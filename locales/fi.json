@@ -1289,9 +1289,24 @@
         "update_error_alert": "Profiilin päivityksessä tapahtui virhe"
       },
       "impersonate": {
-        "title": "Henkilöllisyyden jäljittely",
-        "success": "Henkilöllisyyden jäljittely onnistui",
-        "error": "Henkilöllisyyden jäljittelyssä ilmeni ongelmia. Tarkista käyttöoikeutesi"
+        "title": "Turvavarmistus",
+        "subtitle": "Vahvista henkilöllisyytesi jatkaaksesi",
+        "description": "Kirjaudut sisään asiakkaan puolesta. Istunto kirjataan auditointia varten.",
+        "email_label": "Sähköposti",
+        "email_placeholder": "Anna sähköposti",
+        "password_label": "Salasana",
+        "password_placeholder": "Anna salasana",
+        "submit_button": "Vahvista ja jatka",
+        "cancel_button": "Peruuta",
+        "back_to_home": "Takaisin etusivulle",
+        "success": "Vahvistus onnistui. Vaihdetaan asiakasnäkymään…",
+        "error": "Henkilöllisyyden jäljittelyssä ilmeni ongelmia. Tarkista käyttöoikeutesi",
+        "errors": {
+          "invalid_user_id": "Virheellinen asiakasviite. Palaa Back Officeen ja yritä uudelleen.",
+          "user_not_found": "Asiakastiliä ei löytynyt tai sinulla ei ole oikeutta esiintyä tämän käyttäjän nimissä.",
+          "impersonate_failed": "Vahvistus onnistui, mutta vaihto asiakastiliin epäonnistui. Yritä uudelleen.",
+          "generic": "Jotain meni pieleen. Yritä uudelleen."
+        }
       },
       "promotion_coupons": {
         "title": "Kaikki kupongit ja tarjoukset",

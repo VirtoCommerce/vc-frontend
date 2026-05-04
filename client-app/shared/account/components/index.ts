@@ -14,4 +14,5 @@ export { default as PasswordTips } from "./password-tips.vue";
 export { default as ProfileUpdateSuccessModal } from "./profile-update-success-modal.vue";
 export { default as RegistrationSuccessModal } from "./registration-success-modal.vue";
 export { default as ResetPasswordForm } from "./reset-password-form.vue";
+export { default as SecurityVerificationForm } from "./security-verification-form.vue";
 export { default as SignInForm } from "./sign-in-form.vue";

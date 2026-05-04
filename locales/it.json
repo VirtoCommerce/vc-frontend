@@ -1289,9 +1289,24 @@
         "update_error_alert": "Si è verificato un errore durante l'aggiornamento del profilo"
       },
       "impersonate": {
-        "title": "Impersonificazione",
-        "success": "Impersonificazione riuscita",
-        "error": "Alcuni problemi durante l'impersonificazione. Controlla i tuoi permessi"
+        "title": "Verifica di sicurezza",
+        "subtitle": "Conferma la tua identità per continuare",
+        "description": "Stai accedendo per conto di un cliente. La sessione verrà registrata per audit.",
+        "email_label": "Email",
+        "email_placeholder": "Inserisci la tua email",
+        "password_label": "Password",
+        "password_placeholder": "Inserisci la tua password",
+        "submit_button": "Verifica e continua",
+        "cancel_button": "Annulla",
+        "back_to_home": "Torna alla home",
+        "success": "Verifica riuscita. Passaggio alla vista cliente…",
+        "error": "Alcuni problemi durante l'impersonificazione. Controlla i tuoi permessi",
+        "errors": {
+          "invalid_user_id": "Riferimento cliente non valido. Torna al Back Office e riprova.",
+          "user_not_found": "Account cliente non trovato o non hai i permessi per impersonare questo utente.",
+          "impersonate_failed": "Verifica riuscita, ma il passaggio all'account cliente è fallito. Riprova.",
+          "generic": "Qualcosa è andato storto. Riprova."
+        }
       },
       "promotion_coupons": {
         "title": "Tutti i coupon e le promozioni",

@@ -13,7 +13,6 @@ const Lists = () => import("@/pages/account/lists.vue");
 const ListDetails = () => import("@/pages/account/list-details.vue");
 const SavedForLaterDetails = () => import("@/pages/account/saved-for-later-details.vue");
 const SavedCreditCards = () => import("@/pages/account/saved-credit-cards.vue");
-const Impersonate = () => import("@/pages/account/impersonate.vue");
 const PromotionCoupons = () => import("@/pages/account/promotion-coupons.vue");
 
 export const accountRoutes: RouteRecordRaw[] = [
@@ -79,12 +78,6 @@ export const accountRoutes: RouteRecordRaw[] = [
     path: "saved-credit-cards",
     name: "SavedCreditCards",
     component: SavedCreditCards,
-  },
-  {
-    path: "impersonate/:userId",
-    name: "Impersonate",
-    props: true,
-    component: Impersonate,
   },
   {
     path: ROUTES.PROMOTION_COUPONS.PATH,

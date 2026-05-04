@@ -1289,9 +1289,24 @@
         "update_error_alert": "更新个人资料时出错"
       },
       "impersonate": {
-        "title": "冒充",
-        "success": "冒充成功",
-        "error": "冒充时出现一些问题。检查您的权限"
+        "title": "安全验证",
+        "subtitle": "请确认身份以继续",
+        "description": "您正以客户名义登录。本次会话将被审核记录。",
+        "email_label": "邮箱",
+        "email_placeholder": "请输入邮箱",
+        "password_label": "密码",
+        "password_placeholder": "请输入密码",
+        "submit_button": "验证并继续",
+        "cancel_button": "取消",
+        "back_to_home": "返回首页",
+        "success": "验证成功。正在切换到客户视图…",
+        "error": "冒充时出现一些问题。检查您的权限",
+        "errors": {
+          "invalid_user_id": "客户引用无效。请返回 Back Office 重试。",
+          "user_not_found": "未找到客户账户或您无权模拟该用户。",
+          "impersonate_failed": "验证成功,但切换到客户账户失败。请重试。",
+          "generic": "出错了。请重试。"
+        }
       },
       "promotion_coupons": {
         "title": "所有优惠券与促销",

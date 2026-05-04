@@ -1289,9 +1289,24 @@
         "update_error_alert": "Es gab einen Fehler beim Aktualisieren des Profils"
       },
       "impersonate": {
-        "title": "Nachahmung",
-        "success": "Impersonation erfolgreich",
-        "error": "Einige Probleme während der Nachahmung. Überprüfen Sie Ihre Berechtigungen"
+        "title": "Sicherheitsüberprüfung",
+        "subtitle": "Bestätigen Sie Ihre Identität, um fortzufahren",
+        "description": "Sie melden sich im Namen eines Kunden an. Die Sitzung wird zur Überprüfung aufgezeichnet.",
+        "email_label": "E-Mail",
+        "email_placeholder": "E-Mail eingeben",
+        "password_label": "Passwort",
+        "password_placeholder": "Passwort eingeben",
+        "submit_button": "Bestätigen und fortfahren",
+        "cancel_button": "Abbrechen",
+        "back_to_home": "Zurück zur Startseite",
+        "success": "Überprüfung erfolgreich. Wechsel zur Kundenansicht…",
+        "error": "Einige Probleme während der Nachahmung. Überprüfen Sie Ihre Berechtigungen",
+        "errors": {
+          "invalid_user_id": "Ungültige Kundenreferenz. Kehren Sie zum Back Office zurück und versuchen Sie es erneut.",
+          "user_not_found": "Kundenkonto nicht gefunden oder Sie haben keine Berechtigung, sich als dieser Benutzer auszugeben.",
+          "impersonate_failed": "Überprüfung erfolgreich, aber der Wechsel zum Kundenkonto ist fehlgeschlagen. Bitte versuchen Sie es erneut.",
+          "generic": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
+        }
       },
       "promotion_coupons": {
         "title": "Alle Gutscheine & Aktionen",

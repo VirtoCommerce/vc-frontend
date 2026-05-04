@@ -1289,9 +1289,24 @@
         "update_error_alert": "Hubo un error durante la actualización del perfil"
       },
       "impersonate": {
-        "title": "Suplantación",
-        "success": "Suplantación exitosa",
-        "error": "Algunos problemas durante la suplantación. Verifica tus permisos"
+        "title": "Verificación de seguridad",
+        "subtitle": "Confirme su identidad para continuar",
+        "description": "Está iniciando sesión en nombre de un cliente. La sesión será auditada.",
+        "email_label": "Correo electrónico",
+        "email_placeholder": "Ingrese su correo electrónico",
+        "password_label": "Contraseña",
+        "password_placeholder": "Ingrese su contraseña",
+        "submit_button": "Verificar y continuar",
+        "cancel_button": "Cancelar",
+        "back_to_home": "Volver al inicio",
+        "success": "Verificación exitosa. Cambiando a la vista del cliente…",
+        "error": "Algunos problemas durante la suplantación. Verifica tus permisos",
+        "errors": {
+          "invalid_user_id": "Referencia de cliente inválida. Vuelva al Back Office e inténtelo de nuevo.",
+          "user_not_found": "Cuenta de cliente no encontrada o no tiene permiso para suplantar a este usuario.",
+          "impersonate_failed": "La verificación fue exitosa, pero el cambio a la cuenta del cliente falló. Inténtelo de nuevo.",
+          "generic": "Algo salió mal. Inténtelo de nuevo."
+        }
       },
       "promotion_coupons": {
         "title": "Todos los cupones y promociones",

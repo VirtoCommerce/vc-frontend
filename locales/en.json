@@ -1289,9 +1289,24 @@
         "update_error_alert": "There was an error during profile update"
       },
       "impersonate": {
-        "title": "Impersonation",
-        "success": "Impersonation succeeded",
-        "error": "Some problems occurred during impersonation. Check your permissions"
+        "title": "Security verification",
+        "subtitle": "Confirm your identity to continue",
+        "description": "You are logging in on behalf of a customer. The session will be audited.",
+        "email_label": "Email",
+        "email_placeholder": "Enter your email",
+        "password_label": "Password",
+        "password_placeholder": "Enter your password",
+        "submit_button": "Verify and continue",
+        "cancel_button": "Cancel",
+        "back_to_home": "Back to home",
+        "success": "Verification successful. Switching to customer view…",
+        "error": "Some problems occurred during impersonation. Check your permissions",
+        "errors": {
+          "invalid_user_id": "Invalid customer reference. Please return to Back Office and try again.",
+          "user_not_found": "Customer account not found or you don't have permission to impersonate this user.",
+          "impersonate_failed": "Verification succeeded, but switching to the customer account failed. Please try again.",
+          "generic": "Something went wrong. Please try again."
+        }
       },
       "promotion_coupons": {
         "title": "All coupons & promotions",
