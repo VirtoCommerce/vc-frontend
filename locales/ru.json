@@ -316,6 +316,8 @@
           "call_us_label": "Поддержка: ",
           "logged_in_as": "вход под именем",
           "account_menu_label": "Меню аккаунта",
+          "back_to_operator": "Вернуться к {name}",
+          "switching_back": "Возвращаемся…",
           "no_results": "Результаты не найдены",
           "dark_mode": {
             "system": "Тема: авто",

@@ -43,7 +43,7 @@ export function useImpersonate() {
     impersonateStatus.value = undefined;
   }
 
-  async function doImpersonate(targetUserId: string): Promise<void> {
+  async function requestImpersonateToken(userId: string, redirectTo: string = "/"): Promise<void> {
     step.value = "impersonate";
     impersonateStatus.value = "loading";
 
@@ -53,7 +53,7 @@ export function useImpersonate() {
           new URLSearchParams({
             grant_type: "impersonate",
             scope: "offline_access",
-            user_id: targetUserId,
+            user_id: userId,
           }),
           "application/x-www-form-urlencoded",
         )
@@ -83,24 +83,37 @@ export function useImpersonate() {
         impersonateStatus.value = "success";
         step.value = "success";
 
-        // reload all tabs to renew state
+        // Ordering invariant: tokens must be persisted to localStorage (above) BEFORE the
+        // broadcast fires, so other tabs read the new session on reload. Don't reorder.
+        // We use OTHERS + explicit location.href so the current tab can navigate to a
+        // non-"/" URL while other tabs follow the existing reload-to-home behavior.
         setTimeout(() => {
-          void broadcast.emit(reloadAndOpenMainPage, null, TabsType.ALL);
+          void broadcast.emit(reloadAndOpenMainPage, null, TabsType.OTHERS);
+          location.href = redirectTo;
         }, 1000);
       } else {
         notifications.error({ text: t("pages.account.impersonate.error") });
-        Logger.error(doImpersonate.name, tokenError, tokenErrors);
+        Logger.error(requestImpersonateToken.name, tokenError, tokenErrors);
         impersonateStatus.value = "error";
         errors.value = [{ code: "impersonate_failed" }];
         step.value = "idle";
       }
     } catch (e) {
       notifications.error({ text: t("pages.account.impersonate.error") });
-      Logger.error(doImpersonate.name, e);
+      Logger.error(requestImpersonateToken.name, e);
       impersonateStatus.value = "error";
       errors.value = [{ code: "impersonate_failed" }];
       step.value = "idle";
     }
+  }
+
+  async function doImpersonate(targetUserId: string): Promise<void> {
+    await requestImpersonateToken(targetUserId);
+  }
+
+  async function revertImpersonate(redirectTo: string = "/"): Promise<void> {
+    resetState();
+    await requestImpersonateToken("", redirectTo);
   }
 
   async function impersonate(supportEmail: string, supportPassword: string, targetUserId: string): Promise<void> {
@@ -146,6 +159,7 @@ export function useImpersonate() {
   return {
     impersonate,
     impersonateAuthenticated,
+    revertImpersonate,
     loading,
     step,
     errors,

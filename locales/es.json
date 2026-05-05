@@ -316,6 +316,8 @@
           "call_us_label": "Llámanos: ",
           "logged_in_as": "conectado como",
           "account_menu_label": "Menú de cuenta",
+          "back_to_operator": "Volver a {name}",
+          "switching_back": "Volviendo…",
           "no_results": "No se encontraron resultados",
           "dark_mode": {
             "system": "Tema: automático",

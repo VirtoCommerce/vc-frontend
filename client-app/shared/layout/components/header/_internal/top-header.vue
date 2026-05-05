@@ -3,6 +3,12 @@
     class="flex h-10 items-center gap-1 bg-[--header-top-bg-color] px-5 text-sm text-[--header-top-text-color] xl:gap-3 xl:px-11"
     data-test-id="top-header"
   >
+    <Teleport to="body">
+      <VcLoaderOverlay v-if="reverting" fixed-spinner data-test-id="back-to-operator-loader">
+        {{ $t("shared.layout.header.top_header.switching_back") }}
+      </VcLoaderOverlay>
+    </Teleport>
+
     <div class="flex min-w-0 shrink items-center gap-3">
       <LanguageSelector
         v-if="$context.availableLanguages && $context.availableLanguages.length > 1"
@@ -132,6 +138,22 @@
               </router-link>
 
               <VcButton
+                v-if="operator"
+                :title="backToOperatorLabel"
+                :aria-label="backToOperatorLabel"
+                class="ml-4"
+                variant="outline"
+                color="neutral"
+                size="xs"
+                data-test-id="back-to-operator-button"
+                icon
+                @click="onBackToOperator"
+              >
+                <VcIcon name="arrow-left" />
+              </VcButton>
+
+              <VcButton
+                v-else
                 :title="$t('shared.layout.header.link_logout')"
                 class="ml-4"
                 variant="outline"
@@ -144,6 +166,20 @@
                 <VcIcon name="logout" />
               </VcButton>
             </div>
+
+            <button
+              v-if="operator"
+              type="button"
+              class="flex items-center gap-2 border-t border-neutral-200 p-3 text-start hover:bg-neutral-50"
+              data-test-id="back-to-operator-row"
+              @click="onBackToOperator"
+            >
+              <VcIcon class="fill-primary" name="arrow-left" />
+
+              <span class="truncate">
+                {{ backToOperatorLabel }}
+              </span>
+            </button>
 
             <TopHeaderOrganizations v-if="isMultiOrganization" @organization-selected="loginMenuVisible = false" />
           </div>
@@ -174,29 +210,53 @@
 
 <script setup lang="ts">
 import { onClickOutside } from "@vueuse/core";
-import { ref } from "vue";
+import { computed, ref } from "vue";
+import { useI18n } from "vue-i18n";
 import { useDarkMode } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
+import { Logger } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
-import { useSignMeOut, useUser } from "@/shared/account";
+import { useImpersonate, useSignMeOut, useUser } from "@/shared/account";
 import { CurrencySelector, LanguageSelector } from "@/shared/layout/components";
 import { ShipToSelector } from "@/shared/ship-to-location";
 import DarkModeToggle from "./dark-mode-toggle.vue";
 import TopHeaderLink from "./top-header-link.vue";
 import TopHeaderOrganizations from "./top-header-organizations.vue";
 
+const { t } = useI18n();
 const { isAuthenticated, user, operator, organization, isMultiOrganization } = useUser();
 const { signMeOut } = useSignMeOut();
+const { revertImpersonate } = useImpersonate();
 const { isDarkModeAvailable } = useDarkMode();
 const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 
 const loginMenu = ref(null);
 const loginMenuVisible = ref(false);
+const reverting = ref(false);
 
 const support_phone_number = getSettingValue(MODULE_XAPI_KEYS.SUPPORT_PHONE_NUMBER);
+
+const backToOperatorLabel = computed(() =>
+  operator.value
+    ? t("shared.layout.header.top_header.back_to_operator", {
+        name: operator.value.contact?.fullName || operator.value.userName,
+      })
+    : "",
+);
 
 onClickOutside(loginMenu, () => {
   loginMenuVisible.value = false;
 });
+
+async function onBackToOperator(): Promise<void> {
+  loginMenuVisible.value = false;
+  reverting.value = true;
+  try {
+    await revertImpersonate("/company/members");
+  } catch (e) {
+    Logger.error(onBackToOperator.name, e);
+    reverting.value = false;
+  }
+}
 </script>

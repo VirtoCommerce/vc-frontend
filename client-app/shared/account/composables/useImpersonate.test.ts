@@ -62,7 +62,7 @@ vi.mock("@/core/api/common", async () => {
 
 vi.mock("@/shared/broadcast", () => {
   const emit = vi.fn();
-  const TabsType = { ALL: "ALL", CURRENT: "CURRENT" } as const;
+  const TabsType = { ALL: "ALL", CURRENT: "CURRENT", OTHERS: "OTHERS" } as const;
   const reloadAndOpenMainPage = "reloadAndOpenMainPage";
 
   return {
@@ -119,7 +119,7 @@ type FetchMockStateType = {
 
 type BroadcastMockStateType = {
   emit: ReturnType<typeof vi.fn>;
-  TabsType: { ALL: string; CURRENT: string };
+  TabsType: { ALL: string; CURRENT: string; OTHERS: string };
   reloadAndOpenMainPage: string;
 };
 
@@ -182,11 +182,13 @@ describe("useImpersonate", () => {
     const broadcastState = await getBroadcastState();
     broadcastState.emit.mockReset();
 
+    vi.stubGlobal("location", { href: "" });
     vi.useFakeTimers();
   });
 
   afterEach(() => {
     vi.useRealTimers();
+    vi.unstubAllGlobals();
     vi.clearAllMocks();
   });
 
@@ -238,7 +240,7 @@ describe("useImpersonate", () => {
     expect(broadcastState.emit).toHaveBeenCalledWith(
       broadcastState.reloadAndOpenMainPage,
       null,
-      broadcastState.TabsType.ALL,
+      broadcastState.TabsType.OTHERS,
     );
   });
 
@@ -399,6 +401,54 @@ describe("useImpersonate", () => {
     expect(errors.value).toEqual([{ code: "impersonate_failed" }]);
     expect(step.value).toBe("idle");
     expect(loading.value).toBe(false);
+  });
+
+  it("revertImpersonate posts empty user_id, sets tokens, broadcasts OTHERS, and navigates to redirectTo", async () => {
+    const auth = await getAuthState();
+    const fetchState = await getFetchState();
+    const broadcastState = await getBroadcastState();
+
+    setSuccessfulImpersonateResponse(fetchState);
+
+    let postedBody: URLSearchParams | undefined;
+    fetchState.useFetch.mockImplementation((url: string) => {
+      expect(url).toBe("/connect/token");
+      return {
+        post: (body: URLSearchParams) => {
+          postedBody = body;
+          return {
+            json: () => Promise.resolve(fetchState.fetchResult),
+          };
+        },
+      };
+    });
+
+    const { useImpersonate } = await importComposable();
+    const { revertImpersonate, step } = useImpersonate();
+
+    await revertImpersonate("/company/members");
+
+    expect(postedBody?.get("user_id")).toBe("");
+    expect(postedBody?.get("grant_type")).toBe("impersonate");
+    expect(auth.setAccessToken).toHaveBeenCalledWith("access");
+    expect(auth.setRefreshToken).toHaveBeenCalledWith("refresh");
+    expect(auth.setTokenType).toHaveBeenCalledWith("Bearer");
+    expect(auth.setExpiresAt).toHaveBeenCalledWith(3600);
+    expect(step.value).toBe("success");
+
+    // Timer not yet fired
+    expect(broadcastState.emit).not.toHaveBeenCalled();
+    expect(location.href).toBe("");
+
+    vi.runAllTimers();
+
+    expect(broadcastState.emit).toHaveBeenCalledTimes(1);
+    expect(broadcastState.emit).toHaveBeenCalledWith(
+      broadcastState.reloadAndOpenMainPage,
+      null,
+      broadcastState.TabsType.OTHERS,
+    );
+    expect(location.href).toBe("/company/members");
   });
 
   it("resetState clears step and errors", async () => {

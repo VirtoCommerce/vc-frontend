@@ -316,6 +316,8 @@
           "call_us_label": "致电我们：",
           "logged_in_as": "已登录为",
           "account_menu_label": "帐户菜单",
+          "back_to_operator": "返回 {name}",
+          "switching_back": "正在返回…",
           "no_results": "未找到结果",
           "dark_mode": {
             "system": "主题：自动",

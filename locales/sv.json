@@ -316,6 +316,8 @@
           "call_us_label": "Ring oss: ",
           "logged_in_as": "inloggad som",
           "account_menu_label": "Kontomeny",
+          "back_to_operator": "Tillbaka till {name}",
+          "switching_back": "Byter tillbaka…",
           "no_results": "Inga resultat hittades",
           "dark_mode": {
             "system": "Tema: automatiskt",

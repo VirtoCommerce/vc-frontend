@@ -316,6 +316,8 @@
           "call_us_label": "お電話: ",
           "logged_in_as": "ログインユーザー:",
           "account_menu_label": "アカウントメニュー",
+          "back_to_operator": "{name} に戻る",
+          "switching_back": "戻っています…",
           "no_results": "結果が見つかりません",
           "dark_mode": {
             "system": "テーマ：自動",

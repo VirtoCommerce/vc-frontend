@@ -316,6 +316,8 @@
           "call_us_label": "Soita meille: ",
           "logged_in_as": "kirjautuneena nimellä",
           "account_menu_label": "Tilivalikko",
+          "back_to_operator": "Takaisin: {name}",
+          "switching_back": "Palataan…",
           "no_results": "Ei tuloksia",
           "dark_mode": {
             "system": "Teema: automaattinen",
