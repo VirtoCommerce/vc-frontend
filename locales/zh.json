@@ -494,7 +494,7 @@
           "user_not_found": "未找到用户。请确保您输入了正确的信息"
         }
       },
-      "security_verification_form": {
+      "impersonate_form": {
         "subtitle": "请确认身份以继续",
         "description": "您正以客户名义登录。本次会话将被审核记录。",
         "email_label": "邮箱",

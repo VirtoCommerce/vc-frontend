@@ -28,7 +28,7 @@
       </template>
     </div>
 
-    <SecurityVerificationForm v-else :target-user-id="userId" @success="onSuccess" @cancel="onCancel" />
+    <ImpersonateForm v-else :target-user-id="userId" @success="onSuccess" @cancel="onCancel" />
   </VcEmptyPage>
 </template>
 
@@ -38,7 +38,7 @@ import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useErrorsTranslator, usePageHead } from "@/core/composables";
 import { StorefrontPermissions } from "@/core/enums";
-import { SecurityVerificationForm, useImpersonate, useUser } from "@/shared/account";
+import { ImpersonateForm, useImpersonate, useUser } from "@/shared/account";
 import type { IdentityErrorType } from "@/core/api/graphql/types";
 
 interface IProps {
@@ -60,7 +60,7 @@ const canSkipVerification = computed<boolean>(
   () => isAuthenticated.value && (!!operator.value || checkPermissions(StorefrontPermissions.CanImpersonate)),
 );
 
-const { translate } = useErrorsTranslator<IdentityErrorType>("shared.account.security_verification_form.errors");
+const { translate } = useErrorsTranslator<IdentityErrorType>("shared.account.impersonate_form.errors");
 
 const translatedSilentErrors = computed<string[]>(() => {
   const list = errors.value ?? [];

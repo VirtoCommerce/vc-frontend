@@ -494,7 +494,7 @@
           "user_not_found": "Brukeren ble ikke funnet. Kontroller at du har skrevet inn korrekt informasjon"
         }
       },
-      "security_verification_form": {
+      "impersonate_form": {
         "subtitle": "Bekreft identiteten din for å fortsette",
         "description": "Du logger inn på vegne av en kunde. Økten vil bli loggført for revisjon.",
         "email_label": "E-post",

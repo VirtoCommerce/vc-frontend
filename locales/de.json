@@ -494,7 +494,7 @@
           "user_not_found": "Benutzer nicht gefunden. Bitte stellen Sie sicher, dass Sie die richtigen Informationen eingegeben haben"
         }
       },
-      "security_verification_form": {
+      "impersonate_form": {
         "subtitle": "Bestätigen Sie Ihre Identität, um fortzufahren",
         "description": "Sie melden sich im Namen eines Kunden an. Die Sitzung wird zur Überprüfung aufgezeichnet.",
         "email_label": "E-Mail",

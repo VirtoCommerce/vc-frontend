@@ -494,7 +494,7 @@
           "user_not_found": "User not found. Ensure you've entered the correct information"
         }
       },
-      "security_verification_form": {
+      "impersonate_form": {
         "subtitle": "Confirm your identity to continue",
         "description": "You are logging in on behalf of a customer. The session will be audited.",
         "email_label": "Email",
