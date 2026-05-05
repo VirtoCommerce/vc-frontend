@@ -33,7 +33,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from "vue";
+import { computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useErrorsTranslator, usePageHead } from "@/core/composables";
@@ -81,11 +81,15 @@ function onSuccess(): void {
   // useImpersonate handles broadcast and reload; nothing extra to do here.
 }
 
-onMounted(() => {
-  if (canSkipVerification.value) {
-    void impersonateAuthenticated(props.userId);
-  }
-});
+watch(
+  canSkipVerification,
+  (canSkip) => {
+    if (canSkip) {
+      void impersonateAuthenticated(props.userId);
+    }
+  },
+  { immediate: true },
+);
 </script>
 
 <style lang="scss">
