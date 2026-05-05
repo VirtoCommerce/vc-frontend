@@ -1303,7 +1303,6 @@
         "success": "Verifiering lyckades. Växlar till kundvyn…",
         "error": "Några problem uppstod under impersonation. Kontrollera dina behörigheter",
         "errors": {
-          "invalid_user_id": "Ogiltig kundreferens. Återgå till Back Office och försök igen.",
           "impersonate_failed": "Verifiering lyckades, men växling till kundkontot misslyckades. Försök igen.",
           "generic": "Något gick fel. Försök igen."
         }

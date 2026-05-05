@@ -110,12 +110,6 @@ export function useImpersonate() {
   async function impersonate(supportEmail: string, supportPassword: string, targetUserId: string): Promise<void> {
     resetState();
 
-    if (!targetUserId) {
-      failedStep.value = "verify";
-      errors.value = [{ code: "invalid_user_id" }];
-      return;
-    }
-
     step.value = "verify";
 
     let authThrew = false;
@@ -168,12 +162,6 @@ export function useImpersonate() {
    */
   async function impersonateAuthenticated(targetUserId: string): Promise<void> {
     resetState();
-
-    if (!targetUserId) {
-      failedStep.value = "verify";
-      errors.value = [{ code: "invalid_user_id" }];
-      return;
-    }
 
     step.value = "impersonate";
     await doImpersonate(targetUserId);

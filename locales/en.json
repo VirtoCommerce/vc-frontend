@@ -1303,7 +1303,6 @@
         "success": "Verification successful. Switching to customer view…",
         "error": "Some problems occurred during impersonation. Check your permissions",
         "errors": {
-          "invalid_user_id": "Invalid customer reference. Please return to Back Office and try again.",
           "impersonate_failed": "Verification succeeded, but switching to the customer account failed. Please try again.",
           "generic": "Something went wrong. Please try again."
         }

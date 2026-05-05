@@ -1303,7 +1303,6 @@
         "success": "Weryfikacja udana. Przełączanie do widoku klienta…",
         "error": "Wystąpiły problemy podczas podrabiania. Sprawdź swoje uprawnienia",
         "errors": {
-          "invalid_user_id": "Nieprawidłowe odniesienie do klienta. Wróć do Back Office i spróbuj ponownie.",
           "impersonate_failed": "Weryfikacja powiodła się, ale przełączenie na konto klienta nie powiodło się. Spróbuj ponownie.",
           "generic": "Coś poszło nie tak. Spróbuj ponownie."
         }

@@ -1,16 +1,6 @@
 <template>
   <VcEmptyPage class="impersonate" icon="outline-security" image="sign-in.jpg">
-    <div v-if="!userId" class="impersonate__error">
-      <VcAlert color="danger" variant="outline-dark" size="md" icon>
-        {{ $t("pages.account.impersonate.errors.invalid_user_id") }}
-      </VcAlert>
-
-      <VcButton class="impersonate__back" @click="goHome">
-        {{ $t("pages.account.impersonate.back_to_home") }}
-      </VcButton>
-    </div>
-
-    <div v-else-if="canSkipVerification" class="impersonate__silent">
+    <div v-if="canSkipVerification" class="impersonate__silent">
       <template v-if="translatedSilentErrors.length === 0">
         <VcLoaderOverlay no-bg />
 
@@ -95,10 +85,6 @@ function onSuccess(): void {
 }
 
 onMounted(() => {
-  if (!props.userId) {
-    return;
-  }
-
   if (canSkipVerification.value) {
     void impersonateAuthenticated(props.userId);
   }
@@ -107,10 +93,6 @@ onMounted(() => {
 
 <style lang="scss">
 .impersonate {
-  &__error {
-    @apply mx-auto flex w-full max-w-md flex-col gap-4 text-start;
-  }
-
   &__silent {
     @apply relative mx-auto flex min-h-32 w-full max-w-md flex-col gap-4 text-start;
   }

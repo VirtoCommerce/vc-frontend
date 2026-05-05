@@ -1303,7 +1303,6 @@
         "success": "Verificación exitosa. Cambiando a la vista del cliente…",
         "error": "Algunos problemas durante la suplantación. Verifica tus permisos",
         "errors": {
-          "invalid_user_id": "Referencia de cliente inválida. Vuelva al Back Office e inténtelo de nuevo.",
           "impersonate_failed": "La verificación fue exitosa, pero el cambio a la cuenta del cliente falló. Inténtelo de nuevo.",
           "generic": "Algo salió mal. Inténtelo de nuevo."
         }

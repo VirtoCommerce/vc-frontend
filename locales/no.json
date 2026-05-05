@@ -1303,7 +1303,6 @@
         "success": "Verifisering vellykket. Bytter til kundevisning…",
         "error": "Problemer med identitetsetterligning. Kontroller tilgangsrettighetene dine",
         "errors": {
-          "invalid_user_id": "Ugyldig kundereferanse. Gå tilbake til Back Office og prøv igjen.",
           "impersonate_failed": "Verifiseringen lyktes, men byttet til kundekontoen mislyktes. Prøv igjen.",
           "generic": "Noe gikk galt. Prøv igjen."
         }
