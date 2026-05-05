@@ -589,6 +589,10 @@
         "title": "Block user",
         "text": "Are you sure you want to block access of the user?"
       },
+      "login_on_behalf_modal": {
+        "title": "Login on behalf",
+        "text": "You are logging in on behalf of {email}. The session will be audited."
+      },
       "unblock_member_modal": {
         "title": "Unblock user",
         "text": "Are you sure you want to unblock access of the user?"
@@ -1371,6 +1375,7 @@
           "invite": "Invite",
           "reset_search": "Reset search",
           "edit_role": "Edit role",
+          "login_on_behalf": "Login on behalf",
           "block_user": "Block user",
           "unblock_user": "Unblock user",
           "delete": "Delete",

@@ -589,6 +589,10 @@
         "title": "Blokker bruker",
         "text": "Er du sikker på at du vil blokkere brukerens tilgang?"
       },
+      "login_on_behalf_modal": {
+        "title": "Logg inn på vegne av",
+        "text": "Du logger inn på vegne av {email}. Økten vil bli loggført."
+      },
       "unblock_member_modal": {
         "title": "Opphev blokkering av bruker",
         "text": "Er du sikker på at du vil oppheve blokkeringen av brukerens tilgang?"
@@ -1371,6 +1375,7 @@
           "invite": "Inviter",
           "reset_search": "Tilbakestill søk",
           "edit_role": "Rediger rolle",
+          "login_on_behalf": "Logg inn på vegne av",
           "block_user": "Blokker bruker",
           "unblock_user": "Opphev blokkering av bruker",
           "delete": "Slett",

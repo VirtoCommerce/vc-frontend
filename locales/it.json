@@ -589,6 +589,10 @@
         "title": "Blocca utente",
         "text": "Sei sicuro di voler bloccare l'accesso dell'utente?"
       },
+      "login_on_behalf_modal": {
+        "title": "Accedi per conto di",
+        "text": "Stai accedendo per conto di {email}. La sessione verrà registrata."
+      },
       "unblock_member_modal": {
         "title": "Sblocca utente",
         "text": "Sei sicuro di voler sbloccare l'accesso dell'utente?"
@@ -1371,6 +1375,7 @@
           "invite": "Invita",
           "reset_search": "Reimposta ricerca",
           "edit_role": "Modifica ruolo",
+          "login_on_behalf": "Accedi per conto di",
           "block_user": "Blocca utente",
           "unblock_user": "Sblocca utente",
           "delete": "Elimina",

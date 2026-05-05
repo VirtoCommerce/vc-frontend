@@ -589,6 +589,10 @@
         "title": "Benutzer blockieren",
         "text": "Sind Sie sicher, dass Sie den Zugriff des Benutzers blockieren möchten?"
       },
+      "login_on_behalf_modal": {
+        "title": "Im Namen anmelden",
+        "text": "Sie melden sich im Namen von {email} an. Die Sitzung wird protokolliert."
+      },
       "unblock_member_modal": {
         "title": "Benutzer entsperren",
         "text": "Sind Sie sicher, dass Sie den Zugriff des Benutzers entsperren möchten?"
@@ -1371,6 +1375,7 @@
           "invite": "Einladen",
           "reset_search": "Suche zurücksetzen",
           "edit_role": "Rolle bearbeiten",
+          "login_on_behalf": "Im Namen anmelden",
           "block_user": "Benutzer blockieren",
           "unblock_user": "Benutzer entsperren",
           "delete": "Löschen",

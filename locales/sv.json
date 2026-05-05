@@ -589,6 +589,10 @@
         "title": "Blockera användare",
         "text": "Är du säker på att du vill blockera användarens åtkomst?"
       },
+      "login_on_behalf_modal": {
+        "title": "Logga in å andras vägnar",
+        "text": "Du loggar in å {email}s vägnar. Sessionen kommer att loggas."
+      },
       "unblock_member_modal": {
         "title": "Avblockera användare",
         "text": "Är du säker på att du vill avblockera användarens åtkomst?"
@@ -1371,6 +1375,7 @@
           "invite": "Bjud in",
           "reset_search": "Återställ sökning",
           "edit_role": "Redigera roll",
+          "login_on_behalf": "Logga in å andras vägnar",
           "block_user": "Blockera användare",
           "unblock_user": "Avblockera användare",
           "delete": "Radera",

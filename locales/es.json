@@ -589,6 +589,10 @@
         "title": "Bloquear usuario",
         "text": "¿Estás seguro de que deseas bloquear el acceso del usuario?"
       },
+      "login_on_behalf_modal": {
+        "title": "Iniciar sesión en nombre de",
+        "text": "Estás iniciando sesión en nombre de {email}. La sesión será auditada."
+      },
       "unblock_member_modal": {
         "title": "Desbloquear usuario",
         "text": "¿Estás seguro de que deseas desbloquear el acceso del usuario?"
@@ -1371,6 +1375,7 @@
           "invite": "Invitar",
           "reset_search": "Restablecer búsqueda",
           "edit_role": "Editar rol",
+          "login_on_behalf": "Iniciar sesión en nombre de",
           "block_user": "Bloquear usuario",
           "unblock_user": "Desbloquear usuario",
           "delete": "Eliminar",

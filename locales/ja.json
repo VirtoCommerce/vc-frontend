@@ -589,6 +589,10 @@
         "title": "ユーザーをブロック",
         "text": "このユーザーのアクセスをブロックしますか？"
       },
+      "login_on_behalf_modal": {
+        "title": "代理ログイン",
+        "text": "{email} としてログインしようとしています。セッションは監査されます。"
+      },
       "unblock_member_modal": {
         "title": "ブロック解除",
         "text": "このユーザーのブロックを解除しますか？"
@@ -1371,6 +1375,7 @@
           "invite": "招待",
           "reset_search": "検索をリセット",
           "edit_role": "役割を編集",
+          "login_on_behalf": "代理ログイン",
           "block_user": "ユーザーをブロック",
           "unblock_user": "ブロックを解除",
           "delete": "削除",

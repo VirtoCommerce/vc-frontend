@@ -589,6 +589,10 @@
         "title": "封锁用户",
         "text": "您确定要封锁该用户的访问权限吗？"
       },
+      "login_on_behalf_modal": {
+        "title": "代表登录",
+        "text": "您正在代表 {email} 登录。该会话将被审计。"
+      },
       "unblock_member_modal": {
         "title": "解除封锁用户",
         "text": "您确定要解除该用户的访问权限吗？"
@@ -1371,6 +1375,7 @@
           "invite": "邀请",
           "reset_search": "重置搜索",
           "edit_role": "编辑角色",
+          "login_on_behalf": "代表登录",
           "block_user": "封锁用户",
           "unblock_user": "解除封锁用户",
           "delete": "删除",

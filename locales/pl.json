@@ -589,6 +589,10 @@
         "title": "Blokuj użytkownika",
         "text": "Czy na pewno chcesz zablokować dostęp użytkownika?"
       },
+      "login_on_behalf_modal": {
+        "title": "Zaloguj się w imieniu",
+        "text": "Logujesz się w imieniu {email}. Sesja zostanie zarejestrowana."
+      },
       "unblock_member_modal": {
         "title": "Odblokuj użytkownika",
         "text": "Czy na pewno chcesz odblokować dostęp użytkownika?"
@@ -1371,6 +1375,7 @@
           "invite": "Zaproś",
           "reset_search": "Resetuj wyszukiwanie",
           "edit_role": "Edytuj rolę",
+          "login_on_behalf": "Zaloguj się w imieniu",
           "block_user": "Zablokuj użytkownika",
           "unblock_user": "Odblokuj użytkownika",
           "delete": "Usuń",
