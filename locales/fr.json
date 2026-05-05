@@ -494,7 +494,7 @@
           "user_not_found": "Utilisateur non trouvé. Veuillez vous assurer que vous avez entré les bonnes informations"
         }
       },
-      "security_verification_form": {
+      "impersonate_form": {
         "subtitle": "Confirmez votre identité pour continuer",
         "description": "Vous vous connectez au nom d'un client. La session sera auditée.",
         "email_label": "E-mail",

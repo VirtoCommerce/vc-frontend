@@ -1,33 +1,33 @@
 <template>
-  <div class="security-verification-form">
-    <VcTypography tag="h1" class="security-verification-form__title">
+  <div class="impersonate-form">
+    <VcTypography tag="h1" class="impersonate-form__title">
       {{ $t("pages.account.impersonate.title") }}
     </VcTypography>
 
-    <p class="security-verification-form__subtitle">
-      {{ $t("shared.account.security_verification_form.subtitle") }}
+    <p class="impersonate-form__subtitle">
+      {{ $t("shared.account.impersonate_form.subtitle") }}
     </p>
 
-    <p class="security-verification-form__description">
-      {{ $t("shared.account.security_verification_form.description") }}
+    <p class="impersonate-form__description">
+      {{ $t("shared.account.impersonate_form.description") }}
     </p>
 
     <VcAlert
       v-if="step === 'success'"
-      class="security-verification-form__success"
+      class="impersonate-form__success"
       color="success"
       variant="outline-dark"
       size="md"
       icon
     >
-      {{ $t("shared.account.security_verification_form.success") }}
+      {{ $t("shared.account.impersonate_form.success") }}
     </VcAlert>
 
-    <form v-else class="security-verification-form__form" @submit="onSubmit">
+    <form v-else class="impersonate-form__form" @submit="onSubmit">
       <VcAlert
         v-for="(message, index) in translatedErrors"
         :key="`${index}-${message}`"
-        class="security-verification-form__error"
+        class="impersonate-form__error"
         color="danger"
         variant="outline-dark"
         size="sm"
@@ -39,10 +39,10 @@
       <VcInput
         v-model.trim="email"
         name="email"
-        class="security-verification-form__field"
+        class="impersonate-form__field"
         type="email"
-        :label="$t('shared.account.security_verification_form.email_label')"
-        :placeholder="$t('shared.account.security_verification_form.email_placeholder')"
+        :label="$t('shared.account.impersonate_form.email_label')"
+        :placeholder="$t('shared.account.impersonate_form.email_placeholder')"
         :disabled="loading"
         :message="validationErrors.email"
         :error="!!validationErrors.email"
@@ -53,10 +53,10 @@
       <VcInput
         v-model="password"
         name="password"
-        class="security-verification-form__field"
+        class="impersonate-form__field"
         type="password"
-        :label="$t('shared.account.security_verification_form.password_label')"
-        :placeholder="$t('shared.account.security_verification_form.password_placeholder')"
+        :label="$t('shared.account.impersonate_form.password_label')"
+        :placeholder="$t('shared.account.impersonate_form.password_placeholder')"
         :disabled="loading"
         :message="validationErrors.password"
         :error="!!validationErrors.password"
@@ -64,26 +64,20 @@
         required
       />
 
-      <div class="security-verification-form__actions">
-        <VcButton
-          type="submit"
-          class="security-verification-form__submit"
-          :loading="loading"
-          :disabled="!meta.valid"
-          no-wrap
-        >
-          {{ $t("shared.account.security_verification_form.submit_button") }}
+      <div class="impersonate-form__actions">
+        <VcButton type="submit" class="impersonate-form__submit" :loading="loading" :disabled="!meta.valid" no-wrap>
+          {{ $t("shared.account.impersonate_form.submit_button") }}
         </VcButton>
 
         <VcButton
           type="button"
-          class="security-verification-form__cancel"
+          class="impersonate-form__cancel"
           variant="outline"
           :disabled="loading"
           no-wrap
           @click="onCancel"
         >
-          {{ $t("shared.account.security_verification_form.cancel_button") }}
+          {{ $t("shared.account.impersonate_form.cancel_button") }}
         </VcButton>
       </div>
     </form>
@@ -131,7 +125,7 @@ const { value: password } = useField<string>("password");
 
 const { impersonate, loading, step, errors, resetState } = useImpersonate();
 
-const { translate } = useErrorsTranslator<IdentityErrorType>("shared.account.security_verification_form.errors");
+const { translate } = useErrorsTranslator<IdentityErrorType>("shared.account.impersonate_form.errors");
 
 const translatedErrors = computed<string[]>(() => {
   const list = errors.value ?? [];
@@ -160,7 +154,7 @@ watch([email, password], () => {
 </script>
 
 <style lang="scss">
-.security-verification-form {
+.impersonate-form {
   @apply mx-auto flex w-full max-w-md flex-col text-start;
 
   &__title {

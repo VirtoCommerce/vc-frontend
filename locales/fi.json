@@ -494,7 +494,7 @@
           "user_not_found": "Käyttäjää ei löydy. Tarkista, että olet syöttänyt oikeat tiedot"
         }
       },
-      "security_verification_form": {
+      "impersonate_form": {
         "subtitle": "Vahvista henkilöllisyytesi jatkaaksesi",
         "description": "Kirjaudut sisään asiakkaan puolesta. Istunto kirjataan auditointia varten.",
         "email_label": "Sähköposti",

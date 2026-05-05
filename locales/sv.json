@@ -494,7 +494,7 @@
           "user_not_found": "Användaren hittades inte. Kontrollera att du har angett korrekt information"
         }
       },
-      "security_verification_form": {
+      "impersonate_form": {
         "subtitle": "Bekräfta din identitet för att fortsätta",
         "description": "Du loggar in å en kunds vägnar. Sessionen kommer att granskas.",
         "email_label": "E-post",

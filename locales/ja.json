@@ -494,7 +494,7 @@
           "user_not_found": "ユーザーが見つかりません。入力情報を確認してください"
         }
       },
-      "security_verification_form": {
+      "impersonate_form": {
         "subtitle": "続行するには本人確認をしてください",
         "description": "お客様の代わりにログインしています。このセッションは監査のため記録されます。",
         "email_label": "メール",
