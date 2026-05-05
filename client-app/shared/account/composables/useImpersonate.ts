@@ -9,7 +9,6 @@ import type { IdentityErrorType } from "@/core/api/graphql/types";
 import type { ConnectTokenResponseType } from "@/core/types";
 
 type StepType = "idle" | "verify" | "impersonate" | "success";
-type FailedStepType = "verify" | "impersonate" | null;
 type ImpersonateStatusType = "loading" | "success" | "error" | undefined;
 
 export function useImpersonate() {
@@ -27,7 +26,6 @@ export function useImpersonate() {
   const { t } = useI18n();
 
   const step = ref<StepType>("idle");
-  const failedStep = ref<FailedStepType>(null);
   const errors = ref<IdentityErrorType[]>([]);
   const impersonateStatus = ref<ImpersonateStatusType>();
 
@@ -41,12 +39,12 @@ export function useImpersonate() {
 
   function resetState(): void {
     step.value = "idle";
-    failedStep.value = null;
     errors.value = [];
     impersonateStatus.value = undefined;
   }
 
   async function doImpersonate(targetUserId: string): Promise<void> {
+    step.value = "impersonate";
     impersonateStatus.value = "loading";
 
     try {
@@ -63,6 +61,8 @@ export function useImpersonate() {
 
       if (!data.value || error.value) {
         impersonateStatus.value = "error";
+        errors.value = [{ code: "impersonate_failed" }];
+        step.value = "idle";
         return;
       }
 
@@ -81,6 +81,7 @@ export function useImpersonate() {
         setTokenType(token_type);
         setRefreshToken(refresh_token);
         impersonateStatus.value = "success";
+        step.value = "success";
 
         // reload all tabs to renew state
         setTimeout(() => {
@@ -90,23 +91,18 @@ export function useImpersonate() {
         notifications.error({ text: t("pages.account.impersonate.error") });
         Logger.error(doImpersonate.name, tokenError, tokenErrors);
         impersonateStatus.value = "error";
+        errors.value = [{ code: "impersonate_failed" }];
+        step.value = "idle";
       }
     } catch (e) {
       notifications.error({ text: t("pages.account.impersonate.error") });
       Logger.error(doImpersonate.name, e);
       impersonateStatus.value = "error";
+      errors.value = [{ code: "impersonate_failed" }];
+      step.value = "idle";
     }
   }
 
-  /**
-   * Two-step flow: verify Support credentials via grant_type=password,
-   * then impersonate the target user via grant_type=impersonate.
-   *
-   * Intentionally does NOT call useSignMeIn().signIn — Support must not merge
-   * their (or the anonymous) cart with the customer's cart. After authorize()
-   * succeeds Apollo may briefly hold the Support token, but doImpersonate()
-   * immediately overwrites it and broadcasts a full reload one second later.
-   */
   async function impersonate(supportEmail: string, supportPassword: string, targetUserId: string): Promise<void> {
     resetState();
 
@@ -128,52 +124,23 @@ export function useImpersonate() {
     // proceeding to doImpersonate would emit unauthorizedErrorEvent and redirect to /sign-in.
     // Surface a generic error to the form instead.
     if (authThrew && !hasAuthErrors) {
-      failedStep.value = "verify";
       errors.value = [{ code: "generic" }];
       step.value = "idle";
       return;
     }
 
     if (hasAuthErrors) {
-      failedStep.value = "verify";
       errors.value = verifyErrors as IdentityErrorType[];
       step.value = "idle";
       return;
     }
 
-    step.value = "impersonate";
     await doImpersonate(targetUserId);
-
-    if (impersonateStatus.value === "error") {
-      failedStep.value = "impersonate";
-      errors.value = [{ code: "impersonate_failed" }];
-      step.value = "idle";
-      return;
-    }
-
-    step.value = "success";
   }
 
-  /**
-   * Single-step flow for users that are already authenticated and have
-   * permission to impersonate. Skips the verify step and goes straight to
-   * grant_type=impersonate. Use this when the Support user is already signed
-   * in to storefront — there's no need to re-collect credentials.
-   */
   async function impersonateAuthenticated(targetUserId: string): Promise<void> {
     resetState();
-
-    step.value = "impersonate";
     await doImpersonate(targetUserId);
-
-    if (impersonateStatus.value === "error") {
-      failedStep.value = "impersonate";
-      errors.value = [{ code: "impersonate_failed" }];
-      step.value = "idle";
-      return;
-    }
-
-    step.value = "success";
   }
 
   return {
@@ -181,7 +148,6 @@ export function useImpersonate() {
     impersonateAuthenticated,
     loading,
     step,
-    failedStep,
     errors,
     resetState,
   };

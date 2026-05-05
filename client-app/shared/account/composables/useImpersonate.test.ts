@@ -200,7 +200,7 @@ describe("useImpersonate", () => {
     setSuccessfulImpersonateResponse(fetchState);
 
     const { useImpersonate } = await importComposable();
-    const { impersonate, step, failedStep, loading, errors } = useImpersonate();
+    const { impersonate, step, loading, errors } = useImpersonate();
 
     await impersonate("support@example.com", "password", "target-user-id");
 
@@ -209,7 +209,6 @@ describe("useImpersonate", () => {
     expect(auth.setAccessToken).toHaveBeenCalledWith("access");
     expect(auth.setRefreshToken).toHaveBeenCalledWith("refresh");
     expect(step.value).toBe("success");
-    expect(failedStep.value).toBeNull();
     expect(loading.value).toBe(false);
     expect(errors.value).toEqual([]);
   });
@@ -253,13 +252,12 @@ describe("useImpersonate", () => {
     });
 
     const { useImpersonate } = await importComposable();
-    const { impersonate, step, failedStep, errors, loading } = useImpersonate();
+    const { impersonate, step, errors, loading } = useImpersonate();
 
     await impersonate("support@example.com", "wrong-password", "target-user-id");
 
     expect(auth.authorize).toHaveBeenCalledTimes(1);
     expect(fetchState.useFetch).not.toHaveBeenCalled();
-    expect(failedStep.value).toBe("verify");
     expect(errors.value).toEqual(verifyErrors);
     expect(step.value).toBe("idle");
     expect(loading.value).toBe(false);
@@ -275,13 +273,12 @@ describe("useImpersonate", () => {
     });
 
     const { useImpersonate } = await importComposable();
-    const { impersonate, step, failedStep, errors, loading } = useImpersonate();
+    const { impersonate, step, errors, loading } = useImpersonate();
 
     await impersonate("support@example.com", "password", "target-user-id");
 
     expect(auth.authorize).toHaveBeenCalledTimes(1);
     expect(fetchState.useFetch).not.toHaveBeenCalled();
-    expect(failedStep.value).toBe("verify");
     expect(errors.value).toEqual([{ code: "generic" }]);
     expect(step.value).toBe("idle");
     expect(loading.value).toBe(false);
@@ -297,14 +294,13 @@ describe("useImpersonate", () => {
     setFailedImpersonateResponse(fetchState);
 
     const { useImpersonate } = await importComposable();
-    const { impersonate, step, failedStep, errors, loading } = useImpersonate();
+    const { impersonate, step, errors, loading } = useImpersonate();
 
     await impersonate("support@example.com", "password", "target-user-id");
 
     expect(auth.authorize).toHaveBeenCalledTimes(1);
     expect(fetchState.useFetch).toHaveBeenCalledTimes(1);
     expect(auth.setAccessToken).not.toHaveBeenCalled();
-    expect(failedStep.value).toBe("impersonate");
     expect(errors.value).toEqual([{ code: "impersonate_failed" }]);
     expect(step.value).toBe("idle");
     expect(loading.value).toBe(false);
@@ -373,7 +369,7 @@ describe("useImpersonate", () => {
     setSuccessfulImpersonateResponse(fetchState);
 
     const { useImpersonate } = await importComposable();
-    const { impersonateAuthenticated, step, failedStep, loading, errors } = useImpersonate();
+    const { impersonateAuthenticated, step, loading, errors } = useImpersonate();
 
     await impersonateAuthenticated("target-user-id");
 
@@ -382,48 +378,44 @@ describe("useImpersonate", () => {
     expect(auth.setAccessToken).toHaveBeenCalledWith("access");
     expect(auth.setRefreshToken).toHaveBeenCalledWith("refresh");
     expect(step.value).toBe("success");
-    expect(failedStep.value).toBeNull();
     expect(loading.value).toBe(false);
     expect(errors.value).toEqual([]);
   });
 
-  it("impersonateAuthenticated failure: sets failedStep impersonate and impersonate_failed error", async () => {
+  it("impersonateAuthenticated failure: surfaces impersonate_failed error", async () => {
     const auth = await getAuthState();
     const fetchState = await getFetchState();
 
     setFailedImpersonateResponse(fetchState);
 
     const { useImpersonate } = await importComposable();
-    const { impersonateAuthenticated, step, failedStep, errors, loading } = useImpersonate();
+    const { impersonateAuthenticated, step, errors, loading } = useImpersonate();
 
     await impersonateAuthenticated("target-user-id");
 
     expect(auth.authorize).not.toHaveBeenCalled();
     expect(fetchState.useFetch).toHaveBeenCalledTimes(1);
     expect(auth.setAccessToken).not.toHaveBeenCalled();
-    expect(failedStep.value).toBe("impersonate");
     expect(errors.value).toEqual([{ code: "impersonate_failed" }]);
     expect(step.value).toBe("idle");
     expect(loading.value).toBe(false);
   });
 
-  it("resetState clears step, failedStep and errors", async () => {
+  it("resetState clears step and errors", async () => {
     const auth = await getAuthState();
     auth.authorize.mockImplementation(async () => {
       auth.authErrors.value = [{ code: "invalid_grant" }];
     });
 
     const { useImpersonate } = await importComposable();
-    const { impersonate, resetState, step, failedStep, errors } = useImpersonate();
+    const { impersonate, resetState, step, errors } = useImpersonate();
 
     await impersonate("support@example.com", "password", "target-user-id");
-    expect(failedStep.value).toBe("verify");
     expect(errors.value.length).toBeGreaterThan(0);
 
     resetState();
 
     expect(step.value).toBe("idle");
-    expect(failedStep.value).toBeNull();
     expect(errors.value).toEqual([]);
   });
 });
