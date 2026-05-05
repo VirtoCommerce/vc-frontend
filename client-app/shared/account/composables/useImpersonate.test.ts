@@ -60,13 +60,22 @@ vi.mock("@/core/api/common", async () => {
   };
 });
 
-vi.mock("@/shared/broadcast", () => ({
-  TabsType: { ALL: "ALL", CURRENT: "CURRENT" },
-  reloadAndOpenMainPage: "reloadAndOpenMainPage",
-  useBroadcast: () => ({
-    emit: vi.fn(),
-  }),
-}));
+vi.mock("@/shared/broadcast", () => {
+  const emit = vi.fn();
+  const TabsType = { ALL: "ALL", CURRENT: "CURRENT" } as const;
+  const reloadAndOpenMainPage = "reloadAndOpenMainPage";
+
+  return {
+    __mockBroadcastState: {
+      emit,
+      TabsType,
+      reloadAndOpenMainPage,
+    },
+    TabsType,
+    reloadAndOpenMainPage,
+    useBroadcast: () => ({ emit }),
+  };
+});
 
 vi.mock("@/shared/notification", () => ({
   useNotifications: () => ({
@@ -108,6 +117,12 @@ type FetchMockStateType = {
   };
 };
 
+type BroadcastMockStateType = {
+  emit: ReturnType<typeof vi.fn>;
+  TabsType: { ALL: string; CURRENT: string };
+  reloadAndOpenMainPage: string;
+};
+
 async function getAuthState(): Promise<AuthMockStateType> {
   const mod = (await import("@/core/composables")) as unknown as { __mockAuthState: AuthMockStateType };
   return mod.__mockAuthState;
@@ -116,6 +131,11 @@ async function getAuthState(): Promise<AuthMockStateType> {
 async function getFetchState(): Promise<FetchMockStateType> {
   const mod = (await import("@/core/api/common")) as unknown as { __mockFetchState: FetchMockStateType };
   return mod.__mockFetchState;
+}
+
+async function getBroadcastState(): Promise<BroadcastMockStateType> {
+  const mod = (await import("@/shared/broadcast")) as unknown as { __mockBroadcastState: BroadcastMockStateType };
+  return mod.__mockBroadcastState;
 }
 
 async function importComposable() {
@@ -159,6 +179,9 @@ describe("useImpersonate", () => {
     fetchState.fetchResult.data.value = undefined;
     fetchState.fetchResult.error.value = undefined;
 
+    const broadcastState = await getBroadcastState();
+    broadcastState.emit.mockReset();
+
     vi.useFakeTimers();
   });
 
@@ -189,6 +212,35 @@ describe("useImpersonate", () => {
     expect(failedStep.value).toBeNull();
     expect(loading.value).toBe(false);
     expect(errors.value).toEqual([]);
+  });
+
+  it("broadcasts reloadAndOpenMainPage 1 second after impersonate success", async () => {
+    const auth = await getAuthState();
+    const fetchState = await getFetchState();
+    const broadcastState = await getBroadcastState();
+
+    auth.authorize.mockImplementation(async () => {
+      auth.authErrors.value = undefined;
+    });
+    setSuccessfulImpersonateResponse(fetchState);
+
+    const { useImpersonate } = await importComposable();
+    const { impersonate, step } = useImpersonate();
+
+    await impersonate("support@example.com", "password", "target-user-id");
+
+    expect(step.value).toBe("success");
+    // setTimeout is scheduled but timers are paused — emit must NOT have fired yet.
+    expect(broadcastState.emit).not.toHaveBeenCalled();
+
+    vi.advanceTimersByTime(1000);
+
+    expect(broadcastState.emit).toHaveBeenCalledTimes(1);
+    expect(broadcastState.emit).toHaveBeenCalledWith(
+      broadcastState.reloadAndOpenMainPage,
+      null,
+      broadcastState.TabsType.ALL,
+    );
   });
 
   it("verify fails: invalid credentials prevent impersonate from being called", async () => {

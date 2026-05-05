@@ -94,8 +94,8 @@
 import { toTypedSchema } from "@vee-validate/yup";
 import { useField, useForm } from "vee-validate";
 import { computed, watch } from "vue";
-import { useI18n } from "vue-i18n";
 import { object, string } from "yup";
+import { useErrorsTranslator } from "@/core/composables";
 import { useImpersonate } from "@/shared/account/composables";
 import type { IdentityErrorType } from "@/core/api/graphql/types";
 
@@ -131,25 +131,15 @@ const { value: password } = useField<string>("password");
 
 const { impersonate, loading, step, errors, resetState } = useImpersonate();
 
-const i18n = useI18n();
-
-const ERROR_LOCALE_NAMESPACES = ["pages.account.impersonate.errors", "shared.account.sign_in_form.errors"] as const;
-
-function translateError(error: IdentityErrorType): string | undefined {
-  const code = error.code;
-  if (code) {
-    const namespace = ERROR_LOCALE_NAMESPACES.find((ns) => i18n.te(`${ns}.${code}`));
-    if (namespace) {
-      return i18n.t(`${namespace}.${code}`);
-    }
-  }
-  return error.description ?? undefined;
-}
+const { translate } = useErrorsTranslator<IdentityErrorType>([
+  "pages.account.impersonate.errors",
+  "shared.account.sign_in_form.errors",
+]);
 
 const translatedErrors = computed<string[]>(() => {
   const list = errors.value ?? [];
   return list
-    .map((error) => translateError(error))
+    .map((error) => translate(error))
     .filter((message): message is string => typeof message === "string" && message.length > 0);
 });
 
