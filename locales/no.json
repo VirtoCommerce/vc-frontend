@@ -494,6 +494,28 @@
           "user_not_found": "Brukeren ble ikke funnet. Kontroller at du har skrevet inn korrekt informasjon"
         }
       },
+      "security_verification_form": {
+        "subtitle": "Bekreft identiteten din for å fortsette",
+        "description": "Du logger inn på vegne av en kunde. Økten vil bli loggført for revisjon.",
+        "email_label": "E-post",
+        "email_placeholder": "Skriv inn e-posten din",
+        "password_label": "Passord",
+        "password_placeholder": "Skriv inn passordet ditt",
+        "submit_button": "Bekreft og fortsett",
+        "cancel_button": "Avbryt",
+        "success": "Verifisering vellykket. Bytter til kundevisning…",
+        "errors": {
+          "login_failed": "@:shared.account.sign_in_form.errors.login_failed",
+          "user_is_temporary_locked_out": "@:shared.account.sign_in_form.errors.user_is_temporary_locked_out",
+          "user_is_locked_out": "@:shared.account.sign_in_form.errors.user_is_locked_out",
+          "email_verification_is_required": "@:shared.account.sign_in_form.errors.email_verification_is_required",
+          "user_cannot_login_in_store": "@:shared.account.sign_in_form.errors.user_cannot_login_in_store",
+          "password_expired": "@:shared.account.sign_in_form.errors.password_expired",
+          "user_not_found": "@:shared.account.sign_in_form.errors.user_not_found",
+          "impersonate_failed": "Verifiseringen lyktes, men byttet til kundekontoen mislyktes. Prøv igjen.",
+          "generic": "Noe gikk galt. Prøv igjen."
+        }
+      },
       "forgot_password_form": {
         "error_alert": "Ugyldig resultat fra forespørsel om tilbakestilling av passord. Vennligst "
       },
@@ -1290,22 +1312,9 @@
       },
       "impersonate": {
         "title": "Sikkerhetsverifisering",
-        "subtitle": "Bekreft identiteten din for å fortsette",
-        "description": "Du logger inn på vegne av en kunde. Økten vil bli loggført for revisjon.",
-        "email_label": "E-post",
-        "email_placeholder": "Skriv inn e-posten din",
-        "password_label": "Passord",
-        "password_placeholder": "Skriv inn passordet ditt",
-        "submit_button": "Bekreft og fortsett",
-        "cancel_button": "Avbryt",
         "back_to_home": "Tilbake til hjem",
         "switching_in_progress": "Bytter til kundevisning…",
-        "success": "Verifisering vellykket. Bytter til kundevisning…",
-        "error": "Problemer med identitetsetterligning. Kontroller tilgangsrettighetene dine",
-        "errors": {
-          "impersonate_failed": "Verifiseringen lyktes, men byttet til kundekontoen mislyktes. Prøv igjen.",
-          "generic": "Noe gikk galt. Prøv igjen."
-        }
+        "error": "Problemer med identitetsetterligning. Kontroller tilgangsrettighetene dine"
       },
       "promotion_coupons": {
         "title": "Alle kuponger og kampanjer",

@@ -5,11 +5,11 @@
     </VcTypography>
 
     <p class="security-verification-form__subtitle">
-      {{ $t("pages.account.impersonate.subtitle") }}
+      {{ $t("shared.account.security_verification_form.subtitle") }}
     </p>
 
     <p class="security-verification-form__description">
-      {{ $t("pages.account.impersonate.description") }}
+      {{ $t("shared.account.security_verification_form.description") }}
     </p>
 
     <VcAlert
@@ -20,7 +20,7 @@
       size="md"
       icon
     >
-      {{ $t("pages.account.impersonate.success") }}
+      {{ $t("shared.account.security_verification_form.success") }}
     </VcAlert>
 
     <form v-else class="security-verification-form__form" @submit="onSubmit">
@@ -41,8 +41,8 @@
         name="email"
         class="security-verification-form__field"
         type="email"
-        :label="$t('pages.account.impersonate.email_label')"
-        :placeholder="$t('pages.account.impersonate.email_placeholder')"
+        :label="$t('shared.account.security_verification_form.email_label')"
+        :placeholder="$t('shared.account.security_verification_form.email_placeholder')"
         :disabled="loading"
         :message="validationErrors.email"
         :error="!!validationErrors.email"
@@ -55,8 +55,8 @@
         name="password"
         class="security-verification-form__field"
         type="password"
-        :label="$t('pages.account.impersonate.password_label')"
-        :placeholder="$t('pages.account.impersonate.password_placeholder')"
+        :label="$t('shared.account.security_verification_form.password_label')"
+        :placeholder="$t('shared.account.security_verification_form.password_placeholder')"
         :disabled="loading"
         :message="validationErrors.password"
         :error="!!validationErrors.password"
@@ -72,7 +72,7 @@
           :disabled="!meta.valid"
           no-wrap
         >
-          {{ $t("pages.account.impersonate.submit_button") }}
+          {{ $t("shared.account.security_verification_form.submit_button") }}
         </VcButton>
 
         <VcButton
@@ -83,7 +83,7 @@
           no-wrap
           @click="onCancel"
         >
-          {{ $t("pages.account.impersonate.cancel_button") }}
+          {{ $t("shared.account.security_verification_form.cancel_button") }}
         </VcButton>
       </div>
     </form>
@@ -131,10 +131,7 @@ const { value: password } = useField<string>("password");
 
 const { impersonate, loading, step, errors, resetState } = useImpersonate();
 
-const { translate } = useErrorsTranslator<IdentityErrorType>([
-  "pages.account.impersonate.errors",
-  "shared.account.sign_in_form.errors",
-]);
+const { translate } = useErrorsTranslator<IdentityErrorType>("shared.account.security_verification_form.errors");
 
 const translatedErrors = computed<string[]>(() => {
   const list = errors.value ?? [];

@@ -494,6 +494,28 @@
           "user_not_found": "Пользователь не найден. Пожалуйста, убедитесь, что вы ввели правильную информацию"
         }
       },
+      "security_verification_form": {
+        "subtitle": "Подтвердите свою личность, чтобы продолжить",
+        "description": "Вы входите от имени клиента. Сессия будет записана для аудита.",
+        "email_label": "Email",
+        "email_placeholder": "Введите email",
+        "password_label": "Пароль",
+        "password_placeholder": "Введите пароль",
+        "submit_button": "Подтвердить и продолжить",
+        "cancel_button": "Отмена",
+        "success": "Проверка пройдена. Переключаемся на представление клиента…",
+        "errors": {
+          "login_failed": "@:shared.account.sign_in_form.errors.login_failed",
+          "user_is_temporary_locked_out": "@:shared.account.sign_in_form.errors.user_is_temporary_locked_out",
+          "user_is_locked_out": "@:shared.account.sign_in_form.errors.user_is_locked_out",
+          "email_verification_is_required": "@:shared.account.sign_in_form.errors.email_verification_is_required",
+          "user_cannot_login_in_store": "@:shared.account.sign_in_form.errors.user_cannot_login_in_store",
+          "password_expired": "@:shared.account.sign_in_form.errors.password_expired",
+          "user_not_found": "@:shared.account.sign_in_form.errors.user_not_found",
+          "impersonate_failed": "Проверка пройдена, но переключение на аккаунт клиента не удалось. Попробуйте ещё раз.",
+          "generic": "Что-то пошло не так. Попробуйте ещё раз."
+        }
+      },
       "forgot_password_form": {
         "error_alert": "Неверный результат запроса сброса пароля. Пожалуйста, "
       },
@@ -1290,22 +1312,9 @@
       },
       "impersonate": {
         "title": "Проверка безопасности",
-        "subtitle": "Подтвердите свою личность, чтобы продолжить",
-        "description": "Вы входите от имени клиента. Сессия будет записана для аудита.",
-        "email_label": "Email",
-        "email_placeholder": "Введите email",
-        "password_label": "Пароль",
-        "password_placeholder": "Введите пароль",
-        "submit_button": "Подтвердить и продолжить",
-        "cancel_button": "Отмена",
         "back_to_home": "Вернуться на главную",
         "switching_in_progress": "Переключаемся на представление клиента…",
-        "success": "Проверка пройдена. Переключаемся на представление клиента…",
-        "error": "Возникли проблемы при имперсонализации. Проверьте ваши права доступа",
-        "errors": {
-          "impersonate_failed": "Проверка пройдена, но переключение на аккаунт клиента не удалось. Попробуйте ещё раз.",
-          "generic": "Что-то пошло не так. Попробуйте ещё раз."
-        }
+        "error": "Возникли проблемы при имперсонализации. Проверьте ваши права доступа"
       },
       "promotion_coupons": {
         "title": "Все купоны и акции",

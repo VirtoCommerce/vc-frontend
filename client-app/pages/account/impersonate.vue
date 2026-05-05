@@ -60,10 +60,7 @@ const canSkipVerification = computed<boolean>(
   () => isAuthenticated.value && (!!operator.value || checkPermissions(StorefrontPermissions.CanImpersonate)),
 );
 
-const { translate } = useErrorsTranslator<IdentityErrorType>([
-  "pages.account.impersonate.errors",
-  "shared.account.sign_in_form.errors",
-]);
+const { translate } = useErrorsTranslator<IdentityErrorType>("shared.account.security_verification_form.errors");
 
 const translatedSilentErrors = computed<string[]>(() => {
   const list = errors.value ?? [];
