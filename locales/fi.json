@@ -494,6 +494,28 @@
           "user_not_found": "Käyttäjää ei löydy. Tarkista, että olet syöttänyt oikeat tiedot"
         }
       },
+      "security_verification_form": {
+        "subtitle": "Vahvista henkilöllisyytesi jatkaaksesi",
+        "description": "Kirjaudut sisään asiakkaan puolesta. Istunto kirjataan auditointia varten.",
+        "email_label": "Sähköposti",
+        "email_placeholder": "Anna sähköposti",
+        "password_label": "Salasana",
+        "password_placeholder": "Anna salasana",
+        "submit_button": "Vahvista ja jatka",
+        "cancel_button": "Peruuta",
+        "success": "Vahvistus onnistui. Vaihdetaan asiakasnäkymään…",
+        "errors": {
+          "login_failed": "@:shared.account.sign_in_form.errors.login_failed",
+          "user_is_temporary_locked_out": "@:shared.account.sign_in_form.errors.user_is_temporary_locked_out",
+          "user_is_locked_out": "@:shared.account.sign_in_form.errors.user_is_locked_out",
+          "email_verification_is_required": "@:shared.account.sign_in_form.errors.email_verification_is_required",
+          "user_cannot_login_in_store": "@:shared.account.sign_in_form.errors.user_cannot_login_in_store",
+          "password_expired": "@:shared.account.sign_in_form.errors.password_expired",
+          "user_not_found": "@:shared.account.sign_in_form.errors.user_not_found",
+          "impersonate_failed": "Vahvistus onnistui, mutta vaihto asiakastiliin epäonnistui. Yritä uudelleen.",
+          "generic": "Jotain meni pieleen. Yritä uudelleen."
+        }
+      },
       "forgot_password_form": {
         "error_alert": "Virheellinen tulos salasanannollauspyynnöstä. Ole hyvä "
       },
@@ -1290,22 +1312,9 @@
       },
       "impersonate": {
         "title": "Turvavarmistus",
-        "subtitle": "Vahvista henkilöllisyytesi jatkaaksesi",
-        "description": "Kirjaudut sisään asiakkaan puolesta. Istunto kirjataan auditointia varten.",
-        "email_label": "Sähköposti",
-        "email_placeholder": "Anna sähköposti",
-        "password_label": "Salasana",
-        "password_placeholder": "Anna salasana",
-        "submit_button": "Vahvista ja jatka",
-        "cancel_button": "Peruuta",
         "back_to_home": "Takaisin etusivulle",
         "switching_in_progress": "Vaihdetaan asiakasnäkymään…",
-        "success": "Vahvistus onnistui. Vaihdetaan asiakasnäkymään…",
-        "error": "Henkilöllisyyden jäljittelyssä ilmeni ongelmia. Tarkista käyttöoikeutesi",
-        "errors": {
-          "impersonate_failed": "Vahvistus onnistui, mutta vaihto asiakastiliin epäonnistui. Yritä uudelleen.",
-          "generic": "Jotain meni pieleen. Yritä uudelleen."
-        }
+        "error": "Henkilöllisyyden jäljittelyssä ilmeni ongelmia. Tarkista käyttöoikeutesi"
       },
       "promotion_coupons": {
         "title": "Kaikki kupongit ja tarjoukset",

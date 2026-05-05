@@ -494,6 +494,28 @@
           "user_not_found": "Utente non trovato. Assicurati di aver inserito le informazioni corrette"
         }
       },
+      "security_verification_form": {
+        "subtitle": "Conferma la tua identità per continuare",
+        "description": "Stai accedendo per conto di un cliente. La sessione verrà registrata per audit.",
+        "email_label": "Email",
+        "email_placeholder": "Inserisci la tua email",
+        "password_label": "Password",
+        "password_placeholder": "Inserisci la tua password",
+        "submit_button": "Verifica e continua",
+        "cancel_button": "Annulla",
+        "success": "Verifica riuscita. Passaggio alla vista cliente…",
+        "errors": {
+          "login_failed": "@:shared.account.sign_in_form.errors.login_failed",
+          "user_is_temporary_locked_out": "@:shared.account.sign_in_form.errors.user_is_temporary_locked_out",
+          "user_is_locked_out": "@:shared.account.sign_in_form.errors.user_is_locked_out",
+          "email_verification_is_required": "@:shared.account.sign_in_form.errors.email_verification_is_required",
+          "user_cannot_login_in_store": "@:shared.account.sign_in_form.errors.user_cannot_login_in_store",
+          "password_expired": "@:shared.account.sign_in_form.errors.password_expired",
+          "user_not_found": "@:shared.account.sign_in_form.errors.user_not_found",
+          "impersonate_failed": "Verifica riuscita, ma il passaggio all'account cliente è fallito. Riprova.",
+          "generic": "Qualcosa è andato storto. Riprova."
+        }
+      },
       "forgot_password_form": {
         "error_alert": "Risultato non valido della richiesta di reimpostazione password. Per favore "
       },
@@ -1290,22 +1312,9 @@
       },
       "impersonate": {
         "title": "Verifica di sicurezza",
-        "subtitle": "Conferma la tua identità per continuare",
-        "description": "Stai accedendo per conto di un cliente. La sessione verrà registrata per audit.",
-        "email_label": "Email",
-        "email_placeholder": "Inserisci la tua email",
-        "password_label": "Password",
-        "password_placeholder": "Inserisci la tua password",
-        "submit_button": "Verifica e continua",
-        "cancel_button": "Annulla",
         "back_to_home": "Torna alla home",
         "switching_in_progress": "Passaggio alla vista cliente…",
-        "success": "Verifica riuscita. Passaggio alla vista cliente…",
-        "error": "Alcuni problemi durante l'impersonificazione. Controlla i tuoi permessi",
-        "errors": {
-          "impersonate_failed": "Verifica riuscita, ma il passaggio all'account cliente è fallito. Riprova.",
-          "generic": "Qualcosa è andato storto. Riprova."
-        }
+        "error": "Alcuni problemi durante l'impersonificazione. Controlla i tuoi permessi"
       },
       "promotion_coupons": {
         "title": "Tutti i coupon e le promozioni",
