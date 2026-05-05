@@ -6,7 +6,7 @@ function asKey<T>(key: string): keyof T {
   return key as keyof T;
 }
 
-export function useErrorsTranslator<T extends object>(localeItemsGroupKey: string) {
+export function useErrorsTranslator<T extends object>(localeItemsGroupKey: string | readonly string[]) {
   const i18n = useI18n();
 
   const errors = ref<T[]>();
@@ -34,12 +34,25 @@ export function useErrorsTranslator<T extends object>(localeItemsGroupKey: strin
 
   function translate(error: T): string | undefined {
     const code = getErrorValue(error, [asKey<T>("code"), asKey<T>("errorCode")]) as string;
-    const localeKey = `${localeItemsGroupKey}.${code}`;
+    const fallback = getErrorValue(error, [asKey<T>("description"), asKey<T>("errorMessage")]) as string;
+
+    if (!code) {
+      return fallback;
+    }
+
+    const namespaces = Array.isArray(localeItemsGroupKey)
+      ? (localeItemsGroupKey as readonly string[])
+      : [localeItemsGroupKey as string];
     const parameters = getErrorParameters(error) ?? [];
 
-    return i18n.te(localeKey)
-      ? i18n.t(localeKey, parameters as NamedValue)
-      : (getErrorValue(error, [asKey<T>("description"), asKey<T>("errorMessage")]) as string);
+    for (const ns of namespaces) {
+      const localeKey = `${ns}.${code}`;
+      if (i18n.te(localeKey)) {
+        return i18n.t(localeKey, parameters as NamedValue);
+      }
+    }
+
+    return fallback;
   }
 
   const localizedItemsErrors = computed<Record<string, string[]>>(

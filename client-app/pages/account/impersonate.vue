@@ -46,7 +46,7 @@
 import { computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
-import { usePageHead } from "@/core/composables";
+import { useErrorsTranslator, usePageHead } from "@/core/composables";
 import { StorefrontPermissions } from "@/core/enums";
 import { SecurityVerificationForm, useImpersonate, useUser } from "@/shared/account";
 import type { IdentityErrorType } from "@/core/api/graphql/types";
@@ -58,8 +58,7 @@ interface IProps {
 const props = defineProps<IProps>();
 
 const router = useRouter();
-const i18n = useI18n();
-const { t } = i18n;
+const { t } = useI18n();
 const { isAuthenticated, checkPermissions, operator } = useUser();
 const { impersonateAuthenticated, errors } = useImpersonate();
 
@@ -71,23 +70,15 @@ const canSkipVerification = computed<boolean>(
   () => isAuthenticated.value && (!!operator.value || checkPermissions(StorefrontPermissions.CanImpersonate)),
 );
 
-const ERROR_LOCALE_NAMESPACES = ["pages.account.impersonate.errors", "shared.account.sign_in_form.errors"] as const;
-
-function translateError(error: IdentityErrorType): string | undefined {
-  const code = error.code;
-  if (code) {
-    const namespace = ERROR_LOCALE_NAMESPACES.find((ns) => i18n.te(`${ns}.${code}`));
-    if (namespace) {
-      return i18n.t(`${namespace}.${code}`);
-    }
-  }
-  return error.description ?? undefined;
-}
+const { translate } = useErrorsTranslator<IdentityErrorType>([
+  "pages.account.impersonate.errors",
+  "shared.account.sign_in_form.errors",
+]);
 
 const translatedSilentErrors = computed<string[]>(() => {
   const list = errors.value ?? [];
   return list
-    .map((error) => translateError(error))
+    .map((error) => translate(error))
     .filter((message): message is string => typeof message === "string" && message.length > 0);
 });
 
