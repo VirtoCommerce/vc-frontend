@@ -102,11 +102,13 @@ watch(selectedInput, (newValue) => {
   if (newValue === CUSTOM_VALUE.value) {
     emit("update", customInput.value || undefined);
   } else if (newValue === NOT_SELECTED_VALUE.value) {
+    customInput.value = "";
     emit("update", undefined);
   } else {
     // Extract index from predefined_N
     const index = removePrefixAndSpace(newValue) - 1;
     const option = props.section.options?.[index];
+    customInput.value = "";
     emit("update", option?.text || undefined);
   }
 });

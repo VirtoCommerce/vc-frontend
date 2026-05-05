@@ -359,6 +359,30 @@ describe("SectionTextFieldset", () => {
       expect(emitted?.[emitted.length - 1]).toEqual(["First Option"]);
     });
 
+    it("clears custom input when switching from custom value to predefined option", async () => {
+      const wrapper = createComponent({
+        section: {
+          allowTextOptions: true,
+          allowCustomText: true,
+          options: [{ id: "1", text: "First Option" }],
+        },
+      });
+
+      const input = wrapper.find('[data-test-id="custom-input"]');
+      await input.setValue("stale text");
+      await wrapper.vm.$nextTick();
+
+      const firstOption = wrapper.find('[data-test-id="predefined-option"][data-test-option-order="1"]');
+      await firstOption.trigger("click");
+      await wrapper.vm.$nextTick();
+
+      expect((input.element as HTMLInputElement).value).toBe("");
+
+      const emitted = wrapper.emitted("update");
+      expect(emitted).toBeTruthy();
+      expect(emitted?.[emitted.length - 1]).toEqual(["First Option"]);
+    });
+
     it("handles undefined option text", async () => {
       const wrapper = createComponent({
         section: {
