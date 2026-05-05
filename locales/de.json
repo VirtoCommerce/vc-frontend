@@ -1303,7 +1303,6 @@
         "success": "Überprüfung erfolgreich. Wechsel zur Kundenansicht…",
         "error": "Einige Probleme während der Nachahmung. Überprüfen Sie Ihre Berechtigungen",
         "errors": {
-          "invalid_user_id": "Ungültige Kundenreferenz. Kehren Sie zum Back Office zurück und versuchen Sie es erneut.",
           "impersonate_failed": "Überprüfung erfolgreich, aber der Wechsel zum Kundenkonto ist fehlgeschlagen. Bitte versuchen Sie es erneut.",
           "generic": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
         }

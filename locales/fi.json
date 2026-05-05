@@ -1303,7 +1303,6 @@
         "success": "Vahvistus onnistui. Vaihdetaan asiakasnäkymään…",
         "error": "Henkilöllisyyden jäljittelyssä ilmeni ongelmia. Tarkista käyttöoikeutesi",
         "errors": {
-          "invalid_user_id": "Virheellinen asiakasviite. Palaa Back Officeen ja yritä uudelleen.",
           "impersonate_failed": "Vahvistus onnistui, mutta vaihto asiakastiliin epäonnistui. Yritä uudelleen.",
           "generic": "Jotain meni pieleen. Yritä uudelleen."
         }

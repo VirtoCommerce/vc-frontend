@@ -1303,7 +1303,6 @@
         "success": "Verifica riuscita. Passaggio alla vista cliente…",
         "error": "Alcuni problemi durante l'impersonificazione. Controlla i tuoi permessi",
         "errors": {
-          "invalid_user_id": "Riferimento cliente non valido. Torna al Back Office e riprova.",
           "impersonate_failed": "Verifica riuscita, ma il passaggio all'account cliente è fallito. Riprova.",
           "generic": "Qualcosa è andato storto. Riprova."
         }

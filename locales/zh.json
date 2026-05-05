@@ -1303,7 +1303,6 @@
         "success": "验证成功。正在切换到客户视图…",
         "error": "冒充时出现一些问题。检查您的权限",
         "errors": {
-          "invalid_user_id": "客户引用无效。请返回 Back Office 重试。",
           "impersonate_failed": "验证成功,但切换到客户账户失败。请重试。",
           "generic": "出错了。请重试。"
         }

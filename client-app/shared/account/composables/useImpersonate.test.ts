@@ -310,22 +310,6 @@ describe("useImpersonate", () => {
     expect(loading.value).toBe(false);
   });
 
-  it("empty targetUserId: skips authorize and reports verify failure", async () => {
-    const auth = await getAuthState();
-    const fetchState = await getFetchState();
-
-    const { useImpersonate } = await importComposable();
-    const { impersonate, step, failedStep, errors } = useImpersonate();
-
-    await impersonate("support@example.com", "password", "");
-
-    expect(auth.authorize).not.toHaveBeenCalled();
-    expect(fetchState.useFetch).not.toHaveBeenCalled();
-    expect(failedStep.value).toBe("verify");
-    expect(errors.value).toEqual([{ code: "invalid_user_id" }]);
-    expect(step.value).toBe("idle");
-  });
-
   it("loading state reflects active step during the flow", async () => {
     const auth = await getAuthState();
     const fetchState = await getFetchState();
@@ -401,22 +385,6 @@ describe("useImpersonate", () => {
     expect(failedStep.value).toBeNull();
     expect(loading.value).toBe(false);
     expect(errors.value).toEqual([]);
-  });
-
-  it("impersonateAuthenticated empty targetUserId: skips doImpersonate and reports invalid_user_id", async () => {
-    const auth = await getAuthState();
-    const fetchState = await getFetchState();
-
-    const { useImpersonate } = await importComposable();
-    const { impersonateAuthenticated, step, failedStep, errors } = useImpersonate();
-
-    await impersonateAuthenticated("");
-
-    expect(auth.authorize).not.toHaveBeenCalled();
-    expect(fetchState.useFetch).not.toHaveBeenCalled();
-    expect(failedStep.value).toBe("verify");
-    expect(errors.value).toEqual([{ code: "invalid_user_id" }]);
-    expect(step.value).toBe("idle");
   });
 
   it("impersonateAuthenticated failure: sets failedStep impersonate and impersonate_failed error", async () => {
