@@ -265,6 +265,28 @@ describe("useImpersonate", () => {
     expect(loading.value).toBe(false);
   });
 
+  it("verify throws non-400: skips impersonate and surfaces generic error", async () => {
+    const auth = await getAuthState();
+    const fetchState = await getFetchState();
+
+    // Simulate network failure / 5xx — authorize throws but does NOT populate authErrors
+    auth.authorize.mockImplementation(async () => {
+      throw new Error("Network failure");
+    });
+
+    const { useImpersonate } = await importComposable();
+    const { impersonate, step, failedStep, errors, loading } = useImpersonate();
+
+    await impersonate("support@example.com", "password", "target-user-id");
+
+    expect(auth.authorize).toHaveBeenCalledTimes(1);
+    expect(fetchState.useFetch).not.toHaveBeenCalled();
+    expect(failedStep.value).toBe("verify");
+    expect(errors.value).toEqual([{ code: "generic" }]);
+    expect(step.value).toBe("idle");
+    expect(loading.value).toBe(false);
+  });
+
   it("impersonate fails after verify succeeded", async () => {
     const auth = await getAuthState();
     const fetchState = await getFetchState();

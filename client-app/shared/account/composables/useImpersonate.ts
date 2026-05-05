@@ -117,14 +117,30 @@ export function useImpersonate() {
     }
 
     step.value = "verify";
+
+    let authThrew = false;
     try {
       await authorize(supportEmail, supportPassword);
     } catch (e) {
+      authThrew = true;
       Logger.error(impersonate.name, e);
     }
 
     const verifyErrors = authErrors.value;
-    if (verifyErrors && verifyErrors.length > 0) {
+    const hasAuthErrors = !!verifyErrors && verifyErrors.length > 0;
+
+    // Non-400 failures (network, 5xx, etc.) leave authErrors empty but throw the promise.
+    // If authorize threw without producing an errors array, the token was NOT written —
+    // proceeding to doImpersonate would emit unauthorizedErrorEvent and redirect to /sign-in.
+    // Surface a generic error to the form instead.
+    if (authThrew && !hasAuthErrors) {
+      failedStep.value = "verify";
+      errors.value = [{ code: "generic" }];
+      step.value = "idle";
+      return;
+    }
+
+    if (hasAuthErrors) {
       failedStep.value = "verify";
       errors.value = verifyErrors as IdentityErrorType[];
       step.value = "idle";
