@@ -1,26 +1,26 @@
 <template>
-  <div class="w-[27.5rem]">
+  <div class="orders-filter">
     <VcDialog dividers size="xs">
       <VcDialogHeader @close="$emit('close')">
         {{ $t("shared.account.orders_filter.title") }}
       </VcDialogHeader>
 
       <VcDialogContent>
-        <div class="flex flex-col gap-5">
+        <div class="orders-filter__content">
           <slot />
 
           <div v-if="facets?.length">
             <VcLabel>{{ $t("shared.account.orders_filter.status_label") }}</VcLabel>
 
-            <VcCheckboxGroup v-model="filterData.statuses" class="mt-2 space-y-3.5">
-              <VcCheckbox
-                v-for="facet in statusFacet?.items"
-                :key="facet.term"
-                :value="facet.term"
-                :class="{ 'font-bold': isSelectedStatus(facet.term), 'text-neutral': !isSelectedStatus(facet.term) }"
-              >
-                <div class="flex w-full max-w-full gap-1">
-                  <div class="min-w-0 truncate">{{ facet.label }}</div>
+            <VcCheckboxGroup v-model="filterData.statuses" class="orders-filter__statuses">
+              <VcCheckbox v-for="facet in statusFacet?.items" :key="facet.term" :value="facet.term">
+                <div
+                  :class="[
+                    'orders-filter__status-content',
+                    { 'orders-filter__status-content--selected': isSelectedStatus(facet.term) },
+                  ]"
+                >
+                  <div class="orders-filter__status-label">{{ facet.label }}</div>
 
                   <VcBadge variant="outline" size="sm" rounded>{{ facet.count }}</VcBadge>
                 </div>
@@ -71,3 +71,29 @@ function isSelectedStatus(status: string) {
   return filterData.value.statuses.indexOf(status) !== -1;
 }
 </script>
+
+<style lang="scss">
+.orders-filter {
+  @apply w-[27.5rem];
+
+  &__content {
+    @apply flex flex-col gap-5;
+  }
+
+  &__statuses {
+    @apply mt-2 space-y-3.5;
+  }
+
+  &__status-content {
+    @apply flex w-full max-w-full gap-1 text-neutral;
+
+    &--selected {
+      @apply font-bold text-inherit;
+    }
+  }
+
+  &__status-label {
+    @apply min-w-0 truncate;
+  }
+}
+</style>

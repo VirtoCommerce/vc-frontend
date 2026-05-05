@@ -6,7 +6,7 @@
       icon="grid"
       :label="$t('shared.catalog.view_mode.grid_label')"
       :aria-label="$t('common.accessibility.switch_to_grid_view')"
-      data-test-id="view-switcher.grid-view-tab"
+      data-test-id="grid-view-tab"
       @change="$emit('update:mode', $event)"
     >
       <span class="view-mode__text">
@@ -20,7 +20,7 @@
       icon="list"
       :label="$t('shared.catalog.view_mode.list_label')"
       :aria-label="$t('common.accessibility.switch_to_list_view')"
-      data-test-id="view-switcher.list-view-tab"
+      data-test-id="list-view-tab"
       @change="$emit('update:mode', $event)"
     >
       <span class="view-mode__text">

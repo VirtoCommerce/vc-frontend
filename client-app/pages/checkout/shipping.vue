@@ -10,7 +10,7 @@
           <ProceedTo
             :to="{ name: 'Billing' }"
             :disabled="!isValidShipment"
-            test-id="checkout.billing-button"
+            test-id="billing-button"
             @click="
               analytics('addShippingInfo', { ...cart!, items: selectedLineItems }, {}, shipment?.shipmentMethodOption)
             "

@@ -1195,12 +1195,16 @@ function createConfigurationSection(
   };
 }
 
-function createTextConfigurationSection(id: number, { isRequired = false }: { isRequired?: boolean } = {}) {
+function createTextConfigurationSection(
+  id: number,
+  { isRequired = false, dependsOnSectionId }: { isRequired?: boolean; dependsOnSectionId?: string } = {},
+) {
   return {
     id: `text_section_${id}`,
     name: `Text Section ${id}`,
     type: CONFIGURABLE_SECTION_TYPES.text,
     isRequired,
+    dependsOnSectionId,
     options: [],
   };
 }
@@ -1220,6 +1224,7 @@ function mockI18n(): void {
     return {
       useI18n: vi.fn().mockReturnValue({
         t: (key: string) => key,
+        te: () => true,
       }),
     };
   });
