@@ -162,7 +162,9 @@ export const componentConfigs = {
 export function mergeA11yConfigs(...configs: Array<Parameters["a11y"]>): Parameters["a11y"] {
   return configs.reduce(
     (merged, config) => {
-      if (!config) return merged;
+      if (!config) {
+        return merged;
+      }
 
       return {
         ...merged,
