@@ -441,7 +441,7 @@ const columns = computed<VcTableColumnType[]>(() => {
     },
   ];
 
-  if (userCanEditOrganization.value) {
+  if (canShowMembersDropdownMenu.value) {
     // Add action column
     result.push({
       id: "actions",

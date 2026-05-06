@@ -227,7 +227,7 @@ import TopHeaderOrganizations from "./top-header-organizations.vue";
 const { t } = useI18n();
 const { isAuthenticated, user, operator, organization, isMultiOrganization } = useUser();
 const { signMeOut } = useSignMeOut();
-const { revertImpersonate } = useImpersonate();
+const { revertImpersonate, step: impersonateStep } = useImpersonate();
 const { isDarkModeAvailable } = useDarkMode();
 const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 
@@ -256,6 +256,12 @@ async function onBackToOperator(): Promise<void> {
     await revertImpersonate("/company/members");
   } catch (e) {
     Logger.error(onBackToOperator.name, e);
+  }
+  // requestImpersonateToken handles its own errors and never re-throws.
+  // On success it sets step="success" and the page reloads shortly after,
+  // so the loader stays visible until then. On any failure step is reset
+  // to "idle" — release the loader so the user can retry.
+  if (impersonateStep.value !== "success") {
     reverting.value = false;
   }
 }
