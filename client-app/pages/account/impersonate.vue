@@ -81,10 +81,12 @@ function onSuccess(): void {
   // useImpersonate handles broadcast and reload; nothing extra to do here.
 }
 
+let triggered = false;
 watch(
   canSkipVerification,
   (canSkip) => {
-    if (canSkip) {
+    if (canSkip && !triggered) {
+      triggered = true;
       void impersonateAuthenticated(props.userId);
     }
   },
