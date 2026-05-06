@@ -267,11 +267,7 @@
                   v-if="contact.id !== user.memberId"
                   :contact-status="contact.status"
                   :can-edit-organization="userCanEditOrganization"
-                  :can-login-on-behalf="
-                    userCanLoginOnBehalf &&
-                    !!contact.securityAccounts?.length &&
-                    contact.status !== ContactStatus.Locked
-                  "
+                  :can-login-on-behalf="canLoginOnBehalfOf(contact)"
                   class="inline-block"
                   @edit="openEditCustomerRoleModal(contact)"
                   @remove="openDeleteModal(contact)"
@@ -307,9 +303,7 @@
                   v-if="item.id !== user.memberId"
                   :contact-status="item.status"
                   :can-edit-organization="userCanEditOrganization"
-                  :can-login-on-behalf="
-                    userCanLoginOnBehalf && !!item.securityAccounts?.length && item.status !== ContactStatus.Locked
-                  "
+                  :can-login-on-behalf="canLoginOnBehalfOf(item)"
                   placement="left-start"
                   @edit="openEditCustomerRoleModal(item)"
                   @remove="openDeleteModal(item)"
@@ -413,6 +407,10 @@ const filtersDropdownElement = shallowRef<HTMLElement | null>(null);
 const userCanEditOrganization = computed<boolean>(() => checkPermissions(XApiPermissions.CanEditOrganization));
 const userCanLoginOnBehalf = computed<boolean>(() => checkPermissions(StorefrontPermissions.CanImpersonate));
 const canShowMembersDropdownMenu = computed<boolean>(() => userCanEditOrganization.value || userCanLoginOnBehalf.value);
+
+function canLoginOnBehalfOf(contact: ExtendedContactType): boolean {
+  return userCanLoginOnBehalf.value && !!contact.securityAccounts?.length && contact.status !== ContactStatus.Locked;
+}
 
 const columns = computed<VcTableColumnType[]>(() => {
   const result: VcTableColumnType[] = [
