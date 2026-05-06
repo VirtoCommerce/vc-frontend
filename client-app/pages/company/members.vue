@@ -264,7 +264,7 @@
 
               <td v-if="canManageMembers" class="px-5 text-right">
                 <MembersDropdownMenu
-                  v-if="contact.id !== user.memberId"
+                  v-if="canShowDropdownFor(contact)"
                   :contact-status="contact.status"
                   :can-edit-organization="userCanEditOrganization"
                   :can-login-on-behalf="canLoginOnBehalfOf(contact)"
@@ -300,7 +300,7 @@
 
               <div v-if="canManageMembers" class="w-7 flex-none">
                 <MembersDropdownMenu
-                  v-if="item.id !== user.memberId"
+                  v-if="canShowDropdownFor(item)"
                   :contact-status="item.status"
                   :can-edit-organization="userCanEditOrganization"
                   :can-login-on-behalf="canLoginOnBehalfOf(item)"
@@ -410,6 +410,10 @@ const canManageMembers = computed<boolean>(() => userCanEditOrganization.value |
 
 function canLoginOnBehalfOf(contact: ExtendedContactType): boolean {
   return userCanLoginOnBehalf.value && !!contact.securityAccounts?.length && contact.status !== ContactStatus.Locked;
+}
+
+function canShowDropdownFor(contact: ExtendedContactType): boolean {
+  return contact.id !== user.value.memberId && (userCanEditOrganization.value || canLoginOnBehalfOf(contact));
 }
 
 const columns = computed<VcTableColumnType[]>(() => {
