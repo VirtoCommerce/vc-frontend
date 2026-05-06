@@ -20,9 +20,9 @@
 
 <script setup lang="ts">
 import { computed, watchEffect } from "vue";
-import { BREAKPOINTS } from "@/core/constants";
 import { extractNumberFromString } from "@/core/utilities";
 import { ProductCard, useProducts } from "@/shared/catalog";
+import { BREAKPOINTS } from "@/ui-kit/constants";
 
 interface IProps {
   id?: string;

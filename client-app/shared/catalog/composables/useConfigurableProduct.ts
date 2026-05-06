@@ -5,6 +5,7 @@ import { apolloClient, getConfigurationItems, getProductConfiguration } from "@/
 import { ChangeCartConfiguredItemDocument, CreateConfiguredLineItemDocument } from "@/core/api/graphql/types";
 import { getMergeStrategyUniqueBy, useMutationBatcher } from "@/core/composables";
 import { LINE_ITEM_ID_URL_SEARCH_PARAM } from "@/core/constants";
+import { ValidationErrorObjectType } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { createSharedComposableByArgs, getUrlSearchParam, Logger } from "@/core/utilities";
 import { toCSV } from "@/core/utilities/common";
@@ -156,7 +157,11 @@ function _useConfigurableProduct(configurableProductId: MaybeRef<string>) {
     const index = selectedConfigurationValue.value?.findIndex((section) => section.sectionId === payload.sectionId);
     if (index !== -1) {
       const newValue = [...selectedConfigurationValue.value];
-      isEmptyValue(payload.sectionId, payload) ? newValue.splice(index, 1) : newValue.splice(index, 1, payload);
+      if (isEmptyValue(payload.sectionId, payload)) {
+        newValue.splice(index, 1);
+      } else {
+        newValue.splice(index, 1, payload);
+      }
       selectedConfigurationValue.value = newValue;
     } else {
       selectedConfigurationValue.value = [...selectedConfigurationValue.value, payload];
@@ -310,6 +315,29 @@ function _useConfigurableProduct(configurableProductId: MaybeRef<string>) {
       mergeStrategy: getMergeStrategyUniqueBy("sectionId"),
     },
   );
+
+  function hasConfiguredItemValidationErrors(
+    cartResult:
+      | {
+          validationErrors?: Array<{ objectType?: string; objectId?: string }>;
+          items?: Array<{ id: string; productId: string; validationErrors?: Array<unknown> }>;
+        }
+      | undefined,
+    lineItemId: string,
+  ) {
+    const hasCartLevelErrors =
+      cartResult?.validationErrors?.some(
+        (error) =>
+          (error.objectType === ValidationErrorObjectType.CatalogProduct &&
+            error.objectId === unref(configurableProductId)) ||
+          (error.objectType === ValidationErrorObjectType.LineItem && error.objectId === lineItemId),
+      ) ?? false;
+    const hasLineItemErrors =
+      cartResult?.items?.some((item) => item.id === lineItemId && Boolean(item.validationErrors?.length)) ?? false;
+
+    return hasCartLevelErrors || hasLineItemErrors;
+  }
+
   async function createConfiguredLineItem() {
     creating.value = true;
     try {
@@ -367,8 +395,16 @@ function _useConfigurableProduct(configurableProductId: MaybeRef<string>) {
           storeId,
         },
       });
-      initialSelectedConfigurationInput.value = configurationSections ?? [];
-      return result?.data?.changeCartConfiguredItem;
+      const updatedCart = result?.data?.changeCartConfiguredItem as
+        | {
+            validationErrors?: Array<{ objectType?: string; objectId?: string }>;
+            items?: Array<{ id: string; productId: string; validationErrors?: Array<unknown> }>;
+          }
+        | undefined;
+      if (!hasConfiguredItemValidationErrors(updatedCart, lineItemId)) {
+        initialSelectedConfigurationInput.value = configurationSections ?? [];
+      }
+      return updatedCart as ShortCartFragment | undefined;
     } catch (e) {
       Logger.error(`${useConfigurableProduct.name}.${changeCartConfiguredItem.name}`, e);
       throw e;
