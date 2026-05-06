@@ -38,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import { uniqBy } from "lodash";
+import { groupBy, sumBy } from "lodash";
 import { computed, ref, shallowRef, toValue } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
@@ -93,7 +93,11 @@ async function addItems(items: InputNewBulkItemType[]) {
     return;
   }
 
-  const normalizedItems = uniqBy(items, (item) => item.productSku);
+  const normalizedItems = Object.entries(groupBy(items, "productSku")).map(([productSku, groupedItems]) => ({
+    ...groupedItems[0],
+    productSku,
+    quantity: sumBy(groupedItems, (item) => item.quantity ?? 0),
+  }));
 
   const resultItems = await addBulkItemsToCart(normalizedItems);
 

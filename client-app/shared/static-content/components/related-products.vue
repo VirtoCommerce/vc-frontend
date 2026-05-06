@@ -30,9 +30,9 @@ import { useBreakpoints } from "@vueuse/core";
 import { computed, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useAnalytics } from "@/core/composables";
-import { BREAKPOINTS } from "@/core/constants";
 import { extractNumberFromString } from "@/core/utilities";
 import { ProductCardRelated } from "@/shared/catalog";
+import { BREAKPOINTS } from "@/ui-kit/constants";
 import type { Product } from "@/core/api/graphql/types";
 
 interface IProps {
