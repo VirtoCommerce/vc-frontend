@@ -81,9 +81,9 @@
 </template>
 
 <script setup lang="ts">
-import { useUser, useUserOrganizations } from "@/shared/account";
 import { useDebounceFn } from "@vueuse/core";
 import { computed, ref } from "vue";
+import { useUser, useUserOrganizations } from "@/shared/account";
 
 const emit = defineEmits<{
   organizationSelected: [];
