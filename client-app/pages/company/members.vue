@@ -262,7 +262,7 @@
                 <MemberStatus :status="contact.status" />
               </td>
 
-              <td v-if="canShowMembersDropdownMenu" class="px-5 text-right">
+              <td v-if="canManageMembers" class="px-5 text-right">
                 <MembersDropdownMenu
                   v-if="contact.id !== user.memberId"
                   :contact-status="contact.status"
@@ -298,7 +298,7 @@
                 <MemberStatus :status="item.status" />
               </div>
 
-              <div v-if="canShowMembersDropdownMenu" class="w-7 flex-none">
+              <div v-if="canManageMembers" class="w-7 flex-none">
                 <MembersDropdownMenu
                   v-if="item.id !== user.memberId"
                   :contact-status="item.status"
@@ -406,7 +406,7 @@ const filtersDropdownElement = shallowRef<HTMLElement | null>(null);
 
 const userCanEditOrganization = computed<boolean>(() => checkPermissions(XApiPermissions.CanEditOrganization));
 const userCanLoginOnBehalf = computed<boolean>(() => checkPermissions(StorefrontPermissions.CanImpersonate));
-const canShowMembersDropdownMenu = computed<boolean>(() => userCanEditOrganization.value || userCanLoginOnBehalf.value);
+const canManageMembers = computed<boolean>(() => userCanEditOrganization.value || userCanLoginOnBehalf.value);
 
 function canLoginOnBehalfOf(contact: ExtendedContactType): boolean {
   return userCanLoginOnBehalf.value && !!contact.securityAccounts?.length && contact.status !== ContactStatus.Locked;
@@ -439,7 +439,7 @@ const columns = computed<VcTableColumnType[]>(() => {
     },
   ];
 
-  if (canShowMembersDropdownMenu.value) {
+  if (canManageMembers.value) {
     // Add action column
     result.push({
       id: "actions",
