@@ -197,7 +197,17 @@
 
 <script setup lang="ts" generic="T extends VcTableItemType">
 import { useBreakpoints } from "@vueuse/core";
-import { computed, defineComponent, Fragment, getCurrentInstance, provide, ref, useSlots } from "vue";
+import {
+  computed,
+  defineComponent,
+  Fragment,
+  getCurrentInstance,
+  onMounted,
+  onUpdated,
+  provide,
+  ref,
+  useSlots,
+} from "vue";
 import { BREAKPOINTS, TABLE_SKELETON_ROWS_SIZE, TABLE_PAGE_LIMIT } from "@/ui-kit/constants";
 import VcTableColumn from "./vc-table-column.vue";
 import { vcTableKey } from "./vc-table-context";
@@ -443,9 +453,18 @@ function getColumnFixedClasses(column: VcTableColumnType, baseClass: string): Re
   };
 }
 
-// Detect if @row-click listener is bound (for auto cursor-pointer)
+// Detect if @row-click listener is bound (for auto cursor-pointer).
+// instance.vnode is non-reactive, so we manually refresh on mount/update to track parent re-renders
+// (covers the case where parent dynamically adds/removes the listener).
 const instance = getCurrentInstance();
-const hasRowClickListener = computed(() => !!instance?.vnode.props?.onRowClick);
+const hasRowClickListener = ref(false);
+
+function syncRowClickListener() {
+  hasRowClickListener.value = !!instance?.vnode.props?.onRowClick;
+}
+
+onMounted(syncRowClickListener);
+onUpdated(syncRowClickListener);
 
 // Resolve row class from VcTable prop
 function resolvedRowClass(item: T, index: number): unknown[] | undefined {
