@@ -104,7 +104,7 @@ import { useBreakpoints } from "@vueuse/core";
 import { onBeforeUnmount, onMounted, ref, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useAnalytics } from "@/core/composables";
-import { BREAKPOINTS } from "@/core/constants";
+import { BREAKPOINTS } from "@/ui-kit/constants";
 import VariationsDefault from "./variations-default.vue";
 import VariationsTable from "./variations-table.vue";
 import type { Product, SearchProductFilterResult } from "@/core/api/graphql/types";
