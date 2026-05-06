@@ -54,6 +54,11 @@ export type AddQuoteItemsCommandType = {
   quoteId: Scalars['String']['input'];
 };
 
+export type AddressDuplicatedResultType = {
+  /** Indicates whether the address is a duplicate of an existing address. */
+  isDuplicated: Scalars['Boolean']['output'];
+};
+
 export type ApproveQuoteCommandType = {
   quoteId: Scalars['String']['input'];
 };
@@ -5381,6 +5386,7 @@ export type Query = {
   carts?: Maybe<CartConnection>;
   categories?: Maybe<CategoryConnection>;
   category?: Maybe<Category>;
+  checkDuplicateAddress?: Maybe<AddressDuplicatedResultType>;
   checkEmailUniqueness?: Maybe<Scalars['Boolean']['output']>;
   checkUsernameUniqueness?: Maybe<Scalars['Boolean']['output']>;
   childCategories?: Maybe<ChildCategoriesQueryResponseType>;
@@ -5389,6 +5395,8 @@ export type Query = {
   contacts?: Maybe<ContactConnection>;
   contract?: Maybe<ContractType>;
   countries: Array<CountryType>;
+  currentCustomerAddresses?: Maybe<MemberAddressConnection>;
+  currentOrganizationAddresses?: Maybe<MemberAddressConnection>;
   customerReviews?: Maybe<CustomerReviewConnection>;
   dynamicProperties?: Maybe<DynamicPropertyConnection>;
   dynamicProperty?: Maybe<DynamicPropertyType>;
@@ -5567,6 +5575,12 @@ export type QueryCategoryArgs = {
 };
 
 
+export type QueryCheckDuplicateAddressArgs = {
+  address: InputMemberAddressType;
+  memberId: Scalars['String']['input'];
+};
+
+
 export type QueryCheckEmailUniquenessArgs = {
   email: Scalars['String']['input'];
 };
@@ -5618,6 +5632,28 @@ export type QueryContactsArgs = {
 
 export type QueryContractArgs = {
   id?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryCurrentCustomerAddressesArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  cities?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  countryCodes?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  keyword?: InputMaybe<Scalars['String']['input']>;
+  regionIds?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  sort?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryCurrentOrganizationAddressesArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  cities?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  countryCodes?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  keyword?: InputMaybe<Scalars['String']['input']>;
+  regionIds?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  sort?: InputMaybe<Scalars['String']['input']>;
 };
 
 
