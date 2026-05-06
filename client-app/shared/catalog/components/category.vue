@@ -241,23 +241,23 @@ import {
   getFilterExpressionForZeroPrice,
 } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
-import CategoryProducts from "@/shared/catalog/components/category/category-products.vue";
-import FiltersPopupSidebar from "@/shared/catalog/components/category/filters-popup-sidebar.vue";
 import { useCategorySeo } from "@/shared/catalog/composables/useCategorySeo";
 import { CATALOG_PAGINATION_MODES, CatalogControl } from "@/shared/catalog/constants/catalog";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar.ts";
 import { useSearchScore } from "@/shared/layout/composables/useSearchScore.ts";
 import { LOCAL_ID_PREFIX, useShipToLocation } from "@/shared/ship-to-location/composables";
-import type { RouteLocationRaw } from "vue-router";
 import { useCategory, useProducts } from "../composables";
 import CategorySelector from "./category-selector.vue";
 import ProductsFilters from "./products-filters.vue";
 import ViewMode from "./view-mode.vue";
 import type { Product } from "@/core/api/graphql/types";
 import type { FiltersDisplayOrderType, ProductsFiltersType, ProductsSearchParamsType } from "@/shared/catalog";
+import type { RouteLocationRaw } from "vue-router";
 import ActiveFilterChips from "@/shared/catalog/components/active-filter-chips.vue";
 import CategoryControls from "@/shared/catalog/components/category/category-controls.vue";
 import CategoryHorizontalFilters from "@/shared/catalog/components/category/category-horizontal-filters.vue";
+import CategoryProducts from "@/shared/catalog/components/category/category-products.vue";
+import FiltersPopupSidebar from "@/shared/catalog/components/category/filters-popup-sidebar.vue";
 const props = defineProps<IProps>();
 
 const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));

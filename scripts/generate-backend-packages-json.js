@@ -112,7 +112,9 @@ function promptPassword(question) {
 
 // Check if hostname is localhost or local IP address
 function isLocalHost(hostname) {
-  if (!hostname) return false;
+  if (!hostname) {
+    return false;
+  }
   const lowerHostname = hostname.toLowerCase();
   return (
     lowerHostname === "localhost" ||
@@ -252,7 +254,9 @@ async function fetchJson(url, retries = 5, retryInterval = 5000) {
 
 // Get property value from object (case-insensitive)
 function getPropertyCaseInsensitive(obj, propertyName) {
-  if (!obj) return undefined;
+  if (!obj) {
+    return undefined;
+  }
   const lowerPropertyName = propertyName.toLowerCase();
   const keys = Object.keys(obj);
   const matchingKey = keys.find((key) => key.toLowerCase() === lowerPropertyName);

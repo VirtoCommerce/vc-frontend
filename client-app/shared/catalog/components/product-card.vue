@@ -144,10 +144,6 @@
 </template>
 
 <script setup lang="ts">
-import { PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME } from "@/shared/catalog/constants/product";
-import { EXTENSION_NAMES } from "@/shared/common/constants";
-import { AddToCompareCatalog } from "@/shared/compare/components";
-import { AddToList } from "@/shared/wishlists";
 import { computed, nextTick, ref, toRef, useTemplateRef } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
 import { useBrowserTarget } from "@/core/composables";
@@ -160,6 +156,10 @@ import {
 } from "@/modules/customer-reviews/constants";
 import { useProductVariations } from "@/shared/catalog/composables/useProductVariations";
 import { useProducts } from "@/shared/catalog/composables/useProducts";
+import { PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME } from "@/shared/catalog/constants/product";
+import { EXTENSION_NAMES } from "@/shared/common/constants";
+import { AddToCompareCatalog } from "@/shared/compare/components";
+import { AddToList } from "@/shared/wishlists";
 import BadgesWrapper from "./badges-wrapper.vue";
 import CountInCart from "./count-in-cart.vue";
 import DiscountBadge from "./discount-badge.vue";
