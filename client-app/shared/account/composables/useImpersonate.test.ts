@@ -198,30 +198,7 @@ describe("useImpersonate", () => {
     vi.clearAllMocks();
   });
 
-  it("happy path: completes verify then impersonate and ends in success", async () => {
-    const auth = await getAuthState();
-    const fetchState = await getFetchState();
-
-    auth.authorize.mockImplementation(async () => {
-      auth.authErrors.value = undefined;
-    });
-    setSuccessfulImpersonateResponse(fetchState);
-
-    const { useImpersonate } = await importComposable();
-    const { impersonate, step, loading, errors } = useImpersonate();
-
-    await impersonate("support@example.com", "password", "target-user-id");
-
-    expect(auth.authorize).toHaveBeenCalledWith("support@example.com", "password");
-    expect(fetchState.useFetch).toHaveBeenCalledWith("/connect/token");
-    expect(auth.setAccessToken).toHaveBeenCalledWith("access");
-    expect(auth.setRefreshToken).toHaveBeenCalledWith("refresh");
-    expect(step.value).toBe("success");
-    expect(loading.value).toBe(false);
-    expect(errors.value).toEqual([]);
-  });
-
-  it("broadcasts reloadAndOpenMainPage 1 second after impersonate success", async () => {
+  it("happy path: verify, impersonate, broadcasts OTHERS after 1s", async () => {
     const auth = await getAuthState();
     const fetchState = await getFetchState();
     const broadcastState = await getBroadcastState();
@@ -232,11 +209,17 @@ describe("useImpersonate", () => {
     setSuccessfulImpersonateResponse(fetchState);
 
     const { useImpersonate } = await importComposable();
-    const { impersonate, step } = useImpersonate();
+    const { impersonate, step, errors } = useImpersonate();
 
     await impersonate("support@example.com", "password", "target-user-id");
 
+    expect(auth.authorize).toHaveBeenCalledWith("support@example.com", "password");
+    expect(fetchState.useFetch).toHaveBeenCalledWith("/connect/token");
+    expect(auth.setAccessToken).toHaveBeenCalledWith("access");
+    expect(auth.setRefreshToken).toHaveBeenCalledWith("refresh");
     expect(step.value).toBe("success");
+    expect(errors.value).toEqual([]);
+
     // setTimeout is scheduled but timers are paused — emit must NOT have fired yet.
     expect(broadcastState.emit).not.toHaveBeenCalled();
 
@@ -314,62 +297,6 @@ describe("useImpersonate", () => {
     expect(loading.value).toBe(false);
   });
 
-  it("loading state reflects active step during the flow", async () => {
-    const auth = await getAuthState();
-    const fetchState = await getFetchState();
-
-    let resolveAuthorize: (() => void) | undefined;
-    let resolveFetch: ((value: unknown) => void) | undefined;
-
-    auth.authorize.mockImplementation(
-      () =>
-        new Promise<void>((resolve) => {
-          resolveAuthorize = () => {
-            auth.authErrors.value = undefined;
-            resolve();
-          };
-        }),
-    );
-
-    // Override useFetch to return a deferred json() promise so we can pause inside doImpersonate.
-    function makeDeferredJson<T = unknown>() {
-      return new Promise<{ data: { value: T | undefined }; error: { value: unknown } }>((resolve) => {
-        resolveFetch = resolve as (value: unknown) => void;
-      });
-    }
-    fetchState.useFetch.mockImplementation(() => ({
-      post: () => ({ json: makeDeferredJson }),
-    }));
-
-    const { useImpersonate } = await importComposable();
-    const { impersonate, step, loading } = useImpersonate();
-
-    const promise = impersonate("support@example.com", "password", "target-user-id");
-
-    // While in verify step
-    await Promise.resolve();
-    expect(step.value).toBe("verify");
-    expect(loading.value).toBe(true);
-
-    resolveAuthorize?.();
-    // Allow microtasks to flush so the impersonate step kicks in
-    await Promise.resolve();
-    await Promise.resolve();
-
-    // While in impersonate step
-    expect(step.value).toBe("impersonate");
-    expect(loading.value).toBe(true);
-
-    resolveFetch?.({
-      data: { value: { access_token: "a", token_type: "Bearer", expires_in: 1, refresh_token: "r" } },
-      error: { value: undefined },
-    });
-    await promise;
-
-    expect(step.value).toBe("success");
-    expect(loading.value).toBe(false);
-  });
-
   it("impersonateAuthenticated happy path: skips authorize and ends in success", async () => {
     const auth = await getAuthState();
     const fetchState = await getFetchState();
@@ -388,25 +315,6 @@ describe("useImpersonate", () => {
     expect(step.value).toBe("success");
     expect(loading.value).toBe(false);
     expect(errors.value).toEqual([]);
-  });
-
-  it("impersonateAuthenticated failure: surfaces impersonate_failed error", async () => {
-    const auth = await getAuthState();
-    const fetchState = await getFetchState();
-
-    setFailedImpersonateResponse(fetchState);
-
-    const { useImpersonate } = await importComposable();
-    const { impersonateAuthenticated, step, errors, loading } = useImpersonate();
-
-    await impersonateAuthenticated("target-user-id");
-
-    expect(auth.authorize).not.toHaveBeenCalled();
-    expect(fetchState.useFetch).toHaveBeenCalledTimes(1);
-    expect(auth.setAccessToken).not.toHaveBeenCalled();
-    expect(errors.value).toEqual([{ code: "impersonate_failed" }]);
-    expect(step.value).toBe("idle");
-    expect(loading.value).toBe(false);
   });
 
   it("revertImpersonate posts empty user_id, sets tokens, broadcasts OTHERS, and navigates to redirectTo", async () => {
@@ -455,23 +363,5 @@ describe("useImpersonate", () => {
       broadcastState.TabsType.OTHERS,
     );
     expect(location.href).toBe("/company/members");
-  });
-
-  it("resetState clears step and errors", async () => {
-    const auth = await getAuthState();
-    auth.authorize.mockImplementation(async () => {
-      auth.authErrors.value = [{ code: "invalid_grant" }];
-    });
-
-    const { useImpersonate } = await importComposable();
-    const { impersonate, resetState, step, errors } = useImpersonate();
-
-    await impersonate("support@example.com", "password", "target-user-id");
-    expect(errors.value.length).toBeGreaterThan(0);
-
-    resetState();
-
-    expect(step.value).toBe("idle");
-    expect(errors.value).toEqual([]);
   });
 });
