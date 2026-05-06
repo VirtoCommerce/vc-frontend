@@ -107,10 +107,6 @@ export function useImpersonate() {
     }
   }
 
-  async function doImpersonate(targetUserId: string): Promise<void> {
-    await requestImpersonateToken(targetUserId);
-  }
-
   async function revertImpersonate(redirectTo: string = "/"): Promise<void> {
     resetState();
     await requestImpersonateToken("", redirectTo);
@@ -134,8 +130,8 @@ export function useImpersonate() {
 
     // Non-400 failures (network, 5xx, etc.) leave authErrors empty but throw the promise.
     // If authorize threw without producing an errors array, the token was NOT written —
-    // proceeding to doImpersonate would emit unauthorizedErrorEvent and redirect to /sign-in.
-    // Surface a generic error to the form instead.
+    // proceeding to requestImpersonateToken would emit unauthorizedErrorEvent and redirect
+    // to /sign-in. Surface a generic error to the form instead.
     if (authThrew && !hasAuthErrors) {
       errors.value = [{ code: "generic" }];
       step.value = "idle";
@@ -148,12 +144,12 @@ export function useImpersonate() {
       return;
     }
 
-    await doImpersonate(targetUserId);
+    await requestImpersonateToken(targetUserId);
   }
 
   async function impersonateAuthenticated(targetUserId: string): Promise<void> {
     resetState();
-    await doImpersonate(targetUserId);
+    await requestImpersonateToken(targetUserId);
   }
 
   return {

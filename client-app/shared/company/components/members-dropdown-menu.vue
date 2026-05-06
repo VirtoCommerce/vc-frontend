@@ -52,7 +52,6 @@
 </template>
 
 <script setup lang="ts">
-import { toRefs } from "vue";
 import { ContactStatus } from "../types";
 
 interface IEmit {
@@ -71,11 +70,9 @@ export interface IProps {
 
 defineEmits<IEmit>();
 
-const props = withDefaults(defineProps<IProps>(), {
+withDefaults(defineProps<IProps>(), {
   placement: "bottom-end",
   canLoginOnBehalf: false,
   canEditOrganization: false,
 });
-
-const { contactStatus, placement } = toRefs(props);
 </script>
