@@ -62,7 +62,7 @@ import { useElementBounding, useBreakpoints, useLocalStorage } from "@vueuse/cor
 import { computed, onMounted, ref, useTemplateRef } from "vue";
 import { useRouteQueryParam, useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
-import { BREAKPOINTS, IN_STOCK_PRODUCTS_LOCAL_STORAGE } from "@/core/constants";
+import { IN_STOCK_PRODUCTS_LOCAL_STORAGE } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { QueryParamName } from "@/core/enums";
 import { globals } from "@/core/globals";
@@ -72,6 +72,7 @@ import {
   getFilterExpressionForZeroPrice,
 } from "@/core/utilities";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
+import { BREAKPOINTS } from "@/ui-kit/constants";
 import BarcodeScanner from "./search-bar/barcode-scanner.vue";
 import SearchDropdown from "./search-dropdown.vue";
 
