@@ -182,7 +182,7 @@ const containerTag = computed(() => (isInsideInteractive.value ? "span" : "label
   }
 
   &__input {
-    @apply absolute inset-0 opacity-0 cursor-pointer m-0 w-full h-full z-10;
+    @apply absolute inset-0 opacity-0 cursor-pointer m-0 w-full h-full z-[1];
 
     #{$disabled} & {
       @apply cursor-not-allowed;
@@ -190,7 +190,7 @@ const containerTag = computed(() => (isInsideInteractive.value ? "span" : "label
   }
 
   &__indicator {
-    @apply flex-none size-[--size] border-2 rounded-full border-neutral-400 bg-additional-50;
+    @apply flex-none size-[--size] border-2 rounded-full border-neutral-500 bg-additional-50;
 
     #{$no-indicator} & {
       @apply hidden;

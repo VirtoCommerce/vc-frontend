@@ -194,7 +194,8 @@
       "min_value": "El valor mínimo es {value}",
       "empty_wish_list": "No hay artículos en la lista",
       "not_defined": "Indefinido",
-      "invalid_coupon": "Este código no coincide con ningún cupón activo. Por favor, verifica que todo esté correcto e inténtalo de nuevo.",
+      "invalid_coupon": "Este código no es válido",
+      "failed_coupon": "Algo salió mal con el cupón. Por favor, inténtalo de nuevo.",
       "fill_all_required": "Por favor, completa toda la información requerida para continuar.",
       "something_went_wrong": "Algo salió mal. Por favor, inténtalo de nuevo más tarde.",
       "checkout_pricing_warning": "La disponibilidad, el envío, los impuestos y las promociones no son definitivos hasta que completes tu pedido.",
@@ -235,7 +236,6 @@
       "password": "Introduce tu contraseña",
       "confirm_password": "Confirma tu contraseña",
       "purchase_order_number": "Introduce un número de orden de compra",
-      "promotion_code": "Introduce un cupón promocional",
       "select_credit_card": "Selecciona tarjeta de crédito"
     },
     "links": {
@@ -367,6 +367,7 @@
         "ship_to_selector": {
           "add_new": "Añadir nuevo",
           "add_new_address": "Añadir nueva dirección",
+          "no_results": "No hay direcciones que coincidan con tu búsqueda",
           "search": "Buscar",
           "select_address": "Seleccionar dirección",
           "title": "Enviar a:"
@@ -643,6 +644,13 @@
         "title": "Lista de componentes",
         "edit_configuration": "Editar configuración",
         "selected_text": "Texto seleccionado: {text}"
+      },
+      "coupons_section": {
+        "title": "Descuento y cupones",
+        "expires": "@:shared.account.promotion_coupons.expires",
+        "custom_code": "Código personalizado",
+        "enter_custom_code": "Ingresar código personalizado",
+        "all_coupons": "Ver todos los cupones y promociones"
       }
     },
     "catalog": {
@@ -666,7 +674,7 @@
         "vendor_label": "Vendedor",
         "all_vendor_products": "Todos Los Productos Del Vendedor",
         "share_product_label": "Compartir producto",
-        "create_configuration_button": "Crea tu propia configuración",
+        "create_configuration_button": "Crear nueva configuración",
         "price_block": {
           "title": "Precio y entrega",
           "mobile_title": "Compartir y más",
@@ -873,6 +881,10 @@
         },
         "user_error_message": "No se pudo inicializar el pago. Inténtalo de nuevo más tarde o usa otro método de pago",
         "payment_unavailable": "El método de pago no está disponible. Inténtalo de nuevo más tarde."
+      },
+      "datatrans_lightbox": {
+        "title": "Pago seguro",
+        "description": "Será redirigido a una ventana de pago segura de Datatrans para completar su compra."
       },
       "authorize_net": {
         "user_agreement_link": "Acuerdo de usuario",
@@ -1213,7 +1225,8 @@
           "cart_pickup_points_not_found": "No hay puntos de recogida disponibles para estos productos. Seleccione otro método de envío.",
           "cart_pickup_points_not_found_by_filter": "No se encontraron puntos de recogida.",
           "cart_pickup_points_reset_search": "Restablecer búsqueda",
-          "availability": "Disponibilidad"
+          "availability": "Disponibilidad",
+          "search_pickup_locations": "Buscar puntos de recogida"
         }
       },
       "order_payment": {

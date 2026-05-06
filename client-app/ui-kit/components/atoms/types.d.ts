@@ -8,7 +8,6 @@ declare module "vue" {
     VcBadge: typeof Components.VcBadge;
     VcBreadcrumbs: typeof Components.VcBreadcrumbs;
     VcButton: typeof Components.VcButton;
-    VcCardSkeleton: typeof Components.VcCardSkeleton;
     VcCarouselPagination: typeof Components.VcCarouselPagination;
     VcCheckbox: typeof Components.VcCheckbox;
     VcCheckboxGroup: typeof Components.VcCheckboxGroup;
@@ -22,6 +21,7 @@ declare module "vue" {
     VcInfinityScrollLoader: typeof Components.VcInfinityScrollLoader;
     VcLabel: typeof Components.VcLabel;
     VcLayout: typeof Components.VcLayout;
+    /** @deprecated Use VcProperty or VcProductProperties instead */
     VcLineItemProperty: typeof Components.VcLineItemProperty;
     VcListItem: typeof Components.VcListItem;
     VcLoader: typeof Components.VcLoader;
@@ -29,6 +29,7 @@ declare module "vue" {
     VcPopover: typeof Components.VcPopover;
     VcPopupSidebar: typeof Components.VcPopupSidebar;
     VcPriceDisplay: typeof Components.VcPriceDisplay;
+    /** @deprecated Use VcPriceDisplay or VcProductPrice instead */
     VcPriceDisplayCatalog: typeof Components.VcPriceDisplayCatalog;
     VcProductActions: typeof Components.VcProductActions;
     VcProductProperties: typeof Components.VcProductProperties;
@@ -39,8 +40,6 @@ declare module "vue" {
     VcRadioButton: typeof Components.VcRadioButton;
     VcScrollTopButton: typeof Components.VcScrollTopButton;
     VcSwitch: typeof Components.VcSwitch;
-    /** @deprecated VcTabs is deprecated, use VcTabSwitch instead. */
-    VcTabs: typeof Components.VcTabs;
     VcTooltip: typeof Components.VcTooltip;
     VcTotalDisplay: typeof Components.VcTotalDisplay;
     VcTypography: typeof Components.VcTypography;

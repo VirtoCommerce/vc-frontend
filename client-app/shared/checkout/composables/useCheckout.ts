@@ -9,13 +9,14 @@ import { AddressType, ProductType } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { isEqualAddresses, Logger } from "@/core/utilities";
 import { createSharedComposableByArgs } from "@/core/utilities/composables";
-import { useUser, useUserAddresses } from "@/shared/account";
+import { useCustomerAddresses, useUser } from "@/shared/account";
 import { useFullCart, EXTENDED_DEBOUNCE_IN_MS } from "@/shared/cart";
-import { useOrganizationAddresses } from "@/shared/company";
+import { useCurrentOrganizationAddresses } from "@/shared/company";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import { PaymentMethodGroupType, usePayment } from "@/shared/payment";
 import { BOPIS_CODE } from "./useBopis";
+import { createAddressFilterContext } from "./usePickupFilterContext";
 import type {
   CartAddressType,
   CustomerOrderType,
@@ -24,9 +25,11 @@ import type {
   MemberAddressType,
   PaymentMethodType,
 } from "@/core/api/graphql/types";
-import type { AnyAddressType } from "@/core/types";
+import type { AnyAddressType, ISortInfo } from "@/core/types";
 import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-address-modal.vue";
 import SelectAddressModal from "@/shared/checkout/components/select-address-modal.vue";
+
+const ADDRESSES_PER_PAGE = 6;
 
 const useGlobalCheckout = createGlobalState(() => {
   const loading = ref(false);
@@ -67,14 +70,38 @@ export function _useCheckout(cartId?: string) {
   const { user, isAuthenticated, isCorporateMember } = useUser();
   const {
     addresses: personalAddresses,
-    fetchAddresses: fetchPersonalAddresses,
+    loading: personalAddressesLoading,
+    totalCount: personalAddressesTotalCount,
+    page: personalAddressesPage,
+    keyword: personalAddressesKeyword,
+    filterCountryCodes: personalFilterCountryCodes,
+    filterRegionIds: personalFilterRegionIds,
+    filterCities: personalFilterCities,
+    termFacets: personalTermFacets,
+    sort: personalAddressesSort,
     addOrUpdateAddresses: addOrUpdatePersonalAddresses,
-  } = useUserAddresses();
+  } = useCustomerAddresses(
+    ADDRESSES_PER_PAGE,
+    computed(() => isAuthenticated.value && !isCorporateMember.value),
+  );
   const {
     addresses: organizationsAddresses,
-    fetchAddresses: fetchOrganizationAddresses,
+    loading: organizationAddressesLoading,
+    totalCount: organizationAddressesTotalCount,
+    page: organizationAddressesPage,
+    keyword: organizationAddressesKeyword,
+    filterCountryCodes: organizationFilterCountryCodes,
+    filterRegionIds: organizationFilterRegionIds,
+    filterCities: organizationFilterCities,
+    termFacets: organizationTermFacets,
+    sort: organizationAddressesSort,
     addOrUpdateAddresses: addOrUpdateOrganizationAddresses,
-  } = useOrganizationAddresses(user.value.contact?.organizationId || "");
+  } = useCurrentOrganizationAddresses(
+    () => user.value.contact?.organizationId ?? "",
+    ADDRESSES_PER_PAGE,
+    computed(() => isAuthenticated.value && isCorporateMember.value),
+  );
+
   const {
     refetch: refetchCart,
     cart,
@@ -103,6 +130,13 @@ export function _useCheckout(cartId?: string) {
     clearState: clearGlobalCheckoutState,
     initialized,
   } = useGlobalCheckout();
+  const addressFilterContext = createAddressFilterContext({
+    loading: computed(() =>
+      isCorporateMember.value ? organizationAddressesLoading.value : personalAddressesLoading.value,
+    ),
+    termFacets: computed(() => (isCorporateMember.value ? organizationTermFacets.value : personalTermFacets.value)),
+  });
+
   const { themeContext } = useThemeContext();
   const { pushHistoricalEvent } = useHistoricalEvents();
   const { finalizePayment } = usePayment();
@@ -201,10 +235,6 @@ export function _useCheckout(cartId?: string) {
     placedOrder.value?.items?.every((item) => item.productType === ProductType.Digital),
   );
 
-  function isExistAddress(address: AnyAddressType): boolean {
-    return addresses.value.some((item) => isEqualAddresses(item, address));
-  }
-
   async function setPaymentMethod(method: PaymentMethodType): Promise<void> {
     await updatePayment({
       id: payment.value?.id,
@@ -240,8 +270,6 @@ export function _useCheckout(cartId?: string) {
     loading.value = true;
 
     await setCheckoutDefaults();
-
-    void fetchAddresses();
 
     analytics("beginCheckout", { ...cart.value!, items: selectedLineItems.value });
 
@@ -296,14 +324,62 @@ export function _useCheckout(cartId?: string) {
   }
 
   function openSelectAddressModal(addressType: AddressType): void {
+    if (isCorporateMember.value) {
+      organizationAddressesPage.value = 1;
+    } else {
+      personalAddressesPage.value = 1;
+    }
+
     openModal({
       component: SelectAddressModal,
 
       props: {
-        addresses: addresses.value,
+        addresses,
         currentAddress:
           addressType === AddressType.Billing ? payment.value?.billingAddress : shipment.value?.deliveryAddress,
         isCorporateAddresses: isCorporateMember.value,
+        paginationMode: "server",
+        loading: isCorporateMember.value ? organizationAddressesLoading : personalAddressesLoading,
+        totalCount: isCorporateMember.value ? organizationAddressesTotalCount : personalAddressesTotalCount,
+        sort: isCorporateMember.value ? organizationAddressesSort : personalAddressesSort,
+        filterContext: addressFilterContext,
+        showFilters: true,
+        sortableColumns: ["name"],
+        onPageChange(newPage: number) {
+          if (isCorporateMember.value) {
+            organizationAddressesPage.value = newPage;
+          } else {
+            personalAddressesPage.value = newPage;
+          }
+        },
+        onUpdateSort(newSort: ISortInfo) {
+          if (isCorporateMember.value) {
+            organizationAddressesPage.value = 1;
+            organizationAddressesSort.value = newSort;
+          } else {
+            personalAddressesPage.value = 1;
+            personalAddressesSort.value = newSort;
+          }
+        },
+        onFilterChange() {
+          const keyword = addressFilterContext.filterKeyword.value;
+          const countryCodes = addressFilterContext.filterCountries.value?.termValues?.map((v) => v.value) ?? [];
+          const regionIds = addressFilterContext.filterRegions.value?.termValues?.map((v) => v.value) ?? [];
+          const cities = addressFilterContext.filterCities.value?.termValues?.map((v) => v.value) ?? [];
+          if (isCorporateMember.value) {
+            organizationAddressesPage.value = 1;
+            organizationAddressesKeyword.value = keyword;
+            organizationFilterCountryCodes.value = countryCodes;
+            organizationFilterRegionIds.value = regionIds;
+            organizationFilterCities.value = cities;
+          } else {
+            personalAddressesPage.value = 1;
+            personalAddressesKeyword.value = keyword;
+            personalFilterCountryCodes.value = countryCodes;
+            personalFilterRegionIds.value = regionIds;
+            personalFilterCities.value = cities;
+          }
+        },
 
         async onResult(address?: MemberAddressType) {
           if (!address) {
@@ -327,28 +403,26 @@ export function _useCheckout(cartId?: string) {
     });
   }
 
-  async function fetchAddresses(): Promise<void> {
-    if (!isAuthenticated.value) {
-      return;
-    }
-
-    if (isCorporateMember.value) {
-      await fetchOrganizationAddresses();
-    } else {
-      await fetchPersonalAddresses();
-    }
-  }
-
   function onDeliveryAddressChange(): void {
-    addresses.value.length
-      ? openSelectAddressModal(AddressType.Shipping)
-      : openAddOrUpdateAddressModal(AddressType.Shipping, shipment.value?.deliveryAddress);
+    const totalCount = isCorporateMember.value
+      ? organizationAddressesTotalCount.value
+      : personalAddressesTotalCount.value;
+    if (totalCount > 0) {
+      openSelectAddressModal(AddressType.Shipping);
+    } else {
+      openAddOrUpdateAddressModal(AddressType.Shipping, shipment.value?.deliveryAddress);
+    }
   }
 
   function onBillingAddressChange(): void {
-    addresses.value.length
-      ? openSelectAddressModal(AddressType.Billing)
-      : openAddOrUpdateAddressModal(AddressType.Billing, payment.value?.billingAddress);
+    const totalCount = isCorporateMember.value
+      ? organizationAddressesTotalCount.value
+      : personalAddressesTotalCount.value;
+    if (totalCount > 0) {
+      openSelectAddressModal(AddressType.Billing);
+    } else {
+      openAddOrUpdateAddressModal(AddressType.Billing, payment.value?.billingAddress);
+    }
   }
 
   function getNewAddresses(payload: {
@@ -357,7 +431,7 @@ export function _useCheckout(cartId?: string) {
   }): MemberAddressType[] {
     const newAddresses: MemberAddressType[] = [];
 
-    if (payload.shippingAddress && !isExistAddress(payload.shippingAddress)) {
+    if (payload.shippingAddress) {
       newAddresses.push({
         ...payload.shippingAddress,
         isDefault: false,
@@ -367,7 +441,6 @@ export function _useCheckout(cartId?: string) {
     }
     if (
       payload.billingAddress &&
-      !isExistAddress(payload.billingAddress) &&
       (!payload.shippingAddress || !isEqualAddresses(payload.shippingAddress, payload.billingAddress))
     ) {
       newAddresses.push({
@@ -471,6 +544,10 @@ export function _useCheckout(cartId?: string) {
         productIds: placedOrder.value.items?.map((item) => item.productId),
         storeId: globals.storeId,
       });
+
+      if (orderPayed) {
+        analytics("purchase", placedOrder.value);
+      }
 
       await router.replace({ name: canPayNow.value && !orderPayed ? "CheckoutPayment" : "CheckoutCompleted" });
     } else {

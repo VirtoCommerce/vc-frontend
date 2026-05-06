@@ -63,9 +63,9 @@
           </span>
 
           <sup v-if="showProductsCount" class="category__products-count">
-            <b class="me-1" data-test-id="category-page.total-products-count">{{
-              $n(totalProductsCount, "decimal")
-            }}</b>
+            <b class="me-1" data-test-id="products-count-label">
+              {{ $n(totalProductsCount, "decimal") }}
+            </b>
 
             <template v-if="currentCategory && searchQueryParam">
               {{ $t("pages.catalog.products_found_message_search", totalProductsCount) }}
@@ -121,7 +121,7 @@
               v-if="!hideViewModeSelector"
               v-model:mode="savedViewMode"
               class="category__view-mode"
-              data-test-id="category-page.view-switcher"
+              data-test-id="view-switcher"
             />
 
             <!-- In stock and branches -->

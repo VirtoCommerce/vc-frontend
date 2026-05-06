@@ -194,7 +194,8 @@
       "min_value": "O valor mínimo é {value}",
       "empty_wish_list": "Não há itens na lista",
       "not_defined": "Indefinido",
-      "invalid_coupon": "Este código não corresponde a nenhum cupom ativo. Por favor, verifique se está tudo correto e tente novamente.",
+      "invalid_coupon": "Este código não é válido",
+      "failed_coupon": "Algo deu errado com o cupom. Por favor, tente novamente.",
       "fill_all_required": "Por favor, preencha todas as informações obrigatórias para continuar.",
       "something_went_wrong": "Algo deu errado. Por favor, tente novamente mais tarde.",
       "checkout_pricing_warning": "Disponibilidade, envio, impostos e promoções não são finais até que você conclua seu pedido.",
@@ -235,7 +236,6 @@
       "password": "Insira sua senha",
       "confirm_password": "Confirme sua senha",
       "purchase_order_number": "Insira um número de pedido de compra",
-      "promotion_code": "Insira um cupom promocional",
       "select_credit_card": "Selecione cartão de crédito"
     },
     "links": {
@@ -367,6 +367,7 @@
         "ship_to_selector": {
           "add_new": "Adicionar novo",
           "add_new_address": "Adicionar novo endereço",
+          "no_results": "Nenhum endereço corresponde à sua pesquisa",
           "search": "Pesquisar",
           "select_address": "Selecionar endereço",
           "title": "Enviar para:"
@@ -643,6 +644,13 @@
         "title": "Lista de componentes",
         "edit_configuration": "Editar configuração",
         "selected_text": "Texto selecionado: {text}"
+      },
+      "coupons_section": {
+        "title": "Descontos e cupons",
+        "expires": "@:shared.account.promotion_coupons.expires",
+        "custom_code": "Código personalizado",
+        "enter_custom_code": "Inserir código personalizado",
+        "all_coupons": "Ver todos os cupons e promoções"
       }
     },
     "catalog": {
@@ -666,7 +674,7 @@
         "vendor_label": "Fornecedor",
         "all_vendor_products": "Todos Os Produtos Do Fornecedor",
         "share_product_label": "Compartilhar produto",
-        "create_configuration_button": "Crie sua própria configuração",
+        "create_configuration_button": "Criar nova configuração",
         "price_block": {
           "title": "Preço e Entrega",
           "mobile_title": "Compartilhar e mais",
@@ -873,6 +881,10 @@
         },
         "user_error_message": "Não foi possível inicializar o pagamento. Tente novamente mais tarde ou use outro método de pagamento",
         "payment_unavailable": "O método de pagamento não está disponível. Tente novamente mais tarde"
+      },
+      "datatrans_lightbox": {
+        "title": "Pagamento seguro",
+        "description": "Você será redirecionado para uma janela de pagamento Datatrans segura para concluir sua compra."
       },
       "authorize_net": {
         "user_agreement_link": "Acordo de Usuário",
@@ -1213,7 +1225,8 @@
           "cart_pickup_points_not_found": "Não há pontos de recolha disponíveis para estes produtos. Selecione outro método de envio.",
           "cart_pickup_points_not_found_by_filter": "Locais de recolha não encontrados.",
           "cart_pickup_points_reset_search": "Resetar pesquisa",
-          "availability": "Disponibilidade"
+          "availability": "Disponibilidade",
+          "search_pickup_locations": "Pesquisar locais de retirada"
         }
       },
       "order_payment": {

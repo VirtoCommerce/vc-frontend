@@ -84,12 +84,14 @@ const { objectType, seoInfo } = useSlugInfo(route.path.slice(1));
 const parentCategory = computed<CategoryType | undefined>(() => props.category?.parent);
 const subcategories = computed<CategoryType[]>(
   () =>
-    props.category?.childCategories.map((el) => {
-      return {
-        ...el,
-        facet: getFacet(el),
-      };
-    }) || [],
+    props.category?.childCategories
+      .map((el) => {
+        return {
+          ...el,
+          facet: getFacet(el),
+        };
+      })
+      .sort((a, b) => a.name.localeCompare(b.name)) || [],
 );
 
 const searchParam = useRouteQueryParam<string>(QueryParamName.SearchPhrase);

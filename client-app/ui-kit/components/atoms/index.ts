@@ -1,7 +1,6 @@
 export { default as VcActionInput } from "./action-input/vc-action-input.vue";
 export { default as VcBadge } from "./badge/vc-badge.vue";
 export { default as VcBreadcrumbs } from "./breadcrumbs/vc-breadcrumbs.vue";
-export { default as VcCardSkeleton } from "./card-skeleton/vc-card-skeleton.vue";
 export { default as VcCarouselPagination } from "./carousel-pagination/vc-carousel-pagination.vue";
 export { default as VcCheckbox } from "./checkbox/vc-checkbox.vue";
 export { default as VcCheckboxGroup } from "./checkbox-group/vc-checkbox-group.vue";
@@ -14,6 +13,7 @@ export { default as VcInfinityScrollLoader } from "./infinity-scroll-loader/vc-i
 export { default as VcInputDetails } from "./input-details/vc-input-details.vue";
 export { default as VcLabel } from "./label/vc-label.vue";
 export { default as VcLayout } from "./layout/vc-layout.vue";
+/** @deprecated Use VcProperty or VcProductProperties instead */
 export { default as VcLineItemProperty } from "./line-item-property/vc-line-item-property.vue";
 export { default as VcLink } from "./link/vc-link.vue";
 export { default as VcListItem } from "./list-item/vc-list-item.vue";
@@ -22,6 +22,7 @@ export { default as VcMarkdownRender } from "./markdown-render/vc-markdown-rende
 export { default as VcPopover } from "./popover/vc-popover.vue";
 export { default as VcPopupSidebar } from "./popup-sidebar/vc-popup-sidebar.vue";
 export { default as VcPriceDisplay } from "./price-display/vc-price-display.vue";
+/** @deprecated Use VcPriceDisplay or VcProductPrice instead */
 export { default as VcPriceDisplayCatalog } from "./price-display-catalog/vc-price-display-catalog.vue";
 export { default as VcProductActions } from "./product-actions/vc-product-actions.vue";
 export { default as VcProductProperties } from "./product-properties/vc-product-properties.vue";
@@ -33,8 +34,6 @@ export { default as VcRadioButton } from "./radio-button/vc-radio-button.vue";
 export { default as VcScrollTopButton } from "./scroll-top-button/vc-scroll-top-button.vue";
 export { default as VcScrollbar } from "./scrollbar/vc-scrollbar.vue";
 export { default as VcSwitch } from "./switch/vc-switch.vue";
-/** @deprecated VcTabs is deprecated, use VcTabSwitch instead. */
-export { default as VcTabs } from "./tabs/vc-tabs.vue";
 export { default as VcTooltip } from "./tooltip/vc-tooltip.vue";
 export { default as VcTotalDisplay } from "./total-display/vc-total-display.vue";
 export { default as VcTypography } from "./typography/vc-typography.vue";

@@ -194,7 +194,8 @@
       "min_value": "最小值为 {value}",
       "empty_wish_list": "列表中没有商品",
       "not_defined": "未定义",
-      "invalid_coupon": "此代码不匹配任何活动优惠券。请仔细检查后再试。",
+      "invalid_coupon": "此代码无效",
+      "failed_coupon": "优惠券出现问题。请重试。",
       "fill_all_required": "请完成所有必填信息以继续。",
       "something_went_wrong": "出了点问题。请稍后再试。",
       "checkout_pricing_warning": "在您完成订单之前，库存、运输、税费和促销信息尚未最终确定。",
@@ -235,7 +236,6 @@
       "password": "输入您的密码",
       "confirm_password": "确认您的密码",
       "purchase_order_number": "输入采购订单号",
-      "promotion_code": "输入促销代码",
       "select_credit_card": "选择信用卡"
     },
     "links": {
@@ -367,6 +367,7 @@
         "ship_to_selector": {
           "add_new": "新增",
           "add_new_address": "添加新地址",
+          "no_results": "没有找到匹配您搜索的地址",
           "search": "搜索",
           "select_address": "选择地址",
           "title": "运送至："
@@ -643,6 +644,13 @@
         "title": "组件列表",
         "edit_configuration": "编辑配置",
         "selected_text": "已选文字：{text}"
+      },
+      "coupons_section": {
+        "title": "折扣与优惠券",
+        "expires": "@:shared.account.promotion_coupons.expires",
+        "custom_code": "自定义代码",
+        "enter_custom_code": "输入自定义代码",
+        "all_coupons": "查看所有优惠券和促销活动"
       }
     },
     "catalog": {
@@ -666,7 +674,7 @@
         "vendor_label": "供应商",
         "all_vendor_products": "所有供应商产品",
         "share_product_label": "分享产品",
-        "create_configuration_button": "创建您的配置",
+        "create_configuration_button": "创建新配置",
         "price_block": {
           "title": "价格与运输",
           "mobile_title": "分享与更多",
@@ -873,6 +881,10 @@
         },
         "user_error_message": "无法初始化支付。请稍后再试或使用其他支付方式",
         "payment_unavailable": "支付方式不可用，请稍后重试"
+      },
+      "datatrans_lightbox": {
+        "title": "安全支付",
+        "description": "您将被重定向到安全的Datatrans支付窗口以完成购买。"
       },
       "authorize_net": {
         "user_agreement_link": "用户协议",
@@ -1213,7 +1225,8 @@
           "cart_pickup_points_not_found": "此商品无适用的自提点。请选择其他配送方式",
           "cart_pickup_points_not_found_by_filter": "未找到自提点。",
           "cart_pickup_points_reset_search": "重置搜索",
-          "availability": "可用性"
+          "availability": "可用性",
+          "search_pickup_locations": "搜索取货地点"
         }
       },
       "order_payment": {

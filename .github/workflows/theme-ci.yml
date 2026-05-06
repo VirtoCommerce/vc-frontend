@@ -43,7 +43,7 @@ jobs:
     steps:
 
       - name: Set up Node 22
-        uses: actions/setup-node@v4.2.0
+        uses: actions/setup-node@v6
         with:
           node-version: '22'
 
@@ -56,7 +56,7 @@ jobs:
         run: |
           echo "RELEASE_STATUS=true" >> $GITHUB_ENV
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -97,7 +97,7 @@ jobs:
           yarn install
 
       - name: SonarCloud Scan
-        uses: SonarSource/sonarqube-scan-action@v5.3.1
+        uses: SonarSource/sonarqube-scan-action@v7.1.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -120,7 +120,7 @@ jobs:
           yarn test:coverage
 
       - name: Upload Coverage Report
-        uses:  actions/upload-artifact@v4
+        uses:  actions/upload-artifact@v7
         with:
           name: coverage-report
           path: coverage
@@ -247,41 +247,23 @@ jobs:
             $branchName = $env:REF_NAME
           }
           Add-Content -Path $env:GITHUB_OUTPUT -Value "branchName=$branchName"
-
-  ui-e2e-auto-tests:
-    needs: 'ci'
+  auto-tests:
+    needs: ci
     if: ${{ ((github.ref == 'refs/heads/dev') && (github.event_name == 'push')) ||
         (github.event_name == 'workflow_dispatch') || (github.base_ref == 'dev') && (github.event_name == 'pull_request') }}
-    uses: VirtoCommerce/.github/.github/workflows/e2e-autotests.yml@v3.800.23
+    uses: VirtoCommerce/.github/.github/workflows/pytest-tests.yml@v3.800.30
     with:
       installModules: 'false'
       installCustomModule: 'false'
-      runTests: 'true'
       vctestingRepoBranch: 'dev'
       frontendZipUrl: '${{ needs.ci.outputs.artifactUrl }}'
       customPackagesJsonUrl: 'https://github.com/${{ github.repository }}/raw/${{ needs.ci.outputs.branchName }}/backend-packages.json'
+      testSuites: 'graphql,e2e,restapi'
     secrets:
       envPAT: ${{ secrets.REPO_TOKEN }}
       testSecretEnvFile: ${{ secrets.VC_TESTING_MODULE_ENV_FILE }}
       sendgridApiKey: ${{ secrets.SENDGRID_APIKEY_4E2E_AUTOTESTS }}
-
-  ui-auto-tests:
-    needs: 'ci'
-    if: ${{ ((github.ref == 'refs/heads/dev') && (github.event_name == 'push')) ||
-      (github.base_ref == 'dev') && (github.event_name == 'pull_request') || 
-      (github.event_name == 'workflow_dispatch') }}
-    uses: VirtoCommerce/.github/.github/workflows/ui-autotests.yml@v3.800.23
-    with:
-      installModules: 'true'
-      installCustomModule: 'false'
-      platformDockerTag: 'linux-latest'
-      frontendZipUrl: '${{ needs.ci.outputs.artifactUrl }}'
-      vctestingRepoBranch: 'dev'
-    secrets:
-      envPAT: ${{ secrets.REPO_TOKEN }}
-      testSecretEnvFile: ${{ secrets.VC_TESTING_MODULE_ENV_FILE }}
-      sendgridApiKey: ${{ secrets.SENDGRID_APIKEY_4E2E_AUTOTESTS }}
-
+  
   deploy-cloud:
     if: ${{ github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'}}
     needs: ci

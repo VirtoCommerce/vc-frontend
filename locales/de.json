@@ -194,7 +194,8 @@
       "min_value": "Der minimale Wert beträgt {value}",
       "empty_wish_list": "Es befinden sich keine Artikel auf der Liste",
       "not_defined": "Nicht definiert",
-      "invalid_coupon": "Dieser Code entspricht keinem aktiven Gutschein. Bitte überprüfen Sie alles und versuchen Sie es erneut.",
+      "invalid_coupon": "Dieser Code ist nicht gültig",
+      "failed_coupon": "Mit dem Gutschein ist etwas schiefgelaufen. Bitte versuche es erneut.",
       "fill_all_required": "Bitte füllen Sie alle erforderlichen Felder aus, um fortzufahren.",
       "something_went_wrong": "Etwas ist schiefgelaufen. Bitte versuchen Sie es später erneut.",
       "checkout_pricing_warning": "Verfügbarkeit, Versand, Steuern und Aktionen sind erst endgültig, wenn Sie Ihre Bestellung abschließen.",
@@ -235,7 +236,6 @@
       "password": "Geben Sie Ihr Passwort ein",
       "confirm_password": "Bestätigen Sie Ihr Passwort",
       "purchase_order_number": "Geben Sie eine Bestellnummer ein",
-      "promotion_code": "Geben Sie einen Promo-Gutschein ein",
       "select_credit_card": "Wählen Sie eine Kreditkarte"
     },
     "links": {
@@ -367,6 +367,7 @@
         "ship_to_selector": {
           "add_new": "Neu hinzufügen",
           "add_new_address": "Neue Adresse hinzufügen",
+          "no_results": "Keine Adressen entsprechen Ihrer Suche",
           "search": "Suche",
           "select_address": "Adresse auswählen",
           "title": "Liefern nach:"
@@ -643,6 +644,13 @@
         "title": "Komponentenliste",
         "edit_configuration": "Konfiguration bearbeiten",
         "selected_text": "Ausgewählter Text: {text}"
+      },
+      "coupons_section": {
+        "title": "Rabatte & Gutscheine",
+        "expires": "@:shared.account.promotion_coupons.expires",
+        "custom_code": "Benutzerdefinierter Code",
+        "enter_custom_code": "Benutzerdefinierten Code eingeben",
+        "all_coupons": "Alle Gutscheine & Aktionen anzeigen"
       }
     },
     "catalog": {
@@ -666,7 +674,7 @@
         "vendor_label": "Anbieter",
         "all_vendor_products": "Alle Anbieterprodukte",
         "share_product_label": "Produkt teilen",
-        "create_configuration_button": "Konfiguration erstellen",
+        "create_configuration_button": "Neue Konfiguration erstellen",
         "price_block": {
           "title": "Preis und Lieferung",
           "mobile_title": "Teilen & Mehr",
@@ -873,6 +881,10 @@
         },
         "user_error_message": "Zahlung konnte nicht initialisiert werden. Bitte versuchen Sie es später noch einmal oder wählen Sie eine andere Zahlungsmethode.",
         "payment_unavailable": "Zahlungsmethode ist nicht verfügbar. Bitte versuche es später noch einmal."
+      },
+      "datatrans_lightbox": {
+        "title": "Sichere Zahlung",
+        "description": "Sie werden zu einem sicheren Datatrans-Zahlungsfenster weitergeleitet, um Ihren Einkauf abzuschließen."
       },
       "authorize_net": {
         "user_agreement_link": "Nutzungsbedingungen",
@@ -1213,7 +1225,8 @@
           "cart_pickup_points_not_found": "Für diese Produkte sind keine Abholpunkte verfügbar. Wählen Sie eine andere Versandart.",
           "cart_pickup_points_not_found_by_filter": "Abholpunkte nicht gefunden.",
           "cart_pickup_points_reset_search": "Suche zurücksetzen",
-          "availability": "Verfügbarkeit"
+          "availability": "Verfügbarkeit",
+          "search_pickup_locations": "Abholstandorte suchen"
         }
       },
       "order_payment": {

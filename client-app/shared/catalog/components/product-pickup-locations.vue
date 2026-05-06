@@ -84,6 +84,7 @@ const filterContext = createProductFilterContext({
 const modalOpening = ref(false);
 
 async function openMapModal() {
+  const trigger = document.activeElement as HTMLElement;
   modalOpening.value = true;
   filterContext.clearFilter();
 
@@ -94,6 +95,7 @@ async function openMapModal() {
   }
 
   openModal({
+    triggerElement: trigger,
     component: SelectAddressMapModal,
     props: {
       addresses: modalAddresses,

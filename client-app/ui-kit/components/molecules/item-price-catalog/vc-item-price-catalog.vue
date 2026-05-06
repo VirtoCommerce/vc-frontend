@@ -31,4 +31,9 @@ interface IProps {
 withDefaults(defineProps<IProps>(), {
   priceColorClass: "text-neutral-900",
 });
+
+if (import.meta.env.DEV) {
+  // eslint-disable-next-line no-console
+  console.warn("[VcItemPriceCatalog] This component is deprecated. Use VcProductPrice instead.");
+}
 </script>

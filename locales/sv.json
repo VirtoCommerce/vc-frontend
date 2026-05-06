@@ -194,7 +194,8 @@
       "min_value": "Minsta värde är {value}",
       "empty_wish_list": "Det finns inga artiklar i listan",
       "not_defined": "Odefinierat",
-      "invalid_coupon": "Denna kod matchar inte någon aktiv kupong. Kontrollera att allt är korrekt och försök igen.",
+      "invalid_coupon": "Den här koden är inte giltig",
+      "failed_coupon": "Något gick fel med kupongen. Försök igen.",
       "fill_all_required": "Fyll i all obligatorisk information för att fortsätta.",
       "something_went_wrong": "Något gick fel. Vänligen försök igen senare.",
       "checkout_pricing_warning": "Tillgänglighet, frakt, skatt och kampanjer är inte definitiva förrän du slutför din beställning.",
@@ -235,7 +236,6 @@
       "password": "Ange ditt lösenord",
       "confirm_password": "Bekräfta ditt lösenord",
       "purchase_order_number": "Ange ett inköpsordernummer",
-      "promotion_code": "Ange en kampanjkod",
       "select_credit_card": "Välj kreditkort"
     },
     "links": {
@@ -367,6 +367,7 @@
         "ship_to_selector": {
           "add_new": "Lägg till ny",
           "add_new_address": "Lägg till ny adress",
+          "no_results": "Inga adresser matchar din sökning",
           "search": "Sök",
           "select_address": "Välj adress",
           "title": "Skicka till:"
@@ -643,6 +644,13 @@
         "title": "Komponentlista",
         "edit_configuration": "Redigera konfiguration",
         "selected_text": "Vald text: {text}"
+      },
+      "coupons_section": {
+        "title": "Rabatt & kuponger",
+        "expires": "@:shared.account.promotion_coupons.expires",
+        "custom_code": "Anpassad kod",
+        "enter_custom_code": "Ange anpassad kod",
+        "all_coupons": "Visa alla kuponger & kampanjer"
       }
     },
     "catalog": {
@@ -666,7 +674,7 @@
         "vendor_label": "Leverantör",
         "all_vendor_products": "Alla leverantörens produkter",
         "share_product_label": "Dela produkt",
-        "create_configuration_button": "Skapa din egen konfiguration",
+        "create_configuration_button": "Skapa ny konfiguration",
         "price_block": {
           "title": "Pris och leverans",
           "mobile_title": "Dela och mer",
@@ -873,6 +881,10 @@
         },
         "user_error_message": "Kan inte initiera betalning. Vänligen försök igen senare eller använd en annan betalningsmetod",
         "payment_unavailable": "Betalningsmetoden är inte tillgänglig. Vänligen försök igen senare"
+      },
+      "datatrans_lightbox": {
+        "title": "Säker betalning",
+        "description": "Du kommer att omdirigeras till ett säkert Datatrans-betalningsfönster för att slutföra ditt köp."
       },
       "authorize_net": {
         "user_agreement_link": "Användaravtal",
@@ -1213,7 +1225,8 @@
           "cart_pickup_points_not_found": "Det finns inga tillgängliga upphämtningsställen för dessa produkter. Välj en annan leveransmetod.",
           "cart_pickup_points_not_found_by_filter": "Hittade inga upphämtningsställen.",
           "cart_pickup_points_reset_search": "Återställ sökning",
-          "availability": "Tillgänglighet"
+          "availability": "Tillgänglighet",
+          "search_pickup_locations": "Sök upphämtningsplatser"
         }
       },
       "order_payment": {

@@ -54,7 +54,7 @@
       <VcInput
         v-model="filterKeyword"
         :placeholder="$t('common.labels.search')"
-        :aria-label="$t('common.labels.search')"
+        :aria-label="$t('pages.account.order_details.bopis.search_pickup_locations')"
         size="sm"
         class="select-address-filter__keyword"
         test-id-input="search-keyword-input"
@@ -84,7 +84,7 @@
         :data-test-id="`filter-country-${value.value}`"
         @close="removeFilterCountry(value.value)"
       >
-        {{ value.value }}
+        {{ value.label || value.value }}
       </VcChip>
 
       <VcChip
@@ -95,7 +95,7 @@
         :data-test-id="`filter-region-${value.value}`"
         @close="removeFilterRegion(value.value)"
       >
-        {{ value.value }}
+        {{ value.label || value.value }}
       </VcChip>
 
       <VcChip
@@ -106,7 +106,7 @@
         :data-test-id="`filter-city-${value.value}`"
         @close="removeFilterCity(value.value)"
       >
-        {{ value.value }}
+        {{ value.label || value.value }}
       </VcChip>
 
       <VcChip color="secondary" variant="outline" clickable data-test-id="reset-filters-chip" @click="resetFilter">
@@ -120,7 +120,6 @@
 
 <script setup lang="ts">
 import { computed, useTemplateRef } from "vue";
-import { CITY_FACET, COUNTRY_NAME_FACET, REGION_NAME_FACET } from "@/shared/cart";
 import { FacetFilter } from "@/shared/catalog";
 import { usePickupFilterContext } from "@/shared/checkout/composables";
 import type { FacetFilterType } from "@/core/types";
@@ -162,15 +161,11 @@ function resetFacetSearchAndApply() {
 }
 
 function applyFilter(changedFilter?: FacetFilterType) {
-  if (changedFilter?.name === COUNTRY_NAME_FACET) {
+  if (changedFilter?.name === filterOptionsCountries.value?.paramName) {
     filterCountries.value = changedFilter;
-  }
-
-  if (changedFilter?.name === REGION_NAME_FACET) {
+  } else if (changedFilter?.name === filterOptionsRegions.value?.paramName) {
     filterRegions.value = changedFilter;
-  }
-
-  if (changedFilter?.name === CITY_FACET) {
+  } else if (changedFilter?.name === filterOptionsCities.value?.paramName) {
     filterCities.value = changedFilter;
   }
 

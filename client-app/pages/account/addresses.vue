@@ -6,7 +6,7 @@
         {{ $t("common.titles.addresses") }}
       </VcTypography>
 
-      <VcButton v-if="paginatedAddresses.length" size="sm" variant="outline" @click="openAddOrUpdateAddressModal()">
+      <VcButton v-if="addresses.length" size="sm" variant="outline" @click="openAddOrUpdateAddressModal()">
         <span class="sm:hidden">{{ $t("common.buttons.add_new") }}</span>
 
         <span class="hidden sm:inline">{{ $t("common.buttons.add_new_address") }}</span>
@@ -14,7 +14,7 @@
     </div>
 
     <VcEmptyView
-      v-if="!paginatedAddresses.length && !addressesLoading"
+      v-if="!addresses.length && !addressesLoading"
       :text="$t('common.messages.no_addresses')"
       icon="outline-address"
     >
@@ -32,7 +32,7 @@
           :loading="addressesLoading"
           :columns="columns"
           :sort="sort"
-          :items="paginatedAddresses"
+          :items="addresses"
           :pages="pages"
           :page="page"
           :description="$t('pages.account.addresses.meta.table_description')"
@@ -94,7 +94,7 @@
           </template>
 
           <template #desktop-body>
-            <tr v-for="address in paginatedAddresses" :key="address.id" class="even:bg-neutral-50">
+            <tr v-for="address in addresses" :key="address.id" class="even:bg-neutral-50">
               <td class="overflow-hidden text-ellipsis p-5">{{ address.firstName }} {{ address.lastName }}</td>
 
               <td class="overflow-hidden text-ellipsis p-5">
@@ -127,27 +127,27 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useCountries, usePageHead } from "@/core/composables";
 import { AddressType } from "@/core/enums";
-import { AddressDropdownMenu, useUserAddresses } from "@/shared/account";
+import { AddressDropdownMenu, useCustomerAddresses } from "@/shared/account";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import type { MemberAddressFieldsFragment } from "@/core/api/graphql/types";
-import type { ISortInfo } from "@/core/types";
 import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-address-modal.vue";
 
 const { t } = useI18n();
 const { countries, loadCountries } = useCountries();
 const {
   loading: addressesLoading,
-  addresses,
   sort,
-  fetchAddresses,
+  page,
+  pages,
+  addresses,
   removeAddresses,
   addOrUpdateAddresses,
-} = useUserAddresses();
+} = useCustomerAddresses();
 const { openModal, closeModal } = useModal();
 const notifications = useNotifications();
 
@@ -155,15 +155,7 @@ usePageHead({
   title: t("pages.account.addresses.meta.title"),
 });
 
-const page = ref(1);
-const itemsPerPage = ref(6);
-
-const pages = computed<number>(() => Math.ceil(addresses.value.length / itemsPerPage.value));
-const paginatedAddresses = computed(() =>
-  addresses.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value),
-);
-
-const columns = computed<ITableColumn[]>(() => [
+const columns = computed<VcTableColumnType[]>(() => [
   {
     id: "firstName",
     title: t("common.labels.recipient_name"),
@@ -206,10 +198,9 @@ function openAddOrUpdateAddressModal(address?: MemberAddressFieldsFragment): voi
   });
 }
 
-async function applySorting(sortInfo: ISortInfo): Promise<void> {
+function applySorting(sortInfo: VcTableSortInfoType): void {
   sort.value = sortInfo;
   page.value = 1;
-  await fetchAddresses();
 }
 
 function removeAddress(address: MemberAddressFieldsFragment): void {
@@ -247,8 +238,6 @@ function removeAddress(address: MemberAddressFieldsFragment): void {
 }
 
 onMounted(async () => {
-  await fetchAddresses();
-
   if (!countries.value.length) {
     await loadCountries();
   }

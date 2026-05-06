@@ -195,6 +195,7 @@
       "empty_wish_list": "Listalla ei ole yhtään tuotetta",
       "not_defined": "Määrittelemätön",
       "invalid_coupon": "Tämä koodi ei vastaa yhtään aktiivista kuponkia. Tarkista, että kaikki on oikein, ja yritä uudelleen.",
+      "failed_coupon": "Kupongissa tapahtui virhe. Yritä uudelleen.",
       "fill_all_required": "Täytä kaikki pakolliset tiedot jatkaaksesi.",
       "something_went_wrong": "Jotain meni pieleen. Yritä myöhemmin uudelleen.",
       "checkout_pricing_warning": "Saatavuus, toimitus, verot ja kampanjat eivät ole lopullisia ennen kuin olet viimeistellyt tilauksesi.",
@@ -235,7 +236,6 @@
       "password": "Syötä salasanasi",
       "confirm_password": "Vahvista salasanasi",
       "purchase_order_number": "Syötä ostotilauksen numero",
-      "promotion_code": "Syötä kampanjakoodi",
       "select_credit_card": "Valitse luottokortti"
     },
     "links": {
@@ -367,6 +367,7 @@
         "ship_to_selector": {
           "add_new": "Lisää uusi",
           "add_new_address": "Lisää uusi osoite",
+          "no_results": "Ei osoitteita, jotka vastaavat hakua",
           "search": "Hae",
           "select_address": "Valitse osoite",
           "title": "Toimitusosoite:"
@@ -643,6 +644,13 @@
         "title": "Komponenttilista",
         "edit_configuration": "Muokkaa kokoonpanoa",
         "selected_text": "Valittu teksti: {text}"
+      },
+      "coupons_section": {
+        "title": "Alennukset & kupongit",
+        "expires": "@:shared.account.promotion_coupons.expires",
+        "custom_code": "Mukautettu koodi",
+        "enter_custom_code": "Syötä mukautettu koodi",
+        "all_coupons": "Näytä kaikki kupongit & tarjoukset"
       }
     },
     "catalog": {
@@ -666,7 +674,7 @@
         "vendor_label": "Toimittaja",
         "all_vendor_products": "Kaikki toimittajan tuotteet",
         "share_product_label": "Jaa tuote",
-        "create_configuration_button": "Luo oma kokoonpano",
+        "create_configuration_button": "Luo uusi kokoonpano",
         "price_block": {
           "title": "Hinta ja toimitus",
           "mobile_title": "Jaa ja lisää",
@@ -873,6 +881,10 @@
         },
         "user_error_message": "Maksua ei voi aloittaa. Yritä uudelleen myöhemmin tai käytä toista maksutapaa",
         "payment_unavailable": "Maksutapa ei ole saatavilla. Yritä uudelleen myöhemmin"
+      },
+      "datatrans_lightbox": {
+        "title": "Turvallinen maksu",
+        "description": "Sinut ohjataan turvalliseen Datatrans-maksuikkunaan ostoksesi viimeistelemiseksi."
       },
       "authorize_net": {
         "user_agreement_link": "Käyttäjäsopimus",
@@ -1213,7 +1225,8 @@
           "cart_pickup_points_not_found": "Näille tuotteille ei ole noutopisteitä. Valitse toinen toimitustapa.",
           "cart_pickup_points_not_found_by_filter": "Noutopisteitä ei löytynyt.",
           "cart_pickup_points_reset_search": "Nollaa haku",
-          "availability": "Saatavuus"
+          "availability": "Saatavuus",
+          "search_pickup_locations": "Hae noutopisteitä"
         }
       },
       "order_payment": {

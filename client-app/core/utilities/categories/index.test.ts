@@ -16,6 +16,7 @@ function createCategory(overrides: Partial<Category>): Category {
     childCategories: [],
     descriptions: [],
     images: [],
+    assets: [],
     outlines: [],
     properties: [],
     seoInfo: {

@@ -194,7 +194,8 @@
       "min_value": "Minimalna wartość to {value}",
       "empty_wish_list": "Lista życzeń nie zawiera żadnych przedmiotów",
       "not_defined": "Niezdefiniowany",
-      "invalid_coupon": "Ten kod nie odpowiada żadnym aktywnym kuponom. Proszę sprawdzić, czy wszystko jest poprawne i spróbować ponownie.",
+      "invalid_coupon": "Ten kod nie jest prawidłowy",
+      "failed_coupon": "Coś poszło nie tak z kuponem. Spróbuj ponownie.",
       "fill_all_required": "Proszę wypełnić wszystkie wymagane informacje, aby kontynuować.",
       "something_went_wrong": "Coś poszło nie tak. Proszę spróbować ponownie później.",
       "checkout_pricing_warning": "Dostępność, wysyłka, podatek i promocje nie są ostateczne, dopóki nie ukończysz zamówienia.",
@@ -235,7 +236,6 @@
       "password": "Wprowadź swoje hasło",
       "confirm_password": "Potwierdź swoje hasło",
       "purchase_order_number": "Wprowadź numer zamówienia",
-      "promotion_code": "Wprowadź kod promocyjny",
       "select_credit_card": "Wybierz kartę kredytową"
     },
     "links": {
@@ -367,6 +367,7 @@
         "ship_to_selector": {
           "add_new": "Dodaj nowy",
           "add_new_address": "Dodaj nowy adres",
+          "no_results": "Nie znaleziono adresów pasujących do Twojego wyszukiwania",
           "search": "Szukaj",
           "select_address": "Wybierz adres",
           "title": "Wyślij do:"
@@ -643,6 +644,13 @@
         "title": "Lista komponentów",
         "edit_configuration": "Edytuj konfigurację",
         "selected_text": "Wybrany tekst: {text}"
+      },
+      "coupons_section": {
+        "title": "Zniżki i kupony",
+        "expires": "@:shared.account.promotion_coupons.expires",
+        "custom_code": "Niestandardowy kod",
+        "enter_custom_code": "Wprowadź niestandardowy kod",
+        "all_coupons": "Zobacz wszystkie kupony i promocje"
       }
     },
     "catalog": {
@@ -666,7 +674,7 @@
         "vendor_label": "Sprzedawca",
         "all_vendor_products": "Wszystkie Produkty Sprzedawcy",
         "share_product_label": "Udostępnij produkt",
-        "create_configuration_button": "Utwórz własną konfigurację",
+        "create_configuration_button": "Utwórz nową konfigurację",
         "price_block": {
           "title": "Cena i dostawa",
           "mobile_title": "Udostępnij i więcej",
@@ -873,6 +881,10 @@
         },
         "user_error_message": "Nie można zainicjować płatności. Spróbuj ponownie później lub użyj innej metody płatności",
         "payment_unavailable": "Metoda płatności jest niedostępna. Spróbuj ponownie później."
+      },
+      "datatrans_lightbox": {
+        "title": "Bezpieczna płatność",
+        "description": "Zostaniesz przekierowany do bezpiecznego okna płatności Datatrans, aby dokończyć zakup."
       },
       "authorize_net": {
         "user_agreement_link": "Umowa użytkownika",
@@ -1213,7 +1225,8 @@
           "cart_pickup_points_not_found": "Brak dostępnych punktów odbioru dla tych produktów. Wybierz inną metodę wysyłki.",
           "cart_pickup_points_not_found_by_filter": "Nie znaleziono punktów odbioru.",
           "cart_pickup_points_reset_search": "Resetuj wyszukiwanie",
-          "availability": "Dostępność"
+          "availability": "Dostępność",
+          "search_pickup_locations": "Szukaj punktów odbioru"
         }
       },
       "order_payment": {

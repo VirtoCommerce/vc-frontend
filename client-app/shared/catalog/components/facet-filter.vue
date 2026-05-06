@@ -8,6 +8,7 @@
           size="sm"
           maxlength="30"
           :disabled="loading"
+          :aria-label="$t('common.labels.search', [facet.label])"
           :placeholder="$t('common.labels.search', [facet.label])"
           truncate
         />
@@ -114,13 +115,16 @@
           size="sm"
           maxlength="30"
           :disabled="loading"
+          :aria-label="$t('common.labels.search', [facet.label])"
           :placeholder="$t('common.labels.search', [facet.label])"
           truncate
         />
       </div>
 
       <div class="facet-filter-dropdown__items">
-        <VcMenuItem v-if="isNoResults" disabled>{{ $t("pages.catalog.no_facet_found_message") }}</VcMenuItem>
+        <VcMenuItem v-if="isNoResults" disabled>
+          {{ $t("pages.catalog.no_facet_found_message") }}
+        </VcMenuItem>
 
         <VcMenuItem
           v-for="item in filtered"

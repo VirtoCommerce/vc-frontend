@@ -1,29 +1,31 @@
 <template>
-  <VcSelect
-    v-model="selectedDateFilter"
-    :label="label"
-    :items="dateFilterTypes"
-    text-field="label"
-    enable-teleport
-    @change="handleChangeType"
-  />
-
-  <div v-if="selectedDateFilter.id === DateFilterId.CUSTOM" class="flex items-end gap-3 max-lg:flex-col">
-    <VcDateSelector
-      v-model="selectedDateFilter.startDate"
-      class="grow max-lg:w-full"
-      :label="$t('shared.account.orders_filter.start_date_label')"
-      @update:model-value="$emit('change', selectedDateFilter)"
+  <div class="date-filter-select">
+    <VcSelect
+      v-model="selectedDateFilter"
+      :label="label"
+      :items="dateFilterTypes"
+      text-field="label"
+      enable-teleport
+      @change="handleChangeType"
     />
 
-    <div class="text-2xl/[2.75rem] max-lg:hidden">&mdash;</div>
+    <div v-if="selectedDateFilter.id === DateFilterId.CUSTOM" class="date-filter-select__custom">
+      <VcDateSelector
+        v-model="selectedDateFilter.startDate"
+        class="date-filter-select__date"
+        :label="$t('shared.account.orders_filter.start_date_label')"
+        @update:model-value="$emit('change', selectedDateFilter)"
+      />
 
-    <VcDateSelector
-      v-model="selectedDateFilter.endDate"
-      class="grow max-lg:w-full"
-      :label="$t('shared.account.orders_filter.end_date_label')"
-      @update:model-value="$emit('change', selectedDateFilter)"
-    />
+      <div class="date-filter-select__separator">&mdash;</div>
+
+      <VcDateSelector
+        v-model="selectedDateFilter.endDate"
+        class="date-filter-select__date"
+        :label="$t('shared.account.orders_filter.end_date_label')"
+        @update:model-value="$emit('change', selectedDateFilter)"
+      />
+    </div>
   </div>
 </template>
 
@@ -61,3 +63,37 @@ function handleChangeType(): void {
   emit("change", selectedDateFilter.value);
 }
 </script>
+
+<style lang="scss">
+.date-filter-select {
+  @apply flex flex-col gap-3;
+
+  @media (width >= theme("screens.lg")) {
+    @apply gap-5;
+  }
+
+  &__custom {
+    @apply flex items-end gap-3;
+
+    @media (width < theme("screens.lg")) {
+      @apply flex-col;
+    }
+  }
+
+  &__date {
+    @apply grow;
+
+    @media (width < theme("screens.lg")) {
+      @apply w-full;
+    }
+  }
+
+  &__separator {
+    @apply text-2xl/[2.75rem];
+
+    @media (width < theme("screens.lg")) {
+      @apply hidden;
+    }
+  }
+}
+</style>

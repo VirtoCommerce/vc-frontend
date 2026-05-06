@@ -194,7 +194,8 @@
       "min_value": "Минимальное значение: {value}",
       "empty_wish_list": "В списке нет товаров",
       "not_defined": "Не определено",
-      "invalid_coupon": "Этот код не соответствует ни одному из активных купонов. Проверьте правильность и попробуйте снова.",
+      "invalid_coupon": "Этот код недействителен",
+      "failed_coupon": "Что-то пошло не так с купоном. Пожалуйста, попробуйте еще раз.",
       "fill_all_required": "Введите всю необходимую информацию для продолжения.",
       "something_went_wrong": "Что-то пошло не так. Пожалуйста, попробуйте позже.",
       "checkout_pricing_warning": "Наличие товаров, доставка, налоги и акции не являются окончательными до завершения оформления заказа.",
@@ -235,7 +236,6 @@
       "password": "Введите пароль",
       "confirm_password": "Подтвердите пароль",
       "purchase_order_number": "Введите номер заказа",
-      "promotion_code": "Введите промокод",
       "select_credit_card": "Выберите кредитную карту"
     },
     "links": {
@@ -367,6 +367,7 @@
         "ship_to_selector": {
           "add_new": "Добавить новый",
           "add_new_address": "Добавить новый адрес",
+          "no_results": "Нет адресов, соответствующих вашему запросу",
           "search": "Поиск",
           "select_address": "Выберите адрес",
           "title": "Доставка в:"
@@ -643,6 +644,13 @@
         "title": "Список компонентов",
         "edit_configuration": "Редактировать конфигурацию",
         "selected_text": "Выбранный текст: {text}"
+      },
+      "coupons_section": {
+        "title": "Скидки и купоны",
+        "expires": "@:shared.account.promotion_coupons.expires",
+        "custom_code": "Пользовательский код",
+        "enter_custom_code": "Введите пользовательский код",
+        "all_coupons": "Посмотреть все купоны и акции"
       }
     },
     "catalog": {
@@ -666,7 +674,7 @@
         "vendor_label": "Поставщик",
         "all_vendor_products": "Все Товары Поставщика",
         "share_product_label": "Поделиться товаром",
-        "create_configuration_button": "Создайте свою конфигурацию",
+        "create_configuration_button": "Создать новую конфигурацию",
         "price_block": {
           "title": "Цена и доставка",
           "mobile_title": "Опции и действия",
@@ -873,6 +881,10 @@
         },
         "user_error_message": "Не удалось инициализировать платёж. Попробуйте позже или выберите другой способ оплаты",
         "payment_unavailable": "Способ оплаты недоступен. Повторите попытку позже."
+      },
+      "datatrans_lightbox": {
+        "title": "Безопасная оплата",
+        "description": "Вы будете перенаправлены в безопасное окно оплаты Datatrans для завершения покупки."
       },
       "authorize_net": {
         "user_agreement_link": "Пользовательского соглашения",
@@ -1213,7 +1225,8 @@
           "cart_pickup_points_not_found": "Для этих товаров нет доступных пунктов выдачи. Выберите другой способ доставки.",
           "cart_pickup_points_not_found_by_filter": "Пункты выдачи не найдены.",
           "cart_pickup_points_reset_search": "Очистить поиск",
-          "availability": "Доступность"
+          "availability": "Доступность",
+          "search_pickup_locations": "Поиск пунктов выдачи"
         }
       },
       "order_payment": {

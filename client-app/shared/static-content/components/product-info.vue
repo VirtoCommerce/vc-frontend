@@ -32,17 +32,6 @@
             />
           </template>
         </div>
-
-        <div v-if="product.isConfigurable" class="product-info__config">
-          <VcButton
-            color="secondary"
-            variant="outline"
-            prepend-icon="cube-transparent"
-            @click="handleCreateConfiguration"
-          >
-            {{ $t("shared.catalog.product_details.create_configuration_button") }}
-          </VcButton>
-        </div>
       </div>
     </div>
   </VcWidget>
@@ -85,13 +74,6 @@ function getBlockProperties(block: NonNullable<IPageContent["blocks"]>[number]) 
   }
 
   return {};
-}
-
-function handleCreateConfiguration() {
-  const productConfigurationElement = document.getElementById("product-configuration-anchor");
-  if (productConfigurationElement) {
-    productConfigurationElement.scrollIntoView({ block: "center", inline: "nearest", behavior: "smooth" });
-  }
 }
 
 function shouldShowBlock(block: NonNullable<IPageContent["blocks"]>[number]) {

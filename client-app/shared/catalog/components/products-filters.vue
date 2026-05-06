@@ -46,7 +46,7 @@
 <script setup lang="ts">
 import { useElementBounding, watchDebounced } from "@vueuse/core";
 import { cloneDeep } from "lodash";
-import { watch, shallowRef, ref, nextTick, computed } from "vue";
+import { computed, nextTick, ref, shallowRef, watch } from "vue";
 import { useThemeContext } from "@/core/composables";
 import FacetFilter from "./facet-filter.vue";
 import type { SearchProductFilterResult } from "@/core/api/graphql/types";
@@ -197,11 +197,3 @@ function isSliderFilterEnabled() {
   return themeContext.value.settings.range_filter_type === "slider";
 }
 </script>
-
-<style scoped lang="scss">
-:deep(.facet-filter--dropdown:last-child) {
-  .vc-popover__content {
-    @apply right-0 left-auto #{!important};
-  }
-}
-</style>

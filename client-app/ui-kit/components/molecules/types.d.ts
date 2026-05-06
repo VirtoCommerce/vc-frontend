@@ -23,14 +23,10 @@ declare module "vue" {
     VcFile: typeof Components.VcFile;
     VcFilePicker: typeof Components.VcFilePicker;
     VcInput: typeof Components.VcInput;
-    VcItemPrice: typeof Components.VcItemPrice;
+    /** @deprecated Use VcProductPrice instead */
     VcItemPriceCatalog: typeof Components.VcItemPriceCatalog;
     VcLineItem: typeof Components.VcLineItem;
     VcLineItems: typeof Components.VcLineItems;
-    /** @deprecated VcLineItemPrice is deprecated, use VcProductPrice instead. */
-    VcLineItemPrice: typeof Components.VcLineItemPrice;
-    /** @deprecated VcLineItemTotal is deprecated, use VcProductPrice instead. */
-    VcLineItemTotal: typeof Components.VcLineItemTotal;
     VcList: typeof Components.VcList;
     VcLoaderOverlay: typeof Components.VcLoaderOverlay;
     VcLoaderWithText: typeof Components.VcLoaderWithText;
@@ -40,7 +36,6 @@ declare module "vue" {
     VcProductButton: typeof Components.VcProductButton;
     VcProductPrice: typeof Components.VcProductPrice;
     VcProductTotal: typeof Components.VcProductTotal;
-    // @deprecated
     VcSelect: typeof Components.VcSelect;
     VcShape: typeof Components.VcShape;
     VcSlider: typeof Components.VcSlider;
@@ -49,8 +44,6 @@ declare module "vue" {
     VcTextarea: typeof Components.VcTextarea;
     VcRating: typeof Components.VcRating;
     VcVariantPicker: typeof Components.VcVariantPicker;
-    // @deprecated is deprecated, use VendorName instead
-    VcVendor: typeof Components.VcVendor;
     VcWidget: typeof Components.VcWidget;
     VcWidgetSkeleton: typeof Components.VcWidgetSkeleton;
   }

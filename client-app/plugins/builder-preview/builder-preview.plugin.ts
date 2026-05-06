@@ -1,4 +1,5 @@
 import { useGlobalInterceptors } from "@/core/api/common";
+import { globals, setGlobals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { useStaticPage } from "@/shared/static-content";
 import { templateBlocks } from "@/shared/static-content/components";
@@ -26,7 +27,20 @@ declare type TransferDataType = {
   sectionId?: string;
   url?: string;
   settings?: IThemeConfig;
+  token?: { access_token?: string } | null;
+  userId?: string | null;
 };
+
+function scrollToSection(sectionId: string) {
+  requestAnimationFrame(() => {
+    const element = document.getElementById("__scroll__" + sectionId);
+    if (element) {
+      const rect = measureElement(element);
+      const targetPosition = (rect.top || 0) - window.innerHeight / 10;
+      window.scroll({ top: targetPosition, behavior: "smooth" });
+    }
+  });
+}
 
 async function updatePreview(data: TransferDataType, options: { router: Router }) {
   const template = data.template;
@@ -37,8 +51,7 @@ async function updatePreview(data: TransferDataType, options: { router: Router }
   const newTemplate = { ...template, content: <IPageContent[]>[] };
 
   template.content.forEach((block: IPageContent) => {
-    newTemplate.content.push({ type: "scroll-to", id: "__scroll__" + block.id });
-    newTemplate.content.push(block);
+    newTemplate.content.push({ type: "scroll-to", id: "__scroll__" + block.id }, block);
   });
 
   if (!data.templateKey) {
@@ -50,6 +63,20 @@ async function updatePreview(data: TransferDataType, options: { router: Router }
     await options.router.push(templateUrl);
   }
   templateUrl = undefined;
+
+  // Remember the initially selected section for scroll restoration after auth changes
+  if (data.sectionId) {
+    initialSectionId = data.sectionId;
+  }
+
+  if (pendingScrollRestore) {
+    pendingScrollRestore = false;
+    if (initialSectionId) {
+      scrollToSection(initialSectionId);
+    }
+  } else if (data.type === "page" && initialSectionId) {
+    scrollToSection(initialSectionId);
+  }
 }
 
 function updateSettings(app: App, settings: IThemeConfig) {
@@ -62,7 +89,7 @@ function updateSettings(app: App, settings: IThemeConfig) {
   keys
     .filter(([key]) => key.startsWith("color"))
     .forEach(([key, value]) => {
-      document.documentElement.style.setProperty(`--${key.replace(/_/g, "-")}`, value as string);
+      document.documentElement.style.setProperty(`--${key.replaceAll("_", "-")}`, value as string);
     });
 }
 
@@ -99,13 +126,50 @@ export function measureElement(element: HTMLElement): {
 }
 
 let templateUrl: string | undefined;
+let previewToken: string | null | undefined;
+let originalUserId: string | undefined;
+let pendingScrollRestore = false;
+let initialSectionId: string | undefined;
 
 function modifyRequests() {
   const { onRequest } = useGlobalInterceptors();
 
-  onRequest.value.push((_, init) => {
-    if (init?.headers) {
+  // Take all previously registered interceptors (e.g. auth plugin)
+  // and replace them with a single wrapper that runs them sequentially,
+  // then applies preview overrides last.
+  // This avoids the Promise.all race where auth's async refresh()
+  // could overwrite the preview Authorization header.
+  const existingInterceptors = onRequest.value.splice(0);
+
+  onRequest.value.push(async (input, init) => {
+    for (const intercept of existingInterceptors) {
+      await intercept(input, init);
+    }
+
+    if (!init) {
+      return;
+    }
+
+    // Only add x-template-builder header to HTTP requests (where init.headers exists),
+    // not to WebSocket connectionParams (where init is a plain object).
+    if (init.headers) {
       Object.assign(init.headers, { ["x-template-builder"]: "preview-mode" });
+    }
+
+    // Override Authorization on both init.headers and init itself,
+    // because auth plugin may place it on either depending on
+    // whether init.headers existed (HTTP requests vs WebSocket connectionParams).
+    const target = init as Record<string, unknown>;
+    if (previewToken) {
+      if (init.headers) {
+        (init.headers as Record<string, string>).Authorization = `Bearer ${previewToken}`;
+      }
+      target.Authorization = `Bearer ${previewToken}`;
+    } else if (previewToken === null) {
+      if (init.headers) {
+        delete (init.headers as Record<string, string>).Authorization;
+      }
+      delete target.Authorization;
     }
   });
 }
@@ -154,18 +218,10 @@ function handleMessages(app: App, options: PageBuilderPluginOptionsType, bodyEl:
       case "hover":
         // ignore now
         break;
-      case "select": {
-        const element = document.getElementById("__scroll__" + event.data.sectionId);
-        if (element) {
-          const rect = measureElement(element);
-          const targetPosition = (rect.top || 0) - window.innerHeight / 10;
-          window.scroll({
-            top: targetPosition,
-            behavior: "smooth",
-          });
-        }
+      case "select":
+        initialSectionId = event.data.sectionId;
+        scrollToSection(event.data.sectionId!);
         break;
-      }
       case "navigate": {
         // we will know about template it or not in the next message
         templateUrl = event.data.url;
@@ -174,6 +230,17 @@ function handleMessages(app: App, options: PageBuilderPluginOptionsType, bodyEl:
       case "settings":
         updateSettings(app, event.data.settings!);
         break;
+      case "auth": {
+        previewToken = event.data.token?.access_token || null;
+        if (!originalUserId) {
+          originalUserId = globals.userId;
+        }
+        setGlobals({ userId: event.data.userId || originalUserId });
+        // Force remount of all blocks with new token and restore scroll afterward
+        pendingScrollRestore = true;
+        staticPagePreview.value = undefined;
+        break;
+      }
       default:
         Logger.warn(`Unknown message type: ${event.data.type}`);
     }
@@ -198,10 +265,10 @@ function modifyRoutes(router: Router, mode: "preview" | "designer") {
   router.addRoute(matcher);
 
   router.beforeEach((to, from, next) => {
-    if (to.path !== "/designer-preview") {
-      next({ path: "/designer-preview", query: to.query, hash: to.hash });
-    } else {
+    if (to.path === "/designer-preview") {
       next();
+    } else {
+      next({ path: "/designer-preview", query: to.query, hash: to.hash });
     }
   });
 }

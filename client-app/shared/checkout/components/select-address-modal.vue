@@ -72,8 +72,10 @@
       :items="paginatedAddresses"
       :description="$t('shared.checkout.select_address_modal.meta.table_description')"
       :loading="loading"
+      :sort="sort"
       bordered
       @page-changed="onPageChange"
+      @header-click="onSortChange"
     >
       <template #mobile-item="{ item }">
         <div class="relative flex items-center space-x-3 border-b p-4 last:border-none">
@@ -140,11 +142,11 @@
           </div>
 
           <div class="w-10 flex-none text-center">
-            <VcIcon v-if="item.id === selectedAddress?.id" class="fill-secondary" name="check-circle" :size="20" />
+            <VcIcon v-if="isSelected(item)" class="fill-secondary" name="check-circle" :size="20" />
           </div>
 
           <button
-            v-if="item.id !== selectedAddress?.id"
+            v-if="!isSelected(item)"
             type="button"
             class="absolute inset-0 opacity-0"
             @click="setAddress(item)"
@@ -157,7 +159,7 @@
           <span>{{ emptyText ?? $t("shared.checkout.select_address_modal.no_addresses_message") }}</span>
 
           <VcButton
-            v-if="showFilters"
+            v-if="showFilters && filterContext?.filterIsApplied.value"
             icon="reset"
             @click="resetFilter"
             :aria-label="$t('pages.account.order_details.bopis.cart_pickup_points_reset_search')"
@@ -168,10 +170,7 @@
       <template #desktop-item="{ item }">
         <tr
           :data-test-id="`customer-address-${item.id}`"
-          :class="[
-            'group border-b last:border-none hover:bg-secondary-50',
-            { 'cursor-pointer': item.id !== selectedAddress?.id },
-          ]"
+          :class="['group border-b last:border-none hover:bg-secondary-50', { 'cursor-pointer': !isSelected(item) }]"
           @click="setAddress(item)"
         >
           <td class="px-4 py-3.5">
@@ -223,7 +222,7 @@
           </td>
 
           <td class="h-[3.75rem] py-2.5 text-center">
-            <VcIcon v-if="item.id === selectedAddress?.id" class="fill-success" name="check-circle" />
+            <VcIcon v-if="isSelected(item)" class="fill-success" name="check-circle" />
 
             <VcButton v-else class="invisible group-hover:lg:visible" variant="outline" size="xs">
               {{ $t("shared.checkout.select_address_modal.select_button") }}
@@ -240,7 +239,12 @@
                 {{ emptyText ?? $t("shared.checkout.select_address_modal.no_addresses_message") }}
               </span>
 
-              <VcButton v-if="showFilters" class="mt-5" prepend-icon="reset" @click="resetFilter">
+              <VcButton
+                v-if="showFilters && filterContext?.filterIsApplied.value"
+                class="mt-5"
+                prepend-icon="reset"
+                @click="resetFilter"
+              >
                 {{ $t("pages.account.order_details.bopis.cart_pickup_points_reset_search") }}
               </VcButton>
             </div>
@@ -253,14 +257,15 @@
 
 <script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { computed, ref, watchEffect } from "vue";
+import { sortBy } from "lodash";
+import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { PAGE_LIMIT } from "@/core/constants";
 import { isEqualAddresses, isMemberAddressType } from "@/core/utilities";
 import { SelectAddressFilter } from "@/shared/checkout";
 import { providePickupFilterContext } from "@/shared/checkout/composables";
 import type { MemberAddressType } from "@/core/api/graphql/types";
-import type { AnyAddressType } from "@/core/types";
+import type { AnyAddressType, ISortInfo } from "@/core/types";
 import type { IPickupFilterContext } from "@/shared/checkout/composables";
 import PickupAvailabilityInfo from "@/shared/common/components/pickup-availability-info.vue";
 
@@ -280,6 +285,8 @@ interface IProps {
   paginationMode?: PaginationModeType;
   loading?: boolean;
   totalCount?: number;
+  sort?: ISortInfo;
+  sortableColumns?: string[];
 }
 
 interface IEmits {
@@ -288,6 +295,7 @@ interface IEmits {
   (event: "filterChange"): void;
   (event: "resetFilter"): void;
   (event: "pageChange", page: number): void;
+  (event: "updateSort", value: ISortInfo): void;
 }
 
 const emit = defineEmits<IEmits>();
@@ -302,6 +310,7 @@ const props = withDefaults(defineProps<IProps>(), {
   paginationMode: "client",
   loading: false,
   totalCount: 0,
+  sortableColumns: () => [],
 });
 
 const { t } = useI18n();
@@ -330,10 +339,19 @@ const pages = computed(() => {
   const itemsTotal = props.paginationMode === "server" ? props.totalCount : props.addresses.length;
   return Math.max(1, Math.ceil(itemsTotal / itemsPerPage.value));
 });
+
+const sortedAddresses = computed<AnyAddressType[]>(() => {
+  if (props.paginationMode === "server" || !props.sort) {
+    return props.addresses;
+  }
+  const sorted = sortBy(props.addresses, props.sort.column);
+  return props.sort.direction === "desc" ? sorted.reverse() : sorted;
+});
+
 const paginatedAddresses = computed(() =>
   props.paginationMode === "server"
     ? props.addresses
-    : props.addresses.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value),
+    : sortedAddresses.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value),
 );
 const hasFavoriteAddresses = computed(() => props.addresses.some((item) => item.isFavorite));
 
@@ -357,7 +375,7 @@ const columns = computed<VcTableColumnType[]>(() => {
     cols.splice(cols.length - 1, 0, { id: "availability", title: t("pages.account.order_details.bopis.availability") });
   }
 
-  return cols;
+  return cols.map((col) => ({ ...col, sortable: props.sortableColumns.includes(col.id) }));
 });
 
 function getFormattedAddress(address: AnyAddressType): string {
@@ -376,6 +394,15 @@ function onPageChange(): void {
   emit("pageChange", page.value);
 }
 
+function onSortChange(info: VcTableSortInfoType): void {
+  page.value = 1;
+  emit("updateSort", info);
+}
+
+function isSelected(address: AnyAddressType): boolean {
+  return !!selectedAddress.value && isEqualAddresses(address, selectedAddress.value);
+}
+
 function setAddress(address: AnyAddressType): void {
   selectedAddress.value = address;
 }
@@ -386,9 +413,13 @@ function save(): void {
   }
 }
 
-watchEffect(() => {
-  selectedAddress.value = props.addresses.find((item) =>
-    isEqualAddresses(item, props.currentAddress ?? {}, { omitFields: props.omitFieldsOnCompare }),
-  );
+onMounted(() => {
+  if (props.paginationMode === "server") {
+    selectedAddress.value = props.currentAddress;
+  } else {
+    selectedAddress.value = props.addresses.find((item) =>
+      isEqualAddresses(item, props.currentAddress ?? {}, { omitFields: props.omitFieldsOnCompare }),
+    );
+  }
 });
 </script>

@@ -20,6 +20,7 @@
       :allowed-extensions="allowedExtensions"
       :files="files"
       :requirements="requirements"
+      :disabled="hasMaxFileCount"
       class="vc-file-uploader__drop-container"
       @add-files="addFiles"
     />
