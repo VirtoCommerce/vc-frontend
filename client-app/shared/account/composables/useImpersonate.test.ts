@@ -99,6 +99,12 @@ vi.mock("@/core/utilities", () => ({
   },
 }));
 
+vi.mock("./useUser", () => ({
+  useUser: () => ({
+    operator: { value: null },
+  }),
+}));
+
 type AuthMockStateType = {
   authorize: ReturnType<typeof vi.fn>;
   authErrors: { value: Array<{ code?: string; description?: string }> | undefined };

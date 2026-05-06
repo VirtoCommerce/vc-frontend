@@ -5,6 +5,7 @@ import { useAuth } from "@/core/composables";
 import { Logger } from "@/core/utilities";
 import { TabsType, useBroadcast, reloadAndOpenMainPage } from "@/shared/broadcast";
 import { useNotifications } from "@/shared/notification";
+import { useUser } from "./useUser";
 import type { IdentityErrorType } from "@/core/api/graphql/types";
 import type { ConnectTokenResponseType } from "@/core/types";
 
@@ -152,10 +153,40 @@ export function useImpersonate() {
     await requestImpersonateToken(targetUserId);
   }
 
+  const { operator } = useUser();
+  const reverting = ref(false);
+
+  const backToOperatorLabel = computed(() =>
+    operator.value
+      ? t("shared.layout.header.top_header.back_to_operator", {
+          name: operator.value.contact?.fullName || operator.value.userName,
+        })
+      : "",
+  );
+
+  async function backToOperator(): Promise<void> {
+    reverting.value = true;
+    try {
+      await revertImpersonate("/company/members");
+    } catch (e) {
+      Logger.error(backToOperator.name, e);
+    }
+    // requestImpersonateToken handles its own errors and never re-throws.
+    // On success step="success" and the page reloads shortly after, so the loader
+    // stays visible until then. On any failure step is reset to "idle" — release
+    // the loader so the user can retry.
+    if (step.value !== "success") {
+      reverting.value = false;
+    }
+  }
+
   return {
     impersonate,
     impersonateAuthenticated,
     revertImpersonate,
+    backToOperator,
+    backToOperatorLabel,
+    reverting,
     loading,
     step,
     errors,

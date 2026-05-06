@@ -138,22 +138,6 @@
               </router-link>
 
               <VcButton
-                v-if="operator"
-                :title="backToOperatorLabel"
-                :aria-label="backToOperatorLabel"
-                class="ml-4"
-                variant="outline"
-                color="neutral"
-                size="xs"
-                data-test-id="back-to-operator-button"
-                icon
-                @click="onBackToOperator"
-              >
-                <VcIcon name="arrow-left" />
-              </VcButton>
-
-              <VcButton
-                v-else
                 :title="$t('shared.layout.header.link_logout')"
                 class="ml-4"
                 variant="outline"
@@ -210,12 +194,10 @@
 
 <script setup lang="ts">
 import { onClickOutside } from "@vueuse/core";
-import { computed, ref } from "vue";
-import { useI18n } from "vue-i18n";
+import { ref } from "vue";
 import { useDarkMode } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
-import { Logger } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
 import { useImpersonate, useSignMeOut, useUser } from "@/shared/account";
 import { CurrencySelector, LanguageSelector } from "@/shared/layout/components";
@@ -224,26 +206,16 @@ import DarkModeToggle from "./dark-mode-toggle.vue";
 import TopHeaderLink from "./top-header-link.vue";
 import TopHeaderOrganizations from "./top-header-organizations.vue";
 
-const { t } = useI18n();
 const { isAuthenticated, user, operator, organization, isMultiOrganization } = useUser();
 const { signMeOut } = useSignMeOut();
-const { revertImpersonate, step: impersonateStep } = useImpersonate();
+const { reverting, backToOperatorLabel, backToOperator } = useImpersonate();
 const { isDarkModeAvailable } = useDarkMode();
 const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 
 const loginMenu = ref(null);
 const loginMenuVisible = ref(false);
-const reverting = ref(false);
 
 const support_phone_number = getSettingValue(MODULE_XAPI_KEYS.SUPPORT_PHONE_NUMBER);
-
-const backToOperatorLabel = computed(() =>
-  operator.value
-    ? t("shared.layout.header.top_header.back_to_operator", {
-        name: operator.value.contact?.fullName || operator.value.userName,
-      })
-    : "",
-);
 
 onClickOutside(loginMenu, () => {
   loginMenuVisible.value = false;
@@ -251,18 +223,6 @@ onClickOutside(loginMenu, () => {
 
 async function onBackToOperator(): Promise<void> {
   loginMenuVisible.value = false;
-  reverting.value = true;
-  try {
-    await revertImpersonate("/company/members");
-  } catch (e) {
-    Logger.error(onBackToOperator.name, e);
-  }
-  // requestImpersonateToken handles its own errors and never re-throws.
-  // On success it sets step="success" and the page reloads shortly after,
-  // so the loader stays visible until then. On any failure step is reset
-  // to "idle" — release the loader so the user can retry.
-  if (impersonateStep.value !== "success") {
-    reverting.value = false;
-  }
+  await backToOperator();
 }
 </script>
