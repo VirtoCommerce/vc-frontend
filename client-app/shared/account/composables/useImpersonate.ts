@@ -9,7 +9,6 @@ import type { IdentityErrorType } from "@/core/api/graphql/types";
 import type { ConnectTokenResponseType } from "@/core/types";
 
 type StepType = "idle" | "verify" | "impersonate" | "success";
-type ImpersonateStatusType = "loading" | "success" | "error" | undefined;
 
 export function useImpersonate() {
   const {
@@ -27,25 +26,18 @@ export function useImpersonate() {
 
   const step = ref<StepType>("idle");
   const errors = ref<IdentityErrorType[]>([]);
-  const impersonateStatus = ref<ImpersonateStatusType>();
 
   const loading = computed<boolean>(
-    () =>
-      isAuthorizing.value ||
-      impersonateStatus.value === "loading" ||
-      step.value === "verify" ||
-      step.value === "impersonate",
+    () => isAuthorizing.value || step.value === "verify" || step.value === "impersonate",
   );
 
   function resetState(): void {
     step.value = "idle";
     errors.value = [];
-    impersonateStatus.value = undefined;
   }
 
   async function doImpersonate(targetUserId: string): Promise<void> {
     step.value = "impersonate";
-    impersonateStatus.value = "loading";
 
     try {
       const { error, data } = await useFetch("/connect/token")
@@ -60,7 +52,6 @@ export function useImpersonate() {
         .json<ConnectTokenResponseType>();
 
       if (!data.value || error.value) {
-        impersonateStatus.value = "error";
         errors.value = [{ code: "impersonate_failed" }];
         step.value = "idle";
         return;
@@ -80,7 +71,6 @@ export function useImpersonate() {
         setExpiresAt(expires_in);
         setTokenType(token_type);
         setRefreshToken(refresh_token);
-        impersonateStatus.value = "success";
         step.value = "success";
 
         // reload all tabs to renew state
@@ -90,14 +80,12 @@ export function useImpersonate() {
       } else {
         notifications.error({ text: t("pages.account.impersonate.error") });
         Logger.error(doImpersonate.name, tokenError, tokenErrors);
-        impersonateStatus.value = "error";
         errors.value = [{ code: "impersonate_failed" }];
         step.value = "idle";
       }
     } catch (e) {
       notifications.error({ text: t("pages.account.impersonate.error") });
       Logger.error(doImpersonate.name, e);
-      impersonateStatus.value = "error";
       errors.value = [{ code: "impersonate_failed" }];
       step.value = "idle";
     }
