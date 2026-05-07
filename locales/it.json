@@ -912,8 +912,7 @@
         "list_edit_button": "Modifica",
         "remove_list_button": "Elimina",
         "make_private_button": "Rendi privato",
-        "share_button": "Condividi",
-        "saved": "Salvato"
+        "share_button": "Condividi"
       },
       "list_details": {
         "add_all_to_cart_button": "Aggiungi tutto al carrello",
