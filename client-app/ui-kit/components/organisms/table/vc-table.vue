@@ -321,7 +321,7 @@ const sortedChildColumnRegistrations = computed<VcTableColumnRegistrationType[]>
   const registrations = Array.from(childColumns.value.values());
 
   const fallback = registrations.length;
-  return registrations.toSorted((a, b) => {
+  return [...registrations].sort((a, b) => {
     const aIdx = order.indexOf(a.column.id);
     const bIdx = order.indexOf(b.column.id);
 
