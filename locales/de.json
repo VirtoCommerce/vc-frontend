@@ -912,8 +912,7 @@
         "list_edit_button": "Bearbeiten",
         "remove_list_button": "Löschen",
         "make_private_button": "Privat machen",
-        "share_button": "Teilen",
-        "saved": "Gespeichert"
+        "share_button": "Teilen"
       },
       "list_details": {
         "add_all_to_cart_button": "Alles in den Warenkorb",

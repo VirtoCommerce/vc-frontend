@@ -1279,15 +1279,17 @@ function createTextConfigurationSection(
   id: number,
   {
     isRequired = false,
+    dependsOnSectionId,
     options = [],
     defaultOptionText,
-  }: { isRequired?: boolean; options?: string[]; defaultOptionText?: string } = {},
+  }: { isRequired?: boolean; dependsOnSectionId?: string; options?: string[]; defaultOptionText?: string } = {},
 ) {
   return {
     id: `text_section_${id}`,
     name: `Text Section ${id}`,
     type: CONFIGURABLE_SECTION_TYPES.text,
     isRequired,
+    dependsOnSectionId,
     allowTextOptions: options.length > 0,
     options: options.map((optionText, index) => ({
       id: `text_option_${id}_${index + 1}`,
@@ -1312,6 +1314,7 @@ function mockI18n(): void {
     return {
       useI18n: vi.fn().mockReturnValue({
         t: (key: string) => key,
+        te: () => true,
       }),
     };
   });

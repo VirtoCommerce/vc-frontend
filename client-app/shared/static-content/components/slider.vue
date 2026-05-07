@@ -56,8 +56,7 @@ import { useBreakpoints } from "@vueuse/core";
 import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { computed, getCurrentInstance } from "vue";
-import { BREAKPOINTS } from "@/core/constants";
-import type { BreakpointsType } from "@/core/constants";
+import { BREAKPOINTS } from "@/ui-kit/constants";
 
 // synced with Page builder module config/schemas/sections/slider.json and builder.io builderIOComponents
 type SlideHeightType = "small" | "medium" | "large" | "auto";

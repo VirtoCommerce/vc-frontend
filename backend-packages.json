@@ -6,20 +6,22 @@
   "PlatformAssetUrl": "",
   "Sources": [
     {
+      "Name": "AzureBlob",
+      "Container": "packages",
+      "ServiceUri": "https://vc3prerelease.blob.core.windows.net",
+      "Modules": []
+    },
+    {
       "Name": "GithubReleases",
       "ModuleSources": ["https://raw.githubusercontent.com/VirtoCommerce/vc-modules/master/modules_v3.json"],
       "Modules": [
         {
-          "Id": "VirtoCommerce.Contentful",
-          "Version": "3.805.0"
+          "Id": "VirtoCommerce.Loyalty",
+          "Version": "3.1000.0"
         },
         {
           "Id": "VirtoCommerce.ElasticSearch",
           "Version": "3.806.0"
-        },
-        {
-          "Id": "VirtoCommerce.ElasticAppSearch",
-          "Version": "3.816.0"
         },
         {
           "Id": "VirtoCommerce.XFrontend",
@@ -62,10 +64,6 @@
           "Version": "4.1000.0"
         },
         {
-          "Id": "VirtoCommerce.Content",
-          "Version": "3.1000.0"
-        },
-        {
           "Id": "VirtoCommerce.Return",
           "Version": "3.1000.0"
         },
@@ -75,10 +73,6 @@
         },
         {
           "Id": "VirtoCommerce.AuthorizeNetPayment",
-          "Version": "3.1000.0"
-        },
-        {
-          "Id": "VirtoCommerce.SqlQueries",
           "Version": "3.1000.0"
         },
         {
@@ -110,10 +104,6 @@
           "Version": "3.1000.0"
         },
         {
-          "Id": "VirtoCommerce.XPickup",
-          "Version": "3.1000.0"
-        },
-        {
           "Id": "VirtoCommerce.CustomerExportImport",
           "Version": "3.1000.0"
         },
@@ -132,10 +122,6 @@
         {
           "Id": "VirtoCommerce.WhiteLabeling",
           "Version": "3.1001.0"
-        },
-        {
-          "Id": "VirtoCommerce.Sanity",
-          "Version": "3.1000.0"
         },
         {
           "Id": "VirtoCommerce.Tax",
@@ -234,10 +220,6 @@
           "Version": "3.1001.0"
         },
         {
-          "Id": "VirtoCommerce.Orders",
-          "Version": "3.1005.0"
-        },
-        {
           "Id": "VirtoCommerce.Marketing",
           "Version": "3.1003.0"
         },
@@ -282,20 +264,8 @@
           "Version": "3.1001.0"
         },
         {
-          "Id": "VirtoCommerce.PageBuilderModule",
-          "Version": "3.1007.0"
-        },
-        {
           "Id": "VirtoCommerce.Catalog",
           "Version": "3.1020.0"
-        },
-        {
-          "Id": "VirtoCommerce.XOrder",
-          "Version": "3.1003.0"
-        },
-        {
-          "Id": "VirtoCommerce.EventBus",
-          "Version": "3.1006.0"
         },
         {
           "Id": "VirtoCommerce.Shipping",
@@ -310,16 +280,8 @@
           "Version": "3.1004.0"
         },
         {
-          "Id": "VirtoCommerce.BuilderIO",
-          "Version": "3.1001.0"
-        },
-        {
           "Id": "VirtoCommerce.Customer",
           "Version": "3.1007.0"
-        },
-        {
-          "Id": "VirtoCommerce.XCart",
-          "Version": "3.1010.0"
         },
         {
           "Id": "VirtoCommerce.ProfileExperienceApiModule",
@@ -328,14 +290,60 @@
         {
           "Id": "VirtoCommerce.XCatalog",
           "Version": "3.1005.0"
+        },
+        {
+          "Id": "VirtoCommerce.SqlQueries",
+          "Version": "3.1001.0"
+        },
+        {
+          "Id": "VirtoCommerce.XPickup",
+          "Version": "3.1001.0"
+        },
+        {
+          "Id": "VirtoCommerce.Sanity",
+          "Version": "3.1002.0"
+        },
+        {
+          "Id": "VirtoCommerce.BuilderIO",
+          "Version": "3.1002.0"
+        },
+        {
+          "Id": "VirtoCommerce.PageBuilderModule",
+          "Version": "3.1009.0"
+        },
+        {
+          "Id": "VirtoCommerce.Contentful",
+          "Version": "3.1001.0"
+        },
+        {
+          "Id": "VirtoCommerce.Orders",
+          "Version": "3.1007.0"
+        },
+        {
+          "Id": "VirtoCommerce.XOrder",
+          "Version": "3.1004.0"
+        },
+        {
+          "Id": "VirtoCommerce.ProductSnapshot",
+          "Version": "3.1000.0"
+        },
+        {
+          "Id": "VirtoCommerce.Content",
+          "Version": "3.1001.0"
+        },
+        {
+          "Id": "VirtoCommerce.EventBus",
+          "Version": "3.1007.0"
+        },
+        {
+          "Id": "VirtoCommerce.XCart",
+          "Version": "3.1011.0"
+        },
+        {
+          "Id": "VirtoCommerce.ElasticAppSearch",
+          "Version": "3.1000.0"
         }
       ]
-    },
-    {
-      "Name": "AzureBlob",
-      "Container": "packages",
-      "ServiceUri": "https://vc3prerelease.blob.core.windows.net",
-      "Modules": []
     }
   ]
 }

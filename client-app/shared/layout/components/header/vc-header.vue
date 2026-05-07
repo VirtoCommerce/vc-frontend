@@ -24,8 +24,9 @@
 import { useBreakpoints, useElementBounding, useCssVar } from "@vueuse/core";
 import { computed, ref, watch } from "vue";
 import { useWhiteLabeling, useThemeContext } from "@/core/composables";
-import { BREAKPOINTS, DESKTOP_MENU_MODES } from "@/core/constants";
+import { DESKTOP_MENU_MODES } from "@/core/constants";
 import { useUser } from "@/shared/account";
+import { BREAKPOINTS } from "@/ui-kit/constants";
 import Created from "../print/created.vue";
 import BottomHeader from "./_internal/bottom-header.vue";
 import MegaMenu from "./_internal/mega-menu.vue";

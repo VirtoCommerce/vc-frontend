@@ -912,8 +912,7 @@
         "list_edit_button": "Muokkaa",
         "remove_list_button": "Poista",
         "make_private_button": "Tee yksityiseksi",
-        "share_button": "Jaa",
-        "saved": "Tallennettu"
+        "share_button": "Jaa"
       },
       "list_details": {
         "add_all_to_cart_button": "Lisää kaikki ostoskoriin",
