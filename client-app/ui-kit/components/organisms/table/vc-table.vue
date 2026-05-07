@@ -144,8 +144,8 @@
             :style="resolvedRowStyle(item, rowIndex)"
             :tabindex="hasRowClickListener ? 0 : undefined"
             :role="hasRowClickListener ? 'button' : undefined"
-            @click="$emit('rowClick', item, rowIndex)"
-            @keydown.enter="$emit('rowClick', item, rowIndex)"
+            @click="hasRowClickListener && $emit('rowClick', item, rowIndex)"
+            @keydown.enter="hasRowClickListener && $emit('rowClick', item, rowIndex)"
           >
             <td
               v-for="column in orderedColumns"
@@ -321,7 +321,7 @@ const sortedChildColumnRegistrations = computed<VcTableColumnRegistrationType[]>
   const registrations = Array.from(childColumns.value.values());
 
   const fallback = registrations.length;
-  return registrations.sort((a, b) => {
+  return registrations.toSorted((a, b) => {
     const aIdx = order.indexOf(a.column.id);
     const bIdx = order.indexOf(b.column.id);
 
