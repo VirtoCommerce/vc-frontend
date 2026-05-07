@@ -903,7 +903,8 @@ export const RowInlineStyle: StoryType = {
     components: { VcTable, VcTableColumn, VcBadge },
     setup: () => {
       const rowStyle = (item: Record<string, unknown>) => ({
-        opacity: item.status === "Inactive" ? "0.5" : "1",
+        color: item.status === "Inactive" ? "var(--color-neutral-500)" : "var(--color-neutral-900)",
+        pointerEvents: item.status === "Inactive" ? "none" : "auto",
       });
       return { args, rowStyle };
     },
