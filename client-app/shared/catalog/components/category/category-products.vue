@@ -18,20 +18,8 @@
       </div>
 
       <div
-        :class="[
-          'category-products__list',
-          {
-            'category-products__list--list': savedViewMode === 'list',
-            'category-products__list--grid': savedViewMode === 'grid',
-          },
-        ]"
-        :data-test-id="
-          savedViewMode === 'list'
-            ? 'category-page.products-list-view'
-            : savedViewMode === 'grid'
-              ? 'category-page.products-grid-view'
-              : ''
-        "
+        :class="`category-products__list category-products__list--${savedViewMode}`"
+        :data-test-id="`products-${savedViewMode}-view`"
       >
         <template v-if="fetchingProducts">
           <component :is="skeletonComponent" v-for="i in itemsPerPage" :key="i" />
@@ -105,9 +93,10 @@
 import { useBreakpoints } from "@vueuse/core";
 import { computed, toRef } from "vue";
 import { useBrowserTarget } from "@/core/composables";
-import { BREAKPOINTS, DEFAULT_PAGE_SIZE, PAGE_LIMIT } from "@/core/constants";
+import { DEFAULT_PAGE_SIZE, PAGE_LIMIT } from "@/core/constants";
 import { ProductCard, ProductSkeletonGrid, ProductSkeletonList } from "@/shared/catalog/components";
 import { CATALOG_PAGINATION_MODES } from "@/shared/catalog/constants/catalog";
+import { BREAKPOINTS } from "@/ui-kit/constants";
 import type { Product } from "@/core/api/graphql/types";
 import type { CatalogPaginationModeType } from "@/shared/catalog/types/catalog";
 

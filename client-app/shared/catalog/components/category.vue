@@ -63,9 +63,9 @@
           </span>
 
           <sup v-if="showProductsCount" class="category__products-count">
-            <b class="me-1" data-test-id="category-page.total-products-count">{{
-              $n(totalProductsCount, "decimal")
-            }}</b>
+            <b class="me-1" data-test-id="products-count-label">
+              {{ $n(totalProductsCount, "decimal") }}
+            </b>
 
             <template v-if="currentCategory && searchQueryParam">
               {{ $t("pages.catalog.products_found_message_search", totalProductsCount) }}
@@ -121,7 +121,7 @@
               v-if="!hideViewModeSelector"
               v-model:mode="savedViewMode"
               class="category__view-mode"
-              data-test-id="category-page.view-switcher"
+              data-test-id="view-switcher"
             />
 
             <!-- In stock and branches -->
@@ -228,7 +228,7 @@ import { useRoute, useRouter } from "vue-router";
 import { useAnalytics, useThemeContext } from "@/core/composables";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
-import { BREAKPOINTS, DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
+import { DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { QueryParamName } from "@/core/enums";
 import { globals } from "@/core/globals";
@@ -246,6 +246,7 @@ import { CATALOG_PAGINATION_MODES, CatalogControl } from "@/shared/catalog/const
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar.ts";
 import { useSearchScore } from "@/shared/layout/composables/useSearchScore.ts";
 import { LOCAL_ID_PREFIX, useShipToLocation } from "@/shared/ship-to-location/composables";
+import { BREAKPOINTS } from "@/ui-kit/constants";
 import { useCategory, useProducts } from "../composables";
 import CategorySelector from "./category-selector.vue";
 import ProductsFilters from "./products-filters.vue";

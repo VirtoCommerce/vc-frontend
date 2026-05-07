@@ -194,7 +194,8 @@
       "min_value": "最小値は{value}です",
       "empty_wish_list": "リストが空です",
       "not_defined": "未定義",
-      "invalid_coupon": "無効なクーポンです",
+      "invalid_coupon": "このコードは無効です",
+      "failed_coupon": "クーポンの適用に失敗しました。もう一度お試しください。",
       "fill_all_required": "必須項目を入力してください",
       "something_went_wrong": "エラーが発生しました。後でもう一度お試しください。",
       "checkout_pricing_warning": "在庫、配送、税金、プロモーションは注文を完了するまで確定されません。",
@@ -235,7 +236,6 @@
       "password": "パスワードを入力",
       "confirm_password": "パスワードを確認",
       "purchase_order_number": "発注番号を入力",
-      "promotion_code": "クーポンコードを入力",
       "select_credit_card": "カードを選択"
     },
     "links": {
@@ -644,6 +644,13 @@
         "title": "構成部品リスト",
         "edit_configuration": "構成を編集",
         "selected_text": "選択されたテキスト：{text}"
+      },
+      "coupons_section": {
+        "title": "割引 & クーポン",
+        "expires": "@:shared.account.promotion_coupons.expires",
+        "custom_code": "カスタムコード",
+        "enter_custom_code": "カスタムコードを入力",
+        "all_coupons": "すべてのクーポンとプロモーションを表示"
       }
     },
     "catalog": {
@@ -698,7 +705,6 @@
           "changed_confirmation": "商品の設定が変更されました。保存しますか？",
           "check_your_configuration": "製品構成を確認してください",
           "required_section": "セクションは必須です",
-          "max_length_exceeded": "テキストは {max} 文字を超えることはできません",
           "optional_no_selected": "さらに選択をパーソナライズ（任意）",
           "required_no_selected": "すべての必須オプションを選択して、完了してください",
           "section-text-fieldset": {

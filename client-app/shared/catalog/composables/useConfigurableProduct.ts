@@ -5,6 +5,7 @@ import { apolloClient, getConfigurationItems, getProductConfiguration } from "@/
 import { ChangeCartConfiguredItemDocument, CreateConfiguredLineItemDocument } from "@/core/api/graphql/types";
 import { getMergeStrategyUniqueBy, useMutationBatcher } from "@/core/composables";
 import { LINE_ITEM_ID_URL_SEARCH_PARAM } from "@/core/constants";
+import { ValidationErrorObjectType } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { createSharedComposableByArgs, getUrlSearchParam, Logger } from "@/core/utilities";
 import { toCSV } from "@/core/utilities/common";
@@ -21,7 +22,10 @@ import type {
 } from "@/core/api/graphql/types";
 import type { DeepReadonly, MaybeRef } from "vue";
 
-type SectionValueType = Omit<CartConfigurationItemType, "id">;
+type SectionValueType = Pick<
+  CartConfigurationItemType,
+  "sectionId" | "type" | "productId" | "quantity" | "customText" | "files"
+>;
 
 type SelectedConfigurationType = {
   productId: string | undefined;
@@ -64,6 +68,27 @@ function _useConfigurableProduct(configurableProductId: MaybeRef<string>) {
 
   const loading = computed(() => fetching.value || creating.value || changeCartConfiguredItemLoading.value);
 
+  /**
+   * Whether all visible required configuration sections have valid values.
+   * Read-only check — does NOT mutate validationErrors (safe for use in computed/template bindings).
+   */
+  const isRequiredConfigurationComplete = computed(() => {
+    if (configuration.value.length === 0) {
+      return false;
+    }
+    const valueMap = new Map(selectedConfigurationValue.value.map((v) => [v.sectionId, v]));
+    return configuration.value.every((section) => {
+      if (!isSectionVisible(section.id)) {
+        return true;
+      }
+      if (!section.isRequired) {
+        const value = valueMap.get(section.id);
+        return !value || validateValue(section.id, value).isValid;
+      }
+      return validateValue(section.id, valueMap.get(section.id)).isValid;
+    });
+  });
+
   const isConfigurationChanged = computed(() => {
     if (initialSelectedConfigurationInput.value.length !== selectedConfigurationValue.value.length) {
       return true;
@@ -76,6 +101,40 @@ function _useConfigurableProduct(configurableProductId: MaybeRef<string>) {
   const selectedConfigurationInput = computed(() => {
     return selectedConfigurationValue.value.map((value) => preselectedValueToInputSection(value));
   });
+
+  const hiddenSectionIds = computed(() => {
+    const hidden = new Set<string>();
+    // Iterate until stable — handles transitive dependencies (A depends on B depends on C).
+    // Bounded by section count to guard against circular dependency in backend data.
+    let changed = true;
+    let iterations = 0;
+    const maxIterations = configuration.value.length;
+    const valueMap = new Map(selectedConfigurationValue.value.map((v) => [v.sectionId, v]));
+    while (changed && iterations < maxIterations) {
+      changed = false;
+      iterations++;
+      for (const section of configuration.value) {
+        if (hidden.has(section.id)) {
+          continue;
+        }
+        if (!section.dependsOnSectionId) {
+          continue;
+        }
+        const dependsOnHidden = hidden.has(section.dependsOnSectionId);
+        const dependsOnEmpty =
+          !dependsOnHidden && isEmptyValue(section.dependsOnSectionId, valueMap.get(section.dependsOnSectionId));
+        if (dependsOnHidden || dependsOnEmpty) {
+          hidden.add(section.id);
+          changed = true;
+        }
+      }
+    }
+    return hidden;
+  });
+
+  function isSectionVisible(sectionId: string) {
+    return !hiddenSectionIds.value.has(sectionId);
+  }
 
   const selectedConfiguration = computed(() => {
     return selectedConfigurationValue.value
@@ -98,7 +157,11 @@ function _useConfigurableProduct(configurableProductId: MaybeRef<string>) {
     const index = selectedConfigurationValue.value?.findIndex((section) => section.sectionId === payload.sectionId);
     if (index !== -1) {
       const newValue = [...selectedConfigurationValue.value];
-      isEmptyValue(payload.sectionId, payload) ? newValue.splice(index, 1) : newValue.splice(index, 1, payload);
+      if (isEmptyValue(payload.sectionId, payload)) {
+        newValue.splice(index, 1);
+      } else {
+        newValue.splice(index, 1, payload);
+      }
       selectedConfigurationValue.value = newValue;
     } else {
       selectedConfigurationValue.value = [...selectedConfigurationValue.value, payload];
@@ -107,8 +170,23 @@ function _useConfigurableProduct(configurableProductId: MaybeRef<string>) {
 
   function selectSectionValue(payload: SectionValueType) {
     changeSelectionValue(payload);
+
+    // Clear values & errors of sections that become hidden due to this change
+    clearHiddenSectionValues();
+
     void createConfiguredLineItem();
     validateSection(payload.sectionId);
+  }
+
+  function clearHiddenSectionValues() {
+    const hidden = new Set(hiddenSectionIds.value);
+    if (hidden.size === 0) {
+      return;
+    }
+    selectedConfigurationValue.value = selectedConfigurationValue.value.filter((v) => !hidden.has(v.sectionId));
+    for (const sectionId of hidden) {
+      validationErrors.value.delete(sectionId);
+    }
   }
 
   function getSelectedOptionTextValue(section: SectionValueType, sectionId: string) {
@@ -142,18 +220,10 @@ function _useConfigurableProduct(configurableProductId: MaybeRef<string>) {
           : { isValid, error: t("shared.catalog.product_details.product_configuration.required_section") };
       }
       case CONFIGURABLE_SECTION_TYPES.text: {
-        if (section.isRequired && !value?.customText?.trim()) {
-          return { isValid: false, error: t("shared.catalog.product_details.product_configuration.required_section") };
-        }
-        if (section.maxLength && value?.customText && value.customText.length > section.maxLength) {
-          return {
-            isValid: false,
-            error: t("shared.catalog.product_details.product_configuration.max_length_exceeded", {
-              max: section.maxLength,
-            }),
-          };
-        }
-        return { isValid: true };
+        const isValid = !section.isRequired || !!value?.customText?.trim();
+        return isValid
+          ? { isValid }
+          : { isValid, error: t("shared.catalog.product_details.product_configuration.required_section") };
       }
       case CONFIGURABLE_SECTION_TYPES.file: {
         const isValid = !section.isRequired || !!value?.files?.length;
@@ -175,6 +245,13 @@ function _useConfigurableProduct(configurableProductId: MaybeRef<string>) {
     if (!section) {
       return;
     }
+
+    // Skip validation for hidden sections — they are not shown to the user
+    if (!isSectionVisible(section.id)) {
+      validationErrors.value.delete(section.id);
+      return;
+    }
+
     const input = selectedConfigurationValue.value.find((value) => value.sectionId === section.id);
 
     if (!input && section.isRequired) {
@@ -238,6 +315,29 @@ function _useConfigurableProduct(configurableProductId: MaybeRef<string>) {
       mergeStrategy: getMergeStrategyUniqueBy("sectionId"),
     },
   );
+
+  function hasConfiguredItemValidationErrors(
+    cartResult:
+      | {
+          validationErrors?: Array<{ objectType?: string; objectId?: string }>;
+          items?: Array<{ id: string; productId: string; validationErrors?: Array<unknown> }>;
+        }
+      | undefined,
+    lineItemId: string,
+  ) {
+    const hasCartLevelErrors =
+      cartResult?.validationErrors?.some(
+        (error) =>
+          (error.objectType === ValidationErrorObjectType.CatalogProduct &&
+            error.objectId === unref(configurableProductId)) ||
+          (error.objectType === ValidationErrorObjectType.LineItem && error.objectId === lineItemId),
+      ) ?? false;
+    const hasLineItemErrors =
+      cartResult?.items?.some((item) => item.id === lineItemId && Boolean(item.validationErrors?.length)) ?? false;
+
+    return hasCartLevelErrors || hasLineItemErrors;
+  }
+
   async function createConfiguredLineItem() {
     creating.value = true;
     try {
@@ -295,8 +395,16 @@ function _useConfigurableProduct(configurableProductId: MaybeRef<string>) {
           storeId,
         },
       });
-      initialSelectedConfigurationInput.value = configurationSections ?? [];
-      return result?.data?.changeCartConfiguredItem;
+      const updatedCart = result?.data?.changeCartConfiguredItem as
+        | {
+            validationErrors?: Array<{ objectType?: string; objectId?: string }>;
+            items?: Array<{ id: string; productId: string; validationErrors?: Array<unknown> }>;
+          }
+        | undefined;
+      if (!hasConfiguredItemValidationErrors(updatedCart, lineItemId)) {
+        initialSelectedConfigurationInput.value = configurationSections ?? [];
+      }
+      return updatedCart as ShortCartFragment | undefined;
     } catch (e) {
       Logger.error(`${useConfigurableProduct.name}.${changeCartConfiguredItem.name}`, e);
       throw e;
@@ -337,7 +445,7 @@ function _useConfigurableProduct(configurableProductId: MaybeRef<string>) {
 
   function updateWithDefaultValues() {
     configuration.value.forEach((section) => {
-      if (!section.isRequired) {
+      if (!section.isRequired || !isSectionVisible(section.id)) {
         return;
       }
       switch (section.type) {
@@ -357,7 +465,7 @@ function _useConfigurableProduct(configurableProductId: MaybeRef<string>) {
     });
   }
 
-  function updateWithPreselectedValues(preselectedValues?: CartConfigurationItemType[]) {
+  function updateWithPreselectedValues(preselectedValues?: SectionValueType[]) {
     preselectedValues?.forEach((value) => {
       const section = configuration.value.find(({ id }) => id === value.sectionId);
       const isPreselectedValueValid = !!section && isValidValue(section.id, value);
@@ -397,6 +505,7 @@ function _useConfigurableProduct(configurableProductId: MaybeRef<string>) {
     changeCartConfiguredItemBatched,
     validateSections,
     updateWithPreselectedValues,
+    isSectionVisible,
     markConfigurationAsSaved,
 
     loading: readonly(loading),
@@ -407,6 +516,7 @@ function _useConfigurableProduct(configurableProductId: MaybeRef<string>) {
     configuredLineItem: readonly(configuredLineItem),
     isConfigurationChanged: readonly(isConfigurationChanged),
     validationErrors: readonly(validationErrors),
+    isRequiredConfigurationComplete: readonly(isRequiredConfigurationComplete),
   };
 }
 

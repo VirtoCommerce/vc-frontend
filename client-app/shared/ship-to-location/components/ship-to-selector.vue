@@ -99,7 +99,11 @@
                     selectAddress(address);
                     close();
                   "
-                  :data-test-id="`address-${address.id}`"
+                  :data-country="address.countryName"
+                  :data-region="address.regionName"
+                  :data-city="address.city"
+                  :data-line-1="address.line1"
+                  :data-postal-code="address.postalCode"
                 >
                   <VcIcon
                     name="whishlist"

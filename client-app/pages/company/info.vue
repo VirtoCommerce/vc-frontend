@@ -129,7 +129,7 @@
           <VcTable
             :columns="columns"
             :description="$t('pages.company.info.meta.table_description')"
-            :items="paginatedAddresses"
+            :items="addresses"
             :loading="loadingAddresses"
             :page="page"
             :pages="pages"
@@ -215,7 +215,7 @@
             </template>
 
             <template #desktop-body>
-              <tr v-for="address in paginatedAddresses" :key="address.id" class="even:bg-neutral-50">
+              <tr v-for="address in addresses" :key="address.id" class="even:bg-neutral-50">
                 <td class="px-4 py-3 text-center">
                   <VcTooltip placement="bottom-start" width="max-content">
                     <template #trigger>
@@ -299,8 +299,8 @@ import { AddressType, XApiPermissions } from "@/core/enums";
 import { AddressDropdownMenu, useUser } from "@/shared/account";
 import {
   AddOrUpdateCompanyAddressModal,
+  useCurrentOrganizationAddresses,
   useOrganization,
-  useOrganizationAddresses,
   useOrganizationLogo,
 } from "@/shared/company";
 import { useFiles } from "@/shared/files";
@@ -311,8 +311,7 @@ import { fileRequirements } from "@/ui-kit/utilities";
 import type { MemberAddressType } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
 
-const page = ref(1);
-const itemsPerPage = ref(10);
+const ITEMS_PER_PAGE = 10;
 
 const { t } = useI18n();
 
@@ -345,13 +344,14 @@ const { loading: loadingOrganizationLogo, updateLogo } = useOrganizationLogo();
 const {
   addresses,
   sort,
-  fetchAddresses,
+  page,
+  pages,
   removeAddresses,
   addOrUpdateAddresses,
   addAddressToFavorite,
   removeAddressFromFavorite,
   loading: loadingAddresses,
-} = useOrganizationAddresses(organization.value!.id);
+} = useCurrentOrganizationAddresses(() => organization.value!.id, ITEMS_PER_PAGE);
 const { openModal, closeModal } = useModal();
 const notifications = useNotifications();
 
@@ -364,11 +364,6 @@ const {
 
 const organizationId = computed<string>(() => organization.value!.id);
 const canEditOrganization = computed<boolean>(() => checkPermissions(XApiPermissions.CanEditOrganization));
-
-const pages = computed<number>(() => Math.ceil(addresses.value.length / itemsPerPage.value));
-const paginatedAddresses = computed<MemberAddressType[]>(() =>
-  addresses.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value),
-);
 
 const columns = computed<VcTableColumnType[]>(() => {
   const result: VcTableColumnType[] = [
@@ -426,10 +421,9 @@ function onPageChange(newPage: number): void {
   page.value = newPage;
 }
 
-async function applySorting(sortInfo: ISortInfo): Promise<void> {
+function applySorting(sortInfo: ISortInfo): void {
   sort.value = sortInfo;
   page.value = 1;
-  await fetchAddresses();
 }
 
 async function saveOrganizationName(): Promise<void> {
@@ -499,8 +493,6 @@ function openAddOrUpdateCompanyAddressModal(address?: MemberAddressType): void {
     },
   });
 }
-
-void fetchAddresses();
 
 async function saveOrganizationLogo(): Promise<void> {
   await updateLogo(organizationId.value, newLogoUrl.value);
