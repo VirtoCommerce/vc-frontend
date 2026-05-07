@@ -7,8 +7,6 @@ import type { AnyAddressType } from "@/core/types";
 const openModalMock = vi.hoisted(() => vi.fn());
 const closeModalMock = vi.hoisted(() => vi.fn());
 const checkPermissionsMock = vi.hoisted(() => vi.fn());
-const fetchPersonalAddressesMock = vi.hoisted(() => vi.fn().mockResolvedValue(undefined));
-const fetchOrganizationAddressesMock = vi.hoisted(() => vi.fn().mockResolvedValue(undefined));
 const addOrUpdatePersonalAddressesMock = vi.hoisted(() => vi.fn().mockResolvedValue(undefined));
 const addOrUpdateOrganizationAddressesMock = vi.hoisted(() => vi.fn().mockResolvedValue(undefined));
 const updateShipmentMock = vi.hoisted(() => vi.fn().mockResolvedValue(undefined));
@@ -35,18 +33,16 @@ vi.mock("@/shared/account", () => ({
     checkPermissions: checkPermissionsMock,
     user,
   }),
-  useUserAddresses: () => ({
+  useCustomerAddresses: () => ({
     addresses: personalAddresses,
-    fetchAddresses: fetchPersonalAddressesMock,
     addOrUpdateAddresses: addOrUpdatePersonalAddressesMock,
     loading: userAddressesLoading,
   }),
 }));
 
 vi.mock("@/shared/company", () => ({
-  useOrganizationAddresses: () => ({
+  useCurrentOrganizationAddresses: () => ({
     addresses: organizationAddresses,
-    fetchAddresses: fetchOrganizationAddressesMock,
     addOrUpdateAddresses: addOrUpdateOrganizationAddressesMock,
     loading: orgLoading,
   }),
@@ -163,8 +159,6 @@ describe("useShipToLocation composable", () => {
     openModalMock.mockClear();
     closeModalMock.mockClear();
     checkPermissionsMock.mockClear();
-    fetchPersonalAddressesMock.mockClear();
-    fetchOrganizationAddressesMock.mockClear();
     addOrUpdatePersonalAddressesMock.mockClear();
     addOrUpdateOrganizationAddressesMock.mockClear();
     updateShipmentMock.mockClear();
@@ -220,35 +214,6 @@ describe("useShipToLocation composable", () => {
     it("computes user type as personal when authenticated and not corporate", () => {
       const { accountAddresses } = useShipToLocation();
       expect(accountAddresses.value).toEqual(personalAddresses.value);
-    });
-
-    it("calls fetchPersonalAddresses when user is personal", async () => {
-      const { fetchAddresses } = useShipToLocation();
-      await fetchAddresses();
-      expect(fetchPersonalAddressesMock).toHaveBeenCalled();
-      expect(fetchOrganizationAddressesMock).not.toHaveBeenCalled();
-    });
-
-    it("calls fetchOrganizationAddresses when user is corporate", async () => {
-      isCorporateMember.value = true;
-      checkPermissionsMock.mockReturnValue(true);
-
-      const { fetchAddresses } = useShipToLocation();
-      await fetchAddresses();
-
-      // Verify organization addresses are fetched for corporate users with exact call check
-      expect(fetchOrganizationAddressesMock).toHaveBeenCalled();
-      expect(fetchPersonalAddressesMock).not.toHaveBeenCalled();
-    });
-
-    it("does not call any fetch method when user is anonymous", async () => {
-      isAuthenticated.value = false;
-
-      const { fetchAddresses } = useShipToLocation();
-      await fetchAddresses();
-
-      expect(fetchPersonalAddressesMock).not.toHaveBeenCalled();
-      expect(fetchOrganizationAddressesMock).not.toHaveBeenCalled();
     });
   });
 
@@ -792,31 +757,6 @@ describe("useShipToLocation composable", () => {
   });
 
   describe("Error Handling", () => {
-    it("handles fetchAddresses error gracefully without altering existing personalAddresses", async () => {
-      // Set initial personal addresses
-      personalAddresses.value = [
-        {
-          id: "addr1",
-          line1: "Test Address",
-          line2: "",
-          city: "City",
-          regionName: "Region",
-          countryName: "Country",
-          postalCode: "0000",
-        },
-      ];
-      // Simulate error in fetchPersonalAddresses
-      fetchPersonalAddressesMock.mockRejectedValue(new Error("Test error"));
-      const { fetchAddresses } = useShipToLocation();
-      try {
-        await fetchAddresses();
-      } catch {
-        // swallow error
-      }
-      expect(personalAddresses.value).toHaveLength(1);
-      expect(personalAddresses.value[0].id).toBe("addr1");
-    });
-
     it("handles fetchAddresses error for corporate user gracefully", () => {
       isCorporateMember.value = true;
       checkPermissionsMock.mockReturnValue(true);

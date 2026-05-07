@@ -160,7 +160,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { computed, ref } from "vue";
 import { XApiPermissions } from "@/core/enums";
 import { useUser } from "@/shared/account";
 import { AddressLine } from "@/shared/common";
@@ -182,7 +182,6 @@ const {
   organizationsAddresses,
   getFilteredAddresses,
   getLimitedAddresses,
-  fetchAddresses,
   selectAddress,
   openAddOrUpdateAddressModal,
 } = useShipToLocation();
@@ -204,10 +203,6 @@ const canAddNewAddress = computed(
     checkPermissions(XApiPermissions.CanEditOrganization) ||
     (!checkPermissions(XApiPermissions.CanEditOrganization) && organizationsAddresses.value.length === 0),
 );
-
-onMounted(() => {
-  void fetchAddresses();
-});
 </script>
 
 <style lang="scss">

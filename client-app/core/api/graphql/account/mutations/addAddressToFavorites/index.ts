@@ -1,5 +1,11 @@
-import { AddAddressToFavoritesDocument } from "@/core/api/graphql/types";
-import { graphqlClient } from "../../../client";
+import { AddAddressToFavoritesDocument, OperationNames } from "@/core/api/graphql/types";
+import { filterActiveQueryNames } from "@/core/api/graphql/utils";
+import { apolloClient, graphqlClient } from "../../../client";
+
+const ADDRESS_LIST_QUERIES = [
+  OperationNames.Query.GetCurrentUserAddresses,
+  OperationNames.Query.GetCurrentOrganizationAddresses,
+];
 
 export async function addAddressToFavorites(addressId: string) {
   await graphqlClient.mutate({
@@ -9,5 +15,9 @@ export async function addAddressToFavorites(addressId: string) {
         addressId,
       },
     },
+  });
+
+  await apolloClient.refetchQueries({
+    include: filterActiveQueryNames(apolloClient, ADDRESS_LIST_QUERIES),
   });
 }
