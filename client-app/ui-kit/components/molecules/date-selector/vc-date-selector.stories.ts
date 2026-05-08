@@ -131,7 +131,7 @@ export const WithMinMax: StoryType = {
       modelValue: today,
     };
   })(),
-  storyName: "With Min/Max Constraints",
+  name: "With Min/Max Constraints",
   parameters: {
     docs: {
       description: {
@@ -163,7 +163,7 @@ export const OutOfRangeValidation: StoryType = {
       modelValue: `${currentYear}-${currentMonth}-10`, // This date is before min
     };
   })(),
-  storyName: "Out of Range Validation",
+  name: "Out of Range Validation",
   parameters: {
     docs: {
       description: {
@@ -190,7 +190,7 @@ export const WithDateTime: StoryType = {
       modelValue: `${currentYear}-${currentMonth}-17`,
     };
   })(),
-  storyName: "Min/Max with DateTime (Auto-normalized)",
+  name: "Min/Max with DateTime (Auto-normalized)",
   parameters: {
     docs: {
       description: {

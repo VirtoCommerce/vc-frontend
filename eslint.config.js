@@ -263,7 +263,7 @@ export default defineConfigWithVueTs(
               message: "Please import useFetch from @/core/api/common instead",
             },
             {
-              name: "@vueuse/integrations/useAxios.mjs",
+              name: "@vueuse/integrations/useAxios",
               importNames: ["useAxios"],
               message: "Please import useAxios from @/core/api/common instead",
             },
