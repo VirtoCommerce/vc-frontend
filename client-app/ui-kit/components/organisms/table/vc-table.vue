@@ -65,11 +65,7 @@
                 :style="getColumnStyle(column)"
               >
                 <!-- Custom per-column header slot -->
-                <HeaderCellRenderer
-                  v-if="getColumnHeaderSlot(column.id)"
-                  :slot-fn="getColumnHeaderSlot(column.id)"
-                  :column="column"
-                />
+                <HeaderCellRenderer v-if="column.headerSlotFn" :slot-fn="column.headerSlotFn" :column="column" />
 
                 <button
                   v-else-if="column.sortable && sort"
@@ -158,12 +154,7 @@
               ]"
               :style="getColumnStyle(column)"
             >
-              <CellRenderer
-                v-if="getColumnSlot(column.id)"
-                :slot-fn="getColumnSlot(column.id)"
-                :item="item"
-                :index="rowIndex"
-              />
+              <CellRenderer v-if="column.slotFn" :slot-fn="column.slotFn" :item="item" :index="rowIndex" />
             </td>
           </tr>
         </tbody>
@@ -397,25 +388,21 @@ const mergedColumns = computed<VcTableColumnType[]>(() => {
   return result;
 });
 
-// Reorder columns: fixed-start → normal → fixed-end
-// This ensures fixed columns are always at the edges, regardless of template order
-const orderedColumns = computed<VcTableColumnType[]>(() => {
-  const cols = mergedColumns.value;
-  const start = cols.filter((col) => col.fixed === "start");
-  const center = cols.filter((col) => !col.fixed);
-  const end = cols.filter((col) => col.fixed === "end");
+// Reorder columns: fixed-start → normal → fixed-end, and attach resolved slots
+// per column to avoid repeated Map lookups in the template (header + each cell).
+// This ensures fixed columns are always at the edges, regardless of template order.
+const orderedColumns = computed<
+  Array<VcTableColumnType & { slotFn?: VcTableColumnSlotFnType; headerSlotFn?: VcTableColumnHeaderSlotFnType }>
+>(() => {
+  const withSlots = mergedColumns.value.map((col) => {
+    const reg = childColumns.value.get(col.id);
+    return { ...col, slotFn: reg?.slot, headerSlotFn: reg?.headerSlot };
+  });
+  const start = withSlots.filter((col) => col.fixed === "start");
+  const center = withSlots.filter((col) => !col.fixed);
+  const end = withSlots.filter((col) => col.fixed === "end");
   return [...start, ...center, ...end];
 });
-
-// Get column slot by column id
-function getColumnSlot(columnId: string): VcTableColumnSlotFnType | undefined {
-  return childColumns.value.get(columnId)?.slot;
-}
-
-// Get column header slot by column id
-function getColumnHeaderSlot(columnId: string): VcTableColumnHeaderSlotFnType | undefined {
-  return childColumns.value.get(columnId)?.headerSlot;
-}
 
 // Detect edge fixed columns for shadow rendering
 const lastFixedStartId = computed<string | undefined>(() => {
