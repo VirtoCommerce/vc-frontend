@@ -5,10 +5,9 @@ import browserslistToEsbuild from "browserslist-to-esbuild";
 import { visualizer } from "rollup-plugin-visualizer";
 import { defineConfig, loadEnv } from "vite";
 import { checker } from "vite-plugin-checker";
-import mkcertImport from "vite-plugin-mkcert";
+import mkcert from "vite-plugin-mkcert";
 import type { ProxyOptions, UserConfig, PluginOption } from "vite";
 
-const mkcert = mkcertImport.default ?? mkcertImport;
 const graphql = graphqlImport.default ?? graphqlImport;
 
 function getProxy(target: ProxyOptions["target"], options: Omit<ProxyOptions, "target"> = {}): ProxyOptions {
