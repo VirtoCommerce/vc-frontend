@@ -1,5 +1,10 @@
 <template>
   <div class="vc-table">
+    <!-- Hidden container for VcTableColumn children (renderless, needed for provide/inject registration) -->
+    <div v-show="false" aria-hidden="true">
+      <slot />
+    </div>
+
     <!-- Mobile table view -->
     <div v-if="isMobile && $slots['mobile-item']" class="vc-table__mobile">
       <!-- Mobile skeleton view -->
@@ -18,12 +23,19 @@
       <slot v-else-if="!items.length" name="mobile-empty" />
 
       <!-- Mobile item view -->
-      <slot v-else v-for="(item, index) in items" :key="item.id || index" name="mobile-item" :item="item" />
+      <slot v-else v-for="(item, index) in items" :key="getItemKey(item, index)" name="mobile-item" :item="item" />
     </div>
 
     <!-- Desktop table view -->
-    <VcScrollbar v-else :horizontal="scrollable" class="vc-table__scrollbar">
-      <table class="vc-table__desktop">
+    <VcScrollbar
+      v-else
+      :horizontal="scrollable"
+      :vertical="!!maxHeight"
+      :focusable="scrollable || !!maxHeight"
+      :style="scrollbarStyle"
+      class="vc-table__scrollbar"
+    >
+      <table :class="['vc-table__desktop', { 'vc-table__desktop--scrollable': scrollable }]">
         <caption v-if="description" class="vc-table__caption">
           {{
             description
@@ -31,10 +43,13 @@
         </caption>
 
         <slot name="header">
-          <thead v-if="!hideDefaultHeader && columns.length" class="vc-table__head">
-            <tr class="vc-table__row">
+          <thead
+            v-if="!hideDefaultHeader && orderedColumns.length"
+            :class="['vc-table__head', { 'vc-table__head--sticky': stickyHeader || maxHeight }]"
+          >
+            <tr class="vc-table__head-row">
               <th
-                v-for="column in columns"
+                v-for="column in orderedColumns"
                 :key="column.id"
                 scope="col"
                 :aria-sort="getAriaSort(column.id)"
@@ -44,11 +59,16 @@
                   {
                     'vc-table__title--sortable': column.sortable,
                   },
+                  getColumnFixedClasses(column, 'vc-table__title'),
                   column.classes,
                 ]"
+                :style="getColumnStyle(column)"
               >
+                <!-- Custom per-column header slot -->
+                <HeaderCellRenderer v-if="column.headerSlotFn" :slot-fn="column.headerSlotFn" :column="column" />
+
                 <button
-                  v-if="column.sortable && sort"
+                  v-else-if="column.sortable && sort"
                   type="button"
                   class="vc-table__sort-button"
                   @click="
@@ -85,13 +105,15 @@
             <!-- Default skeleton template -->
             <tr v-for="row in skeletonRows" :key="row" class="vc-table__skeleton">
               <td
-                v-for="column in columns"
+                v-for="column in orderedColumns"
                 :key="column.id"
                 :class="[
                   'vc-table__skeleton-cell',
                   `vc-table__skeleton-cell--align--${column.align ?? 'left'}`,
+                  getColumnFixedClasses(column, 'vc-table__skeleton-cell'),
                   column.classes,
                 ]"
+                :style="getColumnStyle(column)"
               >
                 <div class="vc-table__skeleton-item" />
               </td>
@@ -109,9 +131,37 @@
           <slot name="desktop-body" />
         </tbody>
 
+        <!-- Desktop table view with VcTableColumn slots -->
+        <tbody v-else-if="items.length && hasColumnSlots" class="vc-table__body">
+          <tr
+            v-for="(item, rowIndex) in items"
+            :key="getItemKey(item, rowIndex)"
+            :class="['vc-table__row', resolvedRowClass(item, rowIndex)]"
+            :style="resolvedRowStyle(item, rowIndex)"
+            :tabindex="hasRowClickListener ? 0 : undefined"
+            :role="hasRowClickListener ? 'button' : undefined"
+            @click="hasRowClickListener && $emit('rowClick', item, rowIndex)"
+            @keydown.enter="hasRowClickListener && $emit('rowClick', item, rowIndex)"
+          >
+            <td
+              v-for="column in orderedColumns"
+              :key="column.id"
+              :class="[
+                'vc-table__cell',
+                `vc-table__cell--align--${column.align ?? 'left'}`,
+                getColumnFixedClasses(column, 'vc-table__cell'),
+                column.classes,
+              ]"
+              :style="getColumnStyle(column)"
+            >
+              <CellRenderer v-if="column.slotFn" :slot-fn="column.slotFn" :item="item" :index="rowIndex" />
+            </td>
+          </tr>
+        </tbody>
+
         <!-- Desktop table item view -->
         <tbody v-else-if="items.length && $slots['desktop-item']" class="vc-table__body">
-          <slot v-for="(item, index) in items" :key="item.id || index" name="desktop-item" :item="item" />
+          <slot v-for="(item, index) in items" :key="getItemKey(item, index)" name="desktop-item" :item="item" />
         </tbody>
       </table>
     </VcScrollbar>
@@ -129,7 +179,7 @@
           v-if="!hideDefaultFooter && items.length && pages > 1"
           :page="page"
           :pages="Math.min(pages, pageLimit || pages)"
-          @update:page="onPageUpdate"
+          @update:page="$emit('pageChanged', $event)"
         />
       </div>
     </slot>
@@ -138,12 +188,26 @@
 
 <script setup lang="ts" generic="T extends VcTableItemType">
 import { useBreakpoints } from "@vueuse/core";
-import { computed } from "vue";
+import {
+  computed,
+  defineComponent,
+  Fragment,
+  getCurrentInstance,
+  onMounted,
+  onUpdated,
+  provide,
+  ref,
+  useSlots,
+} from "vue";
 import { BREAKPOINTS, TABLE_SKELETON_ROWS_SIZE, TABLE_PAGE_LIMIT } from "@/ui-kit/constants";
+import VcTableColumn from "./vc-table-column.vue";
+import { vcTableKey } from "./vc-table-context";
+import type { PropType, VNode } from "vue";
 
-const emit = defineEmits<{
+defineEmits<{
   (event: "headerClick", item: VcTableSortInfoType): void;
   (event: "pageChanged", page: number): void;
+  (event: "rowClick", item: T, index: number): void;
 }>();
 
 const props = withDefaults(
@@ -163,6 +227,32 @@ const props = withDefaults(
     bordered?: boolean;
     mobileBordered?: boolean;
     scrollable?: boolean;
+    /**
+     * Makes the table header sticky. When used without `maxHeight`, the header
+     * sticks to the top of the viewport during page scroll. When used with
+     * `maxHeight`, the header sticks to the top of the scrollable container.
+     */
+    stickyHeader?: boolean;
+    /**
+     * Maximum height of the table. When set, enables vertical scrolling
+     * within the table container. Automatically enables sticky header.
+     *
+     * @example max-height="400px"
+     * @example max-height="50vh"
+     */
+    maxHeight?: string;
+    /**
+     * Dynamic per-item class for rows. Receives the item and row index.
+     *
+     * @example :row-class="(item) => ({ 'bg-red-100': item.isOverdue })"
+     */
+    rowClass?: string | Record<string, boolean> | ((item: T, index: number) => string | Record<string, boolean>);
+    /**
+     * Dynamic per-item inline style for rows. Receives the item and row index.
+     *
+     * @example :row-style="(item) => ({ opacity: item.isDisabled ? '0.5' : '1' })"
+     */
+    rowStyle?: string | Record<string, string> | ((item: T, index: number) => string | Record<string, string>);
   }>(),
   {
     columns: () => [],
@@ -175,6 +265,247 @@ const props = withDefaults(
   },
 );
 
+const FIXED_COLUMN_DEFAULT_WIDTH = "150px";
+
+// Track columns registered by VcTableColumn children
+const childColumns = ref<Map<string, VcTableColumnRegistrationType>>(new Map());
+
+// Provide context to child VcTableColumn components
+provide<VcTableContextType>(vcTableKey, {
+  registerColumn(
+    column: VcTableColumnType,
+    slot?: VcTableColumnSlotFnType,
+    headerSlot?: VcTableColumnHeaderSlotFnType,
+  ) {
+    childColumns.value.set(column.id, { column, slot, headerSlot });
+  },
+  unregisterColumn(columnId: string) {
+    childColumns.value.delete(columnId);
+  },
+});
+
+// Extract column IDs from slot VNodes in strict template order
+const slots = useSlots();
+
+function extractColumnIds(vnodes: VNode[]): string[] {
+  const ids: string[] = [];
+  for (const node of vnodes) {
+    if (node.type === VcTableColumn && node.props?.id) {
+      ids.push(String(node.props.id));
+    } else if (node.type === Fragment && Array.isArray(node.children)) {
+      ids.push(...extractColumnIds(node.children as VNode[]));
+    }
+  }
+  return ids;
+}
+
+const templateColumnOrder = computed<string[]>(() => {
+  if (!slots.default) {
+    return [];
+  }
+  return extractColumnIds(slots.default());
+});
+
+// Get sorted child column registrations based on template VNode order
+const sortedChildColumnRegistrations = computed<VcTableColumnRegistrationType[]>(() => {
+  const order = templateColumnOrder.value;
+  const registrations = Array.from(childColumns.value.values());
+
+  const fallback = registrations.length;
+  return [...registrations].sort((a, b) => {
+    const aIdx = order.indexOf(a.column.id);
+    const bIdx = order.indexOf(b.column.id);
+
+    // Items not in template order sort to the end; preserve relative order among them
+    return (aIdx === -1 ? fallback : aIdx) - (bIdx === -1 ? fallback : bIdx);
+  });
+});
+
+// Check if any child column has a slot defined (enables slot-based rendering)
+const hasColumnSlots = computed<boolean>(() => {
+  return sortedChildColumnRegistrations.value.some((reg) => reg.slot !== undefined);
+});
+
+// Compute cumulative sticky offsets for fixed columns.
+// Uses calc() to support any CSS unit (px, rem, em, etc.), not just pixels.
+const columnOffsets = computed<Map<string, string>>(() => {
+  const offsets = new Map<string, string>();
+  const cols = orderedColumns.value;
+
+  // Start offsets
+  const startWidths: string[] = [];
+  for (const col of cols) {
+    if (col.fixed === "start") {
+      offsets.set(col.id, startWidths.length ? `calc(${startWidths.join(" + ")})` : "0px");
+      startWidths.push(col.width ?? FIXED_COLUMN_DEFAULT_WIDTH);
+    }
+  }
+
+  // End offsets (iterate from the end)
+  const endWidths: string[] = [];
+  for (let i = cols.length - 1; i >= 0; i--) {
+    const col = cols[i];
+    if (col.fixed === "end") {
+      offsets.set(col.id, endWidths.length ? `calc(${endWidths.join(" + ")})` : "0px");
+      endWidths.push(col.width ?? FIXED_COLUMN_DEFAULT_WIDTH);
+    }
+  }
+
+  return offsets;
+});
+
+// Merge prop columns with child columns
+// Child columns take precedence over prop columns when both exist
+const mergedColumns = computed<VcTableColumnType[]>(() => {
+  // If no child columns, just return prop columns (backward compatibility)
+  if (childColumns.value.size === 0) {
+    return props.columns;
+  }
+
+  // If no prop columns, return child columns sorted by order
+  if (props.columns.length === 0) {
+    return sortedChildColumnRegistrations.value.map((item) => item.column);
+  }
+
+  // Merge: child columns take precedence, maintain child order
+  const usedIds = new Set<string>();
+
+  // Create merged result - child columns define the order and override props
+  const result: VcTableColumnType[] = [];
+
+  for (const childReg of sortedChildColumnRegistrations.value) {
+    result.push(childReg.column);
+    usedIds.add(childReg.column.id);
+  }
+
+  // Add any prop columns not overridden by children (at the end)
+  for (const propCol of props.columns) {
+    if (!usedIds.has(propCol.id)) {
+      result.push(propCol);
+    }
+  }
+
+  return result;
+});
+
+// Reorder columns: fixed-start → normal → fixed-end, and attach resolved slots
+// per column to avoid repeated Map lookups in the template (header + each cell).
+// This ensures fixed columns are always at the edges, regardless of template order.
+const orderedColumns = computed<
+  Array<VcTableColumnType & { slotFn?: VcTableColumnSlotFnType; headerSlotFn?: VcTableColumnHeaderSlotFnType }>
+>(() => {
+  const withSlots = mergedColumns.value.map((col) => {
+    const reg = childColumns.value.get(col.id);
+    return { ...col, slotFn: reg?.slot, headerSlotFn: reg?.headerSlot };
+  });
+  const start = withSlots.filter((col) => col.fixed === "start");
+  const center = withSlots.filter((col) => !col.fixed);
+  const end = withSlots.filter((col) => col.fixed === "end");
+  return [...start, ...center, ...end];
+});
+
+// Detect edge fixed columns for shadow rendering
+const lastFixedStartId = computed<string | undefined>(() => {
+  const cols = orderedColumns.value.filter((col) => col.fixed === "start");
+  return cols.length ? cols[cols.length - 1].id : undefined;
+});
+
+const firstFixedEndId = computed<string | undefined>(() => {
+  return orderedColumns.value.find((col) => col.fixed === "end")?.id;
+});
+
+// Get inline style for fixed (sticky) columns
+function getColumnStyle(column: VcTableColumnType): Record<string, string> | undefined {
+  const offset = columnOffsets.value.get(column.id);
+
+  if (column.fixed && offset !== undefined) {
+    const width = column.width ?? FIXED_COLUMN_DEFAULT_WIDTH;
+    const cssProperty = column.fixed === "start" ? "inset-inline-start" : "inset-inline-end";
+    return { position: "sticky", [cssProperty]: offset, zIndex: "3", width, minWidth: width, maxWidth: width };
+  }
+
+  if (column.width) {
+    return { minWidth: column.width };
+  }
+
+  return undefined;
+}
+
+// Get fixed column CSS classes (fixed flag + edge shadow markers)
+function getColumnFixedClasses(column: VcTableColumnType, baseClass: string): Record<string, boolean> {
+  return {
+    [`${baseClass}--fixed`]: !!column.fixed,
+    [`${baseClass}--fixed--start`]: column.id === lastFixedStartId.value,
+    [`${baseClass}--fixed--end`]: column.id === firstFixedEndId.value,
+  };
+}
+
+// Detect if @row-click listener is bound (for auto cursor-pointer).
+// instance.vnode is non-reactive, so we manually refresh on mount/update to track parent re-renders
+// (covers the case where parent dynamically adds/removes the listener).
+const instance = getCurrentInstance();
+const hasRowClickListener = ref(false);
+
+function syncRowClickListener() {
+  hasRowClickListener.value = !!instance?.vnode.props?.onRowClick;
+}
+
+onMounted(syncRowClickListener);
+onUpdated(syncRowClickListener);
+
+// Resolve row class from VcTable prop
+function resolvedRowClass(item: T, index: number): unknown[] | undefined {
+  let rowClassValue: unknown;
+  if (props.rowClass) {
+    rowClassValue = typeof props.rowClass === "function" ? props.rowClass(item, index) : props.rowClass;
+  }
+  const clickClass = hasRowClickListener.value ? "cursor-pointer" : undefined;
+
+  if (!rowClassValue && !clickClass) {
+    return undefined;
+  }
+
+  return [rowClassValue, clickClass];
+}
+
+// Resolve row style from VcTable prop
+function resolvedRowStyle(item: T, index: number): string | Record<string, string> | undefined {
+  if (!props.rowStyle) {
+    return undefined;
+  }
+
+  if (typeof props.rowStyle === "function") {
+    return props.rowStyle(item, index);
+  }
+
+  return props.rowStyle;
+}
+
+// Stable cell renderer — avoids creating a new functional component identity on every render
+const CellRenderer = defineComponent({
+  props: {
+    slotFn: { type: Function as PropType<VcTableColumnSlotFnType>, default: undefined },
+    item: { type: Object, required: true },
+    index: { type: Number, required: true },
+  },
+
+  setup(p) {
+    return () => p.slotFn?.({ item: p.item, index: p.index });
+  },
+});
+
+// Stable header cell renderer for custom column header slots
+const HeaderCellRenderer = defineComponent({
+  props: {
+    slotFn: { type: Function as PropType<VcTableColumnHeaderSlotFnType>, default: undefined },
+    column: { type: Object as PropType<VcTableColumnType>, required: true },
+  },
+
+  setup(p) {
+    return () => p.slotFn?.({ column: p.column });
+  },
+});
+
 const breakpoints = useBreakpoints(BREAKPOINTS);
 const isMobile = computed(() => {
   if (props.mobileBreakpoint === "none") {
@@ -183,40 +514,94 @@ const isMobile = computed(() => {
   return breakpoints.smaller(props.mobileBreakpoint).value;
 });
 
+const scrollbarStyle = computed(() => {
+  if (props.maxHeight) {
+    return { "--vc-table-max-height": props.maxHeight };
+  }
+  return undefined;
+});
+
 const desktopBorderWidth = computed(() => (props.bordered ? "1px" : "0"));
 const mobileBorderWidth = computed(() => (props.mobileBordered ? "1px" : "0"));
 
 const desktopRadius = computed(() => (props.bordered ? "var(--radius)" : "0"));
 const mobileRadius = computed(() => (props.mobileBordered ? "var(--radius)" : "0"));
 
-function onPageUpdate(newPage: number) {
-  emit("pageChanged", newPage);
-}
-
-function toggleSortDirection(currentDirection: string): VcTableSortDirectionType {
+function toggleSortDirection(currentDirection: VcTableSortDirectionType): VcTableSortDirectionType {
   return currentDirection === "desc" ? "asc" : "desc";
 }
 
-function getAriaSort(columnId: unknown): "ascending" | "descending" | "none" {
+function getAriaSort(columnId: string): "ascending" | "descending" | "none" {
   if (!props.sort || props.sort.column !== columnId) {
     return "none";
   }
 
   return props.sort.direction === "asc" ? "ascending" : "descending";
 }
+
+/**
+ * Gets a unique key for table row rendering.
+ * Tries to use item.id if available, otherwise falls back to index.
+ */
+function getItemKey(item: T, index: number): string {
+  const itemWithId = item as { id?: string | number };
+  return String(itemWithId.id ?? index);
+}
 </script>
 
 <style lang="scss">
 .vc-table {
+  $headSticky: "";
+
+  @mixin column-align {
+    &--align {
+      &--left {
+        @apply text-start;
+      }
+
+      &--center {
+        @apply text-center;
+      }
+
+      &--right {
+        @apply text-end;
+      }
+    }
+  }
+
+  @mixin fixed-column-separators {
+    &--start {
+      &::after {
+        @apply pointer-events-none absolute inset-y-0 right-0 w-0.5 bg-neutral-300;
+
+        content: "";
+      }
+    }
+
+    &--end {
+      &::before {
+        @apply pointer-events-none absolute inset-y-0 left-0 w-0.5 bg-neutral-300;
+
+        content: "";
+      }
+    }
+  }
+  $row: "";
+  $skeleton: "";
+
   --radius: var(--vc-table-radius, var(--vc-radius, 0.5rem));
+  --desktop-radius: v-bind(desktopRadius);
+  --desktop-border-width: v-bind(desktopBorderWidth);
+  --mobile-border-width: v-bind(mobileBorderWidth);
+  --mobile-radius: v-bind(mobileRadius);
 
   &__mobile {
     @apply border-neutral-200;
 
     word-break: break-word;
     border-style: solid;
-    border-width: v-bind(mobileBorderWidth);
-    border-radius: v-bind(mobileRadius);
+    border-width: var(--mobile-border-width);
+    border-radius: var(--mobile-radius);
   }
 
   &__mobile-skeleton {
@@ -238,13 +623,18 @@ function getAriaSort(columnId: unknown): "ascending" | "descending" | "none" {
   &__scrollbar {
     @apply w-full border-neutral-200;
 
+    max-height: var(--vc-table-max-height, none);
     border-style: solid;
-    border-width: v-bind(desktopBorderWidth);
-    border-radius: v-bind(desktopRadius);
+    border-width: var(--desktop-border-width);
+    border-radius: var(--desktop-radius);
   }
 
   &__desktop {
     @apply w-full text-left text-sm;
+
+    &--scrollable {
+      @apply w-auto min-w-full;
+    }
   }
 
   &__caption {
@@ -253,27 +643,35 @@ function getAriaSort(columnId: unknown): "ascending" | "descending" | "none" {
 
   &__head {
     @apply border-b border-neutral-200;
+
+    &--sticky {
+      $headSticky: &;
+
+      @apply sticky z-20 bg-additional-50;
+
+      top: var(--vc-table-sticky-offset, 0px);
+
+      &::after {
+        @apply pointer-events-none absolute inset-x-0 bottom-0 border-b border-neutral-200;
+
+        content: "";
+      }
+    }
   }
 
   &__title {
-    @apply px-4 py-2 font-bold;
+    @apply px-4 py-1 h-10 font-bold;
 
-    &--sortable {
-      @apply cursor-pointer;
-    }
+    @include column-align;
 
-    &--align {
-      &--left {
-        @apply text-start;
+    &--fixed {
+      @apply bg-additional-50;
+
+      #{$headSticky} & {
+        z-index: 30;
       }
 
-      &--center {
-        @apply text-center;
-      }
-
-      &--right {
-        @apply text-end;
-      }
+      @include fixed-column-separators;
     }
   }
 
@@ -283,32 +681,80 @@ function getAriaSort(columnId: unknown): "ascending" | "descending" | "none" {
     &:first-child {
       tr:first-child {
         td:first-child {
-          @apply rounded-tl-[v-bind(desktopRadius)];
+          @apply rounded-tl-[--desktop-radius];
         }
 
         td:last-child {
-          @apply rounded-tr-[v-bind(desktopRadius)];
+          @apply rounded-tr-[--desktop-radius];
         }
       }
     }
 
     tr:last-child {
       td:first-child {
-        @apply rounded-bl-[v-bind(desktopRadius)];
+        @apply rounded-bl-[--desktop-radius];
       }
 
       td:last-child {
-        @apply rounded-br-[v-bind(desktopRadius)];
+        @apply rounded-br-[--desktop-radius];
       }
     }
   }
 
+  &__row {
+    $row: &;
+
+    &:nth-child(even) {
+      @apply bg-neutral-50;
+    }
+
+    &:hover {
+      @apply bg-neutral-200;
+    }
+  }
+
   &__skeleton {
-    @apply even:bg-neutral-50;
+    $skeleton: &;
+
+    &:nth-child(even) {
+      @apply bg-neutral-50;
+    }
   }
 
   &__skeleton-cell {
     @apply px-4 py-3;
+
+    @include column-align;
+
+    &--fixed {
+      @apply bg-additional-50;
+
+      #{$skeleton}:nth-child(even) & {
+        @apply bg-neutral-50;
+      }
+
+      @include fixed-column-separators;
+    }
+  }
+
+  &__cell {
+    @apply px-4 py-3;
+
+    @include column-align;
+
+    &--fixed {
+      @apply bg-additional-50;
+
+      #{$row}:nth-child(even) & {
+        @apply bg-neutral-50;
+      }
+
+      #{$row}:hover & {
+        @apply bg-neutral-200;
+      }
+
+      @include fixed-column-separators;
+    }
   }
 
   &__skeleton-item {
@@ -316,7 +762,7 @@ function getAriaSort(columnId: unknown): "ascending" | "descending" | "none" {
   }
 
   &__sort-button {
-    @apply inline-flex items-center gap-2 p-1 rounded;
+    @apply inline-flex cursor-pointer items-center gap-2 p-1 -m-1 rounded;
   }
 
   &__sort-icon {
