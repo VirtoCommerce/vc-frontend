@@ -1,10 +1,10 @@
-import { eagerComputed } from "@vueuse/core";
+import { computedEager } from "@vueuse/core";
 import { computed, ref, shallowRef, warn } from "vue";
 import type { Slots } from "vue";
 
 const customSlots = shallowRef<Slots>({});
 const isAnimated = ref(false);
-const isSlotsExist = eagerComputed(() => !!Object.keys(customSlots.value).length);
+const isSlotsExist = computedEager(() => !!Object.keys(customSlots.value).length);
 
 function setSlots(slots: Slots) {
   if (isSlotsExist.value) {

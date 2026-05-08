@@ -57,7 +57,7 @@
 </template>
 
 <script setup lang="ts">
-import { eagerComputed } from "@vueuse/core";
+import { computedEager } from "@vueuse/core";
 import { computed, inject, ref } from "vue";
 import { vcDialogKey } from "../../atoms/dialog/vc-dialog-context";
 import type { ComponentPublicInstance } from "vue";
@@ -143,9 +143,9 @@ const _size = computed(() => {
   return "md";
 });
 
-const enabled = eagerComputed<boolean>(() => !props.disabled && !props.loading);
-const isRouterLink = eagerComputed<boolean>(() => !!props.to && enabled.value);
-const isExternalLink = eagerComputed<boolean>(() => !!props.externalLink && enabled.value);
+const enabled = computedEager<boolean>(() => !props.disabled && !props.loading);
+const isRouterLink = computedEager<boolean>(() => !!props.to && enabled.value);
+const isExternalLink = computedEager<boolean>(() => !!props.externalLink && enabled.value);
 
 const target = computed<string | undefined>(() =>
   props.target && (isExternalLink.value || isRouterLink.value) ? props.target : undefined,

@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-import { eagerComputed } from "@vueuse/core";
+import { computedEager } from "@vueuse/core";
 import { computed } from "vue";
 import { useShortCart } from "@/shared/cart/composables";
 
@@ -40,5 +40,5 @@ const lineItemInCart = computed(() => {
   return cart.value?.items.find((item) => item.productId === props.productId);
 });
 
-const countInCart = eagerComputed<number>(() => lineItemInCart.value?.quantity ?? 0);
+const countInCart = computedEager<number>(() => lineItemInCart.value?.quantity ?? 0);
 </script>
