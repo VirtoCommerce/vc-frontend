@@ -36,6 +36,17 @@
       "nav_up": "Upp",
       "nav_down": "Ner"
     },
+    "calendar": {
+      "previous_month": "Previous month",
+      "next_month": "Next month",
+      "previous_year": "Previous year",
+      "next_year": "Next year",
+      "today": "Today",
+      "clear": "Clear",
+      "choose_date": "Choose date",
+      "choose_start_date": "Choose start date",
+      "choose_end_date": "Choose end date"
+    },
     "date_selector": {
       "min_date_error": "Datum måste vara på eller efter {min}",
       "max_date_error": "Datum måste vara på eller före {max}"

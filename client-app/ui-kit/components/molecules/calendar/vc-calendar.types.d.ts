@@ -1,0 +1,13 @@
+declare global {
+  type VcCalendarSizeType = "sm" | "md";
+
+  type VcCalendarFirstDayOfWeekType = 0 | 1 | 2 | 3 | 4 | 5 | 6;
+
+  type VcCalendarWeekdayFormatType = "narrow" | "short" | "long";
+
+  type VcCalendarDisabledDateType = (date: string) => boolean;
+
+  type VcCalendarValueType = string | undefined;
+}
+
+export {};

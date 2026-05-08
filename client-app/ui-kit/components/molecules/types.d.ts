@@ -7,6 +7,7 @@ declare module "vue" {
     VcAlert: typeof Components.VcAlert;
     VcButton: typeof Components.VcButton;
     VcButtonSeeMoreLess: typeof Components.VcButtonSeeMoreLess;
+    VcCalendar: typeof Components.VcCalendar;
     VcCarousel: typeof Components.VcCarousel;
     VcChip: typeof Components.VcChip;
     VcCollapsibleContent: typeof Components.VcCollapsibleContent;
@@ -36,6 +37,7 @@ declare module "vue" {
     VcProductButton: typeof Components.VcProductButton;
     VcProductPrice: typeof Components.VcProductPrice;
     VcProductTotal: typeof Components.VcProductTotal;
+    VcRangeCalendar: typeof Components.VcRangeCalendar;
     VcSelect: typeof Components.VcSelect;
     VcShape: typeof Components.VcShape;
     VcSlider: typeof Components.VcSlider;
