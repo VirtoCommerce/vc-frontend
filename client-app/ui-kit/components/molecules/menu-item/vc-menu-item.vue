@@ -45,7 +45,6 @@
 </template>
 
 <script setup lang="ts">
-import { computedEager } from "@vueuse/core";
 import { ref, computed, provide, onMounted } from "vue";
 import { getLinkAttr } from "@/core/utilities/common";
 import { useComponentId } from "@/ui-kit/composables";
@@ -89,9 +88,9 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const currentElement = ref<HTMLElement>();
 const parentTag = ref("");
-const enabled = computedEager<boolean>(() => !props.disabled);
-const isRouterLink = computedEager<boolean>(() => !!props.to && enabled.value);
-const isExternalLink = computedEager<boolean>(
+const enabled = computed<boolean>(() => !props.disabled);
+const isRouterLink = computed<boolean>(() => !!props.to && enabled.value);
+const isExternalLink = computed<boolean>(
   () => ("externalLink" in getLinkAttr(props.to) || !!props.externalLink) && enabled.value,
 );
 const componentId = useComponentId("menu-item");
