@@ -10,7 +10,7 @@ import { SortDirection } from "@/core/enums";
 import { getSortingExpression, Logger, toInputAddress } from "@/core/utilities";
 import type { InputMemberAddressType, MemberAddressType } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
-import type { MaybeRef } from "@vueuse/core";
+import type { MaybeRef } from "vue";
 
 const requestedAddressesQuantity = 9999;
 

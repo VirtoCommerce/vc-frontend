@@ -934,8 +934,7 @@
         "list_edit_button": "Rediger",
         "remove_list_button": "Fjern",
         "make_private_button": "Gjør privat",
-        "share_button": "Del",
-        "saved": "Lagret"
+        "share_button": "Del"
       },
       "list_details": {
         "add_all_to_cart_button": "Legg alle i handlekurven",

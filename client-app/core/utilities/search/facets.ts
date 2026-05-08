@@ -8,7 +8,7 @@ import type {
   TermFacet,
   SearchProductFilterResult,
 } from "@/core/api/graphql/types";
-import type { MaybeRef } from "@vueuse/core";
+import type { MaybeRef } from "vue";
 
 /**
  * Learn more about filter syntax:

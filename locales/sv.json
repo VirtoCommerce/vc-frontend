@@ -934,8 +934,7 @@
         "list_edit_button": "Redigera",
         "remove_list_button": "Radera",
         "make_private_button": "Gör privat",
-        "share_button": "Dela",
-        "saved": "Sparad"
+        "share_button": "Dela"
       },
       "list_details": {
         "add_all_to_cart_button": "Lägg till alla i kundvagn",
