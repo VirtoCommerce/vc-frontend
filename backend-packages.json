@@ -1,8 +1,8 @@
 {
   "ManifestVersion": "2.0",
-  "PlatformVersion": "3.1025.0",
+  "PlatformVersion": "3.1026.0",
   "PlatformImage": "ghcr.io/virtocommerce/platform",
-  "PlatformImageTag": "3.1025.0",
+  "PlatformImageTag": "3.1026.0",
   "PlatformAssetUrl": "",
   "Sources": [
     {
@@ -149,7 +149,7 @@
         },
         {
           "Id": "VirtoCommerce.TaskManagement",
-          "Version": "3.1000.0"
+          "Version": "3.1001.0"
         },
         {
           "Id": "VirtoCommerce.CatalogPersonalization",
@@ -237,7 +237,7 @@
         },
         {
           "Id": "VirtoCommerce.Xapi",
-          "Version": "3.1006.0"
+          "Version": "3.1007.0"
         },
         {
           "Id": "VirtoCommerce.Seo",
