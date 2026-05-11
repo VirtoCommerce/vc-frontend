@@ -94,7 +94,7 @@ jobs:
         step: start
         token: ${{ env.GITHUB_TOKEN }}
         env: ${{ steps.deployConfig.outputs.environmentName }}
-        no_override: true
+        no_override: false
 
     - name: Deploy to ${{ steps.deployConfig.outputs.environmentName }}
       uses: VirtoCommerce/vc-github-actions/create-deploy-pr@master
