@@ -24,7 +24,12 @@
         />
       </div>
 
-      <router-link class="coupons-section__link" :to="{ name: ROUTES.PROMOTION_COUPONS.NAME }" target="_blank">
+      <router-link
+        class="coupons-section__link"
+        :to="{ name: ROUTES.PROMOTION_COUPONS.NAME }"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
         {{ $t("shared.cart.coupons_section.all_coupons") }}
         <VcIcon class="coupons-section__arrow" name="arrow-right" :size="14" />
       </router-link>
