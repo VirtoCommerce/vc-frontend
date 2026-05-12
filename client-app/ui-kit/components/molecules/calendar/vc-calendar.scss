@@ -100,7 +100,7 @@
   }
 
   &__weekday {
-    @apply flex items-center justify-center text-neutral-500 font-bold uppercase;
+    @apply flex items-center justify-center text-neutral-700 font-bold uppercase;
 
     height: 1.5rem;
     font-size: var(--weekday-text);
@@ -146,10 +146,10 @@
     &[data-outside-view] {
       $outside: &;
 
-      @apply text-neutral-400 font-normal;
+      @apply text-neutral-500 font-normal;
 
       &:hover {
-        @apply bg-neutral-100 text-neutral-500;
+        @apply bg-neutral-100 text-neutral-600;
       }
     }
 
@@ -157,7 +157,7 @@
     &[data-disabled] {
       $disabled: &;
 
-      @apply text-neutral-600 cursor-not-allowed pointer-events-none bg-transparent;
+      @apply text-neutral-500 cursor-not-allowed pointer-events-none bg-transparent;
 
       text-decoration: line-through;
       text-decoration-thickness: 1px;
@@ -180,7 +180,6 @@
     }
 
     /* focus ring — sits on top of any state */
-    &[data-focused],
     &:focus-visible {
       @apply outline outline-[3px] outline-[--focus-ring];
 

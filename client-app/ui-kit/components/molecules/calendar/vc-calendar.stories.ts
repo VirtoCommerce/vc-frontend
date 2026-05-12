@@ -48,6 +48,13 @@ export const Default: StoryType = {
     weekdayFormat: "short",
     firstDayOfWeek: 1,
   },
+  parameters: {
+    docs: {
+      source: {
+        code: `<VcCalendar v-model="value" :first-day-of-week="1" />`,
+      },
+    },
+  },
   render: (args) => ({
     components: { VcCalendar },
     setup() {
@@ -62,6 +69,16 @@ export const Selected: StoryType = {
   args: {
     weekdayFormat: "short",
     firstDayOfWeek: 1,
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <!-- value ref starts at "2026-10-15" -->
+          <VcCalendar v-model="value" :first-day-of-week="1" />
+        `,
+      },
+    },
   },
   render: (args) => ({
     components: { VcCalendar },
@@ -85,6 +102,20 @@ export const WithMinMax: StoryType = {
     min: "2026-10-05",
     max: "2026-10-25",
   },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcCalendar
+            v-model="value"
+            :first-day-of-week="1"
+            min="2026-10-05"
+            max="2026-10-25"
+          />
+        `,
+      },
+    },
+  },
   render: (args) => ({
     components: { VcCalendar },
     setup() {
@@ -105,6 +136,16 @@ export const WithDisabledDates: StoryType = {
       description: {
         story:
           "`disabledDate` predicate marks weekends as unavailable (data-unavailable) — distinct from min/max disabled.",
+      },
+      source: {
+        code: `
+          <!-- disabledDate returns true for weekends -->
+          <VcCalendar
+            v-model="value"
+            :first-day-of-week="1"
+            :disabled-date="(iso) => [0, 6].includes(new Date(iso).getDay())"
+          />
+        `,
       },
     },
   },
@@ -130,6 +171,13 @@ export const WithFooter: StoryType = {
     firstDayOfWeek: 1,
     showFooter: true,
   },
+  parameters: {
+    docs: {
+      source: {
+        code: `<VcCalendar v-model="value" :first-day-of-week="1" show-footer />`,
+      },
+    },
+  },
   render: (args) => ({
     components: { VcCalendar },
     setup() {
@@ -151,6 +199,13 @@ export const SizeSm: StoryType = {
     weekdayFormat: "short",
     firstDayOfWeek: 1,
   },
+  parameters: {
+    docs: {
+      source: {
+        code: `<VcCalendar v-model="value" :first-day-of-week="1" size="sm" />`,
+      },
+    },
+  },
   render: (args) => ({
     components: { VcCalendar },
     setup() {
@@ -167,6 +222,13 @@ export const LocaleRu: StoryType = {
     firstDayOfWeek: 1,
     locale: "ru-RU",
   },
+  parameters: {
+    docs: {
+      source: {
+        code: `<VcCalendar v-model="value" :first-day-of-week="1" locale="ru-RU" />`,
+      },
+    },
+  },
   render: (args) => ({
     components: { VcCalendar },
     setup() {
@@ -181,6 +243,13 @@ export const LocaleJa: StoryType = {
   args: {
     weekdayFormat: "short",
     locale: "ja-JP",
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `<VcCalendar v-model="value" locale="ja-JP" />`,
+      },
+    },
   },
   render: (args) => ({
     components: { VcCalendar },
@@ -202,6 +271,12 @@ export const BoundaryToday: StoryType = {
       description: {
         story:
           "Selecting today's date exercises the combined `data-today` + `data-selected` styling (filled cell, today ring suppressed by selected styling).",
+      },
+      source: {
+        code: `
+          <!-- value is today's ISO date -->
+          <VcCalendar v-model="value" :first-day-of-week="1" />
+        `,
       },
     },
   },

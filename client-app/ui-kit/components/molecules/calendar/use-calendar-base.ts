@@ -36,6 +36,10 @@ export function dateValueToIso(value: DateValue | undefined): string | undefined
   return value.toString();
 }
 
+export function todayDate(): DateValue {
+  return todayInLocalTz(getLocalTimeZone());
+}
+
 export function useCalendarBase(opts: IUseCalendarBaseOptions) {
   const { t, locale: i18nLocale } = useI18n();
 
@@ -93,10 +97,6 @@ export function useCalendarBase(opts: IUseCalendarBaseOptions) {
     placeholderRef.value = placeholderRef.value.add({ years: 1 });
   }
 
-  function todayDate(): DateValue {
-    return todayInLocalTz(getLocalTimeZone());
-  }
-
   return {
     t,
     placeholderRef,
@@ -109,6 +109,5 @@ export function useCalendarBase(opts: IUseCalendarBaseOptions) {
     onPlaceholderUpdate,
     goToPreviousYear,
     goToNextYear,
-    todayDate,
   };
 }

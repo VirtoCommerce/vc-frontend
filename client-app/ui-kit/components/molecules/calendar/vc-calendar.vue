@@ -104,7 +104,7 @@ import {
   CalendarRoot,
 } from "reka-ui";
 import { computed, toRef, watch } from "vue";
-import { dateValueToIso, tryParseDate, useCalendarBase } from "./use-calendar-base";
+import { dateValueToIso, todayDate, tryParseDate, useCalendarBase } from "./use-calendar-base";
 import type { DateValue } from "@internationalized/date";
 
 interface IProps {
@@ -149,7 +149,7 @@ function getInitialPlaceholder(): DateValue {
       return parsed;
     }
   }
-  return base.todayDate();
+  return todayDate();
 }
 
 const base = useCalendarBase({
@@ -193,7 +193,7 @@ function onUpdate(value: DateValue | DateValue[] | undefined): void {
 }
 
 function onTodayClick(): void {
-  const now = base.todayDate();
+  const now = todayDate();
   placeholderRef.value = now;
   onUpdate(now);
 }
@@ -217,4 +217,4 @@ watch(
 );
 </script>
 
-<style lang="scss" src="./calendar.scss"></style>
+<style lang="scss" src="./vc-calendar.scss"></style>

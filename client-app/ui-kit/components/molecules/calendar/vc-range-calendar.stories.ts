@@ -48,6 +48,13 @@ export const Default: StoryType = {
     weekdayFormat: "short",
     firstDayOfWeek: 1,
   },
+  parameters: {
+    docs: {
+      source: {
+        code: `<VcRangeCalendar v-model="value" :first-day-of-week="1" />`,
+      },
+    },
+  },
   render: (args) => ({
     components: { VcRangeCalendar },
     setup() {
@@ -68,6 +75,12 @@ export const Committed: StoryType = {
       description: {
         story:
           "Multi-day committed range. Endpoints render with primary-500 fill and rounded outer corners; middle cells form a continuous primary-100 band.",
+      },
+      source: {
+        code: `
+          <!-- value ref starts at { start: "2026-10-08", end: "2026-10-14" } -->
+          <VcRangeCalendar v-model="value" :first-day-of-week="1" />
+        `,
       },
     },
   },
@@ -95,6 +108,12 @@ export const SingleDay: StoryType = {
     docs: {
       description: {
         story: "Range with start === end. Should render as a single fully-rounded primary-500 cell, not a square cell.",
+      },
+      source: {
+        code: `
+          <!-- value ref starts at { start: "2026-10-15", end: "2026-10-15" } -->
+          <VcRangeCalendar v-model="value" :first-day-of-week="1" />
+        `,
       },
     },
   },
@@ -124,6 +143,12 @@ export const HoverPreview: StoryType = {
         story:
           "Anchor date set, end not yet committed. Hover toward another date to see the preview band — the hover-preview state is transient and only visible interactively.",
       },
+      source: {
+        code: `
+          <!-- Anchor only — hover over a day to see the preview band -->
+          <VcRangeCalendar v-model="value" :first-day-of-week="1" />
+        `,
+      },
     },
   },
   render: (args) => ({
@@ -148,6 +173,20 @@ export const WithMinMax: StoryType = {
     min: "2026-10-05",
     max: "2026-10-25",
   },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcRangeCalendar
+            v-model="value"
+            :first-day-of-week="1"
+            min="2026-10-05"
+            max="2026-10-25"
+          />
+        `,
+      },
+    },
+  },
   render: (args) => ({
     components: { VcRangeCalendar },
     setup() {
@@ -168,6 +207,15 @@ export const WithDisabledDates: StoryType = {
       description: {
         story:
           "`disabledDate` predicate marks weekends as unavailable (data-unavailable) — distinct from min/max disabled.",
+      },
+      source: {
+        code: `
+          <VcRangeCalendar
+            v-model="value"
+            :first-day-of-week="1"
+            :disabled-date="(iso) => [0, 6].includes(new Date(iso).getDay())"
+          />
+        `,
       },
     },
   },
@@ -192,6 +240,13 @@ export const WithFooter: StoryType = {
     firstDayOfWeek: 1,
     showFooter: true,
   },
+  parameters: {
+    docs: {
+      source: {
+        code: `<VcRangeCalendar v-model="value" :first-day-of-week="1" show-footer />`,
+      },
+    },
+  },
   render: (args) => ({
     components: { VcRangeCalendar },
     setup() {
@@ -212,6 +267,13 @@ export const SizeSm: StoryType = {
     size: "sm",
     weekdayFormat: "short",
     firstDayOfWeek: 1,
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `<VcRangeCalendar v-model="value" :first-day-of-week="1" size="sm" />`,
+      },
+    },
   },
   render: (args) => ({
     components: { VcRangeCalendar },
