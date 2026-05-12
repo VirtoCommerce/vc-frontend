@@ -32,7 +32,6 @@ export { default as VcProductActionsButton } from "./product-actions-button/vc-p
 export { default as VcProductButton } from "./product-button/vc-product-button.vue";
 export { default as VcProductPrice } from "./product-price/vc-product-price.vue";
 export { default as VcProductTotal } from "./product-total/vc-product-total.vue";
-export { default as VcRangeCalendar } from "./calendar/vc-range-calendar.vue";
 export { default as VcRating } from "./rating/vc-rating.vue";
 export { default as VcSelect } from "./select/vc-select.vue";
 export { default as VcShape } from "./shape/vc-shape.vue";

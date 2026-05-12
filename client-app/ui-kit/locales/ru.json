@@ -38,16 +38,13 @@
     },
     "calendar": {
       "aria_label": "Calendar",
-      "aria_label_range": "Date range calendar",
       "previous_month": "Previous month",
       "next_month": "Next month",
       "previous_year": "Previous year",
       "next_year": "Next year",
       "today": "Today",
       "clear": "Clear",
-      "choose_date": "Choose date",
-      "choose_start_date": "Choose start date",
-      "choose_end_date": "Choose end date"
+      "choose_date": "Choose date"
     },
     "date_selector": {
       "min_date_error": "Дата должна быть не ранее {min}",

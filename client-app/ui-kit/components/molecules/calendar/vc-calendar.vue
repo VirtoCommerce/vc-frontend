@@ -16,7 +16,6 @@
     :min-value="minDateValue"
     :max-value="maxDateValue"
     :is-date-unavailable="isDateUnavailable"
-    :number-of-months="numberOfMonths"
     fixed-weeks
     :class="rootClasses"
     :data-test-id="dataTestId"
@@ -124,7 +123,6 @@ interface IProps {
   locale?: string;
   firstDayOfWeek?: VcCalendarFirstDayOfWeekType;
   weekdayFormat?: VcCalendarWeekdayFormatType;
-  numberOfMonths?: number;
   dataTestId?: string;
 }
 
@@ -145,7 +143,6 @@ const props = withDefaults(defineProps<IProps>(), {
   locale: undefined,
   firstDayOfWeek: undefined,
   weekdayFormat: "short",
-  numberOfMonths: 1,
   dataTestId: undefined,
 });
 

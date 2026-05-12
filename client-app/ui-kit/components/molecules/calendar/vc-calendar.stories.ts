@@ -3,7 +3,7 @@ import { VcCalendar } from "..";
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
 const SIZES = ["sm", "md"];
-const WEEKDAY_FORMATS = ["narrow", "short", "long"];
+const WEEKDAY_FORMATS = ["narrow", "short"];
 
 const meta: Meta<typeof VcCalendar> = {
   title: "Components/Molecules/VcCalendar",
@@ -203,6 +203,34 @@ export const SizeSm: StoryType = {
     docs: {
       source: {
         code: `<VcCalendar v-model="value" :first-day-of-week="1" size="sm" />`,
+      },
+    },
+  },
+  render: (args) => ({
+    components: { VcCalendar },
+    setup() {
+      const value = ref<string | undefined>("2026-10-15");
+      return { args, value };
+    },
+    template: `<VcCalendar v-bind="args" v-model="value" />`,
+  }),
+};
+
+export const FirstDaySunday: StoryType = {
+  args: {
+    firstDayOfWeek: 0,
+    weekdayFormat: "short",
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: "Week starts on Sunday (US convention). Compare with the default Monday-first stories above.",
+      },
+      source: {
+        code: `
+          <!-- US-style week starts on Sunday -->
+          <VcCalendar v-model="value" :first-day-of-week="0" />
+        `,
       },
     },
   },
