@@ -1,6 +1,12 @@
 <template>
+  <!--
+    role="group" legalizes aria-label on reka's root <div> (axe aria-prohibited-attr).
+    Calendar-internal keyboard nav stays with reka's <table role="grid">.
+  -->
   <RangeCalendarRoot
     v-slot="{ weekDays, grid }"
+    role="group"
+    :calendar-label="t('ui_kit.calendar.aria_label_range')"
     :model-value="parsedModelValue"
     :placeholder="placeholderRef"
     :locale="resolvedLocale"

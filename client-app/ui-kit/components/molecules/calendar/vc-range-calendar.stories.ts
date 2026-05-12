@@ -132,40 +132,6 @@ export const SingleDay: StoryType = {
   }),
 };
 
-export const HoverPreview: StoryType = {
-  args: {
-    weekdayFormat: "short",
-    firstDayOfWeek: 1,
-  },
-  parameters: {
-    docs: {
-      description: {
-        story:
-          "Anchor date set, end not yet committed. Hover toward another date to see the preview band — the hover-preview state is transient and only visible interactively.",
-      },
-      source: {
-        code: `
-          <!-- Anchor only — hover over a day to see the preview band -->
-          <VcRangeCalendar v-model="value" :first-day-of-week="1" />
-        `,
-      },
-    },
-  },
-  render: (args) => ({
-    components: { VcRangeCalendar },
-    setup() {
-      const value = ref<{ start?: string; end?: string }>({ start: "2026-10-08", end: undefined });
-      return { args, value };
-    },
-    template: `
-      <div class="space-y-2">
-        <VcRangeCalendar v-bind="args" v-model="value" />
-        <div class="text-sm text-neutral-600">Hover over Oct 14 to see the preview band.</div>
-      </div>
-    `,
-  }),
-};
-
 export const WithMinMax: StoryType = {
   args: {
     weekdayFormat: "short",

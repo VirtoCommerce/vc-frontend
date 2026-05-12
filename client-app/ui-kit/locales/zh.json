@@ -37,6 +37,8 @@
       "nav_down": "向下"
     },
     "calendar": {
+      "aria_label": "Calendar",
+      "aria_label_range": "Date range calendar",
       "previous_month": "Previous month",
       "next_month": "Next month",
       "previous_year": "Previous year",
