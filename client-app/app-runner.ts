@@ -1,7 +1,7 @@
 import { createHead } from "@unhead/vue/client";
 import { DefaultApolloClient } from "@vue/apollo-composable";
 import { createApp, h, provide } from "vue";
-import { apolloClient, getPageContext } from "@/core/api/graphql";
+import { apolloClient, getPageContext, initializeApplication } from "@/core/api/graphql";
 import { GetSlugInfoDocument } from "@/core/api/graphql/types";
 import { useCurrency, useDarkMode, useThemeContext, useNavigations, useWhiteLabeling } from "@/core/composables";
 import { useHotjar } from "@/core/composables/useHotjar";
@@ -16,7 +16,7 @@ import {
   extensionPointsPlugin,
   permissionsPlugin,
 } from "@/core/plugins";
-import { extractHostname, Logger } from "@/core/utilities";
+import { checkModulesVersions, extractHostname, Logger } from "@/core/utilities";
 import { createI18n } from "@/i18n";
 import { init as initModuleBackInStock } from "@/modules/back-in-stock";
 import { init as initCustomerReviews } from "@/modules/customer-reviews";
@@ -104,6 +104,13 @@ export default async () => {
     ? extractHostname(import.meta.env.APP_BACKEND_URL as string)
     : globalThis.location.hostname;
   const userId = savedUserId.value;
+
+  try {
+    const initialStore = await initializeApplication(domain);
+    checkModulesVersions(initialStore?.settings?.modules);
+  } catch (e) {
+    Logger.warn("Failed to verify backend module versions", e as Error);
+  }
 
   const getPageContextPromise = getPageContext({
     domain: domain,

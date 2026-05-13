@@ -2,6 +2,7 @@ export * from "./address";
 export * from "./brands";
 export * from "./breadcrumbs";
 export * from "./categories";
+export * from "./checkModulesVersions";
 export * from "./common";
 export * from "./composables";
 export * from "./date";
