@@ -13,6 +13,7 @@ declare module "vue" {
     VcCollapsibleContent: typeof Components.VcCollapsibleContent;
     VcCompositeShape: typeof Components.VcCompositeShape;
     VcCopyText: typeof Components.VcCopyText;
+    VcDateInput: typeof Components.VcDateInput;
     VcDateSelector: typeof Components.VcDateSelector;
     VcDialogContent: typeof Components.VcDialogContent;
     VcDialogFooter: typeof Components.VcDialogFooter;
