@@ -96,6 +96,11 @@ const computedErrorMessage = computed(() => {
 });
 
 if (import.meta.env.DEV) {
+  // eslint-disable-next-line no-console
+  console.warn(
+    "[VcDateSelector] This component is deprecated. Use VcDatePicker for typed date entry with calendar popover, or VcDateInput for input-only.",
+  );
+
   const vnodeProps = getCurrentInstance()?.vnode.props ?? {};
 
   if ("isRequired" in vnodeProps) {

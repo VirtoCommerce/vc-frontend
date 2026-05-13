@@ -6,6 +6,7 @@ const SIZES = ["xs", "sm", "md", "auto"];
 const meta: Meta<typeof VcDateSelector> = {
   title: "Components/Molecules/VcDateSelector",
   component: VcDateSelector,
+  tags: ["deprecated"],
   argTypes: {
     label: {
       control: "text",
@@ -97,6 +98,7 @@ const meta: Meta<typeof VcDateSelector> = {
   `,
   }),
   parameters: {
+    deprecated: "Use VcDatePicker for typed date entry with calendar popover, or VcDateInput for input-only.",
     a11y: {
       // Disable target-size rule - calendar button size is determined by input height
       // Using options.rules for axe.run() to ensure the rule is disabled during execution

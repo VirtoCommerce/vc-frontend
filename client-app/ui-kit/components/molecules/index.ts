@@ -8,6 +8,7 @@ export { default as VcCollapsibleContent } from "./collapsible-content/vc-collap
 export { default as VcCompositeShape } from "./composite-shape/vc-composite-shape.vue";
 export { default as VcCopyText } from "./copy-text/vc-copy-text.vue";
 export { default as VcDateInput } from "./date-input/vc-date-input.vue";
+/** @deprecated Use VcDatePicker for typed date entry with calendar popover, or VcDateInput for input-only. */
 export { default as VcDateSelector } from "./date-selector/vc-date-selector.vue";
 export { default as VcDialogContent } from "./dialog-content/vc-dialog-content.vue";
 export { default as VcDialogFooter } from "./dialog-footer/vc-dialog-footer.vue";
