@@ -37,13 +37,13 @@
       "nav_down": "Alas"
     },
     "calendar": {
-      "aria_label": "Calendar",
-      "previous_month": "Previous month",
-      "next_month": "Next month",
-      "previous_year": "Previous year",
-      "next_year": "Next year",
-      "today": "Today",
-      "clear": "Clear"
+      "aria_label": "Kalenteri",
+      "previous_month": "Edellinen kuukausi",
+      "next_month": "Seuraava kuukausi",
+      "previous_year": "Edellinen vuosi",
+      "next_year": "Seuraava vuosi",
+      "today": "Tänään",
+      "clear": "Tyhjennä"
     },
     "date_selector": {
       "min_date_error": "Päivämäärän on oltava vähintään {min}",

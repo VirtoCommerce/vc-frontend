@@ -37,13 +37,13 @@
       "nav_down": "Giù"
     },
     "calendar": {
-      "aria_label": "Calendar",
-      "previous_month": "Previous month",
-      "next_month": "Next month",
-      "previous_year": "Previous year",
-      "next_year": "Next year",
-      "today": "Today",
-      "clear": "Clear"
+      "aria_label": "Calendario",
+      "previous_month": "Mese precedente",
+      "next_month": "Mese successivo",
+      "previous_year": "Anno precedente",
+      "next_year": "Anno successivo",
+      "today": "Oggi",
+      "clear": "Cancella"
     },
     "date_selector": {
       "min_date_error": "La data deve essere successiva o uguale a {min}",

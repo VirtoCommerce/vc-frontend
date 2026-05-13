@@ -37,13 +37,13 @@
       "nav_down": "Ner"
     },
     "calendar": {
-      "aria_label": "Calendar",
-      "previous_month": "Previous month",
-      "next_month": "Next month",
-      "previous_year": "Previous year",
-      "next_year": "Next year",
-      "today": "Today",
-      "clear": "Clear"
+      "aria_label": "Kalender",
+      "previous_month": "Föregående månad",
+      "next_month": "Nästa månad",
+      "previous_year": "Föregående år",
+      "next_year": "Nästa år",
+      "today": "Idag",
+      "clear": "Rensa"
     },
     "date_selector": {
       "min_date_error": "Datum måste vara på eller efter {min}",

@@ -37,13 +37,13 @@
       "nav_down": "向下"
     },
     "calendar": {
-      "aria_label": "Calendar",
-      "previous_month": "Previous month",
-      "next_month": "Next month",
-      "previous_year": "Previous year",
-      "next_year": "Next year",
-      "today": "Today",
-      "clear": "Clear"
+      "aria_label": "日历",
+      "previous_month": "上个月",
+      "next_month": "下个月",
+      "previous_year": "上一年",
+      "next_year": "下一年",
+      "today": "今天",
+      "clear": "清除"
     },
     "date_selector": {
       "min_date_error": "日期必须在{min}或之后",

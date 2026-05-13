@@ -37,13 +37,13 @@
       "nav_down": "Ned"
     },
     "calendar": {
-      "aria_label": "Calendar",
-      "previous_month": "Previous month",
-      "next_month": "Next month",
-      "previous_year": "Previous year",
-      "next_year": "Next year",
-      "today": "Today",
-      "clear": "Clear"
+      "aria_label": "Kalender",
+      "previous_month": "Forrige måned",
+      "next_month": "Neste måned",
+      "previous_year": "Forrige år",
+      "next_year": "Neste år",
+      "today": "I dag",
+      "clear": "Tøm"
     },
     "date_selector": {
       "min_date_error": "Datoen må være på eller etter {min}",

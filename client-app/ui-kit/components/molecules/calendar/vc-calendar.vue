@@ -83,7 +83,13 @@
     </CalendarGrid>
 
     <div v-if="showFooter" class="vc-calendar__footer">
-      <button type="button" class="vc-calendar__footer-btn" @click="onTodayClick">
+      <button
+        type="button"
+        class="vc-calendar__footer-btn"
+        :disabled="todayDisabled"
+        :aria-disabled="todayDisabled || undefined"
+        @click="onTodayClick"
+      >
         {{ t("ui_kit.calendar.today") }}
       </button>
 
@@ -191,7 +197,25 @@ function onUpdate(value: DateValue | DateValue[] | undefined): void {
   emit("update:modelValue", iso);
 }
 
+const todayDisabled = computed<boolean>(() => {
+  const now = todayDate();
+  if (minDateValue.value && now.compare(minDateValue.value) < 0) {
+    return true;
+  }
+  if (maxDateValue.value && now.compare(maxDateValue.value) > 0) {
+    return true;
+  }
+  const predicate = isDateUnavailable.value;
+  if (predicate && predicate(now)) {
+    return true;
+  }
+  return false;
+});
+
 function onTodayClick(): void {
+  if (todayDisabled.value) {
+    return;
+  }
   const now = todayDate();
   placeholderRef.value = now;
   onUpdate(now);
@@ -431,6 +455,15 @@ watch(
 
       &:hover {
         @apply bg-neutral-100 text-neutral-800;
+      }
+    }
+
+    &[disabled],
+    &[aria-disabled="true"] {
+      @apply text-neutral-400 cursor-not-allowed;
+
+      &:hover {
+        @apply bg-transparent text-neutral-400;
       }
     }
   }
