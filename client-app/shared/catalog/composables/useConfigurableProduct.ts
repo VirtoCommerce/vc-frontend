@@ -444,32 +444,41 @@ function _useConfigurableProduct(configurableProductId: MaybeRef<string>) {
   }
 
   function updateWithDefaultValues() {
-    let hasChanges = true;
-    let iterations = 0;
-    const maxIterations = configuration.value.length;
+    for (let pass = 0; pass < configuration.value.length; pass++) {
+      const defaultWasApplied = applyDefaultsForVisibleSections();
 
-    while (hasChanges && iterations < maxIterations) {
-      hasChanges = false;
-      iterations++;
-
-      for (const section of configuration.value) {
-        if (!isSectionVisible(section.id)) {
-          continue;
-        }
-
-        if (selectedConfigurationValue.value.some((value) => value.sectionId === section.id)) {
-          continue;
-        }
-
-        const defaultValue = getDefaultSectionValue(section);
-        if (!defaultValue) {
-          continue;
-        }
-
-        changeSelectionValue(defaultValue);
-        hasChanges = true;
+      if (!defaultWasApplied) {
+        break;
       }
     }
+  }
+
+  function applyDefaultsForVisibleSections() {
+    let defaultWasApplied = false;
+
+    for (const section of configuration.value) {
+      if (!canApplyDefaultValue(section)) {
+        continue;
+      }
+
+      const defaultValue = getDefaultSectionValue(section);
+      if (!defaultValue) {
+        continue;
+      }
+
+      changeSelectionValue(defaultValue);
+      defaultWasApplied = true;
+    }
+
+    return defaultWasApplied;
+  }
+
+  function canApplyDefaultValue(section: ConfigurationSectionType) {
+    return isSectionVisible(section.id) && !hasSelectedSectionValue(section.id);
+  }
+
+  function hasSelectedSectionValue(sectionId: string) {
+    return selectedConfigurationValue.value.some((value) => value.sectionId === sectionId);
   }
 
   function getDefaultSectionValue(section: ConfigurationSectionType): SectionValueType | undefined {
