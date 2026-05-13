@@ -30,7 +30,7 @@ interface IRunOptions {
 function setup(options: IRunOptions) {
   const scope = effectScope();
   const modelValue = ref<string | undefined>(options.modelValue);
-  const locale: Ref<string | undefined> | undefined = options.locale !== undefined ? ref(options.locale) : undefined;
+  const locale: Ref<string | undefined> | undefined = options.locale === undefined ? undefined : ref(options.locale);
   const updateOn = ref<VcDateFieldUpdateOnType>(options.updateOn ?? "blur");
   const min = ref<string | undefined>(options.min);
   const max = ref<string | undefined>(options.max);

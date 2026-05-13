@@ -18,7 +18,7 @@ describe("toDateOnlyString", () => {
   });
 
   test("returns undefined for empty input", () => {
-    expect(toDateOnlyString(undefined)).toBeUndefined();
+    expect(toDateOnlyString()).toBeUndefined();
     expect(toDateOnlyString("")).toBeUndefined();
   });
 });

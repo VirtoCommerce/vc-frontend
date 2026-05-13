@@ -1,9 +1,4 @@
 <template>
-  <!--
-    role="group" legalizes aria-label on reka's root <div> (axe aria-prohibited-attr).
-    Calendar-internal keyboard nav stays with reka's <table role="grid">, so role="application"
-    would be wrong — it strips browse-mode from screen readers unnecessarily.
-  -->
   <CalendarRoot
     v-slot="{ weekDays, grid }"
     role="group"

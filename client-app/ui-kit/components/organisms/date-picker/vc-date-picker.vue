@@ -130,22 +130,6 @@ const calendarSize = computed<VcCalendarSizeType>(() => {
   return props.size;
 });
 
-/**
- * Pick the aria-* attrs out of VcPopover's `triggerProps` slot prop.
- *
- * VcPopover ships a full set of trigger bindings (role, aria-*, onClick,
- * onMouseenter, …). We only want the aria advertising — `onClick: toggle`
- * would re-add input-click-to-toggle behavior that's deliberately avoided
- * (toggling lives on the calendar icon button only). `role="button"` would
- * also clash with the underlying <input>, so we drop it too.
- *
- * `aria-controls` is the canonical id assigned by VcPopover via
- * `useComponentId("vc-popover")` to its body element — keeping the picker
- * a thin consumer of that contract rather than duplicating the id locally.
- *
- * TODO: ask VcPopover to expose ariaProps separately from triggerProps so we
- * don't silently break when VcPopover's trigger contract changes.
- */
 function forwardedAria(triggerProps: Record<string, unknown>): Record<string, string | number | null> {
   const aria: Record<string, string | number | null> = {
     "aria-haspopup": triggerProps["aria-haspopup"] as string,
