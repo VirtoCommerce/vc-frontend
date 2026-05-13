@@ -321,6 +321,33 @@ export const LocaleJa: StoryType = {
   }),
 };
 
+export const LocaleLongMonthName: StoryType = {
+  args: {
+    locale: "fr-FR",
+    firstDayOfWeek: 1,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Long month names (e.g., French 'septembre') don't expand calendar width — heading truncates with ellipsis instead. Calendar width is deterministic: 7 × cell-size + 6 × grid-gap + 2 × padding.",
+      },
+      source: {
+        code: `<!-- value defaults to 2026-09-15 to land on a long-name month -->
+<VcCalendar v-model="value" locale="fr-FR" :first-day-of-week="1" />`,
+      },
+    },
+  },
+  render: (args) => ({
+    components: { VcCalendar },
+    setup() {
+      const value = ref<string | undefined>("2026-09-15");
+      return { args, value };
+    },
+    template: `<VcCalendar v-bind="args" v-model="value" />`,
+  }),
+};
+
 export const BoundaryToday: StoryType = {
   args: {
     weekdayFormat: "short",

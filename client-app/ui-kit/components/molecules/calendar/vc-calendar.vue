@@ -23,41 +23,40 @@
     @update:placeholder="onPlaceholderUpdate"
   >
     <div class="vc-calendar__header">
-      <div class="vc-calendar__nav-group">
-        <button
-          type="button"
-          class="vc-calendar__nav"
-          :aria-label="t('ui_kit.calendar.previous_year')"
-          :disabled="prevYearDisabled"
-          :aria-disabled="prevYearDisabled || undefined"
-          @click="goToPreviousYear"
-        >
-          <VcIcon name="chevron-double-left" />
-        </button>
+      <button
+        type="button"
+        class="vc-calendar__nav vc-calendar__nav--year-prev"
+        :aria-label="t('ui_kit.calendar.previous_year')"
+        :disabled="prevYearDisabled"
+        :aria-disabled="prevYearDisabled || undefined"
+        @click="goToPreviousYear"
+      >
+        <VcIcon name="chevron-double-left" />
+      </button>
 
-        <CalendarPrev class="vc-calendar__nav" :aria-label="t('ui_kit.calendar.previous_month')">
-          <VcIcon name="chevron-left" />
-        </CalendarPrev>
-      </div>
+      <CalendarPrev
+        class="vc-calendar__nav vc-calendar__nav--month-prev"
+        :aria-label="t('ui_kit.calendar.previous_month')"
+      >
+        <VcIcon name="chevron-left" />
+      </CalendarPrev>
 
       <CalendarHeading class="vc-calendar__heading" />
 
-      <div class="vc-calendar__nav-group">
-        <CalendarNext class="vc-calendar__nav" :aria-label="t('ui_kit.calendar.next_month')">
-          <VcIcon name="chevron-right" />
-        </CalendarNext>
+      <CalendarNext class="vc-calendar__nav vc-calendar__nav--month-next" :aria-label="t('ui_kit.calendar.next_month')">
+        <VcIcon name="chevron-right" />
+      </CalendarNext>
 
-        <button
-          type="button"
-          class="vc-calendar__nav"
-          :aria-label="t('ui_kit.calendar.next_year')"
-          :disabled="nextYearDisabled"
-          :aria-disabled="nextYearDisabled || undefined"
-          @click="goToNextYear"
-        >
-          <VcIcon name="chevron-double-right" />
-        </button>
-      </div>
+      <button
+        type="button"
+        class="vc-calendar__nav vc-calendar__nav--year-next"
+        :aria-label="t('ui_kit.calendar.next_year')"
+        :disabled="nextYearDisabled"
+        :aria-disabled="nextYearDisabled || undefined"
+        @click="goToNextYear"
+      >
+        <VcIcon name="chevron-double-right" />
+      </button>
     </div>
 
     <CalendarGrid v-for="month in grid" :key="month.value.toString()" class="vc-calendar__grid-wrapper">
@@ -232,7 +231,9 @@ watch(
   $today: "";
   $outside: "";
 
-  @apply inline-flex flex-col w-fit p-3 gap-2 bg-[--bg-color] text-[--text-color] border border-[--border-color] rounded-[--radius];
+  @apply inline-flex flex-col p-3 gap-2 bg-[--bg-color] text-[--text-color] border border-[--border-color] rounded-[--radius];
+
+  max-width: 100%;
 
   &--size {
     &--md {
@@ -265,13 +266,10 @@ watch(
   }
 
   &__header {
-    @apply grid items-center gap-2 px-1;
+    @apply grid items-center;
 
-    grid-template-columns: auto 1fr auto;
-  }
-
-  &__nav-group {
-    @apply inline-flex items-center gap-0.5;
+    grid-template-columns: repeat(7, var(--cell-size));
+    gap: var(--grid-gap);
   }
 
   &__nav {
@@ -305,6 +303,11 @@ watch(
   &__heading {
     @apply text-center font-bold text-neutral-900;
 
+    grid-column: 3 / 6;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     font-size: var(--heading-text);
     letter-spacing: 0.01em;
   }
