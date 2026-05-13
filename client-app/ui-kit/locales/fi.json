@@ -50,6 +50,11 @@
       "min_date_error": "Päivämäärän on oltava vähintään {min}",
       "max_date_error": "Päivämäärän on oltava enintään {max}"
     },
+    "date_input": {
+      "invalid_format": "Virheellinen päivämäärämuoto",
+      "min_date_error": "Päivämäärän on oltava vähintään {min}",
+      "max_date_error": "Päivämäärän on oltava enintään {max}"
+    },
     "labels": {
       "not_available": "Ei saatavilla",
       "price_per_item": "Hinta per tuote",

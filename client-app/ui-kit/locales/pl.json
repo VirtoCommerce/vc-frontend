@@ -50,6 +50,11 @@
       "min_date_error": "Data musi być nie wcześniejsza niż {min}",
       "max_date_error": "Data musi być nie późniejsza niż {max}"
     },
+    "date_input": {
+      "invalid_format": "Nieprawidłowy format daty",
+      "min_date_error": "Data musi być nie wcześniejsza niż {min}",
+      "max_date_error": "Data musi być nie późniejsza niż {max}"
+    },
     "labels": {
       "not_available": "N/D",
       "price_per_item": "Cena za sztukę",

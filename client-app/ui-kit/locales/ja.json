@@ -37,18 +37,23 @@
       "nav_down": "下へ"
     },
     "calendar": {
-      "aria_label": "Calendar",
-      "previous_month": "Previous month",
-      "next_month": "Next month",
-      "previous_year": "Previous year",
-      "next_year": "Next year",
-      "today": "Today",
-      "clear": "Clear",
-      "choose_date": "Choose date"
+      "aria_label": "カレンダー",
+      "previous_month": "前の月",
+      "next_month": "次の月",
+      "previous_year": "前年",
+      "next_year": "翌年",
+      "today": "今日",
+      "clear": "クリア",
+      "choose_date": "日付を選択"
     },
     "date_selector": {
       "min_date_error": "日付は{min}以降である必要があります",
       "max_date_error": "日付は{max}以前である必要があります"
+    },
+    "date_input": {
+      "invalid_format": "日付の形式が無効です",
+      "min_date_error": "日付は {min} 以降を指定してください",
+      "max_date_error": "日付は {max} 以前を指定してください"
     },
     "labels": {
       "not_available": "N/A",

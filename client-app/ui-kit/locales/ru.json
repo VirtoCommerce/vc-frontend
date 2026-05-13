@@ -50,6 +50,11 @@
       "min_date_error": "Дата должна быть не ранее {min}",
       "max_date_error": "Дата должна быть не позднее {max}"
     },
+    "date_input": {
+      "invalid_format": "Недопустимый формат даты",
+      "min_date_error": "Дата должна быть не ранее {min}",
+      "max_date_error": "Дата должна быть не позднее {max}"
+    },
     "labels": {
       "not_available": "Н/Д",
       "price_per_item": "Цена за единицу",

@@ -50,6 +50,11 @@
       "min_date_error": "La fecha debe ser igual o posterior al {min}",
       "max_date_error": "La fecha debe ser igual o anterior al {max}"
     },
+    "date_input": {
+      "invalid_format": "Formato de fecha no válido",
+      "min_date_error": "La fecha debe ser igual o posterior al {min}",
+      "max_date_error": "La fecha debe ser igual o anterior al {max}"
+    },
     "labels": {
       "not_available": "N/D",
       "price_per_item": "Precio por artículo",

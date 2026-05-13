@@ -50,6 +50,11 @@
       "min_date_error": "日期必须在{min}或之后",
       "max_date_error": "日期必须在{max}或之前"
     },
+    "date_input": {
+      "invalid_format": "日期格式无效",
+      "min_date_error": "日期必须在{min}或之后",
+      "max_date_error": "日期必须在{max}或之前"
+    },
     "labels": {
       "not_available": "不可用",
       "price_per_item": "单价",

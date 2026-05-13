@@ -50,6 +50,11 @@
       "min_date_error": "Datum måste vara på eller efter {min}",
       "max_date_error": "Datum måste vara på eller före {max}"
     },
+    "date_input": {
+      "invalid_format": "Ogiltigt datumformat",
+      "min_date_error": "Datum måste vara på eller efter {min}",
+      "max_date_error": "Datum måste vara på eller före {max}"
+    },
     "labels": {
       "not_available": "Ej tillgänglig",
       "price_per_item": "Pris per enhet",

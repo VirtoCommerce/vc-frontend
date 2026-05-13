@@ -50,6 +50,11 @@
       "min_date_error": "Datum muss am oder nach {min} liegen",
       "max_date_error": "Datum muss am oder vor {max} liegen"
     },
+    "date_input": {
+      "invalid_format": "Ungültiges Datumsformat",
+      "min_date_error": "Datum muss am oder nach {min} liegen",
+      "max_date_error": "Datum muss am oder vor {max} liegen"
+    },
     "labels": {
       "not_available": "N/V",
       "price_per_item": "Preis pro Artikel",
