@@ -207,18 +207,6 @@ export function formatDateLocale(value: CalendarDate | null | undefined, locale:
 }
 
 /**
- * High-level: take user input text → return canonical ISO YYYY-MM-DD or null.
- * Accepts locale-formatted strings AND ISO strings.
- */
-export function parseDateInputToIso(text: string, locale: string): string | null {
-  const cd = parseDateInput(text, locale);
-  if (!cd) {
-    return null;
-  }
-  return cd.toString();
-}
-
-/**
  * Derive a static placeholder hint pattern reflecting the locale's short
  * date format. Uses `Intl.DateTimeFormat.formatToParts` to discover field
  * order and literal separators, then maps:

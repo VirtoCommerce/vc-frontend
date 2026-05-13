@@ -805,6 +805,7 @@
         "phone_label": "@:common.labels.phone{':'}",
         "email_label": "@:common.labels.email{':'}",
         "no_addresses_message": "您尚未有任何地址",
+        "search_addresses_aria_label": "搜索地址",
         "title": "选择地址"
       },
       "shipping_method_modal": {
