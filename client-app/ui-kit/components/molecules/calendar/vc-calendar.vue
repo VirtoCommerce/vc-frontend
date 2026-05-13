@@ -238,12 +238,6 @@ watch(
   --border-color: var(--color-neutral-200);
   --text-color: var(--color-neutral-800);
 
-  $self: &;
-  $disabled: "";
-  $unavailable: "";
-  $today: "";
-  $outside: "";
-
   @apply inline-flex flex-col p-3 gap-2 bg-[--bg-color] text-[--text-color] border border-[--border-color] rounded-[--radius];
 
   max-width: 100%;
@@ -372,16 +366,12 @@ watch(
 
     /* today: 2px primary-500 ring (inset, doesn't shift layout) */
     &[data-today] {
-      $today: &;
-
       @apply font-bold;
 
       box-shadow: inset 0 0 0 2px var(--color-primary-500);
     }
 
     &[data-outside-view] {
-      $outside: &;
-
       @apply text-neutral-500 font-normal;
 
       &:hover {
@@ -391,8 +381,6 @@ watch(
 
     /* disabled (min/max boundary) */
     &[data-disabled] {
-      $disabled: &;
-
       @apply text-neutral-500 cursor-not-allowed pointer-events-none bg-transparent;
 
       text-decoration: line-through;
@@ -402,8 +390,6 @@ watch(
 
     /* unavailable (disabledDate predicate — visually distinct from min/max) */
     &[data-unavailable] {
-      $unavailable: &;
-
       @apply text-neutral-500 cursor-not-allowed pointer-events-none;
 
       background: repeating-linear-gradient(
