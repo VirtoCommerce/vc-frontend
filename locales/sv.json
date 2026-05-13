@@ -833,6 +833,7 @@
         "phone_label": "@:common.labels.phone{':'}",
         "email_label": "@:common.labels.email{':'}",
         "no_addresses_message": "Du har inga adresser ännu",
+        "search_addresses_aria_label": "Sök adresser",
         "title": "Välj adress"
       },
       "shipping_method_modal": {
@@ -940,8 +941,7 @@
         "list_edit_button": "Redigera",
         "remove_list_button": "Radera",
         "make_private_button": "Gör privat",
-        "share_button": "Dela",
-        "saved": "Sparad"
+        "share_button": "Dela"
       },
       "list_details": {
         "add_all_to_cart_button": "Lägg till alla i kundvagn",

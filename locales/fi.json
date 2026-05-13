@@ -833,6 +833,7 @@
         "phone_label": "@:common.labels.phone{':'}",
         "email_label": "@:common.labels.email{':'}",
         "no_addresses_message": "Sinulla ei ole vielä osoitteita",
+        "search_addresses_aria_label": "Hae osoitteita",
         "title": "Valitse osoite"
       },
       "shipping_method_modal": {
@@ -940,8 +941,7 @@
         "list_edit_button": "Muokkaa",
         "remove_list_button": "Poista",
         "make_private_button": "Tee yksityiseksi",
-        "share_button": "Jaa",
-        "saved": "Tallennettu"
+        "share_button": "Jaa"
       },
       "list_details": {
         "add_all_to_cart_button": "Lisää kaikki ostoskoriin",

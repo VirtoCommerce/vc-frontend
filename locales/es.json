@@ -833,6 +833,7 @@
         "phone_label": "@:common.labels.phone{':'}",
         "email_label": "@:common.labels.email{':'}",
         "no_addresses_message": "Aún no tienes ninguna dirección",
+        "search_addresses_aria_label": "Buscar direcciones",
         "title": "Seleccionar dirección"
       },
       "shipping_method_modal": {
@@ -940,8 +941,7 @@
         "list_edit_button": "Editar",
         "remove_list_button": "Eliminar",
         "make_private_button": "Hacer privado",
-        "share_button": "Compartir",
-        "saved": "Guardado"
+        "share_button": "Compartir"
       },
       "list_details": {
         "add_all_to_cart_button": "Añadir todo al carrito",

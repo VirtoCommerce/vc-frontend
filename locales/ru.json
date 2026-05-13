@@ -833,6 +833,7 @@
         "phone_label": "@:common.labels.phone{':'}",
         "email_label": "@:common.labels.email{':'}",
         "no_addresses_message": "У вас пока нет адресов",
+        "search_addresses_aria_label": "Поиск адресов",
         "title": "Выбрать адрес"
       },
       "shipping_method_modal": {
@@ -940,8 +941,7 @@
         "list_edit_button": "Редактировать",
         "remove_list_button": "Удалить",
         "make_private_button": "Сделать приватным",
-        "share_button": "Поделиться",
-        "saved": "Сохранено"
+        "share_button": "Поделиться"
       },
       "list_details": {
         "add_all_to_cart_button": "Добавить все в корзину",

@@ -18,8 +18,10 @@
     <div v-if="list.description" class="truncate pe-10 md:max-w-[30%] md:pe-0">{{ list.description }}</div>
 
     <div class="flex items-center pt-4 md:contents">
-      <div class="md:whitespace-nowrap">
-        {{ $t("shared.wishlists.list_card.saved") }}: <b>{{ $d(list.modifiedDate) }}</b>
+      <div class="flex items-center gap-1.5">
+        <VcIcon :size="16" name="save-v2" class="text-info-400" />
+
+        <b>{{ $d(list.modifiedDate, "short") }}</b>
       </div>
 
       <WishlistStatus
