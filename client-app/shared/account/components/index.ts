@@ -5,6 +5,7 @@ export { default as CouponItem } from "./coupon-item.vue";
 export { default as CreditCard } from "./credit-card.vue";
 export { default as CreditCardSkeleton } from "./credit-card-skeleton.vue";
 export { default as ForgotPasswordForm } from "./forgot-password-form.vue";
+export { default as ImpersonateForm } from "./impersonate-form.vue";
 export { default as OrderLineItems } from "./order-line-items.vue";
 export { default as OrderStatus } from "./order-status.vue";
 export { default as Orders } from "./orders.vue";
