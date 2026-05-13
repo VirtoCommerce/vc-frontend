@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { effectScope, nextTick, ref } from "vue";
-import { useDateField } from "./useDateField";
-import type { VcDateFieldUpdateOnType } from "./useDateField";
+import { useDateField } from "@/ui-kit/composables";
+import type { VcDateFieldUpdateOnType } from "@/ui-kit/composables";
 import type { Ref } from "vue";
 
 vi.mock("vue-i18n", () => {
@@ -114,7 +114,6 @@ describe("useDateField — commit on blur", () => {
 
   test("does not re-commit when input matches existing modelValue", () => {
     const { field, onCommit } = setup({ modelValue: "2026-10-15" });
-    // displayValue starts pre-formatted
     field.onBlur();
     expect(onCommit).not.toHaveBeenCalled();
   });
@@ -126,7 +125,6 @@ describe("useDateField — commit on blur", () => {
     expect(onCommit).not.toHaveBeenCalled();
     expect(field.errorText.value).toBe("ui_kit.date_input.invalid_format");
     expect(field.isValid.value).toBe(false);
-    // dirty text is preserved
     expect(field.displayValue.value).toBe("garbage");
   });
 

@@ -1,11 +1,11 @@
 import { getLocalTimeZone, parseDate, today as todayInLocalTz } from "@internationalized/date";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { Logger } from "@/core/utilities";
 import type { CalendarDate, DateValue } from "@internationalized/date";
 import type { Ref } from "vue";
 
 export interface IUseCalendarBaseOptions {
-  size: Ref<VcCalendarSizeType>;
   locale: Ref<string | undefined>;
   min: Ref<string | undefined>;
   max: Ref<string | undefined>;
@@ -14,8 +14,9 @@ export interface IUseCalendarBaseOptions {
 }
 
 /**
- * Safely parses an ISO YYYY-MM-DD string into a CalendarDate.
- * Returns undefined when the input is missing or malformed.
+ * In dev, a non-empty unparseable value logs a warning — that's a contract
+ * violation by the consumer (we accept ISO YYYY-MM-DD only). Empty/undefined
+ * is legitimate and stays silent.
  */
 export function tryParseDate(value: string | undefined): CalendarDate | undefined {
   if (!value) {
@@ -24,7 +25,10 @@ export function tryParseDate(value: string | undefined): CalendarDate | undefine
 
   try {
     return parseDate(value);
-  } catch {
+  } catch (error) {
+    if (import.meta.env.DEV) {
+      Logger.warn(`tryParseDate: "${value}" is not a valid ISO YYYY-MM-DD`, error);
+    }
     return undefined;
   }
 }
@@ -54,7 +58,14 @@ export function useCalendarBase(opts: IUseCalendarBaseOptions) {
     if (!fn) {
       return undefined;
     }
-    return (date: DateValue) => fn(date.toString());
+    return (date: DateValue) => {
+      try {
+        return fn(date.toString());
+      } catch (error) {
+        Logger.error("VcCalendar: disabledDate predicate threw", { date: date.toString(), error });
+        return false;
+      }
+    };
   });
 
   const prevYearDisabled = computed<boolean>(() => {

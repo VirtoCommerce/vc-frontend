@@ -23,7 +23,6 @@ const PLACEMENTS = [
 
 // Module-level helper to satisfy sonarjs/no-identical-functions across stories.
 function isWeekend(iso: string): boolean {
-  // ISO YYYY-MM-DD parsed as UTC date for stable weekday calculation.
   const date = new Date(`${iso}T00:00:00Z`);
   const dayOfWeek = date.getUTCDay();
   return dayOfWeek === 0 || dayOfWeek === 6;
@@ -58,6 +57,12 @@ const meta: Meta<typeof VcDatePicker> = {
       options: PLACEMENTS,
       type: { name: "string", required: false },
       table: { type: { summary: PLACEMENTS.join(" | ") } },
+    },
+    firstDayOfWeek: {
+      control: "select",
+      options: [0, 1, 2, 3, 4, 5, 6],
+      description: "0 = Sunday, 1 = Monday, ..., 6 = Saturday",
+      table: { type: { summary: "0 | 1 | 2 | 3 | 4 | 5 | 6" } },
     },
     min: {
       control: "text",
@@ -384,7 +389,7 @@ export const LocaleJa: StoryType = {
     docs: {
       description: {
         story:
-          "Japanese locale: format from Intl + i18n labels via temporary global locale switch. Story registers `ja.json` and toggles `useI18n().locale` to `ja-JP` for demonstration — in production, locale messages are loaded at app startup.",
+          "Japanese locale: format from Intl + i18n labels via temporary global locale switch. Story registers `ja.json` and toggles `useI18n().locale` to `ja-JP` for demonstration — in production, locale messages are loaded at app startup.\n\nNote on i18n scope: this story temporarily switches vue-i18n's GLOBAL locale to ja-JP on mount (restoring on unmount). If Storybook autodocs renders this story alongside others, neighboring stories may briefly see the ja-JP locale during this story's lifecycle. Production code paths are unaffected — locale is normally controlled by the user-preferences layer.",
       },
       source: {
         code: `<!-- value ref starts empty -->\n<VcDatePicker v-model="value" label="注文日" locale="ja-JP" />`,
@@ -398,7 +403,6 @@ export const LocaleJa: StoryType = {
       const i18n = useI18n();
       const previousLocale = i18n.locale.value;
 
-      // Register ja-JP messages (Storybook's preview only ships en.json by default).
       i18n.mergeLocaleMessage("ja-JP", jaMessages);
 
       onMounted(() => {

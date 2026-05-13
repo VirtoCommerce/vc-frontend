@@ -43,8 +43,7 @@
       "previous_year": "前年",
       "next_year": "翌年",
       "today": "今日",
-      "clear": "クリア",
-      "choose_date": "日付を選択"
+      "clear": "クリア"
     },
     "date_selector": {
       "min_date_error": "日付は{min}以降である必要があります",

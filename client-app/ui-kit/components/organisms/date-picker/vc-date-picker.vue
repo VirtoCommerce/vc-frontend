@@ -1,6 +1,6 @@
 <template>
   <VcPopover :placement="placement" :offset-options="{ mainAxis: 4 }">
-    <template #default="{ opened, toggle }">
+    <template #default="{ toggle, triggerProps }">
       <VcDateInput
         ref="dateInputRef"
         :model-value="modelValue"
@@ -20,11 +20,7 @@
         :mask="mask"
         :clearable="clearable"
         :aria-label="ariaLabel"
-        :aria="{
-          'aria-haspopup': 'dialog',
-          'aria-expanded': opened ? 'true' : 'false',
-          'aria-controls': popoverContentId,
-        }"
+        :aria="forwardedAria(triggerProps)"
         :tabindex="tabindex"
         :data-test-id="dataTestId"
         @update:model-value="onInputUpdate"
@@ -47,20 +43,18 @@
     </template>
 
     <template #content="{ close }">
-      <div :id="popoverContentId" role="dialog" :aria-label="t('ui_kit.calendar.aria_label')">
-        <VcCalendar
-          :model-value="modelValue"
-          :size="calendarSize"
-          :min="min"
-          :max="max"
-          :disabled-date="disabledDate"
-          :locale="locale"
-          :first-day-of-week="firstDayOfWeek"
-          :weekday-format="weekdayFormat"
-          :show-footer="showFooter"
-          @update:model-value="onCalendarUpdate(close, $event)"
-        />
-      </div>
+      <VcCalendar
+        :model-value="modelValue"
+        :size="calendarSize"
+        :min="min"
+        :max="max"
+        :disabled-date="disabledDate"
+        :locale="locale"
+        :first-day-of-week="firstDayOfWeek"
+        :weekday-format="weekdayFormat"
+        :show-footer="showFooter"
+        @update:model-value="onCalendarUpdate(close, $event)"
+      />
     </template>
   </VcPopover>
 </template>
@@ -68,7 +62,6 @@
 <script setup lang="ts">
 import { computed, useTemplateRef } from "vue";
 import { useI18n } from "vue-i18n";
-import { useComponentId } from "@/ui-kit/composables";
 import type { VcDateFieldUpdateOnType } from "@/ui-kit/composables";
 
 interface IProps {
@@ -111,7 +104,6 @@ interface IProps {
 
 interface IEmits {
   (event: "update:modelValue", value: string | undefined): void;
-  (event: "change", value: string | undefined): void;
   (event: "blur", focusEvent: FocusEvent): void;
   (event: "focus", focusEvent: FocusEvent): void;
   (event: "clear"): void;
@@ -127,7 +119,6 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const { t } = useI18n();
 
-const popoverContentId = useComponentId("vc-date-picker-popover");
 const dateInputRef = useTemplateRef<{ inputElement: HTMLInputElement | null } | null>("dateInputRef");
 const innerInputElement = computed<HTMLInputElement | null>(() => dateInputRef.value?.inputElement ?? null);
 
@@ -139,9 +130,33 @@ const calendarSize = computed<VcCalendarSizeType>(() => {
   return props.size;
 });
 
+/**
+ * Pick the aria-* attrs out of VcPopover's `triggerProps` slot prop.
+ *
+ * VcPopover ships a full set of trigger bindings (role, aria-*, onClick,
+ * onMouseenter, …). We only want the aria advertising — `onClick: toggle`
+ * would re-add input-click-to-toggle behavior that's deliberately avoided
+ * (toggling lives on the calendar icon button only). `role="button"` would
+ * also clash with the underlying <input>, so we drop it too.
+ *
+ * `aria-controls` is the canonical id assigned by VcPopover via
+ * `useComponentId("vc-popover")` to its body element — keeping the picker
+ * a thin consumer of that contract rather than duplicating the id locally.
+ */
+function forwardedAria(triggerProps: Record<string, unknown>): Record<string, string | number | null> {
+  const aria: Record<string, string | number | null> = {
+    "aria-haspopup": triggerProps["aria-haspopup"] as string,
+    "aria-expanded": String(triggerProps["aria-expanded"]),
+  };
+  const controls = triggerProps["aria-controls"];
+  if (typeof controls === "string") {
+    aria["aria-controls"] = controls;
+  }
+  return aria;
+}
+
 function onInputUpdate(value: string | undefined): void {
   emit("update:modelValue", value);
-  emit("change", value);
 }
 
 function onInputBlur(event: FocusEvent): void {
@@ -158,7 +173,6 @@ function onInputClear(): void {
 
 function onCalendarUpdate(close: () => void, value: string | undefined): void {
   emit("update:modelValue", value);
-  emit("change", value);
   if (props.closeOnSelect && value !== undefined) {
     close();
     // Return focus to the input after the popover closes — accessible keyboard flow.

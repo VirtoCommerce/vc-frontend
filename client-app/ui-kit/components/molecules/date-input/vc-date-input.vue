@@ -38,6 +38,7 @@ import { parseDate } from "@internationalized/date";
 import { useEventListener } from "@vueuse/core";
 import { computed, toRef, useTemplateRef } from "vue";
 import { useI18n } from "vue-i18n";
+import { Logger } from "@/core/utilities";
 import { useDateField } from "@/ui-kit/composables";
 import {
   deriveDateMaskFromLocale,
@@ -93,7 +94,6 @@ interface IProps {
 
 interface IEmits {
   (event: "update:modelValue", value: string | undefined): void;
-  (event: "change", value: string | undefined): void;
   (event: "blur", focusEvent: FocusEvent): void;
   (event: "focus", focusEvent: FocusEvent): void;
   (event: "clear"): void;
@@ -116,7 +116,6 @@ const { displayValue, errorText, onBlur, onEnter, onClear, commit } = useDateFie
   max: toRef(props, "max"),
   onCommit: (iso) => {
     emit("update:modelValue", iso);
-    emit("change", iso);
   },
 });
 
@@ -194,14 +193,18 @@ useEventListener(innerInputElement, "paste", (event: ClipboardEvent) => {
     // Unparseable — let maska transform the pasted text into the mask slots.
     return;
   }
-  event.preventDefault();
   let cd;
   try {
     cd = parseDate(iso);
-  } catch {
-    // Defensive: iso came from our own parser, so this branch is unreachable.
+  } catch (error) {
+    // Unreachable in practice (iso came from our own parser). If it fires,
+    // fall through to native paste / maska rather than dropping the input.
+    if (import.meta.env.DEV) {
+      Logger.warn("VcDateInput: paste handler — parseDateInputToIso succeeded but parseDate threw", { iso, error });
+    }
     return;
   }
+  event.preventDefault();
   displayValue.value = formatDateLocale(cd, resolvedLocale.value);
   commit();
 });

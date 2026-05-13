@@ -7,7 +7,7 @@ import {
   parseDateInput,
   parseDateInputToIso,
   toDateOnlyString,
-} from "./date";
+} from "@/ui-kit/utilities/date";
 
 describe("toDateOnlyString", () => {
   test("strips time portion from ISO datetime", () => {
@@ -42,8 +42,6 @@ describe("parseDateInput", () => {
   });
 
   describe("ISO passthrough across locales", () => {
-    // ISO regex is locale-agnostic — two locales with different short-format
-    // separators are sufficient to prove the ISO branch isn't locale-influenced.
     test.each([["en-US"], ["ja-JP"]])("ISO 2026-10-15 parses in %s", (locale) => {
       const result = parseDateInput("2026-10-15", locale);
       expect(result).not.toBeNull();
@@ -91,9 +89,7 @@ describe("parseDateInput", () => {
   });
 
   test("wrong-locale format does not silently parse", () => {
-    // de-DE format "15.10.2026" with separator "/" should fail for en-US.
     expect(parseDateInput("15.10.2026", "en-US")).toBeNull();
-    // en-US format with "/" should fail for de-DE.
     expect(parseDateInput("10/15/2026", "de-DE")).toBeNull();
   });
 });

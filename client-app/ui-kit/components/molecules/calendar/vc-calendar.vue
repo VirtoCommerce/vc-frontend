@@ -114,7 +114,7 @@ import { dateValueToIso, todayDate, tryParseDate, useCalendarBase } from "./use-
 import type { DateValue } from "@internationalized/date";
 
 interface IProps {
-  modelValue?: VcCalendarValueType;
+  modelValue?: string;
   size?: VcCalendarSizeType;
   min?: string;
   max?: string;
@@ -127,8 +127,7 @@ interface IProps {
 }
 
 interface IEmits {
-  (event: "update:modelValue", value: VcCalendarValueType): void;
-  (event: "change", value: VcCalendarValueType): void;
+  (event: "update:modelValue", value: string | undefined): void;
 }
 
 const emit = defineEmits<IEmits>();
@@ -157,7 +156,6 @@ function getInitialPlaceholder(): DateValue {
 }
 
 const base = useCalendarBase({
-  size: toRef(props, "size"),
   locale: toRef(props, "locale"),
   min: toRef(props, "min"),
   max: toRef(props, "max"),
@@ -189,11 +187,9 @@ const parsedModelValue = computed<DateValue | undefined>(() => {
 });
 
 function onUpdate(value: DateValue | DateValue[] | undefined): void {
-  // Single mode only ever yields a single DateValue (or undefined)
   const single = Array.isArray(value) ? value[0] : value;
   const iso = dateValueToIso(single);
   emit("update:modelValue", iso);
-  emit("change", iso);
 }
 
 function onTodayClick(): void {
@@ -204,13 +200,12 @@ function onTodayClick(): void {
 
 function onClearClick(): void {
   emit("update:modelValue", undefined);
-  emit("change", undefined);
 }
 
+// Sync placeholder to incoming model value so external state changes scroll the view.
 watch(
   () => props.modelValue,
   (next) => {
-    // Sync placeholder to incoming model value so external state changes scroll the view
     if (typeof next === "string") {
       const parsed = tryParseDate(next);
       if (parsed) {
@@ -238,12 +233,6 @@ watch(
   $outside: "";
 
   @apply inline-flex flex-col w-fit p-3 gap-2 bg-[--bg-color] text-[--text-color] border border-[--border-color] rounded-[--radius];
-
-  font-family:
-    "Lato",
-    system-ui,
-    -apple-system,
-    sans-serif;
 
   &--size {
     &--md {
@@ -334,11 +323,10 @@ watch(
   }
 
   &__weekday {
-    @apply flex items-center justify-center text-neutral-700 font-bold uppercase;
+    @apply flex items-center justify-center text-neutral-700 font-bold uppercase tracking-wider;
 
     height: 1.5rem;
     font-size: var(--weekday-text);
-    letter-spacing: 0.04em;
   }
 
   &__grid {
@@ -358,7 +346,6 @@ watch(
     width: var(--cell-size);
     height: var(--cell-size);
     font-size: var(--cell-text);
-    font-family: inherit;
     transition:
       background 120ms ease,
       color 120ms ease;
@@ -376,7 +363,6 @@ watch(
       box-shadow: inset 0 0 0 2px var(--color-primary-500);
     }
 
-    /* outside-view (adjacent month padding) */
     &[data-outside-view] {
       $outside: &;
 
@@ -427,12 +413,9 @@ watch(
   }
 
   &__footer-btn {
-    @apply bg-transparent border-0 cursor-pointer rounded-[--day-radius] uppercase text-primary-700;
+    @apply bg-transparent border-0 cursor-pointer rounded-[--day-radius] uppercase text-primary-700 text-xs font-black tracking-wider;
 
     font-family: inherit;
-    font-size: 0.75rem;
-    font-weight: 900;
-    letter-spacing: 0.04em;
     padding: 0.375rem 0.625rem;
     transition: background 120ms ease;
 
@@ -449,9 +432,6 @@ watch(
     }
   }
 
-  /* TODO: VCST-XXXX Watermelon contrast — white text on yellow-green primary-500 fails WCAG AA. */
-
-  /* Single-mode selected day: solid primary fill, white text, fully rounded. */
   &--mode--single &__day[data-selected] {
     @apply font-bold;
 

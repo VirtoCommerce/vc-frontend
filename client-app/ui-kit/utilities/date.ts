@@ -27,10 +27,10 @@ function probeLocaleDateFormat(locale: string): ILocaleDateFormatProbe | null {
   }
 
   try {
-    // Pick a probe date whose day/month/year values are all distinct and unambiguous.
-    const probe = new Date(Date.UTC(2026, 0, 5)); // 2026-01-05
-    // Use explicit 4-digit year so round-trip with formatDateLocale is consistent
+    // Probe date with day/month/year values all distinct and unambiguous.
+    // Explicit 4-digit year so round-trip with formatDateLocale is consistent
     // across locales (Intl's "short" yields 2-digit years in en-US/de-DE).
+    const probe = new Date(Date.UTC(2026, 0, 5));
     const parts = new Intl.DateTimeFormat(locale, {
       year: "numeric",
       month: "2-digit",
@@ -54,8 +54,6 @@ function probeLocaleDateFormat(locale: string): ILocaleDateFormatProbe | null {
       return null;
     }
 
-    // Pick the separator: the most common literal between numeric parts.
-    // Most locales produce a single literal like "/", ".", "-".
     const separator = literals.find((s) => s && s.trim().length > 0) ?? "/";
 
     const result: ILocaleDateFormatProbe = { order, separator };
@@ -79,10 +77,9 @@ function tryParseIso(text: string): CalendarDate | null {
 }
 
 /**
- * Construct a CalendarDate and verify the components survive a round-trip
- * (guards against silent month overflow like Feb 30 → Mar 2 in some libraries).
- * `@internationalized/date` actually throws on invalid components, but we
- * double-check explicitly to be defensive.
+ * Construct a CalendarDate and verify the components survive a round-trip —
+ * guards against silent month overflow like Feb 30 → Mar 2. `@internationalized/date`
+ * throws on invalid components, but we double-check explicitly to be defensive.
  */
 function buildValidCalendarDate(year: number, month: number, day: number): CalendarDate | null {
   if (!Number.isInteger(year) || !Number.isInteger(month) || !Number.isInteger(day)) {
@@ -103,7 +100,7 @@ function buildValidCalendarDate(year: number, month: number, day: number): Calen
     if (cd.year !== year || cd.month !== month || cd.day !== day) {
       return null;
     }
-    // Use parseDate to catch any normalizations the constructor might allow.
+    // parseDate catches any normalizations the constructor might allow.
     const iso = cd.toString();
     const reparsed = parseDate(iso);
     if (reparsed.year !== year || reparsed.month !== month || reparsed.day !== day) {
@@ -130,13 +127,12 @@ export function parseDateInput(text: string, locale: string): CalendarDate | nul
     return null;
   }
 
-  // 1. Try ISO YYYY-MM-DD first — this is unambiguous.
+  // ISO is unambiguous — try it before locale-specific parsing.
   const isoResult = tryParseIso(trimmed);
   if (isoResult) {
     return isoResult;
   }
 
-  // 2. Probe the locale's short format, then split user input by that separator.
   const probe = probeLocaleDateFormat(locale);
   if (!probe) {
     return null;
@@ -147,7 +143,6 @@ export function parseDateInput(text: string, locale: string): CalendarDate | nul
     return null;
   }
 
-  // All tokens must be numeric integers with no extraneous chars.
   const parsedTokens: number[] = [];
   for (const token of tokens) {
     const t = token.trim();
@@ -173,7 +168,7 @@ export function parseDateInput(text: string, locale: string): CalendarDate | nul
     }
   }
 
-  // We require a 4-digit year (1000–9999). Two-digit years are ambiguous; reject them.
+  // 4-digit year required — two-digit years are ambiguous.
   if (year < 1000 || year > 9999) {
     return null;
   }
@@ -244,7 +239,7 @@ export function parseDateInputToIso(text: string, locale: string): string | null
  */
 export function derivePlaceholderFromLocale(locale: string): string {
   try {
-    const probe = new Date(Date.UTC(2026, 0, 5)); // 2026-01-05
+    const probe = new Date(Date.UTC(2026, 0, 5));
     const parts = new Intl.DateTimeFormat(locale, {
       year: "numeric",
       month: "2-digit",

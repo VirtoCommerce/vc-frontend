@@ -1,5 +1,6 @@
 import { computed, ref, toValue, watch } from "vue";
 import { useI18n } from "vue-i18n";
+import { Logger } from "@/core/utilities";
 import { tryParseDate } from "@/ui-kit/components/molecules/calendar/use-calendar-base";
 import { formatDateLocale, parseDateInputToIso } from "@/ui-kit/utilities/date";
 import type { MaybeRef, Ref } from "vue";
@@ -17,7 +18,6 @@ export interface IUseDateFieldOptions {
   min?: Ref<string | undefined>;
   /** ISO YYYY-MM-DD max boundary. */
   max?: Ref<string | undefined>;
-  /** Called when a valid ISO value should be emitted upstream. */
   onCommit: (iso: string | undefined) => void;
 }
 
@@ -50,10 +50,6 @@ export function useDateField(opts: IUseDateFieldOptions) {
 
   watch([() => opts.modelValue.value, resolvedLocale], syncDisplayFromModel, { immediate: true });
 
-  /**
-   * Parsed ISO of the current displayValue, or null if it can't be parsed.
-   * Empty displayValue is treated as "no value" (null without it being an error).
-   */
   const parsedIso = computed<string | null>(() => {
     const trimmed = displayValue.value.trim();
     if (!trimmed) {
@@ -64,6 +60,38 @@ export function useDateField(opts: IUseDateFieldOptions) {
 
   const isEmpty = computed<boolean>(() => displayValue.value.trim().length === 0);
 
+  /**
+   * Parsed CalendarDate of the consumer's `min` boundary.
+   *
+   * If `min` is non-empty but unparseable, the consumer passed a non-ISO
+   * value — surface it via a dev-only warning so the contract violation
+   * is visible during development. The boundary is then ignored (returns
+   * undefined) rather than corrupting validation with a bogus comparison.
+   */
+  const minDate = computed(() => {
+    const value = opts.min?.value;
+    if (!value) {
+      return undefined;
+    }
+    const parsed = tryParseDate(value);
+    if (!parsed && import.meta.env.DEV) {
+      Logger.warn(`useDateField: min="${value}" is not a valid ISO YYYY-MM-DD`);
+    }
+    return parsed;
+  });
+
+  const maxDate = computed(() => {
+    const value = opts.max?.value;
+    if (!value) {
+      return undefined;
+    }
+    const parsed = tryParseDate(value);
+    if (!parsed && import.meta.env.DEV) {
+      Logger.warn(`useDateField: max="${value}" is not a valid ISO YYYY-MM-DD`);
+    }
+    return parsed;
+  });
+
   const isValid = computed<boolean>(() => {
     if (isEmpty.value) {
       return true;
@@ -72,10 +100,14 @@ export function useDateField(opts: IUseDateFieldOptions) {
     if (!iso) {
       return false;
     }
-    if (opts.min?.value && iso < opts.min.value) {
+    const parsedDate = tryParseDate(iso);
+    if (!parsedDate) {
       return false;
     }
-    if (opts.max?.value && iso > opts.max.value) {
+    if (minDate.value && parsedDate.compare(minDate.value) < 0) {
+      return false;
+    }
+    if (maxDate.value && parsedDate.compare(maxDate.value) > 0) {
       return false;
     }
     return true;
@@ -89,25 +121,27 @@ export function useDateField(opts: IUseDateFieldOptions) {
     if (!iso) {
       return t("ui_kit.date_input.invalid_format");
     }
-    if (opts.min?.value && iso < opts.min.value) {
-      return t("ui_kit.date_input.min_date_error", { min: opts.min.value });
+    const parsedDate = tryParseDate(iso);
+    if (!parsedDate) {
+      return t("ui_kit.date_input.invalid_format");
     }
-    if (opts.max?.value && iso > opts.max.value) {
-      return t("ui_kit.date_input.max_date_error", { max: opts.max.value });
+    if (minDate.value && parsedDate.compare(minDate.value) < 0) {
+      return t("ui_kit.date_input.min_date_error", { min: opts.min?.value });
+    }
+    if (maxDate.value && parsedDate.compare(maxDate.value) > 0) {
+      return t("ui_kit.date_input.max_date_error", { max: opts.max?.value });
     }
     return undefined;
   });
 
   function commit(): void {
     if (isEmpty.value) {
-      // Empty → clear upstream model.
       if (opts.modelValue.value) {
         opts.onCommit(undefined);
       }
       return;
     }
     if (!isValid.value) {
-      // Hold dirty text; errorText is surfaced until the user fixes it.
       return;
     }
     const iso = parsedIso.value;
@@ -119,10 +153,6 @@ export function useDateField(opts: IUseDateFieldOptions) {
     }
   }
 
-  function onInput(value: string): void {
-    displayValue.value = value;
-  }
-
   function onBlur(): void {
     const mode = toValue(opts.updateOn) ?? "blur";
     if (mode === "blur") {
@@ -131,7 +161,6 @@ export function useDateField(opts: IUseDateFieldOptions) {
   }
 
   function onEnter(): void {
-    // Enter always commits, regardless of updateOn mode.
     commit();
   }
 
@@ -146,19 +175,18 @@ export function useDateField(opts: IUseDateFieldOptions) {
     displayValue,
     errorText,
     isValid,
-    onInput,
     onBlur,
     onEnter,
     onClear,
     /**
-     * Programmatically commit the current `displayValue` upstream.
-     * Same semantics as `onBlur` in `updateOn: "blur"` mode (and the
-     * unconditional Enter commit): invalid input is held dirty, empty
-     * clears an existing model, valid input emits the canonical ISO.
+     * Commit the current displayValue unconditionally — bypasses the `updateOn` gate.
+     * Used for programmatic commits (e.g. paste interception). For user-event-driven
+     * commits, prefer `onBlur` or `onEnter` which respect `updateOn`.
      *
-     * Useful for callers that bypass the natural input/blur flow — e.g.
-     * a paste handler that writes a formatted value into `displayValue`
-     * directly and needs to flush it immediately.
+     * Behavior:
+     * - Valid input → emit `onCommit(iso)`.
+     * - Empty input + existing model → emit `onCommit(undefined)`.
+     * - Invalid input → no emit; `errorText` is surfaced via `isValid` / `errorText`.
      */
     commit,
   };

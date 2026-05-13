@@ -43,8 +43,7 @@
       "previous_year": "Previous year",
       "next_year": "Next year",
       "today": "Today",
-      "clear": "Clear",
-      "choose_date": "Choose date"
+      "clear": "Clear"
     },
     "date_selector": {
       "min_date_error": "A data deve ser igual ou posterior a {min}",

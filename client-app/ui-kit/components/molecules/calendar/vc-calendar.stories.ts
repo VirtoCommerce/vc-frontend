@@ -21,6 +21,12 @@ const meta: Meta<typeof VcCalendar> = {
       type: { name: "string", required: false },
       table: { type: { summary: WEEKDAY_FORMATS.join(" | ") } },
     },
+    firstDayOfWeek: {
+      control: "select",
+      options: [0, 1, 2, 3, 4, 5, 6],
+      description: "0 = Sunday, 1 = Monday, ..., 6 = Saturday",
+      table: { type: { summary: "0 | 1 | 2 | 3 | 4 | 5 | 6" } },
+    },
     min: {
       control: "text",
       description: "Minimum date in YYYY-MM-DD format",
@@ -154,7 +160,6 @@ export const WithDisabledDates: StoryType = {
     setup() {
       const value = ref<string | undefined>("2026-10-15");
       const disabledDate = (iso: string) => {
-        // ISO YYYY-MM-DD parsed as UTC date for stable weekday calculation
         const d = new Date(`${iso}T00:00:00Z`);
         const dow = d.getUTCDay();
         return dow === 0 || dow === 6;
