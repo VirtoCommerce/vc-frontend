@@ -827,6 +827,7 @@
         "phone_label": "@:common.labels.phone{':'}",
         "email_label": "@:common.labels.email{':'}",
         "no_addresses_message": "Sinulla ei ole vielä osoitteita",
+        "search_addresses_aria_label": "Hae osoitteita",
         "title": "Valitse osoite"
       },
       "shipping_method_modal": {

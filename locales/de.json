@@ -827,6 +827,7 @@
         "phone_label": "@:common.labels.phone{':' }",
         "email_label": "@:common.labels.email{':' }",
         "no_addresses_message": "Sie haben noch keine Adressen",
+        "search_addresses_aria_label": "Adressen suchen",
         "title": "Adresse auswählen"
       },
       "shipping_method_modal": {

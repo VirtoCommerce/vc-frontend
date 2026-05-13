@@ -17,6 +17,7 @@ export interface IPickupFilterContext {
   filterSelectsAreEmpty: ComputedRef<boolean>;
   filterIsApplied: Ref<boolean>;
   pickupLocationsLoading: Ref<boolean>;
+  searchAriaLabelKey: string;
   clearFilter: () => void;
   buildFilter: () => string | undefined;
 }
@@ -64,6 +65,7 @@ export function createCartFilterContext(): IPickupFilterContext {
     filterSelectsAreEmpty,
     filterIsApplied,
     pickupLocationsLoading,
+    searchAriaLabelKey: "pages.account.order_details.bopis.search_pickup_locations",
     clearFilter,
     buildFilter,
   });
@@ -149,6 +151,7 @@ export function createAddressFilterContext(options: {
     filterSelectsAreEmpty,
     filterIsApplied,
     pickupLocationsLoading: options.loading,
+    searchAriaLabelKey: "shared.checkout.select_address_modal.search_addresses_aria_label",
     clearFilter,
     buildFilter,
   });
@@ -188,6 +191,7 @@ export function createProductFilterContext(options: { loading: Ref<boolean> }): 
     filterSelectsAreEmpty,
     filterIsApplied,
     pickupLocationsLoading: options.loading,
+    searchAriaLabelKey: "pages.account.order_details.bopis.search_pickup_locations",
     clearFilter,
     buildFilter,
   });
