@@ -805,6 +805,7 @@
         "phone_label": "@:common.labels.phone{':'}",
         "email_label": "@:common.labels.email{':'}",
         "no_addresses_message": "You do not have any addresses yet",
+        "search_addresses_aria_label": "Search addresses",
         "title": "Select address"
       },
       "shipping_method_modal": {
