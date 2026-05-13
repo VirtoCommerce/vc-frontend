@@ -494,6 +494,28 @@
           "user_not_found": "Usuário não encontrado. Por favor, certifique-se de que você inseriu as informações corretas"
         }
       },
+      "impersonate_form": {
+        "subtitle": "Confirme sua identidade para continuar",
+        "description": "Você está fazendo login em nome de um cliente. A sessão será auditada.",
+        "email_label": "Email",
+        "email_placeholder": "Digite seu email",
+        "password_label": "Senha",
+        "password_placeholder": "Digite sua senha",
+        "submit_button": "Verificar e continuar",
+        "cancel_button": "Cancelar",
+        "success": "Verificação bem-sucedida. Mudando para a visão do cliente…",
+        "errors": {
+          "login_failed": "@:shared.account.sign_in_form.errors.login_failed",
+          "user_is_temporary_locked_out": "@:shared.account.sign_in_form.errors.user_is_temporary_locked_out",
+          "user_is_locked_out": "@:shared.account.sign_in_form.errors.user_is_locked_out",
+          "email_verification_is_required": "@:shared.account.sign_in_form.errors.email_verification_is_required",
+          "user_cannot_login_in_store": "@:shared.account.sign_in_form.errors.user_cannot_login_in_store",
+          "password_expired": "@:shared.account.sign_in_form.errors.password_expired",
+          "user_not_found": "@:shared.account.sign_in_form.errors.user_not_found",
+          "impersonate_failed": "Verificação bem-sucedida, mas a mudança para a conta do cliente falhou. Tente novamente.",
+          "generic": "Algo deu errado. Tente novamente."
+        }
+      },
       "forgot_password_form": {
         "error_alert": "Resultado inválido da solicitação de redefinição de senha. Por favor "
       },
@@ -805,6 +827,7 @@
         "phone_label": "@:common.labels.phone{':'}",
         "email_label": "@:common.labels.email{':'}",
         "no_addresses_message": "Você ainda não tem nenhum endereço",
+        "search_addresses_aria_label": "Pesquisar endereços",
         "title": "Selecionar endereço"
       },
       "shipping_method_modal": {
@@ -1288,8 +1311,9 @@
         "update_error_alert": "Ocorreu um erro durante a atualização do perfil"
       },
       "impersonate": {
-        "title": "Impersonação",
-        "success": "Impersonificação bem-sucedida",
+        "title": "Verificação de segurança",
+        "back_to_home": "Voltar ao início",
+        "switching_in_progress": "Mudando para a visão do cliente…",
         "error": "Alguns problemas durante a personificação. Verifique suas permissões"
       },
       "promotion_coupons": {

@@ -494,6 +494,28 @@
           "user_not_found": "未找到用户。请确保您输入了正确的信息"
         }
       },
+      "impersonate_form": {
+        "subtitle": "请确认身份以继续",
+        "description": "您正以客户名义登录。本次会话将被审核记录。",
+        "email_label": "邮箱",
+        "email_placeholder": "请输入邮箱",
+        "password_label": "密码",
+        "password_placeholder": "请输入密码",
+        "submit_button": "验证并继续",
+        "cancel_button": "取消",
+        "success": "验证成功。正在切换到客户视图…",
+        "errors": {
+          "login_failed": "@:shared.account.sign_in_form.errors.login_failed",
+          "user_is_temporary_locked_out": "@:shared.account.sign_in_form.errors.user_is_temporary_locked_out",
+          "user_is_locked_out": "@:shared.account.sign_in_form.errors.user_is_locked_out",
+          "email_verification_is_required": "@:shared.account.sign_in_form.errors.email_verification_is_required",
+          "user_cannot_login_in_store": "@:shared.account.sign_in_form.errors.user_cannot_login_in_store",
+          "password_expired": "@:shared.account.sign_in_form.errors.password_expired",
+          "user_not_found": "@:shared.account.sign_in_form.errors.user_not_found",
+          "impersonate_failed": "验证成功,但切换到客户账户失败。请重试。",
+          "generic": "出错了。请重试。"
+        }
+      },
       "forgot_password_form": {
         "error_alert": "重置密码请求的结果无效。请 "
       },
@@ -805,6 +827,7 @@
         "phone_label": "@:common.labels.phone{':'}",
         "email_label": "@:common.labels.email{':'}",
         "no_addresses_message": "您尚未有任何地址",
+        "search_addresses_aria_label": "搜索地址",
         "title": "选择地址"
       },
       "shipping_method_modal": {
@@ -1288,8 +1311,9 @@
         "update_error_alert": "更新个人资料时出错"
       },
       "impersonate": {
-        "title": "冒充",
-        "success": "冒充成功",
+        "title": "安全验证",
+        "back_to_home": "返回首页",
+        "switching_in_progress": "正在切换到客户视图…",
         "error": "冒充时出现一些问题。检查您的权限"
       },
       "promotion_coupons": {
