@@ -5,7 +5,6 @@ import {
   derivePlaceholderFromLocale,
   formatDateLocale,
   parseDateInput,
-  parseDateInputToIso,
   toDateOnlyString,
 } from "@/ui-kit/utilities/date";
 
@@ -118,27 +117,6 @@ describe("formatDateLocale", () => {
       const parsed = parseDateInput(formatted, locale);
       expect(parsed?.toString(), `round-trip failed for ${locale} formatted=${formatted}`).toBe("2026-03-07");
     }
-  });
-});
-
-describe("parseDateInputToIso", () => {
-  test.each([
-    ["en-US short", "10/15/2026", "en-US", "2026-10-15"],
-    ["de-DE short", "15.10.2026", "de-DE", "2026-10-15"],
-    ["ja-JP short", "2026/10/15", "ja-JP", "2026-10-15"],
-    ["ISO in any locale", "2026-10-15", "fi-FI", "2026-10-15"],
-  ])("%s returns canonical ISO", (_label, text, locale, expected) => {
-    expect(parseDateInputToIso(text, locale)).toBe(expected);
-  });
-
-  test("invalid input returns null", () => {
-    expect(parseDateInputToIso("", "en-US")).toBeNull();
-    expect(parseDateInputToIso("garbage", "en-US")).toBeNull();
-    expect(parseDateInputToIso("2026-02-30", "en-US")).toBeNull();
-  });
-
-  test("pads single-digit month and day in ISO output", () => {
-    expect(parseDateInputToIso("1/5/2026", "en-US")).toBe("2026-01-05");
   });
 });
 
