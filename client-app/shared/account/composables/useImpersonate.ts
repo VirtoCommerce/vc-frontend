@@ -11,15 +11,7 @@ import type { ConnectTokenResponseType } from "@/core/types";
 type StepType = "idle" | "verify" | "impersonate" | "success";
 
 export function useImpersonate() {
-  const {
-    authorize,
-    errors: authErrors,
-    isAuthorizing,
-    setTokenType,
-    setAccessToken,
-    setExpiresAt,
-    setRefreshToken,
-  } = useAuth();
+  const { authorize, errors: authErrors, setTokenType, setAccessToken, setExpiresAt, setRefreshToken } = useAuth();
   const broadcast = useBroadcast();
   const notifications = useNotifications();
   const { t } = useI18n();
@@ -27,9 +19,7 @@ export function useImpersonate() {
   const step = ref<StepType>("idle");
   const errors = ref<IdentityErrorType[]>([]);
 
-  const loading = computed<boolean>(
-    () => isAuthorizing.value || step.value === "verify" || step.value === "impersonate",
-  );
+  const loading = computed<boolean>(() => step.value === "verify" || step.value === "impersonate");
 
   function resetState(): void {
     step.value = "idle";
@@ -118,7 +108,7 @@ export function useImpersonate() {
     }
 
     if (hasAuthErrors) {
-      errors.value = verifyErrors as IdentityErrorType[];
+      errors.value = verifyErrors;
       step.value = "idle";
       return;
     }
