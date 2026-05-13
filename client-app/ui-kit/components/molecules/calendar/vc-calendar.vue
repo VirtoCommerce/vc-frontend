@@ -115,6 +115,7 @@ import {
   CalendarRoot,
 } from "reka-ui";
 import { computed, toRef, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { dateValueToIso, todayDate, tryParseDate, useCalendarBase } from "./use-calendar-base";
 import type { DateValue } from "@internationalized/date";
 
@@ -151,14 +152,10 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 function getInitialPlaceholder(): DateValue {
-  if (typeof props.modelValue === "string") {
-    const parsed = tryParseDate(props.modelValue);
-    if (parsed) {
-      return parsed;
-    }
-  }
-  return todayDate();
+  return tryParseDate(props.modelValue) ?? todayDate();
 }
+
+const { t } = useI18n();
 
 const base = useCalendarBase({
   locale: toRef(props, "locale"),
@@ -169,7 +166,6 @@ const base = useCalendarBase({
 });
 
 const {
-  t,
   placeholderRef,
   resolvedLocale,
   minDateValue,
@@ -184,12 +180,7 @@ const {
 
 const rootClasses = computed(() => ["vc-calendar", `vc-calendar--size--${props.size}`, "vc-calendar--mode--single"]);
 
-const parsedModelValue = computed<DateValue | undefined>(() => {
-  if (typeof props.modelValue !== "string") {
-    return undefined;
-  }
-  return tryParseDate(props.modelValue);
-});
+const parsedModelValue = computed<DateValue | undefined>(() => tryParseDate(props.modelValue));
 
 function onUpdate(value: DateValue | DateValue[] | undefined): void {
   const single = Array.isArray(value) ? value[0] : value;
@@ -229,11 +220,9 @@ function onClearClick(): void {
 watch(
   () => props.modelValue,
   (next) => {
-    if (typeof next === "string") {
-      const parsed = tryParseDate(next);
-      if (parsed) {
-        placeholderRef.value = parsed;
-      }
+    const parsed = tryParseDate(next);
+    if (parsed) {
+      placeholderRef.value = parsed;
     }
   },
 );

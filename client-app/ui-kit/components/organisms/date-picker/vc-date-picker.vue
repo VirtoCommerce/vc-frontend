@@ -142,6 +142,9 @@ const calendarSize = computed<VcCalendarSizeType>(() => {
  * `aria-controls` is the canonical id assigned by VcPopover via
  * `useComponentId("vc-popover")` to its body element — keeping the picker
  * a thin consumer of that contract rather than duplicating the id locally.
+ *
+ * TODO: ask VcPopover to expose ariaProps separately from triggerProps so we
+ * don't silently break when VcPopover's trigger contract changes.
  */
 function forwardedAria(triggerProps: Record<string, unknown>): Record<string, string | number | null> {
   const aria: Record<string, string | number | null> = {

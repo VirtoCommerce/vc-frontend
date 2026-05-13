@@ -1,8 +1,8 @@
 import { computed, ref, toValue, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { Logger } from "@/core/utilities";
 import { tryParseDate } from "@/ui-kit/components/molecules/calendar/use-calendar-base";
-import { formatDateLocale, parseDateInputToIso } from "@/ui-kit/utilities/date";
+import { formatDateLocale, parseDateInput } from "@/ui-kit/utilities/date";
+import type { CalendarDate } from "@internationalized/date";
 import type { MaybeRef, Ref } from "vue";
 
 export type VcDateFieldUpdateOnType = "blur" | "enter";
@@ -50,64 +50,31 @@ export function useDateField(opts: IUseDateFieldOptions) {
 
   watch([() => opts.modelValue.value, resolvedLocale], syncDisplayFromModel, { immediate: true });
 
-  const parsedIso = computed<string | null>(() => {
+  const parsedDate = computed<CalendarDate | null>(() => {
     const trimmed = displayValue.value.trim();
     if (!trimmed) {
       return null;
     }
-    return parseDateInputToIso(trimmed, resolvedLocale.value);
+    return parseDateInput(trimmed, resolvedLocale.value);
   });
 
   const isEmpty = computed<boolean>(() => displayValue.value.trim().length === 0);
 
-  /**
-   * Parsed CalendarDate of the consumer's `min` boundary.
-   *
-   * If `min` is non-empty but unparseable, the consumer passed a non-ISO
-   * value — surface it via a dev-only warning so the contract violation
-   * is visible during development. The boundary is then ignored (returns
-   * undefined) rather than corrupting validation with a bogus comparison.
-   */
-  const minDate = computed(() => {
-    const value = opts.min?.value;
-    if (!value) {
-      return undefined;
-    }
-    const parsed = tryParseDate(value);
-    if (!parsed && import.meta.env.DEV) {
-      Logger.warn(`useDateField: min="${value}" is not a valid ISO YYYY-MM-DD`);
-    }
-    return parsed;
-  });
-
-  const maxDate = computed(() => {
-    const value = opts.max?.value;
-    if (!value) {
-      return undefined;
-    }
-    const parsed = tryParseDate(value);
-    if (!parsed && import.meta.env.DEV) {
-      Logger.warn(`useDateField: max="${value}" is not a valid ISO YYYY-MM-DD`);
-    }
-    return parsed;
-  });
+  const minDate = computed(() => tryParseDate(opts.min?.value));
+  const maxDate = computed(() => tryParseDate(opts.max?.value));
 
   const isValid = computed<boolean>(() => {
     if (isEmpty.value) {
       return true;
     }
-    const iso = parsedIso.value;
-    if (!iso) {
+    const cd = parsedDate.value;
+    if (!cd) {
       return false;
     }
-    const parsedDate = tryParseDate(iso);
-    if (!parsedDate) {
+    if (minDate.value && cd.compare(minDate.value) < 0) {
       return false;
     }
-    if (minDate.value && parsedDate.compare(minDate.value) < 0) {
-      return false;
-    }
-    if (maxDate.value && parsedDate.compare(maxDate.value) > 0) {
+    if (maxDate.value && cd.compare(maxDate.value) > 0) {
       return false;
     }
     return true;
@@ -117,18 +84,14 @@ export function useDateField(opts: IUseDateFieldOptions) {
     if (isValid.value || isEmpty.value) {
       return undefined;
     }
-    const iso = parsedIso.value;
-    if (!iso) {
+    const cd = parsedDate.value;
+    if (!cd) {
       return t("ui_kit.date_input.invalid_format");
     }
-    const parsedDate = tryParseDate(iso);
-    if (!parsedDate) {
-      return t("ui_kit.date_input.invalid_format");
-    }
-    if (minDate.value && parsedDate.compare(minDate.value) < 0) {
+    if (minDate.value && cd.compare(minDate.value) < 0) {
       return t("ui_kit.date_input.min_date_error", { min: opts.min?.value });
     }
-    if (maxDate.value && parsedDate.compare(maxDate.value) > 0) {
+    if (maxDate.value && cd.compare(maxDate.value) > 0) {
       return t("ui_kit.date_input.max_date_error", { max: opts.max?.value });
     }
     return undefined;
@@ -136,7 +99,7 @@ export function useDateField(opts: IUseDateFieldOptions) {
 
   function commit(): void {
     if (isEmpty.value) {
-      if (opts.modelValue.value) {
+      if (opts.modelValue.value !== undefined) {
         opts.onCommit(undefined);
       }
       return;
@@ -144,10 +107,8 @@ export function useDateField(opts: IUseDateFieldOptions) {
     if (!isValid.value) {
       return;
     }
-    const iso = parsedIso.value;
-    if (!iso) {
-      return;
-    }
+    // isValid guarantees parsedDate is non-null when isEmpty is false (checked above).
+    const iso = parsedDate.value!.toString();
     if (iso !== opts.modelValue.value) {
       opts.onCommit(iso);
     }

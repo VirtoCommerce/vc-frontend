@@ -34,17 +34,15 @@
 </template>
 
 <script setup lang="ts">
-import { parseDate } from "@internationalized/date";
 import { useEventListener } from "@vueuse/core";
 import { computed, toRef, useTemplateRef } from "vue";
 import { useI18n } from "vue-i18n";
-import { Logger } from "@/core/utilities";
 import { useDateField } from "@/ui-kit/composables";
 import {
   deriveDateMaskFromLocale,
   derivePlaceholderFromLocale,
   formatDateLocale,
-  parseDateInputToIso,
+  parseDateInput,
 } from "@/ui-kit/utilities/date";
 import type { VcDateFieldUpdateOnType } from "@/ui-kit/composables";
 
@@ -188,20 +186,9 @@ useEventListener(innerInputElement, "paste", (event: ClipboardEvent) => {
   if (!pasted.trim()) {
     return;
   }
-  const iso = parseDateInputToIso(pasted, resolvedLocale.value);
-  if (!iso) {
+  const cd = parseDateInput(pasted, resolvedLocale.value);
+  if (!cd) {
     // Unparseable — let maska transform the pasted text into the mask slots.
-    return;
-  }
-  let cd;
-  try {
-    cd = parseDate(iso);
-  } catch (error) {
-    // Unreachable in practice (iso came from our own parser). If it fires,
-    // fall through to native paste / maska rather than dropping the input.
-    if (import.meta.env.DEV) {
-      Logger.warn("VcDateInput: paste handler — parseDateInputToIso succeeded but parseDate threw", { iso, error });
-    }
     return;
   }
   event.preventDefault();

@@ -45,7 +45,7 @@ export function todayDate(): DateValue {
 }
 
 export function useCalendarBase(opts: IUseCalendarBaseOptions) {
-  const { t, locale: i18nLocale } = useI18n();
+  const { locale: i18nLocale } = useI18n();
 
   const placeholderRef = ref(opts.initialPlaceholder()) as Ref<DateValue>;
 
@@ -109,7 +109,6 @@ export function useCalendarBase(opts: IUseCalendarBaseOptions) {
   }
 
   return {
-    t,
     placeholderRef,
     resolvedLocale,
     minDateValue,
