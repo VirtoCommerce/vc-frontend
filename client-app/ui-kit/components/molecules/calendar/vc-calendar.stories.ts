@@ -2,7 +2,7 @@ import { ref } from "vue";
 import { VcCalendar } from "..";
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
-const SIZES = ["sm", "md"];
+const SIZES = ["xs", "sm", "md"];
 const WEEKDAY_FORMATS = ["narrow", "short"];
 
 const meta: Meta<typeof VcCalendar> = {
@@ -190,6 +190,33 @@ export const WithFooter: StoryType = {
         <div class="text-sm text-neutral-600">Selected: {{ value || "(none)" }}</div>
       </div>
     `,
+  }),
+};
+
+export const SizeXs: StoryType = {
+  args: {
+    size: "xs",
+    weekdayFormat: "narrow",
+    firstDayOfWeek: 1,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`size: xs` — compact 28px cells suited for inline pickers and density-constrained surfaces. Pair with `weekday-format="narrow"` so the single-letter weekday labels fit the cell width.',
+      },
+      source: {
+        code: `<VcCalendar v-model="value" :first-day-of-week="1" size="xs" weekday-format="narrow" />`,
+      },
+    },
+  },
+  render: (args) => ({
+    components: { VcCalendar },
+    setup() {
+      const value = ref<string | undefined>("2026-10-15");
+      return { args, value };
+    },
+    template: `<VcCalendar v-bind="args" v-model="value" />`,
   }),
 };
 

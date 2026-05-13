@@ -1,5 +1,5 @@
 declare global {
-  type VcCalendarSizeType = "sm" | "md";
+  type VcCalendarSizeType = "xs" | "sm" | "md";
 
   type VcCalendarFirstDayOfWeekType = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
