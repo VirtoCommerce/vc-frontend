@@ -258,8 +258,105 @@ describe("useDateField — errorText edge cases", () => {
   test("clearing invalid input clears the error", () => {
     const { field } = setup({ modelValue: undefined });
     field.displayValue.value = "garbage";
+    field.onBlur();
     expect(field.errorText.value).toBe("ui_kit.date_input.invalid_format");
-    field.displayValue.value = "";
+    field.onClear();
     expect(field.errorText.value).toBeUndefined();
+    expect(field.displayValue.value).toBe("");
+  });
+});
+
+describe("useDateField — errorText touched-gating", () => {
+  test("errorText stays undefined while typing partial garbage (pre-blur)", () => {
+    const { field } = setup({ modelValue: undefined });
+    field.displayValue.value = "1";
+    expect(field.errorText.value).toBeUndefined();
+    field.displayValue.value = "10/";
+    expect(field.errorText.value).toBeUndefined();
+    field.displayValue.value = "garbage";
+    expect(field.errorText.value).toBeUndefined();
+  });
+
+  test("errorText surfaces after blur in default (blur) mode", () => {
+    const { field } = setup({ modelValue: undefined });
+    field.displayValue.value = "garbage";
+    field.onBlur();
+    expect(field.errorText.value).toBe("ui_kit.date_input.invalid_format");
+  });
+
+  test("errorText stays undefined after blur in updateOn=enter mode", () => {
+    const { field } = setup({ modelValue: undefined, updateOn: "enter" });
+    field.displayValue.value = "garbage";
+    field.onBlur();
+    expect(field.errorText.value).toBeUndefined();
+    field.onEnter();
+    expect(field.errorText.value).toBe("ui_kit.date_input.invalid_format");
+  });
+
+  test("errorText surfaces after Enter in default (blur) mode", () => {
+    const { field } = setup({ modelValue: undefined });
+    field.displayValue.value = "garbage";
+    field.onEnter();
+    expect(field.errorText.value).toBe("ui_kit.date_input.invalid_format");
+  });
+
+  test("external modelValue change resets touched and clears stale error", async () => {
+    const { field, modelValue } = setup({ modelValue: undefined });
+    field.displayValue.value = "garbage";
+    field.onBlur();
+    expect(field.errorText.value).toBe("ui_kit.date_input.invalid_format");
+
+    modelValue.value = "2026-10-15";
+    await nextTick();
+
+    expect(field.displayValue.value).toBe("10/15/2026");
+    expect(field.errorText.value).toBeUndefined();
+  });
+
+  test("locale change after blur preserves touched (does NOT clear error)", async () => {
+    const { field, locale } = setup({ modelValue: undefined, locale: "en-US" });
+
+    field.displayValue.value = "garbage";
+    field.onBlur();
+    expect(field.errorText.value).toBe("ui_kit.date_input.invalid_format");
+
+    // Locale change runs syncDisplayFromModel, which clears displayValue
+    // when modelValue is undefined. errorText goes undefined via isEmpty,
+    // NOT via touched reset.
+    locale!.value = "de-DE";
+    await nextTick();
+    expect(field.displayValue.value).toBe("");
+    expect(field.errorText.value).toBeUndefined();
+
+    // Type new garbage WITHOUT blurring. If locale change had reset touched,
+    // errorText would stay undefined. Because touched survived, error
+    // surfaces immediately.
+    field.displayValue.value = "garbage2";
+    expect(field.errorText.value).toBe("ui_kit.date_input.invalid_format");
+  });
+
+  test("onClear resets touched (subsequent typing stays quiet until next commit)", () => {
+    const { field } = setup({ modelValue: undefined });
+    field.displayValue.value = "garbage";
+    field.onBlur();
+    expect(field.errorText.value).toBe("ui_kit.date_input.invalid_format");
+
+    field.onClear();
+    expect(field.errorText.value).toBeUndefined();
+    expect(field.displayValue.value).toBe("");
+
+    field.displayValue.value = "garbage2";
+    expect(field.errorText.value).toBeUndefined();
+
+    field.onBlur();
+    expect(field.errorText.value).toBe("ui_kit.date_input.invalid_format");
+  });
+
+  test("commit() (public) marks touched", () => {
+    const { field, onCommit } = setup({ modelValue: undefined });
+    field.displayValue.value = "garbage";
+    field.commit();
+    expect(field.errorText.value).toBe("ui_kit.date_input.invalid_format");
+    expect(onCommit).not.toHaveBeenCalled();
   });
 });

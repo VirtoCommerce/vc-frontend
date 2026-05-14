@@ -37,6 +37,7 @@ export function useDateField(opts: IUseDateFieldOptions) {
   const resolvedLocale = computed<string>(() => opts.locale?.value ?? i18nLocale.value);
 
   const displayValue = ref<string>("");
+  const touched = ref<boolean>(false);
 
   function syncDisplayFromModel(): void {
     const iso = opts.modelValue.value;
@@ -48,7 +49,15 @@ export function useDateField(opts: IUseDateFieldOptions) {
     displayValue.value = cd ? formatDateLocale(cd, resolvedLocale.value) : "";
   }
 
-  watch([() => opts.modelValue.value, resolvedLocale], syncDisplayFromModel, { immediate: true });
+  watch(
+    () => opts.modelValue.value,
+    () => {
+      syncDisplayFromModel();
+      touched.value = false;
+    },
+    { immediate: true },
+  );
+  watch(resolvedLocale, syncDisplayFromModel);
 
   const parsedDate = computed<CalendarDate | null>(() => {
     const trimmed = displayValue.value.trim();
@@ -81,7 +90,7 @@ export function useDateField(opts: IUseDateFieldOptions) {
   });
 
   const errorText = computed<string | undefined>(() => {
-    if (isValid.value || isEmpty.value) {
+    if (!touched.value || isValid.value || isEmpty.value) {
       return undefined;
     }
     const cd = parsedDate.value;
@@ -98,6 +107,7 @@ export function useDateField(opts: IUseDateFieldOptions) {
   });
 
   function commit(): void {
+    touched.value = true;
     if (isEmpty.value) {
       if (opts.modelValue.value !== undefined) {
         opts.onCommit(undefined);
@@ -117,16 +127,19 @@ export function useDateField(opts: IUseDateFieldOptions) {
   function onBlur(): void {
     const mode = toValue(opts.updateOn) ?? "blur";
     if (mode === "blur") {
+      touched.value = true;
       commit();
     }
   }
 
   function onEnter(): void {
+    touched.value = true;
     commit();
   }
 
   function onClear(): void {
     displayValue.value = "";
+    touched.value = false;
     if (opts.modelValue.value !== undefined) {
       opts.onCommit(undefined);
     }

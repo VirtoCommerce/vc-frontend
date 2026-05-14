@@ -10,19 +10,23 @@
     />
 
     <div v-if="selectedDateFilter.id === DateFilterId.CUSTOM" class="date-filter-select__custom">
-      <VcDateSelector
+      <VcDatePicker
         v-model="selectedDateFilter.startDate"
         class="date-filter-select__date"
         :label="$t('shared.account.orders_filter.start_date_label')"
+        :max="selectedDateFilter.endDate"
+        mask
         @update:model-value="$emit('change', selectedDateFilter)"
       />
 
       <div class="date-filter-select__separator">&mdash;</div>
 
-      <VcDateSelector
+      <VcDatePicker
         v-model="selectedDateFilter.endDate"
         class="date-filter-select__date"
         :label="$t('shared.account.orders_filter.end_date_label')"
+        :min="selectedDateFilter.startDate"
+        mask
         @update:model-value="$emit('change', selectedDateFilter)"
       />
     </div>
