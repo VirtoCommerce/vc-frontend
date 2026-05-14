@@ -337,7 +337,6 @@ import { getFilterExpressionFromFacets } from "@/core/utilities";
 import { useUser } from "@/shared/account";
 import { FacetItem } from "@/shared/common";
 import {
-  ContactStatus,
   EditCustomerRoleModal,
   InviteMemberModal,
   MemberStatus,
@@ -409,7 +408,7 @@ const userCanLoginOnBehalf = computed<boolean>(() => checkPermissions(Storefront
 const canManageMembers = computed<boolean>(() => userCanEditOrganization.value || userCanLoginOnBehalf.value);
 
 function canLoginOnBehalfOf(contact: ExtendedContactType): boolean {
-  return userCanLoginOnBehalf.value && !!contact.securityAccounts?.length && contact.status !== ContactStatus.Locked;
+  return userCanLoginOnBehalf.value && !!contact.securityAccounts?.length;
 }
 
 function canShowDropdownFor(contact: ExtendedContactType): boolean {
