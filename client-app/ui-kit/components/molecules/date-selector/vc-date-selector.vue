@@ -122,10 +122,7 @@ function openCalendar(focusInput: () => void): void {
     return;
   }
 
-  /**
-   * Workaround for multiple date inputs in Firefox: delay ensures picker opens on first click when switching.
-   * Do not remove without testing in Firefox (especially  on MacOS).
-   */
+  // Firefox (esp. macOS) workaround: delay ensures the picker opens on first click when switching between date inputs.
   setTimeout(() => {
     if (typeof el.showPicker === "function") {
       el.showPicker();

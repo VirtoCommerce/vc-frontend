@@ -22,14 +22,8 @@ export interface IUseDateFieldOptions {
 }
 
 /**
- * Reactive orchestration for a date-text input.
- *
- * Owns the displayed text (locale-formatted), validates user input against
- * locale short format / ISO, surfaces a translated `errorText` when invalid,
- * and commits canonical ISO values upstream on blur and/or Enter.
- *
- * Invalid input is held in `displayValue` (kept dirty) until the user fixes
- * it — `onCommit` is NOT called for invalid input.
+ * Owns the locale-formatted display text for a date-text input and commits canonical ISO upstream.
+ * Invalid input is held in `displayValue` until corrected — `onCommit` is not called for it.
  */
 export function useDateField(opts: IUseDateFieldOptions) {
   const { t, locale: i18nLocale } = useI18n();
@@ -153,14 +147,10 @@ export function useDateField(opts: IUseDateFieldOptions) {
     onEnter,
     onClear,
     /**
-     * Commit the current displayValue unconditionally — bypasses the `updateOn` gate.
-     * Used for programmatic commits (e.g. paste interception). For user-event-driven
-     * commits, prefer `onBlur` or `onEnter` which respect `updateOn`.
-     *
-     * Behavior:
-     * - Valid input → emit `onCommit(iso)`.
-     * - Empty input + existing model → emit `onCommit(undefined)`.
-     * - Invalid input → no emit; `errorText` is surfaced via `isValid` / `errorText`.
+     * Commit displayValue unconditionally (bypasses `updateOn`). Used for programmatic commits like paste.
+     * - Valid → `onCommit(iso)`.
+     * - Empty + existing model → `onCommit(undefined)`.
+     * - Invalid → no emit; surfaces via `errorText`.
      */
     commit,
   };

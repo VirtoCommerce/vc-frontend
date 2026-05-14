@@ -132,9 +132,7 @@ describe("derivePlaceholderFromLocale", () => {
   });
 
   test("hint shape matches formatDateLocale output shape", () => {
-    // For each locale the hint must have the same length, the same
-    // non-digit separators in the same positions, and digits where the
-    // hint has Y/M/D token characters.
+    // Hint and formatted output must share length, separator positions, and digit slots.
     const date = new CalendarDate(2026, 10, 15);
     for (const locale of ["en-US", "de-DE", "ru-RU", "ja-JP", "fi-FI"]) {
       const formatted = formatDateLocale(date, locale);
@@ -167,17 +165,13 @@ describe("deriveDateMaskFromLocale", () => {
 
 describe("derivePlaceholderFromLocale — fallback", () => {
   test("returns ISO-shape fallback for unparseable locale", () => {
-    // "zzz-zzz-zzz" makes Intl.DateTimeFormat throw "Incorrect locale information
-    // provided" — exercises the catch branch. ("xx-INVALID" is silently
-    // tolerated by V8 and does NOT trigger the fallback.)
+    // "zzz-zzz-zzz" throws in Intl ("xx-INVALID" is silently tolerated by V8 and won't trigger the catch).
     expect(derivePlaceholderFromLocale("zzz-zzz-zzz")).toBe("YYYY-MM-DD");
   });
 });
 
 describe("deriveDateMaskFromLocale — fallback", () => {
   test("returns ISO-shape mask for unparseable locale", () => {
-    // Same fallback-trigger as the placeholder counterpart: the mask is
-    // derived from the placeholder, so it inherits the ISO-shape fallback.
     expect(deriveDateMaskFromLocale("zzz-zzz-zzz")).toBe("####-##-##");
   });
 });

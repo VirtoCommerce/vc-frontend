@@ -157,8 +157,6 @@ describe("useDateField — commit on enter", () => {
     field.onEnter();
     expect(onCommit).toHaveBeenCalledExactlyOnceWith("2026-10-15");
   });
-  // Invalid-input behavior is mode-independent and is covered by the blur block;
-  // no need to re-test it for Enter.
 });
 
 describe("useDateField — onClear", () => {
@@ -320,17 +318,13 @@ describe("useDateField — errorText touched-gating", () => {
     field.onBlur();
     expect(field.errorText.value).toBe("ui_kit.date_input.invalid_format");
 
-    // Locale change runs syncDisplayFromModel, which clears displayValue
-    // when modelValue is undefined. errorText goes undefined via isEmpty,
-    // NOT via touched reset.
+    // Locale change clears displayValue (modelValue is undefined) so error hides via isEmpty, NOT touched reset.
     locale!.value = "de-DE";
     await nextTick();
     expect(field.displayValue.value).toBe("");
     expect(field.errorText.value).toBeUndefined();
 
-    // Type new garbage WITHOUT blurring. If locale change had reset touched,
-    // errorText would stay undefined. Because touched survived, error
-    // surfaces immediately.
+    // Typing without blurring: error surfaces immediately, proving touched survived the locale change.
     field.displayValue.value = "garbage2";
     expect(field.errorText.value).toBe("ui_kit.date_input.invalid_format");
   });

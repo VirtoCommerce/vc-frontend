@@ -13,11 +13,7 @@ export interface IUseCalendarBaseOptions {
   initialPlaceholder: () => DateValue;
 }
 
-/**
- * In dev, a non-empty unparseable value logs a warning — that's a contract
- * violation by the consumer (we accept ISO YYYY-MM-DD only). Empty/undefined
- * is legitimate and stays silent.
- */
+/** Parses ISO YYYY-MM-DD. Empty input returns undefined silently; unparseable input warns in dev. */
 export function tryParseDate(value: string | undefined): CalendarDate | undefined {
   if (!value) {
     return undefined;
@@ -73,8 +69,7 @@ export function useCalendarBase(opts: IUseCalendarBaseOptions) {
     if (!min) {
       return false;
     }
-    // Disable when subtracting a year would put the placeholder strictly before min.
-    // Compare via first-of-month to mirror month-nav (CalendarPrev) boundary semantics.
+    // Compare via first-of-month to mirror CalendarPrev's month-nav boundary semantics.
     const prev = placeholderRef.value.subtract({ years: 1 }).set({ day: 1 });
     const minMonthStart = min.set({ day: 1 });
     return prev.compare(minMonthStart) < 0;

@@ -89,8 +89,7 @@ interface IProps {
   /** Apply a locale-aware input mask on the text input. See VcDateInput for semantics. */
   mask?: boolean;
   clearable?: boolean;
-  /** Teleport the calendar popover into #popover-host. Use when the picker
-   *  sits inside a clipping container (modal, dialog, overflow:hidden parent). */
+  /** Teleport the popover into #popover-host — use inside clipping containers (modal, overflow:hidden). */
   enableTeleport?: boolean;
   /** Show the calendar footer (Today / Clear buttons). */
   showFooter?: boolean;

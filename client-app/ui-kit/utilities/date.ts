@@ -16,20 +16,15 @@ interface ILocaleDateFormatProbe {
 
 const localeFormatProbeCache = new Map<string, ILocaleDateFormatProbe | null>();
 
-/**
- * Probe Intl.DateTimeFormat to discover the locale's short-format field order
- * (day/month/year) and the literal separator between them.
- * Returns null if probing fails (e.g. non-numeric/RTL locales we can't parse).
- */
+/** Discovers the locale's short-format field order and separator via Intl. Returns null for non-numeric/RTL locales. */
 function probeLocaleDateFormat(locale: string): ILocaleDateFormatProbe | null {
   if (localeFormatProbeCache.has(locale)) {
     return localeFormatProbeCache.get(locale) ?? null;
   }
 
   try {
-    // Probe date with day/month/year values all distinct and unambiguous.
-    // Explicit 4-digit year so round-trip with formatDateLocale is consistent
-    // across locales (Intl's "short" yields 2-digit years in en-US/de-DE).
+    // Distinct d/m/y values + explicit 4-digit year so round-trip stays consistent across locales
+    // (Intl's "short" yields 2-digit years in en-US/de-DE which would collide with our parser).
     const probe = new Date(Date.UTC(2026, 0, 5));
     const parts = new Intl.DateTimeFormat(locale, {
       year: "numeric",
@@ -76,11 +71,7 @@ function tryParseIso(text: string): CalendarDate | null {
   return buildValidCalendarDate(year, month, day);
 }
 
-/**
- * Construct a CalendarDate and verify the components survive a round-trip —
- * guards against silent month overflow like Feb 30 → Mar 2. `@internationalized/date`
- * throws on invalid components, but we double-check explicitly to be defensive.
- */
+/** Constructs and round-trip-verifies a CalendarDate; rejects silent month overflow (Feb 30 → Mar 2 etc.). */
 function buildValidCalendarDate(year: number, month: number, day: number): CalendarDate | null {
   if (!Number.isInteger(year) || !Number.isInteger(month) || !Number.isInteger(day)) {
     return null;
@@ -112,11 +103,7 @@ function buildValidCalendarDate(year: number, month: number, day: number): Calen
   }
 }
 
-/**
- * Locale-aware parsing of a user-typed date string.
- * Accepts the locale's short format (per Intl.DateTimeFormat with dateStyle: "short")
- * AND ISO YYYY-MM-DD. Returns null for anything else.
- */
+/** Parses a user-typed date in the locale's short format or ISO YYYY-MM-DD. Returns null otherwise. */
 export function parseDateInput(text: string, locale: string): CalendarDate | null {
   if (typeof text !== "string") {
     return null;
@@ -177,13 +164,9 @@ export function parseDateInput(text: string, locale: string): CalendarDate | nul
 }
 
 /**
- * Format a CalendarDate using the locale's short date layout, but with an
- * explicit 4-digit year and 2-digit month/day. This guarantees the output
- * round-trips through parseDateInput in every supported locale (Intl's
- * `dateStyle: "short"` produces 2-digit years in en-US/de-DE which collides
- * with our 4-digit-year-only parsing rule).
- *
- * Returns "" for null/undefined input.
+ * Formats a CalendarDate in the locale's short layout with an explicit 4-digit year + 2-digit
+ * month/day, so output round-trips through parseDateInput (Intl's "short" gives 2-digit years
+ * in en-US/de-DE which our parser rejects). Returns "" for null/undefined.
  */
 export function formatDateLocale(value: CalendarDate | null | undefined, locale: string): string {
   if (!value) {
@@ -191,9 +174,7 @@ export function formatDateLocale(value: CalendarDate | null | undefined, locale:
   }
 
   try {
-    // CalendarDate.toDate requires a time zone; UTC is safe because the
-    // resulting Date represents midnight UTC of the same calendar day,
-    // and we render in UTC to avoid TZ drift in the formatted string.
+    // Render in UTC to prevent local-TZ drift shifting the formatted calendar day.
     const date = new Date(Date.UTC(value.year, value.month - 1, value.day));
     return new Intl.DateTimeFormat(locale, {
       year: "numeric",
@@ -206,25 +187,7 @@ export function formatDateLocale(value: CalendarDate | null | undefined, locale:
   }
 }
 
-/**
- * Derive a static placeholder hint pattern reflecting the locale's short
- * date format. Uses `Intl.DateTimeFormat.formatToParts` to discover field
- * order and literal separators, then maps:
- *   - day → "DD"
- *   - month → "MM"
- *   - year → "YYYY"
- *   - literal (separator) → verbatim
- *
- * Suitable for use as a plain `<input placeholder>` value. Falls back to
- * `"YYYY-MM-DD"` (ISO) when probing fails (rare non-numeric/RTL locales).
- *
- * Examples:
- *   en-US  → "MM/DD/YYYY"
- *   de-DE  → "DD.MM.YYYY"
- *   ru-RU  → "DD.MM.YYYY"
- *   ja-JP  → "YYYY/MM/DD"
- *   fi-FI  → "DD.MM.YYYY"
- */
+/** Returns a placeholder hint like "MM/DD/YYYY" / "DD.MM.YYYY" / "YYYY/MM/DD" matching the locale's short format. Falls back to "YYYY-MM-DD". */
 export function derivePlaceholderFromLocale(locale: string): string {
   try {
     const probe = new Date(Date.UTC(2026, 0, 5));
@@ -262,23 +225,7 @@ export function derivePlaceholderFromLocale(locale: string): string {
   }
 }
 
-/**
- * Derive a maska-compatible mask pattern for the given locale.
- *
- * Builds on `derivePlaceholderFromLocale`: replaces D/M/Y placeholder
- * characters with `#` (maska's token for any digit) and preserves the
- * locale's separators verbatim.
- *
- * Examples:
- *   en-US  → "##/##/####"
- *   de-DE  → "##.##.####"
- *   ru-RU  → "##.##.####"
- *   ja-JP  → "####/##/##"
- *   fi-FI  → "##.##.####"
- *
- * Returns "####-##-##" (ISO shape) as a safe fallback if probing fails
- * (mirrors `derivePlaceholderFromLocale`'s ISO fallback).
- */
+/** Returns a maska pattern (D/M/Y → "#") matching the locale's short format. Falls back to "####-##-##". */
 export function deriveDateMaskFromLocale(locale: string): string {
   return derivePlaceholderFromLocale(locale).replace(/[DMY]/g, "#");
 }

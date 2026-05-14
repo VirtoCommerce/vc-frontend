@@ -69,18 +69,7 @@ interface IProps {
   locale?: string;
   /** When to commit user input. Default "blur". Enter always commits regardless. */
   updateOn?: VcDateFieldUpdateOnType;
-  /**
-   * When true, applies a locale-aware input mask. Separators are auto-inserted
-   * as the user types digits — e.g. `##.##.####` for ru/de/fi, `##/##/####`
-   * for en-US, `####/##/##` for ja-JP. Compatible with `placeholder`.
-   *
-   * Paste of recognizable date formats (ISO `YYYY-MM-DD` or the active
-   * locale's short format) is intercepted before the mask applies and
-   * reformatted into the locale's display format. Paste of free-form text
-   * is subject to mask transformation (digits flow into mask slots).
-   *
-   * Default: false (no mask; smart placeholder hint via Intl is still shown).
-   */
+  /** Apply a locale-aware input mask. Default false. Paste of ISO or locale-short dates is reformatted; other paste flows through the mask. */
   mask?: boolean;
   clearable?: boolean;
   ariaLabel?: string;
@@ -162,22 +151,8 @@ defineExpose({
   inputElement: innerInputElement,
 });
 
-/**
- * Paste interception (mask-only).
- *
- * Without a mask, the natural VcInput v-model + useDateField flow already
- * handles paste correctly (the pasted text lands in displayValue and is
- * validated on blur / Enter). With a mask, maska's directive intercepts
- * the resulting `input` event and reshapes the pasted text into the mask
- * pattern — which corrupts well-formed pastes like `2026-10-15` in a
- * `##.##.####` mask locale.
- *
- * To preserve "paste an ISO date and have it just work", we listen for
- * paste BEFORE maska sees the input event: if the pasted text parses as
- * a date in any supported format, we `preventDefault()` the native paste,
- * write the locale-formatted display value directly, and commit. Anything
- * unparseable is allowed to flow through, where maska will reshape it.
- */
+// Intercept paste before maska reshapes it — well-formed dates (ISO or locale-short)
+// would otherwise be corrupted by the mask transform.
 useEventListener(innerInputElement, "paste", (event: ClipboardEvent) => {
   if (!props.mask) {
     return;
