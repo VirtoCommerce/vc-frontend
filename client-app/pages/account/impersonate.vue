@@ -1,30 +1,115 @@
 <template>
-  <div>
-    <VcTypography tag="h1">
-      {{ $t("pages.account.impersonate.title") }}
-    </VcTypography>
+  <VcEmptyPage class="impersonate" icon="outline-security" image="sign-in.jpg">
+    <div v-if="canSkipVerification" class="impersonate__silent">
+      <template v-if="translatedSilentErrors.length === 0">
+        <VcLoaderOverlay no-bg />
 
-    <VcLoaderOverlay v-if="status === 'loading'" no-bg />
+        <VcTypography class="impersonate__silent-message">
+          {{ $t("pages.account.impersonate.switching_in_progress") }}
+        </VcTypography>
+      </template>
 
-    <VcAlert v-if="status === 'error'" color="danger" class="mt-4" icon>
-      {{ $t("pages.account.impersonate.error") }}
-    </VcAlert>
-  </div>
+      <template v-else>
+        <VcAlert
+          v-for="(message, index) in translatedSilentErrors"
+          :key="`${index}-${message}`"
+          class="impersonate__silent-error"
+          color="danger"
+          variant="outline-dark"
+          size="md"
+          icon
+        >
+          {{ message }}
+        </VcAlert>
+
+        <VcButton class="impersonate__back" @click="goHome">
+          {{ $t("pages.account.impersonate.back_to_home") }}
+        </VcButton>
+      </template>
+    </div>
+
+    <ImpersonateForm v-else :target-user-id="userId" @success="onSuccess" @cancel="onCancel" />
+  </VcEmptyPage>
 </template>
 
 <script setup lang="ts">
-import { onMounted } from "vue";
-import { useImpersonate } from "@/core/composables";
-
-const props = defineProps<IProps>();
+import { computed, watch } from "vue";
+import { useI18n } from "vue-i18n";
+import { useRouter } from "vue-router";
+import { useErrorsTranslator, usePageHead } from "@/core/composables";
+import { StorefrontPermissions } from "@/core/enums";
+import { ImpersonateForm, useImpersonate, useUser } from "@/shared/account";
+import type { IdentityErrorType } from "@/core/api/graphql/types";
 
 interface IProps {
   userId: string;
 }
 
-const { status, impersonate } = useImpersonate();
+const props = defineProps<IProps>();
 
-onMounted(() => {
-  void impersonate(props.userId);
+const router = useRouter();
+const { t } = useI18n();
+const { isAuthenticated, checkPermissions, operator } = useUser();
+const { impersonateAuthenticated, errors } = useImpersonate();
+
+usePageHead({
+  title: t("pages.account.impersonate.title"),
 });
+
+const canSkipVerification = computed<boolean>(
+  () => isAuthenticated.value && (!!operator.value || checkPermissions(StorefrontPermissions.CanImpersonate)),
+);
+
+const { translate } = useErrorsTranslator<IdentityErrorType>("shared.account.impersonate_form.errors");
+
+const translatedSilentErrors = computed<string[]>(() => {
+  const list = errors.value ?? [];
+  return list
+    .map((error) => translate(error))
+    .filter((message): message is string => typeof message === "string" && message.length > 0);
+});
+
+function goHome(): void {
+  void router.push("/");
+}
+
+function onCancel(): void {
+  goHome();
+}
+
+function onSuccess(): void {
+  // useImpersonate handles broadcast and reload; nothing extra to do here.
+}
+
+let triggered = false;
+watch(
+  canSkipVerification,
+  (canSkip) => {
+    if (canSkip && !triggered) {
+      triggered = true;
+      void impersonateAuthenticated(props.userId);
+    }
+  },
+  { immediate: true },
+);
 </script>
+
+<style lang="scss">
+.impersonate {
+  &__silent {
+    @apply relative mx-auto flex min-h-32 w-full max-w-md flex-col gap-4 text-start;
+  }
+
+  &__silent-message {
+    @apply text-center;
+  }
+
+  &__silent-error {
+    @apply mb-0;
+  }
+
+  &__back {
+    @apply self-start;
+  }
+}
+</style>

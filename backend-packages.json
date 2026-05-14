@@ -76,10 +76,6 @@
           "Version": "3.1000.0"
         },
         {
-          "Id": "VirtoCommerce.AvalaraTax",
-          "Version": "3.1000.0"
-        },
-        {
           "Id": "VirtoCommerce.AzureAD",
           "Version": "3.1000.0"
         },
@@ -142,14 +138,6 @@
         {
           "Id": "VirtoCommerce.OpenSearch",
           "Version": "3.1000.0"
-        },
-        {
-          "Id": "VirtoCommerce.News",
-          "Version": "3.1000.0"
-        },
-        {
-          "Id": "VirtoCommerce.TaskManagement",
-          "Version": "3.1001.0"
         },
         {
           "Id": "VirtoCommerce.CatalogPersonalization",
@@ -236,16 +224,8 @@
           "Version": "3.1002.0"
         },
         {
-          "Id": "VirtoCommerce.Xapi",
-          "Version": "3.1007.0"
-        },
-        {
           "Id": "VirtoCommerce.Seo",
           "Version": "3.1002.0"
-        },
-        {
-          "Id": "VirtoCommerce.Core",
-          "Version": "3.1003.0"
         },
         {
           "Id": "VirtoCommerce.FileExperienceApi",
@@ -262,10 +242,6 @@
         {
           "Id": "VirtoCommerce.Skyflow",
           "Version": "3.1001.0"
-        },
-        {
-          "Id": "VirtoCommerce.Catalog",
-          "Version": "3.1020.0"
         },
         {
           "Id": "VirtoCommerce.Shipping",
@@ -336,12 +312,36 @@
           "Version": "3.1007.0"
         },
         {
-          "Id": "VirtoCommerce.XCart",
-          "Version": "3.1011.0"
-        },
-        {
           "Id": "VirtoCommerce.ElasticAppSearch",
           "Version": "3.1000.0"
+        },
+        {
+          "Id": "VirtoCommerce.News",
+          "Version": "3.1001.0"
+        },
+        {
+          "Id": "VirtoCommerce.AvalaraTax",
+          "Version": "3.1001.0"
+        },
+        {
+          "Id": "VirtoCommerce.XCart",
+          "Version": "3.1013.0"
+        },
+        {
+          "Id": "VirtoCommerce.Core",
+          "Version": "3.1004.0"
+        },
+        {
+          "Id": "VirtoCommerce.Xapi",
+          "Version": "3.1007.0"
+        },
+        {
+          "Id": "VirtoCommerce.Catalog",
+          "Version": "3.1022.0"
+        },
+        {
+          "Id": "VirtoCommerce.TaskManagement",
+          "Version": "3.1001.0"
         }
       ]
     }
