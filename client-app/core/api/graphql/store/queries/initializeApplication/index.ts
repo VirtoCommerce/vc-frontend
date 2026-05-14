@@ -4,7 +4,7 @@ import type { InitializeApplicationQuery } from "@/core/api/graphql/types";
 
 type InitialStoreType = InitializeApplicationQuery["store"];
 
-const CACHE_KEY_PREFIX = "vc-initialStore-v1:";
+const CACHE_KEY_PREFIX = "vc:initialStore:v1:";
 const CACHE_TTL_MS = 60 * 60 * 1000;
 
 type CachedEntryType = {
