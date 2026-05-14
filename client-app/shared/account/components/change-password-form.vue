@@ -1,8 +1,8 @@
 <template>
-  <form class="w-full text-start" @submit="onSubmit">
+  <form class="change-password-form" @submit="onSubmit">
     <VcInput
       v-model="oldPassword"
-      class="mb-5"
+      class="change-password-form__input"
       :label="$t('shared.account.change_password_form.current_pass_label')"
       :placeholder="$t('shared.account.change_password_form.current_pass_placeholder')"
       type="password"
@@ -15,7 +15,7 @@
 
     <VcInput
       v-model="newPassword"
-      class="mb-5"
+      class="change-password-form__input"
       :label="$t('shared.account.change_password_form.new_pass_label')"
       :placeholder="$t('shared.account.change_password_form.new_pass_placeholder')"
       type="password"
@@ -28,7 +28,7 @@
 
     <VcInput
       v-model="confirmPassword"
-      class="mb-5"
+      class="change-password-form__input"
       :label="$t('shared.account.change_password_form.confirm_new_pass_label')"
       :placeholder="$t('shared.account.change_password_form.confirm_new_pass_placeholder')"
       type="password"
@@ -41,11 +41,11 @@
 
     <PasswordTips v-if="passwordRequirements" :requirements="passwordRequirements" />
 
-    <VcAlert v-for="error in result?.errors" :key="error.code" color="danger" class="my-5 text-xs" icon>
+    <VcAlert v-for="error in result?.errors" :key="error.code" color="danger" class="change-password-form__error" icon>
       {{ translate(error) }}
     </VcAlert>
 
-    <div class="mt-5 max-sm:text-center">
+    <div class="change-password-form__actions">
       <VcButton :disabled="!meta.valid || meta.pending" :loading="loading" type="submit" min-width="12rem">
         {{ $t("common.buttons.change") }}
       </VcButton>
@@ -122,3 +122,25 @@ const onSubmit = handleSubmit(async (data) => {
   }
 });
 </script>
+
+<style lang="scss">
+.change-password-form {
+  @apply w-full text-start;
+
+  &__input {
+    @apply mb-5;
+  }
+
+  &__error {
+    @apply my-5 text-xs;
+  }
+
+  &__actions {
+    @apply mt-5;
+
+    @media (width < theme("screens.sm")) {
+      @apply text-center;
+    }
+  }
+}
+</style>

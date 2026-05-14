@@ -95,7 +95,7 @@
 
           <span>
             {{ shippingPrice?.amount > 0 ? "+" : "" }}
-            <VcPriceDisplay :value="shippingPrice" data-test-id="cart-shipping-total-label" />
+            <VcPriceDisplay :value="shippingPrice" data-test-id="shipping-cost-label" />
           </span>
         </div>
       </div>

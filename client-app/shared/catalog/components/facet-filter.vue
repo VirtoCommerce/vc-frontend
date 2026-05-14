@@ -122,7 +122,9 @@
       </div>
 
       <div class="facet-filter-dropdown__items">
-        <VcMenuItem v-if="isNoResults" disabled>{{ $t("pages.catalog.no_facet_found_message") }}</VcMenuItem>
+        <VcMenuItem v-if="isNoResults" disabled>
+          {{ $t("pages.catalog.no_facet_found_message") }}
+        </VcMenuItem>
 
         <VcMenuItem
           v-for="item in filtered"

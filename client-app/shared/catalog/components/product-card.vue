@@ -3,7 +3,6 @@
     :view-mode="viewMode"
     :data-product-sku="product.code"
     border
-    data-test-id="product-card"
     ref="productCard"
     :class="['product-card', `product-card--${viewMode}`]"
   >
@@ -87,7 +86,7 @@
     <template v-else-if="product.hasVariations">
       <VcProductButton
         class="product-card__variations-button"
-        data-test-id="product-card-variations-button"
+        :data-test-id="`variations-${product.code}-button`"
         :link-text="$t('pages.catalog.show_on_a_separate_page')"
         :link-to="link"
         :button-text="$t('pages.catalog.variations_button', [variationsCount])"
@@ -98,7 +97,7 @@
 
       <VcProductButton
         class="product-card__variations-link-button"
-        data-test-id="product-card-variations-link-button"
+        :data-test-id="`variations-${product.code}-button`"
         :to="link"
         :link-text="$t('pages.catalog.show_on_a_separate_page')"
         :link-to="link"
@@ -119,7 +118,7 @@
     </AddToCartSimple>
 
     <template v-if="viewMode === 'list'" #expanded-content>
-      <div v-show="isExpanded" class="product-card__variants-wrapper" data-test-id="product-card-variants-wrapper">
+      <div v-show="isExpanded" class="product-card__variants-wrapper">
         <div
           v-if="fetchingVariations && (!variations || variations.length === 0)"
           class="product-card__variants-loader"
@@ -145,15 +144,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed, toRef, ref, nextTick, useTemplateRef } from "vue";
+import { computed, nextTick, ref, toRef, useTemplateRef } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
 import { useBrowserTarget } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { BrowserTargetType, ProductType } from "@/core/enums";
 import { getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
 import {
-  MODULE_ID as CUSTOMER_REVIEWS_MODULE_ID,
   ENABLED_KEY as CUSTOMER_REVIEWS_ENABLED_KEY,
+  MODULE_ID as CUSTOMER_REVIEWS_MODULE_ID,
 } from "@/modules/customer-reviews/constants";
 import { useProductVariations } from "@/shared/catalog/composables/useProductVariations";
 import { useProducts } from "@/shared/catalog/composables/useProducts";

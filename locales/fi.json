@@ -195,6 +195,7 @@
       "empty_wish_list": "Listalla ei ole yhtään tuotetta",
       "not_defined": "Määrittelemätön",
       "invalid_coupon": "Tämä koodi ei vastaa yhtään aktiivista kuponkia. Tarkista, että kaikki on oikein, ja yritä uudelleen.",
+      "failed_coupon": "Kupongissa tapahtui virhe. Yritä uudelleen.",
       "fill_all_required": "Täytä kaikki pakolliset tiedot jatkaaksesi.",
       "something_went_wrong": "Jotain meni pieleen. Yritä myöhemmin uudelleen.",
       "checkout_pricing_warning": "Saatavuus, toimitus, verot ja kampanjat eivät ole lopullisia ennen kuin olet viimeistellyt tilauksesi.",
@@ -235,7 +236,6 @@
       "password": "Syötä salasanasi",
       "confirm_password": "Vahvista salasanasi",
       "purchase_order_number": "Syötä ostotilauksen numero",
-      "promotion_code": "Syötä kampanjakoodi",
       "select_credit_card": "Valitse luottokortti"
     },
     "links": {
@@ -494,6 +494,28 @@
           "user_not_found": "Käyttäjää ei löydy. Tarkista, että olet syöttänyt oikeat tiedot"
         }
       },
+      "impersonate_form": {
+        "subtitle": "Vahvista henkilöllisyytesi jatkaaksesi",
+        "description": "Kirjaudut sisään asiakkaan puolesta. Istunto kirjataan auditointia varten.",
+        "email_label": "Sähköposti",
+        "email_placeholder": "Anna sähköposti",
+        "password_label": "Salasana",
+        "password_placeholder": "Anna salasana",
+        "submit_button": "Vahvista ja jatka",
+        "cancel_button": "Peruuta",
+        "success": "Vahvistus onnistui. Vaihdetaan asiakasnäkymään…",
+        "errors": {
+          "login_failed": "@:shared.account.sign_in_form.errors.login_failed",
+          "user_is_temporary_locked_out": "@:shared.account.sign_in_form.errors.user_is_temporary_locked_out",
+          "user_is_locked_out": "@:shared.account.sign_in_form.errors.user_is_locked_out",
+          "email_verification_is_required": "@:shared.account.sign_in_form.errors.email_verification_is_required",
+          "user_cannot_login_in_store": "@:shared.account.sign_in_form.errors.user_cannot_login_in_store",
+          "password_expired": "@:shared.account.sign_in_form.errors.password_expired",
+          "user_not_found": "@:shared.account.sign_in_form.errors.user_not_found",
+          "impersonate_failed": "Vahvistus onnistui, mutta vaihto asiakastiliin epäonnistui. Yritä uudelleen.",
+          "generic": "Jotain meni pieleen. Yritä uudelleen."
+        }
+      },
       "forgot_password_form": {
         "error_alert": "Virheellinen tulos salasanannollauspyynnöstä. Ole hyvä "
       },
@@ -644,6 +666,13 @@
         "title": "Komponenttilista",
         "edit_configuration": "Muokkaa kokoonpanoa",
         "selected_text": "Valittu teksti: {text}"
+      },
+      "coupons_section": {
+        "title": "Alennukset & kupongit",
+        "expires": "@:shared.account.promotion_coupons.expires",
+        "custom_code": "Mukautettu koodi",
+        "enter_custom_code": "Syötä mukautettu koodi",
+        "all_coupons": "Näytä kaikki kupongit & tarjoukset"
       }
     },
     "catalog": {
@@ -798,6 +827,7 @@
         "phone_label": "@:common.labels.phone{':'}",
         "email_label": "@:common.labels.email{':'}",
         "no_addresses_message": "Sinulla ei ole vielä osoitteita",
+        "search_addresses_aria_label": "Hae osoitteita",
         "title": "Valitse osoite"
       },
       "shipping_method_modal": {
@@ -905,8 +935,7 @@
         "list_edit_button": "Muokkaa",
         "remove_list_button": "Poista",
         "make_private_button": "Tee yksityiseksi",
-        "share_button": "Jaa",
-        "saved": "Tallennettu"
+        "share_button": "Jaa"
       },
       "list_details": {
         "add_all_to_cart_button": "Lisää kaikki ostoskoriin",
@@ -1282,8 +1311,9 @@
         "update_error_alert": "Profiilin päivityksessä tapahtui virhe"
       },
       "impersonate": {
-        "title": "Henkilöllisyyden jäljittely",
-        "success": "Henkilöllisyyden jäljittely onnistui",
+        "title": "Turvavarmistus",
+        "back_to_home": "Takaisin etusivulle",
+        "switching_in_progress": "Vaihdetaan asiakasnäkymään…",
         "error": "Henkilöllisyyden jäljittelyssä ilmeni ongelmia. Tarkista käyttöoikeutesi"
       },
       "promotion_coupons": {

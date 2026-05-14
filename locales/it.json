@@ -194,7 +194,8 @@
       "min_value": "Il valore minimo è {value}",
       "empty_wish_list": "Non ci sono articoli nella lista",
       "not_defined": "Non definito",
-      "invalid_coupon": "Questo codice non corrisponde a nessun coupon attivo. Controlla che tutto sia corretto e riprova.",
+      "invalid_coupon": "Questo codice non è valido",
+      "failed_coupon": "Qualcosa è andato storto con il coupon. Riprova.",
       "fill_all_required": "Completa tutte le informazioni richieste per procedere.",
       "something_went_wrong": "Qualcosa è andato storto. Per favore, riprova più tardi.",
       "checkout_pricing_warning": "Disponibilità, spedizione, tasse e promozioni non sono definitive fino al completamento dell'ordine.",
@@ -235,7 +236,6 @@
       "password": "Inserisci la tua password",
       "confirm_password": "Conferma la tua password",
       "purchase_order_number": "Inserisci un numero d'ordine d'acquisto",
-      "promotion_code": "Inserisci un codice promozionale",
       "select_credit_card": "Seleziona carta di credito"
     },
     "links": {
@@ -494,6 +494,28 @@
           "user_not_found": "Utente non trovato. Assicurati di aver inserito le informazioni corrette"
         }
       },
+      "impersonate_form": {
+        "subtitle": "Conferma la tua identità per continuare",
+        "description": "Stai accedendo per conto di un cliente. La sessione verrà registrata per audit.",
+        "email_label": "Email",
+        "email_placeholder": "Inserisci la tua email",
+        "password_label": "Password",
+        "password_placeholder": "Inserisci la tua password",
+        "submit_button": "Verifica e continua",
+        "cancel_button": "Annulla",
+        "success": "Verifica riuscita. Passaggio alla vista cliente…",
+        "errors": {
+          "login_failed": "@:shared.account.sign_in_form.errors.login_failed",
+          "user_is_temporary_locked_out": "@:shared.account.sign_in_form.errors.user_is_temporary_locked_out",
+          "user_is_locked_out": "@:shared.account.sign_in_form.errors.user_is_locked_out",
+          "email_verification_is_required": "@:shared.account.sign_in_form.errors.email_verification_is_required",
+          "user_cannot_login_in_store": "@:shared.account.sign_in_form.errors.user_cannot_login_in_store",
+          "password_expired": "@:shared.account.sign_in_form.errors.password_expired",
+          "user_not_found": "@:shared.account.sign_in_form.errors.user_not_found",
+          "impersonate_failed": "Verifica riuscita, ma il passaggio all'account cliente è fallito. Riprova.",
+          "generic": "Qualcosa è andato storto. Riprova."
+        }
+      },
       "forgot_password_form": {
         "error_alert": "Risultato non valido della richiesta di reimpostazione password. Per favore "
       },
@@ -644,6 +666,13 @@
         "title": "Elenco componenti",
         "edit_configuration": "Modifica configurazione",
         "selected_text": "Testo selezionato: {text}"
+      },
+      "coupons_section": {
+        "title": "Sconti e coupon",
+        "expires": "@:shared.account.promotion_coupons.expires",
+        "custom_code": "Codice personalizzato",
+        "enter_custom_code": "Inserisci codice personalizzato",
+        "all_coupons": "Visualizza tutti i coupon e le promozioni"
       }
     },
     "catalog": {
@@ -798,6 +827,7 @@
         "phone_label": "@:common.labels.phone{':'}",
         "email_label": "@:common.labels.email{':'}",
         "no_addresses_message": "Non hai ancora nessun indirizzo",
+        "search_addresses_aria_label": "Cerca indirizzi",
         "title": "Seleziona indirizzo"
       },
       "shipping_method_modal": {
@@ -905,8 +935,7 @@
         "list_edit_button": "Modifica",
         "remove_list_button": "Elimina",
         "make_private_button": "Rendi privato",
-        "share_button": "Condividi",
-        "saved": "Salvato"
+        "share_button": "Condividi"
       },
       "list_details": {
         "add_all_to_cart_button": "Aggiungi tutto al carrello",
@@ -1282,8 +1311,9 @@
         "update_error_alert": "Si è verificato un errore durante l'aggiornamento del profilo"
       },
       "impersonate": {
-        "title": "Impersonificazione",
-        "success": "Impersonificazione riuscita",
+        "title": "Verifica di sicurezza",
+        "back_to_home": "Torna alla home",
+        "switching_in_progress": "Passaggio alla vista cliente…",
         "error": "Alcuni problemi durante l'impersonificazione. Controlla i tuoi permessi"
       },
       "promotion_coupons": {

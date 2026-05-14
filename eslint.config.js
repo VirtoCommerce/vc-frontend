@@ -30,7 +30,7 @@ export default defineConfigWithVueTs(
       "artifacts/",
       "storybook-static/",
       "storybook-styles/dist/",
-      "client-app/public/fcm-service-worker-v1.8.js",
+      "client-app/public/fcm-service-worker-v1.9.js",
       ".deployment/",
       ".github/",
       ".husky/",
@@ -263,7 +263,7 @@ export default defineConfigWithVueTs(
               message: "Please import useFetch from @/core/api/common instead",
             },
             {
-              name: "@vueuse/integrations/useAxios.mjs",
+              name: "@vueuse/integrations/useAxios",
               importNames: ["useAxios"],
               message: "Please import useAxios from @/core/api/common instead",
             },

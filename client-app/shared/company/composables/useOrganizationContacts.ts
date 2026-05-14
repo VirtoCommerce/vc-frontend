@@ -21,7 +21,7 @@ import type {
 } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
 import type { ExtendedContactType } from "@/shared/company";
-import type { MaybeRef } from "@vueuse/core";
+import type { MaybeRef } from "vue";
 
 export function useOrganizationContacts(organizationId: MaybeRef<string>) {
   const loading = ref(false);

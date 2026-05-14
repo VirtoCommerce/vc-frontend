@@ -194,7 +194,8 @@
       "min_value": "Minimalna wartość to {value}",
       "empty_wish_list": "Lista życzeń nie zawiera żadnych przedmiotów",
       "not_defined": "Niezdefiniowany",
-      "invalid_coupon": "Ten kod nie odpowiada żadnym aktywnym kuponom. Proszę sprawdzić, czy wszystko jest poprawne i spróbować ponownie.",
+      "invalid_coupon": "Ten kod nie jest prawidłowy",
+      "failed_coupon": "Coś poszło nie tak z kuponem. Spróbuj ponownie.",
       "fill_all_required": "Proszę wypełnić wszystkie wymagane informacje, aby kontynuować.",
       "something_went_wrong": "Coś poszło nie tak. Proszę spróbować ponownie później.",
       "checkout_pricing_warning": "Dostępność, wysyłka, podatek i promocje nie są ostateczne, dopóki nie ukończysz zamówienia.",
@@ -235,7 +236,6 @@
       "password": "Wprowadź swoje hasło",
       "confirm_password": "Potwierdź swoje hasło",
       "purchase_order_number": "Wprowadź numer zamówienia",
-      "promotion_code": "Wprowadź kod promocyjny",
       "select_credit_card": "Wybierz kartę kredytową"
     },
     "links": {
@@ -494,6 +494,28 @@
           "user_not_found": "Nie znaleziono użytkownika. Proszę upewnić się, że wprowadziłeś poprawne informacje"
         }
       },
+      "impersonate_form": {
+        "subtitle": "Potwierdź swoją tożsamość, aby kontynuować",
+        "description": "Logujesz się w imieniu klienta. Sesja zostanie zarejestrowana w celach audytu.",
+        "email_label": "Email",
+        "email_placeholder": "Wprowadź email",
+        "password_label": "Hasło",
+        "password_placeholder": "Wprowadź hasło",
+        "submit_button": "Potwierdź i kontynuuj",
+        "cancel_button": "Anuluj",
+        "success": "Weryfikacja udana. Przełączanie do widoku klienta…",
+        "errors": {
+          "login_failed": "@:shared.account.sign_in_form.errors.login_failed",
+          "user_is_temporary_locked_out": "@:shared.account.sign_in_form.errors.user_is_temporary_locked_out",
+          "user_is_locked_out": "@:shared.account.sign_in_form.errors.user_is_locked_out",
+          "email_verification_is_required": "@:shared.account.sign_in_form.errors.email_verification_is_required",
+          "user_cannot_login_in_store": "@:shared.account.sign_in_form.errors.user_cannot_login_in_store",
+          "password_expired": "@:shared.account.sign_in_form.errors.password_expired",
+          "user_not_found": "@:shared.account.sign_in_form.errors.user_not_found",
+          "impersonate_failed": "Weryfikacja powiodła się, ale przełączenie na konto klienta nie powiodło się. Spróbuj ponownie.",
+          "generic": "Coś poszło nie tak. Spróbuj ponownie."
+        }
+      },
       "forgot_password_form": {
         "error_alert": "Nieprawidłowy wynik żądania resetowania hasła. Proszę "
       },
@@ -644,6 +666,13 @@
         "title": "Lista komponentów",
         "edit_configuration": "Edytuj konfigurację",
         "selected_text": "Wybrany tekst: {text}"
+      },
+      "coupons_section": {
+        "title": "Zniżki i kupony",
+        "expires": "@:shared.account.promotion_coupons.expires",
+        "custom_code": "Niestandardowy kod",
+        "enter_custom_code": "Wprowadź niestandardowy kod",
+        "all_coupons": "Zobacz wszystkie kupony i promocje"
       }
     },
     "catalog": {
@@ -798,6 +827,7 @@
         "phone_label": "@:common.labels.phone{':'}",
         "email_label": "@:common.labels.email{':'}",
         "no_addresses_message": "Nie masz jeszcze żadnych adresów",
+        "search_addresses_aria_label": "Szukaj adresów",
         "title": "Wybierz adres"
       },
       "shipping_method_modal": {
@@ -905,8 +935,7 @@
         "list_edit_button": "Edytuj",
         "remove_list_button": "Usuń",
         "make_private_button": "Uczyń prywatną",
-        "share_button": "Udostępnij",
-        "saved": "Zapisano"
+        "share_button": "Udostępnij"
       },
       "list_details": {
         "add_all_to_cart_button": "Dodaj wszystko do koszyka",
@@ -1282,8 +1311,9 @@
         "update_error_alert": "Wystąpił błąd podczas aktualizacji profilu"
       },
       "impersonate": {
-        "title": "Podrabianie",
-        "success": "Podrobienie zakończone",
+        "title": "Weryfikacja bezpieczeństwa",
+        "back_to_home": "Powrót do strony głównej",
+        "switching_in_progress": "Przełączanie do widoku klienta…",
         "error": "Wystąpiły problemy podczas podrabiania. Sprawdź swoje uprawnienia"
       },
       "promotion_coupons": {

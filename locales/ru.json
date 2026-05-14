@@ -194,7 +194,8 @@
       "min_value": "Минимальное значение: {value}",
       "empty_wish_list": "В списке нет товаров",
       "not_defined": "Не определено",
-      "invalid_coupon": "Этот код не соответствует ни одному из активных купонов. Проверьте правильность и попробуйте снова.",
+      "invalid_coupon": "Этот код недействителен",
+      "failed_coupon": "Что-то пошло не так с купоном. Пожалуйста, попробуйте еще раз.",
       "fill_all_required": "Введите всю необходимую информацию для продолжения.",
       "something_went_wrong": "Что-то пошло не так. Пожалуйста, попробуйте позже.",
       "checkout_pricing_warning": "Наличие товаров, доставка, налоги и акции не являются окончательными до завершения оформления заказа.",
@@ -235,7 +236,6 @@
       "password": "Введите пароль",
       "confirm_password": "Подтвердите пароль",
       "purchase_order_number": "Введите номер заказа",
-      "promotion_code": "Введите промокод",
       "select_credit_card": "Выберите кредитную карту"
     },
     "links": {
@@ -494,6 +494,28 @@
           "user_not_found": "Пользователь не найден. Пожалуйста, убедитесь, что вы ввели правильную информацию"
         }
       },
+      "impersonate_form": {
+        "subtitle": "Подтвердите свою личность, чтобы продолжить",
+        "description": "Вы входите от имени клиента. Сессия будет записана для аудита.",
+        "email_label": "Email",
+        "email_placeholder": "Введите email",
+        "password_label": "Пароль",
+        "password_placeholder": "Введите пароль",
+        "submit_button": "Подтвердить и продолжить",
+        "cancel_button": "Отмена",
+        "success": "Проверка пройдена. Переключаемся на представление клиента…",
+        "errors": {
+          "login_failed": "@:shared.account.sign_in_form.errors.login_failed",
+          "user_is_temporary_locked_out": "@:shared.account.sign_in_form.errors.user_is_temporary_locked_out",
+          "user_is_locked_out": "@:shared.account.sign_in_form.errors.user_is_locked_out",
+          "email_verification_is_required": "@:shared.account.sign_in_form.errors.email_verification_is_required",
+          "user_cannot_login_in_store": "@:shared.account.sign_in_form.errors.user_cannot_login_in_store",
+          "password_expired": "@:shared.account.sign_in_form.errors.password_expired",
+          "user_not_found": "@:shared.account.sign_in_form.errors.user_not_found",
+          "impersonate_failed": "Проверка пройдена, но переключение на аккаунт клиента не удалось. Попробуйте ещё раз.",
+          "generic": "Что-то пошло не так. Попробуйте ещё раз."
+        }
+      },
       "forgot_password_form": {
         "error_alert": "Неверный результат запроса сброса пароля. Пожалуйста, "
       },
@@ -644,6 +666,13 @@
         "title": "Список компонентов",
         "edit_configuration": "Редактировать конфигурацию",
         "selected_text": "Выбранный текст: {text}"
+      },
+      "coupons_section": {
+        "title": "Скидки и купоны",
+        "expires": "@:shared.account.promotion_coupons.expires",
+        "custom_code": "Пользовательский код",
+        "enter_custom_code": "Введите пользовательский код",
+        "all_coupons": "Посмотреть все купоны и акции"
       }
     },
     "catalog": {
@@ -798,6 +827,7 @@
         "phone_label": "@:common.labels.phone{':'}",
         "email_label": "@:common.labels.email{':'}",
         "no_addresses_message": "У вас пока нет адресов",
+        "search_addresses_aria_label": "Поиск адресов",
         "title": "Выбрать адрес"
       },
       "shipping_method_modal": {
@@ -905,8 +935,7 @@
         "list_edit_button": "Редактировать",
         "remove_list_button": "Удалить",
         "make_private_button": "Сделать приватным",
-        "share_button": "Поделиться",
-        "saved": "Сохранено"
+        "share_button": "Поделиться"
       },
       "list_details": {
         "add_all_to_cart_button": "Добавить все в корзину",
@@ -1282,8 +1311,9 @@
         "update_error_alert": "Произошла ошибка при обновлении профиля"
       },
       "impersonate": {
-        "title": "Имперсонализация",
-        "success": "Имперсонализация прошла успешно",
+        "title": "Проверка безопасности",
+        "back_to_home": "Вернуться на главную",
+        "switching_in_progress": "Переключаемся на представление клиента…",
         "error": "Возникли проблемы при имперсонализации. Проверьте ваши права доступа"
       },
       "promotion_coupons": {

@@ -81,6 +81,11 @@ interface IProps {
   reservedSpace?: boolean;
 }
 
+type CartValidationResultType = {
+  validationErrors?: ValidationErrorType[];
+  items?: Array<ShortLineItemFragment & { validationErrors?: ValidationErrorType[] }>;
+};
+
 const product = toRef(props, "product");
 const { cart, addToCart, changeItemQuantityBatched, addToCartLoading, changeItemQuantityBatchedOverflowed } =
   useShortCart();
@@ -173,15 +178,28 @@ async function onConfigurableSubmit() {
 
   try {
     if (mode === AddToCartModeType.Update && lineItem) {
-      await changeCartConfiguredItem(lineItem.id, undefined, selectedConfigurationInput.value);
+      const updatedCart = (await changeCartConfiguredItem(lineItem.id, undefined, selectedConfigurationInput.value)) as
+        | CartValidationResultType
+        | undefined;
+      const validationMessages = getConfigurableValidationErrors(updatedCart, lineItem.id);
+      if (validationMessages.length) {
+        displayErrorMessage(mode, validationMessages.join(" "));
+        return;
+      }
+
       markConfigurationAsSaved();
       return;
     }
 
-    // TODO: Workaround — comparing cart items before/after to find the newly added lineItemId.
+    // TODO: Workaround - comparing cart items before/after to find the newly added lineItemId.
     // Replace once backend provides the lineItemId directly (new mutation or updated response).
     const existingItemIds = new Set(cart.value?.items?.map((item) => item.id));
     const updatedCart = await addToCart(product.value.id, minQty.value, selectedConfigurationInput.value);
+    const validationMessages = getConfigurableValidationErrors(updatedCart);
+    if (validationMessages.length) {
+      displayErrorMessage(mode, validationMessages.join(" "));
+      return;
+    }
 
     // configuredLineItem reflects the latest price preview from CreateConfiguredLineItem mutation.
     // ShortLineItemFragment in the cart response does not include price data.
@@ -284,6 +302,25 @@ function getValidationErrors(): string {
       .map(translate)
       .join(" ") || ""
   );
+}
+
+function getConfigurableValidationErrors(updatedCart?: CartValidationResultType, lineItemId?: string): string[] {
+  const cartValidationErrors =
+    updatedCart?.validationErrors
+      ?.filter(
+        (error) =>
+          (error.objectId === product.value.id && error.objectType === ValidationErrorObjectType.CatalogProduct) ||
+          (lineItemId && error.objectId === lineItemId && error.objectType === ValidationErrorObjectType.LineItem),
+      )
+      .map(translate)
+      .filter(Boolean) ?? [];
+  const lineItemValidationErrors =
+    updatedCart?.items
+      ?.find((item) => item.id === lineItemId)
+      ?.validationErrors?.map(translate)
+      .filter(Boolean) ?? [];
+
+  return [...new Set([...cartValidationErrors, ...lineItemValidationErrors])] as string[];
 }
 
 function getLineItem(items?: ShortLineItemFragment[]): ShortLineItemFragment | undefined {

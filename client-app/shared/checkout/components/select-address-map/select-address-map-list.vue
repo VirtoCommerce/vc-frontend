@@ -19,7 +19,6 @@
         :data-pickup-point-name="address.name"
         :data-coords="address.geoLocation"
         class="select-address-map-list__item"
-        data-test-id="pickup-location-item"
       >
         <VcRadioButton
           :model-value="selectedAddressId"

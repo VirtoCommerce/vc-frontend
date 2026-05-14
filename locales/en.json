@@ -194,7 +194,8 @@
       "min_value": "The minimum value is {value}",
       "empty_wish_list": "There are no items in the list",
       "not_defined": "Undefined",
-      "invalid_coupon": "This code does not match any active coupons. Double-check that everything is correct and try again.",
+      "invalid_coupon": "This code is not valid",
+      "failed_coupon": "Something went wrong with the coupon. Please try again.",
       "fill_all_required": "Complete all required information to proceed.",
       "something_went_wrong": "Something went wrong. Please try again later.",
       "checkout_pricing_warning": "Availability, shipping, tax and promotions are not final until you complete your order.",
@@ -235,7 +236,6 @@
       "password": "Enter your password",
       "confirm_password": "Confirm your password",
       "purchase_order_number": "Enter a purchase order number",
-      "promotion_code": "Enter a promo-coupon",
       "select_credit_card": "Select credit card"
     },
     "links": {
@@ -494,6 +494,28 @@
           "user_not_found": "User not found. Ensure you've entered the correct information"
         }
       },
+      "impersonate_form": {
+        "subtitle": "Confirm your identity to continue",
+        "description": "You are logging in on behalf of a customer. The session will be audited.",
+        "email_label": "Email",
+        "email_placeholder": "Enter your email",
+        "password_label": "Password",
+        "password_placeholder": "Enter your password",
+        "submit_button": "Verify and continue",
+        "cancel_button": "Cancel",
+        "success": "Verification successful. Switching to customer view…",
+        "errors": {
+          "login_failed": "@:shared.account.sign_in_form.errors.login_failed",
+          "user_is_temporary_locked_out": "@:shared.account.sign_in_form.errors.user_is_temporary_locked_out",
+          "user_is_locked_out": "@:shared.account.sign_in_form.errors.user_is_locked_out",
+          "email_verification_is_required": "@:shared.account.sign_in_form.errors.email_verification_is_required",
+          "user_cannot_login_in_store": "@:shared.account.sign_in_form.errors.user_cannot_login_in_store",
+          "password_expired": "@:shared.account.sign_in_form.errors.password_expired",
+          "user_not_found": "@:shared.account.sign_in_form.errors.user_not_found",
+          "impersonate_failed": "Verification succeeded, but switching to the customer account failed. Please try again.",
+          "generic": "Something went wrong. Please try again."
+        }
+      },
       "forgot_password_form": {
         "error_alert": "Invalid result of the reset password request. Please "
       },
@@ -644,6 +666,13 @@
         "title": "Components list",
         "edit_configuration": "Edit configuration",
         "selected_text": "Selected text: {text}"
+      },
+      "coupons_section": {
+        "title": "Discount & coupons",
+        "expires": "@:shared.account.promotion_coupons.expires",
+        "custom_code": "Custom code",
+        "enter_custom_code": "Enter custom code",
+        "all_coupons": "View all coupons & promotions"
       }
     },
     "catalog": {
@@ -798,6 +827,7 @@
         "phone_label": "@:common.labels.phone{':'}",
         "email_label": "@:common.labels.email{':'}",
         "no_addresses_message": "You do not have any addresses yet",
+        "search_addresses_aria_label": "Search addresses",
         "title": "Select address"
       },
       "shipping_method_modal": {
@@ -905,8 +935,7 @@
         "list_edit_button": "Edit",
         "remove_list_button": "Delete",
         "make_private_button": "Make private",
-        "share_button": "Share",
-        "saved": "Saved"
+        "share_button": "Share"
       },
       "list_details": {
         "add_all_to_cart_button": "Add all to cart",
@@ -1282,8 +1311,9 @@
         "update_error_alert": "There was an error during profile update"
       },
       "impersonate": {
-        "title": "Impersonation",
-        "success": "Impersonation succeeded",
+        "title": "Security verification",
+        "back_to_home": "Back to home",
+        "switching_in_progress": "Switching to customer view…",
         "error": "Some problems occurred during impersonation. Check your permissions"
       },
       "promotion_coupons": {

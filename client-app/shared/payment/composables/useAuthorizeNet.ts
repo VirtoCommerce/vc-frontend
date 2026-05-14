@@ -2,7 +2,7 @@ import { noop, useScriptTag } from "@vueuse/core";
 import { authorizePayment } from "@/core/api/graphql";
 import { Logger } from "@/core/utilities";
 import type { AuthorizePaymentResultType } from "@/core/api/graphql/types";
-import type { MaybeRef } from "@vueuse/core";
+import type { MaybeRef } from "vue";
 
 export function useAuthorizeNet(options: { scriptURL: MaybeRef<string>; manualScriptLoading?: boolean }) {
   const { scriptURL, manualScriptLoading = false } = options;

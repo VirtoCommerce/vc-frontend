@@ -194,7 +194,8 @@
       "min_value": "Der minimale Wert beträgt {value}",
       "empty_wish_list": "Es befinden sich keine Artikel auf der Liste",
       "not_defined": "Nicht definiert",
-      "invalid_coupon": "Dieser Code entspricht keinem aktiven Gutschein. Bitte überprüfen Sie alles und versuchen Sie es erneut.",
+      "invalid_coupon": "Dieser Code ist nicht gültig",
+      "failed_coupon": "Mit dem Gutschein ist etwas schiefgelaufen. Bitte versuche es erneut.",
       "fill_all_required": "Bitte füllen Sie alle erforderlichen Felder aus, um fortzufahren.",
       "something_went_wrong": "Etwas ist schiefgelaufen. Bitte versuchen Sie es später erneut.",
       "checkout_pricing_warning": "Verfügbarkeit, Versand, Steuern und Aktionen sind erst endgültig, wenn Sie Ihre Bestellung abschließen.",
@@ -235,7 +236,6 @@
       "password": "Geben Sie Ihr Passwort ein",
       "confirm_password": "Bestätigen Sie Ihr Passwort",
       "purchase_order_number": "Geben Sie eine Bestellnummer ein",
-      "promotion_code": "Geben Sie einen Promo-Gutschein ein",
       "select_credit_card": "Wählen Sie eine Kreditkarte"
     },
     "links": {
@@ -494,6 +494,28 @@
           "user_not_found": "Benutzer nicht gefunden. Bitte stellen Sie sicher, dass Sie die richtigen Informationen eingegeben haben"
         }
       },
+      "impersonate_form": {
+        "subtitle": "Bestätigen Sie Ihre Identität, um fortzufahren",
+        "description": "Sie melden sich im Namen eines Kunden an. Die Sitzung wird zur Überprüfung aufgezeichnet.",
+        "email_label": "E-Mail",
+        "email_placeholder": "E-Mail eingeben",
+        "password_label": "Passwort",
+        "password_placeholder": "Passwort eingeben",
+        "submit_button": "Bestätigen und fortfahren",
+        "cancel_button": "Abbrechen",
+        "success": "Überprüfung erfolgreich. Wechsel zur Kundenansicht…",
+        "errors": {
+          "login_failed": "@:shared.account.sign_in_form.errors.login_failed",
+          "user_is_temporary_locked_out": "@:shared.account.sign_in_form.errors.user_is_temporary_locked_out",
+          "user_is_locked_out": "@:shared.account.sign_in_form.errors.user_is_locked_out",
+          "email_verification_is_required": "@:shared.account.sign_in_form.errors.email_verification_is_required",
+          "user_cannot_login_in_store": "@:shared.account.sign_in_form.errors.user_cannot_login_in_store",
+          "password_expired": "@:shared.account.sign_in_form.errors.password_expired",
+          "user_not_found": "@:shared.account.sign_in_form.errors.user_not_found",
+          "impersonate_failed": "Überprüfung erfolgreich, aber der Wechsel zum Kundenkonto ist fehlgeschlagen. Bitte versuchen Sie es erneut.",
+          "generic": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
+        }
+      },
       "forgot_password_form": {
         "error_alert": "Ungültiges Ergebnis der Anfrage zum Zurücksetzen des Passworts. Bitte "
       },
@@ -644,6 +666,13 @@
         "title": "Komponentenliste",
         "edit_configuration": "Konfiguration bearbeiten",
         "selected_text": "Ausgewählter Text: {text}"
+      },
+      "coupons_section": {
+        "title": "Rabatte & Gutscheine",
+        "expires": "@:shared.account.promotion_coupons.expires",
+        "custom_code": "Benutzerdefinierter Code",
+        "enter_custom_code": "Benutzerdefinierten Code eingeben",
+        "all_coupons": "Alle Gutscheine & Aktionen anzeigen"
       }
     },
     "catalog": {
@@ -798,6 +827,7 @@
         "phone_label": "@:common.labels.phone{':' }",
         "email_label": "@:common.labels.email{':' }",
         "no_addresses_message": "Sie haben noch keine Adressen",
+        "search_addresses_aria_label": "Adressen suchen",
         "title": "Adresse auswählen"
       },
       "shipping_method_modal": {
@@ -905,8 +935,7 @@
         "list_edit_button": "Bearbeiten",
         "remove_list_button": "Löschen",
         "make_private_button": "Privat machen",
-        "share_button": "Teilen",
-        "saved": "Gespeichert"
+        "share_button": "Teilen"
       },
       "list_details": {
         "add_all_to_cart_button": "Alles in den Warenkorb",
@@ -1282,8 +1311,9 @@
         "update_error_alert": "Es gab einen Fehler beim Aktualisieren des Profils"
       },
       "impersonate": {
-        "title": "Nachahmung",
-        "success": "Impersonation erfolgreich",
+        "title": "Sicherheitsüberprüfung",
+        "back_to_home": "Zurück zur Startseite",
+        "switching_in_progress": "Wechsel zur Kundenansicht…",
         "error": "Einige Probleme während der Nachahmung. Überprüfen Sie Ihre Berechtigungen"
       },
       "promotion_coupons": {
