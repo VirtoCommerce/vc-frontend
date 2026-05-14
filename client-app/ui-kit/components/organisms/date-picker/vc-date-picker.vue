@@ -33,7 +33,7 @@
             type="button"
             icon="calendar"
             variant="no-background"
-            color="neutral"
+            color="primary"
             :disabled="disabled || readonly"
             :aria-label="t('ui_kit.accessibility.open_calendar')"
             @click="toggle"
