@@ -135,7 +135,7 @@ const calendarSize = computed<VcCalendarSizeType>(() => {
 function forwardedAria(triggerProps: Record<string, unknown>): Record<string, string | number | null> {
   const aria: Record<string, string | number | null> = {
     "aria-haspopup": triggerProps["aria-haspopup"] as string,
-    "aria-expanded": String(triggerProps["aria-expanded"]),
+    "aria-expanded": String(triggerProps["aria-expanded"] ?? false),
   };
   const controls = triggerProps["aria-controls"];
   if (typeof controls === "string") {
