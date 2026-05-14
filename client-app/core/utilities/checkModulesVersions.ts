@@ -3,6 +3,12 @@ import backendPackages from "../../../backend-packages.json";
 type ManifestModuleType = { Id: string; Version: string };
 type BackendModuleType = { moduleId?: string | null; version?: string | null };
 
+export type OutdatedBackendModuleType = {
+  moduleId: string;
+  backendVersion: string;
+  expectedVersion: string;
+};
+
 function parseVersion(version: string): number[] {
   return version.split(".").map((part) => Number.parseInt(part, 10) || 0);
 }
@@ -26,14 +32,15 @@ function getManifestModules(): ManifestModuleType[] {
   return backendPackages.Sources.flatMap((source) => (source.Modules ?? []) as ManifestModuleType[]);
 }
 
-export function checkModulesVersions(backendModules: readonly BackendModuleType[] | null | undefined): void {
+export function getOutdatedModules(
+  backendModules: readonly BackendModuleType[] | null | undefined,
+): OutdatedBackendModuleType[] {
   if (!backendModules?.length) {
-    return;
+    return [];
   }
 
   const manifestByModuleId = new Map(getManifestModules().map((module) => [module.Id, module.Version]));
-
-  const outdated: { moduleId: string; backendVersion: string; expectedVersion: string }[] = [];
+  const outdated: OutdatedBackendModuleType[] = [];
 
   for (const backendModule of backendModules) {
     if (!backendModule.moduleId || !backendModule.version) {
@@ -54,7 +61,5 @@ export function checkModulesVersions(backendModules: readonly BackendModuleType[
     }
   }
 
-  if (outdated.length) {
-    console.warn("Backend modules are older than expected by the frontend manifest:", outdated);
-  }
+  return outdated;
 }

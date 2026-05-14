@@ -17,11 +17,11 @@
       "Modules": [
         {
           "Id": "VirtoCommerce.Loyalty",
-          "Version": "3.1000.0"
+          "Version": "3.1001.0"
         },
         {
           "Id": "VirtoCommerce.ElasticSearch",
-          "Version": "3.806.0"
+          "Version": "3.807.0"
         },
         {
           "Id": "VirtoCommerce.XFrontend",

@@ -3,7 +3,14 @@ import { DefaultApolloClient } from "@vue/apollo-composable";
 import { createApp, h, provide } from "vue";
 import { apolloClient, getPageContext, initializeApplication } from "@/core/api/graphql";
 import { GetSlugInfoDocument } from "@/core/api/graphql/types";
-import { useCurrency, useDarkMode, useThemeContext, useNavigations, useWhiteLabeling } from "@/core/composables";
+import {
+  useCurrency,
+  useDarkMode,
+  useModules,
+  useThemeContext,
+  useNavigations,
+  useWhiteLabeling,
+} from "@/core/composables";
 import { useHotjar } from "@/core/composables/useHotjar";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { FALLBACK_LOCALE, IS_DEVELOPMENT } from "@/core/constants";
@@ -16,7 +23,7 @@ import {
   extensionPointsPlugin,
   permissionsPlugin,
 } from "@/core/plugins";
-import { checkModulesVersions, extractHostname, Logger } from "@/core/utilities";
+import { extractHostname, Logger } from "@/core/utilities";
 import { createI18n } from "@/i18n";
 import { init as initModuleBackInStock } from "@/modules/back-in-stock";
 import { init as initCustomerReviews } from "@/modules/customer-reviews";
@@ -32,6 +39,7 @@ import { isPreviewMode as isPageBuilderPreviewMode } from "@/plugins/builder-pre
 import { createRouter } from "@/router";
 import { useUser } from "@/shared/account";
 import ProductBlocks from "@/shared/catalog/components/product";
+import { useNotifications } from "@/shared/notification";
 import { templateBlocks } from "@/shared/static-content";
 import { uiKit } from "@/ui-kit";
 import { getLocales as getUIKitLocales } from "@/ui-kit/utilities/getLocales";
@@ -86,6 +94,8 @@ export default async () => {
   const { fetchCatalogMenu } = useNavigations();
   const { themePresetName, setWhiteLabelingSettings } = useWhiteLabeling();
   const { setActivePreset } = useDarkMode();
+  const { setModules, outdatedModules } = useModules();
+  const notifications = useNotifications();
 
   const fallback = {
     locale: FALLBACK_LOCALE,
@@ -107,7 +117,7 @@ export default async () => {
 
   try {
     const initialStore = await initializeApplication(domain);
-    checkModulesVersions(initialStore?.settings?.modules);
+    setModules(initialStore?.settings?.modules);
   } catch (e) {
     Logger.warn("Failed to verify backend module versions", e as Error);
   }
@@ -260,7 +270,33 @@ export default async () => {
   };
 
   app.mount(appElement);
+
+  notifyOutdatedModules(outdatedModules.value, i18n.global.t, notifications);
 };
+
+function notifyOutdatedModules(
+  outdated: ReturnType<typeof useModules>["outdatedModules"]["value"],
+  t: (key: string, params?: Record<string, unknown>) => string,
+  notifications: ReturnType<typeof useNotifications>,
+): void {
+  if (!outdated.length) {
+    return;
+  }
+
+  const modulesList = outdated
+    .map(
+      ({ moduleId, backendVersion, expectedVersion }) =>
+        `<b>${moduleId}</b> <br><span style="font-size: 12px;">${backendVersion} → ${expectedVersion}</span>`,
+    )
+    .join("<br><br>");
+
+  notifications.warning({
+    group: "OutdatedBackendModules",
+    singleInGroup: true,
+    html: `${t("common.messages.outdated_backend_modules")}<br><br>${modulesList}`,
+    duration: 15000,
+  });
+}
 
 function getPermalink(permalink: string, getUrlWithoutPossibleLocale: (fullPath: string) => string) {
   permalink = getUrlWithoutPossibleLocale(permalink);

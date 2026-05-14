@@ -217,6 +217,7 @@
       "password_about_expire": "Your password is about to expire in {value} day(s). Set a new password in profile",
       "password_expired": "Your password is expired",
       "data_changed": "The data has been modified on one of the other tabs. Refresh the page to display the latest data.",
+      "outdated_backend_modules": "Backend modules are older than expected by the frontend:",
       "logo_changed": "Logo was successfully changed.",
       "logo_deleted": "Logo was deleted.",
       "pending_operations_leaving_page_confirmation": "Some operations are still in progress. Are you sure you want to leave this page? Unsaved changes may be lost."
