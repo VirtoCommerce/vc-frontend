@@ -31,6 +31,7 @@ function isWeekend(iso: string): boolean {
 const meta: Meta<typeof VcDatePicker> = {
   title: "Components/Organisms/VcDatePicker",
   component: VcDatePicker,
+  decorators: [() => ({ template: '<div id="popover-host"></div><story />' })],
   parameters: {
     docs: {
       description: {
@@ -89,6 +90,7 @@ const meta: Meta<typeof VcDatePicker> = {
     mask: { control: "boolean" },
     showFooter: { control: "boolean" },
     closeOnSelect: { control: "boolean" },
+    enableTeleport: { control: "boolean" },
   },
 };
 
@@ -476,6 +478,34 @@ export const CloseOnSelectFalse: StoryType = {
       },
       source: {
         code: `<VcDatePicker v-model="value" label="Order date" :close-on-select="false" />`,
+      },
+    },
+  },
+  render: (args) => ({
+    components: { VcDatePicker },
+    setup() {
+      const value = ref<string | undefined>(undefined);
+      return { args, value };
+    },
+    template: `
+      <div class="space-y-2">
+        <VcDatePicker v-bind="args" v-model="value" />
+        <div class="text-sm text-neutral-600">ISO value: {{ value || "(none)" }}</div>
+      </div>
+    `,
+  }),
+};
+
+export const EnabledTeleport: StoryType = {
+  args: { label: "Order date", enableTeleport: true },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`enable-teleport` renders the calendar popover into `#popover-host` (the app-level host element). Use this when the picker sits inside a clipping container — a modal, dialog, or any ancestor with `overflow: hidden` — so the calendar can escape the clip and float over surrounding UI. In production the host lives in `App.vue`; this story provides a host via a Storybook decorator.",
+      },
+      source: {
+        code: `<VcDatePicker v-model="value" label="Order date" :enable-teleport="true" />`,
       },
     },
   },

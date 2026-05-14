@@ -1,5 +1,5 @@
 <template>
-  <VcPopover :placement="placement" :offset-options="{ mainAxis: 4 }">
+  <VcPopover :placement="placement" :offset-options="{ mainAxis: 4 }" :enable-teleport="enableTeleport">
     <template #default="{ toggle, triggerProps }">
       <VcDateInput
         ref="dateInputRef"
@@ -89,6 +89,9 @@ interface IProps {
   /** Apply a locale-aware input mask on the text input. See VcDateInput for semantics. */
   mask?: boolean;
   clearable?: boolean;
+  /** Teleport the calendar popover into #popover-host. Use when the picker
+   *  sits inside a clipping container (modal, dialog, overflow:hidden parent). */
+  enableTeleport?: boolean;
   /** Show the calendar footer (Today / Clear buttons). */
   showFooter?: boolean;
   firstDayOfWeek?: VcCalendarFirstDayOfWeekType;

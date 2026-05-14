@@ -16,6 +16,7 @@
         :label="$t('shared.account.orders_filter.start_date_label')"
         :max="selectedDateFilter.endDate"
         mask
+        enable-teleport
         @update:model-value="$emit('change', selectedDateFilter)"
       />
 
@@ -27,6 +28,7 @@
         :label="$t('shared.account.orders_filter.end_date_label')"
         :min="selectedDateFilter.startDate"
         mask
+        enable-teleport
         @update:model-value="$emit('change', selectedDateFilter)"
       />
     </div>
