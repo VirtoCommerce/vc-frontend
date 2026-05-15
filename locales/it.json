@@ -316,6 +316,8 @@
           "call_us_label": "Chiamaci: ",
           "logged_in_as": "connesso come",
           "account_menu_label": "Menu account",
+          "back_to_operator": "Torna a {name}",
+          "switching_back": "Ritorno in corso…",
           "no_results": "Nessun risultato trovato",
           "dark_mode": {
             "system": "Tema: automatico",
@@ -588,6 +590,10 @@
       "block_member_modal": {
         "title": "Blocca utente",
         "text": "Sei sicuro di voler bloccare l'accesso dell'utente?"
+      },
+      "login_on_behalf_modal": {
+        "title": "Accedi per conto di",
+        "text": "Stai accedendo per conto di {email}. La sessione verrà registrata."
       },
       "unblock_member_modal": {
         "title": "Sblocca utente",
@@ -1371,6 +1377,7 @@
           "invite": "Invita",
           "reset_search": "Reimposta ricerca",
           "edit_role": "Modifica ruolo",
+          "login_on_behalf": "Accedi per conto di",
           "block_user": "Blocca utente",
           "unblock_user": "Sblocca utente",
           "delete": "Elimina",

@@ -316,6 +316,8 @@
           "call_us_label": "Ring oss: ",
           "logged_in_as": "logget inn som",
           "account_menu_label": "Kontomeny",
+          "back_to_operator": "Tilbake til {name}",
+          "switching_back": "Bytter tilbake…",
           "no_results": "Ingen resultater funnet",
           "dark_mode": {
             "system": "Tema: automatisk",
@@ -588,6 +590,10 @@
       "block_member_modal": {
         "title": "Blokker bruker",
         "text": "Er du sikker på at du vil blokkere brukerens tilgang?"
+      },
+      "login_on_behalf_modal": {
+        "title": "Logg inn på vegne av",
+        "text": "Du logger inn på vegne av {email}. Økten vil bli loggført."
       },
       "unblock_member_modal": {
         "title": "Opphev blokkering av bruker",
@@ -1371,6 +1377,7 @@
           "invite": "Inviter",
           "reset_search": "Tilbakestill søk",
           "edit_role": "Rediger rolle",
+          "login_on_behalf": "Logg inn på vegne av",
           "block_user": "Blokker bruker",
           "unblock_user": "Opphev blokkering av bruker",
           "delete": "Slett",

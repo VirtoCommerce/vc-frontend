@@ -316,6 +316,8 @@
           "call_us_label": "致电我们：",
           "logged_in_as": "已登录为",
           "account_menu_label": "帐户菜单",
+          "back_to_operator": "返回 {name}",
+          "switching_back": "正在返回…",
           "no_results": "未找到结果",
           "dark_mode": {
             "system": "主题：自动",
@@ -588,6 +590,10 @@
       "block_member_modal": {
         "title": "封锁用户",
         "text": "您确定要封锁该用户的访问权限吗？"
+      },
+      "login_on_behalf_modal": {
+        "title": "代表登录",
+        "text": "您正在代表 {email} 登录。该会话将被审计。"
       },
       "unblock_member_modal": {
         "title": "解除封锁用户",
@@ -1371,6 +1377,7 @@
           "invite": "邀请",
           "reset_search": "重置搜索",
           "edit_role": "编辑角色",
+          "login_on_behalf": "代表登录",
           "block_user": "封锁用户",
           "unblock_user": "解除封锁用户",
           "delete": "删除",
