@@ -494,6 +494,28 @@
           "user_not_found": "Utilisateur non trouvé. Veuillez vous assurer que vous avez entré les bonnes informations"
         }
       },
+      "impersonate_form": {
+        "subtitle": "Confirmez votre identité pour continuer",
+        "description": "Vous vous connectez au nom d'un client. La session sera auditée.",
+        "email_label": "E-mail",
+        "email_placeholder": "Saisissez votre e-mail",
+        "password_label": "Mot de passe",
+        "password_placeholder": "Saisissez votre mot de passe",
+        "submit_button": "Vérifier et continuer",
+        "cancel_button": "Annuler",
+        "success": "Vérification réussie. Basculement vers la vue client…",
+        "errors": {
+          "login_failed": "@:shared.account.sign_in_form.errors.login_failed",
+          "user_is_temporary_locked_out": "@:shared.account.sign_in_form.errors.user_is_temporary_locked_out",
+          "user_is_locked_out": "@:shared.account.sign_in_form.errors.user_is_locked_out",
+          "email_verification_is_required": "@:shared.account.sign_in_form.errors.email_verification_is_required",
+          "user_cannot_login_in_store": "@:shared.account.sign_in_form.errors.user_cannot_login_in_store",
+          "password_expired": "@:shared.account.sign_in_form.errors.password_expired",
+          "user_not_found": "@:shared.account.sign_in_form.errors.user_not_found",
+          "impersonate_failed": "Vérification réussie, mais le basculement vers le compte client a échoué. Veuillez réessayer.",
+          "generic": "Une erreur s'est produite. Veuillez réessayer."
+        }
+      },
       "forgot_password_form": {
         "error_alert": "Résultat invalide de la demande de réinitialisation du mot de passe. Veuillez "
       },
@@ -805,6 +827,7 @@
         "phone_label": "@:common.labels.phone{':' }",
         "email_label": "@:common.labels.email{':' }",
         "no_addresses_message": "Vous n'avez pas encore d'adresses",
+        "search_addresses_aria_label": "Rechercher des adresses",
         "title": "Sélectionner une adresse"
       },
       "shipping_method_modal": {
@@ -912,8 +935,7 @@
         "list_edit_button": "Modifier",
         "remove_list_button": "Supprimer",
         "make_private_button": "Rendre privé",
-        "share_button": "Partager",
-        "saved": "Enregistré"
+        "share_button": "Partager"
       },
       "list_details": {
         "add_all_to_cart_button": "Tout ajouter au panier",
@@ -1289,8 +1311,9 @@
         "update_error_alert": "Une erreur s'est produite lors de la mise à jour du profil"
       },
       "impersonate": {
-        "title": "Impersonation",
-        "success": "Impersonation réussie",
+        "title": "Vérification de sécurité",
+        "back_to_home": "Retour à l'accueil",
+        "switching_in_progress": "Basculement vers la vue client…",
         "error": "Des problèmes sont survenus lors de l'imitation. Vérifiez vos autorisations"
       },
       "promotion_coupons": {

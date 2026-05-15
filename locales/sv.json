@@ -494,6 +494,28 @@
           "user_not_found": "Användaren hittades inte. Kontrollera att du har angett korrekt information"
         }
       },
+      "impersonate_form": {
+        "subtitle": "Bekräfta din identitet för att fortsätta",
+        "description": "Du loggar in å en kunds vägnar. Sessionen kommer att granskas.",
+        "email_label": "E-post",
+        "email_placeholder": "Ange din e-post",
+        "password_label": "Lösenord",
+        "password_placeholder": "Ange ditt lösenord",
+        "submit_button": "Verifiera och fortsätt",
+        "cancel_button": "Avbryt",
+        "success": "Verifiering lyckades. Växlar till kundvyn…",
+        "errors": {
+          "login_failed": "@:shared.account.sign_in_form.errors.login_failed",
+          "user_is_temporary_locked_out": "@:shared.account.sign_in_form.errors.user_is_temporary_locked_out",
+          "user_is_locked_out": "@:shared.account.sign_in_form.errors.user_is_locked_out",
+          "email_verification_is_required": "@:shared.account.sign_in_form.errors.email_verification_is_required",
+          "user_cannot_login_in_store": "@:shared.account.sign_in_form.errors.user_cannot_login_in_store",
+          "password_expired": "@:shared.account.sign_in_form.errors.password_expired",
+          "user_not_found": "@:shared.account.sign_in_form.errors.user_not_found",
+          "impersonate_failed": "Verifiering lyckades, men växling till kundkontot misslyckades. Försök igen.",
+          "generic": "Något gick fel. Försök igen."
+        }
+      },
       "forgot_password_form": {
         "error_alert": "Ogiltigt resultat av begäran om lösenordsåterställning. Vänligen "
       },
@@ -805,6 +827,7 @@
         "phone_label": "@:common.labels.phone{':'}",
         "email_label": "@:common.labels.email{':'}",
         "no_addresses_message": "Du har inga adresser ännu",
+        "search_addresses_aria_label": "Sök adresser",
         "title": "Välj adress"
       },
       "shipping_method_modal": {
@@ -912,8 +935,7 @@
         "list_edit_button": "Redigera",
         "remove_list_button": "Radera",
         "make_private_button": "Gör privat",
-        "share_button": "Dela",
-        "saved": "Sparad"
+        "share_button": "Dela"
       },
       "list_details": {
         "add_all_to_cart_button": "Lägg till alla i kundvagn",
@@ -1289,8 +1311,9 @@
         "update_error_alert": "Det uppstod ett fel vid profiluppdatering"
       },
       "impersonate": {
-        "title": "Impersonation",
-        "success": "Impersonation lyckades",
+        "title": "Säkerhetsverifiering",
+        "back_to_home": "Tillbaka till start",
+        "switching_in_progress": "Växlar till kundvyn…",
         "error": "Några problem uppstod under impersonation. Kontrollera dina behörigheter"
       },
       "promotion_coupons": {

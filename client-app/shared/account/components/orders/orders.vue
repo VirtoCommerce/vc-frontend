@@ -193,7 +193,6 @@
       v-else
       :loading="ordersLoading"
       :orders="orders"
-      :columns="columns"
       :sort="sort"
       :pages="pages"
       :page="page"
@@ -285,21 +284,6 @@ const isMobile = breakpoints.smaller("lg");
 const localKeyword = ref("");
 const filtersVisible = ref(false);
 const selectedDateFilterType = ref<DateFilterType>();
-
-const columns = computed<VcTableColumnType[]>(() => [
-  { id: "number", title: t("pages.account.orders.order_number_label"), sortable: true },
-  {
-    id: orderScope.value === "private" ? "purchaseOrder" : "buyerName",
-    title:
-      orderScope.value === "private"
-        ? t("pages.account.orders.purchase_number_label")
-        : t("pages.account.orders.buyer_name_label"),
-  },
-  { id: "invoice", title: t("pages.account.orders.invoice_label") },
-  { id: "createdDate", title: t("pages.account.orders.date_label"), sortable: true },
-  { id: "status", title: t("pages.account.orders.status_label"), sortable: true, classes: "!px-3" },
-  { id: "total", title: t("pages.account.orders.total_label"), sortable: true, align: "right" },
-]);
 
 const organizationCustomerNames = computed(() =>
   facets.value?.find((item) => item.name === CUSTOMER_NAME_FACET_NAME)?.items?.map((item) => item.label),

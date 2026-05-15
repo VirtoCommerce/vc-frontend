@@ -1,7 +1,6 @@
 import { computed, unref } from "vue";
 import { getProductRoute } from "../utilities";
-import type { MaybeRef } from "@vueuse/core";
-import type { ComputedRef } from "vue";
+import type { ComputedRef, MaybeRef } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 
 export function useProductsRoutes(

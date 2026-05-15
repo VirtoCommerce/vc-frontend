@@ -1,7 +1,6 @@
 <template>
   <VcTable
     :loading="loading"
-    :columns="columns"
     :items="orders"
     :sort="sort"
     :pages="pages"
@@ -13,14 +12,15 @@
     class="orders-table"
     @header-click="emit('headerClick', $event)"
     @page-changed="emit('pageChanged', $event)"
+    @row-click="emit('rowClick', $event)"
   >
-    <template #mobile-item="itemData">
+    <template #mobile-item="{ item }">
       <button
         class="orders-table__mobile-row"
         type="button"
         tabindex="0"
-        @click="emit('rowClick', itemData.item)"
-        @keyup.enter="emit('rowClick', itemData.item)"
+        @click="emit('rowClick', item)"
+        @keyup.enter="emit('rowClick', item)"
       >
         <div class="orders-table__mobile-cell">
           <span class="orders-table__mobile-label">
@@ -28,21 +28,21 @@
           </span>
 
           <span class="orders-table__mobile-value orders-table__mobile-value--bold orders-table__mobile-value--pr">
-            {{ itemData.item.number }}
+            {{ item.number }}
           </span>
         </div>
 
         <div class="orders-table__mobile-cell orders-table__mobile-cell--end">
-          <OrderStatus :status="itemData.item.status" :display-value="itemData.item.statusDisplayValue" />
+          <OrderStatus :status="item.status" :display-value="item.statusDisplayValue" />
         </div>
 
-        <div v-if="orderScope === 'organization' && itemData.item?.customerName" class="orders-table__mobile-cell">
+        <div v-if="orderScope === 'organization' && item?.customerName" class="orders-table__mobile-cell">
           <span class="orders-table__mobile-label">
             {{ $t("pages.account.orders.buyer_name_label") }}
           </span>
 
           <span class="orders-table__mobile-value">
-            {{ itemData.item?.customerName }}
+            {{ item?.customerName }}
           </span>
         </div>
 
@@ -52,7 +52,7 @@
           </span>
 
           <span class="orders-table__mobile-value">
-            {{ $d(itemData.item?.createdDate) }}
+            {{ $d(item?.createdDate) }}
           </span>
         </div>
 
@@ -62,43 +62,75 @@
           </span>
 
           <span class="orders-table__mobile-value orders-table__mobile-value--bold">
-            {{ itemData.item.total?.formattedAmount }}
+            {{ item.total?.formattedAmount }}
           </span>
         </div>
       </button>
     </template>
 
-    <template #desktop-body>
-      <tr v-for="order in orders" :key="order.id" class="orders-table__desktop-row" @click="emit('rowClick', order)">
-        <td class="orders-table__desktop-cell">
-          {{ order.number }}
-        </td>
+    <!-- Desktop columns -->
+    <VcTableColumn id="number" v-slot="{ item }" :title="$t('pages.account.orders.order_number_label')" sortable>
+      {{ item.number }}
+    </VcTableColumn>
 
-        <td v-if="orderScope === 'private'" class="orders-table__desktop-cell">
-          {{ order.purchaseOrderNumber }}
-        </td>
+    <VcTableColumn
+      v-if="orderScope === 'private'"
+      id="purchaseOrder"
+      v-slot="{ item }"
+      :title="$t('pages.account.orders.purchase_number_label')"
+    >
+      {{ item.purchaseOrderNumber }}
+    </VcTableColumn>
 
-        <td v-if="orderScope === 'organization'" class="orders-table__desktop-cell">
-          {{ order.customerName }}
-        </td>
+    <VcTableColumn
+      v-if="orderScope === 'organization'"
+      id="buyerName"
+      v-slot="{ item }"
+      :title="$t('pages.account.orders.buyer_name_label')"
+      class="w-32 xl:w-40"
+    >
+      {{ item.customerName }}
+    </VcTableColumn>
 
-        <td class="orders-table__desktop-cell">
-          {{ order.inPayments?.[0]?.number }}
-        </td>
+    <VcTableColumn
+      id="invoice"
+      v-slot="{ item }"
+      :title="$t('pages.account.orders.invoice_label')"
+      class="w-32 xl:w-40"
+    >
+      {{ item.inPayments?.[0]?.number }}
+    </VcTableColumn>
 
-        <td class="orders-table__desktop-cell">
-          {{ $d(order?.createdDate) }}
-        </td>
+    <VcTableColumn
+      id="createdDate"
+      v-slot="{ item }"
+      :title="$t('pages.account.orders.date_label')"
+      sortable
+      class="w-28"
+    >
+      {{ $d(item?.createdDate) }}
+    </VcTableColumn>
 
-        <td class="orders-table__desktop-cell orders-table__desktop-cell--status">
-          <OrderStatus :status="order.status" :display-value="order.statusDisplayValue" class="orders-table__status" />
-        </td>
+    <VcTableColumn
+      id="status"
+      v-slot="{ item }"
+      :title="$t('pages.account.orders.status_label')"
+      sortable
+      class="w-36"
+    >
+      <OrderStatus :status="item.status" :display-value="item.statusDisplayValue" class="inline-block" />
+    </VcTableColumn>
 
-        <td class="orders-table__desktop-cell orders-table__desktop-cell--total">
-          {{ order.total?.formattedAmount }}
-        </td>
-      </tr>
-    </template>
+    <VcTableColumn
+      id="total"
+      v-slot="{ item }"
+      :title="$t('pages.account.orders.total_label')"
+      sortable
+      align="right"
+      class="w-40"
+    >
+      {{ item.total?.formattedAmount }}
+    </VcTableColumn>
 
     <template #page-limit-message>
       {{ $t("ui_kit.reach_limit.page_limit_filters") }}
@@ -107,6 +139,7 @@
 </template>
 
 <script setup lang="ts">
+import { VcTableColumn } from "@/ui-kit/components/organisms";
 import OrderStatus from "../order-status.vue";
 import type { OrderScopeType } from "../../types";
 import type { CustomerOrderType } from "@/core/api/graphql/types";
@@ -115,7 +148,6 @@ import type { ISortInfo } from "@/core/types";
 interface IProps {
   loading: boolean;
   orders: CustomerOrderType[];
-  columns: VcTableColumnType[];
   sort: ISortInfo;
   pages: number;
   page: number;
@@ -164,34 +196,6 @@ defineProps<IProps>();
     &--pr {
       @apply pr-4;
     }
-  }
-
-  &__desktop-row {
-    @apply cursor-pointer;
-
-    &:nth-child(even) {
-      @apply bg-neutral-50;
-    }
-
-    &:hover {
-      @apply bg-neutral-200;
-    }
-  }
-
-  &__desktop-cell {
-    @apply overflow-hidden text-ellipsis p-5;
-
-    &--status {
-      @apply p-1;
-    }
-
-    &--total {
-      @apply text-right;
-    }
-  }
-
-  &__status {
-    @apply inline-block;
   }
 }
 </style>
