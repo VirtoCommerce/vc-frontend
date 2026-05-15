@@ -1075,7 +1075,7 @@
         "title": "Cambiar contraseña"
       },
       "header": "Cambia tu contraseña",
-      "success_message": "Tu contraseña ha sido cambiada con éxito"
+      "success_message": "Tu contraseña ha sido cambiada con éxito. Cambiar tu contraseña cerrará tu sesión en todos los demás dispositivos y navegadores."
     },
     "sign_in": {
       "meta": {

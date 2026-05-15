@@ -1075,7 +1075,7 @@
         "title": "Changer le mot de passe"
       },
       "header": "Changez votre mot de passe",
-      "success_message": "Votre mot de passe a été changé avec succès"
+      "success_message": "Votre mot de passe a été modifié avec succès. La modification de votre mot de passe vous déconnectera de tous les autres appareils et navigateurs."
     },
     "sign_in": {
       "meta": {

@@ -1075,7 +1075,7 @@
         "title": "Ändra lösenord"
       },
       "header": "Ändra ditt lösenord",
-      "success_message": "Ditt lösenord har ändrats framgångsrikt"
+      "success_message": "Ditt lösenord har ändrats framgångsrikt. Att ändra ditt lösenord loggar ut dig från alla andra enheter och webbläsare."
     },
     "sign_in": {
       "meta": {
