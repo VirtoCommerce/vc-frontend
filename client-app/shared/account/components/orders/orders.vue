@@ -1,224 +1,219 @@
 <template>
   <div class="orders">
-    <template v-if="withSearch">
-      <!-- Mobile filters sidebar -->
-      <VcPopupSidebar :is-visible="isMobile && filtersVisible" @hide="hideFilters">
-        <MobileOrdersFilter>
-          <template #buyerNameFilterType>
-            <VcWidget v-if="showCustomerNameFilter" :title="$t('common.labels.buyer_name')" size="sm">
-              <VcSelect v-model="filterData.customerNames" :items="organizationCustomerNames ?? []" multiple />
-            </VcWidget>
-          </template>
-
-          <template #dateFilterType>
-            <DateFilterSelect :date-filter-type="selectedDateFilterType" @change="handleOrdersDateFilterChange" />
-          </template>
-        </MobileOrdersFilter>
-
-        <template #footer>
-          <VcButton
-            :disabled="isFilterEmpty && !isFilterDirty"
-            class="me-auto"
-            color="secondary"
-            variant="outline"
-            size="sm"
-            icon="reset"
-            :title="$t('common.buttons.reset')"
-            @click="
-              resetOrderFilters();
-              hideFilters();
-            "
-          />
-
-          <VcButton
-            :disabled="isFilterEmpty && !isFilterDirty"
-            variant="outline"
-            size="sm"
-            min-width="6.25rem"
-            @click="hideFilters"
-          >
-            {{ $t("common.buttons.cancel") }}
-          </VcButton>
-
-          <VcButton
-            :disabled="!isFilterDirty"
-            size="sm"
-            min-width="6.25rem"
-            @click="
-              applyOrderFilters();
-              hideFilters();
-            "
-          >
-            {{ $t("common.buttons.apply") }}
-          </VcButton>
-        </template>
-      </VcPopupSidebar>
-
-      <div class="orders__toolbar">
-        <div v-if="isOrganizationMaintainer" class="orders__scope-tabs">
-          <VcTabSwitch
-            v-model="orderScope"
-            value="organization"
-            icon="case"
-            :label="$t('common.buttons.all_orders')"
-            @change="toggleOrdersScope('organization')"
-          />
-
-          <VcTabSwitch
-            v-model="orderScope"
-            value="private"
-            icon="user"
-            :label="$t('common.buttons.my_orders')"
-            @change="toggleOrdersScope('private')"
-          />
-        </div>
-
-        <div class="orders__search-bar">
-          <!-- Desktop filters popover -->
-          <VcPopover v-if="!isMobile" placement="bottom-end" :offset-options="8" :disabled="ordersLoading" lazy>
-            <template #default="{ triggerProps }">
-              <VcButton :disabled="ordersLoading" variant="outline" v-bind="triggerProps">
-                <VcIcon name="filter" />
-
-                <span>{{ $t("common.buttons.filters") }}</span>
-              </VcButton>
-            </template>
-
-            <template #content="{ close }">
-              <OrdersFilter
-                @apply="
-                  applyOrderFilters();
-                  close();
-                "
-                @reset="
-                  resetOrderFilters();
-                  close();
-                "
-                @close="close"
-              >
-                <DateFilterSelect
-                  :date-filter-type="selectedDateFilterType"
-                  :label="$t('shared.account.orders_filter.created_date_label')"
-                  @change="handleOrdersDateFilterChange"
-                />
-
-                <VcSelect
-                  v-if="showCustomerNameFilter"
-                  v-model="filterData.customerNames"
-                  :label="$t('common.labels.buyer_name')"
-                  :items="organizationCustomerNames ?? []"
-                  multiple
-                  enable-teleport
-                />
-              </OrdersFilter>
-            </template>
-          </VcPopover>
-
-          <!-- Mobile filters button -->
-          <VcButton v-else :disabled="ordersLoading" icon @click="filtersVisible = true">
-            <VcIcon name="filter" />
-
-            <span>{{ $t("common.buttons.filters") }}</span>
-          </VcButton>
-
-          <div class="orders__search-input-wrapper">
-            <VcInput
-              v-model="localKeyword"
-              maxlength="64"
-              clearable
-              class="orders__search-input"
-              :disabled="ordersLoading"
-              :placeholder="$t('pages.account.orders.search_placeholder')"
-              @keydown.enter="applyKeyword"
-              @clear="resetKeyword"
-            >
-              <template #append>
-                <VcButton
-                  :disabled="ordersLoading"
-                  :aria-label="$t('common.buttons.search_orders')"
-                  icon="search"
-                  icon-size="1.25rem"
-                  @click="applyKeyword"
-                />
-              </template>
-            </VcInput>
-          </div>
-        </div>
-      </div>
-
-      <!-- Filters chips -->
-      <div v-if="!isFilterEmpty" class="orders__chips">
-        <template v-for="item in filterChipsItems" :key="item.value">
-          <VcChip color="secondary" closable @close="handleRemoveFilter(item)">
-            {{ item.label }}
-          </VcChip>
+    <!-- Mobile filters sidebar -->
+    <VcPopupSidebar :is-visible="isMobile && filtersVisible" @hide="hideFilters">
+      <MobileOrdersFilter>
+        <template #buyerNameFilterType>
+          <VcWidget v-if="showCustomerNameFilter" :title="$t('common.labels.buyer_name')" size="sm">
+            <VcSelect v-model="filterData.customerNames" :items="organizationCustomerNames ?? []" multiple />
+          </VcWidget>
         </template>
 
-        <VcChip color="secondary" variant="outline" clickable @click="resetOrderFilters">
-          <span>{{ $t("common.buttons.reset_filters") }}</span>
+        <template #dateFilterType>
+          <DateFilterSelect :date-filter-type="selectedDateFilterType" @change="handleOrdersDateFilterChange" />
+        </template>
+      </MobileOrdersFilter>
 
-          <VcIcon name="reset" />
-        </VcChip>
-      </div>
-    </template>
+      <template #footer>
+        <VcButton
+          :disabled="isFilterEmpty && !isFilterDirty"
+          class="me-auto"
+          color="secondary"
+          variant="outline"
+          size="sm"
+          icon="reset"
+          :title="$t('common.buttons.reset')"
+          @click="
+            resetOrderFilters();
+            hideFilters();
+          "
+        />
 
-    <!-- Empty view -->
-    <VcEmptyView
-      v-if="!orders.length && !ordersLoading"
-      :text="
-        keyword || !isFilterEmpty
-          ? $t('pages.account.orders.no_results_message')
-          : $t('pages.account.orders.no_orders_message')
-      "
-      icon="outline-order"
-      :variant="!!keyword || !isFilterEmpty ? 'search' : 'empty'"
-    >
-      <template #button>
-        <VcButton v-if="keyword || !isFilterEmpty" prepend-icon="reset" @click="resetFiltersWithKeyword">
-          {{ $t("pages.account.orders.buttons.reset_search") }}
+        <VcButton
+          :disabled="isFilterEmpty && !isFilterDirty"
+          variant="outline"
+          size="sm"
+          min-width="6.25rem"
+          @click="hideFilters"
+        >
+          {{ $t("common.buttons.cancel") }}
         </VcButton>
 
-        <VcButton v-else-if="!!continue_shopping_link" :external-link="continue_shopping_link">
-          {{ $t("pages.account.orders.buttons.no_orders") }}
-        </VcButton>
-
-        <VcButton v-else to="/">
-          {{ $t("pages.account.orders.buttons.no_orders") }}
+        <VcButton
+          :disabled="!isFilterDirty"
+          size="sm"
+          min-width="6.25rem"
+          @click="
+            applyOrderFilters();
+            hideFilters();
+          "
+        >
+          {{ $t("common.buttons.apply") }}
         </VcButton>
       </template>
-    </VcEmptyView>
+    </VcPopupSidebar>
+
+    <div class="orders__toolbar">
+      <div v-if="isOrganizationMaintainer" class="orders__scope-tabs">
+        <VcTabSwitch
+          v-model="orderScope"
+          value="organization"
+          icon="case"
+          :label="$t('common.buttons.all_orders')"
+          @change="toggleOrdersScope('organization')"
+        />
+
+        <VcTabSwitch
+          v-model="orderScope"
+          value="private"
+          icon="user"
+          :label="$t('common.buttons.my_orders')"
+          @change="toggleOrdersScope('private')"
+        />
+      </div>
+
+      <div class="orders__search-bar">
+        <!-- Desktop filters popover -->
+        <VcPopover v-if="!isMobile" placement="bottom-end" :offset-options="8" :disabled="ordersLoading" lazy>
+          <template #default="{ triggerProps }">
+            <VcButton :disabled="ordersLoading" variant="outline" v-bind="triggerProps">
+              <VcIcon name="filter" />
+
+              <span>{{ $t("common.buttons.filters") }}</span>
+            </VcButton>
+          </template>
+
+          <template #content="{ close }">
+            <OrdersFilter
+              @apply="
+                applyOrderFilters();
+                close();
+              "
+              @reset="
+                resetOrderFilters();
+                close();
+              "
+              @close="close"
+            >
+              <DateFilterSelect
+                :date-filter-type="selectedDateFilterType"
+                :label="$t('shared.account.orders_filter.created_date_label')"
+                @change="handleOrdersDateFilterChange"
+              />
+
+              <VcSelect
+                v-if="showCustomerNameFilter"
+                v-model="filterData.customerNames"
+                :label="$t('common.labels.buyer_name')"
+                :items="organizationCustomerNames ?? []"
+                multiple
+                enable-teleport
+              />
+            </OrdersFilter>
+          </template>
+        </VcPopover>
+
+        <!-- Mobile filters button -->
+        <VcButton v-else :disabled="ordersLoading" icon @click="filtersVisible = true">
+          <VcIcon name="filter" />
+
+          <span>{{ $t("common.buttons.filters") }}</span>
+        </VcButton>
+
+        <div class="orders__search-input-wrapper">
+          <VcInput
+            v-model="localKeyword"
+            maxlength="64"
+            clearable
+            class="orders__search-input"
+            :disabled="ordersLoading"
+            :placeholder="$t('pages.account.orders.search_placeholder')"
+            @keydown.enter="applyKeyword"
+            @clear="resetKeyword"
+          >
+            <template #append>
+              <VcButton
+                :disabled="ordersLoading"
+                :aria-label="$t('common.buttons.search_orders')"
+                icon="search"
+                icon-size="1.25rem"
+                @click="applyKeyword"
+              />
+            </template>
+          </VcInput>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters chips -->
+    <div v-if="!isFilterEmpty" class="orders__chips">
+      <template v-for="item in filterChipsItems" :key="item.value">
+        <VcChip color="secondary" closable @close="handleRemoveFilter(item)">
+          {{ item.label }}
+        </VcChip>
+      </template>
+
+      <VcChip color="secondary" variant="outline" clickable @click="resetOrderFilters">
+        <span>{{ $t("common.buttons.reset_filters") }}</span>
+
+        <VcIcon name="reset" />
+      </VcChip>
+    </div>
 
     <!-- Content block -->
     <OrdersTable
-      v-else
       :loading="ordersLoading"
       :orders="orders"
       :sort="sort"
       :pages="pages"
       :page="page"
-      :hide-default-footer="!withPagination"
-      :bordered="withSearch"
+      bordered
       :order-scope="orderScope"
       @header-click="applySorting"
       @page-changed="changePage"
       @row-click="goToOrderDetails"
-    />
+    >
+      <template #empty>
+        <VcEmptyView
+          :text="
+            keyword || !isFilterEmpty
+              ? $t('pages.account.orders.no_results_message')
+              : $t('pages.account.orders.no_orders_message')
+          "
+          icon="outline-order"
+          :variant="!!keyword || !isFilterEmpty ? 'search' : 'empty'"
+        >
+          <template #button>
+            <VcButton v-if="keyword || !isFilterEmpty" prepend-icon="reset" @click="resetFiltersWithKeyword">
+              {{ $t("pages.account.orders.buttons.reset_search") }}
+            </VcButton>
+
+            <VcButton v-else-if="!!continue_shopping_link" :external-link="continue_shopping_link">
+              {{ $t("pages.account.orders.buttons.no_orders") }}
+            </VcButton>
+
+            <VcButton v-else to="/">
+              {{ $t("pages.account.orders.buttons.no_orders") }}
+            </VcButton>
+          </template>
+        </VcEmptyView>
+      </template>
+    </OrdersTable>
   </div>
 </template>
 
 <script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints, useLocalStorage } from "@vueuse/core";
-import { computed, onMounted, ref, toRefs, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRouter } from "vue-router";
-import { useBrowserTarget } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { usePageHead } from "@/core/composables/usePageHead";
-import { CUSTOMER_NAME_FACET_NAME, DEFAULT_ORDERS_PER_PAGE } from "@/core/constants";
+import { CUSTOMER_NAME_FACET_NAME } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
-import { BrowserTargetType, SortDirection } from "@/core/enums";
+import { SortDirection } from "@/core/enums";
 import { Sort } from "@/core/types";
 import { toDateISOString } from "@/core/utilities";
+import { useOrderNavigation } from "@/shared/account/composables/useOrderNavigation";
 import { useUserOrders } from "@/shared/account/composables/useUserOrders";
 import { useUserOrdersFilter } from "@/shared/account/composables/useUserOrdersFilter";
 import { useUser } from "../../composables";
@@ -227,34 +222,13 @@ import MobileOrdersFilter from "../mobile-orders-filter.vue";
 import OrdersFilter from "../orders-filter.vue";
 import OrdersTable from "./orders-table.vue";
 import type { OrderScopeType, OrdersFilterChipsItemType } from "../../types";
-import type { CustomerOrderType } from "@/core/api/graphql/types";
 import type { DateFilterType, ISortInfo } from "@/core/types";
 
-export interface IProps {
-  withSearch?: boolean;
-  withPagination?: boolean;
-  itemsPerPage?: number;
-}
-
-const props = withDefaults(defineProps<IProps>(), { itemsPerPage: DEFAULT_ORDERS_PER_PAGE });
-
-const { itemsPerPage } = toRefs(props);
-
 const { t } = useI18n();
-const { browserTarget } = useBrowserTarget();
-const router = useRouter();
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const {
-  loading: ordersLoading,
-  orders,
-  fetchOrders,
-  sort,
-  pages,
-  page,
-  keyword,
-  facets,
-} = useUserOrders({ itemsPerPage });
+const { loading: ordersLoading, orders, fetchOrders, sort, pages, page, keyword, facets } = useUserOrders({});
 const { user, isOrganizationMaintainer } = useUser();
+const { goToOrderDetails } = useOrderNavigation();
 
 const {
   appliedFilterData,
@@ -335,16 +309,6 @@ function handleOrdersDateFilterChange(dateFilterType: DateFilterType): void {
   filterData.value.endDate = dateFilterType.endDate ? toDateISOString(dateFilterType.endDate) : undefined;
 
   selectedDateFilterType.value = dateFilterType;
-}
-
-function goToOrderDetails(order: CustomerOrderType): void {
-  const orderRoute = router.resolve({ name: "OrderDetails", params: { orderId: order.id } });
-
-  if (browserTarget.value === BrowserTargetType.BLANK) {
-    window.open(orderRoute.href, "_blank")!.focus();
-  } else {
-    window.location.href = orderRoute.href;
-  }
 }
 
 function applyOrderFilters(): void {

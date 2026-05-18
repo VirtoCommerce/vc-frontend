@@ -111,13 +111,7 @@
       {{ $d(item?.createdDate) }}
     </VcTableColumn>
 
-    <VcTableColumn
-      id="status"
-      v-slot="{ item }"
-      :title="$t('pages.account.orders.status_label')"
-      sortable
-      class="w-36"
-    >
+    <VcTableColumn id="status" v-slot="{ item }" :title="$t('pages.account.orders.status_label')" sortable class="w-36">
       <OrderStatus :status="item.status" :display-value="item.statusDisplayValue" class="inline-block" />
     </VcTableColumn>
 
@@ -131,6 +125,14 @@
     >
       {{ item.total?.formattedAmount }}
     </VcTableColumn>
+
+    <template #mobile-empty>
+      <slot name="empty" />
+    </template>
+
+    <template #desktop-empty>
+      <slot name="empty" />
+    </template>
 
     <template #page-limit-message>
       {{ $t("ui_kit.reach_limit.page_limit_filters") }}
@@ -151,8 +153,8 @@ interface IProps {
   sort: ISortInfo;
   pages: number;
   page: number;
-  hideDefaultFooter: boolean;
-  bordered: boolean;
+  hideDefaultFooter?: boolean;
+  bordered?: boolean;
   orderScope: OrderScopeType;
 }
 
