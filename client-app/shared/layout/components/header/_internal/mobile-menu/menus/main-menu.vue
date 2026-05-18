@@ -1,4 +1,10 @@
 <template>
+  <Teleport to="body">
+    <VcLoaderOverlay v-if="reverting" fixed-spinner data-test-id="mobile-back-to-operator-loader">
+      {{ $t("shared.layout.header.top_header.switching_back") }}
+    </VcLoaderOverlay>
+  </Teleport>
+
   <section class="grow divide-y divide-additional-50 divide-opacity-20 overflow-y-auto">
     <ul class="flex flex-col gap-y-2 px-9 py-6">
       <li>
@@ -23,7 +29,7 @@
     <div class="flex flex-col gap-y-2 px-9 py-6">
       <template v-if="isAuthenticated">
         <!-- Account -->
-        <div class="mb-4 mt-2 flex flex-row gap-4 text-xl">
+        <div class="my-2 flex flex-row gap-4 text-xl">
           <div
             class="flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-full ring-2 ring-accent-300"
           >
@@ -32,29 +38,46 @@
             <VcIcon v-else name="user" />
           </div>
 
-          <div class="flex flex-col leading-tight">
-            <div class="flex flex-wrap items-center gap-x-1 text-accent-100">
-              <template v-if="operator">
-                <span class="line-clamp-3 font-bold text-[--mobile-menu-text-color] [word-break:break-word]">
-                  {{ operator.contact?.fullName || operator.userName }}
-                </span>
-
-                <span class="text-[--mobile-menu-text-color]">
-                  {{ $t("shared.layout.header.top_header.logged_in_as") }}
-                </span>
-              </template>
-
-              <span class="line-clamp-3 font-bold text-[--mobile-menu-text-color] [word-break:break-word]">
-                {{ user.contact?.fullName || user.userName }}
+          <div
+            class="line-clamp-3 flex flex-wrap items-center gap-x-1 text-[--mobile-menu-text-color] [word-break:break-word]"
+          >
+            <template v-if="operator">
+              <span class="font-bold">
+                {{ operator.contact?.fullName || operator.userName }}
               </span>
-            </div>
 
-            <div>
-              <button type="button" class="font-bold text-[--mobile-menu-navigation-color]" @click="signMeOut">
-                {{ $t("shared.layout.header.link_logout") }}
-              </button>
-            </div>
+              {{ $t("shared.layout.header.top_header.logged_in_as") }}
+            </template>
+
+            <span class="font-bold">
+              {{ user.contact?.fullName || user.userName }}
+            </span>
           </div>
+        </div>
+
+        <div class="mb-4 flex justify-between gap-2">
+          <button
+            v-if="operator"
+            type="button"
+            class="flex items-center gap-1 font-bold text-[--mobile-menu-navigation-color]"
+            data-test-id="mobile-back-to-operator-button"
+            @click="onBackToOperator"
+          >
+            <VcIcon name="arrow-left" />
+
+            <span>{{ backToOperatorLabel }}</span>
+          </button>
+
+          <button
+            type="button"
+            class="group flex items-center gap-1 font-bold text-[--mobile-menu-link-color]"
+            data-test-id="mobile-account-menu-logout-row"
+            @click="signMeOut"
+          >
+            <VcIcon name="logout" />
+
+            <span>{{ $t("shared.layout.header.link_logout") }}</span>
+          </button>
         </div>
 
         <!-- Account sections -->
@@ -141,7 +164,7 @@
 import { useI18n } from "vue-i18n";
 import { useCurrency, useNavigations } from "@/core/composables";
 import { ROUTES } from "@/router/routes/constants";
-import { useSignMeOut, useUser } from "@/shared/account";
+import { useImpersonate, useSignMeOut, useUser } from "@/shared/account";
 import type { ExtendedMenuLinkType } from "@/core/types";
 import LinkDefault from "@/shared/layout/components/header/_internal/mobile-menu/link-components/link-default.vue";
 import MobileMenuLink from "@/shared/layout/components/header/_internal/mobile-menu/mobile-menu-link.vue";
@@ -160,6 +183,7 @@ defineProps<IProps>();
 
 const { signMeOut } = useSignMeOut();
 const { user, operator, isAuthenticated, isCorporateMember } = useUser();
+const { reverting, backToOperatorLabel, backToOperator: onBackToOperator } = useImpersonate();
 const {
   mobileMainMenuItems,
   mobilePurchasingMenuItem,

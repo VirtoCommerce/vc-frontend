@@ -316,6 +316,8 @@
           "call_us_label": "Rufen Sie uns an: ",
           "logged_in_as": "eingeloggt als",
           "account_menu_label": "Kontomenü",
+          "back_to_operator": "Zurück zu {name}",
+          "switching_back": "Wechsle zurück…",
           "no_results": "Keine Ergebnisse gefunden",
           "dark_mode": {
             "system": "Design: automatisch",
@@ -588,6 +590,10 @@
       "block_member_modal": {
         "title": "Benutzer blockieren",
         "text": "Sind Sie sicher, dass Sie den Zugriff des Benutzers blockieren möchten?"
+      },
+      "login_on_behalf_modal": {
+        "title": "Im Namen anmelden",
+        "text": "Sie melden sich im Namen von {email} an. Die Sitzung wird protokolliert."
       },
       "unblock_member_modal": {
         "title": "Benutzer entsperren",
@@ -1371,6 +1377,7 @@
           "invite": "Einladen",
           "reset_search": "Suche zurücksetzen",
           "edit_role": "Rolle bearbeiten",
+          "login_on_behalf": "Im Namen anmelden",
           "block_user": "Benutzer blockieren",
           "unblock_user": "Benutzer entsperren",
           "delete": "Löschen",
