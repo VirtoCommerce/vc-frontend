@@ -154,6 +154,8 @@ interface IProps {
   listId: string;
   hideSettings?: boolean;
   listName?: string;
+  addToCartHandler?: (item: LineItemType, quantity: number) => Promise<void>;
+  addAllToCartHandler?: (items: LineItemType[]) => Promise<void>;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -238,8 +240,8 @@ async function addAllListItemsToCart(): Promise<void> {
     return;
   }
 
-  const items = wishlistItems.value.map(({ productId, quantity }) => ({ productId, quantity }));
-  await addItemsToCart(items);
+  const addAllToCartHandler = props.addAllToCartHandler ?? defaultAddAllToCart;
+  await addAllToCartHandler(wishlistItems.value);
 
   const products = wishlistItems.value
     .map((item) => item.product)
@@ -252,6 +254,12 @@ async function addAllListItemsToCart(): Promise<void> {
 
   showResultModal(wishlistItems.value);
 }
+
+async function defaultAddAllToCart(items: LineItemType[]): Promise<void> {
+  const newCartItems = items.map(({ productId, quantity }) => ({ productId, quantity }));
+  await addItemsToCart(newCartItems);
+}
+
 async function updateItems() {
   const payload: InputUpdateWishlistItemsType = {
     listId: list.value!.id,
@@ -308,28 +316,35 @@ async function addOrUpdateCartItem(item: PreparedLineItemType, quantity: number)
     (listItem) => listItem.productId === item.productId,
   );
 
-  if (!lineItem?.product) {
+  if (!lineItem?.product || pendingItems.value[lineItem.id]) {
     return;
   }
 
   const itemInCart = cart.value?.items?.find((cartItem) => cartItem.productId === item.productId);
-  if (pendingItems.value[lineItem.id]) {
-    return;
-  }
-  pendingItems.value[lineItem.id] = true;
-  if (itemInCart) {
-    if (itemInCart.quantity !== quantity) {
-      await changeItemQuantity(itemInCart.id, quantity);
-    }
-  } else {
-    await addToCart(lineItem.product.id, quantity);
 
-    trackAddItemToCart(lineItem.product, quantity);
-    void pushHistoricalEvent({ eventType: "addToCart", productId: lineItem.product.id });
+  pendingItems.value[lineItem.id] = true;
+  try {
+    if (itemInCart) {
+      if (itemInCart.quantity !== quantity) {
+        await changeItemQuantity(itemInCart.id, quantity);
+      }
+    } else {
+      const addToCartHandler = props.addToCartHandler ?? defaultAddToCart;
+      await addToCartHandler(lineItem, quantity);
+      trackAddItemToCart(lineItem.product, quantity);
+      void pushHistoricalEvent({ eventType: "addToCart", productId: lineItem.product.id });
+    }
+  } finally {
+    pendingItems.value[lineItem.id] = false;
   }
-  pendingItems.value[lineItem.id] = false;
 
   showResultModal([lineItem]);
+}
+
+async function defaultAddToCart(item: LineItemType, quantity: number): Promise<void> {
+  if (item.product) {
+    await addToCart(item.product.id, quantity);
+  }
 }
 
 function openDeleteProductModal(values: string[]): void {
