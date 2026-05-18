@@ -13,7 +13,7 @@ import {
 } from "@/core/composables";
 import { useHotjar } from "@/core/composables/useHotjar";
 import { useLanguages } from "@/core/composables/useLanguages";
-import { FALLBACK_LOCALE, IS_DEVELOPMENT } from "@/core/constants";
+import { DEFAULT_NOTIFICATION_DURATION, FALLBACK_LOCALE, IS_DEVELOPMENT } from "@/core/constants";
 import { setGlobals } from "@/core/globals";
 import {
   applicationInsightsPlugin,
@@ -283,18 +283,37 @@ function notifyOutdatedModules(
     return;
   }
 
-  const modulesList = outdated
-    .map(
-      ({ moduleId, backendVersion, expectedVersion }) =>
-        `<b>${moduleId}</b> <br><span style="font-size: 12px;">${backendVersion} → ${expectedVersion}</span>`,
-    )
-    .join("<br><br>");
+  const MODULES_PREVIEW_LIMIT = 3;
+  const modulesLines = outdated.map(
+    ({ moduleId, expectedVersion, backendVersion }) => `${moduleId} ${expectedVersion} ≥ ${backendVersion}`,
+  );
+  const previewLines = modulesLines.slice(0, MODULES_PREVIEW_LIMIT);
+  const hiddenCount = modulesLines.length - previewLines.length;
+  const previewHtml = hiddenCount > 0 ? `${previewLines.join("<br>")}<br>…` : previewLines.join("<br>");
 
-  notifications.warning({
+  notifications.error({
     group: "OutdatedBackendModules",
     singleInGroup: true,
-    html: `${t("common.messages.outdated_backend_modules")}<br><br>${modulesList}`,
-    duration: 15000,
+    html: `${t("common.messages.outdated_backend_modules")}<br><br>${previewHtml}`,
+    duration: DEFAULT_NOTIFICATION_DURATION,
+    variant: "outline-dark",
+    button: {
+      text: t("common.buttons.copy_to_clipboard"),
+      color: "secondary",
+      variant: "outline",
+      clickHandler: (notificationId: string) => {
+        void navigator.clipboard.writeText(modulesLines.join("\n"));
+
+        notifications.update(notificationId, {
+          duration: 5000,
+          type: "success",
+          text: t("common.messages.copied_to_clipboard"),
+          html: undefined,
+          variant: "solid",
+          button: undefined,
+        });
+      },
+    },
   });
 }
 

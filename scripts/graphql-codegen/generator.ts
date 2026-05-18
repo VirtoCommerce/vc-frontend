@@ -11,6 +11,7 @@ const core = {
   apiPath: "client-app/core/api/graphql",
   commonFragmentsPath: "client-app/core/api/graphql/common/fragments",
   schemaPath: `${process.env.APP_BACKEND_URL}/graphql`,
+  clientDirectivesPath: "client-app/core/api/graphql/_clientDirectives.graphql",
 } as const;
 
 // WARNING: Disabling TLS certificate validation exposes the application to man-in-the-middle attacks.
@@ -121,12 +122,14 @@ async function runCodegen() {
   const typesPath = `${core.apiPath}/types.ts`;
   await generate(
     {
-      schema: core.schemaPath,
+      schema: [core.schemaPath, core.clientDirectivesPath],
       silent: true,
       documents: [
         addExtension(core.apiPath),
         // exclude independent modules from general modules
         ...independentModules.map((module) => `!${addExtension(module.apiPath)}`),
+        // exclude client-only directive declarations — they are not operations
+        `!${core.clientDirectivesPath}`,
       ],
       generates: {
         [typesPath]: {

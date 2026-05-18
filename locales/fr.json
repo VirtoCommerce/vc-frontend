@@ -81,7 +81,8 @@
       "all_products": "Tous les produits",
       "buy_now": "Acheter",
       "see_all": "Voir tout",
-      "report_a_problem": "Signaler un problème"
+      "report_a_problem": "Signaler un problème",
+      "copy_to_clipboard": "Copier dans le presse-papiers"
     },
     "labels": {
       "actions": "Actions",
@@ -209,6 +210,7 @@
       "fail_to_change_quantity_in_cart": "Désolé, impossible de mettre à jour la quantité du produit dans le panier. {reason}",
       "unhandled_error": "Nous nous excusons pour le désagrément. Notre serveur rencontre actuellement des problèmes techniques. Veuillez réessayer plus tard.",
       "report_sent_successfully": "Merci ! Votre rapport a été envoyé avec succès. Nous allons examiner le problème.",
+      "copied_to_clipboard": "Copié dans le presse-papiers",
       "role_update_successful": "Le rôle du client a été mis à jour avec succès.",
       "role_update_failed": "Des erreurs se sont produites lors de la mise à jour du rôle : {0}",
       "passwords_do_not_match": "Les champs de mot de passe doivent avoir des valeurs correspondantes.",
@@ -217,6 +219,7 @@
       "password_about_expire": "Votre mot de passe expirera dans {value} jour(s). Veuillez définir un nouveau mot de passe dans votre profil.",
       "password_expired": "Votre mot de passe a expiré",
       "data_changed": "Les données ont été modifiées dans l'un des autres onglets. Veuillez actualiser la page pour afficher les données actuelles.",
+      "outdated_backend_modules": "L'application frontend attend des versions plus récentes de la Plateforme et d'un ou plusieurs Modules. <br> L'application frontend fonctionne sur un backend incompatible. Certaines fonctionnalités peuvent être indisponibles, dégradées ou instables jusqu'à ce que la Plateforme et les Modules soient mis à niveau pour répondre aux exigences du magasin. Veuillez partager le rapport ci-dessous avec votre administrateur.",
       "logo_changed": "Le logo a été changé avec succès.",
       "logo_deleted": "Le logo a été supprimé.",
       "pending_operations_leaving_page_confirmation": "Certaines opérations sont toujours en cours. Êtes-vous sûr de vouloir quitter cette page ? Les modifications non enregistrées pourraient être perdues."

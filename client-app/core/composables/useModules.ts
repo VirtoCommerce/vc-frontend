@@ -12,9 +12,21 @@ function _useModules() {
     modules.value = payload ? [...payload] : [];
   }
 
+  const installedModuleIds = computed<ReadonlySet<string>>(() => {
+    const ids = new Set<string>();
+    for (const module of modules.value) {
+      if (module.moduleId) {
+        ids.add(module.moduleId);
+      }
+    }
+    return ids;
+  });
+
   return {
     modules: computed(() => modules.value),
     outdatedModules: computed(() => getOutdatedModules(modules.value)),
+    installedModuleIds,
+    hasModule: (moduleId: string) => installedModuleIds.value.has(moduleId),
     setModules,
   };
 }

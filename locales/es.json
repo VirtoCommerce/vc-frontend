@@ -81,7 +81,8 @@
       "all_products": "Todos los productos",
       "buy_now": "Comprar ahora",
       "see_all": "Ver todo",
-      "report_a_problem": "Reportar un problema"
+      "report_a_problem": "Reportar un problema",
+      "copy_to_clipboard": "Copiar al portapapeles"
     },
     "labels": {
       "actions": "Acciones",
@@ -209,6 +210,7 @@
       "fail_to_change_quantity_in_cart": "Lo sentimos, no se puede actualizar la cantidad del producto en el carrito. {reason}",
       "unhandled_error": "Disculpa las molestias. Nuestro servidor está experimentando problemas técnicos. Por favor, inténtalo de nuevo más tarde.",
       "report_sent_successfully": "¡Gracias! Tu informe ha sido enviado con éxito. Lo revisaremos.",
+      "copied_to_clipboard": "Copiado al portapapeles",
       "role_update_successful": "El rol del cliente se ha actualizado con éxito.",
       "role_update_failed": "Se produjeron errores durante la actualización del rol: {0}",
       "passwords_do_not_match": "Los campos de contraseña deben tener valores coincidentes.",
@@ -217,6 +219,7 @@
       "password_about_expire": "Tu contraseña está a punto de expirar en {value} día(s). Por favor, establece una nueva contraseña en el perfil.",
       "password_expired": "Tu contraseña ha expirado",
       "data_changed": "Los datos han sido modificados en uno de los otros tabs. Por favor, actualiza la página para mostrar los datos actuales.",
+      "outdated_backend_modules": "La aplicación frontend espera versiones más recientes de la Plataforma y uno o más Módulos. <br> La aplicación frontend se está ejecutando en un backend incompatible. Algunas funciones pueden no estar disponibles, degradarse o ser inestables hasta que la Plataforma y los Módulos se actualicen para cumplir con los requisitos de la tienda. Por favor, comparta el informe a continuación con su administrador.",
       "logo_changed": "El logo se cambió correctamente.",
       "logo_deleted": "El logo fue eliminado.",
       "pending_operations_leaving_page_confirmation": "Algunas operaciones aún están en curso. ¿Seguro que quieres salir de esta página? Los cambios no guardados podrían perderse."
