@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div class="account-lists">
     <!-- Title block -->
-    <div class="flex items-center justify-between">
+    <div class="account-lists__header">
       <VcTypography tag="h1">
         {{ $t("shared.account.navigation.links.lists") }}
       </VcTypography>
@@ -14,27 +14,33 @@
         prepend-icon="plus"
         @click="openCreateListModal"
       >
-        <span class="hidden sm:inline">{{ $t("pages.account.lists.create_list_button") }}</span>
+        <span class="account-lists__create-button-label account-lists__create-button-label--full">
+          {{ $t("pages.account.lists.create_list_button") }}
+        </span>
 
-        <span class="sm:hidden">{{ $t("pages.account.lists.create_list_button_mobile") }}</span>
+        <span class="account-lists__create-button-label account-lists__create-button-label--short">
+          {{ $t("pages.account.lists.create_list_button_mobile") }}
+        </span>
       </VcButton>
     </div>
 
     <!-- Lists / Skeletons -->
-    <div v-if="loading || lists.length" class="space-y-3 md:space-y-2.5">
-      <template v-if="loading">
-        <WishlistCardSkeleton v-for="item in 5" :key="item" />
-      </template>
+    <div v-if="loading || lists.length" class="account-lists__container">
+      <div class="account-lists__items">
+        <template v-if="loading">
+          <WishlistCardSkeleton v-for="item in 5" :key="item" />
+        </template>
 
-      <template v-else>
-        <WishlistCard
-          v-for="list in lists"
-          :key="list.id"
-          :list="list"
-          @settings="openListSettingsModal(list)"
-          @remove="openDeleteListModal(list)"
-        />
-      </template>
+        <template v-else>
+          <WishlistCard
+            v-for="list in lists"
+            :key="list.id"
+            :list="list"
+            @settings="openListSettingsModal(list)"
+            @remove="openDeleteListModal(list)"
+          />
+        </template>
+      </div>
     </div>
 
     <!-- Empty -->
@@ -109,3 +115,39 @@ function openDeleteListModal(list: WishlistType) {
 
 void fetchWishlists();
 </script>
+
+<style lang="scss">
+.account-lists {
+  &__header {
+    @apply flex items-center justify-between;
+  }
+
+  &__create-button-label {
+    &--full {
+      @apply hidden;
+
+      @media (min-width: theme("screens.sm")) {
+        @apply inline;
+      }
+    }
+
+    &--short {
+      @media (min-width: theme("screens.sm")) {
+        @apply hidden;
+      }
+    }
+  }
+
+  &__container {
+    @apply @container;
+  }
+
+  &__items {
+    @apply space-y-3;
+
+    @container (min-width: theme("containers.xl")) {
+      @apply grid grid-cols-[fit-content(40%)_minmax(0,1fr)_auto_auto_auto] gap-y-2.5 space-y-0;
+    }
+  }
+}
+</style>
