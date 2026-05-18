@@ -1,7 +1,7 @@
 <template>
-  <div class="account-lists">
+  <div class="lists">
     <!-- Title block -->
-    <div class="account-lists__header">
+    <div class="lists__header">
       <VcTypography tag="h1">
         {{ $t("shared.account.navigation.links.lists") }}
       </VcTypography>
@@ -14,19 +14,19 @@
         prepend-icon="plus"
         @click="openCreateListModal"
       >
-        <span class="account-lists__create-button-label account-lists__create-button-label--full">
+        <span class="lists__create-button-label lists__create-button-label--full">
           {{ $t("pages.account.lists.create_list_button") }}
         </span>
 
-        <span class="account-lists__create-button-label account-lists__create-button-label--short">
+        <span class="lists__create-button-label lists__create-button-label--short">
           {{ $t("pages.account.lists.create_list_button_mobile") }}
         </span>
       </VcButton>
     </div>
 
     <!-- Lists / Skeletons -->
-    <div v-if="loading || lists.length" class="account-lists__container">
-      <div class="account-lists__items">
+    <div v-if="loading || lists.length" class="lists__container">
+      <div class="lists__items">
         <template v-if="loading">
           <WishlistCardSkeleton v-for="item in 5" :key="item" />
         </template>
@@ -117,7 +117,7 @@ void fetchWishlists();
 </script>
 
 <style lang="scss">
-.account-lists {
+.lists {
   &__header {
     @apply flex items-center justify-between;
   }
