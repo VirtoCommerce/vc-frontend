@@ -316,6 +316,8 @@
           "call_us_label": "Rufen Sie uns an: ",
           "logged_in_as": "eingeloggt als",
           "account_menu_label": "Kontomenü",
+          "back_to_operator": "Zurück zu {name}",
+          "switching_back": "Wechsle zurück…",
           "no_results": "Keine Ergebnisse gefunden",
           "dark_mode": {
             "system": "Design: automatisch",
@@ -494,6 +496,28 @@
           "user_not_found": "Benutzer nicht gefunden. Bitte stellen Sie sicher, dass Sie die richtigen Informationen eingegeben haben"
         }
       },
+      "impersonate_form": {
+        "subtitle": "Bestätigen Sie Ihre Identität, um fortzufahren",
+        "description": "Sie melden sich im Namen eines Kunden an. Die Sitzung wird zur Überprüfung aufgezeichnet.",
+        "email_label": "E-Mail",
+        "email_placeholder": "E-Mail eingeben",
+        "password_label": "Passwort",
+        "password_placeholder": "Passwort eingeben",
+        "submit_button": "Bestätigen und fortfahren",
+        "cancel_button": "Abbrechen",
+        "success": "Überprüfung erfolgreich. Wechsel zur Kundenansicht…",
+        "errors": {
+          "login_failed": "@:shared.account.sign_in_form.errors.login_failed",
+          "user_is_temporary_locked_out": "@:shared.account.sign_in_form.errors.user_is_temporary_locked_out",
+          "user_is_locked_out": "@:shared.account.sign_in_form.errors.user_is_locked_out",
+          "email_verification_is_required": "@:shared.account.sign_in_form.errors.email_verification_is_required",
+          "user_cannot_login_in_store": "@:shared.account.sign_in_form.errors.user_cannot_login_in_store",
+          "password_expired": "@:shared.account.sign_in_form.errors.password_expired",
+          "user_not_found": "@:shared.account.sign_in_form.errors.user_not_found",
+          "impersonate_failed": "Überprüfung erfolgreich, aber der Wechsel zum Kundenkonto ist fehlgeschlagen. Bitte versuchen Sie es erneut.",
+          "generic": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
+        }
+      },
       "forgot_password_form": {
         "error_alert": "Ungültiges Ergebnis der Anfrage zum Zurücksetzen des Passworts. Bitte "
       },
@@ -566,6 +590,10 @@
       "block_member_modal": {
         "title": "Benutzer blockieren",
         "text": "Sind Sie sicher, dass Sie den Zugriff des Benutzers blockieren möchten?"
+      },
+      "login_on_behalf_modal": {
+        "title": "Im Namen anmelden",
+        "text": "Sie melden sich im Namen von {email} an. Die Sitzung wird protokolliert."
       },
       "unblock_member_modal": {
         "title": "Benutzer entsperren",
@@ -805,6 +833,7 @@
         "phone_label": "@:common.labels.phone{':' }",
         "email_label": "@:common.labels.email{':' }",
         "no_addresses_message": "Sie haben noch keine Adressen",
+        "search_addresses_aria_label": "Adressen suchen",
         "title": "Adresse auswählen"
       },
       "shipping_method_modal": {
@@ -1288,8 +1317,9 @@
         "update_error_alert": "Es gab einen Fehler beim Aktualisieren des Profils"
       },
       "impersonate": {
-        "title": "Nachahmung",
-        "success": "Impersonation erfolgreich",
+        "title": "Sicherheitsüberprüfung",
+        "back_to_home": "Zurück zur Startseite",
+        "switching_in_progress": "Wechsel zur Kundenansicht…",
         "error": "Einige Probleme während der Nachahmung. Überprüfen Sie Ihre Berechtigungen"
       },
       "promotion_coupons": {
@@ -1347,6 +1377,7 @@
           "invite": "Einladen",
           "reset_search": "Suche zurücksetzen",
           "edit_role": "Rolle bearbeiten",
+          "login_on_behalf": "Im Namen anmelden",
           "block_user": "Benutzer blockieren",
           "unblock_user": "Benutzer entsperren",
           "delete": "Löschen",

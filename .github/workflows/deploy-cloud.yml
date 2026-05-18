@@ -88,13 +88,13 @@ jobs:
         deployConfigPath: .deployment/theme/cloudDeploy.json
 
     - name: Start deployment
-      uses: bobheadxi/deployments@main
+      uses: VirtoCommerce/vc-github-actions/gh-deployments@master
       id: deployment
       with:
         step: start
         token: ${{ env.GITHUB_TOKEN }}
         env: ${{ steps.deployConfig.outputs.environmentName }}
-        override: true
+        no_override: false
 
     - name: Deploy to ${{ steps.deployConfig.outputs.environmentName }}
       uses: VirtoCommerce/vc-github-actions/create-deploy-pr@master
@@ -130,7 +130,7 @@ jobs:
       run: echo "DEPLOY_STATE=failed"  >> $GITHUB_ENV
 
     - name: Update GitHub deployment status
-      uses: bobheadxi/deployments@main
+      uses: VirtoCommerce/vc-github-actions/gh-deployments@master
       if: always()
       with:
         step: finish

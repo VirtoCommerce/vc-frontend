@@ -316,6 +316,8 @@
           "call_us_label": "Ring oss: ",
           "logged_in_as": "inloggad som",
           "account_menu_label": "Kontomeny",
+          "back_to_operator": "Tillbaka till {name}",
+          "switching_back": "Byter tillbaka…",
           "no_results": "Inga resultat hittades",
           "dark_mode": {
             "system": "Tema: automatiskt",
@@ -494,6 +496,28 @@
           "user_not_found": "Användaren hittades inte. Kontrollera att du har angett korrekt information"
         }
       },
+      "impersonate_form": {
+        "subtitle": "Bekräfta din identitet för att fortsätta",
+        "description": "Du loggar in å en kunds vägnar. Sessionen kommer att granskas.",
+        "email_label": "E-post",
+        "email_placeholder": "Ange din e-post",
+        "password_label": "Lösenord",
+        "password_placeholder": "Ange ditt lösenord",
+        "submit_button": "Verifiera och fortsätt",
+        "cancel_button": "Avbryt",
+        "success": "Verifiering lyckades. Växlar till kundvyn…",
+        "errors": {
+          "login_failed": "@:shared.account.sign_in_form.errors.login_failed",
+          "user_is_temporary_locked_out": "@:shared.account.sign_in_form.errors.user_is_temporary_locked_out",
+          "user_is_locked_out": "@:shared.account.sign_in_form.errors.user_is_locked_out",
+          "email_verification_is_required": "@:shared.account.sign_in_form.errors.email_verification_is_required",
+          "user_cannot_login_in_store": "@:shared.account.sign_in_form.errors.user_cannot_login_in_store",
+          "password_expired": "@:shared.account.sign_in_form.errors.password_expired",
+          "user_not_found": "@:shared.account.sign_in_form.errors.user_not_found",
+          "impersonate_failed": "Verifiering lyckades, men växling till kundkontot misslyckades. Försök igen.",
+          "generic": "Något gick fel. Försök igen."
+        }
+      },
       "forgot_password_form": {
         "error_alert": "Ogiltigt resultat av begäran om lösenordsåterställning. Vänligen "
       },
@@ -566,6 +590,10 @@
       "block_member_modal": {
         "title": "Blockera användare",
         "text": "Är du säker på att du vill blockera användarens åtkomst?"
+      },
+      "login_on_behalf_modal": {
+        "title": "Logga in å andras vägnar",
+        "text": "Du loggar in å {email}s vägnar. Sessionen kommer att loggas."
       },
       "unblock_member_modal": {
         "title": "Avblockera användare",
@@ -805,6 +833,7 @@
         "phone_label": "@:common.labels.phone{':'}",
         "email_label": "@:common.labels.email{':'}",
         "no_addresses_message": "Du har inga adresser ännu",
+        "search_addresses_aria_label": "Sök adresser",
         "title": "Välj adress"
       },
       "shipping_method_modal": {
@@ -1288,8 +1317,9 @@
         "update_error_alert": "Det uppstod ett fel vid profiluppdatering"
       },
       "impersonate": {
-        "title": "Impersonation",
-        "success": "Impersonation lyckades",
+        "title": "Säkerhetsverifiering",
+        "back_to_home": "Tillbaka till start",
+        "switching_in_progress": "Växlar till kundvyn…",
         "error": "Några problem uppstod under impersonation. Kontrollera dina behörigheter"
       },
       "promotion_coupons": {
@@ -1347,6 +1377,7 @@
           "invite": "Bjud in",
           "reset_search": "Återställ sökning",
           "edit_role": "Redigera roll",
+          "login_on_behalf": "Logga in å andras vägnar",
           "block_user": "Blockera användare",
           "unblock_user": "Avblockera användare",
           "delete": "Radera",

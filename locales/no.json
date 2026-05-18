@@ -316,6 +316,8 @@
           "call_us_label": "Ring oss: ",
           "logged_in_as": "logget inn som",
           "account_menu_label": "Kontomeny",
+          "back_to_operator": "Tilbake til {name}",
+          "switching_back": "Bytter tilbake…",
           "no_results": "Ingen resultater funnet",
           "dark_mode": {
             "system": "Tema: automatisk",
@@ -494,6 +496,28 @@
           "user_not_found": "Brukeren ble ikke funnet. Kontroller at du har skrevet inn korrekt informasjon"
         }
       },
+      "impersonate_form": {
+        "subtitle": "Bekreft identiteten din for å fortsette",
+        "description": "Du logger inn på vegne av en kunde. Økten vil bli loggført for revisjon.",
+        "email_label": "E-post",
+        "email_placeholder": "Skriv inn e-posten din",
+        "password_label": "Passord",
+        "password_placeholder": "Skriv inn passordet ditt",
+        "submit_button": "Bekreft og fortsett",
+        "cancel_button": "Avbryt",
+        "success": "Verifisering vellykket. Bytter til kundevisning…",
+        "errors": {
+          "login_failed": "@:shared.account.sign_in_form.errors.login_failed",
+          "user_is_temporary_locked_out": "@:shared.account.sign_in_form.errors.user_is_temporary_locked_out",
+          "user_is_locked_out": "@:shared.account.sign_in_form.errors.user_is_locked_out",
+          "email_verification_is_required": "@:shared.account.sign_in_form.errors.email_verification_is_required",
+          "user_cannot_login_in_store": "@:shared.account.sign_in_form.errors.user_cannot_login_in_store",
+          "password_expired": "@:shared.account.sign_in_form.errors.password_expired",
+          "user_not_found": "@:shared.account.sign_in_form.errors.user_not_found",
+          "impersonate_failed": "Verifiseringen lyktes, men byttet til kundekontoen mislyktes. Prøv igjen.",
+          "generic": "Noe gikk galt. Prøv igjen."
+        }
+      },
       "forgot_password_form": {
         "error_alert": "Ugyldig resultat fra forespørsel om tilbakestilling av passord. Vennligst "
       },
@@ -566,6 +590,10 @@
       "block_member_modal": {
         "title": "Blokker bruker",
         "text": "Er du sikker på at du vil blokkere brukerens tilgang?"
+      },
+      "login_on_behalf_modal": {
+        "title": "Logg inn på vegne av",
+        "text": "Du logger inn på vegne av {email}. Økten vil bli loggført."
       },
       "unblock_member_modal": {
         "title": "Opphev blokkering av bruker",
@@ -805,6 +833,7 @@
         "phone_label": "@:common.labels.phone{':'}",
         "email_label": "@:common.labels.email{':'}",
         "no_addresses_message": "Du har ingen adresser ennå",
+        "search_addresses_aria_label": "Søk etter adresser",
         "title": "Velg adresse"
       },
       "shipping_method_modal": {
@@ -1288,8 +1317,9 @@
         "update_error_alert": "Feil ved oppdatering av profil"
       },
       "impersonate": {
-        "title": "Identitetsetterligning",
-        "success": "Identitetsetterligning vellykket",
+        "title": "Sikkerhetsverifisering",
+        "back_to_home": "Tilbake til hjem",
+        "switching_in_progress": "Bytter til kundevisning…",
         "error": "Problemer med identitetsetterligning. Kontroller tilgangsrettighetene dine"
       },
       "promotion_coupons": {
@@ -1347,6 +1377,7 @@
           "invite": "Inviter",
           "reset_search": "Tilbakestill søk",
           "edit_role": "Rediger rolle",
+          "login_on_behalf": "Logg inn på vegne av",
           "block_user": "Blokker bruker",
           "unblock_user": "Opphev blokkering av bruker",
           "delete": "Slett",
