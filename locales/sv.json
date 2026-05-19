@@ -1584,6 +1584,9 @@
         "submit_button": "@:common.buttons.submit"
       }
     },
+    "loyalty-catalog": {
+      "title": "Lojalitetskatalog"
+    },
     "compare": {
       "meta": {
         "title": "Jämför produkter",

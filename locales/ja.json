@@ -1584,6 +1584,9 @@
         "submit_button": "@:common.buttons.submit"
       }
     },
+    "loyalty-catalog": {
+      "title": "ロイヤルティカタログ"
+    },
     "compare": {
       "meta": {
         "title": "商品比較",

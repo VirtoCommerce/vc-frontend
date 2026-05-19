@@ -3,6 +3,10 @@ export const ROUTES = {
     NAME: "Catalog",
     PATH: "/catalog",
   },
+  LOYALTY_CATALOG: {
+    NAME: "LoyaltyCatalog",
+    PATH: "/loyalty-catalog",
+  },
   SEARCH: {
     NAME: "Search",
     PATH: "/search",

@@ -1,3 +1,5 @@
+import { useThemeContext } from "@/core/composables";
+import { LOYALTY_CURRENCY_KEY, LOYALTY_ENABLED_KEY, LOYALTY_MODULE_ID } from "@/core/constants/modules";
 import { ROUTES } from "@/router/routes/constants";
 import { accountRoutes } from "./account";
 import { cartRoutes } from "./cart";
@@ -25,6 +27,7 @@ const BulkOrder = () => import("@/pages/bulk-order.vue");
 const CompareProducts = () => import("@/pages/compare-products.vue");
 const Search = () => import("@/pages/search.vue");
 const Catalog = () => import("@/pages/catalog.vue");
+const LoyaltyCatalog = () => import("@/pages/loyalty-catalog.vue");
 const Category = () => import("@/pages/category.vue");
 const ProductRoute = () => import("@/pages/product-route.vue");
 const SharedList = () => import("@/pages/shared-list.vue");
@@ -86,6 +89,25 @@ export const mainRoutes: RouteRecordRaw[] = [
   ...cartRoutes,
   ...checkoutRoutes,
   { path: ROUTES.CATALOG.PATH, name: ROUTES.CATALOG.NAME, component: Catalog, props: true },
+  {
+    path: ROUTES.LOYALTY_CATALOG.PATH,
+    name: ROUTES.LOYALTY_CATALOG.NAME,
+    component: LoyaltyCatalog,
+    beforeEnter: (_to, _from, next) => {
+      const { themeContext } = useThemeContext();
+      const loyaltyModule = themeContext.value?.storeSettings?.modules?.find(
+        (module) => module.moduleId === LOYALTY_MODULE_ID,
+      );
+      const settings = loyaltyModule?.settings ?? [];
+      const isEnabled = settings.find((s) => s.name === LOYALTY_ENABLED_KEY)?.value === true;
+      const currency = settings.find((s) => s.name === LOYALTY_CURRENCY_KEY)?.value as string | undefined;
+
+      if (!isEnabled || !currency) {
+        return next({ name: "NotFound" });
+      }
+      return next();
+    },
+  },
   { path: "/category/:categoryId", name: "Category", component: Category, props: true },
   {
     path: "/product/:productId",

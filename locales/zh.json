@@ -1584,6 +1584,9 @@
         "submit_button": "@:common.buttons.submit"
       }
     },
+    "loyalty-catalog": {
+      "title": "忠诚度目录"
+    },
     "compare": {
       "meta": {
         "title": "比较产品",

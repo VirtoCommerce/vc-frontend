@@ -289,13 +289,16 @@ interface IProps {
   showButtonToDefaultView?: boolean;
   filtersDisplayOrder?: FiltersDisplayOrderType;
   facetsToHide?: string[];
+  /** Overrides the default store currency when fetching products (e.g. for loyalty catalog). */
+  currencyCodeOverride?: string;
 }
 
 const { allowSetMeta } = toRefs(props);
 const filtersDisplayOrder = toRef(props, "filtersDisplayOrder");
 const facetsToHide = toRef(props, "facetsToHide");
 
-const { catalogId, currencyCode } = globals;
+const { catalogId, currencyCode: defaultCurrencyCode } = globals;
+const currencyCode = computed(() => props.currencyCodeOverride || defaultCurrencyCode);
 
 const breakpoints = useBreakpoints(BREAKPOINTS);
 const isMobile = breakpoints.smaller("md");
@@ -382,6 +385,7 @@ const {
   withFacets: true,
   catalogPaginationMode: catalogPaginationMode.value,
   facetsToHide: normalizedFacetsToHide.value,
+  currencyCodeOverride: () => props.currencyCodeOverride,
 });
 const { loading: loadingCategory, category: currentCategory, fetchCategory } = useCategory();
 const { analytics } = useAnalytics();
@@ -649,7 +653,7 @@ watch(
         ? undefined
         : getFilterExpression([
             getFilterExpressionForCategorySubtree({ catalogId, categoryId }),
-            getFilterExpressionForZeroPrice(!!zero_price_product_enabled, currencyCode),
+            getFilterExpressionForZeroPrice(!!zero_price_product_enabled, currencyCode.value),
             getFilterExpressionForInStockVariations(true),
           ]);
       const data = await fetchCategory({
