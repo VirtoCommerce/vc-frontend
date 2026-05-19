@@ -16,8 +16,9 @@
     :list-id="savedForLaterListId"
     :list-name="$t('pages.cart.saved_for_later')"
     hide-settings
-    :add-to-cart-handler="moveSingleItemToCart"
-    :add-all-to-cart-handler="moveAllItemsToCart"
+    kind="saved-for-later"
+    @add-to-cart="moveSingleItemToCart"
+    @add-all-to-cart="moveAllItemsToCart"
   />
 
   <div v-else>
