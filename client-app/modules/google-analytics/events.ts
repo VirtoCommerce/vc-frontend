@@ -1,19 +1,36 @@
 import { sumBy } from "lodash";
+import { useCurrency } from "@/core/composables/useCurrency";
 import { globals } from "@/core/globals";
 import { Logger, toCSV } from "@/core/utilities";
 import { DEBUG_PREFIX } from "./constants";
 import { lineItemToGtagItem, productToGtagItem, sendEvent } from "./utils";
 import type { ConfiguredPriceType } from "./types";
+import type { Product, VariationType } from "@/core/api/graphql/types";
 import type { TrackerEventsType } from "@/core/types/analytics";
 
 const { currencyCode } = globals;
+const { currentCurrency } = useCurrency();
 
 export const events: TrackerEventsType = {
   viewItemList(items, params) {
+    const itemList = (items ?? []) as (Product | VariationType)[];
+    const itemListId = params?.item_list_id;
+    const itemListName = params?.item_list_name;
+    const paramsCurrency = typeof params?.currency === "string" ? params.currency : undefined;
+    const currency = paramsCurrency ?? currentCurrency.value?.code;
+
+    const gtagItems = itemList.map((product, index) =>
+      productToGtagItem(product, index, { itemListId, itemListName, currency }),
+    );
+
+    // GA4: event-level currency only when value is set; view_item_list has no value.
+    const restParams: Record<string, unknown> = { ...(params ?? {}) };
+    delete restParams.currency;
+
     sendEvent("view_item_list", {
-      ...params,
-      items_skus: toCSV((items ?? []).map((el) => el.code)),
-      items_count: items?.length ?? 0,
+      ...restParams,
+      items: gtagItems,
+      items_count: gtagItems.length,
     });
   },
 
@@ -49,9 +66,12 @@ export const events: TrackerEventsType = {
       string,
       unknown
     >;
+
     const inputItem = productToGtagItem(item, undefined, configuredPrice);
     inputItem.quantity = quantity;
+
     const unitPrice = configuredPrice?.actual ?? item.price?.actual?.amount ?? 0;
+
     sendEvent("add_to_cart", {
       ...eventParams,
       currency: currencyCode,
@@ -63,6 +83,7 @@ export const events: TrackerEventsType = {
   addItemsToCart(items, params) {
     const subtotal: number = sumBy(items, (item) => item?.price?.actual?.amount);
     const inputItems = items.filter(Boolean).map((item) => productToGtagItem(item));
+
     sendEvent("add_to_cart", {
       ...params,
       currency: currencyCode,
@@ -78,6 +99,7 @@ export const events: TrackerEventsType = {
       0,
     );
     const subtotalRound = Math.round(subtotal * 100) / 100;
+
     const inputItems = items.map((item, index) => ({
       index,
       item_id: item.sku,
@@ -88,6 +110,7 @@ export const events: TrackerEventsType = {
       price: item.salePrice?.amount ?? item.listPrice?.amount,
       quantity: item.quantity,
     }));
+
     sendEvent("add_to_cart", {
       ...params,
       currency: currencyCode,
@@ -109,6 +132,7 @@ export const events: TrackerEventsType = {
   removeItemsFromCart(items, params) {
     const subtotal: number = sumBy(items, (item) => item.extendedPrice?.amount);
     const inputItems = items.map(lineItemToGtagItem);
+
     sendEvent("remove_from_cart", {
       ...params,
       currency: currencyCode,
