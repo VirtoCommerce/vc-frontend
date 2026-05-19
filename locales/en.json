@@ -244,6 +244,7 @@
     "links": {
       "home": "Home",
       "catalog": "Catalog",
+      "loyalty_catalog": "Loyalty catalog",
       "bulk_order": "Bulk order",
       "compare": "Compare",
       "contact_us": "Contact us",

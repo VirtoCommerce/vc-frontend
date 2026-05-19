@@ -244,6 +244,7 @@
     "links": {
       "home": "Home",
       "catalog": "Catalogo",
+      "loyalty_catalog": "Catalogo fedeltà",
       "bulk_order": "Ordine all'ingrosso",
       "compare": "Confronta",
       "contact_us": "Contattaci",

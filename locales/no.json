@@ -244,6 +244,7 @@
     "links": {
       "home": "Hjem",
       "catalog": "Katalog",
+      "loyalty_catalog": "Lojalitetskatalog",
       "bulk_order": "Massebestilling",
       "compare": "Sammenlign",
       "contact_us": "Kontakt oss",

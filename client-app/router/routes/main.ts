@@ -35,6 +35,17 @@ const Branch = () => import("@/pages/branch.vue");
 const Welcome = () => import("@/pages/welcome.vue");
 const Matcher = () => import("@/pages/matcher/matcher.vue");
 
+function isLoyaltyCatalogAvailable(): boolean {
+  const { themeContext } = useThemeContext();
+  const loyaltyModule = themeContext.value?.storeSettings?.modules?.find(
+    (module) => module.moduleId === LOYALTY_MODULE_ID,
+  );
+  const settings = loyaltyModule?.settings ?? [];
+  const isEnabled = settings.find((s) => s.name === LOYALTY_ENABLED_KEY)?.value === true;
+  const currency = settings.find((s) => s.name === LOYALTY_CURRENCY_KEY)?.value as string | undefined;
+  return isEnabled && !!currency;
+}
+
 export const mainRoutes: RouteRecordRaw[] = [
   { path: "/auth/callback", name: "AuthCallback", component: callback, meta: { public: true, redirectable: false } },
   { path: "/400", name: "BadRequest", component: Error400, meta: { public: true, redirectable: false } },
@@ -94,18 +105,16 @@ export const mainRoutes: RouteRecordRaw[] = [
     name: ROUTES.LOYALTY_CATALOG.NAME,
     component: LoyaltyCatalog,
     beforeEnter: (_to, _from, next) => {
-      const { themeContext } = useThemeContext();
-      const loyaltyModule = themeContext.value?.storeSettings?.modules?.find(
-        (module) => module.moduleId === LOYALTY_MODULE_ID,
-      );
-      const settings = loyaltyModule?.settings ?? [];
-      const isEnabled = settings.find((s) => s.name === LOYALTY_ENABLED_KEY)?.value === true;
-      const currency = settings.find((s) => s.name === LOYALTY_CURRENCY_KEY)?.value as string | undefined;
-
-      if (!isEnabled || !currency) {
-        return next({ name: "NotFound" });
-      }
-      return next();
+      return isLoyaltyCatalogAvailable() ? next() : next({ name: "NotFound" });
+    },
+  },
+  {
+    path: `${ROUTES.LOYALTY_CATALOG.PATH}/:pathMatch(.*)*`,
+    name: "LoyaltyCatalogMatcher",
+    component: Matcher,
+    props: true,
+    beforeEnter: (_to, _from, next) => {
+      return isLoyaltyCatalogAvailable() ? next() : next({ name: "NotFound" });
     },
   },
   { path: "/category/:categoryId", name: "Category", component: Category, props: true },

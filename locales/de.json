@@ -244,6 +244,7 @@
     "links": {
       "home": "Startseite",
       "catalog": "Katalog",
+      "loyalty_catalog": "Treueprogramm-Katalog",
       "bulk_order": "Mengenbestellung",
       "compare": "Vergleichen",
       "contact_us": "Kontaktieren Sie uns",

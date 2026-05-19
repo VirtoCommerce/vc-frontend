@@ -262,6 +262,26 @@ describe("useLanguages", () => {
       expect(location.search).toBe("?x=1");
       expect(location.hash).toBe("#sec");
     });
+
+    it("updateLocalizedUrl preserves /loyalty-catalog prefix on slug replace", async () => {
+      navigateTo("/loyalty-catalog/old-slug?x=1#sec");
+      const { useLanguages } = await importComposable();
+      const languages = useLanguages();
+      languages.updateLocalizedUrl("/new-slug");
+      expect(location.pathname).toBe("/loyalty-catalog/new-slug");
+      expect(location.search).toBe("?x=1");
+      expect(location.hash).toBe("#sec");
+    });
+
+    it("updateLocalizedUrl preserves /loyalty-catalog prefix together with locale", async () => {
+      navigateTo("/fr/loyalty-catalog/old-slug?x=1#sec");
+      const { useLanguages } = await importComposable();
+      const languages = useLanguages();
+      languages.updateLocalizedUrl("/new-slug");
+      expect(location.pathname).toBe("/fr/loyalty-catalog/new-slug");
+      expect(location.search).toBe("?x=1");
+      expect(location.hash).toBe("#sec");
+    });
   });
 
   describe("URL short alias disambiguation", () => {
