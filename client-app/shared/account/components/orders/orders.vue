@@ -361,7 +361,7 @@ watch(
 <style lang="scss">
 .orders {
   &__toolbar {
-    @apply flex flex-col items-center gap-3;
+    @apply mb-4 flex flex-col items-center gap-3;
 
     @media (width >= theme("screens.lg")) {
       @apply flex-row;
