@@ -1,10 +1,10 @@
 import { InitializeApplicationDocument } from "@/core/api/graphql/types";
+import { INITIALIZE_APP_CACHE_KEY_PREFIX } from "@/core/constants";
 import { graphqlClient } from "../../../client";
 import type { InitializeApplicationQuery } from "@/core/api/graphql/types";
 
 type InitialStoreType = InitializeApplicationQuery["store"];
 
-const CACHE_KEY_PREFIX = "vc:initialStore:v1:";
 const CACHE_TTL_MS = 60 * 60 * 1000;
 
 type CachedEntryType = {
@@ -14,7 +14,7 @@ type CachedEntryType = {
 
 function readCache(domain: string): InitialStoreType | undefined {
   try {
-    const raw = localStorage.getItem(CACHE_KEY_PREFIX + domain);
+    const raw = localStorage.getItem(INITIALIZE_APP_CACHE_KEY_PREFIX + domain);
     if (!raw) {
       return undefined;
     }
@@ -33,7 +33,7 @@ function readCache(domain: string): InitialStoreType | undefined {
 function writeCache(domain: string, data: InitialStoreType): void {
   try {
     const entry: CachedEntryType = { timestamp: Date.now(), data };
-    localStorage.setItem(CACHE_KEY_PREFIX + domain, JSON.stringify(entry));
+    localStorage.setItem(INITIALIZE_APP_CACHE_KEY_PREFIX + domain, JSON.stringify(entry));
   } catch {
     // ignore quota / serialization errors
   }
