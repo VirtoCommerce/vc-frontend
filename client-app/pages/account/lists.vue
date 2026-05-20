@@ -28,7 +28,7 @@
     <div v-if="loading || lists.length" class="lists__container">
       <div class="lists__items">
         <template v-if="loading">
-          <WishlistCardSkeleton v-for="item in 5" :key="item" />
+          <WishlistCardSkeleton v-for="item in 10" :key="item" />
         </template>
 
         <template v-else>
