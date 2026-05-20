@@ -941,7 +941,8 @@
         "list_edit_button": "Rediger",
         "remove_list_button": "Fjern",
         "make_private_button": "Gjør privat",
-        "share_button": "Del"
+        "share_button": "Del",
+        "last_modified_label": "Sist endret: {date}"
       },
       "list_details": {
         "add_all_to_cart_button": "Legg alle i handlekurven",
