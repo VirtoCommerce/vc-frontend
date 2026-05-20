@@ -135,10 +135,10 @@ export function lineItemToGtagItem(
   };
 }
 
-function getCategories(breadcrumbs: Breadcrumb[] = []): Record<string, string> {
+function getCategories(breadcrumbs: Breadcrumb[] | null | undefined): Record<string, string> {
   const categories: Record<string, string> = {};
 
-  breadcrumbs
+  (breadcrumbs ?? [])
     .filter((breadcrumb) => breadcrumb.typeName !== "CatalogProduct")
     .slice(0, 5) // first five, according to the documentation
     .forEach((breadcrumb, i) => {
