@@ -1103,7 +1103,7 @@
         "title": "Alterar senha"
       },
       "header": "Altere sua senha",
-      "success_message": "Sua senha foi alterada com sucesso"
+      "success_message": "Sua senha foi alterada com sucesso. Alterar sua senha encerrará sua sessão em todos os outros dispositivos e navegadores."
     },
     "sign_in": {
       "meta": {

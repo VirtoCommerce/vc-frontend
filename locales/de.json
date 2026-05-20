@@ -1103,7 +1103,7 @@
         "title": "Passwort ändern"
       },
       "header": "Ändern Sie Ihr Passwort",
-      "success_message": "Ihr Passwort wurde erfolgreich geändert"
+      "success_message": "Ihr Passwort wurde erfolgreich geändert. Durch das Ändern Ihres Passworts werden Sie von allen anderen Geräten und Browsern abgemeldet."
     },
     "sign_in": {
       "meta": {
