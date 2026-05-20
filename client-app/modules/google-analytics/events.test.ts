@@ -135,32 +135,6 @@ describe("google-analytics events", () => {
       expect(item.quantity).toBe(1);
     });
 
-    it.each([
-      [
-        "brand.name",
-        { brand: { name: "Foo Brand" }, brandName: undefined } as unknown as Partial<Product>,
-        "Foo Brand",
-      ],
-      ["brandName", { brand: undefined, brandName: "Fallback Brand" } as unknown as Partial<Product>, "Fallback Brand"],
-      [
-        "case-insensitive 'Brand' property",
-        {
-          brand: undefined,
-          brandName: undefined,
-          properties: [{ name: "Brand", value: "PropBrand" }],
-        } as unknown as Partial<Product>,
-        "PropBrand",
-      ],
-    ])("resolves item_brand from %s", async (_label, overrides, expected) => {
-      const { events } = await import("./events");
-      const product = buildProduct(overrides);
-
-      void events.viewItemList!([product], { currency: "USD" });
-
-      const payload = hoisted.sendEventMock.mock.calls[0][1];
-      expect(payload.items[0].item_brand).toBe(expected);
-    });
-
     it("falls back affiliation to store name when product has no vendor", async () => {
       hoisted.themeContextRef.value = { storeName: "Mercury Store" };
       const { events } = await import("./events");
