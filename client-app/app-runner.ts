@@ -119,7 +119,7 @@ export default async () => {
     const initialStore = await initializeApplication(domain);
     setModules(initialStore?.settings?.modules);
   } catch (e) {
-    Logger.warn("Failed to verify backend module versions", e as Error);
+    Logger.warn("Failed to verify backend module versions", e);
   }
 
   const getPageContextPromise = getPageContext({
