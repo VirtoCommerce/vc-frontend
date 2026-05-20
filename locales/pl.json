@@ -942,7 +942,7 @@
         "remove_list_button": "Usuń",
         "make_private_button": "Uczyń prywatną",
         "share_button": "Udostępnij",
-        "last_modified_label": "Ostatnia modyfikacja"
+        "last_modified_label": "Ostatnia modyfikacja: {date}"
       },
       "list_details": {
         "add_all_to_cart_button": "Dodaj wszystko do koszyka",

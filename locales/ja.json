@@ -942,7 +942,7 @@
         "remove_list_button": "Delete",
         "make_private_button": "Make private",
         "share_button": "Share",
-        "last_modified_label": "Last modified"
+        "last_modified_label": "Last modified: {date}"
       },
       "list_details": {
         "add_all_to_cart_button": "Add all to cart",

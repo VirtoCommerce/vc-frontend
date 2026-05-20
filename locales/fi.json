@@ -942,7 +942,7 @@
         "remove_list_button": "Poista",
         "make_private_button": "Tee yksityiseksi",
         "share_button": "Jaa",
-        "last_modified_label": "Viimeksi muokattu"
+        "last_modified_label": "Viimeksi muokattu: {date}"
       },
       "list_details": {
         "add_all_to_cart_button": "Lisää kaikki ostoskoriin",
