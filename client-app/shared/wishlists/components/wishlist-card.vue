@@ -16,7 +16,7 @@
 
     <div class="wishlist-card__meta-row">
       <div class="wishlist-card__date" :aria-label="$t('shared.wishlists.list_card.last_modified_label')">
-        <VcIcon :size="16" name="save-v2" class="text-info-400" />
+        <VcIcon :size="16" name="save-v2" class="text-info-500" />
 
         <b>{{ $d(list.modifiedDate, "short") }}</b>
       </div>
