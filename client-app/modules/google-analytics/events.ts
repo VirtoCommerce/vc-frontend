@@ -24,7 +24,7 @@ export const events: TrackerEventsType = {
     );
 
     // GA4: event-level currency only when value is set; view_item_list has no value.
-    const restParams: Record<string, unknown> = { ...(params ?? {}) };
+    const restParams: Record<string, unknown> = { ...params };
     delete restParams.currency;
 
     sendEvent("view_item_list", {
@@ -237,7 +237,7 @@ export const events: TrackerEventsType = {
         coupon: order.coupons?.[0],
         shipping: order.shippingTotal?.amount,
         tax: order.taxTotal?.amount,
-        items: order.items?.map(lineItemToGtagItem),
+        items: order.items?.map((item, index) => lineItemToGtagItem(item, index)),
         items_count: order.items?.length,
       });
     } catch (e) {

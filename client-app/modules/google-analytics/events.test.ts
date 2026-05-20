@@ -2,8 +2,8 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 import type { CustomerOrderType, OrderLineItemType, Product } from "@/core/api/graphql/types";
 
 const hoisted = vi.hoisted(() => ({
-  currentCurrencyRef: { value: { code: "USD" } as { code: string } },
-  themeContextRef: { value: { storeName: "Test Store" } as { storeName: string } },
+  currentCurrencyRef: { value: { code: "USD" } },
+  themeContextRef: { value: { storeName: "Test Store" } },
   sendEventMock: vi.fn(),
 }));
 
@@ -164,7 +164,7 @@ describe("google-analytics events", () => {
     it("falls back affiliation to store name when product has no vendor", async () => {
       hoisted.themeContextRef.value = { storeName: "Mercury Store" };
       const { events } = await import("./events");
-      const product = buildProduct({ vendor: undefined } as unknown as Partial<Product>);
+      const product = buildProduct({ vendor: undefined });
 
       void events.viewItemList!([product], { currency: "USD" });
 
