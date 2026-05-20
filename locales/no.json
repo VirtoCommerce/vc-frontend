@@ -1103,7 +1103,7 @@
         "title": "Endre passord"
       },
       "header": "Endre passordet ditt",
-      "success_message": "Passordet ditt er endret"
+      "success_message": "Passordet ditt er endret. Når du endrer passordet ditt, blir du logget ut av alle andre enheter og nettlesere."
     },
     "sign_in": {
       "meta": {
