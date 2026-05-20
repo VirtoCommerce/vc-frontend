@@ -209,13 +209,13 @@ export const events: TrackerEventsType = {
     }
   },
 
-  purchase(order, transactionId, params) {
+  purchase(order, params) {
     try {
       sendEvent("purchase", {
         ...params,
         currency: order.currency?.code,
-        transaction_id: transactionId,
-        value: order.total.amount,
+        transaction_id: order.number,
+        value: order.subTotal?.amount,
         coupon: order.coupons?.[0],
         shipping: order.shippingTotal?.amount,
         tax: order.taxTotal?.amount,
@@ -232,10 +232,12 @@ export const events: TrackerEventsType = {
       sendEvent("place_order", {
         ...params,
         currency: order.currency?.code,
-        value: order.total?.amount,
+        transaction_id: order.number,
+        value: order.subTotal?.amount,
         coupon: order.coupons?.[0],
-        shipping: order.shippingTotal.amount,
-        tax: order.taxTotal.amount,
+        shipping: order.shippingTotal?.amount,
+        tax: order.taxTotal?.amount,
+        items: order.items?.map(lineItemToGtagItem),
         items_count: order.items?.length,
       });
     } catch (e) {

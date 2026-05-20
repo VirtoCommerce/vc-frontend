@@ -27,7 +27,7 @@ export interface IBasicAnalyticsEventMap {
   beginCheckout: [cart: CartType, params?: EventParamsType];
   addShippingInfo: [cart?: CartType, params?: EventParamsType, shipmentMethodOption?: string];
   addPaymentInfo: [cart?: CartType, params?: EventParamsType, paymentGatewayCode?: string];
-  purchase: [order: CustomerOrderType, transactionId?: string, params?: EventParamsType];
+  purchase: [order: CustomerOrderType, params?: EventParamsType];
   placeOrder: [order: CustomerOrderType, params?: EventParamsType];
   search: [searchTerm: string, visibleItems?: { code: string }[], itemsCount?: number];
   viewSearchResults: [searchTerm: string, params?: ViewSearchResultsParamsAdditionalType];
