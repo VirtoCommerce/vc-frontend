@@ -1104,7 +1104,7 @@
         "title": "更改密码"
       },
       "header": "更改您的密码",
-      "success_message": "您的密码已成功更改"
+      "success_message": "您的密码已成功更改。更改密码将使您从所有其他设备和浏览器上注销。"
     },
     "sign_in": {
       "meta": {

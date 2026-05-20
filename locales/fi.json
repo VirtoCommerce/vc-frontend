@@ -1104,7 +1104,7 @@
         "title": "Vaihda salasana"
       },
       "header": "Vaihda salasanasi",
-      "success_message": "Salasanasi on vaihdettu onnistuneesti"
+      "success_message": "Salasanasi on vaihdettu onnistuneesti. Salasanan vaihtaminen kirjaa sinut ulos kaikilta muilta laitteilta ja selaimilta."
     },
     "sign_in": {
       "meta": {

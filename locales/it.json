@@ -1104,7 +1104,7 @@
         "title": "Cambia password"
       },
       "header": "Cambia la tua password",
-      "success_message": "La tua password è stata cambiata con successo"
+      "success_message": "La tua password è stata cambiata con successo. La modifica della password ti disconnetterà da tutti gli altri dispositivi e browser."
     },
     "sign_in": {
       "meta": {
