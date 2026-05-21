@@ -54,24 +54,6 @@
     </VcPopupSidebar>
 
     <div class="orders__toolbar">
-      <div v-if="isOrganizationMaintainer" class="orders__scope-tabs">
-        <VcTabSwitch
-          v-model="orderScope"
-          value="organization"
-          icon="case"
-          :label="$t('common.buttons.all_orders')"
-          @change="toggleOrdersScope('organization')"
-        />
-
-        <VcTabSwitch
-          v-model="orderScope"
-          value="private"
-          icon="user"
-          :label="$t('common.buttons.my_orders')"
-          @change="toggleOrdersScope('private')"
-        />
-      </div>
-
       <div class="orders__search-bar">
         <!-- Desktop filters popover -->
         <VcPopover v-if="!isMobile" placement="bottom-end" :offset-options="8" :disabled="ordersLoading" lazy>
@@ -142,6 +124,24 @@
             </template>
           </VcInput>
         </div>
+      </div>
+
+      <div v-if="isOrganizationMaintainer" class="orders__scope-tabs">
+        <VcTabSwitch
+          v-model="orderScope"
+          value="organization"
+          icon="case"
+          :label="$t('common.buttons.all_orders')"
+          @change="toggleOrdersScope('organization')"
+        />
+
+        <VcTabSwitch
+          v-model="orderScope"
+          value="private"
+          icon="user"
+          :label="$t('common.buttons.my_orders')"
+          @change="toggleOrdersScope('private')"
+        />
       </div>
     </div>
 
@@ -254,7 +254,7 @@ const { continue_shopping_link } = getModuleSettings({
   [MODULE_XAPI_KEYS.CONTINUE_SHOPPING_LINK]: "continue_shopping_link",
 });
 
-const isMobile = breakpoints.smaller("lg");
+const isMobile = breakpoints.smaller("sm");
 
 const localKeyword = ref("");
 const filtersVisible = ref(false);
@@ -362,21 +362,17 @@ watch(
 <style lang="scss">
 .orders {
   &__toolbar {
-    @apply mb-4 flex flex-col items-center gap-3;
+    @apply mb-4 flex flex-col gap-3;
 
     @media (width >= theme("screens.lg")) {
-      @apply flex-row;
+      @apply flex-row items-center;
     }
-  }
-
-  &__scope-tabs {
-    @apply flex gap-2;
   }
 
   &__search-bar {
     @apply flex grow flex-row items-center gap-x-2;
 
-    @media (width >= theme("screens.lg")) {
+    @media (width >= theme("screens.sm")) {
       @apply flex-row-reverse gap-x-5;
     }
   }
@@ -387,6 +383,26 @@ watch(
 
   &__search-input {
     @apply w-full;
+  }
+
+  &__scope-tabs {
+    @apply flex w-full gap-2;
+
+    > * {
+      @apply flex-1;
+    }
+
+    @media (width >= theme("screens.sm")) {
+      @apply w-auto;
+
+      > * {
+        @apply flex-none;
+      }
+    }
+
+    @media (width >= theme("screens.lg")) {
+      @apply order-first;
+    }
   }
 
   &__chips {
