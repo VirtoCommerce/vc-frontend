@@ -22,21 +22,21 @@
         @click="emit('rowClick', item)"
         @keyup.enter="emit('rowClick', item)"
       >
-        <div class="orders-table__mobile-cell">
+        <div class="orders-table__mobile-field">
           <span class="orders-table__mobile-label">
             {{ $t("pages.account.orders.order_number_label") }}
           </span>
 
-          <span class="orders-table__mobile-value orders-table__mobile-value--bold orders-table__mobile-value--pr">
+          <span class="orders-table__mobile-value orders-table__mobile-value--emphasis">
             {{ item.number }}
           </span>
         </div>
 
-        <div class="orders-table__mobile-cell orders-table__mobile-cell--end">
+        <div class="orders-table__mobile-status">
           <OrderStatus :status="item.status" :display-value="item.statusDisplayValue" />
         </div>
 
-        <div v-if="orderScope === 'organization' && item?.customerName" class="orders-table__mobile-cell">
+        <div v-if="orderScope === 'organization' && item?.customerName" class="orders-table__mobile-field">
           <span class="orders-table__mobile-label">
             {{ $t("pages.account.orders.buyer_name_label") }}
           </span>
@@ -46,7 +46,7 @@
           </span>
         </div>
 
-        <div class="orders-table__mobile-cell">
+        <div class="orders-table__mobile-field">
           <span class="orders-table__mobile-label">
             {{ $t("pages.account.orders.date_label") }}
           </span>
@@ -56,12 +56,12 @@
           </span>
         </div>
 
-        <div class="orders-table__mobile-cell">
+        <div class="orders-table__mobile-field">
           <span class="orders-table__mobile-label">
             {{ $t("pages.account.orders.total_label") }}
           </span>
 
-          <span class="orders-table__mobile-value orders-table__mobile-value--bold">
+          <span class="orders-table__mobile-value orders-table__mobile-value--emphasis">
             {{ item.total?.formattedAmount }}
           </span>
         </div>
@@ -173,15 +173,15 @@ defineProps<IProps>();
   @apply bg-additional-50;
 
   &__mobile-row {
-    @apply grid w-full cursor-pointer grid-cols-2 items-center gap-y-4 border-b border-neutral-200 p-6 text-left;
+    @apply grid w-full cursor-pointer grid-cols-2 items-center gap-x-4 gap-y-4 border-b border-neutral-200 p-6 text-left;
   }
 
-  &__mobile-cell {
+  &__mobile-field {
     @apply flex flex-col;
+  }
 
-    &--end {
-      @apply items-end justify-center;
-    }
+  &__mobile-status {
+    @apply flex flex-col items-end justify-center;
   }
 
   &__mobile-label {
@@ -191,12 +191,8 @@ defineProps<IProps>();
   &__mobile-value {
     @apply overflow-hidden text-ellipsis;
 
-    &--bold {
+    &--emphasis {
       @apply font-black;
-    }
-
-    &--pr {
-      @apply pr-4;
     }
   }
 }
