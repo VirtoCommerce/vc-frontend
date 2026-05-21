@@ -123,11 +123,7 @@
 
         <!-- Desktop empty view -->
         <tbody v-else-if="!items.length" class="vc-table__body">
-          <tr>
-            <td :colspan="orderedColumns.length">
-              <slot name="desktop-empty" />
-            </td>
-          </tr>
+          <slot name="desktop-empty" />
         </tbody>
 
         <!-- Desktop table view (custom body) -->
