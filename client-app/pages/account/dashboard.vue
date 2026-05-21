@@ -25,7 +25,6 @@
           <OrdersTable
             :loading="loading"
             :orders="orders"
-            :sort="sort"
             :pages="pages"
             :page="page"
             hide-default-footer
@@ -102,7 +101,7 @@ usePageHead({
   title: t("pages.account.dashboard.meta.title"),
 });
 
-const { loading, orders, fetchOrders, sort, pages, page } = useUserOrders({ itemsPerPage: 4 });
+const { loading, orders, fetchOrders, pages, page } = useUserOrders({ itemsPerPage: 4 });
 const { resetFilters } = useUserOrdersFilter();
 const { goToOrderDetails } = useOrderNavigation();
 const { getModuleSettings } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);

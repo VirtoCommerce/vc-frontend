@@ -150,7 +150,7 @@ import type { ISortInfo } from "@/core/types";
 interface IProps {
   loading: boolean;
   orders: CustomerOrderType[];
-  sort: ISortInfo;
+  sort?: ISortInfo;
   pages: number;
   page: number;
   hideDefaultFooter?: boolean;
