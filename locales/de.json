@@ -316,6 +316,8 @@
           "call_us_label": "Rufen Sie uns an: ",
           "logged_in_as": "eingeloggt als",
           "account_menu_label": "Kontomenü",
+          "back_to_operator": "Zurück zu {name}",
+          "switching_back": "Wechsle zurück…",
           "no_results": "Keine Ergebnisse gefunden",
           "dark_mode": {
             "system": "Design: automatisch",
@@ -588,6 +590,10 @@
       "block_member_modal": {
         "title": "Benutzer blockieren",
         "text": "Sind Sie sicher, dass Sie den Zugriff des Benutzers blockieren möchten?"
+      },
+      "login_on_behalf_modal": {
+        "title": "Im Namen anmelden",
+        "text": "Sie melden sich im Namen von {email} an. Die Sitzung wird protokolliert."
       },
       "unblock_member_modal": {
         "title": "Benutzer entsperren",
@@ -935,7 +941,8 @@
         "list_edit_button": "Bearbeiten",
         "remove_list_button": "Löschen",
         "make_private_button": "Privat machen",
-        "share_button": "Teilen"
+        "share_button": "Teilen",
+        "last_modified_label": "Zuletzt geändert: {date}"
       },
       "list_details": {
         "add_all_to_cart_button": "Alles in den Warenkorb",
@@ -1097,7 +1104,7 @@
         "title": "Passwort ändern"
       },
       "header": "Ändern Sie Ihr Passwort",
-      "success_message": "Ihr Passwort wurde erfolgreich geändert"
+      "success_message": "Ihr Passwort wurde erfolgreich geändert. Durch das Ändern Ihres Passworts werden Sie von allen anderen Geräten und Browsern abgemeldet."
     },
     "sign_in": {
       "meta": {
@@ -1371,6 +1378,7 @@
           "invite": "Einladen",
           "reset_search": "Suche zurücksetzen",
           "edit_role": "Rolle bearbeiten",
+          "login_on_behalf": "Im Namen anmelden",
           "block_user": "Benutzer blockieren",
           "unblock_user": "Benutzer entsperren",
           "delete": "Löschen",

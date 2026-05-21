@@ -316,6 +316,8 @@
           "call_us_label": "Appelez-nous : ",
           "logged_in_as": "connecté en tant que",
           "account_menu_label": "Menu du compte",
+          "back_to_operator": "Revenir à {name}",
+          "switching_back": "Retour en cours…",
           "no_results": "Aucun résultat trouvé",
           "dark_mode": {
             "system": "Thème : auto",
@@ -588,6 +590,10 @@
       "block_member_modal": {
         "title": "Bloquer l'utilisateur",
         "text": "Êtes-vous sûr de vouloir bloquer l'accès de l'utilisateur ?"
+      },
+      "login_on_behalf_modal": {
+        "title": "Se connecter au nom de",
+        "text": "Vous vous connectez au nom de {email}. La session sera auditée."
       },
       "unblock_member_modal": {
         "title": "Débloquer l'utilisateur",
@@ -935,7 +941,8 @@
         "list_edit_button": "Modifier",
         "remove_list_button": "Supprimer",
         "make_private_button": "Rendre privé",
-        "share_button": "Partager"
+        "share_button": "Partager",
+        "last_modified_label": "Dernière modification : {date}"
       },
       "list_details": {
         "add_all_to_cart_button": "Tout ajouter au panier",
@@ -1097,7 +1104,7 @@
         "title": "Changer le mot de passe"
       },
       "header": "Changez votre mot de passe",
-      "success_message": "Votre mot de passe a été changé avec succès"
+      "success_message": "Votre mot de passe a été modifié avec succès. La modification de votre mot de passe vous déconnectera de tous les autres appareils et navigateurs."
     },
     "sign_in": {
       "meta": {
@@ -1371,6 +1378,7 @@
           "invite": "Inviter",
           "reset_search": "Réinitialiser la recherche",
           "edit_role": "Modifier le rôle",
+          "login_on_behalf": "Se connecter au nom de",
           "block_user": "Bloquer l'utilisateur",
           "unblock_user": "Débloquer l'utilisateur",
           "delete": "Supprimer",

@@ -316,6 +316,8 @@
           "call_us_label": "Call us: ",
           "logged_in_as": "logged in as",
           "account_menu_label": "Account menu",
+          "back_to_operator": "Back to {name}",
+          "switching_back": "Switching back…",
           "no_results": "No results found",
           "dark_mode": {
             "system": "Theme: auto",
@@ -588,6 +590,10 @@
       "block_member_modal": {
         "title": "Block user",
         "text": "Are you sure you want to block access of the user?"
+      },
+      "login_on_behalf_modal": {
+        "title": "Login on behalf",
+        "text": "You are logging in on behalf of {email}. The session will be audited."
       },
       "unblock_member_modal": {
         "title": "Unblock user",
@@ -935,7 +941,8 @@
         "list_edit_button": "Edit",
         "remove_list_button": "Delete",
         "make_private_button": "Make private",
-        "share_button": "Share"
+        "share_button": "Share",
+        "last_modified_label": "Last modified: {date}"
       },
       "list_details": {
         "add_all_to_cart_button": "Add all to cart",
@@ -1097,7 +1104,7 @@
         "title": "Change password"
       },
       "header": "Change your password",
-      "success_message": "Your password has been successfully changed"
+      "success_message": "Your password has been successfully changed. Changing your password will sign you out of all other devices and browsers."
     },
     "sign_in": {
       "meta": {
@@ -1371,6 +1378,7 @@
           "invite": "Invite",
           "reset_search": "Reset search",
           "edit_role": "Edit role",
+          "login_on_behalf": "Login on behalf",
           "block_user": "Block user",
           "unblock_user": "Unblock user",
           "delete": "Delete",

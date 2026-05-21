@@ -316,6 +316,8 @@
           "call_us_label": "Soita meille: ",
           "logged_in_as": "kirjautuneena nimellä",
           "account_menu_label": "Tilivalikko",
+          "back_to_operator": "Takaisin: {name}",
+          "switching_back": "Palataan…",
           "no_results": "Ei tuloksia",
           "dark_mode": {
             "system": "Teema: automaattinen",
@@ -588,6 +590,10 @@
       "block_member_modal": {
         "title": "Estä käyttäjä",
         "text": "Haluatko varmasti estää käyttäjän pääsyn?"
+      },
+      "login_on_behalf_modal": {
+        "title": "Kirjaudu sisään käyttäjän nimissä",
+        "text": "Kirjaudut sisään käyttäjän {email} nimissä. Istunto tallennetaan."
       },
       "unblock_member_modal": {
         "title": "Poista esto käyttäjältä",
@@ -935,7 +941,8 @@
         "list_edit_button": "Muokkaa",
         "remove_list_button": "Poista",
         "make_private_button": "Tee yksityiseksi",
-        "share_button": "Jaa"
+        "share_button": "Jaa",
+        "last_modified_label": "Viimeksi muokattu: {date}"
       },
       "list_details": {
         "add_all_to_cart_button": "Lisää kaikki ostoskoriin",
@@ -1097,7 +1104,7 @@
         "title": "Vaihda salasana"
       },
       "header": "Vaihda salasanasi",
-      "success_message": "Salasanasi on vaihdettu onnistuneesti"
+      "success_message": "Salasanasi on vaihdettu onnistuneesti. Salasanan vaihtaminen kirjaa sinut ulos kaikilta muilta laitteilta ja selaimilta."
     },
     "sign_in": {
       "meta": {
@@ -1371,6 +1378,7 @@
           "invite": "Kutsu",
           "reset_search": "Nollaa haku",
           "edit_role": "Muokkaa roolia",
+          "login_on_behalf": "Kirjaudu sisään käyttäjän nimissä",
           "block_user": "Estä käyttäjä",
           "unblock_user": "Poista esto käyttäjältä",
           "delete": "Poista",

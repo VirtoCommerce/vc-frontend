@@ -316,6 +316,8 @@
           "call_us_label": "Ring oss: ",
           "logged_in_as": "inloggad som",
           "account_menu_label": "Kontomeny",
+          "back_to_operator": "Tillbaka till {name}",
+          "switching_back": "Byter tillbaka…",
           "no_results": "Inga resultat hittades",
           "dark_mode": {
             "system": "Tema: automatiskt",
@@ -588,6 +590,10 @@
       "block_member_modal": {
         "title": "Blockera användare",
         "text": "Är du säker på att du vill blockera användarens åtkomst?"
+      },
+      "login_on_behalf_modal": {
+        "title": "Logga in å andras vägnar",
+        "text": "Du loggar in å {email}s vägnar. Sessionen kommer att loggas."
       },
       "unblock_member_modal": {
         "title": "Avblockera användare",
@@ -935,7 +941,8 @@
         "list_edit_button": "Redigera",
         "remove_list_button": "Radera",
         "make_private_button": "Gör privat",
-        "share_button": "Dela"
+        "share_button": "Dela",
+        "last_modified_label": "Senast ändrad: {date}"
       },
       "list_details": {
         "add_all_to_cart_button": "Lägg till alla i kundvagn",
@@ -1097,7 +1104,7 @@
         "title": "Ändra lösenord"
       },
       "header": "Ändra ditt lösenord",
-      "success_message": "Ditt lösenord har ändrats framgångsrikt"
+      "success_message": "Ditt lösenord har ändrats framgångsrikt. Att ändra ditt lösenord loggar ut dig från alla andra enheter och webbläsare."
     },
     "sign_in": {
       "meta": {
@@ -1371,6 +1378,7 @@
           "invite": "Bjud in",
           "reset_search": "Återställ sökning",
           "edit_role": "Redigera roll",
+          "login_on_behalf": "Logga in å andras vägnar",
           "block_user": "Blockera användare",
           "unblock_user": "Avblockera användare",
           "delete": "Radera",

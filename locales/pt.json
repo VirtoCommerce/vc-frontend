@@ -316,6 +316,8 @@
           "call_us_label": "Ligue para nós: ",
           "logged_in_as": "logado como",
           "account_menu_label": "Menu da conta",
+          "back_to_operator": "Voltar para {name}",
+          "switching_back": "Voltando…",
           "no_results": "Nenhum resultado encontrado",
           "dark_mode": {
             "system": "Tema: automático",
@@ -588,6 +590,10 @@
       "block_member_modal": {
         "title": "Bloquear usuário",
         "text": "Tem certeza de que deseja bloquear o acesso do usuário?"
+      },
+      "login_on_behalf_modal": {
+        "title": "Entrar em nome de",
+        "text": "Você está entrando em nome de {email}. A sessão será auditada."
       },
       "unblock_member_modal": {
         "title": "Desbloquear usuário",
@@ -935,7 +941,8 @@
         "list_edit_button": "Editar",
         "remove_list_button": "Excluir",
         "make_private_button": "Tornar privado",
-        "share_button": "Compartilhar"
+        "share_button": "Compartilhar",
+        "last_modified_label": "Última modificação: {date}"
       },
       "list_details": {
         "add_all_to_cart_button": "Adicionar tudo ao carrinho",
@@ -1097,7 +1104,7 @@
         "title": "Alterar senha"
       },
       "header": "Altere sua senha",
-      "success_message": "Sua senha foi alterada com sucesso"
+      "success_message": "Sua senha foi alterada com sucesso. Alterar sua senha encerrará sua sessão em todos os outros dispositivos e navegadores."
     },
     "sign_in": {
       "meta": {
@@ -1371,6 +1378,7 @@
           "invite": "Convidar",
           "reset_search": "Resetar pesquisa",
           "edit_role": "Editar papel",
+          "login_on_behalf": "Entrar em nome de",
           "block_user": "Bloquear usuário",
           "unblock_user": "Desbloquear usuário",
           "delete": "Excluir",

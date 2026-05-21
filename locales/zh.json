@@ -316,6 +316,8 @@
           "call_us_label": "致电我们：",
           "logged_in_as": "已登录为",
           "account_menu_label": "帐户菜单",
+          "back_to_operator": "返回 {name}",
+          "switching_back": "正在返回…",
           "no_results": "未找到结果",
           "dark_mode": {
             "system": "主题：自动",
@@ -588,6 +590,10 @@
       "block_member_modal": {
         "title": "封锁用户",
         "text": "您确定要封锁该用户的访问权限吗？"
+      },
+      "login_on_behalf_modal": {
+        "title": "代表登录",
+        "text": "您正在代表 {email} 登录。该会话将被审计。"
       },
       "unblock_member_modal": {
         "title": "解除封锁用户",
@@ -935,7 +941,8 @@
         "list_edit_button": "编辑",
         "remove_list_button": "删除",
         "make_private_button": "设为私人",
-        "share_button": "分享"
+        "share_button": "分享",
+        "last_modified_label": "最后修改：{date}"
       },
       "list_details": {
         "add_all_to_cart_button": "全部加入购物车",
@@ -1097,7 +1104,7 @@
         "title": "更改密码"
       },
       "header": "更改您的密码",
-      "success_message": "您的密码已成功更改"
+      "success_message": "您的密码已成功更改。更改密码将使您从所有其他设备和浏览器上注销。"
     },
     "sign_in": {
       "meta": {
@@ -1371,6 +1378,7 @@
           "invite": "邀请",
           "reset_search": "重置搜索",
           "edit_role": "编辑角色",
+          "login_on_behalf": "代表登录",
           "block_user": "封锁用户",
           "unblock_user": "解除封锁用户",
           "delete": "删除",
