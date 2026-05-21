@@ -22,7 +22,25 @@
 
       <template #default-container>
         <div class="pb-1.5">
+          <VcEmptyView
+            v-if="!loading && !orders.length"
+            :text="$t('pages.account.orders.no_orders_message')"
+            icon="outline-order"
+            variant="empty"
+          >
+            <template #button>
+              <VcButton v-if="!!continue_shopping_link" :external-link="continue_shopping_link">
+                {{ $t("pages.account.orders.buttons.no_orders") }}
+              </VcButton>
+
+              <VcButton v-else to="/">
+                {{ $t("pages.account.orders.buttons.no_orders") }}
+              </VcButton>
+            </template>
+          </VcEmptyView>
+
           <OrdersTable
+            v-else
             :loading="loading"
             :orders="orders"
             :pages="pages"
@@ -31,21 +49,7 @@
             :bordered="false"
             order-scope="private"
             @row-click="goToOrderDetails"
-          >
-            <template #empty>
-              <VcEmptyView :text="$t('pages.account.orders.no_orders_message')" icon="outline-order" variant="empty">
-                <template #button>
-                  <VcButton v-if="!!continue_shopping_link" :external-link="continue_shopping_link">
-                    {{ $t("pages.account.orders.buttons.no_orders") }}
-                  </VcButton>
-
-                  <VcButton v-else to="/">
-                    {{ $t("pages.account.orders.buttons.no_orders") }}
-                  </VcButton>
-                </template>
-              </VcEmptyView>
-            </template>
-          </OrdersTable>
+          />
         </div>
       </template>
     </VcWidget>

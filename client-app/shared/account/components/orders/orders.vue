@@ -160,8 +160,35 @@
       </VcChip>
     </div>
 
+    <!-- Empty view -->
+    <VcEmptyView
+      v-if="!orders.length && !ordersLoading"
+      :text="
+        keyword || !isFilterEmpty
+          ? $t('pages.account.orders.no_results_message')
+          : $t('pages.account.orders.no_orders_message')
+      "
+      icon="outline-order"
+      :variant="!!keyword || !isFilterEmpty ? 'search' : 'empty'"
+    >
+      <template #button>
+        <VcButton v-if="keyword || !isFilterEmpty" prepend-icon="reset" @click="resetFiltersWithKeyword">
+          {{ $t("pages.account.orders.buttons.reset_search") }}
+        </VcButton>
+
+        <VcButton v-else-if="!!continue_shopping_link" :external-link="continue_shopping_link">
+          {{ $t("pages.account.orders.buttons.no_orders") }}
+        </VcButton>
+
+        <VcButton v-else to="/">
+          {{ $t("pages.account.orders.buttons.no_orders") }}
+        </VcButton>
+      </template>
+    </VcEmptyView>
+
     <!-- Content block -->
     <OrdersTable
+      v-else
       :loading="ordersLoading"
       :orders="orders"
       :sort="sort"
@@ -172,33 +199,7 @@
       @header-click="applySorting"
       @page-changed="changePage"
       @row-click="goToOrderDetails"
-    >
-      <template #empty>
-        <VcEmptyView
-          :text="
-            keyword || !isFilterEmpty
-              ? $t('pages.account.orders.no_results_message')
-              : $t('pages.account.orders.no_orders_message')
-          "
-          icon="outline-order"
-          :variant="!!keyword || !isFilterEmpty ? 'search' : 'empty'"
-        >
-          <template #button>
-            <VcButton v-if="keyword || !isFilterEmpty" prepend-icon="reset" @click="resetFiltersWithKeyword">
-              {{ $t("pages.account.orders.buttons.reset_search") }}
-            </VcButton>
-
-            <VcButton v-else-if="!!continue_shopping_link" :external-link="continue_shopping_link">
-              {{ $t("pages.account.orders.buttons.no_orders") }}
-            </VcButton>
-
-            <VcButton v-else to="/">
-              {{ $t("pages.account.orders.buttons.no_orders") }}
-            </VcButton>
-          </template>
-        </VcEmptyView>
-      </template>
-    </OrdersTable>
+    />
   </div>
 </template>
 

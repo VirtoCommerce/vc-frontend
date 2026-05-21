@@ -126,14 +126,6 @@
       {{ item.total?.formattedAmount }}
     </VcTableColumn>
 
-    <template #mobile-empty>
-      <slot name="empty" />
-    </template>
-
-    <template #desktop-empty>
-      <slot name="empty" />
-    </template>
-
     <template #page-limit-message>
       {{ $t("ui_kit.reach_limit.page_limit_filters") }}
     </template>
