@@ -941,7 +941,8 @@
         "list_edit_button": "编辑",
         "remove_list_button": "删除",
         "make_private_button": "设为私人",
-        "share_button": "分享"
+        "share_button": "分享",
+        "last_modified_label": "最后修改：{date}"
       },
       "list_details": {
         "add_all_to_cart_button": "全部加入购物车",
@@ -1103,7 +1104,7 @@
         "title": "更改密码"
       },
       "header": "更改您的密码",
-      "success_message": "您的密码已成功更改"
+      "success_message": "您的密码已成功更改。更改密码将使您从所有其他设备和浏览器上注销。"
     },
     "sign_in": {
       "meta": {

@@ -636,6 +636,11 @@ export type ConfigurableProductOptionInput = {
   selectedForCheckout?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
+export type ConfigurableProductOptionKeyInput = {
+  /** Product ID */
+  productId: Scalars['String']['input'];
+};
+
 export type ConfigurationItemsResponseType = {
   /** Configuration items for configurable product */
   configurationItems?: Maybe<Array<Maybe<CartConfigurationItemType>>>;
@@ -672,6 +677,15 @@ export type ConfigurationSectionInput = {
   fileUrls?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   /** Configuration section option/product */
   option?: InputMaybe<ConfigurableProductOptionInput>;
+  /** Configuration section ID */
+  sectionId: Scalars['String']['input'];
+  /** Configuration section type. Possible values: 'Product', 'Variation', 'Text', 'File' */
+  type: Scalars['String']['input'];
+};
+
+export type ConfigurationSectionKeyInput = {
+  /** Identifying subset of the configuration section option (Product/Variation only) */
+  option?: InputMaybe<ConfigurableProductOptionKeyInput>;
   /** Configuration section ID */
   sectionId: Scalars['String']['input'];
   /** Configuration section type. Possible values: 'Product', 'Variation', 'Text', 'File' */
@@ -1781,12 +1795,54 @@ export type InputCartItemQuantityType = {
   quantity: Scalars['Int']['input'];
 };
 
+export type InputChangeAllCartConfigurationItemsSelectedType = {
+  cartId?: InputMaybe<Scalars['String']['input']>;
+  cartName?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  /** Line item Id */
+  lineItemId: Scalars['String']['input'];
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
+};
+
 export type InputChangeAllCartItemsSelectedType = {
   cartId?: InputMaybe<Scalars['String']['input']>;
   cartName?: InputMaybe<Scalars['String']['input']>;
   cartType?: InputMaybe<Scalars['String']['input']>;
   cultureName?: InputMaybe<Scalars['String']['input']>;
   currencyCode?: InputMaybe<Scalars['String']['input']>;
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
+};
+
+export type InputChangeCartConfigurationItemSelectedType = {
+  cartId?: InputMaybe<Scalars['String']['input']>;
+  cartName?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
+  /** Configuration section that identifies the configuration item to toggle */
+  configurationSection: ConfigurationSectionKeyInput;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  /** Line item Id */
+  lineItemId: Scalars['String']['input'];
+  /** Is configuration item selected for checkout */
+  selectedForCheckout: Scalars['Boolean']['input'];
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
+};
+
+export type InputChangeCartConfigurationItemsSelectedType = {
+  cartId?: InputMaybe<Scalars['String']['input']>;
+  cartName?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
+  /** Configuration sections that identify the configuration items to toggle */
+  configurationSections: Array<ConfigurationSectionKeyInput>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  /** Line item Id */
+  lineItemId: Scalars['String']['input'];
   storeId: Scalars['String']['input'];
   userId: Scalars['String']['input'];
 };
@@ -3355,6 +3411,7 @@ export type Mutations = {
   approveQuoteRequest?: Maybe<ApproveQuoteResultType>;
   authorizePayment?: Maybe<AuthorizePaymentResultType>;
   cancelQuoteRequest?: Maybe<QuoteType>;
+  changeCartConfigurationItemSelected?: Maybe<CartType>;
   changeCartConfiguredItem?: Maybe<CartType>;
   changeCartCurrency?: Maybe<CartType>;
   changeCartItemComment?: Maybe<CartType>;
@@ -3431,12 +3488,16 @@ export type Mutations = {
   requestRegistration?: Maybe<RequestRegistrationType>;
   resetPasswordByToken?: Maybe<CustomIdentityResultType>;
   saveSearchQuery?: Maybe<Scalars['Boolean']['output']>;
+  selectAllCartConfigurationItems?: Maybe<CartType>;
   selectAllCartItems?: Maybe<CartType>;
+  selectCartConfigurationItems?: Maybe<CartType>;
   selectCartItems?: Maybe<CartType>;
   sendPasswordResetEmail?: Maybe<Scalars['Boolean']['output']>;
   sendVerifyEmail?: Maybe<Scalars['Boolean']['output']>;
   submitQuoteRequest?: Maybe<QuoteType>;
+  unSelectAllCartConfigurationItems?: Maybe<CartType>;
   unSelectAllCartItems?: Maybe<CartType>;
+  unSelectCartConfigurationItems?: Maybe<CartType>;
   unSelectCartItems?: Maybe<CartType>;
   unlockOrganizationContact?: Maybe<ContactType>;
   updateCartDynamicProperties?: Maybe<CartType>;
@@ -3576,6 +3637,11 @@ export type MutationsAuthorizePaymentArgs = {
 
 export type MutationsCancelQuoteRequestArgs = {
   command: CancelQuoteCommandType;
+};
+
+
+export type MutationsChangeCartConfigurationItemSelectedArgs = {
+  command: InputChangeCartConfigurationItemSelectedType;
 };
 
 
@@ -3944,8 +4010,18 @@ export type MutationsSaveSearchQueryArgs = {
 };
 
 
+export type MutationsSelectAllCartConfigurationItemsArgs = {
+  command: InputChangeAllCartConfigurationItemsSelectedType;
+};
+
+
 export type MutationsSelectAllCartItemsArgs = {
   command?: InputMaybe<InputChangeAllCartItemsSelectedType>;
+};
+
+
+export type MutationsSelectCartConfigurationItemsArgs = {
+  command: InputChangeCartConfigurationItemsSelectedType;
 };
 
 
@@ -3969,8 +4045,18 @@ export type MutationsSubmitQuoteRequestArgs = {
 };
 
 
+export type MutationsUnSelectAllCartConfigurationItemsArgs = {
+  command: InputChangeAllCartConfigurationItemsSelectedType;
+};
+
+
 export type MutationsUnSelectAllCartItemsArgs = {
   command?: InputMaybe<InputChangeAllCartItemsSelectedType>;
+};
+
+
+export type MutationsUnSelectCartConfigurationItemsArgs = {
+  command: InputChangeCartConfigurationItemsSelectedType;
 };
 
 
@@ -5640,6 +5726,7 @@ export type QueryCurrentCustomerAddressesArgs = {
   cities?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   countryCodes?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   first?: InputMaybe<Scalars['Int']['input']>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   keyword?: InputMaybe<Scalars['String']['input']>;
   regionIds?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   sort?: InputMaybe<Scalars['String']['input']>;
@@ -5651,6 +5738,7 @@ export type QueryCurrentOrganizationAddressesArgs = {
   cities?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   countryCodes?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   first?: InputMaybe<Scalars['Int']['input']>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   keyword?: InputMaybe<Scalars['String']['input']>;
   regionIds?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   sort?: InputMaybe<Scalars['String']['input']>;

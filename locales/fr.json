@@ -941,7 +941,8 @@
         "list_edit_button": "Modifier",
         "remove_list_button": "Supprimer",
         "make_private_button": "Rendre privé",
-        "share_button": "Partager"
+        "share_button": "Partager",
+        "last_modified_label": "Dernière modification : {date}"
       },
       "list_details": {
         "add_all_to_cart_button": "Tout ajouter au panier",
@@ -1103,7 +1104,7 @@
         "title": "Changer le mot de passe"
       },
       "header": "Changez votre mot de passe",
-      "success_message": "Votre mot de passe a été changé avec succès"
+      "success_message": "Votre mot de passe a été modifié avec succès. La modification de votre mot de passe vous déconnectera de tous les autres appareils et navigateurs."
     },
     "sign_in": {
       "meta": {
