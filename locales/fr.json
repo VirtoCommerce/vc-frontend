@@ -941,7 +941,8 @@
         "list_edit_button": "Modifier",
         "remove_list_button": "Supprimer",
         "make_private_button": "Rendre privé",
-        "share_button": "Partager"
+        "share_button": "Partager",
+        "last_modified_label": "Dernière modification : {date}"
       },
       "list_details": {
         "add_all_to_cart_button": "Tout ajouter au panier",

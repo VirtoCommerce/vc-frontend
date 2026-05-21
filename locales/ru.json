@@ -941,7 +941,8 @@
         "list_edit_button": "Редактировать",
         "remove_list_button": "Удалить",
         "make_private_button": "Сделать приватным",
-        "share_button": "Поделиться"
+        "share_button": "Поделиться",
+        "last_modified_label": "Последнее изменение: {date}"
       },
       "list_details": {
         "add_all_to_cart_button": "Добавить все в корзину",
