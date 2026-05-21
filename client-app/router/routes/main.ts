@@ -40,7 +40,7 @@ const Branch = () => import("@/pages/branch.vue");
 const Welcome = () => import("@/pages/welcome.vue");
 const Matcher = () => import("@/pages/matcher/matcher.vue");
 
-const LOYALTY_CATALOG_MODES = ["Mixed Cart", "Loyalty Store"];
+const LOYALTY_CATALOG_MODES = new Set(["Mixed Cart", "Loyalty Store"]);
 
 function isLoyaltyCatalogAvailable(): boolean {
   const { themeContext } = useThemeContext();
@@ -51,7 +51,7 @@ function isLoyaltyCatalogAvailable(): boolean {
   const isEnabled = settings.find((s) => s.name === LOYALTY_ENABLED_KEY)?.value === true;
   const currency = settings.find((s) => s.name === LOYALTY_CURRENCY_KEY)?.value as string | undefined;
   const mode = settings.find((s) => s.name === LOYALTY_MODE_KEY)?.value as string | undefined;
-  return isEnabled && !!currency && !!mode && LOYALTY_CATALOG_MODES.includes(mode);
+  return isEnabled && !!currency && !!mode && LOYALTY_CATALOG_MODES.has(mode);
 }
 
 export const mainRoutes: RouteRecordRaw[] = [
