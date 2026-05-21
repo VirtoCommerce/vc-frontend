@@ -1585,7 +1585,7 @@
         "submit_button": "@:common.buttons.submit"
       }
     },
-    "loyalty-catalog": {
+    "loyalty_catalog": {
       "title": "Loyalty catalog"
     },
     "compare": {

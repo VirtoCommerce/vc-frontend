@@ -1,5 +1,10 @@
 import { useThemeContext } from "@/core/composables";
-import { LOYALTY_CURRENCY_KEY, LOYALTY_ENABLED_KEY, LOYALTY_MODULE_ID } from "@/core/constants/modules";
+import {
+  LOYALTY_CURRENCY_KEY,
+  LOYALTY_ENABLED_KEY,
+  LOYALTY_MODE_KEY,
+  LOYALTY_MODULE_ID,
+} from "@/core/constants/modules";
 import { ROUTES } from "@/router/routes/constants";
 import { accountRoutes } from "./account";
 import { cartRoutes } from "./cart";
@@ -35,6 +40,8 @@ const Branch = () => import("@/pages/branch.vue");
 const Welcome = () => import("@/pages/welcome.vue");
 const Matcher = () => import("@/pages/matcher/matcher.vue");
 
+const LOYALTY_CATALOG_MODES = ["Mixed Cart", "Loyalty Store"];
+
 function isLoyaltyCatalogAvailable(): boolean {
   const { themeContext } = useThemeContext();
   const loyaltyModule = themeContext.value?.storeSettings?.modules?.find(
@@ -43,7 +50,8 @@ function isLoyaltyCatalogAvailable(): boolean {
   const settings = loyaltyModule?.settings ?? [];
   const isEnabled = settings.find((s) => s.name === LOYALTY_ENABLED_KEY)?.value === true;
   const currency = settings.find((s) => s.name === LOYALTY_CURRENCY_KEY)?.value as string | undefined;
-  return isEnabled && !!currency;
+  const mode = settings.find((s) => s.name === LOYALTY_MODE_KEY)?.value as string | undefined;
+  return isEnabled && !!currency && !!mode && LOYALTY_CATALOG_MODES.includes(mode);
 }
 
 export const mainRoutes: RouteRecordRaw[] = [

@@ -8,16 +8,16 @@
 
 <script setup lang="ts">
 import { useSeoMeta } from "@unhead/vue";
+import { useI18n } from "vue-i18n";
 import { useBreadcrumbs } from "@/core/composables";
 import { usePageTitle } from "@/core/composables/usePageTitle";
-import { globals } from "@/core/globals";
 import { useLoyaltySettings } from "@/shared/loyalty/composables/useLoyaltySettings";
 import Category from "@/shared/catalog/components/category.vue";
 
-const { i18n } = globals;
+const { t } = useI18n();
 const { loyaltyCurrencyCode } = useLoyaltySettings();
 
-const title = i18n.global.t("pages.loyalty-catalog.title");
+const title = t("pages.loyalty_catalog.title");
 const { title: pageTitle } = usePageTitle(title);
 
 useSeoMeta({
