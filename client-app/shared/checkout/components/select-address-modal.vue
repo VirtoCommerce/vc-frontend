@@ -232,24 +232,20 @@
       </template>
 
       <template #desktop-empty>
-        <tr>
-          <td :colspan="showAvailability ? 5 : 4">
-            <div class="flex flex-col items-center p-5">
-              <span class="text-base">
-                {{ emptyText ?? $t("shared.checkout.select_address_modal.no_addresses_message") }}
-              </span>
+        <div class="flex flex-col items-center p-5">
+          <span class="text-base">
+            {{ emptyText ?? $t("shared.checkout.select_address_modal.no_addresses_message") }}
+          </span>
 
-              <VcButton
-                v-if="showFilters && filterContext?.filterIsApplied.value"
-                class="mt-5"
-                prepend-icon="reset"
-                @click="resetFilter"
-              >
-                {{ $t("pages.account.order_details.bopis.cart_pickup_points_reset_search") }}
-              </VcButton>
-            </div>
-          </td>
-        </tr>
+          <VcButton
+            v-if="showFilters && filterContext?.filterIsApplied.value"
+            class="mt-5"
+            prepend-icon="reset"
+            @click="resetFilter"
+          >
+            {{ $t("pages.account.order_details.bopis.cart_pickup_points_reset_search") }}
+          </VcButton>
+        </div>
       </template>
     </VcTable>
   </VcModal>

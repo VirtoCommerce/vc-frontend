@@ -1050,11 +1050,9 @@ export const Empty: StoryType = {
         </VcTableColumn>
 
         <template #desktop-empty>
-          <tr>
-            <td colspan="3" class="p-10 text-center text-neutral-500">
-              No items available
-            </td>
-          </tr>
+          <div class="p-10 text-center text-neutral-500">
+            No items available
+          </div>
         </template>
       </VcTable>
     `,
@@ -1071,11 +1069,9 @@ export const Empty: StoryType = {
   <VcTableColumn id="email" title="Email" v-slot="{ item }">{{ item.email }}</VcTableColumn>
 
   <template #desktop-empty>
-    <tr>
-      <td colspan="2" class="p-10 text-center text-neutral-500">
-        No items available
-      </td>
-    </tr>
+    <div class="p-10 text-center text-neutral-500">
+      No items available
+    </div>
   </template>
 </VcTable>
         `,
