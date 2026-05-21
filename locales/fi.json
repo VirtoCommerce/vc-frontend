@@ -944,7 +944,8 @@
         "list_edit_button": "Muokkaa",
         "remove_list_button": "Poista",
         "make_private_button": "Tee yksityiseksi",
-        "share_button": "Jaa"
+        "share_button": "Jaa",
+        "last_modified_label": "Viimeksi muokattu: {date}"
       },
       "list_details": {
         "add_all_to_cart_button": "Lisää kaikki ostoskoriin",
@@ -1106,7 +1107,7 @@
         "title": "Vaihda salasana"
       },
       "header": "Vaihda salasanasi",
-      "success_message": "Salasanasi on vaihdettu onnistuneesti"
+      "success_message": "Salasanasi on vaihdettu onnistuneesti. Salasanan vaihtaminen kirjaa sinut ulos kaikilta muilta laitteilta ja selaimilta."
     },
     "sign_in": {
       "meta": {

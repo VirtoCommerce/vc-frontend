@@ -5730,6 +5730,7 @@ export type QueryCurrentCustomerAddressesArgs = {
   cities?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   countryCodes?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   first?: InputMaybe<Scalars['Int']['input']>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   keyword?: InputMaybe<Scalars['String']['input']>;
   regionIds?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   sort?: InputMaybe<Scalars['String']['input']>;
@@ -5741,6 +5742,7 @@ export type QueryCurrentOrganizationAddressesArgs = {
   cities?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   countryCodes?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   first?: InputMaybe<Scalars['Int']['input']>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   keyword?: InputMaybe<Scalars['String']['input']>;
   regionIds?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   sort?: InputMaybe<Scalars['String']['input']>;

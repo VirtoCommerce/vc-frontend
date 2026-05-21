@@ -944,7 +944,8 @@
         "list_edit_button": "Editar",
         "remove_list_button": "Excluir",
         "make_private_button": "Tornar privado",
-        "share_button": "Compartilhar"
+        "share_button": "Compartilhar",
+        "last_modified_label": "Última modificação: {date}"
       },
       "list_details": {
         "add_all_to_cart_button": "Adicionar tudo ao carrinho",
@@ -1106,7 +1107,7 @@
         "title": "Alterar senha"
       },
       "header": "Altere sua senha",
-      "success_message": "Sua senha foi alterada com sucesso"
+      "success_message": "Sua senha foi alterada com sucesso. Alterar sua senha encerrará sua sessão em todos os outros dispositivos e navegadores."
     },
     "sign_in": {
       "meta": {

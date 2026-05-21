@@ -944,7 +944,8 @@
         "list_edit_button": "Bearbeiten",
         "remove_list_button": "Löschen",
         "make_private_button": "Privat machen",
-        "share_button": "Teilen"
+        "share_button": "Teilen",
+        "last_modified_label": "Zuletzt geändert: {date}"
       },
       "list_details": {
         "add_all_to_cart_button": "Alles in den Warenkorb",
@@ -1106,7 +1107,7 @@
         "title": "Passwort ändern"
       },
       "header": "Ändern Sie Ihr Passwort",
-      "success_message": "Ihr Passwort wurde erfolgreich geändert"
+      "success_message": "Ihr Passwort wurde erfolgreich geändert. Durch das Ändern Ihres Passworts werden Sie von allen anderen Geräten und Browsern abgemeldet."
     },
     "sign_in": {
       "meta": {

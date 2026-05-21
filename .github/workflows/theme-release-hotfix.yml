@@ -12,12 +12,12 @@ jobs:
       VERSION_SUFFIX: ""
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           fetch-depth: 0
 
       - name: Set up Node 22
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
           node-version: '22'
 
@@ -26,7 +26,7 @@ jobs:
           corepack enable
 
       - name: Setup sonarqube
-        uses: warchant/setup-sonar-scanner@v8
+        uses: warchant/setup-sonar-scanner@7559f7221c1f8637fc6be7287945e2c5b3f6dea9 # v8
 
       - name: Install VirtoCommerce.GlobalTool
         uses: VirtoCommerce/vc-github-actions/setup-vcbuild@master
@@ -59,7 +59,7 @@ jobs:
           yarn install
 
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
+        uses: SonarSource/sonarcloud-github-action@ba3875ecf642b2129de2b589510c81a8b53dbf4e # master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
