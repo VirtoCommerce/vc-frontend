@@ -52,7 +52,8 @@
     "date_input": {
       "invalid_format": "Formato data non valido",
       "min_date_error": "La data deve essere successiva o uguale a {min}",
-      "max_date_error": "La data deve essere precedente o uguale a {max}"
+      "max_date_error": "La data deve essere precedente o uguale a {max}",
+      "unavailable_date": "Questa data non è disponibile"
     },
     "labels": {
       "not_available": "N/D",

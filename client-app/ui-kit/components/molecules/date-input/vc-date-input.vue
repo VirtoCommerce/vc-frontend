@@ -65,6 +65,8 @@ interface IProps {
   min?: string;
   /** ISO YYYY-MM-DD max boundary. */
   max?: string;
+  /** Predicate that returns true to mark a date unavailable. Receives ISO YYYY-MM-DD. */
+  disabledDate?: VcCalendarDisabledDateType;
   /** Override locale; defaults to i18n's active locale. */
   locale?: string;
   /** When to commit user input. Default "blur". Enter always commits regardless. */
@@ -101,6 +103,7 @@ const { displayValue, errorText, onBlur, onEnter, onClear, commit } = useDateFie
   updateOn: toRef(props, "updateOn"),
   min: toRef(props, "min"),
   max: toRef(props, "max"),
+  disabledDate: toRef(props, "disabledDate"),
   onCommit: (iso) => {
     emit("update:modelValue", iso);
   },

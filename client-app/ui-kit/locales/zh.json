@@ -52,7 +52,8 @@
     "date_input": {
       "invalid_format": "日期格式无效",
       "min_date_error": "日期必须在{min}或之后",
-      "max_date_error": "日期必须在{max}或之前"
+      "max_date_error": "日期必须在{max}或之前",
+      "unavailable_date": "此日期不可用"
     },
     "labels": {
       "not_available": "不可用",

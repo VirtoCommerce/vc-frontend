@@ -25,6 +25,7 @@ interface IRunOptions {
   updateOn?: VcDateFieldUpdateOnType;
   min?: string;
   max?: string;
+  disabledDate?: VcCalendarDisabledDateType;
 }
 
 function setup(options: IRunOptions) {
@@ -34,6 +35,7 @@ function setup(options: IRunOptions) {
   const updateOn = ref<VcDateFieldUpdateOnType>(options.updateOn ?? "blur");
   const min = ref<string | undefined>(options.min);
   const max = ref<string | undefined>(options.max);
+  const disabledDate = ref<VcCalendarDisabledDateType | undefined>(options.disabledDate);
   const onCommit = vi.fn<(iso: string | undefined) => void>();
 
   let field!: ReturnType<typeof useDateField>;
@@ -44,6 +46,7 @@ function setup(options: IRunOptions) {
       updateOn,
       min,
       max,
+      disabledDate,
       onCommit: (iso) => {
         onCommit(iso);
         modelValue.value = iso;
@@ -51,7 +54,7 @@ function setup(options: IRunOptions) {
     });
   });
 
-  return { field, modelValue, locale, updateOn, min, max, onCommit, scope };
+  return { field, modelValue, locale, updateOn, min, max, disabledDate, onCommit, scope };
 }
 
 beforeEach(() => {
@@ -352,5 +355,40 @@ describe("useDateField — errorText touched-gating", () => {
     field.commit();
     expect(field.errorText.value).toBe("ui_kit.date_input.invalid_format");
     expect(onCommit).not.toHaveBeenCalled();
+  });
+});
+
+describe("useDateField — disabledDate predicate", () => {
+  test("rejects date matched by disabledDate predicate and surfaces unavailable error", () => {
+    const { field, onCommit } = setup({
+      modelValue: undefined,
+      disabledDate: (iso: string) => iso === "2026-10-17",
+    });
+    field.displayValue.value = "10/17/2026";
+    field.onBlur();
+    expect(onCommit).not.toHaveBeenCalled();
+    expect(field.isValid.value).toBe(false);
+    expect(field.errorText.value).toBe("ui_kit.date_input.unavailable_date");
+  });
+
+  test("no regression when disabledDate is undefined", () => {
+    const { field, onCommit } = setup({ modelValue: undefined });
+    field.displayValue.value = "10/17/2026";
+    field.onBlur();
+    expect(onCommit).toHaveBeenCalledExactlyOnceWith("2026-10-17");
+    expect(field.isValid.value).toBe(true);
+    expect(field.errorText.value).toBeUndefined();
+  });
+
+  test("min violation takes precedence over disabledDate (min runs first)", () => {
+    const { field, onCommit } = setup({
+      modelValue: undefined,
+      min: "2026-01-01",
+      disabledDate: () => true,
+    });
+    field.displayValue.value = "12/31/2025";
+    field.onBlur();
+    expect(onCommit).not.toHaveBeenCalled();
+    expect(field.errorText.value).toBe('ui_kit.date_input.min_date_error:{"min":"2026-01-01"}');
   });
 });

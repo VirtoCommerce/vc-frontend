@@ -15,6 +15,7 @@
         :error="error"
         :min="min"
         :max="max"
+        :disabled-date="disabledDate"
         :locale="locale"
         :update-on="updateOn"
         :mask="mask"

@@ -52,7 +52,8 @@
     "date_input": {
       "invalid_format": "Virheellinen päivämäärämuoto",
       "min_date_error": "Päivämäärän on oltava vähintään {min}",
-      "max_date_error": "Päivämäärän on oltava enintään {max}"
+      "max_date_error": "Päivämäärän on oltava enintään {max}",
+      "unavailable_date": "Tämä päivämäärä ei ole saatavilla"
     },
     "labels": {
       "not_available": "Ei saatavilla",

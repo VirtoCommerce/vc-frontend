@@ -52,7 +52,8 @@
     "date_input": {
       "invalid_format": "日付の形式が無効です",
       "min_date_error": "日付は {min} 以降を指定してください",
-      "max_date_error": "日付は {max} 以前を指定してください"
+      "max_date_error": "日付は {max} 以前を指定してください",
+      "unavailable_date": "この日付は利用できません"
     },
     "labels": {
       "not_available": "N/A",

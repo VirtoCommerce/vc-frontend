@@ -18,6 +18,8 @@ export interface IUseDateFieldOptions {
   min?: Ref<string | undefined>;
   /** ISO YYYY-MM-DD max boundary. */
   max?: Ref<string | undefined>;
+  /** Predicate that returns true to mark a date unavailable. Receives ISO YYYY-MM-DD. */
+  disabledDate?: Ref<VcCalendarDisabledDateType | undefined>;
   onCommit: (iso: string | undefined) => void;
 }
 
@@ -80,6 +82,9 @@ export function useDateField(opts: IUseDateFieldOptions) {
     if (maxDate.value && cd.compare(maxDate.value) > 0) {
       return false;
     }
+    if (opts.disabledDate?.value?.(cd.toString())) {
+      return false;
+    }
     return true;
   });
 
@@ -96,6 +101,9 @@ export function useDateField(opts: IUseDateFieldOptions) {
     }
     if (maxDate.value && cd.compare(maxDate.value) > 0) {
       return t("ui_kit.date_input.max_date_error", { max: opts.max?.value });
+    }
+    if (opts.disabledDate?.value?.(cd.toString())) {
+      return t("ui_kit.date_input.unavailable_date");
     }
     return undefined;
   });

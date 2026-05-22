@@ -52,7 +52,8 @@
     "date_input": {
       "invalid_format": "Ungültiges Datumsformat",
       "min_date_error": "Datum muss am oder nach {min} liegen",
-      "max_date_error": "Datum muss am oder vor {max} liegen"
+      "max_date_error": "Datum muss am oder vor {max} liegen",
+      "unavailable_date": "Dieses Datum ist nicht verfügbar"
     },
     "labels": {
       "not_available": "N/V",
