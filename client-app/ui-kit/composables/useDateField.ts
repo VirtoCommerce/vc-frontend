@@ -1,5 +1,6 @@
 import { computed, ref, toValue, watch } from "vue";
 import { useI18n } from "vue-i18n";
+import { Logger } from "@/core/utilities";
 import { tryParseDate } from "@/ui-kit/components/molecules/calendar/use-calendar-base";
 import { formatDateLocale, parseDateInput } from "@/ui-kit/utilities/date";
 import type { CalendarDate } from "@internationalized/date";
@@ -68,6 +69,21 @@ export function useDateField(opts: IUseDateFieldOptions) {
   const minDate = computed(() => tryParseDate(opts.min?.value));
   const maxDate = computed(() => tryParseDate(opts.max?.value));
 
+  // Mirror VcCalendar behavior: a throwing predicate must not break field validation.
+  // Swallow + log so the field stays usable when consumer-supplied logic crashes.
+  function isDisabledDateHit(cd: CalendarDate): boolean {
+    const fn = opts.disabledDate?.value;
+    if (!fn) {
+      return false;
+    }
+    try {
+      return fn(cd.toString());
+    } catch (error) {
+      Logger.error("VcDateInput: disabledDate predicate threw", { date: cd.toString(), error });
+      return false;
+    }
+  }
+
   const isValid = computed<boolean>(() => {
     if (isEmpty.value) {
       return true;
@@ -82,7 +98,7 @@ export function useDateField(opts: IUseDateFieldOptions) {
     if (maxDate.value && cd.compare(maxDate.value) > 0) {
       return false;
     }
-    if (opts.disabledDate?.value?.(cd.toString())) {
+    if (isDisabledDateHit(cd)) {
       return false;
     }
     return true;
@@ -102,7 +118,7 @@ export function useDateField(opts: IUseDateFieldOptions) {
     if (maxDate.value && cd.compare(maxDate.value) > 0) {
       return t("ui_kit.date_input.max_date_error", { max: opts.max?.value });
     }
-    if (opts.disabledDate?.value?.(cd.toString())) {
+    if (isDisabledDateHit(cd)) {
       return t("ui_kit.date_input.unavailable_date");
     }
     return undefined;

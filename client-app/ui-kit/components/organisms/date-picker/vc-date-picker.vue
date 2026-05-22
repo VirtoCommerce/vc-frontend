@@ -35,7 +35,6 @@
         @focus="onInputFocus"
         @clear="onInputClear"
         @keydown.esc.stop="close"
-        @keydown.enter="open"
       >
         <template #append>
           <VcButton
@@ -170,8 +169,13 @@ function onInputClear(): void {
 }
 
 function onCalendarUpdate(close: () => void, value: string | undefined): void {
+  // Belt-and-braces guard: ignore calendar emits when read-only/disabled even if popover was opened programmatically.
+  if (props.disabled || props.readonly) {
+    return;
+  }
   emit("update:modelValue", value);
-  if (props.closeOnSelect && value !== undefined) {
+  // Close on BOTH select and clear (footer "Clear" emits undefined) so the popover doesn't linger after clearing.
+  if (props.closeOnSelect) {
     close();
     // Return focus to the input after the popover closes — accessible keyboard flow.
     innerInputElement.value?.focus();

@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { effectScope, nextTick, ref } from "vue";
+import { Logger } from "@/core/utilities";
 import { useDateField } from "@/ui-kit/composables";
 import type { VcDateFieldUpdateOnType } from "@/ui-kit/composables";
 import type { Ref } from "vue";
@@ -390,5 +391,26 @@ describe("useDateField — disabledDate predicate", () => {
     field.onBlur();
     expect(onCommit).not.toHaveBeenCalled();
     expect(field.errorText.value).toBe('ui_kit.date_input.min_date_error:{"min":"2026-01-01"}');
+  });
+
+  test("throwing predicate is swallowed: input treated as valid, no error surfaced, Logger.error called", () => {
+    // Mirror VcCalendar behavior — a consumer-supplied predicate that throws must not break the field.
+    const loggerSpy = vi.spyOn(Logger, "error").mockImplementation(() => {});
+    const { field, onCommit } = setup({
+      modelValue: undefined,
+      disabledDate: () => {
+        throw new Error("boom");
+      },
+    });
+    field.displayValue.value = "10/17/2026";
+    field.onBlur();
+    // Predicate throws are swallowed → field stays valid and commits through.
+    expect(field.isValid.value).toBe(true);
+    expect(field.errorText.value).toBeUndefined();
+    expect(onCommit).toHaveBeenCalledExactlyOnceWith("2026-10-17");
+    // Logger.error fires on every read of isDisabledDateHit — at minimum once (during isValid eval).
+    expect(loggerSpy).toHaveBeenCalled();
+    expect(loggerSpy.mock.calls[0][0]).toBe("VcDateInput: disabledDate predicate threw");
+    loggerSpy.mockRestore();
   });
 });
