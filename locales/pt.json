@@ -81,7 +81,8 @@
       "all_products": "Todos os produtos",
       "buy_now": "Comprar agora",
       "see_all": "Ver tudo",
-      "report_a_problem": "Reportar um problema"
+      "report_a_problem": "Reportar um problema",
+      "copy_to_clipboard": "Copiar para a área de transferência"
     },
     "labels": {
       "actions": "Ações",
@@ -209,6 +210,7 @@
       "fail_to_change_quantity_in_cart": "Desculpe, não é possível atualizar a quantidade do produto no carrinho. {reason}",
       "unhandled_error": "Desculpe pelo transtorno. Nosso servidor está enfrentando problemas técnicos no momento. Por favor, tente novamente mais tarde.",
       "report_sent_successfully": "Obrigado! Seu relatório foi enviado com sucesso. Vamos analisá-lo.",
+      "copied_to_clipboard": "Copiado para a área de transferência",
       "role_update_successful": "O papel do cliente foi atualizado com sucesso.",
       "role_update_failed": "Ocorreram erros durante a atualização do papel: {0}",
       "passwords_do_not_match": "Os campos de senha devem ter valores correspondentes.",
@@ -217,6 +219,7 @@
       "password_about_expire": "Sua senha está prestes a expirar em {value} dia(s). Por favor, defina uma nova senha no perfil.",
       "password_expired": "Sua senha expirou",
       "data_changed": "Os dados foram alterados em um dos outros tabs. Por favor, atualize a página para exibir os dados atuais.",
+      "outdated_backend_modules": "A aplicação frontend espera versões mais recentes da Plataforma e de um ou mais Módulos. <br> A Aplicação Frontend está rodando em um backend incompatível. Alguns recursos podem ficar indisponíveis, degradados ou instáveis até que a Plataforma e os Módulos sejam atualizados para atender aos requisitos da loja. Por favor, compartilhe o relatório abaixo com seu administrador.",
       "logo_changed": "O logotipo foi alterado com sucesso.",
       "logo_deleted": "O logotipo foi excluído.",
       "pending_operations_leaving_page_confirmation": "Algumas operações ainda estão em andamento. Tem certeza de que deseja sair desta página? As alterações não salvas podem ser perdidas."

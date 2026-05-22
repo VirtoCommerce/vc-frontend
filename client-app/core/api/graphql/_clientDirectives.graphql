@@ -1,0 +1,5 @@
+# Client-only directives. Not sent to the server — stripped before the request.
+# Used to mark fields/selections that depend on optional backend modules,
+# so the client can omit them when the corresponding module is not installed.
+
+directive @gate(module: String!) on FIELD
