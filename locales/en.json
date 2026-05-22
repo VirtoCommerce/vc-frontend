@@ -81,7 +81,8 @@
       "all_products": "All products",
       "buy_now": "Buy now",
       "see_all": "See all",
-      "report_a_problem": "Report a problem"
+      "report_a_problem": "Report a problem",
+      "copy_to_clipboard": "Copy to clipboard"
     },
     "labels": {
       "actions": "Actions",
@@ -209,6 +210,7 @@
       "fail_to_change_quantity_in_cart": "Sorry, can't update product quantity in cart. {reason}",
       "unhandled_error": "Apologies for the inconvenience. Our server is currently experiencing technical issues. Please try again later.",
       "report_sent_successfully": "Thank you! Your report has been sent successfully. We'll look into it.",
+      "copied_to_clipboard": "Copied to clipboard",
       "role_update_successful": "The customer role has been updated successfully",
       "role_update_failed": "Errors occurred during the role updating: {0}",
       "passwords_do_not_match": "The password fields must have matching values",
@@ -217,6 +219,7 @@
       "password_about_expire": "Your password is about to expire in {value} day(s). Set a new password in profile",
       "password_expired": "Your password is expired",
       "data_changed": "The data has been modified on one of the other tabs. Refresh the page to display the latest data.",
+      "outdated_backend_modules": "The frontend application expects newer versions of the Platform and one or more Modules. <br> Frontend Application is running on an incompatible backend. Some features may be unavailable, degraded, or unstable until the Platform and Modules are upgraded to meet the storefront's requirements. Please share the report below with your administrator.",
       "logo_changed": "Logo was successfully changed.",
       "logo_deleted": "Logo was deleted.",
       "pending_operations_leaving_page_confirmation": "Some operations are still in progress. Are you sure you want to leave this page? Unsaved changes may be lost."
