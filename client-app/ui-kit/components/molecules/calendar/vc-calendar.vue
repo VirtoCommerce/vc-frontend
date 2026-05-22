@@ -218,6 +218,8 @@ watch(
     const parsed = tryParseDate(next);
     if (parsed) {
       placeholderRef.value = parsed;
+    } else {
+      placeholderRef.value = getInitialPlaceholder();
     }
   },
 );

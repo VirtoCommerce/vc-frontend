@@ -22,6 +22,7 @@
     "accessibility": {
       "close_alert": "Sulje hälytys",
       "open_calendar": "Avaa kalenteri",
+      "calendar": "Kalenteri",
       "product_quantity": "Tuotteen määrä",
       "decrease_quantity": "Vähennä määrää",
       "increase_quantity": "Lisää määrää",

@@ -22,6 +22,7 @@
     "accessibility": {
       "close_alert": "Stäng varning",
       "open_calendar": "Öppna kalender",
+      "calendar": "Kalender",
       "product_quantity": "Produktantal",
       "decrease_quantity": "Minska antal",
       "increase_quantity": "Öka antal",

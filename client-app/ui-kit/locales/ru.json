@@ -22,6 +22,7 @@
     "accessibility": {
       "close_alert": "Закрыть уведомление",
       "open_calendar": "Открыть календарь",
+      "calendar": "Календарь",
       "product_quantity": "Количество товара",
       "decrease_quantity": "Уменьшить количество",
       "increase_quantity": "Увеличить количество",

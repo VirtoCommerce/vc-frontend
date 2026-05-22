@@ -22,6 +22,7 @@
     "accessibility": {
       "close_alert": "Benachrichtigung schließen",
       "open_calendar": "Kalender öffnen",
+      "calendar": "Kalender",
       "product_quantity": "Produktmenge",
       "decrease_quantity": "Menge verringern",
       "increase_quantity": "Menge erhöhen",

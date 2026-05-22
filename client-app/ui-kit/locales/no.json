@@ -22,6 +22,7 @@
     "accessibility": {
       "close_alert": "Lukk varsel",
       "open_calendar": "Åpne kalender",
+      "calendar": "Kalender",
       "product_quantity": "Produktantall",
       "decrease_quantity": "Reduser antall",
       "increase_quantity": "Øk antall",

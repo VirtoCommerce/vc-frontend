@@ -22,6 +22,7 @@
     "accessibility": {
       "close_alert": "Close alert",
       "open_calendar": "Open calendar",
+      "calendar": "Calendar",
       "product_quantity": "Product quantity",
       "decrease_quantity": "Decrease quantity",
       "increase_quantity": "Increase quantity",

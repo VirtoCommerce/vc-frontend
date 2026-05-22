@@ -2,6 +2,7 @@ import { getLocalTimeZone, parseDate, today as todayInLocalTz } from "@internati
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { Logger } from "@/core/utilities";
+import { toDateOnlyString } from "@/ui-kit/utilities/date";
 import type { CalendarDate, DateValue } from "@internationalized/date";
 import type { Ref } from "vue";
 
@@ -13,17 +14,22 @@ export interface IUseCalendarBaseOptions {
   initialPlaceholder: () => DateValue;
 }
 
-/** Parses ISO YYYY-MM-DD. Empty input returns undefined silently; unparseable input warns in dev. */
+/** Parses ISO YYYY-MM-DD; ISO datetime strings are accepted and truncated to the date portion. */
 export function tryParseDate(value: string | undefined): CalendarDate | undefined {
   if (!value) {
     return undefined;
   }
 
+  const dateOnly = toDateOnlyString(value);
+  if (!dateOnly) {
+    return undefined;
+  }
+
   try {
-    return parseDate(value);
+    return parseDate(dateOnly);
   } catch (error) {
     if (import.meta.env.DEV) {
-      Logger.warn(`tryParseDate: "${value}" is not a valid ISO YYYY-MM-DD`, error);
+      Logger.warn(`tryParseDate: "${value}" is not a parseable ISO date`, error);
     }
     return undefined;
   }

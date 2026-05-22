@@ -1,6 +1,12 @@
 <template>
-  <VcPopover :placement="placement" :offset-options="{ mainAxis: 4 }" :enable-teleport="enableTeleport">
-    <template #default="{ toggle, triggerProps }">
+  <VcPopover
+    :placement="placement"
+    :offset-options="{ mainAxis: 4 }"
+    :enable-teleport="enableTeleport"
+    role="dialog"
+    :aria-label="t('ui_kit.accessibility.calendar')"
+  >
+    <template #default="{ toggle, triggerProps, open, close }">
       <VcDateInput
         ref="dateInputRef"
         :model-value="modelValue"
@@ -28,6 +34,8 @@
         @blur="onInputBlur"
         @focus="onInputFocus"
         @clear="onInputClear"
+        @keydown.esc.stop="close"
+        @keydown.enter="open"
       >
         <template #append>
           <VcButton

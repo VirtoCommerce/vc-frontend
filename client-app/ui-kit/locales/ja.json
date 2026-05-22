@@ -22,6 +22,7 @@
     "accessibility": {
       "close_alert": "アラートを閉じる",
       "open_calendar": "カレンダーを開く",
+      "calendar": "カレンダー",
       "product_quantity": "製品数量",
       "decrease_quantity": "数量を減らす",
       "increase_quantity": "数量を増やす",
