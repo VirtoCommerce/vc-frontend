@@ -22,6 +22,33 @@ function getFirstDayOfWeek(currentDate: Date): Date {
   return new Date(date.setDate(diff));
 }
 
+function applyFilters() {
+  if (JSON.stringify(appliedFilterData.value) === JSON.stringify(filterData.value)) {
+    return;
+  }
+  appliedFilterData.value = { ...filterData.value };
+}
+
+function resetFilterData() {
+  filterData.value = { statuses: [], customerNames: [], startDate: undefined, endDate: undefined };
+  appliedFilterData.value = { ...filterData.value };
+}
+
+function setFacetsLocalization(localizationFacets: OrderFacetType[] | undefined) {
+  facetLocalization.value = localizationFacets;
+}
+
+function getFacetLocalization(facetName: string, term: string): string | undefined {
+  const facet = facetLocalization.value?.find((el) => el.name === facetName);
+  return facet?.items?.find((el) => el.term === term)?.label;
+}
+
+function handleOrdersDateFilterChange(dateFilterType: DateFilterType): void {
+  filterData.value.startDate = dateFilterType.startDate ? toDateISOString(dateFilterType.startDate) : undefined;
+  filterData.value.endDate = dateFilterType.endDate ? toDateISOString(dateFilterType.endDate) : undefined;
+  selectedDateFilterType.value = dateFilterType;
+}
+
 export function useUserOrdersFilter(orderScope?: MaybeRef<OrderScopeType>) {
   const { d, t } = useI18n();
   const { isOrganizationMaintainer } = useUser();
@@ -146,18 +173,6 @@ export function useUserOrdersFilter(orderScope?: MaybeRef<OrderScopeType>) {
     return isOrganizationMaintainer.value && scope === "organization" && !!organizationCustomerNames.value?.length;
   });
 
-  function applyFilters() {
-    if (JSON.stringify(appliedFilterData.value) === JSON.stringify(filterData.value)) {
-      return;
-    }
-    appliedFilterData.value = { ...filterData.value };
-  }
-
-  function resetFilterData() {
-    filterData.value = { statuses: [], customerNames: [], startDate: undefined, endDate: undefined };
-    appliedFilterData.value = { ...filterData.value };
-  }
-
   function resetFilters() {
     resetFilterData();
     selectedDateFilterType.value = dateFilterTypes.value[0];
@@ -192,21 +207,6 @@ export function useUserOrdersFilter(orderScope?: MaybeRef<OrderScopeType>) {
       selectedDateFilterType.value.startDate = appliedFilterData.value?.startDate;
       selectedDateFilterType.value.endDate = appliedFilterData.value?.endDate;
     }
-  }
-
-  function setFacetsLocalization(localizationFacets: OrderFacetType[] | undefined) {
-    facetLocalization.value = localizationFacets;
-  }
-
-  function getFacetLocalization(facetName: string, term: string): string | undefined {
-    const facet = facetLocalization.value?.find((el) => el.name === facetName);
-    return facet?.items?.find((el) => el.term === term)?.label;
-  }
-
-  function handleOrdersDateFilterChange(dateFilterType: DateFilterType): void {
-    filterData.value.startDate = dateFilterType.startDate ? toDateISOString(dateFilterType.startDate) : undefined;
-    filterData.value.endDate = dateFilterType.endDate ? toDateISOString(dateFilterType.endDate) : undefined;
-    selectedDateFilterType.value = dateFilterType;
   }
 
   return {
