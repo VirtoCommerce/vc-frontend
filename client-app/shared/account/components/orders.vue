@@ -1,21 +1,12 @@
 <template>
   <div class="orders">
-    <!-- Mobile filters sidebar -->
-    <OrdersMobileFiltersSidebar v-if="isMobile" v-model:visible="filtersVisible" :order-scope="orderScope" />
-
     <div class="orders__toolbar">
       <div class="orders__search-bar">
         <!-- Desktop filters popover -->
-        <OrdersDesktopFiltersPopover v-if="!isMobile" :order-scope="orderScope" :loading="ordersLoading" />
+        <OrdersDesktopFilters v-if="!isMobile" :order-scope="orderScope" :loading="ordersLoading" />
 
-        <!-- Mobile filters button -->
-        <VcButton
-          v-else
-          :disabled="ordersLoading"
-          icon="filter"
-          :ariaLabel="$t('common.buttons.filters')"
-          @click="filtersVisible = true"
-        />
+        <!-- Mobile filters -->
+        <OrdersMobileFilters v-if="isMobile" :order-scope="orderScope" :loading="ordersLoading" />
 
         <div class="orders__search-input-wrapper">
           <VcInput
@@ -130,11 +121,11 @@ import { Sort } from "@/core/types";
 import { useOrderNavigation } from "@/shared/account/composables/useOrderNavigation";
 import { useUserOrders } from "@/shared/account/composables/useUserOrders";
 import { useUserOrdersFilter } from "@/shared/account/composables/useUserOrdersFilter";
-import { useUser } from "../../composables";
-import OrdersDesktopFiltersPopover from "./orders-desktop-filters-popover.vue";
-import OrdersMobileFiltersSidebar from "./orders-mobile-filters-sidebar.vue";
-import OrdersTable from "./orders-table.vue";
-import type { OrderScopeType } from "../../types";
+import { useUser } from "../composables";
+import OrdersDesktopFilters from "./orders/orders-desktop-filters.vue";
+import OrdersMobileFilters from "./orders/orders-mobile-filters.vue";
+import OrdersTable from "./orders/orders-table.vue";
+import type { OrderScopeType } from "../types";
 import type { ISortInfo } from "@/core/types";
 
 const { t } = useI18n();
@@ -160,7 +151,6 @@ const { continue_shopping_link } = getModuleSettings({
 const isMobile = breakpoints.smaller("sm");
 
 const localKeyword = ref("");
-const filtersVisible = ref(false);
 
 async function changePage(newPage: number) {
   page.value = newPage;
