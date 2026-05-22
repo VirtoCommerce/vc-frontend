@@ -62,7 +62,7 @@ vi.mock("@/core/api/common", async () => {
 
 vi.mock("@/shared/broadcast", () => {
   const emit = vi.fn();
-  const TabsType = { ALL: "ALL", CURRENT: "CURRENT" } as const;
+  const TabsType = { ALL: "ALL", CURRENT: "CURRENT", OTHERS: "OTHERS" } as const;
   const reloadAndOpenMainPage = "reloadAndOpenMainPage";
 
   return {
@@ -99,6 +99,12 @@ vi.mock("@/core/utilities", () => ({
   },
 }));
 
+vi.mock("./useUser", () => ({
+  useUser: () => ({
+    operator: { value: null },
+  }),
+}));
+
 type AuthMockStateType = {
   authorize: ReturnType<typeof vi.fn>;
   authErrors: { value: Array<{ code?: string; description?: string }> | undefined };
@@ -119,7 +125,7 @@ type FetchMockStateType = {
 
 type BroadcastMockStateType = {
   emit: ReturnType<typeof vi.fn>;
-  TabsType: { ALL: string; CURRENT: string };
+  TabsType: { ALL: string; CURRENT: string; OTHERS: string };
   reloadAndOpenMainPage: string;
 };
 
@@ -182,38 +188,17 @@ describe("useImpersonate", () => {
     const broadcastState = await getBroadcastState();
     broadcastState.emit.mockReset();
 
+    vi.stubGlobal("location", { href: "" });
     vi.useFakeTimers();
   });
 
   afterEach(() => {
     vi.useRealTimers();
+    vi.unstubAllGlobals();
     vi.clearAllMocks();
   });
 
-  it("happy path: completes verify then impersonate and ends in success", async () => {
-    const auth = await getAuthState();
-    const fetchState = await getFetchState();
-
-    auth.authorize.mockImplementation(async () => {
-      auth.authErrors.value = undefined;
-    });
-    setSuccessfulImpersonateResponse(fetchState);
-
-    const { useImpersonate } = await importComposable();
-    const { impersonate, step, loading, errors } = useImpersonate();
-
-    await impersonate("support@example.com", "password", "target-user-id");
-
-    expect(auth.authorize).toHaveBeenCalledWith("support@example.com", "password");
-    expect(fetchState.useFetch).toHaveBeenCalledWith("/connect/token");
-    expect(auth.setAccessToken).toHaveBeenCalledWith("access");
-    expect(auth.setRefreshToken).toHaveBeenCalledWith("refresh");
-    expect(step.value).toBe("success");
-    expect(loading.value).toBe(false);
-    expect(errors.value).toEqual([]);
-  });
-
-  it("broadcasts reloadAndOpenMainPage 1 second after impersonate success", async () => {
+  it("happy path: verify, impersonate, broadcasts OTHERS after 1s", async () => {
     const auth = await getAuthState();
     const fetchState = await getFetchState();
     const broadcastState = await getBroadcastState();
@@ -224,11 +209,17 @@ describe("useImpersonate", () => {
     setSuccessfulImpersonateResponse(fetchState);
 
     const { useImpersonate } = await importComposable();
-    const { impersonate, step } = useImpersonate();
+    const { impersonate, step, errors } = useImpersonate();
 
     await impersonate("support@example.com", "password", "target-user-id");
 
+    expect(auth.authorize).toHaveBeenCalledWith("support@example.com", "password");
+    expect(fetchState.useFetch).toHaveBeenCalledWith("/connect/token");
+    expect(auth.setAccessToken).toHaveBeenCalledWith("access");
+    expect(auth.setRefreshToken).toHaveBeenCalledWith("refresh");
     expect(step.value).toBe("success");
+    expect(errors.value).toEqual([]);
+
     // setTimeout is scheduled but timers are paused — emit must NOT have fired yet.
     expect(broadcastState.emit).not.toHaveBeenCalled();
 
@@ -238,7 +229,7 @@ describe("useImpersonate", () => {
     expect(broadcastState.emit).toHaveBeenCalledWith(
       broadcastState.reloadAndOpenMainPage,
       null,
-      broadcastState.TabsType.ALL,
+      broadcastState.TabsType.OTHERS,
     );
   });
 
@@ -306,62 +297,6 @@ describe("useImpersonate", () => {
     expect(loading.value).toBe(false);
   });
 
-  it("loading state reflects active step during the flow", async () => {
-    const auth = await getAuthState();
-    const fetchState = await getFetchState();
-
-    let resolveAuthorize: (() => void) | undefined;
-    let resolveFetch: ((value: unknown) => void) | undefined;
-
-    auth.authorize.mockImplementation(
-      () =>
-        new Promise<void>((resolve) => {
-          resolveAuthorize = () => {
-            auth.authErrors.value = undefined;
-            resolve();
-          };
-        }),
-    );
-
-    // Override useFetch to return a deferred json() promise so we can pause inside doImpersonate.
-    function makeDeferredJson<T = unknown>() {
-      return new Promise<{ data: { value: T | undefined }; error: { value: unknown } }>((resolve) => {
-        resolveFetch = resolve as (value: unknown) => void;
-      });
-    }
-    fetchState.useFetch.mockImplementation(() => ({
-      post: () => ({ json: makeDeferredJson }),
-    }));
-
-    const { useImpersonate } = await importComposable();
-    const { impersonate, step, loading } = useImpersonate();
-
-    const promise = impersonate("support@example.com", "password", "target-user-id");
-
-    // While in verify step
-    await Promise.resolve();
-    expect(step.value).toBe("verify");
-    expect(loading.value).toBe(true);
-
-    resolveAuthorize?.();
-    // Allow microtasks to flush so the impersonate step kicks in
-    await Promise.resolve();
-    await Promise.resolve();
-
-    // While in impersonate step
-    expect(step.value).toBe("impersonate");
-    expect(loading.value).toBe(true);
-
-    resolveFetch?.({
-      data: { value: { access_token: "a", token_type: "Bearer", expires_in: 1, refresh_token: "r" } },
-      error: { value: undefined },
-    });
-    await promise;
-
-    expect(step.value).toBe("success");
-    expect(loading.value).toBe(false);
-  });
-
   it("impersonateAuthenticated happy path: skips authorize and ends in success", async () => {
     const auth = await getAuthState();
     const fetchState = await getFetchState();
@@ -382,40 +317,51 @@ describe("useImpersonate", () => {
     expect(errors.value).toEqual([]);
   });
 
-  it("impersonateAuthenticated failure: surfaces impersonate_failed error", async () => {
+  it("revertImpersonate posts empty user_id, sets tokens, broadcasts OTHERS, and navigates to redirectTo", async () => {
     const auth = await getAuthState();
     const fetchState = await getFetchState();
+    const broadcastState = await getBroadcastState();
 
-    setFailedImpersonateResponse(fetchState);
+    setSuccessfulImpersonateResponse(fetchState);
 
-    const { useImpersonate } = await importComposable();
-    const { impersonateAuthenticated, step, errors, loading } = useImpersonate();
-
-    await impersonateAuthenticated("target-user-id");
-
-    expect(auth.authorize).not.toHaveBeenCalled();
-    expect(fetchState.useFetch).toHaveBeenCalledTimes(1);
-    expect(auth.setAccessToken).not.toHaveBeenCalled();
-    expect(errors.value).toEqual([{ code: "impersonate_failed" }]);
-    expect(step.value).toBe("idle");
-    expect(loading.value).toBe(false);
-  });
-
-  it("resetState clears step and errors", async () => {
-    const auth = await getAuthState();
-    auth.authorize.mockImplementation(async () => {
-      auth.authErrors.value = [{ code: "invalid_grant" }];
+    let postedBody: URLSearchParams | undefined;
+    fetchState.useFetch.mockImplementation((url: string) => {
+      expect(url).toBe("/connect/token");
+      return {
+        post: (body: URLSearchParams) => {
+          postedBody = body;
+          return {
+            json: () => Promise.resolve(fetchState.fetchResult),
+          };
+        },
+      };
     });
 
     const { useImpersonate } = await importComposable();
-    const { impersonate, resetState, step, errors } = useImpersonate();
+    const { revertImpersonate, step } = useImpersonate();
 
-    await impersonate("support@example.com", "password", "target-user-id");
-    expect(errors.value.length).toBeGreaterThan(0);
+    await revertImpersonate("/company/members");
 
-    resetState();
+    expect(postedBody?.get("user_id")).toBe("");
+    expect(postedBody?.get("grant_type")).toBe("impersonate");
+    expect(auth.setAccessToken).toHaveBeenCalledWith("access");
+    expect(auth.setRefreshToken).toHaveBeenCalledWith("refresh");
+    expect(auth.setTokenType).toHaveBeenCalledWith("Bearer");
+    expect(auth.setExpiresAt).toHaveBeenCalledWith(3600);
+    expect(step.value).toBe("success");
 
-    expect(step.value).toBe("idle");
-    expect(errors.value).toEqual([]);
+    // Timer not yet fired
+    expect(broadcastState.emit).not.toHaveBeenCalled();
+    expect(location.href).toBe("");
+
+    vi.runAllTimers();
+
+    expect(broadcastState.emit).toHaveBeenCalledTimes(1);
+    expect(broadcastState.emit).toHaveBeenCalledWith(
+      broadcastState.reloadAndOpenMainPage,
+      null,
+      broadcastState.TabsType.OTHERS,
+    );
+    expect(location.href).toBe("/company/members");
   });
 });

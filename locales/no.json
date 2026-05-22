@@ -81,7 +81,8 @@
       "all_products": "Alle produkter",
       "buy_now": "Kjøp nå",
       "see_all": "Se alle",
-      "report_a_problem": "Rapporter et problem"
+      "report_a_problem": "Rapporter et problem",
+      "copy_to_clipboard": "Kopier til utklippstavlen"
     },
     "labels": {
       "actions": "Handlinger",
@@ -209,6 +210,7 @@
       "fail_to_change_quantity_in_cart": "Antallet for produktet kan dessverre ikke oppdateres i handlekurven. {reason}",
       "unhandled_error": "Beklager ulempen. Serveren vår opplever for øyeblikket tekniske problemer. Prøv igjen senere.",
       "report_sent_successfully": "Takk! Din rapport er sendt. Vi vil se på det.",
+      "copied_to_clipboard": "Kopiert til utklippstavlen",
       "role_update_successful": "Brukerrollen er oppdatert",
       "role_update_failed": "Feil ved oppdatering av rolle: {0}",
       "passwords_do_not_match": "Passordfeltene samsvarer ikke",
@@ -217,6 +219,7 @@
       "password_about_expire": "Passordet ditt utløper om {value} dager. Sett et nytt passord i profilen din",
       "password_expired": "Passordet ditt har utløpt",
       "data_changed": "Data har endret seg i en annen fane. Oppdater siden for å se de nyeste dataene.",
+      "outdated_backend_modules": "Frontend-applikasjonen forventer nyere versjoner av plattformen og en eller flere moduler. <br> Frontend-applikasjonen kjører på en inkompatibel backend. Noen funksjoner kan være utilgjengelige, forringede eller ustabile inntil plattformen og modulene er oppgradert for å møte nettbutikkens krav. Vennligst del rapporten nedenfor med administratoren din.",
       "logo_changed": "Logoen er endret.",
       "logo_deleted": "Logoen er slettet.",
       "pending_operations_leaving_page_confirmation": "Noen operasjoner er fortsatt i gang. Er du sikker på at du vil forlate denne siden? Endringer som ikke er lagret kan gå tapt."
@@ -316,6 +319,8 @@
           "call_us_label": "Ring oss: ",
           "logged_in_as": "logget inn som",
           "account_menu_label": "Kontomeny",
+          "back_to_operator": "Tilbake til {name}",
+          "switching_back": "Bytter tilbake…",
           "no_results": "Ingen resultater funnet",
           "dark_mode": {
             "system": "Tema: automatisk",
@@ -588,6 +593,10 @@
       "block_member_modal": {
         "title": "Blokker bruker",
         "text": "Er du sikker på at du vil blokkere brukerens tilgang?"
+      },
+      "login_on_behalf_modal": {
+        "title": "Logg inn på vegne av",
+        "text": "Du logger inn på vegne av {email}. Økten vil bli loggført."
       },
       "unblock_member_modal": {
         "title": "Opphev blokkering av bruker",
@@ -935,7 +944,8 @@
         "list_edit_button": "Rediger",
         "remove_list_button": "Fjern",
         "make_private_button": "Gjør privat",
-        "share_button": "Del"
+        "share_button": "Del",
+        "last_modified_label": "Sist endret: {date}"
       },
       "list_details": {
         "add_all_to_cart_button": "Legg alle i handlekurven",
@@ -1097,7 +1107,7 @@
         "title": "Endre passord"
       },
       "header": "Endre passordet ditt",
-      "success_message": "Passordet ditt er endret"
+      "success_message": "Passordet ditt er endret. Når du endrer passordet ditt, blir du logget ut av alle andre enheter og nettlesere."
     },
     "sign_in": {
       "meta": {
@@ -1371,6 +1381,7 @@
           "invite": "Inviter",
           "reset_search": "Tilbakestill søk",
           "edit_role": "Rediger rolle",
+          "login_on_behalf": "Logg inn på vegne av",
           "block_user": "Blokker bruker",
           "unblock_user": "Opphev blokkering av bruker",
           "delete": "Slett",

@@ -5,6 +5,7 @@ import { useAuth } from "@/core/composables";
 import { Logger } from "@/core/utilities";
 import { TabsType, useBroadcast, reloadAndOpenMainPage } from "@/shared/broadcast";
 import { useNotifications } from "@/shared/notification";
+import { useUser } from "./useUser";
 import type { IdentityErrorType } from "@/core/api/graphql/types";
 import type { ConnectTokenResponseType } from "@/core/types";
 
@@ -26,7 +27,7 @@ export function useImpersonate() {
     errors.value = [];
   }
 
-  async function doImpersonate(targetUserId: string): Promise<void> {
+  async function requestImpersonateToken(userId: string, redirectTo: string = "/"): Promise<void> {
     step.value = "impersonate";
 
     try {
@@ -35,7 +36,7 @@ export function useImpersonate() {
           new URLSearchParams({
             grant_type: "impersonate",
             scope: "offline_access",
-            user_id: targetUserId,
+            user_id: userId,
           }),
           "application/x-www-form-urlencoded",
         )
@@ -63,22 +64,31 @@ export function useImpersonate() {
         setRefreshToken(refresh_token);
         step.value = "success";
 
-        // reload all tabs to renew state
+        // Ordering invariant: tokens must be persisted to localStorage (above) BEFORE the
+        // broadcast fires, so other tabs read the new session on reload. Don't reorder.
+        // We use OTHERS + explicit location.href so the current tab can navigate to a
+        // non-"/" URL while other tabs follow the existing reload-to-home behavior.
         setTimeout(() => {
-          void broadcast.emit(reloadAndOpenMainPage, null, TabsType.ALL);
+          void broadcast.emit(reloadAndOpenMainPage, null, TabsType.OTHERS);
+          location.href = redirectTo;
         }, 1000);
       } else {
         notifications.error({ text: t("pages.account.impersonate.error") });
-        Logger.error(doImpersonate.name, tokenError, tokenErrors);
+        Logger.error(requestImpersonateToken.name, tokenError, tokenErrors);
         errors.value = [{ code: "impersonate_failed" }];
         step.value = "idle";
       }
     } catch (e) {
       notifications.error({ text: t("pages.account.impersonate.error") });
-      Logger.error(doImpersonate.name, e);
+      Logger.error(requestImpersonateToken.name, e);
       errors.value = [{ code: "impersonate_failed" }];
       step.value = "idle";
     }
+  }
+
+  async function revertImpersonate(redirectTo: string = "/"): Promise<void> {
+    resetState();
+    await requestImpersonateToken("", redirectTo);
   }
 
   async function impersonate(supportEmail: string, supportPassword: string, targetUserId: string): Promise<void> {
@@ -99,8 +109,8 @@ export function useImpersonate() {
 
     // Non-400 failures (network, 5xx, etc.) leave authErrors empty but throw the promise.
     // If authorize threw without producing an errors array, the token was NOT written —
-    // proceeding to doImpersonate would emit unauthorizedErrorEvent and redirect to /sign-in.
-    // Surface a generic error to the form instead.
+    // proceeding to requestImpersonateToken would emit unauthorizedErrorEvent and redirect
+    // to /sign-in. Surface a generic error to the form instead.
     if (authThrew && !hasAuthErrors) {
       errors.value = [{ code: "generic" }];
       step.value = "idle";
@@ -113,17 +123,48 @@ export function useImpersonate() {
       return;
     }
 
-    await doImpersonate(targetUserId);
+    await requestImpersonateToken(targetUserId);
   }
 
   async function impersonateAuthenticated(targetUserId: string): Promise<void> {
     resetState();
-    await doImpersonate(targetUserId);
+    await requestImpersonateToken(targetUserId);
+  }
+
+  const { operator } = useUser();
+  const reverting = ref(false);
+
+  const backToOperatorLabel = computed(() =>
+    operator.value
+      ? t("shared.layout.header.top_header.back_to_operator", {
+          name: operator.value.contact?.fullName || operator.value.userName,
+        })
+      : "",
+  );
+
+  async function backToOperator(): Promise<void> {
+    reverting.value = true;
+    try {
+      await revertImpersonate("/company/members");
+    } catch (e) {
+      Logger.error(backToOperator.name, e);
+    }
+    // requestImpersonateToken handles its own errors and never re-throws.
+    // On success step="success" and the page reloads shortly after, so the loader
+    // stays visible until then. On any failure step is reset to "idle" — release
+    // the loader so the user can retry.
+    if (step.value !== "success") {
+      reverting.value = false;
+    }
   }
 
   return {
     impersonate,
     impersonateAuthenticated,
+    revertImpersonate,
+    backToOperator,
+    backToOperatorLabel,
+    reverting,
     loading,
     step,
     errors,
