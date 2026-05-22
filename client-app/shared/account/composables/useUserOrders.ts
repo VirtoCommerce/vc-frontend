@@ -13,7 +13,7 @@ export interface IUseUserOrdersOptions {
   itemsPerPage?: MaybeRef<number>;
 }
 
-const facets = shallowRef<OrderFacetType[] | undefined>();
+export const facets = shallowRef<OrderFacetType[] | undefined>();
 
 export function useUserOrders(options: IUseUserOrdersOptions) {
   const itemsPerPage = ref(options.itemsPerPage ?? DEFAULT_ORDERS_PER_PAGE);

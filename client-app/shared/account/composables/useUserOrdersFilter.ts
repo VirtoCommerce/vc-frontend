@@ -1,14 +1,18 @@
-import { computed, ref } from "vue";
+import { computed, ref, unref } from "vue";
 import { useI18n } from "vue-i18n";
+import { CUSTOMER_NAME_FACET_NAME } from "@/core/constants";
 import { DateFilterId } from "@/core/enums";
-import { toEndDateFilterValue, toStartDateFilterValue } from "@/core/utilities";
+import { toEndDateFilterValue, toStartDateFilterValue, toDateISOString } from "@/core/utilities";
+import { useUser } from "./useUser";
+import { facets } from "./useUserOrders";
 import type { DateFilterType } from "@/core/types";
-import type { OrdersFilterDataType, OrdersFilterChipsItemType, OrderFacetType } from "@/shared/account";
-import type { Ref } from "vue";
+import type { OrdersFilterDataType, OrdersFilterChipsItemType, OrderFacetType, OrderScopeType } from "@/shared/account";
+import type { MaybeRef, Ref } from "vue";
 
 const filterData: Ref<OrdersFilterDataType> = ref({ statuses: [], customerNames: [] });
 const appliedFilterData: Ref<OrdersFilterDataType> = ref({ ...filterData.value });
 const facetLocalization: Ref<OrderFacetType[] | undefined> = ref();
+const selectedDateFilterType: Ref<DateFilterType | undefined> = ref();
 
 function getFirstDayOfWeek(currentDate: Date): Date {
   const date = new Date(currentDate);
@@ -18,8 +22,9 @@ function getFirstDayOfWeek(currentDate: Date): Date {
   return new Date(date.setDate(diff));
 }
 
-export function useUserOrdersFilter() {
+export function useUserOrdersFilter(orderScope?: MaybeRef<OrderScopeType>) {
   const { d, t } = useI18n();
+  const { isOrganizationMaintainer } = useUser();
 
   function getDateFilterRanges(): DateFilterType[] {
     const currentDate = new Date();
@@ -85,6 +90,8 @@ export function useUserOrdersFilter() {
     ];
   }
 
+  const dateFilterTypes = computed(() => getDateFilterRanges());
+
   const isFilterEmpty = computed(() => {
     const { statuses, startDate, endDate, customerNames } = appliedFilterData.value;
     return !statuses.length && !startDate && !endDate && !customerNames?.length;
@@ -130,6 +137,15 @@ export function useUserOrdersFilter() {
     return items;
   });
 
+  const organizationCustomerNames = computed(() =>
+    facets.value?.find((item) => item.name === CUSTOMER_NAME_FACET_NAME)?.items?.map((item) => item.label),
+  );
+
+  const showCustomerNameFilter = computed(() => {
+    const scope = orderScope ? unref(orderScope) : undefined;
+    return isOrganizationMaintainer.value && scope === "organization" && !!organizationCustomerNames.value?.length;
+  });
+
   function applyFilters() {
     if (JSON.stringify(appliedFilterData.value) === JSON.stringify(filterData.value)) {
       return;
@@ -137,13 +153,16 @@ export function useUserOrdersFilter() {
     appliedFilterData.value = { ...filterData.value };
   }
 
-  function resetFilters() {
+  function resetFilterData() {
     filterData.value = { statuses: [], customerNames: [], startDate: undefined, endDate: undefined };
     appliedFilterData.value = { ...filterData.value };
   }
 
-  function resetDataToApplied() {
-    filterData.value = { ...appliedFilterData.value };
+  function resetFilters() {
+    resetFilterData();
+    selectedDateFilterType.value = dateFilterTypes.value[0];
+    selectedDateFilterType.value.startDate = undefined;
+    selectedDateFilterType.value.endDate = undefined;
   }
 
   function removeFilterChipsItem(item: OrdersFilterChipsItemType) {
@@ -167,10 +186,16 @@ export function useUserOrdersFilter() {
     }
 
     filterData.value = { ...appliedFilterData.value };
+
+    if (item.fieldName === "startDate" || item.fieldName === "endDate") {
+      selectedDateFilterType.value = dateFilterTypes.value[0];
+      selectedDateFilterType.value.startDate = appliedFilterData.value?.startDate;
+      selectedDateFilterType.value.endDate = appliedFilterData.value?.endDate;
+    }
   }
 
-  function setFacetsLocalization(facets: OrderFacetType[] | undefined) {
-    facetLocalization.value = facets;
+  function setFacetsLocalization(localizationFacets: OrderFacetType[] | undefined) {
+    facetLocalization.value = localizationFacets;
   }
 
   function getFacetLocalization(facetName: string, term: string): string | undefined {
@@ -178,17 +203,27 @@ export function useUserOrdersFilter() {
     return facet?.items?.find((el) => el.term === term)?.label;
   }
 
+  function handleOrdersDateFilterChange(dateFilterType: DateFilterType): void {
+    filterData.value.startDate = dateFilterType.startDate ? toDateISOString(dateFilterType.startDate) : undefined;
+    filterData.value.endDate = dateFilterType.endDate ? toDateISOString(dateFilterType.endDate) : undefined;
+    selectedDateFilterType.value = dateFilterType;
+  }
+
   return {
     filterData,
     appliedFilterData: computed(() => appliedFilterData.value),
-    dateFilterTypes: computed(() => getDateFilterRanges()),
+    dateFilterTypes,
     isFilterEmpty,
     isFilterDirty,
     filterChipsItems,
+    organizationCustomerNames,
+    showCustomerNameFilter,
     applyFilters,
     resetFilters,
-    resetDataToApplied,
+    resetFilterData,
     removeFilterChipsItem,
     setFacetsLocalization,
+    selectedDateFilterType,
+    handleOrdersDateFilterChange,
   };
 }

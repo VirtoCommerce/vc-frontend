@@ -106,7 +106,7 @@ usePageHead({
 });
 
 const { loading, orders, fetchOrders, pages, page } = useUserOrders({ itemsPerPage: 4 });
-const { resetFilters } = useUserOrdersFilter();
+const { resetFilterData } = useUserOrdersFilter();
 const { goToOrderDetails } = useOrderNavigation();
 const { getModuleSettings } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 
@@ -115,7 +115,7 @@ const { continue_shopping_link } = getModuleSettings({
 });
 
 onMounted(async () => {
-  resetFilters();
+  resetFilterData();
   await fetchOrders("private");
 });
 </script>
