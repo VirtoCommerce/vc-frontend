@@ -1,5 +1,5 @@
 <template>
-  <VcPopover placement="bottom-end" :offset-options="8" :disabled="loading" lazy>
+  <VcPopover placement="bottom-end" class="orders-desktop-filters" :offset-options="8" :disabled="loading" lazy>
     <template #default="{ triggerProps }">
       <VcButton :disabled="loading" variant="outline" v-bind="triggerProps">
         <VcIcon name="filter" />

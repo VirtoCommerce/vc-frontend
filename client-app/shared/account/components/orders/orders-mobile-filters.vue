@@ -1,11 +1,11 @@
 <template>
-  <VcButton :disabled="loading" icon @click="filtersVisible = true">
+  <VcButton v-bind="$attrs" :disabled="loading" icon @click="filtersVisible = true">
     <VcIcon name="filter" />
 
     <span>{{ $t("common.buttons.filters") }}</span>
   </VcButton>
 
-  <VcPopupSidebar :is-visible="filtersVisible" @hide="filtersVisible = false">
+  <VcPopupSidebar class="orders-mobile-filters" :is-visible="filtersVisible" @hide="filtersVisible = false">
     <MobileOrdersFilter>
       <template #buyerNameFilterType>
         <VcWidget v-if="showCustomerNameFilter" :title="$t('common.labels.buyer_name')" size="sm">
@@ -54,12 +54,14 @@ import DateFilterSelect from "../date-filter-select.vue";
 import MobileOrdersFilter from "../mobile-orders-filter.vue";
 import type { OrderScopeType } from "../../types";
 
+defineOptions({ inheritAttrs: false });
+
+const props = defineProps<IProps>();
+
 interface IProps {
   orderScope: OrderScopeType;
   loading: boolean;
 }
-
-const props = defineProps<IProps>();
 
 const {
   filterData,
