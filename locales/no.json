@@ -681,7 +681,9 @@
         "expires": "@:shared.account.promotion_coupons.expires",
         "custom_code": "Egendefinert kode",
         "enter_custom_code": "Skriv inn egendefinert kode",
-        "all_coupons": "Se alle kuponger og kampanjer"
+        "all_coupons": "Se alle kuponger og kampanjer",
+        "apply_aria": "Apply coupon {code}",
+        "remove_aria": "Remove coupon"
       }
     },
     "catalog": {

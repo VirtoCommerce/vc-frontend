@@ -33,6 +33,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import type { GetPromotionCouponsQuery } from "@/core/api/graphql/types";
 
 type ViewType = "default" | "applied" | "error";
@@ -59,11 +60,14 @@ interface IViewConfig {
     variant: VcButtonVariantType;
     color: VcButtonColorType;
     disabled: boolean;
+    ariaLabel: string;
   };
 }
 
 const emit = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), { custom: false, modelValue: "", loading: false });
+
+const { t } = useI18n();
 
 const code = computed({
   get: () => (props.custom ? props.modelValue : (props.coupon?.couponCode ?? "")),
@@ -87,22 +91,40 @@ function handleClick() {
   }
 }
 
-const viewConfigs: Record<ViewType, IViewConfig> = {
-  default: {
-    iconName: "receipt-tax",
-    button: { icon: "arrow-right", variant: "solid", color: "primary", disabled: false },
-  },
-  applied: {
-    iconName: "round-check",
-    button: { icon: "outline-trash", variant: "no-background", color: "neutral", disabled: false },
-  },
-  error: {
-    iconName: "receipt-tax",
-    button: { icon: "arrow-right", variant: "solid", color: "primary", disabled: true },
-  },
-};
+const viewConfig = computed<IViewConfig>(() => {
+  const applyAriaLabel = t("shared.cart.coupons_section.apply_aria", { code: code.value });
+  const removeAriaLabel = t("shared.cart.coupons_section.remove_aria");
 
-const viewConfig = computed(() => viewConfigs[props.view]);
+  const applyButtonBase = {
+    icon: "arrow-right",
+    variant: "solid",
+    color: "primary",
+    ariaLabel: applyAriaLabel,
+  } as const;
+
+  const viewConfigs: Record<ViewType, IViewConfig> = {
+    default: {
+      iconName: "receipt-tax",
+      button: { ...applyButtonBase, disabled: false },
+    },
+    applied: {
+      iconName: "round-check",
+      button: {
+        icon: "outline-trash",
+        variant: "no-background",
+        color: "neutral",
+        disabled: false,
+        ariaLabel: removeAriaLabel,
+      },
+    },
+    error: {
+      iconName: "receipt-tax",
+      button: { ...applyButtonBase, disabled: true },
+    },
+  };
+
+  return viewConfigs[props.view];
+});
 </script>
 
 <style lang="scss">

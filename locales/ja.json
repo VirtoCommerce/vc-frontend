@@ -681,7 +681,9 @@
         "expires": "@:shared.account.promotion_coupons.expires",
         "custom_code": "カスタムコード",
         "enter_custom_code": "カスタムコードを入力",
-        "all_coupons": "すべてのクーポンとプロモーションを表示"
+        "all_coupons": "すべてのクーポンとプロモーションを表示",
+        "apply_aria": "Apply coupon {code}",
+        "remove_aria": "Remove coupon"
       }
     },
     "catalog": {
