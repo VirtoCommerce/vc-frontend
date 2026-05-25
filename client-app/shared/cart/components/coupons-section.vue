@@ -40,6 +40,8 @@
 <script setup lang="ts">
 import { ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
+import { useModules } from "@/core/composables";
+import { MODULE_ID_MARKETING_EXPERIENCE_API } from "@/core/constants/modules";
 import { ROUTES } from "@/router/routes/constants";
 import { usePromotionCoupons, useUser } from "@/shared/account";
 import { useCoupon } from "@/shared/cart";
@@ -47,9 +49,14 @@ import CouponCard from "./coupon-card.vue";
 
 const COUPONS_PER_PAGE = 4;
 
+const { hasModule } = useModules();
 const { t } = useI18n();
 const { isAuthenticated } = useUser();
-const { coupons } = usePromotionCoupons(COUPONS_PER_PAGE, undefined, isAuthenticated);
+const { coupons } = usePromotionCoupons(
+  COUPONS_PER_PAGE,
+  undefined,
+  isAuthenticated && hasModule(MODULE_ID_MARKETING_EXPERIENCE_API),
+);
 const { appliedCouponCode, couponError, loadingCouponCode, applyCoupon, removeCoupon } = useCoupon();
 
 const customCode = ref("");
