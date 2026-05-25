@@ -26,7 +26,7 @@
         {{ $t("shared.cart.coupons_section.expires") }} {{ $d(coupon.endDate, "short") }}
       </p>
 
-      <p v-if="view === 'error' && !!error" class="coupon-card__error">{{ error }}</p>
+      <p v-if="view === 'error' && !!error" role="alert" class="coupon-card__error">{{ error }}</p>
     </div>
   </div>
 </template>
