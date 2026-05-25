@@ -251,7 +251,7 @@ jobs:
     needs: ci
     if: ${{ ((github.ref == 'refs/heads/dev') && (github.event_name == 'push')) ||
         (github.event_name == 'workflow_dispatch') || (github.base_ref == 'dev') && (github.event_name == 'pull_request') }}
-    uses: VirtoCommerce/.github/.github/workflows/pytest-tests.yml@v3.800.31
+    uses: VirtoCommerce/.github/.github/workflows/pytest-tests.yml@v3.800.35
     with:
       installModules: 'false'
       installCustomModule: 'false'
@@ -260,6 +260,7 @@ jobs:
       customPackagesJsonUrl: 'https://github.com/${{ github.repository }}/raw/${{ needs.ci.outputs.branchName }}/backend-packages.json'
       testSuites: 'graphql,e2e,restapi'
     secrets:
+      appInsightsInstrumentationKey: ${{ secrets.E2E_APPINSIGHTSINSTRUMENTATIONKEY }}
       envPAT: ${{ secrets.REPO_TOKEN }}
       testSecretEnvFile: ${{ secrets.VC_TESTING_MODULE_ENV_FILE }}
       sendgridApiKey: ${{ secrets.SENDGRID_APIKEY_4E2E_AUTOTESTS }}
