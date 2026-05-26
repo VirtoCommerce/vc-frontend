@@ -214,7 +214,7 @@ export const events: TrackerEventsType = {
       sendEvent("purchase", {
         ...params,
         currency: order.currency?.code,
-        transaction_id: order.number,
+        transaction_id: order.id,
         value: order.subTotal?.amount,
         coupon: order.coupons?.[0],
         shipping: order.shippingTotal?.amount,
@@ -232,7 +232,7 @@ export const events: TrackerEventsType = {
       sendEvent("place_order", {
         ...params,
         currency: order.currency?.code,
-        transaction_id: order.number,
+        transaction_id: order.id,
         value: order.subTotal?.amount,
         coupon: order.coupons?.[0],
         shipping: order.shippingTotal?.amount,

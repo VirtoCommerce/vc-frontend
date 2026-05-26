@@ -131,8 +131,7 @@ describe("google-analytics events", () => {
       expect(item.item_list_name).toBe("List One");
       expect(item.price).toBe(120);
       expect(item.discount).toBe(20);
-      // Quantity must be hardcoded to 1 for view-type events, NOT stock count (563).
-      expect(item.quantity).toBe(1);
+      expect(item).not.toHaveProperty("quantity");
     });
 
     it("falls back affiliation to store name when product has no vendor", async () => {
@@ -182,13 +181,13 @@ describe("google-analytics events", () => {
       expect(payload.value).not.toBe(150);
       // items[] previously missing in placeOrder — defend the regression.
       expect(payload.items).toHaveLength(order.items.length);
-      // transaction_id must be derived from order.number.
-      expect(payload.transaction_id).toBe("ORD-12345");
+      // transaction_id must be derived from order.id (UUID).
+      expect(payload.transaction_id).toBe("order-uuid-1");
     });
   });
 
   describe("purchase", () => {
-    it("sends purchase with AC3-compliant payload (value=subTotal, transaction_id=order.number)", async () => {
+    it("sends purchase with AC3-compliant payload (value=subTotal, transaction_id=order.id)", async () => {
       const { events } = await import("./events");
       const order = buildOrder();
 
@@ -197,7 +196,7 @@ describe("google-analytics events", () => {
       const payload = hoisted.sendEventMock.mock.calls[0][1];
       expect(payload.value).toBe(100);
       expect(payload.value).not.toBe(150);
-      expect(payload.transaction_id).toBe("ORD-12345");
+      expect(payload.transaction_id).toBe("order-uuid-1");
     });
   });
 });

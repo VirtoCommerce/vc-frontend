@@ -70,8 +70,6 @@ export function productToGtagItem(
     item_list_name: ctx?.itemListName,
     price: listPrice,
     discount,
-    // GA4 view-type events: 1 displayed unit, not stock; cart uses lineItemToGtagItem.
-    quantity: 1,
     ...categories,
   };
 }
