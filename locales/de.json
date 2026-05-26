@@ -81,7 +81,8 @@
       "all_products": "Alle Produkte",
       "buy_now": "Jetzt kaufen",
       "see_all": "Alle anzeigen",
-      "report_a_problem": "Problem melden"
+      "report_a_problem": "Problem melden",
+      "copy_to_clipboard": "In die Zwischenablage kopieren"
     },
     "labels": {
       "actions": "Aktionen",
@@ -209,6 +210,7 @@
       "fail_to_change_quantity_in_cart": "Entschuldigung, die Produktmenge im Warenkorb kann nicht aktualisiert werden. {reason}",
       "unhandled_error": "Entschuldigen Sie die Unannehmlichkeiten. Unser Server hat derzeit technische Probleme. Bitte versuchen Sie es später erneut.",
       "report_sent_successfully": "Vielen Dank! Ihr Bericht wurde erfolgreich gesendet. Wir werden uns darum kümmern.",
+      "copied_to_clipboard": "In die Zwischenablage kopiert",
       "role_update_successful": "Die Kundenrolle wurde erfolgreich aktualisiert.",
       "role_update_failed": "Es sind Fehler bei der Aktualisierung der Rolle aufgetreten: {0}",
       "passwords_do_not_match": "Die Passwortfelder müssen übereinstimmende Werte haben.",
@@ -217,6 +219,7 @@
       "password_about_expire": "Ihr Passwort läuft in {value} Tag(en) ab. Bitte setzen Sie ein neues Passwort im Profil.",
       "password_expired": "Ihr Passwort ist abgelaufen",
       "data_changed": "Die Daten wurden in einem der anderen Tabs geändert. Bitte aktualisieren Sie die Seite, um die aktuellen Daten anzuzeigen.",
+      "outdated_backend_modules": "Die Frontend-Anwendung erwartet neuere Versionen der Plattform und eines oder mehrerer Module. <br> Die Frontend-Anwendung läuft auf einem inkompatiblen Backend. Einige Funktionen sind möglicherweise nicht verfügbar, beeinträchtigt oder instabil, bis die Plattform und die Module aufgerüstet sind, um die Anforderungen des Shops zu erfüllen. Bitte teilen Sie den unten stehenden Bericht mit Ihrem Administrator.",
       "logo_changed": "Das Logo wurde erfolgreich geändert.",
       "logo_deleted": "Das Logo wurde gelöscht.",
       "pending_operations_leaving_page_confirmation": "Einige Vorgänge sind noch in Bearbeitung. Möchten Sie diese Seite wirklich verlassen? Nicht gespeicherte Änderungen gehen möglicherweise verloren."
@@ -316,6 +319,8 @@
           "call_us_label": "Rufen Sie uns an: ",
           "logged_in_as": "eingeloggt als",
           "account_menu_label": "Kontomenü",
+          "back_to_operator": "Zurück zu {name}",
+          "switching_back": "Wechsle zurück…",
           "no_results": "Keine Ergebnisse gefunden",
           "dark_mode": {
             "system": "Design: automatisch",
@@ -588,6 +593,10 @@
       "block_member_modal": {
         "title": "Benutzer blockieren",
         "text": "Sind Sie sicher, dass Sie den Zugriff des Benutzers blockieren möchten?"
+      },
+      "login_on_behalf_modal": {
+        "title": "Im Namen anmelden",
+        "text": "Sie melden sich im Namen von {email} an. Die Sitzung wird protokolliert."
       },
       "unblock_member_modal": {
         "title": "Benutzer entsperren",
@@ -935,7 +944,8 @@
         "list_edit_button": "Bearbeiten",
         "remove_list_button": "Löschen",
         "make_private_button": "Privat machen",
-        "share_button": "Teilen"
+        "share_button": "Teilen",
+        "last_modified_label": "Zuletzt geändert: {date}"
       },
       "list_details": {
         "add_all_to_cart_button": "Alles in den Warenkorb",
@@ -1097,7 +1107,7 @@
         "title": "Passwort ändern"
       },
       "header": "Ändern Sie Ihr Passwort",
-      "success_message": "Ihr Passwort wurde erfolgreich geändert"
+      "success_message": "Ihr Passwort wurde erfolgreich geändert. Durch das Ändern Ihres Passworts werden Sie von allen anderen Geräten und Browsern abgemeldet."
     },
     "sign_in": {
       "meta": {
@@ -1371,6 +1381,7 @@
           "invite": "Einladen",
           "reset_search": "Suche zurücksetzen",
           "edit_role": "Rolle bearbeiten",
+          "login_on_behalf": "Im Namen anmelden",
           "block_user": "Benutzer blockieren",
           "unblock_user": "Benutzer entsperren",
           "delete": "Löschen",

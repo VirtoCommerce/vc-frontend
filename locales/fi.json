@@ -81,7 +81,8 @@
       "all_products": "Kaikki tuotteet",
       "buy_now": "Osta nyt",
       "see_all": "Katso kaikki",
-      "report_a_problem": "Ilmoita ongelmasta"
+      "report_a_problem": "Ilmoita ongelmasta",
+      "copy_to_clipboard": "Kopioi leikepöydälle"
     },
     "labels": {
       "actions": "Toiminnot",
@@ -209,6 +210,7 @@
       "fail_to_change_quantity_in_cart": "Valitettavasti tuotteen määrää ei voi päivittää ostoskorissa. {reason}",
       "unhandled_error": "Pahoittelut häiriöstä. Palvelimellamme on tällä hetkellä teknisiä ongelmia. Yritä uudelleen myöhemmin.",
       "report_sent_successfully": "Kiitos! Raporttisi on lähetetty onnistuneesti. Tarkastelemme sitä.",
+      "copied_to_clipboard": "Kopioitu leikepöydälle",
       "role_update_successful": "Käyttäjärooli on päivitetty onnistuneesti",
       "role_update_failed": "Virhe roolin päivityksessä: {0}",
       "passwords_do_not_match": "Salasanakenttien arvot eivät täsmää",
@@ -217,6 +219,7 @@
       "password_about_expire": "Salasanasi vanhenee {value} päivän kuluttua. Aseta uusi salasana profiilissasi",
       "password_expired": "Salasanasi on vanhentunut",
       "data_changed": "Tiedot ovat muuttuneet toisella välilehdellä. Päivitä sivu nähdäksesi viimeisimmät tiedot.",
+      "outdated_backend_modules": "Frontend-sovellus odottaa uudempaa versiota alustasta ja yhdestä tai useammasta moduulista. <br> Frontend-sovellus käyttää yhteensopimatonta taustajärjestelmää. Jotkin ominaisuudet eivät välttämättä ole käytettävissä, toimivat heikosti tai ovat epävakaita, kunnes alusta ja moduulit on päivitetty vastaamaan verkkokaupan vaatimuksia. Jaa alla oleva raportti järjestelmänvalvojallesi.",
       "logo_changed": "Logo on vaihdettu onnistuneesti.",
       "logo_deleted": "Logo on poistettu.",
       "pending_operations_leaving_page_confirmation": "Osa toimintoja on vielä käynnissä. Haluatko varmasti poistua tältä sivulta? Tallentamattomat muutokset saattavat kadota."
@@ -316,6 +319,8 @@
           "call_us_label": "Soita meille: ",
           "logged_in_as": "kirjautuneena nimellä",
           "account_menu_label": "Tilivalikko",
+          "back_to_operator": "Takaisin: {name}",
+          "switching_back": "Palataan…",
           "no_results": "Ei tuloksia",
           "dark_mode": {
             "system": "Teema: automaattinen",
@@ -588,6 +593,10 @@
       "block_member_modal": {
         "title": "Estä käyttäjä",
         "text": "Haluatko varmasti estää käyttäjän pääsyn?"
+      },
+      "login_on_behalf_modal": {
+        "title": "Kirjaudu sisään käyttäjän nimissä",
+        "text": "Kirjaudut sisään käyttäjän {email} nimissä. Istunto tallennetaan."
       },
       "unblock_member_modal": {
         "title": "Poista esto käyttäjältä",
@@ -935,7 +944,8 @@
         "list_edit_button": "Muokkaa",
         "remove_list_button": "Poista",
         "make_private_button": "Tee yksityiseksi",
-        "share_button": "Jaa"
+        "share_button": "Jaa",
+        "last_modified_label": "Viimeksi muokattu: {date}"
       },
       "list_details": {
         "add_all_to_cart_button": "Lisää kaikki ostoskoriin",
@@ -1097,7 +1107,7 @@
         "title": "Vaihda salasana"
       },
       "header": "Vaihda salasanasi",
-      "success_message": "Salasanasi on vaihdettu onnistuneesti"
+      "success_message": "Salasanasi on vaihdettu onnistuneesti. Salasanan vaihtaminen kirjaa sinut ulos kaikilta muilta laitteilta ja selaimilta."
     },
     "sign_in": {
       "meta": {
@@ -1371,6 +1381,7 @@
           "invite": "Kutsu",
           "reset_search": "Nollaa haku",
           "edit_role": "Muokkaa roolia",
+          "login_on_behalf": "Kirjaudu sisään käyttäjän nimissä",
           "block_user": "Estä käyttäjä",
           "unblock_user": "Poista esto käyttäjältä",
           "delete": "Poista",

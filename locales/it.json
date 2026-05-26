@@ -81,7 +81,8 @@
       "all_products": "Tutti i prodotti",
       "buy_now": "Acquista ora",
       "see_all": "Vedi tutto",
-      "report_a_problem": "Segnala un problema"
+      "report_a_problem": "Segnala un problema",
+      "copy_to_clipboard": "Copia negli appunti"
     },
     "labels": {
       "actions": "Azioni",
@@ -209,6 +210,7 @@
       "fail_to_change_quantity_in_cart": "Spiacenti, non è possibile aggiornare la quantità del prodotto nel carrello. {reason}",
       "unhandled_error": "Ci scusiamo per l'inconveniente. Il nostro server sta attualmente riscontrando problemi tecnici. Riprova più tardi.",
       "report_sent_successfully": "Grazie! Il tuo rapporto è stato inviato con successo. Lo esamineremo.",
+      "copied_to_clipboard": "Copiato negli appunti",
       "role_update_successful": "Il ruolo del cliente è stato aggiornato con successo.",
       "role_update_failed": "Si sono verificati errori durante l'aggiornamento del ruolo: {0}",
       "passwords_do_not_match": "I campi della password devono avere valori corrispondenti.",
@@ -217,6 +219,7 @@
       "password_about_expire": "La tua password sta per scadere tra {value} giorno(i). Imposta una nuova password nel profilo.",
       "password_expired": "La tua password è scaduta",
       "data_changed": "I dati sono stati modificati in uno degli altri tab. Per favore, aggiorna la pagina per visualizzare i dati correnti.",
+      "outdated_backend_modules": "L'applicazione frontend si aspetta versioni più recenti della Piattaforma e di uno o più Moduli. <br> L'applicazione frontend è in esecuzione su un backend incompatibile. Alcune funzionalità potrebbero non essere disponibili, degradate o instabili fino a quando la Piattaforma e i Moduli non verranno aggiornati per soddisfare i requisiti del negozio. Condividi il report sottostante con il tuo amministratore.",
       "logo_changed": "Il logo è stato modificato con successo.",
       "logo_deleted": "Il logo è stato eliminato.",
       "pending_operations_leaving_page_confirmation": "Alcune operazioni sono ancora in corso. Vuoi veramente lasciare questa pagina? Le modifiche non salvate potrebbero andare perse."
@@ -316,6 +319,8 @@
           "call_us_label": "Chiamaci: ",
           "logged_in_as": "connesso come",
           "account_menu_label": "Menu account",
+          "back_to_operator": "Torna a {name}",
+          "switching_back": "Ritorno in corso…",
           "no_results": "Nessun risultato trovato",
           "dark_mode": {
             "system": "Tema: automatico",
@@ -588,6 +593,10 @@
       "block_member_modal": {
         "title": "Blocca utente",
         "text": "Sei sicuro di voler bloccare l'accesso dell'utente?"
+      },
+      "login_on_behalf_modal": {
+        "title": "Accedi per conto di",
+        "text": "Stai accedendo per conto di {email}. La sessione verrà registrata."
       },
       "unblock_member_modal": {
         "title": "Sblocca utente",
@@ -935,7 +944,8 @@
         "list_edit_button": "Modifica",
         "remove_list_button": "Elimina",
         "make_private_button": "Rendi privato",
-        "share_button": "Condividi"
+        "share_button": "Condividi",
+        "last_modified_label": "Ultima modifica: {date}"
       },
       "list_details": {
         "add_all_to_cart_button": "Aggiungi tutto al carrello",
@@ -1097,7 +1107,7 @@
         "title": "Cambia password"
       },
       "header": "Cambia la tua password",
-      "success_message": "La tua password è stata cambiata con successo"
+      "success_message": "La tua password è stata cambiata con successo. La modifica della password ti disconnetterà da tutti gli altri dispositivi e browser."
     },
     "sign_in": {
       "meta": {
@@ -1371,6 +1381,7 @@
           "invite": "Invita",
           "reset_search": "Reimposta ricerca",
           "edit_role": "Modifica ruolo",
+          "login_on_behalf": "Accedi per conto di",
           "block_user": "Blocca utente",
           "unblock_user": "Sblocca utente",
           "delete": "Elimina",

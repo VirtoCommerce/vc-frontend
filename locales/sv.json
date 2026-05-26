@@ -81,7 +81,8 @@
       "all_products": "Alla produkter",
       "buy_now": "Köp nu",
       "see_all": "Se alla",
-      "report_a_problem": "Rapportera ett problem"
+      "report_a_problem": "Rapportera ett problem",
+      "copy_to_clipboard": "Kopiera till urklipp"
     },
     "labels": {
       "actions": "Åtgärder",
@@ -209,6 +210,7 @@
       "fail_to_change_quantity_in_cart": "Tyvärr, kan inte uppdatera produktantal i kundvagnen. {reason}",
       "unhandled_error": "Ursäkta besväret. Vår server upplever för närvarande tekniska problem. Vänligen försök igen senare.",
       "report_sent_successfully": "Tack! Din rapport har skickats framgångsrikt. Vi kommer att titta på det.",
+      "copied_to_clipboard": "Kopierat till urklipp",
       "role_update_successful": "Kundrollen har uppdaterats framgångsrikt",
       "role_update_failed": "Fel uppstod vid uppdatering av rollen: {0}",
       "passwords_do_not_match": "Lösenordsfälten måste ha matchande värden",
@@ -217,6 +219,7 @@
       "password_about_expire": "Ditt lösenord kommer att upphöra om {value} dag(ar). Ange ett nytt lösenord i profilen",
       "password_expired": "Ditt lösenord har upphört",
       "data_changed": "Data har ändrats på en av de andra flikarna. Uppdatera sidan för att visa de senaste uppgifterna.",
+      "outdated_backend_modules": "Frontend-applikationen förväntar sig nyare versioner av plattformen och en eller flera moduler. <br> Frontend-applikationen körs på en inkompatibel backend. Vissa funktioner kan vara otillgängliga, nedgraderade eller instabila tills plattformen och modulerna uppgraderas för att uppfylla butikens krav. Vänligen dela rapporten nedan med din administratör.",
       "logo_changed": "Logotypen har ändrats framgångsrikt.",
       "logo_deleted": "Logotypen har raderats.",
       "pending_operations_leaving_page_confirmation": "Vissa åtgärder pågår fortfarande. Vill du verkligen lämna den här sidan? Ändringar som inte sparats kan gå förlorade."
@@ -316,6 +319,8 @@
           "call_us_label": "Ring oss: ",
           "logged_in_as": "inloggad som",
           "account_menu_label": "Kontomeny",
+          "back_to_operator": "Tillbaka till {name}",
+          "switching_back": "Byter tillbaka…",
           "no_results": "Inga resultat hittades",
           "dark_mode": {
             "system": "Tema: automatiskt",
@@ -588,6 +593,10 @@
       "block_member_modal": {
         "title": "Blockera användare",
         "text": "Är du säker på att du vill blockera användarens åtkomst?"
+      },
+      "login_on_behalf_modal": {
+        "title": "Logga in å andras vägnar",
+        "text": "Du loggar in å {email}s vägnar. Sessionen kommer att loggas."
       },
       "unblock_member_modal": {
         "title": "Avblockera användare",
@@ -935,7 +944,8 @@
         "list_edit_button": "Redigera",
         "remove_list_button": "Radera",
         "make_private_button": "Gör privat",
-        "share_button": "Dela"
+        "share_button": "Dela",
+        "last_modified_label": "Senast ändrad: {date}"
       },
       "list_details": {
         "add_all_to_cart_button": "Lägg till alla i kundvagn",
@@ -1097,7 +1107,7 @@
         "title": "Ändra lösenord"
       },
       "header": "Ändra ditt lösenord",
-      "success_message": "Ditt lösenord har ändrats framgångsrikt"
+      "success_message": "Ditt lösenord har ändrats framgångsrikt. Att ändra ditt lösenord loggar ut dig från alla andra enheter och webbläsare."
     },
     "sign_in": {
       "meta": {
@@ -1371,6 +1381,7 @@
           "invite": "Bjud in",
           "reset_search": "Återställ sökning",
           "edit_role": "Redigera roll",
+          "login_on_behalf": "Logga in å andras vägnar",
           "block_user": "Blockera användare",
           "unblock_user": "Avblockera användare",
           "delete": "Radera",

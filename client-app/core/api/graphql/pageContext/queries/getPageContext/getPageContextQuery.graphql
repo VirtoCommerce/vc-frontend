@@ -28,7 +28,7 @@ query GetPageContext(
     slugInfo {
       ...slugInfoResponseTypeFields
     }
-    whiteLabelingSettings {
+    whiteLabelingSettings @gate(module: "VirtoCommerce.WhiteLabeling") {
       ...whiteLabelingFields
     }
   }

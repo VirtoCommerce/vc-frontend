@@ -1,12 +1,19 @@
 import { createHead } from "@unhead/vue/client";
 import { DefaultApolloClient } from "@vue/apollo-composable";
 import { createApp, h, provide } from "vue";
-import { apolloClient, getPageContext } from "@/core/api/graphql";
+import { apolloClient, getPageContext, initializeApplication } from "@/core/api/graphql";
 import { GetSlugInfoDocument } from "@/core/api/graphql/types";
-import { useCurrency, useDarkMode, useThemeContext, useNavigations, useWhiteLabeling } from "@/core/composables";
+import {
+  useCurrency,
+  useDarkMode,
+  useModules,
+  useThemeContext,
+  useNavigations,
+  useWhiteLabeling,
+} from "@/core/composables";
 import { useHotjar } from "@/core/composables/useHotjar";
 import { useLanguages } from "@/core/composables/useLanguages";
-import { FALLBACK_LOCALE, IS_DEVELOPMENT } from "@/core/constants";
+import { DEFAULT_NOTIFICATION_DURATION, FALLBACK_LOCALE, IS_DEVELOPMENT } from "@/core/constants";
 import { setGlobals } from "@/core/globals";
 import {
   applicationInsightsPlugin,
@@ -32,6 +39,7 @@ import { isPreviewMode as isPageBuilderPreviewMode } from "@/plugins/builder-pre
 import { createRouter } from "@/router";
 import { useUser } from "@/shared/account";
 import ProductBlocks from "@/shared/catalog/components/product";
+import { useNotifications } from "@/shared/notification";
 import { templateBlocks } from "@/shared/static-content";
 import { uiKit } from "@/ui-kit";
 import { getLocales as getUIKitLocales } from "@/ui-kit/utilities/getLocales";
@@ -86,6 +94,8 @@ export default async () => {
   const { fetchCatalogMenu } = useNavigations();
   const { themePresetName, setWhiteLabelingSettings } = useWhiteLabeling();
   const { setActivePreset } = useDarkMode();
+  const { setModules, outdatedModules } = useModules();
+  const notifications = useNotifications();
 
   const fallback = {
     locale: FALLBACK_LOCALE,
@@ -104,6 +114,13 @@ export default async () => {
     ? extractHostname(import.meta.env.APP_BACKEND_URL as string)
     : globalThis.location.hostname;
   const userId = savedUserId.value;
+
+  try {
+    const initialStore = await initializeApplication(domain);
+    setModules(initialStore?.settings?.modules);
+  } catch (e) {
+    Logger.warn("Failed to verify backend module versions", e);
+  }
 
   const getPageContextPromise = getPageContext({
     domain: domain,
@@ -253,7 +270,52 @@ export default async () => {
   };
 
   app.mount(appElement);
+
+  notifyOutdatedModules(outdatedModules.value, i18n.global.t, notifications);
 };
+
+function notifyOutdatedModules(
+  outdated: ReturnType<typeof useModules>["outdatedModules"]["value"],
+  t: (key: string, params?: Record<string, unknown>) => string,
+  notifications: ReturnType<typeof useNotifications>,
+): void {
+  if (!outdated.length) {
+    return;
+  }
+
+  const MODULES_PREVIEW_LIMIT = 3;
+  const modulesLines = outdated.map(
+    ({ moduleId, expectedVersion, backendVersion }) => `${moduleId} ${expectedVersion} ≥ ${backendVersion}`,
+  );
+  const previewLines = modulesLines.slice(0, MODULES_PREVIEW_LIMIT);
+  const hiddenCount = modulesLines.length - previewLines.length;
+  const previewHtml = hiddenCount > 0 ? `${previewLines.join("<br>")}<br>…` : previewLines.join("<br>");
+
+  notifications.error({
+    group: "OutdatedBackendModules",
+    singleInGroup: true,
+    html: `${t("common.messages.outdated_backend_modules")}<br><br>${previewHtml}`,
+    duration: DEFAULT_NOTIFICATION_DURATION,
+    variant: "outline-dark",
+    button: {
+      text: t("common.buttons.copy_to_clipboard"),
+      color: "secondary",
+      variant: "outline",
+      clickHandler: (notificationId: string) => {
+        void navigator.clipboard.writeText(modulesLines.join("\n"));
+
+        notifications.update(notificationId, {
+          duration: 5000,
+          type: "success",
+          text: t("common.messages.copied_to_clipboard"),
+          html: undefined,
+          variant: "solid",
+          button: undefined,
+        });
+      },
+    },
+  });
+}
 
 function getPermalink(permalink: string, getUrlWithoutPossibleLocale: (fullPath: string) => string) {
   permalink = getUrlWithoutPossibleLocale(permalink);

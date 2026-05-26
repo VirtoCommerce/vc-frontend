@@ -81,7 +81,8 @@
       "all_products": "所有产品",
       "buy_now": "立即购买",
       "see_all": "查看全部",
-      "report_a_problem": "报告问题"
+      "report_a_problem": "报告问题",
+      "copy_to_clipboard": "复制到剪贴板"
     },
     "labels": {
       "actions": "操作",
@@ -209,6 +210,7 @@
       "fail_to_change_quantity_in_cart": "抱歉，无法更新购物车中的商品数量。{reason}",
       "unhandled_error": "抱歉给您带来不便。我们的服务器目前遇到技术问题。请稍后再试。",
       "report_sent_successfully": "谢谢！您的报告已成功发送。我们会查看的。",
+      "copied_to_clipboard": "已复制到剪贴板",
       "role_update_successful": "客户角色已成功更新。",
       "role_update_failed": "更新角色时发生错误：{0}",
       "passwords_do_not_match": "密码字段的值必须匹配。",
@@ -217,6 +219,7 @@
       "password_about_expire": "您的密码将在 {value} 天后过期。请在配置文件中设置新密码。",
       "password_expired": "您的密码已过期",
       "data_changed": "数据在其他标签中被修改。请刷新页面以显示当前数据。",
+      "outdated_backend_modules": "前端应用程序需要新版本的平台和模块。<br>前端应用程序正在运行不兼容的后端。在平台和模块升级以满足店面要求之前，某些功能可能不可用、降级或不稳定。请与您的管理员分享以下报告。",
       "logo_changed": "标志已成功更改。",
       "logo_deleted": "标志已被删除。",
       "pending_operations_leaving_page_confirmation": "某些操作仍在进行中。确定要离开此页面吗？未保存的更改可能会丢失。"
@@ -316,6 +319,8 @@
           "call_us_label": "致电我们：",
           "logged_in_as": "已登录为",
           "account_menu_label": "帐户菜单",
+          "back_to_operator": "返回 {name}",
+          "switching_back": "正在返回…",
           "no_results": "未找到结果",
           "dark_mode": {
             "system": "主题：自动",
@@ -588,6 +593,10 @@
       "block_member_modal": {
         "title": "封锁用户",
         "text": "您确定要封锁该用户的访问权限吗？"
+      },
+      "login_on_behalf_modal": {
+        "title": "代表登录",
+        "text": "您正在代表 {email} 登录。该会话将被审计。"
       },
       "unblock_member_modal": {
         "title": "解除封锁用户",
@@ -935,7 +944,8 @@
         "list_edit_button": "编辑",
         "remove_list_button": "删除",
         "make_private_button": "设为私人",
-        "share_button": "分享"
+        "share_button": "分享",
+        "last_modified_label": "最后修改：{date}"
       },
       "list_details": {
         "add_all_to_cart_button": "全部加入购物车",
@@ -1097,7 +1107,7 @@
         "title": "更改密码"
       },
       "header": "更改您的密码",
-      "success_message": "您的密码已成功更改"
+      "success_message": "您的密码已成功更改。更改密码将使您从所有其他设备和浏览器上注销。"
     },
     "sign_in": {
       "meta": {
@@ -1371,6 +1381,7 @@
           "invite": "邀请",
           "reset_search": "重置搜索",
           "edit_role": "编辑角色",
+          "login_on_behalf": "代表登录",
           "block_user": "封锁用户",
           "unblock_user": "解除封锁用户",
           "delete": "删除",

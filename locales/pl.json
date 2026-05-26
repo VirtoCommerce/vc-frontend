@@ -81,7 +81,8 @@
       "all_products": "Wszystkie produkty",
       "buy_now": "Kup teraz",
       "see_all": "Zobacz wszystko",
-      "report_a_problem": "Zgłoś problem"
+      "report_a_problem": "Zgłoś problem",
+      "copy_to_clipboard": "Kopiuj do schowka"
     },
     "labels": {
       "actions": "Akcje",
@@ -209,6 +210,7 @@
       "fail_to_change_quantity_in_cart": "Przepraszamy, nie można zaktualizować ilości produktu w koszyku. {reason}",
       "unhandled_error": "Przepraszamy za niedogodności. Nasz serwer obecnie doświadcza problemów technicznych. Proszę spróbować ponownie później.",
       "report_sent_successfully": "Dziękujemy! Twój raport został pomyślnie wysłany. Zajmiemy się tym.",
+      "copied_to_clipboard": "Skopiowano do schowka",
       "role_update_successful": "Rola klienta została pomyślnie zaktualizowana.",
       "role_update_failed": "Wystąpiły błędy podczas aktualizacji roli: {0}",
       "passwords_do_not_match": "Pola hasła muszą mieć dopasowane wartości.",
@@ -217,6 +219,7 @@
       "password_about_expire": "Twoje hasło wkrótce wygaśnie za {value} dzień/dni. Proszę ustawić nowe hasło w profilu.",
       "password_expired": "Twoje hasło wygasło",
       "data_changed": "Dane zostały zmienione w jednym z innych tabów. Proszę odśwież stronę, aby wyświetlić aktualne dane.",
+      "outdated_backend_modules": "Aplikacja frontendowa oczekuje nowszych wersji Platformy i jednego lub więcej Modułów. <br> Aplikacja frontendowa działa na niekompatybilnym zapleczu. Niektóre funkcje mogą być niedostępne, zdegradowane lub niestabilne, dopóki Platforma i Moduły nie zostaną zaktualizowane, aby spełnić wymagania sklepu. Udostępnij poniższy raport swojemu administratorowi.",
       "logo_changed": "Logo zostało pomyślnie zmienione.",
       "logo_deleted": "Logo zostało usunięte.",
       "pending_operations_leaving_page_confirmation": "Niektóre operacje są w toku. Czy na pewno chcesz opuścić tę stronę? Niezapisane zmiany mogą zostać utracone."
@@ -316,6 +319,8 @@
           "call_us_label": "Zadzwoń do nas: ",
           "logged_in_as": "zalogowany jako",
           "account_menu_label": "Menu konta",
+          "back_to_operator": "Wróć do {name}",
+          "switching_back": "Powrót…",
           "no_results": "Nie znaleziono wyników",
           "dark_mode": {
             "system": "Motyw: automatyczny",
@@ -588,6 +593,10 @@
       "block_member_modal": {
         "title": "Blokuj użytkownika",
         "text": "Czy na pewno chcesz zablokować dostęp użytkownika?"
+      },
+      "login_on_behalf_modal": {
+        "title": "Zaloguj się w imieniu",
+        "text": "Logujesz się w imieniu {email}. Sesja zostanie zarejestrowana."
       },
       "unblock_member_modal": {
         "title": "Odblokuj użytkownika",
@@ -935,7 +944,8 @@
         "list_edit_button": "Edytuj",
         "remove_list_button": "Usuń",
         "make_private_button": "Uczyń prywatną",
-        "share_button": "Udostępnij"
+        "share_button": "Udostępnij",
+        "last_modified_label": "Ostatnia modyfikacja: {date}"
       },
       "list_details": {
         "add_all_to_cart_button": "Dodaj wszystko do koszyka",
@@ -1097,7 +1107,7 @@
         "title": "Zmień hasło"
       },
       "header": "Zmień swoje hasło",
-      "success_message": "Twoje hasło zostało pomyślnie zmienione"
+      "success_message": "Twoje hasło zostało pomyślnie zmienione. Zmiana hasła spowoduje wylogowanie ze wszystkich innych urządzeń i przeglądarek."
     },
     "sign_in": {
       "meta": {
@@ -1371,6 +1381,7 @@
           "invite": "Zaproś",
           "reset_search": "Resetuj wyszukiwanie",
           "edit_role": "Edytuj rolę",
+          "login_on_behalf": "Zaloguj się w imieniu",
           "block_user": "Zablokuj użytkownika",
           "unblock_user": "Odblokuj użytkownika",
           "delete": "Usuń",

@@ -3,6 +3,12 @@
     class="flex h-10 items-center gap-1 bg-[--header-top-bg-color] px-5 text-sm text-[--header-top-text-color] xl:gap-3 xl:px-11"
     data-test-id="top-header"
   >
+    <Teleport to="body">
+      <VcLoaderOverlay v-if="reverting" fixed-spinner data-test-id="back-to-operator-loader">
+        {{ $t("shared.layout.header.top_header.switching_back") }}
+      </VcLoaderOverlay>
+    </Teleport>
+
     <div class="flex min-w-0 shrink items-center gap-3">
       <LanguageSelector
         v-if="$context.availableLanguages && $context.availableLanguages.length > 1"
@@ -145,6 +151,20 @@
               </VcButton>
             </div>
 
+            <button
+              v-if="operator"
+              type="button"
+              class="flex items-center gap-2 border-t border-neutral-200 p-3 text-start hover:bg-neutral-50"
+              data-test-id="back-to-operator-row"
+              @click="onBackToOperator"
+            >
+              <VcIcon class="fill-primary" name="arrow-left" />
+
+              <span class="truncate">
+                {{ backToOperatorLabel }}
+              </span>
+            </button>
+
             <TopHeaderOrganizations v-if="isMultiOrganization" @organization-selected="loginMenuVisible = false" />
           </div>
         </div>
@@ -179,7 +199,7 @@ import { useDarkMode } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { ROUTES } from "@/router/routes/constants";
-import { useSignMeOut, useUser } from "@/shared/account";
+import { useImpersonate, useSignMeOut, useUser } from "@/shared/account";
 import { CurrencySelector, LanguageSelector } from "@/shared/layout/components";
 import { ShipToSelector } from "@/shared/ship-to-location";
 import DarkModeToggle from "./dark-mode-toggle.vue";
@@ -188,6 +208,7 @@ import TopHeaderOrganizations from "./top-header-organizations.vue";
 
 const { isAuthenticated, user, operator, organization, isMultiOrganization } = useUser();
 const { signMeOut } = useSignMeOut();
+const { reverting, backToOperatorLabel, backToOperator } = useImpersonate();
 const { isDarkModeAvailable } = useDarkMode();
 const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 
@@ -199,4 +220,9 @@ const support_phone_number = getSettingValue(MODULE_XAPI_KEYS.SUPPORT_PHONE_NUMB
 onClickOutside(loginMenu, () => {
   loginMenuVisible.value = false;
 });
+
+async function onBackToOperator(): Promise<void> {
+  loginMenuVisible.value = false;
+  await backToOperator();
+}
 </script>

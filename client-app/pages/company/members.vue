@@ -262,14 +262,17 @@
                 <MemberStatus :status="contact.status" />
               </td>
 
-              <td v-if="userCanEditOrganization" class="px-5 text-right">
+              <td v-if="canManageMembers" class="px-5 text-right">
                 <MembersDropdownMenu
-                  v-if="contact.id !== user.memberId"
+                  v-if="canShowDropdownFor(contact)"
                   :contact-status="contact.status"
+                  :can-edit-organization="userCanEditOrganization"
+                  :can-login-on-behalf="canLoginOnBehalfOf(contact)"
                   class="inline-block"
                   @edit="openEditCustomerRoleModal(contact)"
                   @remove="openDeleteModal(contact)"
                   @lock-or-unlock="openLockOrUnlockModal(contact, $event)"
+                  @login-on-behalf="openLoginOnBehalfModal(contact)"
                 />
               </td>
             </tr>
@@ -295,14 +298,17 @@
                 <MemberStatus :status="item.status" />
               </div>
 
-              <div v-if="userCanEditOrganization" class="w-7 flex-none">
+              <div v-if="canManageMembers" class="w-7 flex-none">
                 <MembersDropdownMenu
-                  v-if="item.id !== user.memberId"
+                  v-if="canShowDropdownFor(item)"
                   :contact-status="item.status"
+                  :can-edit-organization="userCanEditOrganization"
+                  :can-login-on-behalf="canLoginOnBehalfOf(item)"
                   placement="left-start"
                   @edit="openEditCustomerRoleModal(item)"
                   @remove="openDeleteModal(item)"
                   @lock-or-unlock="openLockOrUnlockModal(item, $event)"
+                  @login-on-behalf="openLoginOnBehalfModal(item)"
                 />
               </div>
             </div>
@@ -321,11 +327,12 @@
 import { breakpointsTailwind, onClickOutside, useBreakpoints } from "@vueuse/core";
 import { computed, onMounted, ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
+import { useRouter } from "vue-router";
 import { usePageHead } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { B2B_ROLES } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
-import { XApiPermissions } from "@/core/enums";
+import { StorefrontPermissions, XApiPermissions } from "@/core/enums";
 import { getFilterExpressionFromFacets } from "@/core/utilities";
 import { useUser } from "@/shared/account";
 import { FacetItem } from "@/shared/common";
@@ -380,6 +387,7 @@ const {
   resetFacetItem,
 } = useOrganizationContactsFilterFacets();
 const { openModal } = useModal();
+const router = useRouter();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const notifications = useNotifications();
 const { getModuleSettings } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
@@ -396,6 +404,16 @@ const filtersButtonElement = shallowRef<HTMLElement | null>(null);
 const filtersDropdownElement = shallowRef<HTMLElement | null>(null);
 
 const userCanEditOrganization = computed<boolean>(() => checkPermissions(XApiPermissions.CanEditOrganization));
+const userCanLoginOnBehalf = computed<boolean>(() => checkPermissions(StorefrontPermissions.CanImpersonate));
+const canManageMembers = computed<boolean>(() => userCanEditOrganization.value || userCanLoginOnBehalf.value);
+
+function canLoginOnBehalfOf(contact: ExtendedContactType): boolean {
+  return userCanLoginOnBehalf.value && !!contact.securityAccounts?.length;
+}
+
+function canShowDropdownFor(contact: ExtendedContactType): boolean {
+  return contact.id !== user.value.memberId && (userCanEditOrganization.value || canLoginOnBehalfOf(contact));
+}
 
 const columns = computed<VcTableColumnType[]>(() => {
   const result: VcTableColumnType[] = [
@@ -424,7 +442,7 @@ const columns = computed<VcTableColumnType[]>(() => {
     },
   ];
 
-  if (userCanEditOrganization.value) {
+  if (canManageMembers.value) {
     // Add action column
     result.push({
       id: "actions",
@@ -521,6 +539,26 @@ function openLockOrUnlockModal(contact: ExtendedContactType, isUnlock?: boolean)
           await lockContact(contact);
         }
         closeLockOrUnlockModal();
+      },
+    },
+  });
+}
+
+function openLoginOnBehalfModal(contact: ExtendedContactType): void {
+  const closeLoginOnBehalfModal = openModal({
+    component: "VcConfirmationModal",
+    props: {
+      variant: "info",
+      title: t("shared.company.login_on_behalf_modal.title"),
+      text: t("shared.company.login_on_behalf_modal.text", {
+        email: contact.extended.emails?.[0] ?? contact.fullName,
+      }),
+      onConfirm() {
+        if (!contact.securityAccounts?.length) {
+          return;
+        }
+        closeLoginOnBehalfModal();
+        void router.push({ name: "Impersonate", params: { userId: contact.securityAccounts[0].id } });
       },
     },
   });
