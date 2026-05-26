@@ -1,0 +1,15 @@
+query InitializeApplication($domain: String!) {
+  store(domain: $domain) {
+    storeUrl
+    settings {
+      modules {
+        moduleId
+        version
+        settings {
+          name
+          value
+        }
+      }
+    }
+  }
+}
