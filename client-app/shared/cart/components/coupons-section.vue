@@ -1,7 +1,7 @@
 <template>
   <VcWidget class="coupons-section" :title="$t('shared.cart.coupons_section.title')">
     <template #default-container>
-      <div class="coupons-section__container">
+      <div class="coupons-section__container" :class="{ 'coupons-section__container--no-link': !queryEnabled }">
         <CouponCard
           v-for="coupon in coupons"
           :key="coupon.id"
@@ -25,6 +25,7 @@
       </div>
 
       <router-link
+        v-if="queryEnabled"
         class="coupons-section__link"
         :to="{ name: ROUTES.PROMOTION_COUPONS.NAME }"
         target="_blank"
@@ -38,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watchEffect } from "vue";
+import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useModules } from "@/core/composables";
 import { MODULE_ID_MARKETING_EXPERIENCE_API } from "@/core/constants/modules";
@@ -52,11 +53,9 @@ const COUPONS_PER_PAGE = 4;
 const { hasModule } = useModules();
 const { t } = useI18n();
 const { isAuthenticated } = useUser();
-const { coupons } = usePromotionCoupons(
-  COUPONS_PER_PAGE,
-  undefined,
-  isAuthenticated && hasModule(MODULE_ID_MARKETING_EXPERIENCE_API),
-);
+const isMarketingExperienceApiEnabled = computed(() => hasModule(MODULE_ID_MARKETING_EXPERIENCE_API));
+const queryEnabled = computed(() => isAuthenticated.value && isMarketingExperienceApiEnabled.value);
+const { coupons } = usePromotionCoupons(COUPONS_PER_PAGE, undefined, queryEnabled);
 const { appliedCouponCode, couponError, loadingCouponCode, applyCoupon, removeCoupon } = useCoupon();
 
 const customCode = ref("");
@@ -101,6 +100,10 @@ function getError(code: string | undefined): string | undefined {
 .coupons-section {
   &__container {
     @apply space-y-3 px-5 pt-4 pb-0.5;
+
+    &--no-link {
+      @apply pb-4;
+    }
   }
 
   &__link {
