@@ -387,7 +387,13 @@ const {
   facetsToHide: normalizedFacetsToHide.value,
   currencyCodeOverride: () => props.currencyCodeOverride,
 });
-const { loading: loadingCategory, category: currentCategory, fetchCategory } = useCategory();
+const {
+  loading: loadingCategory,
+  category: currentCategory,
+  fetchCategory,
+} = useCategory({
+  currencyCodeOverride: () => props.currencyCodeOverride,
+});
 const { analytics } = useAnalytics();
 const { updateLocalizedUrl } = useLanguages();
 

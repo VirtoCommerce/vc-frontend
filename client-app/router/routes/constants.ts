@@ -11,6 +11,10 @@ export const ROUTES = {
     NAME: "LoyaltyProduct",
     PATH: "/loyalty-catalog/product/:productId",
   },
+  LOYALTY_CATEGORY: {
+    NAME: "LoyaltyCategory",
+    PATH: "/loyalty-catalog/category/:categoryId",
+  },
   SEARCH: {
     NAME: "Search",
     PATH: "/search",

@@ -126,6 +126,15 @@ export const mainRoutes: RouteRecordRaw[] = [
     },
   },
   {
+    path: ROUTES.LOYALTY_CATEGORY.PATH,
+    name: ROUTES.LOYALTY_CATEGORY.NAME,
+    component: Category,
+    props: true,
+    beforeEnter: (_to, _from, next) => {
+      return isLoyaltyCatalogAvailable() ? next() : next({ name: "NotFound" });
+    },
+  },
+  {
     path: `${ROUTES.LOYALTY_CATALOG.PATH}/:pathMatch(.*)*`,
     name: "LoyaltyCatalogMatcher",
     component: Matcher,
