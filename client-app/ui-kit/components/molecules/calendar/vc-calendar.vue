@@ -361,7 +361,7 @@ watch(
       @apply bg-primary-50 text-primary-700;
     }
 
-    /* today: 2px primary-500 ring (inset, doesn't shift layout) */
+    /* inset ring so it doesn't shift layout */
     &[data-today] {
       @apply font-bold;
 
@@ -376,7 +376,6 @@ watch(
       }
     }
 
-    /* disabled (min/max boundary) */
     &[data-disabled] {
       @apply text-neutral-500 cursor-not-allowed pointer-events-none bg-transparent;
 
@@ -385,7 +384,7 @@ watch(
       text-decoration-color: var(--color-neutral-400);
     }
 
-    /* unavailable (disabledDate predicate — visually distinct from min/max) */
+    /* disabledDate predicate — visually distinct from min/max */
     &[data-unavailable] {
       @apply text-neutral-500 cursor-not-allowed pointer-events-none;
 
@@ -398,7 +397,6 @@ watch(
       );
     }
 
-    /* focus ring — sits on top of any state */
     &:focus-visible {
       @apply outline outline-[3px] outline-[--focus-ring];
 

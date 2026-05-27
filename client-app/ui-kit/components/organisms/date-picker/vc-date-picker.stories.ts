@@ -207,6 +207,60 @@ export const WithMinMax: StoryType = {
   }),
 };
 
+export const ValidityEvent: StoryType = {
+  args: {
+    label: "Order date",
+    min: "2026-10-05",
+    max: "2026-10-25",
+    message: "Pick a date between 2026-10-05 and 2026-10-25",
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Demonstrates the `update:valid` event from a consumer's perspective. When a user types an out-of-range date, the value is rejected internally — it is NOT emitted via `v-model`, so a parent watching `v-model` alone would never learn about the invalid state. Instead, the picker emits `update:valid=false` (forwarded from the inner `VcDateInput`/`useDateField.isValid`, fired `{ immediate: true }` on mount and on every validity change). A parent captures that boolean to gate actions — here a mock **Apply** button is disabled while invalid. This mirrors the real orders filter (`shared/account/components/date-filter-select.vue`), which uses exactly this wiring to disable its Apply button. Try typing a date before 2026-10-05 or after 2026-10-25 to see Apply disable.",
+      },
+      source: {
+        code: `
+          <!-- value ref starts at a valid in-range "2026-10-15" -->
+          <!-- isValid ref tracks the picker's validity -->
+          <VcDatePicker
+            v-model="value"
+            label="Order date"
+            min="2026-10-05"
+            max="2026-10-25"
+            @update:valid="isValid = $event"
+          />
+
+          <button :disabled="!isValid" @click="apply">Apply</button>
+        `,
+      },
+    },
+  },
+  render: (args) => ({
+    components: { VcDatePicker },
+    setup() {
+      const value = ref<string | undefined>("2026-10-15");
+      const isValid = ref(true);
+      return { args, value, isValid };
+    },
+    template: `
+      <div class="space-y-2">
+        <VcDatePicker v-bind="args" v-model="value" @update:valid="isValid = $event" />
+        <div class="text-sm text-neutral-600">ISO value: {{ value || "(none)" }}</div>
+        <div class="text-sm text-neutral-600">valid: {{ isValid }}</div>
+        <button
+          type="button"
+          :disabled="!isValid"
+          class="rounded bg-primary px-3 py-1.5 text-sm text-additional-50 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          Apply
+        </button>
+      </div>
+    `,
+  }),
+};
+
 export const WithDisabledDates: StoryType = {
   args: {
     label: "Order date",

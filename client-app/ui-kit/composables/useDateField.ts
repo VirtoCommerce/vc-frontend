@@ -69,8 +69,7 @@ export function useDateField(opts: IUseDateFieldOptions) {
   const minDate = computed(() => tryParseDate(opts.min?.value));
   const maxDate = computed(() => tryParseDate(opts.max?.value));
 
-  // Mirror VcCalendar behavior: a throwing predicate must not break field validation.
-  // Swallow + log so the field stays usable when consumer-supplied logic crashes.
+  // A throwing consumer predicate must not break field validation.
   function isDisabledDateHit(cd: CalendarDate): boolean {
     const fn = opts.disabledDate?.value;
     if (!fn) {
@@ -135,7 +134,7 @@ export function useDateField(opts: IUseDateFieldOptions) {
     if (!isValid.value) {
       return;
     }
-    // isValid guarantees parsedDate is non-null when isEmpty is false (checked above).
+    // isValid guarantees parsedDate is non-null when not empty.
     const iso = parsedDate.value!.toString();
     if (iso !== opts.modelValue.value) {
       opts.onCommit(iso);
@@ -170,12 +169,7 @@ export function useDateField(opts: IUseDateFieldOptions) {
     onBlur,
     onEnter,
     onClear,
-    /**
-     * Commit displayValue unconditionally (bypasses `updateOn`). Used for programmatic commits like paste.
-     * - Valid → `onCommit(iso)`.
-     * - Empty + existing model → `onCommit(undefined)`.
-     * - Invalid → no emit; surfaces via `errorText`.
-     */
+    /** Commit displayValue unconditionally (bypasses `updateOn`). Used for programmatic commits like paste. */
     commit,
   };
 }

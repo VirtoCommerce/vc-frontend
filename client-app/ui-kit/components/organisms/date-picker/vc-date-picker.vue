@@ -31,6 +31,7 @@
         :tabindex="tabindex"
         :data-test-id="dataTestId"
         @update:model-value="onInputUpdate"
+        @update:valid="emit('update:valid', $event)"
         @blur="onInputBlur"
         @focus="onInputFocus"
         @clear="onInputClear"
@@ -114,6 +115,7 @@ interface IProps {
 
 interface IEmits {
   (event: "update:modelValue", value: string | undefined): void;
+  (event: "update:valid", value: boolean): void;
   (event: "blur", focusEvent: FocusEvent): void;
   (event: "focus", focusEvent: FocusEvent): void;
   (event: "clear"): void;
@@ -169,15 +171,15 @@ function onInputClear(): void {
 }
 
 function onCalendarUpdate(close: () => void, value: string | undefined): void {
-  // Belt-and-braces guard: ignore calendar emits when read-only/disabled even if popover was opened programmatically.
+  // Guard against calendar emits when read-only/disabled (popover may be opened programmatically).
   if (props.disabled || props.readonly) {
     return;
   }
   emit("update:modelValue", value);
-  // Close on BOTH select and clear (footer "Clear" emits undefined) so the popover doesn't linger after clearing.
+  // Close on both select and clear (footer "Clear" emits undefined).
   if (props.closeOnSelect) {
     close();
-    // Return focus to the input after the popover closes — accessible keyboard flow.
+    // Return focus to the input for keyboard a11y.
     innerInputElement.value?.focus();
   }
 }

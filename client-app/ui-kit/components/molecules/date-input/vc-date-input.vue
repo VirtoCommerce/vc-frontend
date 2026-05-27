@@ -35,7 +35,7 @@
 
 <script setup lang="ts">
 import { useEventListener } from "@vueuse/core";
-import { computed, toRef, useTemplateRef } from "vue";
+import { computed, toRef, useTemplateRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDateField } from "@/ui-kit/composables";
 import {
@@ -83,6 +83,7 @@ interface IProps {
 
 interface IEmits {
   (event: "update:modelValue", value: string | undefined): void;
+  (event: "update:valid", value: boolean): void;
   (event: "blur", focusEvent: FocusEvent): void;
   (event: "focus", focusEvent: FocusEvent): void;
   (event: "clear"): void;
@@ -97,7 +98,7 @@ const props = withDefaults(defineProps<IProps>(), {
 const { locale: i18nLocale } = useI18n();
 const resolvedLocale = computed<string>(() => props.locale ?? i18nLocale.value);
 
-const { displayValue, errorText, onBlur, onEnter, onClear, commit } = useDateField({
+const { displayValue, errorText, isValid, onBlur, onEnter, onClear, commit } = useDateField({
   modelValue: toRef(props, "modelValue"),
   locale: resolvedLocale,
   updateOn: toRef(props, "updateOn"),
@@ -129,6 +130,9 @@ const computedMessage = computed<string | undefined>(() => {
   return errorText.value ?? props.message;
 });
 
+// Immediate so the empty (valid) state is reported on mount.
+watch(isValid, (v) => emit("update:valid", v), { immediate: true });
+
 function onInputBlur(event: FocusEvent): void {
   onBlur();
   emit("blur", event);
@@ -154,8 +158,7 @@ defineExpose({
   inputElement: innerInputElement,
 });
 
-// Intercept paste before maska reshapes it — well-formed dates (ISO or locale-short)
-// would otherwise be corrupted by the mask transform.
+// Intercept paste before maska reshapes it — well-formed dates would otherwise be corrupted by the mask transform.
 useEventListener(innerInputElement, "paste", (event: ClipboardEvent) => {
   if (!props.mask) {
     return;
@@ -166,7 +169,7 @@ useEventListener(innerInputElement, "paste", (event: ClipboardEvent) => {
   }
   const cd = parseDateInput(pasted, resolvedLocale.value);
   if (!cd) {
-    // Unparseable — let maska transform the pasted text into the mask slots.
+    // Unparseable — let maska handle it.
     return;
   }
   event.preventDefault();

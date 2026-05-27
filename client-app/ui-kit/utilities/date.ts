@@ -23,8 +23,7 @@ function probeLocaleDateFormat(locale: string): ILocaleDateFormatProbe | null {
   }
 
   try {
-    // Distinct d/m/y values + explicit 4-digit year so round-trip stays consistent across locales
-    // (Intl's "short" yields 2-digit years in en-US/de-DE which would collide with our parser).
+    // Explicit 4-digit year: Intl's "short" yields 2-digit years our parser would reject.
     const probe = new Date(Date.UTC(2026, 0, 5));
     const parts = new Intl.DateTimeFormat(locale, {
       year: "numeric",
@@ -91,7 +90,7 @@ function buildValidCalendarDate(year: number, month: number, day: number): Calen
     if (cd.year !== year || cd.month !== month || cd.day !== day) {
       return null;
     }
-    // parseDate catches any normalizations the constructor might allow.
+    // Re-parse to catch any normalizations the constructor allowed.
     const iso = cd.toString();
     const reparsed = parseDate(iso);
     if (reparsed.year !== year || reparsed.month !== month || reparsed.day !== day) {
@@ -163,11 +162,7 @@ export function parseDateInput(text: string, locale: string): CalendarDate | nul
   return buildValidCalendarDate(year, month, day);
 }
 
-/**
- * Formats a CalendarDate in the locale's short layout with an explicit 4-digit year + 2-digit
- * month/day, so output round-trips through parseDateInput (Intl's "short" gives 2-digit years
- * in en-US/de-DE which our parser rejects). Returns "" for null/undefined.
- */
+/** Formats a CalendarDate in the locale's short layout with explicit 4-digit year so output round-trips through parseDateInput. Returns "" for null/undefined. */
 export function formatDateLocale(value: CalendarDate | null | undefined, locale: string): string {
   if (!value) {
     return "";
