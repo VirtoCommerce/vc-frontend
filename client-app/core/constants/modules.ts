@@ -29,3 +29,5 @@ export const VIRTOPAGES_ENABLED_KEY = "VirtoPages.Enable";
 
 export const INTENT_SEARCH_MODULE_ID = "VirtoCommerce.IntentSearch";
 export const INTENT_SEARCH_ENABLED_KEY = "IntentSearch.Enabled";
+
+export const MODULE_ID_MARKETING_EXPERIENCE_API = "VirtoCommerce.MarketingExperienceApi";

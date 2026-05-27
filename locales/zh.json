@@ -682,7 +682,9 @@
         "expires": "@:shared.account.promotion_coupons.expires",
         "custom_code": "自定义代码",
         "enter_custom_code": "输入自定义代码",
-        "all_coupons": "查看所有优惠券和促销活动"
+        "all_coupons": "查看所有优惠券和促销活动",
+        "apply_aria": "Apply coupon {code}",
+        "remove_aria": "Remove coupon"
       }
     },
     "catalog": {

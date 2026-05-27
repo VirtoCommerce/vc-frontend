@@ -682,7 +682,9 @@
         "expires": "@:shared.account.promotion_coupons.expires",
         "custom_code": "Пользовательский код",
         "enter_custom_code": "Введите пользовательский код",
-        "all_coupons": "Посмотреть все купоны и акции"
+        "all_coupons": "Посмотреть все купоны и акции",
+        "apply_aria": "Применить купон {code}",
+        "remove_aria": "Удалить купон"
       }
     },
     "catalog": {

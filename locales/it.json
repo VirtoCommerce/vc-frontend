@@ -682,7 +682,9 @@
         "expires": "@:shared.account.promotion_coupons.expires",
         "custom_code": "Codice personalizzato",
         "enter_custom_code": "Inserisci codice personalizzato",
-        "all_coupons": "Visualizza tutti i coupon e le promozioni"
+        "all_coupons": "Visualizza tutti i coupon e le promozioni",
+        "apply_aria": "Apply coupon {code}",
+        "remove_aria": "Remove coupon"
       }
     },
     "catalog": {

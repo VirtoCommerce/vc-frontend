@@ -682,7 +682,9 @@
         "expires": "@:shared.account.promotion_coupons.expires",
         "custom_code": "Mukautettu koodi",
         "enter_custom_code": "Syötä mukautettu koodi",
-        "all_coupons": "Näytä kaikki kupongit & tarjoukset"
+        "all_coupons": "Näytä kaikki kupongit & tarjoukset",
+        "apply_aria": "Apply coupon {code}",
+        "remove_aria": "Remove coupon"
       }
     },
     "catalog": {
