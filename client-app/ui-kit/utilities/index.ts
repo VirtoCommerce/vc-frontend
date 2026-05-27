@@ -7,3 +7,4 @@ export * from "./focus";
 export * from "./images";
 export * from "./price";
 export * from "./string-array";
+export * from "./variant-compat";

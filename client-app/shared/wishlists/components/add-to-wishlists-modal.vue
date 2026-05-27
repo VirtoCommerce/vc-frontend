@@ -75,7 +75,7 @@
               class="mt-2"
               color="neutral"
               size="xs"
-              variant="no-background"
+              variant="ghost"
               icon="delete-thin"
               :disabled="loading"
               @click="removeNewList(index)"

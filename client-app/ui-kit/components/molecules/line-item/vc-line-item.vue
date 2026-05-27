@@ -127,7 +127,7 @@
           class="vc-line-item__remove-button"
           color="neutral"
           size="sm"
-          variant="no-background"
+          variant="ghost"
           icon="delete-thin"
           data-test-id="remove-item-button"
           :disabled="disabled"

@@ -96,7 +96,7 @@
               type="button"
               icon="delete-thin"
               color="neutral"
-              variant="no-background"
+              variant="ghost"
               class="vc-select__clear"
               :icon-size="size === 'md' ? '0.875rem' : '0.75rem'"
               @keydown.enter.stop.prevent

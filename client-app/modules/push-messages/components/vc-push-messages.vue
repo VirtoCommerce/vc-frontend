@@ -32,7 +32,7 @@
               width="9rem"
             >
               <template #trigger="{ triggerProps }">
-                <VcButton icon variant="no-background" v-bind="triggerProps">
+                <VcButton icon variant="ghost" v-bind="triggerProps">
                   <VcIcon class="vc-push-messages__options-icon" name="dots-vertical" size="sm" />
                 </VcButton>
               </template>

@@ -94,7 +94,7 @@ const viewConfigs: Record<ViewType, IViewConfig> = {
   },
   applied: {
     iconName: "round-check",
-    button: { icon: "outline-trash", variant: "no-background", color: "neutral", disabled: false },
+    button: { icon: "outline-trash", variant: "ghost", color: "neutral", disabled: false },
   },
   error: {
     iconName: "receipt-tax",

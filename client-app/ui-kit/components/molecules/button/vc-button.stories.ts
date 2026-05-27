@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
 const SIZES = ["xxs", "xs", "sm", "md", "lg"];
 const COLORS = ["primary", "secondary", "success", "info", "neutral", "warning", "danger", "accent"];
-const VARIANTS = ["solid", "outline", "no-border", "no-background", "solid-light"];
+const VARIANTS = ["solid", "outline", "surface", "ghost", "soft"];
 const TYPES = ["button", "reset", "submit"];
 
 export default {
@@ -74,23 +74,23 @@ export const Outline: StoryType = {
   },
 };
 
-export const NoBorder: StoryType = {
+export const Surface: StoryType = {
   args: {
-    variant: "no-border",
+    variant: "surface",
     color: "secondary",
   },
 };
 
-export const NoBackground: StoryType = {
+export const Ghost: StoryType = {
   args: {
-    variant: "no-background",
+    variant: "ghost",
     color: "secondary",
   },
 };
 
-export const SolidLight: StoryType = {
+export const Soft: StoryType = {
   args: {
-    variant: "solid-light",
+    variant: "soft",
     color: "secondary",
   },
 };

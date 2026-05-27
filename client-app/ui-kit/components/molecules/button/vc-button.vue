@@ -13,7 +13,7 @@
       'vc-button group',
       `vc-button--size--${_size}`,
       `vc-button--color--${color}`,
-      `vc-button--${variant}--${color}`,
+      `vc-button--${canonicalVariant}--${color}`,
       {
         'vc-button--icon': !!icon,
         'vc-button--square': square,
@@ -58,6 +58,7 @@
 
 <script setup lang="ts">
 import { computed, inject, ref } from "vue";
+import { resolveVariant } from "../../../utilities/variant-compat";
 import { vcDialogKey } from "../../atoms/dialog/vc-dialog-context";
 import type { ComponentPublicInstance } from "vue";
 import type { RouteLocationRaw } from "vue-router";
@@ -111,6 +112,8 @@ const props = withDefaults(defineProps<IProps>(), {
   tag: "",
   tabindex: 0,
 });
+
+const canonicalVariant = computed(() => resolveVariant("VcButton", props.variant));
 
 const inputContext = inject<VcInputContextType | null>("inputContext", null);
 const dialogContext = inject(vcDialogKey, { size: ref("md") });
@@ -342,99 +345,38 @@ defineExpose({
         --loader-border-r: var(--color-#{$color}-500);
       }
     }
+  }
 
-    &--solid--#{$color} {
-      --bg-color: var(--color-#{$color}-500);
-      --border-color: var(--color-#{$color}-500);
+  $variants: solid, soft, outline, surface, ghost;
 
-      &:not([class*="--warning"]) {
-        --text-color: var(--color-additional-50);
-      }
-
-      &[class*="--warning"] {
-        --text-color: var(--color-warning-900);
-      }
-
-      &:hover:not(#{$loading}, #{$disabled}) {
-        --bg-color: var(--color-#{$color}-600);
-        --border-color: var(--color-#{$color}-600);
-        --text-color: var(--color-additional-50);
-      }
-
-      & #{$loaderIcon} {
-        --loader-border: var(--color-#{$color}-200);
-        --loader-border-r: var(--color-additional-50);
+  @each $variant in $variants {
+    @each $color in $colors {
+      &--#{$variant}--#{$color} {
+        --bg-color: var(--vc-button-#{$variant}-#{$color}-bg);
+        --border-color: var(--vc-button-#{$variant}-#{$color}-border);
+        --text-color: var(--vc-button-#{$variant}-#{$color}-text);
+        --vc-icon-color: var(--vc-button-#{$variant}-#{$color}-icon);
       }
     }
+  }
 
-    &--no-border--#{$color} {
-      --bg-color: var(--color-additional-50);
-      --border-color: var(--color-additional-50);
-
-      &:not([class*="--warning"]) {
-        --text-color: var(--color-#{$color}-500);
-      }
-
-      &[class*="--warning"] {
-        --text-color: var(--color-warning-700);
-      }
-
-      &:hover:not(#{$loading}, #{$disabled}) {
-        --bg-color: var(--color-#{$color}-100);
-        --border-color: var(--color-#{$color}-100);
-        --text-color: var(--color-#{$color}-700);
-      }
+  // Hover — color-mix based, derived from current variant colors. No per-color overrides.
+  @each $color in $colors {
+    &--solid--#{$color}:hover:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(in srgb, var(--vc-button-solid-#{$color}-bg), black 8%);
+      --border-color: color-mix(in srgb, var(--vc-button-solid-#{$color}-border), black 8%);
     }
 
-    &--outline--#{$color} {
-      --bg-color: var(--color-additional-50);
-      --border-color: var(--color-#{$color}-500);
-
-      &:not([class*="--warning"]) {
-        --text-color: var(--color-#{$color}-500);
-      }
-
-      &[class*="--warning"] {
-        --text-color: var(--color-warning-700);
-      }
-
-      &:hover:not(#{$loading}, #{$disabled}) {
-        --text-color: var(--color-#{$color}-600);
-      }
+    &--soft--#{$color}:hover:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(in srgb, var(--vc-button-soft-#{$color}-bg), black 8%);
+      --border-color: color-mix(in srgb, var(--vc-button-soft-#{$color}-border), black 8%);
     }
 
-    &--no-background--#{$color} {
-      --bg-color: transparent;
-      --border-color: transparent;
-
-      &:not([class*="--warning"]) {
-        --text-color: var(--color-#{$color}-500);
-      }
-
-      &[class*="--warning"] {
-        --text-color: var(--color-warning-700);
-      }
-
-      &:hover:not(#{$loading}, #{$disabled}) {
-        --text-color: var(--color-#{$color}-600);
-      }
-    }
-
-    &--solid-light--#{$color} {
-      --bg-color: var(--color-#{$color}-100);
-      --border-color: var(--color-#{$color}-100);
-      --text-color: var(--color-#{$color}-800);
-
-      &:hover:not(#{$loading}, #{$disabled}) {
-        --bg-color: var(--color-#{$color}-50);
-        --border-color: var(--color-#{$color}-50);
-        --text-color: var(--color-#{$color}-700);
-      }
-
-      & #{$loaderIcon} {
-        --loader-border: var(--color-#{$color}-200);
-        --loader-border-r: var(--color-#{$color}-500);
-      }
+    &--outline--#{$color}:hover:not(#{$loading}, #{$disabled}),
+    &--surface--#{$color}:hover:not(#{$loading}, #{$disabled}),
+    &--ghost--#{$color}:hover:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(in srgb, var(--color-#{$color}-500), transparent 92%);
+      --text-color: var(--color-#{$color}-700);
     }
   }
 
@@ -448,7 +390,7 @@ defineExpose({
       --border-color: var(--color-neutral-200);
     }
 
-    &[class*="--no-border--"] {
+    &[class*="--surface--"] {
       --bg-color: var(--color-neutral-200);
       --border-color: var(--color-neutral-200);
     }
@@ -457,7 +399,7 @@ defineExpose({
       --border-color: var(--color-neutral-300);
     }
 
-    &[class*="--solid-light--"] {
+    &[class*="--soft--"] {
       --bg-color: var(--color-neutral-100);
       --border-color: var(--color-neutral-100);
     }
