@@ -284,9 +284,13 @@ export function useShortCart() {
       },
     },
   );
-  function updateItemCartQuantity(productId: string, quantity: number) {
+  function updateItemCartQuantity(productId: string, quantity: number, itemCurrencyCode?: string) {
     return updateItemCartQuantityMutation({
-      command: { items: [{ productId, quantity }], ...commonVariables, cartId: cart.value?.id },
+      command: {
+        items: [{ productId, quantity, currencyCode: itemCurrencyCode }],
+        ...commonVariables,
+        cartId: cart.value?.id,
+      },
     });
   }
 
