@@ -90,12 +90,24 @@ async function initLocale(i18n: I18n, cultureName: string): Promise<void> {
   });
 
   const localeFromUrl = getLocaleFromUrl();
+  const targetLocale = currentMaybeShortLocale.value;
   const isDefault = defaultStoreLanguage.value.cultureName === cultureName;
 
-  if ((localeFromUrl && currentMaybeShortLocale.value !== localeFromUrl) || isDefault) {
-    // remove a full locale from the url beforehand in order to avoid case like /fr-FR -> /fr/-FR (when language has short alias)
-    // remove the default locale e.g. en-US from the url - /en-US/cart -> /cart
-    history.pushState(null, "", location.href.replace(new RegExp(`/${localeFromUrl}`), ""));
+  let newPath = location.pathname;
+
+  if (localeFromUrl) {
+    // anchor at the start of the pathname and require / or end after the locale,
+    // otherwise plain `replace("/de", "")` would eat the `de` inside paths like `/destinations`
+    newPath = newPath.replace(new RegExp(`^/${localeFromUrl}(?=/|$)`, "i"), "") || "/";
+  }
+
+  if (!isDefault) {
+    // ensure non-default locale is reflected in the URL so vue-router's base matches the pathname
+    newPath = newPath === "/" ? `/${targetLocale}` : `/${targetLocale}${newPath}`;
+  }
+
+  if (newPath !== location.pathname) {
+    history.pushState(null, "", `${newPath}${location.search}${location.hash}`);
   }
 
   document.documentElement.setAttribute("lang", cultureName);
