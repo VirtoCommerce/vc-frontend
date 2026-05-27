@@ -1,7 +1,7 @@
 <template>
   <VcWidget class="coupons-section" :title="$t('shared.cart.coupons_section.title')">
     <template #default-container>
-      <div class="coupons-section__container" :class="{ 'coupons-section__container--no-link': !queryEnabled }">
+      <div class="coupons-section__container">
         <CouponCard
           v-for="coupon in coupons"
           :key="coupon.id"
@@ -99,15 +99,11 @@ function getError(code: string | undefined): string | undefined {
 <style lang="scss">
 .coupons-section {
   &__container {
-    @apply space-y-3 px-5 pt-4 pb-0.5;
-
-    &--no-link {
-      @apply pb-4;
-    }
+    @apply space-y-3 px-5 pt-4 pb-4;
   }
 
   &__link {
-    @apply mb-0.5 px-5 py-3.5 flex text-xs font-bold gap-2 text-[--link-color] hover:text-[--link-hover-color];
+    @apply pb-4 px-5 flex text-xs font-bold gap-2 text-[--link-color] hover:text-[--link-hover-color];
   }
 
   &__arrow {
