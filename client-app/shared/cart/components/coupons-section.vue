@@ -99,7 +99,7 @@ function getError(code: string | undefined): string | undefined {
 <style lang="scss">
 .coupons-section {
   &__container {
-    @apply space-y-3 px-5 pt-4 pb-4;
+    @apply space-y-3 px-5 py-4;
   }
 
   &__link {
