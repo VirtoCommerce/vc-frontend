@@ -1,3 +1,4 @@
+import { ROUTES } from "@/router/routes/constants";
 import type { RouteLocationRaw } from "vue-router";
 
 export function getProductRoute(productId: string, productSlug?: string, basePath?: string): RouteLocationRaw;
@@ -6,9 +7,14 @@ export function getProductRoute(
   productSlug?: string,
   basePath?: string,
 ): RouteLocationRaw | undefined {
-  const defaultRoute = productId ? { name: "Product", params: { productId } } : undefined;
   if (!productSlug) {
-    return defaultRoute;
+    if (!productId) {
+      return undefined;
+    }
+    const isLoyaltyCatalog = basePath?.replace(/\/$/, "") === ROUTES.LOYALTY_CATALOG.PATH;
+    return isLoyaltyCatalog
+      ? { name: ROUTES.LOYALTY_PRODUCT.NAME, params: { productId } }
+      : { name: "Product", params: { productId } };
   }
   const prefix = basePath?.replace(/\/$/, "") ?? "";
   return `${prefix}/${productSlug}`;
