@@ -681,7 +681,9 @@
         "expires": "@:shared.account.promotion_coupons.expires",
         "custom_code": "Anpassad kod",
         "enter_custom_code": "Ange anpassad kod",
-        "all_coupons": "Visa alla kuponger & kampanjer"
+        "all_coupons": "Visa alla kuponger & kampanjer",
+        "apply_aria": "Apply coupon {code}",
+        "remove_aria": "Remove coupon"
       }
     },
     "catalog": {

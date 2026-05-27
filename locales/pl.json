@@ -681,7 +681,9 @@
         "expires": "@:shared.account.promotion_coupons.expires",
         "custom_code": "Niestandardowy kod",
         "enter_custom_code": "Wprowadź niestandardowy kod",
-        "all_coupons": "Zobacz wszystkie kupony i promocje"
+        "all_coupons": "Zobacz wszystkie kupony i promocje",
+        "apply_aria": "Apply coupon {code}",
+        "remove_aria": "Remove coupon"
       }
     },
     "catalog": {
