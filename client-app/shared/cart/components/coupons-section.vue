@@ -25,6 +25,7 @@
       </div>
 
       <router-link
+        v-if="queryEnabled"
         class="coupons-section__link"
         :to="{ name: ROUTES.PROMOTION_COUPONS.NAME }"
         target="_blank"
@@ -38,8 +39,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watchEffect } from "vue";
+import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
+import { useModules } from "@/core/composables";
+import { MODULE_ID_MARKETING_EXPERIENCE_API } from "@/core/constants/modules";
 import { ROUTES } from "@/router/routes/constants";
 import { usePromotionCoupons, useUser } from "@/shared/account";
 import { useCoupon } from "@/shared/cart";
@@ -47,9 +50,12 @@ import CouponCard from "./coupon-card.vue";
 
 const COUPONS_PER_PAGE = 4;
 
+const { hasModule } = useModules();
 const { t } = useI18n();
 const { isAuthenticated } = useUser();
-const { coupons } = usePromotionCoupons(COUPONS_PER_PAGE, undefined, isAuthenticated);
+const isMarketingExperienceApiEnabled = computed(() => hasModule(MODULE_ID_MARKETING_EXPERIENCE_API));
+const queryEnabled = computed(() => isAuthenticated.value && isMarketingExperienceApiEnabled.value);
+const { coupons } = usePromotionCoupons(COUPONS_PER_PAGE, undefined, queryEnabled);
 const { appliedCouponCode, couponError, loadingCouponCode, applyCoupon, removeCoupon } = useCoupon();
 
 const customCode = ref("");
@@ -93,11 +99,11 @@ function getError(code: string | undefined): string | undefined {
 <style lang="scss">
 .coupons-section {
   &__container {
-    @apply space-y-3 px-5 pt-4 pb-0.5;
+    @apply space-y-3 px-5 py-4;
   }
 
   &__link {
-    @apply mb-0.5 px-5 py-3.5 flex text-xs font-bold gap-2 text-[--link-color] hover:text-[--link-hover-color];
+    @apply pb-4 px-5 flex text-xs font-bold gap-2 text-[--link-color] hover:text-[--link-hover-color];
   }
 
   &__arrow {
