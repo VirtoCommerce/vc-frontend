@@ -51,7 +51,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { STATUS_ORDERS_FACET_NAME } from "@/core/constants";
-import { useUserOrders } from "../composables";
+import { facets } from "../composables/useUserOrders";
 import { useUserOrdersFilter } from "../composables/useUserOrdersFilter";
 
 interface IEmits {
@@ -62,7 +62,6 @@ interface IEmits {
 
 defineEmits<IEmits>();
 
-const { facets } = useUserOrders({});
 const { filterData, isFilterEmpty, isFilterDirty } = useUserOrdersFilter();
 
 const statusFacet = computed(() => facets.value?.find((facet) => facet.name === STATUS_ORDERS_FACET_NAME));

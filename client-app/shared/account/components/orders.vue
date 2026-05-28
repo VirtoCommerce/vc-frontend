@@ -119,8 +119,8 @@ import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { SortDirection } from "@/core/enums";
 import { Sort } from "@/core/types";
 import { useOrderNavigation } from "@/shared/account/composables/useOrderNavigation";
-import { useUserOrders } from "@/shared/account/composables/useUserOrders";
-import { useUserOrdersFilter } from "@/shared/account/composables/useUserOrdersFilter";
+import { facets, useUserOrders } from "@/shared/account/composables/useUserOrders";
+import { getFilterExpression, useUserOrdersFilter } from "@/shared/account/composables/useUserOrdersFilter";
 import { useUser } from "../composables";
 import OrdersDesktopFilters from "./orders/orders-desktop-filters.vue";
 import OrdersMobileFilters from "./orders/orders-mobile-filters.vue";
@@ -141,8 +141,14 @@ usePageHead({ title: t("pages.account.orders.meta.title") });
 const ORDER_SCOPE_KEY = `order-scope-${user.value.id}`;
 const orderScope = useLocalStorage<OrderScopeType>(ORDER_SCOPE_KEY, "private");
 
-const { appliedFilterData, isFilterEmpty, filterChipsItems, resetFilters, removeFilterChipsItem } =
-  useUserOrdersFilter();
+const {
+  appliedFilterData,
+  isFilterEmpty,
+  filterChipsItems,
+  resetFilters,
+  removeFilterChipsItem,
+  setFacetsLocalization,
+} = useUserOrdersFilter();
 
 const { continue_shopping_link } = getModuleSettings({
   [MODULE_XAPI_KEYS.CONTINUE_SHOPPING_LINK]: "continue_shopping_link",
@@ -155,19 +161,22 @@ const localKeyword = ref("");
 async function changePage(newPage: number) {
   page.value = newPage;
   window.scroll({ top: 0, behavior: "smooth" });
-  await fetchOrders(orderScope.value);
+  await fetchOrders(orderScope.value, getFilterExpression(keyword.value, appliedFilterData.value));
+  setFacetsLocalization(facets.value);
 }
 
 async function applySorting(sortInfo: ISortInfo): Promise<void> {
   sort.value = new Sort(sortInfo.column, sortInfo.direction);
   page.value = 1;
-  await fetchOrders(orderScope.value);
+  await fetchOrders(orderScope.value, getFilterExpression(keyword.value, appliedFilterData.value));
+  setFacetsLocalization(facets.value);
 }
 
 async function applyKeyword() {
   keyword.value = localKeyword.value.trim();
   page.value = 1;
-  await fetchOrders(orderScope.value);
+  await fetchOrders(orderScope.value, getFilterExpression(keyword.value, appliedFilterData.value));
+  setFacetsLocalization(facets.value);
 }
 
 async function resetKeyword() {
@@ -202,10 +211,11 @@ onMounted(() => {
 
 watch(
   appliedFilterData,
-  () => {
+  async () => {
     page.value = 1;
 
-    void fetchOrders(orderScope.value);
+    await fetchOrders(orderScope.value, getFilterExpression(keyword.value, appliedFilterData.value));
+    setFacetsLocalization(facets.value);
   },
   { deep: true },
 );

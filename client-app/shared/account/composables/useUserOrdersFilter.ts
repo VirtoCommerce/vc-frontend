@@ -9,6 +9,39 @@ import type { DateFilterType } from "@/core/types";
 import type { OrdersFilterDataType, OrdersFilterChipsItemType, OrderFacetType, OrderScopeType } from "@/shared/account";
 import type { MaybeRef, Ref } from "vue";
 
+export function getFilterExpression(keyword: string, filterData: OrdersFilterDataType): string {
+  let filterExpression = "";
+  if (keyword) {
+    filterExpression += `${keyword} `;
+  }
+  if (filterData.statuses.length) {
+    const statuses = filterData.statuses.map((status) => `"${status}"`);
+    filterExpression += `status:${statuses.join(",")} `;
+  }
+  if (filterData.customerNames?.length) {
+    const customerNames = filterData.customerNames.map((name) => `"${name}"`);
+    filterExpression += `customername:${customerNames.join(",")} `;
+  }
+
+  const startDateFilterValue = toStartDateFilterValue(filterData.startDate);
+  const endDateFilterValue = toEndDateFilterValue(filterData.endDate);
+  if (startDateFilterValue || endDateFilterValue) {
+    let createdDateFilterValue = "";
+    if (startDateFilterValue) {
+      createdDateFilterValue += `"${startDateFilterValue}" `;
+    }
+    createdDateFilterValue += "TO";
+    if (endDateFilterValue) {
+      createdDateFilterValue += ` "${endDateFilterValue}"`;
+    }
+    filterExpression += `createddate:[${createdDateFilterValue}]`;
+  }
+
+  filterExpression = filterExpression.trim();
+
+  return filterExpression;
+}
+
 const filterData: Ref<OrdersFilterDataType> = ref({ statuses: [], customerNames: [] });
 const appliedFilterData: Ref<OrdersFilterDataType> = ref({ ...filterData.value });
 const facetLocalization: Ref<OrderFacetType[] | undefined> = ref();
