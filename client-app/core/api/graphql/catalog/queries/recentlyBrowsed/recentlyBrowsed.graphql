@@ -49,6 +49,10 @@ query GetRecentlyBrowsed($storeId: String!, $currencyCode: String, $cultureName:
           formattedAmount
         }
       }
+      breadcrumbs {
+        title
+        typeName
+      }
     }
   }
 }

@@ -142,7 +142,7 @@ describe("useAnalytics", () => {
     delete mockTracker1.events.purchase;
 
     const event: AnalyticsEventNameType = "purchase";
-    const args: AnalyticsEventMapType["purchase"] = [mockedCustomerOrder, "txn123", arbitraryParam];
+    const args: AnalyticsEventMapType["purchase"] = [mockedCustomerOrder, arbitraryParam];
 
     analytics(event, ...args);
 
@@ -183,7 +183,7 @@ describe("useAnalytics", () => {
     expect(Logger.warn).not.toHaveBeenCalled();
 
     const event2: AnalyticsEventNameType = "purchase";
-    const args2: AnalyticsEventMapType["purchase"] = [mockedCustomerOrder, "txn123", { someParam: "value2" }];
+    const args2: AnalyticsEventMapType["purchase"] = [mockedCustomerOrder, { someParam: "value2" }];
 
     analytics(event2, ...args2);
 
