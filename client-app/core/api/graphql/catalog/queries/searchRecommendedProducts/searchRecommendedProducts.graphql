@@ -48,6 +48,10 @@ query GetProductRecommendations(
           formattedAmount
         }
       }
+      breadcrumbs {
+        title
+        typeName
+      }
     }
   }
 }
