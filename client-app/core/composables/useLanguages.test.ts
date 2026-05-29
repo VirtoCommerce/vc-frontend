@@ -334,6 +334,78 @@ describe("useLanguages", () => {
       expect(setLocaleForYup).toHaveBeenCalledTimes(1);
       expect(location.pathname).toBe("/cart");
     });
+
+    it("prepends short locale prefix when URL has no locale (VCST-5144)", async () => {
+      // /destinations + de must become /de/destinations, not /de/stinations
+      navigateTo("/destinations?x=1#sec");
+      const { useLanguages } = await importComposable();
+      const languages = useLanguages();
+      const i18n: I18n = createI18n("en-US", "USD");
+
+      await languages.initLocale(i18n, "de-DE");
+
+      expect(location.pathname).toBe("/de/destinations");
+      expect(location.search).toBe("?x=1");
+      expect(location.hash).toBe("#sec");
+    });
+
+    it("prepends short locale prefix on root path", async () => {
+      navigateTo("/");
+      const { useLanguages } = await importComposable();
+      const languages = useLanguages();
+      const i18n: I18n = createI18n("en-US", "USD");
+
+      await languages.initLocale(i18n, "fr-FR");
+
+      expect(location.pathname).toBe("/fr");
+    });
+
+    it("does not modify URL when short locale prefix already matches", async () => {
+      navigateTo("/de/destinations?x=1");
+      const { useLanguages } = await importComposable();
+      const languages = useLanguages();
+      const i18n: I18n = createI18n("en-US", "USD");
+
+      await languages.initLocale(i18n, "de-DE");
+
+      expect(location.pathname).toBe("/de/destinations");
+      expect(location.search).toBe("?x=1");
+    });
+
+    it("replaces full locale with short alias when language has a unique short form", async () => {
+      navigateTo("/fr-FR/cart");
+      const { useLanguages } = await importComposable();
+      const languages = useLanguages();
+      const i18n: I18n = createI18n("en-US", "USD");
+
+      await languages.initLocale(i18n, "fr-FR");
+
+      expect(location.pathname).toBe("/fr/cart");
+    });
+
+    it("strips default locale prefix without eating pathname characters", async () => {
+      // pathname starts with `de` but locale prefix is /en-US — must strip only the anchored prefix
+      navigateTo("/en-US/destinations");
+      const { useLanguages } = await importComposable();
+      const languages = useLanguages();
+      const i18n: I18n = createI18n("en-US", "USD");
+
+      await languages.initLocale(i18n, "en-US");
+
+      expect(location.pathname).toBe("/destinations");
+    });
+
+    it("does not strip locale-looking substring from pathname when switching to default", async () => {
+      // pathname `/destinations` must not be touched when switching to default English
+      navigateTo("/destinations");
+      const { useLanguages } = await importComposable();
+      const languages = useLanguages();
+      const i18n: I18n = createI18n("en-US", "USD");
+
+      await languages.initLocale(i18n, "en-US");
+
+      expect(location.pathname).toBe("/destinations");
+    });
   });
 
   describe("mergeLocalesMessages", () => {
