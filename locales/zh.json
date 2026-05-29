@@ -574,6 +574,7 @@
         "created_date_label": "创建日期",
         "start_date_label": "开始日期",
         "end_date_label": "结束日期",
+        "invalid_range": "日期范围无效。",
         "apply_button": "@:common.buttons.apply",
         "reset_button": "@:common.buttons.reset"
       },

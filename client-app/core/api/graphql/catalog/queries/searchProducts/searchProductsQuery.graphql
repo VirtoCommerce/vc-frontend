@@ -115,6 +115,10 @@ query SearchProducts(
       rating {
         ...rating
       }
+      breadcrumbs {
+        title
+        typeName
+      }
     }
     term_facets @include(if: $withFacets) {
       name

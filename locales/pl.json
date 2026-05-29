@@ -574,6 +574,7 @@
         "created_date_label": "Data utworzenia",
         "start_date_label": "Data rozpoczęcia",
         "end_date_label": "Data zakończenia",
+        "invalid_range": "Nieprawidłowy zakres dat.",
         "apply_button": "@:common.buttons.apply",
         "reset_button": "@:common.buttons.reset"
       },

@@ -22,6 +22,7 @@
     "accessibility": {
       "close_alert": "Lukk varsel",
       "open_calendar": "Åpne kalender",
+      "calendar": "Kalender",
       "product_quantity": "Produktantall",
       "decrease_quantity": "Reduser antall",
       "increase_quantity": "Øk antall",
@@ -36,9 +37,24 @@
       "nav_up": "Opp",
       "nav_down": "Ned"
     },
+    "calendar": {
+      "aria_label": "Kalender",
+      "previous_month": "Forrige måned",
+      "next_month": "Neste måned",
+      "previous_year": "Forrige år",
+      "next_year": "Neste år",
+      "today": "I dag",
+      "clear": "Tøm"
+    },
     "date_selector": {
       "min_date_error": "Datoen må være på eller etter {min}",
       "max_date_error": "Datoen må være på eller før {max}"
+    },
+    "date_input": {
+      "invalid_format": "Ugyldig datoformat",
+      "min_date_error": "Datoen må være på eller etter {min}",
+      "max_date_error": "Datoen må være på eller før {max}",
+      "unavailable_date": "Denne datoen er ikke tilgjengelig"
     },
     "labels": {
       "not_available": "Ikke tilgjengelig",
