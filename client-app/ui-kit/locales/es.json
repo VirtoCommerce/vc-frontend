@@ -22,6 +22,7 @@
     "accessibility": {
       "close_alert": "Cerrar alerta",
       "open_calendar": "Abrir calendario",
+      "calendar": "Calendario",
       "product_quantity": "Cantidad del producto",
       "decrease_quantity": "Disminuir cantidad",
       "increase_quantity": "Aumentar cantidad",
@@ -36,9 +37,24 @@
       "nav_up": "Arriba",
       "nav_down": "Abajo"
     },
+    "calendar": {
+      "aria_label": "Calendario",
+      "previous_month": "Mes anterior",
+      "next_month": "Mes siguiente",
+      "previous_year": "Año anterior",
+      "next_year": "Año siguiente",
+      "today": "Hoy",
+      "clear": "Borrar"
+    },
     "date_selector": {
       "min_date_error": "La fecha debe ser igual o posterior al {min}",
       "max_date_error": "La fecha debe ser igual o anterior al {max}"
+    },
+    "date_input": {
+      "invalid_format": "Formato de fecha no válido",
+      "min_date_error": "La fecha debe ser igual o posterior al {min}",
+      "max_date_error": "La fecha debe ser igual o anterior al {max}",
+      "unavailable_date": "Esta fecha no está disponible"
     },
     "labels": {
       "not_available": "N/D",

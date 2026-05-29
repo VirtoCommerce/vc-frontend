@@ -6,6 +6,7 @@ declare module "vue" {
   export interface GlobalComponents {
     VcAddToCart: typeof Components.VcAddToCart;
     VcConfirmationModal: typeof Components.VcConfirmationModal;
+    VcDatePicker: typeof Components.VcDatePicker;
     VcModal: typeof Components.VcModal;
     VcPagination: typeof Components.VcPagination;
     VcProductCard: typeof Components.VcProductCard;

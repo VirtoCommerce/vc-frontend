@@ -22,6 +22,7 @@
     "accessibility": {
       "close_alert": "Sulje hälytys",
       "open_calendar": "Avaa kalenteri",
+      "calendar": "Kalenteri",
       "product_quantity": "Tuotteen määrä",
       "decrease_quantity": "Vähennä määrää",
       "increase_quantity": "Lisää määrää",
@@ -36,9 +37,24 @@
       "nav_up": "Ylös",
       "nav_down": "Alas"
     },
+    "calendar": {
+      "aria_label": "Kalenteri",
+      "previous_month": "Edellinen kuukausi",
+      "next_month": "Seuraava kuukausi",
+      "previous_year": "Edellinen vuosi",
+      "next_year": "Seuraava vuosi",
+      "today": "Tänään",
+      "clear": "Tyhjennä"
+    },
     "date_selector": {
       "min_date_error": "Päivämäärän on oltava vähintään {min}",
       "max_date_error": "Päivämäärän on oltava enintään {max}"
+    },
+    "date_input": {
+      "invalid_format": "Virheellinen päivämäärämuoto",
+      "min_date_error": "Päivämäärän on oltava vähintään {min}",
+      "max_date_error": "Päivämäärän on oltava enintään {max}",
+      "unavailable_date": "Tämä päivämäärä ei ole saatavilla"
     },
     "labels": {
       "not_available": "Ei saatavilla",
