@@ -6,7 +6,7 @@
     role="dialog"
     :aria-label="t('ui_kit.accessibility.calendar')"
   >
-    <template #default="{ toggle, triggerProps, open, close }">
+    <template #default="{ toggle, triggerProps }">
       <VcDateInput
         ref="dateInputRef"
         :model-value="modelValue"
@@ -35,7 +35,6 @@
         @blur="onInputBlur"
         @focus="onInputFocus"
         @clear="onInputClear"
-        @keydown.esc.stop="close"
       >
         <template #append>
           <VcButton
