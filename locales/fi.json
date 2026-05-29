@@ -575,6 +575,7 @@
         "created_date_label": "Luontipäivämäärä",
         "start_date_label": "Aloituspäivämäärä",
         "end_date_label": "Lopetuspäivämäärä",
+        "invalid_range": "Virheellinen päivämääräväli.",
         "apply_button": "@:common.buttons.apply",
         "reset_button": "@:common.buttons.reset"
       },

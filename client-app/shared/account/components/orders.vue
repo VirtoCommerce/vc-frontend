@@ -10,7 +10,11 @@
         </template>
 
         <template #dateFilterType>
-          <DateFilterSelect :date-filter-type="selectedDateFilterType" @change="handleOrdersDateFilterChange" />
+          <DateFilterSelect
+            :date-filter-type="selectedDateFilterType"
+            @change="handleOrdersDateFilterChange"
+            @update:valid="isDateRangeValid = $event"
+          />
         </template>
       </MobileOrdersFilter>
 
@@ -40,7 +44,7 @@
         </VcButton>
 
         <VcButton
-          :disabled="!isFilterDirty"
+          :disabled="!isFilterDirty || !isDateRangeValid"
           size="sm"
           min-width="6.25rem"
           @click="
@@ -85,6 +89,7 @@
 
           <template #content="{ close }">
             <OrdersFilter
+              :is-date-range-valid="isDateRangeValid"
               @apply="
                 applyOrderFilters();
                 close();
@@ -99,6 +104,7 @@
                 :date-filter-type="selectedDateFilterType"
                 :label="$t('shared.account.orders_filter.created_date_label')"
                 @change="handleOrdersDateFilterChange"
+                @update:valid="isDateRangeValid = $event"
               />
 
               <VcSelect
@@ -402,6 +408,8 @@ const isMobile = breakpoints.smaller("lg");
 const localKeyword = ref("");
 const filtersVisible = ref(false);
 const selectedDateFilterType = ref<DateFilterType>();
+// Default true — empty inputs are valid; updated via DateFilterSelect's update:valid.
+const isDateRangeValid = ref(true);
 
 const organizationCustomerNames = computed(() =>
   facets.value?.find((item) => item.name === CUSTOMER_NAME_FACET_NAME)?.items?.map((item) => item.label),

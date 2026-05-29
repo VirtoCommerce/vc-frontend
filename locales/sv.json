@@ -575,6 +575,7 @@
         "created_date_label": "Skapat datum",
         "start_date_label": "Startdatum",
         "end_date_label": "Slutdatum",
+        "invalid_range": "Ogiltigt datumintervall.",
         "apply_button": "@:common.buttons.apply",
         "reset_button": "@:common.buttons.reset"
       },

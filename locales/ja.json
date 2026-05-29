@@ -575,6 +575,7 @@
         "created_date_label": "作成日",
         "start_date_label": "開始日",
         "end_date_label": "終了日",
+        "invalid_range": "無効な日付範囲です。",
         "apply_button": "@:common.buttons.apply",
         "reset_button": "@:common.buttons.reset"
       },

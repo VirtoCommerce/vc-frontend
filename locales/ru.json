@@ -575,6 +575,7 @@
         "created_date_label": "Дата создания",
         "start_date_label": "Дата начала",
         "end_date_label": "Дата окончания",
+        "invalid_range": "Некорректный диапазон дат.",
         "apply_button": "@:common.buttons.apply",
         "reset_button": "@:common.buttons.reset"
       },

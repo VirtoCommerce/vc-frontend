@@ -7,11 +7,14 @@ declare module "vue" {
     VcAlert: typeof Components.VcAlert;
     VcButton: typeof Components.VcButton;
     VcButtonSeeMoreLess: typeof Components.VcButtonSeeMoreLess;
+    VcCalendar: typeof Components.VcCalendar;
     VcCarousel: typeof Components.VcCarousel;
     VcChip: typeof Components.VcChip;
     VcCollapsibleContent: typeof Components.VcCollapsibleContent;
     VcCompositeShape: typeof Components.VcCompositeShape;
     VcCopyText: typeof Components.VcCopyText;
+    VcDateInput: typeof Components.VcDateInput;
+    /** @deprecated Use VcDatePicker for typed date entry with calendar popover, or VcDateInput for input-only. */
     VcDateSelector: typeof Components.VcDateSelector;
     VcDialogContent: typeof Components.VcDialogContent;
     VcDialogFooter: typeof Components.VcDialogFooter;
