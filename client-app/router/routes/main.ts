@@ -1,3 +1,10 @@
+import { useThemeContext } from "@/core/composables";
+import {
+  LOYALTY_CURRENCY_KEY,
+  LOYALTY_ENABLED_KEY,
+  LOYALTY_MODE_KEY,
+  LOYALTY_MODULE_ID,
+} from "@/core/constants/modules";
 import { ROUTES } from "@/router/routes/constants";
 import { accountRoutes } from "./account";
 import { cartRoutes } from "./cart";
@@ -25,12 +32,27 @@ const BulkOrder = () => import("@/pages/bulk-order.vue");
 const CompareProducts = () => import("@/pages/compare-products.vue");
 const Search = () => import("@/pages/search.vue");
 const Catalog = () => import("@/pages/catalog.vue");
+const LoyaltyCatalog = () => import("@/pages/loyalty-catalog.vue");
 const Category = () => import("@/pages/category.vue");
 const ProductRoute = () => import("@/pages/product-route.vue");
 const SharedList = () => import("@/pages/shared-list.vue");
 const Branch = () => import("@/pages/branch.vue");
 const Welcome = () => import("@/pages/welcome.vue");
 const Matcher = () => import("@/pages/matcher/matcher.vue");
+
+const LOYALTY_CATALOG_MODES = new Set(["Mixed Cart", "Loyalty Store"]);
+
+function isLoyaltyCatalogAvailable(): boolean {
+  const { themeContext } = useThemeContext();
+  const loyaltyModule = themeContext.value?.storeSettings?.modules?.find(
+    (module) => module.moduleId === LOYALTY_MODULE_ID,
+  );
+  const settings = loyaltyModule?.settings ?? [];
+  const isEnabled = settings.find((s) => s.name === LOYALTY_ENABLED_KEY)?.value === true;
+  const currency = settings.find((s) => s.name === LOYALTY_CURRENCY_KEY)?.value as string | undefined;
+  const mode = settings.find((s) => s.name === LOYALTY_MODE_KEY)?.value as string | undefined;
+  return isEnabled && !!currency && !!mode && LOYALTY_CATALOG_MODES.has(mode);
+}
 
 export const mainRoutes: RouteRecordRaw[] = [
   { path: "/auth/callback", name: "AuthCallback", component: callback, meta: { public: true, redirectable: false } },
@@ -86,6 +108,41 @@ export const mainRoutes: RouteRecordRaw[] = [
   ...cartRoutes,
   ...checkoutRoutes,
   { path: ROUTES.CATALOG.PATH, name: ROUTES.CATALOG.NAME, component: Catalog, props: true },
+  {
+    path: ROUTES.LOYALTY_CATALOG.PATH,
+    name: ROUTES.LOYALTY_CATALOG.NAME,
+    component: LoyaltyCatalog,
+    beforeEnter: (_to, _from, next) => {
+      return isLoyaltyCatalogAvailable() ? next() : next({ name: "NotFound" });
+    },
+  },
+  {
+    path: ROUTES.LOYALTY_PRODUCT.PATH,
+    name: ROUTES.LOYALTY_PRODUCT.NAME,
+    component: ProductRoute,
+    props: (route) => ({ allowSetMeta: true, productId: route.params.productId }),
+    beforeEnter: (_to, _from, next) => {
+      return isLoyaltyCatalogAvailable() ? next() : next({ name: "NotFound" });
+    },
+  },
+  {
+    path: ROUTES.LOYALTY_CATEGORY.PATH,
+    name: ROUTES.LOYALTY_CATEGORY.NAME,
+    component: Category,
+    props: true,
+    beforeEnter: (_to, _from, next) => {
+      return isLoyaltyCatalogAvailable() ? next() : next({ name: "NotFound" });
+    },
+  },
+  {
+    path: `${ROUTES.LOYALTY_CATALOG.PATH}/:pathMatch(.*)*`,
+    name: "LoyaltyCatalogMatcher",
+    component: Matcher,
+    props: true,
+    beforeEnter: (_to, _from, next) => {
+      return isLoyaltyCatalogAvailable() ? next() : next({ name: "NotFound" });
+    },
+  },
   { path: "/category/:categoryId", name: "Category", component: Category, props: true },
   {
     path: "/product/:productId",

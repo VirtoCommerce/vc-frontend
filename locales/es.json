@@ -244,6 +244,7 @@
     "links": {
       "home": "Inicio",
       "catalog": "Catálogo",
+      "loyalty_catalog": "Catálogo de fidelidad",
       "bulk_order": "Pedido en masa",
       "compare": "Comparar",
       "contact_us": "Contáctanos",
@@ -1584,6 +1585,9 @@
         "terms_and_policy_link": "Términos y Política",
         "submit_button": "@:common.buttons.submit"
       }
+    },
+    "loyalty_catalog": {
+      "title": "Catálogo de fidelidad"
     },
     "compare": {
       "meta": {

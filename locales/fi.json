@@ -244,6 +244,7 @@
     "links": {
       "home": "Koti",
       "catalog": "Luettelo",
+      "loyalty_catalog": "Kanta-asiakaskatalogi",
       "bulk_order": "Joukkotilaus",
       "compare": "Vertaa",
       "contact_us": "Ota yhteyttä",
@@ -1584,6 +1585,9 @@
         "terms_and_policy_link": "Käyttöehdot ja tietosuojakäytäntö",
         "submit_button": "@:common.buttons.submit"
       }
+    },
+    "loyalty_catalog": {
+      "title": "Kanta-asiakaskatalogi"
     },
     "compare": {
       "meta": {

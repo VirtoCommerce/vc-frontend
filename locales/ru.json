@@ -244,6 +244,7 @@
     "links": {
       "home": "Главная",
       "catalog": "Каталог",
+      "loyalty_catalog": "Каталог лояльности",
       "bulk_order": "Мультизаказ",
       "compare": "Сравнение",
       "contact_us": "Свяжитесь с нами",
@@ -1584,6 +1585,9 @@
         "terms_and_policy_link": "Условиями и Политикой",
         "submit_button": "@:common.buttons.submit"
       }
+    },
+    "loyalty_catalog": {
+      "title": "Каталог лояльности"
     },
     "compare": {
       "meta": {

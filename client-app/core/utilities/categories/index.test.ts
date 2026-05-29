@@ -229,4 +229,34 @@ describe("getCategoryRoute", () => {
 
     expect(result).toStrictEqual(expectedRoute);
   });
+
+  describe("when basePath is provided", () => {
+    it("should prepend the basePath to the slug-based route", () => {
+      const category: Category = createCategory({ id: "1", slug: "electronics" });
+      const result = getCategoryRoute(category, undefined, "/loyalty-catalog");
+      expect(result).toStrictEqual({ path: "/loyalty-catalog/electronics" });
+    });
+
+    it("should normalize a trailing slash in basePath", () => {
+      const category: Category = createCategory({ id: "1", slug: "electronics" });
+      const result = getCategoryRoute(category, undefined, "/loyalty-catalog/");
+      expect(result).toStrictEqual({ path: "/loyalty-catalog/electronics" });
+    });
+
+    it("should fall back to the LoyaltyCategory route when basePath is /loyalty-catalog and slug is missing", () => {
+      const category: Category = createCategory({ id: "2", slug: undefined });
+      const result = getCategoryRoute(category, undefined, "/loyalty-catalog");
+      expect(result).toEqual({ name: "LoyaltyCategory", params: { categoryId: "2" } });
+    });
+
+    it("should keep query on the LoyaltyCategory fallback", () => {
+      const category: Category = createCategory({ id: "2", slug: undefined });
+      const result = getCategoryRoute(category, { sort: "name-ascending" }, "/loyalty-catalog");
+      expect(result).toEqual({
+        name: "LoyaltyCategory",
+        params: { categoryId: "2" },
+        query: { sort: "name-ascending" },
+      });
+    });
+  });
 });

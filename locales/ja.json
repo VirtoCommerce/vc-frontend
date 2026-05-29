@@ -244,6 +244,7 @@
     "links": {
       "home": "ホーム",
       "catalog": "カタログ",
+      "loyalty_catalog": "ロイヤルティカタログ",
       "bulk_order": "一括注文",
       "compare": "比較",
       "contact_us": "お問い合わせ",
@@ -1584,6 +1585,9 @@
         "terms_and_policy_link": "利用規約とポリシー",
         "submit_button": "@:common.buttons.submit"
       }
+    },
+    "loyalty_catalog": {
+      "title": "ロイヤルティカタログ"
     },
     "compare": {
       "meta": {

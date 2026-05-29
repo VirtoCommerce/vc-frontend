@@ -244,6 +244,7 @@
     "links": {
       "home": "Startseite",
       "catalog": "Katalog",
+      "loyalty_catalog": "Treueprogramm-Katalog",
       "bulk_order": "Mengenbestellung",
       "compare": "Vergleichen",
       "contact_us": "Kontaktieren Sie uns",
@@ -1584,6 +1585,9 @@
         "terms_and_policy_link": "Bedingungen und Richtlinien",
         "submit_button": "@:common.buttons.submit"
       }
+    },
+    "loyalty_catalog": {
+      "title": "Treueprogramm-Katalog"
     },
     "compare": {
       "meta": {

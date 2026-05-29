@@ -244,6 +244,7 @@
     "links": {
       "home": "Hjem",
       "catalog": "Katalog",
+      "loyalty_catalog": "Lojalitetskatalog",
       "bulk_order": "Massebestilling",
       "compare": "Sammenlign",
       "contact_us": "Kontakt oss",
@@ -1584,6 +1585,9 @@
         "terms_and_policy_link": "Vilkår og retningslinjer",
         "submit_button": "@:common.buttons.submit"
       }
+    },
+    "loyalty_catalog": {
+      "title": "Lojalitetskatalog"
     },
     "compare": {
       "meta": {

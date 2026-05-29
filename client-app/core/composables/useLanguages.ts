@@ -3,6 +3,7 @@ import { merge } from "lodash";
 import { computed, ref } from "vue";
 import { setLocale as setLocaleForYup } from "yup";
 import { useUser } from "@/shared/account/composables/useUser";
+import { getCatalogBasePath } from "@/shared/catalog/composables/useCatalogBasePath";
 import { useThemeContext } from "./useThemeContext";
 import type { ILanguage } from "../types";
 import type { I18n } from "@/i18n";
@@ -208,9 +209,20 @@ export function useLanguages() {
 
     const localeFromUrl = getLocaleFromUrl();
     const normalizedPermalink = permalink.startsWith("/") ? permalink : `/${permalink}`;
-    const permalinkWithLocale = localeFromUrl ? `/${localeFromUrl}${normalizedPermalink}` : normalizedPermalink;
 
-    history.replaceState(history.state, "", `${permalinkWithLocale}${location.search}${location.hash}`);
+    // Preserve a catalog namespace prefix (e.g. /loyalty-catalog) if the current URL is under one,
+    // so that slug-driven replaceState calls don't drop it.
+    const localePrefix = localeFromUrl ? `/${localeFromUrl}` : "";
+    const pathnameWithoutLocale = localeFromUrl
+      ? location.pathname.slice(localePrefix.length) || "/"
+      : location.pathname;
+    const basePath = getCatalogBasePath(pathnameWithoutLocale);
+
+    history.replaceState(
+      history.state,
+      "",
+      `${localePrefix}${basePath}${normalizedPermalink}${location.search}${location.hash}`,
+    );
   }
 
   return {

@@ -244,6 +244,7 @@
     "links": {
       "home": "Strona główna",
       "catalog": "Katalog",
+      "loyalty_catalog": "Katalog lojalnościowy",
       "bulk_order": "Duże zamówienia",
       "compare": "Porównaj",
       "contact_us": "Skontaktuj się z nami",
@@ -1584,6 +1585,9 @@
         "terms_and_policy_link": "Warunki i Polityka",
         "submit_button": "@:common.buttons.submit"
       }
+    },
+    "loyalty_catalog": {
+      "title": "Katalog lojalnościowy"
     },
     "compare": {
       "meta": {

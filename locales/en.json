@@ -244,6 +244,7 @@
     "links": {
       "home": "Home",
       "catalog": "Catalog",
+      "loyalty_catalog": "Loyalty catalog",
       "bulk_order": "Bulk order",
       "compare": "Compare",
       "contact_us": "Contact us",
@@ -1584,6 +1585,9 @@
         "terms_and_policy_link": "Terms and Policy",
         "submit_button": "@:common.buttons.submit"
       }
+    },
+    "loyalty_catalog": {
+      "title": "Loyalty catalog"
     },
     "compare": {
       "meta": {

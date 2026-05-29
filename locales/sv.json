@@ -244,6 +244,7 @@
     "links": {
       "home": "Hem",
       "catalog": "Katalog",
+      "loyalty_catalog": "Lojalitetskatalog",
       "bulk_order": "Massbeställning",
       "compare": "Jämför",
       "contact_us": "Kontakta oss",
@@ -1584,6 +1585,9 @@
         "terms_and_policy_link": "Villkor och policy",
         "submit_button": "@:common.buttons.submit"
       }
+    },
+    "loyalty_catalog": {
+      "title": "Lojalitetskatalog"
     },
     "compare": {
       "meta": {
