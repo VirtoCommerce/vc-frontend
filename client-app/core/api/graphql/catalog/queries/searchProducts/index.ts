@@ -29,10 +29,13 @@ export async function searchProducts(
     withImages?: boolean;
     /** @default false */
     withZeroPrice?: boolean;
+    /** Overrides the currency code from globals (e.g. for loyalty catalog). */
+    currencyCodeOverride?: string;
   } = {},
 ): Promise<ProductConnection> {
-  const { storeId, catalogId, userId, cultureName, currencyCode } = globals;
-  const { withFacets = false, withImages = true, withZeroPrice = false } = options;
+  const { storeId, catalogId, userId, cultureName, currencyCode: defaultCurrencyCode } = globals;
+  const { withFacets = false, withImages = true, withZeroPrice = false, currencyCodeOverride } = options;
+  const currencyCode = currencyCodeOverride || defaultCurrencyCode;
   const slugOutline = useLocalStorage<string>(NAVIGATION_OUTLINE, "");
 
   const filterString = [

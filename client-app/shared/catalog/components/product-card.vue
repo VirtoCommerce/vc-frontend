@@ -74,9 +74,9 @@
     <VcProductButton
       v-else-if="product.isConfigurable"
       data-test-id="product-card-configurations-button"
-      :to="getProductRoute(product.id, product.slug)"
+      :to="link"
       :link-text="$t('pages.catalog.customize_button')"
-      :link-to="getProductRoute(product.id, product.slug)"
+      :link-to="link"
       :button-text="$t('pages.catalog.customize_button')"
       icon="cube-transparent"
       :target="browserTarget || browserTargetFromSetting"
@@ -154,6 +154,7 @@ import {
   ENABLED_KEY as CUSTOMER_REVIEWS_ENABLED_KEY,
   MODULE_ID as CUSTOMER_REVIEWS_MODULE_ID,
 } from "@/modules/customer-reviews/constants";
+import { useCatalogBasePath } from "@/shared/catalog/composables/useCatalogBasePath";
 import { useProductVariations } from "@/shared/catalog/composables/useProductVariations";
 import { useProducts } from "@/shared/catalog/composables/useProducts";
 import { PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME } from "@/shared/catalog/constants/product";
@@ -200,7 +201,8 @@ const productReviewsEnabled = isEnabled(CUSTOMER_REVIEWS_ENABLED_KEY);
 
 const productId = computed(() => product.value.id);
 
-const link = computed(() => getProductRoute(productId.value, props.product.slug));
+const catalogBasePath = useCatalogBasePath();
+const link = computed(() => getProductRoute(productId.value, props.product.slug, catalogBasePath.value));
 
 const actualPrice = computed(() =>
   product.value.hasVariations

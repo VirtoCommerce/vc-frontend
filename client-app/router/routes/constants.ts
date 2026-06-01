@@ -3,6 +3,18 @@ export const ROUTES = {
     NAME: "Catalog",
     PATH: "/catalog",
   },
+  LOYALTY_CATALOG: {
+    NAME: "LoyaltyCatalog",
+    PATH: "/loyalty-catalog",
+  },
+  LOYALTY_PRODUCT: {
+    NAME: "LoyaltyProduct",
+    PATH: "/loyalty-catalog/product/:productId",
+  },
+  LOYALTY_CATEGORY: {
+    NAME: "LoyaltyCategory",
+    PATH: "/loyalty-catalog/category/:categoryId",
+  },
   SEARCH: {
     NAME: "Search",
     PATH: "/search",

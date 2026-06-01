@@ -26,7 +26,7 @@
         @change="$emit('select', isSelected)"
       />
 
-      <div v-if="$slots['after-image'] || withImage" class="vc-line-item__img-container">
+      <div v-if="hasImageContainer" class="vc-line-item__img-container">
         <!--  IMAGE -->
         <VcImage class="vc-line-item__img" :src="imageUrl" :alt="name" size-suffix="sm" lazy />
 
@@ -39,8 +39,8 @@
         :class="[
           'vc-line-item__content',
           {
-            'vc-line-item__content--with-image': withImage,
-            'vc-line-item__content--selectable': !withImage && selectable,
+            'vc-line-item__content--with-image': hasImageContainer,
+            'vc-line-item__content--selectable': !hasImageContainer && selectable,
           },
         ]"
       >
@@ -143,7 +143,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watchEffect } from "vue";
+import { computed, ref, useSlots, watchEffect } from "vue";
 import type { CommonVendor, MoneyType, Property } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
 
@@ -182,6 +182,10 @@ const props = withDefaults(defineProps<IProps>(), {
   properties: () => [],
   browserTarget: "_blank",
 });
+
+const slots = useSlots();
+
+const hasImageContainer = computed(() => !!slots["after-image"] || props.withImage);
 
 const isSelected = ref<boolean>(true);
 
@@ -316,6 +320,10 @@ watchEffect(() => {
     @container (width > theme("containers.2xl")) {
       @apply hidden;
     }
+
+    #{$deleted} & {
+      @apply hidden;
+    }
   }
 
   &__content {
@@ -356,6 +364,10 @@ watchEffect(() => {
 
   &__name-actions {
     @container (width <= theme("containers.2xl")) {
+      @apply hidden;
+    }
+
+    #{$deleted} & {
       @apply hidden;
     }
   }

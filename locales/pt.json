@@ -244,6 +244,7 @@
     "links": {
       "home": "Início",
       "catalog": "Catálogo",
+      "loyalty_catalog": "Catálogo de fidelidade",
       "bulk_order": "Pedido em Massa",
       "compare": "Comparar",
       "contact_us": "Contate-Nos",
@@ -574,6 +575,7 @@
         "created_date_label": "Data de criação",
         "start_date_label": "Data de início",
         "end_date_label": "Data de término",
+        "invalid_range": "Intervalo de datas inválido.",
         "apply_button": "@:common.buttons.apply",
         "reset_button": "@:common.buttons.reset"
       },
@@ -681,7 +683,9 @@
         "expires": "@:shared.account.promotion_coupons.expires",
         "custom_code": "Código personalizado",
         "enter_custom_code": "Inserir código personalizado",
-        "all_coupons": "Ver todos os cupons e promoções"
+        "all_coupons": "Ver todos os cupons e promoções",
+        "apply_aria": "Apply coupon {code}",
+        "remove_aria": "Remove coupon"
       }
     },
     "catalog": {
@@ -1581,6 +1585,9 @@
         "terms_and_policy_link": "Termos e Política",
         "submit_button": "@:common.buttons.submit"
       }
+    },
+    "loyalty_catalog": {
+      "title": "Catálogo de fidelidade"
     },
     "compare": {
       "meta": {

@@ -68,6 +68,10 @@ query SearchRelatedProducts(
               formattedAmount
             }
           }
+          breadcrumbs {
+            title
+            typeName
+          }
         }
       }
     }

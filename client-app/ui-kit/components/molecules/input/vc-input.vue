@@ -128,7 +128,14 @@ export interface IProps {
   maxlength?: string | number;
   center?: boolean;
   truncate?: boolean;
-  type?: "text" | "password" | "number" | "email" | "search" | "date";
+  type?:
+    | "text"
+    | "password"
+    | "number"
+    | "email"
+    | "search"
+    /** @deprecated Use VcDatePicker (or VcDateInput for input-only) instead. */
+    | "date";
   size?: VcInputSizeType;
   clearable?: boolean;
   browserTooltip?: "enabled" | "disabled";
@@ -156,6 +163,11 @@ const props = withDefaults(defineProps<IProps>(), {
   browserTooltip: "disabled",
   tabindex: 0,
 });
+
+if (import.meta.env.DEV && props.type === "date") {
+  // eslint-disable-next-line no-console
+  console.warn('VcInput: type="date" is deprecated. Use VcDatePicker (or VcDateInput for input-only) instead.');
+}
 
 const LIMITED_TYPES: IProps["type"][] = ["number", "date"];
 

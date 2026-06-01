@@ -6,9 +6,10 @@ import menuData from "@/config/menu.json";
 import { getChildCategories, getMenu } from "@/core/api/graphql";
 import { useCurrency } from "@/core/composables/useCurrency";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
+import { useModules } from "@/core/composables/useModules";
 import { useThemeContext } from "@/core/composables/useThemeContext";
 import { useWhiteLabeling } from "@/core/composables/useWhiteLabeling";
-import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
+import { MODULE_ID_MARKETING_EXPERIENCE_API, MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import {
   convertToExtendedMenuLink,
   getFilterExpressionForCategorySubtree,
@@ -70,6 +71,8 @@ export function _useNavigations() {
     return markRecursively(link);
   }
 
+  const { hasModule } = useModules();
+
   function createMenuComputed(type: "desktop" | "mobile", key: MenuSecionType) {
     return computed<ExtendedMenuLinkType | undefined>(() => {
       const raw = menuSchema.value?.header?.[type]?.[key];
@@ -81,6 +84,10 @@ export function _useNavigations() {
       const schema = clone(getTranslatedMenuLink(raw));
 
       if (Array.isArray(schema.children)) {
+        if (key === "marketing" && !hasModule(MODULE_ID_MARKETING_EXPERIENCE_API)) {
+          schema.children = schema.children.filter((child) => child.id !== "promotion-coupons");
+        }
+
         schema.children.sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0));
       }
 

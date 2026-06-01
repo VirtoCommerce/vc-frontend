@@ -22,6 +22,7 @@
     "accessibility": {
       "close_alert": "アラートを閉じる",
       "open_calendar": "カレンダーを開く",
+      "calendar": "カレンダー",
       "product_quantity": "製品数量",
       "decrease_quantity": "数量を減らす",
       "increase_quantity": "数量を増やす",
@@ -36,9 +37,24 @@
       "nav_up": "上へ",
       "nav_down": "下へ"
     },
+    "calendar": {
+      "aria_label": "カレンダー",
+      "previous_month": "前の月",
+      "next_month": "次の月",
+      "previous_year": "前年",
+      "next_year": "翌年",
+      "today": "今日",
+      "clear": "クリア"
+    },
     "date_selector": {
       "min_date_error": "日付は{min}以降である必要があります",
       "max_date_error": "日付は{max}以前である必要があります"
+    },
+    "date_input": {
+      "invalid_format": "日付の形式が無効です",
+      "min_date_error": "日付は {min} 以降を指定してください",
+      "max_date_error": "日付は {max} 以前を指定してください",
+      "unavailable_date": "この日付は利用できません"
     },
     "labels": {
       "not_available": "N/A",

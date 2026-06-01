@@ -1,11 +1,14 @@
 export { default as VcAlert } from "./alert/vc-alert.vue";
 export { default as VcButton } from "./button/vc-button.vue";
 export { default as VcButtonSeeMoreLess } from "./button-see-more-less/vc-button-see-more-less.vue";
+export { default as VcCalendar } from "./calendar/vc-calendar.vue";
 export { default as VcCarousel } from "./carousel/vc-carousel.vue";
 export { default as VcChip } from "./chip/vc-chip.vue";
 export { default as VcCollapsibleContent } from "./collapsible-content/vc-collapsible-content.vue";
 export { default as VcCompositeShape } from "./composite-shape/vc-composite-shape.vue";
 export { default as VcCopyText } from "./copy-text/vc-copy-text.vue";
+export { default as VcDateInput } from "./date-input/vc-date-input.vue";
+/** @deprecated Use VcDatePicker for typed date entry with calendar popover, or VcDateInput for input-only. */
 export { default as VcDateSelector } from "./date-selector/vc-date-selector.vue";
 export { default as VcDialogContent } from "./dialog-content/vc-dialog-content.vue";
 export { default as VcDialogFooter } from "./dialog-footer/vc-dialog-footer.vue";

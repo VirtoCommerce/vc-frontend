@@ -29,3 +29,10 @@ export const VIRTOPAGES_ENABLED_KEY = "VirtoPages.Enable";
 
 export const INTENT_SEARCH_MODULE_ID = "VirtoCommerce.IntentSearch";
 export const INTENT_SEARCH_ENABLED_KEY = "IntentSearch.Enabled";
+
+export const LOYALTY_MODULE_ID = "VirtoCommerce.Loyalty";
+export const LOYALTY_ENABLED_KEY = "Loyalty.Enable";
+export const LOYALTY_MODE_KEY = "Loyalty.Mode";
+export const LOYALTY_CURRENCY_KEY = "Loyalty.Currency";
+
+export const MODULE_ID_MARKETING_EXPERIENCE_API = "VirtoCommerce.MarketingExperienceApi";

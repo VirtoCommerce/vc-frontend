@@ -1,3 +1,5 @@
+import { useModules } from "@/core/composables";
+import { MODULE_ID_MARKETING_EXPERIENCE_API } from "@/core/constants/modules";
 import { ROUTES } from "@/router/routes/constants";
 import { useUser } from "@/shared/account";
 import type { RouteRecordRaw } from "vue-router";
@@ -83,5 +85,14 @@ export const accountRoutes: RouteRecordRaw[] = [
     path: ROUTES.PROMOTION_COUPONS.PATH,
     name: ROUTES.PROMOTION_COUPONS.NAME,
     component: PromotionCoupons,
+    beforeEnter(_to, _from, next) {
+      const { hasModule } = useModules();
+
+      if (hasModule(MODULE_ID_MARKETING_EXPERIENCE_API)) {
+        next();
+      } else {
+        next({ name: "NotFound" });
+      }
+    },
   },
 ];

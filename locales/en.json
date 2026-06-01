@@ -244,6 +244,7 @@
     "links": {
       "home": "Home",
       "catalog": "Catalog",
+      "loyalty_catalog": "Loyalty catalog",
       "bulk_order": "Bulk order",
       "compare": "Compare",
       "contact_us": "Contact us",
@@ -574,6 +575,7 @@
         "created_date_label": "Created date",
         "start_date_label": "Start date",
         "end_date_label": "End date",
+        "invalid_range": "Invalid date range.",
         "apply_button": "@:common.buttons.apply",
         "reset_button": "@:common.buttons.reset"
       },
@@ -681,7 +683,9 @@
         "expires": "@:shared.account.promotion_coupons.expires",
         "custom_code": "Custom code",
         "enter_custom_code": "Enter custom code",
-        "all_coupons": "View all coupons & promotions"
+        "all_coupons": "View all coupons & promotions",
+        "apply_aria": "Apply coupon {code}",
+        "remove_aria": "Remove coupon"
       }
     },
     "catalog": {
@@ -1581,6 +1585,9 @@
         "terms_and_policy_link": "Terms and Policy",
         "submit_button": "@:common.buttons.submit"
       }
+    },
+    "loyalty_catalog": {
+      "title": "Loyalty catalog"
     },
     "compare": {
       "meta": {
