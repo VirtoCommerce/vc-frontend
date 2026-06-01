@@ -87,7 +87,7 @@
 
 <script setup lang="ts">
 import Skyflow from "skyflow-js";
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { authorizePayment, initializeCartPayment, initializePayment } from "@/core/api/graphql";
 import { useAnalytics, useThemeContext } from "@/core/composables";
@@ -584,6 +584,11 @@ onMounted(async () => {
   if (!skyflowCards.value?.length) {
     void initNewCardForm();
   }
+});
+
+onUnmounted(() => {
+  registerPaymentProcessor(null);
+  setCardDataInvalid();
 });
 
 const isPaymentDataValid = computed(() => {
