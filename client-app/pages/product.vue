@@ -190,6 +190,7 @@ import {
   useConfigurableProduct,
   useProductPickupLocations,
   useProductVariations,
+  useLoyaltyCatalogCurrency,
 } from "@/shared/catalog";
 import { useProductVariationProperties } from "@/shared/catalog/composables/useProductVariationProperties";
 import {
@@ -231,7 +232,15 @@ const isMobile = breakpoints.smaller("md");
 const productId = toRef(props, "productId");
 const filtersDisplayOrder = toRef(props, "filtersDisplayOrder");
 
-const { product, fetching: fetchingProduct, fetchProduct } = useProduct();
+const loyaltyCurrencyOverride = useLoyaltyCatalogCurrency();
+
+const {
+  product,
+  fetching: fetchingProduct,
+  fetchProduct,
+} = useProduct({
+  currencyCodeOverride: loyaltyCurrencyOverride,
+});
 const { fetchProductConfiguration, configuration } = useConfigurableProduct(productId);
 const {
   fetchingProducts: fetchingVariations,
@@ -249,6 +258,7 @@ const {
 } = useProducts({
   withFacets: true,
   filtersDisplayOrder,
+  currencyCodeOverride: loyaltyCurrencyOverride,
 });
 const { relatedProducts, fetchRelatedProducts } = useRelatedProducts();
 const { recommendedProducts, fetchRecommendedProducts } = useRecommendedProducts();
@@ -461,7 +471,11 @@ watch(
     }
 
     if (product.value?.associations?.totalCount && !relatedProductsSection.value?.hidden) {
-      await fetchRelatedProducts({ productId: productId.value, itemsPerPage: 30 });
+      await fetchRelatedProducts({
+        productId: productId.value,
+        itemsPerPage: 30,
+        currencyCodeOverride: loyaltyCurrencyOverride.value,
+      });
     }
 
     const recommendedProductsBlocks = recommendedProductsSection.value?.blocks?.filter((block) => !!block.model) ?? [];
@@ -469,6 +483,7 @@ watch(
       const paramsToFetch = recommendedProductsBlocks.map(({ model }) => ({
         productId: productId.value,
         model: model as string,
+        currencyCodeOverride: loyaltyCurrencyOverride.value,
       }));
       await fetchRecommendedProducts(paramsToFetch);
     }

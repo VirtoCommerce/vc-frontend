@@ -6,6 +6,7 @@ const SIZES = ["xs", "sm", "md", "auto"];
 const meta: Meta<typeof VcDateSelector> = {
   title: "Components/Molecules/VcDateSelector",
   component: VcDateSelector,
+  tags: ["deprecated"],
   argTypes: {
     label: {
       control: "text",
@@ -60,7 +61,6 @@ const meta: Meta<typeof VcDateSelector> = {
       control: "text",
       table: { type: { summary: "string" } },
     },
-    // deprecated props
     isRequired: {
       control: false,
       description: "DEPRECATED: use `required` instead",
@@ -97,9 +97,9 @@ const meta: Meta<typeof VcDateSelector> = {
   `,
   }),
   parameters: {
+    deprecated: "Use VcDatePicker for typed date entry with calendar popover, or VcDateInput for input-only.",
     a11y: {
-      // Disable target-size rule - calendar button size is determined by input height
-      // Using options.rules for axe.run() to ensure the rule is disabled during execution
+      // Calendar button size matches input height; target-size axe rule disabled here.
       options: {
         rules: {
           "target-size": { enabled: false },
@@ -160,7 +160,7 @@ export const OutOfRangeValidation: StoryType = {
     return {
       min: `${currentYear}-${currentMonth}-15`,
       max: `${currentYear}-${currentMonth}-20`,
-      modelValue: `${currentYear}-${currentMonth}-10`, // This date is before min
+      modelValue: `${currentYear}-${currentMonth}-10`,
     };
   })(),
   name: "Out of Range Validation",
@@ -185,8 +185,8 @@ export const WithDateTime: StoryType = {
     const currentYear = today.getFullYear();
 
     return {
-      min: `${currentYear}-${currentMonth}-15T10:30:00`, // Time component will be stripped
-      max: `${currentYear}-${currentMonth}-20T15:45:00`, // Time component will be stripped
+      min: `${currentYear}-${currentMonth}-15T10:30:00`,
+      max: `${currentYear}-${currentMonth}-20T15:45:00`,
       modelValue: `${currentYear}-${currentMonth}-17`,
     };
   })(),

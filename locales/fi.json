@@ -244,6 +244,7 @@
     "links": {
       "home": "Koti",
       "catalog": "Luettelo",
+      "loyalty_catalog": "Kanta-asiakaskatalogi",
       "bulk_order": "Joukkotilaus",
       "compare": "Vertaa",
       "contact_us": "Ota yhteyttä",
@@ -574,6 +575,7 @@
         "created_date_label": "Luontipäivämäärä",
         "start_date_label": "Aloituspäivämäärä",
         "end_date_label": "Lopetuspäivämäärä",
+        "invalid_range": "Virheellinen päivämääräväli.",
         "apply_button": "@:common.buttons.apply",
         "reset_button": "@:common.buttons.reset"
       },
@@ -1583,6 +1585,9 @@
         "terms_and_policy_link": "Käyttöehdot ja tietosuojakäytäntö",
         "submit_button": "@:common.buttons.submit"
       }
+    },
+    "loyalty_catalog": {
+      "title": "Kanta-asiakaskatalogi"
     },
     "compare": {
       "meta": {

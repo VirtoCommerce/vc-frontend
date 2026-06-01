@@ -21,6 +21,7 @@
           },
         ]"
         :role="role"
+        :aria-label="ariaLabel"
       >
         <div
           v-if="arrowEnabled"

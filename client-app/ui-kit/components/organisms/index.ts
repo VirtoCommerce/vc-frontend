@@ -1,5 +1,6 @@
 export { default as VcAddToCart } from "./add-to-cart/vc-add-to-cart.vue";
 export { default as VcConfirmationModal } from "./confirmation-modal/vc-confirmation-modal.vue";
+export { default as VcDatePicker } from "./date-picker/vc-date-picker.vue";
 export { default as VcModal } from "./modal/vc-modal.vue";
 export { default as VcPagination } from "./pagination/vc-pagination.vue";
 export { default as VcProductCard } from "./product-card/vc-product-card.vue";

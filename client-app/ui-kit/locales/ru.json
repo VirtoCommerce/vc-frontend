@@ -22,6 +22,7 @@
     "accessibility": {
       "close_alert": "Закрыть уведомление",
       "open_calendar": "Открыть календарь",
+      "calendar": "Календарь",
       "product_quantity": "Количество товара",
       "decrease_quantity": "Уменьшить количество",
       "increase_quantity": "Увеличить количество",
@@ -36,9 +37,24 @@
       "nav_up": "Вверх",
       "nav_down": "Вниз"
     },
+    "calendar": {
+      "aria_label": "Календарь",
+      "previous_month": "Предыдущий месяц",
+      "next_month": "Следующий месяц",
+      "previous_year": "Предыдущий год",
+      "next_year": "Следующий год",
+      "today": "Сегодня",
+      "clear": "Очистить"
+    },
     "date_selector": {
       "min_date_error": "Дата должна быть не ранее {min}",
       "max_date_error": "Дата должна быть не позднее {max}"
+    },
+    "date_input": {
+      "invalid_format": "Недопустимый формат даты",
+      "min_date_error": "Дата должна быть не ранее {min}",
+      "max_date_error": "Дата должна быть не позднее {max}",
+      "unavailable_date": "Эта дата недоступна"
     },
     "labels": {
       "not_available": "Н/Д",
