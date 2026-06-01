@@ -107,6 +107,39 @@
           <VcPriceDisplay v-if="summaryTotal" :value="summaryTotal" data-test-id="cart-total-label" />
         </span>
       </div>
+
+      <div v-if="otherCartTotals.length" class="flex flex-col" data-test-id="cart-other-currency-totals">
+        <div v-for="cartTotal in otherCartTotals" :key="cartTotal.total.currency.code" class="mt-4 border-t pt-4">
+          <div class="mb-4 text-base font-black">
+            {{ $t("common.labels.total_in_currency", { currency: cartTotal.total.currency.code }) }}
+          </div>
+
+          <div class="mb-4 flex justify-between text-base font-black">
+            <span>{{ $t("common.labels.subtotal") }}</span>
+
+            <span><VcPriceDisplay :value="cartTotal.subTotal" /></span>
+          </div>
+
+          <div class="border-y py-2 text-base font-normal">
+            <div class="flex justify-between">
+              <span>{{ $t("common.labels.discount") }}</span>
+
+              <span v-if="cartTotal.discountTotal">
+                {{ cartTotal.discountTotal.amount > 0 ? "-" : "" }}
+                <VcPriceDisplay :value="cartTotal.discountTotal" />
+              </span>
+            </div>
+          </div>
+
+          <div class="mt-4 flex justify-between text-base font-black">
+            <span>{{ $t("common.labels.total") }}</span>
+
+            <span class="text-[--price-color] print:text-inherit">
+              <VcPriceDisplay :value="cartTotal.total" />
+            </span>
+          </div>
+        </div>
+      </div>
     </div>
 
     <slot name="footer" />
@@ -128,6 +161,7 @@ import { useFullCart } from "@/shared/cart";
 import { useSavedForLater } from "@/shared/cart/composables/useSaveForLater";
 import { useCheckout } from "@/shared/checkout/composables";
 import type {
+  CartTotalType,
   CartType,
   CustomerOrderType,
   DiscountType,
@@ -153,9 +187,12 @@ const { changing: cartChanging } = useFullCart();
 const { changing: checkoutChanging } = useCheckout();
 const { loading: savedForLaterLoading } = useSavedForLater();
 
-const defaultCartTotal = computed(() =>
-  "cartTotals" in props.cart ? (props.cart.cartTotals?.find((t) => t?.isDefaultTotalCurrency) ?? undefined) : undefined,
+const cartTotals = computed(() =>
+  "cartTotals" in props.cart ? (props.cart.cartTotals?.filter((t): t is CartTotalType => !!t) ?? []) : [],
 );
+
+const defaultCartTotal = computed(() => cartTotals.value.find((t) => t.isDefaultTotalCurrency));
+const otherCartTotals = computed(() => cartTotals.value.filter((t) => !t.isDefaultTotalCurrency));
 
 const summarySubTotal = computed(() => defaultCartTotal.value?.subTotal ?? props.cart.subTotal);
 const summaryDiscountTotal = computed(() => defaultCartTotal.value?.discountTotal ?? props.cart.discountTotal);

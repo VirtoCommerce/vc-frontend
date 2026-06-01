@@ -48,6 +48,29 @@
       />
     </template>
 
+    <!-- Items in other currencies (always flat, never grouped by vendor) -->
+    <template v-for="group in otherCurrencyGroups" :key="group.currencyCode">
+      <div v-if="group.items.length" class="mt-5 space-y-3">
+        <h4 class="text-lg font-black">
+          {{ $t("common.labels.products_in_currency", { currency: group.currencyCode }) }}
+        </h4>
+
+        <CartLineItems
+          :items="group.items"
+          :subtotal="group.subTotal"
+          :shared-selected-item-ids="selectedItemIds"
+          :disabled="disabled"
+          :validation-errors="validationErrors"
+          :hide-controls="hideControls"
+          @change:item-quantity="$emit('change:itemQuantity', $event)"
+          @select:items="$emit('select:items', $event)"
+          @remove:items="$emit('remove:items', $event)"
+          @save-for-later="$emit('saveForLater', $event)"
+          @link-click="$emit('linkClick', $event)"
+        />
+      </div>
+    </template>
+
     <div class="mt-2 flex justify-end md:mt-5">
       <VcButton
         :disabled="disabled"
@@ -67,7 +90,7 @@
 <script setup lang="ts">
 import { VendorName } from "@/shared/common";
 import type { LineItemType, ValidationErrorType } from "@/core/api/graphql/types";
-import type { VendorGroupType } from "@/core/types";
+import type { CurrencyGroupType, VendorGroupType } from "@/core/types";
 import CartLineItems from "@/shared/cart/components/cart-line-items.vue";
 
 interface IEmits {
@@ -85,6 +108,7 @@ interface IProps {
   items?: LineItemType[];
   selectedItemIds?: string[];
   itemsGroupedByVendor?: VendorGroupType<LineItemType>[];
+  otherCurrencyGroups?: CurrencyGroupType<LineItemType>[];
   validationErrors?: ValidationErrorType[];
   hideControls?: string[];
 }
@@ -94,6 +118,7 @@ defineEmits<IEmits>();
 withDefaults(defineProps<IProps>(), {
   items: () => [],
   itemsGroupedByVendor: () => [],
+  otherCurrencyGroups: () => [],
   validationErrors: () => [],
 });
 </script>

@@ -131,7 +131,9 @@ async function updateOrAddToCart(productId: string, qty?: number) {
 }
 
 function getLineItem(items?: ShortLineItemFragment[]): ShortLineItemFragment | undefined {
-  return items?.find((item) => item.productId === product.value.id);
+  return items?.find(
+    (item) => item.productId === product.value.id && item.currencyCode === product.value.price.currency,
+  );
 }
 
 function onValidationUpdate(validation: { isValid: true } | { isValid: false; errorMessage: string }) {

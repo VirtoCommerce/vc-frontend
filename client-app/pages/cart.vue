@@ -80,8 +80,9 @@
       <VcLayout sidebar-position="right" sticky>
         <ProductsSection
           :grouped="!!$cfg.line_items_group_by_vendor_enabled"
-          :items="cart.items"
+          :items="mainCurrencyLineItems"
           :items-grouped-by-vendor="lineItemsGroupedByVendor"
+          :other-currency-groups="otherCurrencyLineItemGroups"
           :selected-item-ids="selectedItemIds"
           :validation-errors="cart.validationErrors"
           :disabled="changeItemQuantityBatchedOverflowed || moveToSavedForLaterOverflowed || selectionOverflowed"
@@ -258,6 +259,8 @@ const {
   selectedItemIds,
   selectedLineItems,
   lineItemsGroupedByVendor,
+  mainCurrencyLineItems,
+  otherCurrencyLineItemGroups,
   hasOnlyUnselectedLineItems,
   availableExtendedGifts,
   hasValidationErrors,

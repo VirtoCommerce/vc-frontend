@@ -129,7 +129,9 @@
         <div v-if="withSubtotal" class="vc-line-items__subtotal">
           <span class="vc-line-items__subtotal-label">{{ $t("ui_kit.labels.subtotal") }}:</span>
 
-          <span class="vc-line-items__subtotal-sum">{{ $n(subtotal, "currency") }}</span>
+          <span class="vc-line-items__subtotal-sum">
+            {{ subtotal ? subtotal.formattedAmount : $n(calculatedSubtotal, "currency") }}
+          </span>
         </div>
       </div>
     </div>
@@ -139,6 +141,7 @@
 <script setup lang="ts">
 import { intersection, map, sumBy } from "lodash";
 import { computed, ref, watchEffect } from "vue";
+import type { MoneyType } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
 
 interface IEmits {
@@ -161,6 +164,8 @@ interface IProps {
   withSubtotal?: boolean;
   withHeader?: boolean;
   browserTarget?: BrowserTargetType;
+  /** Predefined subtotal. When provided, it is shown as-is instead of summing the items' extended prices. */
+  subtotal?: MoneyType;
 }
 
 const emit = defineEmits<IEmits>();
@@ -181,7 +186,7 @@ const showTotal = computed(() => props.withTotal && hasTotal.value);
 
 const hasTotal = computed(() => props.items.some((item) => item.extendedPrice));
 
-const subtotal = computed<number>(() =>
+const calculatedSubtotal = computed<number>(() =>
   hasTotal.value
     ? sumBy(
         props.items.filter((item) => selectedItemIds.value.includes(item.id) && item.extendedPrice),
