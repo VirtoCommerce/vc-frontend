@@ -9,13 +9,23 @@
       :payment="payment"
     />
 
-    <!-- TODO: Add support for AuthorizeNet, Skyflow, Datatrans, and extension point payment methods for cart payments when available. -->
+    <PaymentProcessingAuthorizeNet
+      v-else-if="paymentTypeName === 'AuthorizeNetPaymentMethod'"
+      :order="order"
+      :cart="cart"
+      :hide-payment-button="hidePaymentButton"
+      :disabled="disabled"
+      :payment="payment"
+    />
+
+    <!-- TODO: Add support for Skyflow, Datatrans, and extension point payment methods for cart payments when available. -->
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from "vue";
 import type { IPaymentMethodParameters } from "./types";
+import PaymentProcessingAuthorizeNet from "@/shared/payment/components/payment-processing-authorize-net.vue";
 import PaymentProcessingCyberSource from "@/shared/payment/components/payment-processing-cyber-source.vue";
 
 const props = defineProps<IPaymentMethodParameters>();
