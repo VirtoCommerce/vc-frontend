@@ -62,7 +62,7 @@
           :disabled="disabled || hasInvalid"
           :loading="loading"
           class="flex-1 md:order-first md:flex-none"
-          @click="payWithNewCreditCard"
+          @click="() => payWithNewCreditCard()"
         >
           {{ $t("shared.payment.bank_card_form.pay_now_button") }}
         </VcButton>
@@ -76,7 +76,7 @@
           :disabled="disabled || isSavedCardPayBtnDisabled"
           :loading="loading"
           class="shrink"
-          @click="payWithSavedCreditCard"
+          @click="() => payWithSavedCreditCard()"
         >
           {{ $t("shared.payment.bank_card_form.pay_now_button") }}
         </VcButton>
@@ -95,8 +95,7 @@ import { IS_DEVELOPMENT } from "@/core/constants";
 import { Logger, replaceXFromBeginning } from "@/core/utilities";
 import { useUser } from "@/shared/account";
 import { useNotifications } from "@/shared/notification";
-import { usePayment } from "../composables";
-import { useSkyflowCards, useSkyflowStyles } from "../composables";
+import { usePayment, useSkyflowCards, useSkyflowStyles } from "../composables";
 import PaymentPolicies from "./payment-policies.vue";
 import type { IPaymentMethodEmits, IPaymentMethodParameters } from "./types";
 import type {
@@ -241,7 +240,7 @@ async function initNewCardForm(): Promise<void> {
   const container = skyflowClient.container(Skyflow.ContainerType.COMPOSABLE, containerOptions);
 
   container.on(Skyflow.EventName.SUBMIT, () => {
-    if (!hasInvalid.value) {
+    if (!props.hidePaymentButton && !hasInvalid.value) {
       void payWithNewCreditCard();
     }
   });
@@ -595,13 +594,17 @@ const isPaymentDataValid = computed(() => {
   return !isSavedCardPayBtnDisabled.value;
 });
 
-watch(isPaymentDataValid, (isValid) => {
-  if (isValid) {
-    setCardDataValid();
-  } else {
-    setCardDataInvalid();
-  }
-});
+watch(
+  isPaymentDataValid,
+  (isValid) => {
+    if (isValid) {
+      setCardDataValid();
+    } else {
+      setCardDataInvalid();
+    }
+  },
+  { immediate: true },
+);
 
 // utils
 function getParameter(data: KeyValueType[], key: string): string {
