@@ -114,6 +114,8 @@
       "shipping": "运输",
       "tax": "税费",
       "shipping_cost": "运输费用",
+      "total_in_currency": "总计 ({currency})",
+      "products_in_currency": "商品 ({currency})",
       "status": "状态",
       "date": "日期",
       "created_date": "创建日期",
