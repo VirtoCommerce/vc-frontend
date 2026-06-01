@@ -341,12 +341,12 @@ const cvvCollectorStatus = ref({ valid: false, ready: false });
 async function initCvvForm() {
   fullCardCollector?.unmount();
 
+  clearCvv();
+  await initPayment();
+
   if (!isSavedCardCvvRequired.value) {
     return;
   }
-
-  clearCvv();
-  await initPayment();
 
   const containerOptions = {
     layout: [1],
