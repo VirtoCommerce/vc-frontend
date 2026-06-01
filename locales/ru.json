@@ -244,6 +244,7 @@
     "links": {
       "home": "Главная",
       "catalog": "Каталог",
+      "loyalty_catalog": "Каталог лояльности",
       "bulk_order": "Мультизаказ",
       "compare": "Сравнение",
       "contact_us": "Свяжитесь с нами",
@@ -574,6 +575,7 @@
         "created_date_label": "Дата создания",
         "start_date_label": "Дата начала",
         "end_date_label": "Дата окончания",
+        "invalid_range": "Некорректный диапазон дат.",
         "apply_button": "@:common.buttons.apply",
         "reset_button": "@:common.buttons.reset"
       },
@@ -681,7 +683,9 @@
         "expires": "@:shared.account.promotion_coupons.expires",
         "custom_code": "Пользовательский код",
         "enter_custom_code": "Введите пользовательский код",
-        "all_coupons": "Посмотреть все купоны и акции"
+        "all_coupons": "Посмотреть все купоны и акции",
+        "apply_aria": "Применить купон {code}",
+        "remove_aria": "Удалить купон"
       }
     },
     "catalog": {
@@ -1581,6 +1585,9 @@
         "terms_and_policy_link": "Условиями и Политикой",
         "submit_button": "@:common.buttons.submit"
       }
+    },
+    "loyalty_catalog": {
+      "title": "Каталог лояльности"
     },
     "compare": {
       "meta": {

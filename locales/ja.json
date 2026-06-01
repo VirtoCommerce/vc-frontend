@@ -244,6 +244,7 @@
     "links": {
       "home": "ホーム",
       "catalog": "カタログ",
+      "loyalty_catalog": "ロイヤルティカタログ",
       "bulk_order": "一括注文",
       "compare": "比較",
       "contact_us": "お問い合わせ",
@@ -574,6 +575,7 @@
         "created_date_label": "作成日",
         "start_date_label": "開始日",
         "end_date_label": "終了日",
+        "invalid_range": "無効な日付範囲です。",
         "apply_button": "@:common.buttons.apply",
         "reset_button": "@:common.buttons.reset"
       },
@@ -681,7 +683,9 @@
         "expires": "@:shared.account.promotion_coupons.expires",
         "custom_code": "カスタムコード",
         "enter_custom_code": "カスタムコードを入力",
-        "all_coupons": "すべてのクーポンとプロモーションを表示"
+        "all_coupons": "すべてのクーポンとプロモーションを表示",
+        "apply_aria": "Apply coupon {code}",
+        "remove_aria": "Remove coupon"
       }
     },
     "catalog": {
@@ -1581,6 +1585,9 @@
         "terms_and_policy_link": "利用規約とポリシー",
         "submit_button": "@:common.buttons.submit"
       }
+    },
+    "loyalty_catalog": {
+      "title": "ロイヤルティカタログ"
     },
     "compare": {
       "meta": {

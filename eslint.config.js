@@ -197,6 +197,11 @@ export default defineConfigWithVueTs(
           message: "VcPriceDisplayCatalog is deprecated. Use VcPriceDisplay or VcProductPrice instead.",
         },
         { element: "VcItemPriceCatalog", message: "VcItemPriceCatalog is deprecated. Use VcProductPrice instead." },
+        {
+          element: "VcDateSelector",
+          message:
+            "VcDateSelector is deprecated. Use VcDatePicker for typed date entry with calendar popover, or VcDateInput for input-only.",
+        },
       ],
       "vuejs-accessibility/click-events-have-key-events": "warn",
       "vuejs-accessibility/no-static-element-interactions": "warn",

@@ -16,7 +16,7 @@
       />
 
       <CurrencySelector
-        v-if="$context.availableCurrencies && $context.availableCurrencies.length > 1"
+        v-if="!isLoyaltyCatalogRoute && $context.availableCurrencies && $context.availableCurrencies.length > 1"
         class="h-full flex-none"
       />
 
@@ -194,12 +194,14 @@
 
 <script setup lang="ts">
 import { onClickOutside } from "@vueuse/core";
-import { ref } from "vue";
+import { computed, ref } from "vue";
+import { useRoute } from "vue-router";
 import { useDarkMode } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { ROUTES } from "@/router/routes/constants";
 import { useImpersonate, useSignMeOut, useUser } from "@/shared/account";
+import { getCatalogBasePath } from "@/shared/catalog/composables/useCatalogBasePath";
 import { CurrencySelector, LanguageSelector } from "@/shared/layout/components";
 import { ShipToSelector } from "@/shared/ship-to-location";
 import DarkModeToggle from "./dark-mode-toggle.vue";
@@ -211,6 +213,9 @@ const { signMeOut } = useSignMeOut();
 const { reverting, backToOperatorLabel, backToOperator } = useImpersonate();
 const { isDarkModeAvailable } = useDarkMode();
 const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
+
+const route = useRoute();
+const isLoyaltyCatalogRoute = computed(() => getCatalogBasePath(route.path) === ROUTES.LOYALTY_CATALOG.PATH);
 
 const loginMenu = ref(null);
 const loginMenuVisible = ref(false);

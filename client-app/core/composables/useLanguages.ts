@@ -3,6 +3,7 @@ import { merge } from "lodash";
 import { computed, ref } from "vue";
 import { setLocale as setLocaleForYup } from "yup";
 import { useUser } from "@/shared/account/composables/useUser";
+import { getCatalogBasePath } from "@/shared/catalog/composables/useCatalogBasePath";
 import { useThemeContext } from "./useThemeContext";
 import type { ILanguage } from "../types";
 import type { I18n } from "@/i18n";
@@ -90,12 +91,24 @@ async function initLocale(i18n: I18n, cultureName: string): Promise<void> {
   });
 
   const localeFromUrl = getLocaleFromUrl();
+  const targetLocale = currentMaybeShortLocale.value;
   const isDefault = defaultStoreLanguage.value.cultureName === cultureName;
 
-  if ((localeFromUrl && currentMaybeShortLocale.value !== localeFromUrl) || isDefault) {
-    // remove a full locale from the url beforehand in order to avoid case like /fr-FR -> /fr/-FR (when language has short alias)
-    // remove the default locale e.g. en-US from the url - /en-US/cart -> /cart
-    history.pushState(null, "", location.href.replace(new RegExp(`/${localeFromUrl}`), ""));
+  let newPath = location.pathname;
+
+  if (localeFromUrl) {
+    // anchor at the start of the pathname and require / or end after the locale,
+    // otherwise plain `replace("/de", "")` would eat the `de` inside paths like `/destinations`
+    newPath = newPath.replace(new RegExp(`^/${localeFromUrl}(?=/|$)`, "i"), "") || "/";
+  }
+
+  if (!isDefault) {
+    // ensure non-default locale is reflected in the URL so vue-router's base matches the pathname
+    newPath = newPath === "/" ? `/${targetLocale}` : `/${targetLocale}${newPath}`;
+  }
+
+  if (newPath !== location.pathname) {
+    history.pushState(null, "", `${newPath}${location.search}${location.hash}`);
   }
 
   document.documentElement.setAttribute("lang", cultureName);
@@ -208,9 +221,20 @@ export function useLanguages() {
 
     const localeFromUrl = getLocaleFromUrl();
     const normalizedPermalink = permalink.startsWith("/") ? permalink : `/${permalink}`;
-    const permalinkWithLocale = localeFromUrl ? `/${localeFromUrl}${normalizedPermalink}` : normalizedPermalink;
 
-    history.replaceState(history.state, "", `${permalinkWithLocale}${location.search}${location.hash}`);
+    // Preserve a catalog namespace prefix (e.g. /loyalty-catalog) if the current URL is under one,
+    // so that slug-driven replaceState calls don't drop it.
+    const localePrefix = localeFromUrl ? `/${localeFromUrl}` : "";
+    const pathnameWithoutLocale = localeFromUrl
+      ? location.pathname.slice(localePrefix.length) || "/"
+      : location.pathname;
+    const basePath = getCatalogBasePath(pathnameWithoutLocale);
+
+    history.replaceState(
+      history.state,
+      "",
+      `${localePrefix}${basePath}${normalizedPermalink}${location.search}${location.hash}`,
+    );
   }
 
   return {

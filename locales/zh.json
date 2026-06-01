@@ -244,6 +244,7 @@
     "links": {
       "home": "首页",
       "catalog": "目录",
+      "loyalty_catalog": "忠诚度目录",
       "bulk_order": "批量订单",
       "compare": "比较",
       "contact_us": "联系我们",
@@ -574,6 +575,7 @@
         "created_date_label": "创建日期",
         "start_date_label": "开始日期",
         "end_date_label": "结束日期",
+        "invalid_range": "日期范围无效。",
         "apply_button": "@:common.buttons.apply",
         "reset_button": "@:common.buttons.reset"
       },
@@ -681,7 +683,9 @@
         "expires": "@:shared.account.promotion_coupons.expires",
         "custom_code": "自定义代码",
         "enter_custom_code": "输入自定义代码",
-        "all_coupons": "查看所有优惠券和促销活动"
+        "all_coupons": "查看所有优惠券和促销活动",
+        "apply_aria": "Apply coupon {code}",
+        "remove_aria": "Remove coupon"
       }
     },
     "catalog": {
@@ -1581,6 +1585,9 @@
         "terms_and_policy_link": "条款和政策",
         "submit_button": "@:common.buttons.submit"
       }
+    },
+    "loyalty_catalog": {
+      "title": "忠诚度目录"
     },
     "compare": {
       "meta": {

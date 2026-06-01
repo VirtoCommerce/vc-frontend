@@ -1,11 +1,12 @@
-import { computed, readonly, ref, shallowRef } from "vue";
+import { computed, readonly, ref, shallowRef, toValue } from "vue";
 import { getCategory } from "@/core/api/graphql";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import type { ExtendedQueryCategoryArgsType } from "@/core/api/graphql";
 import type { Category } from "@/core/api/graphql/types";
+import type { MaybeRefOrGetter } from "vue";
 
-export function useCategory() {
+export function useCategory(options: { currencyCodeOverride?: MaybeRefOrGetter<string | undefined> } = {}) {
   const loading = ref(false);
   const category = shallowRef<Category>();
 
@@ -14,7 +15,7 @@ export function useCategory() {
   async function fetchCategory(payload: Omit<ExtendedQueryCategoryArgsType, "storeId">) {
     loading.value = true;
     try {
-      const data = await getCategory(payload);
+      const data = await getCategory(payload, { currencyCodeOverride: toValue(options.currencyCodeOverride) });
 
       if (data) {
         category.value = {

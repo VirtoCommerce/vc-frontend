@@ -1,7 +1,7 @@
 import { useLocalStorage } from "@vueuse/core";
 import cloneDeep from "lodash/cloneDeep";
 import isEqual from "lodash/isEqual";
-import { computed, readonly, ref } from "vue";
+import { computed, readonly, ref, toValue } from "vue";
 import { searchProducts } from "@/core/api/graphql/catalog";
 import { useRouteQueryParam, useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
@@ -33,7 +33,7 @@ import type {
 } from "../types";
 import type { Product, RangeFacet, TermFacet, SearchProductFilterResult } from "@/core/api/graphql/types";
 import type { FacetItemType } from "@/core/types";
-import type { Ref } from "vue";
+import type { MaybeRefOrGetter, Ref } from "vue";
 import BranchesModal from "@/shared/fulfillmentCenters/components/branches-modal.vue";
 
 const DEFAULT_ITEMS_PER_PAGE = 16;
@@ -53,6 +53,8 @@ export function useProducts(
     facetsToHide?: string[];
     /** @default true */
     initialFetchingState?: boolean;
+    /** Overrides the default currency code passed to the products query (e.g. for the loyalty catalog). */
+    currencyCodeOverride?: MaybeRefOrGetter<string | undefined>;
   } = {},
 ) {
   const { themeContext } = useThemeContext();
@@ -62,6 +64,7 @@ export function useProducts(
     withZeroPrice = themeContext.value?.settings?.zero_price_product_enabled,
     catalogPaginationMode = CATALOG_PAGINATION_MODES.infiniteScroll,
     initialFetchingState = true,
+    currencyCodeOverride,
   } = options;
   const { openModal } = useModal();
   const { isEnabled } = useModuleSettings(INTENT_SEARCH_MODULE_ID);
@@ -388,7 +391,12 @@ export function useProducts(
         range_facets = [],
         totalCount = 0,
         filters = [],
-      } = await searchProducts(searchParams, { withFacets, withImages, withZeroPrice: actualWithZeroPrice });
+      } = await searchProducts(searchParams, {
+        withFacets,
+        withImages,
+        withZeroPrice: actualWithZeroPrice,
+        currencyCodeOverride: toValue(currencyCodeOverride),
+      });
 
       products.value = items;
       totalProductsCount.value = totalCount;
@@ -425,7 +433,11 @@ export function useProducts(
     fetchingMoreProducts.value = true;
 
     try {
-      const { items = [], totalCount = 0 } = await searchProducts(searchParams, { withImages, withZeroPrice });
+      const { items = [], totalCount = 0 } = await searchProducts(searchParams, {
+        withImages,
+        withZeroPrice,
+        currencyCodeOverride: toValue(currencyCodeOverride),
+      });
 
       const page = searchParams.page;
       const minVisitedPage = Math.min(...pageHistory.value);
@@ -472,6 +484,7 @@ export function useProducts(
       const { term_facets = [], range_facets = [] } = await searchProducts(_searchParams, {
         withZeroPrice,
         withFacets: true,
+        currencyCodeOverride: toValue(currencyCodeOverride),
       });
 
       term_facets.sort((a, b) => a.label.localeCompare(b.label));

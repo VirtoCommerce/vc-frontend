@@ -8,10 +8,11 @@ import type { LocationQueryRaw, RouteLocationRaw } from "vue-router";
 export function useCategoriesRoutes(
   categories: MaybeRef<Pick<Category, "id" | "slug">[]>,
   query?: ReadonlyRefOrGetter<LocationQueryRaw>,
+  basePath?: ReadonlyRefOrGetter<string>,
 ) {
   return computed(() =>
     unref(categories).reduce<Record<string, RouteLocationRaw>>((result, category) => {
-      result[category.id] = getCategoryRoute(category, toValue(query));
+      result[category.id] = getCategoryRoute(category, toValue(query), toValue(basePath));
       return result;
     }, {}),
   );

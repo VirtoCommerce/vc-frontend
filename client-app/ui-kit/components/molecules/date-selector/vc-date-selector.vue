@@ -96,6 +96,11 @@ const computedErrorMessage = computed(() => {
 });
 
 if (import.meta.env.DEV) {
+  // eslint-disable-next-line no-console
+  console.warn(
+    "[VcDateSelector] This component is deprecated. Use VcDatePicker for typed date entry with calendar popover, or VcDateInput for input-only.",
+  );
+
   const vnodeProps = getCurrentInstance()?.vnode.props ?? {};
 
   if ("isRequired" in vnodeProps) {
@@ -117,10 +122,7 @@ function openCalendar(focusInput: () => void): void {
     return;
   }
 
-  /**
-   * Workaround for multiple date inputs in Firefox: delay ensures picker opens on first click when switching.
-   * Do not remove without testing in Firefox (especially  on MacOS).
-   */
+  // Firefox (esp. macOS) workaround: delay ensures the picker opens on first click when switching between date inputs.
   setTimeout(() => {
     if (typeof el.showPicker === "function") {
       el.showPicker();
