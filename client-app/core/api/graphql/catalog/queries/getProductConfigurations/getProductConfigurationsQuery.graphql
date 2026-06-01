@@ -26,6 +26,7 @@ query GetProductConfigurations(
       maxLength
       options {
         id
+        isDefault
         text
         quantity
         listPrice {

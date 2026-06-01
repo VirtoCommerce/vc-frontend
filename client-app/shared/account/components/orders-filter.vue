@@ -9,7 +9,7 @@
         <div class="orders-filter__content">
           <slot />
 
-          <div v-if="facets?.length">
+          <div v-if="facets?.length" class="orders-filter__facets">
             <VcLabel>{{ $t("shared.account.orders_filter.status_label") }}</VcLabel>
 
             <VcCheckboxGroup v-model="filterData.statuses" class="orders-filter__statuses">
@@ -40,7 +40,7 @@
           {{ $t("shared.account.orders_filter.reset_button") }}
         </VcButton>
 
-        <VcButton :disabled="!isFilterDirty" @click="$emit('apply')">
+        <VcButton :disabled="!isFilterDirty || !isDateRangeValid" @click="$emit('apply')">
           {{ $t("shared.account.orders_filter.apply_button") }}
         </VcButton>
       </VcDialogFooter>
@@ -60,7 +60,13 @@ interface IEmits {
   (event: "close"): void;
 }
 
+interface IProps {
+  isDateRangeValid?: boolean;
+}
+
 defineEmits<IEmits>();
+
+withDefaults(defineProps<IProps>(), { isDateRangeValid: true });
 
 const { filterData, isFilterEmpty, isFilterDirty } = useUserOrdersFilter();
 
@@ -76,7 +82,11 @@ function isSelectedStatus(status: string) {
   @apply w-[27.5rem];
 
   &__content {
-    @apply flex flex-col gap-5;
+    @apply flex flex-col;
+  }
+
+  &__facets {
+    @apply mt-4;
   }
 
   &__statuses {

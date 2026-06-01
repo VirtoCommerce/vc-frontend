@@ -5,8 +5,22 @@ import { useBreadcrumbs } from "./useBreadcrumbs";
 // Mock the useI18n composable
 vi.mock("vue-i18n", () => ({
   useI18n: () => ({
-    t: (key: string) => (key === "common.links.home" ? "Home" : key),
+    t: (key: string) => {
+      if (key === "common.links.home") {
+        return "Home";
+      }
+      if (key === "common.links.loyalty_catalog") {
+        return "Loyalty catalog";
+      }
+      return key;
+    },
   }),
+}));
+
+const currentRoute = { path: "/" };
+
+vi.mock("vue-router", () => ({
+  useRoute: () => currentRoute,
 }));
 
 describe("useBreadcrumbs", () => {
@@ -95,5 +109,33 @@ describe("useBreadcrumbs", () => {
       { title: "Orders", route: { name: "Orders" } },
       { title: "Order #123" },
     ]);
+  });
+
+  describe("loyalty-catalog namespace", () => {
+    it("should prepend a Loyalty catalog crumb on inner /loyalty-catalog routes", () => {
+      currentRoute.path = "/loyalty-catalog/camcorders/aerial-drones/3dr-solo";
+      try {
+        const breadcrumbs = [{ title: "3DR Solo" }];
+        const result = useBreadcrumbs(breadcrumbs);
+
+        expect(result.value).toEqual([
+          { title: "Home", route: "/" },
+          { title: "Loyalty catalog", route: "/loyalty-catalog" },
+          { title: "3DR Solo" },
+        ]);
+      } finally {
+        currentRoute.path = "/";
+      }
+    });
+
+    it("should NOT prepend a Loyalty catalog crumb on the namespace root itself", () => {
+      currentRoute.path = "/loyalty-catalog";
+      try {
+        const result = useBreadcrumbs([]);
+        expect(result.value).toEqual([{ title: "Home", route: "/" }]);
+      } finally {
+        currentRoute.path = "/";
+      }
+    });
   });
 });

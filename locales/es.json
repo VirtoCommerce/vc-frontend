@@ -244,6 +244,7 @@
     "links": {
       "home": "Inicio",
       "catalog": "Catálogo",
+      "loyalty_catalog": "Catálogo de fidelidad",
       "bulk_order": "Pedido en masa",
       "compare": "Comparar",
       "contact_us": "Contáctanos",
@@ -574,6 +575,7 @@
         "created_date_label": "Fecha de creación",
         "start_date_label": "Fecha de inicio",
         "end_date_label": "Fecha de finalización",
+        "invalid_range": "Rango de fechas no válido.",
         "apply_button": "@:common.buttons.apply",
         "reset_button": "@:common.buttons.reset"
       },
@@ -1583,6 +1585,9 @@
         "terms_and_policy_link": "Términos y Política",
         "submit_button": "@:common.buttons.submit"
       }
+    },
+    "loyalty_catalog": {
+      "title": "Catálogo de fidelidad"
     },
     "compare": {
       "meta": {

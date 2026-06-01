@@ -6,7 +6,7 @@
   <VcWidget v-else-if="!!parentCategory || subcategories.length" size="xs">
     <template v-if="!!parentCategory" #header>
       <router-link
-        :to="getCategoryRoute(parentCategory, locationQuery)"
+        :to="getCategoryRoute(parentCategory, locationQuery, catalogBasePath)"
         class="-mx-2 flex grow items-center gap-1.5 rounded-sm px-2 py-1 text-sm hover:bg-neutral-50"
       >
         <VcIcon class="fill-primary" name="chevron-left" size="xs" />
@@ -61,6 +61,7 @@ import { useRoute } from "vue-router";
 import { useCategoriesRoutes, useRouteQueryParam } from "@/core/composables";
 import { QueryParamName } from "@/core/enums";
 import { getCategoryRoute } from "@/core/utilities";
+import { useCatalogBasePath } from "@/shared/catalog/composables/useCatalogBasePath";
 import { useSlugInfo } from "@/shared/common";
 import type { Category } from "@/core/api/graphql/types";
 import type { FacetValueItemType } from "@/core/types";
@@ -115,7 +116,8 @@ const locationQuery = computed(() => {
   );
 });
 
-const subcategoriesRoutes = useCategoriesRoutes(subcategories, locationQuery);
+const catalogBasePath = useCatalogBasePath();
+const subcategoriesRoutes = useCategoriesRoutes(subcategories, locationQuery, catalogBasePath);
 
 function getFacet(category: CategoryType) {
   return props.categoryFacets?.find((el) => {

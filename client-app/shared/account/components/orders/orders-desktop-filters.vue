@@ -10,6 +10,7 @@
 
     <template #content="{ close }">
       <OrdersFilter
+        :is-date-range-valid="isDateRangeValid"
         @apply="
           applyFilters();
           close();
@@ -24,6 +25,7 @@
           :date-filter-type="selectedDateFilterType"
           :label="$t('shared.account.orders_filter.created_date_label')"
           @change="handleOrdersDateFilterChange"
+          @update:valid="isDateRangeValid = $event"
         />
 
         <VcSelect
@@ -40,7 +42,7 @@
 </template>
 
 <script setup lang="ts">
-import { toRef } from "vue";
+import { ref, toRef } from "vue";
 import { useUserOrdersFilter } from "../../composables/useUserOrdersFilter";
 import DateFilterSelect from "../date-filter-select.vue";
 import OrdersFilter from "../orders-filter.vue";
@@ -62,4 +64,7 @@ const {
   showCustomerNameFilter,
   organizationCustomerNames,
 } = useUserOrdersFilter(toRef(() => props.orderScope));
+
+// Default true — empty inputs are valid; updated via DateFilterSelect's update:valid.
+const isDateRangeValid = ref(true);
 </script>

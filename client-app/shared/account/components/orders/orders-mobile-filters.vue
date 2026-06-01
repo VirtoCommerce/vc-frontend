@@ -14,7 +14,11 @@
       </template>
 
       <template #dateFilterType>
-        <DateFilterSelect :date-filter-type="selectedDateFilterType" @change="handleOrdersDateFilterChange" />
+        <DateFilterSelect
+          :date-filter-type="selectedDateFilterType"
+          @change="handleOrdersDateFilterChange"
+          @update:valid="isDateRangeValid = $event"
+        />
       </template>
     </MobileOrdersFilter>
 
@@ -40,7 +44,7 @@
         {{ $t("common.buttons.cancel") }}
       </VcButton>
 
-      <VcButton :disabled="!isFilterDirty" size="sm" min-width="6.25rem" @click="handleApply">
+      <VcButton :disabled="!isFilterDirty || !isDateRangeValid" size="sm" min-width="6.25rem" @click="handleApply">
         {{ $t("common.buttons.apply") }}
       </VcButton>
     </template>
@@ -76,6 +80,8 @@ const {
 } = useUserOrdersFilter(toRef(() => props.orderScope));
 
 const filtersVisible = ref(false);
+// Default true — empty inputs are valid; updated via DateFilterSelect's update:valid.
+const isDateRangeValid = ref(true);
 
 function handleApply() {
   applyFilters();

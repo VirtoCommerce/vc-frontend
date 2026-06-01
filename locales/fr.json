@@ -244,6 +244,7 @@
     "links": {
       "home": "Accueil",
       "catalog": "Catalogue",
+      "loyalty_catalog": "Catalogue de fidélité",
       "bulk_order": "Commande en gros",
       "compare": "Comparer",
       "contact_us": "Contactez-nous",
@@ -574,6 +575,7 @@
         "created_date_label": "Date de création",
         "start_date_label": "Date de début",
         "end_date_label": "Date de fin",
+        "invalid_range": "Plage de dates non valide.",
         "apply_button": "@:common.buttons.apply",
         "reset_button": "@:common.buttons.reset"
       },
@@ -1583,6 +1585,9 @@
         "terms_and_policy_link": "Conditions et Politique",
         "submit_button": "@:common.buttons.submit"
       }
+    },
+    "loyalty_catalog": {
+      "title": "Catalogue de fidélité"
     },
     "compare": {
       "meta": {
