@@ -81,6 +81,10 @@ const isValidBankCard = ref(false);
 const bankCardData = ref<BankCardType>(clone(emptyBankCardData));
 const bankCardErrors = ref<BankCardErrorsType>({});
 
+// Guards against late async init completing after the component was torn down
+// (e.g. the shopper switched payment method while Accept.js was still loading).
+let isActive = true;
+
 const scriptURL = computed<string>(() => parameters.value.find(({ key }) => key === "acceptJsPath")?.value ?? "");
 const apiLoginID = computed<string>(() => parameters.value.find(({ key }) => key === "apiLogin")?.value ?? "");
 const clientKey = computed<string>(() => parameters.value.find(({ key }) => key === "clientKey")?.value ?? "");
@@ -133,6 +137,12 @@ async function initPayment() {
     // Otherwise the cart checkout could finalize (tokenize) before the SDK is ready,
     // leaving the payment promise hanging and checkout stuck after the order is created.
     await loadAcceptJS();
+
+    // The component may have been unmounted while Accept.js was loading — don't register
+    // a torn-down instance as the active cart payment processor.
+    if (!isActive) {
+      return;
+    }
 
     initialized.value = true;
     registerPaymentProcessor(sendPaymentData);
@@ -217,16 +227,21 @@ function tokenize(): Promise<Accept.OpaqueData> {
   const authData: Accept.AuthData = { apiLoginID: apiLoginID.value, clientKey: clientKey.value };
 
   return new Promise((resolve, reject) => {
-    dispatchData({ authData, cardData }, (response: Accept.Response) => {
-      if (response.messages.resultCode === "Error") {
-        showErrors(response.messages.message);
-        reject(new Error("Authorize.Net tokenization failed"));
-      } else if (response.opaqueData) {
-        resolve(response.opaqueData);
-      } else {
-        reject(new Error("Authorize.Net returned no opaque data"));
-      }
-    });
+    try {
+      dispatchData({ authData, cardData }, (response: Accept.Response) => {
+        if (response.messages.resultCode === "Error") {
+          showErrors(response.messages.message);
+          reject(new Error("Authorize.Net tokenization failed"));
+        } else if (response.opaqueData) {
+          resolve(response.opaqueData);
+        } else {
+          reject(new Error("Authorize.Net returned no opaque data"));
+        }
+      });
+    } catch (e) {
+      // dispatchData re-throws synchronous Accept.js failures (handler never fires).
+      reject(e instanceof Error ? e : new Error("Authorize.Net dispatchData failed"));
+    }
   });
 }
 
@@ -262,6 +277,7 @@ onMounted(async () => {
 });
 
 onUnmounted(() => {
+  isActive = false;
   registerPaymentProcessor(null);
   setCardDataInvalid();
 });
