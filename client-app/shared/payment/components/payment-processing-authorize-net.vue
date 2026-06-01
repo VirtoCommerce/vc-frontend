@@ -41,7 +41,7 @@
 
 <script setup lang="ts">
 import { clone } from "lodash";
-import { computed, onMounted, onUnmounted, ref, shallowRef, watch, watchEffect } from "vue";
+import { computed, onMounted, onUnmounted, ref, shallowRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { initializeCartPayment, initializePayment } from "@/core/api/graphql";
 import { useAnalytics } from "@/core/composables/useAnalytics";
@@ -117,12 +117,25 @@ async function initPayment() {
       return;
     }
 
-    if (isSuccess) {
-      parameters.value = publicParameters;
-      initialized.value = true;
-    } else {
+    if (!isSuccess) {
       initializationError.value = errorMessage;
+      return;
     }
+
+    parameters.value = publicParameters;
+
+    if (!scriptURL.value) {
+      initializationError.value = t("shared.payment.authorize_net.errors.incorrect_payment_method");
+      return;
+    }
+
+    // Load Accept.js before exposing the form and registering the payment processor.
+    // Otherwise the cart checkout could finalize (tokenize) before the SDK is ready,
+    // leaving the payment promise hanging and checkout stuck after the order is created.
+    await loadAcceptJS();
+
+    initialized.value = true;
+    registerPaymentProcessor(sendPaymentData);
   } catch (e) {
     Logger.error(initPayment.name, e);
     initializationError.value = t("shared.payment.authorize_net.errors.incorrect_payment_method");
@@ -245,7 +258,6 @@ defineExpose({
 });
 
 onMounted(async () => {
-  registerPaymentProcessor(sendPaymentData);
   await initPayment();
 });
 
@@ -267,10 +279,4 @@ watch(
 );
 
 watch(bankCardData, () => (bankCardErrors.value = {}));
-
-watchEffect(async () => {
-  if (scriptURL.value) {
-    await loadAcceptJS();
-  }
-});
 </script>
