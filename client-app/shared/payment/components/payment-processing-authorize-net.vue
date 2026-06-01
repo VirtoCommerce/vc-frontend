@@ -221,7 +221,7 @@ async function pay(
   return result;
 }
 
-function tokenize(): Promise<Accept.OpaqueData> {
+function tokenize(): Promise<Accept.OpaqueData | null> {
   const { month, year, number: cardNumber, securityCode: cardCode, cardholderName: fullName } = bankCardData.value;
   const cardData: Accept.CardData = { cardNumber, month, year, cardCode, fullName };
   const authData: Accept.AuthData = { apiLoginID: apiLoginID.value, clientKey: clientKey.value };
@@ -230,8 +230,10 @@ function tokenize(): Promise<Accept.OpaqueData> {
     try {
       dispatchData({ authData, cardData }, (response: Accept.Response) => {
         if (response.messages.resultCode === "Error") {
+          // Field-level validation errors are surfaced inline (no hard "fail") so the
+          // shopper can correct the card and retry without leaving the payment page.
           showErrors(response.messages.message);
-          reject(new Error("Authorize.Net tokenization failed"));
+          resolve(null);
         } else if (response.opaqueData) {
           resolve(response.opaqueData);
         } else {
@@ -257,9 +259,17 @@ async function sendPaymentData(
 
   try {
     const opaqueData = await tokenize();
+
+    // No opaque data means a field-level validation error was shown inline — let the
+    // shopper fix the card and retry instead of emitting a hard failure.
+    if (!opaqueData) {
+      return null;
+    }
+
     return await pay(opaqueData, orderToPay);
   } catch (e) {
     Logger.error(sendPaymentData.name, e);
+    emit("fail");
     return null;
   } finally {
     loading.value = false;
