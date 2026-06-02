@@ -287,7 +287,7 @@ export function useShortCart() {
   function updateItemCartQuantity(productId: string, quantity: number, itemCurrencyCode?: string) {
     return updateItemCartQuantityMutation({
       command: {
-        items: [{ productId, quantity, currencyCode: itemCurrencyCode }],
+        items: [{ productId, quantity, itemCurrencyCode }],
         ...commonVariables,
         cartId: cart.value?.id,
       },
