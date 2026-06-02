@@ -363,20 +363,28 @@ defineExpose({
   // Hover — color-mix based, derived from current variant colors. No per-color overrides.
   @each $color in $colors {
     &--solid--#{$color}:hover:not(#{$loading}, #{$disabled}) {
-      --bg-color: color-mix(in srgb, var(--vc-button-solid-#{$color}-bg), black 8%);
-      --border-color: color-mix(in srgb, var(--vc-button-solid-#{$color}-border), black 8%);
+      --bg-color: color-mix(in srgb, var(--vc-button-solid-#{$color}-bg), black 15%);
+      --border-color: var(--bg-color);
     }
 
     &--soft--#{$color}:hover:not(#{$loading}, #{$disabled}) {
       --bg-color: color-mix(in srgb, var(--vc-button-soft-#{$color}-bg), black 8%);
-      --border-color: color-mix(in srgb, var(--vc-button-soft-#{$color}-border), black 8%);
+      --border-color: var(--bg-color);
     }
 
-    &--outline--#{$color}:hover:not(#{$loading}, #{$disabled}),
-    &--surface--#{$color}:hover:not(#{$loading}, #{$disabled}),
+    &--surface--#{$color}:hover:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(in srgb, var(--vc-button-surface-#{$color}-text), white 80%);
+      --border-color: var(--bg-color);
+    }
+
+    &--outline--#{$color}:hover:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(in srgb, var(--vc-button-surface-#{$color}-text), white 80%);
+    }
+
     &--ghost--#{$color}:hover:not(#{$loading}, #{$disabled}) {
-      --bg-color: color-mix(in srgb, var(--color-#{$color}-500), transparent 92%);
-      --text-color: var(--color-#{$color}-700);
+      --bg-color: color-mix(in srgb, var(--vc-button-surface-#{$color}-text), white 80%);
+      --border-color: var(--bg-color);
+      --text-color: color-mix(in srgb, var(--vc-button-ghost-#{$color}-text), white 8%);
     }
   }
 

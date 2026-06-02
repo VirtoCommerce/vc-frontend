@@ -1,5 +1,5 @@
-import { VcButton } from "..";
-import { VcIcon } from "../../atoms";
+import { VcButton, VcAlert } from "..";
+import { VcIcon, VcMarkdownRender } from "../../atoms";
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
 const SIZES = ["xxs", "xs", "sm", "md", "lg"];
@@ -44,6 +44,8 @@ export default {
     variant: {
       control: "select",
       options: VARIANTS,
+      description:
+        "Visual style. Deprecated aliases (still supported, emit a dev warning): `no-border` → `surface`, `no-background` → `ghost`, `solid-light` → `soft`.",
       type: { name: "string", required: false },
       table: {
         type: {
@@ -338,6 +340,56 @@ export const AllStates: StoryType = {
               Color: {{ color }}
             </VcButton>
           </div>
+        </div>
+      </div>
+    </div>
+    `,
+  }),
+};
+
+const DEPRECATED_VARIANTS = [
+  { legacy: "no-border", canonical: "surface" },
+  { legacy: "no-background", canonical: "ghost" },
+  { legacy: "solid-light", canonical: "soft" },
+] as const;
+
+const DEPRECATED_VARIANTS_MESSAGE =
+  "Deprecated `variant` aliases are kept for backward compatibility and resolve to their canonical names at runtime (emitting a one-time dev console warning): `solid-light` → **soft**, `no-border` → **surface**, `no-background` → **ghost**. Each row below shows the deprecated alias next to its canonical replacement — they render identically. Prefer the canonical names in new code.";
+
+export const Deprecations: StoryType = {
+  tags: ["deprecated"],
+  args: {
+    size: "md",
+    color: "primary",
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: DEPRECATED_VARIANTS_MESSAGE,
+      },
+    },
+  },
+  render: (args) => ({
+    components: { VcButton, VcAlert, VcMarkdownRender },
+    setup: () => ({ pairs: DEPRECATED_VARIANTS, message: DEPRECATED_VARIANTS_MESSAGE, args }),
+    template: `<div class="space-y-6">
+      <VcAlert color="warning" variant="outline" icon title="Deprecated">
+        <VcMarkdownRender :src="message" />
+      </VcAlert>
+
+      <div
+        class="grid grid-cols-[1fr_auto_1fr] gap-4 items-center"
+        v-for="pair in pairs"
+        :key="pair.legacy"
+      >
+        <div class="space-y-1">
+          <div class="text-xs text-neutral-500">deprecated: <code>{{ pair.legacy }}</code></div>
+          <VcButton v-bind="args" :variant="pair.legacy">{{ pair.legacy }}</VcButton>
+        </div>
+        <div class="text-neutral-400">→</div>
+        <div class="space-y-1">
+          <div class="text-xs text-neutral-500">canonical: <code>{{ pair.canonical }}</code></div>
+          <VcButton v-bind="args" :variant="pair.canonical">{{ pair.canonical }}</VcButton>
         </div>
       </div>
     </div>
