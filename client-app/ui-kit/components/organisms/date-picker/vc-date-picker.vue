@@ -6,7 +6,7 @@
     role="dialog"
     :aria-label="t('ui_kit.accessibility.calendar')"
   >
-    <template #default="{ toggle, triggerProps }">
+    <template #default="{ toggle, triggerProps, close }">
       <VcDateInput
         ref="dateInputRef"
         :model-value="modelValue"
@@ -30,6 +30,7 @@
         :aria="forwardedAria(triggerProps)"
         :tabindex="tabindex"
         :data-test-id="dataTestId"
+        @keydown.esc.stop="close"
         @update:model-value="onInputUpdate"
         @update:valid="emit('update:valid', $event)"
         @blur="onInputBlur"
@@ -37,6 +38,7 @@
         @clear="onInputClear"
       >
         <template #append>
+          <!-- VcDateInput's Escape listener binds to the inner <input>, so it misses this sibling trigger button; handle Escape here too. -->
           <VcButton
             type="button"
             icon="calendar"
@@ -45,12 +47,14 @@
             :disabled="disabled || readonly"
             :aria-label="t('ui_kit.accessibility.open_calendar')"
             @click="toggle"
+            @keydown.esc.stop="close"
           />
         </template>
       </VcDateInput>
     </template>
 
     <template #content="{ close }">
+      <!-- Escape bubbles up from inside the calendar (day cells, nav buttons); close the popover from anywhere in the dialog (WCAG 2.1.2 keyboard trap). -->
       <VcCalendar
         :model-value="modelValue"
         :size="calendarSize"
@@ -61,6 +65,7 @@
         :first-day-of-week="firstDayOfWeek"
         :weekday-format="weekdayFormat"
         :show-footer="showFooter"
+        @keydown.esc.stop="onEscapeClose(close)"
         @update:model-value="onCalendarUpdate(close, $event)"
       />
     </template>
@@ -167,6 +172,12 @@ function onInputFocus(event: FocusEvent): void {
 
 function onInputClear(): void {
   emit("clear");
+}
+
+function onEscapeClose(close: () => void): void {
+  close();
+  // Return focus to the trigger input so keyboard users are not stranded in the closed dialog.
+  innerInputElement.value?.focus();
 }
 
 function onCalendarUpdate(close: () => void, value: string | undefined): void {
