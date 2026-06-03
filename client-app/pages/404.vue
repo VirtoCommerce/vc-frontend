@@ -32,6 +32,13 @@ const { t } = useI18n();
 const page404Anchor = shallowRef<HTMLElement | null>(null);
 const page404AnchorIsVisible = useElementVisibility(page404Anchor);
 
+// Force noindex for both the /404 route and soft-404s rendered via the Matcher
+// catch-all (which has no static meta). Kept in a separate useHead so it is not
+// dropped by the title `head.patch()` below. Overrides the app-level robots default.
+useHead({
+  meta: [{ name: "robots", content: "noindex, follow" }],
+});
+
 const head = useHead({});
 const { title } = usePageTitle(`${t("pages.404.error_code")} ${t("pages.404.error_text")}`);
 
