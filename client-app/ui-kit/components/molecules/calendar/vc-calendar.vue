@@ -247,11 +247,11 @@ function getFocusedCellDate(root: HTMLElement): DateValue | undefined {
   if (!root.contains(active)) {
     return undefined;
   }
-  // Only day cells carry both attributes; nav buttons and footer do not.
-  if (!active.hasAttribute("data-reka-calendar-cell-trigger")) {
+  // Only day cells carry this marker; nav buttons and footer do not. It's empty-valued, so check for absence explicitly.
+  if (active.dataset.rekaCalendarCellTrigger === undefined) {
     return undefined;
   }
-  const iso = active.getAttribute("data-value");
+  const iso = active.dataset.value;
   if (!iso) {
     return undefined;
   }
