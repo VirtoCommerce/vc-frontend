@@ -6,14 +6,20 @@
 
     <!-- Prevent flash of wrong color mode -->
     <script>
-      (function() {
+      (function () {
         var darkAvailable = false;
-        try { darkAvailable = JSON.parse(localStorage.getItem('vc-dark-available')); } catch(e) { console.warn(e); }
+        try {
+          darkAvailable = JSON.parse(localStorage.getItem("vc-dark-available"));
+        } catch (e) {
+          console.warn(e);
+        }
         if (!darkAvailable) return;
-        var mode = localStorage.getItem('vc-color-mode');
-        var isDark = mode === 'dark' ||
-          (mode !== 'light' && globalThis.matchMedia('(prefers-color-scheme: dark)').matches);
-        if (isDark) { document.documentElement.classList.add('dark'); }
+        var mode = localStorage.getItem("vc-color-mode");
+        var isDark =
+          mode === "dark" || (mode !== "light" && globalThis.matchMedia("(prefers-color-scheme: dark)").matches);
+        if (isDark) {
+          document.documentElement.classList.add("dark");
+        }
       })();
     </script>
 
@@ -27,9 +33,9 @@
     <link rel="stylesheet" href="/client-app/assets/styles/preflight.scss" />
     <link rel="stylesheet" href="/client-app/assets/styles/vendors.scss" />
 
-    <link rel="manifest" href="/client-app/config/manifest.webmanifest">
+    <link rel="manifest" href="/client-app/config/manifest.webmanifest" />
 
-    <meta name="robots" content="noindex" />
+    <!-- <meta name="robots" content="noindex" /> -->
 
     <title>Virto Commerce</title>
   </head>

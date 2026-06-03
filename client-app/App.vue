@@ -66,20 +66,6 @@ useHead({
       ],
 });
 
-// Override the static `noindex` default from index.html: index public content
-// routes; keep noindex on account/company, checkout, cart-by-id, and auth/error pages.
-const isNoIndex = computed(
-  () =>
-    route.meta?.noindex === true ||
-    route.meta?.requiresAuth === true ||
-    route.meta?.layout === "Secure" ||
-    route.meta?.public === true,
-);
-
-useHead({
-  meta: [{ name: "robots", content: () => (isNoIndex.value ? "noindex, follow" : "index, follow") }],
-});
-
 const layouts: Record<NonNullable<typeof route.meta.layout>, Component> = {
   Main: markRaw(MainLayout),
   Secure: markRaw(SecureLayout),
