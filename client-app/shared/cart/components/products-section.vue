@@ -57,7 +57,7 @@
 
         <CartLineItems
           :items="group.items"
-          :subtotal="group.subTotal"
+          :subtotal-currency-code="group.currencyCode"
           :shared-selected-item-ids="selectedItemIds"
           :disabled="disabled"
           :validation-errors="validationErrors"

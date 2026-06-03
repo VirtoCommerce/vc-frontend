@@ -192,7 +192,9 @@ const cartTotals = computed(() =>
 );
 
 const defaultCartTotal = computed(() => cartTotals.value.find((t) => t.isDefaultTotalCurrency));
-const otherCartTotals = computed(() => cartTotals.value.filter((t) => !t.isDefaultTotalCurrency));
+const otherCartTotals = computed(() =>
+  cartTotals.value.filter((t) => !t.isDefaultTotalCurrency && t.total.currency.code !== props.cart.currency.code),
+);
 
 const summarySubTotal = computed(() => defaultCartTotal.value?.subTotal ?? props.cart.subTotal);
 const summaryDiscountTotal = computed(() => defaultCartTotal.value?.discountTotal ?? props.cart.discountTotal);

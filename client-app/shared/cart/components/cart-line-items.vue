@@ -10,7 +10,7 @@
     with-price
     with-total
     with-subtotal
-    :subtotal="subtotal"
+    :subtotal-currency-code="subtotalCurrencyCode"
     removable
     :selectable="selectable"
     @select:items="$emit('select:items', $event)"
@@ -106,7 +106,7 @@ import { ProductType } from "@/core/enums";
 import { prepareLineItems } from "@/core/utilities";
 import { InStock } from "@/shared/catalog";
 import { ConfigurationItems } from "@/shared/common";
-import type { LineItemType, MoneyType, ValidationErrorType } from "@/core/api/graphql/types";
+import type { LineItemType, ValidationErrorType } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
 import CartItemActions from "@/shared/cart/components/cart-item-actions.vue";
 import QuantityControl from "@/shared/common/components/quantity-control.vue";
@@ -119,7 +119,7 @@ interface IProps {
   selectable?: boolean;
   sharedSelectedItemIds?: string[];
   hideControls?: string[];
-  subtotal?: MoneyType;
+  subtotalCurrencyCode?: string;
 }
 
 interface IEmits {

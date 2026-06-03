@@ -130,7 +130,12 @@
           <span class="vc-line-items__subtotal-label">{{ $t("ui_kit.labels.subtotal") }}:</span>
 
           <span class="vc-line-items__subtotal-sum">
-            {{ subtotal ? subtotal.formattedAmount : $n(calculatedSubtotal, "currency") }}
+            {{
+              $n(
+                calculatedSubtotal,
+                subtotalCurrencyCode ? { key: "currency", currency: subtotalCurrencyCode } : "currency",
+              )
+            }}
           </span>
         </div>
       </div>
@@ -141,7 +146,6 @@
 <script setup lang="ts">
 import { intersection, map, sumBy } from "lodash";
 import { computed, ref, watchEffect } from "vue";
-import type { MoneyType } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
 
 interface IEmits {
@@ -164,8 +168,8 @@ interface IProps {
   withSubtotal?: boolean;
   withHeader?: boolean;
   browserTarget?: BrowserTargetType;
-  /** Predefined subtotal. When provided, it is shown as-is instead of summing the items' extended prices. */
-  subtotal?: MoneyType;
+  /** Currency code used to format the subtotal (e.g. for foreign-currency groups). Defaults to the app currency. */
+  subtotalCurrencyCode?: string;
 }
 
 const emit = defineEmits<IEmits>();
