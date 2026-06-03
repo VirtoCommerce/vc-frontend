@@ -32,5 +32,8 @@ declare module "vue-router" {
 
     /**  Whether this route can be saved as returnUrl (default: true) */
     redirectable?: boolean;
+
+    /** Excludes the route from search-engine indexing (renders <meta name="robots" content="noindex">). */
+    noindex?: boolean;
   }
 }
