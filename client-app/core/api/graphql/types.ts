@@ -3113,6 +3113,8 @@ export type LineItemType = {
   listTotal: MoneyType;
   /** List total with tax */
   listTotalWithTax: MoneyType;
+  /** Get points amount */
+  loyaltyPoints?: Maybe<MoneyType>;
   /** Measurement unit value */
   measureUnit?: Maybe<Scalars['String']['output']>;
   /** Line item name value */
@@ -5065,6 +5067,8 @@ export type Product = {
   keyProperties: Array<Property>;
   /** Length */
   length?: Maybe<Scalars['Decimal']['output']>;
+  /** Get points amount */
+  loyaltyPoints?: Maybe<MoneyType>;
   /** Manufacturer Part Number (MPN) */
   manufacturerPartNumber?: Maybe<Scalars['String']['output']>;
   masterVariation?: Maybe<VariationType>;
