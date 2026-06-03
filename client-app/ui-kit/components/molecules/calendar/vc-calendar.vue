@@ -283,23 +283,14 @@ function focusCellByIso(root: HTMLElement, iso: string): void {
   cell?.focus();
 }
 
-function onCalendarKeydown(event: KeyboardEvent): void {
-  const root = event.currentTarget;
-  if (!(root instanceof HTMLElement)) {
-    return;
-  }
+type CalendarKeyTargetType = { target: DateValue; boundary: DateValue; step: 1 | -1 };
 
-  const focused = getFocusedCellDate(root);
-  if (!focused) {
-    return;
-  }
-
-  const withModifier = event.ctrlKey || event.metaKey;
+function resolveKeyTarget(key: string, focused: DateValue, withModifier: boolean): CalendarKeyTargetType | undefined {
   let target: DateValue;
   let boundary: DateValue;
   let step: 1 | -1;
 
-  switch (event.key) {
+  switch (key) {
     case "Home":
       if (withModifier) {
         target = startOfMonth(focused);
@@ -320,10 +311,42 @@ function onCalendarKeydown(event: KeyboardEvent): void {
         : startOfWeek(focused, resolvedLocale.value, mappedFirstDay.value);
       step = -1;
       break;
+    case "PageDown":
+      target = withModifier ? focused.add({ years: 1 }) : focused.add({ months: 1 });
+      boundary = endOfMonth(target);
+      step = 1;
+      break;
+    case "PageUp":
+      target = withModifier ? focused.add({ years: -1 }) : focused.add({ months: -1 });
+      boundary = startOfMonth(target);
+      step = -1;
+      break;
     default:
-      // Let reka handle arrows/space/enter; PageUp/PageDown slot in here later.
-      return;
+      // Let reka handle arrows/space/enter.
+      return undefined;
   }
+
+  return { target, boundary, step };
+}
+
+function onCalendarKeydown(event: KeyboardEvent): void {
+  const root = event.currentTarget;
+  if (!(root instanceof HTMLElement)) {
+    return;
+  }
+
+  const focused = getFocusedCellDate(root);
+  if (!focused) {
+    return;
+  }
+
+  const resolvedKey = resolveKeyTarget(event.key, focused, event.ctrlKey || event.metaKey);
+  if (!resolvedKey) {
+    return;
+  }
+
+  let target = resolvedKey.target;
+  const { boundary, step } = resolvedKey;
 
   event.preventDefault();
 
