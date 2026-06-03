@@ -170,6 +170,51 @@ export const WithDisabledDates: StoryType = {
   }),
 };
 
+export const KeyboardBoundsWithDisabledDates: StoryType = {
+  args: {
+    weekdayFormat: "short",
+    firstDayOfWeek: 0,
+    min: "2026-06-10",
+    max: "2026-06-20",
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Verifies that Home/End/PageUp/PageDown keyboard navigation never moves focus outside `[min, max]` even when the targeted week/month boundary date is disabled or out of range. Both the navigation target and the availability-walk boundary are clamped to the min/max window. Focus a mid-window day (e.g. June 17), then press Home/End/PageUp/PageDown and confirm focus stays within June 10–20.",
+      },
+      source: {
+        code: `
+          <!-- disabledDate marks 10th, 11th, 14th, 20th unavailable inside the [min, max] window -->
+          <VcCalendar
+            v-model="value"
+            :first-day-of-week="0"
+            min="2026-06-10"
+            max="2026-06-20"
+            :disabled-date="(iso) => ['2026-06-10', '2026-06-11', '2026-06-14', '2026-06-20'].includes(iso)"
+          />
+        `,
+      },
+    },
+  },
+  render: (args) => ({
+    components: { VcCalendar },
+    setup() {
+      const value = ref<string | undefined>("2026-06-17");
+      const disabledDate = (iso: string) => {
+        return ["2026-06-10", "2026-06-11", "2026-06-14", "2026-06-20"].includes(iso);
+      };
+      return { args, value, disabledDate };
+    },
+    template: `
+      <div class="space-y-2">
+        <VcCalendar v-bind="args" v-model="value" :disabled-date="disabledDate" />
+        <div class="text-sm text-neutral-600">Selected: {{ value || "(none)" }}</div>
+      </div>
+    `,
+  }),
+};
+
 export const WithFooter: StoryType = {
   args: {
     weekdayFormat: "short",

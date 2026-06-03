@@ -239,22 +239,6 @@ function clampToBounds(date: DateValue): DateValue {
   return result;
 }
 
-// Walk toward an available date without crossing the targeted week/month boundary.
-function resolveAvailableTarget(target: DateValue, boundary: DateValue, step: 1 | -1): DateValue | undefined {
-  const predicate = isDateUnavailable.value;
-  if (!predicate) {
-    return target;
-  }
-  let candidate = target;
-  while (predicate(candidate)) {
-    if (candidate.compare(boundary) === 0) {
-      return undefined;
-    }
-    candidate = candidate.add({ days: step });
-  }
-  return candidate;
-}
-
 function getFocusedCellDate(root: HTMLElement): DateValue | undefined {
   const active = document.activeElement;
   if (!(active instanceof HTMLElement)) {
@@ -283,52 +267,52 @@ function focusCellByIso(root: HTMLElement, iso: string): void {
   cell?.focus();
 }
 
-type CalendarKeyTargetType = { target: DateValue; boundary: DateValue; step: 1 | -1 };
+type CalendarKeyTargetType = { target: DateValue };
 
-function resolveKeyTarget(key: string, focused: DateValue, withModifier: boolean): CalendarKeyTargetType | undefined {
+// Home/End: ctrl/meta switches week→month (non-APG bonus). PageUp/Down: Shift switches month→year (APG-correct).
+type CalendarKeyModifiersType = { ctrlOrMeta: boolean; shift: boolean };
+
+function resolveKeyTarget(
+  key: string,
+  focused: DateValue,
+  modifiers: CalendarKeyModifiersType,
+): CalendarKeyTargetType | undefined {
+  const { ctrlOrMeta, shift } = modifiers;
   let target: DateValue;
-  let boundary: DateValue;
-  let step: 1 | -1;
 
   switch (key) {
     case "Home":
-      if (withModifier) {
+      if (ctrlOrMeta) {
         target = startOfMonth(focused);
       } else {
         target = startOfWeek(focused, resolvedLocale.value, mappedFirstDay.value);
       }
-      boundary = withModifier ? endOfMonth(focused) : endOfWeek(focused, resolvedLocale.value, mappedFirstDay.value);
-      step = 1;
       break;
     case "End":
-      if (withModifier) {
+      if (ctrlOrMeta) {
         target = endOfMonth(focused);
       } else {
         target = endOfWeek(focused, resolvedLocale.value, mappedFirstDay.value);
       }
-      boundary = withModifier
-        ? startOfMonth(focused)
-        : startOfWeek(focused, resolvedLocale.value, mappedFirstDay.value);
-      step = -1;
       break;
     case "PageDown":
-      target = withModifier ? focused.add({ years: 1 }) : focused.add({ months: 1 });
-      boundary = endOfMonth(target);
-      step = 1;
+      // Shift = next year per WAI-ARIA APG Date Picker Dialog; plain = next month.
+      target = shift ? focused.add({ years: 1 }) : focused.add({ months: 1 });
       break;
     case "PageUp":
-      target = withModifier ? focused.add({ years: -1 }) : focused.add({ months: -1 });
-      boundary = startOfMonth(target);
-      step = -1;
+      // Shift = previous year per WAI-ARIA APG Date Picker Dialog; plain = previous month.
+      target = shift ? focused.add({ years: -1 }) : focused.add({ months: -1 });
       break;
     default:
       // Let reka handle arrows/space/enter.
       return undefined;
   }
 
-  return { target, boundary, step };
+  return { target };
 }
 
+// Mirror reka's arrow nav for the keys reka doesn't provide (Home/End/PageUp/PageDown):
+// clamp to min/max and land on the target, including data-unavailable cells (focusable, not selectable per APG).
 function onCalendarKeydown(event: KeyboardEvent): void {
   const root = event.currentTarget;
   if (!(root instanceof HTMLElement)) {
@@ -340,25 +324,16 @@ function onCalendarKeydown(event: KeyboardEvent): void {
     return;
   }
 
-  const resolvedKey = resolveKeyTarget(event.key, focused, event.ctrlKey || event.metaKey);
+  const ctrlOrMeta = event.ctrlKey || event.metaKey;
+  const shift = event.shiftKey;
+  const resolvedKey = resolveKeyTarget(event.key, focused, { ctrlOrMeta, shift });
   if (!resolvedKey) {
     return;
   }
 
-  let target = resolvedKey.target;
-  const { step } = resolvedKey;
-
   event.preventDefault();
 
-  target = clampToBounds(target);
-  // Clamp boundary too so the availability walk can't step past min/max.
-  const boundary = clampToBounds(resolvedKey.boundary);
-
-  const resolved = resolveAvailableTarget(target, boundary, step);
-  if (!resolved) {
-    return;
-  }
-  target = resolved;
+  const target = clampToBounds(resolvedKey.target);
 
   // Update placeholder so the grid scrolls when the target spills into an adjacent month.
   placeholderRef.value = target;
