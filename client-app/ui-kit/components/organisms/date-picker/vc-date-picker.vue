@@ -47,7 +47,7 @@
             :disabled="disabled || readonly"
             :aria-label="t('ui_kit.accessibility.open_calendar')"
             @click="toggle"
-            @keydown.esc.stop="close"
+            @keydown.esc.stop="onEscapeClose(close)"
           />
         </template>
       </VcDateInput>

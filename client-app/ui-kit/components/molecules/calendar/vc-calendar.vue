@@ -346,11 +346,13 @@ function onCalendarKeydown(event: KeyboardEvent): void {
   }
 
   let target = resolvedKey.target;
-  const { boundary, step } = resolvedKey;
+  const { step } = resolvedKey;
 
   event.preventDefault();
 
   target = clampToBounds(target);
+  // Clamp boundary too so the availability walk can't step past min/max.
+  const boundary = clampToBounds(resolvedKey.boundary);
 
   const resolved = resolveAvailableTarget(target, boundary, step);
   if (!resolved) {
