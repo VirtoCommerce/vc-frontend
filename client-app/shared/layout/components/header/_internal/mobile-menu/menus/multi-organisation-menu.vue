@@ -50,8 +50,7 @@
 
 <script setup lang="ts">
 import { ref, useTemplateRef, computed } from "vue";
-import { useUser, useUserOrganizations } from "@/shared/account";
-import { useOrganizationSwitcher } from "@/shared/account";
+import { useOrganizationSwitcher, useUser, useUserOrganizations } from "@/shared/account";
 
 const { organizations, hasNextPage, loading, pagesCount, currentPage, loadOrganizations } = useUserOrganizations();
 const { user, isMultiOrganization, organization } = useUser();

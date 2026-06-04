@@ -94,8 +94,7 @@
 <script setup lang="ts">
 import { useDebounceFn } from "@vueuse/core";
 import { computed, ref } from "vue";
-import { useUser, useUserOrganizations } from "@/shared/account";
-import { useOrganizationSwitcher } from "@/shared/account";
+import { useOrganizationSwitcher, useUser, useUserOrganizations } from "@/shared/account";
 
 const emit = defineEmits<{
   organizationSelected: [];
