@@ -495,6 +495,7 @@
           "email_verification_is_required": "Weryfikacja e-mail jest wymagana. Proszę zweryfikować swój adres e-mail",
           "user_is_temporary_locked_out": "Twoje konto zostało tymczasowo zablokowane. Proszę spróbować ponownie później",
           "user_is_locked_out": "@:common.messages.blocked",
+          "user_is_locked_in_organization": "Twój dostęp do tej organizacji został zablokowany. Skontaktuj się z administratorem organizacji",
           "user_cannot_login_in_store": "Dostęp zabroniony. Nie możesz się zalogować do bieżącego sklepu",
           "password_expired": "@:common.messages.password_expired",
           "user_not_found": "Nie znaleziono użytkownika. Proszę upewnić się, że wprowadziłeś poprawne informacje"

@@ -495,6 +495,7 @@
           "email_verification_is_required": "需要电子邮件验证。请验证您的电子邮件地址",
           "user_is_temporary_locked_out": "您的账户已被临时锁定。请稍后再试",
           "user_is_locked_out": "@:common.messages.blocked",
+          "user_is_locked_in_organization": "您对此组织的访问已被阻止。请联系您的组织管理员",
           "user_cannot_login_in_store": "访问被拒绝。您无法登录当前商店",
           "password_expired": "@:common.messages.password_expired",
           "user_not_found": "未找到用户。请确保您输入了正确的信息"

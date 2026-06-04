@@ -1,5 +1,16 @@
 <template>
   <div class="top-header-organizations">
+    <VcAlert
+      v-if="switchError"
+      class="top-header-organizations__error"
+      color="danger"
+      size="sm"
+      variant="outline-dark"
+      icon
+    >
+      {{ switchError }}
+    </VcAlert>
+
     <div v-if="!isShowSearch" class="top-header-organizations__label top-header-organizations__label--static">
       {{ $t("common.labels.organizations") }}
     </div>
@@ -83,7 +94,10 @@
 <script setup lang="ts">
 import { useDebounceFn } from "@vueuse/core";
 import { computed, ref } from "vue";
+import { useAuth, useErrorsTranslator } from "@/core/composables";
+import { IdentityErrors } from "@/core/enums";
 import { useUser, useUserOrganizations } from "@/shared/account";
+import type { IdentityErrorType } from "@/core/api/graphql/types";
 
 const emit = defineEmits<{
   organizationSelected: [];
@@ -92,6 +106,8 @@ const emit = defineEmits<{
 const SEARCH_DEBOUNCE_MS = 300;
 
 const { user, switchOrganization, organization } = useUser();
+const { errors: authErrors } = useAuth();
+const { translate } = useErrorsTranslator<IdentityErrorType>("shared.account.sign_in_form.errors");
 const {
   searchPhrase,
   organizations,
@@ -106,6 +122,7 @@ const {
 } = useUserOrganizations();
 
 const contactOrganizationId = ref(user.value?.contact?.organizationId);
+const switchError = ref<string | null>(null);
 
 const organizationsWithoutCurrent = computed(() =>
   organizations.value.filter((item) => item.id !== organization.value?.id),
@@ -116,7 +133,19 @@ async function selectOrganization(): Promise<void> {
     return;
   }
 
-  await switchOrganization(contactOrganizationId.value);
+  switchError.value = null;
+  const succeeded = await switchOrganization(contactOrganizationId.value);
+
+  if (!succeeded && authErrors.value?.length) {
+    const lockedError = authErrors.value.find(
+      (e) => e.code === IdentityErrors.USER_IS_LOCKED_IN_ORGANIZATION || e.code === IdentityErrors.USER_IS_LOCKED_OUT,
+    );
+    switchError.value = (lockedError ? translate(lockedError) : translate(authErrors.value[0])) ?? null;
+    // Reset radio back to current org
+    contactOrganizationId.value = user.value?.contact?.organizationId;
+    return;
+  }
+
   emit("organizationSelected");
 }
 
@@ -143,6 +172,10 @@ async function onSearchClear(): Promise<void> {
 <style lang="scss">
 .top-header-organizations {
   @apply rounded-b-md border-t bg-neutral-50;
+
+  &__error {
+    @apply m-2;
+  }
 
   &__search {
     @apply border-b bg-neutral-100 p-3 pt-2;

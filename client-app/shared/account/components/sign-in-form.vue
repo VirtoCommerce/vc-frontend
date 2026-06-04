@@ -11,7 +11,12 @@
       variant="outline-dark"
       icon
     >
-      <span v-if="error?.code === IdentityErrors.USER_IS_LOCKED_OUT">
+      <span
+        v-if="
+          error?.code === IdentityErrors.USER_IS_LOCKED_OUT ||
+          error?.code === IdentityErrors.USER_IS_LOCKED_IN_ORGANIZATION
+        "
+      >
         {{ translate(error) }}
         <ContactAdministratorLink />.
       </span>

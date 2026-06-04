@@ -761,6 +761,8 @@ export type ContactType = {
   fullName: Scalars['String']['output'];
   groups: Array<Maybe<Scalars['String']['output']>>;
   id: Scalars['String']['output'];
+  /** Whether the contact is locked in the specified organization */
+  isLockedInOrganization?: Maybe<Scalars['Boolean']['output']>;
   lastName: Scalars['String']['output'];
   /** Member type */
   memberType: Scalars['String']['output'];
@@ -1980,6 +1982,8 @@ export type InputChangeOrderStatusType = {
 };
 
 export type InputChangeOrganizationContactRoleType = {
+  /** Organization identifier for which roles are being changed */
+  organizationId?: InputMaybe<Scalars['String']['input']>;
   /** Role IDs or names to be assigned to the user */
   roleIds?: InputMaybe<Array<Scalars['String']['input']>>;
   /** User identifier to be changed */
@@ -2269,6 +2273,8 @@ export type InputKeyValueType = {
 };
 
 export type InputLockUnlockOrganizationContactType = {
+  /** Organization identifier for which the lock/unlock applies */
+  organizationId?: InputMaybe<Scalars['String']['input']>;
   userId?: InputMaybe<Scalars['String']['input']>;
 };
 

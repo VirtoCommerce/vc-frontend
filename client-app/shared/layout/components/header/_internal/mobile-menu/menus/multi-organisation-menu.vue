@@ -1,5 +1,16 @@
 <template>
   <div ref="scrollContainer" v-if="isMultiOrganization" class="multi-organization-menu">
+    <VcAlert
+      v-if="switchError"
+      class="multi-organization-menu__error"
+      color="danger"
+      size="sm"
+      variant="outline-dark"
+      icon
+    >
+      {{ switchError }}
+    </VcAlert>
+
     <VcRadioButton
       v-if="organization && !loading"
       :model-value="contactOrganizationId"
@@ -39,13 +50,19 @@
 
 <script setup lang="ts">
 import { ref, useTemplateRef, computed } from "vue";
+import { useAuth, useErrorsTranslator } from "@/core/composables";
+import { IdentityErrors } from "@/core/enums";
 import { useUser, useUserOrganizations } from "@/shared/account";
+import type { IdentityErrorType } from "@/core/api/graphql/types";
 
 const { organizations, hasNextPage, loading, pagesCount, currentPage, loadOrganizations } = useUserOrganizations();
 const { user, isMultiOrganization, switchOrganization, organization } = useUser();
+const { errors: authErrors } = useAuth();
+const { translate } = useErrorsTranslator<IdentityErrorType>("shared.account.sign_in_form.errors");
 
 const contactOrganizationId = ref(user.value?.contact?.organizationId);
 const scrollContainer = useTemplateRef("scrollContainer");
+const switchError = ref<string | null>(null);
 
 const organizationsWithoutCurrent = computed(() =>
   organizations.value.filter((item) => item.id !== organization.value?.id),
@@ -56,13 +73,26 @@ async function selectOrganization(): Promise<void> {
     return;
   }
 
-  await switchOrganization(contactOrganizationId.value);
+  switchError.value = null;
+  const succeeded = await switchOrganization(contactOrganizationId.value);
+
+  if (!succeeded && authErrors.value?.length) {
+    const lockedError = authErrors.value.find(
+      (e) => e.code === IdentityErrors.USER_IS_LOCKED_IN_ORGANIZATION || e.code === IdentityErrors.USER_IS_LOCKED_OUT,
+    );
+    switchError.value = (lockedError ? translate(lockedError) : translate(authErrors.value[0])) ?? null;
+    contactOrganizationId.value = user.value?.contact?.organizationId;
+  }
 }
 </script>
 
 <style lang="scss">
 .multi-organization-menu {
   @apply mt-4 flex grow flex-col gap-y-1 font-normal h-[calc(100vh-224px)] overflow-y-auto;
+
+  &__error {
+    @apply mb-2;
+  }
 
   &__radio {
     @apply py-2.5;

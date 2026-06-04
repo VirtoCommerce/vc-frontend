@@ -495,6 +495,7 @@
           "email_verification_is_required": "Требуется подтверждение эл. почты. Подтвердите адрес эл. почты",
           "user_is_temporary_locked_out": "Ваш аккаунт временно заблокирован. Пожалуйста, попробуйте позже",
           "user_is_locked_out": "@:common.messages.blocked",
+          "user_is_locked_in_organization": "Ваш доступ к этой организации заблокирован. Пожалуйста, обратитесь к администратору организации",
           "user_cannot_login_in_store": "Доступ запрещен. Вы не можете войти в текущий магазин",
           "password_expired": "@:common.messages.password_expired",
           "user_not_found": "Пользователь не найден. Пожалуйста, убедитесь, что вы ввели правильную информацию"

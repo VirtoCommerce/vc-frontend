@@ -265,7 +265,7 @@
               <td v-if="canManageMembers" class="px-5 text-right">
                 <MembersDropdownMenu
                   v-if="canShowDropdownFor(contact)"
-                  :contact-status="contact.status"
+                  :contact-status="contact.isLockedInOrganization ? ContactStatus.Locked : contact.status"
                   :can-edit-organization="userCanEditOrganization"
                   :can-login-on-behalf="canLoginOnBehalfOf(contact)"
                   class="inline-block"
@@ -301,7 +301,7 @@
               <div v-if="canManageMembers" class="w-7 flex-none">
                 <MembersDropdownMenu
                   v-if="canShowDropdownFor(item)"
-                  :contact-status="item.status"
+                  :contact-status="item.isLockedInOrganization ? ContactStatus.Locked : item.status"
                   :can-edit-organization="userCanEditOrganization"
                   :can-login-on-behalf="canLoginOnBehalfOf(item)"
                   placement="left-start"
@@ -345,6 +345,7 @@ import {
   useOrganizationContacts,
 } from "@/shared/company";
 import { useOrganizationContactsFilterFacets } from "@/shared/company/composables/useOrganizationContactsFilterFacets";
+import { ContactStatus } from "@/shared/company/types";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import type { FacetItemType, FacetValueItemType, ISortInfo } from "@/core/types";
@@ -590,12 +591,12 @@ function openEditCustomerRoleModal(contact: ExtendedContactType): void {
     component: EditCustomerRoleModal,
     props: {
       roles: B2B_ROLES,
-      currentRoleId: contact.extended.roles[0].id,
+      currentRoleId: contact.extended.roles[0]?.id,
       loading: contactsLoading,
 
       async onConfirm(selectedRoleId: string): Promise<void> {
         const result = await changeContactOrganizationRole({
-          userId: contact.securityAccounts![0].id,
+          userId: contact.id,
           roleIds: [selectedRoleId],
         });
 

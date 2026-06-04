@@ -495,6 +495,7 @@
           "email_verification_is_required": "E-postbekreftelse kreves. Bekreft e-postadressen din",
           "user_is_temporary_locked_out": "Kontoen din er midlertidig låst. Prøv igjen senere.",
           "user_is_locked_out": "@:common.messages.blocked",
+          "user_is_locked_in_organization": "Din tilgang til denne organisasjonen er blokkert. Kontakt organisasjonens administrator",
           "user_cannot_login_in_store": "Tilgang nektet. Du kan ikke logge inn i denne butikken",
           "password_expired": "@:common.messages.password_expired",
           "user_not_found": "Brukeren ble ikke funnet. Kontroller at du har skrevet inn korrekt informasjon"
