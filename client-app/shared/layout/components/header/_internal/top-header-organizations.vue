@@ -94,10 +94,8 @@
 <script setup lang="ts">
 import { useDebounceFn } from "@vueuse/core";
 import { computed, ref } from "vue";
-import { useAuth, useErrorsTranslator } from "@/core/composables";
-import { IdentityErrors } from "@/core/enums";
 import { useUser, useUserOrganizations } from "@/shared/account";
-import type { IdentityErrorType } from "@/core/api/graphql/types";
+import { useOrganizationSwitcher } from "@/shared/account";
 
 const emit = defineEmits<{
   organizationSelected: [];
@@ -105,9 +103,7 @@ const emit = defineEmits<{
 
 const SEARCH_DEBOUNCE_MS = 300;
 
-const { user, switchOrganization, organization } = useUser();
-const { errors: authErrors } = useAuth();
-const { translate } = useErrorsTranslator<IdentityErrorType>("shared.account.sign_in_form.errors");
+const { user, organization } = useUser();
 const {
   searchPhrase,
   organizations,
@@ -120,9 +116,9 @@ const {
   reset,
   isShowSearch,
 } = useUserOrganizations();
+const { switchError, trySwitch } = useOrganizationSwitcher();
 
 const contactOrganizationId = ref(user.value?.contact?.organizationId);
-const switchError = ref<string | null>(null);
 
 const organizationsWithoutCurrent = computed(() =>
   organizations.value.filter((item) => item.id !== organization.value?.id),
@@ -133,15 +129,9 @@ async function selectOrganization(): Promise<void> {
     return;
   }
 
-  switchError.value = null;
-  const succeeded = await switchOrganization(contactOrganizationId.value);
+  const succeeded = await trySwitch(contactOrganizationId.value);
 
-  if (!succeeded && authErrors.value?.length) {
-    const lockedError = authErrors.value.find(
-      (e) => e.code === IdentityErrors.USER_IS_LOCKED_IN_ORGANIZATION || e.code === IdentityErrors.USER_IS_LOCKED_OUT,
-    );
-    switchError.value = (lockedError ? translate(lockedError) : translate(authErrors.value[0])) ?? null;
-    // Reset radio back to current org
+  if (!succeeded) {
     contactOrganizationId.value = user.value?.contact?.organizationId;
     return;
   }
