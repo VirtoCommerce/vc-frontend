@@ -18,7 +18,16 @@
       :payment="payment"
     />
 
-    <!-- TODO: Add support for Skyflow, Datatrans, and extension point payment methods for cart payments when available. -->
+    <PaymentProcessingSkyflow
+      v-else-if="paymentTypeName === 'SkyflowPaymentMethod'"
+      :order="order"
+      :cart="cart"
+      :hide-payment-button="hidePaymentButton"
+      :disabled="disabled"
+      :payment="payment"
+    />
+
+    <!-- TODO: Add support for Datatrans, and extension point payment methods for cart payments when available. -->
   </div>
 </template>
 
@@ -27,6 +36,7 @@ import { computed } from "vue";
 import type { IPaymentMethodParameters } from "./types";
 import PaymentProcessingAuthorizeNet from "@/shared/payment/components/payment-processing-authorize-net.vue";
 import PaymentProcessingCyberSource from "@/shared/payment/components/payment-processing-cyber-source.vue";
+import PaymentProcessingSkyflow from "@/shared/payment/components/payment-processing-skyflow.vue";
 
 const props = defineProps<IPaymentMethodParameters>();
 

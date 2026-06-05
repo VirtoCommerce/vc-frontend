@@ -57,11 +57,12 @@
         <PaymentPolicies />
 
         <VcButton
+          v-if="!hidePaymentButton"
           data-test-id="pay-now-button"
-          :disabled="hasInvalid"
+          :disabled="disabled || hasInvalid"
           :loading="loading"
           class="flex-1 md:order-first md:flex-none"
-          @click="payWithNewCreditCard"
+          @click="() => payWithNewCreditCard()"
         >
           {{ $t("shared.payment.bank_card_form.pay_now_button") }}
         </VcButton>
@@ -71,10 +72,11 @@
     <div v-else-if="selectedSkyflowCard && skyflowCards?.length && !addNewCardSelected">
       <div class="mt-6 flex justify-center md:justify-start">
         <VcButton
-          :disabled="isSavedCardPayBtnDisabled"
+          v-if="!hidePaymentButton"
+          :disabled="disabled || isSavedCardPayBtnDisabled"
           :loading="loading"
           class="shrink"
-          @click="payWithSavedCreditCard"
+          @click="() => payWithSavedCreditCard()"
         >
           {{ $t("shared.payment.bank_card_form.pay_now_button") }}
         </VcButton>
@@ -85,35 +87,34 @@
 
 <script setup lang="ts">
 import Skyflow from "skyflow-js";
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { initializePayment, authorizePayment } from "@/core/api/graphql";
+import { authorizePayment, initializeCartPayment, initializePayment } from "@/core/api/graphql";
 import { useAnalytics, useThemeContext } from "@/core/composables";
 import { IS_DEVELOPMENT } from "@/core/constants";
 import { Logger, replaceXFromBeginning } from "@/core/utilities";
 import { useUser } from "@/shared/account";
 import { useNotifications } from "@/shared/notification";
-import { useSkyflowCards, useSkyflowStyles } from "../composables";
+import { usePayment, useSkyflowCards, useSkyflowStyles } from "../composables";
 import PaymentPolicies from "./payment-policies.vue";
-import type { CustomerOrderType, InputKeyValueType, KeyValueType } from "@/core/api/graphql/types";
+import type { IPaymentMethodEmits, IPaymentMethodParameters } from "./types";
+import type {
+  AuthorizePaymentResultType,
+  CustomerOrderType,
+  InitializeCartPaymentResultType,
+  InitializePaymentResultType,
+  InputKeyValueType,
+  KeyValueType,
+} from "@/core/api/graphql/types";
 import type ComposableContainer from "skyflow-js/types/core/external/collect/compose-collect-container";
 import type ComposableElement from "skyflow-js/types/core/external/collect/compose-collect-element";
 import type { IInsertRecordInput, IInsertResponse } from "skyflow-js/types/utils/common";
 
-const emit = defineEmits<IEmits>();
+const emit = defineEmits<IPaymentMethodEmits>();
 
-const props = defineProps<IProps>();
+const props = defineProps<IPaymentMethodParameters>();
 
 const CVV_REGEX = "^[0-9]{3,4}$";
-
-interface IProps {
-  order: CustomerOrderType;
-}
-
-interface IEmits {
-  (event: "success"): void;
-  (event: "fail", message?: string | null): void;
-}
 
 type FieldsType = { [key: string]: string };
 
@@ -130,6 +131,7 @@ const {
   cvvOnlyCollectStyles,
 } = useSkyflowStyles();
 const notifications = useNotifications();
+const { registerPaymentProcessor, setCardDataValid, setCardDataInvalid } = usePayment();
 
 const loading = ref(false);
 const skyflowContainer = ref<HTMLElement | string>("");
@@ -238,7 +240,7 @@ async function initNewCardForm(): Promise<void> {
   const container = skyflowClient.container(Skyflow.ContainerType.COMPOSABLE, containerOptions);
 
   container.on(Skyflow.EventName.SUBMIT, () => {
-    if (!hasInvalid.value) {
+    if (!props.hidePaymentButton && !hasInvalid.value) {
       void payWithNewCreditCard();
     }
   });
@@ -412,16 +414,31 @@ async function updateCvvInVault(): Promise<void> {
 // CVV only END
 
 // PAYMENT START
+async function initializeByCartOrOrder(): Promise<InitializePaymentResultType | InitializeCartPaymentResultType> {
+  if (props.cart && props.payment) {
+    return await initializeCartPayment({
+      cartId: props.cart.id,
+      paymentId: props.payment.id,
+    });
+  }
+
+  if (props.order) {
+    return await initializePayment({
+      orderId: props.order.id,
+      paymentId: props.order.inPayments[0].id,
+    });
+  }
+
+  throw new Error("Skyflow payment requires either cart+payment or order context");
+}
+
 async function initPayment() {
   if (skyflowClient) {
     return;
   }
 
   try {
-    const { publicParameters, errorMessage } = await initializePayment({
-      orderId: props.order.id,
-      paymentId: props.order.inPayments[0].id,
-    });
+    const { publicParameters, errorMessage } = await initializeByCartOrOrder();
 
     if (errorMessage || !publicParameters) {
       showError(t("shared.payment.bank_card_form.payment_unavailable"));
@@ -460,56 +477,90 @@ function getAdditionalRecords(): IInsertRecordInput | undefined {
   };
 }
 
-async function pay(parameters: InputKeyValueType[]): Promise<void> {
-  const { isSuccess } = await authorizePayment({
-    orderId: props.order.id,
-    paymentId: props.order.inPayments[0].id,
+async function pay(
+  parameters: InputKeyValueType[],
+  orderToPay: CustomerOrderType | null = null,
+): Promise<AuthorizePaymentResultType | null> {
+  const order = orderToPay ?? props.order;
+  if (!order) {
+    return null;
+  }
+
+  const result = await authorizePayment({
+    orderId: order.id,
+    paymentId: order.inPayments[0].id,
     parameters,
   });
 
-  if (isSuccess) {
-    analytics("purchase", props.order);
+  if (result.isSuccess) {
+    if (!orderToPay) {
+      analytics("purchase", order);
+    }
     emit("success");
   } else {
     emit("fail");
   }
+
+  return result;
 }
 
-async function payWithNewCreditCard() {
+async function payWithNewCreditCard(
+  orderToPay: CustomerOrderType | null = null,
+): Promise<AuthorizePaymentResultType | null> {
   loading.value = true;
 
-  const res = (await fullCardCollector.collect({
-    additionalFields: getAdditionalRecords(),
-  })) as IInsertResponse;
+  try {
+    const res = (await fullCardCollector.collect({
+      additionalFields: getAdditionalRecords(),
+    })) as IInsertResponse;
 
-  if (!res?.records) {
-    emit("fail");
+    if (!res?.records) {
+      emit("fail");
+      return null;
+    }
+
+    return await pay(objectToKeyValue(res.records.find((el) => el.fields)?.fields as FieldsType), orderToPay);
+  } finally {
+    loading.value = false;
   }
-
-  await pay(objectToKeyValue(res.records.find((el) => el.fields)?.fields as FieldsType));
-
-  loading.value = false;
 }
 
-async function payWithSavedCreditCard() {
+async function payWithSavedCreditCard(
+  orderToPay: CustomerOrderType | null = null,
+): Promise<AuthorizePaymentResultType | null> {
   loading.value = true;
 
-  if (!selectedSkyflowCard.value) {
-    return;
+  try {
+    if (!selectedSkyflowCard.value) {
+      return null;
+    }
+
+    if (isSavedCardCvvRequired.value) {
+      await updateCvvInVault();
+    }
+
+    return await pay(
+      [
+        {
+          key: "skyflow_id",
+          value: selectedSkyflowCard.value.skyflowId,
+        },
+      ],
+      orderToPay,
+    );
+  } finally {
+    loading.value = false;
+  }
+}
+
+async function sendPaymentData(
+  orderToPay: CustomerOrderType | null = null,
+): Promise<AuthorizePaymentResultType | null> {
+  if (addNewCardSelected.value || !skyflowCards.value?.length) {
+    return await payWithNewCreditCard(orderToPay);
   }
 
-  if (isSavedCardCvvRequired.value) {
-    await updateCvvInVault();
-  }
-
-  await pay([
-    {
-      key: "skyflow_id",
-      value: selectedSkyflowCard.value.skyflowId,
-    },
-  ]);
-
-  loading.value = false;
+  return await payWithSavedCreditCard(orderToPay);
 }
 // PAYMENT END
 
@@ -522,16 +573,45 @@ function showError(message: string) {
 }
 
 onMounted(async () => {
+  registerPaymentProcessor(sendPaymentData);
+
   try {
     await fetchSkyflowCards();
   } catch (e) {
     Logger.error(onMounted.name, e);
   }
 
+  await initPayment();
+
   if (!skyflowCards.value?.length) {
     void initNewCardForm();
   }
 });
+
+onUnmounted(() => {
+  registerPaymentProcessor(null);
+  setCardDataInvalid();
+});
+
+const isPaymentDataValid = computed(() => {
+  if (addNewCardSelected.value || !skyflowCards.value?.length) {
+    return newCardFormInitialized.value && !hasInvalid.value;
+  }
+
+  return !isSavedCardPayBtnDisabled.value;
+});
+
+watch(
+  isPaymentDataValid,
+  (isValid) => {
+    if (isValid) {
+      setCardDataValid();
+    } else {
+      setCardDataInvalid();
+    }
+  },
+  { immediate: true },
+);
 
 // utils
 function getParameter(data: KeyValueType[], key: string): string {
