@@ -187,6 +187,10 @@ let skyflowClient: Skyflow,
   cvvCollector: ComposableContainer | null,
   cvvElement: ComposableElement | null;
 
+// Guards against late async init completing after the component was torn down
+// (e.g. the shopper switched payment method while the vault was still initializing).
+let isActive = true;
+
 // NEW CARD START
 type ElementType =
   | typeof Skyflow.ElementType.CARD_NUMBER
@@ -432,9 +436,9 @@ async function initializeByCartOrOrder(): Promise<InitializePaymentResultType | 
   throw new Error("Skyflow payment requires either cart+payment or order context");
 }
 
-async function initPayment() {
+async function initPayment(): Promise<boolean> {
   if (skyflowClient) {
-    return;
+    return true;
   }
 
   try {
@@ -442,7 +446,7 @@ async function initPayment() {
 
     if (errorMessage || !publicParameters) {
       showError(t("shared.payment.bank_card_form.payment_unavailable"));
-      return;
+      return false;
     }
 
     skyflowTableName = getParameter(publicParameters, "tableName");
@@ -455,8 +459,11 @@ async function initPayment() {
         env: IS_DEVELOPMENT ? Skyflow.Env.DEV : Skyflow.Env.PROD,
       },
     });
+
+    return true;
   } catch {
     showError(t("shared.payment.bank_card_form.payment_unavailable"));
+    return false;
   }
 }
 
@@ -573,15 +580,21 @@ function showError(message: string) {
 }
 
 onMounted(async () => {
-  registerPaymentProcessor(sendPaymentData);
-
   try {
     await fetchSkyflowCards();
   } catch (e) {
     Logger.error(onMounted.name, e);
   }
 
-  await initPayment();
+  const initialized = await initPayment();
+
+  // Register the shared cart payment processor only after a successful init and only while the
+  // component is still mounted. Otherwise a failed init (the payment-unavailable toast is shown)
+  // or a method switch during async init could leave a processor that cart checkout would still
+  // run via finalizePayment after the order is created.
+  if (initialized && isActive) {
+    registerPaymentProcessor(sendPaymentData);
+  }
 
   if (!skyflowCards.value?.length) {
     void initNewCardForm();
@@ -589,6 +602,7 @@ onMounted(async () => {
 });
 
 onUnmounted(() => {
+  isActive = false;
   registerPaymentProcessor(null);
   setCardDataInvalid();
 });
