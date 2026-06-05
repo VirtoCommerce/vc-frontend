@@ -124,7 +124,7 @@ const paymentType = computed(() => props.item.inPayments?.[0]?.paymentMethod?.na
 
     // Compact layout up to the xs breakpoint (480px): two columns, three rows.
     // Left: number / date / buyer. Right: status / payment / total.
-    @container (max-width: theme("containers.sm")) {
+    @container (max-width: theme("containers.xs")) {
       grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       grid-template-areas:
         "number  status"
@@ -157,7 +157,7 @@ const paymentType = computed(() => props.item.inPayments?.[0]?.paymentMethod?.na
     &--payment {
       grid-area: payment;
 
-      @container (max-width: theme("containers.sm")) {
+      @container (max-width: theme("containers.xs")) {
         @apply items-end text-right;
       }
     }
