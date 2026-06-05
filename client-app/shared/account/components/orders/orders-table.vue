@@ -15,7 +15,7 @@
     @row-click="emit('rowClick', $event)"
   >
     <template #mobile-item="{ item }">
-      <OrderCard :item="item" :order-scope="orderScope" @select="emit('rowClick', $event)" />
+      <OrderCard :item="item" :order-scope="orderScope" />
     </template>
 
     <!-- Desktop columns -->

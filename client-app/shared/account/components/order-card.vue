@@ -1,11 +1,5 @@
 <template>
-  <button
-    class="order-card"
-    type="button"
-    tabindex="0"
-    @click="$emit('select', item)"
-    @keyup.enter="$emit('select', item)"
-  >
+  <div class="order-card">
     <div class="order-card__grid">
       <!-- Order number -->
       <div class="order-card__cell order-card__cell--number">
@@ -13,9 +7,9 @@
           {{ $t("pages.account.orders.order_number_label") }}
         </span>
 
-        <span class="order-card__number">
+        <a class="order-card__number" :href="orderHref" :target="linkTarget" :rel="linkRel">
           {{ item.number }}
-        </span>
+        </a>
       </div>
 
       <!-- Date -->
@@ -67,11 +61,14 @@
         </span>
       </div>
     </div>
-  </button>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { useRouter } from "vue-router";
+import { useBrowserTarget } from "@/core/composables";
+import { BrowserTargetType } from "@/core/enums";
 import OrderStatus from "./order-status.vue";
 import type { OrderScopeType } from "../types";
 import type { CustomerOrderType } from "@/core/api/graphql/types";
@@ -81,13 +78,20 @@ interface IProps {
   orderScope: OrderScopeType;
 }
 
-interface IEmits {
-  (event: "select", item: CustomerOrderType): void;
-}
-
-defineEmits<IEmits>();
-
 const props = defineProps<IProps>();
+
+const router = useRouter();
+const { browserTarget } = useBrowserTarget();
+
+const orderHref = computed(() => router.resolve({ name: "OrderDetails", params: { orderId: props.item.id } }).href);
+
+const linkTarget = computed(() => {
+  return browserTarget.value === BrowserTargetType.BLANK ? "_blank" : undefined;
+});
+
+const linkRel = computed(() => {
+  return browserTarget.value === BrowserTargetType.BLANK ? "noopener noreferrer" : undefined;
+});
 
 const showBuyerName = computed(() => props.orderScope === "organization" && !!props.item?.customerName);
 
@@ -96,10 +100,18 @@ const paymentType = computed(() => props.item.inPayments?.[0]?.paymentMethod?.na
 
 <style lang="scss">
 .order-card {
-  @apply w-full cursor-pointer border-b border-neutral-200 px-4 py-3 text-left text-xs;
+  @apply relative w-full cursor-pointer border-b border-neutral-200 px-4 py-3 text-left text-xs transition-shadow;
 
   // The card is the query container so the grid can adapt to the card's own width.
   container-type: inline-size;
+
+  &:hover {
+    @apply shadow-md;
+  }
+
+  &:hover &__number {
+    color: var(--link-hover-color);
+  }
 
   &__grid {
     @apply grid items-start gap-2.5;
@@ -166,7 +178,17 @@ const paymentType = computed(() => props.item.inPayments?.[0]?.paymentMethod?.na
   }
 
   &__number {
-    @apply truncate font-bold text-accent-500;
+    @apply truncate font-bold no-underline transition-colors;
+
+    color: var(--link-color);
+
+    // Stretched link: the whole card is clickable, while the accessible
+    // name stays limited to the order number.
+    &::after {
+      @apply absolute inset-0;
+
+      content: "";
+    }
   }
 
   &__total {
