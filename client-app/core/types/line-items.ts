@@ -55,7 +55,6 @@ export type VendorGroupByVendorIdType<T> = Record<string, VendorGroupType<T>>;
 export type CurrencyGroupType<T> = {
   currencyCode: string;
   items: T[];
-  subTotal?: MoneyType;
 };
 
 export type PreparedLineItemType = {

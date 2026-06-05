@@ -355,16 +355,7 @@ export function _useFullCart(cartId?: string) {
 
   const mainCurrencyLineItems = computed(() => lineItemsByCurrency.value.mainCurrencyItems);
 
-  // Use the subtotal precalculated by the backend (cartTotals) for each non-main currency
-  // instead of summing line items on the client (which would format with the wrong currency).
-  const otherCurrencyLineItemGroups = computed(() => {
-    const totals = cart.value?.cartTotals ?? [];
-
-    return lineItemsByCurrency.value.otherCurrencyGroups.map((group) => ({
-      ...group,
-      subTotal: totals.find((total) => total?.subTotal?.currency?.code === group.currencyCode)?.subTotal,
-    }));
-  });
+  const otherCurrencyLineItemGroups = computed(() => lineItemsByCurrency.value.otherCurrencyGroups);
 
   const lineItemsGroupedByVendor = computed(() => groupByVendor(mainCurrencyLineItems.value));
 
