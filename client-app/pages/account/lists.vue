@@ -8,6 +8,7 @@
 
       <VcButton
         v-if="lists.length || loading"
+        data-test-id="create-wishlist-button"
         :disabled="creationButtonDisabled"
         size="sm"
         variant="outline"
@@ -46,7 +47,7 @@
     <!-- Empty -->
     <VcEmptyView v-else :text="$t('pages.account.lists.no_lists')" icon="outline-lists">
       <template #button>
-        <VcButton prepend-icon="plus" @click="openCreateListModal">
+        <VcButton data-test-id="create-wishlist-button" prepend-icon="plus" @click="openCreateListModal">
           {{ $t("pages.account.lists.create_list_button") }}
         </VcButton>
       </template>
