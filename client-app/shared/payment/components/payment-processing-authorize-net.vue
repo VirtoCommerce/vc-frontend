@@ -287,9 +287,12 @@ onMounted(async () => {
 });
 
 onUnmounted(() => {
+  // Only stop late async init from registering a torn-down instance.
+  // Do NOT clear the shared payment processor or card-validity state here: in multistep
+  // checkout this form lives on the Billing step and unmounts before Place Order on Review,
+  // and the shared state must survive so `isCanFinalizePayment` stays true and
+  // `finalizePayment` can charge the placed order (same approach as CyberSource).
   isActive = false;
-  registerPaymentProcessor(null);
-  setCardDataInvalid();
 });
 
 watch(
