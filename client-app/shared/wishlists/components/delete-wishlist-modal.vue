@@ -1,5 +1,10 @@
 <template>
-  <VcModal :title="$t('shared.wishlists.delete_wishlist_modal.title')" variant="danger" icon="warning">
+  <VcModal
+    :title="$t('shared.wishlists.delete_wishlist_modal.title')"
+    variant="danger"
+    icon="warning"
+    test-id="delete-wishlist-modal"
+  >
     <i18n-t keypath="shared.wishlists.delete_wishlist_modal.message" tag="p" scope="global">
       <template #listName>
         <span class="font-black">{{ list.name }}</span>
@@ -7,7 +12,7 @@
     </i18n-t>
 
     <template #actions="{ close }">
-      <VcButton :loading="loading" color="danger" @click="remove(close)">
+      <VcButton data-test-id="delete-button" :loading="loading" color="danger" @click="remove(close)">
         {{ $t("shared.wishlists.delete_wishlist_modal.delete_button") }}
       </VcButton>
 
