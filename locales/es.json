@@ -1216,6 +1216,7 @@
         "order_number_label": "Número de pedido",
         "purchase_number_label": "Orden de compra",
         "buyer_name_label": "Nombre del comprador",
+        "payment_type_label": "Tipo de pago",
         "status_label": "@:common.labels.status",
         "invoice_label": "Factura",
         "date_label": "@:common.labels.date",

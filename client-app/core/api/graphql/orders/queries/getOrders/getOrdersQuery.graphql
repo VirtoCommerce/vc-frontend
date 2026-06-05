@@ -32,6 +32,10 @@ query GetOrders(
       }
       inPayments {
         number
+        paymentMethod {
+          code
+          name
+        }
       }
       number
       customerId

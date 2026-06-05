@@ -658,6 +658,8 @@ export type Product = {
   keyProperties: Array<Property>;
   /** Length */
   length?: Maybe<Scalars['Decimal']['output']>;
+  /** Get points amount */
+  loyaltyPoints?: Maybe<MoneyType>;
   /** Manufacturer Part Number (MPN) */
   manufacturerPartNumber?: Maybe<Scalars['String']['output']>;
   masterVariation?: Maybe<VariationType>;

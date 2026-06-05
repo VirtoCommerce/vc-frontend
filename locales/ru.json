@@ -1216,6 +1216,7 @@
         "order_number_label": "Номер заказа",
         "purchase_number_label": "Номер закупки",
         "buyer_name_label": "Имя покупателя",
+        "payment_type_label": "Способ оплаты",
         "status_label": "@:common.labels.status",
         "invoice_label": "Счет",
         "date_label": "@:common.labels.date",
