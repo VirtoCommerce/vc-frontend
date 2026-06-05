@@ -188,6 +188,7 @@ const paymentType = computed(() => props.item.inPayments?.[0]?.paymentMethod?.na
       @apply absolute inset-0;
 
       content: "";
+      z-index: 1;
     }
   }
 
