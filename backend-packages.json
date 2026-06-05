@@ -1,8 +1,8 @@
 {
   "ManifestVersion": "2.0",
-  "PlatformVersion": "3.1028.0",
+  "PlatformVersion": "3.1032.0",
   "PlatformImage": "ghcr.io/virtocommerce/platform",
-  "PlatformImageTag": "3.1028.0",
+  "PlatformImageTag": "3.1032.0",
   "PlatformAssetUrl": "",
   "Sources": [
     {
@@ -17,7 +17,7 @@
       "Modules": [
         {
           "Id": "VirtoCommerce.Loyalty",
-          "Version": "3.1000.0"
+          "Version": "3.1003.0"
         },
         {
           "Id": "VirtoCommerce.ElasticSearch",
@@ -160,10 +160,6 @@
           "Version": "3.1001.0"
         },
         {
-          "Id": "VirtoCommerce.ElasticSearch8",
-          "Version": "3.1003.0"
-        },
-        {
           "Id": "VirtoCommerce.Cart",
           "Version": "3.1003.0"
         },
@@ -272,10 +268,6 @@
           "Version": "3.1001.0"
         },
         {
-          "Id": "VirtoCommerce.EventBus",
-          "Version": "3.1007.0"
-        },
-        {
           "Id": "VirtoCommerce.ElasticAppSearch",
           "Version": "3.1000.0"
         },
@@ -290,10 +282,6 @@
         {
           "Id": "VirtoCommerce.Core",
           "Version": "3.1004.0"
-        },
-        {
-          "Id": "VirtoCommerce.Catalog",
-          "Version": "3.1022.0"
         },
         {
           "Id": "VirtoCommerce.TaskManagement",
@@ -332,20 +320,32 @@
           "Version": "3.1001.0"
         },
         {
-          "Id": "VirtoCommerce.Xapi",
-          "Version": "3.1008.0"
-        },
-        {
           "Id": "VirtoCommerce.ProfileExperienceApiModule",
           "Version": "3.1007.0"
         },
         {
+          "Id": "VirtoCommerce.EventBus",
+          "Version": "3.1008.0"
+        },
+        {
           "Id": "VirtoCommerce.Notifications",
-          "Version": "3.1006.0"
+          "Version": "3.1007.0"
+        },
+        {
+          "Id": "VirtoCommerce.Xapi",
+          "Version": "3.1009.0"
+        },
+        {
+          "Id": "VirtoCommerce.Catalog",
+          "Version": "3.1025.0"
+        },
+        {
+          "Id": "VirtoCommerce.ElasticSearch8",
+          "Version": "3.1004.0"
         },
         {
           "Id": "VirtoCommerce.XCart",
-          "Version": "3.1014.0"
+          "Version": "3.1016.0"
         }
       ]
     }

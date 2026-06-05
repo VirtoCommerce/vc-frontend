@@ -26,7 +26,7 @@ jobs:
           corepack enable
 
       - name: Setup sonarqube
-        uses: warchant/setup-sonar-scanner@7559f7221c1f8637fc6be7287945e2c5b3f6dea9 # v8
+        uses: warchant/setup-sonar-scanner@911ef81b14b267a261d70ac94e43d3c822a709d5 # v10
 
       - name: Install VirtoCommerce.GlobalTool
         uses: VirtoCommerce/vc-github-actions/setup-vcbuild@master
