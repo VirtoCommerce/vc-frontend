@@ -1,6 +1,6 @@
 import { ref } from "vue";
 import { useAuth, useErrorsTranslator } from "@/core/composables";
-import { IdentityErrors } from "@/core/enums";
+import { isLockoutError } from "@/core/utilities";
 import { useUser } from "@/shared/account";
 import type { IdentityErrorType } from "@/core/api/graphql/types";
 
@@ -16,9 +16,7 @@ export function useOrganizationSwitcher() {
     const succeeded = await switchOrganization(organizationId);
 
     if (!succeeded && authErrors.value?.length) {
-      const lockedError = authErrors.value.find(
-        (e) => e.code === IdentityErrors.USER_IS_LOCKED_IN_ORGANIZATION || e.code === IdentityErrors.USER_IS_LOCKED_OUT,
-      );
+      const lockedError = authErrors.value.find((e) => isLockoutError(e.code));
       switchError.value = (lockedError ? translate(lockedError) : translate(authErrors.value[0])) ?? null;
     }
 

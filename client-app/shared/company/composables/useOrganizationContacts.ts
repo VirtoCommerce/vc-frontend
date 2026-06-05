@@ -71,7 +71,7 @@ export function useOrganizationContacts(organizationId: MaybeRef<string>) {
     loading.value = true;
 
     try {
-      await lockOrganizationContact(contact.id, unref(organizationId));
+      await lockOrganizationContact(contact.id);
     } catch (e) {
       Logger.error(`${useOrganizationContacts.name}.${lockContact.name}`, e);
       throw e;
@@ -92,7 +92,7 @@ export function useOrganizationContacts(organizationId: MaybeRef<string>) {
     loading.value = true;
 
     try {
-      await unlockOrganizationContact(contact.id, unref(organizationId));
+      await unlockOrganizationContact(contact.id);
     } catch (e) {
       Logger.error(`${useOrganizationContacts.name}.${unlockContact.name}`, e);
       throw e;
@@ -131,7 +131,7 @@ export function useOrganizationContacts(organizationId: MaybeRef<string>) {
     loading.value = true;
 
     try {
-      return await changeOrganizationContactRole({ ...payload, organizationId: unref(organizationId) });
+      return await changeOrganizationContactRole(payload);
     } catch (e) {
       Logger.error(`${useOrganizationContacts.name}.${changeContactOrganizationRole.name}`, e);
       throw e;

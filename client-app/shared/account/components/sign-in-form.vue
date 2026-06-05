@@ -11,12 +11,7 @@
       variant="outline-dark"
       icon
     >
-      <span
-        v-if="
-          error?.code === IdentityErrors.USER_IS_LOCKED_OUT ||
-          error?.code === IdentityErrors.USER_IS_LOCKED_IN_ORGANIZATION
-        "
-      >
+      <span v-if="isLockoutError(error?.code)">
         {{ translate(error) }}
         <ContactAdministratorLink />.
       </span>
@@ -101,6 +96,7 @@ import { ref, watch } from "vue";
 import { object, string } from "yup";
 import { useAnalytics, useAuth, useErrorsTranslator } from "@/core/composables";
 import { IdentityErrors } from "@/core/enums";
+import { isLockoutError } from "@/core/utilities";
 import { Logger } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
 import { useSignMeIn } from "@/shared/account/composables";

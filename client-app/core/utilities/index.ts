@@ -7,6 +7,7 @@ export * from "./common";
 export * from "./composables";
 export * from "./date";
 export * from "./geo";
+export * from "./identity-errors";
 export * from "./line-items";
 export * from "./logger";
 export * from "./menu";
