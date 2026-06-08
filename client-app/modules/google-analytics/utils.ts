@@ -127,7 +127,7 @@ export function lineItemToGtagItem(
             ?.map((promotion: DiscountType | OrderDiscountType) =>
               "promotionName" in promotion ? promotion.promotionName : undefined,
             )
-            ?.filter(Boolean) as string[],
+            ?.filter(Boolean),
         ),
     ...categories,
   };

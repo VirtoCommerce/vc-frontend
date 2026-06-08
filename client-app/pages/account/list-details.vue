@@ -16,6 +16,7 @@
 
         <div class="order-last mt-8 flex flex-wrap gap-3 md:ms-0 md:mt-0 md:shrink-0 lg:my-0">
           <VcButton
+            data-test-id="add-all-to-cart-button"
             :disabled="loading || !pagedListItems.length"
             size="sm"
             variant="outline"
