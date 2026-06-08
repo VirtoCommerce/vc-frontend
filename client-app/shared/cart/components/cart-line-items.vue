@@ -53,8 +53,9 @@
     </template>
 
     <template #after-content="{ item }">
-      <ConfigurationItems
+      <CartConfigurationItems
         v-if="item.isConfigurable"
+        :product-id="item.productId"
         :configuration-items="item.configurationItems"
         :line-item-id="item.id"
         allow-edit
@@ -104,9 +105,9 @@ import { useBrowserTarget, useErrorsTranslator } from "@/core/composables";
 import { ProductType } from "@/core/enums";
 import { prepareLineItems } from "@/core/utilities";
 import { InStock } from "@/shared/catalog";
-import { ConfigurationItems } from "@/shared/common";
 import type { LineItemType, ValidationErrorType } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
+import CartConfigurationItems from "@/shared/cart/components/cart-configuration-items.vue";
 import CartItemActions from "@/shared/cart/components/cart-item-actions.vue";
 import QuantityControl from "@/shared/common/components/quantity-control.vue";
 
