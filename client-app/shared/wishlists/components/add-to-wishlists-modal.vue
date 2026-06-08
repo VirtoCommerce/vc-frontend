@@ -1,5 +1,11 @@
 <template>
-  <VcModal :title="$t('shared.wishlists.add_to_wishlists_modal.title')" max-width="50rem" is-mobile-fullscreen dividers>
+  <VcModal
+    :title="$t('shared.wishlists.add_to_wishlists_modal.title')"
+    max-width="50rem"
+    is-mobile-fullscreen
+    dividers
+    test-id="add-to-wishlists-modal"
+  >
     <div class="rounded border" id="add-to-wishlists-modal">
       <!-- Lists -->
       <template v-if="!loadingLists">
@@ -18,6 +24,7 @@
                 :model-value="!removedLists.includes(list.id || '')"
                 :value="list.id"
                 :disabled="loading"
+                :test-id="`wishlist-modal-list-with-product-checkbox-${list.id}`"
                 class="grow"
                 @update:model-value="listsRemoveUpdate(list.id || '', !!$event)"
               >
@@ -86,7 +93,12 @@
         <VcCheckboxGroup v-model="selectedListsOtherIds">
           <transition-group name="list-input" tag="ul">
             <li v-for="list in listsOther" :key="list.id" class="flex justify-between px-6 pb-5 last:pb-5 sm:pb-4">
-              <VcCheckbox :value="list.id" :disabled="loading" class="grow">
+              <VcCheckbox
+                :value="list.id"
+                :disabled="loading"
+                :test-id="`wishlist-modal-list-checkbox-${list.id}`"
+                class="grow"
+              >
                 <span
                   class="line-clamp-1 ps-0.5 text-base"
                   :class="{ 'text-neutral': !selectedListsOtherIds.includes(list.id!) }"
@@ -127,6 +139,7 @@
       </VcButton>
 
       <VcButton
+        data-test-id="wishlist-modal-save-button"
         :loading="loading"
         :disabled="!newLists.length && !selectedListsOtherIds.length && !removedLists.length"
         class="ms-auto"
