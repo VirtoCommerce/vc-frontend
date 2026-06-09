@@ -416,7 +416,11 @@ watch([isValidBankCard, meta], ([isValidCard, metaFormResult]) => {
   }
 });
 
-onUnmounted(removeScript);
+onUnmounted(() => {
+  removeScript();
+  registerPaymentProcessor(null);
+  setCardDataInvalid();
+});
 </script>
 
 <style lang="scss">

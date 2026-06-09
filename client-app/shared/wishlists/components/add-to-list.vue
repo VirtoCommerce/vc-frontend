@@ -1,5 +1,6 @@
 <template>
   <VcProductActionsButton
+    data-test-id="add-to-list-button"
     color="danger"
     :icon-size="iconSize"
     :active="localWishlistStatus"
