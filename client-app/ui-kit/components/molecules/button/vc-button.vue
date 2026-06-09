@@ -339,11 +339,6 @@ defineExpose({
       &:focus {
         --outline-color: rgb(from var(--color-#{$color}-500) r g b / 0.3);
       }
-
-      &:not([class*="--solid-"]) #{$loaderIcon} {
-        --loader-border: var(--color-#{$color}-100);
-        --loader-border-r: var(--color-#{$color}-500);
-      }
     }
   }
 
@@ -356,6 +351,8 @@ defineExpose({
         --border-color: var(--vc-button-#{$variant}-#{$color}-border);
         --text-color: var(--vc-button-#{$variant}-#{$color}-text);
         --vc-icon-color: var(--vc-button-#{$variant}-#{$color}-icon);
+        --loader-border: color-mix(in srgb, var(--vc-button-#{$variant}-#{$color}-text), transparent 70%);
+        --loader-border-r: var(--vc-button-#{$variant}-#{$color}-text);
       }
     }
   }
@@ -384,7 +381,7 @@ defineExpose({
     &--ghost--#{$color}:hover:not(#{$loading}, #{$disabled}) {
       --bg-color: color-mix(in srgb, var(--vc-button-surface-#{$color}-text), white 80%);
       --border-color: var(--bg-color);
-      --text-color: color-mix(in srgb, var(--vc-button-ghost-#{$color}-text), white 8%);
+      --text-color: color-mix(in srgb, var(--vc-button-ghost-#{$color}-text), black 8%);
     }
   }
 
