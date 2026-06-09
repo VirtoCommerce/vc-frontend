@@ -958,7 +958,8 @@
         "list_settings_button": "清单设置",
         "empty_list": "您的清单是空的",
         "empty_list_button": "继续浏览",
-        "list_icon": "清单图标"
+        "list_icon": "清单图标",
+        "buy_now_empty_cart": "列表中没有商品可以添加到购物车"
       },
       "add_to_wishlists_modal": {
         "title": "请选择清单",

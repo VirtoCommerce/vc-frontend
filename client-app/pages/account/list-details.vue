@@ -134,6 +134,7 @@ import { useShortCart, getItemsForAddBulkItemsToCartResultsModal } from "@/share
 import { SaveChangesModal } from "@/shared/common";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useModal } from "@/shared/modal";
+import { useNotifications } from "@/shared/notification";
 import {
   useWishlists,
   AddOrUpdateWishlistModal,
@@ -146,6 +147,7 @@ import type {
   InputUpdateWishlistLineItemType,
   LineItemType,
   Product,
+  ShortCartFragment,
 } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
 import type { RouteLocationNormalized } from "vue-router";
@@ -175,6 +177,7 @@ const { t } = useI18n();
 const { analytics } = useAnalytics();
 const broadcast = useBroadcast();
 const { openModal } = useModal();
+const notifications = useNotifications();
 const { listLoading, list, fetchWishList, updateItemsInWishlist } = useWishlists();
 const {
   loading: cartLoading,
@@ -246,11 +249,13 @@ async function addAllListItemsToCart(): Promise<void> {
     return;
   }
 
+  let updatedCart: ShortCartFragment | undefined;
+
   if (props.kind === "saved-for-later") {
     emit("add-all-to-cart", wishlistItems.value);
   } else {
     const newCartItems = wishlistItems.value.map(({ productId, quantity }) => ({ productId, quantity }));
-    await addItemsToCart(newCartItems);
+    updatedCart = await addItemsToCart(newCartItems);
   }
 
   const products = wishlistItems.value
@@ -262,7 +267,7 @@ async function addAllListItemsToCart(): Promise<void> {
     void pushHistoricalEvent({ eventType: "addToCart", productIds: products.map((product) => product.id) });
   }
 
-  showResultModal(wishlistItems.value);
+  showResultModal(wishlistItems.value, updatedCart);
 }
 
 async function updateItems() {
@@ -299,12 +304,12 @@ async function openSaveChangesModal(): Promise<boolean> {
   });
 }
 
-function showResultModal(items: LineItemType[]) {
+function showResultModal(items: LineItemType[], resultCart: ShortCartFragment = cart.value!) {
   openModal({
     component: AddBulkItemsToCartResultsModal,
     props: {
       listName: list.value?.name,
-      items: getItemsForAddBulkItemsToCartResultsModal(items, cart.value!),
+      items: getItemsForAddBulkItemsToCartResultsModal(items, resultCart),
     },
   });
 }
@@ -350,7 +355,7 @@ async function addOrUpdateCartItem(item: PreparedLineItemType, quantity: number)
 }
 
 function openDeleteProductModal(values: string[]): void {
-  const item = list.value?.items?.find((i) => values.includes(i.id));
+  const item = list.value?.items?.find((i): i is LineItemType => !!i && values.some((value) => value === i.id));
 
   if (item) {
     openModal({
@@ -403,12 +408,25 @@ async function buyNow() {
 
   try {
     const result = await createCartFromWishlist(list.value.id);
-    if (!result?.data?.createCartFromWishlist?.id) {
+    const createdCart = result?.data?.createCartFromWishlist;
+
+    if (!createdCart?.id) {
       Logger.error("Can't create cart from wishlist", result);
       return;
     }
 
-    void router.push({ name: ROUTES.CART_ID.NAME, params: { cartId: result.data.createCartFromWishlist.id } });
+    // The server may drop lines it can't add (e.g. configurable products created without
+    // their configuration). Don't dead-end the user on an empty cart — notify instead of navigating.
+    if (!createdCart.itemsQuantity) {
+      notifications.error({
+        text: t("shared.wishlists.list_details.buy_now_empty_cart"),
+        duration: 5000,
+        single: true,
+      });
+      return;
+    }
+
+    void router.push({ name: ROUTES.CART_ID.NAME, params: { cartId: createdCart.id } });
   } catch (error) {
     Logger.error("Can't create cart from wishlist", error);
   }

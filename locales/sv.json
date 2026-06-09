@@ -958,7 +958,8 @@
         "list_settings_button": "Listinställningar",
         "empty_list": "Din lista är tom",
         "empty_list_button": "Fortsätt bläddra",
-        "list_icon": "Listikon"
+        "list_icon": "Listikon",
+        "buy_now_empty_cart": "Inga av objekten från listan kunde läggas till i kundvagnen"
       },
       "add_to_wishlists_modal": {
         "title": "Välj lista",

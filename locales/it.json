@@ -958,7 +958,8 @@
         "list_settings_button": "Impostazioni lista",
         "empty_list": "La tua lista è vuota",
         "empty_list_button": "Continua a navigare",
-        "list_icon": "Icona lista"
+        "list_icon": "Icona lista",
+        "buy_now_empty_cart": "Nessuno degli articoli della lista è stato aggiunto al carrello"
       },
       "add_to_wishlists_modal": {
         "title": "Seleziona lista",
