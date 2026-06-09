@@ -81,6 +81,7 @@ import { useForm } from "vee-validate";
 import { computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import * as yup from "yup";
+import { isExpirationDateValid } from "@/core/utilities/date";
 import type { BankCardErrorsType, BankCardType } from "@/shared/payment";
 
 const emit = defineEmits<IEmits>();
@@ -143,7 +144,19 @@ const validationSchema = toTypedSchema(
     cardholderName: yup.string().required().max(64).label(labels.value.cardholderName),
     month: monthYupSchema,
     year: yup.string().when("month", ([month], schema) => {
-      return monthYupSchema.isValidSync(month) ? schema.length(2).label(labels.value.yearLabel) : schema;
+      return monthYupSchema.isValidSync(month)
+        ? schema
+            .length(2)
+            .test(
+              "not-expired",
+              t("shared.payment.bank_card_form.errors.expiration_date"),
+              // Only flag a fully-entered year that resolves to a past date, so the form
+              // becomes invalid immediately (gating cart "Create order") instead of failing
+              // later during Accept.js tokenization after the order is already created.
+              (year) => !year || year.length !== 2 || isExpirationDateValid(month, year),
+            )
+            .label(labels.value.yearLabel)
+        : schema;
     }),
     securityCode: yup.string().required().min(3).max(4).label(labels.value.securityCode),
   }),

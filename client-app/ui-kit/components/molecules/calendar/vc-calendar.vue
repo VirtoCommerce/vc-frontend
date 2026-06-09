@@ -16,6 +16,7 @@
     :data-test-id="dataTestId"
     @update:model-value="onUpdate"
     @update:placeholder="onPlaceholderUpdate"
+    @keydown="onCalendarKeydown"
   >
     <div class="vc-calendar__header">
       <button
@@ -96,6 +97,7 @@
 </template>
 
 <script setup lang="ts">
+import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from "@internationalized/date";
 import {
   CalendarCell,
   CalendarCellTrigger,
@@ -109,7 +111,7 @@ import {
   CalendarPrev,
   CalendarRoot,
 } from "reka-ui";
-import { computed, toRef, watch } from "vue";
+import { computed, nextTick, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { dateValueToIso, todayDate, tryParseDate, useCalendarBase } from "./use-calendar-base";
 import type { DateValue } from "@internationalized/date";
@@ -209,6 +211,137 @@ function onTodayClick(): void {
 
 function onClearClick(): void {
   emit("update:modelValue", undefined);
+}
+
+// reka-ui's CalendarRoot/CalendarCellTrigger only handle arrows/space/enter — Home/End/PageUp/PageDown
+// are NOT covered. We fill the APG date-grid gap here so Home/End move focus within the grid.
+// firstDayOfWeek prop is a number (0=Sunday); startOfWeek/endOfWeek expect a DayOfWeek string.
+const DAY_OF_WEEK_NAMES = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as const;
+
+const mappedFirstDay = computed(() => {
+  const value = props.firstDayOfWeek;
+  if (value === undefined) {
+    return undefined;
+  }
+  return DAY_OF_WEEK_NAMES[value];
+});
+
+function clampToBounds(date: DateValue): DateValue {
+  let result = date;
+  const min = minDateValue.value;
+  const max = maxDateValue.value;
+  if (min && result.compare(min) < 0) {
+    result = min;
+  }
+  if (max && result.compare(max) > 0) {
+    result = max;
+  }
+  return result;
+}
+
+function getFocusedCellDate(root: HTMLElement): DateValue | undefined {
+  const active = document.activeElement;
+  if (!(active instanceof HTMLElement)) {
+    return undefined;
+  }
+  if (!root.contains(active)) {
+    return undefined;
+  }
+  // Only day cells carry this marker; nav buttons and footer do not. It's empty-valued, so check for absence explicitly.
+  if (active.dataset.rekaCalendarCellTrigger === undefined) {
+    return undefined;
+  }
+  const iso = active.dataset.value;
+  if (!iso) {
+    return undefined;
+  }
+  return tryParseDate(iso);
+}
+
+function focusCellByIso(root: HTMLElement, iso: string): void {
+  // Prefer the in-view cell; adjacent-month cells render with data-outside-view.
+  const inView = root.querySelector<HTMLElement>(
+    `[data-reka-calendar-cell-trigger][data-value="${iso}"]:not([data-outside-view])`,
+  );
+  const cell = inView ?? root.querySelector<HTMLElement>(`[data-reka-calendar-cell-trigger][data-value="${iso}"]`);
+  cell?.focus();
+}
+
+type CalendarKeyTargetType = { target: DateValue };
+
+// Home/End: ctrl/meta switches week→month (non-APG bonus). PageUp/Down: Shift switches month→year (APG-correct).
+type CalendarKeyModifiersType = { ctrlOrMeta: boolean; shift: boolean };
+
+function resolveKeyTarget(
+  key: string,
+  focused: DateValue,
+  modifiers: CalendarKeyModifiersType,
+): CalendarKeyTargetType | undefined {
+  const { ctrlOrMeta, shift } = modifiers;
+  let target: DateValue;
+
+  switch (key) {
+    case "Home":
+      if (ctrlOrMeta) {
+        target = startOfMonth(focused);
+      } else {
+        target = startOfWeek(focused, resolvedLocale.value, mappedFirstDay.value);
+      }
+      break;
+    case "End":
+      if (ctrlOrMeta) {
+        target = endOfMonth(focused);
+      } else {
+        target = endOfWeek(focused, resolvedLocale.value, mappedFirstDay.value);
+      }
+      break;
+    case "PageDown":
+      // Shift = next year per WAI-ARIA APG Date Picker Dialog; plain = next month.
+      target = shift ? focused.add({ years: 1 }) : focused.add({ months: 1 });
+      break;
+    case "PageUp":
+      // Shift = previous year per WAI-ARIA APG Date Picker Dialog; plain = previous month.
+      target = shift ? focused.add({ years: -1 }) : focused.add({ months: -1 });
+      break;
+    default:
+      // Let reka handle arrows/space/enter.
+      return undefined;
+  }
+
+  return { target };
+}
+
+// Mirror reka's arrow nav for the keys reka doesn't provide (Home/End/PageUp/PageDown):
+// clamp to min/max and land on the target, including data-unavailable cells (focusable, not selectable per APG).
+function onCalendarKeydown(event: KeyboardEvent): void {
+  const root = event.currentTarget;
+  if (!(root instanceof HTMLElement)) {
+    return;
+  }
+
+  const focused = getFocusedCellDate(root);
+  if (!focused) {
+    return;
+  }
+
+  const ctrlOrMeta = event.ctrlKey || event.metaKey;
+  const shift = event.shiftKey;
+  const resolvedKey = resolveKeyTarget(event.key, focused, { ctrlOrMeta, shift });
+  if (!resolvedKey) {
+    return;
+  }
+
+  event.preventDefault();
+
+  const target = clampToBounds(resolvedKey.target);
+
+  // Update placeholder so the grid scrolls when the target spills into an adjacent month.
+  placeholderRef.value = target;
+
+  const targetIso = target.toString();
+  void nextTick(() => {
+    focusCellByIso(root, targetIso);
+  });
 }
 
 // Sync placeholder to incoming model value so external state changes scroll the view.
