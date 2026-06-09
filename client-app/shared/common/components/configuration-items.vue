@@ -58,14 +58,6 @@
                   </span>
                 </template>
 
-                <VcLink
-                  v-else-if="configurationItem.type === CONFIGURABLE_SECTION_TYPES.product && canEditConfiguration"
-                  class="configuration-items__product-link"
-                  :to="editRoute"
-                >
-                  {{ getText(configurationItem) }}
-                </VcLink>
-
                 <template v-else>
                   {{ getText(configurationItem) }}
                 </template>
@@ -146,8 +138,6 @@ const editRoute = computed(() => {
   }
   return "";
 });
-
-const canEditConfiguration = computed(() => Boolean(props.allowEdit) && Boolean(editRoute.value));
 
 function getFiles(configurationItem: ConfigurationItemLikeType): ConfigurationItemFileType[] {
   return configurationItem.files?.filter((file): file is ConfigurationItemFileType => file != null) ?? [];
@@ -234,17 +224,41 @@ function getText(configurationItem: ConfigurationItemLikeType): string {
         @apply pt-1.5;
       }
     }
+
+    @container (max-width: 360px) {
+      @apply flex flex-wrap items-baseline;
+
+      &:not(:last-child) {
+        @apply border-b border-neutral-100 pb-2;
+
+        td {
+          @apply border-b-0 pb-0;
+        }
+      }
+
+      &:not(:first-child) {
+        @apply pt-1.5;
+
+        td {
+          @apply pt-0;
+        }
+      }
+    }
   }
 
   &__index {
     @apply w-3 pr-0.5 align-top font-bold;
+
+    @container (max-width: 360px) {
+      @apply w-auto shrink-0;
+    }
   }
 
   &__label {
     @apply w-32 truncate pr-4 align-top font-bold;
 
     @container (max-width: 360px) {
-      @apply w-auto max-w-none whitespace-nowrap;
+      @apply w-auto max-w-none grow basis-auto overflow-visible whitespace-normal pr-2;
     }
   }
 
@@ -252,7 +266,7 @@ function getText(configurationItem: ConfigurationItemLikeType): string {
     @apply truncate pe-4 align-top;
 
     @container (max-width: 360px) {
-      @apply whitespace-normal;
+      @apply order-1 grow shrink-0 basis-full overflow-visible whitespace-normal p-0;
     }
   }
 
@@ -264,10 +278,6 @@ function getText(configurationItem: ConfigurationItemLikeType): string {
     @apply inline-flex items-center gap-0.5 text-accent-500;
   }
 
-  &__product-link {
-    @apply text-accent-500;
-  }
-
   &__file-icon {
     @apply shrink-0;
   }
@@ -276,7 +286,7 @@ function getText(configurationItem: ConfigurationItemLikeType): string {
     @apply w-32 whitespace-nowrap align-top font-bold;
 
     @container (max-width: 360px) {
-      @apply w-auto;
+      @apply w-auto ml-auto grow-0 shrink-0 basis-auto;
     }
   }
 

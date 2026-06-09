@@ -44,7 +44,6 @@ fragment fullLineItem on LineItemType {
     name
     customText
     type
-    sectionId
     extendedPrice {
       ...money
     }

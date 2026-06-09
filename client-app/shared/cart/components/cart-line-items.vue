@@ -53,9 +53,8 @@
     </template>
 
     <template #after-content="{ item }">
-      <CartConfigurationItems
+      <ConfigurationItems
         v-if="item.isConfigurable"
-        :product-id="item.productId"
         :configuration-items="item.configurationItems"
         :line-item-id="item.id"
         allow-edit
@@ -105,9 +104,10 @@ import { useBrowserTarget, useErrorsTranslator } from "@/core/composables";
 import { ProductType } from "@/core/enums";
 import { prepareLineItems } from "@/core/utilities";
 import { InStock } from "@/shared/catalog";
+import { ConfigurationItems } from "@/shared/common";
 import type { LineItemType, ValidationErrorType } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
-import CartConfigurationItems from "@/shared/cart/components/cart-configuration-items.vue";
+import type { RouteLocationRaw } from "vue-router";
 import CartItemActions from "@/shared/cart/components/cart-item-actions.vue";
 import QuantityControl from "@/shared/common/components/quantity-control.vue";
 
@@ -143,7 +143,21 @@ const { browserTarget } = useBrowserTarget();
 
 const { localizedItemsErrors, setErrors } = useErrorsTranslator<ValidationErrorType>("validation_error");
 
-const preparedLineItems = computed(() => prepareLineItems(props.items));
+function withLineItemId(route: RouteLocationRaw, lineItemId: string): RouteLocationRaw {
+  if (typeof route === "string") {
+    return { path: route, query: { lineItemId } };
+  }
+  return { ...route, query: { ...("query" in route ? route.query : {}), lineItemId } };
+}
+
+const preparedLineItems = computed(() =>
+  prepareLineItems(props.items).map((item) => {
+    if (!item.isConfigurable || !item.route) {
+      return item;
+    }
+    return { ...item, route: withLineItemId(item.route, item.id) };
+  }),
+);
 
 watchEffect(() => setErrors(validationErrors.value));
 
