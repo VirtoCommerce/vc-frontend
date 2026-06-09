@@ -1,11 +1,18 @@
 <template>
   <VcDropdownMenu :y-offset="4" :x-offset="0" placement="bottom-end">
     <template #trigger="{ triggerProps }">
-      <VcButton icon="cog" color="secondary" variant="outline" size="xs" v-bind="triggerProps" />
+      <VcButton
+        data-test-id="wishlist-card-menu-button"
+        icon="cog"
+        color="secondary"
+        variant="outline"
+        size="xs"
+        v-bind="triggerProps"
+      />
     </template>
 
     <template #content>
-      <VcMenuItem color="secondary" nowrap @click="$emit('edit')">
+      <VcMenuItem data-test-id="wishlist-card-edit-menu-item" color="secondary" nowrap @click="$emit('edit')">
         <template #prepend>
           <VcIcon name="edit" />
         </template>
@@ -13,7 +20,7 @@
         <span>{{ $t("shared.wishlists.list_card.list_edit_button") }}</span>
       </VcMenuItem>
 
-      <VcMenuItem color="secondary" nowrap @click="$emit('remove')">
+      <VcMenuItem data-test-id="wishlist-card-remove-menu-item" color="secondary" nowrap @click="$emit('remove')">
         <VcIcon name="delete-2" class="fill-danger" />
 
         <span>{{ $t("shared.wishlists.list_card.remove_list_button") }}</span>

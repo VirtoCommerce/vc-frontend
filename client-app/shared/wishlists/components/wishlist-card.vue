@@ -1,5 +1,5 @@
 <template>
-  <div class="wishlist-card">
+  <div class="wishlist-card" data-test-id="wishlist-card">
     <div class="wishlist-card__title-row">
       <router-link :to="{ name: 'ListDetails', params: { listId: list.id } }" class="wishlist-card__title">
         {{ list.name }}
