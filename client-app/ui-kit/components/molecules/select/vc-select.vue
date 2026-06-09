@@ -19,6 +19,7 @@
     <VcDropdownMenu
       class="vc-select__container"
       :disabled="!enabled"
+      :lazy="lazy"
       :data-test-id="testIdDropdown"
       tabindex="-1"
       width="trigger"
@@ -197,6 +198,8 @@ interface IProps {
   clearable?: boolean;
   testIdDropdown?: string;
   enableTeleport?: boolean;
+  /** Defer rendering the option list until the dropdown is first opened (forwarded to VcPopover). */
+  lazy?: boolean;
 }
 
 interface IEmits {
