@@ -51,5 +51,8 @@ fragment fullLineItem on LineItemType {
       name
       url
     }
+    configurationSection {
+      name
+    }
   }
 }

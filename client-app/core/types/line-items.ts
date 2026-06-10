@@ -39,10 +39,9 @@ export type AnyLineItemType = {
     name?: string;
     customText?: string;
     type: string;
-    // Cart-only: per-item price. Order/quote fragments do not select this,
-    // so it stays undefined for those line items.
     extendedPrice?: MoneyType;
     files?: Array<{ name: string } | null> | null;
+    configurationSection?: { name?: string | null } | null;
   }[];
   showPlacedPrice?: boolean;
   listTotal?: MoneyType;
@@ -83,9 +82,9 @@ export type PreparedLineItemType = {
     name?: string;
     customText?: string;
     type: string;
-    // Cart-only: per-item price (see ConfigurationItemType above).
     extendedPrice?: MoneyType;
     files?: Array<{ name: string } | null> | null;
+    configurationSection?: { name?: string | null } | null;
   }[];
   showPlacedPrice?: boolean;
   listTotal?: MoneyType;

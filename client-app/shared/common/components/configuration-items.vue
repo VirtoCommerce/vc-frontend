@@ -27,9 +27,11 @@
               <td
                 v-if="hasAnySectionName"
                 class="configuration-items__label"
-                :title="configurationItem.sectionName ?? undefined"
+                :title="configurationItem.configurationSection?.name ?? undefined"
               >
-                <template v-if="configurationItem.sectionName">{{ configurationItem.sectionName }}:</template>
+                <template v-if="configurationItem.configurationSection?.name">
+                  {{ configurationItem.configurationSection?.name }}:
+                </template>
               </td>
 
               <td class="configuration-items__value" :title="getText(configurationItem)">
@@ -102,7 +104,7 @@ type ConfigurationItemLikeType = {
   type: string;
   name?: string | null;
   customText?: string | null;
-  sectionName?: string | null;
+  configurationSection?: { name?: string | null } | null;
   extendedPrice?: MoneyType | null;
   files?: Array<ConfigurationItemFileType | null> | null;
 };
@@ -122,7 +124,7 @@ const lineItemId = toRef(props, "lineItemId");
 const isCollapsed = ref<boolean>(true);
 
 const hasAnySectionName = computed(() => {
-  return configurationItems.value?.some((item) => Boolean(item.sectionName)) ?? false;
+  return configurationItems.value?.some((item) => Boolean(item.configurationSection?.name)) ?? false;
 });
 
 const hasAnyPrice = computed(() => {
