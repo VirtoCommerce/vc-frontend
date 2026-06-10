@@ -207,7 +207,7 @@ function getText(configurationItem: ConfigurationItemLikeType): string {
     border-collapse: collapse;
     table-layout: fixed;
 
-    @container (max-width: theme("containers.sm")) {
+    @container (max-width: theme("containers.xs")) {
       table-layout: auto;
     }
   }
@@ -219,7 +219,7 @@ function getText(configurationItem: ConfigurationItemLikeType): string {
   &__col--index {
     @apply w-3;
 
-    @container (max-width: theme("containers.sm")) {
+    @container (max-width: theme("containers.xs")) {
       @apply w-auto;
     }
   }
@@ -227,7 +227,7 @@ function getText(configurationItem: ConfigurationItemLikeType): string {
   &__col--label {
     @apply w-32;
 
-    @container (max-width: theme("containers.sm")) {
+    @container (max-width: theme("containers.xs")) {
       @apply w-auto;
     }
   }
@@ -235,7 +235,7 @@ function getText(configurationItem: ConfigurationItemLikeType): string {
   &__col--price {
     @apply w-32;
 
-    @container (max-width: theme("containers.sm")) {
+    @container (max-width: theme("containers.xs")) {
       @apply w-auto;
     }
   }
@@ -254,7 +254,7 @@ function getText(configurationItem: ConfigurationItemLikeType): string {
     }
 
     // In the stacked/flex layout the row owns the bottom divider, so the td borders are reset here
-    @container (max-width: theme("containers.sm")) {
+    @container (max-width: theme("containers.xs")) {
       @apply flex flex-wrap items-baseline;
 
       &:not(:last-child) {
@@ -278,7 +278,7 @@ function getText(configurationItem: ConfigurationItemLikeType): string {
   &__index {
     @apply pe-0.5 align-top font-bold;
 
-    @container (max-width: theme("containers.sm")) {
+    @container (max-width: theme("containers.xs")) {
       @apply shrink-0;
     }
   }
@@ -286,7 +286,7 @@ function getText(configurationItem: ConfigurationItemLikeType): string {
   &__label {
     @apply truncate pe-4 align-top font-bold;
 
-    @container (max-width: theme("containers.sm")) {
+    @container (max-width: theme("containers.xs")) {
       @apply grow basis-auto overflow-visible whitespace-normal pe-2;
     }
   }
@@ -294,7 +294,7 @@ function getText(configurationItem: ConfigurationItemLikeType): string {
   &__value {
     @apply truncate pe-4 align-top;
 
-    @container (max-width: theme("containers.sm")) {
+    @container (max-width: theme("containers.xs")) {
       @apply order-1 grow shrink-0 basis-full overflow-visible whitespace-normal p-0;
     }
   }
@@ -302,7 +302,7 @@ function getText(configurationItem: ConfigurationItemLikeType): string {
   &__price {
     @apply whitespace-nowrap align-top font-bold;
 
-    @container (max-width: theme("containers.sm")) {
+    @container (max-width: theme("containers.xs")) {
       @apply ml-auto grow-0 shrink-0 basis-auto;
     }
   }
