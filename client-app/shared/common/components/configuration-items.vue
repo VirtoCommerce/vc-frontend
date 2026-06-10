@@ -21,6 +21,7 @@
 
             <col v-if="hasAnySectionName" class="configuration-items__col--label" />
 
+            <!-- The value column intentionally has no width so it absorbs the remaining space -->
             <col class="configuration-items__col--value" />
 
             <col v-if="hasAnyPrice" class="configuration-items__col--price" />
@@ -59,34 +60,7 @@
               </td>
 
               <td class="configuration-items__value" :title="getText(configurationItem)">
-                <template v-if="configurationItem.type === CONFIGURABLE_SECTION_TYPES.file">
-                  <span class="configuration-items__files">
-                    <template
-                      v-for="(file, fileIndex) in getFiles(configurationItem)"
-                      :key="`${fileIndex}-${file.name}`"
-                    >
-                      <span v-if="fileIndex > 0" class="configuration-items__file-separator">, </span>
-
-                      <VcLink
-                        v-if="file.url"
-                        class="configuration-items__file-link"
-                        :external-link="file.url"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <span>{{ file.name }}</span>
-
-                        <VcIcon class="configuration-items__file-icon" name="external-link" size="xs" />
-                      </VcLink>
-
-                      <span v-else>{{ file.name }}</span>
-                    </template>
-                  </span>
-                </template>
-
-                <template v-else>
-                  {{ getText(configurationItem) }}
-                </template>
+                {{ getText(configurationItem) }}
               </td>
 
               <td v-if="hasAnyPrice" class="configuration-items__price">
@@ -279,6 +253,7 @@ function getText(configurationItem: ConfigurationItemLikeType): string {
       }
     }
 
+    // In the stacked/flex layout the row owns the bottom divider, so the td borders are reset here
     @container (max-width: theme("containers.sm")) {
       @apply flex flex-wrap items-baseline;
 
@@ -301,18 +276,18 @@ function getText(configurationItem: ConfigurationItemLikeType): string {
   }
 
   &__index {
-    @apply w-3 pr-0.5 align-top font-bold;
+    @apply pe-0.5 align-top font-bold;
 
     @container (max-width: theme("containers.sm")) {
-      @apply w-auto shrink-0;
+      @apply shrink-0;
     }
   }
 
   &__label {
-    @apply w-32 truncate pr-4 align-top font-bold;
+    @apply truncate pe-4 align-top font-bold;
 
     @container (max-width: theme("containers.sm")) {
-      @apply w-auto max-w-none grow basis-auto overflow-visible whitespace-normal pr-2;
+      @apply grow basis-auto overflow-visible whitespace-normal pe-2;
     }
   }
 
@@ -324,23 +299,11 @@ function getText(configurationItem: ConfigurationItemLikeType): string {
     }
   }
 
-  &__files {
-    @apply inline;
-  }
-
-  &__file-link {
-    @apply inline-flex items-center gap-0.5 text-accent-500;
-  }
-
-  &__file-icon {
-    @apply shrink-0;
-  }
-
   &__price {
-    @apply w-32 whitespace-nowrap align-top font-bold;
+    @apply whitespace-nowrap align-top font-bold;
 
     @container (max-width: theme("containers.sm")) {
-      @apply w-auto ml-auto grow-0 shrink-0 basis-auto;
+      @apply ml-auto grow-0 shrink-0 basis-auto;
     }
   }
 
