@@ -200,6 +200,18 @@
             <VcPriceDisplay v-if="cart.total" :value="cart.total" />
           </div>
 
+          <div
+            v-for="cartTotal in otherCartTotals"
+            :key="cartTotal.total.currency.code"
+            class="text-end text-base font-bold text-neutral-950"
+          >
+            <span class="me-1">
+              {{ $t("common.labels.total_in_currency", { currency: cartTotal.total.currency.code }) }}:
+            </span>
+
+            <VcPriceDisplay :value="cartTotal.total" />
+          </div>
+
           <ProceedTo
             v-if="$cfg.checkout_multistep_enabled"
             :to="{ name: 'Checkout', params: { cartId: $route.params.cartId } }"
@@ -237,7 +249,7 @@ import {
   ShippingDetailsSection,
   useCheckout,
 } from "@/shared/checkout";
-import type { LineItemType, Product } from "@/core/api/graphql/types";
+import type { CartTotalType, LineItemType, Product } from "@/core/api/graphql/types";
 import CartForLater from "@/shared/cart/components/cart-for-later.vue";
 import CouponsSection from "@/shared/cart/components/coupons-section.vue";
 import GiftsSection from "@/shared/cart/components/gifts-section.vue";
@@ -325,6 +337,14 @@ const recentlyBrowsedProducts = ref<Product[]>([]);
 
 const loading = computed(() => loadingCart.value || loadingCheckout.value || saveForLaterLoading.value);
 
+const otherCartTotals = computed(
+  () =>
+    cart.value?.cartTotals?.filter(
+      (cartTotal): cartTotal is CartTotalType =>
+        !!cartTotal && !cartTotal.isDefaultTotalCurrency && cartTotal.total.currency.code !== cart.value?.currency.code,
+    ) ?? [],
+);
+
 // On single-page checkout, initialize() fires AddOrUpdateCartShipment/Payment on mount.
 // Block user-initiated cart writes until it settles, so a faster mutation (clear cart,
 // save for later) can't be overwritten by a late, stale shipment/payment response.
@@ -338,7 +358,7 @@ const isShowIncompleteDataWarning = computed(
 
 async function handleRemoveItems(itemIds: string[]): Promise<void> {
   const cartBeforeRemove = cart.value!;
-  const removedItems = cartBeforeRemove.items.filter((item) => itemIds.includes(item.id));
+  const removedItems = cartBeforeRemove.items.filter((item) => itemIds.some((id) => id === item.id));
   const cartWillBeEmpty = cartBeforeRemove.items.length === removedItems.length;
 
   await removeItems(itemIds);
@@ -389,7 +409,7 @@ function selectItemEvent(item: LineItemType | undefined): void {
 }
 
 function shouldHide(id: string) {
-  return props.blocksToHide?.includes(id);
+  return props.blocksToHide?.some((blockId) => blockId === id);
 }
 
 watch(
