@@ -676,7 +676,13 @@
       "configuration_items": {
         "title": "Lista de componentes",
         "edit_configuration": "Editar configuración",
-        "selected_text": "Texto seleccionado: {text}"
+        "selected_text": "Texto seleccionado: {text}",
+        "columns": {
+          "number": "Número",
+          "section": "Sección",
+          "value": "Valor",
+          "price": "Precio"
+        }
       },
       "coupons_section": {
         "title": "Descuento y cupones",

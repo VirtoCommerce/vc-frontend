@@ -676,7 +676,13 @@
       "configuration_items": {
         "title": "组件列表",
         "edit_configuration": "编辑配置",
-        "selected_text": "已选文字：{text}"
+        "selected_text": "已选文字：{text}",
+        "columns": {
+          "number": "编号",
+          "section": "区块",
+          "value": "值",
+          "price": "价格"
+        }
       },
       "coupons_section": {
         "title": "折扣与优惠券",

@@ -676,7 +676,13 @@
       "configuration_items": {
         "title": "構成部品リスト",
         "edit_configuration": "構成を編集",
-        "selected_text": "選択されたテキスト：{text}"
+        "selected_text": "選択されたテキスト：{text}",
+        "columns": {
+          "number": "番号",
+          "section": "セクション",
+          "value": "値",
+          "price": "価格"
+        }
       },
       "coupons_section": {
         "title": "割引 & クーポン",

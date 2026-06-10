@@ -16,6 +16,30 @@
     <div class="configuration-items__content">
       <div class="configuration-items__table-wrapper">
         <table class="configuration-items__table">
+          <colgroup>
+            <col class="configuration-items__col--index" />
+
+            <col v-if="hasAnySectionName" class="configuration-items__col--label" />
+
+            <col class="configuration-items__col--value" />
+
+            <col v-if="hasAnyPrice" class="configuration-items__col--price" />
+          </colgroup>
+
+          <thead class="configuration-items__sr-only">
+            <tr>
+              <th scope="col">{{ $t("shared.cart.configuration_items.columns.number") }}</th>
+
+              <th v-if="hasAnySectionName" scope="col">
+                {{ $t("shared.cart.configuration_items.columns.section") }}
+              </th>
+
+              <th scope="col">{{ $t("shared.cart.configuration_items.columns.value") }}</th>
+
+              <th v-if="hasAnyPrice" scope="col">{{ $t("shared.cart.configuration_items.columns.price") }}</th>
+            </tr>
+          </thead>
+
           <tbody>
             <tr
               v-for="(configurationItem, index) in configurationItems"
@@ -173,7 +197,7 @@ function getText(configurationItem: ConfigurationItemLikeType): string {
 
   @apply border border-neutral-200 bg-additional-50 px-4 py-1 rounded-[--vc-radius];
 
-  @media (max-width: 480px) {
+  @media (max-width: theme("screens.xs")) {
     @apply px-2;
   }
 
@@ -198,7 +222,7 @@ function getText(configurationItem: ConfigurationItemLikeType): string {
 
     container-type: inline-size;
 
-    @media (max-width: 480px) {
+    @media (max-width: theme("screens.xs")) {
       @apply px-2;
     }
   }
@@ -209,8 +233,36 @@ function getText(configurationItem: ConfigurationItemLikeType): string {
     border-collapse: collapse;
     table-layout: fixed;
 
-    @container (max-width: 360px) {
+    @container (max-width: theme("containers.sm")) {
       table-layout: auto;
+    }
+  }
+
+  &__sr-only {
+    @apply sr-only;
+  }
+
+  &__col--index {
+    @apply w-3;
+
+    @container (max-width: theme("containers.sm")) {
+      @apply w-auto;
+    }
+  }
+
+  &__col--label {
+    @apply w-32;
+
+    @container (max-width: theme("containers.sm")) {
+      @apply w-auto;
+    }
+  }
+
+  &__col--price {
+    @apply w-32;
+
+    @container (max-width: theme("containers.sm")) {
+      @apply w-auto;
     }
   }
 
@@ -227,7 +279,7 @@ function getText(configurationItem: ConfigurationItemLikeType): string {
       }
     }
 
-    @container (max-width: 360px) {
+    @container (max-width: theme("containers.sm")) {
       @apply flex flex-wrap items-baseline;
 
       &:not(:last-child) {
@@ -251,7 +303,7 @@ function getText(configurationItem: ConfigurationItemLikeType): string {
   &__index {
     @apply w-3 pr-0.5 align-top font-bold;
 
-    @container (max-width: 360px) {
+    @container (max-width: theme("containers.sm")) {
       @apply w-auto shrink-0;
     }
   }
@@ -259,7 +311,7 @@ function getText(configurationItem: ConfigurationItemLikeType): string {
   &__label {
     @apply w-32 truncate pr-4 align-top font-bold;
 
-    @container (max-width: 360px) {
+    @container (max-width: theme("containers.sm")) {
       @apply w-auto max-w-none grow basis-auto overflow-visible whitespace-normal pr-2;
     }
   }
@@ -267,7 +319,7 @@ function getText(configurationItem: ConfigurationItemLikeType): string {
   &__value {
     @apply truncate pe-4 align-top;
 
-    @container (max-width: 360px) {
+    @container (max-width: theme("containers.sm")) {
       @apply order-1 grow shrink-0 basis-full overflow-visible whitespace-normal p-0;
     }
   }
@@ -287,7 +339,7 @@ function getText(configurationItem: ConfigurationItemLikeType): string {
   &__price {
     @apply w-32 whitespace-nowrap align-top font-bold;
 
-    @container (max-width: 360px) {
+    @container (max-width: theme("containers.sm")) {
       @apply w-auto ml-auto grow-0 shrink-0 basis-auto;
     }
   }

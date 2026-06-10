@@ -176,7 +176,7 @@ watchEffect(() => {
       --icon-size: 1.25rem;
       --shape-size: 2.5rem;
 
-      @media (min-width: theme("screens.sm")) {
+      @media (min-width: theme("screens.lg")) {
         --p-x: theme("padding.7");
       }
 

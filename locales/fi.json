@@ -676,7 +676,13 @@
       "configuration_items": {
         "title": "Komponenttilista",
         "edit_configuration": "Muokkaa kokoonpanoa",
-        "selected_text": "Valittu teksti: {text}"
+        "selected_text": "Valittu teksti: {text}",
+        "columns": {
+          "number": "Numero",
+          "section": "Osio",
+          "value": "Arvo",
+          "price": "Hinta"
+        }
       },
       "coupons_section": {
         "title": "Alennukset & kupongit",
