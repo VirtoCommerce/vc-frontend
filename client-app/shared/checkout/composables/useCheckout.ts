@@ -515,7 +515,12 @@ export function _useCheckout(cartId?: string) {
 
     if (placedOrder.value) {
       try {
-        const result = await finalizePayment(placedOrder.value);
+        // Only run the registered cart payment processor when the selected method actually
+        // supports cart payment. Otherwise a processor left over from a previously selected
+        // cart-payment method (e.g. the shopper switched to a manual method, which unmounts
+        // the card form without clearing the shared processor) could charge the card for an
+        // order that should not be paid from the cart.
+        const result = paymentMethod.value?.allowCartPayment ? await finalizePayment(placedOrder.value) : undefined;
         orderPayed = result?.isSuccess ?? false;
       } catch (e) {
         Logger.error(`${useCheckout.name}.${createOrderFromCart.name}.paymentProcessor`, e);
