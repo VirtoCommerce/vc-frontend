@@ -360,6 +360,9 @@ async function initCvvForm() {
     {
       table: skyflowTableName,
       column: "cvv",
+      // Bind the saved card's record id at element creation so collect() issues a PUT (update)
+      // on the existing record. Without skyflowID, collect() inserts a new bare-CVV record (POST).
+      skyflowID: selectedSkyflowCard.value?.skyflowId,
       ...cvvOnlyCollectStyles,
       placeholder: "111",
       label: t("shared.payment.bank_card_form.security_code_label"),
@@ -405,10 +408,8 @@ async function updateCvvInVault(): Promise<void> {
     return;
   }
 
-  cvvElement.update({
-    skyflowID: selectedSkyflowCard.value?.skyflowId,
-  });
-
+  // The record id (skyflowID) is bound to the CVV element at creation in initCvvForm,
+  // so collect() updates the existing card record rather than inserting a new one.
   await cvvCollector.collect();
 }
 // CVV only END
