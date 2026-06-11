@@ -17,6 +17,10 @@ query GetOrganizationContacts(
         emails
         status
         isLockedInOrganization(organizationId: $id)
+        rolesInOrganization(organizationId: $id) {
+          id
+          name
+        }
         securityAccounts {
           id
           email

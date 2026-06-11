@@ -596,7 +596,7 @@ function openEditCustomerRoleModal(contact: ExtendedContactType): void {
 
       async onConfirm(selectedRoleId: string): Promise<void> {
         const result = await changeContactOrganizationRole({
-          userId: contact.id,
+          memberId: contact.id,
           roleIds: [selectedRoleId],
         });
 
