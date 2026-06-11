@@ -593,8 +593,6 @@ function showError(message: string) {
 }
 
 onMounted(async () => {
-  registerPaymentProcessor(sendPaymentData);
-
   try {
     await fetchSkyflowCards();
   } catch (e) {
