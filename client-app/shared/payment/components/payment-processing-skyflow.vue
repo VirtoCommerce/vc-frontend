@@ -191,6 +191,11 @@ let skyflowClient: Skyflow,
 // (e.g. the shopper switched payment method while the vault was still initializing).
 let isActive = true;
 
+// Bumped on every CVV-form teardown. A fire-and-forget initCvvForm run captures the token
+// before its async init and bails if a newer selection superseded it, so a slow init for an
+// earlier card can't mount a duplicate collector or bind the CVV field to the wrong record.
+let cvvInitToken = 0;
+
 // NEW CARD START
 type ElementType =
   | typeof Skyflow.ElementType.CARD_NUMBER
@@ -350,7 +355,13 @@ async function initCvvForm() {
   }
 
   clearCvv();
+  const token = cvvInitToken;
   await initPayment();
+
+  // A newer card selection (or teardown) ran clearCvv while the vault was initializing.
+  if (!isActive || token !== cvvInitToken) {
+    return;
+  }
 
   const containerOptions = {
     layout: [1],
@@ -400,6 +411,7 @@ async function initCvvForm() {
 }
 
 function clearCvv() {
+  cvvInitToken++;
   cvvCollector?.unmount();
   cvvCollector = null;
   cvvElement = null;
