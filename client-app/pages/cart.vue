@@ -84,7 +84,12 @@
           :items-grouped-by-vendor="lineItemsGroupedByVendor"
           :selected-item-ids="selectedItemIds"
           :validation-errors="cart.validationErrors"
-          :disabled="changeItemQuantityBatchedOverflowed || moveToSavedForLaterOverflowed || selectionOverflowed"
+          :disabled="
+            changeItemQuantityBatchedOverflowed ||
+            moveToSavedForLaterOverflowed ||
+            selectionOverflowed ||
+            cartMutationsLocked
+          "
           data-test-id="cart.products-section"
           :hide-controls="hideControls"
           @change:item-quantity="changeItemQuantityBatched($event.itemId, $event.quantity)"
@@ -276,7 +281,14 @@ const {
   payment,
   changing: isCartUpdating,
 } = useFullCart();
-const { loading: loadingCheckout, comment, isValidShipment, isValidPayment, initialize } = useCheckout();
+const {
+  loading: loadingCheckout,
+  comment,
+  isValidShipment,
+  isValidPayment,
+  initialize,
+  initialized: checkoutInitialized,
+} = useCheckout();
 
 const {
   savedForLaterList,
@@ -309,6 +321,14 @@ const isCartLocked = ref(false);
 const recentlyBrowsedProducts = ref<Product[]>([]);
 
 const loading = computed(() => loadingCart.value || loadingCheckout.value || saveForLaterLoading.value);
+
+// On single-page checkout, initialize() fires AddOrUpdateCartShipment/Payment on mount.
+// Block user-initiated cart writes until it settles, so a faster mutation (clear cart,
+// save for later) can't be overwritten by a late, stale shipment/payment response.
+const cartMutationsLocked = computed(() => {
+  return !themeContext.value?.settings?.checkout_multistep_enabled && !checkoutInitialized.value;
+});
+
 const isShowIncompleteDataWarning = computed(
   () => (!allItemsAreDigital.value && !isValidShipment.value) || !isValidPayment.value,
 );

@@ -7,10 +7,12 @@
     "
     dividers
     is-mobile-fullscreen
+    test-id="add-or-update-wishlist-modal"
   >
     <div class="space-y-4">
       <VcInput
         v-model="name"
+        test-id-input="wishlist-name-input"
         :label="$t('shared.wishlists.add_or_update_wishlist_modal.list_name_label')"
         :placeholder="$t('shared.wishlists.add_or_update_wishlist_modal.list_name_placeholder')"
         :disabled="loading"
@@ -21,6 +23,7 @@
 
       <VcTextarea
         v-model="description"
+        data-test-id="wishlist-description-input"
         :label="$t('common.labels.description')"
         :disabled="loading"
         :message="errors.description"
@@ -33,6 +36,7 @@
       <div v-if="isCorporateMember" class="space-y-4">
         <VcSelect
           v-model="sharingScope"
+          test-id-dropdown="wishlist-sharing-scope-select"
           :label="$t('shared.wishlists.add_or_update_wishlist_modal.sharing_scope_label')"
           :placeholder="$t('shared.wishlists.add_or_update_wishlist_modal.sharing_scope_placeholder')"
           :disabled="loading"
@@ -67,7 +71,13 @@
         {{ $t("shared.wishlists.add_or_update_wishlist_modal.cancel_button") }}
       </VcButton>
 
-      <VcButton :loading="loading" :disabled="!canSave" class="ms-auto" @click="save(close)">
+      <VcButton
+        data-test-id="wishlist-settings-save-button"
+        :loading="loading"
+        :disabled="!canSave"
+        class="ms-auto"
+        @click="save(close)"
+      >
         {{
           isEditMode
             ? $t("shared.wishlists.add_or_update_wishlist_modal.save_button")
