@@ -534,10 +534,14 @@ function openLockOrUnlockModal(contact: ExtendedContactType, isUnlock?: boolean)
       title: isUnlock ? t("shared.company.unblock_member_modal.title") : t("shared.company.block_member_modal.title"),
       text: isUnlock ? t("shared.company.unblock_member_modal.text") : t("shared.company.block_member_modal.text"),
       async onConfirm() {
-        if (isUnlock) {
-          await unlockContact(contact);
-        } else {
-          await lockContact(contact);
+        try {
+          if (isUnlock) {
+            await unlockContact(contact);
+          } else {
+            await lockContact(contact);
+          }
+        } catch {
+          notifications.error({ duration: 5000, single: true, text: t("common.messages.contact_lock_failed") });
         }
         closeLockOrUnlockModal();
       },
@@ -613,7 +617,7 @@ function openEditCustomerRoleModal(contact: ExtendedContactType): void {
           notifications.error({
             ...notification,
 
-            text: t("common.messages.role_update_failed", [result?.errors?.join(" ")]),
+            text: t("common.messages.role_update_failed"),
           });
         }
 
