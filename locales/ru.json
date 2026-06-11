@@ -114,6 +114,8 @@
       "shipping": "Доставка",
       "tax": "Налог",
       "shipping_cost": "Доставка",
+      "total_in_currency": "Всего в {currency}",
+      "products_in_currency": "Товары в {currency}",
       "status": "Статус",
       "date": "Дата",
       "created_date": "Дата создания",

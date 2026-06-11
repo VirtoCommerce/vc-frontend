@@ -115,7 +115,7 @@ async function updateOrAddToCart(productId: string, qty?: number) {
   const lineItem = getLineItem(cart.value?.items);
 
   try {
-    await updateItemCartQuantity(productId, qty);
+    await updateItemCartQuantity(productId, qty, product.value.price.currency);
   } catch (e) {
     Logger.error("Error updating item quantity in add to cart simple component", e);
   }
@@ -131,7 +131,9 @@ async function updateOrAddToCart(productId: string, qty?: number) {
 }
 
 function getLineItem(items?: ShortLineItemFragment[]): ShortLineItemFragment | undefined {
-  return items?.find((item) => item.productId === product.value.id);
+  return items?.find(
+    (item) => item.productId === product.value.id && item.currencyCode === product.value.price.currency,
+  );
 }
 
 function onValidationUpdate(validation: { isValid: true } | { isValid: false; errorMessage: string }) {
