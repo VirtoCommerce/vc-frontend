@@ -173,7 +173,7 @@
 import { union, isEqual } from "lodash";
 import { computed, ref, useTemplateRef, provide, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { vcPopoverKey } from "@/ui-kit/components/atoms/popover/vc-popover-context";
+import { vcPopoverKey } from "@/ui-kit/components/molecules/popover/vc-popover-context";
 import { useComponentId } from "@/ui-kit/composables";
 
 interface IProps {

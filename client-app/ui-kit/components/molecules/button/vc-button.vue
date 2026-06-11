@@ -58,7 +58,7 @@
 
 <script setup lang="ts">
 import { computed, inject, ref } from "vue";
-import { vcDialogKey } from "../../atoms/dialog/vc-dialog-context";
+import { vcDialogKey } from "../dialog/vc-dialog-context";
 import type { ComponentPublicInstance } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 
