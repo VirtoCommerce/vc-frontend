@@ -166,7 +166,7 @@
               </span>
             </button>
 
-            <TopHeaderOrganizations v-if="isMultiOrganization" @organization-selected="loginMenuVisible = false" />
+            <TopHeaderOrganizations v-if="isMultiOrganization" @organization-selected="closeLoginMenu" />
           </div>
         </div>
       </template>
