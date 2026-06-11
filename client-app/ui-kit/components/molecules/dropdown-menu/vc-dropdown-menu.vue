@@ -11,6 +11,7 @@
     :offset-options="offsetOptions"
     :z-index="zIndex"
     :disabled="disabled"
+    :lazy="lazy"
     shadow
     @toggle="$emit('toggle', $event)"
   >
@@ -61,6 +62,8 @@ interface IProps {
   listRole?: string;
   listId?: string;
   listLabel?: string;
+  /** Defer rendering menu content until the menu is first opened (forwarded to VcPopover). */
+  lazy?: boolean;
 }
 
 defineEmits<IEmits>();
