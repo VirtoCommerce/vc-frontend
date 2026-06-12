@@ -114,6 +114,15 @@ const {
 
 const contactOrganizationId = ref(user.value?.contact?.organizationId);
 
+// Keep the radio selection in sync with the actual active organization so a failed/abandoned switch
+// can't leave the optimistic value stale (clicking the current org early-returns without re-syncing).
+watch(
+  () => user.value?.contact?.organizationId,
+  (organizationId) => {
+    contactOrganizationId.value = organizationId;
+  },
+);
+
 const componentId = useComponentId("organizations");
 const listboxId = componentId + "-listbox";
 const focusedOptionIndex = ref(-1);
