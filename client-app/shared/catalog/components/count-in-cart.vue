@@ -21,6 +21,7 @@ import { useShortCart } from "@/shared/cart/composables";
 
 export interface IProps {
   productId?: string;
+  currency?: string;
   lineItemId?: string;
   size?: VcChipSizeType;
 }
@@ -32,11 +33,14 @@ const props = withDefaults(defineProps<IProps>(), {
 const { cart } = useShortCart();
 
 const lineItemInCart = computed(() => {
+  const matchesCurrency = (item: { currencyCode?: string | null }) =>
+    !props.currency || item.currencyCode === props.currency;
+
   if (props.lineItemId) {
-    return cart.value?.items.find((item) => item.id === props.lineItemId);
+    return cart.value?.items.find((item) => item.id === props.lineItemId && matchesCurrency(item));
   }
 
-  return cart.value?.items.find((item) => item.productId === props.productId);
+  return cart.value?.items.find((item) => item.productId === props.productId && matchesCurrency(item));
 });
 
 const countInCart = computed<number>(() => lineItemInCart.value?.quantity ?? 0);
