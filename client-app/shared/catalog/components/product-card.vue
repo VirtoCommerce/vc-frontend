@@ -114,7 +114,7 @@
         :quantity="product.availabilityData?.availableQuantity"
       />
 
-      <CountInCart :product-id="product.id" />
+      <CountInCart :product-id="product.id" :currency="product.price.currency" />
     </AddToCartSimple>
 
     <template v-if="viewMode === 'list'" #expanded-content>
