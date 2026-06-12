@@ -114,6 +114,8 @@
       "shipping": "Shipping",
       "tax": "Tax",
       "shipping_cost": "Shipping cost",
+      "total_in_currency": "Total in {currency}",
+      "products_in_currency": "Products in {currency}",
       "status": "Status",
       "date": "Date",
       "created_date": "Created date",

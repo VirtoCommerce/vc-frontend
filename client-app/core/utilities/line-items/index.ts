@@ -1,7 +1,13 @@
 import { PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME } from "@/shared/catalog/constants/product";
 import { getProductRoute } from "../product";
 import { getPropertiesGroupedByName } from "../properties";
-import type { AnyLineItemType, VendorGroupType, VendorGroupByVendorIdType, PreparedLineItemType } from "../../types";
+import type {
+  AnyLineItemType,
+  CurrencyGroupType,
+  VendorGroupType,
+  VendorGroupByVendorIdType,
+  PreparedLineItemType,
+} from "../../types";
 import type { LineItemType, OrderLineItemType, Product } from "@/core/api/graphql/types";
 
 export function groupByVendor<T extends LineItemType | OrderLineItemType>(items: T[]): VendorGroupType<T>[] {
@@ -30,6 +36,38 @@ export function groupByVendor<T extends LineItemType | OrderLineItemType>(items:
   result.push(groupWithoutVendor);
 
   return result;
+}
+
+/**
+ * Splits line items into those priced in the main (cart) currency and the rest,
+ * grouping the latter by their currency code. Items without a currency code are
+ * treated as main-currency items.
+ */
+export function splitLineItemsByCurrency<T extends LineItemType>(
+  items: T[],
+  mainCurrencyCode?: string,
+): { mainCurrencyItems: T[]; otherCurrencyGroups: CurrencyGroupType<T>[] } {
+  const mainCurrencyItems: T[] = [];
+  const otherGroupsMap = new Map<string, T[]>();
+
+  items.forEach((item) => {
+    const code = item.currencyCode;
+
+    if (!code || !mainCurrencyCode || code === mainCurrencyCode) {
+      mainCurrencyItems.push(item);
+    } else {
+      const group = otherGroupsMap.get(code) ?? [];
+      group.push(item);
+      otherGroupsMap.set(code, group);
+    }
+  });
+
+  const otherCurrencyGroups = Array.from(otherGroupsMap, ([currencyCode, groupItems]) => ({
+    currencyCode,
+    items: groupItems,
+  }));
+
+  return { mainCurrencyItems, otherCurrencyGroups };
 }
 
 function prepareItemPrices(item: AnyLineItemType) {

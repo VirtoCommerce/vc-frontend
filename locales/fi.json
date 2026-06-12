@@ -114,6 +114,8 @@
       "shipping": "Toimitus",
       "tax": "Vero",
       "shipping_cost": "Toimituskulut",
+      "total_in_currency": "Yhteensä valuutassa {currency}",
+      "products_in_currency": "Tuotteet valuutassa {currency}",
       "status": "Tila",
       "date": "Päivämäärä",
       "created_date": "Luontipäivämäärä",

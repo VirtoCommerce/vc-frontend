@@ -46,6 +46,21 @@ fragment fullCart on CartType {
   currency {
     ...currency
   }
+  cartTotals {
+    isDefaultTotalCurrency
+    total {
+      ...money
+    }
+    subTotal {
+      ...money
+    }
+    discountTotal {
+      ...money
+    }
+    taxTotal {
+      ...money
+    }
+  }
   total {
     ...money
   }
