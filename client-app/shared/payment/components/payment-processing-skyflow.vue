@@ -191,6 +191,11 @@ let skyflowClient: Skyflow,
 // (e.g. the shopper switched payment method while the vault was still initializing).
 let isActive = true;
 
+// Bumped on every CVV-form teardown. A fire-and-forget initCvvForm run captures the token
+// before its async init and bails if a newer selection superseded it, so a slow init for an
+// earlier card can't mount a duplicate collector or bind the CVV field to the wrong record.
+let cvvInitToken = 0;
+
 // NEW CARD START
 type ElementType =
   | typeof Skyflow.ElementType.CARD_NUMBER
@@ -350,7 +355,13 @@ async function initCvvForm() {
   }
 
   clearCvv();
+  const token = cvvInitToken;
   await initPayment();
+
+  // A newer card selection (or teardown) ran clearCvv while the vault was initializing.
+  if (!isActive || token !== cvvInitToken) {
+    return;
+  }
 
   const containerOptions = {
     layout: [1],
@@ -364,6 +375,9 @@ async function initCvvForm() {
     {
       table: skyflowTableName,
       column: "cvv",
+      // Bind the saved card's record id at element creation so collect() issues a PUT (update)
+      // on the existing record. Without skyflowID, collect() inserts a new bare-CVV record (POST).
+      skyflowID: selectedSkyflowCard.value?.skyflowId,
       ...cvvOnlyCollectStyles,
       placeholder: "111",
       label: t("shared.payment.bank_card_form.security_code_label"),
@@ -397,6 +411,7 @@ async function initCvvForm() {
 }
 
 function clearCvv() {
+  cvvInitToken++;
   cvvCollector?.unmount();
   cvvCollector = null;
   cvvElement = null;
@@ -409,10 +424,8 @@ async function updateCvvInVault(): Promise<void> {
     return;
   }
 
-  cvvElement.update({
-    skyflowID: selectedSkyflowCard.value?.skyflowId,
-  });
-
+  // The record id (skyflowID) is bound to the CVV element at creation in initCvvForm,
+  // so collect() updates the existing card record rather than inserting a new one.
   await cvvCollector.collect();
 }
 // CVV only END

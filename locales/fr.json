@@ -114,6 +114,8 @@
       "shipping": "Expédition",
       "tax": "Taxe",
       "shipping_cost": "Frais de port",
+      "total_in_currency": "Total en {currency}",
+      "products_in_currency": "Produits en {currency}",
       "status": "Statut",
       "date": "Date",
       "created_date": "Date de création",
