@@ -14,7 +14,7 @@
       <div class="mb-4 flex justify-between text-base font-black">
         <span>{{ $t("common.labels.subtotal") }}</span>
 
-        <span><VcPriceDisplay :value="cart.subTotal!" data-test-id="cart-subtotal-label" /></span>
+        <span><VcPriceDisplay :value="summarySubTotal!" data-test-id="cart-subtotal-label" /></span>
       </div>
 
       <div class="border-y py-2 text-base font-normal">
@@ -33,9 +33,9 @@
             />
           </component>
 
-          <span v-if="cart.discountTotal">
-            {{ cart.discountTotal?.amount > 0 ? "-" : "" }}
-            <VcPriceDisplay :value="cart.discountTotal" data-test-id="cart-discount-total-label" />
+          <span v-if="summaryDiscountTotal">
+            {{ summaryDiscountTotal?.amount > 0 ? "-" : "" }}
+            <VcPriceDisplay :value="summaryDiscountTotal" data-test-id="cart-discount-total-label" />
           </span>
         </div>
 
@@ -85,8 +85,8 @@
           <span>{{ $t("common.labels.tax") }}</span>
 
           <span>
-            {{ cart.taxTotal?.amount > 0 ? "+" : "" }}
-            <VcPriceDisplay v-if="cart.taxTotal" :value="cart.taxTotal" data-test-id="cart-tax-total-label" />
+            {{ summaryTaxTotal?.amount > 0 ? "+" : "" }}
+            <VcPriceDisplay v-if="summaryTaxTotal" :value="summaryTaxTotal" data-test-id="cart-tax-total-label" />
           </span>
         </div>
 
@@ -104,8 +104,41 @@
         <span>{{ $t("common.labels.total") }}</span>
 
         <span class="text-[--price-color] print:text-inherit">
-          <VcPriceDisplay v-if="cart.total" :value="cart.total" data-test-id="cart-total-label" />
+          <VcPriceDisplay v-if="summaryTotal" :value="summaryTotal" data-test-id="cart-total-label" />
         </span>
+      </div>
+
+      <div v-if="otherCartTotals.length" class="flex flex-col" data-test-id="cart-other-currency-totals">
+        <div v-for="cartTotal in otherCartTotals" :key="cartTotal.total.currency.code" class="mt-4 border-t pt-4">
+          <div class="mb-4 text-base font-black">
+            {{ $t("common.labels.total_in_currency", { currency: cartTotal.total.currency.code }) }}
+          </div>
+
+          <div class="mb-4 flex justify-between text-base font-black">
+            <span>{{ $t("common.labels.subtotal") }}</span>
+
+            <span><VcPriceDisplay :value="cartTotal.subTotal" /></span>
+          </div>
+
+          <div class="border-y py-2 text-base font-normal">
+            <div class="flex justify-between">
+              <span>{{ $t("common.labels.discount") }}</span>
+
+              <span v-if="cartTotal.discountTotal">
+                {{ cartTotal.discountTotal.amount > 0 ? "-" : "" }}
+                <VcPriceDisplay :value="cartTotal.discountTotal" />
+              </span>
+            </div>
+          </div>
+
+          <div class="mt-4 flex justify-between text-base font-black">
+            <span>{{ $t("common.labels.total") }}</span>
+
+            <span class="text-[--price-color] print:text-inherit">
+              <VcPriceDisplay :value="cartTotal.total" />
+            </span>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -128,6 +161,7 @@ import { useFullCart } from "@/shared/cart";
 import { useSavedForLater } from "@/shared/cart/composables/useSaveForLater";
 import { useCheckout } from "@/shared/checkout/composables";
 import type {
+  CartTotalType,
   CartType,
   CustomerOrderType,
   DiscountType,
@@ -152,6 +186,20 @@ const { currentCurrency } = useCurrency();
 const { changing: cartChanging } = useFullCart();
 const { changing: checkoutChanging } = useCheckout();
 const { loading: savedForLaterLoading } = useSavedForLater();
+
+const cartTotals = computed(() =>
+  "cartTotals" in props.cart ? (props.cart.cartTotals?.filter((t): t is CartTotalType => !!t) ?? []) : [],
+);
+
+const defaultCartTotal = computed(() => cartTotals.value.find((t) => t.isDefaultTotalCurrency));
+const otherCartTotals = computed(() =>
+  cartTotals.value.filter((t) => !t.isDefaultTotalCurrency && t.total.currency.code !== props.cart.currency.code),
+);
+
+const summarySubTotal = computed(() => defaultCartTotal.value?.subTotal ?? props.cart.subTotal);
+const summaryDiscountTotal = computed(() => defaultCartTotal.value?.discountTotal ?? props.cart.discountTotal);
+const summaryTaxTotal = computed(() => defaultCartTotal.value?.taxTotal ?? props.cart.taxTotal);
+const summaryTotal = computed(() => defaultCartTotal.value?.total ?? props.cart.total);
 
 const changing = computed(() => cartChanging.value || checkoutChanging.value || savedForLaterLoading.value);
 
