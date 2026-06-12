@@ -114,6 +114,8 @@
       "shipping": "Frakt",
       "tax": "Skatt",
       "shipping_cost": "Fraktkostnader",
+      "total_in_currency": "Totalt i {currency}",
+      "products_in_currency": "Produkter i {currency}",
       "status": "Status",
       "date": "Dato",
       "created_date": "Opprettelsesdato",

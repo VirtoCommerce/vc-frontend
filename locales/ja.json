@@ -114,6 +114,8 @@
       "shipping": "配送",
       "tax": "税金",
       "shipping_cost": "送料",
+      "total_in_currency": "合計 {currency}",
+      "products_in_currency": "商品 {currency}",
       "status": "状態",
       "date": "日付",
       "created_date": "作成日",
