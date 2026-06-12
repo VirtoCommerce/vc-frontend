@@ -268,7 +268,8 @@ function focusCellByIso(root: HTMLElement, iso: string): void {
     `[data-reka-calendar-cell-trigger][data-value="${iso}"]:not([data-outside-view])`,
   );
   const cell = inView ?? root.querySelector<HTMLElement>(`[data-reka-calendar-cell-trigger][data-value="${iso}"]`);
-  cell?.focus();
+  // preventScroll: VcCalendar is body-portaled, so a default focus() would scroll the whole document to it.
+  cell?.focus({ preventScroll: true });
 }
 
 // Focus-entry for the day grid: selected → today → first focusable in-view cell.
@@ -293,7 +294,7 @@ function focusActiveCell(): void {
   }
 
   const firstInView = root.querySelector<HTMLElement>("[data-reka-calendar-cell-trigger]:not([data-outside-view])");
-  firstInView?.focus();
+  firstInView?.focus({ preventScroll: true });
 }
 
 type CalendarKeyTargetType = { target: DateValue };
