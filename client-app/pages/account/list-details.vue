@@ -158,16 +158,15 @@ interface IProps {
   hideSettings?: boolean;
   listName?: string;
   kind?: "wishlist" | "saved-for-later";
+  onAddToCart?: (item: LineItemType, quantity: number) => Promise<void>;
+  onAddAllToCart?: (items: LineItemType[]) => Promise<void>;
 }
-
-const emit = defineEmits<{
-  (e: "add-to-cart", item: LineItemType, quantity: number): void;
-  (e: "add-all-to-cart", items: LineItemType[]): void;
-}>();
 
 const props = withDefaults(defineProps<IProps>(), {
   listName: undefined,
   kind: "wishlist",
+  onAddToCart: undefined,
+  onAddAllToCart: undefined,
 });
 
 const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
@@ -249,10 +248,13 @@ async function addAllListItemsToCart(): Promise<void> {
     return;
   }
 
+  const previousCart = cart.value;
   let updatedCart: ShortCartFragment | undefined;
 
   if (props.kind === "saved-for-later") {
-    emit("add-all-to-cart", wishlistItems.value);
+    // Wait for the move to complete and the shared cart to be refetched, otherwise the result
+    // modal below would read a stale cart and report every moved item as "not added".
+    await props.onAddAllToCart?.(wishlistItems.value);
   } else {
     const newCartItems = wishlistItems.value.map(({ productId, quantity }) => ({ productId, quantity }));
     updatedCart = await addItemsToCart(newCartItems);
@@ -267,7 +269,7 @@ async function addAllListItemsToCart(): Promise<void> {
     void pushHistoricalEvent({ eventType: "addToCart", productIds: products.map((product) => product.id) });
   }
 
-  showResultModal(wishlistItems.value, updatedCart);
+  showResultModal(wishlistItems.value, updatedCart, previousCart);
 }
 
 async function updateItems() {
@@ -304,12 +306,16 @@ async function openSaveChangesModal(): Promise<boolean> {
   });
 }
 
-function showResultModal(items: LineItemType[], resultCart: ShortCartFragment = cart.value!) {
+function showResultModal(
+  items: LineItemType[],
+  resultCart: ShortCartFragment = cart.value!,
+  previousCart?: ShortCartFragment,
+) {
   openModal({
     component: AddBulkItemsToCartResultsModal,
     props: {
       listName: list.value?.name,
-      items: getItemsForAddBulkItemsToCartResultsModal(items, resultCart),
+      items: getItemsForAddBulkItemsToCartResultsModal(items, resultCart, previousCart),
     },
   });
 }
@@ -331,6 +337,7 @@ async function addOrUpdateCartItem(item: PreparedLineItemType, quantity: number)
   }
 
   const itemInCart = cart.value?.items?.find((cartItem) => cartItem.productId === item.productId);
+  const previousCart = cart.value;
 
   pendingItems.value[lineItem.id] = true;
   try {
@@ -340,7 +347,7 @@ async function addOrUpdateCartItem(item: PreparedLineItemType, quantity: number)
       }
     } else {
       if (props.kind === "saved-for-later") {
-        emit("add-to-cart", lineItem, quantity);
+        await props.onAddToCart?.(lineItem, quantity);
       } else {
         await addToCart(lineItem.product.id, quantity);
       }
@@ -351,7 +358,7 @@ async function addOrUpdateCartItem(item: PreparedLineItemType, quantity: number)
     pendingItems.value[lineItem.id] = false;
   }
 
-  showResultModal([lineItem]);
+  showResultModal([lineItem], cart.value, previousCart);
 }
 
 function openDeleteProductModal(values: string[]): void {
