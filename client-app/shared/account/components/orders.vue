@@ -480,10 +480,9 @@ function getDisplayTotals(order: CustomerOrderType): MoneyType[] {
     return order.total ? [order.total] : [];
   }
 
-  return [
-    ...totals.filter((total) => total.isDefaultTotalCurrency),
-    ...totals.filter((total) => !total.isDefaultTotalCurrency),
-  ].map((total) => total.total);
+  totals.sort((a, b) => Number(b.isDefaultTotalCurrency) - Number(a.isDefaultTotalCurrency));
+
+  return totals.map((total) => total.total);
 }
 
 function goToOrderDetails(order: CustomerOrderType): void {
