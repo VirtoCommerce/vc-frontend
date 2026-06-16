@@ -1,28 +1,30 @@
 {
   "ManifestVersion": "2.0",
-  "PlatformVersion": "3.1037.0",
+  "PlatformVersion": "3.1038.0",
   "PlatformImage": "ghcr.io/virtocommerce/platform",
-  "PlatformImageTag": "3.1037.0",
+  "PlatformImageTag": "3.1038.0",
   "PlatformAssetUrl": "",
   "Sources": [
+    {
+      "Name": "AzureBlob",
+      "Container": "packages",
+      "ServiceUri": "https://vc3prerelease.blob.core.windows.net",
+      "Modules": []
+    },
     {
       "Name": "GithubReleases",
       "ModuleSources": ["https://raw.githubusercontent.com/VirtoCommerce/vc-modules/master/modules_v3.json"],
       "Modules": [
+        {
+          "Id": "VirtoCommerce.Loyalty",
+          "Version": "3.1003.0"
+        },
         {
           "Id": "VirtoCommerce.ElasticSearch",
           "Version": "3.806.0"
         },
         {
           "Id": "VirtoCommerce.XFrontend",
-          "Version": "3.1000.0"
-        },
-        {
-          "Id": "VirtoCommerce.CatalogCsvImportModule",
-          "Version": "3.1000.0"
-        },
-        {
-          "Id": "VirtoCommerce.EnvironmentsCompare",
           "Version": "3.1000.0"
         },
         {
@@ -44,10 +46,6 @@
         {
           "Id": "VirtoCommerce.XOrder",
           "Version": "3.1004.0"
-        },
-        {
-          "Id": "VirtoCommerce.TaskManagement",
-          "Version": "3.1001.0"
         },
         {
           "Id": "VirtoCommerce.Orders",
@@ -278,10 +276,6 @@
           "Version": "3.1001.0"
         },
         {
-          "Id": "VirtoCommerce.SqlQueries",
-          "Version": "3.1004.0"
-        },
-        {
           "Id": "VirtoCommerce.CyberSourcePayment",
           "Version": "3.1002.0"
         },
@@ -339,15 +333,25 @@
         },
         {
           "Id": "VirtoCommerce.XCart",
-          "Version": "3.1019.0"
+          "Version": "3.1020.0"
+        },
+        {
+          "Id": "VirtoCommerce.EnvironmentsCompare",
+          "Version": "3.1001.0"
+        },
+        {
+          "Id": "VirtoCommerce.TaskManagement",
+          "Version": "3.1003.0"
+        },
+        {
+          "Id": "VirtoCommerce.CatalogCsvImportModule",
+          "Version": "3.1001.0"
+        },
+        {
+          "Id": "VirtoCommerce.SqlQueries",
+          "Version": "3.1005.0"
         }
       ]
-    },
-    {
-      "Name": "AzureBlob",
-      "Container": "packages",
-      "ServiceUri": "https://vc3prerelease.blob.core.windows.net",
-      "Modules": []
     }
   ]
 }
