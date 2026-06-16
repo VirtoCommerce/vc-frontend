@@ -258,8 +258,12 @@
             {{ $t("pages.account.orders.total_label") }}
           </span>
 
-          <span class="overflow-hidden text-ellipsis font-black">
-            {{ item.total?.formattedAmount }}
+          <span
+            v-for="total in getDisplayTotals(item)"
+            :key="total.currency.code"
+            class="overflow-hidden text-ellipsis font-black"
+          >
+            {{ total.formattedAmount }}
           </span>
         </div>
       </button>
@@ -320,7 +324,11 @@
       class="w-40"
       v-slot="{ item }"
     >
-      {{ item.total?.formattedAmount }}
+      <div class="flex flex-col">
+        <span v-for="total in getDisplayTotals(item)" :key="total.currency.code">
+          {{ total.formattedAmount }}
+        </span>
+      </div>
     </VcTableColumn>
 
     <template #page-limit-message>
@@ -351,7 +359,7 @@ import MobileOrdersFilter from "./mobile-orders-filter.vue";
 import OrderStatus from "./order-status.vue";
 import OrdersFilter from "./orders-filter.vue";
 import type { OrderScopeType, OrdersFilterChipsItemType } from "../types";
-import type { CustomerOrderType } from "@/core/api/graphql/types";
+import type { CustomerOrderType, MoneyType, OrderTotalType } from "@/core/api/graphql/types";
 import type { DateFilterType, ISortInfo } from "@/core/types";
 
 export interface IProps {
@@ -461,6 +469,21 @@ function handleOrdersDateFilterChange(dateFilterType: DateFilterType): void {
   filterData.value.endDate = dateFilterType.endDate ? toDateISOString(dateFilterType.endDate) : undefined;
 
   selectedDateFilterType.value = dateFilterType;
+}
+
+// Totals to show in the Total column: the primary-currency total first, then the rest.
+// Falls back to the order's single total when per-currency totals are unavailable.
+function getDisplayTotals(order: CustomerOrderType): MoneyType[] {
+  const totals = order.orderTotals?.filter((total): total is OrderTotalType => !!total) ?? [];
+
+  if (!totals.length) {
+    return order.total ? [order.total] : [];
+  }
+
+  return [
+    ...totals.filter((total) => total.isDefaultTotalCurrency),
+    ...totals.filter((total) => !total.isDefaultTotalCurrency),
+  ].map((total) => total.total);
 }
 
 function goToOrderDetails(order: CustomerOrderType): void {
