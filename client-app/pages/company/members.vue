@@ -7,7 +7,7 @@
       </VcTypography>
 
       <VcButton
-        v-if="$can($permissions.storefront.CanInviteUsers)"
+        v-if="$can($permissions.xApi.CanInviteUsers)"
         variant="outline"
         class="flex-none"
         @click="openInviteModal"
@@ -332,7 +332,7 @@ import { usePageHead } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { B2B_ROLES } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
-import { StorefrontPermissions, XApiPermissions } from "@/core/enums";
+import { PlatformPermissions, XApiPermissions } from "@/core/enums";
 import { getFilterExpressionFromFacets } from "@/core/utilities";
 import { useUser } from "@/shared/account";
 import { FacetItem } from "@/shared/common";
@@ -405,7 +405,7 @@ const filtersButtonElement = shallowRef<HTMLElement | null>(null);
 const filtersDropdownElement = shallowRef<HTMLElement | null>(null);
 
 const userCanEditOrganization = computed<boolean>(() => checkPermissions(XApiPermissions.CanEditOrganization));
-const userCanLoginOnBehalf = computed<boolean>(() => checkPermissions(StorefrontPermissions.CanImpersonate));
+const userCanLoginOnBehalf = computed<boolean>(() => checkPermissions(PlatformPermissions.CanImpersonate));
 const canManageMembers = computed<boolean>(() => userCanEditOrganization.value || userCanLoginOnBehalf.value);
 
 function canLoginOnBehalfOf(contact: ExtendedContactType): boolean {

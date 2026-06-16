@@ -16,7 +16,7 @@ import {
   updateContact,
 } from "@/core/api/graphql/account";
 import { useAuth } from "@/core/composables/useAuth";
-import { ORGANIZATION_MAINTAINER, USER_ID_LOCAL_STORAGE } from "@/core/constants";
+import { USER_ID_LOCAL_STORAGE } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import {
@@ -127,7 +127,7 @@ export function _useUser() {
     let access = !!user.value?.isAdministrator;
 
     if (!access) {
-      access = permissions.every((permission) => user.value?.permissions?.includes(permission));
+      access = permissions.every((permission) => user.value?.permissions?.some((p) => p === permission));
     }
 
     return access;
@@ -380,11 +380,6 @@ export function _useUser() {
     isAuthenticated,
     isCorporateMember,
     isMultiOrganization: computed(() => (user.value?.contact?.organizations?.totalCount ?? 0) > 1),
-    isOrganizationMaintainer: computed(
-      () =>
-        user.value?.roles?.some((role) => role.name.toLowerCase() === ORGANIZATION_MAINTAINER.name.toLowerCase()) ??
-        false,
-    ),
     organization,
     operator,
     userGroups,
