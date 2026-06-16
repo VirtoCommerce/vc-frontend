@@ -127,7 +127,7 @@ export function _useUser() {
     let access = !!user.value?.isAdministrator;
 
     if (!access) {
-      access = permissions.every((permission) => user.value?.permissions?.some((p) => p === permission));
+      access = permissions.every((permission) => user.value?.permissions?.includes(permission as never));
     }
 
     return access;
