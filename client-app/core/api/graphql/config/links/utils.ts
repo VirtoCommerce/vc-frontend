@@ -22,19 +22,21 @@ type ItemResultType = {
   productId: string;
   quantity: number;
   sku: string;
+  currencyCode: string;
 };
 
 export function handleOptimisticResponseUpdateCartQuantity(
   cart: CartType,
   itemsInput: UpdateShortCartItemQuantityMutationVariables["command"]["items"],
 ) {
-  const updatesByProductId = new Map(itemsInput?.map((item) => [item.productId, item.quantity]) ?? []);
+  const updatesByProductId = new Map(itemsInput?.map((item) => [item.productId, item]) ?? []);
   const baseItemsByProductId = new Map(cart?.items?.map((item) => [item.productId, item]) ?? []);
   const baseItems = cart?.items ?? [];
+  const cartCurrencyCode = cart?.currency?.code ?? "";
 
   // Start from existing items and apply updates
   const itemsResult: ItemResultType[] = baseItems.map((lineItem) => {
-    const nextQty = updatesByProductId.get(lineItem.productId);
+    const nextQty = updatesByProductId.get(lineItem.productId)?.quantity;
 
     return {
       __typename: "LineItemType",
@@ -42,11 +44,13 @@ export function handleOptimisticResponseUpdateCartQuantity(
       productId: lineItem.productId,
       quantity: nextQty === undefined ? lineItem.quantity : nextQty,
       sku: lineItem.sku ?? "",
+      currencyCode: lineItem.currencyCode ?? cartCurrencyCode,
     };
   });
 
   // Add new items for products that were not in the cart
-  for (const [productId, qty] of updatesByProductId) {
+  for (const [productId, item] of updatesByProductId) {
+    const qty = item.quantity;
     if (qty <= 0) {
       continue;
     }
@@ -57,7 +61,7 @@ export function handleOptimisticResponseUpdateCartQuantity(
     }
 
     const newItem = generateCacheIdIfNew<Omit<ItemResultType, "id" | "__typename">>(
-      { productId, quantity: qty, sku: "" },
+      { productId, quantity: qty, sku: "", currencyCode: item.itemCurrencyCode ?? cartCurrencyCode },
       "LineItemType",
     ) as ItemResultType;
 
