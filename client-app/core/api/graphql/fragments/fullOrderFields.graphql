@@ -11,6 +11,21 @@ fragment fullOrderFields on CustomerOrderType {
   currency {
     ...currency
   }
+  orderTotals {
+    isDefaultTotalCurrency
+    total {
+      ...money
+    }
+    subTotal {
+      ...money
+    }
+    discountTotal {
+      ...money
+    }
+    taxTotal {
+      ...money
+    }
+  }
   shipments {
     shipmentMethodCode
     shipmentMethodOption
