@@ -20,6 +20,7 @@
       class="vc-select__container"
       :disabled="!enabled"
       :lazy="lazy"
+      :teleport-selector="teleportSelector"
       :data-test-id="testIdDropdown"
       tabindex="-1"
       width="trigger"
@@ -200,6 +201,8 @@ interface IProps {
   enableTeleport?: boolean;
   /** Defer rendering the option list until the dropdown is first opened (forwarded to VcPopover). */
   lazy?: boolean;
+  /** Teleport target selector for the dropdown; defaults to the global popover host (forwarded to VcPopover). */
+  teleportSelector?: string;
 }
 
 interface IEmits {
