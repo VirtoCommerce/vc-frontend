@@ -500,12 +500,16 @@ export function _useCheckout(cartId?: string) {
     }
   }
 
-  function notifyIfLoyaltyBalanceInsufficient(): boolean {
-    const loyaltyError = cart.value?.validationErrors?.find(
+  const loyaltyInsufficientBalanceError = computed(() =>
+    cart.value?.validationErrors?.find(
       (error) => error?.errorCode === CartValidationErrors.LOYALTY_INSUFFICIENT_BALANCE,
-    );
+    ),
+  );
+
+  function notifyIfLoyaltyBalanceInsufficient(): void {
+    const loyaltyError = loyaltyInsufficientBalanceError.value;
     if (!loyaltyError) {
-      return false;
+      return;
     }
 
     const params = loyaltyError.errorParameters ?? [];
@@ -522,7 +526,6 @@ export function _useCheckout(cartId?: string) {
       duration: 15000,
       single: true,
     });
-    return true;
   }
 
   async function completePlacedOrder(order: CustomerOrderType): Promise<void> {
@@ -575,7 +578,8 @@ export function _useCheckout(cartId?: string) {
 
     await prepareOrderData();
 
-    if (notifyIfLoyaltyBalanceInsufficient()) {
+    if (loyaltyInsufficientBalanceError.value) {
+      notifyIfLoyaltyBalanceInsufficient();
       loading.value = false;
       return null;
     }
