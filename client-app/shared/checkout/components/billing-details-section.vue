@@ -135,8 +135,7 @@ const paymentCardVisible = computed(() => {
     props.cart &&
     paymentMethod.value &&
     paymentMethod.value.allowCartPayment &&
-    currentPaymentMethod.value &&
-    billingAddress.value
+    currentPaymentMethod.value
   );
 });
 
