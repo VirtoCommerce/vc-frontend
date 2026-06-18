@@ -153,7 +153,7 @@
 </template>
 
 <script setup lang="ts">
-import { sumBy } from "lodash";
+import { sumBy } from "lodash-es";
 import { computed, ref } from "vue";
 import { useCurrency } from "@/core/composables";
 import { useLanguages } from "@/core/composables/useLanguages";

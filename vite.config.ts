@@ -81,9 +81,20 @@ export default defineConfig(({ command, mode }): UserConfig => {
       rollupOptions: {
         output: {
           manualChunks(id) {
-            if (id.includes("node_modules")) {
-              return "vendor";
+            if (!id || !id.includes("node_modules")) {
+              return;
             }
+            // These are imported only via dynamic import()/defineAsyncComponent; leave them
+            // unassigned so they stay in their own lazy chunks instead of the eager vendor.
+            const isDeferredLib = /[\\/]node_modules[\\/](skyflow-js|barcode-detector|marked|nouislider)[\\/]/.test(id);
+            if (isDeferredLib) {
+              return;
+            }
+            // All other node_modules go to a shared eager vendor chunk so library evaluation
+            // is its own task, separate from the app entry chunk. Folding them into the entry
+            // chunk produced one long evaluation task that inflated TBT (same total work,
+            // worse task granularity).
+            return "vendor";
           },
         },
       },

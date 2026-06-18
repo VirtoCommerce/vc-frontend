@@ -1,5 +1,5 @@
 import { createSharedComposable, watchDebounced } from "@vueuse/core";
-import difference from "lodash/difference";
+import { difference } from "lodash-es";
 import { readonly, ref } from "vue";
 import { DEFAULT_SORT } from "@/core/constants";
 import { SortDirection } from "@/core/enums";
