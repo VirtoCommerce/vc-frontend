@@ -1,5 +1,6 @@
 <template>
   <CalendarRoot
+    ref="calendarRootRef"
     v-slot="{ weekDays, grid }"
     role="group"
     :calendar-label="t('ui_kit.calendar.aria_label')"
@@ -111,10 +112,11 @@ import {
   CalendarPrev,
   CalendarRoot,
 } from "reka-ui";
-import { computed, nextTick, toRef, watch } from "vue";
+import { computed, nextTick, toRef, useTemplateRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { dateValueToIso, todayDate, tryParseDate, useCalendarBase } from "./use-calendar-base";
 import type { DateValue } from "@internationalized/date";
+import type { ComponentPublicInstance } from "vue";
 
 interface IProps {
   modelValue?: string;
@@ -175,6 +177,9 @@ const {
   goToNextYear,
 } = base;
 
+// reka's CalendarRoot forwards its root element via `$el`.
+const calendarRootRef = useTemplateRef<ComponentPublicInstance | null>("calendarRootRef");
+
 const rootClasses = computed(() => ["vc-calendar", `vc-calendar--size--${props.size}`, "vc-calendar--mode--single"]);
 
 const parsedModelValue = computed<DateValue | undefined>(() => tryParseDate(props.modelValue));
@@ -213,9 +218,8 @@ function onClearClick(): void {
   emit("update:modelValue", undefined);
 }
 
-// reka-ui's CalendarRoot/CalendarCellTrigger only handle arrows/space/enter — Home/End/PageUp/PageDown
-// are NOT covered. We fill the APG date-grid gap here so Home/End move focus within the grid.
-// firstDayOfWeek prop is a number (0=Sunday); startOfWeek/endOfWeek expect a DayOfWeek string.
+// reka handles only arrows/space/enter; we add Home/End/PageUp/PageDown (APG date-grid gap).
+// firstDayOfWeek is a number (0=Sunday); startOfWeek/endOfWeek expect a DayOfWeek string.
 const DAY_OF_WEEK_NAMES = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as const;
 
 const mappedFirstDay = computed(() => {
@@ -247,7 +251,7 @@ function getFocusedCellDate(root: HTMLElement): DateValue | undefined {
   if (!root.contains(active)) {
     return undefined;
   }
-  // Only day cells carry this marker; nav buttons and footer do not. It's empty-valued, so check for absence explicitly.
+  // Only day cells carry this (empty-valued) marker; nav/footer do not.
   if (active.dataset.rekaCalendarCellTrigger === undefined) {
     return undefined;
   }
@@ -264,12 +268,38 @@ function focusCellByIso(root: HTMLElement, iso: string): void {
     `[data-reka-calendar-cell-trigger][data-value="${iso}"]:not([data-outside-view])`,
   );
   const cell = inView ?? root.querySelector<HTMLElement>(`[data-reka-calendar-cell-trigger][data-value="${iso}"]`);
-  cell?.focus();
+  // preventScroll: VcCalendar is body-portaled, so a default focus() would scroll the whole document to it.
+  cell?.focus({ preventScroll: true });
+}
+
+// Focus-entry for the day grid: selected → today → first focusable in-view cell.
+function focusActiveCell(): void {
+  const root = calendarRootRef.value?.$el;
+  if (!(root instanceof HTMLElement)) {
+    return;
+  }
+
+  const selected = parsedModelValue.value;
+  if (selected) {
+    focusCellByIso(root, selected.toString());
+    if (getFocusedCellDate(root)) {
+      return;
+    }
+  }
+
+  const now = todayDate();
+  focusCellByIso(root, now.toString());
+  if (getFocusedCellDate(root)) {
+    return;
+  }
+
+  const firstInView = root.querySelector<HTMLElement>("[data-reka-calendar-cell-trigger]:not([data-outside-view])");
+  firstInView?.focus({ preventScroll: true });
 }
 
 type CalendarKeyTargetType = { target: DateValue };
 
-// Home/End: ctrl/meta switches week→month (non-APG bonus). PageUp/Down: Shift switches month→year (APG-correct).
+// Home/End: ctrl/meta = month (else week). PageUp/Down: shift = year (else month), per APG.
 type CalendarKeyModifiersType = { ctrlOrMeta: boolean; shift: boolean };
 
 function resolveKeyTarget(
@@ -296,11 +326,9 @@ function resolveKeyTarget(
       }
       break;
     case "PageDown":
-      // Shift = next year per WAI-ARIA APG Date Picker Dialog; plain = next month.
       target = shift ? focused.add({ years: 1 }) : focused.add({ months: 1 });
       break;
     case "PageUp":
-      // Shift = previous year per WAI-ARIA APG Date Picker Dialog; plain = previous month.
       target = shift ? focused.add({ years: -1 }) : focused.add({ months: -1 });
       break;
     default:
@@ -311,8 +339,6 @@ function resolveKeyTarget(
   return { target };
 }
 
-// Mirror reka's arrow nav for the keys reka doesn't provide (Home/End/PageUp/PageDown):
-// clamp to min/max and land on the target, including data-unavailable cells (focusable, not selectable per APG).
 function onCalendarKeydown(event: KeyboardEvent): void {
   const root = event.currentTarget;
   if (!(root instanceof HTMLElement)) {
@@ -335,7 +361,7 @@ function onCalendarKeydown(event: KeyboardEvent): void {
 
   const target = clampToBounds(resolvedKey.target);
 
-  // Update placeholder so the grid scrolls when the target spills into an adjacent month.
+  // Scroll the grid when the target spills into an adjacent month.
   placeholderRef.value = target;
 
   const targetIso = target.toString();
@@ -356,6 +382,10 @@ watch(
     }
   },
 );
+
+defineExpose({
+  focusActiveCell,
+});
 </script>
 
 <style lang="scss">
