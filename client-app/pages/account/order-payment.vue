@@ -305,8 +305,8 @@
 </template>
 
 <script setup lang="ts">
-import { cloneDeep } from "lodash";
-import { computed, ref, watch, watchEffect } from "vue";
+import { cloneDeep } from "lodash-es";
+import { computed, defineAsyncComponent, ref, watch, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
@@ -323,7 +323,12 @@ import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-a
 import PaymentProcessingAuthorizeNet from "@/shared/payment/components/payment-processing-authorize-net.vue";
 import PaymentProcessingCyberSource from "@/shared/payment/components/payment-processing-cyber-source.vue";
 import PaymentProcessingDatatrans from "@/shared/payment/components/payment-processing-datatrans.vue";
-import PaymentProcessingSkyflow from "@/shared/payment/components/payment-processing-skyflow.vue";
+
+// Loaded only when the Skyflow method is the active payment type, so the skyflow-js SDK
+// (~80 KB gzip) stays out of the eager bundle shared across checkout/account routes.
+const PaymentProcessingSkyflow = defineAsyncComponent(
+  () => import("@/shared/payment/components/payment-processing-skyflow.vue"),
+);
 
 interface IProps {
   orderId: string;
