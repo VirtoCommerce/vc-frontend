@@ -42,6 +42,8 @@ jobs:
           languages: javascript-typescript
           queries: security-extended
 
+      # Skip a finding: dismiss the alert in Security > Code scanning (False positive /
+      # Won't fix), or add a top-level "paths-ignore:" above to exclude paths.
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@8aad20d150bbac5944a9f9d289da16a4b0d87c1e # v4
         with:

@@ -49,6 +49,9 @@ jobs:
         # so a broken rule can never silently pass as exit code 2 again.
         run: semgrep scan --validate --config .semgrep/vc-security.yml
 
+      # Skip a finding: add "// nosemgrep: <rule-id>" on or above the line
+      # ("<!-- nosemgrep: <rule-id> -->" in .vue templates), exclude paths via a
+      # repo-root .semgrepignore, or add "paths: exclude:" to a rule in the ruleset.
       - name: Semgrep scan
         run: |
           set +e
@@ -103,6 +106,8 @@ jobs:
       security-events: write
     # Reusable workflow: it runs the scan, then uploads SARIF to the Security tab.
     # fail-on-vuln: false keeps it non-blocking during the baseline phase.
+    # Skip an advisory: add [[IgnoredVulns]] (id + reason, optional ignoreUntil) to
+    # an osv-scanner.toml at the repo root, or dismiss the alert in the Security tab.
     uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@9a498708959aeaef5ef730655706c5a1df1edbc2 # v2.3.8
     with:
       scan-args: |-
