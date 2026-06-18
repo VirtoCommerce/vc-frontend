@@ -146,14 +146,15 @@ rules:
     severity: ERROR
     languages: [generic]
 
-  # target="_blank" without rel="noopener" (reverse tabnabbing).
+  # target="_blank" on a tag lacking rel=noopener/noreferrer (reverse tabnabbing).
+  # Whole-tag regex so a sibling rel attribute is honoured in any order.
   - id: vc-target-blank-noopener
     languages: [generic]
     paths:
-      include: ["*.vue"]
+      include: ["*.vue", "*.html"]
     patterns:
-      - pattern: target="_blank"
-      - pattern-not-inside: 'rel="... noopener ..."'
+      - pattern-regex: '<[a-zA-Z][^>]*\btarget\s*=\s*["'']_blank["''][^>]*>'
+      - pattern-not-regex: '<[a-zA-Z][^>]*\brel\s*=\s*["''][^"'']*(noopener|noreferrer)[^"'']*["''][^>]*>'
     message: >
       target="_blank" needs rel="noopener noreferrer" to prevent reverse-tabnabbing.
     severity: WARNING
