@@ -75,6 +75,17 @@ async function flushAndResolve(debounceMs = DEFAULT_DEBOUNCE_MS) {
   await vi.advanceTimersByTimeAsync(1);
 }
 
+function lineItemPartitionKey(vars: Record<string, unknown>): string {
+  const command = vars.command as { lineItemId?: string } | undefined;
+  return command?.lineItemId ?? "";
+}
+
+function createPartitionedLink() {
+  return createQueuedMutationsLink({
+    targets: [createQueueTarget("TestMutation", { getPartitionKey: lineItemPartitionKey })],
+  });
+}
+
 describe("createQueuedMutationsLink", () => {
   beforeEach(() => {
     vi.useFakeTimers();
@@ -596,17 +607,6 @@ describe("createQueuedMutationsLink", () => {
   });
 
   describe("partition key", () => {
-    function lineItemPartitionKey(vars: Record<string, unknown>): string {
-      const command = vars.command as { lineItemId?: string } | undefined;
-      return command?.lineItemId ?? "";
-    }
-
-    function createPartitionedLink() {
-      return createQueuedMutationsLink({
-        targets: [createQueueTarget("TestMutation", { getPartitionKey: lineItemPartitionKey })],
-      });
-    }
-
     it("should merge mutations sharing the same partition key into one request", async () => {
       const link = createPartitionedLink();
       const forward = createForward();
