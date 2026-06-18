@@ -1,0 +1,93 @@
+name: Security
+
+# SAST (Semgrep) + SCA (OSV-Scanner) for the frontend (VCST-5292).
+# Introduced in non-blocking mode: jobs surface findings as SARIF in the
+# repository Security tab but do not fail the build, so an inherited-finding
+# baseline can be established before gating is turned on.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [master, dev]
+    paths-ignore:
+      - '.idea'
+      - '.vscode'
+      - 'README.md'
+      - 'LICENSE'
+  pull_request:
+    paths-ignore:
+      - '.idea'
+      - '.vscode'
+      - 'README.md'
+      - 'LICENSE'
+  schedule:
+    # Weekly drift scan so newly published advisories surface without a code change.
+    - cron: '17 4 * * 1'
+
+permissions:
+  contents: read
+
+jobs:
+  semgrep:
+    name: Semgrep (SAST)
+    # Skip Dependabot and PRs from forks (no access to upload SARIF / secrets).
+    if: ${{ github.actor != 'dependabot[bot]' &&
+         (github.event.pull_request.head.repo.full_name == github.repository ||
+         github.event.pull_request.head.repo.full_name == '') }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+
+      - name: Install Semgrep
+        run: pipx install semgrep
+
+      - name: Semgrep scan
+        # Non-blocking: report findings, never fail the build (baseline phase).
+        continue-on-error: true
+        run: |
+          semgrep scan \
+            --config .semgrep/vc-security.yml \
+            --config p/javascript \
+            --config p/typescript \
+            --config p/owasp-top-ten \
+            --sarif --output semgrep.sarif \
+            --metrics off
+
+      - name: Upload Semgrep SARIF
+        if: always()
+        uses: github/codeql-action/upload-sarif@dd903d2e4f5405488e5ef1422510ee31c8b32357 # v3
+        with:
+          sarif_file: semgrep.sarif
+          category: semgrep
+
+  osv-scanner:
+    name: OSV-Scanner (SCA)
+    if: ${{ github.actor != 'dependabot[bot]' &&
+         (github.event.pull_request.head.repo.full_name == github.repository ||
+         github.event.pull_request.head.repo.full_name == '') }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+
+      - name: OSV-Scanner
+        # Non-blocking: report dependency advisories, never fail the build.
+        continue-on-error: true
+        uses: google/osv-scanner-action@9a498708959aeaef5ef730655706c5a1df1edbc2 # v2.3.8
+        with:
+          scan-args: |-
+            --format=sarif
+            --output=osv-results.sarif
+            --lockfile=yarn.lock
+
+      - name: Upload OSV-Scanner SARIF
+        if: always()
+        uses: github/codeql-action/upload-sarif@dd903d2e4f5405488e5ef1422510ee31c8b32357 # v3
+        with:
+          sarif_file: osv-results.sarif
+          category: osv-scanner
