@@ -2,7 +2,12 @@ import { Observable, gql } from "@apollo/client/core";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { AbortReason } from "@/core/api/common/enums";
 import { useQueuedMutations } from "@/core/composables/useQueuedMutations";
-import { createQueuedMutationsLink, createQueueTarget, DEFAULT_DEBOUNCE_MS } from "./queued-mutations";
+import {
+  createQueuedMutationsLink,
+  createQueuedMutationsController,
+  createQueueTarget,
+  DEFAULT_DEBOUNCE_MS,
+} from "./queued-mutations";
 import type { IQueueTargetConfig } from "./types";
 import type { Operation, NextLink, ApolloLink } from "@apollo/client/core";
 
@@ -587,6 +592,150 @@ describe("createQueuedMutationsLink", () => {
       const vars = fwd.mock.calls.map((c: unknown[]) => (c[0] as { variables: unknown }).variables);
       expect(vars).toContainEqual({ items: ["x", "y"] });
       expect(vars).toContainEqual({ sections: [1, 2] });
+    });
+  });
+
+  describe("partition key", () => {
+    function lineItemPartitionKey(vars: Record<string, unknown>): string {
+      const command = vars.command as { lineItemId?: string } | undefined;
+      return command?.lineItemId ?? "";
+    }
+
+    function createPartitionedLink() {
+      return createQueuedMutationsLink({
+        targets: [createQueueTarget("TestMutation", { getPartitionKey: lineItemPartitionKey })],
+      });
+    }
+
+    it("should merge mutations sharing the same partition key into one request", async () => {
+      const link = createPartitionedLink();
+      const forward = createForward();
+
+      enqueue(link, forward, "TestMutation", { command: { lineItemId: "A" }, value: 1 });
+      enqueue(link, forward, "TestMutation", { command: { lineItemId: "A" }, value: 2 });
+
+      await flushAndResolve();
+
+      expect(forward).toHaveBeenCalledTimes(1);
+      const fwd = forward as unknown as ReturnType<typeof vi.fn>;
+      // defaultMergeVariables shallow-merges, so the later value wins
+      expect(fwd.mock.calls[0][0].variables).toEqual({ command: { lineItemId: "A" }, value: 2 });
+    });
+
+    it("should create independent queues for different partition keys", async () => {
+      const link = createPartitionedLink();
+      const forward = createForward();
+
+      enqueue(link, forward, "TestMutation", { command: { lineItemId: "A" }, value: "alpha" });
+      enqueue(link, forward, "TestMutation", { command: { lineItemId: "B" }, value: "beta" });
+
+      await flushAndResolve();
+
+      expect(forward).toHaveBeenCalledTimes(2);
+      const fwd = forward as unknown as ReturnType<typeof vi.fn>;
+      const vars = fwd.mock.calls.map((c: unknown[]) => (c[0] as { variables: unknown }).variables);
+      expect(vars).toContainEqual({ command: { lineItemId: "A" }, value: "alpha" });
+      expect(vars).toContainEqual({ command: { lineItemId: "B" }, value: "beta" });
+    });
+
+    it("should give each partition its own debounce timer", async () => {
+      const link = createPartitionedLink();
+      const forward = createForward();
+
+      enqueue(link, forward, "TestMutation", { command: { lineItemId: "A" }, value: 1 });
+      await vi.advanceTimersByTimeAsync(DEFAULT_DEBOUNCE_MS / 2);
+
+      // Partition B starts its own timer halfway through partition A's window
+      enqueue(link, forward, "TestMutation", { command: { lineItemId: "B" }, value: 2 });
+      await vi.advanceTimersByTimeAsync(DEFAULT_DEBOUNCE_MS / 2 + 1);
+
+      // Only partition A has fired so far
+      expect(forward).toHaveBeenCalledTimes(1);
+      const fwd = forward as unknown as ReturnType<typeof vi.fn>;
+      expect(fwd.mock.calls[0][0].variables).toEqual({ command: { lineItemId: "A" }, value: 1 });
+
+      await flushAndResolve(DEFAULT_DEBOUNCE_MS / 2);
+      expect(forward).toHaveBeenCalledTimes(2);
+    });
+
+    it("should call getPartitionKey with the mutation variables", () => {
+      const getPartitionKey = vi.fn(lineItemPartitionKey);
+      const link = createQueuedMutationsLink({
+        targets: [createQueueTarget("TestMutation", { getPartitionKey })],
+      });
+      const forward = createForward();
+
+      enqueue(link, forward, "TestMutation", { command: { lineItemId: "X" } });
+
+      expect(getPartitionKey).toHaveBeenCalledWith({ command: { lineItemId: "X" } });
+    });
+
+    it("should keep the single-queue behavior when no partition key is declared", async () => {
+      const link = createQueuedMutationsLink({ targets: [createQueueTarget("TestMutation", {})] });
+      const forward = createForward();
+
+      enqueue(link, forward, "TestMutation", { command: { lineItemId: "A" }, value: 1 });
+      enqueue(link, forward, "TestMutation", { command: { lineItemId: "B" }, value: 2 });
+
+      await flushAndResolve();
+
+      expect(forward).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe("controller.flushNow", () => {
+    it("should drain a queued mutation immediately without waiting for the debounce", async () => {
+      const { link, flushNow } = createQueuedMutationsController({
+        targets: [createQueueTarget("TestMutation", {})],
+      });
+      const forward = createForward();
+
+      enqueue(link, forward, "TestMutation", { a: 1 });
+      expect(forward).not.toHaveBeenCalled();
+
+      flushNow("TestMutation");
+      await vi.advanceTimersByTimeAsync(1);
+
+      expect(forward).toHaveBeenCalledTimes(1);
+      const fwd = forward as unknown as ReturnType<typeof vi.fn>;
+      expect(fwd.mock.calls[0][0].variables).toEqual({ a: 1 });
+    });
+
+    it("should be a no-op when nothing is queued for the operation", () => {
+      const { flushNow } = createQueuedMutationsController({
+        targets: [createQueueTarget("TestMutation", {})],
+      });
+
+      expect(() => flushNow("TestMutation")).not.toThrow();
+      expect(() => flushNow("UnknownMutation")).not.toThrow();
+    });
+
+    it("should drain only the requested partition when a partition key is given", async () => {
+      const { link, flushNow } = createQueuedMutationsController({
+        targets: [
+          createQueueTarget("TestMutation", {
+            getPartitionKey: (vars: Record<string, unknown>) =>
+              String((vars as { lineItemId?: string }).lineItemId ?? ""),
+          }),
+        ],
+      });
+      const forward = createForward();
+
+      enqueue(link, forward, "TestMutation", { lineItemId: "li-1", v: 1 });
+      enqueue(link, forward, "TestMutation", { lineItemId: "li-2", v: 2 });
+      expect(forward).not.toHaveBeenCalled();
+
+      flushNow("TestMutation", "li-1");
+      await vi.advanceTimersByTimeAsync(1);
+
+      expect(forward).toHaveBeenCalledTimes(1);
+      const fwd = forward as unknown as ReturnType<typeof vi.fn>;
+      expect((fwd.mock.calls[0][0].variables as { lineItemId: string }).lineItemId).toBe("li-1");
+
+      // The li-2 partition still fires on its own debounce
+      await flushAndResolve();
+      expect(forward).toHaveBeenCalledTimes(2);
+      expect((fwd.mock.calls[1][0].variables as { lineItemId: string }).lineItemId).toBe("li-2");
     });
   });
 });

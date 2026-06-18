@@ -1,5 +1,23 @@
 import type { ApolloLink } from "@apollo/client/core";
 
+/**
+ * Controller returned by createQueuedMutationsController. Exposes the
+ * ApolloLink for wiring into the client AND a flushNow() escape hatch for
+ * callers that need to drain a queued operation immediately (e.g. on input
+ * blur, before navigation).
+ */
+export interface IQueuedMutationsController {
+  link: ApolloLink;
+  /**
+   * Immediately drain the queue for the given operation (and optional partition
+   * key). Cancels the pending debounce timer and fires the merged mutation.
+   * No-ops if nothing is queued OR if a previous mutation is still in flight
+   * for that queue - in the latter case the pending batch will still fire
+   * after the in-flight one resolves, just on its scheduled debounce.
+   */
+  flushNow: (opName: string, partitionKey?: string) => void;
+}
+
 type MergeQueuedFnType<TVars extends Record<string, unknown> = Record<string, unknown>> = (a: TVars, b: TVars) => TVars;
 
 export interface IQueueTargetConfig<TVars extends Record<string, unknown> = Record<string, unknown>> {
@@ -13,6 +31,13 @@ export interface IQueueTargetConfig<TVars extends Record<string, unknown> = Reco
    * @default (a, b) => { ...a, ...b } @link{defaultMergeVariables}
    */
   mergeQueued?: MergeQueuedFnType<TVars>;
+  /**
+   * Extracts a partition key from mutation variables.
+   * Mutations with different partition keys get independent queues
+   * (separate timers, observers, and merged variables).
+   * When omitted, all mutations share a single queue per operation name.
+   */
+  getPartitionKey?: (vars: TVars) => string;
 }
 
 export interface IQueueTarget<TVars extends Record<string, unknown> = Record<string, unknown>> {
