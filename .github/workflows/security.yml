@@ -44,10 +44,14 @@ jobs:
       - name: Install Semgrep
         run: pipx install semgrep
 
+      - name: Validate custom rules
+        # Fails fast and names the offending rule if any custom pattern is invalid,
+        # so a broken rule can never silently pass as exit code 2 again.
+        run: semgrep scan --validate --config .semgrep/vc-security.yml
+
       - name: Semgrep scan
-        # Non-blocking: report findings, never fail the build (baseline phase).
-        continue-on-error: true
         run: |
+          set +e
           semgrep scan \
             --config .semgrep/vc-security.yml \
             --config p/javascript \
@@ -55,10 +59,18 @@ jobs:
             --config p/owasp-top-ten \
             --sarif --output semgrep.sarif \
             --metrics off
+          code=$?
+          # 0 = clean, 1 = findings (non-blocking during the baseline phase),
+          # anything higher = a real Semgrep error that must surface (fail the job).
+          if [ "$code" -gt 1 ]; then
+            echo "::error::Semgrep exited with code $code"
+            exit "$code"
+          fi
+          echo "Semgrep exit code $code treated as success (baseline phase)."
 
       - name: Upload Semgrep SARIF
         if: always()
-        uses: github/codeql-action/upload-sarif@dd903d2e4f5405488e5ef1422510ee31c8b32357 # v3
+        uses: github/codeql-action/upload-sarif@8aad20d150bbac5944a9f9d289da16a4b0d87c1e # v4
         with:
           sarif_file: semgrep.sarif
           category: semgrep
