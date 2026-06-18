@@ -184,8 +184,8 @@ rules:
       - pattern-either:
           - pattern: '$X.addEventListener("message", ($E) => { ... })'
           - pattern: '$X.addEventListener("message", function ($E) { ... })'
-      - pattern-not: '$X.addEventListener("message", ($E) => { ... $E.origin ... })'
-      - pattern-not: '$X.addEventListener("message", function ($E) { ... $E.origin ... })'
+      - pattern-not: '$X.addEventListener("message", ($E) => { <... $E.origin ...> })'
+      - pattern-not: '$X.addEventListener("message", function ($E) { <... $E.origin ...> })'
     message: >
       'message' handler must validate event.origin against a trusted allowlist
       before acting on the payload.
