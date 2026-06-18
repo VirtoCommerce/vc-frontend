@@ -2,20 +2,20 @@ name: Theme CI
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      [master, dev]
-    paths-ignore:
-      - '.idea'
-      - '.vscode'
-      - 'README.md'
-      - 'LICENSE'
-  pull_request:
-    paths-ignore:
-      - '.idea'
-      - '.vscode'
-      - 'README.md'
-      - 'LICENSE'
+  # push:
+  #   branches:
+  #     [master, dev]
+  #   paths-ignore:
+  #     - '.idea'
+  #     - '.vscode'
+  #     - 'README.md'
+  #     - 'LICENSE'
+  # pull_request:
+  #   paths-ignore:
+  #     - '.idea'
+  #     - '.vscode'
+  #     - 'README.md'
+  #     - 'LICENSE'
 
 jobs:
   ci:
