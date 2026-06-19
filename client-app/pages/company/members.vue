@@ -7,7 +7,7 @@
       </VcTypography>
 
       <VcButton
-        v-if="$can($permissions.storefront.CanInviteUsers)"
+        v-if="$can($permissions.xApi.CanInviteUsers)"
         variant="outline"
         class="flex-none"
         @click="openInviteModal"
@@ -265,7 +265,7 @@
               <td v-if="canManageMembers" class="px-5 text-right">
                 <MembersDropdownMenu
                   v-if="canShowDropdownFor(contact)"
-                  :contact-status="contact.status"
+                  :contact-status="contact.isLockedInOrganization ? ContactStatus.Locked : contact.status"
                   :can-edit-organization="userCanEditOrganization"
                   :can-login-on-behalf="canLoginOnBehalfOf(contact)"
                   class="inline-block"
@@ -301,7 +301,7 @@
               <div v-if="canManageMembers" class="w-7 flex-none">
                 <MembersDropdownMenu
                   v-if="canShowDropdownFor(item)"
-                  :contact-status="item.status"
+                  :contact-status="item.isLockedInOrganization ? ContactStatus.Locked : item.status"
                   :can-edit-organization="userCanEditOrganization"
                   :can-login-on-behalf="canLoginOnBehalfOf(item)"
                   placement="left-start"
@@ -332,7 +332,7 @@ import { usePageHead } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { B2B_ROLES } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
-import { StorefrontPermissions, XApiPermissions } from "@/core/enums";
+import { PlatformPermissions, XApiPermissions } from "@/core/enums";
 import { getFilterExpressionFromFacets } from "@/core/utilities";
 import { useUser } from "@/shared/account";
 import { FacetItem } from "@/shared/common";
@@ -345,6 +345,7 @@ import {
   useOrganizationContacts,
 } from "@/shared/company";
 import { useOrganizationContactsFilterFacets } from "@/shared/company/composables/useOrganizationContactsFilterFacets";
+import { ContactStatus } from "@/shared/company/types";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import type { FacetItemType, FacetValueItemType, ISortInfo } from "@/core/types";
@@ -404,7 +405,7 @@ const filtersButtonElement = shallowRef<HTMLElement | null>(null);
 const filtersDropdownElement = shallowRef<HTMLElement | null>(null);
 
 const userCanEditOrganization = computed<boolean>(() => checkPermissions(XApiPermissions.CanEditOrganization));
-const userCanLoginOnBehalf = computed<boolean>(() => checkPermissions(StorefrontPermissions.CanImpersonate));
+const userCanLoginOnBehalf = computed<boolean>(() => checkPermissions(PlatformPermissions.CanImpersonate));
 const canManageMembers = computed<boolean>(() => userCanEditOrganization.value || userCanLoginOnBehalf.value);
 
 function canLoginOnBehalfOf(contact: ExtendedContactType): boolean {
@@ -533,10 +534,14 @@ function openLockOrUnlockModal(contact: ExtendedContactType, isUnlock?: boolean)
       title: isUnlock ? t("shared.company.unblock_member_modal.title") : t("shared.company.block_member_modal.title"),
       text: isUnlock ? t("shared.company.unblock_member_modal.text") : t("shared.company.block_member_modal.text"),
       async onConfirm() {
-        if (isUnlock) {
-          await unlockContact(contact);
-        } else {
-          await lockContact(contact);
+        try {
+          if (isUnlock) {
+            await unlockContact(contact);
+          } else {
+            await lockContact(contact);
+          }
+        } catch {
+          notifications.error({ duration: 5000, single: true, text: t("common.messages.contact_lock_failed") });
         }
         closeLockOrUnlockModal();
       },
@@ -590,12 +595,12 @@ function openEditCustomerRoleModal(contact: ExtendedContactType): void {
     component: EditCustomerRoleModal,
     props: {
       roles: B2B_ROLES,
-      currentRoleId: contact.extended.roles[0].id,
+      currentRoleId: contact.extended.roles[0]?.id,
       loading: contactsLoading,
 
       async onConfirm(selectedRoleId: string): Promise<void> {
         const result = await changeContactOrganizationRole({
-          userId: contact.securityAccounts![0].id,
+          memberId: contact.id,
           roleIds: [selectedRoleId],
         });
 
@@ -612,7 +617,7 @@ function openEditCustomerRoleModal(contact: ExtendedContactType): void {
           notifications.error({
             ...notification,
 
-            text: t("common.messages.role_update_failed", [result?.errors?.join(" ")]),
+            text: t("common.messages.role_update_failed"),
           });
         }
 

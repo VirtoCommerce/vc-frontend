@@ -37,7 +37,7 @@ import { computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useErrorsTranslator, usePageHead } from "@/core/composables";
-import { StorefrontPermissions } from "@/core/enums";
+import { PlatformPermissions } from "@/core/enums";
 import { ImpersonateForm, useImpersonate, useUser } from "@/shared/account";
 import type { IdentityErrorType } from "@/core/api/graphql/types";
 
@@ -57,7 +57,7 @@ usePageHead({
 });
 
 const canSkipVerification = computed<boolean>(
-  () => isAuthenticated.value && (!!operator.value || checkPermissions(StorefrontPermissions.CanImpersonate)),
+  () => isAuthenticated.value && (!!operator.value || checkPermissions(PlatformPermissions.CanImpersonate)),
 );
 
 const { translate } = useErrorsTranslator<IdentityErrorType>("shared.account.impersonate_form.errors");
@@ -66,7 +66,7 @@ const translatedSilentErrors = computed<string[]>(() => {
   const list = errors.value ?? [];
   return list
     .map((error) => translate(error))
-    .filter((message): message is string => typeof message === "string" && message.length > 0);
+    .filter((message): message is string => typeof message === "string" && !!message);
 });
 
 function goHome(): void {

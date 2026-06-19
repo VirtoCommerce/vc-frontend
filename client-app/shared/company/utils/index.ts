@@ -19,7 +19,7 @@ export function getFullName(contact: ContactType): string {
 }
 
 export function getContactRoles(contact: ContactType): RoleType[] {
-  return contact.securityAccounts?.[0]?.roles ?? [];
+  return contact.rolesInOrganization ?? contact.securityAccounts?.[0]?.roles ?? [];
 }
 
 export function convertToExtendedContact(contact: ContactType, fullNameFallback: string): ExtendedContactType {

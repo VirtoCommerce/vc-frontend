@@ -16,7 +16,7 @@ import {
   updateContact,
 } from "@/core/api/graphql/account";
 import { useAuth } from "@/core/composables/useAuth";
-import { ORGANIZATION_MAINTAINER, USER_ID_LOCAL_STORAGE } from "@/core/constants";
+import { USER_ID_LOCAL_STORAGE } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import {
@@ -63,7 +63,7 @@ export function _useUser() {
   const operator = computed(() => user.value?.operator ?? null);
 
   const broadcast = useBroadcast();
-  const { refresh } = useAuth();
+  const { refresh, errors: authErrors } = useAuth();
   const { openModal, closeModal } = useModal();
   const contactCultureName = computed(() => user.value?.contact?.defaultLanguage);
   const userGroups = computed(() => user.value?.contact?.groups || []);
@@ -127,7 +127,7 @@ export function _useUser() {
     let access = !!user.value?.isAdministrator;
 
     if (!access) {
-      access = permissions.every((permission) => user.value?.permissions?.includes(permission));
+      access = permissions.every((permission) => user.value?.permissions?.includes(permission as never));
     }
 
     return access;
@@ -354,17 +354,23 @@ export function _useUser() {
     }
   }
 
-  async function switchOrganization(organizationId: string): Promise<void> {
+  async function switchOrganization(organizationId: string): Promise<boolean> {
     loading.value = true;
 
     try {
       await refresh(organizationId);
 
+      if (authErrors.value?.length) {
+        return false;
+      }
+
       localStorage.setItem(`organization-id-${user.value?.userName}`, organizationId);
 
       void broadcast.emit(pageReloadEvent, null, TabsType.ALL);
+      return true;
     } catch (e) {
       Logger.error(switchOrganization.name, e);
+      return false;
     } finally {
       loading.value = false;
     }
@@ -374,11 +380,6 @@ export function _useUser() {
     isAuthenticated,
     isCorporateMember,
     isMultiOrganization: computed(() => (user.value?.contact?.organizations?.totalCount ?? 0) > 1),
-    isOrganizationMaintainer: computed(
-      () =>
-        user.value?.roles?.some((role) => role.name.toLowerCase() === ORGANIZATION_MAINTAINER.name.toLowerCase()) ??
-        false,
-    ),
     organization,
     operator,
     userGroups,

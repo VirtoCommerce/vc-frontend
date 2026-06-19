@@ -1,5 +1,16 @@
 <template>
   <div class="top-header-organizations">
+    <VcAlert
+      v-if="switchError"
+      class="top-header-organizations__error"
+      color="danger"
+      size="sm"
+      variant="outline-dark"
+      icon
+    >
+      {{ switchError }}
+    </VcAlert>
+
     <div v-if="!isShowSearch" class="top-header-organizations__label top-header-organizations__label--static">
       {{ $t("common.labels.organizations") }}
     </div>
@@ -89,7 +100,7 @@
 <script setup lang="ts">
 import { useDebounceFn } from "@vueuse/core";
 import { computed, ref, watch } from "vue";
-import { useUser, useUserOrganizations } from "@/shared/account";
+import { useOrganizationSwitcher, useUser, useUserOrganizations } from "@/shared/account";
 import { useComponentId } from "@/ui-kit/composables";
 
 const emit = defineEmits<{
@@ -98,7 +109,7 @@ const emit = defineEmits<{
 
 const SEARCH_DEBOUNCE_MS = 300;
 
-const { user, switchOrganization, organization } = useUser();
+const { user, organization } = useUser();
 const {
   searchPhrase,
   organizations,
@@ -111,6 +122,7 @@ const {
   reset,
   isShowSearch,
 } = useUserOrganizations();
+const { switchError, trySwitch } = useOrganizationSwitcher();
 
 const contactOrganizationId = ref(user.value?.contact?.organizationId);
 
@@ -196,7 +208,13 @@ async function selectOrganization(organizationId: string): Promise<void> {
 
   contactOrganizationId.value = organizationId;
 
-  await switchOrganization(organizationId);
+  const succeeded = await trySwitch(organizationId);
+
+  if (!succeeded) {
+    contactOrganizationId.value = user.value?.contact?.organizationId;
+    return;
+  }
+
   emit("organizationSelected");
 }
 
@@ -223,6 +241,10 @@ async function onSearchClear(): Promise<void> {
 <style lang="scss">
 .top-header-organizations {
   @apply rounded-b-md border-t bg-neutral-50;
+
+  &__error {
+    @apply m-2;
+  }
 
   &__search {
     @apply border-b bg-neutral-100 p-3 pt-2;
