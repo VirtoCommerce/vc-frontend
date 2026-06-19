@@ -12,4 +12,5 @@ export * from "./logger";
 export * from "./menu";
 export * from "./product";
 export * from "./properties";
+export * from "./same-origin";
 export * from "./search";

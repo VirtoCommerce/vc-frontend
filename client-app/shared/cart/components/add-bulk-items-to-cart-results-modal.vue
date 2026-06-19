@@ -61,6 +61,7 @@
                   v-if="item.productExists"
                   :to="links[item.productId]"
                   target="_blank"
+                  rel="noopener noreferrer"
                   class="font-bold text-[--link-color] hover:text-[--link-hover-color]"
                 >
                   {{ item.name }}

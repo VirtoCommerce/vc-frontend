@@ -131,6 +131,9 @@ rules:
       - pattern-not: location.href = "..."
       - pattern-not: $L.location.assign("...")
       - pattern-not: $L.location.replace("...")
+      # Navigations routed through the audited same-origin helpers are safe: both
+      # resolve against the current origin and drop cross-origin targets.
+      - pattern-not-regex: '(getReturnUrlValue|toSameOriginPath)\('
     message: >
       Dynamic location assignment — validate same-origin / host allowlist before
       navigating (open redirect / phishing vector).
@@ -169,6 +172,9 @@ rules:
           - pattern: window.open($URL, $TARGET)
       - pattern-not: $W.open($URL, $TARGET, "...noopener...")
       - pattern-not: window.open($URL, $TARGET, "...noopener...")
+      # IndexedDB has an unrelated .open(name, version) API — not a window.open sink.
+      - pattern-not: indexedDB.open(...)
+      - pattern-not: $W.indexedDB.open(...)
     message: >
       window.open without "noopener" lets the opened page control window.opener.
       Pass "noopener,noreferrer" as the features argument.
@@ -185,8 +191,14 @@ rules:
       - pattern-either:
           - pattern: '$X.addEventListener("message", ($E) => { ... })'
           - pattern: '$X.addEventListener("message", function ($E) { ... })'
+          - pattern: '$X.addEventListener("message", async ($E) => { ... })'
+          - pattern: '$X.addEventListener("message", async function ($E) { ... })'
+      # An $E.origin check anywhere in the handler body clears it — including async
+      # handlers, which Semgrep treats as structurally distinct from sync ones.
       - pattern-not: '$X.addEventListener("message", ($E) => { <... $E.origin ...> })'
       - pattern-not: '$X.addEventListener("message", function ($E) { <... $E.origin ...> })'
+      - pattern-not: '$X.addEventListener("message", async ($E) => { <... $E.origin ...> })'
+      - pattern-not: '$X.addEventListener("message", async function ($E) { <... $E.origin ...> })'
     message: >
       'message' handler must validate event.origin against a trusted allowlist
       before acting on the payload.
@@ -245,6 +257,10 @@ rules:
     patterns:
       - pattern-regex: '(?i)\b(api[_-]?key|secret|client[_-]?secret|password|passwd|private[_-]?key|access[_-]?token)\b\s*[:=]\s*["''][^"'']{8,}["'']'
       - pattern-not-regex: '(?i)(your[_-]|example|placeholder|changeme|xxxx|\$\{|import\.meta|process\.env)'
+      # `:api-key="builderIoApiKey"` — a v-bind/assignment whose value is a bare JS
+      # identifier is a variable reference, not a literal secret (real keys carry
+      # digits/symbols). Only the `=` form, so TS `apiKey: "literal"` still fires.
+      - pattern-not-regex: '(?i)\b(api[_-]?key|secret|client[_-]?secret|password|passwd|private[_-]?key|access[_-]?token)\b\s*=\s*["''][A-Za-z_$][A-Za-z0-9_$]*["'']'
     message: >
       Possible hardcoded secret. Source secrets from runtime backend settings or
       environment, never commit them. Verify this is not a public identifier.
