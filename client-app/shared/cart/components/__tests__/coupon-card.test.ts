@@ -9,7 +9,7 @@ const mockTranslate = (key: string) => key;
 vi.mock("vue-i18n", () => ({
   useI18n: () => ({
     t: mockTranslate,
-    d: (value: unknown) => String(value),
+    d: String,
   }),
 }));
 
