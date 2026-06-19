@@ -430,6 +430,7 @@
           "title": "Skannaa viivakoodi",
           "description": "Jatkaaksesi, aktivoi kamerasi skannataksesi tuotteen viivakoodin. Tämä auttaa meitä tunnistamaan tuotteen nopeasti ja tarjoamaan tarvittavat tiedot.",
           "browse": "Selaa tiedostoja",
+          "upload_image": "Lataa kuva viivakoodin skannausta varten",
           "cancel": "@:common.buttons.cancel",
           "errors": {
             "no_barcode_detected": "Kuvasta ei löydy viivakoodeja",

@@ -430,6 +430,7 @@
           "title": "Escanear código de barras",
           "description": "Para continuar, habilita tu cámara para escanear el código de barras del producto. Esto nos ayudará a identificar rápidamente el artículo y proporcionarte la información necesaria.",
           "browse": "Explorar archivos",
+          "upload_image": "Sube una imagen para escanear un código de barras",
           "cancel": "@:common.buttons.cancel",
           "errors": {
             "no_barcode_detected": "No se detectaron códigos de barras en la imagen",

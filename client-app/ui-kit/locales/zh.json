@@ -110,6 +110,7 @@
     "file_uploader": {
       "drag_and_drop": "拖放文件到此处或",
       "browse": "浏览您的文件",
+      "aria_label": "选择文件",
       "requirements": "可上传的文件格式为 {formats}。每个文件不得超过 {fileSize}。最多允许 {maxFileCount} 个文件。",
       "any_format": "任何",
       "errors": {

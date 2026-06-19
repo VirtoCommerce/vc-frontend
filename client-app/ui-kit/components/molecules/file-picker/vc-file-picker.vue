@@ -11,6 +11,7 @@
       ref="fileInputRef"
       type="file"
       class="vc-file-picker__input"
+      :aria-label="ariaLabel ?? $t('ui_kit.file_uploader.aria_label')"
       :multiple="maxFileCount > 1"
       :accept="allowedExtensions?.join(',')"
       @input="onFileChange"
@@ -57,6 +58,7 @@ interface IProps {
   files: FileType[];
   requirements?: string;
   disabled?: boolean;
+  ariaLabel?: string;
 }
 
 interface IEmits {

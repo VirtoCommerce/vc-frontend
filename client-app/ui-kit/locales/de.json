@@ -110,6 +110,7 @@
     "file_uploader": {
       "drag_and_drop": "Datei hierher ziehen oder",
       "browse": "Durchsuchen Sie Ihre Dateien",
+      "aria_label": "Dateien auswählen",
       "requirements": "Die Dateien, die hochgeladen werden können, sind im Format {formats}. Jede Datei darf {fileSize} nicht überschreiten. Maximal {maxFileCount} Dateien erlaubt.",
       "any_format": "beliebig",
       "errors": {

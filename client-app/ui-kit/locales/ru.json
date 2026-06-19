@@ -110,6 +110,7 @@
     "file_uploader": {
       "drag_and_drop": "Перетащите файл сюда или",
       "browse": "Просмотрите ваши файлы",
+      "aria_label": "Выберите файлы",
       "requirements": "Доступные для загрузки файлы в форматах {formats}. Каждый файл не должен превышать {fileSize}. Максимум {maxFileCount} файлов разрешено.",
       "any_format": "любой",
       "errors": {

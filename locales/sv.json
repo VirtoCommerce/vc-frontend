@@ -430,6 +430,7 @@
           "title": "Skanna streckkod",
           "description": "För att fortsätta, aktivera din kamera för att skanna streckkoden på produkten. Detta hjälper oss att snabbt identifiera artikeln och ge dig nödvändig information.",
           "browse": "Bläddra filer",
+          "upload_image": "Ladda upp en bild för att skanna en streckkod",
           "cancel": "@:common.buttons.cancel",
           "errors": {
             "no_barcode_detected": "Inga streckkoder hittades i bilden",

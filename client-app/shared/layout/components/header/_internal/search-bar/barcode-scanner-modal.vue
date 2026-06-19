@@ -30,6 +30,7 @@
       ref="fileInputRef"
       type="file"
       class="barcode-scanner-modal__input"
+      :aria-label="$t('shared.layout.search_bar.barcode_detector.upload_image')"
       accept="image/*"
       @change="onFileSelected"
     />

@@ -430,6 +430,7 @@
           "title": "Skanowanie kodu kreskowego",
           "description": "Aby kontynuować, włącz kamerę, aby zeskanować kod kreskowy na produkcie. Pomoże nam to szybko zidentyfikować przedmiot i dostarczyć niezbędne informacje.",
           "browse": "Przeglądaj pliki",
+          "upload_image": "Prześlij obraz, aby zeskanować kod kreskowy",
           "cancel": "@:common.buttons.cancel",
           "errors": {
             "no_barcode_detected": "Nie wykryto kodów kreskowych na obrazie",

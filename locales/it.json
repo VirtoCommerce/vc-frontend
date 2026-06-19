@@ -430,6 +430,7 @@
           "title": "Scansione codice a barre",
           "description": "Per procedere, abilita la fotocamera per scansionare il codice a barre sul prodotto. Questo ci aiuterà a identificare rapidamente l'articolo e fornirti le informazioni necessarie.",
           "browse": "Sfoglia file",
+          "upload_image": "Carica un'immagine per scansionare un codice a barre",
           "cancel": "@:common.buttons.cancel",
           "errors": {
             "no_barcode_detected": "Nessun codice a barre rilevato nell'immagine",

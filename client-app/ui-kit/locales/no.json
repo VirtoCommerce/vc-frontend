@@ -110,6 +110,7 @@
     "file_uploader": {
       "drag_and_drop": "Dra og slipp filen her eller",
       "browse": "Bla gjennom filene dine",
+      "aria_label": "Velg filer",
       "requirements": "Filene som kan lastes opp er i formatene {formats}. Hver fil må ikke overskride {fileSize}. Maksimum {maxFileCount} filer tillatt.",
       "any_format": "alle",
       "errors": {

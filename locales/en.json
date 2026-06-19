@@ -430,6 +430,7 @@
           "title": "Barcode scan",
           "description": "To proceed, enable your camera to scan the barcode on the product. This will help us quickly identify the item and provide you with the necessary information.",
           "browse": "Browse files",
+          "upload_image": "Upload an image to scan a barcode",
           "cancel": "@:common.buttons.cancel",
           "errors": {
             "no_barcode_detected": "No barcodes detected in the image",

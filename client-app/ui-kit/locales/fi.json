@@ -110,6 +110,7 @@
     "file_uploader": {
       "drag_and_drop": "Vedä ja pudota tiedosto tähän tai",
       "browse": "Selaa tiedostojasi",
+      "aria_label": "Valitse tiedostot",
       "requirements": "Ladattavissa olevat tiedostot ovat muodossa {formats}. Yksittäisen tiedoston koko ei saa ylittää {fileSize}. Enintään {maxFileCount} tiedostoa sallittu.",
       "any_format": "mikä tahansa",
       "errors": {

@@ -430,6 +430,7 @@
           "title": "条码扫描",
           "description": "请启用相机扫描产品条形码以继续。 这将帮助我们快速识别商品并为您提供必要的信息。",
           "browse": "浏览文件",
+          "upload_image": "上传图片以扫描条形码",
           "cancel": "@:common.buttons.cancel",
           "errors": {
             "no_barcode_detected": "图片中未检测到条形码",

@@ -430,6 +430,7 @@
           "title": "Scan du code-barres",
           "description": "Pour continuer, veuillez activer votre caméra pour scanner le code-barres sur le produit. Cela nous aidera à identifier rapidement l'article et à vous fournir les informations nécessaires.",
           "browse": "Parcourir les fichiers",
+          "upload_image": "Télécharger une image pour scanner un code-barres",
           "cancel": "@:common.buttons.cancel",
           "errors": {
             "no_barcode_detected": "Aucun code-barres détecté dans l'image",

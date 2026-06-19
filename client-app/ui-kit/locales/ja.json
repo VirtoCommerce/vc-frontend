@@ -110,6 +110,7 @@
     "file_uploader": {
       "drag_and_drop": "ここにファイルをドラッグ＆ドロップまたは",
       "browse": "ファイルを参照",
+      "aria_label": "ファイルを選択",
       "requirements": "アップロード可能なファイルは {formats} 形式です。各ファイルは {fileSize} を超えてはなりません。最大 {maxFileCount} ファイルが許可されています。",
       "any_format": "任意",
       "errors": {

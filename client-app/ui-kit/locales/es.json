@@ -110,6 +110,7 @@
     "file_uploader": {
       "drag_and_drop": "Arrastra y suelta el archivo aquí o",
       "browse": "Explora tus archivos",
+      "aria_label": "Elegir archivos",
       "requirements": "Los archivos disponibles para cargar están en formatos {formats}. Cada archivo no debe exceder {fileSize}. Máximo {maxFileCount} archivos permitidos.",
       "any_format": "cualquier",
       "errors": {

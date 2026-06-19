@@ -110,6 +110,7 @@
     "file_uploader": {
       "drag_and_drop": "Trascina e rilascia il file qui o",
       "browse": "Sfoglia i tuoi file",
+      "aria_label": "Scegli file",
       "requirements": "I file disponibili per il caricamento sono nei formati {formats}. Ogni file non deve superare {fileSize}. Massimo {maxFileCount} file consentiti.",
       "any_format": "qualsiasi",
       "errors": {

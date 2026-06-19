@@ -430,6 +430,7 @@
           "title": "Barcode-Scan",
           "description": "Um fortzufahren, aktivieren Sie bitte Ihre Kamera, um den Barcode auf dem Produkt zu scannen. Dies hilft uns, den Artikel schnell zu identifizieren und Ihnen die notwendigen Informationen bereitzustellen.",
           "browse": "Dateien durchsuchen",
+          "upload_image": "Bild hochladen, um einen Barcode zu scannen",
           "cancel": "@:common.buttons.cancel",
           "errors": {
             "no_barcode_detected": "Keine Barcodes im Bild erkannt",

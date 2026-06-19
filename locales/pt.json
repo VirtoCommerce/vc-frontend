@@ -430,6 +430,7 @@
           "title": "Leitura de código de barras",
           "description": "Para continuar, ative a câmera para ler o código de barras do produto. Isso nos ajudará a identificar o item rapidamente e fornecer as informações necessárias.",
           "browse": "Procurar ficheiros",
+          "upload_image": "Carregue uma imagem para ler um código de barras",
           "cancel": "@:common.buttons.cancel",
           "errors": {
             "no_barcode_detected": "Nenhum código de barras detetado na imagem",

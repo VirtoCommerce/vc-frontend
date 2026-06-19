@@ -110,6 +110,7 @@
     "file_uploader": {
       "drag_and_drop": "Glissez-déposez le fichier ici ou",
       "browse": "Parcourir vos fichiers",
+      "aria_label": "Choisir des fichiers",
       "requirements": "Les fichiers disponibles pour le téléchargement sont aux formats {formats}. Chaque fichier ne doit pas dépasser {fileSize}. Maximum {maxFileCount} fichiers autorisés.",
       "any_format": "tout",
       "errors": {

@@ -110,6 +110,7 @@
     "file_uploader": {
       "drag_and_drop": "Przeciągnij i upuść plik tutaj lub",
       "browse": "Przeglądaj swoje pliki",
+      "aria_label": "Wybierz pliki",
       "requirements": "Dostępne do przesłania pliki są w formatach {formats}. Każdy plik nie powinien przekraczać {fileSize}. Maksymalnie {maxFileCount} plików dozwolonych.",
       "any_format": "dowolny",
       "errors": {
