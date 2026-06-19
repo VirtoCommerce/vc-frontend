@@ -21,6 +21,33 @@ function handleBeforeEnter(
     next();
   }
 }
+
+async function restoreUcpHandoffCartId(ucpSession: string): Promise<string> {
+  const response = await fetch("/ucp/v1/internal/handoff/restore", {
+    method: "POST",
+    credentials: "omit",
+    headers: {
+      "content-type": "application/json",
+      accept: "application/json",
+    },
+    body: JSON.stringify({ ucp_session: ucpSession }),
+  });
+
+  if (!response.ok) {
+    const details = await response.text().catch(() => "");
+    throw new Error(`Unable to restore UCP handoff session. Status: ${response.status}. ${details}`);
+  }
+
+  const payload = (await response.json()) as { checkout?: { cart_id?: string; cart?: { id?: string } } };
+  const cartId = payload.checkout?.cart_id ?? payload.checkout?.cart?.id;
+
+  if (!cartId) {
+    throw new Error("UCP handoff session does not include cart id.");
+  }
+
+  return cartId;
+}
+
 export const checkoutRoutes: RouteRecordRaw[] = [
   {
     path: "/checkout/completed",
@@ -70,10 +97,23 @@ export const checkoutRoutes: RouteRecordRaw[] = [
       },
     ],
     meta: { layout: "Secure", redirectable: false },
-    beforeEnter(to, from, next) {
+    async beforeEnter(to, from, next) {
+      if (typeof to.query.ucp_session === "string") {
+        try {
+          const cartId = await restoreUcpHandoffCartId(to.query.ucp_session);
+          next({ name: ROUTES.CART_ID.NAME, params: { cartId }, query: { ucp_handoff: "1" }, replace: true });
+        } catch (error) {
+          console.error("Unable to restore UCP handoff session.", error);
+          next({ name: ROUTES.CART.NAME, replace: true });
+        }
+        return;
+      }
+
       if (from.name === ROUTES.CART.NAME || from.name === ROUTES.CART_ID.NAME) {
         next();
       } else if (from.name === "CheckoutPaymentResult" && to.name === "CheckoutPayment") {
+        next();
+      } else if (to.query.ucp_handoff === "1") {
         next();
       } else if (to.params.cartId) {
         next({ name: ROUTES.CART_ID.NAME, params: { cartId: to.params.cartId }, replace: true });
