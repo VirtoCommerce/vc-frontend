@@ -111,7 +111,7 @@ const viewConfig = computed<IViewConfig>(() => {
       iconName: "round-check",
       button: {
         icon: "outline-trash",
-        variant: "no-background",
+        variant: "ghost",
         color: "neutral",
         disabled: false,
         ariaLabel: removeAriaLabel,

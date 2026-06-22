@@ -15,7 +15,7 @@
       <VcButton
         :icon="isFullView ? 'delete-2' : 'arrows-expand'"
         color="neutral"
-        variant="no-border"
+        variant="surface"
         size="sm"
         @click="isFullView = !isFullView"
       />

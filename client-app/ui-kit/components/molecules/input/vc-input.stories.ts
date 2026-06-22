@@ -1,4 +1,5 @@
-import { VcInput, VcButton } from "..";
+import { VcInput, VcButton, VcAlert } from "..";
+import { VcMarkdownRender } from "../../atoms";
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
 const SIZES = ["xs", "sm", "md"];
@@ -17,6 +18,8 @@ const meta: Meta = {
     type: {
       control: "radio",
       options: TYPES,
+      description:
+        "Input type. Deprecated value: `date` — use VcDatePicker (typed date entry with calendar popover) or VcDateInput (input-only) instead.",
       table: { type: { summary: TYPES.join(" | ") } },
     },
     size: {
@@ -165,4 +168,28 @@ export const WithMessageAndCounter: StoryType = {
       },
     },
   },
+};
+
+const DATE_TYPE_DEPRECATION =
+  '`type="date"` is deprecated — use **VcDatePicker** (calendar popover) or **VcDateInput** (input-only) instead. It still renders for backward compatibility and emits a one-time dev console warning.';
+
+export const Deprecations: StoryType = {
+  tags: ["deprecated"],
+  parameters: {
+    docs: {
+      description: {
+        story: DATE_TYPE_DEPRECATION,
+      },
+    },
+  },
+  render: () => ({
+    components: { VcInput, VcAlert, VcMarkdownRender },
+    setup: () => ({ message: DATE_TYPE_DEPRECATION }),
+    template: `<div class="space-y-3">
+      <VcAlert color="warning" variant="outline" icon title="Deprecated">
+        <VcMarkdownRender :src="message" />
+      </VcAlert>
+      <VcInput type="date" label="Date input (deprecated)" />
+    </div>`,
+  }),
 };

@@ -43,7 +43,7 @@
           <VcButton
             type="button"
             icon="calendar"
-            variant="no-background"
+            variant="ghost"
             color="primary"
             :disabled="disabled || readonly"
             :aria-label="t('ui_kit.accessibility.open_calendar')"

@@ -17,7 +17,7 @@
           v-if="applied"
           :aria-label="$t('ui_kit.buttons.deny')"
           color="neutral"
-          variant="no-background"
+          variant="ghost"
           :disabled="disabled"
           icon="delete-thin"
           size="sm"
@@ -28,7 +28,7 @@
           v-else
           :aria-label="$t('ui_kit.buttons.apply')"
           icon="apply"
-          variant="no-background"
+          variant="ghost"
           size="sm"
           :disabled="value.length === 0 || disabled || !!errorMessage"
           @click="$emit('apply')"
