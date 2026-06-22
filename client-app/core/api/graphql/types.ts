@@ -5229,8 +5229,17 @@ export type ProductConnection = {
   range_facets: Array<RangeFacet>;
   /** Term facets */
   term_facets: Array<TermFacet>;
+  /** Available sort orderings ("sort by" options) for the store */
+  sort_definitions: Array<SortDefinitionType>;
   /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
   totalCount?: Maybe<Scalars['Int']['output']>;
+};
+
+export type SortDefinitionType = {
+  id: Scalars['String']['output'];
+  isDefault: Scalars['Boolean']['output'];
+  name?: Maybe<Scalars['String']['output']>;
+  selected: Scalars['Boolean']['output'];
 };
 
 /** An edge in a connection from an object to another object of type `Product`. */

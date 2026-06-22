@@ -22,6 +22,7 @@ import {
   rangeFacetToCommonFacet,
   termFacetToCommonFacet,
 } from "@/core/utilities";
+import { setProductSortDefinitions } from "@/shared/catalog/composables/useProductSortDefinitions";
 import { usePurchasedBefore } from "@/shared/catalog/composables/usePurchasedBefore";
 import { CATALOG_PAGINATION_MODES } from "@/shared/catalog/constants/catalog";
 import { useModal } from "@/shared/modal";
@@ -92,7 +93,8 @@ export function useProducts(
 
   const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
     defaultValue: PRODUCT_SORTING_LIST[0].id,
-    validator: (value) => PRODUCT_SORTING_LIST.some((item) => item.id === value),
+    // Sort codes are store-defined (dynamic) and resolved server-side, so accept any token-shaped value.
+    validator: (value) => /^[a-z0-9-_]*$/i.test(value),
   });
 
   const searchQueryParam = useRouteQueryParam<string>(QueryParamName.SearchPhrase, {
@@ -131,7 +133,7 @@ export function useProducts(
     facets: [],
     filters: [],
   });
-  const normalizedFacetsToHide = computed(() => options.facetsToHide?.map((facet) => facet.toLowerCase()));
+  const normalizedFacetsToHide = computed(() => options.facetsToHide?.map((facet) => facet?.toLowerCase()));
   const productFiltersSorted = computed(() => {
     return { ...productsFilters.value, facets: getSortedFacets(productsFilters.value.facets) };
   });
@@ -150,7 +152,7 @@ export function useProducts(
     if (options.filtersDisplayOrder?.value?.order?.length) {
       const order = options.filtersDisplayOrder.value.order
         .split(",")
-        .map((item) => item.trim().toLowerCase())
+        .map((item) => item?.trim().toLowerCase())
         .filter(Boolean);
 
       if (!order.length) {
@@ -160,14 +162,17 @@ export function useProducts(
       const sortedFacets: FacetItemType[] = [];
 
       order.forEach((filter) => {
-        const facet = allFacets.find(({ label }) => label.toLowerCase() === filter);
+        const facet = allFacets.find(({ label }) => label?.toLowerCase() === filter);
         if (facet) {
           sortedFacets.push(facet);
         }
       });
 
       return options.filtersDisplayOrder?.value?.showRest
-        ? [...sortedFacets, ...allFacets.filter(({ label }) => !order.includes(label.toLowerCase()))]
+        ? [
+            ...sortedFacets,
+            ...allFacets.filter(({ label }) => !order.some((orderItem) => orderItem === label?.toLowerCase())),
+          ]
         : sortedFacets;
     }
 
@@ -338,10 +343,10 @@ export function useProducts(
 
   function hasSelectedFacets(): boolean {
     const filteredFacets = facets.value.filter(
-      (facet) => !normalizedFacetsToHide.value?.includes(facet.paramName.toLowerCase()),
+      (facet) => !normalizedFacetsToHide.value?.some((name) => name === facet.paramName.toLowerCase()),
     );
     const filteredFilters = productsFilters.value.filters.filter(
-      (filter) => !normalizedFacetsToHide.value?.includes(filter.name.toLowerCase()),
+      (filter) => !normalizedFacetsToHide.value?.some((name) => name === filter.name.toLowerCase()),
     );
     return !!filteredFacets.length && !!filteredFilters.length;
   }
@@ -391,6 +396,7 @@ export function useProducts(
         range_facets = [],
         totalCount = 0,
         filters = [],
+        sort_definitions = [],
       } = await searchProducts(searchParams, {
         withFacets,
         withImages,
@@ -408,6 +414,8 @@ export function useProducts(
       addPageHistory(searchParams.page ?? 1);
 
       if (withFacets) {
+        setProductSortDefinitions(sort_definitions);
+
         setFacets({
           termFacets: term_facets,
           rangeFacets: range_facets,
@@ -471,7 +479,7 @@ export function useProducts(
   }
 
   function addPageHistory(page?: number) {
-    if (page && page <= pagesCount.value && !pageHistory.value.includes(page)) {
+    if (page && page <= pagesCount.value && !pageHistory.value.some((visitedPage) => visitedPage === page)) {
       pageHistory.value.push(page);
     }
   }
@@ -506,7 +514,7 @@ export function useProducts(
     currentPage.value = page;
 
     if (catalogPaginationMode === CATALOG_PAGINATION_MODES.loadMore && page > Math.max(...pageHistory.value)) {
-      pageQueryParam.value = page.toString();
+      pageQueryParam.value = String(page);
     }
   }
 
@@ -524,7 +532,7 @@ export function useProducts(
   }
 
   function isExcludedFilter(filter: SearchProductFilterResult): boolean {
-    return EXCLUDED_FILTER_NAMES.includes(filter.name);
+    return EXCLUDED_FILTER_NAMES.some((name) => name === filter.name);
   }
 
   function prepareFilters(filters: SearchProductFilterResult[]) {
