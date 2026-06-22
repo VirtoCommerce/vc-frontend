@@ -22,7 +22,7 @@
         :size="size"
         square
         color="secondary"
-        variant="solid-light"
+        variant="soft"
         :aria-expanded="ariaExpandedValue"
         :aria-label="buttonAriaLabel"
         @click="expand"

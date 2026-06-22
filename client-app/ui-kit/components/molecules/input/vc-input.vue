@@ -58,7 +58,7 @@
           type="button"
           icon="delete-thin"
           color="neutral"
-          variant="no-background"
+          variant="ghost"
           class="vc-input__clear"
           :icon-size="size === 'md' ? '0.875rem' : '0.75rem'"
           @keydown.enter.stop.prevent
@@ -73,7 +73,7 @@
           :aria-label="$t('ui_kit.buttons.show_hide_password')"
           type="button"
           :icon="passwordVisibilityIcon"
-          variant="no-border"
+          variant="surface"
           :icon-size="size === 'md' ? '1.5rem' : '1.25rem'"
           class="vc-input__password-button"
           @click="togglePasswordVisibility"
