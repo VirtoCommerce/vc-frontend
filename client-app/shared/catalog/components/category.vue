@@ -105,7 +105,7 @@
               </VcLabel>
 
               <VcSelect
-                v-model="sortQueryParam"
+                v-model="selectedSort"
                 text-field="name"
                 value-field="id"
                 :disabled="fetchingProducts"
@@ -242,7 +242,10 @@ import {
 } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
 import { useCategorySeo } from "@/shared/catalog/composables/useCategorySeo";
-import { useProductSortDefinitions } from "@/shared/catalog/composables/useProductSortDefinitions";
+import {
+  useProductSortDefinitions,
+  useSelectedSortOption,
+} from "@/shared/catalog/composables/useProductSortDefinitions";
 import { CATALOG_PAGINATION_MODES, CatalogControl } from "@/shared/catalog/constants/catalog";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar.ts";
 import { useSearchScore } from "@/shared/layout/composables/useSearchScore.ts";
@@ -472,6 +475,7 @@ const categoryProductsAnchor = shallowRef<HTMLElement | null>(null);
 const { t } = useI18n();
 
 const { sortList: translatedProductSortingList } = useProductSortDefinitions();
+const selectedSort = useSelectedSortOption(sortQueryParam);
 
 function cancelControl(control: CatalogControl) {
   switch (control) {

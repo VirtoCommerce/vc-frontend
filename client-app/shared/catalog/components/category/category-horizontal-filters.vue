@@ -48,7 +48,7 @@
             @click="sortingItemClickHandler(sortingOption.id, close)"
           >
             <VcRadioButton
-              v-model="sortQueryParam"
+              v-model="selectedSort"
               size="sm"
               :value="sortingOption.id"
               :label="sortingOption.name"
@@ -65,7 +65,10 @@
 import { useRouteQueryParam } from "@/core/composables";
 import { PRODUCT_SORTING_LIST } from "@/core/constants";
 import { QueryParamName } from "@/core/enums";
-import { useProductSortDefinitions } from "@/shared/catalog/composables/useProductSortDefinitions";
+import {
+  useProductSortDefinitions,
+  useSelectedSortOption,
+} from "@/shared/catalog/composables/useProductSortDefinitions";
 import type { SearchProductFilterResult } from "@/core/api/graphql/types";
 import type { ProductsFiltersType } from "@/shared/catalog";
 import ProductsFilters from "@/shared/catalog/components/products-filters.vue";
@@ -96,6 +99,7 @@ const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
 });
 
 const { sortList: translatedProductSortingList } = useProductSortDefinitions();
+const selectedSort = useSelectedSortOption(sortQueryParam);
 
 function sortingItemClickHandler(id: string, close: () => void) {
   sortQueryParam.value = id;

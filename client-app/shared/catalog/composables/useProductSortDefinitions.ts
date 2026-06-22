@@ -2,6 +2,7 @@ import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { PRODUCT_SORTING_LIST } from "@/core/constants";
 import type { SortDefinitionType } from "@/core/api/graphql/types";
+import type { WritableComputedRef } from "vue";
 
 export interface IProductSortingOption {
   id: string;
@@ -39,4 +40,20 @@ export function useProductSortDefinitions() {
     sortList,
     sortDefinitions: computed(() => sortDefinitions.value),
   };
+}
+
+/**
+ * Two-way binding for the sort control that tolerates an unknown or now-hidden `?sort` code: when the current value
+ * matches no visible option, the control presents the default ("") instead of rendering blank. Writes flow straight
+ * through to the route param (which drops `?sort` for the default).
+ */
+export function useSelectedSortOption(sortQueryParam: WritableComputedRef<string>) {
+  const { sortList } = useProductSortDefinitions();
+
+  return computed<string>({
+    get: () => (sortList.value.some((option) => option.id === sortQueryParam.value) ? sortQueryParam.value : ""),
+    set: (value) => {
+      sortQueryParam.value = value;
+    },
+  });
 }
