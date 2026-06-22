@@ -300,6 +300,39 @@ export const WithDisabledDates: StoryType = {
   }),
 };
 
+export const FocusEntryOnOpen: StoryType = {
+  args: {
+    label: "Order date",
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "WCAG 2.1.1 focus-entry behavior. Open the picker (mouse or keyboard) — focus lands on the selected day cell; if no value, on today.",
+      },
+      source: {
+        code: `
+          <!-- value ref starts at "2026-10-15"; opening the popover focuses that day cell -->
+          <VcDatePicker v-model="value" label="Order date" />
+        `,
+      },
+    },
+  },
+  render: (args) => ({
+    components: { VcDatePicker },
+    setup() {
+      const value = ref<string | undefined>("2026-10-15");
+      return { args, value };
+    },
+    template: `
+      <div class="space-y-2">
+        <VcDatePicker v-bind="args" v-model="value" />
+        <div class="text-sm text-neutral-600">ISO value: {{ value || "(none)" }}</div>
+      </div>
+    `,
+  }),
+};
+
 export const WithFooter: StoryType = {
   args: {
     label: "Order date",
