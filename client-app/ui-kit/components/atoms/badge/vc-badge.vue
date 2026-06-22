@@ -3,7 +3,7 @@
     :class="[
       'vc-badge',
       `vc-badge--size--${size}${$slots.default ? '' : '--dot'}`,
-      `vc-badge--${variant}--${color}`,
+      `vc-badge--${canonicalVariant}--${color}`,
       {
         'vc-badge--rounded': rounded,
         'vc-badge--truncate': truncate,
@@ -19,6 +19,9 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
+import { resolveVariant } from "../../../utilities/variant-compat";
+
 interface IProps {
   color?: VcBadgeColorType;
   size?: VcBadgeSizeType;
@@ -30,11 +33,13 @@ interface IProps {
   maxWidth?: string;
 }
 
-withDefaults(defineProps<IProps>(), {
+const props = withDefaults(defineProps<IProps>(), {
   color: "primary",
   size: "md",
   variant: "solid",
 });
+
+const canonicalVariant = computed(() => resolveVariant("VcBadge", props.variant));
 </script>
 
 <style lang="scss">
@@ -53,7 +58,7 @@ withDefaults(defineProps<IProps>(), {
   &--size {
     &--xs {
       --size: 1rem;
-      --vc-icon-size: 0.625rem;
+      --vc-icon-size: 0.5rem;
       --gap: 0.25rem;
 
       @apply pb-px px-[0.188rem] text-xxs/[1];
@@ -118,46 +123,16 @@ withDefaults(defineProps<IProps>(), {
     @apply p-0;
   }
 
-  @each $color in $colors {
-    &--solid--#{$color} {
-      --bg-color: var(--color-#{$color}-500);
-      --border-color: var(--color-#{$color}-500);
+  $variants: solid, soft, outline, surface, ghost, tonal;
 
-      &:not([class*="--warning"]) {
-        --text-color: var(--color-additional-50);
+  @each $variant in $variants {
+    @each $color in $colors {
+      &--#{$variant}--#{$color} {
+        --bg-color: var(--vc-badge-#{$variant}-#{$color}-bg);
+        --border-color: var(--vc-badge-#{$variant}-#{$color}-border);
+        --text-color: var(--vc-badge-#{$variant}-#{$color}-text);
+        --vc-icon-color: var(--vc-badge-#{$variant}-#{$color}-icon);
       }
-
-      &[class*="--warning"] {
-        --text-color: var(--color-neutral-900);
-      }
-    }
-
-    &--solid-light--#{$color} {
-      --bg-color: var(--color-#{$color}-100);
-      --border-color: var(--color-#{$color}-100);
-      --text-color: var(--color-#{$color}-800);
-      --vc-icon-color: var(--color-#{$color}-700);
-    }
-
-    &--outline--#{$color} {
-      --bg-color: var(--color-additional-50);
-      --border-color: var(--color-#{$color}-500);
-      --vc-icon-color: var(--color-#{$color}-700);
-
-      &:not([class*="--warning"]) {
-        --text-color: var(--color-#{$color}-500);
-      }
-
-      &[class*="--warning"] {
-        --text-color: var(--color-warning-700);
-      }
-    }
-
-    &--outline-dark--#{$color} {
-      --bg-color: var(--color-#{$color}-100);
-      --border-color: var(--color-#{$color}-500);
-      --text-color: var(--color-#{$color}-800);
-      --vc-icon-color: var(--color-#{$color}-700);
     }
   }
 
