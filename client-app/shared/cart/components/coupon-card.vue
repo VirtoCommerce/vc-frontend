@@ -105,7 +105,7 @@ const viewConfig = computed<IViewConfig>(() => {
   const viewConfigs: Record<ViewType, IViewConfig> = {
     default: {
       iconName: "receipt-tax",
-      button: { ...applyButtonBase, disabled: false },
+      button: { ...applyButtonBase, disabled: !code.value.trim() },
     },
     applied: {
       iconName: "round-check",
