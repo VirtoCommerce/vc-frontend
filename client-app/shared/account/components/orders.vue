@@ -58,7 +58,7 @@
     </VcPopupSidebar>
 
     <div class="flex flex-col items-center gap-3 lg:flex-row">
-      <div v-if="isOrganizationMaintainer" class="flex gap-2">
+      <div v-if="$can($permissions.xApi.CanViewOrganizationOrders)" class="flex gap-2">
         <VcTabSwitch
           v-model="orderScope"
           value="organization"
@@ -347,7 +347,7 @@ import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { usePageHead } from "@/core/composables/usePageHead";
 import { CUSTOMER_NAME_FACET_NAME, DEFAULT_ORDERS_PER_PAGE } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
-import { BrowserTargetType, SortDirection } from "@/core/enums";
+import { BrowserTargetType, SortDirection, XApiPermissions } from "@/core/enums";
 import { Sort } from "@/core/types";
 import { toDateISOString } from "@/core/utilities";
 import { useUserOrders } from "@/shared/account/composables/useUserOrders";
@@ -386,7 +386,7 @@ const {
   keyword,
   facets,
 } = useUserOrders({ itemsPerPage });
-const { user, isOrganizationMaintainer } = useUser();
+const { user, checkPermissions } = useUser();
 
 const {
   appliedFilterData,
@@ -424,7 +424,9 @@ const organizationCustomerNames = computed(() =>
 );
 const showCustomerNameFilter = computed(
   () =>
-    isOrganizationMaintainer.value && orderScope.value === "organization" && organizationCustomerNames.value?.length,
+    checkPermissions(XApiPermissions.CanViewOrganizationOrders) &&
+    orderScope.value === "organization" &&
+    organizationCustomerNames.value?.length,
 );
 
 async function changePage(newPage: number) {
@@ -526,7 +528,7 @@ function toggleOrdersScope(scope: OrderScopeType): void {
 onMounted(() => {
   resetFilters();
 
-  if (!isOrganizationMaintainer.value) {
+  if (!checkPermissions(XApiPermissions.CanViewOrganizationOrders)) {
     orderScope.value = "private";
   }
 });

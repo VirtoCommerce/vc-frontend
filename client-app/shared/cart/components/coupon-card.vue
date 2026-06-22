@@ -105,13 +105,13 @@ const viewConfig = computed<IViewConfig>(() => {
   const viewConfigs: Record<ViewType, IViewConfig> = {
     default: {
       iconName: "receipt-tax",
-      button: { ...applyButtonBase, disabled: false },
+      button: { ...applyButtonBase, disabled: !code.value.trim() },
     },
     applied: {
       iconName: "round-check",
       button: {
         icon: "outline-trash",
-        variant: "no-background",
+        variant: "ghost",
         color: "neutral",
         disabled: false,
         ariaLabel: removeAriaLabel,

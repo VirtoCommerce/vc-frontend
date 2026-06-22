@@ -215,7 +215,8 @@
       "report_sent_successfully": "Merci ! Votre rapport a été envoyé avec succès. Nous allons examiner le problème.",
       "copied_to_clipboard": "Copié dans le presse-papiers",
       "role_update_successful": "Le rôle du client a été mis à jour avec succès.",
-      "role_update_failed": "Des erreurs se sont produites lors de la mise à jour du rôle : {0}",
+      "contact_lock_failed": "Échec du blocage/déblocage de l'utilisateur.",
+      "role_update_failed": "Des erreurs se sont produites lors de la mise à jour du rôle.",
       "passwords_do_not_match": "Les champs de mot de passe doivent avoir des valeurs correspondantes.",
       "password_new_same_old": "Votre mot de passe actuel et votre nouveau mot de passe doivent être différents.",
       "blocked": "Vous avez été bloqué. Vous ne pouvez pas accéder à des informations ou créer la commande. Pour plus de détails, veuillez ",
@@ -498,6 +499,7 @@
           "email_verification_is_required": "Vérification de l'e-mail requise. Veuillez vérifier votre adresse e-mail",
           "user_is_temporary_locked_out": "Votre compte a été temporairement verrouillé. Veuillez réessayer plus tard",
           "user_is_locked_out": "@:common.messages.blocked",
+          "user_is_locked_in_organization": "Votre accès à cette organisation a été bloqué. Veuillez contacter l'administrateur de votre organisation",
           "user_cannot_login_in_store": "Accès refusé. Vous ne pouvez pas vous connecter au magasin actuel",
           "password_expired": "@:common.messages.password_expired",
           "user_not_found": "Utilisateur non trouvé. Veuillez vous assurer que vous avez entré les bonnes informations"

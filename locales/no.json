@@ -215,7 +215,8 @@
       "report_sent_successfully": "Takk! Din rapport er sendt. Vi vil se på det.",
       "copied_to_clipboard": "Kopiert til utklippstavlen",
       "role_update_successful": "Brukerrollen er oppdatert",
-      "role_update_failed": "Feil ved oppdatering av rolle: {0}",
+      "contact_lock_failed": "Kunne ikke blokkere/oppheve blokkering av brukeren.",
+      "role_update_failed": "Feil ved oppdatering av rolle.",
       "passwords_do_not_match": "Passordfeltene samsvarer ikke",
       "password_new_same_old": "Ditt nåværende passord og det nye passordet kan ikke være det samme",
       "blocked": "Du er blokkert. Du kan ikke få tilgang til data eller legge inn en bestilling. For mer informasjon, kontakt ",
@@ -498,6 +499,7 @@
           "email_verification_is_required": "E-postbekreftelse kreves. Bekreft e-postadressen din",
           "user_is_temporary_locked_out": "Kontoen din er midlertidig låst. Prøv igjen senere.",
           "user_is_locked_out": "@:common.messages.blocked",
+          "user_is_locked_in_organization": "Din tilgang til denne organisasjonen er blokkert. Kontakt organisasjonens administrator",
           "user_cannot_login_in_store": "Tilgang nektet. Du kan ikke logge inn i denne butikken",
           "password_expired": "@:common.messages.password_expired",
           "user_not_found": "Brukeren ble ikke funnet. Kontroller at du har skrevet inn korrekt informasjon"

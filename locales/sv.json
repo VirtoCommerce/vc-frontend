@@ -215,7 +215,8 @@
       "report_sent_successfully": "Tack! Din rapport har skickats framgångsrikt. Vi kommer att titta på det.",
       "copied_to_clipboard": "Kopierat till urklipp",
       "role_update_successful": "Kundrollen har uppdaterats framgångsrikt",
-      "role_update_failed": "Fel uppstod vid uppdatering av rollen: {0}",
+      "contact_lock_failed": "Det gick inte att blockera/avblockera användaren.",
+      "role_update_failed": "Fel uppstod vid uppdatering av rollen.",
       "passwords_do_not_match": "Lösenordsfälten måste ha matchande värden",
       "password_new_same_old": "Ditt nuvarande lösenord och nya lösenord måste vara olika",
       "blocked": "Du har blockerats. Du kan inte nå någon information eller skapa beställningen. För mer information, vänligen ",
@@ -498,6 +499,7 @@
           "email_verification_is_required": "E-postverifiering krävs. Verifiera din e-postadress",
           "user_is_temporary_locked_out": "Ditt konto har tillfälligt låsts. Vänligen försök igen senare.",
           "user_is_locked_out": "@:common.messages.blocked",
+          "user_is_locked_in_organization": "Din åtkomst till den här organisationen har blockerats. Kontakta din organisationsadministratör",
           "user_cannot_login_in_store": "Åtkomst nekad. Du kan inte logga in i den aktuella butiken",
           "password_expired": "@:common.messages.password_expired",
           "user_not_found": "Användaren hittades inte. Kontrollera att du har angett korrekt information"

@@ -776,7 +776,10 @@ export type ContactType = {
   fullName: Scalars['String']['output'];
   groups: Array<Maybe<Scalars['String']['output']>>;
   id: Scalars['String']['output'];
+  /** Whether the contact is locked in the specified organization */
   isLockedInOrganization?: Maybe<Scalars['Boolean']['output']>;
+  /** Roles assigned to the contact within the specified organization */
+  rolesInOrganization?: Maybe<Array<RoleType>>;
   lastName: Scalars['String']['output'];
   /** Member type */
   memberType: Scalars['String']['output'];
@@ -2005,10 +2008,12 @@ export type InputChangeOrderStatusType = {
 };
 
 export type InputChangeOrganizationContactRoleType = {
-  /** Role IDs or names to be assigned to the user within the organization */
+  /** Contact member ID to be changed */
+  memberId: Scalars['String']['input'];
+  /** Organization identifier for which roles are being changed */
+  organizationId?: InputMaybe<Scalars['String']['input']>;
+  /** Role IDs or names to be assigned to the user */
   roleIds?: InputMaybe<Array<Scalars['String']['input']>>;
-  /** User identifier to be changed */
-  userId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type InputChangeOrganizationLogoCommandType = {
@@ -2294,7 +2299,10 @@ export type InputKeyValueType = {
 };
 
 export type InputLockUnlockOrganizationContactType = {
-  userId?: InputMaybe<Scalars['String']['input']>;
+  /** Contact member ID */
+  memberId: Scalars['String']['input'];
+  /** Organization identifier for which the lock/unlock applies */
+  organizationId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type InputMarkPushMessageReadType = {
