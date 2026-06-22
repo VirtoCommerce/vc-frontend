@@ -342,7 +342,7 @@ defineExpose({
     }
   }
 
-  $variants: solid, soft, outline, surface, ghost;
+  $variants: solid, soft, outline, surface, ghost, tonal;
 
   @each $variant in $variants {
     @each $color in $colors {
@@ -383,6 +383,10 @@ defineExpose({
       --border-color: var(--bg-color);
       --text-color: color-mix(in srgb, var(--vc-button-ghost-#{$color}-text), black 8%);
     }
+
+    &--tonal--#{$color}:hover:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(in srgb, var(--vc-button-tonal-#{$color}-bg), black 8%);
+    }
   }
 
   &#{$disabled}:not(#{$loading}),
@@ -407,6 +411,11 @@ defineExpose({
     &[class*="--soft--"] {
       --bg-color: var(--color-neutral-100);
       --border-color: var(--color-neutral-100);
+    }
+
+    &[class*="--tonal--"] {
+      --bg-color: var(--color-neutral-100);
+      --border-color: var(--color-neutral-300);
     }
   }
 
