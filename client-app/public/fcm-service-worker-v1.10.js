@@ -35,9 +35,9 @@ try {
 }
 
 // Update configuration when received config from main thread
-self.addEventListener("message", (event) => {
+globalThis.addEventListener("message", (event) => {
   // Reject messages that are not from a same-origin client before acting on the payload
-  if (event.origin !== self.location.origin) {
+  if (event.origin !== globalThis.location.origin) {
     return;
   }
 
@@ -63,9 +63,9 @@ self.addEventListener("message", (event) => {
   }
 });
 
-self.addEventListener("message", (event) => {
+globalThis.addEventListener("message", (event) => {
   // Reject messages that are not from a same-origin client before acting on the payload
-  if (event.origin !== self.location.origin) {
+  if (event.origin !== globalThis.location.origin) {
     return;
   }
 
@@ -75,13 +75,13 @@ self.addEventListener("message", (event) => {
   }
 });
 
-self.addEventListener("notificationclick", function (event) {
+globalThis.addEventListener("notificationclick", function (event) {
   event.notification.close();
   const url = event.notification?.data?.url || DEFAULT_RETURN_URL;
-  event.waitUntil(self.clients.openWindow(`/push-message/${event.notification?.data?.messageId}/?returnUrl=${url}`));
+  event.waitUntil(globalThis.clients.openWindow(`/push-message/${event.notification?.data?.messageId}/?returnUrl=${url}`));
 });
 
-self.addEventListener("push", function (event) {
+globalThis.addEventListener("push", function (event) {
   if (!isInitialized) {
     console.warn("Firebase not properly initialized, skipping push notification");
     return;
@@ -91,7 +91,7 @@ self.addEventListener("push", function (event) {
   event.waitUntil(
     registration.pushManager.getSubscription().then(async () => {
       const defaultIcon = await getDefaultIcon();
-      return self.registration.showNotification(data?.title ?? "", {
+      return globalThis.registration.showNotification(data?.title ?? "", {
         data: { messageId: data.messageId, url: data.url },
         badge: data?.icon || defaultIcon,
         body: htmlToText(data?.body) ?? "",
@@ -203,7 +203,7 @@ function htmlToText(html) {
   html = html.replace(/<p[^>]*>(.*?)<\/p>/gs, handleParagraphs);
 
   // Remove remaining HTML tags
-  html = html.replace(/<\/?(\w+)(?:\s+[^>]+)?\s*>/g, "");
+  html = html.replace(/<\/?\w[^>]*>/g, "");
 
   return html.trim();
 }
