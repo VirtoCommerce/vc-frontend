@@ -34,7 +34,7 @@ import type {
 } from "../types";
 import type { Product, RangeFacet, TermFacet, SearchProductFilterResult } from "@/core/api/graphql/types";
 import type { FacetItemType } from "@/core/types";
-import type { MaybeRefOrGetter, Ref } from "vue";
+import type { Ref } from "vue";
 import BranchesModal from "@/shared/fulfillmentCenters/components/branches-modal.vue";
 
 const DEFAULT_ITEMS_PER_PAGE = 16;
@@ -55,7 +55,9 @@ export function useProducts(
     /** @default true */
     initialFetchingState?: boolean;
     /** Overrides the default currency code passed to the products query (e.g. for the loyalty catalog). */
-    currencyCodeOverride?: MaybeRefOrGetter<string | undefined>;
+    // The `?` already allows the property to be omitted/undefined; the ref and getter branches still carry
+    // `undefined` (e.g. the loyalty currency computed), so the bare value branch stays `string` to avoid a redundant top-level `undefined`.
+    currencyCodeOverride?: string | Ref<string | undefined> | (() => string | undefined);
   } = {},
 ) {
   const { themeContext } = useThemeContext();
