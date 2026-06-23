@@ -140,12 +140,17 @@ rules:
     severity: WARNING
     languages: [typescript, javascript]
 
-  # javascript:/data: URLs assigned to navigable attributes (templates and JS).
+  # javascript:/vbscript:/renderable-data: URLs assigned to navigable attributes.
   - id: vc-javascript-uri
-    pattern-regex: '(href|src|to|action)\s*=\s*["''](javascript|data|vbscript):'
+    pattern-either:
+      # Executable schemes on any navigable/source attribute — run on activation.
+      - pattern-regex: '(?i)(href|src|to|action)\s*=\s*["''](javascript|vbscript):'
+      # Renderable data: documents (HTML/SVG/XHTML) execute script; inline
+      # data:image/png|jpg|gif|webp in a src/href are safe and intentionally not matched.
+      - pattern-regex: '(?i)(href|src|to|action)\s*=\s*["'']data:(text/html|image/svg\+xml|application/xhtml)'
     message: >
-      javascript:/data:/vbscript: URI used as a navigable target — XSS on activation.
-      Allowlist http/https/mailto schemes only.
+      javascript:/vbscript:/data:text-html|svg URI used as a navigable target — XSS on
+      activation. Allowlist http/https/mailto (inline data:image/* is fine).
     severity: ERROR
     languages: [generic]
 

@@ -34,14 +34,10 @@ try {
   console.warn("Firebase placeholder initialization failed:", e);
 }
 
-// Reject messages that are not from a same-origin client before acting on their payload
-function isTrustedMessage(event) {
-  return event.origin === self.location.origin;
-}
-
 // Update configuration when received config from main thread
 self.addEventListener("message", (event) => {
-  if (!isTrustedMessage(event)) {
+  // Reject messages that are not from a same-origin client before acting on the payload
+  if (event.origin !== self.location.origin) {
     return;
   }
 
@@ -68,7 +64,8 @@ self.addEventListener("message", (event) => {
 });
 
 self.addEventListener("message", (event) => {
-  if (!isTrustedMessage(event)) {
+  // Reject messages that are not from a same-origin client before acting on the payload
+  if (event.origin !== self.location.origin) {
     return;
   }
 
