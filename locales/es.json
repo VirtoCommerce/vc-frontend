@@ -960,7 +960,8 @@
         "list_settings_button": "Configuraciones de la lista",
         "empty_list": "Tu lista está vacía",
         "empty_list_button": "Continuar navegando",
-        "list_icon": "Icono de lista"
+        "list_icon": "Icono de lista",
+        "buy_now_empty_cart": "Ninguno de los artículos de la lista se pudo agregar al carrito"
       },
       "add_to_wishlists_modal": {
         "title": "Por favor, selecciona la lista",

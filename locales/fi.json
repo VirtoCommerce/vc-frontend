@@ -960,7 +960,8 @@
         "list_settings_button": "Listan asetukset",
         "empty_list": "Listasi on tyhjä",
         "empty_list_button": "Jatka selaamista",
-        "list_icon": "Listakuvake"
+        "list_icon": "Listakuvake",
+        "buy_now_empty_cart": "Yhtäkään listan tuotetta ei voitu lisätä ostoskoriin"
       },
       "add_to_wishlists_modal": {
         "title": "Valitse lista",

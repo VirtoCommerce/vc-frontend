@@ -960,7 +960,8 @@
         "list_settings_button": "Настройки списка",
         "empty_list": "Ваш список пуст",
         "empty_list_button": "Перейти в каталог",
-        "list_icon": "Иконка списка"
+        "list_icon": "Иконка списка",
+        "buy_now_empty_cart": "Ни один из товаров из списка не удалось добавить в корзину"
       },
       "add_to_wishlists_modal": {
         "title": "Выберите список",

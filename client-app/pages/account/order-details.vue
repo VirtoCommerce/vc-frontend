@@ -266,12 +266,13 @@ async function reorderItems() {
 
   loadingAddItemsToCart.value = true;
 
+  const previousCart = cart.value;
   await addItemsToCart(items.map(({ productId, quantity }) => ({ productId, quantity })));
 
   openModal({
     component: AddBulkItemsToCartResultsModal,
     props: {
-      items: getItemsForAddBulkItemsToCartResultsModal(items, cart.value!),
+      items: getItemsForAddBulkItemsToCartResultsModal(items, cart.value!, previousCart),
       listName: t("pages.account.order_details.title", [order.value?.number]),
     },
   });
