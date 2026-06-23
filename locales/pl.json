@@ -864,7 +864,9 @@
         "view_list": "Lista",
         "view_map": "Mapa",
         "pick_point_info_title": "Informacje o punkcie odbioru",
-        "pick_up_here": "Odbierz tutaj"
+        "pick_up_here": "Odbierz tutaj",
+        "load_more": "Załaduj więcej",
+        "showing_count": "Wyświetlono {loaded} z {total}"
       }
     },
     "bulk_order": {

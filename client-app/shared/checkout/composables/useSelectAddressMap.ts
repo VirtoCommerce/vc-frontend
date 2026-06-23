@@ -27,8 +27,17 @@ function getLatLng(location: string | undefined) {
   }
 }
 
+export function getAddressElement(id: string): HTMLElement | null {
+  return document.querySelector<HTMLElement>(`[data-address-id="${CSS.escape(id)}"]`);
+}
+
+export function focusAddressRadio(id: string): void {
+  const radio = getAddressElement(id)?.querySelector<HTMLElement>('input[type="radio"]');
+  radio?.focus();
+}
+
 function scrollToAddressInList(addressId: string) {
-  const listElement = document.querySelector(`[data-address-id="${CSS.escape(addressId)}"]`);
+  const listElement = getAddressElement(addressId);
 
   if (listElement) {
     listElement.scrollIntoView({ behavior: "smooth", block: "center" });

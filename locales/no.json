@@ -864,7 +864,9 @@
         "view_list": "Liste",
         "view_map": "Kart",
         "pick_point_info_title": "Hentepunktinfo",
-        "pick_up_here": "Hent her"
+        "pick_up_here": "Hent her",
+        "load_more": "Last inn mer",
+        "showing_count": "Viser {loaded} av {total}"
       }
     },
     "bulk_order": {

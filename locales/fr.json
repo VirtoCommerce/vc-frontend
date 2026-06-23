@@ -864,7 +864,9 @@
         "view_list": "Liste",
         "view_map": "Carte",
         "pick_point_info_title": "Info point de collecte",
-        "pick_up_here": "Retirer ici"
+        "pick_up_here": "Retirer ici",
+        "load_more": "Charger plus",
+        "showing_count": "Affichage de {loaded} sur {total}"
       }
     },
     "bulk_order": {

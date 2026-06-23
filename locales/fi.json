@@ -864,7 +864,9 @@
         "view_list": "Lista",
         "view_map": "Kartta",
         "pick_point_info_title": "Noutopisteen tiedot",
-        "pick_up_here": "Nouda täältä"
+        "pick_up_here": "Nouda täältä",
+        "load_more": "Lataa lisää",
+        "showing_count": "Näytetään {loaded} / {total}"
       }
     },
     "bulk_order": {

@@ -14,9 +14,13 @@
           :selected-address-id="selectedAddressId"
           :selectable="selectable"
           :filtered="filterIsApplied"
+          :has-next-page="hasNextPage"
+          :loading-more="loadingMore"
+          :total-count="totalCount"
           class="select-address-map-mobile__list"
           @select="onSelect"
           @reset-filter="resetFilter"
+          @load-more="$emit('loadMore')"
         />
 
         <SelectAddressMapView
@@ -86,11 +90,15 @@ interface IProps {
   apiKey: string;
   currentAddress?: { id: string };
   selectable?: boolean;
+  hasNextPage?: boolean;
+  loadingMore?: boolean;
+  totalCount?: number;
 }
 
 interface IEmits {
   (event: "result", value: string): void;
   (event: "filterChange"): void;
+  (event: "loadMore"): void;
 }
 
 const emit = defineEmits<IEmits>();

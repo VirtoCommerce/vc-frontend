@@ -1,4 +1,5 @@
 import { createSharedComposable } from "@vueuse/core";
+import uniqBy from "lodash/uniqBy";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { getCartPickupLocations } from "@/core/api/graphql/cart";
@@ -10,10 +11,13 @@ export const COUNTRY_NAME_FACET = "address_countryname";
 export const REGION_NAME_FACET = "address_regionname";
 export const CITY_FACET = "address_city";
 
+const PICKUP_LOCATIONS_FACET = `${COUNTRY_NAME_FACET} ${REGION_NAME_FACET} ${CITY_FACET}`;
+
 export function _useCartPickupLocations() {
   const { t } = useI18n();
 
   const pickupLocationsLoading = ref(false);
+  const pickupLocationsLoadingMore = ref(false);
 
   const pickupLocations = ref<ProductPickupLocation[]>([]);
 
@@ -27,6 +31,9 @@ export function _useCartPickupLocations() {
   const filterKeyword = ref<string>("");
 
   const pickupLocationsTotalCount = ref(0);
+
+  const pickupLocationsEndCursor = ref<string | undefined>(undefined);
+  const pickupLocationsHasNextPage = ref(false);
 
   const filterSelectsAreEmpty = computed(
     () =>
@@ -68,13 +75,20 @@ export function _useCartPickupLocations() {
     payload: Omit<QueryCartPickupLocationsArgs, "storeId" | "cultureName" | "facet">,
   ) {
     pickupLocationsLoading.value = true;
+
+    pickupLocationsEndCursor.value = undefined;
+    pickupLocationsHasNextPage.value = false;
+
     try {
       const data = await getCartPickupLocations({
-        facet: `${COUNTRY_NAME_FACET} ${REGION_NAME_FACET} ${CITY_FACET}`,
+        facet: PICKUP_LOCATIONS_FACET,
         ...payload,
       });
       pickupLocations.value = data.items ?? [];
       pickupLocationsTotalCount.value = data.totalCount ?? 0;
+
+      pickupLocationsEndCursor.value = data.pageInfo?.endCursor ?? undefined;
+      pickupLocationsHasNextPage.value = data.pageInfo?.hasNextPage ?? false;
 
       const termFacetCounties = data.term_facets?.find((f) => f.name === COUNTRY_NAME_FACET);
       if (termFacetCounties) {
@@ -121,11 +135,44 @@ export function _useCartPickupLocations() {
       pickupLocationsLoading.value = false;
     }
   }
+
+  async function loadMorePickupLocations(
+    payload: Omit<QueryCartPickupLocationsArgs, "storeId" | "cultureName" | "facet" | "after">,
+  ) {
+    if (pickupLocationsLoading.value || pickupLocationsLoadingMore.value || !pickupLocationsHasNextPage.value) {
+      return;
+    }
+
+    pickupLocationsLoadingMore.value = true;
+    try {
+      const data = await getCartPickupLocations({
+        facet: PICKUP_LOCATIONS_FACET,
+        ...payload,
+        after: pickupLocationsEndCursor.value,
+      });
+
+      // keep-first dedup (BL-BOPIS-008): a prepended confirmed location at items[0] must win
+      // over a duplicate arriving on a later page, so the FIRST occurrence is retained.
+      pickupLocations.value = uniqBy([...pickupLocations.value, ...(data.items ?? [])], (item) => item.id);
+
+      pickupLocationsEndCursor.value = data.pageInfo?.endCursor ?? undefined;
+      pickupLocationsHasNextPage.value = data.pageInfo?.hasNextPage ?? false;
+    } catch (e) {
+      Logger.error(`${useCartPickupLocations.name}.${loadMorePickupLocations.name}`, e);
+      throw e;
+    } finally {
+      pickupLocationsLoadingMore.value = false;
+    }
+  }
+
   return {
     pickupLocationsLoading,
+    pickupLocationsLoadingMore,
     pickupLocations,
     pickupLocationsTotalCount,
+    pickupLocationsHasNextPage,
     fetchPickupLocations,
+    loadMorePickupLocations,
 
     filterOptionsCountries,
     filterOptionsRegions,
