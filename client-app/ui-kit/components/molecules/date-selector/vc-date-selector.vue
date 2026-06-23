@@ -15,7 +15,7 @@
     <template #append="{ focusInput }">
       <VcButton
         type="button"
-        variant="no-background"
+        variant="ghost"
         icon="calendar"
         :disabled="disabledComputed"
         :aria-label="$t('ui_kit.accessibility.open_calendar')"

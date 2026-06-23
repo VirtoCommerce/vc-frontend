@@ -23,7 +23,7 @@
       class="vc-push-message__button"
       size="xs"
       color="neutral"
-      variant="no-background"
+      variant="ghost"
       icon="delete-thin"
       @click="
         $emit('remove');
