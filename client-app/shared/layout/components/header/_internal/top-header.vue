@@ -83,6 +83,7 @@
           </template>
 
           <button
+            ref="accountButton"
             type="button"
             :aria-label="$t('shared.layout.header.top_header.account_menu_label')"
             aria-haspopup="true"
@@ -165,7 +166,7 @@
               </span>
             </button>
 
-            <TopHeaderOrganizations v-if="isMultiOrganization" @organization-selected="loginMenuVisible = false" />
+            <TopHeaderOrganizations v-if="isMultiOrganization" @organization-selected="closeLoginMenu" />
           </div>
         </div>
       </template>
@@ -193,7 +194,7 @@
 </template>
 
 <script setup lang="ts">
-import { onClickOutside } from "@vueuse/core";
+import { onClickOutside, onKeyStroke } from "@vueuse/core";
 import { computed, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useDarkMode } from "@/core/composables";
@@ -219,12 +220,26 @@ const isLoyaltyCatalogRoute = computed(() => getCatalogBasePath(route.path) === 
 
 const loginMenu = ref(null);
 const loginMenuVisible = ref(false);
+const accountButton = ref<HTMLButtonElement | null>(null);
 
 const support_phone_number = getSettingValue(MODULE_XAPI_KEYS.SUPPORT_PHONE_NUMBER);
 
 onClickOutside(loginMenu, () => {
   loginMenuVisible.value = false;
 });
+
+onKeyStroke("Escape", () => {
+  if (!loginMenuVisible.value) {
+    return;
+  }
+
+  closeLoginMenu();
+});
+
+function closeLoginMenu(): void {
+  loginMenuVisible.value = false;
+  accountButton.value?.focus();
+}
 
 async function onBackToOperator(): Promise<void> {
   loginMenuVisible.value = false;

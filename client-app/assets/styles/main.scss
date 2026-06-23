@@ -4,6 +4,7 @@
 @include meta.load-css("helpers");
 @include meta.load-css("deprecated");
 @include meta.load-css("colors");
+@include meta.load-css("ui-kit-tokens");
 
 :root {
   //Recommended maximum border-radius: 10px (0.625rem)

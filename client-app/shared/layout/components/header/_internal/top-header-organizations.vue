@@ -1,5 +1,16 @@
 <template>
   <div class="top-header-organizations">
+    <VcAlert
+      v-if="switchError"
+      class="top-header-organizations__error"
+      color="danger"
+      size="sm"
+      variant="outline-dark"
+      icon
+    >
+      {{ switchError }}
+    </VcAlert>
+
     <div v-if="!isShowSearch" class="top-header-organizations__label top-header-organizations__label--static">
       {{ $t("common.labels.organizations") }}
     </div>
@@ -16,7 +27,15 @@
         data-test-id="organizations-search"
         :placeholder="$t('common.labels.search')"
         :clearable="!!searchPhrase"
+        :aria="{
+          role: 'combobox',
+          'aria-expanded': 'true',
+          'aria-haspopup': 'listbox',
+          'aria-controls': listboxId,
+          'aria-activedescendant': activeDescendantId ?? null,
+        }"
         @keydown.enter="onSearch"
+        @keydown.down.prevent="next(-1)"
         @input="onSearchInput"
         @clear="onSearchClear"
       >
@@ -26,27 +45,25 @@
       </VcInput>
     </div>
 
-    <VcScrollbar vertical class="top-header-organizations__list" test-id="organizations-list">
-      <VcMenuItem v-if="organization && !loading && organizations.length > 0" size="xs" :clickable="false">
-        <VcRadioButton
-          :model-value="contactOrganizationId"
-          :value="organization.id"
-          :label="organization.name"
-          :max-lines="2"
-          :title="organization.name"
-          :data-organization-name="organization.name"
-          word-break="break-word"
-        />
-      </VcMenuItem>
-
+    <VcScrollbar
+      :id="listboxId"
+      vertical
+      role="listbox"
+      :aria-label="$t('common.labels.organizations')"
+      class="top-header-organizations__list"
+      test-id="organizations-list"
+    >
       <VcMenuItem
-        v-for="item in organizationsWithoutCurrent"
+        v-for="(item, index) in displayedOrganizations"
         :key="item.id"
         size="xs"
-        @click="
-          contactOrganizationId = item.id;
-          selectOrganization();
-        "
+        role="option"
+        :option-id="getOptionId(index)"
+        :data-vc-organization-option="componentId"
+        :aria-selected="contactOrganizationId === item.id"
+        @click="selectOrganization(item.id)"
+        @keydown.up.prevent="prev(index)"
+        @keydown.down.prevent="next(index)"
       >
         <VcRadioButton
           :model-value="contactOrganizationId"
@@ -82,8 +99,9 @@
 
 <script setup lang="ts">
 import { useDebounceFn } from "@vueuse/core";
-import { computed, ref } from "vue";
-import { useUser, useUserOrganizations } from "@/shared/account";
+import { computed, ref, watch } from "vue";
+import { useOrganizationSwitcher, useUser, useUserOrganizations } from "@/shared/account";
+import { useComponentId } from "@/ui-kit/composables";
 
 const emit = defineEmits<{
   organizationSelected: [];
@@ -91,7 +109,7 @@ const emit = defineEmits<{
 
 const SEARCH_DEBOUNCE_MS = 300;
 
-const { user, switchOrganization, organization } = useUser();
+const { user, organization } = useUser();
 const {
   searchPhrase,
   organizations,
@@ -104,19 +122,99 @@ const {
   reset,
   isShowSearch,
 } = useUserOrganizations();
+const { switchError, trySwitch } = useOrganizationSwitcher();
 
 const contactOrganizationId = ref(user.value?.contact?.organizationId);
 
-const organizationsWithoutCurrent = computed(() =>
-  organizations.value.filter((item) => item.id !== organization.value?.id),
+// Keep the radio selection in sync with the actual active organization so a failed/abandoned switch
+// can't leave the optimistic value stale (clicking the current org early-returns without re-syncing).
+watch(
+  () => user.value?.contact?.organizationId,
+  (organizationId) => {
+    contactOrganizationId.value = organizationId;
+  },
 );
 
-async function selectOrganization(): Promise<void> {
-  if (!contactOrganizationId.value) {
+const componentId = useComponentId("organizations");
+const listboxId = componentId + "-listbox";
+const focusedOptionIndex = ref(-1);
+
+const displayedOrganizations = computed(() => {
+  const withoutCurrent = organizations.value.filter((item) => item.id !== organization.value?.id);
+
+  if (organization.value && !loading.value && organizations.value.length > 0) {
+    return [organization.value, ...withoutCurrent];
+  }
+
+  return withoutCurrent;
+});
+
+watch(displayedOrganizations, () => {
+  focusedOptionIndex.value = -1;
+});
+
+function getOptionId(index: number): string {
+  return `${componentId}-option-${index}`;
+}
+
+const activeDescendantId = computed(() => {
+  if (focusedOptionIndex.value >= 0) {
+    return getOptionId(focusedOptionIndex.value);
+  }
+  return undefined;
+});
+
+function getOptionElements(): HTMLElement[] {
+  const elements = document.querySelectorAll<HTMLElement>(
+    `[data-vc-organization-option="${componentId}"] [tabindex='0']`,
+  );
+  return Array.from(elements);
+}
+
+function next(index: number): void {
+  const elements = getOptionElements();
+
+  if (!elements.length) {
     return;
   }
 
-  await switchOrganization(contactOrganizationId.value);
+  const nextIndex = index >= elements.length - 1 ? 0 : index + 1;
+  focusedOptionIndex.value = nextIndex;
+  elements[nextIndex]?.focus();
+}
+
+function prev(index: number): void {
+  const elements = getOptionElements();
+
+  if (!elements.length) {
+    return;
+  }
+
+  const prevIndex = index <= 0 ? elements.length - 1 : index - 1;
+  focusedOptionIndex.value = prevIndex;
+  elements[prevIndex]?.focus();
+}
+
+async function selectOrganization(organizationId: string): Promise<void> {
+  if (!organizationId) {
+    return;
+  }
+
+  // The current organization is already active — selecting it must not trigger a redundant switch.
+  if (organizationId === organization.value?.id) {
+    emit("organizationSelected");
+    return;
+  }
+
+  contactOrganizationId.value = organizationId;
+
+  const succeeded = await trySwitch(organizationId);
+
+  if (!succeeded) {
+    contactOrganizationId.value = user.value?.contact?.organizationId;
+    return;
+  }
+
   emit("organizationSelected");
 }
 
@@ -143,6 +241,10 @@ async function onSearchClear(): Promise<void> {
 <style lang="scss">
 .top-header-organizations {
   @apply rounded-b-md border-t bg-neutral-50;
+
+  &__error {
+    @apply m-2;
+  }
 
   &__search {
     @apply border-b bg-neutral-100 p-3 pt-2;
