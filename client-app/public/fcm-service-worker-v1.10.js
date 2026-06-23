@@ -202,8 +202,13 @@ function htmlToText(html) {
   // Replace paragraphs
   html = html.replace(/<p[^>]*>(.*?)<\/p>/gs, handleParagraphs);
 
-  // Remove remaining HTML tags
-  html = html.replace(/<\/?\w[^>]*>/g, "");
+  // Remove remaining HTML tags. Loop until the string stops changing so that
+  // removing one tag cannot reveal another (e.g. "<<div>div>" -> "<div>" -> "").
+  let previous;
+  do {
+    previous = html;
+    html = html.replace(/<\/?\w[^>]*>/g, "");
+  } while (html !== previous);
 
   return html.trim();
 }
