@@ -338,7 +338,7 @@ const filtersToShow = computed(() => {
   return {
     ...productsFilters.value,
     facets: productsFilters.value.facets.filter(
-      (facet) => !normalizedFacetsToHide.value.some((name) => name === facet.paramName.toLowerCase()),
+      (facet) => !normalizedFacetsToHide.value.includes(facet.paramName.toLowerCase()),
     ),
   };
 });

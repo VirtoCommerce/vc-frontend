@@ -169,10 +169,7 @@ export function useProducts(
       });
 
       return options.filtersDisplayOrder?.value?.showRest
-        ? [
-            ...sortedFacets,
-            ...allFacets.filter(({ label }) => !order.some((orderItem) => orderItem === label?.toLowerCase())),
-          ]
+        ? [...sortedFacets, ...allFacets.filter(({ label }) => !order.includes(label?.toLowerCase() ?? ""))]
         : sortedFacets;
     }
 
@@ -343,10 +340,10 @@ export function useProducts(
 
   function hasSelectedFacets(): boolean {
     const filteredFacets = facets.value.filter(
-      (facet) => !normalizedFacetsToHide.value?.some((name) => name === facet.paramName.toLowerCase()),
+      (facet) => !normalizedFacetsToHide.value?.includes(facet.paramName.toLowerCase()),
     );
     const filteredFilters = productsFilters.value.filters.filter(
-      (filter) => !normalizedFacetsToHide.value?.some((name) => name === filter.name.toLowerCase()),
+      (filter) => !normalizedFacetsToHide.value?.includes(filter.name.toLowerCase()),
     );
     return !!filteredFacets.length && !!filteredFilters.length;
   }
@@ -479,7 +476,7 @@ export function useProducts(
   }
 
   function addPageHistory(page?: number) {
-    if (page && page <= pagesCount.value && !pageHistory.value.some((visitedPage) => visitedPage === page)) {
+    if (page && page <= pagesCount.value && !pageHistory.value.includes(page)) {
       pageHistory.value.push(page);
     }
   }
@@ -532,7 +529,7 @@ export function useProducts(
   }
 
   function isExcludedFilter(filter: SearchProductFilterResult): boolean {
-    return EXCLUDED_FILTER_NAMES.some((name) => name === filter.name);
+    return EXCLUDED_FILTER_NAMES.includes(filter.name);
   }
 
   function prepareFilters(filters: SearchProductFilterResult[]) {
