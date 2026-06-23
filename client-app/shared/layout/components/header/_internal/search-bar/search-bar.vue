@@ -22,7 +22,7 @@
           color="secondary"
           append-icon="delete-2"
           size="xs"
-          variant="solid-light"
+          variant="soft"
           disabled
           loading
           min-width="5rem"
@@ -36,7 +36,7 @@
           color="secondary"
           append-icon="delete-2"
           size="xs"
-          variant="solid-light"
+          variant="soft"
           :aria-label="$t('shared.layout.search_bar.scope_remove_label', { label: item.label })"
           :data-search-scope="item.label"
           @click.stop="onScopeItemClick(item.id)"

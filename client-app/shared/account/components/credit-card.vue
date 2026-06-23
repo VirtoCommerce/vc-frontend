@@ -18,7 +18,7 @@
       :aria-label="$t('common.buttons.remove_credit_card')"
       color="neutral"
       size="xs"
-      variant="no-background"
+      variant="ghost"
       icon="delete-thin"
       @click="$emit('remove')"
     />
