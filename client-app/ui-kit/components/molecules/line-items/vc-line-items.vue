@@ -129,7 +129,14 @@
         <div v-if="withSubtotal" class="vc-line-items__subtotal">
           <span class="vc-line-items__subtotal-label">{{ $t("ui_kit.labels.subtotal") }}:</span>
 
-          <span class="vc-line-items__subtotal-sum">{{ $n(subtotal, "currency") }}</span>
+          <span class="vc-line-items__subtotal-sum">
+            {{
+              $n(
+                calculatedSubtotal,
+                subtotalCurrencyCode ? { key: "currency", currency: subtotalCurrencyCode } : "currency",
+              )
+            }}
+          </span>
         </div>
       </div>
     </div>
@@ -161,6 +168,8 @@ interface IProps {
   withSubtotal?: boolean;
   withHeader?: boolean;
   browserTarget?: BrowserTargetType;
+  /** Currency code used to format the subtotal (e.g. for foreign-currency groups). Defaults to the app currency. */
+  subtotalCurrencyCode?: string;
 }
 
 const emit = defineEmits<IEmits>();
@@ -181,7 +190,7 @@ const showTotal = computed(() => props.withTotal && hasTotal.value);
 
 const hasTotal = computed(() => props.items.some((item) => item.extendedPrice));
 
-const subtotal = computed<number>(() =>
+const calculatedSubtotal = computed<number>(() =>
   hasTotal.value
     ? sumBy(
         props.items.filter((item) => selectedItemIds.value.includes(item.id) && item.extendedPrice),

@@ -13,7 +13,7 @@
       'vc-button group',
       `vc-button--size--${_size}`,
       `vc-button--color--${color}`,
-      `vc-button--${variant}--${color}`,
+      `vc-button--${canonicalVariant}--${color}`,
       {
         'vc-button--icon': !!icon,
         'vc-button--square': square,
@@ -58,6 +58,7 @@
 
 <script setup lang="ts">
 import { computed, inject, ref } from "vue";
+import { resolveVariant } from "../../../utilities/variant-compat";
 import { vcDialogKey } from "../../atoms/dialog/vc-dialog-context";
 import type { ComponentPublicInstance } from "vue";
 import type { RouteLocationRaw } from "vue-router";
@@ -111,6 +112,8 @@ const props = withDefaults(defineProps<IProps>(), {
   tag: "",
   tabindex: 0,
 });
+
+const canonicalVariant = computed(() => resolveVariant("VcButton", props.variant));
 
 const inputContext = inject<VcInputContextType | null>("inputContext", null);
 const dialogContext = inject(vcDialogKey, { size: ref("md") });
@@ -336,105 +339,49 @@ defineExpose({
       &:focus {
         --outline-color: rgb(from var(--color-#{$color}-500) r g b / 0.3);
       }
+    }
+  }
 
-      &:not([class*="--solid-"]) #{$loaderIcon} {
-        --loader-border: var(--color-#{$color}-100);
-        --loader-border-r: var(--color-#{$color}-500);
+  $variants: solid, soft, outline, surface, ghost;
+
+  @each $variant in $variants {
+    @each $color in $colors {
+      &--#{$variant}--#{$color} {
+        --bg-color: var(--vc-button-#{$variant}-#{$color}-bg);
+        --border-color: var(--vc-button-#{$variant}-#{$color}-border);
+        --text-color: var(--vc-button-#{$variant}-#{$color}-text);
+        --vc-icon-color: var(--vc-button-#{$variant}-#{$color}-icon);
+        --loader-border: color-mix(in srgb, var(--vc-button-#{$variant}-#{$color}-text), transparent 70%);
+        --loader-border-r: var(--vc-button-#{$variant}-#{$color}-text);
       }
     }
+  }
 
-    &--solid--#{$color} {
-      --bg-color: var(--color-#{$color}-500);
-      --border-color: var(--color-#{$color}-500);
-
-      &:not([class*="--warning"]) {
-        --text-color: var(--color-additional-50);
-      }
-
-      &[class*="--warning"] {
-        --text-color: var(--color-warning-900);
-      }
-
-      &:hover:not(#{$loading}, #{$disabled}) {
-        --bg-color: var(--color-#{$color}-600);
-        --border-color: var(--color-#{$color}-600);
-        --text-color: var(--color-additional-50);
-      }
-
-      & #{$loaderIcon} {
-        --loader-border: var(--color-#{$color}-200);
-        --loader-border-r: var(--color-additional-50);
-      }
+  // Hover — color-mix based, derived from current variant colors. No per-color overrides.
+  @each $color in $colors {
+    &--solid--#{$color}:hover:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(in srgb, var(--vc-button-solid-#{$color}-bg), black 15%);
+      --border-color: var(--bg-color);
     }
 
-    &--no-border--#{$color} {
-      --bg-color: var(--color-additional-50);
-      --border-color: var(--color-additional-50);
-
-      &:not([class*="--warning"]) {
-        --text-color: var(--color-#{$color}-500);
-      }
-
-      &[class*="--warning"] {
-        --text-color: var(--color-warning-700);
-      }
-
-      &:hover:not(#{$loading}, #{$disabled}) {
-        --bg-color: var(--color-#{$color}-100);
-        --border-color: var(--color-#{$color}-100);
-        --text-color: var(--color-#{$color}-700);
-      }
+    &--soft--#{$color}:hover:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(in srgb, var(--vc-button-soft-#{$color}-bg), black 8%);
+      --border-color: var(--bg-color);
     }
 
-    &--outline--#{$color} {
-      --bg-color: var(--color-additional-50);
-      --border-color: var(--color-#{$color}-500);
-
-      &:not([class*="--warning"]) {
-        --text-color: var(--color-#{$color}-500);
-      }
-
-      &[class*="--warning"] {
-        --text-color: var(--color-warning-700);
-      }
-
-      &:hover:not(#{$loading}, #{$disabled}) {
-        --text-color: var(--color-#{$color}-600);
-      }
+    &--surface--#{$color}:hover:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(in srgb, var(--vc-button-surface-#{$color}-text), white 80%);
+      --border-color: var(--bg-color);
     }
 
-    &--no-background--#{$color} {
-      --bg-color: transparent;
-      --border-color: transparent;
-
-      &:not([class*="--warning"]) {
-        --text-color: var(--color-#{$color}-500);
-      }
-
-      &[class*="--warning"] {
-        --text-color: var(--color-warning-700);
-      }
-
-      &:hover:not(#{$loading}, #{$disabled}) {
-        --text-color: var(--color-#{$color}-600);
-      }
+    &--outline--#{$color}:hover:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(in srgb, var(--vc-button-surface-#{$color}-text), white 80%);
     }
 
-    &--solid-light--#{$color} {
-      --bg-color: var(--color-#{$color}-100);
-      --border-color: var(--color-#{$color}-100);
-      --text-color: var(--color-#{$color}-800);
-
-      &:hover:not(#{$loading}, #{$disabled}) {
-        --bg-color: var(--color-#{$color}-50);
-        --border-color: var(--color-#{$color}-50);
-        --text-color: var(--color-#{$color}-700);
-      }
-
-      & #{$loaderIcon} {
-        --loader-border: var(--color-#{$color}-200);
-        --loader-border-r: var(--color-#{$color}-500);
-      }
+    &--ghost--#{$color}:hover:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(in srgb, var(--vc-button-surface-#{$color}-text), white 80%);
+      --border-color: var(--bg-color);
+      --text-color: color-mix(in srgb, var(--vc-button-ghost-#{$color}-text), black 8%);
     }
   }
 
@@ -448,7 +395,7 @@ defineExpose({
       --border-color: var(--color-neutral-200);
     }
 
-    &[class*="--no-border--"] {
+    &[class*="--surface--"] {
       --bg-color: var(--color-neutral-200);
       --border-color: var(--color-neutral-200);
     }
@@ -457,7 +404,7 @@ defineExpose({
       --border-color: var(--color-neutral-300);
     }
 
-    &[class*="--solid-light--"] {
+    &[class*="--soft--"] {
       --bg-color: var(--color-neutral-100);
       --border-color: var(--color-neutral-100);
     }

@@ -32,7 +32,7 @@
         </div>
       </div>
 
-      <div v-if="isOrganizationMaintainer" class="orders__scope-tabs">
+      <div v-if="checkPermissions(XApiPermissions.CanViewOrganizationOrders)" class="orders__scope-tabs">
         <VcTabSwitch
           v-model="orderScope"
           value="organization"
@@ -116,7 +116,7 @@ import { useI18n } from "vue-i18n";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { usePageHead } from "@/core/composables/usePageHead";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
-import { SortDirection } from "@/core/enums";
+import { SortDirection, XApiPermissions } from "@/core/enums";
 import { Sort } from "@/core/types";
 import { useOrderNavigation } from "@/shared/account/composables/useOrderNavigation";
 import { facets, useUserOrders } from "@/shared/account/composables/useUserOrders";
@@ -131,7 +131,7 @@ import type { ISortInfo } from "@/core/types";
 const { t } = useI18n();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { loading: ordersLoading, orders, fetchOrders, sort, pages, page, keyword } = useUserOrders({});
-const { user, isOrganizationMaintainer } = useUser();
+const { user, checkPermissions } = useUser();
 const { goToOrderDetails } = useOrderNavigation();
 
 const { getModuleSettings } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
@@ -204,7 +204,7 @@ function toggleOrdersScope(scope: OrderScopeType): void {
 onMounted(() => {
   resetFilters();
 
-  if (!isOrganizationMaintainer.value) {
+  if (!checkPermissions(XApiPermissions.CanViewOrganizationOrders)) {
     orderScope.value = "private";
   }
 });

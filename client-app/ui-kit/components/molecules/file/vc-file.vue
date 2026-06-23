@@ -48,7 +48,7 @@
             v-if="reloadable"
             :class="{ invisible: !reloadable }"
             :aria-label="$t('ui_kit.file.reload')"
-            variant="no-background"
+            variant="ghost"
             color="accent"
             size="xxs"
             icon="reset"
@@ -58,7 +58,7 @@
           <VcButton
             v-if="removable"
             :aria-label="$t('ui_kit.file.remove')"
-            variant="no-background"
+            variant="ghost"
             color="neutral"
             size="xxs"
             icon="delete-thin"

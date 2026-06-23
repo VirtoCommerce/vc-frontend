@@ -43,7 +43,7 @@ import { getMergeStrategyUniqueBy, useMutationBatcher } from "@/core/composables
 import { useSyncMutationBatchers } from "@/core/composables/useSyncMutationBatchers";
 import { ProductType, ValidationErrorObjectType } from "@/core/enums";
 import { globals } from "@/core/globals";
-import { groupByVendor, Logger } from "@/core/utilities";
+import { groupByVendor, splitLineItemsByCurrency, Logger } from "@/core/utilities";
 import { createSharedComposableByArgs } from "@/core/utilities/composables";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
@@ -284,9 +284,13 @@ export function useShortCart() {
       },
     },
   );
-  function updateItemCartQuantity(productId: string, quantity: number) {
+  function updateItemCartQuantity(productId: string, quantity: number, itemCurrencyCode?: string) {
     return updateItemCartQuantityMutation({
-      command: { items: [{ productId, quantity }], ...commonVariables, cartId: cart.value?.id },
+      command: {
+        items: [{ productId, quantity, itemCurrencyCode }],
+        ...commonVariables,
+        cartId: cart.value?.id,
+      },
     });
   }
 
@@ -343,7 +347,17 @@ export function _useFullCart(cartId?: string) {
   const availableShippingMethods = computed(() => cart.value?.availableShippingMethods ?? []);
   const availablePaymentMethods = computed(() => cart.value?.availablePaymentMethods ?? []);
 
-  const lineItemsGroupedByVendor = computed(() => groupByVendor(cart.value?.items ?? []));
+  // Vendor grouping and the main products list only cover items in the cart's main currency.
+  // Items priced in other currencies are listed separately, grouped by their currency.
+  const lineItemsByCurrency = computed(() =>
+    splitLineItemsByCurrency(cart.value?.items ?? [], cart.value?.currency?.code),
+  );
+
+  const mainCurrencyLineItems = computed(() => lineItemsByCurrency.value.mainCurrencyItems);
+
+  const otherCurrencyLineItemGroups = computed(() => lineItemsByCurrency.value.otherCurrencyGroups);
+
+  const lineItemsGroupedByVendor = computed(() => groupByVendor(mainCurrencyLineItems.value));
 
   const selectedLineItems = computed(() => cart.value?.items?.filter((item) => item.selectedForCheckout) ?? []);
 
@@ -684,6 +698,8 @@ export function _useFullCart(cartId?: string) {
     availablePaymentMethods,
     selectedItemIds,
     lineItemsGroupedByVendor,
+    mainCurrencyLineItems,
+    otherCurrencyLineItemGroups,
     selectedLineItems,
     selectedLineItemsGroupedByVendor,
     hasOnlyUnselectedLineItems,

@@ -40,19 +40,19 @@
   }
 
   @each $color in $colors {
-    &--no-border--#{$color} {
+    &--surface--#{$color} {
       --text-color: var(--color-#{$color}-900);
     }
   }
 
   @each $color in $colors {
-    &--no-background--#{$color} {
+    &--ghost--#{$color} {
       --text-color: var(--color-#{$color}-900);
     }
   }
 
   @each $color in $colors {
-    &--solid-light--#{$color} {
+    &--soft--#{$color} {
       --bg-color: var(--color-#{$color}-200);
       --border-color: var(--color-#{$color}-200);
       --text-color: var(--color-#{$color}-900);

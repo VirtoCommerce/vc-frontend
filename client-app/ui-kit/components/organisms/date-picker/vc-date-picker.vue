@@ -5,6 +5,7 @@
     :enable-teleport="enableTeleport"
     role="dialog"
     :aria-label="t('ui_kit.accessibility.calendar')"
+    @toggle="onPopoverToggle"
   >
     <template #default="{ toggle, triggerProps, close }">
       <VcDateInput
@@ -38,11 +39,11 @@
         @clear="onInputClear"
       >
         <template #append>
-          <!-- VcDateInput's Escape listener binds to the inner <input>, so it misses this sibling trigger button; handle Escape here too. -->
+          <!-- VcDateInput's Escape listener binds the inner <input>, so handle Escape on this sibling button too. -->
           <VcButton
             type="button"
             icon="calendar"
-            variant="no-background"
+            variant="ghost"
             color="primary"
             :disabled="disabled || readonly"
             :aria-label="t('ui_kit.accessibility.open_calendar')"
@@ -54,8 +55,9 @@
     </template>
 
     <template #content="{ close }">
-      <!-- Escape bubbles up from inside the calendar (day cells, nav buttons); close the popover from anywhere in the dialog (WCAG 2.1.2 keyboard trap). -->
+      <!-- Escape from anywhere in the calendar closes the dialog (WCAG 2.1.2 no keyboard trap). -->
       <VcCalendar
+        ref="calendarRef"
         :model-value="modelValue"
         :size="calendarSize"
         :min="min"
@@ -73,7 +75,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, useTemplateRef } from "vue";
+import { computed, nextTick, useTemplateRef } from "vue";
 import { useI18n } from "vue-i18n";
 import type { VcDateFieldUpdateOnType } from "@/ui-kit/composables";
 
@@ -138,6 +140,8 @@ const { t } = useI18n();
 const dateInputRef = useTemplateRef<{ inputElement: HTMLInputElement | null } | null>("dateInputRef");
 const innerInputElement = computed<HTMLInputElement | null>(() => dateInputRef.value?.inputElement ?? null);
 
+const calendarRef = useTemplateRef<{ focusActiveCell: () => void } | null>("calendarRef");
+
 // VcInputSizeType includes "auto" which VcCalendar doesn't model — fall back to "md".
 const calendarSize = computed<VcCalendarSizeType>(() => {
   if (props.size === "auto") {
@@ -148,6 +152,8 @@ const calendarSize = computed<VcCalendarSizeType>(() => {
 
 function forwardedAria(triggerProps: Record<string, unknown>): Record<string, string | number | null> {
   const aria: Record<string, string | number | null> = {
+    // combobox role makes aria-expanded/haspopup/controls valid on the input (a textbox disallows them).
+    role: "combobox",
     "aria-haspopup": triggerProps["aria-haspopup"] as string,
     "aria-expanded": String(triggerProps["aria-expanded"] ?? false),
   };
@@ -174,22 +180,30 @@ function onInputClear(): void {
   emit("clear");
 }
 
+function onPopoverToggle(opened: boolean): void {
+  if (!opened) {
+    return;
+  }
+  // VcPopover doesn't focus its content; move focus into the grid (WCAG 2.1.1).
+  // nextTick: content is display:none until opened, so wait until it is visible.
+  void nextTick(() => {
+    calendarRef.value?.focusActiveCell();
+  });
+}
+
 function onEscapeClose(close: () => void): void {
   close();
-  // Return focus to the trigger input so keyboard users are not stranded in the closed dialog.
+  // Return focus to the trigger so keyboard users are not stranded.
   innerInputElement.value?.focus();
 }
 
 function onCalendarUpdate(close: () => void, value: string | undefined): void {
-  // Guard against calendar emits when read-only/disabled (popover may be opened programmatically).
   if (props.disabled || props.readonly) {
     return;
   }
   emit("update:modelValue", value);
-  // Close on both select and clear (footer "Clear" emits undefined).
   if (props.closeOnSelect) {
     close();
-    // Return focus to the input for keyboard a11y.
     innerInputElement.value?.focus();
   }
 }

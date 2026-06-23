@@ -19,6 +19,8 @@
     <VcDropdownMenu
       class="vc-select__container"
       :disabled="!enabled"
+      :lazy="lazy"
+      :teleport-selector="teleportSelector"
       :data-test-id="testIdDropdown"
       tabindex="-1"
       width="trigger"
@@ -96,7 +98,7 @@
               type="button"
               icon="delete-thin"
               color="neutral"
-              variant="no-background"
+              variant="ghost"
               class="vc-select__clear"
               :icon-size="size === 'md' ? '0.875rem' : '0.75rem'"
               @keydown.enter.stop.prevent
@@ -197,6 +199,10 @@ interface IProps {
   clearable?: boolean;
   testIdDropdown?: string;
   enableTeleport?: boolean;
+  /** Defer rendering the option list until the dropdown is first opened (forwarded to VcPopover). */
+  lazy?: boolean;
+  /** Teleport target selector for the dropdown; defaults to the global popover host (forwarded to VcPopover). */
+  teleportSelector?: string;
 }
 
 interface IEmits {
