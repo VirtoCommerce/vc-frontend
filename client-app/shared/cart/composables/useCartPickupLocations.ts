@@ -35,6 +35,8 @@ export function _useCartPickupLocations() {
   const pickupLocationsEndCursor = ref<string | undefined>(undefined);
   const pickupLocationsHasNextPage = ref(false);
 
+  const fetchGeneration = ref(0);
+
   const filterSelectsAreEmpty = computed(
     () =>
       !(
@@ -75,9 +77,7 @@ export function _useCartPickupLocations() {
     payload: Omit<QueryCartPickupLocationsArgs, "storeId" | "cultureName" | "facet">,
   ) {
     pickupLocationsLoading.value = true;
-
-    pickupLocationsEndCursor.value = undefined;
-    pickupLocationsHasNextPage.value = false;
+    fetchGeneration.value++;
 
     try {
       const data = await getCartPickupLocations({
@@ -144,12 +144,19 @@ export function _useCartPickupLocations() {
     }
 
     pickupLocationsLoadingMore.value = true;
+    const requestGeneration = fetchGeneration.value;
     try {
       const data = await getCartPickupLocations({
         facet: PICKUP_LOCATIONS_FACET,
         ...payload,
         after: pickupLocationsEndCursor.value,
       });
+
+      // Bug guard (race): if a fetchPickupLocations started after this loadMore began, its
+      // generation bump makes this response stale. Drop it without touching the list/cursor.
+      if (fetchGeneration.value !== requestGeneration) {
+        return;
+      }
 
       // keep-first dedup (BL-BOPIS-008): a prepended confirmed location at items[0] must win
       // over a duplicate arriving on a later page, so the FIRST occurrence is retained.

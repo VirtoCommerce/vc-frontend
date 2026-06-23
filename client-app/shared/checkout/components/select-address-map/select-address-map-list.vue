@@ -113,13 +113,19 @@ const { t } = useI18n();
 const loadedCount = computed(() => Math.min(props.addresses.length, props.totalCount ?? 0));
 
 watch(
-  () => props.addresses.length,
-  async (newLen, oldLen) => {
-    if (oldLen === 0 || newLen <= oldLen) {
+  () => props.addresses.map((address) => address.id),
+  async (newIds, oldIds) => {
+    // Only move focus on a true "Load more" append: the new list must be a strict extension of the
+    // old one (all old ids preserved, in order, at the front) AND longer. A filter/search refetch
+    // replaces the set — its length can grow without preserving the prefix — and must NOT steal focus.
+    const isAppend =
+      oldIds.length > 0 && newIds.length > oldIds.length && oldIds.every((id, index) => id === newIds[index]);
+
+    if (!isAppend) {
       return;
     }
 
-    const firstNewAddress = props.addresses[oldLen];
+    const firstNewAddress = props.addresses[oldIds.length];
 
     if (!firstNewAddress) {
       return;
