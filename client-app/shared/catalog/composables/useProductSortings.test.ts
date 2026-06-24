@@ -12,7 +12,7 @@ vi.mock("vue-i18n", () => ({
 }));
 
 function def(overrides: Partial<ProductSortingType> & { id: string }): ProductSortingType {
-  return { id: overrides.id, name: overrides.id, isDefault: false, selected: false, ...overrides };
+  return { name: overrides.id, isDefault: false, selected: false, ...overrides };
 }
 
 function writableParam(initial: string): WritableComputedRef<string> {
@@ -52,7 +52,7 @@ describe("useProductSortings", () => {
     });
 
     it("falls back to the id when a definition has no name", () => {
-      setProductSortings([def({ id: "custom", name: null })]);
+      setProductSortings([def({ id: "custom", name: undefined })]);
 
       const { sortList } = useProductSortings();
 
