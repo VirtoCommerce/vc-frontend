@@ -171,7 +171,15 @@ const colorSet = {
 };
 
 module.exports = {
-  content: ["./index.html", "./client-app/**/*.{vue,js,ts,jsx,tsx}", "./node_modules/tw-elements/dist/js/**/*.js"],
+  content: [
+    "./index.html",
+    "./client-app/**/*.{vue,js,ts,jsx,tsx}",
+    // Generated GraphQL types (1+ MiB, 25k-char lines) trigger catastrophic backtracking in the
+    // Tailwind class extractor regex, adding tens of seconds to every cold dev start and build.
+    // Codegen output cannot contain real class names.
+    "!./client-app/**/api/graphql/**/types.ts",
+    "./node_modules/tw-elements/dist/js/**/*.js",
+  ],
 
   safelist: ["lg:inline"],
 

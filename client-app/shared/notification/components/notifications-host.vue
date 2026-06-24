@@ -24,7 +24,7 @@
             <VcButton
               :to="notification.button.to"
               :color="notification.button.color ?? 'accent'"
-              :variant="notification.button.variant ?? 'no-border'"
+              :variant="notification.button.variant ?? 'surface'"
               class="notifications-host__button"
               size="xs"
               @click="

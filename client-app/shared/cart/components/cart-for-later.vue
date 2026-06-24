@@ -26,7 +26,7 @@
 
     <div v-if="maxVisibleItems < availableItems.length" class="cart-for-later__show-more">
       <VcButton
-        variant="no-border"
+        variant="surface"
         append-icon="chevron-down"
         data-test-id="cart-for-later.show-more-button"
         @click="maxVisibleItems += VISIBLE_ITEMS_STEP"

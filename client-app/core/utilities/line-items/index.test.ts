@@ -1,6 +1,12 @@
 import { describe, it, expect, vi } from "vitest";
 import { PropertyType, PropertyValueTypes } from "@/core/api/graphql/types";
-import { groupByVendor, prepareLineItem, prepareLineItems, prepareLineItemForProduct } from "./index";
+import {
+  groupByVendor,
+  prepareLineItem,
+  prepareLineItems,
+  prepareLineItemForProduct,
+  splitLineItemsByCurrency,
+} from "./index";
 import type {
   Product,
   PriceType,
@@ -535,6 +541,55 @@ describe("prepareLineItems", () => {
   it("should return an empty array when input is empty", () => {
     const preparedItems = prepareLineItems([]);
     expect(preparedItems).toEqual([]);
+  });
+});
+
+describe("splitLineItemsByCurrency", () => {
+  it("treats an item without a currency code as a main-currency item", () => {
+    const item = createMockLineItem({ id: "li1", currencyCode: undefined });
+    const result = splitLineItemsByCurrency([item], "USD");
+
+    expect(result.mainCurrencyItems).toEqual([item]);
+    expect(result.otherCurrencyGroups).toEqual([]);
+  });
+
+  it("puts every item into main-currency items when mainCurrencyCode is undefined", () => {
+    const item1 = createMockLineItem({ id: "li1", currencyCode: "USD" });
+    const item2 = createMockLineItem({ id: "li2", currencyCode: "EUR" });
+    const result = splitLineItemsByCurrency([item1, item2]);
+
+    expect(result.mainCurrencyItems).toEqual([item1, item2]);
+    expect(result.otherCurrencyGroups).toEqual([]);
+  });
+
+  it("groups items matching the main currency code into main-currency items", () => {
+    const item1 = createMockLineItem({ id: "li1", currencyCode: "USD" });
+    const item2 = createMockLineItem({ id: "li2", currencyCode: "USD" });
+    const result = splitLineItemsByCurrency([item1, item2], "USD");
+
+    expect(result.mainCurrencyItems).toEqual([item1, item2]);
+    expect(result.otherCurrencyGroups).toEqual([]);
+  });
+
+  it("groups foreign-currency items by their currency code", () => {
+    const main = createMockLineItem({ id: "li-main", currencyCode: "USD" });
+    const eur1 = createMockLineItem({ id: "li-eur1", currencyCode: "EUR" });
+    const eur2 = createMockLineItem({ id: "li-eur2", currencyCode: "EUR" });
+    const gbp = createMockLineItem({ id: "li-gbp", currencyCode: "GBP" });
+    const result = splitLineItemsByCurrency([main, eur1, gbp, eur2], "USD");
+
+    expect(result.mainCurrencyItems).toEqual([main]);
+    expect(result.otherCurrencyGroups).toEqual([
+      { currencyCode: "EUR", items: [eur1, eur2] },
+      { currencyCode: "GBP", items: [gbp] },
+    ]);
+  });
+
+  it("returns empty results for an empty array", () => {
+    const result = splitLineItemsByCurrency([], "USD");
+
+    expect(result.mainCurrencyItems).toEqual([]);
+    expect(result.otherCurrencyGroups).toEqual([]);
   });
 });
 

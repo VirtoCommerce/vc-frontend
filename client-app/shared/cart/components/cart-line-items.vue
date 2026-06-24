@@ -10,6 +10,7 @@
     with-price
     with-total
     with-subtotal
+    :subtotal-currency-code="subtotalCurrencyCode"
     removable
     :selectable="selectable"
     @select:items="$emit('select:items', $event)"
@@ -119,6 +120,7 @@ interface IProps {
   selectable?: boolean;
   sharedSelectedItemIds?: string[];
   hideControls?: string[];
+  subtotalCurrencyCode?: string;
 }
 
 interface IEmits {
