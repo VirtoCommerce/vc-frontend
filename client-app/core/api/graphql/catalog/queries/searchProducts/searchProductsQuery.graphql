@@ -137,7 +137,7 @@ query SearchProducts(
     filters @include(if: $withFacets) {
       ...filter
     }
-    sort_definitions @include(if: $withFacets) {
+    sortings @include(if: $withFacets) {
       id
       name
       isDefault

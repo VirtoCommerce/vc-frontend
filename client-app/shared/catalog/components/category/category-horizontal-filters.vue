@@ -65,10 +65,7 @@
 import { useRouteQueryParam } from "@/core/composables";
 import { PRODUCT_SORTING_LIST } from "@/core/constants";
 import { QueryParamName } from "@/core/enums";
-import {
-  useProductSortDefinitions,
-  useSelectedSortOption,
-} from "@/shared/catalog/composables/useProductSortDefinitions";
+import { useProductSortings, useSelectedSortOption } from "@/shared/catalog/composables/useProductSortings";
 import type { SearchProductFilterResult } from "@/core/api/graphql/types";
 import type { ProductsFiltersType } from "@/shared/catalog";
 import ProductsFilters from "@/shared/catalog/components/products-filters.vue";
@@ -98,7 +95,7 @@ const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
   validator: (value) => /^[a-z0-9-_]*$/i.test(value),
 });
 
-const { sortList: translatedProductSortingList } = useProductSortDefinitions();
+const { sortList: translatedProductSortingList } = useProductSortings();
 const selectedSort = useSelectedSortOption(sortQueryParam);
 
 function sortingItemClickHandler(id: string, close: () => void) {

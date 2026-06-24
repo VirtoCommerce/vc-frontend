@@ -1,12 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { computed, ref } from "vue";
 import { PRODUCT_SORTING_LIST } from "@/core/constants/products";
-import {
-  setProductSortDefinitions,
-  useProductSortDefinitions,
-  useSelectedSortOption,
-} from "./useProductSortDefinitions";
-import type { SortDefinitionType } from "@/core/api/graphql/types";
+import { setProductSortings, useProductSortings, useSelectedSortOption } from "./useProductSortings";
+import type { ProductSortingType } from "@/core/api/graphql/types";
 import type { WritableComputedRef } from "vue";
 
 vi.mock("vue-i18n", () => ({
@@ -15,7 +11,7 @@ vi.mock("vue-i18n", () => ({
   }),
 }));
 
-function def(overrides: Partial<SortDefinitionType> & { id: string }): SortDefinitionType {
+function def(overrides: Partial<ProductSortingType> & { id: string }): ProductSortingType {
   return { id: overrides.id, name: overrides.id, isDefault: false, selected: false, ...overrides };
 }
 
@@ -29,25 +25,25 @@ function writableParam(initial: string): WritableComputedRef<string> {
   });
 }
 
-describe("useProductSortDefinitions", () => {
+describe("useProductSortings", () => {
   beforeEach(() => {
-    setProductSortDefinitions([]); // reset the module-level singleton between tests
+    setProductSortings([]); // reset the module-level singleton between tests
   });
 
   describe("sortList", () => {
     it("falls back to the hardcoded list when there are no backend definitions", () => {
-      const { sortList } = useProductSortDefinitions();
+      const { sortList } = useProductSortings();
 
       expect(sortList.value).toEqual(PRODUCT_SORTING_LIST.map((item) => ({ id: item.id, name: item.name })));
     });
 
     it("maps backend definitions and routes the default option to an empty id", () => {
-      setProductSortDefinitions([
+      setProductSortings([
         def({ id: "featured", name: "Featured", isDefault: true }),
         def({ id: "price-ascending", name: "Price", selected: true }),
       ]);
 
-      const { sortList } = useProductSortDefinitions();
+      const { sortList } = useProductSortings();
 
       expect(sortList.value).toEqual([
         { id: "", name: "Featured" },
@@ -56,9 +52,9 @@ describe("useProductSortDefinitions", () => {
     });
 
     it("falls back to the id when a definition has no name", () => {
-      setProductSortDefinitions([def({ id: "custom", name: null })]);
+      setProductSortings([def({ id: "custom", name: null })]);
 
-      const { sortList } = useProductSortDefinitions();
+      const { sortList } = useProductSortings();
 
       expect(sortList.value).toEqual([{ id: "custom", name: "custom" }]);
     });
@@ -66,7 +62,7 @@ describe("useProductSortDefinitions", () => {
 
   describe("useSelectedSortOption", () => {
     beforeEach(() => {
-      setProductSortDefinitions([
+      setProductSortings([
         def({ id: "featured", name: "Featured", isDefault: true }),
         def({ id: "price-ascending", name: "Price" }),
       ]);

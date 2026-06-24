@@ -22,7 +22,7 @@ import {
   rangeFacetToCommonFacet,
   termFacetToCommonFacet,
 } from "@/core/utilities";
-import { setProductSortDefinitions } from "@/shared/catalog/composables/useProductSortDefinitions";
+import { setProductSortings } from "@/shared/catalog/composables/useProductSortings";
 import { usePurchasedBefore } from "@/shared/catalog/composables/usePurchasedBefore";
 import { CATALOG_PAGINATION_MODES } from "@/shared/catalog/constants/catalog";
 import { useModal } from "@/shared/modal";
@@ -395,7 +395,7 @@ export function useProducts(
         range_facets = [],
         totalCount = 0,
         filters = [],
-        sort_definitions = [],
+        sortings = [],
       } = await searchProducts(searchParams, {
         withFacets,
         withImages,
@@ -413,7 +413,7 @@ export function useProducts(
       addPageHistory(searchParams.page ?? 1);
 
       if (withFacets) {
-        setProductSortDefinitions(sort_definitions);
+        setProductSortings(sortings);
 
         setFacets({
           termFacets: term_facets,

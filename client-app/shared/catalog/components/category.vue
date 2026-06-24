@@ -242,10 +242,7 @@ import {
 } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
 import { useCategorySeo } from "@/shared/catalog/composables/useCategorySeo";
-import {
-  useProductSortDefinitions,
-  useSelectedSortOption,
-} from "@/shared/catalog/composables/useProductSortDefinitions";
+import { useProductSortings, useSelectedSortOption } from "@/shared/catalog/composables/useProductSortings";
 import { CATALOG_PAGINATION_MODES, CatalogControl } from "@/shared/catalog/constants/catalog";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar.ts";
 import { useSearchScore } from "@/shared/layout/composables/useSearchScore.ts";
@@ -474,7 +471,7 @@ const categoryProductsAnchor = shallowRef<HTMLElement | null>(null);
 
 const { t } = useI18n();
 
-const { sortList: translatedProductSortingList } = useProductSortDefinitions();
+const { sortList: translatedProductSortingList } = useProductSortings();
 const selectedSort = useSelectedSortOption(sortQueryParam);
 
 function cancelControl(control: CatalogControl) {
