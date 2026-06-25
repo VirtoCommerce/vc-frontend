@@ -22,6 +22,7 @@ declare module "vue" {
     VcDialogFooter: typeof Components.VcDialogFooter;
     VcDialogHeader: typeof Components.VcDialogHeader;
     VcDropdownMenu: typeof Components.VcDropdownMenu;
+    VcEmptyView: typeof Components.VcEmptyView;
     VcExpansionPanel: typeof Components.VcExpansionPanel;
     VcExpansionPanels: typeof Components.VcExpansionPanels;
     VcFileUploader: typeof Components.VcFileUploader;
