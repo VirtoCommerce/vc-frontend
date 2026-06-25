@@ -12,11 +12,11 @@
       "Modules": [
         {
           "Id": "VirtoCommerce.Catalog",
-          "BlobName": "VirtoCommerce.Catalog_3.1032.0-alpha.2554-vcst-5177-configurable-products-sorting.zip"
+          "BlobName": "VirtoCommerce.Catalog_3.1032.0-alpha.2558-vcst-5177-configurable-products-sorting.zip"
         },
         {
           "Id": "VirtoCommerce.XCatalog",
-          "BlobName": "VirtoCommerce.XCatalog_3.1009.0-alpha.213-vcst-5177-configurable-products-sorting.zip"
+          "BlobName": "VirtoCommerce.XCatalog_3.1009.0-alpha.218-vcst-5177-configurable-products-sorting.zip"
         }
       ]
     },
