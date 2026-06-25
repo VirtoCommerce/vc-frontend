@@ -27,7 +27,7 @@
 
 <script setup lang="ts">
 import { inject, ref, computed } from "vue";
-import { vcDialogKey } from "../../atoms/dialog/vc-dialog-context";
+import { vcDialogKey } from "../dialog/vc-dialog-context";
 
 export interface IEmits {
   (event: "close"): void;
