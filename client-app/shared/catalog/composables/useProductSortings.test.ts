@@ -61,29 +61,45 @@ describe("useProductSortings", () => {
   });
 
   describe("useSelectedSortOption", () => {
-    beforeEach(() => {
-      setProductSortings([
-        def({ id: "featured", name: "Featured", isDefault: true }),
-        def({ id: "price-ascending", name: "Price" }),
-      ]);
+    it("returns undefined before the first backend response (initial load)", () => {
+      setProductSortings([]); // no definitions yet
+
+      const selected = useSelectedSortOption(writableParam(""));
+
+      expect(selected.value).toBeUndefined();
     });
 
-    it("passes through a value that matches a visible option", () => {
+    it("mirrors the backend-selected option", () => {
+      setProductSortings([
+        def({ id: "featured", name: "Featured", isDefault: true }),
+        def({ id: "price-ascending", name: "Price", selected: true }),
+      ]);
+
       const selected = useSelectedSortOption(writableParam("price-ascending"));
 
       expect(selected.value).toBe("price-ascending");
     });
 
-    it("snaps an unknown or now-hidden value to the default empty option", () => {
-      const selected = useSelectedSortOption(writableParam("does-not-exist"));
+    it("maps the selected default option to the empty id", () => {
+      setProductSortings([
+        def({ id: "featured", name: "Featured", isDefault: true, selected: true }),
+        def({ id: "price-ascending", name: "Price" }),
+      ]);
+
+      const selected = useSelectedSortOption(writableParam(""));
 
       expect(selected.value).toBe("");
     });
 
-    it("treats the empty default as a valid option", () => {
-      const selected = useSelectedSortOption(writableParam(""));
+    it("returns undefined when nothing is selected (hidden, unknown, or raw sort)", () => {
+      setProductSortings([
+        def({ id: "featured", name: "Featured", isDefault: true }),
+        def({ id: "price-ascending", name: "Price" }),
+      ]);
 
-      expect(selected.value).toBe("");
+      const selected = useSelectedSortOption(writableParam("name-ascending"));
+
+      expect(selected.value).toBeUndefined();
     });
 
     it("writes straight through to the underlying query param", () => {
@@ -91,8 +107,10 @@ describe("useProductSortings", () => {
       const selected = useSelectedSortOption(param);
 
       selected.value = "price-ascending";
-
       expect(param.value).toBe("price-ascending");
+
+      selected.value = undefined;
+      expect(param.value).toBe("");
     });
   });
 });
