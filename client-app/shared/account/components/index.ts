@@ -9,6 +9,7 @@ export { default as ImpersonateForm } from "./impersonate-form.vue";
 export { default as OrderLineItems } from "./order-line-items.vue";
 export { default as OrderStatus } from "./order-status.vue";
 export { default as Orders } from "./orders.vue";
+export { default as OrdersTable } from "./orders/orders-table.vue";
 /** @deprecated PageToolbarBlock is deprecated. Consider using a custom implementation. */
 export { default as PageToolbarBlock } from "./page-toolbar-block.vue";
 export { default as PasswordTips } from "./password-tips.vue";
