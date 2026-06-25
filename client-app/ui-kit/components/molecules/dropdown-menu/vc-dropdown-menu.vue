@@ -12,6 +12,7 @@
     :z-index="zIndex"
     :disabled="disabled"
     :lazy="lazy"
+    :teleport-selector="teleportSelector"
     shadow
     @toggle="$emit('toggle', $event)"
   >
@@ -64,6 +65,8 @@ interface IProps {
   listLabel?: string;
   /** Defer rendering menu content until the menu is first opened (forwarded to VcPopover). */
   lazy?: boolean;
+  /** Teleport target selector for the menu content; defaults to the global popover host (forwarded to VcPopover). */
+  teleportSelector?: string;
 }
 
 defineEmits<IEmits>();

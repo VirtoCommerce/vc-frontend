@@ -22,7 +22,7 @@ interface IProps {
 const emit = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   size: "sm",
-  variant: "no-background",
+  variant: "ghost",
 });
 
 const { t } = useI18n();

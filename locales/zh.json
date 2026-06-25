@@ -214,7 +214,8 @@
       "report_sent_successfully": "谢谢！您的报告已成功发送。我们会查看的。",
       "copied_to_clipboard": "已复制到剪贴板",
       "role_update_successful": "客户角色已成功更新。",
-      "role_update_failed": "更新角色时发生错误：{0}",
+      "contact_lock_failed": "阻止/取消阻止用户失败。",
+      "role_update_failed": "更新角色时发生错误。",
       "passwords_do_not_match": "密码字段的值必须匹配。",
       "password_new_same_old": "您的当前密码和新密码必须不同。",
       "blocked": "您已被封锁。您无法访问任何信息或创建订单。如需更多信息，请 ",
@@ -497,6 +498,7 @@
           "email_verification_is_required": "需要电子邮件验证。请验证您的电子邮件地址",
           "user_is_temporary_locked_out": "您的账户已被临时锁定。请稍后再试",
           "user_is_locked_out": "@:common.messages.blocked",
+          "user_is_locked_in_organization": "您对此组织的访问已被阻止。请联系您的组织管理员",
           "user_cannot_login_in_store": "访问被拒绝。您无法登录当前商店",
           "password_expired": "@:common.messages.password_expired",
           "user_not_found": "未找到用户。请确保您输入了正确的信息"
