@@ -3,8 +3,12 @@ export { default as VcConfirmationModal } from "./confirmation-modal/vc-confirma
 export { default as VcDatePicker } from "./date-picker/vc-date-picker.vue";
 export { default as VcModal } from "./modal/vc-modal.vue";
 export { default as VcPagination } from "./pagination/vc-pagination.vue";
+export { default as VcPopupSidebar } from "./popup-sidebar/vc-popup-sidebar.vue";
+export { default as VcProductButton } from "./product-button/vc-product-button.vue";
 export { default as VcProductCard } from "./product-card/vc-product-card.vue";
 export { default as VcProductImage } from "./product-image/vc-product-image.vue";
 export { default as VcQuantityStepper } from "./quantity-stepper/vc-quantity-stepper.vue";
 export { default as VcTable } from "./table/vc-table.vue";
 export { default as VcTableColumn } from "./table/vc-table-column.vue";
+export { default as VcWidget } from "./widget/vc-widget.vue";
+export { default as VcWidgetSkeleton } from "./widget-skeleton/vc-widget-skeleton.vue";
