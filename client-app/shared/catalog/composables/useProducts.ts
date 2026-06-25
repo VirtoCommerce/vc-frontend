@@ -22,7 +22,6 @@ import {
   rangeFacetToCommonFacet,
   termFacetToCommonFacet,
 } from "@/core/utilities";
-import { setProductSortings } from "@/shared/catalog/composables/useProductSortings";
 import { usePurchasedBefore } from "@/shared/catalog/composables/usePurchasedBefore";
 import { CATALOG_PAGINATION_MODES } from "@/shared/catalog/constants/catalog";
 import { useModal } from "@/shared/modal";
@@ -32,7 +31,13 @@ import type {
   ProductsFiltersType,
   ProductsSearchParamsType,
 } from "../types";
-import type { Product, RangeFacet, TermFacet, SearchProductFilterResult } from "@/core/api/graphql/types";
+import type {
+  Product,
+  RangeFacet,
+  TermFacet,
+  SearchProductFilterResult,
+  ProductSortingType,
+} from "@/core/api/graphql/types";
 import type { FacetItemType } from "@/core/types";
 import type { Ref } from "vue";
 import BranchesModal from "@/shared/fulfillmentCenters/components/branches-modal.vue";
@@ -126,6 +131,9 @@ export function useProducts(
 
   const products = ref<Product[]>([]);
   const facets = ref<FacetItemType[]>([]);
+  // Per-instance "sort by" options from the search response (only fetched when withFacets). Owned by this
+  // useProducts instance — passed to the sort dropdown by the consumer rather than shared via module state.
+  const productSortings = ref<ProductSortingType[]>([]);
 
   const prevProductsFilters = ref<ProductsFiltersType>();
   const productsFilters = ref<ProductsFiltersType>({
@@ -413,7 +421,7 @@ export function useProducts(
       addPageHistory(searchParams.page ?? 1);
 
       if (withFacets) {
-        setProductSortings(sortings);
+        productSortings.value = sortings;
 
         setFacets({
           termFacets: term_facets,
@@ -564,6 +572,7 @@ export function useProducts(
     pagesCount: readonly(pagesCount),
     products: computed(() => products.value),
     productsById,
+    sortings: computed(() => productSortings.value),
     productsFilters: productFiltersSorted,
     searchQueryParam,
     sortQueryParam,

@@ -142,7 +142,7 @@
           <CategoryHorizontalFilters
             v-if="isHorizontalFilters && !isMobile"
             :facets-loading="fetchingFacets"
-            :sort-query-param="sortQueryParam"
+            :sortings="sortings"
             :loading="fetchingProducts || fetchingFacets"
             :filters="filtersToShow"
             :hide-sorting="hideSorting"
@@ -242,7 +242,7 @@ import {
 } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
 import { useCategorySeo } from "@/shared/catalog/composables/useCategorySeo";
-import { useProductSortings, useSelectedSortOption } from "@/shared/catalog/composables/useProductSortings";
+import { useProductSortings } from "@/shared/catalog/composables/useProductSortings";
 import { CATALOG_PAGINATION_MODES, CatalogControl } from "@/shared/catalog/constants/catalog";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar.ts";
 import { useSearchScore } from "@/shared/layout/composables/useSearchScore.ts";
@@ -362,6 +362,7 @@ const {
   productsFilters,
   searchQueryParam,
   sortQueryParam,
+  sortings,
   totalProductsCount,
   preserveUserQueryQueryParam,
 
@@ -471,8 +472,7 @@ const categoryProductsAnchor = shallowRef<HTMLElement | null>(null);
 
 const { t } = useI18n();
 
-const { sortList: translatedProductSortingList } = useProductSortings();
-const selectedSort = useSelectedSortOption(sortQueryParam);
+const { sortList: translatedProductSortingList, selectedSort } = useProductSortings(sortings, sortQueryParam);
 
 function cancelControl(control: CatalogControl) {
   switch (control) {

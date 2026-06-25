@@ -1,9 +1,9 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { computed, ref } from "vue";
 import { PRODUCT_SORTING_LIST } from "@/core/constants/products";
-import { setProductSortings, useProductSortings, useSelectedSortOption } from "./useProductSortings";
+import { useProductSortings } from "./useProductSortings";
 import type { ProductSortingType } from "@/core/api/graphql/types";
-import type { WritableComputedRef } from "vue";
+import type { Ref, WritableComputedRef } from "vue";
 
 vi.mock("vue-i18n", () => ({
   useI18n: vi.fn().mockReturnValue({
@@ -25,25 +25,26 @@ function writableParam(initial: string): WritableComputedRef<string> {
   });
 }
 
-describe("useProductSortings", () => {
-  beforeEach(() => {
-    setProductSortings([]); // reset the module-level singleton between tests
-  });
+function sortingsRef(definitions: ProductSortingType[] = []): Ref<ProductSortingType[]> {
+  return ref(definitions);
+}
 
+describe("useProductSortings", () => {
   describe("sortList", () => {
     it("falls back to the hardcoded list when there are no backend definitions", () => {
-      const { sortList } = useProductSortings();
+      const { sortList } = useProductSortings(sortingsRef(), writableParam(""));
 
       expect(sortList.value).toEqual(PRODUCT_SORTING_LIST.map((item) => ({ id: item.id, name: item.name })));
     });
 
     it("maps backend definitions and routes the default option to an empty id", () => {
-      setProductSortings([
-        def({ id: "featured", name: "Featured", isDefault: true }),
-        def({ id: "price-ascending", name: "Price", selected: true }),
-      ]);
-
-      const { sortList } = useProductSortings();
+      const { sortList } = useProductSortings(
+        sortingsRef([
+          def({ id: "featured", name: "Featured", isDefault: true }),
+          def({ id: "price-ascending", name: "Price", selected: true }),
+        ]),
+        writableParam(""),
+      );
 
       expect(sortList.value).toEqual([
         { id: "", name: "Featured" },
@@ -52,64 +53,74 @@ describe("useProductSortings", () => {
     });
 
     it("falls back to the id when a definition has no name", () => {
-      setProductSortings([def({ id: "custom", name: undefined })]);
-
-      const { sortList } = useProductSortings();
+      const { sortList } = useProductSortings(sortingsRef([def({ id: "custom", name: undefined })]), writableParam(""));
 
       expect(sortList.value).toEqual([{ id: "custom", name: "custom" }]);
     });
+
+    it("reacts to the sortings source changing", () => {
+      const sortings = sortingsRef();
+      const { sortList } = useProductSortings(sortings, writableParam(""));
+
+      expect(sortList.value).toHaveLength(PRODUCT_SORTING_LIST.length);
+
+      sortings.value = [def({ id: "price-ascending", name: "Price", selected: true })];
+
+      expect(sortList.value).toEqual([{ id: "price-ascending", name: "Price" }]);
+    });
   });
 
-  describe("useSelectedSortOption", () => {
+  describe("selectedSort", () => {
     it("returns undefined before the first backend response (initial load)", () => {
-      setProductSortings([]); // no definitions yet
+      const { selectedSort } = useProductSortings(sortingsRef(), writableParam(""));
 
-      const selected = useSelectedSortOption(writableParam(""));
-
-      expect(selected.value).toBeUndefined();
+      expect(selectedSort.value).toBeUndefined();
     });
 
     it("mirrors the backend-selected option", () => {
-      setProductSortings([
-        def({ id: "featured", name: "Featured", isDefault: true }),
-        def({ id: "price-ascending", name: "Price", selected: true }),
-      ]);
+      const { selectedSort } = useProductSortings(
+        sortingsRef([
+          def({ id: "featured", name: "Featured", isDefault: true }),
+          def({ id: "price-ascending", name: "Price", selected: true }),
+        ]),
+        writableParam("price-ascending"),
+      );
 
-      const selected = useSelectedSortOption(writableParam("price-ascending"));
-
-      expect(selected.value).toBe("price-ascending");
+      expect(selectedSort.value).toBe("price-ascending");
     });
 
     it("maps the selected default option to the empty id", () => {
-      setProductSortings([
-        def({ id: "featured", name: "Featured", isDefault: true, selected: true }),
-        def({ id: "price-ascending", name: "Price" }),
-      ]);
+      const { selectedSort } = useProductSortings(
+        sortingsRef([
+          def({ id: "featured", name: "Featured", isDefault: true, selected: true }),
+          def({ id: "price-ascending", name: "Price" }),
+        ]),
+        writableParam(""),
+      );
 
-      const selected = useSelectedSortOption(writableParam(""));
-
-      expect(selected.value).toBe("");
+      expect(selectedSort.value).toBe("");
     });
 
     it("returns undefined when nothing is selected (hidden, unknown, or raw sort)", () => {
-      setProductSortings([
-        def({ id: "featured", name: "Featured", isDefault: true }),
-        def({ id: "price-ascending", name: "Price" }),
-      ]);
+      const { selectedSort } = useProductSortings(
+        sortingsRef([
+          def({ id: "featured", name: "Featured", isDefault: true }),
+          def({ id: "price-ascending", name: "Price" }),
+        ]),
+        writableParam("name-ascending"),
+      );
 
-      const selected = useSelectedSortOption(writableParam("name-ascending"));
-
-      expect(selected.value).toBeUndefined();
+      expect(selectedSort.value).toBeUndefined();
     });
 
     it("writes straight through to the underlying query param", () => {
       const param = writableParam("");
-      const selected = useSelectedSortOption(param);
+      const { selectedSort } = useProductSortings(sortingsRef(), param);
 
-      selected.value = "price-ascending";
+      selectedSort.value = "price-ascending";
       expect(param.value).toBe("price-ascending");
 
-      selected.value = undefined;
+      selectedSort.value = undefined;
       expect(param.value).toBe("");
     });
   });
