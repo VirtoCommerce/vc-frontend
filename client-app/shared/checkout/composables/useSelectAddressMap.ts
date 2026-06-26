@@ -36,6 +36,15 @@ export function focusAddressRadio(id: string): void {
   radio?.focus();
 }
 
+/**
+ * Returns true when `newIds` begins with `oldIds` as an in-order prefix.
+ * With `strict: true`, also requires `newIds` to be strictly longer than `oldIds`.
+ */
+export function isPrefixExtension(oldIds: string[], newIds: string[], options?: { strict?: boolean }): boolean {
+  const longEnough = options?.strict ? newIds.length > oldIds.length : newIds.length >= oldIds.length;
+  return longEnough && oldIds.every((id, index) => id === newIds[index]);
+}
+
 function scrollToAddressInList(addressId: string) {
   const listElement = getAddressElement(addressId);
 

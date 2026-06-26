@@ -79,7 +79,7 @@
 import { computed, nextTick, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { getAddressName } from "@/core/utilities/address";
-import { focusAddressRadio } from "@/shared/checkout/composables";
+import { focusAddressRadio, isPrefixExtension } from "@/shared/checkout/composables";
 import type { PickupLocationType } from "@/shared/checkout/composables";
 import PickupAvailabilityInfo from "@/shared/common/components/pickup-availability-info.vue";
 
@@ -118,8 +118,7 @@ watch(
     // Only move focus on a true "Load more" append: the new list must be a strict extension of the
     // old one (all old ids preserved, in order, at the front) AND longer. A filter/search refetch
     // replaces the set — its length can grow without preserving the prefix — and must NOT steal focus.
-    const isAppend =
-      oldIds.length > 0 && newIds.length > oldIds.length && oldIds.every((id, index) => id === newIds[index]);
+    const isAppend = oldIds.length > 0 && isPrefixExtension(oldIds, newIds, { strict: true });
 
     if (!isAppend) {
       return;

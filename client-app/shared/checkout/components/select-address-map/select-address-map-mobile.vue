@@ -75,7 +75,7 @@
 <script setup lang="ts">
 import { nextTick, ref, toRef, useTemplateRef, watch } from "vue";
 import { SelectAddressFilter } from "@/shared/checkout";
-import { useSelectAddressMap } from "@/shared/checkout/composables";
+import { focusAddressRadio, useSelectAddressMap } from "@/shared/checkout/composables";
 import { useModal } from "@/shared/modal";
 import { focusFirstElement } from "@/ui-kit/utilities/focus";
 import PickupLocationCard from "../pickup-location-card.vue";
@@ -154,10 +154,9 @@ function onInfoCardClose() {
   closingLocationId.value = selectedLocation.value?.id;
   isInfoCardVisible.value = false;
   void nextTick(() => {
-    const radio = document.querySelector<HTMLElement>(
-      `[data-address-id="${CSS.escape(selectedAddressId.value ?? "")}"] input[type="radio"]`,
-    );
-    radio?.focus();
+    if (selectedAddressId.value) {
+      focusAddressRadio(selectedAddressId.value);
+    }
   });
 }
 

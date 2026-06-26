@@ -27,6 +27,7 @@
 import { ref, watch } from "vue";
 import { geoLocationStringToLatLng } from "@/core/utilities/geo";
 import { Logger } from "@/core/utilities/logger";
+import { isPrefixExtension } from "@/shared/checkout/composables";
 import cubeIcon from "@/ui-kit/icons/cube.svg?raw";
 import { getColorValue } from "@/ui-kit/utilities/css";
 import type { PickupLocationType } from "@/shared/checkout/composables";
@@ -60,7 +61,7 @@ watch(
   (addresses) => {
     const newIds = toIds(addresses);
     const oldIds = previousIds.value;
-    const isAppend = newIds.length >= oldIds.length && oldIds.every((id, i) => id === newIds[i]);
+    const isAppend = isPrefixExtension(oldIds, newIds);
 
     if (!isAppend) {
       mapEpoch.value++;
