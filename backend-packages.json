@@ -9,11 +9,7 @@
       "Name": "AzureBlob",
       "Container": "packages",
       "ServiceUri": "https://vc3prerelease.blob.core.windows.net",
-      "Modules": [
-        {
-          "BlobName": "VirtoCommerce.XCart_3.1022.0-pr-122-972d.zip"
-        }
-      ]
+      "Modules": []
     },
     {
       "Name": "GithubReleases",
@@ -313,7 +309,7 @@
         },
         {
           "Id": "VirtoCommerce.XCart",
-          "Version": "3.1020.0"
+          "Version": "3.1022.0"
         },
         {
           "Id": "VirtoCommerce.EnvironmentsCompare",
