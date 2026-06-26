@@ -680,7 +680,13 @@
       "configuration_items": {
         "title": "Lista komponentów",
         "edit_configuration": "Edytuj konfigurację",
-        "selected_text": "Wybrany tekst: {text}"
+        "selected_text": "Wybrany tekst: {text}",
+        "columns": {
+          "number": "Numer",
+          "section": "Sekcja",
+          "value": "Wartość",
+          "price": "Cena"
+        }
       },
       "coupons_section": {
         "title": "Zniżki i kupony",

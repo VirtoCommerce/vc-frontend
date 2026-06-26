@@ -1,9 +1,10 @@
-import { VcBadge } from "..";
+import { VcBadge, VcMarkdownRender } from "..";
+import { VcAlert } from "../../molecules";
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
 const SIZES = ["xs", "sm", "md", "lg"];
 const COLORS = ["primary", "secondary", "success", "info", "neutral", "warning", "danger", "accent"];
-const VARIANTS = ["solid", "solid-light", "outline", "outline-dark"];
+const VARIANTS = ["solid", "soft", "outline", "surface", "ghost", "tonal"];
 
 export default {
   title: "Components/Atoms/VcBadge",
@@ -32,6 +33,8 @@ export default {
     variant: {
       control: "select",
       options: VARIANTS,
+      description:
+        "Visual style. Deprecated aliases (still supported, emit a one-time dev warning): `solid-light` → `soft`, `outline-dark` → `tonal`.",
       type: { name: "string", required: false },
       table: {
         type: {
@@ -55,9 +58,9 @@ const renderTemplate = (template: string) => (args: Record<string, unknown>) => 
 
 export const Basic: StoryObj = {};
 
-export const SolidLight: StoryObj = {
+export const Soft: StoryObj = {
   args: {
-    variant: "solid-light",
+    variant: "soft",
   },
 };
 
@@ -67,9 +70,21 @@ export const Outline: StoryObj = {
   },
 };
 
-export const OutlineDark: StoryObj = {
+export const Surface: StoryObj = {
   args: {
-    variant: "outline-dark",
+    variant: "surface",
+  },
+};
+
+export const Ghost: StoryObj = {
+  args: {
+    variant: "ghost",
+  },
+};
+
+export const Tonal: StoryObj = {
+  args: {
+    variant: "tonal",
   },
 };
 
@@ -160,9 +175,11 @@ export const AllColors: StoryObj = {
       <div v-for="color in colors" class="flex items-center gap-4">
         <span class="w-20 text-sm">{{ color }}:</span>
         <VcBadge :color="color">35</VcBadge>
-        <VcBadge :color="color" variant="solid-light">35</VcBadge>
+        <VcBadge :color="color" variant="soft">35</VcBadge>
         <VcBadge :color="color" variant="outline">35</VcBadge>
-        <VcBadge :color="color" variant="outline-dark">35</VcBadge>
+        <VcBadge :color="color" variant="surface">35</VcBadge>
+        <VcBadge :color="color" variant="ghost">35</VcBadge>
+        <VcBadge :color="color" variant="tonal">35</VcBadge>
       </div>
     </div>`,
   }),
@@ -225,6 +242,51 @@ export const AllStates: StoryObj = {
               <VcBadge v-for="color in colors" :color="color" :variant="variant" :size="size" rounded />
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+    `,
+  }),
+};
+
+const DEPRECATED_VARIANTS = [
+  { legacy: "solid-light", canonical: "soft" },
+  { legacy: "outline-dark", canonical: "tonal" },
+] as const;
+
+const DEPRECATED_VARIANTS_MESSAGE =
+  "Deprecated `variant` aliases are kept for backward compatibility and resolve to their canonical names at runtime (emitting a one-time dev console warning): `solid-light` → **soft**, `outline-dark` → **tonal**. Each row below shows the deprecated alias next to its canonical replacement — they render identically. Prefer the canonical names in new code.";
+
+export const Deprecations: StoryObj = {
+  tags: ["deprecated"],
+  parameters: {
+    docs: {
+      description: {
+        story: DEPRECATED_VARIANTS_MESSAGE,
+      },
+    },
+  },
+  render: () => ({
+    components: { VcBadge, VcAlert, VcMarkdownRender },
+    setup: () => ({ pairs: DEPRECATED_VARIANTS, message: DEPRECATED_VARIANTS_MESSAGE }),
+    template: `<div class="space-y-6">
+      <VcAlert color="warning" variant="outline" icon title="Deprecated">
+        <VcMarkdownRender :src="message" />
+      </VcAlert>
+
+      <div
+        class="grid grid-cols-[1fr_auto_1fr] gap-4 items-center"
+        v-for="pair in pairs"
+        :key="pair.legacy"
+      >
+        <div class="space-y-1">
+          <div class="text-xs text-neutral-500">deprecated: <code>{{ pair.legacy }}</code></div>
+          <VcBadge :variant="pair.legacy">35</VcBadge>
+        </div>
+        <div class="text-neutral-400">→</div>
+        <div class="space-y-1">
+          <div class="text-xs text-neutral-500">canonical: <code>{{ pair.canonical }}</code></div>
+          <VcBadge :variant="pair.canonical">35</VcBadge>
         </div>
       </div>
     </div>
