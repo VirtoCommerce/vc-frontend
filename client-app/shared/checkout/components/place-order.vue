@@ -13,7 +13,7 @@ import { usePayment } from "@/shared/payment/composables";
 import ProceedTo from "@/shared/checkout/components/proceed-to.vue";
 
 const { hasOnlyUnselectedLineItems } = useFullCart();
-const { paymentMethod, isValidCheckout, createOrderFromCart } = useCheckout();
+const { allowCartPayment, isValidCheckout, createOrderFromCart } = useCheckout();
 const { isCanFinalizePayment } = usePayment();
 const { isAuthenticated } = useUser();
 
@@ -21,7 +21,7 @@ const isDisabled = computed(() => {
   return (
     hasOnlyUnselectedLineItems.value ||
     !isValidCheckout.value ||
-    (isAuthenticated.value && paymentMethod.value?.allowCartPayment && !isCanFinalizePayment.value)
+    (isAuthenticated.value && allowCartPayment.value && !isCanFinalizePayment.value)
   );
 });
 </script>
