@@ -224,6 +224,9 @@ export default defineConfigWithVueTs(
 
       // Disabled rules
       "@typescript-eslint/no-non-null-assertion": "off",
+      // False-positives repo-wide on generic methods (e.g. Array.prototype.includes), reporting the
+      // unsubstituted type parameter "T"; vue-tsc already type-checks these. Known eslint-plugin-sonarjs regression.
+      "sonarjs/argument-type": "off",
       "sonarjs/no-duplicate-string": "off",
       "tailwindcss/no-custom-classname": "off",
       "vue/multi-word-component-names": "off",

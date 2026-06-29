@@ -25,7 +25,7 @@
         },
         {
           "Id": "VirtoCommerce.XFrontend",
-          "Version": "3.1000.0"
+          "Version": "3.1003.0"
         },
         {
           "Id": "VirtoCommerce.OpenTelemetry",
@@ -88,15 +88,23 @@
           "Version": "3.1003.0"
         },
         {
-          "Id": "VirtoCommerce.OpenIdConnectModule",
-          "Version": "3.1001.0"
+          "Id": "VirtoCommerce.Marketing",
+          "Version": "3.1006.0"
         },
         {
           "Id": "VirtoCommerce.OrderManagement",
           "Version": "3.1002.0"
         },
         {
-          "Id": "VirtoCommerce.Sanity",
+          "Id": "VirtoCommerce.Catalog",
+          "Version": "3.1032.0"
+        },
+        {
+          "Id": "VirtoCommerce.Store",
+          "Version": "3.1005.0"
+        },
+        {
+          "Id": "VirtoCommerce.AzureSearch",
           "Version": "3.1003.0"
         },
         {
@@ -204,8 +212,8 @@
           "Version": "3.1004.0"
         },
         {
-          "Id": "VirtoCommerce.BackupRestore",
-          "Version": "3.1001.0"
+          "Id": "VirtoCommerce.XCatalog",
+          "Version": "3.1009.0"
         },
         {
           "Id": "VirtoCommerce.Store",
@@ -232,8 +240,8 @@
           "Version": "3.1005.0"
         },
         {
-          "Id": "VirtoCommerce.CatalogPersonalization",
-          "Version": "3.1003.0"
+          "Id": "VirtoCommerce.Search",
+          "Version": "3.1005.0"
         },
         {
           "Id": "VirtoCommerce.Pages",
@@ -288,8 +296,8 @@
           "Version": "3.1003.0"
         },
         {
-          "Id": "VirtoCommerce.Subscription",
-          "Version": "3.1002.0"
+          "Id": "VirtoCommerce.PageBuilderModule",
+          "Version": "3.1013.0"
         },
         {
           "Id": "VirtoCommerce.GDPR",
@@ -345,7 +353,7 @@
         },
         {
           "Id": "VirtoCommerce.Customer",
-          "Version": "3.1013.0"
+          "Version": "3.1012.0"
         },
         {
           "Id": "VirtoCommerce.Catalog",
