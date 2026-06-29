@@ -9,16 +9,7 @@
       "Name": "AzureBlob",
       "Container": "packages",
       "ServiceUri": "https://vc3prerelease.blob.core.windows.net",
-      "Modules": [
-        {
-          "Id": "VirtoCommerce.Catalog",
-          "BlobName": "VirtoCommerce.Catalog_3.1032.0-alpha.2558-vcst-5177-configurable-products-sorting.zip"
-        },
-        {
-          "Id": "VirtoCommerce.XCatalog",
-          "BlobName": "VirtoCommerce.XCatalog_3.1009.0-alpha.218-vcst-5177-configurable-products-sorting.zip"
-        }
-      ]
+      "Modules": []
     },
     {
       "Name": "GithubReleases",
@@ -95,6 +86,10 @@
         {
           "Id": "VirtoCommerce.Subscription",
           "Version": "3.1002.0"
+        },
+        {
+          "Id": "VirtoCommerce.Catalog",
+          "Version": "3.1032.0"
         },
         {
           "Id": "VirtoCommerce.Store",
@@ -211,6 +206,10 @@
         {
           "Id": "VirtoCommerce.BuilderIO",
           "Version": "3.1004.0"
+        },
+        {
+          "Id": "VirtoCommerce.XCatalog",
+          "Version": "3.1009.0"
         },
         {
           "Id": "VirtoCommerce.XCMS",
