@@ -329,6 +329,56 @@ describe("useCartPickupLocations", () => {
       // Pagination reflects the fresh fetch, not the stale loadMore response.
       expect(pickupLocationsHasNextPage.value).toBe(false);
     });
+
+    it("should KEEP a loadMore response when a concurrent fetch REJECTS (no spurious generation bump)", async () => {
+      const { fetchPickupLocations, loadMorePickupLocations, pickupLocations, pickupLocationsHasNextPage } =
+        useCartPickupLocations();
+
+      // Seed an initial fetch so hasNextPage=true and a cursor is set; loadMore can pass its guard.
+      getCartPickupLocationsMock.mockResolvedValueOnce(
+        createConnection({
+          items: [createLocation({ id: "seed-a" })],
+          pageInfo: { endCursor: "seed-cursor", hasNextPage: true, hasPreviousPage: false, startCursor: undefined },
+        }),
+      );
+      await fetchPickupLocations({ cartId: "cart-1", first: 6 });
+
+      // loadMore returns a promise we resolve manually, so we control resolution order.
+      let resolveLoadMore!: (v: unknown) => void;
+      const loadMorePromise = new Promise((res) => {
+        resolveLoadMore = res;
+      });
+      getCartPickupLocationsMock.mockReturnValueOnce(loadMorePromise);
+
+      // Start loadMore (passes guard now: hasNextPage true, not loading), but do NOT await yet.
+      const loadMoreCall = loadMorePickupLocations({ cartId: "cart-1", first: 6 });
+
+      // A concurrent fetch starts and REJECTS. Because the generation bump now happens only on success,
+      // a failed fetch must NOT bump it, so the in-flight loadMore stays valid.
+      getCartPickupLocationsMock.mockRejectedValueOnce(new Error("boom"));
+      await expect(fetchPickupLocations({ cartId: "cart-1", first: 6 })).rejects.toThrow();
+
+      // Now resolve the loadMore with its page-2 items + advanced page info.
+      resolveLoadMore(
+        createConnection({
+          items: [createLocation({ id: "page2-a" }), createLocation({ id: "page2-b" })],
+          pageInfo: { endCursor: "page2-cursor", hasNextPage: true, hasPreviousPage: false, startCursor: undefined },
+        }),
+      );
+      await loadMoreCall;
+
+      // The append WAS applied: the generation guard did not discard the valid loadMore response.
+      expect(pickupLocations.value.map((l) => l.id)).toEqual(["seed-a", "page2-a", "page2-b"]);
+      // Pagination reflects the loadMore response (cursor + hasNextPage updated).
+      expect(pickupLocationsHasNextPage.value).toBe(true);
+
+      // The cursor advanced to the loadMore response: the next loadMore forwards it as `after`.
+      getCartPickupLocationsMock.mockResolvedValueOnce(createConnection());
+      await loadMorePickupLocations({ cartId: "cart-1", first: 6 });
+
+      const nextLoadMoreArg = getCartPickupLocationsMock.mock.calls.at(-1)?.[0] as Record<string, unknown>;
+      expect(nextLoadMoreArg.after).toBe("page2-cursor");
+    });
   });
 
   describe("error handling preserves state", () => {

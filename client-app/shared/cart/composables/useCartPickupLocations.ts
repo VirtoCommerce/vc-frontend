@@ -77,13 +77,19 @@ export function _useCartPickupLocations() {
     payload: Omit<QueryCartPickupLocationsArgs, "storeId" | "cultureName" | "facet">,
   ) {
     pickupLocationsLoading.value = true;
-    fetchGeneration.value++;
 
     try {
       const data = await getCartPickupLocations({
         facet: PICKUP_LOCATIONS_FACET,
         ...payload,
       });
+
+      // Bug guard (race): bump the generation on SUCCESS, not on entry. A failed fetch leaves the
+      // old data intact, so a concurrent loadMore's append to that old data stays valid and must not
+      // be dropped. A successful fetch bumps here — strictly before replacing the list, with no await
+      // in between — so a concurrent loadMore that resolves later is correctly discarded by the guard.
+      fetchGeneration.value++;
+
       pickupLocations.value = data.items ?? [];
       pickupLocationsTotalCount.value = data.totalCount ?? 0;
 
