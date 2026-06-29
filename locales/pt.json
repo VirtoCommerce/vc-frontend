@@ -114,6 +114,8 @@
       "shipping": "Envio",
       "tax": "Imposto",
       "shipping_cost": "Custo de envio",
+      "total_in_currency": "Total em {currency}",
+      "products_in_currency": "Produtos em {currency}",
       "status": "Status",
       "date": "Data",
       "created_date": "Data de criação",
@@ -212,7 +214,8 @@
       "report_sent_successfully": "Obrigado! Seu relatório foi enviado com sucesso. Vamos analisá-lo.",
       "copied_to_clipboard": "Copiado para a área de transferência",
       "role_update_successful": "O papel do cliente foi atualizado com sucesso.",
-      "role_update_failed": "Ocorreram erros durante a atualização do papel: {0}",
+      "contact_lock_failed": "Falha ao bloquear/desbloquear o usuário.",
+      "role_update_failed": "Ocorreram erros durante a atualização do papel.",
       "passwords_do_not_match": "Os campos de senha devem ter valores correspondentes.",
       "password_new_same_old": "Sua senha atual e a nova senha devem ser diferentes.",
       "blocked": "Você foi bloqueado. Não pode acessar nenhuma informação ou criar o pedido. Para mais detalhes, por favor ",
@@ -495,6 +498,7 @@
           "email_verification_is_required": "Verificação de e-mail necessária. Por favor, verifique seu endereço de e-mail",
           "user_is_temporary_locked_out": "Sua conta foi temporariamente bloqueada. Por favor, tente novamente mais tarde",
           "user_is_locked_out": "@:common.messages.blocked",
+          "user_is_locked_in_organization": "O seu acesso a esta organização foi bloqueado. Entre em contacto com o administrador da sua organização",
           "user_cannot_login_in_store": "Acesso negado. Você não pode entrar na loja atual",
           "password_expired": "@:common.messages.password_expired",
           "user_not_found": "Usuário não encontrado. Por favor, certifique-se de que você inseriu as informações corretas"
@@ -676,7 +680,13 @@
       "configuration_items": {
         "title": "Lista de componentes",
         "edit_configuration": "Editar configuração",
-        "selected_text": "Texto selecionado: {text}"
+        "selected_text": "Texto selecionado: {text}",
+        "columns": {
+          "number": "Número",
+          "section": "Seção",
+          "value": "Valor",
+          "price": "Preço"
+        }
       },
       "coupons_section": {
         "title": "Descontos e cupons",

@@ -39,7 +39,9 @@ export type AnyLineItemType = {
     name?: string;
     customText?: string;
     type: string;
+    extendedPrice?: MoneyType;
     files?: Array<{ name: string } | null> | null;
+    configurationSection?: { name?: string | null } | null;
   }[];
   showPlacedPrice?: boolean;
   listTotal?: MoneyType;
@@ -51,6 +53,11 @@ export type VendorGroupType<T> = {
 };
 
 export type VendorGroupByVendorIdType<T> = Record<string, VendorGroupType<T>>;
+
+export type CurrencyGroupType<T> = {
+  currencyCode: string;
+  items: T[];
+};
 
 export type PreparedLineItemType = {
   id: string;
@@ -80,7 +87,9 @@ export type PreparedLineItemType = {
     name?: string;
     customText?: string;
     type: string;
+    extendedPrice?: MoneyType;
     files?: Array<{ name: string } | null> | null;
+    configurationSection?: { name?: string | null } | null;
   }[];
   showPlacedPrice?: boolean;
   listTotal?: MoneyType;

@@ -114,6 +114,8 @@
       "shipping": "Доставка",
       "tax": "Налог",
       "shipping_cost": "Доставка",
+      "total_in_currency": "Всего в {currency}",
+      "products_in_currency": "Товары в {currency}",
       "status": "Статус",
       "date": "Дата",
       "created_date": "Дата создания",
@@ -212,7 +214,8 @@
       "report_sent_successfully": "Спасибо! Ваш отчет успешно отправлен. Мы обязательно разберемся с проблемой.",
       "copied_to_clipboard": "Скопировано в буфер обмена",
       "role_update_successful": "Роль клиента была успешно обновлена.",
-      "role_update_failed": "Ошибка при обновлении роли: {0}",
+      "contact_lock_failed": "Ошибка при блокировке/разблокировке пользователя.",
+      "role_update_failed": "Ошибка при обновлении роли.",
       "passwords_do_not_match": "Пароли должны совпадать.",
       "password_new_same_old": "Текущий пароль и новый пароль должны отличаться.",
       "blocked": "Ваш аккаунт заблокирован. Вы не можете получить доступ к информации или создать заказ. Для получения дополнительных сведений, пожалуйста, ",
@@ -495,6 +498,7 @@
           "email_verification_is_required": "Требуется подтверждение эл. почты. Подтвердите адрес эл. почты",
           "user_is_temporary_locked_out": "Ваш аккаунт временно заблокирован. Пожалуйста, попробуйте позже",
           "user_is_locked_out": "@:common.messages.blocked",
+          "user_is_locked_in_organization": "Ваш доступ к этой организации заблокирован. Пожалуйста, обратитесь к администратору организации",
           "user_cannot_login_in_store": "Доступ запрещен. Вы не можете войти в текущий магазин",
           "password_expired": "@:common.messages.password_expired",
           "user_not_found": "Пользователь не найден. Пожалуйста, убедитесь, что вы ввели правильную информацию"
@@ -676,7 +680,13 @@
       "configuration_items": {
         "title": "Список компонентов",
         "edit_configuration": "Редактировать конфигурацию",
-        "selected_text": "Выбранный текст: {text}"
+        "selected_text": "Выбранный текст: {text}",
+        "columns": {
+          "number": "Номер",
+          "section": "Секция",
+          "value": "Значение",
+          "price": "Цена"
+        }
       },
       "coupons_section": {
         "title": "Скидки и купоны",

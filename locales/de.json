@@ -114,6 +114,8 @@
       "shipping": "Versand",
       "tax": "Steuer",
       "shipping_cost": "Versandkosten",
+      "total_in_currency": "Gesamt in {currency}",
+      "products_in_currency": "Produkte in {currency}",
       "status": "Status",
       "date": "Datum",
       "created_date": "Erstellungsdatum",
@@ -212,7 +214,8 @@
       "report_sent_successfully": "Vielen Dank! Ihr Bericht wurde erfolgreich gesendet. Wir werden uns darum kümmern.",
       "copied_to_clipboard": "In die Zwischenablage kopiert",
       "role_update_successful": "Die Kundenrolle wurde erfolgreich aktualisiert.",
-      "role_update_failed": "Es sind Fehler bei der Aktualisierung der Rolle aufgetreten: {0}",
+      "contact_lock_failed": "Fehler beim Sperren/Entsperren des Benutzers.",
+      "role_update_failed": "Es sind Fehler bei der Aktualisierung der Rolle aufgetreten.",
       "passwords_do_not_match": "Die Passwortfelder müssen übereinstimmende Werte haben.",
       "password_new_same_old": "Ihr aktuelles Passwort und das neue Passwort müssen unterschiedlich sein.",
       "blocked": "Sie wurden blockiert. Sie können keine Informationen abrufen oder Bestellungen aufgeben. Für weitere Details ",
@@ -495,6 +498,7 @@
           "email_verification_is_required": "E-Mail-Überprüfung erforderlich. Bitte verifizieren Sie Ihre E-Mail-Adresse",
           "user_is_temporary_locked_out": "Ihr Konto wurde vorübergehend gesperrt. Bitte versuchen Sie es später erneut",
           "user_is_locked_out": "@:common.messages.blocked",
+          "user_is_locked_in_organization": "Ihr Zugriff auf diese Organisation wurde gesperrt. Bitte wenden Sie sich an Ihren Organisationsadministrator",
           "user_cannot_login_in_store": "Zugriff verweigert. Sie können sich nicht im aktuellen Geschäft anmelden",
           "password_expired": "@:common.messages.password_expired",
           "user_not_found": "Benutzer nicht gefunden. Bitte stellen Sie sicher, dass Sie die richtigen Informationen eingegeben haben"
@@ -676,7 +680,13 @@
       "configuration_items": {
         "title": "Komponentenliste",
         "edit_configuration": "Konfiguration bearbeiten",
-        "selected_text": "Ausgewählter Text: {text}"
+        "selected_text": "Ausgewählter Text: {text}",
+        "columns": {
+          "number": "Nummer",
+          "section": "Abschnitt",
+          "value": "Wert",
+          "price": "Preis"
+        }
       },
       "coupons_section": {
         "title": "Rabatte & Gutscheine",

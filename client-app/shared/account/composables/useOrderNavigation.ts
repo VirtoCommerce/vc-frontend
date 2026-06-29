@@ -11,7 +11,7 @@ export function useOrderNavigation() {
     const orderRoute = router.resolve({ name: "OrderDetails", params: { orderId: order.id } });
 
     if (browserTarget.value === BrowserTargetType.BLANK) {
-      globalThis.open(orderRoute.href, "_blank")!.focus();
+      globalThis.open(orderRoute.href, "_blank")?.focus();
     } else {
       globalThis.location.href = orderRoute.href;
     }

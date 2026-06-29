@@ -114,6 +114,8 @@
       "shipping": "Toimitus",
       "tax": "Vero",
       "shipping_cost": "Toimituskulut",
+      "total_in_currency": "Yhteensä valuutassa {currency}",
+      "products_in_currency": "Tuotteet valuutassa {currency}",
       "status": "Tila",
       "date": "Päivämäärä",
       "created_date": "Luontipäivämäärä",
@@ -212,7 +214,8 @@
       "report_sent_successfully": "Kiitos! Raporttisi on lähetetty onnistuneesti. Tarkastelemme sitä.",
       "copied_to_clipboard": "Kopioitu leikepöydälle",
       "role_update_successful": "Käyttäjärooli on päivitetty onnistuneesti",
-      "role_update_failed": "Virhe roolin päivityksessä: {0}",
+      "contact_lock_failed": "Käyttäjän esto/eston poisto epäonnistui.",
+      "role_update_failed": "Virhe roolin päivityksessä.",
       "passwords_do_not_match": "Salasanakenttien arvot eivät täsmää",
       "password_new_same_old": "Nykyinen salasanasi ja uusi salasana eivät saa olla samat",
       "blocked": "Sinut on estetty. Et voi käyttää tietoja tai tehdä tilausta. Lisätietoja saat ottamalla yhteyttä ",
@@ -495,6 +498,7 @@
           "email_verification_is_required": "Sähköpostin vahvistus vaaditaan. Vahvista sähköpostiosoitteesi",
           "user_is_temporary_locked_out": "Tilisi on tilapäisesti lukittu. Yritä uudelleen myöhemmin.",
           "user_is_locked_out": "@:common.messages.blocked",
+          "user_is_locked_in_organization": "Pääsysi tähän organisaatioon on estetty. Ota yhteyttä organisaatiosi järjestelmänvalvojaan",
           "user_cannot_login_in_store": "Pääsy evätty. Et voi kirjautua tähän kauppaan",
           "password_expired": "@:common.messages.password_expired",
           "user_not_found": "Käyttäjää ei löydy. Tarkista, että olet syöttänyt oikeat tiedot"
@@ -676,7 +680,13 @@
       "configuration_items": {
         "title": "Komponenttilista",
         "edit_configuration": "Muokkaa kokoonpanoa",
-        "selected_text": "Valittu teksti: {text}"
+        "selected_text": "Valittu teksti: {text}",
+        "columns": {
+          "number": "Numero",
+          "section": "Osio",
+          "value": "Arvo",
+          "price": "Hinta"
+        }
       },
       "coupons_section": {
         "title": "Alennukset & kupongit",

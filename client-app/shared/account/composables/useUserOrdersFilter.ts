@@ -1,7 +1,7 @@
 import { computed, ref, unref } from "vue";
 import { useI18n } from "vue-i18n";
 import { CUSTOMER_NAME_FACET_NAME } from "@/core/constants";
-import { DateFilterId } from "@/core/enums";
+import { DateFilterId, XApiPermissions } from "@/core/enums";
 import { toEndDateFilterValue, toStartDateFilterValue, toDateISOString } from "@/core/utilities";
 import { useUser } from "./useUser";
 import { facets } from "./useUserOrders";
@@ -84,7 +84,7 @@ function handleOrdersDateFilterChange(dateFilterType: DateFilterType): void {
 
 export function useUserOrdersFilter(orderScope?: MaybeRef<OrderScopeType>) {
   const { d, t } = useI18n();
-  const { isOrganizationMaintainer } = useUser();
+  const { checkPermissions } = useUser();
 
   function getDateFilterRanges(): DateFilterType[] {
     const currentDate = new Date();
@@ -203,7 +203,11 @@ export function useUserOrdersFilter(orderScope?: MaybeRef<OrderScopeType>) {
 
   const showCustomerNameFilter = computed(() => {
     const scope = orderScope ? unref(orderScope) : undefined;
-    return isOrganizationMaintainer.value && scope === "organization" && !!organizationCustomerNames.value?.length;
+    return (
+      checkPermissions(XApiPermissions.CanViewOrganizationOrders) &&
+      scope === "organization" &&
+      !!organizationCustomerNames.value?.length
+    );
   });
 
   function resetFilters() {

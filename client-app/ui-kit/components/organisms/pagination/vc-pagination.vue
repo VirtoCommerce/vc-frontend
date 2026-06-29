@@ -35,7 +35,7 @@
           ref="prevButtonRef"
           class="vc-pagination__button vc-pagination__button--prev"
           color="secondary"
-          variant="solid-light"
+          variant="soft"
           size="sm"
           :disabled="page === 1"
           no-wrap
@@ -52,7 +52,7 @@
           ref="nextButtonRef"
           class="vc-pagination__button vc-pagination__button--next"
           color="secondary"
-          variant="solid-light"
+          variant="soft"
           size="sm"
           :disabled="page === pages"
           no-wrap

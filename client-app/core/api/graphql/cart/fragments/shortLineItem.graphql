@@ -3,4 +3,5 @@ fragment shortLineItem on LineItemType {
   sku
   quantity
   productId
+  currencyCode
 }
