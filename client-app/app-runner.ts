@@ -276,9 +276,9 @@ export default async () => {
 
   await router.isReady();
 
-  app.config.warnHandler = (message = "", _, traceDetails = "") => {
+  app.config.warnHandler = (message, _, traceDetails) => {
     // to remove builder.io warnings
-    if (consoleIgnoredErrors.some((err) => message.includes(err) && traceDetails.includes(BUILDER_IO_TRACE_MARKER))) {
+    if (consoleIgnoredErrors.some((err) => message?.includes(err) && traceDetails?.includes(BUILDER_IO_TRACE_MARKER))) {
       return;
     }
 
