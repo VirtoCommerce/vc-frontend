@@ -7,6 +7,7 @@
     with-price
     with-total
     with-subtotal
+    :subtotal-currency-code="subtotalCurrencyCode"
   >
     <template #titles>
       <div class="text-center">
@@ -40,6 +41,7 @@ import type { LineItemType, OrderLineItemType } from "@/core/api/graphql/types";
 
 interface IProps {
   items?: OrderLineItemType[] | LineItemType[];
+  subtotalCurrencyCode?: string;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
