@@ -9,20 +9,11 @@
       "Name": "AzureBlob",
       "Container": "packages",
       "ServiceUri": "https://vc3prerelease.blob.core.windows.net",
-      "Modules": [
-        {
-          "BlobName": "Virtocommerce.UCP_3.1000.0-pr-1-3af2.zip"
-        },
-        {
-          "BlobName": "VirtoCommerce.XCart_3.1024.0-pr-132-175a.zip"
-        }
-      ]
+      "Modules": []
     },
     {
       "Name": "GithubReleases",
-      "ModuleSources": [
-        "https://raw.githubusercontent.com/VirtoCommerce/vc-modules/master/modules_v3.json"
-      ],
+      "ModuleSources": ["https://raw.githubusercontent.com/VirtoCommerce/vc-modules/master/modules_v3.json"],
       "Modules": [
         {
           "Id": "VirtoCommerce.Loyalty",
@@ -355,6 +346,10 @@
         {
           "Id": "VirtoCommerce.XOrder",
           "Version": "3.1006.0"
+        },
+        {
+          "Id": "VirtoCommerce.XCart",
+          "Version": "3.1023.0"
         }
       ]
     }
