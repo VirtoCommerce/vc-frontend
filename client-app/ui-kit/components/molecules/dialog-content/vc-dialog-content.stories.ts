@@ -1,5 +1,4 @@
-import { VcDialog } from "@/ui-kit/components/atoms";
-import { VcDialogContent, VcDialogFooter, VcDialogHeader } from "..";
+import { VcDialog, VcDialogContent, VcDialogFooter, VcDialogHeader } from "..";
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
 const meta: Meta<typeof VcDialogContent> = {

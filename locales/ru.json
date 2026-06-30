@@ -681,7 +681,13 @@
       "configuration_items": {
         "title": "Список компонентов",
         "edit_configuration": "Редактировать конфигурацию",
-        "selected_text": "Выбранный текст: {text}"
+        "selected_text": "Выбранный текст: {text}",
+        "columns": {
+          "number": "Номер",
+          "section": "Секция",
+          "value": "Значение",
+          "price": "Цена"
+        }
       },
       "coupons_section": {
         "title": "Скидки и купоны",

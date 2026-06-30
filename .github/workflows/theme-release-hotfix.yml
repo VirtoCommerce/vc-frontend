@@ -92,10 +92,12 @@ jobs:
           blobSAS: ${{ secrets.BLOB_TOKEN }}
 
       - name: Create GH Release
+        env:
+          IMAGE_PREFIX: ${{ steps.image.outputs.prefix }}
         run: |
-          gh release create ${{ steps.image.outputs.prefix }} \
-                --target="${{ github.ref_name }}" \
+          gh release create "$IMAGE_PREFIX" \
+                --target="$GITHUB_REF_NAME" \
                 --latest=false \
                 --repo="$GITHUB_REPOSITORY" \
-                --title="${{ steps.image.outputs.prefix }}" \
-                "./artifacts/${GITHUB_REPOSITORY#*/}-${{ steps.image.outputs.prefix }}.zip#${GITHUB_REPOSITORY#*/}-${{ steps.image.outputs.prefix }}.zip"
+                --title="$IMAGE_PREFIX" \
+                "./artifacts/${GITHUB_REPOSITORY#*/}-${IMAGE_PREFIX}.zip#${GITHUB_REPOSITORY#*/}-${IMAGE_PREFIX}.zip"

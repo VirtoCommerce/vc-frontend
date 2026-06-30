@@ -681,7 +681,13 @@
       "configuration_items": {
         "title": "Komponentliste",
         "edit_configuration": "Rediger konfigurasjon",
-        "selected_text": "Valgt tekst: {text}"
+        "selected_text": "Valgt tekst: {text}",
+        "columns": {
+          "number": "Nummer",
+          "section": "Seksjon",
+          "value": "Verdi",
+          "price": "Pris"
+        }
       },
       "coupons_section": {
         "title": "Rabatt & kuponger",

@@ -681,6 +681,12 @@
       "configuration_items": {
         "title": "Liste des composants",
         "edit_configuration": "Modifier la configuration",
+        "columns": {
+          "number": "Numéro",
+          "section": "Section",
+          "value": "Valeur",
+          "price": "Prix"
+        },
         "selected_text": "Texte sélectionné : {text}"
       },
       "coupons_section": {

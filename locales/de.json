@@ -681,7 +681,13 @@
       "configuration_items": {
         "title": "Komponentenliste",
         "edit_configuration": "Konfiguration bearbeiten",
-        "selected_text": "Ausgewählter Text: {text}"
+        "selected_text": "Ausgewählter Text: {text}",
+        "columns": {
+          "number": "Nummer",
+          "section": "Abschnitt",
+          "value": "Wert",
+          "price": "Preis"
+        }
       },
       "coupons_section": {
         "title": "Rabatte & Gutscheine",
