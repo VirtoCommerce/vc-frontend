@@ -1,3 +1,4 @@
+import uniqBy from "lodash/uniqBy";
 import { ContactStatus } from "../types";
 import type { ContactType, RoleType } from "@/core/api/graphql/types";
 import type { ExtendedContactType } from "@/shared/company";
@@ -19,7 +20,13 @@ export function getFullName(contact: ContactType): string {
 }
 
 export function getContactRoles(contact: ContactType): RoleType[] {
-  return contact.rolesInOrganization ?? contact.securityAccounts?.[0]?.roles ?? [];
+  const orgRoles = contact.rolesInOrganization ?? [];
+  const globalRoles = contact.securityAccounts?.flatMap((sa) => sa.roles ?? []) ?? [];
+
+  return uniqBy(
+    [...orgRoles, ...globalRoles].filter((r) => r.id),
+    "id",
+  );
 }
 
 export function convertToExtendedContact(contact: ContactType, fullNameFallback: string): ExtendedContactType {

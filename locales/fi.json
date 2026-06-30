@@ -1403,7 +1403,7 @@
         },
         "content_header": {
           "name": "Nimi",
-          "role": "Rooli",
+          "role": "Roolit",
           "email": "Sähköposti",
           "active": "Aktiivinen"
         },

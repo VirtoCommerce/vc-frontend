@@ -1403,7 +1403,7 @@
         },
         "content_header": {
           "name": "Namn",
-          "role": "Roll",
+          "role": "Roller",
           "email": "E-post",
           "active": "Aktiv"
         },

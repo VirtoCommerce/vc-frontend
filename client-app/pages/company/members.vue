@@ -203,15 +203,15 @@
     <VcEmptyView
       v-if="!contacts.length && !contactsLoading"
       :text="
-        keyword || filter
+        keyword || filter || roleIds.length
           ? $t('pages.company.members.no_results_message')
           : $t('pages.company.members.no_members_message')
       "
       icon="outline-order"
-      :variant="!!keyword || !!filter ? 'search' : 'empty'"
+      :variant="!!keyword || !!filter || !!roleIds.length ? 'search' : 'empty'"
     >
       <template #button>
-        <VcButton v-if="keyword || filter" prepend-icon="reset" @click="resetFiltersWithKeyword">
+        <VcButton v-if="keyword || filter || roleIds.length" prepend-icon="reset" @click="resetFiltersWithKeyword">
           {{ $t("pages.company.members.buttons.reset_search") }}
         </VcButton>
 
@@ -242,16 +242,12 @@
         >
           <template #desktop-body>
             <tr v-for="contact in contacts" :key="contact.id" class="even:bg-neutral-50">
-              <td class="py-2.5 pl-4 pr-0">
-                <RoleIcon :role-id="contact.extended.roles[0]?.id" />
-              </td>
-
-              <td class="px-4 py-2.5">
+              <td class="w-40 truncate px-4 py-2.5" :title="contact.fullName">
                 {{ contact.fullName }}
               </td>
 
               <td class="px-4 py-2.5">
-                {{ contact.extended.roles[0]?.name }}
+                {{ contact.extended.roles.map((r) => r.name).join(", ") }}
               </td>
 
               <td class="w-1/4 max-w-52 truncate px-4 py-2.5" :title="contact.extended.emails[0]">
@@ -280,17 +276,13 @@
 
           <template #mobile-item="{ item }">
             <div class="flex items-center border-b px-5">
-              <div class="py-4.5">
-                <RoleIcon :role-id="item.extended.roles[0]?.id" />
-              </div>
-
-              <div class="grow py-4.5 pl-4 [word-break:break-word]">
+              <div class="grow py-4.5 [word-break:break-word]">
                 <div>
                   <b>{{ item.fullName }}</b>
                 </div>
 
                 <div class="text-sm">
-                  {{ item.extended.roles[0]?.name }}
+                  {{ item.extended.roles.map((r) => r.name).join(", ") }}
                 </div>
               </div>
 
@@ -341,7 +333,6 @@ import {
   InviteMemberModal,
   MemberStatus,
   MembersDropdownMenu,
-  RoleIcon,
   useOrganizationContacts,
 } from "@/shared/company";
 import { useOrganizationContactsFilterFacets } from "@/shared/company/composables/useOrganizationContactsFilterFacets";
@@ -370,6 +361,7 @@ const {
   sort,
   keyword,
   filter,
+  roleIds,
   contacts,
   fetchContacts,
   lockContact,
@@ -418,10 +410,6 @@ function canShowDropdownFor(contact: ExtendedContactType): boolean {
 
 const columns = computed<VcTableColumnType[]>(() => {
   const result: VcTableColumnType[] = [
-    {
-      id: "roleIcon",
-      classes: "w-14",
-    },
     {
       id: "name",
       title: t("pages.company.members.content_header.name"),
@@ -480,16 +468,23 @@ async function resetKeyword() {
   }
 }
 
+function syncFilterFromFacets() {
+  const roleFacet = appliedFacets.value.find((f) => f.paramName === "roleId");
+  roleIds.value = roleFacet?.values.filter((v) => v.selected).map((v) => v.value) ?? [];
+  const nonRoleFacets = appliedFacets.value.filter((f) => f.paramName !== "roleId");
+  filter.value = getFilterExpressionFromFacets(nonRoleFacets);
+}
+
 async function applyFilters() {
   applyFacets();
-  filter.value = getFilterExpressionFromFacets(appliedFacets);
+  syncFilterFromFacets();
   page.value = 1;
   await fetchContacts();
 }
 
 async function resetFilterItem(facet: FacetItemType, facetValue: FacetValueItemType) {
   resetFacetItem({ paramName: facet.paramName, value: facetValue.value });
-  filter.value = getFilterExpressionFromFacets(appliedFacets);
+  syncFilterFromFacets();
   page.value = 1;
   await fetchContacts();
 }
@@ -497,6 +492,7 @@ async function resetFilterItem(facet: FacetItemType, facetValue: FacetValueItemT
 async function resetFilters() {
   resetFacets();
   filter.value = "";
+  roleIds.value = [];
   page.value = 1;
   await fetchContacts();
 }

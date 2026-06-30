@@ -5,9 +5,10 @@ query GetOrganizationContacts(
   $after: String
   $sort: String
   $searchPhrase: String
+  $roleIds: [String]
 ) {
   organization(id: $id, userId: $userId) {
-    contacts(first: $first, after: $after, sort: $sort, searchPhrase: $searchPhrase) {
+    contacts(first: $first, after: $after, sort: $sort, searchPhrase: $searchPhrase, roleIds: $roleIds) {
       items {
         id
         name
