@@ -414,4 +414,64 @@ describe("useCartPickupLocations", () => {
       expect(loadMoreArg.after).toBe("kept-cursor");
     });
   });
+
+  describe("committed filter/keyword snapshot drives loadMore", () => {
+    it("should continue the committed (F1) query+cursor when a later filter refetch (F2) FAILS, not the new filter", async () => {
+      const { fetchPickupLocations, loadMorePickupLocations } = useCartPickupLocations();
+
+      // Successful seed fetch with filter F1: sets list + cursor C1 + hasNextPage, and commits F1.
+      getCartPickupLocationsMock.mockResolvedValueOnce(
+        createConnection({
+          items: [createLocation({ id: "f1-a" })],
+          pageInfo: { endCursor: "cursor-f1", hasNextPage: true, hasPreviousPage: false, startCursor: undefined },
+        }),
+      );
+      await fetchPickupLocations({ cartId: "cart-1", first: 6, keyword: "kw-f1", filter: "filter-f1" });
+
+      // A new filter refetch (F2) FAILS. The catch leaves list/cursor/hasNextPage AND the committed
+      // snapshot from F1 untouched.
+      getCartPickupLocationsMock.mockRejectedValueOnce(new Error("boom"));
+      await expect(
+        fetchPickupLocations({ cartId: "cart-1", first: 6, keyword: "kw-f2", filter: "filter-f2" }),
+      ).rejects.toThrow();
+
+      // Load more: it must carry the COMMITTED F1 query (the one that produced cursor C1), NOT live F2.
+      getCartPickupLocationsMock.mockResolvedValueOnce(createConnection());
+      await loadMorePickupLocations({ cartId: "cart-1", first: 6 });
+
+      const loadMoreArg = getCartPickupLocationsMock.mock.calls.at(-1)?.[0] as Record<string, unknown>;
+      expect(loadMoreArg.keyword).toBe("kw-f1");
+      expect(loadMoreArg.filter).toBe("filter-f1");
+      expect(loadMoreArg.after).toBe("cursor-f1");
+    });
+
+    it("should send the new filter (F2) + its cursor (C2) after a SUCCESSFUL F1->F2 change", async () => {
+      const { fetchPickupLocations, loadMorePickupLocations } = useCartPickupLocations();
+
+      // Successful F1 fetch.
+      getCartPickupLocationsMock.mockResolvedValueOnce(
+        createConnection({
+          pageInfo: { endCursor: "cursor-f1", hasNextPage: true, hasPreviousPage: false, startCursor: undefined },
+        }),
+      );
+      await fetchPickupLocations({ cartId: "cart-1", first: 6, keyword: "kw-f1", filter: "filter-f1" });
+
+      // Successful F2 fetch: re-commits to F2 + cursor C2.
+      getCartPickupLocationsMock.mockResolvedValueOnce(
+        createConnection({
+          pageInfo: { endCursor: "cursor-f2", hasNextPage: true, hasPreviousPage: false, startCursor: undefined },
+        }),
+      );
+      await fetchPickupLocations({ cartId: "cart-1", first: 6, keyword: "kw-f2", filter: "filter-f2" });
+
+      // Load more continues F2 + C2.
+      getCartPickupLocationsMock.mockResolvedValueOnce(createConnection());
+      await loadMorePickupLocations({ cartId: "cart-1", first: 6 });
+
+      const loadMoreArg = getCartPickupLocationsMock.mock.calls.at(-1)?.[0] as Record<string, unknown>;
+      expect(loadMoreArg.keyword).toBe("kw-f2");
+      expect(loadMoreArg.filter).toBe("filter-f2");
+      expect(loadMoreArg.after).toBe("cursor-f2");
+    });
+  });
 });

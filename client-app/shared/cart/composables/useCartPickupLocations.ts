@@ -35,6 +35,9 @@ export function _useCartPickupLocations() {
   const pickupLocationsEndCursor = ref<string | undefined>(undefined);
   const pickupLocationsHasNextPage = ref(false);
 
+  const committedKeyword = ref<string | undefined>(undefined);
+  const committedFilter = ref<string | undefined>(undefined);
+
   const fetchGeneration = ref(0);
 
   const filterSelectsAreEmpty = computed(
@@ -96,6 +99,12 @@ export function _useCartPickupLocations() {
       pickupLocationsEndCursor.value = data.pageInfo?.endCursor ?? undefined;
       pickupLocationsHasNextPage.value = data.pageInfo?.hasNextPage ?? false;
 
+      // Commit the filter/keyword that produced this cursor ATOMICALLY with the cursor itself (no
+      // await between these assignments). loadMore reads this snapshot — never the live filter refs —
+      // so a later failed filter refetch cannot desync the cursor from the query that produced it.
+      committedKeyword.value = payload.keyword;
+      committedFilter.value = payload.filter;
+
       const termFacetCounties = data.term_facets?.find((f) => f.name === COUNTRY_NAME_FACET);
       if (termFacetCounties) {
         filterOptionsCountries.value = termFacetToCommonFacet(termFacetCounties);
@@ -143,7 +152,7 @@ export function _useCartPickupLocations() {
   }
 
   async function loadMorePickupLocations(
-    payload: Omit<QueryCartPickupLocationsArgs, "storeId" | "cultureName" | "facet" | "after">,
+    payload: Omit<QueryCartPickupLocationsArgs, "storeId" | "cultureName" | "facet" | "after" | "keyword" | "filter">,
   ) {
     if (pickupLocationsLoading.value || pickupLocationsLoadingMore.value || !pickupLocationsHasNextPage.value) {
       return;
@@ -155,6 +164,8 @@ export function _useCartPickupLocations() {
       const data = await getCartPickupLocations({
         facet: PICKUP_LOCATIONS_FACET,
         ...payload,
+        keyword: committedKeyword.value,
+        filter: committedFilter.value,
         after: pickupLocationsEndCursor.value,
       });
 

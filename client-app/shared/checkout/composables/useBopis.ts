@@ -143,13 +143,12 @@ export function useBopis() {
           });
         },
 
-        // map ON only — opaque-cursor "Load more"; `after` is supplied internally from the stored endCursor.
+        // map ON only — opaque-cursor "Load more"; `after`, keyword and filter are supplied internally
+        // from the committed snapshot (the values that produced the stored endCursor), not live refs.
         onLoadMore: async () => {
           await loadMorePickupLocations({
             cartId,
             first: pageSize.value,
-            keyword: filterKeyword.value,
-            filter: buildFilter(),
           });
         },
 
