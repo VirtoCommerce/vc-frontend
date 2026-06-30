@@ -14,7 +14,7 @@ export interface IUseProductVariationsOptions {
   /** Products filters from useProducts composable */
   productsFilters: Ref<ProductsFiltersType>;
   /** Sort expression string */
-  sort?: MaybeRef<string | undefined>;
+  sort?: string | Ref<string | undefined> | (() => string | undefined);
   /** Filter expression for variations */
   variationsFilterExpression: MaybeRef<string>;
   /** Custom filter builder function - if provided, uses this instead of productsFilters */
