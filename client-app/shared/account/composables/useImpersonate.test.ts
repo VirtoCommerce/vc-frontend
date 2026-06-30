@@ -97,6 +97,9 @@ vi.mock("@/core/utilities", () => ({
     info: vi.fn(),
     warn: vi.fn(),
   },
+  // Same-origin relative paths (the only values passed in-app) pass through
+  // unchanged; the helper's open-redirect guard is covered in its own unit test.
+  toSameOriginPath: (url?: string | null) => url ?? "/",
 }));
 
 vi.mock("./useUser", () => ({

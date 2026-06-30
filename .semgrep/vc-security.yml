@@ -1,0 +1,283 @@
+# Virto Commerce frontend security ruleset (VCST-5292).
+#
+# Two layers of coverage work together:
+#   1. Maintained registry packs — p/javascript, p/typescript, p/owasp-top-ten — are
+#      wired into .github/workflows/security.yml. These are kept up to date by Semgrep
+#      and are the primary net for *general and future* vulnerability classes.
+#   2. This file — project-specific, high-signal rules. They are written by
+#      vulnerability *class* (not pinned to a single file/line), so they also fire on
+#      new code that reintroduces the same pattern anywhere in the repo.
+#
+# Rules are named generically (vc-*) so the same file can be reused across Virto
+# Commerce frontend repositories and keep findings comparable.
+
+rules:
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Authentication & session handling
+  # ─────────────────────────────────────────────────────────────────────────────
+
+  # Access/refresh tokens read from URL query params.
+  - id: vc-token-from-url-query
+    patterns:
+      - pattern-either:
+          - pattern: $Q.query.access_token
+          - pattern: $Q.query.refresh_token
+          - pattern: $Q.query.id_token
+    message: >
+      Access/refresh/ID tokens must not be read from URL query params (they leak via
+      history, Referer and logs, and enable session injection). Use a server-side
+      code-exchange sign-in flow instead.
+    severity: ERROR
+    languages: [typescript]
+
+  # Auth/refresh tokens persisted in web storage.
+  - id: vc-token-in-web-storage
+    patterns:
+      - pattern-either:
+          - pattern: "useLocalStorage($KEY, { ..., access_token: $A, ... })"
+          - pattern: "useLocalStorage($KEY, { ..., refresh_token: $R, ... })"
+          - pattern: "useSessionStorage($KEY, { ..., access_token: $A, ... })"
+          - pattern: "useSessionStorage($KEY, { ..., refresh_token: $R, ... })"
+          - pattern: localStorage.setItem($KEY, $TOK)
+          - pattern: sessionStorage.setItem($KEY, $TOK)
+      - metavariable-regex:
+          metavariable: $KEY
+          regex: '(?i).*(auth|token|session|jwt|credential).*'
+    message: >
+      Auth/refresh tokens in local/session storage are XSS-exfiltratable. Store the
+      refresh token in an HttpOnly cookie and keep the access token in memory only.
+    severity: ERROR
+    languages: [typescript]
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # DOM XSS sinks
+  # ─────────────────────────────────────────────────────────────────────────────
+
+  # document.write sink.
+  - id: vc-document-write-sink
+    pattern-either:
+      - pattern: $W.document.write(...)
+      - pattern: $W.document.writeln(...)
+      - pattern: document.write(...)
+      - pattern: document.writeln(...)
+    message: >
+      document.write/writeln with interpolated values is an XSS sink. HTML-escape
+      every interpolated value or run the markup through DOMPurify.sanitize first.
+    severity: ERROR
+    languages: [typescript, javascript]
+
+  # Assignment of non-literal HTML into innerHTML / outerHTML / insertAdjacentHTML.
+  # ESLint no-unsanitized covers this too; the Semgrep rule keeps coverage in files
+  # ESLint may skip and in plain JS service workers / public scripts.
+  - id: vc-innerhtml-assignment
+    patterns:
+      - pattern-either:
+          - pattern: $EL.innerHTML = $V
+          - pattern: $EL.outerHTML = $V
+          - pattern: $EL.insertAdjacentHTML($POS, $V)
+      - pattern-not: $EL.innerHTML = "..."
+      - pattern-not: $EL.outerHTML = "..."
+      - pattern-not: $EL.insertAdjacentHTML($POS, "...")
+    message: >
+      Dynamic innerHTML/outerHTML/insertAdjacentHTML is an XSS sink. Use textContent,
+      DOM APIs, or DOMPurify.sanitize for HTML content.
+    severity: WARNING
+    languages: [typescript, javascript]
+
+  # v-html bound to a transform that only looks like a sanitizer.
+  - id: vc-vhtml-fake-sanitizer
+    patterns:
+      - pattern-regex: 'v-html\s*=\s*"[^"]*\b(replaceUnicode|format|transform|encode|decode|highlight)\b'
+    paths:
+      include: ["*.vue"]
+    message: >
+      v-html bound to a transform that is NOT a sanitizer. Use v-html-safe
+      (vue-html-secure) or DOMPurify.sanitize, or plain {{ }} interpolation.
+    severity: ERROR
+    languages: [generic]
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Code injection
+  # ─────────────────────────────────────────────────────────────────────────────
+
+  # eval / Function constructor / string-argument timers.
+  - id: vc-dynamic-code-execution
+    pattern-either:
+      - pattern: eval(...)
+      - pattern: new Function(...)
+      - pattern: Function(...)
+      - pattern: setTimeout("...", ...)
+      - pattern: setInterval("...", ...)
+    message: >
+      Dynamic code execution (eval / Function / string-arg timer) is a code-injection
+      sink. Replace with a concrete function reference or a safe parser.
+    severity: ERROR
+    languages: [typescript, javascript]
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Redirects, links & navigation
+  # ─────────────────────────────────────────────────────────────────────────────
+
+  # Dynamic location assignment — open redirect.
+  - id: vc-open-redirect-location
+    patterns:
+      - pattern-either:
+          - pattern: $L.location.href = $URL
+          - pattern: location.href = $URL
+          - pattern: $L.location.assign($URL)
+          - pattern: $L.location.replace($URL)
+          - pattern: $L.location = $URL
+      - pattern-not: $L.location.href = "..."
+      - pattern-not: location.href = "..."
+      - pattern-not: $L.location.assign("...")
+      - pattern-not: $L.location.replace("...")
+      # Navigations routed through the audited same-origin helpers are safe: both
+      # resolve against the current origin and drop cross-origin targets.
+      - pattern-not-regex: '(getReturnUrlValue|toSameOriginPath)\('
+    message: >
+      Dynamic location assignment — validate same-origin / host allowlist before
+      navigating (open redirect / phishing vector).
+    severity: WARNING
+    languages: [typescript, javascript]
+
+  # javascript:/vbscript:/renderable-data: URLs assigned to navigable attributes.
+  - id: vc-javascript-uri
+    pattern-either:
+      # Executable schemes on any navigable/source attribute — run on activation.
+      - pattern-regex: '(?i)(href|src|to|action)\s*=\s*["''](javascript|vbscript):'
+      # Renderable data: documents (HTML/SVG/XHTML) execute script; inline
+      # data:image/png|jpg|gif|webp in a src/href are safe and intentionally not matched.
+      - pattern-regex: '(?i)(href|src|to|action)\s*=\s*["'']data:(text/html|image/svg\+xml|application/xhtml)'
+    message: >
+      javascript:/vbscript:/data:text-html|svg URI used as a navigable target — XSS on
+      activation. Allowlist http/https/mailto (inline data:image/* is fine).
+    severity: ERROR
+    languages: [generic]
+
+  # target="_blank" on a tag lacking rel=noopener/noreferrer (reverse tabnabbing).
+  # Whole-tag regex so a sibling rel attribute is honoured in any order.
+  - id: vc-target-blank-noopener
+    languages: [generic]
+    paths:
+      include: ["*.vue", "*.html"]
+    patterns:
+      - pattern-regex: '<[a-zA-Z][^>]*\btarget\s*=\s*["'']_blank["''][^>]*>'
+      - pattern-not-regex: '<[a-zA-Z][^>]*\brel\s*=\s*["''][^"'']*(noopener|noreferrer)[^"'']*["''][^>]*>'
+    message: >
+      target="_blank" needs rel="noopener noreferrer" to prevent reverse-tabnabbing.
+    severity: WARNING
+
+  # window.open without the noopener feature.
+  - id: vc-window-open-noopener
+    patterns:
+      - pattern-either:
+          - pattern: $W.open($URL)
+          - pattern: $W.open($URL, $TARGET)
+          - pattern: window.open($URL)
+          - pattern: window.open($URL, $TARGET)
+      - pattern-not: $W.open($URL, $TARGET, "...noopener...")
+      - pattern-not: window.open($URL, $TARGET, "...noopener...")
+      # IndexedDB has an unrelated .open(name, version) API — not a window.open sink.
+      - pattern-not: indexedDB.open(...)
+      - pattern-not: $W.indexedDB.open(...)
+    message: >
+      window.open without "noopener" lets the opened page control window.opener.
+      Pass "noopener,noreferrer" as the features argument.
+    severity: WARNING
+    languages: [typescript, javascript]
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Cross-origin messaging
+  # ─────────────────────────────────────────────────────────────────────────────
+
+  # 'message' listener without an origin check.
+  - id: vc-postmessage-no-origin-check
+    patterns:
+      - pattern-either:
+          - pattern: '$X.addEventListener("message", ($E) => { ... })'
+          - pattern: '$X.addEventListener("message", function ($E) { ... })'
+          - pattern: '$X.addEventListener("message", async ($E) => { ... })'
+          - pattern: '$X.addEventListener("message", async function ($E) { ... })'
+      # An $E.origin check anywhere in the handler body clears it — including async
+      # handlers, which Semgrep treats as structurally distinct from sync ones.
+      - pattern-not: '$X.addEventListener("message", ($E) => { <... $E.origin ...> })'
+      - pattern-not: '$X.addEventListener("message", function ($E) { <... $E.origin ...> })'
+      - pattern-not: '$X.addEventListener("message", async ($E) => { <... $E.origin ...> })'
+      - pattern-not: '$X.addEventListener("message", async function ($E) { <... $E.origin ...> })'
+    message: >
+      'message' handler must validate event.origin against a trusted allowlist
+      before acting on the payload.
+    severity: WARNING
+    languages: [typescript, javascript]
+
+  # postMessage broadcast to any origin.
+  - id: vc-postmessage-wildcard-target
+    pattern-either:
+      - pattern: $W.postMessage($MSG, "*")
+      - pattern: $W.postMessage($MSG, "*", $T)
+    message: >
+      postMessage with "*" targetOrigin leaks the message to any origin. Specify the
+      exact recipient origin.
+    severity: WARNING
+    languages: [typescript, javascript]
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Third-party scripts & spreadsheet exports
+  # ─────────────────────────────────────────────────────────────────────────────
+
+  # Dynamically loaded external <script> without Subresource Integrity.
+  - id: vc-dynamic-script-no-sri
+    patterns:
+      - pattern-either:
+          - pattern: |
+              $S = document.createElement("script");
+              ...
+              $S.src = $URL;
+          - pattern: $S.setAttribute("src", $URL)
+      - pattern-not-inside: |
+          ... $S.integrity = ...; ...
+    message: >
+      Dynamically loaded external script without Subresource Integrity — route
+      through an integrity-aware loader (Magecart vector).
+    severity: WARNING
+    languages: [typescript, javascript]
+
+  # Spreadsheet/CSV formula injection via exceljs addRow.
+  - id: vc-csv-formula-injection
+    pattern-either:
+      - pattern: $WS.addRow($DATA)
+      - pattern: $WS.addRows($DATA)
+    message: >
+      Spreadsheet cells built from backend/user data can carry =/+/-/@ formula
+      injection. Prefix risky cells with a quote before addRow.
+    severity: WARNING
+    languages: [typescript]
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Secrets & weak randomness (heuristics — verify before acting)
+  # ─────────────────────────────────────────────────────────────────────────────
+
+  # Hardcoded secret assigned to a non-empty string literal.
+  - id: vc-hardcoded-secret
+    patterns:
+      - pattern-regex: '(?i)\b(api[_-]?key|secret|client[_-]?secret|password|passwd|private[_-]?key|access[_-]?token)\b\s*[:=]\s*["''][^"'']{8,}["'']'
+      - pattern-not-regex: '(?i)(your[_-]|example|placeholder|changeme|xxxx|\$\{|import\.meta|process\.env)'
+      # `:api-key="builderIoApiKey"` — a v-bind/assignment whose value is a bare JS
+      # identifier is a variable reference, not a literal secret (real keys carry
+      # digits/symbols). Only the `=` form, so TS `apiKey: "literal"` still fires.
+      - pattern-not-regex: '(?i)\b(api[_-]?key|secret|client[_-]?secret|password|passwd|private[_-]?key|access[_-]?token)\b\s*=\s*["''][A-Za-z_$][A-Za-z0-9_$]*["'']'
+    message: >
+      Possible hardcoded secret. Source secrets from runtime backend settings or
+      environment, never commit them. Verify this is not a public identifier.
+    severity: WARNING
+    languages: [generic]
+
+  # Math.random() used to derive a security-sensitive value.
+  - id: vc-insecure-randomness
+    patterns:
+      - pattern-regex: '(?i)(nonce|token|secret|salt|otp|csrf|session[_-]?id|password)\b.{0,40}Math\.random\(\)'
+    message: >
+      Math.random() is not cryptographically secure. Use crypto.getRandomValues /
+      crypto.randomUUID for tokens, nonces, salts or identifiers.
+    severity: WARNING
+    languages: [generic]
