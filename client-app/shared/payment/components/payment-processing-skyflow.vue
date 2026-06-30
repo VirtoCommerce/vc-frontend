@@ -96,6 +96,7 @@ import { Logger, replaceXFromBeginning } from "@/core/utilities";
 import { useUser } from "@/shared/account";
 import { useNotifications } from "@/shared/notification";
 import { usePayment, useSkyflowCards, useSkyflowStyles } from "../composables";
+import { getCvvValidation } from "../utils/skyflow-cvv-validation";
 import PaymentPolicies from "./payment-policies.vue";
 import type { IPaymentMethodEmits, IPaymentMethodParameters } from "./types";
 import type {
@@ -114,9 +115,21 @@ const emit = defineEmits<IPaymentMethodEmits>();
 
 const props = defineProps<IPaymentMethodParameters>();
 
-const CVV_REGEX = "^[0-9]{3,4}$";
-
 type FieldsType = { [key: string]: string };
+
+// Builds the brand-conditional CVV REGEX_MATCH_RULE for the Skyflow element from the detected
+// (or saved) card scheme. Amex requires 4 digits, every other brand 3 (VCST-5202).
+function buildCvvValidations(cardScheme?: string | null) {
+  return [
+    {
+      type: Skyflow.ValidationRuleType.REGEX_MATCH_RULE,
+      params: {
+        regex: getCvvValidation(cardScheme).regex,
+        error: t("shared.payment.bank_card_form.errors.security_code"),
+      },
+    },
+  ];
+}
 
 const { t } = useI18n();
 const { user, isAuthenticated } = useUser();
@@ -136,7 +149,13 @@ const { registerPaymentProcessor, setCardDataValid, setCardDataInvalid } = usePa
 const loading = ref(false);
 const skyflowContainer = ref<HTMLElement | string>("");
 const saveCreditCard = ref(false);
-const selectedSkyflowCard = ref<{ cardNumber: string; cardExpiration?: string; skyflowId: string }>();
+const selectedSkyflowCard = ref<{
+  cardNumber: string;
+  cardExpiration?: string;
+  skyflowId: string;
+  cardScheme?: string | null;
+  cardType?: string | null;
+}>();
 
 const creditCards = computed(() => {
   const cards =
@@ -172,7 +191,13 @@ const skyflowFormLoading = computed(() => {
   return false;
 });
 
-function selectSkyflowCard(skyflowCard: { cardNumber: string; cardExpiration?: string; skyflowId: string }): void {
+function selectSkyflowCard(skyflowCard: {
+  cardNumber: string;
+  cardExpiration?: string;
+  skyflowId: string;
+  cardScheme?: string | null;
+  cardType?: string | null;
+}): void {
   selectedSkyflowCard.value = skyflowCard;
   if (isNewCard(skyflowCard)) {
     void initNewCardForm();
@@ -195,6 +220,10 @@ let isActive = true;
 // before its async init and bails if a newer selection superseded it, so a slow init for an
 // earlier card can't mount a duplicate collector or bind the CVV field to the wrong record.
 let cvvInitToken = 0;
+
+// Last CVV regex applied to the new-card CVV element, so the brand-driven update only fires
+// when the detected scheme actually changes the rule (not on every card-number keystroke).
+let currentNewCardCvvRegex = getCvvValidation().regex;
 
 // NEW CARD START
 type ElementType =
@@ -296,23 +325,16 @@ async function initNewCardForm(): Promise<void> {
     },
   );
 
+  const { placeholder: cvvPlaceholder } = getCvvValidation();
   const CVV = container.create(
     {
       table: skyflowTableName,
       column: "cvv",
       ...newCardCvvCollectStyles,
-      placeholder: "111",
+      placeholder: cvvPlaceholder,
       label: t("shared.payment.bank_card_form.security_code_label"),
       type: Skyflow.ElementType.INPUT_FIELD,
-      validations: [
-        {
-          type: Skyflow.ValidationRuleType.REGEX_MATCH_RULE,
-          params: {
-            regex: CVV_REGEX,
-            error: t("shared.payment.bank_card_form.errors.security_code"),
-          },
-        },
-      ],
+      validations: buildCvvValidations(),
     },
     {
       required: true,
@@ -320,6 +342,18 @@ async function initNewCardForm(): Promise<void> {
       format: "XXXX",
     },
   );
+
+  // Re-derive the CVV rule + placeholder from the brand Skyflow detects on the card number
+  // (surfaced as `selectedCardScheme` on its CHANGE event), updating the mounted CVV element
+  // in place so an Amex card requires a 4-digit CVV (VCST-5202).
+  cardName.on(Skyflow.EventName.CHANGE, ({ selectedCardScheme }: { selectedCardScheme?: string }) => {
+    const { regex, placeholder } = getCvvValidation(selectedCardScheme);
+    if (regex === currentNewCardCvvRegex) {
+      return;
+    }
+    currentNewCardCvvRegex = regex;
+    CVV.update({ validations: buildCvvValidations(selectedCardScheme), placeholder });
+  });
 
   [cardName, cardholderName, cardExpiration, CVV].forEach((el) => {
     el.on(Skyflow.EventName.CHANGE, updateValidationStatus);
@@ -371,6 +405,12 @@ async function initCvvForm() {
 
   const container = skyflowClient.container(Skyflow.ContainerType.COMPOSABLE, containerOptions);
 
+  // The saved card's brand is already known, so the per-brand CVV rule is derived once at
+  // creation (no card-number element to detect it from here) — Amex saved cards require 4
+  // digits, others 3 (VCST-5202).
+  const savedCardScheme = selectedSkyflowCard.value?.cardScheme ?? selectedSkyflowCard.value?.cardType;
+  const { placeholder: savedCvvPlaceholder } = getCvvValidation(savedCardScheme);
+
   const CVV = container.create(
     {
       table: skyflowTableName,
@@ -379,18 +419,10 @@ async function initCvvForm() {
       // on the existing record. Without skyflowID, collect() inserts a new bare-CVV record (POST).
       skyflowID: selectedSkyflowCard.value?.skyflowId,
       ...cvvOnlyCollectStyles,
-      placeholder: "111",
+      placeholder: savedCvvPlaceholder,
       label: t("shared.payment.bank_card_form.security_code_label"),
       type: Skyflow.ElementType.INPUT_FIELD,
-      validations: [
-        {
-          type: Skyflow.ValidationRuleType.REGEX_MATCH_RULE,
-          params: {
-            regex: CVV_REGEX,
-            error: t("shared.payment.bank_card_form.errors.security_code"),
-          },
-        },
-      ],
+      validations: buildCvvValidations(savedCardScheme),
     },
     {
       required: true,

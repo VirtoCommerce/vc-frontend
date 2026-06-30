@@ -5,6 +5,8 @@ query GetSkyflowCards($storeId: String) {
       cardExpiration
       skyflowId
       active
+      cardScheme
+      cardType
     }
   }
 }
