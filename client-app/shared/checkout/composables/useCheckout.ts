@@ -162,6 +162,13 @@ export function _useCheckout(cartId?: string) {
     availablePaymentMethods.value.find((item) => item.code === payment.value?.paymentGatewayCode),
   );
 
+  // Cart payment (paying the card from the cart during order placement) is only supported in
+  // single-page checkout. Multistep checkout defers payment to the dedicated CheckoutPayment step
+  // after the order is placed, so the cart-payment processor and card form must stay disabled there.
+  const canPayFromCart = computed(
+    () => !themeContext.value?.settings?.checkout_multistep_enabled && !!paymentMethod.value?.allowCartPayment,
+  );
+
   const changeCommentDebounced = useDebounceFn(async (value: string) => {
     if (cart.value?.comment !== value) {
       await changeComment(value);
@@ -181,7 +188,7 @@ export function _useCheckout(cartId?: string) {
     set: (value: string) => {
       commentChanging.value = true;
       _comment.value = value;
-      void changeCommentDebounced(value?.trim());
+      void changeCommentDebounced((value ?? "").trim());
     },
   });
 
@@ -537,7 +544,7 @@ export function _useCheckout(cartId?: string) {
       // cart-payment method (e.g. the shopper switched to a manual method, which unmounts
       // the card form without clearing the shared processor) could charge the card for an
       // order that should not be paid from the cart.
-      const result = paymentMethod.value?.allowCartPayment ? await finalizePayment(order) : undefined;
+      const result = canPayFromCart.value ? await finalizePayment(order) : undefined;
       orderPayed = result?.isSuccess ?? false;
     } catch (e) {
       Logger.error(`${useCheckout.name}.${createOrderFromCart.name}.paymentProcessor`, e);
@@ -617,6 +624,7 @@ export function _useCheckout(cartId?: string) {
     shipmentMethod,
     billingAddress,
     paymentMethod,
+    canPayFromCart,
     comment,
     billingAddressEqualsShipping,
     purchaseOrderNumber,
