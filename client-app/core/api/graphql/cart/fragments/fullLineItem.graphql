@@ -44,9 +44,15 @@ fragment fullLineItem on LineItemType {
     name
     customText
     type
+    extendedPrice {
+      ...money
+    }
     files {
       name
       url
+    }
+    configurationSection {
+      name
     }
   }
 }
