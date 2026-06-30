@@ -28,6 +28,7 @@
         v-if="linkText"
         :to="linkTo ?? null"
         target="_blank"
+        rel="noopener noreferrer"
         :class="[
           'vc-product-button__link',
           {
