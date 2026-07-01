@@ -246,7 +246,7 @@
                 {{ contact.fullName }}
               </td>
 
-              <td class="px-4 py-2.5">
+              <td class="max-w-xs truncate px-4 py-2.5" :title="contact.extended.roles.map((r) => r.name).join(', ')">
                 {{ contact.extended.roles.map((r) => r.name).join(", ") }}
               </td>
 
@@ -281,7 +281,7 @@
                   <b>{{ item.fullName }}</b>
                 </div>
 
-                <div class="text-sm">
+                <div class="truncate text-sm" :title="item.extended.roles.map((r) => r.name).join(', ')">
                   {{ item.extended.roles.map((r) => r.name).join(", ") }}
                 </div>
               </div>
