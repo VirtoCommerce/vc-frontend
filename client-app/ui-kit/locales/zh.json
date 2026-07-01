@@ -123,6 +123,11 @@
       "page_limit_filters": "没有更多结果。请尝试更改筛选条件。",
       "page_limit": "无法显示更多结果。"
     },
+    "table": {
+      "empty": "未找到记录",
+      "error": "加载数据失败",
+      "retry": "重试"
+    },
     "slider": {
       "tooltip": "{count} 件商品",
       "aria_label": "范围滑块，从 {min} 到 {max}",

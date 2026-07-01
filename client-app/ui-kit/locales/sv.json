@@ -123,6 +123,11 @@
       "page_limit_filters": "Inga fler resultat. Försök ändra filtren.",
       "page_limit": "Inga fler resultat kan visas."
     },
+    "table": {
+      "empty": "Inga poster hittades",
+      "error": "Det gick inte att läsa in data",
+      "retry": "Försök igen"
+    },
     "slider": {
       "tooltip": "{count} objekt",
       "aria_label": "Skjutreglage från {min} till {max}",

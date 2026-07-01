@@ -123,6 +123,11 @@
       "page_limit_filters": "Ingen flere resultater. Prøv å endre filtrene.",
       "page_limit": "Ingen flere resultater kan vises."
     },
+    "table": {
+      "empty": "Ingen oppføringer funnet",
+      "error": "Kunne ikke laste inn data",
+      "retry": "Prøv igjen"
+    },
     "slider": {
       "tooltip": "{count} elementer",
       "aria_label": "Skyveknapp fra {min} til {max}",

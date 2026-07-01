@@ -19,8 +19,19 @@
         </div>
       </slot>
 
+      <!-- Mobile error view (checked before empty so a failed request with an empty array shows the error) -->
+      <template v-else-if="error">
+        <slot name="error">
+          <DefaultErrorState />
+        </slot>
+      </template>
+
       <!-- Mobile empty view -->
-      <slot v-else-if="!items.length" name="mobile-empty" />
+      <template v-else-if="!items.length">
+        <slot v-if="$slots['mobile-empty']" name="mobile-empty" />
+
+        <VcEmptyView v-else variant="search" :text="$t('ui_kit.table.empty')" />
+      </template>
 
       <!-- Mobile item view -->
       <slot v-else v-for="(item, index) in items" :key="getItemKey(item, index)" name="mobile-item" :item="item" />
@@ -121,9 +132,26 @@
           </slot>
         </tbody>
 
+        <!-- Desktop error view (checked before empty so a failed request with an empty array shows the error) -->
+        <tbody v-else-if="error" class="vc-table__body">
+          <tr>
+            <td :colspan="orderedColumns.length" class="vc-table__state-cell">
+              <slot name="error">
+                <DefaultErrorState />
+              </slot>
+            </td>
+          </tr>
+        </tbody>
+
         <!-- Desktop empty view -->
         <tbody v-else-if="!items.length" class="vc-table__body">
-          <slot name="desktop-empty" />
+          <slot v-if="$slots['desktop-empty']" name="desktop-empty" />
+
+          <tr v-else>
+            <td :colspan="orderedColumns.length" class="vc-table__state-cell">
+              <VcEmptyView variant="search" :text="$t('ui_kit.table.empty')" />
+            </td>
+          </tr>
         </tbody>
 
         <!-- Desktop table view (custom body) -->
@@ -193,6 +221,7 @@ import {
   defineComponent,
   Fragment,
   getCurrentInstance,
+  h,
   onMounted,
   onUpdated,
   provide,
@@ -203,11 +232,14 @@ import { BREAKPOINTS, TABLE_SKELETON_ROWS_SIZE, TABLE_PAGE_LIMIT } from "@/ui-ki
 import VcTableColumn from "./vc-table-column.vue";
 import { vcTableKey } from "./vc-table-context";
 import type { PropType, VNode } from "vue";
+import VcButton from "@/ui-kit/components/molecules/button/vc-button.vue";
+import VcEmptyView from "@/ui-kit/components/molecules/empty-view/vc-empty-view.vue";
 
-defineEmits<{
+const emit = defineEmits<{
   (event: "headerClick", item: VcTableSortInfoType): void;
   (event: "pageChanged", page: number): void;
   (event: "rowClick", item: T, index: number): void;
+  (event: "retry"): void;
 }>();
 
 const props = withDefaults(
@@ -218,6 +250,7 @@ const props = withDefaults(
     pages?: number;
     page?: number;
     loading?: boolean;
+    error?: boolean;
     hideDefaultHeader?: boolean;
     hideDefaultFooter?: boolean;
     description?: string;
@@ -445,13 +478,25 @@ function getColumnFixedClasses(column: VcTableColumnType, baseClass: string): Re
 // (covers the case where parent dynamically adds/removes the listener).
 const instance = getCurrentInstance();
 const hasRowClickListener = ref(false);
+const hasRetryListener = ref(false);
 
 function syncRowClickListener() {
   hasRowClickListener.value = !!instance?.vnode.props?.onRowClick;
 }
 
-onMounted(syncRowClickListener);
-onUpdated(syncRowClickListener);
+function syncRetryListener() {
+  hasRetryListener.value = !!instance?.vnode.props?.onRetry;
+}
+
+onMounted(() => {
+  syncRowClickListener();
+  syncRetryListener();
+});
+
+onUpdated(() => {
+  syncRowClickListener();
+  syncRetryListener();
+});
 
 // Resolve row class from VcTable prop
 function resolvedRowClass(item: T, index: number): unknown[] | undefined {
@@ -503,6 +548,33 @@ const HeaderCellRenderer = defineComponent({
 
   setup(p) {
     return () => p.slotFn?.({ column: p.column });
+  },
+});
+
+// Translate via the app's global $t so the default error state resolves the same
+// messages as the surrounding template (avoids an extra useI18n() setup call).
+function translate(key: string): string {
+  const t = instance?.appContext.config.globalProperties.$t;
+  return t ? t(key) : key;
+}
+
+// Default error state, shared between the desktop (table cell) and mobile branches
+// so the markup isn't duplicated. The consumer-provided `#error` slot overrides this in both.
+const DefaultErrorState = defineComponent({
+  setup() {
+    return () =>
+      h(
+        VcEmptyView,
+        { variant: "error", text: translate("ui_kit.table.error") },
+        hasRetryListener.value
+          ? {
+              button: () =>
+                h(VcButton, { variant: "outline", color: "secondary", onClick: () => emit("retry") }, () =>
+                  translate("ui_kit.table.retry"),
+                ),
+            }
+          : undefined,
+      );
   },
 });
 
@@ -771,6 +843,10 @@ function getItemKey(item: T, index: number): string {
     &--asc {
       @apply rotate-180;
     }
+  }
+
+  &__state-cell {
+    @apply p-0;
   }
 
   &__footer {

@@ -123,6 +123,11 @@
       "page_limit_filters": "No more results. Please try to change filters.",
       "page_limit": "No more results could be shown."
     },
+    "table": {
+      "empty": "No records found",
+      "error": "Failed to load data",
+      "retry": "Try again"
+    },
     "slider": {
       "tooltip": "{count} items",
       "aria_label": "Range slider from {min} to {max}",

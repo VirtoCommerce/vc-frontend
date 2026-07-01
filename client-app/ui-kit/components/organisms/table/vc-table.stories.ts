@@ -13,6 +13,7 @@ interface IVcTableStoryArgs {
   pages?: number;
   page?: number;
   loading?: boolean;
+  error?: boolean;
   hideDefaultHeader?: boolean;
   hideDefaultFooter?: boolean;
   description?: string;
@@ -1076,6 +1077,225 @@ export const Empty: StoryType = {
         No items available
       </td>
     </tr>
+  </template>
+</VcTable>
+        `,
+      },
+    },
+  },
+};
+
+// 14b. EmptyDefault — built-in empty view (no #desktop-empty slot)
+export const EmptyDefault: StoryType = {
+  args: {
+    items: [],
+    pages: 0,
+    page: 0,
+    bordered: true,
+  },
+  render: (args) => ({
+    components: { VcTable, VcTableColumn },
+    setup: () => ({ args }),
+    template: `
+      <VcTable :items="args.items" :pages="args.pages" :page="args.page" :bordered="args.bordered">
+        <VcTableColumn id="name" title="Name" v-slot="{ item }">
+          {{ item.name }}
+        </VcTableColumn>
+        <VcTableColumn id="email" title="Email" v-slot="{ item }">
+          {{ item.email }}
+        </VcTableColumn>
+        <VcTableColumn id="status" title="Status" v-slot="{ item }">
+          {{ item.status }}
+        </VcTableColumn>
+      </VcTable>
+    `,
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Default empty state. When no `#desktop-empty`/`#mobile-empty` slot is provided, the table renders a built-in `VcEmptyView` (search variant) with the `ui_kit.table.empty` message.",
+      },
+      source: {
+        code: `
+<VcTable :items="[]" bordered>
+  <VcTableColumn id="name" title="Name" v-slot="{ item }">{{ item.name }}</VcTableColumn>
+  <VcTableColumn id="email" title="Email" v-slot="{ item }">{{ item.email }}</VcTableColumn>
+  <VcTableColumn id="status" title="Status" v-slot="{ item }">{{ item.status }}</VcTableColumn>
+</VcTable>
+        `,
+      },
+    },
+  },
+};
+
+// 14c. Error — default error state with retry
+export const ErrorDefault: StoryType = {
+  args: {
+    items: [],
+    pages: 0,
+    page: 0,
+    error: true,
+    bordered: true,
+  },
+  render: (args) => ({
+    components: { VcTable, VcTableColumn },
+    setup: () => {
+      const handleRetry = () => {
+        alert("Retry requested");
+      };
+      return { args, handleRetry };
+    },
+    template: `
+      <VcTable
+        :items="args.items"
+        :pages="args.pages"
+        :page="args.page"
+        :error="args.error"
+        :bordered="args.bordered"
+        @retry="handleRetry"
+      >
+        <VcTableColumn id="name" title="Name" v-slot="{ item }">
+          {{ item.name }}
+        </VcTableColumn>
+        <VcTableColumn id="email" title="Email" v-slot="{ item }">
+          {{ item.email }}
+        </VcTableColumn>
+        <VcTableColumn id="status" title="Status" v-slot="{ item }">
+          {{ item.status }}
+        </VcTableColumn>
+      </VcTable>
+    `,
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Default error state via `:error` prop. Renders a built-in `VcEmptyView` (error variant) with a themed illustration and the `ui_kit.table.error` message. The secondary retry button appears because a `@retry` listener is bound and emits `retry` on click. Error is checked before empty, so it shows even when `items` is empty.",
+      },
+      source: {
+        code: `
+<VcTable :items="items" :error="true" bordered @retry="fetchItems">
+  <VcTableColumn id="name" title="Name" v-slot="{ item }">{{ item.name }}</VcTableColumn>
+  <VcTableColumn id="email" title="Email" v-slot="{ item }">{{ item.email }}</VcTableColumn>
+  <VcTableColumn id="status" title="Status" v-slot="{ item }">{{ item.status }}</VcTableColumn>
+</VcTable>
+        `,
+      },
+    },
+  },
+};
+
+// 14d. ErrorWithoutRetry — error state without a @retry listener (no retry button)
+export const ErrorWithoutRetry: StoryType = {
+  args: {
+    items: [],
+    pages: 0,
+    page: 0,
+    error: true,
+    bordered: true,
+  },
+  render: (args) => ({
+    components: { VcTable, VcTableColumn },
+    setup: () => ({ args }),
+    template: `
+      <VcTable
+        :items="args.items"
+        :pages="args.pages"
+        :page="args.page"
+        :error="args.error"
+        :bordered="args.bordered"
+      >
+        <VcTableColumn id="name" title="Name" v-slot="{ item }">
+          {{ item.name }}
+        </VcTableColumn>
+        <VcTableColumn id="email" title="Email" v-slot="{ item }">
+          {{ item.email }}
+        </VcTableColumn>
+        <VcTableColumn id="status" title="Status" v-slot="{ item }">
+          {{ item.status }}
+        </VcTableColumn>
+      </VcTable>
+    `,
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Error state without a `@retry` listener. The retry button is only rendered when a `@retry` handler is bound, so here only the error message is shown.",
+      },
+      source: {
+        code: `
+<!-- No @retry listener → no retry button -->
+<VcTable :items="[]" :error="true" bordered>
+  <VcTableColumn id="name" title="Name" v-slot="{ item }">{{ item.name }}</VcTableColumn>
+  <VcTableColumn id="email" title="Email" v-slot="{ item }">{{ item.email }}</VcTableColumn>
+  <VcTableColumn id="status" title="Status" v-slot="{ item }">{{ item.status }}</VcTableColumn>
+</VcTable>
+        `,
+      },
+    },
+  },
+};
+
+// 14e. ErrorCustomSlot — override the error state via the single #error slot
+export const ErrorCustomSlot: StoryType = {
+  args: {
+    items: [],
+    pages: 0,
+    page: 0,
+    error: true,
+    bordered: true,
+    mobileBordered: true,
+    mobileBreakpoint: "md",
+  },
+  render: (args) => ({
+    components: { VcTable, VcTableColumn },
+    setup: () => ({ args }),
+    template: `
+      <VcTable
+        :items="args.items"
+        :pages="args.pages"
+        :page="args.page"
+        :error="args.error"
+        :bordered="args.bordered"
+        :mobile-bordered="args.mobileBordered"
+        :mobile-breakpoint="args.mobileBreakpoint"
+      >
+        <VcTableColumn id="name" title="Name" v-slot="{ item }">
+          {{ item.name }}
+        </VcTableColumn>
+        <VcTableColumn id="email" title="Email" v-slot="{ item }">
+          {{ item.email }}
+        </VcTableColumn>
+        <VcTableColumn id="status" title="Status" v-slot="{ item }">
+          {{ item.status }}
+        </VcTableColumn>
+
+        <template #mobile-item="{ item }">
+          <div class="border-b border-neutral-200 p-4 last:border-b-0">{{ item.name }}</div>
+        </template>
+
+        <template #error>
+          <div class="p-10 text-center text-danger-600">Something went wrong while loading this table.</div>
+        </template>
+      </VcTable>
+    `,
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Custom error state via the single `#error` slot. The same content renders in both the desktop (inside a full-width table cell) and mobile branches, fully replacing the default error view.",
+      },
+      source: {
+        code: `
+<VcTable :items="[]" :error="true" bordered mobile-breakpoint="md">
+  <VcTableColumn id="name" title="Name" v-slot="{ item }">{{ item.name }}</VcTableColumn>
+  <VcTableColumn id="email" title="Email" v-slot="{ item }">{{ item.email }}</VcTableColumn>
+
+  <template #error>
+    <div class="p-10 text-center text-danger-600">Something went wrong while loading this table.</div>
   </template>
 </VcTable>
         `,

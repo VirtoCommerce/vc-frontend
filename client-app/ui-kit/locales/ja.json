@@ -123,6 +123,11 @@
       "page_limit_filters": "これ以上の結果はありません。フィルターを変更してみてください。",
       "page_limit": "これ以上の結果を表示できません。"
     },
+    "table": {
+      "empty": "レコードが見つかりません",
+      "error": "データの読み込みに失敗しました",
+      "retry": "再試行"
+    },
     "slider": {
       "tooltip": "{count} アイテム",
       "aria_label": "{min} から {max} までの範囲スライダー",

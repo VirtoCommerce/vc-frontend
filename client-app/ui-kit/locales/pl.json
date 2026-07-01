@@ -123,6 +123,11 @@
       "page_limit_filters": "Brak dalszych wyników. Spróbuj zmienić filtry.",
       "page_limit": "Nie można wyświetlić więcej wyników."
     },
+    "table": {
+      "empty": "Nie znaleziono rekordów",
+      "error": "Nie udało się załadować danych",
+      "retry": "Spróbuj ponownie"
+    },
     "slider": {
       "tooltip": "{count} przedmiotów",
       "aria_label": "Suwak zakresu od {min} do {max}",

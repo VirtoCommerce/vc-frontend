@@ -1,5 +1,5 @@
 declare global {
-  type VcEmptyViewVariantType = "empty" | "search";
+  type VcEmptyViewVariantType = "empty" | "search" | "error";
 }
 
 export {};
