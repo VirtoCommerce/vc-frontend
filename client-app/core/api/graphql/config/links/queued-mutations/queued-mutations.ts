@@ -15,6 +15,13 @@ import type { DefaultContext } from "@apollo/client/core";
 
 export const DEFAULT_DEBOUNCE_MS = 1000;
 
+// Single source of truth for state keys, shared by getStateKey and flushNow so
+// both agree. An empty/undefined partition key normalizes to the bare "opName"
+// queue (the default partition), keeping it reachable via flushNow(opName).
+function makeStateKey(opName: string, partitionKey?: string): string {
+  return partitionKey ? `${opName}:${partitionKey}` : opName;
+}
+
 /**
  * Creates a queued mutations controller exposing the ApolloLink and a
  * flushNow escape hatch.
@@ -50,13 +57,6 @@ export function createQueuedMutationsController(config: IQueueConfig): IQueuedMu
   // State is keyed by "opName" or, when the target declares getPartitionKey, by
   // "opName:partition" so each partition keeps an independent queue.
   const stateByOperation = new Map<string, IOperationState<TVarsType>>();
-
-  // Single source of truth for state keys, shared by getStateKey and flushNow so
-  // both agree. An empty/undefined partition key normalizes to the bare "opName"
-  // queue (the default partition), keeping it reachable via flushNow(opName).
-  function makeStateKey(opName: string, partitionKey?: string): string {
-    return partitionKey ? `${opName}:${partitionKey}` : opName;
-  }
 
   function getStateKey(opName: string, variables: TVarsType): string {
     const cfg = targetConfigMap.get(opName);
