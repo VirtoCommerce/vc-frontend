@@ -186,6 +186,7 @@
       "email_not_unique": "Tämä sähköpostiosoite on jo rekisteröity meillä",
       "max_length": "Tämä kenttä ei saa sisältää enempää kuin {max} merkkiä",
       "creating_order_error": "Virhe tilauksen luomisessa",
+      "loyalty_insufficient_balance": "Ei tarpeeksi kanta-asiakaspisteitä tilauksen tekemiseen. Vaaditaan: {required}, käytettävissä: {available}.",
       "payment_processing_error": "Virhe maksun käsittelyssä",
       "item_can_t_be_purchased": "Tätä tuotetta ei voi ostaa",
       "item_is_out_of_stock": "Tämä tuote on loppu varastosta",
@@ -214,7 +215,8 @@
       "report_sent_successfully": "Kiitos! Raporttisi on lähetetty onnistuneesti. Tarkastelemme sitä.",
       "copied_to_clipboard": "Kopioitu leikepöydälle",
       "role_update_successful": "Käyttäjärooli on päivitetty onnistuneesti",
-      "role_update_failed": "Virhe roolin päivityksessä: {0}",
+      "contact_lock_failed": "Käyttäjän esto/eston poisto epäonnistui.",
+      "role_update_failed": "Virhe roolin päivityksessä.",
       "passwords_do_not_match": "Salasanakenttien arvot eivät täsmää",
       "password_new_same_old": "Nykyinen salasanasi ja uusi salasana eivät saa olla samat",
       "blocked": "Sinut on estetty. Et voi käyttää tietoja tai tehdä tilausta. Lisätietoja saat ottamalla yhteyttä ",
@@ -497,6 +499,7 @@
           "email_verification_is_required": "Sähköpostin vahvistus vaaditaan. Vahvista sähköpostiosoitteesi",
           "user_is_temporary_locked_out": "Tilisi on tilapäisesti lukittu. Yritä uudelleen myöhemmin.",
           "user_is_locked_out": "@:common.messages.blocked",
+          "user_is_locked_in_organization": "Pääsysi tähän organisaatioon on estetty. Ota yhteyttä organisaatiosi järjestelmänvalvojaan",
           "user_cannot_login_in_store": "Pääsy evätty. Et voi kirjautua tähän kauppaan",
           "password_expired": "@:common.messages.password_expired",
           "user_not_found": "Käyttäjää ei löydy. Tarkista, että olet syöttänyt oikeat tiedot"
@@ -678,7 +681,13 @@
       "configuration_items": {
         "title": "Komponenttilista",
         "edit_configuration": "Muokkaa kokoonpanoa",
-        "selected_text": "Valittu teksti: {text}"
+        "selected_text": "Valittu teksti: {text}",
+        "columns": {
+          "number": "Numero",
+          "section": "Osio",
+          "value": "Arvo",
+          "price": "Hinta"
+        }
       },
       "coupons_section": {
         "title": "Alennukset & kupongit",

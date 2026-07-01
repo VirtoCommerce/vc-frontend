@@ -186,6 +186,7 @@
       "email_not_unique": "このメールは既に登録済みです",
       "max_length": "{max}文字以内で入力してください",
       "creating_order_error": "注文作成エラー",
+      "loyalty_insufficient_balance": "ご注文にはロイヤルティポイントが不足しています。必要数: {required}、利用可能数: {available}。",
       "payment_processing_error": "支払い処理中にエラーが発生しました",
       "item_can_t_be_purchased": "購入できません",
       "item_is_out_of_stock": "在庫切れです",
@@ -214,7 +215,8 @@
       "report_sent_successfully": "ありがとうございます！レポートが正常に送信されました。確認いたします。",
       "copied_to_clipboard": "クリップボードにコピーしました",
       "role_update_successful": "権限を更新しました",
-      "role_update_failed": "権限の更新に失敗: {0}",
+      "contact_lock_failed": "ユーザーのブロック/ブロック解除に失敗しました。",
+      "role_update_failed": "権限の更新に失敗しました。",
       "passwords_do_not_match": "パスワードが一致しません",
       "password_new_same_old": "現在のパスワードと異なる必要があります",
       "blocked": "アカウントがブロックされています",
@@ -497,6 +499,7 @@
           "email_verification_is_required": "メール認証が必要です。メールアドレスを確認してください",
           "user_is_temporary_locked_out": "アカウントが一時的にロックされました。しばらく時間をおいて再試行してください",
           "user_is_locked_out": "@:common.messages.blocked",
+          "user_is_locked_in_organization": "この組織へのアクセスがブロックされました。組織の管理者にお問い合わせください",
           "user_cannot_login_in_store": "アクセスが拒否されました。現在のストアにログインできません",
           "password_expired": "@:common.messages.password_expired",
           "user_not_found": "ユーザーが見つかりません。入力情報を確認してください"
@@ -678,7 +681,13 @@
       "configuration_items": {
         "title": "構成部品リスト",
         "edit_configuration": "構成を編集",
-        "selected_text": "選択されたテキスト：{text}"
+        "selected_text": "選択されたテキスト：{text}",
+        "columns": {
+          "number": "番号",
+          "section": "セクション",
+          "value": "値",
+          "price": "価格"
+        }
       },
       "coupons_section": {
         "title": "割引 & クーポン",

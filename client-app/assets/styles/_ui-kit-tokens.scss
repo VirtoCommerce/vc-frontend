@@ -1,0 +1,526 @@
+// Consumable UI-Kit tokens.
+// Each declaration is `var(<preset-override-key>, <palette-fallback>)`.
+// Preset JSON may define any of the `--color-vc-*` overrides; if not, the palette fallback applies.
+// Pilot scope: VcButton only, default state. Hover/disabled stay in component SCSS for now.
+
+:root {
+  // ============================================================
+  // VcButton — solid
+  // ============================================================
+  --vc-button-solid-primary-bg:       var(--color-vc-background-solid-primary,   var(--color-primary-500));
+  --vc-button-solid-primary-border:   var(--color-vc-border-solid-primary,       var(--color-primary-500));
+  --vc-button-solid-primary-text:     var(--color-vc-text-solid-primary,         var(--color-additional-50));
+  --vc-button-solid-primary-icon:     var(--color-vc-icon-solid-primary,         currentColor);
+
+  --vc-button-solid-secondary-bg:     var(--color-vc-background-solid-secondary, var(--color-secondary-500));
+  --vc-button-solid-secondary-border: var(--color-vc-border-solid-secondary,     var(--color-secondary-500));
+  --vc-button-solid-secondary-text:   var(--color-vc-text-solid-secondary,       var(--color-additional-50));
+  --vc-button-solid-secondary-icon:   var(--color-vc-icon-solid-secondary,       currentColor);
+
+  --vc-button-solid-accent-bg:        var(--color-vc-background-solid-accent,    var(--color-accent-500));
+  --vc-button-solid-accent-border:    var(--color-vc-border-solid-accent,        var(--color-accent-500));
+  --vc-button-solid-accent-text:      var(--color-vc-text-solid-accent,          var(--color-additional-50));
+  --vc-button-solid-accent-icon:      var(--color-vc-icon-solid-accent,          currentColor);
+
+  --vc-button-solid-neutral-bg:       var(--color-vc-background-solid-neutral,   var(--color-neutral-500));
+  --vc-button-solid-neutral-border:   var(--color-vc-border-solid-neutral,       var(--color-neutral-500));
+  --vc-button-solid-neutral-text:     var(--color-vc-text-solid-neutral,         var(--color-additional-50));
+  --vc-button-solid-neutral-icon:     var(--color-vc-icon-solid-neutral,         currentColor);
+
+  --vc-button-solid-warning-bg:       var(--color-vc-background-solid-warning,   var(--color-warning-500));
+  --vc-button-solid-warning-border:   var(--color-vc-border-solid-warning,       var(--color-warning-500));
+  --vc-button-solid-warning-text:     var(--color-vc-text-solid-warning,         var(--color-warning-900));
+  --vc-button-solid-warning-icon:     var(--color-vc-icon-solid-warning,         currentColor);
+
+  --vc-button-solid-danger-bg:        var(--color-vc-background-solid-danger,    var(--color-danger-500));
+  --vc-button-solid-danger-border:    var(--color-vc-border-solid-danger,        var(--color-danger-500));
+  --vc-button-solid-danger-text:      var(--color-vc-text-solid-danger,          var(--color-additional-50));
+  --vc-button-solid-danger-icon:      var(--color-vc-icon-solid-danger,          currentColor);
+
+  --vc-button-solid-success-bg:       var(--color-vc-background-solid-success,   var(--color-success-500));
+  --vc-button-solid-success-border:   var(--color-vc-border-solid-success,       var(--color-success-500));
+  --vc-button-solid-success-text:     var(--color-vc-text-solid-success,         var(--color-additional-50));
+  --vc-button-solid-success-icon:     var(--color-vc-icon-solid-success,         currentColor);
+
+  --vc-button-solid-info-bg:          var(--color-vc-background-solid-info,      var(--color-info-500));
+  --vc-button-solid-info-border:      var(--color-vc-border-solid-info,          var(--color-info-500));
+  --vc-button-solid-info-text:        var(--color-vc-text-solid-info,            var(--color-additional-50));
+  --vc-button-solid-info-icon:        var(--color-vc-icon-solid-info,            currentColor);
+
+  // ============================================================
+  // VcButton — soft (was "solid-light")
+  // ============================================================
+  --vc-button-soft-primary-bg:        var(--color-vc-background-soft-primary,    var(--color-primary-100));
+  --vc-button-soft-primary-border:    var(--color-vc-border-soft-primary,        var(--color-primary-100));
+  --vc-button-soft-primary-text:      var(--color-vc-text-soft-primary,          var(--color-primary-800));
+  --vc-button-soft-primary-icon:      var(--color-vc-icon-soft-primary,          currentColor);
+
+  --vc-button-soft-secondary-bg:      var(--color-vc-background-soft-secondary,  var(--color-secondary-100));
+  --vc-button-soft-secondary-border:  var(--color-vc-border-soft-secondary,      var(--color-secondary-100));
+  --vc-button-soft-secondary-text:    var(--color-vc-text-soft-secondary,        var(--color-secondary-800));
+  --vc-button-soft-secondary-icon:    var(--color-vc-icon-soft-secondary,        currentColor);
+
+  --vc-button-soft-accent-bg:         var(--color-vc-background-soft-accent,     var(--color-accent-100));
+  --vc-button-soft-accent-border:     var(--color-vc-border-soft-accent,         var(--color-accent-100));
+  --vc-button-soft-accent-text:       var(--color-vc-text-soft-accent,           var(--color-accent-800));
+  --vc-button-soft-accent-icon:       var(--color-vc-icon-soft-accent,           currentColor);
+
+  --vc-button-soft-neutral-bg:        var(--color-vc-background-soft-neutral,    var(--color-neutral-100));
+  --vc-button-soft-neutral-border:    var(--color-vc-border-soft-neutral,        var(--color-neutral-100));
+  --vc-button-soft-neutral-text:      var(--color-vc-text-soft-neutral,          var(--color-neutral-800));
+  --vc-button-soft-neutral-icon:      var(--color-vc-icon-soft-neutral,          currentColor);
+
+  --vc-button-soft-warning-bg:        var(--color-vc-background-soft-warning,    var(--color-warning-100));
+  --vc-button-soft-warning-border:    var(--color-vc-border-soft-warning,        var(--color-warning-100));
+  --vc-button-soft-warning-text:      var(--color-vc-text-soft-warning,          var(--color-warning-800));
+  --vc-button-soft-warning-icon:      var(--color-vc-icon-soft-warning,          currentColor);
+
+  --vc-button-soft-danger-bg:         var(--color-vc-background-soft-danger,     var(--color-danger-100));
+  --vc-button-soft-danger-border:     var(--color-vc-border-soft-danger,         var(--color-danger-100));
+  --vc-button-soft-danger-text:       var(--color-vc-text-soft-danger,           var(--color-danger-800));
+  --vc-button-soft-danger-icon:       var(--color-vc-icon-soft-danger,           currentColor);
+
+  --vc-button-soft-success-bg:        var(--color-vc-background-soft-success,    var(--color-success-100));
+  --vc-button-soft-success-border:    var(--color-vc-border-soft-success,        var(--color-success-100));
+  --vc-button-soft-success-text:      var(--color-vc-text-soft-success,          var(--color-success-800));
+  --vc-button-soft-success-icon:      var(--color-vc-icon-soft-success,          currentColor);
+
+  --vc-button-soft-info-bg:           var(--color-vc-background-soft-info,       var(--color-info-100));
+  --vc-button-soft-info-border:       var(--color-vc-border-soft-info,           var(--color-info-100));
+  --vc-button-soft-info-text:         var(--color-vc-text-soft-info,             var(--color-info-800));
+  --vc-button-soft-info-icon:         var(--color-vc-icon-soft-info,             currentColor);
+
+  // ============================================================
+  // VcButton — outline
+  // ============================================================
+  --vc-button-outline-primary-bg:     var(--color-vc-background-outline-primary,   var(--color-additional-50));
+  --vc-button-outline-primary-border: var(--color-vc-border-outline-primary,       var(--color-primary-500));
+  --vc-button-outline-primary-text:   var(--color-vc-text-outline-primary,         var(--color-primary-500));
+  --vc-button-outline-primary-icon:   var(--color-vc-icon-outline-primary,         currentColor);
+
+  --vc-button-outline-secondary-bg:     var(--color-vc-background-outline-secondary, var(--color-additional-50));
+  --vc-button-outline-secondary-border: var(--color-vc-border-outline-secondary,     var(--color-secondary-500));
+  --vc-button-outline-secondary-text:   var(--color-vc-text-outline-secondary,       var(--color-secondary-500));
+  --vc-button-outline-secondary-icon:   var(--color-vc-icon-outline-secondary,       currentColor);
+
+  --vc-button-outline-accent-bg:        var(--color-vc-background-outline-accent,    var(--color-additional-50));
+  --vc-button-outline-accent-border:    var(--color-vc-border-outline-accent,        var(--color-accent-500));
+  --vc-button-outline-accent-text:      var(--color-vc-text-outline-accent,          var(--color-accent-500));
+  --vc-button-outline-accent-icon:      var(--color-vc-icon-outline-accent,          currentColor);
+
+  --vc-button-outline-neutral-bg:       var(--color-vc-background-outline-neutral,   var(--color-additional-50));
+  --vc-button-outline-neutral-border:   var(--color-vc-border-outline-neutral,       var(--color-neutral-500));
+  --vc-button-outline-neutral-text:     var(--color-vc-text-outline-neutral,         var(--color-neutral-500));
+  --vc-button-outline-neutral-icon:     var(--color-vc-icon-outline-neutral,         currentColor);
+
+  --vc-button-outline-warning-bg:       var(--color-vc-background-outline-warning,   var(--color-additional-50));
+  --vc-button-outline-warning-border:   var(--color-vc-border-outline-warning,       var(--color-warning-500));
+  --vc-button-outline-warning-text:     var(--color-vc-text-outline-warning,         var(--color-warning-700));
+  --vc-button-outline-warning-icon:     var(--color-vc-icon-outline-warning,         currentColor);
+
+  --vc-button-outline-danger-bg:        var(--color-vc-background-outline-danger,    var(--color-additional-50));
+  --vc-button-outline-danger-border:    var(--color-vc-border-outline-danger,        var(--color-danger-500));
+  --vc-button-outline-danger-text:      var(--color-vc-text-outline-danger,          var(--color-danger-500));
+  --vc-button-outline-danger-icon:      var(--color-vc-icon-outline-danger,          currentColor);
+
+  --vc-button-outline-success-bg:       var(--color-vc-background-outline-success,   var(--color-additional-50));
+  --vc-button-outline-success-border:   var(--color-vc-border-outline-success,       var(--color-success-500));
+  --vc-button-outline-success-text:     var(--color-vc-text-outline-success,         var(--color-success-500));
+  --vc-button-outline-success-icon:     var(--color-vc-icon-outline-success,         currentColor);
+
+  --vc-button-outline-info-bg:          var(--color-vc-background-outline-info,      var(--color-additional-50));
+  --vc-button-outline-info-border:      var(--color-vc-border-outline-info,          var(--color-info-500));
+  --vc-button-outline-info-text:        var(--color-vc-text-outline-info,            var(--color-info-500));
+  --vc-button-outline-info-icon:        var(--color-vc-icon-outline-info,            currentColor);
+
+  // ============================================================
+  // VcButton — surface (was "no-border")
+  // ============================================================
+  --vc-button-surface-primary-bg:       var(--color-vc-background-surface-primary,   var(--color-additional-50));
+  --vc-button-surface-primary-border:   var(--color-vc-border-surface-primary,       var(--color-additional-50));
+  --vc-button-surface-primary-text:     var(--color-vc-text-surface-primary,         var(--color-primary-500));
+  --vc-button-surface-primary-icon:     var(--color-vc-icon-surface-primary,         currentColor);
+
+  --vc-button-surface-secondary-bg:     var(--color-vc-background-surface-secondary, var(--color-additional-50));
+  --vc-button-surface-secondary-border: var(--color-vc-border-surface-secondary,     var(--color-additional-50));
+  --vc-button-surface-secondary-text:   var(--color-vc-text-surface-secondary,       var(--color-secondary-500));
+  --vc-button-surface-secondary-icon:   var(--color-vc-icon-surface-secondary,       currentColor);
+
+  --vc-button-surface-accent-bg:        var(--color-vc-background-surface-accent,    var(--color-additional-50));
+  --vc-button-surface-accent-border:    var(--color-vc-border-surface-accent,        var(--color-additional-50));
+  --vc-button-surface-accent-text:      var(--color-vc-text-surface-accent,          var(--color-accent-500));
+  --vc-button-surface-accent-icon:      var(--color-vc-icon-surface-accent,          currentColor);
+
+  --vc-button-surface-neutral-bg:       var(--color-vc-background-surface-neutral,   var(--color-additional-50));
+  --vc-button-surface-neutral-border:   var(--color-vc-border-surface-neutral,       var(--color-additional-50));
+  --vc-button-surface-neutral-text:     var(--color-vc-text-surface-neutral,         var(--color-neutral-500));
+  --vc-button-surface-neutral-icon:     var(--color-vc-icon-surface-neutral,         currentColor);
+
+  --vc-button-surface-warning-bg:       var(--color-vc-background-surface-warning,   var(--color-additional-50));
+  --vc-button-surface-warning-border:   var(--color-vc-border-surface-warning,       var(--color-additional-50));
+  --vc-button-surface-warning-text:     var(--color-vc-text-surface-warning,         var(--color-warning-700));
+  --vc-button-surface-warning-icon:     var(--color-vc-icon-surface-warning,         currentColor);
+
+  --vc-button-surface-danger-bg:        var(--color-vc-background-surface-danger,    var(--color-additional-50));
+  --vc-button-surface-danger-border:    var(--color-vc-border-surface-danger,        var(--color-additional-50));
+  --vc-button-surface-danger-text:      var(--color-vc-text-surface-danger,          var(--color-danger-500));
+  --vc-button-surface-danger-icon:      var(--color-vc-icon-surface-danger,          currentColor);
+
+  --vc-button-surface-success-bg:       var(--color-vc-background-surface-success,   var(--color-additional-50));
+  --vc-button-surface-success-border:   var(--color-vc-border-surface-success,       var(--color-additional-50));
+  --vc-button-surface-success-text:     var(--color-vc-text-surface-success,         var(--color-success-500));
+  --vc-button-surface-success-icon:     var(--color-vc-icon-surface-success,         currentColor);
+
+  --vc-button-surface-info-bg:          var(--color-vc-background-surface-info,      var(--color-additional-50));
+  --vc-button-surface-info-border:      var(--color-vc-border-surface-info,          var(--color-additional-50));
+  --vc-button-surface-info-text:        var(--color-vc-text-surface-info,            var(--color-info-500));
+  --vc-button-surface-info-icon:        var(--color-vc-icon-surface-info,            currentColor);
+
+  // ============================================================
+  // VcButton — ghost (was "no-background")
+  // ============================================================
+  --vc-button-ghost-primary-bg:       var(--color-vc-background-ghost-primary,   transparent);
+  --vc-button-ghost-primary-border:   var(--color-vc-border-ghost-primary,       transparent);
+  --vc-button-ghost-primary-text:     var(--color-vc-text-ghost-primary,         var(--color-primary-500));
+  --vc-button-ghost-primary-icon:     var(--color-vc-icon-ghost-primary,         currentColor);
+
+  --vc-button-ghost-secondary-bg:     var(--color-vc-background-ghost-secondary, transparent);
+  --vc-button-ghost-secondary-border: var(--color-vc-border-ghost-secondary,     transparent);
+  --vc-button-ghost-secondary-text:   var(--color-vc-text-ghost-secondary,       var(--color-secondary-500));
+  --vc-button-ghost-secondary-icon:   var(--color-vc-icon-ghost-secondary,       currentColor);
+
+  --vc-button-ghost-accent-bg:        var(--color-vc-background-ghost-accent,    transparent);
+  --vc-button-ghost-accent-border:    var(--color-vc-border-ghost-accent,        transparent);
+  --vc-button-ghost-accent-text:      var(--color-vc-text-ghost-accent,          var(--color-accent-500));
+  --vc-button-ghost-accent-icon:      var(--color-vc-icon-ghost-accent,          currentColor);
+
+  --vc-button-ghost-neutral-bg:       var(--color-vc-background-ghost-neutral,   transparent);
+  --vc-button-ghost-neutral-border:   var(--color-vc-border-ghost-neutral,       transparent);
+  --vc-button-ghost-neutral-text:     var(--color-vc-text-ghost-neutral,         var(--color-neutral-500));
+  --vc-button-ghost-neutral-icon:     var(--color-vc-icon-ghost-neutral,         currentColor);
+
+  --vc-button-ghost-warning-bg:       var(--color-vc-background-ghost-warning,   transparent);
+  --vc-button-ghost-warning-border:   var(--color-vc-border-ghost-warning,       transparent);
+  --vc-button-ghost-warning-text:     var(--color-vc-text-ghost-warning,         var(--color-warning-700));
+  --vc-button-ghost-warning-icon:     var(--color-vc-icon-ghost-warning,         currentColor);
+
+  --vc-button-ghost-danger-bg:        var(--color-vc-background-ghost-danger,    transparent);
+  --vc-button-ghost-danger-border:    var(--color-vc-border-ghost-danger,        transparent);
+  --vc-button-ghost-danger-text:      var(--color-vc-text-ghost-danger,          var(--color-danger-500));
+  --vc-button-ghost-danger-icon:      var(--color-vc-icon-ghost-danger,          currentColor);
+
+  --vc-button-ghost-success-bg:       var(--color-vc-background-ghost-success,   transparent);
+  --vc-button-ghost-success-border:   var(--color-vc-border-ghost-success,       transparent);
+  --vc-button-ghost-success-text:     var(--color-vc-text-ghost-success,         var(--color-success-500));
+  --vc-button-ghost-success-icon:     var(--color-vc-icon-ghost-success,         currentColor);
+
+  --vc-button-ghost-info-bg:          var(--color-vc-background-ghost-info,      transparent);
+  --vc-button-ghost-info-border:      var(--color-vc-border-ghost-info,          transparent);
+  --vc-button-ghost-info-text:        var(--color-vc-text-ghost-info,            var(--color-info-500));
+  --vc-button-ghost-info-icon:        var(--color-vc-icon-ghost-info,            currentColor);
+
+  // ============================================================
+  // VcButton — tonal (shares VcBadge's tonal `--color-vc-*` keys)
+  // ============================================================
+  --vc-button-tonal-primary-bg:       var(--color-vc-background-tonal-primary,   var(--color-primary-100));
+  --vc-button-tonal-primary-border:   var(--color-vc-border-tonal-primary,       var(--color-primary-500));
+  --vc-button-tonal-primary-text:     var(--color-vc-text-tonal-primary,         var(--color-primary-800));
+  --vc-button-tonal-primary-icon:     var(--color-vc-icon-tonal-primary,         currentColor);
+
+  --vc-button-tonal-secondary-bg:     var(--color-vc-background-tonal-secondary, var(--color-secondary-100));
+  --vc-button-tonal-secondary-border: var(--color-vc-border-tonal-secondary,     var(--color-secondary-500));
+  --vc-button-tonal-secondary-text:   var(--color-vc-text-tonal-secondary,       var(--color-secondary-800));
+  --vc-button-tonal-secondary-icon:   var(--color-vc-icon-tonal-secondary,       currentColor);
+
+  --vc-button-tonal-accent-bg:        var(--color-vc-background-tonal-accent,    var(--color-accent-100));
+  --vc-button-tonal-accent-border:    var(--color-vc-border-tonal-accent,        var(--color-accent-500));
+  --vc-button-tonal-accent-text:      var(--color-vc-text-tonal-accent,          var(--color-accent-800));
+  --vc-button-tonal-accent-icon:      var(--color-vc-icon-tonal-accent,          currentColor);
+
+  --vc-button-tonal-neutral-bg:       var(--color-vc-background-tonal-neutral,   var(--color-neutral-100));
+  --vc-button-tonal-neutral-border:   var(--color-vc-border-tonal-neutral,       var(--color-neutral-500));
+  --vc-button-tonal-neutral-text:     var(--color-vc-text-tonal-neutral,         var(--color-neutral-800));
+  --vc-button-tonal-neutral-icon:     var(--color-vc-icon-tonal-neutral,         currentColor);
+
+  --vc-button-tonal-warning-bg:       var(--color-vc-background-tonal-warning,   var(--color-warning-100));
+  --vc-button-tonal-warning-border:   var(--color-vc-border-tonal-warning,       var(--color-warning-500));
+  --vc-button-tonal-warning-text:     var(--color-vc-text-tonal-warning,         var(--color-warning-800));
+  --vc-button-tonal-warning-icon:     var(--color-vc-icon-tonal-warning,         currentColor);
+
+  --vc-button-tonal-danger-bg:        var(--color-vc-background-tonal-danger,    var(--color-danger-100));
+  --vc-button-tonal-danger-border:    var(--color-vc-border-tonal-danger,        var(--color-danger-500));
+  --vc-button-tonal-danger-text:      var(--color-vc-text-tonal-danger,          var(--color-danger-800));
+  --vc-button-tonal-danger-icon:      var(--color-vc-icon-tonal-danger,          currentColor);
+
+  --vc-button-tonal-success-bg:       var(--color-vc-background-tonal-success,   var(--color-success-100));
+  --vc-button-tonal-success-border:   var(--color-vc-border-tonal-success,       var(--color-success-500));
+  --vc-button-tonal-success-text:     var(--color-vc-text-tonal-success,         var(--color-success-800));
+  --vc-button-tonal-success-icon:     var(--color-vc-icon-tonal-success,         currentColor);
+
+  --vc-button-tonal-info-bg:          var(--color-vc-background-tonal-info,      var(--color-info-100));
+  --vc-button-tonal-info-border:      var(--color-vc-border-tonal-info,          var(--color-info-500));
+  --vc-button-tonal-info-text:        var(--color-vc-text-tonal-info,            var(--color-info-800));
+  --vc-button-tonal-info-icon:        var(--color-vc-icon-tonal-info,            currentColor);
+
+  // ============================================================
+  // VcBadge — shares VcButton's `--color-vc-*` semantic override keys so a
+  // single preset override drives both. Fallbacks are badge-specific.
+  // ============================================================
+  // VcBadge — solid
+  --vc-badge-solid-primary-bg:       var(--color-vc-background-solid-primary,   var(--color-primary-500));
+  --vc-badge-solid-primary-border:   var(--color-vc-border-solid-primary,       var(--color-primary-500));
+  --vc-badge-solid-primary-text:     var(--color-vc-text-solid-primary,         var(--color-additional-50));
+  --vc-badge-solid-primary-icon:     var(--color-vc-icon-solid-primary,         currentColor);
+
+  --vc-badge-solid-secondary-bg:     var(--color-vc-background-solid-secondary, var(--color-secondary-500));
+  --vc-badge-solid-secondary-border: var(--color-vc-border-solid-secondary,     var(--color-secondary-500));
+  --vc-badge-solid-secondary-text:   var(--color-vc-text-solid-secondary,       var(--color-additional-50));
+  --vc-badge-solid-secondary-icon:   var(--color-vc-icon-solid-secondary,       currentColor);
+
+  --vc-badge-solid-neutral-bg:       var(--color-vc-background-solid-neutral,   var(--color-neutral-500));
+  --vc-badge-solid-neutral-border:   var(--color-vc-border-solid-neutral,       var(--color-neutral-500));
+  --vc-badge-solid-neutral-text:     var(--color-vc-text-solid-neutral,         var(--color-additional-50));
+  --vc-badge-solid-neutral-icon:     var(--color-vc-icon-solid-neutral,         currentColor);
+
+  --vc-badge-solid-info-bg:          var(--color-vc-background-solid-info,      var(--color-info-500));
+  --vc-badge-solid-info-border:      var(--color-vc-border-solid-info,          var(--color-info-500));
+  --vc-badge-solid-info-text:        var(--color-vc-text-solid-info,            var(--color-additional-50));
+  --vc-badge-solid-info-icon:        var(--color-vc-icon-solid-info,            currentColor);
+
+  --vc-badge-solid-success-bg:       var(--color-vc-background-solid-success,   var(--color-success-500));
+  --vc-badge-solid-success-border:   var(--color-vc-border-solid-success,       var(--color-success-500));
+  --vc-badge-solid-success-text:     var(--color-vc-text-solid-success,         var(--color-additional-50));
+  --vc-badge-solid-success-icon:     var(--color-vc-icon-solid-success,         currentColor);
+
+  --vc-badge-solid-warning-bg:       var(--color-vc-background-solid-warning,   var(--color-warning-500));
+  --vc-badge-solid-warning-border:   var(--color-vc-border-solid-warning,       var(--color-warning-500));
+  --vc-badge-solid-warning-text:     var(--color-vc-text-solid-warning,         var(--color-neutral-900));
+  --vc-badge-solid-warning-icon:     var(--color-vc-icon-solid-warning,         currentColor);
+
+  --vc-badge-solid-danger-bg:        var(--color-vc-background-solid-danger,    var(--color-danger-500));
+  --vc-badge-solid-danger-border:    var(--color-vc-border-solid-danger,        var(--color-danger-500));
+  --vc-badge-solid-danger-text:      var(--color-vc-text-solid-danger,          var(--color-additional-50));
+  --vc-badge-solid-danger-icon:      var(--color-vc-icon-solid-danger,          currentColor);
+
+  --vc-badge-solid-accent-bg:        var(--color-vc-background-solid-accent,    var(--color-accent-500));
+  --vc-badge-solid-accent-border:    var(--color-vc-border-solid-accent,        var(--color-accent-500));
+  --vc-badge-solid-accent-text:      var(--color-vc-text-solid-accent,          var(--color-additional-50));
+  --vc-badge-solid-accent-icon:      var(--color-vc-icon-solid-accent,          currentColor);
+
+  // ============================================================
+  // VcBadge — soft (was "solid-light")
+  // ============================================================
+  --vc-badge-soft-primary-bg:       var(--color-vc-background-soft-primary,   var(--color-primary-100));
+  --vc-badge-soft-primary-border:   var(--color-vc-border-soft-primary,       var(--color-primary-100));
+  --vc-badge-soft-primary-text:     var(--color-vc-text-soft-primary,         var(--color-primary-800));
+  --vc-badge-soft-primary-icon:     var(--color-vc-icon-soft-primary,         var(--color-primary-700));
+
+  --vc-badge-soft-secondary-bg:     var(--color-vc-background-soft-secondary, var(--color-secondary-100));
+  --vc-badge-soft-secondary-border: var(--color-vc-border-soft-secondary,     var(--color-secondary-100));
+  --vc-badge-soft-secondary-text:   var(--color-vc-text-soft-secondary,       var(--color-secondary-800));
+  --vc-badge-soft-secondary-icon:   var(--color-vc-icon-soft-secondary,       var(--color-secondary-700));
+
+  --vc-badge-soft-neutral-bg:       var(--color-vc-background-soft-neutral,   var(--color-neutral-100));
+  --vc-badge-soft-neutral-border:   var(--color-vc-border-soft-neutral,       var(--color-neutral-100));
+  --vc-badge-soft-neutral-text:     var(--color-vc-text-soft-neutral,         var(--color-neutral-800));
+  --vc-badge-soft-neutral-icon:     var(--color-vc-icon-soft-neutral,         var(--color-neutral-700));
+
+  --vc-badge-soft-info-bg:          var(--color-vc-background-soft-info,      var(--color-info-100));
+  --vc-badge-soft-info-border:      var(--color-vc-border-soft-info,          var(--color-info-100));
+  --vc-badge-soft-info-text:        var(--color-vc-text-soft-info,            var(--color-info-800));
+  --vc-badge-soft-info-icon:        var(--color-vc-icon-soft-info,            var(--color-info-700));
+
+  --vc-badge-soft-success-bg:       var(--color-vc-background-soft-success,   var(--color-success-100));
+  --vc-badge-soft-success-border:   var(--color-vc-border-soft-success,       var(--color-success-100));
+  --vc-badge-soft-success-text:     var(--color-vc-text-soft-success,         var(--color-success-800));
+  --vc-badge-soft-success-icon:     var(--color-vc-icon-soft-success,         var(--color-success-700));
+
+  --vc-badge-soft-warning-bg:       var(--color-vc-background-soft-warning,   var(--color-warning-100));
+  --vc-badge-soft-warning-border:   var(--color-vc-border-soft-warning,       var(--color-warning-100));
+  --vc-badge-soft-warning-text:     var(--color-vc-text-soft-warning,         var(--color-warning-800));
+  --vc-badge-soft-warning-icon:     var(--color-vc-icon-soft-warning,         var(--color-warning-700));
+
+  --vc-badge-soft-danger-bg:        var(--color-vc-background-soft-danger,    var(--color-danger-100));
+  --vc-badge-soft-danger-border:    var(--color-vc-border-soft-danger,        var(--color-danger-100));
+  --vc-badge-soft-danger-text:      var(--color-vc-text-soft-danger,          var(--color-danger-800));
+  --vc-badge-soft-danger-icon:      var(--color-vc-icon-soft-danger,          var(--color-danger-700));
+
+  --vc-badge-soft-accent-bg:        var(--color-vc-background-soft-accent,    var(--color-accent-100));
+  --vc-badge-soft-accent-border:    var(--color-vc-border-soft-accent,        var(--color-accent-100));
+  --vc-badge-soft-accent-text:      var(--color-vc-text-soft-accent,          var(--color-accent-800));
+  --vc-badge-soft-accent-icon:      var(--color-vc-icon-soft-accent,          var(--color-accent-700));
+
+  // ============================================================
+  // VcBadge — outline
+  // Design change: text uses the -800 shade for all colors (was -500;
+  // warning was -700). Bakes the former warning text exception into tokens.
+  // ============================================================
+  --vc-badge-outline-primary-bg:       var(--color-vc-background-outline-primary,   var(--color-additional-50));
+  --vc-badge-outline-primary-border:   var(--color-vc-border-outline-primary,       var(--color-primary-500));
+  --vc-badge-outline-primary-text:     var(--color-vc-text-outline-primary,         var(--color-primary-800));
+  --vc-badge-outline-primary-icon:     var(--color-vc-icon-outline-primary,         var(--color-primary-700));
+
+  --vc-badge-outline-secondary-bg:     var(--color-vc-background-outline-secondary, var(--color-additional-50));
+  --vc-badge-outline-secondary-border: var(--color-vc-border-outline-secondary,     var(--color-secondary-500));
+  --vc-badge-outline-secondary-text:   var(--color-vc-text-outline-secondary,       var(--color-secondary-800));
+  --vc-badge-outline-secondary-icon:   var(--color-vc-icon-outline-secondary,       var(--color-secondary-700));
+
+  --vc-badge-outline-neutral-bg:       var(--color-vc-background-outline-neutral,   var(--color-additional-50));
+  --vc-badge-outline-neutral-border:   var(--color-vc-border-outline-neutral,       var(--color-neutral-500));
+  --vc-badge-outline-neutral-text:     var(--color-vc-text-outline-neutral,         var(--color-neutral-800));
+  --vc-badge-outline-neutral-icon:     var(--color-vc-icon-outline-neutral,         var(--color-neutral-700));
+
+  --vc-badge-outline-info-bg:          var(--color-vc-background-outline-info,      var(--color-additional-50));
+  --vc-badge-outline-info-border:      var(--color-vc-border-outline-info,          var(--color-info-500));
+  --vc-badge-outline-info-text:        var(--color-vc-text-outline-info,            var(--color-info-800));
+  --vc-badge-outline-info-icon:        var(--color-vc-icon-outline-info,            var(--color-info-700));
+
+  --vc-badge-outline-success-bg:       var(--color-vc-background-outline-success,   var(--color-additional-50));
+  --vc-badge-outline-success-border:   var(--color-vc-border-outline-success,       var(--color-success-500));
+  --vc-badge-outline-success-text:     var(--color-vc-text-outline-success,         var(--color-success-800));
+  --vc-badge-outline-success-icon:     var(--color-vc-icon-outline-success,         var(--color-success-700));
+
+  --vc-badge-outline-warning-bg:       var(--color-vc-background-outline-warning,   var(--color-additional-50));
+  --vc-badge-outline-warning-border:   var(--color-vc-border-outline-warning,       var(--color-warning-500));
+  --vc-badge-outline-warning-text:     var(--color-vc-text-outline-warning,         var(--color-warning-800));
+  --vc-badge-outline-warning-icon:     var(--color-vc-icon-outline-warning,         var(--color-warning-700));
+
+  --vc-badge-outline-danger-bg:        var(--color-vc-background-outline-danger,    var(--color-additional-50));
+  --vc-badge-outline-danger-border:    var(--color-vc-border-outline-danger,        var(--color-danger-500));
+  --vc-badge-outline-danger-text:      var(--color-vc-text-outline-danger,          var(--color-danger-800));
+  --vc-badge-outline-danger-icon:      var(--color-vc-icon-outline-danger,          var(--color-danger-700));
+
+  --vc-badge-outline-accent-bg:        var(--color-vc-background-outline-accent,    var(--color-additional-50));
+  --vc-badge-outline-accent-border:    var(--color-vc-border-outline-accent,        var(--color-accent-500));
+  --vc-badge-outline-accent-text:      var(--color-vc-text-outline-accent,          var(--color-accent-800));
+  --vc-badge-outline-accent-icon:      var(--color-vc-icon-outline-accent,          var(--color-accent-700));
+
+  // ============================================================
+  // VcBadge — surface (shares VcButton's surface `--color-vc-*` keys)
+  // ============================================================
+  --vc-badge-surface-primary-bg:       var(--color-vc-background-surface-primary,   var(--color-additional-50));
+  --vc-badge-surface-primary-border:   var(--color-vc-border-surface-primary,       var(--color-additional-50));
+  --vc-badge-surface-primary-text:     var(--color-vc-text-surface-primary,         var(--color-primary-500));
+  --vc-badge-surface-primary-icon:     var(--color-vc-icon-surface-primary,         currentColor);
+
+  --vc-badge-surface-secondary-bg:     var(--color-vc-background-surface-secondary, var(--color-additional-50));
+  --vc-badge-surface-secondary-border: var(--color-vc-border-surface-secondary,     var(--color-additional-50));
+  --vc-badge-surface-secondary-text:   var(--color-vc-text-surface-secondary,       var(--color-secondary-500));
+  --vc-badge-surface-secondary-icon:   var(--color-vc-icon-surface-secondary,       currentColor);
+
+  --vc-badge-surface-neutral-bg:       var(--color-vc-background-surface-neutral,   var(--color-additional-50));
+  --vc-badge-surface-neutral-border:   var(--color-vc-border-surface-neutral,       var(--color-additional-50));
+  --vc-badge-surface-neutral-text:     var(--color-vc-text-surface-neutral,         var(--color-neutral-500));
+  --vc-badge-surface-neutral-icon:     var(--color-vc-icon-surface-neutral,         currentColor);
+
+  --vc-badge-surface-info-bg:          var(--color-vc-background-surface-info,      var(--color-additional-50));
+  --vc-badge-surface-info-border:      var(--color-vc-border-surface-info,          var(--color-additional-50));
+  --vc-badge-surface-info-text:        var(--color-vc-text-surface-info,            var(--color-info-500));
+  --vc-badge-surface-info-icon:        var(--color-vc-icon-surface-info,            currentColor);
+
+  --vc-badge-surface-success-bg:       var(--color-vc-background-surface-success,   var(--color-additional-50));
+  --vc-badge-surface-success-border:   var(--color-vc-border-surface-success,       var(--color-additional-50));
+  --vc-badge-surface-success-text:     var(--color-vc-text-surface-success,         var(--color-success-500));
+  --vc-badge-surface-success-icon:     var(--color-vc-icon-surface-success,         currentColor);
+
+  --vc-badge-surface-warning-bg:       var(--color-vc-background-surface-warning,   var(--color-additional-50));
+  --vc-badge-surface-warning-border:   var(--color-vc-border-surface-warning,       var(--color-additional-50));
+  --vc-badge-surface-warning-text:     var(--color-vc-text-surface-warning,         var(--color-warning-700));
+  --vc-badge-surface-warning-icon:     var(--color-vc-icon-surface-warning,         currentColor);
+
+  --vc-badge-surface-danger-bg:        var(--color-vc-background-surface-danger,    var(--color-additional-50));
+  --vc-badge-surface-danger-border:    var(--color-vc-border-surface-danger,        var(--color-additional-50));
+  --vc-badge-surface-danger-text:      var(--color-vc-text-surface-danger,          var(--color-danger-500));
+  --vc-badge-surface-danger-icon:      var(--color-vc-icon-surface-danger,          currentColor);
+
+  --vc-badge-surface-accent-bg:        var(--color-vc-background-surface-accent,    var(--color-additional-50));
+  --vc-badge-surface-accent-border:    var(--color-vc-border-surface-accent,        var(--color-additional-50));
+  --vc-badge-surface-accent-text:      var(--color-vc-text-surface-accent,          var(--color-accent-500));
+  --vc-badge-surface-accent-icon:      var(--color-vc-icon-surface-accent,          currentColor);
+
+  // ============================================================
+  // VcBadge — tonal (was "outline-dark")
+  // ============================================================
+  --vc-badge-tonal-primary-bg:       var(--color-vc-background-tonal-primary,   var(--color-primary-100));
+  --vc-badge-tonal-primary-border:   var(--color-vc-border-tonal-primary,       var(--color-primary-500));
+  --vc-badge-tonal-primary-text:     var(--color-vc-text-tonal-primary,         var(--color-primary-800));
+  --vc-badge-tonal-primary-icon:     var(--color-vc-icon-tonal-primary,         var(--color-primary-700));
+
+  --vc-badge-tonal-secondary-bg:     var(--color-vc-background-tonal-secondary, var(--color-secondary-100));
+  --vc-badge-tonal-secondary-border: var(--color-vc-border-tonal-secondary,     var(--color-secondary-500));
+  --vc-badge-tonal-secondary-text:   var(--color-vc-text-tonal-secondary,       var(--color-secondary-800));
+  --vc-badge-tonal-secondary-icon:   var(--color-vc-icon-tonal-secondary,       var(--color-secondary-700));
+
+  --vc-badge-tonal-neutral-bg:       var(--color-vc-background-tonal-neutral,   var(--color-neutral-100));
+  --vc-badge-tonal-neutral-border:   var(--color-vc-border-tonal-neutral,       var(--color-neutral-500));
+  --vc-badge-tonal-neutral-text:     var(--color-vc-text-tonal-neutral,         var(--color-neutral-800));
+  --vc-badge-tonal-neutral-icon:     var(--color-vc-icon-tonal-neutral,         var(--color-neutral-700));
+
+  --vc-badge-tonal-info-bg:          var(--color-vc-background-tonal-info,      var(--color-info-100));
+  --vc-badge-tonal-info-border:      var(--color-vc-border-tonal-info,          var(--color-info-500));
+  --vc-badge-tonal-info-text:        var(--color-vc-text-tonal-info,            var(--color-info-800));
+  --vc-badge-tonal-info-icon:        var(--color-vc-icon-tonal-info,            var(--color-info-700));
+
+  --vc-badge-tonal-success-bg:       var(--color-vc-background-tonal-success,   var(--color-success-100));
+  --vc-badge-tonal-success-border:   var(--color-vc-border-tonal-success,       var(--color-success-500));
+  --vc-badge-tonal-success-text:     var(--color-vc-text-tonal-success,         var(--color-success-800));
+  --vc-badge-tonal-success-icon:     var(--color-vc-icon-tonal-success,         var(--color-success-700));
+
+  --vc-badge-tonal-warning-bg:       var(--color-vc-background-tonal-warning,   var(--color-warning-100));
+  --vc-badge-tonal-warning-border:   var(--color-vc-border-tonal-warning,       var(--color-warning-500));
+  --vc-badge-tonal-warning-text:     var(--color-vc-text-tonal-warning,         var(--color-warning-800));
+  --vc-badge-tonal-warning-icon:     var(--color-vc-icon-tonal-warning,         var(--color-warning-700));
+
+  --vc-badge-tonal-danger-bg:        var(--color-vc-background-tonal-danger,    var(--color-danger-100));
+  --vc-badge-tonal-danger-border:    var(--color-vc-border-tonal-danger,        var(--color-danger-500));
+  --vc-badge-tonal-danger-text:      var(--color-vc-text-tonal-danger,          var(--color-danger-800));
+  --vc-badge-tonal-danger-icon:      var(--color-vc-icon-tonal-danger,          var(--color-danger-700));
+
+  --vc-badge-tonal-accent-bg:        var(--color-vc-background-tonal-accent,    var(--color-accent-100));
+  --vc-badge-tonal-accent-border:    var(--color-vc-border-tonal-accent,        var(--color-accent-500));
+  --vc-badge-tonal-accent-text:      var(--color-vc-text-tonal-accent,          var(--color-accent-800));
+  --vc-badge-tonal-accent-icon:      var(--color-vc-icon-tonal-accent,          var(--color-accent-700));
+
+  // ============================================================
+  // VcBadge — ghost (shares VcButton's ghost `--color-vc-*` keys)
+  // ============================================================
+  --vc-badge-ghost-primary-bg:       var(--color-vc-background-ghost-primary,   transparent);
+  --vc-badge-ghost-primary-border:   var(--color-vc-border-ghost-primary,       transparent);
+  --vc-badge-ghost-primary-text:     var(--color-vc-text-ghost-primary,         var(--color-primary-500));
+  --vc-badge-ghost-primary-icon:     var(--color-vc-icon-ghost-primary,         currentColor);
+
+  --vc-badge-ghost-secondary-bg:     var(--color-vc-background-ghost-secondary, transparent);
+  --vc-badge-ghost-secondary-border: var(--color-vc-border-ghost-secondary,     transparent);
+  --vc-badge-ghost-secondary-text:   var(--color-vc-text-ghost-secondary,       var(--color-secondary-500));
+  --vc-badge-ghost-secondary-icon:   var(--color-vc-icon-ghost-secondary,       currentColor);
+
+  --vc-badge-ghost-neutral-bg:       var(--color-vc-background-ghost-neutral,   transparent);
+  --vc-badge-ghost-neutral-border:   var(--color-vc-border-ghost-neutral,       transparent);
+  --vc-badge-ghost-neutral-text:     var(--color-vc-text-ghost-neutral,         var(--color-neutral-500));
+  --vc-badge-ghost-neutral-icon:     var(--color-vc-icon-ghost-neutral,         currentColor);
+
+  --vc-badge-ghost-info-bg:          var(--color-vc-background-ghost-info,      transparent);
+  --vc-badge-ghost-info-border:      var(--color-vc-border-ghost-info,          transparent);
+  --vc-badge-ghost-info-text:        var(--color-vc-text-ghost-info,            var(--color-info-500));
+  --vc-badge-ghost-info-icon:        var(--color-vc-icon-ghost-info,            currentColor);
+
+  --vc-badge-ghost-success-bg:       var(--color-vc-background-ghost-success,   transparent);
+  --vc-badge-ghost-success-border:   var(--color-vc-border-ghost-success,       transparent);
+  --vc-badge-ghost-success-text:     var(--color-vc-text-ghost-success,         var(--color-success-500));
+  --vc-badge-ghost-success-icon:     var(--color-vc-icon-ghost-success,         currentColor);
+
+  --vc-badge-ghost-warning-bg:       var(--color-vc-background-ghost-warning,   transparent);
+  --vc-badge-ghost-warning-border:   var(--color-vc-border-ghost-warning,       transparent);
+  --vc-badge-ghost-warning-text:     var(--color-vc-text-ghost-warning,         var(--color-warning-700));
+  --vc-badge-ghost-warning-icon:     var(--color-vc-icon-ghost-warning,         currentColor);
+
+  --vc-badge-ghost-danger-bg:        var(--color-vc-background-ghost-danger,    transparent);
+  --vc-badge-ghost-danger-border:    var(--color-vc-border-ghost-danger,        transparent);
+  --vc-badge-ghost-danger-text:      var(--color-vc-text-ghost-danger,          var(--color-danger-500));
+  --vc-badge-ghost-danger-icon:      var(--color-vc-icon-ghost-danger,          currentColor);
+
+  --vc-badge-ghost-accent-bg:        var(--color-vc-background-ghost-accent,    transparent);
+  --vc-badge-ghost-accent-border:    var(--color-vc-border-ghost-accent,        transparent);
+  --vc-badge-ghost-accent-text:      var(--color-vc-text-ghost-accent,          var(--color-accent-500));
+  --vc-badge-ghost-accent-icon:      var(--color-vc-icon-ghost-accent,          currentColor);
+}

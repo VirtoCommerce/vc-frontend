@@ -186,6 +186,7 @@
       "email_not_unique": "Ten adres e-mail jest już zarejestrowany u nas",
       "max_length": "To pole nie może zawierać więcej niż {max} znaków",
       "creating_order_error": "Błąd podczas tworzenia zamówienia",
+      "loyalty_insufficient_balance": "Nie wystarczająca liczba punktów lojalnościowych, aby złożyć zamówienie. Wymagane: {required}, dostępne: {available}.",
       "payment_processing_error": "Błąd podczas przetwarzania płatności",
       "item_can_t_be_purchased": "Ten przedmiot nie może być zakupiony",
       "item_is_out_of_stock": "Ten przedmiot jest niedostępny",
@@ -214,7 +215,8 @@
       "report_sent_successfully": "Dziękujemy! Twój raport został pomyślnie wysłany. Zajmiemy się tym.",
       "copied_to_clipboard": "Skopiowano do schowka",
       "role_update_successful": "Rola klienta została pomyślnie zaktualizowana.",
-      "role_update_failed": "Wystąpiły błędy podczas aktualizacji roli: {0}",
+      "contact_lock_failed": "Nie udało się zablokować/odblokować użytkownika.",
+      "role_update_failed": "Wystąpiły błędy podczas aktualizacji roli.",
       "passwords_do_not_match": "Pola hasła muszą mieć dopasowane wartości.",
       "password_new_same_old": "Twoje obecne hasło i nowe hasło muszą się różnić.",
       "blocked": "Zostałeś zablokowany. Nie możesz uzyskać dostępu do żadnych informacji ani złożyć zamówienia. Więcej informacji znajdziesz ",
@@ -497,6 +499,7 @@
           "email_verification_is_required": "Weryfikacja e-mail jest wymagana. Proszę zweryfikować swój adres e-mail",
           "user_is_temporary_locked_out": "Twoje konto zostało tymczasowo zablokowane. Proszę spróbować ponownie później",
           "user_is_locked_out": "@:common.messages.blocked",
+          "user_is_locked_in_organization": "Twój dostęp do tej organizacji został zablokowany. Skontaktuj się z administratorem organizacji",
           "user_cannot_login_in_store": "Dostęp zabroniony. Nie możesz się zalogować do bieżącego sklepu",
           "password_expired": "@:common.messages.password_expired",
           "user_not_found": "Nie znaleziono użytkownika. Proszę upewnić się, że wprowadziłeś poprawne informacje"
@@ -678,7 +681,13 @@
       "configuration_items": {
         "title": "Lista komponentów",
         "edit_configuration": "Edytuj konfigurację",
-        "selected_text": "Wybrany tekst: {text}"
+        "selected_text": "Wybrany tekst: {text}",
+        "columns": {
+          "number": "Numer",
+          "section": "Sekcja",
+          "value": "Wartość",
+          "price": "Cena"
+        }
       },
       "coupons_section": {
         "title": "Zniżki i kupony",

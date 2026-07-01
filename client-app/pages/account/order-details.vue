@@ -50,7 +50,18 @@
         </div>
 
         <!-- Items not grouped by Vendor -->
-        <OrderLineItems v-else :items="orderItems" />
+        <OrderLineItems v-else :items="mainCurrencyOrderItems" />
+
+        <!-- Items in other currencies (always flat, never grouped by vendor) -->
+        <template v-for="group in otherCurrencyOrderItemGroups" :key="group.currencyCode">
+          <div v-if="group.items.length" class="mt-5 space-y-3">
+            <h4 class="text-lg font-black">
+              {{ $t("common.labels.products_in_currency", { currency: group.currencyCode }) }}
+            </h4>
+
+            <OrderLineItems :items="group.items" :subtotal-currency-code="group.currencyCode" />
+          </div>
+        </template>
       </VcWidget>
 
       <AcceptedGifts v-if="giftItems.length" :items="giftItems" class="mt-5" />
@@ -193,7 +204,8 @@ const breakpoints = useBreakpoints(breakpointsTailwind);
 const {
   order,
   giftItems,
-  orderItems,
+  mainCurrencyOrderItems,
+  otherCurrencyOrderItemGroups,
   orderItemsGroupedByVendor,
   deliveryAddress,
   pickupLocation,

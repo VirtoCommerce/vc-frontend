@@ -1,6 +1,5 @@
 import { useLocalStorage } from "@vueuse/core";
-import isEqual from "lodash/isEqual";
-import omit from "lodash/omit";
+import { isEqual, omit } from "lodash-es";
 import { computed, ref } from "vue";
 import { updateContact } from "@/core/api/graphql/account";
 import { XApiPermissions } from "@/core/enums";

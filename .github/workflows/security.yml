@@ -1,0 +1,117 @@
+name: Security
+
+# SAST (Semgrep) + SCA (OSV-Scanner) for the frontend (VCST-5292).
+# Introduced in non-blocking mode: jobs surface findings as SARIF in the
+# repository Security tab but do not fail the build, so an inherited-finding
+# baseline can be established before gating is turned on.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [master, dev]
+    paths-ignore:
+      - '.idea'
+      - '.vscode'
+      - 'README.md'
+      - 'LICENSE'
+  pull_request:
+    paths-ignore:
+      - '.idea'
+      - '.vscode'
+      - 'README.md'
+      - 'LICENSE'
+  schedule:
+    # Weekly drift scan so newly published advisories surface without a code change.
+    - cron: '17 4 * * 1'
+
+permissions:
+  contents: read
+
+jobs:
+  semgrep:
+    name: Semgrep (SAST)
+    # Skip Dependabot and PRs from forks (no access to upload SARIF / secrets).
+    if: ${{ github.actor != 'dependabot[bot]' &&
+         (github.event.pull_request.head.repo.full_name == github.repository ||
+         github.event.pull_request.head.repo.full_name == '') }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+
+      - name: Install Semgrep
+        run: pipx install semgrep
+
+      - name: Validate custom rules
+        # Fails fast and names the offending rule if any custom pattern is invalid,
+        # so a broken rule can never silently pass as exit code 2 again.
+        run: semgrep scan --validate --config .semgrep/vc-security.yml
+
+      # Skip a finding: add "// nosemgrep: <rule-id>" on or above the line
+      # ("<!-- nosemgrep: <rule-id> -->" in .vue templates), exclude paths via a
+      # repo-root .semgrepignore, or add "paths: exclude:" to a rule in the ruleset.
+      - name: Semgrep scan
+        run: |
+          set +e
+          semgrep scan \
+            --config .semgrep/vc-security.yml \
+            --config p/javascript \
+            --config p/typescript \
+            --config p/owasp-top-ten \
+            --sarif --output semgrep.sarif \
+            --metrics off
+          code=$?
+          # 0 = clean, 1 = findings (non-blocking during the baseline phase),
+          # anything higher = a real Semgrep error that must surface (fail the job).
+          if [ "$code" -gt 1 ]; then
+            echo "::error::Semgrep exited with code $code"
+            exit "$code"
+          fi
+          echo "Semgrep exit code $code treated as success (baseline phase)."
+
+      - name: Pretty-print SARIF
+        # Semgrep emits minified single-line JSON; reformat so the downloadable
+        # artifact is human-readable (still valid SARIF for code scanning).
+        if: always()
+        run: |
+          if [ -f semgrep.sarif ]; then
+            jq . semgrep.sarif > semgrep.pretty.sarif && mv semgrep.pretty.sarif semgrep.sarif
+          fi
+
+      - name: Upload Semgrep SARIF to code scanning
+        # Guard on the file existing: if Semgrep crashes before writing SARIF, skip the
+        # upload instead of failing the (non-blocking, baseline-phase) Security workflow.
+        if: ${{ always() && hashFiles('semgrep.sarif') != '' }}
+        uses: github/codeql-action/upload-sarif@8aad20d150bbac5944a9f9d289da16a4b0d87c1e # v4
+        with:
+          sarif_file: semgrep.sarif
+          category: semgrep
+
+      - name: Upload Semgrep SARIF as artifact
+        if: ${{ always() && hashFiles('semgrep.sarif') != '' }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: Semgrep SARIF file
+          path: semgrep.sarif
+          if-no-files-found: warn
+
+  osv-scanner:
+    name: OSV-Scanner (SCA)
+    if: ${{ github.actor != 'dependabot[bot]' &&
+         (github.event.pull_request.head.repo.full_name == github.repository ||
+         github.event.pull_request.head.repo.full_name == '') }}
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    # Reusable workflow: it runs the scan, then uploads SARIF to the Security tab.
+    # fail-on-vuln: false keeps it non-blocking during the baseline phase.
+    # Skip an advisory: add [[IgnoredVulns]] (id + reason, optional ignoreUntil) to
+    # an osv-scanner.toml at the repo root, or dismiss the alert in the Security tab.
+    uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@9a498708959aeaef5ef730655706c5a1df1edbc2 # v2.3.8
+    with:
+      scan-args: |-
+        --lockfile=yarn.lock
+      fail-on-vuln: false

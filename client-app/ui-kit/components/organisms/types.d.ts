@@ -9,10 +9,14 @@ declare module "vue" {
     VcDatePicker: typeof Components.VcDatePicker;
     VcModal: typeof Components.VcModal;
     VcPagination: typeof Components.VcPagination;
+    VcPopupSidebar: typeof Components.VcPopupSidebar;
+    VcProductButton: typeof Components.VcProductButton;
     VcProductCard: typeof Components.VcProductCard;
     VcProductImage: typeof Components.VcProductImage;
     VcQuantityStepper: typeof Components.VcQuantityStepper;
     VcTable: typeof Components.VcTable;
+    VcWidget: typeof Components.VcWidget;
+    VcWidgetSkeleton: typeof Components.VcWidgetSkeleton;
   }
 }
 

@@ -1,4 +1,5 @@
 #import "../common/fragments/money.graphql"
+#import "../common/fragments/currency.graphql"
 #import "../catalog/fragments/property.graphql"
 
 fragment orderLineItemFields on OrderLineItemType {
@@ -9,6 +10,9 @@ fragment orderLineItemFields on OrderLineItemType {
   productId
   productType
   showPlacedPrice
+  currency {
+    ...currency
+  }
   listTotal {
     ...money
   }

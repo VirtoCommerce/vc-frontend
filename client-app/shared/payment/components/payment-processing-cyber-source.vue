@@ -60,7 +60,7 @@
       :loading="loading"
       class="flex-1 md:order-first md:flex-none"
       data-test-id="pay-now-button"
-      @click="sendPaymentData"
+      @click="() => sendPaymentData()"
     >
       {{ $t("shared.payment.bank_card_form.pay_now_button") }}
     </VcButton>

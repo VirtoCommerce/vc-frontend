@@ -2,7 +2,7 @@
   <VcButton
     class="barcode-scanner"
     color="primary"
-    variant="no-border"
+    variant="surface"
     size="xs"
     type="button"
     icon="barcode"
@@ -11,8 +11,13 @@
 </template>
 
 <script setup lang="ts">
+import { defineAsyncComponent } from "vue";
 import { useModal } from "@/shared/modal";
-import BarcodeScannerModal from "./barcode-scanner-modal.vue";
+
+// Loaded on first scan click so the barcode-detector ponyfill (~44 KB) stays out of the
+// eager header bundle that ships on every page.
+const BarcodeScannerModal = defineAsyncComponent(() => import("./barcode-scanner-modal.vue"));
+
 const emit = defineEmits<IEmits>();
 
 interface IEmits {

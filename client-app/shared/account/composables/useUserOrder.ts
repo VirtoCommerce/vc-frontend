@@ -1,7 +1,7 @@
 import { computed, ref, shallowRef } from "vue";
 import { addOrUpdateOrderPayment, getShortOrder, getFullOrder } from "@/core/api/graphql";
 import { ProductType } from "@/core/enums";
-import { groupByVendor, Logger } from "@/core/utilities";
+import { groupByVendor, splitLineItemsByCurrency, Logger } from "@/core/utilities";
 import type {
   GetFullOrderQueryVariables,
   GetShortOrderQueryVariables,
@@ -14,7 +14,14 @@ const order = shallowRef<CustomerOrderType>();
 
 const giftItems = computed(() => (order.value?.items || []).filter((item) => item.isGift));
 const orderItems = computed(() => (order.value?.items || []).filter((item) => !item.isGift));
-const orderItemsGroupedByVendor = computed(() => groupByVendor(orderItems.value));
+
+// Vendor grouping and the main products list only cover items in the order's main currency.
+// Items priced in other currencies are listed separately, grouped by their currency.
+const lineItemsByCurrency = computed(() => splitLineItemsByCurrency(orderItems.value, order.value?.currency?.code));
+const mainCurrencyOrderItems = computed(() => lineItemsByCurrency.value.mainCurrencyItems);
+const otherCurrencyOrderItemGroups = computed(() => lineItemsByCurrency.value.otherCurrencyGroups);
+const orderItemsGroupedByVendor = computed(() => groupByVendor(mainCurrencyOrderItems.value));
+
 const allItemsAreDigital = computed(
   () => !!order.value?.items?.every((item) => item.productType === ProductType.Digital),
 );
@@ -79,6 +86,8 @@ export function useUserOrder() {
     allItemsAreDigital,
     giftItems,
     orderItems,
+    mainCurrencyOrderItems,
+    otherCurrencyOrderItemGroups,
     orderItemsGroupedByVendor,
     deliveryAddress,
     pickupLocation,
