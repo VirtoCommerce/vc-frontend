@@ -51,12 +51,16 @@ export function createQueuedMutationsController(config: IQueueConfig): IQueuedMu
   // "opName:partition" so each partition keeps an independent queue.
   const stateByOperation = new Map<string, IOperationState<TVarsType>>();
 
+  // Single source of truth for state keys, shared by getStateKey and flushNow so
+  // both agree. An empty/undefined partition key normalizes to the bare "opName"
+  // queue (the default partition), keeping it reachable via flushNow(opName).
+  function makeStateKey(opName: string, partitionKey?: string): string {
+    return partitionKey ? `${opName}:${partitionKey}` : opName;
+  }
+
   function getStateKey(opName: string, variables: TVarsType): string {
     const cfg = targetConfigMap.get(opName);
-    if (cfg?.getPartitionKey) {
-      return `${opName}:${cfg.getPartitionKey(variables)}`;
-    }
-    return opName;
+    return makeStateKey(opName, cfg?.getPartitionKey?.(variables));
   }
 
   const { setQueuedTotal } = useQueuedMutations();
@@ -70,6 +74,7 @@ export function createQueuedMutationsController(config: IQueueConfig): IQueuedMu
 
     const newState: IOperationState<TVarsType> = {
       inFlight: false,
+      flushRequested: false,
       timer: null,
       mergedVariables: null,
       observers: [],
@@ -119,6 +124,21 @@ export function createQueuedMutationsController(config: IQueueConfig): IQueuedMu
     state.timer = setTimeout(() => {
       flush(opName);
     }, debounceMs);
+  }
+
+  // Called when an in-flight request settles. If flushNow() was requested while
+  // it was in flight, drain the queued batch immediately (single-flight is now
+  // released); otherwise fall back to the normal debounce.
+  function drainOrSchedule(opName: string): void {
+    const state = getState(opName);
+
+    if (state.flushRequested) {
+      state.flushRequested = false;
+      flush(opName);
+      return;
+    }
+
+    scheduleNextFlush(opName);
   }
 
   function enqueue(opName: string, variables: TVarsType, observer: IObserver): void {
@@ -172,7 +192,7 @@ export function createQueuedMutationsController(config: IQueueConfig): IQueuedMu
           observer.next(result);
           observer.complete();
         }
-        scheduleNextFlush(opName);
+        drainOrSchedule(opName);
       },
       error: (err) => {
         state.inFlight = false;
@@ -180,7 +200,7 @@ export function createQueuedMutationsController(config: IQueueConfig): IQueuedMu
         for (const observer of observers) {
           observer.error(err);
         }
-        scheduleNextFlush(opName);
+        drainOrSchedule(opName);
       },
     });
   }
@@ -222,11 +242,12 @@ export function createQueuedMutationsController(config: IQueueConfig): IQueuedMu
   /**
    * Escape hatch to flush a queued operation immediately instead of waiting for
    * its debounce window - e.g. on input blur, before navigation. No-op if
-   * nothing is queued; if a previous mutation is still in flight the pending
-   * batch waits for its scheduled flush as usual.
+   * nothing is queued. If a previous mutation is still in flight, the queued
+   * batch is drained immediately once that request settles (no extra debounce);
+   * we never fire a second request in parallel with an in-flight one.
    */
   function flushNow(opName: string, partitionKey?: string): void {
-    const stateKey = partitionKey ? `${opName}:${partitionKey}` : opName;
+    const stateKey = makeStateKey(opName, partitionKey);
     const state = stateByOperation.get(stateKey);
     if (!state) {
       return;
@@ -234,6 +255,11 @@ export function createQueuedMutationsController(config: IQueueConfig): IQueuedMu
     if (state.timer) {
       clearTimeout(state.timer);
       state.timer = null;
+    }
+    // Can't send a parallel request; mark it so the settle handler drains ASAP.
+    if (state.inFlight) {
+      state.flushRequested = true;
+      return;
     }
     flush(stateKey);
   }

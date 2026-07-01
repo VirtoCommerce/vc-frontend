@@ -737,5 +737,68 @@ describe("createQueuedMutationsLink", () => {
       expect(forward).toHaveBeenCalledTimes(2);
       expect((fwd.mock.calls[1][0].variables as { lineItemId: string }).lineItemId).toBe("li-2");
     });
+
+    it("should not fire a parallel request while one is in flight, then drain immediately on settle", async () => {
+      const { link, flushNow } = createQueuedMutationsController({
+        targets: [createQueueTarget("TestMutation", {})],
+      });
+
+      let resolveFirst!: () => void;
+      const forward = vi.fn(
+        () =>
+          new Observable((observer) => {
+            resolveFirst = () => {
+              observer.next({ data: {} });
+              observer.complete();
+            };
+          }),
+      ) as unknown as NextLink;
+
+      // First batch goes in flight
+      enqueue(link, forward, "TestMutation", { batch: 1 });
+      await vi.advanceTimersByTimeAsync(DEFAULT_DEBOUNCE_MS);
+      expect(forward).toHaveBeenCalledTimes(1);
+
+      // Queue a second batch and request an immediate flush while in flight
+      enqueue(link, forward, "TestMutation", { batch: 2 });
+      flushNow("TestMutation");
+      await vi.advanceTimersByTimeAsync(DEFAULT_DEBOUNCE_MS);
+
+      // Single-flight preserved: no parallel request
+      expect(forward).toHaveBeenCalledTimes(1);
+
+      // Settling the in-flight request drains the queued batch immediately - no
+      // extra debounce (we only advance 0ms, far less than DEFAULT_DEBOUNCE_MS)
+      resolveFirst();
+      await vi.advanceTimersByTimeAsync(0);
+
+      expect(forward).toHaveBeenCalledTimes(2);
+      const fwd = forward as unknown as ReturnType<typeof vi.fn>;
+      expect(fwd.mock.calls[1][0].variables).toEqual({ batch: 2 });
+    });
+
+    it("should route an empty partition key to the default queue reachable by flushNow(opName)", async () => {
+      const { link, flushNow } = createQueuedMutationsController({
+        targets: [
+          createQueueTarget("TestMutation", {
+            getPartitionKey: (vars: Record<string, unknown>) =>
+              String((vars as { lineItemId?: string }).lineItemId ?? ""),
+          }),
+        ],
+      });
+      const forward = createForward();
+
+      // No lineItemId => empty partition key => must land in the default queue
+      enqueue(link, forward, "TestMutation", { v: 1 });
+      expect(forward).not.toHaveBeenCalled();
+
+      // flushNow without a partition key must reach that queue
+      flushNow("TestMutation");
+      await vi.advanceTimersByTimeAsync(1);
+
+      expect(forward).toHaveBeenCalledTimes(1);
+      const fwd = forward as unknown as ReturnType<typeof vi.fn>;
+      expect(fwd.mock.calls[0][0].variables).toEqual({ v: 1 });
+    });
   });
 });
