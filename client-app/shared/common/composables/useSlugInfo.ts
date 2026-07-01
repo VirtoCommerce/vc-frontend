@@ -4,7 +4,7 @@ import { useGetPage, useGetPageDocument, useGetSlugInfo } from "@/core/api/graph
 import { useLanguages } from "@/core/composables/useLanguages";
 import { NAVIGATION_OUTLINE } from "@/core/constants";
 import { globals } from "@/core/globals";
-import { isMarkdownWithFrontmatter, safeDecode } from "@/core/utilities/common";
+import { humanizeName, isMarkdownWithFrontmatter, safeDecode } from "@/core/utilities/common";
 import type { IPageTemplate } from "@/shared/static-content";
 import type { MaybeRefOrGetter } from "vue";
 
@@ -112,6 +112,20 @@ export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
     }
 
     if (isPageContent(content)) {
+      // VCST-5274: `settings.name`/`displayName` are baked into the page document at authoring
+      // time and are never rewritten on rename. Everything server-side that derives from them is
+      // stale too — `page.name` (GetPage) resolves to the indexed `displayName`, and the SEO name
+      // (ContentSeoResolver) is `displayName` as well. The value that actually follows a File-name
+      // rename is the page's file path, so derive the breadcrumb / <title> leaf from `relativeUrl`
+      // (its file name without extension) instead of the stored name.
+      const fileName = contentResult?.value?.page?.relativeUrl
+        ?.split("/")
+        .filter(Boolean)
+        .pop()
+        ?.replace(/\.[^.]+$/, "");
+      if (fileName) {
+        content.settings = { ...content.settings, name: humanizeName(fileName) };
+      }
       return content;
     }
 

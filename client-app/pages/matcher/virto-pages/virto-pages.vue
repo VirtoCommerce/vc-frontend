@@ -1,6 +1,6 @@
 <template>
   <div>
-    <VPPageBuilder v-if="isPageBuilderContent" :content="pageDocument?.content" />
+    <VPPageBuilder v-if="isPageBuilderContent" :content="pageDocument?.content" :name="liveName" />
 
     <VPBuilderIO v-if="isBulderIOContent" :content="pageDocument?.content" />
   </div>
@@ -29,6 +29,10 @@ const isPageBuilderContent = computed(() => {
 const permalink = computed(() => {
   return props.pageDocument?.permalink;
 });
+
+// VCST-5274: the page document's baked `settings.name` is never updated on rename, so derive
+// the breadcrumb leaf from the live permalink (its last segment) instead of the stored name.
+const liveName = computed(() => permalink.value?.split("/").filter(Boolean).pop());
 
 const { updateLocalizedUrl } = useLanguages();
 
