@@ -35,5 +35,8 @@ export { apolloClient, graphqlClient } from "@/core/api/graphql/client";
 export { globals } from "@/core/globals";
 export { FALLBACK_LOCALE } from "@/core/constants";
 
+// ── Contract version ──────────────────────────────────────────────────────────
+export { CORE_VERSION } from "./version";
+
 // ── Types ─────────────────────────────────────────────────────────────────────
 export type { I18n } from "@/i18n";

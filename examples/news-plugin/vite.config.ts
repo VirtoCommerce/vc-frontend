@@ -39,7 +39,15 @@ export default defineConfig({
     federation({
       name: "news",
       filename: "remoteEntry.js",
-      manifest: true,
+      // Declare the host contract in the manifest so the host can version-gate the
+      // plugin BEFORE executing any of its code (VCST-5159, #2). `requiredHostVersion`
+      // is the minimum `@vc-frontend/core` this plugin was built against.
+      manifest: {
+        additionalData: (data) => {
+          (data.stats.metaData as Record<string, unknown>).requiredHostVersion = "2.0.0";
+          return data.stats;
+        },
+      },
       // Off: avoids emitting .d.ts across the shared facade's host source graph.
       dts: false,
       exposes: {

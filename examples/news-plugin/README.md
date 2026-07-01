@@ -78,6 +78,24 @@ Tailwind only scans `client-app/**` — so the plugin needs **its own Tailwind p
 With this, the federated `/news` renders **pixel-identical to production**
 (`vcst-qa-storefront.govirto.com/news`).
 
+## Robustness (implemented)
+
+- **Version safety (#2).** The loader reads each remote's manifest (`metaData.requiredHostVersion`,
+  a plain JSON fetch — no code execution) and compares it to the host's `CORE_VERSION` before
+  loading. Incompatible → **skipped**, never executed. Verified live: `requiredHostVersion:"2.0.0"`
+  (≤ host `2.53.0`) loads; `"99.0.0"` is skipped and `/news` 404s. Uses the existing
+  `compareVersions` from `checkModulesVersions`.
+- **Deep-link timing (#4).** Plugin routes are added via async import, so `app-runner` now
+  **awaits `initNewsModule` before `app.use(router)`** — routes exist before the router's initial
+  navigation. Hard loads / deep links to `/news` render (verified), with no 404 flash and no
+  post-hoc `router.replace` (which could hijack a later navigation).
+- **Observable failures (#8).** `initFederatedModules` returns `{ loaded, failed, skipped }`;
+  each failure/skip is logged with context, summarized, and surfaced as a dev notification.
+  (Prod should route these to AppInsights `trackException`.)
+- **Minimal singleton set (#6).** `MF_SHARED` is documented entry-by-entry with the reason each
+  package *must* be a single instance; anything not requiring it is intentionally excluded so
+  plugins can version it independently.
+
 ## Known limitations / next steps
 
 - **Facade types.** The plugin consumes `@vc-frontend/core` as **raw source**, so `vue-tsc`
@@ -85,12 +103,6 @@ With this, the federated `/news` renders **pixel-identical to production**
   globals) and reports host-source errors — *none in the plugin's own files*. Productionizing
   means shipping compiled `.d.ts` from the facade ("publish-from-source types" build) and
   pointing plugins at that instead of source.
-- **Deep-link timing — FIXED.** Federated loading is async, so plugin routes aren't registered
-  when the router resolves the *initial* navigation; a hard load / deep link to `/news` used to
-  hit the 404 catch-all. The loader (`client-app/modules/federated/index.ts`) now re-resolves
-  the current location after plugins register and `router.replace`s if a freshly-added route
-  matches — so hard loads of `/news` render correctly (verified). A brief 404 flash is still
-  possible before the remote loads; a route-level loading guard would remove even that.
 - **Dev server (`yarn dev`) blocked in MF mode.** `@module-federation/vite` pre-bundles the
   shared `@vc-frontend/core` facade with esbuild, which has no `.graphql` loader (77/199 query
   files use `#import`), so the host dev server fails. Use `build-only` + `preview` for now;

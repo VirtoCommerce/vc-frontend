@@ -51,12 +51,19 @@ import type { PageBuilderPluginOptionsType } from "./plugins/builder-preview/mod
 // APP_MF_HOST constant lets the bundler drop the dead branch entirely: in MF builds
 // `@/modules/news` is NOT bundled (truly replaced), and default builds pull in neither
 // the MF runtime nor the federated loader (VCST-5159).
-function initNewsModule(router: ReturnType<typeof createRouter>, i18n: ReturnType<typeof createI18n>): void {
+//
+// Returns a promise the caller MUST await before installing the router, so the news
+// routes (added asynchronously via a dynamic import in either branch) are registered
+// before the initial navigation resolves — otherwise a hard load / deep link to a
+// news URL falls through to the 404 route (#4).
+async function initNewsModule(router: ReturnType<typeof createRouter>, i18n: ReturnType<typeof createI18n>): Promise<void> {
   if (import.meta.env.APP_MF_HOST) {
     // Federated plugins bind to the host's live router/i18n via @vc-frontend/core.
-    void import("@/modules/federated").then(({ initFederatedModules }) => initFederatedModules());
+    const { initFederatedModules } = await import("@/modules/federated");
+    await initFederatedModules();
   } else {
-    void import("@/modules/news").then(({ init }) => init(router, i18n));
+    const { init } = await import("@/modules/news");
+    init(router, i18n);
   }
 }
 
@@ -225,7 +232,9 @@ export default async () => {
   void initializePurchaseRequests(router, i18n);
   void initializeGoogleAnalytics();
   void initializeHotjar();
-  void initNewsModule(router, i18n);
+  // Kicked off here but awaited before `app.use(router)` so its routes are registered
+  // before the router's initial navigation (see initNewsModule / #4).
+  const newsModuleReady = initNewsModule(router, i18n);
   void initLoyalty(router, i18n);
 
   // Plugins
@@ -261,6 +270,12 @@ export default async () => {
       app.use(builderIoPreviewPlugin, { router });
     }
   }
+
+  // Ensure federated/dynamically-imported module routes (e.g. news) are registered
+  // before the router resolves its initial navigation, so deep links / hard loads to
+  // those routes don't fall through to the 404 route (#4). Isolated: a failed remote
+  // still resolves (initFederatedModules never rejects), so boot is never blocked.
+  await newsModuleReady;
 
   // router must be registered after all plugins because some of them are using router.beforeEach to protect routes or add functionality before route changes, and we want to make sure that those are registered before we start using the router
   app.use(router);

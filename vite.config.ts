@@ -12,12 +12,23 @@ import type { ProxyOptions, UserConfig, PluginOption } from "vite";
 const graphql = graphqlImport.default ?? graphqlImport;
 
 /**
- * Module Federation shared singletons (VCST-5159). These MUST be a single instance
- * across host and every plugin, or reactivity, routing, i18n, the Apollo cache and
- * the `createGlobalState` composables (useUser / useCart / useExtensionRegistry)
- * silently fork. `requiredVersion: "*"` (accept any version; `strictVersion` defaults
- * to false so a mismatch only warns, never blocks) decouples runtime from the
- * published `@vc-frontend/core` version so a host upgrade never forces a plugin re-release.
+ * Module Federation shared singletons (VCST-5159).
+ *
+ * This list is INTENTIONALLY MINIMAL (#6): a package belongs here only if a second
+ * instance would break correctness. Sharing pins the version host-wide — plugins bind
+ * to the host's copy and cannot upgrade it independently — so anything that does NOT
+ * strictly require a single instance must be left OUT and bundled per-plugin instead,
+ * to preserve independent versioning. Each entry below has a hard reason:
+ *   - vue / vue-router / vue-i18n : one framework instance (reactivity, the router the
+ *     app navigates, the i18n messages are merged into) — two copies = broken inject.
+ *   - @vueuse/core               : `createGlobalState` backs useUser/useCart/
+ *     useExtensionRegistry; a second copy = a second, empty global state.
+ *   - @apollo/client + @vue/apollo-composable + graphql : one client/cache/injection,
+ *     and Apollo requires a single `graphql` (DocumentNodes from another copy throw).
+ *   - @vc-frontend/core          : the host provides the live facade instance.
+ *
+ * `requiredVersion: "*"` here keeps MF itself from blocking; real compatibility is
+ * enforced explicitly by the loader's version gate (see client-app/modules/federated, #2).
  *
  * NOTE: keep in sync with `examples/news-plugin/vite.config.ts`, where the same
  * list is declared with `import: false` (plugins consume, never provide).
