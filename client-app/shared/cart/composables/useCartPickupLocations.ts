@@ -87,10 +87,8 @@ export function _useCartPickupLocations() {
         ...payload,
       });
 
-      // Bug guard (race): bump the generation on SUCCESS, not on entry. A failed fetch leaves the
-      // old data intact, so a concurrent loadMore's append to that old data stays valid and must not
-      // be dropped. A successful fetch bumps here — strictly before replacing the list, with no await
-      // in between — so a concurrent loadMore that resolves later is correctly discarded by the guard.
+      // Bump generation on success (not on entry): a failed fetch keeps old data, so a concurrent
+      // loadMore's append stays valid; a successful one supersedes any in-flight loadMore.
       fetchGeneration.value++;
 
       pickupLocations.value = data.items ?? [];
@@ -99,9 +97,10 @@ export function _useCartPickupLocations() {
       pickupLocationsEndCursor.value = data.pageInfo?.endCursor ?? undefined;
       pickupLocationsHasNextPage.value = data.pageInfo?.hasNextPage ?? false;
 
-      // Commit the filter/keyword that produced this cursor ATOMICALLY with the cursor itself (no
-      // await between these assignments). loadMore reads this snapshot — never the live filter refs —
-      // so a later failed filter refetch cannot desync the cursor from the query that produced it.
+      // This reset now owns the UI, so clear the append spinner instead of waiting for the stale loadMore.
+      pickupLocationsLoadingMore.value = false;
+
+      // Snapshot the filter/keyword that produced this cursor; loadMore reads this, never the live refs.
       committedKeyword.value = payload.keyword;
       committedFilter.value = payload.filter;
 
@@ -169,23 +168,30 @@ export function _useCartPickupLocations() {
         after: pickupLocationsEndCursor.value,
       });
 
-      // Bug guard (race): if a fetchPickupLocations started after this loadMore began, its
-      // generation bump makes this response stale. Drop it without touching the list/cursor.
+      // A reset fetch that started after this loadMore makes the response stale: a superseded loadMore
+      // must have zero observable effect (no append, cursor, spinner, or surfaced error).
       if (fetchGeneration.value !== requestGeneration) {
         return;
       }
 
-      // keep-first dedup (BL-BOPIS-008): a prepended confirmed location at items[0] must win
-      // over a duplicate arriving on a later page, so the FIRST occurrence is retained.
+      // keep-first dedup (BL-BOPIS-008): a prepended confirmed location at items[0] must win over a
+      // duplicate on a later page, so the FIRST occurrence is retained.
       pickupLocations.value = uniqBy([...pickupLocations.value, ...(data.items ?? [])], (item) => item.id);
 
       pickupLocationsEndCursor.value = data.pageInfo?.endCursor ?? undefined;
       pickupLocationsHasNextPage.value = data.pageInfo?.hasNextPage ?? false;
     } catch (e) {
-      Logger.error(`${useCartPickupLocations.name}.${loadMorePickupLocations.name}`, e);
-      throw e;
+      // Surface only for the current generation; a superseded loadMore stays silent.
+      if (fetchGeneration.value === requestGeneration) {
+        Logger.error(`${useCartPickupLocations.name}.${loadMorePickupLocations.name}`, e);
+        throw e;
+      }
     } finally {
-      pickupLocationsLoadingMore.value = false;
+      // Clear the spinner only for the current generation; a stale response must not flip it off
+      // under a reset (or newer loadMore) that now owns the flag.
+      if (fetchGeneration.value === requestGeneration) {
+        pickupLocationsLoadingMore.value = false;
+      }
     }
   }
 

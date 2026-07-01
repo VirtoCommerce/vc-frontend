@@ -330,6 +330,45 @@ describe("useCartPickupLocations", () => {
       expect(pickupLocationsHasNextPage.value).toBe(false);
     });
 
+    it("should CLEAR the load-more spinner as soon as a superseding fetch resolves, not wait for the stale loadMore", async () => {
+      const { fetchPickupLocations, loadMorePickupLocations, pickupLocationsLoadingMore } = useCartPickupLocations();
+
+      // Seed an initial fetch so hasNextPage=true and a cursor is set; loadMore can pass its guard.
+      getCartPickupLocationsMock.mockResolvedValueOnce(
+        createConnection({
+          items: [createLocation({ id: "seed-a" })],
+          pageInfo: { endCursor: "seed-cursor", hasNextPage: true, hasPreviousPage: false, startCursor: undefined },
+        }),
+      );
+      await fetchPickupLocations({ cartId: "cart-1", first: 6 });
+
+      // loadMore is in flight (spinner on), resolution held so we control ordering.
+      let resolveLoadMore!: (v: unknown) => void;
+      const loadMorePromise = new Promise((res) => {
+        resolveLoadMore = res;
+      });
+      getCartPickupLocationsMock.mockReturnValueOnce(loadMorePromise);
+      const loadMoreCall = loadMorePickupLocations({ cartId: "cart-1", first: 6 });
+      expect(pickupLocationsLoadingMore.value).toBe(true);
+
+      // A fresh fetch (e.g. filter apply) completes while loadMore is still pending; it supersedes it.
+      getCartPickupLocationsMock.mockResolvedValueOnce(
+        createConnection({
+          items: [createLocation({ id: "fresh-a" })],
+          pageInfo: { endCursor: "fresh-cursor", hasNextPage: true, hasPreviousPage: false, startCursor: undefined },
+        }),
+      );
+      await fetchPickupLocations({ cartId: "cart-1", first: 6 });
+
+      // Fresh results are shown, so "Load more" must already be usable, not stuck on the stale loadMore.
+      expect(pickupLocationsLoadingMore.value).toBe(false);
+
+      // Draining the stale loadMore must not resurrect the spinner either.
+      resolveLoadMore(createConnection({ items: [createLocation({ id: "stale-a" })] }));
+      await loadMoreCall;
+      expect(pickupLocationsLoadingMore.value).toBe(false);
+    });
+
     it("should KEEP a loadMore response when a concurrent fetch REJECTS (no spurious generation bump)", async () => {
       const { fetchPickupLocations, loadMorePickupLocations, pickupLocations, pickupLocationsHasNextPage } =
         useCartPickupLocations();
