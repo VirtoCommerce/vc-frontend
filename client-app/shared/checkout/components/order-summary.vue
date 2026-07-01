@@ -159,7 +159,7 @@ import { useCurrency } from "@/core/composables";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { useFullCart } from "@/shared/cart";
 import { useSavedForLater } from "@/shared/cart/composables/useSaveForLater";
-import { useCheckout } from "@/shared/checkout/composables";
+import { useCheckout } from "@/shared/checkout/composables/useCheckout";
 import type {
   CartTotalType,
   CartType,

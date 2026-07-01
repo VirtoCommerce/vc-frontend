@@ -10,8 +10,8 @@
 
 <script lang="ts" setup>
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { WishlistProductItemSkeleton } from "@/shared/wishlists";
 import ProductSkeletonGrid from "@/shared/catalog/components/product-skeleton-grid.vue";
+import WishlistProductItemSkeleton from "@/shared/wishlists/components/wishlist-product-item-skeleton.vue";
 
 interface IProps {
   itemsCount: number;

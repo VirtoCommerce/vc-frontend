@@ -1,7 +1,7 @@
 import { ref } from "vue";
 import { useAuth, useErrorsTranslator } from "@/core/composables";
 import { isLockoutError } from "@/core/utilities";
-import { useUser } from "@/shared/account";
+import { useUser } from "@/shared/account/composables/useUser";
 import type { IdentityErrorType } from "@/core/api/graphql/types";
 
 export function useOrganizationSwitcher() {

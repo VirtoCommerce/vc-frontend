@@ -58,7 +58,7 @@
 
 <script setup lang="ts">
 import { getAddressName } from "@/core/utilities/address";
-import type { PickupLocationType } from "@/shared/checkout/composables";
+import type { PickupLocationType } from "@/shared/checkout/composables/useSelectAddressMap";
 import PickupAvailabilityInfo from "@/shared/common/components/pickup-availability-info.vue";
 
 interface IProps {

@@ -26,10 +26,10 @@
 <script setup lang="ts">
 import { useBreakpoints, breakpointsTailwind } from "@vueuse/core";
 import { toRef } from "vue";
-import { providePickupFilterContext } from "@/shared/checkout/composables";
+import { providePickupFilterContext } from "@/shared/checkout/composables/usePickupFilterContext";
 import { SelectAddressMapDesktop, SelectAddressMapMobile } from "./select-address-map";
 import type { PickupLocationType } from "./select-address-map";
-import type { IPickupFilterContext } from "@/shared/checkout/composables";
+import type { IPickupFilterContext } from "@/shared/checkout/composables/usePickupFilterContext";
 
 interface IProps {
   addresses?: PickupLocationType[];
