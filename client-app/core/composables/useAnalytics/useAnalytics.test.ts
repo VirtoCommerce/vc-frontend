@@ -283,7 +283,7 @@ describe("useAnalytics", () => {
     expect(Logger.warn).not.toHaveBeenCalled();
   });
 
-  it("should not dispatch events and not log warnings when no trackers are added", () => {
+  it("should not dispatch events and not log warnings when no trackers are added after development mode reset", () => {
     const event: AnalyticsEventNameType = "viewItem";
     const args: AnalyticsEventMapType["viewItem"] = [mockedProduct, arbitraryParam];
 
