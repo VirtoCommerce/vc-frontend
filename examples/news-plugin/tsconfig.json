@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "@vue/tsconfig/tsconfig.dom.json",
+  "include": ["src/**/*", "vite.config.ts"],
+  "compilerOptions": {
+    "composite": false,
+    "noEmit": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "resolveJsonModule": true,
+    "types": ["node", "vite/client"],
+    "baseUrl": ".",
+    "paths": {
+      // Local dev, no publish: the plugin resolves the facade straight from host
+      // source. In an external repo this would instead be the installed
+      // `@vc-frontend/core` type package. `@/*` lets tsc follow the facade's own
+      // internal imports; runtime never bundles any of it (import:false in MF).
+      "@vc-frontend/core": ["../../client-app/core-api/index.ts"],
+      "@/*": ["../../client-app/*"]
+    }
+  }
+}

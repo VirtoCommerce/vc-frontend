@@ -1,0 +1,17 @@
+{
+  "news": {
+    "list": {
+      "title": "最新消息",
+      "not-found": "未找到任何消息",
+      "search-placeholder": "搜索",
+      "written-by": "撰写人"
+    },
+    "details": {
+      "written-by": "撰写人",
+      "last-updated": "上次更新：",
+      "breadcrumbs": {
+        "news": "新闻"
+      }
+    }
+  }
+}

@@ -29,7 +29,6 @@ import { init as initModuleBackInStock } from "@/modules/back-in-stock";
 import { init as initCustomerReviews } from "@/modules/customer-reviews";
 import { init as initializeGoogleAnalytics } from "@/modules/google-analytics";
 import { init as initLoyalty } from "@/modules/loyalty";
-import { init as initNews } from "@/modules/news";
 import { initialize as initializePurchaseRequests } from "@/modules/purchase-requests";
 import { init as initPushNotifications } from "@/modules/push-messages";
 import { init as initModuleQuotes } from "@/modules/quotes";
@@ -46,6 +45,20 @@ import { getLocales as getUIKitLocales } from "@/ui-kit/utilities/getLocales";
 import App from "./App.vue";
 import type { PageContextResponseType } from "./core/api/graphql/types";
 import type { PageBuilderPluginOptionsType } from "./plugins/builder-preview/models/PageBuilderPluginOptionsType";
+
+// News is delivered either as a federated Module Federation plugin (APP_MF_HOST) or
+// the in-app module (default). BOTH branches are dynamic imports so the compile-time
+// APP_MF_HOST constant lets the bundler drop the dead branch entirely: in MF builds
+// `@/modules/news` is NOT bundled (truly replaced), and default builds pull in neither
+// the MF runtime nor the federated loader (VCST-5159).
+function initNewsModule(router: ReturnType<typeof createRouter>, i18n: ReturnType<typeof createI18n>): void {
+  if (import.meta.env.APP_MF_HOST) {
+    // Federated plugins bind to the host's live router/i18n via @vc-frontend/core.
+    void import("@/modules/federated").then(({ initFederatedModules }) => initFederatedModules());
+  } else {
+    void import("@/modules/news").then(({ init }) => init(router, i18n));
+  }
+}
 
 // eslint-disable-next-line no-restricted-exports
 export default async () => {
@@ -190,7 +203,7 @@ export default async () => {
       data: { slugInfo: pageContext.slugInfo },
     });
   } catch (e) {
-    Logger.warn("Failed to seed slugInfo into Apollo cache", e as Error);
+    Logger.warn("Failed to seed slugInfo into Apollo cache", e);
   }
 
   /**
@@ -212,7 +225,7 @@ export default async () => {
   void initializePurchaseRequests(router, i18n);
   void initializeGoogleAnalytics();
   void initializeHotjar();
-  void initNews(router, i18n);
+  void initNewsModule(router, i18n);
   void initLoyalty(router, i18n);
 
   // Plugins
@@ -236,7 +249,7 @@ export default async () => {
     const builderPreviewPlugin = (await import("@/plugins/builder-preview/builder-preview.plugin").catch(Logger.error))
       ?.default;
     if (builderPreviewPlugin) {
-      app.use(builderPreviewPlugin, <PageBuilderPluginOptionsType>{ router });
+      app.use(builderPreviewPlugin, { router });
     }
   }
 

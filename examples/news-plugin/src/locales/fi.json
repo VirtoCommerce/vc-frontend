@@ -1,0 +1,17 @@
+{
+  "news": {
+    "list": {
+      "title": "Viimeisimmät uutiset",
+      "not-found": "Uutisia ei löytynyt",
+      "search-placeholder": "Hae",
+      "written-by": "Kirjoittanut"
+    },
+    "details": {
+      "written-by": "Kirjoittanut",
+      "last-updated": "Viimeksi päivitetty:",
+      "breadcrumbs": {
+        "news": "Uutiset"
+      }
+    }
+  }
+}

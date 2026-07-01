@@ -1,0 +1,17 @@
+{
+  "news": {
+    "list": {
+      "title": "Senaste nyheterna",
+      "not-found": "Inga nyheter hittades",
+      "search-placeholder": "Sök",
+      "written-by": "Skrivet av"
+    },
+    "details": {
+      "written-by": "Skrivet av",
+      "last-updated": "Senast uppdaterad:",
+      "breadcrumbs": {
+        "news": "Nyheter"
+      }
+    }
+  }
+}

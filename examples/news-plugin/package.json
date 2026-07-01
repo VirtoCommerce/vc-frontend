@@ -1,0 +1,11 @@
+{
+  "name": "@vc-frontend/news-plugin",
+  "version": "0.0.0",
+  "description": "MVP: the storefront 'news' module rebuilt as a standalone Module Federation plugin that consumes @vc-frontend/core (VCST-5159). Built with the root toolchain; no separate install or publish required.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "vite build --config examples/news-plugin/vite.config.ts",
+    "dev": "vite --config examples/news-plugin/vite.config.ts"
+  }
+}

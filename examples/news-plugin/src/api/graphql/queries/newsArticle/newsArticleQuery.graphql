@@ -1,0 +1,21 @@
+query NewsArticle($id: String!, $storeId: String!, $languageCode: String!) {
+  newsArticle(id: $id, storeId: $storeId, languageCode: $languageCode) {
+    id
+    title
+    publishDate
+    content
+    contentPreview
+    tags
+    author {
+      id
+      name
+      iconUrl
+    }
+    seoInfo {
+      pageTitle
+      metaKeywords
+      metaDescription
+      semanticUrl
+    }
+  }
+}

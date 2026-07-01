@@ -1,0 +1,13 @@
+{
+  "name": "@vc-frontend/core",
+  "version": "2.53.0",
+  "description": "Curated public API surface of the VC B2B storefront host, consumed by Module Federation plugins. Publish-from-source: type contract only — the running implementation is injected by the host at runtime via MF shared singletons.",
+  "type": "module",
+  "private": true,
+  "main": "./index.ts",
+  "module": "./index.ts",
+  "types": "./index.ts",
+  "exports": {
+    ".": "./index.ts"
+  }
+}

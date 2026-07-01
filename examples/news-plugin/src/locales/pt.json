@@ -1,0 +1,17 @@
+{
+  "news": {
+    "list": {
+      "title": "Últimas notícias",
+      "not-found": "Nenhuma notícia encontrada",
+      "search-placeholder": "Pesquisar",
+      "written-by": "Escrito por"
+    },
+    "details": {
+      "written-by": "Escrito por",
+      "last-updated": "Última atualização:",
+      "breadcrumbs": {
+        "news": "Notícias"
+      }
+    }
+  }
+}

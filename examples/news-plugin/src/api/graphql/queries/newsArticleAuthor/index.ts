@@ -1,0 +1,14 @@
+import { graphqlClient } from "@vc-frontend/core";
+import { NewsArticleAuthorDocument } from "../../types";
+import type { Query, NewsArticleAuthor, QueryNewsArticleAuthorArgs } from "../../types";
+
+export async function getNewsArticleAuthor(authorId: string): Promise<NewsArticleAuthor | undefined> {
+  const { data } = await graphqlClient.query<Required<Pick<Query, "newsArticleAuthor">>, QueryNewsArticleAuthorArgs>({
+    query: NewsArticleAuthorDocument,
+    variables: {
+      authorId: authorId,
+    },
+  });
+
+  return data?.newsArticleAuthor;
+}

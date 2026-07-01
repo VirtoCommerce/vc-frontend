@@ -1,0 +1,9 @@
+/*
+ * Plugin utility layer. Only `components` + `utilities` — NOT `base`, so we don't
+ * re-inject the host's Tailwind preflight/reset (that would double-apply globally).
+ * Tailwind (JIT) emits only the classes this plugin's templates actually use.
+ * The CSS custom properties these utilities reference (--color-*, etc.) are already
+ * defined on the host document, so colors/theme resolve at runtime.
+ */
+@tailwind components;
+@tailwind utilities;
