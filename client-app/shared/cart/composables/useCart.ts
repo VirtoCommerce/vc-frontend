@@ -1,7 +1,7 @@
 import { ApolloError, gql } from "@apollo/client/core";
 import { useApolloClient, useMutation } from "@vue/apollo-composable";
 import { createSharedComposable } from "@vueuse/core";
-import { difference, keyBy, merge, intersection } from "lodash";
+import { difference, intersection, keyBy, merge } from "lodash-es";
 import { computed, readonly, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";

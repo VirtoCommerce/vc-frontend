@@ -114,7 +114,7 @@
 
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
-import { cloneDeep, every, isEqual, remove } from "lodash";
+import { cloneDeep, every, isEqual, remove } from "lodash-es";
 import { useField } from "vee-validate";
 import { computed, onMounted, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";

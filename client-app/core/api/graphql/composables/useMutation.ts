@@ -1,5 +1,5 @@
 import { useMutation as _useMutation } from "@vue/apollo-composable";
-import { merge } from "lodash";
+import { merge } from "lodash-es";
 import { toValue } from "vue";
 import type { DeepOmitByType } from "@/core/types/utility";
 import type { DocumentNode, OperationVariables, TypedDocumentNode } from "@apollo/client/core";
