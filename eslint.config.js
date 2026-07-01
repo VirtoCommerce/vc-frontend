@@ -1,6 +1,7 @@
 import js from "@eslint/js";
 import { defineConfigWithVueTs, vueTsConfigs } from "@vue/eslint-config-typescript";
 import importPlugin from "eslint-plugin-import";
+import nounsanitized from "eslint-plugin-no-unsanitized";
 import prettierPlugin from "eslint-plugin-prettier/recommended";
 import sonarjs from "eslint-plugin-sonarjs";
 import sortExportAll from "eslint-plugin-sort-export-all";
@@ -224,12 +225,28 @@ export default defineConfigWithVueTs(
 
       // Disabled rules
       "@typescript-eslint/no-non-null-assertion": "off",
+      // False-positives repo-wide on generic methods (e.g. Array.prototype.includes), reporting the
+      // unsubstituted type parameter "T"; vue-tsc already type-checks these. Known eslint-plugin-sonarjs regression.
+      "sonarjs/argument-type": "off",
       "sonarjs/no-duplicate-string": "off",
       "tailwindcss/no-custom-classname": "off",
       "vue/multi-word-component-names": "off",
       "vue/require-default-prop": "off",
       "vuejs-accessibility/form-control-has-label": "off",
       "vuejs-accessibility/label-has-for": "off",
+    },
+  },
+
+  // Security rules (VCST-5292): flag unsafe DOM sinks (XSS).
+  // Set to `warn` to establish a baseline without breaking existing code;
+  // promote to `error` once the flagged sinks are remediated.
+  {
+    files: ["**/*.{js,ts,vue}"],
+    plugins: { "no-unsanitized": nounsanitized },
+    rules: {
+      "no-unsanitized/method": "warn", // e.g. document.write, insertAdjacentHTML
+      "no-unsanitized/property": "warn", // e.g. innerHTML, outerHTML
+      "vue/no-v-html": "warn", // raw v-html; prefer v-html-safe / {{ }}
     },
   },
 

@@ -1,4 +1,5 @@
 import { setup } from "@storybook/vue3-vite";
+import { create } from "storybook/theming/create";
 import { darkPresets, presets } from "../client-app/assets/presets";
 import { useThemeContext } from "../client-app/core/composables";
 import { setGlobals } from "../client-app/core/globals";
@@ -15,10 +16,16 @@ import type { Preview } from "@storybook/vue3-vite";
 
 import "../storybook-styles/swiper.scss";
 import "../storybook-styles/utilities.scss";
+import "../client-app/assets/styles/_ui-kit-tokens.scss";
 import "../client-app/assets/styles/_dark.scss";
 
 const DEFAULT_LOCALE = "en";
 const DEFAULT_CURRENCY = "USD";
+
+const docsTheme = create({
+  base: "light",
+  fontBase: "Lato, sans-serif",
+});
 
 const i18n: I18n = createI18n(DEFAULT_LOCALE, DEFAULT_CURRENCY);
 const router = createStorybookRouter();
@@ -113,9 +120,12 @@ if (ENABLE_DOM_MONITORING && typeof window !== "undefined") {
 }
 
 function presetToCssVars(preset: IThemeConfigPreset): string {
-  return Object.entries(preset)
-    .map(([key, value]) => `--${key.replace(/_/g, "-")}: ${value};`)
-    .join("");
+  return (
+    Object.entries(preset)
+      // eslint-disable-next-line sonarjs/null-dereference -- key from Object.entries is always a string
+      .map(([key, value]) => `--${key.replace(/_/g, "-")}: ${value};`)
+      .join("")
+  );
 }
 
 function applyDarkMode(mode: "light" | "dark" | "system") {
@@ -216,6 +226,7 @@ const preview: Preview = {
         icon: "paintbrush",
         items: PRESETS.map((preset) => ({
           value: preset,
+          // eslint-disable-next-line sonarjs/null-dereference -- preset from Object.keys is always a string
           title: preset.charAt(0).toUpperCase() + preset.slice(1).replace(/-/g, " "),
         })),
         dynamicTitle: true,
@@ -243,6 +254,7 @@ const preview: Preview = {
     docs: {
       codePanel: true,
       page: DocsPage,
+      theme: docsTheme,
     },
   },
   decorators: [

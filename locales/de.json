@@ -186,6 +186,7 @@
       "email_not_unique": "Diese E-Mail ist bereits bei uns registriert",
       "max_length": "Dieses Feld darf nicht mehr als {max} Zeichen enthalten",
       "creating_order_error": "Fehler beim Erstellen einer Bestellung",
+      "loyalty_insufficient_balance": "Nicht genügend Treuepunkte, um die Bestellung aufzugeben. Erforderlich: {required}, verfügbar: {available}.",
       "payment_processing_error": "Fehler bei der Zahlungsabwicklung",
       "item_can_t_be_purchased": "Dieser Artikel kann nicht gekauft werden",
       "item_is_out_of_stock": "Dieser Artikel ist nicht auf Lager",
@@ -214,7 +215,8 @@
       "report_sent_successfully": "Vielen Dank! Ihr Bericht wurde erfolgreich gesendet. Wir werden uns darum kümmern.",
       "copied_to_clipboard": "In die Zwischenablage kopiert",
       "role_update_successful": "Die Kundenrolle wurde erfolgreich aktualisiert.",
-      "role_update_failed": "Es sind Fehler bei der Aktualisierung der Rolle aufgetreten: {0}",
+      "contact_lock_failed": "Fehler beim Sperren/Entsperren des Benutzers.",
+      "role_update_failed": "Es sind Fehler bei der Aktualisierung der Rolle aufgetreten.",
       "passwords_do_not_match": "Die Passwortfelder müssen übereinstimmende Werte haben.",
       "password_new_same_old": "Ihr aktuelles Passwort und das neue Passwort müssen unterschiedlich sein.",
       "blocked": "Sie wurden blockiert. Sie können keine Informationen abrufen oder Bestellungen aufgeben. Für weitere Details ",
@@ -497,6 +499,7 @@
           "email_verification_is_required": "E-Mail-Überprüfung erforderlich. Bitte verifizieren Sie Ihre E-Mail-Adresse",
           "user_is_temporary_locked_out": "Ihr Konto wurde vorübergehend gesperrt. Bitte versuchen Sie es später erneut",
           "user_is_locked_out": "@:common.messages.blocked",
+          "user_is_locked_in_organization": "Ihr Zugriff auf diese Organisation wurde gesperrt. Bitte wenden Sie sich an Ihren Organisationsadministrator",
           "user_cannot_login_in_store": "Zugriff verweigert. Sie können sich nicht im aktuellen Geschäft anmelden",
           "password_expired": "@:common.messages.password_expired",
           "user_not_found": "Benutzer nicht gefunden. Bitte stellen Sie sicher, dass Sie die richtigen Informationen eingegeben haben"
@@ -678,7 +681,13 @@
       "configuration_items": {
         "title": "Komponentenliste",
         "edit_configuration": "Konfiguration bearbeiten",
-        "selected_text": "Ausgewählter Text: {text}"
+        "selected_text": "Ausgewählter Text: {text}",
+        "columns": {
+          "number": "Nummer",
+          "section": "Abschnitt",
+          "value": "Wert",
+          "price": "Preis"
+        }
       },
       "coupons_section": {
         "title": "Rabatte & Gutscheine",

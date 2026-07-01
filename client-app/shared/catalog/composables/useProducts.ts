@@ -30,9 +30,15 @@ import type {
   ProductsFiltersType,
   ProductsSearchParamsType,
 } from "../types";
-import type { Product, RangeFacet, TermFacet, SearchProductFilterResult } from "@/core/api/graphql/types";
+import type {
+  Product,
+  RangeFacet,
+  TermFacet,
+  SearchProductFilterResult,
+  ProductSortingType,
+} from "@/core/api/graphql/types";
 import type { FacetItemType } from "@/core/types";
-import type { MaybeRefOrGetter, Ref } from "vue";
+import type { Ref } from "vue";
 import BranchesModal from "@/shared/fulfillmentCenters/components/branches-modal.vue";
 
 const DEFAULT_ITEMS_PER_PAGE = 16;
@@ -53,7 +59,9 @@ export function useProducts(
     /** @default true */
     initialFetchingState?: boolean;
     /** Overrides the default currency code passed to the products query (e.g. for the loyalty catalog). */
-    currencyCodeOverride?: MaybeRefOrGetter<string | undefined>;
+    // The `?` already allows the property to be omitted/undefined; the ref and getter branches still carry
+    // `undefined` (e.g. the loyalty currency computed), so the bare value branch stays `string` to avoid a redundant top-level `undefined`.
+    currencyCodeOverride?: string | Ref<string | undefined> | (() => string | undefined);
   } = {},
 ) {
   const { themeContext } = useThemeContext();
@@ -91,7 +99,8 @@ export function useProducts(
 
   const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
     defaultValue: PRODUCT_SORTING_LIST[0].id,
-    validator: (value) => PRODUCT_SORTING_LIST.some((item) => item.id === value),
+    // Sort codes are store-defined (dynamic) and resolved server-side, so accept any token-shaped value.
+    validator: (value) => /^[a-z0-9-_]*$/i.test(value),
   });
 
   const searchQueryParam = useRouteQueryParam<string>(QueryParamName.SearchPhrase, {
@@ -121,6 +130,9 @@ export function useProducts(
 
   const products = ref<Product[]>([]);
   const facets = ref<FacetItemType[]>([]);
+  // Per-instance "sort by" options from the search response (only fetched when withFacets). Owned by this
+  // useProducts instance — passed to the sort dropdown by the consumer rather than shared via module state.
+  const productSortings = ref<ProductSortingType[]>([]);
 
   const prevProductsFilters = ref<ProductsFiltersType>();
   const productsFilters = ref<ProductsFiltersType>({
@@ -130,7 +142,7 @@ export function useProducts(
     facets: [],
     filters: [],
   });
-  const normalizedFacetsToHide = computed(() => options.facetsToHide?.map((facet) => facet.toLowerCase()));
+  const normalizedFacetsToHide = computed(() => options.facetsToHide?.map((facet) => facet?.toLowerCase()));
   const productFiltersSorted = computed(() => {
     return { ...productsFilters.value, facets: getSortedFacets(productsFilters.value.facets) };
   });
@@ -149,7 +161,7 @@ export function useProducts(
     if (options.filtersDisplayOrder?.value?.order?.length) {
       const order = options.filtersDisplayOrder.value.order
         .split(",")
-        .map((item) => item.trim().toLowerCase())
+        .map((item) => item?.trim().toLowerCase())
         .filter(Boolean);
 
       if (!order.length) {
@@ -159,14 +171,14 @@ export function useProducts(
       const sortedFacets: FacetItemType[] = [];
 
       order.forEach((filter) => {
-        const facet = allFacets.find(({ label }) => label.toLowerCase() === filter);
+        const facet = allFacets.find(({ label }) => label?.toLowerCase() === filter);
         if (facet) {
           sortedFacets.push(facet);
         }
       });
 
       return options.filtersDisplayOrder?.value?.showRest
-        ? [...sortedFacets, ...allFacets.filter(({ label }) => !order.includes(label.toLowerCase()))]
+        ? [...sortedFacets, ...allFacets.filter(({ label }) => !order.includes(label?.toLowerCase() ?? ""))]
         : sortedFacets;
     }
 
@@ -390,6 +402,7 @@ export function useProducts(
         range_facets = [],
         totalCount = 0,
         filters = [],
+        sortings = [],
       } = await searchProducts(searchParams, {
         withFacets,
         withImages,
@@ -407,6 +420,8 @@ export function useProducts(
       addPageHistory(searchParams.page ?? 1);
 
       if (withFacets) {
+        productSortings.value = sortings;
+
         setFacets({
           termFacets: term_facets,
           rangeFacets: range_facets,
@@ -505,7 +520,7 @@ export function useProducts(
     currentPage.value = page;
 
     if (catalogPaginationMode === CATALOG_PAGINATION_MODES.loadMore && page > Math.max(...pageHistory.value)) {
-      pageQueryParam.value = page.toString();
+      pageQueryParam.value = String(page);
     }
   }
 
@@ -556,6 +571,7 @@ export function useProducts(
     pagesCount: readonly(pagesCount),
     products: computed(() => products.value),
     productsById,
+    sortings: computed(() => productSortings.value),
     productsFilters: productFiltersSorted,
     searchQueryParam,
     sortQueryParam,

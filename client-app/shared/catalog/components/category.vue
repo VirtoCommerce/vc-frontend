@@ -105,7 +105,7 @@
               </VcLabel>
 
               <VcSelect
-                v-model="sortQueryParam"
+                v-model="selectedSort"
                 text-field="name"
                 value-field="id"
                 :disabled="fetchingProducts"
@@ -142,7 +142,7 @@
           <CategoryHorizontalFilters
             v-if="isHorizontalFilters && !isMobile"
             :facets-loading="fetchingFacets"
-            :sort-query-param="sortQueryParam"
+            :sortings="sortings"
             :loading="fetchingProducts || fetchingFacets"
             :filters="filtersToShow"
             :hide-sorting="hideSorting"
@@ -228,7 +228,7 @@ import { useRoute, useRouter } from "vue-router";
 import { useAnalytics, useThemeContext } from "@/core/composables";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
-import { DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
+import { DEFAULT_PAGE_SIZE } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { QueryParamName } from "@/core/enums";
 import { globals } from "@/core/globals";
@@ -242,6 +242,7 @@ import {
 } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
 import { useCategorySeo } from "@/shared/catalog/composables/useCategorySeo";
+import { useProductSortings } from "@/shared/catalog/composables/useProductSortings";
 import { CATALOG_PAGINATION_MODES, CatalogControl } from "@/shared/catalog/constants/catalog";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar.ts";
 import { useSearchScore } from "@/shared/layout/composables/useSearchScore.ts";
@@ -311,7 +312,7 @@ const router = useRouter();
 const { isCategoryScope } = useSearchScore();
 
 const normalizedFacetsToHide = computed(() => {
-  return facetsToHide.value?.map((facet) => facet.toLowerCase());
+  return facetsToHide.value?.map((facet) => String(facet).toLowerCase()) ?? [];
 });
 
 const isResetPageButtonShown = computed(() => {
@@ -334,13 +335,13 @@ const filtersToShow = computed(() => {
   return {
     ...productsFilters.value,
     facets: productsFilters.value.facets.filter(
-      (facet) => !normalizedFacetsToHide.value?.includes(facet.paramName.toLowerCase()),
+      (facet) => !normalizedFacetsToHide.value.includes(facet.paramName.toLowerCase()),
     ),
   };
 });
 
 const categoryFacets = computed(() => {
-  return filtersToShow.value.facets.find((el) => el.paramName === CATEGORY_FACET_PARAM_NAME)?.values;
+  return filtersToShow.value.facets.find((el) => el.paramName === CATEGORY_FACET_PARAM_NAME)?.values ?? [];
 });
 
 const { themeContext } = useThemeContext();
@@ -361,6 +362,7 @@ const {
   productsFilters,
   searchQueryParam,
   sortQueryParam,
+  sortings,
   totalProductsCount,
   preserveUserQueryQueryParam,
 
@@ -409,7 +411,7 @@ const stickyMobileHeaderIsVisible = computed<boolean>(() => !stickyMobileHeaderA
 
 const isHorizontalFilters = computed(() => !isMobile.value && props.filtersOrientation === "horizontal");
 const hideViewModeSelector = computed(() => {
-  return props.viewMode && viewModes.includes(props.viewMode);
+  return !!props.viewMode && viewModes.includes(props.viewMode);
 });
 
 const categoryListProperties = computed(() => ({
@@ -470,14 +472,7 @@ const categoryProductsAnchor = shallowRef<HTMLElement | null>(null);
 
 const { t } = useI18n();
 
-function getTranslatedProductSortingList() {
-  return PRODUCT_SORTING_LIST.map((item) => ({
-    ...item,
-    name: t(item.name),
-  }));
-}
-
-const translatedProductSortingList = computed(() => getTranslatedProductSortingList());
+const { sortList: translatedProductSortingList, selectedSort } = useProductSortings(sortings, sortQueryParam);
 
 function cancelControl(control: CatalogControl) {
   switch (control) {
@@ -532,7 +527,7 @@ const searchParams = computed<ProductsSearchParamsType>(() => ({
 const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 
 function applyFilters(newFilters: ProductsFiltersType): void {
-  _applyFilters(newFilters);
+  void _applyFilters(newFilters);
 }
 
 async function changeProductsPage(pageNumber: number): Promise<void> {
@@ -698,7 +693,7 @@ watch(
 
 watch(searchQueryParam, (value) => {
   setQueryScope(value);
-  resetCurrentPage();
+  void resetCurrentPage();
 });
 
 watchDebounced(

@@ -186,6 +186,7 @@
       "email_not_unique": "Este correo electrónico ya está registrado con nosotros",
       "max_length": "Este campo no debe contener más de {max} caracteres",
       "creating_order_error": "Error al crear un pedido",
+      "loyalty_insufficient_balance": "No hay suficientes puntos de fidelidad para realizar el pedido. Requeridos: {required}, disponibles: {available}.",
       "payment_processing_error": "Error durante el procesamiento del pago",
       "item_can_t_be_purchased": "Este artículo no se puede comprar",
       "item_is_out_of_stock": "Este artículo está agotado",
@@ -214,7 +215,8 @@
       "report_sent_successfully": "¡Gracias! Tu informe ha sido enviado con éxito. Lo revisaremos.",
       "copied_to_clipboard": "Copiado al portapapeles",
       "role_update_successful": "El rol del cliente se ha actualizado con éxito.",
-      "role_update_failed": "Se produjeron errores durante la actualización del rol: {0}",
+      "contact_lock_failed": "Error al bloquear/desbloquear el usuario.",
+      "role_update_failed": "Se produjeron errores durante la actualización del rol.",
       "passwords_do_not_match": "Los campos de contraseña deben tener valores coincidentes.",
       "password_new_same_old": "Tu contraseña actual y la nueva deben ser diferentes.",
       "blocked": "Has sido bloqueado. No puedes acceder a ninguna información ni crear el pedido. Para más detalles, por favor ",
@@ -497,6 +499,7 @@
           "email_verification_is_required": "Se requiere verificación de correo electrónico. Por favor, verifica tu dirección de correo electrónico",
           "user_is_temporary_locked_out": "Tu cuenta ha sido bloqueada temporalmente. Por favor, inténtalo de nuevo después de un tiempo",
           "user_is_locked_out": "@:common.messages.blocked",
+          "user_is_locked_in_organization": "Su acceso a esta organización ha sido bloqueado. Póngase en contacto con el administrador de su organización",
           "user_cannot_login_in_store": "Acceso denegado. No puedes iniciar sesión en la tienda actual",
           "password_expired": "@:common.messages.password_expired",
           "user_not_found": "Usuario no encontrado. Por favor, asegúrate de haber introducido la información correcta"
@@ -678,7 +681,13 @@
       "configuration_items": {
         "title": "Lista de componentes",
         "edit_configuration": "Editar configuración",
-        "selected_text": "Texto seleccionado: {text}"
+        "selected_text": "Texto seleccionado: {text}",
+        "columns": {
+          "number": "Número",
+          "section": "Sección",
+          "value": "Valor",
+          "price": "Precio"
+        }
       },
       "coupons_section": {
         "title": "Descuento y cupones",
