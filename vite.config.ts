@@ -10,6 +10,10 @@ import type { ProxyOptions, UserConfig, PluginOption } from "vite";
 
 const graphql = graphqlImport.default ?? graphqlImport;
 
+// Libraries imported only via dynamic import()/defineAsyncComponent; kept out of the eager
+// `vendor` chunk so they stay in their own lazy chunks.
+const DEFERRED_LIBS = ["skyflow-js", "barcode-detector", "marked", "nouislider"];
+
 function getProxy(target: ProxyOptions["target"], options: Omit<ProxyOptions, "target"> = {}): ProxyOptions {
   const dontTrustSelfSignedCertificate = false;
 
@@ -81,9 +85,15 @@ export default defineConfig(({ command, mode }): UserConfig => {
       rollupOptions: {
         output: {
           manualChunks(id) {
-            if (id.includes("node_modules")) {
-              return "vendor";
+            if (!id?.includes("node_modules")) {
+              return;
             }
+            const isDeferredLib = DEFERRED_LIBS.some((lib) => id.includes(`/node_modules/${lib}/`));
+            if (isDeferredLib) {
+              return;
+            }
+            // Everything else goes to a single shared eager `vendor` chunk.
+            return "vendor";
           },
         },
       },
