@@ -73,7 +73,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, defineAsyncComponent } from "vue";
 import { useRouter } from "vue-router";
 import { OrderSummary, useCheckout } from "@/shared/checkout";
 import { PaymentActionType, PaymentProcessingRedirection } from "@/shared/payment";
@@ -81,7 +81,12 @@ import type { PaymentInType } from "@/core/api/graphql/types";
 import PaymentProcessingAuthorizeNet from "@/shared/payment/components/payment-processing-authorize-net.vue";
 import PaymentProcessingCyberSource from "@/shared/payment/components/payment-processing-cyber-source.vue";
 import PaymentProcessingDatatrans from "@/shared/payment/components/payment-processing-datatrans.vue";
-import PaymentProcessingSkyflow from "@/shared/payment/components/payment-processing-skyflow.vue";
+
+// Loaded only when the Skyflow method is the active payment type, so the skyflow-js SDK
+// (~80 KB gzip) stays out of the eager bundle shared across checkout/account routes.
+const PaymentProcessingSkyflow = defineAsyncComponent(
+  () => import("@/shared/payment/components/payment-processing-skyflow.vue"),
+);
 
 const router = useRouter();
 const { placedOrder, allOrderItemsAreDigital } = useCheckout();
