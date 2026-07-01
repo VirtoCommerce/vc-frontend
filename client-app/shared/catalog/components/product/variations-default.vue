@@ -47,7 +47,7 @@
 </template>
 
 <script setup lang="ts">
-import { sortBy } from "lodash";
+import { sortBy } from "lodash-es";
 import { toRef } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
 import { useBrowserTarget } from "@/core/composables";

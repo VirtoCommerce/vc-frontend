@@ -40,7 +40,7 @@
 </template>
 
 <script setup lang="ts">
-import { clone } from "lodash";
+import { clone } from "lodash-es";
 import { computed, onMounted, onUnmounted, ref, shallowRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { initializeCartPayment, initializePayment } from "@/core/api/graphql";

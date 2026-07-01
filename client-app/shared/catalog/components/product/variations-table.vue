@@ -84,7 +84,7 @@
 </template>
 
 <script setup lang="ts">
-import { flatten, sortBy, uniqBy } from "lodash";
+import { flatten, sortBy, uniqBy } from "lodash-es";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { PropertyType } from "@/core/api/graphql/types";

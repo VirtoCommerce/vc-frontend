@@ -75,7 +75,7 @@
 
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
-import { clone } from "lodash";
+import { clone } from "lodash-es";
 import { Mask } from "maska";
 import { useForm } from "vee-validate";
 import { computed, watch } from "vue";
