@@ -3,7 +3,7 @@
 
 // NOTE: When updating the service worker, make sure to update the version in the service worker module constants "client-app/modules/push-messages/constants/index.ts"
 
-const VERSION = "12.14.0";
+const VERSION = "12.15.0";
 importScripts(
   `//www.gstatic.com/firebasejs/${VERSION}/firebase-app-compat.js`,
   `//www.gstatic.com/firebasejs/${VERSION}/firebase-messaging-compat.js`,
@@ -78,7 +78,9 @@ globalThis.addEventListener("message", (event) => {
 globalThis.addEventListener("notificationclick", function (event) {
   event.notification.close();
   const url = event.notification?.data?.url || DEFAULT_RETURN_URL;
-  event.waitUntil(globalThis.clients.openWindow(`/push-message/${event.notification?.data?.messageId}/?returnUrl=${url}`));
+  event.waitUntil(
+    globalThis.clients.openWindow(`/push-message/${event.notification?.data?.messageId}/?returnUrl=${url}`),
+  );
 });
 
 globalThis.addEventListener("push", function (event) {
