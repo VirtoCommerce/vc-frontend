@@ -38,7 +38,11 @@ export function _useCartPickupLocations() {
   const committedKeyword = ref<string | undefined>(undefined);
   const committedFilter = ref<string | undefined>(undefined);
 
+  // Monotonic, never reset (guards below compare by equality).
+  // fetchGeneration: bumps on successful reset — arbitrates fetch-vs-loadMore.
+  // fetchToken: bumps on every reset entry — arbitrates fetch-vs-fetch (last-started wins).
   const fetchGeneration = ref(0);
+  const fetchToken = ref(0);
 
   const filterSelectsAreEmpty = computed(
     () =>
@@ -79,6 +83,7 @@ export function _useCartPickupLocations() {
   async function fetchPickupLocations(
     payload: Omit<QueryCartPickupLocationsArgs, "storeId" | "cultureName" | "facet">,
   ) {
+    const requestToken = ++fetchToken.value;
     pickupLocationsLoading.value = true;
 
     try {
@@ -87,8 +92,12 @@ export function _useCartPickupLocations() {
         ...payload,
       });
 
-      // Bump generation on success (not on entry): a failed fetch keeps old data, so a concurrent
-      // loadMore's append stays valid; a successful one supersedes any in-flight loadMore.
+      // Superseded by a newer reset: drop this response.
+      if (fetchToken.value !== requestToken) {
+        return;
+      }
+
+      // Bump on success, not on entry: a failed fetch must not invalidate a valid in-flight loadMore.
       fetchGeneration.value++;
 
       pickupLocations.value = data.items ?? [];
@@ -97,10 +106,10 @@ export function _useCartPickupLocations() {
       pickupLocationsEndCursor.value = data.pageInfo?.endCursor ?? undefined;
       pickupLocationsHasNextPage.value = data.pageInfo?.hasNextPage ?? false;
 
-      // This reset now owns the UI, so clear the append spinner instead of waiting for the stale loadMore.
+      // This reset supersedes any in-flight loadMore, so its spinner is done.
       pickupLocationsLoadingMore.value = false;
 
-      // Snapshot the filter/keyword that produced this cursor; loadMore reads this, never the live refs.
+      // loadMore reads this snapshot, never the live filter refs.
       committedKeyword.value = payload.keyword;
       committedFilter.value = payload.filter;
 
@@ -143,10 +152,15 @@ export function _useCartPickupLocations() {
         };
       }
     } catch (e) {
-      Logger.error(`${useCartPickupLocations.name}.${fetchPickupLocations.name}`, e);
-      throw e;
+      // Only the last-started fetch surfaces its error and owns the loading flag.
+      if (fetchToken.value === requestToken) {
+        Logger.error(`${useCartPickupLocations.name}.${fetchPickupLocations.name}`, e);
+        throw e;
+      }
     } finally {
-      pickupLocationsLoading.value = false;
+      if (fetchToken.value === requestToken) {
+        pickupLocationsLoading.value = false;
+      }
     }
   }
 
@@ -168,27 +182,23 @@ export function _useCartPickupLocations() {
         after: pickupLocationsEndCursor.value,
       });
 
-      // A reset fetch that started after this loadMore makes the response stale: a superseded loadMore
-      // must have zero observable effect (no append, cursor, spinner, or surfaced error).
+      // Superseded by a reset: a stale loadMore must have zero observable effect.
       if (fetchGeneration.value !== requestGeneration) {
         return;
       }
 
-      // keep-first dedup (BL-BOPIS-008): a prepended confirmed location at items[0] must win over a
-      // duplicate on a later page, so the FIRST occurrence is retained.
+      // keep-first dedup (BL-BOPIS-008): a duplicate on a later page must not overwrite items[0].
       pickupLocations.value = uniqBy([...pickupLocations.value, ...(data.items ?? [])], (item) => item.id);
 
       pickupLocationsEndCursor.value = data.pageInfo?.endCursor ?? undefined;
       pickupLocationsHasNextPage.value = data.pageInfo?.hasNextPage ?? false;
     } catch (e) {
-      // Surface only for the current generation; a superseded loadMore stays silent.
+      // Only the current generation surfaces its error and owns the spinner.
       if (fetchGeneration.value === requestGeneration) {
         Logger.error(`${useCartPickupLocations.name}.${loadMorePickupLocations.name}`, e);
         throw e;
       }
     } finally {
-      // Clear the spinner only for the current generation; a stale response must not flip it off
-      // under a reset (or newer loadMore) that now owns the flag.
       if (fetchGeneration.value === requestGeneration) {
         pickupLocationsLoadingMore.value = false;
       }

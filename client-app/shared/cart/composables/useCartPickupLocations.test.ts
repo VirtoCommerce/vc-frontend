@@ -369,6 +369,52 @@ describe("useCartPickupLocations", () => {
       expect(pickupLocationsLoadingMore.value).toBe(false);
     });
 
+    it("should apply the LAST-STARTED fetch and drop an earlier concurrent fetch that resolves later", async () => {
+      const { fetchPickupLocations, loadMorePickupLocations, pickupLocations, pickupLocationsLoading } =
+        useCartPickupLocations();
+
+      // F2 starts first; hold its resolution to control ordering.
+      let resolveF2!: (v: unknown) => void;
+      const f2Promise = new Promise((res) => {
+        resolveF2 = res;
+      });
+      getCartPickupLocationsMock.mockReturnValueOnce(f2Promise);
+      const f2Call = fetchPickupLocations({ cartId: "cart-1", first: 6, keyword: "kw-f2", filter: "filter-f2" });
+
+      // F3 starts after F2 and resolves first — the last-started fetch must win.
+      getCartPickupLocationsMock.mockResolvedValueOnce(
+        createConnection({
+          items: [createLocation({ id: "f3-a" })],
+          pageInfo: { endCursor: "cursor-f3", hasNextPage: true, hasPreviousPage: false, startCursor: undefined },
+        }),
+      );
+      await fetchPickupLocations({ cartId: "cart-1", first: 6, keyword: "kw-f3", filter: "filter-f3" });
+
+      // F3 is applied and owns loading; F2 (still pending) must not have flipped it off.
+      expect(pickupLocations.value.map((l) => l.id)).toEqual(["f3-a"]);
+      expect(pickupLocationsLoading.value).toBe(false);
+
+      // Late F2 must be dropped entirely.
+      resolveF2(
+        createConnection({
+          items: [createLocation({ id: "f2-a" }), createLocation({ id: "f2-b" })],
+          pageInfo: { endCursor: "cursor-f2", hasNextPage: false, hasPreviousPage: false, startCursor: undefined },
+        }),
+      );
+      await f2Call;
+
+      expect(pickupLocations.value.map((l) => l.id)).toEqual(["f3-a"]);
+
+      // loadMore continues the committed F3 query + cursor, proving F2 did not overwrite it.
+      getCartPickupLocationsMock.mockResolvedValueOnce(createConnection());
+      await loadMorePickupLocations({ cartId: "cart-1", first: 6 });
+
+      const loadMoreArg = getCartPickupLocationsMock.mock.calls.at(-1)?.[0] as Record<string, unknown>;
+      expect(loadMoreArg.keyword).toBe("kw-f3");
+      expect(loadMoreArg.filter).toBe("filter-f3");
+      expect(loadMoreArg.after).toBe("cursor-f3");
+    });
+
     it("should KEEP a loadMore response when a concurrent fetch REJECTS (no spurious generation bump)", async () => {
       const { fetchPickupLocations, loadMorePickupLocations, pickupLocations, pickupLocationsHasNextPage } =
         useCartPickupLocations();
