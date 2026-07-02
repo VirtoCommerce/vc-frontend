@@ -57,11 +57,11 @@
         :readonly="readonly"
         :disabled="disabled"
         type="password"
-        placeholder="111"
+        :placeholder="securityCodePlaceholder"
         name="securityCode"
         autocomplete="off"
-        minlength="3"
-        maxlength="4"
+        :minlength="securityCodeLength"
+        :maxlength="securityCodeLength"
         class="basis-1/4"
         hide-password-switcher
         required
@@ -115,10 +115,20 @@ const initialValues: BankCardType = {
 
 const cardMaskOptions = { mask: "#### #### #### #### ###" };
 const dateMaskOptions = { mask: "## / ##" };
-const securityCodeMaskOptions = { mask: "####" };
 
 const cardMask = new Mask(cardMaskOptions);
 const dateMask = new Mask(dateMaskOptions);
+
+// American Express cards (IIN prefix 34 / 37) use a 4-digit CVV ("CID"); all other brands use 3.
+// Deriving the required length from the card number lets the CVV rule, mask, length and placeholder
+// reflect the detected brand, so a malformed CVV is caught client-side (gating cart "Create order")
+// instead of later during Accept.js tokenization after an unpaid order is already created.
+const AMEX_CVV_LENGTH = 4;
+const DEFAULT_CVV_LENGTH = 3;
+
+function getCvvLength(cardNumber: string | undefined): number {
+  return /^3[47]/.test(cardNumber || "") ? AMEX_CVV_LENGTH : DEFAULT_CVV_LENGTH;
+}
 
 const labels = computed(() => {
   return {
@@ -158,7 +168,11 @@ const validationSchema = toTypedSchema(
             .label(labels.value.yearLabel)
         : schema;
     }),
-    securityCode: yup.string().required().min(3).max(4).label(labels.value.securityCode),
+    securityCode: yup
+      .string()
+      .required()
+      .when("number", ([cardNumber], schema) => schema.length(getCvvLength(cardNumber)))
+      .label(labels.value.securityCode),
   }),
 );
 
@@ -177,6 +191,10 @@ const [cardholderName] = defineField("cardholderName");
 const [month] = defineField("month");
 const [year] = defineField("year");
 const [securityCode] = defineField("securityCode");
+
+const securityCodeLength = computed(() => getCvvLength(number.value));
+const securityCodeMaskOptions = computed(() => ({ mask: "#".repeat(securityCodeLength.value) }));
+const securityCodePlaceholder = computed(() => "1".repeat(securityCodeLength.value));
 
 const expirationDate = computed<string | undefined, string>({
   get: () => dateMask.masked((month.value || "") + (year.value || "")),

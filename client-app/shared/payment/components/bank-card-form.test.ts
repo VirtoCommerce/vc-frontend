@@ -24,10 +24,13 @@ vi.mock("vue-i18n", () => {
 
 const CARD_NUMBER_LABEL = "shared.payment.bank_card_form.number_label";
 const EXPIRATION_FIELD_LABEL = "shared.payment.bank_card_form.expiration_date_label";
+const SECURITY_CODE_LABEL = "shared.payment.bank_card_form.security_code_label";
 const ERROR_MESSAGES = {
   MONTH: "shared.payment.bank_card_form.errors.month",
   MONTH_INCOMPLETE: "shared.payment.bank_card_form.month_label must be exactly 2 characters",
   YEAR_INCOMPLETE: "shared.payment.bank_card_form.year_label must be exactly 2 characters",
+  CVV_3: "shared.payment.bank_card_form.security_code_label must be exactly 3 characters",
+  CVV_4: "shared.payment.bank_card_form.security_code_label must be exactly 4 characters",
 } as const;
 
 async function findElementByText(text: string) {
@@ -41,6 +44,9 @@ function getExpirationInput() {
 }
 function getCardNumberInput() {
   return renderedComponent.getByLabelText<HTMLInputElement>(CARD_NUMBER_LABEL);
+}
+function getSecurityCodeInput() {
+  return renderedComponent.getByLabelText<HTMLInputElement>(SECURITY_CODE_LABEL);
 }
 
 async function waitForElementToBeRemoved(selector: string) {
@@ -203,6 +209,50 @@ describe("BankCardForm", () => {
         await fireEvent.update(input, "122");
         expect(await findElementByText(ERROR_MESSAGES.YEAR_INCOMPLETE)).toBeInTheDocument();
       });
+    });
+  });
+
+  // VCST-5344: the CVV length must be validated per detected card brand. Amex (prefix 34/37)
+  // requires a 4-digit CVV; all other brands require exactly 3. The previous brand-agnostic
+  // rule (min 3 / max 4) accepted both lengths for any brand, letting a malformed CVV enable
+  // Place order and create an unpaid ghost order before Accept.js rejected it downstream.
+  describe("Security Code Field (per-brand CVV)", () => {
+    const AMEX_NUMBER = "370000000000002";
+    const VISA_NUMBER = "4007000000027";
+
+    async function fillBrandAndCvv(cardNumber: string, cvv: string) {
+      await fireEvent.update(getCardNumberInput(), cardNumber);
+      await fireEvent.update(getSecurityCodeInput(), cvv);
+    }
+
+    it("should reject a 3-digit CVV on an Amex card (needs 4)", async () => {
+      await fillBrandAndCvv(AMEX_NUMBER, "123");
+      expect(await findElementByText(ERROR_MESSAGES.CVV_4)).toBeInTheDocument();
+    });
+
+    it("should clamp the CVV mask to 3 digits on a Visa card (cannot over-type a 4-digit CVV)", async () => {
+      const cvvInput = getSecurityCodeInput();
+      await fireEvent.update(getCardNumberInput(), VISA_NUMBER);
+      await fireEvent.update(cvvInput, "1234");
+      // The brand-conditional mask truncates the 4th digit so a Visa CVV can never exceed 3.
+      expect(cvvInput.value).toBe("123");
+    });
+
+    it("should reject a 2-digit CVV on a Visa card (needs exactly 3)", async () => {
+      await fillBrandAndCvv(VISA_NUMBER, "12");
+      expect(await findElementByText(ERROR_MESSAGES.CVV_3)).toBeInTheDocument();
+    });
+
+    it("should accept a 4-digit CVV on an Amex card", async () => {
+      await fillBrandAndCvv(AMEX_NUMBER, "1234");
+      expect(queryElementByText(ERROR_MESSAGES.CVV_3)).not.toBeInTheDocument();
+      expect(queryElementByText(ERROR_MESSAGES.CVV_4)).not.toBeInTheDocument();
+    });
+
+    it("should accept a 3-digit CVV on a Visa card", async () => {
+      await fillBrandAndCvv(VISA_NUMBER, "123");
+      expect(queryElementByText(ERROR_MESSAGES.CVV_3)).not.toBeInTheDocument();
+      expect(queryElementByText(ERROR_MESSAGES.CVV_4)).not.toBeInTheDocument();
     });
   });
 });
