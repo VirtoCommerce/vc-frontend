@@ -68,7 +68,7 @@
 </template>
 
 <script setup lang="ts">
-import { uniqueId } from "lodash";
+import { uniqueId } from "lodash-es";
 import { computed, ref, watchEffect } from "vue";
 
 export interface IEmits {

@@ -1,4 +1,4 @@
-import isEqual from "lodash/isEqual";
+import { isEqual } from "lodash-es";
 import { CONFIGURABLE_SECTION_TYPES } from "../constants/configurableProducts";
 import type { ConfigurationSectionInput } from "@/core/api/graphql/types";
 import type { DeepReadonly } from "vue";
