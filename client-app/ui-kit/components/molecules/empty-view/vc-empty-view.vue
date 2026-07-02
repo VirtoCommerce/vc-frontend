@@ -3,6 +3,8 @@
     <slot name="icon">
       <div v-if="variant === 'search'" class="vc-empty-view__search-icon" v-html="nothingFoundImgRaw" />
 
+      <div v-else-if="variant === 'error'" class="vc-empty-view__error-illustration" v-html="loadErrorImgRaw" />
+
       <VcIcon v-else-if="variant === 'empty' && icon" class="vc-empty-view__icon" :name="icon" />
     </slot>
 
@@ -19,6 +21,7 @@
 </template>
 
 <script setup lang="ts">
+import loadErrorImgRaw from "@/ui-kit/images/load-error.svg?raw";
 import nothingFoundImgRaw from "@/ui-kit/images/nothing-found.svg?raw";
 
 interface IProp {
@@ -41,6 +44,10 @@ withDefaults(defineProps<IProp>(), {
   }
 
   &__search-icon {
+    @apply size-[9.75rem];
+  }
+
+  &__error-illustration {
     @apply size-[9.75rem];
   }
 

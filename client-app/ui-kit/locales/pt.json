@@ -123,6 +123,14 @@
       "page_limit_filters": "Não há mais resultados. Tente mudar os filtros.",
       "page_limit": "Não é possível mostrar mais resultados."
     },
+    "table": {
+      "empty": "Nenhum registro encontrado",
+      "error": "Falha ao carregar os dados",
+      "retry": "Tentar novamente",
+      "select_row": "Selecionar linha",
+      "select_all": "Selecionar tudo",
+      "deselect_all": "Desmarcar tudo"
+    },
     "slider": {
       "tooltip": "{count} itens",
       "aria_label": "Slider de intervalo de {min} a {max}",

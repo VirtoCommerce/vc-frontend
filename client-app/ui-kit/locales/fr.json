@@ -123,6 +123,14 @@
       "page_limit_filters": "Pas d'autres résultats. Veuillez essayer de changer les filtres.",
       "page_limit": "Aucun autre résultat ne peut être affiché."
     },
+    "table": {
+      "empty": "Aucun enregistrement trouvé",
+      "error": "Échec du chargement des données",
+      "retry": "Réessayer",
+      "select_row": "Sélectionner la ligne",
+      "select_all": "Tout sélectionner",
+      "deselect_all": "Tout désélectionner"
+    },
     "slider": {
       "tooltip": "{count} articles",
       "aria_label": "Curseur de plage de {min} à {max}",

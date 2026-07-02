@@ -123,6 +123,14 @@
       "page_limit_filters": "Keine weiteren Ergebnisse. Bitte versuchen Sie, die Filter zu ändern.",
       "page_limit": "Es konnten keine weiteren Ergebnisse angezeigt werden."
     },
+    "table": {
+      "empty": "Keine Einträge gefunden",
+      "error": "Daten konnten nicht geladen werden",
+      "retry": "Erneut versuchen",
+      "select_row": "Zeile auswählen",
+      "select_all": "Alle auswählen",
+      "deselect_all": "Alle abwählen"
+    },
     "slider": {
       "tooltip": "{count} Artikel",
       "aria_label": "Schieberegler von {min} bis {max}",

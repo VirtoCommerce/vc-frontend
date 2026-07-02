@@ -29,6 +29,7 @@ html.dark {
   @include meta.load-css("dark/molecules/vc-menu-item");
   @include meta.load-css("dark/molecules/vc-nav-button");
   @include meta.load-css("dark/molecules/vc-product-actions-button");
+  @include meta.load-css("dark/organisms/vc-table");
   @include meta.load-css("dark/shared/catalog/product-pickup-locations");
   @include meta.load-css("dark/shared/payment/payment-processing-cyber-source");
   @include meta.load-css("dark/shared/payment/payment-processing-datatrans");

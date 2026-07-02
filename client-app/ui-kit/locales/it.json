@@ -123,6 +123,14 @@
       "page_limit_filters": "Nessun altro risultato. Prova a cambiare i filtri.",
       "page_limit": "Non è possibile mostrare altri risultati."
     },
+    "table": {
+      "empty": "Nessun record trovato",
+      "error": "Impossibile caricare i dati",
+      "retry": "Riprova",
+      "select_row": "Seleziona riga",
+      "select_all": "Seleziona tutto",
+      "deselect_all": "Deseleziona tutto"
+    },
     "slider": {
       "tooltip": "{count} articoli",
       "aria_label": "Slider da {min} a {max}",
