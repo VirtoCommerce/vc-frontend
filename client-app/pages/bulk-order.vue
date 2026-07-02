@@ -38,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import { groupBy, sumBy } from "lodash";
+import { groupBy, sumBy } from "lodash-es";
 import { computed, ref, shallowRef, toValue } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";

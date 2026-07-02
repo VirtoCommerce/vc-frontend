@@ -56,7 +56,7 @@
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
 import { toRefs } from "@vueuse/core";
-import { debounce } from "lodash";
+import { debounce } from "lodash-es";
 import { useField } from "vee-validate";
 import { computed, onMounted, ref, toRef, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";

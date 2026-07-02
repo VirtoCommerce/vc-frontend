@@ -1,4 +1,4 @@
-import { sumBy } from "lodash";
+import { sumBy } from "lodash-es";
 import { useCurrency } from "@/core/composables/useCurrency";
 import { globals } from "@/core/globals";
 import { Logger, toCSV } from "@/core/utilities";
