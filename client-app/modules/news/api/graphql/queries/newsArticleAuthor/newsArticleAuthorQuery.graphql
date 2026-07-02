@@ -1,6 +1,0 @@
-query NewsArticleAuthor($authorId: String!) {
-  newsArticleAuthor(authorId: $authorId) {
-    id
-    name
-  }
-}

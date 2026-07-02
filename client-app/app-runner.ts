@@ -46,24 +46,20 @@ import App from "./App.vue";
 import type { PageContextResponseType } from "./core/api/graphql/types";
 import type { PageBuilderPluginOptionsType } from "./plugins/builder-preview/models/PageBuilderPluginOptionsType";
 
-// News is delivered either as a federated Module Federation plugin (APP_MF_HOST) or
-// the in-app module (default). BOTH branches are dynamic imports so the compile-time
-// APP_MF_HOST constant lets the bundler drop the dead branch entirely: in MF builds
-// `@/modules/news` is NOT bundled (truly replaced), and default builds pull in neither
-// the MF runtime nor the federated loader (VCST-5159).
+// News is delivered exclusively as a Module Federation plugin (VCST-5159): the in-app
+// `@/modules/news` module has been removed. Gated by the compile-time APP_MF_HOST
+// constant so default builds pull in neither the MF runtime nor the federated loader —
+// in those builds news is simply not present (MF-only by design).
 //
 // Returns a promise the caller MUST await before installing the router, so the news
-// routes (added asynchronously via a dynamic import in either branch) are registered
-// before the initial navigation resolves — otherwise a hard load / deep link to a
-// news URL falls through to the 404 route (#4).
-async function initNewsModule(router: ReturnType<typeof createRouter>, i18n: ReturnType<typeof createI18n>): Promise<void> {
+// routes (added asynchronously by the plugin's init()) are registered before the
+// initial navigation resolves — otherwise a hard load / deep link to a news URL falls
+// through to the 404 route (#4).
+async function initNewsModule(): Promise<void> {
   if (import.meta.env.APP_MF_HOST) {
     // Federated plugins bind to the host's live router/i18n via @vc-frontend/core.
     const { initFederatedModules } = await import("@/modules/federated");
     await initFederatedModules();
-  } else {
-    const { init } = await import("@/modules/news");
-    init(router, i18n);
   }
 }
 
@@ -234,7 +230,7 @@ export default async () => {
   void initializeHotjar();
   // Kicked off here but awaited before `app.use(router)` so its routes are registered
   // before the router's initial navigation (see initNewsModule / #4).
-  const newsModuleReady = initNewsModule(router, i18n);
+  const newsModuleReady = initNewsModule();
   void initLoyalty(router, i18n);
 
   // Plugins

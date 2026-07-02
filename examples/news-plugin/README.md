@@ -63,6 +63,11 @@ Apollo client + host ui-kit — see the deep-link caveat below.
 - ✅ The plugin type-checks against a **self-contained compiled contract** (`@vc-frontend/core`'s
   `dist/index.d.ts`) — hermetically, touching **zero host source** (#3, see below).
 - ✅ `requiredVersion:"*"` decouples runtime from the facade version → a host bump never forces a plugin re-release.
+- ✅ **The in-app `client-app/modules/news` module is deleted** — news is delivered *only* by this
+  plugin. Both seams are federated: the list/routes via `init()`, and the SEO article page via a
+  second expose `./news-article-page` that the host's slug matcher `loadRemote()`s. Verified: host
+  build + typecheck pass with the module gone, and `loadRemote('news/news-article-page')` resolves
+  to the `news-article` component at runtime.
 
 ## Styling: plugins need the shared Tailwind preset
 
@@ -119,17 +124,10 @@ With this, the federated `/news` renders **pixel-identical to production**
   compiled JS/`.d.ts` so its source graph isn't crawled.
 - **https both sides.** The host runs on https (mkcert); the remote must too, or the browser
   blocks the cross-origin remote as mixed content. Both use the shared `.certificates` CA.
-- **Second integration seam: the slug matcher.** A module isn't wired to the host only via
-  `app-runner` `init()`. `client-app/pages/matcher/slug-content.vue` statically imports
-  `@/modules/news/pages/news-article.vue` to render news articles on SEO slug URLs. So in MF
-  mode the news `init`/routes/**list** page are correctly dropped from the host bundle, but the
-  **article detail page is still bundled** via the slug matcher. Fully replacing news as a
-  plugin means routing that seam through federation too (expose the article page as a remote
-  component and `loadRemote` it in the matcher) — a follow-up beyond this spike.
 - **Remote discovery.** For the MVP the remote URL is env/convention (`APP_MF_REMOTES` or a
   localhost default); production should add an `entryUrl` to the `InitializeApplication`
   module manifest and feed the loader from there.
-- **In-app `news` still present.** The host falls back to the static module when
-  `APP_MF_HOST` is off, so both paths coexist during the spike. Fully "replacing" news means
-  deleting `client-app/modules/news` and making the federated path the default — deferred
-  until the approach is signed off.
+- **News is now MF-only.** With `client-app/modules/news` deleted and the fallback branch
+  removed, a build with `APP_MF_HOST` off has **no news at all** (the slug matcher throws for
+  news-article URLs, degrading to no render). That's the intended trade-off of full removal; a
+  production rollout would either always enable MF or provide a graceful "news unavailable" state.

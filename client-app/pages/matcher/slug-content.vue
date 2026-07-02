@@ -36,6 +36,7 @@
 
 <script setup lang="ts">
 import { defineAsyncComponent, onBeforeUnmount, watch, watchEffect, computed } from "vue";
+import type { Component } from "vue";
 import { useNavigations } from "@/core/composables";
 import { useSlugInfo } from "@/shared/common";
 import { useStaticPage } from "@/shared/static-content";
@@ -62,7 +63,21 @@ const VPMarkdown = defineAsyncComponent(() => import("@/pages/matcher/virto-page
 const StaticPage = defineAsyncComponent(() => import("@/pages/static-page.vue"));
 const BrandsPage = defineAsyncComponent(() => import("@/pages/brands.vue"));
 const BrandPage = defineAsyncComponent(() => import("@/pages/brand.vue"));
-const NewsArticlePage = defineAsyncComponent(() => import("@/modules/news/pages/news-article.vue"));
+// News is delivered as a Module Federation plugin (VCST-5159), so the article page
+// for SEO slug URLs is loaded from the remote instead of a bundled in-app module.
+// Gated by APP_MF_HOST: in non-MF builds the branch is dead-code-eliminated, so the
+// MF runtime isn't pulled in — and news simply isn't available (MF-only by design).
+const NewsArticlePage = defineAsyncComponent(async () => {
+  if (!import.meta.env.APP_MF_HOST) {
+    throw new Error("News is served via Module Federation; build the host with APP_MF_HOST.");
+  }
+  const { loadRemote } = await import("@module-federation/enhanced/runtime");
+  const remote = await loadRemote<{ default: Component }>("news/news-article-page");
+  if (!remote?.default) {
+    throw new Error("news/news-article-page remote is unavailable");
+  }
+  return remote.default;
+});
 
 const { setMatchingRouteName } = useNavigations();
 

@@ -51,7 +51,12 @@ export default defineConfig({
       // Off: avoids emitting .d.ts across the shared facade's host source graph.
       dts: false,
       exposes: {
+        // The host↔plugin entry contract: init() wires routes/locales.
         "./plugin": path.resolve(__dirname, "src/index.ts"),
+        // The news article page as a remote component. The host's SEO slug matcher
+        // (pages/matcher/slug-content.vue) loadRemote()s this for news-article URLs,
+        // so the host no longer statically imports it from an in-app module.
+        "./news-article-page": path.resolve(__dirname, "src/pages/news-article.vue"),
       },
       shared: MF_SHARED,
     }) as PluginOption,
