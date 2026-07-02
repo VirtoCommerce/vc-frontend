@@ -1227,6 +1227,7 @@
         "order_number_label": "订单编号",
         "purchase_number_label": "采购订单",
         "buyer_name_label": "买方姓名",
+        "payment_type_label": "支付方式",
         "status_label": "@:common.labels.status",
         "invoice_label": "发票",
         "date_label": "@:common.labels.date",

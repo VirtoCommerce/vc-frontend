@@ -15,61 +15,7 @@
     @row-click="emit('rowClick', $event)"
   >
     <template #mobile-item="{ item }">
-      <button
-        class="orders-table__mobile-row"
-        type="button"
-        tabindex="0"
-        @click="emit('rowClick', item)"
-        @keyup.enter="emit('rowClick', item)"
-      >
-        <div class="orders-table__mobile-field">
-          <span class="orders-table__mobile-label">
-            {{ $t("pages.account.orders.order_number_label") }}
-          </span>
-
-          <span class="orders-table__mobile-value orders-table__mobile-value--emphasis">
-            {{ item.number }}
-          </span>
-        </div>
-
-        <div class="orders-table__mobile-status">
-          <OrderStatus :status="item.status" :display-value="item.statusDisplayValue" />
-        </div>
-
-        <div v-if="orderScope === 'organization' && item?.customerName" class="orders-table__mobile-field">
-          <span class="orders-table__mobile-label">
-            {{ $t("pages.account.orders.buyer_name_label") }}
-          </span>
-
-          <span class="orders-table__mobile-value">
-            {{ item?.customerName }}
-          </span>
-        </div>
-
-        <div class="orders-table__mobile-field">
-          <span class="orders-table__mobile-label">
-            {{ $t("pages.account.orders.date_label") }}
-          </span>
-
-          <span class="orders-table__mobile-value">
-            {{ $d(item?.createdDate) }}
-          </span>
-        </div>
-
-        <div class="orders-table__mobile-field">
-          <span class="orders-table__mobile-label">
-            {{ $t("pages.account.orders.total_label") }}
-          </span>
-
-          <span
-            v-for="total in getDisplayTotals(item)"
-            :key="total.currency.code"
-            class="orders-table__mobile-value orders-table__mobile-value--emphasis"
-          >
-            {{ total.formattedAmount }}
-          </span>
-        </div>
-      </button>
+      <OrderCard :item="item" :order-scope="orderScope" />
     </template>
 
     <!-- Desktop columns -->
@@ -125,7 +71,7 @@
       :title="$t('pages.account.orders.total_label')"
       sortable
       align="right"
-      class="w-40"
+      class="w-32"
     >
       <div class="flex flex-col">
         <span v-for="total in getDisplayTotals(item)" :key="total.currency.code">
@@ -141,10 +87,12 @@
 </template>
 
 <script setup lang="ts">
+import { getDisplayTotals } from "@/core/utilities";
 import { VcTableColumn } from "@/ui-kit/components/organisms";
+import OrderCard from "../order-card.vue";
 import OrderStatus from "../order-status.vue";
 import type { OrderScopeType } from "../../types";
-import type { CustomerOrderType, MoneyType, OrderTotalType } from "@/core/api/graphql/types";
+import type { CustomerOrderType } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
 
 interface IProps {
@@ -166,48 +114,4 @@ interface IEmits {
 
 const emit = defineEmits<IEmits>();
 defineProps<IProps>();
-
-// Totals to show in the Total column: the primary-currency total first, then the rest.
-// Falls back to the order's single total when per-currency totals are unavailable.
-function getDisplayTotals(order: CustomerOrderType): MoneyType[] {
-  const totals = order.orderTotals?.filter((total): total is OrderTotalType => !!total) ?? [];
-
-  if (!totals.length) {
-    return order.total ? [order.total] : [];
-  }
-
-  totals.sort((a, b) => Number(b.isDefaultTotalCurrency) - Number(a.isDefaultTotalCurrency));
-
-  return totals.map((total) => total.total);
-}
 </script>
-
-<style lang="scss">
-.orders-table {
-  @apply bg-additional-50;
-
-  &__mobile-row {
-    @apply grid w-full cursor-pointer grid-cols-2 items-center gap-x-4 gap-y-4 border-b border-neutral-200 p-6 text-left;
-  }
-
-  &__mobile-field {
-    @apply flex flex-col;
-  }
-
-  &__mobile-status {
-    @apply flex flex-col items-end justify-center;
-  }
-
-  &__mobile-label {
-    @apply text-sm text-neutral-400;
-  }
-
-  &__mobile-value {
-    @apply overflow-hidden text-ellipsis;
-
-    &--emphasis {
-      @apply font-black;
-    }
-  }
-}
-</style>
