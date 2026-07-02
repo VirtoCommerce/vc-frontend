@@ -4,7 +4,7 @@
     :map-id="MAP_ID"
     :options="{ disableDefaultUI: true }"
     class="select-address-map-view"
-    :key="addressesKey"
+    :key="mapEpoch"
   >
     <GoogleMapMarkerClusterer :map-id="MAP_ID">
       <template v-for="address in addresses" :key="address.id">
@@ -24,9 +24,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { ref, watch } from "vue";
 import { geoLocationStringToLatLng } from "@/core/utilities/geo";
 import { Logger } from "@/core/utilities/logger";
+import { isPrefixExtension } from "@/shared/checkout/composables";
 import cubeIcon from "@/ui-kit/icons/cube.svg?raw";
 import { getColorValue } from "@/ui-kit/utilities/css";
 import type { PickupLocationType } from "@/shared/checkout/composables";
@@ -49,7 +50,27 @@ const props = defineProps<IProps>();
 
 const MAP_ID = "select-bopis-map-modal";
 
-const addressesKey = computed(() => props.addresses.map((a) => a.id).join("-"));
+const toIds = (list: PickupLocationType[]) => list.map((a) => a.id);
+
+// Stable key: pure append keeps map mounted (no re-center); a replaced set remounts.
+const previousIds = ref<string[]>([]);
+const mapEpoch = ref(0);
+
+watch(
+  () => props.addresses,
+  (addresses) => {
+    const newIds = toIds(addresses);
+    const oldIds = previousIds.value;
+    const isAppend = isPrefixExtension(oldIds, newIds);
+
+    if (!isAppend) {
+      mapEpoch.value++;
+    }
+
+    previousIds.value = newIds;
+  },
+  { immediate: true },
+);
 
 // Pin styling
 const pinColor = getColorValue("primary");

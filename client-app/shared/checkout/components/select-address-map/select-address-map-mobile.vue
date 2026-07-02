@@ -14,9 +14,13 @@
           :selected-address-id="selectedAddressId"
           :selectable="selectable"
           :filtered="filterIsApplied"
+          :has-next-page="hasNextPage"
+          :loading-more="loadingMore"
+          :total-count="totalCount"
           class="select-address-map-mobile__list"
           @select="onSelect"
           @reset-filter="resetFilter"
+          @load-more="$emit('loadMore')"
         />
 
         <SelectAddressMapView
@@ -71,7 +75,7 @@
 <script setup lang="ts">
 import { nextTick, ref, toRef, useTemplateRef, watch } from "vue";
 import { SelectAddressFilter } from "@/shared/checkout";
-import { useSelectAddressMap } from "@/shared/checkout/composables";
+import { focusAddressRadio, useSelectAddressMap } from "@/shared/checkout/composables";
 import { useModal } from "@/shared/modal";
 import { focusFirstElement } from "@/ui-kit/utilities/focus";
 import PickupLocationCard from "../pickup-location-card.vue";
@@ -86,11 +90,15 @@ interface IProps {
   apiKey: string;
   currentAddress?: { id: string };
   selectable?: boolean;
+  hasNextPage?: boolean;
+  loadingMore?: boolean;
+  totalCount?: number;
 }
 
 interface IEmits {
   (event: "result", value: string): void;
   (event: "filterChange"): void;
+  (event: "loadMore"): void;
 }
 
 const emit = defineEmits<IEmits>();
@@ -146,10 +154,9 @@ function onInfoCardClose() {
   closingLocationId.value = selectedLocation.value?.id;
   isInfoCardVisible.value = false;
   void nextTick(() => {
-    const radio = document.querySelector<HTMLElement>(
-      `[data-address-id="${CSS.escape(selectedAddressId.value ?? "")}"] input[type="radio"]`,
-    );
-    radio?.focus();
+    if (selectedAddressId.value) {
+      focusAddressRadio(selectedAddressId.value);
+    }
   });
 }
 

@@ -871,7 +871,9 @@
         "view_list": "列表",
         "view_map": "地图",
         "pick_point_info_title": "自提点信息",
-        "pick_up_here": "在此取货"
+        "pick_up_here": "在此取货",
+        "load_more": "加载更多",
+        "showing_count": "显示 {total} 个中的 {loaded} 个"
       }
     },
     "bulk_order": {

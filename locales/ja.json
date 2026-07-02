@@ -871,7 +871,9 @@
         "view_list": "リスト",
         "view_map": "地図",
         "pick_point_info_title": "受取スポット情報",
-        "pick_up_here": "ここで受け取る"
+        "pick_up_here": "ここで受け取る",
+        "load_more": "さらに読み込む",
+        "showing_count": "{total}件中{loaded}件を表示"
       }
     },
     "bulk_order": {

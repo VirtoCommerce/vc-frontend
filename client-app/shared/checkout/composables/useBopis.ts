@@ -22,8 +22,11 @@ export function useBopis() {
   const {
     pickupLocations,
     fetchPickupLocations,
+    loadMorePickupLocations,
     pickupLocationsLoading,
+    pickupLocationsLoadingMore,
     pickupLocationsTotalCount,
+    pickupLocationsHasNextPage,
     filterKeyword,
     buildFilter,
     clearFilter,
@@ -42,7 +45,7 @@ export function useBopis() {
 
   const modalOpening = ref(false);
 
-  const addresses = computed<ProductPickupLocation[]>(() => (pickupLocations.value as ProductPickupLocation[]) ?? []);
+  const addresses = computed<ProductPickupLocation[]>(() => pickupLocations.value ?? []);
   const pageSize = computed(() => (isBopisMapEnabled.value ? ADDRESSES_FETCH_MAP_LIMIT : ADDRESSES_FETCH_LIST_LIMIT));
 
   const normalizedAddresses = computed<AnyAddressType[]>(() =>
@@ -108,6 +111,8 @@ export function useBopis() {
         paginationMode: "server",
         loading: pickupLocationsLoading,
         totalCount: pickupLocationsTotalCount,
+        hasNextPage: pickupLocationsHasNextPage,
+        loadingMore: pickupLocationsLoadingMore,
 
         onFilterChange: async () => {
           await fetchPickupLocations({
@@ -120,6 +125,14 @@ export function useBopis() {
 
         onResetFilter: clearFilter,
 
+        // Two mutually-exclusive pagination handlers selected by the `Shipping.Bopis.GoogleMaps.Enabled`
+        // setting via `modalComponent` above; only one is ever wired to a live UI per modal session:
+        //   - map OFF (default): select-address-modal.vue renders VcPagination → onPageChange.
+        //     Offset-style cursor — `after` is the item offset `(page - 1) * pageSize` resolved server-side.
+        //   - map ON: select-address-map-modal.vue renders a "Load more" button → onLoadMore.
+        //     Opaque cursor — `after` is the server `endCursor` (set inside loadMorePickupLocations).
+        // Both write to the same useCartPickupLocations state, so the two `after` semantics must never
+        // be mixed within one session; the modal switch guarantees that.
         onPageChange: async (newPage: number) => {
           await fetchPickupLocations({
             cartId,
@@ -127,6 +140,15 @@ export function useBopis() {
             after: ((newPage - 1) * pageSize.value).toString(),
             keyword: filterKeyword.value,
             filter: buildFilter(),
+          });
+        },
+
+        // map ON only — opaque-cursor "Load more"; `after`, keyword and filter are supplied internally
+        // from the committed snapshot (the values that produced the stored endCursor), not live refs.
+        onLoadMore: async () => {
+          await loadMorePickupLocations({
+            cartId,
+            first: pageSize.value,
           });
         },
 
