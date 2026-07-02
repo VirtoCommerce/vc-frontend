@@ -1,5 +1,6 @@
 {
   "name": "Call to Action",
+  "description": "Standalone call-to-action: a centered title with one or more action buttons, on a tinted background. Use when: simple promotional CTA with button(s) and no imagery — sign-up prompt, 'Learn more', 'Get started'. Skip when: the CTA needs a visual hero (use `call-to-action-with-image`), it's just a heading (use `title`), or it's longer body text (use `text`). `title` is the centered headline. `buttons` is a list of `{ label, url }` pairs (from `shared/buttons`) — provide one primary button by default; add a second for a secondary action only if the user implies it.",
   "icon": "article",
   "displayField": "name",
   "includeShared": ["buttons"],

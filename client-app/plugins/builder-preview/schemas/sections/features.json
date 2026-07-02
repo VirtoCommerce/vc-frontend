@@ -1,5 +1,6 @@
 {
   "name": "Features",
+  "description": "Marketing feature grid — title + subtitle + a row of 2–5 columns each with image (icon), bold uppercase title and short text. Used for 'why choose us', value propositions, benefits overview. Use when: highlighting 3–5 distinct selling points / benefits / services in parallel. Skip when: a single highlight (use `call-to-action-with-image`), product showcase (use `products` family), or longer body text (use `text`). `title` is the section heading; `subtitle` is a one-line elaboration. `columns` is a list — generate 3–4 by default (the layout adapts to the count). Each column: `title` (short, rendered uppercase), `text` (1–2 sentence description), `image` URL (icon-sized — leave empty if not supplied; the user adds in the editor).",
   "icon": "image",
   "displayField": "name",
   "settings": [

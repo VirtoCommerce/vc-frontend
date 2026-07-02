@@ -1,5 +1,6 @@
 {
   "name": "Pages",
+  "description": "Default content page — flexible composition for marketing, landing, FAQ, About-us, and other static informational pages. This is the default template when the user does not explicitly indicate a more specialized page type. Use when: the user asks for a generic page, landing page, info page, or anything that isn't clearly a blog post or product page. Skip when: the user names a specialized type — use `blogs` for blog posts / articles / news, `product` for product detail pages. Page settings: `header` is the visible H1 (typically same or close to the page name); `hideBreadcrumbs` defaults to false, set true only for top-level standalones like a homepage; `seoInfo` carries SEO meta (`pageTitle`, `metaKeywords`, `metaDescription`) — leave it empty unless the user supplied SEO copy in the prompt.",
   "previewRule": "{{item.settings.permalink}}",
   "request": [
     {

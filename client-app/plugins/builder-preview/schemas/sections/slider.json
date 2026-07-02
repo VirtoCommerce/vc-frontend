@@ -1,5 +1,6 @@
 {
   "name": "Slider",
+  "description": "Image carousel / slider with optional per-slide title, text and link, plus section-level title and subtitle. Use when: hero rotating banner, promotional slider, before/after carousel, or gallery with linked images. Skip when: single image (use `image`), product carousel (use `products-carousel`), or a single marketing CTA with image (use `call-to-action-with-image`). `title` and `subtitle` are optional headers above the slider. `slides` is a list — each `image` URL (required), optional `title` (rendered uppercase under the image), `text` (1–2 sentence caption), `url` (link wrapping the slide). `height` controls slide height: `auto` (default) keeps the natural image aspect; `small` / `medium` / `large` use fixed responsive pixel heights.",
   "icon": "image",
   "displayField": "title",
   "blocks": [],

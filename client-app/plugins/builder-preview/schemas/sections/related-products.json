@@ -1,5 +1,6 @@
 {
   "name": "Related products",
+  "description": "Auto-populated 'Related products' widget on a product page — pulls from the current product's relations defined in the catalog; no settings needed. Restricted to the `product` template. Use when: composing a product detail page and wanting the standard 'Related products' section after `product-info`. Skip when: not on the `product` template, or wanting a manually curated list (use `products-carousel` with `skus` instead). `settings` is empty.",
   "icon": "smartphone",
   "targetTemplates": ["product"],
   "displayField": "name",
