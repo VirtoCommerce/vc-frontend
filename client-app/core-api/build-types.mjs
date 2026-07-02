@@ -1,26 +1,9 @@
 /**
- * Publish-from-source type build for `@vc-frontend/core` (VCST-5159, #3).
- *
- * Produces a SINGLE self-contained `dist/index.d.ts` that a federated plugin can
- * type-check against without ever reaching into host source. This is the type
- * half of the "publish-from-source" contract: the running implementation is still
- * injected by the host at runtime via the MF shared singleton (see vite.config.ts
- * › MF_SHARED and client-app/modules/federated), so there is no runtime artifact —
- * only the declaration file that pins the plugin's compile-time contract.
- *
- * Why a two-step build:
- *   1. vue-tsc emits the facade's reachable type graph (~700 .d.ts, including the
- *      Vue SFC component types) into `.types-build/`. Raw, these still reference
- *      `@/…` host paths — useless to an external consumer.
- *   2. rollup-plugin-dts inlines that graph into one file, resolving `@/…` against
- *      the emitted tree and dropping every host-internal reference. What remains
- *      are imports from the shared peer packages (vue, vue-router, vue-i18n,
- *      @apollo/client, @vueuse/*) — which the plugin already has.
- *
- * Regenerate after ANY change to the facade surface (index.ts) or the types it
- * re-exports:  `yarn build:core-types`  (also runnable from repo root).
- * The output is committed so plugins type-check without a prebuild step; a CI
- * check should re-run this and fail on drift (documented as a follow-up).
+ * Publish-from-source type build for `@vc-frontend/core` (VCST-5159, #3). Produces a
+ * single self-contained `dist/index.d.ts` a plugin type-checks against without reaching
+ * into host source. Two steps: vue-tsc emits the facade's type graph, then
+ * rollup-plugin-dts inlines it into one file (only shared peer imports remain).
+ * Run `yarn build:core-types` after any facade change; output is committed.
  */
 import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";

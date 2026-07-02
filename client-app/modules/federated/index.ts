@@ -1,31 +1,16 @@
 import { loadRemote, registerRemotes } from "@module-federation/enhanced/runtime";
-import { compareVersions, Logger } from "@/core/utilities";
+import { Logger } from "@/core/utilities";
 import { CORE_VERSION } from "@/core-api/version";
 import { useNotifications } from "@/shared/notification";
+import { compareVersions } from "./compare-versions";
 
 /**
- * Host-side loader for Module Federation plugins (VCST-5159).
- *
- * Runtime discovery instead of static `import`: for each configured remote, read its
- * manifest, version-check it, `loadRemote` its `./plugin` expose, and call its `init()`
- * hook. Plugins bind to the host's live router/i18n/etc. through the shared
- * `@vc-frontend/core` facade, so nothing is passed in.
- *
- * Guarantees:
- * - Version safety (#2): a remote is skipped BEFORE any of its code runs if its
- *   declared `requiredHostVersion` isn't satisfied by this host's core version.
- * - Isolation (#8): one failing/incompatible remote can't abort the others or boot;
- *   outcomes are logged, surfaced in dev, and returned for telemetry.
- *
- * Route registration timing (#4) is handled by the caller: `app-runner` awaits this
- * before installing the router, so plugin routes exist for the initial navigation
- * (no 404 flash, no post-hoc re-navigation).
- *
- * Discovery source is env (`APP_MF_REMOTES`, a JSON map of `{ [remoteName]:
- * manifestUrl }`). The harness ships with NO remotes configured — it is generic
- * infrastructure; a host wires in its own remotes via that env, and production
- * should feed the list from the `InitializeApplication` module manifest once it
- * carries an entry URL per module.
+ * Host-side loader for Module Federation plugins (VCST-5159). For each configured
+ * remote: read its manifest, version-check it, `loadRemote` its `./plugin` expose, and
+ * call `init()`. Plugins bind to the host's live services via the shared facade.
+ * - #2 version safety: an incompatible remote is skipped before any of its code runs.
+ * - #8 isolation: one bad remote can't abort the others; outcomes are logged/returned.
+ * Discovery is env-driven (`APP_MF_REMOTES`); the harness ships no built-in remote.
  */
 
 /** The contract every federated plugin's `./plugin` expose must satisfy. */

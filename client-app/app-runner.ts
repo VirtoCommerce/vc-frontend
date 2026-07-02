@@ -27,6 +27,7 @@ import { extractHostname, Logger } from "@/core/utilities";
 import { createI18n } from "@/i18n";
 import { init as initModuleBackInStock } from "@/modules/back-in-stock";
 import { init as initCustomerReviews } from "@/modules/customer-reviews";
+import { startFederatedModules } from "@/modules/federated/bootstrap";
 import { init as initializeGoogleAnalytics } from "@/modules/google-analytics";
 import { init as initLoyalty } from "@/modules/loyalty";
 import { init as initNews } from "@/modules/news";
@@ -215,9 +216,8 @@ export default async () => {
   void initNews(router, i18n);
   void initLoyalty(router, i18n);
 
-  // Module Federation host (VCST-5159): kicks off federated plugin loading if this
-  // build opts in (APP_MF_HOST). Awaited before app.use(router) so plugin routes
-  // exist for the initial navigation (#4). See startFederatedModules() below.
+  // Module Federation host (VCST-5159): load federated plugins if APP_MF_HOST is on.
+  // Awaited before app.use(router) so plugin routes exist for the first navigation (#4).
   const federatedModulesReady = startFederatedModules();
 
   // Plugins
@@ -254,9 +254,7 @@ export default async () => {
     }
   }
 
-  // Ensure federated plugin routes are registered before the router is installed and
-  // its initial navigation resolves (#4). Never rejects — initFederatedModules is
-  // fully isolated, so boot is never blocked by a bad/absent remote.
+  // Federated plugin routes must exist before the router is installed (#4). Never rejects.
   await federatedModulesReady;
 
   // router must be registered after all plugins because some of them are using router.beforeEach to protect routes or add functionality before route changes, and we want to make sure that those are registered before we start using the router
@@ -283,19 +281,6 @@ export default async () => {
 
   notifyOutdatedModules(outdatedModules.value, i18n.global.t, notifications);
 };
-
-// Generic Module Federation bootstrap (VCST-5159). Returns a promise the caller
-// awaits before installing the router. The MF runtime + loader are dynamically
-// imported only when APP_MF_HOST is set, so default builds pull in neither. The
-// remote list is read from APP_MF_REMOTES (empty by default) — the harness ships no
-// built-in remotes; a host configures its own. Never rejects (initFederatedModules
-// is fully isolated), so boot is never blocked by a bad or absent remote.
-function startFederatedModules(): Promise<unknown> {
-  if (!import.meta.env.APP_MF_HOST) {
-    return Promise.resolve();
-  }
-  return import("@/modules/federated").then(({ initFederatedModules }) => initFederatedModules());
-}
 
 function notifyOutdatedModules(
   outdated: ReturnType<typeof useModules>["outdatedModules"]["value"],

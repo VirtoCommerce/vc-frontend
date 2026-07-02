@@ -13,7 +13,7 @@ function parseVersion(version: string): number[] {
   return version.split(".").map((part) => Number.parseInt(part, 10) || 0);
 }
 
-export function compareVersions(a: string, b: string): number {
+function compareVersions(a: string, b: string): number {
   const partsA = parseVersion(a);
   const partsB = parseVersion(b);
   const length = Math.max(partsA.length, partsB.length);
