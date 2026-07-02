@@ -191,21 +191,28 @@ export default async () => {
     currencyCode: currentCurrency.value.code,
   });
 
-  // Seed Apollo cache with initial slugInfo from pageContext to avoid the first network call
-  try {
-    const baseVariables = {
-      userId: user.value.id,
-      storeId: themeContext.value.storeId,
-      cultureName: currentLanguage.value.cultureName,
-    } as const;
+  // Seed Apollo cache with initial slugInfo from pageContext to avoid the first network call.
+  // pageContext was fetched with `possibleCultureName`; if in preview mode an unsupported/mistyped
+  // `cultureName` query was sent to getPageContext but then rejected in favor of the resolved
+  // culture, the returned slugInfo belongs to a different culture — skip seeding so it isn't cached
+  // under the wrong culture key (VCST-5219).
+  const previewCultureRejected = isPreview && !!previewCultureName && previewCultureName !== currentCultureName;
+  if (!previewCultureRejected) {
+    try {
+      const baseVariables = {
+        userId: user.value.id,
+        storeId: themeContext.value.storeId,
+        cultureName: currentLanguage.value.cultureName,
+      } as const;
 
-    apolloClient.writeQuery({
-      query: GetSlugInfoDocument,
-      variables: { ...baseVariables, permalink },
-      data: { slugInfo: pageContext.slugInfo },
-    });
-  } catch (e) {
-    Logger.warn("Failed to seed slugInfo into Apollo cache", e as Error);
+      apolloClient.writeQuery({
+        query: GetSlugInfoDocument,
+        variables: { ...baseVariables, permalink },
+        data: { slugInfo: pageContext.slugInfo },
+      });
+    } catch (e) {
+      Logger.warn("Failed to seed slugInfo into Apollo cache", e as Error);
+    }
   }
 
   /**

@@ -7,7 +7,7 @@ import { templateBlocks } from "@/shared/static-content/components";
 import PreviewPage from "./components/preview-page.vue";
 import ScrollToElement from "./components/scroll-to-element.vue";
 import { getRegisteredComponents } from "./register-components";
-import { getBuilderOrigin, getPreviewPageId } from "./utils";
+import { getBuilderOrigin, getPreviewCultureName, getPreviewPageId } from "./utils";
 import type { PageBuilderPluginOptionsType } from "./models/PageBuilderPluginOptionsType";
 import type { IThemeConfig } from "@/core/types";
 import type { IPageContent, IPageTemplate } from "@/shared/static-content/types";
@@ -320,8 +320,18 @@ export default {
       window.parent.postMessage({ source: "preview", type: "loaded", data: customComponents }, builderOrigin);
       await options.router.push("/designer-preview");
     } else {
+      // Preserve both pageId and cultureName so a refreshed or shared standalone-preview URL keeps
+      // rendering in the page's language instead of the store default (VCST-5219).
+      const query = new URLSearchParams();
       const pageId = getPreviewPageId();
-      await options.router.push(`/designer-preview?pageId=${pageId!}`);
+      if (pageId) {
+        query.set("pageId", pageId);
+      }
+      const cultureName = getPreviewCultureName();
+      if (cultureName) {
+        query.set("cultureName", cultureName);
+      }
+      await options.router.push(`/designer-preview?${query.toString()}`);
     }
   },
 };
