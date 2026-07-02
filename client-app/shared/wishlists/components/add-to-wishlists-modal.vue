@@ -158,7 +158,7 @@ import { useAnalytics, useThemeContext } from "@/core/composables";
 import { DEFAULT_WISHLIST_LIMIT, DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { asyncForEach } from "@/core/utilities";
 import { useUser } from "@/shared/account/composables";
-import { useConfigurableProduct } from "@/shared/catalog";
+import { useConfigurableProduct } from "@/shared/catalog/composables/useConfigurableProduct";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import { useFocusManagement } from "@/ui-kit/composables";

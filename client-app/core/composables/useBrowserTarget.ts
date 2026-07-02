@@ -1,7 +1,7 @@
 import { computed } from "vue";
 import { useRoute } from "vue-router";
-import { useThemeContext } from "@/core/composables";
-import { useSlugInfo } from "@/shared/common";
+import { useThemeContext } from "@/core/composables/useThemeContext";
+import { useSlugInfo } from "@/shared/common/composables/useSlugInfo";
 import { BrowserTargetType } from "../enums";
 
 export function useBrowserTarget() {

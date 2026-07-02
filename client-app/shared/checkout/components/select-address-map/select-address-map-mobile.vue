@@ -70,14 +70,14 @@
 
 <script setup lang="ts">
 import { nextTick, ref, toRef, useTemplateRef, watch } from "vue";
-import { SelectAddressFilter } from "@/shared/checkout";
-import { useSelectAddressMap } from "@/shared/checkout/composables";
+import { useSelectAddressMap } from "@/shared/checkout/composables/useSelectAddressMap";
 import { useModal } from "@/shared/modal";
 import { focusFirstElement } from "@/ui-kit/utilities/focus";
 import PickupLocationCard from "../pickup-location-card.vue";
 import SelectAddressMapList from "./select-address-map-list.vue";
 import SelectAddressMapView from "./select-address-map-view.vue";
-import type { PickupLocationType } from "@/shared/checkout/composables";
+import type { PickupLocationType } from "@/shared/checkout/composables/useSelectAddressMap";
+import SelectAddressFilter from "@/shared/checkout/components/select-address-filter.vue";
 
 type ViewModeType = "list" | "map";
 
