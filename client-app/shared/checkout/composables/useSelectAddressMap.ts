@@ -27,8 +27,26 @@ function getLatLng(location: string | undefined) {
   }
 }
 
+export function getAddressElement(id: string): HTMLElement | null {
+  return document.querySelector<HTMLElement>(`[data-address-id="${CSS.escape(id)}"]`);
+}
+
+export function focusAddressRadio(id: string): void {
+  const radio = getAddressElement(id)?.querySelector<HTMLElement>('input[type="radio"]');
+  radio?.focus();
+}
+
+/**
+ * Returns true when `newIds` begins with `oldIds` as an in-order prefix.
+ * With `strict: true`, also requires `newIds` to be strictly longer than `oldIds`.
+ */
+export function isPrefixExtension(oldIds: string[], newIds: string[], options?: { strict?: boolean }): boolean {
+  const longEnough = options?.strict ? newIds.length > oldIds.length : newIds.length >= oldIds.length;
+  return longEnough && oldIds.every((id, index) => id === newIds[index]);
+}
+
 function scrollToAddressInList(addressId: string) {
-  const listElement = document.querySelector(`[data-address-id="${CSS.escape(addressId)}"]`);
+  const listElement = getAddressElement(addressId);
 
   if (listElement) {
     listElement.scrollIntoView({ behavior: "smooth", block: "center" });

@@ -16,8 +16,12 @@
         :api-key="apiKey"
         :current-address="currentAddress"
         :selectable="selectable"
+        :has-next-page="hasNextPage"
+        :loading-more="loadingMore"
+        :total-count="totalCount"
         @result="$emit('result', $event)"
         @filter-change="$emit('filterChange')"
+        @load-more="$emit('loadMore')"
       />
     </template>
   </VcModal>
@@ -37,11 +41,15 @@ interface IProps {
   currentAddress?: { id: string };
   selectable?: boolean;
   filterContext: IPickupFilterContext;
+  hasNextPage?: boolean;
+  loadingMore?: boolean;
+  totalCount?: number;
 }
 
 interface IEmits {
   (event: "result", value: string): void;
   (event: "filterChange"): void;
+  (event: "loadMore"): void;
 }
 
 defineEmits<IEmits>();
