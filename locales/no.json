@@ -1404,7 +1404,7 @@
         },
         "content_header": {
           "name": "Navn",
-          "role": "Rolle",
+          "role": "Roller",
           "email": "E-post",
           "active": "Aktiv"
         },

@@ -1404,7 +1404,7 @@
         },
         "content_header": {
           "name": "Nome",
-          "role": "Papel",
+          "role": "Papéis",
           "email": "E-mail",
           "active": "Ativo"
         },

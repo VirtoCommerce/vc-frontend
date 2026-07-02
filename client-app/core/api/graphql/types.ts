@@ -4615,6 +4615,7 @@ export type OrganizationAddressesArgs = {
 export type OrganizationContactsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
+  roleIds?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   searchPhrase?: InputMaybe<Scalars['String']['input']>;
   sort?: InputMaybe<Scalars['String']['input']>;
 };
@@ -8290,6 +8291,7 @@ export type GetOrganizationContactsQueryVariables = Exact<{
   after?: InputMaybe<Scalars['String']['input']>;
   sort?: InputMaybe<Scalars['String']['input']>;
   searchPhrase?: InputMaybe<Scalars['String']['input']>;
+  roleIds?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 }>;
 
 
