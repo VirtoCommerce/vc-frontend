@@ -30,6 +30,21 @@ query GetOrders(
       total {
         ...money
       }
+      orderTotals {
+        isDefaultTotalCurrency
+        total {
+          ...money
+        }
+        subTotal {
+          ...money
+        }
+        discountTotal {
+          ...money
+        }
+        taxTotal {
+          ...money
+        }
+      }
       inPayments(first: 1, sort: "CreatedDate:desc") {
         number
         paymentMethod {

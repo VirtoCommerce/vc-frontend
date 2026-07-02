@@ -19,7 +19,12 @@
             </div>
 
             <div class="mt-6 flex gap-6 lg:mt-14">
-              <VcButton class="flex-1 lg:flex-none" external-link="https://virtocommerce.com" target="_blank">
+              <VcButton
+                class="flex-1 lg:flex-none"
+                external-link="https://virtocommerce.com"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 {{ $t("pages.demo_landing.primary_block.first_button") }}
               </VcButton>
 

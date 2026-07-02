@@ -3,7 +3,7 @@
 
 // NOTE: When updating the service worker, make sure to update the version in the service worker module constants "client-app/modules/push-messages/constants/index.ts"
 
-const VERSION = "12.14.0";
+const VERSION = "12.15.0";
 importScripts(
   `//www.gstatic.com/firebasejs/${VERSION}/firebase-app-compat.js`,
   `//www.gstatic.com/firebasejs/${VERSION}/firebase-messaging-compat.js`,
@@ -35,7 +35,12 @@ try {
 }
 
 // Update configuration when received config from main thread
-self.addEventListener("message", (event) => {
+globalThis.addEventListener("message", (event) => {
+  // Reject messages that are not from a same-origin client before acting on the payload
+  if (event.origin !== globalThis.location.origin) {
+    return;
+  }
+
   if (event.data.type === "initialize") {
     const { config } = event.data;
 
@@ -58,20 +63,27 @@ self.addEventListener("message", (event) => {
   }
 });
 
-self.addEventListener("message", (event) => {
+globalThis.addEventListener("message", (event) => {
+  // Reject messages that are not from a same-origin client before acting on the payload
+  if (event.origin !== globalThis.location.origin) {
+    return;
+  }
+
   if (event.data.type === "update-icon") {
     const { icon } = event.data;
     storeDefaultIcon(icon);
   }
 });
 
-self.addEventListener("notificationclick", function (event) {
+globalThis.addEventListener("notificationclick", function (event) {
   event.notification.close();
   const url = event.notification?.data?.url || DEFAULT_RETURN_URL;
-  event.waitUntil(self.clients.openWindow(`/push-message/${event.notification?.data?.messageId}/?returnUrl=${url}`));
+  event.waitUntil(
+    globalThis.clients.openWindow(`/push-message/${event.notification?.data?.messageId}/?returnUrl=${url}`),
+  );
 });
 
-self.addEventListener("push", function (event) {
+globalThis.addEventListener("push", function (event) {
   if (!isInitialized) {
     console.warn("Firebase not properly initialized, skipping push notification");
     return;
@@ -81,7 +93,7 @@ self.addEventListener("push", function (event) {
   event.waitUntil(
     registration.pushManager.getSubscription().then(async () => {
       const defaultIcon = await getDefaultIcon();
-      return self.registration.showNotification(data?.title ?? "", {
+      return globalThis.registration.showNotification(data?.title ?? "", {
         data: { messageId: data.messageId, url: data.url },
         badge: data?.icon || defaultIcon,
         body: htmlToText(data?.body) ?? "",
@@ -192,8 +204,13 @@ function htmlToText(html) {
   // Replace paragraphs
   html = html.replace(/<p[^>]*>(.*?)<\/p>/gs, handleParagraphs);
 
-  // Remove remaining HTML tags
-  html = html.replace(/<\/?(\w+)(?:\s+[^>]+)?\s*>/g, "");
+  // Remove remaining HTML tags. Loop until the string stops changing so that
+  // removing one tag cannot reveal another (e.g. "<<div>div>" -> "<div>" -> "").
+  let previous;
+  do {
+    previous = html;
+    html = html.replace(/<\/?\w[^>]*>/g, "");
+  } while (html !== previous);
 
   return html.trim();
 }

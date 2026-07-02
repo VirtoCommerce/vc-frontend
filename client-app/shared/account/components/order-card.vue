@@ -56,8 +56,8 @@
           {{ $t("pages.account.orders.total_label") }}
         </span>
 
-        <span class="order-card__total">
-          {{ item.total?.formattedAmount }}
+        <span v-for="total in getDisplayTotals(item)" :key="total.currency.code" class="order-card__total">
+          {{ total.formattedAmount }}
         </span>
       </div>
     </div>
@@ -69,6 +69,7 @@ import { computed } from "vue";
 import { useRouter } from "vue-router";
 import { useBrowserTarget } from "@/core/composables";
 import { BrowserTargetType } from "@/core/enums";
+import { getDisplayTotals } from "@/core/utilities";
 import OrderStatus from "./order-status.vue";
 import type { OrderScopeType } from "../types";
 import type { CustomerOrderType } from "@/core/api/graphql/types";

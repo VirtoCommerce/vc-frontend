@@ -73,7 +73,11 @@
       align="right"
       class="w-32"
     >
-      {{ item.total?.formattedAmount }}
+      <div class="flex flex-col">
+        <span v-for="total in getDisplayTotals(item)" :key="total.currency.code">
+          {{ total.formattedAmount }}
+        </span>
+      </div>
     </VcTableColumn>
 
     <template #page-limit-message>
@@ -83,6 +87,7 @@
 </template>
 
 <script setup lang="ts">
+import { getDisplayTotals } from "@/core/utilities";
 import { VcTableColumn } from "@/ui-kit/components/organisms";
 import OrderCard from "../order-card.vue";
 import OrderStatus from "../order-status.vue";

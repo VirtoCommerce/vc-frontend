@@ -186,6 +186,7 @@
       "email_not_unique": "Cet e-mail est déjà enregistré chez nous",
       "max_length": "Ce champ ne doit pas contenir plus de {max} caractères",
       "creating_order_error": "Erreur lors de la création d'une commande",
+      "loyalty_insufficient_balance": "Pas assez de points de fidélité pour passer la commande. Requis : {required}, disponible : {available}.",
       "payment_processing_error": "Erreur lors du traitement du paiement",
       "item_can_t_be_purchased": "Cet article ne peut pas être acheté",
       "item_is_out_of_stock": "Cet article est en rupture de stock",
