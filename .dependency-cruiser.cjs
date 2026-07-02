@@ -180,6 +180,13 @@ module.exports = {
     },
   ],
   options: {
+    // VCST-5159 (#3): the generated @vc-frontend/core type contract and its build
+    // script are not shipped app code. The contract legitimately imports peer
+    // packages (vue, @apollo/client, …) and the script imports the rollup toolchain;
+    // neither belongs in the app dependency graph.
+    exclude: {
+      path: "client-app/core-api/(dist/|build-types\\.mjs$)",
+    },
     doNotFollow: {
       path: "node_modules",
     },

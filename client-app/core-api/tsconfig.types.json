@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  // Declaration-emit program for the publish-from-source facade (VCST-5159, #3).
+  //
+  // `build-types.mjs` runs this to emit the facade's whole reachable type graph
+  // into `.types-build/`, then rolls it up with rollup-plugin-dts into a single
+  // self-contained `dist/index.d.ts`. It is NOT part of the app typecheck.
+  //
+  // The ambient host declarations (client-app/*.d.ts, ui-kit/types) are included so
+  // the emit is clean — without them, host globals (FileType, import.meta.env, …)
+  // resolve to errors even though they never reach the rolled-up surface.
+  "extends": "../../tsconfig.app.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "declarationDir": "./.types-build",
+    "rootDir": "..",
+    "composite": false,
+    "incremental": false,
+    "skipLibCheck": true,
+    "noEmitOnError": false
+  },
+  "include": ["../*.d.ts", "../ui-kit/types/index.d.ts", "./index.ts"],
+  "exclude": []
+}

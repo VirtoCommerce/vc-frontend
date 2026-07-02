@@ -11,3 +11,5 @@ storybook-static
 client-app/modules/**/api/graphql/types.ts
 client-app/core/api/graphql/**/types.ts
 client-app/core/api/graphql/schema.json
+# Generated, self-contained @vc-frontend/core type contract (VCST-5159)
+client-app/core-api/dist/
