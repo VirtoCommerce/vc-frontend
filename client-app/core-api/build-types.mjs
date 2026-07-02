@@ -98,6 +98,8 @@ writeFileSync(OUT_FILE, BANNER + "\n" + code, "utf8");
 rmSync(EMIT_DIR, { recursive: true, force: true });
 
 // External peer imports the contract expects the plugin (or host) to provide.
-const externals = [...new Set([...code.matchAll(/from ['"]([^'".][^'"]*)['"]/g)].map((m) => m[1]))].sort();
+const externals = [...new Set([...code.matchAll(/from ['"]([^'".][^'"]*)['"]/g)].map((m) => m[1]))].sort((a, b) =>
+  a.localeCompare(b),
+);
 step(`wrote ${OUT_FILE} (${code.split("\n").length} lines).`);
 step(`external peer imports: ${externals.join(", ") || "(none)"}`);
