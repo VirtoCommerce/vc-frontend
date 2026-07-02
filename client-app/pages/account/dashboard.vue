@@ -97,7 +97,7 @@ import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
-import { OrdersTable, useOrderNavigation, useUserOrders, useUserOrdersFilter } from "@/shared/account";
+import { OrdersTable, useOrderNavigation, useUserOrders } from "@/shared/account";
 
 const { t } = useI18n();
 
@@ -106,7 +106,6 @@ usePageHead({
 });
 
 const { loading, orders, fetchOrders, pages, page } = useUserOrders({ itemsPerPage: 4 });
-const { resetFilterData } = useUserOrdersFilter();
 const { goToOrderDetails } = useOrderNavigation();
 const { getModuleSettings } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 
@@ -115,7 +114,6 @@ const { continue_shopping_link } = getModuleSettings({
 });
 
 onMounted(async () => {
-  resetFilterData();
   await fetchOrders("private");
 });
 </script>
