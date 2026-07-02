@@ -1,5 +1,25 @@
 import type { ApolloLink } from "@apollo/client/core";
 
+/**
+ * Controller returned by createQueuedMutationsController. Exposes the
+ * ApolloLink for wiring into the client AND a flushNow() escape hatch for
+ * callers that need to drain a queued operation immediately (e.g. on input
+ * blur, before navigation).
+ */
+export interface IQueuedMutationsController {
+  link: ApolloLink;
+  /**
+   * Immediately drain the queue for the given operation (and optional partition
+   * key). Cancels the pending debounce timer and fires the merged mutation.
+   * No-ops if nothing is queued. If a previous mutation is still in flight for
+   * that queue, the pending batch is flushed immediately once the in-flight
+   * request settles (with no additional debounce), instead of waiting for its
+   * scheduled debounce window. Never sends a second request in parallel with an
+   * in-flight one.
+   */
+  flushNow: (opName: string, partitionKey?: string) => void;
+}
+
 type MergeQueuedFnType<TVars extends Record<string, unknown> = Record<string, unknown>> = (a: TVars, b: TVars) => TVars;
 
 export interface IQueueTargetConfig<TVars extends Record<string, unknown> = Record<string, unknown>> {
@@ -13,6 +33,15 @@ export interface IQueueTargetConfig<TVars extends Record<string, unknown> = Reco
    * @default (a, b) => { ...a, ...b } @link{defaultMergeVariables}
    */
   mergeQueued?: MergeQueuedFnType<TVars>;
+  /**
+   * Extracts a partition key from mutation variables.
+   * Mutations with different partition keys get independent queues
+   * (separate timers, observers, and merged variables).
+   * When omitted, all mutations share a single queue per operation name.
+   * Returning an empty string routes to the operation's default queue - the
+   * same one reachable via `flushNow(opName)` without a partition key.
+   */
+  getPartitionKey?: (vars: TVars) => string;
 }
 
 export interface IQueueTarget<TVars extends Record<string, unknown> = Record<string, unknown>> {
@@ -32,6 +61,11 @@ export interface IObserver {
 
 export interface IOperationState<TVars extends Record<string, unknown>> {
   inFlight: boolean;
+  /**
+   * Set by flushNow() when a request is already in flight. On settle, the queue
+   * is drained immediately (no debounce) instead of rescheduling.
+   */
+  flushRequested: boolean;
   timer: ReturnType<typeof setTimeout> | null;
   mergedVariables: TVars | null;
   observers: IObserver[];
