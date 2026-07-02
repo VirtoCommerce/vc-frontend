@@ -24,6 +24,7 @@
  */
 import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { createRequire } from "node:module";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { rollup } from "rollup";
@@ -31,6 +32,10 @@ import dts from "rollup-plugin-dts";
 
 const CORE_API_DIR = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(CORE_API_DIR, "../..");
+// Resolve vue-tsc's bin to an absolute path and run it with the current Node binary
+// (process.execPath) — never via PATH-resolved `npx`, which a hostile PATH could hijack.
+const require = createRequire(import.meta.url);
+const VUE_TSC_BIN = resolve(dirname(require.resolve("vue-tsc/package.json")), "bin/vue-tsc.js");
 const EMIT_DIR = resolve(CORE_API_DIR, ".types-build");
 const DIST_DIR = resolve(CORE_API_DIR, "dist");
 const EMIT_ENTRY = resolve(EMIT_DIR, "core-api/index.d.ts");
@@ -48,10 +53,9 @@ function step(msg) {
 // 1 ── emit the facade's declaration graph ────────────────────────────────────
 step("emitting declarations with vue-tsc…");
 rmSync(EMIT_DIR, { recursive: true, force: true });
-const emit = spawnSync("npx", ["vue-tsc", "--project", resolve(CORE_API_DIR, "tsconfig.types.json")], {
+const emit = spawnSync(process.execPath, [VUE_TSC_BIN, "--project", resolve(CORE_API_DIR, "tsconfig.types.json")], {
   cwd: REPO_ROOT,
   encoding: "utf8",
-  shell: process.platform === "win32",
 });
 // vue-tsc reports diagnostics in host files that are outside the facade surface
 // (e.g. ui-kit components relying on ambient globals we don't load here). Those
