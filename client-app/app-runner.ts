@@ -35,7 +35,7 @@ import { init as initPushNotifications } from "@/modules/push-messages";
 import { init as initModuleQuotes } from "@/modules/quotes";
 import { BUILDER_IO_TRACE_MARKER, consoleIgnoredErrors } from "@/pages/matcher/builderIo/console-ignored-errors";
 import { isPreviewMode as isBuilderIoPreviewMode } from "@/plugins/builder-io-preview/utils";
-import { isPreviewMode as isPageBuilderPreviewMode } from "@/plugins/builder-preview/utils";
+import { getPreviewCultureName, isPreviewMode as isPageBuilderPreviewMode } from "@/plugins/builder-preview/utils";
 import { createRouter } from "@/router";
 import { useUser } from "@/shared/account";
 import ProductBlocks from "@/shared/catalog/components/product";
@@ -44,6 +44,7 @@ import { templateBlocks } from "@/shared/static-content";
 import { uiKit } from "@/ui-kit";
 import { getLocales as getUIKitLocales } from "@/ui-kit/utilities/getLocales";
 import App from "./App.vue";
+import type { ILanguage } from "./core/types";
 import type { PageContextResponseType } from "./core/api/graphql/types";
 import type { PageBuilderPluginOptionsType } from "./plugins/builder-preview/models/PageBuilderPluginOptionsType";
 
@@ -88,6 +89,7 @@ export default async () => {
     resolveLocale,
     getUrlWithoutPossibleLocale,
     resolvePossibleLocale,
+    supportedLanguages,
   } = useLanguages();
   const { currentCurrency } = useCurrency();
   const { init: initializeHotjar } = useHotjar();
@@ -107,7 +109,12 @@ export default async () => {
 
   // get initialization query parameters
   const pathname = globalThis.location.pathname;
-  const possibleCultureName = resolvePossibleLocale(pathname);
+  // In Page Builder preview/designer the URL carries the edited page's language as `?cultureName=`
+  // and the route is a fixed `/designer-preview` (no `/{lang}` prefix). Honor that culture so the
+  // preview renders in the page's language instead of the store default (VCST-5219).
+  const isPreview = isPageBuilderPreviewMode();
+  const previewCultureName = isPreview ? getPreviewCultureName() : undefined;
+  const possibleCultureName = previewCultureName ?? resolvePossibleLocale(pathname);
   const permalink = getPermalink(pathname, getUrlWithoutPossibleLocale);
 
   const domain = IS_DEVELOPMENT
@@ -153,13 +160,21 @@ export default async () => {
    */
   const head = createHead();
 
-  const currentCultureName = resolveLocale();
+  const currentCultureName =
+    previewCultureName &&
+    supportedLanguages.value.some((language: ILanguage) => language.cultureName === previewCultureName)
+      ? previewCultureName
+      : resolveLocale();
   const isDefaultLocaleInUse = defaultStoreCulture.value === currentCultureName;
 
   const i18n = createI18n(currentCultureName, currentCurrency.value.code, fallback);
-  await initLocale(i18n, currentCultureName);
+  // Keep the URL as `/designer-preview` in preview mode (no `/{lang}` prefix) so the fixed preview
+  // route keeps resolving; the locale still switches for content and chrome (VCST-5219).
+  await initLocale(i18n, currentCultureName, { rewriteUrl: !isPreview });
 
-  const router = createRouter({ base: isDefaultLocaleInUse ? "" : currentMaybeShortLocale.value });
+  const router = createRouter({
+    base: isPreview || isDefaultLocaleInUse ? "" : currentMaybeShortLocale.value,
+  });
 
   /**
    * Setting global variables
@@ -176,21 +191,28 @@ export default async () => {
     currencyCode: currentCurrency.value.code,
   });
 
-  // Seed Apollo cache with initial slugInfo from pageContext to avoid the first network call
-  try {
-    const baseVariables = {
-      userId: user.value.id,
-      storeId: themeContext.value.storeId,
-      cultureName: currentLanguage.value.cultureName,
-    } as const;
+  // Seed Apollo cache with initial slugInfo from pageContext to avoid the first network call.
+  // pageContext was fetched with `possibleCultureName`; if in preview mode an unsupported/mistyped
+  // `cultureName` query was sent to getPageContext but then rejected in favor of the resolved
+  // culture, the returned slugInfo belongs to a different culture — skip seeding so it isn't cached
+  // under the wrong culture key (VCST-5219).
+  const previewCultureRejected = isPreview && !!previewCultureName && previewCultureName !== currentCultureName;
+  if (!previewCultureRejected) {
+    try {
+      const baseVariables = {
+        userId: user.value.id,
+        storeId: themeContext.value.storeId,
+        cultureName: currentLanguage.value.cultureName,
+      } as const;
 
-    apolloClient.writeQuery({
-      query: GetSlugInfoDocument,
-      variables: { ...baseVariables, permalink },
-      data: { slugInfo: pageContext.slugInfo },
-    });
-  } catch (e) {
-    Logger.warn("Failed to seed slugInfo into Apollo cache", e as Error);
+      apolloClient.writeQuery({
+        query: GetSlugInfoDocument,
+        variables: { ...baseVariables, permalink },
+        data: { slugInfo: pageContext.slugInfo },
+      });
+    } catch (e) {
+      Logger.warn("Failed to seed slugInfo into Apollo cache", e as Error);
+    }
   }
 
   /**

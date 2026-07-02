@@ -68,7 +68,7 @@ function fetchLocaleMessages(locale: string): Promise<LocaleMessage> {
   return import("../../../locales/en.json"); // can't use variables in import
 }
 
-async function initLocale(i18n: I18n, cultureName: string): Promise<void> {
+async function initLocale(i18n: I18n, cultureName: string, options?: { rewriteUrl?: boolean }): Promise<void> {
   currentLanguage.value = supportedLanguages.value.find((x) => x.cultureName === cultureName);
 
   let messages = i18n.global.getLocaleMessage(cultureName);
@@ -90,25 +90,31 @@ async function initLocale(i18n: I18n, cultureName: string): Promise<void> {
     },
   });
 
-  const localeFromUrl = getLocaleFromUrl();
-  const targetLocale = currentMaybeShortLocale.value;
-  const isDefault = defaultStoreLanguage.value.cultureName === cultureName;
+  // In preview/designer mode the route is a fixed `/designer-preview` with vue-router base "",
+  // so the locale must NOT be reflected as a `/{lang}` URL prefix — otherwise the pathname stops
+  // matching the router base and the preview 404s. Callers pass `rewriteUrl: false` to keep the URL
+  // intact while still switching the active locale (see VCST-5219).
+  if (options?.rewriteUrl !== false) {
+    const localeFromUrl = getLocaleFromUrl();
+    const targetLocale = currentMaybeShortLocale.value;
+    const isDefault = defaultStoreLanguage.value.cultureName === cultureName;
 
-  let newPath = location.pathname;
+    let newPath = location.pathname;
 
-  if (localeFromUrl) {
-    // anchor at the start of the pathname and require / or end after the locale,
-    // otherwise plain `replace("/de", "")` would eat the `de` inside paths like `/destinations`
-    newPath = newPath.replace(new RegExp(`^/${localeFromUrl}(?=/|$)`, "i"), "") || "/";
-  }
+    if (localeFromUrl) {
+      // anchor at the start of the pathname and require / or end after the locale,
+      // otherwise plain `replace("/de", "")` would eat the `de` inside paths like `/destinations`
+      newPath = newPath.replace(new RegExp(`^/${localeFromUrl}(?=/|$)`, "i"), "") || "/";
+    }
 
-  if (!isDefault) {
-    // ensure non-default locale is reflected in the URL so vue-router's base matches the pathname
-    newPath = newPath === "/" ? `/${targetLocale}` : `/${targetLocale}${newPath}`;
-  }
+    if (!isDefault) {
+      // ensure non-default locale is reflected in the URL so vue-router's base matches the pathname
+      newPath = newPath === "/" ? `/${targetLocale}` : `/${targetLocale}${newPath}`;
+    }
 
-  if (newPath !== location.pathname) {
-    history.pushState(null, "", `${newPath}${location.search}${location.hash}`);
+    if (newPath !== location.pathname) {
+      history.pushState(null, "", `${newPath}${location.search}${location.hash}`);
+    }
   }
 
   document.documentElement.setAttribute("lang", cultureName);

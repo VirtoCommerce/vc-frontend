@@ -1,4 +1,5 @@
 import { useGlobalInterceptors } from "@/core/api/common";
+import { useLanguages } from "@/core/composables/useLanguages";
 import { globals, setGlobals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { useStaticPage } from "@/shared/static-content";
@@ -6,7 +7,7 @@ import { templateBlocks } from "@/shared/static-content/components";
 import PreviewPage from "./components/preview-page.vue";
 import ScrollToElement from "./components/scroll-to-element.vue";
 import { getRegisteredComponents } from "./register-components";
-import { getBuilderOrigin, getPreviewPageId } from "./utils";
+import { getBuilderOrigin, getPreviewCultureName, getPreviewPageId } from "./utils";
 import type { PageBuilderPluginOptionsType } from "./models/PageBuilderPluginOptionsType";
 import type { IThemeConfig } from "@/core/types";
 import type { IPageContent, IPageTemplate } from "@/shared/static-content/types";
@@ -29,7 +30,28 @@ declare type TransferDataType = {
   settings?: IThemeConfig;
   token?: { access_token?: string } | null;
   userId?: string | null;
+  cultureName?: string;
 };
+
+// Switch the storefront preview to the edited page's language without touching the URL (VCST-5219).
+// The designer preview runs on a fixed `/designer-preview` route (vue-router base ""), so we must not
+// add a `/{lang}` prefix here; we only re-init the i18n locale and update globals.cultureName, which
+// drives content-localized GraphQL queries on the next block remount.
+async function applyPreviewLocale(cultureName?: string) {
+  if (!cultureName || cultureName === globals.cultureName) {
+    return;
+  }
+
+  const { supportedLanguages, initLocale } = useLanguages();
+  if (!supportedLanguages.value.some((language) => language.cultureName === cultureName)) {
+    return;
+  }
+
+  if (globals.i18n) {
+    await initLocale(globals.i18n, cultureName, { rewriteUrl: false });
+  }
+  setGlobals({ cultureName });
+}
 
 function scrollToSection(sectionId: string) {
   requestAnimationFrame(() => {
@@ -181,11 +203,15 @@ function createOverlay() {
     bodyEl.style.visibility = "hidden";
     bodyEl.style.position = "relative";
     const interactiveBlocker = document.createElement("div");
-    interactiveBlocker.style.position = "absolute";
-    interactiveBlocker.style.top = "0";
-    interactiveBlocker.style.left = "0";
-    interactiveBlocker.style.bottom = "0";
-    interactiveBlocker.style.right = "0";
+    // Cover the whole viewport and sit above every storefront element (sticky header, language
+    // selector, etc.) so no in-preview interaction is possible inside the designer. This is what
+    // prevents the user from switching the storefront language and hitting the `/fr/designer-preview`
+    // 404 — the preview simply follows the edited page's language instead (VCST-5219).
+    interactiveBlocker.style.position = "fixed";
+    interactiveBlocker.style.inset = "0";
+    interactiveBlocker.style.zIndex = "2147483647";
+    interactiveBlocker.style.background = "transparent";
+    interactiveBlocker.style.pointerEvents = "auto";
     bodyEl.appendChild(interactiveBlocker);
   }
 
@@ -198,6 +224,10 @@ function handleMessages(app: App, options: PageBuilderPluginOptionsType, bodyEl:
     if (event.origin !== builderOrigin || event.data.source !== "builder") {
       return;
     }
+
+    // Render the preview in the edited page's language before it becomes visible (VCST-5219),
+    // so a non-default-language page never flashes in the store default language.
+    await applyPreviewLocale(event.data.cultureName);
 
     if (bodyEl) {
       bodyEl.style.visibility = "visible";
@@ -290,8 +320,18 @@ export default {
       window.parent.postMessage({ source: "preview", type: "loaded", data: customComponents }, builderOrigin);
       await options.router.push("/designer-preview");
     } else {
+      // Preserve both pageId and cultureName so a refreshed or shared standalone-preview URL keeps
+      // rendering in the page's language instead of the store default (VCST-5219).
+      const query = new URLSearchParams();
       const pageId = getPreviewPageId();
-      await options.router.push(`/designer-preview?pageId=${pageId!}`);
+      if (pageId) {
+        query.set("pageId", pageId);
+      }
+      const cultureName = getPreviewCultureName();
+      if (cultureName) {
+        query.set("cultureName", cultureName);
+      }
+      await options.router.push(`/designer-preview?${query.toString()}`);
     }
   },
 };
