@@ -60,7 +60,8 @@ Apollo client + host ui-kit — see the deep-link caveat below.
 - ✅ The remote builds and emits `mf-manifest.json` with `./plugin` + all 8 shared singletons.
 - ✅ Shared code (ui-kit, `reka-ui`, Vue, …) is **not** bundled into the plugin — it binds to the host at runtime.
 - ✅ `@vueuse/core` shared as a singleton keeps `createGlobalState` composables (useUser/useCart/useExtensionRegistry) shared with the host.
-- ✅ The plugin's own sources type-check cleanly against `@vc-frontend/core`.
+- ✅ The plugin type-checks against a **self-contained compiled contract** (`@vc-frontend/core`'s
+  `dist/index.d.ts`) — hermetically, touching **zero host source** (#3, see below).
 - ✅ `requiredVersion:"*"` decouples runtime from the facade version → a host bump never forces a plugin re-release.
 
 ## Styling: plugins need the shared Tailwind preset
@@ -95,14 +96,22 @@ With this, the federated `/news` renders **pixel-identical to production**
 - **Minimal singleton set (#6).** `MF_SHARED` is documented entry-by-entry with the reason each
   package *must* be a single instance; anything not requiring it is intentionally excluded so
   plugins can version it independently.
+- **Compiled type contract (#3).** `@vc-frontend/core` now ships a **single, self-contained
+  `dist/index.d.ts`** built by `yarn build:core-types` (vue-tsc emit → `rollup-plugin-dts`
+  rollup; the facade's whole `@/…` graph is inlined, leaving only shared-peer imports like
+  `vue`/`@apollo/client`). The plugin's `tsconfig` dropped its `@/*` + source-path hacks and
+  resolves the facade like any installed package (`package.json` `exports.types`). Result,
+  verified: the plugin typecheck went from **338 errors across ~140 host files → 0 errors,
+  0 host files** — a genuine, publishable contract, exactly what an external repo would consume.
+  The runtime is unchanged (host still provides the live instance via the MF singleton), so this
+  is types-only: no second implementation, no drift between the contract and what runs.
 
 ## Known limitations / next steps
 
-- **Facade types.** The plugin consumes `@vc-frontend/core` as **raw source**, so `vue-tsc`
-  follows its `@/` re-exports into host internals (host `*.graphql` ambient decls, host
-  globals) and reports host-source errors — *none in the plugin's own files*. Productionizing
-  means shipping compiled `.d.ts` from the facade ("publish-from-source types" build) and
-  pointing plugins at that instead of source.
+- **Contract drift guard.** `dist/index.d.ts` is generated and committed so plugins type-check
+  with no prebuild. Nothing yet *forces* regeneration when the facade surface changes — a CI step
+  that re-runs `yarn build:core-types` and fails on a non-empty `git diff` is the intended guard
+  (follow-up). The build itself is drift-proof (regenerated from source); only the commit can lag.
 - **Dev server (`yarn dev`) blocked in MF mode.** `@module-federation/vite` pre-bundles the
   shared `@vc-frontend/core` facade with esbuild, which has no `.graphql` loader (77/199 query
   files use `#import`), so the host dev server fails. Use `build-only` + `preview` for now;

@@ -9,14 +9,12 @@
     "moduleResolution": "Bundler",
     "resolveJsonModule": true,
     "types": ["node", "vite/client"],
-    "baseUrl": ".",
-    "paths": {
-      // Local dev, no publish: the plugin resolves the facade straight from host
-      // source. In an external repo this would instead be the installed
-      // `@vc-frontend/core` type package. `@/*` lets tsc follow the facade's own
-      // internal imports; runtime never bundles any of it (import:false in MF).
-      "@vc-frontend/core": ["../../client-app/core-api/index.ts"],
-      "@/*": ["../../client-app/*"]
-    }
+    "baseUrl": "."
+    // No path mappings: `@vc-frontend/core` resolves like any installed package
+    // via its package.json `exports.types` → the compiled, self-contained
+    // dist/index.d.ts contract (VCST-5159, #3). The plugin no longer reaches into
+    // host source, so its typecheck stays hermetic — exactly what an external repo
+    // consuming the published contract would see. Regenerate the contract with
+    // `yarn build:core-types` after any facade change.
   }
 }

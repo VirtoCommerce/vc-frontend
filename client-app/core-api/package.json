@@ -6,8 +6,14 @@
   "private": true,
   "main": "./index.ts",
   "module": "./index.ts",
-  "types": "./index.ts",
+  "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./index.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./index.ts"
+    }
+  },
+  "scripts": {
+    "build:types": "node build-types.mjs"
   }
 }
