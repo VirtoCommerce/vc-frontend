@@ -13,6 +13,7 @@ import {
   toCSV,
   areStringOrNumberEqual,
   buildRedirectUrl,
+  humanizeName,
 } from "./index";
 import type { RouteLocationNormalized } from "vue-router";
 
@@ -552,5 +553,36 @@ describe("buildRedirectUrl", () => {
 
     const result = buildRedirectUrl(route);
     expect(result).toEqual({ returnUrl: "/test/path?param=value#section" });
+  });
+});
+
+describe("humanizeName", () => {
+  it("replaces underscores and hyphens with spaces", () => {
+    expect(humanizeName("about_us")).toBe("About us");
+    expect(humanizeName("contact-us")).toBe("Contact us");
+    expect(humanizeName("my_new-page")).toBe("My new page");
+  });
+
+  it("upper-cases the first letter while preserving the rest (keeps acronyms)", () => {
+    expect(humanizeName("ARAS_Security")).toBe("ARAS Security");
+    expect(humanizeName("landing")).toBe("Landing");
+  });
+
+  it("collapses repeated separators and trims", () => {
+    expect(humanizeName("  home__page  ")).toBe("Home page");
+  });
+
+  it("leaves an already friendly name intact", () => {
+    expect(humanizeName("My Page")).toBe("My Page");
+  });
+
+  it("returns an empty string for an empty input", () => {
+    expect(humanizeName("")).toBe("");
+  });
+
+  it("returns an empty string for non-string input", () => {
+    expect(humanizeName(undefined)).toBe("");
+    expect(humanizeName(null)).toBe("");
+    expect(humanizeName({})).toBe("");
   });
 });
