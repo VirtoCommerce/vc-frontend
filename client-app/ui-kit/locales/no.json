@@ -126,7 +126,10 @@
     "table": {
       "empty": "Ingen oppføringer funnet",
       "error": "Kunne ikke laste inn data",
-      "retry": "Prøv igjen"
+      "retry": "Prøv igjen",
+      "select_row": "Velg rad",
+      "select_all": "Velg alle",
+      "deselect_all": "Fjern alle valg"
     },
     "slider": {
       "tooltip": "{count} elementer",

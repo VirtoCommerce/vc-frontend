@@ -126,7 +126,10 @@
     "table": {
       "empty": "Nessun record trovato",
       "error": "Impossibile caricare i dati",
-      "retry": "Riprova"
+      "retry": "Riprova",
+      "select_row": "Seleziona riga",
+      "select_all": "Seleziona tutto",
+      "deselect_all": "Deseleziona tutto"
     },
     "slider": {
       "tooltip": "{count} articoli",

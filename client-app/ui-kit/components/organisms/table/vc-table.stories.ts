@@ -1,5 +1,5 @@
 import { computed, ref } from "vue";
-import { VcBadge } from "@/ui-kit/components/atoms";
+import { VcBadge, VcCheckbox } from "@/ui-kit/components/atoms";
 import { BREAKPOINTS } from "@/ui-kit/constants";
 import { VcTable, VcTableColumn } from "..";
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
@@ -23,6 +23,9 @@ interface IVcTableStoryArgs {
   bordered?: boolean;
   mobileBordered?: boolean;
   scrollable?: boolean;
+  selectionMode?: VcTableSelectionModeType;
+  selection?: VcTableSelectionKeyType[];
+  isRowSelectable?: (item: { id: number | string; [key: string]: unknown }) => boolean;
 }
 
 const meta: Meta<IVcTableStoryArgs> = {
@@ -2920,6 +2923,319 @@ async function onHeaderClick(sortInfo: VcTableSortInfoType) {
     </template>
   </VcTable>
 </template>
+        `,
+      },
+    },
+  },
+};
+
+// =============================================================================
+// Row Selection
+// =============================================================================
+
+// 28. SelectionMultiple — checkbox selection with header select-all
+export const SelectionMultiple: StoryType = {
+  args: {
+    items: sampleItems,
+    pages: 1,
+    page: 1,
+    bordered: true,
+    selectionMode: "multiple",
+  },
+  render: (args) => ({
+    components: { VcTable, VcTableColumn, VcBadge },
+    setup: () => {
+      const selection = ref<VcTableSelectionKeyType[]>([]);
+      const lastMeta = ref<string>("—");
+      const handleSelectionChange = (
+        keys: VcTableSelectionKeyType[],
+        rows: Array<Record<string, unknown>>,
+        changeMeta: VcTableSelectionMetaType<Record<string, unknown>>,
+      ) => {
+        const rowLabel = changeMeta.row ? ` (${String(changeMeta.row.name)})` : "";
+        lastMeta.value = `${changeMeta.action}${rowLabel} → ${rows.length} row(s)`;
+      };
+      return { args, selection, lastMeta, handleSelectionChange };
+    },
+    template: `
+      <div>
+        <div class="mb-4 p-3 bg-neutral-100 rounded text-sm">
+          Selected keys: <strong>{{ selection.length ? selection.join(", ") : "none" }}</strong>
+          <br />
+          Last change: <strong>{{ lastMeta }}</strong>
+        </div>
+
+        <VcTable
+          :items="args.items"
+          :pages="args.pages"
+          :page="args.page"
+          :bordered="args.bordered"
+          selection-mode="multiple"
+          v-model:selection="selection"
+          @selection-change="handleSelectionChange"
+        >
+          <VcTableColumn id="name" title="Name" v-slot="{ item }">{{ item.name }}</VcTableColumn>
+          <VcTableColumn id="email" title="Email" v-slot="{ item }">{{ item.email }}</VcTableColumn>
+          <VcTableColumn id="role" title="Role" v-slot="{ item }">{{ item.role }}</VcTableColumn>
+          <VcTableColumn id="status" title="Status" align="center" v-slot="{ item }">
+            <VcBadge :color="item.status === 'Active' ? 'success' : 'neutral'" variant="solid-light" size="sm">
+              {{ item.status }}
+            </VcBadge>
+          </VcTableColumn>
+        </VcTable>
+      </div>
+    `,
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Multiple selection via `selection-mode="multiple"` with `v-model:selection` (an array of row keys). A leading checkbox column is added automatically, and the header checkbox toggles all selectable rows on the current page (with an indeterminate state for partial selection).',
+      },
+      source: {
+        code: `
+<script setup lang="ts">
+const selection = ref<(string | number)[]>([]);
+
+function onSelectionChange(keys, rows, meta) {
+  // keys: all selected keys; rows: matching rows in current items; meta.action: select | deselect | select-all | deselect-all
+}
+</script>
+
+<template>
+  <VcTable
+    :items="items"
+    selection-mode="multiple"
+    v-model:selection="selection"
+    @selection-change="onSelectionChange"
+    bordered
+  >
+    <VcTableColumn id="name" title="Name" v-slot="{ item }">{{ item.name }}</VcTableColumn>
+    <VcTableColumn id="email" title="Email" v-slot="{ item }">{{ item.email }}</VcTableColumn>
+  </VcTable>
+</template>
+        `,
+      },
+    },
+  },
+};
+
+// 29. SelectionSingle — radio selection (no select-all)
+export const SelectionSingle: StoryType = {
+  args: {
+    items: sampleItems,
+    pages: 1,
+    page: 1,
+    bordered: true,
+    selectionMode: "single",
+  },
+  render: (args) => ({
+    components: { VcTable, VcTableColumn },
+    setup: () => {
+      const selection = ref<VcTableSelectionKeyType[]>([]);
+      return { args, selection };
+    },
+    template: `
+      <div>
+        <div class="mb-4 p-3 bg-neutral-100 rounded text-sm">
+          Selected key: <strong>{{ selection[0] ?? "none" }}</strong>
+        </div>
+
+        <VcTable
+          :items="args.items"
+          :pages="args.pages"
+          :page="args.page"
+          :bordered="args.bordered"
+          selection-mode="single"
+          v-model:selection="selection"
+        >
+          <VcTableColumn id="name" title="Name" v-slot="{ item }">{{ item.name }}</VcTableColumn>
+          <VcTableColumn id="email" title="Email" v-slot="{ item }">{{ item.email }}</VcTableColumn>
+          <VcTableColumn id="role" title="Role" v-slot="{ item }">{{ item.role }}</VcTableColumn>
+        </VcTable>
+      </div>
+    `,
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Single selection via `selection-mode="single"`. Radio controls are used, selecting a new row replaces the previous one (the model array holds at most one key), and the header shows no select-all control.',
+      },
+      source: {
+        code: `
+<script setup lang="ts">
+const selection = ref<(string | number)[]>([]); // 0..1 keys
+</script>
+
+<template>
+  <VcTable :items="items" selection-mode="single" v-model:selection="selection" bordered>
+    <VcTableColumn id="name" title="Name" v-slot="{ item }">{{ item.name }}</VcTableColumn>
+    <VcTableColumn id="email" title="Email" v-slot="{ item }">{{ item.email }}</VcTableColumn>
+  </VcTable>
+</template>
+        `,
+      },
+    },
+  },
+};
+
+// 30. SelectionWithDisabledRows — isRowSelectable disables some controls
+export const SelectionWithDisabledRows: StoryType = {
+  args: {
+    items: sampleItems,
+    pages: 1,
+    page: 1,
+    bordered: true,
+    selectionMode: "multiple",
+  },
+  render: (args) => ({
+    components: { VcTable, VcTableColumn, VcBadge },
+    setup: () => {
+      const selection = ref<VcTableSelectionKeyType[]>([]);
+      // Inactive rows cannot be selected and are excluded from select-all.
+      const isRowSelectable = (item: Record<string, unknown>) => item.status === "Active";
+      return { args, selection, isRowSelectable };
+    },
+    template: `
+      <div>
+        <div class="mb-4 p-3 bg-neutral-100 rounded text-sm">
+          Selected keys: <strong>{{ selection.length ? selection.join(", ") : "none" }}</strong>
+          <div class="text-neutral-500 mt-1">Inactive users are not selectable.</div>
+        </div>
+
+        <VcTable
+          :items="args.items"
+          :pages="args.pages"
+          :page="args.page"
+          :bordered="args.bordered"
+          selection-mode="multiple"
+          :is-row-selectable="isRowSelectable"
+          v-model:selection="selection"
+        >
+          <VcTableColumn id="name" title="Name" v-slot="{ item }">{{ item.name }}</VcTableColumn>
+          <VcTableColumn id="email" title="Email" v-slot="{ item }">{{ item.email }}</VcTableColumn>
+          <VcTableColumn id="status" title="Status" align="center" v-slot="{ item }">
+            <VcBadge :color="item.status === 'Active' ? 'success' : 'neutral'" variant="solid-light" size="sm">
+              {{ item.status }}
+            </VcBadge>
+          </VcTableColumn>
+        </VcTable>
+      </div>
+    `,
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Disabled rows via `:is-row-selectable`. Rows returning `false` get a disabled control, ignore clicks, and are excluded from select-all. Here inactive users cannot be selected.",
+      },
+      source: {
+        code: `
+<script setup lang="ts">
+const selection = ref<(string | number)[]>([]);
+const isRowSelectable = (item) => item.status === "Active";
+</script>
+
+<template>
+  <VcTable
+    :items="items"
+    selection-mode="multiple"
+    :is-row-selectable="isRowSelectable"
+    v-model:selection="selection"
+    bordered
+  >
+    <VcTableColumn id="name" title="Name" v-slot="{ item }">{{ item.name }}</VcTableColumn>
+    <VcTableColumn id="status" title="Status" align="center" v-slot="{ item }">{{ item.status }}</VcTableColumn>
+  </VcTable>
+</template>
+        `,
+      },
+    },
+  },
+};
+
+// 31. SelectionMobile — custom #mobile-item slot using the selection scope
+export const SelectionMobile: StoryType = {
+  args: {
+    items: sampleItems,
+    pages: 1,
+    page: 1,
+    bordered: true,
+    mobileBordered: true,
+    mobileBreakpoint: "md",
+    selectionMode: "multiple",
+  },
+  render: (args) => ({
+    components: { VcTable, VcTableColumn, VcBadge, VcCheckbox },
+    setup: () => {
+      const selection = ref<VcTableSelectionKeyType[]>([]);
+      return { args, selection };
+    },
+    template: `
+      <div>
+        <div class="mb-4 p-3 bg-neutral-100 rounded text-sm">
+          Selected keys: <strong>{{ selection.length ? selection.join(", ") : "none" }}</strong>
+        </div>
+
+        <VcTable
+          :items="args.items"
+          :pages="args.pages"
+          :page="args.page"
+          :bordered="args.bordered"
+          :mobile-bordered="args.mobileBordered"
+          :mobile-breakpoint="args.mobileBreakpoint"
+          selection-mode="multiple"
+          v-model:selection="selection"
+        >
+          <template #mobile-item="{ item, selected, toggle, selectable }">
+            <div
+              class="flex items-start gap-3 border-b border-neutral-200 p-4 last:border-b-0"
+              :class="{ 'bg-primary-50': selected }"
+            >
+              <VcCheckbox
+                size="sm"
+                :model-value="selected"
+                :disabled="!selectable"
+                aria-label="Select row"
+                @change="toggle"
+              />
+              <div class="min-w-0">
+                <div class="flex items-center gap-2">
+                  <span class="font-bold">{{ item.name }}</span>
+                  <VcBadge :color="item.status === 'Active' ? 'success' : 'neutral'" variant="solid-light" size="sm">
+                    {{ item.status }}
+                  </VcBadge>
+                </div>
+                <div class="text-sm text-neutral-600">{{ item.email }}</div>
+              </div>
+            </div>
+          </template>
+
+          <VcTableColumn id="name" title="Name" v-slot="{ item }">{{ item.name }}</VcTableColumn>
+          <VcTableColumn id="email" title="Email" v-slot="{ item }">{{ item.email }}</VcTableColumn>
+        </VcTable>
+      </div>
+    `,
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Mobile selection. Custom `#mobile-item` cards cannot receive an injected control, so the slot scope exposes `{ selected, toggle, selectable }` — place your own `VcCheckbox`/`VcRadioButton` and wire it to `toggle`. Resize below the `md` breakpoint to see the mobile view.",
+      },
+      source: {
+        code: `
+<VcTable :items="items" selection-mode="multiple" v-model:selection="selection" mobile-breakpoint="md">
+  <template #mobile-item="{ item, selected, toggle, selectable }">
+    <div class="flex items-start gap-3 p-4" :class="{ 'bg-primary-50': selected }">
+      <VcCheckbox size="sm" :model-value="selected" :disabled="!selectable" aria-label="Select row" @change="toggle" />
+      <span class="font-bold">{{ item.name }}</span>
+    </div>
+  </template>
+
+  <VcTableColumn id="name" title="Name" v-slot="{ item }">{{ item.name }}</VcTableColumn>
+</VcTable>
         `,
       },
     },

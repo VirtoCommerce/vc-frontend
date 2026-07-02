@@ -126,7 +126,10 @@
     "table": {
       "empty": "Nie znaleziono rekordów",
       "error": "Nie udało się załadować danych",
-      "retry": "Spróbuj ponownie"
+      "retry": "Spróbuj ponownie",
+      "select_row": "Zaznacz wiersz",
+      "select_all": "Zaznacz wszystko",
+      "deselect_all": "Odznacz wszystko"
     },
     "slider": {
       "tooltip": "{count} przedmiotów",

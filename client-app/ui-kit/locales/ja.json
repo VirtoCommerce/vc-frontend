@@ -126,7 +126,10 @@
     "table": {
       "empty": "レコードが見つかりません",
       "error": "データの読み込みに失敗しました",
-      "retry": "再試行"
+      "retry": "再試行",
+      "select_row": "行を選択",
+      "select_all": "すべて選択",
+      "deselect_all": "すべて選択解除"
     },
     "slider": {
       "tooltip": "{count} アイテム",

@@ -126,7 +126,10 @@
     "table": {
       "empty": "Inga poster hittades",
       "error": "Det gick inte att läsa in data",
-      "retry": "Försök igen"
+      "retry": "Försök igen",
+      "select_row": "Välj rad",
+      "select_all": "Välj alla",
+      "deselect_all": "Avmarkera alla"
     },
     "slider": {
       "tooltip": "{count} objekt",

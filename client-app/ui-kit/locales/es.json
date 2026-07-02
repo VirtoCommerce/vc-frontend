@@ -126,7 +126,10 @@
     "table": {
       "empty": "No se encontraron registros",
       "error": "Error al cargar los datos",
-      "retry": "Intentar de nuevo"
+      "retry": "Intentar de nuevo",
+      "select_row": "Seleccionar fila",
+      "select_all": "Seleccionar todo",
+      "deselect_all": "Deseleccionar todo"
     },
     "slider": {
       "tooltip": "{count} artículos",

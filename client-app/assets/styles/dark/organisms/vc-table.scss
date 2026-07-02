@@ -1,0 +1,7 @@
+// Selected-row highlight: 8% primary is almost invisible on dark surfaces.
+// Bump the alpha so the selected row stays clearly visible without looking acid.
+// Drives both the row background and the sticky/opaque cell highlight, which
+// both read this variable.
+.vc-table {
+  --vc-table-selected-bg: rgb(from var(--color-primary-500) r g b / 0.16);
+}

@@ -126,7 +126,10 @@
     "table": {
       "empty": "Keine Einträge gefunden",
       "error": "Daten konnten nicht geladen werden",
-      "retry": "Erneut versuchen"
+      "retry": "Erneut versuchen",
+      "select_row": "Zeile auswählen",
+      "select_all": "Alle auswählen",
+      "deselect_all": "Alle abwählen"
     },
     "slider": {
       "tooltip": "{count} Artikel",

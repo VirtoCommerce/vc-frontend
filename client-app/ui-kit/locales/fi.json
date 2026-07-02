@@ -126,7 +126,10 @@
     "table": {
       "empty": "Tietueita ei löytynyt",
       "error": "Tietojen lataaminen epäonnistui",
-      "retry": "Yritä uudelleen"
+      "retry": "Yritä uudelleen",
+      "select_row": "Valitse rivi",
+      "select_all": "Valitse kaikki",
+      "deselect_all": "Poista kaikki valinnat"
     },
     "slider": {
       "tooltip": "{count} kohdetta",

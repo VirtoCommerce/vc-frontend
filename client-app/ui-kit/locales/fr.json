@@ -126,7 +126,10 @@
     "table": {
       "empty": "Aucun enregistrement trouvé",
       "error": "Échec du chargement des données",
-      "retry": "Réessayer"
+      "retry": "Réessayer",
+      "select_row": "Sélectionner la ligne",
+      "select_all": "Tout sélectionner",
+      "deselect_all": "Tout désélectionner"
     },
     "slider": {
       "tooltip": "{count} articles",

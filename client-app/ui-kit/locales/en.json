@@ -126,7 +126,10 @@
     "table": {
       "empty": "No records found",
       "error": "Failed to load data",
-      "retry": "Try again"
+      "retry": "Try again",
+      "select_row": "Select row",
+      "select_all": "Select all",
+      "deselect_all": "Deselect all"
     },
     "slider": {
       "tooltip": "{count} items",
