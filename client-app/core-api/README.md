@@ -87,13 +87,21 @@ Say a plugin needs `useThemeContext`.
    yarn build:core-types   # ~1 min; rewrites dist/index.d.ts
    ```
 
-3. **Bump the version** — in BOTH `version.ts` and this `package.json` (a guard fails
-   the build if they diverge):
+3. **Bump the contract version:**
+
+   ```bash
+   yarn bump:core minor    # updates version.ts + core-api/package.json together
+   ```
+
    - **additive** change (new export) → **minor** bump. Plugins that use the new export
      declare `requiredHostVersion: "^2.54.0"` so older hosts correctly refuse them.
    - **breaking** change (remove / rename / change semantics) → **major** bump, and
-     update the `@vc-frontend/core` range in `federation.mjs`. Avoid this — it breaks
-     every plugin.
+     update the `@vc-frontend/core` range in `federation.mjs` (the script reminds you).
+     Avoid this — it breaks every plugin.
+
+   > This version tracks **facade changes only**. It is independent of the host app
+   > version in the root `package.json` that release automation bumps — releases never
+   > touch the contract version, and a build guard keeps the two facade files in sync.
 
 4. **Commit `index.ts`, `dist/index.d.ts`, `version.ts`, `package.json` together.**
    If you forget step 2 or 3, CI fails with a message pointing here.

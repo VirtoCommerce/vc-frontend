@@ -19,6 +19,7 @@
     "build:watch": "yarn precheck && yarn build-only --watch",
     "build-only": "yarn precheck && vite build",
     "build:core-types": "yarn precheck && node client-app/core-api/build-types.mjs",
+    "bump:core": "node client-app/core-api/bump-version.mjs",
     "validate:types": "yarn precheck && vue-tsc --build --force",
     "validate:dependencies": "yarn precheck && depcruise client-app",
     "validate:core-types": "yarn precheck && node client-app/core-api/build-types.mjs --check",

@@ -147,7 +147,7 @@ initFederatedModules()             index.ts
                                    CORE_VERSION. Incompatible, malformed, unreadable or
                                    timed out ⇒ SKIP (fail closed — no plugin code has run)
   3. registerRemotes(compatible)   { force: true } so HMR re-registration won't throw
-  4. loadRemote(`${name}/plugin`)  ⇒ plugin module ⇒ await plugin.init()  (15s budget)
+  4. loadRemote(`${name}/plugin`)  ⇒ plugin module ⇒ await plugin.init()  (10s budget)
   5. Promise.allSettled            one bad plugin cannot abort the others
   6. reportOutcome({loaded,failed,skipped})   logs; in DEV also shows a notification
 ```
@@ -162,7 +162,7 @@ Three design points worth calling out:
   ones this host can satisfy. Unreadable or unparseable ⇒ treated as incompatible
   (fail closed). A bare version like `"2.53.0"` is normalized to `"^2.53.0"` — so a
   host **major** bump correctly rejects plugins built against the previous major.
-- **Every network step is time-budgeted** (manifest 5s, load and init 15s each, tunable
+- **Every network step is time-budgeted** (manifest 5s, load and init 10s each, tunable
   via `initFederatedModules(options)`). Because boot awaits this loader, a hung remote
   must degrade to a `failed`/`skipped` plugin — never a blank storefront. Containment
   semantics: a `loadRemote` that resolves _after_ its budget never gets its `init()`
