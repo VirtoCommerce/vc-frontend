@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getCvvValidation } from "./skyflow-cvv-validation";
+import { getCardSchemeFromNumber, getCvvValidation } from "./skyflow-cvv-validation";
 
 // VCST-5202: Skyflow CVV validation must be per-brand.
 // The brand-agnostic `^[0-9]{3,4}$` accepted a 3-digit CVV on Amex (needs 4) and a 4-digit
@@ -40,6 +40,53 @@ describe("getCvvValidation (VCST-5202)", () => {
 
   it("is case-insensitive for the scheme name", () => {
     expect(getCvvValidation("amex").regex).toBe(getCvvValidation("AMEX").regex);
+  });
+
+  // The two data sources spell Amex differently: the Skyflow SDK CHANGE event uses the
+  // Skyflow.CardType enum ("AMEX"); the Skyflow vault (surfaced by the backend as
+  // SkyflowCardType.cardScheme) uses the full network name "AMERICAN EXPRESS". Both must map to 4.
+  it("requires 4 digits for every real Amex spelling emitted by the SDK and the vault", () => {
+    for (const scheme of ["AMEX", "American Express", "AMERICAN EXPRESS", "american express"]) {
+      const { regex, placeholder } = getCvvValidation(scheme);
+
+      expect(matches(regex, "1234")).toBe(true);
+      expect(matches(regex, "123")).toBe(false);
+      expect(placeholder).toBe("1111");
+    }
+  });
+});
+
+// The Skyflow SDK only populates `selectedCardScheme` on an explicit card-brand-choice selection
+// (co-badged cards), so a plain auto-detected Amex must be recognised from the card number itself.
+describe("getCardSchemeFromNumber (VCST-5202)", () => {
+  it("detects Amex from a full card number (IIN 34/37)", () => {
+    expect(getCardSchemeFromNumber("378282246310005")).toBe("AMEX"); // Amex test card (37)
+    expect(getCardSchemeFromNumber("341111111111111")).toBe("AMEX"); // Amex (34)
+  });
+
+  it("detects Amex from the partially masked value the SDK returns in PROD", () => {
+    // PROD CARD_NUMBER value keeps the first 6 digits and masks the rest with 'X'.
+    expect(getCardSchemeFromNumber("378282XXXXXXXXX")).toBe("AMEX");
+    expect(getCardSchemeFromNumber("3782 82XX XXXX XXX")).toBe("AMEX");
+  });
+
+  it("returns undefined for non-Amex brands so the 3-digit default applies", () => {
+    expect(getCardSchemeFromNumber("4111111111111111")).toBeUndefined(); // Visa
+    expect(getCardSchemeFromNumber("5555555555554444")).toBeUndefined(); // Mastercard
+    expect(getCardSchemeFromNumber("6011111111111117")).toBeUndefined(); // Discover
+  });
+
+  it("returns undefined while the prefix is still incomplete or empty", () => {
+    expect(getCardSchemeFromNumber("")).toBeUndefined();
+    expect(getCardSchemeFromNumber(null)).toBeUndefined();
+    expect(getCardSchemeFromNumber()).toBeUndefined();
+    expect(getCardSchemeFromNumber("3")).toBeUndefined(); // 34/37 not yet distinguishable
+  });
+
+  it("feeds getCvvValidation to require 4 digits for a detected Amex card", () => {
+    const { regex } = getCvvValidation(getCardSchemeFromNumber("378282XXXXXXXXX"));
+    expect(new RegExp(regex).test("1234")).toBe(true);
+    expect(new RegExp(regex).test("123")).toBe(false);
   });
 
   // Saved cards expose their brand via the GraphQL SkyflowCardType.cardScheme / cardType fields

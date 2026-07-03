@@ -96,7 +96,7 @@ import { Logger, replaceXFromBeginning } from "@/core/utilities";
 import { useUser } from "@/shared/account";
 import { useNotifications } from "@/shared/notification";
 import { usePayment, useSkyflowCards, useSkyflowStyles } from "../composables";
-import { getCvvValidation } from "../utils/skyflow-cvv-validation";
+import { getCardSchemeFromNumber, getCvvValidation } from "../utils/skyflow-cvv-validation";
 import PaymentPolicies from "./payment-policies.vue";
 import type { IPaymentMethodEmits, IPaymentMethodParameters } from "./types";
 import type {
@@ -343,17 +343,23 @@ async function initNewCardForm(): Promise<void> {
     },
   );
 
-  // Re-derive the CVV rule + placeholder from the brand Skyflow detects on the card number
-  // (surfaced as `selectedCardScheme` on its CHANGE event), updating the mounted CVV element
-  // in place so an Amex card requires a 4-digit CVV (VCST-5202).
-  cardName.on(Skyflow.EventName.CHANGE, ({ selectedCardScheme }: { selectedCardScheme?: string }) => {
-    const { regex, placeholder } = getCvvValidation(selectedCardScheme);
-    if (regex === currentNewCardCvvRegex) {
-      return;
-    }
-    currentNewCardCvvRegex = regex;
-    CVV.update({ validations: buildCvvValidations(selectedCardScheme), placeholder });
-  });
+  // Re-derive the CVV rule + placeholder from the brand Skyflow detects on the card number,
+  // updating the mounted CVV element in place so an Amex card requires a 4-digit CVV (VCST-5202).
+  // `selectedCardScheme` is only populated on an explicit card-brand-choice selection (co-badged
+  // cards), so for an auto-detected single-scheme card such as Amex it is empty — fall back to the
+  // IIN prefix of the card number `value` (the SDK keeps the leading digits unmasked, even in PROD).
+  cardName.on(
+    Skyflow.EventName.CHANGE,
+    ({ selectedCardScheme, value }: { selectedCardScheme?: string; value?: string }) => {
+      const cardScheme = selectedCardScheme || getCardSchemeFromNumber(value);
+      const { regex, placeholder } = getCvvValidation(cardScheme);
+      if (regex === currentNewCardCvvRegex) {
+        return;
+      }
+      currentNewCardCvvRegex = regex;
+      CVV.update({ validations: buildCvvValidations(cardScheme), placeholder });
+    },
+  );
 
   [cardName, cardholderName, cardExpiration, CVV].forEach((el) => {
     el.on(Skyflow.EventName.CHANGE, updateValidationStatus);
