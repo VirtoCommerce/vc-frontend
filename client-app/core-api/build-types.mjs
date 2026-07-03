@@ -134,14 +134,22 @@ const contract = BANNER + "\n" + code;
  * Returns null when no baseline is available (no git, no base ref, contract absent
  * at base) — callers then skip versioning logic quietly.
  */
+// S4036: never resolve `git` through PATH - use well-known absolute locations only,
+// same stance as the vue-tsc spawn above. Exotic installs simply skip the (optional)
+// versioning automation; CI runs on a standard image where /usr/bin/git exists.
+const GIT_BIN = [
+  "/usr/bin/git",
+  "/usr/local/bin/git",
+  "/opt/homebrew/bin/git",
+  "C:\\Program Files\\Git\\cmd\\git.exe",
+].find((candidate) => existsSync(candidate));
+
 function compareContractToBase(currentContract) {
+  if (!GIT_BIN) {
+    return null;
+  }
   const baseRef = process.env.MF_CONTRACT_BASE_REF || "origin/dev";
-  // S4036: resolve `git` only from fixed, root-owned directories (POSIX) so a writable
-  // entry on the inherited PATH cannot shadow the binary - same stance as the vue-tsc
-  // spawn above. Windows keeps the inherited PATH (git has no fixed install location).
-  const fixedPath = process.platform === "win32" ? process.env.PATH : "/usr/local/bin:/usr/bin:/bin";
-  const git = (args) =>
-    spawnSync("git", args, { cwd: REPO_ROOT, encoding: "utf8", env: { ...process.env, PATH: fixedPath } });
+  const git = (args) => spawnSync(GIT_BIN, args, { cwd: REPO_ROOT, encoding: "utf8" });
   const mergeBase = git(["merge-base", "HEAD", baseRef]);
   const baseSha = mergeBase.status === 0 ? mergeBase.stdout.trim() : "";
   const baseContract = baseSha ? git(["show", `${baseSha}:client-app/core-api/dist/index.d.ts`]) : { status: 1 };
