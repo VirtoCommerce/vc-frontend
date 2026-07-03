@@ -46,7 +46,6 @@ import { uiKit } from "@/ui-kit";
 import { getLocales as getUIKitLocales } from "@/ui-kit/utilities/getLocales";
 import App from "./App.vue";
 import type { PageContextResponseType } from "./core/api/graphql/types";
-import type { PageBuilderPluginOptionsType } from "./plugins/builder-preview/models/PageBuilderPluginOptionsType";
 
 // eslint-disable-next-line no-restricted-exports
 export default async () => {
@@ -191,7 +190,7 @@ export default async () => {
       data: { slugInfo: pageContext.slugInfo },
     });
   } catch (e) {
-    Logger.warn("Failed to seed slugInfo into Apollo cache", e as Error);
+    Logger.warn("Failed to seed slugInfo into Apollo cache", e);
   }
 
   /**
@@ -216,8 +215,8 @@ export default async () => {
   void initNews(router, i18n);
   void initLoyalty(router, i18n);
 
-  // Module Federation host (VCST-5159): load federated plugins if APP_MF_HOST is on.
-  // Awaited before app.use(router) so plugin routes exist for the first navigation (#4).
+  // Module Federation host: load federated plugins if APP_MF_HOST is on.
+  // Awaited before app.use(router) so plugin routes exist for the first navigation.
   const federatedModulesReady = startFederatedModules();
 
   // Plugins
@@ -241,7 +240,7 @@ export default async () => {
     const builderPreviewPlugin = (await import("@/plugins/builder-preview/builder-preview.plugin").catch(Logger.error))
       ?.default;
     if (builderPreviewPlugin) {
-      app.use(builderPreviewPlugin, <PageBuilderPluginOptionsType>{ router });
+      app.use(builderPreviewPlugin, { router });
     }
   }
 
@@ -254,7 +253,7 @@ export default async () => {
     }
   }
 
-  // Federated plugin routes must exist before the router is installed (#4). Never rejects.
+  // Federated plugin routes must exist before the router is installed. Never rejects.
   await federatedModulesReady;
 
   // router must be registered after all plugins because some of them are using router.beforeEach to protect routes or add functionality before route changes, and we want to make sure that those are registered before we start using the router
@@ -270,7 +269,7 @@ export default async () => {
 
   app.config.warnHandler = (msg, _, trace) => {
     // to remove builder.io warnings
-    if (consoleIgnoredErrors.some((err) => msg.includes(err) && trace.includes(BUILDER_IO_TRACE_MARKER))) {
+    if (consoleIgnoredErrors.some((err) => msg?.includes(err) && trace?.includes(BUILDER_IO_TRACE_MARKER))) {
       return;
     }
 
@@ -326,7 +325,6 @@ function notifyOutdatedModules(
 }
 
 function getPermalink(permalink: string, getUrlWithoutPossibleLocale: (fullPath: string) => string) {
-  permalink = getUrlWithoutPossibleLocale(permalink);
-  permalink = permalink === "/" ? "/" : permalink.replace(/^\/+/, "");
-  return permalink;
+  const withoutLocale = getUrlWithoutPossibleLocale(permalink);
+  return withoutLocale === "/" ? "/" : (withoutLocale?.replace(/^\/+/, "") ?? "");
 }
