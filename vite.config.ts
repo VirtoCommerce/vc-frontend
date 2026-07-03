@@ -102,12 +102,11 @@ export default defineConfig(({ command, mode }): UserConfig => {
       sourcemap: true,
       rollupOptions: {
         output: {
-          manualChunks(id) {
-            const moduleId = id ?? "";
-            if (!moduleId.includes("node_modules")) {
+          manualChunks(id = "") {
+            if (!id.includes("node_modules")) {
               return;
             }
-            const isDeferredLib = DEFERRED_LIBS.some((lib) => moduleId.includes(`/node_modules/${lib}/`));
+            const isDeferredLib = DEFERRED_LIBS.some((lib) => id.includes(`/node_modules/${lib}/`));
             if (isDeferredLib) {
               return;
             }

@@ -122,7 +122,7 @@ const toolDeps = ["typescript", "vite", "@vitejs/plugin-vue", "@module-federatio
 if (selected.tailwind) {
   toolDeps.push("tailwindcss", "postcss", "autoprefixer", "postcss-import");
 }
-const portalPath = relative(targetDir, CORE_API_DIR).split("\\").join("/");
+const portalPath = relative(targetDir, CORE_API_DIR).replaceAll("\\", "/");
 
 // Shared entries the plugin does NOT install must be dropped from its MF config.
 const ALL_OPTIONAL_SHARED = {
