@@ -25,7 +25,7 @@ vi.mock("@/shared/notification", () => ({
   useNotifications: () => ({ error: notificationErrorMock }),
 }));
 
-vi.mock("@/core-api/core-version", () => ({ CORE_VERSION: "2.53.0" }));
+vi.mock("@/core-api/package.json", () => ({ version: "2.53.0" }));
 
 const REMOTE_URL = "https://plugins.example.com/news/mf-manifest.json";
 

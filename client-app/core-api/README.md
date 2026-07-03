@@ -31,7 +31,6 @@ Files in this folder:
 | ----------------- | ----------------------------------------------------------------------------------------------------------------- |
 | `index.ts`        | **The facade source** — a list of re-exports. This is the API. Edit this.                                         |
 | `dist/index.d.ts` | **Generated** type contract. Never edit; regenerate and commit.                                                   |
-| `core-version.ts` | Runtime `CORE_VERSION` export — reads the version from `package.json` (single source).                            |
 | `federation.mjs`  | Shared-singleton contract (`createHostShared` / `createRemoteShared` + defaults) for both host and plugin builds. |
 | `build-types.mjs` | The generator (below).                                                                                            |
 

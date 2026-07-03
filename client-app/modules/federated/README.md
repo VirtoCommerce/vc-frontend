@@ -129,6 +129,28 @@ package.
 
 ---
 
+## The two version gates
+
+There are deliberately **two** version checks, guarding **different failure classes** —
+don't "simplify" one away:
+
+|            | 1 · CONTRACT GATE                                         | 2 · SHARED-DEPENDENCY GATE                                            |
+| ---------- | --------------------------------------------------------- | --------------------------------------------------------------------- |
+| Guards     | the **facade API contract** (`@vc-frontend/core` surface) | **each shared library** (vue, @apollo/client, …)                      |
+| Question   | "was this plugin built against a compatible host API?"    | "do the host-provided singletons satisfy the plugin's ranges?"        |
+| Input      | manifest `metaData.requiredHostVersion` vs `CORE_VERSION` | plugin's shared config (`createRemoteShared` ranges) vs host versions |
+| When       | **before any plugin code executes** (manifest JSON only)  | during `loadRemote()`, MF shared-scope negotiation                    |
+| On failure | remote **skipped** (fail closed)                          | remote **failed** (MF throws via `strictVersion`; isolated)           |
+| Code       | `version-gate.ts` (+ `isCompatible` in `index.ts`)        | `core-api/federation.mjs` (`strictVersion: true`)                     |
+
+One can pass while the other fails: a plugin can require the right facade version yet
+be built against a different Vue major (gate 1 passes, gate 2 throws), or ship the
+right Vue range but use a facade export this host doesn't have (gate 2 passes, gate 1
+skips). vc-shell has **neither** as a hard stop (its shared mismatches only warn) —
+it can afford that because everything flows through published npm semver; we can't.
+
+---
+
 ## The load sequence (what actually happens at boot)
 
 ```

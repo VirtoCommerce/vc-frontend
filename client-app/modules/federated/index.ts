@@ -1,6 +1,6 @@
 import { loadRemote, registerRemotes } from "@module-federation/enhanced/runtime";
 import { Logger } from "@/core/utilities";
-import { CORE_VERSION } from "@/core-api/core-version";
+import { version as CORE_VERSION } from "@/core-api/package.json";
 import { useNotifications } from "@/shared/notification";
 import { checkHostCompatibility } from "./version-gate";
 
@@ -111,10 +111,12 @@ function resolveRemotes(): IRemoteDescriptor[] {
 }
 
 /**
- * Version gate (#2). Fetches the remote manifest (plain JSON — no code execution) and
- * checks its declared `requiredHostVersion` (semver version or range) against the
- * host's core version. Skips on incompatibility, malformed requirement, manifest
- * read failure, or timeout — all fail closed.
+ * CONTRACT GATE (version gate 1 of 2 — see version-gate.ts and the README). Fetches
+ * the remote manifest (plain JSON — no code execution) and checks its declared
+ * `requiredHostVersion` (semver version or range) against the host's core version.
+ * Skips on incompatibility, malformed requirement, manifest read failure, or
+ * timeout — all fail closed. Shared-library versions (vue, apollo, ...) are guarded
+ * separately by the SHARED-DEPENDENCY GATE at loadRemote() time.
  */
 async function isCompatible(remote: IRemoteDescriptor, manifestTimeoutMs: number): Promise<boolean> {
   try {

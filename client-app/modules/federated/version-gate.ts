@@ -1,7 +1,12 @@
 import { satisfies, valid, validRange } from "semver";
 
 /**
- * Fail-closed host-version gate for federated plugins (VCST-5159, #2).
+ * CONTRACT GATE — the first of the TWO version gates (VCST-5159, #2; see "The two
+ * version gates" in ./README.md). Guards the FACADE API CONTRACT: "was this plugin
+ * built against a compatible @vc-frontend/core surface?" Evaluated from plain manifest
+ * JSON BEFORE any plugin code executes. Its counterpart, the SHARED-DEPENDENCY GATE
+ * (core-api/federation.mjs, strictVersion), guards individual shared libraries
+ * (vue, @apollo/client, ...) later, during loadRemote().
  *
  * `required` comes from the remote manifest (`metaData.requiredHostVersion`) and may be
  * a full semver range ("^2.53.0", ">=2.53.0 <3"). A bare version ("2.53.0") means

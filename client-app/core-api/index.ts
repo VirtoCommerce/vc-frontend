@@ -20,5 +20,8 @@ export { apolloClient, graphqlClient } from "@/core/api/graphql/client";
 
 export { useModuleSettings } from "@/core/composables/useModuleSettings";
 export { globals } from "@/core/globals";
-export { CORE_VERSION } from "./core-version";
 export type { I18n } from "@/i18n";
+
+import { version } from "./package.json";
+/** Contract version, single-sourced from core-api/package.json (managed by build:core-types / bump:core). */
+export const CORE_VERSION: string = version;

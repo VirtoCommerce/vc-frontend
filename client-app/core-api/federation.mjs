@@ -22,9 +22,14 @@ export const MF_SHARED_RANGES = {
   "@vc-frontend/core": "^1.0.0",
 };
 
-// strictVersion: the MF runtime only WARNS on a singleton range mismatch by default;
-// strict makes it throw at loadRemote() time, which the host loader already converts
-// into an isolated per-plugin failure - real fail-closed instead of a console warning.
+// SHARED-DEPENDENCY GATE - the second of the TWO version gates (see "The two version
+// gates" in modules/federated/README.md). Guards INDIVIDUAL shared libraries: "does
+// the host-provided vue/apollo/... satisfy the range this plugin was built against?"
+// strictVersion is what makes it a gate: the MF runtime only WARNS on a singleton
+// range mismatch by default; strict makes it throw at loadRemote() time, which the
+// host loader converts into an isolated per-plugin failure. The facade API contract
+// itself is guarded earlier by the CONTRACT GATE (modules/federated/version-gate.ts),
+// before any plugin code runs.
 function buildSharedConfig(extra) {
   return Object.fromEntries(
     Object.entries(MF_SHARED_RANGES).map(([name, requiredVersion]) => [
