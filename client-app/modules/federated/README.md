@@ -3,7 +3,7 @@
 This folder is the **host side** of Module Federation (MF) for the storefront — the
 code that discovers, version-checks, and loads **remote plugins** at runtime.
 
-A "remote plugin" is a *separately built, separately deployed* bundle (its own repo,
+A "remote plugin" is a _separately built, separately deployed_ bundle (its own repo,
 its own CI) that the storefront pulls in over HTTP at startup. It is **not** one of the
 in-repo modules in `client-app/modules/*` — those ship inside the host bundle. The point
 of MF is exactly that separation: a plugin team can build and release on their own cadence
@@ -23,10 +23,16 @@ APP_MF_REMOTES='{"news":"https://plugins.example.com/news/mf-manifest.json"}' \
 yarn dev
 ```
 
-- `APP_MF_HOST` → turns the host into a federation host (build + runtime).
+- `APP_MF_HOST` → turns the host into a federation host (build + runtime). `""`, `"false"`
+  and `"0"` count as off.
 - `APP_MF_REMOTES` → a JSON map of `remoteName → manifestUrl`. No var = no remotes = no-op.
+  URLs must be **https** (http is allowed for localhost only).
 
-That's the whole operator surface. Everything below is *why* and *how*.
+> **Both vars are inlined at BUILD time** (Vite `import.meta.env`): changing the remote
+> list means rebuilding the host, not just flipping a deployment variable. Runtime
+> discovery via a backend manifest is the planned replacement (see `TODO.md` #1).
+
+That's the whole operator surface. Everything below is _why_ and _how_.
 
 ---
 
@@ -75,15 +81,15 @@ through the shared `@vc-frontend/core` facade — never by importing host source
 
 A plugin must not `import "@/..."` from the host — those paths don't exist in the
 plugin's build. Instead, the host publishes a **curated public surface** as the package
-`@vc-frontend/core` (source: `client-app/core-api/`). This is the *single* seam between
+`@vc-frontend/core` (source: `client-app/core-api/`). This is the _single_ seam between
 host and plugin.
 
 Two halves, and they are deliberately different:
 
-| | Plugin gets… | From… |
-|---|---|---|
-| **At build/type-check time** | **Types only** — a self-contained `dist/index.d.ts` | `yarn build:core-types` output, committed |
-| **At runtime** | The host's **live singleton instance** (real router, real Apollo client, …) | MF shared scope (`shareStrategy: "loaded-first"`) |
+|                              | Plugin gets…                                                                | From…                                             |
+| ---------------------------- | --------------------------------------------------------------------------- | ------------------------------------------------- |
+| **At build/type-check time** | **Types only** — a self-contained `dist/index.d.ts`                         | `yarn build:core-types` output, committed         |
+| **At runtime**               | The host's **live singleton instance** (real router, real Apollo client, …) | MF shared scope (`shareStrategy: "loaded-first"`) |
 
 This is "publish from source": the plugin compiles against a frozen type contract and
 gets zero host coupling, while at runtime it shares the exact same live objects as the
@@ -98,11 +104,17 @@ host. No second Vue, no second router, no duplicate Apollo cache.
 - Meta: `CORE_VERSION`, `type I18n`
 
 > **Rule of thumb:** keep the facade **small and additive**. Removing or renaming an
-> export is a breaking change for *every* plugin — bump `CORE_VERSION` when you do.
+> export is a breaking change for _every_ plugin — bump `CORE_VERSION` when you do.
 
 The shared **singletons** (what must be one-instance-only across host+plugins) live in
-`vite.federation.ts` → `MF_SHARED`: `vue`, `vue-router`, `vue-i18n`, `@vueuse/core`,
-`@apollo/client`, `@vue/apollo-composable`, `graphql`, and `@vc-frontend/core` itself.
+`client-app/core-api/federation.mjs` — the **single source of truth for both sides**:
+`vue`, `vue-router`, `vue-i18n`, `@vueuse/core`, `@apollo/client`,
+`@vue/apollo-composable`, `graphql`, and `@vc-frontend/core` itself, each with a real
+semver `requiredVersion` range (kept consistent with the host `package.json` by a
+build-types guard). The host build consumes `HOST_SHARED` (via `vite.federation.ts`);
+a plugin build imports `REMOTE_SHARED` from `@vc-frontend/core/federation` — its
+`import: false` stops the remote from bundling multi-MB fallback copies. Mirrors
+vc-shell's `@vc-shell/mf-config` package.
 
 ---
 
@@ -119,24 +131,31 @@ startFederatedModules()            bootstrap.ts
   │  dynamic import("./index")              ← keeps MF runtime out of non-MF builds
   ▼
 initFederatedModules()             index.ts
-  1. resolveRemotes()              parse APP_MF_REMOTES → [{name, entry}]  (empty ⇒ done)
-  2. isCompatible(remote)          fetch manifest JSON, compare requiredHostVersion
-                                   with CORE_VERSION. Incompatible OR unreadable ⇒ SKIP
-                                   (fail closed — no plugin code has run yet)
+  1. resolveRemotes()              parse + validate APP_MF_REMOTES → [{name, entry}]
+                                   (empty ⇒ done; non-https / malformed entries dropped)
+  2. isCompatible(remote)          fetch manifest JSON (5s budget), evaluate
+                                   requiredHostVersion (semver version or RANGE) against
+                                   CORE_VERSION. Incompatible, malformed, unreadable or
+                                   timed out ⇒ SKIP (fail closed — no plugin code has run)
   3. registerRemotes(compatible)   { force: true } so HMR re-registration won't throw
-  4. loadRemote(`${name}/plugin`)  ⇒ plugin module ⇒ await plugin.init()
+  4. loadRemote(`${name}/plugin`)  ⇒ plugin module ⇒ await plugin.init()  (15s budget)
   5. Promise.allSettled            one bad plugin cannot abort the others
   6. reportOutcome({loaded,failed,skipped})   logs; in DEV also shows a notification
 ```
 
-Two design points worth calling out:
+Three design points worth calling out:
 
 - **Awaited before `app.use(router)`** so a plugin that calls `router.addRoute()` in
-  `init()` is registered *before* the initial navigation resolves — deep links to
+  `init()` is registered _before_ the initial navigation resolves — deep links to
   plugin routes work on first paint.
 - **Version gate runs before any remote code executes.** We fetch the manifest (plain
   JSON, no execution), read `metaData.requiredHostVersion`, and only `loadRemote` the
-  ones this host can satisfy. Unreadable manifest ⇒ treated as incompatible (fail closed).
+  ones this host can satisfy. Unreadable or unparseable ⇒ treated as incompatible
+  (fail closed). A bare version like `"2.53.0"` is normalized to `"^2.53.0"` — so a
+  host **major** bump correctly rejects plugins built against the previous major.
+- **Every network step is time-budgeted** (manifest 5s, load+init 15s, tunable via
+  `initFederatedModules(options)`). Because boot awaits this loader, a hung remote must
+  degrade to a `failed`/`skipped` plugin — never a blank storefront.
 
 ---
 
@@ -153,15 +172,28 @@ A plugin is its own build. It must:
    }
    ```
 
-2. **Depend on `@vc-frontend/core` for anything host-provided**, and mark it (plus the
-   shared framework libs) as **shared/singleton** in its own MF config so it consumes the
-   host's instance rather than bundling its own.
+2. **Depend on `@vc-frontend/core` for anything host-provided**, and reuse the host's
+   shared-singleton map instead of hand-maintaining one — a forgotten entry silently
+   ships a second Vue:
 
-3. **Declare the host version it needs** in its manifest:
+   ```ts
+   // plugin vite.config.ts
+   import { REMOTE_SHARED } from "@vc-frontend/core/federation";
+
+   federation({
+     name: "news",
+     exposes: { "./plugin": "./src/index.ts" },
+     shared: { ...REMOTE_SHARED }, // singletons, host-compatible ranges, import: false
+   });
+   ```
+
+3. **Declare the host version it needs** in its manifest — a semver **version or range**:
 
    ```jsonc
    // mf-manifest.json (excerpt)
-   { "metaData": { "requiredHostVersion": "2.53.0" } }
+   { "metaData": { "requiredHostVersion": "^2.53.0" } }
+   // a bare "2.53.0" means the same thing (normalized to ^2.53.0);
+   // anything semver can't parse is rejected (fail closed)
    ```
 
 ### Sketch of a plugin `init()`
@@ -187,28 +219,53 @@ Once built and deployed, add it to the host's `APP_MF_REMOTES` and it loads on n
 
 ## Files in this folder
 
-| File | Role |
-|---|---|
-| `bootstrap.ts` | App-runner entry. Flag check + dynamic import of the loader. **No static MF-runtime import** — so non-MF builds bundle neither the runtime nor the loader. |
-| `index.ts` | The loader: resolve remotes → version gate → `registerRemotes` → `loadRemote`/`init` → report. Contains the `IFederatedPlugin` contract. |
-| `compare-versions.ts` | Dotted-numeric version compare for the gate. Local so the harness touches zero core utilities. |
+| File              | Role                                                                                                                                                                            |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `bootstrap.ts`    | App-runner entry. Flag check + dynamic import of the loader (both failure-proof). **No static MF-runtime import** — so non-MF builds bundle neither the runtime nor the loader. |
+| `index.ts`        | The loader: resolve+validate remotes → version gate → `registerRemotes` → `loadRemote`/`init` (time-budgeted) → report. Contains the `IFederatedPlugin` contract.               |
+| `version-gate.ts` | Fail-closed semver gate for `requiredHostVersion` (version or range).                                                                                                           |
+| `*.test.ts`       | Unit tests for the loader, the gate, bootstrap and the shared-dep contract.                                                                                                     |
 
 **Related files outside this folder:**
 
-| File | Role |
-|---|---|
-| `vite.federation.ts` (repo root) | Build-side host config: `MF_SHARED` singletons, `federatedHostPlugin`, `federatedAlias`. At root because it imports a build-time dev dep. |
-| `client-app/core-api/` | The `@vc-frontend/core` facade + the `build-types.mjs` type-contract build. |
-| `client-app/app-runner.ts` | Calls `startFederatedModules()` and awaits it before `app.use(router)`. |
+| File                                 | Role                                                                                                                                                                                             |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `client-app/core-api/federation.mjs` | **Single source of truth** for the shared-singleton contract: `HOST_SHARED`, `REMOTE_SHARED`, `isMfFlagEnabled`. Plain `.mjs` so plugin vite configs (node) and browser code can both import it. |
+| `vite.federation.ts` (repo root)     | Build-side host config: `federatedHostPlugin` (consumes `HOST_SHARED`), `federatedAlias`. At root because it imports a build-time dev dep.                                                       |
+| `client-app/core-api/`               | The `@vc-frontend/core` facade + the `build-types.mjs` type-contract build.                                                                                                                      |
+| `client-app/app-runner.ts`           | Calls `startFederatedModules()` and awaits it before `app.use(router)`.                                                                                                                          |
 
 ---
 
 ## Environment variables
 
-| Var | Scope | Meaning |
-|---|---|---|
-| `APP_MF_HOST` | build + runtime | Enables the MF host plugin in Vite **and** the runtime bootstrap. Off ⇒ complete no-op. |
-| `APP_MF_REMOTES` | runtime | JSON `{ "<name>": "<manifestUrl>" }`. Absent/invalid ⇒ no remotes loaded. |
+| Var              | Scope                | Meaning                                                                                                              |
+| ---------------- | -------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `APP_MF_HOST`    | build time (inlined) | Enables the MF host plugin in Vite **and** the runtime bootstrap. Off (unset/`""`/`"false"`/`"0"`) ⇒ complete no-op. |
+| `APP_MF_REMOTES` | build time (inlined) | JSON `{ "<name>": "<manifestUrl>" }`, https-only. Absent/invalid ⇒ no remotes loaded.                                |
+
+---
+
+## Security model (read before enabling in production)
+
+A federated plugin executes with **full application privileges** — same origin, same
+session, same Apollo client. Treat the remote list as part of the deploy artifact, not
+as tenant-editable configuration. What the harness enforces today:
+
+- **https-only remotes** (http allowed for `localhost` only) — no downgradable code loads.
+- **Fail-closed gating** — a manifest that can't be fetched, parsed or version-matched
+  never gets its code executed.
+- **Build-time remote list** — an attacker can't add a remote without producing a new
+  host build (this is a temporary property; see the central-discovery TODO, which must
+  come with an origin allowlist).
+
+What **you** must provide when enabling MF in an environment:
+
+- **CSP**: add each plugin origin to `script-src` and `connect-src` (manifest fetch +
+  chunk loading). Without CSP, any XSS can `import()` arbitrary code anyway — CSP is the
+  real boundary that makes the https/allowlist story meaningful.
+- **Trusted hosting** for plugin artifacts (same trust level as the host bundle itself);
+  artifact integrity/signing is an open follow-up in `TODO.md`.
 
 ---
 
@@ -216,13 +273,17 @@ Once built and deployed, add it to the host's `APP_MF_REMOTES` and it loads on n
 
 - **Off by default.** No flag, no cost — the loader isn't even imported.
 - **Isolation is total.** `initFederatedModules()` never rejects; a failing plugin is
-  logged and reported, others still load.
-- **Fail closed on version.** Can't read/parse a manifest ⇒ skip that remote.
-- **The `.d.ts` is generated.** After any facade change, run `yarn build:core-types` and
-  commit `client-app/core-api/dist/index.d.ts`. It must contain **zero** `@/` references
-  (the build fails loudly otherwise).
+  logged and reported, others still load. A hung remote is cut off by the time budgets.
+- **Fail closed on version.** Can't read/parse/satisfy a manifest ⇒ skip that remote.
+- **The `.d.ts` is generated and drift-guarded.** After any facade change, run
+  `yarn build:core-types` and commit `client-app/core-api/dist/index.d.ts` (zero `@/`
+  references, checked). `yarn validate` (and therefore CI `yarn build`) runs
+  `validate:core-types`, which regenerates the contract and **fails if the committed
+  file is stale** — same for `CORE_VERSION`/package.json sync and shared-range drift.
 - **Bump `CORE_VERSION`** (`core-api/version.ts`, kept in sync with `core-api/package.json`)
-  on any breaking facade change.
+  on any breaking facade change — **including a major bump of a shared singleton**
+  (vue, @apollo/client, …): plugins pin against the facade version, so a breaking shared
+  dep must surface there.
 
 See [`TODO.md`](./TODO.md) for what's intentionally deferred (remote discovery via a
-central manifest, a CI guard for the generated contract, etc.).
+central manifest, artifact integrity, a reference plugin in CI, etc.).

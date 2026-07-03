@@ -2,7 +2,7 @@ import { loadRemote, registerRemotes } from "@module-federation/enhanced/runtime
 import { Logger } from "@/core/utilities";
 import { CORE_VERSION } from "@/core-api/version";
 import { useNotifications } from "@/shared/notification";
-import { compareVersions } from "./compare-versions";
+import { checkHostCompatibility } from "./version-gate";
 
 /**
  * Host-side loader for Module Federation plugins (VCST-5159). For each configured
@@ -10,6 +10,9 @@ import { compareVersions } from "./compare-versions";
  * call `init()`. Plugins bind to the host's live services via the shared facade.
  * - #2 version safety: an incompatible remote is skipped before any of its code runs.
  * - #8 isolation: one bad remote can't abort the others; outcomes are logged/returned.
+ * - Every network step is time-budgeted: the app-runner awaits this loader before
+ *   installing the router, so a hung remote must degrade to failed/skipped, never
+ *   block first paint.
  * Discovery is env-driven (`APP_MF_REMOTES`); the harness ships no built-in remote.
  */
 
@@ -37,37 +40,101 @@ export interface IFederatedLoadResult {
   skipped: string[];
 }
 
-function resolveRemotes(): IRemoteDescriptor[] {
-  const raw = import.meta.env.APP_MF_REMOTES as string | undefined;
-  if (raw) {
-    try {
-      const parsed = JSON.parse(raw) as Record<string, string>;
-      return Object.entries(parsed).map(([name, entry]) => ({ name, entry }));
-    } catch (error) {
-      Logger.error("[MF] APP_MF_REMOTES is not valid JSON; ignoring", error);
-    }
+export interface IFederatedLoaderOptions {
+  /** Budget for reading one remote's manifest JSON; exceeded => skipped (fail closed). */
+  manifestTimeoutMs?: number;
+  /** Budget for loading + init()ing one remote; exceeded => failed. */
+  loadTimeoutMs?: number;
+}
+
+const DEFAULT_MANIFEST_TIMEOUT_MS = 5_000;
+const DEFAULT_LOAD_TIMEOUT_MS = 15_000;
+
+async function withTimeout<T>(work: Promise<T>, ms: number, label: string): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms);
+  });
+  try {
+    return await Promise.race([work, timeout]);
+  } finally {
+    clearTimeout(timer);
   }
-  // No remotes configured → no-op. The harness carries no built-in remote.
-  return [];
+}
+
+/**
+ * Remote code executes with full app privileges, so the entry URL must not be
+ * downgradable: https only, with http allowed solely for localhost development.
+ */
+function isAllowedRemoteUrl(entry: string): boolean {
+  let url: URL;
+  try {
+    url = new URL(entry);
+  } catch {
+    return false;
+  }
+  if (url.protocol === "https:") {
+    return true;
+  }
+  const isLocalhost = url.hostname === "localhost" || url.hostname === "127.0.0.1";
+  return url.protocol === "http:" && isLocalhost;
+}
+
+function resolveRemotes(): IRemoteDescriptor[] {
+  const raw = import.meta.env.APP_MF_REMOTES;
+  if (!raw) {
+    // No remotes configured -> no-op. The harness carries no built-in remote.
+    return [];
+  }
+
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(raw);
+  } catch (error) {
+    Logger.error("[MF] APP_MF_REMOTES is not valid JSON; ignoring", error);
+    return [];
+  }
+  if (parsed === null || typeof parsed !== "object" || Array.isArray(parsed)) {
+    Logger.error("[MF] APP_MF_REMOTES must be a JSON object of remote name -> manifest URL; ignoring");
+    return [];
+  }
+
+  const remotes: IRemoteDescriptor[] = [];
+  for (const [name, entry] of Object.entries(parsed)) {
+    if (typeof entry !== "string" || !isAllowedRemoteUrl(entry)) {
+      Logger.error(`[MF] Ignoring remote "${name}": entry must be an https URL (http only for localhost)`);
+      continue;
+    }
+    remotes.push({ name, entry });
+  }
+  return remotes;
 }
 
 /**
  * Version gate (#2). Fetches the remote manifest (plain JSON — no code execution) and
- * checks its declared `requiredHostVersion` against the host's core version. Returns
- * false (skip) on incompatibility OR when the manifest can't be read (fail closed).
+ * checks its declared `requiredHostVersion` (semver version or range) against the
+ * host's core version. Skips on incompatibility, malformed requirement, manifest
+ * read failure, or timeout — all fail closed.
  */
-async function isCompatible(remote: IRemoteDescriptor): Promise<boolean> {
+async function isCompatible(remote: IRemoteDescriptor, manifestTimeoutMs: number): Promise<boolean> {
   try {
-    const response = await fetch(remote.entry, { headers: { accept: "application/json" } });
-    if (!response.ok) {
-      throw new Error(`manifest HTTP ${response.status}`);
-    }
-    const manifest = (await response.json()) as IRemoteManifest;
-    const required = manifest.metaData?.requiredHostVersion;
-    if (required && compareVersions(CORE_VERSION, required) < 0) {
-      Logger.warn(
-        `[MF] Skipping "${remote.name}": requires @vc-frontend/core >= ${required}, host provides ${CORE_VERSION}`,
-      );
+    const readManifest = async (): Promise<IRemoteManifest> => {
+      const response = await fetch(remote.entry, {
+        headers: { accept: "application/json" },
+        // Aborts the actual network request; withTimeout below bounds the whole step
+        // even if a fetch implementation ignores the signal.
+        signal: AbortSignal.timeout(manifestTimeoutMs),
+      });
+      if (!response.ok) {
+        throw new Error(`manifest HTTP ${response.status}`);
+      }
+      return (await response.json()) as IRemoteManifest;
+    };
+    const manifest = await withTimeout(readManifest(), manifestTimeoutMs, `manifest fetch for "${remote.name}"`);
+
+    const compatibility = checkHostCompatibility(CORE_VERSION, manifest.metaData?.requiredHostVersion);
+    if (!compatibility.ok) {
+      Logger.warn(`[MF] Skipping "${remote.name}": ${compatibility.reason}`);
       return false;
     }
     return true;
@@ -97,7 +164,10 @@ function reportOutcome(result: IFederatedLoadResult): void {
  * Registers and initializes every configured, compatible federated plugin. Resolves
  * once all have settled and returns the outcome. Never rejects — isolation is total.
  */
-export async function initFederatedModules(): Promise<IFederatedLoadResult> {
+export async function initFederatedModules(options?: IFederatedLoaderOptions): Promise<IFederatedLoadResult> {
+  const manifestTimeoutMs = options?.manifestTimeoutMs ?? DEFAULT_MANIFEST_TIMEOUT_MS;
+  const loadTimeoutMs = options?.loadTimeoutMs ?? DEFAULT_LOAD_TIMEOUT_MS;
+
   const result: IFederatedLoadResult = { loaded: [], failed: [], skipped: [] };
   const remotes = resolveRemotes();
   if (remotes.length === 0) {
@@ -105,7 +175,9 @@ export async function initFederatedModules(): Promise<IFederatedLoadResult> {
   }
 
   // Version-gate everything before registering/executing any remote code.
-  const compatibility = await Promise.all(remotes.map(async (remote) => ({ remote, ok: await isCompatible(remote) })));
+  const compatibility = await Promise.all(
+    remotes.map(async (remote) => ({ remote, ok: await isCompatible(remote, manifestTimeoutMs) })),
+  );
   const compatible = compatibility.filter((entry) => entry.ok).map((entry) => entry.remote);
   compatibility.filter((entry) => !entry.ok).forEach((entry) => result.skipped.push(entry.remote.name));
 
@@ -123,8 +195,13 @@ export async function initFederatedModules(): Promise<IFederatedLoadResult> {
   await Promise.allSettled(
     compatible.map(async (remote) => {
       try {
-        const plugin = await loadRemote<IFederatedPlugin>(`${remote.name}/plugin`);
-        await plugin?.init?.();
+        const loadAndInit = async (): Promise<void> => {
+          const plugin = await loadRemote<IFederatedPlugin>(`${remote.name}/plugin`);
+          await plugin?.init?.();
+        };
+        // On timeout the underlying load cannot be cancelled — a late init() may still
+        // complete in the background, but boot proceeds without it (degraded, logged).
+        await withTimeout(loadAndInit(), loadTimeoutMs, `plugin "${remote.name}" load/init`);
         result.loaded.push(remote.name);
       } catch (error) {
         result.failed.push(remote.name);

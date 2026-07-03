@@ -7,29 +7,30 @@ initial harness to keep the first cut small and reviewable. Roughly in priority 
 
 ## 1. Central remote discovery (drop the hardcoded list)
 
-**Now:** remotes come from the `APP_MF_REMOTES` env var — a static JSON map baked in at
-deploy time. Adding/removing a plugin means a redeploy.
+**Now:** remotes come from the `APP_MF_REMOTES` env var — a static JSON map **inlined at
+build time**. Adding/removing a plugin means rebuilding the host.
 
 **Want:** the host fetches a **central manifest** (e.g. from the platform backend) that
 lists the enabled remotes for this tenant/environment, and registers those at runtime.
-No host redeploy to enable a plugin.
+No host rebuild to enable a plugin.
 
 - Prior art: vc-shell does this — backend endpoint `GET /api/apps/{appId}/manifest`
   (`AppManifestService.cs`), `remoteEntry` served as a static file from a platform module.
+- **Must ship together with an origin allowlist**: once the remote list becomes runtime
+  data, "who can add a remote" becomes a code-execution trust boundary (today the
+  build-time inlining is what keeps it deploy-controlled — see the README security model).
 - Keep `APP_MF_REMOTES` as a **local/dev override** even after this lands.
-- Decision on record: *"let it be constant yet"* — so this is explicitly deferred, not
+- Decision on record: _"let it be constant yet"_ — so this is explicitly deferred, not
   forgotten. `resolveRemotes()` in `index.ts` is the single seam to change.
 
 ---
 
-## 2. CI guard for the generated type contract
+## 2. Artifact integrity for remote code
 
-`client-app/core-api/dist/index.d.ts` is generated (`yarn build:core-types`) and
-**committed**. Nothing stops someone editing the facade and forgetting to regenerate,
-so the committed `.d.ts` silently drifts from source.
-
-**Want:** a CI step that runs `yarn build:core-types` and fails if `git diff` is dirty —
-i.e. "the committed contract doesn't match the facade." Cheap, catches the whole class.
+Remotes load over https from trusted hosting, but there is no integrity/signature check
+on the manifest or chunks (MF has no native SRI story). Evaluate: signed manifests,
+hash pinning in the central discovery response (vc-shell passes `entry.hash`), or CSP
+`strict-dynamic` + nonce approaches.
 
 ---
 
@@ -46,11 +47,12 @@ silently vanishes in prod is observable. There's already a `// Prod:` marker in 
 ## 4. Confirm the plugin-side story end to end
 
 The harness is host-side only and ships no built-in remote, so the plugin contract is
-currently validated by design, not by a living example in CI.
+exercised by unit tests (loader/gate/shared-config) but not by a living remote in CI.
 
 **Want:** a minimal reference remote (separate build) that exposes `./plugin`, consumes
-`@vc-frontend/core`, declares `requiredHostVersion`, and is loaded in an integration test.
-Locks the contract against regressions and doubles as copy-paste starter docs.
+`@vc-frontend/core` + `REMOTE_SHARED`, declares `requiredHostVersion`, and is loaded in
+an integration test. Locks the contract against regressions and doubles as copy-paste
+starter docs.
 
 ---
 
@@ -66,11 +68,25 @@ built, expect requests to widen it. Guard rails:
 
 ---
 
+## Done (formerly deferred here)
+
+- **CI guard for the generated type contract** — `yarn validate:core-types` (part of
+  `yarn validate`, which CI's `yarn build` runs) regenerates the contract and fails on
+  drift; also checks `CORE_VERSION` ↔ `core-api/package.json` sync and that
+  `federation.mjs` shared ranges stay compatible with host `package.json`.
+- **Semver version gate** — `requiredHostVersion` accepts a version or range, evaluated
+  with real semver, fail-closed on anything unparseable (was: custom dotted-numeric
+  minimum-only compare).
+- **Time budgets** — manifest fetch and plugin load/init are bounded so a hung remote
+  degrades instead of blocking boot.
+- **Shared-dep single source of truth** — `core-api/federation.mjs` (`HOST_SHARED` /
+  `REMOTE_SHARED`), consumable by plugin builds as `@vc-frontend/core/federation`.
+
 ## Not doing (and why)
 
-- **Runtime version *gating* beyond a warn** — MF's own `requiredVersion` only warns.
-  Our explicit pre-execution gate (`isCompatible`) is the safety net; vc-shell dropped
-  runtime version gating entirely (PR #228). We keep the fail-closed manifest check but
-  don't try to out-clever MF's shared-scope negotiation.
+- **Out-clevering MF's shared-scope negotiation** — the shared singletons now carry real
+  semver ranges (MF warns on mismatch), and the hard fail-closed layer stays our explicit
+  pre-execution manifest gate. We don't try to re-implement MF's negotiation on top;
+  vc-shell dropped runtime version gating entirely (PR #228), we keep the manifest gate.
 - **Publishing `@vc-frontend/core` to npm** — the host is `"private": true` and deploys
   as a theme zip. Publish-from-source (portal link + committed `.d.ts`) is deliberate.

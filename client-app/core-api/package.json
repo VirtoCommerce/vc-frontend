@@ -11,6 +11,10 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./index.ts"
+    },
+    "./federation": {
+      "types": "./federation.d.mts",
+      "import": "./federation.mjs"
     }
   },
   "scripts": {

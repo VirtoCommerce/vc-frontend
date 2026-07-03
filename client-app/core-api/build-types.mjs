@@ -4,14 +4,22 @@
  * into host source. Two steps: vue-tsc emits the facade's type graph, then
  * rollup-plugin-dts inlines it into one file (only shared peer imports remain).
  * Run `yarn build:core-types` after any facade change; output is committed.
+ *
+ * `--check` mode (yarn validate:core-types, part of `yarn validate` and therefore CI):
+ * regenerates the contract in memory and fails if the committed dist/index.d.ts does
+ * not match — the drift guard for the committed artifact.
  */
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { rollup } from "rollup";
 import dts from "rollup-plugin-dts";
+import { intersects, satisfies } from "semver";
+import { MF_SHARED_RANGES } from "./federation.mjs";
+
+const CHECK_MODE = process.argv.includes("--check");
 
 const CORE_API_DIR = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(CORE_API_DIR, "../..");
@@ -33,6 +41,46 @@ function step(msg) {
   console.log(`[build-types] ${msg}`);
 }
 
+function fail(msg) {
+  console.error(`[build-types] FAILED: ${msg}`);
+  process.exit(1);
+}
+
+// 0 ── contract-consistency guards (cheap, run before the slow emit) ──────────
+const corePkg = require("./package.json");
+const hostPkg = require(resolve(REPO_ROOT, "package.json"));
+
+// CORE_VERSION (runtime gate) must match the facade package version.
+const versionTs = readFileSync(resolve(CORE_API_DIR, "version.ts"), "utf8");
+const coreVersionMatch = versionTs.match(/CORE_VERSION = "([^"]+)"/);
+if (!coreVersionMatch) {
+  fail("could not find CORE_VERSION in core-api/version.ts.");
+}
+if (coreVersionMatch[1] !== corePkg.version) {
+  fail(
+    `CORE_VERSION "${coreVersionMatch[1]}" (version.ts) != "${corePkg.version}" (core-api/package.json) — keep them in sync.`,
+  );
+}
+
+// The shared-singleton ranges (federation.mjs) must stay compatible with what the
+// host actually installs — otherwise the MF runtime would reject the host's own deps.
+for (const [name, range] of Object.entries(MF_SHARED_RANGES)) {
+  if (name === "@vc-frontend/core") {
+    if (!satisfies(corePkg.version, range)) {
+      fail(`federation.mjs range "${range}" for @vc-frontend/core does not include its version ${corePkg.version}.`);
+    }
+    continue;
+  }
+  const declared = hostPkg.dependencies?.[name];
+  if (!declared) {
+    fail(`federation.mjs shares "${name}" but it is not a host dependency in package.json.`);
+  }
+  if (!intersects(range, declared)) {
+    fail(`federation.mjs range "${range}" for "${name}" does not intersect host package.json "${declared}".`);
+  }
+}
+step("contract consistency guards passed (CORE_VERSION sync, shared-dep ranges).");
+
 // 1 ── emit the facade's declaration graph ────────────────────────────────────
 step("emitting declarations with vue-tsc…");
 rmSync(EMIT_DIR, { recursive: true, force: true });
@@ -40,14 +88,25 @@ const emit = spawnSync(process.execPath, [VUE_TSC_BIN, "--project", resolve(CORE
   cwd: REPO_ROOT,
   encoding: "utf8",
 });
+const emitOutput = (emit.stdout ?? "") + (emit.stderr ?? "");
 // vue-tsc reports diagnostics in host files that are outside the facade surface
-// (e.g. ui-kit components relying on ambient globals we don't load here). Those
-// files never reach the rolled-up contract, so the emit is validated by its
-// OUTPUT, not by exit code — declarations are still written (noEmitOnError:false).
+// (e.g. ui-kit components relying on ambient globals we don't load here). Those never
+// reach the rolled-up contract, so they are tolerated (noEmitOnError:false) — but an
+// error INSIDE core-api itself means the contract source is broken: fail hard.
+const coreApiErrors = emitOutput
+  .split("\n")
+  .filter((line) => line.includes("error TS") && /client-app[\\/]core-api[\\/]/.test(line));
+if (coreApiErrors.length > 0) {
+  console.error(coreApiErrors.join("\n"));
+  fail(`vue-tsc reported ${coreApiErrors.length} error(s) in core-api sources — the facade itself is broken.`);
+}
+const otherErrorCount = emitOutput.split("\n").filter((line) => line.includes("error TS")).length;
+if (otherErrorCount > 0) {
+  step(`note: ${otherErrorCount} out-of-surface host diagnostic(s) tolerated (never reach the contract).`);
+}
 if (!existsSync(EMIT_ENTRY)) {
-  console.error(`[build-types] FAILED: no declarations emitted at ${EMIT_ENTRY} (vue-tsc exit ${emit.status}).`);
-  console.error((emit.stdout ?? "") + (emit.stderr ?? ""));
-  process.exit(1);
+  console.error(emitOutput);
+  fail(`no declarations emitted at ${EMIT_ENTRY} (vue-tsc exit ${emit.status}).`);
 }
 
 // 2 ── roll the graph up into one self-contained file ─────────────────────────
@@ -67,22 +126,31 @@ const bundle = await rollup({
 const { output } = await bundle.generate({ format: "es" });
 await bundle.close();
 
-let code = output[0].code;
+const code = output[0].code;
+rmSync(EMIT_DIR, { recursive: true, force: true });
 
 // Guard: the whole point is zero host coupling. If any `@/…` survived, the rollup
 // failed to inline something — fail loudly rather than ship a broken contract.
 if (code.includes("@/")) {
-  console.error("[build-types] FAILED: unresolved '@/' reference(s) remain in the rolled contract.");
-  process.exit(1);
+  fail("unresolved '@/' reference(s) remain in the rolled contract.");
 }
 
-mkdirSync(DIST_DIR, { recursive: true });
-writeFileSync(OUT_FILE, BANNER + "\n" + code, "utf8");
-rmSync(EMIT_DIR, { recursive: true, force: true });
+const contract = BANNER + "\n" + code;
 
-// External peer imports the contract expects the plugin (or host) to provide.
-const externals = [...new Set([...code.matchAll(/from ['"]([^'".][^'"]*)['"]/g)].map((m) => m[1]))].sort((a, b) =>
-  a.localeCompare(b),
-);
-step(`wrote ${OUT_FILE} (${code.split("\n").length} lines).`);
-step(`external peer imports: ${externals.join(", ") || "(none)"}`);
+if (CHECK_MODE) {
+  const committed = existsSync(OUT_FILE) ? readFileSync(OUT_FILE, "utf8") : "";
+  if (committed !== contract) {
+    fail("committed dist/index.d.ts is stale — run `yarn build:core-types` and commit the result.");
+  }
+  step("check passed: committed contract matches the facade.");
+} else {
+  mkdirSync(DIST_DIR, { recursive: true });
+  writeFileSync(OUT_FILE, contract, "utf8");
+
+  // External peer imports the contract expects the plugin (or host) to provide.
+  const externals = [...new Set([...code.matchAll(/from ['"]([^'".][^'"]*)['"]/g)].map((m) => m[1]))].sort((a, b) =>
+    a.localeCompare(b),
+  );
+  step(`wrote ${OUT_FILE} (${code.split("\n").length} lines).`);
+  step(`external peer imports: ${externals.join(", ") || "(none)"}`);
+}
