@@ -1,7 +1,7 @@
 import { createRequire } from "node:module";
 import path from "node:path";
 import { federation } from "@module-federation/vite";
-import { HOST_SHARED, isMfFlagEnabled } from "./client-app/core-api/federation.mjs";
+import { createHostShared, isMfFlagEnabled } from "./client-app/core-api/federation.mjs";
 import type { PluginOption } from "vite";
 
 /**
@@ -39,11 +39,8 @@ export function federatedHostPlugin(enabled: string | boolean | undefined): Plug
       manifest: true,
       dts: false,
       shareStrategy: "loaded-first",
-      shared: {
-        ...HOST_SHARED,
-        // The facade is portal-linked source; give MF its concrete version explicitly.
-        "@vc-frontend/core": { ...HOST_SHARED["@vc-frontend/core"], version: coreApiVersion },
-      },
+      // The facade is portal-linked source; give MF its concrete version explicitly.
+      shared: createHostShared({ "@vc-frontend/core": { version: coreApiVersion } }),
     }) as PluginOption,
   ];
 }

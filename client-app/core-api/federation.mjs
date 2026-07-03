@@ -34,15 +34,46 @@ function buildSharedConfig(extra) {
   );
 }
 
-/** Shared config for the HOST build - it bundles and provides every shared dep. */
-export const HOST_SHARED = buildSharedConfig({});
+function mergeSharedConfig(base, overrides) {
+  const merged = { ...base };
+  for (const [name, override] of Object.entries(overrides)) {
+    if (override === false) {
+      delete merged[name];
+      continue;
+    }
+    merged[name] = { singleton: true, strictVersion: true, ...merged[name], ...override };
+  }
+  return merged;
+}
 
 /**
- * Shared config for PLUGIN (remote) builds. `import: false` prevents the remote from
- * bundling multi-MB fallback copies (vue, apollo, ...) - it relies entirely on the
- * host to provide the singletons at runtime.
+ * Shared config for the HOST build - it bundles and provides every shared dep.
+ * `overrides` merges per package: tweak a field, add a package, or drop one with
+ * `false`, without losing the defaults:
+ *   createHostShared({ vue: { requiredVersion: "^3.6.0" } })
+ *   createHostShared({ "my-lib": { requiredVersion: "^5.0.0" } })
+ *   createHostShared({ graphql: false })
  */
-export const REMOTE_SHARED = buildSharedConfig({ import: false });
+export function createHostShared(overrides = {}) {
+  return mergeSharedConfig(buildSharedConfig({}), overrides);
+}
+
+/**
+ * Shared config for PLUGIN (remote) builds. Defaults carry `import: false`, which
+ * prevents the remote from bundling multi-MB fallback copies (vue, apollo, ...) - it
+ * relies entirely on the host to provide the singletons at runtime. Packages ADDED
+ * via overrides do NOT get `import: false`: a plugin-specific shared lib is provided
+ * by the plugin itself. Same override semantics as createHostShared.
+ */
+export function createRemoteShared(overrides = {}) {
+  return mergeSharedConfig(buildSharedConfig({ import: false }), overrides);
+}
+
+/** The default host config - equivalent to createHostShared() with no overrides. */
+export const HOST_SHARED = createHostShared();
+
+/** The default plugin config - equivalent to createRemoteShared() with no overrides. */
+export const REMOTE_SHARED = createRemoteShared();
 
 /**
  * Env-flag normalization shared by the vite config (node) and bootstrap (browser).

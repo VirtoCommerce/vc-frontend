@@ -115,10 +115,12 @@ The shared **singletons** (what must be one-instance-only across host+plugins) l
 semver `requiredVersion` range (kept consistent with the host `package.json` by a
 build-types guard) and `strictVersion: true` — a range mismatch makes MF **throw at
 `loadRemote()`** (isolated to that plugin) instead of the default console warning.
-The host build consumes `HOST_SHARED` (via `vite.federation.ts`); a plugin build
-imports `REMOTE_SHARED` from `@vc-frontend/core/federation` — its `import: false`
-stops the remote from bundling multi-MB fallback copies. Mirrors vc-shell's
-`@vc-shell/mf-config` package.
+The host build consumes `createHostShared()` (via `vite.federation.ts`); a plugin
+build calls `createRemoteShared()` from `@vc-frontend/core/federation` — its
+`import: false` stops the remote from bundling multi-MB fallback copies. Both accept
+per-package **overrides** (adjust a range, add a package, drop one with `false`), so
+the defaults never lock a consumer in. Mirrors vc-shell's `@vc-shell/mf-config`
+package.
 
 > Importing `@vc-frontend/core` at **runtime outside MF** (node tooling, a build that
 > forgot `REMOTE_SHARED`) hits a throwing shim with an explanation — the package root
@@ -191,13 +193,25 @@ A plugin is its own build. It must:
 
    ```ts
    // plugin vite.config.ts
-   import { REMOTE_SHARED } from "@vc-frontend/core/federation";
+   import { createRemoteShared } from "@vc-frontend/core/federation";
 
    federation({
      name: "news",
      exposes: { "./plugin": "./src/index.ts" },
-     shared: { ...REMOTE_SHARED }, // singletons, host-compatible ranges, import: false
+     // defaults: singletons, host-compatible ranges, import: false
+     shared: createRemoteShared(),
    });
+   ```
+
+   The defaults are overridable per package — adjust a field, add a plugin-provided
+   shared lib, or drop an entry with `false`:
+
+   ```ts
+   shared: createRemoteShared({
+     vue: { requiredVersion: "^3.6.0" },            // adjust a default
+     "my-chart-lib": { requiredVersion: "^5.0.0" }, // add (plugin provides it)
+     graphql: false,                                // remove
+   }),
    ```
 
 3. **Declare the host version it needs** in its manifest — a semver **version or range**:
@@ -241,12 +255,12 @@ Once built and deployed, add it to the host's `APP_MF_REMOTES` and it loads on n
 
 **Related files outside this folder:**
 
-| File                                 | Role                                                                                                                                                                                             |
-| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `client-app/core-api/federation.mjs` | **Single source of truth** for the shared-singleton contract: `HOST_SHARED`, `REMOTE_SHARED`, `isMfFlagEnabled`. Plain `.mjs` so plugin vite configs (node) and browser code can both import it. |
-| `vite.federation.ts` (repo root)     | Build-side host config: `federatedHostPlugin` (consumes `HOST_SHARED`), `federatedAlias`. At root because it imports a build-time dev dep.                                                       |
-| `client-app/core-api/`               | The `@vc-frontend/core` facade + the `build-types.mjs` type-contract build.                                                                                                                      |
-| `client-app/app-runner.ts`           | Calls `startFederatedModules()` and awaits it before `app.use(router)`.                                                                                                                          |
+| File                                 | Role                                                                                                                                                                                                                                                 |
+| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `client-app/core-api/federation.mjs` | **Single source of truth** for the shared-singleton contract: `createHostShared`/`createRemoteShared` (+ `HOST_SHARED`/`REMOTE_SHARED` defaults), `isMfFlagEnabled`. Plain `.mjs` so plugin vite configs (node) and browser code can both import it. |
+| `vite.federation.ts` (repo root)     | Build-side host config: `federatedHostPlugin` (consumes `createHostShared()`), `federatedAlias`. At root because it imports a build-time dev dep.                                                                                                    |
+| `client-app/core-api/`               | The `@vc-frontend/core` facade + the `build-types.mjs` type-contract build.                                                                                                                                                                          |
+| `client-app/app-runner.ts`           | Calls `startFederatedModules()` and awaits it before `app.use(router)`.                                                                                                                                                                              |
 
 ---
 
