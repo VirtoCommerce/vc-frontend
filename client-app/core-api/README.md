@@ -27,12 +27,14 @@ build resolves the source via a Vite alias, bypassing package exports.)
 
 Files in this folder:
 
-| File              | Role                                                                                                              |
-| ----------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `index.ts`        | **The facade source** — a list of re-exports. This is the API. Edit this.                                         |
-| `dist/index.d.ts` | **Generated** type contract. Never edit; regenerate and commit.                                                   |
-| `federation.mjs`  | Shared-singleton contract (`createHostShared` / `createRemoteShared` + defaults) for both host and plugin builds. |
-| `build-types.mjs` | The generator (below).                                                                                            |
+| File                | Role                                                                                                              |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `index.ts`          | **The facade source** — a list of re-exports. This is the API. Edit this.                                         |
+| `dist/index.d.ts`   | **Generated** type contract. Never edit; regenerate and commit.                                                   |
+| `federation.mjs`    | Shared-singleton contract (`createHostShared` / `createRemoteShared` + defaults) for both host and plugin builds. |
+| `bump-version.mjs`  | `yarn bump:core <level>` — manual contract-version bump (majors; minors are automatic).                           |
+| `create-plugin.mjs` | `yarn create:plugin` — scaffolds a new plugin project with versions read from the host.                           |
+| `build-types.mjs`   | The generator (below).                                                                                            |
 
 ---
 

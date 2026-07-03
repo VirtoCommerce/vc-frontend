@@ -44,8 +44,12 @@ exercised by unit tests (loader/gate/shared-config) but not by a living remote i
 
 **Want:** a minimal reference remote (separate build) that exposes `./plugin`, consumes
 `@vc-frontend/core` + `REMOTE_SHARED`, declares `requiredHostVersion`, and is loaded in
-an integration test. Locks the contract against regressions and doubles as copy-paste
-starter docs.
+an integration test. Locks the contract against regressions.
+
+Partially covered already: `yarn create:plugin` generates exactly such a remote and has
+been verified end to end (install, build, manifest metadata, type-check). The remaining
+gap is wiring that generate-and-build cycle into CI, plus a live `loadRemote` smoke
+against a running host.
 
 ---
 
