@@ -12,6 +12,9 @@ without touching or rebuilding this repo.
 > Jira: **VCST-5159**. Everything here is behind the `APP_MF_HOST` flag and is a **no-op
 > when the flag is off** — the harness ships with **zero built-in remotes**.
 
+> **Want to BUILD a plugin?** Start with the step-by-step walkthrough:
+> [`HOWTO.md`](./HOWTO.md). This file is the reference for how the host side works.
+
 ---
 
 ## TL;DR
