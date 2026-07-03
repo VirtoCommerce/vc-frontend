@@ -357,6 +357,13 @@ async function initNewCardForm(): Promise<void> {
         return;
       }
       currentNewCardCvvRegex = regex;
+      // The required CVV length just changed (e.g. a late Amex number after a 3-digit CVV was
+      // already typed). `update({ validations })` swaps the rule but does NOT re-emit a CHANGE for
+      // the value already in the field, so the CVV element keeps its stale `isValid` from the old
+      // rule — which would leave Place order enabled with a now-wrong-length CVV. Drop the tracked
+      // CVV validity now; it is restored only when the element emits a fresh valid CHANGE under the
+      // new rule (VCST-5202).
+      updateValidationStatus({ elementType: Skyflow.ElementType.INPUT_FIELD, isValid: false });
       CVV.update({ validations: buildCvvValidations(cardScheme), placeholder });
     },
   );

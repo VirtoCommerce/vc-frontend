@@ -42,6 +42,17 @@ describe("getCvvValidation (VCST-5202)", () => {
     expect(getCvvValidation("amex").regex).toBe(getCvvValidation("AMEX").regex);
   });
 
+  // The component re-validates the already-entered CVV whenever a brand change alters the required
+  // length. That reset is gated on the CVV regex actually changing, so Amex must yield a regex
+  // distinct from the non-Amex / not-yet-detected default — otherwise a 3-digit CVV entered before
+  // a late Amex number would keep its stale validity and leave Place order enabled (VCST-5202).
+  it("yields a length-distinct regex for Amex vs non-Amex so a late brand switch retriggers validation", () => {
+    expect(getCvvValidation("AMEX").regex).not.toBe(getCvvValidation("VISA").regex);
+    expect(getCvvValidation("AMEX").regex).not.toBe(getCvvValidation().regex);
+    // A non-Amex brand must NOT change the rule from the default, so the common path never resets.
+    expect(getCvvValidation("VISA").regex).toBe(getCvvValidation().regex);
+  });
+
   // The two data sources spell Amex differently: the Skyflow SDK CHANGE event uses the
   // Skyflow.CardType enum ("AMEX"); the Skyflow vault (surfaced by the backend as
   // SkyflowCardType.cardScheme) uses the full network name "AMERICAN EXPRESS". Both must map to 4.
