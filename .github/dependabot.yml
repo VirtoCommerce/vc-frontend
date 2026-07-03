@@ -8,3 +8,17 @@ updates:
       actions:
         patterns:
           - "*"
+
+  # Keep npm dependencies current — closes the dependency-currency gap behind
+  # findings like grpc-js DoS, ts-utils prototype pollution and dompurify (VCST-5292).
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+    groups:
+      # Batch routine, low-risk version bumps into a single PR to reduce noise.
+      dependencies:
+        update-types:
+          - minor
+          - patch

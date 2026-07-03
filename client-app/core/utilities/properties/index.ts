@@ -1,4 +1,4 @@
-import { filter, groupBy } from "lodash";
+import { filter, groupBy } from "lodash-es";
 import { PropertyValueTypes } from "@/core/api/graphql/types";
 import { globals } from "@/core/globals";
 import type { Property, PropertyType, PropertyGroup } from "@/core/api/graphql/types";

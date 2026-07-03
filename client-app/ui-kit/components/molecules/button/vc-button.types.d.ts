@@ -6,6 +6,7 @@ declare global {
     | "soft"
     | "surface"
     | "ghost"
+    | "tonal"
     /** @deprecated Use "soft" instead. */
     | "solid-light"
     /** @deprecated Use "surface" instead. */

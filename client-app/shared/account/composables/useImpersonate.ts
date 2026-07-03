@@ -2,7 +2,7 @@ import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useFetch } from "@/core/api/common";
 import { useAuth } from "@/core/composables";
-import { Logger } from "@/core/utilities";
+import { Logger, toSameOriginPath } from "@/core/utilities";
 import { TabsType, useBroadcast, reloadAndOpenMainPage } from "@/shared/broadcast";
 import { useNotifications } from "@/shared/notification";
 import { useUser } from "./useUser";
@@ -70,7 +70,7 @@ export function useImpersonate() {
         // non-"/" URL while other tabs follow the existing reload-to-home behavior.
         setTimeout(() => {
           void broadcast.emit(reloadAndOpenMainPage, null, TabsType.OTHERS);
-          location.href = redirectTo;
+          location.href = toSameOriginPath(redirectTo);
         }, 1000);
       } else {
         notifications.error({ text: t("pages.account.impersonate.error") });

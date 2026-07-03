@@ -99,7 +99,7 @@
 </template>
 
 <script lang="ts" setup>
-import keyBy from "lodash/keyBy";
+import { keyBy } from "lodash-es";
 import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";

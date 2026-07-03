@@ -55,6 +55,7 @@
             class="view-all-link"
             :href="openedItem.route as string"
             target="_blank"
+            rel="noopener noreferrer"
             @click="$emit('close')"
           >
             {{ $t("shared.layout.header.mobile.view_all_catalog") }}

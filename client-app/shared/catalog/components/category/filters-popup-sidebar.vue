@@ -94,8 +94,7 @@
 </template>
 
 <script setup lang="ts">
-import cloneDeep from "lodash/cloneDeep";
-import isEqual from "lodash/isEqual";
+import { cloneDeep, isEqual } from "lodash-es";
 import { watch, ref, computed, nextTick, onMounted, onUnmounted } from "vue";
 import { usePurchasedBefore } from "@/shared/catalog/composables";
 import { useModal } from "@/shared/modal";

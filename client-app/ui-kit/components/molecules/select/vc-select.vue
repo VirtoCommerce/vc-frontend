@@ -171,10 +171,10 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { union, isEqual } from "lodash";
+import { isEqual, union } from "lodash-es";
 import { computed, ref, useTemplateRef, provide, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { vcPopoverKey } from "@/ui-kit/components/atoms/popover/vc-popover-context";
+import { vcPopoverKey } from "@/ui-kit/components/molecules/popover/vc-popover-context";
 import { useComponentId } from "@/ui-kit/composables";
 
 interface IProps {

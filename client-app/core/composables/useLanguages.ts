@@ -1,5 +1,5 @@
 import { useLocalStorage, useSessionStorage } from "@vueuse/core";
-import { merge } from "lodash";
+import { merge } from "lodash-es";
 import { computed, ref } from "vue";
 import { setLocale as setLocaleForYup } from "yup";
 import { useUser } from "@/shared/account/composables/useUser";

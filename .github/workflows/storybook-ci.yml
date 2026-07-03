@@ -87,11 +87,14 @@ jobs:
           yarn version ${{ env.VERSION }}
 
       - name: Set DOCKER_TAG variable
+        env:
+          SHORT_VERSION: ${{ steps.image.outputs.shortVersion }}
+          TAGGED_VERSION: ${{ steps.image.outputs.taggedVersion }}
         run: |
-          if [ '${{ github.ref }}' = 'refs/heads/master' ]; then
-            echo "DOCKER_TAG=${{ steps.image.outputs.shortVersion }}" >> $GITHUB_ENV
+          if [ "$GITHUB_REF" = 'refs/heads/master' ]; then
+            echo "DOCKER_TAG=$SHORT_VERSION" >> "$GITHUB_ENV"
           else
-            echo "DOCKER_TAG=${{ steps.image.outputs.taggedVersion }}" >> $GITHUB_ENV
+            echo "DOCKER_TAG=$TAGGED_VERSION" >> "$GITHUB_ENV"
           fi;
 
       - name: Install dependencies

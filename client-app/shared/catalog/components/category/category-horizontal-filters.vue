@@ -48,7 +48,7 @@
             @click="sortingItemClickHandler(sortingOption.id, close)"
           >
             <VcRadioButton
-              v-model="sortQueryParam"
+              v-model="selectedSort"
               size="sm"
               :value="sortingOption.id"
               :label="sortingOption.name"
@@ -62,19 +62,19 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-import { useI18n } from "vue-i18n";
 import { useRouteQueryParam } from "@/core/composables";
 import { PRODUCT_SORTING_LIST } from "@/core/constants";
 import { QueryParamName } from "@/core/enums";
-import type { SearchProductFilterResult } from "@/core/api/graphql/types";
+import { useProductSortings } from "@/shared/catalog/composables/useProductSortings";
+import type { ProductSortingType, SearchProductFilterResult } from "@/core/api/graphql/types";
 import type { ProductsFiltersType } from "@/shared/catalog";
 import ProductsFilters from "@/shared/catalog/components/products-filters.vue";
 
 const emit = defineEmits<IEmits>();
-withDefaults(defineProps<IProps>(), {
+const props = withDefaults(defineProps<IProps>(), {
   hideAllFilters: false,
   hideSorting: false,
+  sortings: () => [],
 });
 
 interface IEmits {
@@ -86,25 +86,22 @@ interface IEmits {
 interface IProps {
   loading: boolean;
   filters: ProductsFiltersType;
+  /** "Sort by" options from the owning product grid's search response. */
+  sortings?: ProductSortingType[];
   hideSorting?: boolean;
   hideAllFilters?: boolean;
 }
 
 const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
   defaultValue: PRODUCT_SORTING_LIST[0].id,
-  validator: (value) => PRODUCT_SORTING_LIST.some((item) => item.id === value),
+  // Sort codes are store-defined (dynamic) and resolved server-side, so accept any token-shaped value.
+  validator: (value) => /^[a-z0-9-_]*$/i.test(value),
 });
 
-const { t } = useI18n();
-
-function getTranslatedProductSortingList() {
-  return PRODUCT_SORTING_LIST.map((item) => ({
-    ...item,
-    name: t(item.name),
-  }));
-}
-
-const translatedProductSortingList = computed(() => getTranslatedProductSortingList());
+const { sortList: translatedProductSortingList, selectedSort } = useProductSortings(
+  () => props.sortings,
+  sortQueryParam,
+);
 
 function sortingItemClickHandler(id: string, close: () => void) {
   sortQueryParam.value = id;

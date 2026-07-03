@@ -3,8 +3,8 @@ import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { nextTick } from "vue";
 import { LINE_ITEM_QUANTITY_LIMIT } from "@/core/constants";
 import { createWrapperFactory } from "@/core/utilities/tests";
-import { VcInputDetails, VcPopover, VcTooltip } from "@/ui-kit/components/atoms";
-import { VcButton, VcInput } from "@/ui-kit/components/molecules";
+import { VcInputDetails, VcTooltip } from "@/ui-kit/components/atoms";
+import { VcButton, VcInput, VcPopover } from "@/ui-kit/components/molecules";
 import { VcAddToCart } from "@/ui-kit/components/organisms";
 
 const BUTTONS_SELECTOR = ".vc-add-to-cart__icon-button, .vc-add-to-cart__text-button";

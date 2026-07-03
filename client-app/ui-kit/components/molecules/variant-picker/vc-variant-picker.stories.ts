@@ -1,6 +1,5 @@
 import { ref } from "vue";
-import { VcVariantPicker } from "..";
-import { VcVariantPickerGroup } from "../../atoms";
+import { VcVariantPicker, VcVariantPickerGroup } from "..";
 import type { Meta, StoryObj, StoryFn } from "@storybook/vue3-vite";
 
 const SIZES = ["xxs", "xs", "sm", "md", "lg"];

@@ -186,6 +186,7 @@
       "email_not_unique": "Diese E-Mail ist bereits bei uns registriert",
       "max_length": "Dieses Feld darf nicht mehr als {max} Zeichen enthalten",
       "creating_order_error": "Fehler beim Erstellen einer Bestellung",
+      "loyalty_insufficient_balance": "Nicht genügend Treuepunkte, um die Bestellung aufzugeben. Erforderlich: {required}, verfügbar: {available}.",
       "payment_processing_error": "Fehler bei der Zahlungsabwicklung",
       "item_can_t_be_purchased": "Dieser Artikel kann nicht gekauft werden",
       "item_is_out_of_stock": "Dieser Artikel ist nicht auf Lager",
@@ -680,7 +681,13 @@
       "configuration_items": {
         "title": "Komponentenliste",
         "edit_configuration": "Konfiguration bearbeiten",
-        "selected_text": "Ausgewählter Text: {text}"
+        "selected_text": "Ausgewählter Text: {text}",
+        "columns": {
+          "number": "Nummer",
+          "section": "Abschnitt",
+          "value": "Wert",
+          "price": "Preis"
+        }
       },
       "coupons_section": {
         "title": "Rabatte & Gutscheine",
@@ -864,7 +871,9 @@
         "view_list": "Liste",
         "view_map": "Karte",
         "pick_point_info_title": "Abholpunkt-Info",
-        "pick_up_here": "Hier abholen"
+        "pick_up_here": "Hier abholen",
+        "load_more": "Mehr laden",
+        "showing_count": "{loaded} von {total} werden angezeigt"
       }
     },
     "bulk_order": {

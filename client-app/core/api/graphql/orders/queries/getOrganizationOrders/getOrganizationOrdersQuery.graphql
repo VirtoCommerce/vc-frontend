@@ -30,6 +30,21 @@ query GetOrganizationOrders(
       total {
         ...money
       }
+      orderTotals {
+        isDefaultTotalCurrency
+        total {
+          ...money
+        }
+        subTotal {
+          ...money
+        }
+        discountTotal {
+          ...money
+        }
+        taxTotal {
+          ...money
+        }
+      }
       inPayments {
         number
       }

@@ -21,6 +21,10 @@ query GetCartPickupLocations(
     facet: $facet
   ) {
     totalCount
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
     items {
       id
       name

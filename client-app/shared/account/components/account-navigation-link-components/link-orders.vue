@@ -30,7 +30,7 @@
 import { computed, toRef } from "vue";
 import { useRoute } from "vue-router";
 import { STATUS_ORDERS_FACET_NAME } from "@/core/constants";
-import { useUserOrders } from "@/shared/account/composables/useUserOrders";
+import { facets } from "@/shared/account/composables/useUserOrders";
 import { useUserOrdersFilter } from "@/shared/account/composables/useUserOrdersFilter";
 import type { ExtendedMenuLinkType } from "@/core/types";
 import AccountNavigationItem from "@/shared/account/components/account-navigation-item.vue";
@@ -44,7 +44,6 @@ const props = defineProps<IProps>();
 const item = toRef(props, "item");
 
 const route = useRoute();
-const { facets } = useUserOrders({});
 
 const isOrdersPage = computed(() => route.name === "Orders");
 const { filterData, applyFilters } = useUserOrdersFilter();

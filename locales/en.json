@@ -186,6 +186,7 @@
       "email_not_unique": "This email is already registered with us",
       "max_length": "This field must not contain more than {max} characters",
       "creating_order_error": "Error when creating an order",
+      "loyalty_insufficient_balance": "Not enough loyalty points to place the order. Required: {required}, available: {available}.",
       "payment_processing_error": "Error during payment processing",
       "item_can_t_be_purchased": "This item cannot be purchased",
       "item_is_out_of_stock": "This item is out of stock",
@@ -680,7 +681,13 @@
       "configuration_items": {
         "title": "Components list",
         "edit_configuration": "Edit configuration",
-        "selected_text": "Selected text: {text}"
+        "selected_text": "Selected text: {text}",
+        "columns": {
+          "number": "Number",
+          "section": "Section",
+          "value": "Value",
+          "price": "Price"
+        }
       },
       "coupons_section": {
         "title": "Discount & coupons",
@@ -864,7 +871,9 @@
         "view_list": "List",
         "view_map": "Map",
         "pick_point_info_title": "Pick point info",
-        "pick_up_here": "Pick up here"
+        "pick_up_here": "Pick up here",
+        "load_more": "Load more",
+        "showing_count": "Showing {loaded} of {total}"
       }
     },
     "bulk_order": {

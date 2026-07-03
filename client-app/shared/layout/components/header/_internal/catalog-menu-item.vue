@@ -5,6 +5,7 @@
       class="catalog-menu-link"
       :href="item.route as string"
       target="_blank"
+      rel="noopener noreferrer"
       @click="select"
     >
       {{ item.title }}
@@ -21,6 +22,7 @@
           class="catalog-menu-child-link"
           :href="child.route as string"
           target="_blank"
+          rel="noopener noreferrer"
           @click="select"
         >
           {{ child.title }}

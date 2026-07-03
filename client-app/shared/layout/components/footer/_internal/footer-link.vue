@@ -1,6 +1,6 @@
 <template>
   <span>
-    <a v-if="isExternalLink" class="footer-link" target="_blank" :href="props.to as string">
+    <a v-if="isExternalLink" class="footer-link" target="_blank" rel="noopener noreferrer" :href="props.to as string">
       {{ title }}
     </a>
 

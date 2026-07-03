@@ -22,7 +22,34 @@
 
       <template #default-container>
         <div class="pb-1.5">
-          <Orders :items-per-page="4" />
+          <VcEmptyView
+            v-if="!loading && !orders.length"
+            :text="$t('pages.account.orders.no_orders_message')"
+            icon="outline-order"
+            variant="empty"
+          >
+            <template #button>
+              <VcButton v-if="!!continue_shopping_link" :external-link="continue_shopping_link">
+                {{ $t("pages.account.orders.buttons.no_orders") }}
+              </VcButton>
+
+              <VcButton v-else to="/">
+                {{ $t("pages.account.orders.buttons.no_orders") }}
+              </VcButton>
+            </template>
+          </VcEmptyView>
+
+          <OrdersTable
+            v-else
+            :loading="loading"
+            :orders="orders"
+            :pages="pages"
+            :page="page"
+            hide-default-footer
+            :bordered="false"
+            order-scope="private"
+            @row-click="goToOrderDetails"
+          />
         </div>
       </template>
     </VcWidget>
@@ -65,13 +92,28 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
-import { Orders } from "@/shared/account";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
+import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
+import { OrdersTable, useOrderNavigation, useUserOrders } from "@/shared/account";
 
 const { t } = useI18n();
 
 usePageHead({
   title: t("pages.account.dashboard.meta.title"),
+});
+
+const { loading, orders, fetchOrders, pages, page } = useUserOrders({ itemsPerPage: 4 });
+const { goToOrderDetails } = useOrderNavigation();
+const { getModuleSettings } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
+
+const { continue_shopping_link } = getModuleSettings({
+  [MODULE_XAPI_KEYS.CONTINUE_SHOPPING_LINK]: "continue_shopping_link",
+});
+
+onMounted(async () => {
+  await fetchOrders("private");
 });
 </script>

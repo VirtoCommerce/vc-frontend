@@ -4,9 +4,11 @@ import { getProduct } from "@/core/api/graphql/catalog";
 import { NAVIGATION_OUTLINE } from "@/core/constants";
 import { Logger } from "@/core/utilities";
 import type { Product } from "@/core/api/graphql/types";
-import type { MaybeRefOrGetter, Ref } from "vue";
+import type { Ref } from "vue";
 
-export function useProduct(options: { currencyCodeOverride?: MaybeRefOrGetter<string | undefined> } = {}) {
+export function useProduct(
+  options: { currencyCodeOverride?: string | Ref<string | undefined> | (() => string | undefined) } = {},
+) {
   const fetching: Ref<boolean> = ref(true);
   const product: Ref<Product | undefined> = ref();
   const navigationOutline = useLocalStorage<string>(NAVIGATION_OUTLINE, "");

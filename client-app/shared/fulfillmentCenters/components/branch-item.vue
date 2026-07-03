@@ -7,7 +7,12 @@
         <div class="relative -mt-0.5 grow md:-mt-1">
           <div class="pr-3">
             <div :class="{ 'max-w-full truncate': isTextTruncateEnabled }">
-              <a :href="`/branch/${branch.id}`" target="_blank" class="mt-px text-base font-black text-[--link-color]">
+              <a
+                :href="`/branch/${branch.id}`"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="mt-px text-base font-black text-[--link-color]"
+              >
                 {{ branch.name }}
               </a>
             </div>

@@ -1,5 +1,5 @@
 import { createGlobalState } from "@vueuse/core";
-import pick from "lodash/pick";
+import { pick } from "lodash-es";
 import { shallowReadonly, shallowRef } from "vue";
 import { IS_DEVELOPMENT } from "@/core/constants";
 import { Logger } from "@/core/utilities";

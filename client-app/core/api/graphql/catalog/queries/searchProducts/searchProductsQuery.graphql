@@ -137,5 +137,11 @@ query SearchProducts(
     filters @include(if: $withFacets) {
       ...filter
     }
+    sortings @include(if: $withFacets) {
+      id
+      name
+      isDefault
+      selected
+    }
   }
 }
