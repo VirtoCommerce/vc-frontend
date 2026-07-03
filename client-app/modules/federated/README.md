@@ -122,10 +122,10 @@ per-package **overrides** (adjust a range, add a package, drop one with `false`)
 the defaults never lock a consumer in. Mirrors vc-shell's `@vc-shell/mf-config`
 package.
 
-> Importing `@vc-frontend/core` at **runtime outside MF** (node tooling, a build that
-> forgot `REMOTE_SHARED`) hits a throwing shim with an explanation — the package root
-> deliberately has no standalone runtime; only the type contract and `./federation`
-> are directly consumable.
+> The package root is **types-only** — there is deliberately no runtime entry. A plugin
+> build that forgot to mark it shared, or node tooling resolving it directly, fails
+> immediately at resolution time (`ERR_PACKAGE_PATH_NOT_EXPORTED`); only the type
+> contract and `./federation` are directly consumable.
 
 ---
 

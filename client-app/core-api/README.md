@@ -19,19 +19,21 @@ add something to the facade** (the day-to-day developer flow).
 | **Runtime**      | The host's live objects (real router, real Apollo…) | MF shared scope — the host injects itself                  |
 
 So a plugin **compiles against a frozen contract** and **runs against the live host**.
-There is no third life: importing `@vc-frontend/core` at runtime outside MF hits a
-throwing shim (`runtime-shim.mjs`) that explains this model.
+There is no third life: the package root export is **types-only** (no `import`
+condition), so resolving `@vc-frontend/core` for runtime outside the MF shared scope —
+node tooling, a plugin build that forgot to mark it shared — fails immediately at
+resolution time instead of dragging raw host source into the consumer. (The host's own
+build resolves the source via a Vite alias, bypassing package exports.)
 
 Files in this folder:
 
-| File               | Role                                                                                         |
-| ------------------ | -------------------------------------------------------------------------------------------- |
-| `index.ts`         | **The facade source** — a list of re-exports. This is the API. Edit this.                    |
-| `dist/index.d.ts`  | **Generated** type contract. Never edit; regenerate and commit.                              |
-| `version.ts`       | `CORE_VERSION` — the contract version plugins pin against.                                   |
-| `federation.mjs`   | Shared-singleton contract (`HOST_SHARED` / `REMOTE_SHARED`) for both host and plugin builds. |
-| `build-types.mjs`  | The generator (below).                                                                       |
-| `runtime-shim.mjs` | Throwing runtime target for outside-MF resolution.                                           |
+| File              | Role                                                                                                              |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `index.ts`        | **The facade source** — a list of re-exports. This is the API. Edit this.                                         |
+| `dist/index.d.ts` | **Generated** type contract. Never edit; regenerate and commit.                                                   |
+| `version.ts`      | `CORE_VERSION` — the contract version plugins pin against.                                                        |
+| `federation.mjs`  | Shared-singleton contract (`createHostShared` / `createRemoteShared` + defaults) for both host and plugin builds. |
+| `build-types.mjs` | The generator (below).                                                                                            |
 
 ---
 
