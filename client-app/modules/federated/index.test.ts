@@ -2,15 +2,21 @@ import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { initFederatedModules } from "./index";
 
-const { loadRemoteMock, registerRemotesMock, loggerErrorMock, loggerWarnMock, notificationErrorMock } = vi.hoisted(
-  () => ({
-    loadRemoteMock: vi.fn(),
-    registerRemotesMock: vi.fn(),
-    loggerErrorMock: vi.fn(),
-    loggerWarnMock: vi.fn(),
-    notificationErrorMock: vi.fn(),
-  }),
-);
+const {
+  loadRemoteMock,
+  registerRemotesMock,
+  loggerErrorMock,
+  loggerWarnMock,
+  notificationErrorMock,
+  getAppInsightsMock,
+} = vi.hoisted(() => ({
+  loadRemoteMock: vi.fn(),
+  registerRemotesMock: vi.fn(),
+  loggerErrorMock: vi.fn(),
+  loggerWarnMock: vi.fn(),
+  notificationErrorMock: vi.fn(),
+  getAppInsightsMock: vi.fn(),
+}));
 
 vi.mock("@module-federation/enhanced/runtime", () => ({
   loadRemote: loadRemoteMock,
@@ -26,6 +32,8 @@ vi.mock("@/shared/notification", () => ({
 }));
 
 vi.mock("@/core-api/package.json", () => ({ version: "2.53.0" }));
+
+vi.mock("@/core/plugins/applicationInsights.plugin", () => ({ getAppInsights: getAppInsightsMock }));
 
 const REMOTE_URL = "https://plugins.example.com/news/mf-manifest.json";
 
@@ -247,6 +255,32 @@ describe("initFederatedModules", () => {
 
     expect(result.loaded).toEqual(["good"]);
     expect(result.failed).toEqual(["bad"]);
+  });
+
+  it("routes failed and skipped plugins to Application Insights when it is configured", async () => {
+    const trackExceptionMock = vi.fn();
+    getAppInsightsMock.mockReturnValue({ trackException: trackExceptionMock });
+    stubManifestFetch({ metaData: { requiredHostVersion: "99.0.0" } });
+    stubRemotesEnv({ old: REMOTE_URL, broken: "https://plugins.example.com/broken/mf-manifest.json" });
+
+    await initFederatedModules();
+
+    expect(trackExceptionMock).toHaveBeenCalledTimes(2);
+    expect(trackExceptionMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        properties: expect.objectContaining({ pluginName: "old", outcome: "skipped", hostCoreVersion: "2.53.0" }),
+      }),
+    );
+  });
+
+  it("stays silent towards Application Insights when it is not configured", async () => {
+    getAppInsightsMock.mockReturnValue(undefined);
+    stubManifestFetch({}, { ok: false, status: 503 });
+    stubRemotesEnv({ news: REMOTE_URL });
+
+    const result = await initFederatedModules();
+
+    expect(result.skipped).toEqual(["news"]);
   });
 
   it("counts a plugin whose init() throws as failed", async () => {

@@ -1,4 +1,5 @@
 import { loadRemote, registerRemotes } from "@module-federation/enhanced/runtime";
+import { getAppInsights } from "@/core/plugins/applicationInsights.plugin";
 import { Logger } from "@/core/utilities";
 import { version as CORE_VERSION } from "@/core-api/package.json";
 import { useNotifications } from "@/shared/notification";
@@ -146,14 +147,36 @@ async function isCompatible(remote: IRemoteDescriptor, manifestTimeoutMs: number
   }
 }
 
-/** Log + (in dev) surface a summary so a vanished plugin is never silent (#8). */
+/**
+ * Routes failed/skipped plugins to Application Insights so a plugin that vanishes in
+ * production is observable, not just a console line. Best-effort: no-op when
+ * AppInsights is not configured for the store (console logging still covers it).
+ */
+function trackOutcome(result: IFederatedLoadResult): void {
+  const appInsights = getAppInsights();
+  if (!appInsights) {
+    return;
+  }
+  const entries = [
+    ...result.failed.map((name) => ({ name, outcome: "failed" })),
+    ...result.skipped.map((name) => ({ name, outcome: "skipped" })),
+  ];
+  for (const entry of entries) {
+    appInsights.trackException({
+      exception: new Error(`[MF] federated plugin "${entry.name}" ${entry.outcome}`),
+      properties: { pluginName: entry.name, outcome: entry.outcome, hostCoreVersion: CORE_VERSION },
+    });
+  }
+}
+
+/** Log + track + (in dev) surface a summary so a vanished plugin is never silent (#8). */
 function reportOutcome(result: IFederatedLoadResult): void {
   const { loaded, failed, skipped } = result;
   if (failed.length === 0 && skipped.length === 0) {
     return;
   }
   Logger.warn(`[MF] plugins loaded=${loaded.length} failed=[${failed.join(", ")}] skipped=[${skipped.join(", ")}]`);
-  // Prod: these failures should also be routed to AppInsights trackException.
+  trackOutcome(result);
   if (import.meta.env.DEV) {
     useNotifications().error({
       text: `Module Federation: ${failed.length} plugin(s) failed, ${skipped.length} skipped (incompatible). See console.`,

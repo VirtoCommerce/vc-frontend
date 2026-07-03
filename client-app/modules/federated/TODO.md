@@ -37,17 +37,7 @@ passes `entry.hash`), or CSP `strict-dynamic` + nonce approaches.
 
 ---
 
-## 3. Production error routing
-
-`reportOutcome()` logs failures and, **in DEV only**, shows a toast. In production,
-failed/skipped plugins are logged but not surfaced anywhere actionable.
-
-**Want:** route failed/skipped plugins to AppInsights (`trackException`) so a plugin that
-silently vanishes in prod is observable. There's already a `// Prod:` marker in `index.ts`.
-
----
-
-## 4. Confirm the plugin-side story end to end
+## 3. Confirm the plugin-side story end to end
 
 The harness is host-side only and ships no built-in remote, so the plugin contract is
 exercised by unit tests (loader/gate/shared-config) but not by a living remote in CI.
@@ -59,7 +49,7 @@ starter docs.
 
 ---
 
-## 5. Facade surface review
+## 4. Facade surface review
 
 The current facade (`core-api/index.ts`) is intentionally minimal. As real plugins get
 built, expect requests to widen it. Guard rails:
@@ -72,6 +62,11 @@ built, expect requests to widen it. Guard rails:
 ---
 
 ## Done (formerly deferred here)
+
+- **Production error routing** — failed/skipped plugins are reported to Application
+  Insights (`trackException` with plugin name, outcome and host core version) via the
+  instance captured by `applicationInsights.plugin.ts`; best-effort no-op where
+  AppInsights is not configured. DEV additionally shows a toast.
 
 - **CI guard for the generated type contract** — `yarn validate:core-types` (part of
   `yarn validate`, which CI's `yarn build` runs) regenerates the contract and fails on

@@ -183,7 +183,7 @@ initFederatedModules()             index.ts
   3. registerRemotes(compatible)   { force: true } so HMR re-registration won't throw
   4. loadRemote(`${name}/plugin`)  ⇒ plugin module ⇒ await plugin.init()  (10s budget)
   5. Promise.allSettled            one bad plugin cannot abort the others
-  6. reportOutcome({loaded,failed,skipped})   logs; in DEV also shows a notification
+  6. reportOutcome({loaded,failed,skipped})   logs + AppInsights trackException; DEV toast
 ```
 
 Three design points worth calling out:
