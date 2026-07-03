@@ -103,8 +103,10 @@ host. No second Vue, no second router, no duplicate Apollo cache.
 - Config: `useModuleSettings`, `globals`
 - Meta: `CORE_VERSION`, `type I18n`
 
-> **Rule of thumb:** keep the facade **small and additive**. Removing or renaming an
-> export is a breaking change for _every_ plugin — bump `CORE_VERSION` when you do.
+> **Rule of thumb:** keep the facade **small and additive**. New export ⇒ minor
+> `CORE_VERSION` bump; removing/renaming ⇒ major (breaks _every_ plugin).
+> **How to add an export, and how the `.d.ts` generation works:**
+> [`client-app/core-api/README.md`](../../core-api/README.md).
 
 The shared **singletons** (what must be one-instance-only across host+plugins) live in
 `client-app/core-api/federation.mjs` — the **single source of truth for both sides**:
