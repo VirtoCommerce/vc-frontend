@@ -137,7 +137,15 @@ inside the live app. If something's off, the console tells you which gate said n
 (`[MF] Skipping ...` / `[MF] Failed to load ...`), and the boot outcome is logged as
 `{ loaded, failed, skipped }`.
 
-> http is allowed for localhost only. Anywhere else: https, plus CSP entries for the
+`APP_MF_REMOTES` is a **map — any number of plugins**, each key being the remote's MF
+`name` and each value its manifest URL (different origins are fine). All plugins are
+gate-checked and loaded in parallel, each in isolation:
+
+```bash
+APP_MF_REMOTES='{"my-plugin":"https://a.example.com/my-plugin/mf-manifest.json","loyalty":"https://b.example.com/loyalty/mf-manifest.json"}'
+```
+
+> http is allowed for localhost only. Anywhere else: https, plus CSP entries for each
 > plugin origin — see the **Security model** section of the README before shipping.
 
 ## Step 5 — ship it
