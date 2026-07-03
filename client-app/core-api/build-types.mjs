@@ -52,7 +52,7 @@ const hostPkg = require(resolve(REPO_ROOT, "package.json"));
 
 // CORE_VERSION (runtime gate) must match the facade package version.
 const versionTs = readFileSync(resolve(CORE_API_DIR, "version.ts"), "utf8");
-const coreVersionMatch = versionTs.match(/CORE_VERSION = "([^"]+)"/);
+const coreVersionMatch = /CORE_VERSION = "([^"]+)"/.exec(versionTs);
 if (!coreVersionMatch) {
   fail("could not find CORE_VERSION in core-api/version.ts.");
 }
