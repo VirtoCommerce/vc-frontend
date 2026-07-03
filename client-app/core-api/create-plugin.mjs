@@ -1,5 +1,5 @@
 /**
- * Scaffolds a new Module Federation plugin project (VCST-5159). Counterpart of
+ * Scaffolds a new Module Federation plugin project. Counterpart of
  * vc-shell's create-vc-app for this harness.
  *
  *   yarn create:plugin <plugin-name> <target-dir> [flags]

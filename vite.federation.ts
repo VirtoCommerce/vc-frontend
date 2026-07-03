@@ -6,7 +6,7 @@ import { createHostShared, isMfFlagEnabled } from "./client-app/core-api/federat
 import type { PluginOption } from "vite";
 
 /**
- * Build-side Module Federation HOST config (VCST-5159), split out of vite.config.ts.
+ * Build-side Module Federation HOST config, split out of vite.config.ts.
  * Build-time tooling (imports the @module-federation/vite dev dep), so it lives at
  * build scope, not in client-app. The runtime loader lives in client-app/modules/federated.
  *

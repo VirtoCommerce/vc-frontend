@@ -1,6 +1,6 @@
 /**
  * `@vc-frontend/core` — the curated PUBLIC surface a Module Federation plugin may
- * import from the host (VCST-5159). A facade: re-exports host code, nothing moves.
+ * import from the host. A facade: re-exports host code, nothing moves.
  * Publish-from-source: plugins consume TYPES only (compiled dist/index.d.ts); the
  * host provides the live instance at runtime via the MF shared singleton.
  * Keep it SMALL and additive — removing/renaming an export breaks every plugin.

@@ -1,6 +1,6 @@
 /**
- * Single source of truth for the Module Federation shared-dependency contract
- * (VCST-5159, review follow-up #4/#5). Consumed by BOTH sides:
+ * Single source of truth for the Module Federation shared-dependency contract.
+ * Consumed by BOTH sides:
  * - the host build (vite.federation.ts) via HOST_SHARED;
  * - plugin builds (node vite configs) via `@vc-frontend/core/federation` -> REMOTE_SHARED.
  * Mirrors vc-shell's @vc-shell/mf-config package. Plain .mjs with no node APIs so the

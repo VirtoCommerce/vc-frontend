@@ -1,7 +1,7 @@
 import { satisfies, valid, validRange } from "semver";
 
 /**
- * CONTRACT GATE — the first of the TWO version gates (VCST-5159, #2; see "The two
+ * CONTRACT GATE — the first of the TWO version gates (see "The two
  * version gates" in ./README.md). Guards the FACADE API CONTRACT: "was this plugin
  * built against a compatible @vc-frontend/core surface?" Evaluated from plain manifest
  * JSON BEFORE any plugin code executes. Its counterpart, the SHARED-DEPENDENCY GATE

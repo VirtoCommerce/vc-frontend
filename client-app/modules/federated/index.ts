@@ -6,11 +6,11 @@ import { useNotifications } from "@/shared/notification";
 import { checkHostCompatibility } from "./version-gate";
 
 /**
- * Host-side loader for Module Federation plugins (VCST-5159). For each configured
+ * Host-side loader for Module Federation plugins. For each configured
  * remote: read its manifest, version-check it, `loadRemote` its `./plugin` expose, and
  * call `init()`. Plugins bind to the host's live services via the shared facade.
- * - #2 version safety: an incompatible remote is skipped before any of its code runs.
- * - #8 isolation: one bad remote can't abort the others; outcomes are logged/returned.
+ * - Version safety: an incompatible remote is skipped before any of its code runs.
+ * - Isolation: one bad remote can't abort the others; outcomes are logged/returned.
  * - Every network step is time-budgeted: the app-runner awaits this loader before
  *   installing the router, so a hung remote must degrade to failed/skipped, never
  *   block first paint.
@@ -169,7 +169,7 @@ function trackOutcome(result: IFederatedLoadResult): void {
   }
 }
 
-/** Log + track + (in dev) surface a summary so a vanished plugin is never silent (#8). */
+/** Log + track + (in dev) surface a summary so a vanished plugin is never silent. */
 function reportOutcome(result: IFederatedLoadResult): void {
   const { loaded, failed, skipped } = result;
   if (failed.length === 0 && skipped.length === 0) {

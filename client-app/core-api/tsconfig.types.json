@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  // Declaration-emit program for the publish-from-source facade (VCST-5159, #3).
+  // Declaration-emit program for the publish-from-source facade.
   //
   // `build-types.mjs` runs this to emit the facade's whole reachable type graph
   // into `.types-build/`, then rolls it up with rollup-plugin-dts into a single

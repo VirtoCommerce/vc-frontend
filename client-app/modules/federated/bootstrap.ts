@@ -2,7 +2,7 @@ import { Logger } from "@/core/utilities";
 import { isMfFlagEnabled } from "@/core-api/federation.mjs";
 
 /**
- * App-runner entry for Module Federation (VCST-5159). Kept free of static MF-runtime
+ * App-runner entry for Module Federation. Kept free of static MF-runtime
  * imports: the loader (./index) is imported dynamically and only when APP_MF_HOST is
  * set, so non-MF builds bundle neither the runtime nor the loader.
  */
