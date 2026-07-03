@@ -186,6 +186,13 @@ initFederatedModules()             index.ts
   6. reportOutcome({loaded,failed,skipped})   logs + AppInsights trackException; DEV toast
 ```
 
+In production, each failed/skipped plugin surfaces in Application Insights as an
+exception `[MF] federated plugin "<name>" <outcome>` with `pluginName`, `outcome` and
+`hostCoreVersion` custom properties — query those to detect a plugin that silently
+vanished for users. (This is why `applicationInsights.plugin.ts` exports
+`getAppInsights()`: the library's `useAppInsights()` is inject-based and unusable from
+boot-time code like this loader.)
+
 Three design points worth calling out:
 
 - **Awaited before `app.use(router)`** so a plugin that calls `router.addRoute()` in
