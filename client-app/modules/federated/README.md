@@ -152,6 +152,13 @@ right Vue range but use a facade export this host doesn't have (gate 2 passes, g
 skips). vc-shell has **neither** as a hard stop (its shared mismatches only warn) —
 it can afford that because everything flows through published npm semver; we can't.
 
+How can a plugin even disagree with the host about Vue, when it borrows the host's
+Vue at runtime? Because **borrowing happens at runtime only**: at build time the
+plugin compiles, type-checks and SFC-compiles against its **own** installed packages,
+and separate build cadences (the whole point of MF) mean a year-old plugin artifact
+can meet a host that upgraded a shared dependency yesterday. The gate doesn't prevent
+that skew — it makes it loud and isolated instead of silently corrupting.
+
 ---
 
 ## The load sequence (what actually happens at boot)
