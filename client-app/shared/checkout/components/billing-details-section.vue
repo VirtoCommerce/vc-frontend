@@ -130,10 +130,7 @@ const currentPaymentMethod = computed(() => {
 });
 
 const paymentCardVisible = computed(() => {
-  return (
-    isAuthenticated.value && props.cart && canPayFromCart.value &&
-    currentPaymentMethod.value
-  );
+  return isAuthenticated.value && props.cart && canPayFromCart.value && currentPaymentMethod.value;
 });
 
 const {
