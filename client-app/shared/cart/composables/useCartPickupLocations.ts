@@ -1,4 +1,5 @@
 import { createSharedComposable } from "@vueuse/core";
+import { uniqBy } from "lodash-es";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { getCartPickupLocations } from "@/core/api/graphql/cart";
@@ -10,10 +11,13 @@ export const COUNTRY_NAME_FACET = "address_countryname";
 export const REGION_NAME_FACET = "address_regionname";
 export const CITY_FACET = "address_city";
 
+const PICKUP_LOCATIONS_FACET = `${COUNTRY_NAME_FACET} ${REGION_NAME_FACET} ${CITY_FACET}`;
+
 export function _useCartPickupLocations() {
   const { t } = useI18n();
 
   const pickupLocationsLoading = ref(false);
+  const pickupLocationsLoadingMore = ref(false);
 
   const pickupLocations = ref<ProductPickupLocation[]>([]);
 
@@ -27,6 +31,18 @@ export function _useCartPickupLocations() {
   const filterKeyword = ref<string>("");
 
   const pickupLocationsTotalCount = ref(0);
+
+  const pickupLocationsEndCursor = ref<string | undefined>(undefined);
+  const pickupLocationsHasNextPage = ref(false);
+
+  const committedKeyword = ref<string | undefined>(undefined);
+  const committedFilter = ref<string | undefined>(undefined);
+
+  // Monotonic, never reset (guards below compare by equality).
+  // fetchGeneration: bumps on successful reset — arbitrates fetch-vs-loadMore.
+  // fetchToken: bumps on every reset entry — arbitrates fetch-vs-fetch (last-started wins).
+  const fetchGeneration = ref(0);
+  const fetchToken = ref(0);
 
   const filterSelectsAreEmpty = computed(
     () =>
@@ -67,14 +83,35 @@ export function _useCartPickupLocations() {
   async function fetchPickupLocations(
     payload: Omit<QueryCartPickupLocationsArgs, "storeId" | "cultureName" | "facet">,
   ) {
+    const requestToken = ++fetchToken.value;
     pickupLocationsLoading.value = true;
+
     try {
       const data = await getCartPickupLocations({
-        facet: `${COUNTRY_NAME_FACET} ${REGION_NAME_FACET} ${CITY_FACET}`,
+        facet: PICKUP_LOCATIONS_FACET,
         ...payload,
       });
+
+      // Superseded by a newer reset: drop this response.
+      if (fetchToken.value !== requestToken) {
+        return;
+      }
+
+      // Bump on success, not on entry: a failed fetch must not invalidate a valid in-flight loadMore.
+      fetchGeneration.value++;
+
       pickupLocations.value = data.items ?? [];
       pickupLocationsTotalCount.value = data.totalCount ?? 0;
+
+      pickupLocationsEndCursor.value = data.pageInfo?.endCursor ?? undefined;
+      pickupLocationsHasNextPage.value = data.pageInfo?.hasNextPage ?? false;
+
+      // This reset supersedes any in-flight loadMore, so its spinner is done.
+      pickupLocationsLoadingMore.value = false;
+
+      // loadMore reads this snapshot, never the live filter refs.
+      committedKeyword.value = payload.keyword;
+      committedFilter.value = payload.filter;
 
       const termFacetCounties = data.term_facets?.find((f) => f.name === COUNTRY_NAME_FACET);
       if (termFacetCounties) {
@@ -115,17 +152,67 @@ export function _useCartPickupLocations() {
         };
       }
     } catch (e) {
-      Logger.error(`${useCartPickupLocations.name}.${fetchPickupLocations.name}`, e);
-      throw e;
+      // Only the last-started fetch surfaces its error and owns the loading flag.
+      if (fetchToken.value === requestToken) {
+        Logger.error(`${useCartPickupLocations.name}.${fetchPickupLocations.name}`, e);
+        throw e;
+      }
     } finally {
-      pickupLocationsLoading.value = false;
+      if (fetchToken.value === requestToken) {
+        pickupLocationsLoading.value = false;
+      }
     }
   }
+
+  async function loadMorePickupLocations(
+    payload: Omit<QueryCartPickupLocationsArgs, "storeId" | "cultureName" | "facet" | "after" | "keyword" | "filter">,
+  ) {
+    if (pickupLocationsLoading.value || pickupLocationsLoadingMore.value || !pickupLocationsHasNextPage.value) {
+      return;
+    }
+
+    pickupLocationsLoadingMore.value = true;
+    const requestGeneration = fetchGeneration.value;
+    try {
+      const data = await getCartPickupLocations({
+        facet: PICKUP_LOCATIONS_FACET,
+        ...payload,
+        keyword: committedKeyword.value,
+        filter: committedFilter.value,
+        after: pickupLocationsEndCursor.value,
+      });
+
+      // Superseded by a reset: a stale loadMore must have zero observable effect.
+      if (fetchGeneration.value !== requestGeneration) {
+        return;
+      }
+
+      // keep-first dedup (BL-BOPIS-008): a duplicate on a later page must not overwrite items[0].
+      pickupLocations.value = uniqBy([...pickupLocations.value, ...(data.items ?? [])], (item) => item.id);
+
+      pickupLocationsEndCursor.value = data.pageInfo?.endCursor ?? undefined;
+      pickupLocationsHasNextPage.value = data.pageInfo?.hasNextPage ?? false;
+    } catch (e) {
+      // Only the current generation surfaces its error and owns the spinner.
+      if (fetchGeneration.value === requestGeneration) {
+        Logger.error(`${useCartPickupLocations.name}.${loadMorePickupLocations.name}`, e);
+        throw e;
+      }
+    } finally {
+      if (fetchGeneration.value === requestGeneration) {
+        pickupLocationsLoadingMore.value = false;
+      }
+    }
+  }
+
   return {
     pickupLocationsLoading,
+    pickupLocationsLoadingMore,
     pickupLocations,
     pickupLocationsTotalCount,
+    pickupLocationsHasNextPage,
     fetchPickupLocations,
+    loadMorePickupLocations,
 
     filterOptionsCountries,
     filterOptionsRegions,

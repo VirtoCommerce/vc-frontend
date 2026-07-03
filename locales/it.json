@@ -871,7 +871,9 @@
         "view_list": "Lista",
         "view_map": "Mappa",
         "pick_point_info_title": "Info punto di ritiro",
-        "pick_up_here": "Ritira qui"
+        "pick_up_here": "Ritira qui",
+        "load_more": "Carica altro",
+        "showing_count": "Visualizzati {loaded} di {total}"
       }
     },
     "bulk_order": {
