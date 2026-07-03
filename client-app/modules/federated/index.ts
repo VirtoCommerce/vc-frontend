@@ -195,13 +195,30 @@ export async function initFederatedModules(options?: IFederatedLoaderOptions): P
   await Promise.allSettled(
     compatible.map(async (remote) => {
       try {
-        const loadAndInit = async (): Promise<void> => {
-          const plugin = await loadRemote<IFederatedPlugin>(`${remote.name}/plugin`);
-          await plugin?.init?.();
-        };
-        // On timeout the underlying load cannot be cancelled — a late init() may still
-        // complete in the background, but boot proceeds without it (degraded, logged).
-        await withTimeout(loadAndInit(), loadTimeoutMs, `plugin "${remote.name}" load/init`);
+        // Load and init are raced SEPARATELY: a loadRemote that resolves after its
+        // budget has nothing chained to it, so a timed-out plugin's init() is never
+        // invoked - the timeout is real containment for the side-effecting phase.
+        const plugin = await withTimeout(
+          loadRemote<IFederatedPlugin>(`${remote.name}/plugin`),
+          loadTimeoutMs,
+          `plugin "${remote.name}" load`,
+        );
+        if (plugin?.init) {
+          // An init() that already STARTED cannot be cancelled. If it outlives its
+          // budget the plugin is reported failed, and its eventual completion is
+          // logged so the "failed" outcome is never silently contradicted later.
+          const initWork = Promise.resolve(plugin.init());
+          try {
+            await withTimeout(initWork, loadTimeoutMs, `plugin "${remote.name}" init`);
+          } catch (error) {
+            initWork
+              .then(() =>
+                Logger.warn(`[MF] plugin "${remote.name}" init completed after its budget - state is indeterminate`),
+              )
+              .catch(() => {});
+            throw error;
+          }
+        }
         result.loaded.push(remote.name);
       } catch (error) {
         result.failed.push(remote.name);

@@ -5,6 +5,8 @@
 
 export interface ISharedDepConfig {
   singleton: boolean;
+  /** MF throws (instead of warning) when the provided version misses requiredVersion. */
+  strictVersion: boolean;
   requiredVersion: string;
   /** Present (false) only in REMOTE_SHARED - remotes must not bundle fallback copies. */
   import?: false;

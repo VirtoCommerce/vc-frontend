@@ -22,11 +22,14 @@ export const MF_SHARED_RANGES = {
   "@vc-frontend/core": "^2.53.0",
 };
 
+// strictVersion: the MF runtime only WARNS on a singleton range mismatch by default;
+// strict makes it throw at loadRemote() time, which the host loader already converts
+// into an isolated per-plugin failure - real fail-closed instead of a console warning.
 function buildSharedConfig(extra) {
   return Object.fromEntries(
     Object.entries(MF_SHARED_RANGES).map(([name, requiredVersion]) => [
       name,
-      { singleton: true, requiredVersion, ...extra },
+      { singleton: true, strictVersion: true, requiredVersion, ...extra },
     ]),
   );
 }

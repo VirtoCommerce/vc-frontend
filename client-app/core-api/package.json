@@ -10,7 +10,7 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./index.ts"
+      "import": "./runtime-shim.mjs"
     },
     "./federation": {
       "types": "./federation.d.mts",

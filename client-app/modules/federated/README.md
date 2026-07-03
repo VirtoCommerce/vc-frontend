@@ -111,10 +111,17 @@ The shared **singletons** (what must be one-instance-only across host+plugins) l
 `vue`, `vue-router`, `vue-i18n`, `@vueuse/core`, `@apollo/client`,
 `@vue/apollo-composable`, `graphql`, and `@vc-frontend/core` itself, each with a real
 semver `requiredVersion` range (kept consistent with the host `package.json` by a
-build-types guard). The host build consumes `HOST_SHARED` (via `vite.federation.ts`);
-a plugin build imports `REMOTE_SHARED` from `@vc-frontend/core/federation` — its
-`import: false` stops the remote from bundling multi-MB fallback copies. Mirrors
-vc-shell's `@vc-shell/mf-config` package.
+build-types guard) and `strictVersion: true` — a range mismatch makes MF **throw at
+`loadRemote()`** (isolated to that plugin) instead of the default console warning.
+The host build consumes `HOST_SHARED` (via `vite.federation.ts`); a plugin build
+imports `REMOTE_SHARED` from `@vc-frontend/core/federation` — its `import: false`
+stops the remote from bundling multi-MB fallback copies. Mirrors vc-shell's
+`@vc-shell/mf-config` package.
+
+> Importing `@vc-frontend/core` at **runtime outside MF** (node tooling, a build that
+> forgot `REMOTE_SHARED`) hits a throwing shim with an explanation — the package root
+> deliberately has no standalone runtime; only the type contract and `./federation`
+> are directly consumable.
 
 ---
 
@@ -153,9 +160,13 @@ Three design points worth calling out:
   ones this host can satisfy. Unreadable or unparseable ⇒ treated as incompatible
   (fail closed). A bare version like `"2.53.0"` is normalized to `"^2.53.0"` — so a
   host **major** bump correctly rejects plugins built against the previous major.
-- **Every network step is time-budgeted** (manifest 5s, load+init 15s, tunable via
-  `initFederatedModules(options)`). Because boot awaits this loader, a hung remote must
-  degrade to a `failed`/`skipped` plugin — never a blank storefront.
+- **Every network step is time-budgeted** (manifest 5s, load and init 15s each, tunable
+  via `initFederatedModules(options)`). Because boot awaits this loader, a hung remote
+  must degrade to a `failed`/`skipped` plugin — never a blank storefront. Containment
+  semantics: a `loadRemote` that resolves _after_ its budget never gets its `init()`
+  called; an `init()` that already started cannot be cancelled — the plugin is reported
+  `failed` and, if the init later completes, that is logged as **indeterminate** so the
+  outcome is never silently contradicted.
 
 ---
 
@@ -266,6 +277,13 @@ What **you** must provide when enabling MF in an environment:
   real boundary that makes the https/allowlist story meaningful.
 - **Trusted hosting** for plugin artifacts (same trust level as the host bundle itself);
   artifact integrity/signing is an open follow-up in `TODO.md`.
+
+Known limitation (documented, accepted for now): the gate fetches the manifest itself,
+and the MF runtime fetches it **again** for loading — a remote redeployed between the
+two requests means the manifest that was validated is not guaranteed to be the one
+executed (TOCTOU), and remote boot pays a second round trip. The MF runtime exposes no
+public way to seed its manifest cache; the real fix is hash-pinned artifacts in the
+central-discovery response (see `TODO.md` #2 — vc-shell already passes `entry.hash`).
 
 ---
 

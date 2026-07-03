@@ -17,9 +17,13 @@ import type { PluginOption } from "vite";
 const require = createRequire(import.meta.url);
 const coreApiVersion = (require("./client-app/core-api/package.json") as { version: string }).version;
 
-/** Alias so the host resolves @vc-frontend/core to real source (it provides the live facade). */
+/**
+ * Alias so the HOST resolves @vc-frontend/core to the real source entry (it provides
+ * the live facade). Points at the file, not the package dir: the package `exports`
+ * root deliberately maps `import` to a throwing runtime shim for outside consumers.
+ */
 export function federatedAlias(rootDir: string): Record<string, string> {
-  return { "@vc-frontend/core": path.resolve(rootDir, "client-app/core-api") };
+  return { "@vc-frontend/core": path.resolve(rootDir, "client-app/core-api/index.ts") };
 }
 
 /** MF host plugin(s) — empty when APP_MF_HOST is off. Spread into vite `plugins`. */

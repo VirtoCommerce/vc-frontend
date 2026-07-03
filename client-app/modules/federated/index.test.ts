@@ -194,6 +194,47 @@ describe("initFederatedModules", () => {
     expect(result).toEqual({ loaded: [], failed: ["news"], skipped: [] });
   });
 
+  it("never calls init() of a plugin whose load resolved only after the budget", async () => {
+    stubManifestFetch({});
+    stubRemotesEnv({ news: REMOTE_URL });
+    const initMock = vi.fn();
+    let resolveLoad: ((plugin: { init: () => void }) => void) | undefined;
+    loadRemoteMock.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          resolveLoad = resolve;
+        }),
+    );
+
+    const result = await initFederatedModules({ loadTimeoutMs: 20 });
+    expect(result.failed).toEqual(["news"]);
+
+    resolveLoad?.({ init: initMock });
+    await flushPromises();
+
+    expect(initMock).not.toHaveBeenCalled();
+  });
+
+  it("reports failed on an overrunning init() and logs its late completion as indeterminate", async () => {
+    stubManifestFetch({});
+    stubRemotesEnv({ news: REMOTE_URL });
+    let resolveInit: (() => void) | undefined;
+    loadRemoteMock.mockResolvedValue({
+      init: () =>
+        new Promise<void>((resolve) => {
+          resolveInit = resolve;
+        }),
+    });
+
+    const result = await initFederatedModules({ loadTimeoutMs: 20 });
+    expect(result.failed).toEqual(["news"]);
+
+    resolveInit?.();
+    await flushPromises();
+
+    expect(loggerWarnMock).toHaveBeenCalledWith(expect.stringContaining("indeterminate"));
+  });
+
   it("isolates a failing plugin from the others", async () => {
     stubManifestFetch({});
     stubRemotesEnv({ good: REMOTE_URL, bad: "https://plugins.example.com/bad/mf-manifest.json" });

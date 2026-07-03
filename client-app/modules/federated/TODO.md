@@ -28,9 +28,12 @@ No host rebuild to enable a plugin.
 ## 2. Artifact integrity for remote code
 
 Remotes load over https from trusted hosting, but there is no integrity/signature check
-on the manifest or chunks (MF has no native SRI story). Evaluate: signed manifests,
-hash pinning in the central discovery response (vc-shell passes `entry.hash`), or CSP
-`strict-dynamic` + nonce approaches.
+on the manifest or chunks (MF has no native SRI story). This also covers the known
+**TOCTOU** window: the gate fetches the manifest, then the MF runtime independently
+fetches it again for loading (its cache is not publicly seedable) — a redeploy between
+the two requests means validated ≠ executed, plus a second round trip per remote.
+Evaluate: signed manifests, hash pinning in the central discovery response (vc-shell
+passes `entry.hash`), or CSP `strict-dynamic` + nonce approaches.
 
 ---
 
@@ -84,9 +87,10 @@ built, expect requests to widen it. Guard rails:
 
 ## Not doing (and why)
 
-- **Out-clevering MF's shared-scope negotiation** — the shared singletons now carry real
-  semver ranges (MF warns on mismatch), and the hard fail-closed layer stays our explicit
-  pre-execution manifest gate. We don't try to re-implement MF's negotiation on top;
-  vc-shell dropped runtime version gating entirely (PR #228), we keep the manifest gate.
+- **Out-clevering MF's shared-scope negotiation** — the shared singletons carry real
+  semver ranges with `strictVersion: true`, so MF itself **throws** on a mismatch at
+  `loadRemote()` (isolated per plugin by the loader), and the pre-execution manifest
+  gate stays the outer fail-closed layer. We don't re-implement MF's negotiation on
+  top; vc-shell dropped runtime version gating entirely (PR #228), we keep both layers.
 - **Publishing `@vc-frontend/core` to npm** — the host is `"private": true` and deploys
   as a theme zip. Publish-from-source (portal link + committed `.d.ts`) is deliberate.

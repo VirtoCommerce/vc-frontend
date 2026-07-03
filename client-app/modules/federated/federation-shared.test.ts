@@ -7,9 +7,11 @@ describe("federation shared-dep contract", () => {
     expect(Object.keys(REMOTE_SHARED)).toEqual(Object.keys(MF_SHARED_RANGES));
   });
 
-  it("every shared dep is a singleton with a real version range", () => {
+  it("every shared dep is a strict singleton with a real version range", () => {
     for (const config of Object.values(HOST_SHARED)) {
       expect(config.singleton).toBe(true);
+      // strict: MF must THROW on a range mismatch (the default only warns).
+      expect(config.strictVersion).toBe(true);
       expect(config.requiredVersion).not.toBe("*");
     }
   });
