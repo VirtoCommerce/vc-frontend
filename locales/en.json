@@ -871,7 +871,9 @@
         "view_list": "List",
         "view_map": "Map",
         "pick_point_info_title": "Pick point info",
-        "pick_up_here": "Pick up here"
+        "pick_up_here": "Pick up here",
+        "load_more": "Load more",
+        "showing_count": "Showing {loaded} of {total}"
       }
     },
     "bulk_order": {
