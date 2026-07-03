@@ -12,11 +12,10 @@
 export function extractExportNames(declarations) {
   const names = [...declarations.matchAll(/^export \{([^}]*)\}/gm)].flatMap((match) =>
     match[1].split(",").map((entry) => {
-      const parts = entry
-        .trim()
-        .replace(/^type /, "")
-        .split(/\s+as\s+/);
-      return parts[parts.length - 1];
+      const cleaned = entry.trim().replace(/^type /, "");
+      // Index-based "as" split (Sonar S8786: a \s+as\s+ regex backtracks super-linearly).
+      const aliasIndex = cleaned.lastIndexOf(" as ");
+      return aliasIndex === -1 ? cleaned : cleaned.slice(aliasIndex + 4).trim();
     }),
   );
   return new Set(names.filter(Boolean));

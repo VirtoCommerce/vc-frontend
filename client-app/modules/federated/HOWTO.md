@@ -10,10 +10,6 @@ What you'll build: a plugin that lives in **its own project**, is **built and
 deployed on its own**, and gets loaded by the storefront over HTTP at startup —
 adding its routes and pages as if it were compiled in.
 
-> A living reference implementation is the `news` plugin from the spike
-> ([PR #2359](https://github.com/VirtoCommerce/vc-frontend/pull/2359),
-> `examples/news-plugin`) — every snippet below is distilled from it.
-
 ---
 
 ## The 30-second mental model

@@ -136,7 +136,12 @@ const contract = BANNER + "\n" + code;
  */
 function compareContractToBase(currentContract) {
   const baseRef = process.env.MF_CONTRACT_BASE_REF || "origin/dev";
-  const git = (args) => spawnSync("git", args, { cwd: REPO_ROOT, encoding: "utf8" });
+  // S4036: resolve `git` only from fixed, root-owned directories (POSIX) so a writable
+  // entry on the inherited PATH cannot shadow the binary - same stance as the vue-tsc
+  // spawn above. Windows keeps the inherited PATH (git has no fixed install location).
+  const fixedPath = process.platform === "win32" ? process.env.PATH : "/usr/local/bin:/usr/bin:/bin";
+  const git = (args) =>
+    spawnSync("git", args, { cwd: REPO_ROOT, encoding: "utf8", env: { ...process.env, PATH: fixedPath } });
   const mergeBase = git(["merge-base", "HEAD", baseRef]);
   const baseSha = mergeBase.status === 0 ? mergeBase.stdout.trim() : "";
   const baseContract = baseSha ? git(["show", `${baseSha}:client-app/core-api/dist/index.d.ts`]) : { status: 1 };
