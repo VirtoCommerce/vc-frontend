@@ -192,4 +192,9 @@ jobs:
       environmentId: ${{ github.ref == 'refs/heads/master' && 'qa' || 'dev' }}
       jiraKeys: ${{ needs.ci.outputs.jira-keys }}
       forceCommit: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' }}
-    secrets: inherit
+    secrets:
+      REPO_TOKEN: ${{ secrets.REPO_TOKEN }}
+      VIRTOCLOUD_KEY_VCPT_VCST: ${{ secrets.VIRTOCLOUD_KEY_VCPT_VCST }}
+      CLOUD_INSTANCE_BASE_URL: ${{ secrets.CLOUD_INSTANCE_BASE_URL }}
+      CLIENT_ID: ${{ secrets.CLIENT_ID }}
+      CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
