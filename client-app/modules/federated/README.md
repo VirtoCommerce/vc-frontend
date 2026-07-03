@@ -272,7 +272,7 @@ Once built and deployed, add it to the host's `APP_MF_REMOTES` and it loads on n
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `bootstrap.ts`    | App-runner entry. Flag check + dynamic import of the loader (both failure-proof). **No static MF-runtime import** — so non-MF builds bundle neither the runtime nor the loader. |
 | `index.ts`        | The loader: resolve+validate remotes → version gate → `registerRemotes` → `loadRemote`/`init` (time-budgeted) → report. Contains the `IFederatedPlugin` contract.               |
-| `version-gate.ts` | Fail-closed semver gate for `requiredHostVersion` (version or range).                                                                                                           |
+| `version-gate.ts` | The CONTRACT GATE: fail-closed semver check of `requiredHostVersion` (version or range) against the facade version.                                                             |
 | `*.test.ts`       | Unit tests for the loader, the gate, bootstrap and the shared-dep contract.                                                                                                     |
 
 **Related files outside this folder:**
