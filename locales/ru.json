@@ -871,7 +871,9 @@
         "view_list": "Список",
         "view_map": "Карта",
         "pick_point_info_title": "Информация о пункте выдачи",
-        "pick_up_here": "Забрать здесь"
+        "pick_up_here": "Забрать здесь",
+        "load_more": "Загрузить ещё",
+        "showing_count": "Показано {loaded} из {total}"
       }
     },
     "bulk_order": {
