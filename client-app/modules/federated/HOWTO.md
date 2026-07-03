@@ -36,7 +36,7 @@ compile-time tools always match the host's runtime), asks which optional groups 
 need (vue-router / vue-i18n / Apollo / @vueuse — unselected ones are also dropped from
 the MF shared config), and emits everything described below, ready for
 `yarn install && yarn build`. Non-interactive: `--yes` takes the defaults;
-`--with-i18n`, `--with-apollo`, `--with-vueuse`, `--no-router` override.
+`--with-i18n`, `--with-apollo`, `--with-vueuse`, `--with-tailwind`, `--no-router` override.
 
 **What it generates (the manual version):** a plugin is an ordinary Vite + Vue project,
 separate from the host repo:
@@ -90,36 +90,24 @@ config**, and the **manifest metadata**:
 
 ```ts
 import { federation } from "@module-federation/vite";
-import { createRemoteShared } from "@vc-frontend/core/federation";
+import { createRemoteFederationOptions } from "@vc-frontend/core/federation";
 import vue from "@vitejs/plugin-vue";
 import { defineConfig } from "vite";
 
 export default defineConfig({
   plugins: [
     vue(),
-    federation({
-      name: "my-plugin",
-      filename: "remoteEntry.js",
-
-      // 1) The host loads exactly this: `loadRemote("my-plugin/plugin")`.
-      exposes: { "./plugin": "./src/index.ts" },
-
-      // 2) Never bundle your own Vue/Apollo/facade - borrow the host's.
-      //    Defaults are overridable per package if you need to (see README).
-      shared: createRemoteShared(),
-
-      // 3) Tell the host which facade version you were built against.
-      //    The host's CONTRACT GATE reads this from the manifest and refuses
-      //    to run your code on an incompatible host (version or semver range).
-      manifest: {
-        additionalData: (data) => {
-          (data.stats.metaData as Record<string, unknown>).requiredHostVersion = "^1.0.0";
-          return data.stats;
-        },
-      },
-
-      dts: false, // types come from the committed contract, not MF codegen
-    }),
+    // One call - the HOST owns the wiring conventions (expose key `./plugin`,
+    // shared singletons with import:false, manifest metadata, dts off), so plugins
+    // pick up convention changes by updating their host checkout, not their config.
+    federation(
+      createRemoteFederationOptions({
+        name: "my-plugin",
+        // CONTRACT GATE: the facade version this plugin is built against.
+        requiredHostVersion: "^1.0.0",
+        // Optional: sharedOverrides / exposes when you need to deviate.
+      }),
+    ),
   ],
   build: { target: "esnext" }, // MF entry uses top-level await
   server: { port: 3001, cors: true, origin: "http://localhost:3001" },
@@ -153,8 +141,12 @@ Rules of the road:
   even on a direct deep link.
 - Keep `init()` fast: it has a time budget (10s), and the whole app boot waits for it.
 - **Styling:** your components ship their own CSS (plain styles in SFCs work as-is).
-  The host's Tailwind utilities are generated from HOST templates only — if you want
-  Tailwind in the plugin, run your own Tailwind pass with your own config.
+  For **Tailwind**, scaffold with `--with-tailwind` (or copy its output): the plugin
+  runs its own utility pass with the **host's design system as preset**
+  (`require("@vc-frontend/core/tailwind-preset")` in `tailwind.config.cjs` — colors
+  resolve through the host's CSS variables at runtime), scans only the plugin's own
+  sources, and emits `components` + `utilities` **without `base`** so the host's
+  preflight isn't re-applied.
 
 ## Step 4 — run it against the host
 

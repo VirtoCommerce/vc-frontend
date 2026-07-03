@@ -224,15 +224,15 @@ A plugin is its own build. It must:
    ships a second Vue:
 
    ```ts
-   // plugin vite.config.ts
-   import { createRemoteShared } from "@vc-frontend/core/federation";
+   // plugin vite.config.ts - one call, conventions owned by the host
+   import { createRemoteFederationOptions } from "@vc-frontend/core/federation";
 
-   federation({
-     name: "news",
-     exposes: { "./plugin": "./src/index.ts" },
-     // defaults: singletons, host-compatible ranges, import: false
-     shared: createRemoteShared(),
-   });
+   federation(
+     createRemoteFederationOptions({
+       name: "news",
+       requiredHostVersion: "^1.0.0", // CONTRACT GATE input, stamped into the manifest
+     }),
+   );
    ```
 
    The defaults are overridable per package — adjust a field, add a plugin-provided

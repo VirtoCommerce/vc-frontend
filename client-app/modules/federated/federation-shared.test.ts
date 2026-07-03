@@ -4,6 +4,7 @@ import {
   MF_SHARED_RANGES,
   REMOTE_SHARED,
   createHostShared,
+  createRemoteFederationOptions,
   createRemoteShared,
   isMfFlagEnabled,
 } from "@/core-api/federation.mjs";
@@ -68,6 +69,43 @@ describe("createHostShared / createRemoteShared overrides", () => {
     createRemoteShared({ vue: { requiredVersion: "^999.0.0" }, graphql: false });
     expect(REMOTE_SHARED.vue.requiredVersion).toBe(MF_SHARED_RANGES.vue);
     expect(REMOTE_SHARED).toHaveProperty("graphql");
+  });
+});
+
+describe("createRemoteFederationOptions", () => {
+  it("requires name and requiredHostVersion", () => {
+    expect(() => createRemoteFederationOptions({ name: "", requiredHostVersion: "^1.0.0" })).toThrow();
+    expect(() => createRemoteFederationOptions({ name: "news", requiredHostVersion: "" })).toThrow();
+  });
+
+  it("wires the harness conventions: filename, default expose, remote shared, dts off", () => {
+    const options = createRemoteFederationOptions({ name: "news", requiredHostVersion: "^1.0.0" });
+    expect(options.name).toBe("news");
+    expect(options.filename).toBe("remoteEntry.js");
+    expect(options.exposes).toEqual({ "./plugin": "./src/index.ts" });
+    expect(options.shared).toEqual(REMOTE_SHARED);
+    expect(options.dts).toBe(false);
+  });
+
+  it("stamps requiredHostVersion into the manifest metaData", () => {
+    const options = createRemoteFederationOptions({ name: "news", requiredHostVersion: "^1.2.0" });
+    const stats = { metaData: {} as Record<string, unknown> };
+
+    const returned = options.manifest.additionalData({ stats });
+
+    expect(returned).toBe(stats);
+    expect(stats.metaData.requiredHostVersion).toBe("^1.2.0");
+  });
+
+  it("forwards sharedOverrides and custom exposes", () => {
+    const options = createRemoteFederationOptions({
+      name: "news",
+      requiredHostVersion: "^1.0.0",
+      exposes: { "./plugin": "./src/main.ts" },
+      sharedOverrides: { graphql: false },
+    });
+    expect(options.exposes).toEqual({ "./plugin": "./src/main.ts" });
+    expect(options.shared).not.toHaveProperty("graphql");
   });
 });
 

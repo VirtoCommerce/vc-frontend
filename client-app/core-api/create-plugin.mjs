@@ -31,7 +31,7 @@ const [pluginName, targetDirArg] = positional;
 
 if (!pluginName || !targetDirArg) {
   console.error(
-    "Usage: yarn create:plugin <plugin-name> <target-dir> [--yes] [--with-i18n] [--with-apollo] [--with-vueuse] [--no-router]",
+    "Usage: yarn create:plugin <plugin-name> <target-dir> [--yes] [--with-i18n] [--with-apollo] [--with-vueuse] [--with-tailwind] [--no-router]",
   );
   process.exit(1);
 }
@@ -85,6 +85,13 @@ const GROUPS = [
     prompt: "@vueuse/core (composition utilities)",
     packages: ["@vueuse/core"],
   },
+  {
+    key: "tailwind",
+    flag: "--with-tailwind",
+    defaultOn: false,
+    prompt: "Tailwind CSS (host design tokens, plugin-local utility pass)",
+    packages: [],
+  },
 ];
 
 async function selectGroups() {
@@ -112,6 +119,9 @@ const selected = await selectGroups();
 // ── assemble dependencies ─────────────────────────────────────────────────────
 const runtimeDeps = ["vue", ...GROUPS.filter((group) => selected[group.key]).flatMap((group) => group.packages)];
 const toolDeps = ["typescript", "vite", "@vitejs/plugin-vue", "@module-federation/vite", "vue-tsc"];
+if (selected.tailwind) {
+  toolDeps.push("tailwindcss", "postcss", "autoprefixer", "postcss-import");
+}
 const portalPath = relative(targetDir, CORE_API_DIR).split("\\").join("/");
 
 // Shared entries the plugin does NOT install must be dropped from its MF config.
@@ -125,9 +135,11 @@ const droppedShared = Object.entries(ALL_OPTIONAL_SHARED)
   .filter(([key]) => !selected[key])
   .flatMap(([, packages]) => packages);
 const droppedSharedLines = droppedShared
-  .map((name) => `        "${name}": false, // not used by this plugin`)
+  .map((name) => `          "${name}": false, // not used by this plugin`)
   .join("\n");
-const sharedOverrides = droppedShared.length ? `{\n${droppedSharedLines}\n      }` : "";
+const sharedOverridesArg = droppedShared.length
+  ? `\n        sharedOverrides: {\n${droppedSharedLines}\n        },`
+  : "";
 
 // ── file templates ────────────────────────────────────────────────────────────
 const sortedEntries = (names) =>
@@ -151,34 +163,63 @@ const pkgJson = {
 };
 
 const viteConfig = `import { federation } from "@module-federation/vite";
-import { createRemoteShared } from "@vc-frontend/core/federation";
+import { createRemoteFederationOptions } from "@vc-frontend/core/federation";
 import vue from "@vitejs/plugin-vue";
 import { defineConfig } from "vite";
 
 export default defineConfig({
   plugins: [
     vue(),
-    federation({
-      name: "${pluginName}",
-      filename: "remoteEntry.js",
-      // The host loads exactly this: loadRemote("${pluginName}/plugin").
-      exposes: { "./plugin": "./src/index.ts" },
-      // Borrow the host's live singletons; never bundle copies.
-      shared: createRemoteShared(${sharedOverrides}),
-      // CONTRACT GATE input: the facade version this plugin is built against.
-      manifest: {
-        additionalData: (data) => {
-          (data.stats.metaData as Record<string, unknown>).requiredHostVersion = "^${corePkg.version}";
-          return data.stats;
-        },
-      },
-      dts: false,
-    }),
+    // Wiring conventions (expose key, shared singletons, manifest metadata) come from
+    // the host - client-app/core-api/federation.mjs in the host checkout owns them.
+    federation(
+      createRemoteFederationOptions({
+        name: "${pluginName}",
+        // CONTRACT GATE: the facade version this plugin is built against.
+        requiredHostVersion: "^${corePkg.version}",${sharedOverridesArg}
+      }),
+    ),
   ],
   build: { target: "esnext" }, // MF entry uses top-level await
   server: { port: 3001, cors: true, origin: "http://localhost:3001" },
   preview: { cors: true },
 });
+`;
+
+const tailwindConfig = `const path = require("path");
+const hostPreset = require("@vc-frontend/core/tailwind-preset");
+
+// The HOST's design system (colors via CSS custom properties, spacing, breakpoints),
+// scanning ONLY this plugin's sources - utilities match the host 1:1.
+const preset = hostPreset.default ?? hostPreset;
+
+module.exports = {
+  ...preset,
+  content: [path.resolve(__dirname, "index.html"), path.resolve(__dirname, "src/**/*.{vue,js,ts}")],
+};
+`;
+
+const postcssConfig = `const path = require("path");
+
+// Same pipeline as the host, with Tailwind pinned to THIS plugin's config so it scans
+// the plugin's own sources and generates the utilities its templates use.
+module.exports = {
+  plugins: {
+    "postcss-import": {},
+    "tailwindcss/nesting": {},
+    tailwindcss: { config: path.resolve(__dirname, "tailwind.config.cjs") },
+    autoprefixer: {},
+  },
+};
+`;
+
+const stylesCss = `/*
+ * Plugin utility layer: only components + utilities - NOT base, so the host's
+ * Tailwind preflight/reset is not re-injected (it is already applied globally).
+ * The CSS custom properties these utilities reference are defined by the host.
+ */
+@tailwind components;
+@tailwind utilities;
 `;
 
 const tsconfig = {
@@ -197,8 +238,9 @@ const tsconfig = {
   include: ["src", "vite.config.ts"],
 };
 
+const stylesImport = selected.tailwind ? 'import "./styles.css";\n' : "";
 const indexTs = selected.router
-  ? `import { globals } from "@vc-frontend/core";
+  ? `${stylesImport}import { globals } from "@vc-frontend/core";
 import type { RouteRecordRaw } from "vue-router";
 
 const MyPage = () => import("./pages/my-page.vue");
@@ -209,13 +251,14 @@ export function init(): void {
   globals.router.addRoute(route);
 }
 `
-  : `export function init(): void {
+  : `${stylesImport}export function init(): void {
   // Wire your plugin here (extension points, listeners, ...) using @vc-frontend/core.
 }
 `;
 
+const pageClass = selected.tailwind ? ' class="p-6 text-primary-700"' : "";
 const myPageVue = `<template>
-  <div class="p-6">
+  <div${pageClass}>
     <h1>${pluginName}</h1>
     <p>Served by Module Federation - built and deployed separately from the host.</p>
   </div>
@@ -262,6 +305,11 @@ writeFileSync(join(targetDir, "tsconfig.json"), JSON.stringify(tsconfig, null, 2
 writeFileSync(join(targetDir, "src", "index.ts"), indexTs);
 if (selected.router) {
   writeFileSync(join(targetDir, "src", "pages", "my-page.vue"), myPageVue);
+}
+if (selected.tailwind) {
+  writeFileSync(join(targetDir, "tailwind.config.cjs"), tailwindConfig);
+  writeFileSync(join(targetDir, "postcss.config.cjs"), postcssConfig);
+  writeFileSync(join(targetDir, "src", "styles.css"), stylesCss);
 }
 writeFileSync(join(targetDir, "src", "shims-vue.d.ts"), shimsVue);
 writeFileSync(join(targetDir, "README.md"), readme);

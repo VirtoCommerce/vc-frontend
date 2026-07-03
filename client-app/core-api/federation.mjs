@@ -81,6 +81,36 @@ export const HOST_SHARED = createHostShared();
 export const REMOTE_SHARED = createRemoteShared();
 
 /**
+ * One-call federation() options for a PLUGIN build:
+ *   federation(createRemoteFederationOptions({ name: "news", requiredHostVersion: "^1.0.0" }))
+ * The harness owns the wiring conventions (expose key, manifest metadata, shared
+ * singletons, entry filename), so plugins pick convention changes up by updating
+ * their host checkout instead of hand-editing config. Pure data - deliberately
+ * imports no build tooling, so consuming it never requires the host's node_modules.
+ */
+export function createRemoteFederationOptions({ name, requiredHostVersion, exposes, sharedOverrides }) {
+  if (!name || !requiredHostVersion) {
+    throw new Error("createRemoteFederationOptions: `name` and `requiredHostVersion` are required.");
+  }
+  return {
+    name,
+    filename: "remoteEntry.js",
+    exposes: exposes ?? { "./plugin": "./src/index.ts" },
+    shared: createRemoteShared(sharedOverrides ?? {}),
+    // CONTRACT GATE input: the host refuses to run this plugin's code when its
+    // facade version does not satisfy this range.
+    manifest: {
+      additionalData: (data) => {
+        data.stats.metaData.requiredHostVersion = requiredHostVersion;
+        return data.stats;
+      },
+    },
+    // Types come from the committed contract (dist/index.d.ts), not MF codegen.
+    dts: false,
+  };
+}
+
+/**
  * Env-flag normalization shared by the vite config (node) and bootstrap (browser).
  * Env values are strings, so "false"/"0" must count as off, not truthy.
  */

@@ -22,4 +22,23 @@ export declare function createHostShared(overrides?: SharedOverridesType): Recor
 export declare function createRemoteShared(overrides?: SharedOverridesType): Record<string, ISharedDepConfig>;
 export declare const HOST_SHARED: Record<string, ISharedDepConfig>;
 export declare const REMOTE_SHARED: Record<string, ISharedDepConfig>;
+
+export interface IRemoteFederationOptions {
+  name: string;
+  filename: string;
+  exposes: Record<string, string>;
+  shared: Record<string, ISharedDepConfig>;
+  manifest: {
+    additionalData: (data: { stats: { metaData: Record<string, unknown> } }) => unknown;
+  };
+  dts: false;
+}
+
+export declare function createRemoteFederationOptions(options: {
+  name: string;
+  requiredHostVersion: string;
+  exposes?: Record<string, string>;
+  sharedOverrides?: SharedOverridesType;
+}): IRemoteFederationOptions;
+
 export declare function isMfFlagEnabled(value: string | boolean | undefined): boolean;

@@ -12,7 +12,8 @@
     "./federation": {
       "types": "./federation.d.mts",
       "import": "./federation.mjs"
-    }
+    },
+    "./tailwind-preset": "./tailwind-preset.cjs"
   },
   "scripts": {
     "build:types": "node build-types.mjs"
