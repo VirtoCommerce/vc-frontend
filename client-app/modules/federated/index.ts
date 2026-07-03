@@ -1,6 +1,6 @@
 import { loadRemote, registerRemotes } from "@module-federation/enhanced/runtime";
 import { Logger } from "@/core/utilities";
-import { CORE_VERSION } from "@/core-api/version";
+import { CORE_VERSION } from "@/core-api/core-version";
 import { useNotifications } from "@/shared/notification";
 import { checkHostCompatibility } from "./version-gate";
 

@@ -20,5 +20,5 @@ export { apolloClient, graphqlClient } from "@/core/api/graphql/client";
 
 export { useModuleSettings } from "@/core/composables/useModuleSettings";
 export { globals } from "@/core/globals";
-export { CORE_VERSION } from "./version";
+export { CORE_VERSION } from "./core-version";
 export type { I18n } from "@/i18n";

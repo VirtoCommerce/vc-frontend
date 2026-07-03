@@ -49,20 +49,10 @@ function fail(msg) {
 }
 
 // 0 ── contract-consistency guards (cheap, run before the slow emit) ──────────
+// The contract version has a single source: core-api/package.json (the runtime
+// CORE_VERSION imports it, so there is nothing to keep in sync).
 const corePkg = require("./package.json");
 const hostPkg = require(resolve(REPO_ROOT, "package.json"));
-
-// CORE_VERSION (runtime gate) must match the facade package version.
-const versionTs = readFileSync(resolve(CORE_API_DIR, "version.ts"), "utf8");
-const coreVersionMatch = /CORE_VERSION = "([^"]+)"/.exec(versionTs);
-if (!coreVersionMatch) {
-  fail("could not find CORE_VERSION in core-api/version.ts.");
-}
-if (coreVersionMatch[1] !== corePkg.version) {
-  fail(
-    `CORE_VERSION "${coreVersionMatch[1]}" (version.ts) != "${corePkg.version}" (core-api/package.json) — keep them in sync.`,
-  );
-}
 
 // The shared-singleton ranges (federation.mjs) must stay compatible with what the
 // host actually installs — otherwise the MF runtime would reject the host's own deps.
@@ -81,7 +71,7 @@ for (const [name, range] of Object.entries(MF_SHARED_RANGES)) {
     fail(`federation.mjs range "${range}" for "${name}" does not intersect host package.json "${declared}".`);
   }
 }
-step("contract consistency guards passed (CORE_VERSION sync, shared-dep ranges).");
+step("contract consistency guards passed (shared-dep ranges).");
 
 // 1 ── emit the facade's declaration graph ────────────────────────────────────
 step("emitting declarations with vue-tsc…");
@@ -150,18 +140,24 @@ function compareContractToBase(currentContract) {
   const mergeBase = git(["merge-base", "HEAD", baseRef]);
   const baseSha = mergeBase.status === 0 ? mergeBase.stdout.trim() : "";
   const baseContract = baseSha ? git(["show", `${baseSha}:client-app/core-api/dist/index.d.ts`]) : { status: 1 };
-  const baseVersionTs = baseSha ? git(["show", `${baseSha}:client-app/core-api/version.ts`]) : { status: 1 };
-  if (baseContract.status !== 0 || baseVersionTs.status !== 0) {
+  const basePkgJson = baseSha ? git(["show", `${baseSha}:client-app/core-api/package.json`]) : { status: 1 };
+  if (baseContract.status !== 0 || basePkgJson.status !== 0) {
     return null;
   }
   const removedExports = [...extractExportNames(baseContract.stdout)].filter(
     (name) => !extractExportNames(currentContract).has(name),
   );
+  let baseVersion;
+  try {
+    baseVersion = JSON.parse(basePkgJson.stdout).version;
+  } catch {
+    return null;
+  }
   return {
     baseRef,
     baseSha,
     changed: baseContract.stdout !== currentContract,
-    baseVersion: /CORE_VERSION = "([^"]+)"/.exec(baseVersionTs.stdout)?.[1],
+    baseVersion,
     removedExports,
   };
 }
@@ -171,16 +167,14 @@ function compareContractToBase(currentContract) {
  * unchanged version gets a minor bump right here (idempotent — an already-bumped
  * version is left alone). The one human decision left is a BREAKING change: removed
  * exports refuse the auto-bump and require an explicit `yarn bump:core major`.
- *
- * Returns the contract to write: the generated one embeds CORE_VERSION as a literal
- * type, so a bump must be patched into it — otherwise the file written by THIS run
- * would carry the pre-bump version and the next `--check` would report it stale.
+ * The contract itself types CORE_VERSION as plain `string`, so bumping the version
+ * never changes the generated .d.ts.
  */
 function autoBumpMinorIfContractChanged(currentContract, currentVersion) {
   const base = compareContractToBase(currentContract);
   if (!base) {
     step("version auto-bump skipped: no committed contract baseline (set MF_CONTRACT_BASE_REF to override).");
-    return currentContract;
+    return;
   }
   const decision = decideVersionAction({ ...base, currentVersion });
   if (decision.action === "require-major") {
@@ -189,12 +183,10 @@ function autoBumpMinorIfContractChanged(currentContract, currentVersion) {
         "Run `yarn bump:core major`, update the @vc-frontend/core range in federation.mjs, then rerun the build.",
     );
   }
-  if (decision.action !== "bump-minor") {
-    return currentContract;
+  if (decision.action === "bump-minor") {
+    const { current, next } = bumpContractVersion("minor");
+    step(`contract changed vs ${base.baseRef} — version auto-bumped ${current} -> ${next} (commit package.json too).`);
   }
-  const { current, next } = bumpContractVersion("minor");
-  step(`contract changed vs ${base.baseRef} — version auto-bumped ${current} -> ${next} (commit both files).`);
-  return currentContract.replace(`CORE_VERSION = "${current}"`, `CORE_VERSION = "${next}"`);
 }
 
 if (CHECK_MODE) {
@@ -203,9 +195,9 @@ if (CHECK_MODE) {
     fail("committed dist/index.d.ts is stale — run `yarn build:core-types` and commit the result.");
   }
   step("check passed: committed contract matches the facade.");
-  // Safety net for anyone who edited version files by hand or bypassed the build.
+  // Safety net for anyone who edited the version by hand or bypassed the build.
   const base = compareContractToBase(contract);
-  if (base && decideVersionAction({ ...base, currentVersion: coreVersionMatch[1] }).action !== "none") {
+  if (base && decideVersionAction({ ...base, currentVersion: corePkg.version }).action !== "none") {
     fail(
       `the public contract changed relative to ${base.baseRef}, but CORE_VERSION is still ${base.baseVersion}. ` +
         "Run `yarn build:core-types` (auto-bumps minor); for a breaking change run `yarn bump:core major` first.",
@@ -217,9 +209,9 @@ if (CHECK_MODE) {
       : "bump guard skipped: no baseline.",
   );
 } else {
-  const finalContract = autoBumpMinorIfContractChanged(contract, coreVersionMatch[1]);
+  autoBumpMinorIfContractChanged(contract, corePkg.version);
   mkdirSync(DIST_DIR, { recursive: true });
-  writeFileSync(OUT_FILE, finalContract, "utf8");
+  writeFileSync(OUT_FILE, contract, "utf8");
 
   // External peer imports the contract expects the plugin (or host) to provide.
   const externals = [...new Set([...code.matchAll(/from ['"]([^'".][^'"]*)['"]/g)].map((m) => m[1]))].sort((a, b) =>

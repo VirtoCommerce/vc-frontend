@@ -1524,16 +1524,14 @@ type GlobalVariablesType = {
 declare const globals: Readonly<Required<GlobalVariablesType>>;
 
 /**
- * Version of the `@vc-frontend/core` public contract (VCST-5159, #2).
- *
- * Federated plugins declare the minimum core version they were built against in
- * their manifest (`metaData.requiredHostVersion`); the host loader compares it to
- * this value and refuses to load an incompatible plugin instead of letting it fail
- * at runtime. Bump on any breaking change to the facade surface.
- *
- * Keep in sync with core-api/package.json `version`.
+ * Version of the `@vc-frontend/core` public contract (VCST-5159, #2), single-sourced
+ * from core-api/package.json. Federated plugins declare the contract version/range
+ * they were built against in their manifest (`metaData.requiredHostVersion`); the
+ * host loader compares it to this value and refuses to load an incompatible plugin
+ * before any of its code runs. Managed by `yarn build:core-types` (auto minor bump)
+ * and `yarn bump:core major` - do not edit the version by hand.
  */
-declare const CORE_VERSION = "1.0.0";
+declare const CORE_VERSION: string;
 
 export { CORE_VERSION, _default$1 as VcButton, _default$2 as VcMarkdownRender, _default as VcWidget, apolloClient, globals, graphqlClient, useExtensionRegistry, useModuleSettings };
 export type { I18n };

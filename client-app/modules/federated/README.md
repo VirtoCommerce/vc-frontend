@@ -314,9 +314,10 @@ central-discovery response (see `TODO.md` #2 — vc-shell already passes `entry.
   references, checked). `yarn validate` (and therefore CI `yarn build`) runs
   `validate:core-types`, which regenerates the contract and **fails if the committed
   file is stale** — same for `CORE_VERSION`/package.json sync and shared-range drift.
-- **Bump `CORE_VERSION`** (`core-api/version.ts`, kept in sync with `core-api/package.json`)
-  on any breaking facade change — **including a major bump of a shared singleton**
-  (vue, @apollo/client, …): plugins pin against the facade version, so a breaking shared
+- **`CORE_VERSION` is single-sourced** from `core-api/package.json` and managed by
+  the contract build: additive facade changes auto-bump minor; breaking ones require
+  `yarn bump:core major` — **including a major bump of a shared singleton** (vue,
+  @apollo/client, …): plugins pin against the facade version, so a breaking shared
   dep must surface there.
 
 See [`TODO.md`](./TODO.md) for what's intentionally deferred (remote discovery via a
