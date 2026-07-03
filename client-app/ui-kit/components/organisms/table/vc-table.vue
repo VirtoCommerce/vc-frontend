@@ -19,7 +19,7 @@
         </div>
       </slot>
 
-      <!-- Mobile error view (checked before empty so a failed request with an empty array shows the error) -->
+      <!-- Error before empty: a failed request with empty items still shows the error -->
       <template v-else-if="error">
         <slot name="error">
           <DefaultErrorState />
@@ -173,7 +173,7 @@
           </slot>
         </tbody>
 
-        <!-- Desktop error view (checked before empty so a failed request with an empty array shows the error) -->
+        <!-- Error before empty: a failed request with empty items still shows the error -->
         <tbody v-else-if="error" class="vc-table__body">
           <tr>
             <td :colspan="stateColspan" class="vc-table__state-cell">
@@ -325,7 +325,9 @@ const emit = defineEmits<{
   (event: "pageChanged", page: number): void;
   (event: "rowClick", item: T, index: number): void;
   (event: "retry"): void;
+  /** Emitted keys are always strings (normalized from `getItemKey`), even if numeric keys were passed in. */
   (event: "update:selection", keys: VcTableSelectionKeyType[]): void;
+  /** Emitted keys are always strings (normalized from `getItemKey`), even if numeric keys were passed in. */
   (event: "selectionChange", keys: VcTableSelectionKeyType[], rows: T[], meta: VcTableSelectionMetaType<T>): void;
 }>();
 
@@ -374,22 +376,17 @@ const props = withDefaults(
      */
     rowStyle?: string | Record<string, string> | ((item: T, index: number) => string | Record<string, string>);
     /**
-     * Enables optional row selection.
-     * - `"single"`: radio controls, at most one selected row.
-     * - `"multiple"`: checkbox controls with a header select-all.
-     * When `undefined`, selection is disabled and the table behaves as before.
+     * Row selection mode. `"single"` = radio, at most one row; `"multiple"` = checkboxes
+     * with a header select-all. `undefined` disables selection.
      */
     selectionMode?: VcTableSelectionModeType;
     /**
-     * Selected row keys (v-model:selection). Always an array of keys derived from `getItemKey`.
-     * In `single` mode the array holds 0..1 keys; in `multiple` mode 0..N keys.
-     * Selection is owned by the parent, so it persists across `items`/page/sort/filter changes.
+     * Selected row keys (v-model:selection). Parent-owned, so selection persists across
+     * `items`/page/sort/filter changes. Accepts `string | number` keys but compares them
+     * as strings (matching `getItemKey`), so numeric `[1, 2]` still matches `id: 1` / `id: 2`.
      */
     selection?: VcTableSelectionKeyType[];
-    /**
-     * Predicate deciding whether a row can be selected. Rows returning `false`
-     * get a disabled control and are excluded from select-all.
-     */
+    /** Predicate: rows returning `false` get a disabled control and are excluded from select-all. */
     isRowSelectable?: (item: T) => boolean;
   }>(),
   {
@@ -756,7 +753,8 @@ function getItemKey(item: T, index: number): string {
 
 const selectionEnabled = computed<boolean>(() => props.selectionMode !== undefined);
 
-const selectionSet = computed<Set<VcTableSelectionKeyType>>(() => new Set(props.selection));
+// Normalize to strings so comparisons match `getItemKey`, even for numeric input keys.
+const selectionSet = computed<Set<string>>(() => new Set(props.selection.map((key) => String(key))));
 
 function isRowSelectable(item: T): boolean {
   return props.isRowSelectable ? props.isRowSelectable(item) : true;
@@ -766,9 +764,9 @@ function isRowSelected(item: T, index: number): boolean {
   return selectionSet.value.has(getItemKey(item, index));
 }
 
-// Keys of the currently visible, selectable rows (used by select-all).
-const selectableKeysOnPage = computed<VcTableSelectionKeyType[]>(() => {
-  const keys: VcTableSelectionKeyType[] = [];
+// Selectable keys among current items; drives select-all.
+const selectableKeysOnPage = computed<string[]>(() => {
+  const keys: string[] = [];
   props.items.forEach((item, index) => {
     if (isRowSelectable(item)) {
       keys.push(getItemKey(item, index));
@@ -789,8 +787,7 @@ const isSomeSelected = computed<boolean>(() => {
   return selectedCountOnPage.value > 0 && !isAllSelected.value;
 });
 
-// Resolve selected row objects among the currently available `items`.
-// Rows selected on other pages are not present in `items`, so they can't be resolved here.
+// Resolve selected rows among current `items` only; off-page selections aren't present here.
 function resolveRows(keys: VcTableSelectionKeyType[]): T[] {
   const wanted = new Set(keys);
   const rows: T[] = [];
@@ -808,8 +805,7 @@ function commitSelection(keys: VcTableSelectionKeyType[], meta: VcTableSelection
 }
 
 function toggleRow(item: T, index: number): void {
-  // No-op when selection is disabled: the slot scope still exposes `toggle`,
-  // but calling it must not silently mutate/emit selection.
+  // Slot scope exposes `toggle` even when selection is off; calling it must be a no-op.
   if (!selectionEnabled.value) {
     return;
   }
@@ -827,8 +823,8 @@ function toggleRow(item: T, index: number): void {
     return;
   }
 
-  // multiple
-  const keys = [...props.selection];
+  // multiple; normalize so the string `key` matches numeric input keys
+  const keys = props.selection.map((existingKey) => String(existingKey));
   const existingIndex = keys.indexOf(key);
   if (existingIndex === -1) {
     keys.push(key);
@@ -843,13 +839,13 @@ function toggleSelectAll(): void {
   const pageKeys = selectableKeysOnPage.value;
 
   if (isAllSelected.value) {
-    // Deselect only the selectable rows on the current page, keep off-page selections intact.
+    // Deselect current page only, keep off-page selections (normalized to strings).
     const pageKeySet = new Set(pageKeys);
-    const keys = props.selection.filter((key) => !pageKeySet.has(key));
+    const keys = props.selection.map((key) => String(key)).filter((key) => !pageKeySet.has(key));
     commitSelection(keys, { action: "deselect-all" });
   } else {
-    // Merge current-page selectable keys into the existing selection (preserve off-page selections).
-    const keys = [...props.selection];
+    // Merge current page into existing selection (normalized to strings).
+    const keys = props.selection.map((key) => String(key));
     for (const key of pageKeys) {
       if (!keys.includes(key)) {
         keys.push(key);
@@ -917,8 +913,7 @@ function selectionSlotScope(
   $skeleton: "";
 
   --radius: var(--vc-table-radius, var(--vc-radius, 0.5rem));
-  // Selected-row highlight. 8% alpha reads well on light backgrounds; the dark
-  // override bumps the alpha so the row stays clearly visible on dark surfaces.
+  // Selected-row highlight; dark override bumps the alpha for dark surfaces.
   --vc-table-selected-bg: rgb(from var(--color-primary-500) r g b / 0.08);
   --desktop-radius: v-bind(desktopRadius);
   --desktop-border-width: v-bind(desktopBorderWidth);
@@ -1046,8 +1041,7 @@ function selectionSlotScope(
     &--selected {
       $selected: &;
 
-      // Soft, unobtrusive highlight that stays readable in light/dark themes.
-      // Wins over the zebra/hover backgrounds thanks to the compound selectors below.
+      // Compound selectors so the highlight wins over the zebra/hover backgrounds.
       &,
       &:nth-child(even),
       &:hover {
@@ -1096,7 +1090,7 @@ function selectionSlotScope(
         @apply bg-neutral-200;
       }
 
-      // Keep the selection highlight visible on sticky (opaque) cells of a selected row.
+      // Keep the highlight on sticky (opaque) cells of a selected row.
       .vc-table__row--selected & {
         background-color: var(--vc-table-selected-bg);
       }
@@ -1108,26 +1102,15 @@ function selectionSlotScope(
   &__selection-cell {
     @apply px-3;
 
-    // Center the selection control within the narrow column.
-    //
-    // The control's own box (checkbox indicator + label line-height, or the
-    // md-sized radio) is taller than the plain text line in a normal cell, so
-    // left to itself it would stretch the row. We collapse the control to just
-    // its visual indicator height and vertically center it, so the row height
-    // stays driven by the regular cells' content — not by the selection control.
+    // Center the control and collapse its box so it doesn't stretch the row height.
     > .vc-checkbox,
     > .vc-radio-button {
       @apply mx-auto flex w-fit items-center justify-center;
 
-      // The control root (block + a ~14px line-height around its inline-flex
-      // container) leaves a phantom descent that makes the selection cell ~1px
-      // taller than a plain text cell and stretches the whole row. Flex-centering
-      // the root and zeroing its line-box removes that descent, so the row height
-      // stays driven by the regular cells' content, not by the selection control.
+      // line-height:0 removes the control's phantom baseline descent that would stretch the row.
       line-height: 0;
 
-      // Kill the label's min-height / line-height contribution: with no label
-      // text the empty label span must not reserve vertical space.
+      // Empty label span must not reserve vertical space.
       .vc-checkbox__label,
       .vc-radio-button__label {
         @apply min-h-0 leading-none;

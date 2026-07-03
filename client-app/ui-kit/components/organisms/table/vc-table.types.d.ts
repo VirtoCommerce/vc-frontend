@@ -23,6 +23,11 @@ declare global {
 
   type VcTableSelectionModeType = "single" | "multiple";
 
+  /**
+   * A row selection key. Accepted as `string | number` on input, but VcTable
+   * normalizes keys to strings for all internal comparisons and emits them back
+   * as strings (consistent with `getItemKey`, which stringifies `item.id`).
+   */
   type VcTableSelectionKeyType = string | number;
 
   /**

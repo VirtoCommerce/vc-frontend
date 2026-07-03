@@ -5,8 +5,7 @@ import { createWrapperFactory } from "@/core/utilities/tests";
 import VcTableColumn from "./vc-table-column.vue";
 import VcTable from "./vc-table.vue";
 
-// Mutable flag lets individual tests emulate the mobile breakpoint.
-// Defaults to `false` (desktop) so existing tests are unaffected.
+// Mutable flag so tests can emulate the mobile breakpoint; defaults to desktop.
 const { breakpointState } = vi.hoisted(() => ({ breakpointState: { isMobile: false } }));
 
 vi.mock("@vueuse/core", async (importOriginal) => {
@@ -44,13 +43,9 @@ async function mountWithSlots(options: {
   items?: VcTableItemType[];
   columns?: Array<{ id: string; title: string }>;
   rowClass?:
-    | string
-    | Record<string, boolean>
-    | ((item: VcTableItemType, index: number) => string | Record<string, boolean>);
+    string | Record<string, boolean> | ((item: VcTableItemType, index: number) => string | Record<string, boolean>);
   rowStyle?:
-    | string
-    | Record<string, string>
-    | ((item: VcTableItemType, index: number) => string | Record<string, string>);
+    string | Record<string, string> | ((item: VcTableItemType, index: number) => string | Record<string, string>);
   onRowClick?: (item: VcTableItemType, index: number) => void;
 }) {
   const cols = options.columns ?? [{ id: "name", title: "Name" }];
@@ -502,11 +497,8 @@ describe("getAriaSort", () => {
 
 // ─── 8. Empty / Error states ────────────────────────────────
 
-/**
- * Stubs that expose VcEmptyView's rendered text/icon and forward its `#button`
- * slot (where the retry button lives), plus a real <button> for VcButton so
- * clicks propagate to VcTable's `@retry` emit.
- */
+// Expose VcEmptyView's text/icon + forward its `#button` slot, with a real <button>
+// for VcButton so retry clicks propagate to VcTable's `@retry` emit.
 const stateStubs = {
   ...sharedStubs,
   VcEmptyView: {
@@ -521,11 +513,8 @@ const stateStubs = {
   VcButton: { template: '<button class="button-stub"><slot /></button>' },
 };
 
-/**
- * Mount VcTable with VcTableColumn children (desktop columns + a `mobile-item`
- * slot) so both desktop and mobile branches have real content to fall back from.
- * Set `breakpointState.isMobile = true` before calling to exercise the mobile branch.
- */
+// Desktop columns + a `mobile-item` slot so both branches have content to fall back from.
+// Set `breakpointState.isMobile = true` before calling for the mobile branch.
 async function mountState(options: {
   items?: VcTableItemType[];
   error?: boolean;
@@ -705,12 +694,9 @@ describe("error / empty states (mobile)", () => {
 
 // ─── 9. Row selection ───────────────────────────────────────
 
-/**
- * Lightweight stubs for the selection controls. They mirror the props VcTable
- * binds and emit `change` from a real <button>, so tests can trigger a toggle
- * and assert props (checked/indeterminate/disabled) without pulling in the full
- * VcCheckbox / VcRadioButton internals. Mirrors the `stateStubs` approach above.
- */
+// Selection-control stubs: mirror the bound props and emit `change` from a real
+// <button>, so tests can toggle and assert checked/indeterminate/disabled without
+// the full VcCheckbox / VcRadioButton internals.
 const selectionStubs = {
   ...sharedStubs,
   VcCheckbox: {
@@ -742,11 +728,8 @@ const selectionStubs = {
   },
 };
 
-/**
- * Mount VcTable with a single VcTableColumn child (desktop, slot-based rendering)
- * plus a `mobile-item` slot exposing the selection scope. Set
- * `breakpointState.isMobile = true` before calling to exercise the mobile branch.
- */
+// Single VcTableColumn child (desktop, slot-based) plus optional #desktop-item /
+// #mobile-item slots exposing the selection scope.
 async function mountSelectable(options: {
   items?: VcTableItemType[];
   selectionMode?: VcTableSelectionModeType;
@@ -767,8 +750,8 @@ async function mountSelectable(options: {
     props.isRowSelectable = options.isRowSelectable;
   }
 
-  // When a #desktop-item slot is used, register the column WITHOUT a default slot
-  // so the column-slot tbody branch (which wins over #desktop-item) stays inactive.
+  // With a #desktop-item slot, register the column without a default slot so the
+  // column-slot tbody branch (which wins over #desktop-item) stays inactive.
   const slots: Record<string, unknown> = {
     default: () =>
       h(
@@ -920,7 +903,6 @@ describe("row selection — select-all (multiple)", () => {
 
     await wrapper.find("thead .checkbox-stub").trigger("click");
 
-    // Row "2" is not selectable, so it is not part of select-all.
     expect(wrapper.emitted("update:selection")?.[0]).toEqual([["1", "3"]]);
   });
 
@@ -933,6 +915,106 @@ describe("row selection — select-all (multiple)", () => {
 
     const headerCheckbox = wrapper.find("thead .checkbox-stub");
     expect(headerCheckbox.attributes("data-checked")).toBe("true");
+  });
+});
+
+// Regression: `getItemKey` stringifies keys but `selection` accepts `(string | number)[]`,
+// so numeric keys must still match/toggle/clear (`Set([1]).has("1")` is false without normalization).
+const numericItems: VcTableItemType[] = [
+  { id: 1, name: "Alice" },
+  { id: 2, name: "Bob" },
+  { id: 3, name: "Charlie" },
+];
+
+describe("row selection — numeric keys (multiple)", () => {
+  it("marks rows selected when the parent supplies numeric keys", async () => {
+    const wrapper = await mountSelectable({
+      selectionMode: "multiple",
+      items: numericItems,
+      selection: [1, 2],
+    });
+
+    const rows = wrapper.findAll(".vc-table__row");
+    expect(rows[0].classes()).toContain("vc-table__row--selected");
+    expect(rows[1].classes()).toContain("vc-table__row--selected");
+    expect(rows[2].classes()).not.toContain("vc-table__row--selected");
+  });
+
+  it("toggling a new row emits normalized string keys without duplicates", async () => {
+    const wrapper = await mountSelectable({
+      selectionMode: "multiple",
+      items: numericItems,
+      selection: [1],
+    });
+
+    // Toggle the second row (id 2) on.
+    await wrapper.findAll("tbody .checkbox-stub")[1].trigger("click");
+
+    // Both keys must be strings — no `[1, "2"]` mismatch.
+    expect(wrapper.emitted("update:selection")?.[0]).toEqual([["1", "2"]]);
+  });
+
+  it("toggling an already-selected numeric row removes it (no lingering numeric key)", async () => {
+    const wrapper = await mountSelectable({
+      selectionMode: "multiple",
+      items: numericItems,
+      selection: [1],
+    });
+
+    // Toggle the first row (id 1, currently selected) off.
+    await wrapper.findAll("tbody .checkbox-stub")[0].trigger("click");
+
+    // Must fully clear — not leave `1` alongside a new `"1"`.
+    expect(wrapper.emitted("update:selection")?.[0]).toEqual([[]]);
+  });
+
+  it("header checkbox reflects a fully numeric selection as checked", async () => {
+    const wrapper = await mountSelectable({
+      selectionMode: "multiple",
+      items: numericItems,
+      selection: [1, 2, 3],
+    });
+
+    const headerCheckbox = wrapper.find("thead .checkbox-stub");
+    expect(headerCheckbox.attributes("data-checked")).toBe("true");
+    expect(headerCheckbox.attributes("data-indeterminate")).toBe("false");
+  });
+
+  it("deselect-all clears a fully numeric selection (no stale numeric keys)", async () => {
+    const wrapper = await mountSelectable({
+      selectionMode: "multiple",
+      items: numericItems,
+      selection: [1, 2, 3],
+    });
+
+    await wrapper.find("thead .checkbox-stub").trigger("click");
+
+    // Without normalization the numeric keys would survive the string-based filter.
+    expect(wrapper.emitted("update:selection")?.[0]).toEqual([[]]);
+
+    const change = wrapper.emitted("selectionChange")?.[0] as [
+      VcTableSelectionKeyType[],
+      VcTableItemType[],
+      VcTableSelectionMetaType<VcTableItemType>,
+    ];
+    expect(change[2]).toEqual({ action: "deselect-all" });
+  });
+});
+
+describe("row selection — numeric keys (single)", () => {
+  it("marks the row selected and deselects on re-click with a numeric key", async () => {
+    const wrapper = await mountSelectable({
+      selectionMode: "single",
+      items: numericItems,
+      selection: [2],
+    });
+
+    const rows = wrapper.findAll(".vc-table__row");
+    expect(rows[1].classes()).toContain("vc-table__row--selected");
+
+    // Re-clicking the already-selected row (id 2) clears the selection.
+    await wrapper.findAll("tbody .radio-stub")[1].trigger("click");
+    expect(wrapper.emitted("update:selection")?.[0]).toEqual([[]]);
   });
 });
 
