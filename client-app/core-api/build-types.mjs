@@ -17,6 +17,8 @@ import { fileURLToPath } from "node:url";
 import { rollup } from "rollup";
 import dts from "rollup-plugin-dts";
 import { intersects, satisfies } from "semver";
+import { bumpContractVersion } from "./bump-version.mjs";
+import { decideVersionAction, extractExportNames } from "./contract-versioning.mjs";
 import { MF_SHARED_RANGES } from "./federation.mjs";
 
 const CHECK_MODE = process.argv.includes("--check");
@@ -137,13 +139,79 @@ if (code.includes("@/")) {
 
 const contract = BANNER + "\n" + code;
 
+/**
+ * Compares the freshly generated contract to the one committed on the base branch.
+ * Returns null when no baseline is available (no git, no base ref, contract absent
+ * at base) — callers then skip versioning logic quietly.
+ */
+function compareContractToBase(currentContract) {
+  const baseRef = process.env.MF_CONTRACT_BASE_REF || "origin/dev";
+  const git = (args) => spawnSync("git", args, { cwd: REPO_ROOT, encoding: "utf8" });
+  const mergeBase = git(["merge-base", "HEAD", baseRef]);
+  const baseSha = mergeBase.status === 0 ? mergeBase.stdout.trim() : "";
+  const baseContract = baseSha ? git(["show", `${baseSha}:client-app/core-api/dist/index.d.ts`]) : { status: 1 };
+  const baseVersionTs = baseSha ? git(["show", `${baseSha}:client-app/core-api/version.ts`]) : { status: 1 };
+  if (baseContract.status !== 0 || baseVersionTs.status !== 0) {
+    return null;
+  }
+  const removedExports = [...extractExportNames(baseContract.stdout)].filter(
+    (name) => !extractExportNames(currentContract).has(name),
+  );
+  return {
+    baseRef,
+    baseSha,
+    changed: baseContract.stdout !== currentContract,
+    baseVersion: /CORE_VERSION = "([^"]+)"/.exec(baseVersionTs.stdout)?.[1],
+    removedExports,
+  };
+}
+
+/**
+ * Contract versioning is AUTOMATIC for the common case: a changed contract with an
+ * unchanged version gets a minor bump right here (idempotent — an already-bumped
+ * version is left alone). The one human decision left is a BREAKING change: removed
+ * exports refuse the auto-bump and require an explicit `yarn bump:core major`.
+ */
+function autoBumpMinorIfContractChanged(currentContract, currentVersion) {
+  const base = compareContractToBase(currentContract);
+  if (!base) {
+    step("version auto-bump skipped: no committed contract baseline (set MF_CONTRACT_BASE_REF to override).");
+    return;
+  }
+  const decision = decideVersionAction({ ...base, currentVersion });
+  if (decision.action === "require-major") {
+    fail(
+      `exports removed from the public contract (${decision.removedExports.join(", ")}) — that is BREAKING. ` +
+        "Run `yarn bump:core major`, update the @vc-frontend/core range in federation.mjs, then rerun the build.",
+    );
+  }
+  if (decision.action === "bump-minor") {
+    const { current, next } = bumpContractVersion("minor");
+    step(`contract changed vs ${base.baseRef} — version auto-bumped ${current} -> ${next} (commit both files).`);
+  }
+}
+
 if (CHECK_MODE) {
   const committed = existsSync(OUT_FILE) ? readFileSync(OUT_FILE, "utf8") : "";
   if (committed !== contract) {
     fail("committed dist/index.d.ts is stale — run `yarn build:core-types` and commit the result.");
   }
   step("check passed: committed contract matches the facade.");
+  // Safety net for anyone who edited version files by hand or bypassed the build.
+  const base = compareContractToBase(contract);
+  if (base && decideVersionAction({ ...base, currentVersion: coreVersionMatch[1] }).action !== "none") {
+    fail(
+      `the public contract changed relative to ${base.baseRef}, but CORE_VERSION is still ${base.baseVersion}. ` +
+        "Run `yarn build:core-types` (auto-bumps minor); for a breaking change run `yarn bump:core major` first.",
+    );
+  }
+  step(
+    base
+      ? `bump guard passed (base ${base.baseRef} @ ${base.baseSha.slice(0, 8)}).`
+      : "bump guard skipped: no baseline.",
+  );
 } else {
+  autoBumpMinorIfContractChanged(contract, coreVersionMatch[1]);
   mkdirSync(DIST_DIR, { recursive: true });
   writeFileSync(OUT_FILE, contract, "utf8");
 

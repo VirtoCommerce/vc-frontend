@@ -19,7 +19,7 @@ export const MF_SHARED_RANGES = {
   "@apollo/client": "^3.14.0",
   "@vue/apollo-composable": "^4.2.0",
   graphql: "^16.14.0",
-  "@vc-frontend/core": "^2.53.0",
+  "@vc-frontend/core": "^1.0.0",
 };
 
 // strictVersion: the MF runtime only WARNS on a singleton range mismatch by default;

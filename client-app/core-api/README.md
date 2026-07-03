@@ -65,6 +65,11 @@ Guards that run with it (any failure = non-zero exit):
 - **In CI:** `yarn validate:core-types` (part of `yarn validate`, which `yarn build`
   runs) regenerates the contract in memory and **fails if the committed file differs**.
   You cannot merge a facade change with a stale contract.
+- **In CI (bump guard):** if the contract **changed relative to `origin/dev`** but
+  `CORE_VERSION` did not (someone bypassed the build or hand-edited version files),
+  the check fails and points at `yarn build:core-types` / `yarn bump:core major`.
+  (Base ref overridable via `MF_CONTRACT_BASE_REF`; the guard and the auto-bump skip
+  quietly where the baseline is unavailable.)
 
 The output is deterministic: same source ⇒ byte-identical file, so the git diff of
 `dist/index.d.ts` is a readable review artifact of "what did the public API change".
@@ -87,24 +92,32 @@ Say a plugin needs `useThemeContext`.
    yarn build:core-types   # ~1 min; rewrites dist/index.d.ts
    ```
 
-3. **Bump the contract version:**
+   The build also **bumps the contract version automatically**: if the generated
+   contract differs from the one on `origin/dev` and the version wasn't bumped yet, it
+   applies a **minor** bump (`version.ts` + this `package.json`) for you. Running it
+   again won't double-bump. Plugins that use the new export then declare
+   `requiredHostVersion: "^1.1.0"`, so older hosts correctly refuse them.
+
+3. **Breaking change? That's the one manual step.** If you removed or renamed an
+   export, the build **refuses** to auto-bump (removed exports are provably breaking)
+   and asks you to decide explicitly:
 
    ```bash
-   yarn bump:core minor    # updates version.ts + core-api/package.json together
+   yarn bump:core major    # then update the @vc-frontend/core range in federation.mjs
    ```
 
-   - **additive** change (new export) → **minor** bump. Plugins that use the new export
-     declare `requiredHostVersion: "^2.54.0"` so older hosts correctly refuse them.
-   - **breaking** change (remove / rename / change semantics) → **major** bump, and
-     update the `@vc-frontend/core` range in `federation.mjs` (the script reminds you).
-     Avoid this — it breaks every plugin.
+   A changed type on a _kept_ export can also be breaking — no diff can prove intent,
+   so know what you're shipping. Avoid breaking changes; they break every plugin.
 
-   > This version tracks **facade changes only**. It is independent of the host app
-   > version in the root `package.json` that release automation bumps — releases never
-   > touch the contract version, and a build guard keeps the two facade files in sync.
+   > The contract version tracks **facade changes only**. It is independent of the host
+   > app version in the root `package.json` that release automation bumps — releases
+   > never touch it, and a build guard keeps the two facade files in sync.
 
 4. **Commit `index.ts`, `dist/index.d.ts`, `version.ts`, `package.json` together.**
-   If you forget step 2 or 3, CI fails with a message pointing here.
+
+You can't forget any of this: CI fails on a stale contract (forgot step 2) and on a
+changed contract without a version change (bypassed the build), each time printing the
+exact command to run.
 
 Rules of thumb for what to export:
 

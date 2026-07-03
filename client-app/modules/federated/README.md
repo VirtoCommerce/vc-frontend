@@ -160,7 +160,7 @@ Three design points worth calling out:
 - **Version gate runs before any remote code executes.** We fetch the manifest (plain
   JSON, no execution), read `metaData.requiredHostVersion`, and only `loadRemote` the
   ones this host can satisfy. Unreadable or unparseable ⇒ treated as incompatible
-  (fail closed). A bare version like `"2.53.0"` is normalized to `"^2.53.0"` — so a
+  (fail closed). A bare version like `"1.0.0"` is normalized to `"^1.0.0"` — so a
   host **major** bump correctly rejects plugins built against the previous major.
 - **Every network step is time-budgeted** (manifest 5s, load and init 10s each, tunable
   via `initFederatedModules(options)`). Because boot awaits this loader, a hung remote
@@ -204,8 +204,8 @@ A plugin is its own build. It must:
 
    ```jsonc
    // mf-manifest.json (excerpt)
-   { "metaData": { "requiredHostVersion": "^2.53.0" } }
-   // a bare "2.53.0" means the same thing (normalized to ^2.53.0);
+   { "metaData": { "requiredHostVersion": "^1.0.0" } }
+   // a bare "1.0.0" means the same thing (normalized to ^1.0.0);
    // anything semver can't parse is rejected (fail closed)
    ```
 

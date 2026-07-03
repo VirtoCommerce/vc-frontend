@@ -1533,7 +1533,7 @@ declare const globals: Readonly<Required<GlobalVariablesType>>;
  *
  * Keep in sync with core-api/package.json `version`.
  */
-declare const CORE_VERSION = "2.53.0";
+declare const CORE_VERSION = "1.0.0";
 
 export { CORE_VERSION, _default$1 as VcButton, _default$2 as VcMarkdownRender, _default as VcWidget, apolloClient, globals, graphqlClient, useExtensionRegistry, useModuleSettings };
 export type { I18n };

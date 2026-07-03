@@ -8,4 +8,4 @@
  *
  * Keep in sync with core-api/package.json `version`.
  */
-export const CORE_VERSION = "2.53.0";
+export const CORE_VERSION = "1.0.0";
