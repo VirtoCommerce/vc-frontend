@@ -1,5 +1,6 @@
 import { createRequire } from "node:module";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { federation } from "@module-federation/vite";
 import { createHostShared, isMfFlagEnabled } from "./client-app/core-api/federation.mjs";
 import type { PluginOption } from "vite";
@@ -16,6 +17,7 @@ import type { PluginOption } from "vite";
 
 const require = createRequire(import.meta.url);
 const coreApiVersion = (require("./client-app/core-api/package.json") as { version: string }).version;
+const coreApiEntry = fileURLToPath(new URL("./client-app/core-api/index.ts", import.meta.url));
 
 /**
  * Alias so the HOST resolves @vc-frontend/core to the real source entry (it provides
@@ -39,8 +41,11 @@ export function federatedHostPlugin(enabled: string | boolean | undefined): Plug
       manifest: true,
       dts: false,
       shareStrategy: "loaded-first",
-      // The facade is portal-linked source; give MF its concrete version explicitly.
-      shared: createHostShared({ "@vc-frontend/core": { version: coreApiVersion } }),
+      // The facade is not an installed package, and @module-federation/vite resolves
+      // shared providers via Node resolution from the project root - Vite aliases do
+      // NOT apply. Without the explicit `import` path the host would register an
+      // EMPTY module as the facade provider; `version` is explicit for the same reason.
+      shared: createHostShared({ "@vc-frontend/core": { version: coreApiVersion, import: coreApiEntry } }),
     }) as PluginOption,
   ];
 }

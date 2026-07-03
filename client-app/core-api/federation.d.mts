@@ -10,8 +10,12 @@ export interface ISharedDepConfig {
   requiredVersion?: string;
   /** Concrete version to announce to the MF runtime (host side, source-linked packages). */
   version?: string;
-  /** Present (false) only in remote configs - remotes must not bundle fallback copies. */
-  import?: false;
+  /**
+   * `false` in remote configs (remotes must not bundle fallback copies); a module
+   * path string on the host side for source-linked packages that Node resolution
+   * cannot find (the MF build resolves shared providers without Vite aliases).
+   */
+  import?: false | string;
 }
 
 /** Per-package overrides: partial config to merge, or `false` to drop the package. */

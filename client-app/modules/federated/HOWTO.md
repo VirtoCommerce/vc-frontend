@@ -126,7 +126,7 @@ import type { RouteRecordRaw } from "vue-router";
 
 const MyPage = () => import("./pages/MyPage.vue");
 
-const route: RouteRecordRaw = { path: "/my-page", name: "MyPage", component: MyPage };
+const route: RouteRecordRaw = { path: "/my-plugin", name: "my-plugin", component: MyPage };
 
 export function init(): void {
   globals.router.addRoute(route);
@@ -158,11 +158,25 @@ cd my-plugin && yarn build && yarn preview          # -> http://localhost:3001
 cd vc-frontend
 APP_MF_HOST=true \
 APP_MF_REMOTES='{"my-plugin":"http://localhost:3001/mf-manifest.json"}' \
-yarn build-only && yarn preview
+yarn build-only --mode=development && yarn preview  # -> https://localhost:3000
 ```
 
-Open the storefront, navigate to `/my-page` — your separately-built page renders
-inside the live app. If something's off, the console tells you which gate said no
+Notes on the host side:
+
+- **build + preview, not `yarn dev`** — the dev server can't prebundle the shared
+  GraphQL facade in MF mode (known limitation); the production build has no such issue.
+  `yarn preview` proxies API calls to `APP_BACKEND_URL` exactly like dev does, so your
+  usual `.env.local` backend applies.
+- **`--mode=development` matters locally**: a production-mode build resolves the store
+  from the browser's hostname — `localhost` means nothing to the backend, and the app
+  renders an empty page. A development-mode build resolves the store from
+  `APP_BACKEND_URL`, exactly like `yarn dev`.
+- The preview server is **https** (same local certificate as the dev server).
+- The remote list is inlined at **build** time — changing `APP_MF_REMOTES` means
+  rebuilding the host.
+
+Open `https://localhost:3000/my-plugin` — your separately-built page renders inside the
+live storefront. If something's off, the console tells you which gate said no
 (`[MF] Skipping ...` / `[MF] Failed to load ...`), and the boot outcome is logged as
 `{ loaded, failed, skipped }`.
 

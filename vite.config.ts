@@ -27,6 +27,18 @@ function getProxy(target: ProxyOptions["target"], options: Omit<ProxyOptions, "t
   };
 }
 
+function getBackendProxy(): Record<string, ProxyOptions> {
+  return {
+    "^/api": getProxy(process.env.APP_BACKEND_URL),
+    "^/graphql": getProxy(process.env.APP_BACKEND_URL, { ws: true }),
+    "^/(connect|revoke)/token": getProxy(process.env.APP_BACKEND_URL),
+    "^/cms-content": getProxy(process.env.APP_BACKEND_URL),
+    "^/externalsignin": getProxy(process.env.APP_BACKEND_URL),
+    "^/signin-oidc": getProxy(process.env.APP_BACKEND_URL),
+    "^/signin-google": getProxy(process.env.APP_BACKEND_URL),
+  };
+}
+
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }): UserConfig => {
   const isServe = command == "serve";
@@ -91,10 +103,11 @@ export default defineConfig(({ command, mode }): UserConfig => {
       rollupOptions: {
         output: {
           manualChunks(id) {
-            if (!id?.includes("node_modules")) {
+            const moduleId = id ?? "";
+            if (!moduleId.includes("node_modules")) {
               return;
             }
-            const isDeferredLib = DEFERRED_LIBS.some((lib) => id.includes(`/node_modules/${lib}/`));
+            const isDeferredLib = DEFERRED_LIBS.some((lib) => moduleId.includes(`/node_modules/${lib}/`));
             if (isDeferredLib) {
               return;
             }
@@ -115,15 +128,15 @@ export default defineConfig(({ command, mode }): UserConfig => {
         "Cross-Origin-Resource-Policy": "cross-origin",
         "Cross-Origin-Embedder-Policy": "unsafe-none",
       },
-      proxy: {
-        "^/api": getProxy(process.env.APP_BACKEND_URL),
-        "^/graphql": getProxy(process.env.APP_BACKEND_URL, { ws: true }),
-        "^/(connect|revoke)/token": getProxy(process.env.APP_BACKEND_URL),
-        "^/cms-content": getProxy(process.env.APP_BACKEND_URL),
-        "^/externalsignin": getProxy(process.env.APP_BACKEND_URL),
-        "^/signin-oidc": getProxy(process.env.APP_BACKEND_URL),
-        "^/signin-google": getProxy(process.env.APP_BACKEND_URL),
-      },
+      proxy: getBackendProxy(),
+    },
+    // Mirrors server.proxy so a production build can be smoke-tested against the
+    // backend via `yarn preview` - required to run the MF host locally, since dev
+    // mode cannot prebundle the shared GraphQL facade under esbuild (VCST-5159).
+    preview: {
+      port: 3000,
+      cors: true,
+      proxy: getBackendProxy(),
     },
     css: {
       preprocessorOptions: {

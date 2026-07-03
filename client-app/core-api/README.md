@@ -23,7 +23,10 @@ There is no third life: the package root export is **types-only** (no `import`
 condition), so resolving `@vc-frontend/core` for runtime outside the MF shared scope —
 node tooling, a plugin build that forgot to mark it shared — fails immediately at
 resolution time instead of dragging raw host source into the consumer. (The host's own
-build resolves the source via a Vite alias, bypassing package exports.)
+build never goes through package resolution: `vite.federation.ts` points the MF shared
+provider at `index.ts` via an explicit `import` path — required, because the MF build
+resolves shared providers with Node resolution and ignores Vite aliases — and a Vite
+alias covers direct host-side imports.)
 
 Files in this folder:
 
