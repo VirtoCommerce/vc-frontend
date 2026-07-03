@@ -25,7 +25,21 @@ step 1 explains.)
 
 ## Step 1 — scaffold the project
 
-A plugin is an ordinary Vite + Vue project, separate from the host repo:
+**Fast path — generate it.** From a host checkout:
+
+```bash
+yarn create:plugin my-plugin ../my-plugin
+```
+
+The generator reads all dependency versions **from the host's package.json** (so your
+compile-time tools always match the host's runtime), asks which optional groups you
+need (vue-router / vue-i18n / Apollo / @vueuse — unselected ones are also dropped from
+the MF shared config), and emits everything described below, ready for
+`yarn install && yarn build`. Non-interactive: `--yes` takes the defaults;
+`--with-i18n`, `--with-apollo`, `--with-vueuse`, `--no-router` override.
+
+**What it generates (the manual version):** a plugin is an ordinary Vite + Vue project,
+separate from the host repo:
 
 ```
 my-plugin/
@@ -138,6 +152,9 @@ Rules of the road:
 - `init()` runs **before the host installs the router**, so routes you add here work
   even on a direct deep link.
 - Keep `init()` fast: it has a time budget (10s), and the whole app boot waits for it.
+- **Styling:** your components ship their own CSS (plain styles in SFCs work as-is).
+  The host's Tailwind utilities are generated from HOST templates only — if you want
+  Tailwind in the plugin, run your own Tailwind pass with your own config.
 
 ## Step 4 — run it against the host
 
