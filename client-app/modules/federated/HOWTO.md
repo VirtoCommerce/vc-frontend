@@ -17,8 +17,9 @@ adding its routes and pages as if it were compiled in.
 Your plugin imports host services (router, Apollo, components…) from **one package**:
 `@vc-frontend/core`. At compile time that package gives you **types only** (one
 committed `.d.ts` file). At runtime the storefront hands your code its **live
-objects** through Module Federation. You never install or bundle Vue, Apollo, or the
-host — you borrow the running ones.
+objects** through Module Federation. You never **bundle** Vue, Apollo, or the host —
+you borrow the running ones. (You still install them locally as compile-time tools —
+step 1 explains.)
 
 ---
 
@@ -35,18 +36,37 @@ my-plugin/
 └── package.json
 ```
 
-In `package.json`, link the facade from a host checkout (no npm publish exists —
-this is "publish from source"):
+In `package.json`: link the facade from a host checkout (no npm publish exists —
+this is "publish from source"), and install **everything your code imports** as dev
+dependencies — Vue included:
 
 ```jsonc
 {
   "dependencies": {
     "@vc-frontend/core": "portal:../vc-frontend/client-app/core-api",
   },
+  "devDependencies": {
+    // compile-time only - NOTHING below ships in your bundle (import: false);
+    // pick versions inside the host's shared ranges (federation.mjs),
+    // ideally the host's exact versions
+    "vue": "3.5.39",
+    "vue-router": "^4.6.4",
+    "@module-federation/vite": "1.16.12",
+    "@vitejs/plugin-vue": "^6.0.0",
+    "typescript": "~5.9.0",
+    "vite": "^7.0.0",
+  },
 }
 ```
 
-That single dependency brings you the type contract (`dist/index.d.ts`) and the
+Why install Vue if you "borrow the host's"? Borrowing happens at **runtime** only. At
+build time your local Vue is like C header files: `@vitejs/plugin-vue` needs its
+compiler for your SFC templates, TypeScript needs its types, Vite needs to resolve the
+imports. `createRemoteShared()` then guarantees none of it lands in the bundle — the
+built chunks reference the host's live instances. (Add `vue-i18n`, `@apollo/client`,
+`@vue/apollo-composable`, `@vueuse/core` the same way if you import them.)
+
+The facade dependency brings you the type contract (`dist/index.d.ts`) and the
 shared-dependency config (`@vc-frontend/core/federation`).
 
 ## Step 2 — wire the build
