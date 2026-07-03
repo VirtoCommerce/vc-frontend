@@ -27,7 +27,7 @@
 import { ref, watch } from "vue";
 import { geoLocationStringToLatLng } from "@/core/utilities/geo";
 import { Logger } from "@/core/utilities/logger";
-import { isPrefixExtension } from "@/shared/checkout/composables";
+import { isPrefixExtension } from "@/shared/checkout/composables/useSelectAddressMap";
 import cubeIcon from "@/ui-kit/icons/cube.svg?raw";
 import { getColorValue } from "@/ui-kit/utilities/css";
 import type { PickupLocationType } from "@/shared/checkout/composables/useSelectAddressMap";
