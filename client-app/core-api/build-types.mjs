@@ -171,12 +171,16 @@ function compareContractToBase(currentContract) {
  * unchanged version gets a minor bump right here (idempotent — an already-bumped
  * version is left alone). The one human decision left is a BREAKING change: removed
  * exports refuse the auto-bump and require an explicit `yarn bump:core major`.
+ *
+ * Returns the contract to write: the generated one embeds CORE_VERSION as a literal
+ * type, so a bump must be patched into it — otherwise the file written by THIS run
+ * would carry the pre-bump version and the next `--check` would report it stale.
  */
 function autoBumpMinorIfContractChanged(currentContract, currentVersion) {
   const base = compareContractToBase(currentContract);
   if (!base) {
     step("version auto-bump skipped: no committed contract baseline (set MF_CONTRACT_BASE_REF to override).");
-    return;
+    return currentContract;
   }
   const decision = decideVersionAction({ ...base, currentVersion });
   if (decision.action === "require-major") {
@@ -185,10 +189,12 @@ function autoBumpMinorIfContractChanged(currentContract, currentVersion) {
         "Run `yarn bump:core major`, update the @vc-frontend/core range in federation.mjs, then rerun the build.",
     );
   }
-  if (decision.action === "bump-minor") {
-    const { current, next } = bumpContractVersion("minor");
-    step(`contract changed vs ${base.baseRef} — version auto-bumped ${current} -> ${next} (commit both files).`);
+  if (decision.action !== "bump-minor") {
+    return currentContract;
   }
+  const { current, next } = bumpContractVersion("minor");
+  step(`contract changed vs ${base.baseRef} — version auto-bumped ${current} -> ${next} (commit both files).`);
+  return currentContract.replace(`CORE_VERSION = "${current}"`, `CORE_VERSION = "${next}"`);
 }
 
 if (CHECK_MODE) {
@@ -211,9 +217,9 @@ if (CHECK_MODE) {
       : "bump guard skipped: no baseline.",
   );
 } else {
-  autoBumpMinorIfContractChanged(contract, coreVersionMatch[1]);
+  const finalContract = autoBumpMinorIfContractChanged(contract, coreVersionMatch[1]);
   mkdirSync(DIST_DIR, { recursive: true });
-  writeFileSync(OUT_FILE, contract, "utf8");
+  writeFileSync(OUT_FILE, finalContract, "utf8");
 
   // External peer imports the contract expects the plugin (or host) to provide.
   const externals = [...new Set([...code.matchAll(/from ['"]([^'".][^'"]*)['"]/g)].map((m) => m[1]))].sort((a, b) =>
