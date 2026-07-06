@@ -168,9 +168,10 @@ Distribution has two forms (full walkthrough:
   folder (the `files` field keeps it to the distributables) and published as a **GitHub
   Release asset** on tag `core-v<CORE_VERSION>` by the manual *Core Facade Release*
   workflow (`.github/workflows/core-facade-release.yml`). Plugins pin the asset URL; their
-  lockfile records the tarball checksum. Re-releasing an existing version is refused —
-  a new contract means a new `CORE_VERSION`. **Never delete `core-v*` releases/tags**:
-  a deleted release is the only way an existing plugin's pin can break.
+  lockfile records the tarball checksum. The workflow dispatches from `dev` only and
+  refuses a version whose release **or tag** already exists — a new contract means a new
+  `CORE_VERSION`. **Never delete `core-v*` releases/tags**: a deleted release is the only
+  way an existing plugin's pin can break.
 - **Local co-dev (unreleased facade changes):** **yalc** — `yarn core:yalc-push` from the
   repo root rebuilds the contract and pushes it into every locally-linked plugin. Never
   commit the injected `file:.yalc/…` dependency.

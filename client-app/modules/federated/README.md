@@ -332,7 +332,8 @@ A federated plugin executes with **full application privileges** — same origin
 session, same Apollo client. Treat the remote list as part of the deploy artifact, not
 as tenant-editable configuration. What the harness enforces today:
 
-- **https-only remotes** (http allowed for `localhost` only) — no downgradable code loads.
+- **https-only remotes** (http allowed for loopback only: `localhost` / `127.0.0.1` /
+  `[::1]`) — no downgradable code loads.
 - **Fail-closed gating** — a manifest that can't be fetched, parsed or version-matched
   never gets its code executed.
 - **Build-time remote list** — an attacker can't add a remote without producing a new
