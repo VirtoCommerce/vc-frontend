@@ -1,4 +1,4 @@
-import uniqBy from "lodash/uniqBy";
+import { uniqBy } from "lodash-es";
 import { ContactStatus } from "../types";
 import type { ContactType, RoleType } from "@/core/api/graphql/types";
 import type { ExtendedContactType } from "@/shared/company";
