@@ -6,13 +6,12 @@
   // into `.types-build/`, then rolls it up with rollup-plugin-dts into a single
   // self-contained `dist/index.d.ts`. It is NOT part of the app typecheck.
   //
-  // Ambient host declarations must ALL be in scope so the reachable facade graph emits
-  // cleanly. The facade re-exports ui-kit barrels (dragging in every component .vue,
-  // which reference per-component `declare global` type aliases like VcChipColorType)
-  // plus shared/core code that augments `window` (e.g. VCExtensionRegistry). Missing any
-  // of those ambient files turned into ~115 tolerated "out-of-surface" diagnostics that
-  // could mask a REAL type error in the exported surface — so they are included here and
-  // build-types.mjs now fails on ANY emit diagnostic.
+  // The `include` must keep ALL ambient host declarations in scope: the facade
+  // re-exports ui-kit barrels (dragging in every component .vue, which reference
+  // per-component `declare global` type aliases like VcChipColorType) plus shared/core
+  // code that augments `window` (e.g. VCExtensionRegistry). build-types.mjs fails on
+  // ANY emit diagnostic, so a missing ambient file is a hard build failure — if the
+  // build fails on an unresolved global, add its .d.ts file here.
   "extends": "../../tsconfig.app.json",
   "compilerOptions": {
     "noEmit": false,
