@@ -1287,12 +1287,12 @@ declare const __VLS_base$1: vue.DefineComponent<IProps$1, {
     type: VcButtonTypeType;
     to: RouteLocationRaw | null;
     disabled: boolean;
+    truncate: boolean;
     tabindex: string | number;
     color: VcButtonColorType;
-    loading: boolean;
     variant: VcButtonVariantType;
     tag: string;
-    truncate: boolean;
+    loading: boolean;
     noWrap: boolean;
     fullWidth: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
@@ -1369,8 +1369,8 @@ declare const __VLS_base: vue.DefineComponent<IProps, {}, {}, {}, {}, vue.Compon
     onToggleCollapse?: ((value: boolean) => any) | undefined;
 }>, {
     size: "xs" | "sm" | "md" | "lg";
-    border: boolean;
     shadow: boolean;
+    border: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
 declare const __VLS_export: __VLS_WithSlots<typeof __VLS_base, __VLS_Slots>;
 declare const _default: typeof __VLS_export;

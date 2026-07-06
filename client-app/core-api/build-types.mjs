@@ -85,20 +85,18 @@ const emit = spawnSync(process.execPath, [VUE_TSC_BIN, "--project", resolve(CORE
   encoding: "utf8",
 });
 const emitOutput = (emit.stdout ?? "") + (emit.stderr ?? "");
-// vue-tsc reports diagnostics in host files that are outside the facade surface
-// (e.g. ui-kit components relying on ambient globals we don't load here). Those never
-// reach the rolled-up contract, so they are tolerated (noEmitOnError:false) — but an
-// error INSIDE core-api itself means the contract source is broken: fail hard.
-const coreApiErrors = emitOutput
-  .split("\n")
-  .filter((line) => line.includes("error TS") && /client-app[\\/]core-api[\\/]/.test(line));
-if (coreApiErrors.length > 0) {
-  console.error(coreApiErrors.join("\n"));
-  fail(`vue-tsc reported ${coreApiErrors.length} error(s) in core-api sources — the facade itself is broken.`);
-}
-const otherErrorCount = emitOutput.split("\n").filter((line) => line.includes("error TS")).length;
-if (otherErrorCount > 0) {
-  step(`note: ${otherErrorCount} out-of-surface host diagnostic(s) tolerated (never reach the contract).`);
+// Fail on ANY diagnostic in the emitted graph. The facade re-exports ui-kit/shared/core
+// code, so a type error anywhere reachable from it can silently degrade the exported
+// surface (noEmitOnError:false still emits) and ship a misleading contract. tsconfig.types.json
+// pulls in every ambient host declaration so the reachable graph resolves cleanly; if this
+// starts failing, either the surface genuinely broke or a new ambient .d.ts needs including.
+const emitErrors = emitOutput.split("\n").filter((line) => line.includes("error TS"));
+if (emitErrors.length > 0) {
+  console.error(emitErrors.join("\n"));
+  fail(
+    `vue-tsc reported ${emitErrors.length} error(s) emitting the facade type graph — the re-exported surface must type-check. ` +
+      "Fix the error, or (if it is an unresolved ambient global) add its declaration file to tsconfig.types.json `include`.",
+  );
 }
 if (!existsSync(EMIT_ENTRY)) {
   console.error(emitOutput);
