@@ -102,7 +102,8 @@ export function createRemoteFederationOptions({ name, requiredHostVersion, expos
     manifest: {
       additionalData: (data) => {
         // `??=` so a build where MF hands us stats without a metaData object doesn't throw.
-        (data.stats.metaData ??= {}).requiredHostVersion = requiredHostVersion;
+        data.stats.metaData ??= {};
+        data.stats.metaData.requiredHostVersion = requiredHostVersion;
         return data.stats;
       },
     },

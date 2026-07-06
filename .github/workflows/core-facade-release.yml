@@ -6,8 +6,9 @@
 # Manual-only by design: the contract version bumps automatically on facade changes
 # (yarn build:core-types), but a human decides when a version becomes consumable.
 # Releases are immutable — re-running for an already-released version fails; bump the
-# contract version instead. See client-app/core-api/README.md and
-# client-app/modules/federated/TODO.md §1 (Facade distribution & local co-dev).
+# contract version instead. Never delete core-v* releases: a deleted release is the only
+# way a plugin's pin can break. See client-app/core-api/README.md and
+# client-app/modules/federated/specs/2026-07-06-facade-distribution-design.md.
 name: Core Facade Release
 
 on:
@@ -54,7 +55,12 @@ jobs:
             exit 1
           fi
 
-      - name: Install dependencies
+      # Dependency lifecycle scripts are disabled: this job holds a contents:write token,
+      # and the drift check needs no build scripts (verified — vue-demi's is the only one
+      # skipped and it is not on this code path). Supply-chain hardening, not paranoia.
+      - name: Install dependencies (no lifecycle scripts)
+        env:
+          YARN_ENABLE_SCRIPTS: 'false'
         run: |
           yarn install
 
