@@ -78,9 +78,9 @@ dist-ssr
 # Playwright MCP
 .playwright-mcp/
 
-# VCST-5159: the @vc-frontend/core type contract (dist/index.d.ts) is committed as
-# the plugin's compile-time contract, overriding the repo-wide `dist` ignore above.
-# The intermediate declaration emit is disposable and stays ignored.
+# The generated @vc-frontend/core distributables (type contract dist/index.d.ts,
+# tailwind preset snapshot dist/tailwind-preset.cjs) are committed, overriding the
+# repo-wide `dist` ignore above. The intermediate declaration emit stays ignored.
 !client-app/core-api/dist/
 !client-app/core-api/dist/**
 client-app/core-api/.types-build/

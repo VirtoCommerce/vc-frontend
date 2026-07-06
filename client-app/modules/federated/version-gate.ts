@@ -9,8 +9,8 @@ import { satisfies, valid, validRange } from "semver";
  * (vue, @apollo/client, ...) later, during loadRemote().
  *
  * `required` comes from the remote manifest (`metaData.requiredHostVersion`) and may be
- * a full semver range ("^2.53.0", ">=2.53.0 <3"). A bare version ("2.53.0") means
- * "this major, at least this version" (normalized to "^2.53.0") — additive facade
+ * a full semver range ("^1.2.0", ">=1.2.0 <2"). A bare version ("1.2.0") means
+ * "this major, at least this version" (normalized to "^1.2.0") — additive facade
  * changes stay compatible, a major bump does not. A value semver cannot parse NEVER
  * passes: the gate exists to stop incompatible code before it executes, so unparseable
  * input must fail closed, not fall through.

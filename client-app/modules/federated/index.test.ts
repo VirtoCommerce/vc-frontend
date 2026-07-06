@@ -31,7 +31,7 @@ vi.mock("@/shared/notification", () => ({
   useNotifications: () => ({ error: notificationErrorMock }),
 }));
 
-vi.mock("@/core-api/package.json", () => ({ version: "2.53.0" }));
+vi.mock("@/core-api/package.json", () => ({ version: "1.4.0" }));
 
 vi.mock("@/core/plugins/applicationInsights.plugin", () => ({
   getAppInsightsWhenReady: getAppInsightsWhenReadyMock,
@@ -44,7 +44,7 @@ function stubRemotesEnv(remotes: unknown): void {
 }
 
 // A manifest the host accepts by default; tests that care override it explicitly.
-const COMPATIBLE_MANIFEST = { metaData: { requiredHostVersion: "^2.0.0" } };
+const COMPATIBLE_MANIFEST = { metaData: { requiredHostVersion: "^1.0.0" } };
 
 function stubManifestFetch(
   manifest: unknown = COMPATIBLE_MANIFEST,
@@ -114,7 +114,7 @@ describe("initFederatedModules", () => {
   });
 
   it("allows http for localhost development remotes", async () => {
-    stubManifestFetch({ metaData: { requiredHostVersion: "2.53.0" } });
+    stubManifestFetch({ metaData: { requiredHostVersion: "1.4.0" } });
     stubRemotesEnv({ local: "http://localhost:3001/mf-manifest.json" });
     loadRemoteMock.mockResolvedValue({ init: vi.fn() });
 
@@ -124,7 +124,7 @@ describe("initFederatedModules", () => {
   });
 
   it("loads a compatible plugin and calls its init()", async () => {
-    stubManifestFetch({ metaData: { requiredHostVersion: "^2.0.0" } });
+    stubManifestFetch({ metaData: { requiredHostVersion: "^1.0.0" } });
     stubRemotesEnv({ news: REMOTE_URL });
     const initMock = vi.fn();
     loadRemoteMock.mockResolvedValue({ init: initMock });
@@ -289,7 +289,7 @@ describe("initFederatedModules", () => {
     expect(trackExceptionMock).toHaveBeenCalledTimes(2);
     expect(trackExceptionMock).toHaveBeenCalledWith(
       expect.objectContaining({
-        properties: expect.objectContaining({ pluginName: "old", outcome: "skipped", hostCoreVersion: "2.53.0" }),
+        properties: expect.objectContaining({ pluginName: "old", outcome: "skipped", hostCoreVersion: "1.4.0" }),
       }),
     );
   });

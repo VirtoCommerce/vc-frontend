@@ -32,7 +32,7 @@ export function extractExportNames(declarations) {
   return new Set(names.filter(Boolean));
 }
 
-/** Major component of a semver string ("2.53.0" -> 2). NaN for unparseable input. */
+/** Major component of a semver string ("1.2.0" -> 1). NaN for unparseable input. */
 function majorOf(version) {
   return Number.parseInt(version, 10);
 }

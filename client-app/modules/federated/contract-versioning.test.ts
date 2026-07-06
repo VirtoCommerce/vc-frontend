@@ -37,14 +37,14 @@ describe("extractExportNames", () => {
 });
 
 describe("decideVersionAction", () => {
-  const base = { baseVersion: "2.53.0", currentVersion: "2.53.0", removedExports: [] as string[] };
+  const base = { baseVersion: "1.4.0", currentVersion: "1.4.0", removedExports: [] as string[] };
 
   it("does nothing when the contract is unchanged", () => {
     expect(decideVersionAction({ ...base, changed: false })).toEqual({ action: "none", reason: "contract unchanged" });
   });
 
   it("does nothing when the version was already bumped", () => {
-    expect(decideVersionAction({ ...base, changed: true, currentVersion: "2.54.0" })).toEqual({
+    expect(decideVersionAction({ ...base, changed: true, currentVersion: "1.5.0" })).toEqual({
       action: "none",
       reason: "version already bumped",
     });

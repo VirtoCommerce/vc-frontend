@@ -27,7 +27,7 @@ export default defineConfigWithVueTs(
     ignores: [
       "**/node_modules/",
       "dist/",
-      // Generated, self-contained @vc-frontend/core type contract (VCST-5159, #3).
+      // Generated, self-contained @vc-frontend/core type contract (see client-app/core-api/README.md).
       "client-app/core-api/dist/",
       ".certificates/",
       "artifacts/",

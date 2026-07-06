@@ -36,8 +36,10 @@ yarn build-only --mode=development && yarn preview
   URLs must be **https** (http is allowed for localhost only).
 
 > **Both vars are inlined at BUILD time** (Vite `import.meta.env`): changing the remote
-> list means rebuilding the host, not just flipping a deployment variable. Runtime
-> discovery via a backend manifest is the planned replacement (see `TODO.md` #1).
+> list means rebuilding the host, not just flipping a deployment variable. Runtime,
+> settings-driven discovery is the planned replacement (see `TODO.md` #2 and
+> `specs/2026-07-06-discovery-hosting-decision.md`; `APP_MF_REMOTES` then stays as the
+> local/dev override).
 
 That's the whole operator surface. Everything below is _why_ and _how_.
 
@@ -344,7 +346,7 @@ and the MF runtime fetches it **again** for loading — a remote redeployed betw
 two requests means the manifest that was validated is not guaranteed to be the one
 executed (TOCTOU), and remote boot pays a second round trip. The MF runtime exposes no
 public way to seed its manifest cache; the real fix is hash-pinned artifacts in the
-central-discovery response (see `TODO.md` #2 — vc-shell already passes `entry.hash`).
+central-discovery response (see `TODO.md` #3 — vc-shell already passes `entry.hash`).
 
 ---
 

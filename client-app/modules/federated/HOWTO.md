@@ -197,8 +197,8 @@ APP_MF_REMOTES='{"my-plugin":"https://a.example.com/my-plugin/mf-manifest.json",
 
 1. Build and upload `dist/` (manifest + chunks) to trusted **https** hosting.
 2. Add the manifest URL to the host's `APP_MF_REMOTES` and rebuild the host
-   (the remote list is inlined at build time — backend-driven discovery is a
-   planned follow-up, `TODO.md` #1).
+   (the remote list is inlined at build time — settings-driven runtime discovery
+   is a planned follow-up, `TODO.md` #2).
 3. Add the plugin origin to the storefront CSP (`script-src`, `connect-src`).
 
 ---

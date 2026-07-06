@@ -6,7 +6,7 @@ import { visualizer } from "rollup-plugin-visualizer";
 import { defineConfig, loadEnv } from "vite";
 import { checker } from "vite-plugin-checker";
 import mkcert from "vite-plugin-mkcert";
-// Module Federation host config — split into vite.federation.ts.
+// Module Federation host config lives in vite.federation.ts.
 import { federatedHostPlugin, federatedAlias } from "./vite.federation.js";
 import type { ProxyOptions, UserConfig, PluginOption } from "vite";
 
