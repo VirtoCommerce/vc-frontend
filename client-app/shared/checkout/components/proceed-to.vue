@@ -20,10 +20,13 @@ const props = withDefaults(defineProps<IProps>(), {
   disabled: false,
 });
 
-const { loading: loadingCart, changing: changingCart, hasValidationErrors } = useFullCart();
+const { loading: loadingCart, changing: changingCart, hasValidationErrors, hasLoyaltyValidationErrors } = useFullCart();
 const { loading: loadingCheckout, changing: changingCheckout } = useCheckout();
 
 const loading = computed(() => loadingCart.value || loadingCheckout.value);
 const changing = computed(() => changingCart.value || changingCheckout.value);
-const disabled = computed(() => props.disabled || loading.value || changing.value || hasValidationErrors.value);
+const disabled = computed(
+  () =>
+    props.disabled || loading.value || changing.value || hasValidationErrors.value || hasLoyaltyValidationErrors.value,
+);
 </script>

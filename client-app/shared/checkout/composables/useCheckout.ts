@@ -11,7 +11,7 @@ import { isEqualAddresses, Logger } from "@/core/utilities";
 import { createSharedComposableByArgs } from "@/core/utilities/composables";
 import { useCustomerAddresses, useUser } from "@/shared/account";
 import { useFullCart, EXTENDED_DEBOUNCE_IN_MS } from "@/shared/cart";
-import { CartValidationErrors } from "@/shared/cart/enums";
+import { LOYALTY_VALIDATION_ERROR_MESSAGE_KEYS } from "@/shared/cart/enums";
 import { useCurrentOrganizationAddresses } from "@/shared/company";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
@@ -113,6 +113,8 @@ export function _useCheckout(cartId?: string) {
     availableShippingMethods,
     availablePaymentMethods,
     hasValidationErrors,
+    loyaltyValidationErrors,
+    hasLoyaltyValidationErrors,
     allItemsAreDigital,
     updateShipment,
     removeShipment,
@@ -507,31 +509,34 @@ export function _useCheckout(cartId?: string) {
     }
   }
 
-  const loyaltyInsufficientBalanceError = computed(() =>
-    cart.value?.validationErrors?.find(
-      (error) => error?.errorCode === CartValidationErrors.LOYALTY_INSUFFICIENT_BALANCE,
-    ),
-  );
+  // Safety net for AC-6 (parity): the Place Order / Go to checkout buttons are already
+  // disabled while any loyalty validation error is active, but if submission is somehow
+  // reached we surface the SAME message the cart shows for that error code — never a
+  // generic "Error when creating an order" toast.
+  function notifyLoyaltyValidationErrors(): void {
+    loyaltyValidationErrors.value.forEach((loyaltyError) => {
+      const messageKey = loyaltyError.errorCode
+        ? LOYALTY_VALIDATION_ERROR_MESSAGE_KEYS[loyaltyError.errorCode]
+        : undefined;
 
-  function notifyIfLoyaltyBalanceInsufficient(): void {
-    const loyaltyError = loyaltyInsufficientBalanceError.value;
-    if (!loyaltyError) {
-      return;
-    }
+      if (!messageKey) {
+        return;
+      }
 
-    const params = loyaltyError.errorParameters ?? [];
-    const getParam = (key: string) => {
-      const value = params.find((param) => param?.key === key)?.value;
-      const parsed = Number(value);
-      return Number.isNaN(parsed) ? (value ?? "") : parsed;
-    };
-    notifications.error({
-      text: t("common.messages.loyalty_insufficient_balance", {
-        required: getParam("required"),
-        available: getParam("available"),
-      }),
-      duration: 15000,
-      single: true,
+      const params = (loyaltyError.errorParameters ?? []).reduce<Record<string, string | number>>((acc, param) => {
+        if (param?.key) {
+          const parsed = Number(param.value);
+          acc[param.key] =
+            param.value != null && param.value !== "" && !Number.isNaN(parsed) ? parsed : (param.value ?? "");
+        }
+        return acc;
+      }, {});
+
+      notifications.error({
+        text: t(messageKey, params),
+        duration: 15000,
+        single: true,
+      });
     });
   }
 
@@ -585,8 +590,8 @@ export function _useCheckout(cartId?: string) {
 
     await prepareOrderData();
 
-    if (loyaltyInsufficientBalanceError.value) {
-      notifyIfLoyaltyBalanceInsufficient();
+    if (hasLoyaltyValidationErrors.value) {
+      notifyLoyaltyValidationErrors();
       loading.value = false;
       return null;
     }

@@ -49,7 +49,7 @@ import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import ClearCartModal from "../components/clear-cart-modal.vue";
 import { EXTENDED_DEBOUNCE_IN_MS } from "../constants";
-import { CartValidationErrors } from "../enums";
+import { CartValidationErrors, LOYALTY_VALIDATION_ERROR_CODES } from "../enums";
 import type {
   InputNewBulkItemType,
   InputNewCartItemType,
@@ -57,7 +57,6 @@ import type {
   CartType,
   InputPaymentType,
   InputShipmentType,
-  AddOrUpdateCartShipmentMutation,
   AddOrUpdateCartShipmentMutationVariables,
   LineItemType,
   ConfigurationSectionInput,
@@ -394,6 +393,15 @@ export function _useFullCart(cartId?: string) {
       cart.value.validationErrors[0]?.errorCode == CartValidationErrors.ALL_LINE_ITEMS_UNSELECTED,
   );
 
+  const loyaltyValidationErrors = computed(
+    () =>
+      cart.value?.validationErrors?.filter((error) =>
+        (LOYALTY_VALIDATION_ERROR_CODES as readonly string[]).includes(error.errorCode ?? ""),
+      ) ?? [],
+  );
+
+  const hasLoyaltyValidationErrors = computed(() => loyaltyValidationErrors.value.length > 0);
+
   const { mutate: _selectCartItemsMutation } = useMutation(SelectCartItemsDocument);
   const { mutate: _unselectCartItemsMutation } = useMutation(UnselectCartItemsDocument);
   const selectCartBatcher = useMutationBatcher(_selectCartItemsMutation);
@@ -581,7 +589,7 @@ export function _useFullCart(cartId?: string) {
       {
         optimisticResponse: (vars, { IGNORE }) => {
           if ((vars as AddOrUpdateCartShipmentMutationVariables).command.shipment.id === undefined) {
-            return IGNORE as AddOrUpdateCartShipmentMutation;
+            return IGNORE;
           }
           return {
             addOrUpdateCartShipment: merge({}, cart.value, {
@@ -708,6 +716,8 @@ export function _useFullCart(cartId?: string) {
     availableExtendedGifts,
     hasValidationErrors,
     hasOnlyUnselectedValidationError,
+    loyaltyValidationErrors,
+    hasLoyaltyValidationErrors,
     load,
     refetch,
     forceFetch,
