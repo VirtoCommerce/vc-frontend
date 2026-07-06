@@ -33,17 +33,36 @@ jobs:
 
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
 
+      # Immutable core-v* releases must only ever be minted from the default branch —
+      # a release from a feature branch would permanently occupy that contract version
+      # with unmerged code.
+      - name: Fail unless run from dev
+        if: github.ref != 'refs/heads/dev'
+        run: |
+          echo "::error::Core facade releases must be dispatched from the dev branch (got ${GITHUB_REF})."
+          exit 1
+
       - name: Read contract version
         id: core
         run: |
           version=$(jq -r .version client-app/core-api/package.json)
+          # Own-repo input, but $GITHUB_OUTPUT is newline-delimited — reject anything
+          # that is not a plain semver string before it can smuggle extra output lines.
+          if ! printf '%s' "$version" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$'; then
+            echo "::error::client-app/core-api/package.json version \"$version\" is not a valid semver string."
+            exit 1
+          fi
           echo "version=$version" >> "$GITHUB_OUTPUT"
           echo "tag=core-v$version" >> "$GITHUB_OUTPUT"
           echo "tarball=vc-frontend-core-$version.tgz" >> "$GITHUB_OUTPUT"
 
       # Releases are immutable: the plugin-side pin (URL + lockfile checksum) must never
       # change meaning. A new contract means a new CORE_VERSION, not a re-release.
-      - name: Fail if this contract version is already released
+      # The TAG is checked too, not just the release: `gh release create` on a
+      # pre-existing tag silently ignores --target and binds the release to the old
+      # tag's commit — while the tarball is packed from THIS checkout. Tag and asset
+      # would diverge.
+      - name: Fail if this contract version is already released or tagged
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ steps.core.outputs.tag }}
@@ -54,15 +73,21 @@ jobs:
               "changes; yarn bump:core major for breaking ones) and re-run."
             exit 1
           fi
+          if git ls-remote --exit-code --tags origin "refs/tags/$TAG" > /dev/null 2>&1; then
+            echo "::error::Tag $TAG already exists (without a release) — creating a release" \
+              "on it would bind to that tag's commit instead of this run's. Delete the stray" \
+              "tag or bump the contract version."
+            exit 1
+          fi
 
       # Dependency lifecycle scripts are disabled: this job holds a contents:write token,
       # and the drift check needs no build scripts (verified — vue-demi's is the only one
       # skipped and it is not on this code path). Supply-chain hardening, not paranoia.
-      - name: Install dependencies (no lifecycle scripts)
+      - name: Install dependencies (no lifecycle scripts, frozen lockfile)
         env:
           YARN_ENABLE_SCRIPTS: 'false'
         run: |
-          yarn install
+          yarn install --immutable
 
       # Read-only drift check (NOT build:core-types, which regenerates and can
       # auto-bump the version — a release must pack exactly what is committed).

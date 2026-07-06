@@ -83,7 +83,8 @@ function isAllowedRemoteUrl(entry: string): boolean {
   if (url.protocol === "https:") {
     return true;
   }
-  const isLocalhost = url.hostname === "localhost" || url.hostname === "127.0.0.1";
+  // URL.hostname keeps the brackets for IPv6 literals, hence "[::1]".
+  const isLocalhost = url.hostname === "localhost" || url.hostname === "127.0.0.1" || url.hostname === "[::1]";
   return url.protocol === "http:" && isLocalhost;
 }
 
@@ -238,11 +239,20 @@ export async function initFederatedModules(options?: IFederatedLoaderOptions): P
     return result;
   }
 
-  registerRemotes(
-    compatible.map((remote) => ({ name: remote.name, entry: remote.entry })),
-    // Re-registering the same remote across HMR reloads must not throw.
-    { force: true },
-  );
+  try {
+    registerRemotes(
+      compatible.map((remote) => ({ name: remote.name, entry: remote.entry })),
+      // Re-registering the same remote across HMR reloads must not throw.
+      { force: true },
+    );
+  } catch (error) {
+    // Registration is all-or-nothing, so a throw here fails every compatible remote at
+    // once — but it must still resolve (not reject) to keep the "never rejects" contract.
+    compatible.forEach((remote) => result.failed.push(remote.name));
+    Logger.error("[MF] registerRemotes failed", error);
+    reportOutcome(result);
+    return result;
+  }
 
   await Promise.allSettled(
     compatible.map(async (remote) => {

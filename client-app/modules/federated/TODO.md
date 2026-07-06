@@ -86,6 +86,10 @@ section of the discovery spec.
 type-check — including from the real tarball), but only manually. Remaining:
 
 - [ ] Wire the scaffold → install → build cycle into CI (locks the plugin contract).
+- [ ] **Host PR CI: fetch the `dev` baseline** for `validate:core-types` — the
+      removal-detection gate (`compareContractToBase`) degrades to a loud warning when
+      the checkout is too shallow to see the base branch's committed contract. Needs
+      `fetch-depth: 0` (or an explicit `git fetch origin dev`) in the theme CI checkout.
 - [ ] A live `loadRemote` smoke against a running host build.
 - [ ] When #2 lands: coverage for the new `resolveRemotes` (multi-source, precedence truth
       table, name-collision dedup) and a **guard test for the load-bearing ordering

@@ -197,8 +197,8 @@ In production, each failed/skipped plugin surfaces in Application Insights as an
 exception `[MF] federated plugin "<name>" <outcome>` with `pluginName`, `outcome` and
 `hostCoreVersion` custom properties — query those to detect a plugin that silently
 vanished for users. (This is why `applicationInsights.plugin.ts` exports
-`getAppInsights()`: the library's `useAppInsights()` is inject-based and unusable from
-boot-time code like this loader.)
+`getAppInsightsWhenReady()`: the library's `useAppInsights()` is inject-based and
+unusable from boot-time code like this loader.)
 
 Three design points worth calling out:
 

@@ -125,6 +125,34 @@ describe("initFederatedModules", () => {
     expect(result.loaded).toEqual(["local"]);
   });
 
+  it("allows http for IPv6 loopback development remotes", async () => {
+    stubManifestFetch({ metaData: { requiredHostVersion: "1.4.0" } });
+    // eslint-disable-next-line sonarjs/no-clear-text-protocols -- loopback-only http is the case under test; the rule whitelists "localhost" but not "[::1]"
+    stubRemotesEnv({ local: "http://[::1]:3001/mf-manifest.json" });
+    loadRemoteMock.mockResolvedValue({ init: vi.fn() });
+
+    const result = await initFederatedModules();
+
+    expect(result.loaded).toEqual(["local"]);
+  });
+
+  it("resolves with every remote failed (never rejects) when registerRemotes throws", async () => {
+    stubManifestFetch();
+    stubRemotesEnv({ news: REMOTE_URL, loyalty: "https://plugins.example.com/loyalty/mf-manifest.json" });
+    // Once, not persistent: beforeEach's clearAllMocks() does not remove implementations.
+    registerRemotesMock.mockImplementationOnce(() => {
+      throw new Error("runtime not initialized");
+    });
+
+    const result = await initFederatedModules();
+
+    expect(result.failed).toEqual(expect.arrayContaining(["news", "loyalty"]));
+    expect(result.failed).toHaveLength(2);
+    expect(result.loaded).toEqual([]);
+    expect(loadRemoteMock).not.toHaveBeenCalled();
+    expect(loggerErrorMock).toHaveBeenCalledWith("[MF] registerRemotes failed", expect.any(Error));
+  });
+
   it("loads a compatible plugin and calls its init()", async () => {
     stubManifestFetch({ metaData: { requiredHostVersion: "^1.0.0" } });
     stubRemotesEnv({ news: REMOTE_URL });

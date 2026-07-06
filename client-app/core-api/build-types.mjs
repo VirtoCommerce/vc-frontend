@@ -167,6 +167,18 @@ function generateTailwindPreset() {
         `${PRESET_PLUGIN_REQUIRES.length} (PRESET_PLUGIN_REQUIRES in build-types.mjs) — update the list.`,
     );
   }
+  // The count guard alone is blind to a same-count plugin SWAP (loaded plugins are
+  // opaque functions), so also require each emitted id to still be referenced in the
+  // config source — a swapped-out plugin fails here instead of shipping stale requires.
+  const tailwindConfigSource = readFileSync(resolve(REPO_ROOT, "tailwind.config.ts"), "utf8");
+  for (const id of PRESET_PLUGIN_REQUIRES) {
+    if (!tailwindConfigSource.includes(`require("${id}")`)) {
+      fail(
+        `tailwind.config.ts no longer references plugin "${id}" but the preset snapshot ` +
+          `still emits it — update PRESET_PLUGIN_REQUIRES in build-types.mjs.`,
+      );
+    }
+  }
 
   // Everything except `content` (consumer-owned) and `plugins` (functions, re-emitted
   // below) is plain data. A function anywhere else would be silently dropped by
