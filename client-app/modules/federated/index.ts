@@ -158,13 +158,17 @@ async function isCompatible(remote: IRemoteDescriptor, manifestTimeoutMs: number
  * Routes failed/skipped plugins to Application Insights so a plugin that vanishes in
  * production is observable, not just a console line. Best-effort: no-op when
  * AppInsights is not configured for the store (console logging still covers it).
+ *
+ * The two outcomes go to DIFFERENT telemetry streams on purpose. `failed` is
+ * exception-shaped (something broke) and belongs in the exceptions blade that
+ * dashboards and error-rate alerts watch. `skipped` is a gate doing its job — e.g.
+ * every session on a store whose plugin lags the host contract — and reporting it as
+ * an exception on every boot would flood the failure stream until [MF] exceptions get
+ * ignored, masking real failures. As a customEvent it stays queryable and alertable
+ * (customEvents | where name == "[MF] federated plugin skipped") without the noise.
  */
 function trackOutcome(result: IFederatedLoadResult): void {
-  const entries = [
-    ...result.failed.map((name) => ({ name, outcome: "failed" })),
-    ...result.skipped.map((name) => ({ name, outcome: "skipped" })),
-  ];
-  if (entries.length === 0) {
+  if (result.failed.length === 0 && result.skipped.length === 0) {
     return;
   }
   // AppInsights installs and finishes loading asynchronously - after this loader has
@@ -177,14 +181,20 @@ function trackOutcome(result: IFederatedLoadResult): void {
       if (!appInsights) {
         return;
       }
-      for (const entry of entries) {
+      for (const name of result.failed) {
         appInsights.trackException({
-          exception: new Error(`[MF] federated plugin "${entry.name}" ${entry.outcome}`),
-          properties: { pluginName: entry.name, outcome: entry.outcome, hostCoreVersion: CORE_VERSION },
+          exception: new Error(`[MF] federated plugin "${name}" failed`),
+          properties: { pluginName: name, outcome: "failed", hostCoreVersion: CORE_VERSION },
+        });
+      }
+      for (const name of result.skipped) {
+        appInsights.trackEvent({
+          name: "[MF] federated plugin skipped",
+          properties: { pluginName: name, outcome: "skipped", hostCoreVersion: CORE_VERSION },
         });
       }
     })
-    // Telemetry is best-effort: a throw from trackException must not become an
+    // Telemetry is best-effort: a throw from track* must not become an
     // unhandled rejection (this runs detached from the awaited loader promise).
     .catch((error) => Logger.error("[MF] failed to report plugin outcomes to Application Insights", error));
 }

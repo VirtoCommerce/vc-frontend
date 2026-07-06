@@ -311,18 +311,42 @@ describe("initFederatedModules", () => {
     expect(result.failed).toEqual(["bad"]);
   });
 
-  it("routes failed and skipped plugins to Application Insights when it is configured", async () => {
+  it("routes failed plugins to AppInsights as exceptions and skipped ones as events", async () => {
+    // failed = something broke -> exception stream; skipped = a gate did its job
+    // (expected outcome) -> event stream, so it cannot drown real failures.
     const trackExceptionMock = vi.fn();
-    getAppInsightsWhenReadyMock.mockResolvedValue({ trackException: trackExceptionMock });
-    stubManifestFetch({ metaData: { requiredHostVersion: "99.0.0" } });
-    stubRemotesEnv({ old: REMOTE_URL, broken: "https://plugins.example.com/broken/mf-manifest.json" });
+    const trackEventMock = vi.fn();
+    getAppInsightsWhenReadyMock.mockResolvedValue({ trackException: trackExceptionMock, trackEvent: trackEventMock });
+    const fetchMock = vi.fn((url: string = "") =>
+      Promise.resolve({
+        ok: true,
+        status: 200,
+        json: () => {
+          const incompatible = { metaData: { requiredHostVersion: "99.0.0" } };
+          return Promise.resolve(url.includes("/old/") ? incompatible : COMPATIBLE_MANIFEST);
+        },
+      }),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+    stubRemotesEnv({
+      old: "https://plugins.example.com/old/mf-manifest.json",
+      broken: "https://plugins.example.com/broken/mf-manifest.json",
+    });
+    loadRemoteMock.mockRejectedValue(new Error("boom"));
 
     await initFederatedModules();
     await flushPromises();
 
-    expect(trackExceptionMock).toHaveBeenCalledTimes(2);
+    expect(trackExceptionMock).toHaveBeenCalledTimes(1);
     expect(trackExceptionMock).toHaveBeenCalledWith(
       expect.objectContaining({
+        properties: expect.objectContaining({ pluginName: "broken", outcome: "failed", hostCoreVersion: "1.4.0" }),
+      }),
+    );
+    expect(trackEventMock).toHaveBeenCalledTimes(1);
+    expect(trackEventMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: "[MF] federated plugin skipped",
         properties: expect.objectContaining({ pluginName: "old", outcome: "skipped", hostCoreVersion: "1.4.0" }),
       }),
     );
@@ -331,8 +355,8 @@ describe("initFederatedModules", () => {
   it("still reports to Application Insights when it becomes ready only after the loader finished", async () => {
     // Regression: the loader runs before the AppInsights plugin installs/loads, so the
     // instance resolves late. Telemetry must still be sent, not dropped.
-    const trackExceptionMock = vi.fn();
-    let resolveReady: ((instance: { trackException: typeof trackExceptionMock }) => void) | undefined;
+    const trackEventMock = vi.fn();
+    let resolveReady: ((instance: { trackEvent: typeof trackEventMock }) => void) | undefined;
     getAppInsightsWhenReadyMock.mockReturnValue(
       new Promise((resolve) => {
         resolveReady = resolve;
@@ -343,13 +367,13 @@ describe("initFederatedModules", () => {
 
     await initFederatedModules();
     await flushPromises();
-    expect(trackExceptionMock).not.toHaveBeenCalled();
+    expect(trackEventMock).not.toHaveBeenCalled();
 
     // AppInsights finishes loading afterwards.
-    resolveReady?.({ trackException: trackExceptionMock });
+    resolveReady?.({ trackEvent: trackEventMock });
     await flushPromises();
 
-    expect(trackExceptionMock).toHaveBeenCalledTimes(1);
+    expect(trackEventMock).toHaveBeenCalledTimes(1);
   });
 
   it("stays silent towards Application Insights when it is not configured", async () => {
