@@ -15,7 +15,7 @@ import type { MaybeRefOrGetter } from "vue";
  * culture. Used to derive the storefront breadcrumb / title after a rename (VCST-5274).
  */
 function getPageFileName(relativeUrl: string | undefined, cultures: (string | null | undefined)[]): string {
-  const parts = relativeUrl?.split("/").findLast(Boolean)?.split(".") ?? [];
+  const parts = relativeUrl?.split("/").filter(Boolean).pop()?.split(".") ?? [];
   if (parts.length > 1) {
     parts.pop(); // extension
   }
