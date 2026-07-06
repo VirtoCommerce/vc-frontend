@@ -11,9 +11,12 @@ import { satisfies, valid, validRange } from "semver";
  * `required` comes from the remote manifest (`metaData.requiredHostVersion`) and may be
  * a full semver range ("^1.2.0", ">=1.2.0 <2"). A bare version ("1.2.0") means
  * "this major, at least this version" (normalized to "^1.2.0") — additive facade
- * changes stay compatible, a major bump does not. A value semver cannot parse NEVER
- * passes: the gate exists to stop incompatible code before it executes, so unparseable
- * input must fail closed, not fall through.
+ * changes stay compatible, a major bump does not. Only a FULL triple is normalized:
+ * a partial version like "1.2" is not `valid()` semver, so it falls through as the
+ * npm X-range "1.2.x" and pins the minor (host 1.4.0 does NOT satisfy it) — scaffolded
+ * plugins always emit a full "^x.y.z", so this only matters for hand-written values.
+ * A value semver cannot parse NEVER passes: the gate exists to stop incompatible code
+ * before it executes, so unparseable input must fail closed, not fall through.
  */
 
 export interface IHostCompatibility {

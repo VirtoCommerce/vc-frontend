@@ -222,7 +222,11 @@ function compareContractToBase(currentContract, currentPreset) {
     return null;
   }
   const baseRef = process.env.MF_CONTRACT_BASE_REF || "origin/dev";
-  const git = (args) => spawnSync(GIT_BIN, args, { cwd: REPO_ROOT, encoding: "utf8" });
+  // maxBuffer: node's 1MB default would KILL the child once a committed artifact
+  // outgrows it (status becomes null) — indistinguishable from "no baseline" below,
+  // silently disabling the auto-bump and the require-major gate. Size the buffer so
+  // that can't happen before anyone notices.
+  const git = (args) => spawnSync(GIT_BIN, args, { cwd: REPO_ROOT, encoding: "utf8", maxBuffer: 32 * 1024 * 1024 });
   const mergeBase = git(["merge-base", "HEAD", baseRef]);
   const baseSha = mergeBase.status === 0 ? mergeBase.stdout.trim() : "";
   const baseContract = baseSha ? git(["show", `${baseSha}:client-app/core-api/dist/index.d.ts`]) : { status: 1 };

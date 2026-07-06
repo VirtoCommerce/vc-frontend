@@ -32,6 +32,8 @@ export interface IRemoteFederationOptions {
   filename: string;
   exposes: Record<string, string>;
   shared: Record<string, ISharedDepConfig>;
+  /** Mirrors the host's strategy so provider selection is deterministic everywhere. */
+  shareStrategy: "loaded-first";
   manifest: {
     // Param/return must stay assignable to @module-federation/vite's PluginManifestOptions
     // (stats is a bare Record there, and it expects the modified stats back), so a plugin's

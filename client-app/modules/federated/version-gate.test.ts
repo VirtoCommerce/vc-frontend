@@ -35,6 +35,19 @@ describe("checkHostCompatibility", () => {
     });
   });
 
+  describe("partial version (NOT normalized — npm X-range semantics)", () => {
+    // "1.2" is not valid() semver, so it skips the ^-normalization and is evaluated
+    // as the range "1.2.x": it pins the minor. Pinned here on purpose — scaffolded
+    // plugins always emit a full "^x.y.z"; this documents the hand-written case.
+    it("passes a host within the pinned minor", () => {
+      expect(checkHostCompatibility("1.2.5", "1.2").ok).toBe(true);
+    });
+
+    it("fails a newer host outside the pinned minor (unlike a bare full version)", () => {
+      expect(checkHostCompatibility("1.4.0", "1.2").ok).toBe(false);
+    });
+  });
+
   describe("explicit semver ranges", () => {
     it("evaluates caret ranges", () => {
       expect(checkHostCompatibility("1.4.0", "^1.0.0").ok).toBe(true);

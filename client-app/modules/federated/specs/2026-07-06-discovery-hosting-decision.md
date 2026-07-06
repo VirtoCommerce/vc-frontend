@@ -223,14 +223,11 @@ gaps it found are tracked in `TODO.md`):
 
 ## Delivered with the harness (formerly TODO items)
 
-- **Production error routing** — failed/skipped plugins are reported to Application
-  Insights via the instance captured by `applicationInsights.plugin.ts` (best-effort
-  no-op where AppInsights is not configured; DEV additionally shows a toast). Split by
-  meaning (review 2026-07-06): `failed` → `trackException` (something broke — belongs
-  in the exceptions blade alerting watches); `skipped` → `trackEvent`
-  `"[MF] federated plugin skipped"` (a gate doing its job, e.g. a store's plugin
-  lagging the host contract — expected outcomes must not flood the exception stream
-  into alarm fatigue). Both carry plugin name, outcome and host core version.
+- **Failure visibility (dev)** — failed/skipped plugins are logged with per-plugin
+  reasons, and DEV builds additionally show a toast. Production telemetry routing
+  (Application Insights) is not part of the harness — `Logger` is a no-op in prod — and
+  is tracked in `TODO.md` as a stage-2 observability follow-up (the harness fails
+  closed and ships without it).
 - **CI guard for the generated type contract** — `yarn validate:core-types` (part of
   `yarn validate`, which CI's `yarn build` runs) regenerates the contract and fails on
   drift; also checks that `federation.mjs` shared ranges stay compatible with host

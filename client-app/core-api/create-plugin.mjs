@@ -103,6 +103,16 @@ const GROUPS = [
   },
 ];
 
+// Fail on typos ("--tailwind", "--with-apollos") instead of silently ignoring them:
+// in a non-interactive run (--yes / CI) there is no prompt to catch the mistake, so an
+// unknown flag would silently scaffold WITHOUT the requested group.
+const KNOWN_FLAGS = new Set(["--yes", ...GROUPS.map((group) => group.flag)]);
+const unknownFlags = [...flags].filter((flag) => !KNOWN_FLAGS.has(flag));
+if (unknownFlags.length > 0) {
+  console.error(`Unknown flag(s): ${unknownFlags.join(", ")}. Known flags: ${[...KNOWN_FLAGS].join(", ")}`);
+  process.exit(1);
+}
+
 async function selectGroups() {
   const selection = {};
   const interactive = process.stdin.isTTY && !flags.has("--yes");
@@ -152,15 +162,9 @@ const coreTarballUrl = `https://github.com/${HOST_REPO}/releases/download/core-v
 // Optional groups the plugin does not USE at runtime are dropped from its MF shared config.
 // (They may still be installed as type-peers via typePeerNames, but declaring an unused
 // singleton as shared only risks a spurious version-gate failure at load — so drop it.)
-const ALL_OPTIONAL_SHARED = {
-  router: ["vue-router"],
-  i18n: ["vue-i18n"],
-  apollo: ["@apollo/client", "@vue/apollo-composable", "graphql"],
-  vueuse: ["@vueuse/core"],
-};
-const droppedShared = Object.entries(ALL_OPTIONAL_SHARED)
-  .filter(([key]) => !selected[key])
-  .flatMap(([, packages]) => packages);
+// Derived from GROUPS so the group→packages mapping lives in exactly one place
+// (tailwind's empty `packages` self-excludes).
+const droppedShared = GROUPS.filter((group) => !selected[group.key]).flatMap((group) => group.packages);
 const droppedSharedLines = droppedShared
   .map((name) => `          "${name}": false, // not used by this plugin`)
   .join("\n");
@@ -181,7 +185,11 @@ const mergeDeps = (...maps) => {
       merged[name] ??= range;
     }
   }
-  return Object.fromEntries(Object.keys(merged).sort((a, b) => a.localeCompare(b)).map((name) => [name, merged[name]]));
+  return Object.fromEntries(
+    Object.keys(merged)
+      .sort((a, b) => a.localeCompare(b))
+      .map((name) => [name, merged[name]]),
+  );
 };
 
 const pkgJson = {

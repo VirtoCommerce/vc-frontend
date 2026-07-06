@@ -96,10 +96,14 @@ type-check — including from the real tarball), but only manually. Remaining:
       claim** — `setThemeContext(store)` must run before `startFederatedModules()`
       (currently asserted, untested).
 
-## 6. Prod-readiness gaps (not yet designed)
+## 6. Stage 2 — hardening & scale-out (not yet designed)
 
-From the 2026-07-06 review; most block *prod*, not the pilot. (Route authorization moved
-to #1 — it likely blocks the pilot.)
+From the 2026-07-06 review. None of these block shipping the harness — it is off by
+default, and flag-on with a build-pinned list of trusted plugins fails closed and is
+bounded. They become relevant when scaling past a controlled pilot (more plugins,
+third-party authors, runtime discovery, broad store rollout); the kill switch and
+CSP/integrity are the two to treat as prerequisites for *that* stage. (Route
+authorization moved to #1 — it likely blocks the pilot.)
 
 - **Inter-plugin isolation** — route-path collisions, duplicate remote names, extension-key
   clobbering between plugins are unhandled (only host-vs-plugin isolation exists).
@@ -114,6 +118,23 @@ to #1 — it likely blocks the pilot.)
 - **Plugin i18n** — no contract for a plugin to register translation messages / RTL.
 - **Compat-drift governance** — no registry of plugin↔host versions / host-major breakage
   detection across N plugins.
+- **Prod telemetry for failed/skipped plugins (AppInsights)** — a stage-2 observability
+  improvement, not a blocker: the harness fails closed and ships fine without it. `Logger`
+  is a no-op in production, so a failed/skipped plugin leaves no prod signal today (dev gets
+  console + toast). Design sketch: expose the AppInsights instance to
+  boot-time code via an `onLoaded`-fed module singleton + a `getAppInsightsWhenReady(timeout)`
+  bridge in `applicationInsights.plugin.ts` (the library's `useAppInsights()` is inject-based;
+  the loader starts before the plugin installs, so a bare read is always undefined), then
+  report `failed` as `trackException` and `skipped` as a `[MF] federated plugin skipped`
+  customEvent (split streams so gate-noise cannot drown real failures), fire-and-forget.
+  Harden install() while at it: `app.use(AppInsightsPlugin)` in try/catch — `Logger.error` +
+  a `useNotifications()` toast, settle the ready promise, keep booting (a malformed
+  instrumentation key must not white-screen the store).
+- **Contract-gate granularity** — breaking-change detection (`core-api/contract-versioning.mjs`)
+  diffs top-level export *names* only: a signature/type change to an existing export ships as
+  a minor bump, `^`-satisfies the contract gate, and a stale plugin loads against the changed
+  surface anyway. Fix is structural API diffing (api-extractor / ts-morph over the two `.d.ts`
+  programs) or requiring a human minor/major classification on any contract change.
 - **Multi-store vs env granularity** — one env/backend serves many stores → per-store remote
   lists but a per-env ingress CSP that must allowlist the *union* of every store's origins.
 - **Central `ModuleFederation` module** becomes a hard discovery dependency in every

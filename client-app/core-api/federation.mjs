@@ -1,8 +1,9 @@
 /**
  * Single source of truth for the Module Federation shared-dependency contract.
  * Consumed by BOTH sides:
- * - the host build (vite.federation.ts) via HOST_SHARED;
- * - plugin builds (node vite configs) via `@vc-frontend/core/federation` -> REMOTE_SHARED.
+ * - the host build (vite.federation.ts) via createHostShared();
+ * - plugin builds (node vite configs) via `@vc-frontend/core/federation` ->
+ *   createRemoteFederationOptions() / createRemoteShared().
  * Mirrors vc-shell's @vc-shell/mf-config package. Plain .mjs with no node APIs so the
  * flag helper is also importable from browser code (bootstrap.ts).
  *
@@ -30,11 +31,15 @@ export const MF_SHARED_RANGES = {
 // host loader converts into an isolated per-plugin failure. The facade API contract
 // itself is guarded earlier by the CONTRACT GATE (modules/federated/version-gate.ts),
 // before any plugin code runs.
+// One place for the per-entry defaults: base packages (buildSharedConfig) and packages
+// ADDED via overrides (mergeSharedConfig) must get identical semantics.
+const SHARED_DEFAULTS = { singleton: true, strictVersion: true };
+
 function buildSharedConfig(extra) {
   return Object.fromEntries(
     Object.entries(MF_SHARED_RANGES).map(([name, requiredVersion]) => [
       name,
-      { singleton: true, strictVersion: true, requiredVersion, ...extra },
+      { ...SHARED_DEFAULTS, requiredVersion, ...extra },
     ]),
   );
 }
@@ -46,7 +51,7 @@ function mergeSharedConfig(base, overrides) {
       delete merged[name];
       continue;
     }
-    merged[name] = { singleton: true, strictVersion: true, ...merged[name], ...override };
+    merged[name] = { ...SHARED_DEFAULTS, ...merged[name], ...override };
   }
   return merged;
 }
@@ -75,10 +80,10 @@ export function createRemoteShared(overrides = {}) {
 }
 
 /** The default host config - equivalent to createHostShared() with no overrides. */
-export const HOST_SHARED = createHostShared();
+export const HOST_SHARED = /* @__PURE__ */ createHostShared();
 
 /** The default plugin config - equivalent to createRemoteShared() with no overrides. */
-export const REMOTE_SHARED = createRemoteShared();
+export const REMOTE_SHARED = /* @__PURE__ */ createRemoteShared();
 
 /**
  * One-call federation() options for a PLUGIN build:
@@ -97,6 +102,12 @@ export function createRemoteFederationOptions({ name, requiredHostVersion, expos
     filename: "remoteEntry.js",
     exposes: exposes ?? { "./plugin": "./src/index.ts" },
     shared: createRemoteShared(sharedOverrides ?? {}),
+    // Same strategy as the host (vite.federation.ts). With the MF default
+    // ("version-first") on the remote side, two plugins sharing the same extra package
+    // at different versions could resolve a different provider than the host would -
+    // and strictVersion turns that into a hard load failure. One strategy everywhere
+    // keeps provider selection deterministic across dev and prod.
+    shareStrategy: "loaded-first",
     // CONTRACT GATE input: the host refuses to run this plugin's code when its
     // facade version does not satisfy this range.
     manifest: {
@@ -114,8 +125,11 @@ export function createRemoteFederationOptions({ name, requiredHostVersion, expos
 
 /**
  * Env-flag normalization shared by the vite config (node) and bootstrap (browser).
- * Env values are strings, so "false"/"0" must count as off, not truthy.
+ * Env values are strings, so "false"/"0" must count as off, not truthy — and common
+ * ops spellings of "disabled" ("off", "no") must fail toward OFF, not enable MF.
  */
+const OFF_FLAG_VALUES = new Set(["", "false", "0", "off", "no"]);
+
 export function isMfFlagEnabled(value) {
   if (value === true) {
     return true;
@@ -123,6 +137,5 @@ export function isMfFlagEnabled(value) {
   if (typeof value !== "string") {
     return false;
   }
-  const normalized = value.trim().toLowerCase();
-  return normalized !== "" && normalized !== "false" && normalized !== "0";
+  return !OFF_FLAG_VALUES.has(value.trim().toLowerCase());
 }

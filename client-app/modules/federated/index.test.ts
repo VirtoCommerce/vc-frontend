@@ -2,23 +2,15 @@ import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { initFederatedModules } from "./index";
 
-const {
-  loadRemoteMock,
-  registerRemotesMock,
-  loggerErrorMock,
-  loggerWarnMock,
-  loggerInfoMock,
-  notificationErrorMock,
-  getAppInsightsWhenReadyMock,
-} = vi.hoisted(() => ({
-  loadRemoteMock: vi.fn(),
-  registerRemotesMock: vi.fn(),
-  loggerErrorMock: vi.fn(),
-  loggerWarnMock: vi.fn(),
-  loggerInfoMock: vi.fn(),
-  notificationErrorMock: vi.fn(),
-  getAppInsightsWhenReadyMock: vi.fn(),
-}));
+const { loadRemoteMock, registerRemotesMock, loggerErrorMock, loggerWarnMock, loggerInfoMock, notificationErrorMock } =
+  vi.hoisted(() => ({
+    loadRemoteMock: vi.fn(),
+    registerRemotesMock: vi.fn(),
+    loggerErrorMock: vi.fn(),
+    loggerWarnMock: vi.fn(),
+    loggerInfoMock: vi.fn(),
+    notificationErrorMock: vi.fn(),
+  }));
 
 vi.mock("@module-federation/enhanced/runtime", () => ({
   loadRemote: loadRemoteMock,
@@ -34,10 +26,6 @@ vi.mock("@/shared/notification", () => ({
 }));
 
 vi.mock("@/core-api/package.json", () => ({ version: "1.4.0" }));
-
-vi.mock("@/core/plugins/applicationInsights.plugin", () => ({
-  getAppInsightsWhenReady: getAppInsightsWhenReadyMock,
-}));
 
 const REMOTE_URL = "https://plugins.example.com/news/mf-manifest.json";
 
@@ -64,8 +52,6 @@ function stubManifestFetch(
 describe("initFederatedModules", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    // Default: AppInsights not configured. Individual tests override with an instance.
-    getAppInsightsWhenReadyMock.mockResolvedValue(undefined);
   });
 
   afterEach(() => {
@@ -113,6 +99,17 @@ describe("initFederatedModules", () => {
     expect(result).toEqual({ loaded: [], failed: [], skipped: [] });
     expect(fetchMock).not.toHaveBeenCalled();
     expect(loggerErrorMock).toHaveBeenCalledTimes(3);
+  });
+
+  it("rejects a remote entry URL without '.json' (would be script-loaded, not read as a manifest)", async () => {
+    const fetchMock = stubManifestFetch();
+    stubRemotesEnv({ news: "https://plugins.example.com/news/manifest?v=2" });
+
+    const result = await initFederatedModules();
+
+    expect(result).toEqual({ loaded: [], failed: [], skipped: [] });
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(loggerErrorMock).toHaveBeenCalledWith(expect.stringContaining(".json"));
   });
 
   it("allows http for localhost development remotes", async () => {
@@ -275,6 +272,9 @@ describe("initFederatedModules", () => {
     await flushPromises();
 
     expect(initMock).not.toHaveBeenCalled();
+    // The late load DID execute the remote's module scope — that must be logged, like
+    // a late init, so the "failed" outcome is never silently contradicted.
+    expect(loggerWarnMock).toHaveBeenCalledWith(expect.stringContaining("load completed after its budget"));
   });
 
   it("reports failed on an overrunning init() and logs its late completion as indeterminate", async () => {
@@ -309,82 +309,6 @@ describe("initFederatedModules", () => {
 
     expect(result.loaded).toEqual(["good"]);
     expect(result.failed).toEqual(["bad"]);
-  });
-
-  it("routes failed plugins to AppInsights as exceptions and skipped ones as events", async () => {
-    // failed = something broke -> exception stream; skipped = a gate did its job
-    // (expected outcome) -> event stream, so it cannot drown real failures.
-    const trackExceptionMock = vi.fn();
-    const trackEventMock = vi.fn();
-    getAppInsightsWhenReadyMock.mockResolvedValue({ trackException: trackExceptionMock, trackEvent: trackEventMock });
-    const fetchMock = vi.fn((url: string = "") =>
-      Promise.resolve({
-        ok: true,
-        status: 200,
-        json: () => {
-          const incompatible = { metaData: { requiredHostVersion: "99.0.0" } };
-          return Promise.resolve(url.includes("/old/") ? incompatible : COMPATIBLE_MANIFEST);
-        },
-      }),
-    );
-    vi.stubGlobal("fetch", fetchMock);
-    stubRemotesEnv({
-      old: "https://plugins.example.com/old/mf-manifest.json",
-      broken: "https://plugins.example.com/broken/mf-manifest.json",
-    });
-    loadRemoteMock.mockRejectedValue(new Error("boom"));
-
-    await initFederatedModules();
-    await flushPromises();
-
-    expect(trackExceptionMock).toHaveBeenCalledTimes(1);
-    expect(trackExceptionMock).toHaveBeenCalledWith(
-      expect.objectContaining({
-        properties: expect.objectContaining({ pluginName: "broken", outcome: "failed", hostCoreVersion: "1.4.0" }),
-      }),
-    );
-    expect(trackEventMock).toHaveBeenCalledTimes(1);
-    expect(trackEventMock).toHaveBeenCalledWith(
-      expect.objectContaining({
-        name: "[MF] federated plugin skipped",
-        properties: expect.objectContaining({ pluginName: "old", outcome: "skipped", hostCoreVersion: "1.4.0" }),
-      }),
-    );
-  });
-
-  it("still reports to Application Insights when it becomes ready only after the loader finished", async () => {
-    // Regression: the loader runs before the AppInsights plugin installs/loads, so the
-    // instance resolves late. Telemetry must still be sent, not dropped.
-    const trackEventMock = vi.fn();
-    let resolveReady: ((instance: { trackEvent: typeof trackEventMock }) => void) | undefined;
-    getAppInsightsWhenReadyMock.mockReturnValue(
-      new Promise((resolve) => {
-        resolveReady = resolve;
-      }),
-    );
-    stubManifestFetch({ metaData: { requiredHostVersion: "99.0.0" } });
-    stubRemotesEnv({ old: REMOTE_URL });
-
-    await initFederatedModules();
-    await flushPromises();
-    expect(trackEventMock).not.toHaveBeenCalled();
-
-    // AppInsights finishes loading afterwards.
-    resolveReady?.({ trackEvent: trackEventMock });
-    await flushPromises();
-
-    expect(trackEventMock).toHaveBeenCalledTimes(1);
-  });
-
-  it("stays silent towards Application Insights when it is not configured", async () => {
-    getAppInsightsWhenReadyMock.mockResolvedValue(undefined);
-    stubManifestFetch({}, { ok: false, status: 503 });
-    stubRemotesEnv({ news: REMOTE_URL });
-
-    const result = await initFederatedModules();
-    await flushPromises();
-
-    expect(result.skipped).toEqual(["news"]);
   });
 
   it("counts a plugin whose init() throws as failed", async () => {

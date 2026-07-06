@@ -190,20 +190,17 @@ initFederatedModules()             index.ts
   3. registerRemotes(compatible)   { force: true } so HMR re-registration won't throw
   4. loadRemote(`${name}/plugin`)  ⇒ plugin module ⇒ await plugin.init()  (10s budget)
   5. Promise.allSettled            one bad plugin cannot abort the others
-  6. reportOutcome({loaded,failed,skipped})   logs + AppInsights (see below); DEV toast
+  6. reportOutcome({loaded,failed,skipped})   logs; DEV toast
 ```
 
-In production, both outcomes surface in Application Insights — in **different
-streams**, because they mean different things. A **failed** plugin (something broke)
-is a `trackException`: `[MF] federated plugin "<name>" failed`. A **skipped** plugin
-is a gate doing its job — e.g. every session on a store whose plugin lags the host
-contract — so it is a `trackEvent` named `[MF] federated plugin skipped` instead:
-still queryable and alertable (`customEvents | where name == "[MF] federated plugin
-skipped"`), but it cannot flood the exceptions blade until real `[MF]` failures get
-ignored. Both carry `pluginName`, `outcome` and `hostCoreVersion` custom properties.
-(This is why `applicationInsights.plugin.ts` exports `getAppInsightsWhenReady()`: the
-library's `useAppInsights()` is inject-based and unusable from boot-time code like
-this loader.)
+In production `Logger` is a no-op, so failed/skipped plugins currently surface through
+the loader's returned outcome only — there is no telemetry signal yet. Reporting
+outcomes to Application Insights (`trackException` for **failed** — something broke; a
+`trackEvent` for **skipped** — a gate doing its job, kept out of the exceptions blade
+so it cannot drown real failures) is a tracked stage-2 follow-up in `TODO.md`; the
+harness fails closed and ships without it. It requires bridging the AppInsights
+instance to boot-time code (the library's `useAppInsights()` is inject-based and
+unusable from a loader that runs before the plugin installs).
 
 Three design points worth calling out:
 

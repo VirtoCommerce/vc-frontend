@@ -84,6 +84,8 @@ describe("createRemoteFederationOptions", () => {
     expect(options.filename).toBe("remoteEntry.js");
     expect(options.exposes).toEqual({ "./plugin": "./src/index.ts" });
     expect(options.shared).toEqual(REMOTE_SHARED);
+    // Must match the host's strategy (vite.federation.ts) - see the comment in federation.mjs.
+    expect(options.shareStrategy).toBe("loaded-first");
     expect(options.dts).toBe(false);
   });
 
@@ -123,6 +125,9 @@ describe("isMfFlagEnabled", () => {
     ["", false],
     ["false", false],
     ["0", false],
+    // Ops spellings of "disabled" must fail toward OFF, not enable MF.
+    ["off", false],
+    ["no", false],
     ["true", true],
     ["1", true],
     [true, true],
@@ -130,6 +135,7 @@ describe("isMfFlagEnabled", () => {
     ["FALSE", false],
     ["False", false],
     [" false ", false],
+    ["OFF", false],
     ["TRUE", true],
     [" true ", true],
   ])("treats %j as %j", (value, expected) => {
