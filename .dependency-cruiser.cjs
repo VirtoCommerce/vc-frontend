@@ -180,12 +180,13 @@ module.exports = {
     },
   ],
   options: {
-    // The generated @vc-frontend/core type contract and its build
-    // script are not shipped app code. The contract legitimately imports peer
-    // packages (vue, @apollo/client, …) and the script imports the rollup toolchain;
-    // neither belongs in the app dependency graph.
+    // The generated @vc-frontend/core type contract and its build/versioning
+    // scripts are not shipped app code. The contract legitimately imports peer
+    // packages (vue, @apollo/client, …) and the scripts import the rollup toolchain
+    // and semver (from the ROOT package.json, not the facade's); neither belongs in
+    // the app dependency graph.
     exclude: {
-      path: "client-app/core-api/(dist/|build-types\\.mjs$)",
+      path: "client-app/core-api/(dist/|build-types\\.mjs$|bump-version\\.mjs$)",
     },
     doNotFollow: {
       path: "node_modules",
