@@ -1,9 +1,10 @@
 # Facade distribution — harness side (VCST-5159)
 
-**Status:** approved design, pending implementation
+**Status:** implemented (see the Addendum for what shifted during implementation)
 **Branch / PR:** `feat/VCST-5159-mf-harness` (same PR as the harness)
-**Decision record:** `client-app/modules/federated/TODO.md` §1 → *Facade distribution & local
-co-dev* (source of truth for the *why*; this spec is the *what/how* for the harness-side slice).
+**Decision record:** [`2026-07-06-discovery-hosting-decision.md`](./2026-07-06-discovery-hosting-decision.md)
+→ *Facade distribution & local co-dev* (the *why*; this spec is the *what/how* for the
+harness-side slice).
 
 ## Goal
 
