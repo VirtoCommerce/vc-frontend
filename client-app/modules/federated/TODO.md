@@ -23,6 +23,27 @@ No host rebuild to enable a plugin.
 - Decision on record: _"let it be constant yet"_ — so this is explicitly deferred, not
   forgotten. `resolveRemotes()` in `index.ts` is the single seam to change.
 
+**Today's operating model (until this lands).** Enabling a plugin is a manual,
+build-time, deploy-owned action — there is no runtime toggle and no self-service:
+
+1. The **plugin author** builds and deploys their artifact to trusted https hosting, then
+   hands the host owner the manifest URL + origin. They cannot register it themselves.
+2. The **host release / devops owner** adds the entry to `APP_MF_REMOTES` (a build-time
+   env var), rebuilds and redeploys the host, and adds the plugin origin to the storefront
+   CSP.
+3. There is no admin / runtime path — the remote list is part of the deploy artifact by
+   design (see the README security model). Central discovery is what turns this three-step
+   release into a config change.
+
+**CSP is a deployment prerequisite, and it does not exist yet.** The reference stack
+(`VirtoCommerce/vc-deploy-dev`: the SPA ships as a theme zip served by the
+`ghcr.io/virtocommerce/storefront` container behind an ingress) sets **no CSP / security
+headers at all**. Enabling MF in production therefore means *introducing* a CSP at the
+ingress / storefront-container layer (each plugin origin in `script-src` + `connect-src`) —
+it is never a `vc-frontend` repo change. When central discovery lands, this CSP and the
+origin allowlist above should be driven from the same source, so a plugin is enabled in
+one place instead of three.
+
 ---
 
 ## 2. Artifact integrity for remote code
@@ -93,3 +114,9 @@ built, expect requests to widen it. Guard rails:
   top; vc-shell dropped runtime version gating entirely (PR #228), we keep both layers.
 - **Publishing `@vc-frontend/core` to npm** — the host is `"private": true` and deploys
   as a theme zip. Publish-from-source (portal link + committed `.d.ts`) is deliberate.
+  Revisit only if we need **external** plugin authors who cannot check out the host: the
+  `portal:` link requires a host checkout on disk, so a registry (public npm or a private
+  feed) would become the distribution channel for the type contract + `./federation`
+  config. That is an additive change to how the contract is *distributed* — not to the
+  harness — so it stays deferred until such an author exists. (Prior art: vc-shell
+  publishes `@vc-shell/mf-config|mf-host|mf-module` to npm via OIDC Trusted Publishing.)
