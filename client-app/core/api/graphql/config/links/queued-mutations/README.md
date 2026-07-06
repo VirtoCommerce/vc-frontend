@@ -54,7 +54,7 @@ When the server responds:
 - Sets `inFlight = false`
 - Notifies **all queued observers** with the result by calling their `next()` and `complete()` methods
 - Each original caller receives the same response
-- Schedules the next flush if new mutations arrived during the request
+- If `flushNow` was requested while the request was in flight, drains the queued batch **immediately** (no debounce); otherwise schedules the next flush on the normal debounce if new mutations arrived during the request
 
 #### 8. Error Handling
 On network errors:
@@ -75,7 +75,46 @@ If an observer unsubscribes (e.g., component unmounts):
 
 **Observable Pattern**: Apollo uses Observables for lazy execution and cancellation. Subscriptions start when you `.subscribe()`, and cleanup happens when you unsubscribe.
 
-**Per-Operation State**: Each mutation type (operation name) maintains its own independent queue, timer, and in-flight state. `UpdateShortCartItemQuantity` doesn't interfere with other mutations.
+**Per-Operation State**: Each mutation type (operation name) maintains its own independent queue, timer, and in-flight state. `UpdateShortCartItemQuantity` doesn't interfere with other mutations. When a target declares a `getPartitionKey` (see below), state is keyed by `"opName:partition"` so each partition is independent too.
+
+---
+
+## Partition Keys
+
+By default there is **one queue per operation name**, so every call to an operation shares one debounce timer and one merge buffer - even when they edit different entities (e.g. different cart line items). That means one edit can reset another's timer, and both edits are merged into a single request.
+
+Declaring a `getPartitionKey` splits the operation into **independent queues, one per key** (own timer, own observers, own merge buffer):
+
+```ts
+createQueueTarget("UpdateCartItem", {
+  getPartitionKey: (vars) => vars.command.lineItemId, // "A", "B", ...
+});
+```
+
+Now `UpdateCartItem({ lineItemId: "A" })` and `UpdateCartItem({ lineItemId: "B" })` are fully independent - A is never delayed by B, and each request carries exactly one line item.
+
+- Omit `getPartitionKey` and behavior is identical to before (one shared queue per operation name).
+- Returning an **empty string** routes to the operation's **default queue** - the same one reachable via `flushNow(opName)` without a partition key. Empty and non-empty keys never collide.
+
+## `flushNow` Escape Hatch
+
+A queued mutation normally fires only after its debounce elapses. Sometimes you need it committed *now* - e.g. the user blurs an input or navigates away.
+
+`createQueuedMutationsController(config)` returns the link **plus** a `flushNow`:
+
+```ts
+const { link, flushNow } = createQueuedMutationsController({ targets });
+
+// e.g. on input blur - don't wait out the debounce:
+flushNow("UpdateCartItem", lineItemId); // cancel the timer, send the merged payload now
+```
+
+Semantics:
+
+- **No-op** if nothing is queued for that operation/partition.
+- If **no request is in flight**, it cancels the debounce timer and sends the merged payload immediately.
+- If a **request is already in flight** for that queue, it never sends a second request in parallel. Instead the pending batch is drained **immediately once the in-flight request settles** (with no additional debounce).
+- `createQueuedMutationsLink` remains a thin wrapper over the controller's `link`, so existing imports need no changes.
 
 ---
 
@@ -105,11 +144,13 @@ The `createQueueTarget` helper preserves type safety for each target's `mergeQue
 
 - **`debounceMs`**: Wait time before flushing the queue (default: 1000ms)
 - **`mergeQueued`**: Function to merge variables from multiple calls
+- **`getPartitionKey`**: Optional. Extracts a partition key from the variables so one operation runs several independent queues (see [Partition Keys](#partition-keys)). Returning an empty string uses the default queue.
 
 ### State Management
 
-Each operation maintains:
+Each operation (or partition) maintains:
 - `inFlight`: Boolean tracking active network request
+- `flushRequested`: Boolean set by `flushNow` while a request is in flight, so the queued batch drains immediately on settle instead of rescheduling
 - `observers`: Array of observer objects (each with `next`, `complete`, `error` methods) waiting for response
 - `mergedVariables`: Accumulated variables from all queued calls
 - `abortController`: Handles request cancellation

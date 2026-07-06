@@ -1,6 +1,6 @@
 import { useLocalStorage } from "@vueuse/core";
 import { createGlobalState } from "@vueuse/core";
-import { remove } from "lodash";
+import { remove } from "lodash-es";
 import { computed, readonly, ref } from "vue";
 import {
   getMe,

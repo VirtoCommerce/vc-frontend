@@ -1,6 +1,4 @@
-import clone from "lodash/cloneDeep";
-import isEqual from "lodash/isEqual";
-import pick from "lodash/pick";
+import { cloneDeep as clone, isEqual, pick } from "lodash-es";
 import type { AnyAddressType } from "../../types";
 import type { InputMemberAddressType, MemberAddressType } from "@/core/api/graphql/types";
 
