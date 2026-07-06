@@ -93,8 +93,12 @@ jobs:
             echo
             echo "Docs: [client-app/core-api/README.md](https://github.com/$GITHUB_REPOSITORY/blob/$GITHUB_SHA/client-app/core-api/README.md)"
           } > release-notes.md
+          # --latest=false: facade releases must never steal the repo's "Latest" badge
+          # from theme releases (theme-ci sets make_latest: true) — anything consuming
+          # releases/latest expects the theme zip, not this tarball.
           gh release create "$TAG" "client-app/core-api/$TARBALL" \
             --repo "$GITHUB_REPOSITORY" \
             --target "$GITHUB_SHA" \
             --title "@vc-frontend/core $VERSION" \
+            --latest=false \
             --notes-file release-notes.md
