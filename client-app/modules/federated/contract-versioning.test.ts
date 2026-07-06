@@ -17,6 +17,11 @@ describe("extractExportNames", () => {
     expect(extractExportNames("export { _default$2 as VcWidget, type I18n };")).toEqual(new Set(["VcWidget", "I18n"]));
   });
 
+  it("reads whole-line `export type { ... }` blocks (the form the rolled-up .d.ts emits)", () => {
+    const declarations = ["export { VcButton, apolloClient };", "export type { I18n, IThemeConfig };"].join("\n");
+    expect(extractExportNames(declarations)).toEqual(new Set(["VcButton", "apolloClient", "I18n", "IThemeConfig"]));
+  });
+
   it("ignores declarations that are not export statements", () => {
     const declarations = [
       "declare const VcButton: unknown;",
@@ -56,9 +61,35 @@ describe("decideVersionAction", () => {
     });
   });
 
-  it("accepts an already-bumped version even when exports were removed", () => {
+  it("still requires a major bump when a removal follows an earlier additive minor bump", () => {
+    // base 1.0.0 was auto-bumped to 1.1.0 for an additive change; a later removal in the
+    // same release window must NOT be masked by that minor bump (regression guard).
+    expect(
+      decideVersionAction({
+        changed: true,
+        baseVersion: "1.0.0",
+        currentVersion: "1.1.0",
+        removedExports: ["VcButton"],
+      }),
+    ).toEqual({ action: "require-major", removedExports: ["VcButton"] });
+  });
+
+  it("accepts a removal once the MAJOR version has been bumped past the baseline", () => {
     expect(
       decideVersionAction({ ...base, changed: true, currentVersion: "3.0.0", removedExports: ["VcButton"] }),
-    ).toEqual({ action: "none", reason: "version already bumped" });
+    ).toEqual({ action: "none", reason: "major already bumped" });
+  });
+
+  it("fails closed (requires major) on a removal when a version string is unparseable", () => {
+    // majorOf() yields NaN for a malformed version; the NaN comparison must resolve to
+    // require-major, never silently allow the breaking removal through.
+    expect(
+      decideVersionAction({
+        changed: true,
+        baseVersion: "not-a-version",
+        currentVersion: "2.0.0",
+        removedExports: ["VcButton"],
+      }),
+    ).toEqual({ action: "require-major", removedExports: ["VcButton"] });
   });
 });

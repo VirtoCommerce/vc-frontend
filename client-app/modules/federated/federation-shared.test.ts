@@ -118,6 +118,12 @@ describe("isMfFlagEnabled", () => {
     ["true", true],
     ["1", true],
     [true, true],
+    // Case- and whitespace-insensitive: env values are not always lowercased.
+    ["FALSE", false],
+    ["False", false],
+    [" false ", false],
+    ["TRUE", true],
+    [" true ", true],
   ])("treats %j as %j", (value, expected) => {
     expect(isMfFlagEnabled(value)).toBe(expected);
   });

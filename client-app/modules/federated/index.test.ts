@@ -8,14 +8,14 @@ const {
   loggerErrorMock,
   loggerWarnMock,
   notificationErrorMock,
-  getAppInsightsMock,
+  getAppInsightsWhenReadyMock,
 } = vi.hoisted(() => ({
   loadRemoteMock: vi.fn(),
   registerRemotesMock: vi.fn(),
   loggerErrorMock: vi.fn(),
   loggerWarnMock: vi.fn(),
   notificationErrorMock: vi.fn(),
-  getAppInsightsMock: vi.fn(),
+  getAppInsightsWhenReadyMock: vi.fn(),
 }));
 
 vi.mock("@module-federation/enhanced/runtime", () => ({
@@ -33,7 +33,9 @@ vi.mock("@/shared/notification", () => ({
 
 vi.mock("@/core-api/package.json", () => ({ version: "2.53.0" }));
 
-vi.mock("@/core/plugins/applicationInsights.plugin", () => ({ getAppInsights: getAppInsightsMock }));
+vi.mock("@/core/plugins/applicationInsights.plugin", () => ({
+  getAppInsightsWhenReady: getAppInsightsWhenReadyMock,
+}));
 
 const REMOTE_URL = "https://plugins.example.com/news/mf-manifest.json";
 
@@ -54,6 +56,8 @@ function stubManifestFetch(manifest: unknown, init?: { ok?: boolean; status?: nu
 describe("initFederatedModules", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Default: AppInsights not configured. Individual tests override with an instance.
+    getAppInsightsWhenReadyMock.mockResolvedValue(undefined);
   });
 
   afterEach(() => {
@@ -259,11 +263,12 @@ describe("initFederatedModules", () => {
 
   it("routes failed and skipped plugins to Application Insights when it is configured", async () => {
     const trackExceptionMock = vi.fn();
-    getAppInsightsMock.mockReturnValue({ trackException: trackExceptionMock });
+    getAppInsightsWhenReadyMock.mockResolvedValue({ trackException: trackExceptionMock });
     stubManifestFetch({ metaData: { requiredHostVersion: "99.0.0" } });
     stubRemotesEnv({ old: REMOTE_URL, broken: "https://plugins.example.com/broken/mf-manifest.json" });
 
     await initFederatedModules();
+    await flushPromises();
 
     expect(trackExceptionMock).toHaveBeenCalledTimes(2);
     expect(trackExceptionMock).toHaveBeenCalledWith(
@@ -273,12 +278,37 @@ describe("initFederatedModules", () => {
     );
   });
 
+  it("still reports to Application Insights when it becomes ready only after the loader finished", async () => {
+    // Regression: the loader runs before the AppInsights plugin installs/loads, so the
+    // instance resolves late. Telemetry must still be sent, not dropped.
+    const trackExceptionMock = vi.fn();
+    let resolveReady: ((instance: { trackException: typeof trackExceptionMock }) => void) | undefined;
+    getAppInsightsWhenReadyMock.mockReturnValue(
+      new Promise((resolve) => {
+        resolveReady = resolve;
+      }),
+    );
+    stubManifestFetch({ metaData: { requiredHostVersion: "99.0.0" } });
+    stubRemotesEnv({ old: REMOTE_URL });
+
+    await initFederatedModules();
+    await flushPromises();
+    expect(trackExceptionMock).not.toHaveBeenCalled();
+
+    // AppInsights finishes loading afterwards.
+    resolveReady?.({ trackException: trackExceptionMock });
+    await flushPromises();
+
+    expect(trackExceptionMock).toHaveBeenCalledTimes(1);
+  });
+
   it("stays silent towards Application Insights when it is not configured", async () => {
-    getAppInsightsMock.mockReturnValue(undefined);
+    getAppInsightsWhenReadyMock.mockResolvedValue(undefined);
     stubManifestFetch({}, { ok: false, status: 503 });
     stubRemotesEnv({ news: REMOTE_URL });
 
     const result = await initFederatedModules();
+    await flushPromises();
 
     expect(result.skipped).toEqual(["news"]);
   });

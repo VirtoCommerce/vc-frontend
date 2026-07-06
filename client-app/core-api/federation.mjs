@@ -115,5 +115,12 @@ export function createRemoteFederationOptions({ name, requiredHostVersion, expos
  * Env values are strings, so "false"/"0" must count as off, not truthy.
  */
 export function isMfFlagEnabled(value) {
-  return value === true || (typeof value === "string" && value !== "" && value !== "false" && value !== "0");
+  if (value === true) {
+    return true;
+  }
+  if (typeof value !== "string") {
+    return false;
+  }
+  const normalized = value.trim().toLowerCase();
+  return normalized !== "" && normalized !== "false" && normalized !== "0";
 }

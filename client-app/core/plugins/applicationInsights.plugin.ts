@@ -19,6 +19,18 @@ export type ApplicationInsightsType = Parameters<NonNullable<AppInsightsPluginOp
 
 let appInsightsInstance: ApplicationInsightsType | undefined;
 
+const DEFAULT_READY_TIMEOUT_MS = 10_000;
+
+// Settles once the readiness of AppInsights is known: with the instance when the SDK's
+// onLoaded fires, or with undefined when install() finds AppInsights is not configured
+// for the store. Boot-time services (e.g. the federated module loader) start BEFORE this
+// plugin installs, and even after install the SDK's onLoaded fires asynchronously later -
+// so a bare getAppInsights() would almost always read undefined at boot.
+let resolveReady: (instance: ApplicationInsightsType | undefined) => void = () => {};
+const readyPromise = new Promise<ApplicationInsightsType | undefined>((resolve) => {
+  resolveReady = resolve;
+});
+
 /**
  * The library's own useAppInsights() is inject()-based and works only inside component
  * setup. This getter serves non-component code (boot-time services like the federated
@@ -27,6 +39,29 @@ let appInsightsInstance: ApplicationInsightsType | undefined;
  */
 export function getAppInsights(): ApplicationInsightsType | undefined {
   return appInsightsInstance;
+}
+
+/**
+ * Awaitable counterpart to getAppInsights() for boot-time callers that would otherwise
+ * read undefined because AppInsights has not finished loading yet. Resolves with the
+ * instance once it loads, or with undefined when AppInsights is not configured or does
+ * not load within `timeoutMs` - telemetry stays best-effort and never hangs the caller.
+ */
+export async function getAppInsightsWhenReady(
+  timeoutMs = DEFAULT_READY_TIMEOUT_MS,
+): Promise<ApplicationInsightsType | undefined> {
+  if (appInsightsInstance) {
+    return appInsightsInstance;
+  }
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<undefined>((resolve) => {
+    timer = setTimeout(() => resolve(undefined), timeoutMs);
+  });
+  try {
+    return await Promise.race([readyPromise, timeout]);
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 export const applicationInsightsPlugin: Plugin<[IApplicationInsightsPluginOptions?]> = {
@@ -48,11 +83,16 @@ export const applicationInsightsPlugin: Plugin<[IApplicationInsightsPluginOption
           trackInitialPageView: true,
           onLoaded: (appInsights) => {
             appInsightsInstance = appInsights;
+            resolveReady(appInsights);
           },
         };
 
         app.use(AppInsightsPlugin, options);
+        return;
       }
     }
+
+    // Not configured for this store: unblock awaiting callers immediately.
+    resolveReady(undefined);
   },
 };
