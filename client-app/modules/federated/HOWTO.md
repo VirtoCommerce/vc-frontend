@@ -50,14 +50,16 @@ my-plugin/
 └── package.json
 ```
 
-In `package.json`: link the facade from a host checkout (no npm publish exists —
-this is "publish from source"), and install **everything your code imports** as dev
-dependencies — Vue included:
+In `package.json`: pin the facade to its **versioned tarball URL** — a Release asset
+of the (public) host repo, published by the *Core Facade Release* workflow. No
+registry, token, or account; any package manager installs it, and your lockfile
+records the tarball checksum so the pin is tamper-evident. Then install **everything
+your code imports** as dev dependencies — Vue included:
 
 ```jsonc
 {
   "dependencies": {
-    "@vc-frontend/core": "portal:../vc-frontend/client-app/core-api",
+    "@vc-frontend/core": "https://github.com/VirtoCommerce/vc-frontend/releases/download/core-v1.0.0/vc-frontend-core-1.0.0.tgz",
   },
   "devDependencies": {
     // compile-time only - NOTHING below ships in your bundle (import: false);
@@ -223,6 +225,30 @@ and it's three small steps: add one re-export line to `core-api/index.ts`, run
 The full flow, including what counts as a breaking change:
 [`client-app/core-api/README.md`](../../core-api/README.md).
 
+### Co-developing the facade and a plugin (yalc)
+
+While that facade change is still **unpushed and unreleased**, your plugin can't get it
+from the pinned tarball. Bridge the gap with [yalc](https://github.com/wclr/yalc)
+(`npm i -g yalc`) — a local, offline package store; no registry, token, or account. It
+copies real files into the consumer (no symlinks), so Vite/TS resolve it like a normal
+install:
+
+```bash
+# once: publish the local facade and link it into the plugin
+cd vc-frontend/client-app/core-api && yalc publish
+cd my-plugin && yalc add @vc-frontend/core && yarn install
+
+# every facade edit: rebuild the contract + push to all linked plugins (one command)
+cd vc-frontend && yarn core:yalc-push
+```
+
+**Hygiene:** yalc rewrites your plugin's `@vc-frontend/core` to a `file:.yalc/...` path.
+`.yalc/` and `yalc.lock` are gitignored by the scaffold, but the `package.json` edit is
+not — before pushing, run `yalc remove @vc-frontend/core` and restore the pinned tarball
+URL. Never commit a `file:` facade dependency. Once the facade change is merged and the
+*Core Facade Release* workflow has published `core-v<new-version>`, bump your pin to the
+new URL (and your `requiredHostVersion` if you use the new exports).
+
 ## Versioning cheat sheet
 
 | You do…                                             | What happens                                                                            |
@@ -231,4 +257,5 @@ The full flow, including what counts as a breaking change:
 | remove/rename a facade export                       | the build refuses; you run `yarn bump:core major` explicitly — this breaks every plugin |
 | build a plugin using a new export                   | declare `requiredHostVersion: "^1.1.0"` — older hosts will refuse it (CONTRACT GATE)    |
 | build a plugin against a different Vue/Apollo major | the SHARED-DEPENDENCY GATE fails that plugin at load, in isolation                      |
+| consume a new facade version in your plugin         | bump the pinned tarball URL to `core-v<new>` **and** `requiredHostVersion` together     |
 | forget any of the regenerate/bump steps             | CI fails with the exact command to run                                                  |

@@ -4,6 +4,12 @@
   "description": "Curated public API surface of the VC B2B storefront host, consumed by Module Federation plugins. Publish-from-source: type contract only — the running implementation is injected by the host at runtime via MF shared singletons.",
   "type": "module",
   "private": true,
+  "files": [
+    "dist/index.d.ts",
+    "dist/tailwind-preset.cjs",
+    "federation.mjs",
+    "federation.d.mts"
+  ],
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
@@ -13,7 +19,7 @@
       "types": "./federation.d.mts",
       "import": "./federation.mjs"
     },
-    "./tailwind-preset": "./tailwind-preset.cjs"
+    "./tailwind-preset": "./dist/tailwind-preset.cjs"
   },
   "scripts": {
     "build:types": "node build-types.mjs"

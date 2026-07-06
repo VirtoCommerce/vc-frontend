@@ -20,10 +20,14 @@ without touching or rebuilding this repo.
 ## TL;DR
 
 ```bash
-# Build/serve the host WITH federation enabled, pointing at one or more remotes:
+# Serve the host WITH federation enabled, pointing at one or more remotes.
+# Use build + preview, NOT `yarn dev`: the dev server can't prebundle the shared GraphQL
+# facade in MF mode (known limitation). Use `--mode=development` locally so the store
+# resolves from APP_BACKEND_URL — a prod-mode build resolves it from `localhost` and renders
+# an empty page. See HOWTO.md step 4.
 APP_MF_HOST=true \
 APP_MF_REMOTES='{"news":"https://plugins.example.com/news/mf-manifest.json"}' \
-yarn dev
+yarn build-only --mode=development && yarn preview
 ```
 
 - `APP_MF_HOST` → turns the host into a federation host (build + runtime). `""`, `"false"`

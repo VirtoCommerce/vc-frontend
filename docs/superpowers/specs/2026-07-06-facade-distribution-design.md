@@ -53,7 +53,7 @@ Add a `files` field so `npm pack` carries only the distributables:
 Consumption URL shape (what plugins pin):
 
 ```
-https://github.com/VirtoCommerce/vc-theme-b2b-vue/releases/download/core-v<V>/vc-frontend-core-<V>.tgz
+https://github.com/VirtoCommerce/vc-frontend/releases/download/core-v<V>/vc-frontend-core-<V>.tgz
 ```
 
 `yarn.lock` in the consuming plugin records the tarball checksum → tamper-evident pin.
@@ -64,10 +64,10 @@ https://github.com/VirtoCommerce/vc-theme-b2b-vue/releases/download/core-v<V>/vc
   current `CORE_VERSION` (read from `core-api/package.json`, already loaded as `corePkg`):
 
   ```jsonc
-  "@vc-frontend/core": "https://github.com/VirtoCommerce/vc-theme-b2b-vue/releases/download/core-v1.0.0/vc-frontend-core-1.0.0.tgz"
+  "@vc-frontend/core": "https://github.com/VirtoCommerce/vc-frontend/releases/download/core-v1.0.0/vc-frontend-core-1.0.0.tgz"
   ```
 
-- Repo slug `VirtoCommerce/vc-theme-b2b-vue` is a hardcoded constant in the script (the
+- Repo slug `VirtoCommerce/vc-frontend` is a hardcoded constant in the script (the
   scaffolder ships only in this repo; no `repository` field exists in the root
   `package.json` to read).
 - Remove `portal:`-specific code: the `portalPath` computation and the
@@ -147,6 +147,23 @@ https://github.com/VirtoCommerce/vc-theme-b2b-vue/releases/download/core-v<V>/vc
   YAML mistake cannot fire on merge.
 - Existing `yarn validate` must stay green (the `files` field must not confuse
   `validate:core-types`).
+
+## Addendum (discovered during implementation)
+
+- **Tailwind preset had to become a generated artifact.** Installing the real tarball
+  revealed `tailwind-preset.cjs` re-exported `../../tailwind.config` — resolvable via
+  `portal:`/yalc only, broken in a tarball. Implemented: `build-types.mjs` now also
+  generates a self-contained `dist/tailwind-preset.cjs` (theme data inlined via
+  `tailwindcss/loadConfig`; `content` omitted; the config's Tailwind plugins re-emitted
+  as consumer-resolved `require`s, added to the scaffold's `--with-tailwind` deps).
+  Drift-checked by `validate:core-types`; a preset change auto-bumps `CORE_VERSION`
+  (minor) exactly like a contract change, because the released tarball is immutable per
+  version. The `files`/`exports` entries moved to `dist/tailwind-preset.cjs`.
+- **Drift check correction:** the release workflow runs `yarn validate:core-types`
+  (read-only `--check`), not `build:core-types` — the build variant regenerates and can
+  auto-bump, and a release must pack exactly what is committed.
+- **Repo slug:** `VirtoCommerce/vc-frontend` (the repo is being renamed;
+  `vc-theme-b2b-vue` is the legacy alias).
 
 ## Out of scope (recorded, not lost)
 

@@ -30,15 +30,15 @@ alias covers direct host-side imports.)
 
 Files in this folder:
 
-| File                  | Role                                                                                                              |
-| --------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `index.ts`            | **The facade source** — a list of re-exports. This is the API. Edit this.                                         |
-| `dist/index.d.ts`     | **Generated** type contract. Never edit; regenerate and commit.                                                   |
-| `federation.mjs`      | Shared-singleton contract (`createHostShared` / `createRemoteShared` + defaults) for both host and plugin builds. |
-| `bump-version.mjs`    | `yarn bump:core <level>` — manual contract-version bump (majors; minors are automatic).                           |
-| `create-plugin.mjs`   | `yarn create:plugin` — scaffolds a new plugin project with versions read from the host.                           |
-| `tailwind-preset.cjs` | The host's Tailwind design system for plugin builds (`@vc-frontend/core/tailwind-preset`).                        |
-| `build-types.mjs`     | The generator (below).                                                                                            |
+| File                       | Role                                                                                                              |
+| -------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `index.ts`                 | **The facade source** — a list of re-exports. This is the API. Edit this.                                         |
+| `dist/index.d.ts`          | **Generated** type contract. Never edit; regenerate and commit.                                                   |
+| `dist/tailwind-preset.cjs` | **Generated** self-contained snapshot of the host's Tailwind design system (`@vc-frontend/core/tailwind-preset`). Source: the root `tailwind.config.ts`. Never edit; regenerate and commit. |
+| `federation.mjs`           | Shared-singleton contract (`createHostShared` / `createRemoteShared` + defaults) for both host and plugin builds. |
+| `bump-version.mjs`         | `yarn bump:core <level>` — manual contract-version bump (majors; minors are automatic).                           |
+| `create-plugin.mjs`        | `yarn create:plugin` — scaffolds a new plugin project with versions read from the host.                           |
+| `build-types.mjs`          | The generator (below) — emits both the type contract and the tailwind preset snapshot.                            |
 
 ---
 
@@ -81,6 +81,15 @@ Guards that run with it (any failure = non-zero exit):
 
 The output is deterministic: same source ⇒ byte-identical file, so the git diff of
 `dist/index.d.ts` is a readable review artifact of "what did the public API change".
+
+The same run also generates **`dist/tailwind-preset.cjs`** — a self-contained snapshot
+of the root `tailwind.config.ts` (theme data inlined; `content` omitted — consumers
+scan their own sources; the config's Tailwind plugins are re-emitted as `require`s
+resolved from the consumer's node_modules, since functions can't be serialized). It
+must be self-contained because the package installs as a tarball — it cannot reach
+back into a host checkout. The same guards apply: drift-checked in CI, and a preset
+change (design-token change) auto-bumps `CORE_VERSION` exactly like a contract change —
+the released tarball is immutable per version.
 
 ---
 
@@ -139,10 +148,24 @@ Rules of thumb for what to export:
 
 ---
 
-## Why "publish from source" instead of npm?
+## How plugins get this package (and why not npm)
 
-The host is `"private": true` and deploys as a theme zip — there is no npm pipeline to
-publish a real package. Committing a compiled, self-contained `.d.ts` gives plugins a
-stable contract to compile against **without** publishing, while MF hands them the live
-implementation at runtime. The price is the "regenerate + commit" step — which CI
-enforces so it cannot silently drift.
+There is deliberately **no npm registry** in the loop — no publish pipeline, no token,
+no account, on any CI provider. (`"private": true` here blocks accidental `npm publish`;
+it says nothing about repo visibility — this repo is public.) Committing a compiled,
+self-contained `.d.ts` gives plugins a stable contract to compile against, while MF
+hands them the live implementation at runtime. The price is the "regenerate + commit"
+step — which CI enforces so it cannot silently drift.
+
+Distribution has two forms (full walkthrough:
+[`HOWTO.md`](../modules/federated/HOWTO.md)):
+
+- **Released (what plugins commit):** a versioned tarball, built by `npm pack` from this
+  folder (the `files` field keeps it to the distributables) and published as a **GitHub
+  Release asset** on tag `core-v<CORE_VERSION>` by the manual *Core Facade Release*
+  workflow (`.github/workflows/core-facade-release.yml`). Plugins pin the asset URL; their
+  lockfile records the tarball checksum. Re-releasing an existing version is refused —
+  a new contract means a new `CORE_VERSION`.
+- **Local co-dev (unreleased facade changes):** **yalc** — `yarn core:yalc-push` from the
+  repo root rebuilds the contract and pushes it into every locally-linked plugin. Never
+  commit the injected `file:.yalc/…` dependency.

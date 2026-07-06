@@ -120,9 +120,25 @@ const selected = await selectGroups();
 const runtimeDeps = ["vue", ...GROUPS.filter((group) => selected[group.key]).flatMap((group) => group.packages)];
 const toolDeps = ["typescript", "vite", "@vitejs/plugin-vue", "@module-federation/vite", "vue-tsc"];
 if (selected.tailwind) {
-  toolDeps.push("tailwindcss", "postcss", "autoprefixer", "postcss-import");
+  // The last two are required by the host's tailwind preset (its `plugins` entries
+  // resolve from THIS plugin's node_modules — the preset snapshot cannot carry code).
+  toolDeps.push(
+    "tailwindcss",
+    "postcss",
+    "autoprefixer",
+    "postcss-import",
+    "@tailwindcss/container-queries",
+    "tw-elements",
+  );
 }
-const portalPath = relative(targetDir, CORE_API_DIR).replaceAll("\\", "/");
+
+// The committed form of the facade dependency: a versioned tarball published as a
+// GitHub Release asset of the (public) host repo by the "Core Facade Release"
+// workflow. No registry, token, or account — any package manager can install it,
+// and the consumer's lockfile records the tarball checksum (tamper-evident pin).
+// Local co-dev against an unpushed facade uses yalc instead (see HOWTO.md).
+const HOST_REPO = "VirtoCommerce/vc-frontend";
+const coreTarballUrl = `https://github.com/${HOST_REPO}/releases/download/core-v${corePkg.version}/vc-frontend-core-${corePkg.version}.tgz`;
 
 // Shared entries the plugin does NOT install must be dropped from its MF config.
 const ALL_OPTIONAL_SHARED = {
@@ -150,14 +166,12 @@ const pkgJson = {
   version: "1.0.0",
   private: true,
   type: "module",
-  // Same Yarn as the host: the portal: protocol needs Berry (classic delegates via corepack).
-  packageManager: hostPkg.packageManager,
   scripts: {
     build: "vite build",
     preview: "vite preview --port 3001",
     "type-check": "vue-tsc --noEmit",
   },
-  dependencies: { "@vc-frontend/core": `portal:${portalPath}` },
+  dependencies: { "@vc-frontend/core": coreTarballUrl },
   // Compile-time only: nothing below ships in the bundle (MF shared, import: false).
   devDependencies: { ...sortedEntries(runtimeDeps), ...sortedEntries(toolDeps) },
 };
@@ -294,6 +308,14 @@ A Module Federation plugin for the VC storefront, scaffolded by \`yarn create:pl
 - Build: \`yarn build\` - Serve for the host: \`yarn preview\` (port 3001)
 - Full walkthrough (running against the host, shipping, versioning):
   the host repo's \`client-app/modules/federated/HOWTO.md\`.
+
+## The facade dependency
+
+\`@vc-frontend/core\` is pinned to a versioned tarball URL (a Release asset of the host
+repo) - the lockfile records its checksum. **Keep it that way in commits.** For local
+co-development against an unpushed facade, use yalc (\`yalc add @vc-frontend/core\`);
+run \`yalc remove @vc-frontend/core\` and restore the pinned URL before pushing - never
+commit a \`file:.yalc/...\` dependency.
 `;
 
 // ── write ─────────────────────────────────────────────────────────────────────
@@ -313,7 +335,8 @@ if (selected.tailwind) {
 }
 writeFileSync(join(targetDir, "src", "shims-vue.d.ts"), shimsVue);
 writeFileSync(join(targetDir, "README.md"), readme);
-writeFileSync(join(targetDir, ".gitignore"), "node_modules/\ndist/\n");
+// yalc artifacts (local facade co-dev) must never be committed - see README.
+writeFileSync(join(targetDir, ".gitignore"), "node_modules/\ndist/\n.yalc/\nyalc.lock\n");
 // Standalone project: keep Yarn out of the host's workspace/PnP context.
 writeFileSync(join(targetDir, ".yarnrc.yml"), "nodeLinker: node-modules\n");
 
@@ -329,4 +352,10 @@ console.log(`\nNext steps:
 
 Then point the host at it:
   APP_MF_HOST=true APP_MF_REMOTES='{"${pluginName}":"http://localhost:3001/mf-manifest.json"}' yarn build-only && yarn preview
+
+@vc-frontend/core is pinned to the core-v${corePkg.version} release asset. If that release
+has not been published yet, yarn install will 404 - either run the "Core Facade Release"
+workflow in the host repo once, or work purely locally with yalc:
+  (host)   yarn build:core-types && cd client-app/core-api && yalc publish
+  (plugin) yalc add @vc-frontend/core
 `);

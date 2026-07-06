@@ -1,0 +1,94 @@
+# Publishes the @vc-frontend/core facade as a versioned tarball Release asset, so
+# out-of-repo Module Federation plugins can pin it by URL with no registry or token:
+#
+#   https://github.com/VirtoCommerce/vc-frontend/releases/download/core-v<V>/vc-frontend-core-<V>.tgz
+#
+# Manual-only by design: the contract version bumps automatically on facade changes
+# (yarn build:core-types), but a human decides when a version becomes consumable.
+# Releases are immutable — re-running for an already-released version fails; bump the
+# contract version instead. See client-app/core-api/README.md and
+# client-app/modules/federated/TODO.md §1 (Facade distribution & local co-dev).
+name: Core Facade Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # create the core-v* tag + release with the built-in GITHUB_TOKEN
+    env:
+      FORCE_COLOR: true
+    steps:
+      - name: Set up Node 22
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: '22'
+
+      - name: Enable corepack
+        run: |
+          corepack enable
+
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+
+      - name: Read contract version
+        id: core
+        run: |
+          version=$(jq -r .version client-app/core-api/package.json)
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "tag=core-v$version" >> "$GITHUB_OUTPUT"
+          echo "tarball=vc-frontend-core-$version.tgz" >> "$GITHUB_OUTPUT"
+
+      # Releases are immutable: the plugin-side pin (URL + lockfile checksum) must never
+      # change meaning. A new contract means a new CORE_VERSION, not a re-release.
+      - name: Fail if this contract version is already released
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.core.outputs.tag }}
+        run: |
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            echo "::error::Release $TAG already exists — releases are immutable." \
+              "Bump the contract version (yarn build:core-types auto-bumps on facade" \
+              "changes; yarn bump:core major for breaking ones) and re-run."
+            exit 1
+          fi
+
+      - name: Install dependencies
+        run: |
+          yarn install
+
+      # Read-only drift check (NOT build:core-types, which regenerates and can
+      # auto-bump the version — a release must pack exactly what is committed).
+      - name: Validate the committed contract
+        run: |
+          yarn validate:core-types
+
+      - name: Pack the facade tarball
+        working-directory: client-app/core-api
+        run: |
+          npm pack
+
+      - name: Create release with tarball asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.core.outputs.version }}
+          TAG: ${{ steps.core.outputs.tag }}
+          TARBALL: ${{ steps.core.outputs.tarball }}
+        run: |
+          {
+            echo "Type contract + federation config of the storefront host facade, for Module Federation plugin builds."
+            echo
+            echo "Pin it in a plugin's package.json:"
+            echo
+            echo '```json'
+            echo "\"@vc-frontend/core\": \"https://github.com/$GITHUB_REPOSITORY/releases/download/$TAG/$TARBALL\""
+            echo '```'
+            echo
+            echo "Docs: [client-app/core-api/README.md](https://github.com/$GITHUB_REPOSITORY/blob/$GITHUB_SHA/client-app/core-api/README.md)"
+          } > release-notes.md
+          gh release create "$TAG" "client-app/core-api/$TARBALL" \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
+            --title "@vc-frontend/core $VERSION" \
+            --notes-file release-notes.md
