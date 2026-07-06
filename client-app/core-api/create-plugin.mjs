@@ -191,7 +191,12 @@ const pkgJson = {
   type: "module",
   scripts: {
     build: "vite build",
+    // Auto-rebuild dist/ on save; pair with `preview` for a build+reload loop.
+    watch: "vite build --watch",
     preview: "vite preview --port 3001",
+    // HMR remote: run the plugin as its own dev server so edits hot-update live inside
+    // a host that is itself running `yarn dev` (see HOWTO "Dev inner loop").
+    dev: "vite --port 3001",
     "type-check": "vue-tsc --noEmit",
   },
   dependencies: { "@vc-frontend/core": coreTarballUrl },
@@ -382,6 +387,6 @@ Then point the host at it:
 @vc-frontend/core is pinned to the core-v${corePkg.version} release asset. If that release
 has not been published yet, yarn install will 404 - either run the "Core Facade Release"
 workflow in the host repo once, or work purely locally with yalc:
-  (host)   yarn build:core-types && cd client-app/core-api && yalc publish
+  (host)   yarn build:core-types && cd client-app/core-api && yalc publish --private
   (plugin) yalc add @vc-frontend/core
 `);

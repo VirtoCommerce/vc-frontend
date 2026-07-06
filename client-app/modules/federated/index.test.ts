@@ -7,6 +7,7 @@ const {
   registerRemotesMock,
   loggerErrorMock,
   loggerWarnMock,
+  loggerInfoMock,
   notificationErrorMock,
   getAppInsightsWhenReadyMock,
 } = vi.hoisted(() => ({
@@ -14,6 +15,7 @@ const {
   registerRemotesMock: vi.fn(),
   loggerErrorMock: vi.fn(),
   loggerWarnMock: vi.fn(),
+  loggerInfoMock: vi.fn(),
   notificationErrorMock: vi.fn(),
   getAppInsightsWhenReadyMock: vi.fn(),
 }));
@@ -24,7 +26,7 @@ vi.mock("@module-federation/enhanced/runtime", () => ({
 }));
 
 vi.mock("@/core/utilities", () => ({
-  Logger: { error: loggerErrorMock, warn: loggerWarnMock, info: vi.fn(), debug: vi.fn() },
+  Logger: { error: loggerErrorMock, warn: loggerWarnMock, info: loggerInfoMock, debug: vi.fn() },
 }));
 
 vi.mock("@/shared/notification", () => ({
@@ -135,6 +137,10 @@ describe("initFederatedModules", () => {
     expect(loadRemoteMock).toHaveBeenCalledWith("news/plugin");
     expect(initMock).toHaveBeenCalledOnce();
     expect(result).toEqual({ loaded: ["news"], failed: [], skipped: [] });
+    // Happy path still emits a positive dev-console confirmation (invisible otherwise
+    // for extension-point-only plugins), and no failure noise.
+    expect(loggerInfoMock).toHaveBeenCalledWith("[MF] plugins loaded=[news]");
+    expect(loggerWarnMock).not.toHaveBeenCalled();
   });
 
   it("counts a plugin without init() as loaded (init is optional)", async () => {

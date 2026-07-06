@@ -189,9 +189,12 @@ Notes on the host side:
   rebuilding the host.
 
 Open `https://localhost:3000/my-plugin` — your separately-built page renders inside the
-live storefront. If something's off, the console tells you which gate said no
-(`[MF] Skipping ...` / `[MF] Failed to load ...`), and the boot outcome is logged as
-`{ loaded, failed, skipped }`.
+live storefront. In a development-mode build the console confirms the load with
+`[MF] plugins loaded=[my-plugin]` (the positive signal you want when a plugin registers
+an extension point and renders no route of its own). If something's off, the console
+tells you which gate said no instead — `[MF] Skipping ...` (CONTRACT GATE) or
+`[MF] Failed to load ...` (SHARED-DEPENDENCY GATE) — followed by the outcome summary
+`[MF] plugins loaded=… failed=[…] skipped=[…]`.
 
 `APP_MODULES_FEDERATION_REMOTES` is a **map — any number of plugins**, each key being the remote's MF
 `name` and each value its manifest URL (different origins are fine). All plugins are
@@ -245,8 +248,10 @@ copies real files into the consumer (no symlinks), so Vite/TS resolve it like a 
 install:
 
 ```bash
-# once: publish the local facade and link it into the plugin
-cd vc-frontend/client-app/core-api && yalc publish
+# once: publish the local facade and link it into the plugin.
+# --private is required: the facade package is `"private": true`, and yalc (like npm)
+# refuses to publish a private package without it. `yarn core:yalc-push` already passes it.
+cd vc-frontend/client-app/core-api && yalc publish --private
 cd my-plugin && yalc add @vc-frontend/core && yarn install
 
 # every facade edit: rebuild the contract + push to all linked plugins (one command)

@@ -20,7 +20,7 @@
     "build-only": "yarn precheck && vite build",
     "build:core-types": "yarn precheck && node client-app/core-api/build-types.mjs",
     "bump:core": "node client-app/core-api/bump-version.mjs",
-    "core:yalc-push": "yarn build:core-types && cd client-app/core-api && yalc push",
+    "core:yalc-push": "yarn build:core-types && cd client-app/core-api && yalc push --private",
     "create:plugin": "node client-app/core-api/create-plugin.mjs",
     "validate:types": "yarn precheck && vue-tsc --build --force",
     "validate:dependencies": "yarn precheck && depcruise client-app",

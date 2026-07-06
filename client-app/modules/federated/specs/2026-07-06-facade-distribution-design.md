@@ -89,12 +89,13 @@ https://github.com/VirtoCommerce/vc-frontend/releases/download/core-v<V>/vc-fron
 - One root `package.json` script:
 
   ```jsonc
-  "core:yalc-push": "yarn build:core-types && cd client-app/core-api && yalc push"
+  "core:yalc-push": "yarn build:core-types && cd client-app/core-api && yalc push --private"
   ```
 
   Rebuild the contract and propagate to every locally-linked plugin in one command.
   (`yalc push` publishes to the local `~/.yalc` store *and* updates all consumers that
-  ran `yalc add`/`yalc link`.)
+  ran `yalc add`/`yalc link`. `--private` is required because the facade package is
+  `"private": true` — yalc refuses to publish a private package without it.)
 - yalc is **not** added as a host devDependency — it is a dev-machine tool
   (`npm i -g yalc`), not part of the host build; the docs say so. The script failing
   with "yalc: command not found" is acceptable and self-explanatory.
@@ -108,7 +109,7 @@ https://github.com/VirtoCommerce/vc-frontend/releases/download/core-v<V>/vc-fron
     sentence on what it is (a Release asset of the public host repo; checksum recorded
     in the plugin's lockfile; no token).
   - New short subsection "Co-developing the facade and a plugin" — the yalc loop
-    (`yalc publish` → `yalc add` → edit → `yarn core:yalc-push`), plus hygiene: never
+    (`yalc publish --private` → `yalc add` → edit → `yarn core:yalc-push`), plus hygiene: never
     commit the injected `file:.yalc/…` dep; `yalc remove` + restore the pinned URL
     before pushing.
   - Versioning cheat sheet: add a row for "consume a new facade version" (bump the

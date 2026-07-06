@@ -192,6 +192,14 @@ function trackOutcome(result: IFederatedLoadResult): void {
 function reportOutcome(result: IFederatedLoadResult): void {
   const { loaded, failed, skipped } = result;
   if (failed.length === 0 && skipped.length === 0) {
+    // Happy path: no AppInsights exception, no prod noise (Logger is a no-op in
+    // production builds). But a plugin author running the prescribed local flow
+    // (build --mode=development + preview, where Logger IS live) otherwise gets zero
+    // confirmation their remote loaded — invisible for extension-point-only plugins
+    // that render no route. One positive line closes that gap.
+    if (loaded.length > 0) {
+      Logger.info(`[MF] plugins loaded=[${loaded.join(", ")}]`);
+    }
     return;
   }
   Logger.warn(`[MF] plugins loaded=${loaded.length} failed=[${failed.join(", ")}] skipped=[${skipped.join(", ")}]`);

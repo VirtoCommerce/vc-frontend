@@ -114,7 +114,7 @@ visibility), so **no registry, token, or account is needed**:
   - *Fallback:* Yarn `#workspace=@vc-frontend/core` git link — no publish step, but clones
     the whole (large) storefront repo per install and is Yarn-Berry-only.
 - **Local co-dev (editing the host facade + plugin together, unpushed):** **yalc** —
-  `yalc publish` in `core-api` → `yalc add @vc-frontend/core` in the plugin →
+  `yalc publish --private` in `core-api` → `yalc add @vc-frontend/core` in the plugin →
   `yarn core:yalc-push` on change. Purely local/offline (`~/.yalc` store): **no tokens,
   accounts, or registry**, and bundler-robust (copies real files — no symlink
   duplicate-instance footgun). Don't commit `.yalc/` or the injected `file:` dep;
