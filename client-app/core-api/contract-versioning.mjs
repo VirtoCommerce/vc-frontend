@@ -1,7 +1,7 @@
 /**
- * Pure decision logic for contract versioning, extracted from build-types.mjs so it
- * is unit-testable (the build script executes its pipeline on import and cannot be
- * imported by tests). No filesystem or git access here - callers supply the facts.
+ * Pure decision logic for contract versioning. Must stay side-effect-free (no
+ * filesystem/git — callers supply the facts) and separate from build-types.mjs:
+ * that script executes its pipeline on import, so tests can only import THIS module.
  */
 
 /**
