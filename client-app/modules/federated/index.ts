@@ -12,8 +12,10 @@ import { checkHostCompatibility } from "./version-gate";
  * - Version safety: an incompatible remote is skipped before any of its code runs.
  * - Isolation: one bad remote can't abort the others; outcomes are logged/returned.
  * - Every network step is time-budgeted: the app-runner awaits this loader before
- *   installing the router, so a hung remote must degrade to failed/skipped, never
- *   block first paint.
+ *   installing the router, so a hung remote is *bounded* — it degrades to failed/skipped
+ *   within its budget rather than hanging boot forever. It does still delay first paint by
+ *   up to manifestTimeout + loadTimeout + initTimeout in the worst case, so keep budgets
+ *   tight (defaults: 5s manifest, 10s load, 10s init).
  * Discovery is env-driven (`APP_MF_REMOTES`); the harness ships no built-in remote.
  */
 
@@ -66,6 +68,10 @@ async function withTimeout<T>(work: Promise<T>, ms: number, label: string): Prom
 /**
  * Remote code executes with full app privileges, so the entry URL must not be
  * downgradable: https only, with http allowed solely for localhost development.
+ * NOTE: this validates the MANIFEST url only. The manifest then declares its own
+ * remoteEntry.js/chunk URLs, which loadRemote fetches as-is — they are NOT re-checked
+ * here. The trust boundary is therefore the configured remote: whoever controls that
+ * https manifest is trusted to point at code URLs of their choosing.
  */
 function isAllowedRemoteUrl(entry: string): boolean {
   let url: URL;

@@ -101,7 +101,8 @@ export function createRemoteFederationOptions({ name, requiredHostVersion, expos
     // facade version does not satisfy this range.
     manifest: {
       additionalData: (data) => {
-        data.stats.metaData.requiredHostVersion = requiredHostVersion;
+        // `??=` so a build where MF hands us stats without a metaData object doesn't throw.
+        (data.stats.metaData ??= {}).requiredHostVersion = requiredHostVersion;
         return data.stats;
       },
     },

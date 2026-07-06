@@ -13,8 +13,10 @@ import type { ProxyOptions, UserConfig, PluginOption } from "vite";
 const graphql = graphqlImport.default ?? graphqlImport;
 
 // Libraries imported only via dynamic import()/defineAsyncComponent; kept out of the eager
-// `vendor` chunk so they stay in their own lazy chunks.
-const DEFERRED_LIBS = ["skyflow-js", "barcode-detector", "marked", "nouislider"];
+// `vendor` chunk so they stay in their own lazy chunks. `@module-federation/*` is reached
+// only through the flag-gated dynamic import in app-runner, so deferring it keeps the MF
+// runtime out of the default (APP_MF_HOST off) eager bundle entirely.
+const DEFERRED_LIBS = ["skyflow-js", "barcode-detector", "marked", "nouislider", "@module-federation"];
 
 function getProxy(target: ProxyOptions["target"], options: Omit<ProxyOptions, "target"> = {}): ProxyOptions {
   const dontTrustSelfSignedCertificate = false;

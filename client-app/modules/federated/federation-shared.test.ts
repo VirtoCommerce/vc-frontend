@@ -97,6 +97,14 @@ describe("createRemoteFederationOptions", () => {
     expect(stats.metaData.requiredHostVersion).toBe("^1.2.0");
   });
 
+  it("creates metaData when the stats object has none (no throw)", () => {
+    const options = createRemoteFederationOptions({ name: "news", requiredHostVersion: "^1.2.0" });
+    const stats = {} as { metaData?: Record<string, unknown> };
+
+    expect(() => options.manifest.additionalData({ stats })).not.toThrow();
+    expect(stats.metaData?.requiredHostVersion).toBe("^1.2.0");
+  });
+
   it("forwards sharedOverrides and custom exposes", () => {
     const options = createRemoteFederationOptions({
       name: "news",

@@ -229,11 +229,20 @@ if (CHECK_MODE) {
       );
     }
   }
-  step(
-    base
-      ? `bump guard passed (base ${base.baseRef} @ ${base.baseSha.slice(0, 8)}).`
-      : "bump guard skipped: no baseline.",
-  );
+  if (base) {
+    step(`bump guard passed (base ${base.baseRef} @ ${base.baseSha.slice(0, 8)}).`);
+  } else {
+    // The require-major gate can only run against a committed baseline contract. It is
+    // legitimately absent while this contract is first introduced, but once it exists on
+    // the base branch a missing baseline means a shallow/misconfigured checkout — which
+    // would silently disable the strongest gate. Warn loudly (esp. in CI) rather than
+    // pass quietly; the drift guard above and `yarn bump:core major` remain the backstop.
+    const where = process.env.CI ? "CI" : "local";
+    console.warn(
+      `[build-types] ⚠ bump guard NOT enforced (${where}): no committed baseline contract to diff against. ` +
+        "If the contract already exists on the base branch, ensure the base ref is fetched (e.g. fetch-depth: 0).",
+    );
+  }
 } else {
   autoBumpMinorIfContractChanged(contract, corePkg.version);
   mkdirSync(DIST_DIR, { recursive: true });
