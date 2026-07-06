@@ -4,7 +4,7 @@
   //
   // `build-types.mjs` runs this to emit the facade's whole reachable type graph
   // into `.types-build/`, then rolls it up with rollup-plugin-dts into a single
-  // self-contained `dist/index.d.ts`. It is NOT part of the app typecheck.
+  // self-contained `contract/index.d.ts`. It is NOT part of the app typecheck.
   //
   // The `include` must keep ALL ambient host declarations in scope: the facade
   // re-exports ui-kit barrels (dragging in every component .vue, which reference

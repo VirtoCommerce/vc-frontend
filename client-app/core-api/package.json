@@ -5,21 +5,21 @@
   "type": "module",
   "private": true,
   "files": [
-    "dist/index.d.ts",
-    "dist/tailwind-preset.cjs",
+    "contract/index.d.ts",
+    "contract/tailwind-preset.cjs",
     "federation.mjs",
     "federation.d.mts"
   ],
-  "types": "./dist/index.d.ts",
+  "types": "./contract/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts"
+      "types": "./contract/index.d.ts"
     },
     "./federation": {
       "types": "./federation.d.mts",
       "import": "./federation.mjs"
     },
-    "./tailwind-preset": "./dist/tailwind-preset.cjs"
+    "./tailwind-preset": "./contract/tailwind-preset.cjs"
   },
   "scripts": {
     "build:types": "node build-types.mjs"

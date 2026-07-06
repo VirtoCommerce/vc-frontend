@@ -27,7 +27,7 @@ any plugin-repo CI checks are out of scope (tracked in TODO.md).
 Add a `files` field so `npm pack` carries only the distributables:
 
 ```jsonc
-"files": ["dist/index.d.ts", "federation.mjs", "federation.d.mts", "tailwind-preset.cjs"]
+"files": ["contract/index.d.ts", "federation.mjs", "federation.d.mts", "tailwind-preset.cjs"]
 ```
 
 - `package.json` is included automatically; the existing `exports` map already routes
@@ -155,12 +155,12 @@ https://github.com/VirtoCommerce/vc-frontend/releases/download/core-v<V>/vc-fron
 - **Tailwind preset had to become a generated artifact.** Installing the real tarball
   revealed `tailwind-preset.cjs` re-exported `../../tailwind.config` — resolvable via
   `portal:`/yalc only, broken in a tarball. Implemented: `build-types.mjs` now also
-  generates a self-contained `dist/tailwind-preset.cjs` (theme data inlined via
+  generates a self-contained `contract/tailwind-preset.cjs` (theme data inlined via
   `tailwindcss/loadConfig`; `content` omitted; the config's Tailwind plugins re-emitted
   as consumer-resolved `require`s, added to the scaffold's `--with-tailwind` deps).
   Drift-checked by `validate:core-types`; a preset change auto-bumps `CORE_VERSION`
   (minor) exactly like a contract change, because the released tarball is immutable per
-  version. The `files`/`exports` entries moved to `dist/tailwind-preset.cjs`.
+  version. The `files`/`exports` entries moved to `contract/tailwind-preset.cjs`.
 - **Drift check correction:** the release workflow runs `yarn validate:core-types`
   (read-only `--check`), not `build:core-types` — the build variant regenerates and can
   auto-bump, and a release must pack exactly what is committed.

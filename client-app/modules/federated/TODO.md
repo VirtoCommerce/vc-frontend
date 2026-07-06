@@ -146,6 +146,6 @@ The current facade (`core-api/index.ts`) is intentionally minimal. As real plugi
 built, expect requests to widen it. Guard rails:
 
 - Keep it **additive** — removing/renaming ⇒ breaking ⇒ `CORE_VERSION` bump.
-- Every addition grows `dist/index.d.ts` and its transitive type graph — watch the size.
+- Every addition grows `contract/index.d.ts` and its transitive type graph — watch the size.
 - Prefer exposing **composables/functions** over raw internals, so the implementation can
   change behind the facade without breaking the contract.

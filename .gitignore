@@ -78,9 +78,7 @@ dist-ssr
 # Playwright MCP
 .playwright-mcp/
 
-# The generated @vc-frontend/core distributables (type contract dist/index.d.ts,
-# tailwind preset snapshot dist/tailwind-preset.cjs) are committed, overriding the
-# repo-wide `dist` ignore above. The intermediate declaration emit stays ignored.
-!client-app/core-api/dist/
-!client-app/core-api/dist/**
+# The generated @vc-frontend/core artifacts (contract/index.d.ts, contract/tailwind-preset.cjs)
+# are committed by design ("contract" is deliberately not named dist — it is the versioned
+# type contract, not transient build output). The intermediate declaration emit stays ignored.
 client-app/core-api/.types-build/

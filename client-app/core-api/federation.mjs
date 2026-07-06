@@ -118,7 +118,7 @@ export function createRemoteFederationOptions({ name, requiredHostVersion, expos
         return data.stats;
       },
     },
-    // Types come from the committed contract (dist/index.d.ts), not MF codegen.
+    // Types come from the committed contract (contract/index.d.ts), not MF codegen.
     dts: false,
   };
 }

@@ -83,7 +83,7 @@ built chunks reference the host's live instances. (Add `vue-i18n`, `@apollo/clie
 `@vue/apollo-composable`, `@vueuse/core` the same way if you import them.)
 
 > **Type-peers — install them even if your code never imports them.** The facade's
-> `dist/index.d.ts` *references* external libraries in its own types (e.g. `useModuleSettings`
+> `contract/index.d.ts` *references* external libraries in its own types (e.g. `useModuleSettings`
 > pulls in `@vueuse/core`, `apolloClient` pulls in `@apollo/client`). If a referenced
 > package isn't installed, TypeScript **silently degrades that whole facade export to
 > `any`** — the plugin tsconfig ships `skipLibCheck: true`, so you get no "Cannot find
@@ -93,7 +93,7 @@ built chunks reference the host's live instances. (Add `vue-i18n`, `@apollo/clie
 > hand-written `package.json`s need to copy them in; the generator is the recommended path
 > precisely so you never have to.
 
-The facade dependency brings you the type contract (`dist/index.d.ts`) and the
+The facade dependency brings you the type contract (`contract/index.d.ts`) and the
 shared-dependency config (`@vc-frontend/core/federation`).
 
 ## Step 2 — wire the build

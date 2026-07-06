@@ -186,7 +186,7 @@ module.exports = {
     // and semver (from the ROOT package.json, not the facade's); neither belongs in
     // the app dependency graph.
     exclude: {
-      path: "client-app/core-api/(dist/|build-types\\.mjs$|bump-version\\.mjs$)",
+      path: "client-app/core-api/(contract/|build-types\\.mjs$|bump-version\\.mjs$)",
     },
     doNotFollow: {
       path: "node_modules",

@@ -98,7 +98,7 @@ Two halves, and they are deliberately different:
 
 |                              | Plugin gets…                                                                | From…                                             |
 | ---------------------------- | --------------------------------------------------------------------------- | ------------------------------------------------- |
-| **At build/type-check time** | **Types only** — a self-contained `dist/index.d.ts`                         | `yarn build:core-types` output, committed         |
+| **At build/type-check time** | **Types only** — a self-contained `contract/index.d.ts`                         | `yarn build:core-types` output, committed         |
 | **At runtime**               | The host's **live singleton instance** (real router, real Apollo client, …) | MF shared scope (`shareStrategy: "loaded-first"`) |
 
 This is "publish from source": the plugin compiles against a frozen type contract and
@@ -361,7 +361,7 @@ central-discovery response (see `TODO.md` #3 — vc-shell already passes `entry.
   logged and reported, others still load. A hung remote is cut off by the time budgets.
 - **Fail closed on version.** Can't read/parse/satisfy a manifest ⇒ skip that remote.
 - **The `.d.ts` is generated and drift-guarded.** After any facade change, run
-  `yarn build:core-types` and commit `client-app/core-api/dist/index.d.ts` (zero `@/`
+  `yarn build:core-types` and commit `client-app/core-api/contract/index.d.ts` (zero `@/`
   references, checked). `yarn validate` (and therefore CI `yarn build`) runs
   `validate:core-types`, which regenerates the contract and **fails if the committed
   file is stale** — same for `CORE_VERSION`/package.json sync and shared-range drift.

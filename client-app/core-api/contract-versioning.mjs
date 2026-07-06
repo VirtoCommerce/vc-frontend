@@ -11,7 +11,7 @@
  *
  * ASSUMPTION: rollup-plugin-dts consolidates the whole surface into trailing
  * `export { ... }` / `export type { ... }` blocks (verified against the current
- * dist/index.d.ts). It does NOT match inline forms (`export declare const X`,
+ * contract/index.d.ts). It does NOT match inline forms (`export declare const X`,
  * `export interface X`). If a future rollup/config change starts emitting inline
  * exports, a removed inline symbol would be invisible here and slip through as a
  * non-breaking minor — extend the matcher to cover those forms if that ever happens.
