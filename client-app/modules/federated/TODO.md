@@ -36,7 +36,7 @@ The settings home is a **central `ModuleFederation.Remotes` store setting** (`[{
 `IsPublic`, store-level), owned by one small dedicated platform module — deliberately **not**
 tied to any plugin's own BE module. We do **not** have each BE module self-declare its remote:
 the FE plugin lives in **its own repo, decoupled from any BE module**, so routing discovery
-back through a BE module's settings would re-introduce exactly the dependency we're removing.
+back through a BE module's settings would create exactly the dependency this design avoids.
 One central, source-agnostic list is the target.
 
 Why not vc-shell's `AppManifestService` as the primary: it discovers only plugins
@@ -76,9 +76,9 @@ The setting holds a **URL**; the host never knows or cares who serves it — so 
 - browser-reachable and **allowlisted in the CSP**;
 - plugin built with `publicPath: "auto"`.
 
-The artifact is **not** shipped in the BE module zip — that would re-couple FE releases to
-module releases and force frontenders to run the platform locally (see *Separation of
-concerns* below). Providers are interchangeable **examples that satisfy the contract**,
+The artifact is **not** shipped in the BE module zip (vc-shell's convention) — that would
+couple FE releases to module releases and force frontenders to run the platform locally
+(see *Separation of concerns* below). Providers are interchangeable **examples that satisfy the contract**,
 chosen per-env via the setting URL — jsDelivr / GitHub Pages (pilot & dev/QA), Cloudflare
 Pages / Azure Static Web Apps / Blob+CDN / own CDN (prod). Run one in QA and another in
 prod with zero host change.
