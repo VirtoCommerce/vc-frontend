@@ -176,10 +176,12 @@ yarn build-only --mode=development && yarn preview  # -> https://localhost:3000
 
 Notes on the host side:
 
-- **build + preview, not `yarn dev`** — the dev server can't prebundle the shared
-  GraphQL facade in MF mode (known limitation); the production build has no such issue.
-  `yarn preview` proxies API calls to `APP_BACKEND_URL` exactly like dev does, so your
-  usual `.env.local` backend applies.
+- **build + preview is the reliable path** — it always works and matches what CI/prod
+  produce, so it is the safe default for *running* the host. (`yarn dev` also works and
+  additionally gives HMR — see [**The dev inner loop**](#the-dev-inner-loop) below — but
+  the dev server's shared-GraphQL-facade prebundling is the historically fragile part, so
+  reach for it as the iteration loop, not the canonical run.) `yarn preview` proxies API
+  calls to `APP_BACKEND_URL` exactly like dev does, so your usual `.env.local` backend applies.
 - **`--mode=development` matters locally**: a production-mode build resolves the store
   from the browser's hostname — `localhost` means nothing to the backend, and the app
   renders an empty page. A development-mode build resolves the store from
@@ -206,6 +208,30 @@ APP_MODULES_FEDERATION_REMOTES='{"my-plugin":"https://a.example.com/my-plugin/mf
 
 > http is allowed for localhost only. Anywhere else: https, plus CSP entries for each
 > plugin origin — see the **Security model** section of the README before shipping.
+
+### The dev inner loop
+
+Once the two servers are up, how you iterate depends on which side you're changing.
+
+**Changing plugin code — two loops, pick one** (the scaffold ships a script for each):
+
+- **Rebuild + reload (always works):** `yarn watch` in the plugin (`vite build --watch`,
+  rebuilds `dist/` on save in ~0.5s) while `yarn preview` keeps serving it; then reload the
+  browser. No host rebuild, no `preview` restart — the host re-fetches the manifest + the
+  content-hashed chunks on reload. Do a cache-bypassing reload (DevTools "Disable cache")
+  so a stale `mf-manifest.json` isn't served.
+- **HMR (no reload):** run the plugin as its own dev server — `yarn dev` (`vite --port
+  3001`, which serves `mf-manifest.json` in dev too) instead of `build`+`preview` — **and**
+  run the host with `yarn dev` instead of `build-only`+`preview`. The plugin's HMR client is
+  injected into the host page, so edits hot-update live across the MF boundary. Verified on
+  this harness for route / UI-kit / `useModuleSettings` plugins. *Caveat:* the dev server's
+  shared-GraphQL-facade prebundling is the fragile bit — it did not reproduce as a problem in
+  testing, but is unverified for a plugin that shares `@apollo/client`; if `yarn dev` on the
+  host fails to boot or a shared dep misbehaves, fall back to the rebuild loop above.
+
+**Changing the host** — you only rebuild the host when the **remote list/name** changes
+(`APP_MODULES_FEDERATION_REMOTES` is inlined at build time) or host source changes; plain plugin edits
+never need a host rebuild.
 
 ## Step 5 — ship it
 

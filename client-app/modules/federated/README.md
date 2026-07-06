@@ -21,10 +21,11 @@ without touching or rebuilding this repo.
 
 ```bash
 # Serve the host WITH federation enabled, pointing at one or more remotes.
-# Use build + preview, NOT `yarn dev`: the dev server can't prebundle the shared GraphQL
-# facade in MF mode (known limitation). Use `--mode=development` locally so the store
-# resolves from APP_BACKEND_URL — a prod-mode build resolves it from `localhost` and renders
-# an empty page. See HOWTO.md step 4.
+# build + preview is the reliable path (matches CI/prod); `yarn dev` also works and adds
+# HMR, but the dev server's shared-GraphQL-facade prebundling is the fragile part — use it
+# as the iteration loop, not the canonical run (HOWTO.md "The dev inner loop"). Use
+# `--mode=development` locally so the store resolves from APP_BACKEND_URL — a prod-mode build
+# resolves it from `localhost` and renders an empty page. See HOWTO.md step 4.
 APP_MODULES_FEDERATION_ENABLED=true \
 APP_MODULES_FEDERATION_REMOTES='{"news":"https://plugins.example.com/news/mf-manifest.json"}' \
 yarn build-only --mode=development && yarn preview
