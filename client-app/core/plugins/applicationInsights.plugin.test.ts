@@ -63,7 +63,8 @@ describe("getAppInsightsWhenReady", () => {
     installPlugin(mod.applicationInsightsPlugin);
 
     await expect(mod.getAppInsightsWhenReady(1000)).resolves.toBe(instance);
-    expect(mod.getAppInsights()).toBe(instance);
+    // The fast path: a second call resolves synchronously from the captured instance.
+    await expect(mod.getAppInsightsWhenReady(1000)).resolves.toBe(instance);
   });
 
   it("resolves undefined once install finds AppInsights is not configured", async () => {
@@ -73,7 +74,6 @@ describe("getAppInsightsWhenReady", () => {
     installPlugin(mod.applicationInsightsPlugin);
 
     await expect(mod.getAppInsightsWhenReady(1000)).resolves.toBeUndefined();
-    expect(mod.getAppInsights()).toBeUndefined();
   });
 
   it("resolves undefined when configured but onLoaded never fires (timeout path)", async () => {

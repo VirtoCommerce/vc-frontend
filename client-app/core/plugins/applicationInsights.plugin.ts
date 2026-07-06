@@ -25,27 +25,18 @@ const DEFAULT_READY_TIMEOUT_MS = 10_000;
 // onLoaded fires, or with undefined when install() finds AppInsights is not configured
 // for the store. Boot-time services (e.g. the federated module loader) start BEFORE this
 // plugin installs, and even after install the SDK's onLoaded fires asynchronously later -
-// so a bare getAppInsights() would almost always read undefined at boot.
+// so a bare synchronous read of the instance would almost always be undefined at boot.
 let resolveReady: (instance: ApplicationInsightsType | undefined) => void = () => {};
 const readyPromise = new Promise<ApplicationInsightsType | undefined>((resolve) => {
   resolveReady = resolve;
 });
 
 /**
- * The library's own useAppInsights() is inject()-based and works only inside component
- * setup. This getter serves non-component code (boot-time services like the federated
- * module loader). Undefined until the plugin loads, or when AppInsights is not
- * configured for the store - callers must treat tracking as best-effort.
- */
-export function getAppInsights(): ApplicationInsightsType | undefined {
-  return appInsightsInstance;
-}
-
-/**
- * Awaitable counterpart to getAppInsights() for boot-time callers that would otherwise
- * read undefined because AppInsights has not finished loading yet. Resolves with the
- * instance once it loads, or with undefined when AppInsights is not configured or does
- * not load within `timeoutMs` - telemetry stays best-effort and never hangs the caller.
+ * Serves non-component code that runs at boot, before the SDK has loaded (e.g. the
+ * federated module loader) - the library's own useAppInsights() is inject()-based and
+ * works only inside component setup. Resolves with the instance once it loads, or with
+ * undefined when AppInsights is not configured for the store or does not load within
+ * `timeoutMs` - telemetry stays best-effort and never hangs the caller.
  */
 export async function getAppInsightsWhenReady(
   timeoutMs = DEFAULT_READY_TIMEOUT_MS,
