@@ -16,12 +16,21 @@ import { createRequire } from "node:module";
 import { dirname, join, relative, resolve } from "node:path";
 import * as readline from "node:readline/promises";
 import { fileURLToPath } from "node:url";
+import { MF_SHARED_RANGES } from "./federation.mjs";
 
 const CORE_API_DIR = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(CORE_API_DIR, "../..");
 const require = createRequire(import.meta.url);
 const hostPkg = require(resolve(REPO_ROOT, "package.json"));
 const corePkg = require("./package.json");
+
+// The facade's type-peers: every MF shared singleton (federation.mjs) is also referenced
+// by the contract's own types (e.g. useModuleSettings -> @vueuse/core, apolloClient ->
+// @apollo/client), so ALL of them must be installed or those facade types silently resolve
+// to `any` — `skipLibCheck` (standard in the plugin tsconfig) hides the missing module.
+// They are installed unconditionally below, independent of the optional runtime groups
+// (which only decide MF *shared* config). Same single source of truth as the shared config.
+const typePeerNames = Object.keys(MF_SHARED_RANGES).filter((name) => name !== "@vc-frontend/core");
 
 // ── input ─────────────────────────────────────────────────────────────────────
 const args = process.argv.slice(2);
@@ -140,7 +149,9 @@ if (selected.tailwind) {
 const HOST_REPO = "VirtoCommerce/vc-frontend";
 const coreTarballUrl = `https://github.com/${HOST_REPO}/releases/download/core-v${corePkg.version}/vc-frontend-core-${corePkg.version}.tgz`;
 
-// Shared entries the plugin does NOT install must be dropped from its MF config.
+// Optional groups the plugin does not USE at runtime are dropped from its MF shared config.
+// (They may still be installed as type-peers via typePeerNames, but declaring an unused
+// singleton as shared only risks a spurious version-gate failure at load — so drop it.)
 const ALL_OPTIONAL_SHARED = {
   router: ["vue-router"],
   i18n: ["vue-i18n"],
@@ -161,6 +172,18 @@ const sharedOverridesArg = droppedShared.length
 const sortedEntries = (names) =>
   Object.fromEntries(names.sort((a, b) => a.localeCompare(b)).map((name) => [name, hostVersion(name)]));
 
+// Merge dependency maps left-to-right (earlier map wins on conflicts — so a group's
+// host-pinned version beats a contract-peer fallback), returning a name-sorted object.
+const mergeDeps = (...maps) => {
+  const merged = {};
+  for (const map of maps) {
+    for (const [name, range] of Object.entries(map)) {
+      merged[name] ??= range;
+    }
+  }
+  return Object.fromEntries(Object.keys(merged).sort((a, b) => a.localeCompare(b)).map((name) => [name, merged[name]]));
+};
+
 const pkgJson = {
   name: pluginName,
   version: "1.0.0",
@@ -172,8 +195,11 @@ const pkgJson = {
     "type-check": "vue-tsc --noEmit",
   },
   dependencies: { "@vc-frontend/core": coreTarballUrl },
-  // Compile-time only: nothing below ships in the bundle (MF shared, import: false).
-  devDependencies: { ...sortedEntries(runtimeDeps), ...sortedEntries(toolDeps) },
+  // Compile-time only — nothing here ships in the bundle: packages the plugin imports are
+  // MF-shared (import: false, borrowed from the host at runtime); the rest are type-peers
+  // and tooling, tree-shaken away. `typePeerNames` ensures every facade type-peer is present
+  // even when its optional runtime group wasn't selected (see the note at the top of file).
+  devDependencies: mergeDeps(sortedEntries(runtimeDeps), sortedEntries(toolDeps), sortedEntries(typePeerNames)),
 };
 
 const viteConfig = `import { federation } from "@module-federation/vite";
@@ -343,7 +369,7 @@ writeFileSync(join(targetDir, ".yarnrc.yml"), "nodeLinker: node-modules\n");
 console.log(`\nScaffolded "${pluginName}" at ${targetDir}`);
 console.log(`  deps pinned from host: ${runtimeDeps.join(", ")}`);
 if (droppedShared.length) {
-  console.log(`  dropped from MF shared (not installed): ${droppedShared.join(", ")}`);
+  console.log(`  dropped from MF shared (unused at runtime): ${droppedShared.join(", ")}`);
 }
 console.log(`\nNext steps:
   cd ${relative(process.cwd(), targetDir) || "."}

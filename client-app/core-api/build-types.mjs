@@ -321,7 +321,8 @@ if (CHECK_MODE) {
   writeFileSync(PRESET_OUT_FILE, tailwindPreset, "utf8");
   step(`wrote ${PRESET_OUT_FILE}.`);
 
-  // External peer imports the contract expects the plugin (or host) to provide.
+  // External peer imports the contract expects the plugin (or host) to provide. These are
+  // the MF shared singletons (federation.mjs) — create-plugin installs them as type-peers.
   const externals = [...new Set([...code.matchAll(/from ['"]([^'".][^'"]*)['"]/g)].map((m) => m[1]))].sort((a, b) =>
     a.localeCompare(b),
   );

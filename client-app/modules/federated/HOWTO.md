@@ -82,6 +82,17 @@ imports. `createRemoteShared()` then guarantees none of it lands in the bundle �
 built chunks reference the host's live instances. (Add `vue-i18n`, `@apollo/client`,
 `@vue/apollo-composable`, `@vueuse/core` the same way if you import them.)
 
+> **Type-peers — install them even if your code never imports them.** The facade's
+> `dist/index.d.ts` *references* external libraries in its own types (e.g. `useModuleSettings`
+> pulls in `@vueuse/core`, `apolloClient` pulls in `@apollo/client`). If a referenced
+> package isn't installed, TypeScript **silently degrades that whole facade export to
+> `any`** — the plugin tsconfig ships `skipLibCheck: true`, so you get no "Cannot find
+> module" error, just lost intellisense (an IDE hover shows `any`). These are exactly the
+> **MF shared singletons** (`federation.mjs`), so **`yarn create:plugin` installs the whole
+> set for you automatically** — regardless of which optional groups you pick. Only
+> hand-written `package.json`s need to copy them in; the generator is the recommended path
+> precisely so you never have to.
+
 The facade dependency brings you the type contract (`dist/index.d.ts`) and the
 shared-dependency config (`@vc-frontend/core/federation`).
 
