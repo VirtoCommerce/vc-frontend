@@ -9,6 +9,26 @@ import type { IPageTemplate } from "@/shared/static-content";
 import type { MaybeRefOrGetter } from "vue";
 
 /**
+ * Extracts the page file name (without the language segment and extension) from a content file
+ * relative URL — e.g. "/blogs/my_post.en-US.page" → "my_post". Mirrors how the admin blade parses
+ * the File name: drop the extension, then drop a trailing culture segment when it matches a known
+ * culture. Used to derive the storefront breadcrumb / title after a rename (VCST-5274).
+ */
+function getPageFileName(relativeUrl: string | undefined, cultures: (string | null | undefined)[]): string {
+  const parts = relativeUrl?.split("/").findLast(Boolean)?.split(".") ?? [];
+  if (parts.length > 1) {
+    parts.pop(); // extension
+  }
+  if (
+    parts.length > 1 &&
+    cultures.some((culture) => culture?.toLowerCase() === parts[parts.length - 1].toLowerCase())
+  ) {
+    parts.pop(); // language segment
+  }
+  return parts.join(".");
+}
+
+/**
  * @param seoUrl path after domain without slash at the beginning
  **/
 export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
@@ -118,11 +138,10 @@ export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
       // (ContentSeoResolver) is `displayName` as well. The value that actually follows a File-name
       // rename is the page's file path, so derive the breadcrumb / <title> leaf from `relativeUrl`
       // (its file name without extension) instead of the stored name.
-      const fileName = contentResult?.value?.page?.relativeUrl
-        ?.split("/")
-        .filter(Boolean)
-        .pop()
-        ?.replace(/\.[^.]+$/, "");
+      const fileName = getPageFileName(contentResult?.value?.page?.relativeUrl, [
+        slugInfo.value?.entityInfo?.languageCode,
+        currentCultureName,
+      ]);
       if (fileName) {
         content.settings = { ...content.settings, name: humanizeName(fileName) };
       }

@@ -32,7 +32,7 @@ const permalink = computed(() => {
 
 // VCST-5274: the page document's baked `settings.name` is never updated on rename, so derive
 // the breadcrumb leaf from the live permalink (its last segment) instead of the stored name.
-const liveName = computed(() => permalink.value?.split("/").filter(Boolean).pop());
+const liveName = computed(() => permalink.value?.split("/").findLast(Boolean));
 
 const { updateLocalizedUrl } = useLanguages();
 
