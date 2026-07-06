@@ -200,9 +200,11 @@ Three design points worth calling out:
   plugin routes work on first paint.
 - **Version gate runs before any remote code executes.** We fetch the manifest (plain
   JSON, no execution), read `metaData.requiredHostVersion`, and only `loadRemote` the
-  ones this host can satisfy. Unreadable or unparseable ⇒ treated as incompatible
-  (fail closed). A bare version like `"1.0.0"` is normalized to `"^1.0.0"` — so a
-  host **major** bump correctly rejects plugins built against the previous major.
+  ones this host can satisfy. Missing, unreadable, or unparseable ⇒ treated as
+  incompatible (fail closed) — a plugin must declare `requiredHostVersion` to run
+  (`createRemoteFederationOptions` makes it mandatory). A bare version like `"1.0.0"` is
+  normalized to `"^1.0.0"` — so a host **major** bump correctly rejects plugins built
+  against the previous major.
 - **Every network step is time-budgeted** (manifest 5s, load and init 10s each, tunable
   via `initFederatedModules(options)`). Because boot awaits this loader, a hung remote
   must degrade to a `failed`/`skipped` plugin — never a blank storefront. Containment

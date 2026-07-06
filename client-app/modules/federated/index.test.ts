@@ -43,7 +43,13 @@ function stubRemotesEnv(remotes: unknown): void {
   vi.stubEnv("APP_MF_REMOTES", typeof remotes === "string" ? remotes : JSON.stringify(remotes));
 }
 
-function stubManifestFetch(manifest: unknown, init?: { ok?: boolean; status?: number }): ReturnType<typeof vi.fn> {
+// A manifest the host accepts by default; tests that care override it explicitly.
+const COMPATIBLE_MANIFEST = { metaData: { requiredHostVersion: "^2.0.0" } };
+
+function stubManifestFetch(
+  manifest: unknown = COMPATIBLE_MANIFEST,
+  init?: { ok?: boolean; status?: number },
+): ReturnType<typeof vi.fn> {
   const fetchMock = vi.fn().mockResolvedValue({
     ok: init?.ok ?? true,
     status: init?.status ?? 200,
@@ -66,7 +72,7 @@ describe("initFederatedModules", () => {
   });
 
   it("is a no-op when APP_MF_REMOTES is not set", async () => {
-    const fetchMock = stubManifestFetch({});
+    const fetchMock = stubManifestFetch();
     vi.stubEnv("APP_MF_REMOTES", "");
 
     const result = await initFederatedModules();
@@ -77,7 +83,7 @@ describe("initFederatedModules", () => {
   });
 
   it("ignores invalid JSON in APP_MF_REMOTES", async () => {
-    stubManifestFetch({});
+    stubManifestFetch();
     stubRemotesEnv("{not json");
 
     const result = await initFederatedModules();
@@ -87,7 +93,7 @@ describe("initFederatedModules", () => {
   });
 
   it("ignores a non-object APP_MF_REMOTES value", async () => {
-    stubManifestFetch({});
+    stubManifestFetch();
     stubRemotesEnv([REMOTE_URL]);
 
     const result = await initFederatedModules();
@@ -97,7 +103,7 @@ describe("initFederatedModules", () => {
   });
 
   it("rejects non-https remote URLs (http only for localhost)", async () => {
-    const fetchMock = stubManifestFetch({});
+    const fetchMock = stubManifestFetch();
     stubRemotesEnv({ evil: "http://plugins.example.com/mf-manifest.json", junk: "not a url", num: 5 });
 
     const result = await initFederatedModules();
@@ -132,7 +138,7 @@ describe("initFederatedModules", () => {
   });
 
   it("counts a plugin without init() as loaded (init is optional)", async () => {
-    stubManifestFetch({});
+    stubManifestFetch();
     stubRemotesEnv({ news: REMOTE_URL });
     loadRemoteMock.mockResolvedValue({});
 
@@ -154,6 +160,16 @@ describe("initFederatedModules", () => {
 
   it("skips (fail closed) on a malformed requiredHostVersion", async () => {
     stubManifestFetch({ metaData: { requiredHostVersion: "not-a-version" } });
+    stubRemotesEnv({ news: REMOTE_URL });
+
+    const result = await initFederatedModules();
+
+    expect(result.skipped).toEqual(["news"]);
+    expect(loadRemoteMock).not.toHaveBeenCalled();
+  });
+
+  it("skips (fail closed) a manifest that declares no requiredHostVersion", async () => {
+    stubManifestFetch({}); // no metaData.requiredHostVersion
     stubRemotesEnv({ news: REMOTE_URL });
 
     const result = await initFederatedModules();
@@ -197,7 +213,7 @@ describe("initFederatedModules", () => {
   });
 
   it("fails a plugin whose load/init hangs past the budget instead of blocking boot", async () => {
-    stubManifestFetch({});
+    stubManifestFetch();
     stubRemotesEnv({ news: REMOTE_URL });
     loadRemoteMock.mockImplementation(() => new Promise(() => {}));
 
@@ -207,7 +223,7 @@ describe("initFederatedModules", () => {
   });
 
   it("never calls init() of a plugin whose load resolved only after the budget", async () => {
-    stubManifestFetch({});
+    stubManifestFetch();
     stubRemotesEnv({ news: REMOTE_URL });
     const initMock = vi.fn();
     let resolveLoad: ((plugin: { init: () => void }) => void) | undefined;
@@ -228,7 +244,7 @@ describe("initFederatedModules", () => {
   });
 
   it("reports failed on an overrunning init() and logs its late completion as indeterminate", async () => {
-    stubManifestFetch({});
+    stubManifestFetch();
     stubRemotesEnv({ news: REMOTE_URL });
     let resolveInit: (() => void) | undefined;
     loadRemoteMock.mockResolvedValue({
@@ -248,7 +264,7 @@ describe("initFederatedModules", () => {
   });
 
   it("isolates a failing plugin from the others", async () => {
-    stubManifestFetch({});
+    stubManifestFetch();
     stubRemotesEnv({ good: REMOTE_URL, bad: "https://plugins.example.com/bad/mf-manifest.json" });
     loadRemoteMock.mockImplementation((id: string) =>
       id === "bad/plugin" ? Promise.reject(new Error("boom")) : Promise.resolve({ init: vi.fn() }),
@@ -314,7 +330,7 @@ describe("initFederatedModules", () => {
   });
 
   it("counts a plugin whose init() throws as failed", async () => {
-    stubManifestFetch({});
+    stubManifestFetch();
     stubRemotesEnv({ news: REMOTE_URL });
     loadRemoteMock.mockResolvedValue({
       init: () => {

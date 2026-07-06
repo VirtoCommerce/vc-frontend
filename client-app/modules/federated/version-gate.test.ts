@@ -2,9 +2,11 @@ import { describe, expect, it } from "vitest";
 import { checkHostCompatibility } from "./version-gate";
 
 describe("checkHostCompatibility", () => {
-  it("passes when the plugin declares no requirement", () => {
-    expect(checkHostCompatibility("2.53.0", undefined).ok).toBe(true);
-    expect(checkHostCompatibility("2.53.0", "").ok).toBe(true);
+  it("fails closed when the plugin declares no requirement", () => {
+    const undefinedResult = checkHostCompatibility("2.53.0", undefined);
+    expect(undefinedResult.ok).toBe(false);
+    expect(undefinedResult.reason).toContain("no requiredHostVersion");
+    expect(checkHostCompatibility("2.53.0", "").ok).toBe(false);
   });
 
   describe("bare version (normalized to same-major minimum)", () => {

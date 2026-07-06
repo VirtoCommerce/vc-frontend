@@ -33,7 +33,11 @@ export interface IRemoteFederationOptions {
   exposes: Record<string, string>;
   shared: Record<string, ISharedDepConfig>;
   manifest: {
-    additionalData: (data: { stats: { metaData: Record<string, unknown> } }) => unknown;
+    // Param/return must stay assignable to @module-federation/vite's PluginManifestOptions
+    // (stats is a bare Record there, and it expects the modified stats back), so a plugin's
+    // `federation(createRemoteFederationOptions(...))` type-checks. The .mjs impl narrows
+    // stats.metaData itself at runtime.
+    additionalData: (data: { stats: Record<string, unknown> }) => Record<string, unknown>;
   };
   dts: false;
 }

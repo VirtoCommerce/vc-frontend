@@ -24,8 +24,11 @@ export interface IHostCompatibility {
 
 export function checkHostCompatibility(hostVersion: string, required: string | undefined): IHostCompatibility {
   if (!required) {
-    // No requirement declared — the plugin opts out of gating.
-    return { ok: true };
+    // Fail closed: this gate exists to stop code built against an unknown host contract.
+    // A manifest with no requiredHostVersion cannot be verified, so it is skipped rather
+    // than run. createRemoteFederationOptions makes the field mandatory, so a compliant
+    // plugin always carries it — only hand-rolled, legacy, or stripped manifests land here.
+    return { ok: false, reason: "manifest declares no requiredHostVersion — cannot verify host compatibility" };
   }
   const range = valid(required) ? `^${required}` : required;
   if (!validRange(range)) {
