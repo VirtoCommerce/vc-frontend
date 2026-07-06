@@ -754,7 +754,7 @@ function getItemKey(item: T, index: number): string {
 const selectionEnabled = computed<boolean>(() => props.selectionMode !== undefined);
 
 // Normalize to strings so comparisons match `getItemKey`, even for numeric input keys.
-const selectionSet = computed<Set<string>>(() => new Set(props.selection.map((key) => String(key))));
+const selectionSet = computed<Set<string>>(() => new Set(props.selection.map(String)));
 
 function isRowSelectable(item: T): boolean {
   return props.isRowSelectable ? props.isRowSelectable(item) : true;
@@ -824,7 +824,7 @@ function toggleRow(item: T, index: number): void {
   }
 
   // multiple; normalize so the string `key` matches numeric input keys
-  const keys = props.selection.map((existingKey) => String(existingKey));
+  const keys = props.selection.map(String);
   const existingIndex = keys.indexOf(key);
   if (existingIndex === -1) {
     keys.push(key);
@@ -841,11 +841,11 @@ function toggleSelectAll(): void {
   if (isAllSelected.value) {
     // Deselect current page only, keep off-page selections (normalized to strings).
     const pageKeySet = new Set(pageKeys);
-    const keys = props.selection.map((key) => String(key)).filter((key) => !pageKeySet.has(key));
+    const keys = props.selection.map(String).filter((key) => !pageKeySet.has(key));
     commitSelection(keys, { action: "deselect-all" });
   } else {
     // Merge current page into existing selection (normalized to strings).
-    const keys = props.selection.map((key) => String(key));
+    const keys = props.selection.map(String);
     for (const key of pageKeys) {
       if (!keys.includes(key)) {
         keys.push(key);
