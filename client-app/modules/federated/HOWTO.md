@@ -176,12 +176,11 @@ yarn build-only --mode=development && yarn preview  # -> https://localhost:3000
 
 Notes on the host side:
 
-- **build + preview is the reliable path** — it always works and matches what CI/prod
-  produce, so it is the safe default for *running* the host. (`yarn dev` also works and
-  additionally gives HMR — see [**The dev inner loop**](#the-dev-inner-loop) below — but
-  the dev server's shared-GraphQL-facade prebundling is the historically fragile part, so
-  reach for it as the iteration loop, not the canonical run.) `yarn preview` proxies API
-  calls to `APP_BACKEND_URL` exactly like dev does, so your usual `.env.local` backend applies.
+- **build + preview is the canonical run** — it matches what CI/prod produce, so it is the
+  default for *running* the host. (`yarn dev` also works and additionally gives HMR — see
+  [**The dev inner loop**](#the-dev-inner-loop) below — reach for it as the iteration loop.)
+  `yarn preview` proxies API calls to `APP_BACKEND_URL` exactly like dev does, so your usual
+  `.env.local` backend applies.
 - **`--mode=development` matters locally**: a production-mode build resolves the store
   from the browser's hostname — `localhost` means nothing to the backend, and the app
   renders an empty page. A development-mode build resolves the store from
@@ -224,10 +223,11 @@ Once the two servers are up, how you iterate depends on which side you're changi
   3001`, which serves `mf-manifest.json` in dev too) instead of `build`+`preview` — **and**
   run the host with `yarn dev` instead of `build-only`+`preview`. The plugin's HMR client is
   injected into the host page, so edits hot-update live across the MF boundary. Verified on
-  this harness for route / UI-kit / `useModuleSettings` plugins. *Caveat:* the dev server's
-  shared-GraphQL-facade prebundling is the fragile bit — it did not reproduce as a problem in
-  testing, but is unverified for a plugin that shares `@apollo/client`; if `yarn dev` on the
-  host fails to boot or a shared dep misbehaves, fall back to the rebuild loop above.
+  this harness for route / UI-kit / `useModuleSettings` plugins **and** for a plugin that
+  shares `@apollo/client`+`graphql` and runs its own query through the shared Apollo client
+  (an older note warned the dev server couldn't prebundle the shared GraphQL facade — that no
+  longer reproduces). `build`+`preview` is still the canonical run because it matches
+  CI/prod; use `yarn dev` when you want the HMR loop.
 
 **Changing the host** — you only rebuild the host when the **remote list/name** changes
 (`APP_MODULES_FEDERATION_REMOTES` is inlined at build time) or host source changes; plain plugin edits
