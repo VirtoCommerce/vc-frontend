@@ -6,8 +6,9 @@ from here — never from `@/...` host paths.
 
 For the loader / boot side, see
 [`client-app/modules/federated/README.md`](../modules/federated/README.md).
-This file covers the facade itself: how its type contract is generated, and **how to
-add something to the facade** (the day-to-day developer flow).
+This file covers the facade itself: how its type contract is generated, **how to add
+something to the facade** (the day-to-day developer flow), and how plugins get the
+package (releases + local co-dev).
 
 ---
 
@@ -35,10 +36,11 @@ Files in this folder:
 | `index.ts`                 | **The facade source** — a list of re-exports. This is the API. Edit this.                                         |
 | `dist/index.d.ts`          | **Generated** type contract. Never edit; regenerate and commit.                                                   |
 | `dist/tailwind-preset.cjs` | **Generated** self-contained snapshot of the host's Tailwind design system (`@vc-frontend/core/tailwind-preset`). Source: the root `tailwind.config.ts`. Never edit; regenerate and commit. |
-| `federation.mjs`           | Shared-singleton contract (`createHostShared` / `createRemoteShared` + defaults) for both host and plugin builds. |
+| `federation.mjs`           | Shared-singleton contract (`createHostShared` / `createRemoteShared` + defaults) for both host and plugin builds; types in `federation.d.mts`. |
 | `bump-version.mjs`         | `yarn bump:core <level>` — manual contract-version bump (majors; minors are automatic).                           |
-| `create-plugin.mjs`        | `yarn create:plugin` — scaffolds a new plugin project with versions read from the host.                           |
+| `create-plugin.mjs`        | `yarn create:plugin` — scaffolds a new plugin project: versions read from the host, facade pinned to its release tarball. |
 | `build-types.mjs`          | The generator (below) — emits both the type contract and the tailwind preset snapshot.                            |
+| `contract-versioning.mjs`  | Pure decision logic for the version bumps/guards (side-effect-free so it is unit-testable). |
 
 ---
 
@@ -76,8 +78,9 @@ Guards that run with it (any failure = non-zero exit):
 - **In CI (bump guard):** if the contract **changed relative to `origin/dev`** but
   `CORE_VERSION` did not (someone bypassed the build or hand-edited version files),
   the check fails and points at `yarn build:core-types` / `yarn bump:core major`.
-  (Base ref overridable via `MF_CONTRACT_BASE_REF`; the guard and the auto-bump skip
-  quietly where the baseline is unavailable.)
+  (Base ref overridable via `MF_CONTRACT_BASE_REF`. With no baseline to diff against —
+  shallow checkout, missing base ref — the auto-bump skips quietly and the check
+  **warns loudly** that the guard is not enforced.)
 
 The output is deterministic: same source ⇒ byte-identical file, so the git diff of
 `dist/index.d.ts` is a readable review artifact of "what did the public API change".
@@ -111,9 +114,8 @@ Say a plugin needs `useThemeContext`.
 
    The build also **bumps the contract version automatically**: if the generated
    contract differs from the one on `origin/dev` and the version wasn't bumped yet, it
-   applies a **minor** bump to this `package.json` (the single version source) for
-   you. Running it
-   again won't double-bump. Plugins that use the new export then declare
+   applies a **minor** bump to this `package.json` (the single version source) for you —
+   running it again won't double-bump. Plugins that use the new export then declare
    `requiredHostVersion: "^1.1.0"`, so older hosts correctly refuse them.
 
 3. **Breaking change? That's the one manual step.** If you removed or renamed an
@@ -131,7 +133,9 @@ Say a plugin needs `useThemeContext`.
    > `package.json` (the runtime `CORE_VERSION` imports it) and is independent of the
    > host app version in the root `package.json` that release automation bumps.
 
-4. **Commit `index.ts`, `dist/index.d.ts` and `package.json` together.**
+4. **Commit `index.ts`, the regenerated `dist/` files and `package.json` together.**
+   (A facade change touches `dist/index.d.ts`; a design-token change in the root
+   `tailwind.config.ts` touches `dist/tailwind-preset.cjs` — same flow, same guards.)
 
 You can't forget any of this: CI fails on a stale contract (forgot step 2) and on a
 changed contract without a version change (bypassed the build), each time printing the
@@ -165,7 +169,8 @@ Distribution has two forms (full walkthrough:
   Release asset** on tag `core-v<CORE_VERSION>` by the manual *Core Facade Release*
   workflow (`.github/workflows/core-facade-release.yml`). Plugins pin the asset URL; their
   lockfile records the tarball checksum. Re-releasing an existing version is refused —
-  a new contract means a new `CORE_VERSION`.
+  a new contract means a new `CORE_VERSION`. **Never delete `core-v*` releases/tags**:
+  a deleted release is the only way an existing plugin's pin can break.
 - **Local co-dev (unreleased facade changes):** **yalc** — `yarn core:yalc-push` from the
   repo root rebuilds the contract and pushes it into every locally-linked plugin. Never
   commit the injected `file:.yalc/…` dependency.
