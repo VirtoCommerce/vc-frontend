@@ -28,7 +28,7 @@ export function federatedAlias(rootDir: string): Record<string, string> {
   return { "@vc-frontend/core": path.resolve(rootDir, "client-app/core-api/index.ts") };
 }
 
-/** MF host plugin(s) — empty when APP_MF_HOST is off. Spread into vite `plugins`. */
+/** MF host plugin(s) — empty when APP_MODULES_FEDERATION_ENABLED is off. Spread into vite `plugins`. */
 export function federatedHostPlugin(enabled: string | boolean | undefined): PluginOption[] {
   if (!isMfFlagEnabled(enabled)) {
     return [];

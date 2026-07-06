@@ -40,7 +40,7 @@ vi.mock("@/core/plugins/applicationInsights.plugin", () => ({
 const REMOTE_URL = "https://plugins.example.com/news/mf-manifest.json";
 
 function stubRemotesEnv(remotes: unknown): void {
-  vi.stubEnv("APP_MF_REMOTES", typeof remotes === "string" ? remotes : JSON.stringify(remotes));
+  vi.stubEnv("APP_MODULES_FEDERATION_REMOTES", typeof remotes === "string" ? remotes : JSON.stringify(remotes));
 }
 
 // A manifest the host accepts by default; tests that care override it explicitly.
@@ -71,9 +71,9 @@ describe("initFederatedModules", () => {
     vi.unstubAllGlobals();
   });
 
-  it("is a no-op when APP_MF_REMOTES is not set", async () => {
+  it("is a no-op when APP_MODULES_FEDERATION_REMOTES is not set", async () => {
     const fetchMock = stubManifestFetch();
-    vi.stubEnv("APP_MF_REMOTES", "");
+    vi.stubEnv("APP_MODULES_FEDERATION_REMOTES", "");
 
     const result = await initFederatedModules();
 
@@ -82,7 +82,7 @@ describe("initFederatedModules", () => {
     expect(registerRemotesMock).not.toHaveBeenCalled();
   });
 
-  it("ignores invalid JSON in APP_MF_REMOTES", async () => {
+  it("ignores invalid JSON in APP_MODULES_FEDERATION_REMOTES", async () => {
     stubManifestFetch();
     stubRemotesEnv("{not json");
 
@@ -92,7 +92,7 @@ describe("initFederatedModules", () => {
     expect(loggerErrorMock).toHaveBeenCalledWith(expect.stringContaining("not valid JSON"), expect.anything());
   });
 
-  it("ignores a non-object APP_MF_REMOTES value", async () => {
+  it("ignores a non-object APP_MODULES_FEDERATION_REMOTES value", async () => {
     stubManifestFetch();
     stubRemotesEnv([REMOTE_URL]);
 

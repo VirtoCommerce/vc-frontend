@@ -9,7 +9,7 @@ in-repo modules in `client-app/modules/*` — those ship inside the host bundle.
 of MF is exactly that separation: a plugin team can build and release on their own cadence
 without touching or rebuilding this repo.
 
-> Jira: **VCST-5159**. Everything here is behind the `APP_MF_HOST` flag and is a **no-op
+> Jira: **VCST-5159**. Everything here is behind the `APP_MODULES_FEDERATION_ENABLED` flag and is a **no-op
 > when the flag is off** — the harness ships with **zero built-in remotes**.
 
 > **Want to BUILD a plugin?** Start with the step-by-step walkthrough:
@@ -25,20 +25,20 @@ without touching or rebuilding this repo.
 # facade in MF mode (known limitation). Use `--mode=development` locally so the store
 # resolves from APP_BACKEND_URL — a prod-mode build resolves it from `localhost` and renders
 # an empty page. See HOWTO.md step 4.
-APP_MF_HOST=true \
-APP_MF_REMOTES='{"news":"https://plugins.example.com/news/mf-manifest.json"}' \
+APP_MODULES_FEDERATION_ENABLED=true \
+APP_MODULES_FEDERATION_REMOTES='{"news":"https://plugins.example.com/news/mf-manifest.json"}' \
 yarn build-only --mode=development && yarn preview
 ```
 
-- `APP_MF_HOST` → turns the host into a federation host (build + runtime). `""`, `"false"`
+- `APP_MODULES_FEDERATION_ENABLED` → turns the host into a federation host (build + runtime). `""`, `"false"`
   and `"0"` count as off.
-- `APP_MF_REMOTES` → a JSON map of `remoteName → manifestUrl`. No var = no remotes = no-op.
+- `APP_MODULES_FEDERATION_REMOTES` → a JSON map of `remoteName → manifestUrl`. No var = no remotes = no-op.
   URLs must be **https** (http is allowed for localhost only).
 
 > **Both vars are inlined at BUILD time** (Vite `import.meta.env`): changing the remote
 > list means rebuilding the host, not just flipping a deployment variable. Runtime,
 > settings-driven discovery is the planned replacement (see `TODO.md` #2 and
-> `specs/2026-07-06-discovery-hosting-decision.md`; `APP_MF_REMOTES` then stays as the
+> `specs/2026-07-06-discovery-hosting-decision.md`; `APP_MODULES_FEDERATION_REMOTES` then stays as the
 > local/dev override).
 
 That's the whole operator surface. Everything below is _why_ and _how_.
@@ -59,7 +59,7 @@ That's the whole operator surface. Everything below is _why_ and _how_.
 │         ┌────────────────┼────────────────┐                          │
 │         ▼                ▼                 ▼                          │
 │   resolveRemotes()  version gate      loadRemote()                    │
-│   (APP_MF_REMOTES)  (isCompatible)    + plugin.init()                 │
+│   (APP_MODULES_FEDERATION_REMOTES)  (isCompatible)    + plugin.init()                 │
 │                                                                       │
 │   exposes the shared facade  ▶  @vc-frontend/core  (live instance)    │
 └───────────────────────────────────────────────┬───────────────────────┘
@@ -78,7 +78,7 @@ That's the whole operator surface. Everything below is _why_ and _how_.
 ```
 
 **How host and remotes find each other:** the host holds a list of remotes
-(`APP_MF_REMOTES`). Each entry points at the plugin's `mf-manifest.json`, a small JSON
+(`APP_MODULES_FEDERATION_REMOTES`). Each entry points at the plugin's `mf-manifest.json`, a small JSON
 index that tells the MF runtime where the plugin's code (`remoteEntry.js` + chunks) lives.
 The host reads that manifest, checks compatibility, then loads the plugin's `./plugin`
 entry and calls its `init()`. The plugin, in turn, reaches back into the host **only**
@@ -176,11 +176,11 @@ app-runner.ts
   │  await ready;                             // BEFORE app.use(router)
   ▼
 startFederatedModules()            bootstrap.ts
-  │  if (!APP_MF_HOST) return;              ← flag off ⇒ instant no-op
+  │  if (!APP_MODULES_FEDERATION_ENABLED) return;              ← flag off ⇒ instant no-op
   │  dynamic import("./index")              ← keeps MF runtime out of non-MF builds
   ▼
 initFederatedModules()             index.ts
-  1. resolveRemotes()              parse + validate APP_MF_REMOTES → [{name, entry}]
+  1. resolveRemotes()              parse + validate APP_MODULES_FEDERATION_REMOTES → [{name, entry}]
                                    (empty ⇒ done; non-https / malformed entries dropped)
   2. isCompatible(remote)          fetch manifest JSON (5s budget), evaluate
                                    requiredHostVersion (semver version or RANGE) against
@@ -287,7 +287,7 @@ export function init() {
 }
 ```
 
-Once built and deployed, add it to the host's `APP_MF_REMOTES` and it loads on next boot.
+Once built and deployed, add it to the host's `APP_MODULES_FEDERATION_REMOTES` and it loads on next boot.
 
 ---
 
@@ -315,8 +315,8 @@ Once built and deployed, add it to the host's `APP_MF_REMOTES` and it loads on n
 
 | Var              | Scope                | Meaning                                                                                                              |
 | ---------------- | -------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| `APP_MF_HOST`    | build time (inlined) | Enables the MF host plugin in Vite **and** the runtime bootstrap. Off (unset/`""`/`"false"`/`"0"`) ⇒ complete no-op. |
-| `APP_MF_REMOTES` | build time (inlined) | JSON `{ "<name>": "<manifestUrl>" }`, https-only. Absent/invalid ⇒ no remotes loaded.                                |
+| `APP_MODULES_FEDERATION_ENABLED`    | build time (inlined) | Enables the MF host plugin in Vite **and** the runtime bootstrap. Off (unset/`""`/`"false"`/`"0"`) ⇒ complete no-op. |
+| `APP_MODULES_FEDERATION_REMOTES` | build time (inlined) | JSON `{ "<name>": "<manifestUrl>" }`, https-only. Absent/invalid ⇒ no remotes loaded.                                |
 
 ---
 

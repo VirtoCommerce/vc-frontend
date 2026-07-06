@@ -351,7 +351,7 @@ console.log(`\nNext steps:
   yarn build && yarn preview   # serves mf-manifest.json on :3001
 
 Then point the host at it:
-  APP_MF_HOST=true APP_MF_REMOTES='{"${pluginName}":"http://localhost:3001/mf-manifest.json"}' yarn build-only && yarn preview
+  APP_MODULES_FEDERATION_ENABLED=true APP_MODULES_FEDERATION_REMOTES='{"${pluginName}":"http://localhost:3001/mf-manifest.json"}' yarn build-only && yarn preview
 
 @vc-frontend/core is pinned to the core-v${corePkg.version} release asset. If that release
 has not been published yet, yarn install will 404 - either run the "Core Facade Release"

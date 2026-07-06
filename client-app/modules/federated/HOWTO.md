@@ -158,8 +158,8 @@ cd my-plugin && yarn build && yarn preview          # -> http://localhost:3001
 
 # terminal 2 - the host, pointed at your plugin
 cd vc-frontend
-APP_MF_HOST=true \
-APP_MF_REMOTES='{"my-plugin":"http://localhost:3001/mf-manifest.json"}' \
+APP_MODULES_FEDERATION_ENABLED=true \
+APP_MODULES_FEDERATION_REMOTES='{"my-plugin":"http://localhost:3001/mf-manifest.json"}' \
 yarn build-only --mode=development && yarn preview  # -> https://localhost:3000
 ```
 
@@ -174,7 +174,7 @@ Notes on the host side:
   renders an empty page. A development-mode build resolves the store from
   `APP_BACKEND_URL`, exactly like `yarn dev`.
 - The preview server is **https** (same local certificate as the dev server).
-- The remote list is inlined at **build** time — changing `APP_MF_REMOTES` means
+- The remote list is inlined at **build** time — changing `APP_MODULES_FEDERATION_REMOTES` means
   rebuilding the host.
 
 Open `https://localhost:3000/my-plugin` — your separately-built page renders inside the
@@ -182,12 +182,12 @@ live storefront. If something's off, the console tells you which gate said no
 (`[MF] Skipping ...` / `[MF] Failed to load ...`), and the boot outcome is logged as
 `{ loaded, failed, skipped }`.
 
-`APP_MF_REMOTES` is a **map — any number of plugins**, each key being the remote's MF
+`APP_MODULES_FEDERATION_REMOTES` is a **map — any number of plugins**, each key being the remote's MF
 `name` and each value its manifest URL (different origins are fine). All plugins are
 gate-checked and loaded in parallel, each in isolation:
 
 ```bash
-APP_MF_REMOTES='{"my-plugin":"https://a.example.com/my-plugin/mf-manifest.json","loyalty":"https://b.example.com/loyalty/mf-manifest.json"}'
+APP_MODULES_FEDERATION_REMOTES='{"my-plugin":"https://a.example.com/my-plugin/mf-manifest.json","loyalty":"https://b.example.com/loyalty/mf-manifest.json"}'
 ```
 
 > http is allowed for localhost only. Anywhere else: https, plus CSP entries for each
@@ -196,7 +196,7 @@ APP_MF_REMOTES='{"my-plugin":"https://a.example.com/my-plugin/mf-manifest.json",
 ## Step 5 — ship it
 
 1. Build and upload `dist/` (manifest + chunks) to trusted **https** hosting.
-2. Add the manifest URL to the host's `APP_MF_REMOTES` and rebuild the host
+2. Add the manifest URL to the host's `APP_MODULES_FEDERATION_REMOTES` and rebuild the host
    (the remote list is inlined at build time — settings-driven runtime discovery
    is a planned follow-up, `TODO.md` #2).
 3. Add the plugin origin to the storefront CSP (`script-src`, `connect-src`).

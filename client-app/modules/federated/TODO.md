@@ -16,7 +16,7 @@ Definition and rationale: *Pilot* section of the discovery spec.
 - [ ] **Publish the first facade release** — run the *Core Facade Release* workflow once
       so the `core-v1.0.0` URL that fresh scaffolds pin actually resolves.
 - [ ] Scaffold the plugin (`yarn create:plugin`) into **its own repo**; host `dist/` on
-      jsDelivr / GitHub Pages; wire into the host via hardcoded `APP_MF_REMOTES`.
+      jsDelivr / GitHub Pages; wire into the host via hardcoded `APP_MODULES_FEDERATION_REMOTES`.
 - [ ] **Plugin-repo CI guard:** fail the plugin build if the committed `@vc-frontend/core`
       value isn't the pinned release URL (catches a stray `file:`/`portal:`/yalc leak).
 - [ ] **Route authorization** — sales-rep is rep-only; plugin `addRoute` has no
@@ -25,9 +25,9 @@ Definition and rationale: *Pilot* section of the discovery spec.
 
 ## 2. Settings-driven discovery & enablement (runtime, per-env)
 
-Decided, not built — the step from hardcoded `APP_MF_REMOTES` to per-env runtime config.
+Decided, not built — the step from hardcoded `APP_MODULES_FEDERATION_REMOTES` to per-env runtime config.
 Full design + review corrections: discovery spec. Until implemented, the build-time
-`APP_MF_REMOTES` env remains the only path (manual, deploy-owned, rebuild per change, no
+`APP_MODULES_FEDERATION_REMOTES` env remains the only path (manual, deploy-owned, rebuild per change, no
 runtime toggle).
 
 - [ ] Central **`ModuleFederation.Remotes`** store setting + one small dedicated platform
@@ -35,11 +35,11 @@ runtime toggle).
 - [ ] **Versioned normalized descriptor** `{ name, url, enabled, version?,
       requiredHostVersion?, hash?, source }` with per-source adapters.
 - [ ] **`resolveRemotes()` precedence** — canonical resolution + truth table over
-      {theme switch × store `Enabled` × store list × `APP_MF_REMOTES`}, incl.
+      {theme switch × store `Enabled` × store list × `APP_MODULES_FEDERATION_REMOTES`}, incl.
       present-vs-empty, replace-vs-merge, name-collision dedup. Decided: local
-      `APP_MF_REMOTES` **overrides** the runtime setting.
+      `APP_MODULES_FEDERATION_REMOTES` **overrides** the runtime setting.
 - [ ] **Theme master switch** in `client-app/config/settings_data.json` for the runtime
-      role of `APP_MF_HOST` — while keeping a build-time bundling gate
+      role of `APP_MODULES_FEDERATION_ENABLED` — while keeping a build-time bundling gate
       (`vite.federation.ts` can import the JSON, or a build switch survives).
 - [ ] **Backend-capability gate** — `requiredBackendModules` precondition checked against
       the installed module list before load; unmet ⇒ `skipped` with a distinct reason

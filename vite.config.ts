@@ -15,7 +15,7 @@ const graphql = graphqlImport.default ?? graphqlImport;
 // Libraries imported only via dynamic import()/defineAsyncComponent; kept out of the eager
 // `vendor` chunk so they stay in their own lazy chunks. `@module-federation/*` is reached
 // only through the flag-gated dynamic import in app-runner, so deferring it keeps the MF
-// runtime out of the default (APP_MF_HOST off) eager bundle entirely.
+// runtime out of the default (APP_MODULES_FEDERATION_ENABLED off) eager bundle entirely.
 const DEFERRED_LIBS = ["skyflow-js", "barcode-detector", "marked", "nouislider", "@module-federation"];
 
 function getProxy(target: ProxyOptions["target"], options: Omit<ProxyOptions, "target"> = {}): ProxyOptions {
@@ -64,8 +64,8 @@ export default defineConfig(({ command, mode }): UserConfig => {
           })
         : undefined,
       vue(),
-      // Module Federation host — empty unless APP_MF_HOST is set (see vite.federation.ts).
-      ...federatedHostPlugin(process.env.APP_MF_HOST),
+      // Module Federation host — empty unless APP_MODULES_FEDERATION_ENABLED is set (see vite.federation.ts).
+      ...federatedHostPlugin(process.env.APP_MODULES_FEDERATION_ENABLED),
       graphql() as PluginOption,
       isServe
         ? checker({

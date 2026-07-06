@@ -11,7 +11,7 @@ decided*, kept for context and review traceability.
 
 ## The constraint that forced a decision
 
-`APP_MF_HOST` / `APP_MF_REMOTES` are read from `import.meta.env`, **inlined at build
+`APP_MODULES_FEDERATION_ENABLED` / `APP_MODULES_FEDERATION_REMOTES` are read from `import.meta.env`, **inlined at build
 time** — so one theme artifact carries one hardcoded plugin list and on/off state. That
 doesn't compose with how environments are configured: `vc-deploy-dev` is ArgoCD +
 Kustomize, where per-env values (DB host, `VirtoCommerce__Endpoint__Url`, the SPA zip via
@@ -54,20 +54,20 @@ migration** to add a descriptor; the change is **additive and backward compatibl
 setting ⇒ no remotes ⇒ today's no-op; extra entries ignored by older clients). This is the
 exact pattern ~30 modules already use (GA4, Hotjar, Loyalty, News, …).
 
-## Enablement — three levels, no `APP_MF_HOST`
+## Enablement — three levels, no `APP_MODULES_FEDERATION_ENABLED`
 
 - **Theme master switch** → a flag in `client-app/config/settings_data.json` (theme config,
-  read via `useThemeContext` at boot). Replaces only the **runtime** role of `APP_MF_HOST`.
-  ⚠️ It does **not** replace `APP_MF_HOST`'s **build-time** role (the Vite
+  read via `useThemeContext` at boot). Replaces only the **runtime** role of `APP_MODULES_FEDERATION_ENABLED`.
+  ⚠️ It does **not** replace `APP_MODULES_FEDERATION_ENABLED`'s **build-time** role (the Vite
   `federatedHostPlugin`, `vite.config.ts` / `vite.federation.ts`, which decides whether
   the MF runtime is bundled at all) — see *Review findings* below.
 - **Runtime per-env** → the store setting (`Enabled` + the list).
-- **Local/dev override & pilot hardcode** → `APP_MF_REMOTES` (kept — lets a frontender
+- **Local/dev override & pilot hardcode** → `APP_MODULES_FEDERATION_REMOTES` (kept — lets a frontender
   point at `localhost:3001` with no backend setting, and is how the first plugin is wired
-  *before* settings-driven discovery exists). **Decided:** when set, `APP_MF_REMOTES`
+  *before* settings-driven discovery exists). **Decided:** when set, `APP_MODULES_FEDERATION_REMOTES`
   **overrides** the runtime setting (a true local/dev override — it does not lose to it).
 - **Seams:** the flag check in `bootstrap.ts` and `resolveRemotes()` in `index.ts` — the
-  only spots reading `import.meta.env.APP_MF_*` today.
+  only spots reading `import.meta.env.APP_MODULES_FEDERATION_*` today.
 
 ## Hosting — provider-agnostic contract (decoupled from discovery)
 
@@ -147,7 +147,7 @@ The 2026-07-06 review qualified the claim — CSP alone is not sufficient:
   `script-src https://cdn.jsdelivr.net/gh/VirtoCommerce/`) at the ingress, paired with
   **versioned-immutable URLs** (CSP path matching is weakened by redirects; a pinned
   version has none). Hash pinning is the airtight form. **Not needed for the pilot** —
-  the hardcoded `APP_MF_REMOTES` list is build-controlled, so shared CDNs are safe there.
+  the hardcoded `APP_MODULES_FEDERATION_REMOTES` list is build-controlled, so shared CDNs are safe there.
   Dedicated origins / `*.plugins.example.com` only if we outgrow path-scoping.
 - **A *tight* base CSP does not exist today** (GA4/Hotjar/inline scripts) — hardening it
   (no `unsafe-inline`, no wildcard) is a **from-zero project on the prod critical path**,
@@ -172,7 +172,7 @@ if snippet annotations are locked down.
   origin; the BE module ships the settings descriptor **once**; thereafter the URL value
   (runtime setting) and the artifact (external host) change with **no module release**.
 - **Local dev needs no backend/module:** frontenders run only the plugin
-  (`yarn preview` → `:3001`) + the storefront with `APP_MF_REMOTES`, pointed at a **shared
+  (`yarn preview` → `:3001`) + the storefront with `APP_MODULES_FEDERATION_REMOTES`, pointed at a **shared
   remote backend** via `APP_BACKEND_URL` (as `.env.local` already does). No local platform,
   no local module.
 
@@ -183,7 +183,7 @@ plugin is a **new, separate** frontend in **its own repo** (built vs `@vc-fronte
 exposes `./plugin`, declares `requiredHostVersion`) — **not** the existing backoffice
 `Web/App`, and **not** shipped from the BE module.
 
-**For the pilot, hardcode the remote** via the existing build-time `APP_MF_REMOTES` path —
+**For the pilot, hardcode the remote** via the existing build-time `APP_MODULES_FEDERATION_REMOTES` path —
 no store settings, no platform module, no new plumbing. That is enough to prove the full
 loop (build → host → gate → `loadRemote` → `init`) end-to-end. The settings-driven central
 list is the target *once the loop is proven*; it is **not** a prerequisite for the pilot.
@@ -194,7 +194,7 @@ A multi-agent, code-verified architecture review confirmed every claim about *cu
 (boot order, seams, facade, GA4/Hotjar precedent) and produced these corrections (the open
 gaps it found are tracked in `TODO.md`):
 
-- **`settings_data.json` does not fully replace `APP_MF_HOST`:** the build-time bundling
+- **`settings_data.json` does not fully replace `APP_MODULES_FEDERATION_ENABLED`:** the build-time bundling
   gate must also read the flag (`vite.federation.ts` — Node can import the JSON), **or** a
   build-time switch survives. Frame the theme flag as *build-time-by-necessity for runtime
   bundling*; per-env on/off is the store `Enabled` flag.
@@ -203,10 +203,10 @@ gaps it found are tracked in `TODO.md`):
   descriptor** `{ name, url, enabled, version?, requiredHostVersion?, hash?, source }` with
   per-source adapters so source-specific fields don't leak into the host.
 - **Precedence is underspecified.** Define one canonical `resolveRemotes()` resolution + a
-  truth table over {theme switch × store `Enabled` × store list × `APP_MF_REMOTES`}:
+  truth table over {theme switch × store `Enabled` × store list × `APP_MODULES_FEDERATION_REMOTES`}:
   present-vs-empty, replace-vs-merge, and **name-collision dedup**
   (`registerRemotes({force:true})` silently overrides a duplicate). **Decided:** local
-  `APP_MF_REMOTES` **overrides** the runtime setting (true dev/local override).
+  `APP_MODULES_FEDERATION_REMOTES` **overrides** the runtime setting (true dev/local override).
 - **Say "provider/hosting-agnostic," not "host-agnostic."** Authoring is coupled to this
   host's `@vc-frontend/core` + `./plugin` + `requiredHostVersion`; external authorship
   stays first-party-scoped for now. Discovery is **platform-bound** (store settings /

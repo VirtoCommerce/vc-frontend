@@ -16,7 +16,7 @@ import { checkHostCompatibility } from "./version-gate";
  *   within its budget rather than hanging boot forever. It does still delay first paint by
  *   up to manifestTimeout + loadTimeout + initTimeout in the worst case, so keep budgets
  *   tight (defaults: 5s manifest, 10s load, 10s init).
- * Discovery is env-driven (`APP_MF_REMOTES`); the harness ships no built-in remote.
+ * Discovery is env-driven (`APP_MODULES_FEDERATION_REMOTES`); the harness ships no built-in remote.
  */
 
 /** The contract every federated plugin's `./plugin` expose must satisfy. */
@@ -88,7 +88,7 @@ function isAllowedRemoteUrl(entry: string): boolean {
 }
 
 function resolveRemotes(): IRemoteDescriptor[] {
-  const raw = import.meta.env.APP_MF_REMOTES;
+  const raw = import.meta.env.APP_MODULES_FEDERATION_REMOTES;
   if (!raw) {
     // No remotes configured -> no-op. The harness carries no built-in remote.
     return [];
@@ -98,11 +98,11 @@ function resolveRemotes(): IRemoteDescriptor[] {
   try {
     parsed = JSON.parse(raw);
   } catch (error) {
-    Logger.error("[MF] APP_MF_REMOTES is not valid JSON; ignoring", error);
+    Logger.error("[MF] APP_MODULES_FEDERATION_REMOTES is not valid JSON; ignoring", error);
     return [];
   }
   if (parsed === null || typeof parsed !== "object" || Array.isArray(parsed)) {
-    Logger.error("[MF] APP_MF_REMOTES must be a JSON object of remote name -> manifest URL; ignoring");
+    Logger.error("[MF] APP_MODULES_FEDERATION_REMOTES must be a JSON object of remote name -> manifest URL; ignoring");
     return [];
   }
 
