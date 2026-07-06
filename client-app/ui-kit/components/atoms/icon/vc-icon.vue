@@ -1,15 +1,26 @@
 <template>
-  <span :class="['vc-icon', sizeClass]" :style="style" v-html="icon"></span>
+  <span
+    :class="['vc-icon', sizeClass, { 'vc-icon--outline': isOutline }]"
+    :style="style"
+    :aria-hidden="ariaHidden"
+    :role="role"
+    :aria-label="label || undefined"
+    v-html="icon"
+  ></span>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
-import { getColorValue, loadIconRaw } from "@/ui-kit/utilities";
+import { getColorValue, loadIconRaw, resolveIcon } from "@/ui-kit/utilities";
+import type { IconVariantType } from "@/ui-kit/utilities";
 
 interface IProps {
   name?: string;
   size?: VcIconSizeType;
   color?: string;
+  variant?: IconVariantType;
+  label?: string;
+  strokeWidth?: number;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -17,29 +28,48 @@ const props = withDefaults(defineProps<IProps>(), {
   color: "",
 });
 
-const icon = ref();
+const icon = ref("");
+const isOutline = ref(false);
 
-const style = computed(() =>
-  typeof props.size === "number"
-    ? {
-        width: `${props.size}px`,
-        height: `${props.size}px`,
-      }
-    : {},
-);
+const PRESET_SIZES = ["xxs", "xs", "sm", "md", "lg", "xl", "xxl"];
 
-const sizeClass = computed(() => (typeof props.size === "string" ? `vc-icon--size--${props.size}` : ""));
+const isPreset = computed(() => typeof props.size === "string" && PRESET_SIZES.includes(props.size));
+
+const sizeClass = computed(() => (isPreset.value ? `vc-icon--size--${props.size as string}` : ""));
+
+const style = computed(() => {
+  const result: Record<string, string> = {};
+
+  if (props.size !== undefined && props.size !== "" && !isPreset.value) {
+    const value = typeof props.size === "number" ? `${props.size}px` : props.size;
+    result.width = value;
+    result.height = value;
+  }
+
+  if (props.strokeWidth !== undefined) {
+    result["--vc-icon-stroke"] = String(props.strokeWidth);
+  }
+
+  return result;
+});
 
 const _color = computed(() => getColorValue(props.color));
 
-async function loadIcon(name?: string) {
-  icon.value = await loadIconRaw(name);
+const ariaHidden = computed(() => (props.label ? undefined : "true"));
+const role = computed(() => (props.label ? "img" : undefined));
+
+async function loadIcon(name?: string, variant?: IconVariantType) {
+  const { raw, isOutline: outline } = await loadIconRaw(name, variant);
+  icon.value = raw;
+  isOutline.value = outline;
 }
 
 watch(
-  () => props.name,
-  (newIconName: string) => {
-    void loadIcon(newIconName);
+  () => [props.name, props.variant] as const,
+  ([newName, newVariant]) => {
+    // sync so --outline class applies before async SVG load resolves, avoiding first-paint flash
+    isOutline.value = resolveIcon(newName, newVariant).isOutline;
+    void loadIcon(newName, newVariant);
   },
   { immediate: true },
 );
@@ -56,6 +86,52 @@ watch(
 
   @apply flex-none inline-block align-top size-[--size] leading-none fill-[--color] text-[--color];
 
+  &--outline {
+    @apply fill-none;
+
+    container-type: inline-size;
+
+    svg :where(path, line, circle, rect, polyline, polygon, ellipse) {
+      fill: none;
+      stroke: var(--color);
+      stroke-width: var(--vc-icon-stroke, var(--stroke-bucket, 1.5));
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      vector-effect: non-scaling-stroke;
+    }
+
+    // TODO(design): confirm stroke bucket widths (A–E)
+    @container (width <= 10px) {
+      svg {
+        --stroke-bucket: 1;
+      }
+    }
+
+    @container (10px < width <= 14px) {
+      svg {
+        --stroke-bucket: 1.25;
+      }
+    }
+
+    @container (14px < width <= 24px) {
+      svg {
+        --stroke-bucket: 1.5;
+      }
+    }
+
+    @container (24px < width <= 48px) {
+      svg {
+        --stroke-bucket: 1.75;
+      }
+    }
+
+    @container (width > 48px) {
+      svg {
+        --stroke-bucket: 2;
+      }
+    }
+  }
+
   &--size {
     &--xxs {
       @apply size-2.5;
@@ -68,6 +144,8 @@ watch(
     &--sm {
       @apply size-5;
     }
+
+    // md: no rule — themeable default via --vc-icon-size
 
     &--lg {
       @apply size-10;
