@@ -61,8 +61,12 @@
             {{ $t("pages.account.orders.total_label") }}
           </span>
 
-          <span class="orders-table__mobile-value orders-table__mobile-value--emphasis">
-            {{ item.total?.formattedAmount }}
+          <span
+            v-for="total in getDisplayTotals(item)"
+            :key="total.currency.code"
+            class="orders-table__mobile-value orders-table__mobile-value--emphasis"
+          >
+            {{ total.formattedAmount }}
           </span>
         </div>
       </button>
@@ -123,7 +127,11 @@
       align="right"
       class="w-40"
     >
-      {{ item.total?.formattedAmount }}
+      <div class="flex flex-col">
+        <span v-for="total in getDisplayTotals(item)" :key="total.currency.code">
+          {{ total.formattedAmount }}
+        </span>
+      </div>
     </VcTableColumn>
 
     <template #page-limit-message>
@@ -136,7 +144,7 @@
 import { VcTableColumn } from "@/ui-kit/components/organisms";
 import OrderStatus from "../order-status.vue";
 import type { OrderScopeType } from "../../types";
-import type { CustomerOrderType } from "@/core/api/graphql/types";
+import type { CustomerOrderType, MoneyType, OrderTotalType } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
 
 interface IProps {
@@ -158,6 +166,20 @@ interface IEmits {
 
 const emit = defineEmits<IEmits>();
 defineProps<IProps>();
+
+// Totals to show in the Total column: the primary-currency total first, then the rest.
+// Falls back to the order's single total when per-currency totals are unavailable.
+function getDisplayTotals(order: CustomerOrderType): MoneyType[] {
+  const totals = order.orderTotals?.filter((total): total is OrderTotalType => !!total) ?? [];
+
+  if (!totals.length) {
+    return order.total ? [order.total] : [];
+  }
+
+  totals.sort((a, b) => Number(b.isDefaultTotalCurrency) - Number(a.isDefaultTotalCurrency));
+
+  return totals.map((total) => total.total);
+}
 </script>
 
 <style lang="scss">

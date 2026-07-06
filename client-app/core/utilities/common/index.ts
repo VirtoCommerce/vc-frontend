@@ -1,4 +1,4 @@
-import uniqBy from "lodash/uniqBy";
+import { uniqBy } from "lodash-es";
 import type { RouteLocationRaw, RouteLocationNormalizedLoaded, RouteLocationNormalized } from "vue-router";
 
 const RETURN_URL_KEYS = ["returnUrl", "ReturnUrl"] as const;

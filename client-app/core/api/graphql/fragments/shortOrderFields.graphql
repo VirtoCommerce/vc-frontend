@@ -41,4 +41,19 @@ fragment shortOrderFields on CustomerOrderType {
   total {
     ...money
   }
+  orderTotals {
+    isDefaultTotalCurrency
+    total {
+      ...money
+    }
+    subTotal {
+      ...money
+    }
+    discountTotal {
+      ...money
+    }
+    taxTotal {
+      ...money
+    }
+  }
 }

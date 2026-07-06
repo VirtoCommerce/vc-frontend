@@ -4,8 +4,7 @@
 
 <script setup lang="ts">
 import DOMPurify from "dompurify";
-import { marked } from "marked";
-import { computed } from "vue";
+import { ref, watch } from "vue";
 
 interface IProps {
   src: string;
@@ -13,7 +12,30 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
-const markdown = computed(() => DOMPurify.sanitize(marked(props.src) as string, { USE_PROFILES: { html: true } }));
+const markdown = ref("");
+
+// `marked` (~40 KB) is loaded only when markdown is actually rendered, keeping it off the
+// eager bundle. DOMPurify is already eager (used by image utilities), so it is imported directly.
+watch(
+  () => props.src,
+  async (src, _previousSrc, onCleanup) => {
+    let cancelled = false;
+    onCleanup(() => {
+      cancelled = true;
+    });
+    if (!src) {
+      markdown.value = "";
+      return;
+    }
+    const { marked } = await import("marked");
+    // `src` may have changed while the marked chunk was loading; skip this stale result.
+    if (cancelled) {
+      return;
+    }
+    markdown.value = DOMPurify.sanitize(marked(src) as string, { USE_PROFILES: { html: true } });
+  },
+  { immediate: true },
+);
 </script>
 
 <style lang="scss">

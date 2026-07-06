@@ -1,6 +1,5 @@
 import { useLocalStorage } from "@vueuse/core";
-import cloneDeep from "lodash/cloneDeep";
-import isEqual from "lodash/isEqual";
+import { cloneDeep, isEqual } from "lodash-es";
 import { computed, readonly, ref, toValue } from "vue";
 import { searchProducts } from "@/core/api/graphql/catalog";
 import { useRouteQueryParam, useThemeContext } from "@/core/composables";

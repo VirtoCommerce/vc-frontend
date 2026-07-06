@@ -1,7 +1,5 @@
 import { useMutation } from "@vue/apollo-composable";
-import pickBy from "lodash/pickBy";
-import uniq from "lodash/uniq";
-import uniqBy from "lodash/uniqBy";
+import { pickBy, uniq, uniqBy } from "lodash-es";
 import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { CreateConfiguredLineItemDocument } from "@/core/api/graphql/types";

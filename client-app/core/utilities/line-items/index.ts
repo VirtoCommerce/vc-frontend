@@ -38,12 +38,16 @@ export function groupByVendor<T extends LineItemType | OrderLineItemType>(items:
   return result;
 }
 
+function getLineItemCurrencyCode(item: LineItemType | OrderLineItemType): string | undefined {
+  return "currency" in item ? item.currency?.code : (item.currencyCode ?? undefined);
+}
+
 /**
- * Splits line items into those priced in the main (cart) currency and the rest,
+ * Splits line items into those priced in the main (cart/order) currency and the rest,
  * grouping the latter by their currency code. Items without a currency code are
  * treated as main-currency items.
  */
-export function splitLineItemsByCurrency<T extends LineItemType>(
+export function splitLineItemsByCurrency<T extends LineItemType | OrderLineItemType>(
   items: T[],
   mainCurrencyCode?: string,
 ): { mainCurrencyItems: T[]; otherCurrencyGroups: CurrencyGroupType<T>[] } {
@@ -51,7 +55,7 @@ export function splitLineItemsByCurrency<T extends LineItemType>(
   const otherGroupsMap = new Map<string, T[]>();
 
   items.forEach((item) => {
-    const code = item.currencyCode;
+    const code = getLineItemCurrencyCode(item);
 
     if (!code || !mainCurrencyCode || code === mainCurrencyCode) {
       mainCurrencyItems.push(item);

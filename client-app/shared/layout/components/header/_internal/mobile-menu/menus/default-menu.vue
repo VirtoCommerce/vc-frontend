@@ -25,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import { capitalize } from "lodash";
+import { capitalize } from "lodash-es";
 import type { ExtendedMenuLinkType } from "@/core/types";
 import MobileMenuLink from "@/shared/layout/components/header/_internal/mobile-menu/mobile-menu-link.vue";
 
