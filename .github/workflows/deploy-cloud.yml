@@ -35,6 +35,22 @@ on:
         default: 'https://portal.virtocommerce.cloud'
         required: false
         type: string
+    secrets:
+      REPO_TOKEN:
+        description: 'GitHub token used to create the deploy PR/commit and update deployment status'
+        required: true
+      VIRTOCLOUD_KEY_VCPT_VCST:
+        description: 'Virto Cloud token used to check deployment status'
+        required: false
+      CLOUD_INSTANCE_BASE_URL:
+        description: 'Jira cloud instance base URL (for pushing deployment info)'
+        required: false
+      CLIENT_ID:
+        description: 'Jira client id (for pushing deployment info)'
+        required: false
+      CLIENT_SECRET:
+        description: 'Jira client secret (for pushing deployment info)'
+        required: false
   workflow_dispatch:
     inputs:
       cmPath:
