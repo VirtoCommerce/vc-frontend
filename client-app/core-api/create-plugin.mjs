@@ -110,7 +110,7 @@ const GROUPS = [
     key: "tailwind",
     flag: "--with-tailwind",
     defaultOn: false,
-    prompt: "Tailwind CSS (host design tokens, plugin-local utility pass)",
+    prompt: "Tailwind CSS (host design tokens, scoped via <style scoped> + @apply)",
     packages: [],
   },
 ];
