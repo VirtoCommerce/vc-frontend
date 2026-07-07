@@ -58,11 +58,16 @@ add links via `mergeMenuSchema(...)`, which is not on the facade yet.
 
 | Decision | Choice |
 |---|---|
-| Nav-link injection | **Expose `useNavigations` (→ `mergeMenuSchema`) on the facade**; plugin merges a Corporate menu item, like `loyalty`/`purchase-requests`. |
+| Nav-link injection | **Expose a narrow `extendMenuSchema(schema)` wrapper on the facade** (thin wrapper over `useNavigations().mergeMenuSchema`); plugin merges a Corporate menu item, like `loyalty`/`purchase-requests`. Chosen over re-exporting the whole `useNavigations` composable on API-hygiene grounds — see H1. |
 | Plugin location | Own fresh git repo at `~/vc/vc-plugins/sales-rep-plugin`, scaffolded via `yarn create:plugin`. |
 | Table interactivity | **Search + sort + pagination** over mock data; empty filter slot kept (member-style role/status facets aren't meaningful for single-role, active-only reps). |
 | Scaffold tooling | ESLint + Prettier + EditorConfig/VSCode + Husky/lint-staged/commitlint, aligned with host. |
 | Tooling delivery | **Part of this ticket** (not a separate PR). |
+
+> **Open item (non-blocking):** AC#4 literally says "search + **filters**". We consciously ship
+> search + sort + pagination only, since role/status facets don't map to single-role, active-only
+> reps. Get ticket-owner sign-off on dropping facet filters, or the empty filter slot becomes a
+> real facet later.
 
 ## Work streams
 
@@ -76,22 +81,50 @@ changes are testable before the harness PR merges.
 
 ## Host-repo changes (minimal & generic)
 
-### H1 — Facade: expose menu injection
+### H1 — Facade: expose a narrow menu-injection helper
 
-Add one re-export to `client-app/core-api/index.ts`:
+Add a thin host-side wrapper next to the composable, then re-export **the wrapper** (not the
+whole composable) from `client-app/core-api/index.ts`:
 
 ```ts
-export { useNavigations } from "@/core/composables/useNavigations";
+// client-app/core/composables/extendMenuSchema.ts
+import { useNavigations } from "@/core/composables/useNavigations";
+import type { MenuType } from "@/core/types";
+import type { DeepPartial } from "utility-types";
+
+/** Narrow facade helper for MF plugins: contribute additional menu items without
+ *  exposing the whole useNavigations surface. Same live singleton at runtime. */
+export function extendMenuSchema(schema: DeepPartial<MenuType>): void {
+  useNavigations().mergeMenuSchema(schema);
+}
+```
+```ts
+// client-app/core-api/index.ts
+export { extendMenuSchema } from "@/core/composables/extendMenuSchema";
 ```
 
 Then `yarn build:core-types` regenerates `contract/index.d.ts` and auto-minor-bumps
-`CORE_VERSION`. Commit `index.ts` + regenerated `contract/` + `package.json` together (CI
-enforces the contract is not stale). This is the entire facade surface change.
+`CORE_VERSION`. Commit the new composable + `index.ts` + regenerated `contract/` + `package.json`
+together (CI enforces the contract is not stale). This is the entire facade surface change.
 
-> `useNavigations` is a `createGlobalState` singleton; exposing the composable (rather than a
-> bare `mergeMenuSchema`) matches how host code consumes it and lets the singleton stay shared.
-> If it drags in a package that must be a singleton, add it to `MF_SHARED_RANGES` in
-> `federation.mjs` (verify during implementation).
+**Why the wrapper, not `export { useNavigations }`** — verified by running `yarn build:core-types`
+both ways against this checkout:
+
+- Contract size is a near-wash: full composable +48 lines (→1586), wrapper +24 lines (→1562).
+  Both build cleanly; neither leaves a forbidden `@/…` reference. The "bloat / brittle build"
+  worry does **not** materialize — size is not the reason.
+- The real reason is **API hygiene**: `useNavigations`'s return object has ~20 members, several of
+  which *mutate host nav state* (`fetchCatalogMenu`, `fetchFooterLinks`, `fetchPinnedLinks`,
+  `setMatchingRouteName`, `markLinkTree`). Every one becomes a forever-promise to every plugin;
+  removing one later is a major bump. The plugin needs exactly one function. The facade is
+  additive, so if a future plugin genuinely needs more, adding it then is a cheap minor bump.
+- **`utility-types` becomes a new external contract import either way** (it types
+  `DeepPartial<MenuType>`). The scaffold must add `utility-types` as a **type-peer devDep**
+  (types-only, no runtime singleton) — otherwise `DeepPartial<MenuType>` silently resolves to
+  `any` under `skipLibCheck` (per `create-plugin.mjs`'s own type-peer warning). See H2.
+- No `MF_SHARED_RANGES` change is needed: the plugin borrows `@vc-frontend/core` from the host's
+  shared scope with `import: false`, so re-exported host code never introduces a new **runtime**
+  singleton. The only fallout is type-level (the `utility-types` peer above).
 
 ### H2 — `create:plugin` scaffold tooling
 
@@ -101,22 +134,40 @@ trimmed/aligned to the host repo:
 - `eslint.config.js` (+ `lint` script, eslint devDeps)
 - `.prettierrc.json` + `.prettierignore` (+ `format` script, prettier devDep)
 - `.editorconfig` + `.vscode/settings.json` (format-on-save)
-- Husky + lint-staged + commitlint (pre-commit + commit-msg hooks; `prepare` script + devDeps)
+- Husky + lint-staged + commitlint (pre-commit + commit-msg hooks; `"prepare": "husky"` — the
+  host's `postinstall: yarn precheck && husky` does **not** transplant, plugins have no `precheck`)
 
-Update `create-plugin.test.ts` to assert the new files are generated. This benefits all future
-plugins, not just this one.
+Also, independent of the lint tooling: add **`utility-types`** to the scaffold's type-peer
+devDeps (it's the external import behind `DeepPartial<MenuType>` from the H1 facade export;
+without it the facade's menu type resolves to `any` under `skipLibCheck`).
+
+Constraints verified against the host:
+- All named packages exist in the host `package.json` (eslint 9 flat, prettier, husky 9.1.7,
+  lint-staged, `@commitlint/cli` + `config-conventional`), so `create-plugin.mjs`'s
+  read-version-from-host step (which hard-exits on a missing package) is satisfied. Keep the
+  **trimmed** eslint config's plugin list and the emitted devDeps in lockstep — the host config
+  pulls in sonarjs/tailwind/storybook/a11y plugins the plugin should not inherit.
+- Plugin `package.json` is `"type": "module"` — emit config files in ESM or `.cjs` accordingly
+  (e.g. commitlint config as `.cjs`).
+- The lint tooling currently added here is **unconditional**; add a `--no-lint` escape hatch (the
+  generator is otherwise opt-in-group-driven) so a plugin can skip git hooks.
+
+Update the scaffold test at **`client-app/modules/federated/create-plugin.test.ts`** (it spawns
+the real script and asserts file existence + parseability) to cover the new files. This benefits
+all future plugins, not just this one.
 
 ## The plugin — internal shape (mirrors `modules/news`)
 
 ```
 sales-rep-plugin/
 ├── src/
-│   ├── index.ts                    # init(): gate → mergeMenuSchema + addRoute + load locale
+│   ├── index.ts                    # init(): gate (once) → addRoute + extendMenuSchema + load locale
 │   ├── pages/sales-reps.vue        # VcWidget > VcTable; search + sort + pagination
 │   ├── composables/useSalesReps.ts # MOCK data now; swap to GraphQL later (stable interface)
+│   ├── composables/useSalesRepsConfig.ts # plugin-local MOCK gate (role name); real setting = swap point
 │   ├── api/                        # placeholder query shape (profile-experience-api)
 │   ├── types/index.ts              # SalesRep { id, name, email, phone }
-│   ├── constants.ts                # MODULE_ID, ENABLED_KEY, route name/segment
+│   ├── constants.ts                # MODULE_ID, ROLE_NAME_KEY, route name/segment
 │   └── locales/{en,...}.json
 └── (eslint / prettier / editorconfig / husky configs from the enhanced scaffold)
 ```
@@ -124,23 +175,41 @@ sales-rep-plugin/
 ### Registration flow (`src/index.ts`)
 
 ```ts
+let registered = false;
+
 export function init(): void {
-  const { isEnabled } = useModuleSettings(MODULE_ID);
-  if (!isEnabled(ENABLED_KEY)) return;                 // AC#2/#3: gated on the Sales Rep setting
+  if (registered) return;                              // idempotent: loader re-inits on HMR;
+  if (!isSalesRepsEnabled()) return;                   // extendMenuSchema/addRoute both non-idempotent
+  registered = true;
+
   globals.router.addRoute("Company", salesRepsRoute);  // nested → account shell + requiresOrganization
-  useNavigations().mergeMenuSchema(menuSchema);        // adds Corporate → "Sales rep" link
-  globals.i18n.global.mergeLocaleMessage(/* plugin locales */);
+  extendMenuSchema(menuSchema);                        // adds Corporate → "Sales rep" link
+  loadPluginLocale(globals.i18n);                      // merges current locale + `en` fallback
 }
 ```
 
+- **Gate (`isSalesRepsEnabled` in `useSalesRepsConfig.ts`) — DO NOT use the host `isEnabled()`
+  directly.** Verified: `useModuleSettings(MODULE_ID).isEnabled(key)` returns strictly
+  `value === true` read from `themeContext.storeSettings.modules` (`useModuleSettings.ts:24`). With
+  `vc-module-profile-experience-api` absent from the store (our premise), it returns **false**, so
+  a raw `if (!isEnabled(...)) return` would kill the plugin at line 1 — no route, no link, ever.
+  Instead the gate is a **plugin-local mock** returning `true` (the configured role name), with the
+  real call — `getSettingValue(ROLE_NAME_KEY)` non-empty (AC#2 is a *role-name string*, not a
+  boolean) — written as the commented one-line swap point.
 - **Route:** path `/company/sales-reps`, name `SalesReps`, nested under `Company`. Inherits
-  `requiresAuth` + `requiresOrganization`, so no custom guard and no `useUser` facade export.
+  `requiresAuth` + `requiresOrganization` (merged into `to.meta` for nested routes; enforced by the
+  global `beforeEach` in `router/index.ts`), so no custom guard and no `useUser` facade export.
 - **Nav link:** injected into `header.desktop.corporate.children` **and**
   `header.mobile.corporate.children`; `id: "sales-reps"`, `icon: "user-group"`, `route:
-  { name: "SalesReps" }`, `priority` placing it right after Company members. Visibility rides on
-  the existing `isCorporateMember` gate on the Corporate widget.
-- **Gate default:** the backend setting won't exist yet, so the mock defaults to **enabled** so
-  the link/page appear in local runs, with a comment marking where the real gate takes over.
+  { name: "SalesReps" }`. Ordering: desktop corporate items carry no `priority` (sort key 0), so any
+  positive value works; **mobile** Company members has `priority: 30`, so use **> 30** to land after
+  it on mobile. Visibility rides on the existing `isCorporateMember` gate on the Corporate widget.
+- **Locale:** merge messages in `init()` (the nav-link title is a translation key resolved at render
+  time). Merge the **current** locale *and* the **`en` fallback** (mirroring
+  `modules/utils.ts#loadModuleLocale`), or missing keys render raw when current ≠ en.
+- **Idempotency:** `extendMenuSchema` concatenates arrays blindly and `router.addRoute` re-adds; the
+  federated loader tolerates remote re-registration (HMR), so a module-level `registered` flag
+  guards against duplicate links/routes.
 
 ### Data (mocked) — `useSalesReps()`
 
@@ -167,14 +236,22 @@ pointed at the plugin's dev server. Confirm:
 3. Search, column sort, and pagination work against the mock data.
 4. A non-organization user hitting `/company/sales-reps` directly is redirected (inherited guard).
 5. Only active reps are listed.
-6. `yarn build:core-types` produces no contract drift in CI; `create-plugin.test.ts` passes with
-   the new tooling files.
+6. `yarn build:core-types` produces no contract drift in CI; the federated `create-plugin.test.ts`
+   passes with the new tooling files.
+7. Idempotency: forcing a plugin re-`init()` (HMR) does **not** duplicate the nav link or route.
 
 ## Risks / to-verify during implementation
 
-- Whether exposing `useNavigations` requires adding any newly-reachable package to
-  `MF_SHARED_RANGES` (singleton safety).
-- Confirm `VcTable` and friends resolve at runtime inside a federated plugin's rendered
-  templates (expected: yes, shared Vue singleton + host global registration).
-- `create-plugin.mjs` devDep versions are read from the host `package.json`; ensure the new
-  tooling packages exist there (or pin sensible versions).
+- **Timing is best-effort, not absolute.** The host awaits federated loading before
+  `app.use(router)`, but `startFederatedModules()` has a ~20s boot backstop that lets boot continue
+  if a remote stalls — in which case route registration lands late. Normal path is fine (route
+  ready before first navigation); just don't rely on strict ordering.
+- **Contract-build graph growth (watch, don't assume).** `useNavigations` transitively pulls the
+  GraphQL barrel, `useWhiteLabeling`, `useCurrency`, `menu.json`, core utilities; `build:core-types`
+  fails on any diagnostic reachable from the facade. Run it first thing and eyeball the contract
+  diff — the H1 wrapper keeps the *exported* surface to one function but the emit still walks the
+  reachable graph. (Verified building cleanly on this checkout; re-check after rebasing on harness.)
+- Confirm `VcTable`/`VcWidget`/`VcInput`/`VcEmptyView` resolve at runtime inside a federated
+  plugin's rendered templates (expected: yes — shared Vue singleton + host global registration).
+- `create-plugin.mjs` devDep versions are read from the host `package.json` (hard-exits on a
+  missing package); all named tooling packages + `utility-types` are present today — keep it so.
