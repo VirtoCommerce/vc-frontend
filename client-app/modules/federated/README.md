@@ -31,8 +31,9 @@ APP_MODULES_FEDERATION_REMOTES='{"news":"https://plugins.example.com/news/mf-man
 yarn build-only --mode=development && yarn preview
 ```
 
-- `APP_MODULES_FEDERATION_ENABLED` → turns the host into a federation host (build + runtime). `""`, `"false"`
-  and `"0"` count as off.
+- `APP_MODULES_FEDERATION_ENABLED` → turns the host into a federation host (build + runtime). Only
+  `"true"`, `"1"`, `"yes"` or `"on"` enable it — any other value counts as off (allowlist:
+  enabling remote code loading is the dangerous direction).
 - `APP_MODULES_FEDERATION_REMOTES` → a JSON map of `remoteName → manifestUrl`. No var = no remotes = no-op.
   URLs must be **https** (http is allowed for localhost only).
 
@@ -182,13 +183,14 @@ startFederatedModules()            bootstrap.ts
   ▼
 initFederatedModules()             index.ts
   1. resolveRemotes()              parse + validate APP_MODULES_FEDERATION_REMOTES → [{name, entry}]
-                                   (empty ⇒ done; non-https / malformed entries dropped)
-  2. isCompatible(remote)          fetch manifest JSON (5s budget), evaluate
+                                   (empty ⇒ done; non-string / non-https / non-".json"
+                                   entries are reported as SKIPPED, never silently dropped)
+  2. isCompatible(remote)          fetch manifest JSON (3s budget), evaluate
                                    requiredHostVersion (semver version or RANGE) against
                                    CORE_VERSION. Incompatible, malformed, unreadable or
                                    timed out ⇒ SKIP (fail closed — no plugin code has run)
   3. registerRemotes(compatible)   { force: true } so HMR re-registration won't throw
-  4. loadRemote(`${name}/plugin`)  ⇒ plugin module ⇒ await plugin.init()  (10s budget)
+  4. loadRemote(`${name}/plugin`)  ⇒ plugin module ⇒ await plugin.init()  (5s budget each)
   5. Promise.allSettled            one bad plugin cannot abort the others
   6. reportOutcome({loaded,failed,skipped})   logs; DEV toast
 ```
@@ -214,13 +216,17 @@ Three design points worth calling out:
   (`createRemoteFederationOptions` makes it mandatory). A bare version like `"1.0.0"` is
   normalized to `"^1.0.0"` — so a host **major** bump correctly rejects plugins built
   against the previous major.
-- **Every network step is time-budgeted** (manifest 5s, load and init 10s each, tunable
-  via `initFederatedModules(options)`). Because boot awaits this loader, a hung remote
-  must degrade to a `failed`/`skipped` plugin — never a blank storefront. Containment
+- **Every network step is time-budgeted** (two knobs via `initFederatedModules(options)`:
+  manifest 3s; load and init 5s _each_ — one remote may legally take up to
+  manifest + 2×load ≈ 13s). Because boot awaits this loader, a hung remote must degrade
+  to a `failed`/`skipped` plugin — never a blank storefront. `bootstrap.ts` adds a
+  20s **backstop** above that sum, covering what the budgets cannot (the loader chunk
+  fetch itself hanging, an inner timeout malfunctioning) — a remote operating within
+  its budgets never trips it, preserving the deep-link guarantee. Containment
   semantics: a `loadRemote` that resolves _after_ its budget never gets its `init()`
   called; an `init()` that already started cannot be cancelled — the plugin is reported
-  `failed` and, if the init later completes, that is logged as **indeterminate** so the
-  outcome is never silently contradicted.
+  `failed`, and any late settlement (success or the real failure cause) is logged as
+  **indeterminate** so the outcome is never silently contradicted.
 
 ---
 

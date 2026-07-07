@@ -44,6 +44,14 @@ if (!pluginName || !targetDirArg) {
   );
   process.exit(1);
 }
+// Same fail-on-typos stance as the flag validation below: a stray third argument is
+// a mistake (a mistyped flag, a forgotten quote), not something to silently ignore.
+if (positional.length > 2) {
+  console.error(
+    `Unexpected argument(s): ${positional.slice(2).join(", ")} — expected <plugin-name> <target-dir> only.`,
+  );
+  process.exit(1);
+}
 if (!/^[a-z][a-z0-9-]*$/.test(pluginName)) {
   console.error(`Plugin name "${pluginName}" must be kebab-case ([a-z][a-z0-9-]*) - it becomes the MF remote name.`);
   process.exit(1);

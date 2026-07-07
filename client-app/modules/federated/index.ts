@@ -12,10 +12,12 @@ import { checkHostCompatibility } from "./version-gate";
  * - Isolation: one bad remote can't abort the others; outcomes are logged/returned.
  * - Every network step is time-budgeted: the app-runner awaits this loader before
  *   installing the router, so a hung remote is *bounded* — it degrades to failed/skipped
- *   within its budget rather than hanging boot forever. Per-phase budgets (defaults:
- *   5s manifest, 10s load, 10s init) can chain up to their sum for one remote; boot
- *   itself is additionally capped by the aggregate BOOT_BUDGET_MS in bootstrap.ts,
- *   past which the app proceeds and this loader finishes detached.
+ *   within its budget rather than hanging boot forever. There are TWO budget knobs
+ *   (manifestTimeoutMs, loadTimeoutMs — the latter bounds load and init separately),
+ *   so one remote may legally take up to manifest + 2×load (defaults: 3s + 5s + 5s =
+ *   13s). bootstrap.ts additionally holds a BOOT_BACKSTOP_MS above that sum — a true
+ *   backstop that fires only when these budgets malfunction or the loader chunk fetch
+ *   itself hangs; keep it > manifest + 2×load when changing the defaults here.
  * Discovery is env-driven (`APP_MODULES_FEDERATION_REMOTES`); the harness ships no built-in remote.
  */
 
@@ -39,29 +41,56 @@ interface IRemoteManifest {
 export interface IFederatedLoadResult {
   loaded: string[];
   failed: string[];
-  /** Skipped because incompatible with this host, or manifest unreadable. */
+  /** Skipped because incompatible with this host, manifest unreadable, or the configured entry URL is invalid. */
   skipped: string[];
 }
 
 export interface IFederatedLoaderOptions {
   /** Budget for reading one remote's manifest JSON; exceeded => skipped (fail closed). */
   manifestTimeoutMs?: number;
-  /** Budget for loading + init()ing one remote; exceeded => failed. */
+  /**
+   * Budget for the load phase AND (separately) the init phase of one remote;
+   * exceeded => failed. When raising the defaults, keep bootstrap.ts's
+   * BOOT_BACKSTOP_MS above manifestTimeoutMs + 2×loadTimeoutMs.
+   */
   loadTimeoutMs?: number;
 }
 
-const DEFAULT_MANIFEST_TIMEOUT_MS = 5_000;
-const DEFAULT_LOAD_TIMEOUT_MS = 10_000;
+const DEFAULT_MANIFEST_TIMEOUT_MS = 3_000;
+const DEFAULT_LOAD_TIMEOUT_MS = 5_000;
+
+/** Distinguishes a budget expiry from the work's own failure (see raceWithLateLogging). */
+class TimeoutError extends Error {}
 
 async function withTimeout<T>(work: Promise<T>, ms: number, label: string): Promise<T> {
   let timer: ReturnType<typeof setTimeout> | undefined;
   const timeout = new Promise<never>((_, reject) => {
-    timer = setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms);
+    timer = setTimeout(() => reject(new TimeoutError(`${label} timed out after ${ms}ms`)), ms);
   });
   try {
     return await Promise.race([work, timeout]);
   } finally {
     clearTimeout(timer);
+  }
+}
+
+/**
+ * withTimeout, plus: when the BUDGET (not the work) is what failed, the work keeps
+ * running detached — its eventual settlement is logged either way, so a "failed"
+ * outcome is never silently contradicted (late success) and the real cause of a late
+ * failure is not discarded in favor of the synthetic timeout error. A work promise
+ * that rejects on its own is NOT double-logged — the caller's catch owns that error.
+ */
+async function raceWithLateLogging<T>(work: Promise<T>, ms: number, label: string, lateNote: string): Promise<T> {
+  try {
+    return await withTimeout(work, ms, label);
+  } catch (error) {
+    if (error instanceof TimeoutError) {
+      work
+        .then(() => Logger.warn(`[MF] ${label} completed after its budget - ${lateNote}`))
+        .catch((lateError) => Logger.warn(`[MF] ${label} failed after its budget`, lateError));
+    }
+    throw error;
   }
 }
 
@@ -88,11 +117,28 @@ function isAllowedRemoteUrl(entry: string): boolean {
   return url.protocol === "http:" && isLocalhost;
 }
 
-function resolveRemotes(): IRemoteDescriptor[] {
+interface IResolvedRemotes {
+  remotes: IRemoteDescriptor[];
+  /** Names whose configured entry failed validation — reported as `skipped`, never silently dropped. */
+  invalidNames: string[];
+}
+
+/**
+ * Parses and validates APP_MODULES_FEDERATION_REMOTES. The full entry-URL contract
+ * lives HERE (a future discovery source must route through this function, not just
+ * isAllowedRemoteUrl): the value must be a string, an allowed https/localhost URL, and
+ * contain ".json" — the MF runtime decides manifest-vs-remoteEntry by that substring
+ * (isPureRemoteEntry in @module-federation/runtime-core does `!entry.includes(".json")`),
+ * so a manifest URL without it would pass the version gate (it fetches fine as JSON)
+ * but then be <script>-loaded as JS by loadRemote — a SyntaxError far from the real
+ * cause. Rejected here, at configuration time, with the real reason instead.
+ */
+function resolveRemotes(): IResolvedRemotes {
+  const resolved: IResolvedRemotes = { remotes: [], invalidNames: [] };
   const raw = import.meta.env.APP_MODULES_FEDERATION_REMOTES;
   if (!raw) {
     // No remotes configured -> no-op. The harness carries no built-in remote.
-    return [];
+    return resolved;
   }
 
   let parsed: unknown;
@@ -100,36 +146,34 @@ function resolveRemotes(): IRemoteDescriptor[] {
     parsed = JSON.parse(raw);
   } catch (error) {
     Logger.error("[MF] APP_MODULES_FEDERATION_REMOTES is not valid JSON; ignoring", error);
-    return [];
+    return resolved;
   }
   if (parsed === null || typeof parsed !== "object" || Array.isArray(parsed)) {
     Logger.error("[MF] APP_MODULES_FEDERATION_REMOTES must be a JSON object of remote name -> manifest URL; ignoring");
-    return [];
+    return resolved;
   }
 
-  const remotes: IRemoteDescriptor[] = [];
   for (const [name, value] of Object.entries(parsed)) {
-    // The explicit string-or-empty coercion (instead of narrowing across `continue`)
-    // keeps sonar's dataflow analysis happy; "" fails the URL check like any non-string.
-    const entry = typeof value === "string" ? value : "";
-    if (!isAllowedRemoteUrl(entry)) {
-      Logger.error(`[MF] Ignoring remote "${name}": entry must be an https URL (http only for localhost)`);
+    if (typeof value !== "string") {
+      Logger.error(`[MF] Skipping remote "${name}": entry must be a string URL`);
+      resolved.invalidNames.push(name);
       continue;
     }
-    // The MF runtime decides manifest-vs-remoteEntry by a ".json" substring in the URL
-    // (a plain includes() check on its side). A manifest URL without it would pass the
-    // version gate (it fetches fine as JSON) but then be <script>-loaded as JS by
-    // loadRemote — a SyntaxError far from the real cause. Rejected here, at
-    // configuration time, with the real reason instead.
-    if (!/\.json/.test(entry)) {
+    if (!isAllowedRemoteUrl(value)) {
+      Logger.error(`[MF] Skipping remote "${name}": entry must be an https URL (http only for localhost)`);
+      resolved.invalidNames.push(name);
+      continue;
+    }
+    if (!/\.json/.test(value)) {
       Logger.error(
-        `[MF] Ignoring remote "${name}": entry must be a manifest JSON URL containing ".json" (e.g. .../mf-manifest.json) — the MF runtime script-loads other URLs as a remoteEntry`,
+        `[MF] Skipping remote "${name}": entry must be a manifest JSON URL containing ".json" (e.g. .../mf-manifest.json) — the MF runtime script-loads other URLs as a remoteEntry`,
       );
+      resolved.invalidNames.push(name);
       continue;
     }
-    remotes.push({ name, entry });
+    resolved.remotes.push({ name, entry: value });
   }
-  return remotes;
+  return resolved;
 }
 
 /**
@@ -191,7 +235,7 @@ function reportOutcome(result: IFederatedLoadResult): void {
   Logger.warn(`[MF] plugins loaded=${loaded.length} failed=[${failed.join(", ")}] skipped=[${skipped.join(", ")}]`);
   if (import.meta.env.DEV) {
     useNotifications().error({
-      text: `Module Federation: ${failed.length} plugin(s) failed, ${skipped.length} skipped (incompatible). See console.`,
+      text: `Module Federation: ${failed.length} plugin(s) failed, ${skipped.length} skipped (incompatible or misconfigured). See console.`,
       single: false,
     });
   }
@@ -206,8 +250,14 @@ export async function initFederatedModules(options?: IFederatedLoaderOptions): P
   const loadTimeoutMs = options?.loadTimeoutMs ?? DEFAULT_LOAD_TIMEOUT_MS;
 
   const result: IFederatedLoadResult = { loaded: [], failed: [], skipped: [] };
-  const remotes = resolveRemotes();
+  const { remotes, invalidNames } = resolveRemotes();
+  // Config-invalid remotes count as skipped so they surface through the same loud
+  // path (summary log + DEV toast) as version-gate skips — never a silent drop.
+  result.skipped.push(...invalidNames);
   if (remotes.length === 0) {
+    if (result.skipped.length > 0) {
+      reportOutcome(result);
+    }
     return result;
   }
 
@@ -242,40 +292,24 @@ export async function initFederatedModules(options?: IFederatedLoaderOptions): P
     compatible.map(async (remote) => {
       try {
         // Load and init are raced SEPARATELY: a timed-out plugin's init() is never
-        // invoked - the timeout is real containment for the init phase. The load
-        // itself cannot be cancelled though: a loadRemote that resolves after its
-        // budget has still EXECUTED the remote's module scope (top-level side effects
-        // like a CSS import), so - mirroring the init overrun below - its late
-        // completion is logged rather than silently contradicting the "failed" outcome.
-        const loadWork = loadRemote<IFederatedPlugin>(`${remote.name}/plugin`);
-        let plugin: IFederatedPlugin | null;
-        try {
-          plugin = await withTimeout(loadWork, loadTimeoutMs, `plugin "${remote.name}" load`);
-        } catch (error) {
-          loadWork
-            .then(() =>
-              Logger.warn(
-                `[MF] plugin "${remote.name}" load completed after its budget - its module scope has executed (init() is NOT called); state is indeterminate`,
-              ),
-            )
-            .catch(() => {});
-          throw error;
-        }
+        // invoked - the timeout is real containment for the init phase. Neither phase
+        // can be CANCELLED though: a loadRemote that resolves after its budget has
+        // still executed the remote's module scope (top-level side effects like a CSS
+        // import), and an init() that started keeps running — raceWithLateLogging logs
+        // both late settlements so the "failed" outcome is never silently contradicted.
+        const plugin = await raceWithLateLogging(
+          loadRemote<IFederatedPlugin>(`${remote.name}/plugin`),
+          loadTimeoutMs,
+          `plugin "${remote.name}" load`,
+          "its module scope has executed (init() is NOT called); state is indeterminate",
+        );
         if (plugin?.init) {
-          // An init() that already STARTED cannot be cancelled. If it outlives its
-          // budget the plugin is reported failed, and its eventual completion is
-          // logged so the "failed" outcome is never silently contradicted later.
-          const initWork = Promise.resolve(plugin.init());
-          try {
-            await withTimeout(initWork, loadTimeoutMs, `plugin "${remote.name}" init`);
-          } catch (error) {
-            initWork
-              .then(() =>
-                Logger.warn(`[MF] plugin "${remote.name}" init completed after its budget - state is indeterminate`),
-              )
-              .catch(() => {});
-            throw error;
-          }
+          await raceWithLateLogging(
+            Promise.resolve(plugin.init()),
+            loadTimeoutMs,
+            `plugin "${remote.name}" init`,
+            "state is indeterminate",
+          );
         }
         result.loaded.push(remote.name);
       } catch (error) {

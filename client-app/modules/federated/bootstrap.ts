@@ -8,41 +8,47 @@ import { isMfFlagEnabled } from "@/core-api/federation.mjs";
  */
 
 /**
- * Upper bound on how long BOOT may wait for the whole loader. The per-phase budgets in
- * ./index bound each step (5s manifest, 10s load, 10s init), but they CHAIN: a remote
- * whose manifest answers fast, loads slowly and then hangs in init() holds first paint
- * for their sum (~25s of blank page). This caps the aggregate: past it, boot proceeds
- * and the loader finishes detached — a straggler behaves like the documented init
- * overrun (its routes may register after the first navigation; outcome still reported
- * by the loader's own logging/telemetry when it settles).
+ * BACKSTOP, not a budget: the loader's own per-phase budgets (./index — two knobs;
+ * a remote may legally take up to manifest + 2×load, 13s with the 3s/5s defaults)
+ * already bound how long a compliant remote can hold boot. This outer cap exists for
+ * what those budgets cannot cover — the fetch of the loader chunk itself hanging, or
+ * an inner timeout malfunctioning — so it must stay ABOVE the per-phase sum: a remote
+ * operating within its budgets must never trip it (its routes are guaranteed to exist
+ * for the first navigation). Past the backstop, boot proceeds and the loader finishes
+ * detached: late plugins may register routes after the first navigation, and the only
+ * signal is dev logging — production telemetry is a tracked stage-2 follow-up
+ * (TODO.md), so a backstop overrun currently leaves NO prod signal.
  */
-const BOOT_BUDGET_MS = 10_000;
-const BUDGET_EXCEEDED = Symbol("mf-boot-budget-exceeded");
+const BOOT_BACKSTOP_MS = 20_000;
 
 export async function startFederatedModules(): Promise<void> {
   if (!isMfFlagEnabled(import.meta.env.APP_MODULES_FEDERATION_ENABLED)) {
     return;
   }
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  // Started BEFORE the dynamic import so the backstop covers the loader-chunk fetch
+  // too — a stalled (never-settling) chunk request must not hold boot past the cap.
+  const backstop = new Promise<void>((resolve) => {
+    timer = setTimeout(() => {
+      Logger.warn(
+        `[MF] federated loader exceeded the ${BOOT_BACKSTOP_MS}ms boot backstop - continuing boot without waiting; late plugins may register routes after the first navigation`,
+      );
+      resolve();
+    }, BOOT_BACKSTOP_MS);
+  });
   try {
-    const { initFederatedModules } = await import("./index");
-    const work = initFederatedModules();
-    let timer: ReturnType<typeof setTimeout> | undefined;
-    const budget = new Promise<typeof BUDGET_EXCEEDED>((resolve) => {
-      timer = setTimeout(() => resolve(BUDGET_EXCEEDED), BOOT_BUDGET_MS);
-    });
-    try {
-      const outcome = await Promise.race([work, budget]);
-      if (outcome === BUDGET_EXCEEDED) {
-        Logger.warn(
-          `[MF] federated loader exceeded the ${BOOT_BUDGET_MS}ms boot budget - continuing boot without waiting; late plugins may register routes after the first navigation`,
-        );
-      }
-    } finally {
-      clearTimeout(timer);
-    }
+    const work = (async () => {
+      const { initFederatedModules } = await import("./index");
+      await initFederatedModules();
+    })();
+    await Promise.race([work, backstop]);
   } catch (error) {
     // The app-runner awaits this before installing the router — a loader chunk-load
-    // failure must degrade to "no plugins", never break boot.
+    // failure must degrade to "no plugins", never break boot. (A rejection AFTER the
+    // backstop fired is absorbed by the race's own subscription — and the loader
+    // itself never rejects — so nothing is left unhandled on the detached path.)
     Logger.error("[MF] Federated loader failed to start", error);
+  } finally {
+    clearTimeout(timer);
   }
 }

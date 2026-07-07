@@ -1,4 +1,5 @@
-import { execFileSync, spawnSync } from "node:child_process";
+// @vitest-environment node
+import { spawnSync } from "node:child_process";
 import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
@@ -17,12 +18,19 @@ const SCRIPT = resolve(__dirname, "../../core-api/create-plugin.mjs");
 
 const tempDirs: string[] = [];
 
-function scaffold(name: string, flags: string[]): { dir: string; stdout: string } {
+/** Runs the real scaffolder against a fresh temp dir; callers assert on status/stderr/dir. */
+function runScaffolder(name: string, flags: string[]): { dir: string; status: number | null; stderr: string } {
   const parent = mkdtempSync(join(tmpdir(), "mf-scaffold-"));
   tempDirs.push(parent);
   const dir = join(parent, name);
-  const stdout = execFileSync(process.execPath, [SCRIPT, name, dir, ...flags], { encoding: "utf8" });
-  return { dir, stdout };
+  const { status, stderr } = spawnSync(process.execPath, [SCRIPT, name, dir, ...flags], { encoding: "utf8" });
+  return { dir, status, stderr };
+}
+
+function scaffoldExpectingSuccess(name: string, flags: string[]): string {
+  const { dir, status, stderr } = runScaffolder(name, flags);
+  expect(status, stderr).toBe(0);
+  return dir;
 }
 
 function expectParseableTs(filePath: string): void {
@@ -42,7 +50,7 @@ afterEach(() => {
 
 describe("create-plugin scaffolder", () => {
   it("scaffolds a default plugin whose generated TS parses and whose JSON is valid", () => {
-    const { dir } = scaffold("my-plugin", ["--yes"]);
+    const dir = scaffoldExpectingSuccess("my-plugin", ["--yes"]);
 
     for (const file of ["package.json", "vite.config.ts", "tsconfig.json", "src/index.ts", "index.html"]) {
       expect(existsSync(join(dir, file)), `${file} should exist`).toBe(true);
@@ -70,7 +78,7 @@ describe("create-plugin scaffolder", () => {
   });
 
   it("scaffolds the tailwind variant with the config/styles files", () => {
-    const { dir } = scaffold("tw-plugin", ["--yes", "--with-tailwind"]);
+    const dir = scaffoldExpectingSuccess("tw-plugin", ["--yes", "--with-tailwind"]);
 
     for (const file of ["tailwind.config.cjs", "postcss.config.cjs", "src/styles.css"]) {
       expect(existsSync(join(dir, file)), `${file} should exist`).toBe(true);
@@ -81,26 +89,20 @@ describe("create-plugin scaffolder", () => {
   it("rejects unknown flags instead of silently ignoring them", () => {
     // "--tailwind" is the natural typo for "--with-tailwind"; silently ignoring it would
     // scaffold WITHOUT tailwind in CI/non-TTY runs where no prompt can catch the mistake.
-    const parent = mkdtempSync(join(tmpdir(), "mf-scaffold-"));
-    tempDirs.push(parent);
-    const run = spawnSync(
-      process.execPath,
-      [SCRIPT, "typo-plugin", join(parent, "typo-plugin"), "--yes", "--tailwind"],
-      {
-        encoding: "utf8",
-      },
-    );
-    expect(run.status).not.toBe(0);
-    expect(run.stderr).toContain("Unknown flag");
+    const { status, stderr } = runScaffolder("typo-plugin", ["--yes", "--tailwind"]);
+    expect(status).not.toBe(0);
+    expect(stderr).toContain("Unknown flag");
+  });
+
+  it("rejects stray positional arguments instead of silently ignoring them", () => {
+    const { status, stderr } = runScaffolder("my-plugin", ["--yes", "stray-token"]);
+    expect(status).not.toBe(0);
+    expect(stderr).toContain("Unexpected argument");
   });
 
   it("rejects a non-kebab-case plugin name", () => {
-    const parent = mkdtempSync(join(tmpdir(), "mf-scaffold-"));
-    tempDirs.push(parent);
-    const run = spawnSync(process.execPath, [SCRIPT, "My_Plugin", join(parent, "My_Plugin"), "--yes"], {
-      encoding: "utf8",
-    });
-    expect(run.status).not.toBe(0);
-    expect(run.stderr).toContain("kebab-case");
+    const { status, stderr } = runScaffolder("My_Plugin", ["--yes"]);
+    expect(status).not.toBe(0);
+    expect(stderr).toContain("kebab-case");
   });
 });

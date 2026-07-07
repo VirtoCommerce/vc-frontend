@@ -90,15 +90,17 @@ describe("initFederatedModules", () => {
     expect(registerRemotesMock).not.toHaveBeenCalled();
   });
 
-  it("rejects non-https remote URLs (http only for localhost)", async () => {
+  it("rejects non-https remote URLs (http only for localhost) and reports them as skipped", async () => {
     const fetchMock = stubManifestFetch();
     stubRemotesEnv({ evil: "http://plugins.example.com/mf-manifest.json", junk: "not a url", num: 5 });
 
     const result = await initFederatedModules();
 
-    expect(result).toEqual({ loaded: [], failed: [], skipped: [] });
+    // Config-invalid remotes surface as skipped (summary log + DEV toast), never a silent drop.
+    expect(result).toEqual({ loaded: [], failed: [], skipped: ["evil", "junk", "num"] });
     expect(fetchMock).not.toHaveBeenCalled();
     expect(loggerErrorMock).toHaveBeenCalledTimes(3);
+    expect(notificationErrorMock).toHaveBeenCalled();
   });
 
   it("rejects a remote entry URL without '.json' (would be script-loaded, not read as a manifest)", async () => {
@@ -107,7 +109,7 @@ describe("initFederatedModules", () => {
 
     const result = await initFederatedModules();
 
-    expect(result).toEqual({ loaded: [], failed: [], skipped: [] });
+    expect(result).toEqual({ loaded: [], failed: [], skipped: ["news"] });
     expect(fetchMock).not.toHaveBeenCalled();
     expect(loggerErrorMock).toHaveBeenCalledWith(expect.stringContaining(".json"));
   });
@@ -275,6 +277,27 @@ describe("initFederatedModules", () => {
     // The late load DID execute the remote's module scope — that must be logged, like
     // a late init, so the "failed" outcome is never silently contradicted.
     expect(loggerWarnMock).toHaveBeenCalledWith(expect.stringContaining("load completed after its budget"));
+  });
+
+  it("logs the real cause when a timed-out load later fails (not just the synthetic timeout)", async () => {
+    stubManifestFetch();
+    stubRemotesEnv({ news: REMOTE_URL });
+    let rejectLoad: ((reason: Error) => void) | undefined;
+    loadRemoteMock.mockImplementation(
+      () =>
+        new Promise((_, reject) => {
+          rejectLoad = reject;
+        }),
+    );
+
+    const result = await initFederatedModules({ loadTimeoutMs: 20 });
+    expect(result.failed).toEqual(["news"]);
+
+    const realCause = new Error("shared-dependency gate: vue range mismatch");
+    rejectLoad?.(realCause);
+    await flushPromises();
+
+    expect(loggerWarnMock).toHaveBeenCalledWith(expect.stringContaining("load failed after its budget"), realCause);
   });
 
   it("reports failed on an overrunning init() and logs its late completion as indeterminate", async () => {

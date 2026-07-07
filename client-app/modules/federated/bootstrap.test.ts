@@ -67,26 +67,44 @@ describe("startFederatedModules", () => {
     expect(loggerErrorMock).toHaveBeenCalled();
   });
 
-  it("stops waiting at the aggregate boot budget when the loader hangs (boot proceeds)", async () => {
+  it("stops waiting at the boot backstop when the loader hangs (boot proceeds)", async () => {
     vi.useFakeTimers();
     try {
       vi.stubEnv("APP_MODULES_FEDERATION_ENABLED", "true");
-      // Per-phase budgets are bypassed here on purpose: this simulates their WORST-CASE
-      // chaining (manifest ok + slow load + hung init), which only the aggregate cap bounds.
+      // Simulates an inner-budget malfunction (the loader never settles) — the one
+      // in-loader case the backstop exists for.
       initFederatedModulesMock.mockImplementation(() => new Promise(() => {}));
       const { startFederatedModules } = await loadBootstrap();
 
       const boot = startFederatedModules();
-      await vi.advanceTimersByTimeAsync(10_000);
+      await vi.advanceTimersByTimeAsync(20_000);
 
       await expect(boot).resolves.toBeUndefined();
-      expect(loggerWarnMock).toHaveBeenCalledWith(expect.stringContaining("boot budget"));
+      expect(loggerWarnMock).toHaveBeenCalledWith(expect.stringContaining("boot backstop"));
     } finally {
       vi.useRealTimers();
     }
   });
 
-  it("does not log a budget warning when the loader settles in time", async () => {
+  it("bounds a hanging loader-chunk import at the backstop (timer starts before the import)", async () => {
+    vi.useFakeTimers();
+    try {
+      vi.stubEnv("APP_MODULES_FEDERATION_ENABLED", "true");
+      // A stalled (never-settling) chunk fetch: the import promise neither resolves nor rejects.
+      vi.doMock("./index", () => new Promise(() => {}));
+      const { startFederatedModules } = await loadBootstrap();
+
+      const boot = startFederatedModules();
+      await vi.advanceTimersByTimeAsync(20_000);
+
+      await expect(boot).resolves.toBeUndefined();
+      expect(loggerWarnMock).toHaveBeenCalledWith(expect.stringContaining("boot backstop"));
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("does not log a backstop warning when the loader settles in time", async () => {
     vi.stubEnv("APP_MODULES_FEDERATION_ENABLED", "true");
     initFederatedModulesMock.mockResolvedValue({ loaded: ["news"], failed: [], skipped: [] });
     const { startFederatedModules } = await loadBootstrap();

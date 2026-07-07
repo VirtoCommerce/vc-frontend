@@ -113,6 +113,11 @@ authorization moved to #1 — it likely blocks the pilot.)
   `app.use(router)`; add a lazy/route-triggered tier for non-critical plugins.
 - **Route fallback** — deep links to a skipped/failed plugin route degrade to a generic
   routing failure; reserve host placeholder routes / a "feature unavailable" contract.
+  Related: when a plugin settles AFTER the boot backstop and registers its route late,
+  the user who deep-linked keeps seeing the 404 even though the route now exists
+  (`router.addRoute` does not re-match the current location) — a late-settlement
+  `router.replace(currentRoute.fullPath)` when the current match is the not-found route
+  would recover it.
 - **SSR/SEO** — `loadRemote` is client-side, so plugin routes are CSR-only (rules out MF for
   SEO-relevant public content; fine for authenticated sales-rep).
 - **Plugin i18n** — no contract for a plugin to register translation messages / RTL.
@@ -127,6 +132,8 @@ authorization moved to #1 — it likely blocks the pilot.)
   the loader starts before the plugin installs, so a bare read is always undefined), then
   report `failed` as `trackException` and `skipped` as a `[MF] federated plugin skipped`
   customEvent (split streams so gate-noise cannot drown real failures), fire-and-forget.
+  Also report boot-backstop overruns (`bootstrap.ts`) — today an overrun leaves no prod
+  signal at all, so sporadic missing-plugin incidents cannot be correlated to slow boots.
   Harden install() while at it: `app.use(AppInsightsPlugin)` in try/catch — `Logger.error` +
   a `useNotifications()` toast, settle the ready promise, keep booting (a malformed
   instrumentation key must not white-screen the store).

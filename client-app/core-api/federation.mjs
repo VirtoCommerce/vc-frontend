@@ -23,6 +23,10 @@ export const MF_SHARED_RANGES = {
   "@vc-frontend/core": "^1.0.0",
 };
 
+// One place for the per-entry defaults: base packages (buildSharedConfig) and packages
+// ADDED via overrides (mergeSharedConfig) must get identical semantics.
+const SHARED_DEFAULTS = { singleton: true, strictVersion: true };
+
 // SHARED-DEPENDENCY GATE - the second of the TWO version gates (see "The two version
 // gates" in modules/federated/README.md). Guards INDIVIDUAL shared libraries: "does
 // the host-provided vue/apollo/... satisfy the range this plugin was built against?"
@@ -31,10 +35,6 @@ export const MF_SHARED_RANGES = {
 // host loader converts into an isolated per-plugin failure. The facade API contract
 // itself is guarded earlier by the CONTRACT GATE (modules/federated/version-gate.ts),
 // before any plugin code runs.
-// One place for the per-entry defaults: base packages (buildSharedConfig) and packages
-// ADDED via overrides (mergeSharedConfig) must get identical semantics.
-const SHARED_DEFAULTS = { singleton: true, strictVersion: true };
-
 function buildSharedConfig(extra) {
   return Object.fromEntries(
     Object.entries(MF_SHARED_RANGES).map(([name, requiredVersion]) => [
@@ -125,10 +125,12 @@ export function createRemoteFederationOptions({ name, requiredHostVersion, expos
 
 /**
  * Env-flag normalization shared by the vite config (node) and bootstrap (browser).
- * Env values are strings, so "false"/"0" must count as off, not truthy — and common
- * ops spellings of "disabled" ("off", "no") must fail toward OFF, not enable MF.
+ * ALLOWLIST semantics: only an explicit affirmative ("true", "1", "yes", "on") enables
+ * Module Federation — every other string ("false", "0", "off", "no", "disabled",
+ * typos, ...) fails toward OFF. Enabling a code-loading feature is the dangerous
+ * direction, so unrecognized values must never enable it.
  */
-const OFF_FLAG_VALUES = new Set(["", "false", "0", "off", "no"]);
+const ON_FLAG_VALUES = new Set(["true", "1", "yes", "on"]);
 
 export function isMfFlagEnabled(value) {
   if (value === true) {
@@ -137,5 +139,5 @@ export function isMfFlagEnabled(value) {
   if (typeof value !== "string") {
     return false;
   }
-  return !OFF_FLAG_VALUES.has(value.trim().toLowerCase());
+  return ON_FLAG_VALUES.has(value.trim().toLowerCase());
 }

@@ -125,11 +125,17 @@ describe("isMfFlagEnabled", () => {
     ["", false],
     ["false", false],
     ["0", false],
-    // Ops spellings of "disabled" must fail toward OFF, not enable MF.
+    // ALLOWLIST: any value that is not an explicit affirmative fails toward OFF —
+    // enabling remote code loading is the dangerous direction.
     ["off", false],
     ["no", false],
+    ["disabled", false],
+    ["enabled", false],
+    ["tru", false],
     ["true", true],
     ["1", true],
+    ["yes", true],
+    ["on", true],
     [true, true],
     // Case- and whitespace-insensitive: env values are not always lowercased.
     ["FALSE", false],
