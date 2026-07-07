@@ -53,7 +53,7 @@
 
 ## PHASE A — Host repo
 
-### Task A1: Facade — `extendMenuSchema` helper + typed UI components
+### Task 1 (A1): Facade — `extendMenuSchema` helper + typed UI components
 
 **Files:**
 - Create: `client-app/core/composables/extendMenuSchema.ts`
@@ -153,7 +153,7 @@ git commit -m "feat(VCST-5409): facade — extendMenuSchema helper + VcTable/VcI
 
 ---
 
-### Task A2: `create:plugin` scaffold — lint/format/git-hook tooling + type-peers
+### Task 2 (A2): `create:plugin` scaffold — lint/format/git-hook tooling + type-peers
 
 **Files:**
 - Modify: `client-app/core-api/create-plugin.mjs`
@@ -365,7 +365,7 @@ git commit -m "feat(VCST-5409): create:plugin emits lint/format/git-hook tooling
 
 ---
 
-### Task A3: Publish the facade locally for co-dev (yalc)
+### Task 3 (A3): Publish the facade locally for co-dev (yalc)
 
 **Files:** none (local publish only).
 
@@ -393,7 +393,7 @@ _No commit — this is a local action._
 
 ## PHASE B — Plugin repo (`~/vc/vc-plugins/sales-rep-plugin`)
 
-### Task B1: Scaffold the plugin, link the facade, verify the baseline build
+### Task 4 (B1): Scaffold the plugin, link the facade, verify the baseline build
 
 **Files:** the whole scaffolded project (generated), then `git init`.
 
@@ -452,7 +452,7 @@ git commit -m "chore: scaffold sales-rep MF plugin (create:plugin --with-tailwin
 
 ---
 
-### Task B2: Types, mock data, and `useSalesReps` (TDD)
+### Task 5 (B2): Types, mock data, and `useSalesReps` (TDD)
 
 **Files:**
 - Create: `src/types/index.ts`, `src/api/mock.ts`, `src/composables/useSalesReps.ts`
@@ -602,7 +602,7 @@ git commit -m "feat: sales rep types, mock data, and useSalesReps (search/sort/p
 
 ---
 
-### Task B3: Config gate + constants (TDD)
+### Task 6 (B3): Config gate + constants (TDD)
 
 **Files:**
 - Create: `src/constants.ts`, `src/composables/useSalesRepsConfig.ts`
@@ -683,7 +683,7 @@ git commit -m "feat: plugin-local sales-rep config gate + constants"
 
 ---
 
-### Task B4: The table page
+### Task 7 (B4): The table page
 
 **Files:**
 - Create: `src/pages/sales-reps.vue`, `src/locales/en.json`
@@ -812,7 +812,7 @@ git commit -m "feat: sales reps table page (read-only, search + sort + paginatio
 
 ---
 
-### Task B5: `init()` — route + nav link + locale (idempotent, gated)
+### Task 8 (B5): `init()` — route + nav link + locale (idempotent, gated)
 
 **Files:**
 - Create: `src/routes.ts`, `src/menu.ts`, `src/index.ts`
@@ -970,7 +970,7 @@ git commit -m "feat: init() registers gated /company/sales-reps route + Corporat
 
 ---
 
-### Task B6: End-to-end verification against the host
+### Task 9 (B6): End-to-end verification against the host
 
 **Files:** none (verification; commit only fixes).
 
