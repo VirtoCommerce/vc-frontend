@@ -59,13 +59,14 @@ const hoisted = vi.hoisted(() => {
 
   const contactCultureName = { value: undefined as string | undefined };
   const pinnedLocale = { value: null as string | null };
+  const facetsCultureName = { value: "" };
   const previousCultureSlug = {
     value: { cultureName: "", slug: "" },
   };
 
   return {
     langs: { enUS, frFR, deDE, ptBR, ptPT },
-    state: { themeContext, contactCultureName, pinnedLocale, previousCultureSlug },
+    state: { themeContext, contactCultureName, pinnedLocale, facetsCultureName, previousCultureSlug },
   };
 });
 
@@ -78,7 +79,8 @@ vi.mock("./useThemeContext", () => ({
 }));
 
 vi.mock("@vueuse/core", () => ({
-  useLocalStorage: () => hoisted.state.pinnedLocale,
+  useLocalStorage: (key: string) =>
+    key === "facetsCultureName" ? hoisted.state.facetsCultureName : hoisted.state.pinnedLocale,
   useSessionStorage: () => hoisted.state.previousCultureSlug,
 }));
 
@@ -102,6 +104,7 @@ describe("useLanguages", () => {
     vi.clearAllMocks();
     hoisted.state.pinnedLocale.value = null;
     hoisted.state.contactCultureName.value = undefined;
+    hoisted.state.facetsCultureName.value = "";
     hoisted.state.previousCultureSlug.value = { cultureName: "", slug: "" };
     navigateTo("/");
     // Reset default language and available languages if modified by a test
@@ -425,6 +428,43 @@ describe("useLanguages", () => {
       await languages.initLocale(i18n, "en-US");
 
       expect(location.pathname).toBe("/destinations");
+    });
+
+    it("drops facets left over from a different culture (VCST-5324 follow-up)", async () => {
+      hoisted.state.facetsCultureName.value = "en-US";
+      navigateTo('/catalog?facets="COLOR":"Red"&page=2');
+      const { useLanguages } = await importComposable();
+      const languages = useLanguages();
+      const i18n: I18n = createI18n("en-US", "USD");
+
+      await languages.initLocale(i18n, "de-DE");
+
+      expect(location.search).toBe("?page=2");
+      expect(hoisted.state.facetsCultureName.value).toBe("de-DE");
+    });
+
+    it("keeps facets when the resolved culture matches the one they were built under", async () => {
+      hoisted.state.facetsCultureName.value = "de-DE";
+      navigateTo('/de/catalog?facets="COLOR":"Red"');
+      const { useLanguages } = await importComposable();
+      const languages = useLanguages();
+      const i18n: I18n = createI18n("en-US", "USD");
+
+      await languages.initLocale(i18n, "de-DE");
+
+      expect(location.search).toBe("?facets=%22COLOR%22:%22Red%22");
+    });
+
+    it("keeps facets on the very first init (nothing recorded yet to compare against)", async () => {
+      navigateTo('/catalog?facets="COLOR":"Red"');
+      const { useLanguages } = await importComposable();
+      const languages = useLanguages();
+      const i18n: I18n = createI18n("en-US", "USD");
+
+      await languages.initLocale(i18n, "en-US");
+
+      expect(location.search).toBe("?facets=%22COLOR%22:%22Red%22");
+      expect(hoisted.state.facetsCultureName.value).toBe("en-US");
     });
   });
 

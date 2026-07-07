@@ -7,7 +7,7 @@ import { TabsType, pageReloadEvent, useBroadcast } from "@/shared/broadcast";
 export function useSignMeOut(options: { reloadPage?: boolean } = { reloadPage: true }) {
   const { client } = useApolloClient();
   const broadcast = useBroadcast();
-  const { removeLocaleFromUrl, removeFacetsFromUrl, unpinLocale } = useLanguages();
+  const { removeLocaleFromUrl, unpinLocale } = useLanguages();
 
   const { unauthorize } = useAuth();
 
@@ -18,7 +18,6 @@ export function useSignMeOut(options: { reloadPage?: boolean } = { reloadPage: t
 
     unpinLocale();
     removeLocaleFromUrl();
-    removeFacetsFromUrl();
 
     localStorage.removeItem("currency");
     localStorage.removeItem(USER_ID_LOCAL_STORAGE);

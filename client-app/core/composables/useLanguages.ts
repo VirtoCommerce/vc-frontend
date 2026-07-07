@@ -18,6 +18,10 @@ const previousCultureSlug = useSessionStorage<{ cultureName: string; slug: strin
   cultureName: "",
   slug: "",
 });
+// Culture the URL's facets (if any) were built under. Compared against the resolved culture on every
+// initLocale() call (i.e. every full page load/reload) so stale facets are dropped regardless of which
+// tab or flow (language switch, sign-in/out, profile change) changed the effective culture.
+const facetsCultureName = useLocalStorage<string>("facetsCultureName", "");
 
 const defaultStoreLanguage = computed<ILanguage>(() => themeContext.value.defaultLanguage);
 const defaultStoreCulture = computed<string>(() => defaultStoreLanguage.value.cultureName);
@@ -81,6 +85,11 @@ async function initLocale(i18n: I18n, cultureName: string): Promise<void> {
 
   (i18n.global as unknown as Composer).locale.value = cultureName;
 
+  if (facetsCultureName.value && facetsCultureName.value !== cultureName) {
+    removeFacetsFromUrl();
+  }
+  facetsCultureName.value = cultureName;
+
   setLocaleForYup({
     mixed: {
       required: i18n.global.t("common.messages.required_field"),
@@ -134,8 +143,8 @@ function removeLocaleFromUrl() {
   }
 }
 
-// Facet term values are language-specific strings, so drop them whenever the effective locale
-// changes (language switch, sign-in/out, profile locale change) rather than keep a stale filter.
+// Facet term values are language-specific strings; called from initLocale() whenever the resolved
+// culture no longer matches the one facetsCultureName was last set to.
 function removeFacetsFromUrl() {
   const url = new URL(location.href);
 
