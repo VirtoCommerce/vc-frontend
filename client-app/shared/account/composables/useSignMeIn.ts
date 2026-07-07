@@ -18,7 +18,7 @@ export function useSignMeIn() {
   const { cart } = useShortCart();
   const { result: me, load: getMe } = useGetMeQuery();
   const { mutate: mergeCart } = useMutation(MergeCartDocument);
-  const { unpinLocale, removeLocaleFromUrl } = useLanguages();
+  const { unpinLocale, removeLocaleFromUrl, removeFacetsFromUrl } = useLanguages();
   const { supportedCurrencies, saveCurrencyCode } = useCurrency();
   const { mutate: changeCartCurrency } = useMutation(ChangeCartCurrencyDocument);
   const { currencyCode: currentCurrencyCode, storeId, cultureName } = globals;
@@ -30,6 +30,7 @@ export function useSignMeIn() {
 
       unpinLocale();
       removeLocaleFromUrl();
+      removeFacetsFromUrl();
 
       // get user that will be applied after reload.
       await getMe();

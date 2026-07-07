@@ -60,7 +60,7 @@ const hoisted = vi.hoisted(() => {
   const contactCultureName = { value: undefined as string | undefined };
   const pinnedLocale = { value: null as string | null };
   const previousCultureSlug = {
-    value: { cultureName: "", slug: "" } as { cultureName: string; slug: string },
+    value: { cultureName: "", slug: "" },
   };
 
   return {
@@ -230,6 +230,26 @@ describe("useLanguages", () => {
       languages.removeLocaleFromUrl();
       expect(location.pathname).toBe("/ru-RU/cart");
       expect(location.search).toBe("?x=1");
+      expect(location.hash).toBe("#sec");
+    });
+
+    it("removeFacetsFromUrl strips the facets param and preserves the rest of the query/hash", async () => {
+      navigateTo('/catalog?facets="COLOR":"Red"&page=2#sec');
+      const { useLanguages } = await importComposable();
+      const languages = useLanguages();
+      languages.removeFacetsFromUrl();
+      expect(location.pathname).toBe("/catalog");
+      expect(location.search).toBe("?page=2");
+      expect(location.hash).toBe("#sec");
+    });
+
+    it("removeFacetsFromUrl does nothing when no facets param is present", async () => {
+      navigateTo("/catalog?page=2#sec");
+      const { useLanguages } = await importComposable();
+      const languages = useLanguages();
+      languages.removeFacetsFromUrl();
+      expect(location.pathname).toBe("/catalog");
+      expect(location.search).toBe("?page=2");
       expect(location.hash).toBe("#sec");
     });
 

@@ -65,6 +65,7 @@ const {
   supportedLanguages,
   pinLocale,
   removeLocaleFromUrl,
+  removeFacetsFromUrl,
   currentLanguage,
   previousCultureSlug,
   getUrlWithoutLocale,
@@ -94,6 +95,7 @@ async function select(cultureName: string) {
   }
 
   removeLocaleFromUrl();
+  removeFacetsFromUrl();
   void broadcast.emit(dataChangedEvent);
   location.reload();
 }

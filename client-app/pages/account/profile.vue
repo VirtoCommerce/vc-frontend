@@ -100,7 +100,7 @@ const { t } = useI18n();
 const { user, updateUser } = useUser();
 const { themeContext } = useThemeContext();
 const { openModal } = useModal();
-const { currentLanguage, removeLocaleFromUrl, unpinLocale } = useLanguages();
+const { currentLanguage, removeLocaleFromUrl, removeFacetsFromUrl, unpinLocale } = useLanguages();
 const { currentCurrency, supportedCurrencies, saveCurrencyCode } = useCurrency();
 const { mutate: changeCartCurrency } = useMutation(ChangeCartCurrencyDocument);
 const broadcast = useBroadcast();
@@ -141,6 +141,7 @@ const [currencyCode] = defineField("currencyCode");
 function applyLanguage(): void {
   unpinLocale();
   removeLocaleFromUrl();
+  removeFacetsFromUrl();
 }
 
 async function applyCurrency(): Promise<void> {
