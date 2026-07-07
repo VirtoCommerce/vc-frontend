@@ -8,7 +8,7 @@
 
 // UI kit — curated components for explicit imports (all VC* are also globally
 // registered by the host, so plugins can use them in templates without importing).
-export { VcWidget } from "@/ui-kit/components";
+export { VcWidget, VcTable, VcInput, VcEmptyView } from "@/ui-kit/components";
 export { VcButton } from "@/ui-kit/components/molecules";
 export { VcMarkdownRender } from "@/ui-kit/components/atoms";
 
@@ -19,6 +19,7 @@ export { useExtensionRegistry } from "@/shared/common/composables/extensionRegis
 export { apolloClient, graphqlClient } from "@/core/api/graphql/client";
 
 export { useModuleSettings } from "@/core/composables/useModuleSettings";
+export { extendMenuSchema } from "@/core/composables/extendMenuSchema";
 export { globals } from "@/core/globals";
 export type { I18n } from "@/i18n";
 
