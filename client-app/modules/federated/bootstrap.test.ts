@@ -1,13 +1,18 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-const { initFederatedModulesMock, loggerErrorMock, loggerWarnMock } = vi.hoisted(() => ({
+const { initFederatedModulesMock, loggerErrorMock, loggerWarnMock, notificationErrorMock } = vi.hoisted(() => ({
   initFederatedModulesMock: vi.fn(),
   loggerErrorMock: vi.fn(),
   loggerWarnMock: vi.fn(),
+  notificationErrorMock: vi.fn(),
 }));
 
 vi.mock("@/core/utilities", () => ({
   Logger: { error: loggerErrorMock, warn: loggerWarnMock, info: vi.fn(), debug: vi.fn() },
+}));
+
+vi.mock("@/shared/notification", () => ({
+  useNotifications: () => ({ error: notificationErrorMock }),
 }));
 
 async function loadBootstrap() {
@@ -56,6 +61,9 @@ describe("startFederatedModules", () => {
 
     await expect(startFederatedModules()).resolves.toBeUndefined();
     expect(loggerErrorMock).toHaveBeenCalledWith(expect.stringContaining("failed to start"), expect.anything());
+    expect(notificationErrorMock).toHaveBeenCalledWith(
+      expect.objectContaining({ text: expect.stringContaining("failed to start") }),
+    );
   });
 
   it("resolves (never rejects) when the loader itself rejects", async () => {
@@ -81,6 +89,10 @@ describe("startFederatedModules", () => {
 
       await expect(boot).resolves.toBeUndefined();
       expect(loggerWarnMock).toHaveBeenCalledWith(expect.stringContaining("boot backstop"));
+      // Dev-visibility rule: a vanished/late harness is never console-only in dev.
+      expect(notificationErrorMock).toHaveBeenCalledWith(
+        expect.objectContaining({ text: expect.stringContaining("boot backstop") }),
+      );
     } finally {
       vi.useRealTimers();
     }

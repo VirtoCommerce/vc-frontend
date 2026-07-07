@@ -222,7 +222,8 @@ Three design points worth calling out:
   to a `failed`/`skipped` plugin — never a blank storefront. `bootstrap.ts` adds a
   20s **backstop** above that sum, covering what the budgets cannot (the loader chunk
   fetch itself hanging, an inner timeout malfunctioning) — a remote operating within
-  its budgets never trips it, preserving the deep-link guarantee. Containment
+  its budgets never trips it, preserving the deep-link guarantee. In dev, a backstop
+  overrun or a loader-start failure also surfaces as a toast, same as plugin failures. Containment
   semantics: a `loadRemote` that resolves _after_ its budget never gets its `init()`
   called; an `init()` that already started cannot be cancelled — the plugin is reported
   `failed`, and any late settlement (success or the real failure cause) is logged as

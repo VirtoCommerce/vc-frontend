@@ -1,5 +1,6 @@
 import { Logger } from "@/core/utilities";
 import { isMfFlagEnabled } from "@/core-api/federation.mjs";
+import { useNotifications } from "@/shared/notification";
 
 /**
  * App-runner entry for Module Federation. Kept free of static MF-runtime
@@ -22,6 +23,22 @@ import { isMfFlagEnabled } from "@/core-api/federation.mjs";
 // Exported for the invariant test only (backstop > manifest + 2×load defaults).
 export const BOOT_BACKSTOP_MS = 20_000;
 
+/**
+ * Same dev-visibility rule as the loader's reportOutcome: in dev a vanished harness is
+ * never console-only. Throw-safe because a toast failure inside `work`'s catch would
+ * reject `work` — and `work` must never reject (boot depends on it).
+ */
+function notifyDevError(text: string): void {
+  if (!import.meta.env.DEV) {
+    return;
+  }
+  try {
+    useNotifications().error({ text, single: false });
+  } catch {
+    // A dev convenience must never break boot.
+  }
+}
+
 export async function startFederatedModules(): Promise<void> {
   if (!isMfFlagEnabled(import.meta.env.APP_MODULES_FEDERATION_ENABLED)) {
     return;
@@ -33,6 +50,9 @@ export async function startFederatedModules(): Promise<void> {
     timer = setTimeout(() => {
       Logger.warn(
         `[MF] federated loader exceeded the ${BOOT_BACKSTOP_MS}ms boot backstop - continuing boot without waiting; late plugins may register routes after the first navigation`,
+      );
+      notifyDevError(
+        `Module Federation: the loader exceeded the ${BOOT_BACKSTOP_MS}ms boot backstop — plugins may appear late or not at all. See console.`,
       );
       resolve();
     }, BOOT_BACKSTOP_MS);
@@ -47,6 +67,7 @@ export async function startFederatedModules(): Promise<void> {
       await initFederatedModules();
     } catch (error) {
       Logger.error("[MF] Federated loader failed to start", error);
+      notifyDevError("Module Federation: the loader failed to start — no plugins were loaded. See console.");
     }
   })();
   try {
