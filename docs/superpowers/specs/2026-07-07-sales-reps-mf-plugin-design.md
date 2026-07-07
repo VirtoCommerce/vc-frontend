@@ -39,8 +39,11 @@ real backend wiring; excluding reps from the Company members query (backend).
 
 - **Route registration:** `globals.router.addRoute(parentName, route)` — live `vue-router`
   via the `globals` facade export. Works today.
-- **UI:** all `Vc*` ui-kit components are globally registered (`client-app/ui-kit/index.ts:15`),
-  so a plugin template can use `<VcTable>`, `<VcWidget>`, `<VcInput>`, `<VcEmptyView>` with no import.
+- **UI (runtime):** all `Vc*` ui-kit components are globally registered
+  (`client-app/ui-kit/index.ts:15`), so at runtime a plugin template resolves `<VcTable>` etc.
+  However, the plugin's own `vue-tsc` type-check has no knowledge of host globals — so the
+  components the page uses (`VcTable`, `VcInput`, `VcEmptyView`; `VcWidget` already exported) must
+  be **added to the facade** for typed imports. See H1.
 - **Account shell:** both `/account` and `/company` render `<AccountShell />` (sidebar +
   `<router-view>`). Nesting a route under the `Company` parent yields the corporate sidebar
   layout **and** inherits its `meta: { requiresAuth, requiresOrganization }` guard.
@@ -81,10 +84,22 @@ changes are testable before the harness PR merges.
 
 ## Host-repo changes (minimal & generic)
 
-### H1 — Facade: expose a narrow menu-injection helper
+### H1 — Facade: menu-injection helper + typed UI components
 
-Add a thin host-side wrapper next to the composable, then re-export **the wrapper** (not the
-whole composable) from `client-app/core-api/index.ts`:
+Two additive changes to the facade (`client-app/core-api/index.ts`), verified to build a clean
+contract together (`yarn build:core-types`: 1538 → 1764 lines, no surviving `@/…` refs):
+
+**(i) UI components** the plugin page imports with types:
+
+```ts
+export { VcWidget, VcTable, VcInput, VcEmptyView } from "@/ui-kit/components";
+```
+
+`VcInput` transitively adds **`maska`** to the contract's external peer imports (alongside
+`utility-types` from (ii)) — both must be scaffold type-peers (see H2).
+
+**(ii) Menu-injection helper.** Add a thin host-side wrapper next to the composable, then
+re-export **the wrapper** (not the whole composable):
 
 ```ts
 // client-app/core/composables/extendMenuSchema.ts
@@ -137,9 +152,11 @@ trimmed/aligned to the host repo:
 - Husky + lint-staged + commitlint (pre-commit + commit-msg hooks; `"prepare": "husky"` — the
   host's `postinstall: yarn precheck && husky` does **not** transplant, plugins have no `precheck`)
 
-Also, independent of the lint tooling: add **`utility-types`** to the scaffold's type-peer
-devDeps (it's the external import behind `DeepPartial<MenuType>` from the H1 facade export;
-without it the facade's menu type resolves to `any` under `skipLibCheck`).
+Also, independent of the lint tooling: add **`utility-types`** and **`maska`** to the scaffold's
+type-peer devDeps — the two new external imports the H1 facade additions introduce
+(`DeepPartial<MenuType>` and `VcInput`'s mask types). Without them those facade types resolve to
+`any` under `skipLibCheck`. Both are present in the host `package.json` (`utility-types ^3.11.0`,
+`maska ^3.2.0`).
 
 Constraints verified against the host:
 - All named packages exist in the host `package.json` (eslint 9 flat, prettier, husky 9.1.7,
@@ -223,8 +240,9 @@ filtering is baked into the mock (AC#5).
 
 `VcWidget size="lg"` → `VcTable` with a computed `columns` (Name / Email / Phone, sortable),
 `VcInput` search, `@header-click`/`@page-changed` wiring, `VcEmptyView` for empty/no-results —
-trimmed from `pages/company/members.vue`. Read-only: no row actions, no CRUD (AC#7). Empty
-filter slot retained for future facets.
+trimmed from `pages/company/members.vue`. Components are **imported from `@vc-frontend/core`**
+(H1) so the plugin type-checks; they still resolve to the host's global singletons at runtime.
+Read-only: no row actions, no CRUD (AC#7). Empty filter slot retained for future facets.
 
 ## Verification
 
