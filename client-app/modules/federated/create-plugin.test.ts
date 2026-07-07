@@ -129,6 +129,32 @@ describe("create-plugin scaffolder", () => {
     expect(readFileSync(join(dir, "src", "index.ts"), "utf8")).toContain('import "./styles.css"');
   });
 
+  it("scaffolds vitest tooling by default, and skips it all with --no-test", () => {
+    const dir = scaffoldExpectingSuccess("test-plugin", ["--yes"]);
+
+    for (const file of ["vitest.config.ts", "src/mocks/vc-frontend-core.ts"]) {
+      expect(existsSync(join(dir, file)), `${file} should exist`).toBe(true);
+    }
+    const pkg = JSON.parse(readFileSync(join(dir, "package.json"), "utf8"));
+    expect(pkg.devDependencies).toHaveProperty("vitest");
+    expect(pkg.devDependencies).toHaveProperty("@vue/test-utils");
+    expect(pkg.devDependencies).toHaveProperty("jsdom");
+    expect(pkg.scripts).toHaveProperty("test", "vitest run");
+    expect(pkg.scripts).toHaveProperty("test:watch", "vitest");
+    expectParseableTs(join(dir, "vitest.config.ts"));
+    expectParseableTs(join(dir, "src", "mocks", "vc-frontend-core.ts"));
+
+    const noTestDir = scaffoldExpectingSuccess("no-test-plugin", ["--yes", "--no-test"]);
+    for (const file of ["vitest.config.ts", "src/mocks/vc-frontend-core.ts"]) {
+      expect(existsSync(join(noTestDir, file)), `${file} should NOT exist`).toBe(false);
+    }
+    const noTestPkg = JSON.parse(readFileSync(join(noTestDir, "package.json"), "utf8"));
+    expect(noTestPkg.devDependencies).not.toHaveProperty("vitest");
+    expect(noTestPkg.devDependencies).not.toHaveProperty("jsdom");
+    expect(noTestPkg.scripts).not.toHaveProperty("test");
+    expect(noTestPkg.scripts).not.toHaveProperty("test:watch");
+  });
+
   it("rejects unknown flags instead of silently ignoring them", () => {
     // "--tailwind" is the natural typo for "--with-tailwind"; silently ignoring it would
     // scaffold WITHOUT tailwind in CI/non-TTY runs where no prompt can catch the mistake.

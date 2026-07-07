@@ -11,7 +11,9 @@
  * --with-vueuse, --no-router). Unselected groups are also dropped from the
  * plugin's MF shared config, so the build never needs packages it doesn't use.
  * ESLint/Prettier/EditorConfig/Husky tooling is scaffolded by default; --no-lint
- * skips it (and its devDeps/scripts) entirely.
+ * skips it (and its devDeps/scripts) entirely. Vitest unit-test tooling (jsdom
+ * environment + a facade stub/alias, so specs can `vi.mock("@vc-frontend/core")`)
+ * is scaffolded by default too; --no-test skips it (and its devDeps/scripts) entirely.
  */
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
@@ -42,7 +44,7 @@ const [pluginName, targetDirArg] = positional;
 
 if (!pluginName || !targetDirArg) {
   console.error(
-    "Usage: yarn create:plugin <plugin-name> <target-dir> [--yes] [--with-i18n] [--with-apollo] [--with-vueuse] [--with-tailwind] [--no-router] [--no-lint]",
+    "Usage: yarn create:plugin <plugin-name> <target-dir> [--yes] [--with-i18n] [--with-apollo] [--with-vueuse] [--with-tailwind] [--no-router] [--no-lint] [--no-test]",
   );
   process.exit(1);
 }
@@ -116,7 +118,7 @@ const GROUPS = [
 // Fail on typos ("--tailwind", "--with-apollos") instead of silently ignoring them:
 // in a non-interactive run (--yes / CI) there is no prompt to catch the mistake, so an
 // unknown flag would silently scaffold WITHOUT the requested group.
-const KNOWN_FLAGS = new Set(["--yes", "--no-lint", ...GROUPS.map((group) => group.flag)]);
+const KNOWN_FLAGS = new Set(["--yes", "--no-lint", "--no-test", ...GROUPS.map((group) => group.flag)]);
 const unknownFlags = [...flags].filter((flag) => !KNOWN_FLAGS.has(flag));
 if (unknownFlags.length > 0) {
   console.error(`Unknown flag(s): ${unknownFlags.join(", ")}. Known flags: ${[...KNOWN_FLAGS].join(", ")}`);
@@ -145,6 +147,7 @@ async function selectGroups() {
 
 const selected = await selectGroups();
 const withLint = !flags.has("--no-lint");
+const withTest = !flags.has("--no-test");
 
 // ── assemble dependencies ─────────────────────────────────────────────────────
 const runtimeDeps = ["vue", ...GROUPS.filter((group) => selected[group.key]).flatMap((group) => group.packages)];
@@ -184,6 +187,10 @@ const lintDeps = withLint
       "@commitlint/config-conventional",
     ]
   : [];
+
+// Unit-test tooling, matching the host's own vitest setup (jsdom, not happy-dom — the
+// latter isn't a host dependency). Opt out with --no-test.
+const testDeps = withTest ? ["vitest", "@vue/test-utils", "jsdom"] : [];
 
 // The committed form of the facade dependency: a versioned tarball published as a
 // GitHub Release asset of the (public) host repo by the "Core Facade Release"
@@ -240,6 +247,12 @@ const pkgJson = {
     // a host that is itself running `yarn dev` (see HOWTO "Dev inner loop").
     dev: "vite --port 3001",
     "type-check": "vue-tsc --noEmit",
+    ...(withTest
+      ? {
+          test: "vitest run",
+          "test:watch": "vitest",
+        }
+      : {}),
     ...(withLint
       ? {
           lint: "eslint . --fix",
@@ -261,6 +274,7 @@ const pkgJson = {
     sortedEntries(typePeerNames),
     sortedEntries(typeOnlyPeers),
     sortedEntries(lintDeps),
+    sortedEntries(testDeps),
   ),
 };
 
@@ -346,6 +360,34 @@ const tsconfig = {
   },
   include: ["src", "vite.config.ts"],
 };
+
+// The facade is types-only at runtime (host injects it via MF shared singletons), so
+// Vite's resolver throws on "@vc-frontend/core" before vi.mock() gets a chance to
+// substitute it. The alias below points it at a real, empty file instead; every test
+// that touches the specifier still overrides it via vi.mock("@vc-frontend/core", ...).
+const vitestConfig = `import { fileURLToPath } from "node:url";
+import vue from "@vitejs/plugin-vue";
+import { defineConfig } from "vitest/config";
+
+export default defineConfig({
+  plugins: [vue()],
+  resolve: {
+    alias: {
+      "@vc-frontend/core": fileURLToPath(new URL("./src/mocks/vc-frontend-core.ts", import.meta.url)),
+    },
+  },
+  test: { environment: "jsdom" },
+});
+`;
+
+const vcFrontendCoreMock = `// Test-only resolution target for "@vc-frontend/core" (see vitest.config.ts alias).
+//
+// The real package ships types only - the facade is injected by the host at runtime
+// via MF shared singletons, so it has no runtime entry for Vite to resolve. Every test
+// that touches this specifier overrides it via vi.mock("@vc-frontend/core", () => ({ ... }));
+// this file's exports are never used directly.
+export {};
+`;
 
 const stylesImport = selected.tailwind ? 'import "./styles.css";\n' : "";
 const indexTs = selected.router
@@ -480,6 +522,11 @@ if (selected.tailwind) {
   writeFileSync(join(targetDir, "src", "styles.css"), stylesCss);
 }
 writeFileSync(join(targetDir, "src", "shims-vue.d.ts"), shimsVue);
+if (withTest) {
+  writeFileSync(join(targetDir, "vitest.config.ts"), vitestConfig);
+  mkdirSync(join(targetDir, "src", "mocks"), { recursive: true });
+  writeFileSync(join(targetDir, "src", "mocks", "vc-frontend-core.ts"), vcFrontendCoreMock);
+}
 writeFileSync(join(targetDir, "README.md"), readme);
 // yalc artifacts (local facade co-dev) must never be committed - see README.
 writeFileSync(join(targetDir, ".gitignore"), "node_modules/\ndist/\n.yalc/\nyalc.lock\n");
