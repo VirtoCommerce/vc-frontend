@@ -127,6 +127,13 @@ describe("create-plugin scaffolder", () => {
       expect(existsSync(join(dir, file)), `${file} should exist`).toBe(true);
     }
     expect(readFileSync(join(dir, "src", "index.ts"), "utf8")).toContain('import "./styles.css"');
+
+    // Isolation is via Vue scoped styles, NOT a global utility layer: the config must not
+    // set an `important` scope, styles.css must not emit `@tailwind utilities`, and the
+    // demo page must carry a <style scoped> block.
+    expect(readFileSync(join(dir, "tailwind.config.cjs"), "utf8")).not.toContain("important:");
+    expect(readFileSync(join(dir, "src", "styles.css"), "utf8")).not.toMatch(/^@tailwind/m);
+    expect(readFileSync(join(dir, "src", "pages", "my-page.vue"), "utf8")).toContain("<style scoped>");
   });
 
   it("scaffolds vitest tooling by default, and skips it all with --no-test", () => {

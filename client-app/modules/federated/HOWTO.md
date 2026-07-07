@@ -155,11 +155,12 @@ Rules of the road:
 - Keep `init()` fast: it has a time budget (10s), and the whole app boot waits for it.
 - **Styling:** your components ship their own CSS (plain styles in SFCs work as-is).
   For **Tailwind**, scaffold with `--with-tailwind` (or copy its output): the plugin
-  runs its own utility pass with the **host's design system as preset**
-  (`require("@vc-frontend/core/tailwind-preset")` in `tailwind.config.cjs` — colors
-  resolve through the host's CSS variables at runtime), scans only the plugin's own
-  sources, and emits `components` + `utilities` **without `base`** so the host's
-  preflight isn't re-applied.
+  uses the **host's design system as preset** (`require("@vc-frontend/core/tailwind-preset")`
+  in `tailwind.config.cjs` — colors resolve through the host's CSS variables at runtime).
+  Style components with **`<style scoped>` + `@apply`**: Vue confines those styles to the
+  component (a `data-v-*` attribute), so the plugin emits **no global utility layer** and
+  can't leak into — or be clobbered by — host pages. See the plugin's `README.md` for the
+  full styling guidance (and the optional `important`/`!important` escape hatches).
 
 ## Step 4 — run it against the host
 

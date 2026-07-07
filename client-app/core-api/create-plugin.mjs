@@ -312,20 +312,16 @@ export default defineConfig({
 const tailwindConfig = `const path = require("path");
 const hostPreset = require("@vc-frontend/core/tailwind-preset");
 
-// The HOST's design system (colors via CSS custom properties, spacing, breakpoints),
-// scanning ONLY this plugin's sources - utilities match the host 1:1.
+// The HOST's design system (colors via CSS custom properties, spacing, breakpoints).
+// Content scanning covers this plugin's sources so \`@apply\` in <style scoped> blocks
+// resolves against the host's tokens. Styling is done per-component via scoped styles
+// (see src/pages/*.vue), so this plugin emits NO global utility layer — there is nothing
+// to leak into host pages, and no \`important\` scope is needed.
 const preset = hostPreset.default ?? hostPreset;
 
 module.exports = {
   ...preset,
   content: [path.resolve(__dirname, "index.html"), path.resolve(__dirname, "src/**/*.{vue,js,ts}")],
-  // Scope every generated utility under the plugin's root class ('.${pluginName}'), so the
-  // plugin's CSS - injected into the host after the host stylesheet - can ONLY affect the
-  // plugin's own subtree, never host pages. The descendant selector also raises specificity
-  // ('.${pluginName} .flex-col' = 0-2-0) so the plugin's utilities (incl. responsive/state
-  // variants) win over the host's global utilities WITHIN the subtree. Every rendered root
-  // MUST carry class="${pluginName}" (see src/pages/*.vue) or its utilities won't apply.
-  important: ".${pluginName}",
 };
 `;
 
@@ -344,19 +340,16 @@ module.exports = {
 `;
 
 const stylesCss = `/*
- * Plugin utility layer: only components + utilities - NOT base, so the host's
- * Tailwind preflight/reset is not re-injected (it is already applied globally).
- * The CSS custom properties these utilities reference are defined by the host.
+ * Plugin-global CSS. This file is injected into the host document, so anything here is
+ * GLOBAL and can affect host pages. Do NOT add '@tailwind utilities' here: a re-emitted
+ * flat utility (e.g. .flex-col) would win by source order and clobber host elements that
+ * rely on a later variant like lg:flex-row.
  *
- * Isolation is handled by 'important: ".${pluginName}"' in tailwind.config.cjs: every
- * utility is emitted scoped under the plugin root class, so this CSS can only style the
- * plugin's own subtree and never leaks into host pages. (A plugin's CSS is injected into
- * the host after the host stylesheet; without scoping, a re-emitted flat utility such as
- * .flex-col would win by source order and clobber host elements that rely on a later
- * variant like lg:flex-row - breaking host pages globally.)
+ * Style components with Tailwind via <style scoped> + @apply instead (see src/pages/*.vue):
+ * Vue stamps a data-v-* attribute onto the component's elements and rewrites the selectors
+ * to match, so those styles apply only to the component and never leak. Add a rule here
+ * only for a genuinely global, plugin-owned selector you fully control.
  */
-@tailwind components;
-@tailwind utilities;
 `;
 
 const tsconfig = {
@@ -421,11 +414,29 @@ export function init(): void {
 }
 `;
 
-// The root carries the plugin-name scope class so Tailwind's `important: ".${pluginName}"`
-// (tailwind.config.cjs) confines this plugin's utilities to its own subtree — see there.
-const pageClass = selected.tailwind ? ` class="${pluginName} p-6 text-primary-700"` : "";
-const myPageVue = `<template>
-  <div${pageClass}>
+// With Tailwind, style the page in a <style scoped> block via @apply: Vue stamps a data-v-*
+// attribute onto these elements and rewrites the selectors to match, so the styles apply
+// ONLY to this component and never leak into the host — no scope class, no `important`.
+const myPageVue = selected.tailwind
+  ? `<template>
+  <div class="${pluginName}">
+    <h1 class="${pluginName}__title">${pluginName}</h1>
+    <p>Served by Module Federation - built and deployed separately from the host.</p>
+  </div>
+</template>
+
+<style scoped>
+.${pluginName} {
+  @apply p-6;
+}
+
+.${pluginName}__title {
+  @apply text-xl font-bold text-primary-700;
+}
+</style>
+`
+  : `<template>
+  <div>
     <h1>${pluginName}</h1>
     <p>Served by Module Federation - built and deployed separately from the host.</p>
   </div>
@@ -461,6 +472,26 @@ A Module Federation plugin for the VC storefront, scaffolded by \`yarn create:pl
 - Build: \`yarn build\` - Serve for the host: \`yarn preview\` (port 3001)
 - Full walkthrough (running against the host, shipping, versioning):
   the host repo's \`client-app/modules/federated/HOWTO.md\`.
+
+## Styling
+
+Your plugin renders inside the host page, and the host uses unprefixed Tailwind. To avoid
+clobbering host styles (or being clobbered):
+
+1. **Style components with \`<style scoped>\` + \`@apply\`.** Vue stamps a \`data-v-*\`
+   attribute onto the component's elements (and onto the root of any host component you pass
+   a \`class\` to) and rewrites your selectors to match, so the styles apply only to this
+   component and never leak into host pages. Utilities resolve against the host design
+   tokens. See \`src/pages/my-page.vue\` for the generated example.
+2. **Never add \`@tailwind utilities\` to \`src/styles.css\`.** That file is injected
+   globally; a re-emitted flat utility (e.g. \`.flex-col\`) would win by source order and
+   clobber host elements that rely on a later variant like \`lg:flex-row\`. Keep global CSS
+   to plugin-owned selectors you fully control.
+3. **Escape hatches (optional).** Add \`!important\` to a single declaration for a
+   deliberate, local override. And if you ever need a whole subtree scoped without
+   per-component styles, Tailwind's \`important: ".<plugin-root>"\` config (with a matching
+   root class) confines every emitted utility to that subtree — it works but re-introduces
+   a global utility layer, so prefer scoped styles.
 
 ## The facade dependency
 
