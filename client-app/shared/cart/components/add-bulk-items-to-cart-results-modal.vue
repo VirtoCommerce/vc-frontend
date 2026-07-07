@@ -408,7 +408,7 @@ function print() {
 
   &__view-cart-button {
     @media (width < theme("screens.xs")) {
-      @apply !min-w-full;
+      min-width: 100% !important;
     }
 
     @media (width >= theme("screens.xs")) {
