@@ -319,6 +319,13 @@ const preset = hostPreset.default ?? hostPreset;
 module.exports = {
   ...preset,
   content: [path.resolve(__dirname, "index.html"), path.resolve(__dirname, "src/**/*.{vue,js,ts}")],
+  // Scope every generated utility under the plugin's root class ('.${pluginName}'), so the
+  // plugin's CSS - injected into the host after the host stylesheet - can ONLY affect the
+  // plugin's own subtree, never host pages. The descendant selector also raises specificity
+  // ('.${pluginName} .flex-col' = 0-2-0) so the plugin's utilities (incl. responsive/state
+  // variants) win over the host's global utilities WITHIN the subtree. Every rendered root
+  // MUST carry class="${pluginName}" (see src/pages/*.vue) or its utilities won't apply.
+  important: ".${pluginName}",
 };
 `;
 
@@ -341,17 +348,15 @@ const stylesCss = `/*
  * Tailwind preflight/reset is not re-injected (it is already applied globally).
  * The CSS custom properties these utilities reference are defined by the host.
  *
- * Wrapped in a named cascade @layer so these utilities NEVER outrank the host's.
- * A plugin's CSS is injected into the host AFTER the host stylesheet; unlayered, a
- * re-emitted flat utility (e.g. .flex-col) would win by source order and clobber a
- * host element relying on a later-ordered variant (e.g. lg:flex-row) - breaking host
- * pages globally. Unlayered CSS (the host's) always beats layered CSS, so this keeps
- * the host authoritative while the plugin's own unique utilities still apply.
+ * Isolation is handled by 'important: ".${pluginName}"' in tailwind.config.cjs: every
+ * utility is emitted scoped under the plugin root class, so this CSS can only style the
+ * plugin's own subtree and never leaks into host pages. (A plugin's CSS is injected into
+ * the host after the host stylesheet; without scoping, a re-emitted flat utility such as
+ * .flex-col would win by source order and clobber host elements that rely on a later
+ * variant like lg:flex-row - breaking host pages globally.)
  */
-@layer vc-plugin {
-  @tailwind components;
-  @tailwind utilities;
-}
+@tailwind components;
+@tailwind utilities;
 `;
 
 const tsconfig = {
@@ -416,7 +421,9 @@ export function init(): void {
 }
 `;
 
-const pageClass = selected.tailwind ? ' class="p-6 text-primary-700"' : "";
+// The root carries the plugin-name scope class so Tailwind's `important: ".${pluginName}"`
+// (tailwind.config.cjs) confines this plugin's utilities to its own subtree — see there.
+const pageClass = selected.tailwind ? ` class="${pluginName} p-6 text-primary-700"` : "";
 const myPageVue = `<template>
   <div${pageClass}>
     <h1>${pluginName}</h1>
