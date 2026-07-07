@@ -1764,4 +1764,4 @@ declare const globals: Readonly<Required<GlobalVariablesType>>;
 declare const CORE_VERSION: string;
 
 export { CORE_VERSION, _default$4 as VcButton, _default$3 as VcEmptyView, _default$2 as VcInput, _default$5 as VcMarkdownRender, _default$1 as VcTable, _default as VcWidget, apolloClient, extendMenuSchema, globals, graphqlClient, useExtensionRegistry, useModuleSettings };
-export type { I18n };
+export type { I18n, MenuType };

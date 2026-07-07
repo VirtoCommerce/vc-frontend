@@ -22,6 +22,9 @@ export { useModuleSettings } from "@/core/composables/useModuleSettings";
 export { extendMenuSchema } from "@/core/composables/extendMenuSchema";
 export { globals } from "@/core/globals";
 export type { I18n } from "@/i18n";
+// Menu schema type for plugins contributing nav links: type an extendMenuSchema
+// argument as `DeepPartial<MenuType>` (DeepPartial from the utility-types peer).
+export type { MenuType } from "@/core/types/menu";
 
 import { version } from "./package.json";
 /** Contract version, single-sourced from core-api/package.json (managed by build:core-types / bump:core). */
