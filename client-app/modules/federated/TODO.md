@@ -126,7 +126,7 @@ authorization moved to #1 — it likely blocks the pilot.)
 - **Prod telemetry for failed/skipped plugins (AppInsights)** — a stage-2 observability
   improvement, not a blocker: the harness fails closed and ships fine without it. `Logger`
   is a no-op in production, so a failed/skipped plugin leaves no prod signal today (dev gets
-  console + toast). Design sketch: expose the AppInsights instance to
+  console via Logger). Design sketch: expose the AppInsights instance to
   boot-time code via an `onLoaded`-fed module singleton + a `getAppInsightsWhenReady(timeout)`
   bridge in `applicationInsights.plugin.ts` (the library's `useAppInsights()` is inject-based;
   the loader starts before the plugin installs, so a bare read is always undefined), then

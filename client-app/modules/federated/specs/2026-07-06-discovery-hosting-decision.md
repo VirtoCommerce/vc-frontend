@@ -224,7 +224,7 @@ gaps it found are tracked in `TODO.md`):
 ## Delivered with the harness (formerly TODO items)
 
 - **Failure visibility (dev)** — failed/skipped plugins are logged with per-plugin
-  reasons, and DEV builds additionally show a toast. Production telemetry routing
+  reasons (Logger is live in dev builds, a no-op in prod). Production telemetry routing
   (Application Insights) is not part of the harness — `Logger` is a no-op in prod — and
   is tracked in `TODO.md` as a stage-2 observability follow-up (the harness fails
   closed and ships without it).

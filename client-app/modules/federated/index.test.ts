@@ -2,15 +2,13 @@ import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { initFederatedModules } from "./index";
 
-const { loadRemoteMock, registerRemotesMock, loggerErrorMock, loggerWarnMock, loggerInfoMock, notificationErrorMock } =
-  vi.hoisted(() => ({
-    loadRemoteMock: vi.fn(),
-    registerRemotesMock: vi.fn(),
-    loggerErrorMock: vi.fn(),
-    loggerWarnMock: vi.fn(),
-    loggerInfoMock: vi.fn(),
-    notificationErrorMock: vi.fn(),
-  }));
+const { loadRemoteMock, registerRemotesMock, loggerErrorMock, loggerWarnMock, loggerInfoMock } = vi.hoisted(() => ({
+  loadRemoteMock: vi.fn(),
+  registerRemotesMock: vi.fn(),
+  loggerErrorMock: vi.fn(),
+  loggerWarnMock: vi.fn(),
+  loggerInfoMock: vi.fn(),
+}));
 
 vi.mock("@module-federation/enhanced/runtime", () => ({
   loadRemote: loadRemoteMock,
@@ -19,10 +17,6 @@ vi.mock("@module-federation/enhanced/runtime", () => ({
 
 vi.mock("@/core/utilities", () => ({
   Logger: { error: loggerErrorMock, warn: loggerWarnMock, info: loggerInfoMock, debug: vi.fn() },
-}));
-
-vi.mock("@/shared/notification", () => ({
-  useNotifications: () => ({ error: notificationErrorMock }),
 }));
 
 vi.mock("@/core-api/package.json", () => ({ version: "1.4.0" }));
@@ -96,11 +90,11 @@ describe("initFederatedModules", () => {
 
     const result = await initFederatedModules();
 
-    // Config-invalid remotes surface as skipped (summary log + DEV toast), never a silent drop.
+    // Config-invalid remotes surface as skipped (summary log), never a silent drop.
     expect(result).toEqual({ loaded: [], failed: [], skipped: ["evil", "junk", "num"] });
     expect(fetchMock).not.toHaveBeenCalled();
     expect(loggerErrorMock).toHaveBeenCalledTimes(3);
-    expect(notificationErrorMock).toHaveBeenCalled();
+    expect(loggerWarnMock).toHaveBeenCalledWith(expect.stringContaining("skipped=[evil, junk, num]"));
   });
 
   it("rejects a remote entry URL without '.json' (would be script-loaded, not read as a manifest)", async () => {

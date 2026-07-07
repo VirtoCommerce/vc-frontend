@@ -1,7 +1,6 @@
 import { loadRemote, registerRemotes } from "@module-federation/enhanced/runtime";
 import { Logger } from "@/core/utilities";
 import { version as CORE_VERSION } from "@/core-api/package.json";
-import { useNotifications } from "@/shared/notification";
 import { checkHostCompatibility } from "./version-gate";
 
 /**
@@ -214,11 +213,10 @@ async function isCompatible(remote: IRemoteDescriptor, manifestTimeoutMs: number
 }
 
 /**
- * Log + (in dev) surface a summary so a vanished plugin is never silent during
- * development. NOTE: Logger is a no-op in production builds, so failed/skipped plugins
- * leave no prod telemetry signal yet. Reporting them to Application Insights
- * (exceptions for `failed`, customEvents for `skipped`) is a tracked stage-2
- * follow-up: see TODO.md.
+ * Log a summary so a vanished plugin is never silent during development (Logger is
+ * live in dev builds and a no-op in production). NOTE: failed/skipped plugins leave
+ * no prod signal yet — reporting them to Application Insights (exceptions for
+ * `failed`, customEvents for `skipped`) is a tracked stage-2 follow-up: see TODO.md.
  */
 function reportOutcome(result: IFederatedLoadResult): void {
   const { loaded, failed, skipped } = result;
@@ -234,12 +232,6 @@ function reportOutcome(result: IFederatedLoadResult): void {
     return;
   }
   Logger.warn(`[MF] plugins loaded=${loaded.length} failed=[${failed.join(", ")}] skipped=[${skipped.join(", ")}]`);
-  if (import.meta.env.DEV) {
-    useNotifications().error({
-      text: `Module Federation: ${failed.length} plugin(s) failed, ${skipped.length} skipped (incompatible or misconfigured). See console.`,
-      single: false,
-    });
-  }
 }
 
 /**
@@ -253,7 +245,7 @@ export async function initFederatedModules(options?: IFederatedLoaderOptions): P
   const result: IFederatedLoadResult = { loaded: [], failed: [], skipped: [] };
   const { remotes, invalidNames } = resolveRemotes();
   // Config-invalid remotes count as skipped so they surface through the same loud
-  // path (summary log + DEV toast) as version-gate skips — never a silent drop.
+  // summary log as version-gate skips — never a silent drop.
   result.skipped.push(...invalidNames);
   if (remotes.length === 0) {
     if (result.skipped.length > 0) {

@@ -192,7 +192,7 @@ initFederatedModules()             index.ts
   3. registerRemotes(compatible)   { force: true } so HMR re-registration won't throw
   4. loadRemote(`${name}/plugin`)  ⇒ plugin module ⇒ await plugin.init()  (5s budget each)
   5. Promise.allSettled            one bad plugin cannot abort the others
-  6. reportOutcome({loaded,failed,skipped})   logs; DEV toast
+  6. reportOutcome({loaded,failed,skipped})   logs (Logger is live in dev, no-op in prod)
 ```
 
 In production `Logger` is a no-op, so failed/skipped plugins currently surface through
@@ -222,8 +222,7 @@ Three design points worth calling out:
   to a `failed`/`skipped` plugin — never a blank storefront. `bootstrap.ts` adds a
   20s **backstop** above that sum, covering what the budgets cannot (the loader chunk
   fetch itself hanging, an inner timeout malfunctioning) — a remote operating within
-  its budgets never trips it, preserving the deep-link guarantee. In dev, a backstop
-  overrun or a loader-start failure also surfaces as a toast, same as plugin failures. Containment
+  its budgets never trips it, preserving the deep-link guarantee. Containment
   semantics: a `loadRemote` that resolves _after_ its budget never gets its `init()`
   called; an `init()` that already started cannot be cancelled — the plugin is reported
   `failed`, and any late settlement (success or the real failure cause) is logged as
