@@ -77,6 +77,49 @@ describe("create-plugin scaffolder", () => {
     expect(readFileSync(join(dir, "vite.config.ts"), "utf8")).toContain('"@apollo/client": false');
   });
 
+  it("scaffolds lint/format/git-hook tooling by default, and skips it all with --no-lint", () => {
+    const dir = scaffoldExpectingSuccess("lint-plugin", ["--yes"]);
+
+    for (const file of [
+      "eslint.config.js",
+      ".prettierrc.json",
+      ".prettierignore",
+      ".editorconfig",
+      ".commitlintrc.cjs",
+      ".vscode/settings.json",
+      ".husky/pre-commit",
+      ".husky/commit-msg",
+    ]) {
+      expect(existsSync(join(dir, file)), `${file} should exist`).toBe(true);
+    }
+    const pkg = JSON.parse(readFileSync(join(dir, "package.json"), "utf8"));
+    expect(pkg.devDependencies).toHaveProperty("eslint");
+    expect(pkg.devDependencies).toHaveProperty("utility-types");
+    expect(pkg.devDependencies).toHaveProperty("maska");
+    expect(pkg.scripts).toHaveProperty("lint");
+    expectParseableTs(join(dir, "eslint.config.js"));
+
+    const noLintDir = scaffoldExpectingSuccess("no-lint-plugin", ["--yes", "--no-lint"]);
+    for (const file of [
+      "eslint.config.js",
+      ".prettierrc.json",
+      ".prettierignore",
+      ".editorconfig",
+      ".commitlintrc.cjs",
+      ".vscode/settings.json",
+      ".husky/pre-commit",
+      ".husky/commit-msg",
+    ]) {
+      expect(existsSync(join(noLintDir, file)), `${file} should NOT exist`).toBe(false);
+    }
+    const noLintPkg = JSON.parse(readFileSync(join(noLintDir, "package.json"), "utf8"));
+    expect(noLintPkg.devDependencies).not.toHaveProperty("eslint");
+    expect(noLintPkg.devDependencies).toHaveProperty("utility-types");
+    expect(noLintPkg.devDependencies).toHaveProperty("maska");
+    expect(noLintPkg.scripts).not.toHaveProperty("lint");
+    expect(noLintPkg).not.toHaveProperty("lint-staged");
+  });
+
   it("scaffolds the tailwind variant with the config/styles files", () => {
     const dir = scaffoldExpectingSuccess("tw-plugin", ["--yes", "--with-tailwind"]);
 

@@ -10,6 +10,8 @@
  * interactively (or via flags: --yes takes defaults, --with-i18n, --with-apollo,
  * --with-vueuse, --no-router). Unselected groups are also dropped from the
  * plugin's MF shared config, so the build never needs packages it doesn't use.
+ * ESLint/Prettier/EditorConfig/Husky tooling is scaffolded by default; --no-lint
+ * skips it (and its devDeps/scripts) entirely.
  */
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
@@ -40,7 +42,7 @@ const [pluginName, targetDirArg] = positional;
 
 if (!pluginName || !targetDirArg) {
   console.error(
-    "Usage: yarn create:plugin <plugin-name> <target-dir> [--yes] [--with-i18n] [--with-apollo] [--with-vueuse] [--with-tailwind] [--no-router]",
+    "Usage: yarn create:plugin <plugin-name> <target-dir> [--yes] [--with-i18n] [--with-apollo] [--with-vueuse] [--with-tailwind] [--no-router] [--no-lint]",
   );
   process.exit(1);
 }
@@ -114,7 +116,7 @@ const GROUPS = [
 // Fail on typos ("--tailwind", "--with-apollos") instead of silently ignoring them:
 // in a non-interactive run (--yes / CI) there is no prompt to catch the mistake, so an
 // unknown flag would silently scaffold WITHOUT the requested group.
-const KNOWN_FLAGS = new Set(["--yes", ...GROUPS.map((group) => group.flag)]);
+const KNOWN_FLAGS = new Set(["--yes", "--no-lint", ...GROUPS.map((group) => group.flag)]);
 const unknownFlags = [...flags].filter((flag) => !KNOWN_FLAGS.has(flag));
 if (unknownFlags.length > 0) {
   console.error(`Unknown flag(s): ${unknownFlags.join(", ")}. Known flags: ${[...KNOWN_FLAGS].join(", ")}`);
@@ -142,6 +144,7 @@ async function selectGroups() {
 }
 
 const selected = await selectGroups();
+const withLint = !flags.has("--no-lint");
 
 // ── assemble dependencies ─────────────────────────────────────────────────────
 const runtimeDeps = ["vue", ...GROUPS.filter((group) => selected[group.key]).flatMap((group) => group.packages)];
@@ -158,6 +161,29 @@ if (selected.tailwind) {
     "tw-elements",
   );
 }
+
+// Type-peers the facade contract references but that are NOT MF shared singletons
+// (types-only). Without them, DeepPartial<MenuType> (extendMenuSchema) and VcInput's
+// mask types silently resolve to `any` under skipLibCheck.
+const typeOnlyPeers = ["utility-types", "maska"];
+
+// Lint / format / git-hook tooling — a trimmed, host-aligned subset. Opt out with --no-lint.
+const lintDeps = withLint
+  ? [
+      "eslint",
+      "typescript-eslint",
+      "@vue/eslint-config-typescript",
+      "eslint-plugin-vue",
+      "eslint-plugin-prettier",
+      "eslint-config-prettier",
+      "globals",
+      "prettier",
+      "husky",
+      "lint-staged",
+      "@commitlint/cli",
+      "@commitlint/config-conventional",
+    ]
+  : [];
 
 // The committed form of the facade dependency: a versioned tarball published as a
 // GitHub Release asset of the (public) host repo by the "Core Facade Release"
@@ -214,14 +240,36 @@ const pkgJson = {
     // a host that is itself running `yarn dev` (see HOWTO "Dev inner loop").
     dev: "vite --port 3001",
     "type-check": "vue-tsc --noEmit",
+    ...(withLint
+      ? {
+          lint: "eslint . --fix",
+          format: 'prettier --write "src/**/*.{ts,vue,json,css}"',
+          prepare: "husky",
+        }
+      : {}),
   },
   dependencies: { "@vc-frontend/core": coreTarballUrl },
   // Compile-time only — nothing here ships in the bundle: packages the plugin imports are
   // MF-shared (import: false, borrowed from the host at runtime); the rest are type-peers
   // and tooling, tree-shaken away. `typePeerNames` ensures every facade type-peer is present
   // even when its optional runtime group wasn't selected (see the note at the top of file).
-  devDependencies: mergeDeps(sortedEntries(runtimeDeps), sortedEntries(toolDeps), sortedEntries(typePeerNames)),
+  // `typeOnlyPeers` (utility-types, maska) are unconditional too — see the note above their
+  // declaration. `lintDeps` is empty when --no-lint is passed.
+  devDependencies: mergeDeps(
+    sortedEntries(runtimeDeps),
+    sortedEntries(toolDeps),
+    sortedEntries(typePeerNames),
+    sortedEntries(typeOnlyPeers),
+    sortedEntries(lintDeps),
+  ),
 };
+
+if (withLint) {
+  pkgJson["lint-staged"] = {
+    "*.{js,ts,vue}": ["eslint --fix"],
+    "*.{json,css}": ["prettier --write"],
+  };
+}
 
 const viteConfig = `import { federation } from "@module-federation/vite";
 import { createRemoteFederationOptions } from "@vc-frontend/core/federation";
@@ -365,6 +413,57 @@ run \`yalc remove @vc-frontend/core\` and restore the pinned URL before pushing 
 commit a \`file:.yalc/...\` dependency.
 `;
 
+const eslintConfig = `import { defineConfigWithVueTs, vueTsConfigs } from "@vue/eslint-config-typescript";
+import prettier from "eslint-plugin-prettier/recommended";
+import pluginVue from "eslint-plugin-vue";
+import globals from "globals";
+
+// Trimmed, host-aligned flat config for a standalone MF plugin.
+export default defineConfigWithVueTs(
+  { ignores: ["dist/", "node_modules/", ".yalc/"] },
+  pluginVue.configs["flat/recommended"],
+  vueTsConfigs.recommended,
+  { languageOptions: { globals: { ...globals.browser } } },
+  prettier,
+);
+`;
+
+const prettierrc =
+  JSON.stringify({ $schema: "https://json.schemastore.org/prettierrc", endOfLine: "auto" }, null, 2) + "\n";
+const prettierignore = "dist/\nnode_modules/\n.yalc/\n";
+const editorconfig = `# Editor configuration, see https://editorconfig.org
+root = true
+
+[*]
+charset = utf-8
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+max_line_length = 120
+trim_trailing_whitespace = true
+
+[*.{vue,js,ts}]
+quote_type = double
+
+[*.md]
+max_line_length = off
+trim_trailing_whitespace = false
+`;
+const vscodeSettings =
+  JSON.stringify(
+    {
+      "editor.formatOnSave": true,
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      "editor.codeActionsOnSave": { "source.fixAll.eslint": "explicit" },
+      "eslint.useFlatConfig": true,
+    },
+    null,
+    2,
+  ) + "\n";
+const commitlintConfig = 'module.exports = { extends: ["@commitlint/config-conventional"] };\n';
+const huskyPreCommit = "yarn lint-staged\n";
+const huskyCommitMsg = "yarn commitlint --edit $1\n";
+
 // ── write ─────────────────────────────────────────────────────────────────────
 mkdirSync(join(targetDir, "src", "pages"), { recursive: true });
 writeFileSync(join(targetDir, "package.json"), JSON.stringify(pkgJson, null, 2) + "\n");
@@ -386,6 +485,18 @@ writeFileSync(join(targetDir, "README.md"), readme);
 writeFileSync(join(targetDir, ".gitignore"), "node_modules/\ndist/\n.yalc/\nyalc.lock\n");
 // Standalone project: keep Yarn out of the host's workspace/PnP context.
 writeFileSync(join(targetDir, ".yarnrc.yml"), "nodeLinker: node-modules\n");
+if (withLint) {
+  writeFileSync(join(targetDir, "eslint.config.js"), eslintConfig);
+  writeFileSync(join(targetDir, ".prettierrc.json"), prettierrc);
+  writeFileSync(join(targetDir, ".prettierignore"), prettierignore);
+  writeFileSync(join(targetDir, ".editorconfig"), editorconfig);
+  writeFileSync(join(targetDir, ".commitlintrc.cjs"), commitlintConfig);
+  mkdirSync(join(targetDir, ".vscode"), { recursive: true });
+  writeFileSync(join(targetDir, ".vscode", "settings.json"), vscodeSettings);
+  mkdirSync(join(targetDir, ".husky"), { recursive: true });
+  writeFileSync(join(targetDir, ".husky", "pre-commit"), huskyPreCommit);
+  writeFileSync(join(targetDir, ".husky", "commit-msg"), huskyCommitMsg);
+}
 
 console.log(`\nScaffolded "${pluginName}" at ${targetDir}`);
 console.log(`  deps pinned from host: ${runtimeDeps.join(", ")}`);
