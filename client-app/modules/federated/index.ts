@@ -56,8 +56,9 @@ export interface IFederatedLoaderOptions {
   loadTimeoutMs?: number;
 }
 
-const DEFAULT_MANIFEST_TIMEOUT_MS = 3_000;
-const DEFAULT_LOAD_TIMEOUT_MS = 5_000;
+// Exported for the invariant test only (bootstrap's backstop must exceed their sum).
+export const DEFAULT_MANIFEST_TIMEOUT_MS = 3_000;
+export const DEFAULT_LOAD_TIMEOUT_MS = 5_000;
 
 /** Distinguishes a budget expiry from the work's own failure (see raceWithLateLogging). */
 class TimeoutError extends Error {}
@@ -303,7 +304,13 @@ export async function initFederatedModules(options?: IFederatedLoaderOptions): P
           `plugin "${remote.name}" load`,
           "its module scope has executed (init() is NOT called); state is indeterminate",
         );
-        if (plugin?.init) {
+        // The MF runtime resolves null instead of rejecting when an errorLoadRemote
+        // failover hook is registered. None is today, but "no module delivered"
+        // must never count (silently) as loaded if one ever appears.
+        if (plugin === null) {
+          throw new Error(`plugin "${remote.name}" load resolved to null - no module was delivered`);
+        }
+        if (plugin.init) {
           await raceWithLateLogging(
             Promise.resolve(plugin.init()),
             loadTimeoutMs,

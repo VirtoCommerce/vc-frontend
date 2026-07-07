@@ -86,6 +86,34 @@ describe("startFederatedModules", () => {
     }
   });
 
+  it("logs a loader-chunk failure even when it happens AFTER the backstop fired", async () => {
+    vi.useFakeTimers();
+    try {
+      vi.stubEnv("APP_MODULES_FEDERATION_ENABLED", "true");
+      // Chunk fetch stalls past the backstop, then errors: the failure must still be
+      // logged — otherwise the backstop's "late plugins" warning is the only (and
+      // misleading) signal for a loader that actually died.
+      vi.doMock(
+        "./index",
+        () =>
+          new Promise((_, reject) => {
+            setTimeout(() => reject(new Error("chunk error after backstop")), 25_000);
+          }),
+      );
+      const { startFederatedModules } = await loadBootstrap();
+
+      const boot = startFederatedModules();
+      await vi.advanceTimersByTimeAsync(20_000);
+      await expect(boot).resolves.toBeUndefined();
+      expect(loggerErrorMock).not.toHaveBeenCalled();
+
+      await vi.advanceTimersByTimeAsync(5_000);
+      expect(loggerErrorMock).toHaveBeenCalledWith(expect.stringContaining("failed to start"), expect.anything());
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it("bounds a hanging loader-chunk import at the backstop (timer starts before the import)", async () => {
     vi.useFakeTimers();
     try {
@@ -104,13 +132,21 @@ describe("startFederatedModules", () => {
     }
   });
 
-  it("does not log a backstop warning when the loader settles in time", async () => {
-    vi.stubEnv("APP_MODULES_FEDERATION_ENABLED", "true");
-    initFederatedModulesMock.mockResolvedValue({ loaded: ["news"], failed: [], skipped: [] });
-    const { startFederatedModules } = await loadBootstrap();
+  it("does not log a backstop warning when the loader settles in time (timer is cleared)", async () => {
+    vi.useFakeTimers();
+    try {
+      vi.stubEnv("APP_MODULES_FEDERATION_ENABLED", "true");
+      initFederatedModulesMock.mockResolvedValue({ loaded: ["news"], failed: [], skipped: [] });
+      const { startFederatedModules } = await loadBootstrap();
 
-    await startFederatedModules();
+      await startFederatedModules();
+      // Advance PAST the backstop: a leaked (uncleared) timer would fire its
+      // misleading warning long after a perfectly normal boot.
+      await vi.advanceTimersByTimeAsync(20_000);
 
-    expect(loggerWarnMock).not.toHaveBeenCalled();
+      expect(loggerWarnMock).not.toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

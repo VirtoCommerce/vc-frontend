@@ -300,6 +300,43 @@ describe("initFederatedModules", () => {
     expect(loggerWarnMock).toHaveBeenCalledWith(expect.stringContaining("load failed after its budget"), realCause);
   });
 
+  it("does not late-log an ordinary failure (only budget expiries get the 'after its budget' warn)", async () => {
+    stubManifestFetch();
+    stubRemotesEnv({ news: REMOTE_URL });
+    loadRemoteMock.mockRejectedValue(new Error("boom"));
+
+    const result = await initFederatedModules();
+    await flushPromises();
+
+    expect(result.failed).toEqual(["news"]);
+    // The caller's catch owns a work-own rejection; a spurious "after its budget" warn
+    // would contradict the single Logger.error it produces.
+    expect(loggerWarnMock).not.toHaveBeenCalledWith(expect.stringContaining("after its budget"), expect.anything());
+    expect(loggerWarnMock).not.toHaveBeenCalledWith(expect.stringContaining("after its budget"));
+  });
+
+  it("counts a plugin whose load resolves to null (no module delivered) as failed, not loaded", async () => {
+    stubManifestFetch();
+    stubRemotesEnv({ news: REMOTE_URL });
+    // The MF runtime resolves null instead of rejecting when an errorLoadRemote
+    // failover hook is registered — "no module" must never silently count as loaded.
+    loadRemoteMock.mockResolvedValue(null);
+
+    const result = await initFederatedModules();
+
+    expect(result).toEqual({ loaded: [], failed: ["news"], skipped: [] });
+    expect(loggerErrorMock).toHaveBeenCalledWith(expect.stringContaining("news"), expect.anything());
+  });
+
+  it("backstop invariant: a budget-compliant remote can never trip the boot backstop", async () => {
+    const { BOOT_BACKSTOP_MS } = await import("./bootstrap");
+    const { DEFAULT_MANIFEST_TIMEOUT_MS, DEFAULT_LOAD_TIMEOUT_MS } = await import("./index");
+
+    // One remote may legally take manifest + load + init; the bootstrap backstop must
+    // sit above that sum or a compliant plugin loses its deep-link guarantee.
+    expect(BOOT_BACKSTOP_MS).toBeGreaterThan(DEFAULT_MANIFEST_TIMEOUT_MS + 2 * DEFAULT_LOAD_TIMEOUT_MS);
+  });
+
   it("reports failed on an overrunning init() and logs its late completion as indeterminate", async () => {
     stubManifestFetch();
     stubRemotesEnv({ news: REMOTE_URL });

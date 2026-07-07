@@ -19,7 +19,8 @@ import { isMfFlagEnabled } from "@/core-api/federation.mjs";
  * signal is dev logging — production telemetry is a tracked stage-2 follow-up
  * (TODO.md), so a backstop overrun currently leaves NO prod signal.
  */
-const BOOT_BACKSTOP_MS = 20_000;
+// Exported for the invariant test only (backstop > manifest + 2×load defaults).
+export const BOOT_BACKSTOP_MS = 20_000;
 
 export async function startFederatedModules(): Promise<void> {
   if (!isMfFlagEnabled(import.meta.env.APP_MODULES_FEDERATION_ENABLED)) {
@@ -36,18 +37,20 @@ export async function startFederatedModules(): Promise<void> {
       resolve();
     }, BOOT_BACKSTOP_MS);
   });
-  try {
-    const work = (async () => {
+  // Failures are handled INSIDE `work`, so a loader-chunk error logs the same single
+  // line before or after the backstop (a catch around the race would silently absorb
+  // post-backstop rejections). `work` never rejecting also means a loader failure
+  // degrades to "no plugins" and can never break boot.
+  const work = (async () => {
+    try {
       const { initFederatedModules } = await import("./index");
       await initFederatedModules();
-    })();
+    } catch (error) {
+      Logger.error("[MF] Federated loader failed to start", error);
+    }
+  })();
+  try {
     await Promise.race([work, backstop]);
-  } catch (error) {
-    // The app-runner awaits this before installing the router — a loader chunk-load
-    // failure must degrade to "no plugins", never break boot. (A rejection AFTER the
-    // backstop fired is absorbed by the race's own subscription — and the loader
-    // itself never rejects — so nothing is left unhandled on the detached path.)
-    Logger.error("[MF] Federated loader failed to start", error);
   } finally {
     clearTimeout(timer);
   }
