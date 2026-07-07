@@ -93,19 +93,21 @@
     </VcEmptyView>
 
     <!-- Content block -->
-    <OrdersTable
-      v-else
-      :loading="ordersLoading"
-      :orders="orders"
-      :sort="sort"
-      :pages="pages"
-      :page="page"
-      bordered
-      :order-scope="orderScope"
-      @header-click="applySorting"
-      @page-changed="changePage"
-      @row-click="goToOrderDetails"
-    />
+    <VcWidget v-else size="lg">
+      <template #default-container>
+        <OrdersTable
+          :loading="ordersLoading"
+          :orders="orders"
+          :sort="sort"
+          :pages="pages"
+          :page="page"
+          :order-scope="orderScope"
+          @header-click="applySorting"
+          @page-changed="changePage"
+          @row-click="goToOrderDetails"
+        />
+      </template>
+    </VcWidget>
   </div>
 </template>
 
