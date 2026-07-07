@@ -340,9 +340,18 @@ const stylesCss = `/*
  * Plugin utility layer: only components + utilities - NOT base, so the host's
  * Tailwind preflight/reset is not re-injected (it is already applied globally).
  * The CSS custom properties these utilities reference are defined by the host.
+ *
+ * Wrapped in a named cascade @layer so these utilities NEVER outrank the host's.
+ * A plugin's CSS is injected into the host AFTER the host stylesheet; unlayered, a
+ * re-emitted flat utility (e.g. .flex-col) would win by source order and clobber a
+ * host element relying on a later-ordered variant (e.g. lg:flex-row) - breaking host
+ * pages globally. Unlayered CSS (the host's) always beats layered CSS, so this keeps
+ * the host authoritative while the plugin's own unique utilities still apply.
  */
-@tailwind components;
-@tailwind utilities;
+@layer vc-plugin {
+  @tailwind components;
+  @tailwind utilities;
+}
 `;
 
 const tsconfig = {
