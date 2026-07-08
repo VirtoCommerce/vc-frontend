@@ -18,10 +18,9 @@ const previousCultureSlug = useSessionStorage<{ cultureName: string; slug: strin
   cultureName: "",
   slug: "",
 });
-// Culture the URL's facets (if any) were built under. Compared against the resolved culture on every
-// initLocale() call (i.e. every full page load/reload) so stale facets are dropped regardless of which
-// tab or flow (language switch, sign-in/out, profile change) changed the effective culture.
-const facetsCultureName = useLocalStorage<string>("facetsCultureName", "");
+// Culture this tab's facets were built under; session-scoped like previousCultureSlug above, so tabs
+// on different locales don't wipe each other's valid facets via a shared localStorage key.
+const facetsCultureName = useSessionStorage<string>("facetsCultureName", "");
 
 const defaultStoreLanguage = computed<ILanguage>(() => themeContext.value.defaultLanguage);
 const defaultStoreCulture = computed<string>(() => defaultStoreLanguage.value.cultureName);

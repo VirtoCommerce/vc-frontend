@@ -79,9 +79,9 @@ vi.mock("./useThemeContext", () => ({
 }));
 
 vi.mock("@vueuse/core", () => ({
-  useLocalStorage: (key: string) =>
-    key === "facetsCultureName" ? hoisted.state.facetsCultureName : hoisted.state.pinnedLocale,
-  useSessionStorage: () => hoisted.state.previousCultureSlug,
+  useLocalStorage: () => hoisted.state.pinnedLocale,
+  useSessionStorage: (key: string) =>
+    key === "facetsCultureName" ? hoisted.state.facetsCultureName : hoisted.state.previousCultureSlug,
 }));
 
 vi.mock("yup", () => ({
