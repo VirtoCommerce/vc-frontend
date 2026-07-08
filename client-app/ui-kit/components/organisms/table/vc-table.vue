@@ -235,7 +235,7 @@
                 size="sm"
                 tabindex="-1"
                 :model-value="isRowSelected(item, rowIndex)"
-                :disabled="!isRowSelectable(item)"
+                :disabled="!isRowSelectable(item) && !isRowSelected(item, rowIndex)"
                 :aria-label="rowSelectionAriaLabel(item, rowIndex)"
                 @change="toggleRow(item, rowIndex)"
               />
@@ -247,7 +247,7 @@
                 :name="`sel-${tableId}-${getItemKey(item, rowIndex)}`"
                 :value="getItemKey(item, rowIndex)"
                 :model-value="isRowSelected(item, rowIndex) ? getItemKey(item, rowIndex) : undefined"
-                :disabled="!isRowSelectable(item)"
+                :disabled="!isRowSelectable(item) && !isRowSelected(item, rowIndex)"
                 :aria-label="rowSelectionAriaLabel(item, rowIndex)"
                 @change="toggleRow(item, rowIndex)"
               />

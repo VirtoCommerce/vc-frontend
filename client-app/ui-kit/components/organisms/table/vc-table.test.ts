@@ -1140,6 +1140,30 @@ describe("row selection — isRowSelectable=false", () => {
     expect(wrapper.emitted("update:selection")).toBeUndefined();
     expect(wrapper.emitted("selectionChange")).toBeUndefined();
   });
+
+  it("keeps the control enabled for a selected non-selectable row while disabling an unselected one (multiple)", async () => {
+    const wrapper = await mountSelectable({
+      selectionMode: "multiple",
+      selection: ["2"],
+      isRowSelectable: (item) => item.id === "1",
+    });
+
+    const rowCheckboxes = wrapper.findAll("tbody .checkbox-stub");
+    expect(rowCheckboxes[1].attributes("data-disabled")).toBe("false");
+    expect(rowCheckboxes[2].attributes("data-disabled")).toBe("true");
+  });
+
+  it("keeps the control enabled for a selected non-selectable row while disabling an unselected one (single)", async () => {
+    const wrapper = await mountSelectable({
+      selectionMode: "single",
+      selection: ["2"],
+      isRowSelectable: (item) => item.id === "1",
+    });
+
+    const radios = wrapper.findAll("tbody .radio-stub");
+    expect(radios[1].attributes("data-disabled")).toBe("false");
+    expect(radios[2].attributes("data-disabled")).toBe("true");
+  });
 });
 
 describe("row selection — selectability gates addition only (contract)", () => {
