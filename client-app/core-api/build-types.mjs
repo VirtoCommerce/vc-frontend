@@ -246,7 +246,9 @@ function compareContractToBase(currentContract, currentPreset) {
   // must bump CORE_VERSION exactly like a contract change (releases are immutable — an
   // unbumped version could never be re-released with the new preset). Absent at base =
   // first introduction, not a change.
-  const basePreset = baseSha ? git(["show", `${baseSha}:client-app/core-api/contract/tailwind-preset.cjs`]) : { status: 1 };
+  const basePreset = baseSha
+    ? git(["show", `${baseSha}:client-app/core-api/contract/tailwind-preset.cjs`])
+    : { status: 1 };
   const presetChanged = basePreset.status === 0 && basePreset.stdout !== currentPreset;
   return {
     baseRef,

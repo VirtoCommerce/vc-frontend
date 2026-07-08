@@ -374,6 +374,20 @@ export default defineConfigWithVueTs(
     },
   },
 
+  // @vc-frontend/core node CLI tooling (build-types, bump-version, create-plugin, ...):
+  // - console output is their UX, same as scripts/** above.
+  // - import/order is disabled: these scripts use CommonJS interop (createRequire + dynamic
+  //   `require(resolve(...))` that can't be static imports), and import/order misreads those
+  //   in-body require() calls as a second import group, emitting an unfixable false
+  //   "empty line between import groups" on the ESM block above them.
+  {
+    files: ["client-app/core-api/*.mjs"],
+    rules: {
+      "no-console": "off",
+      "import/order": "off",
+    },
+  },
+
   // Type-aware configuration for examples files
   {
     files: ["examples/**/*.ts", "examples/**/*.vue"],
