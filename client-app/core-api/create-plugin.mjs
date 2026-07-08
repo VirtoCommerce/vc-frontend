@@ -670,6 +670,17 @@ export default defineConfigWithVueTs(
   pluginVue.configs["flat/recommended"],
   vueTsConfigs.recommended,
   { languageOptions: { globals: { ...globals.browser } } },
+  {
+    rules: {
+      // \`_\`-prefixed args/vars are the deliberate "unused" convention (mock signatures, hooks).
+      "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_", varsIgnorePattern: "^_" }],
+    },
+  },
+  {
+    // Tailwind/PostCSS configs are CommonJS by design (loaded by tools, not bundled).
+    files: ["**/*.cjs"],
+    rules: { "@typescript-eslint/no-require-imports": "off" },
+  },
   prettier,
 );
 `;

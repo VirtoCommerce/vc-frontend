@@ -98,6 +98,11 @@ describe("create-plugin scaffolder", () => {
     expect(pkg.devDependencies).toHaveProperty("maska");
     expect(pkg.scripts).toHaveProperty("lint");
     expectParseableTs(join(dir, "eslint.config.js"));
+    // The scaffold's own emitted files must lint clean: .cjs configs use require()
+    // by design, and `_`-prefixed unused args are the sanctioned convention.
+    const eslintCfg = readFileSync(join(dir, "eslint.config.js"), "utf8");
+    expect(eslintCfg).toContain("no-require-imports");
+    expect(eslintCfg).toContain("argsIgnorePattern");
 
     const noLintDir = scaffoldExpectingSuccess("no-lint-plugin", ["--yes", "--no-lint"]);
     for (const file of [
