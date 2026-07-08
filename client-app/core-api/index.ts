@@ -17,6 +17,10 @@ export { useExtensionRegistry } from "@/shared/common/composables/extensionRegis
 
 // GraphQL / Apollo — same client, cache and auth link as the host.
 export { apolloClient, graphqlClient } from "@/core/api/graphql/client";
+// Reactive Apollo composables — re-exported so plugins execute the HOST's module
+// instance and resolve the DefaultApolloClient provided app-wide in app-runner.
+// A plugin must import these via the facade, never bundle its own copy.
+export { useQuery, useLazyQuery, useMutation } from "@vue/apollo-composable";
 
 export { useModuleSettings } from "@/core/composables/useModuleSettings";
 export { extendMenuSchema } from "@/core/composables/extendMenuSchema";

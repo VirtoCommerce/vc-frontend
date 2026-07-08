@@ -108,11 +108,14 @@ host. No second Vue, no second router, no duplicate Apollo cache.
 
 **Current facade surface** (see `client-app/core-api/index.ts` for the authoritative list):
 
-- UI: `VcWidget`, `VcButton`, `VcMarkdownRender` (all `Vc*` are also globally registered)
-- Extension points: `useExtensionRegistry`
-- Data: `apolloClient`, `graphqlClient`
+- UI: `VcWidget`, `VcTable`, `VcInput`, `VcEmptyView`, `VcButton`, `VcMarkdownRender`
+  (all `Vc*` are also globally registered)
+- Extension points: `useExtensionRegistry`, `extendMenuSchema`
+- Data: `apolloClient`, `graphqlClient`, and the reactive composables `useQuery`,
+  `useLazyQuery`, `useMutation` (the host's `@vue/apollo-composable` instance — bound to the
+  app-provided `DefaultApolloClient`; never bundle your own copy)
 - Config: `useModuleSettings`, `globals`
-- Meta: `CORE_VERSION`, `type I18n`
+- Meta: `CORE_VERSION`, `type I18n`, `type MenuType`
 
 > **Rule of thumb:** keep the facade **small and additive**. New export ⇒ minor
 > `CORE_VERSION` bump; removing/renaming ⇒ major (breaks _every_ plugin).

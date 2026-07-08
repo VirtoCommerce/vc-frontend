@@ -8,6 +8,7 @@ import { RouteLocationRaw, Router } from 'vue-router';
 import { MaskOptions } from 'maska';
 import * as _apollo_client_cache from '@apollo/client/cache';
 import { ApolloClient } from '@apollo/client/core';
+export { useLazyQuery, useMutation, useQuery } from '@vue/apollo-composable';
 import * as _vueuse_core from '@vueuse/core';
 import { DeepPartial } from 'utility-types';
 import * as vue_i18n from 'vue-i18n';
