@@ -1,5 +1,5 @@
 <template>
-  <div v-if="messages.length" role="status" aria-live="polite" class="flex flex-col gap-y-2">
+  <output v-if="messages.length" aria-live="polite" class="flex flex-col gap-y-2">
     <VcAlert
       v-for="message in messages"
       :key="message.code"
@@ -11,7 +11,7 @@
     >
       {{ message.text }}
     </VcAlert>
-  </div>
+  </output>
 </template>
 
 <script setup lang="ts">
