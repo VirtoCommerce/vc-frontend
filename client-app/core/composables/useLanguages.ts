@@ -56,6 +56,14 @@ function fetchLocaleMessages(locale: string): Promise<LocaleMessage> {
   const localesPathPrefix = "../../../locales";
 
   const locales = import.meta.glob<boolean, string, LocaleMessage>("../../../locales/*.json"); // can't use variables in import
+
+  // The locale may originate from user-controlled input (e.g. a `?cultureName=` query param).
+  // Reject anything that isn't a plain locale identifier before using it to index the bundle map,
+  // so it can't select an unexpected target or traverse paths (CodeQL: unvalidated dynamic method call).
+  if (!/^[a-zA-Z0-9-]+$/.test(locale)) {
+    return import("../../../locales/en.json"); // can't use variables in import
+  }
+
   const path = `${localesPathPrefix}/${locale}.json`;
   const shortPath = `${localesPathPrefix}/${locale.slice(0, 2)}.json`;
 
