@@ -713,6 +713,7 @@ const selectionStubs = {
       />
     `,
   },
+  // Mirror native radio: `change` fires only on transition to checked.
   VcRadioButton: {
     props: ["modelValue", "value", "disabled", "ariaLabel"],
     emits: ["change"],
@@ -722,7 +723,7 @@ const selectionStubs = {
         :data-checked="String(modelValue === value)"
         :data-disabled="String(!!disabled)"
         :aria-label="ariaLabel"
-        @click="$emit('change', value)"
+        @click="modelValue !== value && $emit('change', value)"
       />
     `,
   },
@@ -947,7 +948,6 @@ describe("row selection — numeric keys (multiple)", () => {
       selection: [1],
     });
 
-    // Toggle the second row (id 2) on.
     await wrapper.findAll("tbody .checkbox-stub")[1].trigger("click");
 
     // Both keys must be strings — no `[1, "2"]` mismatch.
@@ -961,7 +961,6 @@ describe("row selection — numeric keys (multiple)", () => {
       selection: [1],
     });
 
-    // Toggle the first row (id 1, currently selected) off.
     await wrapper.findAll("tbody .checkbox-stub")[0].trigger("click");
 
     // Must fully clear — not leave `1` alongside a new `"1"`.
@@ -1002,18 +1001,19 @@ describe("row selection — numeric keys (multiple)", () => {
 });
 
 describe("row selection — numeric keys (single)", () => {
-  it("marks the row selected and deselects on re-click with a numeric key", async () => {
+  it("marks the numeric-key row selected and deselects it via the slot toggle", async () => {
+    // deselect via slot toggle; numeric key `2` must match already-selected `"2"`
     const wrapper = await mountSelectable({
       selectionMode: "single",
       items: numericItems,
       selection: [2],
+      desktopItemSlot: true,
     });
 
-    const rows = wrapper.findAll(".vc-table__row");
-    expect(rows[1].classes()).toContain("vc-table__row--selected");
+    const slotRows = wrapper.findAll(".desktop-item-slot");
+    expect(slotRows[1].classes()).toContain("is-selected");
 
-    // Re-clicking the already-selected row (id 2) clears the selection.
-    await wrapper.findAll("tbody .radio-stub")[1].trigger("click");
+    await slotRows[1].find(".desktop-item-slot__toggle").trigger("click");
     expect(wrapper.emitted("update:selection")?.[0]).toEqual([[]]);
   });
 });
@@ -1030,7 +1030,6 @@ describe("row selection — single (desktop)", () => {
   it("selecting a row replaces the previous selection (array stays <= 1)", async () => {
     const wrapper = await mountSelectable({ selectionMode: "single", selection: ["1"] });
 
-    // Click the third row's radio (index 2 → key "3").
     const radios = wrapper.findAll("tbody .radio-stub");
     await radios[2].trigger("click");
 
@@ -1044,10 +1043,51 @@ describe("row selection — single (desktop)", () => {
     expect(change[2]).toEqual({ action: "select", row: items[2] });
   });
 
-  it("clicking the already-selected row deselects it", async () => {
+  it("re-clicking the already-selected row via the radio is add-only (does not deselect)", async () => {
     const wrapper = await mountSelectable({ selectionMode: "single", selection: ["1"] });
 
     await wrapper.findAll("tbody .radio-stub")[0].trigger("click");
+
+    expect(wrapper.emitted("update:selection")).toBeUndefined();
+    expect(wrapper.emitted("selectionChange")).toBeUndefined();
+  });
+});
+
+describe("row selection — single (slot toggle deselect)", () => {
+  it("deselects the selected row via the #desktop-item slot toggle", async () => {
+    const wrapper = await mountSelectable({
+      selectionMode: "single",
+      selection: ["1"],
+      desktopItemSlot: true,
+    });
+
+    const slotRows = wrapper.findAll(".desktop-item-slot");
+    expect(slotRows[0].classes()).toContain("is-selected");
+
+    await slotRows[0].find(".desktop-item-slot__toggle").trigger("click");
+
+    expect(wrapper.emitted("update:selection")?.[0]).toEqual([[]]);
+
+    const change = wrapper.emitted("selectionChange")?.[0] as [
+      VcTableSelectionKeyType[],
+      VcTableItemType[],
+      VcTableSelectionMetaType<VcTableItemType>,
+    ];
+    expect(change[2]).toEqual({ action: "deselect", row: items[0] });
+  });
+
+  it("deselects the selected row via the #mobile-item slot toggle", async () => {
+    breakpointState.isMobile = true;
+    const wrapper = await mountSelectable({
+      selectionMode: "single",
+      selection: ["1"],
+      mobileItemSlot: true,
+    });
+
+    const slotItems = wrapper.findAll(".mobile-item-slot");
+    expect(slotItems[0].classes()).toContain("is-selected");
+
+    await slotItems[0].find(".mobile-item-slot__toggle").trigger("click");
 
     expect(wrapper.emitted("update:selection")?.[0]).toEqual([[]]);
 
@@ -1096,6 +1136,95 @@ describe("row selection — isRowSelectable=false", () => {
 
     expect(wrapper.emitted("update:selection")).toBeUndefined();
     expect(wrapper.emitted("selectionChange")).toBeUndefined();
+  });
+});
+
+describe("row selection — selectability gates addition only (contract)", () => {
+  it("cannot ADD a non-selectable, unselected row via the slot toggle", async () => {
+    const wrapper = await mountSelectable({
+      selectionMode: "multiple",
+      selection: [],
+      isRowSelectable: (item) => item.id !== "2",
+      desktopItemSlot: true,
+    });
+
+    const slotRows = wrapper.findAll(".desktop-item-slot");
+    await slotRows[1].find(".desktop-item-slot__toggle").trigger("click");
+
+    expect(wrapper.emitted("update:selection")).toBeUndefined();
+    expect(wrapper.emitted("selectionChange")).toBeUndefined();
+  });
+
+  it("CAN deselect a non-selectable row that is already in the selection (multiple)", async () => {
+    // trapped state: selected + non-selectable
+    const wrapper = await mountSelectable({
+      selectionMode: "multiple",
+      selection: ["2"],
+      isRowSelectable: (item) => item.id !== "2",
+      desktopItemSlot: true,
+    });
+
+    const slotRows = wrapper.findAll(".desktop-item-slot");
+    expect(slotRows[1].classes()).toContain("is-selected");
+    expect(slotRows[1].classes()).not.toContain("is-selectable");
+
+    await slotRows[1].find(".desktop-item-slot__toggle").trigger("click");
+
+    expect(wrapper.emitted("update:selection")?.[0]).toEqual([[]]);
+
+    const change = wrapper.emitted("selectionChange")?.[0] as [
+      VcTableSelectionKeyType[],
+      VcTableItemType[],
+      VcTableSelectionMetaType<VcTableItemType>,
+    ];
+    expect(change[2]).toEqual({ action: "deselect", row: items[1] });
+  });
+
+  it("CAN deselect a non-selectable row that is already selected (single)", async () => {
+    const wrapper = await mountSelectable({
+      selectionMode: "single",
+      selection: ["2"],
+      isRowSelectable: (item) => item.id !== "2",
+      desktopItemSlot: true,
+    });
+
+    const slotRows = wrapper.findAll(".desktop-item-slot");
+    expect(slotRows[1].classes()).toContain("is-selected");
+    expect(slotRows[1].classes()).not.toContain("is-selectable");
+
+    await slotRows[1].find(".desktop-item-slot__toggle").trigger("click");
+
+    expect(wrapper.emitted("update:selection")?.[0]).toEqual([[]]);
+
+    const change = wrapper.emitted("selectionChange")?.[0] as [
+      VcTableSelectionKeyType[],
+      VcTableItemType[],
+      VcTableSelectionMetaType<VcTableItemType>,
+    ];
+    expect(change[2]).toEqual({ action: "deselect", row: items[1] });
+  });
+
+  it("deselect-all clears a stuck non-selectable page key, keeping off-page selections", async () => {
+    // "2" = stuck non-selectable page key, "99" = off-page
+    const wrapper = await mountSelectable({
+      selectionMode: "multiple",
+      selection: ["1", "2", "3", "99"],
+      isRowSelectable: (item) => item.id !== "2",
+    });
+
+    const headerCheckbox = wrapper.find("thead .checkbox-stub");
+    expect(headerCheckbox.attributes("data-checked")).toBe("true");
+
+    await headerCheckbox.trigger("click");
+
+    expect(wrapper.emitted("update:selection")?.[0]).toEqual([["99"]]);
+
+    const change = wrapper.emitted("selectionChange")?.[0] as [
+      VcTableSelectionKeyType[],
+      VcTableItemType[],
+      VcTableSelectionMetaType<VcTableItemType>,
+    ];
+    expect(change[2]).toEqual({ action: "deselect-all" });
   });
 });
 

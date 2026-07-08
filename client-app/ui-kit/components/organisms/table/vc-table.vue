@@ -810,14 +810,15 @@ function toggleRow(item: T, index: number): void {
     return;
   }
 
-  if (!isRowSelectable(item)) {
+  const key = getItemKey(item, index);
+  const alreadySelected = selectionSet.value.has(key);
+
+  // gate ADD only — deselect must always work, never trap a row
+  if (!alreadySelected && !isRowSelectable(item)) {
     return;
   }
 
-  const key = getItemKey(item, index);
-
   if (props.selectionMode === "single") {
-    const alreadySelected = selectionSet.value.has(key);
     const keys = alreadySelected ? [] : [key];
     commitSelection(keys, { action: alreadySelected ? "deselect" : "select", row: item });
     return;
@@ -836,17 +837,14 @@ function toggleRow(item: T, index: number): void {
 }
 
 function toggleSelectAll(): void {
-  const pageKeys = selectableKeysOnPage.value;
-
   if (isAllSelected.value) {
-    // Deselect current page only, keep off-page selections (normalized to strings).
-    const pageKeySet = new Set(pageKeys);
+    // clear all page keys (incl. stuck non-selectable), keep off-page
+    const pageKeySet = new Set(props.items.map((item, index) => getItemKey(item, index)));
     const keys = props.selection.map(String).filter((key) => !pageKeySet.has(key));
     commitSelection(keys, { action: "deselect-all" });
   } else {
-    // Merge current page into existing selection (normalized to strings).
     const keys = props.selection.map(String);
-    for (const key of pageKeys) {
+    for (const key of selectableKeysOnPage.value) {
       if (!keys.includes(key)) {
         keys.push(key);
       }
