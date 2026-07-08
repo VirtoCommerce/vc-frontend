@@ -871,7 +871,9 @@
         "view_list": "Lista",
         "view_map": "Mapa",
         "pick_point_info_title": "Info do ponto de recolha",
-        "pick_up_here": "Recolher aqui"
+        "pick_up_here": "Recolher aqui",
+        "load_more": "Carregar mais",
+        "showing_count": "Mostrando {loaded} de {total}"
       }
     },
     "bulk_order": {
@@ -1227,6 +1229,7 @@
         "order_number_label": "Número do pedido",
         "purchase_number_label": "Número do pedido de compra",
         "buyer_name_label": "Nome do comprador",
+        "payment_type_label": "Tipo de pagamento",
         "status_label": "@:common.labels.status",
         "invoice_label": "Fatura",
         "date_label": "@:common.labels.date",

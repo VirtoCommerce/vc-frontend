@@ -1,0 +1,562 @@
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { FacetTypes } from "@/core/api/graphql/types";
+import { useCartPickupLocations, COUNTRY_NAME_FACET, REGION_NAME_FACET, CITY_FACET } from "./useCartPickupLocations";
+import type { CartPickupLocationConnection, ProductPickupLocation, TermFacet } from "@/core/api/graphql/types";
+
+// getCartPickupLocations is the GraphQL operation wrapper the composable calls.
+const getCartPickupLocationsMock = vi.hoisted(() => vi.fn());
+
+vi.mock("@/core/api/graphql/cart", () => ({
+  getCartPickupLocations: getCartPickupLocationsMock,
+}));
+
+// useCartPickupLocations is wrapped in createSharedComposable, which would share state
+// across every call within the test run. Mock createSharedComposable to an identity
+// pass-through so each invocation gets a fresh, isolated state instance. Keep the rest
+// of @vueuse/core intact (other modules rely on noop, etc.).
+vi.mock("@vueuse/core", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@vueuse/core")>();
+  return {
+    ...actual,
+    createSharedComposable: <T extends (...args: never[]) => unknown>(fn: T) => fn,
+  };
+});
+
+vi.mock("vue-i18n", () => ({
+  useI18n: () => ({
+    t: (key: string) => key,
+  }),
+}));
+
+// getFormattedLabel (used by termFacetToCommonFacet) reads globals.i18n.global.
+vi.mock("@/core/globals", () => ({
+  globals: {
+    storeId: "test-store-id",
+    cultureName: "en-US",
+    i18n: {
+      global: {
+        t: (key: string) => key,
+        d: (value: unknown) => String(value),
+      },
+    },
+  },
+}));
+
+function createLocation(overrides: Partial<ProductPickupLocation> = {}): ProductPickupLocation {
+  return {
+    id: "loc-1",
+    name: "Location 1",
+    isActive: true,
+    address: { id: "addr-1" },
+    ...overrides,
+  };
+}
+
+function createTermFacet(name: string): TermFacet {
+  return {
+    facetType: FacetTypes.Terms,
+    label: name,
+    name,
+    terms: [{ count: 1, isSelected: false, label: "Value", term: "value" }],
+  };
+}
+
+function createConnection(overrides: Partial<CartPickupLocationConnection> = {}): CartPickupLocationConnection {
+  return {
+    items: [createLocation()],
+    totalCount: 1,
+    pageInfo: { endCursor: "cursor-1", hasNextPage: false, hasPreviousPage: false, startCursor: undefined },
+    filter_facets: [],
+    range_facets: [],
+    term_facets: [],
+    ...overrides,
+  };
+}
+
+describe("useCartPickupLocations", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  describe("fetchPickupLocations (reset)", () => {
+    it("should REPLACE the list rather than append on a subsequent fetch", async () => {
+      const { fetchPickupLocations, pickupLocations } = useCartPickupLocations();
+
+      getCartPickupLocationsMock.mockResolvedValueOnce(
+        createConnection({ items: [createLocation({ id: "page1-a", name: "First page A" })] }),
+      );
+      await fetchPickupLocations({ cartId: "cart-1", first: 6 });
+      expect(pickupLocations.value.map((l) => l.id)).toEqual(["page1-a"]);
+
+      getCartPickupLocationsMock.mockResolvedValueOnce(
+        createConnection({
+          items: [
+            createLocation({ id: "page2-a", name: "Second page A" }),
+            createLocation({ id: "page2-b", name: "Second page B" }),
+          ],
+        }),
+      );
+      await fetchPickupLocations({ cartId: "cart-1", first: 6 });
+
+      // The list equals ONLY the second response's items.
+      expect(pickupLocations.value.map((l) => l.id)).toEqual(["page2-a", "page2-b"]);
+    });
+
+    it("should expose hasNextPage from pageInfo, recompute facets, and carry endCursor into the next loadMore", async () => {
+      const { fetchPickupLocations, loadMorePickupLocations, pickupLocationsHasNextPage, filterOptionsCountries } =
+        useCartPickupLocations();
+
+      getCartPickupLocationsMock.mockResolvedValueOnce(
+        createConnection({
+          pageInfo: { endCursor: "next-cursor", hasNextPage: true, hasPreviousPage: false, startCursor: undefined },
+          term_facets: [createTermFacet(COUNTRY_NAME_FACET)],
+        }),
+      );
+
+      await fetchPickupLocations({ cartId: "cart-1", first: 6 });
+
+      expect(pickupLocationsHasNextPage.value).toBe(true);
+      expect(filterOptionsCountries.value?.values).toHaveLength(1);
+
+      // The cursor is internal now: assert it behaviorally by checking the next loadMore
+      // forwards it as the `after` argument.
+      getCartPickupLocationsMock.mockResolvedValueOnce(createConnection());
+      await loadMorePickupLocations({ cartId: "cart-1", first: 6 });
+
+      const loadMoreArg = getCartPickupLocationsMock.mock.calls[1][0] as Record<string, unknown>;
+      expect(loadMoreArg.after).toBe("next-cursor");
+    });
+
+    it("should NOT pass an after argument", async () => {
+      const { fetchPickupLocations } = useCartPickupLocations();
+
+      getCartPickupLocationsMock.mockResolvedValueOnce(createConnection());
+      await fetchPickupLocations({ cartId: "cart-1", first: 6 });
+
+      const callArg = getCartPickupLocationsMock.mock.calls[0][0] as Record<string, unknown>;
+      expect(callArg).not.toHaveProperty("after");
+    });
+  });
+
+  describe("loadMorePickupLocations (append)", () => {
+    it("should append new items, advance endCursor, and NOT recompute facets", async () => {
+      const {
+        fetchPickupLocations,
+        loadMorePickupLocations,
+        pickupLocations,
+        filterOptionsCountries,
+        filterOptionsRegions,
+        filterOptionsCities,
+      } = useCartPickupLocations();
+
+      // Reset call: seed page 1 with facets so we can assert they stay unchanged.
+      getCartPickupLocationsMock.mockResolvedValueOnce(
+        createConnection({
+          items: [createLocation({ id: "p1-a" }), createLocation({ id: "p1-b" })],
+          pageInfo: { endCursor: "cursor-1", hasNextPage: true, hasPreviousPage: false, startCursor: undefined },
+          term_facets: [
+            createTermFacet(COUNTRY_NAME_FACET),
+            createTermFacet(REGION_NAME_FACET),
+            createTermFacet(CITY_FACET),
+          ],
+        }),
+      );
+      await fetchPickupLocations({ cartId: "cart-1", first: 6 });
+
+      const countriesBefore = filterOptionsCountries.value;
+      const regionsBefore = filterOptionsRegions.value;
+      const citiesBefore = filterOptionsCities.value;
+
+      // Append call: page 2 with NO facets in the response, still more pages to come.
+      getCartPickupLocationsMock.mockResolvedValueOnce(
+        createConnection({
+          items: [createLocation({ id: "p2-a" }), createLocation({ id: "p2-b" })],
+          pageInfo: { endCursor: "cursor-2", hasNextPage: true, hasPreviousPage: false, startCursor: undefined },
+          term_facets: [],
+        }),
+      );
+      await loadMorePickupLocations({ cartId: "cart-1", first: 6 });
+
+      // Items appended (page1 then page2).
+      expect(pickupLocations.value.map((l) => l.id)).toEqual(["p1-a", "p1-b", "p2-a", "p2-b"]);
+      // Facets preserved (loadMore does not recompute them, even though page 2 had none).
+      expect(filterOptionsCountries.value).toBe(countriesBefore);
+      expect(filterOptionsRegions.value).toBe(regionsBefore);
+      expect(filterOptionsCities.value).toBe(citiesBefore);
+
+      // endCursor advanced: the next loadMore forwards page 2's cursor as `after`
+      // (the cursor is internal, so it is asserted behaviorally).
+      getCartPickupLocationsMock.mockResolvedValueOnce(createConnection());
+      await loadMorePickupLocations({ cartId: "cart-1", first: 6 });
+
+      const secondLoadMoreArg = getCartPickupLocationsMock.mock.calls[2][0] as Record<string, unknown>;
+      expect(secondLoadMoreArg.after).toBe("cursor-2");
+    });
+
+    it("should send the current endCursor as the after argument", async () => {
+      const { fetchPickupLocations, loadMorePickupLocations } = useCartPickupLocations();
+
+      getCartPickupLocationsMock.mockResolvedValueOnce(
+        createConnection({
+          pageInfo: { endCursor: "cursor-after", hasNextPage: true, hasPreviousPage: false, startCursor: undefined },
+        }),
+      );
+      await fetchPickupLocations({ cartId: "cart-1", first: 6 });
+
+      getCartPickupLocationsMock.mockResolvedValueOnce(createConnection());
+      await loadMorePickupLocations({ cartId: "cart-1", first: 6 });
+
+      const loadMoreArg = getCartPickupLocationsMock.mock.calls[1][0] as Record<string, unknown>;
+      expect(loadMoreArg.after).toBe("cursor-after");
+    });
+  });
+
+  describe("loadMorePickupLocations guards", () => {
+    it("should make NO request and not change the list when hasNextPage is false", async () => {
+      const { fetchPickupLocations, loadMorePickupLocations, pickupLocations } = useCartPickupLocations();
+
+      getCartPickupLocationsMock.mockResolvedValueOnce(
+        createConnection({
+          items: [createLocation({ id: "only" })],
+          pageInfo: { endCursor: "c", hasNextPage: false, hasPreviousPage: false, startCursor: undefined },
+        }),
+      );
+      await fetchPickupLocations({ cartId: "cart-1", first: 6 });
+      expect(getCartPickupLocationsMock).toHaveBeenCalledTimes(1);
+
+      await loadMorePickupLocations({ cartId: "cart-1", first: 6 });
+
+      // No additional request, list unchanged.
+      expect(getCartPickupLocationsMock).toHaveBeenCalledTimes(1);
+      expect(pickupLocations.value.map((l) => l.id)).toEqual(["only"]);
+    });
+
+    it("should make NO request while a load is already in flight (loading=true)", async () => {
+      const { fetchPickupLocations, loadMorePickupLocations, pickupLocationsLoading } = useCartPickupLocations();
+
+      // First, set up a state where hasNextPage is true.
+      getCartPickupLocationsMock.mockResolvedValueOnce(
+        createConnection({
+          pageInfo: { endCursor: "c", hasNextPage: true, hasPreviousPage: false, startCursor: undefined },
+        }),
+      );
+      await fetchPickupLocations({ cartId: "cart-1", first: 6 });
+      const callsAfterFetch = getCartPickupLocationsMock.mock.calls.length;
+
+      // Drive the loading branch: a load is in flight.
+      pickupLocationsLoading.value = true;
+      await loadMorePickupLocations({ cartId: "cart-1", first: 6 });
+
+      // Guard short-circuited: no new request.
+      expect(getCartPickupLocationsMock.mock.calls).toHaveLength(callsAfterFetch);
+    });
+  });
+
+  describe("dedup keep-first invariant (BL-BOPIS-008)", () => {
+    it("should keep the first (page-1) occurrence and not overwrite it with the page-2 version", async () => {
+      const { fetchPickupLocations, loadMorePickupLocations, pickupLocations } = useCartPickupLocations();
+
+      getCartPickupLocationsMock.mockResolvedValueOnce(
+        createConnection({
+          items: [createLocation({ id: "dup", name: "Original page-1 name" })],
+          pageInfo: { endCursor: "c1", hasNextPage: true, hasPreviousPage: false, startCursor: undefined },
+        }),
+      );
+      await fetchPickupLocations({ cartId: "cart-1", first: 6 });
+
+      getCartPickupLocationsMock.mockResolvedValueOnce(
+        createConnection({
+          items: [
+            createLocation({ id: "dup", name: "Replacement page-2 name" }),
+            createLocation({ id: "fresh", name: "Fresh page-2 item" }),
+          ],
+          pageInfo: { endCursor: "c2", hasNextPage: false, hasPreviousPage: false, startCursor: undefined },
+        }),
+      );
+      await loadMorePickupLocations({ cartId: "cart-1", first: 6 });
+
+      // The duplicate id appears once, retaining the page-1 name; the unique page-2 item is appended.
+      expect(pickupLocations.value.map((l) => l.id)).toEqual(["dup", "fresh"]);
+      const dup = pickupLocations.value.find((l) => l.id === "dup");
+      expect(dup?.name).toBe("Original page-1 name");
+    });
+  });
+
+  describe("stale-response races", () => {
+    it("should DROP a loadMore response that resolves after a fresh fetch (no stale append, no cursor overwrite)", async () => {
+      const { fetchPickupLocations, loadMorePickupLocations, pickupLocations, pickupLocationsHasNextPage } =
+        useCartPickupLocations();
+
+      // Seed an initial fetch so hasNextPage=true and a cursor is set; loadMore can pass its guard.
+      getCartPickupLocationsMock.mockResolvedValueOnce(
+        createConnection({
+          items: [createLocation({ id: "seed-a" })],
+          pageInfo: { endCursor: "seed-cursor", hasNextPage: true, hasPreviousPage: false, startCursor: undefined },
+        }),
+      );
+      await fetchPickupLocations({ cartId: "cart-1", first: 6 });
+
+      // loadMore returns a promise we resolve manually, so we control resolution order.
+      let resolveLoadMore!: (v: unknown) => void;
+      const loadMorePromise = new Promise((res) => {
+        resolveLoadMore = res;
+      });
+      getCartPickupLocationsMock.mockReturnValueOnce(loadMorePromise);
+
+      // Start loadMore (passes guard now: hasNextPage true, not loading), but do NOT await yet.
+      const loadMoreCall = loadMorePickupLocations({ cartId: "cart-1", first: 6 });
+
+      // A fresh fetch starts and completes; it bumps fetchGeneration, superseding the in-flight loadMore.
+      getCartPickupLocationsMock.mockResolvedValueOnce(
+        createConnection({
+          items: [createLocation({ id: "fresh-a" }), createLocation({ id: "fresh-b" })],
+          pageInfo: { endCursor: "fresh-cursor", hasNextPage: false, hasPreviousPage: false, startCursor: undefined },
+        }),
+      );
+      await fetchPickupLocations({ cartId: "cart-1", first: 6 });
+
+      // Now resolve the stale loadMore with distinctive items + different page info.
+      resolveLoadMore(
+        createConnection({
+          items: [createLocation({ id: "stale-a" }), createLocation({ id: "stale-b" })],
+          pageInfo: { endCursor: "stale-cursor", hasNextPage: true, hasPreviousPage: false, startCursor: undefined },
+        }),
+      );
+      await loadMoreCall;
+
+      // The stale loadMore items are NOT appended; the list equals only the fresh fetch's items.
+      expect(pickupLocations.value.map((l) => l.id)).toEqual(["fresh-a", "fresh-b"]);
+      // Pagination reflects the fresh fetch, not the stale loadMore response.
+      expect(pickupLocationsHasNextPage.value).toBe(false);
+    });
+
+    it("should CLEAR the load-more spinner as soon as a superseding fetch resolves, not wait for the stale loadMore", async () => {
+      const { fetchPickupLocations, loadMorePickupLocations, pickupLocationsLoadingMore } = useCartPickupLocations();
+
+      // Seed an initial fetch so hasNextPage=true and a cursor is set; loadMore can pass its guard.
+      getCartPickupLocationsMock.mockResolvedValueOnce(
+        createConnection({
+          items: [createLocation({ id: "seed-a" })],
+          pageInfo: { endCursor: "seed-cursor", hasNextPage: true, hasPreviousPage: false, startCursor: undefined },
+        }),
+      );
+      await fetchPickupLocations({ cartId: "cart-1", first: 6 });
+
+      // loadMore is in flight (spinner on), resolution held so we control ordering.
+      let resolveLoadMore!: (v: unknown) => void;
+      const loadMorePromise = new Promise((res) => {
+        resolveLoadMore = res;
+      });
+      getCartPickupLocationsMock.mockReturnValueOnce(loadMorePromise);
+      const loadMoreCall = loadMorePickupLocations({ cartId: "cart-1", first: 6 });
+      expect(pickupLocationsLoadingMore.value).toBe(true);
+
+      // A fresh fetch (e.g. filter apply) completes while loadMore is still pending; it supersedes it.
+      getCartPickupLocationsMock.mockResolvedValueOnce(
+        createConnection({
+          items: [createLocation({ id: "fresh-a" })],
+          pageInfo: { endCursor: "fresh-cursor", hasNextPage: true, hasPreviousPage: false, startCursor: undefined },
+        }),
+      );
+      await fetchPickupLocations({ cartId: "cart-1", first: 6 });
+
+      // Fresh results are shown, so "Load more" must already be usable, not stuck on the stale loadMore.
+      expect(pickupLocationsLoadingMore.value).toBe(false);
+
+      // Draining the stale loadMore must not resurrect the spinner either.
+      resolveLoadMore(createConnection({ items: [createLocation({ id: "stale-a" })] }));
+      await loadMoreCall;
+      expect(pickupLocationsLoadingMore.value).toBe(false);
+    });
+
+    it("should apply the LAST-STARTED fetch and drop an earlier concurrent fetch that resolves later", async () => {
+      const { fetchPickupLocations, loadMorePickupLocations, pickupLocations, pickupLocationsLoading } =
+        useCartPickupLocations();
+
+      // F2 starts first; hold its resolution to control ordering.
+      let resolveF2!: (v: unknown) => void;
+      const f2Promise = new Promise((res) => {
+        resolveF2 = res;
+      });
+      getCartPickupLocationsMock.mockReturnValueOnce(f2Promise);
+      const f2Call = fetchPickupLocations({ cartId: "cart-1", first: 6, keyword: "kw-f2", filter: "filter-f2" });
+
+      // F3 starts after F2 and resolves first — the last-started fetch must win.
+      getCartPickupLocationsMock.mockResolvedValueOnce(
+        createConnection({
+          items: [createLocation({ id: "f3-a" })],
+          pageInfo: { endCursor: "cursor-f3", hasNextPage: true, hasPreviousPage: false, startCursor: undefined },
+        }),
+      );
+      await fetchPickupLocations({ cartId: "cart-1", first: 6, keyword: "kw-f3", filter: "filter-f3" });
+
+      // F3 is applied and owns loading; F2 (still pending) must not have flipped it off.
+      expect(pickupLocations.value.map((l) => l.id)).toEqual(["f3-a"]);
+      expect(pickupLocationsLoading.value).toBe(false);
+
+      // Late F2 must be dropped entirely.
+      resolveF2(
+        createConnection({
+          items: [createLocation({ id: "f2-a" }), createLocation({ id: "f2-b" })],
+          pageInfo: { endCursor: "cursor-f2", hasNextPage: false, hasPreviousPage: false, startCursor: undefined },
+        }),
+      );
+      await f2Call;
+
+      expect(pickupLocations.value.map((l) => l.id)).toEqual(["f3-a"]);
+
+      // loadMore continues the committed F3 query + cursor, proving F2 did not overwrite it.
+      getCartPickupLocationsMock.mockResolvedValueOnce(createConnection());
+      await loadMorePickupLocations({ cartId: "cart-1", first: 6 });
+
+      const loadMoreArg = getCartPickupLocationsMock.mock.calls.at(-1)?.[0] as Record<string, unknown>;
+      expect(loadMoreArg.keyword).toBe("kw-f3");
+      expect(loadMoreArg.filter).toBe("filter-f3");
+      expect(loadMoreArg.after).toBe("cursor-f3");
+    });
+
+    it("should KEEP a loadMore response when a concurrent fetch REJECTS (no spurious generation bump)", async () => {
+      const { fetchPickupLocations, loadMorePickupLocations, pickupLocations, pickupLocationsHasNextPage } =
+        useCartPickupLocations();
+
+      // Seed an initial fetch so hasNextPage=true and a cursor is set; loadMore can pass its guard.
+      getCartPickupLocationsMock.mockResolvedValueOnce(
+        createConnection({
+          items: [createLocation({ id: "seed-a" })],
+          pageInfo: { endCursor: "seed-cursor", hasNextPage: true, hasPreviousPage: false, startCursor: undefined },
+        }),
+      );
+      await fetchPickupLocations({ cartId: "cart-1", first: 6 });
+
+      // loadMore returns a promise we resolve manually, so we control resolution order.
+      let resolveLoadMore!: (v: unknown) => void;
+      const loadMorePromise = new Promise((res) => {
+        resolveLoadMore = res;
+      });
+      getCartPickupLocationsMock.mockReturnValueOnce(loadMorePromise);
+
+      // Start loadMore (passes guard now: hasNextPage true, not loading), but do NOT await yet.
+      const loadMoreCall = loadMorePickupLocations({ cartId: "cart-1", first: 6 });
+
+      // A concurrent fetch starts and REJECTS. Because the generation bump now happens only on success,
+      // a failed fetch must NOT bump it, so the in-flight loadMore stays valid.
+      getCartPickupLocationsMock.mockRejectedValueOnce(new Error("boom"));
+      await expect(fetchPickupLocations({ cartId: "cart-1", first: 6 })).rejects.toThrow();
+
+      // Now resolve the loadMore with its page-2 items + advanced page info.
+      resolveLoadMore(
+        createConnection({
+          items: [createLocation({ id: "page2-a" }), createLocation({ id: "page2-b" })],
+          pageInfo: { endCursor: "page2-cursor", hasNextPage: true, hasPreviousPage: false, startCursor: undefined },
+        }),
+      );
+      await loadMoreCall;
+
+      // The append WAS applied: the generation guard did not discard the valid loadMore response.
+      expect(pickupLocations.value.map((l) => l.id)).toEqual(["seed-a", "page2-a", "page2-b"]);
+      // Pagination reflects the loadMore response (cursor + hasNextPage updated).
+      expect(pickupLocationsHasNextPage.value).toBe(true);
+
+      // The cursor advanced to the loadMore response: the next loadMore forwards it as `after`.
+      getCartPickupLocationsMock.mockResolvedValueOnce(createConnection());
+      await loadMorePickupLocations({ cartId: "cart-1", first: 6 });
+
+      const nextLoadMoreArg = getCartPickupLocationsMock.mock.calls.at(-1)?.[0] as Record<string, unknown>;
+      expect(nextLoadMoreArg.after).toBe("page2-cursor");
+    });
+  });
+
+  describe("error handling preserves state", () => {
+    it("should preserve the previous list, hasNextPage, and cursor when a fetch throws", async () => {
+      const { fetchPickupLocations, loadMorePickupLocations, pickupLocations, pickupLocationsHasNextPage } =
+        useCartPickupLocations();
+
+      // A successful fetch with more pages to come.
+      getCartPickupLocationsMock.mockResolvedValueOnce(
+        createConnection({
+          items: [createLocation({ id: "kept-a" }), createLocation({ id: "kept-b" })],
+          pageInfo: { endCursor: "kept-cursor", hasNextPage: true, hasPreviousPage: false, startCursor: undefined },
+        }),
+      );
+      await fetchPickupLocations({ cartId: "cart-1", first: 6 });
+
+      expect(pickupLocations.value.map((l) => l.id)).toEqual(["kept-a", "kept-b"]);
+      expect(pickupLocationsHasNextPage.value).toBe(true);
+
+      // The next fetch rejects.
+      getCartPickupLocationsMock.mockRejectedValueOnce(new Error("boom"));
+      await expect(fetchPickupLocations({ cartId: "cart-1", first: 6 })).rejects.toThrow();
+
+      // List and hasNextPage are preserved (not cleared mid-fetch).
+      expect(pickupLocations.value.map((l) => l.id)).toEqual(["kept-a", "kept-b"]);
+      expect(pickupLocationsHasNextPage.value).toBe(true);
+
+      // The cursor is internal: assert it survived by checking the next loadMore forwards it as `after`.
+      getCartPickupLocationsMock.mockResolvedValueOnce(createConnection());
+      await loadMorePickupLocations({ cartId: "cart-1", first: 6 });
+
+      const loadMoreArg = getCartPickupLocationsMock.mock.calls.at(-1)?.[0] as Record<string, unknown>;
+      expect(loadMoreArg.after).toBe("kept-cursor");
+    });
+  });
+
+  describe("committed filter/keyword snapshot drives loadMore", () => {
+    it("should continue the committed (F1) query+cursor when a later filter refetch (F2) FAILS, not the new filter", async () => {
+      const { fetchPickupLocations, loadMorePickupLocations } = useCartPickupLocations();
+
+      // Successful seed fetch with filter F1: sets list + cursor C1 + hasNextPage, and commits F1.
+      getCartPickupLocationsMock.mockResolvedValueOnce(
+        createConnection({
+          items: [createLocation({ id: "f1-a" })],
+          pageInfo: { endCursor: "cursor-f1", hasNextPage: true, hasPreviousPage: false, startCursor: undefined },
+        }),
+      );
+      await fetchPickupLocations({ cartId: "cart-1", first: 6, keyword: "kw-f1", filter: "filter-f1" });
+
+      // A new filter refetch (F2) FAILS. The catch leaves list/cursor/hasNextPage AND the committed
+      // snapshot from F1 untouched.
+      getCartPickupLocationsMock.mockRejectedValueOnce(new Error("boom"));
+      await expect(
+        fetchPickupLocations({ cartId: "cart-1", first: 6, keyword: "kw-f2", filter: "filter-f2" }),
+      ).rejects.toThrow();
+
+      // Load more: it must carry the COMMITTED F1 query (the one that produced cursor C1), NOT live F2.
+      getCartPickupLocationsMock.mockResolvedValueOnce(createConnection());
+      await loadMorePickupLocations({ cartId: "cart-1", first: 6 });
+
+      const loadMoreArg = getCartPickupLocationsMock.mock.calls.at(-1)?.[0] as Record<string, unknown>;
+      expect(loadMoreArg.keyword).toBe("kw-f1");
+      expect(loadMoreArg.filter).toBe("filter-f1");
+      expect(loadMoreArg.after).toBe("cursor-f1");
+    });
+
+    it("should send the new filter (F2) + its cursor (C2) after a SUCCESSFUL F1->F2 change", async () => {
+      const { fetchPickupLocations, loadMorePickupLocations } = useCartPickupLocations();
+
+      // Successful F1 fetch.
+      getCartPickupLocationsMock.mockResolvedValueOnce(
+        createConnection({
+          pageInfo: { endCursor: "cursor-f1", hasNextPage: true, hasPreviousPage: false, startCursor: undefined },
+        }),
+      );
+      await fetchPickupLocations({ cartId: "cart-1", first: 6, keyword: "kw-f1", filter: "filter-f1" });
+
+      // Successful F2 fetch: re-commits to F2 + cursor C2.
+      getCartPickupLocationsMock.mockResolvedValueOnce(
+        createConnection({
+          pageInfo: { endCursor: "cursor-f2", hasNextPage: true, hasPreviousPage: false, startCursor: undefined },
+        }),
+      );
+      await fetchPickupLocations({ cartId: "cart-1", first: 6, keyword: "kw-f2", filter: "filter-f2" });
+
+      // Load more continues F2 + C2.
+      getCartPickupLocationsMock.mockResolvedValueOnce(createConnection());
+      await loadMorePickupLocations({ cartId: "cart-1", first: 6 });
+
+      const loadMoreArg = getCartPickupLocationsMock.mock.calls.at(-1)?.[0] as Record<string, unknown>;
+      expect(loadMoreArg.keyword).toBe("kw-f2");
+      expect(loadMoreArg.filter).toBe("filter-f2");
+      expect(loadMoreArg.after).toBe("cursor-f2");
+    });
+  });
+});

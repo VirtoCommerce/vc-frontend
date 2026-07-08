@@ -871,7 +871,9 @@
         "view_list": "Список",
         "view_map": "Карта",
         "pick_point_info_title": "Информация о пункте выдачи",
-        "pick_up_here": "Забрать здесь"
+        "pick_up_here": "Забрать здесь",
+        "load_more": "Загрузить ещё",
+        "showing_count": "Показано {loaded} из {total}"
       }
     },
     "bulk_order": {
@@ -1227,6 +1229,7 @@
         "order_number_label": "Номер заказа",
         "purchase_number_label": "Номер закупки",
         "buyer_name_label": "Имя покупателя",
+        "payment_type_label": "Способ оплаты",
         "status_label": "@:common.labels.status",
         "invoice_label": "Счет",
         "date_label": "@:common.labels.date",
