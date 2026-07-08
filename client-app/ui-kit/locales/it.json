@@ -127,7 +127,7 @@
       "empty": "Nessun record trovato",
       "error": "Impossibile caricare i dati",
       "retry": "Riprova",
-      "select_row": "Seleziona riga",
+      "select_row_number": "Select row {number}",
       "select_all": "Seleziona tutto",
       "deselect_all": "Deseleziona tutto"
     },

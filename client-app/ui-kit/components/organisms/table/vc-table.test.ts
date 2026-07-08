@@ -1,9 +1,12 @@
 import { mount, shallowMount } from "@vue/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { h, nextTick } from "vue";
+import { createI18n } from "vue-i18n";
 import { createWrapperFactory } from "@/core/utilities/tests";
 import VcTableColumn from "./vc-table-column.vue";
 import VcTable from "./vc-table.vue";
+
+const i18n = createI18n({ locale: "en", legacy: false, messages: {}, missingWarn: false });
 
 // Mutable flag so tests can emulate the mobile breakpoint; defaults to desktop.
 const { breakpointState } = vi.hoisted(() => ({ breakpointState: { isMobile: false } }));
@@ -76,7 +79,7 @@ async function mountWithSlots(options: {
           ),
         ),
     },
-    global: { stubs: sharedStubs, mocks: { $t: (key: string) => key } },
+    global: { stubs: sharedStubs, plugins: [i18n], mocks: { $t: (key: string) => key } },
   });
 
   await nextTick();
@@ -552,7 +555,7 @@ async function mountState(options: {
     props,
     attrs: options.onRetry ? { onRetry: options.onRetry } : {},
     slots,
-    global: { stubs: stateStubs, mocks: { $t: (key: string) => key } },
+    global: { stubs: stateStubs, plugins: [i18n], mocks: { $t: (key: string) => key } },
   });
 
   await nextTick();
@@ -790,7 +793,7 @@ async function mountSelectable(options: {
     props,
     attrs: options.onRowClick ? { onRowClick: options.onRowClick } : {},
     slots,
-    global: { stubs: selectionStubs, mocks: { $t: (key: string) => key } },
+    global: { stubs: selectionStubs, plugins: [i18n], mocks: { $t: (key: string) => key } },
   });
 
   await nextTick();
@@ -1335,5 +1338,324 @@ describe("row selection — disabled (selectionMode undefined)", () => {
       expect(row.classes()).not.toContain("is-selected");
       expect(row.classes()).toContain("is-selectable");
     });
+  });
+});
+
+// ─── 10. Roving-tabindex keyboard navigation ────────────────
+
+// Dispatch a real (cancelable) keydown so `event.defaultPrevented` is observable;
+// vue-test-utils' `trigger` doesn't hand back the event.
+function pressKey(el: Element, key: string): KeyboardEvent {
+  const event = new KeyboardEvent("keydown", { key, bubbles: true, cancelable: true });
+  el.dispatchEvent(event);
+  return event;
+}
+
+function rowTabindexes(wrapper: ReturnType<typeof mount>): (string | undefined)[] {
+  return wrapper.findAll(".vc-table__row").map((row) => row.attributes("tabindex"));
+}
+
+function activeIndexFromDom(wrapper: ReturnType<typeof mount>): number {
+  return rowTabindexes(wrapper).indexOf("0");
+}
+
+describe("keyboard nav — roving tabindex", () => {
+  it("keeps exactly one row tabindex=0 (multiple)", async () => {
+    const wrapper = await mountSelectable({ selectionMode: "multiple", selection: [] });
+
+    expect(rowTabindexes(wrapper)).toEqual(["0", "-1", "-1"]);
+  });
+
+  it("keeps exactly one row tabindex=0 (single)", async () => {
+    const wrapper = await mountSelectable({ selectionMode: "single", selection: [] });
+
+    expect(rowTabindexes(wrapper)).toEqual(["0", "-1", "-1"]);
+  });
+
+  it("exposes a single tab entry on the first row by default (Tab enters once)", async () => {
+    const wrapper = await mountSelectable({ selectionMode: "multiple", selection: [] });
+
+    const tabindexes = rowTabindexes(wrapper);
+    expect(tabindexes.filter((value) => value === "0")).toHaveLength(1);
+    expect(activeIndexFromDom(wrapper)).toBe(0);
+  });
+
+  it("returns focus to the active row, not the last (Shift+Tab)", async () => {
+    const wrapper = await mountSelectable({ selectionMode: "multiple", selection: [] });
+
+    await wrapper.findAll(".vc-table__row")[1].trigger("focusin");
+
+    expect(rowTabindexes(wrapper)).toEqual(["-1", "0", "-1"]);
+  });
+});
+
+describe("keyboard nav — arrows move focus only", () => {
+  it("ArrowDown/ArrowUp move focus without mutating selection or aria-selected (multiple)", async () => {
+    const wrapper = await mountSelectable({ selectionMode: "multiple", selection: [] });
+    const rows = wrapper.findAll(".vc-table__row");
+
+    const before = rows.map((row) => row.attributes("aria-selected"));
+
+    pressKey(rows[0].element, "ArrowDown");
+    await nextTick();
+
+    expect(activeIndexFromDom(wrapper)).toBe(1);
+    expect(wrapper.emitted("update:selection")).toBeUndefined();
+
+    await wrapper.findAll(".vc-table__row")[1].trigger("focusin");
+    pressKey(wrapper.findAll(".vc-table__row")[1].element, "ArrowUp");
+    await nextTick();
+
+    expect(activeIndexFromDom(wrapper)).toBe(0);
+    expect(wrapper.emitted("update:selection")).toBeUndefined();
+    expect(wrapper.findAll(".vc-table__row").map((row) => row.attributes("aria-selected"))).toEqual(before);
+  });
+
+  it("preventDefaults ArrowDown/ArrowUp (page scroll is suppressed)", async () => {
+    const wrapper = await mountSelectable({ selectionMode: "single", selection: [] });
+    const rows = wrapper.findAll(".vc-table__row");
+
+    expect(pressKey(rows[0].element, "ArrowDown").defaultPrevented).toBe(true);
+    expect(pressKey(rows[0].element, "ArrowUp").defaultPrevented).toBe(true);
+  });
+
+  it("ArrowDown on the last row is a no-op (no wrap)", async () => {
+    const wrapper = await mountSelectable({ selectionMode: "multiple", selection: [] });
+
+    const last = wrapper.findAll(".vc-table__row")[2];
+    await last.trigger("focusin");
+    pressKey(last.element, "ArrowDown");
+    await nextTick();
+
+    expect(activeIndexFromDom(wrapper)).toBe(2);
+  });
+
+  it("ArrowUp on the first row is a no-op (no wrap)", async () => {
+    const wrapper = await mountSelectable({ selectionMode: "multiple", selection: [] });
+
+    const first = wrapper.findAll(".vc-table__row")[0];
+    pressKey(first.element, "ArrowUp");
+    await nextTick();
+
+    expect(activeIndexFromDom(wrapper)).toBe(0);
+  });
+
+  it("Home focuses the first row, End the last", async () => {
+    const wrapper = await mountSelectable({ selectionMode: "multiple", selection: [] });
+
+    const middle = wrapper.findAll(".vc-table__row")[1];
+    await middle.trigger("focusin");
+
+    pressKey(wrapper.findAll(".vc-table__row")[1].element, "End");
+    await nextTick();
+    expect(activeIndexFromDom(wrapper)).toBe(2);
+
+    pressKey(wrapper.findAll(".vc-table__row")[2].element, "Home");
+    await nextTick();
+    expect(activeIndexFromDom(wrapper)).toBe(0);
+  });
+});
+
+describe("keyboard nav — Space commits selection", () => {
+  it("toggles the selectable row and preventDefaults (multiple)", async () => {
+    const wrapper = await mountSelectable({ selectionMode: "multiple", selection: [] });
+
+    const event = pressKey(wrapper.findAll(".vc-table__row")[0].element, " ");
+    await nextTick();
+
+    expect(event.defaultPrevented).toBe(true);
+    expect(wrapper.emitted("update:selection")?.[0]).toEqual([["1"]]);
+  });
+
+  it("is a no-op on a non-selectable, unselected row", async () => {
+    const wrapper = await mountSelectable({
+      selectionMode: "multiple",
+      selection: [],
+      isRowSelectable: (item) => item.id !== "2",
+    });
+
+    pressKey(wrapper.findAll(".vc-table__row")[1].element, " ");
+    await nextTick();
+
+    expect(wrapper.emitted("update:selection")).toBeUndefined();
+  });
+
+  it("still deselects a non-selectable row that is already selected", async () => {
+    const wrapper = await mountSelectable({
+      selectionMode: "multiple",
+      selection: ["2"],
+      isRowSelectable: (item) => item.id !== "2",
+    });
+
+    pressKey(wrapper.findAll(".vc-table__row")[1].element, " ");
+    await nextTick();
+
+    expect(wrapper.emitted("update:selection")?.[0]).toEqual([[]]);
+  });
+
+  it("replaces the previous single selection (array stays length 1)", async () => {
+    const wrapper = await mountSelectable({ selectionMode: "single", selection: ["1"] });
+
+    pressKey(wrapper.findAll(".vc-table__row")[2].element, " ");
+    await nextTick();
+
+    expect(wrapper.emitted("update:selection")?.[0]).toEqual([["3"]]);
+  });
+});
+
+describe("keyboard nav — Enter", () => {
+  it("emits rowClick and does NOT select when a @row-click listener is bound", async () => {
+    const onRowClick = vi.fn();
+    const wrapper = await mountSelectable({ selectionMode: "multiple", selection: [], onRowClick });
+
+    const event = pressKey(wrapper.findAll(".vc-table__row")[0].element, "Enter");
+    await nextTick();
+
+    expect(event.defaultPrevented).toBe(true);
+    expect(wrapper.emitted("rowClick")?.[0]).toEqual([items[0], 0]);
+    expect(wrapper.emitted("update:selection")).toBeUndefined();
+  });
+
+  it("selects when no @row-click listener is bound and selection is on", async () => {
+    const wrapper = await mountSelectable({ selectionMode: "multiple", selection: [] });
+
+    pressKey(wrapper.findAll(".vc-table__row")[1].element, "Enter");
+    await nextTick();
+
+    expect(wrapper.emitted("rowClick")).toBeUndefined();
+    expect(wrapper.emitted("update:selection")?.[0]).toEqual([["2"]]);
+  });
+});
+
+describe("keyboard nav — controls stay out of the tab order", () => {
+  it("gives radios unique names and does not select a neighbor on ArrowDown (single)", async () => {
+    const wrapper = await mountSelectable({ selectionMode: "single", selection: [] });
+
+    const names = wrapper.findAll("tbody .radio-stub").map((radio) => radio.attributes("name"));
+    expect(names.every(Boolean)).toBe(true);
+    expect(new Set(names).size).toBe(names.length);
+
+    pressKey(wrapper.findAll(".vc-table__row")[0].element, "ArrowDown");
+    await nextTick();
+
+    expect(wrapper.emitted("update:selection")).toBeUndefined();
+  });
+
+  it("marks row controls tabindex=-1 so a control click adds no extra tab stop (multiple)", async () => {
+    const wrapper = await mountSelectable({ selectionMode: "multiple", selection: [] });
+
+    const control = wrapper.find("tbody .checkbox-stub");
+    expect(control.attributes("tabindex")).toBe("-1");
+
+    await control.trigger("click");
+
+    expect(wrapper.emitted("update:selection")?.[0]).toEqual([["1"]]);
+  });
+
+  it("radio controls are tabindex=-1 (single)", async () => {
+    const wrapper = await mountSelectable({ selectionMode: "single", selection: [] });
+
+    wrapper.findAll("tbody .radio-stub").forEach((radio) => {
+      expect(radio.attributes("tabindex")).toBe("-1");
+    });
+  });
+
+  it("keeps the select-all checkbox as its own tab stop, outside the roving group", async () => {
+    const wrapper = await mountSelectable({ selectionMode: "multiple", selection: [] });
+
+    // Header checkbox has no tabindex → default (natural) tab stop, not roving (-1).
+    expect(wrapper.find("thead .checkbox-stub").attributes("tabindex")).toBeUndefined();
+    wrapper.findAll("tbody .checkbox-stub").forEach((control) => {
+      expect(control.attributes("tabindex")).toBe("-1");
+    });
+  });
+});
+
+describe("keyboard nav — accessible control label", () => {
+  it("uses the per-row resolver when rowSelectionLabel is provided", async () => {
+    const wrapper = await mountSelectable({ selectionMode: "multiple", selection: [] });
+    await wrapper.setProps({ rowSelectionLabel: (_item: VcTableItemType, index: number) => `custom-${index}` });
+    await nextTick();
+
+    expect(wrapper.findAll("tbody .checkbox-stub").map((control) => control.attributes("aria-label"))).toEqual([
+      "custom-0",
+      "custom-1",
+      "custom-2",
+    ]);
+  });
+
+  it("falls back to the numbered i18n key, not a constant label", async () => {
+    const wrapper = await mountSelectable({ selectionMode: "multiple", selection: [] });
+
+    // Resolves the numbered key (`select_row_number`), never a fixed "Select row".
+    wrapper.findAll("tbody .checkbox-stub").forEach((control) => {
+      expect(control.attributes("aria-label")).toBe("ui_kit.table.select_row_number");
+      expect(control.attributes("aria-label")).not.toBe("Select row");
+    });
+  });
+});
+
+describe("keyboard nav — rowClick + selection coexist", () => {
+  it("drops role=button, keeps one tab stop and aria-selected", async () => {
+    const wrapper = await mountSelectable({ selectionMode: "multiple", selection: ["2"], onRowClick: () => {} });
+
+    const rows = wrapper.findAll(".vc-table__row");
+    rows.forEach((row) => {
+      expect(row.attributes("role")).toBeUndefined();
+    });
+
+    expect(rowTabindexes(wrapper).filter((value) => value === "0")).toHaveLength(1);
+    expect(rows.map((row) => row.attributes("aria-selected"))).toEqual(["false", "true", "false"]);
+  });
+});
+
+describe("keyboard nav — aria-selected gating", () => {
+  it("omits aria-selected when selectionMode is undefined", async () => {
+    const wrapper = await mountSelectable({});
+
+    wrapper.findAll(".vc-table__row").forEach((row) => {
+      expect(row.attributes("aria-selected")).toBeUndefined();
+    });
+  });
+});
+
+describe("keyboard nav — page change resets the active row", () => {
+  it("resets activeRowIndex to a valid row and preserves off-page selection", async () => {
+    const wrapper = await mountSelectable({ selectionMode: "multiple", selection: ["99"] });
+
+    await wrapper.findAll(".vc-table__row")[2].trigger("focusin");
+    expect(activeIndexFromDom(wrapper)).toBe(2);
+
+    await wrapper.setProps({
+      items: [
+        { id: "10", name: "Dan" },
+        { id: "11", name: "Eve" },
+      ],
+    });
+    await nextTick();
+
+    // A single, valid active row after the page swap.
+    expect(rowTabindexes(wrapper)).toEqual(["0", "-1"]);
+    expect(activeIndexFromDom(wrapper)).toBe(0);
+
+    // Parent-owned selection is untouched by the page change.
+    expect(wrapper.emitted("update:selection")).toBeUndefined();
+  });
+});
+
+describe("keyboard nav — disabled without selection or rowClick", () => {
+  it("has no roving tabindex and no aria-selected (prior behavior)", async () => {
+    const wrapper = await mountSelectable({});
+
+    wrapper.findAll(".vc-table__row").forEach((row) => {
+      expect(row.attributes("tabindex")).toBeUndefined();
+      expect(row.attributes("aria-selected")).toBeUndefined();
+      expect(row.attributes("role")).toBeUndefined();
+    });
+
+    pressKey(wrapper.findAll(".vc-table__row")[0].element, "ArrowDown");
+    await nextTick();
+
+    expect(wrapper.emitted("update:selection")).toBeUndefined();
   });
 });

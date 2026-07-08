@@ -127,7 +127,7 @@
       "empty": "Keine Einträge gefunden",
       "error": "Daten konnten nicht geladen werden",
       "retry": "Erneut versuchen",
-      "select_row": "Zeile auswählen",
+      "select_row_number": "Select row {number}",
       "select_all": "Alle auswählen",
       "deselect_all": "Alle abwählen"
     },

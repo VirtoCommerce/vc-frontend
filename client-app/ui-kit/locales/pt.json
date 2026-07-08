@@ -127,7 +127,7 @@
       "empty": "Nenhum registro encontrado",
       "error": "Falha ao carregar os dados",
       "retry": "Tentar novamente",
-      "select_row": "Selecionar linha",
+      "select_row_number": "Select row {number}",
       "select_all": "Selecionar tudo",
       "deselect_all": "Desmarcar tudo"
     },

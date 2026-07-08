@@ -205,16 +205,19 @@
           <tr
             v-for="(item, rowIndex) in items"
             :key="getItemKey(item, rowIndex)"
+            :ref="(el) => setRowRef(el as Element | null, rowIndex)"
             :class="[
               'vc-table__row',
               { 'vc-table__row--selected': selectionEnabled && isRowSelected(item, rowIndex) },
               resolvedRowClass(item, rowIndex),
             ]"
             :style="resolvedRowStyle(item, rowIndex)"
-            :tabindex="hasRowClickListener ? 0 : undefined"
-            :role="hasRowClickListener ? 'button' : undefined"
+            :tabindex="rowTabindex(rowIndex)"
+            :role="!selectionEnabled && hasRowClickListener ? 'button' : undefined"
+            :aria-selected="selectionEnabled ? isRowSelected(item, rowIndex) : undefined"
             @click="hasRowClickListener && $emit('rowClick', item, rowIndex)"
-            @keydown.enter="hasRowClickListener && $emit('rowClick', item, rowIndex)"
+            @focusin="activeRowIndex = rowIndex"
+            @keydown="onRowKeydown($event, item, rowIndex)"
           >
             <td
               v-if="selectionEnabled"
@@ -230,19 +233,22 @@
               <VcCheckbox
                 v-if="selectionMode === 'multiple'"
                 size="sm"
+                tabindex="-1"
                 :model-value="isRowSelected(item, rowIndex)"
                 :disabled="!isRowSelectable(item)"
-                :aria-label="$t('ui_kit.table.select_row')"
+                :aria-label="rowSelectionAriaLabel(item, rowIndex)"
                 @change="toggleRow(item, rowIndex)"
               />
 
               <VcRadioButton
                 v-else
                 size="sm"
+                :tabindex="-1"
+                :name="`sel-${tableId}-${getItemKey(item, rowIndex)}`"
                 :value="getItemKey(item, rowIndex)"
                 :model-value="isRowSelected(item, rowIndex) ? getItemKey(item, rowIndex) : undefined"
                 :disabled="!isRowSelectable(item)"
-                :aria-label="$t('ui_kit.table.select_row')"
+                :aria-label="rowSelectionAriaLabel(item, rowIndex)"
                 @change="toggleRow(item, rowIndex)"
               />
             </td>
@@ -305,12 +311,16 @@ import {
   Fragment,
   getCurrentInstance,
   h,
+  nextTick,
   onMounted,
   onUpdated,
   provide,
   ref,
   useSlots,
+  watch,
 } from "vue";
+import { useI18n } from "vue-i18n";
+import { useComponentId } from "@/ui-kit/composables";
 import { BREAKPOINTS, TABLE_SKELETON_ROWS_SIZE, TABLE_PAGE_LIMIT } from "@/ui-kit/constants";
 import VcTableColumn from "./vc-table-column.vue";
 import { vcTableKey } from "./vc-table-context";
@@ -388,6 +398,8 @@ const props = withDefaults(
     selection?: VcTableSelectionKeyType[];
     /** Predicate: rows returning `false` get a disabled control and are excluded from select-all. */
     isRowSelectable?: (item: T) => boolean;
+    /** Custom accessible label for a row's selection control; falls back to "Select row N". */
+    rowSelectionLabel?: (item: T, index: number) => string;
   }>(),
   {
     columns: () => [],
@@ -400,6 +412,8 @@ const props = withDefaults(
     selection: () => [],
   },
 );
+
+const { t } = useI18n();
 
 const FIXED_COLUMN_DEFAULT_WIDTH = "150px";
 const SELECTION_COLUMN_WIDTH = "3rem";
@@ -678,13 +692,6 @@ const HeaderCellRenderer = defineComponent({
   },
 });
 
-// Translate via the app's global $t so the default error state resolves the same
-// messages as the surrounding template (avoids an extra useI18n() setup call).
-function translate(key: string): string {
-  const t = instance?.appContext.config.globalProperties.$t;
-  return t ? t(key) : key;
-}
-
 // Default error state, shared between the desktop (table cell) and mobile branches
 // so the markup isn't duplicated. The consumer-provided `#error` slot overrides this in both.
 const DefaultErrorState = defineComponent({
@@ -692,12 +699,12 @@ const DefaultErrorState = defineComponent({
     return () =>
       h(
         VcEmptyView,
-        { variant: "error", text: translate("ui_kit.table.error") },
+        { variant: "error", text: t("ui_kit.table.error") },
         hasRetryListener.value
           ? {
               button: () =>
                 h(VcButton, { variant: "outline", color: "secondary", onClick: () => emit("retry") }, () =>
-                  translate("ui_kit.table.retry"),
+                  t("ui_kit.table.retry"),
                 ),
             }
           : undefined,
@@ -746,6 +753,8 @@ function getItemKey(item: T, index: number): string {
   const itemWithId = item as { id?: string | number };
   return String(itemWithId.id ?? index);
 }
+
+const tableId = useComponentId("vc-table");
 
 // -----------------------------------------------------------------------------
 // Row selection
@@ -868,6 +877,94 @@ function selectionSlotScope(
     selectable: isRowSelectable(item),
   };
 }
+
+// -----------------------------------------------------------------------------
+// Roving-tabindex keyboard navigation for built-in selectable rows.
+// Arrows move focus only; Space/Enter commit the selection.
+// -----------------------------------------------------------------------------
+
+const activeRowIndex = ref(0);
+const rowRefs = ref<(HTMLTableRowElement | null)[]>([]);
+
+function setRowRef(el: Element | null, index: number): void {
+  rowRefs.value[index] = el as HTMLTableRowElement | null;
+}
+
+function rowTabindex(index: number): number | undefined {
+  if (selectionEnabled.value) {
+    return index === activeRowIndex.value ? 0 : -1;
+  }
+  return hasRowClickListener.value ? 0 : undefined;
+}
+
+function rowSelectionAriaLabel(item: T, index: number): string {
+  return props.rowSelectionLabel?.(item, index) ?? t("ui_kit.table.select_row_number", { number: index + 1 });
+}
+
+function focusRow(index: number): void {
+  const max = props.items.length - 1;
+  if (max < 0) {
+    return;
+  }
+  const clamped = Math.min(Math.max(index, 0), max);
+  activeRowIndex.value = clamped;
+  void nextTick(() => {
+    rowRefs.value[clamped]?.focus();
+  });
+}
+
+function onRowKeydown(event: KeyboardEvent, item: T, index: number): void {
+  if (!selectionEnabled.value) {
+    // rowClick-only rows keep their original Enter behavior.
+    if (event.key === "Enter" && hasRowClickListener.value) {
+      emit("rowClick", item, index);
+    }
+    return;
+  }
+
+  switch (event.key) {
+    case "ArrowDown":
+      event.preventDefault();
+      if (index < props.items.length - 1) {
+        focusRow(index + 1);
+      }
+      break;
+    case "ArrowUp":
+      event.preventDefault();
+      if (index > 0) {
+        focusRow(index - 1);
+      }
+      break;
+    case "Home":
+      event.preventDefault();
+      focusRow(0);
+      break;
+    case "End":
+      event.preventDefault();
+      focusRow(props.items.length - 1);
+      break;
+    case " ":
+    case "Spacebar":
+      event.preventDefault();
+      toggleRow(item, index);
+      break;
+    case "Enter":
+      event.preventDefault();
+      if (hasRowClickListener.value) {
+        emit("rowClick", item, index);
+      } else {
+        toggleRow(item, index);
+      }
+      break;
+  }
+}
+
+watch(
+  () => props.items,
+  () => {
+    activeRowIndex.value = 0;
+  },
+);
 </script>
 
 <style lang="scss">

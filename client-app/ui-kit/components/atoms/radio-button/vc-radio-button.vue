@@ -22,6 +22,7 @@
         :value="value"
         :checked="checked"
         :disabled="disabled"
+        :tabindex="tabindex"
         :aria-checked="checked"
         :aria-label="ariaLabel || label || undefined"
         :aria-describedby="hasDetails ? detailsId : undefined"
@@ -72,6 +73,7 @@ interface IProps {
   noIndicator?: boolean;
   testIdInput?: string;
   ariaLabel?: string;
+  tabindex?: number;
 }
 
 interface IEmits {

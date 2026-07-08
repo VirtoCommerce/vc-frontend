@@ -127,7 +127,7 @@
       "empty": "未找到记录",
       "error": "加载数据失败",
       "retry": "重试",
-      "select_row": "选择行",
+      "select_row_number": "Select row {number}",
       "select_all": "全选",
       "deselect_all": "取消全选"
     },

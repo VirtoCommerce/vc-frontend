@@ -127,7 +127,7 @@
       "empty": "No records found",
       "error": "Failed to load data",
       "retry": "Try again",
-      "select_row": "Select row",
+      "select_row_number": "Select row {number}",
       "select_all": "Select all",
       "deselect_all": "Deselect all"
     },

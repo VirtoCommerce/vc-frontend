@@ -127,7 +127,7 @@
       "empty": "Tietueita ei löytynyt",
       "error": "Tietojen lataaminen epäonnistui",
       "retry": "Yritä uudelleen",
-      "select_row": "Valitse rivi",
+      "select_row_number": "Select row {number}",
       "select_all": "Valitse kaikki",
       "deselect_all": "Poista kaikki valinnat"
     },
