@@ -14,11 +14,11 @@ import { DeepPartial } from 'utility-types';
 import * as vue_i18n from 'vue-i18n';
 import { LocaleMessage } from '@intlify/core-base';
 
-interface IProps$3 {
+interface IProps$4 {
     src: string;
 }
-declare const __VLS_export$5: vue.DefineComponent<IProps$3, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$3> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const _default$5: typeof __VLS_export$5;
+declare const __VLS_export$6: vue.DefineComponent<IProps$4, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$4> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const _default$6: typeof __VLS_export$6;
 
 type Maybe<T> = T;
 /** All built-in and custom scalars, mapped to their actual values */
@@ -1239,7 +1239,7 @@ type VideoType = {
     uploadDate?: Maybe<Scalars['DateTime']['output']>;
 };
 
-interface IProps$2 {
+interface IProps$3 {
     color?: VcButtonColorType;
     size?: VcButtonSizeType;
     variant?: VcButtonVariantType;
@@ -1269,7 +1269,7 @@ declare var __VLS_16: {};
 declare var __VLS_23: {};
 declare var __VLS_25: {};
 declare var __VLS_32: {};
-type __VLS_Slots$2 = {} & {
+type __VLS_Slots$3 = {} & {
     prepend?: (props: typeof __VLS_16) => any;
 } & {
     default?: (props: typeof __VLS_23) => any;
@@ -1278,13 +1278,13 @@ type __VLS_Slots$2 = {} & {
 } & {
     loader?: (props: typeof __VLS_32) => any;
 };
-declare const __VLS_base$2: vue.DefineComponent<IProps$2, {
+declare const __VLS_base$3: vue.DefineComponent<IProps$3, {
     focus: typeof focus;
     blur: typeof blur;
     el: vue.ComputedRef<HTMLElement | null>;
 }, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     click: (value: MouseEvent) => any;
-}, string, vue.PublicProps, Readonly<IProps$2> & Readonly<{
+}, string, vue.PublicProps, Readonly<IProps$3> & Readonly<{
     onClick?: ((value: MouseEvent) => any) | undefined;
 }>, {
     type: VcButtonTypeType;
@@ -1299,10 +1299,10 @@ declare const __VLS_base$2: vue.DefineComponent<IProps$2, {
     noWrap: boolean;
     fullWidth: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$4: __VLS_WithSlots$2<typeof __VLS_base$2, __VLS_Slots$2>;
-declare const _default$4: typeof __VLS_export$4;
+declare const __VLS_export$5: __VLS_WithSlots$3<typeof __VLS_base$3, __VLS_Slots$3>;
+declare const _default$5: typeof __VLS_export$5;
 
-type __VLS_WithSlots$2<T, S> = T & {
+type __VLS_WithSlots$3<T, S> = T & {
     new (): {
         $slots: S;
     };
@@ -1314,28 +1314,28 @@ interface IProp {
     variant?: VcEmptyViewVariantType;
 }
 declare var __VLS_1: {};
-declare var __VLS_8: {};
+declare var __VLS_8$1: {};
 declare var __VLS_10: {};
-type __VLS_Slots$1 = {} & {
+type __VLS_Slots$2 = {} & {
     icon?: (props: typeof __VLS_1) => any;
 } & {
-    default?: (props: typeof __VLS_8) => any;
+    default?: (props: typeof __VLS_8$1) => any;
 } & {
     button?: (props: typeof __VLS_10) => any;
 };
-declare const __VLS_base$1: vue.DefineComponent<IProp, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProp> & Readonly<{}>, {
+declare const __VLS_base$2: vue.DefineComponent<IProp, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProp> & Readonly<{}>, {
     variant: VcEmptyViewVariantType;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$3: __VLS_WithSlots$1<typeof __VLS_base$1, __VLS_Slots$1>;
-declare const _default$3: typeof __VLS_export$3;
+declare const __VLS_export$4: __VLS_WithSlots$2<typeof __VLS_base$2, __VLS_Slots$2>;
+declare const _default$4: typeof __VLS_export$4;
 
-type __VLS_WithSlots$1<T, S> = T & {
+type __VLS_WithSlots$2<T, S> = T & {
     new (): {
         $slots: S;
     };
 };
 
-interface IProps$1 {
+interface IProps$2 {
     modelModifiers?: Record<string, boolean>;
     autocomplete?: string;
     readonly?: boolean;
@@ -1372,8 +1372,8 @@ interface IProps$1 {
     tabindex?: string | number;
     mask?: string | MaskOptions;
 }
-declare const __VLS_export$2: <T extends string | number | null>(__VLS_props: NonNullable<Awaited<typeof __VLS_setup>>["props"], __VLS_ctx?: __VLS_PrettifyLocal$1<Pick<NonNullable<Awaited<typeof __VLS_setup>>, "attrs" | "emit" | "slots">>, __VLS_exposed?: NonNullable<Awaited<typeof __VLS_setup>>["expose"], __VLS_setup?: Promise<{
-    props: vue.PublicProps & __VLS_PrettifyLocal$1<(IProps$1 & {
+declare const __VLS_export$3: <T extends string | number | null>(__VLS_props: NonNullable<Awaited<typeof __VLS_setup>>["props"], __VLS_ctx?: __VLS_PrettifyLocal$1<Pick<NonNullable<Awaited<typeof __VLS_setup>>, "attrs" | "emit" | "slots">>, __VLS_exposed?: NonNullable<Awaited<typeof __VLS_setup>>["expose"], __VLS_setup?: Promise<{
+    props: vue.PublicProps & __VLS_PrettifyLocal$1<(IProps$2 & {
         modelValue?: T;
     }) & {
         onBlur?: ((blurEvent: FocusEvent) => any) | undefined;
@@ -1404,7 +1404,7 @@ declare const __VLS_export$2: <T extends string | number | null>(__VLS_props: No
 }>) => vue.VNode & {
     __ctx?: Awaited<typeof __VLS_setup>;
 };
-declare const _default$2: typeof __VLS_export$2;
+declare const _default$3: typeof __VLS_export$3;
 
 type __VLS_PrettifyLocal$1<T> = (T extends any ? {
     [K in keyof T]: T[K];
@@ -1440,6 +1440,31 @@ type ExtendedMenuLinkType = {
     priority?: number;
     isCatalogItem?: boolean;
     dataTestId?: string;
+};
+
+interface IProps$1 {
+    tag?: string;
+    variant?: VcTypographyVariantType;
+    truncate?: boolean;
+    fontSize?: string;
+    fontWeight?: string;
+    textTransform?: string;
+    color?: string;
+}
+declare var __VLS_8: {};
+type __VLS_Slots$1 = {} & {
+    default?: (props: typeof __VLS_8) => any;
+};
+declare const __VLS_base$1: vue.DefineComponent<IProps$1, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$1> & Readonly<{}>, {
+    tag: string;
+}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const __VLS_export$2: __VLS_WithSlots$1<typeof __VLS_base$1, __VLS_Slots$1>;
+declare const _default$2: typeof __VLS_export$2;
+
+type __VLS_WithSlots$1<T, S> = T & {
+    new (): {
+        $slots: S;
+    };
 };
 
 declare const __VLS_export$1: <T extends VcTableItemType>(__VLS_props: NonNullable<Awaited<typeof __VLS_setup>>["props"], __VLS_ctx?: __VLS_PrettifyLocal<Pick<NonNullable<Awaited<typeof __VLS_setup>>, "attrs" | "emit" | "slots">>, __VLS_exposed?: NonNullable<Awaited<typeof __VLS_setup>>["expose"], __VLS_setup?: Promise<{
@@ -1764,5 +1789,5 @@ declare const globals: Readonly<Required<GlobalVariablesType>>;
 /** Contract version, single-sourced from core-api/package.json (managed by build:core-types / bump:core). */
 declare const CORE_VERSION: string;
 
-export { CORE_VERSION, _default$4 as VcButton, _default$3 as VcEmptyView, _default$2 as VcInput, _default$5 as VcMarkdownRender, _default$1 as VcTable, _default as VcWidget, apolloClient, extendMenuSchema, globals, graphqlClient, useExtensionRegistry, useModuleSettings };
+export { CORE_VERSION, _default$5 as VcButton, _default$4 as VcEmptyView, _default$3 as VcInput, _default$6 as VcMarkdownRender, _default$1 as VcTable, _default$2 as VcTypography, _default as VcWidget, apolloClient, extendMenuSchema, globals, graphqlClient, useExtensionRegistry, useModuleSettings };
 export type { I18n, MenuType };

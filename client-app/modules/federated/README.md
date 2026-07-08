@@ -108,8 +108,8 @@ host. No second Vue, no second router, no duplicate Apollo cache.
 
 **Current facade surface** (see `client-app/core-api/index.ts` for the authoritative list):
 
-- UI: `VcWidget`, `VcTable`, `VcInput`, `VcEmptyView`, `VcButton`, `VcMarkdownRender`
-  (all `Vc*` are also globally registered)
+- UI: `VcWidget`, `VcTable`, `VcInput`, `VcEmptyView`, `VcButton`, `VcTypography`,
+  `VcMarkdownRender` (all `Vc*` are also globally registered)
 - Extension points: `useExtensionRegistry`, `extendMenuSchema`
 - Data: `apolloClient`, `graphqlClient`, and the reactive composables `useQuery`,
   `useLazyQuery`, `useMutation` (the host's `@vue/apollo-composable` instance — bound to the
