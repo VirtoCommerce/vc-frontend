@@ -190,11 +190,27 @@ describe("create-plugin scaffolder", () => {
     expect(plainPkg.devDependencies).not.toHaveProperty("@graphql-codegen/cli");
   });
 
-  it("gitignores .env regardless of selected groups", () => {
+  it("gitignores .env and yarn install state regardless of selected groups", () => {
     // .env may carry a real backend URL (and one day credentials); it must never be
     // committable from a scaffolded project, whether or not codegen was selected.
     const dir = scaffoldExpectingSuccess("env-plugin", ["--yes"]);
-    expect(readFileSync(join(dir, ".gitignore"), "utf8")).toContain(".env");
+    const gitignore = readFileSync(join(dir, ".gitignore"), "utf8");
+    expect(gitignore).toContain(".env");
+    // Yarn 4 writes .yarn/install-state.gz even with nodeLinker: node-modules.
+    expect(gitignore).toContain(".yarn/*");
+    expect(gitignore).toContain("coverage/");
+  });
+
+  it("excludes generated GraphQL types from lint and format with --with-apollo", () => {
+    // Mirrors the host: codegen output is not linted/formatted (eslint.config.js and
+    // .prettierignore both carry the generated-types path).
+    const dir = scaffoldExpectingSuccess("gql-ignore-plugin", ["--yes", "--with-apollo"]);
+    expect(readFileSync(join(dir, "eslint.config.js"), "utf8")).toContain("src/api/graphql/types.ts");
+    expect(readFileSync(join(dir, ".prettierignore"), "utf8")).toContain("src/api/graphql/types.ts");
+
+    const plainDir = scaffoldExpectingSuccess("plain-ignore-plugin", ["--yes"]);
+    expect(readFileSync(join(plainDir, "eslint.config.js"), "utf8")).not.toContain("src/api/graphql/types.ts");
+    expect(readFileSync(join(plainDir, ".prettierignore"), "utf8")).not.toContain("src/api/graphql/types.ts");
   });
 
   it("README documents scripts and workflows matching the selected groups", () => {

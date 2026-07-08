@@ -656,6 +656,9 @@ run \`yalc remove @vc-frontend/core\` and restore the pinned URL before pushing 
 commit a \`file:.yalc/...\` dependency.
 `;
 
+// Generated GraphQL types are excluded from lint/format, mirroring the host's own
+// eslint.config.js / .prettierignore treatment of codegen output.
+const generatedTypesIgnore = selected.apollo ? `, "src/api/graphql/types.ts"` : "";
 const eslintConfig = `import { defineConfigWithVueTs, vueTsConfigs } from "@vue/eslint-config-typescript";
 import prettier from "eslint-plugin-prettier/recommended";
 import pluginVue from "eslint-plugin-vue";
@@ -663,7 +666,7 @@ import globals from "globals";
 
 // Trimmed, host-aligned flat config for a standalone MF plugin.
 export default defineConfigWithVueTs(
-  { ignores: ["dist/", "node_modules/", ".yalc/"] },
+  { ignores: ["dist/", "node_modules/", ".yalc/"${generatedTypesIgnore}] },
   pluginVue.configs["flat/recommended"],
   vueTsConfigs.recommended,
   { languageOptions: { globals: { ...globals.browser } } },
@@ -673,7 +676,7 @@ export default defineConfigWithVueTs(
 
 const prettierrc =
   JSON.stringify({ $schema: "https://json.schemastore.org/prettierrc", endOfLine: "auto" }, null, 2) + "\n";
-const prettierignore = "dist/\nnode_modules/\n.yalc/\n";
+const prettierignore = `dist/\nnode_modules/\n.yalc/\n${selected.apollo ? "src/api/graphql/types.ts\n" : ""}`;
 const editorconfig = `# Editor configuration, see https://editorconfig.org
 root = true
 
@@ -738,7 +741,11 @@ if (selected.apollo) {
 writeFileSync(join(targetDir, "README.md"), readme);
 // yalc artifacts (local facade co-dev) must never be committed - see README.
 // .env is ignored unconditionally: it may carry a real backend URL (or credentials).
-writeFileSync(join(targetDir, ".gitignore"), "node_modules/\ndist/\n.yalc/\nyalc.lock\n.env\n");
+// .yarn/* is Yarn 4 install state (nodeLinker: node-modules still writes install-state.gz).
+writeFileSync(
+  join(targetDir, ".gitignore"),
+  "node_modules/\ndist/\ncoverage/\n.yalc/\nyalc.lock\n.env\n.yarn/*\n!.yarn/patches\n",
+);
 // Standalone project: keep Yarn out of the host's workspace/PnP context.
 writeFileSync(join(targetDir, ".yarnrc.yml"), "nodeLinker: node-modules\n");
 if (withLint) {
