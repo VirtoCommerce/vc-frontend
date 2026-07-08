@@ -162,6 +162,59 @@ describe("create-plugin scaffolder", () => {
     expect(noTestPkg.scripts).not.toHaveProperty("test:watch");
   });
 
+  it("scaffolds GraphQL codegen tooling with --with-apollo, and skips it without", () => {
+    const dir = scaffoldExpectingSuccess("gql-plugin", ["--yes", "--with-apollo"]);
+
+    for (const file of ["codegen.ts", ".env.example", "src/api/graphql/queries/.gitkeep"]) {
+      expect(existsSync(join(dir, file)), `${file} should exist`).toBe(true);
+    }
+    const pkg = JSON.parse(readFileSync(join(dir, "package.json"), "utf8"));
+    expect(pkg.scripts).toHaveProperty("generate:graphql-types");
+    expect(pkg.devDependencies).toHaveProperty("@graphql-codegen/cli");
+    // Generated types import it directly — relying on hoisting from @apollo/client is fragile.
+    expect(pkg.devDependencies).toHaveProperty("@graphql-typed-document-node/core");
+    expectParseableTs(join(dir, "codegen.ts"));
+    const codegen = readFileSync(join(dir, "codegen.ts"), "utf8");
+    // Scoped-schema convention: /graphql/<plugin-name>, correctable via the TODO comment.
+    expect(codegen).toContain("/graphql/gql-plugin");
+    // codegen-cli does not read .env itself — the config must load it and fail loudly.
+    expect(codegen).toContain("APP_BACKEND_URL");
+    expect(codegen).toContain("loadEnv");
+
+    const plainDir = scaffoldExpectingSuccess("plain-plugin", ["--yes"]);
+    for (const file of ["codegen.ts", ".env.example"]) {
+      expect(existsSync(join(plainDir, file)), `${file} should NOT exist`).toBe(false);
+    }
+    const plainPkg = JSON.parse(readFileSync(join(plainDir, "package.json"), "utf8"));
+    expect(plainPkg.scripts).not.toHaveProperty("generate:graphql-types");
+    expect(plainPkg.devDependencies).not.toHaveProperty("@graphql-codegen/cli");
+  });
+
+  it("gitignores .env regardless of selected groups", () => {
+    // .env may carry a real backend URL (and one day credentials); it must never be
+    // committable from a scaffolded project, whether or not codegen was selected.
+    const dir = scaffoldExpectingSuccess("env-plugin", ["--yes"]);
+    expect(readFileSync(join(dir, ".gitignore"), "utf8")).toContain(".env");
+  });
+
+  it("README documents scripts and workflows matching the selected groups", () => {
+    const dir = scaffoldExpectingSuccess("readme-plugin", ["--yes", "--with-apollo"]);
+    const readme = readFileSync(join(dir, "README.md"), "utf8");
+    expect(readme).toContain("generate:graphql-types");
+    expect(readme).toContain("APP_BACKEND_URL");
+    expect(readme).toContain("APP_MODULES_FEDERATION_REMOTES");
+    expect(readme).toContain("requiredHostVersion");
+    expect(readme).toContain("yarn test");
+
+    const plainDir = scaffoldExpectingSuccess("readme-plain", ["--yes", "--no-test"]);
+    const plainReadme = readFileSync(join(plainDir, "README.md"), "utf8");
+    expect(plainReadme).not.toContain("generate:graphql-types");
+    expect(plainReadme).not.toContain("yarn test");
+    // Evergreen sections are unconditional.
+    expect(plainReadme).toContain("APP_MODULES_FEDERATION_REMOTES");
+    expect(plainReadme).toContain("requiredHostVersion");
+  });
+
   it("rejects unknown flags instead of silently ignoring them", () => {
     // "--tailwind" is the natural typo for "--with-tailwind"; silently ignoring it would
     // scaffold WITHOUT tailwind in CI/non-TTY runs where no prompt can catch the mistake.

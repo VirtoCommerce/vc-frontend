@@ -192,6 +192,25 @@ const lintDeps = withLint
 // latter isn't a host dependency). Opt out with --no-test.
 const testDeps = withTest ? ["vitest", "@vue/test-utils", "jsdom"] : [];
 
+// GraphQL codegen toolchain — emitted only with the Apollo group: typed documents are
+// the supported way to consume a backend module's scoped schema (documents in
+// src/api/graphql, generated types.ts committed). Versions pin from the host so the
+// plugin generates with exactly the toolchain the host's own modules use.
+const codegenDeps = selected.apollo
+  ? [
+      "@graphql-codegen/add",
+      "@graphql-codegen/cli",
+      "@graphql-codegen/named-operations-object",
+      "@graphql-codegen/typed-document-node",
+      "@graphql-codegen/typescript",
+      "@graphql-codegen/typescript-operations",
+    ]
+  : [];
+// Generated types import this package directly (`import type { TypedDocumentNode } ...`);
+// the host resolves it by hoisting, but a standalone plugin must declare it. Not in the
+// host's package.json, hence a literal pin (matches the host lockfile's major).
+const codegenLiteralDeps = selected.apollo ? { "@graphql-typed-document-node/core": "^3.2.0" } : {};
+
 // The committed form of the facade dependency: a versioned tarball published as a
 // GitHub Release asset of the (public) host repo by the "Core Facade Release"
 // workflow. No registry, token, or account — any package manager can install it,
@@ -247,6 +266,11 @@ const pkgJson = {
     // a host that is itself running `yarn dev` (see HOWTO "Dev inner loop").
     dev: "vite --port 3001",
     "type-check": "vue-tsc --noEmit",
+    ...(selected.apollo
+      ? {
+          "generate:graphql-types": "graphql-codegen --config codegen.ts",
+        }
+      : {}),
     ...(withTest
       ? {
           test: "vitest run",
@@ -273,6 +297,8 @@ const pkgJson = {
     sortedEntries(toolDeps),
     sortedEntries(typePeerNames),
     sortedEntries(typeOnlyPeers),
+    sortedEntries(codegenDeps),
+    codegenLiteralDeps,
     sortedEntries(lintDeps),
     sortedEntries(testDeps),
   ),
@@ -465,14 +491,142 @@ const indexHtml = `<!doctype html>
 </html>
 `;
 
+// codegen config: executed by graphql-codegen's CLI (jiti loads the TS). The CLI does
+// NOT read .env itself, so the config loads it via Vite's loadEnv (already a devDep) —
+// shell-exported variables win over .env values.
+const codegenTs = `import { loadEnv } from "vite";
+import type { CodegenConfig } from "@graphql-codegen/cli";
+
+// graphql-codegen does not load .env files; reuse Vite's loader so the same .env serves
+// dev and codegen. process.env (shell) takes precedence over .env values.
+const env = { ...loadEnv("", process.cwd(), ""), ...process.env };
+
+if (!env.APP_BACKEND_URL) {
+  throw new Error("APP_BACKEND_URL is not set — put it in .env (see .env.example) or export it in the shell.");
+}
+
+const config: CodegenConfig = {
+  // The backend module's scoped schema. Convention: /graphql/<module-scope>.
+  // TODO: if the backend registers a different scope name (see its ScopedSchemaFactory
+  // registration), correct the path here.
+  schema: \`\${env.APP_BACKEND_URL}/graphql/${pluginName}\`,
+  documents: "src/api/graphql/**/*.graphql",
+  generates: {
+    "src/api/graphql/types.ts": {
+      plugins: [
+        { add: { content: "// This file is auto-generated. Do not edit manually.\\n" } },
+        "typescript",
+        "typescript-operations",
+        "typed-document-node",
+        "named-operations-object",
+      ],
+      // Mirrors the host's scripts/graphql-codegen/generator.ts CONFIG so generated
+      // code is style- and scalar-compatible with the host's own modules.
+      config: {
+        dedupeFragments: true,
+        identifierName: "OperationNames",
+        maybeValue: "T",
+        scalars: {
+          BigInt: "number",
+          Byte: "number",
+          Date: "string",
+          DateOnly: "string",
+          Decimal: "number",
+          DynamicPropertyValue: "string | number | boolean | null",
+          Guid: "string",
+          Half: "number",
+          Long: "number",
+          Milliseconds: "number",
+          ModuleSettingValue: "string | number | boolean | null",
+          OptionalDecimal: "number | undefined",
+          OptionalNullableDecimal: "number | null | undefined",
+          OptionalString: "string | undefined",
+          PropertyValue: "string | number | boolean | null",
+          SByte: "number",
+          Seconds: "number",
+          Short: "number",
+          TimeOnly: "string",
+          UInt: "number",
+          ULong: "number",
+          Uri: "string",
+          UShort: "number",
+        },
+        skipTypename: true,
+        useTypeImports: true,
+        skipGraphQLImport: true,
+      },
+    },
+  },
+};
+
+export default config;
+`;
+
+const envExample = `# Backend whose GraphQL schema \`yarn generate:graphql-types\` introspects (see codegen.ts).
+# Copy to .env (gitignored) and adjust.
+APP_BACKEND_URL=https://localhost:5001
+`;
+
+// ── README (evergreen dev info only — scripts, workflows; no code details) ────
+const scriptRows = [
+  "| `yarn build` | Production build of the remote (`dist/`) |",
+  "| `yarn watch` | Rebuild on save; pair with `yarn preview` |",
+  "| `yarn preview` | Serve the built remote for the host (port 3001) |",
+  "| `yarn dev` | HMR dev server (see HOWTO “Dev inner loop”) |",
+  "| `yarn type-check` | `vue-tsc` against the frozen facade contract |",
+  ...(selected.apollo
+    ? ["| `yarn generate:graphql-types` | Regenerate `src/api/graphql/types.ts` from the backend schema |"]
+    : []),
+  ...(withTest ? ["| `yarn test` / `yarn test:watch` | Vitest unit tests (jsdom) |"] : []),
+  ...(withLint ? ["| `yarn lint` / `yarn format` | ESLint / Prettier over the sources |"] : []),
+].join("\n");
+
+const codegenReadmeSection = selected.apollo
+  ? `
+## GraphQL codegen
+
+GraphQL documents live in \`src/api/graphql/**/*.graphql\`; \`yarn generate:graphql-types\`
+introspects the backend module's scoped schema (see \`codegen.ts\` — the endpoint path is a
+convention, correct it there if the backend registers a different scope) and regenerates
+\`src/api/graphql/types.ts\` (committed). Set \`APP_BACKEND_URL\` in \`.env\` first
+(copy \`.env.example\`; \`.env\` is gitignored and must stay that way).
+`
+  : "";
+
 const readme = `# ${pluginName}
 
 A Module Federation plugin for the VC storefront, scaffolded by \`yarn create:plugin\`.
+Full walkthrough (running against the host, shipping, versioning):
+the host repo's \`client-app/modules/federated/HOWTO.md\`.
 
-- Build: \`yarn build\` - Serve for the host: \`yarn preview\` (port 3001)
-- Full walkthrough (running against the host, shipping, versioning):
-  the host repo's \`client-app/modules/federated/HOWTO.md\`.
+## Scripts
 
+| Script | Purpose |
+| --- | --- |
+${scriptRows}
+
+## Local development against the host
+
+1. Build the facade from the host checkout and link it here (types only):
+   \`(host) yarn build:core-types && cd client-app/core-api && yalc publish --private\`
+   then \`(plugin) yalc add @vc-frontend/core && yarn install\`.
+2. Serve this plugin: \`yarn build && yarn preview\` (or \`yarn dev\` for HMR).
+3. Point the host at it:
+   \`APP_MODULES_FEDERATION_ENABLED=true APP_MODULES_FEDERATION_REMOTES='{"${pluginName}":"http://localhost:3001/mf-manifest.json"}' yarn build-only --mode=development && yarn preview\`
+
+## The facade dependency & contract versioning
+
+\`@vc-frontend/core\` is pinned to a versioned tarball URL (a Release asset of the host
+repo) — the lockfile records its checksum. **Keep it that way in commits.** For local
+co-development against an unpushed facade, use yalc (\`yalc add @vc-frontend/core\`);
+run \`yalc remove @vc-frontend/core\` and restore the pinned URL before pushing — never
+commit a \`file:.yalc/...\` dependency.
+
+\`vite.config.ts\` declares \`requiredHostVersion\` — the contract gate: hosts whose facade
+version does not satisfy it refuse to load this plugin (clean skip instead of a runtime
+error). When you adopt an export added in a newer facade version, bump
+\`requiredHostVersion\` **and** the pinned tarball URL together.
+${codegenReadmeSection}
 ## Styling
 
 Your plugin renders inside the host page, and the host uses unprefixed Tailwind. To avoid
@@ -574,9 +728,17 @@ if (withTest) {
   mkdirSync(join(targetDir, "src", "mocks"), { recursive: true });
   writeFileSync(join(targetDir, "src", "mocks", "vc-frontend-core.ts"), vcFrontendCoreMock);
 }
+if (selected.apollo) {
+  writeFileSync(join(targetDir, "codegen.ts"), codegenTs);
+  writeFileSync(join(targetDir, ".env.example"), envExample);
+  // Documents live here; the author writes real ones (no fake sample query).
+  mkdirSync(join(targetDir, "src", "api", "graphql", "queries"), { recursive: true });
+  writeFileSync(join(targetDir, "src", "api", "graphql", "queries", ".gitkeep"), "");
+}
 writeFileSync(join(targetDir, "README.md"), readme);
 // yalc artifacts (local facade co-dev) must never be committed - see README.
-writeFileSync(join(targetDir, ".gitignore"), "node_modules/\ndist/\n.yalc/\nyalc.lock\n");
+// .env is ignored unconditionally: it may carry a real backend URL (or credentials).
+writeFileSync(join(targetDir, ".gitignore"), "node_modules/\ndist/\n.yalc/\nyalc.lock\n.env\n");
 // Standalone project: keep Yarn out of the host's workspace/PnP context.
 writeFileSync(join(targetDir, ".yarnrc.yml"), "nodeLinker: node-modules\n");
 if (withLint) {
@@ -594,6 +756,11 @@ if (withLint) {
 
 console.log(`\nScaffolded "${pluginName}" at ${targetDir}`);
 console.log(`  deps pinned from host: ${runtimeDeps.join(", ")}`);
+if (selected.apollo) {
+  console.log(
+    `  GraphQL codegen: set APP_BACKEND_URL in .env (copy .env.example), put documents in src/api/graphql, run yarn generate:graphql-types`,
+  );
+}
 if (droppedShared.length) {
   console.log(`  dropped from MF shared (unused at runtime): ${droppedShared.join(", ")}`);
 }

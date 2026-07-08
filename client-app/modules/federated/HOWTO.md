@@ -37,6 +37,9 @@ need (vue-router / vue-i18n / Apollo / @vueuse — unselected ones are also drop
 the MF shared config), and emits everything described below, ready for
 `yarn install && yarn build`. Non-interactive: `--yes` takes the defaults;
 `--with-i18n`, `--with-apollo`, `--with-vueuse`, `--with-tailwind`, `--no-router` override.
+`--with-apollo` also emits GraphQL codegen tooling (`codegen.ts` pointed at the backend
+module's scoped schema, `yarn generate:graphql-types`, documents under `src/api/graphql/`),
+and every scaffold gets a README covering its scripts and the dev/versioning workflows.
 
 **What it generates (the manual version):** a plugin is an ordinary Vite + Vue project,
 separate from the host repo:
