@@ -45,8 +45,12 @@ query GetOrganizationOrders(
           ...money
         }
       }
-      inPayments {
+      inPayments(first: 1, sort: "CreatedDate:desc") {
         number
+        paymentMethod {
+          code
+          name
+        }
       }
       number
       customerId

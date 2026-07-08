@@ -6,6 +6,7 @@
         :color="orderStatus?.color || defaultColor"
         :icon="icon ?? orderStatus?.icon"
         :truncate="truncate"
+        size="sm"
         rounded
       >
         <span>{{ displayValue || status }}</span>
