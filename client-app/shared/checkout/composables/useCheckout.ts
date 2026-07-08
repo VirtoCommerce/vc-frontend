@@ -10,8 +10,7 @@ import { globals } from "@/core/globals";
 import { isEqualAddresses, Logger } from "@/core/utilities";
 import { createSharedComposableByArgs } from "@/core/utilities/composables";
 import { useCustomerAddresses, useUser } from "@/shared/account";
-import { useFullCart, EXTENDED_DEBOUNCE_IN_MS } from "@/shared/cart";
-import { LOYALTY_VALIDATION_ERROR_MESSAGE_KEYS } from "@/shared/cart/enums";
+import { useFullCart, getLoyaltyValidationMessages, EXTENDED_DEBOUNCE_IN_MS } from "@/shared/cart";
 import { useCurrentOrganizationAddresses } from "@/shared/company";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
@@ -63,7 +62,7 @@ const useGlobalCheckout = createGlobalState(() => {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function _useCheckout(cartId?: string) {
   const { analytics } = useAnalytics();
-  const { t } = useI18n();
+  const { t, te } = useI18n();
   const route = useRoute();
   const notifications = useNotifications();
   const { openModal, closeModal } = useModal();
@@ -514,28 +513,20 @@ export function _useCheckout(cartId?: string) {
   // reached we surface the SAME message the cart shows for that error code — never a
   // generic "Error when creating an order" toast.
   function notifyLoyaltyValidationErrors(): void {
-    loyaltyValidationErrors.value.forEach((loyaltyError) => {
-      const messageKey = loyaltyError.errorCode
-        ? LOYALTY_VALIDATION_ERROR_MESSAGE_KEYS[loyaltyError.errorCode]
-        : undefined;
+    const messages = getLoyaltyValidationMessages(loyaltyValidationErrors.value, {
+      translate: (key, params) => t(key, params),
+      hasTranslation: (key) => te(key),
+    });
 
-      if (!messageKey) {
-        return;
-      }
-
-      const params = (loyaltyError.errorParameters ?? []).reduce<Record<string, string | number>>((acc, param) => {
-        if (param?.key) {
-          const parsed = Number(param.value);
-          acc[param.key] =
-            param.value != null && param.value !== "" && !Number.isNaN(parsed) ? parsed : (param.value ?? "");
-        }
-        return acc;
-      }, {});
-
+    // Show every active loyalty error. Only the first toast replaces the previous attempt's loyalty
+    // toasts (singleInGroup, scoped to the loyalty group so unrelated toasts survive); the rest are
+    // appended. Using `single: true` per toast would clear the whole stack, leaving only the last.
+    messages.forEach(({ text }, index) => {
       notifications.error({
-        text: t(messageKey, params),
+        text,
         duration: 15000,
-        single: true,
+        group: "loyalty-validation",
+        singleInGroup: index === 0,
       });
     });
   }
