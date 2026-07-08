@@ -286,14 +286,14 @@
     <!-- Table footer -->
     <slot name="footer">
       <div class="vc-table__footer">
-        <div v-if="pageLimit && page >= pageLimit" class="vc-table__page-limit-message">
+        <div v-if="!error && pageLimit && page >= pageLimit" class="vc-table__page-limit-message">
           <slot name="page-limit-message">
             {{ $t("ui_kit.reach_limit.page_limit") }}
           </slot>
         </div>
 
         <VcPagination
-          v-if="!hideDefaultFooter && items.length && pages > 1"
+          v-if="!hideDefaultFooter && !error && items.length && pages > 1"
           :page="page"
           :pages="Math.min(pages, pageLimit || pages)"
           @update:page="$emit('pageChanged', $event)"

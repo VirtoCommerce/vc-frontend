@@ -1897,3 +1897,67 @@ describe("selection column gating — DEV warning", () => {
     expect(warnSpy).not.toHaveBeenCalled();
   });
 });
+
+// ─── Footer (pagination / page-limit) ───────────────────────
+
+async function mountFooter(options: {
+  items?: VcTableItemType[];
+  error?: boolean;
+  pages?: number;
+  page?: number;
+  pageLimit?: number | null;
+}) {
+  const props: Record<string, unknown> = { items: options.items ?? items };
+  if (options.error !== undefined) {
+    props.error = options.error;
+  }
+  if (options.pages !== undefined) {
+    props.pages = options.pages;
+  }
+  if (options.page !== undefined) {
+    props.page = options.page;
+  }
+  if (options.pageLimit !== undefined) {
+    props.pageLimit = options.pageLimit;
+  }
+
+  const wrapper = mount(VcTable, {
+    props,
+    slots: {
+      "desktop-item": (scope: { item: VcTableItemType } | undefined) =>
+        h("div", { class: "desktop-item" }, String(scope?.item.name ?? "")),
+    },
+    global: { stubs: sharedStubs, plugins: [i18n], mocks: { $t: (key: string) => key } },
+  });
+
+  await nextTick();
+  await nextTick();
+
+  return wrapper;
+}
+
+describe("footer pagination", () => {
+  it("hides pagination when error=true even with items and multiple pages", async () => {
+    const wrapper = await mountFooter({ items, error: true, pages: 3 });
+
+    expect(wrapper.find("vc-pagination-stub").exists()).toBe(false);
+  });
+
+  it("renders pagination when error=false with items and multiple pages", async () => {
+    const wrapper = await mountFooter({ items, error: false, pages: 3 });
+
+    expect(wrapper.find("vc-pagination-stub").exists()).toBe(true);
+  });
+
+  it("hides page-limit message when error=true even at the page limit", async () => {
+    const wrapper = await mountFooter({ items, error: true, pages: 3, page: 2, pageLimit: 2 });
+
+    expect(wrapper.find(".vc-table__page-limit-message").exists()).toBe(false);
+  });
+
+  it("renders page-limit message when error=false at the page limit", async () => {
+    const wrapper = await mountFooter({ items, error: false, pages: 3, page: 2, pageLimit: 2 });
+
+    expect(wrapper.find(".vc-table__page-limit-message").exists()).toBe(true);
+  });
+});
