@@ -31,12 +31,18 @@ import { useElementVisibility } from "@vueuse/core";
 import { computed, shallowRef, unref } from "vue";
 import { useBreadcrumbs } from "@/core/composables";
 import { usePageTitle } from "@/core/composables/usePageTitle";
+import { humanizeName } from "@/core/utilities/common";
 import { getBlockType } from "@/plugins/builder-preview/block-mapping";
 import { useStaticPage } from "@/shared/static-content";
 
 const { staticPage: template } = useStaticPage();
 
-const templateName = computed(() => unref(template)?.settings?.name || unref(template)?.settings?.header || "");
+// VCST-5274: the live page name is injected into `settings.name` upstream (useSlugInfo), so the
+// breadcrumb follows renames. Humanize here as well to keep the leaf friendly for the fallback
+// cases (a stored name that still has underscores, or `settings.header`).
+const templateName = computed(() =>
+  humanizeName(unref(template)?.settings?.name || unref(template)?.settings?.header || ""),
+);
 
 const breadcrumbs = useBreadcrumbs(() => [{ title: templateName.value }] as IBreadcrumb[]);
 
