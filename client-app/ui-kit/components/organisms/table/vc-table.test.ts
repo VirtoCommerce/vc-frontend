@@ -1,5 +1,5 @@
 import { mount, shallowMount } from "@vue/test-utils";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { h, nextTick } from "vue";
 import { createI18n } from "vue-i18n";
 import { createWrapperFactory } from "@/core/utilities/tests";
@@ -730,6 +730,9 @@ const selectionStubs = {
       />
     `,
   },
+  // Lightweight state stubs so empty/error branches render without the real molecules.
+  VcEmptyView: { props: ["variant", "text"], template: '<div class="empty-view-stub" :data-variant="variant" />' },
+  VcButton: { template: '<button class="button-stub"><slot /></button>' },
 };
 
 // Single VcTableColumn child (desktop, slot-based) plus optional #desktop-item /
@@ -742,6 +745,9 @@ async function mountSelectable(options: {
   onRowClick?: (item: VcTableItemType, index: number) => void;
   desktopItemSlot?: boolean;
   mobileItemSlot?: boolean;
+  desktopBodySlot?: boolean;
+  loading?: boolean;
+  error?: boolean;
 }) {
   const props: Record<string, unknown> = { items: options.items ?? items };
   if (options.selectionMode !== undefined) {
@@ -753,19 +759,32 @@ async function mountSelectable(options: {
   if (options.isRowSelectable !== undefined) {
     props.isRowSelectable = options.isRowSelectable;
   }
+  if (options.loading !== undefined) {
+    props.loading = options.loading;
+  }
+  if (options.error !== undefined) {
+    props.error = options.error;
+  }
 
-  // With a #desktop-item slot, register the column without a default slot so the
-  // column-slot tbody branch (which wins over #desktop-item) stays inactive.
+  // With a #desktop-item slot (or an opaque #desktop-body), register the column without a
+  // default slot so the column-slot tbody branch (which wins over both) stays inactive.
   const slots: Record<string, unknown> = {
     default: () =>
       h(
         VcTableColumn,
         { id: "name", title: "Name" },
-        options.desktopItemSlot
+        options.desktopItemSlot || options.desktopBodySlot
           ? {}
           : { default: ({ item }: { item: VcTableItemType }) => h("span", String(item.name ?? "")) },
       ),
   };
+
+  if (options.desktopBodySlot) {
+    slots["desktop-body"] = () =>
+      (options.items ?? items).map((item) =>
+        h("tr", { class: "desktop-body-row" }, [h("td", { class: "desktop-body-cell" }, String(item.name ?? ""))]),
+      );
+  }
 
   if (options.desktopItemSlot) {
     slots["desktop-item"] = (scope: VcTableItemSlotScopeType<VcTableItemType>) =>
@@ -1681,5 +1700,200 @@ describe("keyboard nav — disabled without selection or rowClick", () => {
     await nextTick();
 
     expect(wrapper.emitted("update:selection")).toBeUndefined();
+  });
+});
+
+// ─── 11. Selection column gating (showSelectionColumn) ──────
+
+describe("selection column gating — present with inline column slots", () => {
+  it("renders the leading selection cell in the header and every data row", async () => {
+    const wrapper = await mountSelectable({ selectionMode: "multiple", selection: [] });
+
+    expect(wrapper.find("thead .vc-table__selection-cell").exists()).toBe(true);
+    // header = selection cell + 1 data column
+    expect(wrapper.findAll("thead th")).toHaveLength(2);
+
+    // Every row carries a leading selection cell aligned with the header.
+    expect(wrapper.findAll("tbody .vc-table__cell.vc-table__selection-cell")).toHaveLength(3);
+  });
+
+  it("keeps the multiple select-all header checkbox and indeterminate state working", async () => {
+    const wrapper = await mountSelectable({ selectionMode: "multiple", selection: ["1"] });
+
+    const headerCheckbox = wrapper.find("thead .checkbox-stub");
+    expect(headerCheckbox.exists()).toBe(true);
+    expect(headerCheckbox.attributes("data-indeterminate")).toBe("true");
+  });
+});
+
+describe("selection column gating — suppressed under #desktop-body", () => {
+  // Selection + #desktop-body logs a one-shot DEV warning on mount; silence it here.
+  let warnSpy: ReturnType<typeof vi.spyOn>;
+
+  beforeEach(() => {
+    warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    warnSpy.mockRestore();
+  });
+
+  it("renders no selection cell in the header and header/body columns stay aligned", async () => {
+    const wrapper = await mountSelectable({ selectionMode: "multiple", selection: [], desktopBodySlot: true });
+
+    expect(wrapper.find("thead .vc-table__selection-cell").exists()).toBe(false);
+    expect(wrapper.find(".vc-table__selection-cell").exists()).toBe(false);
+
+    // Header exposes only the real column; body rows carry a single matching cell.
+    expect(wrapper.findAll("thead th")).toHaveLength(1);
+    const bodyRows = wrapper.findAll("tbody .desktop-body-row");
+    expect(bodyRows).toHaveLength(3);
+    bodyRows.forEach((row) => {
+      expect(row.findAll("td")).toHaveLength(1);
+    });
+  });
+
+  it("omits the multiple select-all header checkbox", async () => {
+    const wrapper = await mountSelectable({ selectionMode: "multiple", selection: [], desktopBodySlot: true });
+
+    expect(wrapper.find("thead .checkbox-stub").exists()).toBe(false);
+  });
+
+  it("renders a skeleton without a leading selection cell while loading", async () => {
+    const wrapper = await mountSelectable({
+      selectionMode: "multiple",
+      selection: [],
+      desktopBodySlot: true,
+      loading: true,
+    });
+
+    expect(wrapper.find(".vc-table__skeleton").exists()).toBe(true);
+    expect(wrapper.find(".vc-table__skeleton-cell.vc-table__selection-cell").exists()).toBe(false);
+    expect(wrapper.find("thead .vc-table__selection-cell").exists()).toBe(false);
+  });
+
+  it("spans the error state cell over the real columns only (no +1 for selection)", async () => {
+    const wrapper = await mountSelectable({
+      selectionMode: "multiple",
+      selection: [],
+      items: [],
+      error: true,
+      desktopBodySlot: true,
+    });
+
+    expect(wrapper.find("td.vc-table__state-cell").attributes("colspan")).toBe("1");
+  });
+
+  it("spans the empty state cell over the real columns only (no +1 for selection)", async () => {
+    const wrapper = await mountSelectable({
+      selectionMode: "multiple",
+      selection: [],
+      items: [],
+      desktopBodySlot: true,
+    });
+
+    expect(wrapper.find("td.vc-table__state-cell").attributes("colspan")).toBe("1");
+  });
+});
+
+describe("selection column gating — state colspan includes selection with column slots", () => {
+  it("spans the empty state cell over columns + the selection cell", async () => {
+    const wrapper = await mountSelectable({ selectionMode: "multiple", selection: [], items: [] });
+
+    // 1 data column + leading selection column.
+    expect(wrapper.find("td.vc-table__state-cell").attributes("colspan")).toBe("2");
+  });
+});
+
+describe("selection column gating — header cell present under #desktop-item", () => {
+  it("keeps the leading selection header cell (the consumer supplies the row cell via slot scope)", async () => {
+    const wrapper = await mountSelectable({
+      selectionMode: "multiple",
+      selection: ["2"],
+      isRowSelectable: (item) => item.id !== "3",
+      desktopItemSlot: true,
+    });
+
+    expect(wrapper.find("thead .vc-table__selection-cell").exists()).toBe(true);
+
+    // The slot scope stays functional: selected / selectable reflect state and toggle commits.
+    const slotRows = wrapper.findAll(".desktop-item-slot");
+    expect(slotRows[1].classes()).toContain("is-selected");
+    expect(slotRows[2].classes()).not.toContain("is-selectable");
+
+    await slotRows[0].find(".desktop-item-slot__toggle").trigger("click");
+    expect(wrapper.emitted("update:selection")?.[0]).toEqual([["2", "1"]]);
+  });
+});
+
+describe("selection column gating — no phantom offset for fixed columns under #desktop-body", () => {
+  let warnSpy: ReturnType<typeof vi.spyOn>;
+
+  beforeEach(() => {
+    warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    warnSpy.mockRestore();
+  });
+
+  it("does not seed the selection column width into fixed-start offsets", async () => {
+    const wrapper = mount(VcTable, {
+      props: {
+        selectionMode: "multiple",
+        selection: [],
+        items,
+        columns: [
+          { id: "a", title: "A", fixed: "start", width: "150px" },
+          { id: "b", title: "B" },
+        ],
+      },
+      slots: {
+        "desktop-body": () =>
+          items.map((item) => h("tr", { class: "desktop-body-row" }, [h("td", String(item.name ?? ""))])),
+      },
+      global: { stubs: selectionStubs, plugins: [i18n], mocks: { $t: (key: string) => key } },
+    });
+
+    await nextTick();
+
+    const firstTh = wrapper.findAll("th")[0];
+    // Leading fixed-start column sits flush at 0px — not shifted by SELECTION_COLUMN_WIDTH (3rem).
+    expect(firstTh.attributes("style")).toContain("inset-inline-start: 0px");
+    expect(firstTh.attributes("style")).not.toContain("3rem");
+    expect(wrapper.find("thead .vc-table__selection-cell").exists()).toBe(false);
+  });
+});
+
+describe("selection column gating — DEV warning", () => {
+  let warnSpy: ReturnType<typeof vi.spyOn>;
+
+  beforeEach(() => {
+    vi.stubEnv("DEV", true);
+    warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    warnSpy.mockRestore();
+    vi.unstubAllEnvs();
+  });
+
+  it("warns exactly once for selection + #desktop-body", async () => {
+    await mountSelectable({ selectionMode: "multiple", selection: [], desktopBodySlot: true });
+
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+    expect(warnSpy.mock.calls[0][0]).toMatch(/desktop-body/);
+  });
+
+  it("does not warn for selection + #desktop-item", async () => {
+    await mountSelectable({ selectionMode: "multiple", selection: [], desktopItemSlot: true });
+
+    expect(warnSpy).not.toHaveBeenCalled();
+  });
+
+  it("does not warn for selection + VcTableColumn slots", async () => {
+    await mountSelectable({ selectionMode: "multiple", selection: [] });
+
+    expect(warnSpy).not.toHaveBeenCalled();
   });
 });

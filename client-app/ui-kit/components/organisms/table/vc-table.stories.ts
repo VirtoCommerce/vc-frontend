@@ -3196,7 +3196,7 @@ export const SelectionMobile: StoryType = {
               <VcCheckbox
                 size="sm"
                 :model-value="selected"
-                :disabled="!selectable"
+                :disabled="!selectable && !selected"
                 aria-label="Select row"
                 @change="toggle"
               />
@@ -3229,7 +3229,7 @@ export const SelectionMobile: StoryType = {
 <VcTable :items="items" selection-mode="multiple" v-model:selection="selection" mobile-breakpoint="md">
   <template #mobile-item="{ item, selected, toggle, selectable }">
     <div class="flex items-start gap-3 p-4" :class="{ 'bg-primary-50': selected }">
-      <VcCheckbox size="sm" :model-value="selected" :disabled="!selectable" aria-label="Select row" @change="toggle" />
+      <VcCheckbox size="sm" :model-value="selected" :disabled="!selectable && !selected" aria-label="Select row" @change="toggle" />
       <span class="font-bold">{{ item.name }}</span>
     </div>
   </template>

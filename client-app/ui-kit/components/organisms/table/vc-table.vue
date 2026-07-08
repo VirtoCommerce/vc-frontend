@@ -68,7 +68,7 @@
           >
             <tr class="vc-table__head-row">
               <th
-                v-if="selectionEnabled"
+                v-if="showSelectionColumn"
                 scope="col"
                 :class="[
                   'vc-table__title',
@@ -145,7 +145,7 @@
             <!-- Default skeleton template -->
             <tr v-for="row in skeletonRows" :key="row" class="vc-table__skeleton">
               <td
-                v-if="selectionEnabled"
+                v-if="showSelectionColumn"
                 :class="[
                   'vc-table__skeleton-cell',
                   'vc-table__selection-cell',
@@ -220,7 +220,7 @@
             @keydown="onRowKeydown($event, item, rowIndex)"
           >
             <td
-              v-if="selectionEnabled"
+              v-if="showSelectionColumn"
               :class="[
                 'vc-table__cell',
                 'vc-table__selection-cell',
@@ -566,7 +566,7 @@ const lastFixedStartId = computed<string | undefined>(() => {
 // The selection column becomes sticky-start only when the table already has
 // fixed-start columns, so it stays visible during horizontal scroll alongside them.
 const hasFixedStartColumn = computed<boolean>(() => orderedColumns.value.some((col) => col.fixed === "start"));
-const selectionColumnSticky = computed<boolean>(() => selectionEnabled.value && hasFixedStartColumn.value);
+const selectionColumnSticky = computed<boolean>(() => showSelectionColumn.value && hasFixedStartColumn.value);
 
 // Inline style for the leading selection column cell/header.
 const selectionColumnStyle = computed<Record<string, string>>(() => {
@@ -582,7 +582,7 @@ const selectionColumnStyle = computed<Record<string, string>>(() => {
 });
 
 // Colspan for full-width state cells (empty/error), including the selection column.
-const stateColspan = computed<number>(() => orderedColumns.value.length + (selectionEnabled.value ? 1 : 0));
+const stateColspan = computed<number>(() => orderedColumns.value.length + (showSelectionColumn.value ? 1 : 0));
 
 const firstFixedEndId = computed<string | undefined>(() => {
   return orderedColumns.value.find((col) => col.fixed === "end")?.id;
@@ -632,6 +632,13 @@ function syncRetryListener() {
 onMounted(() => {
   syncRowClickListener();
   syncRetryListener();
+
+  if (import.meta.env.DEV && selectionEnabled.value && slots["desktop-body"]) {
+    // eslint-disable-next-line no-console
+    console.warn(
+      "VcTable: `selectionMode` is not supported with the `#desktop-body` slot — the component can't inject a selection cell per row. Use `#desktop-item` (exposes `selected`/`toggle`/`selectable`) or VcTableColumn slots for row selection.",
+    );
+  }
 });
 
 onUpdated(() => {
@@ -761,6 +768,8 @@ const tableId = useComponentId("vc-table");
 // -----------------------------------------------------------------------------
 
 const selectionEnabled = computed<boolean>(() => props.selectionMode !== undefined);
+
+const showSelectionColumn = computed<boolean>(() => selectionEnabled.value && !slots["desktop-body"]);
 
 // Normalize to strings so comparisons match `getItemKey`, even for numeric input keys.
 const selectionSet = computed<Set<string>>(() => new Set(props.selection.map(String)));
