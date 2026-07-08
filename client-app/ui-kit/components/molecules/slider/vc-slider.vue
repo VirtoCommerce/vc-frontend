@@ -392,9 +392,9 @@ onMounted(async () => {
     return;
   }
 
-  // nouislider (~94 KB) and its CSS load with the slider (price filter) rather than shipping
-  // in the eager bundle on every page.
-  const [{ create }] = await Promise.all([import("nouislider"), import("nouislider/dist/nouislider.css")]);
+  // Lazy-loaded to keep nouislider (~94 KB) off the eager bundle. CSS goes through a
+  // `nouislider` cascade layer (nouislider.layer.css) so this late chunk can't override our styles.
+  const [{ create }] = await Promise.all([import("nouislider"), import("./nouislider.layer.css")]);
 
   if (!sliderRef.value) {
     return;
