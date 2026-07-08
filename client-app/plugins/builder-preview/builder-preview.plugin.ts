@@ -1,7 +1,9 @@
 import { useGlobalInterceptors } from "@/core/api/common";
 import { useLanguages } from "@/core/composables/useLanguages";
+import { FALLBACK_LOCALE } from "@/core/constants";
 import { globals, setGlobals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
+import { getLocales as getUIKitLocales } from "@/ui-kit/utilities/getLocales";
 import { useStaticPage } from "@/shared/static-content";
 import { templateBlocks } from "@/shared/static-content/components";
 import PreviewPage from "./components/preview-page.vue";
@@ -42,13 +44,22 @@ async function applyPreviewLocale(cultureName?: string) {
     return;
   }
 
-  const { supportedLanguages, initLocale } = useLanguages();
-  if (!supportedLanguages.value.some((language) => language.cultureName === cultureName)) {
+  const { supportedLanguages, initLocale, mergeLocalesMessages } = useLanguages();
+  const language = supportedLanguages.value.find((item) => item.cultureName === cultureName);
+  if (!language) {
     return;
   }
 
   if (globals.i18n) {
     await initLocale(globals.i18n, cultureName, { rewriteUrl: false });
+
+    // Merge the UI kit locale bundles for the new language, mirroring storefront boot, otherwise
+    // ui_kit.* strings stay in the initial boot language while page content uses the new locale (VCST-5219).
+    const uiKitMessages = await getUIKitLocales(FALLBACK_LOCALE, language.twoLetterLanguageName);
+    mergeLocalesMessages(globals.i18n, language.twoLetterLanguageName, uiKitMessages.messages);
+    if (language.twoLetterLanguageName !== FALLBACK_LOCALE) {
+      mergeLocalesMessages(globals.i18n, FALLBACK_LOCALE, uiKitMessages.fallbackMessages);
+    }
   }
   setGlobals({ cultureName });
 }
