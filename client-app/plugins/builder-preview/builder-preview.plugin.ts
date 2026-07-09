@@ -208,6 +208,9 @@ function modifyRequests() {
   });
 }
 
+/** Largest value a CSS `z-index` accepts (2^31 - 1) — keeps the blocker above every storefront element. */
+const MAX_Z_INDEX = 2147483647;
+
 function createOverlay() {
   const bodyEl = document.getElementsByTagName("body").item(0);
 
@@ -221,7 +224,7 @@ function createOverlay() {
     // 404 — the preview simply follows the edited page's language instead (VCST-5219).
     interactiveBlocker.style.position = "fixed";
     interactiveBlocker.style.inset = "0";
-    interactiveBlocker.style.zIndex = "2147483647";
+    interactiveBlocker.style.zIndex = String(MAX_Z_INDEX);
     interactiveBlocker.style.background = "transparent";
     interactiveBlocker.style.pointerEvents = "auto";
     bodyEl.appendChild(interactiveBlocker);

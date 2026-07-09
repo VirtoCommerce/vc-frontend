@@ -24,7 +24,7 @@ export function getPreviewPageId(): string | undefined {
 // so anything that isn't shaped like a locale identifier is dropped here.
 export function getPreviewCultureName(): string | undefined {
   const urlParams = new URLSearchParams(globalThis.location.search);
-  const cultureName = urlParams.get("cultureName");
+  const cultureName = urlParams.get("cultureName") || undefined;
   return cultureName && LOCALE_ID_REGEX.test(cultureName) ? cultureName : undefined;
 }
 
