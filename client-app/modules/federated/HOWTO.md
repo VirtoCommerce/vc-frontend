@@ -152,7 +152,8 @@ Rules of the road:
   something the facade doesn't export, that's a facade extension request (below).
 - `init()` runs **before the host installs the router**, so routes you add here work
   even on a direct deep link.
-- Keep `init()` fast: it has a time budget (10s), and the whole app boot waits for it.
+- Keep `init()` fast: it has a time budget (5s — the loader's per-phase `loadTimeoutMs`),
+  and the whole app boot waits for it.
 - **Styling:** your components ship their own CSS (plain styles in SFCs work as-is).
   For **Tailwind**, scaffold with `--with-tailwind` (or copy its output): the plugin
   runs its own utility pass with the **host's design system as preset**
