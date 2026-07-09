@@ -2,13 +2,25 @@ import { useLocalStorage, useSessionStorage } from "@vueuse/core";
 import { merge } from "lodash-es";
 import { computed, ref } from "vue";
 import { setLocale as setLocaleForYup } from "yup";
+import { LOCALE_ID_REGEX } from "@/core/constants/locale";
+import { Logger } from "@/core/utilities";
+import { getDefaultNumberFormats } from "@/i18n";
 import { useUser } from "@/shared/account/composables/useUser";
 import { getCatalogBasePath } from "@/shared/catalog/composables/useCatalogBasePath";
+import { useCurrency } from "./useCurrency";
 import { useThemeContext } from "./useThemeContext";
 import type { ILanguage } from "../types";
 import type { I18n } from "@/i18n";
 import type { LocaleMessage } from "@intlify/core-base";
 import type { Composer, LocaleMessageValue } from "vue-i18n";
+
+/**
+ * Loads and merges extra locale messages (UI kit, module bundles, …) for the given language.
+ * Registered via `registerLocaleLoader` and re-run by `applyLocale` on every locale switch,
+ * so runtime switches (e.g. the builder preview applying the edited page's culture, VCST-5219)
+ * stay in sync with what boot loaded.
+ */
+export type LocaleLoaderType = (i18n: I18n, language: ILanguage) => Promise<void>;
 
 const { themeContext } = useThemeContext();
 
@@ -43,6 +55,19 @@ const currentMaybeShortLocale = computed(() => {
   return tryShortLocale(currentLanguage.value?.cultureName ?? "");
 });
 
+const localeLoaders: LocaleLoaderType[] = [];
+
+/**
+ * Registers a loader of extra locale messages (UI kit bundles, module bundles, …).
+ * Every registered loader is (re-)run by `applyLocale`, so a single registration keeps the
+ * messages in sync across all runtime locale switches. Registering the same loader twice is a no-op.
+ */
+function registerLocaleLoader(loader: LocaleLoaderType): void {
+  if (!localeLoaders.includes(loader)) {
+    localeLoaders.push(loader);
+  }
+}
+
 function tryShortLocale(localeOrCultureName: string) {
   const twoLetterLanguageName = localeOrCultureName.slice(0, 2);
 
@@ -60,7 +85,7 @@ function fetchLocaleMessages(locale: string): Promise<LocaleMessage> {
   // The locale may originate from user-controlled input (e.g. a `?cultureName=` query param).
   // Reject anything that isn't a plain locale identifier before using it to index the bundle map,
   // so it can't select an unexpected target or traverse paths (CodeQL: unvalidated dynamic method call).
-  if (!/^[a-zA-Z0-9-]+$/.test(locale)) {
+  if (!LOCALE_ID_REGEX.test(locale)) {
     return import("../../../locales/en.json"); // can't use variables in import
   }
 
@@ -126,6 +151,51 @@ async function initLocale(i18n: I18n, cultureName: string, options?: { rewriteUr
   }
 
   document.documentElement.setAttribute("lang", cultureName);
+}
+
+/**
+ * Fully applies a locale at runtime: base app messages (`initLocale`), per-culture number formats,
+ * and every registered locale loader (UI kit, module bundles, …). This is the single shared
+ * "switch the app language" entry point used by both storefront boot and the builder preview,
+ * so the two can't silently diverge (VCST-5219).
+ *
+ * Loader failures are isolated and logged: a missing optional bundle must degrade to fallback
+ * messages, never break the locale switch itself.
+ */
+async function applyLocale(i18n: I18n, cultureName: string, options?: { rewriteUrl?: boolean }): Promise<void> {
+  await initLocale(i18n, cultureName, options);
+
+  const { currentCurrency } = useCurrency();
+  (i18n.global as unknown as Composer).mergeNumberFormat(
+    cultureName,
+    getDefaultNumberFormats(currentCurrency.value.code),
+  );
+
+  const language = currentLanguage.value ?? defaultStoreLanguage.value;
+  await Promise.all(
+    localeLoaders.map((load) =>
+      load(i18n, language).catch((error: unknown) =>
+        Logger.error(`Failed to load extra locale messages for "${cultureName}"`, error),
+      ),
+    ),
+  );
+}
+
+/**
+ * Maps a raw, possibly user-supplied locale value ("fr", "fr-fr", "fr-FR") to the exact
+ * `cultureName` of a supported store language, or `undefined` if no language matches.
+ */
+function normalizeToSupportedCulture(localeOrCultureName?: string): string | undefined {
+  const value = localeOrCultureName?.toLowerCase();
+
+  if (!value) {
+    return undefined;
+  }
+
+  return supportedLanguages.value.find(
+    (language) =>
+      language.cultureName.toLowerCase() === value || language.twoLetterLanguageName.toLowerCase() === value,
+  )?.cultureName;
 }
 
 function getLocaleFromUrl(): string | undefined {
@@ -269,7 +339,10 @@ export function useLanguages() {
     }),
 
     initLocale,
+    applyLocale,
+    registerLocaleLoader,
     resolveLocale,
+    normalizeToSupportedCulture,
     fetchLocaleMessages,
     mergeLocalesMessages,
 

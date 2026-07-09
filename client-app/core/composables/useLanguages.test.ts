@@ -80,6 +80,7 @@ vi.mock("./useThemeContext", () => ({
 vi.mock("@vueuse/core", () => ({
   useLocalStorage: () => hoisted.state.pinnedLocale,
   useSessionStorage: () => hoisted.state.previousCultureSlug,
+  noop: () => {},
 }));
 
 vi.mock("yup", () => ({

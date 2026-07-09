@@ -1,9 +1,7 @@
 import { useGlobalInterceptors } from "@/core/api/common";
 import { useLanguages } from "@/core/composables/useLanguages";
-import { FALLBACK_LOCALE } from "@/core/constants";
 import { globals, setGlobals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
-import { getLocales as getUIKitLocales } from "@/ui-kit/utilities/getLocales";
 import { useStaticPage } from "@/shared/static-content";
 import { templateBlocks } from "@/shared/static-content/components";
 import PreviewPage from "./components/preview-page.vue";
@@ -35,33 +33,36 @@ declare type TransferDataType = {
   cultureName?: string;
 };
 
+// Serializes locale switches: builder messages arrive concurrently and interleaved
+// `applyPreviewLocale` runs must apply in order, not race each other.
+let localeSwitchQueue: Promise<void> = Promise.resolve();
+
 // Switch the storefront preview to the edited page's language without touching the URL (VCST-5219).
 // The designer preview runs on a fixed `/designer-preview` route (vue-router base ""), so we must not
-// add a `/{lang}` prefix here; we only re-init the i18n locale and update globals.cultureName, which
-// drives content-localized GraphQL queries on the next block remount.
-async function applyPreviewLocale(cultureName?: string) {
-  if (!cultureName || cultureName === globals.cultureName) {
-    return;
-  }
+// add a `/{lang}` prefix here; we re-apply the locale through the shared seam (app messages, UI kit
+// and module bundles, number formats) and update globals.cultureName, which drives
+// content-localized GraphQL queries on the next block remount.
+function applyPreviewLocale(cultureName?: string): Promise<void> {
+  localeSwitchQueue = localeSwitchQueue.then(() => switchPreviewLocale(cultureName));
+  return localeSwitchQueue;
+}
 
-  const { supportedLanguages, initLocale, mergeLocalesMessages } = useLanguages();
-  const language = supportedLanguages.value.find((item) => item.cultureName === cultureName);
-  if (!language) {
-    return;
-  }
+async function switchPreviewLocale(rawCultureName?: string): Promise<void> {
+  try {
+    const { applyLocale, normalizeToSupportedCulture } = useLanguages();
+    const cultureName = normalizeToSupportedCulture(rawCultureName);
 
-  if (globals.i18n) {
-    await initLocale(globals.i18n, cultureName, { rewriteUrl: false });
-
-    // Merge the UI kit locale bundles for the new language, mirroring storefront boot, otherwise
-    // ui_kit.* strings stay in the initial boot language while page content uses the new locale (VCST-5219).
-    const uiKitMessages = await getUIKitLocales(FALLBACK_LOCALE, language.twoLetterLanguageName);
-    mergeLocalesMessages(globals.i18n, language.twoLetterLanguageName, uiKitMessages.messages);
-    if (language.twoLetterLanguageName !== FALLBACK_LOCALE) {
-      mergeLocalesMessages(globals.i18n, FALLBACK_LOCALE, uiKitMessages.fallbackMessages);
+    if (!cultureName || cultureName === globals.cultureName || !globals.i18n) {
+      return;
     }
+
+    await applyLocale(globals.i18n, cultureName, { rewriteUrl: false });
+    setGlobals({ cultureName });
+  } catch (error) {
+    // Never propagate: the message handler reveals the preview body right after this, and a failed
+    // locale switch must degrade to the boot language — not leave the preview permanently hidden.
+    Logger.error("Failed to apply the preview locale", error);
   }
-  setGlobals({ cultureName });
 }
 
 function scrollToSection(sectionId: string) {

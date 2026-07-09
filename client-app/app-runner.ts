@@ -44,7 +44,6 @@ import { templateBlocks } from "@/shared/static-content";
 import { uiKit } from "@/ui-kit";
 import { getLocales as getUIKitLocales } from "@/ui-kit/utilities/getLocales";
 import App from "./App.vue";
-import type { ILanguage } from "./core/types";
 import type { PageContextResponseType } from "./core/api/graphql/types";
 import type { PageBuilderPluginOptionsType } from "./plugins/builder-preview/models/PageBuilderPluginOptionsType";
 
@@ -83,13 +82,14 @@ export default async () => {
     currentLanguage,
     currentMaybeShortLocale,
     defaultStoreCulture,
-    initLocale,
+    applyLocale,
+    registerLocaleLoader,
     fetchLocaleMessages,
     mergeLocalesMessages,
     resolveLocale,
+    normalizeToSupportedCulture,
     getUrlWithoutPossibleLocale,
     resolvePossibleLocale,
-    supportedLanguages,
   } = useLanguages();
   const { currentCurrency } = useCurrency();
   const { init: initializeHotjar } = useHotjar();
@@ -160,17 +160,26 @@ export default async () => {
    */
   const head = createHead();
 
-  const currentCultureName =
-    previewCultureName &&
-    supportedLanguages.value.some((language: ILanguage) => language.cultureName === previewCultureName)
-      ? previewCultureName
-      : resolveLocale();
+  // `previewCultureName` is only set in preview mode; tolerate short/differently-cased values
+  // ("fr", "fr-fr") instead of silently falling back to the store default (VCST-5219).
+  const currentCultureName = normalizeToSupportedCulture(previewCultureName) ?? resolveLocale();
   const isDefaultLocaleInUse = defaultStoreCulture.value === currentCultureName;
 
   const i18n = createI18n(currentCultureName, currentCurrency.value.code, fallback);
+
+  // The UI kit loads its locale bundles through the shared locale-loader seam, so boot and any
+  // runtime locale switch (e.g. builder preview, VCST-5219) share one copy of this logic.
+  registerLocaleLoader(async (i18nInstance, language) => {
+    const uiKitMessages = await getUIKitLocales(FALLBACK_LOCALE, language.twoLetterLanguageName);
+    mergeLocalesMessages(i18nInstance, language.twoLetterLanguageName, uiKitMessages.messages);
+    if (language.twoLetterLanguageName !== FALLBACK_LOCALE) {
+      mergeLocalesMessages(i18nInstance, FALLBACK_LOCALE, uiKitMessages.fallbackMessages);
+    }
+  });
+
   // Keep the URL as `/designer-preview` in preview mode (no `/{lang}` prefix) so the fixed preview
   // route keeps resolving; the locale still switches for content and chrome (VCST-5219).
-  await initLocale(i18n, currentCultureName, { rewriteUrl: !isPreview });
+  await applyLocale(i18n, currentCultureName, { rewriteUrl: !isPreview });
 
   const router = createRouter({
     base: isPreview || isDefaultLocaleInUse ? "" : currentMaybeShortLocale.value,
@@ -245,11 +254,6 @@ export default async () => {
   app.use(contextPlugin, themeContext.value);
   app.use(configPlugin, themeContext.value);
 
-  const UIKitMessages = await getUIKitLocales(FALLBACK_LOCALE, currentLanguage.value?.twoLetterLanguageName);
-  mergeLocalesMessages(i18n, currentLanguage.value?.twoLetterLanguageName, UIKitMessages.messages);
-  if (currentLanguage.value?.twoLetterLanguageName !== FALLBACK_LOCALE) {
-    mergeLocalesMessages(i18n, FALLBACK_LOCALE, UIKitMessages.fallbackMessages);
-  }
   app.use(uiKit);
 
   app.use(applicationInsightsPlugin, { router });

@@ -1,12 +1,30 @@
 import { useLanguages } from "@/core/composables/useLanguages";
 import { FALLBACK_LOCALE } from "@/core/constants";
 import { Logger } from "@/core/utilities";
+import type { ILanguage } from "@/core/types";
 import type { I18n } from "@/i18n";
 import type { LocaleMessageValue } from "vue-i18n";
 
+const modulesWithLocaleLoader = new Set<string>();
+
 export async function loadModuleLocale(i18n: I18n, moduleName: string): Promise<void> {
-  const { currentLanguage, mergeLocalesMessages } = useLanguages();
-  const locale = currentLanguage.value?.twoLetterLanguageName || FALLBACK_LOCALE;
+  const { currentLanguage, registerLocaleLoader } = useLanguages();
+
+  // Re-load this module's messages on every runtime locale switch (e.g. the builder preview
+  // applying the edited page's culture, VCST-5219), not just once at module init.
+  if (!modulesWithLocaleLoader.has(moduleName)) {
+    modulesWithLocaleLoader.add(moduleName);
+    registerLocaleLoader((i18nInstance: I18n, language: ILanguage) =>
+      mergeModuleLocales(i18nInstance, moduleName, language),
+    );
+  }
+
+  await mergeModuleLocales(i18n, moduleName, currentLanguage.value);
+}
+
+async function mergeModuleLocales(i18n: I18n, moduleName: string, language?: ILanguage): Promise<void> {
+  const { mergeLocalesMessages } = useLanguages();
+  const locale = language?.twoLetterLanguageName || FALLBACK_LOCALE;
 
   try {
     const [moduleFallbackMessages, moduleMessages] = await Promise.all<LocaleMessageValue[]>([
