@@ -2,8 +2,12 @@ import { useLocalStorage, useSessionStorage } from "@vueuse/core";
 import { merge } from "lodash-es";
 import { computed, ref } from "vue";
 import { setLocale as setLocaleForYup } from "yup";
+import { LOCALE_ID_REGEX } from "@/core/constants/locale";
+import { runLocaleLoaders } from "@/core/locale-loaders";
+import { getDefaultNumberFormats } from "@/i18n";
 import { useUser } from "@/shared/account/composables/useUser";
 import { getCatalogBasePath } from "@/shared/catalog/composables/useCatalogBasePath";
+import { useCurrency } from "./useCurrency";
 import { useThemeContext } from "./useThemeContext";
 import type { ILanguage } from "../types";
 import type { I18n } from "@/i18n";
@@ -43,6 +47,7 @@ const currentMaybeShortLocale = computed(() => {
   return tryShortLocale(currentLanguage.value?.cultureName ?? "");
 });
 
+
 function tryShortLocale(localeOrCultureName: string) {
   const twoLetterLanguageName = localeOrCultureName.slice(0, 2);
 
@@ -60,7 +65,7 @@ function fetchLocaleMessages(locale: string): Promise<LocaleMessage> {
   // The locale may originate from user-controlled input (e.g. a `?cultureName=` query param).
   // Reject anything that isn't a plain locale identifier before using it to index the bundle map,
   // so it can't select an unexpected target or traverse paths (CodeQL: unvalidated dynamic method call).
-  if (!/^[a-zA-Z0-9-]+$/.test(locale)) {
+  if (!LOCALE_ID_REGEX.test(locale)) {
     return import("../../../locales/en.json"); // can't use variables in import
   }
 
@@ -126,6 +131,44 @@ async function initLocale(i18n: I18n, cultureName: string, options?: { rewriteUr
   }
 
   document.documentElement.setAttribute("lang", cultureName);
+}
+
+/**
+ * Fully applies a locale at runtime: base app messages (`initLocale`), per-culture number formats,
+ * and every registered locale loader (UI kit, module bundles, …). This is the single shared
+ * "switch the app language" entry point used by both storefront boot and the builder preview,
+ * so the two can't silently diverge (VCST-5219).
+ *
+ * Loader failures are isolated and logged: a missing optional bundle must degrade to fallback
+ * messages, never break the locale switch itself.
+ */
+async function applyLocale(i18n: I18n, cultureName: string, options?: { rewriteUrl?: boolean }): Promise<void> {
+  await initLocale(i18n, cultureName, options);
+
+  const { currentCurrency } = useCurrency();
+  (i18n.global as unknown as Composer).mergeNumberFormat(
+    cultureName,
+    getDefaultNumberFormats(currentCurrency.value.code),
+  );
+
+  await runLocaleLoaders(i18n, currentLanguage.value ?? defaultStoreLanguage.value);
+}
+
+/**
+ * Maps a raw, possibly user-supplied locale value ("fr", "fr-fr", "fr-FR") to the exact
+ * `cultureName` of a supported store language, or `undefined` if no language matches.
+ */
+function normalizeToSupportedCulture(localeOrCultureName?: string): string | undefined {
+  const value = localeOrCultureName?.toLowerCase();
+
+  if (!value) {
+    return undefined;
+  }
+
+  return supportedLanguages.value.find(
+    (language) =>
+      language.cultureName.toLowerCase() === value || language.twoLetterLanguageName.toLowerCase() === value,
+  )?.cultureName;
 }
 
 function getLocaleFromUrl(): string | undefined {
@@ -269,7 +312,9 @@ export function useLanguages() {
     }),
 
     initLocale,
+    applyLocale,
     resolveLocale,
+    normalizeToSupportedCulture,
     fetchLocaleMessages,
     mergeLocalesMessages,
 
