@@ -871,7 +871,9 @@
         "view_list": "Lista",
         "view_map": "Kartta",
         "pick_point_info_title": "Noutopisteen tiedot",
-        "pick_up_here": "Nouda täältä"
+        "pick_up_here": "Nouda täältä",
+        "load_more": "Lataa lisää",
+        "showing_count": "Näytetään {loaded} / {total}"
       }
     },
     "bulk_order": {
@@ -1227,6 +1229,7 @@
         "order_number_label": "Tilausnumero",
         "purchase_number_label": "Ostotilaus",
         "buyer_name_label": "Ostajan nimi",
+        "payment_type_label": "Maksutapa",
         "status_label": "@:common.labels.status",
         "invoice_label": "Lasku",
         "date_label": "@:common.labels.date",
