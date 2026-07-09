@@ -77,6 +77,54 @@ describe("create-plugin scaffolder", () => {
     expect(readFileSync(join(dir, "vite.config.ts"), "utf8")).toContain('"@apollo/client": false');
   });
 
+  it("scaffolds lint/format/git-hook tooling by default, and skips it all with --no-lint", () => {
+    const dir = scaffoldExpectingSuccess("lint-plugin", ["--yes"]);
+
+    for (const file of [
+      "eslint.config.js",
+      ".prettierrc.json",
+      ".prettierignore",
+      ".editorconfig",
+      ".commitlintrc.cjs",
+      ".vscode/settings.json",
+      ".husky/pre-commit",
+      ".husky/commit-msg",
+    ]) {
+      expect(existsSync(join(dir, file)), `${file} should exist`).toBe(true);
+    }
+    const pkg = JSON.parse(readFileSync(join(dir, "package.json"), "utf8"));
+    expect(pkg.devDependencies).toHaveProperty("eslint");
+    expect(pkg.devDependencies).toHaveProperty("utility-types");
+    expect(pkg.devDependencies).toHaveProperty("maska");
+    expect(pkg.scripts).toHaveProperty("lint");
+    expectParseableTs(join(dir, "eslint.config.js"));
+    // The scaffold's own emitted files must lint clean: .cjs configs use require()
+    // by design, and `_`-prefixed unused args are the sanctioned convention.
+    const eslintCfg = readFileSync(join(dir, "eslint.config.js"), "utf8");
+    expect(eslintCfg).toContain("no-require-imports");
+    expect(eslintCfg).toContain("argsIgnorePattern");
+
+    const noLintDir = scaffoldExpectingSuccess("no-lint-plugin", ["--yes", "--no-lint"]);
+    for (const file of [
+      "eslint.config.js",
+      ".prettierrc.json",
+      ".prettierignore",
+      ".editorconfig",
+      ".commitlintrc.cjs",
+      ".vscode/settings.json",
+      ".husky/pre-commit",
+      ".husky/commit-msg",
+    ]) {
+      expect(existsSync(join(noLintDir, file)), `${file} should NOT exist`).toBe(false);
+    }
+    const noLintPkg = JSON.parse(readFileSync(join(noLintDir, "package.json"), "utf8"));
+    expect(noLintPkg.devDependencies).not.toHaveProperty("eslint");
+    expect(noLintPkg.devDependencies).toHaveProperty("utility-types");
+    expect(noLintPkg.devDependencies).toHaveProperty("maska");
+    expect(noLintPkg.scripts).not.toHaveProperty("lint");
+    expect(noLintPkg).not.toHaveProperty("lint-staged");
+  });
+
   it("scaffolds the tailwind variant with the config/styles files", () => {
     const dir = scaffoldExpectingSuccess("tw-plugin", ["--yes", "--with-tailwind"]);
 
@@ -84,6 +132,108 @@ describe("create-plugin scaffolder", () => {
       expect(existsSync(join(dir, file)), `${file} should exist`).toBe(true);
     }
     expect(readFileSync(join(dir, "src", "index.ts"), "utf8")).toContain('import "./styles.css"');
+
+    // Isolation is via Vue scoped styles, NOT a global utility layer: the config must not
+    // set an `important` scope, styles.css must not emit `@tailwind utilities`, and the
+    // demo page must carry a <style scoped> block.
+    expect(readFileSync(join(dir, "tailwind.config.cjs"), "utf8")).not.toContain("important:");
+    expect(readFileSync(join(dir, "src", "styles.css"), "utf8")).not.toMatch(/^@tailwind/m);
+    expect(readFileSync(join(dir, "src", "pages", "my-page.vue"), "utf8")).toContain("<style scoped>");
+  });
+
+  it("scaffolds vitest tooling by default, and skips it all with --no-test", () => {
+    const dir = scaffoldExpectingSuccess("test-plugin", ["--yes"]);
+
+    for (const file of ["vitest.config.ts", "src/mocks/vc-frontend-core.ts"]) {
+      expect(existsSync(join(dir, file)), `${file} should exist`).toBe(true);
+    }
+    const pkg = JSON.parse(readFileSync(join(dir, "package.json"), "utf8"));
+    expect(pkg.devDependencies).toHaveProperty("vitest");
+    expect(pkg.devDependencies).toHaveProperty("@vue/test-utils");
+    expect(pkg.devDependencies).toHaveProperty("jsdom");
+    expect(pkg.scripts).toHaveProperty("test", "vitest run");
+    expect(pkg.scripts).toHaveProperty("test:watch", "vitest");
+    expectParseableTs(join(dir, "vitest.config.ts"));
+    expectParseableTs(join(dir, "src", "mocks", "vc-frontend-core.ts"));
+
+    const noTestDir = scaffoldExpectingSuccess("no-test-plugin", ["--yes", "--no-test"]);
+    for (const file of ["vitest.config.ts", "src/mocks/vc-frontend-core.ts"]) {
+      expect(existsSync(join(noTestDir, file)), `${file} should NOT exist`).toBe(false);
+    }
+    const noTestPkg = JSON.parse(readFileSync(join(noTestDir, "package.json"), "utf8"));
+    expect(noTestPkg.devDependencies).not.toHaveProperty("vitest");
+    expect(noTestPkg.devDependencies).not.toHaveProperty("jsdom");
+    expect(noTestPkg.scripts).not.toHaveProperty("test");
+    expect(noTestPkg.scripts).not.toHaveProperty("test:watch");
+  });
+
+  it("scaffolds GraphQL codegen tooling with --with-apollo, and skips it without", () => {
+    const dir = scaffoldExpectingSuccess("gql-plugin", ["--yes", "--with-apollo"]);
+
+    for (const file of ["codegen.ts", ".env.example", "src/api/graphql/queries/.gitkeep"]) {
+      expect(existsSync(join(dir, file)), `${file} should exist`).toBe(true);
+    }
+    const pkg = JSON.parse(readFileSync(join(dir, "package.json"), "utf8"));
+    expect(pkg.scripts).toHaveProperty("generate:graphql-types");
+    expect(pkg.devDependencies).toHaveProperty("@graphql-codegen/cli");
+    // Generated types import it directly — relying on hoisting from @apollo/client is fragile.
+    expect(pkg.devDependencies).toHaveProperty("@graphql-typed-document-node/core");
+    expectParseableTs(join(dir, "codegen.ts"));
+    const codegen = readFileSync(join(dir, "codegen.ts"), "utf8");
+    // Scoped-schema convention: /graphql/<plugin-name>, correctable via the TODO comment.
+    expect(codegen).toContain("/graphql/gql-plugin");
+    // codegen-cli does not read .env itself — the config must load it and fail loudly.
+    expect(codegen).toContain("APP_BACKEND_URL");
+    expect(codegen).toContain("loadEnv");
+
+    const plainDir = scaffoldExpectingSuccess("plain-plugin", ["--yes"]);
+    for (const file of ["codegen.ts", ".env.example"]) {
+      expect(existsSync(join(plainDir, file)), `${file} should NOT exist`).toBe(false);
+    }
+    const plainPkg = JSON.parse(readFileSync(join(plainDir, "package.json"), "utf8"));
+    expect(plainPkg.scripts).not.toHaveProperty("generate:graphql-types");
+    expect(plainPkg.devDependencies).not.toHaveProperty("@graphql-codegen/cli");
+  });
+
+  it("gitignores .env and yarn install state regardless of selected groups", () => {
+    // .env may carry a real backend URL (and one day credentials); it must never be
+    // committable from a scaffolded project, whether or not codegen was selected.
+    const dir = scaffoldExpectingSuccess("env-plugin", ["--yes"]);
+    const gitignore = readFileSync(join(dir, ".gitignore"), "utf8");
+    expect(gitignore).toContain(".env");
+    // Yarn 4 writes .yarn/install-state.gz even with nodeLinker: node-modules.
+    expect(gitignore).toContain(".yarn/*");
+    expect(gitignore).toContain("coverage/");
+  });
+
+  it("excludes generated GraphQL types from lint and format with --with-apollo", () => {
+    // Mirrors the host: codegen output is not linted/formatted (eslint.config.js and
+    // .prettierignore both carry the generated-types path).
+    const dir = scaffoldExpectingSuccess("gql-ignore-plugin", ["--yes", "--with-apollo"]);
+    expect(readFileSync(join(dir, "eslint.config.js"), "utf8")).toContain("src/api/graphql/types.ts");
+    expect(readFileSync(join(dir, ".prettierignore"), "utf8")).toContain("src/api/graphql/types.ts");
+
+    const plainDir = scaffoldExpectingSuccess("plain-ignore-plugin", ["--yes"]);
+    expect(readFileSync(join(plainDir, "eslint.config.js"), "utf8")).not.toContain("src/api/graphql/types.ts");
+    expect(readFileSync(join(plainDir, ".prettierignore"), "utf8")).not.toContain("src/api/graphql/types.ts");
+  });
+
+  it("README documents scripts and workflows matching the selected groups", () => {
+    const dir = scaffoldExpectingSuccess("readme-plugin", ["--yes", "--with-apollo"]);
+    const readme = readFileSync(join(dir, "README.md"), "utf8");
+    expect(readme).toContain("generate:graphql-types");
+    expect(readme).toContain("APP_BACKEND_URL");
+    expect(readme).toContain("APP_MODULES_FEDERATION_REMOTES");
+    expect(readme).toContain("requiredHostVersion");
+    expect(readme).toContain("yarn test");
+
+    const plainDir = scaffoldExpectingSuccess("readme-plain", ["--yes", "--no-test"]);
+    const plainReadme = readFileSync(join(plainDir, "README.md"), "utf8");
+    expect(plainReadme).not.toContain("generate:graphql-types");
+    expect(plainReadme).not.toContain("yarn test");
+    // Evergreen sections are unconditional.
+    expect(plainReadme).toContain("APP_MODULES_FEDERATION_REMOTES");
+    expect(plainReadme).toContain("requiredHostVersion");
   });
 
   it("rejects unknown flags instead of silently ignoring them", () => {

@@ -10,6 +10,10 @@
  * interactively (or via flags: --yes takes defaults, --with-i18n, --with-apollo,
  * --with-vueuse, --no-router). Unselected groups are also dropped from the
  * plugin's MF shared config, so the build never needs packages it doesn't use.
+ * ESLint/Prettier/EditorConfig/Husky tooling is scaffolded by default; --no-lint
+ * skips it (and its devDeps/scripts) entirely. Vitest unit-test tooling (jsdom
+ * environment + a facade stub/alias, so specs can `vi.mock("@vc-frontend/core")`)
+ * is scaffolded by default too; --no-test skips it (and its devDeps/scripts) entirely.
  */
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
@@ -40,7 +44,7 @@ const [pluginName, targetDirArg] = positional;
 
 if (!pluginName || !targetDirArg) {
   console.error(
-    "Usage: yarn create:plugin <plugin-name> <target-dir> [--yes] [--with-i18n] [--with-apollo] [--with-vueuse] [--with-tailwind] [--no-router]",
+    "Usage: yarn create:plugin <plugin-name> <target-dir> [--yes] [--with-i18n] [--with-apollo] [--with-vueuse] [--with-tailwind] [--no-router] [--no-lint] [--no-test]",
   );
   process.exit(1);
 }
@@ -106,7 +110,7 @@ const GROUPS = [
     key: "tailwind",
     flag: "--with-tailwind",
     defaultOn: false,
-    prompt: "Tailwind CSS (host design tokens, plugin-local utility pass)",
+    prompt: "Tailwind CSS (host design tokens, scoped via <style scoped> + @apply)",
     packages: [],
   },
 ];
@@ -114,7 +118,7 @@ const GROUPS = [
 // Fail on typos ("--tailwind", "--with-apollos") instead of silently ignoring them:
 // in a non-interactive run (--yes / CI) there is no prompt to catch the mistake, so an
 // unknown flag would silently scaffold WITHOUT the requested group.
-const KNOWN_FLAGS = new Set(["--yes", ...GROUPS.map((group) => group.flag)]);
+const KNOWN_FLAGS = new Set(["--yes", "--no-lint", "--no-test", ...GROUPS.map((group) => group.flag)]);
 const unknownFlags = [...flags].filter((flag) => !KNOWN_FLAGS.has(flag));
 if (unknownFlags.length > 0) {
   console.error(`Unknown flag(s): ${unknownFlags.join(", ")}. Known flags: ${[...KNOWN_FLAGS].join(", ")}`);
@@ -142,6 +146,8 @@ async function selectGroups() {
 }
 
 const selected = await selectGroups();
+const withLint = !flags.has("--no-lint");
+const withTest = !flags.has("--no-test");
 
 // ── assemble dependencies ─────────────────────────────────────────────────────
 const runtimeDeps = ["vue", ...GROUPS.filter((group) => selected[group.key]).flatMap((group) => group.packages)];
@@ -158,6 +164,52 @@ if (selected.tailwind) {
     "tw-elements",
   );
 }
+
+// Type-peers the facade contract references but that are NOT MF shared singletons
+// (types-only). Without them, DeepPartial<MenuType> (extendMenuSchema) and VcInput's
+// mask types silently resolve to `any` under skipLibCheck.
+const typeOnlyPeers = ["utility-types", "maska"];
+
+// Lint / format / git-hook tooling — a trimmed, host-aligned subset. Opt out with --no-lint.
+const lintDeps = withLint
+  ? [
+      "eslint",
+      "typescript-eslint",
+      "@vue/eslint-config-typescript",
+      "eslint-plugin-vue",
+      "eslint-plugin-prettier",
+      "eslint-config-prettier",
+      "globals",
+      "prettier",
+      "husky",
+      "lint-staged",
+      "@commitlint/cli",
+      "@commitlint/config-conventional",
+    ]
+  : [];
+
+// Unit-test tooling, matching the host's own vitest setup (jsdom, not happy-dom — the
+// latter isn't a host dependency). Opt out with --no-test.
+const testDeps = withTest ? ["vitest", "@vue/test-utils", "jsdom"] : [];
+
+// GraphQL codegen toolchain — emitted only with the Apollo group: typed documents are
+// the supported way to consume a backend module's scoped schema (documents in
+// src/api/graphql, generated types.ts committed). Versions pin from the host so the
+// plugin generates with exactly the toolchain the host's own modules use.
+const codegenDeps = selected.apollo
+  ? [
+      "@graphql-codegen/add",
+      "@graphql-codegen/cli",
+      "@graphql-codegen/named-operations-object",
+      "@graphql-codegen/typed-document-node",
+      "@graphql-codegen/typescript",
+      "@graphql-codegen/typescript-operations",
+    ]
+  : [];
+// Generated types import this package directly (`import type { TypedDocumentNode } ...`);
+// the host resolves it by hoisting, but a standalone plugin must declare it. Not in the
+// host's package.json, hence a literal pin (matches the host lockfile's major).
+const codegenLiteralDeps = selected.apollo ? { "@graphql-typed-document-node/core": "^3.2.0" } : {};
 
 // The committed form of the facade dependency: a versioned tarball published as a
 // GitHub Release asset of the (public) host repo by the "Core Facade Release"
@@ -214,14 +266,50 @@ const pkgJson = {
     // a host that is itself running `yarn dev` (see HOWTO "Dev inner loop").
     dev: "vite --port 3001",
     "type-check": "vue-tsc --noEmit",
+    ...(selected.apollo
+      ? {
+          "generate:graphql-types": "graphql-codegen --config codegen.ts",
+        }
+      : {}),
+    ...(withTest
+      ? {
+          test: "vitest run",
+          "test:watch": "vitest",
+        }
+      : {}),
+    ...(withLint
+      ? {
+          lint: "eslint . --fix",
+          format: 'prettier --write "src/**/*.{ts,vue,json,css}"',
+          prepare: "husky",
+        }
+      : {}),
   },
   dependencies: { "@vc-frontend/core": coreTarballUrl },
   // Compile-time only — nothing here ships in the bundle: packages the plugin imports are
   // MF-shared (import: false, borrowed from the host at runtime); the rest are type-peers
   // and tooling, tree-shaken away. `typePeerNames` ensures every facade type-peer is present
   // even when its optional runtime group wasn't selected (see the note at the top of file).
-  devDependencies: mergeDeps(sortedEntries(runtimeDeps), sortedEntries(toolDeps), sortedEntries(typePeerNames)),
+  // `typeOnlyPeers` (utility-types, maska) are unconditional too — see the note above their
+  // declaration. `lintDeps` is empty when --no-lint is passed.
+  devDependencies: mergeDeps(
+    sortedEntries(runtimeDeps),
+    sortedEntries(toolDeps),
+    sortedEntries(typePeerNames),
+    sortedEntries(typeOnlyPeers),
+    sortedEntries(codegenDeps),
+    codegenLiteralDeps,
+    sortedEntries(lintDeps),
+    sortedEntries(testDeps),
+  ),
 };
+
+if (withLint) {
+  pkgJson["lint-staged"] = {
+    "*.{js,ts,vue}": ["eslint --fix"],
+    "*.{json,css}": ["prettier --write"],
+  };
+}
 
 const viteConfig = `import { federation } from "@module-federation/vite";
 import { createRemoteFederationOptions } from "@vc-frontend/core/federation";
@@ -250,8 +338,11 @@ export default defineConfig({
 const tailwindConfig = `const path = require("path");
 const hostPreset = require("@vc-frontend/core/tailwind-preset");
 
-// The HOST's design system (colors via CSS custom properties, spacing, breakpoints),
-// scanning ONLY this plugin's sources - utilities match the host 1:1.
+// The HOST's design system (colors via CSS custom properties, spacing, breakpoints).
+// Content scanning covers this plugin's sources so \`@apply\` in <style scoped> blocks
+// resolves against the host's tokens. Styling is done per-component via scoped styles
+// (see src/pages/*.vue), so this plugin emits NO global utility layer — there is nothing
+// to leak into host pages, and no \`important\` scope is needed.
 const preset = hostPreset.default ?? hostPreset;
 
 module.exports = {
@@ -275,12 +366,16 @@ module.exports = {
 `;
 
 const stylesCss = `/*
- * Plugin utility layer: only components + utilities - NOT base, so the host's
- * Tailwind preflight/reset is not re-injected (it is already applied globally).
- * The CSS custom properties these utilities reference are defined by the host.
+ * Plugin-global CSS. This file is injected into the host document, so anything here is
+ * GLOBAL and can affect host pages. Do NOT add '@tailwind utilities' here: a re-emitted
+ * flat utility (e.g. .flex-col) would win by source order and clobber host elements that
+ * rely on a later variant like lg:flex-row.
+ *
+ * Style components with Tailwind via <style scoped> + @apply instead (see src/pages/*.vue):
+ * Vue stamps a data-v-* attribute onto the component's elements and rewrites the selectors
+ * to match, so those styles apply only to the component and never leak. Add a rule here
+ * only for a genuinely global, plugin-owned selector you fully control.
  */
-@tailwind components;
-@tailwind utilities;
 `;
 
 const tsconfig = {
@@ -298,6 +393,34 @@ const tsconfig = {
   },
   include: ["src", "vite.config.ts"],
 };
+
+// The facade is types-only at runtime (host injects it via MF shared singletons), so
+// Vite's resolver throws on "@vc-frontend/core" before vi.mock() gets a chance to
+// substitute it. The alias below points it at a real, empty file instead; every test
+// that touches the specifier still overrides it via vi.mock("@vc-frontend/core", ...).
+const vitestConfig = `import { fileURLToPath } from "node:url";
+import vue from "@vitejs/plugin-vue";
+import { defineConfig } from "vitest/config";
+
+export default defineConfig({
+  plugins: [vue()],
+  resolve: {
+    alias: {
+      "@vc-frontend/core": fileURLToPath(new URL("./src/mocks/vc-frontend-core.ts", import.meta.url)),
+    },
+  },
+  test: { environment: "jsdom" },
+});
+`;
+
+const vcFrontendCoreMock = `// Test-only resolution target for "@vc-frontend/core" (see vitest.config.ts alias).
+//
+// The real package ships types only - the facade is injected by the host at runtime
+// via MF shared singletons, so it has no runtime entry for Vite to resolve. Every test
+// that touches this specifier overrides it via vi.mock("@vc-frontend/core", () => ({ ... }));
+// this file's exports are never used directly.
+export {};
+`;
 
 const stylesImport = selected.tailwind ? 'import "./styles.css";\n' : "";
 const indexTs = selected.router
@@ -317,9 +440,29 @@ export function init(): void {
 }
 `;
 
-const pageClass = selected.tailwind ? ' class="p-6 text-primary-700"' : "";
-const myPageVue = `<template>
-  <div${pageClass}>
+// With Tailwind, style the page in a <style scoped> block via @apply: Vue stamps a data-v-*
+// attribute onto these elements and rewrites the selectors to match, so the styles apply
+// ONLY to this component and never leak into the host — no scope class, no `important`.
+const myPageVue = selected.tailwind
+  ? `<template>
+  <div class="${pluginName}">
+    <h1 class="${pluginName}__title">${pluginName}</h1>
+    <p>Served by Module Federation - built and deployed separately from the host.</p>
+  </div>
+</template>
+
+<style scoped>
+.${pluginName} {
+  @apply p-6;
+}
+
+.${pluginName}__title {
+  @apply text-xl font-bold text-primary-700;
+}
+</style>
+`
+  : `<template>
+  <div>
     <h1>${pluginName}</h1>
     <p>Served by Module Federation - built and deployed separately from the host.</p>
   </div>
@@ -348,13 +491,161 @@ const indexHtml = `<!doctype html>
 </html>
 `;
 
+// codegen config: executed by graphql-codegen's CLI (jiti loads the TS). The CLI does
+// NOT read .env itself, so the config loads it via Vite's loadEnv (already a devDep) —
+// shell-exported variables win over .env values.
+const codegenTs = `import { loadEnv } from "vite";
+import type { CodegenConfig } from "@graphql-codegen/cli";
+
+// graphql-codegen does not load .env files; reuse Vite's loader so the same .env serves
+// dev and codegen. process.env (shell) takes precedence over .env values.
+const env = { ...loadEnv("", process.cwd(), ""), ...process.env };
+
+if (!env.APP_BACKEND_URL) {
+  throw new Error("APP_BACKEND_URL is not set — put it in .env (see .env.example) or export it in the shell.");
+}
+
+const config: CodegenConfig = {
+  // The backend module's scoped schema. Convention: /graphql/<module-scope>.
+  // TODO: if the backend registers a different scope name (see its ScopedSchemaFactory
+  // registration), correct the path here.
+  schema: \`\${env.APP_BACKEND_URL}/graphql/${pluginName}\`,
+  documents: "src/api/graphql/**/*.graphql",
+  generates: {
+    "src/api/graphql/types.ts": {
+      plugins: [
+        { add: { content: "// This file is auto-generated. Do not edit manually.\\n" } },
+        "typescript",
+        "typescript-operations",
+        "typed-document-node",
+        "named-operations-object",
+      ],
+      // Mirrors the host's scripts/graphql-codegen/generator.ts CONFIG so generated
+      // code is style- and scalar-compatible with the host's own modules.
+      config: {
+        dedupeFragments: true,
+        identifierName: "OperationNames",
+        maybeValue: "T",
+        scalars: {
+          BigInt: "number",
+          Byte: "number",
+          Date: "string",
+          DateOnly: "string",
+          Decimal: "number",
+          DynamicPropertyValue: "string | number | boolean | null",
+          Guid: "string",
+          Half: "number",
+          Long: "number",
+          Milliseconds: "number",
+          ModuleSettingValue: "string | number | boolean | null",
+          OptionalDecimal: "number | undefined",
+          OptionalNullableDecimal: "number | null | undefined",
+          OptionalString: "string | undefined",
+          PropertyValue: "string | number | boolean | null",
+          SByte: "number",
+          Seconds: "number",
+          Short: "number",
+          TimeOnly: "string",
+          UInt: "number",
+          ULong: "number",
+          Uri: "string",
+          UShort: "number",
+        },
+        skipTypename: true,
+        useTypeImports: true,
+        skipGraphQLImport: true,
+      },
+    },
+  },
+};
+
+export default config;
+`;
+
+const envExample = `# Backend whose GraphQL schema \`yarn generate:graphql-types\` introspects (see codegen.ts).
+# Copy to .env (gitignored) and adjust.
+APP_BACKEND_URL=https://localhost:5001
+`;
+
+// ── README (evergreen dev info only — scripts, workflows; no code details) ────
+const scriptRows = [
+  "| `yarn build` | Production build of the remote (`dist/`) |",
+  "| `yarn watch` | Rebuild on save; pair with `yarn preview` |",
+  "| `yarn preview` | Serve the built remote for the host (port 3001) |",
+  "| `yarn dev` | HMR dev server (see HOWTO “Dev inner loop”) |",
+  "| `yarn type-check` | `vue-tsc` against the frozen facade contract |",
+  ...(selected.apollo
+    ? ["| `yarn generate:graphql-types` | Regenerate `src/api/graphql/types.ts` from the backend schema |"]
+    : []),
+  ...(withTest ? ["| `yarn test` / `yarn test:watch` | Vitest unit tests (jsdom) |"] : []),
+  ...(withLint ? ["| `yarn lint` / `yarn format` | ESLint / Prettier over the sources |"] : []),
+].join("\n");
+
+const codegenReadmeSection = selected.apollo
+  ? `
+## GraphQL codegen
+
+GraphQL documents live in \`src/api/graphql/**/*.graphql\`; \`yarn generate:graphql-types\`
+introspects the backend module's scoped schema (see \`codegen.ts\` — the endpoint path is a
+convention, correct it there if the backend registers a different scope) and regenerates
+\`src/api/graphql/types.ts\` (committed). Set \`APP_BACKEND_URL\` in \`.env\` first
+(copy \`.env.example\`; \`.env\` is gitignored and must stay that way).
+`
+  : "";
+
 const readme = `# ${pluginName}
 
 A Module Federation plugin for the VC storefront, scaffolded by \`yarn create:plugin\`.
+Full walkthrough (running against the host, shipping, versioning):
+the host repo's \`client-app/modules/federated/HOWTO.md\`.
 
-- Build: \`yarn build\` - Serve for the host: \`yarn preview\` (port 3001)
-- Full walkthrough (running against the host, shipping, versioning):
-  the host repo's \`client-app/modules/federated/HOWTO.md\`.
+## Scripts
+
+| Script | Purpose |
+| --- | --- |
+${scriptRows}
+
+## Local development against the host
+
+1. Build the facade from the host checkout and link it here (types only):
+   \`(host) yarn build:core-types && cd client-app/core-api && yalc publish --private\`
+   then \`(plugin) yalc add @vc-frontend/core && yarn install\`.
+2. Serve this plugin: \`yarn build && yarn preview\` (or \`yarn dev\` for HMR).
+3. Point the host at it:
+   \`APP_MODULES_FEDERATION_ENABLED=true APP_MODULES_FEDERATION_REMOTES='{"${pluginName}":"http://localhost:3001/mf-manifest.json"}' yarn build-only --mode=development && yarn preview\`
+
+## The facade dependency & contract versioning
+
+\`@vc-frontend/core\` is pinned to a versioned tarball URL (a Release asset of the host
+repo) — the lockfile records its checksum. **Keep it that way in commits.** For local
+co-development against an unpushed facade, use yalc (\`yalc add @vc-frontend/core\`);
+run \`yalc remove @vc-frontend/core\` and restore the pinned URL before pushing — never
+commit a \`file:.yalc/...\` dependency.
+
+\`vite.config.ts\` declares \`requiredHostVersion\` — the contract gate: hosts whose facade
+version does not satisfy it refuse to load this plugin (clean skip instead of a runtime
+error). When you adopt an export added in a newer facade version, bump
+\`requiredHostVersion\` **and** the pinned tarball URL together.
+${codegenReadmeSection}
+## Styling
+
+Your plugin renders inside the host page, and the host uses unprefixed Tailwind. To avoid
+clobbering host styles (or being clobbered):
+
+1. **Style components with \`<style scoped>\` + \`@apply\`.** Vue stamps a \`data-v-*\`
+   attribute onto the component's elements (and onto the root of any host component you pass
+   a \`class\` to) and rewrites your selectors to match, so the styles apply only to this
+   component and never leak into host pages. Utilities resolve against the host design
+   tokens. See \`src/pages/my-page.vue\` for the generated example.
+2. **Never add \`@tailwind utilities\` to \`src/styles.css\`.** That file is injected
+   globally; a re-emitted flat utility (e.g. \`.flex-col\`) would win by source order and
+   clobber host elements that rely on a later variant like \`lg:flex-row\`. Keep global CSS
+   to plugin-owned selectors you fully control.
+3. **Escape hatches (optional).** Add \`!important\` to a single declaration for a
+   deliberate, local override. And if you ever need a whole subtree scoped without
+   per-component styles, Tailwind's \`important: ".<plugin-root>"\` config (with a matching
+   root class) confines every emitted utility to that subtree — it works but re-introduces
+   a global utility layer, so prefer scoped styles.
 
 ## The facade dependency
 
@@ -364,6 +655,71 @@ co-development against an unpushed facade, use yalc (\`yalc add @vc-frontend/cor
 run \`yalc remove @vc-frontend/core\` and restore the pinned URL before pushing - never
 commit a \`file:.yalc/...\` dependency.
 `;
+
+// Generated GraphQL types are excluded from lint/format, mirroring the host's own
+// eslint.config.js / .prettierignore treatment of codegen output.
+const generatedTypesIgnore = selected.apollo ? `, "src/api/graphql/types.ts"` : "";
+const eslintConfig = `import { defineConfigWithVueTs, vueTsConfigs } from "@vue/eslint-config-typescript";
+import prettier from "eslint-plugin-prettier/recommended";
+import pluginVue from "eslint-plugin-vue";
+import globals from "globals";
+
+// Trimmed, host-aligned flat config for a standalone MF plugin.
+export default defineConfigWithVueTs(
+  { ignores: ["dist/", "node_modules/", ".yalc/"${generatedTypesIgnore}] },
+  pluginVue.configs["flat/recommended"],
+  vueTsConfigs.recommended,
+  { languageOptions: { globals: { ...globals.browser } } },
+  {
+    rules: {
+      // \`_\`-prefixed args/vars are the deliberate "unused" convention (mock signatures, hooks).
+      "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_", varsIgnorePattern: "^_" }],
+    },
+  },
+  {
+    // Tailwind/PostCSS configs are CommonJS by design (loaded by tools, not bundled).
+    files: ["**/*.cjs"],
+    rules: { "@typescript-eslint/no-require-imports": "off" },
+  },
+  prettier,
+);
+`;
+
+const prettierrc =
+  JSON.stringify({ $schema: "https://json.schemastore.org/prettierrc", endOfLine: "auto" }, null, 2) + "\n";
+const prettierignore = `dist/\nnode_modules/\n.yalc/\n${selected.apollo ? "src/api/graphql/types.ts\n" : ""}`;
+const editorconfig = `# Editor configuration, see https://editorconfig.org
+root = true
+
+[*]
+charset = utf-8
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+max_line_length = 120
+trim_trailing_whitespace = true
+
+[*.{vue,js,ts}]
+quote_type = double
+
+[*.md]
+max_line_length = off
+trim_trailing_whitespace = false
+`;
+const vscodeSettings =
+  JSON.stringify(
+    {
+      "editor.formatOnSave": true,
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      "editor.codeActionsOnSave": { "source.fixAll.eslint": "explicit" },
+      "eslint.useFlatConfig": true,
+    },
+    null,
+    2,
+  ) + "\n";
+const commitlintConfig = 'module.exports = { extends: ["@commitlint/config-conventional"] };\n';
+const huskyPreCommit = "yarn lint-staged\n";
+const huskyCommitMsg = "yarn commitlint --edit $1\n";
 
 // ── write ─────────────────────────────────────────────────────────────────────
 mkdirSync(join(targetDir, "src", "pages"), { recursive: true });
@@ -381,14 +737,48 @@ if (selected.tailwind) {
   writeFileSync(join(targetDir, "src", "styles.css"), stylesCss);
 }
 writeFileSync(join(targetDir, "src", "shims-vue.d.ts"), shimsVue);
+if (withTest) {
+  writeFileSync(join(targetDir, "vitest.config.ts"), vitestConfig);
+  mkdirSync(join(targetDir, "src", "mocks"), { recursive: true });
+  writeFileSync(join(targetDir, "src", "mocks", "vc-frontend-core.ts"), vcFrontendCoreMock);
+}
+if (selected.apollo) {
+  writeFileSync(join(targetDir, "codegen.ts"), codegenTs);
+  writeFileSync(join(targetDir, ".env.example"), envExample);
+  // Documents live here; the author writes real ones (no fake sample query).
+  mkdirSync(join(targetDir, "src", "api", "graphql", "queries"), { recursive: true });
+  writeFileSync(join(targetDir, "src", "api", "graphql", "queries", ".gitkeep"), "");
+}
 writeFileSync(join(targetDir, "README.md"), readme);
 // yalc artifacts (local facade co-dev) must never be committed - see README.
-writeFileSync(join(targetDir, ".gitignore"), "node_modules/\ndist/\n.yalc/\nyalc.lock\n");
+// .env is ignored unconditionally: it may carry a real backend URL (or credentials).
+// .yarn/* is Yarn 4 install state (nodeLinker: node-modules still writes install-state.gz).
+writeFileSync(
+  join(targetDir, ".gitignore"),
+  "node_modules/\ndist/\ncoverage/\n.yalc/\nyalc.lock\n.env\n.yarn/*\n!.yarn/patches\n",
+);
 // Standalone project: keep Yarn out of the host's workspace/PnP context.
 writeFileSync(join(targetDir, ".yarnrc.yml"), "nodeLinker: node-modules\n");
+if (withLint) {
+  writeFileSync(join(targetDir, "eslint.config.js"), eslintConfig);
+  writeFileSync(join(targetDir, ".prettierrc.json"), prettierrc);
+  writeFileSync(join(targetDir, ".prettierignore"), prettierignore);
+  writeFileSync(join(targetDir, ".editorconfig"), editorconfig);
+  writeFileSync(join(targetDir, ".commitlintrc.cjs"), commitlintConfig);
+  mkdirSync(join(targetDir, ".vscode"), { recursive: true });
+  writeFileSync(join(targetDir, ".vscode", "settings.json"), vscodeSettings);
+  mkdirSync(join(targetDir, ".husky"), { recursive: true });
+  writeFileSync(join(targetDir, ".husky", "pre-commit"), huskyPreCommit);
+  writeFileSync(join(targetDir, ".husky", "commit-msg"), huskyCommitMsg);
+}
 
 console.log(`\nScaffolded "${pluginName}" at ${targetDir}`);
 console.log(`  deps pinned from host: ${runtimeDeps.join(", ")}`);
+if (selected.apollo) {
+  console.log(
+    `  GraphQL codegen: set APP_BACKEND_URL in .env (copy .env.example), put documents in src/api/graphql, run yarn generate:graphql-types`,
+  );
+}
 if (droppedShared.length) {
   console.log(`  dropped from MF shared (unused at runtime): ${droppedShared.join(", ")}`);
 }

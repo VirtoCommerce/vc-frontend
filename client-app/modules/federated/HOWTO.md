@@ -37,6 +37,9 @@ need (vue-router / vue-i18n / Apollo / @vueuse — unselected ones are also drop
 the MF shared config), and emits everything described below, ready for
 `yarn install && yarn build`. Non-interactive: `--yes` takes the defaults;
 `--with-i18n`, `--with-apollo`, `--with-vueuse`, `--with-tailwind`, `--no-router` override.
+`--with-apollo` also emits GraphQL codegen tooling (`codegen.ts` pointed at the backend
+module's scoped schema, `yarn generate:graphql-types`, documents under `src/api/graphql/`),
+and every scaffold gets a README covering its scripts and the dev/versioning workflows.
 
 **What it generates (the manual version):** a plugin is an ordinary Vite + Vue project,
 separate from the host repo:
@@ -155,11 +158,12 @@ Rules of the road:
 - Keep `init()` fast: it has a time budget (10s), and the whole app boot waits for it.
 - **Styling:** your components ship their own CSS (plain styles in SFCs work as-is).
   For **Tailwind**, scaffold with `--with-tailwind` (or copy its output): the plugin
-  runs its own utility pass with the **host's design system as preset**
-  (`require("@vc-frontend/core/tailwind-preset")` in `tailwind.config.cjs` — colors
-  resolve through the host's CSS variables at runtime), scans only the plugin's own
-  sources, and emits `components` + `utilities` **without `base`** so the host's
-  preflight isn't re-applied.
+  uses the **host's design system as preset** (`require("@vc-frontend/core/tailwind-preset")`
+  in `tailwind.config.cjs` — colors resolve through the host's CSS variables at runtime).
+  Style components with **`<style scoped>` + `@apply`**: Vue confines those styles to the
+  component (a `data-v-*` attribute), so the plugin emits **no global utility layer** and
+  can't leak into — or be clobbered by — host pages. See the plugin's `README.md` for the
+  full styling guidance (and the optional `important`/`!important` escape hatches).
 
 ## Step 4 — run it against the host
 

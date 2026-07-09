@@ -8,8 +8,8 @@
 
 // UI kit — curated components for explicit imports (all VC* are also globally
 // registered by the host, so plugins can use them in templates without importing).
-export { VcWidget } from "@/ui-kit/components";
-export { VcButton } from "@/ui-kit/components/molecules";
+export { VcWidget, VcTable, VcInput, VcEmptyView } from "@/ui-kit/components";
+export { VcButton, VcTypography } from "@/ui-kit/components/molecules";
 export { VcMarkdownRender } from "@/ui-kit/components/atoms";
 
 // Extension registry — backed by @vueuse createGlobalState (hence @vueuse is shared).
@@ -17,10 +17,18 @@ export { useExtensionRegistry } from "@/shared/common/composables/extensionRegis
 
 // GraphQL / Apollo — same client, cache and auth link as the host.
 export { apolloClient, graphqlClient } from "@/core/api/graphql/client";
+// Reactive Apollo composables — re-exported so plugins execute the HOST's module
+// instance and resolve the DefaultApolloClient provided app-wide in app-runner.
+// A plugin must import these via the facade, never bundle its own copy.
+export { useQuery, useLazyQuery, useMutation } from "@vue/apollo-composable";
 
 export { useModuleSettings } from "@/core/composables/useModuleSettings";
+export { extendMenuSchema } from "@/core/composables/extendMenuSchema";
 export { globals } from "@/core/globals";
 export type { I18n } from "@/i18n";
+// Menu schema type for plugins contributing nav links: type an extendMenuSchema
+// argument as `DeepPartial<MenuType>` (DeepPartial from the utility-types peer).
+export type { MenuType } from "@/core/types/menu";
 
 import { version } from "./package.json";
 /** Contract version, single-sourced from core-api/package.json (managed by build:core-types / bump:core). */

@@ -5,17 +5,20 @@
 import * as vue from 'vue';
 import { Component } from 'vue';
 import { RouteLocationRaw, Router } from 'vue-router';
+import { MaskOptions } from 'maska';
 import * as _apollo_client_cache from '@apollo/client/cache';
 import { ApolloClient } from '@apollo/client/core';
+export { useLazyQuery, useMutation, useQuery } from '@vue/apollo-composable';
 import * as _vueuse_core from '@vueuse/core';
+import { DeepPartial } from 'utility-types';
 import * as vue_i18n from 'vue-i18n';
 import { LocaleMessage } from '@intlify/core-base';
 
-interface IProps$2 {
+interface IProps$4 {
     src: string;
 }
-declare const __VLS_export$2: vue.DefineComponent<IProps$2, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$2> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const _default$2: typeof __VLS_export$2;
+declare const __VLS_export$6: vue.DefineComponent<IProps$4, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$4> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const _default$6: typeof __VLS_export$6;
 
 type Maybe<T> = T;
 /** All built-in and custom scalars, mapped to their actual values */
@@ -1236,7 +1239,7 @@ type VideoType = {
     uploadDate?: Maybe<Scalars['DateTime']['output']>;
 };
 
-interface IProps$1 {
+interface IProps$3 {
     color?: VcButtonColorType;
     size?: VcButtonSizeType;
     variant?: VcButtonVariantType;
@@ -1266,7 +1269,7 @@ declare var __VLS_16: {};
 declare var __VLS_23: {};
 declare var __VLS_25: {};
 declare var __VLS_32: {};
-type __VLS_Slots$1 = {} & {
+type __VLS_Slots$3 = {} & {
     prepend?: (props: typeof __VLS_16) => any;
 } & {
     default?: (props: typeof __VLS_23) => any;
@@ -1275,13 +1278,13 @@ type __VLS_Slots$1 = {} & {
 } & {
     loader?: (props: typeof __VLS_32) => any;
 };
-declare const __VLS_base$1: vue.DefineComponent<IProps$1, {
+declare const __VLS_base$3: vue.DefineComponent<IProps$3, {
     focus: typeof focus;
     blur: typeof blur;
     el: vue.ComputedRef<HTMLElement | null>;
 }, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     click: (value: MouseEvent) => any;
-}, string, vue.PublicProps, Readonly<IProps$1> & Readonly<{
+}, string, vue.PublicProps, Readonly<IProps$3> & Readonly<{
     onClick?: ((value: MouseEvent) => any) | undefined;
 }>, {
     type: VcButtonTypeType;
@@ -1296,15 +1299,138 @@ declare const __VLS_base$1: vue.DefineComponent<IProps$1, {
     noWrap: boolean;
     fullWidth: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
-declare const __VLS_export$1: __VLS_WithSlots$1<typeof __VLS_base$1, __VLS_Slots$1>;
-declare const _default$1: typeof __VLS_export$1;
+declare const __VLS_export$5: __VLS_WithSlots$3<typeof __VLS_base$3, __VLS_Slots$3>;
+declare const _default$5: typeof __VLS_export$5;
 
-type __VLS_WithSlots$1<T, S> = T & {
+type __VLS_WithSlots$3<T, S> = T & {
     new (): {
         $slots: S;
     };
 };
 
+interface IProp {
+    text?: string;
+    icon?: string;
+    variant?: VcEmptyViewVariantType;
+}
+declare var __VLS_1: {};
+declare var __VLS_8$1: {};
+declare var __VLS_10: {};
+type __VLS_Slots$2 = {} & {
+    icon?: (props: typeof __VLS_1) => any;
+} & {
+    default?: (props: typeof __VLS_8$1) => any;
+} & {
+    button?: (props: typeof __VLS_10) => any;
+};
+declare const __VLS_base$2: vue.DefineComponent<IProp, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProp> & Readonly<{}>, {
+    variant: VcEmptyViewVariantType;
+}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const __VLS_export$4: __VLS_WithSlots$2<typeof __VLS_base$2, __VLS_Slots$2>;
+declare const _default$4: typeof __VLS_export$4;
+
+type __VLS_WithSlots$2<T, S> = T & {
+    new (): {
+        $slots: S;
+    };
+};
+
+interface IProps$2 {
+    modelModifiers?: Record<string, boolean>;
+    autocomplete?: string;
+    readonly?: boolean;
+    disabled?: boolean;
+    required?: boolean;
+    name?: string;
+    ariaLabel?: string;
+    label?: string;
+    placeholder?: string;
+    message?: string;
+    singleLineMessage?: boolean;
+    error?: boolean;
+    noBorder?: boolean;
+    hidePasswordSwitcher?: boolean;
+    showEmptyDetails?: boolean;
+    counter?: boolean;
+    min?: string | number;
+    max?: string | number;
+    step?: string | number;
+    minlength?: string | number;
+    maxlength?: string | number;
+    center?: boolean;
+    truncate?: boolean;
+    type?: "text" | "password" | "number" | "email" | "search"
+    /** @deprecated Use VcDatePicker (or VcDateInput for input-only) instead. */
+     | "date";
+    size?: VcInputSizeType;
+    clearable?: boolean;
+    browserTooltip?: "enabled" | "disabled";
+    selectOnClick?: boolean;
+    testIdInput?: string;
+    aria?: Record<string, string | number | null>;
+    disableAutocomplete?: boolean;
+    tabindex?: string | number;
+    mask?: string | MaskOptions;
+}
+declare const __VLS_export$3: <T extends string | number | null>(__VLS_props: NonNullable<Awaited<typeof __VLS_setup>>["props"], __VLS_ctx?: __VLS_PrettifyLocal$1<Pick<NonNullable<Awaited<typeof __VLS_setup>>, "attrs" | "emit" | "slots">>, __VLS_exposed?: NonNullable<Awaited<typeof __VLS_setup>>["expose"], __VLS_setup?: Promise<{
+    props: vue.PublicProps & __VLS_PrettifyLocal$1<(IProps$2 & {
+        modelValue?: T;
+    }) & {
+        onBlur?: ((blurEvent: FocusEvent) => any) | undefined;
+        onFocus?: ((focusEvent: FocusEvent) => any) | undefined;
+        "onUpdate:modelValue"?: ((value: T | undefined) => any) | undefined;
+        onClear?: (() => any) | undefined;
+    }> & (typeof globalThis extends {
+        __VLS_PROPS_FALLBACK: infer P;
+    } ? P : {});
+    expose: (exposed: vue.ShallowUnwrapRef<{
+        inputElement: Readonly<vue.ShallowRef<HTMLInputElement | null, HTMLInputElement | null>>;
+    }>) => void;
+    attrs: any;
+    slots: {
+        prepend?: (props: {
+            focusInput: () => void;
+        }) => any;
+    } & {
+        append?: (props: {
+            focusInput: () => void;
+        }) => any;
+    };
+    emit: {
+        (event: "clear"): void;
+        (event: "blur", blurEvent: FocusEvent): void;
+        (event: "focus", focusEvent: FocusEvent): void;
+    } & ((event: "update:modelValue", value: T | undefined) => void);
+}>) => vue.VNode & {
+    __ctx?: Awaited<typeof __VLS_setup>;
+};
+declare const _default$3: typeof __VLS_export$3;
+
+type __VLS_PrettifyLocal$1<T> = (T extends any ? {
+    [K in keyof T]: T[K];
+} : {
+    [K in keyof T as K]: T[K];
+}) & {};
+
+type MenuType = {
+    header: {
+        desktop: {
+            main: ExtendedMenuLinkType[];
+            purchasing: ExtendedMenuLinkType;
+            marketing: ExtendedMenuLinkType;
+            user: ExtendedMenuLinkType;
+            corporate: ExtendedMenuLinkType;
+        };
+        mobile: {
+            main: ExtendedMenuLinkType[];
+            purchasing: ExtendedMenuLinkType;
+            marketing: ExtendedMenuLinkType;
+            user: ExtendedMenuLinkType;
+            corporate: ExtendedMenuLinkType;
+        };
+    };
+    footer: ExtendedMenuLinkType[];
+};
 type ExtendedMenuLinkType = {
     id?: string;
     title?: string;
@@ -1315,6 +1441,128 @@ type ExtendedMenuLinkType = {
     isCatalogItem?: boolean;
     dataTestId?: string;
 };
+
+interface IProps$1 {
+    tag?: string;
+    variant?: VcTypographyVariantType;
+    truncate?: boolean;
+    fontSize?: string;
+    fontWeight?: string;
+    textTransform?: string;
+    color?: string;
+}
+declare var __VLS_8: {};
+type __VLS_Slots$1 = {} & {
+    default?: (props: typeof __VLS_8) => any;
+};
+declare const __VLS_base$1: vue.DefineComponent<IProps$1, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<IProps$1> & Readonly<{}>, {
+    tag: string;
+}, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
+declare const __VLS_export$2: __VLS_WithSlots$1<typeof __VLS_base$1, __VLS_Slots$1>;
+declare const _default$2: typeof __VLS_export$2;
+
+type __VLS_WithSlots$1<T, S> = T & {
+    new (): {
+        $slots: S;
+    };
+};
+
+declare const __VLS_export$1: <T extends VcTableItemType>(__VLS_props: NonNullable<Awaited<typeof __VLS_setup>>["props"], __VLS_ctx?: __VLS_PrettifyLocal<Pick<NonNullable<Awaited<typeof __VLS_setup>>, "attrs" | "emit" | "slots">>, __VLS_exposed?: NonNullable<Awaited<typeof __VLS_setup>>["expose"], __VLS_setup?: Promise<{
+    props: vue.PublicProps & __VLS_PrettifyLocal<{
+        columns?: VcTableColumnType[];
+        items?: T[];
+        sort?: VcTableSortInfoType;
+        pages?: number;
+        page?: number;
+        loading?: boolean;
+        hideDefaultHeader?: boolean;
+        hideDefaultFooter?: boolean;
+        description?: string;
+        pageLimit?: number | null;
+        mobileBreakpoint?: "none" | BreakpointsType;
+        skeletonRows?: number;
+        bordered?: boolean;
+        mobileBordered?: boolean;
+        scrollable?: boolean;
+        /**
+         * Makes the table header sticky. When used without `maxHeight`, the header
+         * sticks to the top of the viewport during page scroll. When used with
+         * `maxHeight`, the header sticks to the top of the scrollable container.
+         */
+        stickyHeader?: boolean;
+        /**
+         * Maximum height of the table. When set, enables vertical scrolling
+         * within the table container. Automatically enables sticky header.
+         *
+         * @example max-height="400px"
+         * @example max-height="50vh"
+         */
+        maxHeight?: string;
+        /**
+         * Dynamic per-item class for rows. Receives the item and row index.
+         *
+         * @example :row-class="(item) => ({ 'bg-red-100': item.isOverdue })"
+         */
+        rowClass?: string | Record<string, boolean> | ((item: T, index: number) => string | Record<string, boolean>);
+        /**
+         * Dynamic per-item inline style for rows. Receives the item and row index.
+         *
+         * @example :row-style="(item) => ({ opacity: item.isDisabled ? '0.5' : '1' })"
+         */
+        rowStyle?: string | Record<string, string> | ((item: T, index: number) => string | Record<string, string>);
+    } & {
+        onHeaderClick?: ((item: VcTableSortInfoType) => any) | undefined;
+        onPageChanged?: ((page: number) => any) | undefined;
+        onRowClick?: ((item: T, index: number) => any) | undefined;
+    }> & (typeof globalThis extends {
+        __VLS_PROPS_FALLBACK: infer P;
+    } ? P : {});
+    expose: (exposed: {}) => void;
+    attrs: any;
+    slots: {
+        default?: (props: {}) => any;
+    } & {
+        'mobile-skeleton'?: (props: {}) => any;
+    } & {
+        'mobile-empty'?: (props: {}) => any;
+    } & {
+        'mobile-item'?: (props: {
+            key: string;
+            item: T;
+        }) => any;
+    } & {
+        header?: (props: {}) => any;
+    } & {
+        'desktop-skeleton'?: (props: {}) => any;
+    } & {
+        'desktop-empty'?: (props: {}) => any;
+    } & {
+        'desktop-body'?: (props: {}) => any;
+    } & {
+        'desktop-item'?: (props: {
+            key: string;
+            item: T;
+        }) => any;
+    } & {
+        footer?: (props: {}) => any;
+    } & {
+        'page-limit-message'?: (props: {}) => any;
+    };
+    emit: {
+        (event: "headerClick", item: VcTableSortInfoType): void;
+        (event: "pageChanged", page: number): void;
+        (event: "rowClick", item: T, index: number): void;
+    };
+}>) => vue.VNode & {
+    __ctx?: Awaited<typeof __VLS_setup>;
+};
+declare const _default$1: typeof __VLS_export$1;
+
+type __VLS_PrettifyLocal<T> = (T extends any ? {
+    [K in keyof T]: T[K];
+} : {
+    [K in keyof T as K]: T[K];
+}) & {};
 
 interface IProps {
     title?: string;
@@ -1462,6 +1710,13 @@ declare const useModuleSettings: _vueuse_core.UseMemoizeReturn<{
     }[] | undefined>;
 }, [moduleId: string]>;
 
+/**
+ * Narrow facade helper for Module Federation plugins: contribute additional menu items
+ * (e.g. an account-nav link) without exposing the whole useNavigations surface.
+ * Same live singleton — the host provides this module at runtime via the MF shared scope.
+ */
+declare function extendMenuSchema(schema: DeepPartial<MenuType>): void;
+
 declare function createI18n(locale: string, currency: string, fallback?: {
     locale: string;
     message: LocaleMessage;
@@ -1534,5 +1789,5 @@ declare const globals: Readonly<Required<GlobalVariablesType>>;
 /** Contract version, single-sourced from core-api/package.json (managed by build:core-types / bump:core). */
 declare const CORE_VERSION: string;
 
-export { CORE_VERSION, _default$1 as VcButton, _default$2 as VcMarkdownRender, _default as VcWidget, apolloClient, globals, graphqlClient, useExtensionRegistry, useModuleSettings };
-export type { I18n };
+export { CORE_VERSION, _default$5 as VcButton, _default$4 as VcEmptyView, _default$3 as VcInput, _default$6 as VcMarkdownRender, _default$1 as VcTable, _default$2 as VcTypography, _default as VcWidget, apolloClient, extendMenuSchema, globals, graphqlClient, useExtensionRegistry, useModuleSettings };
+export type { I18n, MenuType };
