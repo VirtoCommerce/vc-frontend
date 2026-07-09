@@ -36,7 +36,7 @@ import { init as initPushNotifications } from "@/modules/push-messages";
 import { init as initModuleQuotes } from "@/modules/quotes";
 import { BUILDER_IO_TRACE_MARKER, consoleIgnoredErrors } from "@/pages/matcher/builderIo/console-ignored-errors";
 import { isPreviewMode as isBuilderIoPreviewMode } from "@/plugins/builder-io-preview/utils";
-import { getPreviewCultureName, isPreviewMode as isPageBuilderPreviewMode } from "@/plugins/builder-preview/utils";
+import { getPreviewBootOptions as getPageBuilderPreviewBoot } from "@/plugins/builder-preview/utils";
 import { createRouter } from "@/router";
 import { useUser } from "@/shared/account";
 import ProductBlocks from "@/shared/catalog/components/product";
@@ -109,12 +109,8 @@ export default async () => {
 
   // get initialization query parameters
   const pathname = globalThis.location.pathname;
-  // In Page Builder preview/designer the URL carries the edited page's language as `?cultureName=`
-  // and the route is a fixed `/designer-preview` (no `/{lang}` prefix). Honor that culture so the
-  // preview renders in the page's language instead of the store default (VCST-5219).
-  const isPageBuilderPreview = isPageBuilderPreviewMode();
-  const previewCultureName = isPageBuilderPreview ? getPreviewCultureName() : undefined;
-  const possibleCultureName = previewCultureName ?? resolvePossibleLocale(pathname);
+  const pageBuilderPreview = getPageBuilderPreviewBoot();
+  const possibleCultureName = pageBuilderPreview.cultureName ?? resolvePossibleLocale(pathname);
   const permalink = getPermalink(pathname, getUrlWithoutPossibleLocale);
 
   const domain = IS_DEVELOPMENT
@@ -160,9 +156,9 @@ export default async () => {
    */
   const head = createHead();
 
-  // `previewCultureName` is only set in preview mode; tolerate short/differently-cased values
+  // A preview boot carries the edited page's language; tolerate short/differently-cased values
   // ("fr", "fr-fr") instead of silently falling back to the store default (VCST-5219).
-  const currentCultureName = normalizeToSupportedCulture(previewCultureName) ?? resolveLocale();
+  const currentCultureName = normalizeToSupportedCulture(pageBuilderPreview.cultureName) ?? resolveLocale();
   const isDefaultLocaleInUse = defaultStoreCulture.value === currentCultureName;
 
   const i18n = createI18n(currentCultureName, currentCurrency.value.code, fallback);
@@ -177,12 +173,10 @@ export default async () => {
     }
   });
 
-  // Keep the URL as `/designer-preview` in preview mode (no `/{lang}` prefix) so the fixed preview
-  // route keeps resolving; the locale still switches for content and chrome (VCST-5219).
-  await applyLocale(i18n, currentCultureName, { rewriteUrl: !isPageBuilderPreview });
+  await applyLocale(i18n, currentCultureName, { rewriteUrl: pageBuilderPreview.useLocalePrefix });
 
   const router = createRouter({
-    base: isPageBuilderPreview || isDefaultLocaleInUse ? "" : currentMaybeShortLocale.value,
+    base: pageBuilderPreview.useLocalePrefix && !isDefaultLocaleInUse ? currentMaybeShortLocale.value : "",
   });
 
   /**
@@ -201,13 +195,13 @@ export default async () => {
   });
 
   // Seed Apollo cache with initial slugInfo from pageContext to avoid the first network call.
-  // pageContext was fetched with `possibleCultureName`; if in preview mode an unsupported/mistyped
-  // `cultureName` query was sent to getPageContext but then rejected in favor of the resolved
-  // culture, the returned slugInfo belongs to a different culture — skip seeding so it isn't cached
-  // under the wrong culture key (VCST-5219).
-  const previewCultureRejected =
-    isPageBuilderPreview && !!previewCultureName && previewCultureName !== currentCultureName;
-  if (!previewCultureRejected) {
+  // pageContext was fetched with the raw preview `cultureName`. When the app resolved to a different
+  // culture — an unsupported value, or a short form like "fr" normalized to "fr-FR" — the returned
+  // slugInfo belongs to another culture, so skip seeding rather than cache it under the wrong key
+  // (VCST-5219).
+  const previewCultureDiffersFromResolved =
+    !!pageBuilderPreview.cultureName && pageBuilderPreview.cultureName !== currentCultureName;
+  if (!previewCultureDiffersFromResolved) {
     try {
       const baseVariables = {
         userId: user.value.id,
@@ -259,7 +253,7 @@ export default async () => {
 
   app.use(applicationInsightsPlugin, { router });
 
-  if (isPageBuilderPreviewMode()) {
+  if (pageBuilderPreview.isActive) {
     const builderPreviewPlugin = (await import("@/plugins/builder-preview/builder-preview.plugin").catch(Logger.error))
       ?.default;
     if (builderPreviewPlugin) {
