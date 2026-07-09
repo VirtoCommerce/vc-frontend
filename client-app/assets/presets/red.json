@@ -98,6 +98,13 @@
   "color_additional_50": "#ffffff",
   "color_additional_950": "#000000",
 
+  "color_vc_text_outline_accent": "#2563eb",
+  "color_vc_text_surface_accent": "#2563eb",
+  "color_vc_text_ghost_accent": "#2563eb",
+
+  "color_link": "#2563eb",
+  "color_link_hover": "#1d4ed8",
+
   "color_body_bg": "#fafafa",
   "color_body_text": "#0a0a0a",
 
