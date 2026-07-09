@@ -28,10 +28,12 @@
 <script setup lang="ts">
 import { onBeforeMount, shallowRef, computed, unref } from "vue";
 import { useBreadcrumbs } from "@/core/composables";
+import { humanizeName } from "@/core/utilities/common";
 import { getBlockType } from "@/plugins/builder-preview/block-mapping";
 
 interface IProps {
   content?: string;
+  name?: string;
 }
 
 type BlockType = {
@@ -46,8 +48,13 @@ interface IPageBuilderContent {
 
 const props = defineProps<IProps>();
 
-const templateName = computed(
-  () => unref(pageBuilderContent)?.settings?.name || unref(pageBuilderContent)?.settings?.header || "",
+// VCST-5274: prefer the live name derived from the permalink (which follows renames) over the
+// document's baked `settings.name`, which is written once at authoring time and never updated
+// on rename. Humanize the result so a raw, web-safe name (underscores) is shown as a friendly label.
+const templateName = computed(() =>
+  humanizeName(
+    props.name || unref(pageBuilderContent)?.settings?.name || unref(pageBuilderContent)?.settings?.header || "",
+  ),
 );
 const breadcrumbs = useBreadcrumbs(() => [{ title: templateName.value }] as IBreadcrumb[]);
 const canShowContent = shallowRef(false);
