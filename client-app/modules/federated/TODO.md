@@ -109,15 +109,55 @@ authorization moved to #1 — it likely blocks the pilot.)
   clobbering between plugins are unhandled (only host-vs-plugin isolation exists).
 - **Kill switch** — the hardcoded pilot needs a **rebuild** to kill a bad plugin; gate any
   prod exposure on settings + CSP + integrity. Note store-settings propagation/cache latency.
-- **Boot cost ∝ N** — all remotes are manifest-fetched / loaded / `init`'d eagerly before
-  `app.use(router)`; add a lazy/route-triggered tier for non-critical plugins.
-- **Route fallback** — deep links to a skipped/failed plugin route degrade to a generic
-  routing failure; reserve host placeholder routes / a "feature unavailable" contract.
-  Related: when a plugin settles AFTER the boot backstop and registers its route late,
-  the user who deep-linked keeps seeing the 404 even though the route now exists
-  (`router.addRoute` does not re-match the current location) — a late-settlement
-  `router.replace(currentRoute.fullPath)` when the current match is the not-found route
-  would recover it.
+- **Non-blocking boot + deep-link routing — manifest-declared routes (chosen stage-2
+  direction; from the PR #2365 review).** Today `startFederatedModules()` is **`await`ed
+  before `app.use(router)`** (`app-runner.ts`) so plugin `addRoute`s exist before the first
+  navigation. The wait is **URL-agnostic**: with the flag on, *every* cold load (incl.
+  `/cart`, CMS pages) blocks on remote loading, though only a cold load to a *plugin* URL
+  actually needs it. It is free when the flag is off (early return), overlaps concurrent
+  boot work, and is backstop-bounded — so not a blocker, but it mis-charges 100% of cold
+  loads for the one deep-link case.
+  - **The hard constraint:** a remote route **cannot exist until its code is fetched and
+    `init()` runs**, and this app has **no clean 404** — every unmatched URL falls through
+    the catch-all `Matcher` (`router/routes/main.ts`), which does backend slug resolution
+    (spinner → `NotFound`). So until a remote loads, the host cannot distinguish a
+    *not-yet-registered plugin route* from a *genuine 404*. Interim options only pick **who
+    pays:** (a) keep the boot `await` — all cold loads wait; (b) **pure late-settlement
+    re-match** — fire-and-forget, then on loader-settle, if `currentRoute` is on
+    `Matcher`/`NotFound` but now resolves to a real route, `router.replace(fullPath)`
+    (guard: replace **only** when the re-resolved route is *non-fallthrough*, else
+    CMS/permalink pages get spuriously re-navigated) — nobody waits, but a plugin deep-link
+    can flash `spinner → 404 → page`, since Matcher's slug-miss query often wins the race
+    against the full manifest→entry→chunk→init chain; (c) re-match **+ hold the Matcher
+    spinner** until settle — no flash, but genuine CMS/404 cold loads also hold, and it
+    couples the core Matcher to MF.
+  - **Chosen direction — declare routes in the manifest.** Each plugin declares its route
+    prefix(es) in `mf-manifest.json` `metaData` (e.g. `hostRoutes: ["/sales-reps"]`). The
+    host already fetches + trusts the manifest in the version gate (`index.ts`
+    `isCompatible`), so it learns which paths are plugin-owned after **one cheap GET, before
+    any code runs** — which **dissolves the ambiguity** the interim options are stuck on:
+    the penalty lands only on genuinely plugin-owned paths. `/cart` and CMS pages are never
+    touched, a real 404 never holds, and a plugin deep-link goes `spinner → page` with no
+    flash. After the version gate passes, register a **placeholder route** per declared path
+    → a shared "federated route loading" component that awaits *that* plugin's
+    `loadRemote`+`init`, then the plugin's real `addRoute` populates the subtree and we
+    re-resolve. Placeholders are real Vue Router entries, so plugin paths **bypass Matcher
+    entirely** (no 404 race, no Matcher coupling).
+  - **Feasibility:** we own the plugin build (`core-api/create-plugin.mjs`, `federation.mjs`,
+    `vite.federation.ts`), so the declaration is scaffolded and injected into the generated
+    manifest (post-build patch if `@module-federation/enhanced` exposes no custom `metaData`
+    hook — **verify the native path first**). No new network or trust surface (the manifest
+    is already the trust anchor). Matching reuses Vue Router path patterns.
+  - **Costs / risks:** **declaration drift** — manifest says `/x`, `init()` registers `/y`
+    → placeholder hangs → needs a bounded fallback to 404; best mitigated by generating both
+    from **one** scaffold source. The **placeholder + per-plugin readiness** machinery
+    (async route components for remotes). A **collision guard** — a declared placeholder
+    must not shadow an existing core route (`/cart`). The **pre-manifest window** — an
+    initial nav that fires before manifests arrive: cover with a short **manifest-phase-only**
+    wait on fallthrough (~≤3s / one round-trip, far cheaper than a full-load wait) or a
+    re-match once placeholders register; `/cart` still never waits.
+  - **Supersedes** the old "Boot cost ∝ N" and "Route fallback" bullets, and grows the
+    **plugin contract** (route declaration) → coordinate with §7 and contract versioning.
 - **SSR/SEO** — `loadRemote` is client-side, so plugin routes are CSR-only (rules out MF for
   SEO-relevant public content; fine for authenticated sales-rep).
 - **Plugin i18n** — no contract for a plugin to register translation messages / RTL.
