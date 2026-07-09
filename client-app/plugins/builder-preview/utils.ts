@@ -20,7 +20,9 @@ export function getPreviewPageId(): string | undefined {
 // renders in the page's language instead of the store default.
 export function getPreviewCultureName(): string | undefined {
   const urlParams = new URLSearchParams(globalThis.location.search);
-  return urlParams.get("cultureName") ?? undefined;
+  // `?cultureName=` with no value yields "", which must be treated the same as a missing param —
+  // otherwise it would be forwarded as a culture instead of falling back to the resolved locale.
+  return urlParams.get("cultureName") || undefined;
 }
 
 export function isPreviewMode(): boolean {
