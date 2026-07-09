@@ -207,6 +207,20 @@ export function presetNameToFileName(name: string): string {
   return name.toLowerCase().replaceAll(" ", "-");
 }
 
+/**
+ * Turns a web-safe page / file name into a human-friendly label for display.
+ * Replaces `_` and `-` separators with spaces, collapses whitespace and upper-cases the
+ * first letter while preserving the rest (so acronyms like "ARAS" are not lower-cased).
+ * VCST-5274: the storefront breadcrumb showed the raw name verbatim (underscores).
+ */
+export function humanizeName(name: unknown): string {
+  if (typeof name !== "string") {
+    return "";
+  }
+  const text = name.replace(/[_-]+/g, " ").replace(/\s+/g, " ").trim();
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
 export function isMarkdownWithFrontmatter(content: string): boolean {
   return content.trimStart().startsWith("---");
 }
