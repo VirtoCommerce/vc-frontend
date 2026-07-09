@@ -15,6 +15,7 @@ import { useHotjar } from "@/core/composables/useHotjar";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { DEFAULT_NOTIFICATION_DURATION, FALLBACK_LOCALE, IS_DEVELOPMENT } from "@/core/constants";
 import { setGlobals } from "@/core/globals";
+import { registerLocaleLoader } from "@/core/locale-loaders";
 import {
   applicationInsightsPlugin,
   authPlugin,
@@ -83,7 +84,6 @@ export default async () => {
     currentMaybeShortLocale,
     defaultStoreCulture,
     applyLocale,
-    registerLocaleLoader,
     fetchLocaleMessages,
     mergeLocalesMessages,
     resolveLocale,
@@ -169,7 +169,7 @@ export default async () => {
 
   // The UI kit loads its locale bundles through the shared locale-loader seam, so boot and any
   // runtime locale switch (e.g. builder preview, VCST-5219) share one copy of this logic.
-  registerLocaleLoader(async (i18nInstance, language) => {
+  registerLocaleLoader("ui-kit", async (i18nInstance, language) => {
     const uiKitMessages = await getUIKitLocales(FALLBACK_LOCALE, language.twoLetterLanguageName);
     mergeLocalesMessages(i18nInstance, language.twoLetterLanguageName, uiKitMessages.messages);
     if (language.twoLetterLanguageName !== FALLBACK_LOCALE) {

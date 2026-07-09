@@ -3,7 +3,7 @@ import { merge } from "lodash-es";
 import { computed, ref } from "vue";
 import { setLocale as setLocaleForYup } from "yup";
 import { LOCALE_ID_REGEX } from "@/core/constants/locale";
-import { Logger } from "@/core/utilities";
+import { runLocaleLoaders } from "@/core/locale-loaders";
 import { getDefaultNumberFormats } from "@/i18n";
 import { useUser } from "@/shared/account/composables/useUser";
 import { getCatalogBasePath } from "@/shared/catalog/composables/useCatalogBasePath";
@@ -13,14 +13,6 @@ import type { ILanguage } from "../types";
 import type { I18n } from "@/i18n";
 import type { LocaleMessage } from "@intlify/core-base";
 import type { Composer, LocaleMessageValue } from "vue-i18n";
-
-/**
- * Loads and merges extra locale messages (UI kit, module bundles, …) for the given language.
- * Registered via `registerLocaleLoader` and re-run by `applyLocale` on every locale switch,
- * so runtime switches (e.g. the builder preview applying the edited page's culture, VCST-5219)
- * stay in sync with what boot loaded.
- */
-export type LocaleLoaderType = (i18n: I18n, language: ILanguage) => Promise<void>;
 
 const { themeContext } = useThemeContext();
 
@@ -55,18 +47,6 @@ const currentMaybeShortLocale = computed(() => {
   return tryShortLocale(currentLanguage.value?.cultureName ?? "");
 });
 
-const localeLoaders: LocaleLoaderType[] = [];
-
-/**
- * Registers a loader of extra locale messages (UI kit bundles, module bundles, …).
- * Every registered loader is (re-)run by `applyLocale`, so a single registration keeps the
- * messages in sync across all runtime locale switches. Registering the same loader twice is a no-op.
- */
-function registerLocaleLoader(loader: LocaleLoaderType): void {
-  if (!localeLoaders.includes(loader)) {
-    localeLoaders.push(loader);
-  }
-}
 
 function tryShortLocale(localeOrCultureName: string) {
   const twoLetterLanguageName = localeOrCultureName.slice(0, 2);
@@ -171,14 +151,7 @@ async function applyLocale(i18n: I18n, cultureName: string, options?: { rewriteU
     getDefaultNumberFormats(currentCurrency.value.code),
   );
 
-  const language = currentLanguage.value ?? defaultStoreLanguage.value;
-  await Promise.all(
-    localeLoaders.map((load) =>
-      load(i18n, language).catch((error: unknown) =>
-        Logger.error(`Failed to load extra locale messages for "${cultureName}"`, error),
-      ),
-    ),
-  );
+  await runLocaleLoaders(i18n, currentLanguage.value ?? defaultStoreLanguage.value);
 }
 
 /**
@@ -340,7 +313,6 @@ export function useLanguages() {
 
     initLocale,
     applyLocale,
-    registerLocaleLoader,
     resolveLocale,
     normalizeToSupportedCulture,
     fetchLocaleMessages,
