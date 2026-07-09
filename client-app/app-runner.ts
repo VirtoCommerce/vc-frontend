@@ -112,8 +112,8 @@ export default async () => {
   // In Page Builder preview/designer the URL carries the edited page's language as `?cultureName=`
   // and the route is a fixed `/designer-preview` (no `/{lang}` prefix). Honor that culture so the
   // preview renders in the page's language instead of the store default (VCST-5219).
-  const isPreview = isPageBuilderPreviewMode();
-  const previewCultureName = isPreview ? getPreviewCultureName() : undefined;
+  const isPageBuilderPreview = isPageBuilderPreviewMode();
+  const previewCultureName = isPageBuilderPreview ? getPreviewCultureName() : undefined;
   const possibleCultureName = previewCultureName ?? resolvePossibleLocale(pathname);
   const permalink = getPermalink(pathname, getUrlWithoutPossibleLocale);
 
@@ -170,10 +170,10 @@ export default async () => {
   const i18n = createI18n(currentCultureName, currentCurrency.value.code, fallback);
   // Keep the URL as `/designer-preview` in preview mode (no `/{lang}` prefix) so the fixed preview
   // route keeps resolving; the locale still switches for content and chrome (VCST-5219).
-  await initLocale(i18n, currentCultureName, { rewriteUrl: !isPreview });
+  await initLocale(i18n, currentCultureName, { rewriteUrl: !isPageBuilderPreview });
 
   const router = createRouter({
-    base: isPreview || isDefaultLocaleInUse ? "" : currentMaybeShortLocale.value,
+    base: isPageBuilderPreview || isDefaultLocaleInUse ? "" : currentMaybeShortLocale.value,
   });
 
   /**
@@ -196,7 +196,8 @@ export default async () => {
   // `cultureName` query was sent to getPageContext but then rejected in favor of the resolved
   // culture, the returned slugInfo belongs to a different culture — skip seeding so it isn't cached
   // under the wrong culture key (VCST-5219).
-  const previewCultureRejected = isPreview && !!previewCultureName && previewCultureName !== currentCultureName;
+  const previewCultureRejected =
+    isPageBuilderPreview && !!previewCultureName && previewCultureName !== currentCultureName;
   if (!previewCultureRejected) {
     try {
       const baseVariables = {
