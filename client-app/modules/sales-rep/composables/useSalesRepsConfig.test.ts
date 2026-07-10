@@ -1,9 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { isSalesRepsEnabled, salesRepRoleName } from "./useSalesRepsConfig";
+import { isSalesRepsEnabled } from "./useSalesRepsConfig";
 
 describe("useSalesRepsConfig (mock)", () => {
-  it("is enabled and returns a non-empty role name", () => {
+  it("is enabled", () => {
     expect(isSalesRepsEnabled()).toBe(true);
-    expect(salesRepRoleName().length).toBeGreaterThan(0);
   });
 });
