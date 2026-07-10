@@ -4,17 +4,12 @@
 // which would DISABLE the module). The DATA path is real (customerSalesReps via useSalesReps);
 // only this gate stays mocked until the backend ships the setting.
 //
-// SWAP POINT (when the backend adds the manifest setting): read the role-name string —
+// SWAP POINT (when the backend adds the manifest setting): derive enabled from the
+// role-name string —
 //   import { useModuleSettings } from "@/core/composables/useModuleSettings";
 //   import { MODULE_ID, ROLE_NAME_KEY } from "../constants";
 //   const roleName = useModuleSettings(MODULE_ID).getSettingValue(ROLE_NAME_KEY);
-//   -> enabled = typeof roleName === "string" && roleName.trim().length > 0;
-const MOCK_ROLE_NAME = "Sales Representative";
-
-export function salesRepRoleName(): string {
-  return MOCK_ROLE_NAME;
-}
-
+//   return typeof roleName === "string" && roleName.trim().length > 0;
 export function isSalesRepsEnabled(): boolean {
-  return salesRepRoleName().trim().length > 0;
+  return true;
 }
