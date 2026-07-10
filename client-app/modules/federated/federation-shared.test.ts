@@ -1,0 +1,150 @@
+import { describe, expect, it } from "vitest";
+import {
+  HOST_SHARED,
+  MF_SHARED_RANGES,
+  REMOTE_SHARED,
+  createHostShared,
+  createRemoteFederationOptions,
+  createRemoteShared,
+  isMfFlagEnabled,
+} from "@/core-api/federation.mjs";
+
+describe("federation shared-dep contract", () => {
+  it("host and remote configs cover exactly the same packages", () => {
+    expect(Object.keys(HOST_SHARED)).toEqual(Object.keys(MF_SHARED_RANGES));
+    expect(Object.keys(REMOTE_SHARED)).toEqual(Object.keys(MF_SHARED_RANGES));
+  });
+
+  it("every shared dep is a strict singleton with a real version range", () => {
+    for (const config of Object.values(HOST_SHARED)) {
+      expect(config.singleton).toBe(true);
+      // strict: MF must THROW on a range mismatch (the default only warns).
+      expect(config.strictVersion).toBe(true);
+      expect(config.requiredVersion).not.toBe("*");
+    }
+  });
+
+  it("remote config never bundles fallback copies", () => {
+    for (const config of Object.values(REMOTE_SHARED)) {
+      expect(config.import).toBe(false);
+    }
+    for (const config of Object.values(HOST_SHARED)) {
+      expect(config).not.toHaveProperty("import");
+    }
+  });
+});
+
+describe("createHostShared / createRemoteShared overrides", () => {
+  it("returns the defaults when called without overrides", () => {
+    expect(createHostShared()).toEqual(HOST_SHARED);
+    expect(createRemoteShared()).toEqual(REMOTE_SHARED);
+  });
+
+  it("overrides a single field of a default entry without losing the rest", () => {
+    const shared = createRemoteShared({ vue: { requiredVersion: "^3.6.0" } });
+    expect(shared.vue).toEqual({
+      singleton: true,
+      strictVersion: true,
+      import: false,
+      requiredVersion: "^3.6.0",
+    });
+  });
+
+  it("adds a new package; remote-added packages are provided by the plugin (no import:false)", () => {
+    const shared = createRemoteShared({ "my-chart-lib": { requiredVersion: "^5.0.0" } });
+    expect(shared["my-chart-lib"]).toEqual({
+      singleton: true,
+      strictVersion: true,
+      requiredVersion: "^5.0.0",
+    });
+  });
+
+  it("removes a package with false", () => {
+    const shared = createHostShared({ graphql: false });
+    expect(shared).not.toHaveProperty("graphql");
+    expect(Object.keys(shared)).toHaveLength(Object.keys(HOST_SHARED).length - 1);
+  });
+
+  it("does not mutate the exported defaults", () => {
+    createRemoteShared({ vue: { requiredVersion: "^999.0.0" }, graphql: false });
+    expect(REMOTE_SHARED.vue.requiredVersion).toBe(MF_SHARED_RANGES.vue);
+    expect(REMOTE_SHARED).toHaveProperty("graphql");
+  });
+});
+
+describe("createRemoteFederationOptions", () => {
+  it("requires name and requiredHostVersion", () => {
+    expect(() => createRemoteFederationOptions({ name: "", requiredHostVersion: "^1.0.0" })).toThrow();
+    expect(() => createRemoteFederationOptions({ name: "news", requiredHostVersion: "" })).toThrow();
+  });
+
+  it("wires the harness conventions: filename, default expose, remote shared, dts off", () => {
+    const options = createRemoteFederationOptions({ name: "news", requiredHostVersion: "^1.0.0" });
+    expect(options.name).toBe("news");
+    expect(options.filename).toBe("remoteEntry.js");
+    expect(options.exposes).toEqual({ "./plugin": "./src/index.ts" });
+    expect(options.shared).toEqual(REMOTE_SHARED);
+    // Must match the host's strategy (vite.federation.ts) - see the comment in federation.mjs.
+    expect(options.shareStrategy).toBe("loaded-first");
+    expect(options.dts).toBe(false);
+  });
+
+  it("stamps requiredHostVersion into the manifest metaData", () => {
+    const options = createRemoteFederationOptions({ name: "news", requiredHostVersion: "^1.2.0" });
+    const stats = { metaData: {} as Record<string, unknown> };
+
+    const returned = options.manifest.additionalData({ stats });
+
+    expect(returned).toBe(stats);
+    expect(stats.metaData.requiredHostVersion).toBe("^1.2.0");
+  });
+
+  it("creates metaData when the stats object has none (no throw)", () => {
+    const options = createRemoteFederationOptions({ name: "news", requiredHostVersion: "^1.2.0" });
+    const stats = {} as { metaData?: Record<string, unknown> };
+
+    expect(() => options.manifest.additionalData({ stats })).not.toThrow();
+    expect(stats.metaData?.requiredHostVersion).toBe("^1.2.0");
+  });
+
+  it("forwards sharedOverrides and custom exposes", () => {
+    const options = createRemoteFederationOptions({
+      name: "news",
+      requiredHostVersion: "^1.0.0",
+      exposes: { "./plugin": "./src/main.ts" },
+      sharedOverrides: { graphql: false },
+    });
+    expect(options.exposes).toEqual({ "./plugin": "./src/main.ts" });
+    expect(options.shared).not.toHaveProperty("graphql");
+  });
+});
+
+describe("isMfFlagEnabled", () => {
+  it.each([
+    [undefined, false],
+    ["", false],
+    ["false", false],
+    ["0", false],
+    // ALLOWLIST: any value that is not an explicit affirmative fails toward OFF —
+    // enabling remote code loading is the dangerous direction.
+    ["off", false],
+    ["no", false],
+    ["disabled", false],
+    ["enabled", false],
+    ["tru", false],
+    ["true", true],
+    ["1", true],
+    ["yes", true],
+    ["on", true],
+    [true, true],
+    // Case- and whitespace-insensitive: env values are not always lowercased.
+    ["FALSE", false],
+    ["False", false],
+    [" false ", false],
+    ["OFF", false],
+    ["TRUE", true],
+    [" true ", true],
+  ])("treats %j as %j", (value, expected) => {
+    expect(isMfFlagEnabled(value)).toBe(expected);
+  });
+});
