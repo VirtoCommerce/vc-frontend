@@ -1,10 +1,10 @@
 {
   "sales_rep": {
     "navigation": {
-      "link": "Selger"
+      "link": "Salgsrepresentanter"
     },
     "page": {
-      "title": "Selgere"
+      "title": "Salgsrepresentanter"
     },
     "table": {
       "name": "Navn",
@@ -12,7 +12,7 @@
       "phone": "Telefon",
       "search_placeholder": "Søk etter navn, e-post eller telefon",
       "search_aria": "Søk etter selgere",
-      "empty": "Ingen selgere funnet"
+      "empty": "Ingen salgsrepresentanter funnet"
     }
   }
 }

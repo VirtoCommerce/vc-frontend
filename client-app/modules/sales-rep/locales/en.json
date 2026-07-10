@@ -1,7 +1,11 @@
 {
   "sales_rep": {
-    "navigation": { "link": "Sales rep" },
-    "page": { "title": "Sales reps" },
+    "navigation": {
+      "link": "Sales reps"
+    },
+    "page": {
+      "title": "Sales reps"
+    },
     "table": {
       "name": "Name",
       "email": "Email",

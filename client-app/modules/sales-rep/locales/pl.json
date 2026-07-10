@@ -1,16 +1,16 @@
 {
   "sales_rep": {
     "navigation": {
-      "link": "Przedstawiciel handlowy"
+      "link": "Przedstawiciele handlowi"
     },
     "page": {
       "title": "Przedstawiciele handlowi"
     },
     "table": {
-      "name": "Imię",
+      "name": "Imię i nazwisko",
       "email": "Email",
       "phone": "Telefon",
-      "search_placeholder": "Szukaj po imieniu, emailu lub telefonie",
+      "search_placeholder": "Szukaj po imieniu i nazwisku, emailu lub telefonie",
       "search_aria": "Szukaj przedstawicieli handlowych",
       "empty": "Nie znaleziono przedstawicieli handlowych"
     }

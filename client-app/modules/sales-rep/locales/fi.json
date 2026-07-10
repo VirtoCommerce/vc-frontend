@@ -1,7 +1,7 @@
 {
   "sales_rep": {
     "navigation": {
-      "link": "Myyntiedustaja"
+      "link": "Myyntiedustajat"
     },
     "page": {
       "title": "Myyntiedustajat"
@@ -12,7 +12,7 @@
       "phone": "Puhelin",
       "search_placeholder": "Hae nimellä, sähköpostilla tai puhelimella",
       "search_aria": "Hae myyntiedustajia",
-      "empty": "Ei myyntiedustajia löytynyt"
+      "empty": "Myyntiedustajia ei löytynyt"
     }
   }
 }
