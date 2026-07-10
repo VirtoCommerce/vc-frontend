@@ -1,0 +1,18 @@
+{
+  "sales_rep": {
+    "navigation": {
+      "link": "Myyntiedustaja"
+    },
+    "page": {
+      "title": "Myyntiedustajat"
+    },
+    "table": {
+      "name": "Nimi",
+      "email": "Sähköposti",
+      "phone": "Puhelin",
+      "search_placeholder": "Hae nimellä, sähköpostilla tai puhelimella",
+      "search_aria": "Hae myyntiedustajia",
+      "empty": "Ei myyntiedustajia löytynyt"
+    }
+  }
+}

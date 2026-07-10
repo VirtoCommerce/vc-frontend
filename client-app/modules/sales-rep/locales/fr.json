@@ -1,0 +1,18 @@
+{
+  "sales_rep": {
+    "navigation": {
+      "link": "Commercial"
+    },
+    "page": {
+      "title": "Commerciaux"
+    },
+    "table": {
+      "name": "Nom",
+      "email": "E-mail",
+      "phone": "Téléphone",
+      "search_placeholder": "Rechercher par nom, e-mail ou téléphone",
+      "search_aria": "Rechercher des commerciaux",
+      "empty": "Aucun commercial trouvé"
+    }
+  }
+}

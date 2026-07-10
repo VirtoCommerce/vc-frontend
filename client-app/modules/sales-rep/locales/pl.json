@@ -1,0 +1,18 @@
+{
+  "sales_rep": {
+    "navigation": {
+      "link": "Przedstawiciel handlowy"
+    },
+    "page": {
+      "title": "Przedstawiciele handlowi"
+    },
+    "table": {
+      "name": "Imię",
+      "email": "Email",
+      "phone": "Telefon",
+      "search_placeholder": "Szukaj po imieniu, emailu lub telefonie",
+      "search_aria": "Szukaj przedstawicieli handlowych",
+      "empty": "Nie znaleziono przedstawicieli handlowych"
+    }
+  }
+}

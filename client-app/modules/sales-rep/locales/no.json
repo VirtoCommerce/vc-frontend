@@ -1,0 +1,18 @@
+{
+  "sales_rep": {
+    "navigation": {
+      "link": "Selger"
+    },
+    "page": {
+      "title": "Selgere"
+    },
+    "table": {
+      "name": "Navn",
+      "email": "E-post",
+      "phone": "Telefon",
+      "search_placeholder": "Søk etter navn, e-post eller telefon",
+      "search_aria": "Søk etter selgere",
+      "empty": "Ingen selgere funnet"
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "sales_rep": {
+    "navigation": { "link": "Sales rep" },
+    "page": { "title": "Sales reps" },
+    "table": {
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "search_placeholder": "Search by name, email or phone",
+      "search_aria": "Search sales reps",
+      "empty": "No sales reps found"
+    }
+  }
+}
