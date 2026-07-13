@@ -3,9 +3,9 @@ import { merge } from "lodash-es";
 import { computed, ref } from "vue";
 import { setLocale as setLocaleForYup } from "yup";
 import { LOCALE_ID_REGEX } from "@/core/constants/locale";
+import { QueryParamName } from "@/core/enums";
 import { runLocaleLoaders } from "@/core/locale-loaders";
 import { getDefaultNumberFormats } from "@/i18n";
-import { QueryParamName } from "@/core/enums";
 import { useUser } from "@/shared/account/composables/useUser";
 import { getCatalogBasePath } from "@/shared/catalog/composables/useCatalogBasePath";
 import { useCurrency } from "./useCurrency";
@@ -50,7 +50,6 @@ const currentLanguage = ref<ILanguage>();
 const currentMaybeShortLocale = computed(() => {
   return tryShortLocale(currentLanguage.value?.cultureName ?? "");
 });
-
 
 function tryShortLocale(localeOrCultureName: string) {
   const twoLetterLanguageName = localeOrCultureName?.slice(0, 2) ?? "";
@@ -126,7 +125,7 @@ async function initLocale(i18n: I18n, cultureName: string, options?: { rewriteUr
     if (localeFromUrl) {
       // anchor at the start of the pathname and require / or end after the locale,
       // otherwise plain `replace("/de", "")` would eat the `de` inside paths like `/destinations`
-      newPath = newPath.replace(new RegExp(`^/${localeFromUrl}(?=/|$)`, "i"), "") || "/";
+      newPath = newPath?.replace(new RegExp(`^/${localeFromUrl}(?=/|$)`, "i"), "") || "/";
     }
 
     if (!isDefault) {

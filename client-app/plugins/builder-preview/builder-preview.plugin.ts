@@ -33,21 +33,12 @@ declare type TransferDataType = {
   cultureName?: string;
 };
 
-// Serializes locale switches: builder messages arrive concurrently and interleaved
-// `applyPreviewLocale` runs must apply in order, not race each other.
-let localeSwitchQueue: Promise<void> = Promise.resolve();
-
 // Switch the storefront preview to the edited page's language without touching the URL (VCST-5219).
 // The designer preview runs on a fixed `/designer-preview` route (vue-router base ""), so we must not
 // add a `/{lang}` prefix here; we re-apply the locale through the shared seam (app messages, UI kit
 // and module bundles, number formats) and update globals.cultureName, which drives
 // content-localized GraphQL queries on the next block remount.
-function applyPreviewLocale(cultureName?: string): Promise<void> {
-  localeSwitchQueue = localeSwitchQueue.then(() => switchPreviewLocale(cultureName));
-  return localeSwitchQueue;
-}
-
-async function switchPreviewLocale(rawCultureName?: string): Promise<void> {
+async function applyPreviewLocale(rawCultureName?: string): Promise<void> {
   try {
     const { applyLocale, normalizeToSupportedCulture } = useLanguages();
     const cultureName = normalizeToSupportedCulture(rawCultureName);
@@ -121,9 +112,9 @@ function updateSettings(app: App, settings: IThemeConfig) {
   });
 
   keys
-    .filter(([key]) => key.startsWith("color"))
+    .filter(([key]) => key?.startsWith("color"))
     .forEach(([key, value]) => {
-      document.documentElement.style.setProperty(`--${key.replaceAll("_", "-")}`, value as string);
+      document.documentElement.style.setProperty(`--${key?.replaceAll("_", "-") ?? ""}`, value as string);
     });
 }
 
@@ -233,62 +224,82 @@ function createOverlay() {
   return bodyEl;
 }
 
+async function handleMessage(
+  app: App,
+  options: PageBuilderPluginOptionsType,
+  bodyEl: HTMLElement | null,
+  data: TransferDataType,
+) {
+  // Render the preview in the edited page's language before it becomes visible (VCST-5219),
+  // so a non-default-language page never flashes in the store default language.
+  await applyPreviewLocale(data.cultureName);
+
+  if (bodyEl) {
+    bodyEl.style.visibility = "visible";
+  }
+
+  switch (data.type) {
+    case "changed":
+    case "update":
+    case "remove":
+    case "add":
+    case "reload":
+    case "page":
+    case "swap":
+    case "preview":
+      await updatePreview(data, options);
+      break;
+
+    case "hover":
+      // ignore now
+      break;
+    case "select":
+      initialSectionId = data.sectionId;
+      scrollToSection(data.sectionId!);
+      break;
+    case "navigate": {
+      // we will know about template it or not in the next message
+      templateUrl = data.url;
+      break;
+    }
+    case "settings":
+      updateSettings(app, data.settings!);
+      break;
+    case "auth": {
+      previewToken = data.token?.access_token || null;
+      if (!originalUserId) {
+        originalUserId = globals.userId;
+      }
+      setGlobals({ userId: data.userId || originalUserId });
+      // Force remount of all blocks with new token and restore scroll afterward
+      pendingScrollRestore = true;
+      staticPagePreview.value = undefined;
+      break;
+    }
+    default:
+      Logger.warn(`Unknown message type: ${data.type}`);
+  }
+}
+
 function handleMessages(app: App, options: PageBuilderPluginOptionsType, bodyEl: HTMLElement | null) {
   const builderOrigin = getBuilderOrigin();
-  window.addEventListener("message", async (event: MessageEvent<TransferDataType>) => {
+
+  // Builder messages arrive as independent tasks, and each handler awaits (locale switch, router
+  // navigation), so unqueued handlers would interleave: an older message could apply its template
+  // after a newer one. Chaining them keeps preview state in the order the builder sent it.
+  let messageQueue: Promise<void> = Promise.resolve();
+
+  window.addEventListener("message", (event: MessageEvent<TransferDataType>) => {
     if (event.origin !== builderOrigin || event.data.source !== "builder") {
       return;
     }
 
-    // Render the preview in the edited page's language before it becomes visible (VCST-5219),
-    // so a non-default-language page never flashes in the store default language.
-    await applyPreviewLocale(event.data.cultureName);
-
-    if (bodyEl) {
-      bodyEl.style.visibility = "visible";
-    }
-
-    switch (event.data.type) {
-      case "changed":
-      case "update":
-      case "remove":
-      case "add":
-      case "reload":
-      case "page":
-      case "swap":
-      case "preview":
-        await updatePreview(event.data, options);
-        break;
-
-      case "hover":
-        // ignore now
-        break;
-      case "select":
-        initialSectionId = event.data.sectionId;
-        scrollToSection(event.data.sectionId!);
-        break;
-      case "navigate": {
-        // we will know about template it or not in the next message
-        templateUrl = event.data.url;
-        break;
-      }
-      case "settings":
-        updateSettings(app, event.data.settings!);
-        break;
-      case "auth": {
-        previewToken = event.data.token?.access_token || null;
-        if (!originalUserId) {
-          originalUserId = globals.userId;
-        }
-        setGlobals({ userId: event.data.userId || originalUserId });
-        // Force remount of all blocks with new token and restore scroll afterward
-        pendingScrollRestore = true;
-        staticPagePreview.value = undefined;
-        break;
-      }
-      default:
-        Logger.warn(`Unknown message type: ${event.data.type}`);
-    }
+    messageQueue = messageQueue.then(() =>
+      handleMessage(app, options, bodyEl, event.data).catch((error: unknown) => {
+        // Never break the chain: a failed message must not stall every following one.
+        Logger.error("Failed to handle the builder preview message", error);
+      }),
+    );
   });
 }
 

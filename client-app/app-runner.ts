@@ -194,30 +194,15 @@ export default async () => {
     currencyCode: currentCurrency.value.code,
   });
 
-  // Seed Apollo cache with initial slugInfo from pageContext to avoid the first network call.
-  // pageContext was fetched with the raw preview `cultureName`. When the app resolved to a different
-  // culture — an unsupported value, or a short form like "fr" normalized to "fr-FR" — the returned
-  // slugInfo belongs to another culture, so skip seeding rather than cache it under the wrong key
-  // (VCST-5219).
-  const previewCultureDiffersFromResolved =
-    !!pageBuilderPreview.cultureName && pageBuilderPreview.cultureName !== currentCultureName;
-  if (!previewCultureDiffersFromResolved) {
-    try {
-      const baseVariables = {
-        userId: user.value.id,
-        storeId: themeContext.value.storeId,
-        cultureName: currentLanguage.value.cultureName,
-      } as const;
-
-      apolloClient.writeQuery({
-        query: GetSlugInfoDocument,
-        variables: { ...baseVariables, permalink },
-        data: { slugInfo: pageContext.slugInfo },
-      });
-    } catch (e) {
-      Logger.warn("Failed to seed slugInfo into Apollo cache", e as Error);
-    }
-  }
+  seedSlugInfoCache({
+    slugInfo: pageContext.slugInfo,
+    permalink,
+    userId: user.value.id,
+    storeId: themeContext.value.storeId,
+    cultureName: currentLanguage.value.cultureName,
+    previewCultureName: pageBuilderPreview.cultureName,
+    resolvedCultureName: currentCultureName,
+  });
 
   /**
    * Other settings
@@ -348,4 +333,38 @@ function notifyOutdatedModules(
 function getPermalink(permalink: string, getUrlWithoutPossibleLocale: (fullPath: string) => string) {
   const withoutLocale = getUrlWithoutPossibleLocale(permalink);
   return withoutLocale === "/" ? "/" : (withoutLocale?.replace(/^\/+/, "") ?? "");
+}
+
+/**
+ * Seeds the Apollo cache with the slugInfo already returned by pageContext, so the first navigation
+ * doesn't repeat that network call.
+ *
+ * pageContext is fetched with the raw preview `cultureName`. When the app resolves to a different
+ * culture — an unsupported value, or a short form like "fr" normalized to "fr-FR" — that slugInfo
+ * belongs to another culture, so skip seeding rather than cache it under the wrong key (VCST-5219).
+ */
+function seedSlugInfoCache(params: {
+  slugInfo: PageContextResponseType["slugInfo"];
+  permalink: string;
+  userId: string;
+  storeId: string;
+  cultureName: string;
+  previewCultureName?: string;
+  resolvedCultureName: string;
+}) {
+  const { slugInfo, permalink, userId, storeId, cultureName, previewCultureName, resolvedCultureName } = params;
+
+  if (previewCultureName && previewCultureName !== resolvedCultureName) {
+    return;
+  }
+
+  try {
+    apolloClient.writeQuery({
+      query: GetSlugInfoDocument,
+      variables: { userId, storeId, cultureName, permalink },
+      data: { slugInfo },
+    });
+  } catch (e) {
+    Logger.warn("Failed to seed slugInfo into Apollo cache", e);
+  }
 }
