@@ -27,6 +27,16 @@ export type LoyaltyBalanceResult = {
   resultBalance: Scalars['Decimal']['output'];
 };
 
+/** Per-SKU accumulation for a PerSku mission. */
+export type LoyaltyMissionProgressItem = {
+  /** The accumulated quantity. */
+  currentQuantity: Scalars['Int']['output'];
+  /** The SKU product id. */
+  productId?: Maybe<Scalars['String']['output']>;
+  /** The target quantity. */
+  targetQuantity: Scalars['Int']['output'];
+};
+
 /** Represents a log entry for a loyalty program operation. */
 export type LoyaltyOperationLog = {
   /** The amount involved in the operation. */
@@ -70,6 +80,64 @@ export type LoyaltyOperationLogObject = {
   type: Scalars['String']['output'];
 };
 
+/** Represents a loyalty mission together with the current user's progress. */
+export type LoyaltyUserMission = {
+  /** The mission banner image URL. */
+  bannerUrl?: Maybe<Scalars['String']['output']>;
+  /** The date and time when the mission was completed. */
+  completedDate?: Maybe<Scalars['DateTime']['output']>;
+  /** The accumulated value towards the mission target. */
+  currentValue?: Maybe<Scalars['Decimal']['output']>;
+  /** The localized mission description. */
+  description?: Maybe<Scalars['String']['output']>;
+  /** The mission end date. */
+  endDate?: Maybe<Scalars['DateTime']['output']>;
+  /** Whether the user has started the mission. */
+  isStarted?: Maybe<Scalars['Boolean']['output']>;
+  /** Per-SKU progress items for PerSku missions. */
+  items?: Maybe<Array<Maybe<LoyaltyMissionProgressItem>>>;
+  /** The localized mission name. */
+  localizedName?: Maybe<Scalars['String']['output']>;
+  /** The mission identifier. */
+  missionId?: Maybe<Scalars['String']['output']>;
+  /** The internal mission name. */
+  name?: Maybe<Scalars['String']['output']>;
+  /** The completion percentage (0-100). */
+  percentage?: Maybe<Scalars['Decimal']['output']>;
+  /** The end of the mission occurrence window. */
+  periodEnd?: Maybe<Scalars['DateTime']['output']>;
+  /** The start of the mission occurrence window. */
+  periodStart?: Maybe<Scalars['DateTime']['output']>;
+  /** The progress identifier. Null when the user has not started the mission yet. */
+  progressId?: Maybe<Scalars['String']['output']>;
+  /** The mission start date. */
+  startDate?: Maybe<Scalars['DateTime']['output']>;
+  /** The progress status (InProgress, Completed, Expired). */
+  status?: Maybe<Scalars['String']['output']>;
+  /** The mission target value. */
+  targetValue?: Maybe<Scalars['Decimal']['output']>;
+};
+
+/** A connection from an object to a list of objects of type `LoyaltyUserMission`. */
+export type LoyaltyUserMissionConnection = {
+  /** A list of all of the edges returned in the connection. */
+  edges?: Maybe<Array<Maybe<LoyaltyUserMissionEdge>>>;
+  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
+  items?: Maybe<Array<Maybe<LoyaltyUserMission>>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
+  totalCount?: Maybe<Scalars['Int']['output']>;
+};
+
+/** An edge in a connection from an object to another object of type `LoyaltyUserMission`. */
+export type LoyaltyUserMissionEdge = {
+  /** A cursor for use in pagination */
+  cursor: Scalars['String']['output'];
+  /** The item at the end of the edge */
+  node?: Maybe<LoyaltyUserMission>;
+};
+
 /** Information about pagination in a connection. */
 export type PageInfo = {
   /** When paginating forwards, the cursor to continue. */
@@ -84,12 +152,25 @@ export type PageInfo = {
 
 export type Query = {
   loyaltyBalance?: Maybe<LoyaltyBalanceResult>;
+  loyaltyMissionProgress?: Maybe<LoyaltyUserMissionConnection>;
   loyaltyPointsHistory?: Maybe<LoyaltyOperationLogConnection>;
 };
 
 
 export type QueryLoyaltyBalanceArgs = {
   orderId?: InputMaybe<Scalars['String']['input']>;
+  userId?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryLoyaltyMissionProgressArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  keyword?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
+  statuses?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
   userId?: InputMaybe<Scalars['String']['input']>;
 };
 

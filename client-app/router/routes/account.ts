@@ -16,6 +16,7 @@ const ListDetails = () => import("@/pages/account/list-details.vue");
 const SavedForLaterDetails = () => import("@/pages/account/saved-for-later-details.vue");
 const SavedCreditCards = () => import("@/pages/account/saved-credit-cards.vue");
 const PromotionCoupons = () => import("@/pages/account/promotion-coupons.vue");
+const Missions = () => import("@/pages/account/missions.vue");
 
 export const accountRoutes: RouteRecordRaw[] = [
   { path: "dashboard", name: "Dashboard", component: Dashboard },
@@ -94,5 +95,10 @@ export const accountRoutes: RouteRecordRaw[] = [
         next({ name: "NotFound" });
       }
     },
+  },
+  {
+    path: ROUTES.MISSIONS.PATH,
+    name: ROUTES.MISSIONS.NAME,
+    component: Missions,
   },
 ];

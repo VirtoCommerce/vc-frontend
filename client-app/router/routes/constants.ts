@@ -42,4 +42,8 @@ export const ROUTES = {
     NAME: "PromotionCoupons",
     PATH: "coupons",
   },
+  MISSIONS: {
+    NAME: "Missions",
+    PATH: "missions",
+  },
 } as const;

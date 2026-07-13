@@ -269,6 +269,7 @@
       "orders": "Orders",
       "lists": "Lists",
       "promotion_coupons": "Coupons & Promotions",
+      "missions_challenges": "Missions & challenges",
       "list_details": "List details",
       "cart": "Cart",
       "company_info": "Company info",
@@ -484,6 +485,7 @@
           "lists": "@:common.links.lists",
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
+          "missions_challenges": "@:common.links.missions_challenges",
           "company_info": "@:common.links.company_info",
           "company_members": "@:common.links.company_members",
           "saved_credit_cards": "@:common.links.saved_credit_cards"
@@ -1373,6 +1375,41 @@
       "promotion_coupons": {
         "title": "All coupons & promotions",
         "no_lists": "You don't have any coupons or promotions"
+      },
+      "missions": {
+        "title": "Missions & challenges",
+        "description": "Complete missions to earn bonus Virto Rewards points.",
+        "balance_banner": {
+          "label": "Virto Rewards balance",
+          "points": "points",
+          "points_history": "Points history"
+        },
+        "redeem_banner": {
+          "title": "Redeem your points",
+          "description": "Trade points for products in the rewards catalog.",
+          "catalog": "Catalog"
+        },
+        "card": {
+          "type_products": "Products",
+          "type_order_value": "Order value",
+          "type_orders": "Orders",
+          "points": "points",
+          "days_left": "{count} day left | {count} days left",
+          "mission_completed": "Mission completed",
+          "open_mission": "Open mission",
+          "progress_skus": "{current} of {target} SKUs",
+          "progress_spend": "{current} of {target}",
+          "progress_orders": "{current} of {target} orders"
+        },
+        "sku_modal": {
+          "buy_at_least": "Buy at least {count}",
+          "total_units": "Total units",
+          "targets_met": "Targets met",
+          "reward_hint": "Earn {points} points when all targets are met",
+          "reward_unlocked": "All targets met — {points} points unlocked",
+          "close": "Close",
+          "add_to_cart": "Add to cart"
+        }
       }
     },
     "company": {

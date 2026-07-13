@@ -97,6 +97,15 @@
         "title": "shared.account.navigation.marketing_title",
         "children": [
           {
+            "id": "missions",
+            "route": {
+              "name": "Missions"
+            },
+            "title": "shared.account.navigation.links.missions_challenges",
+            "icon": "flag",
+            "priority": 5
+          },
+          {
             "id": "promotion-coupons",
             "route": {
               "name": "PromotionCoupons"
@@ -260,6 +269,15 @@
         "title": "shared.account.navigation.marketing_title",
         "icon": "receipt-tax",
         "children": [
+          {
+            "id": "missions",
+            "route": {
+              "name": "Missions"
+            },
+            "title": "shared.account.navigation.links.missions_challenges",
+            "icon": "flag",
+            "priority": 5
+          },
           {
             "id": "promotion-coupons",
             "route": {
