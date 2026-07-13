@@ -240,6 +240,12 @@
                 @change="toggleRow(item, rowIndex)"
               />
 
+              <!--
+                Toggle on `click`, not `change`: a native radio's `change` never fires when
+                re-clicking the already-checked radio, so `@change` could select but never
+                deselect by mouse. The overlay input covers the control, so exactly one click
+                fires; keyboard toggling is handled by the row's `onRowKeydown`.
+              -->
               <VcRadioButton
                 v-else
                 size="sm"
@@ -249,7 +255,7 @@
                 :model-value="isRowSelected(item, rowIndex) ? getItemKey(item, rowIndex) : undefined"
                 :disabled="!isRowSelectable(item) && !isRowSelected(item, rowIndex)"
                 :aria-label="rowSelectionAriaLabel(item, rowIndex)"
-                @change="toggleRow(item, rowIndex)"
+                @click="toggleRow(item, rowIndex)"
               />
             </td>
 

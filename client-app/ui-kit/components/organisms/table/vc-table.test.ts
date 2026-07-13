@@ -716,17 +716,16 @@ const selectionStubs = {
       />
     `,
   },
-  // Mirror native radio: `change` fires only on transition to checked.
+  // The table toggles the radio on native `click` (a real radio's `change` can't fire
+  // when re-clicking the already-checked radio), so the stub only needs to be clickable.
   VcRadioButton: {
     props: ["modelValue", "value", "disabled", "ariaLabel"],
-    emits: ["change"],
     template: `
       <button
         class="radio-stub"
         :data-checked="String(modelValue === value)"
         :data-disabled="String(!!disabled)"
         :aria-label="ariaLabel"
-        @click="modelValue !== value && $emit('change', value)"
       />
     `,
   },
@@ -1065,13 +1064,19 @@ describe("row selection — single (desktop)", () => {
     expect(change[2]).toEqual({ action: "select", row: items[2] });
   });
 
-  it("re-clicking the already-selected row via the radio is add-only (does not deselect)", async () => {
+  it("re-clicking the already-selected row via the radio deselects it", async () => {
     const wrapper = await mountSelectable({ selectionMode: "single", selection: ["1"] });
 
     await wrapper.findAll("tbody .radio-stub")[0].trigger("click");
 
-    expect(wrapper.emitted("update:selection")).toBeUndefined();
-    expect(wrapper.emitted("selectionChange")).toBeUndefined();
+    expect(wrapper.emitted("update:selection")?.[0]).toEqual([[]]);
+
+    const change = wrapper.emitted("selectionChange")?.[0] as [
+      VcTableSelectionKeyType[],
+      VcTableItemType[],
+      VcTableSelectionMetaType<VcTableItemType>,
+    ];
+    expect(change[2]).toEqual({ action: "deselect", row: items[0] });
   });
 });
 
