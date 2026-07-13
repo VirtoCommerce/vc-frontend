@@ -186,6 +186,7 @@
       "email_not_unique": "Ten adres e-mail jest już zarejestrowany u nas",
       "max_length": "To pole nie może zawierać więcej niż {max} znaków",
       "creating_order_error": "Błąd podczas tworzenia zamówienia",
+      "loyalty_insufficient_balance": "Nie wystarczająca liczba punktów lojalnościowych, aby złożyć zamówienie. Wymagane: {required}, dostępne: {available}.",
       "payment_processing_error": "Błąd podczas przetwarzania płatności",
       "item_can_t_be_purchased": "Ten przedmiot nie może być zakupiony",
       "item_is_out_of_stock": "Ten przedmiot jest niedostępny",
@@ -870,7 +871,9 @@
         "view_list": "Lista",
         "view_map": "Mapa",
         "pick_point_info_title": "Informacje o punkcie odbioru",
-        "pick_up_here": "Odbierz tutaj"
+        "pick_up_here": "Odbierz tutaj",
+        "load_more": "Załaduj więcej",
+        "showing_count": "Wyświetlono {loaded} z {total}"
       }
     },
     "bulk_order": {
@@ -1226,6 +1229,7 @@
         "order_number_label": "Numer zamówienia",
         "purchase_number_label": "Numer zamówienia",
         "buyer_name_label": "Nazwa kupującego",
+        "payment_type_label": "Typ płatności",
         "status_label": "@:common.labels.status",
         "invoice_label": "Faktura",
         "date_label": "@:common.labels.date",
@@ -1403,7 +1407,7 @@
         },
         "content_header": {
           "name": "Imię",
-          "role": "Rola",
+          "role": "Role",
           "email": "E-mail",
           "active": "Aktywny"
         },

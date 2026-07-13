@@ -1,4 +1,4 @@
-import { uniqueId } from "lodash";
+import { uniqueId } from "lodash-es";
 import { computed, markRaw, nextTick, ref } from "vue";
 import type { CloseModalHandleType, IModal } from "..";
 

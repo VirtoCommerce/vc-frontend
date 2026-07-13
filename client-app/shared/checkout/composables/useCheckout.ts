@@ -1,5 +1,5 @@
 import { createGlobalState, useDebounceFn } from "@vueuse/core";
-import { omit } from "lodash";
+import { omit } from "lodash-es";
 import { computed, readonly, ref, shallowRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
@@ -11,6 +11,7 @@ import { isEqualAddresses, Logger } from "@/core/utilities";
 import { createSharedComposableByArgs } from "@/core/utilities/composables";
 import { useCustomerAddresses, useUser } from "@/shared/account";
 import { useFullCart, EXTENDED_DEBOUNCE_IN_MS } from "@/shared/cart";
+import { CartValidationErrors } from "@/shared/cart/enums";
 import { useCurrentOrganizationAddresses } from "@/shared/company";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
@@ -161,6 +162,13 @@ export function _useCheckout(cartId?: string) {
     availablePaymentMethods.value.find((item) => item.code === payment.value?.paymentGatewayCode),
   );
 
+  // Cart payment (paying the card from the cart during order placement) is only supported in
+  // single-page checkout. Multistep checkout defers payment to the dedicated CheckoutPayment step
+  // after the order is placed, so the cart-payment processor and card form must stay disabled there.
+  const canPayFromCart = computed(
+    () => !themeContext.value?.settings?.checkout_multistep_enabled && !!paymentMethod.value?.allowCartPayment,
+  );
+
   const changeCommentDebounced = useDebounceFn(async (value: string) => {
     if (cart.value?.comment !== value) {
       await changeComment(value);
@@ -180,7 +188,7 @@ export function _useCheckout(cartId?: string) {
     set: (value: string) => {
       commentChanging.value = true;
       _comment.value = value;
-      void changeCommentDebounced(value.trim());
+      void changeCommentDebounced((value ?? "").trim());
     },
   });
 
@@ -499,10 +507,89 @@ export function _useCheckout(cartId?: string) {
     }
   }
 
+  const loyaltyInsufficientBalanceError = computed(() =>
+    cart.value?.validationErrors?.find(
+      (error) => error?.errorCode === CartValidationErrors.LOYALTY_INSUFFICIENT_BALANCE,
+    ),
+  );
+
+  function notifyIfLoyaltyBalanceInsufficient(): void {
+    const loyaltyError = loyaltyInsufficientBalanceError.value;
+    if (!loyaltyError) {
+      return;
+    }
+
+    const params = loyaltyError.errorParameters ?? [];
+    const getParam = (key: string) => {
+      const value = params.find((param) => param?.key === key)?.value;
+      const parsed = Number(value);
+      return Number.isNaN(parsed) ? (value ?? "") : parsed;
+    };
+    notifications.error({
+      text: t("common.messages.loyalty_insufficient_balance", {
+        required: getParam("required"),
+        available: getParam("available"),
+      }),
+      duration: 15000,
+      single: true,
+    });
+  }
+
+  async function completePlacedOrder(order: CustomerOrderType): Promise<void> {
+    let orderPayed = false;
+
+    try {
+      // Only run the registered cart payment processor when the selected method actually
+      // supports cart payment. Otherwise a processor left over from a previously selected
+      // cart-payment method (e.g. the shopper switched to a manual method, which unmounts
+      // the card form without clearing the shared processor) could charge the card for an
+      // order that should not be paid from the cart.
+      const result = canPayFromCart.value ? await finalizePayment(order) : undefined;
+      orderPayed = result?.isSuccess ?? false;
+    } catch (e) {
+      Logger.error(`${useCheckout.name}.${createOrderFromCart.name}.paymentProcessor`, e);
+      placedOrder.value = null;
+      notifications.error({
+        text: t("common.messages.payment_processing_error"),
+        duration: 15000,
+        single: true,
+      });
+      return;
+    }
+
+    await refetchCart();
+
+    if (themeContext.value?.storeSettings?.defaultSelectedForCheckout && cart.value?.items.length) {
+      selectCartItems(cart.value.items.map((item) => item.id));
+    }
+
+    clearState();
+
+    analytics("placeOrder", order);
+    void pushHistoricalEvent({
+      eventType: "placeOrder",
+      sessionId: order.id,
+      productIds: order.items?.map((item) => item.productId),
+      storeId: globals.storeId,
+    });
+
+    if (orderPayed) {
+      analytics("purchase", order);
+    }
+
+    await router.replace({ name: canPayNow.value && !orderPayed ? "CheckoutPayment" : "CheckoutCompleted" });
+  }
+
   async function createOrderFromCart(): Promise<CustomerOrderType | null> {
     loading.value = true;
 
     await prepareOrderData();
+
+    if (loyaltyInsufficientBalanceError.value) {
+      notifyIfLoyaltyBalanceInsufficient();
+      loading.value = false;
+      return null;
+    }
 
     try {
       // TODO remove as CustomerOrderType. Infer it from API
@@ -511,50 +598,8 @@ export function _useCheckout(cartId?: string) {
       Logger.error(`${useCheckout.name}.${createOrderFromCart.name}`, e);
     }
 
-    let orderPayed = false;
-
     if (placedOrder.value) {
-      try {
-        // Only run the registered cart payment processor when the selected method actually
-        // supports cart payment. Otherwise a processor left over from a previously selected
-        // cart-payment method (e.g. the shopper switched to a manual method, which unmounts
-        // the card form without clearing the shared processor) could charge the card for an
-        // order that should not be paid from the cart.
-        const result = paymentMethod.value?.allowCartPayment ? await finalizePayment(placedOrder.value) : undefined;
-        orderPayed = result?.isSuccess ?? false;
-      } catch (e) {
-        Logger.error(`${useCheckout.name}.${createOrderFromCart.name}.paymentProcessor`, e);
-        placedOrder.value = null;
-        notifications.error({
-          text: t("common.messages.payment_processing_error"),
-          duration: 15000,
-          single: true,
-        });
-        loading.value = false;
-        return null;
-      }
-
-      await refetchCart();
-
-      if (themeContext.value?.storeSettings?.defaultSelectedForCheckout && cart.value?.items.length) {
-        selectCartItems(cart.value.items.map((item) => item.id));
-      }
-
-      clearState();
-
-      analytics("placeOrder", placedOrder.value);
-      void pushHistoricalEvent({
-        eventType: "placeOrder",
-        sessionId: placedOrder.value.id,
-        productIds: placedOrder.value.items?.map((item) => item.productId),
-        storeId: globals.storeId,
-      });
-
-      if (orderPayed) {
-        analytics("purchase", placedOrder.value);
-      }
-
-      await router.replace({ name: canPayNow.value && !orderPayed ? "CheckoutPayment" : "CheckoutCompleted" });
+      await completePlacedOrder(placedOrder.value);
     } else {
       notifications.error({
         text: t("common.messages.creating_order_error"),
@@ -579,6 +624,7 @@ export function _useCheckout(cartId?: string) {
     shipmentMethod,
     billingAddress,
     paymentMethod,
+    canPayFromCart,
     comment,
     billingAddressEqualsShipping,
     purchaseOrderNumber,

@@ -164,7 +164,7 @@
 
 <script setup lang="ts">
 import { useDebounceFn, useBreakpoints } from "@vueuse/core";
-import { pickBy } from "lodash";
+import { pickBy } from "lodash-es";
 import { computed, onMounted, ref, toRefs, toValue, useTemplateRef, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useCategoriesRoutes, useRouteQueryParam, useThemeContext, useAnalytics } from "@/core/composables";

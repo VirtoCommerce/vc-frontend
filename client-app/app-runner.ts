@@ -27,6 +27,7 @@ import { extractHostname, Logger } from "@/core/utilities";
 import { createI18n } from "@/i18n";
 import { init as initModuleBackInStock } from "@/modules/back-in-stock";
 import { init as initCustomerReviews } from "@/modules/customer-reviews";
+import { startFederatedModules } from "@/modules/federated/bootstrap";
 import { init as initializeGoogleAnalytics } from "@/modules/google-analytics";
 import { init as initLoyalty } from "@/modules/loyalty";
 import { init as initNews } from "@/modules/news";
@@ -231,6 +232,10 @@ export default async () => {
   void initNews(router, i18n);
   void initLoyalty(router, i18n);
 
+  // Module Federation host: load federated plugins if APP_MODULES_FEDERATION_ENABLED is on.
+  // Awaited before app.use(router) so plugin routes exist for the first navigation.
+  const federatedModulesReady = startFederatedModules();
+
   // Plugins
   app.use(head);
   app.use(i18n);
@@ -264,6 +269,9 @@ export default async () => {
       app.use(builderIoPreviewPlugin, { router });
     }
   }
+
+  // Federated plugin routes must exist before the router is installed. Never rejects.
+  await federatedModulesReady;
 
   // router must be registered after all plugins because some of them are using router.beforeEach to protect routes or add functionality before route changes, and we want to make sure that those are registered before we start using the router
   app.use(router);

@@ -30,7 +30,7 @@
 </template>
 
 <script setup lang="ts" generic="T">
-import _ from "lodash";
+import { clone } from "lodash-es";
 import { Pagination, Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { computed, getCurrentInstance } from "vue";
@@ -55,7 +55,7 @@ const modules = [Pagination, Navigation];
 const listeners = computed<SwiperEvents>(() => props.options.on ?? ({} as SwiperEvents));
 
 const attrs = computed<Omit<ICarouselOptions, "on">>(() => {
-  const options = _.clone(props.options);
+  const options = clone(props.options);
   delete options.on;
   return options;
 });

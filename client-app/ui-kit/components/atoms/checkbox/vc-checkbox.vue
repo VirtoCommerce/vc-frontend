@@ -57,7 +57,7 @@
 </template>
 
 <script setup lang="ts">
-import { includes } from "lodash";
+import { includes } from "lodash-es";
 import { computed, inject, ref, useSlots } from "vue";
 import { INTERACTIVE_PARENT_KEY } from "@/ui-kit/components/molecules/menu-item/vc-menu-item-context";
 

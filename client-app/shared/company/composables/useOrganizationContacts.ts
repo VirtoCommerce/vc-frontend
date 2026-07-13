@@ -1,4 +1,4 @@
-import _ from "lodash";
+import { map } from "lodash-es";
 import { computed, readonly, ref, shallowRef, unref } from "vue";
 import { useI18n } from "vue-i18n";
 import {
@@ -30,6 +30,7 @@ export function useOrganizationContacts(organizationId: MaybeRef<string>) {
   const page = ref(1);
   const keyword = ref("");
   const filter = ref("");
+  const roleIds = ref<string[]>([]);
   const contacts = shallowRef<ExtendedContactType[]>([]);
   const sort = ref<ISortInfo>({
     column: "name",
@@ -51,11 +52,12 @@ export function useOrganizationContacts(organizationId: MaybeRef<string>) {
         after: String((page.value - 1) * itemsPerPage.value),
         sort: sortingExpression,
         searchPhrase: filterExpression,
+        roleIds: roleIds.value.length ? roleIds.value : undefined,
       });
 
       const contactFullNameFallback: string = t("pages.company.members.invite_sent");
 
-      contacts.value = _.map(response.items, (item: ContactType) =>
+      contacts.value = map(response.items, (item: ContactType) =>
         convertToExtendedContact(item, contactFullNameFallback),
       );
       pages.value = Math.ceil((response.totalCount ?? 0) / itemsPerPage.value);
@@ -146,6 +148,7 @@ export function useOrganizationContacts(organizationId: MaybeRef<string>) {
     page,
     keyword,
     filter,
+    roleIds,
     fetchContacts,
     lockContact,
     unlockContact,

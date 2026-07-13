@@ -1,5 +1,5 @@
 import { isDefined } from "@vueuse/core";
-import { intersection } from "lodash";
+import { intersection } from "lodash-es";
 import { v4 as uuidv4 } from "uuid";
 import { ServerError } from "@/core/api/common";
 import { AbortReason } from "@/core/api/common/enums";

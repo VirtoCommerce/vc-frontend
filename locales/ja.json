@@ -186,6 +186,7 @@
       "email_not_unique": "このメールは既に登録済みです",
       "max_length": "{max}文字以内で入力してください",
       "creating_order_error": "注文作成エラー",
+      "loyalty_insufficient_balance": "ご注文にはロイヤルティポイントが不足しています。必要数: {required}、利用可能数: {available}。",
       "payment_processing_error": "支払い処理中にエラーが発生しました",
       "item_can_t_be_purchased": "購入できません",
       "item_is_out_of_stock": "在庫切れです",
@@ -870,7 +871,9 @@
         "view_list": "リスト",
         "view_map": "地図",
         "pick_point_info_title": "受取スポット情報",
-        "pick_up_here": "ここで受け取る"
+        "pick_up_here": "ここで受け取る",
+        "load_more": "さらに読み込む",
+        "showing_count": "{total}件中{loaded}件を表示"
       }
     },
     "bulk_order": {
@@ -1226,6 +1229,7 @@
         "order_number_label": "注文番号",
         "purchase_number_label": "発注番号",
         "buyer_name_label": "購入者名",
+        "payment_type_label": "支払い方法",
         "status_label": "@:common.labels.status",
         "invoice_label": "請求書",
         "date_label": "@:common.labels.date",

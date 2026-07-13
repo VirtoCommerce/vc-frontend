@@ -186,6 +186,7 @@
       "email_not_unique": "Tämä sähköpostiosoite on jo rekisteröity meillä",
       "max_length": "Tämä kenttä ei saa sisältää enempää kuin {max} merkkiä",
       "creating_order_error": "Virhe tilauksen luomisessa",
+      "loyalty_insufficient_balance": "Ei tarpeeksi kanta-asiakaspisteitä tilauksen tekemiseen. Vaaditaan: {required}, käytettävissä: {available}.",
       "payment_processing_error": "Virhe maksun käsittelyssä",
       "item_can_t_be_purchased": "Tätä tuotetta ei voi ostaa",
       "item_is_out_of_stock": "Tämä tuote on loppu varastosta",
@@ -870,7 +871,9 @@
         "view_list": "Lista",
         "view_map": "Kartta",
         "pick_point_info_title": "Noutopisteen tiedot",
-        "pick_up_here": "Nouda täältä"
+        "pick_up_here": "Nouda täältä",
+        "load_more": "Lataa lisää",
+        "showing_count": "Näytetään {loaded} / {total}"
       }
     },
     "bulk_order": {
@@ -1226,6 +1229,7 @@
         "order_number_label": "Tilausnumero",
         "purchase_number_label": "Ostotilaus",
         "buyer_name_label": "Ostajan nimi",
+        "payment_type_label": "Maksutapa",
         "status_label": "@:common.labels.status",
         "invoice_label": "Lasku",
         "date_label": "@:common.labels.date",
@@ -1403,7 +1407,7 @@
         },
         "content_header": {
           "name": "Nimi",
-          "role": "Rooli",
+          "role": "Roolit",
           "email": "Sähköposti",
           "active": "Aktiivinen"
         },

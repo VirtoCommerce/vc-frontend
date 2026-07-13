@@ -1,4 +1,4 @@
-import _ from "lodash";
+import { cloneDeep, isEqual } from "lodash-es";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import {
@@ -39,11 +39,11 @@ export function useOrganizationContactsFilterFacets() {
     },
   ];
 
-  const appliedFacets = ref<FacetItemType[]>(_.cloneDeep(initialFacets));
-  const selectableFacets = ref<FacetItemType[]>(_.cloneDeep(initialFacets));
+  const appliedFacets = ref<FacetItemType[]>(cloneDeep(initialFacets));
+  const selectableFacets = ref<FacetItemType[]>(cloneDeep(initialFacets));
 
   const isFacetsDirty = computed<boolean>(() => {
-    return !_.isEqual(appliedFacets.value, selectableFacets.value);
+    return !isEqual(appliedFacets.value, selectableFacets.value);
   });
 
   const numberOfFacetsApplied = computed<number>(() =>
@@ -54,17 +54,17 @@ export function useOrganizationContactsFilterFacets() {
 
   function applyFacets() {
     if (isFacetsDirty.value) {
-      appliedFacets.value = _.cloneDeep(selectableFacets.value);
+      appliedFacets.value = cloneDeep(selectableFacets.value);
     }
   }
 
   function resetFacets() {
-    appliedFacets.value = _.cloneDeep(initialFacets);
-    selectableFacets.value = _.cloneDeep(initialFacets);
+    appliedFacets.value = cloneDeep(initialFacets);
+    selectableFacets.value = cloneDeep(initialFacets);
   }
 
   function resetSelectableToAppliedFacets() {
-    selectableFacets.value = _.cloneDeep(appliedFacets.value);
+    selectableFacets.value = cloneDeep(appliedFacets.value);
   }
 
   function resetFacetItem(payload: Pick<FacetItemType, "paramName"> & Pick<FacetValueItemType, "value">) {

@@ -1,8 +1,5 @@
 import { ApolloError } from "@apollo/client/core";
-import cloneDeep from "lodash/cloneDeep";
-import mergeWith from "lodash/mergeWith";
-import noop from "lodash/noop";
-import uniqueId from "lodash/uniqueId";
+import { cloneDeep, mergeWith, noop, uniqueId } from "lodash-es";
 import { ref } from "vue";
 import { AbortReason } from "@/core/api/common/enums";
 import { uniqByLast } from "@/core/utilities/common";

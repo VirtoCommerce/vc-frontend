@@ -6,9 +6,17 @@ import { visualizer } from "rollup-plugin-visualizer";
 import { defineConfig, loadEnv } from "vite";
 import { checker } from "vite-plugin-checker";
 import mkcert from "vite-plugin-mkcert";
+// Module Federation host config lives in vite.federation.ts.
+import { federatedHostPlugin, federatedAlias } from "./vite.federation.js";
 import type { ProxyOptions, UserConfig, PluginOption } from "vite";
 
 const graphql = graphqlImport.default ?? graphqlImport;
+
+// Libraries imported only via dynamic import()/defineAsyncComponent; kept out of the eager
+// `vendor` chunk so they stay in their own lazy chunks. `@module-federation/*` is reached
+// only through the flag-gated dynamic import in app-runner, so deferring it keeps the MF
+// runtime out of the default (APP_MODULES_FEDERATION_ENABLED off) eager bundle entirely.
+const DEFERRED_LIBS = ["skyflow-js", "barcode-detector", "marked", "nouislider", "@module-federation"];
 
 function getProxy(target: ProxyOptions["target"], options: Omit<ProxyOptions, "target"> = {}): ProxyOptions {
   const dontTrustSelfSignedCertificate = false;
@@ -18,6 +26,18 @@ function getProxy(target: ProxyOptions["target"], options: Omit<ProxyOptions, "t
     changeOrigin: true,
     secure: dontTrustSelfSignedCertificate,
     ...options,
+  };
+}
+
+function getBackendProxy(): Record<string, ProxyOptions> {
+  return {
+    "^/api": getProxy(process.env.APP_BACKEND_URL),
+    "^/graphql": getProxy(process.env.APP_BACKEND_URL, { ws: true }),
+    "^/(connect|revoke)/token": getProxy(process.env.APP_BACKEND_URL),
+    "^/cms-content": getProxy(process.env.APP_BACKEND_URL),
+    "^/externalsignin": getProxy(process.env.APP_BACKEND_URL),
+    "^/signin-oidc": getProxy(process.env.APP_BACKEND_URL),
+    "^/signin-google": getProxy(process.env.APP_BACKEND_URL),
   };
 }
 
@@ -44,6 +64,8 @@ export default defineConfig(({ command, mode }): UserConfig => {
           })
         : undefined,
       vue(),
+      // Module Federation host — empty unless APP_MODULES_FEDERATION_ENABLED is set (see vite.federation.ts).
+      ...federatedHostPlugin(process.env.APP_MODULES_FEDERATION_ENABLED),
       graphql() as PluginOption,
       isServe
         ? checker({
@@ -67,6 +89,8 @@ export default defineConfig(({ command, mode }): UserConfig => {
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "client-app"),
+        // Host provides the shared facade — resolves @vc-frontend/core to real source.
+        ...federatedAlias(__dirname),
       },
     },
     define: {
@@ -80,10 +104,16 @@ export default defineConfig(({ command, mode }): UserConfig => {
       sourcemap: true,
       rollupOptions: {
         output: {
-          manualChunks(id) {
-            if (id.includes("node_modules")) {
-              return "vendor";
+          manualChunks(id = "") {
+            if (!id.includes("node_modules")) {
+              return;
             }
+            const isDeferredLib = DEFERRED_LIBS.some((lib) => id.includes(`/node_modules/${lib}/`));
+            if (isDeferredLib) {
+              return;
+            }
+            // Everything else goes to a single shared eager `vendor` chunk.
+            return "vendor";
           },
         },
       },
@@ -99,15 +129,16 @@ export default defineConfig(({ command, mode }): UserConfig => {
         "Cross-Origin-Resource-Policy": "cross-origin",
         "Cross-Origin-Embedder-Policy": "unsafe-none",
       },
-      proxy: {
-        "^/api": getProxy(process.env.APP_BACKEND_URL),
-        "^/graphql": getProxy(process.env.APP_BACKEND_URL, { ws: true }),
-        "^/(connect|revoke)/token": getProxy(process.env.APP_BACKEND_URL),
-        "^/cms-content": getProxy(process.env.APP_BACKEND_URL),
-        "^/externalsignin": getProxy(process.env.APP_BACKEND_URL),
-        "^/signin-oidc": getProxy(process.env.APP_BACKEND_URL),
-        "^/signin-google": getProxy(process.env.APP_BACKEND_URL),
-      },
+      proxy: getBackendProxy(),
+    },
+    // Mirrors server.proxy so a production build can be smoke-tested against the backend
+    // via `yarn preview` — the canonical way to run the MF host locally. (`yarn dev` also
+    // works, incl. HMR for plugins that share @apollo/client — see
+    // client-app/modules/federated/HOWTO.md "The dev inner loop".)
+    preview: {
+      port: 3000,
+      cors: true,
+      proxy: getBackendProxy(),
     },
     css: {
       preprocessorOptions: {

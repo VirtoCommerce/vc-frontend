@@ -4,9 +4,11 @@ import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import type { ExtendedQueryCategoryArgsType } from "@/core/api/graphql";
 import type { Category } from "@/core/api/graphql/types";
-import type { MaybeRefOrGetter } from "vue";
+import type { Ref } from "vue";
 
-export function useCategory(options: { currencyCodeOverride?: MaybeRefOrGetter<string | undefined> } = {}) {
+export function useCategory(
+  options: { currencyCodeOverride?: string | Ref<string | undefined> | (() => string | undefined) } = {},
+) {
   const loading = ref(false);
   const category = shallowRef<Category>();
 

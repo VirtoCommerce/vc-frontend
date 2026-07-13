@@ -1,0 +1,129 @@
+# Publishes the @vc-frontend/core facade as a versioned tarball Release asset, so
+# out-of-repo Module Federation plugins can pin it by URL with no registry or token:
+#
+#   https://github.com/VirtoCommerce/vc-frontend/releases/download/core-v<V>/vc-frontend-core-<V>.tgz
+#
+# Manual-only by design: the contract version bumps automatically on facade changes
+# (yarn build:core-types), but a human decides when a version becomes consumable.
+# Releases are immutable — re-running for an already-released version fails; bump the
+# contract version instead. Never delete core-v* releases: a deleted release is the only
+# way a plugin's pin can break. See client-app/core-api/README.md and
+# client-app/modules/federated/specs/2026-07-06-facade-distribution-design.md.
+name: Core Facade Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # create the core-v* tag + release with the built-in GITHUB_TOKEN
+    env:
+      FORCE_COLOR: true
+    steps:
+      - name: Set up Node 22
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: '22'
+
+      - name: Enable corepack
+        run: |
+          corepack enable
+
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+
+      # Immutable core-v* releases must only ever be minted from the default branch —
+      # a release from a feature branch would permanently occupy that contract version
+      # with unmerged code.
+      - name: Fail unless run from dev
+        if: github.ref != 'refs/heads/dev'
+        run: |
+          echo "::error::Core facade releases must be dispatched from the dev branch (got ${GITHUB_REF})."
+          exit 1
+
+      - name: Read contract version
+        id: core
+        run: |
+          version=$(jq -r .version client-app/core-api/package.json)
+          # Own-repo input, but $GITHUB_OUTPUT is newline-delimited — reject anything
+          # that is not a plain semver string before it can smuggle extra output lines.
+          if ! printf '%s' "$version" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$'; then
+            echo "::error::client-app/core-api/package.json version \"$version\" is not a valid semver string."
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "tag=core-v$version" >> "$GITHUB_OUTPUT"
+          echo "tarball=vc-frontend-core-$version.tgz" >> "$GITHUB_OUTPUT"
+
+      # Releases are immutable: the plugin-side pin (URL + lockfile checksum) must never
+      # change meaning. A new contract means a new CORE_VERSION, not a re-release.
+      # The TAG is checked too, not just the release: `gh release create` on a
+      # pre-existing tag silently ignores --target and binds the release to the old
+      # tag's commit — while the tarball is packed from THIS checkout. Tag and asset
+      # would diverge.
+      - name: Fail if this contract version is already released or tagged
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.core.outputs.tag }}
+        run: |
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            echo "::error::Release $TAG already exists — releases are immutable." \
+              "Bump the contract version (yarn build:core-types auto-bumps on facade" \
+              "changes; yarn bump:core major for breaking ones) and re-run."
+            exit 1
+          fi
+          if git ls-remote --exit-code --tags origin "refs/tags/$TAG" > /dev/null 2>&1; then
+            echo "::error::Tag $TAG already exists (without a release) — creating a release" \
+              "on it would bind to that tag's commit instead of this run's. Delete the stray" \
+              "tag or bump the contract version."
+            exit 1
+          fi
+
+      # Dependency lifecycle scripts are disabled: this job holds a contents:write token,
+      # and the drift check needs no build scripts (verified — vue-demi's is the only one
+      # skipped and it is not on this code path). Supply-chain hardening, not paranoia.
+      - name: Install dependencies (no lifecycle scripts, frozen lockfile)
+        env:
+          YARN_ENABLE_SCRIPTS: 'false'
+        run: |
+          yarn install --immutable
+
+      # Read-only drift check (NOT build:core-types, which regenerates and can
+      # auto-bump the version — a release must pack exactly what is committed).
+      - name: Validate the committed contract
+        run: |
+          yarn validate:core-types
+
+      - name: Pack the facade tarball
+        working-directory: client-app/core-api
+        run: |
+          npm pack
+
+      - name: Create release with tarball asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.core.outputs.version }}
+          TAG: ${{ steps.core.outputs.tag }}
+          TARBALL: ${{ steps.core.outputs.tarball }}
+        run: |
+          {
+            echo "Type contract + federation config of the storefront host facade, for Module Federation plugin builds."
+            echo
+            echo "Pin it in a plugin's package.json:"
+            echo
+            echo '```json'
+            echo "\"@vc-frontend/core\": \"https://github.com/$GITHUB_REPOSITORY/releases/download/$TAG/$TARBALL\""
+            echo '```'
+            echo
+            echo "Docs: [client-app/core-api/README.md](https://github.com/$GITHUB_REPOSITORY/blob/$GITHUB_SHA/client-app/core-api/README.md)"
+          } > release-notes.md
+          # --latest=false: facade releases must never steal the repo's "Latest" badge
+          # from theme releases (theme-ci sets make_latest: true) — anything consuming
+          # releases/latest expects the theme zip, not this tarball.
+          gh release create "$TAG" "client-app/core-api/$TARBALL" \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
+            --title "@vc-frontend/core $VERSION" \
+            --latest=false \
+            --notes-file release-notes.md

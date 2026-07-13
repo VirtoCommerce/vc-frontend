@@ -7,3 +7,10 @@ interface Window {
   google: typeof google;
   dataLayer: Array<unknown>;
 }
+
+interface ImportMetaEnv {
+  /** Enables the Module Federation host, build + runtime. Only "true", "1", "yes" or "on" enable it; any other value means off. */
+  readonly APP_MODULES_FEDERATION_ENABLED?: string;
+  /** JSON map of remote name -> mf-manifest.json URL. Inlined at BUILD time (see modules/federated/README.md). */
+  readonly APP_MODULES_FEDERATION_REMOTES?: string;
+}

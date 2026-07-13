@@ -130,20 +130,14 @@ const currentPaymentMethod = computed(() => {
 });
 
 const paymentCardVisible = computed(() => {
-  return (
-    isAuthenticated.value &&
-    props.cart &&
-    paymentMethod.value &&
-    paymentMethod.value.allowCartPayment &&
-    currentPaymentMethod.value &&
-    billingAddress.value
-  );
+  return isAuthenticated.value && props.cart && canPayFromCart.value && currentPaymentMethod.value;
 });
 
 const {
   billingAddressEqualsShipping,
   billingAddress,
   paymentMethod,
+  canPayFromCart,
   shipmentMethod,
   onBillingAddressChange,
   setPaymentMethod,

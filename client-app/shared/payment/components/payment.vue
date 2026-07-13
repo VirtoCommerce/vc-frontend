@@ -32,11 +32,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, defineAsyncComponent } from "vue";
 import type { IPaymentMethodParameters } from "./types";
 import PaymentProcessingAuthorizeNet from "@/shared/payment/components/payment-processing-authorize-net.vue";
 import PaymentProcessingCyberSource from "@/shared/payment/components/payment-processing-cyber-source.vue";
-import PaymentProcessingSkyflow from "@/shared/payment/components/payment-processing-skyflow.vue";
+
+// Loaded only when the Skyflow method is the active payment type, so the skyflow-js SDK
+// (~80 KB gzip) stays out of the eager bundle shared across checkout/account routes.
+const PaymentProcessingSkyflow = defineAsyncComponent(
+  () => import("@/shared/payment/components/payment-processing-skyflow.vue"),
+);
 
 const props = defineProps<IPaymentMethodParameters>();
 
