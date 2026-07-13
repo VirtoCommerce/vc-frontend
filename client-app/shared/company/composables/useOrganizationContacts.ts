@@ -30,6 +30,7 @@ export function useOrganizationContacts(organizationId: MaybeRef<string>) {
   const page = ref(1);
   const keyword = ref("");
   const filter = ref("");
+  const roleIds = ref<string[]>([]);
   const contacts = shallowRef<ExtendedContactType[]>([]);
   const sort = ref<ISortInfo>({
     column: "name",
@@ -51,6 +52,7 @@ export function useOrganizationContacts(organizationId: MaybeRef<string>) {
         after: String((page.value - 1) * itemsPerPage.value),
         sort: sortingExpression,
         searchPhrase: filterExpression,
+        roleIds: roleIds.value.length ? roleIds.value : undefined,
       });
 
       const contactFullNameFallback: string = t("pages.company.members.invite_sent");
@@ -146,6 +148,7 @@ export function useOrganizationContacts(organizationId: MaybeRef<string>) {
     page,
     keyword,
     filter,
+    roleIds,
     fetchContacts,
     lockContact,
     unlockContact,
