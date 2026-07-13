@@ -29,8 +29,20 @@
       </VcInput>
     </div>
 
-    <!-- Empty view — outside the card, shown instead of it (Company members pattern). -->
-    <VcEmptyView v-if="!items.length && !loading" :text="t('sales_rep.table.empty')" icon="outline-order" />
+    <!-- Empty view — outside the card, shown instead of it (Company members pattern).
+         Distinguishes "no reps at all" from "your search matched nothing" (+ reset). -->
+    <VcEmptyView
+      v-if="!items.length && !loading"
+      :text="keyword ? t('sales_rep.table.no_results') : t('sales_rep.table.empty')"
+      :variant="keyword ? 'search' : 'empty'"
+      icon="outline-order"
+    >
+      <template v-if="keyword" #button>
+        <VcButton prepend-icon="reset" @click="resetKeyword">
+          {{ t("sales_rep.table.reset_search") }}
+        </VcButton>
+      </template>
+    </VcEmptyView>
 
     <!-- Content block -->
     <VcWidget v-else size="lg">

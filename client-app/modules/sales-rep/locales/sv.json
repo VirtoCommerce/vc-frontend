@@ -12,7 +12,9 @@
       "phone": "Telefon",
       "search_placeholder": "Sök efter namn, e-post eller telefon",
       "search_aria": "Sök efter säljare",
-      "empty": "Inga säljare hittades"
+      "empty": "Inga säljare hittades",
+      "no_results": "Inga säljare matchar din sökning",
+      "reset_search": "Återställ sökning"
     }
   }
 }

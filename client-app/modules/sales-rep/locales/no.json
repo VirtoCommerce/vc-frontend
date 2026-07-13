@@ -12,7 +12,9 @@
       "phone": "Telefon",
       "search_placeholder": "Søk etter navn, e-post eller telefon",
       "search_aria": "Søk etter selgere",
-      "empty": "Ingen salgsrepresentanter funnet"
+      "empty": "Ingen salgsrepresentanter funnet",
+      "no_results": "Ingen säljare matchar din sökning",
+      "reset_search": "Återställ sökning"
     }
   }
 }

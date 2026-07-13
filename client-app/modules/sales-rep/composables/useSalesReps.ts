@@ -1,5 +1,5 @@
 import { useQuery } from "@vue/apollo-composable";
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { CustomerSalesRepsDocument } from "../api/graphql/types";
@@ -46,6 +46,15 @@ export function useSalesReps() {
   );
 
   const pages = computed(() => Math.max(1, Math.ceil((result.value?.customerSalesReps?.totalCount ?? 0) / PAGE_SIZE)));
+
+  // If the result set shrinks under the user (e.g. reps removed server-side, or the total
+  // drops after a refetch) so the current page no longer exists, clamp back to the last
+  // valid page — otherwise the page is stranded on an empty view with no way back.
+  watch(pages, (total) => {
+    if (page.value > total) {
+      page.value = total;
+    }
+  });
 
   return { loading, keyword, sort, page, pages, items };
 }

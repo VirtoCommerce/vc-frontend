@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { nextTick } from "vue";
 import { PAGE_SIZE, useSalesReps } from "./useSalesReps";
 import type { CustomerSalesRepsQuery } from "../api/graphql/types";
 
@@ -102,6 +103,20 @@ describe("useSalesReps", () => {
 
     queryMock.result.value = repsResult(PAGE_SIZE * 2 + 1, []);
     expect(pages.value).toBe(3);
+  });
+
+  it("clamps the current page when the result set shrinks below it", async () => {
+    const { page, pages } = useSalesReps();
+
+    queryMock.result.value = repsResult(PAGE_SIZE * 3, []); // 3 pages
+    page.value = 3;
+    await nextTick();
+    expect(page.value).toBe(3); // still valid — no clamp
+
+    queryMock.result.value = repsResult(PAGE_SIZE, []); // shrinks to 1 page
+    await nextTick();
+    expect(pages.value).toBe(1);
+    expect(page.value).toBe(1); // clamped back to the last valid page
   });
 
   it("passes loading through and registers an error handler", () => {
