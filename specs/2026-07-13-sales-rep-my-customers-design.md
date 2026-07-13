@@ -50,6 +50,8 @@ branch). Only the **operation** (`SalesRepCustomersQuery` + `SalesRepCustomersDo
    rep order-detail query**, and `OrderDetails` runs the customer-facing, current-user-scoped
    `order` query, so a rep opening another org's order will likely **403**. Requester's call:
    **keep the link anyway** (matches the story literally); flag the 403/BE dependency in the PR.
+   The link **opens in a new tab** (`target="_blank" rel="noopener noreferrer"`) so a rep doesn't
+   lose the customer list when inspecting an order.
 3. **Entry point:** register the route **and** add a *temporary* Corporate menu link so the page
    is reachable/testable; to be superseded by the Sales Rep Hub widget in the left-rail task.
 

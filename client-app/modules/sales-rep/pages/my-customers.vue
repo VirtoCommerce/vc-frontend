@@ -69,6 +69,8 @@
                   <VcLink
                     class="my-customers__order"
                     :to="{ name: 'OrderDetails', params: { orderId: customer.lastOrder.id } }"
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
                     {{ orderLabel(customer.lastOrder.number) }}
                   </VcLink>
@@ -88,6 +90,8 @@
                 <VcLink
                   class="my-customers__order"
                   :to="{ name: 'OrderDetails', params: { orderId: item.lastOrder.id } }"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
                   {{ orderLabel(item.lastOrder.number) }}
                 </VcLink>
