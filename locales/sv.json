@@ -1234,6 +1234,7 @@
         "order_number_label": "Beställningsnummer",
         "purchase_number_label": "Inköpsorder",
         "buyer_name_label": "Köparens namn",
+        "payment_type_label": "Betalningstyp",
         "status_label": "@:common.labels.status",
         "invoice_label": "Faktura",
         "date_label": "@:common.labels.date",
@@ -1411,7 +1412,7 @@
         },
         "content_header": {
           "name": "Namn",
-          "role": "Roll",
+          "role": "Roller",
           "email": "E-post",
           "active": "Aktiv"
         },

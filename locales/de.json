@@ -1234,6 +1234,7 @@
         "order_number_label": "Bestellnummer",
         "purchase_number_label": "Einkaufsbestellung",
         "buyer_name_label": "Käufername",
+        "payment_type_label": "Zahlungsart",
         "status_label": "@:common.labels.status",
         "invoice_label": "Rechnung",
         "date_label": "@:common.labels.date",
@@ -1411,7 +1412,7 @@
         },
         "content_header": {
           "name": "Name",
-          "role": "Rolle",
+          "role": "Rollen",
           "email": "E-Mail",
           "active": "Aktiv"
         },

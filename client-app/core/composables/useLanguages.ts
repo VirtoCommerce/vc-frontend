@@ -2,6 +2,7 @@ import { useLocalStorage, useSessionStorage } from "@vueuse/core";
 import { merge } from "lodash-es";
 import { computed, ref } from "vue";
 import { setLocale as setLocaleForYup } from "yup";
+import { QueryParamName } from "@/core/enums";
 import { useUser } from "@/shared/account/composables/useUser";
 import { getCatalogBasePath } from "@/shared/catalog/composables/useCatalogBasePath";
 import { useThemeContext } from "./useThemeContext";
@@ -17,6 +18,9 @@ const previousCultureSlug = useSessionStorage<{ cultureName: string; slug: strin
   cultureName: "",
   slug: "",
 });
+// Culture this tab's facets were built under; session-scoped like previousCultureSlug above, so tabs
+// on different locales don't wipe each other's valid facets via a shared localStorage key.
+const facetsCultureName = useSessionStorage<string>("facetsCultureName", "");
 
 const defaultStoreLanguage = computed<ILanguage>(() => themeContext.value.defaultLanguage);
 const defaultStoreCulture = computed<string>(() => defaultStoreLanguage.value.cultureName);
@@ -44,7 +48,7 @@ const currentMaybeShortLocale = computed(() => {
 });
 
 function tryShortLocale(localeOrCultureName: string) {
-  const twoLetterLanguageName = localeOrCultureName.slice(0, 2);
+  const twoLetterLanguageName = localeOrCultureName?.slice(0, 2) ?? "";
 
   return supportedLanguages.value.filter((language) => language.twoLetterLanguageName === twoLetterLanguageName)
     .length === 1
@@ -57,11 +61,11 @@ function fetchLocaleMessages(locale: string): Promise<LocaleMessage> {
 
   const locales = import.meta.glob<boolean, string, LocaleMessage>("../../../locales/*.json"); // can't use variables in import
   const path = `${localesPathPrefix}/${locale}.json`;
-  const shortPath = `${localesPathPrefix}/${locale.slice(0, 2)}.json`;
+  const shortPath = `${localesPathPrefix}/${locale?.slice(0, 2) ?? ""}.json`;
 
   if (locales[path]) {
     return locales[path]();
-  } else if (locale.length > 2 && locales[shortPath]) {
+  } else if ((locale?.length ?? 0) > 2 && locales[shortPath]) {
     return locales[shortPath](); // try get short locale as a fallback (e.g. en-US.json -> en.json)
   }
 
@@ -79,6 +83,11 @@ async function initLocale(i18n: I18n, cultureName: string): Promise<void> {
   }
 
   (i18n.global as unknown as Composer).locale.value = cultureName;
+
+  if (facetsCultureName.value && facetsCultureName.value !== cultureName) {
+    removeFacetsFromUrl();
+  }
+  facetsCultureName.value = cultureName;
 
   setLocaleForYup({
     mixed: {
@@ -99,7 +108,7 @@ async function initLocale(i18n: I18n, cultureName: string): Promise<void> {
   if (localeFromUrl) {
     // anchor at the start of the pathname and require / or end after the locale,
     // otherwise plain `replace("/de", "")` would eat the `de` inside paths like `/destinations`
-    newPath = newPath.replace(new RegExp(`^/${localeFromUrl}(?=/|$)`, "i"), "") || "/";
+    newPath = newPath?.replace(new RegExp(`^/${localeFromUrl}(?=/|$)`, "i"), "") || "/";
   }
 
   if (!isDefault) {
@@ -133,11 +142,22 @@ function removeLocaleFromUrl() {
   }
 }
 
+// Facet term values are language-specific strings; called from initLocale() whenever the resolved
+// culture no longer matches the one facetsCultureName was last set to.
+function removeFacetsFromUrl() {
+  const url = new URL(location.href);
+
+  if (url.searchParams.has(QueryParamName.Facets)) {
+    url.searchParams.delete(QueryParamName.Facets);
+    history.replaceState(null, "", `${url.pathname}${url.search}${url.hash}`);
+  }
+}
+
 function getUrlWithoutLocale(fullPath: string): string {
   const locale = supportedLocalesRegex.value.exec(fullPath)?.groups?.locale;
 
   if (locale) {
-    return fullPath.replace(supportedLocalesRegex.value, "/");
+    return fullPath?.replace(supportedLocalesRegex.value, "/") ?? "";
   }
 
   return fullPath;
@@ -149,13 +169,13 @@ function getUrlWithoutPossibleLocale(fullPath: string): string {
 
   if (match) {
     const idxToSlice = match[0].length;
-    let result = path.slice(idxToSlice);
+    let result = path?.slice(idxToSlice) ?? "";
 
-    if (!result.startsWith("/")) {
-      result = "/" + result;
+    if (!result?.startsWith("/")) {
+      result = "/" + (result ?? "");
     }
 
-    return result === "/" ? result : result.replaceAll(/\/+/g, "/");
+    return result === "/" ? result : (result?.replaceAll(/\/+/g, "/") ?? "");
   }
 
   return fullPath;
@@ -220,7 +240,7 @@ export function useLanguages() {
     }
 
     const localeFromUrl = getLocaleFromUrl();
-    const normalizedPermalink = permalink.startsWith("/") ? permalink : `/${permalink}`;
+    const normalizedPermalink = permalink?.startsWith("/") ? permalink : `/${permalink}`;
 
     // Preserve a catalog namespace prefix (e.g. /loyalty-catalog) if the current URL is under one,
     // so that slug-driven replaceState calls don't drop it.
@@ -267,6 +287,7 @@ export function useLanguages() {
     getUrlWithoutLocale,
     getUrlWithoutPossibleLocale,
     removeLocaleFromUrl,
+    removeFacetsFromUrl,
     updateLocalizedUrl,
     resolvePossibleLocale,
   };

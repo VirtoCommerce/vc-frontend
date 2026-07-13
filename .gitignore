@@ -77,3 +77,8 @@ dist-ssr
 
 # Playwright MCP
 .playwright-mcp/
+
+# The generated @vc-frontend/core artifacts (contract/index.d.ts, contract/tailwind-preset.cjs)
+# are committed by design ("contract" is deliberately not named dist — it is the versioned
+# type contract, not transient build output). The intermediate declaration emit stays ignored.
+client-app/core-api/.types-build/
