@@ -121,7 +121,7 @@ export const StrokeBuckets: StoryType = {
   render: () => ({
     components: { VcIcon },
     setup: () => ({
-      sizes: [12, 16, 20, 24, 32, 40, 48, 64],
+      sizes: [10, 12, 14, 16, 20, 24, 28, 36, 56],
       icons: ["credit-card", "bell", "settings", "heart", "search"],
     }),
     template: `

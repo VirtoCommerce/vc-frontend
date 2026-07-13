@@ -111,27 +111,51 @@ watch(
       }
     }
 
-    @container (10px < width <= 14px) {
+    @container (10px < width <= 12px) {
       svg {
-        --stroke-bucket: 1.25;
+        --stroke-bucket: 1.1;
       }
     }
 
-    @container (14px < width <= 24px) {
+    @container (12px < width <= 14px) {
+      svg {
+        --stroke-bucket: 1.3;
+      }
+    }
+
+    @container (14px < width <= 16px) {
       svg {
         --stroke-bucket: 1.5;
       }
     }
 
-    @container (24px < width <= 44px) {
+    @container (16px < width <= 20px) {
+      svg {
+        --stroke-bucket: 1.6;
+      }
+    }
+
+    @container (20px < width <= 24px) {
       svg {
         --stroke-bucket: 1.75;
       }
     }
 
-    @container (width > 44px) {
+    @container (24px < width <= 28px) {
+      svg {
+        --stroke-bucket: 1.8;
+      }
+    }
+
+    @container (28px < width <= 36px) {
       svg {
         --stroke-bucket: 2;
+      }
+    }
+
+    @container (width > 36px) {
+      svg {
+        --stroke-bucket: 2.7;
       }
     }
   }
