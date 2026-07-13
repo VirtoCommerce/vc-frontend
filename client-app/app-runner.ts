@@ -27,6 +27,7 @@ import { extractHostname, Logger } from "@/core/utilities";
 import { createI18n } from "@/i18n";
 import { init as initModuleBackInStock } from "@/modules/back-in-stock";
 import { init as initCustomerReviews } from "@/modules/customer-reviews";
+import { startFederatedModules } from "@/modules/federated/bootstrap";
 import { init as initializeGoogleAnalytics } from "@/modules/google-analytics";
 import { init as initLoyalty } from "@/modules/loyalty";
 import { init as initNews } from "@/modules/news";
@@ -37,6 +38,7 @@ import { BUILDER_IO_TRACE_MARKER, consoleIgnoredErrors } from "@/pages/matcher/b
 import { isPreviewMode as isBuilderIoPreviewMode } from "@/plugins/builder-io-preview/utils";
 import { isPreviewMode as isPageBuilderPreviewMode } from "@/plugins/builder-preview/utils";
 import { createRouter } from "@/router";
+import { applyUcpHandoffBuyer, restoreUcpHandoffCart } from "@/router/routes/ucp-handoff";
 import { useUser } from "@/shared/account";
 import ProductBlocks from "@/shared/catalog/components/product";
 import { useNotifications } from "@/shared/notification";
@@ -45,7 +47,22 @@ import { uiKit } from "@/ui-kit";
 import { getLocales as getUIKitLocales } from "@/ui-kit/utilities/getLocales";
 import App from "./App.vue";
 import type { PageContextResponseType } from "./core/api/graphql/types";
-import type { PageBuilderPluginOptionsType } from "./plugins/builder-preview/models/PageBuilderPluginOptionsType";
+
+async function getUcpHandoffUserId(): Promise<string | undefined> {
+  const ucpSession = new URL(globalThis.location.href).searchParams.get("ucp_session");
+
+  if (!ucpSession) {
+    return;
+  }
+
+  try {
+    const { buyerId } = await restoreUcpHandoffCart(ucpSession);
+    applyUcpHandoffBuyer(buyerId);
+    return buyerId;
+  } catch (error) {
+    Logger.warn("Failed to pre-restore UCP handoff session", error);
+  }
+}
 
 // eslint-disable-next-line no-restricted-exports
 export default async () => {
@@ -113,7 +130,7 @@ export default async () => {
   const domain = IS_DEVELOPMENT
     ? extractHostname(import.meta.env.APP_BACKEND_URL as string)
     : globalThis.location.hostname;
-  const userId = savedUserId.value;
+  const userId = (await getUcpHandoffUserId()) ?? savedUserId.value;
 
   try {
     const initialStore = await initializeApplication(domain);
@@ -190,7 +207,7 @@ export default async () => {
       data: { slugInfo: pageContext.slugInfo },
     });
   } catch (e) {
-    Logger.warn("Failed to seed slugInfo into Apollo cache", e as Error);
+    Logger.warn("Failed to seed slugInfo into Apollo cache", e);
   }
 
   /**
@@ -215,6 +232,10 @@ export default async () => {
   void initNews(router, i18n);
   void initLoyalty(router, i18n);
 
+  // Module Federation host: load federated plugins if APP_MODULES_FEDERATION_ENABLED is on.
+  // Awaited before app.use(router) so plugin routes exist for the first navigation.
+  const federatedModulesReady = startFederatedModules();
+
   // Plugins
   app.use(head);
   app.use(i18n);
@@ -236,7 +257,7 @@ export default async () => {
     const builderPreviewPlugin = (await import("@/plugins/builder-preview/builder-preview.plugin").catch(Logger.error))
       ?.default;
     if (builderPreviewPlugin) {
-      app.use(builderPreviewPlugin, <PageBuilderPluginOptionsType>{ router });
+      app.use(builderPreviewPlugin, { router });
     }
   }
 
@@ -249,6 +270,9 @@ export default async () => {
     }
   }
 
+  // Federated plugin routes must exist before the router is installed. Never rejects.
+  await federatedModulesReady;
+
   // router must be registered after all plugins because some of them are using router.beforeEach to protect routes or add functionality before route changes, and we want to make sure that those are registered before we start using the router
   app.use(router);
 
@@ -260,13 +284,13 @@ export default async () => {
 
   await router.isReady();
 
-  app.config.warnHandler = (msg, _, trace) => {
+  app.config.warnHandler = (message, _, traceDetails) => {
     // to remove builder.io warnings
-    if (consoleIgnoredErrors.some((err) => msg.includes(err) && trace.includes(BUILDER_IO_TRACE_MARKER))) {
+    if (consoleIgnoredErrors.some((err) => message?.includes(err) && traceDetails?.includes(BUILDER_IO_TRACE_MARKER))) {
       return;
     }
 
-    Logger.warn(msg, trace);
+    Logger.warn(message, traceDetails);
   };
 
   app.mount(appElement);
@@ -317,8 +341,12 @@ function notifyOutdatedModules(
   });
 }
 
-function getPermalink(permalink: string, getUrlWithoutPossibleLocale: (fullPath: string) => string) {
-  permalink = getUrlWithoutPossibleLocale(permalink);
-  permalink = permalink === "/" ? "/" : permalink.replace(/^\/+/, "");
-  return permalink;
+function getPermalink(permalink: string, getUrlWithoutPossibleLocale: (fullPath: string) => string): string {
+  const resolvedPermalink = getUrlWithoutPossibleLocale(permalink) ?? "";
+
+  if (!resolvedPermalink || resolvedPermalink === "/") {
+    return resolvedPermalink;
+  }
+
+  return String(resolvedPermalink).replace(/^\/+/, "");
 }

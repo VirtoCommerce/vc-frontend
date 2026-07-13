@@ -1407,7 +1407,7 @@
         },
         "content_header": {
           "name": "Imię",
-          "role": "Rola",
+          "role": "Role",
           "email": "E-mail",
           "active": "Aktywny"
         },
