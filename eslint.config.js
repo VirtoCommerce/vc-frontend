@@ -27,6 +27,8 @@ export default defineConfigWithVueTs(
     ignores: [
       "**/node_modules/",
       "dist/",
+      // Generated, self-contained @vc-frontend/core type contract (see client-app/core-api/README.md).
+      "client-app/core-api/contract/",
       ".certificates/",
       "artifacts/",
       "storybook-static/",
@@ -369,6 +371,20 @@ export default defineConfigWithVueTs(
     },
     rules: {
       "no-console": "off",
+    },
+  },
+
+  // @vc-frontend/core node CLI tooling (build-types, bump-version, create-plugin, ...):
+  // - console output is their UX, same as scripts/** above.
+  // - import/order is disabled: these scripts use CommonJS interop (createRequire + dynamic
+  //   `require(resolve(...))` that can't be static imports), and import/order misreads those
+  //   in-body require() calls as a second import group, emitting an unfixable false
+  //   "empty line between import groups" on the ESM block above them.
+  {
+    files: ["client-app/core-api/*.mjs"],
+    rules: {
+      "no-console": "off",
+      "import/order": "off",
     },
   },
 
