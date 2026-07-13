@@ -15,6 +15,23 @@
       "empty": "Aucun commercial trouvé",
       "no_results": "Aucun commercial ne correspond à votre recherche",
       "reset_search": "Réinitialiser la recherche"
+    },
+    "my_customers": {
+      "navigation": {
+        "link": "Mes clients"
+      },
+      "page": {
+        "title": "Mes clients"
+      },
+      "table": {
+        "customer": "Client",
+        "last_order": "Dernière commande",
+        "search_placeholder": "Rechercher par nom ou ID de compte",
+        "search_aria": "Rechercher des clients",
+        "empty": "Aucun client trouvé",
+        "no_results": "Aucun client ne correspond à votre recherche",
+        "reset_search": "Réinitialiser la recherche"
+      }
     }
   }
 }
