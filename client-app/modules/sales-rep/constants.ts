@@ -1,5 +1,7 @@
-export const MODULE_ID = "sales-rep";
-export const ROLE_NAME_KEY = "SalesRep.RoleName";
+export const MODULE_ID = "VirtoCommerce.SalesRep";
+// Boolean storefront setting shipped by the backend module (VirtoCommerce.SalesRep,
+// ModuleConstants.Settings.General.SalesRepEnabled, default false).
+export const ENABLED_KEY = "SalesRep.Enabled";
 export const ROUTE_NAME = "SalesReps";
 export const ROUTE_SEGMENT = "sales-reps";
 export const NAV_LINK_ID = "sales-reps";

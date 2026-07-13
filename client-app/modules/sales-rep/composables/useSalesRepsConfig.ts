@@ -1,15 +1,10 @@
-// MOCK gate — kept deliberately: the backend module (vc-module-sales-rep) exposes NO
-// storefront setting yet — its module.manifest has no <settings> section, so there is no
-// role-name value for useModuleSettings() to read (and isEnabled() is strict `value === true`,
-// which would DISABLE the module). The DATA path is real (customerSalesReps via useSalesReps);
-// only this gate stays mocked until the backend ships the setting.
-//
-// SWAP POINT (when the backend adds the manifest setting): derive enabled from the
-// role-name string —
-//   import { useModuleSettings } from "@/core/composables/useModuleSettings";
-//   import { MODULE_ID, ROLE_NAME_KEY } from "../constants";
-//   const roleName = useModuleSettings(MODULE_ID).getSettingValue(ROLE_NAME_KEY);
-//   return typeof roleName === "string" && roleName.trim().length > 0;
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
+import { ENABLED_KEY, MODULE_ID } from "../constants";
+
+// The Sales reps feature is gated by the backend module's storefront setting
+// `SalesRep.Enabled` (VirtoCommerce.SalesRep, Boolean, default false). When the module
+// isn't installed the storefront receives no settings for it, so isEnabled() returns
+// false and the page/menu link stay hidden — same result as an explicit opt-out.
 export function isSalesRepsEnabled(): boolean {
-  return true;
+  return useModuleSettings(MODULE_ID).isEnabled(ENABLED_KEY);
 }

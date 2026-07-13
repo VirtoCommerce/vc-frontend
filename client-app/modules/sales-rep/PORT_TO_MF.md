@@ -19,7 +19,7 @@ the same remap in reverse.
 | `Logger` from `@/core/utilities` (`composables/useSalesReps.ts`) | remove import; use `console.error` |
 | `MenuType` from `@/core/types` (`menu.ts`) | `MenuType` from `@vc-frontend/core` |
 | Vc components **not imported** in `pages/sales-reps.vue` (globally registered by the host) | re-add `import { VcButton, VcEmptyView, VcInput, VcTable, VcTypography, VcWidget } from "@vc-frontend/core";` — MF has no global registration |
-| `useModuleSettings` from `@/core/composables/useModuleSettings` (swap-point comment in `composables/useSalesRepsConfig.ts`) | `@vc-frontend/core` |
+| `useModuleSettings` from `@/core/composables/useModuleSettings` (`composables/useSalesRepsConfig.ts`) | `@vc-frontend/core` |
 
 ## 2. Entry point — `index.ts`
 
@@ -67,8 +67,19 @@ dropped: `package.json`, `vite.config.ts` (federation `exposes`/shared), `codege
 - Locales: the host convention ships all 13 language files (populated from `en` via
   `yarn fix-locales`). The plugin shipped `en.json` only and self-merged it. Either is fine.
 
-## 6. Enable gate — unchanged
+## 6. Enable gate
 
-`composables/useSalesRepsConfig.ts` keeps the deliberate MOCK always-on gate: the backend
-module (`vc-module-sales-rep`) still ships no storefront setting. This is identical in both
-worlds; see the swap-point comment in that file for when the backend adds the manifest setting.
+`composables/useSalesRepsConfig.ts` gates on the backend module's **storefront setting**:
+`useModuleSettings("VirtoCommerce.SalesRep").isEnabled("SalesRep.Enabled")` (Boolean, default
+false). When the module isn't installed the storefront gets no settings for it, so this
+returns false. This differs from the standalone plugin, which could not read the host's
+settings and instead used a mock always-on gate. In an MF world the remote has no direct
+access to `useModuleSettings` either, so re-MF-ifying means reverting to a facade-provided
+settings check (or the mock) — see the plugin's original `useSalesRepsConfig.ts`.
+
+## 7. GraphQL codegen registration
+
+The in-repo module is registered in `scripts/graphql-codegen/generator.ts` (`independentModules`,
+`name: "SalesRep"`, schema `/graphql/sales-rep`) so `api/graphql/types.ts` is reproducible via
+`yarn generate:graphql-types`. The standalone plugin had its own `codegen.ts` pointing at the
+same endpoint; when re-MF-ifying, restore that and remove the host generator entry.
