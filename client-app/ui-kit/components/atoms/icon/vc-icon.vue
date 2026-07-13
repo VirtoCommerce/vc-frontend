@@ -86,6 +86,10 @@ watch(
 
   @apply flex-none inline-block align-top size-[--size] leading-none fill-[--color] text-[--color];
 
+  svg {
+    @apply size-full;
+  }
+
   &--outline {
     @apply fill-none;
 
@@ -100,7 +104,7 @@ watch(
       vector-effect: non-scaling-stroke;
     }
 
-    // TODO(design): confirm stroke bucket widths (A–E)
+    // fixed stroke grid keyed to real rendered px
     @container (width <= 10px) {
       svg {
         --stroke-bucket: 1;
@@ -119,13 +123,13 @@ watch(
       }
     }
 
-    @container (24px < width <= 48px) {
+    @container (24px < width <= 44px) {
       svg {
         --stroke-bucket: 1.75;
       }
     }
 
-    @container (width > 48px) {
+    @container (width > 44px) {
       svg {
         --stroke-bucket: 2;
       }

@@ -42,7 +42,6 @@
     "postinstall": "yarn precheck && husky",
     "check-locales": "yarn precheck && vite-node scripts/check-and-show-missing-locales.ts --source en.json locales client-app/ui-kit/locales client-app/modules/**/locales",
     "fix-locales": "yarn precheck && vite-node scripts/fix-missing-locales.ts --source en.json locales client-app/ui-kit/locales client-app/modules/**/locales",
-    "normalize:icons": "svgo -f client-app/ui-kit/icons/outline --config svgo.config.mjs",
     "check:icon-parity": "node scripts/check-icon-parity.mjs"
   },
   "dependencies": {
@@ -152,7 +151,6 @@
     "storybook": "9.1.20",
     "storybook-addon-tag-badges": "^3.1.0",
     "storybook-vue3-router": "^7.0.0",
-    "svgo": "^4.0.1",
     "tailwindcss": "^3.4.19",
     "typescript": "5.9.3",
     "typescript-eslint": "8.62.1",

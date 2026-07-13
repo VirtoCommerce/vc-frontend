@@ -120,14 +120,27 @@ export const Outline: StoryType = {
 export const StrokeBuckets: StoryType = {
   render: () => ({
     components: { VcIcon },
-    setup: () => ({ sizes: ["xxs", "xs", "sm", "md", "lg", "xl", "xxl"] }),
+    setup: () => ({
+      sizes: [12, 16, 20, 24, 32, 40, 48, 64],
+      icons: ["credit-card", "bell", "settings", "heart", "search"],
+    }),
     template: `
-      <div class="flex items-end gap-4">
-        <div v-for="s in sizes" :key="s" class="text-center">
-          <VcIcon name="credit-card" :size="s" />
-          <div class="text-xs mt-1">{{ s }}</div>
-        </div>
-      </div>
+      <table class="border-collapse">
+        <thead>
+          <tr>
+            <th class="text-xs font-mono text-start p-2"></th>
+            <th v-for="px in sizes" :key="px" class="text-xs font-mono p-2">{{ px }}px</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="icon in icons" :key="icon">
+            <td class="text-xs font-mono text-start p-2">{{ icon }}</td>
+            <td v-for="px in sizes" :key="px" class="p-2 text-center">
+              <VcIcon :name="icon" :size="px" />
+            </td>
+          </tr>
+        </tbody>
+      </table>
     `,
   }),
 };
@@ -135,14 +148,38 @@ export const StrokeBuckets: StoryType = {
 export const StrokeWidths: StoryType = {
   render: () => ({
     components: { VcIcon },
-    setup: () => ({ widths: [1, 1.5, 2, 2.5, 3] }),
+    setup: () => ({
+      widths: [0.75, 1, 1.25, 1.5, 1.75, 2, 2.5],
+      icons: [
+        "credit-card",
+        "calendar",
+        "user",
+        "bell",
+        "heart",
+        "settings",
+        "search",
+        "shopping-cart",
+        "star",
+        "mail",
+      ],
+    }),
     template: `
-      <div class="flex items-end gap-6">
-        <div v-for="w in widths" :key="w" class="text-center">
-          <VcIcon name="credit-card" size="xxl" :strokeWidth="w" />
-          <div class="text-xs mt-1">strokeWidth: {{ w }}</div>
-        </div>
-      </div>
+      <table class="border-collapse">
+        <thead>
+          <tr>
+            <th class="text-xs font-mono text-start p-2"></th>
+            <th v-for="w in widths" :key="w" class="text-xs font-mono p-2">{{ w }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="icon in icons" :key="icon">
+            <td class="text-xs font-mono text-start p-2">{{ icon }}</td>
+            <td v-for="w in widths" :key="w" class="p-2 text-center">
+              <VcIcon :name="icon" :size="40" :strokeWidth="w" />
+            </td>
+          </tr>
+        </tbody>
+      </table>
     `,
   }),
 };
