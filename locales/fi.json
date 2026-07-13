@@ -1229,6 +1229,7 @@
         "order_number_label": "Tilausnumero",
         "purchase_number_label": "Ostotilaus",
         "buyer_name_label": "Ostajan nimi",
+        "payment_type_label": "Maksutapa",
         "status_label": "@:common.labels.status",
         "invoice_label": "Lasku",
         "date_label": "@:common.labels.date",
@@ -1406,7 +1407,7 @@
         },
         "content_header": {
           "name": "Nimi",
-          "role": "Rooli",
+          "role": "Roolit",
           "email": "Sähköposti",
           "active": "Aktiivinen"
         },

@@ -1229,6 +1229,7 @@
         "order_number_label": "Numéro de commande",
         "purchase_number_label": "Numéro de commande d'achat",
         "buyer_name_label": "Nom de l'acheteur",
+        "payment_type_label": "Mode de paiement",
         "status_label": "@:common.labels.status",
         "invoice_label": "Facture",
         "date_label": "@:common.labels.date",
@@ -1406,7 +1407,7 @@
         },
         "content_header": {
           "name": "Nom",
-          "role": "Rôle",
+          "role": "Rôles",
           "email": "E-mail",
           "active": "Actif"
         },

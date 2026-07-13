@@ -305,7 +305,7 @@
         },
         {
           "Id": "VirtoCommerce.ProfileExperienceApiModule",
-          "Version": "3.1009.0"
+          "Version": "3.1011.0"
         },
         {
           "Id": "VirtoCommerce.CustomerReviews",
@@ -329,7 +329,7 @@
         },
         {
           "Id": "VirtoCommerce.Customer",
-          "Version": "3.1013.0"
+          "Version": "3.1014.0"
         },
         {
           "Id": "VirtoCommerce.Catalog",
