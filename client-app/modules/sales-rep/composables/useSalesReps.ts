@@ -1,5 +1,6 @@
 import { useQuery } from "@vue/apollo-composable";
 import { computed, ref } from "vue";
+import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { CustomerSalesRepsDocument } from "../api/graphql/types";
 import type { SalesRepType, SalesRepSortType } from "../types";
@@ -14,6 +15,9 @@ export function useSalesReps() {
   const page = ref(1);
 
   const variables = computed(() => ({
+    // A Sales Rep's account is store-bound; scope to the current store so reps from another
+    // store don't leak in (server defaults to all stores when omitted).
+    storeId: globals.storeId,
     first: PAGE_SIZE,
     // xAPI connections accept the offset as the cursor (host-wide convention).
     after: String((page.value - 1) * PAGE_SIZE),

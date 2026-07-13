@@ -25,14 +25,16 @@ vi.mock("@vue/apollo-composable", () => ({
   useQuery: queryMock.useQuery,
 }));
 
+vi.mock("@/core/globals", () => ({ globals: { storeId: "test-store" } }));
+
 function repsResult(totalCount: number, items: NonNullable<CustomerSalesRepsQuery["customerSalesReps"]>["items"]) {
   return { customerSalesReps: { totalCount, items } };
 }
 
 /** The reactive `variables` computed the composable handed to useQuery. */
-function passedVariables(): { first: number; after: string; keyword: string; sort: string } {
+function passedVariables(): { storeId?: string; first: number; after: string; keyword: string; sort: string } {
   const variables = lastCallArgs()[1] as
-    { value: { first: number; after: string; keyword: string; sort: string } } | undefined;
+    { value: { storeId?: string; first: number; after: string; keyword: string; sort: string } } | undefined;
   if (!variables) {
     throw new Error("useQuery was not called with variables");
   }
@@ -50,7 +52,14 @@ describe("useSalesReps", () => {
   it("queries server-side with offset-as-cursor paging, applied keyword, and column:direction sort", () => {
     const { page, sort, keyword } = useSalesReps();
 
-    expect(passedVariables()).toEqual({ first: PAGE_SIZE, after: "0", keyword: "", sort: "name:asc" });
+    // Scoped to the current store (globals.storeId) so reps from another store don't leak in.
+    expect(passedVariables()).toEqual({
+      storeId: "test-store",
+      first: PAGE_SIZE,
+      after: "0",
+      keyword: "",
+      sort: "name:asc",
+    });
 
     page.value = 3;
     expect(passedVariables().after).toBe(String((3 - 1) * PAGE_SIZE));
