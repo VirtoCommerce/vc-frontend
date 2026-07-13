@@ -81,40 +81,16 @@ describe("getReturnUrlValue", () => {
 });
 
 describe("extractHostname", () => {
-  it("should extract hostname from URL with protocol", () => {
-    const url = "http://www.example.com/path?query=string";
+  it.each([
+    { case: "URL with protocol", url: "http://www.example.com/path?query=string", expected: "www.example.com" },
+    { case: "URL without protocol", url: "www.example.com/path?query=string", expected: "www.example.com" },
+    { case: "URL with port", url: "https://example.com:8080/path", expected: "example.com" },
+    { case: "URL with subdomain", url: "https://subdomain.example.com", expected: "subdomain.example.com" },
+    { case: "URL with query and hash", url: "http://example.com/path?query=string#hash", expected: "example.com" },
+    { case: "string without slashes", url: "localhost:3000", expected: "localhost" },
+  ])("should extract hostname from $case ($url -> $expected)", ({ url, expected }) => {
     const result = extractHostname(url);
-    expect(result).toBe("www.example.com");
-  });
-
-  it("should extract hostname from URL without protocol", () => {
-    const url = "www.example.com/path?query=string";
-    const result = extractHostname(url);
-    expect(result).toBe("www.example.com");
-  });
-
-  it("should extract hostname from URL with port", () => {
-    const url = "https://example.com:8080/path";
-    const result = extractHostname(url);
-    expect(result).toBe("example.com");
-  });
-
-  it("should extract hostname from URL with subdomain", () => {
-    const url = "https://subdomain.example.com";
-    const result = extractHostname(url);
-    expect(result).toBe("subdomain.example.com");
-  });
-
-  it("should extract hostname from URL with query and hash", () => {
-    const url = "http://example.com/path?query=string#hash";
-    const result = extractHostname(url);
-    expect(result).toBe("example.com");
-  });
-
-  it("should return the input string if it does not contain slashes", () => {
-    const url = "localhost:3000";
-    const result = extractHostname(url);
-    expect(result).toBe("localhost");
+    expect(result).toBe(expected);
   });
 });
 
@@ -139,18 +115,19 @@ describe("truncate", () => {
 });
 
 describe("appendSuffixToFilename", () => {
-  it("should append suffix to filename before extension", () => {
-    const filename = "document.pdf";
-    const suffix = "_v2";
+  it.each([
+    { case: "filename with extension", filename: "document.pdf", suffix: "_v2", expected: "document_v2.pdf" },
+    { case: "filename without extension", filename: "document", suffix: "_v2", expected: "document_v2" },
+    {
+      case: "filename with multiple dots",
+      filename: "archive.tar.gz",
+      suffix: "_backup",
+      expected: "archive.tar_backup.gz",
+    },
+    { case: "empty filename", filename: "", suffix: "_v2", expected: "" },
+  ])("should append suffix before extension for $case ($filename -> $expected)", ({ filename, suffix, expected }) => {
     const result = appendSuffixToFilename(filename, suffix);
-    expect(result).toBe("document_v2.pdf");
-  });
-
-  it("should append suffix to filename without extension", () => {
-    const filename = "document";
-    const suffix = "_v2";
-    const result = appendSuffixToFilename(filename, suffix);
-    expect(result).toBe("document_v2");
+    expect(result).toBe(expected);
   });
 
   it("should not append suffix if checkIfSuffixExists is true and suffix already exists", () => {
@@ -165,20 +142,6 @@ describe("appendSuffixToFilename", () => {
     const suffix = "_v2";
     const result = appendSuffixToFilename(filename, suffix, false);
     expect(result).toBe("document_v2_v2.pdf");
-  });
-
-  it("should handle filenames with multiple dots", () => {
-    const filename = "archive.tar.gz";
-    const suffix = "_backup";
-    const result = appendSuffixToFilename(filename, suffix);
-    expect(result).toBe("archive.tar_backup.gz");
-  });
-
-  it("should return the original filename if filename is empty", () => {
-    const filename = "";
-    const suffix = "_v2";
-    const result = appendSuffixToFilename(filename, suffix);
-    expect(result).toBe("");
   });
 });
 
@@ -240,54 +203,31 @@ describe("asyncForEach", () => {
 });
 
 describe("extractNumberFromString", () => {
-  it("should extract the first number from string", () => {
-    const str = "abc123def456";
+  it.each([
+    { case: "the first number from string", str: "abc123def456", expected: 123 },
+    { case: "0 if no number is found", str: "abcdef", expected: 0 },
+    { case: "number at the start of string", str: "123abc", expected: 123 },
+    { case: "number at the end of string", str: "abc456", expected: 456 },
+  ])("should extract $case ($str -> $expected)", ({ str, expected }) => {
     const result = extractNumberFromString(str);
-    expect(result).toBe(123);
-  });
-
-  it("should return 0 if no number is found", () => {
-    const str = "abcdef";
-    const result = extractNumberFromString(str);
-    expect(result).toBe(0);
-  });
-
-  it("should extract number at the start of string", () => {
-    const str = "123abc";
-    const result = extractNumberFromString(str);
-    expect(result).toBe(123);
-  });
-
-  it("should extract number at the end of string", () => {
-    const str = "abc456";
-    const result = extractNumberFromString(str);
-    expect(result).toBe(456);
+    expect(result).toBe(expected);
   });
 });
 
 describe("replaceXFromBeginning", () => {
-  it("should replace leading Xs with default replacement", () => {
-    const input = "XXXX1234";
+  it.each([
+    { case: "replace leading Xs", input: "XXXX1234", expected: "•••• 1234" },
+    { case: "not replace non-leading Xs", input: "12XX34", expected: "12XX34" },
+    { case: "return original string if no leading Xs", input: "1234", expected: "1234" },
+  ])("should $case with default replacement ($input -> $expected)", ({ input, expected }) => {
     const result = replaceXFromBeginning(input);
-    expect(result).toBe("•••• 1234");
+    expect(result).toBe(expected);
   });
 
   it("should replace leading Xs with custom replacement", () => {
     const input = "XX-XX-1234";
     const result = replaceXFromBeginning(input, "**");
     expect(result).toBe("**-XX-1234");
-  });
-
-  it("should not replace non-leading Xs", () => {
-    const input = "12XX34";
-    const result = replaceXFromBeginning(input);
-    expect(result).toBe("12XX34");
-  });
-
-  it("should return original string if no leading Xs", () => {
-    const input = "1234";
-    const result = replaceXFromBeginning(input);
-    expect(result).toBe("1234");
   });
 });
 
