@@ -39,6 +39,7 @@ import { BUILDER_IO_TRACE_MARKER, consoleIgnoredErrors } from "@/pages/matcher/b
 import { isPreviewMode as isBuilderIoPreviewMode } from "@/plugins/builder-io-preview/utils";
 import { isPreviewMode as isPageBuilderPreviewMode } from "@/plugins/builder-preview/utils";
 import { createRouter } from "@/router";
+import { applyUcpHandoffBuyer, restoreUcpHandoffCart } from "@/router/routes/ucp-handoff";
 import { useUser } from "@/shared/account";
 import ProductBlocks from "@/shared/catalog/components/product";
 import { useNotifications } from "@/shared/notification";
@@ -47,6 +48,22 @@ import { uiKit } from "@/ui-kit";
 import { getLocales as getUIKitLocales } from "@/ui-kit/utilities/getLocales";
 import App from "./App.vue";
 import type { PageContextResponseType } from "./core/api/graphql/types";
+
+async function getUcpHandoffUserId(): Promise<string | undefined> {
+  const ucpSession = new URL(globalThis.location.href).searchParams.get("ucp_session");
+
+  if (!ucpSession) {
+    return;
+  }
+
+  try {
+    const { buyerId } = await restoreUcpHandoffCart(ucpSession);
+    applyUcpHandoffBuyer(buyerId);
+    return buyerId;
+  } catch (error) {
+    Logger.warn("Failed to pre-restore UCP handoff session", error);
+  }
+}
 
 // eslint-disable-next-line no-restricted-exports
 export default async () => {
@@ -114,7 +131,7 @@ export default async () => {
   const domain = IS_DEVELOPMENT
     ? extractHostname(import.meta.env.APP_BACKEND_URL as string)
     : globalThis.location.hostname;
-  const userId = savedUserId.value;
+  const userId = (await getUcpHandoffUserId()) ?? savedUserId.value;
 
   try {
     const initialStore = await initializeApplication(domain);
@@ -269,13 +286,13 @@ export default async () => {
 
   await router.isReady();
 
-  app.config.warnHandler = (msg, _, trace) => {
+  app.config.warnHandler = (message, _, traceDetails) => {
     // to remove builder.io warnings
-    if (consoleIgnoredErrors.some((err) => msg?.includes(err) && trace?.includes(BUILDER_IO_TRACE_MARKER))) {
+    if (consoleIgnoredErrors.some((err) => message?.includes(err) && traceDetails?.includes(BUILDER_IO_TRACE_MARKER))) {
       return;
     }
 
-    Logger.warn(msg, trace);
+    Logger.warn(message, traceDetails);
   };
 
   app.mount(appElement);
@@ -326,7 +343,12 @@ function notifyOutdatedModules(
   });
 }
 
-function getPermalink(permalink: string, getUrlWithoutPossibleLocale: (fullPath: string) => string) {
-  const withoutLocale = getUrlWithoutPossibleLocale(permalink);
-  return withoutLocale === "/" ? "/" : (withoutLocale?.replace(/^\/+/, "") ?? "");
+function getPermalink(permalink: string, getUrlWithoutPossibleLocale: (fullPath: string) => string): string {
+  const resolvedPermalink = getUrlWithoutPossibleLocale(permalink) ?? "";
+
+  if (!resolvedPermalink || resolvedPermalink === "/") {
+    return resolvedPermalink;
+  }
+
+  return String(resolvedPermalink).replace(/^\/+/, "");
 }
