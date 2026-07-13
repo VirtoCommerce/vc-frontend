@@ -61,14 +61,14 @@ jobs:
           fetch-depth: 0
 
       - name: Get Image Version
-        uses: VirtoCommerce/vc-github-actions/get-image-version@master
+        uses: VirtoCommerce/.github/actions/get-image-version@VCST-5414
         with:
           projectType: theme
         id: image
 
       - name: Get changelog
         id: changelog
-        uses: VirtoCommerce/vc-github-actions/changelog-generator@master
+        uses: VirtoCommerce/.github/actions/changelog-generator@VCST-5414
 
       - name: Set release VERSION_SUFFIX
         run: |
@@ -144,14 +144,14 @@ jobs:
       - name: Publish to Blob
         if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master')}}
         id: blobRelease
-        uses: VirtoCommerce/vc-github-actions/publish-blob-release@master
+        uses: VirtoCommerce/.github/actions/publish-blob-release@VCST-5414
         with:
           blobSAS: ${{ secrets.BLOB_TOKEN }}
           blobUrl: ${{ vars.BLOB_URL }}
 
       - name: Add link to PR
         if: ${{ github.event_name == 'pull_request' }}
-        uses: VirtoCommerce/vc-github-actions/publish-artifact-link@master
+        uses: VirtoCommerce/.github/actions/publish-artifact-link@VCST-5414
         with:
           artifactUrl: ${{ steps.blobRelease.outputs.packageUrl }}
           repoOrg: ${{ github.repository_owner }}
@@ -190,7 +190,7 @@ jobs:
           fi
 
       - name: Parse Jira Keys from All Commits
-        uses: VirtoCommerce/vc-github-actions/get-jira-keys@master
+        uses: VirtoCommerce/.github/actions/get-jira-keys@VCST-5414
         if: always()
         id: jira_keys
         with:
@@ -225,7 +225,7 @@ jobs:
 
       - name: Update Jira Tasks with Release Number
         if: ${{ github.ref == 'refs/heads/master' }}
-        uses: VirtoCommerce/vc-github-actions/update-jira-tasks-with-release-number@master
+        uses: VirtoCommerce/.github/actions/update-jira-tasks-with-release-number@VCST-5414
         with:
           ghRepository: ${{ github.repository }}
           ghReleaseTag: ${{ steps.image.outputs.prefix }}
@@ -254,7 +254,7 @@ jobs:
     needs: ci
     if: ${{ ((github.ref == 'refs/heads/dev') && (github.event_name == 'push')) ||
         (github.event_name == 'workflow_dispatch') || (github.base_ref == 'dev') && (github.event_name == 'pull_request') }}
-    uses: VirtoCommerce/.github/.github/workflows/pytest-tests.yml@v3.800.39
+    uses: VirtoCommerce/.github/.github/workflows/pytest-tests.yml@VCST-5414
     with:
       installModules: 'false'
       installCustomModule: 'false'
