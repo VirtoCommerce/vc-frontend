@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="sales-reps">
     <!-- Title — an <h1> above the card, matching the Company members page. -->
     <VcTypography class="sales-reps__title" tag="h1">
       {{ t("sales_rep.page.title") }}
@@ -127,43 +127,45 @@ function changePage(newPage: number): void {
 }
 </script>
 
-<style scoped>
-/* Tailwind via @apply inside <style scoped>: Vue stamps a data-v-* attribute onto these
-   elements (and forwards it onto the root of the host components we pass a class to, and
-   onto our slotted <tr>/<div> rendered in this component's scope), so the styles apply
-   ONLY here and never leak into host pages. Plugin emits no global utility layer. */
+<style lang="scss">
+/* BEM under a single `.sales-reps` block root, so every rule is namespaced and can't leak
+   into host pages — no `scoped` needed. Utilities come in via `@apply` (Tailwind), which
+   also keeps the module self-contained if it's re-exported as an MF remote with no global
+   utility layer. */
 /* No vertical margins here: the account shell wraps the page root in
    `flex flex-col gap-y-5`, so it owns the spacing between title, search and table —
    exactly as the Company members page relies on. Adding margins would double it. */
-.sales-reps__title {
-  @apply [word-break:break-word];
-}
+.sales-reps {
+  &__title {
+    @apply [word-break:break-word];
+  }
 
-.sales-reps__search {
-  @apply flex;
-}
+  &__search {
+    @apply flex;
+  }
 
-.sales-reps__search-input {
-  @apply w-full;
-}
+  &__search-input {
+    @apply w-full;
+  }
 
-.sales-reps__row {
-  @apply even:bg-neutral-50;
-}
+  &__row {
+    @apply even:bg-neutral-50;
+  }
 
-.sales-reps__cell {
-  @apply px-4 py-2.5;
-}
+  &__cell {
+    @apply px-4 py-2.5;
 
-.sales-reps__cell--email {
-  @apply w-1/3 max-w-52 truncate;
-}
+    &--email {
+      @apply w-1/3 max-w-52 truncate;
+    }
+  }
 
-.sales-reps__mobile-item {
-  @apply flex flex-col gap-1 border-b px-5 py-4.5 [word-break:break-word];
-}
+  &__mobile-item {
+    @apply flex flex-col gap-1 border-b px-5 py-4.5 [word-break:break-word];
+  }
 
-.sales-reps__mobile-sub {
-  @apply text-sm;
+  &__mobile-sub {
+    @apply text-sm;
+  }
 }
 </style>
