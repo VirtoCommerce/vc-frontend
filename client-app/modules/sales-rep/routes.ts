@@ -11,7 +11,6 @@ export const salesRepsRoute: RouteRecordRaw = {
   component: SalesRepsPage,
 };
 
-// Relative path -> mounts under the "Company" parent (/company/my-customers).
 export const myCustomersRoute: RouteRecordRaw = {
   path: MY_CUSTOMERS_ROUTE_SEGMENT,
   name: MY_CUSTOMERS_ROUTE_NAME,

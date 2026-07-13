@@ -19,9 +19,8 @@ const link = {
   priority: NAV_PRIORITY,
 };
 
-// TEMPORARY: the My customers page belongs in the future "Sales Rep Hub" left-rail widget
-// (VCST-5469 left-rail task). Until that lands, expose it as a Corporate link so the page is
-// reachable — remove this entry when the hub widget replaces it.
+// TEMPORARY: exposed as a Corporate link until the "Sales Rep Hub" left-rail widget lands
+// (VCST-5469 left-rail task) — remove this entry when the hub replaces it.
 const myCustomersLink = {
   id: MY_CUSTOMERS_NAV_LINK_ID,
   title: "sales_rep.my_customers.navigation.link",

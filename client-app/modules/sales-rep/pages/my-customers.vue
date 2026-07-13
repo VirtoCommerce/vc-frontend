@@ -1,11 +1,9 @@
 <template>
   <div class="my-customers">
-    <!-- Title — an <h1> above the card, matching the Sales reps / Company members pages. -->
     <VcTypography class="my-customers__title" tag="h1">
       {{ t("sales_rep.my_customers.page.title") }}
     </VcTypography>
 
-    <!-- Search row (own row above the card, like the Sales reps page). -->
     <div class="my-customers__search">
       <VcInput
         v-model="localKeyword"
@@ -29,8 +27,6 @@
       </VcInput>
     </div>
 
-    <!-- Empty view — outside the card, shown instead of it. Distinguishes "no customers at all"
-         from "your search matched nothing" (+ reset). -->
     <VcEmptyView
       v-if="!items.length && !loading"
       :text="keyword ? t('sales_rep.my_customers.table.no_results') : t('sales_rep.my_customers.table.empty')"
@@ -44,7 +40,6 @@
       </template>
     </VcEmptyView>
 
-    <!-- Content block -->
     <VcWidget v-else size="lg">
       <template #default-container>
         <VcTable
@@ -113,19 +108,15 @@ import type { SalesRepCustomerSortColumnType } from "../types";
 const { t } = useI18n();
 const { loading, keyword, sort, page, pages, items } = useSalesRepCustomers();
 
-// Local (unapplied) search term; committed to the query on Enter or the search button,
-// matching the Sales reps page interaction.
+// Unapplied search term; committed to the query on Enter or the search button.
 const localKeyword = ref("");
 
-// Only Customer (name) is sortable: the backend's salesRepCustomers sort is name-backed
-// (same limit as the Sales reps table). Last order isn't a sortable server field.
+// Only Customer (name) is sortable — the server sort is name-backed.
 const columns = computed(() => [
   { id: "name", title: t("sales_rep.my_customers.table.customer"), sortable: true },
   { id: "lastOrder", title: t("sales_rep.my_customers.table.last_order") },
 ]);
 
-// The order number, prefixed with "#" (e.g. "#21580221"). Kept in one place so desktop and
-// mobile stay in sync.
 function orderLabel(number: string): string {
   return `#${number}`;
 }
@@ -154,7 +145,6 @@ function changePage(newPage: number): void {
 
 <style lang="scss">
 // `@apply` keeps the module self-contained as an MF remote (no global utility layer). See PORT_TO_MF.md.
-// No vertical margins: the account shell wraps the page root in `flex flex-col gap-y-5` and owns the spacing.
 .my-customers {
   &__title {
     @apply [word-break:break-word];

@@ -10,10 +10,9 @@ export const NAV_LINK_ID = "sales-reps";
 // an explicit value keeps us last even if the host later adds desktop priorities.
 export const NAV_PRIORITY = 40;
 
-// "My customers" page (VCST-5469). Reachable at /company/my-customers.
+// "My customers" page (VCST-5469).
 export const MY_CUSTOMERS_ROUTE_NAME = "SalesRepMyCustomers";
 export const MY_CUSTOMERS_ROUTE_SEGMENT = "my-customers";
 export const MY_CUSTOMERS_NAV_LINK_ID = "sales-rep-my-customers";
-// Placed just after the Sales reps link; both are temporary Corporate entries until the
-// Sales Rep Hub left-rail widget lands (VCST-5469 left-rail task).
+// Just after the Sales reps link (40); both are temporary — see menu.ts.
 export const MY_CUSTOMERS_NAV_PRIORITY = 41;
