@@ -128,13 +128,8 @@ function changePage(newPage: number): void {
 </script>
 
 <style lang="scss">
-/* BEM under a single `.sales-reps` block root, so every rule is namespaced and can't leak
-   into host pages — no `scoped` needed. Utilities come in via `@apply` (Tailwind), which
-   also keeps the module self-contained if it's re-exported as an MF remote with no global
-   utility layer. */
-/* No vertical margins here: the account shell wraps the page root in
-   `flex flex-col gap-y-5`, so it owns the spacing between title, search and table —
-   exactly as the Company members page relies on. Adding margins would double it. */
+// `@apply` keeps the module self-contained as an MF remote (no global utility layer). See PORT_TO_MF.md.
+// No vertical margins: the account shell wraps the page root in `flex flex-col gap-y-5` and owns the spacing.
 .sales-reps {
   &__title {
     @apply [word-break:break-word];
