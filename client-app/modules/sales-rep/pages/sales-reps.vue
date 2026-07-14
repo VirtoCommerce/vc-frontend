@@ -60,11 +60,11 @@
         >
           <template #desktop-body>
             <tr v-for="rep in items" :key="rep.id" class="sales-reps__row">
-              <td class="sales-reps__cell">{{ rep.name }}</td>
+              <td class="sales-reps__cell" :title="rep.name">{{ rep.name }}</td>
 
-              <td class="sales-reps__cell sales-reps__cell--email" :title="rep.email">{{ rep.email }}</td>
+              <td class="sales-reps__cell" :title="rep.email">{{ rep.email }}</td>
 
-              <td class="sales-reps__cell">{{ rep.phone }}</td>
+              <td class="sales-reps__cell" :title="rep.phone">{{ rep.phone }}</td>
             </tr>
           </template>
 
@@ -148,11 +148,9 @@ function changePage(newPage: number): void {
   }
 
   &__cell {
-    @apply px-4 py-2.5;
-
-    &--email {
-      @apply w-1/3 max-w-52 truncate;
-    }
+    // Equal thirds, each capped and truncated so a long value (e.g. fullName)
+    // ellipsizes with a `:title` tooltip instead of overflowing and pushing the other cells.
+    @apply w-1/3 max-w-52 truncate px-4 py-2.5;
   }
 
   &__mobile-item {
