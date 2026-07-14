@@ -309,6 +309,8 @@ export type CartConfigurationItemType = {
   salePrice: MoneyType;
   /** Configuration item section ID */
   sectionId: Scalars['String']['output'];
+  /** Configuration item section name */
+  sectionName?: Maybe<Scalars['String']['output']>;
   /** Whether the configuration item is selected for checkout */
   selectedForCheckout: Scalars['Boolean']['output'];
   /** Configuration item SKU */
@@ -4337,6 +4339,8 @@ export type OrderConfigurationItemType = {
   salePrice: MoneyType;
   /** Configuration item section ID */
   sectionId: Scalars['String']['output'];
+  /** Configuration item section name */
+  sectionName?: Maybe<Scalars['String']['output']>;
   /** Configuration item SKU */
   sku?: Maybe<Scalars['String']['output']>;
   /** Configuration item type. Possible values: 'Product', 'Variation', 'Text', 'File' */
