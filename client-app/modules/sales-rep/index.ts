@@ -1,6 +1,7 @@
-import { computed } from "vue";
+import { computed, defineAsyncComponent } from "vue";
 import { useNavigations } from "@/core/composables/useNavigations";
 import { useUser } from "@/shared/account/composables/useUser";
+import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import { loadModuleLocale } from "../utils";
 import { isSalesRepsEnabled } from "./composables/useSalesRepsConfig";
 import {
@@ -26,6 +27,15 @@ export function init(router: Router, i18n: I18n) {
 
   const { mergeMenuSchema, registerAccountSection } = useNavigations();
   const { checkPermissions } = useUser();
+
+  // Custom My customers links that show the total-customer count badge (desktop + mobile).
+  const { register } = useExtensionRegistry();
+  register("accountMenu", MY_CUSTOMERS_NAV_LINK_ID, {
+    component: defineAsyncComponent(() => import("./components/link-my-customers.vue")),
+  });
+  register("mobileMenu", MY_CUSTOMERS_NAV_LINK_ID, {
+    component: defineAsyncComponent(() => import("./components/link-my-customers-mobile.vue")),
+  });
 
   // "Sales reps" contact-info link for buyers (VCST-5409) — stays in the Corporate widget.
   mergeMenuSchema(salesRepMenuSchema);
