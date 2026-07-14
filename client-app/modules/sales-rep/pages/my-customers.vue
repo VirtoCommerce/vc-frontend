@@ -45,37 +45,14 @@
         <VcTable
           :loading="loading"
           :items="items"
-          :columns="columns"
           :sort="sort"
           :pages="pages"
           :page="page"
+          :row-class="rowClass"
           mobile-breakpoint="lg"
           @header-click="applySorting"
           @page-changed="changePage"
         >
-          <template #desktop-body>
-            <tr v-for="customer in items" :key="customer.organizationId" class="my-customers__row">
-              <td class="my-customers__cell">{{ customer.organizationName }}</td>
-
-              <td class="my-customers__cell">
-                <template v-if="customer.lastOrder">
-                  <div>{{ $d(customer.lastOrder.createdDate) }}</div>
-
-                  <VcLink
-                    class="my-customers__order"
-                    :to="{ name: 'OrderDetails', params: { orderId: customer.lastOrder.id } }"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {{ orderLabel(customer.lastOrder.number) }}
-                  </VcLink>
-                </template>
-
-                <template v-else>—</template>
-              </td>
-            </tr>
-          </template>
-
           <template #mobile-item="{ item }">
             <div class="my-customers__mobile-item">
               <b>{{ item.organizationName }}</b>
@@ -93,6 +70,39 @@
               </span>
             </div>
           </template>
+
+          <!-- Only Customer (name) is sortable — the server sort is name-backed. -->
+          <VcTableColumn
+            id="name"
+            v-slot="{ item }"
+            :title="t('sales_rep.my_customers.table.customer')"
+            sortable
+            class="align-top"
+          >
+            {{ item.organizationName }}
+          </VcTableColumn>
+
+          <VcTableColumn
+            id="lastOrder"
+            v-slot="{ item }"
+            :title="t('sales_rep.my_customers.table.last_order')"
+            class="align-top"
+          >
+            <template v-if="item.lastOrder">
+              <div>{{ $d(item.lastOrder.createdDate) }}</div>
+
+              <VcLink
+                class="my-customers__order"
+                :to="{ name: 'OrderDetails', params: { orderId: item.lastOrder.id } }"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {{ orderLabel(item.lastOrder.number) }}
+              </VcLink>
+            </template>
+
+            <template v-else>—</template>
+          </VcTableColumn>
         </VcTable>
       </template>
     </VcWidget>
@@ -100,10 +110,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useSalesRepCustomers } from "../composables/useSalesRepCustomers";
-import type { SalesRepCustomerSortColumnType } from "../types";
+import type { SalesRepCustomerSortColumnType, SalesRepCustomerType } from "../types";
 
 const { t } = useI18n();
 const { loading, keyword, sort, page, pages, items } = useSalesRepCustomers();
@@ -111,14 +121,12 @@ const { loading, keyword, sort, page, pages, items } = useSalesRepCustomers();
 // Unapplied search term; committed to the query on Enter or the search button.
 const localKeyword = ref("");
 
-// Only Customer (name) is sortable — the server sort is name-backed.
-const columns = computed(() => [
-  { id: "name", title: t("sales_rep.my_customers.table.customer"), sortable: true },
-  { id: "lastOrder", title: t("sales_rep.my_customers.table.last_order") },
-]);
-
 function orderLabel(number: string): string {
   return `#${number}`;
+}
+
+function rowClass(_item: SalesRepCustomerType, index: number): string {
+  return index % 2 === 1 ? "bg-neutral-50" : "";
 }
 
 function applyKeyword(): void {
@@ -156,14 +164,6 @@ function changePage(newPage: number): void {
 
   &__search-input {
     @apply w-full;
-  }
-
-  &__row {
-    @apply even:bg-neutral-50;
-  }
-
-  &__cell {
-    @apply px-4 py-2.5 align-top;
   }
 
   // Muted, small order number under the date — matches the design; hover hints it's clickable.
