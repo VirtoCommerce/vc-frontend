@@ -32,6 +32,9 @@
         "no_results": "Yksikään asiakas ei vastaa hakuasi",
         "reset_search": "Tyhjennä haku"
       }
+    },
+    "hub": {
+      "title": "Myyntiedustajan keskus"
     }
   }
 }

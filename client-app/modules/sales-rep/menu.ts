@@ -1,11 +1,4 @@
-import {
-  MY_CUSTOMERS_NAV_LINK_ID,
-  MY_CUSTOMERS_NAV_PRIORITY,
-  MY_CUSTOMERS_ROUTE_NAME,
-  NAV_PRIORITY,
-  NAV_LINK_ID,
-  ROUTE_NAME,
-} from "./constants";
+import { NAV_PRIORITY, NAV_LINK_ID, ROUTE_NAME } from "./constants";
 import type { MenuType } from "@/core/types";
 import type { DeepPartial } from "utility-types";
 
@@ -19,19 +12,9 @@ const link = {
   priority: NAV_PRIORITY,
 };
 
-// TEMPORARY: exposed as a Corporate link until the "Sales Rep Hub" left-rail widget lands
-// (VCST-5469 left-rail task) — remove this entry when the hub replaces it.
-const myCustomersLink = {
-  id: MY_CUSTOMERS_NAV_LINK_ID,
-  title: "sales_rep.my_customers.navigation.link",
-  icon: "users",
-  route: { name: MY_CUSTOMERS_ROUTE_NAME },
-  priority: MY_CUSTOMERS_NAV_PRIORITY,
-};
-
 export const salesRepMenuSchema: DeepPartial<MenuType> = {
   header: {
-    desktop: { corporate: { children: [{ ...link }, { ...myCustomersLink }] } },
-    mobile: { corporate: { children: [{ ...link }, { ...myCustomersLink }] } },
+    desktop: { corporate: { children: [{ ...link }] } },
+    mobile: { corporate: { children: [{ ...link }] } },
   },
 };

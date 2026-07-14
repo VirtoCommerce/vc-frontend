@@ -32,6 +32,9 @@
         "no_results": "Nessun cliente corrisponde alla tua ricerca",
         "reset_search": "Reimposta ricerca"
       }
+    },
+    "hub": {
+      "title": "Hub rappresentante vendite"
     }
   }
 }

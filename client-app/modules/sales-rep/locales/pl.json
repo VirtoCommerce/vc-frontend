@@ -32,6 +32,9 @@
         "no_results": "Żaden klient nie pasuje do wyszukiwania",
         "reset_search": "Resetuj wyszukiwanie"
       }
+    },
+    "hub": {
+      "title": "Centrum przedstawiciela handlowego"
     }
   }
 }

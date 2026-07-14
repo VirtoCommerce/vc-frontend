@@ -32,6 +32,9 @@
         "no_results": "Inga kunder matchar din sökning",
         "reset_search": "Återställ sökning"
       }
+    },
+    "hub": {
+      "title": "Säljrepresentant-hub"
     }
   }
 }

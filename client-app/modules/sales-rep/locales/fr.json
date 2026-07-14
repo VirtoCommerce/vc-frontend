@@ -32,6 +32,9 @@
         "no_results": "Aucun client ne correspond à votre recherche",
         "reset_search": "Réinitialiser la recherche"
       }
+    },
+    "hub": {
+      "title": "Espace représentant commercial"
     }
   }
 }

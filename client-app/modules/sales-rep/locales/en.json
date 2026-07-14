@@ -32,6 +32,9 @@
         "no_results": "No customers match your search",
         "reset_search": "Reset search"
       }
+    },
+    "hub": {
+      "title": "Sales Rep hub"
     }
   }
 }

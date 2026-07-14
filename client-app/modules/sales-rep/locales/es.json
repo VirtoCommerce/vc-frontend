@@ -32,6 +32,9 @@
         "no_results": "Ningún cliente coincide con su búsqueda",
         "reset_search": "Restablecer búsqueda"
       }
+    },
+    "hub": {
+      "title": "Centro del representante de ventas"
     }
   }
 }

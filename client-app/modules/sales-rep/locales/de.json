@@ -32,6 +32,9 @@
         "no_results": "Keine Kunden entsprechen Ihrer Suche",
         "reset_search": "Suche zurücksetzen"
       }
+    },
+    "hub": {
+      "title": "Vertriebsmitarbeiter-Hub"
     }
   }
 }
