@@ -65,13 +65,13 @@
         "code": "Processing",
         "color": "info",
         "variant": "outline",
-        "icon": "process"
+        "icon": "refresh-cw"
       },
       {
         "code": "Pending",
         "color": "info",
         "variant": "outline",
-        "icon": "process"
+        "icon": "refresh-cw"
       },
       {
         "code": "Cancelled",
@@ -110,7 +110,7 @@
         "code": "Processing",
         "color": "info",
         "variant": "outline",
-        "icon": "process"
+        "icon": "refresh-cw"
       },
       {
         "code": "Ordered",
@@ -122,7 +122,7 @@
         "code": "Proposal sent",
         "color": "info",
         "variant": "outline",
-        "icon": "process"
+        "icon": "refresh-cw"
       },
       {
         "code": "On hold",

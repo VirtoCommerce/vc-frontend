@@ -60,7 +60,7 @@
             </span>
 
             <span class="vc-variant-picker__marker">
-              <VcIcon name="apply" size="xxs" />
+              <VcIcon name="check" size="xxs" />
             </span>
           </button>
         </template>

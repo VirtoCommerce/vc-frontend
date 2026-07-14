@@ -1,7 +1,7 @@
 <template>
   <VcWidget
     class="product-configuration"
-    prepend-icon="adjustments"
+    prepend-icon="sliders-vertical"
     :title="$t('shared.catalog.product_details.product_configuration.title')"
     size="lg"
   >

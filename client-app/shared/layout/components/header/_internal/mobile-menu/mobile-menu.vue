@@ -117,7 +117,7 @@ const homeMenuItem = computed<ExtendedMenuLinkType>(() =>
     : {
         route: "/",
         title: t("shared.layout.header.menu.home"),
-        icon: "dashboard-2",
+        icon: "layout-dashboard",
       },
 );
 

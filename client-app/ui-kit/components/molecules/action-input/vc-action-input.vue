@@ -27,7 +27,7 @@
         <VcButton
           v-else
           :aria-label="$t('ui_kit.buttons.apply')"
-          icon="apply"
+          icon="check"
           variant="ghost"
           size="sm"
           :disabled="value.length === 0 || disabled || !!errorMessage"

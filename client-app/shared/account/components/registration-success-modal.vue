@@ -3,7 +3,7 @@
     class="registration-success-modal"
     variant="success"
     :title="$t('shared.account.registration_success_modal.title')"
-    icon="apply"
+    icon="check"
   >
     <template #actions="{ close }">
       <VcButton to="/" class="registration-success-modal__button" @click="close">

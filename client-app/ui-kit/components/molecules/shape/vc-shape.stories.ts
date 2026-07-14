@@ -23,13 +23,13 @@ export const Basic: StoryType = {};
 
 export const Icon: StoryType = {
   args: {
-    icon: "adjustments",
+    icon: "sliders-vertical",
   },
 };
 
 export const Large: StoryType = {
   args: {
-    icon: "adjustments",
+    icon: "sliders-vertical",
     size: "100px",
   },
 };
@@ -45,7 +45,7 @@ export const ImageIcon: StoryType = {
   args: {
     img: "main-banner.webp",
     size: "300px",
-    icon: "adjustments",
+    icon: "sliders-vertical",
   },
 };
 

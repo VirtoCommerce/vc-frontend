@@ -91,7 +91,7 @@
                   ? 'danger'
                   : 'warning'
               "
-              icon="exclamation-circle"
+              icon="circle-alert"
               variant="outline-dark"
             >
               {{ order.cancelReason }}

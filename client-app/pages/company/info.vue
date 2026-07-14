@@ -145,13 +145,13 @@
                   <div>
                     <div class="mb-1 flex gap-1 empty:hidden">
                       <VcBadge v-if="item.isDefault" color="info" rounded size="sm" variant="outline-dark">
-                        <VcIcon name="apply" />
+                        <VcIcon name="check" />
 
                         <span>{{ $t("pages.company.info.labels.default") }}</span>
                       </VcBadge>
 
                       <VcBadge v-if="item.isFavorite" rounded size="sm" variant="outline-dark">
-                        <VcIcon name="whishlist" />
+                        <VcIcon name="star" />
 
                         <span>{{ $t("pages.company.info.labels.favorite") }}</span>
                       </VcBadge>
@@ -227,7 +227,7 @@
                             'fill-primary': address.isFavorite,
                           },
                         ]"
-                        name="whishlist"
+                        name="star"
                         size="md"
                         @click="toggleFavoriteAddress(address.isFavorite, address.id)"
                       />
@@ -265,7 +265,7 @@
 
                 <td :class="{ 'text-right': !canEditOrganization }" class="px-5 py-3 text-center">
                   <VcChip v-if="address.isDefault" color="info" rounded size="sm" variant="outline-dark">
-                    <VcIcon name="apply" />
+                    <VcIcon name="check" />
                     {{ $t("pages.company.info.labels.default") }}
                   </VcChip>
                 </td>

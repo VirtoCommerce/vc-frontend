@@ -13,7 +13,7 @@
   >
     <template v-if="!isSmallScreen && isTableView" #append>
       <VcButton
-        :icon="isFullView ? 'delete-2' : 'arrows-expand'"
+        :icon="isFullView ? 'x' : 'expand'"
         color="neutral"
         variant="surface"
         size="sm"

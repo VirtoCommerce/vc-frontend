@@ -39,7 +39,7 @@ const menuItems: DeepPartial<MenuType> = {
         {
           id: "push-messages",
           title: "push_messages.menu_item_name",
-          icon: "notification-v2",
+          icon: "bell-ring",
           priority: 40,
         },
       ],
