@@ -14,7 +14,11 @@ import { useSalesRepCustomersCount } from "../composables/useSalesRepCustomersCo
 import type { ExtendedMenuLinkType } from "@/core/types";
 import AccountNavigationItem from "@/shared/account/components/account-navigation-item.vue";
 
-defineProps<{ item: ExtendedMenuLinkType }>();
+interface IProps {
+  item: ExtendedMenuLinkType;
+}
+
+defineProps<IProps>();
 
 const { count } = useSalesRepCustomersCount();
 </script>

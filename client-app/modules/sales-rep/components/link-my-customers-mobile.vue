@@ -17,7 +17,17 @@ import { useSalesRepCustomersCount } from "../composables/useSalesRepCustomersCo
 import type { ExtendedMenuLinkType } from "@/core/types";
 import MobileMenuLink from "@/shared/layout/components/header/_internal/mobile-menu/mobile-menu-link.vue";
 
-defineEmits<{ (event: "close"): void; (event: "selectItem"): void }>();
-defineProps<{ item: ExtendedMenuLinkType }>();
+interface IEmits {
+  (event: "close"): void;
+  (event: "selectItem"): void;
+}
+
+interface IProps {
+  item: ExtendedMenuLinkType;
+}
+
+defineEmits<IEmits>();
+defineProps<IProps>();
+
 const { count } = useSalesRepCustomersCount();
 </script>
