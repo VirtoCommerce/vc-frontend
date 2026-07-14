@@ -55,9 +55,9 @@ export const Color: StoryType = {
     components: { VcIcon },
     template: `
       <div class="flex items-center gap-4">
-        <VcIcon name="document-text" color="danger" />
+        <VcIcon name="file-text" color="danger" />
         <VcIcon name="credit-card" color="primary" />
-        <VcIcon name="document-text" class="text-success" />
+        <VcIcon name="file-text" class="text-success" />
         <VcIcon name="credit-card" class="text-warning" />
       </div>
     `,
@@ -66,9 +66,9 @@ export const Color: StoryType = {
     docs: {
       source: {
         code: `
-          <VcIcon name="document-text" color="danger" />
+          <VcIcon name="file-text" color="danger" />
           <VcIcon name="credit-card" color="primary" />
-          <VcIcon name="document-text" class="text-success" />
+          <VcIcon name="file-text" class="text-success" />
           <VcIcon name="credit-card" class="text-warning" />
         `,
       },
@@ -85,7 +85,7 @@ export const Size: StoryType = {
     docs: {
       source: {
         code: `
-          <VcIcon name="document-text" :size="50" />
+          <VcIcon name="file-text" :size="50" />
         `,
       },
     },
@@ -101,7 +101,7 @@ export const SizeString: StoryType = {
     docs: {
       source: {
         code: `
-          <VcIcon name="document-text" size="md" />
+          <VcIcon name="file-text" size="md" />
         `,
       },
     },

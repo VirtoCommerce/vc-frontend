@@ -29,7 +29,7 @@
         color="secondary"
         variant="outline"
         size="sm"
-        icon="reset"
+        icon="rotate-ccw"
         :title="$t('common.buttons.reset')"
         @click="handleReset"
       />

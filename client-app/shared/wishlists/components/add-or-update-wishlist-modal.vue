@@ -57,7 +57,7 @@
               v-if="isClipboardSupported"
               color="secondary"
               variant="soft"
-              icon="document-duplicate"
+              icon="files"
               icon-size="1.25rem"
               @click="copySharingLink"
             />

@@ -19,7 +19,7 @@
           <VcTabSwitch
             v-model="mode"
             :value="SHIPPING_OPTIONS.pickup"
-            icon="cube"
+            icon="box"
             :label="$t('shared.checkout.shipping_details_section.switchers.pickup')"
             :disabled="cartChanging"
             data-test-id="pickup-switcher"

@@ -148,7 +148,7 @@
                 icon
                 @click="signMeOut"
               >
-                <VcIcon name="logout" />
+                <VcIcon name="log-out" />
               </VcButton>
             </div>
 

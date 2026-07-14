@@ -1,7 +1,7 @@
 <template>
   <VcWidget
     :title="$t('shared.checkout.billing_details_section.title')"
-    prepend-icon="cash"
+    prepend-icon="banknote"
     class="mt-5"
     size="lg"
     data-test-id="payment-details-section"
@@ -89,7 +89,7 @@
   <VcWidget
     v-if="paymentCardVisible"
     :title="$t('shared.checkout.billing_details_section.payment_card')"
-    prepend-icon="cash"
+    prepend-icon="banknote"
     size="lg"
     class="mt-5"
   >

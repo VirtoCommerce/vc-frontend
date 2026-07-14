@@ -22,7 +22,7 @@
           <div class="flex items-center gap-3 p-3 text-sm">
             <VcIcon v-if="item.skyflowId.length" class="fill-neutral" name="credit-card" size="xl" />
 
-            <VcIcon v-else class="size-12 fill-success" name="plus-circle-outlined" />
+            <VcIcon v-else class="size-12 fill-success" name="circle-plus" />
 
             {{ item.cardNumber }}
 
@@ -33,7 +33,7 @@
         <template #item="{ item }">
           <VcIcon v-if="item.skyflowId.length" class="fill-neutral" name="credit-card" size="xl" />
 
-          <VcIcon v-else class="size-12 fill-success" name="plus-circle-outlined" />
+          <VcIcon v-else class="size-12 fill-success" name="circle-plus" />
 
           {{ item.cardNumber }}
 

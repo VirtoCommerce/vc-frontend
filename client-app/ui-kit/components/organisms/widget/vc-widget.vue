@@ -38,7 +38,7 @@
                 <VcIcon
                   v-if="collapsible"
                   :class="['vc-widget__append-icon', { 'vc-widget__append-icon--rotate': _collapsed }]"
-                  name="chevron-up-thin"
+                  name="chevron-up"
                 />
 
                 <VcIcon v-else-if="appendIcon" class="vc-widget__append-icon" :name="appendIcon" />

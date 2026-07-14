@@ -56,7 +56,7 @@
         <VcButton
           :disabled="disabled"
           type="button"
-          icon="delete-thin"
+          icon="x"
           color="neutral"
           variant="ghost"
           class="vc-input__clear"

@@ -20,7 +20,7 @@
       :aria-label="$t('ui_kit.buttons.close')"
       @click="$emit('close')"
     >
-      <VcIcon name="delete-thin" />
+      <VcIcon name="x" />
     </button>
   </div>
 </template>

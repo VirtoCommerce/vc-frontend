@@ -2,7 +2,7 @@
   <ProductTitledBlock
     v-if="isBlockVisible"
     :title="model.title || $t('shared.catalog.product_details.options.title')"
-    icon="collection"
+    icon="layers"
     class="options"
   >
     <div class="options__container">

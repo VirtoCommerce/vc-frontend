@@ -34,6 +34,6 @@ defineEmits<IEmits>();
 withDefaults(defineProps<IProps>(), {
   variant: "danger",
   loading: false,
-  icon: "warning",
+  icon: "triangle-alert",
 });
 </script>

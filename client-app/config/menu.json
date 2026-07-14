@@ -86,7 +86,7 @@
               "name": "SavedForLater"
             },
             "title": "shared.layout.header.mobile.account_menu.saved_for_later",
-            "icon": "bookmark-solid",
+            "icon": "bookmark",
             "priority": 60
           }
         ]
@@ -101,7 +101,7 @@
               "name": "PromotionCoupons"
             },
             "title": "shared.account.navigation.links.promotion_coupons",
-            "icon": "receipt-tax",
+            "icon": "receipt",
             "priority": 10
           }
         ]
@@ -116,7 +116,7 @@
               "name": "Profile"
             },
             "title": "shared.account.navigation.links.profile",
-            "icon": "profile",
+            "icon": "id-card",
             "priority": 10
           },
           {
@@ -125,7 +125,7 @@
               "name": "Addresses"
             },
             "title": "shared.account.navigation.links.addresses",
-            "icon": "source-environment",
+            "icon": "building-2",
             "priority": 20
           },
           {
@@ -134,7 +134,7 @@
               "name": "ChangePasswordAccount"
             },
             "title": "shared.account.navigation.links.change_password",
-            "icon": "pass",
+            "icon": "key-round",
             "priority": 30
           },
           {
@@ -151,21 +151,21 @@
       "corporate": {
         "id": "corporate",
         "title": "shared.layout.header.mobile.corporate",
-        "icon": "case",
+        "icon": "briefcase",
         "children": [
           {
             "route": {
               "name": "CompanyInfo"
             },
             "title": "shared.layout.header.mobile.corporate_menu.company_info",
-            "icon": "case"
+            "icon": "briefcase"
           },
           {
             "route": {
               "name": "CompanyMembers"
             },
             "title": "shared.layout.header.mobile.corporate_menu.company_members",
-            "icon": "user-group"
+            "icon": "users"
           }
         ]
       }
@@ -178,7 +178,7 @@
             "name": "Catalog"
           },
           "title": "shared.layout.header.menu.catalog",
-          "icon": "cube",
+          "icon": "box",
           "isCatalogItem": true
         },
         {
@@ -203,7 +203,7 @@
             "name": "Cart"
           },
           "title": "shared.layout.header.menu.cart",
-          "icon": "cart"
+          "icon": "shopping-cart"
         },
         {
           "id": "contacts",
@@ -238,7 +238,7 @@
               "name": "Lists"
             },
             "title": "shared.layout.header.mobile.account_menu.lists",
-            "icon": "list-v2",
+            "icon": "list-checks",
             "priority": 30
           },
           {
@@ -246,7 +246,7 @@
               "name": "SavedForLater"
             },
             "title": "shared.layout.header.mobile.account_menu.saved_for_later",
-            "icon": "bookmark-solid",
+            "icon": "bookmark",
             "priority": 60
           }
         ]
@@ -254,7 +254,7 @@
       "marketing": {
         "id": "marketing",
         "title": "shared.account.navigation.marketing_title",
-        "icon": "receipt-tax",
+        "icon": "receipt",
         "children": [
           {
             "id": "promotion-coupons",
@@ -262,7 +262,7 @@
               "name": "PromotionCoupons"
             },
             "title": "shared.account.navigation.links.promotion_coupons",
-            "icon": "receipt-tax",
+            "icon": "receipt",
             "priority": 10
           }
         ]
@@ -277,7 +277,7 @@
               "name": "Profile"
             },
             "title": "shared.layout.header.mobile.account_menu.profile",
-            "icon": "profile",
+            "icon": "id-card",
             "priority": 10
           },
           {
@@ -286,7 +286,7 @@
               "name": "Addresses"
             },
             "title": "shared.layout.header.mobile.account_menu.addresses",
-            "icon": "source-environment",
+            "icon": "building-2",
             "priority": 20
           },
           {
@@ -294,7 +294,7 @@
               "name": "ChangePasswordAccount"
             },
             "title": "shared.layout.header.mobile.account_menu.change_password",
-            "icon": "pass",
+            "icon": "key-round",
             "priority": 30
           },
           {
@@ -310,12 +310,12 @@
       "corporate": {
         "id": "corporate",
         "title": "shared.layout.header.mobile.corporate",
-        "icon": "case",
+        "icon": "briefcase",
         "children": [
           {
             "id": "contact-organizations",
             "title": "common.labels.my_organizations",
-            "icon": "case",
+            "icon": "briefcase",
             "children": [{}],
             "priority": 10
           },
@@ -324,7 +324,7 @@
               "name": "CompanyInfo"
             },
             "title": "shared.layout.header.mobile.corporate_menu.company_info",
-            "icon": "case",
+            "icon": "briefcase",
             "priority": 20
           },
           {
@@ -332,7 +332,7 @@
               "name": "CompanyMembers"
             },
             "title": "shared.layout.header.mobile.corporate_menu.company_members",
-            "icon": "user-group",
+            "icon": "users",
             "priority": 30
           }
         ]

@@ -24,7 +24,7 @@
       v-if="product.isConfigurable"
       :to="link"
       :button-text="$t('pages.catalog.customize_button')"
-      icon="cube-transparent"
+      icon="box"
       :target="browserTarget"
     />
 

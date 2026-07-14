@@ -2,7 +2,7 @@
   <ProductTitledBlock
     v-if="product.assets?.length"
     class="assets"
-    icon="document-text"
+    icon="file-text"
     :title="model.title || $t('shared.catalog.product_details.assets_block_title')"
   >
     <ul class="assets__list">

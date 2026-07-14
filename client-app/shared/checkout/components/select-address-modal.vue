@@ -82,7 +82,7 @@
           <div class="w-2/3 grow">
             <div class="mb-2.5 flex items-center gap-2 empty:hidden">
               <VcBadge v-if="item.isFavorite" size="sm" variant="outline-dark" rounded color="warning">
-                <VcIcon name="whishlist" />
+                <VcIcon name="star" />
 
                 <span>{{ $t("pages.company.info.labels.favorite") }}</span>
               </VcBadge>
@@ -160,7 +160,7 @@
 
           <VcButton
             v-if="showFilters && filterContext?.filterIsApplied.value"
-            icon="reset"
+            icon="rotate-ccw"
             @click="resetFilter"
             :aria-label="$t('pages.account.order_details.bopis.cart_pickup_points_reset_search')"
           />
@@ -178,7 +178,7 @@
               <VcIcon
                 v-if="hasFavoriteAddresses && item.isFavorite"
                 class="me-1.5 fill-accent"
-                name="whishlist"
+                name="star"
                 :size="16"
               />
 
@@ -242,7 +242,7 @@
               <VcButton
                 v-if="showFilters && filterContext?.filterIsApplied.value"
                 class="mt-5"
-                prepend-icon="reset"
+                prepend-icon="rotate-ccw"
                 @click="resetFilter"
               >
                 {{ $t("pages.account.order_details.bopis.cart_pickup_points_reset_search") }}
@@ -384,6 +384,7 @@ function getFormattedAddress(address: AnyAddressType): string {
   }
 
   const parts = [address.line1, address.line2, address.city, address.regionId, address.postalCode].filter(
+    // eslint-disable-next-line sonarjs/null-dereference -- false positive: typeof guard ensures part is a string
     (part) => typeof part === "string" && part.trim() !== "",
   );
 

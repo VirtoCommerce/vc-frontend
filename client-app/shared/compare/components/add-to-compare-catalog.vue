@@ -1,6 +1,6 @@
 <template>
   <VcProductActionsButton
-    icon="compare"
+    icon="scale"
     :icon-size="iconSize"
     :active="isInCompareList"
     :aria-label="tooltipText"

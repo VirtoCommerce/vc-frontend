@@ -1,6 +1,6 @@
 <template>
   <VcBadge v-if="discount" color="danger" :size="size" class="left-0 top-0 z-[2]" :class="{ absolute: !static }">
-    <VcIcon v-if="isHot" name="fire" />
+    <VcIcon v-if="isHot" name="flame" />
 
     <span>{{ $t("shared.catalog.discount_badge.off", { discount }) }}</span>
   </VcBadge>

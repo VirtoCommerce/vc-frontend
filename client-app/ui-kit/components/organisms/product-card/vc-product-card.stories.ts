@@ -60,7 +60,7 @@ const chip1 = {
   size: "sm",
   rounded: true,
   variant: "outline-dark",
-  icon: "cube",
+  icon: "box",
 };
 
 const chip2 = {
@@ -68,7 +68,7 @@ const chip2 = {
   size: "sm",
   rounded: true,
   variant: "outline-dark",
-  icon: "cart",
+  icon: "shopping-cart",
 };
 
 const availabilityData = {
@@ -89,7 +89,7 @@ const wishlistButton = {
 };
 
 const actionsButton = {
-  icon: "compare",
+  icon: "scale",
   tooltipText: "Add to compare",
   active: true,
 };
@@ -374,14 +374,14 @@ export const FullCard: StoryType = {
       :is-in-stock="product.availabilityData.isInStock"
       :available-quantity="product.availabilityData.availableQuantity"
     >
-      <VcChip color="success" size="sm" rounded variant="outline-dark" icon="cube">
+      <VcChip color="success" size="sm" rounded variant="outline-dark" icon="box">
         {{ product.inStockQuantity }}
       </VcChip>
     </VcAddToCart>
 
     <VcProductActions with-background direction="vertical">
       <VcProductActionsButton tooltip-text="Add to wishlist" />
-      <VcProductActionsButton icon="compare" tooltip-text="Add to compare" :active="isInCompareList" />
+      <VcProductActionsButton icon="scale" tooltip-text="Add to compare" :active="isInCompareList" />
     </VcProductActions>
   </VcProductCard>
 </template>
@@ -440,14 +440,14 @@ export const FullList: StoryType = {
     <VcProductPrice :actual-price="product.price" :list-price="product.listPrice" single-line />
 
     <VcAddToCart v-bind="product.availabilityData">
-      <VcChip color="success" size="sm" rounded variant="outline-dark" icon="cube">
+      <VcChip color="success" size="sm" rounded variant="outline-dark" icon="box">
         {{ product.inStockQuantity }}
       </VcChip>
     </VcAddToCart>
 
     <VcProductActions>
       <VcProductActionsButton tooltip-text="Add to wishlist" />
-      <VcProductActionsButton icon="compare" tooltip-text="Add to compare" :active="isInCompareList" />
+      <VcProductActionsButton icon="scale" tooltip-text="Add to compare" :active="isInCompareList" />
     </VcProductActions>
   </VcProductCard>
 </template>
@@ -500,7 +500,7 @@ export const FullCardRecommendedWay: StoryType = {
 
     <VcProductActions with-background direction="vertical">
       <VcProductActionsButton tooltip-text="Add to wishlist" />
-      <VcProductActionsButton icon="compare" tooltip-text="Add to compare" :active="isInCompareList" />
+      <VcProductActionsButton icon="scale" tooltip-text="Add to compare" :active="isInCompareList" />
     </VcProductActions>
   </template>
 
@@ -513,7 +513,7 @@ export const FullCardRecommendedWay: StoryType = {
   </VcProductProperties>
 
   <VcAddToCart v-bind="product.availabilityData">
-    <VcChip color="success" size="sm" rounded variant="outline-dark" icon="cube">{{ product.inStockQuantity }}</VcChip>
+    <VcChip color="success" size="sm" rounded variant="outline-dark" icon="box">{{ product.inStockQuantity }}</VcChip>
   </VcAddToCart>
 
   <VcProductPrice :actual-price="product.price" :list-price="product.listPrice" single-line />
@@ -567,7 +567,7 @@ export const FullListRecommendedWay: StoryType = {
 
     <VcProductActions>
       <VcProductActionsButton tooltip-text="Add to wishlist" />
-      <VcProductActionsButton icon="compare" tooltip-text="Add to compare" :active="isInCompareList" />
+      <VcProductActionsButton icon="scale" tooltip-text="Add to compare" :active="isInCompareList" />
     </VcProductActions>
   </template>
 
@@ -580,7 +580,7 @@ export const FullListRecommendedWay: StoryType = {
   </VcProductProperties>
 
   <VcAddToCart v-bind="product.availabilityData">
-    <VcChip color="success" size="sm" rounded variant="outline-dark" icon="cube">{{ product.inStockQuantity }}</VcChip>
+    <VcChip color="success" size="sm" rounded variant="outline-dark" icon="box">{{ product.inStockQuantity }}</VcChip>
   </VcAddToCart>
 
   <VcProductPrice :actual-price="product.price" :list-price="product.listPrice" />
@@ -640,7 +640,7 @@ export const LineItem: StoryType = {
     </VcProductProperties>
 
     <VcAddToCart v-bind="item.availabilityData" hide-button>
-      <VcChip color="success" size="sm" rounded variant="outline-dark" icon="cube">
+      <VcChip color="success" size="sm" rounded variant="outline-dark" icon="box">
         {{ item.inStockQuantity }}
       </VcChip>
     </VcAddToCart>
@@ -699,7 +699,7 @@ export const FullListQuantityStepper: StoryType = {
 
     <VcProductActions>
       <VcProductActionsButton tooltip-text="Add to wishlist" />
-      <VcProductActionsButton icon="compare" tooltip-text="Add to compare" />
+      <VcProductActionsButton icon="scale" tooltip-text="Add to compare" />
     </VcProductActions>
   </template>
 
@@ -711,7 +711,7 @@ export const FullListQuantityStepper: StoryType = {
   </VcProductProperties>
 
   <VcQuantityStepper v-model="quantity">
-    <VcChip color="success" size="sm" rounded variant="outline-dark" icon="cube">{{ product.inStockQuantity }}</VcChip>
+    <VcChip color="success" size="sm" rounded variant="outline-dark" icon="box">{{ product.inStockQuantity }}</VcChip>
   </VcQuantityStepper>
 
   <VcProductPrice :actual-price="product.price" :list-price="product.listPrice" />
@@ -765,7 +765,7 @@ export const FullGridQuantityStepper: StoryType = {
 
     <VcProductActions with-background direction="vertical">
       <VcProductActionsButton tooltip-text="Add to wishlist" />
-      <VcProductActionsButton icon="compare" tooltip-text="Add to compare" />
+      <VcProductActionsButton icon="scale" tooltip-text="Add to compare" />
     </VcProductActions>
   </template>
 
@@ -777,7 +777,7 @@ export const FullGridQuantityStepper: StoryType = {
   </VcProductProperties>
 
   <VcQuantityStepper v-model="quantity">
-    <VcChip color="success" size="sm" rounded variant="outline-dark" icon="cube">{{ product.inStockQuantity }}</VcChip>
+    <VcChip color="success" size="sm" rounded variant="outline-dark" icon="box">{{ product.inStockQuantity }}</VcChip>
   </VcQuantityStepper>
 
   <VcProductPrice :actual-price="product.price" :list-price="product.listPrice" />
@@ -835,7 +835,7 @@ export const LineItemQuantityStepper: StoryType = {
   </VcProductProperties>
 
   <VcQuantityStepper v-model="item.quantity">
-    <VcChip color="success" size="sm" rounded variant="outline-dark" icon="cube">{{ item.inStockQuantity }}</VcChip>
+    <VcChip color="success" size="sm" rounded variant="outline-dark" icon="box">{{ item.inStockQuantity }}</VcChip>
   </VcQuantityStepper>
 
   <VcProductPrice :actual-price="item.price" :list-price="item.listPrice" />

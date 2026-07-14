@@ -19,7 +19,7 @@
           color="neutral"
           variant="ghost"
           :disabled="disabled"
-          icon="delete-thin"
+          icon="x"
           size="sm"
           @click="$emit('deny')"
         />

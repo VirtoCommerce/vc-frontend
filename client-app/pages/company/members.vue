@@ -31,7 +31,7 @@
           variant="outline"
           color="secondary"
           size="sm"
-          icon="reset"
+          icon="rotate-ccw"
           :title="$t('common.buttons.reset')"
           @click="
             resetFilters();
@@ -195,7 +195,7 @@
       <VcChip color="secondary" variant="outline" clickable @click="resetFilters">
         <span>{{ $t("common.buttons.reset_filters") }}</span>
 
-        <VcIcon name="reset" />
+        <VcIcon name="rotate-ccw" />
       </VcChip>
     </div>
 
@@ -211,7 +211,7 @@
       :variant="!!keyword || !!filter || !!roleIds.length ? 'search' : 'empty'"
     >
       <template #button>
-        <VcButton v-if="keyword || filter || roleIds.length" prepend-icon="reset" @click="resetFiltersWithKeyword">
+        <VcButton v-if="keyword || filter || roleIds.length" prepend-icon="rotate-ccw" @click="resetFiltersWithKeyword">
           {{ $t("pages.company.members.buttons.reset_search") }}
         </VcButton>
 

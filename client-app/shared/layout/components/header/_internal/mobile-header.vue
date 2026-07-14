@@ -64,7 +64,7 @@
               class="px-1 py-2 xs:px-2"
             >
               <span class="relative block">
-                <VcIcon class="fill-primary" name="cart" :size="28" />
+                <VcIcon class="fill-primary" name="shopping-cart" :size="28" />
 
                 <transition
                   mode="out-in"

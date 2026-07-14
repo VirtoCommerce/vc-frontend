@@ -7,8 +7,8 @@
       size="xs"
       truncate
       icon-size="1.25rem"
-      :icon="icons ? 'bookmark-solid' : null"
-      :prepend-icon="!icons ? 'bookmark-solid' : null"
+      :icon="icons ? 'bookmark' : null"
+      :prepend-icon="!icons ? 'bookmark' : null"
       :variant="selected ? 'no-border' : 'solid-light'"
       :disabled="disabled"
       data-test-id="save-for-later-button"

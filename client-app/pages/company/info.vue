@@ -23,7 +23,7 @@
                 :disabled="!meta.valid || !meta.dirty"
                 :loading="loadingOrganization || loadingUser"
                 class="flex-none"
-                icon="save-v2"
+                icon="save"
                 @click="saveOrganizationName"
               />
             </template>
@@ -63,7 +63,7 @@
 
                   <VcButton
                     v-if="whiteLabelingLogoUrl !== newLogoUrl"
-                    icon="save-v2"
+                    icon="save"
                     class="flex-none"
                     :loading="loadingOrganizationLogo"
                     @click="saveOrganizationLogo"
@@ -71,7 +71,7 @@
 
                   <VcButton
                     v-else
-                    icon="delete-thin"
+                    icon="x"
                     class="flex-none"
                     :disabled="!isOrganizationLogoUploaded"
                     :loading="loadingOrganizationLogo"
@@ -116,7 +116,7 @@
         <VcEmptyView
           v-if="!addresses.length && !loadingAddresses"
           :text="$t('pages.company.info.no_addresses_message')"
-          icon="outline-address"
+          icon="building"
         >
           <template v-if="canEditOrganization" #button>
             <VcButton prepend-icon="plus" @click="openAddOrUpdateCompanyAddressModal()">
@@ -512,7 +512,7 @@ function openDeleteLogoModal() {
     component: VcConfirmationModal,
     props: {
       variant: "danger",
-      icon: "delete-2",
+      icon: "x",
       title: t("shared.company.delete_logo_modal.title"),
       text: t("shared.company.delete_logo_modal.message"),
       onConfirm() {

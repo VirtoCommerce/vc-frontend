@@ -19,7 +19,7 @@
       </VcMenuItem>
 
       <VcMenuItem v-if="isCorporateMember" color="secondary" @click="$emit('toggleFavorite')">
-        <VcIcon name="whishlist" />
+        <VcIcon name="star" />
 
         <span>
           {{
@@ -36,7 +36,7 @@
         color="secondary"
         @click="deleteAddress"
       >
-        <VcIcon :class="address.isDefault ? 'fill-neutral-400' : 'fill-danger'" name="delete-2" />
+        <VcIcon :class="address.isDefault ? 'fill-neutral-400' : 'fill-danger'" name="x" />
 
         <span>{{ $t("common.buttons.delete") }}</span>
       </VcMenuItem>

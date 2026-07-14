@@ -9,7 +9,7 @@
     ]"
     size="lg"
     :title="model.title || $t('shared.catalog.product_details.variations.title')"
-    prepend-icon="cube"
+    prepend-icon="box"
   >
     <template v-if="!isSmallScreen && isTableView" #append>
       <VcButton

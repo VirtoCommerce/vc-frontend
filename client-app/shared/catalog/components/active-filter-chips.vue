@@ -31,7 +31,7 @@
       <VcChip color="secondary" variant="outline" clickable @click="$emit('resetFilters')">
         <span>{{ $t("common.buttons.reset_filters") }}</span>
 
-        <VcIcon name="reset" />
+        <VcIcon name="rotate-ccw" />
       </VcChip>
     </slot>
   </div>
@@ -69,6 +69,7 @@ const { filters } = toRefs(props);
 function formatFilterLabel(filterLabel: string | undefined) {
   const trimmedFilterLabel = filterLabel?.trim();
 
+  // eslint-disable-next-line sonarjs/null-dereference -- false positive: guarded by the !trimmedFilterLabel check
   if (!trimmedFilterLabel || trimmedFilterLabel.startsWith("_")) {
     return "";
   }

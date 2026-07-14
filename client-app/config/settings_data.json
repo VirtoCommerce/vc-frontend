@@ -59,7 +59,7 @@
         "code": "New",
         "color": "success",
         "variant": "outline",
-        "icon": "circle-solid"
+        "icon": "circle"
       },
       {
         "code": "Processing",
@@ -77,25 +77,25 @@
         "code": "Cancelled",
         "color": "danger",
         "variant": "outline-dark",
-        "icon": "circle-solid"
+        "icon": "circle"
       },
       {
         "code": "Completed",
         "color": "success",
         "variant": "outline-dark",
-        "icon": "circle-solid"
+        "icon": "circle"
       },
       {
         "code": "Payment required",
         "color": "warning",
         "variant": "outline",
-        "icon": "circle-outline"
+        "icon": "circle"
       },
       {
         "code": "Ready for pickup",
         "color": "success",
         "variant": "solid",
-        "icon": "cube"
+        "icon": "box"
       }
     ],
 
@@ -104,7 +104,7 @@
         "code": "New",
         "color": "success",
         "variant": "outline-dark",
-        "icon": "circle-solid"
+        "icon": "circle"
       },
       {
         "code": "Processing",
@@ -116,7 +116,7 @@
         "code": "Ordered",
         "color": "success",
         "variant": "outline-dark",
-        "icon": "circle-solid"
+        "icon": "circle"
       },
       {
         "code": "Proposal sent",
@@ -128,25 +128,25 @@
         "code": "On hold",
         "color": "warning",
         "variant": "outline-dark",
-        "icon": "circle-outline"
+        "icon": "circle"
       },
       {
         "code": "Draft",
         "color": "neutral",
         "variant": "outline",
-        "icon": "pencil-alt"
+        "icon": "square-pen"
       },
       {
         "code": "Declined",
         "color": "danger",
         "variant": "outline-dark",
-        "icon": "circle-solid"
+        "icon": "circle"
       },
       {
         "code": "Canceled",
         "color": "danger",
         "variant": "outline-dark",
-        "icon": "circle-solid"
+        "icon": "circle"
       }
     ],
 

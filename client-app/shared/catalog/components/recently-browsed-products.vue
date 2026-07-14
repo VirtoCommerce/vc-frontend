@@ -2,7 +2,7 @@
   <VcWidget
     v-if="products.length"
     :title="$t('pages.cart.recently_browsed_products')"
-    prepend-icon="cursor-click"
+    prepend-icon="mouse-pointer-click"
     size="lg"
   >
     <VcProductsGrid short>

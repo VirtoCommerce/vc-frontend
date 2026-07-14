@@ -13,7 +13,7 @@
     rounded
     :title="$t('common.labels.in_stock')"
   >
-    <VcIcon name="cube" />
+    <VcIcon name="box" />
 
     <span class="inline-block min-w-3 text-center">
       {{ quantity ? inStockQuantityLabel : $t("common.labels.in_stock") }}
@@ -30,7 +30,7 @@
       !isAvailable ? $t('common.messages.product_no_longer_available') : $t('common.messages.product_out_of_stock')
     "
   >
-    <VcIcon name="cube" />
+    <VcIcon name="box" />
 
     <span class="inline-block min-w-3 text-center">0</span>
   </VcChip>

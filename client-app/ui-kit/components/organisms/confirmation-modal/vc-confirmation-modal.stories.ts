@@ -37,7 +37,7 @@ const meta: Meta<typeof VcConfirmationModal> = {
   args: {
     title: "Confirm action",
     text: "Are you sure you want to proceed? This action cannot be undone.",
-    icon: "warning",
+    icon: "triangle-alert",
     variant: "danger",
     singleButton: false,
     loading: false,
@@ -164,7 +164,7 @@ export const Variants: StoryType = {
         v-if="activeVariant"
         :variant="activeVariant"
         :title="activeVariant + ' confirmation'"
-        :icon="activeVariant === 'danger' ? 'warning' : 'information-circle'"
+        :icon="activeVariant === 'danger' ? 'triangle-alert' : 'info'"
         text="Are you sure you want to proceed with this action?"
         @confirm="activeVariant = null"
         @close="activeVariant = null"
@@ -178,7 +178,7 @@ export const Variants: StoryType = {
           <VcConfirmationModal
             variant="warning"
             title="Warning"
-            icon="warning"
+            icon="triangle-alert"
             text="Are you sure you want to proceed?"
             @confirm="onConfirm"
             @close="onClose"

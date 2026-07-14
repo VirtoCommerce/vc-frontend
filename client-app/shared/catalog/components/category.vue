@@ -171,13 +171,13 @@
               >
                 <span>{{ $t("common.buttons.reset_filters") }}</span>
 
-                <VcIcon name="reset" />
+                <VcIcon name="rotate-ccw" />
               </VcChip>
 
               <VcChip v-if="isResetPageButtonShown" color="secondary" variant="outline" clickable @click="resetPage">
                 <span>{{ $t("common.buttons.reset_page") }}</span>
 
-                <VcIcon name="reset" />
+                <VcIcon name="rotate-ccw" />
               </VcChip>
             </template>
           </ActiveFilterChips>

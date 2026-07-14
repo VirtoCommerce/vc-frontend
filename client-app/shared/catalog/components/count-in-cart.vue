@@ -7,7 +7,7 @@
     rounded
     :title="$t('shared.cart.add_to_cart.errors.in_cart')"
   >
-    <VcIcon name="cart" />
+    <VcIcon name="shopping-cart" />
 
     <span class="inline-block min-w-3 text-center" data-test-id="count-in-cart-label">
       {{ countInCart }}

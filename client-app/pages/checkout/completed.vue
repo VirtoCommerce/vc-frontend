@@ -14,7 +14,7 @@
       <div class="mt-6 flex flex-wrap justify-center gap-x-6 gap-y-3 sm:justify-start">
         <VcButton
           :to="{ name: 'OrderDetails', params: { orderId: placedOrder?.id } }"
-          prepend-icon="document-text"
+          prepend-icon="file-text"
           min-width="10rem"
         >
           {{ $t("common.buttons.show_order") }}

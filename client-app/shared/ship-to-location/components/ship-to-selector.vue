@@ -106,7 +106,7 @@
                   :data-postal-code="address.postalCode"
                 >
                   <VcIcon
-                    name="whishlist"
+                    name="star"
                     :size="16"
                     :data-test-id="`ship-to-favorite-icon-${address.id}`"
                     :class="[

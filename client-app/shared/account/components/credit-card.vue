@@ -19,7 +19,7 @@
       color="neutral"
       size="xs"
       variant="ghost"
-      icon="delete-thin"
+      icon="x"
       @click="$emit('remove')"
     />
 

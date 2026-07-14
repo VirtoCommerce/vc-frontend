@@ -20,7 +20,7 @@
             :disabled="loading || !pagedListItems.length"
             size="sm"
             variant="outline"
-            prepend-icon="cart"
+            prepend-icon="shopping-cart"
             class="w-full md:order-last md:w-auto"
             @click="addAllListItemsToCart"
           >
@@ -31,7 +31,7 @@
             :disabled="loading || !pagedListItems.length"
             :loading="createCartFromWishlistLoading"
             size="sm"
-            prepend-icon="cart-check"
+            prepend-icon="shopping-cart"
             class="w-full md:order-last md:w-auto"
             @click="buyNow"
           >
@@ -42,7 +42,7 @@
             :disabled="loading || !isDirty || !list"
             size="sm"
             variant="outline"
-            prepend-icon="save-v2"
+            prepend-icon="save"
             class="grow"
             @click="openSaveChangesModal"
           >
