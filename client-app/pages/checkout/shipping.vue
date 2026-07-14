@@ -29,6 +29,8 @@
               {{ $t("common.messages.something_went_wrong") }}
             </VcAlert>
           </transition>
+
+          <LoyaltyValidationAlert variant="compact" class="mt-4" />
         </template>
       </OrderSummary>
     </template>
@@ -39,6 +41,7 @@
 import { useAnalytics } from "@/core/composables";
 import { useFullCart } from "@/shared/cart";
 import { OrderCommentSection, OrderSummary, ProceedTo, ShippingDetailsSection, useCheckout } from "@/shared/checkout";
+import LoyaltyValidationAlert from "@/shared/cart/components/loyalty-validation-alert.vue";
 
 const { cart, shipment, selectedLineItems, hasValidationErrors } = useFullCart();
 const { comment, isValidShipment } = useCheckout();

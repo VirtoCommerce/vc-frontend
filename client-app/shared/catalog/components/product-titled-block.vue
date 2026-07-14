@@ -1,9 +1,9 @@
 <template>
-  <div class="space-y-4">
-    <div class="flex items-center gap-2">
+  <div class="product-titled-block">
+    <div class="product-titled-block__header">
       <VcShape :icon="icon" />
 
-      <h2 class="grow text-xl font-bold uppercase text-neutral-950">{{ title }}</h2>
+      <h2 class="product-titled-block__title">{{ title }}</h2>
 
       <slot name="after" />
     </div>
@@ -20,3 +20,17 @@ interface IProps {
 
 defineProps<IProps>();
 </script>
+
+<style lang="scss">
+.product-titled-block {
+  @apply space-y-4;
+
+  &__header {
+    @apply flex items-center gap-2;
+  }
+
+  &__title {
+    @apply grow text-xl font-bold uppercase text-neutral-950;
+  }
+}
+</style>
