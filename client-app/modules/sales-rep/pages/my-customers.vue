@@ -166,6 +166,11 @@ function changePage(newPage: number): void {
     @apply px-4 py-2.5 align-top;
   }
 
+  // Muted, small order number under the date — matches the design; hover hints it's clickable.
+  &__order {
+    @apply text-sm text-neutral-500 hover:text-[--link-color] hover:underline;
+  }
+
   &__mobile-item {
     @apply flex flex-col gap-1 border-b px-5 py-4.5 [word-break:break-word];
   }
