@@ -1,6 +1,7 @@
 <template>
   <VcChip
     v-if="countInCart > 0"
+    class="count-in-cart"
     :size="size"
     variant="outline-dark"
     color="neutral"
@@ -9,7 +10,7 @@
   >
     <VcIcon name="cart" />
 
-    <span class="inline-block min-w-3 text-center" data-test-id="count-in-cart-label">
+    <span class="count-in-cart__label" data-test-id="count-in-cart-label">
       {{ countInCart }}
     </span>
   </VcChip>
@@ -45,3 +46,11 @@ const lineItemInCart = computed(() => {
 
 const countInCart = computed<number>(() => lineItemInCart.value?.quantity ?? 0);
 </script>
+
+<style lang="scss">
+.count-in-cart {
+  &__label {
+    @apply inline-block min-w-3 text-center;
+  }
+}
+</style>

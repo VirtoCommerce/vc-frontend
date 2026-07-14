@@ -1,68 +1,68 @@
 <template>
   <VcModal
+    class="add-bulk-items-to-cart-results-modal"
     :title="$t('shared.cart.add_bulk_items_to_cart_results_modal.title')"
     max-width="50rem"
     is-mobile-fullscreen
     dividers
   >
-    <VcExpansionPanels class="flex flex-col gap-y-4">
+    <VcExpansionPanels class="add-bulk-items-to-cart-results-modal__panels">
       <VcExpansionPanel v-for="(group, index) in groups" :key="group.name" :expanded="!index && groups.length === 1">
         <template #icon>
-          <VcIcon v-if="group.name === 'added'" class="fill-success" name="check-circle" />
+          <VcIcon v-if="group.name === 'added'" color="success" name="check-circle" />
 
-          <VcIcon v-else-if="group.name === 'not_added'" class="fill-danger" name="delete" />
+          <VcIcon v-else-if="group.name === 'not_added'" color="danger" name="delete" />
         </template>
 
         <template #header-content>
-          <div class="flex items-center gap-x-2.5">
-            <span class="truncate text-sm font-bold normal-case">
+          <div class="add-bulk-items-to-cart-results-modal__header">
+            <span class="add-bulk-items-to-cart-results-modal__header-title">
               {{ $t(`shared.cart.add_bulk_items_to_cart_results_modal.groups.${group.name}`) }}
             </span>
 
-            <VcBadge class="flex-none" variant="outline" size="sm" rounded>
+            <VcBadge class="add-bulk-items-to-cart-results-modal__badge" variant="outline" size="sm" rounded>
               {{ group.items.length }}
             </VcBadge>
           </div>
         </template>
 
-        <div class="max-h-80 overflow-y-auto rounded-[inherit] md:max-h-72">
-          <ul class="w-full md:table">
-            <li class="top-0 hidden bg-neutral-50 text-sm font-black md:sticky md:table-row">
-              <div class="table-cell border-b px-4 py-2.5">
+        <div class="add-bulk-items-to-cart-results-modal__scroller">
+          <ul class="add-bulk-items-to-cart-results-modal__table">
+            <li class="add-bulk-items-to-cart-results-modal__head-row">
+              <div class="add-bulk-items-to-cart-results-modal__head-cell">
                 {{ $t("shared.cart.add_bulk_items_to_cart_results_modal.labels.sku") }}
               </div>
 
-              <div class="table-cell border-b px-4 py-2.5">
+              <div class="add-bulk-items-to-cart-results-modal__head-cell">
                 {{ $t("shared.cart.add_bulk_items_to_cart_results_modal.labels.product_name") }}
               </div>
 
-              <div class="table-cell border-b px-4 py-2.5 text-right">
+              <div
+                class="add-bulk-items-to-cart-results-modal__head-cell add-bulk-items-to-cart-results-modal__head-cell--right"
+              >
                 {{ $t("shared.cart.add_bulk_items_to_cart_results_modal.labels.quantity") }}
               </div>
             </li>
 
-            <li
-              v-for="item in group.items"
-              :key="item.sku"
-              class="flex flex-wrap border-b px-4 py-2.5 text-sm last:border-0 md:table-row md:border-0 md:p-0 md:odd:bg-neutral-50"
-            >
-              <div class="flex w-3/5 flex-col pr-3 md:table-cell md:w-auto md:px-4 md:py-2.5 md:align-middle">
-                <span class="text-neutral-400 md:hidden">
+            <li v-for="item in group.items" :key="item.sku" class="add-bulk-items-to-cart-results-modal__row">
+              <div class="add-bulk-items-to-cart-results-modal__cell add-bulk-items-to-cart-results-modal__cell--sku">
+                <span class="add-bulk-items-to-cart-results-modal__mobile-label">
                   {{ $t("shared.cart.add_bulk_items_to_cart_results_modal.labels.sku") }}
                 </span>
 
-                <span class="font-bold max-lg:break-all">{{ item.sku }}</span>
+                <span
+                  class="add-bulk-items-to-cart-results-modal__value add-bulk-items-to-cart-results-modal__value--sku"
+                  >{{ item.sku }}</span
+                >
               </div>
 
-              <div
-                class="order-first mb-2.5 line-clamp-2 w-full shrink-0 md:mb-0 md:line-clamp-none md:table-cell md:w-auto md:px-4 md:py-2.5 md:align-middle"
-              >
+              <div class="add-bulk-items-to-cart-results-modal__cell add-bulk-items-to-cart-results-modal__cell--name">
                 <router-link
                   v-if="item.productExists"
                   :to="links[item.productId]"
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="font-bold text-[--link-color] hover:text-[--link-hover-color]"
+                  class="add-bulk-items-to-cart-results-modal__link"
                 >
                   {{ item.name }}
                 </router-link>
@@ -72,12 +72,14 @@
                 </div>
               </div>
 
-              <div class="flex w-2/5 flex-col md:table-cell md:w-auto md:px-4 md:py-2.5 md:text-right md:align-middle">
-                <span class="text-neutral-400 md:hidden">
+              <div
+                class="add-bulk-items-to-cart-results-modal__cell add-bulk-items-to-cart-results-modal__cell--quantity"
+              >
+                <span class="add-bulk-items-to-cart-results-modal__mobile-label">
                   {{ $t("shared.cart.add_bulk_items_to_cart_results_modal.labels.quantity") }}
                 </span>
 
-                <span class="font-bold">{{ $n(item.quantity) }}</span>
+                <span class="add-bulk-items-to-cart-results-modal__value">{{ $n(item.quantity) }}</span>
               </div>
             </li>
           </ul>
@@ -86,7 +88,11 @@
     </VcExpansionPanels>
 
     <template #actions="{ close }">
-      <VcButton :to="{ name: ROUTES.CART.NAME }" class="max-xs:!min-w-full xs:me-auto" @click="close()">
+      <VcButton
+        :to="{ name: ROUTES.CART.NAME }"
+        class="add-bulk-items-to-cart-results-modal__view-cart-button"
+        @click="close()"
+      >
         {{ $t("common.buttons.view_cart") }}
       </VcButton>
 
@@ -281,3 +287,133 @@ function print() {
   printWindow.focus();
 }
 </script>
+
+<style lang="scss">
+.add-bulk-items-to-cart-results-modal {
+  &__panels {
+    @apply flex flex-col gap-y-4;
+  }
+
+  &__header {
+    @apply flex items-center gap-x-2.5;
+  }
+
+  &__header-title {
+    @apply truncate text-sm font-bold normal-case;
+  }
+
+  &__badge {
+    @apply flex-none;
+  }
+
+  &__scroller {
+    @apply max-h-80 overflow-y-auto rounded-[inherit];
+
+    @media (width >= theme("screens.md")) {
+      @apply max-h-72;
+    }
+  }
+
+  &__table {
+    @apply w-full;
+
+    @media (width >= theme("screens.md")) {
+      @apply table;
+    }
+  }
+
+  &__head-row {
+    @apply top-0 hidden bg-neutral-50 text-sm font-black;
+
+    @media (width >= theme("screens.md")) {
+      @apply sticky table-row;
+    }
+  }
+
+  &__head-cell {
+    @apply table-cell border-b px-4 py-2.5;
+
+    &--right {
+      @apply text-end;
+    }
+  }
+
+  &__row {
+    @apply flex flex-wrap border-b px-4 py-2.5 text-sm;
+
+    &:last-child {
+      @apply border-0;
+    }
+
+    @media (width >= theme("screens.md")) {
+      @apply table-row border-0 p-0;
+
+      &:nth-child(odd) {
+        @apply bg-neutral-50;
+      }
+    }
+  }
+
+  &__cell {
+    &--sku {
+      @apply flex w-3/5 flex-col pe-3;
+
+      @media (width >= theme("screens.md")) {
+        @apply table-cell w-auto px-4 py-2.5 align-middle;
+      }
+    }
+
+    &--name {
+      @apply order-first mb-2.5 line-clamp-2 w-full shrink-0;
+
+      @media (width >= theme("screens.md")) {
+        @apply table-cell w-auto px-4 py-2.5 align-middle mb-0 line-clamp-none;
+      }
+    }
+
+    &--quantity {
+      @apply flex w-2/5 flex-col;
+
+      @media (width >= theme("screens.md")) {
+        @apply table-cell w-auto px-4 py-2.5 text-end align-middle;
+      }
+    }
+  }
+
+  &__mobile-label {
+    @apply text-neutral-400;
+
+    @media (width >= theme("screens.md")) {
+      @apply hidden;
+    }
+  }
+
+  &__value {
+    @apply font-bold;
+
+    &--sku {
+      @media (width < theme("screens.lg")) {
+        @apply break-all;
+      }
+    }
+  }
+
+  &__link {
+    @apply font-bold text-[--link-color];
+
+    &:hover {
+      @apply text-[--link-hover-color];
+    }
+  }
+
+  &__view-cart-button {
+    @media (width < theme("screens.xs")) {
+      min-width: 100% !important;
+    }
+
+    @media (width >= theme("screens.xs")) {
+      @apply me-auto;
+    }
+  }
+}
+</style>
