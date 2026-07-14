@@ -355,19 +355,19 @@ function print() {
   }
 
   &__cell {
-    @media (width >= theme("screens.md")) {
-      @apply table-cell w-auto px-4 py-2.5 align-middle;
-    }
-
     &--sku {
       @apply flex w-3/5 flex-col pe-3;
+
+      @media (width >= theme("screens.md")) {
+        @apply table-cell w-auto px-4 py-2.5 align-middle;
+      }
     }
 
     &--name {
       @apply order-first mb-2.5 line-clamp-2 w-full shrink-0;
 
       @media (width >= theme("screens.md")) {
-        @apply mb-0 line-clamp-none;
+        @apply table-cell w-auto px-4 py-2.5 align-middle mb-0 line-clamp-none;
       }
     }
 
@@ -375,7 +375,7 @@ function print() {
       @apply flex w-2/5 flex-col;
 
       @media (width >= theme("screens.md")) {
-        @apply text-end;
+        @apply table-cell w-auto px-4 py-2.5 text-end align-middle;
       }
     }
   }
