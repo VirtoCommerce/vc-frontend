@@ -1,5 +1,5 @@
 import { createGlobalState } from "@vueuse/core";
-import { clone, mergeWith } from "lodash-es";
+import { clone, cloneDeep, mergeWith } from "lodash-es";
 import { computed, readonly, ref, shallowRef, triggerRef } from "vue";
 import menuData from "@/config/menu.json";
 import { getChildCategories, getMenu } from "@/core/api/graphql";
@@ -154,6 +154,21 @@ export function _useNavigations() {
     });
   }
 
+  // Registered account sections (e.g. Sales Rep hub), visibility-filtered and translated for the
+  // mobile drill-down. Clone children first — getTranslatedMenuLink mutates its shared-registry input.
+  const mobileRegisteredAccountSections = computed<ExtendedMenuLinkType[]>(() =>
+    registeredAccountSections.value
+      .filter((section) => !section.isVisible || section.isVisible.value)
+      .map((section) =>
+        getTranslatedMenuLink({
+          id: section.id,
+          title: section.title,
+          icon: section.icon,
+          children: cloneDeep(section.children),
+        }),
+      ),
+  );
+
   const mobilePreSelectedMenuItem = computed<ExtendedMenuLinkType | undefined>(() => {
     const matchedRouteNames = globals.router.currentRoute.value.matched
       .map((item) => item.name)
@@ -181,8 +196,10 @@ export function _useNavigations() {
       return specialRoute;
     }
 
-    // Then search in section children
+    // Then search in section children — registered sections (e.g. Sales Rep hub) lead, matching the
+    // rendered order, so a rep on /company/my-customers auto-opens the hub like built-in routes do.
     const sections = [
+      ...mobileRegisteredAccountSections.value,
       mobilePurchasingMenuItem.value,
       mobileMarketingMenuItem.value,
       mobileUserMenuItem.value,
@@ -300,6 +317,7 @@ export function _useNavigations() {
     mobileMarketingMenuItem,
     mobileUserMenuItem,
     mobileCorporateMenuItem,
+    mobileRegisteredAccountSections,
     mobilePreSelectedMenuItem,
 
     matchingRouteName: readonly(matchingRouteName),

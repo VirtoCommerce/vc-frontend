@@ -7,7 +7,7 @@
     @close="$emit('close')"
     @select="$emit('selectItem')"
   >
-    {{ item.title }}
+    <template #default="{ formattedText }">{{ formattedText }}</template>
   </MobileMenuLink>
 </template>
 
