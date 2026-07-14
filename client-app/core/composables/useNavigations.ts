@@ -22,6 +22,7 @@ import {
 import { globals } from "../globals";
 import type { MenuLinkType } from "../api/graphql/types";
 import type {
+  AccountNavigationSectionType,
   ExtendedMenuLinkType,
   MenuType,
   MarkedMenuLinkType,
@@ -37,6 +38,9 @@ export function _useNavigations() {
 
   const matchingRouteName = ref("");
   const menuSchema = shallowRef<MenuType | null>(menuData);
+  // Account left-rail sections contributed by modules (e.g. the Sales Rep hub).
+  // shallowRef so the sections' `isVisible` ComputedRefs aren't unwrapped by ref's deep typing.
+  const registeredAccountSections = shallowRef<AccountNavigationSectionType[]>([]);
   const catalogMenuItems = shallowRef<ExtendedMenuLinkType[]>([]);
   const footerLinks = shallowRef<ExtendedMenuLinkType[]>([]);
   const pinnedLinks = shallowRef<ExtendedMenuLinkType[]>([]);
@@ -270,6 +274,15 @@ export function _useNavigations() {
     triggerRef(menuSchema);
   }
 
+  // Registers an account left-rail section (idempotent by id). Modules call this at init.
+  function registerAccountSection(section: AccountNavigationSectionType) {
+    if (registeredAccountSections.value.some((x) => x.id === section.id)) {
+      Logger.warn(`[useNavigations] account section "${section.id}" is already registered; ignoring.`);
+      return;
+    }
+    registeredAccountSections.value = [...registeredAccountSections.value, section];
+  }
+
   return {
     setMatchingRouteName,
 
@@ -302,6 +315,8 @@ export function _useNavigations() {
     markLinkTree,
 
     mergeMenuSchema,
+    registerAccountSection,
+    registeredAccountSections: computed(() => registeredAccountSections.value),
   };
 }
 

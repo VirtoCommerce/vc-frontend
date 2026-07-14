@@ -82,6 +82,13 @@
 
         <!-- Account sections -->
         <ul class="flex flex-col gap-y-2">
+          <!-- Registered sections (e.g. Sales Rep hub) — lead the account sections -->
+          <li v-for="section in mobileAccountSections" :key="section.id">
+            <MobileMenuLink :link="section" class="py-1 text-2xl font-bold" @select="$emit('selectItem', section)">
+              {{ section.title }}
+            </MobileMenuLink>
+          </li>
+
           <!-- Purchasing -->
           <li>
             <MobileMenuLink
@@ -161,8 +168,10 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useCurrency, useNavigations } from "@/core/composables";
+import { getTranslatedMenuLink } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
 import { useImpersonate, useSignMeOut, useUser } from "@/shared/account";
 import type { ExtendedMenuLinkType } from "@/core/types";
@@ -190,8 +199,18 @@ const {
   mobileMarketingMenuItem,
   mobileUserMenuItem,
   mobileCorporateMenuItem,
+  registeredAccountSections,
 } = useNavigations();
 const { t } = useI18n();
+
+// Module-registered sections (e.g. Sales Rep hub), translated and shown as drill-downs at the top.
+const mobileAccountSections = computed(() =>
+  registeredAccountSections.value
+    .filter((section) => !section.isVisible || section.isVisible.value)
+    .map((section) =>
+      getTranslatedMenuLink({ id: section.id, title: section.title, icon: section.icon, children: section.children }),
+    ),
+);
 const { supportedCurrencies } = useCurrency();
 
 const unauthorizedMenuItems: ExtendedMenuLinkType[] = [
