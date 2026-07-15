@@ -101,7 +101,7 @@
               "name": "PromotionCoupons"
             },
             "title": "shared.account.navigation.links.promotion_coupons",
-            "icon": "receipt",
+            "icon": "ticket-percent",
             "priority": 10
           }
         ]
@@ -254,7 +254,7 @@
       "marketing": {
         "id": "marketing",
         "title": "shared.account.navigation.marketing_title",
-        "icon": "receipt",
+        "icon": "ticket-percent",
         "children": [
           {
             "id": "promotion-coupons",
@@ -262,7 +262,7 @@
               "name": "PromotionCoupons"
             },
             "title": "shared.account.navigation.links.promotion_coupons",
-            "icon": "receipt",
+            "icon": "ticket-percent",
             "priority": 10
           }
         ]

@@ -59,7 +59,7 @@
             </div>
 
             <button type="button" class="flex cursor-pointer items-center pl-2" @click="clearSelection">
-              <VcIcon name="eraser" class="fill-primary" :size="16" />
+              <VcIcon name="eraser" class="text-primary" :size="16" />
 
               <span class="pl-2 text-sm font-bold text-[--link-color] hover:text-[--link-hover-color]">
                 {{ $t("shared.catalog.branches_modal.clear_selection") }}
@@ -114,7 +114,7 @@
               class="ml-2.5 flex size-7 items-center justify-center self-center rounded bg-additional-50 shadow-md"
               @click="clearSelection"
             >
-              <VcIcon name="eraser" class="fill-primary" :size="16" />
+              <VcIcon name="eraser" class="text-primary" :size="16" />
             </button>
           </template>
         </div>

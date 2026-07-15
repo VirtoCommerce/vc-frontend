@@ -221,6 +221,11 @@ watch(
     @apply mt-1 flex flex-wrap gap-x-1.5 gap-y-0.5 empty:hidden;
   }
 
+  &__decrement,
+  &__increment {
+    --vc-icon-stroke: 2.4;
+  }
+
   @at-root .vc-product-card {
     $wrapperSelector: "> .vc-product-card__wrapper #{$self}";
 

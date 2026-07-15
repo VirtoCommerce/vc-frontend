@@ -25,7 +25,7 @@
               class="h-full pe-3 ps-5 sm:pe-5"
               @click="mobileMenuVisible = true"
             >
-              <VcIcon class="fill-primary" name="menu" :size="32" />
+              <VcIcon color="primary" name="menu" :size="24" :stroke-width="2" />
             </button>
 
             <router-link :to="$context.settings.default_return_url ?? '/'">
@@ -44,7 +44,7 @@
               class="px-1 py-2 xs:px-2"
               :href="`tel:${support_phone_number}`"
             >
-              <VcIcon class="fill-primary" name="phone" :size="28" />
+              <VcIcon color="primary" name="phone" :size="24" />
             </a>
 
             <button
@@ -53,7 +53,7 @@
               class="px-1 py-2 xs:px-2"
               @click="toggleSearchBar"
             >
-              <VcIcon class="fill-primary" name="search" :size="28" />
+              <VcIcon color="primary" name="search" :size="24" />
             </button>
 
             <ExtensionPointList category="mobileHeader" class="px-1 py-2 xs:px-2" />
@@ -64,7 +64,7 @@
               class="px-1 py-2 xs:px-2"
             >
               <span class="relative block">
-                <VcIcon class="fill-primary" name="shopping-cart" :size="28" />
+                <VcIcon color="primary" name="shopping-cart" :size="24" />
 
                 <transition
                   mode="out-in"

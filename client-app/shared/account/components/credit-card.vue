@@ -58,14 +58,14 @@ defineProps<IProps>();
   }
 
   &__icon {
-    @apply size-6 fill-primary;
+    @apply size-6 text-primary;
 
     @media (width > theme("screens.xs")) {
       @apply size-8;
     }
 
     #{$disabled} & {
-      @apply fill-inherit;
+      @apply text-inherit;
     }
   }
 

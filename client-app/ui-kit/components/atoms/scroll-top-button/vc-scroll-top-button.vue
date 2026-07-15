@@ -36,7 +36,7 @@ window.onscroll = () => {
   @apply fixed bottom-10 right-3 z-20 opacity-60 hover:opacity-100;
 
   &__icon {
-    @apply fill-primary;
+    @apply text-primary;
   }
 }
 </style>

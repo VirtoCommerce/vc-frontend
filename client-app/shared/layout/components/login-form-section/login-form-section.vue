@@ -25,13 +25,13 @@
             {{ $t("pages.home.main_banner_block.key_feature_1") }}
           </div>
 
-          <VcIcon name="circle" class="fill-primary" size="xxs" />
+          <VcIcon name="circle" class="text-primary" size="xxs" />
 
           <div>
             {{ $t("pages.home.main_banner_block.key_feature_2") }}
           </div>
 
-          <VcIcon name="circle" class="fill-primary" size="xxs" />
+          <VcIcon name="circle" class="text-primary" size="xxs" />
 
           <div>
             {{ $t("pages.home.main_banner_block.key_feature_3") }}

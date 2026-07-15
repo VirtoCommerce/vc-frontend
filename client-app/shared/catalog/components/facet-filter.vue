@@ -379,6 +379,8 @@ defineExpose({
   }
 
   &__arrow {
+    --vc-icon-stroke: 2.4;
+
     @apply transition-transform;
 
     #{$opened} & {

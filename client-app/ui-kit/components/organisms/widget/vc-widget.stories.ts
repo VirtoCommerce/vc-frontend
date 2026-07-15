@@ -101,7 +101,7 @@ export const PrependSlot: StoryType = {
   },
   render: renderWidget(`<VcWidget v-bind="args">
     <template #prepend>
-      <VcIcon class="fill-danger" name="cake" size="sm" />
+      <VcIcon class="text-danger" name="cake" size="sm" />
     </template>
 
     Widget text
@@ -118,7 +118,7 @@ export const AppendSlot: StoryType = {
     <template #append>
       <span class="flex items-center gap-1">
         <a class="text-accent-600 text-sm underline" href="#">Link</a>
-        <VcIcon class="fill-accent-600" name="arrow-right" size="xs" />
+        <VcIcon class="text-accent-600" name="arrow-right" size="xs" />
       </span>
     </template>
   </VcWidget>`),

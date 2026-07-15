@@ -19,14 +19,14 @@
         :tooltip="false"
         :icon-size="22"
         test-id="mobile-dark-mode-toggle"
-        class="appearance-none fill-[--mobile-menu-navigation-color] p-2"
+        class="appearance-none p-2 text-[--mobile-menu-navigation-color]"
       />
 
       <!-- Language block -->
       <LanguageSelector v-if="supportedLanguages.length > 1" />
 
       <button type="button" class="-mr-4 appearance-none p-4" @click="$emit('close')">
-        <VcIcon name="x" class="fill-[--mobile-menu-navigation-color]" :size="22" />
+        <VcIcon name="x" class="text-[--mobile-menu-navigation-color]" :size="22" />
       </button>
     </div>
 

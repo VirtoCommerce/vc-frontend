@@ -36,7 +36,7 @@
         </VcMenuItem>
 
         <VcMenuItem color="secondary" @click="$emit('remove')">
-          <VcIcon name="x" class="fill-danger" />
+          <VcIcon name="x" class="text-danger" />
 
           <span>{{ $t("pages.company.members.buttons.delete") }}</span>
         </VcMenuItem>

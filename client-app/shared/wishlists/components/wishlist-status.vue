@@ -9,7 +9,7 @@
     </template>
 
     <template v-else>
-      <VcIcon :size="16" class="fill-primary" name="users" />
+      <VcIcon :size="16" class="text-primary" name="users" />
 
       <span>
         {{

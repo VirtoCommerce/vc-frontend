@@ -170,7 +170,7 @@ const unreadVisibility = useVModel(props, "showUnreadOnly", emits);
   }
 
   &__options-icon {
-    @apply fill-neutral group-hover:fill-neutral-700;
+    @apply text-neutral group-hover:text-neutral-700;
   }
 
   &__dialog {

@@ -36,7 +36,7 @@
         color="secondary"
         @click="deleteAddress"
       >
-        <VcIcon :class="address.isDefault ? 'fill-neutral-400' : 'fill-danger'" name="x" />
+        <VcIcon :class="address.isDefault ? 'text-neutral-400' : 'text-danger'" name="x" />
 
         <span>{{ $t("common.buttons.delete") }}</span>
       </VcMenuItem>

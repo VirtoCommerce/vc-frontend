@@ -37,7 +37,7 @@
 
       <!-- Call us block -->
       <div v-if="support_phone_number" class="flex items-center whitespace-nowrap">
-        <VcIcon class="me-1.5 fill-primary" name="phone" size="sm" />
+        <VcIcon class="me-1.5 text-primary" name="phone" size="sm" />
 
         <span class="font-thin">
           {{ $t("shared.layout.header.top_header.call_us_label") }}
@@ -111,10 +111,10 @@
               >
             </span>
 
-            <VcIcon class="fill-primary xl:hidden" name="user-circle" size="sm" />
+            <VcIcon class="text-primary xl:hidden" name="user-circle" size="sm" />
 
             <VcIcon
-              class="ms-1.5 shrink-0 fill-accent-200 [--vc-icon-size:1rem] lg:fill-primary lg:[--vc-icon-size:0.625rem]"
+              class="ms-1.5 shrink-0 text-accent-200 [--vc-icon-size:1rem] lg:text-primary lg:[--vc-icon-size:0.625rem]"
               :name="loginMenuVisible ? 'chevron-up' : 'chevron-down'"
             />
           </button>
@@ -131,7 +131,7 @@
                 data-test-id="dashboard-link"
                 @click="loginMenuVisible = false"
               >
-                <VcIcon class="fill-primary" name="user-circle" />
+                <VcIcon class="text-primary" name="user-circle" />
 
                 <span class="truncate">
                   {{ user.contact?.fullName }}
@@ -159,7 +159,7 @@
               data-test-id="back-to-operator-row"
               @click="onBackToOperator"
             >
-              <VcIcon class="fill-primary" name="arrow-left" />
+              <VcIcon class="text-primary" name="arrow-left" />
 
               <span class="truncate">
                 {{ backToOperatorLabel }}

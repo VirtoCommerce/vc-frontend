@@ -16,7 +16,7 @@
         ? $t('back_in_stock.messages.you_will_be_notified')
         : $t('back_in_stock.messages.stock_alert')
     "
-    link-icon="information-circle"
+    link-icon="info"
     :link-text="isTextShown ? $t('back_in_stock.messages.click_to_receive_alert') : ''"
     @link-click="updateBackInStockSubscription"
   />
