@@ -81,12 +81,20 @@ describe("use-errors-translator", () => {
     ).toBeTruthy();
   });
 
-  it("should return product inactive error", () => {
+  const errorsWithoutParameters: { description: string; errorCode: string }[] = [
+    { description: "product inactive", errorCode: "CART_PRODUCT_INACTIVE" },
+    { description: "invalid product price", errorCode: "PRODUCT_PRICE_INVALID" },
+    { description: "product is out of stock", errorCode: "PRODUCT_FFC_QTY" },
+    { description: "line item not found", errorCode: "LINE_ITEM_NOT_FOUND" },
+    { description: "invalid product", errorCode: "CART_INVALID_PRODUCT" },
+  ];
+
+  it.each(errorsWithoutParameters)("should return $description error", ({ errorCode }) => {
     const { localizedItemsErrors, setErrors } = useErrorsTranslator("validation_error");
 
     setErrors([
       {
-        errorCode: "CART_PRODUCT_INACTIVE",
+        errorCode,
         objectId: "78e7a44e292a439a9a4e059bda5a398f",
         objectType: "CartProduct",
       },
@@ -94,41 +102,7 @@ describe("use-errors-translator", () => {
 
     expect(localizedItemsErrors.value["78e7a44e292a439a9a4e059bda5a398f"]).toBeDefined();
     expect(
-      localizedItemsErrors.value["78e7a44e292a439a9a4e059bda5a398f"].includes("validation_error.CART_PRODUCT_INACTIVE"),
-    ).toBeTruthy();
-  });
-
-  it("should return invalid product price error", () => {
-    const { localizedItemsErrors, setErrors } = useErrorsTranslator("validation_error");
-
-    setErrors([
-      {
-        errorCode: "PRODUCT_PRICE_INVALID",
-        objectId: "78e7a44e292a439a9a4e059bda5a398f",
-        objectType: "CartProduct",
-      },
-    ]);
-
-    expect(localizedItemsErrors.value["78e7a44e292a439a9a4e059bda5a398f"]).toBeDefined();
-    expect(
-      localizedItemsErrors.value["78e7a44e292a439a9a4e059bda5a398f"].includes("validation_error.PRODUCT_PRICE_INVALID"),
-    ).toBeTruthy();
-  });
-
-  it("should return product is out of stock error", () => {
-    const { localizedItemsErrors, setErrors } = useErrorsTranslator("validation_error");
-
-    setErrors([
-      {
-        errorCode: "PRODUCT_FFC_QTY",
-        objectId: "78e7a44e292a439a9a4e059bda5a398f",
-        objectType: "CartProduct",
-      },
-    ]);
-
-    expect(localizedItemsErrors.value["78e7a44e292a439a9a4e059bda5a398f"]).toBeDefined();
-    expect(
-      localizedItemsErrors.value["78e7a44e292a439a9a4e059bda5a398f"].includes("validation_error.PRODUCT_FFC_QTY"),
+      localizedItemsErrors.value["78e7a44e292a439a9a4e059bda5a398f"].includes(`validation_error.${errorCode}`),
     ).toBeTruthy();
   });
 
@@ -205,23 +179,6 @@ describe("use-errors-translator", () => {
     ).toBeTruthy();
   });
 
-  it("should return line item not found error", () => {
-    const { localizedItemsErrors, setErrors } = useErrorsTranslator("validation_error");
-
-    setErrors([
-      {
-        errorCode: "LINE_ITEM_NOT_FOUND",
-        objectId: "78e7a44e292a439a9a4e059bda5a398f",
-        objectType: "CartProduct",
-      },
-    ]);
-
-    expect(localizedItemsErrors.value["78e7a44e292a439a9a4e059bda5a398f"]).toBeDefined();
-    expect(
-      localizedItemsErrors.value["78e7a44e292a439a9a4e059bda5a398f"].includes("validation_error.LINE_ITEM_NOT_FOUND"),
-    ).toBeTruthy();
-  });
-
   it("should return product min order quantity is not available error", () => {
     const { localizedItemsErrors, setErrors } = useErrorsTranslator("validation_error");
 
@@ -267,23 +224,6 @@ describe("use-errors-translator", () => {
     expect(localizedItemsErrors.value["78e7a44e292a439a9a4e059bda5a398f"]).toBeDefined();
     expect(
       localizedItemsErrors.value["78e7a44e292a439a9a4e059bda5a398f"].includes("validation_error.PRODUCT_EXACT_QTY"),
-    ).toBeTruthy();
-  });
-
-  it("should return invalid product error", () => {
-    const { localizedItemsErrors, setErrors } = useErrorsTranslator("validation_error");
-
-    setErrors([
-      {
-        errorCode: "CART_INVALID_PRODUCT",
-        objectId: "78e7a44e292a439a9a4e059bda5a398f",
-        objectType: "CartProduct",
-      },
-    ]);
-
-    expect(localizedItemsErrors.value["78e7a44e292a439a9a4e059bda5a398f"]).toBeDefined();
-    expect(
-      localizedItemsErrors.value["78e7a44e292a439a9a4e059bda5a398f"].includes("validation_error.CART_INVALID_PRODUCT"),
     ).toBeTruthy();
   });
 });

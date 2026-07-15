@@ -69,7 +69,7 @@ export const mainRoutes: RouteRecordRaw[] = [
     path: ROUTES.CHANGE_PASSWORD.PATH,
     name: ROUTES.CHANGE_PASSWORD.NAME,
     component: ChangePassword,
-    meta: { public: false, redirectable: false },
+    meta: { requiresAuth: true, public: false, redirectable: false },
   },
   { path: "/set-password", name: "SetPassword", component: ResetPassword, meta: { public: true } },
   { path: "/blocked", name: "Blocked", component: BlockedPage, meta: { public: true, redirectable: false } },

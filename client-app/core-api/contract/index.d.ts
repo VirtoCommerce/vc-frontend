@@ -1161,6 +1161,7 @@ type TierPriceType = {
 type VariationType = {
     /** Assets */
     assets: Array<Asset>;
+    associations?: Maybe<ProductAssociationConnection>;
     /** Availability data */
     availabilityData: AvailabilityData;
     /** SKU of variation. */

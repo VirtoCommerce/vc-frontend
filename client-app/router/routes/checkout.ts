@@ -1,4 +1,5 @@
 import { ROUTES } from "./constants";
+import { applyUcpHandoffBuyer, restoreUcpHandoffCart } from "./ucp-handoff";
 import type { NavigationGuardNext, RouteLocationNormalized, RouteRecordName, RouteRecordRaw } from "vue-router";
 
 const Checkout = () => import("@/pages/checkout/index.vue");
@@ -21,6 +22,7 @@ function handleBeforeEnter(
     next();
   }
 }
+
 export const checkoutRoutes: RouteRecordRaw[] = [
   {
     path: "/checkout/completed",
@@ -70,10 +72,24 @@ export const checkoutRoutes: RouteRecordRaw[] = [
       },
     ],
     meta: { layout: "Secure", redirectable: false },
-    beforeEnter(to, from, next) {
+    async beforeEnter(to, from, next) {
+      if (typeof to.query.ucp_session === "string") {
+        try {
+          const { cartId, buyerId } = await restoreUcpHandoffCart(to.query.ucp_session);
+          applyUcpHandoffBuyer(buyerId);
+          next({ name: ROUTES.CART_ID.NAME, params: { cartId }, query: { ucp_handoff: "1" }, replace: true });
+        } catch (error) {
+          console.error("Unable to restore UCP handoff session.", error);
+          next({ name: ROUTES.CART.NAME, replace: true });
+        }
+        return;
+      }
+
       if (from.name === ROUTES.CART.NAME || from.name === ROUTES.CART_ID.NAME) {
         next();
       } else if (from.name === "CheckoutPaymentResult" && to.name === "CheckoutPayment") {
+        next();
+      } else if (to.query.ucp_handoff === "1") {
         next();
       } else if (to.params.cartId) {
         next({ name: ROUTES.CART_ID.NAME, params: { cartId: to.params.cartId }, replace: true });

@@ -21,6 +21,25 @@ declare global {
     direction: VcTableSortDirectionType;
   };
 
+  type VcTableSelectionModeType = "single" | "multiple";
+
+  /**
+   * A row selection key. Accepted as `string | number` on input, but VcTable
+   * normalizes keys to strings for all internal comparisons and emits them back
+   * as strings (consistent with `getItemKey`, which stringifies `item.id`).
+   */
+  type VcTableSelectionKeyType = string | number;
+
+  /**
+   * Metadata describing what triggered a selection change.
+   * - `select` / `deselect`: a single row was toggled (`row` is the affected row).
+   * - `select-all` / `deselect-all`: the header control toggled all selectable rows on the current page.
+   */
+  type VcTableSelectionMetaType<T = unknown> = {
+    action: "select" | "deselect" | "select-all" | "deselect-all";
+    row?: T;
+  };
+
   /**
    * Slot function type for rendering cell content
    * Receives the item and row index as scope
@@ -31,6 +50,19 @@ declare global {
   };
 
   type VcTableColumnSlotFnType = Slot<VcTableColumnSlotScopeType>;
+
+  /**
+   * Scope passed to the `#desktop-item` and `#mobile-item` slots.
+   * The selection fields are always present; when selection is disabled,
+   * `selected` is `false`, `selectable` is `true`, and `toggle` is a no-op.
+   */
+  type VcTableItemSlotScopeType<T = unknown> = {
+    item: T;
+    index: number;
+    selected: boolean;
+    toggle: () => void;
+    selectable: boolean;
+  };
 
   /**
    * Slot scope type for custom column header rendering.

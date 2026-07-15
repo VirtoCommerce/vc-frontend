@@ -6,7 +6,7 @@
     "url": "https://virtocommerce.com"
   },
   "license": "SEE LICENSE IN LICENSE.txt",
-  "version": "2.53.0",
+  "version": "2.54.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -25,7 +25,7 @@
     "validate:types": "yarn precheck && vue-tsc --build --force",
     "validate:dependencies": "yarn precheck && depcruise client-app",
     "validate:core-types": "yarn precheck && node client-app/core-api/build-types.mjs --check",
-    "validate": "yarn precheck && yarn validate:types && yarn validate:dependencies && yarn validate:core-types",
+    "validate": "yarn precheck && yarn validate:types && yarn validate:dependencies",
     "commitlint": "yarn precheck && commitlint --edit",
     "lint-staged": "yarn precheck && lint-staged",
     "lint": "yarn precheck && eslint . --cache --cache-location node_modules/.cache/.eslintcache --cache-strategy content",

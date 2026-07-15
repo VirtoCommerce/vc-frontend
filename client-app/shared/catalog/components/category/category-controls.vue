@@ -10,9 +10,9 @@
       @keyup.enter="$emit('applyPurchasedBefore')"
     >
       <span
-        class="whitespace-nowrap text-sm"
+        class="category-controls__label"
         :class="{
-          'text-neutral': !savedPurchasedBefore,
+          'category-controls__label--muted': !savedPurchasedBefore,
         }"
       >
         {{ $t("pages.catalog.purchased_before_filter_card.checkbox_label") }}
@@ -31,9 +31,9 @@
       @keyup.enter="$emit('applyInStock')"
     >
       <span
-        class="whitespace-nowrap text-sm"
+        class="category-controls__label"
         :class="{
-          'text-neutral': !savedInStock,
+          'category-controls__label--muted': !savedInStock,
         }"
       >
         {{ $t("pages.catalog.instock_filter_card.checkbox_label") }}
@@ -55,13 +55,16 @@
       <i18n-t
         keypath="pages.catalog.branch_availability_filter_card.available_in"
         tag="div"
-        class="text-sm"
+        class="category-controls__availability"
         :class="{
-          'text-neutral': !savedBranches.length,
+          'category-controls__availability--muted': !savedBranches.length,
         }"
         scope="global"
       >
-        <span :class="{ 'font-bold text-[--link-color]': savedBranches.length }">
+        <span
+          class="category-controls__branches"
+          :class="{ 'category-controls__branches--active': savedBranches.length }"
+        >
           {{ $t("pages.catalog.branch_availability_filter_card.branches", { n: savedBranches.length }) }}
         </span>
       </i18n-t>
@@ -103,6 +106,30 @@ interface IProps {
 
   @media (min-width: theme("screens.xl")) {
     @apply gap-6;
+  }
+
+  &__label {
+    @apply whitespace-nowrap text-sm;
+
+    &--muted {
+      @apply text-neutral;
+    }
+  }
+
+  &__availability {
+    @apply text-sm;
+
+    &--muted {
+      @apply text-neutral;
+    }
+  }
+
+  &__branches {
+    &--active {
+      @apply font-bold;
+
+      color: var(--link-color);
+    }
   }
 }
 </style>

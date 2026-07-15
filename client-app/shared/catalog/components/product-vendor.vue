@@ -3,9 +3,10 @@
     v-if="showVendor && product.vendor"
     :title="$t('shared.catalog.product_details.vendor_label')"
     size="sm"
-    :class="{ 'print:hidden': product.hasVariations }"
+    class="product-vendor"
+    :class="{ 'product-vendor--hidden-print': product.hasVariations }"
   >
-    <div class="test-base text-center font-bold [word-break:break-word]">
+    <div class="product-vendor__name">
       {{ product.vendor.name }}
     </div>
   </VcWidget>
@@ -30,3 +31,19 @@ const showVendor = computed(
   () => themeContext.value?.settings?.vendor_enabled && !product.value.hasVariations && product.value.vendor,
 );
 </script>
+
+<style lang="scss">
+.product-vendor {
+  &--hidden-print {
+    @media print {
+      @apply hidden;
+    }
+  }
+
+  &__name {
+    @apply text-center font-bold;
+
+    word-break: break-word;
+  }
+}
+</style>

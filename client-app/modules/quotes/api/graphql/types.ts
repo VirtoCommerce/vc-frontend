@@ -1150,6 +1150,7 @@ export type UpdateQuoteDynamicPropertiesCommandType = {
 export type VariationType = {
   /** Assets */
   assets: Array<Asset>;
+  associations?: Maybe<ProductAssociationConnection>;
   /** Availability data */
   availabilityData: AvailabilityData;
   /** SKU of variation. */
@@ -1181,6 +1182,14 @@ export type VariationType = {
   slug?: Maybe<Scalars['String']['output']>;
   /** Product vendor */
   vendor?: Maybe<CommonVendor>;
+};
+
+
+export type VariationTypeAssociationsArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  group?: InputMaybe<Scalars['String']['input']>;
+  query?: InputMaybe<Scalars['String']['input']>;
 };
 
 /** A connection from an object to a list of objects of type `Video`. */

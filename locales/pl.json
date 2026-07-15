@@ -187,6 +187,11 @@
       "max_length": "To pole nie może zawierać więcej niż {max} znaków",
       "creating_order_error": "Błąd podczas tworzenia zamówienia",
       "loyalty_insufficient_balance": "Nie wystarczająca liczba punktów lojalnościowych, aby złożyć zamówienie. Wymagane: {required}, dostępne: {available}.",
+      "loyalty_only_point_products_not_allowed": "Punktów lojalnościowych nie można używać samodzielnie. Dodaj do koszyka co najmniej jeden zwykły produkt, aby złożyć to zamówienie.",
+      "loyalty_payment_method_not_allowed": "Płatność punktami lojalnościowymi nie jest dostępna dla tego zamówienia. Wybierz inną metodę płatności.",
+      "loyalty_insufficient_balance_compact": "Za mało punktów — potrzeba {required}, masz {available}.",
+      "loyalty_only_point_products_not_allowed_compact": "Dodaj zwykły produkt, aby zamówić.",
+      "loyalty_payment_method_not_allowed_compact": "Płatność punktami niedostępna — wybierz inną metodę.",
       "payment_processing_error": "Błąd podczas przetwarzania płatności",
       "item_can_t_be_purchased": "Ten przedmiot nie może być zakupiony",
       "item_is_out_of_stock": "Ten przedmiot jest niedostępny",
@@ -1407,7 +1412,7 @@
         },
         "content_header": {
           "name": "Imię",
-          "role": "Rola",
+          "role": "Role",
           "email": "E-mail",
           "active": "Aktywny"
         },

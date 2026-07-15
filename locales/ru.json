@@ -187,6 +187,11 @@
       "max_length": "Это поле не должно содержать более чем {max} символов",
       "creating_order_error": "Ошибка при создании заказа",
       "loyalty_insufficient_balance": "Недостаточно бонусных баллов для оформления заказа. Требуется: {required}, доступно: {available}.",
+      "loyalty_only_point_products_not_allowed": "Бонусными баллами нельзя оплатить заказ полностью. Добавьте хотя бы один обычный товар, чтобы оформить заказ.",
+      "loyalty_payment_method_not_allowed": "Оплата бонусными баллами недоступна для этого заказа. Выберите другой способ оплаты.",
+      "loyalty_insufficient_balance_compact": "Недостаточно баллов — нужно {required}, есть {available}.",
+      "loyalty_only_point_products_not_allowed_compact": "Добавьте обычный товар для оформления.",
+      "loyalty_payment_method_not_allowed_compact": "Оплата баллами недоступна — выберите другой способ.",
       "payment_processing_error": "Ошибка при обработке платежа",
       "item_can_t_be_purchased": "Этот товар нельзя приобрести",
       "item_is_out_of_stock": "Этот товар отсутствует на складе",
@@ -1407,7 +1412,7 @@
         },
         "content_header": {
           "name": "Имя",
-          "role": "Роль",
+          "role": "Роли",
           "email": "Электронная почта",
           "active": "Статус"
         },

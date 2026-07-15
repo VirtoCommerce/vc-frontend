@@ -187,6 +187,11 @@
       "max_length": "Ce champ ne doit pas contenir plus de {max} caractères",
       "creating_order_error": "Erreur lors de la création d'une commande",
       "loyalty_insufficient_balance": "Pas assez de points de fidélité pour passer la commande. Requis : {required}, disponible : {available}.",
+      "loyalty_only_point_products_not_allowed": "Les points de fidélité ne peuvent pas être utilisés seuls. Ajoutez au moins un produit classique à votre panier pour passer cette commande.",
+      "loyalty_payment_method_not_allowed": "Le paiement avec des points de fidélité n'est pas disponible pour cette commande. Veuillez choisir un autre mode de paiement.",
+      "loyalty_insufficient_balance_compact": "Points insuffisants — besoin de {required}, vous avez {available}.",
+      "loyalty_only_point_products_not_allowed_compact": "Ajoutez un produit classique pour commander.",
+      "loyalty_payment_method_not_allowed_compact": "Paiement en points indisponible — choisissez un autre mode.",
       "payment_processing_error": "Erreur lors du traitement du paiement",
       "item_can_t_be_purchased": "Cet article ne peut pas être acheté",
       "item_is_out_of_stock": "Cet article est en rupture de stock",
@@ -1407,7 +1412,7 @@
         },
         "content_header": {
           "name": "Nom",
-          "role": "Rôle",
+          "role": "Rôles",
           "email": "E-mail",
           "active": "Actif"
         },

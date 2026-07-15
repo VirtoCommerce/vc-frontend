@@ -187,6 +187,11 @@
       "max_length": "Detta fält får inte innehålla mer än {max} tecken",
       "creating_order_error": "Fel vid skapande av beställning",
       "loyalty_insufficient_balance": "Inte tillräckligt med lojalitetspoäng för att slutföra beställningen. Krävs: {required}, tillgängliga: {available}.",
+      "loyalty_only_point_products_not_allowed": "Lojalitetspoäng kan inte användas ensamma. Lägg till minst en vanlig produkt i varukorgen för att lägga denna beställning.",
+      "loyalty_payment_method_not_allowed": "Betalning med lojalitetspoäng är inte tillgänglig för denna beställning. Välj en annan betalningsmetod.",
+      "loyalty_insufficient_balance_compact": "För få poäng – behöver {required}, du har {available}.",
+      "loyalty_only_point_products_not_allowed_compact": "Lägg till en vanlig produkt för att beställa.",
+      "loyalty_payment_method_not_allowed_compact": "Betalning med poäng ej tillgänglig – välj en annan metod.",
       "payment_processing_error": "Fel vid betalningshantering",
       "item_can_t_be_purchased": "Denna artikel kan inte köpas",
       "item_is_out_of_stock": "Denna artikel är slut i lager",
@@ -1407,7 +1412,7 @@
         },
         "content_header": {
           "name": "Namn",
-          "role": "Roll",
+          "role": "Roller",
           "email": "E-post",
           "active": "Aktiv"
         },

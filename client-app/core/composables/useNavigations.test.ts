@@ -169,43 +169,22 @@ describe("useNavigations - mobilePreSelectedMenuItem", () => {
   });
 
   describe("Special routes (Catalog, Category, Product)", () => {
-    it("returns mobileCatalogMenuItem for Catalog route", async () => {
-      hoisted.mockRouter.currentRoute.value.matched = [{ name: "Catalog" }];
-      const navigations = await importComposable();
-      expect(navigations.mobilePreSelectedMenuItem.value?.id).toBe("catalog");
-    });
-
-    it("returns mobileCatalogMenuItem for Category route", async () => {
-      hoisted.mockRouter.currentRoute.value.matched = [{ name: "Category" }];
-      const navigations = await importComposable();
-      expect(navigations.mobilePreSelectedMenuItem.value?.id).toBe("catalog");
-    });
-
-    it("returns mobileCatalogMenuItem for Product route", async () => {
-      hoisted.mockRouter.currentRoute.value.matched = [{ name: "Product" }];
+    it.each(["Catalog", "Category", "Product"])("returns mobileCatalogMenuItem for %s route", async (routeName) => {
+      hoisted.mockRouter.currentRoute.value.matched = [{ name: routeName }];
       const navigations = await importComposable();
       expect(navigations.mobilePreSelectedMenuItem.value?.id).toBe("catalog");
     });
   });
 
   describe("Purchasing section routes", () => {
-    it("returns mobilePurchasingMenuItem for Orders route", async () => {
-      hoisted.mockRouter.currentRoute.value.matched = [{ name: "Orders" }];
-      const navigations = await importComposable();
-      expect(navigations.mobilePreSelectedMenuItem.value?.id).toBe("purchasing");
-    });
-
-    it("returns mobilePurchasingMenuItem for Lists route", async () => {
-      hoisted.mockRouter.currentRoute.value.matched = [{ name: "Lists" }];
-      const navigations = await importComposable();
-      expect(navigations.mobilePreSelectedMenuItem.value?.id).toBe("purchasing");
-    });
-
-    it("returns mobilePurchasingMenuItem for SavedForLater route", async () => {
-      hoisted.mockRouter.currentRoute.value.matched = [{ name: "SavedForLater" }];
-      const navigations = await importComposable();
-      expect(navigations.mobilePreSelectedMenuItem.value?.id).toBe("purchasing");
-    });
+    it.each(["Orders", "Lists", "SavedForLater"])(
+      "returns mobilePurchasingMenuItem for %s route",
+      async (routeName) => {
+        hoisted.mockRouter.currentRoute.value.matched = [{ name: routeName }];
+        const navigations = await importComposable();
+        expect(navigations.mobilePreSelectedMenuItem.value?.id).toBe("purchasing");
+      },
+    );
   });
 
   describe("Marketing section routes", () => {
@@ -223,29 +202,14 @@ describe("useNavigations - mobilePreSelectedMenuItem", () => {
   });
 
   describe("User section routes", () => {
-    it("returns mobileUserMenuItem for Profile route", async () => {
-      hoisted.mockRouter.currentRoute.value.matched = [{ name: "Profile" }];
-      const navigations = await importComposable();
-      expect(navigations.mobilePreSelectedMenuItem.value?.id).toBe("user");
-    });
-
-    it("returns mobileUserMenuItem for Addresses route", async () => {
-      hoisted.mockRouter.currentRoute.value.matched = [{ name: "Addresses" }];
-      const navigations = await importComposable();
-      expect(navigations.mobilePreSelectedMenuItem.value?.id).toBe("user");
-    });
-
-    it("returns mobileUserMenuItem for ChangePasswordAccount route", async () => {
-      hoisted.mockRouter.currentRoute.value.matched = [{ name: "ChangePasswordAccount" }];
-      const navigations = await importComposable();
-      expect(navigations.mobilePreSelectedMenuItem.value?.id).toBe("user");
-    });
-
-    it("returns mobileUserMenuItem for SavedCreditCards route", async () => {
-      hoisted.mockRouter.currentRoute.value.matched = [{ name: "SavedCreditCards" }];
-      const navigations = await importComposable();
-      expect(navigations.mobilePreSelectedMenuItem.value?.id).toBe("user");
-    });
+    it.each(["Profile", "Addresses", "ChangePasswordAccount", "SavedCreditCards"])(
+      "returns mobileUserMenuItem for %s route",
+      async (routeName) => {
+        hoisted.mockRouter.currentRoute.value.matched = [{ name: routeName }];
+        const navigations = await importComposable();
+        expect(navigations.mobilePreSelectedMenuItem.value?.id).toBe("user");
+      },
+    );
   });
 
   describe("Corporate section child routes", () => {

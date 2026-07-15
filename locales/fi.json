@@ -187,6 +187,11 @@
       "max_length": "Tämä kenttä ei saa sisältää enempää kuin {max} merkkiä",
       "creating_order_error": "Virhe tilauksen luomisessa",
       "loyalty_insufficient_balance": "Ei tarpeeksi kanta-asiakaspisteitä tilauksen tekemiseen. Vaaditaan: {required}, käytettävissä: {available}.",
+      "loyalty_only_point_products_not_allowed": "Kanta-asiakaspisteitä ei voi käyttää yksinään. Lisää ostoskoriin vähintään yksi tavallinen tuote tehdäksesi tämän tilauksen.",
+      "loyalty_payment_method_not_allowed": "Maksaminen kanta-asiakaspisteillä ei ole käytettävissä tässä tilauksessa. Valitse toinen maksutapa.",
+      "loyalty_insufficient_balance_compact": "Pisteitä ei riitä – tarvitaan {required}, sinulla on {available}.",
+      "loyalty_only_point_products_not_allowed_compact": "Lisää tavallinen tuote tilataksesi.",
+      "loyalty_payment_method_not_allowed_compact": "Pistemaksu ei käytettävissä – valitse toinen tapa.",
       "payment_processing_error": "Virhe maksun käsittelyssä",
       "item_can_t_be_purchased": "Tätä tuotetta ei voi ostaa",
       "item_is_out_of_stock": "Tämä tuote on loppu varastosta",
@@ -1407,7 +1412,7 @@
         },
         "content_header": {
           "name": "Nimi",
-          "role": "Rooli",
+          "role": "Roolit",
           "email": "Sähköposti",
           "active": "Aktiivinen"
         },

@@ -80,6 +80,7 @@ vi.mock("./useThemeContext", () => ({
 
 vi.mock("@vueuse/core", () => ({
   useLocalStorage: () => hoisted.state.pinnedLocale,
+  noop: () => {},
   useSessionStorage: (key: string) =>
     key === "facetsCultureName" ? hoisted.state.facetsCultureName : hoisted.state.previousCultureSlug,
 }));
@@ -196,42 +197,70 @@ describe("useLanguages", () => {
       expect(languages.getLocaleFromUrl()).toBeUndefined();
     });
 
-    it("removeLocaleFromUrl strips short alias locale prefix and preserves query/hash", async () => {
-      navigateTo("/fr/cart?x=1#sec");
+    it.each([
+      {
+        condition: "strips short alias locale prefix and preserves query/hash",
+        url: "/fr/cart?x=1#sec",
+        expectedPathname: "/cart",
+      },
+      {
+        condition: "strips full locale prefix and preserves query/hash",
+        url: "/fr-FR/cart?x=1#sec",
+        expectedPathname: "/cart",
+      },
+      { condition: "does nothing when no locale is present", url: "/cart?x=1#sec", expectedPathname: "/cart" },
+      {
+        condition: "does nothing when no supported locale is present",
+        url: "/ru-RU/cart?x=1#sec",
+        expectedPathname: "/ru-RU/cart",
+      },
+    ])("removeLocaleFromUrl $condition", async ({ url, expectedPathname }) => {
+      navigateTo(url);
       const { useLanguages } = await importComposable();
       const languages = useLanguages();
       languages.removeLocaleFromUrl();
-      expect(location.pathname).toBe("/cart");
+      expect(location.pathname).toBe(expectedPathname);
       expect(location.search).toBe("?x=1");
       expect(location.hash).toBe("#sec");
     });
 
-    it("removeLocaleFromUrl strips full locale prefix and preserves query/hash", async () => {
-      navigateTo("/fr-FR/cart?x=1#sec");
+    it.each([
+      {
+        condition: "updates URL with permalink like '/bonjour'",
+        url: "/fr/hello?x=1#sec",
+        permalink: "/bonjour",
+        expectedPathname: "/fr/bonjour",
+      },
+      {
+        condition: "updates URL with permalink like 'bonjour'",
+        url: "/fr/hello?x=1#sec",
+        permalink: "bonjour",
+        expectedPathname: "/fr/bonjour",
+      },
+      {
+        condition: "does nothing when permalink is falsy",
+        url: "/fr/cart?x=1#sec",
+        permalink: "",
+        expectedPathname: "/fr/cart",
+      },
+      {
+        condition: "preserves /loyalty-catalog prefix on slug replace",
+        url: "/loyalty-catalog/old-slug?x=1#sec",
+        permalink: "/new-slug",
+        expectedPathname: "/loyalty-catalog/new-slug",
+      },
+      {
+        condition: "preserves /loyalty-catalog prefix together with locale",
+        url: "/fr/loyalty-catalog/old-slug?x=1#sec",
+        permalink: "/new-slug",
+        expectedPathname: "/fr/loyalty-catalog/new-slug",
+      },
+    ])("updateLocalizedUrl $condition", async ({ url, permalink, expectedPathname }) => {
+      navigateTo(url);
       const { useLanguages } = await importComposable();
       const languages = useLanguages();
-      languages.removeLocaleFromUrl();
-      expect(location.pathname).toBe("/cart");
-      expect(location.search).toBe("?x=1");
-      expect(location.hash).toBe("#sec");
-    });
-
-    it("removeLocaleFromUrl does nothing when no locale is present", async () => {
-      navigateTo("/cart?x=1#sec");
-      const { useLanguages } = await importComposable();
-      const languages = useLanguages();
-      languages.removeLocaleFromUrl();
-      expect(location.pathname).toBe("/cart");
-      expect(location.search).toBe("?x=1");
-      expect(location.hash).toBe("#sec");
-    });
-
-    it("removeLocaleFromUrl does nothing when no supported locale is present", async () => {
-      navigateTo("/ru-RU/cart?x=1#sec");
-      const { useLanguages } = await importComposable();
-      const languages = useLanguages();
-      languages.removeLocaleFromUrl();
-      expect(location.pathname).toBe("/ru-RU/cart");
+      languages.updateLocalizedUrl(permalink);
+      expect(location.pathname).toBe(expectedPathname);
       expect(location.search).toBe("?x=1");
       expect(location.hash).toBe("#sec");
     });
@@ -253,56 +282,6 @@ describe("useLanguages", () => {
       languages.removeFacetsFromUrl();
       expect(location.pathname).toBe("/catalog");
       expect(location.search).toBe("?page=2");
-      expect(location.hash).toBe("#sec");
-    });
-
-    it("updateLocalizedUrl updates URL with permalink like '/bonjour'", async () => {
-      navigateTo("/fr/hello?x=1#sec");
-      const { useLanguages } = await importComposable();
-      const languages = useLanguages();
-      languages.updateLocalizedUrl("/bonjour");
-      expect(location.pathname).toBe("/fr/bonjour");
-      expect(location.search).toBe("?x=1");
-      expect(location.hash).toBe("#sec");
-    });
-
-    it("updateLocalizedUrl updates URL with permalink like 'bonjour'", async () => {
-      navigateTo("/fr/hello?x=1#sec");
-      const { useLanguages } = await importComposable();
-      const languages = useLanguages();
-      languages.updateLocalizedUrl("bonjour");
-      expect(location.pathname).toBe("/fr/bonjour");
-      expect(location.search).toBe("?x=1");
-      expect(location.hash).toBe("#sec");
-    });
-
-    it("updateLocalizedUrl does nothing when permalink is falsy", async () => {
-      navigateTo("/fr/cart?x=1#sec");
-      const { useLanguages } = await importComposable();
-      const languages = useLanguages();
-      languages.updateLocalizedUrl("");
-      expect(location.pathname).toBe("/fr/cart");
-      expect(location.search).toBe("?x=1");
-      expect(location.hash).toBe("#sec");
-    });
-
-    it("updateLocalizedUrl preserves /loyalty-catalog prefix on slug replace", async () => {
-      navigateTo("/loyalty-catalog/old-slug?x=1#sec");
-      const { useLanguages } = await importComposable();
-      const languages = useLanguages();
-      languages.updateLocalizedUrl("/new-slug");
-      expect(location.pathname).toBe("/loyalty-catalog/new-slug");
-      expect(location.search).toBe("?x=1");
-      expect(location.hash).toBe("#sec");
-    });
-
-    it("updateLocalizedUrl preserves /loyalty-catalog prefix together with locale", async () => {
-      navigateTo("/fr/loyalty-catalog/old-slug?x=1#sec");
-      const { useLanguages } = await importComposable();
-      const languages = useLanguages();
-      languages.updateLocalizedUrl("/new-slug");
-      expect(location.pathname).toBe("/fr/loyalty-catalog/new-slug");
-      expect(location.search).toBe("?x=1");
       expect(location.hash).toBe("#sec");
     });
   });
@@ -372,15 +351,37 @@ describe("useLanguages", () => {
       expect(location.hash).toBe("#sec");
     });
 
-    it("prepends short locale prefix on root path", async () => {
-      navigateTo("/");
+    it.each([
+      { condition: "prepends short locale prefix on root path", url: "/", locale: "fr-FR", expectedPathname: "/fr" },
+      {
+        condition: "replaces full locale with short alias when language has a unique short form",
+        url: "/fr-FR/cart",
+        locale: "fr-FR",
+        expectedPathname: "/fr/cart",
+      },
+      {
+        // pathname starts with `de` but locale prefix is /en-US — must strip only the anchored prefix
+        condition: "strips default locale prefix without eating pathname characters",
+        url: "/en-US/destinations",
+        locale: "en-US",
+        expectedPathname: "/destinations",
+      },
+      {
+        // pathname `/destinations` must not be touched when switching to default English
+        condition: "does not strip locale-looking substring from pathname when switching to default",
+        url: "/destinations",
+        locale: "en-US",
+        expectedPathname: "/destinations",
+      },
+    ])("$condition", async ({ url, locale, expectedPathname }) => {
+      navigateTo(url);
       const { useLanguages } = await importComposable();
       const languages = useLanguages();
       const i18n: I18n = createI18n("en-US", "USD");
 
-      await languages.initLocale(i18n, "fr-FR");
+      await languages.initLocale(i18n, locale);
 
-      expect(location.pathname).toBe("/fr");
+      expect(location.pathname).toBe(expectedPathname);
     });
 
     it("does not modify URL when short locale prefix already matches", async () => {
@@ -393,41 +394,6 @@ describe("useLanguages", () => {
 
       expect(location.pathname).toBe("/de/destinations");
       expect(location.search).toBe("?x=1");
-    });
-
-    it("replaces full locale with short alias when language has a unique short form", async () => {
-      navigateTo("/fr-FR/cart");
-      const { useLanguages } = await importComposable();
-      const languages = useLanguages();
-      const i18n: I18n = createI18n("en-US", "USD");
-
-      await languages.initLocale(i18n, "fr-FR");
-
-      expect(location.pathname).toBe("/fr/cart");
-    });
-
-    it("strips default locale prefix without eating pathname characters", async () => {
-      // pathname starts with `de` but locale prefix is /en-US — must strip only the anchored prefix
-      navigateTo("/en-US/destinations");
-      const { useLanguages } = await importComposable();
-      const languages = useLanguages();
-      const i18n: I18n = createI18n("en-US", "USD");
-
-      await languages.initLocale(i18n, "en-US");
-
-      expect(location.pathname).toBe("/destinations");
-    });
-
-    it("does not strip locale-looking substring from pathname when switching to default", async () => {
-      // pathname `/destinations` must not be touched when switching to default English
-      navigateTo("/destinations");
-      const { useLanguages } = await importComposable();
-      const languages = useLanguages();
-      const i18n: I18n = createI18n("en-US", "USD");
-
-      await languages.initLocale(i18n, "en-US");
-
-      expect(location.pathname).toBe("/destinations");
     });
 
     it("drops facets left over from a different culture (VCST-5324 follow-up)", async () => {

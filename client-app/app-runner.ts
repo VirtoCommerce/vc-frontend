@@ -15,6 +15,7 @@ import { useHotjar } from "@/core/composables/useHotjar";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { DEFAULT_NOTIFICATION_DURATION, FALLBACK_LOCALE, IS_DEVELOPMENT } from "@/core/constants";
 import { setGlobals } from "@/core/globals";
+import { registerLocaleLoader } from "@/core/locale-loaders";
 import {
   applicationInsightsPlugin,
   authPlugin,
@@ -36,8 +37,9 @@ import { init as initPushNotifications } from "@/modules/push-messages";
 import { init as initModuleQuotes } from "@/modules/quotes";
 import { BUILDER_IO_TRACE_MARKER, consoleIgnoredErrors } from "@/pages/matcher/builderIo/console-ignored-errors";
 import { isPreviewMode as isBuilderIoPreviewMode } from "@/plugins/builder-io-preview/utils";
-import { isPreviewMode as isPageBuilderPreviewMode } from "@/plugins/builder-preview/utils";
+import { getPreviewBootOptions as getPageBuilderPreviewBoot } from "@/plugins/builder-preview/utils";
 import { createRouter } from "@/router";
+import { applyUcpHandoffBuyer, restoreUcpHandoffCart } from "@/router/routes/ucp-handoff";
 import { useUser } from "@/shared/account";
 import ProductBlocks from "@/shared/catalog/components/product";
 import { useNotifications } from "@/shared/notification";
@@ -46,6 +48,22 @@ import { uiKit } from "@/ui-kit";
 import { getLocales as getUIKitLocales } from "@/ui-kit/utilities/getLocales";
 import App from "./App.vue";
 import type { PageContextResponseType } from "./core/api/graphql/types";
+
+async function getUcpHandoffUserId(): Promise<string | undefined> {
+  const ucpSession = new URL(globalThis.location.href).searchParams.get("ucp_session");
+
+  if (!ucpSession) {
+    return;
+  }
+
+  try {
+    const { buyerId } = await restoreUcpHandoffCart(ucpSession);
+    applyUcpHandoffBuyer(buyerId);
+    return buyerId;
+  } catch (error) {
+    Logger.warn("Failed to pre-restore UCP handoff session", error);
+  }
+}
 
 // eslint-disable-next-line no-restricted-exports
 export default async () => {
@@ -82,10 +100,11 @@ export default async () => {
     currentLanguage,
     currentMaybeShortLocale,
     defaultStoreCulture,
-    initLocale,
+    applyLocale,
     fetchLocaleMessages,
     mergeLocalesMessages,
     resolveLocale,
+    normalizeToSupportedCulture,
     getUrlWithoutPossibleLocale,
     resolvePossibleLocale,
   } = useLanguages();
@@ -107,13 +126,14 @@ export default async () => {
 
   // get initialization query parameters
   const pathname = globalThis.location.pathname;
-  const possibleCultureName = resolvePossibleLocale(pathname);
+  const pageBuilderPreview = getPageBuilderPreviewBoot();
+  const possibleCultureName = pageBuilderPreview.cultureName ?? resolvePossibleLocale(pathname);
   const permalink = getPermalink(pathname, getUrlWithoutPossibleLocale);
 
   const domain = IS_DEVELOPMENT
     ? extractHostname(import.meta.env.APP_BACKEND_URL as string)
     : globalThis.location.hostname;
-  const userId = savedUserId.value;
+  const userId = (await getUcpHandoffUserId()) ?? savedUserId.value;
 
   try {
     const initialStore = await initializeApplication(domain);
@@ -153,13 +173,28 @@ export default async () => {
    */
   const head = createHead();
 
-  const currentCultureName = resolveLocale();
+  // A preview boot carries the edited page's language; tolerate short/differently-cased values
+  // ("fr", "fr-fr") instead of silently falling back to the store default (VCST-5219).
+  const currentCultureName = normalizeToSupportedCulture(pageBuilderPreview.cultureName) ?? resolveLocale();
   const isDefaultLocaleInUse = defaultStoreCulture.value === currentCultureName;
 
   const i18n = createI18n(currentCultureName, currentCurrency.value.code, fallback);
-  await initLocale(i18n, currentCultureName);
 
-  const router = createRouter({ base: isDefaultLocaleInUse ? "" : currentMaybeShortLocale.value });
+  // The UI kit loads its locale bundles through the shared locale-loader seam, so boot and any
+  // runtime locale switch (e.g. builder preview, VCST-5219) share one copy of this logic.
+  registerLocaleLoader("ui-kit", async (i18nInstance, language) => {
+    const uiKitMessages = await getUIKitLocales(FALLBACK_LOCALE, language.twoLetterLanguageName);
+    mergeLocalesMessages(i18nInstance, language.twoLetterLanguageName, uiKitMessages.messages);
+    if (language.twoLetterLanguageName !== FALLBACK_LOCALE) {
+      mergeLocalesMessages(i18nInstance, FALLBACK_LOCALE, uiKitMessages.fallbackMessages);
+    }
+  });
+
+  await applyLocale(i18n, currentCultureName, { rewriteUrl: pageBuilderPreview.useLocalePrefix });
+
+  const router = createRouter({
+    base: pageBuilderPreview.useLocalePrefix && !isDefaultLocaleInUse ? currentMaybeShortLocale.value : "",
+  });
 
   /**
    * Setting global variables
@@ -176,22 +211,15 @@ export default async () => {
     currencyCode: currentCurrency.value.code,
   });
 
-  // Seed Apollo cache with initial slugInfo from pageContext to avoid the first network call
-  try {
-    const baseVariables = {
-      userId: user.value.id,
-      storeId: themeContext.value.storeId,
-      cultureName: currentLanguage.value.cultureName,
-    } as const;
-
-    apolloClient.writeQuery({
-      query: GetSlugInfoDocument,
-      variables: { ...baseVariables, permalink },
-      data: { slugInfo: pageContext.slugInfo },
-    });
-  } catch (e) {
-    Logger.warn("Failed to seed slugInfo into Apollo cache", e);
-  }
+  seedSlugInfoCache({
+    slugInfo: pageContext.slugInfo,
+    permalink,
+    userId: user.value.id,
+    storeId: themeContext.value.storeId,
+    cultureName: currentLanguage.value.cultureName,
+    previewCultureName: pageBuilderPreview.cultureName,
+    resolvedCultureName: currentCultureName,
+  });
 
   /**
    * Other settings
@@ -227,16 +255,11 @@ export default async () => {
   app.use(contextPlugin, themeContext.value);
   app.use(configPlugin, themeContext.value);
 
-  const UIKitMessages = await getUIKitLocales(FALLBACK_LOCALE, currentLanguage.value?.twoLetterLanguageName);
-  mergeLocalesMessages(i18n, currentLanguage.value?.twoLetterLanguageName, UIKitMessages.messages);
-  if (currentLanguage.value?.twoLetterLanguageName !== FALLBACK_LOCALE) {
-    mergeLocalesMessages(i18n, FALLBACK_LOCALE, UIKitMessages.fallbackMessages);
-  }
   app.use(uiKit);
 
   app.use(applicationInsightsPlugin, { router });
 
-  if (isPageBuilderPreviewMode()) {
+  if (pageBuilderPreview.isActive) {
     const builderPreviewPlugin = (await import("@/plugins/builder-preview/builder-preview.plugin").catch(Logger.error))
       ?.default;
     if (builderPreviewPlugin) {
@@ -267,13 +290,13 @@ export default async () => {
 
   await router.isReady();
 
-  app.config.warnHandler = (msg, _, trace) => {
+  app.config.warnHandler = (message, _, traceDetails) => {
     // to remove builder.io warnings
-    if (consoleIgnoredErrors.some((err) => msg?.includes(err) && trace?.includes(BUILDER_IO_TRACE_MARKER))) {
+    if (consoleIgnoredErrors.some((err) => message?.includes(err) && traceDetails?.includes(BUILDER_IO_TRACE_MARKER))) {
       return;
     }
 
-    Logger.warn(msg, trace);
+    Logger.warn(message, traceDetails);
   };
 
   app.mount(appElement);
@@ -324,7 +347,46 @@ function notifyOutdatedModules(
   });
 }
 
-function getPermalink(permalink: string, getUrlWithoutPossibleLocale: (fullPath: string) => string) {
-  const withoutLocale = getUrlWithoutPossibleLocale(permalink);
-  return withoutLocale === "/" ? "/" : (withoutLocale?.replace(/^\/+/, "") ?? "");
+function getPermalink(permalink: string, getUrlWithoutPossibleLocale: (fullPath: string) => string): string {
+  const resolvedPermalink = getUrlWithoutPossibleLocale(permalink) ?? "";
+
+  if (!resolvedPermalink || resolvedPermalink === "/") {
+    return resolvedPermalink;
+  }
+
+  return String(resolvedPermalink).replace(/^\/+/, "");
+}
+
+/**
+ * Seeds the Apollo cache with the slugInfo already returned by pageContext, so the first navigation
+ * doesn't repeat that network call.
+ *
+ * pageContext is fetched with the raw preview `cultureName`. When the app resolves to a different
+ * culture — an unsupported value, or a short form like "fr" normalized to "fr-FR" — that slugInfo
+ * belongs to another culture, so skip seeding rather than cache it under the wrong key (VCST-5219).
+ */
+function seedSlugInfoCache(params: {
+  slugInfo: PageContextResponseType["slugInfo"];
+  permalink: string;
+  userId: string;
+  storeId: string;
+  cultureName: string;
+  previewCultureName?: string;
+  resolvedCultureName: string;
+}) {
+  const { slugInfo, permalink, userId, storeId, cultureName, previewCultureName, resolvedCultureName } = params;
+
+  if (previewCultureName && previewCultureName !== resolvedCultureName) {
+    return;
+  }
+
+  try {
+    apolloClient.writeQuery({
+      query: GetSlugInfoDocument,
+      variables: { userId, storeId, cultureName, permalink },
+      data: { slugInfo },
+    });
+  } catch (e) {
+    Logger.warn("Failed to seed slugInfo into Apollo cache", e);
+  }
 }

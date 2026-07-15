@@ -86,10 +86,17 @@ section of the discovery spec.
 type-check — including from the real tarball), but only manually. Remaining:
 
 - [ ] Wire the scaffold → install → build cycle into CI (locks the plugin contract).
-- [ ] **Host PR CI: fetch the `dev` baseline** for `validate:core-types` — the
-      removal-detection gate (`compareContractToBase`) degrades to a loud warning when
-      the checkout is too shallow to see the base branch's committed contract. Needs
-      `fetch-depth: 0` (or an explicit `git fetch origin dev`) in the theme CI checkout.
+- [ ] **Re-wire `validate:core-types` into `yarn validate` when MF ships.** It was
+      removed from the aggregate `validate` script during the pilot (no plugin consumes
+      the contract yet) so that unrelated PRs — e.g. a routine GraphQL-types regen, which
+      reaches the contract through the facade's `apolloClient`/`graphqlClient`
+      re-export — aren't blocked by contract drift. Once a plugin depends on the contract,
+      add `&& yarn validate:core-types` back to the `validate` script in `package.json`.
+- [ ] **Host PR CI: fetch the `dev` baseline** for `validate:core-types` (only matters
+      once the check above is re-wired into CI) — the removal-detection gate
+      (`compareContractToBase`) degrades to a loud warning when the checkout is too
+      shallow to see the base branch's committed contract. Needs `fetch-depth: 0` (or an
+      explicit `git fetch origin dev`) in the theme CI checkout.
 - [ ] A live `loadRemote` smoke against a running host build.
 - [ ] When #2 lands: coverage for the new `resolveRemotes` (multi-source, precedence truth
       table, name-collision dedup) and a **guard test for the load-bearing ordering
