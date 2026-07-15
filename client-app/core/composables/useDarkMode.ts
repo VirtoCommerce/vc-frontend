@@ -72,7 +72,7 @@ function _useDarkMode() {
       case "light":
         return "sun";
       default:
-        return "monitor";
+        return "desktop-computer";
     }
   });
 

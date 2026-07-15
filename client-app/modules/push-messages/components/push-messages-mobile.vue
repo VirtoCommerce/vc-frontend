@@ -3,7 +3,7 @@
     <template #trigger="{ totalCount, unreadCount, triggerProps }">
       <button type="button" v-bind="triggerProps" class="relative">
         <transition :name="unreadCount ? 'shake' : ''" mode="out-in">
-          <VcIcon :key="totalCount" color="primary" name="notification-v2" :size="24" />
+          <VcIcon :key="totalCount" class="text-primary" name="notification-v2" :size="24" />
         </transition>
 
         <transition mode="out-in" name="scale">

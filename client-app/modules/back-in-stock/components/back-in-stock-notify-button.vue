@@ -2,7 +2,7 @@
   <VcProductButton
     color="accent"
     class="back-in-stock-notify-button"
-    :icon="isProductSubscriptionActive(product.id) ? 'bell' : 'notification-non-active'"
+    :icon="isProductSubscriptionActive(product.id) ? 'notification' : 'notification-non-active'"
     :loading="isProductSubscriptionPending(product.id)"
     no-wrap
     truncate

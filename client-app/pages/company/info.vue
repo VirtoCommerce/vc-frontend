@@ -227,7 +227,7 @@
                             'text-primary': address.isFavorite,
                           },
                         ]"
-                        name="star"
+                        name="whishlist"
                         size="md"
                         @click="toggleFavoriteAddress(address.isFavorite, address.id)"
                       />

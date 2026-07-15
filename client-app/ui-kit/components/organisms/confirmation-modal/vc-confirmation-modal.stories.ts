@@ -164,7 +164,7 @@ export const Variants: StoryType = {
         v-if="activeVariant"
         :variant="activeVariant"
         :title="activeVariant + ' confirmation'"
-        :icon="activeVariant === 'danger' ? 'triangle-alert' : 'information-circle'"
+        :icon="activeVariant === 'danger' ? 'warning' : 'information-circle'"
         text="Are you sure you want to proceed with this action?"
         @confirm="activeVariant = null"
         @close="activeVariant = null"

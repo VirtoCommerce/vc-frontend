@@ -178,7 +178,7 @@
               <VcIcon
                 v-if="hasFavoriteAddresses && item.isFavorite"
                 class="me-1.5 text-accent"
-                name="star"
+                name="whishlist"
                 :size="16"
               />
 

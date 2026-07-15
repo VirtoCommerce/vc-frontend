@@ -74,7 +74,7 @@ const iconName = computed<string>(() => {
       return "delete";
 
     case "warning":
-      return "circle-alert";
+      return "exclamation-circle";
 
     case "success":
       return "check-circle";
