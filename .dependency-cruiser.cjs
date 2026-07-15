@@ -28,6 +28,13 @@ module.exports = {
           "[.]d[.]ts$", // TypeScript declaration files
           "(^|/)tsconfig[.]json$", // TypeScript config
           "(^|/)(babel|webpack)[.]config[.](js|cjs|mjs|ts|json)$", // other configs
+          // Type-only modules: consumed exclusively via `import type`, which is
+          // erased pre-compilation and therefore invisible to dependency-cruiser
+          // (tsPreCompilationDeps is off), so they falsely register as orphans.
+          "[.]type[.]ts$", // dedicated type files (e.g. logger.type.ts)
+          "(^|/)types([.]ts$|/)", // type barrels and types/ folders
+          "(^|/)models/[^/]+Type[.]ts$", // page-builder type/model definitions
+          "(^|/)public/", // static assets served by URL (e.g. service workers)
         ],
       },
       to: {},

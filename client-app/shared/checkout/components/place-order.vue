@@ -8,7 +8,7 @@
 import { computed } from "vue";
 import { useUser } from "@/shared/account";
 import { useFullCart } from "@/shared/cart";
-import { useCheckout } from "@/shared/checkout/composables";
+import { useCheckout } from "@/shared/checkout/composables/useCheckout";
 import { usePayment } from "@/shared/payment/composables";
 import ProceedTo from "@/shared/checkout/components/proceed-to.vue";
 
