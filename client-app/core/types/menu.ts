@@ -7,11 +7,9 @@ export type AccountNavigationSectionType = {
   id: string;
   title: string;
   icon?: string;
-  // Ordering weight — DESKTOP ONLY. On desktop, registered sections are merged with the built-ins
-  // and sorted by this value (account-navigation.vue). On MOBILE it is ignored: the built-in
-  // sections are hardcoded template blocks, so registered sections are simply prepended in
-  // registration order (see main-menu.vue). Interleaving on mobile would mean converting the
-  // hardcoded built-ins to a data-driven list — deferred to the upcoming mobile-menu redesign.
+  // Ordering weight — DESKTOP ONLY (account-navigation.vue sorts by it). Ignored on mobile, where
+  // registered sections are prepended in registration order (main-menu.vue); priority-aware mobile
+  // is deferred to the mobile-menu redesign.
   priority?: number;
   children: ExtendedMenuLinkType[];
   // Reactive gate; a section without it is always shown.

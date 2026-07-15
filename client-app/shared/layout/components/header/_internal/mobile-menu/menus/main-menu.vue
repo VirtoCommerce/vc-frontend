@@ -82,12 +82,10 @@
 
         <!-- Account sections -->
         <ul class="flex flex-col gap-y-2">
-          <!-- Registered sections (e.g. Sales Rep hub) always lead the account sections, in
-               registration order. Unlike desktop (account-navigation.vue), mobile does NOT honor
-               `priority`: the built-in sections below are hardcoded <li> blocks, so there is no
-               unified list to interleave into. Making mobile priority-aware means converting those
-               built-ins to a data-driven list — a wide change to this shared component, deferred to
-               the upcoming mobile-menu redesign. Until then, prepending is the intentional behavior. -->
+          <!-- Registered sections (e.g. Sales Rep hub) always lead, in registration order. Mobile does
+               NOT honor `priority` (desktop does): the built-ins below are hardcoded blocks, so there's
+               no list to interleave into. Priority-aware mobile is deferred to the mobile-menu redesign.
+               See AccountNavigationSectionType.priority. -->
           <li v-for="section in mobileRegisteredAccountSections" :key="section.id">
             <MobileMenuLink :link="section" class="py-1 text-2xl font-bold" @select="$emit('selectItem', section)">
               {{ section.title }}
