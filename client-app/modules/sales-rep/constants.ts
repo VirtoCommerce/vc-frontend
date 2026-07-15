@@ -21,3 +21,12 @@ export const HUB_SECTION_ID = "sales-rep-hub";
 export const HUB_NAV_PRIORITY = 5;
 // Permission that defines a Sales Rep (backend module VirtoCommerce.SalesRep, granted via a role).
 export const SALES_REP_ACCESS_PERMISSION = "sales-rep:access";
+
+// Customer profile page (VCST-5308) -> /company/my-customers/:organizationId (a sibling of the
+// My customers list under the "Company" parent; the "Sales Rep hub" title comes from the left-rail
+// section, not a URL segment).
+export const CUSTOMER_PROFILE_ROUTE_NAME = "SalesRepCustomerProfile";
+export const CUSTOMER_PROFILE_ROUTE_SEGMENT = "my-customers/:organizationId";
+// Recent orders shown on the profile; the full paginated list lives on a separate "All orders"
+// page (future story) reached via the block footer link.
+export const CUSTOMER_PROFILE_ORDERS_LIMIT = 7;

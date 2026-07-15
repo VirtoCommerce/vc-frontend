@@ -1,0 +1,14 @@
+query SalesRepOrders($customerId: String!, $storeId: String, $first: Int, $sort: String) {
+  salesRepOrders(customerId: $customerId, storeId: $storeId, first: $first, sort: $sort) {
+    totalCount
+    items {
+      id
+      number
+      createdDate
+      status
+      itemsCount
+      total
+      currency
+    }
+  }
+}

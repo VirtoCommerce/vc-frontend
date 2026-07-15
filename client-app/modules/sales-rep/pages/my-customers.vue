@@ -55,7 +55,12 @@
         >
           <template #mobile-item="{ item }">
             <div class="my-customers__mobile-item">
-              <b>{{ item.organizationName }}</b>
+              <VcLink
+                class="my-customers__customer my-customers__customer--mobile"
+                :to="{ name: CUSTOMER_PROFILE_ROUTE_NAME, params: { organizationId: item.organizationId } }"
+              >
+                {{ item.organizationName }}
+              </VcLink>
 
               <span v-if="item.lastOrder" class="my-customers__mobile-sub">
                 {{ $d(item.lastOrder.createdDate) }} ·
@@ -79,7 +84,12 @@
             sortable
             class="align-top"
           >
-            {{ item.organizationName }}
+            <VcLink
+              class="my-customers__customer"
+              :to="{ name: CUSTOMER_PROFILE_ROUTE_NAME, params: { organizationId: item.organizationId } }"
+            >
+              {{ item.organizationName }}
+            </VcLink>
           </VcTableColumn>
 
           <VcTableColumn
@@ -113,6 +123,7 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useSalesRepCustomers } from "../composables/useSalesRepCustomers";
+import { CUSTOMER_PROFILE_ROUTE_NAME } from "../constants";
 import type { SalesRepCustomerSortColumnType, SalesRepCustomerType } from "../types";
 
 const { t } = useI18n();
@@ -164,6 +175,15 @@ function changePage(newPage: number): void {
 
   &__search-input {
     @apply w-full;
+  }
+
+  // Organization name links to the customer profile (VCST-5308).
+  &__customer {
+    @apply text-[--link-color] hover:underline;
+
+    &--mobile {
+      @apply font-bold;
+    }
   }
 
   // Muted, small order number under the date — matches the design; hover hints it's clickable.

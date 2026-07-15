@@ -1,0 +1,6 @@
+query SalesRepCustomer($id: String!) {
+  salesRepCustomer(id: $id) {
+    organizationId
+    organizationName
+  }
+}
