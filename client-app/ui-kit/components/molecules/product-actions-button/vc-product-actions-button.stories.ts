@@ -53,7 +53,7 @@ export const Basic: StoryType = {
 
 export const Active: StoryType = {
   args: {
-    icon: "scale",
+    icon: "compare",
     active: true,
     ariaLabel: "Remove from comparison",
     tooltipText: "Remove from comparison",
@@ -144,7 +144,7 @@ export const ToggleButtonPressed: StoryType = {
 
 export const CompareButton: StoryType = {
   args: {
-    icon: "scale",
+    icon: "compare",
     ariaLabel: "Add to comparison",
     tooltipText: "Add to comparison",
     ariaPressed: false,

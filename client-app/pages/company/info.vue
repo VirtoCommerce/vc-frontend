@@ -23,7 +23,7 @@
                 :disabled="!meta.valid || !meta.dirty"
                 :loading="loadingOrganization || loadingUser"
                 class="flex-none"
-                icon="save"
+                icon="save-v2"
                 @click="saveOrganizationName"
               />
             </template>
@@ -63,7 +63,7 @@
 
                   <VcButton
                     v-if="whiteLabelingLogoUrl !== newLogoUrl"
-                    icon="save"
+                    icon="save-v2"
                     class="flex-none"
                     :loading="loadingOrganizationLogo"
                     @click="saveOrganizationLogo"
@@ -71,7 +71,7 @@
 
                   <VcButton
                     v-else
-                    icon="x"
+                    icon="delete-thin"
                     class="flex-none"
                     :disabled="!isOrganizationLogoUploaded"
                     :loading="loadingOrganizationLogo"
@@ -116,7 +116,7 @@
         <VcEmptyView
           v-if="!addresses.length && !loadingAddresses"
           :text="$t('pages.company.info.no_addresses_message')"
-          icon="building"
+          icon="outline-address"
         >
           <template v-if="canEditOrganization" #button>
             <VcButton prepend-icon="plus" @click="openAddOrUpdateCompanyAddressModal()">
@@ -145,13 +145,13 @@
                   <div>
                     <div class="mb-1 flex gap-1 empty:hidden">
                       <VcBadge v-if="item.isDefault" color="info" rounded size="sm" variant="outline-dark">
-                        <VcIcon name="check" />
+                        <VcIcon name="apply" />
 
                         <span>{{ $t("pages.company.info.labels.default") }}</span>
                       </VcBadge>
 
                       <VcBadge v-if="item.isFavorite" rounded size="sm" variant="outline-dark">
-                        <VcIcon name="star" />
+                        <VcIcon name="whishlist" />
 
                         <span>{{ $t("pages.company.info.labels.favorite") }}</span>
                       </VcBadge>
@@ -265,7 +265,7 @@
 
                 <td :class="{ 'text-right': !canEditOrganization }" class="px-5 py-3 text-center">
                   <VcChip v-if="address.isDefault" color="info" rounded size="sm" variant="outline-dark">
-                    <VcIcon name="check" />
+                    <VcIcon name="apply" />
                     {{ $t("pages.company.info.labels.default") }}
                   </VcChip>
                 </td>
@@ -512,7 +512,7 @@ function openDeleteLogoModal() {
     component: VcConfirmationModal,
     props: {
       variant: "danger",
-      icon: "x",
+      icon: "delete-2",
       title: t("shared.company.delete_logo_modal.title"),
       text: t("shared.company.delete_logo_modal.message"),
       onConfirm() {

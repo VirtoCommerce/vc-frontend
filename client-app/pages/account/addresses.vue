@@ -16,7 +16,7 @@
     <VcEmptyView
       v-if="!addresses.length && !addressesLoading"
       :text="$t('common.messages.no_addresses')"
-      icon="building"
+      icon="outline-address"
     >
       <template #button>
         <VcButton prepend-icon="plus" @click="openAddOrUpdateAddressModal()">

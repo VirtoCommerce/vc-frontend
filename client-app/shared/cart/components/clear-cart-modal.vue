@@ -1,7 +1,7 @@
 <template>
   <VcModal
     :title="$t('shared.cart.clear_cart_modal.title')"
-    icon="triangle-alert"
+    icon="warning"
     variant="warning"
     test-id="clear-cart-modal"
   >

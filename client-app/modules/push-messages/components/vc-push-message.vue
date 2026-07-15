@@ -24,7 +24,7 @@
       size="xs"
       color="neutral"
       variant="ghost"
-      icon="x"
+      icon="delete-thin"
       @click="
         $emit('remove');
         $event.stopPropagation();

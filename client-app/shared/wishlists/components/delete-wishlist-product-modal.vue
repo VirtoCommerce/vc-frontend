@@ -2,7 +2,7 @@
   <VcModal
     :title="$t('shared.wishlists.delete_wishlist_product_modal.title')"
     variant="danger"
-    icon="triangle-alert"
+    icon="warning"
     test-id="delete-wishlist-product-modal"
   >
     <i18n-t keypath="shared.wishlists.delete_wishlist_product_modal.message" scope="global" tag="p">

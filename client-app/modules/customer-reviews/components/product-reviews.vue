@@ -2,7 +2,7 @@
   <VcWidget
     v-if="reviews?.length || feedbackAvailable"
     :title="$t('common.labels.feedback')"
-    prepend-icon="message-circle"
+    prepend-icon="chat"
     size="lg"
     class="text-sm"
   >

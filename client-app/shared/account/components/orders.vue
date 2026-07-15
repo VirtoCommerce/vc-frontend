@@ -36,7 +36,7 @@
         <VcTabSwitch
           v-model="orderScope"
           value="organization"
-          icon="briefcase"
+          icon="case"
           :label="$t('common.buttons.all_orders')"
           @change="toggleOrdersScope('organization')"
         />
@@ -62,7 +62,7 @@
       <VcChip color="secondary" variant="outline" clickable @click="resetFilters">
         <span>{{ $t("common.buttons.reset_filters") }}</span>
 
-        <VcIcon name="rotate-ccw" />
+        <VcIcon name="reset" />
       </VcChip>
     </div>
 
@@ -78,7 +78,7 @@
       :variant="!!keyword || !isFilterEmpty ? 'search' : 'empty'"
     >
       <template #button>
-        <VcButton v-if="keyword || !isFilterEmpty" prepend-icon="rotate-ccw" @click="resetFiltersWithKeyword">
+        <VcButton v-if="keyword || !isFilterEmpty" prepend-icon="reset" @click="resetFiltersWithKeyword">
           {{ $t("pages.account.orders.buttons.reset_search") }}
         </VcButton>
 

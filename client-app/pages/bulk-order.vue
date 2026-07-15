@@ -71,7 +71,7 @@ const breadcrumbs = useBreadcrumbs([{ title: t("pages.bulk_order.title") }]);
 const { additionalTabs } = useBulkOrderExtensionPoints();
 
 const predefinedTabs: Omit<ITab, "element">[] = [
-  { id: "copy&paste", icon: "files", label: t("pages.bulk_order.copy_n_paste_tab") },
+  { id: "copy&paste", icon: "document-duplicate", label: t("pages.bulk_order.copy_n_paste_tab") },
   { id: "manually", icon: "hand", label: t("pages.bulk_order.manually_tab") },
 ];
 const tabs = computed(() => [...additionalTabs.value.filter((tab) => !toValue(tab.hidden)), ...predefinedTabs]);

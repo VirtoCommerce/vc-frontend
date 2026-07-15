@@ -10,7 +10,7 @@
 
       <div class="flex">
         <div class="flex items-center gap-x-1.5 text-neutral print:-me-px print:border print:px-2">
-          <VcIcon size="xs" name="lock" />
+          <VcIcon size="xs" name="lock-closed" />
 
           <span
             class="hidden text-sm font-bold xs:inline print:inline"

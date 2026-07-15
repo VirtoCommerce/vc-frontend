@@ -41,7 +41,7 @@
             no-wrap
             :to="navigatable ? item.route : undefined"
             :button-text="$t('pages.catalog.customize_button')"
-            icon="box"
+            icon="cube-transparent"
             :target="browserTarget"
           />
 

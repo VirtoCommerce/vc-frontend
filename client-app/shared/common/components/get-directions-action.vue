@@ -4,7 +4,7 @@
     rel="noopener noreferrer"
     variant="outline"
     :size="size"
-    prepend-icon="map-pin"
+    prepend-icon="location-marker"
     :external-link="link"
     >{{ $t("pages.account.order_details.bopis.get_directions") }}</VcButton
   >

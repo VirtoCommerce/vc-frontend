@@ -103,12 +103,12 @@ export const Disabled: StoryType = {
 };
 
 export const Icon: StoryType = {
-  args: { icon: "circle" },
+  args: { icon: "circle-solid" },
   parameters: {
     docs: {
       source: {
         code: `
-          <VcChip icon="circle">Chip text</VcChip>
+          <VcChip icon="circle-solid">Chip text</VcChip>
         `,
       },
     },
@@ -120,7 +120,7 @@ export const IconInSlot: StoryType = {
   render: (args) => ({
     setup: () => ({ args }),
     template: `<VcChip v-bind="args">
-      <VcIcon name="circle" />
+      <VcIcon name="circle-solid" />
       <span>Chip text</span>
     </VcChip>`,
   }),
@@ -129,7 +129,7 @@ export const IconInSlot: StoryType = {
       source: {
         code: `
           <VcChip>
-            <VcIcon name="circle" />
+            <VcIcon name="circle-solid" />
             <span>Chip text</span>
           </VcChip>
         `,
@@ -141,14 +141,14 @@ export const IconInSlot: StoryType = {
 export const IconColorPallette: StoryType = {
   args: {
     variant: "outline",
-    icon: "circle",
+    icon: "circle-solid",
     iconColor: "secondary",
   },
   parameters: {
     docs: {
       source: {
         code: `
-          <VcChip variant="outline" icon="circle" icon-color="secondary">Chip text</VcChip>
+          <VcChip variant="outline" icon="circle-solid" icon-color="secondary">Chip text</VcChip>
         `,
       },
     },
@@ -158,14 +158,14 @@ export const IconColorPallette: StoryType = {
 export const IconColorHEX: StoryType = {
   args: {
     variant: "outline",
-    icon: "circle",
+    icon: "circle-solid",
     iconColor: "#ff0000",
   },
   parameters: {
     docs: {
       source: {
         code: `
-          <VcChip variant="outline" icon="circle" icon-color="#ff0000">Chip text</VcChip>
+          <VcChip variant="outline" icon="circle-solid" icon-color="#ff0000">Chip text</VcChip>
         `,
       },
     },
@@ -343,7 +343,7 @@ export const AllVariants: StoryType = {
   render: (args) => ({
     setup: () => ({ variants: VARIANTS, args }),
     template: `<div class="flex flex-col items-start gap-3">
-      <VcChip v-bind="args" v-for="variant in variants" :variant="variant" icon="circle" closable>
+      <VcChip v-bind="args" v-for="variant in variants" :variant="variant" icon="circle-solid" closable>
         {{ variant }}
       </VcChip>
     </div>`,
@@ -361,11 +361,11 @@ export const AllStates: StoryType = {
           <div class="text-base">Variant: <b>{{ variant }}</b></div>
 
           <div class="flex flex-wrap gap-2 items-center">
-            <VcChip v-for="color in colors" :size="size" :color="color" :variant="variant" icon="circle">
+            <VcChip v-for="color in colors" :size="size" :color="color" :variant="variant" icon="circle-solid">
               Color: {{ color }}
             </VcChip>
 
-            <VcChip :size="size" :variant="variant" icon="circle" disabled>
+            <VcChip :size="size" :variant="variant" icon="circle-solid" disabled>
               Color: Disabled
             </VcChip>
           </div>
@@ -383,7 +383,7 @@ export const AllStates: StoryType = {
               Color: {{ color }}
             </VcChip>
 
-            <VcChip :size="size" :variant="variant" icon="circle" disabled closable>
+            <VcChip :size="size" :variant="variant" icon="circle-solid" disabled closable>
               Color: Disabled
             </VcChip>
           </div>

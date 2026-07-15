@@ -38,7 +38,7 @@
       @click.stop="$emit('close')"
     >
       <slot name="close-icon">
-        <VcIcon name="x" />
+        <VcIcon name="delete-2" />
       </slot>
     </button>
   </span>

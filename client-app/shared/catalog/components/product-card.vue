@@ -78,7 +78,7 @@
       :link-text="$t('pages.catalog.customize_button')"
       :link-to="link"
       :button-text="$t('pages.catalog.customize_button')"
-      icon="box"
+      icon="cube-transparent"
       :target="browserTarget || browserTargetFromSetting"
       @link-click="$emit('linkClick', product, $event)"
     />

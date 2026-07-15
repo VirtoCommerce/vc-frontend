@@ -24,7 +24,7 @@
         >
           <VcLoader v-if="loading" class="mega-menu__loader" />
 
-          <VcIcon v-else class="mega-menu__icon" name="grip" />
+          <VcIcon v-else class="mega-menu__icon" name="drag-dots" />
 
           <span> {{ $t("common.buttons.all_products") }} </span>
         </button>

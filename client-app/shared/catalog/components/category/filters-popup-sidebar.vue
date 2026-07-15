@@ -65,7 +65,7 @@
         color="secondary"
         :title="$t('common.buttons.reset')"
         size="sm"
-        icon="rotate-ccw"
+        icon="reset"
         :disabled="!isExistSelectedFacets"
         @click="onReset"
       />

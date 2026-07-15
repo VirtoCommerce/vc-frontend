@@ -82,7 +82,7 @@
           <div class="w-2/3 grow">
             <div class="mb-2.5 flex items-center gap-2 empty:hidden">
               <VcBadge v-if="item.isFavorite" size="sm" variant="outline-dark" rounded color="warning">
-                <VcIcon name="star" />
+                <VcIcon name="whishlist" />
 
                 <span>{{ $t("pages.company.info.labels.favorite") }}</span>
               </VcBadge>
@@ -160,7 +160,7 @@
 
           <VcButton
             v-if="showFilters && filterContext?.filterIsApplied.value"
-            icon="rotate-ccw"
+            icon="reset"
             @click="resetFilter"
             :aria-label="$t('pages.account.order_details.bopis.cart_pickup_points_reset_search')"
           />
@@ -242,7 +242,7 @@
               <VcButton
                 v-if="showFilters && filterContext?.filterIsApplied.value"
                 class="mt-5"
-                prepend-icon="rotate-ccw"
+                prepend-icon="reset"
                 @click="resetFilter"
               >
                 {{ $t("pages.account.order_details.bopis.cart_pickup_points_reset_search") }}

@@ -26,14 +26,14 @@
       <LanguageSelector v-if="supportedLanguages.length > 1" />
 
       <button type="button" class="-mr-4 appearance-none p-4" @click="$emit('close')">
-        <VcIcon name="x" class="text-[--mobile-menu-navigation-color]" :size="22" />
+        <VcIcon name="delete-thin" class="text-[--mobile-menu-navigation-color]" :size="22" />
       </button>
     </div>
 
     <section v-if="openedItem" class="grow divide-y divide-additional-50 divide-opacity-20 overflow-y-auto">
       <div class="flex flex-col px-10 py-6">
         <button type="button" class="appearance-none self-start text-[--mobile-menu-navigation-color]" @click="goBack">
-          <VcIcon name="circle-arrow-left" size="lg" />
+          <VcIcon name="arrow-circle-left" size="lg" />
         </button>
 
         <h2 v-if="openedItem?.title" class="mt-5 text-2xl uppercase tracking-[0.01em] text-[--mobile-menu-text-color]">
@@ -112,12 +112,12 @@ const homeMenuItem = computed<ExtendedMenuLinkType>(() =>
     ? {
         route: { name: "Dashboard" },
         title: t("shared.layout.header.mobile.account_menu.dashboard"),
-        icon: "layout-grid",
+        icon: "view-grid",
       }
     : {
         route: "/",
         title: t("shared.layout.header.menu.home"),
-        icon: "layout-dashboard",
+        icon: "dashboard-2",
       },
 );
 

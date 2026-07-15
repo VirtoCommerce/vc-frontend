@@ -33,7 +33,7 @@
             >
               <template #trigger="{ triggerProps }">
                 <VcButton icon variant="ghost" v-bind="triggerProps">
-                  <VcIcon class="vc-push-messages__options-icon" name="ellipsis-vertical" size="sm" />
+                  <VcIcon class="vc-push-messages__options-icon" name="dots-vertical" size="sm" />
                 </VcButton>
               </template>
 

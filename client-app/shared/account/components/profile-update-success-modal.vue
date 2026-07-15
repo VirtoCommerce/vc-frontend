@@ -3,7 +3,7 @@
     class="profile-update-success-modal"
     variant="success"
     :title="$t('shared.account.profile_update_success_modal.title')"
-    icon="check"
+    icon="apply"
   >
     <template #actions="{ close }">
       <VcButton class="profile-update-success-modal__button" @click="close">

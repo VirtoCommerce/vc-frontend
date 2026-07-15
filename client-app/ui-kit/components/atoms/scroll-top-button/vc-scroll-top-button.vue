@@ -6,7 +6,7 @@
     :aria-label="$t('common.buttons.scroll_to_top')"
     @click="scrollToTop"
   >
-    <VcIcon class="vc-scroll-top-button__icon" name="circle-arrow-up" size="xl" />
+    <VcIcon class="vc-scroll-top-button__icon" name="arrow-circle-up" size="xl" />
   </button>
 </template>
 

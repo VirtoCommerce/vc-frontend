@@ -3,7 +3,7 @@
     class="cart-deleted-product-modal"
     :title="$t('common.titles.remove_products')"
     variant="danger"
-    icon="triangle-alert"
+    icon="warning"
   >
     <template #actions="{ close }">
       <VcButton class="cart-deleted-product-modal__button" @click="close()">

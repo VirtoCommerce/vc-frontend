@@ -14,7 +14,7 @@
         class="product-price-block__create-config"
         :to="createNewConfigurationRoute"
       >
-        <VcIcon color="primary" name="box" size="xs" />
+        <VcIcon color="primary" name="cube-transparent" size="xs" />
 
         {{ $t("shared.catalog.product_details.create_configuration_button") }}
       </VcLink>
@@ -51,7 +51,7 @@
                   :aria-label="$t('ui_kit.buttons.close')"
                   @click="close()"
                 >
-                  <VcIcon name="x" size="sm" aria-hidden="true" />
+                  <VcIcon name="delete-thin" size="sm" aria-hidden="true" />
                 </button>
               </h3>
 

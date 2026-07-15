@@ -3,7 +3,7 @@
     <ProductTitledBlock
       v-if="!model.hidden && description"
       :title="model.title || $t('shared.catalog.product_details.description_block_title')"
-      icon="file-text"
+      icon="document-text"
     >
       <VcCollapsibleContent max-height="18.75rem" class="text-base text-neutral-600">
         <VcMarkdownRender :src="description" />
@@ -16,7 +16,7 @@
       v-if="!model.hidden && description"
       size="lg"
       :title="model.title || $t('shared.catalog.product_details.description_block_title')"
-      prepend-icon="file-text"
+      prepend-icon="document-text"
     >
       <div class="text-base text-neutral-600">
         <VcMarkdownRender :src="description" />

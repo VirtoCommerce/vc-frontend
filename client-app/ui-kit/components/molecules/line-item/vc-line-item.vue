@@ -128,7 +128,7 @@
           color="neutral"
           size="sm"
           variant="ghost"
-          icon="x"
+          icon="delete-thin"
           data-test-id="remove-item-button"
           :disabled="disabled"
           @click="$emit('remove')"

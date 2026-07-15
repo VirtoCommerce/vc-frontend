@@ -31,7 +31,7 @@
       <VcChip color="secondary" variant="outline" clickable @click="$emit('resetFilters')">
         <span>{{ $t("common.buttons.reset_filters") }}</span>
 
-        <VcIcon name="rotate-ccw" />
+        <VcIcon name="reset" />
       </VcChip>
     </slot>
   </div>

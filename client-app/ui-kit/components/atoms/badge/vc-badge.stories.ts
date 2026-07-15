@@ -103,7 +103,7 @@ export const Truncate: StoryObj = {
       <VcBadge class="w-32" v-bind="args">Long long long long badge text</VcBadge>
 
       <VcBadge class="w-32" v-bind="args">
-        <VcIcon name="circle-check" />
+        <VcIcon name="round-check" />
         <span>Long long long long badge text</span>
       </VcBadge>
     </div>
@@ -126,16 +126,16 @@ export const MaxWidth: StoryObj = {
 
 export const WithIcon: StoryObj = {
   render: renderTemplate(`<VcBadge v-bind="args">
-    <VcIcon name="circle-check" />
+    <VcIcon name="round-check" />
     <span>35</span>
   </VcBadge>`),
 };
 
 export const WithIcons: StoryObj = {
   render: renderTemplate(`<VcBadge v-bind="args">
-    <VcIcon name="circle-check" />
+    <VcIcon name="round-check" />
     <span>35</span>
-    <VcIcon name="circle-check" />
+    <VcIcon name="round-check" />
   </VcBadge>`),
 };
 
@@ -143,7 +143,7 @@ export const OnlyIcon: StoryObj = {
   args: {
     square: true,
   },
-  render: renderTemplate('<VcBadge v-bind="args"><VcIcon name="flame" /></VcBadge>'),
+  render: renderTemplate('<VcBadge v-bind="args"><VcIcon name="fire" /></VcBadge>'),
 };
 
 export const Dot: StoryObj = {
@@ -160,7 +160,7 @@ export const AllSizes: StoryObj = {
         <VcBadge :size="size">35</VcBadge>
         <VcBadge :size="size" rounded>35</VcBadge>
         <VcBadge :size="size" square>
-          <VcIcon name="flame" />
+          <VcIcon name="fire" />
         </VcBadge>
         <VcBadge :size="size" />
       </div>

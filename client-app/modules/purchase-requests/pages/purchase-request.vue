@@ -19,7 +19,7 @@
     </VcEmptyView>
 
     <VcLayout v-else sidebar-position="right" sticky>
-      <VcWidget :title="$t('purchase_request.files_section.title')" prepend-icon="file-plus" size="lg">
+      <VcWidget :title="$t('purchase_request.files_section.title')" prepend-icon="document-add" size="lg">
         <VcFileUploader
           class="h-full"
           v-bind="fileOptions"
@@ -29,7 +29,7 @@
         />
       </VcWidget>
 
-      <VcWidget id="products" :title="$t('shared.cart.products_section.title')" prepend-icon="box" size="lg">
+      <VcWidget id="products" :title="$t('shared.cart.products_section.title')" prepend-icon="cube" size="lg">
         <QuoteLineItems
           v-if="quote?.items?.length"
           :items="quote.items"

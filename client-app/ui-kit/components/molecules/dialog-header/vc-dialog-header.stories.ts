@@ -28,7 +28,7 @@ const meta: Meta<typeof VcDialogHeader> = {
     },
   },
   args: {
-    icon: "briefcase",
+    icon: "case",
     color: "info",
     closable: true,
     size: "md",
@@ -154,7 +154,7 @@ export const Sizes: StoryType = {
     setup: () => ({ sizes: SIZES }),
     template: `<div class="flex flex-col gap-4">
       <VcDialog v-for="size in sizes" :key="size" :size="size" dividers>
-        <VcDialogHeader :size="size" icon="info">Size {{ size }}</VcDialogHeader>
+        <VcDialogHeader :size="size" icon="information-circle">Size {{ size }}</VcDialogHeader>
         <VcDialogContent><p class="text-sm text-neutral-600">Dialog body content.</p></VcDialogContent>
         <VcDialogFooter />
       </VcDialog>

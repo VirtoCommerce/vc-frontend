@@ -51,7 +51,7 @@
             variant="ghost"
             color="accent"
             size="xxs"
-            icon="rotate-ccw"
+            icon="reset"
             @click="reload"
           />
 
@@ -61,7 +61,7 @@
             variant="ghost"
             color="neutral"
             size="xxs"
-            icon="x"
+            icon="delete-thin"
             @click="remove"
           />
         </div>

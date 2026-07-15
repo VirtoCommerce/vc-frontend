@@ -36,14 +36,14 @@
         </VcMenuItem>
 
         <VcMenuItem color="secondary" @click="$emit('remove')">
-          <VcIcon name="x" class="text-danger" />
+          <VcIcon name="delete-2" class="text-danger" />
 
           <span>{{ $t("pages.company.members.buttons.delete") }}</span>
         </VcMenuItem>
       </template>
 
       <VcMenuItem v-if="canLoginOnBehalf" color="secondary" @click="$emit('loginOnBehalf')">
-        <VcIcon name="log-in" />
+        <VcIcon name="direct-login" />
 
         <span>{{ $t("pages.company.members.buttons.login_on_behalf") }}</span>
       </VcMenuItem>

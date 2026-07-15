@@ -243,7 +243,7 @@ export const SlotMainIcon: StoryType = {
     setup: () => ({ args }),
     template: `<VcAlert v-bind="args">
       <template #main-icon>
-        <VcIcon name="shopping-cart" />
+        <VcIcon name="cart" />
       </template>
       Custom main icon via slot
     </VcAlert>`,
@@ -254,7 +254,7 @@ export const SlotMainIcon: StoryType = {
         code: `
           <VcAlert>
             <template #main-icon>
-              <VcIcon name="shopping-cart" />
+              <VcIcon name="cart" />
             </template>
             Custom main icon via slot
           </VcAlert>

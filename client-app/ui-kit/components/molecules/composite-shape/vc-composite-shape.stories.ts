@@ -17,7 +17,7 @@ export const Basic: StoryType = {};
 
 export const IconImage: StoryType = {
   args: {
-    icon: "graduation-cap",
+    icon: "academic-cap",
     img: "basket.jpg",
   },
 };

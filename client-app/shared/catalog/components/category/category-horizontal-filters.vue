@@ -30,7 +30,7 @@
           <VcButton
             size="sm"
             variant="outline"
-            prepend-icon="arrow-up-down"
+            prepend-icon="switch-vertical"
             class="category-horizontal-filters__sorting-trigger"
             v-bind="triggerProps"
           >

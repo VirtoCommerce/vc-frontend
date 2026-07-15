@@ -44,6 +44,7 @@
     "homepage_background_image": "main-banner.webp",
     "catalog_pagination_mode": "infinite_scroll",
     "desktop_menu_mode": "horizontal",
+    "icon_variant": "outline",
 
     "image_thumbnails_enabled": true,
     "image_thumbnails_original_fallback_enabled": true,
@@ -59,43 +60,43 @@
         "code": "New",
         "color": "success",
         "variant": "outline",
-        "icon": "circle"
+        "icon": "circle-solid"
       },
       {
         "code": "Processing",
         "color": "info",
         "variant": "outline",
-        "icon": "refresh-cw"
+        "icon": "process"
       },
       {
         "code": "Pending",
         "color": "info",
         "variant": "outline",
-        "icon": "refresh-cw"
+        "icon": "process"
       },
       {
         "code": "Cancelled",
         "color": "danger",
         "variant": "outline-dark",
-        "icon": "circle"
+        "icon": "circle-solid"
       },
       {
         "code": "Completed",
         "color": "success",
         "variant": "outline-dark",
-        "icon": "circle"
+        "icon": "circle-solid"
       },
       {
         "code": "Payment required",
         "color": "warning",
         "variant": "outline",
-        "icon": "circle"
+        "icon": "circle-outline"
       },
       {
         "code": "Ready for pickup",
         "color": "success",
         "variant": "solid",
-        "icon": "box"
+        "icon": "cube"
       }
     ],
 
@@ -104,49 +105,49 @@
         "code": "New",
         "color": "success",
         "variant": "outline-dark",
-        "icon": "circle"
+        "icon": "circle-solid"
       },
       {
         "code": "Processing",
         "color": "info",
         "variant": "outline",
-        "icon": "refresh-cw"
+        "icon": "process"
       },
       {
         "code": "Ordered",
         "color": "success",
         "variant": "outline-dark",
-        "icon": "circle"
+        "icon": "circle-solid"
       },
       {
         "code": "Proposal sent",
         "color": "info",
         "variant": "outline",
-        "icon": "refresh-cw"
+        "icon": "process"
       },
       {
         "code": "On hold",
         "color": "warning",
         "variant": "outline-dark",
-        "icon": "circle"
+        "icon": "circle-outline"
       },
       {
         "code": "Draft",
         "color": "neutral",
         "variant": "outline",
-        "icon": "square-pen"
+        "icon": "pencil-alt"
       },
       {
         "code": "Declined",
         "color": "danger",
         "variant": "outline-dark",
-        "icon": "circle"
+        "icon": "circle-solid"
       },
       {
         "code": "Canceled",
         "color": "danger",
         "variant": "outline-dark",
-        "icon": "circle"
+        "icon": "circle-solid"
       }
     ],
 

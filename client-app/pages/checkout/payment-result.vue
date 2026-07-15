@@ -24,7 +24,7 @@
           {{ $t("common.buttons.payment_details") }}
         </VcButton>
 
-        <VcButton :to="{ name: 'OrderDetails', params: { orderId: placedOrder!.id } }" prepend-icon="file-text">
+        <VcButton :to="{ name: 'OrderDetails', params: { orderId: placedOrder!.id } }" prepend-icon="document-text">
           {{ $t("common.buttons.show_order") }}
         </VcButton>
 

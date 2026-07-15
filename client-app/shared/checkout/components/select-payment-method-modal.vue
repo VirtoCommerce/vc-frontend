@@ -33,7 +33,7 @@
             v-if="method.code === selectedMethod?.code"
             class="flex size-6 items-center justify-center rounded-full bg-success-600 text-sm text-additional-50"
           >
-            <VcIcon :size="16" name="check" />
+            <VcIcon :size="16" name="check-bold" />
           </div>
 
           <VcButton v-else variant="outline" size="sm" class="flex-none" @click="setMethod(method)">

@@ -1,5 +1,5 @@
 <template>
-  <VcWidget :title="$t('common.titles.order_comment')" prepend-icon="file-text" size="lg">
+  <VcWidget :title="$t('common.titles.order_comment')" prepend-icon="document-text" size="lg">
     <p v-if="readonly">{{ comment }}</p>
 
     <VcTextarea

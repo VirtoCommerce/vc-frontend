@@ -96,7 +96,7 @@
               :aria-label="$t('ui_kit.buttons.clear')"
               :disabled="disabled"
               type="button"
-              icon="x"
+              icon="delete-thin"
               color="neutral"
               variant="ghost"
               class="vc-select__clear"

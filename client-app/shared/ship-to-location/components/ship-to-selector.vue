@@ -10,7 +10,7 @@
     >
       <template #default="{ opened, triggerProps }">
         <button class="ship-to-selector__trigger" type="button" :disabled="loading" v-bind="triggerProps">
-          <VcIcon name="map-pin" size="xs" />
+          <VcIcon name="location-marker" size="xs" />
 
           <VcLoaderOverlay v-if="loading" no-bg />
 
@@ -148,7 +148,7 @@
       data-test-id="add-shipping-address-button"
       @click="openAddOrUpdateAddressModal()"
     >
-      <VcIcon name="map-pin" size="xs" />
+      <VcIcon name="location-marker" size="xs" />
 
       <span class="ship-to-selector__label">{{ $t("shared.layout.header.ship_to_selector.title") }}</span>
 

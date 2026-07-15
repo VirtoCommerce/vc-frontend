@@ -81,7 +81,7 @@
         :variant="!!keyword ? 'search' : 'empty'"
       >
         <template #button>
-          <VcButton v-if="keyword" prepend-icon="rotate-ccw" @click="resetKeyword">
+          <VcButton v-if="keyword" prepend-icon="reset" @click="resetKeyword">
             {{ $t("pages.account.orders.buttons.reset_search") }}
           </VcButton>
 

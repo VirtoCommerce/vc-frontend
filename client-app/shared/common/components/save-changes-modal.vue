@@ -1,5 +1,5 @@
 <template>
-  <VcModal :title="title ?? $t('common.messages.save_changes')" variant="info" icon="triangle-alert">
+  <VcModal :title="title ?? $t('common.messages.save_changes')" variant="info" icon="warning">
     {{ message ?? $t("common.messages.save_changes") }}
 
     <template #actions>

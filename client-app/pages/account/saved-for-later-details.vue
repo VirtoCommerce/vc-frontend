@@ -26,7 +26,7 @@
       {{ $t("pages.cart.saved_for_later") }}
     </VcTypography>
 
-    <VcEmptyView :text="$t('pages.cart.saved_for_later_not_found')" icon="list-checks" />
+    <VcEmptyView :text="$t('pages.cart.saved_for_later_not_found')" icon="list-v2" />
   </div>
 </template>
 

@@ -74,7 +74,7 @@
             data-test-id="mobile-account-menu-logout-row"
             @click="signMeOut"
           >
-            <VcIcon name="log-out" />
+            <VcIcon name="logout" />
 
             <span>{{ $t("shared.layout.header.link_logout") }}</span>
           </button>

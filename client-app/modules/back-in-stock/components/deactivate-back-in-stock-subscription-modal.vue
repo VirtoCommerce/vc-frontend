@@ -1,5 +1,5 @@
 <template>
-  <VcModal :title="$t('back_in_stock.deactivate_modal.title')" variant="danger" icon="triangle-alert">
+  <VcModal :title="$t('back_in_stock.deactivate_modal.title')" variant="danger" icon="warning">
     <i18n-t keypath="back_in_stock.deactivate_modal.message" scope="global" tag="p">
       <template #productName>
         <span class="font-black">{{ productName }}</span>

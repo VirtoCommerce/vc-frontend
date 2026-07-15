@@ -55,7 +55,7 @@ export const Title: StoryType = {
 export const PrependIcon: StoryType = {
   args: {
     title: "Widget title",
-    prependIcon: "graduation-cap",
+    prependIcon: "academic-cap",
   },
 };
 

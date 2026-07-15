@@ -9,7 +9,7 @@
       :aria-label="$t('ui_kit.buttons.copy')"
       size="xxs"
       variant="outline"
-      icon="files"
+      icon="document-duplicate"
       color="secondary"
       @click="copyText"
     />

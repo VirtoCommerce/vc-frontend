@@ -10,7 +10,7 @@
 
     <div class="space-y-5 lg:space-y-6">
       <!-- Quote comment -->
-      <VcWidget :title="$t('quote_details.comment')" prepend-icon="file-text" size="lg">
+      <VcWidget :title="$t('quote_details.comment')" prepend-icon="document-text" size="lg">
         <VcTextarea
           v-model.trim="comment"
           :label="$t('quote_details.comment_field_label')"
@@ -27,7 +27,7 @@
         />
       </VcWidget>
 
-      <VcWidget v-if="$cfg.files_enabled" :title="$t('quote_details.files')" prepend-icon="file-plus" size="lg">
+      <VcWidget v-if="$cfg.files_enabled" :title="$t('quote_details.files')" prepend-icon="document-add" size="lg">
         <VcFileUploader
           v-bind="fileOptions"
           :files="files"
@@ -39,7 +39,7 @@
       </VcWidget>
 
       <!-- Quote products -->
-      <VcWidget :title="$t('quote_details.products')" prepend-icon="box" size="lg">
+      <VcWidget :title="$t('quote_details.products')" prepend-icon="cube" size="lg">
         <QuoteLineItems :items="quote.items" @update:item="onUpdateItem" @remove:item="onRemoveItem" />
       </VcWidget>
 
@@ -61,7 +61,7 @@
       </VcWidget>
 
       <!-- Quote billing address -->
-      <VcWidget :title="$t('quote_details.billing_address')" prepend-icon="banknote" size="lg">
+      <VcWidget :title="$t('quote_details.billing_address')" prepend-icon="cash" size="lg">
         <VcLabel required>{{ $t("quote_details.billing_address") }}</VcLabel>
 
         <div

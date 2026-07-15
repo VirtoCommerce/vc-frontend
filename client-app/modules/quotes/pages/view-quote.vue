@@ -32,7 +32,7 @@
       <VcWidget
         v-if="quote.comment"
         :title="$t('quote_details.comment')"
-        prepend-icon="file-text"
+        prepend-icon="document-text"
         size="lg"
         class="mt-5"
       >
@@ -45,7 +45,7 @@
         v-if="quote.attachments?.length"
         :title="$t('quote_details.files')"
         size="lg"
-        prepend-icon="file-text"
+        prepend-icon="document-text"
         class="mt-5"
       >
         <ul class="space-y-2 rounded-[--vc-radius] border border-neutral-200 px-3 py-4">

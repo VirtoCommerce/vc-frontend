@@ -13,7 +13,7 @@
         <template #trigger="{ triggerProps }">
           <VcButton
             :aria-label="$t('common.buttons.toggle_dropdown')"
-            icon="ellipsis-vertical"
+            icon="dots-vertical"
             variant="outline"
             size="sm"
             v-bind="triggerProps"

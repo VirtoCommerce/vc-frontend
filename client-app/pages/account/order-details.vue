@@ -91,7 +91,7 @@
                   ? 'danger'
                   : 'warning'
               "
-              icon="circle-alert"
+              icon="exclamation-circle"
               variant="outline-dark"
             >
               {{ order.cancelReason }}
@@ -145,7 +145,7 @@
             <AddressInfo :address="deliveryAddress" class="text-base">
               <template v-if="shipmentType === 'pick_up' && pickupLocation" #actions>
                 <div class="flex items-center justify-between gap-2.5 pt-1">
-                  <VcButton size="xs" prepend-icon="info" variant="outline" @click="openInfo">
+                  <VcButton size="xs" prepend-icon="information-circle" variant="outline" @click="openInfo">
                     {{ $t("pages.account.order_details.bopis.point_info") }}
                   </VcButton>
                 </div>

@@ -1,5 +1,6 @@
 import DOMPurify from "dompurify";
 import { Logger } from "@/core/utilities";
+import { resolveIconName } from "./icon-aliases";
 
 export type IconVariantType = "solid" | "outline";
 
@@ -31,6 +32,12 @@ function toMap(loaders: Record<string, () => Promise<string>>): Map<string, () =
 const solidMap = toMap(solidLoaders);
 const outlineMap = toMap(outlineLoaders);
 
+let defaultIconVariant: IconVariantType = "outline";
+
+export function setDefaultIconVariant(variant: IconVariantType): void {
+  defaultIconVariant = variant;
+}
+
 export function resolveIcon(
   name?: string,
   variant?: IconVariantType,
@@ -39,19 +46,26 @@ export function resolveIcon(
     return { isOutline: false };
   }
 
-  if (variant === "outline") {
-    return { loader: outlineMap.get(name), isOutline: true };
+  const effectiveVariant = variant ?? defaultIconVariant;
+  const canonicalName = resolveIconName(name);
+
+  if (effectiveVariant === "solid") {
+    if (solidMap.has(name)) {
+      return { loader: solidMap.get(name), isOutline: false };
+    }
+    if (outlineMap.has(canonicalName)) {
+      return { loader: outlineMap.get(canonicalName), isOutline: true };
+    }
+    return { isOutline: false };
   }
 
-  if (variant === "solid") {
+  if (outlineMap.has(canonicalName)) {
+    return { loader: outlineMap.get(canonicalName), isOutline: true };
+  }
+  if (solidMap.has(name)) {
     return { loader: solidMap.get(name), isOutline: false };
   }
-
-  if (outlineMap.has(name)) {
-    return { loader: outlineMap.get(name), isOutline: true };
-  }
-
-  return { loader: solidMap.get(name), isOutline: false };
+  return { isOutline: true };
 }
 
 export async function loadIconRaw(

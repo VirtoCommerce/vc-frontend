@@ -8,7 +8,7 @@
     :square="!showText"
     truncate
   >
-    <VcIcon name="circle-check" />
+    <VcIcon name="round-check" />
 
     <span v-if="showText">
       {{ $t("shared.catalog.purchased_before_badge.title") }}

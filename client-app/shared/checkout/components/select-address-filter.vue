@@ -112,7 +112,7 @@
       <VcChip color="secondary" variant="outline" clickable data-test-id="reset-filters-chip" @click="resetFilter">
         <span>{{ $t("common.buttons.reset_filters") }}</span>
 
-        <VcIcon name="rotate-ccw" />
+        <VcIcon name="reset" />
       </VcChip>
     </div>
   </div>

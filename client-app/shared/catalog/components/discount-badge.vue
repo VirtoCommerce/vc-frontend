@@ -6,7 +6,7 @@
     class="discount-badge"
     :class="{ 'discount-badge--absolute': !static }"
   >
-    <VcIcon v-if="isHot" name="flame" />
+    <VcIcon v-if="isHot" name="fire" />
 
     <span>{{ $t("shared.catalog.discount_badge.off", { discount }) }}</span>
   </VcBadge>

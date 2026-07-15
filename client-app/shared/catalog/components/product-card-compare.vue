@@ -4,7 +4,7 @@
   >
     <VcProductImage :img-src="product.imgSrc" :images="product.images" :alt="product.name">
       <div class="absolute -right-2.5 -top-2 z-[2]">
-        <VcButton size="xs" variant="surface" color="danger" icon="x" @click="$emit('remove', product)" />
+        <VcButton size="xs" variant="surface" color="danger" icon="delete-2" @click="$emit('remove', product)" />
       </div>
     </VcProductImage>
 
@@ -33,7 +33,7 @@
         class="mb-4"
         :to="link"
         :button-text="$t('pages.catalog.customize_button')"
-        icon="box"
+        icon="cube-transparent"
         :target="browserTarget"
       />
 

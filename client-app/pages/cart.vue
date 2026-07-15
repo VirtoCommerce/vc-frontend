@@ -6,7 +6,7 @@
       v-else
       :title="title ?? $t('pages.cart.title')"
       image="basket.jpg"
-      icon="shopping-cart"
+      icon="outline-cart"
       :breadcrumbs="hideBreadcrumbs ? [] : breadcrumbs"
     >
       <div class="mb-6 text-lg font-bold">
@@ -22,7 +22,7 @@
           {{ $t("common.buttons.continue_shopping") }}
         </VcButton>
 
-        <VcButton :to="{ name: 'BulkOrder' }" prepend-icon="boxes">
+        <VcButton :to="{ name: 'BulkOrder' }" prepend-icon="bulk">
           {{ $t("common.buttons.add_with_bulk_order") }}
         </VcButton>
       </div>
@@ -55,7 +55,7 @@
             {{ $t("common.buttons.continue_shopping") }}
           </VcButton>
 
-          <VcButton :to="{ name: 'BulkOrder' }" prepend-icon="boxes">
+          <VcButton :to="{ name: 'BulkOrder' }" prepend-icon="bulk">
             {{ $t("common.buttons.add_with_bulk_order") }}
           </VcButton>
         </div>

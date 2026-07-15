@@ -1,5 +1,5 @@
 <template>
-  <VcEmptyPage ref="page404Anchor" icon="file-question" image="404.jpg">
+  <VcEmptyPage ref="page404Anchor" icon="outline-404" image="404.jpg">
     <h1 class="text-5xl font-black text-primary max-sm:order-first lg:mb-5 lg:text-8xl">
       {{ $t("pages.404.error_code") }}
     </h1>

@@ -30,7 +30,7 @@
         @click="$emit('close')"
       >
         <slot name="close-icon">
-          <VcIcon name="x" />
+          <VcIcon name="delete-thin" />
         </slot>
       </button>
     </div>

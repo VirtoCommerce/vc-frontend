@@ -21,7 +21,7 @@
       </VcMenuItem>
 
       <VcMenuItem data-test-id="wishlist-card-remove-menu-item" color="secondary" nowrap @click="$emit('remove')">
-        <VcIcon name="x" class="text-danger" />
+        <VcIcon name="delete-2" class="text-danger" />
 
         <span>{{ $t("shared.wishlists.list_card.remove_list_button") }}</span>
       </VcMenuItem>

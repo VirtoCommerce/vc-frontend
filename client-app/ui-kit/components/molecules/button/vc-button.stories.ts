@@ -112,7 +112,7 @@ export const FullWidth: StoryType = {
 
 export const PrependIcon: StoryType = {
   args: {
-    prependIcon: "save",
+    prependIcon: "save-v2",
   },
 };
 
@@ -122,7 +122,7 @@ export const SlotPrependIcon: StoryType = {
     components: { VcButton, VcIcon },
     setup: () => ({ args }),
     template: `<VcButton v-bind="args">
-      <VcIcon name="save" />
+      <VcIcon name="save-v2" />
       <span>Button text</span>
     </VcButton>`,
   }),
@@ -130,7 +130,7 @@ export const SlotPrependIcon: StoryType = {
 
 export const AppendIcon: StoryType = {
   args: {
-    appendIcon: "save",
+    appendIcon: "save-v2",
   },
 };
 
@@ -141,14 +141,14 @@ export const SlotAppendIcon: StoryType = {
     setup: () => ({ args }),
     template: `<VcButton v-bind="args">
       <span>Button text</span>
-      <VcIcon name="save" />
+      <VcIcon name="save-v2" />
     </VcButton>`,
   }),
 };
 
 export const Icon: StoryType = {
   args: {
-    icon: "save",
+    icon: "save-v2",
     ariaLabel: "Save", // Add aria-label for accessibility
   },
   parameters: {
@@ -170,7 +170,7 @@ export const Icon: StoryType = {
 export const IconSize: StoryType = {
   args: {
     iconSize: "1.75rem",
-    icon: "save",
+    icon: "save-v2",
     ariaLabel: "Save", // Add aria-label for accessibility
   },
   parameters: {
@@ -197,7 +197,7 @@ export const SlotIcon: StoryType = {
     components: { VcButton, VcIcon },
     setup: () => ({ args }),
     template: `<VcButton v-bind="args">
-      <VcIcon name="save" />
+      <VcIcon name="save-v2" />
     </VcButton>`,
   }),
   parameters: {
@@ -271,7 +271,7 @@ export const Loading: StoryType = {
 export const Disabled: StoryType = {
   args: {
     disabled: true,
-    appendIcon: "save",
+    appendIcon: "save-v2",
   },
   parameters: {
     a11y: {
@@ -303,7 +303,7 @@ export const MinWidth: StoryType = {
 export const Truncate: StoryType = {
   args: {
     truncate: true,
-    prependIcon: "save",
+    prependIcon: "save-v2",
   },
   render: (args) => ({
     components: { VcButton },

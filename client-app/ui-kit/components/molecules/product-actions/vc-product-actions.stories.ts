@@ -27,7 +27,7 @@ const meta: Meta<typeof VcProductActions> = {
     tooltip-text="VcProductActionsButton"
   />
   <VcProductActionsButton
-    icon="scale"
+    icon="compare"
     active
     tooltip-text="VcProductActionsButton"
   />
@@ -45,7 +45,7 @@ export const Basic: StoryType = {
         code: `
           <VcProductActions>
             <VcProductActionsButton color="danger" active tooltip-text="VcProductActionsButton" />
-            <VcProductActionsButton icon="scale" active tooltip-text="VcProductActionsButton" />
+            <VcProductActionsButton icon="compare" active tooltip-text="VcProductActionsButton" />
           </VcProductActions>
         `,
       },
@@ -63,7 +63,7 @@ export const Vertical: StoryType = {
         code: `
           <VcProductActions direction="vertical">
             <VcProductActionsButton color="danger" active tooltip-text="VcProductActionsButton" />
-            <VcProductActionsButton icon="scale" active tooltip-text="VcProductActionsButton" />
+            <VcProductActionsButton icon="compare" active tooltip-text="VcProductActionsButton" />
           </VcProductActions>
         `,
       },
@@ -82,7 +82,7 @@ export const VerticalWithBg: StoryType = {
         code: `
           <VcProductActions direction="vertical" with-background>
             <VcProductActionsButton color="danger" active tooltip-text="VcProductActionsButton" />
-            <VcProductActionsButton icon="scale" active tooltip-text="VcProductActionsButton" />
+            <VcProductActionsButton icon="compare" active tooltip-text="VcProductActionsButton" />
           </VcProductActions>
         `,
       },

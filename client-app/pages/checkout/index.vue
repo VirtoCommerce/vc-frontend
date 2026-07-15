@@ -50,19 +50,19 @@ const steps = computed<IStepsItem[]>(() => {
 
   if (placedOrder.value) {
     result.push({
-      icon: "arrow-left",
+      icon: "arrow-left-bold",
       route: { name: "OrderDetails", params: { orderId: placedOrder.value.id }, replace: true },
       text: t("common.buttons.back_to_order_details"),
     });
   } else if (route.params.cartId) {
     result.push({
-      icon: "arrow-left",
+      icon: "arrow-left-bold",
       route: { name: ROUTES.CART_ID.NAME, params: { cartId: route.params.cartId }, replace: true },
       text: t("common.buttons.back_to_cart"),
     });
   } else {
     result.push({
-      icon: "arrow-left",
+      icon: "arrow-left-bold",
       route: { name: ROUTES.CART.NAME, replace: true },
       text: t("common.buttons.back_to_cart"),
     });

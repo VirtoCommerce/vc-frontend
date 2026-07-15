@@ -12,7 +12,7 @@
         <div class="mb-24 w-full md:mb-0 md:mt-44 md:w-1/2 lg:w-1/4">
           <div class="flex justify-center">
             <VcCompositeShape
-              icon="briefcase"
+              icon="outline-case"
               img="sign-in.jpg"
               :alt="$t('pages.home.feature_descriptions_block.feature_1')"
             />

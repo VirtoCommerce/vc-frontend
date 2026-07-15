@@ -20,7 +20,7 @@
           v-if="preparingScope"
           class="search-bar__button"
           color="secondary"
-          append-icon="x"
+          append-icon="delete-2"
           size="xs"
           variant="soft"
           disabled
@@ -34,7 +34,7 @@
           :key="item.id"
           class="search-bar__button"
           color="secondary"
-          append-icon="x"
+          append-icon="delete-2"
           size="xs"
           variant="soft"
           :aria-label="$t('shared.layout.search_bar.scope_remove_label', { label: item.label })"

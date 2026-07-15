@@ -2,7 +2,7 @@
   <VcModal
     :title="$t('shared.bulk_order.add_to_cart_sku_errors_modal.title')"
     variant="warning"
-    icon="triangle-alert"
+    icon="warning"
     dividers
     is-mobile-fullscreen
   >

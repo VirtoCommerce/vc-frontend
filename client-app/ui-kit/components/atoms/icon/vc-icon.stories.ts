@@ -43,7 +43,7 @@ export const Basic: StoryType = {
     docs: {
       source: {
         code: `
-          <VcIcon name="credit-card" />
+          <VcIcon name="document-text" />
         `,
       },
     },
@@ -66,7 +66,7 @@ export const Color: StoryType = {
     docs: {
       source: {
         code: `
-          <VcIcon name="file-text" color="danger" />
+          <VcIcon name="document-text" color="danger" />
           <VcIcon name="credit-card" color="primary" />
           <VcIcon name="file-text" class="text-success" />
           <VcIcon name="credit-card" class="text-warning" />
@@ -85,7 +85,7 @@ export const Size: StoryType = {
     docs: {
       source: {
         code: `
-          <VcIcon name="file-text" :size="50" />
+          <VcIcon name="document-text" :size="50" />
         `,
       },
     },
@@ -101,7 +101,7 @@ export const SizeString: StoryType = {
     docs: {
       source: {
         code: `
-          <VcIcon name="file-text" size="md" />
+          <VcIcon name="document-text" size="md" />
         `,
       },
     },

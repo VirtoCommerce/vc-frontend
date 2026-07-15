@@ -110,7 +110,7 @@ const viewConfig = computed<IViewConfig>(() => {
     applied: {
       iconName: "round-check",
       button: {
-        icon: "trash-2",
+        icon: "outline-trash",
         variant: "ghost",
         color: "neutral",
         disabled: false,

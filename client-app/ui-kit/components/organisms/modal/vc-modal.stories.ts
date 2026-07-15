@@ -80,7 +80,7 @@ export const Basic: StoryType = {
 export const WithIcon: StoryType = {
   args: {
     title: "Confirm action",
-    icon: "info",
+    icon: "information-circle",
     variant: "info",
   },
   render: (args) => ({
@@ -99,7 +99,7 @@ export const WithIcon: StoryType = {
     docs: {
       source: {
         code: `
-          <VcModal title="Confirm action" icon="info" variant="info" :show="show" @close="show = false">
+          <VcModal title="Confirm action" icon="information-circle" variant="info" :show="show" @close="show = false">
             <p>Please review the details before proceeding.</p>
           </VcModal>
         `,
@@ -150,7 +150,7 @@ export const WithCustomActions: StoryType = {
 export const Persistent: StoryType = {
   args: {
     title: "Session expired",
-    icon: "lock",
+    icon: "lock-closed",
     variant: "warning",
     isPersistent: true,
   },

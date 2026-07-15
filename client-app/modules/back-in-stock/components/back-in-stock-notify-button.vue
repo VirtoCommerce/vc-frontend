@@ -2,7 +2,7 @@
   <VcProductButton
     color="accent"
     class="back-in-stock-notify-button"
-    :icon="isProductSubscriptionActive(product.id) ? 'bell' : 'bell-off'"
+    :icon="isProductSubscriptionActive(product.id) ? 'bell' : 'notification-non-active'"
     :loading="isProductSubscriptionPending(product.id)"
     no-wrap
     truncate
@@ -16,7 +16,7 @@
         ? $t('back_in_stock.messages.you_will_be_notified')
         : $t('back_in_stock.messages.stock_alert')
     "
-    link-icon="info"
+    link-icon="information-circle"
     :link-text="isTextShown ? $t('back_in_stock.messages.click_to_receive_alert') : ''"
     @link-click="updateBackInStockSubscription"
   />

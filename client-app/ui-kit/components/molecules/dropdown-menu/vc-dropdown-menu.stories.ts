@@ -14,31 +14,31 @@ const meta: Meta<typeof VcDropdownMenu> = {
 
     <template #content>
       <VcMenuItem>
-        <VcIcon name="scale" />
+        <VcIcon name="compare" />
         <span>Menu item 1</span>
       </VcMenuItem>
       <VcMenuItem>
-        <VcIcon name="scale" />
+        <VcIcon name="compare" />
         <span>Menu item 2</span>
       </VcMenuItem>
       <VcMenuItem>
-        <VcIcon name="scale" />
+        <VcIcon name="compare" />
         <span>Menu item 3</span>
       </VcMenuItem>
       <VcMenuItem>
-        <VcIcon name="scale" />
+        <VcIcon name="compare" />
         <span>Menu item 4</span>
       </VcMenuItem>
       <VcMenuItem>
-        <VcIcon name="scale" />
+        <VcIcon name="compare" />
         <span>Menu item 5</span>
       </VcMenuItem>
       <VcMenuItem>
-        <VcIcon name="scale" />
+        <VcIcon name="compare" />
         <span>Menu item 6</span>
       </VcMenuItem>
       <VcMenuItem>
-        <VcIcon name="scale" />
+        <VcIcon name="compare" />
         <span>Menu item 7</span>
       </VcMenuItem>
     </template>

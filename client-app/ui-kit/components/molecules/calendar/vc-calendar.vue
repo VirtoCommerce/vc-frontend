@@ -28,7 +28,7 @@
         :aria-disabled="prevYearDisabled || undefined"
         @click="goToPreviousYear"
       >
-        <VcIcon name="chevrons-left" />
+        <VcIcon name="chevron-double-left" />
       </button>
 
       <CalendarPrev
@@ -52,7 +52,7 @@
         :aria-disabled="nextYearDisabled || undefined"
         @click="goToNextYear"
       >
-        <VcIcon name="chevrons-right" />
+        <VcIcon name="chevron-double-right" />
       </button>
     </div>
 

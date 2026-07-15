@@ -19,7 +19,7 @@
           color="neutral"
           variant="ghost"
           :disabled="disabled"
-          icon="x"
+          icon="delete-thin"
           size="sm"
           @click="$emit('deny')"
         />
@@ -27,7 +27,7 @@
         <VcButton
           v-else
           :aria-label="$t('ui_kit.buttons.apply')"
-          icon="check"
+          icon="apply"
           variant="ghost"
           size="sm"
           :disabled="value.length === 0 || disabled || !!errorMessage"

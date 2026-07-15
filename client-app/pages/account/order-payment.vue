@@ -96,7 +96,7 @@
         </div>
 
         <div class="flex flex-wrap justify-center gap-3 sm:justify-start">
-          <VcButton min-width="12rem" prepend-icon="rotate-ccw" @click="tryAgain">
+          <VcButton min-width="12rem" prepend-icon="reset" @click="tryAgain">
             {{ $t("pages.account.order_payment.try_again_button") }}
           </VcButton>
 

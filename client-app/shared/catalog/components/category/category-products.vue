@@ -81,7 +81,7 @@
       :variant="hasActiveFilters || keyword ? 'search' : 'empty'"
     >
       <template v-if="hasActiveFilters || keyword" #button>
-        <VcButton prepend-icon="rotate-ccw" @click="$emit('resetFilterKeyword')">
+        <VcButton prepend-icon="reset" @click="$emit('resetFilterKeyword')">
           {{ $t("pages.catalog.no_products_button") }}
         </VcButton>
       </template>

@@ -2,7 +2,7 @@
   <ProductTitledBlock
     v-if="showPropertiesBlock"
     :title="model.title || $t('shared.catalog.product_details.technical_specs_block_title')"
-    icon="sliders-vertical"
+    icon="adjustments"
     class="properties"
   >
     <template #after>

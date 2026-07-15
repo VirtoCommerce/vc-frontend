@@ -1,7 +1,7 @@
 <template>
   <div class="flex items-center gap-1.5">
     <template v-if="sharingSetting.scope === WishlistScopeType.Private">
-      <VcIcon :size="16" class="text-info-700" name="lock" />
+      <VcIcon :size="16" class="text-info-700" name="lock-closed" />
 
       <span>
         {{ $t("shared.wishlists.status.private") }}
