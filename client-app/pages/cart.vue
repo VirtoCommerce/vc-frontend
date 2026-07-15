@@ -134,6 +134,8 @@
         <template #sidebar>
           <OrderSummary :cart="cart" :selected-items="selectedLineItems" :no-shipping="allItemsAreDigital" footnote>
             <template #footer>
+              <LoyaltyValidationAlert variant="compact" class="mt-4" />
+
               <ProceedTo
                 v-if="$cfg.checkout_multistep_enabled"
                 :to="{ name: 'Checkout', params: { cartId: $route.params.cartId } }"
@@ -253,6 +255,7 @@ import type { CartTotalType, LineItemType, Product } from "@/core/api/graphql/ty
 import CartForLater from "@/shared/cart/components/cart-for-later.vue";
 import CouponsSection from "@/shared/cart/components/coupons-section.vue";
 import GiftsSection from "@/shared/cart/components/gifts-section.vue";
+import LoyaltyValidationAlert from "@/shared/cart/components/loyalty-validation-alert.vue";
 import ProductsSection from "@/shared/cart/components/products-section.vue";
 import RecentlyBrowsedProducts from "@/shared/catalog/components/recently-browsed-products.vue";
 

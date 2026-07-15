@@ -3,11 +3,11 @@
     <template v-if="products.length || fetchingProducts">
       <div
         v-if="mode === CATALOG_PAGINATION_MODES.loadMore && minVisitedPage > 1"
-        class="-mt-2 mb-6 flex justify-center"
+        class="category-products__pagination category-products__pagination--previous"
       >
         <VcButton
           v-if="products.length"
-          class="mt-4"
+          class="category-products__load-button"
           size="sm"
           :loading="fetchingMoreProducts && pageNumber < minVisitedPage"
           prepend-icon="arrow-left"
@@ -54,7 +54,7 @@
 
       <div
         v-if="mode === CATALOG_PAGINATION_MODES.loadMore && maxVisitedPage < pagesCount"
-        class="mt-6 flex justify-center"
+        class="category-products__pagination category-products__pagination--next"
       >
         <VcButton
           :loading="fetchingMoreProducts && pageNumber > maxVisitedPage"
@@ -242,6 +242,22 @@ function sendGASelectItemEvent(product: Product): void {
         @apply divide-y-0 mx-0 space-y-3.5;
       }
     }
+  }
+
+  &__pagination {
+    @apply flex justify-center;
+
+    &--previous {
+      @apply -mt-2 mb-6;
+    }
+
+    &--next {
+      @apply mt-6;
+    }
+  }
+
+  &__load-button {
+    @apply mt-4;
   }
 
   &__infinity {
