@@ -21,7 +21,11 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useSalesRepCustomer } from "../composables/useSalesRepCustomer";
 
-const props = defineProps<{ organizationId: string }>();
+interface IProps {
+  organizationId: string;
+}
+
+const props = defineProps<IProps>();
 
 const { t } = useI18n();
 // Apollo dedupes this query by id, so sharing it with the page header costs no extra request.

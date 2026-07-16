@@ -37,32 +37,32 @@
       "title": "Myyntiedustajan keskus"
     },
     "customer_profile": {
-      "loading": "Loading…",
-      "not_found": "Customer not found or not in your customers.",
-      "back_to_customers": "Back to my customers",
+      "loading": "Ladataan…",
+      "not_found": "Asiakasta ei löytynyt tai se ei kuulu asiakkaisiisi.",
+      "back_to_customers": "Takaisin omiin asiakkaisiin",
       "orders": {
-        "title": "Orders",
-        "empty": "No orders yet",
-        "number": "Order #",
-        "date": "Date",
-        "items": "Items",
-        "status": "Status",
-        "total": "Total",
-        "view_all": "All orders"
+        "title": "Tilaukset",
+        "empty": "Ei vielä tilauksia",
+        "number": "Tilausnro",
+        "date": "Päivämäärä",
+        "items": "Tuotteet",
+        "status": "Tila",
+        "total": "Yhteensä",
+        "view_all": "Kaikki tilaukset"
       },
       "widgets": {
-        "ytd_purchases": "YTD purchases",
-        "open_balance": "Open balance",
-        "avg_order_value": "Avg order value",
-        "orders_ytd": "Orders YTD"
+        "ytd_purchases": "Ostot vuoden alusta",
+        "open_balance": "Avoin saldo",
+        "avg_order_value": "Keskimääräinen tilausarvo",
+        "orders_ytd": "Tilaukset vuoden alusta"
       },
       "info": {
-        "title": "Customer information",
-        "empty": "No information available",
-        "primary_contact": "Primary contact",
-        "phone": "Phone",
-        "account_type": "Account type",
-        "ship_to": "Ship-to"
+        "title": "Asiakastiedot",
+        "empty": "Ei tietoja saatavilla",
+        "primary_contact": "Ensisijainen yhteyshenkilö",
+        "phone": "Puhelin",
+        "account_type": "Tilin tyyppi",
+        "ship_to": "Toimitusosoite"
       }
     }
   }

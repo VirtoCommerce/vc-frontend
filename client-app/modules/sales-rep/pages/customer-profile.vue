@@ -53,7 +53,11 @@ import CustomerProfileWidgets from "../components/customer-profile-widgets.vue";
 import { useSalesRepCustomer } from "../composables/useSalesRepCustomer";
 import { MY_CUSTOMERS_ROUTE_NAME } from "../constants";
 
-const props = defineProps<{ organizationId: string }>();
+interface IProps {
+  organizationId: string;
+}
+
+const props = defineProps<IProps>();
 
 const { t } = useI18n();
 const { customer, loading, notFound } = useSalesRepCustomer(() => props.organizationId);

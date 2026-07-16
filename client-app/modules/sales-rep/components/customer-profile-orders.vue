@@ -94,7 +94,11 @@ import { useSalesRepCustomerOrders } from "../composables/useSalesRepCustomerOrd
 import type { SalesRepCustomerOrderType } from "../types/customer-profile";
 import OrderStatus from "@/shared/account/components/order-status.vue";
 
-const props = defineProps<{ organizationId: string }>();
+interface IProps {
+  organizationId: string;
+}
+
+const props = defineProps<IProps>();
 
 const { t } = useI18n();
 const { orders, loading } = useSalesRepCustomerOrders(() => props.organizationId);

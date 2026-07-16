@@ -37,32 +37,32 @@
       "title": "Centro del representante de ventas"
     },
     "customer_profile": {
-      "loading": "Loading…",
-      "not_found": "Customer not found or not in your customers.",
-      "back_to_customers": "Back to my customers",
+      "loading": "Cargando…",
+      "not_found": "Cliente no encontrado o no está en tus clientes.",
+      "back_to_customers": "Volver a mis clientes",
       "orders": {
-        "title": "Orders",
-        "empty": "No orders yet",
-        "number": "Order #",
-        "date": "Date",
-        "items": "Items",
-        "status": "Status",
+        "title": "Pedidos",
+        "empty": "Aún no hay pedidos",
+        "number": "N.º de pedido",
+        "date": "Fecha",
+        "items": "Artículos",
+        "status": "Estado",
         "total": "Total",
-        "view_all": "All orders"
+        "view_all": "Todos los pedidos"
       },
       "widgets": {
-        "ytd_purchases": "YTD purchases",
-        "open_balance": "Open balance",
-        "avg_order_value": "Avg order value",
-        "orders_ytd": "Orders YTD"
+        "ytd_purchases": "Compras del año en curso",
+        "open_balance": "Saldo pendiente",
+        "avg_order_value": "Valor medio del pedido",
+        "orders_ytd": "Pedidos del año en curso"
       },
       "info": {
-        "title": "Customer information",
-        "empty": "No information available",
-        "primary_contact": "Primary contact",
-        "phone": "Phone",
-        "account_type": "Account type",
-        "ship_to": "Ship-to"
+        "title": "Información del cliente",
+        "empty": "No hay información disponible",
+        "primary_contact": "Contacto principal",
+        "phone": "Teléfono",
+        "account_type": "Tipo de cuenta",
+        "ship_to": "Envío a"
       }
     }
   }

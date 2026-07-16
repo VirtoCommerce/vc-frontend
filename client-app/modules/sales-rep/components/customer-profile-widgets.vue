@@ -28,8 +28,12 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 
+interface IProps {
+  organizationId: string;
+}
+
 // Unused until the stats query is wired (VCST-5309).
-defineProps<{ organizationId: string }>();
+defineProps<IProps>();
 
 const { t } = useI18n();
 

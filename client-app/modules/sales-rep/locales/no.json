@@ -37,32 +37,32 @@
       "title": "Salgsrepresentant-hub"
     },
     "customer_profile": {
-      "loading": "Loading…",
-      "not_found": "Customer not found or not in your customers.",
-      "back_to_customers": "Back to my customers",
+      "loading": "Laster…",
+      "not_found": "Kunden ble ikke funnet eller er ikke blant kundene dine.",
+      "back_to_customers": "Tilbake til mine kunder",
       "orders": {
-        "title": "Orders",
-        "empty": "No orders yet",
-        "number": "Order #",
-        "date": "Date",
-        "items": "Items",
+        "title": "Bestillinger",
+        "empty": "Ingen bestillinger ennå",
+        "number": "Ordrenr.",
+        "date": "Dato",
+        "items": "Varer",
         "status": "Status",
-        "total": "Total",
-        "view_all": "All orders"
+        "total": "Totalt",
+        "view_all": "Alle bestillinger"
       },
       "widgets": {
-        "ytd_purchases": "YTD purchases",
-        "open_balance": "Open balance",
-        "avg_order_value": "Avg order value",
-        "orders_ytd": "Orders YTD"
+        "ytd_purchases": "Kjøp hittil i år",
+        "open_balance": "Utestående saldo",
+        "avg_order_value": "Gjennomsnittlig ordreverdi",
+        "orders_ytd": "Bestillinger hittil i år"
       },
       "info": {
-        "title": "Customer information",
-        "empty": "No information available",
-        "primary_contact": "Primary contact",
-        "phone": "Phone",
-        "account_type": "Account type",
-        "ship_to": "Ship-to"
+        "title": "Kundeinformasjon",
+        "empty": "Ingen informasjon tilgjengelig",
+        "primary_contact": "Primær kontaktperson",
+        "phone": "Telefon",
+        "account_type": "Kontotype",
+        "ship_to": "Leveringsadresse"
       }
     }
   }

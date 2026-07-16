@@ -37,32 +37,32 @@
       "title": "Центр торгового представителя"
     },
     "customer_profile": {
-      "loading": "Loading…",
-      "not_found": "Customer not found or not in your customers.",
-      "back_to_customers": "Back to my customers",
+      "loading": "Загрузка…",
+      "not_found": "Клиент не найден или не входит в число ваших клиентов.",
+      "back_to_customers": "Назад к моим клиентам",
       "orders": {
-        "title": "Orders",
-        "empty": "No orders yet",
-        "number": "Order #",
-        "date": "Date",
-        "items": "Items",
-        "status": "Status",
-        "total": "Total",
-        "view_all": "All orders"
+        "title": "Заказы",
+        "empty": "Пока нет заказов",
+        "number": "№ заказа",
+        "date": "Дата",
+        "items": "Позиции",
+        "status": "Статус",
+        "total": "Итого",
+        "view_all": "Все заказы"
       },
       "widgets": {
-        "ytd_purchases": "YTD purchases",
-        "open_balance": "Open balance",
-        "avg_order_value": "Avg order value",
-        "orders_ytd": "Orders YTD"
+        "ytd_purchases": "Покупки с начала года",
+        "open_balance": "Открытый баланс",
+        "avg_order_value": "Средняя сумма заказа",
+        "orders_ytd": "Заказы с начала года"
       },
       "info": {
-        "title": "Customer information",
-        "empty": "No information available",
-        "primary_contact": "Primary contact",
-        "phone": "Phone",
-        "account_type": "Account type",
-        "ship_to": "Ship-to"
+        "title": "Информация о клиенте",
+        "empty": "Информация недоступна",
+        "primary_contact": "Основной контакт",
+        "phone": "Телефон",
+        "account_type": "Тип аккаунта",
+        "ship_to": "Адрес доставки"
       }
     }
   }

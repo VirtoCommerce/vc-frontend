@@ -37,32 +37,32 @@
       "title": "Vertriebsmitarbeiter-Hub"
     },
     "customer_profile": {
-      "loading": "Loading…",
-      "not_found": "Customer not found or not in your customers.",
-      "back_to_customers": "Back to my customers",
+      "loading": "Wird geladen…",
+      "not_found": "Kunde nicht gefunden oder nicht in Ihren Kunden.",
+      "back_to_customers": "Zurück zu meinen Kunden",
       "orders": {
-        "title": "Orders",
-        "empty": "No orders yet",
-        "number": "Order #",
-        "date": "Date",
-        "items": "Items",
+        "title": "Bestellungen",
+        "empty": "Noch keine Bestellungen",
+        "number": "Bestellnr.",
+        "date": "Datum",
+        "items": "Artikel",
         "status": "Status",
-        "total": "Total",
-        "view_all": "All orders"
+        "total": "Gesamt",
+        "view_all": "Alle Bestellungen"
       },
       "widgets": {
-        "ytd_purchases": "YTD purchases",
-        "open_balance": "Open balance",
-        "avg_order_value": "Avg order value",
-        "orders_ytd": "Orders YTD"
+        "ytd_purchases": "Käufe seit Jahresbeginn",
+        "open_balance": "Offener Saldo",
+        "avg_order_value": "Durchschn. Bestellwert",
+        "orders_ytd": "Bestellungen seit Jahresbeginn"
       },
       "info": {
-        "title": "Customer information",
-        "empty": "No information available",
-        "primary_contact": "Primary contact",
-        "phone": "Phone",
-        "account_type": "Account type",
-        "ship_to": "Ship-to"
+        "title": "Kundeninformationen",
+        "empty": "Keine Informationen verfügbar",
+        "primary_contact": "Hauptansprechpartner",
+        "phone": "Telefon",
+        "account_type": "Kontotyp",
+        "ship_to": "Lieferadresse"
       }
     }
   }
