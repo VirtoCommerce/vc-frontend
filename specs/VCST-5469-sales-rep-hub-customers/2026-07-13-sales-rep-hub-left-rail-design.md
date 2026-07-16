@@ -12,7 +12,7 @@ When the current user is a **Sales Rep**, the account left rail shows a new **"S
 1. **Generic mechanism**, not a one-off: a reusable account-section registry any module can register into.
 2. **Gate = `SalesRep.Enabled` (store setting) AND `sales-rep:access` (permission)** — both required.
 3. **Desktop = priority-based positioning** (the hub slots into the rail by a numeric priority, interleaving with the built-in sections).
-4. **Mobile = drill-down section** (consistent with the existing Purchasing/Corporate/… sections), rendered at the top.
+4. **Mobile = drill-down section** (consistent with the existing Purchasing/Corporate/… sections), rendered at the top. **`priority` is intentionally NOT honored on mobile** — see "Desktop/mobile ordering asymmetry" below.
 5. Replace the **temporary Corporate "My customers" link** (added in PR #2380) with this widget. Keep the separate "Sales reps" contact-info link (VCST-5409 — a different feature).
 
 ## Verified facts (from the codebase)
@@ -40,6 +40,33 @@ When the current user is a **Sales Rep**, the account left rail shows a new **"S
 ### 3. Mobile — `main-menu.vue`
 - Before the built-in section `<li>`s, `v-for` over `registeredAccountSections` filtered by `isVisible`, rendering a `MobileMenuLink` per section with `@select="$emit('selectItem', section)"`. The controller pushes it and `default-menu.vue` renders `section.children`. No changes to `mobile-menu.vue` / `default-menu.vue`.
 
+### Desktop/mobile ordering asymmetry — why mobile ignores `priority` (READ BEFORE refactoring)
+
+**Behavior as shipped:** on **desktop**, `priority` fully interleaves registered sections among the
+built-ins (`account-navigation.vue` builds one list and `.sort()`s by priority — hub at `5` leads,
+a hypothetical `25` would sit between marketing and corporate). On **mobile**, `priority` is **not
+applied at all**: registered sections are prepended, in registration order, ahead of the built-ins.
+`mobileRegisteredAccountSections` (`useNavigations.ts`) neither sorts by priority nor merges with the
+built-ins.
+
+**Why the asymmetry is deliberate (not an oversight):** the mobile built-in sections
+(Purchasing / Marketing / Corporate / User) are **hardcoded `<li>` template blocks** in
+`main-menu.vue`, whereas desktop already renders sections from a data array. To make mobile honor
+`priority`, those four hardcoded blocks must first be converted into one data-driven, sortable list —
+a **wide-blast change to a shared host component** used by every buyer, with real regression surface
+(drill-down stack, `mobilePreSelectedMenuItem` auto-open, visibility rules). With a **mobile-menu
+redesign/refactor already upcoming**, doing that conversion now would be thrown away. So the decision
+is: **defer priority-aware mobile ordering to that redesign**; until then, prepend-in-registration-order
+is the intentional, low-risk behavior. Today there is a single registered section (the hub), so the
+distinction has **no user-visible effect** yet — it only matters once a second section registers with
+a priority meant to sit *between* built-ins on mobile.
+
+**If you touch this before the redesign:** don't quietly bolt priority onto the mobile getter — the
+built-ins still won't participate, so you'd get a half-honored ordering that's more confusing than the
+current "always on top". Either do the full data-driven conversion or leave the prepend as-is. The
+in-place comments (`AccountNavigationSectionType.priority`, `main-menu.vue`, the mobile getter) point
+back here.
+
 ### 4. Sales Rep Hub registration (module — `client-app/modules/sales-rep`)
 - `index.ts` `init()`: after gating on `isSalesRepsEnabled()` (module already early-returns when the setting is off), register the section:
   ```ts
@@ -61,6 +88,21 @@ When the current user is a **Sales Rep**, the account left rail shows a new **"S
 - `menu.ts`: remove `myCustomersLink` from the Corporate `children` (keep `link` = "Sales reps"). Keep the route + all My-customers-page code from PR #2380 unchanged.
 - Constants: `sales-rep-hub` id + priority as needed (reuse existing `MY_CUSTOMERS_*`).
 - Locales: add `sales_rep.hub.title` ("Sales Rep hub") across all 13 files.
+
+### 5. My-customers link — total-customer count badge (added after initial design)
+The hub's "My customers" child is not rendered as a plain link: it shows a badge with the total
+number of customers assigned to the rep. As shipped:
+- `api/graphql/queries/salesRepCustomersCount/salesRepCustomersCountQuery.graphql` — a count-only
+  query (`salesRepCustomers(storeId, first: 0) { totalCount }`), separate from the paged list query
+  so the badge doesn't fetch rows. **Deliberately unfiltered** (no `keyword`): the badge reflects the
+  rep's *full* customer total, not the My Customers page's current filtered/paged view — so it stays
+  stable while the rep searches/paginates on the page.
+- `composables/useSalesRepCustomersCount.ts` — exposes `count`.
+- `components/link-my-customers.vue` + `link-my-customers-mobile.vue` — wrap `AccountNavigationItem`
+  and render a `VcBadge` (compact `$n`) when `count` is truthy.
+- `index.ts` registers these components into the extension registry (`register("accountMenu", …)`
+  and `register("mobileMenu", …)` under `MY_CUSTOMERS_NAV_LINK_ID`), so the section child declared
+  in §4 is drawn by the badge component on both desktop and mobile.
 
 ## Testing & verification
 

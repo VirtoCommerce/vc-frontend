@@ -25,8 +25,8 @@
       },
       "table": {
         "customer": "Kund",
-        "last_order": "Senaste order",
-        "search_placeholder": "Sök efter namn eller konto-ID",
+        "last_order": "Min senaste order",
+        "search_placeholder": "Sök efter namn",
         "search_aria": "Sök kunder",
         "empty": "Inga kunder hittades",
         "no_results": "Inga kunder matchar din sökning",

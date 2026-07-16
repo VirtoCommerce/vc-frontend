@@ -19,11 +19,30 @@
         </div>
       </slot>
 
+      <!-- Error before empty: a failed request with empty items still shows the error -->
+      <template v-else-if="error">
+        <slot name="error">
+          <DefaultErrorState />
+        </slot>
+      </template>
+
       <!-- Mobile empty view -->
-      <slot v-else-if="!items.length" name="mobile-empty" />
+      <template v-else-if="!items.length">
+        <slot v-if="$slots['mobile-empty']" name="mobile-empty" />
+
+        <VcEmptyView v-else variant="search" :text="$t('ui_kit.table.empty')" />
+      </template>
 
       <!-- Mobile item view -->
-      <slot v-else v-for="(item, index) in items" :key="getItemKey(item, index)" name="mobile-item" :item="item" />
+      <slot
+        v-else
+        v-for="(item, index) in items"
+        :key="getItemKey(item, index)"
+        name="mobile-item"
+        :item="item"
+        :index="index"
+        v-bind="selectionSlotScope(item, index)"
+      />
     </div>
 
     <!-- Desktop table view -->
@@ -48,6 +67,27 @@
             :class="['vc-table__head', { 'vc-table__head--sticky': stickyHeader || maxHeight }]"
           >
             <tr class="vc-table__head-row">
+              <th
+                v-if="showSelectionColumn"
+                scope="col"
+                :class="[
+                  'vc-table__title',
+                  'vc-table__selection-cell',
+                  { 'vc-table__title--fixed': selectionColumnSticky },
+                ]"
+                :style="selectionColumnStyle"
+              >
+                <VcCheckbox
+                  v-if="selectionMode === 'multiple'"
+                  size="sm"
+                  :model-value="isAllSelected"
+                  :indeterminate="isSomeSelected"
+                  :disabled="!selectableKeysOnPage.length"
+                  :aria-label="$t(isAllSelected ? 'ui_kit.table.deselect_all' : 'ui_kit.table.select_all')"
+                  @change="toggleSelectAll"
+                />
+              </th>
+
               <th
                 v-for="column in orderedColumns"
                 :key="column.id"
@@ -105,6 +145,18 @@
             <!-- Default skeleton template -->
             <tr v-for="row in skeletonRows" :key="row" class="vc-table__skeleton">
               <td
+                v-if="showSelectionColumn"
+                :class="[
+                  'vc-table__skeleton-cell',
+                  'vc-table__selection-cell',
+                  { 'vc-table__skeleton-cell--fixed': selectionColumnSticky },
+                ]"
+                :style="selectionColumnStyle"
+              >
+                <div class="vc-table__selection-skeleton" />
+              </td>
+
+              <td
                 v-for="column in orderedColumns"
                 :key="column.id"
                 :class="[
@@ -121,9 +173,26 @@
           </slot>
         </tbody>
 
+        <!-- Error before empty: a failed request with empty items still shows the error -->
+        <tbody v-else-if="error" class="vc-table__body">
+          <tr>
+            <td :colspan="stateColspan" class="vc-table__state-cell">
+              <slot name="error">
+                <DefaultErrorState />
+              </slot>
+            </td>
+          </tr>
+        </tbody>
+
         <!-- Desktop empty view -->
         <tbody v-else-if="!items.length" class="vc-table__body">
-          <slot name="desktop-empty" />
+          <slot v-if="$slots['desktop-empty']" name="desktop-empty" />
+
+          <tr v-else>
+            <td :colspan="stateColspan" class="vc-table__state-cell">
+              <VcEmptyView variant="search" :text="$t('ui_kit.table.empty')" />
+            </td>
+          </tr>
         </tbody>
 
         <!-- Desktop table view (custom body) -->
@@ -136,13 +205,60 @@
           <tr
             v-for="(item, rowIndex) in items"
             :key="getItemKey(item, rowIndex)"
-            :class="['vc-table__row', resolvedRowClass(item, rowIndex)]"
+            :ref="(el) => setRowRef(el as Element | null, rowIndex)"
+            :class="[
+              'vc-table__row',
+              { 'vc-table__row--selected': selectionEnabled && isRowSelected(item, rowIndex) },
+              resolvedRowClass(item, rowIndex),
+            ]"
             :style="resolvedRowStyle(item, rowIndex)"
-            :tabindex="hasRowClickListener ? 0 : undefined"
-            :role="hasRowClickListener ? 'button' : undefined"
+            :tabindex="rowTabindex(rowIndex)"
+            :role="!selectionEnabled && hasRowClickListener ? 'button' : undefined"
+            :aria-selected="selectionEnabled ? isRowSelected(item, rowIndex) : undefined"
             @click="hasRowClickListener && $emit('rowClick', item, rowIndex)"
-            @keydown.enter="hasRowClickListener && $emit('rowClick', item, rowIndex)"
+            @focusin="activeRowIndex = rowIndex"
+            @keydown="onRowKeydown($event, item, rowIndex)"
           >
+            <td
+              v-if="showSelectionColumn"
+              :class="[
+                'vc-table__cell',
+                'vc-table__selection-cell',
+                { 'vc-table__cell--fixed': selectionColumnSticky },
+              ]"
+              :style="selectionColumnStyle"
+              @click.stop
+              @keydown.enter.stop
+            >
+              <VcCheckbox
+                v-if="selectionMode === 'multiple'"
+                size="sm"
+                tabindex="-1"
+                :model-value="isRowSelected(item, rowIndex)"
+                :disabled="!isRowSelectable(item) && !isRowSelected(item, rowIndex)"
+                :aria-label="rowSelectionAriaLabel(item, rowIndex)"
+                @change="toggleRow(item, rowIndex)"
+              />
+
+              <!--
+                Toggle on `click`, not `change`: a native radio's `change` never fires when
+                re-clicking the already-checked radio, so `@change` could select but never
+                deselect by mouse. The overlay input covers the control, so exactly one click
+                fires; keyboard toggling is handled by the row's `onRowKeydown`.
+              -->
+              <VcRadioButton
+                v-else
+                size="sm"
+                :tabindex="-1"
+                :name="`sel-${tableId}-${getItemKey(item, rowIndex)}`"
+                :value="getItemKey(item, rowIndex)"
+                :model-value="isRowSelected(item, rowIndex) ? getItemKey(item, rowIndex) : undefined"
+                :disabled="!isRowSelectable(item) && !isRowSelected(item, rowIndex)"
+                :aria-label="rowSelectionAriaLabel(item, rowIndex)"
+                @click="toggleRow(item, rowIndex)"
+              />
+            </td>
+
             <td
               v-for="column in orderedColumns"
               :key="column.id"
@@ -161,7 +277,14 @@
 
         <!-- Desktop table item view -->
         <tbody v-else-if="items.length && $slots['desktop-item']" class="vc-table__body">
-          <slot v-for="(item, index) in items" :key="getItemKey(item, index)" name="desktop-item" :item="item" />
+          <slot
+            v-for="(item, index) in items"
+            :key="getItemKey(item, index)"
+            name="desktop-item"
+            :item="item"
+            :index="index"
+            v-bind="selectionSlotScope(item, index)"
+          />
         </tbody>
       </table>
     </VcScrollbar>
@@ -169,14 +292,14 @@
     <!-- Table footer -->
     <slot name="footer">
       <div class="vc-table__footer">
-        <div v-if="pageLimit && page >= pageLimit" class="vc-table__page-limit-message">
+        <div v-if="!error && pageLimit && page >= pageLimit" class="vc-table__page-limit-message">
           <slot name="page-limit-message">
             {{ $t("ui_kit.reach_limit.page_limit") }}
           </slot>
         </div>
 
         <VcPagination
-          v-if="!hideDefaultFooter && items.length && pages > 1"
+          v-if="!hideDefaultFooter && !error && items.length && pages > 1"
           :page="page"
           :pages="Math.min(pages, pageLimit || pages)"
           @update:page="$emit('pageChanged', $event)"
@@ -193,21 +316,35 @@ import {
   defineComponent,
   Fragment,
   getCurrentInstance,
+  h,
+  nextTick,
   onMounted,
   onUpdated,
   provide,
   ref,
   useSlots,
+  watch,
 } from "vue";
+import { useI18n } from "vue-i18n";
+import { useComponentId } from "@/ui-kit/composables";
 import { BREAKPOINTS, TABLE_SKELETON_ROWS_SIZE, TABLE_PAGE_LIMIT } from "@/ui-kit/constants";
 import VcTableColumn from "./vc-table-column.vue";
 import { vcTableKey } from "./vc-table-context";
 import type { PropType, VNode } from "vue";
+import VcCheckbox from "@/ui-kit/components/atoms/checkbox/vc-checkbox.vue";
+import VcRadioButton from "@/ui-kit/components/atoms/radio-button/vc-radio-button.vue";
+import VcButton from "@/ui-kit/components/molecules/button/vc-button.vue";
+import VcEmptyView from "@/ui-kit/components/molecules/empty-view/vc-empty-view.vue";
 
-defineEmits<{
+const emit = defineEmits<{
   (event: "headerClick", item: VcTableSortInfoType): void;
   (event: "pageChanged", page: number): void;
   (event: "rowClick", item: T, index: number): void;
+  (event: "retry"): void;
+  /** Emitted keys are always strings (normalized from `getItemKey`), even if numeric keys were passed in. */
+  (event: "update:selection", keys: VcTableSelectionKeyType[]): void;
+  /** Emitted keys are always strings (normalized from `getItemKey`), even if numeric keys were passed in. */
+  (event: "selectionChange", keys: VcTableSelectionKeyType[], rows: T[], meta: VcTableSelectionMetaType<T>): void;
 }>();
 
 const props = withDefaults(
@@ -218,6 +355,7 @@ const props = withDefaults(
     pages?: number;
     page?: number;
     loading?: boolean;
+    error?: boolean;
     hideDefaultHeader?: boolean;
     hideDefaultFooter?: boolean;
     description?: string;
@@ -253,6 +391,21 @@ const props = withDefaults(
      * @example :row-style="(item) => ({ opacity: item.isDisabled ? '0.5' : '1' })"
      */
     rowStyle?: string | Record<string, string> | ((item: T, index: number) => string | Record<string, string>);
+    /**
+     * Row selection mode. `"single"` = radio, at most one row; `"multiple"` = checkboxes
+     * with a header select-all. `undefined` disables selection.
+     */
+    selectionMode?: VcTableSelectionModeType;
+    /**
+     * Selected row keys (v-model:selection). Parent-owned, so selection persists across
+     * `items`/page/sort/filter changes. Accepts `string | number` keys but compares them
+     * as strings (matching `getItemKey`), so numeric `[1, 2]` still matches `id: 1` / `id: 2`.
+     */
+    selection?: VcTableSelectionKeyType[];
+    /** Predicate: rows returning `false` get a disabled control and are excluded from select-all. */
+    isRowSelectable?: (item: T) => boolean;
+    /** Custom accessible label for a row's selection control; falls back to "Select row N". */
+    rowSelectionLabel?: (item: T, index: number) => string;
   }>(),
   {
     columns: () => [],
@@ -262,10 +415,14 @@ const props = withDefaults(
     pageLimit: TABLE_PAGE_LIMIT,
     mobileBreakpoint: "md",
     skeletonRows: TABLE_SKELETON_ROWS_SIZE,
+    selection: () => [],
   },
 );
 
+const { t } = useI18n();
+
 const FIXED_COLUMN_DEFAULT_WIDTH = "150px";
+const SELECTION_COLUMN_WIDTH = "3rem";
 
 // Track columns registered by VcTableColumn children
 const childColumns = ref<Map<string, VcTableColumnRegistrationType>>(new Map());
@@ -332,8 +489,10 @@ const columnOffsets = computed<Map<string, string>>(() => {
   const offsets = new Map<string, string>();
   const cols = orderedColumns.value;
 
-  // Start offsets
-  const startWidths: string[] = [];
+  // Start offsets. When the selection column is sticky (there is at least one
+  // fixed-start column), it occupies the leading start slot, so seed the widths
+  // with its width to shift subsequent fixed-start columns.
+  const startWidths: string[] = selectionColumnSticky.value ? [SELECTION_COLUMN_WIDTH] : [];
   for (const col of cols) {
     if (col.fixed === "start") {
       offsets.set(col.id, startWidths.length ? `calc(${startWidths.join(" + ")})` : "0px");
@@ -410,6 +569,27 @@ const lastFixedStartId = computed<string | undefined>(() => {
   return cols.length ? cols[cols.length - 1].id : undefined;
 });
 
+// The selection column becomes sticky-start only when the table already has
+// fixed-start columns, so it stays visible during horizontal scroll alongside them.
+const hasFixedStartColumn = computed<boolean>(() => orderedColumns.value.some((col) => col.fixed === "start"));
+const selectionColumnSticky = computed<boolean>(() => showSelectionColumn.value && hasFixedStartColumn.value);
+
+// Inline style for the leading selection column cell/header.
+const selectionColumnStyle = computed<Record<string, string>>(() => {
+  const base: Record<string, string> = {
+    width: SELECTION_COLUMN_WIDTH,
+    minWidth: SELECTION_COLUMN_WIDTH,
+    maxWidth: SELECTION_COLUMN_WIDTH,
+  };
+  if (selectionColumnSticky.value) {
+    return { ...base, position: "sticky", insetInlineStart: "0px", zIndex: "3" };
+  }
+  return base;
+});
+
+// Colspan for full-width state cells (empty/error), including the selection column.
+const stateColspan = computed<number>(() => orderedColumns.value.length + (showSelectionColumn.value ? 1 : 0));
+
 const firstFixedEndId = computed<string | undefined>(() => {
   return orderedColumns.value.find((col) => col.fixed === "end")?.id;
 });
@@ -445,13 +625,32 @@ function getColumnFixedClasses(column: VcTableColumnType, baseClass: string): Re
 // (covers the case where parent dynamically adds/removes the listener).
 const instance = getCurrentInstance();
 const hasRowClickListener = ref(false);
+const hasRetryListener = ref(false);
 
 function syncRowClickListener() {
   hasRowClickListener.value = !!instance?.vnode.props?.onRowClick;
 }
 
-onMounted(syncRowClickListener);
-onUpdated(syncRowClickListener);
+function syncRetryListener() {
+  hasRetryListener.value = !!instance?.vnode.props?.onRetry;
+}
+
+onMounted(() => {
+  syncRowClickListener();
+  syncRetryListener();
+
+  if (import.meta.env.DEV && selectionEnabled.value && slots["desktop-body"]) {
+    // eslint-disable-next-line no-console
+    console.warn(
+      "VcTable: `selectionMode` is not supported with the `#desktop-body` slot — the component can't inject a selection cell per row. Use `#desktop-item` (exposes `selected`/`toggle`/`selectable`) or VcTableColumn slots for row selection.",
+    );
+  }
+});
+
+onUpdated(() => {
+  syncRowClickListener();
+  syncRetryListener();
+});
 
 // Resolve row class from VcTable prop
 function resolvedRowClass(item: T, index: number): unknown[] | undefined {
@@ -506,6 +705,26 @@ const HeaderCellRenderer = defineComponent({
   },
 });
 
+// Default error state, shared between the desktop (table cell) and mobile branches
+// so the markup isn't duplicated. The consumer-provided `#error` slot overrides this in both.
+const DefaultErrorState = defineComponent({
+  setup() {
+    return () =>
+      h(
+        VcEmptyView,
+        { variant: "error", text: t("ui_kit.table.error") },
+        hasRetryListener.value
+          ? {
+              button: () =>
+                h(VcButton, { variant: "outline", color: "secondary", onClick: () => emit("retry") }, () =>
+                  t("ui_kit.table.retry"),
+                ),
+            }
+          : undefined,
+      );
+  },
+});
+
 const breakpoints = useBreakpoints(BREAKPOINTS);
 const isMobile = computed(() => {
   if (props.mobileBreakpoint === "none") {
@@ -547,6 +766,220 @@ function getItemKey(item: T, index: number): string {
   const itemWithId = item as { id?: string | number };
   return String(itemWithId.id ?? index);
 }
+
+const tableId = useComponentId("vc-table");
+
+// -----------------------------------------------------------------------------
+// Row selection
+// -----------------------------------------------------------------------------
+
+const selectionEnabled = computed<boolean>(() => props.selectionMode !== undefined);
+
+const showSelectionColumn = computed<boolean>(() => selectionEnabled.value && !slots["desktop-body"]);
+
+// Normalize to strings so comparisons match `getItemKey`, even for numeric input keys.
+const selectionSet = computed<Set<string>>(() => new Set(props.selection.map(String)));
+
+function isRowSelectable(item: T): boolean {
+  return props.isRowSelectable ? props.isRowSelectable(item) : true;
+}
+
+function isRowSelected(item: T, index: number): boolean {
+  return selectionSet.value.has(getItemKey(item, index));
+}
+
+// Selectable keys among current items; drives select-all.
+const selectableKeysOnPage = computed<string[]>(() => {
+  const keys: string[] = [];
+  props.items.forEach((item, index) => {
+    if (isRowSelectable(item)) {
+      keys.push(getItemKey(item, index));
+    }
+  });
+  return keys;
+});
+
+const selectedCountOnPage = computed<number>(() => {
+  return selectableKeysOnPage.value.filter((key) => selectionSet.value.has(key)).length;
+});
+
+const isAllSelected = computed<boolean>(() => {
+  return selectableKeysOnPage.value.length > 0 && selectedCountOnPage.value === selectableKeysOnPage.value.length;
+});
+
+const isSomeSelected = computed<boolean>(() => {
+  return selectedCountOnPage.value > 0 && !isAllSelected.value;
+});
+
+// Resolve selected rows among current `items` only; off-page selections aren't present here.
+function resolveRows(keys: VcTableSelectionKeyType[]): T[] {
+  const wanted = new Set(keys);
+  const rows: T[] = [];
+  props.items.forEach((item, index) => {
+    if (wanted.has(getItemKey(item, index))) {
+      rows.push(item);
+    }
+  });
+  return rows;
+}
+
+function commitSelection(keys: VcTableSelectionKeyType[], meta: VcTableSelectionMetaType<T>): void {
+  emit("update:selection", keys);
+  emit("selectionChange", keys, resolveRows(keys), meta);
+}
+
+function toggleRow(item: T, index: number): void {
+  // Slot scope exposes `toggle` even when selection is off; calling it must be a no-op.
+  if (!selectionEnabled.value) {
+    return;
+  }
+
+  const key = getItemKey(item, index);
+  const alreadySelected = selectionSet.value.has(key);
+
+  // gate ADD only — deselect must always work, never trap a row
+  if (!alreadySelected && !isRowSelectable(item)) {
+    return;
+  }
+
+  if (props.selectionMode === "single") {
+    const keys = alreadySelected ? [] : [key];
+    commitSelection(keys, { action: alreadySelected ? "deselect" : "select", row: item });
+    return;
+  }
+
+  // multiple; normalize so the string `key` matches numeric input keys
+  const keys = props.selection.map(String);
+  const existingIndex = keys.indexOf(key);
+  if (existingIndex === -1) {
+    keys.push(key);
+    commitSelection(keys, { action: "select", row: item });
+  } else {
+    keys.splice(existingIndex, 1);
+    commitSelection(keys, { action: "deselect", row: item });
+  }
+}
+
+function toggleSelectAll(): void {
+  if (isAllSelected.value) {
+    // clear all page keys (incl. stuck non-selectable), keep off-page
+    const pageKeySet = new Set(props.items.map((item, index) => getItemKey(item, index)));
+    const keys = props.selection.map(String).filter((key) => !pageKeySet.has(key));
+    commitSelection(keys, { action: "deselect-all" });
+  } else {
+    const keys = props.selection.map(String);
+    for (const key of selectableKeysOnPage.value) {
+      if (!keys.includes(key)) {
+        keys.push(key);
+      }
+    }
+    commitSelection(keys, { action: "select-all" });
+  }
+}
+
+// Scope helpers exposed to #desktop-item / #mobile-item slots.
+function selectionSlotScope(
+  item: T,
+  index: number,
+): {
+  selected: boolean;
+  toggle: () => void;
+  selectable: boolean;
+} {
+  return {
+    selected: isRowSelected(item, index),
+    toggle: () => toggleRow(item, index),
+    selectable: isRowSelectable(item),
+  };
+}
+
+// -----------------------------------------------------------------------------
+// Roving-tabindex keyboard navigation for built-in selectable rows.
+// Arrows move focus only; Space/Enter commit the selection.
+// -----------------------------------------------------------------------------
+
+const activeRowIndex = ref(0);
+const rowRefs = ref<(HTMLTableRowElement | null)[]>([]);
+
+function setRowRef(el: Element | null, index: number): void {
+  rowRefs.value[index] = el as HTMLTableRowElement | null;
+}
+
+function rowTabindex(index: number): number | undefined {
+  if (selectionEnabled.value) {
+    return index === activeRowIndex.value ? 0 : -1;
+  }
+  return hasRowClickListener.value ? 0 : undefined;
+}
+
+function rowSelectionAriaLabel(item: T, index: number): string {
+  return props.rowSelectionLabel?.(item, index) ?? t("ui_kit.table.select_row_number", { number: index + 1 });
+}
+
+function focusRow(index: number): void {
+  const max = props.items.length - 1;
+  if (max < 0) {
+    return;
+  }
+  const clamped = Math.min(Math.max(index, 0), max);
+  activeRowIndex.value = clamped;
+  void nextTick(() => {
+    rowRefs.value[clamped]?.focus();
+  });
+}
+
+function onRowKeydown(event: KeyboardEvent, item: T, index: number): void {
+  if (!selectionEnabled.value) {
+    // rowClick-only rows keep their original Enter behavior.
+    if (event.key === "Enter" && hasRowClickListener.value) {
+      emit("rowClick", item, index);
+    }
+    return;
+  }
+
+  switch (event.key) {
+    case "ArrowDown":
+      event.preventDefault();
+      if (index < props.items.length - 1) {
+        focusRow(index + 1);
+      }
+      break;
+    case "ArrowUp":
+      event.preventDefault();
+      if (index > 0) {
+        focusRow(index - 1);
+      }
+      break;
+    case "Home":
+      event.preventDefault();
+      focusRow(0);
+      break;
+    case "End":
+      event.preventDefault();
+      focusRow(props.items.length - 1);
+      break;
+    case " ":
+    case "Spacebar":
+      event.preventDefault();
+      toggleRow(item, index);
+      break;
+    case "Enter":
+      event.preventDefault();
+      if (hasRowClickListener.value) {
+        emit("rowClick", item, index);
+      } else {
+        toggleRow(item, index);
+      }
+      break;
+  }
+}
+
+watch(
+  () => props.items,
+  () => {
+    activeRowIndex.value = 0;
+  },
+);
 </script>
 
 <style lang="scss">
@@ -590,6 +1023,8 @@ function getItemKey(item: T, index: number): string {
   $skeleton: "";
 
   --radius: var(--vc-table-radius, var(--vc-radius, 0.5rem));
+  // Selected-row highlight; dark override bumps the alpha for dark surfaces.
+  --vc-table-selected-bg: rgb(from var(--color-primary-500) r g b / 0.08);
   --desktop-radius: v-bind(desktopRadius);
   --desktop-border-width: v-bind(desktopBorderWidth);
   --mobile-border-width: v-bind(mobileBorderWidth);
@@ -703,6 +1138,7 @@ function getItemKey(item: T, index: number): string {
 
   &__row {
     $row: &;
+    $selected: "";
 
     &:nth-child(even) {
       @apply bg-neutral-50;
@@ -710,6 +1146,17 @@ function getItemKey(item: T, index: number): string {
 
     &:hover {
       @apply bg-neutral-200;
+    }
+
+    &--selected {
+      $selected: &;
+
+      // Compound selectors so the highlight wins over the zebra/hover backgrounds.
+      &,
+      &:nth-child(even),
+      &:hover {
+        background-color: var(--vc-table-selected-bg);
+      }
     }
   }
 
@@ -753,8 +1200,41 @@ function getItemKey(item: T, index: number): string {
         @apply bg-neutral-200;
       }
 
+      // Keep the highlight on sticky (opaque) cells of a selected row.
+      .vc-table__row--selected & {
+        background-color: var(--vc-table-selected-bg);
+      }
+
       @include fixed-column-separators;
     }
+  }
+
+  &__selection-cell {
+    @apply px-3;
+
+    // Center the control and collapse its box so it doesn't stretch the row height.
+    > .vc-checkbox,
+    > .vc-radio-button {
+      @apply mx-auto flex w-fit items-center justify-center;
+
+      // line-height:0 removes the control's phantom baseline descent that would stretch the row.
+      line-height: 0;
+
+      // Empty label span must not reserve vertical space.
+      .vc-checkbox__label,
+      .vc-radio-button__label {
+        @apply min-h-0 leading-none;
+      }
+    }
+
+    > .vc-checkbox > .vc-checkbox__container,
+    > .vc-radio-button > .vc-radio-button__container {
+      @apply items-center leading-none;
+    }
+  }
+
+  &__selection-skeleton {
+    @apply mx-auto size-[1.125rem] animate-pulse rounded bg-neutral-200;
   }
 
   &__skeleton-item {
@@ -771,6 +1251,10 @@ function getItemKey(item: T, index: number): string {
     &--asc {
       @apply rotate-180;
     }
+  }
+
+  &__state-cell {
+    @apply p-0;
   }
 
   &__footer {

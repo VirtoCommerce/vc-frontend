@@ -25,8 +25,8 @@
       },
       "table": {
         "customer": "客户",
-        "last_order": "最近订单",
-        "search_placeholder": "按名称或账户ID搜索",
+        "last_order": "我的最近订单",
+        "search_placeholder": "按名称搜索",
         "search_aria": "搜索客户",
         "empty": "未找到客户",
         "no_results": "没有符合您搜索条件的客户",

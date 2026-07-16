@@ -5,6 +5,16 @@
 **Base branch:** `feat/VCST-5409-sales-rep-in-repo-module`
 **Target of PR:** `feat/VCST-5409-sales-rep-in-repo-module` (not `dev`)
 
+> **Status update (superseded in part):** this doc captures the *first* slice of VCST-5469 — the
+> My customers page — when the left-rail reorganization was still a separate, later task. That
+> follow-up was subsequently designed and **shipped on this same branch**
+> (see [`2026-07-13-sales-rep-hub-left-rail-design.md`](./2026-07-13-sales-rep-hub-left-rail-design.md)).
+> As a result, two statements below no longer match the shipped code: the "Sales Rep Hub" is **no
+> longer out of scope** (it is implemented via `registerAccountSection` in `index.ts`), and the
+> **temporary Corporate "My customers" link was never left in place** — the hub widget is the entry
+> point, and `menu.ts` keeps only the separate "Sales reps" contact-info link. Inline notes below
+> mark the affected spots.
+
 ## Scope
 
 Implement **only the "show My customers information" part** of VCST-5469, inside the
@@ -13,7 +23,9 @@ existing in-repo `client-app/modules/sales-rep` module. The **left-rail reorgani
 items) is explicitly **out of scope** — a separate task.
 
 ### Out of scope (do NOT build)
-- The "Sales Rep Hub" left-rail widget and its Dashboard / Orders / Lists menu items.
+- ~~The "Sales Rep Hub" left-rail widget and its Dashboard / Orders / Lists menu items.~~
+  **Superseded:** the hub widget (single "My customers" item) was designed and shipped on this
+  branch — see the left-rail design spec. The Dashboard / Orders / Lists items remain future work.
 - The customer profile / sales-data page (separate stories VCST-5308 / VCST-5309, in progress).
 - Rich mockup fields with **no backend support**: tier tabs (All/Diamond/Platinum/Gold/At risk),
   YTD purchases, LYTD, region/account-id/account-type subtitles, per-row action icons.
@@ -54,6 +66,10 @@ branch). Only the **operation** (`SalesRepCustomersQuery` + `SalesRepCustomersDo
    lose the customer list when inspecting an order.
 3. **Entry point:** register the route **and** add a *temporary* Corporate menu link so the page
    is reachable/testable; to be superseded by the Sales Rep Hub widget in the left-rail task.
+   **Superseded by shipped code:** the hub widget landed on the same branch, so the temporary
+   Corporate link was replaced (not left behind). Final state: the page is reached via the "Sales
+   Rep hub" section registered in `index.ts`; `menu.ts` keeps only the "Sales reps" contact-info
+   link (`sales_rep.navigation.link`). See §4 and the left-rail design spec.
 
 ## Approach
 
@@ -89,21 +105,34 @@ apply on Enter/click, clearable/reset), `VcEmptyView` (distinguishes empty vs no
 reset), `VcWidget` + `VcTable` with `mobile-breakpoint="lg"`, pagination + smooth-scroll on page change.
 
 Columns:
-- **Customer** — `organizationName` as plain text (profile click-through is VCST-5308/5309). Sortable (`name`).
+- **Customer** — `organizationName` as plain text (profile click-through is VCST-5308/5309).
+  **Sortable — Name only.** The backend sort is member-field-backed and only Name maps to a sortable
+  field (mirrors the Company members / Sales reps tables, where the same was verified against
+  `vcptcore-dev`); Last order is not a sort key.
 - **Last order** — formatted `createdDate` + a link showing `#{number}` →
   `{ name: "OrderDetails", params: { orderId: lastOrder.id } }`. Renders `—` when `lastOrder` is null.
   Date formatting via the app's existing date helper/`$d` (match how order dates are rendered elsewhere).
 
 Mobile item mirrors the desktop content stacked, like `sales-reps.vue`.
 
+**Styling constraint (MF-remote readiness):** page SCSS uses `@apply` rather than global utility
+classes so the module stays self-contained if later extracted as a Module Federation remote (no
+dependency on the host's global utility layer). See `client-app/modules/sales-rep/PORT_TO_MF.md`.
+This is why the pages carry local `@apply`-based styles instead of inline Tailwind utilities.
+
 ### 4. Wiring
 - `constants.ts`: `MY_CUSTOMERS_ROUTE_NAME = "SalesRepMyCustomers"`,
   `MY_CUSTOMERS_ROUTE_SEGMENT = "my-customers"`, `MY_CUSTOMERS_NAV_LINK_ID`, nav priority.
 - `routes.ts`: `myCustomersRoute` (relative path → mounts under `Company` → `/company/my-customers`).
-- `menu.ts`: add a **temporary** Corporate link (title `sales_rep.my_customers.navigation.link`,
-  icon e.g. `users`), commented as a placeholder for the future Sales Rep Hub widget.
-- `index.ts`: `router.addRoute("Company", myCustomersRoute)` alongside the existing route; the new
-  link is merged through the existing `mergeMenuSchema(salesRepMenuSchema)` call.
+- `menu.ts`: ~~add a **temporary** Corporate link (title `sales_rep.my_customers.navigation.link`,
+  icon e.g. `users`), commented as a placeholder for the future Sales Rep Hub widget.~~
+  **Superseded:** no My-customers link lives in `menu.ts`. The page is reached via the "Sales Rep
+  hub" section (`registerAccountSection` in `index.ts`); `menu.ts` holds only the "Sales reps"
+  contact-info link. See the left-rail design spec.
+- `index.ts`: `router.addRoute("Company", myCustomersRoute)` alongside the existing route.
+  **As shipped:** `index.ts` also registers the hub section and registers custom badge-bearing link
+  components (see the left-rail spec's count-badge note); the "Sales reps" contact link is still
+  merged via `mergeMenuSchema(salesRepMenuSchema)`.
 
 ### 5. Types & locales
 - `types/index.ts`: add `SalesRepCustomerType`, `SalesRepCustomerSortColumnType` (`"name"`),

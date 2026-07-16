@@ -156,6 +156,8 @@ export function _useNavigations() {
 
   // Registered account sections (e.g. Sales Rep hub), visibility-filtered and translated for the
   // mobile drill-down. Clone children first — getTranslatedMenuLink mutates its shared-registry input.
+  // `priority` is intentionally not applied here: mobile prepends in registration order (desktop is
+  // the priority-ordered path — see AccountNavigationSectionType.priority).
   const mobileRegisteredAccountSections = computed<ExtendedMenuLinkType[]>(() =>
     registeredAccountSections.value
       .filter((section) => !section.isVisible || section.isVisible.value)

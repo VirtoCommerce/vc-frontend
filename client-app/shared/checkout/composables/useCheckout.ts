@@ -10,8 +10,7 @@ import { globals } from "@/core/globals";
 import { isEqualAddresses, Logger } from "@/core/utilities";
 import { createSharedComposableByArgs } from "@/core/utilities/composables";
 import { useCustomerAddresses, useUser } from "@/shared/account";
-import { useFullCart, EXTENDED_DEBOUNCE_IN_MS } from "@/shared/cart";
-import { CartValidationErrors } from "@/shared/cart/enums";
+import { useFullCart, getLoyaltyValidationMessages, EXTENDED_DEBOUNCE_IN_MS } from "@/shared/cart";
 import { useCurrentOrganizationAddresses } from "@/shared/company";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
@@ -63,7 +62,7 @@ const useGlobalCheckout = createGlobalState(() => {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function _useCheckout(cartId?: string) {
   const { analytics } = useAnalytics();
-  const { t } = useI18n();
+  const { t, te } = useI18n();
   const route = useRoute();
   const notifications = useNotifications();
   const { openModal, closeModal } = useModal();
@@ -113,6 +112,8 @@ export function _useCheckout(cartId?: string) {
     availableShippingMethods,
     availablePaymentMethods,
     hasValidationErrors,
+    loyaltyValidationErrors,
+    hasLoyaltyValidationErrors,
     allItemsAreDigital,
     updateShipment,
     removeShipment,
@@ -507,31 +508,26 @@ export function _useCheckout(cartId?: string) {
     }
   }
 
-  const loyaltyInsufficientBalanceError = computed(() =>
-    cart.value?.validationErrors?.find(
-      (error) => error?.errorCode === CartValidationErrors.LOYALTY_INSUFFICIENT_BALANCE,
-    ),
-  );
+  // Safety net for AC-6 (parity): the Place Order / Go to checkout buttons are already
+  // disabled while any loyalty validation error is active, but if submission is somehow
+  // reached we surface the SAME message the cart shows for that error code — never a
+  // generic "Error when creating an order" toast.
+  function notifyLoyaltyValidationErrors(): void {
+    const messages = getLoyaltyValidationMessages(loyaltyValidationErrors.value, {
+      translate: (key, params) => t(key, params),
+      hasTranslation: (key) => te(key),
+    });
 
-  function notifyIfLoyaltyBalanceInsufficient(): void {
-    const loyaltyError = loyaltyInsufficientBalanceError.value;
-    if (!loyaltyError) {
-      return;
-    }
-
-    const params = loyaltyError.errorParameters ?? [];
-    const getParam = (key: string) => {
-      const value = params.find((param) => param?.key === key)?.value;
-      const parsed = Number(value);
-      return Number.isNaN(parsed) ? (value ?? "") : parsed;
-    };
-    notifications.error({
-      text: t("common.messages.loyalty_insufficient_balance", {
-        required: getParam("required"),
-        available: getParam("available"),
-      }),
-      duration: 15000,
-      single: true,
+    // Show every active loyalty error. Only the first toast replaces the previous attempt's loyalty
+    // toasts (singleInGroup, scoped to the loyalty group so unrelated toasts survive); the rest are
+    // appended. Using `single: true` per toast would clear the whole stack, leaving only the last.
+    messages.forEach(({ text }, index) => {
+      notifications.error({
+        text,
+        duration: 15000,
+        group: "loyalty-validation",
+        singleInGroup: index === 0,
+      });
     });
   }
 
@@ -585,8 +581,8 @@ export function _useCheckout(cartId?: string) {
 
     await prepareOrderData();
 
-    if (loyaltyInsufficientBalanceError.value) {
-      notifyIfLoyaltyBalanceInsufficient();
+    if (hasLoyaltyValidationErrors.value) {
+      notifyLoyaltyValidationErrors();
       loading.value = false;
       return null;
     }

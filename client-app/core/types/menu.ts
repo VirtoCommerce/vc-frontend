@@ -7,6 +7,9 @@ export type AccountNavigationSectionType = {
   id: string;
   title: string;
   icon?: string;
+  // Ordering weight — DESKTOP ONLY (account-navigation.vue sorts by it). Ignored on mobile, where
+  // registered sections are prepended in registration order (main-menu.vue); priority-aware mobile
+  // is deferred to the mobile-menu redesign.
   priority?: number;
   children: ExtendedMenuLinkType[];
   // Reactive gate; a section without it is always shown.
