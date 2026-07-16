@@ -7,16 +7,15 @@ type LocationPartsType =
   | undefined;
 
 export function formatCustomerLocation(address: LocationPartsType, options?: { withPostalCode?: boolean }): string {
-  const cityRegion = [address?.city, address?.regionName].filter(Boolean).join(", ");
-
   if (!options?.withPostalCode) {
-    return cityRegion;
+    // Profile "ship to": "City, Region".
+    return [address?.city, address?.regionName].filter(Boolean).join(", ");
   }
 
   // `postalCode` is the canonical member-address field; `zip` is a legacy alias kept as a fallback.
   const postalCode = address?.postalCode || address?.zip;
-  // Postal code first (prefixed with "#"), then "City, Region", middot-separated to match the
-  // design (e.g. "#23220 · Richmond, Virginia").
+  // List rows: postal code (prefixed with "#"), city and region as three middot-separated
+  // segments to match the design (e.g. "#23220 · Richmond · Virginia").
   const code = postalCode ? `#${postalCode}` : "";
-  return [code, cityRegion].filter(Boolean).join(" · ");
+  return [code, address?.city, address?.regionName].filter(Boolean).join(" · ");
 }
