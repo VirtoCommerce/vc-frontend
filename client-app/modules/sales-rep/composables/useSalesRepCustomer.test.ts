@@ -5,9 +5,19 @@ import { useSalesRepCustomer } from "./useSalesRepCustomer";
 // vi.hoisted runs before this file's imports, so it must import vue itself.
 const queryMock = await vi.hoisted(async () => {
   const { ref: r } = await import("vue");
-  const result = r<{ salesRepCustomer?: { organizationId: string; organizationName?: string } | null } | undefined>(
-    undefined,
-  );
+  const result = r<
+    | {
+        salesRepCustomer?: {
+          organizationId: string;
+          organizationName?: string;
+          accountType?: string;
+          phone?: string;
+          shipTo?: string;
+          primaryContact?: { id: string; fullName?: string; name?: string };
+        } | null;
+      }
+    | undefined
+  >(undefined);
   const loading = r(false);
   const onError = vi.fn();
   const useQuery = vi.fn(() => ({ result, loading, onError }));
@@ -19,9 +29,9 @@ vi.mock("@vue/apollo-composable", () => ({ useQuery: queryMock.useQuery }));
 vi.mock("../api/graphql/queries/salesRepCustomer/salesRepCustomerQuery.graphql", () => ({ default: {} }));
 
 /** The reactive `variables` computed the composable handed to useQuery. */
-function passedVariables(): { id: string } {
+function passedVariables(): { organizationId: string } {
   const call = (queryMock.useQuery.mock.calls.at(-1) ?? []) as unknown[];
-  const variables = call[1] as { value: { id: string } } | undefined;
+  const variables = call[1] as { value: { organizationId: string } } | undefined;
   if (!variables) {
     throw new Error("useQuery was not called with variables");
   }
@@ -40,22 +50,50 @@ describe("useSalesRepCustomer", () => {
     const organizationId = ref("org-1");
     useSalesRepCustomer(() => organizationId.value);
 
-    expect(passedVariables()).toEqual({ id: "org-1" });
+    expect(passedVariables()).toEqual({ organizationId: "org-1" });
 
     organizationId.value = "org-2";
-    expect(passedVariables()).toEqual({ id: "org-2" });
+    expect(passedVariables()).toEqual({ organizationId: "org-2" });
   });
 
   it("maps the details to the view shape, tolerating a missing name", () => {
     const { customer } = useSalesRepCustomer("org-1");
 
     queryMock.result.value = {
-      salesRepCustomer: { organizationId: "org-1", organizationName: "The Cottage Shop LLC" },
+      salesRepCustomer: {
+        organizationId: "org-1",
+        organizationName: "The Cottage Shop LLC",
+        accountType: "Garden Center",
+        phone: "(804) 462-1612",
+        shipTo: "Richmond, VA",
+        primaryContact: { id: "c-1", fullName: "Aubrey Kane" },
+      },
     };
-    expect(customer.value).toEqual({ organizationId: "org-1", organizationName: "The Cottage Shop LLC" });
+    expect(customer.value).toEqual({
+      organizationId: "org-1",
+      organizationName: "The Cottage Shop LLC",
+      accountType: "Garden Center",
+      phone: "(804) 462-1612",
+      shipTo: "Richmond, VA",
+      primaryContactName: "Aubrey Kane",
+    });
 
+    // No fullName on the contact -> the name falls back to `name`.
+    queryMock.result.value = {
+      salesRepCustomer: { organizationId: "org-1", primaryContact: { id: "c-1", name: "A. Kane" } },
+    };
+    expect(customer.value?.primaryContactName).toBe("A. Kane");
+
+    // Only the id present: every optional field settles to an empty string.
     queryMock.result.value = { salesRepCustomer: { organizationId: "org-1" } };
-    expect(customer.value).toEqual({ organizationId: "org-1", organizationName: "" });
+    expect(customer.value).toEqual({
+      organizationId: "org-1",
+      organizationName: "",
+      accountType: "",
+      phone: "",
+      shipTo: "",
+      primaryContactName: "",
+    });
   });
 
   it("flags notFound only once loading settles with no customer (rep not served / unknown org)", () => {

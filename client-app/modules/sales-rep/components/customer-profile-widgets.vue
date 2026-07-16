@@ -7,7 +7,7 @@
       :class="`customer-profile-widgets__card--${card.accent}`"
     >
       <div class="customer-profile-widgets__head">
-        <VcIcon class="customer-profile-widgets__icon" :name="card.icon" size="sm" />
+        <VcIcon class="customer-profile-widgets__icon" :name="card.icon" :size="15" />
 
         <span class="customer-profile-widgets__label">{{ t(card.labelKey) }}</span>
       </div>
@@ -17,7 +17,7 @@
       <div class="customer-profile-widgets__sub">{{ card.sub }}</div>
 
       <div class="customer-profile-widgets__delta" :class="`customer-profile-widgets__delta--${card.deltaTone}`">
-        <VcIcon :name="card.deltaIcon" size="xs" />
+        <VcIcon :name="card.deltaIcon" :size="14" />
 
         <span>{{ card.delta }}</span>
       </div>
@@ -62,7 +62,7 @@ const cards: WidgetCardType[] = [
     sub: "vs $64,420 last year",
     delta: "12% YoY",
     deltaTone: "positive",
-    deltaIcon: "arrow-up",
+    deltaIcon: "chevron-up",
   },
   {
     key: "open_balance",
@@ -73,7 +73,7 @@ const cards: WidgetCardType[] = [
     sub: "1 invoice past due",
     delta: "Follow up needed",
     deltaTone: "negative",
-    deltaIcon: "arrow-down",
+    deltaIcon: "chevron-down",
   },
   {
     key: "aov",
@@ -84,7 +84,7 @@ const cards: WidgetCardType[] = [
     sub: "across 13 orders YTD",
     delta: "Lifetime $355,613",
     deltaTone: "positive",
-    deltaIcon: "arrow-up",
+    deltaIcon: "chevron-up",
   },
   {
     key: "orders_ytd",
@@ -95,7 +95,7 @@ const cards: WidgetCardType[] = [
     sub: "last order Apr 21, 2026",
     delta: "Customer since 2014",
     deltaTone: "positive",
-    deltaIcon: "arrow-up",
+    deltaIcon: "chevron-up",
   },
 ];
 </script>
@@ -106,7 +106,9 @@ const cards: WidgetCardType[] = [
   @apply grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4;
 
   &__card {
-    @apply flex flex-col rounded-lg border border-l-4 border-neutral-200 bg-additional-50 p-5 shadow-sm;
+    // Design's `vc-stat-widget__inner`: column with a uniform 6px gap and 16px padding (no
+    // per-item margins), full height so the trend row can pin to the bottom.
+    @apply flex h-full flex-col gap-1.5 rounded-lg border border-l-4 border-neutral-200 bg-additional-50 p-4 shadow-sm;
 
     &--success {
       @apply border-l-success;
@@ -150,15 +152,16 @@ const cards: WidgetCardType[] = [
   }
 
   &__value {
-    @apply mt-2 text-3xl font-bold leading-tight text-neutral-900;
+    @apply text-3xl font-bold leading-tight text-neutral-900;
   }
 
   &__sub {
-    @apply mt-1 text-xs text-neutral-500;
+    @apply text-xs text-neutral-500;
   }
 
   &__delta {
-    @apply mt-3 flex items-center gap-1 text-xs font-medium;
+    // Design's `vc-stat-widget__trend`: 13px bold, 4px gap, pushed to the card bottom (mt-auto).
+    @apply mt-auto flex items-center gap-1 pt-1.5 text-[13px] font-bold;
 
     &--positive {
       @apply text-success-600;

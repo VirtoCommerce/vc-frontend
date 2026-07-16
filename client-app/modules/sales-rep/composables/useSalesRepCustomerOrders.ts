@@ -7,9 +7,9 @@ import { CUSTOMER_PROFILE_ORDERS_LIMIT } from "../constants";
 import type { SalesRepCustomerOrderType } from "../types/customer-profile";
 import type { MaybeRefOrGetter } from "vue";
 
-export function useSalesRepCustomerOrders(customerId: MaybeRefOrGetter<string>) {
+export function useSalesRepCustomerOrders(organizationId: MaybeRefOrGetter<string>) {
   const variables = computed(() => ({
-    customerId: toValue(customerId),
+    organizationId: toValue(organizationId),
     // A Sales Rep's account is store-bound; scope so orders from another store don't leak in.
     storeId: globals.storeId,
     // Only the most recent N; the full paginated list is a separate "All orders" page (future).
@@ -34,12 +34,9 @@ export function useSalesRepCustomerOrders(customerId: MaybeRefOrGetter<string>) 
         createdDate: order.createdDate,
         status: order.status ?? "",
         itemsCount: order.itemsCount,
-        total: order.total,
-        currency: order.currency ?? "",
+        total: order.total.formattedAmount,
       })),
   );
 
-  const totalCount = computed(() => result.value?.salesRepOrders?.totalCount ?? 0);
-
-  return { orders, totalCount, loading };
+  return { orders, loading };
 }

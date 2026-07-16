@@ -6,7 +6,7 @@ import type { SalesRepCustomerProfileType } from "../types/customer-profile";
 import type { MaybeRefOrGetter } from "vue";
 
 export function useSalesRepCustomer(organizationId: MaybeRefOrGetter<string>) {
-  const variables = computed(() => ({ id: toValue(organizationId) }));
+  const variables = computed(() => ({ organizationId: toValue(organizationId) }));
 
   const { result, loading, onError } = useQuery(SalesRepCustomerDocument, variables);
 
@@ -18,7 +18,16 @@ export function useSalesRepCustomer(organizationId: MaybeRefOrGetter<string>) {
   // eslint-disable-next-line sonarjs/function-return-type -- view model or undefined by design
   const customer = computed<SalesRepCustomerProfileType | undefined>(() => {
     const node = result.value?.salesRepCustomer;
-    return node ? { organizationId: node.organizationId, organizationName: node.organizationName ?? "" } : undefined;
+    return node
+      ? {
+          organizationId: node.organizationId,
+          organizationName: node.organizationName ?? "",
+          accountType: node.accountType ?? "",
+          phone: node.phone ?? "",
+          shipTo: node.shipTo ?? "",
+          primaryContactName: node.primaryContact?.fullName || node.primaryContact?.name || "",
+        }
+      : undefined;
   });
 
   // The rep doesn't serve this organization (server returns null), it doesn't exist, or the

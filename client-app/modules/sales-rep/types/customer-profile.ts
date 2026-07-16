@@ -3,6 +3,12 @@
 export type SalesRepCustomerProfileType = {
   organizationId: string;
   organizationName: string;
+  // Only the fields the backend actually exposes (SalesRepCustomerDetails); the design's Payment
+  // terms / Ship via / balances have no source yet, so the block omits them rather than mock them.
+  accountType: string;
+  phone: string;
+  shipTo: string;
+  primaryContactName: string;
 };
 
 export type SalesRepCustomerOrderType = {
@@ -11,6 +17,5 @@ export type SalesRepCustomerOrderType = {
   createdDate: string;
   status: string;
   itemsCount: number;
-  total: number;
-  currency: string;
+  total: string;
 };

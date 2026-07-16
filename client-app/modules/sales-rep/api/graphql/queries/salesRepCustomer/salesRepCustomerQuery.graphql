@@ -1,6 +1,14 @@
-query SalesRepCustomer($id: String!) {
-  salesRepCustomer(id: $id) {
+query SalesRepCustomer($organizationId: String!) {
+  salesRepCustomer(organizationId: $organizationId) {
     organizationId
     organizationName
+    accountType
+    phone
+    shipTo
+    primaryContact {
+      id
+      fullName
+      name
+    }
   }
 }

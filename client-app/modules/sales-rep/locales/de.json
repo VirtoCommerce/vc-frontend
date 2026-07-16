@@ -55,6 +55,14 @@
         "open_balance": "Open balance",
         "avg_order_value": "Avg order value",
         "orders_ytd": "Orders YTD"
+      },
+      "info": {
+        "title": "Customer information",
+        "empty": "No information available",
+        "primary_contact": "Primary contact",
+        "phone": "Phone",
+        "account_type": "Account type",
+        "ship_to": "Ship-to"
       }
     }
   }

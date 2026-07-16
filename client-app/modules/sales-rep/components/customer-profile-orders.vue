@@ -1,12 +1,12 @@
 <template>
   <VcWidget :title="t('sales_rep.customer_profile.orders.title')" size="lg" class="customer-profile-orders">
     <template #append>
-      <!-- Design's text link (`widget-link`): blue `--link-color`, no button chrome. Wires to the
-           future "All orders" page once that route exists (next story). -->
-      <button type="button" class="customer-profile-orders__all-link">
+      <!-- Design's text link (`widget-link`): blue `--link-color`, no button chrome. Points to the
+           existing account Orders page. -->
+      <VcLink :to="{ name: 'Orders' }" class="customer-profile-orders__all-link">
         {{ t("sales_rep.customer_profile.orders.view_all") }}
         <VcIcon name="arrow-right" size="xs" />
-      </button>
+      </VcLink>
     </template>
 
     <VcEmptyView
@@ -28,7 +28,7 @@
               {{ item.number }}
             </VcLink>
 
-            <span>{{ formatTotal(item.total, item.currency) }}</span>
+            <span>{{ item.total }}</span>
           </div>
 
           <div class="customer-profile-orders__mobile-sub">
@@ -86,7 +86,7 @@
         align="right"
         class="align-top font-bold"
       >
-        {{ formatTotal(item.total, item.currency) }}
+        {{ item.total }}
       </VcTableColumn>
     </VcTable>
   </VcWidget>
@@ -100,25 +100,12 @@ import OrderStatus from "@/shared/account/components/order-status.vue";
 
 const props = defineProps<{ organizationId: string }>();
 
-const { t, locale } = useI18n();
+const { t } = useI18n();
 const { orders, loading } = useSalesRepCustomerOrders(() => props.organizationId);
 
 // Zebra striping, matching the My customers table in this module.
 function rowClass(_item: SalesRepCustomerOrderType, index: number): string {
   return index % 2 === 1 ? "bg-neutral-50" : "";
-}
-
-// salesRepOrders returns a raw Decimal `total` + `currency` code (no MoneyType/formattedAmount from
-// the backend), so format client-side by the order's own currency. No fabricated fallback currency:
-// when the code is missing/invalid, render a plain formatted number rather than a wrong symbol.
-function formatTotal(amount: number, currency: string): string {
-  try {
-    return currency
-      ? new Intl.NumberFormat(locale.value, { style: "currency", currency }).format(amount)
-      : new Intl.NumberFormat(locale.value).format(amount);
-  } catch {
-    return new Intl.NumberFormat(locale.value).format(amount);
-  }
 }
 </script>
 

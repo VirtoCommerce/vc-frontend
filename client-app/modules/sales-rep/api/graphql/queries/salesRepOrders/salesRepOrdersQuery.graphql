@@ -1,5 +1,5 @@
-query SalesRepOrders($customerId: String!, $storeId: String, $first: Int, $sort: String) {
-  salesRepOrders(customerId: $customerId, storeId: $storeId, first: $first, sort: $sort) {
+query SalesRepOrders($organizationId: String!, $storeId: String, $first: Int, $sort: String) {
+  salesRepOrders(organizationId: $organizationId, storeId: $storeId, first: $first, sort: $sort) {
     totalCount
     items {
       id
@@ -7,8 +7,14 @@ query SalesRepOrders($customerId: String!, $storeId: String, $first: Int, $sort:
       createdDate
       status
       itemsCount
-      total
-      currency
+      total {
+        amount
+        formattedAmount
+        currency {
+          code
+          symbol
+        }
+      }
     }
   }
 }

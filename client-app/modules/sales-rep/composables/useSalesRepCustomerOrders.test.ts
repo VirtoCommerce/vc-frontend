@@ -26,10 +26,10 @@ vi.mock("@/core/globals", () => ({ globals: { storeId: "test-store" } }));
 vi.mock("../api/graphql/queries/salesRepOrders/salesRepOrdersQuery.graphql", () => ({ default: {} }));
 
 /** The reactive `variables` computed the composable handed to useQuery. */
-function passedVariables(): { customerId: string; storeId?: string; first: number; sort: string } {
+function passedVariables(): { organizationId: string; storeId?: string; first: number; sort: string } {
   const call = (queryMock.useQuery.mock.calls.at(-1) ?? []) as unknown[];
   const variables = call[1] as
-    { value: { customerId: string; storeId?: string; first: number; sort: string } } | undefined;
+    { value: { organizationId: string; storeId?: string; first: number; sort: string } } | undefined;
   if (!variables) {
     throw new Error("useQuery was not called with variables");
   }
@@ -48,7 +48,7 @@ describe("useSalesRepCustomerOrders", () => {
     useSalesRepCustomerOrders("cust-1");
 
     expect(passedVariables()).toEqual({
-      customerId: "cust-1",
+      organizationId: "cust-1",
       storeId: "test-store",
       first: CUSTOMER_PROFILE_ORDERS_LIMIT,
       sort: "createdDate:desc",
@@ -68,15 +68,20 @@ describe("useSalesRepCustomerOrders", () => {
             createdDate: "2026-07-10T00:00:00Z",
             status: "Completed",
             itemsCount: 3,
-            total: 120.5,
-            currency: "USD",
+            total: { amount: 120.5, formattedAmount: "$120.50", currency: { code: "USD", symbol: "$" } },
           },
           null,
-          { id: "o2", createdDate: "2026-07-09T00:00:00Z", itemsCount: 1, total: 10 },
+          {
+            id: "o2",
+            createdDate: "2026-07-09T00:00:00Z",
+            itemsCount: 1,
+            total: { amount: 10, formattedAmount: "$10.00", currency: { code: "USD", symbol: "$" } },
+          },
         ],
       },
     };
 
+    // `total` is taken straight from the backend-formatted MoneyType.formattedAmount (no client formatting).
     expect(orders.value).toEqual([
       {
         id: "o1",
@@ -84,20 +89,10 @@ describe("useSalesRepCustomerOrders", () => {
         createdDate: "2026-07-10T00:00:00Z",
         status: "Completed",
         itemsCount: 3,
-        total: 120.5,
-        currency: "USD",
+        total: "$120.50",
       },
-      { id: "o2", number: "", createdDate: "2026-07-09T00:00:00Z", status: "", itemsCount: 1, total: 10, currency: "" },
+      { id: "o2", number: "", createdDate: "2026-07-09T00:00:00Z", status: "", itemsCount: 1, total: "$10.00" },
     ]);
-  });
-
-  it("exposes totalCount, defaulting to 0 before data arrives", () => {
-    const { totalCount } = useSalesRepCustomerOrders("cust-1");
-
-    expect(totalCount.value).toBe(0);
-
-    queryMock.result.value = { salesRepOrders: { totalCount: 42, items: [] } };
-    expect(totalCount.value).toBe(42);
   });
 
   it("passes loading through and registers an error handler", () => {
