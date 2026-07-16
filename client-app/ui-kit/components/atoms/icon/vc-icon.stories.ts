@@ -145,6 +145,103 @@ export const StrokeBuckets: StoryType = {
   }),
 };
 
+export const ArrowFamilyStrokes: StoryType = {
+  render: () => ({
+    components: { VcIcon },
+    setup: () => ({
+      sizes: [10, 12, 14, 16, 20, 24, 28, 36, 56],
+      icons: [
+        // chevrons
+        "chevron-up",
+        "chevron-down",
+        "chevron-left",
+        "chevron-right",
+        "chevron-first",
+        "chevron-last",
+        "chevrons-up",
+        "chevrons-down",
+        "chevrons-left",
+        "chevrons-right",
+        "chevrons-up-down",
+        "chevrons-left-right",
+        // arrows — cardinal
+        "arrow-up",
+        "arrow-down",
+        "arrow-left",
+        "arrow-right",
+        // arrows — diagonal
+        "arrow-up-left",
+        "arrow-up-right",
+        "arrow-down-left",
+        "arrow-down-right",
+        // arrows — bidirectional
+        "arrow-up-down",
+        "arrow-left-right",
+        // arrows — to / from line & dot
+        "arrow-up-to-line",
+        "arrow-down-to-line",
+        "arrow-left-to-line",
+        "arrow-right-to-line",
+        "arrow-up-from-line",
+        "arrow-down-from-line",
+        "arrow-down-to-dot",
+        "arrow-up-from-dot",
+        // corners
+        "corner-up-left",
+        "corner-up-right",
+        "corner-down-left",
+        "corner-down-right",
+        "corner-left-up",
+        "corner-left-down",
+        "corner-right-up",
+        "corner-right-down",
+        // move
+        "move",
+        "move-horizontal",
+        "move-vertical",
+        "move-diagonal",
+        // simple glyphs
+        "check",
+        "check-check",
+        "x",
+        "plus",
+        "minus",
+        "equal",
+        "divide",
+        // menu / lists / toolbar
+        "menu",
+        "align-justify",
+        "align-left",
+        "align-right",
+        "align-center",
+        "text-align-justify",
+        "text-align-start",
+        "text-align-center",
+        "text-align-end",
+        "list",
+      ],
+    }),
+    template: `
+      <table class="border-collapse">
+        <thead>
+          <tr>
+            <th class="text-xs font-mono text-start p-2"></th>
+            <th v-for="px in sizes" :key="px" class="text-xs font-mono p-2">{{ px }}px</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="icon in icons" :key="icon">
+            <td class="whitespace-nowrap text-xs font-mono text-start p-2">{{ icon }}</td>
+            <td v-for="px in sizes" :key="px" class="p-2 text-center">
+              <VcIcon :name="icon" :size="px" />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    `,
+  }),
+};
+
 export const StrokeWidths: StoryType = {
   render: () => ({
     components: { VcIcon },

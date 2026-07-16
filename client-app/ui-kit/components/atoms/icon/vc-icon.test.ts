@@ -10,7 +10,7 @@ describe("VcIcon variant", () => {
   });
 
   it("does not add vc-icon--outline for a solid-only icon", async () => {
-    const wrapper = mount(VcIcon, { props: { name: "academic-cap" } });
+    const wrapper = mount(VcIcon, { props: { name: "outline-security" } });
     await flushPromises();
     expect(wrapper.classes()).not.toContain("vc-icon--outline");
   });

@@ -25,7 +25,7 @@
               class="h-full pe-3 ps-5 sm:pe-5"
               @click="mobileMenuVisible = true"
             >
-              <VcIcon class="text-primary" name="menu" :size="24" :stroke-width="2" />
+              <VcIcon class="text-primary" name="menu" :size="24" />
             </button>
 
             <router-link :to="$context.settings.default_return_url ?? '/'">

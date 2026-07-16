@@ -7,7 +7,7 @@
     :class="['vc-nav-button', `vc-nav-button--size--${size}`]"
     @click="$emit('click', $event)"
   >
-    <VcIcon :name="iconName" aria-hidden="true" :stroke-width="2.4" />
+    <VcIcon :name="iconName" aria-hidden="true" />
   </button>
 </template>
 

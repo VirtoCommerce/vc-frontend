@@ -240,8 +240,6 @@ function applyRange(range: [number | null, number | null]) {
   }
 
   &__append {
-    --vc-icon-stroke: 2.4;
-
     @apply ms-2;
   }
 

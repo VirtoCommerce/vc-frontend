@@ -68,7 +68,7 @@ export const ICON_ALIASES: Readonly<Record<string, string>> = {
   "source-environment": "building-2",
   "switch-vertical": "arrow-up-down",
   "user-group": "users",
-  "view-grid": "layout-grid",
+  grid: "layout-grid",
   warning: "triangle-alert",
   whishlist: "star",
 };

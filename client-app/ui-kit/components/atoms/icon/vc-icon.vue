@@ -158,6 +158,56 @@ watch(
         --stroke-bucket: 2.7;
       }
     }
+
+    // Sparse arrow-family / line glyphs read too thin on the base grid — give them a heavier
+    // stroke for weight parity. Enumerated exact classes so only simple variants match (not the
+    // bordered / big / sort arrow variants that share the arrow-/chevron- prefix).
+    $arrow-family:
+      "chevron-up", "chevron-down", "chevron-left", "chevron-right", "chevron-first", "chevron-last", "chevrons-up",
+      "chevrons-down", "chevrons-left", "chevrons-right", "chevrons-up-down", "chevrons-left-right", "arrow-up",
+      "arrow-down", "arrow-left", "arrow-right", "arrow-up-left", "arrow-up-right", "arrow-down-left",
+      "arrow-down-right", "arrow-up-down", "arrow-left-right", "arrow-up-to-line", "arrow-down-to-line",
+      "arrow-left-to-line", "arrow-right-to-line", "arrow-up-from-line", "arrow-down-from-line", "arrow-up-from-dot",
+      "arrow-down-to-dot", "corner-up-left", "corner-up-right", "corner-down-left", "corner-down-right",
+      "corner-left-up", "corner-left-down", "corner-right-up", "corner-right-down", "move", "move-horizontal",
+      "move-vertical", "move-diagonal", "check", "check-check", "x", "plus", "minus", "equal", "divide", "menu",
+      "align-justify", "align-left", "align-right", "align-center", "text-align-justify", "text-align-start",
+      "text-align-center", "text-align-end", "list";
+    $arrow-family-selector: "";
+
+    @each $glyph in $arrow-family {
+      @if $arrow-family-selector == "" {
+        $arrow-family-selector: "svg.lucide-#{$glyph}";
+      } @else {
+        $arrow-family-selector: $arrow-family-selector + ", svg.lucide-#{$glyph}";
+      }
+    }
+
+    #{$arrow-family-selector} {
+      @container (width <= 10px) {
+        --stroke-bucket: 1.8;
+      }
+
+      @container (10px < width <= 12px) {
+        --stroke-bucket: 2;
+      }
+
+      @container (12px < width <= 14px) {
+        --stroke-bucket: 2.1;
+      }
+
+      @container (14px < width <= 16px) {
+        --stroke-bucket: 2.2;
+      }
+
+      @container (16px < width <= 20px) {
+        --stroke-bucket: 2.6;
+      }
+
+      @container (width > 20px) {
+        --stroke-bucket: 3;
+      }
+    }
   }
 
   &--size {
