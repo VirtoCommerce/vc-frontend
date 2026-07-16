@@ -9,7 +9,7 @@ export type SalesRepCustomerLastOrderType = { id: string; number: string; create
 export type SalesRepCustomerType = {
   organizationId: string;
   organizationName: string;
-  // Default ship-to location, pre-formatted as "City, Region"; empty when the org has no address.
+  // Default ship-to location, pre-formatted as "#postalCode · City · Region"; empty when no address.
   location: string;
   lastOrder?: SalesRepCustomerLastOrderType;
 };

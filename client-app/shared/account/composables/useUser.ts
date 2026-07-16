@@ -45,7 +45,7 @@ import type {
   ChangePasswordType,
   SignMeUpType,
   UserPersonalDataType,
-} from "@/shared/account";
+} from "@/shared/account/types";
 
 interface IPasswordExpirationEntry {
   userId: string;
