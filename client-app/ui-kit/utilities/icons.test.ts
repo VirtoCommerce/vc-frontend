@@ -22,32 +22,19 @@ describe("resolveIcon", () => {
     expect(resolveIcon("")).toEqual({ isOutline: false });
   });
 
-  it("resolves a legacy alias to its outline equivalent", () => {
-    const { loader, isOutline } = resolveIcon("information-circle");
+  it.each([
+    ["information-circle", true],
+    ["cube", true],
+    ["credit-card", true],
+    ["outline-security", false],
+  ])("resolves %s to a loader with isOutline=%s", (name, expectedOutline) => {
+    const { loader, isOutline } = resolveIcon(name);
     expect(typeof loader).toBe("function");
-    expect(isOutline).toBe(true);
-  });
-
-  it("resolves the 'cube' alias to the 'box' outline icon", () => {
-    const { loader, isOutline } = resolveIcon("cube");
-    expect(typeof loader).toBe("function");
-    expect(isOutline).toBe(true);
-  });
-
-  it("prefers outline when an outline version exists (outline-first)", () => {
-    const { loader, isOutline } = resolveIcon("credit-card");
-    expect(typeof loader).toBe("function");
-    expect(isOutline).toBe(true);
+    expect(isOutline).toBe(expectedOutline);
   });
 
   it("uses the solid glyph when variant='solid' and a solid file exists", () => {
     const { isOutline } = resolveIcon("information-circle", "solid");
-    expect(isOutline).toBe(false);
-  });
-
-  it("falls back to solid for a solid-only custom icon with no alias", () => {
-    const { loader, isOutline } = resolveIcon("outline-security");
-    expect(typeof loader).toBe("function");
     expect(isOutline).toBe(false);
   });
 

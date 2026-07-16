@@ -31,9 +31,9 @@ const props = withDefaults(defineProps<IProps>(), {
 const icon = ref("");
 const isOutline = ref(false);
 
-const PRESET_SIZES = ["xxs", "xs", "sm", "md", "lg", "xl", "xxl"];
+const PRESET_SIZES = new Set(["xxs", "xs", "sm", "md", "lg", "xl", "xxl"]);
 
-const isPreset = computed(() => typeof props.size === "string" && PRESET_SIZES.includes(props.size));
+const isPreset = computed(() => typeof props.size === "string" && PRESET_SIZES.has(props.size));
 
 const sizeClass = computed(() => (isPreset.value ? `vc-icon--size--${props.size as string}` : ""));
 
