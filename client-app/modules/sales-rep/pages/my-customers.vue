@@ -4,61 +4,83 @@
       {{ t("sales_rep.my_customers.page.title") }}
     </VcTypography>
 
-    <div class="my-customers__search">
-      <VcInput
-        v-model="localKeyword"
-        maxlength="64"
-        class="my-customers__search-input"
-        :disabled="loading"
-        :placeholder="t('sales_rep.my_customers.table.search_placeholder')"
-        clearable
-        @keydown.enter="applyKeyword"
-        @clear="resetKeyword"
-      >
-        <template #append>
-          <VcButton
-            :aria-label="t('sales_rep.my_customers.table.search_aria')"
-            :disabled="loading"
-            icon="search"
-            icon-size="1.25rem"
-            @click="applyKeyword"
-          />
-        </template>
-      </VcInput>
-    </div>
-
-    <VcEmptyView
-      v-if="!items.length && !loading"
-      :text="keyword ? t('sales_rep.my_customers.table.no_results') : t('sales_rep.my_customers.table.empty')"
-      :variant="keyword ? 'search' : 'empty'"
-      icon="outline-order"
-    >
-      <template v-if="keyword" #button>
-        <VcButton prepend-icon="reset" @click="resetKeyword">
-          {{ t("sales_rep.my_customers.table.reset_search") }}
-        </VcButton>
-      </template>
-    </VcEmptyView>
-
-    <VcWidget v-else size="lg">
-      <template #default-container>
-        <VcTable
-          :loading="loading"
-          :items="items"
-          :sort="sort"
-          :pages="pages"
-          :page="page"
-          :row-class="rowClass"
-          mobile-breakpoint="lg"
-          @header-click="applySorting"
-          @page-changed="changePage"
+    <div class="my-customers__results">
+      <div class="my-customers__search">
+        <VcInput
+          v-model="localKeyword"
+          maxlength="64"
+          class="my-customers__search-input"
+          :disabled="loading"
+          :placeholder="t('sales_rep.my_customers.table.search_placeholder')"
+          clearable
+          @keydown.enter="applyKeyword"
+          @clear="resetKeyword"
         >
-          <template #mobile-item="{ item }">
-            <div class="my-customers__mobile-item">
-              <b>{{ item.organizationName }}</b>
+          <template #append>
+            <VcButton
+              :aria-label="t('sales_rep.my_customers.table.search_aria')"
+              :disabled="loading"
+              icon="search"
+              icon-size="1.25rem"
+              @click="applyKeyword"
+            />
+          </template>
+        </VcInput>
+      </div>
 
-              <span v-if="item.lastOrder" class="my-customers__mobile-sub">
-                {{ $d(item.lastOrder.createdDate) }} ·
+      <VcEmptyView
+        v-if="!items.length && !loading"
+        :text="keyword ? t('sales_rep.my_customers.table.no_results') : t('sales_rep.my_customers.table.empty')"
+        :variant="keyword ? 'search' : 'empty'"
+        icon="outline-order"
+      >
+        <template v-if="keyword" #button>
+          <VcButton prepend-icon="reset" @click="resetKeyword">
+            {{ t("sales_rep.my_customers.table.reset_search") }}
+          </VcButton>
+        </template>
+      </VcEmptyView>
+
+      <VcWidget v-else size="lg">
+        <template #default-container>
+          <VcTable
+            :loading="loading"
+            :items="items"
+            :sort="sort"
+            :pages="pages"
+            :page="page"
+            :row-class="rowClass"
+            mobile-breakpoint="lg"
+            @header-click="applySorting"
+            @page-changed="changePage"
+          >
+            <template #mobile-item="{ item }">
+              <div class="my-customers__mobile-item">
+                <b>{{ item.organizationName }}</b>
+
+                <span v-if="item.lastOrder" class="my-customers__mobile-sub">
+                  {{ $d(item.lastOrder.createdDate) }} ·
+                  <VcLink
+                    class="my-customers__order"
+                    :to="{ name: 'OrderDetails', params: { orderId: item.lastOrder.id } }"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {{ orderLabel(item.lastOrder.number) }}
+                  </VcLink>
+                </span>
+              </div>
+            </template>
+
+            <!-- Only Customer (name) is sortable — the server sort is name-backed. -->
+            <VcTableColumn id="name" v-slot="{ item }" :title="t('sales_rep.my_customers.table.customer')" sortable>
+              {{ item.organizationName }}
+            </VcTableColumn>
+
+            <VcTableColumn id="lastOrder" v-slot="{ item }" :title="t('sales_rep.my_customers.table.last_order')">
+              <template v-if="item.lastOrder">
+                <div>{{ $d(item.lastOrder.createdDate) }}</div>
+
                 <VcLink
                   class="my-customers__order"
                   :to="{ name: 'OrderDetails', params: { orderId: item.lastOrder.id } }"
@@ -67,45 +89,14 @@
                 >
                   {{ orderLabel(item.lastOrder.number) }}
                 </VcLink>
-              </span>
-            </div>
-          </template>
+              </template>
 
-          <!-- Only Customer (name) is sortable — the server sort is name-backed. -->
-          <VcTableColumn
-            id="name"
-            v-slot="{ item }"
-            :title="t('sales_rep.my_customers.table.customer')"
-            sortable
-            class="align-top"
-          >
-            {{ item.organizationName }}
-          </VcTableColumn>
-
-          <VcTableColumn
-            id="lastOrder"
-            v-slot="{ item }"
-            :title="t('sales_rep.my_customers.table.last_order')"
-            class="align-top"
-          >
-            <template v-if="item.lastOrder">
-              <div>{{ $d(item.lastOrder.createdDate) }}</div>
-
-              <VcLink
-                class="my-customers__order"
-                :to="{ name: 'OrderDetails', params: { orderId: item.lastOrder.id } }"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {{ orderLabel(item.lastOrder.number) }}
-              </VcLink>
-            </template>
-
-            <template v-else>—</template>
-          </VcTableColumn>
-        </VcTable>
-      </template>
-    </VcWidget>
+              <template v-else>—</template>
+            </VcTableColumn>
+          </VcTable>
+        </template>
+      </VcWidget>
+    </div>
   </div>
 </template>
 
@@ -158,12 +149,22 @@ function changePage(newPage: number): void {
     @apply [word-break:break-word];
   }
 
+  // Own the search→table spacing (gap-4 = 1rem, matching Orders) instead of the shell's gap-y-5 (1.25rem) between page children.
+  &__results {
+    @apply flex flex-col gap-4;
+  }
+
   &__search {
     @apply flex;
   }
 
   &__search-input {
     @apply w-full;
+  }
+
+  // Top-align body cells only, so the name lines up with the stacked last-order date/number.
+  .vc-table__cell {
+    @apply align-top;
   }
 
   // Muted, small order number under the date — matches the design; hover hints it's clickable.

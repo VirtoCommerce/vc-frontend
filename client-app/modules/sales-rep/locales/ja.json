@@ -25,8 +25,8 @@
       },
       "table": {
         "customer": "顧客",
-        "last_order": "最近の注文",
-        "search_placeholder": "名前またはアカウントIDで検索",
+        "last_order": "私の最近の注文",
+        "search_placeholder": "名前で検索",
         "search_aria": "顧客を検索",
         "empty": "顧客が見つかりません",
         "no_results": "検索条件に一致する顧客がありません",

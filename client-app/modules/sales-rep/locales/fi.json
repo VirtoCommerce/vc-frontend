@@ -25,8 +25,8 @@
       },
       "table": {
         "customer": "Asiakas",
-        "last_order": "Viimeisin tilaus",
-        "search_placeholder": "Hae nimellä tai tilitunnuksella",
+        "last_order": "Viimeisin tilaukseni",
+        "search_placeholder": "Hae nimellä",
         "search_aria": "Hae asiakkaita",
         "empty": "Asiakkaita ei löytynyt",
         "no_results": "Yksikään asiakas ei vastaa hakuasi",

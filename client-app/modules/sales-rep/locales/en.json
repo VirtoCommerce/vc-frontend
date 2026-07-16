@@ -25,8 +25,8 @@
       },
       "table": {
         "customer": "Customer",
-        "last_order": "Last order",
-        "search_placeholder": "Search by name or account ID",
+        "last_order": "My last order",
+        "search_placeholder": "Search by name",
         "search_aria": "Search customers",
         "empty": "No customers found",
         "no_results": "No customers match your search",

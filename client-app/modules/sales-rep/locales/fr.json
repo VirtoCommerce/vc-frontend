@@ -25,8 +25,8 @@
       },
       "table": {
         "customer": "Client",
-        "last_order": "Dernière commande",
-        "search_placeholder": "Rechercher par nom ou ID de compte",
+        "last_order": "Ma dernière commande",
+        "search_placeholder": "Rechercher par nom",
         "search_aria": "Rechercher des clients",
         "empty": "Aucun client trouvé",
         "no_results": "Aucun client ne correspond à votre recherche",
