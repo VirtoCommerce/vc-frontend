@@ -3,6 +3,7 @@ import { computed, ref, watch } from "vue";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { SalesRepCustomersDocument } from "../api/graphql/types";
+import { formatCustomerLocation } from "../utils";
 import type { SalesRepCustomerType, SalesRepCustomerSortType } from "../types";
 
 export const PAGE_SIZE = 10;
@@ -37,6 +38,7 @@ export function useSalesRepCustomers() {
     (result.value?.salesRepCustomers?.items ?? []).map((customer) => ({
       organizationId: customer.organizationId,
       organizationName: customer.organizationName ?? "",
+      location: formatCustomerLocation(customer.address, { withPostalCode: true }),
       lastOrder: customer.lastOrder?.id
         ? {
             id: customer.lastOrder.id,

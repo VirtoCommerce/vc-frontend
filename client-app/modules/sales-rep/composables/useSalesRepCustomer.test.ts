@@ -12,7 +12,7 @@ const queryMock = await vi.hoisted(async () => {
           organizationName?: string;
           accountType?: string;
           phone?: string;
-          shipTo?: string;
+          address?: { city?: string; regionName?: string };
           primaryContact?: { id: string; fullName?: string; name?: string };
         } | null;
       }
@@ -65,7 +65,7 @@ describe("useSalesRepCustomer", () => {
         organizationName: "The Cottage Shop LLC",
         accountType: "Garden Center",
         phone: "(804) 462-1612",
-        shipTo: "Richmond, VA",
+        address: { city: "Richmond", regionName: "Virginia" },
         primaryContact: { id: "c-1", fullName: "Aubrey Kane" },
       },
     };
@@ -74,7 +74,8 @@ describe("useSalesRepCustomer", () => {
       organizationName: "The Cottage Shop LLC",
       accountType: "Garden Center",
       phone: "(804) 462-1612",
-      shipTo: "Richmond, VA",
+      // Structured address formatted as "City, Region".
+      shipTo: "Richmond, Virginia",
       primaryContactName: "Aubrey Kane",
     });
 

@@ -2,6 +2,7 @@ import { useQuery } from "@vue/apollo-composable";
 import { computed, toValue } from "vue";
 import { Logger } from "@/core/utilities";
 import { SalesRepCustomerDocument } from "../api/graphql/types";
+import { formatCustomerLocation } from "../utils";
 import type { SalesRepCustomerProfileType } from "../types/customer-profile";
 import type { MaybeRefOrGetter } from "vue";
 
@@ -24,7 +25,7 @@ export function useSalesRepCustomer(organizationId: MaybeRefOrGetter<string>) {
           organizationName: node.organizationName ?? "",
           accountType: node.accountType ?? "",
           phone: node.phone ?? "",
-          shipTo: node.shipTo ?? "",
+          shipTo: formatCustomerLocation(node.address),
           primaryContactName: node.primaryContact?.fullName || node.primaryContact?.name || "",
         }
       : undefined;

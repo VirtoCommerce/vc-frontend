@@ -86,18 +86,22 @@ describe("useSalesRepCustomers", () => {
       {
         organizationId: "org-1",
         organizationName: "The Cottage Shop LLC",
+        address: { postalCode: "22902", city: "Charlottesville", regionName: "Virginia" },
         lastOrder: { id: "o-1", number: "21580221", createdDate: "2026-05-19T00:00:00Z" },
       },
-      { organizationId: "org-2", organizationName: "No Orders Inc" }, // lastOrder absent
+      { organizationId: "org-2", organizationName: "No Orders Inc" }, // address and lastOrder absent
     ]);
 
     expect(items.value).toEqual([
       {
         organizationId: "org-1",
         organizationName: "The Cottage Shop LLC",
+        // Postal code first ("#"-prefixed), then "City, Region", middot-separated to match the design.
+        location: "#22902 · Charlottesville, Virginia",
         lastOrder: { id: "o-1", number: "21580221", createdDate: "2026-05-19T00:00:00Z" },
       },
-      { organizationId: "org-2", organizationName: "No Orders Inc", lastOrder: undefined },
+      // No address → empty location string, not undefined.
+      { organizationId: "org-2", organizationName: "No Orders Inc", location: "", lastOrder: undefined },
     ]);
   });
 

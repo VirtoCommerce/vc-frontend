@@ -4,7 +4,10 @@ query SalesRepCustomer($organizationId: String!) {
     organizationName
     accountType
     phone
-    shipTo
+    address {
+      city
+      regionName
+    }
     primaryContact {
       id
       fullName

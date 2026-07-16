@@ -63,6 +63,8 @@
                   {{ item.organizationName }}
                 </VcLink>
 
+                <span v-if="item.location" class="my-customers__location">{{ item.location }}</span>
+
                 <span v-if="item.lastOrder" class="my-customers__mobile-sub">
                   {{ $d(item.lastOrder.createdDate) }} ·
                   <VcLink
@@ -85,6 +87,8 @@
               >
                 {{ item.organizationName }}
               </VcLink>
+
+              <div v-if="item.location" class="my-customers__location">{{ item.location }}</div>
             </VcTableColumn>
 
             <VcTableColumn id="lastOrder" v-slot="{ item }" :title="t('sales_rep.my_customers.table.last_order')">
@@ -184,6 +188,11 @@ function changePage(newPage: number): void {
     &--mobile {
       @apply font-bold;
     }
+  }
+
+  // Muted, small location line under the customer name — matches the design.
+  &__location {
+    @apply mt-0.5 text-sm text-neutral-500 [word-break:break-word];
   }
 
   // Muted, small order number under the date — matches the design; hover hints it's clickable.

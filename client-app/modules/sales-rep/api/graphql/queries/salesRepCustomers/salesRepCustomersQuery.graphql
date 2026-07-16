@@ -4,6 +4,12 @@ query SalesRepCustomers($storeId: String, $first: Int, $after: String, $keyword:
     items {
       organizationId
       organizationName
+      address {
+        postalCode
+        zip
+        city
+        regionName
+      }
       lastOrder {
         id
         number
