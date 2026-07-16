@@ -19,6 +19,40 @@ export type Scalars = {
   Decimal: { input: number; output: number; }
 };
 
+export type CurrencyType = {
+  /** Currency code may be used ISO 4217 */
+  code: Scalars['String']['output'];
+  /** Currency culture name */
+  cultureName: Scalars['String']['output'];
+  /** Currency custom formatting */
+  customFormatting?: Maybe<Scalars['String']['output']>;
+  /** Currency english name */
+  englishName: Scalars['String']['output'];
+  /** Exchange rate */
+  exchangeRate: Scalars['Decimal']['output'];
+  /** Currency name */
+  name: Scalars['String']['output'];
+  /** Symbol */
+  symbol: Scalars['String']['output'];
+};
+
+export type MoneyType = {
+  /** A decimal with the amount rounded to the significant number of decimal digits. */
+  amount: Scalars['Decimal']['output'];
+  /** Currency type */
+  currency: CurrencyType;
+  /** Number of decimal digits for the associated currency. */
+  decimalDigits: Scalars['Int']['output'];
+  /** Formatted amount. */
+  formattedAmount: Scalars['String']['output'];
+  /** Formatted amount without currency. */
+  formattedAmountWithoutCurrency: Scalars['String']['output'];
+  /** Formatted amount without point. */
+  formattedAmountWithoutPoint: Scalars['String']['output'];
+  /** Formatted amount without point and currency. */
+  formattedAmountWithoutPointAndCurrency: Scalars['String']['output'];
+};
+
 /** Information about pagination in a connection. */
 export type PageInfo = {
   /** When paginating forwards, the cursor to continue. */
@@ -35,6 +69,7 @@ export type Query = {
   customerSalesReps?: Maybe<SalesRepContactConnection>;
   salesRepCustomer?: Maybe<SalesRepCustomerDetails>;
   salesRepCustomers?: Maybe<SalesRepCustomerConnection>;
+  salesRepOrderStatuses?: Maybe<Array<Maybe<SalesRepOrderStatus>>>;
   salesRepOrders?: Maybe<SalesRepOrderConnection>;
 };
 
@@ -49,12 +84,13 @@ export type QueryCustomerSalesRepsArgs = {
 
 
 export type QuerySalesRepCustomerArgs = {
-  id: Scalars['String']['input'];
+  organizationId: Scalars['String']['input'];
 };
 
 
 export type QuerySalesRepCustomersArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   keyword?: InputMaybe<Scalars['String']['input']>;
   sort?: InputMaybe<Scalars['String']['input']>;
@@ -62,12 +98,20 @@ export type QuerySalesRepCustomersArgs = {
 };
 
 
+export type QuerySalesRepOrderStatusesArgs = {
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+};
+
+
 export type QuerySalesRepOrdersArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
-  customerId: Scalars['String']['input'];
+  cultureName?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   keyword?: InputMaybe<Scalars['String']['input']>;
+  organizationId?: InputMaybe<Scalars['String']['input']>;
   sort?: InputMaybe<Scalars['String']['input']>;
+  statuses?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   storeId?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -161,18 +205,20 @@ export type SalesRepCustomerEdge = {
 export type SalesRepOrder = {
   /** Date the order was placed. */
   createdDate: Scalars['DateTime']['output'];
-  /** Order currency code (the currency in which the order was submitted). */
-  currency?: Maybe<Scalars['String']['output']>;
   /** Order id. */
   id: Scalars['String']['output'];
   /** Number of line items in the order. */
   itemsCount: Scalars['Int']['output'];
   /** Human-readable order number. */
   number?: Maybe<Scalars['String']['output']>;
-  /** Order status. */
+  /** Organization (customer) id the order belongs to. */
+  organizationId?: Maybe<Scalars['String']['output']>;
+  /** Organization (customer) name. */
+  organizationName?: Maybe<Scalars['String']['output']>;
   status?: Maybe<Scalars['String']['output']>;
-  /** Order grand total. */
-  total: Scalars['Decimal']['output'];
+  statusDisplayValue?: Maybe<Scalars['String']['output']>;
+  /** Order grand total (amount, formatted amount and currency). */
+  total: MoneyType;
 };
 
 /** A connection from an object to a list of objects of type `SalesRepOrder`. */
@@ -193,6 +239,13 @@ export type SalesRepOrderEdge = {
   cursor: Scalars['String']['output'];
   /** The item at the end of the edge */
   node?: Maybe<SalesRepOrder>;
+};
+
+export type SalesRepOrderStatus = {
+  /** Localized label for the status. */
+  localizedName?: Maybe<Scalars['String']['output']>;
+  /** Stable status id — send it back as the salesRepOrders 'status' argument. */
+  name: Scalars['String']['output'];
 };
 
 export type CustomerSalesRepsQueryVariables = Exact<{
