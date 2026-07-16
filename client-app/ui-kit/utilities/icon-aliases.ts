@@ -19,7 +19,6 @@ export const ICON_ALIASES: Readonly<Record<string, string>> = {
   "chevron-double-right": "chevrons-right",
   "chevron-up-thin": "chevron-up",
   "circle-outline": "circle",
-  "circle-solid": "circle",
   clear: "eraser",
   "clipboard-arrow": "clipboard-copy",
   "clipboard-list": "file-text",
