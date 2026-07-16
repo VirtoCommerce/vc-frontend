@@ -4,33 +4,53 @@ import { resolveIconName } from "./icon-aliases";
 
 export type IconVariantType = "solid" | "outline";
 
-const solidLoaders = import.meta.glob("../icons/solid/*.svg", {
-  query: "?raw",
+const solidUrls = import.meta.glob("../icons/solid/*.svg", {
+  query: "?url",
   import: "default",
-}) as Record<string, () => Promise<string>>;
+  eager: true,
+}) as Record<string, string>;
 
-const outlineLoaders = import.meta.glob("../icons/outline/*.svg", {
-  query: "?raw",
+const outlineUrls = import.meta.glob("../icons/outline/*.svg", {
+  query: "?url",
   import: "default",
-}) as Record<string, () => Promise<string>>;
+  eager: true,
+}) as Record<string, string>;
 
-function toMap(loaders: Record<string, () => Promise<string>>): Map<string, () => Promise<string>> {
+function toMap(urls: Record<string, string>): Map<string, () => Promise<string>> {
   const map = new Map<string, () => Promise<string>>();
 
-  for (const [path, loader] of Object.entries(loaders)) {
+  for (const [path, url] of Object.entries(urls)) {
     // eslint-disable-next-line sonarjs/null-dereference -- path is a typed string key; the rule is a false positive here
     const fileName = path.split("/").pop()?.replace(".svg", "");
 
     if (fileName) {
-      map.set(fileName, loader);
+      // Memoize per icon: import() was deduped by the module cache, fetch() is not,
+      // so without this every icon instance on a page would issue its own request.
+      let cached: Promise<string> | undefined;
+
+      map.set(fileName, () => {
+        cached ??= fetch(url)
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`HTTP ${response.status} for ${url}`);
+            }
+            return response.text();
+          })
+          .catch((error: unknown) => {
+            // Don't cache failures — allow a retry on the next render.
+            cached = undefined;
+            throw error;
+          });
+        return cached;
+      });
     }
   }
 
   return map;
 }
 
-const solidMap = toMap(solidLoaders);
-const outlineMap = toMap(outlineLoaders);
+const solidMap = toMap(solidUrls);
+const outlineMap = toMap(outlineUrls);
 
 let defaultIconVariant: IconVariantType = "outline";
 

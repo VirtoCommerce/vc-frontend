@@ -1,6 +1,26 @@
-import { afterEach, describe, it, expect } from "vitest";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
+import { afterAll, afterEach, beforeAll, describe, it, expect, vi } from "vitest";
 import { resolveIconName } from "./icon-aliases";
 import { resolveIcon, loadIconRaw, setDefaultIconVariant } from "./icons";
+
+beforeAll(() => {
+  // Icons resolve to asset URLs and are fetched at runtime; there is no server
+  // under vitest, so serve them from disk.
+  vi.stubGlobal("fetch", async (input: RequestInfo | URL) => {
+    const url = String(input).replace(/^\/@fs/, "");
+    const filePath = url.startsWith("/") && !url.startsWith("//") ? path.join(process.cwd(), url) : url;
+    try {
+      return new Response(await readFile(filePath, "utf8"), { status: 200 });
+    } catch {
+      return new Response("", { status: 404 });
+    }
+  });
+});
+
+afterAll(() => {
+  vi.unstubAllGlobals();
+});
 
 afterEach(() => {
   setDefaultIconVariant("outline");

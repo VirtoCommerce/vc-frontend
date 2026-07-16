@@ -102,6 +102,9 @@ export default defineConfig(({ command, mode }): UserConfig => {
       target: browserslistToEsbuild(),
       emptyOutDir: true,
       sourcemap: true,
+      // Icon SVGs must stay real assets (fetched on demand by VcIcon), never inlined
+      // as data: URIs into the eager registry.
+      assetsInlineLimit: (filePath) => (filePath.includes("/ui-kit/icons/") ? false : undefined),
       rollupOptions: {
         output: {
           manualChunks(id = "") {
