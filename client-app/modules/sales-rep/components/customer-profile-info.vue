@@ -1,6 +1,6 @@
 <template>
   <VcWidget :title="t('sales_rep.customer_profile.info.title')" size="lg" class="customer-profile-info">
-    <!-- No edit affordance: the profile is read-only for the rep (no pencil / edit action). -->
+    <!-- Read-only per design (no edit action). -->
     <VcEmptyView v-if="!rows.length && !loading" :text="t('sales_rep.customer_profile.info.empty')" icon="user" />
 
     <dl v-else class="customer-profile-info__list">
@@ -24,13 +24,10 @@ import { useSalesRepCustomer } from "../composables/useSalesRepCustomer";
 const props = defineProps<{ organizationId: string }>();
 
 const { t } = useI18n();
-// Apollo caches the SalesRepCustomer query by id, so sharing the composable with the page/header
-// costs no extra request — each profile block stays self-contained (the registry contract).
+// Apollo dedupes this query by id, so sharing it with the page header costs no extra request.
 const { customer, loading } = useSalesRepCustomer(() => props.organizationId);
 
-// Only rows the backend actually returns (SalesRepCustomerDetails). Empty values are dropped so the
-// block never shows a label with a blank value; the design's Payment terms / Ship via / balances
-// have no data source yet and are intentionally absent.
+// Only fields the backend returns; blank values are dropped so no label renders empty.
 const rows = computed(() => {
   const c = customer.value;
   if (!c) {
@@ -58,7 +55,7 @@ const rows = computed(() => {
 
 <style lang="scss">
 .customer-profile-info {
-  // Divider separating the header from the content, matching the orders block and the design.
+  // Header divider (size=lg drops the built-in one).
   .vc-widget__header-container {
     @apply border-b border-neutral-200;
   }

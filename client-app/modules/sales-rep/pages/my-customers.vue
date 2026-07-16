@@ -177,7 +177,6 @@ function changePage(newPage: number): void {
     @apply w-full;
   }
 
-  // Organization name links to the customer profile (VCST-5308).
   &__customer {
     @apply text-[--link-color] hover:underline;
 
@@ -186,7 +185,6 @@ function changePage(newPage: number): void {
     }
   }
 
-  // Muted, small order number under the date — matches the design; hover hints it's clickable.
   &__order {
     @apply text-sm text-neutral-500 hover:text-[--link-color] hover:underline;
   }

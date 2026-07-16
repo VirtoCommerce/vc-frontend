@@ -1,8 +1,6 @@
 <template>
   <VcWidget :title="t('sales_rep.customer_profile.orders.title')" size="lg" class="customer-profile-orders">
     <template #append>
-      <!-- Design's text link (`widget-link`): blue `--link-color`, no button chrome. Points to the
-           existing account Orders page. -->
       <VcLink :to="{ name: 'Orders' }" class="customer-profile-orders__all-link">
         {{ t("sales_rep.customer_profile.orders.view_all") }}
         <VcIcon name="arrow-right" size="xs" />
@@ -39,8 +37,6 @@
         </div>
       </template>
 
-      <!-- Customer-facing OrderDetails route (same as the My customers list). A rep opening another
-           org's order may 403 — no rep-scoped order-detail query yet (VCST-5308 follow-up). -->
       <VcTableColumn
         id="number"
         v-slot="{ item }"
@@ -103,7 +99,7 @@ const props = defineProps<{ organizationId: string }>();
 const { t } = useI18n();
 const { orders, loading } = useSalesRepCustomerOrders(() => props.organizationId);
 
-// Zebra striping, matching the My customers table in this module.
+// Zebra striping (matches the My customers table).
 function rowClass(_item: SalesRepCustomerOrderType, index: number): string {
   return index % 2 === 1 ? "bg-neutral-50" : "";
 }
@@ -111,22 +107,20 @@ function rowClass(_item: SalesRepCustomerOrderType, index: number): string {
 
 <style lang="scss">
 .customer-profile-orders {
-  // Divider separating the header from the content, matching the design.
+  // Header divider (size=lg drops the built-in one).
   .vc-widget__header-container {
     @apply border-b border-neutral-200;
   }
 
-  // Tight content padding (VcWidget lg insets by px-7); the design wraps the table in ~8px.
+  // Tighter than lg's default px-7 padding.
   .vc-widget__slot {
     @apply p-2;
   }
 
-  // "All orders" text link (design's `widget-link`): blue link color, small, with the arrow.
   &__all-link {
     @apply inline-flex items-center gap-1 whitespace-nowrap text-sm font-medium text-[--link-color] hover:underline;
   }
 
-  // Order number as a blue link (design's `hub-order-link`); no "#" prefix.
   &__order-link {
     @apply text-[--link-color] hover:underline;
   }

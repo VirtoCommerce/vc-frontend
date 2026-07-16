@@ -13,8 +13,7 @@
     <template v-else>
       <div class="customer-profile__hero">
         <div class="customer-profile__name-row">
-          <!-- Placeholder avatar: salesRepCustomer exposes no logo URL, so we show a neutral mark
-               rather than a broken image. Swap for <VcImage> once a customer-logo field exists. -->
+          <!-- Placeholder: no logo field on salesRepCustomer yet; swap for VcImage when it lands. -->
           <span class="customer-profile__logo" aria-hidden="true">
             <VcIcon name="office-building" />
           </span>
@@ -24,8 +23,7 @@
           </VcTypography>
         </div>
 
-        <!-- Gray sub-line: only the fields the backend actually returns (account type, ship-to).
-             The design's account number / "Assigned to" have no source in salesRepCustomer yet. -->
+        <!-- Only fields the backend returns; the design's account # / "Assigned to" have no source yet. -->
         <p v-if="meta" class="customer-profile__meta">{{ meta }}</p>
       </div>
 
@@ -62,12 +60,11 @@ const { customer, loading, notFound } = useSalesRepCustomer(() => props.organiza
 
 const myCustomersRouteName = MY_CUSTOMERS_ROUTE_NAME;
 
-// H1: the org name once resolved; a neutral label while loading so the header doesn't jump.
+// Org name once resolved; neutral label while loading to avoid a header jump.
 const title = computed(
   () => customer.value?.organizationName || (loading.value ? t("sales_rep.customer_profile.loading") : ""),
 );
 
-// Gray sub-line under the name, built only from fields salesRepCustomer actually returns.
 const meta = computed(() => [customer.value?.accountType, customer.value?.shipTo].filter(Boolean).join(" · "));
 
 usePageHead({
@@ -106,8 +103,7 @@ const breadcrumbs = useBreadcrumbs(() => [
     @apply mt-1.5 text-[13px] text-neutral-500;
   }
 
-  // The aside splits off next to the main column only on desktop (xl); through tablet the profile
-  // stays a single stacked column, matching the mobile design.
+  // Single column through tablet; the aside splits off only on desktop (xl).
   &__layout {
     @apply flex flex-col gap-5 xl:flex-row xl:items-start;
   }
@@ -120,10 +116,8 @@ const breadcrumbs = useBreadcrumbs(() => [
     @apply flex min-w-0 flex-col gap-5 xl:w-80 xl:shrink-0;
   }
 
-  // VcWidget bleeds full-width inside `.vc-container` on mobile (`.vc-container .vc-widget` → -mx-4.5).
-  // Cancel it so the Orders / Customer information blocks keep the same left-right inset as the KPI
-  // row and the title instead of sticking out ~18px wider. `& &__main`/`& &__aside` raises specificity
-  // to (0,3,0) so it wins over VcWidget's (0,2,0) rule without needing `!important`.
+  // Cancel VcWidget's mobile full-bleed (-mx-4.5 in .vc-container) so blocks align with the KPI row
+  // and title. The extra `&` lifts specificity above VcWidget's own rule (avoids !important).
   & &__main .vc-widget,
   & &__aside .vc-widget {
     @apply mx-0;

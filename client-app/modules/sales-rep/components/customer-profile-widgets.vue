@@ -28,16 +28,12 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 
-// Every profile block takes `organizationId` (uniform contract with the other blocks). Unused
-// until the stats query is wired.
+// Unused until the stats query is wired (VCST-5309).
 defineProps<{ organizationId: string }>();
 
 const { t } = useI18n();
 
-// MOCK DATA — VCST-5308 ships the visual; real figures land in VCST-5309 once
-// `salesRepCustomerOrderStatistics(id, storeId, currencyCode)` and the "current/last year"
-// date-range semantics are finalized. Then `value`/`sub`/`delta` come from the query (with
-// `$n`/`$d` formatting) and `deltaTone` from the YoY sign.
+// MOCK — visual only (VCST-5308); real figures come from salesRepCustomerOrderStatistics in VCST-5309.
 type WidgetToneType = "positive" | "negative";
 type WidgetAccentType = "success" | "warning" | "secondary" | "primary";
 type WidgetCardType = {
@@ -101,13 +97,10 @@ const cards: WidgetCardType[] = [
 </script>
 
 <style lang="scss">
-// `@apply` keeps the module self-contained as an MF remote (no global utility layer).
 .customer-profile-widgets {
   @apply grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4;
 
   &__card {
-    // Design's `vc-stat-widget__inner`: column with a uniform 6px gap and 16px padding (no
-    // per-item margins), full height so the trend row can pin to the bottom.
     @apply flex h-full flex-col gap-1.5 rounded-lg border border-l-4 border-neutral-200 bg-additional-50 p-4 shadow-sm;
 
     &--success {
@@ -160,7 +153,6 @@ const cards: WidgetCardType[] = [
   }
 
   &__delta {
-    // Design's `vc-stat-widget__trend`: 13px bold, 4px gap, pushed to the card bottom (mt-auto).
     @apply mt-auto flex items-center gap-1 pt-1.5 text-[13px] font-bold;
 
     &--positive {

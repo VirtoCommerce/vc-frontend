@@ -11,7 +11,7 @@ export function useSalesRepCustomer(organizationId: MaybeRefOrGetter<string>) {
   const { result, loading, onError } = useQuery(SalesRepCustomerDocument, variables);
 
   onError((error) => {
-    // Keep the page functional (renders the not-found state); no toasts, matching the module.
+    // No toast; the page falls back to the not-found view.
     Logger.error("[sales-rep] salesRepCustomer failed:", error);
   });
 
@@ -30,8 +30,7 @@ export function useSalesRepCustomer(organizationId: MaybeRefOrGetter<string>) {
       : undefined;
   });
 
-  // The rep doesn't serve this organization (server returns null), it doesn't exist, or the
-  // request failed — all settle to the same "not found" view once loading finishes.
+  // Not served / unknown / errored all settle to the same not-found view once loading finishes.
   const notFound = computed(() => !loading.value && !customer.value);
 
   return { customer, loading, notFound };

@@ -47,18 +47,13 @@ export const myCustomersRoute: RouteRecordRaw = {
   },
 };
 
-// Customer profile (VCST-5308) -> /company/my-customers/:organizationId. A sibling of the list
-// under the "Company" parent; opened by clicking a customer in My customers, or by deep link.
+// Customer profile (VCST-5308) -> /company/my-customers/:organizationId.
 export const customerProfileRoute: RouteRecordRaw = {
   path: CUSTOMER_PROFILE_ROUTE_SEGMENT,
   name: CUSTOMER_PROFILE_ROUTE_NAME,
   component: CustomerProfilePage,
-  // organizationId flows in as a prop (uniform contract shared by every profile block).
   props: true,
-  // Keep the account left rail (Sales Rep Hub widget + sections) visible per the design — the
-  // profile renders inside the account/company shell, not full-width like OrderDetails.
-  // Same reps-only gate as the list, plus a deep-link id check. The "not served / unknown org"
-  // case is resolved lazily on the page (salesRepCustomer -> not-found view), not blocked here.
+  // Reps-only gate + deep-link id check; the not-served/unknown-org case is handled on the page.
   beforeEnter(to, _from, next) {
     if (!guardSalesRep(next)) {
       return;

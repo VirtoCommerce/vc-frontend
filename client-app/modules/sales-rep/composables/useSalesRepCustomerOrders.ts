@@ -10,9 +10,9 @@ import type { MaybeRefOrGetter } from "vue";
 export function useSalesRepCustomerOrders(organizationId: MaybeRefOrGetter<string>) {
   const variables = computed(() => ({
     organizationId: toValue(organizationId),
-    // A Sales Rep's account is store-bound; scope so orders from another store don't leak in.
+    // Scope to the rep's store so other-store orders don't leak in.
     storeId: globals.storeId,
-    // Only the most recent N; the full paginated list is a separate "All orders" page (future).
+    // Most recent N; the full list lives on the "All orders" page.
     first: CUSTOMER_PROFILE_ORDERS_LIMIT,
     sort: "createdDate:desc",
   }));
@@ -20,13 +20,13 @@ export function useSalesRepCustomerOrders(organizationId: MaybeRefOrGetter<strin
   const { result, loading, onError } = useQuery(SalesRepOrdersDocument, variables);
 
   onError((error) => {
-    // Keep the block functional (empty view); no toasts, matching the module.
+    // No toast; the block falls back to the empty view.
     Logger.error("[sales-rep] salesRepOrders failed:", error);
   });
 
   const orders = computed<SalesRepCustomerOrderType[]>(() =>
     (result.value?.salesRepOrders?.items ?? [])
-      // A connection can surface null items at runtime; skip them so one bad row doesn't blank the list.
+      // Skip null connection items so one bad row doesn't blank the list.
       .filter((order): order is NonNullable<typeof order> => order != null)
       .map((order) => ({
         id: order.id,

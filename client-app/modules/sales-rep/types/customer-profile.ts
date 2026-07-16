@@ -1,10 +1,8 @@
-// View models for the customer profile page (VCST-5308). Kept in a dedicated file so the page,
-// its blocks and the composables share one shape without editing the module's generated types.ts.
+// View models for the customer profile (VCST-5308): a non-null, flattened shape for the UI.
 export type SalesRepCustomerProfileType = {
   organizationId: string;
   organizationName: string;
-  // Only the fields the backend actually exposes (SalesRepCustomerDetails); the design's Payment
-  // terms / Ship via / balances have no source yet, so the block omits them rather than mock them.
+  // Only fields the backend exposes; the design's payment terms / balances have no source yet.
   accountType: string;
   phone: string;
   shipTo: string;
