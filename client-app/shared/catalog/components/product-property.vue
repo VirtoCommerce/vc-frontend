@@ -1,14 +1,14 @@
 <template>
-  <div class="flex gap-x-3">
-    <div class="flex w-1/2 gap-x-3">
-      <div class="shrink text-neutral">
+  <div class="product-property">
+    <div class="product-property__label-group">
+      <div class="product-property__label">
         {{ label }}
       </div>
 
-      <div class="border-grey-100 h-5 flex-1 border-b border-dotted"></div>
+      <div class="product-property__separator"></div>
     </div>
 
-    <div class="line-clamp-3 w-1/2 font-bold">
+    <div class="product-property__value">
       <slot />
     </div>
   </div>
@@ -21,3 +21,25 @@ interface IProps {
 
 defineProps<IProps>();
 </script>
+
+<style lang="scss">
+.product-property {
+  @apply flex gap-x-3;
+
+  &__label-group {
+    @apply flex w-1/2 gap-x-3;
+  }
+
+  &__label {
+    @apply shrink text-neutral;
+  }
+
+  &__separator {
+    @apply h-5 flex-1 border-b border-dotted;
+  }
+
+  &__value {
+    @apply line-clamp-3 w-1/2 font-bold;
+  }
+}
+</style>

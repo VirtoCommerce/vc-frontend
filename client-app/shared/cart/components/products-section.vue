@@ -1,12 +1,12 @@
 <template>
-  <VcWidget id="products" size="lg">
+  <VcWidget id="products" size="lg" class="products-section">
     <!-- Items grouped by Vendor -->
-    <div v-if="grouped" class="space-y-5 md:space-y-7">
+    <div v-if="grouped" class="products-section__groups">
       <template v-for="(group, vendorId) in itemsGroupedByVendor" :key="vendorId">
-        <div v-if="group.items.length" class="space-y-3">
+        <div v-if="group.items.length" class="products-section__group">
           <!-- Vendor -->
-          <div class="flex max-w-full gap-2 max-xs:flex-col">
-            <VendorName :name="group.vendor?.name" class="min-w-0" />
+          <div class="products-section__vendor">
+            <VendorName :name="group.vendor?.name" class="products-section__vendor-name" />
 
             <VcRating
               v-if="$cfg.vendor_rating_enabled && group.vendor?.rating"
@@ -50,8 +50,8 @@
 
     <!-- Items in other currencies (always flat, never grouped by vendor) -->
     <template v-for="group in otherCurrencyGroups" :key="group.currencyCode">
-      <div v-if="group.items.length" class="mt-5 space-y-3">
-        <h4 class="text-lg font-black">
+      <div v-if="group.items.length" class="products-section__currency-group">
+        <h4 class="products-section__currency-title">
           {{ $t("common.labels.products_in_currency", { currency: group.currencyCode }) }}
         </h4>
 
@@ -68,15 +68,20 @@
           @save-for-later="$emit('saveForLater', $event)"
           @link-click="$emit('linkClick', $event)"
         />
+
+        <LoyaltyValidationAlert
+          v-if="!!loyaltyCurrencyCode && group.currencyCode === loyaltyCurrencyCode"
+          class="mt-3"
+        />
       </div>
     </template>
 
-    <div class="mt-2 flex justify-end md:mt-5">
+    <div class="products-section__footer">
       <VcButton
         :disabled="disabled"
         color="secondary"
         size="sm"
-        class="self-start"
+        class="products-section__clear-button"
         variant="outline"
         data-test-id="clear-cart-button"
         @click="$emit('clear:cart')"
@@ -89,9 +94,11 @@
 
 <script setup lang="ts">
 import { VendorName } from "@/shared/common";
+import { useLoyaltySettings } from "@/shared/loyalty/composables/useLoyaltySettings";
 import type { LineItemType, ValidationErrorType } from "@/core/api/graphql/types";
 import type { CurrencyGroupType, VendorGroupType } from "@/core/types";
 import CartLineItems from "@/shared/cart/components/cart-line-items.vue";
+import LoyaltyValidationAlert from "@/shared/cart/components/loyalty-validation-alert.vue";
 
 interface IEmits {
   (event: "change:itemQuantity", value: { itemId: string; quantity: number }): void;
@@ -121,4 +128,54 @@ withDefaults(defineProps<IProps>(), {
   otherCurrencyGroups: () => [],
   validationErrors: () => [],
 });
+
+const { loyaltyCurrencyCode } = useLoyaltySettings();
 </script>
+
+<style lang="scss">
+.products-section {
+  &__groups {
+    @apply space-y-5;
+
+    @media (width >= theme("screens.md")) {
+      @apply space-y-7;
+    }
+  }
+
+  &__group {
+    @apply space-y-3;
+  }
+
+  &__vendor {
+    @apply flex max-w-full gap-2;
+
+    @media (width < theme("screens.xs")) {
+      @apply flex-col;
+    }
+  }
+
+  &__vendor-name {
+    @apply min-w-0;
+  }
+
+  &__currency-group {
+    @apply mt-5 space-y-3;
+  }
+
+  &__currency-title {
+    @apply text-lg font-black;
+  }
+
+  &__footer {
+    @apply mt-2 flex justify-end;
+
+    @media (width >= theme("screens.md")) {
+      @apply mt-5;
+    }
+  }
+
+  &__clear-button {
+    @apply self-start;
+  }
+}
+</style>

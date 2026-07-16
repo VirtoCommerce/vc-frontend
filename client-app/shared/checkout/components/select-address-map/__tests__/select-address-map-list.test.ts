@@ -15,8 +15,8 @@ vi.mock("vue-i18n", () => ({
 
 const focusAddressRadioMock = vi.fn();
 
-vi.mock("@/shared/checkout/composables", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@/shared/checkout/composables")>();
+vi.mock("@/shared/checkout/composables/useSelectAddressMap", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/shared/checkout/composables/useSelectAddressMap")>();
   return {
     ...actual,
     focusAddressRadio: (id: string) => focusAddressRadioMock(id),

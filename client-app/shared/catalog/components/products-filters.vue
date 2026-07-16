@@ -1,13 +1,13 @@
 <template>
-  <div class="space-y-4 lg:space-y-5">
+  <div class="products-filters">
     <!-- Facet Filters Skeletons -->
     <template v-if="loading && !localFilters.facets.length">
       <template v-if="!isHorizontal">
         <VcWidgetSkeleton v-for="i in 6" :key="i" size="xs" head />
       </template>
 
-      <div v-else class="flex gap-3">
-        <div v-for="i in 6" :key="i" class="h-8 w-36 animate-pulse rounded-sm bg-neutral-200" />
+      <div v-else class="products-filters__skeleton-row">
+        <div v-for="i in 6" :key="i" class="products-filters__skeleton" />
       </div>
     </template>
 
@@ -15,13 +15,10 @@
     <template v-else>
       <div
         ref="facetFiltersContainer"
+        class="products-filters__container"
         :class="[
-          'flex gap-3',
-          {
-            'flex-row items-start': isHorizontal,
-            'flex-col items-stretch lg:gap-5': !isHorizontal,
-            '[&>*:last-child]:invisible': isHorizontal && filterCalculationInProgress,
-          },
+          isHorizontal ? 'products-filters__container--horizontal' : 'products-filters__container--vertical',
+          { 'products-filters__container--calculating': isHorizontal && filterCalculationInProgress },
         ]"
       >
         <slot name="prepend" :loading="loading" />
@@ -197,3 +194,43 @@ function isSliderFilterEnabled() {
   return themeContext.value.settings.range_filter_type === "slider";
 }
 </script>
+
+<style lang="scss">
+.products-filters {
+  @apply space-y-4;
+
+  @media (width >= theme("screens.lg")) {
+    @apply space-y-5;
+  }
+
+  &__skeleton-row {
+    @apply flex gap-3;
+  }
+
+  &__skeleton {
+    @apply h-8 w-36 animate-pulse rounded-sm bg-neutral-200;
+  }
+
+  &__container {
+    @apply flex gap-3;
+
+    &--horizontal {
+      @apply flex-row items-start;
+    }
+
+    &--vertical {
+      @apply flex-col items-stretch;
+
+      @media (width >= theme("screens.lg")) {
+        @apply gap-5;
+      }
+    }
+
+    &--calculating {
+      > :last-child {
+        @apply invisible;
+      }
+    }
+  }
+}
+</style>

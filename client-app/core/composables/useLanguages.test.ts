@@ -80,6 +80,7 @@ vi.mock("./useThemeContext", () => ({
 
 vi.mock("@vueuse/core", () => ({
   useLocalStorage: () => hoisted.state.pinnedLocale,
+  noop: () => {},
   useSessionStorage: (key: string) =>
     key === "facetsCultureName" ? hoisted.state.facetsCultureName : hoisted.state.previousCultureSlug,
 }));

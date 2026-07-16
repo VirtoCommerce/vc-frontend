@@ -138,6 +138,8 @@
               {{ $t("common.messages.something_went_wrong") }}
             </VcAlert>
           </transition>
+
+          <LoyaltyValidationAlert variant="compact" class="mt-4" />
         </template>
       </OrderSummary>
 
@@ -157,6 +159,7 @@ import { OrderLineItems } from "@/shared/account";
 import { useCoupon, useFullCart } from "@/shared/cart";
 import { AcceptedGifts, OrderCommentSection, OrderSummary, PlaceOrder, useCheckout } from "@/shared/checkout";
 import { AddressSelection, VendorName } from "@/shared/common";
+import LoyaltyValidationAlert from "@/shared/cart/components/loyalty-validation-alert.vue";
 
 const {
   cart,

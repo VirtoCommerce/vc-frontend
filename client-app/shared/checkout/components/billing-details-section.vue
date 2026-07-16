@@ -101,7 +101,7 @@
 import { computed } from "vue";
 import { useUser } from "@/shared/account";
 import { useFullCart } from "@/shared/cart";
-import { useCheckout } from "@/shared/checkout/composables";
+import { useCheckout } from "@/shared/checkout/composables/useCheckout";
 import { AddressSelection } from "@/shared/common";
 import { BOPIS_CODE } from "../composables/useBopis";
 import type { CartType } from "@/core/api/graphql/types";

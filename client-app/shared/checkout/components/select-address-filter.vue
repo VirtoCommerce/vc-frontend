@@ -121,7 +121,7 @@
 <script setup lang="ts">
 import { computed, useTemplateRef } from "vue";
 import { FacetFilter } from "@/shared/catalog";
-import { usePickupFilterContext } from "@/shared/checkout/composables";
+import { usePickupFilterContext } from "@/shared/checkout/composables/usePickupFilterContext";
 import type { FacetFilterType } from "@/core/types";
 
 interface IEmits {

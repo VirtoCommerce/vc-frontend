@@ -1,4 +1,5 @@
 import { useGlobalInterceptors } from "@/core/api/common";
+import { useLanguages } from "@/core/composables/useLanguages";
 import { globals, setGlobals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { useStaticPage } from "@/shared/static-content";
@@ -6,7 +7,7 @@ import { templateBlocks } from "@/shared/static-content/components";
 import PreviewPage from "./components/preview-page.vue";
 import ScrollToElement from "./components/scroll-to-element.vue";
 import { getRegisteredComponents } from "./register-components";
-import { getBuilderOrigin, getPreviewPageId } from "./utils";
+import { getBuilderOrigin, getPreviewCultureName, getPreviewPageId } from "./utils";
 import type { PageBuilderPluginOptionsType } from "./models/PageBuilderPluginOptionsType";
 import type { IThemeConfig } from "@/core/types";
 import type { IPageContent, IPageTemplate } from "@/shared/static-content/types";
@@ -29,7 +30,31 @@ declare type TransferDataType = {
   settings?: IThemeConfig;
   token?: { access_token?: string } | null;
   userId?: string | null;
+  cultureName?: string;
 };
+
+// Switch the storefront preview to the edited page's language without touching the URL (VCST-5219).
+// The designer preview runs on a fixed `/designer-preview` route (vue-router base ""), so we must not
+// add a `/{lang}` prefix here; we re-apply the locale through the shared seam (app messages, UI kit
+// and module bundles, number formats) and update globals.cultureName, which drives
+// content-localized GraphQL queries on the next block remount.
+async function applyPreviewLocale(rawCultureName?: string): Promise<void> {
+  try {
+    const { applyLocale, normalizeToSupportedCulture } = useLanguages();
+    const cultureName = normalizeToSupportedCulture(rawCultureName);
+
+    if (!cultureName || cultureName === globals.cultureName || !globals.i18n) {
+      return;
+    }
+
+    await applyLocale(globals.i18n, cultureName, { rewriteUrl: false });
+    setGlobals({ cultureName });
+  } catch (error) {
+    // Never propagate: the message handler reveals the preview body right after this, and a failed
+    // locale switch must degrade to the boot language — not leave the preview permanently hidden.
+    Logger.error("Failed to apply the preview locale", error);
+  }
+}
 
 function scrollToSection(sectionId: string) {
   requestAnimationFrame(() => {
@@ -87,9 +112,9 @@ function updateSettings(app: App, settings: IThemeConfig) {
   });
 
   keys
-    .filter(([key]) => key.startsWith("color"))
+    .filter(([key]) => key?.startsWith("color"))
     .forEach(([key, value]) => {
-      document.documentElement.style.setProperty(`--${key.replaceAll("_", "-")}`, value as string);
+      document.documentElement.style.setProperty(`--${key?.replaceAll("_", "-") ?? ""}`, value as string);
     });
 }
 
@@ -174,6 +199,9 @@ function modifyRequests() {
   });
 }
 
+/** Largest value a CSS `z-index` accepts (2^31 - 1) — keeps the blocker above every storefront element. */
+const MAX_Z_INDEX = 2147483647;
+
 function createOverlay() {
   const bodyEl = document.getElementsByTagName("body").item(0);
 
@@ -181,69 +209,97 @@ function createOverlay() {
     bodyEl.style.visibility = "hidden";
     bodyEl.style.position = "relative";
     const interactiveBlocker = document.createElement("div");
-    interactiveBlocker.style.position = "absolute";
-    interactiveBlocker.style.top = "0";
-    interactiveBlocker.style.left = "0";
-    interactiveBlocker.style.bottom = "0";
-    interactiveBlocker.style.right = "0";
+    // Cover the whole viewport and sit above every storefront element (sticky header, language
+    // selector, etc.) so no in-preview interaction is possible inside the designer. This is what
+    // prevents the user from switching the storefront language and hitting the `/fr/designer-preview`
+    // 404 — the preview simply follows the edited page's language instead (VCST-5219).
+    interactiveBlocker.style.position = "fixed";
+    interactiveBlocker.style.inset = "0";
+    interactiveBlocker.style.zIndex = String(MAX_Z_INDEX);
+    interactiveBlocker.style.background = "transparent";
+    interactiveBlocker.style.pointerEvents = "auto";
     bodyEl.appendChild(interactiveBlocker);
   }
 
   return bodyEl;
 }
 
+async function handleMessage(
+  app: App,
+  options: PageBuilderPluginOptionsType,
+  bodyEl: HTMLElement | null,
+  data: TransferDataType,
+) {
+  // Render the preview in the edited page's language before it becomes visible (VCST-5219),
+  // so a non-default-language page never flashes in the store default language.
+  await applyPreviewLocale(data.cultureName);
+
+  if (bodyEl) {
+    bodyEl.style.visibility = "visible";
+  }
+
+  switch (data.type) {
+    case "changed":
+    case "update":
+    case "remove":
+    case "add":
+    case "reload":
+    case "page":
+    case "swap":
+    case "preview":
+      await updatePreview(data, options);
+      break;
+
+    case "hover":
+      // ignore now
+      break;
+    case "select":
+      initialSectionId = data.sectionId;
+      scrollToSection(data.sectionId!);
+      break;
+    case "navigate": {
+      // we will know about template it or not in the next message
+      templateUrl = data.url;
+      break;
+    }
+    case "settings":
+      updateSettings(app, data.settings!);
+      break;
+    case "auth": {
+      previewToken = data.token?.access_token || null;
+      if (!originalUserId) {
+        originalUserId = globals.userId;
+      }
+      setGlobals({ userId: data.userId || originalUserId });
+      // Force remount of all blocks with new token and restore scroll afterward
+      pendingScrollRestore = true;
+      staticPagePreview.value = undefined;
+      break;
+    }
+    default:
+      Logger.warn(`Unknown message type: ${data.type}`);
+  }
+}
+
 function handleMessages(app: App, options: PageBuilderPluginOptionsType, bodyEl: HTMLElement | null) {
   const builderOrigin = getBuilderOrigin();
-  window.addEventListener("message", async (event: MessageEvent<TransferDataType>) => {
+
+  // Builder messages arrive as independent tasks, and each handler awaits (locale switch, router
+  // navigation), so unqueued handlers would interleave: an older message could apply its template
+  // after a newer one. Chaining them keeps preview state in the order the builder sent it.
+  let messageQueue: Promise<void> = Promise.resolve();
+
+  window.addEventListener("message", (event: MessageEvent<TransferDataType>) => {
     if (event.origin !== builderOrigin || event.data.source !== "builder") {
       return;
     }
 
-    if (bodyEl) {
-      bodyEl.style.visibility = "visible";
-    }
-
-    switch (event.data.type) {
-      case "changed":
-      case "update":
-      case "remove":
-      case "add":
-      case "reload":
-      case "page":
-      case "swap":
-      case "preview":
-        await updatePreview(event.data, options);
-        break;
-
-      case "hover":
-        // ignore now
-        break;
-      case "select":
-        initialSectionId = event.data.sectionId;
-        scrollToSection(event.data.sectionId!);
-        break;
-      case "navigate": {
-        // we will know about template it or not in the next message
-        templateUrl = event.data.url;
-        break;
-      }
-      case "settings":
-        updateSettings(app, event.data.settings!);
-        break;
-      case "auth": {
-        previewToken = event.data.token?.access_token || null;
-        if (!originalUserId) {
-          originalUserId = globals.userId;
-        }
-        setGlobals({ userId: event.data.userId || originalUserId });
-        // Force remount of all blocks with new token and restore scroll afterward
-        pendingScrollRestore = true;
-        staticPagePreview.value = undefined;
-        break;
-      }
-      default:
-        Logger.warn(`Unknown message type: ${event.data.type}`);
-    }
+    messageQueue = messageQueue.then(() =>
+      handleMessage(app, options, bodyEl, event.data).catch((error: unknown) => {
+        // Never break the chain: a failed message must not stall every following one.
+        Logger.error("Failed to handle the builder preview message", error);
+      }),
+    );
   });
 }
 
@@ -290,8 +346,18 @@ export default {
       window.parent.postMessage({ source: "preview", type: "loaded", data: customComponents }, builderOrigin);
       await options.router.push("/designer-preview");
     } else {
+      // Preserve both pageId and cultureName so a refreshed or shared standalone-preview URL keeps
+      // rendering in the page's language instead of the store default (VCST-5219).
+      const query = new URLSearchParams();
       const pageId = getPreviewPageId();
-      await options.router.push(`/designer-preview?pageId=${pageId!}`);
+      if (pageId) {
+        query.set("pageId", pageId);
+      }
+      const cultureName = getPreviewCultureName();
+      if (cultureName) {
+        query.set("cultureName", cultureName);
+      }
+      await options.router.push(`/designer-preview?${query.toString()}`);
     }
   },
 };
