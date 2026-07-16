@@ -38,11 +38,8 @@ export const myCustomersRoute: RouteRecordRaw = {
   component: MyCustomersPage,
   // Reps only — non-reps who hit the URL directly are bounced to the dashboard.
   beforeEnter(_to, _from, next) {
-    const { checkPermissions } = useUser();
-    if (isSalesRepsEnabled() && checkPermissions(SALES_REP_ACCESS_PERMISSION)) {
+    if (guardSalesRep(next)) {
       next();
-    } else {
-      next({ name: "Dashboard" });
     }
   },
 };

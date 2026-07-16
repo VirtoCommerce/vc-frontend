@@ -33,8 +33,8 @@ const { customer, loading } = useSalesRepCustomer(() => props.organizationId);
 
 // Only fields the backend returns; blank values are dropped so no label renders empty.
 const rows = computed(() => {
-  const c = customer.value;
-  if (!c) {
+  const details = customer.value;
+  if (!details) {
     return [];
   }
 
@@ -43,16 +43,21 @@ const rows = computed(() => {
       key: "contact",
       labelKey: "sales_rep.customer_profile.info.primary_contact",
       icon: "user",
-      value: c.primaryContactName,
+      value: details.primaryContactName,
     },
-    { key: "phone", labelKey: "sales_rep.customer_profile.info.phone", icon: "phone", value: c.phone },
+    { key: "phone", labelKey: "sales_rep.customer_profile.info.phone", icon: "phone", value: details.phone },
     {
       key: "account_type",
       labelKey: "sales_rep.customer_profile.info.account_type",
       icon: "office-building",
-      value: c.accountType,
+      value: details.accountType,
     },
-    { key: "ship_to", labelKey: "sales_rep.customer_profile.info.ship_to", icon: "location-marker", value: c.shipTo },
+    {
+      key: "ship_to",
+      labelKey: "sales_rep.customer_profile.info.ship_to",
+      icon: "location-marker",
+      value: details.shipTo,
+    },
   ].filter((row) => row.value);
 });
 </script>

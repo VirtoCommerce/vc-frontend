@@ -26,7 +26,7 @@ export const SALES_REP_ACCESS_PERMISSION = "sales-rep:access";
 // My customers list under the "Company" parent; the "Sales Rep hub" title comes from the left-rail
 // section, not a URL segment).
 export const CUSTOMER_PROFILE_ROUTE_NAME = "SalesRepCustomerProfile";
-export const CUSTOMER_PROFILE_ROUTE_SEGMENT = "my-customers/:organizationId";
+export const CUSTOMER_PROFILE_ROUTE_SEGMENT = `${MY_CUSTOMERS_ROUTE_SEGMENT}/:organizationId`;
 // Recent orders shown on the profile; the full paginated list lives on a separate "All orders"
 // page (future story) reached via the block footer link.
 export const CUSTOMER_PROFILE_ORDERS_LIMIT = 7;
