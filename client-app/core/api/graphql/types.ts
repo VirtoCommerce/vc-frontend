@@ -5610,6 +5610,7 @@ export type Query = {
   role?: Maybe<RoleType>;
   salesRepCustomer?: Maybe<SalesRepCustomerDetails>;
   salesRepCustomers?: Maybe<SalesRepCustomerConnection>;
+  salesRepOrderStatuses?: Maybe<Array<Maybe<SalesRepOrderStatus>>>;
   salesRepOrders?: Maybe<SalesRepOrderConnection>;
   searchHistory?: Maybe<SearchHistoryResultType>;
   sharedWishlist?: Maybe<WishlistType>;
@@ -6265,12 +6266,13 @@ export type QueryRoleArgs = {
 
 
 export type QuerySalesRepCustomerArgs = {
-  id: Scalars['String']['input'];
+  organizationId: Scalars['String']['input'];
 };
 
 
 export type QuerySalesRepCustomersArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   keyword?: InputMaybe<Scalars['String']['input']>;
   sort?: InputMaybe<Scalars['String']['input']>;
@@ -6278,12 +6280,20 @@ export type QuerySalesRepCustomersArgs = {
 };
 
 
+export type QuerySalesRepOrderStatusesArgs = {
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+};
+
+
 export type QuerySalesRepOrdersArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
-  customerId: Scalars['String']['input'];
+  cultureName?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   keyword?: InputMaybe<Scalars['String']['input']>;
+  organizationId?: InputMaybe<Scalars['String']['input']>;
   sort?: InputMaybe<Scalars['String']['input']>;
+  statuses?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   storeId?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -6783,18 +6793,20 @@ export type SalesRepCustomerEdge = {
 export type SalesRepOrder = {
   /** Date the order was placed. */
   createdDate: Scalars['DateTime']['output'];
-  /** Order currency code (the currency in which the order was submitted). */
-  currency?: Maybe<Scalars['String']['output']>;
   /** Order id. */
   id: Scalars['String']['output'];
   /** Number of line items in the order. */
   itemsCount: Scalars['Int']['output'];
   /** Human-readable order number. */
   number?: Maybe<Scalars['String']['output']>;
-  /** Order status. */
+  /** Organization (customer) id the order belongs to. */
+  organizationId?: Maybe<Scalars['String']['output']>;
+  /** Organization (customer) name. */
+  organizationName?: Maybe<Scalars['String']['output']>;
   status?: Maybe<Scalars['String']['output']>;
-  /** Order grand total. */
-  total: Scalars['Decimal']['output'];
+  statusDisplayValue?: Maybe<Scalars['String']['output']>;
+  /** Order grand total (amount, formatted amount and currency). */
+  total: MoneyType;
 };
 
 /** A connection from an object to a list of objects of type `SalesRepOrder`. */
@@ -6815,6 +6827,13 @@ export type SalesRepOrderEdge = {
   cursor: Scalars['String']['output'];
   /** The item at the end of the edge */
   node?: Maybe<SalesRepOrder>;
+};
+
+export type SalesRepOrderStatus = {
+  /** Localized label for the status. */
+  localizedName?: Maybe<Scalars['String']['output']>;
+  /** Stable status id — send it back as the salesRepOrders 'status' argument. */
+  name: Scalars['String']['output'];
 };
 
 export type SearchHistoryResultType = {
