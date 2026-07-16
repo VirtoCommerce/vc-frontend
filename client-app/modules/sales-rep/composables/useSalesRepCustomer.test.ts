@@ -10,6 +10,7 @@ const queryMock = await vi.hoisted(async () => {
         salesRepCustomer?: {
           organizationId: string;
           organizationName?: string;
+          iconUrl?: string;
           accountType?: string;
           phone?: string;
           address?: { city?: string; regionName?: string };
@@ -63,6 +64,7 @@ describe("useSalesRepCustomer", () => {
       salesRepCustomer: {
         organizationId: "org-1",
         organizationName: "The Cottage Shop LLC",
+        iconUrl: "https://cdn.example/org-1.png",
         accountType: "Garden Center",
         phone: "(804) 462-1612",
         address: { city: "Richmond", regionName: "Virginia" },
@@ -72,6 +74,7 @@ describe("useSalesRepCustomer", () => {
     expect(customer.value).toEqual({
       organizationId: "org-1",
       organizationName: "The Cottage Shop LLC",
+      iconUrl: "https://cdn.example/org-1.png",
       accountType: "Garden Center",
       phone: "(804) 462-1612",
       // Structured address formatted as "City, Region".
@@ -90,6 +93,7 @@ describe("useSalesRepCustomer", () => {
     expect(customer.value).toEqual({
       organizationId: "org-1",
       organizationName: "",
+      iconUrl: "",
       accountType: "",
       phone: "",
       shipTo: "",

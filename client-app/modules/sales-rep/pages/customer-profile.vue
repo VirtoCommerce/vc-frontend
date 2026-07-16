@@ -13,9 +13,11 @@
     <template v-else>
       <div class="customer-profile__hero">
         <div class="customer-profile__name-row">
-          <!-- Placeholder: no logo field on salesRepCustomer yet; swap for VcImage when it lands. -->
-          <span class="customer-profile__logo" aria-hidden="true">
-            <VcIcon name="office-building" />
+          <!-- Organization icon; a neutral mark stands in when the org has no icon set. -->
+          <span class="customer-profile__logo">
+            <VcImage v-if="customer?.iconUrl" :src="customer.iconUrl" :alt="title" class="customer-profile__logo-img" />
+
+            <VcIcon v-else name="office-building" aria-hidden="true" />
           </span>
 
           <VcTypography tag="h1" class="customer-profile__title">
@@ -97,6 +99,10 @@ const breadcrumbs = useBreadcrumbs(() => [
     --vc-icon-size: 1.5rem;
 
     @apply flex size-11 flex-none items-center justify-center overflow-hidden rounded-md border border-neutral-200 bg-additional-50 text-neutral-400;
+  }
+
+  &__logo-img {
+    @apply size-full object-contain;
   }
 
   &__title {

@@ -2,6 +2,7 @@ query SalesRepCustomer($organizationId: String!) {
   salesRepCustomer(organizationId: $organizationId) {
     organizationId
     organizationName
+    iconUrl
     accountType
     phone
     address {

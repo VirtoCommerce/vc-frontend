@@ -23,6 +23,7 @@ export function useSalesRepCustomer(organizationId: MaybeRefOrGetter<string>) {
       ? {
           organizationId: node.organizationId,
           organizationName: node.organizationName ?? "",
+          iconUrl: node.iconUrl ?? "",
           accountType: node.accountType ?? "",
           phone: node.phone ?? "",
           shipTo: formatCustomerLocation(node.address),
