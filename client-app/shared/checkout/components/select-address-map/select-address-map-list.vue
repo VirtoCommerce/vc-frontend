@@ -79,8 +79,8 @@
 import { computed, nextTick, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { getAddressName } from "@/core/utilities/address";
-import { focusAddressRadio, isPrefixExtension } from "@/shared/checkout/composables";
-import type { PickupLocationType } from "@/shared/checkout/composables";
+import { focusAddressRadio, isPrefixExtension } from "@/shared/checkout/composables/useSelectAddressMap";
+import type { PickupLocationType } from "@/shared/checkout/composables/useSelectAddressMap";
 import PickupAvailabilityInfo from "@/shared/common/components/pickup-availability-info.vue";
 
 interface IProps {

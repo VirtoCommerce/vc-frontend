@@ -262,11 +262,11 @@ import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { PAGE_LIMIT } from "@/core/constants";
 import { isEqualAddresses, isMemberAddressType } from "@/core/utilities";
-import { SelectAddressFilter } from "@/shared/checkout";
-import { providePickupFilterContext } from "@/shared/checkout/composables";
+import { providePickupFilterContext } from "@/shared/checkout/composables/usePickupFilterContext";
 import type { MemberAddressType } from "@/core/api/graphql/types";
 import type { AnyAddressType, ISortInfo } from "@/core/types";
-import type { IPickupFilterContext } from "@/shared/checkout/composables";
+import type { IPickupFilterContext } from "@/shared/checkout/composables/usePickupFilterContext";
+import SelectAddressFilter from "@/shared/checkout/components/select-address-filter.vue";
 import PickupAvailabilityInfo from "@/shared/common/components/pickup-availability-info.vue";
 
 type PaginationModeType = "client" | "server";
