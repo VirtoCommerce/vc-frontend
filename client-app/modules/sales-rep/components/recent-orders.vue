@@ -1,7 +1,7 @@
 <template>
   <VcWidget :title="t('sales_rep.recent_orders.title')" size="lg" class="recent-orders">
     <template #append>
-      <VcLink :to="{ name: 'Orders' }" class="recent-orders__all-link">
+      <VcLink :to="{ name: 'Orders' }" class="recent-orders__all-link" target="_blank" rel="noopener noreferrer">
         {{ t("sales_rep.recent_orders.view_all") }}
         <VcIcon name="arrow-right" size="xs" />
       </VcLink>
