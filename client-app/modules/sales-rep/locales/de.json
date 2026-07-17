@@ -73,9 +73,6 @@
       "title": "Aktuelle Bestellungen",
       "view_all": "Alle Bestellungen",
       "empty": "Noch keine Bestellungen",
-      "tabs": {
-        "all": "Alle"
-      },
       "number": "Bestellnr.",
       "customer": "Kunde",
       "date": "Datum",

@@ -73,9 +73,6 @@
       "title": "Pedidos recentes",
       "view_all": "Todos os pedidos",
       "empty": "Ainda não há pedidos",
-      "tabs": {
-        "all": "Todos"
-      },
       "number": "N.º do pedido",
       "customer": "Cliente",
       "date": "Data",

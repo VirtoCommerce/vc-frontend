@@ -73,9 +73,6 @@
       "title": "Ostatnie zamówienia",
       "view_all": "Wszystkie zamówienia",
       "empty": "Brak zamówień",
-      "tabs": {
-        "all": "Wszystkie"
-      },
       "number": "Nr zamówienia",
       "customer": "Klient",
       "date": "Data",

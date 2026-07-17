@@ -73,9 +73,6 @@
       "title": "Ordini recenti",
       "view_all": "Tutti gli ordini",
       "empty": "Ancora nessun ordine",
-      "tabs": {
-        "all": "Tutti"
-      },
       "number": "N. ordine",
       "customer": "Cliente",
       "date": "Data",

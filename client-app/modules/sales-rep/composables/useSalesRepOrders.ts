@@ -10,27 +10,20 @@ import type { MaybeRefOrGetter } from "vue";
 type UseSalesRepOrdersOptionsType = {
   // Scope to one customer; omit for cross-customer orders (the hub dashboard).
   organizationId?: MaybeRefOrGetter<string | undefined>;
-  // Filter by order-status names (from salesRepOrderStatuses); omit/empty for "All".
-  statuses?: MaybeRefOrGetter<string[] | undefined>;
   first?: MaybeRefOrGetter<number | undefined>;
 };
 
 export function useSalesRepOrders(options: UseSalesRepOrdersOptionsType = {}) {
-  const variables = computed(() => {
-    const statuses = toValue(options.statuses);
-    return {
-      organizationId: toValue(options.organizationId),
-      // Scope to the rep's store so other-store orders don't leak in.
-      storeId: globals.storeId,
-      // Localize statusDisplayValue to the active culture, matching the status tabs.
-      cultureName: globals.cultureName,
-      // undefined (not []) means "no status filter" — the "All" tab.
-      statuses: statuses?.length ? statuses : undefined,
-      // Most recent N; the full list lives on the "All orders" page.
-      first: toValue(options.first) ?? ORDERS_DEFAULT_LIMIT,
-      sort: "createdDate:desc",
-    };
-  });
+  const variables = computed(() => ({
+    organizationId: toValue(options.organizationId),
+    // Scope to the rep's store so other-store orders don't leak in.
+    storeId: globals.storeId,
+    // Localize statusDisplayValue to the active culture.
+    cultureName: globals.cultureName,
+    // Most recent N; the full list lives on the "All orders" page.
+    first: toValue(options.first) ?? ORDERS_DEFAULT_LIMIT,
+    sort: "createdDate:desc",
+  }));
 
   const { result, loading, onError } = useQuery(SalesRepOrdersDocument, variables);
 

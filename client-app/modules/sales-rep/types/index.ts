@@ -31,7 +31,3 @@ export type SalesRepOrderRowType = {
   itemsCount: number;
   total: string;
 };
-
-// A selectable order-status tab from salesRepOrderStatuses: `name` is the filter value sent back
-// to salesRepOrders, `localizedName` is the tab label.
-export type SalesRepOrderStatusType = { name: string; localizedName: string };

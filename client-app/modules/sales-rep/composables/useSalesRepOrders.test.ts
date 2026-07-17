@@ -30,7 +30,6 @@ function passedVariables(): {
   organizationId?: string;
   storeId?: string;
   cultureName?: string;
-  statuses?: string[];
   first: number;
   sort: string;
 } {
@@ -57,29 +56,21 @@ describe("useSalesRepOrders", () => {
       organizationId: "cust-1",
       storeId: "test-store",
       cultureName: "en-US",
-      statuses: undefined,
       first: ORDERS_DEFAULT_LIMIT,
       sort: "createdDate:desc",
     });
   });
 
-  it("omits organizationId for cross-customer use and passes a non-empty status filter", () => {
-    useSalesRepOrders({ statuses: () => ["New"], first: 3 });
+  it("omits organizationId for cross-customer use and honors a custom page size", () => {
+    useSalesRepOrders({ first: 3 });
 
     expect(passedVariables()).toEqual({
       organizationId: undefined,
       storeId: "test-store",
       cultureName: "en-US",
-      statuses: ["New"],
       first: 3,
       sort: "createdDate:desc",
     });
-  });
-
-  it("treats an empty status list as no filter (the All tab)", () => {
-    useSalesRepOrders({ statuses: () => [] });
-
-    expect(passedVariables().statuses).toBeUndefined();
   });
 
   it("maps orders to the view shape, tolerating missing fields and null items", () => {

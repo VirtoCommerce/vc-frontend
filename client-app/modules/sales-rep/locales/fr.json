@@ -73,9 +73,6 @@
       "title": "Commandes récentes",
       "view_all": "Toutes les commandes",
       "empty": "Aucune commande pour le moment",
-      "tabs": {
-        "all": "Tous"
-      },
       "number": "N° de commande",
       "customer": "Client",
       "date": "Date",

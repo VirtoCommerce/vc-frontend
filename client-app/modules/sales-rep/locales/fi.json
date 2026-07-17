@@ -73,9 +73,6 @@
       "title": "Viimeisimmät tilaukset",
       "view_all": "Kaikki tilaukset",
       "empty": "Ei vielä tilauksia",
-      "tabs": {
-        "all": "Kaikki"
-      },
       "number": "Tilausnro",
       "customer": "Asiakas",
       "date": "Päivämäärä",

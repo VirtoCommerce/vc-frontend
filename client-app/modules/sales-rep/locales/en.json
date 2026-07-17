@@ -73,9 +73,6 @@
       "title": "Recent orders",
       "view_all": "All orders",
       "empty": "No orders yet",
-      "tabs": {
-        "all": "All"
-      },
       "number": "Order #",
       "customer": "Customer",
       "date": "Date",

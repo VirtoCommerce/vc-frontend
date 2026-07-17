@@ -73,9 +73,6 @@
       "title": "最近订单",
       "view_all": "全部订单",
       "empty": "暂无订单",
-      "tabs": {
-        "all": "全部"
-      },
       "number": "订单号",
       "customer": "客户",
       "date": "日期",
