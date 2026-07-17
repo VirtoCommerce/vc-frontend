@@ -50,7 +50,7 @@ const cards: StatWidgetCardType[] = [
   {
     key: "orders_placed_mtd",
     labelKey: "sales_rep.hub.dashboard.widgets.orders_placed_mtd",
-    icon: "duplicate",
+    icon: "cash",
     accent: "info",
     value: "47",
     sub: "$142,510.00",
