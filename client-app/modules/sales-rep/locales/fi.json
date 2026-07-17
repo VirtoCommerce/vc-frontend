@@ -64,6 +64,25 @@
         "account_type": "Tilin tyyppi",
         "ship_to": "Toimitusosoite"
       }
+    },
+    "communication": {
+      "action": "Lähetä viesti",
+      "title": "Lähetä viesti",
+      "subtitle": "Tavoittaa kaikki organisaation {organization} jäsenet.",
+      "title_label": "Otsikko",
+      "message_label": "Viesti",
+      "channels_label": "Lähetystapa",
+      "email_label": "Sähköposti",
+      "push_label": "Push-ilmoitus",
+      "channel_required_hint": "Valitse vähintään yksi kanava.",
+      "send_button": "Lähetä",
+      "cancel_button": "Peruuta",
+      "success_text": "Viestisi on lähetetty.",
+      "error_text": "Viestiä ei voitu lähettää. Yritä uudelleen.",
+      "quick_actions": {
+        "title": "Pikatoiminnot",
+        "send_message": "Lähetä viesti"
+      }
     }
   }
 }

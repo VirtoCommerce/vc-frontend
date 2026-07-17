@@ -64,6 +64,25 @@
         "account_type": "Kontotyp",
         "ship_to": "Leveransadress"
       }
+    },
+    "communication": {
+      "action": "Skicka meddelande",
+      "title": "Skicka ett meddelande",
+      "subtitle": "Når alla medlemmar i {organization}.",
+      "title_label": "Titel",
+      "message_label": "Meddelande",
+      "channels_label": "Skicka via",
+      "email_label": "E-post",
+      "push_label": "Push-avisering",
+      "channel_required_hint": "Välj minst en kanal.",
+      "send_button": "Skicka",
+      "cancel_button": "Avbryt",
+      "success_text": "Ditt meddelande har skickats.",
+      "error_text": "Meddelandet kunde inte skickas. Försök igen.",
+      "quick_actions": {
+        "title": "Snabbåtgärder",
+        "send_message": "Skicka meddelande"
+      }
     }
   }
 }

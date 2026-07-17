@@ -64,6 +64,25 @@
         "account_type": "Tipo de conta",
         "ship_to": "Enviar para"
       }
+    },
+    "communication": {
+      "action": "Enviar mensagem",
+      "title": "Enviar uma mensagem",
+      "subtitle": "Alcança todos os membros de {organization}.",
+      "title_label": "Título",
+      "message_label": "Mensagem",
+      "channels_label": "Enviar via",
+      "email_label": "E-mail",
+      "push_label": "Notificação push",
+      "channel_required_hint": "Selecione pelo menos um canal.",
+      "send_button": "Enviar",
+      "cancel_button": "Cancelar",
+      "success_text": "Sua mensagem foi enviada.",
+      "error_text": "Não foi possível enviar a mensagem. Tente novamente.",
+      "quick_actions": {
+        "title": "Ações rápidas",
+        "send_message": "Enviar mensagem"
+      }
     }
   }
 }

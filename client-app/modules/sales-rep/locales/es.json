@@ -64,6 +64,25 @@
         "account_type": "Tipo de cuenta",
         "ship_to": "Envío a"
       }
+    },
+    "communication": {
+      "action": "Enviar mensaje",
+      "title": "Enviar un mensaje",
+      "subtitle": "Llega a todos los miembros de {organization}.",
+      "title_label": "Título",
+      "message_label": "Mensaje",
+      "channels_label": "Enviar por",
+      "email_label": "Correo electrónico",
+      "push_label": "Notificación push",
+      "channel_required_hint": "Seleccione al menos un canal.",
+      "send_button": "Enviar",
+      "cancel_button": "Cancelar",
+      "success_text": "Su mensaje ha sido enviado.",
+      "error_text": "No se pudo enviar el mensaje. Inténtelo de nuevo.",
+      "quick_actions": {
+        "title": "Acciones rápidas",
+        "send_message": "Enviar mensaje"
+      }
     }
   }
 }

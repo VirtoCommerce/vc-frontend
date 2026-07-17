@@ -76,6 +76,16 @@
                     {{ orderLabel(item.lastOrder.number) }}
                   </VcLink>
                 </span>
+
+                <VcButton
+                  class="my-customers__mobile-action"
+                  size="sm"
+                  variant="outline"
+                  prepend-icon="paper-airplane"
+                  @click="openCommunication(item)"
+                >
+                  {{ t("sales_rep.communication.action") }}
+                </VcButton>
               </div>
             </template>
 
@@ -107,6 +117,17 @@
 
               <template v-else>—</template>
             </VcTableColumn>
+
+            <VcTableColumn id="actions" v-slot="{ item }" class="w-16 text-center">
+              <VcButton
+                :aria-label="t('sales_rep.communication.action')"
+                :title="t('sales_rep.communication.action')"
+                icon="paper-airplane"
+                icon-size="1.25rem"
+                variant="ghost"
+                @click="openCommunication(item)"
+              />
+            </VcTableColumn>
           </VcTable>
         </template>
       </VcWidget>
@@ -117,11 +138,14 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { useModal } from "@/shared/modal";
+import CustomerCommunicationModal from "../components/customer-communication-modal.vue";
 import { useSalesRepCustomers } from "../composables/useSalesRepCustomers";
 import { CUSTOMER_PROFILE_ROUTE_NAME } from "../constants";
 import type { SalesRepCustomerSortColumnType, SalesRepCustomerType } from "../types";
 
 const { t } = useI18n();
+const { openModal } = useModal();
 const { loading, keyword, sort, page, pages, items } = useSalesRepCustomers();
 
 // Unapplied search term; committed to the query on Enter or the search button.
@@ -129,6 +153,14 @@ const localKeyword = ref("");
 
 function orderLabel(number: string): string {
   return `#${number}`;
+}
+
+// Broadcast to all members of the customer's org — reuses the shared modal shell (VCST-5310).
+function openCommunication(item: SalesRepCustomerType): void {
+  openModal({
+    component: CustomerCommunicationModal,
+    props: { organizationId: item.organizationId, organizationName: item.organizationName },
+  });
 }
 
 function rowClass(_item: SalesRepCustomerType, index: number): string {
@@ -206,6 +238,10 @@ function changePage(newPage: number): void {
 
   &__mobile-sub {
     @apply text-sm;
+  }
+
+  &__mobile-action {
+    @apply mt-1 self-start;
   }
 }
 </style>

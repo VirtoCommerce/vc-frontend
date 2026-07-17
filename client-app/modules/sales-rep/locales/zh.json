@@ -64,6 +64,25 @@
         "account_type": "账户类型",
         "ship_to": "收货地址"
       }
+    },
+    "communication": {
+      "action": "发送消息",
+      "title": "发送消息",
+      "subtitle": "将送达 {organization} 的所有成员。",
+      "title_label": "标题",
+      "message_label": "消息",
+      "channels_label": "发送方式",
+      "email_label": "电子邮件",
+      "push_label": "推送通知",
+      "channel_required_hint": "请至少选择一个渠道。",
+      "send_button": "发送",
+      "cancel_button": "取消",
+      "success_text": "您的消息已发送。",
+      "error_text": "消息发送失败，请重试。",
+      "quick_actions": {
+        "title": "快捷操作",
+        "send_message": "发送消息"
+      }
     }
   }
 }

@@ -64,6 +64,25 @@
         "account_type": "Kontotyp",
         "ship_to": "Lieferadresse"
       }
+    },
+    "communication": {
+      "action": "Nachricht senden",
+      "title": "Nachricht senden",
+      "subtitle": "Erreicht jedes Mitglied von {organization}.",
+      "title_label": "Titel",
+      "message_label": "Nachricht",
+      "channels_label": "Senden über",
+      "email_label": "E-Mail",
+      "push_label": "Push-Benachrichtigung",
+      "channel_required_hint": "Wählen Sie mindestens einen Kanal aus.",
+      "send_button": "Senden",
+      "cancel_button": "Abbrechen",
+      "success_text": "Ihre Nachricht wurde gesendet.",
+      "error_text": "Die Nachricht konnte nicht gesendet werden. Bitte versuchen Sie es erneut.",
+      "quick_actions": {
+        "title": "Schnellaktionen",
+        "send_message": "Nachricht senden"
+      }
     }
   }
 }

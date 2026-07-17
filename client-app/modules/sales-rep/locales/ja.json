@@ -64,6 +64,25 @@
         "account_type": "アカウントタイプ",
         "ship_to": "配送先"
       }
+    },
+    "communication": {
+      "action": "メッセージを送信",
+      "title": "メッセージを送信",
+      "subtitle": "{organization} のすべてのメンバーに届きます。",
+      "title_label": "タイトル",
+      "message_label": "メッセージ",
+      "channels_label": "送信方法",
+      "email_label": "メール",
+      "push_label": "プッシュ通知",
+      "channel_required_hint": "少なくとも1つのチャネルを選択してください。",
+      "send_button": "送信",
+      "cancel_button": "キャンセル",
+      "success_text": "メッセージを送信しました。",
+      "error_text": "メッセージを送信できませんでした。もう一度お試しください。",
+      "quick_actions": {
+        "title": "クイックアクション",
+        "send_message": "メッセージを送信"
+      }
     }
   }
 }

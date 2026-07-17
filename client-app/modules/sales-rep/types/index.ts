@@ -16,3 +16,13 @@ export type SalesRepCustomerType = {
 // Only Name is sortable — the server sort is name-backed.
 export type SalesRepCustomerSortColumnType = "name";
 export type SalesRepCustomerSortType = { column: SalesRepCustomerSortColumnType; direction: "asc" | "desc" };
+
+// Rep → customer-org broadcast (VCST-5310). storeId/cultureName are added from globals in the composable,
+// not entered by the user; recipients (all org members) are resolved backend-side.
+export type SalesRepCommunicationInputType = {
+  organizationId: string;
+  sendEmail: boolean;
+  sendPush: boolean;
+  message: string;
+  title?: string;
+};

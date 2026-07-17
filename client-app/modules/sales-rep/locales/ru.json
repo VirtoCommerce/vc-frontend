@@ -64,6 +64,25 @@
         "account_type": "Тип аккаунта",
         "ship_to": "Адрес доставки"
       }
+    },
+    "communication": {
+      "action": "Отправить сообщение",
+      "title": "Отправить сообщение",
+      "subtitle": "Получат все участники организации {organization}.",
+      "title_label": "Заголовок",
+      "message_label": "Сообщение",
+      "channels_label": "Отправить через",
+      "email_label": "Эл. почта",
+      "push_label": "Push-уведомление",
+      "channel_required_hint": "Выберите хотя бы один канал.",
+      "send_button": "Отправить",
+      "cancel_button": "Отмена",
+      "success_text": "Ваше сообщение отправлено.",
+      "error_text": "Не удалось отправить сообщение. Попробуйте ещё раз.",
+      "quick_actions": {
+        "title": "Быстрые действия",
+        "send_message": "Отправить сообщение"
+      }
     }
   }
 }

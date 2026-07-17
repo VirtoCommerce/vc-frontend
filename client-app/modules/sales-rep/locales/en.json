@@ -64,6 +64,25 @@
         "account_type": "Account type",
         "ship_to": "Ship-to"
       }
+    },
+    "communication": {
+      "action": "Send message",
+      "title": "Send a message",
+      "subtitle": "Reaches every member of {organization}.",
+      "title_label": "Title",
+      "message_label": "Message",
+      "channels_label": "Send via",
+      "email_label": "Email",
+      "push_label": "Push notification",
+      "channel_required_hint": "Select at least one channel.",
+      "send_button": "Send",
+      "cancel_button": "Cancel",
+      "success_text": "Your message has been sent.",
+      "error_text": "The message could not be sent. Please try again.",
+      "quick_actions": {
+        "title": "Quick actions",
+        "send_message": "Send message"
+      }
     }
   }
 }
