@@ -41,6 +41,12 @@
         },
         "page": {
           "title": "Painel"
+        },
+        "widgets": {
+          "orders_on_hold": "Pedidos em espera",
+          "active_projects": "Projetos ativos",
+          "orders_placed_mtd": "Pedidos no mês atual",
+          "my_customers": "Meus clientes"
         }
       }
     },

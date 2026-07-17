@@ -41,6 +41,12 @@
         },
         "page": {
           "title": "ダッシュボード"
+        },
+        "widgets": {
+          "orders_on_hold": "保留中の注文",
+          "active_projects": "進行中のプロジェクト",
+          "orders_placed_mtd": "今月の注文",
+          "my_customers": "担当顧客"
         }
       }
     },

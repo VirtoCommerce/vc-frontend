@@ -41,6 +41,12 @@
         },
         "page": {
           "title": "Panel"
+        },
+        "widgets": {
+          "orders_on_hold": "Wstrzymane zamówienia",
+          "active_projects": "Aktywne projekty",
+          "orders_placed_mtd": "Zamówienia od początku miesiąca",
+          "my_customers": "Moi klienci"
         }
       }
     },

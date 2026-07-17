@@ -41,6 +41,12 @@
         },
         "page": {
           "title": "仪表板"
+        },
+        "widgets": {
+          "orders_on_hold": "暂挂订单",
+          "active_projects": "进行中的项目",
+          "orders_placed_mtd": "本月至今下单",
+          "my_customers": "我的客户"
         }
       }
     },

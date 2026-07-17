@@ -41,6 +41,12 @@
         },
         "page": {
           "title": "Tableau de bord"
+        },
+        "widgets": {
+          "orders_on_hold": "Commandes en attente",
+          "active_projects": "Projets actifs",
+          "orders_placed_mtd": "Commandes depuis le début du mois",
+          "my_customers": "Mes clients"
         }
       }
     },

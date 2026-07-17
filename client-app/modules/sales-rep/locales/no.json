@@ -41,6 +41,12 @@
         },
         "page": {
           "title": "Dashbord"
+        },
+        "widgets": {
+          "orders_on_hold": "Ordrer på vent",
+          "active_projects": "Aktive prosjekter",
+          "orders_placed_mtd": "Ordrer hittil denne måneden",
+          "my_customers": "Mine kunder"
         }
       }
     },

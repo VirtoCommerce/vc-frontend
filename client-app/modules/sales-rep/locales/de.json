@@ -41,6 +41,12 @@
         },
         "page": {
           "title": "Dashboard"
+        },
+        "widgets": {
+          "orders_on_hold": "Angehaltene Bestellungen",
+          "active_projects": "Aktive Projekte",
+          "orders_placed_mtd": "Bestellungen seit Monatsbeginn",
+          "my_customers": "Meine Kunden"
         }
       }
     },

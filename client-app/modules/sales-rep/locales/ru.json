@@ -41,6 +41,12 @@
         },
         "page": {
           "title": "Дашборд"
+        },
+        "widgets": {
+          "orders_on_hold": "Заказы на удержании",
+          "active_projects": "Активные проекты",
+          "orders_placed_mtd": "Заказы с начала месяца",
+          "my_customers": "Мои клиенты"
         }
       }
     },
