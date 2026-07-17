@@ -231,6 +231,7 @@ export default async () => {
   await addPresetToThemeContext(themePresetName.value ?? themeContext.value.defaultPresetName);
   setActivePreset(themeContext.value.activePresetName ?? themeContext.value.defaultPresetName);
 
+  // Transitional: `icon_variant` eases client migration to outline; slated for removal (outline-only default).
   setDefaultIconVariant(themeContext.value.settings.icon_variant ?? "outline");
 
   if (isAuthenticated.value || themeContext.value.storeSettings.anonymousUsersAllowed) {

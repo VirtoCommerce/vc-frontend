@@ -1,3 +1,6 @@
+// Transitional bridge: maps legacy icon names (still used across call sites) to their Lucide
+// outline equivalents. Meant to shrink and eventually be removed as call sites adopt the canonical
+// Lucide names directly — same migration phase as the `icon_variant` setting and the solid fallback.
 export const ICON_ALIASES: Readonly<Record<string, string>> = {
   "academic-cap": "graduation-cap",
   adjustments: "sliders-vertical",

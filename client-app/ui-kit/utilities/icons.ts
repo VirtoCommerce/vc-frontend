@@ -56,6 +56,9 @@ function toMap(urls: Record<string, string>): Map<string, () => Promise<string>>
 const solidMap = toMap(solidUrls);
 const outlineMap = toMap(outlineUrls);
 
+// Transitional: the `icon_variant` setting lets clients keep the legacy solid look while migrating to
+// outline; it is slated for removal, after which outline is the forced default (drop the setting
+// plumbing and keep this hard-defaulted to "outline").
 let defaultIconVariant: IconVariantType = "outline";
 
 export function setDefaultIconVariant(variant: IconVariantType): void {
@@ -90,6 +93,8 @@ export function resolveIcon(
   if (outlineMap.has(canonicalName)) {
     return { loader: outlineMap.get(canonicalName), isOutline: true };
   }
+  // Transitional: outline→solid fallback bridges names that lack an outline asset yet; removable
+  // once every used icon has an outline glyph (same migration phase as aliases + the setting).
   if (solidMap.has(name)) {
     return { loader: solidMap.get(name), isOutline: false };
   }
