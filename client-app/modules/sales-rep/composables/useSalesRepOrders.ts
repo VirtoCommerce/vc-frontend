@@ -5,12 +5,14 @@ import { Logger } from "@/core/utilities";
 import { SalesRepOrdersDocument } from "../api/graphql/types";
 import { ORDERS_DEFAULT_LIMIT } from "../constants";
 import type { SalesRepOrderRowType } from "../types";
-import type { MaybeRefOrGetter } from "vue";
+import type { Ref } from "vue";
 
 type UseSalesRepOrdersOptionsType = {
   // Scope to one customer; omit for cross-customer orders (the hub dashboard).
-  organizationId?: MaybeRefOrGetter<string | undefined>;
-  first?: MaybeRefOrGetter<number | undefined>;
+  // Expanded (not MaybeRefOrGetter<… | undefined>) so the `?` isn't a redundant second
+  // "undefined" — Sonar S4782; getters/refs still yield undefined (see useProducts.ts).
+  organizationId?: string | Ref<string | undefined> | (() => string | undefined);
+  first?: number | Ref<number | undefined> | (() => number | undefined);
 };
 
 export function useSalesRepOrders(options: UseSalesRepOrdersOptionsType = {}) {
