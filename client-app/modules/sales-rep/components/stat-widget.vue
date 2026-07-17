@@ -33,12 +33,11 @@ interface IProps {
   deltaIcon?: string;
 }
 
+// accent/deltaTone need defaults — they build CSS class names (`--${accent}`). The optional
+// string props (sub/delta/deltaIcon) are only used in v-if/interpolation, so undefined is fine.
 withDefaults(defineProps<IProps>(), {
   accent: "neutral",
-  sub: "",
-  delta: "",
   deltaTone: "positive",
-  deltaIcon: "",
 });
 </script>
 
