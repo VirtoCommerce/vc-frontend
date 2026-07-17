@@ -73,6 +73,9 @@
       "title": "Nylige ordrer",
       "view_all": "Alle bestillinger",
       "empty": "Ingen bestillinger ennå",
+      "tabs": {
+        "all": "Alle"
+      },
       "number": "Ordrenr.",
       "customer": "Kunde",
       "date": "Dato",

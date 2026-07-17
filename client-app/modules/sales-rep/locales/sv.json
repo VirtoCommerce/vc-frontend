@@ -73,6 +73,9 @@
       "title": "Senaste ordrar",
       "view_all": "Alla beställningar",
       "empty": "Inga beställningar ännu",
+      "tabs": {
+        "all": "Alla"
+      },
       "number": "Ordernr",
       "customer": "Kund",
       "date": "Datum",
