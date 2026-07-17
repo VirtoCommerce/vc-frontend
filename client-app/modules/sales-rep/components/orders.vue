@@ -23,7 +23,8 @@
 
     <VcEmptyView v-if="!orders.length && !loading" :text="t('sales_rep.orders.empty')" icon="outline-order" />
 
-    <VcTable v-else :loading="loading" :items="orders" :skeleton-rows="skeletonRows" mobile-breakpoint="lg">
+    <!-- Skeleton rows match the page size so the loading state mirrors what will load. -->
+    <VcTable v-else :loading="loading" :items="orders" :skeleton-rows="limit" mobile-breakpoint="lg">
       <template #mobile-item="{ item }">
         <div class="sales-rep-orders__mobile-item">
           <div class="sales-rep-orders__mobile-row">
@@ -118,8 +119,7 @@ interface IProps {
 }
 
 const props = withDefaults(defineProps<IProps>(), {
-  organizationId: undefined,
-  limit: undefined,
+  limit: ORDERS_DEFAULT_LIMIT,
 });
 
 const { t } = useI18n();
@@ -136,9 +136,6 @@ const tabs = computed(() => [
 ]);
 
 const isCrossCustomer = computed(() => !props.organizationId);
-
-// Show as many skeleton rows as the page will actually load, so the loading state matches the result.
-const skeletonRows = computed(() => props.limit ?? ORDERS_DEFAULT_LIMIT);
 
 const { orders, loading } = useSalesRepOrders({
   organizationId: () => props.organizationId,
