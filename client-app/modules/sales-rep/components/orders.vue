@@ -23,7 +23,7 @@
 
     <VcEmptyView v-if="!orders.length && !loading" :text="t('sales_rep.orders.empty')" icon="outline-order" />
 
-    <VcTable v-else :loading="loading" :items="orders" :row-class="rowClass" mobile-breakpoint="lg">
+    <VcTable v-else :loading="loading" :items="orders" :skeleton-rows="skeletonRows" mobile-breakpoint="lg">
       <template #mobile-item="{ item }">
         <div class="sales-rep-orders__mobile-item">
           <div class="sales-rep-orders__mobile-row">
@@ -105,7 +105,7 @@ import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useSalesRepOrderStatuses } from "../composables/useSalesRepOrderStatuses";
 import { useSalesRepOrders } from "../composables/useSalesRepOrders";
-import type { SalesRepOrderRowType } from "../types";
+import { ORDERS_DEFAULT_LIMIT } from "../constants";
 import OrderStatus from "@/shared/account/components/order-status.vue";
 
 interface IProps {
@@ -137,16 +137,14 @@ const tabs = computed(() => [
 
 const isCrossCustomer = computed(() => !props.organizationId);
 
+// Show as many skeleton rows as the page will actually load, so the loading state matches the result.
+const skeletonRows = computed(() => props.limit ?? ORDERS_DEFAULT_LIMIT);
+
 const { orders, loading } = useSalesRepOrders({
   organizationId: () => props.organizationId,
   statuses: selectedStatuses,
   first: () => props.limit,
 });
-
-// Zebra striping (matches the My customers table).
-function rowClass(_item: SalesRepOrderRowType, index: number): string {
-  return index % 2 === 1 ? "bg-neutral-50" : "";
-}
 </script>
 
 <style lang="scss">
