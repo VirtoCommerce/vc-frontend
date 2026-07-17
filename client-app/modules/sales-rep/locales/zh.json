@@ -1,0 +1,20 @@
+{
+  "sales_rep": {
+    "navigation": {
+      "link": "销售代表"
+    },
+    "page": {
+      "title": "销售代表"
+    },
+    "table": {
+      "name": "姓名",
+      "email": "邮箱",
+      "phone": "电话",
+      "search_placeholder": "按姓名、邮箱或电话搜索",
+      "search_aria": "搜索销售代表",
+      "empty": "未找到销售代表",
+      "no_results": "没有销售代表符合您的搜索条件",
+      "reset_search": "重置搜索"
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "sales_rep": {
+    "navigation": {
+      "link": "Vertriebsmitarbeiter"
+    },
+    "page": {
+      "title": "Vertriebsmitarbeiter"
+    },
+    "table": {
+      "name": "Name",
+      "email": "E-Mail",
+      "phone": "Telefon",
+      "search_placeholder": "Suche nach Name, E-Mail oder Telefon",
+      "search_aria": "Vertriebsmitarbeiter suchen",
+      "empty": "Keine Vertriebsmitarbeiter gefunden",
+      "no_results": "Keine Vertriebsmitarbeiter entsprechen Ihrer Suche",
+      "reset_search": "Suche zurücksetzen"
+    }
+  }
+}
