@@ -22,8 +22,6 @@ const queryMock = await vi.hoisted(async () => {
 
 vi.mock("@vue/apollo-composable", () => ({ useQuery: queryMock.useQuery }));
 vi.mock("@/core/globals", () => ({ globals: { storeId: "test-store", cultureName: "en-US" } }));
-// The operation is imported as a raw document; useQuery is mocked, so a stub is enough.
-vi.mock("../api/graphql/queries/salesRepOrders/salesRepOrdersQuery.graphql", () => ({ default: {} }));
 
 /** The reactive `variables` computed the composable handed to useQuery. */
 function passedVariables(): {

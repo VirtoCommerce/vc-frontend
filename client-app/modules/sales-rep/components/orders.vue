@@ -28,7 +28,10 @@
 
           <div v-if="isCrossCustomer" class="sales-rep-orders__mobile-customer">{{ item.organizationName }}</div>
 
-          <div class="sales-rep-orders__mobile-sub">{{ $d(item.createdDate, "short") }} · {{ item.itemsCount }}</div>
+          <!-- Item count only in single-customer mode, mirroring the desktop Items column (hidden cross-customer). -->
+          <div class="sales-rep-orders__mobile-sub">
+            {{ $d(item.createdDate, "short") }}<template v-if="!isCrossCustomer"> · {{ item.itemsCount }}</template>
+          </div>
 
           <OrderStatus :status="item.status" :display-value="item.statusDisplayValue" />
         </div>
