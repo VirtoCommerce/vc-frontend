@@ -440,8 +440,6 @@ export type CartType = {
   itemsCount: Scalars['Int']['output'];
   /** Quantity of items */
   itemsQuantity: Scalars['Int']['output'];
-  /** Get total points amount */
-  loyaltyPoints?: Maybe<MoneyType>;
   /** Shopping cart name */
   name: Scalars['String']['output'];
   /** Shopping cart organization ID */
@@ -5557,6 +5555,7 @@ export type Query = {
   currentCustomerAddresses?: Maybe<MemberAddressConnection>;
   currentOrganizationAddresses?: Maybe<MemberAddressConnection>;
   customerReviews?: Maybe<CustomerReviewConnection>;
+  customerSalesReps?: Maybe<SalesRepContactConnection>;
   dynamicProperties?: Maybe<DynamicPropertyConnection>;
   dynamicProperty?: Maybe<DynamicPropertyType>;
   evaluateDynamicContent?: Maybe<EvaluateDynamicContentResultType>;
@@ -5609,6 +5608,10 @@ export type Query = {
   /** @deprecated Deprecated. Use sendPasswordResetEmail command. */
   requestPasswordReset?: Maybe<Scalars['Boolean']['output']>;
   role?: Maybe<RoleType>;
+  salesRepCustomer?: Maybe<SalesRepCustomerDetails>;
+  salesRepCustomers?: Maybe<SalesRepCustomerConnection>;
+  salesRepOrderStatuses?: Maybe<Array<Maybe<SalesRepOrderStatus>>>;
+  salesRepOrders?: Maybe<SalesRepOrderConnection>;
   searchHistory?: Maybe<SearchHistoryResultType>;
   sharedWishlist?: Maybe<WishlistType>;
   shipmentStatuses?: Maybe<LocalizedSettingResponseType>;
@@ -5827,6 +5830,15 @@ export type QueryCustomerReviewsArgs = {
   keyword?: InputMaybe<Scalars['String']['input']>;
   sort?: InputMaybe<Scalars['String']['input']>;
   storeId: Scalars['String']['input'];
+};
+
+
+export type QueryCustomerSalesRepsArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  keyword?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -6253,6 +6265,39 @@ export type QueryRoleArgs = {
 };
 
 
+export type QuerySalesRepCustomerArgs = {
+  organizationId: Scalars['String']['input'];
+};
+
+
+export type QuerySalesRepCustomersArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  keyword?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QuerySalesRepOrderStatusesArgs = {
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QuerySalesRepOrdersArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  keyword?: InputMaybe<Scalars['String']['input']>;
+  organizationId?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
+  statuses?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+};
+
+
 export type QuerySearchHistoryArgs = {
   maxCount: Scalars['Int']['input'];
   storeId: Scalars['String']['input'];
@@ -6656,6 +6701,139 @@ export type RoleType = {
   normalizedName: Scalars['String']['output'];
   /** Permissions in Role */
   permissions?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+};
+
+export type SalesRepContact = {
+  /** About the Sales Rep. */
+  about?: Maybe<Scalars['String']['output']>;
+  /** Email addresses to contact the Sales Rep. */
+  emails?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  /** First name. */
+  firstName?: Maybe<Scalars['String']['output']>;
+  /** Full name. */
+  fullName?: Maybe<Scalars['String']['output']>;
+  /** Contact (member) id of the Sales Rep. */
+  id: Scalars['String']['output'];
+  /** Last name. */
+  lastName?: Maybe<Scalars['String']['output']>;
+  /** Middle name. */
+  middleName?: Maybe<Scalars['String']['output']>;
+  /** Display name. */
+  name?: Maybe<Scalars['String']['output']>;
+  /** Phone numbers to contact the Sales Rep. */
+  phones?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  /** Photo URL. */
+  photoUrl?: Maybe<Scalars['String']['output']>;
+};
+
+/** A connection from an object to a list of objects of type `SalesRepContact`. */
+export type SalesRepContactConnection = {
+  /** A list of all of the edges returned in the connection. */
+  edges?: Maybe<Array<Maybe<SalesRepContactEdge>>>;
+  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
+  items?: Maybe<Array<Maybe<SalesRepContact>>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
+  totalCount?: Maybe<Scalars['Int']['output']>;
+};
+
+/** An edge in a connection from an object to another object of type `SalesRepContact`. */
+export type SalesRepContactEdge = {
+  /** A cursor for use in pagination */
+  cursor: Scalars['String']['output'];
+  /** The item at the end of the edge */
+  node?: Maybe<SalesRepContact>;
+};
+
+export type SalesRepCustomer = {
+  /** The customer's most recent order. */
+  lastOrder?: Maybe<SalesRepOrder>;
+  /** Organization (customer) id. */
+  organizationId: Scalars['String']['output'];
+  /** Organization (customer) name. */
+  organizationName?: Maybe<Scalars['String']['output']>;
+};
+
+/** A connection from an object to a list of objects of type `SalesRepCustomer`. */
+export type SalesRepCustomerConnection = {
+  /** A list of all of the edges returned in the connection. */
+  edges?: Maybe<Array<Maybe<SalesRepCustomerEdge>>>;
+  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
+  items?: Maybe<Array<Maybe<SalesRepCustomer>>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
+  totalCount?: Maybe<Scalars['Int']['output']>;
+};
+
+export type SalesRepCustomerDetails = {
+  /** Account type — the organization's business category. */
+  accountType?: Maybe<Scalars['String']['output']>;
+  /** Organization (customer) id. */
+  organizationId: Scalars['String']['output'];
+  /** Organization (customer) name. */
+  organizationName?: Maybe<Scalars['String']['output']>;
+  /** Primary phone number (the primary contact's, falling back to the organization's). */
+  phone?: Maybe<Scalars['String']['output']>;
+  /** Primary contact of the organization (its owner, or the first contact member). */
+  primaryContact?: Maybe<SalesRepContact>;
+  /** Default ship-to location, formatted as "City, Region". */
+  shipTo?: Maybe<Scalars['String']['output']>;
+};
+
+/** An edge in a connection from an object to another object of type `SalesRepCustomer`. */
+export type SalesRepCustomerEdge = {
+  /** A cursor for use in pagination */
+  cursor: Scalars['String']['output'];
+  /** The item at the end of the edge */
+  node?: Maybe<SalesRepCustomer>;
+};
+
+export type SalesRepOrder = {
+  /** Date the order was placed. */
+  createdDate: Scalars['DateTime']['output'];
+  /** Order id. */
+  id: Scalars['String']['output'];
+  /** Number of line items in the order. */
+  itemsCount: Scalars['Int']['output'];
+  /** Human-readable order number. */
+  number?: Maybe<Scalars['String']['output']>;
+  /** Organization (customer) id the order belongs to. */
+  organizationId?: Maybe<Scalars['String']['output']>;
+  /** Organization (customer) name. */
+  organizationName?: Maybe<Scalars['String']['output']>;
+  status?: Maybe<Scalars['String']['output']>;
+  statusDisplayValue?: Maybe<Scalars['String']['output']>;
+  /** Order grand total (amount, formatted amount and currency). */
+  total: MoneyType;
+};
+
+/** A connection from an object to a list of objects of type `SalesRepOrder`. */
+export type SalesRepOrderConnection = {
+  /** A list of all of the edges returned in the connection. */
+  edges?: Maybe<Array<Maybe<SalesRepOrderEdge>>>;
+  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
+  items?: Maybe<Array<Maybe<SalesRepOrder>>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
+  totalCount?: Maybe<Scalars['Int']['output']>;
+};
+
+/** An edge in a connection from an object to another object of type `SalesRepOrder`. */
+export type SalesRepOrderEdge = {
+  /** A cursor for use in pagination */
+  cursor: Scalars['String']['output'];
+  /** The item at the end of the edge */
+  node?: Maybe<SalesRepOrder>;
+};
+
+export type SalesRepOrderStatus = {
+  /** Localized label for the status. */
+  localizedName?: Maybe<Scalars['String']['output']>;
+  /** Stable status id — send it back as the salesRepOrders 'status' argument. */
+  name: Scalars['String']['output'];
 };
 
 export type SearchHistoryResultType = {

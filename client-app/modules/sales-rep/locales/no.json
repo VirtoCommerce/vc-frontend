@@ -1,0 +1,20 @@
+{
+  "sales_rep": {
+    "navigation": {
+      "link": "Salgsrepresentanter"
+    },
+    "page": {
+      "title": "Salgsrepresentanter"
+    },
+    "table": {
+      "name": "Navn",
+      "email": "E-post",
+      "phone": "Telefon",
+      "search_placeholder": "Søk etter navn, e-post eller telefon",
+      "search_aria": "Søk etter selgere",
+      "empty": "Ingen salgsrepresentanter funnet",
+      "no_results": "Ingen salgsrepresentanter samsvarer med søket ditt",
+      "reset_search": "Tilbakestill søk"
+    }
+  }
+}

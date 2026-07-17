@@ -1,0 +1,20 @@
+{
+  "sales_rep": {
+    "navigation": {
+      "link": "Agenti commerciali"
+    },
+    "page": {
+      "title": "Agenti commerciali"
+    },
+    "table": {
+      "name": "Nome",
+      "email": "Email",
+      "phone": "Telefono",
+      "search_placeholder": "Cerca per nome, email o telefono",
+      "search_aria": "Cerca agenti commerciali",
+      "empty": "Nessun agente commerciale trovato",
+      "no_results": "Nessun agente commerciale corrisponde alla ricerca",
+      "reset_search": "Reimposta ricerca"
+    }
+  }
+}
