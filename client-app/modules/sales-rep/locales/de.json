@@ -15,6 +15,26 @@
       "empty": "Keine Vertriebsmitarbeiter gefunden",
       "no_results": "Keine Vertriebsmitarbeiter entsprechen Ihrer Suche",
       "reset_search": "Suche zurücksetzen"
+    },
+    "my_customers": {
+      "navigation": {
+        "link": "Meine Kunden"
+      },
+      "page": {
+        "title": "Meine Kunden"
+      },
+      "table": {
+        "customer": "Kunde",
+        "last_order": "Meine letzte Bestellung",
+        "search_placeholder": "Suche nach Name",
+        "search_aria": "Kunden suchen",
+        "empty": "Keine Kunden gefunden",
+        "no_results": "Keine Kunden entsprechen Ihrer Suche",
+        "reset_search": "Suche zurücksetzen"
+      }
+    },
+    "hub": {
+      "title": "Vertriebsmitarbeiter-Hub"
     }
   }
 }

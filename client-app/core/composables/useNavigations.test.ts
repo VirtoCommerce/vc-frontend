@@ -141,7 +141,7 @@ vi.mock("@/core/utilities", () => ({
   getFilterExpressionForCategorySubtree: vi.fn(() => ""),
   getFilterExpressionForInStockVariations: vi.fn(() => ""),
   getFilterExpressionForZeroPrice: vi.fn(() => ""),
-  Logger: { error: vi.fn() },
+  Logger: { error: vi.fn(), warn: vi.fn() },
   categoryToExtendedMenuLink: vi.fn((item) => item),
   getTranslatedMenuLink: vi.fn((item) => item),
   isActiveRoute: vi.fn(() => false),
@@ -258,5 +258,32 @@ describe("useNavigations - mobilePreSelectedMenuItem", () => {
       const navigations = await importComposable();
       expect(navigations.mobilePreSelectedMenuItem.value).toBeUndefined();
     });
+  });
+});
+
+describe("useNavigations - registerAccountSection", () => {
+  beforeEach(() => {
+    vi.resetModules();
+    vi.clearAllMocks();
+  });
+
+  const section = { id: "sales-rep-hub", title: "sales_rep.hub.title", priority: 5, children: [] };
+
+  it("registers a section and exposes it", async () => {
+    const navigations = await importComposable();
+    expect(navigations.registeredAccountSections.value).toHaveLength(0);
+
+    navigations.registerAccountSection(section);
+
+    expect(navigations.registeredAccountSections.value).toEqual([section]);
+  });
+
+  it("ignores a duplicate id", async () => {
+    const navigations = await importComposable();
+    navigations.registerAccountSection(section);
+    navigations.registerAccountSection({ ...section, title: "other" });
+
+    expect(navigations.registeredAccountSections.value).toHaveLength(1);
+    expect(navigations.registeredAccountSections.value[0].title).toBe("sales_rep.hub.title");
   });
 });

@@ -15,6 +15,26 @@
       "empty": "No sales reps found",
       "no_results": "No sales reps match your search",
       "reset_search": "Reset search"
+    },
+    "my_customers": {
+      "navigation": {
+        "link": "My customers"
+      },
+      "page": {
+        "title": "My customers"
+      },
+      "table": {
+        "customer": "Customer",
+        "last_order": "My last order",
+        "search_placeholder": "Search by name",
+        "search_aria": "Search customers",
+        "empty": "No customers found",
+        "no_results": "No customers match your search",
+        "reset_search": "Reset search"
+      }
+    },
+    "hub": {
+      "title": "Sales Rep hub"
     }
   }
 }

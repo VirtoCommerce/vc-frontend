@@ -15,6 +15,26 @@
       "empty": "未找到销售代表",
       "no_results": "没有销售代表符合您的搜索条件",
       "reset_search": "重置搜索"
+    },
+    "my_customers": {
+      "navigation": {
+        "link": "我的客户"
+      },
+      "page": {
+        "title": "我的客户"
+      },
+      "table": {
+        "customer": "客户",
+        "last_order": "我的最近订单",
+        "search_placeholder": "按名称搜索",
+        "search_aria": "搜索客户",
+        "empty": "未找到客户",
+        "no_results": "没有符合您搜索条件的客户",
+        "reset_search": "重置搜索"
+      }
+    },
+    "hub": {
+      "title": "销售代表中心"
     }
   }
 }

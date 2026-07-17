@@ -15,6 +15,26 @@
       "empty": "Nessun agente commerciale trovato",
       "no_results": "Nessun agente commerciale corrisponde alla ricerca",
       "reset_search": "Reimposta ricerca"
+    },
+    "my_customers": {
+      "navigation": {
+        "link": "I miei clienti"
+      },
+      "page": {
+        "title": "I miei clienti"
+      },
+      "table": {
+        "customer": "Cliente",
+        "last_order": "Il mio ultimo ordine",
+        "search_placeholder": "Cerca per nome",
+        "search_aria": "Cerca clienti",
+        "empty": "Nessun cliente trovato",
+        "no_results": "Nessun cliente corrisponde alla tua ricerca",
+        "reset_search": "Reimposta ricerca"
+      }
+    },
+    "hub": {
+      "title": "Hub rappresentante vendite"
     }
   }
 }

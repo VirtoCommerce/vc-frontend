@@ -15,6 +15,26 @@
       "empty": "Inga säljare hittades",
       "no_results": "Inga säljare matchar din sökning",
       "reset_search": "Återställ sökning"
+    },
+    "my_customers": {
+      "navigation": {
+        "link": "Mina kunder"
+      },
+      "page": {
+        "title": "Mina kunder"
+      },
+      "table": {
+        "customer": "Kund",
+        "last_order": "Min senaste order",
+        "search_placeholder": "Sök efter namn",
+        "search_aria": "Sök kunder",
+        "empty": "Inga kunder hittades",
+        "no_results": "Inga kunder matchar din sökning",
+        "reset_search": "Återställ sökning"
+      }
+    },
+    "hub": {
+      "title": "Säljrepresentant-hub"
     }
   }
 }

@@ -15,6 +15,26 @@
       "empty": "No se encontraron representantes de ventas",
       "no_results": "No hay representantes de ventas que coincidan con tu búsqueda",
       "reset_search": "Restablecer búsqueda"
+    },
+    "my_customers": {
+      "navigation": {
+        "link": "Mis clientes"
+      },
+      "page": {
+        "title": "Mis clientes"
+      },
+      "table": {
+        "customer": "Cliente",
+        "last_order": "Mi último pedido",
+        "search_placeholder": "Buscar por nombre",
+        "search_aria": "Buscar clientes",
+        "empty": "No se encontraron clientes",
+        "no_results": "Ningún cliente coincide con su búsqueda",
+        "reset_search": "Restablecer búsqueda"
+      }
+    },
+    "hub": {
+      "title": "Centro del representante de ventas"
     }
   }
 }

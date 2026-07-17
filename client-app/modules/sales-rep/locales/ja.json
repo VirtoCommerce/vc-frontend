@@ -15,6 +15,26 @@
       "empty": "営業担当者が見つかりませんでした",
       "no_results": "営業担当者が見つかりませんでした",
       "reset_search": "検索をリセット"
+    },
+    "my_customers": {
+      "navigation": {
+        "link": "担当顧客"
+      },
+      "page": {
+        "title": "担当顧客"
+      },
+      "table": {
+        "customer": "顧客",
+        "last_order": "私の最近の注文",
+        "search_placeholder": "名前で検索",
+        "search_aria": "顧客を検索",
+        "empty": "顧客が見つかりません",
+        "no_results": "検索条件に一致する顧客がありません",
+        "reset_search": "検索をリセット"
+      }
+    },
+    "hub": {
+      "title": "営業担当ハブ"
     }
   }
 }

@@ -15,6 +15,26 @@
       "empty": "Myyntiedustajia ei löytynyt",
       "no_results": "Hakuasi vastaavia myyntiedustajia ei löytynyt",
       "reset_search": "Tyhjennä haku"
+    },
+    "my_customers": {
+      "navigation": {
+        "link": "Omat asiakkaat"
+      },
+      "page": {
+        "title": "Omat asiakkaat"
+      },
+      "table": {
+        "customer": "Asiakas",
+        "last_order": "Viimeisin tilaukseni",
+        "search_placeholder": "Hae nimellä",
+        "search_aria": "Hae asiakkaita",
+        "empty": "Asiakkaita ei löytynyt",
+        "no_results": "Yksikään asiakas ei vastaa hakuasi",
+        "reset_search": "Tyhjennä haku"
+      }
+    },
+    "hub": {
+      "title": "Myyntiedustajan keskus"
     }
   }
 }

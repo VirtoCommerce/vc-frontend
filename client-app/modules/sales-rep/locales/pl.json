@@ -15,6 +15,26 @@
       "empty": "Nie znaleziono przedstawicieli handlowych",
       "no_results": "Nie znaleziono przedstawicieli handlowych pasujących do Twojego wyszukiwania",
       "reset_search": "Resetuj wyszukiwanie"
+    },
+    "my_customers": {
+      "navigation": {
+        "link": "Moi klienci"
+      },
+      "page": {
+        "title": "Moi klienci"
+      },
+      "table": {
+        "customer": "Klient",
+        "last_order": "Moje ostatnie zamówienie",
+        "search_placeholder": "Szukaj według nazwy",
+        "search_aria": "Szukaj klientów",
+        "empty": "Nie znaleziono klientów",
+        "no_results": "Żaden klient nie pasuje do wyszukiwania",
+        "reset_search": "Resetuj wyszukiwanie"
+      }
+    },
+    "hub": {
+      "title": "Centrum przedstawiciela handlowego"
     }
   }
 }
