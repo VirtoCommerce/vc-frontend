@@ -69,7 +69,7 @@
         "ship_to": "Ship-to"
       }
     },
-    "recent_orders": {
+    "orders": {
       "title": "Recent orders",
       "view_all": "All orders",
       "empty": "No orders yet",

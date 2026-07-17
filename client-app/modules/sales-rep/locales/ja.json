@@ -69,7 +69,7 @@
         "ship_to": "配送先"
       }
     },
-    "recent_orders": {
+    "orders": {
       "title": "最近の注文",
       "view_all": "すべての注文",
       "empty": "注文はまだありません",

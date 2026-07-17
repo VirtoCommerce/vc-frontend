@@ -34,7 +34,7 @@
 
       <div class="customer-profile__layout">
         <div class="customer-profile__main">
-          <RecentOrders :organization-id="organizationId" />
+          <Orders :organization-id="organizationId" :title="t('sales_rep.orders.title')" />
         </div>
 
         <aside class="customer-profile__aside">
@@ -51,7 +51,7 @@ import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import CustomerProfileInfo from "../components/customer-profile-info.vue";
 import CustomerProfileWidgets from "../components/customer-profile-widgets.vue";
-import RecentOrders from "../components/recent-orders.vue";
+import Orders from "../components/orders.vue";
 import { useSalesRepCustomer } from "../composables/useSalesRepCustomer";
 import { MY_CUSTOMERS_ROUTE_NAME } from "../constants";
 

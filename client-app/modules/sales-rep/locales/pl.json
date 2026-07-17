@@ -69,7 +69,7 @@
         "ship_to": "Adres dostawy"
       }
     },
-    "recent_orders": {
+    "orders": {
       "title": "Ostatnie zamówienia",
       "view_all": "Wszystkie zamówienia",
       "empty": "Brak zamówień",

@@ -69,7 +69,7 @@
         "ship_to": "Lieferadresse"
       }
     },
-    "recent_orders": {
+    "orders": {
       "title": "Aktuelle Bestellungen",
       "view_all": "Alle Bestellungen",
       "empty": "Noch keine Bestellungen",

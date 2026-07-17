@@ -69,7 +69,7 @@
         "ship_to": "Indirizzo di spedizione"
       }
     },
-    "recent_orders": {
+    "orders": {
       "title": "Ordini recenti",
       "view_all": "Tutti gli ordini",
       "empty": "Ancora nessun ordine",

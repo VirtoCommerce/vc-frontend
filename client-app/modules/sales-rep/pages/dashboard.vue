@@ -7,15 +7,15 @@
     <!-- Full-width KPI row (mock until the rep dashboard stats query lands). -->
     <DashboardWidgets />
 
-    <!-- Cross-customer recent orders (real data: salesRepOrders + salesRepOrderStatuses). -->
-    <RecentOrders />
+    <!-- Cross-customer orders (real data: salesRepOrders + salesRepOrderStatuses). -->
+    <Orders :title="t('sales_rep.orders.title')" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 import DashboardWidgets from "../components/dashboard-widgets.vue";
-import RecentOrders from "../components/recent-orders.vue";
+import Orders from "../components/orders.vue";
 
 const { t } = useI18n();
 </script>

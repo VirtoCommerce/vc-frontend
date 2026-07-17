@@ -3,7 +3,7 @@ import { computed, toValue } from "vue";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { SalesRepOrdersDocument } from "../api/graphql/types";
-import { RECENT_ORDERS_LIMIT } from "../constants";
+import { ORDERS_DEFAULT_LIMIT } from "../constants";
 import type { SalesRepOrderRowType } from "../types";
 import type { MaybeRefOrGetter } from "vue";
 
@@ -25,7 +25,7 @@ export function useSalesRepOrders(options: UseSalesRepOrdersOptionsType = {}) {
       // undefined (not []) means "no status filter" — the "All" tab.
       statuses: statuses?.length ? statuses : undefined,
       // Most recent N; the full list lives on the "All orders" page.
-      first: toValue(options.first) ?? RECENT_ORDERS_LIMIT,
+      first: toValue(options.first) ?? ORDERS_DEFAULT_LIMIT,
       sort: "createdDate:desc",
     };
   });

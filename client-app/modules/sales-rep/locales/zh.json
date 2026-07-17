@@ -69,7 +69,7 @@
         "ship_to": "收货地址"
       }
     },
-    "recent_orders": {
+    "orders": {
       "title": "最近订单",
       "view_all": "全部订单",
       "empty": "暂无订单",

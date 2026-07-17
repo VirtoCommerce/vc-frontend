@@ -69,7 +69,7 @@
         "ship_to": "Enviar para"
       }
     },
-    "recent_orders": {
+    "orders": {
       "title": "Pedidos recentes",
       "view_all": "Todos os pedidos",
       "empty": "Ainda não há pedidos",

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { RECENT_ORDERS_LIMIT } from "../constants";
+import { ORDERS_DEFAULT_LIMIT } from "../constants";
 import { useSalesRepOrders } from "./useSalesRepOrders";
 
 // vi.hoisted runs before this file's imports, so it must import vue itself.
@@ -56,7 +56,7 @@ describe("useSalesRepOrders", () => {
       organizationId: "cust-1",
       storeId: "test-store",
       statuses: undefined,
-      first: RECENT_ORDERS_LIMIT,
+      first: ORDERS_DEFAULT_LIMIT,
       sort: "createdDate:desc",
     });
   });

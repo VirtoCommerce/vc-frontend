@@ -69,7 +69,7 @@
         "ship_to": "Toimitusosoite"
       }
     },
-    "recent_orders": {
+    "orders": {
       "title": "Viimeisimmät tilaukset",
       "view_all": "Kaikki tilaukset",
       "empty": "Ei vielä tilauksia",
