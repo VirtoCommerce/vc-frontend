@@ -58,8 +58,16 @@ const _color = computed(() => getColorValue(props.color));
 const ariaHidden = computed(() => (props.label ? undefined : "true"));
 const role = computed(() => (props.label ? "img" : undefined));
 
+let latestLoadToken = 0;
+
 async function loadIcon(name?: string, variant?: IconVariantType) {
+  const token = ++latestLoadToken;
   const { raw, isOutline: outline } = await loadIconRaw(name, variant);
+
+  if (token !== latestLoadToken) {
+    return;
+  }
+
   icon.value = raw;
   isOutline.value = outline;
 }

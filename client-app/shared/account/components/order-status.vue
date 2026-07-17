@@ -8,7 +8,7 @@
         size="sm"
         rounded
       >
-        <VcIcon variant="solid" :name="icon ?? orderStatus?.icon" />
+        <VcIcon v-if="icon ?? orderStatus?.icon" variant="solid" :name="icon ?? orderStatus?.icon" />
 
         <span>{{ displayValue || status }}</span>
       </VcChip>

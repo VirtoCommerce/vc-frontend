@@ -50,6 +50,9 @@ export function resolveIcon(
   const canonicalName = resolveIconName(name);
 
   if (effectiveVariant === "solid") {
+    // Aliases are one-directional (legacy name -> Lucide name), so the solid branch matches the
+    // raw name (solid files keep legacy names). A Lucide-named icon requested as solid whose only
+    // solid asset lives under a legacy name won't match here and falls through to outline below.
     if (solidMap.has(name)) {
       return { loader: solidMap.get(name), isOutline: false };
     }

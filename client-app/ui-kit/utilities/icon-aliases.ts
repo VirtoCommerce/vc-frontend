@@ -21,7 +21,6 @@ export const ICON_ALIASES: Readonly<Record<string, string>> = {
   "circle-outline": "circle",
   clear: "eraser",
   "clipboard-arrow": "clipboard-copy",
-  "clipboard-list": "file-text",
   collection: "layers",
   compare: "git-compare-arrows",
   cube: "box",
@@ -68,7 +67,9 @@ export const ICON_ALIASES: Readonly<Record<string, string>> = {
   "source-environment": "building-2",
   "switch-vertical": "arrow-up-down",
   "user-group": "users",
+  // grid & view-grid intentionally map to the tile-grid glyph; outline/grid.svg is a table icon, not a tile grid
   grid: "layout-grid",
+  "view-grid": "layout-grid",
   warning: "triangle-alert",
   whishlist: "star",
 };
