@@ -35,6 +35,35 @@
     },
     "hub": {
       "title": "営業担当ハブ"
+    },
+    "customer_profile": {
+      "loading": "読み込み中…",
+      "not_found": "顧客が見つからないか、担当顧客に含まれていません。",
+      "back_to_customers": "担当顧客に戻る",
+      "orders": {
+        "title": "注文",
+        "empty": "注文はまだありません",
+        "number": "注文番号",
+        "date": "日付",
+        "items": "商品数",
+        "status": "ステータス",
+        "total": "合計",
+        "view_all": "すべての注文"
+      },
+      "widgets": {
+        "ytd_purchases": "年初来の購入額",
+        "open_balance": "未払い残高",
+        "avg_order_value": "平均注文額",
+        "orders_ytd": "年初来の注文数"
+      },
+      "info": {
+        "title": "顧客情報",
+        "empty": "利用可能な情報はありません",
+        "primary_contact": "主要担当者",
+        "phone": "電話番号",
+        "account_type": "アカウントタイプ",
+        "ship_to": "配送先"
+      }
     }
   }
 }

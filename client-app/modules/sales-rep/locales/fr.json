@@ -35,6 +35,35 @@
     },
     "hub": {
       "title": "Espace représentant commercial"
+    },
+    "customer_profile": {
+      "loading": "Chargement…",
+      "not_found": "Client introuvable ou absent de vos clients.",
+      "back_to_customers": "Retour à mes clients",
+      "orders": {
+        "title": "Commandes",
+        "empty": "Aucune commande pour le moment",
+        "number": "N° de commande",
+        "date": "Date",
+        "items": "Articles",
+        "status": "Statut",
+        "total": "Total",
+        "view_all": "Toutes les commandes"
+      },
+      "widgets": {
+        "ytd_purchases": "Achats depuis le début de l'année",
+        "open_balance": "Solde ouvert",
+        "avg_order_value": "Valeur moyenne des commandes",
+        "orders_ytd": "Commandes depuis le début de l'année"
+      },
+      "info": {
+        "title": "Informations client",
+        "empty": "Aucune information disponible",
+        "primary_contact": "Contact principal",
+        "phone": "Téléphone",
+        "account_type": "Type de compte",
+        "ship_to": "Adresse de livraison"
+      }
     }
   }
 }

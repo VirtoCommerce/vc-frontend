@@ -35,6 +35,35 @@
     },
     "hub": {
       "title": "Central do representante de vendas"
+    },
+    "customer_profile": {
+      "loading": "Carregando…",
+      "not_found": "Cliente não encontrado ou não está nos seus clientes.",
+      "back_to_customers": "Voltar aos meus clientes",
+      "orders": {
+        "title": "Pedidos",
+        "empty": "Ainda não há pedidos",
+        "number": "N.º do pedido",
+        "date": "Data",
+        "items": "Itens",
+        "status": "Status",
+        "total": "Total",
+        "view_all": "Todos os pedidos"
+      },
+      "widgets": {
+        "ytd_purchases": "Compras no ano até agora",
+        "open_balance": "Saldo em aberto",
+        "avg_order_value": "Valor médio do pedido",
+        "orders_ytd": "Pedidos no ano até agora"
+      },
+      "info": {
+        "title": "Informações do cliente",
+        "empty": "Nenhuma informação disponível",
+        "primary_contact": "Contato principal",
+        "phone": "Telefone",
+        "account_type": "Tipo de conta",
+        "ship_to": "Enviar para"
+      }
     }
   }
 }

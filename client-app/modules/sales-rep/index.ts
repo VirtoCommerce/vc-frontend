@@ -12,7 +12,7 @@ import {
   SALES_REP_ACCESS_PERMISSION,
 } from "./constants";
 import { salesRepMenuSchema } from "./menu";
-import { myCustomersRoute, salesRepsRoute } from "./routes";
+import { customerProfileRoute, myCustomersRoute, salesRepsRoute } from "./routes";
 import type { I18n } from "@/i18n";
 import type { Router } from "vue-router";
 
@@ -24,6 +24,8 @@ export function init(router: Router, i18n: I18n) {
   // Relative routes -> mount under the "Company" parent (/company/sales-reps, /company/my-customers).
   router.addRoute("Company", salesRepsRoute);
   router.addRoute("Company", myCustomersRoute);
+  // Customer profile (VCST-5308) -> /company/my-customers/:organizationId.
+  router.addRoute("Company", customerProfileRoute);
 
   const { mergeMenuSchema, registerAccountSection } = useNavigations();
   const { checkPermissions } = useUser();

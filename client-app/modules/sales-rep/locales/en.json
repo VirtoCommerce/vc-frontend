@@ -35,6 +35,35 @@
     },
     "hub": {
       "title": "Sales Rep hub"
+    },
+    "customer_profile": {
+      "loading": "Loading…",
+      "not_found": "Customer not found or not in your customers.",
+      "back_to_customers": "Back to my customers",
+      "orders": {
+        "title": "Orders",
+        "empty": "No orders yet",
+        "number": "Order #",
+        "date": "Date",
+        "items": "Items",
+        "status": "Status",
+        "total": "Total",
+        "view_all": "All orders"
+      },
+      "widgets": {
+        "ytd_purchases": "YTD purchases",
+        "open_balance": "Open balance",
+        "avg_order_value": "Avg order value",
+        "orders_ytd": "Orders YTD"
+      },
+      "info": {
+        "title": "Customer information",
+        "empty": "No information available",
+        "primary_contact": "Primary contact",
+        "phone": "Phone",
+        "account_type": "Account type",
+        "ship_to": "Ship-to"
+      }
     }
   }
 }

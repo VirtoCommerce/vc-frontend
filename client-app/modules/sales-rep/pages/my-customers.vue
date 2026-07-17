@@ -56,7 +56,12 @@
           >
             <template #mobile-item="{ item }">
               <div class="my-customers__mobile-item">
-                <b>{{ item.organizationName }}</b>
+                <VcLink
+                  class="my-customers__customer my-customers__customer--mobile"
+                  :to="{ name: CUSTOMER_PROFILE_ROUTE_NAME, params: { organizationId: item.organizationId } }"
+                >
+                  {{ item.organizationName }}
+                </VcLink>
 
                 <span v-if="item.location" class="my-customers__location">{{ item.location }}</span>
 
@@ -76,7 +81,12 @@
 
             <!-- Only Customer (name) is sortable — the server sort is name-backed. -->
             <VcTableColumn id="name" v-slot="{ item }" :title="t('sales_rep.my_customers.table.customer')" sortable>
-              <div>{{ item.organizationName }}</div>
+              <VcLink
+                class="my-customers__customer"
+                :to="{ name: CUSTOMER_PROFILE_ROUTE_NAME, params: { organizationId: item.organizationId } }"
+              >
+                {{ item.organizationName }}
+              </VcLink>
 
               <div v-if="item.location" class="my-customers__location">{{ item.location }}</div>
             </VcTableColumn>
@@ -108,6 +118,7 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useSalesRepCustomers } from "../composables/useSalesRepCustomers";
+import { CUSTOMER_PROFILE_ROUTE_NAME } from "../constants";
 import type { SalesRepCustomerSortColumnType, SalesRepCustomerType } from "../types";
 
 const { t } = useI18n();
@@ -169,6 +180,14 @@ function changePage(newPage: number): void {
   // Top-align body cells only, so the name lines up with the stacked last-order date/number.
   .vc-table__cell {
     @apply align-top;
+  }
+
+  &__customer {
+    @apply text-[--link-color] hover:underline;
+
+    &--mobile {
+      @apply font-bold;
+    }
   }
 
   // Muted, small location line under the customer name — matches the design.
