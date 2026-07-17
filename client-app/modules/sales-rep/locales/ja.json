@@ -1,0 +1,20 @@
+{
+  "sales_rep": {
+    "navigation": {
+      "link": "営業担当者"
+    },
+    "page": {
+      "title": "営業担当者"
+    },
+    "table": {
+      "name": "名前",
+      "email": "メール",
+      "phone": "電話",
+      "search_placeholder": "名前、メール、または電話で検索",
+      "search_aria": "営業担当者を検索",
+      "empty": "営業担当者が見つかりませんでした",
+      "no_results": "営業担当者が見つかりませんでした",
+      "reset_search": "検索をリセット"
+    }
+  }
+}

@@ -63,6 +63,13 @@ const independentModules: ModuleType[] = [
     apiPath: "client-app/modules/loyalty/api/graphql",
     schemaPath: `${process.env.APP_BACKEND_URL}/graphql/loyalty`,
   },
+  {
+    name: "SalesRep",
+    apiPath: "client-app/modules/sales-rep/api/graphql",
+    // The sales-rep backend module (VirtoCommerce.SalesRep) exposes a scoped schema at
+    // /graphql/sales-rep. Envs without the module installed just log an error (allSettled).
+    schemaPath: `${process.env.APP_BACKEND_URL}/graphql/sales-rep`,
+  },
   /* EXPERIMENTAL FEATURE
   {
     name: "PurchaseRequests",

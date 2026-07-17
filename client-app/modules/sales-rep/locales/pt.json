@@ -1,0 +1,20 @@
+{
+  "sales_rep": {
+    "navigation": {
+      "link": "Representantes de vendas"
+    },
+    "page": {
+      "title": "Representantes de vendas"
+    },
+    "table": {
+      "name": "Nome",
+      "email": "E-mail",
+      "phone": "Telefone",
+      "search_placeholder": "Pesquisar por nome, e-mail ou telefone",
+      "search_aria": "Pesquisar representantes de vendas",
+      "empty": "Nenhum representante de vendas encontrado",
+      "no_results": "Nenhum representante de vendas corresponde à sua pesquisa",
+      "reset_search": "Redefinir pesquisa"
+    }
+  }
+}
