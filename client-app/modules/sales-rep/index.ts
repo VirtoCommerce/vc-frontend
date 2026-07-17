@@ -5,6 +5,8 @@ import { useExtensionRegistry } from "@/shared/common/composables/extensionRegis
 import { loadModuleLocale } from "../utils";
 import { isSalesRepsEnabled } from "./composables/useSalesRepsConfig";
 import {
+  DASHBOARD_NAV_LINK_ID,
+  DASHBOARD_ROUTE_NAME,
   HUB_NAV_PRIORITY,
   HUB_SECTION_ID,
   MY_CUSTOMERS_NAV_LINK_ID,
@@ -12,7 +14,7 @@ import {
   SALES_REP_ACCESS_PERMISSION,
 } from "./constants";
 import { salesRepMenuSchema } from "./menu";
-import { customerProfileRoute, myCustomersRoute, salesRepsRoute } from "./routes";
+import { customerProfileRoute, dashboardRoute, myCustomersRoute, salesRepsRoute } from "./routes";
 import type { I18n } from "@/i18n";
 import type { Router } from "vue-router";
 
@@ -21,8 +23,9 @@ export function init(router: Router, i18n: I18n) {
     return;
   }
 
-  // Relative routes -> mount under the "Company" parent (/company/sales-reps, /company/my-customers).
+  // Relative routes -> mount under the "Company" parent (/company/sales-reps, /company/dashboard, /company/my-customers).
   router.addRoute("Company", salesRepsRoute);
+  router.addRoute("Company", dashboardRoute);
   router.addRoute("Company", myCustomersRoute);
   // Customer profile (VCST-5308) -> /company/my-customers/:organizationId.
   router.addRoute("Company", customerProfileRoute);
@@ -49,6 +52,12 @@ export function init(router: Router, i18n: I18n) {
     icon: "users",
     priority: HUB_NAV_PRIORITY,
     children: [
+      {
+        id: DASHBOARD_NAV_LINK_ID,
+        title: "sales_rep.hub.dashboard.navigation.link",
+        icon: "view-grid",
+        route: { name: DASHBOARD_ROUTE_NAME },
+      },
       {
         id: MY_CUSTOMERS_NAV_LINK_ID,
         title: "sales_rep.my_customers.navigation.link",

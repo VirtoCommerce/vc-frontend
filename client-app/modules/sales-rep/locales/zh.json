@@ -34,7 +34,15 @@
       }
     },
     "hub": {
-      "title": "销售代表中心"
+      "title": "销售代表中心",
+      "dashboard": {
+        "navigation": {
+          "link": "仪表板"
+        },
+        "page": {
+          "title": "仪表板"
+        }
+      }
     },
     "customer_profile": {
       "loading": "加载中…",

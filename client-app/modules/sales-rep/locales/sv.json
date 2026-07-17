@@ -34,7 +34,15 @@
       }
     },
     "hub": {
-      "title": "Säljrepresentant-hub"
+      "title": "Säljrepresentant-hub",
+      "dashboard": {
+        "navigation": {
+          "link": "Instrumentpanel"
+        },
+        "page": {
+          "title": "Instrumentpanel"
+        }
+      }
     },
     "customer_profile": {
       "loading": "Laddar…",

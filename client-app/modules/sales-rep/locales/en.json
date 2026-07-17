@@ -34,7 +34,15 @@
       }
     },
     "hub": {
-      "title": "Sales Rep hub"
+      "title": "Sales Rep hub",
+      "dashboard": {
+        "navigation": {
+          "link": "Dashboard"
+        },
+        "page": {
+          "title": "Dashboard"
+        }
+      }
     },
     "customer_profile": {
       "loading": "Loading…",

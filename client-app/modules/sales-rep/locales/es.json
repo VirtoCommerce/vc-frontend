@@ -34,7 +34,15 @@
       }
     },
     "hub": {
-      "title": "Centro del representante de ventas"
+      "title": "Centro del representante de ventas",
+      "dashboard": {
+        "navigation": {
+          "link": "Panel de control"
+        },
+        "page": {
+          "title": "Panel de control"
+        }
+      }
     },
     "customer_profile": {
       "loading": "Cargando…",

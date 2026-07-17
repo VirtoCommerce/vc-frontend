@@ -34,7 +34,15 @@
       }
     },
     "hub": {
-      "title": "Salgsrepresentant-hub"
+      "title": "Salgsrepresentant-hub",
+      "dashboard": {
+        "navigation": {
+          "link": "Dashbord"
+        },
+        "page": {
+          "title": "Dashbord"
+        }
+      }
     },
     "customer_profile": {
       "loading": "Laster…",

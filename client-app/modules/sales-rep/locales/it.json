@@ -34,7 +34,15 @@
       }
     },
     "hub": {
-      "title": "Hub rappresentante vendite"
+      "title": "Hub rappresentante vendite",
+      "dashboard": {
+        "navigation": {
+          "link": "Dashboard"
+        },
+        "page": {
+          "title": "Dashboard"
+        }
+      }
     },
     "customer_profile": {
       "loading": "Caricamento…",

@@ -34,7 +34,15 @@
       }
     },
     "hub": {
-      "title": "Espace représentant commercial"
+      "title": "Espace représentant commercial",
+      "dashboard": {
+        "navigation": {
+          "link": "Tableau de bord"
+        },
+        "page": {
+          "title": "Tableau de bord"
+        }
+      }
     },
     "customer_profile": {
       "loading": "Chargement…",

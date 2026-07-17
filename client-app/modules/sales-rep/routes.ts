@@ -3,6 +3,8 @@ import { isSalesRepsEnabled } from "./composables/useSalesRepsConfig";
 import {
   CUSTOMER_PROFILE_ROUTE_NAME,
   CUSTOMER_PROFILE_ROUTE_SEGMENT,
+  DASHBOARD_ROUTE_NAME,
+  DASHBOARD_ROUTE_SEGMENT,
   MY_CUSTOMERS_ROUTE_NAME,
   MY_CUSTOMERS_ROUTE_SEGMENT,
   ROUTE_NAME,
@@ -14,6 +16,7 @@ import type { RouteRecordRaw } from "vue-router";
 const SalesRepsPage = () => import("./pages/sales-reps.vue");
 const MyCustomersPage = () => import("./pages/my-customers.vue");
 const CustomerProfilePage = () => import("./pages/customer-profile.vue");
+const DashboardPage = () => import("./pages/dashboard.vue");
 
 // Reps only: reuse the My customers gate (SalesRep.Enabled + sales-rep:access), else -> Dashboard.
 function guardSalesRep(next: (to?: { name: string }) => void): boolean {
@@ -30,6 +33,19 @@ export const salesRepsRoute: RouteRecordRaw = {
   path: ROUTE_SEGMENT,
   name: ROUTE_NAME,
   component: SalesRepsPage,
+};
+
+// "Dashboard" — Sales Rep hub landing (VCST-5485) -> /company/dashboard.
+export const dashboardRoute: RouteRecordRaw = {
+  path: DASHBOARD_ROUTE_SEGMENT,
+  name: DASHBOARD_ROUTE_NAME,
+  component: DashboardPage,
+  // Reps only — non-reps who hit the URL directly are bounced to the account dashboard.
+  beforeEnter(_to, _from, next) {
+    if (guardSalesRep(next)) {
+      next();
+    }
+  },
 };
 
 export const myCustomersRoute: RouteRecordRaw = {

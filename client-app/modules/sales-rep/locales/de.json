@@ -34,7 +34,15 @@
       }
     },
     "hub": {
-      "title": "Vertriebsmitarbeiter-Hub"
+      "title": "Vertriebsmitarbeiter-Hub",
+      "dashboard": {
+        "navigation": {
+          "link": "Dashboard"
+        },
+        "page": {
+          "title": "Dashboard"
+        }
+      }
     },
     "customer_profile": {
       "loading": "Wird geladen…",

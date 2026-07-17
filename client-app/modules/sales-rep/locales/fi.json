@@ -34,7 +34,15 @@
       }
     },
     "hub": {
-      "title": "Myyntiedustajan keskus"
+      "title": "Myyntiedustajan keskus",
+      "dashboard": {
+        "navigation": {
+          "link": "Hallintapaneeli"
+        },
+        "page": {
+          "title": "Hallintapaneeli"
+        }
+      }
     },
     "customer_profile": {
       "loading": "Ladataan…",

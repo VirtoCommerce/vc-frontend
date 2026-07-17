@@ -34,7 +34,15 @@
       }
     },
     "hub": {
-      "title": "Centrum przedstawiciela handlowego"
+      "title": "Centrum przedstawiciela handlowego",
+      "dashboard": {
+        "navigation": {
+          "link": "Panel"
+        },
+        "page": {
+          "title": "Panel"
+        }
+      }
     },
     "customer_profile": {
       "loading": "Ładowanie…",
