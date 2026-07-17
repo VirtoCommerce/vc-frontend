@@ -54,16 +54,6 @@
       "loading": "Carregando…",
       "not_found": "Cliente não encontrado ou não está nos seus clientes.",
       "back_to_customers": "Voltar aos meus clientes",
-      "orders": {
-        "title": "Pedidos",
-        "empty": "Ainda não há pedidos",
-        "number": "N.º do pedido",
-        "date": "Data",
-        "items": "Itens",
-        "status": "Status",
-        "total": "Total",
-        "view_all": "Todos os pedidos"
-      },
       "widgets": {
         "ytd_purchases": "Compras no ano até agora",
         "open_balance": "Saldo em aberto",
@@ -78,6 +68,20 @@
         "account_type": "Tipo de conta",
         "ship_to": "Enviar para"
       }
+    },
+    "recent_orders": {
+      "title": "Pedidos recentes",
+      "view_all": "Todos os pedidos",
+      "empty": "Ainda não há pedidos",
+      "tabs": {
+        "all": "Todos"
+      },
+      "number": "N.º do pedido",
+      "customer": "Cliente",
+      "date": "Data",
+      "items": "Itens",
+      "status": "Status",
+      "total": "Total"
     }
   }
 }

@@ -54,16 +54,6 @@
       "loading": "Wird geladen…",
       "not_found": "Kunde nicht gefunden oder nicht in Ihren Kunden.",
       "back_to_customers": "Zurück zu meinen Kunden",
-      "orders": {
-        "title": "Bestellungen",
-        "empty": "Noch keine Bestellungen",
-        "number": "Bestellnr.",
-        "date": "Datum",
-        "items": "Artikel",
-        "status": "Status",
-        "total": "Gesamt",
-        "view_all": "Alle Bestellungen"
-      },
       "widgets": {
         "ytd_purchases": "Käufe seit Jahresbeginn",
         "open_balance": "Offener Saldo",
@@ -78,6 +68,20 @@
         "account_type": "Kontotyp",
         "ship_to": "Lieferadresse"
       }
+    },
+    "recent_orders": {
+      "title": "Aktuelle Bestellungen",
+      "view_all": "Alle Bestellungen",
+      "empty": "Noch keine Bestellungen",
+      "tabs": {
+        "all": "Alle"
+      },
+      "number": "Bestellnr.",
+      "customer": "Kunde",
+      "date": "Datum",
+      "items": "Artikel",
+      "status": "Status",
+      "total": "Gesamt"
     }
   }
 }

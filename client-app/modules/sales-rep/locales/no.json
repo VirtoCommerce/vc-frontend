@@ -54,16 +54,6 @@
       "loading": "Laster…",
       "not_found": "Kunden ble ikke funnet eller er ikke blant kundene dine.",
       "back_to_customers": "Tilbake til mine kunder",
-      "orders": {
-        "title": "Bestillinger",
-        "empty": "Ingen bestillinger ennå",
-        "number": "Ordrenr.",
-        "date": "Dato",
-        "items": "Varer",
-        "status": "Status",
-        "total": "Totalt",
-        "view_all": "Alle bestillinger"
-      },
       "widgets": {
         "ytd_purchases": "Kjøp hittil i år",
         "open_balance": "Utestående saldo",
@@ -78,6 +68,20 @@
         "account_type": "Kontotype",
         "ship_to": "Leveringsadresse"
       }
+    },
+    "recent_orders": {
+      "title": "Nylige ordrer",
+      "view_all": "Alle bestillinger",
+      "empty": "Ingen bestillinger ennå",
+      "tabs": {
+        "all": "Alle"
+      },
+      "number": "Ordrenr.",
+      "customer": "Kunde",
+      "date": "Dato",
+      "items": "Varer",
+      "status": "Status",
+      "total": "Totalt"
     }
   }
 }

@@ -54,16 +54,6 @@
       "loading": "Chargement…",
       "not_found": "Client introuvable ou absent de vos clients.",
       "back_to_customers": "Retour à mes clients",
-      "orders": {
-        "title": "Commandes",
-        "empty": "Aucune commande pour le moment",
-        "number": "N° de commande",
-        "date": "Date",
-        "items": "Articles",
-        "status": "Statut",
-        "total": "Total",
-        "view_all": "Toutes les commandes"
-      },
       "widgets": {
         "ytd_purchases": "Achats depuis le début de l'année",
         "open_balance": "Solde ouvert",
@@ -78,6 +68,20 @@
         "account_type": "Type de compte",
         "ship_to": "Adresse de livraison"
       }
+    },
+    "recent_orders": {
+      "title": "Commandes récentes",
+      "view_all": "Toutes les commandes",
+      "empty": "Aucune commande pour le moment",
+      "tabs": {
+        "all": "Tous"
+      },
+      "number": "N° de commande",
+      "customer": "Client",
+      "date": "Date",
+      "items": "Articles",
+      "status": "Statut",
+      "total": "Total"
     }
   }
 }

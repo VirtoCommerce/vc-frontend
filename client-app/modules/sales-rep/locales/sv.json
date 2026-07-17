@@ -54,16 +54,6 @@
       "loading": "Laddar…",
       "not_found": "Kunden hittades inte eller finns inte bland dina kunder.",
       "back_to_customers": "Tillbaka till mina kunder",
-      "orders": {
-        "title": "Beställningar",
-        "empty": "Inga beställningar ännu",
-        "number": "Ordernr",
-        "date": "Datum",
-        "items": "Artiklar",
-        "status": "Status",
-        "total": "Totalt",
-        "view_all": "Alla beställningar"
-      },
       "widgets": {
         "ytd_purchases": "Inköp hittills i år",
         "open_balance": "Utestående saldo",
@@ -78,6 +68,20 @@
         "account_type": "Kontotyp",
         "ship_to": "Leveransadress"
       }
+    },
+    "recent_orders": {
+      "title": "Senaste ordrar",
+      "view_all": "Alla beställningar",
+      "empty": "Inga beställningar ännu",
+      "tabs": {
+        "all": "Alla"
+      },
+      "number": "Ordernr",
+      "customer": "Kund",
+      "date": "Datum",
+      "items": "Artiklar",
+      "status": "Status",
+      "total": "Totalt"
     }
   }
 }

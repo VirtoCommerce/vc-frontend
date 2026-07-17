@@ -54,16 +54,6 @@
       "loading": "Loading…",
       "not_found": "Customer not found or not in your customers.",
       "back_to_customers": "Back to my customers",
-      "orders": {
-        "title": "Orders",
-        "empty": "No orders yet",
-        "number": "Order #",
-        "date": "Date",
-        "items": "Items",
-        "status": "Status",
-        "total": "Total",
-        "view_all": "All orders"
-      },
       "widgets": {
         "ytd_purchases": "YTD purchases",
         "open_balance": "Open balance",
@@ -78,6 +68,20 @@
         "account_type": "Account type",
         "ship_to": "Ship-to"
       }
+    },
+    "recent_orders": {
+      "title": "Recent orders",
+      "view_all": "All orders",
+      "empty": "No orders yet",
+      "tabs": {
+        "all": "All"
+      },
+      "number": "Order #",
+      "customer": "Customer",
+      "date": "Date",
+      "items": "Items",
+      "status": "Status",
+      "total": "Total"
     }
   }
 }

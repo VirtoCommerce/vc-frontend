@@ -1,0 +1,6 @@
+query SalesRepOrderStatuses($storeId: String, $cultureName: String) {
+  salesRepOrderStatuses(storeId: $storeId, cultureName: $cultureName) {
+    name
+    localizedName
+  }
+}

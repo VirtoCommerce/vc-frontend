@@ -54,16 +54,6 @@
       "loading": "Ladataan…",
       "not_found": "Asiakasta ei löytynyt tai se ei kuulu asiakkaisiisi.",
       "back_to_customers": "Takaisin omiin asiakkaisiin",
-      "orders": {
-        "title": "Tilaukset",
-        "empty": "Ei vielä tilauksia",
-        "number": "Tilausnro",
-        "date": "Päivämäärä",
-        "items": "Tuotteet",
-        "status": "Tila",
-        "total": "Yhteensä",
-        "view_all": "Kaikki tilaukset"
-      },
       "widgets": {
         "ytd_purchases": "Ostot vuoden alusta",
         "open_balance": "Avoin saldo",
@@ -78,6 +68,20 @@
         "account_type": "Tilin tyyppi",
         "ship_to": "Toimitusosoite"
       }
+    },
+    "recent_orders": {
+      "title": "Viimeisimmät tilaukset",
+      "view_all": "Kaikki tilaukset",
+      "empty": "Ei vielä tilauksia",
+      "tabs": {
+        "all": "Kaikki"
+      },
+      "number": "Tilausnro",
+      "customer": "Asiakas",
+      "date": "Päivämäärä",
+      "items": "Tuotteet",
+      "status": "Tila",
+      "total": "Yhteensä"
     }
   }
 }

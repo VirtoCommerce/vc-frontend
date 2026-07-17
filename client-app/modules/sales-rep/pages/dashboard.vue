@@ -6,12 +6,16 @@
 
     <!-- Full-width KPI row (mock until the rep dashboard stats query lands). -->
     <DashboardWidgets />
+
+    <!-- Cross-customer recent orders (real data: salesRepOrders + salesRepOrderStatuses). -->
+    <RecentOrders />
   </div>
 </template>
 
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 import DashboardWidgets from "../components/dashboard-widgets.vue";
+import RecentOrders from "../components/recent-orders.vue";
 
 const { t } = useI18n();
 </script>
@@ -19,6 +23,8 @@ const { t } = useI18n();
 <style lang="scss">
 // `@apply` keeps the module self-contained as an MF remote (no global utility layer). See PORT_TO_MF.md.
 .sales-rep-dashboard {
+  @apply flex flex-col gap-5;
+
   &__title {
     @apply [word-break:break-word];
   }
