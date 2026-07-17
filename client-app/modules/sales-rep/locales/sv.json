@@ -26,6 +26,7 @@
       "table": {
         "customer": "Kund",
         "last_order": "Min senaste order",
+        "actions": "Åtgärder",
         "search_placeholder": "Sök efter namn",
         "search_aria": "Sök kunder",
         "empty": "Inga kunder hittades",
@@ -66,7 +67,7 @@
       }
     },
     "communication": {
-      "action": "Skicka meddelande",
+      "action": "Skicka e-post",
       "title": "Skicka ett meddelande",
       "subtitle": "Når alla medlemmar i {organization}.",
       "title_label": "Titel",
@@ -81,7 +82,10 @@
       "error_text": "Meddelandet kunde inte skickas. Försök igen.",
       "quick_actions": {
         "title": "Snabbåtgärder",
-        "send_message": "Skicka meddelande"
+        "order_on_behalf": "Beställ åt kunden",
+        "send_email": "Skicka e-post",
+        "create_quote": "Skapa offert",
+        "schedule_call": "Boka samtal"
       }
     }
   }

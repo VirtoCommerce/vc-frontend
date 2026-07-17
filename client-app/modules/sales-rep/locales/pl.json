@@ -26,6 +26,7 @@
       "table": {
         "customer": "Klient",
         "last_order": "Moje ostatnie zamówienie",
+        "actions": "Akcje",
         "search_placeholder": "Szukaj według nazwy",
         "search_aria": "Szukaj klientów",
         "empty": "Nie znaleziono klientów",
@@ -66,7 +67,7 @@
       }
     },
     "communication": {
-      "action": "Wyślij wiadomość",
+      "action": "Wyślij e-mail",
       "title": "Wyślij wiadomość",
       "subtitle": "Dociera do każdego członka organizacji {organization}.",
       "title_label": "Tytuł",
@@ -81,7 +82,10 @@
       "error_text": "Nie udało się wysłać wiadomości. Spróbuj ponownie.",
       "quick_actions": {
         "title": "Szybkie akcje",
-        "send_message": "Wyślij wiadomość"
+        "order_on_behalf": "Zamów w imieniu",
+        "send_email": "Wyślij e-mail",
+        "create_quote": "Utwórz ofertę",
+        "schedule_call": "Zaplanuj rozmowę"
       }
     }
   }

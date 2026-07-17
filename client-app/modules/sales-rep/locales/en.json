@@ -26,6 +26,7 @@
       "table": {
         "customer": "Customer",
         "last_order": "My last order",
+        "actions": "Actions",
         "search_placeholder": "Search by name",
         "search_aria": "Search customers",
         "empty": "No customers found",
@@ -66,7 +67,7 @@
       }
     },
     "communication": {
-      "action": "Send message",
+      "action": "Send email",
       "title": "Send a message",
       "subtitle": "Reaches every member of {organization}.",
       "title_label": "Title",
@@ -81,7 +82,10 @@
       "error_text": "The message could not be sent. Please try again.",
       "quick_actions": {
         "title": "Quick actions",
-        "send_message": "Send message"
+        "order_on_behalf": "Order on behalf",
+        "send_email": "Send email",
+        "create_quote": "Create quote",
+        "schedule_call": "Schedule call"
       }
     }
   }

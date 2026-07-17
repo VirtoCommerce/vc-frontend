@@ -26,6 +26,7 @@
       "table": {
         "customer": "Kunde",
         "last_order": "Min siste ordre",
+        "actions": "Handlinger",
         "search_placeholder": "Søk etter navn",
         "search_aria": "Søk etter kunder",
         "empty": "Ingen kunder funnet",
@@ -66,7 +67,7 @@
       }
     },
     "communication": {
-      "action": "Send melding",
+      "action": "Send e-post",
       "title": "Send en melding",
       "subtitle": "Når alle medlemmer i {organization}.",
       "title_label": "Tittel",
@@ -81,7 +82,10 @@
       "error_text": "Meldingen kunne ikke sendes. Prøv igjen.",
       "quick_actions": {
         "title": "Hurtighandlinger",
-        "send_message": "Send melding"
+        "order_on_behalf": "Bestill på vegne av",
+        "send_email": "Send e-post",
+        "create_quote": "Opprett tilbud",
+        "schedule_call": "Planlegg samtale"
       }
     }
   }

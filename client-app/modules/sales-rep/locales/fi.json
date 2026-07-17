@@ -26,6 +26,7 @@
       "table": {
         "customer": "Asiakas",
         "last_order": "Viimeisin tilaukseni",
+        "actions": "Toiminnot",
         "search_placeholder": "Hae nimellä",
         "search_aria": "Hae asiakkaita",
         "empty": "Asiakkaita ei löytynyt",
@@ -66,7 +67,7 @@
       }
     },
     "communication": {
-      "action": "Lähetä viesti",
+      "action": "Lähetä sähköposti",
       "title": "Lähetä viesti",
       "subtitle": "Tavoittaa kaikki organisaation {organization} jäsenet.",
       "title_label": "Otsikko",
@@ -81,7 +82,10 @@
       "error_text": "Viestiä ei voitu lähettää. Yritä uudelleen.",
       "quick_actions": {
         "title": "Pikatoiminnot",
-        "send_message": "Lähetä viesti"
+        "order_on_behalf": "Tilaa asiakkaan puolesta",
+        "send_email": "Lähetä sähköposti",
+        "create_quote": "Luo tarjous",
+        "schedule_call": "Ajoita puhelu"
       }
     }
   }

@@ -26,6 +26,7 @@
       "table": {
         "customer": "客户",
         "last_order": "我的最近订单",
+        "actions": "操作",
         "search_placeholder": "按名称搜索",
         "search_aria": "搜索客户",
         "empty": "未找到客户",
@@ -66,7 +67,7 @@
       }
     },
     "communication": {
-      "action": "发送消息",
+      "action": "发送电子邮件",
       "title": "发送消息",
       "subtitle": "将送达 {organization} 的所有成员。",
       "title_label": "标题",
@@ -81,7 +82,10 @@
       "error_text": "消息发送失败，请重试。",
       "quick_actions": {
         "title": "快捷操作",
-        "send_message": "发送消息"
+        "order_on_behalf": "代客下单",
+        "send_email": "发送电子邮件",
+        "create_quote": "创建报价",
+        "schedule_call": "安排通话"
       }
     }
   }

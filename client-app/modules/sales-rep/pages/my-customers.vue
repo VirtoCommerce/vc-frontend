@@ -81,7 +81,7 @@
                   class="my-customers__mobile-action"
                   size="sm"
                   variant="outline"
-                  prepend-icon="paper-airplane"
+                  prepend-icon="mail"
                   @click="openCommunication(item)"
                 >
                   {{ t("sales_rep.communication.action") }}
@@ -118,13 +118,19 @@
               <template v-else>—</template>
             </VcTableColumn>
 
-            <VcTableColumn id="actions" v-slot="{ item }" class="w-16 text-center">
+            <VcTableColumn
+              id="actions"
+              v-slot="{ item }"
+              :title="t('sales_rep.my_customers.table.actions')"
+              class="w-16 text-center"
+            >
               <VcButton
                 :aria-label="t('sales_rep.communication.action')"
                 :title="t('sales_rep.communication.action')"
-                icon="paper-airplane"
+                icon="mail"
                 icon-size="1.25rem"
                 variant="ghost"
+                color="neutral"
                 @click="openCommunication(item)"
               />
             </VcTableColumn>

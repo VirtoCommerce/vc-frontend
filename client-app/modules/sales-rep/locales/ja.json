@@ -26,6 +26,7 @@
       "table": {
         "customer": "顧客",
         "last_order": "私の最近の注文",
+        "actions": "アクション",
         "search_placeholder": "名前で検索",
         "search_aria": "顧客を検索",
         "empty": "顧客が見つかりません",
@@ -66,7 +67,7 @@
       }
     },
     "communication": {
-      "action": "メッセージを送信",
+      "action": "メールを送信",
       "title": "メッセージを送信",
       "subtitle": "{organization} のすべてのメンバーに届きます。",
       "title_label": "タイトル",
@@ -81,7 +82,10 @@
       "error_text": "メッセージを送信できませんでした。もう一度お試しください。",
       "quick_actions": {
         "title": "クイックアクション",
-        "send_message": "メッセージを送信"
+        "order_on_behalf": "代理で注文",
+        "send_email": "メールを送信",
+        "create_quote": "見積もりを作成",
+        "schedule_call": "通話を予約"
       }
     }
   }
