@@ -102,6 +102,10 @@ export default defineConfig(({ command, mode }): UserConfig => {
       target: browserslistToEsbuild(),
       emptyOutDir: true,
       sourcemap: true,
+      // Icon SVGs must stay real assets (fetched on demand by VcIcon), never inlined
+      // as data: URIs into the eager registry.
+      // eslint-disable-next-line sonarjs/null-dereference -- filePath is a non-nullable string per Vite's assetsInlineLimit signature; the rule is a false positive here
+      assetsInlineLimit: (filePath) => (filePath.includes("/ui-kit/icons/") ? false : undefined),
       rollupOptions: {
         output: {
           manualChunks(id = "") {

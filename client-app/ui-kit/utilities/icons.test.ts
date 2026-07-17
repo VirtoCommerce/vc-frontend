@@ -1,6 +1,26 @@
-import { afterEach, describe, it, expect } from "vitest";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
+import { afterAll, afterEach, beforeAll, describe, it, expect, vi } from "vitest";
 import { resolveIconName } from "./icon-aliases";
 import { resolveIcon, loadIconRaw, setDefaultIconVariant } from "./icons";
+
+beforeAll(() => {
+  // Icons resolve to asset URLs and are fetched at runtime; there is no server
+  // under vitest, so serve them from disk.
+  vi.stubGlobal("fetch", async (input: RequestInfo | URL) => {
+    const url = String(input).replace(/^\/@fs/, "");
+    const filePath = url.startsWith("/") && !url.startsWith("//") ? path.join(process.cwd(), url) : url;
+    try {
+      return new Response(await readFile(filePath, "utf8"), { status: 200 });
+    } catch {
+      return new Response("", { status: 404 });
+    }
+  });
+});
+
+afterAll(() => {
+  vi.unstubAllGlobals();
+});
 
 afterEach(() => {
   setDefaultIconVariant("outline");
@@ -72,5 +92,71 @@ describe("loadIconRaw", () => {
   it("returns empty raw for an unknown icon name", async () => {
     const { raw } = await loadIconRaw("__does_not_exist__");
     expect(raw).toBe("");
+  });
+
+  // "accessibility" is a real outline icon unused by other tests, so its memoized
+  // loader is unwarmed and this per-test fetch actually runs.
+  it("strips scripts and event handlers from the fetched SVG (sanitization is live)", async () => {
+    const maliciousSvg =
+      '<svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script><rect onload="alert(2)" width="10" height="10"/></svg>';
+    const diskFetch = globalThis.fetch;
+    globalThis.fetch = vi.fn(async () => new Response(maliciousSvg, { status: 200 }));
+
+    try {
+      const { raw } = await loadIconRaw("accessibility", "outline");
+
+      expect(raw).not.toContain("<script");
+      expect(raw).not.toContain("onload");
+      expect(raw).toContain("<svg");
+      expect(raw).toContain("<rect");
+    } finally {
+      globalThis.fetch = diskFetch;
+    }
+  });
+
+  // "airplay" and "activity" are real outline icons unused elsewhere, so their
+  // memoized loaders start cold — the fetch counts below reflect only these tests.
+  it("memoizes the loader so the same icon is fetched only once", async () => {
+    const validSvg = '<svg xmlns="http://www.w3.org/2000/svg" stroke="currentColor"><path d="M1 1"/></svg>';
+    const diskFetch = globalThis.fetch;
+    const fetchSpy = vi.fn(async () => new Response(validSvg, { status: 200 }));
+    globalThis.fetch = fetchSpy;
+
+    try {
+      const first = await loadIconRaw("airplay", "outline");
+      const second = await loadIconRaw("airplay", "outline");
+
+      expect(first.raw).toContain("<svg");
+      expect(second.raw).toContain("<svg");
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
+    } finally {
+      globalThis.fetch = diskFetch;
+    }
+  });
+
+  it("retries the fetch after a failure (failures are not cached)", async () => {
+    const validSvg = '<svg xmlns="http://www.w3.org/2000/svg" stroke="currentColor"><path d="M1 1"/></svg>';
+    const diskFetch = globalThis.fetch;
+    let shouldFail = true;
+    const fetchSpy = vi.fn(async () => {
+      if (shouldFail) {
+        return new Response("", { status: 404 });
+      }
+      return new Response(validSvg, { status: 200 });
+    });
+    globalThis.fetch = fetchSpy;
+
+    try {
+      const failed = await loadIconRaw("activity", "outline");
+      expect(failed.raw).toBe("");
+
+      shouldFail = false;
+      const recovered = await loadIconRaw("activity", "outline");
+
+      expect(recovered.raw).toContain("<svg");
+      expect(fetchSpy).toHaveBeenCalledTimes(2);
+    } finally {
+      globalThis.fetch = diskFetch;
+    }
   });
 });
