@@ -73,6 +73,7 @@
       "title": "Recent orders",
       "view_all": "All orders",
       "empty": "No orders yet",
+      "no_results": "No orders match this filter",
       "tabs": {
         "all": "All"
       },

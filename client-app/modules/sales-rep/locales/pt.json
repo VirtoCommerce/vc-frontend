@@ -73,6 +73,7 @@
       "title": "Pedidos recentes",
       "view_all": "Todos os pedidos",
       "empty": "Ainda não há pedidos",
+      "no_results": "Nenhum pedido corresponde a este filtro",
       "tabs": {
         "all": "Todos"
       },

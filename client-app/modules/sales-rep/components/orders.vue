@@ -21,7 +21,12 @@
       />
     </div>
 
-    <VcEmptyView v-if="!orders.length && !loading" :text="t('sales_rep.orders.empty')" icon="outline-order" />
+    <!-- With a status tab active, "no orders" means "none match the filter" — not "never ordered". -->
+    <VcEmptyView
+      v-if="!orders.length && !loading"
+      :text="activeStatus ? t('sales_rep.orders.no_results') : t('sales_rep.orders.empty')"
+      icon="outline-order"
+    />
 
     <!-- Skeleton rows match the page size so the loading state mirrors what will load. -->
     <VcTable v-else :loading="loading" :items="orders" :skeleton-rows="limit" mobile-breakpoint="lg">

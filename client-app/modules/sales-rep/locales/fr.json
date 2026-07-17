@@ -73,6 +73,7 @@
       "title": "Commandes récentes",
       "view_all": "Toutes les commandes",
       "empty": "Aucune commande pour le moment",
+      "no_results": "Aucune commande ne correspond à ce filtre",
       "tabs": {
         "all": "Tous"
       },

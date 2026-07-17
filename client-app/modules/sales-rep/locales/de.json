@@ -73,6 +73,7 @@
       "title": "Aktuelle Bestellungen",
       "view_all": "Alle Bestellungen",
       "empty": "Noch keine Bestellungen",
+      "no_results": "Keine Bestellungen entsprechen diesem Filter",
       "tabs": {
         "all": "Alle"
       },

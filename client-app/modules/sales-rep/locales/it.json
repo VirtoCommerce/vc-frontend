@@ -73,6 +73,7 @@
       "title": "Ordini recenti",
       "view_all": "Tutti gli ordini",
       "empty": "Ancora nessun ordine",
+      "no_results": "Nessun ordine corrisponde a questo filtro",
       "tabs": {
         "all": "Tutti"
       },
