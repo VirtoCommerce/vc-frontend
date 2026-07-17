@@ -21,7 +21,7 @@ const queryMock = await vi.hoisted(async () => {
 });
 
 vi.mock("@vue/apollo-composable", () => ({ useQuery: queryMock.useQuery }));
-vi.mock("@/core/globals", () => ({ globals: { storeId: "test-store" } }));
+vi.mock("@/core/globals", () => ({ globals: { storeId: "test-store", cultureName: "en-US" } }));
 // The operation is imported as a raw document; useQuery is mocked, so a stub is enough.
 vi.mock("../api/graphql/queries/salesRepOrders/salesRepOrdersQuery.graphql", () => ({ default: {} }));
 
@@ -29,6 +29,7 @@ vi.mock("../api/graphql/queries/salesRepOrders/salesRepOrdersQuery.graphql", () 
 function passedVariables(): {
   organizationId?: string;
   storeId?: string;
+  cultureName?: string;
   statuses?: string[];
   first: number;
   sort: string;
@@ -55,6 +56,7 @@ describe("useSalesRepOrders", () => {
     expect(passedVariables()).toEqual({
       organizationId: "cust-1",
       storeId: "test-store",
+      cultureName: "en-US",
       statuses: undefined,
       first: ORDERS_DEFAULT_LIMIT,
       sort: "createdDate:desc",
@@ -67,6 +69,7 @@ describe("useSalesRepOrders", () => {
     expect(passedVariables()).toEqual({
       organizationId: undefined,
       storeId: "test-store",
+      cultureName: "en-US",
       statuses: ["New"],
       first: 3,
       sort: "createdDate:desc",

@@ -1,5 +1,19 @@
-query SalesRepOrders($organizationId: String, $storeId: String, $statuses: [String], $first: Int, $sort: String) {
-  salesRepOrders(organizationId: $organizationId, storeId: $storeId, statuses: $statuses, first: $first, sort: $sort) {
+query SalesRepOrders(
+  $organizationId: String
+  $storeId: String
+  $statuses: [String]
+  $cultureName: String
+  $first: Int
+  $sort: String
+) {
+  salesRepOrders(
+    organizationId: $organizationId
+    storeId: $storeId
+    statuses: $statuses
+    cultureName: $cultureName
+    first: $first
+    sort: $sort
+  ) {
     totalCount
     items {
       id

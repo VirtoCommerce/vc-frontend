@@ -22,6 +22,8 @@ export function useSalesRepOrders(options: UseSalesRepOrdersOptionsType = {}) {
       organizationId: toValue(options.organizationId),
       // Scope to the rep's store so other-store orders don't leak in.
       storeId: globals.storeId,
+      // Localize statusDisplayValue to the active culture, matching the status tabs.
+      cultureName: globals.cultureName,
       // undefined (not []) means "no status filter" — the "All" tab.
       statuses: statuses?.length ? statuses : undefined,
       // Most recent N; the full list lives on the "All orders" page.
