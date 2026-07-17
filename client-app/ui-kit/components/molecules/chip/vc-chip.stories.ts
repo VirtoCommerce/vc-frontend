@@ -1,9 +1,10 @@
-import { VcChip } from "..";
+import { VcChip, VcAlert } from "..";
+import { VcMarkdownRender } from "../../atoms";
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
 const SIZES = ["sm", "md", "lg"];
 const COLORS = ["primary", "secondary", "success", "info", "neutral", "warning", "danger", "accent"];
-const VARIANTS = ["solid", "solid-light", "outline", "outline-dark"];
+const VARIANTS = ["solid", "soft", "outline", "surface", "ghost", "tonal"];
 
 const meta: Meta<typeof VcChip> = {
   title: "Components/Molecules/VcChip",
@@ -24,6 +25,8 @@ const meta: Meta<typeof VcChip> = {
     variant: {
       control: "select",
       options: VARIANTS,
+      description:
+        "Visual style. Deprecated aliases (still supported, emit a one-time dev warning): `solid-light` → `soft`, `outline-dark` → `tonal`.",
       type: { name: "string", required: false },
       table: { type: { summary: VARIANTS.join(" | ") } },
     },
@@ -48,6 +51,26 @@ export const Basic: StoryType = {
       },
     },
   },
+};
+
+export const Soft: StoryType = {
+  args: { variant: "soft" },
+};
+
+export const Outline: StoryType = {
+  args: { variant: "outline" },
+};
+
+export const Surface: StoryType = {
+  args: { variant: "surface" },
+};
+
+export const Ghost: StoryType = {
+  args: { variant: "ghost" },
+};
+
+export const Tonal: StoryType = {
+  args: { variant: "tonal" },
 };
 
 export const Rounded: StoryType = {
@@ -390,5 +413,50 @@ export const AllStates: StoryType = {
         </div>
       </div>
     </div>`,
+  }),
+};
+
+const DEPRECATED_VARIANTS = [
+  { legacy: "solid-light", canonical: "soft" },
+  { legacy: "outline-dark", canonical: "tonal" },
+] as const;
+
+const DEPRECATED_VARIANTS_MESSAGE =
+  "Deprecated `variant` aliases are kept for backward compatibility and resolve to their canonical names at runtime (emitting a one-time dev console warning): `solid-light` → **soft**, `outline-dark` → **tonal**. Each row below shows the deprecated alias next to its canonical replacement — they render identically. Prefer the canonical names in new code.";
+
+export const Deprecations: StoryType = {
+  tags: ["deprecated"],
+  parameters: {
+    docs: {
+      description: {
+        story: DEPRECATED_VARIANTS_MESSAGE,
+      },
+    },
+  },
+  render: () => ({
+    components: { VcChip, VcAlert, VcMarkdownRender },
+    setup: () => ({ pairs: DEPRECATED_VARIANTS, message: DEPRECATED_VARIANTS_MESSAGE }),
+    template: `<div class="space-y-6">
+      <VcAlert color="warning" variant="outline" icon title="Deprecated">
+        <VcMarkdownRender :src="message" />
+      </VcAlert>
+
+      <div
+        class="grid grid-cols-[1fr_auto_1fr] gap-4 items-center"
+        v-for="pair in pairs"
+        :key="pair.legacy"
+      >
+        <div class="space-y-1">
+          <div class="text-xs text-neutral-500">deprecated: <code>{{ pair.legacy }}</code></div>
+          <VcChip :variant="pair.legacy">Chip text</VcChip>
+        </div>
+        <div class="text-neutral-400">→</div>
+        <div class="space-y-1">
+          <div class="text-xs text-neutral-500">canonical: <code>{{ pair.canonical }}</code></div>
+          <VcChip :variant="pair.canonical">Chip text</VcChip>
+        </div>
+      </div>
+    </div>
+    `,
   }),
 };
