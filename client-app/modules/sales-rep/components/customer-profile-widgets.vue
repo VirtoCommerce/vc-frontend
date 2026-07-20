@@ -21,13 +21,6 @@ import StatWidget from "./stat-widget.vue";
 import StatWidgets from "./stat-widgets.vue";
 import type { StatWidgetCardType } from "../types/widgets";
 
-interface IProps {
-  organizationId: string;
-}
-
-// Unused until the stats query is wired (VCST-5309).
-defineProps<IProps>();
-
 const { t } = useI18n();
 
 // MOCK — visual only (VCST-5308); real figures come from salesRepCustomerOrderStatistics in VCST-5309.

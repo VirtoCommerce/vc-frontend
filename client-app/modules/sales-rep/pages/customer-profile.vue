@@ -30,7 +30,7 @@
       </div>
 
       <!-- Full-width KPI row (mock until VCST-5309). -->
-      <CustomerProfileWidgets :organization-id="organizationId" />
+      <CustomerProfileWidgets />
 
       <div class="customer-profile__layout">
         <div class="customer-profile__main">

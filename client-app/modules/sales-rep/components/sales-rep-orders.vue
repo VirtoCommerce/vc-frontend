@@ -135,11 +135,11 @@ const { orders, loading } = useSalesRepOrders({
   }
 
   &__all-link {
-    @apply inline-flex items-center gap-1 whitespace-nowrap text-sm font-medium text-[--link-color] hover:underline;
+    @apply inline-flex items-center gap-1 whitespace-nowrap text-sm font-medium text-[--link-color] hover:text-[--link-hover-color];
   }
 
   &__order-link {
-    @apply text-[--link-color] hover:underline;
+    @apply text-[--link-color] hover:text-[--link-hover-color];
   }
 
   &__mobile-item {
