@@ -62,7 +62,15 @@ const props = withDefaults(defineProps<IProps>(), {
   size: "md",
 });
 
-const canonicalVariant = computed(() => resolveVariant("VcAlert", props.variant));
+const DEFAULT_ALERT_VARIANT: VcAlertVariantType = "solid";
+const CANONICAL_ALERT_VARIANTS: readonly VcAlertVariantType[] = [DEFAULT_ALERT_VARIANT, "soft", "outline", "tonal"];
+
+const canonicalVariant = computed<VcAlertVariantType>(() => {
+  const resolved = resolveVariant("VcAlert", props.variant);
+  return (CANONICAL_ALERT_VARIANTS as readonly string[]).includes(resolved)
+    ? (resolved as VcAlertVariantType)
+    : DEFAULT_ALERT_VARIANT;
+});
 
 const iconName = computed<string>(() => {
   const { icon } = props;

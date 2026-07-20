@@ -22,7 +22,8 @@
 
   @each $color in $colors {
     &--soft--#{$color} {
-      --bg-color: var(--color-#{$color}-200);
+      --bg-color: var(--color-#{$color}-100);
+      --border-color: var(--color-#{$color}-100);
       --text-color: var(--color-#{$color}-900);
     }
 
@@ -32,7 +33,7 @@
     }
 
     &--tonal--#{$color} {
-      --bg-color: var(--color-#{$color}-200);
+      --bg-color: var(--color-#{$color}-100);
       --text-color: var(--color-#{$color}-900);
       --border-color: var(--color-#{$color}-600);
     }

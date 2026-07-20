@@ -313,6 +313,74 @@ export const AllStates: StoryType = {
   }),
 };
 
+export const KitchenSink: StoryType = {
+  args: {
+    color: "info",
+    variant: "solid",
+    size: "md",
+    title: "Alert",
+    icon: true,
+    closable: true,
+    shadow: true,
+  },
+  parameters: {
+    actions: { handles: ["close"] },
+    docs: {
+      source: {
+        code: `
+          <VcAlert color="info" variant="solid" size="md" title="Alert" icon closable shadow @close="handleClose">
+            Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
+          </VcAlert>
+        `,
+      },
+    },
+  },
+};
+
+export const Layouts: StoryType = {
+  render: () => ({
+    setup: () => ({}),
+    template: `<div class="space-y-4">
+      <div class="space-y-1">
+        <div class="text-xs font-bold">plain</div>
+        <VcAlert color="info" variant="soft">
+          Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
+        </VcAlert>
+      </div>
+      <div class="space-y-1">
+        <div class="text-xs font-bold">icon only</div>
+        <VcAlert color="info" variant="soft" icon>
+          Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
+        </VcAlert>
+      </div>
+      <div class="space-y-1">
+        <div class="text-xs font-bold">title only</div>
+        <VcAlert color="info" variant="soft" title="Alert">
+          Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
+        </VcAlert>
+      </div>
+      <div class="space-y-1">
+        <div class="text-xs font-bold">title + icon</div>
+        <VcAlert color="info" variant="soft" title="Alert" icon>
+          Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
+        </VcAlert>
+      </div>
+      <div class="space-y-1">
+        <div class="text-xs font-bold">title + icon + closable</div>
+        <VcAlert color="info" variant="soft" title="Alert" icon closable>
+          Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
+        </VcAlert>
+      </div>
+      <div class="space-y-1">
+        <div class="text-xs font-bold">title + icon + closable + shadow</div>
+        <VcAlert color="info" variant="soft" title="Alert" icon closable shadow>
+          Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
+        </VcAlert>
+      </div>
+    </div>`,
+  }),
+};
+
 const DEPRECATED_VARIANTS = [
   { legacy: "solid-light", canonical: "soft" },
   { legacy: "outline-dark", canonical: "tonal" },
