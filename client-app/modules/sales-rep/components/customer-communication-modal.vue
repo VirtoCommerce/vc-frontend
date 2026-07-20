@@ -1,9 +1,5 @@
 <template>
   <VcModal ref="modalComponent" :title="t('sales_rep.communication.title')" is-mobile-fullscreen dividers>
-    <VcAlert v-if="failed" color="danger" size="sm" variant="solid-light" class="mb-4">
-      {{ t("sales_rep.communication.error_text") }}
-    </VcAlert>
-
     <p class="customer-communication-modal__subtitle">
       {{ t("sales_rep.communication.subtitle", { organization: organizationName }) }}
     </p>
@@ -87,7 +83,6 @@ const notifications = useNotifications();
 const { sendCommunication, loading } = useSalesRepCommunication();
 
 const modalComponent = useTemplateRef<InstanceType<typeof VcModal>>("modalComponent");
-const failed = ref(false);
 
 // Channels are plain refs (not form fields) so vee-validate's meta.valid stays about the text inputs;
 // the "at least one channel" rule is enforced separately via channelSelected.
@@ -103,8 +98,6 @@ const { value: title } = useField<string>("title", toTypedSchema(string().max(12
 const { value: message } = useField<string>("message", toTypedSchema(string().required().max(1000)));
 
 const send = handleSubmit(async (data) => {
-  failed.value = false;
-
   const succeeded = await sendCommunication({
     organizationId: props.organizationId,
     sendEmail: sendEmail.value,
@@ -122,7 +115,12 @@ const send = handleSubmit(async (data) => {
       single: true,
     });
   } else {
-    failed.value = true;
+    // Self-dismissing toast, consistent with the success path (the modal stays open for a retry).
+    notifications.error({
+      text: t("sales_rep.communication.error_text"),
+      duration: 10000,
+      single: true,
+    });
   }
 });
 </script>
