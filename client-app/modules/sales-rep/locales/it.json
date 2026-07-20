@@ -69,7 +69,7 @@
     "communication": {
       "action": "Invia email",
       "title": "Invia un messaggio",
-      "subtitle": "Raggiunge tutti i membri di {organization}.",
+      "subtitle": "Raggiunge tutti i membri di {organization}",
       "title_label": "Titolo",
       "message_label": "Messaggio",
       "channels_label": "Invia tramite",

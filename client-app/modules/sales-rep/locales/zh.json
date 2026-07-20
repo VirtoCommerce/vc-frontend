@@ -69,7 +69,7 @@
     "communication": {
       "action": "发送电子邮件",
       "title": "发送消息",
-      "subtitle": "将送达 {organization} 的所有成员。",
+      "subtitle": "将送达 {organization} 的所有成员",
       "title_label": "标题",
       "message_label": "消息",
       "channels_label": "发送方式",

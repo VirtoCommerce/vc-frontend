@@ -69,7 +69,7 @@
     "communication": {
       "action": "Отправить эл. письмо",
       "title": "Отправить сообщение",
-      "subtitle": "Получат все участники организации {organization}.",
+      "subtitle": "Получат все участники организации {organization}",
       "title_label": "Заголовок",
       "message_label": "Сообщение",
       "channels_label": "Отправить через",

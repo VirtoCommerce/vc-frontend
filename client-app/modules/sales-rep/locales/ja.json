@@ -69,7 +69,7 @@
     "communication": {
       "action": "メールを送信",
       "title": "メッセージを送信",
-      "subtitle": "{organization} のすべてのメンバーに届きます。",
+      "subtitle": "{organization} のすべてのメンバーに届きます",
       "title_label": "タイトル",
       "message_label": "メッセージ",
       "channels_label": "送信方法",

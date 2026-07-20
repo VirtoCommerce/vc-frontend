@@ -69,7 +69,7 @@
     "communication": {
       "action": "Wyślij e-mail",
       "title": "Wyślij wiadomość",
-      "subtitle": "Dociera do każdego członka organizacji {organization}.",
+      "subtitle": "Dociera do każdego członka organizacji {organization}",
       "title_label": "Tytuł",
       "message_label": "Wiadomość",
       "channels_label": "Wyślij przez",

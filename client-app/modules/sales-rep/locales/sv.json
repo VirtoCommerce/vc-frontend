@@ -69,7 +69,7 @@
     "communication": {
       "action": "Skicka e-post",
       "title": "Skicka ett meddelande",
-      "subtitle": "Når alla medlemmar i {organization}.",
+      "subtitle": "Når alla medlemmar i {organization}",
       "title_label": "Titel",
       "message_label": "Meddelande",
       "channels_label": "Skicka via",

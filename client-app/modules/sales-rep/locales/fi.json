@@ -69,7 +69,7 @@
     "communication": {
       "action": "Lähetä sähköposti",
       "title": "Lähetä viesti",
-      "subtitle": "Tavoittaa kaikki organisaation {organization} jäsenet.",
+      "subtitle": "Tavoittaa kaikki organisaation {organization} jäsenet",
       "title_label": "Otsikko",
       "message_label": "Viesti",
       "channels_label": "Lähetystapa",

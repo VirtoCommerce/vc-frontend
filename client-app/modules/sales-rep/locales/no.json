@@ -69,7 +69,7 @@
     "communication": {
       "action": "Send e-post",
       "title": "Send en melding",
-      "subtitle": "Når alle medlemmer i {organization}.",
+      "subtitle": "Når alle medlemmer i {organization}",
       "title_label": "Tittel",
       "message_label": "Melding",
       "channels_label": "Send via",
