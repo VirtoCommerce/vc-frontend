@@ -82,6 +82,16 @@
 
         <!-- Account sections -->
         <ul class="flex flex-col gap-y-2">
+          <!-- Registered sections (e.g. Sales Rep hub) always lead, in registration order. Mobile does
+               NOT honor `priority` (desktop does): the built-ins below are hardcoded blocks, so there's
+               no list to interleave into. Priority-aware mobile is deferred to the mobile-menu redesign.
+               See AccountNavigationSectionType.priority. -->
+          <li v-for="section in mobileRegisteredAccountSections" :key="section.id">
+            <MobileMenuLink :link="section" class="py-1 text-2xl font-bold" @select="$emit('selectItem', section)">
+              {{ section.title }}
+            </MobileMenuLink>
+          </li>
+
           <!-- Purchasing -->
           <li>
             <MobileMenuLink
@@ -190,6 +200,7 @@ const {
   mobileMarketingMenuItem,
   mobileUserMenuItem,
   mobileCorporateMenuItem,
+  mobileRegisteredAccountSections,
 } = useNavigations();
 const { t } = useI18n();
 const { supportedCurrencies } = useCurrency();

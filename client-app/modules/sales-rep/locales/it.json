@@ -15,6 +15,55 @@
       "empty": "Nessun agente commerciale trovato",
       "no_results": "Nessun agente commerciale corrisponde alla ricerca",
       "reset_search": "Reimposta ricerca"
+    },
+    "my_customers": {
+      "navigation": {
+        "link": "I miei clienti"
+      },
+      "page": {
+        "title": "I miei clienti"
+      },
+      "table": {
+        "customer": "Cliente",
+        "last_order": "Il mio ultimo ordine",
+        "search_placeholder": "Cerca per nome",
+        "search_aria": "Cerca clienti",
+        "empty": "Nessun cliente trovato",
+        "no_results": "Nessun cliente corrisponde alla tua ricerca",
+        "reset_search": "Reimposta ricerca"
+      }
+    },
+    "hub": {
+      "title": "Hub rappresentante vendite"
+    },
+    "customer_profile": {
+      "loading": "Caricamento…",
+      "not_found": "Cliente non trovato o non presente tra i tuoi clienti.",
+      "back_to_customers": "Torna ai miei clienti",
+      "orders": {
+        "title": "Ordini",
+        "empty": "Ancora nessun ordine",
+        "number": "N. ordine",
+        "date": "Data",
+        "items": "Articoli",
+        "status": "Stato",
+        "total": "Totale",
+        "view_all": "Tutti gli ordini"
+      },
+      "widgets": {
+        "ytd_purchases": "Acquisti da inizio anno",
+        "open_balance": "Saldo aperto",
+        "avg_order_value": "Valore medio ordine",
+        "orders_ytd": "Ordini da inizio anno"
+      },
+      "info": {
+        "title": "Informazioni cliente",
+        "empty": "Nessuna informazione disponibile",
+        "primary_contact": "Contatto principale",
+        "phone": "Telefono",
+        "account_type": "Tipo di account",
+        "ship_to": "Indirizzo di spedizione"
+      }
     }
   }
 }

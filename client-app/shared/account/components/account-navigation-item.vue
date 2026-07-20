@@ -5,6 +5,10 @@
     </template>
 
     {{ formatTextFunction(item?.title) }}
+
+    <template v-if="$slots.append" #append>
+      <slot name="append" />
+    </template>
   </VcMenuItem>
 
   <slot />

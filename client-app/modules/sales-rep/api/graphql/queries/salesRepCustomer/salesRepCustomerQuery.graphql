@@ -1,0 +1,18 @@
+query SalesRepCustomer($organizationId: String!) {
+  salesRepCustomer(organizationId: $organizationId) {
+    organizationId
+    organizationName
+    iconUrl
+    accountType
+    phone
+    address {
+      city
+      regionName
+    }
+    primaryContact {
+      id
+      fullName
+      name
+    }
+  }
+}
