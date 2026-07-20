@@ -4,7 +4,6 @@ import { useI18n } from "vue-i18n";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import {
-  SalesRepCartFilterRulesDocument,
   SalesRepCustomerFilterRulesDocument,
   SalesRepCustomerSortRulesDocument,
   SalesRepOrderFilterRulesDocument,
@@ -26,10 +25,9 @@ type RuleSourceType = { document: RuleDocumentType; field: string };
 
 const asRuleDocument = (document: unknown): RuleDocumentType => document as RuleDocumentType;
 
-// All domain × kind combinations. Carts are not a list, so there is no cart sort axis (undefined).
-const RULE_SOURCES: Record<`${SalesRepRuleDomainType}:${SalesRepRuleKindType}`, RuleSourceType | undefined> = {
+// Every supported domain × kind combination (each is a real list). One entry per discovery op.
+const RULE_SOURCES: Record<`${SalesRepRuleDomainType}:${SalesRepRuleKindType}`, RuleSourceType> = {
   "order:filter": { document: asRuleDocument(SalesRepOrderFilterRulesDocument), field: "salesRepOrderFilterRules" },
-  "cart:filter": { document: asRuleDocument(SalesRepCartFilterRulesDocument), field: "salesRepCartFilterRules" },
   "customer:filter": {
     document: asRuleDocument(SalesRepCustomerFilterRulesDocument),
     field: "salesRepCustomerFilterRules",
@@ -44,20 +42,16 @@ const RULE_SOURCES: Record<`${SalesRepRuleDomainType}:${SalesRepRuleKindType}`, 
     document: asRuleDocument(SalesRepTopSellerSortRulesDocument),
     field: "salesRepTopSellerSortRules",
   },
-  "cart:sort": undefined,
 };
 
 export function useSalesRepRules(domain: SalesRepRuleDomainType, kind: SalesRepRuleKindType) {
   const source = RULE_SOURCES[`${domain}:${kind}`];
   const { t, te } = useI18n();
-  // useQuery must run unconditionally (composable rule); use any document as a placeholder but disable
-  // the request for an unsupported axis so it never fires.
-  const document = source?.document ?? asRuleDocument(SalesRepOrderFilterRulesDocument);
 
   const { result, loading, onError } = useQuery(
-    document,
+    source.document,
     () => ({ storeId: globals.storeId, cultureName: globals.cultureName }),
-    { fetchPolicy: "cache-first", enabled: source != null },
+    { fetchPolicy: "cache-first" },
   );
 
   onError((error) => {
@@ -65,14 +59,11 @@ export function useSalesRepRules(domain: SalesRepRuleDomainType, kind: SalesRepR
     Logger.error(`[sales-rep] ${domain}:${kind} rules failed:`, error);
   });
 
-  const rules = computed<SalesRepRuleType[]>(() => {
-    if (!source) {
-      return [];
-    }
-    return (result.value?.[source.field] ?? [])
+  const rules = computed<SalesRepRuleType[]>(() =>
+    (result.value?.[source.field] ?? [])
       .filter((rule): rule is RuleNodeType => rule != null)
-      .map((rule) => ({ name: rule.name, label: resolveLabel(rule.name, rule.localizedName) }));
-  });
+      .map((rule) => ({ name: rule.name, label: resolveLabel(rule.name, rule.localizedName) })),
+  );
 
   // Display label priority: frontend i18n keyed by the rule name → backend localizedName → raw name.
   // Lets the storefront localize/override known rule names while custom/backend rules keep their server label.

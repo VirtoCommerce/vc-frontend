@@ -27,29 +27,12 @@
     <template #default-container>
       <div class="top-sellers__body">
         <!-- Category filter chips (top-seller filter rules = the store catalog's top-level categories). -->
-        <div v-if="filterRules.length" class="top-sellers__filters">
-          <VcChip
-            :variant="filter ? 'outline' : 'solid'"
-            color="secondary"
-            size="sm"
-            clickable
-            @click="filter = undefined"
-          >
-            {{ t("sales_rep.top_sellers.all_categories") }}
-          </VcChip>
-
-          <VcChip
-            v-for="rule in filterRules"
-            :key="rule.name"
-            :variant="filter === rule.name ? 'solid' : 'outline'"
-            color="secondary"
-            size="sm"
-            clickable
-            @click="filter = rule.name"
-          >
-            {{ rule.label }}
-          </VcChip>
-        </div>
+        <SalesRepRuleChips
+          v-if="filterRules.length"
+          v-model="filter"
+          :rules="filterRules"
+          :all-label="t('sales_rep.top_sellers.all_categories')"
+        />
 
         <VcEmptyView v-if="!items.length && !loading" :text="t('sales_rep.top_sellers.empty')" icon="outline-order" />
 
@@ -131,6 +114,7 @@ import { useSalesRepPeriodFilter } from "../composables/useSalesRepPeriodFilter"
 import { useSalesRepRules } from "../composables/useSalesRepRules";
 import { useSalesRepTopSellers } from "../composables/useSalesRepTopSellers";
 import { TOP_SELLERS_DEFAULT_TAKE } from "../constants";
+import SalesRepRuleChips from "./sales-rep-rule-chips.vue";
 
 interface IProps {
   // Widget heading (the caller decides the wording).
@@ -176,10 +160,6 @@ const { items, loading } = useSalesRepTopSellers({
 
   &__control {
     @apply w-40;
-  }
-
-  &__filters {
-    @apply flex flex-wrap gap-2;
   }
 
   &__product {

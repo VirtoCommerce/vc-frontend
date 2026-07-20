@@ -14,29 +14,12 @@
       <div class="sales-rep-orders__body">
         <!-- Optional controls: named filter rule (chips), sort rule + created-date period (selects). -->
         <div v-if="filterable" class="sales-rep-orders__controls">
-          <div v-if="filterRules.length" class="sales-rep-orders__chips">
-            <VcChip
-              :variant="filter ? 'outline' : 'solid'"
-              color="secondary"
-              size="sm"
-              clickable
-              @click="filter = undefined"
-            >
-              {{ t("sales_rep.orders.filter_all") }}
-            </VcChip>
-
-            <VcChip
-              v-for="rule in filterRules"
-              :key="rule.name"
-              :variant="filter === rule.name ? 'solid' : 'outline'"
-              color="secondary"
-              size="sm"
-              clickable
-              @click="filter = rule.name"
-            >
-              {{ rule.label }}
-            </VcChip>
-          </div>
+          <SalesRepRuleChips
+            v-if="filterRules.length"
+            v-model="filter"
+            :rules="filterRules"
+            :all-label="t('sales_rep.orders.filter_all')"
+          />
 
           <div class="sales-rep-orders__selects">
             <VcSelect
@@ -153,6 +136,7 @@ import { useSalesRepOrders } from "../composables/useSalesRepOrders";
 import { useSalesRepPeriodFilter } from "../composables/useSalesRepPeriodFilter";
 import { useSalesRepRules } from "../composables/useSalesRepRules";
 import { ORDERS_DEFAULT_LIMIT } from "../constants";
+import SalesRepRuleChips from "./sales-rep-rule-chips.vue";
 import OrderStatus from "@/shared/account/components/order-status.vue";
 
 interface IProps {
@@ -203,10 +187,6 @@ const { orders, loading } = useSalesRepOrders({
 
   &__controls {
     @apply mb-4 flex flex-col gap-3;
-  }
-
-  &__chips {
-    @apply flex flex-wrap gap-2;
   }
 
   &__selects {

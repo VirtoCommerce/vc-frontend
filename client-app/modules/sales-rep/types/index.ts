@@ -24,7 +24,7 @@ export type SalesRepCustomerType = {
 // sent back in the unified filter/sort argument. `label` is the resolved display text — frontend i18n
 // (keyed by `name`) → backend localizedName → raw name (see useSalesRepRules).
 export type SalesRepRuleType = { name: string; label: string };
-export type SalesRepRuleDomainType = "order" | "cart" | "customer" | "topSeller";
+export type SalesRepRuleDomainType = "order" | "customer" | "topSeller";
 export type SalesRepRuleKindType = "filter" | "sort";
 
 // View model for a ranked Top Sellers row; `revenue` is the backend-formatted amount.

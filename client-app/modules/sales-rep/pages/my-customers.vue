@@ -30,29 +30,12 @@
 
       <!-- Controls: customer segment chips (an "All" baseline + any project segments) + a named sort-rule dropdown. -->
       <div v-if="filterRules.length || sortRules.length" class="my-customers__controls">
-        <div v-if="filterRules.length" class="my-customers__filters">
-          <VcChip
-            :variant="filter ? 'outline' : 'solid'"
-            color="secondary"
-            size="sm"
-            clickable
-            @click="filter = undefined"
-          >
-            {{ t("sales_rep.my_customers.table.all_customers") }}
-          </VcChip>
-
-          <VcChip
-            v-for="segment in segments"
-            :key="segment.name"
-            :variant="filter === segment.name ? 'solid' : 'outline'"
-            color="secondary"
-            size="sm"
-            clickable
-            @click="filter = segment.name"
-          >
-            {{ segment.label }}
-          </VcChip>
-        </div>
+        <SalesRepRuleChips
+          v-if="filterRules.length"
+          v-model="filter"
+          :rules="filterRules"
+          :all-label="t('sales_rep.my_customers.table.all_customers')"
+        />
 
         <VcSelect
           v-if="sortRules.length"
@@ -177,8 +160,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
+import SalesRepRuleChips from "../components/sales-rep-rule-chips.vue";
 import { useSalesRepCustomers } from "../composables/useSalesRepCustomers";
 import { useSalesRepRules } from "../composables/useSalesRepRules";
 import { CUSTOMER_PROFILE_ROUTE_NAME } from "../constants";
@@ -189,11 +173,6 @@ const { loading, keyword, filter, sortRule, page, pages, items } = useSalesRepCu
 
 const { rules: sortRules } = useSalesRepRules("customer", "sort");
 const { rules: filterRules } = useSalesRepRules("customer", "filter");
-
-// The synthetic "All" chip (rendered first, clears the filter) already represents the backend "All" baseline, so
-// drop it from the per-segment loop to avoid a duplicate. The filter row itself always shows (the "All" chip);
-// real project-defined segments appear alongside it.
-const segments = computed(() => filterRules.value.filter((rule) => rule.name.toLowerCase() !== "all"));
 
 // Unapplied search term; committed to the query on Enter or the search button.
 const localKeyword = ref("");
@@ -250,10 +229,6 @@ function changePage(newPage: number): void {
 
   &__controls {
     @apply flex flex-wrap items-center justify-between gap-3;
-  }
-
-  &__filters {
-    @apply flex flex-wrap gap-2;
   }
 
   &__sort {

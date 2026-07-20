@@ -17,25 +17,28 @@ export function useSalesRepCustomers() {
   const sortRule = ref<string | undefined>(undefined);
   const page = ref(1);
 
-  const variables = computed(() => {
-    const windows = buildStatisticsWindows();
-    return {
-      // Scope to the current store so customers from other stores don't leak in.
-      storeId: globals.storeId,
-      first: PAGE_SIZE,
-      // xAPI connections take the offset as the cursor.
-      after: String((page.value - 1) * PAGE_SIZE),
-      keyword: keyword.value,
-      sort: sortRule.value,
-      filter: filter.value,
-      cultureName: globals.cultureName,
-      // Inline YTD / prior-year purchase columns (batched server-side per page, no N+1).
-      ytdFrom: windows.ytdFrom,
-      ytdTo: windows.ytdTo,
-      lastYearFrom: windows.lastYearFrom,
-      lastYearTo: windows.lastYearTo,
-    };
-  });
+  // Resolve the YTD / prior-year windows once for the composable's lifetime, NOT inside the variables
+  // computed: a fresh `new Date()` on every paging/sort/filter change would drift the bounds by milliseconds
+  // and, since they're part of Apollo's cache key, bust cache-first on list revisits. Windows are
+  // period-anchored, so a single "now" per mount is correct.
+  const windows = buildStatisticsWindows();
+
+  const variables = computed(() => ({
+    // Scope to the current store so customers from other stores don't leak in.
+    storeId: globals.storeId,
+    first: PAGE_SIZE,
+    // xAPI connections take the offset as the cursor.
+    after: String((page.value - 1) * PAGE_SIZE),
+    keyword: keyword.value,
+    sort: sortRule.value,
+    filter: filter.value,
+    cultureName: globals.cultureName,
+    // Inline YTD / prior-year purchase columns (batched server-side per page, no N+1).
+    ytdFrom: windows.ytdFrom,
+    ytdTo: windows.ytdTo,
+    lastYearFrom: windows.lastYearFrom,
+    lastYearTo: windows.lastYearTo,
+  }));
 
   // The rep's customer organizations are resolved server-side from the caller's claims.
   const { result, loading, onError } = useQuery(SalesRepCustomersDocument, variables, {
