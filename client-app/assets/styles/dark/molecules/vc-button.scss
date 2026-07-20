@@ -75,13 +75,13 @@
 
   @each $color in $colors {
     &--soft--#{$color} {
-      --bg-color: var(--color-#{$color}-200);
-      --border-color: var(--color-#{$color}-200);
+      --bg-color: var(--color-#{$color}-100);
+      --border-color: var(--color-#{$color}-100);
       --text-color: var(--color-#{$color}-900);
 
       &:hover:not(#{$loading}, #{$disabled}) {
-        --bg-color: var(--color-#{$color}-100);
-        --border-color: var(--color-#{$color}-100);
+        --bg-color: var(--color-#{$color}-50);
+        --border-color: var(--color-#{$color}-50);
       }
     }
   }

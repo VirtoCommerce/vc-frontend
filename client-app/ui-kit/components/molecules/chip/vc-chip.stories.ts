@@ -416,6 +416,23 @@ export const AllStates: StoryType = {
   }),
 };
 
+export const AllVariantsClickable: StoryType = {
+  render: () => ({
+    setup: () => ({ colors: COLORS, variants: VARIANTS }),
+    template: `<div class="space-y-3">
+      <div class="space-y-1" v-for="variant in variants">
+        <div class="text-base">Variant: <b>{{ variant }}</b></div>
+
+        <div class="flex flex-wrap gap-2 items-center">
+          <VcChip v-for="color in colors" size="md" :color="color" :variant="variant" icon="circle-solid" clickable>
+            Color: {{ color }}
+          </VcChip>
+        </div>
+      </div>
+    </div>`,
+  }),
+};
+
 const DEPRECATED_VARIANTS = [
   { legacy: "solid-light", canonical: "soft" },
   { legacy: "outline-dark", canonical: "tonal" },

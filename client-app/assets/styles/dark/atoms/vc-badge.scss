@@ -27,7 +27,7 @@ $solid-bg: (
   }
 
   .vc-badge--soft--#{$color} {
-    --bg-color: var(--color-#{$color}-200);
+    --bg-color: var(--color-#{$color}-100);
     --text-color: var(--color-#{$color}-900);
   }
 }

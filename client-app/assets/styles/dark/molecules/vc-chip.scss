@@ -21,7 +21,7 @@
     warning: 300,
   );
 
-  &[class*="vc-chip--solid--"] {
+  &[class*="vc-chip--solid--"]:not(.vc-chip--disabled) {
     --text-color: var(--color-additional-950);
   }
 
@@ -40,8 +40,36 @@
   }
 
   @each $color in $colors {
-    &--soft--#{$color} {
-      --bg-color: var(--color-#{$color}-200);
+    &--soft--#{$color}:not(.vc-chip--disabled) {
+      --bg-color: var(--color-#{$color}-100);
+      --text-color: var(--color-#{$color}-900);
+
+      &.vc-chip--clickable:not(.vc-chip--disabled) .vc-chip__content:hover {
+        --bg-color: var(--color-#{$color}-50);
+        --border-color: var(--color-#{$color}-50);
+      }
+    }
+
+    &--outline--#{$color}:not(.vc-chip--disabled) {
+      --text-color: var(--color-#{$color}-900);
+      --border-color: var(--color-#{$color}-600);
+
+      &.vc-chip--clickable:not(.vc-chip--disabled) .vc-chip__content:hover {
+        --bg-color: var(--color-#{$color}-100);
+      }
+    }
+
+    &--tonal--#{$color}:not(.vc-chip--disabled) {
+      --bg-color: var(--color-#{$color}-100);
+      --text-color: var(--color-#{$color}-900);
+      --border-color: var(--color-#{$color}-600);
+
+      &.vc-chip--clickable:not(.vc-chip--disabled) .vc-chip__content:hover {
+        --bg-color: var(--color-#{$color}-50);
+      }
+    }
+
+    &--surface--#{$color}:not(.vc-chip--disabled) {
       --text-color: var(--color-#{$color}-900);
 
       &.vc-chip--clickable:not(.vc-chip--disabled) .vc-chip__content:hover {
@@ -50,24 +78,21 @@
       }
     }
 
-    &--outline--#{$color} {
+    &--ghost--#{$color}:not(.vc-chip--disabled) {
       --text-color: var(--color-#{$color}-900);
-      --border-color: var(--color-#{$color}-600);
-    }
 
-    &--tonal--#{$color} {
-      --bg-color: var(--color-#{$color}-200);
-      --text-color: var(--color-#{$color}-900);
-      --border-color: var(--color-#{$color}-600);
+      &.vc-chip--clickable:not(.vc-chip--disabled) .vc-chip__content:hover {
+        --bg-color: var(--color-#{$color}-100);
+        --border-color: var(--color-#{$color}-100);
+        --text-color: var(--color-#{$color}-900);
+      }
     }
+  }
 
-    &--surface--#{$color} {
-      --text-color: var(--color-#{$color}-900);
-    }
-
-    &--ghost--#{$color} {
-      --text-color: var(--color-#{$color}-900);
-    }
+  &--disabled[class*="vc-chip--solid--"],
+  &--disabled[class*="vc-chip--surface--"] {
+    --bg-color: var(--color-neutral-100);
+    --border-color: var(--color-neutral-100);
   }
 
   // Focus ring: chips override --outline-color per-color at 0.4 opacity in light.

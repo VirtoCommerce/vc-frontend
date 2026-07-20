@@ -99,7 +99,22 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const { t } = useI18n();
 
-const canonicalVariant = computed(() => resolveVariant("VcChip", props.variant));
+const DEFAULT_CHIP_VARIANT: VcChipVariantType = "solid";
+const CANONICAL_CHIP_VARIANTS: readonly VcChipVariantType[] = [
+  DEFAULT_CHIP_VARIANT,
+  "soft",
+  "outline",
+  "surface",
+  "ghost",
+  "tonal",
+];
+
+const canonicalVariant = computed<VcChipVariantType>(() => {
+  const resolved = resolveVariant("VcChip", props.variant);
+  return (CANONICAL_CHIP_VARIANTS as readonly string[]).includes(resolved)
+    ? (resolved as VcChipVariantType)
+    : DEFAULT_CHIP_VARIANT;
+});
 
 const isRouterLink = computed(() => !!props.to && props.clickable && !props.disabled);
 const isExternalLink = computed(() => !!props.externalLink && props.clickable && !props.disabled);
