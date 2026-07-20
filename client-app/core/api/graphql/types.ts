@@ -2752,6 +2752,23 @@ export type InputSaveSearchQueryType = {
   storeId: Scalars['String']['input'];
 };
 
+export type InputSendCustomerCommunicationType = {
+  /** Optional culture for localizing the email template (e.g. "en-US"). */
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  /** The Rep's message (required, max 1000 chars). May contain a URL. */
+  message: Scalars['String']['input'];
+  /** Customer organization whose members receive the message. */
+  organizationId: Scalars['String']['input'];
+  /** Send an email to the recipients. */
+  sendEmail: Scalars['Boolean']['input'];
+  /** Send an in-store push notification to the recipients. */
+  sendPush: Scalars['Boolean']['input'];
+  /** Store the message is sent on behalf of (scopes the email template and sender address). */
+  storeId: Scalars['String']['input'];
+  /** Optional message title/heading. */
+  title?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type InputSendVerifyEmailType = {
   email?: InputMaybe<Scalars['String']['input']>;
   /** Notification language code */
@@ -3532,6 +3549,7 @@ export type Mutations = {
   selectAllCartItems?: Maybe<CartType>;
   selectCartConfigurationItems?: Maybe<CartType>;
   selectCartItems?: Maybe<CartType>;
+  sendCustomerCommunication?: Maybe<Scalars['Boolean']['output']>;
   sendPasswordResetEmail?: Maybe<Scalars['Boolean']['output']>;
   sendVerifyEmail?: Maybe<Scalars['Boolean']['output']>;
   submitQuoteRequest?: Maybe<QuoteType>;
@@ -4067,6 +4085,11 @@ export type MutationsSelectCartConfigurationItemsArgs = {
 
 export type MutationsSelectCartItemsArgs = {
   command?: InputMaybe<InputChangeCartItemsSelectedType>;
+};
+
+
+export type MutationsSendCustomerCommunicationArgs = {
+  command: InputSendCustomerCommunicationType;
 };
 
 
@@ -6703,6 +6726,53 @@ export type RoleType = {
   permissions?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
 };
 
+export type SalesRepAddress = {
+  /** Address type. */
+  addressType?: Maybe<Scalars['Int']['output']>;
+  /** City. */
+  city?: Maybe<Scalars['String']['output']>;
+  /** Country code. */
+  countryCode?: Maybe<Scalars['String']['output']>;
+  /** Country name. */
+  countryName?: Maybe<Scalars['String']['output']>;
+  /** Description. */
+  description?: Maybe<Scalars['String']['output']>;
+  /** Email. */
+  email?: Maybe<Scalars['String']['output']>;
+  /** First name. */
+  firstName?: Maybe<Scalars['String']['output']>;
+  /** Id. */
+  id?: Maybe<Scalars['String']['output']>;
+  /** Whether this is the organization's default address. */
+  isDefault: Scalars['Boolean']['output'];
+  /** Id. */
+  key?: Maybe<Scalars['String']['output']>;
+  /** Last name. */
+  lastName?: Maybe<Scalars['String']['output']>;
+  /** Line1. */
+  line1?: Maybe<Scalars['String']['output']>;
+  /** Line2. */
+  line2?: Maybe<Scalars['String']['output']>;
+  /** Middle name. */
+  middleName?: Maybe<Scalars['String']['output']>;
+  /** Name. */
+  name?: Maybe<Scalars['String']['output']>;
+  /** Company name. */
+  organization?: Maybe<Scalars['String']['output']>;
+  /** Outer id. */
+  outerId?: Maybe<Scalars['String']['output']>;
+  /** Phone. */
+  phone?: Maybe<Scalars['String']['output']>;
+  /** Postal code. */
+  postalCode?: Maybe<Scalars['String']['output']>;
+  /** Region id. */
+  regionId?: Maybe<Scalars['String']['output']>;
+  /** Region name. */
+  regionName?: Maybe<Scalars['String']['output']>;
+  /** Zip. */
+  zip?: Maybe<Scalars['String']['output']>;
+};
+
 export type SalesRepContact = {
   /** About the Sales Rep. */
   about?: Maybe<Scalars['String']['output']>;
@@ -6747,7 +6817,11 @@ export type SalesRepContactEdge = {
 };
 
 export type SalesRepCustomer = {
-  /** The customer's most recent order. */
+  /** The organization's default address (structured; the storefront formats it, e.g. "City, Region"). */
+  address?: Maybe<SalesRepAddress>;
+  /** URL of the organization's icon. */
+  iconUrl?: Maybe<Scalars['String']['output']>;
+  /** The rep's most recent order for this customer (only orders the rep created). */
   lastOrder?: Maybe<SalesRepOrder>;
   /** Organization (customer) id. */
   organizationId: Scalars['String']['output'];
@@ -6770,6 +6844,10 @@ export type SalesRepCustomerConnection = {
 export type SalesRepCustomerDetails = {
   /** Account type — the organization's business category. */
   accountType?: Maybe<Scalars['String']['output']>;
+  /** The organization's default address (structured; the storefront formats it, e.g. "City, Region"). */
+  address?: Maybe<SalesRepAddress>;
+  /** URL of the organization's icon. */
+  iconUrl?: Maybe<Scalars['String']['output']>;
   /** Organization (customer) id. */
   organizationId: Scalars['String']['output'];
   /** Organization (customer) name. */
@@ -6778,8 +6856,6 @@ export type SalesRepCustomerDetails = {
   phone?: Maybe<Scalars['String']['output']>;
   /** Primary contact of the organization (its owner, or the first contact member). */
   primaryContact?: Maybe<SalesRepContact>;
-  /** Default ship-to location, formatted as "City, Region". */
-  shipTo?: Maybe<Scalars['String']['output']>;
 };
 
 /** An edge in a connection from an object to another object of type `SalesRepCustomer`. */
