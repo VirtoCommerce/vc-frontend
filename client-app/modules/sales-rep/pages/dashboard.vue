@@ -8,14 +8,14 @@
     <DashboardWidgets />
 
     <!-- Cross-customer orders (real data: salesRepOrders). -->
-    <Orders :title="t('sales_rep.orders.title')" />
+    <SalesRepOrders :title="t('sales_rep.orders.title')" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 import DashboardWidgets from "../components/dashboard-widgets.vue";
-import Orders from "../components/orders.vue";
+import SalesRepOrders from "../components/sales-rep-orders.vue";
 
 const { t } = useI18n();
 </script>

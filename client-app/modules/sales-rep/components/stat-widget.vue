@@ -44,53 +44,24 @@ withDefaults(defineProps<IProps>(), {
 <style lang="scss">
 // `@apply` keeps the module self-contained as an MF remote (no global utility layer). See PORT_TO_MF.md.
 .stat-widget {
-  @apply flex h-full flex-col gap-1.5 rounded-lg border border-l-4 border-neutral-200 bg-additional-50 p-4 shadow-sm;
+  $accents: (
+    primary: var(--color-primary-500),
+    secondary: var(--color-secondary-500),
+    success: var(--color-success-500),
+    warning: var(--color-warning-500),
+    info: var(--color-info-500),
+    neutral: var(--color-neutral-400),
+  );
 
-  &--primary {
-    @apply border-l-primary;
+  @apply flex h-full flex-col gap-1.5 rounded-[--vc-radius] border border-neutral-200 bg-additional-50 p-4 shadow-sm;
 
-    .stat-widget__icon {
-      @apply text-primary;
-    }
-  }
+  // Accent bar on the inline-start edge — logical property so it flips in RTL. A single custom
+  // property feeds both the bar and the icon, collapsing six near-identical modifiers into a loop.
+  border-inline-start: 4px solid var(--stat-widget-accent);
 
-  &--secondary {
-    @apply border-l-secondary;
-
-    .stat-widget__icon {
-      @apply text-secondary;
-    }
-  }
-
-  &--success {
-    @apply border-l-success;
-
-    .stat-widget__icon {
-      @apply text-success;
-    }
-  }
-
-  &--warning {
-    @apply border-l-warning;
-
-    .stat-widget__icon {
-      @apply text-warning;
-    }
-  }
-
-  &--info {
-    @apply border-l-info;
-
-    .stat-widget__icon {
-      @apply text-info;
-    }
-  }
-
-  &--neutral {
-    @apply border-l-neutral-400;
-
-    .stat-widget__icon {
-      @apply text-neutral-400;
+  @each $name, $color in $accents {
+    &--#{$name} {
+      --stat-widget-accent: #{$color};
     }
   }
 
@@ -98,8 +69,12 @@ withDefaults(defineProps<IProps>(), {
     @apply flex items-center gap-2;
   }
 
+  &__icon {
+    color: var(--stat-widget-accent);
+  }
+
   &__label {
-    @apply text-xs font-semibold uppercase tracking-wide text-neutral-500;
+    @apply text-xs font-bold uppercase tracking-wide text-neutral-500;
   }
 
   &__value {
@@ -111,7 +86,7 @@ withDefaults(defineProps<IProps>(), {
   }
 
   &__delta {
-    @apply mt-auto flex items-center gap-1 pt-1.5 text-[13px] font-bold;
+    @apply mt-auto flex items-center gap-1 pt-1.5 text-sm font-bold;
 
     &--positive {
       @apply text-success-600;

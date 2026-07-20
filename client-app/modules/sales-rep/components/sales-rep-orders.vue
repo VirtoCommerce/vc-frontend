@@ -123,16 +123,6 @@ const { orders, loading } = useSalesRepOrders({
 <style lang="scss">
 // `@apply` keeps the module self-contained as an MF remote (no global utility layer). See PORT_TO_MF.md.
 .sales-rep-orders {
-  // Header divider (size=lg drops the built-in one).
-  .vc-widget__header-container {
-    @apply border-b border-neutral-200;
-  }
-
-  // Tighter than lg's default px-7 padding.
-  .vc-widget__slot {
-    @apply p-2;
-  }
-
   &__all-link {
     @apply inline-flex items-center gap-1 whitespace-nowrap text-sm font-medium text-[--link-color] hover:underline;
   }
