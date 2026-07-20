@@ -1,5 +1,5 @@
 <template>
-  <VcWidget :title="title" size="lg" class="sales-rep-orders">
+  <VcWidget :title="title" size="md" class="sales-rep-orders">
     <template #append>
       <VcLink :to="{ name: 'Orders' }" class="sales-rep-orders__all-link" target="_blank" rel="noopener noreferrer">
         {{ t("sales_rep.orders.view_all") }}
@@ -7,13 +7,41 @@
       </VcLink>
     </template>
 
-    <VcEmptyView v-if="!orders.length && !loading" :text="t('sales_rep.orders.empty')" icon="outline-order" />
+    <!-- VcWidget has no padding prop; #default-container is its supported body seam, so we own the
+         inset here instead of touching .vc-widget__slot. The md header divider is unaffected. -->
+    <template #default-container>
+      <div class="sales-rep-orders__body">
+        <VcEmptyView v-if="!orders.length && !loading" :text="t('sales_rep.orders.empty')" icon="outline-order" />
 
-    <!-- Skeleton rows match the page size so the loading state mirrors what will load. -->
-    <VcTable v-else :loading="loading" :items="orders" :skeleton-rows="limit" mobile-breakpoint="lg">
-      <template #mobile-item="{ item }">
-        <div class="sales-rep-orders__mobile-item">
-          <div class="sales-rep-orders__mobile-row">
+        <!-- Skeleton rows match the page size so the loading state mirrors what will load. -->
+        <VcTable v-else :loading="loading" :items="orders" :skeleton-rows="limit" mobile-breakpoint="lg">
+          <template #mobile-item="{ item }">
+            <div class="sales-rep-orders__mobile-item">
+              <div class="sales-rep-orders__mobile-row">
+                <VcLink
+                  class="sales-rep-orders__order-link"
+                  :to="{ name: 'OrderDetails', params: { orderId: item.id } }"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {{ item.number }}
+                </VcLink>
+
+                <span>{{ item.total }}</span>
+              </div>
+
+              <div v-if="isCrossCustomer" class="sales-rep-orders__mobile-customer">{{ item.organizationName }}</div>
+
+              <!-- Item count only in single-customer mode, mirroring the desktop Items column (hidden cross-customer). -->
+              <div class="sales-rep-orders__mobile-sub">
+                {{ $d(item.createdDate, "short") }}<template v-if="!isCrossCustomer"> · {{ item.itemsCount }}</template>
+              </div>
+
+              <OrderStatus :status="item.status" :display-value="item.statusDisplayValue" />
+            </div>
+          </template>
+
+          <VcTableColumn id="number" v-slot="{ item }" :title="t('sales_rep.orders.number')" class="align-top">
             <VcLink
               class="sales-rep-orders__order-link"
               :to="{ name: 'OrderDetails', params: { orderId: item.id } }"
@@ -22,71 +50,49 @@
             >
               {{ item.number }}
             </VcLink>
+          </VcTableColumn>
 
-            <span>{{ item.total }}</span>
-          </div>
+          <!-- Cross-customer (dashboard) shows the customer; a single-customer view shows item count instead. -->
+          <VcTableColumn
+            v-if="isCrossCustomer"
+            id="customer"
+            v-slot="{ item }"
+            :title="t('sales_rep.orders.customer')"
+            class="align-top"
+          >
+            {{ item.organizationName }}
+          </VcTableColumn>
 
-          <div v-if="isCrossCustomer" class="sales-rep-orders__mobile-customer">{{ item.organizationName }}</div>
+          <VcTableColumn id="date" v-slot="{ item }" :title="t('sales_rep.orders.date')" class="align-top">
+            {{ $d(item.createdDate, "short") }}
+          </VcTableColumn>
 
-          <!-- Item count only in single-customer mode, mirroring the desktop Items column (hidden cross-customer). -->
-          <div class="sales-rep-orders__mobile-sub">
-            {{ $d(item.createdDate, "short") }}<template v-if="!isCrossCustomer"> · {{ item.itemsCount }}</template>
-          </div>
+          <VcTableColumn
+            v-if="!isCrossCustomer"
+            id="items"
+            v-slot="{ item }"
+            :title="t('sales_rep.orders.items')"
+            class="align-top"
+          >
+            {{ item.itemsCount }}
+          </VcTableColumn>
 
-          <OrderStatus :status="item.status" :display-value="item.statusDisplayValue" />
-        </div>
-      </template>
+          <VcTableColumn id="status" v-slot="{ item }" :title="t('sales_rep.orders.status')" class="align-top">
+            <OrderStatus :status="item.status" :display-value="item.statusDisplayValue" />
+          </VcTableColumn>
 
-      <VcTableColumn id="number" v-slot="{ item }" :title="t('sales_rep.orders.number')" class="align-top">
-        <VcLink
-          class="sales-rep-orders__order-link"
-          :to="{ name: 'OrderDetails', params: { orderId: item.id } }"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {{ item.number }}
-        </VcLink>
-      </VcTableColumn>
-
-      <!-- Cross-customer (dashboard) shows the customer; a single-customer view shows item count instead. -->
-      <VcTableColumn
-        v-if="isCrossCustomer"
-        id="customer"
-        v-slot="{ item }"
-        :title="t('sales_rep.orders.customer')"
-        class="align-top"
-      >
-        {{ item.organizationName }}
-      </VcTableColumn>
-
-      <VcTableColumn id="date" v-slot="{ item }" :title="t('sales_rep.orders.date')" class="align-top">
-        {{ $d(item.createdDate, "short") }}
-      </VcTableColumn>
-
-      <VcTableColumn
-        v-if="!isCrossCustomer"
-        id="items"
-        v-slot="{ item }"
-        :title="t('sales_rep.orders.items')"
-        class="align-top"
-      >
-        {{ item.itemsCount }}
-      </VcTableColumn>
-
-      <VcTableColumn id="status" v-slot="{ item }" :title="t('sales_rep.orders.status')" class="align-top">
-        <OrderStatus :status="item.status" :display-value="item.statusDisplayValue" />
-      </VcTableColumn>
-
-      <VcTableColumn
-        id="total"
-        v-slot="{ item }"
-        :title="t('sales_rep.orders.total')"
-        align="right"
-        class="align-top font-bold"
-      >
-        {{ item.total }}
-      </VcTableColumn>
-    </VcTable>
+          <VcTableColumn
+            id="total"
+            v-slot="{ item }"
+            :title="t('sales_rep.orders.total')"
+            align="right"
+            class="align-top font-bold"
+          >
+            {{ item.total }}
+          </VcTableColumn>
+        </VcTable>
+      </div>
+    </template>
   </VcWidget>
 </template>
 
@@ -123,6 +129,11 @@ const { orders, loading } = useSalesRepOrders({
 <style lang="scss">
 // `@apply` keeps the module self-contained as an MF remote (no global utility layer). See PORT_TO_MF.md.
 .sales-rep-orders {
+  // Design insets the table ~6px from the widget edge; vertical matches the widget's own body padding.
+  &__body {
+    @apply px-1.5 pb-3 pt-4;
+  }
+
   &__all-link {
     @apply inline-flex items-center gap-1 whitespace-nowrap text-sm font-medium text-[--link-color] hover:underline;
   }
