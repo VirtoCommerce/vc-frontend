@@ -43,10 +43,23 @@
           "title": "仪表板"
         },
         "widgets": {
-          "orders_on_hold": "暂挂订单",
-          "active_projects": "进行中的项目",
+          "new_orders": "新订单",
+          "active_carts": "活动购物车",
           "orders_placed_mtd": "本月至今下单",
+          "orders_placed_week": "本周下单",
+          "orders_placed_ytd": "本年至今下单",
           "my_customers": "我的客户"
+        },
+        "stats": {
+          "value_total": "共 {amount}",
+          "vs_last_week": "较上周 {delta}",
+          "vs_last_month": "较上月 {delta}",
+          "vs_last_year": "较去年 {delta}",
+          "ordered_this_month": "本月 {count} 家下单",
+          "new_customers": "{count} 个新客户",
+          "placed_today": "今日 {count} 单",
+          "new_this_week": "本周新增 {count}",
+          "mtd_of_ytd": "占年初至今 {percent}%"
         }
       }
     },

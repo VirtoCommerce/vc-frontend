@@ -28,6 +28,44 @@
         </VcInput>
       </div>
 
+      <!-- Controls: customer segment chips (an "All" baseline + any project segments) + a named sort-rule dropdown. -->
+      <div v-if="filterRules.length || sortRules.length" class="my-customers__controls">
+        <div v-if="filterRules.length" class="my-customers__filters">
+          <VcChip
+            :variant="filter ? 'outline' : 'solid'"
+            color="secondary"
+            size="sm"
+            clickable
+            @click="filter = undefined"
+          >
+            {{ t("sales_rep.my_customers.table.all_customers") }}
+          </VcChip>
+
+          <VcChip
+            v-for="segment in segments"
+            :key="segment.name"
+            :variant="filter === segment.name ? 'solid' : 'outline'"
+            color="secondary"
+            size="sm"
+            clickable
+            @click="filter = segment.name"
+          >
+            {{ segment.label }}
+          </VcChip>
+        </div>
+
+        <VcSelect
+          v-if="sortRules.length"
+          v-model="sortRule"
+          :items="sortRules"
+          text-field="label"
+          value-field="name"
+          size="sm"
+          :placeholder="t('sales_rep.my_customers.table.sort_placeholder')"
+          class="my-customers__sort"
+        />
+      </div>
+
       <VcEmptyView
         v-if="!items.length && !loading"
         :text="keyword ? t('sales_rep.my_customers.table.no_results') : t('sales_rep.my_customers.table.empty')"
@@ -46,12 +84,10 @@
           <VcTable
             :loading="loading"
             :items="items"
-            :sort="sort"
             :pages="pages"
             :page="page"
             :row-class="rowClass"
             mobile-breakpoint="lg"
-            @header-click="applySorting"
             @page-changed="changePage"
           >
             <template #mobile-item="{ item }">
@@ -64,6 +100,10 @@
                 </VcLink>
 
                 <span v-if="item.location" class="my-customers__location">{{ item.location }}</span>
+
+                <span v-if="item.ytdTotal" class="my-customers__mobile-sub">
+                  {{ t("sales_rep.my_customers.table.ytd") }}: {{ item.ytdTotal }}
+                </span>
 
                 <span v-if="item.lastOrder" class="my-customers__mobile-sub">
                   {{ $d(item.lastOrder.createdDate) }} ·
@@ -79,8 +119,8 @@
               </div>
             </template>
 
-            <!-- Only Customer (name) is sortable — the server sort is name-backed. -->
-            <VcTableColumn id="name" v-slot="{ item }" :title="t('sales_rep.my_customers.table.customer')" sortable>
+            <!-- Ordering is a named sort rule (dropdown), not a column header click. -->
+            <VcTableColumn id="name" v-slot="{ item }" :title="t('sales_rep.my_customers.table.customer')">
               <VcLink
                 class="my-customers__customer"
                 :to="{ name: CUSTOMER_PROFILE_ROUTE_NAME, params: { organizationId: item.organizationId } }"
@@ -89,6 +129,28 @@
               </VcLink>
 
               <div v-if="item.location" class="my-customers__location">{{ item.location }}</div>
+            </VcTableColumn>
+
+            <!-- Inline per-row purchase columns (aliased orderStatistics slices; batched, no N+1). -->
+            <VcTableColumn id="ytd" v-slot="{ item }" :title="t('sales_rep.my_customers.table.ytd')" align="right">
+              <template v-if="item.ytdTotal">
+                <div class="my-customers__amount">{{ item.ytdTotal }}</div>
+
+                <div class="my-customers__sub">
+                  {{ t("sales_rep.my_customers.table.orders_count", { count: item.ytdCount }) }}
+                </div>
+              </template>
+
+              <template v-else>—</template>
+            </VcTableColumn>
+
+            <VcTableColumn
+              id="lastYear"
+              v-slot="{ item }"
+              :title="t('sales_rep.my_customers.table.last_year')"
+              align="right"
+            >
+              {{ item.lastYearTotal || "—" }}
             </VcTableColumn>
 
             <VcTableColumn id="lastOrder" v-slot="{ item }" :title="t('sales_rep.my_customers.table.last_order')">
@@ -115,17 +177,31 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useSalesRepCustomers } from "../composables/useSalesRepCustomers";
+import { useSalesRepRules } from "../composables/useSalesRepRules";
 import { CUSTOMER_PROFILE_ROUTE_NAME } from "../constants";
-import type { SalesRepCustomerSortColumnType, SalesRepCustomerType } from "../types";
+import type { SalesRepCustomerType } from "../types";
 
 const { t } = useI18n();
-const { loading, keyword, sort, page, pages, items } = useSalesRepCustomers();
+const { loading, keyword, filter, sortRule, page, pages, items } = useSalesRepCustomers();
+
+const { rules: sortRules } = useSalesRepRules("customer", "sort");
+const { rules: filterRules } = useSalesRepRules("customer", "filter");
+
+// The synthetic "All" chip (rendered first, clears the filter) already represents the backend "All" baseline, so
+// drop it from the per-segment loop to avoid a duplicate. The filter row itself always shows (the "All" chip);
+// real project-defined segments appear alongside it.
+const segments = computed(() => filterRules.value.filter((rule) => rule.name.toLowerCase() !== "all"));
 
 // Unapplied search term; committed to the query on Enter or the search button.
 const localKeyword = ref("");
+
+// Re-page to the first page whenever the filter or sort selection changes.
+watch([filter, sortRule], () => {
+  page.value = 1;
+});
 
 function orderLabel(number: string): string {
   return `#${number}`;
@@ -143,11 +219,6 @@ function applyKeyword(): void {
 function resetKeyword(): void {
   localKeyword.value = "";
   keyword.value = "";
-  page.value = 1;
-}
-
-function applySorting(sortInfo: { column: string; direction: "asc" | "desc" }): void {
-  sort.value = { column: sortInfo.column as SalesRepCustomerSortColumnType, direction: sortInfo.direction };
   page.value = 1;
 }
 
@@ -177,6 +248,18 @@ function changePage(newPage: number): void {
     @apply w-full;
   }
 
+  &__controls {
+    @apply flex flex-wrap items-center justify-between gap-3;
+  }
+
+  &__filters {
+    @apply flex flex-wrap gap-2;
+  }
+
+  &__sort {
+    @apply w-52;
+  }
+
   // Top-align body cells only, so the name lines up with the stacked last-order date/number.
   .vc-table__cell {
     @apply align-top;
@@ -193,6 +276,14 @@ function changePage(newPage: number): void {
   // Muted, small location line under the customer name — matches the design.
   &__location {
     @apply mt-0.5 text-sm text-neutral-500 [word-break:break-word];
+  }
+
+  &__amount {
+    @apply font-medium;
+  }
+
+  &__sub {
+    @apply mt-0.5 text-sm text-neutral-500;
   }
 
   // Muted, small order number under the date — matches the design; hover hints it's clickable.

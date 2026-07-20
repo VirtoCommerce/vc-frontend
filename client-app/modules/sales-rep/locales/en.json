@@ -26,6 +26,11 @@
       "table": {
         "customer": "Customer",
         "last_order": "My last order",
+        "ytd": "YTD purchases",
+        "last_year": "Last year",
+        "orders_count": "{count} orders",
+        "all_customers": "All",
+        "sort_placeholder": "Sort by",
         "search_placeholder": "Search by name",
         "search_aria": "Search customers",
         "empty": "No customers found",
@@ -43,10 +48,23 @@
           "title": "Dashboard"
         },
         "widgets": {
-          "orders_on_hold": "Orders on hold",
-          "active_projects": "Active projects",
+          "new_orders": "New orders",
+          "active_carts": "Active carts",
+          "orders_placed_week": "Orders placed · WEEK",
           "orders_placed_mtd": "Orders placed · MTD",
+          "orders_placed_ytd": "Orders placed · YTD",
           "my_customers": "My customers"
+        },
+        "stats": {
+          "value_total": "{amount} total",
+          "vs_last_week": "{delta} vs last week",
+          "vs_last_month": "{delta} vs last month",
+          "vs_last_year": "{delta} vs last year",
+          "ordered_this_month": "{count} ordered this month",
+          "new_customers": "{count} new customers",
+          "placed_today": "{count} placed today",
+          "new_this_week": "{count} new this week",
+          "mtd_of_ytd": "{percent}% of YTD"
         }
       }
     },
@@ -58,7 +76,15 @@
         "ytd_purchases": "YTD purchases",
         "open_balance": "Open balance",
         "avg_order_value": "Avg order value",
-        "orders_ytd": "Orders YTD"
+        "orders_ytd": "Orders YTD",
+        "active_projects": "Active projects"
+      },
+      "stats": {
+        "orders_count": "{count} orders YTD",
+        "yoy": "{delta} YoY",
+        "per_order": "Average per order (YTD)",
+        "last_order": "Last order {date}",
+        "customer_since": "Customer since {year}"
       },
       "info": {
         "title": "Customer information",
@@ -78,7 +104,47 @@
       "date": "Date",
       "items": "Items",
       "status": "Status",
-      "total": "Total"
+      "total": "Total",
+      "filter_all": "All",
+      "sort_placeholder": "Sort by"
+    },
+    "period": {
+      "lifetime": "Lifetime",
+      "month": "This month",
+      "year": "This year"
+    },
+    "top_sellers": {
+      "title": "Top sellers",
+      "rank": "#",
+      "product": "Product",
+      "units": "Units",
+      "revenue": "Revenue",
+      "empty": "No sales in this period",
+      "all_categories": "All categories",
+      "sort_placeholder": "Sort by"
+    },
+    "rules": {
+      "order": {
+        "sort": {
+          "recent": "Most recent"
+        }
+      },
+      "customer": {
+        "sort": {
+          "my-last-orders": "My last orders",
+          "ytd-purchases": "YTD purchases",
+          "name": "Customer name"
+        },
+        "filter": {
+          "All": "All"
+        }
+      },
+      "topSeller": {
+        "sort": {
+          "by-units": "By units sold",
+          "by-revenue": "By revenue"
+        }
+      }
     }
   }
 }

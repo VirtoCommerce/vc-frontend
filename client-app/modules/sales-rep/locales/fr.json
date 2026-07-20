@@ -43,10 +43,23 @@
           "title": "Tableau de bord"
         },
         "widgets": {
-          "orders_on_hold": "Commandes en attente",
-          "active_projects": "Projets actifs",
+          "new_orders": "Nouvelles commandes",
+          "active_carts": "Paniers actifs",
           "orders_placed_mtd": "Commandes depuis le début du mois",
+          "orders_placed_week": "Commandes cette semaine",
+          "orders_placed_ytd": "Commandes depuis le début de l'année",
           "my_customers": "Mes clients"
+        },
+        "stats": {
+          "value_total": "{amount} au total",
+          "vs_last_week": "{delta} vs semaine dernière",
+          "vs_last_month": "{delta} vs mois dernier",
+          "vs_last_year": "{delta} vs année dernière",
+          "ordered_this_month": "{count} ont commandé ce mois-ci",
+          "new_customers": "{count} nouveaux clients",
+          "placed_today": "{count} passées aujourd'hui",
+          "new_this_week": "{count} nouveaux cette semaine",
+          "mtd_of_ytd": "{percent}% de l'année"
         }
       }
     },

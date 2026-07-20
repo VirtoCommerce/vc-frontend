@@ -1,10 +1,21 @@
-query SalesRepOrders($organizationId: String, $storeId: String, $cultureName: String, $first: Int, $sort: String) {
+query SalesRepOrders(
+  $organizationId: String
+  $storeId: String
+  $cultureName: String
+  $first: Int
+  $sort: String
+  $filter: String
+  $periodFrom: DateTime
+  $periodTo: DateTime
+) {
   salesRepOrders(
     organizationId: $organizationId
     storeId: $storeId
     cultureName: $cultureName
     first: $first
     sort: $sort
+    filter: $filter
+    period: { from: $periodFrom, to: $periodTo }
   ) {
     totalCount
     items {
@@ -16,6 +27,7 @@ query SalesRepOrders($organizationId: String, $storeId: String, $cultureName: St
       status
       statusDisplayValue
       itemsCount
+      itemsQuantity
       total {
         amount
         formattedAmount

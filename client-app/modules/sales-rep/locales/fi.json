@@ -43,10 +43,23 @@
           "title": "Hallintapaneeli"
         },
         "widgets": {
-          "orders_on_hold": "Pidossa olevat tilaukset",
-          "active_projects": "Aktiiviset projektit",
+          "new_orders": "Uudet tilaukset",
+          "active_carts": "Aktiiviset ostoskorit",
           "orders_placed_mtd": "Tilaukset kuluvan kuun alusta",
+          "orders_placed_week": "Tilaukset tällä viikolla",
+          "orders_placed_ytd": "Tilaukset kuluvan vuoden alusta",
           "my_customers": "Omat asiakkaat"
+        },
+        "stats": {
+          "value_total": "{amount} yhteensä",
+          "vs_last_week": "{delta} vs viime viikko",
+          "vs_last_month": "{delta} vs viime kuu",
+          "vs_last_year": "{delta} vs viime vuosi",
+          "ordered_this_month": "{count} tilasi tässä kuussa",
+          "new_customers": "{count} uutta asiakasta",
+          "placed_today": "{count} tänään",
+          "new_this_week": "{count} uutta tällä viikolla",
+          "mtd_of_ytd": "{percent}% vuodesta"
         }
       }
     },

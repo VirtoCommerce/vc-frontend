@@ -95,6 +95,10 @@ withDefaults(defineProps<IProps>(), {
     &--negative {
       @apply text-danger-600;
     }
+
+    &--neutral {
+      @apply text-neutral-500;
+    }
   }
 }
 </style>

@@ -9,13 +9,34 @@ export type SalesRepCustomerLastOrderType = { id: string; number: string; create
 export type SalesRepCustomerType = {
   organizationId: string;
   organizationName: string;
+  // Business category (Member.accountType), e.g. "Garden Center"; empty when unset.
+  accountType: string;
   // Default ship-to location, pre-formatted as "#postalCode · City · Region"; empty when no address.
   location: string;
+  // Inline per-row purchase columns (aliased orderStatistics slices; the backend batches, no N+1).
+  ytdTotal: string;
+  ytdCount: number;
+  lastYearTotal: string;
   lastOrder?: SalesRepCustomerLastOrderType;
 };
-// Only Name is sortable — the server sort is name-backed.
-export type SalesRepCustomerSortColumnType = "name";
-export type SalesRepCustomerSortType = { column: SalesRepCustomerSortColumnType; direction: "asc" | "desc" };
+
+// A server-defined filter/sort rule option surfaced as a chip or dropdown entry; the chosen `name` is
+// sent back in the unified filter/sort argument. `label` is the resolved display text — frontend i18n
+// (keyed by `name`) → backend localizedName → raw name (see useSalesRepRules).
+export type SalesRepRuleType = { name: string; label: string };
+export type SalesRepRuleDomainType = "order" | "cart" | "customer" | "topSeller";
+export type SalesRepRuleKindType = "filter" | "sort";
+
+// View model for a ranked Top Sellers row; `revenue` is the backend-formatted amount.
+export type SalesRepTopSellerRowType = {
+  rank: number;
+  productId: string;
+  name: string;
+  sku: string;
+  imageUrl: string;
+  units: number;
+  revenue: string;
+};
 
 // View model for a Sales Rep order row, shared by the customer profile (single org) and the hub
 // dashboard (cross-customer). `organizationName` backs the dashboard's Customer column;

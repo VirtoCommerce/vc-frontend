@@ -1,0 +1,108 @@
+query SalesRepCustomerOrderStatistics(
+  $organizationId: String
+  $storeId: String
+  $currencyCode: String
+  $cultureName: String
+  $mtdFrom: DateTime
+  $mtdTo: DateTime
+  $prevFrom: DateTime
+  $prevTo: DateTime
+  $ytdFrom: DateTime
+  $ytdTo: DateTime
+  $lastYearFrom: DateTime
+  $lastYearTo: DateTime
+  $weekFrom: DateTime
+  $weekTo: DateTime
+  $prevWeekFrom: DateTime
+  $prevWeekTo: DateTime
+  $todayFrom: DateTime
+  $todayTo: DateTime
+  $newOrdersFilter: String
+) {
+  salesRepCustomerOrderStatistics(
+    organizationId: $organizationId
+    storeId: $storeId
+    currencyCode: $currencyCode
+    cultureName: $cultureName
+  ) {
+    currencyCode
+    mtd: period(from: $mtdFrom, to: $mtdTo) {
+      total {
+        amount
+        formattedAmount
+      }
+      count
+      average {
+        amount
+        formattedAmount
+      }
+      lastOrderDate
+    }
+    ytd: period(from: $ytdFrom, to: $ytdTo) {
+      total {
+        amount
+        formattedAmount
+      }
+      count
+      average {
+        amount
+        formattedAmount
+      }
+      lastOrderDate
+    }
+    week: period(from: $weekFrom, to: $weekTo) {
+      total {
+        amount
+        formattedAmount
+      }
+      count
+    }
+    sinceDate: period {
+      firstOrderDate
+      lastOrderDate
+    }
+    newOrders: period(filter: $newOrdersFilter) {
+      total {
+        amount
+        formattedAmount
+      }
+      count
+    }
+    newOrdersToday: period(from: $todayFrom, to: $todayTo, filter: $newOrdersFilter) {
+      count
+    }
+    weekVsPrevWeek: comparison(
+      current: { from: $weekFrom, to: $weekTo }
+      previous: { from: $prevWeekFrom, to: $prevWeekTo }
+    ) {
+      totalChange {
+        amount
+        formattedAmount
+      }
+      totalChangePercent
+      countChange
+      countChangePercent
+    }
+    mtdVsPrevMonth: comparison(current: { from: $mtdFrom, to: $mtdTo }, previous: { from: $prevFrom, to: $prevTo }) {
+      totalChange {
+        amount
+        formattedAmount
+      }
+      totalChangePercent
+      countChange
+      countChangePercent
+    }
+    ytdVsLastYear: comparison(
+      current: { from: $ytdFrom, to: $ytdTo }
+      previous: { from: $lastYearFrom, to: $lastYearTo }
+    ) {
+      totalChange {
+        amount
+        formattedAmount
+      }
+      totalChangePercent
+      countChange
+      countChangePercent
+    }
+  }
+}

@@ -43,10 +43,23 @@
           "title": "Panel de control"
         },
         "widgets": {
-          "orders_on_hold": "Pedidos en espera",
-          "active_projects": "Proyectos activos",
+          "new_orders": "Pedidos nuevos",
+          "active_carts": "Carritos activos",
           "orders_placed_mtd": "Pedidos del mes en curso",
+          "orders_placed_week": "Pedidos de esta semana",
+          "orders_placed_ytd": "Pedidos del año en curso",
           "my_customers": "Mis clientes"
+        },
+        "stats": {
+          "value_total": "{amount} en total",
+          "vs_last_week": "{delta} vs. semana pasada",
+          "vs_last_month": "{delta} vs. mes pasado",
+          "vs_last_year": "{delta} vs. año pasado",
+          "ordered_this_month": "{count} compraron este mes",
+          "new_customers": "{count} clientes nuevos",
+          "placed_today": "{count} realizados hoy",
+          "new_this_week": "{count} nuevos esta semana",
+          "mtd_of_ytd": "{percent}% del año"
         }
       }
     },

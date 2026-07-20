@@ -43,10 +43,23 @@
           "title": "Dashboard"
         },
         "widgets": {
-          "orders_on_hold": "Angehaltene Bestellungen",
-          "active_projects": "Aktive Projekte",
+          "new_orders": "Neue Bestellungen",
+          "active_carts": "Aktive Warenkörbe",
           "orders_placed_mtd": "Bestellungen seit Monatsbeginn",
+          "orders_placed_week": "Bestellungen diese Woche",
+          "orders_placed_ytd": "Bestellungen seit Jahresbeginn",
           "my_customers": "Meine Kunden"
+        },
+        "stats": {
+          "value_total": "{amount} gesamt",
+          "vs_last_week": "{delta} ggü. Vorwoche",
+          "vs_last_month": "{delta} ggü. Vormonat",
+          "vs_last_year": "{delta} ggü. Vorjahr",
+          "ordered_this_month": "{count} in diesem Monat bestellt",
+          "new_customers": "{count} neue Kunden",
+          "placed_today": "{count} heute aufgegeben",
+          "new_this_week": "{count} neu diese Woche",
+          "mtd_of_ytd": "{percent}% des Jahres"
         }
       }
     },

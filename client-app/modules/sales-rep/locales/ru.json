@@ -43,10 +43,23 @@
           "title": "Дашборд"
         },
         "widgets": {
-          "orders_on_hold": "Заказы на удержании",
-          "active_projects": "Активные проекты",
+          "new_orders": "Новые заказы",
+          "active_carts": "Активные корзины",
           "orders_placed_mtd": "Заказы с начала месяца",
+          "orders_placed_week": "Заказы за эту неделю",
+          "orders_placed_ytd": "Заказы с начала года",
           "my_customers": "Мои клиенты"
+        },
+        "stats": {
+          "value_total": "{amount} всего",
+          "vs_last_week": "{delta} к прошлой неделе",
+          "vs_last_month": "{delta} к прошлому месяцу",
+          "vs_last_year": "{delta} к прошлому году",
+          "ordered_this_month": "{count} заказали в этом месяце",
+          "new_customers": "{count} новых клиентов",
+          "placed_today": "{count} сегодня",
+          "new_this_week": "{count} новых за неделю",
+          "mtd_of_ytd": "{percent}% от года"
         }
       }
     },

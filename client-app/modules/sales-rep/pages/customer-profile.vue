@@ -29,12 +29,14 @@
         <p v-if="meta" class="customer-profile__meta">{{ meta }}</p>
       </div>
 
-      <!-- Full-width KPI row (mock until VCST-5309). -->
-      <CustomerProfileWidgets />
+      <!-- Full-width KPI row (real data: order + cart statistics scoped to this customer). -->
+      <CustomerProfileWidgets :organization-id="organizationId" />
 
       <div class="customer-profile__layout">
         <div class="customer-profile__main">
-          <SalesRepOrders :organization-id="organizationId" :title="t('sales_rep.orders.title')" />
+          <SalesRepOrders :organization-id="organizationId" :title="t('sales_rep.orders.title')" filterable />
+
+          <TopSellers :organization-id="organizationId" :title="t('sales_rep.top_sellers.title')" />
         </div>
 
         <aside class="customer-profile__aside">
@@ -52,6 +54,7 @@ import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import CustomerProfileInfo from "../components/customer-profile-info.vue";
 import CustomerProfileWidgets from "../components/customer-profile-widgets.vue";
 import SalesRepOrders from "../components/sales-rep-orders.vue";
+import TopSellers from "../components/top-sellers.vue";
 import { useSalesRepCustomer } from "../composables/useSalesRepCustomer";
 import { MY_CUSTOMERS_ROUTE_NAME } from "../constants";
 

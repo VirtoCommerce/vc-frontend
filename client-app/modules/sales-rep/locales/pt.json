@@ -43,10 +43,23 @@
           "title": "Painel"
         },
         "widgets": {
-          "orders_on_hold": "Pedidos em espera",
-          "active_projects": "Projetos ativos",
+          "new_orders": "Novos pedidos",
+          "active_carts": "Carrinhos ativos",
           "orders_placed_mtd": "Pedidos no mês atual",
+          "orders_placed_week": "Pedidos desta semana",
+          "orders_placed_ytd": "Pedidos do ano atual",
           "my_customers": "Meus clientes"
+        },
+        "stats": {
+          "value_total": "{amount} no total",
+          "vs_last_week": "{delta} vs semana passada",
+          "vs_last_month": "{delta} vs mês passado",
+          "vs_last_year": "{delta} vs ano passado",
+          "ordered_this_month": "{count} compraram este mês",
+          "new_customers": "{count} novos clientes",
+          "placed_today": "{count} feitos hoje",
+          "new_this_week": "{count} novos esta semana",
+          "mtd_of_ytd": "{percent}% do ano"
         }
       }
     },
