@@ -7,7 +7,26 @@
       </VcLink>
     </template>
 
-    <VcEmptyView v-if="!orders.length && !loading" :text="t('sales_rep.orders.empty')" icon="outline-order" />
+    <!-- Status tabs come entirely from salesRepOrderStatuses; "All" (no filter) leads. -->
+    <div class="sales-rep-orders__tabs">
+      <VcTabSwitch
+        v-for="tab in tabs"
+        :key="tab.value"
+        v-model="activeStatus"
+        :value="tab.value"
+        :label="tab.label"
+        name="sales-rep-orders-status"
+        size="sm"
+        @change="activeStatus = tab.value"
+      />
+    </div>
+
+    <!-- With a status tab active, "no orders" means "none match the filter" — not "never ordered". -->
+    <VcEmptyView
+      v-if="!orders.length && !loading"
+      :text="activeStatus ? t('sales_rep.orders.no_results') : t('sales_rep.orders.empty')"
+      icon="outline-order"
+    />
 
     <!-- Skeleton rows match the page size so the loading state mirrors what will load. -->
     <VcTable v-else :loading="loading" :items="orders" :skeleton-rows="limit" mobile-breakpoint="lg">
@@ -91,8 +110,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { useSalesRepOrderStatuses } from "../composables/useSalesRepOrderStatuses";
 import { useSalesRepOrders } from "../composables/useSalesRepOrders";
 import { ORDERS_DEFAULT_LIMIT } from "../constants";
 import OrderStatus from "@/shared/account/components/order-status.vue";
@@ -112,10 +132,22 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const { t } = useI18n();
 
+const { statuses } = useSalesRepOrderStatuses();
+
+// "" is the "All" tab (no status filter); other values are salesRepOrderStatuses names.
+const activeStatus = ref("");
+const selectedStatuses = computed(() => (activeStatus.value ? [activeStatus.value] : undefined));
+
+const tabs = computed(() => [
+  { value: "", label: t("sales_rep.orders.tabs.all") },
+  ...statuses.value.map((status) => ({ value: status.name, label: status.localizedName })),
+]);
+
 const isCrossCustomer = computed(() => !props.organizationId);
 
 const { orders, loading } = useSalesRepOrders({
   organizationId: () => props.organizationId,
+  statuses: selectedStatuses,
   first: () => props.limit,
 });
 </script>
@@ -135,6 +167,10 @@ const { orders, loading } = useSalesRepOrders({
 
   &__all-link {
     @apply inline-flex items-center gap-1 whitespace-nowrap text-sm font-medium text-[--link-color] hover:underline;
+  }
+
+  &__tabs {
+    @apply flex flex-wrap gap-2 border-b border-neutral-200 px-3 pb-3 pt-1;
   }
 
   &__order-link {

@@ -1,7 +1,15 @@
-query SalesRepOrders($organizationId: String, $storeId: String, $cultureName: String, $first: Int, $sort: String) {
+query SalesRepOrders(
+  $organizationId: String
+  $storeId: String
+  $statuses: [String]
+  $cultureName: String
+  $first: Int
+  $sort: String
+) {
   salesRepOrders(
     organizationId: $organizationId
     storeId: $storeId
+    statuses: $statuses
     cultureName: $cultureName
     first: $first
     sort: $sort

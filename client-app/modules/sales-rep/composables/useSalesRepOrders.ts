@@ -8,24 +8,32 @@ import type { SalesRepOrderRowType } from "../types";
 import type { Ref } from "vue";
 
 type UseSalesRepOrdersOptionsType = {
+  // Options are expanded (not MaybeRefOrGetter<… | undefined>) so the optional `?` isn't a
+  // redundant second "undefined" at the union's top level — Sonar S4782; refs/getters still
+  // yield undefined, so call sites are unaffected (same shape as useProducts.ts).
   // Scope to one customer; omit for cross-customer orders (the hub dashboard).
-  // Expanded (not MaybeRefOrGetter<… | undefined>) so the `?` isn't a redundant second
-  // "undefined" — Sonar S4782; getters/refs still yield undefined (see useProducts.ts).
   organizationId?: string | Ref<string | undefined> | (() => string | undefined);
+  // Filter by order-status names (from salesRepOrderStatuses); omit/empty for "All".
+  statuses?: string[] | Ref<string[] | undefined> | (() => string[] | undefined);
   first?: number | Ref<number | undefined> | (() => number | undefined);
 };
 
 export function useSalesRepOrders(options: UseSalesRepOrdersOptionsType = {}) {
-  const variables = computed(() => ({
-    organizationId: toValue(options.organizationId),
-    // Scope to the rep's store so other-store orders don't leak in.
-    storeId: globals.storeId,
-    // Localize statusDisplayValue to the active culture.
-    cultureName: globals.cultureName,
-    // Most recent N; the full list lives on the "All orders" page.
-    first: toValue(options.first) ?? ORDERS_DEFAULT_LIMIT,
-    sort: "createdDate:desc",
-  }));
+  const variables = computed(() => {
+    const statuses = toValue(options.statuses);
+    return {
+      organizationId: toValue(options.organizationId),
+      // Scope to the rep's store so other-store orders don't leak in.
+      storeId: globals.storeId,
+      // Localize statusDisplayValue to the active culture, matching the status tabs.
+      cultureName: globals.cultureName,
+      // undefined (not []) means "no status filter" — the "All" tab.
+      statuses: statuses?.length ? statuses : undefined,
+      // Most recent N; the full list lives on the "All orders" page.
+      first: toValue(options.first) ?? ORDERS_DEFAULT_LIMIT,
+      sort: "createdDate:desc",
+    };
+  });
 
   const { result, loading, onError } = useQuery(SalesRepOrdersDocument, variables);
 

@@ -7,7 +7,7 @@
     <!-- Full-width KPI row (mock until the rep dashboard stats query lands). -->
     <DashboardWidgets />
 
-    <!-- Cross-customer orders (real data: salesRepOrders). -->
+    <!-- Cross-customer orders (real data: salesRepOrders + salesRepOrderStatuses). -->
     <Orders :title="t('sales_rep.orders.title')" />
   </div>
 </template>

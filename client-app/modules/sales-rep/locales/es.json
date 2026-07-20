@@ -73,6 +73,10 @@
       "title": "Pedidos recientes",
       "view_all": "Todos los pedidos",
       "empty": "Aún no hay pedidos",
+      "no_results": "Ningún pedido coincide con este filtro",
+      "tabs": {
+        "all": "Todos"
+      },
       "number": "N.º de pedido",
       "customer": "Cliente",
       "date": "Fecha",
