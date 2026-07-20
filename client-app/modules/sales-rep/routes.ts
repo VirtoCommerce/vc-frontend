@@ -28,6 +28,14 @@ function guardSalesRep(next: (to?: { name: string }) => void): boolean {
   return false;
 }
 
+// Rep-facing hub pages mount under the "/company" parent (for URL/layout reasons) which carries
+// `requiresOrganization: true`. But a sales rep serves organizations they don't belong to — their
+// access is defined by `sales-rep:access`, not org membership — so a rep with zero org memberships
+// would otherwise be bounced to Dashboard before these pages could mount. Clearing the inherited
+// gate here lets them through (child meta overrides parent meta in vue-router); the `beforeEnter`
+// guards below still enforce reps-only access. VCST-5494.
+const repRouteMeta = { requiresOrganization: false };
+
 // Relative path -> mounts under the "Company" parent (/company/sales-reps).
 export const salesRepsRoute: RouteRecordRaw = {
   path: ROUTE_SEGMENT,
@@ -40,6 +48,7 @@ export const dashboardRoute: RouteRecordRaw = {
   path: DASHBOARD_ROUTE_SEGMENT,
   name: DASHBOARD_ROUTE_NAME,
   component: DashboardPage,
+  meta: repRouteMeta,
   // Reps only — non-reps who hit the URL directly are bounced to the account dashboard.
   beforeEnter(_to, _from, next) {
     if (guardSalesRep(next)) {
@@ -52,6 +61,7 @@ export const myCustomersRoute: RouteRecordRaw = {
   path: MY_CUSTOMERS_ROUTE_SEGMENT,
   name: MY_CUSTOMERS_ROUTE_NAME,
   component: MyCustomersPage,
+  meta: repRouteMeta,
   // Reps only — non-reps who hit the URL directly are bounced to the dashboard.
   beforeEnter(_to, _from, next) {
     if (guardSalesRep(next)) {
@@ -66,6 +76,7 @@ export const customerProfileRoute: RouteRecordRaw = {
   name: CUSTOMER_PROFILE_ROUTE_NAME,
   component: CustomerProfilePage,
   props: true,
+  meta: repRouteMeta,
   // Reps-only gate + deep-link id check; the not-served/unknown-org case is handled on the page.
   beforeEnter(to, _from, next) {
     if (!guardSalesRep(next)) {
