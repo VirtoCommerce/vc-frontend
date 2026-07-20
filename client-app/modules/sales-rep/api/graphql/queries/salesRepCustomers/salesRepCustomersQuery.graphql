@@ -1,0 +1,20 @@
+query SalesRepCustomers($storeId: String, $first: Int, $after: String, $keyword: String, $sort: String) {
+  salesRepCustomers(storeId: $storeId, first: $first, after: $after, keyword: $keyword, sort: $sort) {
+    totalCount
+    items {
+      organizationId
+      organizationName
+      address {
+        postalCode
+        zip
+        city
+        regionName
+      }
+      lastOrder {
+        id
+        number
+        createdDate
+      }
+    }
+  }
+}

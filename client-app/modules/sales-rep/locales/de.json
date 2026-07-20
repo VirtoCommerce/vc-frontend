@@ -15,6 +15,55 @@
       "empty": "Keine Vertriebsmitarbeiter gefunden",
       "no_results": "Keine Vertriebsmitarbeiter entsprechen Ihrer Suche",
       "reset_search": "Suche zurücksetzen"
+    },
+    "my_customers": {
+      "navigation": {
+        "link": "Meine Kunden"
+      },
+      "page": {
+        "title": "Meine Kunden"
+      },
+      "table": {
+        "customer": "Kunde",
+        "last_order": "Meine letzte Bestellung",
+        "search_placeholder": "Suche nach Name",
+        "search_aria": "Kunden suchen",
+        "empty": "Keine Kunden gefunden",
+        "no_results": "Keine Kunden entsprechen Ihrer Suche",
+        "reset_search": "Suche zurücksetzen"
+      }
+    },
+    "hub": {
+      "title": "Vertriebsmitarbeiter-Hub"
+    },
+    "customer_profile": {
+      "loading": "Wird geladen…",
+      "not_found": "Kunde nicht gefunden oder nicht in Ihren Kunden.",
+      "back_to_customers": "Zurück zu meinen Kunden",
+      "orders": {
+        "title": "Bestellungen",
+        "empty": "Noch keine Bestellungen",
+        "number": "Bestellnr.",
+        "date": "Datum",
+        "items": "Artikel",
+        "status": "Status",
+        "total": "Gesamt",
+        "view_all": "Alle Bestellungen"
+      },
+      "widgets": {
+        "ytd_purchases": "Käufe seit Jahresbeginn",
+        "open_balance": "Offener Saldo",
+        "avg_order_value": "Durchschn. Bestellwert",
+        "orders_ytd": "Bestellungen seit Jahresbeginn"
+      },
+      "info": {
+        "title": "Kundeninformationen",
+        "empty": "Keine Informationen verfügbar",
+        "primary_contact": "Hauptansprechpartner",
+        "phone": "Telefon",
+        "account_type": "Kontotyp",
+        "ship_to": "Lieferadresse"
+      }
     }
   }
 }

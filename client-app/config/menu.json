@@ -89,7 +89,8 @@
             "icon": "bookmark-solid",
             "priority": 60
           }
-        ]
+        ],
+        "priority": 10
       },
       "marketing": {
         "id": "marketing",
@@ -104,7 +105,8 @@
             "icon": "receipt-tax",
             "priority": 10
           }
-        ]
+        ],
+        "priority": 20
       },
       "user": {
         "id": "user",
@@ -146,7 +148,8 @@
             "icon": "credit-card",
             "priority": 40
           }
-        ]
+        ],
+        "priority": 40
       },
       "corporate": {
         "id": "corporate",
@@ -167,7 +170,8 @@
             "title": "shared.layout.header.mobile.corporate_menu.company_members",
             "icon": "user-group"
           }
-        ]
+        ],
+        "priority": 30
       }
     },
     "mobile": {

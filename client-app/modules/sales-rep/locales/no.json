@@ -15,6 +15,55 @@
       "empty": "Ingen salgsrepresentanter funnet",
       "no_results": "Ingen salgsrepresentanter samsvarer med søket ditt",
       "reset_search": "Tilbakestill søk"
+    },
+    "my_customers": {
+      "navigation": {
+        "link": "Mine kunder"
+      },
+      "page": {
+        "title": "Mine kunder"
+      },
+      "table": {
+        "customer": "Kunde",
+        "last_order": "Min siste ordre",
+        "search_placeholder": "Søk etter navn",
+        "search_aria": "Søk etter kunder",
+        "empty": "Ingen kunder funnet",
+        "no_results": "Ingen kunder samsvarer med søket ditt",
+        "reset_search": "Tilbakestill søk"
+      }
+    },
+    "hub": {
+      "title": "Salgsrepresentant-hub"
+    },
+    "customer_profile": {
+      "loading": "Laster…",
+      "not_found": "Kunden ble ikke funnet eller er ikke blant kundene dine.",
+      "back_to_customers": "Tilbake til mine kunder",
+      "orders": {
+        "title": "Bestillinger",
+        "empty": "Ingen bestillinger ennå",
+        "number": "Ordrenr.",
+        "date": "Dato",
+        "items": "Varer",
+        "status": "Status",
+        "total": "Totalt",
+        "view_all": "Alle bestillinger"
+      },
+      "widgets": {
+        "ytd_purchases": "Kjøp hittil i år",
+        "open_balance": "Utestående saldo",
+        "avg_order_value": "Gjennomsnittlig ordreverdi",
+        "orders_ytd": "Bestillinger hittil i år"
+      },
+      "info": {
+        "title": "Kundeinformasjon",
+        "empty": "Ingen informasjon tilgjengelig",
+        "primary_contact": "Primær kontaktperson",
+        "phone": "Telefon",
+        "account_type": "Kontotype",
+        "ship_to": "Leveringsadresse"
+      }
     }
   }
 }
