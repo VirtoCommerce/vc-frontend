@@ -13,7 +13,8 @@ describe("sales-rep routes", () => {
     expect(route.meta?.requiresOrganization).toBe(false);
   });
 
-  it("leaves the buyer-facing sales-reps route org-gated (inherits /company meta)", () => {
-    expect(salesRepsRoute.meta?.requiresOrganization).toBeUndefined();
+  // No `requiresOrganization: false` override -> it keeps the "/company" parent's org gate.
+  it("does not clear the org gate on the sales-reps route", () => {
+    expect(salesRepsRoute.meta?.requiresOrganization).not.toBe(false);
   });
 });
