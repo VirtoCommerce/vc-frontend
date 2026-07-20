@@ -15,6 +15,55 @@
       "empty": "Nie znaleziono przedstawicieli handlowych",
       "no_results": "Nie znaleziono przedstawicieli handlowych pasujących do Twojego wyszukiwania",
       "reset_search": "Resetuj wyszukiwanie"
+    },
+    "my_customers": {
+      "navigation": {
+        "link": "Moi klienci"
+      },
+      "page": {
+        "title": "Moi klienci"
+      },
+      "table": {
+        "customer": "Klient",
+        "last_order": "Moje ostatnie zamówienie",
+        "search_placeholder": "Szukaj według nazwy",
+        "search_aria": "Szukaj klientów",
+        "empty": "Nie znaleziono klientów",
+        "no_results": "Żaden klient nie pasuje do wyszukiwania",
+        "reset_search": "Resetuj wyszukiwanie"
+      }
+    },
+    "hub": {
+      "title": "Centrum przedstawiciela handlowego"
+    },
+    "customer_profile": {
+      "loading": "Ładowanie…",
+      "not_found": "Nie znaleziono klienta lub nie należy do Twoich klientów.",
+      "back_to_customers": "Powrót do moich klientów",
+      "orders": {
+        "title": "Zamówienia",
+        "empty": "Brak zamówień",
+        "number": "Nr zamówienia",
+        "date": "Data",
+        "items": "Pozycje",
+        "status": "Status",
+        "total": "Razem",
+        "view_all": "Wszystkie zamówienia"
+      },
+      "widgets": {
+        "ytd_purchases": "Zakupy od początku roku",
+        "open_balance": "Saldo otwarte",
+        "avg_order_value": "Średnia wartość zamówienia",
+        "orders_ytd": "Zamówienia od początku roku"
+      },
+      "info": {
+        "title": "Informacje o kliencie",
+        "empty": "Brak dostępnych informacji",
+        "primary_contact": "Główna osoba kontaktowa",
+        "phone": "Telefon",
+        "account_type": "Typ konta",
+        "ship_to": "Adres dostawy"
+      }
     }
   }
 }

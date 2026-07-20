@@ -1,5 +1,5 @@
 import { createGlobalState } from "@vueuse/core";
-import { clone, mergeWith } from "lodash-es";
+import { clone, cloneDeep, mergeWith } from "lodash-es";
 import { computed, readonly, ref, shallowRef, triggerRef } from "vue";
 import menuData from "@/config/menu.json";
 import { getChildCategories, getMenu } from "@/core/api/graphql";
@@ -22,6 +22,7 @@ import {
 import { globals } from "../globals";
 import type { MenuLinkType } from "../api/graphql/types";
 import type {
+  AccountNavigationSectionType,
   ExtendedMenuLinkType,
   MenuType,
   MarkedMenuLinkType,
@@ -37,6 +38,9 @@ export function _useNavigations() {
 
   const matchingRouteName = ref("");
   const menuSchema = shallowRef<MenuType | null>(menuData);
+  // Account left-rail sections contributed by modules (e.g. the Sales Rep hub).
+  // shallowRef so the sections' `isVisible` ComputedRefs aren't unwrapped by ref's deep typing.
+  const registeredAccountSections = shallowRef<AccountNavigationSectionType[]>([]);
   const catalogMenuItems = shallowRef<ExtendedMenuLinkType[]>([]);
   const footerLinks = shallowRef<ExtendedMenuLinkType[]>([]);
   const pinnedLinks = shallowRef<ExtendedMenuLinkType[]>([]);
@@ -150,6 +154,23 @@ export function _useNavigations() {
     });
   }
 
+  // Registered account sections (e.g. Sales Rep hub), visibility-filtered and translated for the
+  // mobile drill-down. Clone children first — getTranslatedMenuLink mutates its shared-registry input.
+  // `priority` is intentionally not applied here: mobile prepends in registration order (desktop is
+  // the priority-ordered path — see AccountNavigationSectionType.priority).
+  const mobileRegisteredAccountSections = computed<ExtendedMenuLinkType[]>(() =>
+    registeredAccountSections.value
+      .filter((section) => !section.isVisible || section.isVisible.value)
+      .map((section) =>
+        getTranslatedMenuLink({
+          id: section.id,
+          title: section.title,
+          icon: section.icon,
+          children: cloneDeep(section.children),
+        }),
+      ),
+  );
+
   const mobilePreSelectedMenuItem = computed<ExtendedMenuLinkType | undefined>(() => {
     const matchedRouteNames = globals.router.currentRoute.value.matched
       .map((item) => item.name)
@@ -177,8 +198,10 @@ export function _useNavigations() {
       return specialRoute;
     }
 
-    // Then search in section children
+    // Then search in section children — registered sections (e.g. Sales Rep hub) lead, matching the
+    // rendered order, so a rep on /company/my-customers auto-opens the hub like built-in routes do.
     const sections = [
+      ...mobileRegisteredAccountSections.value,
       mobilePurchasingMenuItem.value,
       mobileMarketingMenuItem.value,
       mobileUserMenuItem.value,
@@ -270,6 +293,15 @@ export function _useNavigations() {
     triggerRef(menuSchema);
   }
 
+  // Registers an account left-rail section (idempotent by id). Modules call this at init.
+  function registerAccountSection(section: AccountNavigationSectionType) {
+    if (registeredAccountSections.value.some((x) => x.id === section.id)) {
+      Logger.warn(`[useNavigations] account section "${section.id}" is already registered; ignoring.`);
+      return;
+    }
+    registeredAccountSections.value = [...registeredAccountSections.value, section];
+  }
+
   return {
     setMatchingRouteName,
 
@@ -287,6 +319,7 @@ export function _useNavigations() {
     mobileMarketingMenuItem,
     mobileUserMenuItem,
     mobileCorporateMenuItem,
+    mobileRegisteredAccountSections,
     mobilePreSelectedMenuItem,
 
     matchingRouteName: readonly(matchingRouteName),
@@ -302,6 +335,8 @@ export function _useNavigations() {
     markLinkTree,
 
     mergeMenuSchema,
+    registerAccountSection,
+    registeredAccountSections: computed(() => registeredAccountSections.value),
   };
 }
 

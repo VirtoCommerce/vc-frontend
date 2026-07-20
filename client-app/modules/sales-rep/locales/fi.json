@@ -15,6 +15,55 @@
       "empty": "Myyntiedustajia ei löytynyt",
       "no_results": "Hakuasi vastaavia myyntiedustajia ei löytynyt",
       "reset_search": "Tyhjennä haku"
+    },
+    "my_customers": {
+      "navigation": {
+        "link": "Omat asiakkaat"
+      },
+      "page": {
+        "title": "Omat asiakkaat"
+      },
+      "table": {
+        "customer": "Asiakas",
+        "last_order": "Viimeisin tilaukseni",
+        "search_placeholder": "Hae nimellä",
+        "search_aria": "Hae asiakkaita",
+        "empty": "Asiakkaita ei löytynyt",
+        "no_results": "Yksikään asiakas ei vastaa hakuasi",
+        "reset_search": "Tyhjennä haku"
+      }
+    },
+    "hub": {
+      "title": "Myyntiedustajan keskus"
+    },
+    "customer_profile": {
+      "loading": "Ladataan…",
+      "not_found": "Asiakasta ei löytynyt tai se ei kuulu asiakkaisiisi.",
+      "back_to_customers": "Takaisin omiin asiakkaisiin",
+      "orders": {
+        "title": "Tilaukset",
+        "empty": "Ei vielä tilauksia",
+        "number": "Tilausnro",
+        "date": "Päivämäärä",
+        "items": "Tuotteet",
+        "status": "Tila",
+        "total": "Yhteensä",
+        "view_all": "Kaikki tilaukset"
+      },
+      "widgets": {
+        "ytd_purchases": "Ostot vuoden alusta",
+        "open_balance": "Avoin saldo",
+        "avg_order_value": "Keskimääräinen tilausarvo",
+        "orders_ytd": "Tilaukset vuoden alusta"
+      },
+      "info": {
+        "title": "Asiakastiedot",
+        "empty": "Ei tietoja saatavilla",
+        "primary_contact": "Ensisijainen yhteyshenkilö",
+        "phone": "Puhelin",
+        "account_type": "Tilin tyyppi",
+        "ship_to": "Toimitusosoite"
+      }
     }
   }
 }
