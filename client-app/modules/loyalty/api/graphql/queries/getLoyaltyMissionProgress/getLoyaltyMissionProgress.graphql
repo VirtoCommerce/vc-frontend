@@ -1,0 +1,57 @@
+query GetLoyaltyMissionProgress(
+  $after: String
+  $first: Int
+  $sort: String
+  $statuses: [String]
+  $isStarted: Boolean
+  $cultureName: String
+  $storeId: String
+) {
+  loyaltyMissionProgress(
+    after: $after
+    first: $first
+    sort: $sort
+    statuses: $statuses
+    isStarted: $isStarted
+    cultureName: $cultureName
+    storeId: $storeId
+  ) {
+    totalCount
+    items {
+      missionId
+      progressId
+      name
+      localizedName
+      description
+      bannerUrl
+      missionType
+      status
+      isStarted
+      percentage
+      currentValue
+      targetValue
+      startDate
+      endDate
+      periodStart
+      periodEnd
+      completedDate
+      daysRemaining
+      missionCurrency {
+        code
+        symbol
+      }
+      rewardPoints {
+        amount
+      }
+      items {
+        productId
+        currentQuantity
+        targetQuantity
+      }
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+  }
+}

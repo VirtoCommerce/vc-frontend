@@ -3480,6 +3480,8 @@ export type LoyaltyUserMission = {
   completedDate?: Maybe<Scalars['DateTime']['output']>;
   /** The accumulated value towards the mission target. */
   currentValue?: Maybe<Scalars['Decimal']['output']>;
+  /** Whole days left until the mission ends. Null when the mission has no end date. */
+  daysRemaining?: Maybe<Scalars['Int']['output']>;
   /** The localized mission description. */
   description?: Maybe<Scalars['String']['output']>;
   /** The mission end date. */
@@ -3490,8 +3492,12 @@ export type LoyaltyUserMission = {
   items?: Maybe<Array<Maybe<LoyaltyMissionProgressItem>>>;
   /** The localized mission name. */
   localizedName?: Maybe<Scalars['String']['output']>;
+  /** The store main currency used to format the target/current money values. */
+  missionCurrency?: Maybe<CurrencyType>;
   /** The mission identifier. */
   missionId?: Maybe<Scalars['String']['output']>;
+  /** The mission type: OrderValue, OrderCount or PerSku. */
+  missionType?: Maybe<Scalars['String']['output']>;
   /** The internal mission name. */
   name?: Maybe<Scalars['String']['output']>;
   /** The completion percentage (0-100). */
@@ -3502,6 +3508,8 @@ export type LoyaltyUserMission = {
   periodStart?: Maybe<Scalars['DateTime']['output']>;
   /** The progress identifier. Null when the user has not started the mission yet. */
   progressId?: Maybe<Scalars['String']['output']>;
+  /** The loyalty points granted on completion. */
+  rewardPoints?: Maybe<MoneyType>;
   /** The mission start date. */
   startDate?: Maybe<Scalars['DateTime']['output']>;
   /** The progress status (InProgress, Completed, Expired). */
@@ -6227,8 +6235,11 @@ export type QueryLoyaltyBalanceArgs = {
 
 export type QueryLoyaltyMissionProgressArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
+  completedEndDate?: InputMaybe<Scalars['DateTime']['input']>;
+  completedStartDate?: InputMaybe<Scalars['DateTime']['input']>;
   cultureName?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
+  isStarted?: InputMaybe<Scalars['Boolean']['input']>;
   keyword?: InputMaybe<Scalars['String']['input']>;
   sort?: InputMaybe<Scalars['String']['input']>;
   statuses?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;

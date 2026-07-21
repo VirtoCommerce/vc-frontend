@@ -1390,15 +1390,15 @@
           "catalog": "Catalog"
         },
         "card": {
-          "type_products": "Products",
+          "type_products": "Featured SKUs",
           "type_order_value": "Order value",
-          "type_orders": "Orders",
+          "type_orders": "Order count",
           "points": "points",
           "days_left": "{count} day left | {count} days left",
           "mission_completed": "Mission completed",
           "open_mission": "Open mission",
           "progress_skus": "{current} of {target} SKUs",
-          "progress_spend": "{current} of {target}",
+          "progress_spend": "{sum} spent",
           "progress_orders": "{current} of {target} orders"
         },
         "sku_modal": {

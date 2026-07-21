@@ -19,6 +19,23 @@ export type Scalars = {
   Decimal: { input: number; output: number; }
 };
 
+export type CurrencyType = {
+  /** Currency code may be used ISO 4217 */
+  code: Scalars['String']['output'];
+  /** Currency culture name */
+  cultureName: Scalars['String']['output'];
+  /** Currency custom formatting */
+  customFormatting?: Maybe<Scalars['String']['output']>;
+  /** Currency english name */
+  englishName: Scalars['String']['output'];
+  /** Exchange rate */
+  exchangeRate: Scalars['Decimal']['output'];
+  /** Currency name */
+  name: Scalars['String']['output'];
+  /** Symbol */
+  symbol: Scalars['String']['output'];
+};
+
 /** Represents the result of a loyalty balance operation. */
 export type LoyaltyBalanceResult = {
   /** The current balance of the loyalty account. */
@@ -88,6 +105,8 @@ export type LoyaltyUserMission = {
   completedDate?: Maybe<Scalars['DateTime']['output']>;
   /** The accumulated value towards the mission target. */
   currentValue?: Maybe<Scalars['Decimal']['output']>;
+  /** Whole days left until the mission ends. Null when the mission has no end date. */
+  daysRemaining?: Maybe<Scalars['Int']['output']>;
   /** The localized mission description. */
   description?: Maybe<Scalars['String']['output']>;
   /** The mission end date. */
@@ -98,8 +117,12 @@ export type LoyaltyUserMission = {
   items?: Maybe<Array<Maybe<LoyaltyMissionProgressItem>>>;
   /** The localized mission name. */
   localizedName?: Maybe<Scalars['String']['output']>;
+  /** The store main currency used to format the target/current money values. */
+  missionCurrency?: Maybe<CurrencyType>;
   /** The mission identifier. */
   missionId?: Maybe<Scalars['String']['output']>;
+  /** The mission type: OrderValue, OrderCount or PerSku. */
+  missionType?: Maybe<Scalars['String']['output']>;
   /** The internal mission name. */
   name?: Maybe<Scalars['String']['output']>;
   /** The completion percentage (0-100). */
@@ -110,6 +133,8 @@ export type LoyaltyUserMission = {
   periodStart?: Maybe<Scalars['DateTime']['output']>;
   /** The progress identifier. Null when the user has not started the mission yet. */
   progressId?: Maybe<Scalars['String']['output']>;
+  /** The loyalty points granted on completion. */
+  rewardPoints?: Maybe<MoneyType>;
   /** The mission start date. */
   startDate?: Maybe<Scalars['DateTime']['output']>;
   /** The progress status (InProgress, Completed, Expired). */
@@ -136,6 +161,23 @@ export type LoyaltyUserMissionEdge = {
   cursor: Scalars['String']['output'];
   /** The item at the end of the edge */
   node?: Maybe<LoyaltyUserMission>;
+};
+
+export type MoneyType = {
+  /** A decimal with the amount rounded to the significant number of decimal digits. */
+  amount: Scalars['Decimal']['output'];
+  /** Currency type */
+  currency: CurrencyType;
+  /** Number of decimal digits for the associated currency. */
+  decimalDigits: Scalars['Int']['output'];
+  /** Formatted amount. */
+  formattedAmount: Scalars['String']['output'];
+  /** Formatted amount without currency. */
+  formattedAmountWithoutCurrency: Scalars['String']['output'];
+  /** Formatted amount without point. */
+  formattedAmountWithoutPoint: Scalars['String']['output'];
+  /** Formatted amount without point and currency. */
+  formattedAmountWithoutPointAndCurrency: Scalars['String']['output'];
 };
 
 /** Information about pagination in a connection. */
@@ -165,8 +207,11 @@ export type QueryLoyaltyBalanceArgs = {
 
 export type QueryLoyaltyMissionProgressArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
+  completedEndDate?: InputMaybe<Scalars['DateTime']['input']>;
+  completedStartDate?: InputMaybe<Scalars['DateTime']['input']>;
   cultureName?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
+  isStarted?: InputMaybe<Scalars['Boolean']['input']>;
   keyword?: InputMaybe<Scalars['String']['input']>;
   sort?: InputMaybe<Scalars['String']['input']>;
   statuses?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
@@ -192,6 +237,19 @@ export type GetLoyaltyBalanceQueryVariables = Exact<{
 
 export type GetLoyaltyBalanceQuery = { loyaltyBalance?: { currentBalance: number, resultBalance: number } };
 
+export type GetLoyaltyMissionProgressQueryVariables = Exact<{
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
+  statuses?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>> | InputMaybe<Scalars['String']['input']>>;
+  isStarted?: InputMaybe<Scalars['Boolean']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type GetLoyaltyMissionProgressQuery = { loyaltyMissionProgress?: { totalCount?: number, items?: Array<{ missionId?: string, progressId?: string, name?: string, localizedName?: string, description?: string, bannerUrl?: string, missionType?: string, status?: string, isStarted?: boolean, percentage?: number, currentValue?: number, targetValue?: number, startDate?: any, endDate?: any, periodStart?: any, periodEnd?: any, completedDate?: any, daysRemaining?: number, missionCurrency?: { code: string, symbol: string }, rewardPoints?: { amount: number }, items?: Array<{ productId?: string, currentQuantity: number, targetQuantity: number }> }>, pageInfo: { hasNextPage: boolean, endCursor?: string } } };
+
 export type GetLoyaltyPointsHistoryQueryVariables = Exact<{
   sort?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
@@ -204,10 +262,12 @@ export type GetLoyaltyPointsHistoryQuery = { loyaltyPointsHistory?: { totalCount
 
 
 export const GetLoyaltyBalanceDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetLoyaltyBalance"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"loyaltyBalance"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"userId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}},{"kind":"Argument","name":{"kind":"Name","value":"orderId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"orderId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"currentBalance"}},{"kind":"Field","name":{"kind":"Name","value":"resultBalance"}}]}}]}}]} as unknown as DocumentNode<GetLoyaltyBalanceQuery, GetLoyaltyBalanceQueryVariables>;
+export const GetLoyaltyMissionProgressDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetLoyaltyMissionProgress"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sort"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"statuses"}},"type":{"kind":"ListType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"isStarted"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"cultureName"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"loyaltyMissionProgress"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}},{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}},{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sort"}}},{"kind":"Argument","name":{"kind":"Name","value":"statuses"},"value":{"kind":"Variable","name":{"kind":"Name","value":"statuses"}}},{"kind":"Argument","name":{"kind":"Name","value":"isStarted"},"value":{"kind":"Variable","name":{"kind":"Name","value":"isStarted"}}},{"kind":"Argument","name":{"kind":"Name","value":"cultureName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"cultureName"}}},{"kind":"Argument","name":{"kind":"Name","value":"storeId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalCount"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"missionId"}},{"kind":"Field","name":{"kind":"Name","value":"progressId"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"localizedName"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"bannerUrl"}},{"kind":"Field","name":{"kind":"Name","value":"missionType"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"isStarted"}},{"kind":"Field","name":{"kind":"Name","value":"percentage"}},{"kind":"Field","name":{"kind":"Name","value":"currentValue"}},{"kind":"Field","name":{"kind":"Name","value":"targetValue"}},{"kind":"Field","name":{"kind":"Name","value":"startDate"}},{"kind":"Field","name":{"kind":"Name","value":"endDate"}},{"kind":"Field","name":{"kind":"Name","value":"periodStart"}},{"kind":"Field","name":{"kind":"Name","value":"periodEnd"}},{"kind":"Field","name":{"kind":"Name","value":"completedDate"}},{"kind":"Field","name":{"kind":"Name","value":"daysRemaining"}},{"kind":"Field","name":{"kind":"Name","value":"missionCurrency"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}}]}},{"kind":"Field","name":{"kind":"Name","value":"rewardPoints"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"amount"}}]}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"productId"}},{"kind":"Field","name":{"kind":"Name","value":"currentQuantity"}},{"kind":"Field","name":{"kind":"Name","value":"targetQuantity"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}}]}}]}}]} as unknown as DocumentNode<GetLoyaltyMissionProgressQuery, GetLoyaltyMissionProgressQueryVariables>;
 export const GetLoyaltyPointsHistoryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetLoyaltyPointsHistory"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sort"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"operationType"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"loyaltyPointsHistory"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sort"}}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}},{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}},{"kind":"Argument","name":{"kind":"Name","value":"operationType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"operationType"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalCount"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"object"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"orderId"}},{"kind":"Field","name":{"kind":"Name","value":"orderNumber"}}]}},{"kind":"Field","name":{"kind":"Name","value":"operationType"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"createdDate"}}]}}]}}]}}]} as unknown as DocumentNode<GetLoyaltyPointsHistoryQuery, GetLoyaltyPointsHistoryQueryVariables>;
 export const OperationNames = {
   Query: {
     GetLoyaltyBalance: 'GetLoyaltyBalance',
+    GetLoyaltyMissionProgress: 'GetLoyaltyMissionProgress',
     GetLoyaltyPointsHistory: 'GetLoyaltyPointsHistory'
   }
 }

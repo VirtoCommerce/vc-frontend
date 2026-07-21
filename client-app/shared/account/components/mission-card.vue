@@ -83,8 +83,8 @@ function openMission(): void {
 
     background: linear-gradient(
       180deg,
-      rgb(from theme("colors.secondary.100") r g b / 0.05),
-      rgb(from theme("colors.secondary.100") r g b / 0.55)
+      rgb(from theme("colors.secondary.900") r g b / 0.05),
+      rgb(from theme("colors.secondary.900") r g b / 0.55)
     );
   }
 

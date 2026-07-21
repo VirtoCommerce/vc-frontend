@@ -62,7 +62,7 @@
     </div>
 
     <div class="missions__cards">
-      <MissionCard v-for="mission in skuMissions" :key="mission.missionId!" :mission="mission" />
+      <MissionCard v-for="mission in missions" :key="mission.missionId!" :mission="mission" />
     </div>
   </div>
 </template>
@@ -70,103 +70,14 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
 import { useLoyaltyBalance } from "@/modules/loyalty/composables/useLoyaltyBalance";
-import type { MissionDataType } from "@/modules/loyalty/composables";
+import { useMissions } from "@/modules/loyalty/composables/useMissions";
 import MissionCard from "@/shared/account/components/mission-card.vue";
 
 const { fetchLoyaltyBalance, loading: balanceLoading, currentBalance } = useLoyaltyBalance();
-
-// TODO: mock data — remove once the `loyaltyMissionProgress` query is wired up.
-const skuMissions: MissionDataType[] = [
-  {
-    missionId: "sku-1",
-    missionType: "PerSku",
-    progressId: "sku-1-progress",
-    name: "coffee-lovers",
-    localizedName: "Stock up on our signature blends",
-    description: "Buy the selected coffee blends to complete this mission.",
-    bannerUrl: "",
-    status: "InProgress",
-    isStarted: true,
-    percentage: 60,
-    rewardPoints: 3000,
-    startDate: "2026-07-01T00:00:00Z",
-    endDate: "2026-07-31T23:59:59Z",
-    periodStart: "2026-07-01T00:00:00Z",
-    periodEnd: "2026-07-31T23:59:59Z",
-    items: [
-      { productId: "espresso-forte", currentQuantity: 2, targetQuantity: 3 },
-      { productId: "house-blend", currentQuantity: 1, targetQuantity: 2 },
-    ],
-  },
-  {
-    missionId: "sku-2",
-    missionType: "PerSku",
-    progressId: "sku-2-progress",
-    name: "brew-kit",
-    localizedName: "Complete your home brewing kit",
-    description: "Grab each accessory from the brewing kit selection.",
-    bannerUrl: "",
-    status: "Completed",
-    isStarted: true,
-    percentage: 100,
-    rewardPoints: 5000,
-    startDate: "2026-06-15T00:00:00Z",
-    endDate: "2026-07-20T23:59:59Z",
-    periodStart: "2026-06-15T00:00:00Z",
-    periodEnd: "2026-07-20T23:59:59Z",
-    completedDate: "2026-07-10T12:00:00Z",
-    items: [
-      { productId: "pour-over-kettle", currentQuantity: 1, targetQuantity: 1 },
-      { productId: "ceramic-dripper", currentQuantity: 1, targetQuantity: 1 },
-      { productId: "paper-filters", currentQuantity: 2, targetQuantity: 2 },
-    ],
-  },
-  {
-    missionId: "sku-3",
-    missionType: "PerSku",
-    name: "tea-sampler",
-    localizedName: "Try the seasonal tea sampler",
-    description: "Purchase the featured seasonal teas before the offer ends.",
-    bannerUrl: "",
-    status: "InProgress",
-    isStarted: false,
-    percentage: 25,
-    rewardPoints: 1500,
-    startDate: "2026-07-10T00:00:00Z",
-    endDate: "2026-07-15T23:59:59Z",
-    periodStart: "2026-07-10T00:00:00Z",
-    periodEnd: "2026-07-15T23:59:59Z",
-    items: [
-      { productId: "green-sencha", currentQuantity: 1, targetQuantity: 2 },
-      { productId: "chamomile-dream", currentQuantity: 0, targetQuantity: 2 },
-    ],
-  },
-  {
-    missionId: "sku-4",
-    missionType: "PerSku",
-    progressId: "sku-4-progress",
-    name: "grinder-bundle",
-    localizedName: "Grab the full grinder bundle",
-    description: "Purchase every item in the grinder bundle.",
-    bannerUrl: "",
-    status: "Completed",
-    isStarted: true,
-    percentage: 100,
-    rewardPoints: 4000,
-    startDate: "2026-06-01T00:00:00Z",
-    endDate: "2026-08-30T23:59:59Z",
-    periodStart: "2026-06-01T00:00:00Z",
-    periodEnd: "2026-08-30T23:59:59Z",
-    completedDate: "2026-07-05T09:00:00Z",
-    items: [
-      { productId: "burr-grinder", currentQuantity: 1, targetQuantity: 1 },
-      { productId: "cleaning-brush", currentQuantity: 1, targetQuantity: 1 },
-    ],
-  },
-];
+const { fetchMissions, missions } = useMissions();
 
 onMounted(async () => {
-  await fetchLoyaltyBalance();
+  await Promise.all([fetchLoyaltyBalance(), fetchMissions()]);
 });
 </script>
 

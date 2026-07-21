@@ -83,7 +83,7 @@
         {{ $t("pages.account.missions.sku_modal.close") }}
       </VcButton>
 
-      <VcButton icon="cart">
+      <VcButton prepend-icon="cart">
         {{ $t("pages.account.missions.sku_modal.add_to_cart") }}
       </VcButton>
     </template>
@@ -141,7 +141,7 @@ onMounted(() => {
 
 <style lang="scss">
 .mission-details {
-  @apply flex flex-col gap-5;
+  @apply flex flex-col gap-5 pb-4;
 
   &__meta {
     @apply flex flex-wrap items-center gap-3;
