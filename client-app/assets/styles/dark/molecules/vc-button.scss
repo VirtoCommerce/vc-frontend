@@ -11,14 +11,14 @@
     warning: 400,
   );
   $solid-hover: (
-    primary: 100,
-    secondary: 200,
-    accent: 200,
-    neutral: 200,
-    success: 300,
-    danger: 300,
-    info: 300,
-    warning: 300,
+    primary: 300,
+    secondary: 400,
+    accent: 400,
+    neutral: 400,
+    success: 500,
+    danger: 500,
+    info: 500,
+    warning: 500,
   );
   $loading: "";
   $disabled: "";
@@ -74,14 +74,37 @@
   }
 
   @each $color in $colors {
+    &--outline--#{$color}:hover:not(#{$loading}, #{$disabled}) {
+      --bg-color: var(--color-#{$color}-100);
+    }
+
+    &--surface--#{$color}:hover:not(#{$loading}, #{$disabled}) {
+      --bg-color: var(--color-#{$color}-100);
+      --border-color: var(--color-#{$color}-100);
+    }
+
+    &--ghost--#{$color}:hover:not(#{$loading}, #{$disabled}) {
+      --bg-color: var(--color-#{$color}-100);
+      --border-color: var(--color-#{$color}-100);
+      --text-color: var(--color-#{$color}-900);
+    }
+  }
+
+  @each $color in $colors {
+    &--tonal--#{$color}:hover:not(#{$loading}, #{$disabled}) {
+      --bg-color: var(--color-#{$color}-200);
+    }
+  }
+
+  @each $color in $colors {
     &--soft--#{$color} {
       --bg-color: var(--color-#{$color}-100);
       --border-color: var(--color-#{$color}-100);
       --text-color: var(--color-#{$color}-900);
 
       &:hover:not(#{$loading}, #{$disabled}) {
-        --bg-color: var(--color-#{$color}-50);
-        --border-color: var(--color-#{$color}-50);
+        --bg-color: var(--color-#{$color}-200);
+        --border-color: var(--color-#{$color}-200);
       }
     }
   }

@@ -11,14 +11,14 @@
     warning: 400,
   );
   $solid-hover: (
-    primary: 100,
-    secondary: 200,
-    accent: 200,
-    neutral: 200,
-    success: 300,
-    danger: 300,
-    info: 300,
-    warning: 300,
+    primary: 300,
+    secondary: 400,
+    accent: 400,
+    neutral: 400,
+    success: 500,
+    danger: 500,
+    info: 500,
+    warning: 500,
   );
 
   &[class*="vc-chip--solid--"]:not(.vc-chip--disabled) {
@@ -45,8 +45,8 @@
       --text-color: var(--color-#{$color}-900);
 
       &.vc-chip--clickable:not(.vc-chip--disabled) .vc-chip__content:hover {
-        --bg-color: var(--color-#{$color}-50);
-        --border-color: var(--color-#{$color}-50);
+        --bg-color: var(--color-#{$color}-200);
+        --border-color: var(--color-#{$color}-200);
       }
     }
 
@@ -65,7 +65,7 @@
       --border-color: var(--color-#{$color}-600);
 
       &.vc-chip--clickable:not(.vc-chip--disabled) .vc-chip__content:hover {
-        --bg-color: var(--color-#{$color}-50);
+        --bg-color: var(--color-#{$color}-200);
       }
     }
 

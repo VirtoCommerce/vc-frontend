@@ -30,4 +30,12 @@ $solid-bg: (
     --bg-color: var(--color-#{$color}-100);
     --text-color: var(--color-#{$color}-900);
   }
+
+  .vc-badge--surface--#{$color} {
+    --text-color: var(--color-#{$color}-900);
+  }
+
+  .vc-badge--ghost--#{$color} {
+    --text-color: var(--color-#{$color}-900);
+  }
 }
