@@ -44,15 +44,17 @@ const i18n = useI18n();
 // The favicon will also NOT be updated in PWA mode (in manifest.json).
 useHead({
   link: favIcons.value?.length
-    ? // Normalize GraphQL `FaviconType` (nullable fields) into unhead's link input via its typed helper
-      favIcons.value.map((icon) =>
-        defineLink({
-          rel: icon.rel ?? "icon",
-          href: icon.href ?? "",
-          sizes: icon.sizes ?? undefined,
-          type: icon.type ?? undefined,
-        }),
-      )
+    ? // Skip malformed favicons (schema allows null entries / missing href); normalize the rest for unhead.
+      favIcons.value
+        .filter((icon) => icon?.href)
+        .map((icon) =>
+          defineLink({
+            rel: icon.rel ?? "icon",
+            href: icon.href ?? "",
+            sizes: icon.sizes ?? undefined,
+            type: icon.type ?? undefined,
+          }),
+        )
     : [
         {
           rel: "icon",
