@@ -29,6 +29,14 @@ function getProxy(target: ProxyOptions["target"], options: Omit<ProxyOptions, "t
   };
 }
 
+// Builds the dev-server `Content-Security-Policy: frame-ancestors` directive. The backend host is
+// environment-specific, so it comes from APP_BACKEND_URL (same source as the proxy target) instead of
+// being hardcoded. builder.io is a fixed external host used by the Page Builder integration.
+function getContentSecurityPolicy(): string {
+  const frameAncestors = ["'self'", process.env.APP_BACKEND_URL, "https://builder.io"].filter(Boolean);
+  return `frame-ancestors ${frameAncestors.join(" ")};`;
+}
+
 function getBackendProxy(): Record<string, ProxyOptions> {
   return {
     "^/api": getProxy(process.env.APP_BACKEND_URL),
@@ -125,7 +133,7 @@ export default defineConfig(({ command, mode }): UserConfig => {
       port: 3000,
       cors: true,
       headers: {
-        "Content-Security-Policy": "frame-ancestors 'self' https://localhost:5001 https://builder.io;",
+        "Content-Security-Policy": getContentSecurityPolicy(),
         "Cross-Origin-Resource-Policy": "cross-origin",
         "Cross-Origin-Embedder-Policy": "unsafe-none",
       },
