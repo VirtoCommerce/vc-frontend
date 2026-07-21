@@ -1,16 +1,41 @@
-// Solid alerts: same additional-50→950 swap for text and icons.
 .vc-alert {
-  $colors: success, warning, danger, info;
+  $colors: info, success, warning, danger;
+  $solid-bg: (
+    success: 400,
+    danger: 400,
+    info: 400,
+    warning: 400,
+  );
 
-  &--solid {
+  &[class*="vc-alert--solid--"] {
     --text-color: var(--color-additional-950);
     --icon-color: var(--color-additional-950);
+    --close-button-icon-color: var(--color-additional-950);
+  }
 
-    @each $color in $colors {
-      &--#{$color} {
-        --bg-color: var(--color-#{$color}-400);
-        --border-color: var(--color-#{$color}-400);
-      }
+  @each $color, $shade in $solid-bg {
+    &--solid--#{$color} {
+      --bg-color: var(--color-#{$color}-#{$shade});
+      --border-color: var(--color-#{$color}-#{$shade});
+    }
+  }
+
+  @each $color in $colors {
+    &--soft--#{$color} {
+      --bg-color: var(--color-#{$color}-100);
+      --border-color: var(--color-#{$color}-100);
+      --text-color: var(--color-#{$color}-900);
+    }
+
+    &--outline--#{$color} {
+      --text-color: var(--color-#{$color}-900);
+      --border-color: var(--color-#{$color}-600);
+    }
+
+    &--tonal--#{$color} {
+      --bg-color: var(--color-#{$color}-100);
+      --text-color: var(--color-#{$color}-900);
+      --border-color: var(--color-#{$color}-600);
     }
   }
 }
