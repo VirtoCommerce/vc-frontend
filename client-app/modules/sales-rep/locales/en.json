@@ -30,7 +30,6 @@
         "last_year": "Last year",
         "orders_count": "{count} orders",
         "all_customers": "All",
-        "sort_placeholder": "Sort by",
         "search_placeholder": "Search by name",
         "search_aria": "Search customers",
         "empty": "No customers found",
@@ -105,13 +104,7 @@
       "items": "Items",
       "status": "Status",
       "total": "Total",
-      "filter_all": "All",
-      "sort_placeholder": "Sort by"
-    },
-    "period": {
-      "lifetime": "Lifetime",
-      "month": "This month",
-      "year": "This year"
+      "filter_all": "All"
     },
     "top_sellers": {
       "title": "Top sellers",
@@ -120,8 +113,7 @@
       "units": "Units",
       "revenue": "Revenue",
       "empty": "No sales in this period",
-      "all_categories": "All categories",
-      "sort_placeholder": "Sort by"
+      "all_categories": "All categories"
     },
     "rules": {
       "order": {
