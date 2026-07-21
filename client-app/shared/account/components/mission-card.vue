@@ -48,10 +48,12 @@
 </template>
 
 <script setup lang="ts">
-import { useMissionCard } from "@/modules/loyalty/composables";
+import { MISSION_TYPE, useMissionCard } from "@/modules/loyalty/composables";
 import { useModal } from "@/shared/modal";
+import OrderMissionModal from "./order-mission-modal.vue";
 import SkuMissionModal from "./sku-mission-modal.vue";
-import type { MissionDataType } from "@/modules/loyalty/composables";
+import type { MissionDataType, MissionType } from "@/modules/loyalty/composables";
+import type { Component } from "vue";
 
 const props = defineProps<{
   mission: MissionDataType;
@@ -60,9 +62,16 @@ const props = defineProps<{
 const { view } = useMissionCard(() => props.mission);
 const { openModal } = useModal();
 
-// Only SKU missions have a modal for now; other mission types will get their own.
+const MODALS_BY_TYPE: Record<MissionType, Component> = {
+  [MISSION_TYPE.PerSku]: SkuMissionModal,
+  [MISSION_TYPE.OrderValue]: OrderMissionModal,
+  [MISSION_TYPE.OrderCount]: OrderMissionModal,
+};
+
 function openMission(): void {
-  openModal({ component: SkuMissionModal, props: { mission: props.mission } });
+  const missionType = (props.mission.missionType as MissionType | undefined) ?? MISSION_TYPE.PerSku;
+
+  openModal({ component: MODALS_BY_TYPE[missionType], props: { mission: props.mission } });
 }
 </script>
 

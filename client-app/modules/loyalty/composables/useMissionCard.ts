@@ -149,5 +149,5 @@ export function useMissionCard(mission: MaybeRefOrGetter<MissionDataType>) {
     };
   });
 
-  return { view };
+  return { view, formatCurrency };
 }

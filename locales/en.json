@@ -1409,6 +1409,13 @@
           "reward_unlocked": "All targets met — {points} points unlocked",
           "close": "Close",
           "add_to_cart": "Add to cart"
+        },
+        "order_modal": {
+          "mission_target": "Mission target",
+          "value_requirement": "Spend {target} in qualifying orders",
+          "count_requirement": "Place {target} separate orders",
+          "close": "Close",
+          "redeem_products": "Redeem products"
         }
       }
     },

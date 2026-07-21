@@ -64,6 +64,14 @@
     <div class="missions__cards">
       <MissionCard v-for="mission in missions" :key="mission.missionId!" :mission="mission" />
     </div>
+
+    <VcPagination
+      v-if="pagesCount > 1"
+      :page="page"
+      :pages="pagesCount"
+      class="missions__pagination"
+      @update:page="changePage"
+    />
   </div>
 </template>
 
@@ -74,7 +82,13 @@ import { useMissions } from "@/modules/loyalty/composables/useMissions";
 import MissionCard from "@/shared/account/components/mission-card.vue";
 
 const { fetchLoyaltyBalance, loading: balanceLoading, currentBalance } = useLoyaltyBalance();
-const { fetchMissions, missions } = useMissions();
+const { fetchMissions, missions, page, pagesCount } = useMissions();
+
+async function changePage(newPage: number) {
+  page.value = newPage;
+  window.scroll({ top: 0, behavior: "smooth" });
+  await fetchMissions();
+}
 
 onMounted(async () => {
   await Promise.all([fetchLoyaltyBalance(), fetchMissions()]);
@@ -92,7 +106,11 @@ onMounted(async () => {
   }
 
   &__cards {
-    @apply grid grid-cols-3 gap-4;
+    @apply grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3;
+  }
+
+  &__pagination {
+    @apply mt-5;
   }
 }
 
