@@ -116,25 +116,9 @@
       "all_categories": "All categories"
     },
     "rules": {
-      "order": {
-        "sort": {
-          "recent": "Most recent"
-        }
-      },
       "customer": {
-        "sort": {
-          "my-last-orders": "My last orders",
-          "ytd-purchases": "YTD purchases",
-          "name": "Customer name"
-        },
         "filter": {
           "All": "All"
-        }
-      },
-      "topSeller": {
-        "sort": {
-          "by-units": "By units sold",
-          "by-revenue": "By revenue"
         }
       }
     }
