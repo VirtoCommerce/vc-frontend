@@ -29,12 +29,10 @@ function getProxy(target: ProxyOptions["target"], options: Omit<ProxyOptions, "t
   };
 }
 
-// Builds the dev-server `Content-Security-Policy: frame-ancestors` directive. The backend host is
-// environment-specific, so it comes from APP_BACKEND_URL (same source as the proxy target) instead of
-// being hardcoded. builder.io is a fixed external host used by the Page Builder integration.
+// Dev-server CSP frame-ancestors: backend host comes from APP_BACKEND_URL (like the proxy);
+// builder.io is a fixed Page Builder host.
 function getContentSecurityPolicy(): string {
-  // Normalize to an origin so a trailing slash/path or unexpected scheme in APP_BACKEND_URL can't
-  // produce an invalid CSP host-source (e.g. ".../store"); falls back gracefully if the var is unset.
+  // Use origin only — strips a trailing slash/path so the CSP host-source stays valid.
   const backendOrigin = process.env.APP_BACKEND_URL ? new URL(process.env.APP_BACKEND_URL).origin : undefined;
   const frameAncestors = ["'self'", backendOrigin, "https://builder.io"].filter(Boolean);
   return `frame-ancestors ${frameAncestors.join(" ")};`;
