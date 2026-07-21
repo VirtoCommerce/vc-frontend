@@ -1,16 +1,24 @@
 <template>
-  <VcModal ref="modalComponent" :title="t('sales_rep.communication.title')" is-mobile-fullscreen dividers>
+  <VcModal
+    ref="modalComponent"
+    :title="t('sales_rep.communication.title')"
+    class="customer-communication-modal"
+    is-mobile-fullscreen
+    dividers
+  >
     <p class="customer-communication-modal__subtitle">
       {{ t("sales_rep.communication.subtitle", { organization: organizationName }) }}
     </p>
 
-    <form class="space-y-4" @submit.prevent>
+    <form class="customer-communication-modal__form" @submit.prevent>
       <VcInput
         v-model="title"
         :label="t('sales_rep.communication.title_label')"
         :placeholder="t('common.placeholders.enter_value')"
         :disabled="loading"
-        :max-length="128"
+        :maxlength="128"
+        :message="errors.title"
+        :error="!!errors.title"
       />
 
       <VcTextarea
@@ -66,16 +74,11 @@ import { useNotifications } from "@/shared/notification";
 import { VcModal } from "@/ui-kit/components";
 import { useSalesRepCommunication } from "../composables/useSalesRepCommunication";
 
-interface IEmits {
-  (e: "result", succeed: boolean): void;
-}
-
 interface IProps {
   organizationId: string;
   organizationName: string;
 }
 
-const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
 const { t } = useI18n();
@@ -94,8 +97,9 @@ const { errors, meta, handleSubmit } = useForm({
   initialValues: { title: "", message: "" },
 });
 
-const { value: title } = useField<string>("title", toTypedSchema(string().max(128)));
-const { value: message } = useField<string>("message", toTypedSchema(string().required().max(1000)));
+// .trim() so a spaces-only value fails `required` (and the validated value matches the trimmed payload).
+const { value: title } = useField<string>("title", toTypedSchema(string().trim().max(128)));
+const { value: message } = useField<string>("message", toTypedSchema(string().trim().required().max(1000)));
 
 const send = handleSubmit(async (data) => {
   const succeeded = await sendCommunication({
@@ -107,7 +111,6 @@ const send = handleSubmit(async (data) => {
   });
 
   if (succeeded) {
-    emit("result", true);
     modalComponent.value?.close();
     notifications.success({
       text: t("sales_rep.communication.success_text"),
@@ -128,6 +131,10 @@ const send = handleSubmit(async (data) => {
 <style lang="scss">
 // `@apply` keeps the module self-contained as an MF remote (no global utility layer). See PORT_TO_MF.md.
 .customer-communication-modal {
+  &__form {
+    @apply space-y-4;
+  }
+
   &__subtitle {
     @apply mb-4 text-sm text-neutral-500 [word-break:break-word];
   }

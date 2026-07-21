@@ -122,7 +122,7 @@
               id="actions"
               v-slot="{ item }"
               :title="t('sales_rep.my_customers.table.actions')"
-              class="w-16 text-center"
+              class="my-customers__actions-col"
             >
               <VcButton
                 :aria-label="t('sales_rep.communication.action')"
@@ -213,6 +213,10 @@ function changePage(newPage: number): void {
 
   &__search-input {
     @apply w-full;
+  }
+
+  &__actions-col {
+    @apply w-16 text-center;
   }
 
   // Top-align body cells only, so the name lines up with the stacked last-order date/number.

@@ -10,10 +10,6 @@ const mutationMock = await vi.hoisted(async () => {
 });
 
 vi.mock("@vue/apollo-composable", () => ({ useMutation: mutationMock.useMutation }));
-// The operation is imported as a raw document; useMutation is mocked, so a stub is enough.
-vi.mock("../api/graphql/mutations/sendCustomerCommunication/sendCustomerCommunicationMutation.graphql", () => ({
-  default: {},
-}));
 vi.mock("@/core/globals", () => ({ globals: { storeId: "B2B-store", cultureName: "en-US" } }));
 
 beforeEach(() => {
