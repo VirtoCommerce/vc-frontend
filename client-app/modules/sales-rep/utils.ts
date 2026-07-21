@@ -1,4 +1,13 @@
+import type { SalesRepRuleType } from "./types";
 import type { StatWidgetToneType } from "./types/widgets";
+
+// The filter chips always prepend a synthetic "All" baseline, and a backend "all" passthrough rule would
+// duplicate it. So the real, selectable filter options are everything except "all" — and a filter control
+// is only worth showing when at least one exists (otherwise the lone "All" chip is a no-op). Single source
+// of the "all = baseline" convention, shared by the chips component and the widgets that gate the control.
+export function selectableFilterRules(rules: SalesRepRuleType[]): SalesRepRuleType[] {
+  return rules.filter((rule) => rule.name.toLowerCase() !== "all");
+}
 
 // The backend exposes the customer's default address as a structured object and leaves formatting to
 // the storefront (schema note: e.g. "City, Region"). Keep this the single source of that format so the

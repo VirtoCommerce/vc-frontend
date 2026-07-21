@@ -1,78 +1,34 @@
 <template>
   <VcWidget :title="title" size="md" class="top-sellers">
-    <template #append>
-      <div class="top-sellers__controls">
-        <VcSelect
-          v-model="period"
-          :items="periodOptions"
-          text-field="label"
-          value-field="value"
-          size="sm"
-          class="top-sellers__control"
-        />
-
-        <VcSelect
-          v-if="sortRules.length"
-          v-model="sort"
-          :items="sortRules"
-          text-field="label"
-          value-field="name"
-          size="sm"
-          :placeholder="t('sales_rep.top_sellers.sort_placeholder')"
-          class="top-sellers__control"
-        />
-      </div>
-    </template>
-
     <template #default-container>
       <div class="top-sellers__body">
-        <!-- Category filter chips (top-seller filter rules = the store catalog's top-level categories). -->
-        <SalesRepRuleChips
-          v-if="filterRules.length"
-          v-model="filter"
-          :rules="filterRules"
-          :all-label="t('sales_rep.top_sellers.all_categories')"
-        />
+        <!-- Category filter chips (top-seller filter rules = the store catalog's top-level categories).
+             The filter sits in a full-width gray toolbar band, divided from the table by a bottom border. -->
+        <div v-if="hasFilterOptions" class="top-sellers__filter">
+          <SalesRepRuleChips
+            v-model="filter"
+            :rules="filterRules"
+            :all-label="t('sales_rep.top_sellers.all_categories')"
+          />
+        </div>
 
-        <VcEmptyView v-if="!items.length && !loading" :text="t('sales_rep.top_sellers.empty')" icon="outline-order" />
+        <div class="top-sellers__content">
+          <VcEmptyView v-if="!items.length && !loading" :text="t('sales_rep.top_sellers.empty')" icon="outline-order" />
 
-        <VcTable
-          v-else
-          :loading="loading"
-          :items="items"
-          :skeleton-rows="TOP_SELLERS_DEFAULT_TAKE"
-          mobile-breakpoint="lg"
-        >
-          <template #mobile-item="{ item }">
-            <div class="top-sellers__mobile-item">
-              <span class="top-sellers__rank">{{ item.rank }}</span>
+          <!-- Sorting is driven by named backend rules; a header click selects the column's rule (no asc/desc toggle). -->
+          <VcTable
+            v-else
+            :loading="loading"
+            :items="items"
+            :skeleton-rows="TOP_SELLERS_DEFAULT_TAKE"
+            :sort="sortInfo"
+            mobile-breakpoint="lg"
+            @header-click="applySort"
+          >
+            <template #mobile-item="{ item }">
+              <div class="top-sellers__mobile-item">
+                <span class="top-sellers__rank">{{ item.rank }}</span>
 
-              <VcLink
-                :to="getProductRoute(item.productId)"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="top-sellers__name"
-              >
-                {{ item.name }}
-              </VcLink>
-
-              <span class="top-sellers__sub">{{ item.sku }} · {{ item.units }} · {{ item.revenue }}</span>
-            </div>
-          </template>
-
-          <VcTableColumn id="rank" v-slot="{ item }" :title="t('sales_rep.top_sellers.rank')" align="center">
-            {{ item.rank }}
-          </VcTableColumn>
-
-          <VcTableColumn id="product" v-slot="{ item }" :title="t('sales_rep.top_sellers.product')">
-            <div class="top-sellers__product">
-              <span class="top-sellers__thumb">
-                <VcImage v-if="item.imageUrl" :src="item.imageUrl" :alt="item.name" class="top-sellers__thumb-img" />
-
-                <VcIcon v-else name="cube" aria-hidden="true" />
-              </span>
-
-              <span class="top-sellers__product-text">
                 <VcLink
                   :to="getProductRoute(item.productId)"
                   target="_blank"
@@ -82,38 +38,74 @@
                   {{ item.name }}
                 </VcLink>
 
-                <span v-if="item.sku" class="top-sellers__sub">{{ item.sku }}</span>
-              </span>
-            </div>
-          </VcTableColumn>
+                <span class="top-sellers__sub">{{ item.sku }} · {{ item.units }} · {{ item.revenue }}</span>
+              </div>
+            </template>
 
-          <VcTableColumn id="units" v-slot="{ item }" :title="t('sales_rep.top_sellers.units')" align="right">
-            {{ item.units }}
-          </VcTableColumn>
+            <VcTableColumn id="rank" v-slot="{ item }" :title="t('sales_rep.top_sellers.rank')" align="center">
+              {{ item.rank }}
+            </VcTableColumn>
 
-          <VcTableColumn
-            id="revenue"
-            v-slot="{ item }"
-            :title="t('sales_rep.top_sellers.revenue')"
-            align="right"
-            class="font-bold"
-          >
-            {{ item.revenue }}
-          </VcTableColumn>
-        </VcTable>
+            <VcTableColumn id="product" v-slot="{ item }" :title="t('sales_rep.top_sellers.product')">
+              <div class="top-sellers__product">
+                <span class="top-sellers__thumb">
+                  <VcImage v-if="item.imageUrl" :src="item.imageUrl" :alt="item.name" class="top-sellers__thumb-img" />
+
+                  <VcIcon v-else name="cube" aria-hidden="true" />
+                </span>
+
+                <span class="top-sellers__product-text">
+                  <VcLink
+                    :to="getProductRoute(item.productId)"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="top-sellers__name"
+                  >
+                    {{ item.name }}
+                  </VcLink>
+
+                  <span v-if="item.sku" class="top-sellers__sub">{{ item.sku }}</span>
+                </span>
+              </div>
+            </VcTableColumn>
+
+            <VcTableColumn
+              id="units"
+              v-slot="{ item }"
+              :title="t('sales_rep.top_sellers.units')"
+              :sortable="isColumnSortable('units')"
+              align="right"
+            >
+              {{ item.units }}
+            </VcTableColumn>
+
+            <VcTableColumn
+              id="revenue"
+              v-slot="{ item }"
+              :title="t('sales_rep.top_sellers.revenue')"
+              :sortable="isColumnSortable('revenue')"
+              align="right"
+              class="font-bold"
+            >
+              {{ item.revenue }}
+            </VcTableColumn>
+          </VcTable>
+        </div>
       </div>
     </template>
   </VcWidget>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { getProductRoute } from "@/core/utilities/product";
+import { useSalesRepColumnSort } from "../composables/useSalesRepColumnSort";
 import { useSalesRepPeriodFilter } from "../composables/useSalesRepPeriodFilter";
 import { useSalesRepRules } from "../composables/useSalesRepRules";
 import { useSalesRepTopSellers } from "../composables/useSalesRepTopSellers";
 import { TOP_SELLERS_DEFAULT_TAKE } from "../constants";
+import { selectableFilterRules } from "../utils";
 import SalesRepRuleChips from "./sales-rep-rule-chips.vue";
 
 interface IProps {
@@ -132,11 +124,22 @@ const sort = ref<string | undefined>(undefined);
 // A salesRepTopSellerFilterRules name (a top-level category id); undefined → all categories.
 const filter = ref<string | undefined>(undefined);
 
-// Period defaults to the current year to date; the selector also offers Lifetime and This month.
-const { period, options: periodOptions, from: periodFrom, to: periodTo } = useSalesRepPeriodFilter("year");
+// Period is fixed to the current year to date (the selector was removed).
+const { from: periodFrom, to: periodTo } = useSalesRepPeriodFilter("year");
 
 const { rules: sortRules } = useSalesRepRules("topSeller", "sort");
 const { rules: filterRules } = useSalesRepRules("topSeller", "filter");
+
+// Show the category chips only when the backend offers a real category beyond the "All" baseline.
+const hasFilterOptions = computed(() => selectableFilterRules(filterRules.value).length > 0);
+
+// Header-click sorting: each sortable column maps to its backend sort-rule name; "by-units" is the server default.
+const { sortInfo, isColumnSortable, applySort } = useSalesRepColumnSort({
+  sortRule: sort,
+  columns: { units: "by-units", revenue: "by-revenue" },
+  defaultColumn: "units",
+  rules: sortRules,
+});
 
 const { items, loading } = useSalesRepTopSellers({
   organizationId: () => props.organizationId,
@@ -150,16 +153,25 @@ const { items, loading } = useSalesRepTopSellers({
 <style lang="scss">
 // `@apply` keeps the module self-contained as an MF remote (no global utility layer). See PORT_TO_MF.md.
 .top-sellers {
+  // Recent Orders top-aligns its header cells (its columns carry `align-top`); VcTable otherwise
+  // centers header text, which left the Top Sellers header sitting ~7px lower. Match it here.
+  .vc-table__title {
+    @apply align-top;
+  }
+
   &__body {
-    @apply flex flex-col gap-3 px-1.5 pb-3 pt-4;
+    @apply flex flex-col;
   }
 
-  &__controls {
-    @apply flex flex-wrap items-center gap-2;
+  // Full-width gray toolbar band holding the category filter; a bottom border divides it from the table.
+  // `px-6` aligns the tabs with the widget header title.
+  &__filter {
+    @apply border-b border-neutral-200 bg-neutral-50 px-6 py-3;
   }
 
-  &__control {
-    @apply w-40;
+  // Design insets the table ~6px from the widget edge; vertical matches the widget's own body padding.
+  &__content {
+    @apply px-1.5 pb-3 pt-4;
   }
 
   &__product {

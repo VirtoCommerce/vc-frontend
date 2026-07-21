@@ -28,24 +28,13 @@
         </VcInput>
       </div>
 
-      <!-- Controls: customer segment chips (an "All" baseline + any project segments) + a named sort-rule dropdown. -->
-      <div v-if="filterRules.length || sortRules.length" class="my-customers__controls">
+      <!-- Controls: customer segment chips (an "All" baseline + any project segments). Sorting moved to table headers.
+           Hidden unless there's a real segment to pick — a lone "All" chip filters nothing. -->
+      <div v-if="hasFilterOptions" class="my-customers__controls">
         <SalesRepRuleChips
-          v-if="filterRules.length"
           v-model="filter"
           :rules="filterRules"
           :all-label="t('sales_rep.my_customers.table.all_customers')"
-        />
-
-        <VcSelect
-          v-if="sortRules.length"
-          v-model="sortRule"
-          :items="sortRules"
-          text-field="label"
-          value-field="name"
-          size="sm"
-          :placeholder="t('sales_rep.my_customers.table.sort_placeholder')"
-          class="my-customers__sort"
         />
       </div>
 
@@ -64,14 +53,17 @@
 
       <VcWidget v-else size="md">
         <template #default-container>
+          <!-- Sorting is driven by named backend rules; a header click selects the column's rule (no asc/desc toggle). -->
           <VcTable
             :loading="loading"
             :items="items"
             :pages="pages"
             :page="page"
             :row-class="rowClass"
+            :sort="sortInfo"
             mobile-breakpoint="lg"
             @page-changed="changePage"
+            @header-click="applySort"
           >
             <template #mobile-item="{ item }">
               <div class="my-customers__mobile-item">
@@ -102,8 +94,12 @@
               </div>
             </template>
 
-            <!-- Ordering is a named sort rule (dropdown), not a column header click. -->
-            <VcTableColumn id="name" v-slot="{ item }" :title="t('sales_rep.my_customers.table.customer')">
+            <VcTableColumn
+              id="name"
+              v-slot="{ item }"
+              :title="t('sales_rep.my_customers.table.customer')"
+              :sortable="isColumnSortable('name')"
+            >
               <VcLink
                 class="my-customers__customer"
                 :to="{ name: CUSTOMER_PROFILE_ROUTE_NAME, params: { organizationId: item.organizationId } }"
@@ -115,7 +111,13 @@
             </VcTableColumn>
 
             <!-- Inline per-row purchase columns (aliased orderStatistics slices; batched, no N+1). -->
-            <VcTableColumn id="ytd" v-slot="{ item }" :title="t('sales_rep.my_customers.table.ytd')" align="right">
+            <VcTableColumn
+              id="ytd"
+              v-slot="{ item }"
+              :title="t('sales_rep.my_customers.table.ytd')"
+              :sortable="isColumnSortable('ytd')"
+              align="right"
+            >
               <template v-if="item.ytdTotal">
                 <div class="my-customers__amount">{{ item.ytdTotal }}</div>
 
@@ -136,7 +138,12 @@
               {{ item.lastYearTotal || "—" }}
             </VcTableColumn>
 
-            <VcTableColumn id="lastOrder" v-slot="{ item }" :title="t('sales_rep.my_customers.table.last_order')">
+            <VcTableColumn
+              id="lastOrder"
+              v-slot="{ item }"
+              :title="t('sales_rep.my_customers.table.last_order')"
+              :sortable="isColumnSortable('lastOrder')"
+            >
               <template v-if="item.lastOrder">
                 <div>{{ $d(item.lastOrder.createdDate) }}</div>
 
@@ -160,12 +167,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import SalesRepRuleChips from "../components/sales-rep-rule-chips.vue";
+import { useSalesRepColumnSort } from "../composables/useSalesRepColumnSort";
 import { useSalesRepCustomers } from "../composables/useSalesRepCustomers";
 import { useSalesRepRules } from "../composables/useSalesRepRules";
 import { CUSTOMER_PROFILE_ROUTE_NAME } from "../constants";
+import { selectableFilterRules } from "../utils";
 import type { SalesRepCustomerType } from "../types";
 
 const { t } = useI18n();
@@ -173,6 +182,17 @@ const { loading, keyword, filter, sortRule, page, pages, items } = useSalesRepCu
 
 const { rules: sortRules } = useSalesRepRules("customer", "sort");
 const { rules: filterRules } = useSalesRepRules("customer", "filter");
+
+// Show the segment chips only when the backend offers a real segment beyond the "All" baseline.
+const hasFilterOptions = computed(() => selectableFilterRules(filterRules.value).length > 0);
+
+// Header-click sorting: each sortable column maps to its backend sort-rule name; "my-last-orders" is the server default.
+const { sortInfo, isColumnSortable, applySort } = useSalesRepColumnSort({
+  sortRule,
+  columns: { name: "name", ytd: "ytd-purchases", lastOrder: "my-last-orders" },
+  defaultColumn: "lastOrder",
+  rules: sortRules,
+});
 
 // Unapplied search term; committed to the query on Enter or the search button.
 const localKeyword = ref("");
@@ -229,10 +249,6 @@ function changePage(newPage: number): void {
 
   &__controls {
     @apply flex flex-wrap items-center justify-between gap-3;
-  }
-
-  &__sort {
-    @apply w-52;
   }
 
   // Top-align body cells only, so the name lines up with the stacked last-order date/number.
