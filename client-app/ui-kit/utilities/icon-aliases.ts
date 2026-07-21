@@ -31,6 +31,7 @@ export const ICON_ALIASES: Readonly<Record<string, string>> = {
   cup: "trophy",
   "cursor-click": "mouse-pointer-click",
   "dashboard-2": "layout-dashboard",
+  delete: "circle-x",
   "delete-2": "x",
   "delete-thin": "x",
   "desktop-computer": "monitor",

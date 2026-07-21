@@ -58,7 +58,9 @@ defineProps<IProps>();
   }
 
   &__icon {
-    @apply size-6 text-primary;
+    --vc-icon-color: var(--color-primary-500);
+
+    @apply size-6;
 
     @media (width > theme("screens.xs")) {
       @apply size-8;
