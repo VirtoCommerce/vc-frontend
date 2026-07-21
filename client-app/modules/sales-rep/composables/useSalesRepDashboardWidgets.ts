@@ -57,7 +57,7 @@ export function useSalesRepDashboardWidgets() {
       {
         key: "active_carts",
         labelKey: "sales_rep.hub.dashboard.widgets.active_carts",
-        icon: "shopping-cart",
+        icon: "cart",
         accent: "success",
         value: formatStatCount(carts?.activeCarts?.count),
         sub: carts?.activeCarts?.total.formattedAmount ?? "",

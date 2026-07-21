@@ -54,7 +54,7 @@ export function useSalesRepCustomerWidgets(organizationId: MaybeRefOrGetter<stri
       {
         key: "active_cart",
         labelKey: "sales_rep.hub.dashboard.widgets.active_carts",
-        icon: "shopping-cart",
+        icon: "cart",
         accent: "success",
         // One bold number — the active cart's total. No sub, no badge; "—" when the customer has no active cart.
         value: activeCarts?.count ? activeCarts.total.formattedAmount : "—",

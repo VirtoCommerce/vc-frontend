@@ -467,7 +467,7 @@ export type SalesRepCustomerCountsComparison = {
 };
 
 export type SalesRepCustomerCountsPeriod = {
-  /** Customers whose first-ever order by the rep falls in the range. */
+  /** Customers first assigned to the rep within the range (by assignment date). */
   newCustomers: Scalars['Int']['output'];
   /** Distinct customers the rep ordered for within the range. */
   orderingCustomers: Scalars['Int']['output'];
@@ -570,7 +570,7 @@ export type SalesRepOrderSortRule = {
 export type SalesRepStatisticsPeriodInput = {
   /** Inclusive lower bound on the created date (null = no lower bound). */
   from?: InputMaybe<Scalars['DateTime']['input']>;
-  /** Exclusive upper bound on the created date (null = no upper bound). */
+  /** Inclusive upper bound on the created date (null = no upper bound). */
   to?: InputMaybe<Scalars['DateTime']['input']>;
 };
 
