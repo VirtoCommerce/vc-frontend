@@ -33,7 +33,10 @@ function getProxy(target: ProxyOptions["target"], options: Omit<ProxyOptions, "t
 // environment-specific, so it comes from APP_BACKEND_URL (same source as the proxy target) instead of
 // being hardcoded. builder.io is a fixed external host used by the Page Builder integration.
 function getContentSecurityPolicy(): string {
-  const frameAncestors = ["'self'", process.env.APP_BACKEND_URL, "https://builder.io"].filter(Boolean);
+  // Normalize to an origin so a trailing slash/path or unexpected scheme in APP_BACKEND_URL can't
+  // produce an invalid CSP host-source (e.g. ".../store"); falls back gracefully if the var is unset.
+  const backendOrigin = process.env.APP_BACKEND_URL ? new URL(process.env.APP_BACKEND_URL).origin : undefined;
+  const frameAncestors = ["'self'", backendOrigin, "https://builder.io"].filter(Boolean);
   return `frame-ancestors ${frameAncestors.join(" ")};`;
 }
 
