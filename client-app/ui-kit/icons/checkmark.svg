@@ -1,7 +1,7 @@
 <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" id="icon">
   <path
     d="M18.3333 9.99999C18.3333 5.39761 14.6023 1.66666 9.99996 1.66666C5.39758 1.66666 1.66663 5.39761 1.66663 9.99999C1.66663 14.6023 5.39758 18.3333 9.99996 18.3333C14.6023 18.3333 18.3333 14.6023 18.3333 9.99999Z"
-    stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
-  <path d="M6.46476 10.0004L6.59042 10.0004M9.84081 10.0004L9.96646 10.0004M13.2846 10.0004L13.4103 10.0004"
-    stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+    stroke="currentColor" stroke-width="1.8" />
+  <path d="M6.66663 10.4167L8.74996 12.5L13.3333 7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+    stroke-linejoin="round" />
 </svg>
