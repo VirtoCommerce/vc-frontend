@@ -15,7 +15,7 @@
         <div class="top-sellers__content">
           <VcEmptyView v-if="!items.length && !loading" :text="t('sales_rep.top_sellers.empty')" icon="outline-order" />
 
-          <!-- Sorting is driven by named backend rules; a header click selects the column's rule (no asc/desc toggle). -->
+          <!-- Sorting maps each header to a named backend rule; both top-seller rules are one-way (highest first). -->
           <VcTable
             v-else
             :loading="loading"

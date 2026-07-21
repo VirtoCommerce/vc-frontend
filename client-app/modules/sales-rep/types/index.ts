@@ -20,10 +20,19 @@ export type SalesRepCustomerType = {
   lastOrder?: SalesRepCustomerLastOrderType;
 };
 
+export type SalesRepSortDirectionType = "asc" | "desc";
+
 // A server-defined filter/sort rule option surfaced as a chip or dropdown entry; the chosen `name` is
 // sent back in the unified filter/sort argument. `label` is the resolved display text — frontend i18n
 // (keyed by `name`) → backend localizedName → raw name (see useSalesRepRules).
-export type SalesRepRuleType = { name: string; label: string };
+// `defaultDirection`/`supportsDirection` are present on SORT rules only (absent on filter rules): the
+// rule's natural direction and whether the client may pick the opposite (drives the header-sort toggle).
+export type SalesRepRuleType = {
+  name: string;
+  label: string;
+  defaultDirection?: SalesRepSortDirectionType;
+  supportsDirection?: boolean;
+};
 export type SalesRepRuleDomainType = "order" | "customer" | "topSeller";
 export type SalesRepRuleKindType = "filter" | "sort";
 

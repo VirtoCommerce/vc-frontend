@@ -11,13 +11,24 @@ import {
   SalesRepTopSellerFilterRulesDocument,
   SalesRepTopSellerSortRulesDocument,
 } from "../api/graphql/types";
-import type { SalesRepRuleDomainType, SalesRepRuleKindType, SalesRepRuleType } from "../types";
+import type {
+  SalesRepRuleDomainType,
+  SalesRepRuleKindType,
+  SalesRepRuleType,
+  SalesRepSortDirectionType,
+} from "../types";
 import type { TypedDocumentNode } from "@graphql-typed-document-node/core";
 
 // CONTROLS source: every discovery op returns the same { name, localizedName } list under a
 // domain-specific root field, so one composable drives all seven. Each generated document is cast to
-// this shared shape and paired with its root field name.
-type RuleNodeType = { name: string; localizedName?: string | null };
+// this shared shape and paired with its root field name. Sort discovery ops additionally return
+// defaultDirection/supportsDirection (absent on filter ops), which drive the header-sort direction toggle.
+type RuleNodeType = {
+  name: string;
+  localizedName?: string | null;
+  defaultDirection?: string | null;
+  supportsDirection?: boolean | null;
+};
 type RuleQueryResultType = Record<string, Array<RuleNodeType | null> | null | undefined>;
 type RuleQueryVariablesType = { storeId?: string; cultureName?: string };
 type RuleDocumentType = TypedDocumentNode<RuleQueryResultType, RuleQueryVariablesType>;
@@ -62,7 +73,13 @@ export function useSalesRepRules(domain: SalesRepRuleDomainType, kind: SalesRepR
   const rules = computed<SalesRepRuleType[]>(() =>
     (result.value?.[source.field] ?? [])
       .filter((rule): rule is RuleNodeType => rule != null)
-      .map((rule) => ({ name: rule.name, label: resolveLabel(rule.name, rule.localizedName) })),
+      .map((rule) => ({
+        name: rule.name,
+        label: resolveLabel(rule.name, rule.localizedName),
+        // Sort-only metadata (undefined on filter rules); normalize the direction to the "asc"/"desc" union.
+        defaultDirection: normalizeDirection(rule.defaultDirection),
+        supportsDirection: rule.supportsDirection ?? undefined,
+      })),
   );
 
   // Display label priority: frontend i18n keyed by the rule name → backend localizedName → raw name.
@@ -70,6 +87,11 @@ export function useSalesRepRules(domain: SalesRepRuleDomainType, kind: SalesRepR
   function resolveLabel(name: string, localizedName?: string | null): string {
     const key = `sales_rep.rules.${domain}.${kind}.${name}`;
     return te(key) ? t(key) : localizedName || name;
+  }
+
+  // Only "asc"/"desc" are meaningful; anything else (incl. absent on filter rules) → undefined.
+  function normalizeDirection(direction?: string | null): SalesRepSortDirectionType | undefined {
+    return direction === "asc" || direction === "desc" ? direction : undefined;
   }
 
   return { rules, loading };

@@ -53,7 +53,7 @@
 
       <VcWidget v-else size="md">
         <template #default-container>
-          <!-- Sorting is driven by named backend rules; a header click selects the column's rule (no asc/desc toggle). -->
+          <!-- Sorting maps each header to a named backend rule; all three customer rules reverse on a second click. -->
           <VcTable
             :loading="loading"
             :items="items"

@@ -21,7 +21,7 @@
           <VcEmptyView v-if="!orders.length && !loading" :text="t('sales_rep.orders.empty')" icon="outline-order" />
 
           <!-- Skeleton rows match the page size so the loading state mirrors what will load.
-               Sorting is a named backend rule; a Date header click selects it (no asc/desc toggle). -->
+               Sorting maps each header to a named backend rule; clicking a reversible rule again toggles asc/desc. -->
           <VcTable
             v-else
             :loading="loading"
@@ -108,6 +108,7 @@
               id="total"
               v-slot="{ item }"
               :title="t('sales_rep.orders.total')"
+              :sortable="filterable && isColumnSortable('total')"
               align="right"
               class="align-top font-bold"
             >
@@ -164,10 +165,11 @@ const { rules: sortRules } = useSalesRepRules("order", "sort");
 // Show the filter chips only when the backend offers a real filter beyond the "All" baseline.
 const hasFilterOptions = computed(() => selectableFilterRules(filterRules.value).length > 0);
 
-// Header-click sorting: the Date column maps to the order sort rule; "recent" is the server default.
+// Header-click sorting: Date → "recent" (default, newest first, one-way); Total → "total" (biggest first,
+// reversible to smallest with a second click). Direction support per rule comes from the backend metadata.
 const { sortInfo, isColumnSortable, applySort } = useSalesRepColumnSort({
   sortRule: sort,
-  columns: { date: "recent" },
+  columns: { date: "recent", total: "total" },
   defaultColumn: "date",
   rules: sortRules,
 });
