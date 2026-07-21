@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import { useHead } from "@unhead/vue";
+import { defineLink, useHead } from "@unhead/vue";
 import { markRaw, onMounted, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
@@ -44,7 +44,15 @@ const i18n = useI18n();
 // The favicon will also NOT be updated in PWA mode (in manifest.json).
 useHead({
   link: favIcons.value?.length
-    ? favIcons.value
+    ? // Normalize GraphQL `FaviconType` (nullable fields) into unhead's link input via its typed helper
+      favIcons.value.map((icon) =>
+        defineLink({
+          rel: icon.rel ?? "icon",
+          href: icon.href ?? "",
+          sizes: icon.sizes ?? undefined,
+          type: icon.type ?? undefined,
+        }),
+      )
     : [
         {
           rel: "icon",

@@ -31,6 +31,7 @@ import { useElementVisibility } from "@vueuse/core";
 import { computed, shallowRef, unref } from "vue";
 import { useBreadcrumbs } from "@/core/composables";
 import { usePageTitle } from "@/core/composables/usePageTitle";
+import { useSeoKeywords } from "@/core/composables/useSeoKeywords";
 import { humanizeName } from "@/core/utilities/common";
 import { getBlockType } from "@/plugins/builder-preview/block-mapping";
 import { useStaticPage } from "@/shared/static-content";
@@ -56,10 +57,11 @@ const { title: pageTitle } = usePageTitle(
 useSeoMeta({
   title: () => (staticPageAnchorVisible.value ? pageTitle.value : undefined),
   description: () => (staticPageAnchorVisible.value ? template.value?.settings?.seoInfo?.metaDescription : undefined),
-  keywords: () => (staticPageAnchorVisible.value ? template.value?.settings?.seoInfo?.metaKeywords : undefined),
   ogUrl: () => (staticPageAnchorVisible.value ? window.location.toString() : undefined),
   ogTitle: () => (staticPageAnchorVisible.value ? pageTitle.value : undefined),
   ogDescription: () => (staticPageAnchorVisible.value ? template.value?.settings?.seoInfo?.metaDescription : undefined),
   ogType: () => (staticPageAnchorVisible.value ? "website" : undefined),
 });
+
+useSeoKeywords(() => (staticPageAnchorVisible.value ? template.value?.settings?.seoInfo?.metaKeywords : undefined));
 </script>
