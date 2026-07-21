@@ -29,6 +29,15 @@ function getProxy(target: ProxyOptions["target"], options: Omit<ProxyOptions, "t
   };
 }
 
+// Dev-server CSP frame-ancestors: backend host comes from APP_BACKEND_URL (like the proxy);
+// builder.io is a fixed Page Builder host.
+function getContentSecurityPolicy(): string {
+  // Use origin only — strips a trailing slash/path so the CSP host-source stays valid.
+  const backendOrigin = process.env.APP_BACKEND_URL ? new URL(process.env.APP_BACKEND_URL).origin : undefined;
+  const frameAncestors = ["'self'", backendOrigin, "https://builder.io"].filter(Boolean);
+  return `frame-ancestors ${frameAncestors.join(" ")};`;
+}
+
 function getBackendProxy(): Record<string, ProxyOptions> {
   return {
     "^/api": getProxy(process.env.APP_BACKEND_URL),
@@ -125,7 +134,7 @@ export default defineConfig(({ command, mode }): UserConfig => {
       port: 3000,
       cors: true,
       headers: {
-        "Content-Security-Policy": "frame-ancestors 'self' https://localhost:5001 https://builder.io;",
+        "Content-Security-Policy": getContentSecurityPolicy(),
         "Cross-Origin-Resource-Policy": "cross-origin",
         "Cross-Origin-Embedder-Policy": "unsafe-none",
       },
