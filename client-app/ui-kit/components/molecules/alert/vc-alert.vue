@@ -2,8 +2,7 @@
   <div
     :class="[
       'vc-alert',
-      `vc-alert--${variant}`,
-      `vc-alert--${variant}--${color}`,
+      `vc-alert--${canonicalVariant}--${color}`,
       `vc-alert--size--${size}`,
       {
         'vc-alert--shadow': shadow,
@@ -39,16 +38,17 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { resolveVariant } from "../../../utilities/variant-compat";
 
 interface IEmits {
   (event: "close"): void;
 }
 
 interface IProps {
-  color?: "success" | "warning" | "danger" | "info";
+  color?: VcAlertColorType;
   icon?: boolean | string;
-  variant?: "solid" | "solid-light" | "outline" | "outline-dark";
-  size?: "sm" | "md";
+  variant?: VcAlertVariantType;
+  size?: VcAlertSizeType;
   title?: string;
   shadow?: boolean;
   closable?: boolean;
@@ -60,6 +60,16 @@ const props = withDefaults(defineProps<IProps>(), {
   variant: "solid",
   color: "info",
   size: "md",
+});
+
+const DEFAULT_ALERT_VARIANT: VcAlertVariantType = "solid";
+const CANONICAL_ALERT_VARIANTS: readonly VcAlertVariantType[] = [DEFAULT_ALERT_VARIANT, "soft", "outline", "tonal"];
+
+const canonicalVariant = computed<VcAlertVariantType>(() => {
+  const resolved = resolveVariant("VcAlert", props.variant);
+  return (CANONICAL_ALERT_VARIANTS as readonly string[]).includes(resolved)
+    ? (resolved as VcAlertVariantType)
+    : DEFAULT_ALERT_VARIANT;
 });
 
 const iconName = computed<string>(() => {
@@ -87,10 +97,7 @@ const iconName = computed<string>(() => {
 
 <style lang="scss">
 .vc-alert {
-  $colors: success, warning, danger, info;
-
   --radius: var(--vc-alert-radius, var(--vc-radius, 0.5rem));
-  --close-button-icon-color: var(--color-neutral-900);
 
   @apply flex items-start border rounded-[--radius] bg-[--bg-color] border-[--border-color] text-[--text-color];
 
@@ -112,55 +119,18 @@ const iconName = computed<string>(() => {
     }
   }
 
-  &--solid {
-    --text-color: var(--color-additional-50);
-    --icon-color: var(--color-additional-50);
+  $colors: info, success, warning, danger;
+  $variants: solid, soft, outline, tonal;
 
+  --close-button-icon-color: var(--text-color);
+
+  @each $variant in $variants {
     @each $color in $colors {
-      &--#{$color} {
-        --bg-color: var(--color-#{$color}-500);
-        --border-color: var(--color-#{$color}-500);
-      }
-    }
-
-    &--warning {
-      --text-color: var(--color-neutral-900);
-      --icon-color: var(--color-warning-50);
-    }
-  }
-
-  &--solid-light {
-    --text-color: var(--color-neutral-900);
-
-    @each $color in $colors {
-      &--#{$color} {
-        --bg-color: var(--color-#{$color}-50);
-        --border-color: var(--color-#{$color}-50);
-        --icon-color: var(--color-#{$color}-500);
-      }
-    }
-  }
-
-  &--outline {
-    --bg-color: var(--color-additional-50);
-    --text-color: var(--color-neutral-900);
-
-    @each $color in $colors {
-      &--#{$color} {
-        --icon-color: var(--color-#{$color}-500);
-        --border-color: var(--color-#{$color}-500);
-      }
-    }
-  }
-
-  &--outline-dark {
-    --text-color: var(--color-neutral-900);
-
-    @each $color in $colors {
-      &--#{$color} {
-        --bg-color: var(--color-#{$color}-50);
-        --border-color: var(--color-#{$color}-500);
-        --icon-color: var(--color-#{$color}-500);
+      &--#{$variant}--#{$color} {
+        --bg-color: var(--vc-alert-#{$variant}-#{$color}-bg);
+        --border-color: var(--vc-alert-#{$variant}-#{$color}-border);
+        --text-color: var(--vc-alert-#{$variant}-#{$color}-text);
+        --icon-color: var(--vc-alert-#{$variant}-#{$color}-icon);
       }
     }
   }
@@ -190,7 +160,7 @@ const iconName = computed<string>(() => {
 
   &__close-button {
     --vc-icon-size: 0.875rem;
-    --vc-icon-color: currentColor;
+    --vc-icon-color: var(--close-button-icon-color);
 
     @apply flex items-center justify-center -my-1 -me-2 size-7;
   }
