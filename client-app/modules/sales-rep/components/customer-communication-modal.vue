@@ -97,7 +97,6 @@ const { errors, meta, handleSubmit } = useForm({
   initialValues: { title: "", message: "" },
 });
 
-// .trim() so a spaces-only value fails `required` (and the validated value matches the trimmed payload).
 const { value: title } = useField<string>("title", toTypedSchema(string().trim().max(128)));
 const { value: message } = useField<string>("message", toTypedSchema(string().trim().required().max(1000)));
 
@@ -118,7 +117,6 @@ const send = handleSubmit(async (data) => {
       single: true,
     });
   } else {
-    // Self-dismissing toast, consistent with the success path (the modal stays open for a retry).
     notifications.error({
       text: t("sales_rep.communication.error_text"),
       duration: 10000,
@@ -129,7 +127,6 @@ const send = handleSubmit(async (data) => {
 </script>
 
 <style lang="scss">
-// `@apply` keeps the module self-contained as an MF remote (no global utility layer). See PORT_TO_MF.md.
 .customer-communication-modal {
   &__form {
     @apply space-y-4;

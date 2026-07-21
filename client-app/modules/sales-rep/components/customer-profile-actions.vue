@@ -1,10 +1,7 @@
 <template>
   <VcWidget :title="t('sales_rep.communication.quick_actions.title')" size="md" class="customer-profile-actions">
-    <!-- #default-container is the kit's supported body seam; the grid owns its inset here instead of
-         overriding .vc-widget__slot. size=md keeps the header divider natively. -->
     <template #default-container>
       <div class="customer-profile-actions__grid">
-        <!-- Order on behalf / Create quote / Schedule call are placeholders until their own tickets land. -->
         <button
           type="button"
           class="customer-profile-actions__tile customer-profile-actions__tile--primary"
@@ -90,7 +87,6 @@ function openCommunication(): void {
 </script>
 
 <style lang="scss">
-// `@apply` keeps the module self-contained as an MF remote (no global utility layer). See PORT_TO_MF.md.
 .customer-profile-actions {
   &__grid {
     // auto-rows-fr keeps both rows the same height even when a label wraps (e.g. "Order on behalf").
