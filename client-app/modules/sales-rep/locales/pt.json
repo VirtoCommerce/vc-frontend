@@ -49,8 +49,10 @@
         "widgets": {
           "new_orders": "Novos pedidos",
           "active_carts": "Carrinhos ativos",
+          "active_cart": "Carrinho ativo",
           "orders_placed_week": "Pedidos desta semana",
           "orders_placed_mtd": "Pedidos no mês atual",
+          "purchased_mtd": "Compras no mês atual",
           "orders_placed_ytd": "Pedidos do ano atual",
           "my_customers": "Meus clientes"
         },

@@ -49,8 +49,10 @@
         "widgets": {
           "new_orders": "Nya order",
           "active_carts": "Aktiva kundvagnar",
+          "active_cart": "Aktiv kundvagn",
           "orders_placed_week": "Order denna vecka",
           "orders_placed_mtd": "Order hittills denna månad",
+          "purchased_mtd": "Köp hittills denna månad",
           "orders_placed_ytd": "Order hittills i år",
           "my_customers": "Mina kunder"
         },

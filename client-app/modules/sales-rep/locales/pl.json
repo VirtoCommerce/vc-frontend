@@ -49,8 +49,10 @@
         "widgets": {
           "new_orders": "Nowe zamówienia",
           "active_carts": "Aktywne koszyki",
+          "active_cart": "Aktywny koszyk",
           "orders_placed_week": "Zamówienia w tym tygodniu",
           "orders_placed_mtd": "Zamówienia od początku miesiąca",
+          "purchased_mtd": "Zakupy od początku miesiąca",
           "orders_placed_ytd": "Zamówienia od początku roku",
           "my_customers": "Moi klienci"
         },

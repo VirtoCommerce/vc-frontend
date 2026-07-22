@@ -49,8 +49,10 @@
         "widgets": {
           "new_orders": "新订单",
           "active_carts": "活动购物车",
+          "active_cart": "活动购物车",
           "orders_placed_week": "本周下单",
           "orders_placed_mtd": "本月至今下单",
+          "purchased_mtd": "本月至今采购额",
           "orders_placed_ytd": "本年至今下单",
           "my_customers": "我的客户"
         },

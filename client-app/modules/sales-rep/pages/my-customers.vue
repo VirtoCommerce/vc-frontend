@@ -201,10 +201,16 @@ const { sortInfo, isColumnSortable, applySort } = useSalesRepColumnSort({
 // Unapplied search term; committed to the query on Enter or the search button.
 const localKeyword = ref("");
 
-// Re-page to the first page whenever the filter or sort selection changes.
-watch([filter, sortRule], () => {
-  page.value = 1;
-});
+// Re-page to the first page whenever the filter or sort selection changes. `flush: "sync"` resets the page
+// before the query's variables watcher runs, so a filter/sort change on page ≥2 fires one request (new
+// filter + page 1), not two (new filter + stale offset, then the page reset).
+watch(
+  [filter, sortRule],
+  () => {
+    page.value = 1;
+  },
+  { flush: "sync" },
+);
 
 function orderLabel(number: string): string {
   return `#${number}`;

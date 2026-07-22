@@ -53,7 +53,8 @@ export function useSalesRepCustomerWidgets(organizationId: MaybeRefOrGetter<stri
       },
       {
         key: "active_cart",
-        labelKey: "sales_rep.hub.dashboard.widgets.active_carts",
+        // Profile shows the single cart's value (money), not a count — its own label vs the dashboard's "Active carts".
+        labelKey: "sales_rep.hub.dashboard.widgets.active_cart",
         icon: "cart",
         accent: "success",
         // One bold number — the active cart's total. No sub, no badge; "—" when the customer has no active cart.
@@ -61,7 +62,8 @@ export function useSalesRepCustomerWidgets(organizationId: MaybeRefOrGetter<stri
       },
       {
         key: "mtd",
-        labelKey: "sales_rep.hub.dashboard.widgets.orders_placed_mtd",
+        // Profile shows this month's order value (money), not the order count — hence "Purchased · MTD".
+        labelKey: "sales_rep.hub.dashboard.widgets.purchased_mtd",
         icon: "cash",
         accent: "info",
         value: mtd?.total.formattedAmount ?? "—",

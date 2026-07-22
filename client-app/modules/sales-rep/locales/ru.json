@@ -49,8 +49,10 @@
         "widgets": {
           "new_orders": "Новые заказы",
           "active_carts": "Активные корзины",
+          "active_cart": "Активная корзина",
           "orders_placed_week": "Заказы за эту неделю",
           "orders_placed_mtd": "Заказы с начала месяца",
+          "purchased_mtd": "Покупки с начала месяца",
           "orders_placed_ytd": "Заказы с начала года",
           "my_customers": "Мои клиенты"
         },

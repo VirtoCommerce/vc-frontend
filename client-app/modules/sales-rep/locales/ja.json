@@ -49,8 +49,10 @@
         "widgets": {
           "new_orders": "新規注文",
           "active_carts": "アクティブなカート",
+          "active_cart": "アクティブなカート",
           "orders_placed_week": "今週の注文",
           "orders_placed_mtd": "今月の注文",
+          "purchased_mtd": "今月の購入額",
           "orders_placed_ytd": "今年の注文",
           "my_customers": "担当顧客"
         },
