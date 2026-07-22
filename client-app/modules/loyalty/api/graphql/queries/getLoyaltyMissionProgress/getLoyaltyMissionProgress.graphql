@@ -5,7 +5,7 @@ query GetLoyaltyMissionProgress(
   $statuses: [String]
   $isStarted: Boolean
   $cultureName: String
-  $storeId: String
+  $storeId: String!
 ) {
   loyaltyMissionProgress(
     after: $after
@@ -47,6 +47,12 @@ query GetLoyaltyMissionProgress(
         productId
         currentQuantity
         targetQuantity
+        product {
+          id
+          name
+          slug
+          imgSrc
+        }
       }
     }
     pageInfo {

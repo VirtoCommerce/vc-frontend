@@ -3,7 +3,7 @@ import { globals } from "@/core/globals";
 import { GetLoyaltyMissionProgressDocument } from "../../types";
 import type { QueryLoyaltyMissionProgressArgs } from "../../types";
 
-export async function getLoyaltyMissionProgress(payload?: QueryLoyaltyMissionProgressArgs) {
+export async function getLoyaltyMissionProgress(payload?: Partial<QueryLoyaltyMissionProgressArgs>) {
   const { storeId, cultureName } = globals;
 
   const { data } = await graphqlClient.query({

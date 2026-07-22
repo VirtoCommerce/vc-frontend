@@ -54,7 +54,7 @@
           </p>
         </div>
 
-        <router-link :to="{ name: 'Catalog' }" class="missions-banner__link missions-banner__link--accent">
+        <router-link v-if="false" :to="{ name: 'Catalog' }" class="missions-banner__link missions-banner__link--accent">
           {{ $t("pages.account.missions.redeem_banner.catalog") }}
           <VcIcon name="chevron-right" class="fill-primary" size="xs" />
         </router-link>

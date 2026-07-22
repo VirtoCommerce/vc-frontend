@@ -4,7 +4,8 @@ import type { GetLoyaltyMissionProgressQuery } from "../api/graphql/types";
 import type { MaybeRefOrGetter } from "vue";
 
 export const MISSION_TYPE = {
-  PerSku: "PerSku",
+  PerSkuAll: "PerSkuAll",
+  PerSkuAny: "PerSkuAny",
   OrderValue: "OrderValue",
   OrderCount: "OrderCount",
 } as const;
@@ -34,6 +35,7 @@ export type MissionCardViewType = {
   progressLabel: string;
   dateLabel: string;
   dateSeverity: MissionDateSeverityType;
+  isCompleted: boolean;
 };
 
 const CARD_I18N = "pages.account.missions.card";
@@ -43,11 +45,6 @@ const DATE_DANGER_DAYS = 10;
 
 type FormatCurrencyType = (value: number, currencyCode?: string) => string;
 
-/**
- * Per-type presenter: everything that differs between mission types lives here.
- * It returns an i18n key (translated later) plus the interpolation params for it.
- * Add a presenter per new `MissionType` — the rest of the composable is shared.
- */
 type MissionPresenterType = (
   mission: MissionDataType,
   formatCurrency: FormatCurrencyType,
@@ -57,15 +54,25 @@ type MissionPresenterType = (
   progressParams: Record<string, unknown>;
 };
 
-function presentPerSku(mission: MissionDataType): ReturnType<MissionPresenterType> {
+function presentPerSkuAll(mission: MissionDataType): ReturnType<MissionPresenterType> {
   const items = mission.items ?? [];
-  const current = items.reduce((sum, item) => sum + item.currentQuantity, 0);
-  const target = items.reduce((sum, item) => sum + item.targetQuantity, 0);
+  const target = items.length;
+  const current = items.filter((item) => item.currentQuantity === item.targetQuantity).length;
 
   return {
     typeLabelKey: `${CARD_I18N}.type_products`,
     progressLabelKey: `${CARD_I18N}.progress_skus`,
     progressParams: { current, target },
+  };
+}
+
+function presentPerSkuAny(mission: MissionDataType): ReturnType<MissionPresenterType> {
+  const target = mission.items?.length ?? 0;
+
+  return {
+    typeLabelKey: `${CARD_I18N}.type_products`,
+    progressLabelKey: `${CARD_I18N}.progress_any_sku`,
+    progressParams: { target },
   };
 }
 
@@ -82,7 +89,6 @@ function presentOrderValue(
   };
 }
 
-// TODO: implement once "OrderCount" missions are available on the backend.
 function presentOrderCount(mission: MissionDataType): ReturnType<MissionPresenterType> {
   return {
     typeLabelKey: `${CARD_I18N}.type_orders`,
@@ -92,7 +98,8 @@ function presentOrderCount(mission: MissionDataType): ReturnType<MissionPresente
 }
 
 const PRESENTERS: Record<MissionType, MissionPresenterType> = {
-  [MISSION_TYPE.PerSku]: presentPerSku,
+  [MISSION_TYPE.PerSkuAll]: presentPerSkuAll,
+  [MISSION_TYPE.PerSkuAny]: presentPerSkuAny,
   [MISSION_TYPE.OrderValue]: presentOrderValue,
   [MISSION_TYPE.OrderCount]: presentOrderCount,
 };
@@ -102,12 +109,10 @@ function isCompleted(mission: MissionDataType): boolean {
 }
 
 function resolveDateSeverity(mission: MissionDataType, daysLeft: number | null): MissionDateSeverityType {
-  // Green is reserved for finished missions.
   if (isCompleted(mission)) {
     return "safe";
   }
 
-  // Otherwise the indicator is yellow by default and turns red as the deadline approaches.
   if (daysLeft !== null && daysLeft < DATE_DANGER_DAYS) {
     return "danger";
   }
@@ -125,7 +130,8 @@ export function useMissionCard(mission: MaybeRefOrGetter<MissionDataType>) {
   const view = computed<MissionCardViewType>(() => {
     const data = toValue(mission);
 
-    const present = PRESENTERS[(data.missionType as MissionType | undefined) ?? MISSION_TYPE.PerSku] ?? presentPerSku;
+    const present =
+      PRESENTERS[(data.missionType as MissionType | undefined) ?? MISSION_TYPE.PerSkuAll] ?? presentPerSkuAll;
     const { typeLabelKey, progressLabelKey, progressParams } = present(data, formatCurrency);
 
     const daysLeft = data.daysRemaining ?? null;
@@ -142,10 +148,11 @@ export function useMissionCard(mission: MaybeRefOrGetter<MissionDataType>) {
       title: data.localizedName ?? data.name ?? "",
       bannerUrl: data.bannerUrl ?? "",
       rewardPoints: data.rewardPoints?.amount ?? 0,
-      percent: data.percentage ?? 0,
-      progressLabel: t(progressLabelKey, progressParams),
+      percent: Math.round((data.percentage ?? 0) * 10) / 10,
+      progressLabel: progressLabelKey ? t(progressLabelKey, progressParams) : "",
       dateLabel,
       dateSeverity: resolveDateSeverity(data, daysLeft),
+      isCompleted: isCompleted(data),
     };
   });
 

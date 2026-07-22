@@ -9,6 +9,10 @@
         {{ $n(view.rewardPoints, "decimal") }} {{ $t("pages.account.missions.card.points") }}
       </VcChip>
 
+      <VcChip v-if="view.isCompleted" class="mission-card__completed" color="success" size="sm" icon="check" rounded>
+        {{ $t("pages.account.missions.card.completed") }}
+      </VcChip>
+
       <VcTypography class="mission-card__type" tag="span">{{ view.typeLabel }}</VcTypography>
     </div>
 
@@ -21,7 +25,11 @@
 
       <div class="mission-card__progress">
         <div class="mission-card__track">
-          <div class="mission-card__bar" :style="{ width: `${view.percent}%` }"></div>
+          <div
+            class="mission-card__bar"
+            :class="{ 'mission-card__bar--completed': view.isCompleted }"
+            :style="{ width: `${view.percent}%` }"
+          />
         </div>
 
         <span class="mission-card__percent">{{ view.percent }}%</span>
@@ -63,13 +71,14 @@ const { view } = useMissionCard(() => props.mission);
 const { openModal } = useModal();
 
 const MODALS_BY_TYPE: Record<MissionType, Component> = {
-  [MISSION_TYPE.PerSku]: SkuMissionModal,
+  [MISSION_TYPE.PerSkuAll]: SkuMissionModal,
+  [MISSION_TYPE.PerSkuAny]: SkuMissionModal,
   [MISSION_TYPE.OrderValue]: OrderMissionModal,
   [MISSION_TYPE.OrderCount]: OrderMissionModal,
 };
 
 function openMission(): void {
-  const missionType = (props.mission.missionType as MissionType | undefined) ?? MISSION_TYPE.PerSku;
+  const missionType = (props.mission.missionType as MissionType | undefined) ?? MISSION_TYPE.PerSkuAll;
 
   openModal({ component: MODALS_BY_TYPE[missionType], props: { mission: props.mission } });
 }
@@ -99,6 +108,10 @@ function openMission(): void {
 
   &__points {
     @apply absolute left-3 top-3;
+  }
+
+  &__completed {
+    @apply absolute right-3 top-3;
   }
 
   &__type {
@@ -143,6 +156,10 @@ function openMission(): void {
 
   &__bar {
     @apply h-full rounded-full bg-primary-500;
+
+    &--completed {
+      @apply bg-success-500;
+    }
   }
 
   &__percent {

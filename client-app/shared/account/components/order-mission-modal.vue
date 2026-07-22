@@ -44,7 +44,7 @@
         {{ $t("pages.account.missions.order_modal.close") }}
       </VcButton>
 
-      <VcButton :to="{ name: 'Catalog' }" append-icon="chevron-right">
+      <VcButton v-if="false" :to="{ name: 'Catalog' }" append-icon="chevron-right">
         {{ $t("pages.account.missions.order_modal.redeem_products") }}
       </VcButton>
     </template>
@@ -64,7 +64,6 @@ const props = defineProps<{
 const { t } = useI18n();
 const { view, formatCurrency } = useMissionCard(() => props.mission);
 
-// Covers OrderValue and OrderCount missions; PerSku missions use sku-mission-modal instead.
 const requirementLabel = computed(() => {
   const target = props.mission.targetValue ?? 0;
   const missionType = (props.mission.missionType as MissionType | undefined) ?? MISSION_TYPE.OrderValue;

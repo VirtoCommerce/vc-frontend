@@ -1,5 +1,10 @@
 import { useModules } from "@/core/composables";
-import { MODULE_ID_MARKETING_EXPERIENCE_API } from "@/core/constants/modules";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
+import {
+  LOYALTY_MISSIONS_ENABLED_KEY,
+  LOYALTY_MODULE_ID,
+  MODULE_ID_MARKETING_EXPERIENCE_API,
+} from "@/core/constants/modules";
 import { ROUTES } from "@/router/routes/constants";
 import { useUser } from "@/shared/account";
 import type { RouteRecordRaw } from "vue-router";
@@ -100,5 +105,14 @@ export const accountRoutes: RouteRecordRaw[] = [
     path: ROUTES.MISSIONS.PATH,
     name: ROUTES.MISSIONS.NAME,
     component: Missions,
+    beforeEnter(_to, _from, next) {
+      const { isEnabled } = useModuleSettings(LOYALTY_MODULE_ID);
+
+      if (isEnabled(LOYALTY_MISSIONS_ENABLED_KEY)) {
+        next();
+      } else {
+        next({ name: "NotFound" });
+      }
+    },
   },
 ];

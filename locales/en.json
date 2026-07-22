@@ -1396,8 +1396,10 @@
           "points": "points",
           "days_left": "{count} day left | {count} days left",
           "mission_completed": "Mission completed",
+          "completed": "Completed",
           "open_mission": "Open mission",
           "progress_skus": "{current} of {target} SKUs",
+          "progress_any_sku": "at least 1 of {target} SKUs",
           "progress_spend": "{sum} spent",
           "progress_orders": "{current} of {target} orders"
         },
@@ -1408,7 +1410,9 @@
           "reward_hint": "Earn {points} points when all targets are met",
           "reward_unlocked": "All targets met — {points} points unlocked",
           "close": "Close",
-          "add_to_cart": "Add to cart"
+          "add_to_cart": "Add to cart",
+          "added_to_cart": "Products added to cart",
+          "add_to_cart_error": "Some products could not be added to cart"
         },
         "order_modal": {
           "mission_target": "Mission target",

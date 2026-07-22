@@ -8,7 +8,12 @@ import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { useModules } from "@/core/composables/useModules";
 import { useThemeContext } from "@/core/composables/useThemeContext";
 import { useWhiteLabeling } from "@/core/composables/useWhiteLabeling";
-import { MODULE_ID_MARKETING_EXPERIENCE_API, MODULE_XAPI_KEYS } from "@/core/constants/modules";
+import {
+  LOYALTY_MISSIONS_ENABLED_KEY,
+  LOYALTY_MODULE_ID,
+  MODULE_ID_MARKETING_EXPERIENCE_API,
+  MODULE_XAPI_KEYS,
+} from "@/core/constants/modules";
 import {
   convertToExtendedMenuLink,
   getFilterExpressionForCategorySubtree,
@@ -75,6 +80,7 @@ export function _useNavigations() {
   }
 
   const { hasModule } = useModules();
+  const { isEnabled: isLoyaltySettingEnabled } = useModuleSettings(LOYALTY_MODULE_ID);
 
   function createMenuComputed(type: "desktop" | "mobile", key: MenuSecionType) {
     return computed<ExtendedMenuLinkType | undefined>(() => {
@@ -87,8 +93,14 @@ export function _useNavigations() {
       const schema = clone(getTranslatedMenuLink(raw));
 
       if (Array.isArray(schema.children)) {
-        if (key === "marketing" && !hasModule(MODULE_ID_MARKETING_EXPERIENCE_API)) {
-          schema.children = schema.children.filter((child) => child.id !== "promotion-coupons");
+        if (key === "marketing") {
+          if (!hasModule(MODULE_ID_MARKETING_EXPERIENCE_API)) {
+            schema.children = schema.children.filter((child) => child.id !== "promotion-coupons");
+          }
+
+          if (!isLoyaltySettingEnabled(LOYALTY_MISSIONS_ENABLED_KEY)) {
+            schema.children = schema.children.filter((child) => child.id !== "missions");
+          }
         }
 
         schema.children.sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0));

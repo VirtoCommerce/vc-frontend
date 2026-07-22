@@ -3423,6 +3423,7 @@ export type LoyaltyBalanceResult = {
 export type LoyaltyMissionProgressItem = {
   /** The accumulated quantity. */
   currentQuantity: Scalars['Int']['output'];
+  product?: Maybe<Product>;
   /** The SKU product id. */
   productId?: Maybe<Scalars['String']['output']>;
   /** The target quantity. */
@@ -3496,7 +3497,7 @@ export type LoyaltyUserMission = {
   missionCurrency?: Maybe<CurrencyType>;
   /** The mission identifier. */
   missionId?: Maybe<Scalars['String']['output']>;
-  /** The mission type: OrderValue, OrderCount or PerSku. */
+  /** The mission type: OrderValue, OrderCount, PerSkuAny or PerSkuAll. */
   missionType?: Maybe<Scalars['String']['output']>;
   /** The internal mission name. */
   name?: Maybe<Scalars['String']['output']>;
@@ -6243,7 +6244,7 @@ export type QueryLoyaltyMissionProgressArgs = {
   keyword?: InputMaybe<Scalars['String']['input']>;
   sort?: InputMaybe<Scalars['String']['input']>;
   statuses?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  storeId?: InputMaybe<Scalars['String']['input']>;
+  storeId: Scalars['String']['input'];
   userId?: InputMaybe<Scalars['String']['input']>;
 };
 
