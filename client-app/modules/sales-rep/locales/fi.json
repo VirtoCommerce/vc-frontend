@@ -26,6 +26,10 @@
       "table": {
         "customer": "Asiakas",
         "last_order": "Viimeisin tilaukseni",
+        "ytd": "Ostot tänä vuonna",
+        "last_year": "Viime vuosi",
+        "orders_count": "{count} tilaukset",
+        "all_customers": "Kaikki",
         "search_placeholder": "Hae nimellä",
         "search_aria": "Hae asiakkaita",
         "empty": "Asiakkaita ei löytynyt",
@@ -45,8 +49,8 @@
         "widgets": {
           "new_orders": "Uudet tilaukset",
           "active_carts": "Aktiiviset ostoskorit",
-          "orders_placed_mtd": "Tilaukset kuluvan kuun alusta",
           "orders_placed_week": "Tilaukset tällä viikolla",
+          "orders_placed_mtd": "Tilaukset kuluvan kuun alusta",
           "orders_placed_ytd": "Tilaukset kuluvan vuoden alusta",
           "my_customers": "Omat asiakkaat"
         },
@@ -71,7 +75,15 @@
         "ytd_purchases": "Ostot vuoden alusta",
         "open_balance": "Avoin saldo",
         "avg_order_value": "Keskimääräinen tilausarvo",
-        "orders_ytd": "Tilaukset vuoden alusta"
+        "orders_ytd": "Tilaukset vuoden alusta",
+        "active_projects": "Aktiiviset projektit"
+      },
+      "stats": {
+        "orders_count": "{count} tilaukset tänä vuonna",
+        "yoy": "{delta} YoY",
+        "per_order": "Keskim. per tilaus (tänä vuonna)",
+        "last_order": "Viimeisin tilaus {date}",
+        "customer_since": "Asiakas vuodesta {year}"
       },
       "info": {
         "title": "Asiakastiedot",
@@ -91,7 +103,24 @@
       "date": "Päivämäärä",
       "items": "Tuotteet",
       "status": "Tila",
-      "total": "Yhteensä"
+      "total": "Yhteensä",
+      "filter_all": "Kaikki"
+    },
+    "top_sellers": {
+      "title": "Suosituimmat myyjät",
+      "rank": "#",
+      "product": "Tuote",
+      "units": "Yksiköt",
+      "revenue": "Tuotto",
+      "empty": "Ei myyntiä tällä kaudella",
+      "all_categories": "Kaikki kategoriat"
+    },
+    "rules": {
+      "customer": {
+        "filter": {
+          "All": "Kaikki"
+        }
+      }
     }
   }
 }

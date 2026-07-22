@@ -25,6 +25,20 @@ type OptionsType = {
   rules: MaybeRefOrGetter<SalesRepRuleType[]>;
 };
 
+// Split "name[:dir]" into the rule name and (recognized) direction. Rule names contain no colon; a garbage
+// suffix yields no direction (the rule's natural one then applies), mirroring the backend's own parsing.
+function parse(expr = ""): { ruleName?: string; direction?: SalesRepSortDirectionType } {
+  const [ruleName, suffix] = (expr || "").split(":");
+  if (!ruleName) {
+    return {};
+  }
+  const direction = suffix?.toLowerCase();
+  return {
+    ruleName,
+    direction: direction === "asc" || direction === "desc" ? direction : undefined,
+  };
+}
+
 export function useSalesRepColumnSort(options: OptionsType) {
   const rulesByName = computed(() => new Map(toValue(options.rules).map((rule) => [rule.name, rule] as const)));
 
@@ -37,24 +51,6 @@ export function useSalesRepColumnSort(options: OptionsType) {
   function isColumnSortable(columnId: string): boolean {
     const rule = options.columns[columnId];
     return !!rule && rulesByName.value.has(rule);
-  }
-
-  // Split "name[:dir]" into the rule name and (recognized) direction. Rule names contain no colon; a garbage
-  // suffix yields no direction (the rule's natural one then applies), mirroring the backend's own parsing.
-  function parse(expr: string | undefined): { ruleName?: string; direction?: SalesRepSortDirectionType } {
-    const value = expr ?? "";
-    if (!value) {
-      return {};
-    }
-    const separator = value.indexOf(":");
-    if (separator === -1) {
-      return { ruleName: value };
-    }
-    const suffix = value.slice(separator + 1).toLowerCase();
-    return {
-      ruleName: value.slice(0, separator),
-      direction: suffix === "asc" || suffix === "desc" ? suffix : undefined,
-    };
   }
 
   // The rule/column/direction currently in effect: the selected rule (or the default column's rule when nothing

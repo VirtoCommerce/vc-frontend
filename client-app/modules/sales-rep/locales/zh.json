@@ -26,6 +26,10 @@
       "table": {
         "customer": "客户",
         "last_order": "我的最近订单",
+        "ytd": "今年迄今购买量",
+        "last_year": "去年",
+        "orders_count": "{count} 笔订单",
+        "all_customers": "全部",
         "search_placeholder": "按名称搜索",
         "search_aria": "搜索客户",
         "empty": "未找到客户",
@@ -45,8 +49,8 @@
         "widgets": {
           "new_orders": "新订单",
           "active_carts": "活动购物车",
-          "orders_placed_mtd": "本月至今下单",
           "orders_placed_week": "本周下单",
+          "orders_placed_mtd": "本月至今下单",
           "orders_placed_ytd": "本年至今下单",
           "my_customers": "我的客户"
         },
@@ -71,7 +75,15 @@
         "ytd_purchases": "年初至今采购额",
         "open_balance": "未结余额",
         "avg_order_value": "平均订单金额",
-        "orders_ytd": "年初至今订单数"
+        "orders_ytd": "年初至今订单数",
+        "active_projects": "活动项目"
+      },
+      "stats": {
+        "orders_count": "{count} 笔订单 (今年迄今)",
+        "yoy": "{delta} 年同比",
+        "per_order": "平均每笔订单 (今年迄今)",
+        "last_order": "上次下单 {date}",
+        "customer_since": "客户始于 {year}"
       },
       "info": {
         "title": "客户信息",
@@ -91,7 +103,24 @@
       "date": "日期",
       "items": "商品",
       "status": "状态",
-      "total": "合计"
+      "total": "合计",
+      "filter_all": "全部"
+    },
+    "top_sellers": {
+      "title": "畅销商品",
+      "rank": "排名",
+      "product": "商品",
+      "units": "件数",
+      "revenue": "收入",
+      "empty": "此期间无销售",
+      "all_categories": "所有类别"
+    },
+    "rules": {
+      "customer": {
+        "filter": {
+          "All": "全部"
+        }
+      }
     }
   }
 }

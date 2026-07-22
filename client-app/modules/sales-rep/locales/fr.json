@@ -26,6 +26,10 @@
       "table": {
         "customer": "Client",
         "last_order": "Ma dernière commande",
+        "ytd": "Achats YTD",
+        "last_year": "Année dernière",
+        "orders_count": "{count} commandes",
+        "all_customers": "Tous",
         "search_placeholder": "Rechercher par nom",
         "search_aria": "Rechercher des clients",
         "empty": "Aucun client trouvé",
@@ -45,8 +49,8 @@
         "widgets": {
           "new_orders": "Nouvelles commandes",
           "active_carts": "Paniers actifs",
-          "orders_placed_mtd": "Commandes depuis le début du mois",
           "orders_placed_week": "Commandes cette semaine",
+          "orders_placed_mtd": "Commandes depuis le début du mois",
           "orders_placed_ytd": "Commandes depuis le début de l'année",
           "my_customers": "Mes clients"
         },
@@ -71,7 +75,15 @@
         "ytd_purchases": "Achats depuis le début de l'année",
         "open_balance": "Solde ouvert",
         "avg_order_value": "Valeur moyenne des commandes",
-        "orders_ytd": "Commandes depuis le début de l'année"
+        "orders_ytd": "Commandes depuis le début de l'année",
+        "active_projects": "Projets actifs"
+      },
+      "stats": {
+        "orders_count": "{count} commandes YTD",
+        "yoy": "{delta} YoY",
+        "per_order": "Moyenne par commande (YTD)",
+        "last_order": "Dernière commande {date}",
+        "customer_since": "Client depuis {year}"
       },
       "info": {
         "title": "Informations client",
@@ -91,7 +103,24 @@
       "date": "Date",
       "items": "Articles",
       "status": "Statut",
-      "total": "Total"
+      "total": "Total",
+      "filter_all": "Tous"
+    },
+    "top_sellers": {
+      "title": "Meilleures ventes",
+      "rank": "#",
+      "product": "Produit",
+      "units": "Unités",
+      "revenue": "Revenus",
+      "empty": "Aucune vente sur cette période",
+      "all_categories": "Toutes catégories"
+    },
+    "rules": {
+      "customer": {
+        "filter": {
+          "All": "Tous"
+        }
+      }
     }
   }
 }

@@ -26,6 +26,10 @@
       "table": {
         "customer": "Kunde",
         "last_order": "Meine letzte Bestellung",
+        "ytd": "Jahresumsatz",
+        "last_year": "Letztes Jahr",
+        "orders_count": "{count} Bestellungen",
+        "all_customers": "Alle",
         "search_placeholder": "Suche nach Name",
         "search_aria": "Kunden suchen",
         "empty": "Keine Kunden gefunden",
@@ -45,8 +49,8 @@
         "widgets": {
           "new_orders": "Neue Bestellungen",
           "active_carts": "Aktive Warenkörbe",
-          "orders_placed_mtd": "Bestellungen seit Monatsbeginn",
           "orders_placed_week": "Bestellungen diese Woche",
+          "orders_placed_mtd": "Bestellungen seit Monatsbeginn",
           "orders_placed_ytd": "Bestellungen seit Jahresbeginn",
           "my_customers": "Meine Kunden"
         },
@@ -71,7 +75,15 @@
         "ytd_purchases": "Käufe seit Jahresbeginn",
         "open_balance": "Offener Saldo",
         "avg_order_value": "Durchschn. Bestellwert",
-        "orders_ytd": "Bestellungen seit Jahresbeginn"
+        "orders_ytd": "Bestellungen seit Jahresbeginn",
+        "active_projects": "Aktive Projekte"
+      },
+      "stats": {
+        "orders_count": "{count} Bestellungen YTD",
+        "yoy": "{delta} YoY",
+        "per_order": "Durchschnitt pro Bestellung (YTD)",
+        "last_order": "Letzte Bestellung {date}",
+        "customer_since": "Kunde seit {year}"
       },
       "info": {
         "title": "Kundeninformationen",
@@ -91,7 +103,24 @@
       "date": "Datum",
       "items": "Artikel",
       "status": "Status",
-      "total": "Gesamt"
+      "total": "Gesamt",
+      "filter_all": "Alle"
+    },
+    "top_sellers": {
+      "title": "Top-Seller",
+      "rank": "#",
+      "product": "Produkt",
+      "units": "Einheiten",
+      "revenue": "Umsatz",
+      "empty": "Keine Verkäufe in diesem Zeitraum",
+      "all_categories": "Alle Kategorien"
+    },
+    "rules": {
+      "customer": {
+        "filter": {
+          "All": "Alle"
+        }
+      }
     }
   }
 }

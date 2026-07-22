@@ -36,6 +36,11 @@ type RuleSourceType = { document: RuleDocumentType; field: string };
 
 const asRuleDocument = (document: unknown): RuleDocumentType => document as RuleDocumentType;
 
+// Only "asc"/"desc" are meaningful; anything else (incl. absent on filter rules) → undefined.
+function normalizeDirection(direction?: string | null): SalesRepSortDirectionType | undefined {
+  return direction === "asc" || direction === "desc" ? direction : undefined;
+}
+
 // Every supported domain × kind combination (each is a real list). One entry per discovery op.
 const RULE_SOURCES: Record<`${SalesRepRuleDomainType}:${SalesRepRuleKindType}`, RuleSourceType> = {
   "order:filter": { document: asRuleDocument(SalesRepOrderFilterRulesDocument), field: "salesRepOrderFilterRules" },
@@ -87,11 +92,6 @@ export function useSalesRepRules(domain: SalesRepRuleDomainType, kind: SalesRepR
   function resolveLabel(name: string, localizedName?: string | null): string {
     const key = `sales_rep.rules.${domain}.${kind}.${name}`;
     return te(key) ? t(key) : localizedName || name;
-  }
-
-  // Only "asc"/"desc" are meaningful; anything else (incl. absent on filter rules) → undefined.
-  function normalizeDirection(direction?: string | null): SalesRepSortDirectionType | undefined {
-    return direction === "asc" || direction === "desc" ? direction : undefined;
   }
 
   return { rules, loading };

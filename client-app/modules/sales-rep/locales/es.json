@@ -26,6 +26,10 @@
       "table": {
         "customer": "Cliente",
         "last_order": "Mi último pedido",
+        "ytd": "Compras YTD",
+        "last_year": "Año pasado",
+        "orders_count": "{count} pedidos",
+        "all_customers": "Todos",
         "search_placeholder": "Buscar por nombre",
         "search_aria": "Buscar clientes",
         "empty": "No se encontraron clientes",
@@ -45,8 +49,8 @@
         "widgets": {
           "new_orders": "Pedidos nuevos",
           "active_carts": "Carritos activos",
-          "orders_placed_mtd": "Pedidos del mes en curso",
           "orders_placed_week": "Pedidos de esta semana",
+          "orders_placed_mtd": "Pedidos del mes en curso",
           "orders_placed_ytd": "Pedidos del año en curso",
           "my_customers": "Mis clientes"
         },
@@ -71,7 +75,15 @@
         "ytd_purchases": "Compras del año en curso",
         "open_balance": "Saldo pendiente",
         "avg_order_value": "Valor medio del pedido",
-        "orders_ytd": "Pedidos del año en curso"
+        "orders_ytd": "Pedidos del año en curso",
+        "active_projects": "Proyectos activos"
+      },
+      "stats": {
+        "orders_count": "{count} pedidos YTD",
+        "yoy": "{delta} interanual",
+        "per_order": "Promedio por pedido (YTD)",
+        "last_order": "Último pedido {date}",
+        "customer_since": "Cliente desde {year}"
       },
       "info": {
         "title": "Información del cliente",
@@ -91,7 +103,24 @@
       "date": "Fecha",
       "items": "Artículos",
       "status": "Estado",
-      "total": "Total"
+      "total": "Total",
+      "filter_all": "Todos"
+    },
+    "top_sellers": {
+      "title": "Top vendedores",
+      "rank": "#",
+      "product": "Producto",
+      "units": "Unidades",
+      "revenue": "Ingresos",
+      "empty": "Sin ventas en este período",
+      "all_categories": "Todas las categorías"
+    },
+    "rules": {
+      "customer": {
+        "filter": {
+          "All": "Todos"
+        }
+      }
     }
   }
 }

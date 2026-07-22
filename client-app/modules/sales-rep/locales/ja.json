@@ -26,6 +26,10 @@
       "table": {
         "customer": "顧客",
         "last_order": "私の最近の注文",
+        "ytd": "今年度の購入金額",
+        "last_year": "昨年",
+        "orders_count": "{count} 件の注文",
+        "all_customers": "すべて",
         "search_placeholder": "名前で検索",
         "search_aria": "顧客を検索",
         "empty": "顧客が見つかりません",
@@ -45,8 +49,8 @@
         "widgets": {
           "new_orders": "新規注文",
           "active_carts": "アクティブなカート",
-          "orders_placed_mtd": "今月の注文",
           "orders_placed_week": "今週の注文",
+          "orders_placed_mtd": "今月の注文",
           "orders_placed_ytd": "今年の注文",
           "my_customers": "担当顧客"
         },
@@ -71,7 +75,15 @@
         "ytd_purchases": "年初来の購入額",
         "open_balance": "未払い残高",
         "avg_order_value": "平均注文額",
-        "orders_ytd": "年初来の注文数"
+        "orders_ytd": "年初来の注文数",
+        "active_projects": "アクティブなプロジェクト"
+      },
+      "stats": {
+        "orders_count": "{count} 件の注文 (今年度)",
+        "yoy": "{delta} YoY",
+        "per_order": "平均注文単価 (今年度)",
+        "last_order": "最終注文 {date}",
+        "customer_since": "{year}年からの顧客"
       },
       "info": {
         "title": "顧客情報",
@@ -91,7 +103,24 @@
       "date": "日付",
       "items": "商品数",
       "status": "ステータス",
-      "total": "合計"
+      "total": "合計",
+      "filter_all": "すべて"
+    },
+    "top_sellers": {
+      "title": "トップセラー",
+      "rank": "#",
+      "product": "商品",
+      "units": "個数",
+      "revenue": "収益",
+      "empty": "この期間の売上なし",
+      "all_categories": "全カテゴリー"
+    },
+    "rules": {
+      "customer": {
+        "filter": {
+          "All": "すべて"
+        }
+      }
     }
   }
 }

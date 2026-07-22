@@ -26,6 +26,10 @@
       "table": {
         "customer": "Kunde",
         "last_order": "Min siste ordre",
+        "ytd": "Årets kjøp",
+        "last_year": "I fjor",
+        "orders_count": "{count} ordre",
+        "all_customers": "Alle",
         "search_placeholder": "Søk etter navn",
         "search_aria": "Søk etter kunder",
         "empty": "Ingen kunder funnet",
@@ -45,8 +49,8 @@
         "widgets": {
           "new_orders": "Nye ordrer",
           "active_carts": "Aktive handlekurver",
-          "orders_placed_mtd": "Ordrer hittil denne måneden",
           "orders_placed_week": "Ordrer denne uken",
+          "orders_placed_mtd": "Ordrer hittil denne måneden",
           "orders_placed_ytd": "Ordrer hittil i år",
           "my_customers": "Mine kunder"
         },
@@ -71,7 +75,15 @@
         "ytd_purchases": "Kjøp hittil i år",
         "open_balance": "Utestående saldo",
         "avg_order_value": "Gjennomsnittlig ordreverdi",
-        "orders_ytd": "Bestillinger hittil i år"
+        "orders_ytd": "Bestillinger hittil i år",
+        "active_projects": "Aktive prosjekter"
+      },
+      "stats": {
+        "orders_count": "{count} ordre hittil i år",
+        "yoy": "{delta} YoY",
+        "per_order": "Gjennomsnitt per ordre (hittil i år)",
+        "last_order": "Siste ordre {date}",
+        "customer_since": "Kunde siden {year}"
       },
       "info": {
         "title": "Kundeinformasjon",
@@ -91,7 +103,24 @@
       "date": "Dato",
       "items": "Varer",
       "status": "Status",
-      "total": "Totalt"
+      "total": "Totalt",
+      "filter_all": "Alle"
+    },
+    "top_sellers": {
+      "title": "Toppselgere",
+      "rank": "#",
+      "product": "Produkt",
+      "units": "Enheter",
+      "revenue": "Inntekter",
+      "empty": "Ingen salg i denne perioden",
+      "all_categories": "Alle kategorier"
+    },
+    "rules": {
+      "customer": {
+        "filter": {
+          "All": "Alle"
+        }
+      }
     }
   }
 }

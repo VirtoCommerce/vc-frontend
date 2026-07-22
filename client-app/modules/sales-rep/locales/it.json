@@ -26,6 +26,10 @@
       "table": {
         "customer": "Cliente",
         "last_order": "Il mio ultimo ordine",
+        "ytd": "Acquisti YTD",
+        "last_year": "Anno scorso",
+        "orders_count": "{count} ordini",
+        "all_customers": "Tutti",
         "search_placeholder": "Cerca per nome",
         "search_aria": "Cerca clienti",
         "empty": "Nessun cliente trovato",
@@ -45,8 +49,8 @@
         "widgets": {
           "new_orders": "Nuovi ordini",
           "active_carts": "Carrelli attivi",
-          "orders_placed_mtd": "Ordini dall’inizio del mese",
           "orders_placed_week": "Ordini di questa settimana",
+          "orders_placed_mtd": "Ordini dall’inizio del mese",
           "orders_placed_ytd": "Ordini dall'inizio dell'anno",
           "my_customers": "I miei clienti"
         },
@@ -71,7 +75,15 @@
         "ytd_purchases": "Acquisti da inizio anno",
         "open_balance": "Saldo aperto",
         "avg_order_value": "Valore medio ordine",
-        "orders_ytd": "Ordini da inizio anno"
+        "orders_ytd": "Ordini da inizio anno",
+        "active_projects": "Progetti attivi"
+      },
+      "stats": {
+        "orders_count": "{count} ordini YTD",
+        "yoy": "{delta} YoY",
+        "per_order": "Media per ordine (YTD)",
+        "last_order": "Ultimo ordine {date}",
+        "customer_since": "Cliente dal {year}"
       },
       "info": {
         "title": "Informazioni cliente",
@@ -91,7 +103,24 @@
       "date": "Data",
       "items": "Articoli",
       "status": "Stato",
-      "total": "Totale"
+      "total": "Totale",
+      "filter_all": "Tutti"
+    },
+    "top_sellers": {
+      "title": "Top venditori",
+      "rank": "#",
+      "product": "Prodotto",
+      "units": "Unità",
+      "revenue": "Entrate",
+      "empty": "Nessuna vendita in questo periodo",
+      "all_categories": "Tutte le categorie"
+    },
+    "rules": {
+      "customer": {
+        "filter": {
+          "All": "Tutti"
+        }
+      }
     }
   }
 }

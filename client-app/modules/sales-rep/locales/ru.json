@@ -26,6 +26,10 @@
       "table": {
         "customer": "Клиент",
         "last_order": "Мой последний заказ",
+        "ytd": "Покупки за год",
+        "last_year": "Прошлый год",
+        "orders_count": "{count} заказов",
+        "all_customers": "Все",
         "search_placeholder": "Поиск по имени",
         "search_aria": "Поиск клиентов",
         "empty": "Клиенты не найдены",
@@ -45,8 +49,8 @@
         "widgets": {
           "new_orders": "Новые заказы",
           "active_carts": "Активные корзины",
-          "orders_placed_mtd": "Заказы с начала месяца",
           "orders_placed_week": "Заказы за эту неделю",
+          "orders_placed_mtd": "Заказы с начала месяца",
           "orders_placed_ytd": "Заказы с начала года",
           "my_customers": "Мои клиенты"
         },
@@ -71,7 +75,15 @@
         "ytd_purchases": "Покупки с начала года",
         "open_balance": "Открытый баланс",
         "avg_order_value": "Средняя сумма заказа",
-        "orders_ytd": "Заказы с начала года"
+        "orders_ytd": "Заказы с начала года",
+        "active_projects": "Активные проекты"
+      },
+      "stats": {
+        "orders_count": "{count} заказов за год",
+        "yoy": "{delta} год к году",
+        "per_order": "Среднее за заказ (за год)",
+        "last_order": "Последний заказ {date}",
+        "customer_since": "Клиент с {year}"
       },
       "info": {
         "title": "Информация о клиенте",
@@ -91,7 +103,24 @@
       "date": "Дата",
       "items": "Позиции",
       "status": "Статус",
-      "total": "Итого"
+      "total": "Итого",
+      "filter_all": "Все"
+    },
+    "top_sellers": {
+      "title": "Лучшие продавцы",
+      "rank": "№",
+      "product": "Товар",
+      "units": "Шт.",
+      "revenue": "Выручка",
+      "empty": "Нет продаж за этот период",
+      "all_categories": "Все категории"
+    },
+    "rules": {
+      "customer": {
+        "filter": {
+          "All": "Все"
+        }
+      }
     }
   }
 }
