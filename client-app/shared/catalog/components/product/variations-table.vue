@@ -246,7 +246,7 @@ function changePage(page: number): void {
   }
 
   &__quantity-icon {
-    @apply me-3 size-4 fill-danger;
+    @apply me-3 size-4 text-danger;
   }
 
   &__in-cart {

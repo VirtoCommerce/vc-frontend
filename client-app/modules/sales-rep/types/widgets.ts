@@ -9,9 +9,10 @@ export type StatWidgetCardType = {
   key: string;
   labelKey: string;
   icon: string;
-  accent: StatWidgetAccentType;
   value: string;
-  // Optional — not every KPI has a sub-line or a period-over-period delta (the component v-ifs them).
+  // Optional to match <StatWidget>'s contract: accent/deltaTone have defaults, and
+  // sub/delta/deltaIcon are v-if-guarded, so a card can omit any of them.
+  accent?: StatWidgetAccentType;
   sub?: string;
   delta?: string;
   deltaTone?: StatWidgetToneType;

@@ -89,7 +89,7 @@ watch([resolvedViewport, () => props.distance], initObserver);
   @apply flex items-center justify-center gap-2 text-base;
 
   &__icon {
-    @apply size-7 fill-primary;
+    @apply size-7 text-primary;
   }
 }
 </style>

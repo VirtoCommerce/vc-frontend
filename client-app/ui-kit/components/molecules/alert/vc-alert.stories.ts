@@ -1,8 +1,9 @@
 import { VcAlert } from "..";
+import { VcMarkdownRender } from "../../atoms";
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
 const COLORS = ["info", "success", "warning", "danger"];
-const VARIANTS = ["solid", "solid-light", "outline", "outline-dark"];
+const VARIANTS = ["solid", "soft", "outline", "tonal"];
 const SIZES = ["sm", "md"];
 
 const meta: Meta<typeof VcAlert> = {
@@ -22,6 +23,8 @@ const meta: Meta<typeof VcAlert> = {
     variant: {
       control: "select",
       options: VARIANTS,
+      description:
+        "Visual style. Deprecated aliases (still supported, emit a one-time dev warning): `solid-light` → `soft`, `outline-dark` → `tonal`.",
       type: { name: "string", required: false },
       table: {
         type: {
@@ -84,49 +87,16 @@ export const WithTitle: StoryType = {
 };
 
 // 2. Variants
-export const VariantSolidLight: StoryType = {
-  args: { variant: "solid-light" },
-  parameters: {
-    docs: {
-      source: {
-        code: `
-          <VcAlert variant="solid-light">
-            Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
-          </VcAlert>
-        `,
-      },
-    },
-  },
+export const VariantSoft: StoryType = {
+  args: { variant: "soft" },
 };
 
 export const VariantOutline: StoryType = {
   args: { variant: "outline" },
-  parameters: {
-    docs: {
-      source: {
-        code: `
-          <VcAlert variant="outline">
-            Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
-          </VcAlert>
-        `,
-      },
-    },
-  },
 };
 
-export const VariantOutlineDark: StoryType = {
-  args: { variant: "outline-dark" },
-  parameters: {
-    docs: {
-      source: {
-        code: `
-          <VcAlert variant="outline-dark">
-            Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
-          </VcAlert>
-        `,
-      },
-    },
-  },
+export const VariantTonal: StoryType = {
+  args: { variant: "tonal" },
 };
 
 // 3. Sizes
@@ -340,5 +310,118 @@ export const AllStates: StoryType = {
         </div>
       </div>
     </div>`,
+  }),
+};
+
+export const KitchenSink: StoryType = {
+  args: {
+    color: "info",
+    variant: "solid",
+    size: "md",
+    title: "Alert",
+    icon: true,
+    closable: true,
+    shadow: true,
+  },
+  parameters: {
+    actions: { handles: ["close"] },
+    docs: {
+      source: {
+        code: `
+          <VcAlert color="info" variant="solid" size="md" title="Alert" icon closable shadow @close="handleClose">
+            Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
+          </VcAlert>
+        `,
+      },
+    },
+  },
+};
+
+export const Layouts: StoryType = {
+  render: () => ({
+    setup: () => ({}),
+    template: `<div class="space-y-4">
+      <div class="space-y-1">
+        <div class="text-xs font-bold">plain</div>
+        <VcAlert color="info" variant="soft">
+          Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
+        </VcAlert>
+      </div>
+      <div class="space-y-1">
+        <div class="text-xs font-bold">icon only</div>
+        <VcAlert color="info" variant="soft" icon>
+          Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
+        </VcAlert>
+      </div>
+      <div class="space-y-1">
+        <div class="text-xs font-bold">title only</div>
+        <VcAlert color="info" variant="soft" title="Alert">
+          Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
+        </VcAlert>
+      </div>
+      <div class="space-y-1">
+        <div class="text-xs font-bold">title + icon</div>
+        <VcAlert color="info" variant="soft" title="Alert" icon>
+          Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
+        </VcAlert>
+      </div>
+      <div class="space-y-1">
+        <div class="text-xs font-bold">title + icon + closable</div>
+        <VcAlert color="info" variant="soft" title="Alert" icon closable>
+          Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
+        </VcAlert>
+      </div>
+      <div class="space-y-1">
+        <div class="text-xs font-bold">title + icon + closable + shadow</div>
+        <VcAlert color="info" variant="soft" title="Alert" icon closable shadow>
+          Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
+        </VcAlert>
+      </div>
+    </div>`,
+  }),
+};
+
+const DEPRECATED_VARIANTS = [
+  { legacy: "solid-light", canonical: "soft" },
+  { legacy: "outline-dark", canonical: "tonal" },
+] as const;
+
+const DEPRECATED_VARIANTS_MESSAGE =
+  "Deprecated `variant` aliases are kept for backward compatibility and resolve to their canonical names at runtime (emitting a one-time dev console warning): `solid-light` → **soft**, `outline-dark` → **tonal**. Each row below shows the deprecated alias next to its canonical replacement — they render identically. Prefer the canonical names in new code.";
+
+export const Deprecations: StoryType = {
+  tags: ["deprecated"],
+  parameters: {
+    docs: {
+      description: {
+        story: DEPRECATED_VARIANTS_MESSAGE,
+      },
+    },
+  },
+  render: () => ({
+    components: { VcAlert, VcMarkdownRender },
+    setup: () => ({ pairs: DEPRECATED_VARIANTS, message: DEPRECATED_VARIANTS_MESSAGE }),
+    template: `<div class="space-y-6">
+      <VcAlert color="warning" variant="outline" icon title="Deprecated">
+        <VcMarkdownRender :src="message" />
+      </VcAlert>
+
+      <div
+        class="grid grid-cols-[1fr_auto_1fr] gap-4 items-center"
+        v-for="pair in pairs"
+        :key="pair.legacy"
+      >
+        <div class="space-y-1">
+          <div class="text-xs text-neutral-500">deprecated: <code>{{ pair.legacy }}</code></div>
+          <VcAlert :variant="pair.legacy">Alert text</VcAlert>
+        </div>
+        <div class="text-neutral-400">→</div>
+        <div class="space-y-1">
+          <div class="text-xs text-neutral-500">canonical: <code>{{ pair.canonical }}</code></div>
+          <VcAlert :variant="pair.canonical">Alert text</VcAlert>
+        </div>
+      </div>
+    </div>
+    `,
   }),
 };
