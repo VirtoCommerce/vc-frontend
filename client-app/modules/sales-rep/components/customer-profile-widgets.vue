@@ -29,6 +29,5 @@ const props = defineProps<IProps>();
 
 const { t } = useI18n();
 
-// Real figures: order + cart statistics scoped to this customer (VCST-5485).
 const { cards } = useSalesRepCustomerWidgets(() => props.organizationId);
 </script>

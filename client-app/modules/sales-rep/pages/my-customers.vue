@@ -28,8 +28,7 @@
         </VcInput>
       </div>
 
-      <!-- Controls: customer segment chips (an "All" baseline + any project segments). Sorting moved to table headers.
-           Hidden unless there's a real segment to pick — a lone "All" chip filters nothing. -->
+      <!-- Segment chips (an "All" baseline + any project segments); hidden unless there's a real segment to pick. -->
       <div v-if="hasFilterOptions" class="my-customers__controls">
         <SalesRepRuleChips
           v-model="filter"
@@ -38,8 +37,7 @@
         />
       </div>
 
-      <!-- A keyword OR an active segment filter narrows the list, so an empty result there means "nothing
-           matches", not "no customers at all". The reset button is keyword-only (the filter resets via its "All" chip). -->
+      <!-- Empty here means "nothing matches" (keyword/filter active), not "no customers"; reset is keyword-only. -->
       <VcEmptyView
         v-if="!items.length && !loading"
         :text="
@@ -201,9 +199,7 @@ const { sortInfo, isColumnSortable, applySort } = useSalesRepColumnSort({
 // Unapplied search term; committed to the query on Enter or the search button.
 const localKeyword = ref("");
 
-// Re-page to the first page whenever the filter or sort selection changes. `flush: "sync"` resets the page
-// before the query's variables watcher runs, so a filter/sort change on page ≥2 fires one request (new
-// filter + page 1), not two (new filter + stale offset, then the page reset).
+// flush: "sync" resets the page before the variables watcher runs, so a filter/sort change fires one request, not two.
 watch(
   [filter, sortRule],
   () => {
@@ -238,7 +234,7 @@ function changePage(newPage: number): void {
 </script>
 
 <style lang="scss">
-// `@apply` keeps the module self-contained as an MF remote (no global utility layer). See PORT_TO_MF.md.
+// @apply: module is self-contained as an MF remote (no global utility layer).
 .my-customers {
   &__title {
     @apply [word-break:break-word];
@@ -274,7 +270,6 @@ function changePage(newPage: number): void {
     }
   }
 
-  // Muted, small location line under the customer name — matches the design.
   &__location {
     @apply mt-0.5 text-sm text-neutral-500 [word-break:break-word];
   }
@@ -287,7 +282,6 @@ function changePage(newPage: number): void {
     @apply mt-0.5 text-sm text-neutral-500;
   }
 
-  // Muted, small order number under the date — matches the design; hover hints it's clickable.
   &__order {
     @apply text-sm text-neutral-500 hover:text-[--link-color] hover:underline;
   }

@@ -17,10 +17,8 @@ export function useSalesRepCustomers() {
   const sortRule = ref<string | undefined>(undefined);
   const page = ref(1);
 
-  // Resolve the YTD / prior-year windows once for the composable's lifetime, NOT inside the variables
-  // computed: a fresh `new Date()` on every paging/sort/filter change would drift the bounds by milliseconds
-  // and, since they're part of Apollo's cache key, bust cache-first on list revisits. Windows are
-  // period-anchored, so a single "now" per mount is correct.
+  // Windows resolved once per mount, not inside the variables computed — a fresh Date() on every
+  // change would drift the bounds and bust Apollo's cache-first (windows are part of the cache key).
   const windows = buildStatisticsWindows();
 
   const variables = computed(() => ({

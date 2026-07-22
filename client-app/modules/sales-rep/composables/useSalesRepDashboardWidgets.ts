@@ -6,17 +6,8 @@ import { useSalesRepCustomerCounts } from "./useSalesRepCustomerCounts";
 import { useSalesRepOrderStatistics } from "./useSalesRepOrderStatistics";
 import type { StatWidgetCardType } from "../types/widgets";
 
-// MAPPING: shapes three statistics SOURCES into the six dashboard KPI cards the StatWidget row renders
-// (VCST-5485). The order-statistics source feeds FOUR cards (New orders + Orders placed WEEK/MTD/YTD) from
-// its aliased slices; the cart source feeds Active carts; customer-counts feeds My customers. Labels stay
-// as `labelKey` (the component localizes them); sub/delta are pre-localized here.
-//
-// Two delta kinds:
-//  • Period-over-period % (WEEK/MTD/YTD "orders placed") → formatSignedPercent on the order-COUNT change:
-//    green ↑ when higher than the previous period, red/orange ↓ when lower, neutral — at 0%, omitted when the
-//    baseline is zero (null percent).
-//  • Plain informational counts (New orders "placed today", Active carts "new this week", My customers
-//    "new customers") → a green count with NO chevron (not a comparison); rendered whenever the slice loaded.
+// Shapes three statistics sources into the six dashboard KPI cards.
+// Deltas are either period-over-period % (chevron) or plain "new activity" counts (no chevron).
 export function useSalesRepDashboardWidgets() {
   const { t } = useI18n();
   const { statistics: orderStatistics, loading: ordersLoading } = useSalesRepOrderStatistics();
@@ -107,8 +98,7 @@ export function useSalesRepDashboardWidgets() {
         sub: thisMonth
           ? t("sales_rep.hub.dashboard.stats.ordered_this_month", { count: thisMonth.orderingCustomers })
           : "",
-        // "{n} new customers" — customers newly ASSIGNED to the rep this month (backend assignment date).
-        // Plain green count, no chevron.
+        // "{n} new customers" — customers newly assigned to the rep this month (backend assignment date).
         delta: thisMonth ? t("sales_rep.hub.dashboard.stats.new_customers", { count: thisMonth.newCustomers }) : "",
         deltaTone: "positive",
       },

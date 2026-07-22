@@ -2,8 +2,7 @@
   <VcWidget :title="title" size="md" class="top-sellers">
     <template #default-container>
       <div class="top-sellers__body">
-        <!-- Category filter chips (top-seller filter rules = the store catalog's top-level categories).
-             The filter sits in a full-width gray toolbar band, divided from the table by a bottom border. -->
+        <!-- Category filter chips: top-seller filter rules = the store catalog's top-level categories. -->
         <div v-if="hasFilterOptions" class="top-sellers__filter">
           <SalesRepRuleChips
             v-model="filter"
@@ -129,7 +128,6 @@ const sort = ref<string | undefined>(undefined);
 // A salesRepTopSellerFilterRules name (a top-level category id); undefined → all categories.
 const filter = ref<string | undefined>(undefined);
 
-// Period is fixed to the current year to date (the selector was removed).
 const { from: periodFrom, to: periodTo } = useSalesRepPeriodFilter("year");
 
 const { rules: sortRules } = useSalesRepRules("topSeller", "sort");
@@ -156,20 +154,17 @@ const { items, loading } = useSalesRepTopSellers({
 </script>
 
 <style lang="scss">
-// `@apply` keeps the module self-contained as an MF remote (no global utility layer). See PORT_TO_MF.md.
+// @apply: module is self-contained as an MF remote (no global utility layer).
 .top-sellers {
   &__body {
     @apply flex flex-col;
   }
 
-  // Full-width gray toolbar band holding the category filter; a bottom border divides it from the table.
-  // `px-6` aligns the tabs with the widget header title.
+  // px-6 aligns the tabs with the widget header title.
   &__filter {
     @apply border-b border-neutral-200 bg-neutral-50 px-6 py-3;
   }
 
-  // Design insets the table ~6px from the widget edge. Column titles use VcTable's default (centered)
-  // header alignment; the reduced top padding keeps them at the intended vertical position.
   &__content {
     @apply px-1.5 pb-3 pt-1;
   }

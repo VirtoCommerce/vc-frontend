@@ -8,11 +8,9 @@
       </VcLink>
     </template>
 
-    <!-- VcWidget has no padding prop; #default-container is its supported body seam, so we own the
-         inset here instead of touching .vc-widget__slot. The md header divider is unaffected. -->
+    <!-- VcWidget has no padding prop; #default-container is our seam for the inset, not .vc-widget__slot. -->
     <template #default-container>
       <div class="sales-rep-orders__body">
-        <!-- Named filter rule (chips) in a full-width gray toolbar band, divided from the table by a border. -->
         <div v-if="filterable && hasFilterOptions" class="sales-rep-orders__filter">
           <SalesRepRuleChips v-model="filter" :rules="filterRules" :all-label="t('sales_rep.orders.filter_all')" />
         </div>
@@ -25,8 +23,7 @@
             icon="outline-order"
           />
 
-          <!-- Skeleton rows match the page size so the loading state mirrors what will load.
-               Sorting maps each header to a named backend rule; clicking a reversible rule again toggles asc/desc. -->
+          <!-- Skeleton rows match the page size; header clicks map to named backend sort rules (reversible ones toggle asc/desc). -->
           <VcTable
             v-else
             :loading="loading"
@@ -53,7 +50,6 @@
 
                 <div v-if="isCrossCustomer" class="sales-rep-orders__mobile-customer">{{ item.organizationName }}</div>
 
-                <!-- Item count only in single-customer mode, mirroring the desktop Items column (hidden cross-customer). -->
                 <div class="sales-rep-orders__mobile-sub">
                   {{ $d(item.createdDate, "short")
                   }}<template v-if="!isCrossCustomer"> · {{ item.itemsCount }}</template>
@@ -74,7 +70,6 @@
               </VcLink>
             </VcTableColumn>
 
-            <!-- Cross-customer (dashboard) shows the customer; a single-customer view shows item count instead. -->
             <VcTableColumn
               v-if="isCrossCustomer"
               id="customer"
@@ -153,7 +148,6 @@ const isCrossCustomer = computed(() => !props.organizationId);
 // Selected named rules; undefined → the server default (baseline filter / "recent" sort).
 const filter = ref<string | undefined>(undefined);
 const sort = ref<string | undefined>(undefined);
-// Period is fixed to the composable default (the selector was removed).
 const { from: periodFrom, to: periodTo } = useSalesRepPeriodFilter();
 
 const { rules: filterRules } = useSalesRepRules("order", "filter");
@@ -162,8 +156,7 @@ const { rules: sortRules } = useSalesRepRules("order", "sort");
 // Show the filter chips only when the backend offers a real filter beyond the "All" baseline.
 const hasFilterOptions = computed(() => selectableFilterRules(filterRules.value).length > 0);
 
-// Header-click sorting: Date → "recent" (default, newest first, one-way); Total → "total" (biggest first,
-// reversible to smallest with a second click). Direction support per rule comes from the backend metadata.
+// Header sort: Date → "recent" (one-way, newest first); Total → "total" (reversible). Direction support is backend-driven.
 const { sortInfo, isColumnSortable, applySort } = useSalesRepColumnSort({
   sortRule: sort,
   columns: { date: "recent", total: "total" },
@@ -182,20 +175,17 @@ const { orders, loading } = useSalesRepOrders({
 </script>
 
 <style lang="scss">
-// `@apply` keeps the module self-contained as an MF remote (no global utility layer). See PORT_TO_MF.md.
+// @apply: module is self-contained as an MF remote (no global utility layer).
 .sales-rep-orders {
   &__body {
     @apply flex flex-col;
   }
 
-  // Full-width gray toolbar band holding the filter; a bottom border divides it from the table.
-  // `px-6` aligns the tabs with the widget header title.
+  // px-6 aligns the tabs with the widget header title.
   &__filter {
     @apply border-b border-neutral-200 bg-neutral-50 px-6 py-3;
   }
 
-  // Design insets the table ~6px from the widget edge. Column titles use VcTable's default (centered)
-  // header alignment; the reduced top padding keeps them at the intended vertical position.
   &__content {
     @apply px-1.5 pb-3 pt-1;
   }

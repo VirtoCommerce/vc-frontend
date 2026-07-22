@@ -23,6 +23,5 @@ import StatWidgets from "./stat-widgets.vue";
 
 const { t } = useI18n();
 
-// Real figures: three statistics sources mapped to the six KPI cards (VCST-5485).
 const { cards } = useSalesRepDashboardWidgets();
 </script>

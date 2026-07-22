@@ -19,10 +19,8 @@ import type {
 } from "../types";
 import type { TypedDocumentNode } from "@graphql-typed-document-node/core";
 
-// CONTROLS source: every discovery op returns the same { name, localizedName } list under a
-// domain-specific root field, so one composable drives all six (3 domains x filter/sort). Each generated document is cast to
-// this shared shape and paired with its root field name. Sort discovery ops additionally return
-// defaultDirection/supportsDirection (absent on filter ops), which drive the header-sort direction toggle.
+// Every discovery op returns the same { name, localizedName } shape under a domain-specific root field,
+// so one composable drives all six (3 domains × filter/sort).
 type RuleNodeType = {
   name: string;
   localizedName?: string | null;
@@ -87,8 +85,7 @@ export function useSalesRepRules(domain: SalesRepRuleDomainType, kind: SalesRepR
       })),
   );
 
-  // Display label priority: frontend i18n keyed by the rule name → backend localizedName → raw name.
-  // Lets the storefront localize/override known rule names while custom/backend rules keep their server label.
+  // Label priority: frontend i18n (by rule name) → backend localizedName → raw name.
   function resolveLabel(name: string, localizedName?: string | null): string {
     const key = `sales_rep.rules.${domain}.${kind}.${name}`;
     return te(key) ? t(key) : localizedName || name;

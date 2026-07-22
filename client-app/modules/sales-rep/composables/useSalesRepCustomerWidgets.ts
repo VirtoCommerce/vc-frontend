@@ -6,13 +6,8 @@ import { useSalesRepOrderStatistics } from "./useSalesRepOrderStatistics";
 import type { StatWidgetCardType } from "../types/widgets";
 import type { MaybeRefOrGetter } from "vue";
 
-// MAPPING: the per-customer profile KPI cards, scoped to one organization. Deliberately UNIFIED with the hub
-// dashboard: the shared cards (New orders, Active cart, Orders YTD) reuse the dashboard's already-translated
-// widget labels + stat phrasings (`hub.dashboard.*`) so both surfaces render identically in all locales, instead
-// of duplicating half-translated keys under `customer_profile.*`. Order + Avg-order-value stay customer-specific.
-//
-// SHOWCASE — the "MTD" card's "% of YTD" badge is derived purely on the client from two slices we already fetch
-// (mtd.total.amount / ytd.total.amount); no backend field is needed for a cross-slice ratio like this.
+// Per-customer KPI cards; shared cards reuse the dashboard's i18n keys (hub.dashboard.*) so both
+// surfaces stay in sync across locales.
 export function useSalesRepCustomerWidgets(organizationId: MaybeRefOrGetter<string>) {
   const { t } = useI18n();
   const orgId = (): string => toValue(organizationId);
@@ -34,7 +29,7 @@ export function useSalesRepCustomerWidgets(organizationId: MaybeRefOrGetter<stri
     const placedToday = orders?.newOrdersToday;
     // Active cart: the summed total of this customer's non-empty carts; "—" when there is none.
     const activeCarts = carts?.activeCarts;
-    // SHOWCASE: this month's revenue as a share of the year's — a client-side ratio of two slices, not a backend field.
+    // This month's revenue as a share of the year's — a client-side ratio, not a backend field.
     const ytdAmount = ytd?.total.amount ?? 0;
     const mtdShare = mtd && ytdAmount > 0 ? Math.round((mtd.total.amount / ytdAmount) * 100) : undefined;
 

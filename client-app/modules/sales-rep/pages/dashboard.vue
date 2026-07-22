@@ -4,13 +4,10 @@
       {{ t("sales_rep.hub.dashboard.page.title") }}
     </VcTypography>
 
-    <!-- Full-width KPI row (real data: order/cart statistics + customer counts). -->
     <DashboardWidgets />
 
-    <!-- Cross-customer orders with filter/sort/period controls (real data: salesRepOrders). -->
     <SalesRepOrders :title="t('sales_rep.orders.title')" filterable />
 
-    <!-- Ranked top-selling products for the rep (real data: salesRepTopSellers). -->
     <TopSellers :title="t('sales_rep.top_sellers.title')" />
   </div>
 </template>
@@ -25,7 +22,7 @@ const { t } = useI18n();
 </script>
 
 <style lang="scss">
-// `@apply` keeps the module self-contained as an MF remote (no global utility layer). See PORT_TO_MF.md.
+// @apply: module is self-contained as an MF remote (no global utility layer).
 .sales-rep-dashboard {
   @apply flex flex-col gap-5;
 

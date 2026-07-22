@@ -11,9 +11,7 @@ type UseSalesRepCartStatisticsOptionsType = {
   organizationId?: string | Ref<string | undefined> | (() => string | undefined);
 };
 
-// SOURCE: one composable owning the salesRepCustomerCartStatistics op. Two aliased slices from one round trip:
-// "activeCarts" (the built-in "active-carts" kind = non-empty, non-project carts, all-time) backs the dashboard
-// "Active carts" card; "newCartsThisWeek" (same kind, week-to-date by cart created date) backs its delta.
+// Two aliased slices from one query: activeCarts backs the "Active carts" card, newCartsThisWeek backs its delta.
 export function useSalesRepCartStatistics(options: UseSalesRepCartStatisticsOptionsType = {}) {
   const variables = computed(() => {
     const windows = buildStatisticsWindows();

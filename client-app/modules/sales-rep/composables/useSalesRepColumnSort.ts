@@ -2,20 +2,14 @@ import { computed, toValue } from "vue";
 import type { SalesRepRuleType, SalesRepSortDirectionType } from "../types";
 import type { MaybeRefOrGetter, Ref } from "vue";
 
-// Bridges VcTable's header-click sorting to the sales-rep backend's *named* sort rules.
-// The backend `sort` argument is a rule name (e.g. "ytd-purchases") with an optional X-Order-style
-// ":asc"/":desc" suffix. A header click selects the column's rule; clicking the already-active column
-// toggles its direction — but only for rules the backend marks reversible (`supportsDirection`). One-way
-// rules (e.g. orders "recent", top-sellers "by-units") stay fixed. We send the bare name for a rule's
-// natural direction (always accepted) and append the suffix only to reverse it, so an unsupported
-// direction is never sent (the backend rejects those).
+// Bridges header-click sorting to the backend's named sort rules ("name"[:asc|desc]); the suffix is
+// sent only to reverse a rule the backend marks reversible (`supportsDirection`).
 
 // columnId → backend sort-rule name.
 export type SalesRepSortColumnMapType = Record<string, string>;
 
 type OptionsType = {
   // The selected sort expression ("name", or "name:asc"/"name:desc"); undefined → the server default.
-  // The handler forwards this straight to the query's `sort` argument.
   sortRule: Ref<string | undefined>;
   // columnId → ruleName. Only columns whose rule the backend actually returns become sortable.
   columns: SalesRepSortColumnMapType;
@@ -25,8 +19,7 @@ type OptionsType = {
   rules: MaybeRefOrGetter<SalesRepRuleType[]>;
 };
 
-// Split "name[:dir]" into the rule name and (recognized) direction. Rule names contain no colon; a garbage
-// suffix yields no direction (the rule's natural one then applies), mirroring the backend's own parsing.
+// Split "name[:dir]" into rule name + recognized direction; an unrecognized suffix yields no direction.
 function parse(expr = ""): { ruleName?: string; direction?: SalesRepSortDirectionType } {
   const [ruleName, suffix] = (expr || "").split(":");
   if (!ruleName) {
@@ -47,14 +40,13 @@ export function useSalesRepColumnSort(options: OptionsType) {
     () => new Map(Object.entries(options.columns).map(([column, rule]) => [rule, column] as const)),
   );
 
-  // A column is sortable only when the backend exposes its rule (mirrors the old `v-if="sortRules.length"`).
+  // A column is sortable only when the backend exposes its rule.
   function isColumnSortable(columnId: string): boolean {
     const rule = options.columns[columnId];
     return !!rule && rulesByName.value.has(rule);
   }
 
-  // The rule/column/direction currently in effect: the selected rule (or the default column's rule when nothing
-  // is selected or the selection is unknown), with the parsed direction or the rule's natural default.
+  // Resolves the active rule/column/direction: selected rule (or default column's) with parsed or natural direction.
   const active = computed(() => {
     const parsed = parse(options.sortRule.value);
     const rule =
@@ -70,9 +62,8 @@ export function useSalesRepColumnSort(options: OptionsType) {
     direction: active.value.direction,
   }));
 
-  // Apply the clicked column's rule. Clicking the active column toggles direction (reversible rules only);
-  // clicking another column selects its rule at its natural direction. The emitted `info.direction` is ignored:
-  // VcTable can't know a rule's reversibility, so the direction is decided here from the backend metadata.
+  // Applies the clicked column's rule; info.direction is ignored since VcTable can't know a rule's
+  // reversibility — direction is decided here from backend metadata.
   function applySort(info: VcTableSortInfoType): void {
     const ruleName = options.columns[info.column];
     const rule = ruleName ? rulesByName.value.get(ruleName) : undefined;

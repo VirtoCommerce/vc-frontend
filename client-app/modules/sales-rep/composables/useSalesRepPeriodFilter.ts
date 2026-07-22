@@ -3,9 +3,7 @@ import { buildStatisticsWindows } from "../utils";
 
 export type SalesRepPeriodType = "lifetime" | "month" | "year";
 
-// Shared period model for the orders + top-sellers widgets: Lifetime (no date bounds) / This month (MTD) /
-// This year (YTD). Resolves the selected period to the from/to bounds a query takes, so both widgets share
-// one period model instead of each repeating it.
+// Shared period model (Lifetime/Month/Year) for the orders + top-sellers widgets, resolved to from/to bounds.
 export function useSalesRepPeriodFilter(initial: SalesRepPeriodType = "lifetime") {
   const period = ref<SalesRepPeriodType>(initial);
   const windows = buildStatisticsWindows();

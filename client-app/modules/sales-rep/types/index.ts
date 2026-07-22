@@ -1,5 +1,5 @@
 // View model for the table; mapped from the GraphQL SalesRepContact (see useSalesReps).
-// Only active reps ever reach the client — filtering is server-side (AC#5).
+// Only active reps ever reach the client; filtering is server-side.
 export type SalesRepType = { id: string; name: string; email: string; phone: string };
 export type SalesRepSortColumnType = "name" | "email" | "phone";
 export type SalesRepSortType = { column: SalesRepSortColumnType; direction: "asc" | "desc" };
@@ -22,11 +22,8 @@ export type SalesRepCustomerType = {
 
 export type SalesRepSortDirectionType = "asc" | "desc";
 
-// A server-defined filter/sort rule option surfaced as a chip or dropdown entry; the chosen `name` is
-// sent back in the unified filter/sort argument. `label` is the resolved display text — frontend i18n
-// (keyed by `name`) → backend localizedName → raw name (see useSalesRepRules).
-// `defaultDirection`/`supportsDirection` are present on SORT rules only (absent on filter rules): the
-// rule's natural direction and whether the client may pick the opposite (drives the header-sort toggle).
+// A server-defined filter/sort rule option surfaced as a chip or dropdown entry (see useSalesRepRules).
+// `defaultDirection`/`supportsDirection` are present on SORT rules only (absent on filter rules).
 export type SalesRepRuleType = {
   name: string;
   label: string;
@@ -47,9 +44,8 @@ export type SalesRepTopSellerRowType = {
   revenue: string;
 };
 
-// View model for a Sales Rep order row, shared by the customer profile (single org) and the hub
-// dashboard (cross-customer). `organizationName` backs the dashboard's Customer column;
-// `statusDisplayValue` is the localized status label; `total` is the backend-formatted amount.
+// Sales Rep order row, shared by the customer profile and hub dashboard; organizationName backs
+// the dashboard's Customer column.
 export type SalesRepOrderRowType = {
   id: string;
   number: string;

@@ -1,17 +1,13 @@
 import type { SalesRepRuleType } from "./types";
 import type { StatWidgetToneType } from "./types/widgets";
 
-// The filter chips always prepend a synthetic "All" baseline, and a backend "all" passthrough rule would
-// duplicate it. So the real, selectable filter options are everything except "all" — and a filter control
-// is only worth showing when at least one exists (otherwise the lone "All" chip is a no-op). Single source
-// of the "all = baseline" convention, shared by the chips component and the widgets that gate the control.
+// Selectable filter options exclude the backend "all" rule (chips already prepend a synthetic "All" baseline).
 export function selectableFilterRules(rules: SalesRepRuleType[]): SalesRepRuleType[] {
   return rules.filter((rule) => rule.name.toLowerCase() !== "all");
 }
 
-// The backend exposes the customer's default address as a structured object and leaves formatting to
-// the storefront (schema note: e.g. "City, Region"). Keep this the single source of that format so the
-// My customers list and the customer profile render locations consistently.
+// Backend leaves address formatting to the storefront; single source of that format so both surfaces
+// render locations consistently.
 type LocationPartsType =
   | { postalCode?: string | null; zip?: string | null; city?: string | null; regionName?: string | null }
   | null
@@ -25,19 +21,13 @@ export function formatCustomerLocation(address: LocationPartsType, options?: { w
 
   // `postalCode` is the canonical member-address field; `zip` is a legacy alias kept as a fallback.
   const postalCode = address?.postalCode || address?.zip;
-  // List rows: postal code (prefixed with "#"), city and region as three middot-separated
-  // segments to match the design (e.g. "#23220 · Richmond · Virginia").
+  // List rows: postal code (prefixed "#"), city, region — middot-separated (e.g. "#23220 · Richmond · Virginia").
   const code = postalCode ? `#${postalCode}` : "";
   return [code, address?.city, address?.regionName].filter(Boolean).join(" · ");
 }
 
-// The statistics ops take explicit date windows as ISO strings (the backend DateTime scalar). The
-// dashboard/customer widgets all share the same windows, so compute them once here. Two design rules:
-//  • Current-period upper bounds are NOW (today), not the calendar-period end — so a stray future-dated
-//    order can't inflate a "this month/year/week so far" figure.
-//  • Previous-period windows are ELAPSED-MATCHED: prevStart → prevStart + (now − currentStart), i.e. the
-//    same elapsed span a year/month/week ago, so a "vs last X" delta compares to-date against prior-to-date.
-// All bounds are UTC and half-open [from, to), matching the backend convention.
+// ISO date windows shared by the statistics ops: current bounds end at NOW (not calendar end);
+// previous-period windows are elapsed-matched for a fair "vs last X" delta.
 export type StatisticsWindowsType = {
   // Month-to-date and the elapsed-matched slice of the previous month.
   mtdFrom: string;
@@ -81,10 +71,8 @@ export function buildStatisticsWindows(now: Date = new Date()): StatisticsWindow
   const prevWeekStart = weekStart - 7 * DAY_MS;
 
   const iso = (ms: number): string => new Date(ms).toISOString();
-  // The same point in the previous period that we've reached in the current one, so "vs last X" compares
-  // to-date against to-date. The Math.min stops it from spilling past the previous period's end: on Mar 31
-  // we're ~30 days into March, but February is shorter, so Feb 1 + 30 days lands in March — without the
-  // clamp the "last month" window would swallow Mar 1-3 and double-count them.
+  // Clamped to the previous period's own end, so a longer current elapsed span (e.g. 30 days into
+  // March vs a 28-day Feb) can't spill past it and double count.
   const matched = (prevStart: number, currentStart: number): string =>
     iso(Math.min(prevStart + (nowMs - currentStart), currentStart));
 
@@ -111,9 +99,8 @@ export function formatStatCount(value?: number | null): string {
   return value != null ? String(value) : "—";
 }
 
-// A period-over-period delta for a stat card. The backend percent is already ×100 and null when the
-// baseline is zero (no meaningful ratio) — in which case there is no delta to show. Tri-state tone:
-// higher than the previous period → green (up), lower → red/orange (down), unchanged → neutral (a dash).
+// Backend percent is already ×100 and null when the baseline is zero (no delta then); tri-state
+// tone: up = green, down = red/orange, unchanged = neutral.
 export type SignedPercentType = { text: string; tone: StatWidgetToneType; icon: string };
 
 // eslint-disable-next-line sonarjs/function-return-type -- the signed delta or undefined (no baseline) by design

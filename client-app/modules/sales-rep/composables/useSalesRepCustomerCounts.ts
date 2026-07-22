@@ -10,9 +10,7 @@ type UseSalesRepCustomerCountsOptionsType = {
   organizationId?: string | Ref<string | undefined> | (() => string | undefined);
 };
 
-// SOURCE: one composable owning the salesRepCustomerCounts op — how many customers the rep serves,
-// how many ordered this month and how many are new, with a month-over-month comparison. Backs the
-// dashboard "My customers" card.
+// Owns the salesRepCustomerCounts op: served/ordered/new customer counts + MoM comparison, backing the "My customers" card.
 export function useSalesRepCustomerCounts(options: UseSalesRepCustomerCountsOptionsType = {}) {
   const variables = computed(() => {
     const windows = buildStatisticsWindows();

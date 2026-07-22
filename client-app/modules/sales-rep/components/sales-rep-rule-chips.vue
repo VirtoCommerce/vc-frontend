@@ -39,8 +39,7 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
-// Selected rule name; `undefined` is the baseline (rendered as the first tab). Single source of the
-// "undefined = All, selected = active" convention so the three surfaces that show rule tabs can't drift.
+// undefined = baseline (first tab); single source of this convention across all rule-tab surfaces.
 const modelValue = defineModel<string | undefined>();
 
 // A backend "All" passthrough rule (customer segments carry one) would duplicate the baseline tab — drop it.
@@ -48,19 +47,16 @@ const selectableRules = computed(() => selectableFilterRules(props.rules));
 </script>
 
 <style lang="scss">
-// `@apply` keeps the module self-contained as an MF remote (no global utility layer). See PORT_TO_MF.md.
+// @apply: module is self-contained as an MF remote (no global utility layer).
 .sales-rep-rule-chips {
   @apply flex flex-wrap items-center gap-1;
 
-  // Segmented-tab look: only the active option is a raised white pill; the rest are plain text.
   // The transparent border keeps every tab the same size so selecting one causes no layout shift.
   &__tab {
     // Radius follows the app-wide `--vc-radius` token so it tracks the theme's roundness setting.
     @apply inline-flex cursor-pointer flex-col items-center rounded-[--vc-radius] border border-transparent px-3 py-1.5 text-sm font-medium text-neutral-500;
 
-    // Reserve the bold (active) width on every tab so toggling font-weight never changes a tab's size —
-    // otherwise activating a tab widens it and can push a neighbour onto the next row (visible reflow).
-    // The measure is a zero-height, invisible copy rendered at the active weight.
+    // Invisible ::after reserves the bold width so toggling font-weight never resizes the tab (avoids reflow).
     &::after {
       @apply invisible h-0 overflow-hidden font-semibold;
 

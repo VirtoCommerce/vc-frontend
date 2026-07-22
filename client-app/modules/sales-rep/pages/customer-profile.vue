@@ -29,7 +29,6 @@
         <p v-if="meta" class="customer-profile__meta">{{ meta }}</p>
       </div>
 
-      <!-- Full-width KPI row (real data: order + cart statistics scoped to this customer). -->
       <CustomerProfileWidgets :organization-id="organizationId" />
 
       <div class="customer-profile__layout">
@@ -129,8 +128,7 @@ const breadcrumbs = useBreadcrumbs(() => [
     @apply flex min-w-0 flex-col gap-5 xl:w-80 xl:shrink-0;
   }
 
-  // Cancel VcWidget's mobile full-bleed (-mx-4.5 in .vc-container) so blocks align with the KPI row
-  // and title. The extra `&` lifts specificity above VcWidget's own rule (avoids !important).
+  // Cancels VcWidget's mobile full-bleed so blocks align with the KPI row/title; the extra & avoids !important.
   & &__main .vc-widget,
   & &__aside .vc-widget {
     @apply mx-0;

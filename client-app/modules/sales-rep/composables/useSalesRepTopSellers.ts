@@ -20,8 +20,7 @@ type UseSalesRepTopSellersOptionsType = {
   take?: number | Ref<number | undefined> | (() => number | undefined);
 };
 
-// SOURCE: one composable owning the salesRepTopSellers op. Returns a ranked list (not a connection);
-// name/sku/image come straight from the order line-item snapshot, revenue is backend-formatted Money.
+// Owns the salesRepTopSellers op; returns a ranked list (not a connection) with order line-item snapshot fields.
 export function useSalesRepTopSellers(options: UseSalesRepTopSellersOptionsType = {}) {
   const variables = computed(() => ({
     organizationId: toValue(options.organizationId),

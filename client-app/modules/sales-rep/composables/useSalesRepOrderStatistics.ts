@@ -13,11 +13,8 @@ type UseSalesRepOrderStatisticsOptionsType = {
   organizationId?: string | Ref<string | undefined> | (() => string | undefined);
 };
 
-// SOURCE: one composable owning the salesRepCustomerOrderStatistics op. All period/comparison slices
-// (week, mtd, ytd, newOrders, newOrdersToday, and the week/month/year vs-previous comparisons) are aliased
-// into the single query, so both the dashboard mapper (week/mtd/ytd/newOrders slices) and the customer
-// mapper (ytd slice) read from one round trip; the backend coalesces overlapping ranges.
-// The window vars (spread from buildStatisticsWindows) are current=period-start→now, previous=elapsed-matched.
+// One composable owns the salesRepCustomerOrderStatistics op; all period/comparison slices are aliased
+// into a single query shared by the dashboard and customer mappers.
 export function useSalesRepOrderStatistics(options: UseSalesRepOrderStatisticsOptionsType = {}) {
   const variables = computed(() => ({
     organizationId: toValue(options.organizationId),
