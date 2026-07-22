@@ -202,7 +202,7 @@ onBeforeUnmount(() => {
   }
 
   &__arrow {
-    @apply fill-secondary-400;
+    @apply text-secondary-400;
   }
 
   &__divider-container {

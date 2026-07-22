@@ -142,7 +142,7 @@
           </div>
 
           <div class="w-10 flex-none text-center">
-            <VcIcon v-if="isSelected(item)" class="fill-secondary" name="check-circle" :size="20" />
+            <VcIcon v-if="isSelected(item)" class="text-secondary" name="check-circle" :size="20" />
           </div>
 
           <button
@@ -177,7 +177,7 @@
             <span class="line-clamp-2">
               <VcIcon
                 v-if="hasFavoriteAddresses && item.isFavorite"
-                class="me-1.5 fill-accent"
+                class="me-1.5 text-accent"
                 name="whishlist"
                 :size="16"
               />
@@ -222,7 +222,7 @@
           </td>
 
           <td class="h-[3.75rem] py-2.5 text-center">
-            <VcIcon v-if="isSelected(item)" class="fill-success" name="check-circle" />
+            <VcIcon v-if="isSelected(item)" class="text-success" name="check-circle" />
 
             <VcButton v-else class="invisible group-hover:lg:visible" variant="outline" size="xs">
               {{ $t("shared.checkout.select_address_modal.select_button") }}
@@ -384,6 +384,7 @@ function getFormattedAddress(address: AnyAddressType): string {
   }
 
   const parts = [address.line1, address.line2, address.city, address.regionId, address.postalCode].filter(
+    // eslint-disable-next-line sonarjs/null-dereference -- false positive: typeof guard ensures part is a string
     (part) => typeof part === "string" && part.trim() !== "",
   );
 

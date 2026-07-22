@@ -58,14 +58,18 @@ defineProps<IProps>();
   }
 
   &__icon {
-    @apply size-6 fill-primary;
+    --vc-icon-color: var(--color-primary-500);
+
+    @apply size-6;
 
     @media (width > theme("screens.xs")) {
       @apply size-8;
     }
 
     #{$disabled} & {
-      @apply fill-inherit;
+      --vc-icon-color: currentColor;
+
+      @apply text-inherit;
     }
   }
 
