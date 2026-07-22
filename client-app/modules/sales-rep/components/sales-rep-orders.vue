@@ -18,7 +18,12 @@
         </div>
 
         <div class="sales-rep-orders__content">
-          <VcEmptyView v-if="!orders.length && !loading" :text="t('sales_rep.orders.empty')" icon="outline-order" />
+          <!-- With a filter active, an empty result means "nothing matches this filter", not "never ordered". -->
+          <VcEmptyView
+            v-if="!orders.length && !loading"
+            :text="filter ? t('sales_rep.orders.no_results') : t('sales_rep.orders.empty')"
+            icon="outline-order"
+          />
 
           <!-- Skeleton rows match the page size so the loading state mirrors what will load.
                Sorting maps each header to a named backend rule; clicking a reversible rule again toggles asc/desc. -->

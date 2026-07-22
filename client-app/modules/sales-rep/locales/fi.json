@@ -98,6 +98,7 @@
       "title": "Viimeisimmät tilaukset",
       "view_all": "Kaikki tilaukset",
       "empty": "Ei vielä tilauksia",
+      "no_results": "Mikään tilaus ei vastaa tätä suodatinta",
       "number": "Tilausnro",
       "customer": "Asiakas",
       "date": "Päivämäärä",
@@ -113,6 +114,7 @@
       "units": "Yksiköt",
       "revenue": "Tuotto",
       "empty": "Ei myyntiä tällä kaudella",
+      "no_results": "Ei myyntiä tässä luokassa",
       "all_categories": "Kaikki kategoriat"
     },
     "rules": {

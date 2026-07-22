@@ -98,6 +98,7 @@
       "title": "Pedidos recientes",
       "view_all": "Todos los pedidos",
       "empty": "Aún no hay pedidos",
+      "no_results": "Ningún pedido coincide con este filtro",
       "number": "N.º de pedido",
       "customer": "Cliente",
       "date": "Fecha",
@@ -113,6 +114,7 @@
       "units": "Unidades",
       "revenue": "Ingresos",
       "empty": "Sin ventas en este período",
+      "no_results": "Sin ventas en esta categoría",
       "all_categories": "Todas las categorías"
     },
     "rules": {

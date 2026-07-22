@@ -98,6 +98,7 @@
       "title": "Recent orders",
       "view_all": "All orders",
       "empty": "No orders yet",
+      "no_results": "No orders match this filter",
       "number": "Order #",
       "customer": "Customer",
       "date": "Date",
@@ -113,6 +114,7 @@
       "units": "Units",
       "revenue": "Revenue",
       "empty": "No sales in this period",
+      "no_results": "No sales in this category",
       "all_categories": "All categories"
     },
     "rules": {

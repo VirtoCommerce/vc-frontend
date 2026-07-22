@@ -98,6 +98,7 @@
       "title": "Ostatnie zamówienia",
       "view_all": "Wszystkie zamówienia",
       "empty": "Brak zamówień",
+      "no_results": "Żadne zamówienie nie pasuje do tego filtra",
       "number": "Nr zamówienia",
       "customer": "Klient",
       "date": "Data",
@@ -113,6 +114,7 @@
       "units": "Sztuki",
       "revenue": "Przychody",
       "empty": "Brak sprzedaży w tym okresie",
+      "no_results": "Brak sprzedaży w tej kategorii",
       "all_categories": "Wszystkie kategorie"
     },
     "rules": {

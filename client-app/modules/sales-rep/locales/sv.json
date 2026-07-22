@@ -98,6 +98,7 @@
       "title": "Senaste ordrar",
       "view_all": "Alla beställningar",
       "empty": "Inga beställningar ännu",
+      "no_results": "Inga ordrar matchar detta filter",
       "number": "Ordernr",
       "customer": "Kund",
       "date": "Datum",
@@ -113,6 +114,7 @@
       "units": "Enheter",
       "revenue": "Intäkter",
       "empty": "Ingen försäljning under denna period",
+      "no_results": "Ingen försäljning i denna kategori",
       "all_categories": "Alla kategorier"
     },
     "rules": {

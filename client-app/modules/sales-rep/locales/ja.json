@@ -98,6 +98,7 @@
       "title": "最近の注文",
       "view_all": "すべての注文",
       "empty": "注文はまだありません",
+      "no_results": "このフィルターに一致する注文はありません",
       "number": "注文番号",
       "customer": "顧客",
       "date": "日付",
@@ -113,6 +114,7 @@
       "units": "個数",
       "revenue": "収益",
       "empty": "この期間の売上なし",
+      "no_results": "このカテゴリーの売上なし",
       "all_categories": "全カテゴリー"
     },
     "rules": {

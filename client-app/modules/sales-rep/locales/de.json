@@ -98,6 +98,7 @@
       "title": "Aktuelle Bestellungen",
       "view_all": "Alle Bestellungen",
       "empty": "Noch keine Bestellungen",
+      "no_results": "Keine Bestellungen entsprechen diesem Filter",
       "number": "Bestellnr.",
       "customer": "Kunde",
       "date": "Datum",
@@ -113,6 +114,7 @@
       "units": "Einheiten",
       "revenue": "Umsatz",
       "empty": "Keine Verkäufe in diesem Zeitraum",
+      "no_results": "Keine Verkäufe in dieser Kategorie",
       "all_categories": "Alle Kategorien"
     },
     "rules": {

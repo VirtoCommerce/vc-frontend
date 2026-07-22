@@ -98,6 +98,7 @@
       "title": "Commandes récentes",
       "view_all": "Toutes les commandes",
       "empty": "Aucune commande pour le moment",
+      "no_results": "Aucune commande ne correspond à ce filtre",
       "number": "N° de commande",
       "customer": "Client",
       "date": "Date",
@@ -113,6 +114,7 @@
       "units": "Unités",
       "revenue": "Revenus",
       "empty": "Aucune vente sur cette période",
+      "no_results": "Aucune vente dans cette catégorie",
       "all_categories": "Toutes catégories"
     },
     "rules": {

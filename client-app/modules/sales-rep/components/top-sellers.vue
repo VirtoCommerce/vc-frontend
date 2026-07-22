@@ -13,7 +13,12 @@
         </div>
 
         <div class="top-sellers__content">
-          <VcEmptyView v-if="!items.length && !loading" :text="t('sales_rep.top_sellers.empty')" icon="outline-order" />
+          <!-- With a category filter active, an empty result means "nothing in this category", not "no sales at all". -->
+          <VcEmptyView
+            v-if="!items.length && !loading"
+            :text="filter ? t('sales_rep.top_sellers.no_results') : t('sales_rep.top_sellers.empty')"
+            icon="outline-order"
+          />
 
           <!-- Sorting maps each header to a named backend rule; both top-seller rules are one-way (highest first). -->
           <VcTable

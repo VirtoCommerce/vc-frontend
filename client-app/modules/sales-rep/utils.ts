@@ -81,8 +81,11 @@ export function buildStatisticsWindows(now: Date = new Date()): StatisticsWindow
   const prevWeekStart = weekStart - 7 * DAY_MS;
 
   const iso = (ms: number): string => new Date(ms).toISOString();
-  // The point in a previous period matching how far the current period has elapsed.
-  const matched = (prevStart: number, currentStart: number): string => iso(prevStart + (nowMs - currentStart));
+  // The point in a previous period matching how far the current period has elapsed — clamped to the current
+  // period start so a longer current-to-date span (e.g. Mar 31 vs the shorter Feb) can't push the previous
+  // window past its own end and overlap the current one, which would double-count and skew the delta.
+  const matched = (prevStart: number, currentStart: number): string =>
+    iso(Math.min(prevStart + (nowMs - currentStart), currentStart));
 
   return {
     mtdFrom: iso(monthStart),

@@ -98,6 +98,7 @@
       "title": "Ordini recenti",
       "view_all": "Tutti gli ordini",
       "empty": "Ancora nessun ordine",
+      "no_results": "Nessun ordine corrisponde a questo filtro",
       "number": "N. ordine",
       "customer": "Cliente",
       "date": "Data",
@@ -113,6 +114,7 @@
       "units": "Unità",
       "revenue": "Entrate",
       "empty": "Nessuna vendita in questo periodo",
+      "no_results": "Nessuna vendita in questa categoria",
       "all_categories": "Tutte le categorie"
     },
     "rules": {
