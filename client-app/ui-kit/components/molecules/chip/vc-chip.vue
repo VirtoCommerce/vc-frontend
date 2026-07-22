@@ -318,7 +318,10 @@ const _iconColor = computed(() => getColorValue(props.iconColor));
 
   &:disabled,
   &#{$disabled} {
-    --vc-icon-color: var(--color-neutral-400);
+    // Override `--icon-color` directly (not `--vc-icon-color`) so the disabled shade wins even when an
+    // explicit `icon-color` prop is set — the prop feeds `--props-icon-color`, which short-circuits the
+    // `--icon-color` fallback, so targeting `--icon-color` is the only lever that beats it.
+    --icon-color: var(--color-neutral-400);
     --text-color: var(--color-neutral-600);
     --close-button-icon-color: var(--color-neutral-400);
 

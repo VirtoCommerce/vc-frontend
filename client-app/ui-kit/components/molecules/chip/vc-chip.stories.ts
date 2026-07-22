@@ -195,6 +195,40 @@ export const IconColorHEX: StoryType = {
   },
 };
 
+export const IconColorAcrossVariants: StoryType = {
+  args: {
+    icon: "circle-solid",
+    iconColor: "danger",
+  },
+  render: (args) => ({
+    setup: () => ({ args, variants: VARIANTS }),
+    template: `
+      <div class="flex flex-col gap-4">
+        <div class="flex flex-wrap items-center gap-3">
+          <VcChip v-for="variant in variants" :key="variant" v-bind="args" :variant="variant">{{ variant }}</VcChip>
+        </div>
+        <div class="flex flex-wrap items-center gap-3">
+          <VcChip v-for="variant in variants" :key="variant" v-bind="args" :variant="variant" disabled>{{ variant }}</VcChip>
+        </div>
+      </div>
+    `,
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Every variant with a custom `icon-color`. The top row shows the requested color honored across all variants; the bottom row shows the disabled state overriding it — a disabled chip always renders its icon in the muted disabled shade, regardless of `icon-color`.",
+      },
+      source: {
+        code: `
+          <VcChip icon="circle-solid" icon-color="danger" variant="soft">soft</VcChip>
+          <VcChip icon="circle-solid" icon-color="danger" variant="soft" disabled>soft</VcChip>
+        `,
+      },
+    },
+  },
+};
+
 export const Truncate: StoryType = {
   args: { truncate: true },
   render: (args) => ({
