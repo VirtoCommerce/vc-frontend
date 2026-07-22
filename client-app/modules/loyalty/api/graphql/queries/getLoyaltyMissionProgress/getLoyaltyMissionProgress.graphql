@@ -52,6 +52,15 @@ query GetLoyaltyMissionProgress(
           name
           slug
           imgSrc
+          price {
+            actual {
+              amount
+              formattedAmount
+              currency {
+                code
+              }
+            }
+          }
         }
       }
     }

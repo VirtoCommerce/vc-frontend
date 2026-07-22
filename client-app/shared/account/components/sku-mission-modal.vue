@@ -39,17 +39,21 @@
             </VcChip>
           </div>
 
-          <VcQuantityStepper
-            v-if="!isMissionCompleted"
-            class="mission-details__stepper"
-            :model-value="row.quantity"
-            :min="0"
-            :max="9999"
-            allow-zero
-            size="sm"
-            :aria-label="row.id"
-            @update:model-value="setQuantity(row.id, $event)"
-          />
+          <div class="mission-details__stepper-wrap">
+            <VcQuantityStepper
+              v-if="!isMissionCompleted"
+              class="mission-details__stepper"
+              :model-value="row.quantity"
+              :min="0"
+              :max="9999"
+              allow-zero
+              size="sm"
+              :aria-label="row.id"
+              @update:model-value="setQuantity(row.id, $event)"
+            />
+
+            <VcPriceDisplay v-if="row.price" class="mission-details__price" :value="row.price.actual" />
+          </div>
         </li>
       </ul>
 
@@ -61,10 +65,16 @@
           <dd>{{ totalUnits }}</dd>
         </div>
 
-        <div class="mission-details__summary-row mission-details__summary-row--total">
+        <div class="mission-details__summary-row">
           <dt>{{ $t("pages.account.missions.sku_modal.targets_met") }}</dt>
 
           <dd :class="{ 'text-success-600': missionCompleted }">{{ summaryMet }} / {{ summaryTarget }}</dd>
+        </div>
+
+        <div class="mission-details__summary-row mission-details__summary-row--total">
+          <dt>{{ $t("pages.account.missions.sku_modal.cart_subtotal") }}</dt>
+
+          <dd>{{ formatCurrency(cartSubtotal.amount, cartSubtotal.currencyCode) }}</dd>
         </div>
       </dl>
     </div>
@@ -109,7 +119,7 @@ const props = defineProps<{
   mission: MissionDataType;
 }>();
 
-const { view } = useMissionCard(() => props.mission);
+const { view, formatCurrency } = useMissionCard(() => props.mission);
 const { addItemsToCart, changing: addToCartLoading } = useShortCart();
 const notifications = useNotifications();
 const { t } = useI18n();
@@ -132,6 +142,7 @@ const rows = computed(() =>
       id,
       name: item?.product?.name ?? id,
       image: item?.product?.imgSrc ?? "",
+      price: item?.product?.price,
       target,
       // How many units are still needed on top of what's already counted towards the mission.
       remaining: remaining === 0 ? target : remaining,
@@ -143,6 +154,15 @@ const rows = computed(() =>
 
 const totalUnits = computed(() => rows.value.reduce((sum, row) => sum + row.quantity, 0));
 const targetsMet = computed(() => rows.value.filter((row) => row.met).length);
+
+// Sum of unit price * quantity across rows the user is about to add — not returned by the backend.
+const cartSubtotal = computed(() => {
+  const itemsToAdd = rows.value.filter((row) => row.quantity > 0 && row.price?.actual);
+  const amount = itemsToAdd.reduce((sum, row) => sum + row.price!.actual.amount * row.quantity, 0);
+  const currencyCode = itemsToAdd[0]?.price?.actual.currency.code;
+
+  return { amount, currencyCode };
+});
 const isAnyMatch = computed(() => props.mission.missionType === MISSION_TYPE.PerSkuAny);
 
 // PerSkuAny only needs one row met, so the summary caps at "1 of 1"; PerSkuAll needs every row met.
@@ -230,12 +250,20 @@ async function addProductsToCart(close: () => void) {
     @apply line-clamp-2 text-sm font-bold text-neutral-900;
   }
 
+  &__stepper-wrap {
+    @apply flex shrink-0 flex-col items-end gap-1;
+  }
+
   &__stepper {
-    @apply w-32 shrink-0;
+    @apply w-32 shrink-0 mb-1;
+  }
+
+  &__price {
+    @apply text-sm font-bold text-neutral-700;
   }
 
   &__summary {
-    @apply flex flex-col gap-1.5 rounded-lg bg-neutral-50 p-4;
+    @apply flex flex-col gap-1.5 rounded-lg bg-neutral-50 p-4 border-neutral-200 border;
   }
 
   &__summary-row {

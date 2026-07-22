@@ -1407,6 +1407,7 @@
           "buy_at_least": "Buy at least {count}",
           "total_units": "Total units",
           "targets_met": "Targets met",
+          "cart_subtotal": "Cart subtotal",
           "reward_hint": "Earn {points} points when all targets are met",
           "reward_unlocked": "All targets met — {points} points unlocked",
           "close": "Close",
