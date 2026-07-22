@@ -10,7 +10,7 @@ type UseSalesRepCustomerCountsOptionsType = {
   organizationId?: string | Ref<string | undefined> | (() => string | undefined);
 };
 
-// Owns the salesRepCustomerCounts op: served/ordered/new customer counts + MoM comparison, backing the "My customers" card.
+// Owns the salesRepCustomerCounts op: served/ordered/new customer counts, backing the "My customers" card.
 export function useSalesRepCustomerCounts(options: UseSalesRepCustomerCountsOptionsType = {}) {
   const variables = computed(() => {
     const windows = buildStatisticsWindows();
@@ -19,8 +19,6 @@ export function useSalesRepCustomerCounts(options: UseSalesRepCustomerCountsOpti
       storeId: globals.storeId,
       mtdFrom: windows.mtdFrom,
       mtdTo: windows.mtdTo,
-      prevFrom: windows.prevFrom,
-      prevTo: windows.prevTo,
     };
   });
 

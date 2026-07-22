@@ -1,22 +1,9 @@
-query SalesRepCustomerCounts(
-  $organizationId: String
-  $storeId: String
-  $mtdFrom: DateTime
-  $mtdTo: DateTime
-  $prevFrom: DateTime
-  $prevTo: DateTime
-) {
+query SalesRepCustomerCounts($organizationId: String, $storeId: String, $mtdFrom: DateTime, $mtdTo: DateTime) {
   salesRepCustomerCounts(organizationId: $organizationId, storeId: $storeId) {
     assignedCustomers
     thisMonth: period(from: $mtdFrom, to: $mtdTo) {
       orderingCustomers
       newCustomers
-    }
-    monthOverMonth: comparison(current: { from: $mtdFrom, to: $mtdTo }, previous: { from: $prevFrom, to: $prevTo }) {
-      orderingCustomersChange
-      orderingCustomersChangePercent
-      newCustomersChange
-      newCustomersChangePercent
     }
   }
 }
