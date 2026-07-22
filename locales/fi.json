@@ -269,6 +269,7 @@
       "orders": "Tilaukset",
       "lists": "Listat",
       "promotion_coupons": "Kupongit ja tarjoukset",
+      "missions_challenges": "Tehtävät & haasteet",
       "list_details": "Listan tiedot",
       "cart": "Ostoskori",
       "company_info": "Yrityksen tiedot",
@@ -484,6 +485,7 @@
           "lists": "@:common.links.lists",
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
+          "missions_challenges": "@:common.links.missions_challenges",
           "company_info": "@:common.links.company_info",
           "company_members": "@:common.links.company_members",
           "saved_credit_cards": "@:common.links.saved_credit_cards"
@@ -1373,6 +1375,52 @@
       "promotion_coupons": {
         "title": "Kaikki kupongit ja tarjoukset",
         "no_lists": "Sinulla ei ole kuponkeja tai tarjouksia"
+      },
+      "missions": {
+        "title": "Tehtävät & haasteet",
+        "description": "Suorita tehtäviä ansaitaksesi bonus Virto Rewards -pisteitä.",
+        "balance_banner": {
+          "label": "Virto Rewards -saldo",
+          "points": "pistettä",
+          "points_history": "Pisteiden historia"
+        },
+        "redeem_banner": {
+          "title": "Lunasta pisteitäsi",
+          "description": "Vaihda pisteitä tuotteisiin palkintoluettelossa.",
+          "catalog": "Luettelo"
+        },
+        "card": {
+          "type_products": "Suositellut tuotteet",
+          "type_order_value": "Tilausarvo",
+          "type_orders": "Tilausten määrä",
+          "points": "pistettä",
+          "days_left": "{count} päivä jäljellä | {count} päivää jäljellä",
+          "mission_completed": "Tehtävä suoritettu",
+          "completed": "Suoritettu",
+          "open_mission": "Avaa tehtävä",
+          "progress_skus": "{current} / {target} tuotetta",
+          "progress_any_sku": "vähintään 1 / {target} tuotetta",
+          "progress_spend": "{sum} käytetty",
+          "progress_orders": "{current} / {target} tilausta"
+        },
+        "sku_modal": {
+          "buy_at_least": "Osta vähintään {count}",
+          "total_units": "Yhteensä kappaletta",
+          "targets_met": "Tavoitteet täytetty",
+          "reward_hint": "Ansaitse {points} pistettä, kun kaikki tavoitteet on täytetty",
+          "reward_unlocked": "Kaikki tavoitteet täytetty — {points} pistettä avattu",
+          "close": "Sulje",
+          "add_to_cart": "Lisää ostoskoriin",
+          "added_to_cart": "Tuotteet lisätty ostoskoriin",
+          "add_to_cart_error": "Joitakin tuotteita ei voitu lisätä ostoskoriin"
+        },
+        "order_modal": {
+          "mission_target": "Tehtävän tavoite",
+          "value_requirement": "Käytä {target} kelpoisiin tilauksiin",
+          "count_requirement": "Tee {target} erillistä tilausta",
+          "close": "Sulje",
+          "redeem_products": "Lunasta tuotteita"
+        }
       }
     },
     "company": {

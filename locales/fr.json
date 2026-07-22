@@ -269,6 +269,7 @@
       "orders": "Commandes",
       "lists": "Listes",
       "promotion_coupons": "Coupons et promotions",
+      "missions_challenges": "Missions et défis",
       "list_details": "Détails de la liste",
       "cart": "Panier",
       "company_info": "Informations sur l'entreprise",
@@ -484,6 +485,7 @@
           "lists": "@:common.links.lists",
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
+          "missions_challenges": "@:common.links.missions_challenges",
           "company_info": "@:common.links.company_info",
           "company_members": "@:common.links.company_members",
           "saved_credit_cards": "@:common.links.saved_credit_cards"
@@ -702,13 +704,13 @@
       "configuration_items": {
         "title": "Liste des composants",
         "edit_configuration": "Modifier la configuration",
+        "selected_text": "Texte sélectionné : {text}",
         "columns": {
           "number": "Numéro",
           "section": "Section",
           "value": "Valeur",
           "price": "Prix"
-        },
-        "selected_text": "Texte sélectionné : {text}"
+        }
       },
       "coupons_section": {
         "title": "Réductions et coupons",
@@ -1373,6 +1375,52 @@
       "promotion_coupons": {
         "title": "Tous les coupons et promotions",
         "no_lists": "Vous n'avez aucun coupon ni promotion"
+      },
+      "missions": {
+        "title": "Missions et défis",
+        "description": "Terminez des missions pour gagner des points bonus Virto Rewards.",
+        "balance_banner": {
+          "label": "Solde Virto Rewards",
+          "points": "points",
+          "points_history": "Historique des points"
+        },
+        "redeem_banner": {
+          "title": "Échangez vos points",
+          "description": "Échangez des points contre des produits dans le catalogue des récompenses.",
+          "catalog": "Catalogue"
+        },
+        "card": {
+          "type_products": "SKU en vedette",
+          "type_order_value": "Valeur de la commande",
+          "type_orders": "Nombre de commandes",
+          "points": "points",
+          "days_left": "{count} jour restant | {count} jours restants",
+          "mission_completed": "Mission terminée",
+          "completed": "Terminé",
+          "open_mission": "Ouvrir la mission",
+          "progress_skus": "{current} sur {target} SKU",
+          "progress_any_sku": "au moins 1 sur {target} SKU",
+          "progress_spend": "{sum} dépensé",
+          "progress_orders": "{current} sur {target} commandes"
+        },
+        "sku_modal": {
+          "buy_at_least": "Achetez au moins {count}",
+          "total_units": "Unités totales",
+          "targets_met": "Cibles atteintes",
+          "reward_hint": "Gagnez {points} points lorsque toutes les cibles sont atteintes",
+          "reward_unlocked": "Toutes les cibles sont atteintes — {points} points débloqués",
+          "close": "Fermer",
+          "add_to_cart": "Ajouter au panier",
+          "added_to_cart": "Produits ajoutés au panier",
+          "add_to_cart_error": "Certains produits n'ont pas pu être ajoutés au panier"
+        },
+        "order_modal": {
+          "mission_target": "Objectif de la mission",
+          "value_requirement": "Dépensez {target} dans les commandes éligibles",
+          "count_requirement": "Passez {target} commandes distinctes",
+          "close": "Fermer",
+          "redeem_products": "Échanger des produits"
+        }
       }
     },
     "company": {

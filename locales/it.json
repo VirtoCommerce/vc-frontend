@@ -269,6 +269,7 @@
       "orders": "Ordini",
       "lists": "Liste",
       "promotion_coupons": "Coupon e promozioni",
+      "missions_challenges": "Missioni e sfide",
       "list_details": "Dettagli lista",
       "cart": "Carrello",
       "company_info": "Informazioni azienda",
@@ -484,6 +485,7 @@
           "lists": "@:common.links.lists",
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
+          "missions_challenges": "@:common.links.missions_challenges",
           "company_info": "@:common.links.company_info",
           "company_members": "@:common.links.company_members",
           "saved_credit_cards": "@:common.links.saved_credit_cards"
@@ -1373,6 +1375,52 @@
       "promotion_coupons": {
         "title": "Tutti i coupon e le promozioni",
         "no_lists": "Non hai coupon o promozioni"
+      },
+      "missions": {
+        "title": "Missioni e sfide",
+        "description": "Completa le missioni per guadagnare punti bonus Virto Rewards.",
+        "balance_banner": {
+          "label": "Saldo Virto Rewards",
+          "points": "punti",
+          "points_history": "Cronologia punti"
+        },
+        "redeem_banner": {
+          "title": "Riscatta i tuoi punti",
+          "description": "Scambia punti per prodotti nel catalogo premi.",
+          "catalog": "Catalogo"
+        },
+        "card": {
+          "type_products": "SKU in primo piano",
+          "type_order_value": "Valore ordine",
+          "type_orders": "Numero di ordini",
+          "points": "punti",
+          "days_left": "{count} giorno rimasto | {count} giorni rimasti",
+          "mission_completed": "Missione completata",
+          "completed": "Completato",
+          "open_mission": "Apri missione",
+          "progress_skus": "{current} di {target} SKU",
+          "progress_any_sku": "almeno 1 SKU su {target}",
+          "progress_spend": "{sum} spesi",
+          "progress_orders": "{current} di {target} ordini"
+        },
+        "sku_modal": {
+          "buy_at_least": "Acquista almeno {count}",
+          "total_units": "Unità totali",
+          "targets_met": "Obiettivi raggiunti",
+          "reward_hint": "Guadagna {points} punti quando tutti gli obiettivi sono soddisfatti",
+          "reward_unlocked": "Tutti gli obiettivi raggiunti — {points} punti sbloccati",
+          "close": "Chiudi",
+          "add_to_cart": "Aggiungi al carrello",
+          "added_to_cart": "Prodotti aggiunti al carrello",
+          "add_to_cart_error": "Alcuni prodotti non hanno potuto essere aggiunti al carrello"
+        },
+        "order_modal": {
+          "mission_target": "Obiettivo missione",
+          "value_requirement": "Spendi {target} in ordini idonei",
+          "count_requirement": "Effettua {target} ordini separati",
+          "close": "Chiudi",
+          "redeem_products": "Riscatta prodotti"
+        }
       }
     },
     "company": {

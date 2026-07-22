@@ -269,6 +269,7 @@
       "orders": "注文履歴",
       "lists": "リスト",
       "promotion_coupons": "クーポンとプロモーション",
+      "missions_challenges": "ミッション＆チャレンジ",
       "list_details": "リスト詳細",
       "cart": "カート",
       "company_info": "会社情報",
@@ -484,6 +485,7 @@
           "lists": "@:common.links.lists",
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
+          "missions_challenges": "@:common.links.missions_challenges",
           "company_info": "@:common.links.company_info",
           "company_members": "@:common.links.company_members",
           "saved_credit_cards": "@:common.links.saved_credit_cards"
@@ -1373,6 +1375,52 @@
       "promotion_coupons": {
         "title": "すべてのクーポンとプロモーション",
         "no_lists": "クーポンやプロモーションはありません"
+      },
+      "missions": {
+        "title": "ミッション＆チャレンジ",
+        "description": "ミッションを完了して、ボーナスVirto Rewardsポイントを獲得しましょう。",
+        "balance_banner": {
+          "label": "Virto Rewards残高",
+          "points": "ポイント",
+          "points_history": "ポイント履歴"
+        },
+        "redeem_banner": {
+          "title": "ポイントを交換する",
+          "description": "報酬カタログでポイントを商品と交換しましょう。",
+          "catalog": "カタログ"
+        },
+        "card": {
+          "type_products": "注目のSKU",
+          "type_order_value": "注文金額",
+          "type_orders": "注文数",
+          "points": "ポイント",
+          "days_left": "{count}日残リ | {count}日残リ",
+          "mission_completed": "ミッション完了",
+          "completed": "完了",
+          "open_mission": "ミッションを開く",
+          "progress_skus": "{current} / {target} SKU",
+          "progress_any_sku": "{target}個中少なくとも1個",
+          "progress_spend": "{sum} 使用済み",
+          "progress_orders": "{current} / {target} 件の注文"
+        },
+        "sku_modal": {
+          "buy_at_least": "少なくとも{count}個購入",
+          "total_units": "合計ユニット",
+          "targets_met": "ターゲット達成",
+          "reward_hint": "すべてのターゲットが達成されると{points}ポイントを獲得",
+          "reward_unlocked": "すべてのターゲットが達成されました — {points}ポイントを獲得しました",
+          "close": "閉じる",
+          "add_to_cart": "カートに追加",
+          "added_to_cart": "製品がカートに追加されました",
+          "add_to_cart_error": "一部の製品はカートに追加できませんでした"
+        },
+        "order_modal": {
+          "mission_target": "ミッションターゲット",
+          "value_requirement": "対象注文で{target}を使用",
+          "count_requirement": "{target}件の個別の注文を出す",
+          "close": "閉じる",
+          "redeem_products": "商品と交換する"
+        }
       }
     },
     "company": {
