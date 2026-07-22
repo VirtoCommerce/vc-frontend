@@ -67,6 +67,8 @@ defineProps<IProps>();
     }
 
     #{$disabled} & {
+      --vc-icon-color: currentColor;
+
       @apply text-inherit;
     }
   }
