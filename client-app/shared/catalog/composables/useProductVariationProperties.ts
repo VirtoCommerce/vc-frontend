@@ -69,7 +69,6 @@ function sortPropertiesByDisplayOrder(props: Property[]): Property[] {
 }
 
 /** Extracts option value from properties array */
-// eslint-disable-next-line sonarjs/function-return-type -- union type by design
 function getOptionValue(props: Property[]): OptionValueType {
   if (!isMultiColorProperty(props)) {
     return normalizePropertyValue(props[0]);
@@ -311,7 +310,6 @@ export function _useProductVariationProperties(variations: Ref<readonly Product[
     return option.label;
   }
 
-  // eslint-disable-next-line sonarjs/function-return-type -- union type by design
   function getSelectedValue(property: IProperty): OptionValueType {
     return property.values.find((opt) => isSelected(property.name, opt.value))?.value ?? "";
   }

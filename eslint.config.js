@@ -224,6 +224,14 @@ export default defineConfigWithVueTs(
       "sonarjs/slow-regex": "warn",
       "sonarjs/todo-tag": "warn",
       "sonarjs/void-use": "warn",
+      // Newly promoted to `error` by the recommended config in eslint-plugin-sonarjs v4; demoted to
+      // `warn` to keep the major bump behavior-neutral. Fixing the findings is tracked separately.
+      "sonarjs/null-dereference": "warn",
+      "sonarjs/no-redundant-optional": "warn",
+      "sonarjs/prefer-specific-assertions": "warn",
+      "sonarjs/prefer-native-lodash-alternative": "warn",
+      "sonarjs/parameterized-tests": "warn",
+      "sonarjs/super-linear-regex": "warn",
 
       // Disabled rules
       "@typescript-eslint/no-non-null-assertion": "off",
