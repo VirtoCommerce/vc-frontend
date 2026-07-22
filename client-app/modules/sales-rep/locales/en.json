@@ -72,10 +72,7 @@
       "not_found": "Customer not found or not in your customers.",
       "back_to_customers": "Back to my customers",
       "widgets": {
-        "ytd_purchases": "YTD purchases",
-        "open_balance": "Open balance",
-        "avg_order_value": "Avg order value",
-        "orders_ytd": "Orders YTD"
+        "avg_order_value": "Avg order value"
       },
       "stats": {
         "per_order": "Average per order (YTD)"

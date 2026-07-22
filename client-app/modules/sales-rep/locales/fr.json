@@ -72,10 +72,7 @@
       "not_found": "Client introuvable ou absent de vos clients.",
       "back_to_customers": "Retour à mes clients",
       "widgets": {
-        "ytd_purchases": "Achats depuis le début de l'année",
-        "open_balance": "Solde ouvert",
-        "avg_order_value": "Valeur moyenne des commandes",
-        "orders_ytd": "Commandes depuis le début de l'année"
+        "avg_order_value": "Valeur moyenne des commandes"
       },
       "stats": {
         "per_order": "Moyenne par commande (YTD)"

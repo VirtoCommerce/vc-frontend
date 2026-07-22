@@ -72,10 +72,7 @@
       "not_found": "未找到客户，或该客户不在您的客户列表中。",
       "back_to_customers": "返回我的客户",
       "widgets": {
-        "ytd_purchases": "年初至今采购额",
-        "open_balance": "未结余额",
-        "avg_order_value": "平均订单金额",
-        "orders_ytd": "年初至今订单数"
+        "avg_order_value": "平均订单金额"
       },
       "stats": {
         "per_order": "平均每笔订单 (今年迄今)"

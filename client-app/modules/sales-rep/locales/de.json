@@ -72,10 +72,7 @@
       "not_found": "Kunde nicht gefunden oder nicht in Ihren Kunden.",
       "back_to_customers": "Zurück zu meinen Kunden",
       "widgets": {
-        "ytd_purchases": "Käufe seit Jahresbeginn",
-        "open_balance": "Offener Saldo",
-        "avg_order_value": "Durchschn. Bestellwert",
-        "orders_ytd": "Bestellungen seit Jahresbeginn"
+        "avg_order_value": "Durchschn. Bestellwert"
       },
       "stats": {
         "per_order": "Durchschnitt pro Bestellung (YTD)"

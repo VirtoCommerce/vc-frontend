@@ -72,10 +72,7 @@
       "not_found": "Asiakasta ei löytynyt tai se ei kuulu asiakkaisiisi.",
       "back_to_customers": "Takaisin omiin asiakkaisiin",
       "widgets": {
-        "ytd_purchases": "Ostot vuoden alusta",
-        "open_balance": "Avoin saldo",
-        "avg_order_value": "Keskimääräinen tilausarvo",
-        "orders_ytd": "Tilaukset vuoden alusta"
+        "avg_order_value": "Keskimääräinen tilausarvo"
       },
       "stats": {
         "per_order": "Keskim. per tilaus (tänä vuonna)"

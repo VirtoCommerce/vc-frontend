@@ -72,10 +72,7 @@
       "not_found": "Kunden ble ikke funnet eller er ikke blant kundene dine.",
       "back_to_customers": "Tilbake til mine kunder",
       "widgets": {
-        "ytd_purchases": "Kjøp hittil i år",
-        "open_balance": "Utestående saldo",
-        "avg_order_value": "Gjennomsnittlig ordreverdi",
-        "orders_ytd": "Bestillinger hittil i år"
+        "avg_order_value": "Gjennomsnittlig ordreverdi"
       },
       "stats": {
         "per_order": "Gjennomsnitt per ordre (hittil i år)"

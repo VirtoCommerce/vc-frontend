@@ -72,10 +72,7 @@
       "not_found": "顧客が見つからないか、担当顧客に含まれていません。",
       "back_to_customers": "担当顧客に戻る",
       "widgets": {
-        "ytd_purchases": "年初来の購入額",
-        "open_balance": "未払い残高",
-        "avg_order_value": "平均注文額",
-        "orders_ytd": "年初来の注文数"
+        "avg_order_value": "平均注文額"
       },
       "stats": {
         "per_order": "平均注文単価 (今年度)"

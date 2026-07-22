@@ -72,10 +72,7 @@
       "not_found": "Cliente non trovato o non presente tra i tuoi clienti.",
       "back_to_customers": "Torna ai miei clienti",
       "widgets": {
-        "ytd_purchases": "Acquisti da inizio anno",
-        "open_balance": "Saldo aperto",
-        "avg_order_value": "Valore medio ordine",
-        "orders_ytd": "Ordini da inizio anno"
+        "avg_order_value": "Valore medio ordine"
       },
       "stats": {
         "per_order": "Media per ordine (YTD)"
