@@ -27,7 +27,6 @@ query SalesRepOrders(
       status
       statusDisplayValue
       itemsCount
-      itemsQuantity
       total {
         amount
         formattedAmount

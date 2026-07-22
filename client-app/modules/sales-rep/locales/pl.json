@@ -75,15 +75,10 @@
         "ytd_purchases": "Zakupy od początku roku",
         "open_balance": "Saldo otwarte",
         "avg_order_value": "Średnia wartość zamówienia",
-        "orders_ytd": "Zamówienia od początku roku",
-        "active_projects": "Aktywne projekty"
+        "orders_ytd": "Zamówienia od początku roku"
       },
       "stats": {
-        "orders_count": "{count} zamówień YTD",
-        "yoy": "{delta} R/R",
-        "per_order": "Średnio na zamówienie (YTD)",
-        "last_order": "Ostatnie zamówienie {date}",
-        "customer_since": "Klient od {year}"
+        "per_order": "Średnio na zamówienie (YTD)"
       },
       "info": {
         "title": "Informacje o kliencie",

@@ -20,7 +20,7 @@ import type {
 import type { TypedDocumentNode } from "@graphql-typed-document-node/core";
 
 // CONTROLS source: every discovery op returns the same { name, localizedName } list under a
-// domain-specific root field, so one composable drives all seven. Each generated document is cast to
+// domain-specific root field, so one composable drives all six (3 domains x filter/sort). Each generated document is cast to
 // this shared shape and paired with its root field name. Sort discovery ops additionally return
 // defaultDirection/supportsDirection (absent on filter ops), which drive the header-sort direction toggle.
 type RuleNodeType = {

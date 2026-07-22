@@ -75,15 +75,10 @@
         "ytd_purchases": "Acquisti da inizio anno",
         "open_balance": "Saldo aperto",
         "avg_order_value": "Valore medio ordine",
-        "orders_ytd": "Ordini da inizio anno",
-        "active_projects": "Progetti attivi"
+        "orders_ytd": "Ordini da inizio anno"
       },
       "stats": {
-        "orders_count": "{count} ordini YTD",
-        "yoy": "{delta} YoY",
-        "per_order": "Media per ordine (YTD)",
-        "last_order": "Ultimo ordine {date}",
-        "customer_since": "Cliente dal {year}"
+        "per_order": "Media per ordine (YTD)"
       },
       "info": {
         "title": "Informazioni cliente",

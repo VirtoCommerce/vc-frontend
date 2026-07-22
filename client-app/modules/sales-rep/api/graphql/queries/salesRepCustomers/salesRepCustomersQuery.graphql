@@ -24,7 +24,6 @@ query SalesRepCustomers(
     items {
       organizationId
       organizationName
-      accountId
       accountType
       address {
         postalCode

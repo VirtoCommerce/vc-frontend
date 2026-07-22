@@ -158,12 +158,6 @@ const { items, loading } = useSalesRepTopSellers({
 <style lang="scss">
 // `@apply` keeps the module self-contained as an MF remote (no global utility layer). See PORT_TO_MF.md.
 .top-sellers {
-  // Recent Orders top-aligns its header cells (its columns carry `align-top`); VcTable otherwise
-  // centers header text, which left the Top Sellers header sitting ~7px lower. Match it here.
-  .vc-table__title {
-    @apply align-top;
-  }
-
   &__body {
     @apply flex flex-col;
   }
@@ -174,9 +168,10 @@ const { items, loading } = useSalesRepTopSellers({
     @apply border-b border-neutral-200 bg-neutral-50 px-6 py-3;
   }
 
-  // Design insets the table ~6px from the widget edge; vertical matches the widget's own body padding.
+  // Design insets the table ~6px from the widget edge. Column titles use VcTable's default (centered)
+  // header alignment; the reduced top padding keeps them at the intended vertical position.
   &__content {
-    @apply px-1.5 pb-3 pt-4;
+    @apply px-1.5 pb-3 pt-1;
   }
 
   &__product {

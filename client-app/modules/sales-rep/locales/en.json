@@ -75,15 +75,10 @@
         "ytd_purchases": "YTD purchases",
         "open_balance": "Open balance",
         "avg_order_value": "Avg order value",
-        "orders_ytd": "Orders YTD",
-        "active_projects": "Active projects"
+        "orders_ytd": "Orders YTD"
       },
       "stats": {
-        "orders_count": "{count} orders YTD",
-        "yoy": "{delta} YoY",
-        "per_order": "Average per order (YTD)",
-        "last_order": "Last order {date}",
-        "customer_since": "Customer since {year}"
+        "per_order": "Average per order (YTD)"
       },
       "info": {
         "title": "Customer information",

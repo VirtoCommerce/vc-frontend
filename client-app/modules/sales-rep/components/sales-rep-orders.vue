@@ -63,7 +63,7 @@
               </div>
             </template>
 
-            <VcTableColumn id="number" v-slot="{ item }" :title="t('sales_rep.orders.number')" class="align-top">
+            <VcTableColumn id="number" v-slot="{ item }" :title="t('sales_rep.orders.number')">
               <VcLink
                 class="sales-rep-orders__order-link"
                 :to="{ name: 'OrderDetails', params: { orderId: item.id } }"
@@ -80,7 +80,6 @@
               id="customer"
               v-slot="{ item }"
               :title="t('sales_rep.orders.customer')"
-              class="align-top"
             >
               {{ item.organizationName }}
             </VcTableColumn>
@@ -89,23 +88,16 @@
               id="date"
               v-slot="{ item }"
               :title="t('sales_rep.orders.date')"
-              :sortable="filterable && isColumnSortable('date')"
-              class="align-top"
+              :sortable="isColumnSortable('date')"
             >
               {{ $d(item.createdDate, "short") }}
             </VcTableColumn>
 
-            <VcTableColumn
-              v-if="!isCrossCustomer"
-              id="items"
-              v-slot="{ item }"
-              :title="t('sales_rep.orders.items')"
-              class="align-top"
-            >
+            <VcTableColumn v-if="!isCrossCustomer" id="items" v-slot="{ item }" :title="t('sales_rep.orders.items')">
               {{ item.itemsCount }}
             </VcTableColumn>
 
-            <VcTableColumn id="status" v-slot="{ item }" :title="t('sales_rep.orders.status')" class="align-top">
+            <VcTableColumn id="status" v-slot="{ item }" :title="t('sales_rep.orders.status')">
               <OrderStatus :status="item.status" :display-value="item.statusDisplayValue" />
             </VcTableColumn>
 
@@ -113,9 +105,9 @@
               id="total"
               v-slot="{ item }"
               :title="t('sales_rep.orders.total')"
-              :sortable="filterable && isColumnSortable('total')"
+              :sortable="isColumnSortable('total')"
               align="right"
-              class="align-top font-bold"
+              class="font-bold"
             >
               {{ item.total }}
             </VcTableColumn>
@@ -202,9 +194,10 @@ const { orders, loading } = useSalesRepOrders({
     @apply border-b border-neutral-200 bg-neutral-50 px-6 py-3;
   }
 
-  // Design insets the table ~6px from the widget edge; vertical matches the widget's own body padding.
+  // Design insets the table ~6px from the widget edge. Column titles use VcTable's default (centered)
+  // header alignment; the reduced top padding keeps them at the intended vertical position.
   &__content {
-    @apply px-1.5 pb-3 pt-4;
+    @apply px-1.5 pb-3 pt-1;
   }
 
   &__all-link {

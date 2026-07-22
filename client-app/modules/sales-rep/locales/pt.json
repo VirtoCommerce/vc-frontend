@@ -75,15 +75,10 @@
         "ytd_purchases": "Compras no ano até agora",
         "open_balance": "Saldo em aberto",
         "avg_order_value": "Valor médio do pedido",
-        "orders_ytd": "Pedidos no ano até agora",
-        "active_projects": "Projetos ativos"
+        "orders_ytd": "Pedidos no ano até agora"
       },
       "stats": {
-        "orders_count": "{count} pedidos YTD",
-        "yoy": "{delta} YoY",
-        "per_order": "Média por pedido (YTD)",
-        "last_order": "Último pedido {date}",
-        "customer_since": "Cliente desde {year}"
+        "per_order": "Média por pedido (YTD)"
       },
       "info": {
         "title": "Informações do cliente",

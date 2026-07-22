@@ -20,7 +20,6 @@ query SalesRepCustomerCartStatistics(
         amount
         formattedAmount
       }
-      lastCartDate
     }
     newCartsThisWeek: period(from: $weekFrom, to: $weekTo, filter: $cartFilter) {
       count

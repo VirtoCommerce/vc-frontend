@@ -75,15 +75,10 @@
         "ytd_purchases": "年初来の購入額",
         "open_balance": "未払い残高",
         "avg_order_value": "平均注文額",
-        "orders_ytd": "年初来の注文数",
-        "active_projects": "アクティブなプロジェクト"
+        "orders_ytd": "年初来の注文数"
       },
       "stats": {
-        "orders_count": "{count} 件の注文 (今年度)",
-        "yoy": "{delta} YoY",
-        "per_order": "平均注文単価 (今年度)",
-        "last_order": "最終注文 {date}",
-        "customer_since": "{year}年からの顧客"
+        "per_order": "平均注文単価 (今年度)"
       },
       "info": {
         "title": "顧客情報",

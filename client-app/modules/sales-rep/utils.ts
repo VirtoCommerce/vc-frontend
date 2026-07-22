@@ -81,9 +81,10 @@ export function buildStatisticsWindows(now: Date = new Date()): StatisticsWindow
   const prevWeekStart = weekStart - 7 * DAY_MS;
 
   const iso = (ms: number): string => new Date(ms).toISOString();
-  // The point in a previous period matching how far the current period has elapsed — clamped to the current
-  // period start so a longer current-to-date span (e.g. Mar 31 vs the shorter Feb) can't push the previous
-  // window past its own end and overlap the current one, which would double-count and skew the delta.
+  // The same point in the previous period that we've reached in the current one, so "vs last X" compares
+  // to-date against to-date. The Math.min stops it from spilling past the previous period's end: on Mar 31
+  // we're ~30 days into March, but February is shorter, so Feb 1 + 30 days lands in March — without the
+  // clamp the "last month" window would swallow Mar 1-3 and double-count them.
   const matched = (prevStart: number, currentStart: number): string =>
     iso(Math.min(prevStart + (nowMs - currentStart), currentStart));
 

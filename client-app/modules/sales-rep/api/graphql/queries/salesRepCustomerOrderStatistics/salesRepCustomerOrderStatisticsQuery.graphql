@@ -36,7 +36,6 @@ query SalesRepCustomerOrderStatistics(
         amount
         formattedAmount
       }
-      lastOrderDate
     }
     ytd: period(from: $ytdFrom, to: $ytdTo) {
       total {
@@ -48,7 +47,6 @@ query SalesRepCustomerOrderStatistics(
         amount
         formattedAmount
       }
-      lastOrderDate
     }
     week: period(from: $weekFrom, to: $weekTo) {
       total {
@@ -56,10 +54,6 @@ query SalesRepCustomerOrderStatistics(
         formattedAmount
       }
       count
-    }
-    sinceDate: period {
-      firstOrderDate
-      lastOrderDate
     }
     newOrders: period(filter: $newOrdersFilter) {
       total {

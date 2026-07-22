@@ -75,15 +75,10 @@
         "ytd_purchases": "Ostot vuoden alusta",
         "open_balance": "Avoin saldo",
         "avg_order_value": "Keskimääräinen tilausarvo",
-        "orders_ytd": "Tilaukset vuoden alusta",
-        "active_projects": "Aktiiviset projektit"
+        "orders_ytd": "Tilaukset vuoden alusta"
       },
       "stats": {
-        "orders_count": "{count} tilaukset tänä vuonna",
-        "yoy": "{delta} YoY",
-        "per_order": "Keskim. per tilaus (tänä vuonna)",
-        "last_order": "Viimeisin tilaus {date}",
-        "customer_since": "Asiakas vuodesta {year}"
+        "per_order": "Keskim. per tilaus (tänä vuonna)"
       },
       "info": {
         "title": "Asiakastiedot",

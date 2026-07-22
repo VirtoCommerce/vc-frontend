@@ -75,15 +75,10 @@
         "ytd_purchases": "年初至今采购额",
         "open_balance": "未结余额",
         "avg_order_value": "平均订单金额",
-        "orders_ytd": "年初至今订单数",
-        "active_projects": "活动项目"
+        "orders_ytd": "年初至今订单数"
       },
       "stats": {
-        "orders_count": "{count} 笔订单 (今年迄今)",
-        "yoy": "{delta} 年同比",
-        "per_order": "平均每笔订单 (今年迄今)",
-        "last_order": "上次下单 {date}",
-        "customer_since": "客户始于 {year}"
+        "per_order": "平均每笔订单 (今年迄今)"
       },
       "info": {
         "title": "客户信息",

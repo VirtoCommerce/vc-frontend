@@ -75,15 +75,10 @@
         "ytd_purchases": "Покупки с начала года",
         "open_balance": "Открытый баланс",
         "avg_order_value": "Средняя сумма заказа",
-        "orders_ytd": "Заказы с начала года",
-        "active_projects": "Активные проекты"
+        "orders_ytd": "Заказы с начала года"
       },
       "stats": {
-        "orders_count": "{count} заказов за год",
-        "yoy": "{delta} год к году",
-        "per_order": "Среднее за заказ (за год)",
-        "last_order": "Последний заказ {date}",
-        "customer_since": "Клиент с {year}"
+        "per_order": "Среднее за заказ (за год)"
       },
       "info": {
         "title": "Информация о клиенте",

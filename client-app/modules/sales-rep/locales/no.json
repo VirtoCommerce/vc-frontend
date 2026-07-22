@@ -75,15 +75,10 @@
         "ytd_purchases": "Kjøp hittil i år",
         "open_balance": "Utestående saldo",
         "avg_order_value": "Gjennomsnittlig ordreverdi",
-        "orders_ytd": "Bestillinger hittil i år",
-        "active_projects": "Aktive prosjekter"
+        "orders_ytd": "Bestillinger hittil i år"
       },
       "stats": {
-        "orders_count": "{count} ordre hittil i år",
-        "yoy": "{delta} YoY",
-        "per_order": "Gjennomsnitt per ordre (hittil i år)",
-        "last_order": "Siste ordre {date}",
-        "customer_since": "Kunde siden {year}"
+        "per_order": "Gjennomsnitt per ordre (hittil i år)"
       },
       "info": {
         "title": "Kundeinformasjon",

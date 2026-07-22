@@ -38,10 +38,14 @@
         />
       </div>
 
+      <!-- A keyword OR an active segment filter narrows the list, so an empty result there means "nothing
+           matches", not "no customers at all". The reset button is keyword-only (the filter resets via its "All" chip). -->
       <VcEmptyView
         v-if="!items.length && !loading"
-        :text="keyword ? t('sales_rep.my_customers.table.no_results') : t('sales_rep.my_customers.table.empty')"
-        :variant="keyword ? 'search' : 'empty'"
+        :text="
+          keyword || filter ? t('sales_rep.my_customers.table.no_results') : t('sales_rep.my_customers.table.empty')
+        "
+        :variant="keyword || filter ? 'search' : 'empty'"
         icon="outline-order"
       >
         <template v-if="keyword" #button>

@@ -1,6 +1,0 @@
-query SalesRepCartFilterRules($storeId: String, $cultureName: String) {
-  salesRepCartFilterRules(storeId: $storeId, cultureName: $cultureName) {
-    name
-    localizedName
-  }
-}
