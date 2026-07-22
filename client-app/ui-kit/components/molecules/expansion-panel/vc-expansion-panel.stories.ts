@@ -80,7 +80,7 @@ export const WithIcon: StoryType = {
     setup: () => ({ args }),
     template: `<VcExpansionPanel v-bind="args">
       <template #icon>
-        <VcIcon name="truck" class="fill-primary" />
+        <VcIcon name="truck" class="text-primary" />
       </template>
       <p class="text-sm text-neutral-600 leading-relaxed">
         Standard shipping takes 3–5 business days. Express shipping is available
@@ -94,7 +94,7 @@ export const WithIcon: StoryType = {
         code: `
           <VcExpansionPanel title="Shipping details" :expanded="true">
             <template #icon>
-              <VcIcon name="truck" class="fill-primary" />
+              <VcIcon name="truck" class="text-primary" />
             </template>
             <p class="text-sm text-neutral-600">Shipping information here.</p>
           </VcExpansionPanel>
