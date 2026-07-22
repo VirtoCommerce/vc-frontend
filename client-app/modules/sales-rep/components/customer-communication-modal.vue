@@ -46,7 +46,8 @@
           <VcCheckbox v-model="sendPush" :disabled="loading">{{ t("sales_rep.communication.push_label") }}</VcCheckbox>
         </div>
 
-        <p v-if="!channelSelected" class="customer-communication-modal__hint">
+        <!-- Always rendered so selecting a channel doesn't resize the modal (the hint reserves its space). -->
+        <p class="customer-communication-modal__hint">
           {{ t("sales_rep.communication.channel_required_hint") }}
         </p>
       </fieldset>
@@ -87,8 +88,6 @@ const { sendCommunication, loading } = useSalesRepCommunication();
 
 const modalComponent = useTemplateRef<InstanceType<typeof VcModal>>("modalComponent");
 
-// Channels are plain refs (not form fields) so vee-validate's meta.valid stays about the text inputs;
-// the "at least one channel" rule is enforced separately via channelSelected.
 const sendEmail = ref(false);
 const sendPush = ref(false);
 const channelSelected = computed(() => sendEmail.value || sendPush.value);
