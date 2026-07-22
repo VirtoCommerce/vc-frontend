@@ -11,6 +11,7 @@
       :delta="card.delta"
       :delta-tone="card.deltaTone"
       :delta-icon="card.deltaIcon"
+      :loading="loading"
     />
   </StatWidgets>
 </template>
@@ -23,5 +24,5 @@ import StatWidgets from "./stat-widgets.vue";
 
 const { t } = useI18n();
 
-const { cards } = useSalesRepDashboardWidgets();
+const { cards, loading } = useSalesRepDashboardWidgets();
 </script>

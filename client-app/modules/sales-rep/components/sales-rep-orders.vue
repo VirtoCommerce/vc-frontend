@@ -51,8 +51,9 @@
                 <div v-if="isCrossCustomer" class="sales-rep-orders__mobile-customer">{{ item.organizationName }}</div>
 
                 <div class="sales-rep-orders__mobile-sub">
-                  {{ $d(item.createdDate, "short")
-                  }}<template v-if="!isCrossCustomer"> · {{ item.itemsCount }}</template>
+                  <span>{{ $d(item.createdDate, "short") }}</span>
+
+                  <template v-if="!isCrossCustomer"> · {{ item.itemsCount }}</template>
                 </div>
 
                 <OrderStatus :status="item.status" :display-value="item.statusDisplayValue" />
