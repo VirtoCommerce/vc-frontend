@@ -128,6 +128,7 @@ vi.mock("@/core/composables/useThemeContext", () => ({
 vi.mock("@/core/composables/useModuleSettings", () => ({
   useModuleSettings: () => ({
     getSettingValue: () => undefined,
+    isEnabled: () => false,
   }),
 }));
 
