@@ -30,16 +30,18 @@ query GetLoyaltyMissionProgress(
       percentage
       currentValue
       targetValue
+      currentMoneyValue {
+        formattedAmount
+      }
+      targetMoneyValue {
+        formattedAmount
+      }
       startDate
       endDate
       periodStart
       periodEnd
       completedDate
       daysRemaining
-      missionCurrency {
-        code
-        symbol
-      }
       rewardPoints {
         amount
       }

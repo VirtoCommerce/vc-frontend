@@ -43,12 +43,7 @@ const CARD_I18N = "pages.account.missions.card";
 /** Below this many days left the date indicator turns red (unless the mission is completed). */
 const DATE_DANGER_DAYS = 10;
 
-type FormatCurrencyType = (value: number, currencyCode?: string) => string;
-
-type MissionPresenterType = (
-  mission: MissionDataType,
-  formatCurrency: FormatCurrencyType,
-) => {
+type MissionPresenterType = (mission: MissionDataType) => {
   typeLabelKey: string;
   progressLabelKey: string;
   progressParams: Record<string, unknown>;
@@ -76,11 +71,8 @@ function presentPerSkuAny(mission: MissionDataType): ReturnType<MissionPresenter
   };
 }
 
-function presentOrderValue(
-  mission: MissionDataType,
-  formatCurrency: FormatCurrencyType,
-): ReturnType<MissionPresenterType> {
-  const sum = formatCurrency(mission.currentValue ?? 0, mission.missionCurrency?.code);
+function presentOrderValue(mission: MissionDataType): ReturnType<MissionPresenterType> {
+  const sum = mission.currentMoneyValue?.formattedAmount ?? "";
 
   return {
     typeLabelKey: `${CARD_I18N}.type_order_value`,
@@ -132,7 +124,7 @@ export function useMissionCard(mission: MaybeRefOrGetter<MissionDataType>) {
 
     const present =
       PRESENTERS[(data.missionType as MissionType | undefined) ?? MISSION_TYPE.PerSkuAll] ?? presentPerSkuAll;
-    const { typeLabelKey, progressLabelKey, progressParams } = present(data, formatCurrency);
+    const { typeLabelKey, progressLabelKey, progressParams } = present(data);
 
     const daysLeft = data.daysRemaining ?? null;
 

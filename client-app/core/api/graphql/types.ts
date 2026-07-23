@@ -3479,6 +3479,8 @@ export type LoyaltyUserMission = {
   bannerUrl?: Maybe<Scalars['String']['output']>;
   /** The date and time when the mission was completed. */
   completedDate?: Maybe<Scalars['DateTime']['output']>;
+  /** The accumulated value as money (currency from the mission currency). Null when mission type is not OrderValue or no currency is available. */
+  currentMoneyValue?: Maybe<MoneyType>;
   /** The accumulated value towards the mission target. */
   currentValue?: Maybe<Scalars['Decimal']['output']>;
   /** Whole days left until the mission ends. Null when the mission has no end date. */
@@ -3493,8 +3495,6 @@ export type LoyaltyUserMission = {
   items?: Maybe<Array<Maybe<LoyaltyMissionProgressItem>>>;
   /** The localized mission name. */
   localizedName?: Maybe<Scalars['String']['output']>;
-  /** The store main currency used to format the target/current money values. */
-  missionCurrency?: Maybe<CurrencyType>;
   /** The mission identifier. */
   missionId?: Maybe<Scalars['String']['output']>;
   /** The mission type: OrderValue, OrderCount, PerSkuAny or PerSkuAll. */
@@ -3515,6 +3515,8 @@ export type LoyaltyUserMission = {
   startDate?: Maybe<Scalars['DateTime']['output']>;
   /** The progress status (InProgress, Completed, Expired). */
   status?: Maybe<Scalars['String']['output']>;
+  /** The target value as money (currency from the mission currency). Null when mission type is not OrderValue or no currency is available. */
+  targetMoneyValue?: Maybe<MoneyType>;
   /** The mission target value. */
   targetValue?: Maybe<Scalars['Decimal']['output']>;
 };

@@ -62,16 +62,15 @@ const props = defineProps<{
 }>();
 
 const { t } = useI18n();
-const { view, formatCurrency } = useMissionCard(() => props.mission);
+const { view } = useMissionCard(() => props.mission);
 
 const requirementLabel = computed(() => {
-  const target = props.mission.targetValue ?? 0;
   const missionType = (props.mission.missionType as MissionType | undefined) ?? MISSION_TYPE.OrderValue;
 
   return missionType === MISSION_TYPE.OrderCount
-    ? t("pages.account.missions.order_modal.count_requirement", { target })
+    ? t("pages.account.missions.order_modal.count_requirement", { target: props.mission.targetValue ?? 0 })
     : t("pages.account.missions.order_modal.value_requirement", {
-        target: formatCurrency(target, props.mission.missionCurrency?.code),
+        target: props.mission.targetMoneyValue?.formattedAmount ?? "",
       });
 });
 </script>
