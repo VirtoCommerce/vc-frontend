@@ -1,5 +1,25 @@
 .vc-button {
   $colors: primary, secondary, accent, neutral, success, danger, info, warning;
+  $solid-bg: (
+    primary: 200,
+    secondary: 300,
+    accent: 300,
+    neutral: 300,
+    success: 400,
+    danger: 400,
+    info: 400,
+    warning: 400,
+  );
+  $solid-hover: (
+    primary: 300,
+    secondary: 400,
+    accent: 400,
+    neutral: 400,
+    success: 500,
+    danger: 500,
+    info: 500,
+    warning: 500,
+  );
   $loading: "";
   $disabled: "";
 
@@ -20,15 +40,17 @@
     --text-color: var(--color-additional-950);
   }
 
-  @each $color in $colors {
+  @each $color, $shade in $solid-bg {
     &--solid--#{$color} {
-      --bg-color: var(--color-#{$color}-400);
-      --border-color: var(--color-#{$color}-400);
+      --bg-color: var(--color-#{$color}-#{$shade});
+      --border-color: var(--color-#{$color}-#{$shade});
+    }
+  }
 
-      &:hover:not(#{$loading}, #{$disabled}) {
-        --bg-color: var(--color-#{$color}-500);
-        --border-color: var(--color-#{$color}-500);
-      }
+  @each $color, $shade in $solid-hover {
+    &--solid--#{$color}:hover:not(#{$loading}, #{$disabled}) {
+      --bg-color: var(--color-#{$color}-#{$shade});
+      --border-color: var(--color-#{$color}-#{$shade});
     }
   }
 
@@ -52,14 +74,37 @@
   }
 
   @each $color in $colors {
-    &--soft--#{$color} {
+    &--outline--#{$color}:hover:not(#{$loading}, #{$disabled}) {
+      --bg-color: var(--color-#{$color}-100);
+    }
+
+    &--surface--#{$color}:hover:not(#{$loading}, #{$disabled}) {
+      --bg-color: var(--color-#{$color}-100);
+      --border-color: var(--color-#{$color}-100);
+    }
+
+    &--ghost--#{$color}:hover:not(#{$loading}, #{$disabled}) {
+      --bg-color: var(--color-#{$color}-100);
+      --border-color: var(--color-#{$color}-100);
+      --text-color: var(--color-#{$color}-900);
+    }
+  }
+
+  @each $color in $colors {
+    &--tonal--#{$color}:hover:not(#{$loading}, #{$disabled}) {
       --bg-color: var(--color-#{$color}-200);
-      --border-color: var(--color-#{$color}-200);
+    }
+  }
+
+  @each $color in $colors {
+    &--soft--#{$color} {
+      --bg-color: var(--color-#{$color}-100);
+      --border-color: var(--color-#{$color}-100);
       --text-color: var(--color-#{$color}-900);
 
       &:hover:not(#{$loading}, #{$disabled}) {
-        --bg-color: var(--color-#{$color}-100);
-        --border-color: var(--color-#{$color}-100);
+        --bg-color: var(--color-#{$color}-200);
+        --border-color: var(--color-#{$color}-200);
       }
     }
   }

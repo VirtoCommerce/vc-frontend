@@ -2,19 +2,40 @@
   --text-color: var(--color-additional-950);
 }
 
-@each $color in primary, secondary, accent, neutral, success, danger, info, warning {
-  .vc-badge--solid--#{$color} {
-    --bg-color: var(--color-#{$color}-400);
-    --border-color: var(--color-#{$color}-400);
-  }
+$solid-bg: (
+  primary: 200,
+  secondary: 300,
+  accent: 300,
+  neutral: 300,
+  success: 400,
+  danger: 400,
+  info: 400,
+  warning: 400,
+);
 
+@each $color, $shade in $solid-bg {
+  .vc-badge--solid--#{$color} {
+    --bg-color: var(--color-#{$color}-#{$shade});
+    --border-color: var(--color-#{$color}-#{$shade});
+  }
+}
+
+@each $color in primary, secondary, accent, neutral, success, danger, info, warning {
   .vc-badge--outline--#{$color} {
     --text-color: var(--color-#{$color}-900);
     --border-color: var(--color-#{$color}-600);
   }
 
   .vc-badge--soft--#{$color} {
-    --bg-color: var(--color-#{$color}-200);
+    --bg-color: var(--color-#{$color}-100);
+    --text-color: var(--color-#{$color}-900);
+  }
+
+  .vc-badge--surface--#{$color} {
+    --text-color: var(--color-#{$color}-900);
+  }
+
+  .vc-badge--ghost--#{$color} {
     --text-color: var(--color-#{$color}-900);
   }
 }

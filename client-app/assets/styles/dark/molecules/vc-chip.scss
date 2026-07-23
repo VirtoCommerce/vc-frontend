@@ -1,43 +1,105 @@
-// Solid chips: same additional-50→950 swap for text and icons.
 .vc-chip {
   $colors: primary, secondary, accent, neutral, success, danger, info, warning;
-  $solid: "";
-  $solidLight: "";
+  $solid-bg: (
+    primary: 200,
+    secondary: 300,
+    accent: 300,
+    neutral: 300,
+    success: 400,
+    danger: 400,
+    info: 400,
+    warning: 400,
+  );
+  $solid-hover: (
+    primary: 300,
+    secondary: 400,
+    accent: 400,
+    neutral: 400,
+    success: 500,
+    danger: 500,
+    info: 500,
+    warning: 500,
+  );
 
-  &--variant {
-    &--solid {
-      $solid: &;
+  &[class*="vc-chip--solid--"]:not(.vc-chip--disabled) {
+    --text-color: var(--color-additional-950);
+  }
 
-      --text-color: var(--color-additional-950);
-      --main-icon-color: var(--color-additional-950);
-      --close-button-icon-color: var(--color-additional-950);
-    }
-
-    &--solid-light {
-      $solidLight: &;
+  @each $color, $shade in $solid-bg {
+    &--solid--#{$color} {
+      --bg-color: var(--color-#{$color}-#{$shade});
+      --border-color: var(--color-#{$color}-#{$shade});
     }
   }
 
-  // Focus ring: chips override --outline-color per-color at 0.4 opacity.
+  @each $color, $shade in $solid-hover {
+    &--solid--#{$color}.vc-chip--clickable:not(.vc-chip--disabled) .vc-chip__content:hover {
+      --bg-color: var(--color-#{$color}-#{$shade});
+      --border-color: var(--color-#{$color}-#{$shade});
+    }
+  }
+
+  @each $color in $colors {
+    &--soft--#{$color}:not(.vc-chip--disabled) {
+      --bg-color: var(--color-#{$color}-100);
+      --text-color: var(--color-#{$color}-900);
+
+      &.vc-chip--clickable:not(.vc-chip--disabled) .vc-chip__content:hover {
+        --bg-color: var(--color-#{$color}-200);
+        --border-color: var(--color-#{$color}-200);
+      }
+    }
+
+    &--outline--#{$color}:not(.vc-chip--disabled) {
+      --text-color: var(--color-#{$color}-900);
+      --border-color: var(--color-#{$color}-600);
+
+      &.vc-chip--clickable:not(.vc-chip--disabled) .vc-chip__content:hover {
+        --bg-color: var(--color-#{$color}-100);
+      }
+    }
+
+    &--tonal--#{$color}:not(.vc-chip--disabled) {
+      --bg-color: var(--color-#{$color}-100);
+      --text-color: var(--color-#{$color}-900);
+      --border-color: var(--color-#{$color}-600);
+
+      &.vc-chip--clickable:not(.vc-chip--disabled) .vc-chip__content:hover {
+        --bg-color: var(--color-#{$color}-200);
+      }
+    }
+
+    &--surface--#{$color}:not(.vc-chip--disabled) {
+      --text-color: var(--color-#{$color}-900);
+
+      &.vc-chip--clickable:not(.vc-chip--disabled) .vc-chip__content:hover {
+        --bg-color: var(--color-#{$color}-100);
+        --border-color: var(--color-#{$color}-100);
+      }
+    }
+
+    &--ghost--#{$color}:not(.vc-chip--disabled) {
+      --text-color: var(--color-#{$color}-900);
+
+      &.vc-chip--clickable:not(.vc-chip--disabled) .vc-chip__content:hover {
+        --bg-color: var(--color-#{$color}-100);
+        --border-color: var(--color-#{$color}-100);
+        --text-color: var(--color-#{$color}-900);
+      }
+    }
+  }
+
+  &--disabled[class*="vc-chip--solid--"],
+  &--disabled[class*="vc-chip--surface--"] {
+    --bg-color: var(--color-neutral-100);
+    --border-color: var(--color-neutral-100);
+  }
+
+  // Focus ring: chips override --outline-color per-color at 0.4 opacity in light.
   // Bump to -700 at 0.8 for dark-mode visibility.
   @each $color in $colors {
     &--color--#{$color} {
       --outline-color: rgb(from var(--color-#{$color}-700) r g b / 0.8);
-    }
-  }
-
-  &--color {
-    @each $color in $colors {
-      &--#{$color} {
-        &#{$solid} {
-          --bg-color: var(--color-#{$color}-400);
-          --border-color: var(--color-#{$color}-400);
-        }
-
-        &#{$solidLight} {
-          --bg-color: var(--color-#{$color}-100);
-        }
-      }
     }
   }
 }

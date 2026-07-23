@@ -558,10 +558,10 @@ function handleTab(event: KeyboardEvent, index: number) {
   }
 
   &__icon {
-    @apply shrink-0 mr-3 fill-neutral-900;
+    @apply shrink-0 mr-3 text-neutral-900;
 
     #{$disabled} & {
-      @apply fill-neutral-400;
+      @apply text-neutral-400;
     }
 
     #{$readonly} & {
