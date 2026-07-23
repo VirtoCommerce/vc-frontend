@@ -146,11 +146,11 @@ import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBrowserTarget } from "@/core/composables";
 import { getProductRoute } from "@/core/utilities";
-import { MISSION_STATUS, MISSION_TYPE, useMissionCard } from "@/modules/loyalty/composables";
 import { useShortCart } from "@/shared/cart/composables";
 import { CountInCart, InStock } from "@/shared/catalog/components";
 import { useNotifications } from "@/shared/notification";
-import type { MissionDataType } from "@/modules/loyalty/composables";
+import { MISSION_STATUS, MISSION_TYPE, useMissionCard } from "../composables";
+import type { MissionDataType } from "../composables";
 import QuantityControl from "@/shared/common/components/quantity-control.vue";
 
 const props = defineProps<{

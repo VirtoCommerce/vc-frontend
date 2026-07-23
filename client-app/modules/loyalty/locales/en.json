@@ -28,5 +28,70 @@
         }
       }
     }
+  },
+  "common": {
+    "links": {
+      "missions_challenges": "Missions & challenges"
+    }
+  },
+  "shared": {
+    "account": {
+      "navigation": {
+        "links": {
+          "missions_challenges": "@:common.links.missions_challenges"
+        }
+      }
+    }
+  },
+  "pages": {
+    "account": {
+      "missions": {
+        "title": "Missions & challenges",
+        "description": "Complete missions to earn bonus Virto Rewards points.",
+        "balance_banner": {
+          "label": "Virto Rewards balance",
+          "points": "points",
+          "points_history": "Points history"
+        },
+        "redeem_banner": {
+          "title": "Redeem your points",
+          "description": "Trade points for products in the rewards catalog.",
+          "catalog": "Catalog"
+        },
+        "card": {
+          "type_products": "Featured SKUs",
+          "type_order_value": "Order value",
+          "type_orders": "Order count",
+          "points": "points",
+          "days_left": "{count} day left | {count} days left",
+          "mission_completed": "Mission completed",
+          "completed": "Completed",
+          "open_mission": "Open mission",
+          "progress_skus": "{current} of {target} SKUs",
+          "progress_any_sku": "at least 1 of {target} SKUs",
+          "progress_spend": "{sum} spent",
+          "progress_orders": "{current} of {target} orders"
+        },
+        "sku_modal": {
+          "buy_at_least": "Buy at least {count}",
+          "total_units": "Total units",
+          "targets_met": "Targets met",
+          "cart_subtotal": "Cart subtotal",
+          "reward_hint": "Earn {points} points when all targets are met",
+          "reward_unlocked": "All targets met — {points} points unlocked",
+          "close": "Close",
+          "add_to_cart": "Add to cart",
+          "added_to_cart": "Products added to cart",
+          "add_to_cart_error": "Some products could not be added to cart"
+        },
+        "order_modal": {
+          "mission_target": "Mission target",
+          "value_requirement": "Spend {target} in qualifying orders",
+          "count_requirement": "Place {target} separate orders",
+          "close": "Close",
+          "redeem_products": "Redeem products"
+        }
+      }
+    }
   }
 }

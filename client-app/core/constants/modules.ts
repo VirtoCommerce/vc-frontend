@@ -49,6 +49,5 @@ export const LOYALTY_MODULE_ID = "VirtoCommerce.Loyalty";
 export const LOYALTY_ENABLED_KEY = "Loyalty.Enable";
 export const LOYALTY_MODE_KEY = "Loyalty.Mode";
 export const LOYALTY_CURRENCY_KEY = "Loyalty.Currency";
-export const LOYALTY_MISSIONS_ENABLED_KEY = "Loyalty.Missions.Enable";
 
 export const MODULE_ID_MARKETING_EXPERIENCE_API = "VirtoCommerce.MarketingExperienceApi";

@@ -28,5 +28,70 @@
         }
       }
     }
+  },
+  "common": {
+    "links": {
+      "missions_challenges": "Aufgaben & Herausforderungen"
+    }
+  },
+  "shared": {
+    "account": {
+      "navigation": {
+        "links": {
+          "missions_challenges": "@:common.links.missions_challenges"
+        }
+      }
+    }
+  },
+  "pages": {
+    "account": {
+      "missions": {
+        "title": "Aufgaben & Herausforderungen",
+        "description": "Schließe Aufgaben ab, um zusätzliche Virto Rewards-Punkte zu sammeln.",
+        "balance_banner": {
+          "label": "Virto Rewards-Guthaben",
+          "points": "Punkte",
+          "points_history": "Punkteverlauf"
+        },
+        "redeem_banner": {
+          "title": "Deine Punkte einlösen",
+          "description": "Tausche Punkte gegen Produkte im Prämienkatalog ein.",
+          "catalog": "Katalog"
+        },
+        "card": {
+          "type_products": "Vorgestellte SKUs",
+          "type_order_value": "Bestellwert",
+          "type_orders": "Anzahl Bestellungen",
+          "points": "Punkte",
+          "days_left": "{count} Tag übrig | {count} Tage übrig",
+          "mission_completed": "Aufgabe abgeschlossen",
+          "completed": "Abgeschlossen",
+          "open_mission": "Aufgabe öffnen",
+          "progress_skus": "{current} von {target} SKUs",
+          "progress_any_sku": "mindestens 1 von {target} SKUs",
+          "progress_spend": "{sum} ausgegeben",
+          "progress_orders": "{current} von {target} Bestellungen"
+        },
+        "sku_modal": {
+          "buy_at_least": "Kaufe mindestens {count}",
+          "total_units": "Gesamte Einheiten",
+          "targets_met": "Ziele erreicht",
+          "cart_subtotal": "Warenkorb-Zwischensumme",
+          "reward_hint": "Verdiene {points} Punkte, wenn alle Ziele erreicht sind",
+          "reward_unlocked": "Alle Ziele erreicht — {points} Punkte freigeschaltet",
+          "close": "Schließen",
+          "add_to_cart": "In den Warenkorb",
+          "added_to_cart": "Produkte zum Warenkorb hinzugefügt",
+          "add_to_cart_error": "Einige Produkte konnten nicht zum Warenkorb hinzugefügt werden"
+        },
+        "order_modal": {
+          "mission_target": "Aufgabenziel",
+          "value_requirement": "Gib {target} in qualifizierenden Bestellungen aus",
+          "count_requirement": "Gib {target} separate Bestellungen auf",
+          "close": "Schließen",
+          "redeem_products": "Produkte einlösen"
+        }
+      }
+    }
   }
 }

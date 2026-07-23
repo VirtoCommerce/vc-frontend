@@ -269,7 +269,6 @@
       "orders": "订单",
       "lists": "清单",
       "promotion_coupons": "优惠券与促销",
-      "missions_challenges": "任务与挑战",
       "list_details": "清单详情",
       "cart": "购物车",
       "company_info": "公司信息",
@@ -485,7 +484,6 @@
           "lists": "@:common.links.lists",
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
-          "missions_challenges": "@:common.links.missions_challenges",
           "company_info": "@:common.links.company_info",
           "company_members": "@:common.links.company_members",
           "saved_credit_cards": "@:common.links.saved_credit_cards"
@@ -1375,53 +1373,6 @@
       "promotion_coupons": {
         "title": "所有优惠券与促销",
         "no_lists": "您目前没有任何优惠券或促销活动"
-      },
-      "missions": {
-        "title": "任务与挑战",
-        "description": "完成任务即可赚取额外的 Virto Rewards 积分。",
-        "balance_banner": {
-          "label": "Virto Rewards 余额",
-          "points": "积分",
-          "points_history": "积分历史"
-        },
-        "redeem_banner": {
-          "title": "兑换您的积分",
-          "description": "用积分兑换奖励目录中的商品。",
-          "catalog": "目录"
-        },
-        "card": {
-          "type_products": "精选 SKU",
-          "type_order_value": "订单金额",
-          "type_orders": "订单数量",
-          "points": "积分",
-          "days_left": "{count} 天剩余 | {count} 天剩余",
-          "mission_completed": "任务已完成",
-          "completed": "已完成",
-          "open_mission": "开启任务",
-          "progress_skus": "{current} / {target} 个 SKU",
-          "progress_any_sku": "至少 1 个 {target} 个 SKU",
-          "progress_spend": "{sum} 已花费",
-          "progress_orders": "{current} / {target} 个订单"
-        },
-        "sku_modal": {
-          "buy_at_least": "至少购买 {count} 件",
-          "total_units": "总件数",
-          "targets_met": "目标已达成",
-          "cart_subtotal": "购物车小计",
-          "reward_hint": "达成所有目标即可赚取 {points} 积分",
-          "reward_unlocked": "所有目标已达成 — 已解锁 {points} 积分",
-          "close": "关闭",
-          "add_to_cart": "添加到购物车",
-          "added_to_cart": "商品已添加到购物车",
-          "add_to_cart_error": "部分商品未能添加到购物车"
-        },
-        "order_modal": {
-          "mission_target": "任务目标",
-          "value_requirement": "在符合条件的订单中花费 {target}",
-          "count_requirement": "下 {target} 个独立订单",
-          "close": "关闭",
-          "redeem_products": "兑换商品"
-        }
       }
     },
     "company": {

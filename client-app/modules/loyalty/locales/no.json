@@ -28,5 +28,70 @@
         }
       }
     }
+  },
+  "common": {
+    "links": {
+      "missions_challenges": "Oppdrag og utfordringer"
+    }
+  },
+  "shared": {
+    "account": {
+      "navigation": {
+        "links": {
+          "missions_challenges": "@:common.links.missions_challenges"
+        }
+      }
+    }
+  },
+  "pages": {
+    "account": {
+      "missions": {
+        "title": "Oppdrag og utfordringer",
+        "description": "Fullfør oppdrag for å tjene bonuspoeng for Virto Rewards.",
+        "balance_banner": {
+          "label": "Virto Rewards-saldo",
+          "points": "poeng",
+          "points_history": "Poenghistorikk"
+        },
+        "redeem_banner": {
+          "title": "Løs inn poengene dine",
+          "description": "Bytt poeng mot produkter i belønningskatalogen.",
+          "catalog": "Katalog"
+        },
+        "card": {
+          "type_products": "Utvalgte SKU-er",
+          "type_order_value": "Ordreverdi",
+          "type_orders": "Antall ordre",
+          "points": "poeng",
+          "days_left": "{count} dag igjen | {count} dager igjen",
+          "mission_completed": "Oppdrag fullført",
+          "completed": "Fullført",
+          "open_mission": "Åpent oppdrag",
+          "progress_skus": "{current} av {target} SKU-er",
+          "progress_any_sku": "minst 1 av {target} SKU-er",
+          "progress_spend": "{sum} brukt",
+          "progress_orders": "{current} av {target} ordre"
+        },
+        "sku_modal": {
+          "buy_at_least": "Kjøp minst {count}",
+          "total_units": "Totale enheter",
+          "targets_met": "Mål oppnådd",
+          "cart_subtotal": "Varerabatt",
+          "reward_hint": "Tjen {points} poeng når alle mål er oppnådd",
+          "reward_unlocked": "Alle mål er oppnådd — {points} poeng låst opp",
+          "close": "Lukk",
+          "add_to_cart": "Legg i handlekurv",
+          "added_to_cart": "Produkter lagt i handlekurv",
+          "add_to_cart_error": "Noen produkter kunne ikke legges i handlekurven"
+        },
+        "order_modal": {
+          "mission_target": "Oppdragsmål",
+          "value_requirement": "Bruk {target} i kvalifiserende ordre",
+          "count_requirement": "Plasser {target} separate ordre",
+          "close": "Lukk",
+          "redeem_products": "Løs inn produkter"
+        }
+      }
+    }
   }
 }

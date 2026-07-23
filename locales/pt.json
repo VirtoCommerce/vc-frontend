@@ -269,7 +269,6 @@
       "orders": "Pedidos",
       "lists": "Listas",
       "promotion_coupons": "Cupons e promoções",
-      "missions_challenges": "Missões e desafios",
       "list_details": "Detalhes da Lista",
       "cart": "Carrinho",
       "company_info": "Informações da Empresa",
@@ -485,7 +484,6 @@
           "lists": "@:common.links.lists",
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
-          "missions_challenges": "@:common.links.missions_challenges",
           "company_info": "@:common.links.company_info",
           "company_members": "@:common.links.company_members",
           "saved_credit_cards": "@:common.links.saved_credit_cards"
@@ -1375,53 +1373,6 @@
       "promotion_coupons": {
         "title": "Todos os cupons e promoções",
         "no_lists": "Você não tem cupons ou promoções"
-      },
-      "missions": {
-        "title": "Missões e desafios",
-        "description": "Complete missões para ganhar pontos bônus do Virto Rewards.",
-        "balance_banner": {
-          "label": "Saldo do Virto Rewards",
-          "points": "pontos",
-          "points_history": "Histórico de pontos"
-        },
-        "redeem_banner": {
-          "title": "Resgate seus pontos",
-          "description": "Troque pontos por produtos no catálogo de recompensas.",
-          "catalog": "Catálogo"
-        },
-        "card": {
-          "type_products": "SKUs em destaque",
-          "type_order_value": "Valor do pedido",
-          "type_orders": "Contagem de pedidos",
-          "points": "pontos",
-          "days_left": "1 dia restante | {count} dias restantes",
-          "mission_completed": "Missão concluída",
-          "completed": "Concluído",
-          "open_mission": "Abrir missão",
-          "progress_skus": "{current} de {target} SKUs",
-          "progress_any_sku": "pelo menos 1 de {target} SKUs",
-          "progress_spend": "{sum} gastos",
-          "progress_orders": "{current} de {target} pedidos"
-        },
-        "sku_modal": {
-          "buy_at_least": "Compre pelo menos {count}",
-          "total_units": "Unidades totais",
-          "targets_met": "Metas atingidas",
-          "cart_subtotal": "Subtotal do carrinho",
-          "reward_hint": "Ganhe {points} pontos quando todas as metas forem atingidas",
-          "reward_unlocked": "Todas as metas atingidas — {points} pontos desbloqueados",
-          "close": "Fechar",
-          "add_to_cart": "Adicionar ao carrinho",
-          "added_to_cart": "Produtos adicionados ao carrinho",
-          "add_to_cart_error": "Alguns produtos não puderam ser adicionados ao carrinho"
-        },
-        "order_modal": {
-          "mission_target": "Meta da missão",
-          "value_requirement": "Gaste {target} em pedidos qualificados",
-          "count_requirement": "Faça {target} pedidos separados",
-          "close": "Fechar",
-          "redeem_products": "Resgatar produtos"
-        }
       }
     },
     "company": {

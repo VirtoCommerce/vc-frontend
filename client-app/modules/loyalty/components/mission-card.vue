@@ -56,11 +56,11 @@
 </template>
 
 <script setup lang="ts">
-import { MISSION_TYPE, useMissionCard } from "@/modules/loyalty/composables";
 import { useModal } from "@/shared/modal";
+import { MISSION_TYPE, useMissionCard } from "../composables";
 import OrderMissionModal from "./order-mission-modal.vue";
 import SkuMissionModal from "./sku-mission-modal.vue";
-import type { MissionDataType, MissionType } from "@/modules/loyalty/composables";
+import type { MissionDataType, MissionType } from "../composables";
 import type { Component } from "vue";
 
 const props = defineProps<{

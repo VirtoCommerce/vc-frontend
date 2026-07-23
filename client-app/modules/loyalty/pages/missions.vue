@@ -77,9 +77,9 @@
 
 <script setup lang="ts">
 import { onMounted } from "vue";
-import { useLoyaltyBalance } from "@/modules/loyalty/composables/useLoyaltyBalance";
-import { useMissions } from "@/modules/loyalty/composables/useMissions";
-import MissionCard from "@/shared/account/components/mission-card.vue";
+import MissionCard from "../components/mission-card.vue";
+import { useLoyaltyBalance } from "../composables/useLoyaltyBalance";
+import { useMissions } from "../composables/useMissions";
 
 const { fetchLoyaltyBalance, loading: balanceLoading, currentBalance } = useLoyaltyBalance();
 const { fetchMissions, missions, page, pagesCount } = useMissions();

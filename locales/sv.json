@@ -269,7 +269,6 @@
       "orders": "Beställningar",
       "lists": "Listor",
       "promotion_coupons": "Kuponger & Erbjudanden",
-      "missions_challenges": "Missions & challenges",
       "list_details": "Listdetaljer",
       "cart": "Kundvagn",
       "company_info": "Företagsinformation",
@@ -485,7 +484,6 @@
           "lists": "@:common.links.lists",
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
-          "missions_challenges": "@:common.links.missions_challenges",
           "company_info": "@:common.links.company_info",
           "company_members": "@:common.links.company_members",
           "saved_credit_cards": "@:common.links.saved_credit_cards"
@@ -1375,53 +1373,6 @@
       "promotion_coupons": {
         "title": "Alla kuponger & kampanjer",
         "no_lists": "Du har inga kuponger eller kampanjer"
-      },
-      "missions": {
-        "title": "Missions & challenges",
-        "description": "Slutför uppdrag för att tjäna bonuspoäng för Virto Rewards.",
-        "balance_banner": {
-          "label": "Virto Rewards-saldo",
-          "points": "poäng",
-          "points_history": "Poänghistorik"
-        },
-        "redeem_banner": {
-          "title": "Lös in dina poäng",
-          "description": "Byt poäng mot produkter i belöningskatalogen.",
-          "catalog": "Katalog"
-        },
-        "card": {
-          "type_products": "Utvalda SKU:er",
-          "type_order_value": "Orderbelopp",
-          "type_orders": "Antal ordrar",
-          "points": "poäng",
-          "days_left": "{count} dag kvar | {count} dagar kvar",
-          "mission_completed": "Uppdrag slutfört",
-          "completed": "Slutförd",
-          "open_mission": "Öppna uppdrag",
-          "progress_skus": "{current} av {target} SKU:er",
-          "progress_any_sku": "minst 1 av {target} SKU:er",
-          "progress_spend": "{sum} spenderat",
-          "progress_orders": "{current} av {target} ordrar"
-        },
-        "sku_modal": {
-          "buy_at_least": "Köp minst {count}",
-          "total_units": "Totala enheter",
-          "targets_met": "Mål uppnådda",
-          "cart_subtotal": "Varukorgens totalsumma",
-          "reward_hint": "Tjäna {points} poäng när alla mål är uppnådda",
-          "reward_unlocked": "Alla mål uppnådda — {points} poäng upplåsta",
-          "close": "Stäng",
-          "add_to_cart": "Lägg i kundvagn",
-          "added_to_cart": "Produkter tillagda i kundvagnen",
-          "add_to_cart_error": "Vissa produkter kunde inte läggas till i kundvagnen"
-        },
-        "order_modal": {
-          "mission_target": "Uppdragsmål",
-          "value_requirement": "Spendera {target} i kvalificerade ordrar",
-          "count_requirement": "Lägg {target} separata ordrar",
-          "close": "Stäng",
-          "redeem_products": "Lös in produkter"
-        }
       }
     },
     "company": {

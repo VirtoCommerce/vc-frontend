@@ -1,10 +1,5 @@
 import { useModules } from "@/core/composables";
-import { useModuleSettings } from "@/core/composables/useModuleSettings";
-import {
-  LOYALTY_MISSIONS_ENABLED_KEY,
-  LOYALTY_MODULE_ID,
-  MODULE_ID_MARKETING_EXPERIENCE_API,
-} from "@/core/constants/modules";
+import { MODULE_ID_MARKETING_EXPERIENCE_API } from "@/core/constants/modules";
 import { ROUTES } from "@/router/routes/constants";
 import { useUser } from "@/shared/account";
 import type { RouteRecordRaw } from "vue-router";
@@ -21,7 +16,6 @@ const ListDetails = () => import("@/pages/account/list-details.vue");
 const SavedForLaterDetails = () => import("@/pages/account/saved-for-later-details.vue");
 const SavedCreditCards = () => import("@/pages/account/saved-credit-cards.vue");
 const PromotionCoupons = () => import("@/pages/account/promotion-coupons.vue");
-const Missions = () => import("@/pages/account/missions.vue");
 
 export const accountRoutes: RouteRecordRaw[] = [
   { path: "dashboard", name: "Dashboard", component: Dashboard },
@@ -95,20 +89,6 @@ export const accountRoutes: RouteRecordRaw[] = [
       const { hasModule } = useModules();
 
       if (hasModule(MODULE_ID_MARKETING_EXPERIENCE_API)) {
-        next();
-      } else {
-        next({ name: "NotFound" });
-      }
-    },
-  },
-  {
-    path: ROUTES.MISSIONS.PATH,
-    name: ROUTES.MISSIONS.NAME,
-    component: Missions,
-    beforeEnter(_to, _from, next) {
-      const { isEnabled } = useModuleSettings(LOYALTY_MODULE_ID);
-
-      if (isEnabled(LOYALTY_MISSIONS_ENABLED_KEY)) {
         next();
       } else {
         next({ name: "NotFound" });

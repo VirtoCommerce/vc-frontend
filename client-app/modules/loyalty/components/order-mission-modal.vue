@@ -54,9 +54,9 @@
 <script setup lang="ts">
 import { computed, useTemplateRef } from "vue";
 import { useI18n } from "vue-i18n";
-import { MISSION_TYPE, useMissionCard } from "@/modules/loyalty/composables";
 import { useCloseModalOnRouteChange } from "@/shared/modal";
-import type { MissionDataType, MissionType } from "@/modules/loyalty/composables";
+import { MISSION_TYPE, useMissionCard } from "../composables";
+import type { MissionDataType, MissionType } from "../composables";
 
 const props = defineProps<{
   mission: MissionDataType;
