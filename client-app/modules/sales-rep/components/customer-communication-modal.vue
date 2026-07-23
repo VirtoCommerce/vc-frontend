@@ -82,7 +82,7 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
-const { t } = useI18n();
+const { t, te } = useI18n();
 const notifications = useNotifications();
 const { sendCommunication, loading } = useSalesRepCommunication();
 
@@ -100,7 +100,7 @@ const { value: title } = useField<string>("title", toTypedSchema(string().trim()
 const { value: message } = useField<string>("message", toTypedSchema(string().trim().required().max(1000)));
 
 const send = handleSubmit(async (data) => {
-  const succeeded = await sendCommunication({
+  const result = await sendCommunication({
     organizationId: props.organizationId,
     sendEmail: sendEmail.value,
     sendPush: sendPush.value,
@@ -108,16 +108,34 @@ const send = handleSubmit(async (data) => {
     message: data.message.trim(),
   });
 
-  if (succeeded) {
+  // Map the backend's stable warning codes to localized messages (unknown codes fall back to a generic note).
+  const warnings = result.warnings.map((code) =>
+    te(`sales_rep.communication.warnings.${code}`)
+      ? t(`sales_rep.communication.warnings.${code}`)
+      : t("sales_rep.communication.warnings.generic"),
+  );
+
+  if (result.succeeded) {
     modalComponent.value?.close();
-    notifications.success({
-      text: t("sales_rep.communication.success_text"),
-      duration: 10000,
-      single: true,
-    });
+
+    if (warnings.length > 0) {
+      // Partial success — at least one channel delivered, but tell the rep what didn't.
+      notifications.warning({
+        text: `${t("sales_rep.communication.partial_success_text")} ${warnings.join(" ")}`,
+        duration: 10000,
+        single: true,
+      });
+    } else {
+      notifications.success({
+        text: t("sales_rep.communication.success_text"),
+        duration: 10000,
+        single: true,
+      });
+    }
   } else {
+    // Nothing was sent — surface the specific reason(s) when we have them, else a generic error.
     notifications.error({
-      text: t("sales_rep.communication.error_text"),
+      text: warnings.length > 0 ? warnings.join(" ") : t("sales_rep.communication.error_text"),
       duration: 10000,
       single: true,
     });

@@ -26,3 +26,12 @@ export type SalesRepCommunicationInputType = {
   message: string;
   title?: string;
 };
+
+// Per-channel outcome of a broadcast. `warnings` carries stable codes (see the backend's
+// ModuleConstants.Communication.Warnings) that the UI maps to a localized message.
+export type SalesRepCommunicationResultType = {
+  succeeded: boolean;
+  pushSent: boolean;
+  emailSent: boolean;
+  warnings: string[];
+};

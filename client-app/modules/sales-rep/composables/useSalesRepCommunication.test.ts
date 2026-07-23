@@ -19,11 +19,12 @@ beforeEach(() => {
 });
 
 describe("useSalesRepCommunication", () => {
-  it("merges globals (storeId/cultureName) into the command and returns the boolean result", async () => {
-    mutationMock.mutate.mockResolvedValue({ data: { sendCustomerCommunication: true } });
+  it("merges globals (storeId/cultureName) into the command and returns the per-channel result", async () => {
+    const payload = { succeeded: true, pushSent: false, emailSent: true, warnings: [] };
+    mutationMock.mutate.mockResolvedValue({ data: { sendCustomerCommunication: payload } });
 
     const { sendCommunication } = useSalesRepCommunication();
-    const succeeded = await sendCommunication({
+    const result = await sendCommunication({
       organizationId: "org-1",
       sendEmail: true,
       sendPush: false,
@@ -31,7 +32,7 @@ describe("useSalesRepCommunication", () => {
       message: "Check https://example.com/list",
     });
 
-    expect(succeeded).toBe(true);
+    expect(result).toEqual(payload);
     expect(mutationMock.mutate).toHaveBeenCalledWith({
       command: {
         organizationId: "org-1",
@@ -45,27 +46,38 @@ describe("useSalesRepCommunication", () => {
     });
   });
 
-  it("settles to false when the server returns no data", async () => {
-    mutationMock.mutate.mockResolvedValue({ data: { sendCustomerCommunication: false } });
+  it("passes a partial-success result (with warnings) straight through", async () => {
+    const payload = { succeeded: true, pushSent: true, emailSent: false, warnings: ["EmailUnavailable"] };
+    mutationMock.mutate.mockResolvedValue({ data: { sendCustomerCommunication: payload } });
 
     const { sendCommunication } = useSalesRepCommunication();
-    expect(await sendCommunication({ organizationId: "org-1", sendEmail: false, sendPush: true, message: "Hi" })).toBe(
-      false,
-    );
-
-    mutationMock.mutate.mockResolvedValue(null);
-    expect(await sendCommunication({ organizationId: "org-1", sendEmail: false, sendPush: true, message: "Hi" })).toBe(
-      false,
-    );
+    expect(
+      await sendCommunication({ organizationId: "org-1", sendEmail: true, sendPush: true, message: "Hi" }),
+    ).toEqual(payload);
   });
 
-  it("returns false (not throws) when the mutation rejects, so the UI can surface the failure", async () => {
+  it("settles to a failed result when the server returns no data", async () => {
+    const failed = { succeeded: false, pushSent: false, emailSent: false, warnings: [] };
+
+    mutationMock.mutate.mockResolvedValue({ data: null });
+    const { sendCommunication } = useSalesRepCommunication();
+    expect(
+      await sendCommunication({ organizationId: "org-1", sendEmail: false, sendPush: true, message: "Hi" }),
+    ).toEqual(failed);
+
+    mutationMock.mutate.mockResolvedValue(null);
+    expect(
+      await sendCommunication({ organizationId: "org-1", sendEmail: false, sendPush: true, message: "Hi" }),
+    ).toEqual(failed);
+  });
+
+  it("returns a failed result (not throws) when the mutation rejects, so the UI can surface the failure", async () => {
     mutationMock.mutate.mockRejectedValue(new Error("PLATFORM error resolving field"));
 
     const { sendCommunication } = useSalesRepCommunication();
     await expect(
       sendCommunication({ organizationId: "org-1", sendEmail: true, sendPush: false, message: "Hi" }),
-    ).resolves.toBe(false);
+    ).resolves.toEqual({ succeeded: false, pushSent: false, emailSent: false, warnings: [] });
   });
 
   it("exposes the mutation loading flag", () => {
