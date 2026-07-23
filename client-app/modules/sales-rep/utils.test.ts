@@ -17,12 +17,13 @@ describe("buildStatisticsWindows", () => {
   });
 
   it("keeps the previous-month window elapsed-matched (no clamp) mid-month", () => {
-    // Mar 15: 14.5 days into March; Feb 1 + 14.5d = Feb 15, still inside February — no clamp.
+    // Mar 15: ~15 days into March (bound rounded to end of the UTC day); Feb 1 + that span = Feb 15,
+    // still inside February — no clamp.
     const now = new Date(Date.UTC(2025, 2, 15, 12, 0, 0));
     const w = buildStatisticsWindows(now);
 
     expect(w.prevFrom).toBe("2025-02-01T00:00:00.000Z");
-    expect(w.prevTo).toBe("2025-02-15T12:00:00.000Z");
+    expect(w.prevTo).toBe("2025-02-15T23:59:59.999Z");
     expect(new Date(w.prevTo).getTime()).toBeLessThan(new Date(w.mtdFrom).getTime());
   });
 
@@ -48,15 +49,17 @@ describe("buildStatisticsWindows", () => {
     expect(new Date(w.prevWeekTo).getTime()).toBeLessThan(new Date(w.weekFrom).getTime());
   });
 
-  it("uses `now` as the upper bound of every current-period window", () => {
+  it("rounds the upper bound of every current-period window to the end of the UTC day (for cache stability)", () => {
+    // Any instant within the day maps to the same end-of-day bound, so co-occurring requests share
+    // a cache key regardless of the exact time they fire.
     const now = new Date(Date.UTC(2025, 5, 10, 8, 15, 0));
-    const iso = now.toISOString();
+    const dayEnd = "2025-06-10T23:59:59.999Z";
     const w = buildStatisticsWindows(now);
 
-    expect(w.mtdTo).toBe(iso);
-    expect(w.ytdTo).toBe(iso);
-    expect(w.weekTo).toBe(iso);
-    expect(w.todayTo).toBe(iso);
+    expect(w.mtdTo).toBe(dayEnd);
+    expect(w.ytdTo).toBe(dayEnd);
+    expect(w.weekTo).toBe(dayEnd);
+    expect(w.todayTo).toBe(dayEnd);
     expect(w.todayFrom).toBe("2025-06-10T00:00:00.000Z");
   });
 });

@@ -52,11 +52,18 @@ export type StatisticsWindowsType = {
 const DAY_MS = 86_400_000;
 
 export function buildStatisticsWindows(now: Date = new Date()): StatisticsWindowsType {
-  const nowMs = now.getTime();
-  const nowIso = now.toISOString();
   const year = now.getUTCFullYear();
   const month = now.getUTCMonth();
   const day = now.getUTCDate();
+
+  // The upper bound of every "to-date" window (and the elapsed span the previous-period baselines are
+  // matched to) is the END of the current UTC day, not the exact instant. A raw `new Date()` upper bound
+  // changes every request, so the backend statistics cache (keyed on the criteria, ToDate included) never
+  // hits and every figure runs live. Rounding to day granularity keeps the key stable within the day so
+  // the cache engages; since there are no future-dated orders, extending "now" to end-of-day never changes
+  // a count.
+  const nowMs = Date.UTC(year, month, day, 23, 59, 59, 999);
+  const nowIso = new Date(nowMs).toISOString();
 
   // Date.UTC normalizes over/underflow (month − 1 === −1 → prev Dec; day − n <= 0 → prev month).
   const monthStart = Date.UTC(year, month, 1);
