@@ -1,5 +1,12 @@
 <template>
-  <VcModal :title="view.title" max-width="42rem" is-mobile-fullscreen dividers test-id="mission-details-modal">
+  <VcModal
+    ref="modalRef"
+    :title="view.title"
+    max-width="42rem"
+    is-mobile-fullscreen
+    dividers
+    test-id="mission-details-modal"
+  >
     <div class="mission-details">
       <!-- Meta -->
       <div class="mission-details__meta">
@@ -23,9 +30,21 @@
           <VcImage class="mission-details__image" :src="row.image" :alt="row.name" lazy />
 
           <div class="mission-details__info">
-            <VcTypography tag="span" class="mission-details__name" text-transform="none">
+            <VcProductTitle
+              class="mission-details__name"
+              :to="row.route"
+              :title="row.name"
+              :target="browserTarget"
+              :lines-number="1"
+            >
               {{ row.name }}
-            </VcTypography>
+            </VcProductTitle>
+
+            <span v-if="row.sku || row.price" class="mission-details__subtitle">
+              <span v-if="row.sku">{{ $t("common.labels.sku") }} #{{ row.sku }}</span>
+              ·
+              <VcPriceDisplay v-if="row.price" :value="row.price.actual" />
+            </span>
 
             <VcChip
               class="mission-details__target"
@@ -40,19 +59,34 @@
           </div>
 
           <div class="mission-details__stepper-wrap">
-            <VcQuantityStepper
+            <QuantityControl
               v-if="!isMissionCompleted"
+              mode="stepper"
               class="mission-details__stepper"
               :model-value="row.quantity"
-              :min="0"
-              :max="9999"
+              :name="row.id"
+              :min-quantity="row.minQuantity"
+              :max-quantity="row.maxQuantity"
+              :available-quantity="row.availableQuantity"
+              :pack-size="row.packSize"
+              :is-active="row.isActive"
+              :is-available="row.isAvailable"
+              :is-buyable="row.isBuyable"
+              :is-in-stock="row.isInStock"
               allow-zero
               size="sm"
-              :aria-label="row.id"
               @update:model-value="setQuantity(row.id, $event)"
-            />
+            >
+              <div class="mission-details__badges">
+                <InStock
+                  :is-in-stock="row.isInStock"
+                  :is-available="row.isAvailable"
+                  :quantity="row.availableQuantity"
+                />
 
-            <VcPriceDisplay v-if="row.price" class="mission-details__price" :value="row.price.actual" />
+                <CountInCart :product-id="row.id" :currency="row.price?.actual.currency.code" />
+              </div>
+            </QuantityControl>
           </div>
         </li>
       </ul>
@@ -110,43 +144,69 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { useBrowserTarget } from "@/core/composables";
+import { getProductRoute } from "@/core/utilities";
 import { MISSION_STATUS, MISSION_TYPE, useMissionCard } from "@/modules/loyalty/composables";
 import { useShortCart } from "@/shared/cart/composables";
+import { CountInCart, InStock } from "@/shared/catalog/components";
 import { useNotifications } from "@/shared/notification";
 import type { MissionDataType } from "@/modules/loyalty/composables";
+import QuantityControl from "@/shared/common/components/quantity-control.vue";
 
 const props = defineProps<{
   mission: MissionDataType;
 }>();
 
 const { view, formatCurrency } = useMissionCard(() => props.mission);
-const { addItemsToCart, changing: addToCartLoading } = useShortCart();
+const { cart, updateItemCartQuantity, changing: addToCartLoading } = useShortCart();
+const { browserTarget } = useBrowserTarget();
 const notifications = useNotifications();
 const { t } = useI18n();
 
-// Units the user wants to add to the cart now, keyed by product id.
+// Locally edited quantities, keyed by product id — only set once the user touches a stepper.
 const quantities = ref<Record<string, number>>({});
 
 const items = computed(() => (props.mission.items ?? []).filter((item) => item != null));
+
+function getCartQuantity(productId: string, currencyCode?: string): number {
+  return (
+    cart.value?.items.find(
+      (cartItem) => cartItem.productId === productId && (!currencyCode || cartItem.currencyCode === currencyCode),
+    )?.quantity ?? 0
+  );
+}
 
 const rows = computed(() =>
   items.value.map((item) => {
     const id = item?.productId ?? "";
     const target = item?.targetQuantity ?? 0;
     const current = item?.currentQuantity ?? 0;
-    const quantity = quantities.value[id] ?? 0;
+    const inCart = getCartQuantity(id, item?.product?.price?.actual.currency.code);
+    const quantity = quantities.value[id] ?? inCart;
 
     const remaining = Math.max(target - current, 0);
 
     return {
       id,
       name: item?.product?.name ?? id,
+      sku: item?.product?.code,
+      route: getProductRoute(id, item?.product?.slug),
       image: item?.product?.imgSrc ?? "",
       price: item?.product?.price,
+      minQuantity: item?.product?.minQuantity,
+      maxQuantity: item?.product?.maxQuantity,
+      availableQuantity: item?.product?.availabilityData?.availableQuantity,
+      packSize: item?.product?.packSize,
+      isActive: item?.product?.availabilityData?.isActive,
+      isAvailable: item?.product?.availabilityData?.isAvailable,
+      isBuyable: item?.product?.availabilityData?.isBuyable,
+      isInStock: item?.product?.availabilityData?.isInStock,
       target,
       // How many units are still needed on top of what's already counted towards the mission.
       remaining: remaining === 0 ? target : remaining,
       quantity,
+      // Quantity already sitting in the cart, so we only submit rows the user actually changed.
+      inCart,
       met: target > 0 && current + quantity >= target,
     };
   }),
@@ -155,7 +215,7 @@ const rows = computed(() =>
 const totalUnits = computed(() => rows.value.reduce((sum, row) => sum + row.quantity, 0));
 const targetsMet = computed(() => rows.value.filter((row) => row.met).length);
 
-// Sum of unit price * quantity across rows the user is about to add — not returned by the backend.
+// Sum of unit price * quantity across rows currently set to a non-zero quantity — not returned by the backend.
 const cartSubtotal = computed(() => {
   const itemsToAdd = rows.value.filter((row) => row.quantity > 0 && row.price?.actual);
   const amount = itemsToAdd.reduce((sum, row) => sum + row.price!.actual.amount * row.quantity, 0);
@@ -177,19 +237,19 @@ function setQuantity(id: string, value: number | undefined): void {
   quantities.value = { ...quantities.value, [id]: value ?? 0 };
 }
 
-const hasItemsToAdd = computed(() => rows.value.some((row) => row.quantity > 0));
+// Only rows whose quantity actually differs from what's already in the cart need to be submitted.
+const changedRows = computed(() => rows.value.filter((row) => row.quantity !== row.inCart));
+const hasItemsToAdd = computed(() => changedRows.value.length > 0);
 
 async function addProductsToCart(close: () => void) {
-  const itemsToAdd = rows.value
-    .filter((row) => row.quantity > 0)
-    .map((row) => ({ productId: row.id, quantity: row.quantity }));
-
-  if (!itemsToAdd.length) {
+  if (!changedRows.value.length) {
     return;
   }
 
   try {
-    await addItemsToCart(itemsToAdd);
+    await Promise.all(
+      changedRows.value.map((row) => updateItemCartQuantity(row.id, row.quantity, row.price?.actual.currency.code)),
+    );
     notifications.success({ text: t("pages.account.missions.sku_modal.added_to_cart") });
     close();
   } catch {
@@ -239,15 +299,28 @@ async function addProductsToCart(close: () => void) {
   }
 
   &__image {
-    @apply size-16 shrink-0 rounded-md border border-neutral-200 bg-additional-50 object-contain;
+    @apply size-18 shrink-0 rounded-md border border-neutral-200 bg-additional-50 object-contain;
   }
 
   &__info {
-    @apply flex min-w-0 flex-1 flex-col items-start gap-2;
+    @apply flex min-w-0 flex-1 flex-col items-start gap-1 font-semibold;
+  }
+
+  &__target {
+    @apply mt-2;
+  }
+
+  &__badges {
+    @apply mt-2 flex gap-1.5;
   }
 
   &__name {
-    @apply line-clamp-2 text-sm font-bold text-neutral-900;
+    --vc-product-title-font-size: theme("fontSize.sm");
+    --vc-product-title-text-color: theme("colors.neutral.900");
+  }
+
+  &__subtitle {
+    @apply flex flex-wrap items-center gap-x-1 text-xs text-neutral-500;
   }
 
   &__stepper-wrap {
@@ -256,10 +329,6 @@ async function addProductsToCart(close: () => void) {
 
   &__stepper {
     @apply w-32 shrink-0 mb-1;
-  }
-
-  &__price {
-    @apply text-sm font-bold text-neutral-700;
   }
 
   &__summary {

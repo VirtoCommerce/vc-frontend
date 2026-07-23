@@ -1,5 +1,5 @@
 <template>
-  <VcModal :title="view.title" is-mobile-fullscreen dividers test-id="mission-details-modal">
+  <VcModal ref="modalRef" :title="view.title" is-mobile-fullscreen dividers test-id="mission-details-modal">
     <div class="order-mission-details">
       <!-- Meta -->
       <div class="order-mission-details__meta">
@@ -52,9 +52,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, useTemplateRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { MISSION_TYPE, useMissionCard } from "@/modules/loyalty/composables";
+import { useCloseModalOnRouteChange } from "@/shared/modal";
 import type { MissionDataType, MissionType } from "@/modules/loyalty/composables";
 
 const props = defineProps<{
@@ -63,6 +64,9 @@ const props = defineProps<{
 
 const { t } = useI18n();
 const { view } = useMissionCard(() => props.mission);
+
+const modalRef = useTemplateRef<{ close: () => void }>("modalRef");
+useCloseModalOnRouteChange(() => modalRef.value?.close());
 
 const requirementLabel = computed(() => {
   const missionType = (props.mission.missionType as MissionType | undefined) ?? MISSION_TYPE.OrderValue;
