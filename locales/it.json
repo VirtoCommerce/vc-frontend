@@ -1407,6 +1407,7 @@
           "buy_at_least": "Acquista almeno {count}",
           "total_units": "Unità totali",
           "targets_met": "Obiettivi raggiunti",
+          "cart_subtotal": "Subtotale carrello",
           "reward_hint": "Guadagna {points} punti quando tutti gli obiettivi sono soddisfatti",
           "reward_unlocked": "Tutti gli obiettivi raggiunti — {points} punti sbloccati",
           "close": "Chiudi",

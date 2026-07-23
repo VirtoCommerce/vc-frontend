@@ -1407,6 +1407,7 @@
           "buy_at_least": "至少购买 {count} 件",
           "total_units": "总件数",
           "targets_met": "目标已达成",
+          "cart_subtotal": "购物车小计",
           "reward_hint": "达成所有目标即可赚取 {points} 积分",
           "reward_unlocked": "所有目标已达成 — 已解锁 {points} 积分",
           "close": "关闭",

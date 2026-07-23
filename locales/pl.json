@@ -1407,6 +1407,7 @@
           "buy_at_least": "Kup co najmniej {count}",
           "total_units": "Łączna liczba sztuk",
           "targets_met": "Cele spełnione",
+          "cart_subtotal": "Suma częściowa koszyka",
           "reward_hint": "Zdobądź {points} punktów po spełnieniu wszystkich celów",
           "reward_unlocked": "Wszystkie cele spełnione — odblokowano {points} punktów",
           "close": "Zamknij",

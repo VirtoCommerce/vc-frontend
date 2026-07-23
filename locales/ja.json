@@ -1407,6 +1407,7 @@
           "buy_at_least": "少なくとも{count}個購入",
           "total_units": "合計ユニット",
           "targets_met": "ターゲット達成",
+          "cart_subtotal": "カート小計",
           "reward_hint": "すべてのターゲットが達成されると{points}ポイントを獲得",
           "reward_unlocked": "すべてのターゲットが達成されました — {points}ポイントを獲得しました",
           "close": "閉じる",

@@ -1407,6 +1407,7 @@
           "buy_at_least": "Kjøp minst {count}",
           "total_units": "Totale enheter",
           "targets_met": "Mål oppnådd",
+          "cart_subtotal": "Varerabatt",
           "reward_hint": "Tjen {points} poeng når alle mål er oppnådd",
           "reward_unlocked": "Alle mål er oppnådd — {points} poeng låst opp",
           "close": "Lukk",

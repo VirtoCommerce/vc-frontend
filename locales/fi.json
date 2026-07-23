@@ -1407,6 +1407,7 @@
           "buy_at_least": "Osta vähintään {count}",
           "total_units": "Yhteensä kappaletta",
           "targets_met": "Tavoitteet täytetty",
+          "cart_subtotal": "Ostoskorin välisumma",
           "reward_hint": "Ansaitse {points} pistettä, kun kaikki tavoitteet on täytetty",
           "reward_unlocked": "Kaikki tavoitteet täytetty — {points} pistettä avattu",
           "close": "Sulje",
