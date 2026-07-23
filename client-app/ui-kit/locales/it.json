@@ -46,6 +46,10 @@
       "today": "Oggi",
       "clear": "Cancella"
     },
+    "date_range_input": {
+      "aria_label": "Intervallo di date",
+      "clear": "Cancella intervallo di date"
+    },
     "date_selector": {
       "min_date_error": "La data deve essere successiva o uguale a {min}",
       "max_date_error": "La data deve essere precedente o uguale a {max}"

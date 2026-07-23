@@ -3,11 +3,13 @@
     :class="[
       'vc-input',
       `vc-input--size--${size}`,
+      `vc-input--align--${align}`,
       {
         'vc-input--readonly': readonly,
         'vc-input--disabled': disabled,
         'vc-input--error': error,
         'vc-input--no-border': noBorder,
+        'vc-input--seamless': seamless,
         'vc-input--center': center,
         'vc-input--truncate': truncate,
       },
@@ -41,7 +43,7 @@
         :step="stepValue"
         :autocomplete="computedAutocomplete"
         :aria-label="ariaLabel ?? label"
-        :aria-describedby="counter || message ? detailsId : undefined"
+        :aria-describedby="!hideDetails && (counter || message) ? detailsId : undefined"
         :title="browserTooltip === 'enabled' ? message : ''"
         class="vc-input__input"
         :tabindex="tabindex"
@@ -61,6 +63,7 @@
           variant="ghost"
           class="vc-input__clear"
           :icon-size="size === 'md' ? '0.875rem' : '0.75rem'"
+          :aria-label="$t('ui_kit.buttons.clear')"
           @keydown.enter.stop.prevent
           @keyup.enter.stop.prevent="clear"
           @click.stop="clear"
@@ -86,6 +89,7 @@
     </div>
 
     <VcInputDetails
+      v-if="!hideDetails"
       :id="counter || message ? detailsId : undefined"
       :show-empty="showEmptyDetails"
       :counter="counter"
@@ -118,16 +122,20 @@ export interface IProps {
   singleLineMessage?: boolean;
   error?: boolean;
   noBorder?: boolean;
+  seamless?: boolean;
   hidePasswordSwitcher?: boolean;
   showEmptyDetails?: boolean;
+  hideDetails?: boolean;
   counter?: boolean;
   min?: string | number;
   max?: string | number;
   step?: string | number;
   minlength?: string | number;
   maxlength?: string | number;
+  /** @deprecated Use align="center" instead. */
   center?: boolean;
   truncate?: boolean;
+  align?: VcInputAlignType;
   type?:
     | "text"
     | "password"
@@ -162,6 +170,9 @@ const props = withDefaults(defineProps<IProps>(), {
   size: "md",
   browserTooltip: "disabled",
   tabindex: 0,
+  hideDetails: false,
+  seamless: false,
+  align: "start",
 });
 
 if (import.meta.env.DEV && props.type === "date") {
@@ -264,8 +275,11 @@ provide<VcInputContextType>("inputContext", {
   $disabled: "";
   $error: "";
   $noBorder: "";
+  $seamless: "";
   $center: "";
   $truncate: "";
+  $alignCenter: "";
+  $alignEnd: "";
 
   --color: var(--vc-input-base-color, theme("colors.primary.500"));
   --focus-color: rgb(from var(--color) r g b / 0.3);
@@ -307,12 +321,26 @@ provide<VcInputContextType>("inputContext", {
     $noBorder: &;
   }
 
+  &--seamless {
+    $seamless: &;
+  }
+
   &--center {
     $center: &;
   }
 
   &--truncate {
     $truncate: &;
+  }
+
+  &--align {
+    &--center {
+      $alignCenter: &;
+    }
+
+    &--end {
+      $alignEnd: &;
+    }
   }
 
   &__container {
@@ -345,6 +373,20 @@ provide<VcInputContextType>("inputContext", {
 
     #{$noBorder} & {
       @apply border-none;
+    }
+
+    #{$seamless} & {
+      @apply border-0 bg-transparent p-0;
+
+      &:has(input:focus) {
+        @apply ring-0;
+      }
+    }
+
+    #{$seamless}#{$sizeXs} &,
+    #{$seamless}#{$sizeSm} &,
+    #{$seamless}#{$sizeMd} & {
+      height: auto;
     }
   }
 
@@ -412,6 +454,14 @@ provide<VcInputContextType>("inputContext", {
 
     #{$truncate} & {
       @apply truncate;
+    }
+
+    #{$alignCenter} & {
+      @apply text-center;
+    }
+
+    #{$alignEnd} & {
+      @apply text-end;
     }
   }
 }

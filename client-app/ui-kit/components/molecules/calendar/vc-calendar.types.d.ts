@@ -6,6 +6,8 @@ declare global {
   type VcCalendarWeekdayFormatType = "narrow" | "short";
 
   type VcCalendarDisabledDateType = (date: string) => boolean;
+
+  type VcDateRange = { start?: string; end?: string };
 }
 
 export {};

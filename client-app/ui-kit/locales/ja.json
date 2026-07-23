@@ -46,6 +46,10 @@
       "today": "今日",
       "clear": "クリア"
     },
+    "date_range_input": {
+      "aria_label": "日付範囲",
+      "clear": "日付範囲をクリア"
+    },
     "date_selector": {
       "min_date_error": "日付は{min}以降である必要があります",
       "max_date_error": "日付は{max}以前である必要があります"

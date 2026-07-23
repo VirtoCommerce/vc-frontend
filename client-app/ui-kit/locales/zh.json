@@ -46,6 +46,10 @@
       "today": "今天",
       "clear": "清除"
     },
+    "date_range_input": {
+      "aria_label": "日期范围",
+      "clear": "清除日期范围"
+    },
     "date_selector": {
       "min_date_error": "日期必须在{min}或之后",
       "max_date_error": "日期必须在{max}或之前"

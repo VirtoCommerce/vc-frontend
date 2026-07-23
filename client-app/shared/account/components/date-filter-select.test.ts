@@ -1,0 +1,47 @@
+import { mount } from "@vue/test-utils";
+import { describe, expect, it, vi } from "vitest";
+import { DateFilterId } from "@/core/enums";
+import DateFilterSelect from "./date-filter-select.vue";
+import type { DateFilterType } from "@/core/types";
+
+// Only `dateFilterTypes` is read by the component; the rest of the composable pulls in
+// useUser/GraphQL, which is irrelevant here.
+vi.mock("../composables/useUserOrdersFilter", () => ({
+  useUserOrdersFilter: () => ({
+    dateFilterTypes: { value: [{ id: DateFilterId.CUSTOM, label: "Custom date" }] },
+  }),
+}));
+
+// VcSelect and VcDateRangePicker are the consumer's direct children; their own behavior is
+// covered by their own test files. Stub both here and assert only the wiring between them.
+const stubs = { VcSelect: true, VcDateRangePicker: true };
+
+function mountWithCustomSelected(props: Partial<{ dateFilterType: DateFilterType; label: string }> = {}) {
+  return mount(DateFilterSelect, {
+    props: { dateFilterType: { id: DateFilterId.CUSTOM, label: "Custom date" }, ...props },
+    global: {
+      stubs,
+      mocks: { $t: (key: string) => key },
+    },
+  });
+}
+
+describe("DateFilterSelect", () => {
+  it("re-emits change when the range picker updates", async () => {
+    const wrapper = mountWithCustomSelected();
+    const picker = wrapper.findComponent({ name: "VcDateRangePicker" });
+    picker.vm.$emit("update:modelValue", { start: "2026-10-08", end: "2026-10-14" });
+    await wrapper.vm.$nextTick();
+    const change = wrapper.emitted("change")?.at(-1)?.[0] as { startDate?: string; endDate?: string };
+    expect(change.startDate).toBe("2026-10-08");
+    expect(change.endDate).toBe("2026-10-14");
+  });
+
+  it("keeps a one-sided range valid", async () => {
+    const wrapper = mountWithCustomSelected();
+    const picker = wrapper.findComponent({ name: "VcDateRangePicker" });
+    picker.vm.$emit("update:modelValue", { start: "2026-10-08", end: undefined });
+    await wrapper.vm.$nextTick();
+    expect(wrapper.emitted("change")?.at(-1)).toBeTruthy();
+  });
+});

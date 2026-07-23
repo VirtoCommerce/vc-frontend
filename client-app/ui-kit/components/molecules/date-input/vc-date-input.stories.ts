@@ -447,7 +447,7 @@ export const WithMask: StoryType = {
 };
 
 export const WithMaskLocaleJa: StoryType = {
-  args: { label: "Order date", locale: "ja-JP", mask: true },
+  args: { label: "注文日", locale: "ja-JP", mask: true },
   parameters: {
     docs: {
       description: {
@@ -455,7 +455,7 @@ export const WithMaskLocaleJa: StoryType = {
           "Mask + Japanese locale. The mask pattern follows the locale: ja-JP yields `####/##/##` (year first). Try typing `20261015` to see the separators auto-insert at year boundary and between month/day. Paste of ISO `2026-10-15` is intercepted by useDateField and reformatted to `2026/10/15`.",
       },
       source: {
-        code: `<VcDateInput v-model="value" label="Order date" locale="ja-JP" mask />`,
+        code: `<VcDateInput v-model="value" label="注文日" locale="ja-JP" mask />`,
       },
     },
   },

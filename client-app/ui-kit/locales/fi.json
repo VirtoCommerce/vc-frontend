@@ -46,6 +46,10 @@
       "today": "Tänään",
       "clear": "Tyhjennä"
     },
+    "date_range_input": {
+      "aria_label": "Päivämääräväli",
+      "clear": "Tyhjennä päivämääräväli"
+    },
     "date_selector": {
       "min_date_error": "Päivämäärän on oltava vähintään {min}",
       "max_date_error": "Päivämäärän on oltava enintään {max}"

@@ -46,6 +46,10 @@
       "today": "Сегодня",
       "clear": "Очистить"
     },
+    "date_range_input": {
+      "aria_label": "Диапазон дат",
+      "clear": "Очистить диапазон дат"
+    },
     "date_selector": {
       "min_date_error": "Дата должна быть не ранее {min}",
       "max_date_error": "Дата должна быть не позднее {max}"

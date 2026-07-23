@@ -46,6 +46,10 @@
       "today": "Dzisiaj",
       "clear": "Wyczyść"
     },
+    "date_range_input": {
+      "aria_label": "Zakres dat",
+      "clear": "Wyczyść zakres dat"
+    },
     "date_selector": {
       "min_date_error": "Data musi być nie wcześniejsza niż {min}",
       "max_date_error": "Data musi być nie późniejsza niż {max}"

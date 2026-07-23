@@ -46,6 +46,10 @@
       "today": "Heute",
       "clear": "Löschen"
     },
+    "date_range_input": {
+      "aria_label": "Datumsbereich",
+      "clear": "Datumsbereich löschen"
+    },
     "date_selector": {
       "min_date_error": "Datum muss am oder nach {min} liegen",
       "max_date_error": "Datum muss am oder vor {max} liegen"

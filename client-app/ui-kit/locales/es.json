@@ -46,6 +46,10 @@
       "today": "Hoy",
       "clear": "Borrar"
     },
+    "date_range_input": {
+      "aria_label": "Rango de fechas",
+      "clear": "Limpiar rango de fechas"
+    },
     "date_selector": {
       "min_date_error": "La fecha debe ser igual o posterior al {min}",
       "max_date_error": "La fecha debe ser igual o anterior al {max}"

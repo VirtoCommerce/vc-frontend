@@ -46,6 +46,10 @@
       "today": "Today",
       "clear": "Clear"
     },
+    "date_range_input": {
+      "aria_label": "Date range",
+      "clear": "Clear date range"
+    },
     "date_selector": {
       "min_date_error": "Date must be on or after {min}",
       "max_date_error": "Date must be on or before {max}"

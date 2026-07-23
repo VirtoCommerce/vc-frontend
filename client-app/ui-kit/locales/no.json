@@ -46,6 +46,10 @@
       "today": "I dag",
       "clear": "Tøm"
     },
+    "date_range_input": {
+      "aria_label": "Datointervall",
+      "clear": "Tøm datointervall"
+    },
     "date_selector": {
       "min_date_error": "Datoen må være på eller etter {min}",
       "max_date_error": "Datoen må være på eller før {max}"

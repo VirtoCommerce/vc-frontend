@@ -18,6 +18,10 @@
     :tabindex="tabindex"
     :clearable="clearable"
     :test-id-input="dataTestId"
+    :no-border="noBorder"
+    :seamless="seamless"
+    :align="align"
+    :hide-details="hideDetails"
     @blur="onInputBlur"
     @focus="onInputFocus"
     @keydown.enter="onInputEnter"
@@ -79,6 +83,10 @@ interface IProps {
   aria?: Record<string, string | number | null>;
   tabindex?: string | number;
   dataTestId?: string;
+  noBorder?: boolean;
+  seamless?: boolean;
+  align?: VcInputAlignType;
+  hideDetails?: boolean;
 }
 
 interface IEmits {
@@ -93,6 +101,10 @@ const emit = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   size: "md",
   updateOn: "blur",
+  noBorder: false,
+  seamless: false,
+  align: "start",
+  hideDetails: false,
 });
 
 const { locale: i18nLocale } = useI18n();
@@ -164,6 +176,7 @@ useEventListener(innerInputElement, "paste", (event: ClipboardEvent) => {
     return;
   }
   const pasted = event.clipboardData?.getData("text") ?? "";
+  // eslint-disable-next-line sonarjs/null-dereference -- pasted is coalesced to "" above; the rule is a false positive here
   if (!pasted.trim()) {
     return;
   }

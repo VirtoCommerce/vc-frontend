@@ -46,6 +46,10 @@
       "today": "Aujourd'hui",
       "clear": "Effacer"
     },
+    "date_range_input": {
+      "aria_label": "Plage de dates",
+      "clear": "Effacer la plage de dates"
+    },
     "date_selector": {
       "min_date_error": "La date doit être à partir du {min}",
       "max_date_error": "La date doit être au plus tard le {max}"

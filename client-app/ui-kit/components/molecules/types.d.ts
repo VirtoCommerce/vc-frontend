@@ -15,6 +15,7 @@ declare module "vue" {
     VcCompositeShape: typeof Components.VcCompositeShape;
     VcCopyText: typeof Components.VcCopyText;
     VcDateInput: typeof Components.VcDateInput;
+    VcDateRangeInput: typeof Components.VcDateRangeInput;
     /** @deprecated Use VcDatePicker for typed date entry with calendar popover, or VcDateInput for input-only. */
     VcDateSelector: typeof Components.VcDateSelector;
     VcDialog: typeof Components.VcDialog;
@@ -50,6 +51,7 @@ declare module "vue" {
     VcProductTotal: typeof Components.VcProductTotal;
     VcProductVendor: typeof Components.VcProductVendor;
     VcProductsGrid: typeof Components.VcProductsGrid;
+    VcRangeCalendar: typeof Components.VcRangeCalendar;
     VcSelect: typeof Components.VcSelect;
     VcShape: typeof Components.VcShape;
     VcSlider: typeof Components.VcSlider;
