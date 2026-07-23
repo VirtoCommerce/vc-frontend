@@ -80,6 +80,16 @@
       "cancel_button": "Anuluj",
       "success_text": "Twoja wiadomość została wysłana.",
       "error_text": "Nie udało się wysłać wiadomości. Spróbuj ponownie.",
+      "partial_success_text": "Twoja wiadomość została wysłana, ale nie wszystkimi kanałami:",
+      "warnings": {
+        "generic": "Nie udało się wysłać wiadomości jednym z wybranych kanałów.",
+        "NoRecipients": "Ta organizacja nie ma kontaktów do powiadomienia.",
+        "EmailUnavailable": "Poczta e-mail jest obecnie niedostępna. Skontaktuj się z administratorem.",
+        "EmailStoreAccessDenied": "Nie udało się wysłać wiadomości e-mail dla wybranego sklepu.",
+        "EmailNoRecipients": "Żaden z odbiorców nie ma adresu e-mail.",
+        "EmailSendFailed": "Nie udało się wysłać wiadomości e-mail. Spróbuj ponownie później.",
+        "PushSendFailed": "Nie udało się wysłać powiadomienia push. Spróbuj ponownie później."
+      },
       "quick_actions": {
         "title": "Szybkie akcje",
         "order_on_behalf": "Zamów w imieniu",

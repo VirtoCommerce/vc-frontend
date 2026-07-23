@@ -80,6 +80,16 @@
       "cancel_button": "Avbryt",
       "success_text": "Ditt meddelande har skickats.",
       "error_text": "Meddelandet kunde inte skickas. Försök igen.",
+      "partial_success_text": "Ditt meddelande skickades, men inte via alla kanaler:",
+      "warnings": {
+        "generic": "Meddelandet kunde inte skickas via en av de valda kanalerna.",
+        "NoRecipients": "Den här organisationen har inga kontakter att meddela.",
+        "EmailUnavailable": "E-post är för närvarande inte tillgängligt. Kontakta din administratör.",
+        "EmailStoreAccessDenied": "E-postmeddelandet kunde inte skickas för den valda butiken.",
+        "EmailNoRecipients": "Ingen av mottagarna har en e-postadress.",
+        "EmailSendFailed": "E-postmeddelandet kunde inte skickas. Försök igen senare.",
+        "PushSendFailed": "Push-aviseringen kunde inte skickas. Försök igen senare."
+      },
       "quick_actions": {
         "title": "Snabbåtgärder",
         "order_on_behalf": "Beställ åt kunden",

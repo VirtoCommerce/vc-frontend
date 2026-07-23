@@ -80,6 +80,16 @@
       "cancel_button": "取消",
       "success_text": "您的消息已发送。",
       "error_text": "消息发送失败，请重试。",
+      "partial_success_text": "您的消息已发送，但并非通过所有渠道：",
+      "warnings": {
+        "generic": "无法通过所选渠道之一发送消息。",
+        "NoRecipients": "该组织没有可通知的联系人。",
+        "EmailUnavailable": "电子邮件当前不可用。请联系您的管理员。",
+        "EmailStoreAccessDenied": "无法为所选商店发送电子邮件。",
+        "EmailNoRecipients": "没有收件人拥有电子邮件地址。",
+        "EmailSendFailed": "无法发送电子邮件。请稍后重试。",
+        "PushSendFailed": "无法发送推送通知。请稍后重试。"
+      },
       "quick_actions": {
         "title": "快捷操作",
         "order_on_behalf": "代客下单",

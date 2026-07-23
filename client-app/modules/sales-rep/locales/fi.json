@@ -80,6 +80,16 @@
       "cancel_button": "Peruuta",
       "success_text": "Viestisi on lähetetty.",
       "error_text": "Viestiä ei voitu lähettää. Yritä uudelleen.",
+      "partial_success_text": "Viestisi lähetettiin, mutta ei kaikkien kanavien kautta:",
+      "warnings": {
+        "generic": "Viestiä ei voitu lähettää yhden valitun kanavan kautta.",
+        "NoRecipients": "Tällä organisaatiolla ei ole ilmoitettavia yhteyshenkilöitä.",
+        "EmailUnavailable": "Sähköposti ei ole tällä hetkellä käytettävissä. Ota yhteyttä järjestelmänvalvojaan.",
+        "EmailStoreAccessDenied": "Sähköpostia ei voitu lähettää valitulle myymälälle.",
+        "EmailNoRecipients": "Yhdelläkään vastaanottajalla ei ole sähköpostiosoitetta.",
+        "EmailSendFailed": "Sähköpostia ei voitu lähettää. Yritä myöhemmin uudelleen.",
+        "PushSendFailed": "Push-ilmoitusta ei voitu lähettää. Yritä myöhemmin uudelleen."
+      },
       "quick_actions": {
         "title": "Pikatoiminnot",
         "order_on_behalf": "Tilaa asiakkaan puolesta",

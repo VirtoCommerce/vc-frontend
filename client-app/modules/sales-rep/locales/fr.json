@@ -80,6 +80,16 @@
       "cancel_button": "Annuler",
       "success_text": "Votre message a été envoyé.",
       "error_text": "Le message n'a pas pu être envoyé. Veuillez réessayer.",
+      "partial_success_text": "Votre message a été envoyé, mais pas sur tous les canaux :",
+      "warnings": {
+        "generic": "Le message n'a pas pu être envoyé sur l'un des canaux sélectionnés.",
+        "NoRecipients": "Cette organisation n'a aucun contact à notifier.",
+        "EmailUnavailable": "L'e-mail est actuellement indisponible. Veuillez contacter votre administrateur.",
+        "EmailStoreAccessDenied": "L'e-mail n'a pas pu être envoyé pour la boutique sélectionnée.",
+        "EmailNoRecipients": "Aucun des destinataires n'a d'adresse e-mail.",
+        "EmailSendFailed": "L'e-mail n'a pas pu être envoyé. Veuillez réessayer plus tard.",
+        "PushSendFailed": "La notification push n'a pas pu être envoyée. Veuillez réessayer plus tard."
+      },
       "quick_actions": {
         "title": "Actions rapides",
         "order_on_behalf": "Commander au nom de",

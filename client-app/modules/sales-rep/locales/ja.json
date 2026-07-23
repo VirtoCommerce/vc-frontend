@@ -80,6 +80,16 @@
       "cancel_button": "キャンセル",
       "success_text": "メッセージを送信しました。",
       "error_text": "メッセージを送信できませんでした。もう一度お試しください。",
+      "partial_success_text": "メッセージは送信されましたが、一部のチャネルでは送信されませんでした:",
+      "warnings": {
+        "generic": "選択されたチャネルのいずれかでメッセージを送信できませんでした。",
+        "NoRecipients": "この組織には通知する連絡先がありません。",
+        "EmailUnavailable": "現在メールは利用できません。管理者にお問い合わせください。",
+        "EmailStoreAccessDenied": "選択したストアではメールを送信できませんでした。",
+        "EmailNoRecipients": "受信者の中にメールアドレスを持つ人がいません。",
+        "EmailSendFailed": "メールを送信できませんでした。しばらくしてからもう一度お試しください。",
+        "PushSendFailed": "プッシュ通知を送信できませんでした。しばらくしてからもう一度お試しください。"
+      },
       "quick_actions": {
         "title": "クイックアクション",
         "order_on_behalf": "代理で注文",

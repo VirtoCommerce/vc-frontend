@@ -80,6 +80,16 @@
       "cancel_button": "Annulla",
       "success_text": "Il tuo messaggio è stato inviato.",
       "error_text": "Impossibile inviare il messaggio. Riprova.",
+      "partial_success_text": "Il messaggio è stato inviato, ma non su tutti i canali:",
+      "warnings": {
+        "generic": "Impossibile inviare il messaggio su uno dei canali selezionati.",
+        "NoRecipients": "Questa organizzazione non ha contatti da notificare.",
+        "EmailUnavailable": "L'e-mail non è al momento disponibile. Contatta l'amministratore.",
+        "EmailStoreAccessDenied": "Impossibile inviare l'e-mail per il negozio selezionato.",
+        "EmailNoRecipients": "Nessuno dei destinatari ha un indirizzo e-mail.",
+        "EmailSendFailed": "Impossibile inviare l'e-mail. Riprova più tardi.",
+        "PushSendFailed": "Impossibile inviare la notifica push. Riprova più tardi."
+      },
       "quick_actions": {
         "title": "Azioni rapide",
         "order_on_behalf": "Ordina per conto",

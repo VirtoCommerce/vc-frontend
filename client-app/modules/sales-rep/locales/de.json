@@ -80,6 +80,16 @@
       "cancel_button": "Abbrechen",
       "success_text": "Ihre Nachricht wurde gesendet.",
       "error_text": "Die Nachricht konnte nicht gesendet werden. Bitte versuchen Sie es erneut.",
+      "partial_success_text": "Ihre Nachricht wurde gesendet, aber nicht über alle Kanäle:",
+      "warnings": {
+        "generic": "Die Nachricht konnte über einen der ausgewählten Kanäle nicht gesendet werden.",
+        "NoRecipients": "Diese Organisation hat keine Kontakte, die benachrichtigt werden können.",
+        "EmailUnavailable": "E-Mail ist derzeit nicht verfügbar. Bitte wenden Sie sich an Ihren Administrator.",
+        "EmailStoreAccessDenied": "Die E-Mail konnte für den ausgewählten Shop nicht gesendet werden.",
+        "EmailNoRecipients": "Keiner der Empfänger hat eine E-Mail-Adresse.",
+        "EmailSendFailed": "Die E-Mail konnte nicht gesendet werden. Bitte versuchen Sie es später erneut.",
+        "PushSendFailed": "Die Push-Benachrichtigung konnte nicht gesendet werden. Bitte versuchen Sie es später erneut."
+      },
       "quick_actions": {
         "title": "Schnellaktionen",
         "order_on_behalf": "Im Namen bestellen",
