@@ -19,14 +19,13 @@
     >
       <span class="relative">
         <slot name="icon">
-          <VcIcon v-if="link.icon" :name="link.icon" :size="24" class="mb-0.5 fill-primary" />
+          <VcIcon v-if="link.icon" :name="link.icon" :size="24" class="mb-0.5 text-primary" />
         </slot>
 
         <transition mode="out-in" name="scale">
           <VcBadge
             v-if="count"
             class="absolute -right-3 -top-2 transition-transform"
-            variant="outline"
             rounded
             nowrap
             size="sm"

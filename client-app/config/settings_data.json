@@ -44,6 +44,7 @@
     "homepage_background_image": "main-banner.webp",
     "catalog_pagination_mode": "infinite_scroll",
     "desktop_menu_mode": "horizontal",
+    "icon_variant": "outline",
 
     "image_thumbnails_enabled": true,
     "image_thumbnails_original_fallback_enabled": true,

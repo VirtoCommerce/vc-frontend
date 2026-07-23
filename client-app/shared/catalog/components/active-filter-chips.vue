@@ -69,6 +69,7 @@ const { filters } = toRefs(props);
 function formatFilterLabel(filterLabel: string | undefined) {
   const trimmedFilterLabel = filterLabel?.trim();
 
+  // eslint-disable-next-line sonarjs/null-dereference -- false positive: guarded by the !trimmedFilterLabel check
   if (!trimmedFilterLabel || trimmedFilterLabel.startsWith("_")) {
     return "";
   }

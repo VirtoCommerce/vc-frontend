@@ -161,7 +161,7 @@ function slideChanged(swiper: SwiperInstance) {
     @apply flex h-6 w-6 items-center justify-center rounded-full bg-additional-50;
 
     .vc-icon {
-      @apply fill-neutral-400;
+      @apply text-neutral-400;
     }
   }
 

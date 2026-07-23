@@ -4,6 +4,7 @@ export * from "./file";
 export * from "./file-requirements";
 export * from "./file-size";
 export * from "./focus";
+export * from "./icons";
 export * from "./images";
 export * from "./price";
 export * from "./string-array";
