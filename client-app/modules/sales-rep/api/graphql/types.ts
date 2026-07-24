@@ -36,6 +36,23 @@ export type CurrencyType = {
   symbol: Scalars['String']['output'];
 };
 
+export type InputSendCustomerCommunicationType = {
+  /** Optional culture for localizing the email template (e.g. "en-US"). */
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  /** The Rep's message (required, max 1000 chars). May contain a URL. */
+  message: Scalars['String']['input'];
+  /** Customer organization whose members receive the message. */
+  organizationId: Scalars['String']['input'];
+  /** Send an email to the recipients. */
+  sendEmail: Scalars['Boolean']['input'];
+  /** Send an in-store push notification to the recipients. */
+  sendPush: Scalars['Boolean']['input'];
+  /** Store the message is sent on behalf of (scopes the email template and sender address). */
+  storeId: Scalars['String']['input'];
+  /** Optional message title/heading. */
+  title?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type MoneyType = {
   /** A decimal with the amount rounded to the significant number of decimal digits. */
   amount: Scalars['Decimal']['output'];
@@ -51,6 +68,15 @@ export type MoneyType = {
   formattedAmountWithoutPoint: Scalars['String']['output'];
   /** Formatted amount without point and currency. */
   formattedAmountWithoutPointAndCurrency: Scalars['String']['output'];
+};
+
+export type Mutations = {
+  sendCustomerCommunication?: Maybe<SalesRepCommunicationResult>;
+};
+
+
+export type MutationsSendCustomerCommunicationArgs = {
+  command: InputSendCustomerCommunicationType;
 };
 
 /** Information about pagination in a connection. */
@@ -160,6 +186,17 @@ export type SalesRepAddress = {
   regionName?: Maybe<Scalars['String']['output']>;
   /** Zip. */
   zip?: Maybe<Scalars['String']['output']>;
+};
+
+export type SalesRepCommunicationResult = {
+  /** Whether the email was accepted for delivery. */
+  emailSent: Scalars['Boolean']['output'];
+  /** Whether the push notification was accepted for delivery. */
+  pushSent: Scalars['Boolean']['output'];
+  /** True when at least one requested channel was accepted for delivery. */
+  succeeded: Scalars['Boolean']['output'];
+  /** Stable outcome codes for any channel that did not deliver (empty on full success). The storefront maps each code to a localized message. */
+  warnings: Array<Scalars['String']['output']>;
 };
 
 export type SalesRepContact = {
