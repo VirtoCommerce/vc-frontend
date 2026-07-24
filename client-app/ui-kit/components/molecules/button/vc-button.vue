@@ -248,6 +248,8 @@ defineExpose({
 
   &--disabled {
     $disabled: &;
+
+    @apply cursor-not-allowed;
   }
 
   &--loading {

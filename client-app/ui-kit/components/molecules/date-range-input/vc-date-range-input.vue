@@ -16,7 +16,6 @@
       <VcDateInput
         ref="startInputRef"
         seamless
-        align="center"
         hide-details
         class="vc-date-range-input__segment"
         :model-value="modelValue?.start"
@@ -41,7 +40,6 @@
 
       <VcDateInput
         seamless
-        align="center"
         hide-details
         class="vc-date-range-input__segment"
         :model-value="modelValue?.end"
@@ -82,7 +80,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, useTemplateRef, watch } from "vue";
+import { computed, provide, ref, useTemplateRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import type { VcDateFieldUpdateOnType } from "@/ui-kit/composables";
 
@@ -149,6 +147,10 @@ const startInputRef = useTemplateRef<{ inputElement: HTMLInputElement | null } |
 const startInputElement = computed<HTMLInputElement | null>(() => startInputRef.value?.inputElement ?? null);
 
 const ariaGroupLabel = computed(() => t("ui_kit.date_range_input.aria_label"));
+
+// Auto-size slot buttons (clear + #append) the same way VcInput does for its own decorators.
+const size = computed(() => props.size);
+provide<VcInputContextType>("inputContext", { size });
 
 const startFormatValid = ref(true);
 const endFormatValid = ref(true);
@@ -232,51 +234,50 @@ defineExpose({
 
 <style lang="scss">
 .vc-date-range-input {
+  $error: "";
+  $disabled: "";
+
   --color: var(--vc-input-base-color, theme("colors.primary.500"));
   --focus-color: rgb(from var(--color) r g b / 0.3);
 
   --radius: var(--vc-input-radius, var(--vc-radius, 0.5rem));
 
-  @apply flex flex-col;
-
   &--error {
+    $error: &;
+
     --color: var(--vc-input-error-color, theme("colors.danger.500"));
   }
 
+  &--disabled {
+    $disabled: &;
+  }
+
   &__field {
-    @apply relative flex items-center p-0.5 border border-neutral-400 rounded-[--radius] bg-additional-50;
+    @apply relative flex items-center justify-start p-0.5 border border-neutral-400 rounded-[--radius] bg-additional-50;
 
     &:focus-within {
       @apply ring ring-[--focus-color];
     }
-  }
 
-  &--size--md &__field {
-    @apply h-11 text-base;
-  }
+    #{$error} & {
+      @apply border-[--color] text-[--color];
+    }
 
-  &--size--sm &__field {
-    @apply h-[2.375rem] text-base;
+    #{$disabled} & {
+      @apply bg-neutral-50 cursor-not-allowed;
+    }
   }
 
   &__segment {
-    @apply flex-1 min-w-0;
+    @apply shrink-0 w-auto;
   }
 
   &__separator {
-    @apply shrink-0 px-1 text-neutral-400 select-none;
+    @apply shrink-0 text-neutral-400 select-none;
   }
 
   &__clear {
     @apply shrink-0;
-  }
-
-  &--error &__field {
-    @apply border-[--color] text-[--color];
-  }
-
-  &--disabled &__field {
-    @apply bg-neutral-50 cursor-not-allowed;
   }
 }
 </style>
