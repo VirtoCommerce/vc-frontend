@@ -5,7 +5,8 @@
 
       <div class="mission-card__overlay"></div>
 
-      <VcChip class="mission-card__points" color="primary" variant="solid-light" size="sm" icon="star" rounded>
+      <VcChip class="mission-card__points" color="primary" variant="soft" size="sm" rounded>
+        <VcIcon name="star" variant="solid" />
         {{ $n(view.rewardPoints, "decimal") }} {{ $t("pages.account.missions.card.points") }}
       </VcChip>
 

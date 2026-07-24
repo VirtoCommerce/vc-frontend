@@ -14,7 +14,7 @@
       <!-- Balance banner -->
       <div class="missions-banner missions-banner--light">
         <div class="missions-banner__icon missions-banner__icon--light">
-          <VcIcon name="badge-check" class="fill-primary" :size="28" />
+          <VcIcon name="badge-check" variant="solid" class="fill-primary" :size="28" />
         </div>
 
         <div class="missions-banner__body">
