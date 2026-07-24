@@ -1,11 +1,11 @@
 import { graphqlClient } from "../../../client";
-import queryDocument from "./getOrganizations.graphql";
+import queryDocument from "./getPendingOrganizationInvites.graphql";
 import type { Organization } from "@/core/api/graphql/types";
 
-export type OrganizationFieldsType = Pick<Organization, "id" | "name">;
+export type PendingOrganizationInviteType = Pick<Organization, "id" | "name" | "myStatusInOrganization">;
 
-interface IOrganizationsType {
-  items: OrganizationFieldsType[];
+interface IPendingOrganizationInvitesResult {
+  items: PendingOrganizationInviteType[];
   totalCount: number;
   pageInfo: {
     hasNextPage: boolean;
@@ -13,11 +13,11 @@ interface IOrganizationsType {
   };
 }
 
-interface IGetOrganizationsQuery {
+interface IGetPendingOrganizationInvitesQuery {
   me?: {
     contact?: {
       organizations?: {
-        items: OrganizationFieldsType[];
+        items: PendingOrganizationInviteType[];
         totalCount: number;
         pageInfo: {
           hasNextPage: boolean;
@@ -28,14 +28,12 @@ interface IGetOrganizationsQuery {
   };
 }
 
-export async function getOrganizations(payload: {
+export async function getPendingOrganizationInvites(payload: {
   after?: string;
   first?: number;
-  sort?: string;
-  searchPhrase?: string;
   statuses?: string[];
-}): Promise<IOrganizationsType> {
-  const { data } = await graphqlClient.query<IGetOrganizationsQuery>({
+}): Promise<IPendingOrganizationInvitesResult> {
+  const { data } = await graphqlClient.query<IGetPendingOrganizationInvitesQuery>({
     query: queryDocument,
     variables: payload,
   });

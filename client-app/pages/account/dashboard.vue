@@ -4,6 +4,8 @@
       {{ $t("pages.account.dashboard.title") }}
     </VcTypography>
 
+    <PendingInvitesWidget />
+
     <VcWidget :title="$t('pages.account.dashboard.last_orders_card.title')">
       <template #append>
         <VcButton class="lg:!hidden" :to="{ name: 'Orders' }" variant="outline" size="xs">
@@ -97,7 +99,7 @@ import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
-import { OrdersTable, useOrderNavigation, useUserOrders } from "@/shared/account";
+import { OrdersTable, PendingInvitesWidget, useOrderNavigation, useUserOrders } from "@/shared/account";
 
 const { t } = useI18n();
 

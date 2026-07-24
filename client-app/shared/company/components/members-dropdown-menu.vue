@@ -13,33 +13,49 @@
 
     <template #content>
       <template v-if="canEditOrganization">
-        <VcMenuItem color="secondary" @click="$emit('edit')">
-          <VcIcon name="edit" />
+        <template v-if="contactStatus === ContactStatus.Invited">
+          <VcMenuItem color="secondary" @click="$emit('resendInvite')">
+            <VcIcon name="reset" />
 
-          <span>{{ $t("pages.company.members.buttons.edit_role") }}</span>
-        </VcMenuItem>
+            <span>{{ $t("pages.company.members.buttons.resend_invite") }}</span>
+          </VcMenuItem>
 
-        <VcMenuItem
-          v-if="contactStatus === ContactStatus.Locked"
-          color="secondary"
-          @click="$emit('lockOrUnlock', true)"
-        >
-          <VcIcon name="check" />
+          <VcMenuItem color="secondary" @click="$emit('revokeInvite')">
+            <VcIcon name="delete-2" class="fill-danger" />
 
-          <span>{{ $t("pages.company.members.buttons.unblock_user") }}</span>
-        </VcMenuItem>
+            <span>{{ $t("pages.company.members.buttons.revoke_invite") }}</span>
+          </VcMenuItem>
+        </template>
 
-        <VcMenuItem v-else color="secondary" @click="$emit('lockOrUnlock')">
-          <VcIcon name="ban" />
+        <template v-else>
+          <VcMenuItem color="secondary" @click="$emit('edit')">
+            <VcIcon name="edit" />
 
-          <span>{{ $t("pages.company.members.buttons.block_user") }}</span>
-        </VcMenuItem>
+            <span>{{ $t("pages.company.members.buttons.edit_role") }}</span>
+          </VcMenuItem>
 
-        <VcMenuItem color="secondary" @click="$emit('remove')">
-          <VcIcon name="delete-2" class="text-danger" />
+          <VcMenuItem
+            v-if="contactStatus === ContactStatus.Locked"
+            color="secondary"
+            @click="$emit('lockOrUnlock', true)"
+          >
+            <VcIcon name="check" />
 
-          <span>{{ $t("pages.company.members.buttons.delete") }}</span>
-        </VcMenuItem>
+            <span>{{ $t("pages.company.members.buttons.unblock_user") }}</span>
+          </VcMenuItem>
+
+          <VcMenuItem v-else color="secondary" @click="$emit('lockOrUnlock')">
+            <VcIcon name="ban" />
+
+            <span>{{ $t("pages.company.members.buttons.block_user") }}</span>
+          </VcMenuItem>
+
+          <VcMenuItem color="secondary" @click="$emit('remove')">
+            <VcIcon name="delete-2" class="fill-danger" />
+
+            <span>{{ $t("pages.company.members.buttons.delete") }}</span>
+          </VcMenuItem>
+        </template>
       </template>
 
       <VcMenuItem v-if="canLoginOnBehalf" color="secondary" @click="$emit('loginOnBehalf')">
@@ -59,6 +75,8 @@ interface IEmit {
   (event: "remove"): void;
   (event: "lockOrUnlock", isUnlock?: boolean): void;
   (event: "loginOnBehalf"): void;
+  (event: "revokeInvite"): void;
+  (event: "resendInvite"): void;
 }
 
 export interface IProps {

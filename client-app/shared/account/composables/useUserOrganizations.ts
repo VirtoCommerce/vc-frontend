@@ -2,13 +2,14 @@ import { createGlobalState } from "@vueuse/core";
 import { computed, ref, readonly, onMounted } from "vue";
 import { getOrganizations } from "@/core/api/graphql/account";
 import { Logger } from "@/core/utilities";
-import type { OrganizationFieldsFragment } from "@/core/api/graphql/types";
+import { ContactStatus } from "@/shared/company/types";
+import type { OrganizationFieldsType } from "@/core/api/graphql/account";
 
 const ORGANIZATIONS_PER_PAGE = 30;
 const SEARCH_THRESHOLD = 10;
 
 function _useUserOrganizations() {
-  const organizations = ref<OrganizationFieldsFragment[]>([]);
+  const organizations = ref<OrganizationFieldsType[]>([]);
   const loading = ref(false);
   const hasNextPage = ref(true);
   const endCursor = ref<string | undefined>(undefined);
@@ -46,6 +47,7 @@ function _useUserOrganizations() {
         first: ORGANIZATIONS_PER_PAGE,
         sort: "name:asc",
         searchPhrase: formattedSearchPhrase.value,
+        statuses: [ContactStatus.Approved],
       });
 
       organizations.value.push(...result.items);

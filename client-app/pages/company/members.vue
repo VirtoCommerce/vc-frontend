@@ -255,13 +255,13 @@
               </td>
 
               <td class="px-4 py-3 text-center">
-                <MemberStatus :status="contact.status" />
+                <MemberStatus :status="getDisplayStatus(contact)" />
               </td>
 
               <td v-if="canManageMembers" class="px-5 text-right">
                 <MembersDropdownMenu
                   v-if="canShowDropdownFor(contact)"
-                  :contact-status="contact.isLockedInOrganization ? ContactStatus.Locked : contact.status"
+                  :contact-status="getDisplayStatus(contact)"
                   :can-edit-organization="userCanEditOrganization"
                   :can-login-on-behalf="canLoginOnBehalfOf(contact)"
                   class="inline-block"
@@ -269,6 +269,8 @@
                   @remove="openDeleteModal(contact)"
                   @lock-or-unlock="openLockOrUnlockModal(contact, $event)"
                   @login-on-behalf="openLoginOnBehalfModal(contact)"
+                  @revoke-invite="openRevokeInviteModal(contact)"
+                  @resend-invite="handleResendInvite(contact)"
                 />
               </td>
             </tr>
@@ -287,13 +289,13 @@
               </div>
 
               <div class="py-4.5 pr-3">
-                <MemberStatus :status="item.status" />
+                <MemberStatus :status="getDisplayStatus(item)" />
               </div>
 
               <div v-if="canManageMembers" class="w-7 flex-none">
                 <MembersDropdownMenu
                   v-if="canShowDropdownFor(item)"
-                  :contact-status="item.isLockedInOrganization ? ContactStatus.Locked : item.status"
+                  :contact-status="getDisplayStatus(item)"
                   :can-edit-organization="userCanEditOrganization"
                   :can-login-on-behalf="canLoginOnBehalfOf(item)"
                   placement="left-start"
@@ -301,6 +303,8 @@
                   @remove="openDeleteModal(item)"
                   @lock-or-unlock="openLockOrUnlockModal(item, $event)"
                   @login-on-behalf="openLoginOnBehalfModal(item)"
+                  @revoke-invite="openRevokeInviteModal(item)"
+                  @resend-invite="handleResendInvite(item)"
                 />
               </div>
             </div>
@@ -362,11 +366,14 @@ const {
   keyword,
   filter,
   roleIds,
+  statuses,
   contacts,
   fetchContacts,
   lockContact,
   unlockContact,
   removeMemberFromOrganization,
+  revokeInvite,
+  resendInvite,
   changeContactOrganizationRole,
 } = useOrganizationContacts(organization.value!.id);
 const {
@@ -406,6 +413,10 @@ function canLoginOnBehalfOf(contact: ExtendedContactType): boolean {
 
 function canShowDropdownFor(contact: ExtendedContactType): boolean {
   return contact.id !== user.value.memberId && (userCanEditOrganization.value || canLoginOnBehalfOf(contact));
+}
+
+function getDisplayStatus(contact: ExtendedContactType): string | undefined {
+  return contact.isLockedInOrganization ? ContactStatus.Locked : (contact.statusInOrganization ?? contact.status);
 }
 
 const columns = computed<VcTableColumnType[]>(() => {
@@ -471,8 +482,12 @@ async function resetKeyword() {
 function syncFilterFromFacets() {
   const roleFacet = appliedFacets.value.find((f) => f.paramName === "roleId");
   roleIds.value = roleFacet?.values.filter((v) => v.selected).map((v) => v.value) ?? [];
-  const nonRoleFacets = appliedFacets.value.filter((f) => f.paramName !== "roleId");
-  filter.value = getFilterExpressionFromFacets(nonRoleFacets);
+
+  const statusFacet = appliedFacets.value.find((f) => f.paramName === "status");
+  statuses.value = statusFacet?.values.filter((v) => v.selected).map((v) => v.value) ?? [];
+
+  const remainingFacets = appliedFacets.value.filter((f) => f.paramName !== "roleId" && f.paramName !== "status");
+  filter.value = getFilterExpressionFromFacets(remainingFacets);
 }
 
 async function applyFilters() {
@@ -493,6 +508,7 @@ async function resetFilters() {
   resetFacets();
   filter.value = "";
   roleIds.value = [];
+  statuses.value = [];
   page.value = 1;
   await fetchContacts();
 }
@@ -584,6 +600,50 @@ function openDeleteModal(contact: ExtendedContactType): void {
       },
     },
   });
+}
+
+function openRevokeInviteModal(contact: ExtendedContactType): void {
+  const closeRevokeInviteModal = openModal({
+    component: "VcConfirmationModal",
+    props: {
+      variant: "danger",
+      loading: contactsLoading,
+      title: t("shared.company.revoke_invite_modal.title"),
+      text: t("shared.company.revoke_invite_modal.text", {
+        name: contact.extended.emails[0] ?? contact.fullName,
+      }),
+      async onConfirm() {
+        try {
+          await revokeInvite(contact.id);
+        } catch {
+          notifications.error({ duration: 5000, single: true, text: t("common.messages.invite_revoke_failed") });
+        }
+        closeRevokeInviteModal();
+      },
+    },
+  });
+}
+
+async function handleResendInvite(contact: ExtendedContactType): Promise<void> {
+  const notification: INotification = {
+    duration: 5000,
+    single: true,
+  };
+
+  try {
+    const result = await resendInvite({
+      memberId: contact.id,
+      urlSuffix: router.resolve({ name: "ConfirmInvitation" }).path,
+    });
+
+    if (result.succeeded) {
+      notifications.success({ ...notification, text: t("pages.company.members.notifications.invite_resent") });
+    } else {
+      notifications.error({ ...notification, text: t("common.messages.invite_resend_failed") });
+    }
+  } catch {
+    notifications.error({ ...notification, text: t("common.messages.invite_resend_failed") });
+  }
 }
 
 function openEditCustomerRoleModal(contact: ExtendedContactType): void {
