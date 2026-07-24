@@ -117,7 +117,7 @@
 
     <template #actions="{ close }">
       <span class="sku-mission-modal__reward" :class="{ 'sku-mission-modal__reward--met': missionCompleted }">
-        <VcIcon name="star" size="xs" class="text-primary" />
+        <VcIcon name="star" size="xs" variant="solid" class="text-primary" />
 
         {{
           missionCompleted
