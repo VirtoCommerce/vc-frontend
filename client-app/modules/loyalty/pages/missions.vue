@@ -14,7 +14,7 @@
       <!-- Balance banner -->
       <div class="missions-banner missions-banner--light">
         <div class="missions-banner__icon missions-banner__icon--light">
-          <VcIcon name="badge-check" variant="solid" class="fill-primary" :size="28" />
+          <VcIcon name="badge-check" variant="solid" class="text-primary" :size="28" />
         </div>
 
         <div class="missions-banner__body">
@@ -41,7 +41,7 @@
       <!-- Redeem banner -->
       <div class="missions-banner missions-banner--dark">
         <div class="missions-banner__icon missions-banner__icon--dark">
-          <VcIcon name="gift" class="fill-primary" :size="28" />
+          <VcIcon name="gift" class="text-primary" variant="solid" :size="28" />
         </div>
 
         <div class="missions-banner__body">
@@ -56,7 +56,7 @@
 
         <router-link v-if="false" :to="{ name: 'Catalog' }" class="missions-banner__link missions-banner__link--accent">
           {{ $t("pages.account.missions.redeem_banner.catalog") }}
-          <VcIcon name="chevron-right" class="fill-primary" size="xs" />
+          <VcIcon name="chevron-right" class="text-primary" size="xs" />
         </router-link>
       </div>
     </div>
