@@ -75,7 +75,6 @@
       "channels_label": "送信方法",
       "email_label": "メール",
       "push_label": "プッシュ通知",
-      "channel_required_hint": "少なくとも1つのチャネルを選択してください。",
       "send_button": "送信",
       "cancel_button": "キャンセル",
       "success_text": "メッセージを送信しました。",

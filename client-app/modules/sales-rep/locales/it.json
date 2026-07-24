@@ -75,7 +75,6 @@
       "channels_label": "Invia tramite",
       "email_label": "Email",
       "push_label": "Notifica push",
-      "channel_required_hint": "Seleziona almeno un canale.",
       "send_button": "Invia",
       "cancel_button": "Annulla",
       "success_text": "Il tuo messaggio è stato inviato.",

@@ -75,7 +75,6 @@
       "channels_label": "Skicka via",
       "email_label": "E-post",
       "push_label": "Push-avisering",
-      "channel_required_hint": "Välj minst en kanal.",
       "send_button": "Skicka",
       "cancel_button": "Avbryt",
       "success_text": "Ditt meddelande har skickats.",

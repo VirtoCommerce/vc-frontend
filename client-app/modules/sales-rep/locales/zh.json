@@ -75,7 +75,6 @@
       "channels_label": "发送方式",
       "email_label": "电子邮件",
       "push_label": "推送通知",
-      "channel_required_hint": "请至少选择一个渠道。",
       "send_button": "发送",
       "cancel_button": "取消",
       "success_text": "您的消息已发送。",

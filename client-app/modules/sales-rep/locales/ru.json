@@ -75,7 +75,6 @@
       "channels_label": "Отправить через",
       "email_label": "Эл. почта",
       "push_label": "Push-уведомление",
-      "channel_required_hint": "Выберите хотя бы один канал.",
       "send_button": "Отправить",
       "cancel_button": "Отмена",
       "success_text": "Ваше сообщение отправлено.",

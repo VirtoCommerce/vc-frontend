@@ -34,9 +34,9 @@
       />
 
       <fieldset>
-        <legend class="customer-communication-modal__channels-label">
+        <VcLabel required class="customer-communication-modal__channels-label">
           {{ t("sales_rep.communication.channels_label") }}
-        </legend>
+        </VcLabel>
 
         <div class="customer-communication-modal__channels">
           <VcCheckbox v-model="sendEmail" :disabled="loading">{{
@@ -45,11 +45,6 @@
 
           <VcCheckbox v-model="sendPush" :disabled="loading">{{ t("sales_rep.communication.push_label") }}</VcCheckbox>
         </div>
-
-        <!-- Always rendered so selecting a channel doesn't resize the modal (the hint reserves its space). -->
-        <p class="customer-communication-modal__hint">
-          {{ t("sales_rep.communication.channel_required_hint") }}
-        </p>
       </fieldset>
     </form>
 
@@ -154,15 +149,11 @@ const send = handleSubmit(async (data) => {
   }
 
   &__channels-label {
-    @apply mb-2 text-sm font-medium text-neutral-900;
+    @apply mb-2;
   }
 
   &__channels {
     @apply flex flex-col gap-2;
-  }
-
-  &__hint {
-    @apply mt-1.5 text-xs text-neutral-500;
   }
 }
 </style>

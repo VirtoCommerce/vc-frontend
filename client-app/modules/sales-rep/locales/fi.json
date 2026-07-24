@@ -75,7 +75,6 @@
       "channels_label": "Lähetystapa",
       "email_label": "Sähköposti",
       "push_label": "Push-ilmoitus",
-      "channel_required_hint": "Valitse vähintään yksi kanava.",
       "send_button": "Lähetä",
       "cancel_button": "Peruuta",
       "success_text": "Viestisi on lähetetty.",

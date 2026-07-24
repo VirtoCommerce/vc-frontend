@@ -75,7 +75,6 @@
       "channels_label": "Send via",
       "email_label": "E-post",
       "push_label": "Push-varsel",
-      "channel_required_hint": "Velg minst én kanal.",
       "send_button": "Send",
       "cancel_button": "Avbryt",
       "success_text": "Meldingen din er sendt.",
