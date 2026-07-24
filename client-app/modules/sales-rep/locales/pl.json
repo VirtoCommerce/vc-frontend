@@ -34,22 +34,26 @@
       }
     },
     "hub": {
-      "title": "Centrum przedstawiciela handlowego"
+      "title": "Centrum przedstawiciela handlowego",
+      "dashboard": {
+        "navigation": {
+          "link": "Panel"
+        },
+        "page": {
+          "title": "Panel"
+        },
+        "widgets": {
+          "orders_on_hold": "Wstrzymane zamówienia",
+          "active_projects": "Aktywne projekty",
+          "orders_placed_mtd": "Zamówienia od początku miesiąca",
+          "my_customers": "Moi klienci"
+        }
+      }
     },
     "customer_profile": {
       "loading": "Ładowanie…",
       "not_found": "Nie znaleziono klienta lub nie należy do Twoich klientów.",
       "back_to_customers": "Powrót do moich klientów",
-      "orders": {
-        "title": "Zamówienia",
-        "empty": "Brak zamówień",
-        "number": "Nr zamówienia",
-        "date": "Data",
-        "items": "Pozycje",
-        "status": "Status",
-        "total": "Razem",
-        "view_all": "Wszystkie zamówienia"
-      },
       "widgets": {
         "ytd_purchases": "Zakupy od początku roku",
         "open_balance": "Saldo otwarte",
@@ -64,6 +68,17 @@
         "account_type": "Typ konta",
         "ship_to": "Adres dostawy"
       }
+    },
+    "orders": {
+      "title": "Ostatnie zamówienia",
+      "view_all": "Wszystkie zamówienia",
+      "empty": "Brak zamówień",
+      "number": "Nr zamówienia",
+      "customer": "Klient",
+      "date": "Data",
+      "items": "Pozycje",
+      "status": "Status",
+      "total": "Razem"
     }
   }
 }

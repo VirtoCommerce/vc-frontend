@@ -34,22 +34,26 @@
       }
     },
     "hub": {
-      "title": "销售代表中心"
+      "title": "销售代表中心",
+      "dashboard": {
+        "navigation": {
+          "link": "仪表板"
+        },
+        "page": {
+          "title": "仪表板"
+        },
+        "widgets": {
+          "orders_on_hold": "暂挂订单",
+          "active_projects": "进行中的项目",
+          "orders_placed_mtd": "本月至今下单",
+          "my_customers": "我的客户"
+        }
+      }
     },
     "customer_profile": {
       "loading": "加载中…",
       "not_found": "未找到客户，或该客户不在您的客户列表中。",
       "back_to_customers": "返回我的客户",
-      "orders": {
-        "title": "订单",
-        "empty": "暂无订单",
-        "number": "订单号",
-        "date": "日期",
-        "items": "商品",
-        "status": "状态",
-        "total": "合计",
-        "view_all": "全部订单"
-      },
       "widgets": {
         "ytd_purchases": "年初至今采购额",
         "open_balance": "未结余额",
@@ -64,6 +68,17 @@
         "account_type": "账户类型",
         "ship_to": "收货地址"
       }
+    },
+    "orders": {
+      "title": "最近订单",
+      "view_all": "全部订单",
+      "empty": "暂无订单",
+      "number": "订单号",
+      "customer": "客户",
+      "date": "日期",
+      "items": "商品",
+      "status": "状态",
+      "total": "合计"
     }
   }
 }
