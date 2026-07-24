@@ -46,6 +46,7 @@ import ProductBlocks from "@/shared/catalog/components/product";
 import { useNotifications } from "@/shared/notification";
 import { templateBlocks } from "@/shared/static-content";
 import { uiKit } from "@/ui-kit";
+import { setDefaultIconVariant } from "@/ui-kit/utilities";
 import { getLocales as getUIKitLocales } from "@/ui-kit/utilities/getLocales";
 import App from "./App.vue";
 import type { PageContextResponseType } from "./core/api/graphql/types";
@@ -229,6 +230,9 @@ export default async () => {
   setWhiteLabelingSettings(whiteLabelingSetting);
   await addPresetToThemeContext(themePresetName.value ?? themeContext.value.defaultPresetName);
   setActivePreset(themeContext.value.activePresetName ?? themeContext.value.defaultPresetName);
+
+  // Transitional: `icon_variant` eases client migration to outline; slated for removal (outline-only default).
+  setDefaultIconVariant(themeContext.value.settings.icon_variant ?? "outline");
 
   if (isAuthenticated.value || themeContext.value.storeSettings.anonymousUsersAllowed) {
     void fetchCatalogMenu();

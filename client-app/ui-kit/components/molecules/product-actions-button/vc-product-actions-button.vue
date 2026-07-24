@@ -62,6 +62,7 @@ const onClick = () => {
   $colors: primary, secondary, success, info, neutral, warning, danger, accent;
   $active: "";
   $loading: "";
+  $disabled: "";
   $loaderIcon: "";
 
   // Ensure minimum 24x24px touch target (p-1.5 = 6px each side, with icon gives ~24px)
@@ -74,6 +75,8 @@ const onClick = () => {
 
   &:disabled,
   &--disabled {
+    $disabled: &;
+
     @apply text-neutral-300 cursor-not-allowed;
   }
 
@@ -107,7 +110,11 @@ const onClick = () => {
   &:not(#{$active}) {
     --focus-color: var(--color-neutral-500);
 
-    @apply text-neutral-400;
+    @apply text-neutral-500;
+
+    &:hover:not(#{$disabled}) {
+      @apply text-neutral-700;
+    }
 
     #{$loaderIcon} {
       --loader-border: var(--color-neutral-200);
