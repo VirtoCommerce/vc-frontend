@@ -2752,6 +2752,23 @@ export type InputSaveSearchQueryType = {
   storeId: Scalars['String']['input'];
 };
 
+export type InputSendCustomerCommunicationType = {
+  /** Optional culture for localizing the email template (e.g. "en-US"). */
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  /** The Rep's message (required, max 1000 chars). May contain a URL. */
+  message: Scalars['String']['input'];
+  /** Customer organization whose members receive the message. */
+  organizationId: Scalars['String']['input'];
+  /** Send an email to the recipients. */
+  sendEmail: Scalars['Boolean']['input'];
+  /** Send an in-store push notification to the recipients. */
+  sendPush: Scalars['Boolean']['input'];
+  /** Store the message is sent on behalf of (scopes the email template and sender address). */
+  storeId: Scalars['String']['input'];
+  /** Optional message title/heading. */
+  title?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type InputSendVerifyEmailType = {
   email?: InputMaybe<Scalars['String']['input']>;
   /** Notification language code */
@@ -3532,6 +3549,7 @@ export type Mutations = {
   selectAllCartItems?: Maybe<CartType>;
   selectCartConfigurationItems?: Maybe<CartType>;
   selectCartItems?: Maybe<CartType>;
+  sendCustomerCommunication?: Maybe<Scalars['Boolean']['output']>;
   sendPasswordResetEmail?: Maybe<Scalars['Boolean']['output']>;
   sendVerifyEmail?: Maybe<Scalars['Boolean']['output']>;
   submitQuoteRequest?: Maybe<QuoteType>;
@@ -4067,6 +4085,11 @@ export type MutationsSelectCartConfigurationItemsArgs = {
 
 export type MutationsSelectCartItemsArgs = {
   command?: InputMaybe<InputChangeCartItemsSelectedType>;
+};
+
+
+export type MutationsSendCustomerCommunicationArgs = {
+  command: InputSendCustomerCommunicationType;
 };
 
 

@@ -34,22 +34,26 @@
       }
     },
     "hub": {
-      "title": "営業担当ハブ"
+      "title": "営業担当ハブ",
+      "dashboard": {
+        "navigation": {
+          "link": "ダッシュボード"
+        },
+        "page": {
+          "title": "ダッシュボード"
+        },
+        "widgets": {
+          "orders_on_hold": "保留中の注文",
+          "active_projects": "進行中のプロジェクト",
+          "orders_placed_mtd": "今月の注文",
+          "my_customers": "担当顧客"
+        }
+      }
     },
     "customer_profile": {
       "loading": "読み込み中…",
       "not_found": "顧客が見つからないか、担当顧客に含まれていません。",
       "back_to_customers": "担当顧客に戻る",
-      "orders": {
-        "title": "注文",
-        "empty": "注文はまだありません",
-        "number": "注文番号",
-        "date": "日付",
-        "items": "商品数",
-        "status": "ステータス",
-        "total": "合計",
-        "view_all": "すべての注文"
-      },
       "widgets": {
         "ytd_purchases": "年初来の購入額",
         "open_balance": "未払い残高",
@@ -64,6 +68,17 @@
         "account_type": "アカウントタイプ",
         "ship_to": "配送先"
       }
+    },
+    "orders": {
+      "title": "最近の注文",
+      "view_all": "すべての注文",
+      "empty": "注文はまだありません",
+      "number": "注文番号",
+      "customer": "顧客",
+      "date": "日付",
+      "items": "商品数",
+      "status": "ステータス",
+      "total": "合計"
     }
   }
 }

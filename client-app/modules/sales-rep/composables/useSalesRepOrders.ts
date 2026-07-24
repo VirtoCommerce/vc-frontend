@@ -3,17 +3,27 @@ import { computed, toValue } from "vue";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { SalesRepOrdersDocument } from "../api/graphql/types";
-import { CUSTOMER_PROFILE_ORDERS_LIMIT } from "../constants";
-import type { SalesRepCustomerOrderType } from "../types/customer-profile";
-import type { MaybeRefOrGetter } from "vue";
+import { ORDERS_DEFAULT_LIMIT } from "../constants";
+import type { SalesRepOrderRowType } from "../types";
+import type { Ref } from "vue";
 
-export function useSalesRepCustomerOrders(organizationId: MaybeRefOrGetter<string>) {
+type UseSalesRepOrdersOptionsType = {
+  // Scope to one customer; omit for cross-customer orders (the hub dashboard).
+  // Expanded (not MaybeRefOrGetter<… | undefined>) so the `?` isn't a redundant second
+  // "undefined" — Sonar S4782; getters/refs still yield undefined (see useProducts.ts).
+  organizationId?: string | Ref<string | undefined> | (() => string | undefined);
+  first?: number | Ref<number | undefined> | (() => number | undefined);
+};
+
+export function useSalesRepOrders(options: UseSalesRepOrdersOptionsType = {}) {
   const variables = computed(() => ({
-    organizationId: toValue(organizationId),
+    organizationId: toValue(options.organizationId),
     // Scope to the rep's store so other-store orders don't leak in.
     storeId: globals.storeId,
+    // Localize statusDisplayValue to the active culture.
+    cultureName: globals.cultureName,
     // Most recent N; the full list lives on the "All orders" page.
-    first: CUSTOMER_PROFILE_ORDERS_LIMIT,
+    first: toValue(options.first) ?? ORDERS_DEFAULT_LIMIT,
     sort: "createdDate:desc",
   }));
 
@@ -24,15 +34,18 @@ export function useSalesRepCustomerOrders(organizationId: MaybeRefOrGetter<strin
     Logger.error("[sales-rep] salesRepOrders failed:", error);
   });
 
-  const orders = computed<SalesRepCustomerOrderType[]>(() =>
+  const orders = computed<SalesRepOrderRowType[]>(() =>
     (result.value?.salesRepOrders?.items ?? [])
       // Skip null connection items so one bad row doesn't blank the list.
       .filter((order): order is NonNullable<typeof order> => order != null)
       .map((order) => ({
         id: order.id,
         number: order.number ?? "",
+        organizationId: order.organizationId ?? "",
+        organizationName: order.organizationName ?? "",
         createdDate: order.createdDate,
         status: order.status ?? "",
+        statusDisplayValue: order.statusDisplayValue ?? "",
         itemsCount: order.itemsCount,
         total: order.total.formattedAmount,
       })),
