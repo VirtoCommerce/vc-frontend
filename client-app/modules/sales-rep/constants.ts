@@ -27,6 +27,13 @@ export const SALES_REP_ACCESS_PERMISSION = "sales-rep:access";
 // section, not a URL segment).
 export const CUSTOMER_PROFILE_ROUTE_NAME = "SalesRepCustomerProfile";
 export const CUSTOMER_PROFILE_ROUTE_SEGMENT = `${MY_CUSTOMERS_ROUTE_SEGMENT}/:organizationId`;
-// Recent orders shown on the profile; the full paginated list lives on a separate "All orders"
-// page (future story) reached via the block footer link.
-export const CUSTOMER_PROFILE_ORDERS_LIMIT = 7;
+// Default page size for the shared sales-rep Orders widget (customer profile + hub dashboard);
+// callers may override via the widget's `limit` prop. The full paginated list lives on a
+// separate "All orders" page (future story).
+export const ORDERS_DEFAULT_LIMIT = 7;
+
+// "Dashboard" — the Sales Rep hub landing page (VCST-5485). Distinct route name from the account
+// "Dashboard" (they share the label but live under different parents: /company vs /account).
+export const DASHBOARD_ROUTE_NAME = "SalesRepDashboard";
+export const DASHBOARD_ROUTE_SEGMENT = "dashboard";
+export const DASHBOARD_NAV_LINK_ID = "sales-rep-dashboard";
