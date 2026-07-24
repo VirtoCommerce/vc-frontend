@@ -32,7 +32,6 @@ import { useI18n } from "vue-i18n";
 import { usePageHead, useThemeContext } from "@/core/composables";
 import { SignInForm } from "@/shared/account";
 
-// eslint-disable-next-line sonarjs/no-hardcoded-passwords
 const PASSWORD_AUTHENTICATION_TYPE = "Password";
 
 const IdentityProviders = defineAsyncComponent(() => import("@/shared/sign-in/components/identity-providers.vue"));

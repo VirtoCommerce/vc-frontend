@@ -138,7 +138,7 @@
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-no-unsanitized": "^4.1.5",
     "eslint-plugin-prettier": "^5.5.6",
-    "eslint-plugin-sonarjs": "^3.0.7",
+    "eslint-plugin-sonarjs": "^4.2.0",
     "eslint-plugin-sort-export-all": "^2.1.0",
     "eslint-plugin-sort-exports": "^0.9.1",
     "eslint-plugin-storybook": "9.1.20",
@@ -148,8 +148,8 @@
     "glob": "^13.0.6",
     "globals": "^17.7.0",
     "husky": "^9.1.7",
-    "jsdom": "^28.1.0",
-    "lint-staged": "^16.4.0",
+    "jsdom": "^29.1.1",
+    "lint-staged": "^17.1.1",
     "postcss": "^8.5.20",
     "postcss-import": "^16.1.1",
     "prettier": "^3.9.5",
@@ -183,7 +183,7 @@
     ]
   },
   "engines": {
-    "node": ">=22.12.0 <23.0.0"
+    "node": ">=22.22.1 <23.0.0"
   },
   "packageManager": "yarn@4.7.0"
 }
