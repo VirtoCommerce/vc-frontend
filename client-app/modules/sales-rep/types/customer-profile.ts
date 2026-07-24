@@ -9,12 +9,3 @@ export type SalesRepCustomerProfileType = {
   shipTo: string;
   primaryContactName: string;
 };
-
-export type SalesRepCustomerOrderType = {
-  id: string;
-  number: string;
-  createdDate: string;
-  status: string;
-  itemsCount: number;
-  total: string;
-};

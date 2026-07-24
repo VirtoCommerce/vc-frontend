@@ -1,5 +1,5 @@
 <template>
-  <VcWidget :title="t('sales_rep.customer_profile.info.title')" size="lg" class="customer-profile-info">
+  <VcWidget :title="t('sales_rep.customer_profile.info.title')" size="md" class="customer-profile-info">
     <!-- Read-only per design (no edit action). -->
     <VcEmptyView v-if="!rows.length && !loading" :text="t('sales_rep.customer_profile.info.empty')" icon="user" />
 
@@ -64,15 +64,6 @@ const rows = computed(() => {
 
 <style lang="scss">
 .customer-profile-info {
-  // Header divider (size=lg drops the built-in one).
-  .vc-widget__header-container {
-    @apply border-b border-neutral-200;
-  }
-
-  .vc-widget__slot {
-    @apply px-5 py-1;
-  }
-
   &__row {
     @apply flex items-baseline justify-between gap-4 border-b border-neutral-100 py-3 last:border-b-0;
   }

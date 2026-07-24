@@ -34,22 +34,26 @@
       }
     },
     "hub": {
-      "title": "Central do representante de vendas"
+      "title": "Central do representante de vendas",
+      "dashboard": {
+        "navigation": {
+          "link": "Painel"
+        },
+        "page": {
+          "title": "Painel"
+        },
+        "widgets": {
+          "orders_on_hold": "Pedidos em espera",
+          "active_projects": "Projetos ativos",
+          "orders_placed_mtd": "Pedidos no mês atual",
+          "my_customers": "Meus clientes"
+        }
+      }
     },
     "customer_profile": {
       "loading": "Carregando…",
       "not_found": "Cliente não encontrado ou não está nos seus clientes.",
       "back_to_customers": "Voltar aos meus clientes",
-      "orders": {
-        "title": "Pedidos",
-        "empty": "Ainda não há pedidos",
-        "number": "N.º do pedido",
-        "date": "Data",
-        "items": "Itens",
-        "status": "Status",
-        "total": "Total",
-        "view_all": "Todos os pedidos"
-      },
       "widgets": {
         "ytd_purchases": "Compras no ano até agora",
         "open_balance": "Saldo em aberto",
@@ -64,6 +68,17 @@
         "account_type": "Tipo de conta",
         "ship_to": "Enviar para"
       }
+    },
+    "orders": {
+      "title": "Pedidos recentes",
+      "view_all": "Todos os pedidos",
+      "empty": "Ainda não há pedidos",
+      "number": "N.º do pedido",
+      "customer": "Cliente",
+      "date": "Data",
+      "items": "Itens",
+      "status": "Status",
+      "total": "Total"
     }
   }
 }
