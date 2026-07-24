@@ -170,7 +170,7 @@ onMounted(async () => {
   }
 
   &__link {
-    @apply ml-auto flex shrink-0 items-center gap-1 text-sm font-bold;
+    @apply ms-auto flex shrink-0 items-center gap-1 text-sm font-bold;
 
     &--default {
       @apply text-[--link-color] hover:text-[--link-hover-color];

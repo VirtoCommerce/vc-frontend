@@ -18,7 +18,7 @@
 
     <div class="mission-card__body">
       <div class="mission-card__meta">
-        <span class="mission-card__dot" :class="`mission-card__dot--${view.dateSeverity}`"></span>
+        <VcBadge :color="view.dateSeverity" />
 
         <span v-if="view.dateLabel" class="mission-card__days">{{ view.dateLabel }}</span>
       </div>
@@ -86,7 +86,7 @@ function openMission(): void {
 
 <style lang="scss">
 .mission-card {
-  @apply flex flex-col overflow-hidden rounded-lg border border-neutral-200 bg-additional-50 shadow-sm;
+  @apply flex flex-col overflow-hidden rounded-[--vc-radius] border border-neutral-200 bg-additional-50 shadow-sm;
 
   &__banner {
     @apply relative h-36 shrink-0 bg-secondary-800;
@@ -126,22 +126,6 @@ function openMission(): void {
     @apply mb-3 flex items-center gap-2;
   }
 
-  &__dot {
-    @apply size-2.5 shrink-0 rounded-full;
-
-    &--safe {
-      @apply bg-success-500;
-    }
-
-    &--warning {
-      @apply bg-warning-500;
-    }
-
-    &--danger {
-      @apply bg-danger-500;
-    }
-  }
-
   &__days {
     @apply text-sm font-bold text-neutral-600;
   }
@@ -163,7 +147,7 @@ function openMission(): void {
   }
 
   &__percent {
-    @apply min-w-10 text-right text-sm font-black text-neutral-700;
+    @apply min-w-10 text-end text-sm font-black text-neutral-700;
   }
 
   &__title {

@@ -5,33 +5,34 @@
     max-width="42rem"
     is-mobile-fullscreen
     dividers
-    test-id="mission-details-modal"
+    test-id="sku-mission-modal"
   >
-    <div class="mission-details">
+    <div class="sku-mission-modal">
       <!-- Meta -->
-      <div class="mission-details__meta">
+      <div class="sku-mission-modal__meta">
         <VcChip color="primary" variant="solid-light" size="sm" icon="star" rounded>
           {{ $n(view.rewardPoints, "decimal") }} {{ $t("pages.account.missions.card.points") }}
         </VcChip>
 
-        <span class="mission-details__days">
-          <span class="mission-details__dot" :class="`mission-details__dot--${view.dateSeverity}`"></span>
+        <span class="sku-mission-modal__days">
+          <VcBadge :color="view.dateSeverity" />
+
           {{ view.dateLabel }}
         </span>
       </div>
 
-      <p v-if="mission.description" class="mission-details__description">
+      <p v-if="mission.description" class="sku-mission-modal__description">
         {{ mission.description }}
       </p>
 
       <!-- Products -->
-      <ul class="mission-details__items">
-        <li v-for="row in rows" :key="row.id" class="mission-details__item">
-          <VcImage class="mission-details__image" :src="row.image" :alt="row.name" lazy />
+      <ul class="sku-mission-modal__items">
+        <li v-for="row in rows" :key="row.id" class="sku-mission-modal__item">
+          <VcImage class="sku-mission-modal__image" :src="row.image" :alt="row.name" lazy />
 
-          <div class="mission-details__info">
+          <div class="sku-mission-modal__info">
             <VcProductTitle
-              class="mission-details__name"
+              class="sku-mission-modal__name"
               :to="row.route"
               :title="row.name"
               :target="browserTarget"
@@ -40,14 +41,14 @@
               {{ row.name }}
             </VcProductTitle>
 
-            <span v-if="row.sku || row.price" class="mission-details__subtitle">
+            <span v-if="row.sku || row.price" class="sku-mission-modal__subtitle">
               <span v-if="row.sku">{{ $t("common.labels.sku") }} #{{ row.sku }}</span>
               ·
               <VcPriceDisplay v-if="row.price" :value="row.price.actual" />
             </span>
 
             <VcChip
-              class="mission-details__target"
+              class="sku-mission-modal__target"
               size="sm"
               :variant="row.met ? 'solid' : 'outline'"
               :color="row.met ? 'success' : 'neutral'"
@@ -58,11 +59,11 @@
             </VcChip>
           </div>
 
-          <div class="mission-details__stepper-wrap">
+          <div class="sku-mission-modal__stepper-wrap">
             <QuantityControl
               v-if="!isMissionCompleted"
               mode="stepper"
-              class="mission-details__stepper"
+              class="sku-mission-modal__stepper"
               :model-value="row.quantity"
               :name="row.id"
               :min-quantity="row.minQuantity"
@@ -77,7 +78,7 @@
               size="sm"
               @update:model-value="setQuantity(row.id, $event)"
             >
-              <div class="mission-details__badges">
+              <div class="sku-mission-modal__badges">
                 <InStock
                   :is-in-stock="row.isInStock"
                   :is-available="row.isAvailable"
@@ -92,20 +93,20 @@
       </ul>
 
       <!-- Summary -->
-      <dl class="mission-details__summary">
-        <div class="mission-details__summary-row">
+      <dl class="sku-mission-modal__summary">
+        <div class="sku-mission-modal__summary-row">
           <dt>{{ $t("pages.account.missions.sku_modal.total_units") }}</dt>
 
           <dd>{{ totalUnits }}</dd>
         </div>
 
-        <div class="mission-details__summary-row">
+        <div class="sku-mission-modal__summary-row">
           <dt>{{ $t("pages.account.missions.sku_modal.targets_met") }}</dt>
 
           <dd :class="{ 'text-success-600': missionCompleted }">{{ summaryMet }} / {{ summaryTarget }}</dd>
         </div>
 
-        <div class="mission-details__summary-row mission-details__summary-row--total">
+        <div class="sku-mission-modal__summary-row sku-mission-modal__summary-row--total">
           <dt>{{ $t("pages.account.missions.sku_modal.cart_subtotal") }}</dt>
 
           <dd>{{ formatCurrency(cartSubtotal.amount, cartSubtotal.currencyCode) }}</dd>
@@ -114,8 +115,8 @@
     </div>
 
     <template #actions="{ close }">
-      <span class="mission-details__reward" :class="{ 'mission-details__reward--met': missionCompleted }">
-        <VcIcon name="star" size="xs" class="fill-primary" />
+      <span class="sku-mission-modal__reward" :class="{ 'sku-mission-modal__reward--met': missionCompleted }">
+        <VcIcon name="star" size="xs" class="text-primary" />
 
         {{
           missionCompleted
@@ -259,7 +260,7 @@ async function addProductsToCart(close: () => void) {
 </script>
 
 <style lang="scss">
-.mission-details {
+.sku-mission-modal {
   @apply flex flex-col gap-5 pb-4;
 
   &__meta {
@@ -268,22 +269,6 @@ async function addProductsToCart(close: () => void) {
 
   &__days {
     @apply flex items-center gap-2 text-sm font-bold text-neutral-600;
-  }
-
-  &__dot {
-    @apply size-2.5 shrink-0 rounded-full;
-
-    &--safe {
-      @apply bg-success-500;
-    }
-
-    &--warning {
-      @apply bg-warning-500;
-    }
-
-    &--danger {
-      @apply bg-danger-500;
-    }
   }
 
   &__description {

@@ -1,40 +1,41 @@
 <template>
   <VcModal ref="modalRef" :title="view.title" is-mobile-fullscreen dividers test-id="mission-details-modal">
-    <div class="order-mission-details">
+    <div class="order-mission-modal">
       <!-- Meta -->
-      <div class="order-mission-details__meta">
+      <div class="order-mission-modal__meta">
         <VcChip color="primary" variant="solid-light" size="sm" icon="star" rounded>
           {{ $n(view.rewardPoints, "decimal") }} {{ $t("pages.account.missions.card.points") }}
         </VcChip>
 
-        <span class="order-mission-details__days">
-          <span class="order-mission-details__dot" :class="`order-mission-details__dot--${view.dateSeverity}`"></span>
+        <span class="order-mission-modal__days">
+          <VcBadge :color="view.dateSeverity" />
+
           {{ view.dateLabel }}
         </span>
       </div>
 
-      <p v-if="mission.description" class="order-mission-details__description">
+      <p v-if="mission.description" class="order-mission-modal__description">
         {{ mission.description }}
       </p>
 
       <!-- Target -->
-      <div class="order-mission-details__target">
-        <span class="order-mission-details__target-label">
+      <div class="order-mission-modal__target">
+        <span class="order-mission-modal__target-label">
           {{ $t("pages.account.missions.order_modal.mission_target") }}
         </span>
 
-        <div class="order-mission-details__target-row">
-          <span class="order-mission-details__requirement">{{ requirementLabel }}</span>
+        <div class="order-mission-modal__target-row">
+          <span class="order-mission-modal__requirement">{{ requirementLabel }}</span>
 
-          <span class="order-mission-details__current">{{ view.progressLabel }}</span>
+          <span class="order-mission-modal__current">{{ view.progressLabel }}</span>
         </div>
 
-        <div class="order-mission-details__progress">
-          <div class="order-mission-details__track">
-            <div class="order-mission-details__bar" :style="{ width: `${view.percent}%` }"></div>
+        <div class="order-mission-modal__progress">
+          <div class="order-mission-modal__track">
+            <div class="order-mission-modal__bar" :style="{ width: `${view.percent}%` }"></div>
           </div>
 
-          <span class="order-mission-details__percent">{{ view.percent }}%</span>
+          <span class="order-mission-modal__percent">{{ view.percent }}%</span>
         </div>
       </div>
     </div>
@@ -80,7 +81,7 @@ const requirementLabel = computed(() => {
 </script>
 
 <style lang="scss">
-.order-mission-details {
+.order-mission-modal {
   @apply flex flex-col gap-5 pb-4;
 
   &__meta {
@@ -89,22 +90,6 @@ const requirementLabel = computed(() => {
 
   &__days {
     @apply flex items-center gap-2 text-sm font-bold text-neutral-600;
-  }
-
-  &__dot {
-    @apply size-2.5 shrink-0 rounded-full;
-
-    &--safe {
-      @apply bg-success-500;
-    }
-
-    &--warning {
-      @apply bg-warning-500;
-    }
-
-    &--danger {
-      @apply bg-danger-500;
-    }
   }
 
   &__description {

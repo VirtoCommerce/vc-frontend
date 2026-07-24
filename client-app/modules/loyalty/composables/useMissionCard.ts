@@ -24,7 +24,7 @@ export type MissionDataType = NonNullable<
   NonNullable<GetLoyaltyMissionProgressQuery["loyaltyMissionProgress"]>["items"]
 >[number];
 
-export type MissionDateSeverityType = "safe" | "warning" | "danger";
+export type MissionDateSeverityType = "success" | "warning" | "danger";
 
 export type MissionCardViewType = {
   typeLabel: string;
@@ -102,7 +102,7 @@ function isCompleted(mission: MissionDataType): boolean {
 
 function resolveDateSeverity(mission: MissionDataType, daysLeft: number | null): MissionDateSeverityType {
   if (isCompleted(mission)) {
-    return "safe";
+    return "success";
   }
 
   if (daysLeft !== null && daysLeft < DATE_DANGER_DAYS) {
