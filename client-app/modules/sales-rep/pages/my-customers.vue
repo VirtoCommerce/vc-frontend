@@ -41,7 +41,7 @@
         </template>
       </VcEmptyView>
 
-      <VcWidget v-else size="lg">
+      <VcWidget v-else size="md">
         <template #default-container>
           <VcTable
             :loading="loading"

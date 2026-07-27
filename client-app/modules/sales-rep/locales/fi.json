@@ -35,22 +35,26 @@
       }
     },
     "hub": {
-      "title": "Myyntiedustajan keskus"
+      "title": "Myyntiedustajan keskus",
+      "dashboard": {
+        "navigation": {
+          "link": "Hallintapaneeli"
+        },
+        "page": {
+          "title": "Hallintapaneeli"
+        },
+        "widgets": {
+          "orders_on_hold": "Pidossa olevat tilaukset",
+          "active_projects": "Aktiiviset projektit",
+          "orders_placed_mtd": "Tilaukset kuluvan kuun alusta",
+          "my_customers": "Omat asiakkaat"
+        }
+      }
     },
     "customer_profile": {
       "loading": "Ladataan…",
       "not_found": "Asiakasta ei löytynyt tai se ei kuulu asiakkaisiisi.",
       "back_to_customers": "Takaisin omiin asiakkaisiin",
-      "orders": {
-        "title": "Tilaukset",
-        "empty": "Ei vielä tilauksia",
-        "number": "Tilausnro",
-        "date": "Päivämäärä",
-        "items": "Tuotteet",
-        "status": "Tila",
-        "total": "Yhteensä",
-        "view_all": "Kaikki tilaukset"
-      },
       "widgets": {
         "ytd_purchases": "Ostot vuoden alusta",
         "open_balance": "Avoin saldo",
@@ -96,6 +100,17 @@
         "create_quote": "Luo tarjous",
         "schedule_call": "Ajoita puhelu"
       }
+    },
+    "orders": {
+      "title": "Viimeisimmät tilaukset",
+      "view_all": "Kaikki tilaukset",
+      "empty": "Ei vielä tilauksia",
+      "number": "Tilausnro",
+      "customer": "Asiakas",
+      "date": "Päivämäärä",
+      "items": "Tuotteet",
+      "status": "Tila",
+      "total": "Yhteensä"
     }
   }
 }

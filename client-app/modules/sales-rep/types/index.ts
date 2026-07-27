@@ -35,3 +35,18 @@ export type SalesRepCommunicationResultType = {
   emailSent: boolean;
   warnings: string[];
 };
+
+// View model for a Sales Rep order row, shared by the customer profile (single org) and the hub
+// dashboard (cross-customer). `organizationName` backs the dashboard's Customer column;
+// `statusDisplayValue` is the localized status label; `total` is the backend-formatted amount.
+export type SalesRepOrderRowType = {
+  id: string;
+  number: string;
+  organizationId: string;
+  organizationName: string;
+  createdDate: string;
+  status: string;
+  statusDisplayValue: string;
+  itemsCount: number;
+  total: string;
+};

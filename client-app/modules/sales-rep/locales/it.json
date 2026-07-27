@@ -35,22 +35,26 @@
       }
     },
     "hub": {
-      "title": "Hub rappresentante vendite"
+      "title": "Hub rappresentante vendite",
+      "dashboard": {
+        "navigation": {
+          "link": "Dashboard"
+        },
+        "page": {
+          "title": "Dashboard"
+        },
+        "widgets": {
+          "orders_on_hold": "Ordini in sospeso",
+          "active_projects": "Progetti attivi",
+          "orders_placed_mtd": "Ordini dall’inizio del mese",
+          "my_customers": "I miei clienti"
+        }
+      }
     },
     "customer_profile": {
       "loading": "Caricamento…",
       "not_found": "Cliente non trovato o non presente tra i tuoi clienti.",
       "back_to_customers": "Torna ai miei clienti",
-      "orders": {
-        "title": "Ordini",
-        "empty": "Ancora nessun ordine",
-        "number": "N. ordine",
-        "date": "Data",
-        "items": "Articoli",
-        "status": "Stato",
-        "total": "Totale",
-        "view_all": "Tutti gli ordini"
-      },
       "widgets": {
         "ytd_purchases": "Acquisti da inizio anno",
         "open_balance": "Saldo aperto",
@@ -96,6 +100,17 @@
         "create_quote": "Crea preventivo",
         "schedule_call": "Pianifica chiamata"
       }
+    },
+    "orders": {
+      "title": "Ordini recenti",
+      "view_all": "Tutti gli ordini",
+      "empty": "Ancora nessun ordine",
+      "number": "N. ordine",
+      "customer": "Cliente",
+      "date": "Data",
+      "items": "Articoli",
+      "status": "Stato",
+      "total": "Totale"
     }
   }
 }

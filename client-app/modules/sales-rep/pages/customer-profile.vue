@@ -30,11 +30,11 @@
       </div>
 
       <!-- Full-width KPI row (mock until VCST-5309). -->
-      <CustomerProfileWidgets :organization-id="organizationId" />
+      <CustomerProfileWidgets />
 
       <div class="customer-profile__layout">
         <div class="customer-profile__main">
-          <CustomerProfileOrders :organization-id="organizationId" />
+          <SalesRepOrders :organization-id="organizationId" :title="t('sales_rep.orders.title')" />
         </div>
 
         <aside class="customer-profile__aside">
@@ -53,8 +53,8 @@ import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import CustomerProfileActions from "../components/customer-profile-actions.vue";
 import CustomerProfileInfo from "../components/customer-profile-info.vue";
-import CustomerProfileOrders from "../components/customer-profile-orders.vue";
 import CustomerProfileWidgets from "../components/customer-profile-widgets.vue";
+import SalesRepOrders from "../components/sales-rep-orders.vue";
 import { useSalesRepCustomer } from "../composables/useSalesRepCustomer";
 import { MY_CUSTOMERS_ROUTE_NAME } from "../constants";
 
