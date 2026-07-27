@@ -63,6 +63,41 @@
             />
           </template>
         </VcInput>
+
+        <template v-if="isCustomerScope">
+          <VcSelect
+            v-model="selectedOrganizationIds"
+            test-id-dropdown="wishlist-share-customers-select"
+            :label="$t('shared.wishlists.add_or_update_wishlist_modal.share_customers_label')"
+            :placeholder="$t('shared.wishlists.add_or_update_wishlist_modal.share_customers_placeholder')"
+            :disabled="shareLoading"
+            :items="customerOptions"
+            text-field="organizationName"
+            value-field="organizationId"
+            multiple
+            autocomplete
+          />
+
+          <VcTextarea
+            v-model="shareMessage"
+            :label="$t('shared.wishlists.add_or_update_wishlist_modal.share_message_label')"
+            :placeholder="$t('shared.wishlists.add_or_update_wishlist_modal.share_message_placeholder')"
+            :disabled="shareLoading"
+            rows="3"
+            counter
+            :max-length="SHARE_MESSAGE_MAX_LENGTH"
+          />
+
+          <div class="flex flex-wrap gap-x-6 gap-y-2">
+            <VcCheckbox v-model="shareSendEmail" :disabled="shareLoading">
+              {{ $t("shared.wishlists.add_or_update_wishlist_modal.share_send_email") }}
+            </VcCheckbox>
+
+            <VcCheckbox v-model="shareSendPush" :disabled="shareLoading">
+              {{ $t("shared.wishlists.add_or_update_wishlist_modal.share_send_push") }}
+            </VcCheckbox>
+          </div>
+        </template>
       </div>
     </div>
 
@@ -73,7 +108,7 @@
 
       <VcButton
         data-test-id="wishlist-settings-save-button"
-        :loading="loading"
+        :loading="loading || shareLoading"
         :disabled="!canSave"
         class="ms-auto"
         @click="save(close)"
@@ -92,10 +127,14 @@
 import { toTypedSchema } from "@vee-validate/yup";
 import { useClipboard } from "@vueuse/core";
 import { useField, useForm } from "vee-validate";
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { object, string } from "yup";
 import { WishlistScopeType } from "@/core/api/graphql/types";
+import { useSalesRepCustomerOptions } from "@/modules/sales-rep/composables/useSalesRepCustomerOptions";
+import { useSalesRepShareList } from "@/modules/sales-rep/composables/useSalesRepShareList";
+import { isSalesRepsEnabled } from "@/modules/sales-rep/composables/useSalesRepsConfig";
+import { SALES_REP_ACCESS_PERMISSION } from "@/modules/sales-rep/constants";
 import { useUser } from "@/shared/account/composables";
 import { useNotifications } from "@/shared/notification";
 import { useWishlists } from "../composables/useWishlists";
@@ -117,10 +156,28 @@ const listDescription = computed<string | undefined>(() => props.list?.descripti
 const listSharingScope = computed<string | undefined>(() => props.list?.sharingSetting?.scope);
 
 const { loading, createWishlist, updateWishlist } = useWishlists();
-const { isCorporateMember } = useUser();
+const { shareList, loading: shareLoading } = useSalesRepShareList();
+const { isCorporateMember, checkPermissions } = useUser();
+
+const isEditMode = computed<boolean>(() => !!props.list);
+
+// "Customer" scope (VCST-5332): a Sales Rep publishes an EXISTING list to specific customer organizations,
+// gated on the Sales Rep module being installed/enabled and the caller holding the rep permission.
+const canShareWithCustomers = computed(
+  () => isEditMode.value && isSalesRepsEnabled() && checkPermissions(SALES_REP_ACCESS_PERMISSION),
+);
+// Only fetched when the caller can share (avoids an authorized request for everyone else).
+const { options: customerOptions } = useSalesRepCustomerOptions(canShareWithCustomers);
+
+// Message cap leaves room for the shared-list link the backend appends (1000-char combined limit).
+const SHARE_MESSAGE_MAX_LENGTH = 900;
+const selectedOrganizationIds = ref<string[]>([]);
+const shareMessage = ref("");
+const shareSendEmail = ref(true);
+const shareSendPush = ref(true);
 
 const listSharingScopes = computed(() => {
-  return [
+  const scopes = [
     {
       id: WishlistScopeType.Private,
       label: t(`shared.wishlists.add_or_update_wishlist_modal.sharing_scope.${WishlistScopeType.Private}`),
@@ -134,6 +191,15 @@ const listSharingScopes = computed(() => {
       label: t(`shared.wishlists.add_or_update_wishlist_modal.sharing_scope.${WishlistScopeType.Organization}`),
     },
   ];
+
+  if (canShareWithCustomers.value) {
+    scopes.push({
+      id: WishlistScopeType.Customer,
+      label: t(`shared.wishlists.add_or_update_wishlist_modal.sharing_scope.${WishlistScopeType.Customer}`),
+    });
+  }
+
+  return scopes;
 });
 
 const listSharingScopeSupportsLink = computed(
@@ -166,11 +232,24 @@ const { value: name } = useField<string | undefined>("name");
 const { value: description } = useField<string | undefined>("description");
 const { value: sharingScope } = useField<string | undefined>("sharingScope");
 
-const isEditMode = computed<boolean>(() => !!props.list);
-const canSave = computed<boolean>(() => meta.value.dirty && meta.value.valid);
+const isCustomerScope = computed(() => sharingScope.value === WishlistScopeType.Customer);
+const canSave = computed<boolean>(() => {
+  if (!meta.value.valid) {
+    return false;
+  }
+
+  return isCustomerScope.value ? selectedOrganizationIds.value.length > 0 : meta.value.dirty;
+});
 
 async function save(closeHandle: () => void): Promise<void> {
   if (!meta.value.valid) {
+    return;
+  }
+
+  if (isCustomerScope.value) {
+    if (await shareWithCustomers()) {
+      closeHandle();
+    }
     return;
   }
 
@@ -192,6 +271,34 @@ async function save(closeHandle: () => void): Promise<void> {
   }
 
   closeHandle();
+}
+
+async function shareWithCustomers(): Promise<boolean> {
+  const result = await shareList({
+    listId: props.list!.id,
+    organizationIds: selectedOrganizationIds.value,
+    sendEmail: shareSendEmail.value,
+    sendPush: shareSendPush.value,
+    message: shareMessage.value.trim() || undefined,
+  });
+
+  if (!result.succeeded) {
+    notifications.error({
+      text: t("shared.wishlists.add_or_update_wishlist_modal.share_error"),
+      single: true,
+    });
+    return false;
+  }
+
+  notifications[result.warnings.length ? "warning" : "success"]({
+    text: t(
+      `shared.wishlists.add_or_update_wishlist_modal.${result.warnings.length ? "share_partial" : "share_success"}`,
+    ),
+    duration: 4000,
+    single: true,
+  });
+
+  return true;
 }
 
 async function copySharingLink() {

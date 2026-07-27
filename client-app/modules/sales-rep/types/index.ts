@@ -36,6 +36,28 @@ export type SalesRepCommunicationResultType = {
   warnings: string[];
 };
 
+// Rep → publish a shopping list to one or more customer orgs (VCST-5332). storeId/cultureName are added from
+// globals in the composable; the org members are notified backend-side. An empty message sends the link only.
+export type SalesRepShareListInputType = {
+  listId: string;
+  organizationIds: string[];
+  sendEmail: boolean;
+  sendPush: boolean;
+  message?: string;
+  title?: string;
+};
+
+// Outcome of publishing a list. `sharingUrl` is the /shared-list/{key} link; `warnings` carries the same
+// stable notification codes as a broadcast (see the backend's ModuleConstants.Communication.Warnings).
+export type SalesRepShareListResultType = {
+  succeeded: boolean;
+  listId?: string;
+  sharingKey?: string;
+  sharingUrl?: string;
+  sharedWithOrganizationIds: string[];
+  warnings: string[];
+};
+
 // View model for a Sales Rep order row, shared by the customer profile (single org) and the hub
 // dashboard (cross-customer). `organizationName` backs the dashboard's Customer column;
 // `statusDisplayValue` is the localized status label; `total` is the backend-formatted amount.

@@ -4,6 +4,10 @@
       {{ list.name }}
     </VcTypography>
 
+    <VcAlert v-if="isRecommendedByRep" color="info" variant="solid-light" size="sm" icon class="shared-list__rep-badge">
+      {{ $t("shared.wishlists.list_details.recommended_by_rep") }}
+    </VcAlert>
+
     <div ref="listElement" class="shared-list__content">
       <!-- Skeletons -->
       <WishlistProductsSkeleton v-if="listLoading" :itemsCount="actualPageRowsCount" />
@@ -65,6 +69,7 @@
 import { cloneDeep, keyBy } from "lodash-es";
 import { computed, ref, watchEffect, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
+import { WishlistScopeType } from "@/core/api/graphql/types";
 import { useAnalytics, usePageHead } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { PAGE_LIMIT } from "@/core/constants";
@@ -88,6 +93,9 @@ const { analytics } = useAnalytics();
 const { t } = useI18n();
 const { listLoading, list, fetchSharedWishList } = useWishlists();
 const { cart } = useShortCart();
+
+// Customer-scoped lists are published by a Sales Rep — surface that to the viewing org member (VCST-5332).
+const isRecommendedByRep = computed(() => list.value?.sharingSetting?.scope === WishlistScopeType.Customer);
 
 const { continue_shopping_link } = getModuleSettings({
   [MODULE_XAPI_KEYS.CONTINUE_SHOPPING_LINK]: "continue_shopping_link",

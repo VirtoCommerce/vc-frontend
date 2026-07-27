@@ -1,0 +1,10 @@
+mutation ShareListWithCustomers($command: InputShareListWithCustomersType!) {
+  shareListWithCustomers(command: $command) {
+    succeeded
+    listId
+    sharingKey
+    sharingUrl
+    sharedWithOrganizationIds
+    warnings
+  }
+}

@@ -15,6 +15,7 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
+  AnyValue: { input: any; output: any; }
   /** The `Date` scalar type represents a year, month and day in accordance with the [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) standard. */
   Date: { input: string; output: string; }
   /** The `DateTime` scalar type represents a date and time. `DateTime` expects timestamps to be formatted in accordance with the [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) standard. */
@@ -309,8 +310,6 @@ export type CartConfigurationItemType = {
   salePrice: MoneyType;
   /** Configuration item section ID */
   sectionId: Scalars['String']['output'];
-  /** Configuration item section name */
-  sectionName?: Maybe<Scalars['String']['output']>;
   /** Whether the configuration item is selected for checkout */
   selectedForCheckout: Scalars['Boolean']['output'];
   /** Configuration item SKU */
@@ -440,6 +439,8 @@ export type CartType = {
   itemsCount: Scalars['Int']['output'];
   /** Quantity of items */
   itemsQuantity: Scalars['Int']['output'];
+  /** Get total points amount */
+  loyaltyPoints?: Maybe<MoneyType>;
   /** Shopping cart name */
   name: Scalars['String']['output'];
   /** Shopping cart organization ID */
@@ -738,10 +739,6 @@ export type ConfigurationSectionType = {
   type: Scalars['String']['output'];
 };
 
-export type ConfirmTaskCommandType = {
-  id: Scalars['String']['input'];
-};
-
 /** A connection from an object to a list of objects of type `Contact`. */
 export type ContactConnection = {
   /** A list of all of the edges returned in the connection. */
@@ -828,40 +825,6 @@ export type ContactTypeSeoInfoArgs = {
   storeId: Scalars['String']['input'];
 };
 
-/** A connection from an object to a list of objects of type `Contract`. */
-export type ContractConnection = {
-  /** A list of all of the edges returned in the connection. */
-  edges?: Maybe<Array<Maybe<ContractEdge>>>;
-  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
-  items?: Maybe<Array<Maybe<ContractType>>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
-  totalCount?: Maybe<Scalars['Int']['output']>;
-};
-
-/** An edge in a connection from an object to another object of type `Contract`. */
-export type ContractEdge = {
-  /** A cursor for use in pagination */
-  cursor: Scalars['String']['output'];
-  /** The item at the end of the edge */
-  node?: Maybe<ContractType>;
-};
-
-export type ContractType = {
-  code: Scalars['String']['output'];
-  description?: Maybe<Scalars['String']['output']>;
-  /** Contract dynamic property values */
-  dynamicProperties?: Maybe<Array<Maybe<DynamicPropertyValueType>>>;
-  endDate?: Maybe<Scalars['DateTime']['output']>;
-  id: Scalars['String']['output'];
-  name: Scalars['String']['output'];
-  startDate?: Maybe<Scalars['DateTime']['output']>;
-  status?: Maybe<Scalars['String']['output']>;
-  storeId?: Maybe<Scalars['String']['output']>;
-  vendorId?: Maybe<Scalars['String']['output']>;
-};
-
 export type CountryRegionType = {
   /** Code of country region. For example 'AL'. */
   id: Scalars['String']['output'];
@@ -936,6 +899,57 @@ export type CustomIdentityResultType = {
   succeeded: Scalars['Boolean']['output'];
 };
 
+export type CustomerCartStatistics = {
+  /** Compares two periods (current vs previous). Reuses the period results, so a bucket shared with a 'period' selection is not queried again. */
+  comparison?: Maybe<CustomerCartStatisticsComparison>;
+  /** Currency all figures below are converted to. */
+  currencyCode: Scalars['String']['output'];
+  /** Cart statistics for a single date range. Omit both bounds for lifetime. */
+  period?: Maybe<CustomerCartStatisticsPeriod>;
+};
+
+
+export type CustomerCartStatisticsComparisonArgs = {
+  current: SalesRepStatisticsPeriodInput;
+  filter?: InputMaybe<Scalars['String']['input']>;
+  previous: SalesRepStatisticsPeriodInput;
+};
+
+
+export type CustomerCartStatisticsPeriodArgs = {
+  filter?: InputMaybe<Scalars['String']['input']>;
+  from?: InputMaybe<Scalars['DateTime']['input']>;
+  to?: InputMaybe<Scalars['DateTime']['input']>;
+};
+
+export type CustomerCartStatisticsComparison = {
+  /** Current average minus previous average (amount, formatted amount and currency). */
+  averageChange: MoneyType;
+  /** Percentage change of average; null when the previous average is zero. */
+  averageChangePercent?: Maybe<Scalars['Decimal']['output']>;
+  /** Current count minus previous count. */
+  countChange: Scalars['Int']['output'];
+  /** Percentage change of count; null when the previous count is zero. */
+  countChangePercent?: Maybe<Scalars['Decimal']['output']>;
+  /** Current total minus previous total (amount, formatted amount and currency). */
+  totalChange: MoneyType;
+  /** Percentage change of total; null when the previous total is zero. */
+  totalChangePercent?: Maybe<Scalars['Decimal']['output']>;
+};
+
+export type CustomerCartStatisticsPeriod = {
+  /** Average cart value in the range (amount, formatted amount and currency). */
+  average: MoneyType;
+  /** Number of carts in the range (the primary widget metric, e.g. 'Active Projects'). */
+  count: Scalars['Int']['output'];
+  /** Date of the most recent cart in the range. */
+  lastCartDate?: Maybe<Scalars['DateTime']['output']>;
+  /** Sum of cart totals in the range (amount, formatted amount and currency). */
+  total: MoneyType;
+  /** Non-null when the figures are partial because some carts were in an unconfigured currency and could not be converted; describes what was excluded. */
+  warning?: Maybe<Scalars['String']['output']>;
+};
+
 /** A connection from an object to a list of objects of type `CustomerOrder`. */
 export type CustomerOrderConnection = {
   /** A list of all of the edges returned in the connection. */
@@ -960,6 +974,59 @@ export type CustomerOrderEdge = {
   cursor: Scalars['String']['output'];
   /** The item at the end of the edge */
   node?: Maybe<CustomerOrderType>;
+};
+
+export type CustomerOrderStatistics = {
+  /** Compares two periods (current vs previous). Reuses the period results, so a bucket shared with a 'period' selection is not queried again. */
+  comparison?: Maybe<CustomerOrderStatisticsComparison>;
+  /** Currency all figures below are converted to. */
+  currencyCode: Scalars['String']['output'];
+  /** Order statistics for a single date range. Omit both bounds for lifetime. */
+  period?: Maybe<CustomerOrderStatisticsPeriod>;
+};
+
+
+export type CustomerOrderStatisticsComparisonArgs = {
+  current: SalesRepStatisticsPeriodInput;
+  filter?: InputMaybe<Scalars['String']['input']>;
+  previous: SalesRepStatisticsPeriodInput;
+};
+
+
+export type CustomerOrderStatisticsPeriodArgs = {
+  filter?: InputMaybe<Scalars['String']['input']>;
+  from?: InputMaybe<Scalars['DateTime']['input']>;
+  to?: InputMaybe<Scalars['DateTime']['input']>;
+};
+
+export type CustomerOrderStatisticsComparison = {
+  /** Current average minus previous average (amount, formatted amount and currency). */
+  averageChange: MoneyType;
+  /** Percentage change of average; null when the previous average is zero. */
+  averageChangePercent?: Maybe<Scalars['Decimal']['output']>;
+  /** Current count minus previous count. */
+  countChange: Scalars['Int']['output'];
+  /** Percentage change of count; null when the previous count is zero. */
+  countChangePercent?: Maybe<Scalars['Decimal']['output']>;
+  /** Current total minus previous total (amount, formatted amount and currency). */
+  totalChange: MoneyType;
+  /** Percentage change of total; null when the previous total is zero. */
+  totalChangePercent?: Maybe<Scalars['Decimal']['output']>;
+};
+
+export type CustomerOrderStatisticsPeriod = {
+  /** Average order value in the range (amount, formatted amount and currency). */
+  average: MoneyType;
+  /** Number of orders in the range. */
+  count: Scalars['Int']['output'];
+  /** Date of the earliest order in the range; on an unbounded period this is the "customer since" date. */
+  firstOrderDate?: Maybe<Scalars['DateTime']['output']>;
+  /** Date of the most recent order in the range. */
+  lastOrderDate?: Maybe<Scalars['DateTime']['output']>;
+  /** Sum of order totals in the range (amount, formatted amount and currency). */
+  total: MoneyType;
+  /** Non-null when the figures are partial because some orders were in an unconfigured currency and could not be converted; describes what was excluded. */
+  warning?: Maybe<Scalars['String']['output']>;
 };
 
 export type CustomerOrderType = {
@@ -2732,6 +2799,42 @@ export type InputResetPasswordByTokenType = {
   userId: Scalars['String']['input'];
 };
 
+export type InputSalesRepLayout = {
+  /** Top-level fixed regions with their blocks. */
+  regions: Array<InputSalesRepLayoutRegion>;
+  /** Document schema version. */
+  schemaVersion: Scalars['Int']['input'];
+  /** Layout surface identifier (e.g. "dashboard", "customerProfile"). */
+  scope: Scalars['String']['input'];
+  /** Optional store to scope the layout to. */
+  storeId?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type InputSalesRepLayoutBlock = {
+  /** Whether the block is parked in the hidden tray. */
+  hidden: Scalars['Boolean']['input'];
+  /** Instance id (frontend-generated, stable across saves, unique within the layout). */
+  id: Scalars['String']['input'];
+  /** Block-type-specific settings (send an empty list for none). */
+  settings: Array<InputSalesRepLayoutSetting>;
+  /** Block type discriminator (frontend-owned vocabulary). */
+  type: Scalars['String']['input'];
+};
+
+export type InputSalesRepLayoutRegion = {
+  /** Blocks in render order (array position is the order). */
+  blocks: Array<InputSalesRepLayoutBlock>;
+  /** Fixed region id (e.g. "statistics", "mainLeft", "mainRight"). */
+  id: Scalars['String']['input'];
+};
+
+export type InputSalesRepLayoutSetting = {
+  /** Setting key (block-type-specific, frontend-owned vocabulary). */
+  key: Scalars['String']['input'];
+  /** Scalar setting value (string, number, boolean). */
+  value?: InputMaybe<Scalars['AnyValue']['input']>;
+};
+
 export type InputSaveForLaterType = {
   /** Source Cart ID */
   cartId: Scalars['String']['input'];
@@ -2776,6 +2879,25 @@ export type InputSendVerifyEmailType = {
   /** Store ID */
   storeId: Scalars['String']['input'];
   userId?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type InputShareListWithCustomersType = {
+  /** Optional culture for localizing the notification (e.g. "en-US"). */
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  /** Wishlist (shopping list) to publish. */
+  listId: Scalars['String']['input'];
+  /** Optional Rep message included in the email/push. The shared-list link is appended; the combined text must not exceed 1000 characters. */
+  message?: InputMaybe<Scalars['String']['input']>;
+  /** Customer organizations to share the list with. The Rep must serve each of them. */
+  organizationIds: Array<Scalars['String']['input']>;
+  /** Send an email to the customers' members. */
+  sendEmail: Scalars['Boolean']['input'];
+  /** Send an in-store push notification to the customers' members. */
+  sendPush: Scalars['Boolean']['input'];
+  /** Store the list is published on behalf of (scopes the link host and the email template/sender). */
+  storeId: Scalars['String']['input'];
+  /** Optional notification title/heading. */
+  title?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type InputShipmentType = {
@@ -3491,7 +3613,6 @@ export type Mutations = {
   clearShipments?: Maybe<CartType>;
   cloneWishlist?: Maybe<WishlistType>;
   confirmEmail?: Maybe<CustomIdentityResultType>;
-  confirmTask?: Maybe<WorkTaskType>;
   createCartFromWishlist?: Maybe<CartType>;
   createConfiguredLineItem?: Maybe<ConfigurationLineItemType>;
   createContact?: Maybe<ContactType>;
@@ -3527,7 +3648,6 @@ export type Mutations = {
   refreshCart?: Maybe<CartType>;
   registerByInvitation?: Maybe<CustomIdentityResultType>;
   rejectGiftItems?: Maybe<CartType>;
-  rejectTask?: Maybe<WorkTaskType>;
   removeAddressFromFavorites?: Maybe<Scalars['Boolean']['output']>;
   removeCart?: Maybe<Scalars['Boolean']['output']>;
   removeCartAddress?: Maybe<CartType>;
@@ -3544,14 +3664,16 @@ export type Mutations = {
   removeWishlistItems?: Maybe<WishlistType>;
   requestRegistration?: Maybe<RequestRegistrationType>;
   resetPasswordByToken?: Maybe<CustomIdentityResultType>;
+  saveSalesRepLayout?: Maybe<SalesRepLayout>;
   saveSearchQuery?: Maybe<Scalars['Boolean']['output']>;
   selectAllCartConfigurationItems?: Maybe<CartType>;
   selectAllCartItems?: Maybe<CartType>;
   selectCartConfigurationItems?: Maybe<CartType>;
   selectCartItems?: Maybe<CartType>;
-  sendCustomerCommunication?: Maybe<Scalars['Boolean']['output']>;
+  sendCustomerCommunication?: Maybe<SalesRepCommunicationResult>;
   sendPasswordResetEmail?: Maybe<Scalars['Boolean']['output']>;
   sendVerifyEmail?: Maybe<Scalars['Boolean']['output']>;
+  shareListWithCustomers?: Maybe<SalesRepShareListResult>;
   submitQuoteRequest?: Maybe<QuoteType>;
   unSelectAllCartConfigurationItems?: Maybe<CartType>;
   unSelectAllCartItems?: Maybe<CartType>;
@@ -3808,11 +3930,6 @@ export type MutationsConfirmEmailArgs = {
 };
 
 
-export type MutationsConfirmTaskArgs = {
-  command: ConfirmTaskCommandType;
-};
-
-
 export type MutationsCreateCartFromWishlistArgs = {
   command: InputCreateCartFromWishlistType;
 };
@@ -3978,11 +4095,6 @@ export type MutationsRejectGiftItemsArgs = {
 };
 
 
-export type MutationsRejectTaskArgs = {
-  command: RejectTaskCommandType;
-};
-
-
 export type MutationsRemoveAddressFromFavoritesArgs = {
   command: RemoveAddressFromFavoritesCommandType;
 };
@@ -4063,6 +4175,11 @@ export type MutationsResetPasswordByTokenArgs = {
 };
 
 
+export type MutationsSaveSalesRepLayoutArgs = {
+  command: InputSalesRepLayout;
+};
+
+
 export type MutationsSaveSearchQueryArgs = {
   command: InputSaveSearchQueryType;
 };
@@ -4100,6 +4217,11 @@ export type MutationsSendPasswordResetEmailArgs = {
 
 export type MutationsSendVerifyEmailArgs = {
   command?: InputMaybe<InputSendVerifyEmailType>;
+};
+
+
+export type MutationsShareListWithCustomersArgs = {
+  command: InputShareListWithCustomersType;
 };
 
 
@@ -4360,8 +4482,6 @@ export type OrderConfigurationItemType = {
   salePrice: MoneyType;
   /** Configuration item section ID */
   sectionId: Scalars['String']['output'];
-  /** Configuration item section name */
-  sectionName?: Maybe<Scalars['String']['output']>;
   /** Configuration item SKU */
   sku?: Maybe<Scalars['String']['output']>;
   /** Configuration item type. Possible values: 'Product', 'Variation', 'Text', 'File' */
@@ -5573,7 +5693,6 @@ export type Query = {
   configurationItems?: Maybe<ConfigurationItemsResponseType>;
   contact?: Maybe<ContactType>;
   contacts?: Maybe<ContactConnection>;
-  contract?: Maybe<ContractType>;
   countries: Array<CountryType>;
   currentCustomerAddresses?: Maybe<MemberAddressConnection>;
   currentOrganizationAddresses?: Maybe<MemberAddressConnection>;
@@ -5601,7 +5720,6 @@ export type Query = {
   orderStatuses?: Maybe<LocalizedSettingResponseType>;
   orders?: Maybe<CustomerOrderConnection>;
   organization?: Maybe<Organization>;
-  organizationContracts?: Maybe<ContractConnection>;
   organizationOrders?: Maybe<CustomerOrderConnection>;
   organizations?: Maybe<OrganizationConnection>;
   page?: Maybe<PageType>;
@@ -5631,17 +5749,27 @@ export type Query = {
   /** @deprecated Deprecated. Use sendPasswordResetEmail command. */
   requestPasswordReset?: Maybe<Scalars['Boolean']['output']>;
   role?: Maybe<RoleType>;
+  salesRepCartFilterRules?: Maybe<Array<Maybe<SalesRepCartFilterRule>>>;
   salesRepCustomer?: Maybe<SalesRepCustomerDetails>;
+  salesRepCustomerCartStatistics?: Maybe<CustomerCartStatistics>;
+  salesRepCustomerCounts?: Maybe<SalesRepCustomerCounts>;
+  salesRepCustomerFilterRules?: Maybe<Array<Maybe<SalesRepCustomerFilterRule>>>;
+  salesRepCustomerOrderStatistics?: Maybe<CustomerOrderStatistics>;
+  salesRepCustomerSortRules?: Maybe<Array<Maybe<SalesRepCustomerSortRule>>>;
   salesRepCustomers?: Maybe<SalesRepCustomerConnection>;
-  salesRepOrderStatuses?: Maybe<Array<Maybe<SalesRepOrderStatus>>>;
+  salesRepLayout?: Maybe<SalesRepLayout>;
+  salesRepOrderFilterRules?: Maybe<Array<Maybe<SalesRepOrderFilterRule>>>;
+  salesRepOrderSortRules?: Maybe<Array<Maybe<SalesRepOrderSortRule>>>;
   salesRepOrders?: Maybe<SalesRepOrderConnection>;
+  salesRepTopSellerFilterRules?: Maybe<Array<Maybe<SalesRepTopSellerFilterRule>>>;
+  salesRepTopSellerSortRules?: Maybe<Array<Maybe<SalesRepTopSellerSortRule>>>;
+  salesRepTopSellers?: Maybe<Array<Maybe<SalesRepTopSeller>>>;
   searchHistory?: Maybe<SearchHistoryResultType>;
   sharedWishlist?: Maybe<WishlistType>;
   shipmentStatuses?: Maybe<LocalizedSettingResponseType>;
   skyflowCards?: Maybe<SkyflowCardResponseType>;
   slugInfo?: Maybe<SlugInfoResponseType>;
   store?: Maybe<StoreResponseType>;
-  tasks?: Maybe<WorkTaskConnection>;
   user?: Maybe<UserType>;
   validateCoupon?: Maybe<Scalars['Boolean']['output']>;
   validatePassword?: Maybe<CustomIdentityResultType>;
@@ -5812,11 +5940,6 @@ export type QueryContactsArgs = {
   first?: InputMaybe<Scalars['Int']['input']>;
   searchPhrase?: InputMaybe<Scalars['String']['input']>;
   sort?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-export type QueryContractArgs = {
-  id?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -6019,18 +6142,6 @@ export type QueryOrdersArgs = {
 export type QueryOrganizationArgs = {
   id: Scalars['String']['input'];
   userId?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-export type QueryOrganizationContractsArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  endDate?: InputMaybe<Scalars['DateTime']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  organizationId: Scalars['String']['input'];
-  startDate?: InputMaybe<Scalars['DateTime']['input']>;
-  statuses?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  storeId?: InputMaybe<Scalars['String']['input']>;
-  vendorId?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -6288,14 +6399,55 @@ export type QueryRoleArgs = {
 };
 
 
+export type QuerySalesRepCartFilterRulesArgs = {
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+};
+
+
 export type QuerySalesRepCustomerArgs = {
   organizationId: Scalars['String']['input'];
+};
+
+
+export type QuerySalesRepCustomerCartStatisticsArgs = {
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  organizationId?: InputMaybe<Scalars['String']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QuerySalesRepCustomerCountsArgs = {
+  organizationId?: InputMaybe<Scalars['String']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QuerySalesRepCustomerFilterRulesArgs = {
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QuerySalesRepCustomerOrderStatisticsArgs = {
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  organizationId?: InputMaybe<Scalars['String']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QuerySalesRepCustomerSortRulesArgs = {
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type QuerySalesRepCustomersArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   cultureName?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   keyword?: InputMaybe<Scalars['String']['input']>;
   sort?: InputMaybe<Scalars['String']['input']>;
@@ -6303,7 +6455,19 @@ export type QuerySalesRepCustomersArgs = {
 };
 
 
-export type QuerySalesRepOrderStatusesArgs = {
+export type QuerySalesRepLayoutArgs = {
+  scope: Scalars['String']['input'];
+  storeId?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QuerySalesRepOrderFilterRulesArgs = {
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QuerySalesRepOrderSortRulesArgs = {
   cultureName?: InputMaybe<Scalars['String']['input']>;
   storeId?: InputMaybe<Scalars['String']['input']>;
 };
@@ -6312,12 +6476,37 @@ export type QuerySalesRepOrderStatusesArgs = {
 export type QuerySalesRepOrdersArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   cultureName?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   keyword?: InputMaybe<Scalars['String']['input']>;
   organizationId?: InputMaybe<Scalars['String']['input']>;
+  period?: InputMaybe<SalesRepStatisticsPeriodInput>;
   sort?: InputMaybe<Scalars['String']['input']>;
-  statuses?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   storeId?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QuerySalesRepTopSellerFilterRulesArgs = {
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QuerySalesRepTopSellerSortRulesArgs = {
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QuerySalesRepTopSellersArgs = {
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<Scalars['String']['input']>;
+  organizationId?: InputMaybe<Scalars['String']['input']>;
+  period?: InputMaybe<SalesRepStatisticsPeriodInput>;
+  sort?: InputMaybe<Scalars['String']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+  take?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -6354,20 +6543,6 @@ export type QuerySlugInfoArgs = {
 export type QueryStoreArgs = {
   cultureName?: InputMaybe<Scalars['String']['input']>;
   domain?: InputMaybe<Scalars['String']['input']>;
-  storeId?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-export type QueryTasksArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  completed?: InputMaybe<Scalars['Boolean']['input']>;
-  endDueDate?: InputMaybe<Scalars['DateTime']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  isActive?: InputMaybe<Scalars['Boolean']['input']>;
-  keyword?: InputMaybe<Scalars['String']['input']>;
-  responsibleId?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Scalars['String']['input']>;
-  startDueDate?: InputMaybe<Scalars['DateTime']['input']>;
   storeId?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -6686,10 +6861,6 @@ export type RegistrationErrorType = {
   parameter?: Maybe<Scalars['String']['output']>;
 };
 
-export type RejectTaskCommandType = {
-  id: Scalars['String']['input'];
-};
-
 export type RemoveAddressFromFavoritesCommandType = {
   addressId: Scalars['String']['input'];
 };
@@ -6773,6 +6944,24 @@ export type SalesRepAddress = {
   zip?: Maybe<Scalars['String']['output']>;
 };
 
+export type SalesRepCartFilterRule = {
+  /** Localized label for the kind. */
+  localizedName?: Maybe<Scalars['String']['output']>;
+  /** Stable kind id — send it back as the salesRepCustomerCartStatistics 'kinds' argument. */
+  name: Scalars['String']['output'];
+};
+
+export type SalesRepCommunicationResult = {
+  /** Whether the email was accepted for delivery. */
+  emailSent: Scalars['Boolean']['output'];
+  /** Whether the push notification was accepted for delivery. */
+  pushSent: Scalars['Boolean']['output'];
+  /** True when at least one requested channel was accepted for delivery. */
+  succeeded: Scalars['Boolean']['output'];
+  /** Stable outcome codes for any channel that did not deliver (empty on full success). The storefront maps each code to a localized message. */
+  warnings: Array<Scalars['String']['output']>;
+};
+
 export type SalesRepContact = {
   /** About the Sales Rep. */
   about?: Maybe<Scalars['String']['output']>;
@@ -6817,16 +7006,29 @@ export type SalesRepContactEdge = {
 };
 
 export type SalesRepCustomer = {
+  /** External/display account id (the organization's OuterId); null when it has none. */
+  accountId?: Maybe<Scalars['String']['output']>;
+  /** Account type — the organization's business category (e.g. "Garden Center"). */
+  accountType?: Maybe<Scalars['String']['output']>;
   /** The organization's default address (structured; the storefront formats it, e.g. "City, Region"). */
   address?: Maybe<SalesRepAddress>;
   /** URL of the organization's icon. */
   iconUrl?: Maybe<Scalars['String']['output']>;
   /** The rep's most recent order for this customer (only orders the rep created). */
   lastOrder?: Maybe<SalesRepOrder>;
+  /** The rep's own order statistics for this customer over a date range (YTD purchases, order count, average, first/last order). Omit both bounds for lifetime; request several aliased selections (e.g. ytd + lastYtd) to build the purchase columns. */
+  orderStatistics?: Maybe<CustomerOrderStatisticsPeriod>;
   /** Organization (customer) id. */
   organizationId: Scalars['String']['output'];
   /** Organization (customer) name. */
   organizationName?: Maybe<Scalars['String']['output']>;
+};
+
+
+export type SalesRepCustomerOrderStatisticsArgs = {
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  from?: InputMaybe<Scalars['DateTime']['input']>;
+  to?: InputMaybe<Scalars['DateTime']['input']>;
 };
 
 /** A connection from an object to a list of objects of type `SalesRepCustomer`. */
@@ -6839,6 +7041,47 @@ export type SalesRepCustomerConnection = {
   pageInfo: PageInfo;
   /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
   totalCount?: Maybe<Scalars['Int']['output']>;
+};
+
+export type SalesRepCustomerCounts = {
+  /** Number of customers (organizations) the rep is assigned to serve. */
+  assignedCustomers: Scalars['Int']['output'];
+  /** Compares two periods (current vs previous). Reuses the period results, so a bucket shared with a 'period' selection is not queried again. */
+  comparison?: Maybe<SalesRepCustomerCountsComparison>;
+  /** Customer counters for a single date range. Omit both bounds for lifetime. */
+  period?: Maybe<SalesRepCustomerCountsPeriod>;
+};
+
+
+export type SalesRepCustomerCountsComparisonArgs = {
+  current: SalesRepStatisticsPeriodInput;
+  filter?: InputMaybe<Scalars['String']['input']>;
+  previous: SalesRepStatisticsPeriodInput;
+};
+
+
+export type SalesRepCustomerCountsPeriodArgs = {
+  filter?: InputMaybe<Scalars['String']['input']>;
+  from?: InputMaybe<Scalars['DateTime']['input']>;
+  to?: InputMaybe<Scalars['DateTime']['input']>;
+};
+
+export type SalesRepCustomerCountsComparison = {
+  /** Current new-customers count minus previous. */
+  newCustomersChange: Scalars['Int']['output'];
+  /** Percentage change of new-customers; null when the previous count is zero. */
+  newCustomersChangePercent?: Maybe<Scalars['Decimal']['output']>;
+  /** Current ordering-customers count minus previous. */
+  orderingCustomersChange: Scalars['Int']['output'];
+  /** Percentage change of ordering-customers; null when the previous count is zero. */
+  orderingCustomersChangePercent?: Maybe<Scalars['Decimal']['output']>;
+};
+
+export type SalesRepCustomerCountsPeriod = {
+  /** Customers first assigned to the rep within the range (by assignment date). */
+  newCustomers: Scalars['Int']['output'];
+  /** Distinct customers the rep ordered for within the range. */
+  orderingCustomers: Scalars['Int']['output'];
 };
 
 export type SalesRepCustomerDetails = {
@@ -6866,13 +7109,67 @@ export type SalesRepCustomerEdge = {
   node?: Maybe<SalesRepCustomer>;
 };
 
+export type SalesRepCustomerFilterRule = {
+  /** Localized label for the segment. */
+  localizedName?: Maybe<Scalars['String']['output']>;
+  /** Stable segment id — send it back in the salesRepCustomers / salesRepCustomerCounts 'filter' argument. */
+  name: Scalars['String']['output'];
+};
+
+export type SalesRepCustomerSortRule = {
+  /** Direction applied when the 'sort' argument carries no direction suffix: 'asc' or 'desc'. */
+  defaultDirection: Scalars['String']['output'];
+  /** Localized label for the ordering. */
+  localizedName?: Maybe<Scalars['String']['output']>;
+  /** Stable sort-rule id — send it back as the salesRepCustomers 'sort' argument (optionally suffixed ':asc'/':desc'). */
+  name: Scalars['String']['output'];
+  /** Whether the client may choose the direction (e.g. 'name:desc'); false = a ':asc'/':desc' opposite of the default is rejected. */
+  supportsDirection: Scalars['Boolean']['output'];
+};
+
+export type SalesRepLayout = {
+  /** When the layout was last saved (UTC). */
+  modifiedDate?: Maybe<Scalars['DateTime']['output']>;
+  /** Top-level fixed regions. */
+  regions: Array<SalesRepLayoutRegion>;
+  /** Document schema version, for frontend migration of older saved layouts. */
+  schemaVersion: Scalars['Int']['output'];
+};
+
+export type SalesRepLayoutBlock = {
+  /** Whether the block is parked in the hidden tray. */
+  hidden: Scalars['Boolean']['output'];
+  /** Instance id (frontend-generated, stable across saves, unique within the layout). */
+  id: Scalars['String']['output'];
+  /** Block-type-specific settings (may be empty). */
+  settings: Array<SalesRepLayoutSetting>;
+  /** Block type discriminator (frontend-owned vocabulary). */
+  type: Scalars['String']['output'];
+};
+
+export type SalesRepLayoutRegion = {
+  /** Blocks in render order (array position is the order). */
+  blocks: Array<SalesRepLayoutBlock>;
+  /** Fixed region id (e.g. "statistics", "mainLeft", "mainRight"). */
+  id: Scalars['String']['output'];
+};
+
+export type SalesRepLayoutSetting = {
+  /** Setting key (block-type-specific, frontend-owned vocabulary). */
+  key: Scalars['String']['output'];
+  /** Scalar setting value (string, number, boolean). */
+  value?: Maybe<Scalars['AnyValue']['output']>;
+};
+
 export type SalesRepOrder = {
   /** Date the order was placed. */
   createdDate: Scalars['DateTime']['output'];
   /** Order id. */
   id: Scalars['String']['output'];
-  /** Number of line items in the order. */
+  /** Number of distinct line items in the order. */
   itemsCount: Scalars['Int']['output'];
+  /** Total number of units in the order (sum of line-item quantities) — the "N units" figure. */
+  itemsQuantity: Scalars['Int']['output'];
   /** Human-readable order number. */
   number?: Maybe<Scalars['String']['output']>;
   /** Organization (customer) id the order belongs to. */
@@ -6905,11 +7202,83 @@ export type SalesRepOrderEdge = {
   node?: Maybe<SalesRepOrder>;
 };
 
-export type SalesRepOrderStatus = {
+export type SalesRepOrderFilterRule = {
   /** Localized label for the status. */
   localizedName?: Maybe<Scalars['String']['output']>;
   /** Stable status id — send it back as the salesRepOrders 'status' argument. */
   name: Scalars['String']['output'];
+};
+
+export type SalesRepOrderSortRule = {
+  /** Direction applied when the 'sort' argument carries no direction suffix: 'asc' or 'desc'. */
+  defaultDirection: Scalars['String']['output'];
+  /** Localized label for the ordering. */
+  localizedName?: Maybe<Scalars['String']['output']>;
+  /** Stable sort-rule id — send it back as the salesRepOrders 'sort' argument (optionally suffixed ':asc'/':desc'). */
+  name: Scalars['String']['output'];
+  /** Whether the client may choose the direction (e.g. 'total:asc'); false = a ':asc'/':desc' opposite of the default is rejected. */
+  supportsDirection: Scalars['Boolean']['output'];
+};
+
+export type SalesRepShareListResult = {
+  /** The shared list id. */
+  listId?: Maybe<Scalars['String']['output']>;
+  /** Customer organizations the list is now shared with. */
+  sharedWithOrganizationIds: Array<Scalars['String']['output']>;
+  /** Stable sharing key — the /shared-list/{key} token delivered to customers. */
+  sharingKey?: Maybe<Scalars['String']['output']>;
+  /** Absolute shared-list URL delivered to the customers. */
+  sharingUrl?: Maybe<Scalars['String']['output']>;
+  /** True when the list was published (the Customer scope was applied). */
+  succeeded: Scalars['Boolean']['output'];
+  /** Stable outcome codes for any notification channel that did not deliver (empty on full success). */
+  warnings: Array<Scalars['String']['output']>;
+};
+
+export type SalesRepStatisticsPeriodInput = {
+  /** Inclusive lower bound on the created date (null = no lower bound). */
+  from?: InputMaybe<Scalars['DateTime']['input']>;
+  /** Inclusive upper bound on the created date (null = no upper bound). */
+  to?: InputMaybe<Scalars['DateTime']['input']>;
+};
+
+export type SalesRepTopSeller = {
+  /** Category id (from the line-item snapshot). */
+  categoryId?: Maybe<Scalars['String']['output']>;
+  /** Product image URL (from the line-item snapshot). */
+  imageUrl?: Maybe<Scalars['String']['output']>;
+  /** Product name (from the line-item snapshot). */
+  name?: Maybe<Scalars['String']['output']>;
+  /** Product id the sales were aggregated by. */
+  productId: Scalars['String']['output'];
+  /** 1-based rank in the list (by the selected metric). */
+  rank: Scalars['Int']['output'];
+  /** Total revenue — sum of quantity × unit price (amount, formatted amount and currency). */
+  revenue: MoneyType;
+  /** Product SKU (from the line-item snapshot). */
+  sku?: Maybe<Scalars['String']['output']>;
+  /** Total units sold (sum of line-item quantities). */
+  units: Scalars['Int']['output'];
+  /** Non-null when Revenue is partial because some of this product's sales were in an unconfigured currency and could not be converted; describes what was excluded. */
+  warning?: Maybe<Scalars['String']['output']>;
+};
+
+export type SalesRepTopSellerFilterRule = {
+  /** Localized category label. */
+  localizedName?: Maybe<Scalars['String']['output']>;
+  /** Stable rule id (a top-level category id) — send it back as the salesRepTopSellers 'filter' argument. */
+  name: Scalars['String']['output'];
+};
+
+export type SalesRepTopSellerSortRule = {
+  /** Direction applied when the 'sort' argument carries no direction suffix: 'asc' or 'desc'. */
+  defaultDirection: Scalars['String']['output'];
+  /** Localized label for the ordering. */
+  localizedName?: Maybe<Scalars['String']['output']>;
+  /** Stable sort-rule id — send it back as the salesRepTopSellers 'sort' argument (optionally suffixed ':asc'/':desc'). */
+  name: Scalars['String']['output'];
+  /** Whether the client may choose the direction; false = a ':asc'/':desc' opposite of the default is rejected (these rank highest-first only). */
+  supportsDirection: Scalars['Boolean']['output'];
 };
 
 export type SearchHistoryResultType = {
@@ -7108,6 +7477,8 @@ export type SlugInfoResponseType = {
 };
 
 export type StoreResponseType = {
+  /** Base URL used to serve this store's public asset (image) URLs. Overrides the global asset CDN. */
+  assetPublicUrl?: Maybe<Scalars['String']['output']>;
   /** Available currencies */
   availableCurrencies: Array<CurrencyType>;
   /** Available languages */
@@ -7288,7 +7659,6 @@ export type ValidationErrorType = {
 export type VariationType = {
   /** Assets */
   assets: Array<Asset>;
-  associations?: Maybe<ProductAssociationConnection>;
   /** Availability data */
   availabilityData: AvailabilityData;
   /** SKU of variation. */
@@ -7320,14 +7690,6 @@ export type VariationType = {
   slug?: Maybe<Scalars['String']['output']>;
   /** Product vendor */
   vendor?: Maybe<CommonVendor>;
-};
-
-
-export type VariationTypeAssociationsArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  group?: InputMaybe<Scalars['String']['input']>;
-  query?: InputMaybe<Scalars['String']['input']>;
 };
 
 /** Vendor Info */
@@ -7491,6 +7853,8 @@ export enum WishlistScopeType {
   AnyoneAnonymous = 'AnyoneAnonymous',
   /** Anyone (authorized) scope */
   AnyoneAuthorized = 'AnyoneAuthorized',
+  /** Customer scope (shared by a Sales Rep with specific customer organizations) */
+  Customer = 'Customer',
   /** Organization scope */
   Organization = 'Organization',
   /** Private scope */
@@ -7529,44 +7893,6 @@ export type WishlistType = {
   storeId?: Maybe<Scalars['String']['output']>;
   /** Wishlist subtotal */
   subTotal: MoneyType;
-};
-
-/** A connection from an object to a list of objects of type `WorkTask`. */
-export type WorkTaskConnection = {
-  /** A list of all of the edges returned in the connection. */
-  edges?: Maybe<Array<Maybe<WorkTaskEdge>>>;
-  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
-  items?: Maybe<Array<Maybe<WorkTaskType>>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
-  totalCount?: Maybe<Scalars['Int']['output']>;
-};
-
-/** An edge in a connection from an object to another object of type `WorkTask`. */
-export type WorkTaskEdge = {
-  /** A cursor for use in pagination */
-  cursor: Scalars['String']['output'];
-  /** The item at the end of the edge */
-  node?: Maybe<WorkTaskType>;
-};
-
-export type WorkTaskType = {
-  completed?: Maybe<Scalars['Boolean']['output']>;
-  createdBy?: Maybe<Scalars['String']['output']>;
-  createdDate: Scalars['DateTime']['output'];
-  description?: Maybe<Scalars['String']['output']>;
-  dueDate?: Maybe<Scalars['DateTime']['output']>;
-  id: Scalars['String']['output'];
-  isActive: Scalars['Boolean']['output'];
-  modifiedBy?: Maybe<Scalars['String']['output']>;
-  modifiedDate?: Maybe<Scalars['DateTime']['output']>;
-  parameters?: Maybe<Scalars['String']['output']>;
-  priority?: Maybe<Scalars['Int']['output']>;
-  responsibleName?: Maybe<Scalars['String']['output']>;
-  storeId?: Maybe<Scalars['String']['output']>;
-  type?: Maybe<Scalars['String']['output']>;
-  workflowId?: Maybe<Scalars['String']['output']>;
 };
 
 export type AddAddressToFavoritesMutationVariables = Exact<{
