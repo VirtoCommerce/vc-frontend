@@ -1,5 +1,7 @@
-// Per-brand CVV (security code) rules for the Skyflow card form.
-// American Express uses a 4-digit CVV (CID); all other brands use 3 digits.
+// Skyflow-specific CVV (security code) shaping. The per-brand length decision and the card-number
+// brand detection live in the shared `./cvv-validation` core (also consumed by the Authorize.Net
+// `bank-card-form`); this module only turns that length into the `{ regex, placeholder }` shape
+// Skyflow's REGEX_MATCH_RULE expects, and re-exports the shared detector for the Skyflow form.
 //
 // Resolving the brand differs by path:
 //   - New card: the Skyflow SDK exposes the brand on the CARD_NUMBER CHANGE event only as
@@ -10,20 +12,12 @@
 //     CARD_NUMBER `value` even in PROD: the first 6 for Amex, 8 for others).
 //   - Saved card: the brand comes from the GraphQL SkyflowCardType.cardScheme / cardType, which
 //     the backend passes through verbatim from the Skyflow vault. Those use full network names
-//     (e.g. "AMERICAN EXPRESS"), whereas the SDK enum uses "AMEX", so matching is normalized.
+//     (e.g. "AMERICAN EXPRESS"), whereas the SDK enum uses "AMEX", so matching is normalized
+//     inside the shared core.
 
-const AMEX_CVV_LENGTH = 4;
-const DEFAULT_CVV_LENGTH = 3;
+import { getCvvLength } from "./cvv-validation";
 
-/** Canonical Amex scheme token (matches Skyflow.CardType.AMEX). */
-const AMEX_SCHEME = "AMEX";
-
-// Every string the two data sources emit for Amex, normalized to letters-only + uppercase:
-// SDK `Skyflow.CardType.AMEX` -> "AMEX"; Skyflow vault `card_scheme` -> "AMERICAN EXPRESS".
-const AMEX_SCHEME_ALIASES = new Set(["AMEX", "AMERICANEXPRESS"]);
-
-// Amex issuer identification numbers (IIN/BIN) start with 34 or 37.
-const AMEX_IIN_RE = /^3[47]/;
+export { getCardSchemeFromNumber } from "./cvv-validation";
 
 export type SkyflowCvvValidationType = {
   /** Anchored regex passed to Skyflow's REGEX_MATCH_RULE. */
@@ -31,22 +25,6 @@ export type SkyflowCvvValidationType = {
   /** Placeholder reflecting the expected digit count for the detected brand. */
   placeholder: string;
 };
-
-function isAmexScheme(cardScheme?: string | null): boolean {
-  const normalized = (cardScheme ?? "").toUpperCase().replace(/[^A-Z]/g, "");
-  return AMEX_SCHEME_ALIASES.has(normalized);
-}
-
-/**
- * Detects the card scheme from a (possibly partially masked) card number by its IIN prefix.
- * Only Amex needs distinguishing (4-digit CVV), so this returns {@link AMEX_SCHEME} for an Amex
- * prefix (34/37) and `undefined` otherwise. Non-digit characters (spaces, mask characters) are
- * stripped first, so the SDK's masked `value` (leading digits intact) still resolves correctly.
- */
-export function getCardSchemeFromNumber(cardNumber?: string | null): string | undefined {
-  const digits = (cardNumber ?? "").replace(/\D/g, "");
-  return AMEX_IIN_RE.test(digits) ? AMEX_SCHEME : undefined;
-}
 
 /**
  * Derives the CVV regex + placeholder for a detected card scheme.
@@ -57,7 +35,7 @@ export function getCardSchemeFromNumber(cardNumber?: string | null): string | un
  *   or undefined before a brand is detected.
  */
 export function getCvvValidation(cardScheme?: string | null): SkyflowCvvValidationType {
-  const length = isAmexScheme(cardScheme) ? AMEX_CVV_LENGTH : DEFAULT_CVV_LENGTH;
+  const length = getCvvLength(cardScheme);
 
   return {
     regex: `^[0-9]{${length}}$`,

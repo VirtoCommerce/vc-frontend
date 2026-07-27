@@ -17,6 +17,25 @@ export type SalesRepCustomerType = {
 export type SalesRepCustomerSortColumnType = "name";
 export type SalesRepCustomerSortType = { column: SalesRepCustomerSortColumnType; direction: "asc" | "desc" };
 
+// Rep → customer-org broadcast (VCST-5310). storeId/cultureName are added from globals in the composable,
+// not entered by the user; recipients (all org members) are resolved backend-side.
+export type SalesRepCommunicationInputType = {
+  organizationId: string;
+  sendEmail: boolean;
+  sendPush: boolean;
+  message: string;
+  title?: string;
+};
+
+// Per-channel outcome of a broadcast. `warnings` carries stable codes (see the backend's
+// ModuleConstants.Communication.Warnings) that the UI maps to a localized message.
+export type SalesRepCommunicationResultType = {
+  succeeded: boolean;
+  pushSent: boolean;
+  emailSent: boolean;
+  warnings: string[];
+};
+
 // View model for a Sales Rep order row, shared by the customer profile (single org) and the hub
 // dashboard (cross-customer). `organizationName` backs the dashboard's Customer column;
 // `statusDisplayValue` is the localized status label; `total` is the backend-formatted amount.
