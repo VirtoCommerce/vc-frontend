@@ -57,11 +57,11 @@
         :readonly="readonly"
         :disabled="disabled"
         type="password"
-        placeholder="111"
+        :placeholder="securityCodePlaceholder"
         name="securityCode"
         autocomplete="off"
-        minlength="3"
-        maxlength="4"
+        :minlength="securityCodeLength"
+        :maxlength="securityCodeLength"
         class="basis-1/4"
         hide-password-switcher
         required
@@ -82,6 +82,7 @@ import { computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import * as yup from "yup";
 import { isExpirationDateValid } from "@/core/utilities/date";
+import { getCardSchemeFromNumber, getCvvLength } from "@/shared/payment/utils/cvv-validation";
 import type { BankCardErrorsType, BankCardType } from "@/shared/payment";
 
 const emit = defineEmits<IEmits>();
@@ -115,10 +116,16 @@ const initialValues: BankCardType = {
 
 const cardMaskOptions = { mask: "#### #### #### #### ###" };
 const dateMaskOptions = { mask: "## / ##" };
-const securityCodeMaskOptions = { mask: "####" };
 
 const cardMask = new Mask(cardMaskOptions);
 const dateMask = new Mask(dateMaskOptions);
+
+// American Express (IIN prefix 34/37) uses a 4-digit CVV; every other brand uses 3. Deriving the
+// required length from the entered card number lets the CVV rule + mask + length + placeholder
+// reflect the detected brand, so a malformed CVV is caught client-side (gating cart "Create order")
+// instead of only later during Accept.js tokenization, after an unpaid order already exists.
+// The brand detection + length decision are shared with the Skyflow form via shared/payment/utils.
+const cvvLengthForNumber = (cardNumber?: string | null) => getCvvLength(getCardSchemeFromNumber(cardNumber));
 
 const labels = computed(() => {
   return {
@@ -158,7 +165,11 @@ const validationSchema = toTypedSchema(
             .label(labels.value.yearLabel)
         : schema;
     }),
-    securityCode: yup.string().required().min(3).max(4).label(labels.value.securityCode),
+    securityCode: yup
+      .string()
+      .required()
+      .when("number", ([cardNumber], schema) => schema.length(cvvLengthForNumber(cardNumber)))
+      .label(labels.value.securityCode),
   }),
 );
 
@@ -177,6 +188,10 @@ const [cardholderName] = defineField("cardholderName");
 const [month] = defineField("month");
 const [year] = defineField("year");
 const [securityCode] = defineField("securityCode");
+
+const securityCodeLength = computed(() => cvvLengthForNumber(number.value));
+const securityCodeMaskOptions = computed(() => ({ mask: "#".repeat(securityCodeLength.value) }));
+const securityCodePlaceholder = computed(() => "1".repeat(securityCodeLength.value));
 
 const expirationDate = computed<string | undefined, string>({
   get: () => dateMask.masked((month.value || "") + (year.value || "")),
