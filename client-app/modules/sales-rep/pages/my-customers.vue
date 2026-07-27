@@ -56,26 +56,47 @@
           >
             <template #mobile-item="{ item }">
               <div class="my-customers__mobile-item">
-                <VcLink
-                  class="my-customers__customer my-customers__customer--mobile"
-                  :to="{ name: CUSTOMER_PROFILE_ROUTE_NAME, params: { organizationId: item.organizationId } }"
-                >
-                  {{ item.organizationName }}
-                </VcLink>
+                <div class="my-customers__mobile-body">
+                  <div class="my-customers__mobile-main">
+                    <VcLink
+                      class="my-customers__customer my-customers__customer--mobile"
+                      :to="{ name: CUSTOMER_PROFILE_ROUTE_NAME, params: { organizationId: item.organizationId } }"
+                    >
+                      {{ item.organizationName }}
+                    </VcLink>
 
-                <span v-if="item.location" class="my-customers__location">{{ item.location }}</span>
+                    <span v-if="item.location" class="my-customers__location">{{ item.location }}</span>
 
-                <span v-if="item.lastOrder" class="my-customers__mobile-sub">
-                  {{ $d(item.lastOrder.createdDate) }} ·
-                  <VcLink
-                    class="my-customers__order"
-                    :to="{ name: 'OrderDetails', params: { orderId: item.lastOrder.id } }"
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    <!-- Mobile has no column header, so caption the last-order link — a bare date/#number reads as an unlabeled link. -->
+                    <div v-if="item.lastOrder" class="my-customers__mobile-order">
+                      <span class="my-customers__mobile-caption">{{
+                        t("sales_rep.my_customers.table.last_order")
+                      }}</span>
+
+                      <span class="my-customers__mobile-sub">
+                        {{ $d(item.lastOrder.createdDate) }} ·
+                        <VcLink
+                          class="my-customers__order"
+                          :to="{ name: 'OrderDetails', params: { orderId: item.lastOrder.id } }"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {{ orderLabel(item.lastOrder.number) }}
+                        </VcLink>
+                      </span>
+                    </div>
+                  </div>
+
+                  <VcButton
+                    class="my-customers__mobile-action"
+                    size="sm"
+                    variant="outline"
+                    prepend-icon="mail"
+                    @click="openCommunication(item)"
                   >
-                    {{ orderLabel(item.lastOrder.number) }}
-                  </VcLink>
-                </span>
+                    {{ t("sales_rep.communication.action") }}
+                  </VcButton>
+                </div>
               </div>
             </template>
 
@@ -107,6 +128,23 @@
 
               <template v-else>—</template>
             </VcTableColumn>
+
+            <VcTableColumn
+              id="actions"
+              v-slot="{ item }"
+              :title="t('sales_rep.my_customers.table.actions')"
+              class="my-customers__actions-col"
+            >
+              <VcButton
+                :aria-label="t('sales_rep.communication.action')"
+                :title="t('sales_rep.communication.action')"
+                icon="mail"
+                icon-size="1.25rem"
+                variant="ghost"
+                color="neutral"
+                @click="openCommunication(item)"
+              />
+            </VcTableColumn>
           </VcTable>
         </template>
       </VcWidget>
@@ -117,11 +155,14 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { useModal } from "@/shared/modal";
+import CustomerCommunicationModal from "../components/customer-communication-modal.vue";
 import { useSalesRepCustomers } from "../composables/useSalesRepCustomers";
 import { CUSTOMER_PROFILE_ROUTE_NAME } from "../constants";
 import type { SalesRepCustomerSortColumnType, SalesRepCustomerType } from "../types";
 
 const { t } = useI18n();
+const { openModal } = useModal();
 const { loading, keyword, sort, page, pages, items } = useSalesRepCustomers();
 
 // Unapplied search term; committed to the query on Enter or the search button.
@@ -129,6 +170,14 @@ const localKeyword = ref("");
 
 function orderLabel(number: string): string {
   return `#${number}`;
+}
+
+// Broadcast to all members of the customer's org — reuses the shared modal shell (VCST-5310).
+function openCommunication(item: SalesRepCustomerType): void {
+  openModal({
+    component: CustomerCommunicationModal,
+    props: { organizationId: item.organizationId, organizationName: item.organizationName },
+  });
 }
 
 function rowClass(_item: SalesRepCustomerType, index: number): string {
@@ -177,6 +226,10 @@ function changePage(newPage: number): void {
     @apply w-full;
   }
 
+  &__actions-col {
+    @apply w-16 text-center;
+  }
+
   // Top-align body cells only, so the name lines up with the stacked last-order date/number.
   .vc-table__cell {
     @apply align-top;
@@ -201,11 +254,44 @@ function changePage(newPage: number): void {
   }
 
   &__mobile-item {
-    @apply flex flex-col gap-1 border-b px-5 py-4.5 [word-break:break-word];
+    @apply border-b px-5 py-4.5 [word-break:break-word];
+
+    // The card is its own query container, so the body can lay the action beside the content once the card is wide enough (≈ tablets / iPad mini).
+    container-type: inline-size;
+  }
+
+  // Stacked on narrow cards; splits into content + action once the card has room (see the container query above).
+  &__mobile-body {
+    @apply flex flex-col gap-3;
+
+    @container (min-width: theme("containers.md")) {
+      @apply flex-row items-start justify-between gap-4;
+    }
+  }
+
+  &__mobile-main {
+    @apply flex min-w-0 flex-col gap-1;
+  }
+
+  &__mobile-order {
+    @apply flex flex-col;
+  }
+
+  // Label the last-order block; on desktop the column header does this job, but the mobile card has no header.
+  &__mobile-caption {
+    @apply text-sm font-medium;
   }
 
   &__mobile-sub {
     @apply text-sm;
+  }
+
+  &__mobile-action {
+    @apply self-start;
+
+    @container (min-width: theme("containers.md")) {
+      @apply shrink-0;
+    }
   }
 }
 </style>

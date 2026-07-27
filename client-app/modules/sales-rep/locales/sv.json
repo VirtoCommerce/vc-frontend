@@ -26,6 +26,7 @@
       "table": {
         "customer": "Kund",
         "last_order": "Min senaste order",
+        "actions": "Åtgärder",
         "search_placeholder": "Sök efter namn",
         "search_aria": "Sök kunder",
         "empty": "Inga kunder hittades",
@@ -67,6 +68,37 @@
         "phone": "Telefon",
         "account_type": "Kontotyp",
         "ship_to": "Leveransadress"
+      }
+    },
+    "communication": {
+      "action": "Skicka e-post",
+      "title": "Skicka ett meddelande",
+      "subtitle": "Når alla medlemmar i {organization}",
+      "title_label": "Titel",
+      "message_label": "Meddelande",
+      "channels_label": "Skicka via",
+      "email_label": "E-post",
+      "push_label": "Push-avisering",
+      "send_button": "Skicka",
+      "cancel_button": "Avbryt",
+      "success_text": "Ditt meddelande har skickats.",
+      "error_text": "Meddelandet kunde inte skickas. Försök igen.",
+      "partial_success_text": "Ditt meddelande skickades, men inte via alla kanaler:",
+      "warnings": {
+        "generic": "Meddelandet kunde inte skickas via en av de valda kanalerna.",
+        "NoRecipients": "Den här organisationen har inga kontakter att meddela.",
+        "EmailUnavailable": "E-post är för närvarande inte tillgängligt. Kontakta din administratör.",
+        "EmailStoreAccessDenied": "E-postmeddelandet kunde inte skickas för den valda butiken.",
+        "EmailNoRecipients": "Ingen av mottagarna har en e-postadress.",
+        "EmailSendFailed": "E-postmeddelandet kunde inte skickas. Försök igen senare.",
+        "PushSendFailed": "Push-aviseringen kunde inte skickas. Försök igen senare."
+      },
+      "quick_actions": {
+        "title": "Snabbåtgärder",
+        "order_on_behalf": "Beställ åt kunden",
+        "send_email": "Skicka e-post",
+        "create_quote": "Skapa offert",
+        "schedule_call": "Boka samtal"
       }
     },
     "orders": {

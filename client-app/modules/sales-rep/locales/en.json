@@ -26,6 +26,7 @@
       "table": {
         "customer": "Customer",
         "last_order": "My last order",
+        "actions": "Actions",
         "search_placeholder": "Search by name",
         "search_aria": "Search customers",
         "empty": "No customers found",
@@ -67,6 +68,37 @@
         "phone": "Phone",
         "account_type": "Account type",
         "ship_to": "Ship-to"
+      }
+    },
+    "communication": {
+      "action": "Send email",
+      "title": "Send a message",
+      "subtitle": "Reaches every member of {organization}",
+      "title_label": "Title",
+      "message_label": "Message",
+      "channels_label": "Send via",
+      "email_label": "Email",
+      "push_label": "Push notification",
+      "send_button": "Send",
+      "cancel_button": "Cancel",
+      "success_text": "Your message has been sent.",
+      "partial_success_text": "Your message was sent, but not on every channel:",
+      "error_text": "The message could not be sent. Please try again.",
+      "warnings": {
+        "generic": "The message could not be sent on one of the selected channels.",
+        "NoRecipients": "This organization has no contacts to notify.",
+        "EmailUnavailable": "Email is currently unavailable. Please contact your administrator.",
+        "EmailStoreAccessDenied": "Email could not be sent for the selected store.",
+        "EmailNoRecipients": "None of the recipients have an email address.",
+        "EmailSendFailed": "The email could not be sent. Please try again later.",
+        "PushSendFailed": "The push notification could not be sent. Please try again later."
+      },
+      "quick_actions": {
+        "title": "Quick actions",
+        "order_on_behalf": "Order on behalf",
+        "send_email": "Send email",
+        "create_quote": "Create quote",
+        "schedule_call": "Schedule call"
       }
     },
     "orders": {
