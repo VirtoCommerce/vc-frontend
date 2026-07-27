@@ -34,22 +34,26 @@
       }
     },
     "hub": {
-      "title": "Sales Rep hub"
+      "title": "Sales Rep hub",
+      "dashboard": {
+        "navigation": {
+          "link": "Dashboard"
+        },
+        "page": {
+          "title": "Dashboard"
+        },
+        "widgets": {
+          "orders_on_hold": "Orders on hold",
+          "active_projects": "Active projects",
+          "orders_placed_mtd": "Orders placed · MTD",
+          "my_customers": "My customers"
+        }
+      }
     },
     "customer_profile": {
       "loading": "Loading…",
       "not_found": "Customer not found or not in your customers.",
       "back_to_customers": "Back to my customers",
-      "orders": {
-        "title": "Orders",
-        "empty": "No orders yet",
-        "number": "Order #",
-        "date": "Date",
-        "items": "Items",
-        "status": "Status",
-        "total": "Total",
-        "view_all": "All orders"
-      },
       "widgets": {
         "ytd_purchases": "YTD purchases",
         "open_balance": "Open balance",
@@ -64,6 +68,17 @@
         "account_type": "Account type",
         "ship_to": "Ship-to"
       }
+    },
+    "orders": {
+      "title": "Recent orders",
+      "view_all": "All orders",
+      "empty": "No orders yet",
+      "number": "Order #",
+      "customer": "Customer",
+      "date": "Date",
+      "items": "Items",
+      "status": "Status",
+      "total": "Total"
     }
   }
 }

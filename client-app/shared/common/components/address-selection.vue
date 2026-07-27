@@ -15,7 +15,7 @@
         v-if="!readonly"
         :disabled="disabled"
         variant="outline"
-        icon="edit"
+        icon="pencil"
         size="xs"
         class="vc-address-selection__button"
         data-test-id="select-address-button"

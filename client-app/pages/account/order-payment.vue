@@ -324,6 +324,8 @@ import PaymentProcessingAuthorizeNet from "@/shared/payment/components/payment-p
 import PaymentProcessingCyberSource from "@/shared/payment/components/payment-processing-cyber-source.vue";
 import PaymentProcessingDatatrans from "@/shared/payment/components/payment-processing-datatrans.vue";
 
+const props = defineProps<IProps>();
+
 // Loaded only when the Skyflow method is the active payment type, so the skyflow-js SDK
 // (~80 KB gzip) stays out of the eager bundle shared across checkout/account routes.
 const PaymentProcessingSkyflow = defineAsyncComponent(
@@ -333,8 +335,6 @@ const PaymentProcessingSkyflow = defineAsyncComponent(
 interface IProps {
   orderId: string;
 }
-
-const props = defineProps<IProps>();
 
 const { getModuleSettings } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 

@@ -176,7 +176,7 @@ onMounted(() => {
   }
 
   &__icon {
-    @apply fill-primary size-4;
+    @apply text-primary size-4;
   }
 
   &__divider {

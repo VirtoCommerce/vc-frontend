@@ -1,11 +1,20 @@
-query SalesRepOrders($organizationId: String!, $storeId: String, $first: Int, $sort: String) {
-  salesRepOrders(organizationId: $organizationId, storeId: $storeId, first: $first, sort: $sort) {
+query SalesRepOrders($organizationId: String, $storeId: String, $cultureName: String, $first: Int, $sort: String) {
+  salesRepOrders(
+    organizationId: $organizationId
+    storeId: $storeId
+    cultureName: $cultureName
+    first: $first
+    sort: $sort
+  ) {
     totalCount
     items {
       id
       number
+      organizationId
+      organizationName
       createdDate
       status
+      statusDisplayValue
       itemsCount
       total {
         amount

@@ -139,7 +139,7 @@ function addFiles(items: File[]) {
   }
 
   &__icon {
-    @apply fill-accent;
+    @apply text-accent;
   }
 
   &__requirements {

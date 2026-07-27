@@ -34,22 +34,26 @@
       }
     },
     "hub": {
-      "title": "Säljrepresentant-hub"
+      "title": "Säljrepresentant-hub",
+      "dashboard": {
+        "navigation": {
+          "link": "Instrumentpanel"
+        },
+        "page": {
+          "title": "Instrumentpanel"
+        },
+        "widgets": {
+          "orders_on_hold": "Order i vänteläge",
+          "active_projects": "Aktiva projekt",
+          "orders_placed_mtd": "Order hittills denna månad",
+          "my_customers": "Mina kunder"
+        }
+      }
     },
     "customer_profile": {
       "loading": "Laddar…",
       "not_found": "Kunden hittades inte eller finns inte bland dina kunder.",
       "back_to_customers": "Tillbaka till mina kunder",
-      "orders": {
-        "title": "Beställningar",
-        "empty": "Inga beställningar ännu",
-        "number": "Ordernr",
-        "date": "Datum",
-        "items": "Artiklar",
-        "status": "Status",
-        "total": "Totalt",
-        "view_all": "Alla beställningar"
-      },
       "widgets": {
         "ytd_purchases": "Inköp hittills i år",
         "open_balance": "Utestående saldo",
@@ -64,6 +68,17 @@
         "account_type": "Kontotyp",
         "ship_to": "Leveransadress"
       }
+    },
+    "orders": {
+      "title": "Senaste ordrar",
+      "view_all": "Alla beställningar",
+      "empty": "Inga beställningar ännu",
+      "number": "Ordernr",
+      "customer": "Kund",
+      "date": "Datum",
+      "items": "Artiklar",
+      "status": "Status",
+      "total": "Totalt"
     }
   }
 }

@@ -4,11 +4,12 @@
       <VcChip
         :variant="orderStatus?.variant"
         :color="orderStatus?.color || defaultColor"
-        :icon="icon ?? orderStatus?.icon"
         :truncate="truncate"
         size="sm"
         rounded
       >
+        <VcIcon v-if="icon ?? orderStatus?.icon" variant="solid" :name="icon ?? orderStatus?.icon" />
+
         <span>{{ displayValue || status }}</span>
       </VcChip>
     </template>
