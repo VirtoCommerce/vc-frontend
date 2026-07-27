@@ -1,6 +1,9 @@
 <template>
   <div class="stat-widget" :class="`stat-widget--${accent}`">
     <div class="stat-widget__head">
+      <!-- Decorator slot ahead of the accent icon; the layout puts its drag affordance here. -->
+      <slot name="leading" />
+
       <VcIcon class="stat-widget__icon" :name="icon" :size="15" />
 
       <span class="stat-widget__label">{{ label }}</span>

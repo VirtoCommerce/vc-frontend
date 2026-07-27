@@ -49,6 +49,31 @@
           "orders_placed_mtd": "Ordrer hittil denne måneden",
           "my_customers": "Mine kunder"
         }
+      },
+      "layout": {
+        "edit": "Rediger oppsett",
+        "editing": "Redigerer oppsett",
+        "hint": "— dra en blokk etter håndtaket for å endre rekkefølgen, eller skjul den med ✕.",
+        "save": "Lagre oppsett",
+        "cancel": "Avbryt",
+        "reset": "Tilbakestill",
+        "save_failed": "Oppsettet kunne ikke lagres. Endringene dine er fortsatt her — prøv igjen.",
+        "hidden_widgets": "Skjulte moduler",
+        "visible_stats": "Synlige nøkkeltall",
+        "hidden_stats": "Skjulte nøkkeltall",
+        "empty_visible": "Dra et nøkkeltall hit for å vise det",
+        "empty_hidden": "Dra et nøkkeltall hit for å skjule det",
+        "a11y": {
+          "reorder": "Endre rekkefølge på {title}",
+          "hide": "Skjul {title}",
+          "show": "Vis {title}",
+          "grabbed": "{title} tatt opp. Posisjon {position} av {total}. Bruk piltastene for å flytte, mellomrom for å slippe, escape for å avbryte.",
+          "moved": "{title} flyttet til posisjon {position} av {total}.",
+          "dropped": "{title} sluppet på posisjon {position} av {total}.",
+          "cancelled": "Flytting av {title} avbrutt.",
+          "parked": "{title} skjult.",
+          "restored": "{title} vist."
+        }
       }
     },
     "customer_profile": {

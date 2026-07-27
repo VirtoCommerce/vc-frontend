@@ -49,6 +49,31 @@
           "orders_placed_mtd": "Tilaukset kuluvan kuun alusta",
           "my_customers": "Omat asiakkaat"
         }
+      },
+      "layout": {
+        "edit": "Muokkaa asettelua",
+        "editing": "Muokataan asettelua",
+        "hint": "— vedä lohkoa kahvasta järjestääksesi sen uudelleen tai piilota se ✕-painikkeella.",
+        "save": "Tallenna asettelu",
+        "cancel": "Peruuta",
+        "reset": "Palauta oletukset",
+        "save_failed": "Asettelun tallentaminen epäonnistui. Muutoksesi ovat yhä tallessa — yritä uudelleen.",
+        "hidden_widgets": "Piilotetut widgetit",
+        "visible_stats": "Näkyvät tunnusluvut",
+        "hidden_stats": "Piilotetut tunnusluvut",
+        "empty_visible": "Vedä tunnusluku tähän näyttääksesi sen",
+        "empty_hidden": "Vedä tunnusluku tähän piilottaaksesi sen",
+        "a11y": {
+          "reorder": "Järjestä {title}",
+          "hide": "Piilota {title}",
+          "show": "Näytä {title}",
+          "grabbed": "{title} tartuttu. Sijainti {position}/{total}. Siirrä nuolinäppäimillä, pudota välilyönnillä, peruuta Esc-näppäimellä.",
+          "moved": "{title} siirretty sijaintiin {position}/{total}.",
+          "dropped": "{title} pudotettu sijaintiin {position}/{total}.",
+          "cancelled": "Kohteen {title} siirto peruutettu.",
+          "parked": "{title} piilotettu.",
+          "restored": "{title} näytetään."
+        }
       }
     },
     "customer_profile": {

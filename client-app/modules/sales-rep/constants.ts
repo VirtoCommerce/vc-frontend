@@ -37,3 +37,13 @@ export const ORDERS_DEFAULT_LIMIT = 7;
 export const DASHBOARD_ROUTE_NAME = "SalesRepDashboard";
 export const DASHBOARD_ROUTE_SEGMENT = "dashboard";
 export const DASHBOARD_NAV_LINK_ID = "sales-rep-dashboard";
+
+// Saved layout (VCST-5367). The backend types `scope` and `region.id` as free-form `String`, not
+// enums — an unrecognized value does not error, it silently addresses a different (empty) document.
+// So these literals are load-bearing: changing one strands every layout already saved under the old
+// value. `constants.test.ts` pins them.
+export const LAYOUT_SCHEMA_VERSION = 1;
+export const DASHBOARD_LAYOUT_SCOPE = "dashboard";
+export const CUSTOMER_PROFILE_LAYOUT_SCOPE = "customerProfile";
+// Ordered so serialization always emits regions in a stable sequence.
+export const LAYOUT_REGION_IDS = ["statistics", "mainLeft", "mainRight"] as const;

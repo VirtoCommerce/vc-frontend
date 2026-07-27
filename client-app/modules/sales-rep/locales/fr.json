@@ -49,6 +49,31 @@
           "orders_placed_mtd": "Commandes depuis le début du mois",
           "my_customers": "Mes clients"
         }
+      },
+      "layout": {
+        "edit": "Modifier la disposition",
+        "editing": "Modification de la disposition",
+        "hint": "— faites glisser un bloc par sa poignée pour le réorganiser, ou masquez-le avec ✕.",
+        "save": "Enregistrer la disposition",
+        "cancel": "Annuler",
+        "reset": "Réinitialiser",
+        "save_failed": "La disposition n'a pas pu être enregistrée. Vos modifications sont conservées — réessayez.",
+        "hidden_widgets": "Widgets masqués",
+        "visible_stats": "Indicateurs visibles",
+        "hidden_stats": "Indicateurs masqués",
+        "empty_visible": "Faites glisser un indicateur ici pour l'afficher",
+        "empty_hidden": "Faites glisser un indicateur ici pour le masquer",
+        "a11y": {
+          "reorder": "Réorganiser {title}",
+          "hide": "Masquer {title}",
+          "show": "Afficher {title}",
+          "grabbed": "{title} saisi. Position {position} sur {total}. Utilisez les flèches pour le déplacer, espace pour le déposer, échap pour annuler.",
+          "moved": "{title} déplacé en position {position} sur {total}.",
+          "dropped": "{title} déposé en position {position} sur {total}.",
+          "cancelled": "Déplacement de {title} annulé.",
+          "parked": "{title} masqué.",
+          "restored": "{title} affiché."
+        }
       }
     },
     "customer_profile": {

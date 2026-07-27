@@ -29,20 +29,94 @@
         <p v-if="meta" class="customer-profile__meta">{{ meta }}</p>
       </div>
 
-      <!-- Full-width KPI row (mock until VCST-5309). -->
-      <CustomerProfileWidgets />
+      <!-- Nothing block-shaped renders until the saved layout is known; see layout-skeleton.vue. -->
+      <LayoutSkeleton v-if="layoutLoading" :stats="4" :blocks="2" />
 
-      <div class="customer-profile__layout">
-        <div class="customer-profile__main">
-          <SalesRepOrders :organization-id="organizationId" :title="t('sales_rep.orders.title')" />
+      <template v-else>
+        <LayoutEditBar
+          v-if="editing"
+          :saving="saving"
+          :failed="saveFailed"
+          @save="save"
+          @cancel="cancel"
+          @reset="reset"
+        />
+
+        <!-- Full-width KPI row (mock until VCST-5309). -->
+        <LayoutStats
+          :scope="SCOPE"
+          :visible="visibleIn('statistics')"
+          :hidden="hiddenIn('statistics')"
+          :editing="editing"
+          @reorder="reorderVisible('statistics', $event)"
+          @reorder-hidden="reorderHidden('statistics', $event)"
+          @set-hidden="setHidden"
+          @announce="announce"
+        />
+
+        <div class="customer-profile__layout">
+          <LayoutRegion
+            class="customer-profile__main"
+            :scope="SCOPE"
+            :entries="visibleIn('mainLeft')"
+            orientation="vertical"
+            group="sales-rep-customer-main-left"
+            :editing="editing"
+            @reorder="reorderVisible('mainLeft', $event)"
+            @set-hidden="setHidden"
+            @announce="announce"
+          >
+            <template #default="{ entry }">
+              <component
+                :is="componentOf(entry.id)"
+                v-if="componentOf(entry.id)"
+                :organization-id="organizationId"
+                :title="t('sales_rep.orders.title')"
+              />
+            </template>
+          </LayoutRegion>
+
+          <!-- Its own Sortable group, so a rail widget can never be dropped into the wide column. -->
+          <LayoutRegion
+            class="customer-profile__aside"
+            tag="aside"
+            :scope="SCOPE"
+            :entries="visibleIn('mainRight')"
+            orientation="vertical"
+            group="sales-rep-customer-main-right"
+            :editing="editing"
+            @reorder="reorderVisible('mainRight', $event)"
+            @set-hidden="setHidden"
+            @announce="announce"
+          >
+            <template #default="{ entry }">
+              <component :is="componentOf(entry.id)" v-if="componentOf(entry.id)" :organization-id="organizationId" />
+            </template>
+          </LayoutRegion>
         </div>
 
-        <aside class="customer-profile__aside">
-          <CustomerProfileActions :organization-id="organizationId" />
+        <LayoutHiddenTray
+          v-if="editing && hiddenWidgets.length"
+          :scope="SCOPE"
+          :entries="hiddenWidgets"
+          @restore="setHidden($event, false)"
+        />
 
-          <CustomerProfileInfo :organization-id="organizationId" />
-        </aside>
-      </div>
+        <div>
+          <VcButton
+            v-if="canEdit"
+            size="xs"
+            color="primary"
+            variant="outline"
+            prepend-icon="adjustments"
+            @click="editing ? cancel() : startEdit()"
+          >
+            {{ editing ? t("sales_rep.hub.layout.editing") : t("sales_rep.hub.layout.edit") }}
+          </VcButton>
+        </div>
+      </template>
+
+      <p class="customer-profile__announcer" aria-live="assertive" aria-atomic="true">{{ message }}</p>
     </template>
   </div>
 </template>
@@ -51,21 +125,71 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
-import CustomerProfileActions from "../components/customer-profile-actions.vue";
-import CustomerProfileInfo from "../components/customer-profile-info.vue";
-import CustomerProfileWidgets from "../components/customer-profile-widgets.vue";
-import SalesRepOrders from "../components/sales-rep-orders.vue";
+import LayoutEditBar from "../components/layout-edit-bar.vue";
+import LayoutHiddenTray from "../components/layout-hidden-tray.vue";
+import LayoutRegion from "../components/layout-region.vue";
+import LayoutSkeleton from "../components/layout-skeleton.vue";
+import LayoutStats from "../components/layout-stats.vue";
+import { useLayoutAnnouncer } from "../composables/useLayoutAnnouncer";
 import { useSalesRepCustomer } from "../composables/useSalesRepCustomer";
+import { useSalesRepLayout } from "../composables/useSalesRepLayout";
 import { MY_CUSTOMERS_ROUTE_NAME } from "../constants";
+import { getBlock } from "../layout/registry";
+import type { SalesRepLayoutRegionIdType } from "../types/layout";
+
+const props = defineProps<IProps>();
+
+const SCOPE = "customerProfile" as const;
 
 interface IProps {
   organizationId: string;
 }
 
-const props = defineProps<IProps>();
-
 const { t } = useI18n();
 const { customer, loading, notFound } = useSalesRepCustomer(() => props.organizationId);
+const { message, announce } = useLayoutAnnouncer(SCOPE);
+const {
+  state,
+  loading: layoutLoading,
+  saving,
+  editing,
+  canEdit,
+  saveFailed,
+  visibleIn,
+  hiddenIn,
+  startEdit,
+  cancel,
+  reset,
+  reorder,
+  setHidden,
+  save,
+} = useSalesRepLayout(SCOPE);
+
+const hiddenWidgets = computed(() => hiddenIn("mainLeft").concat(hiddenIn("mainRight")));
+
+// eslint-disable-next-line sonarjs/function-return-type -- component or undefined by design
+const componentOf = (id: string) => {
+  const block = getBlock(SCOPE, id);
+  return block && "component" in block ? block.component : undefined;
+};
+
+/**
+ * A region's visible and hidden entries are two views of one ordered array, so a reorder of either
+ * view has to be stitched back into the whole before it is stored.
+ */
+function reorderVisible(regionId: SalesRepLayoutRegionIdType, ids: string[]): void {
+  reorder(regionId, [
+    ...ids.map((id) => ({ id, hidden: false })),
+    ...state.value[regionId].filter((entry) => entry.hidden),
+  ]);
+}
+
+function reorderHidden(regionId: SalesRepLayoutRegionIdType, ids: string[]): void {
+  reorder(regionId, [
+    ...state.value[regionId].filter((entry) => !entry.hidden),
+    ...ids.map((id) => ({ id, hidden: true })),
+  ]);
+}
 
 const myCustomersRouteName = MY_CUSTOMERS_ROUTE_NAME;
 
@@ -121,12 +245,18 @@ const breadcrumbs = useBreadcrumbs(() => [
     @apply flex flex-col gap-5 xl:flex-row xl:items-start;
   }
 
+  // Both columns are LayoutRegions now, which supply their own vertical stacking and gap.
   &__main {
-    @apply flex min-w-0 flex-1 flex-col gap-5;
+    @apply min-w-0 flex-1;
   }
 
   &__aside {
-    @apply flex min-w-0 flex-col gap-5 xl:w-80 xl:shrink-0;
+    @apply min-w-0 xl:w-80 xl:shrink-0;
+  }
+
+  // Visually hidden, but announced. Keyboard sorting is silent without it.
+  &__announcer {
+    @apply absolute -m-px size-px overflow-hidden whitespace-nowrap border-0 p-0 [clip:rect(0,0,0,0)];
   }
 
   // Cancel VcWidget's mobile full-bleed (-mx-4.5 in .vc-container) so blocks align with the KPI row

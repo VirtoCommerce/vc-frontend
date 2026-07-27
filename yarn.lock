@@ -4748,6 +4748,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/sortablejs@npm:^1.15.9":
+  version: 1.15.9
+  resolution: "@types/sortablejs@npm:1.15.9"
+  checksum: 10c0/d8ddf3da28a84a023d3003aa64b6495a7112e3945ac05d937afdb7c182b04a1025f126b2977ed8d5a9ede229b4bab85f037efbc97fde8a71128e056ac3122fa9
+  languageName: node
+  linkType: hard
+
 "@types/supercluster@npm:^7.1.3":
   version: 7.1.3
   resolution: "@types/supercluster@npm:7.1.3"
@@ -13997,6 +14004,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"sortablejs@npm:^1.15.7":
+  version: 1.15.7
+  resolution: "sortablejs@npm:1.15.7"
+  checksum: 10c0/6bfec9876bb66cb401377a52d5b4f832b8841ea55e3d290e4a885e129233558e91253f1e539a3a6374fb0a4575d6fb91567d6f46ebcb3613a808a6562dea4a76
+  languageName: node
+  linkType: hard
+
 "source-map-js@npm:>=0.6.2 <2.0.0, source-map-js@npm:^1.0.2, source-map-js@npm:^1.2.0, source-map-js@npm:^1.2.1":
   version: 1.2.1
   resolution: "source-map-js@npm:1.2.1"
@@ -15370,6 +15384,7 @@ __metadata:
     "@types/lodash-es": "npm:^4.17.12"
     "@types/node": "npm:^24.13.3"
     "@types/semver": "npm:^7.7.1"
+    "@types/sortablejs": "npm:^1.15.9"
     "@types/uuid": "npm:^11.0.0"
     "@unhead/vue": "npm:2.1.16"
     "@vc-frontend/core": "portal:./client-app/core-api"
@@ -15428,6 +15443,7 @@ __metadata:
     sass: "npm:^1.101.0"
     semver: "npm:^7.8.5"
     skyflow-js: "npm:2.7.9"
+    sortablejs: "npm:^1.15.7"
     storybook: "npm:9.1.20"
     storybook-addon-tag-badges: "npm:^3.1.0"
     storybook-vue3-router: "npm:^7.0.0"

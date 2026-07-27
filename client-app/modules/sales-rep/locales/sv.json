@@ -49,6 +49,31 @@
           "orders_placed_mtd": "Order hittills denna månad",
           "my_customers": "Mina kunder"
         }
+      },
+      "layout": {
+        "edit": "Redigera layout",
+        "editing": "Redigerar layout",
+        "hint": "— dra ett block i handtaget för att ändra ordning, eller dölj det med ✕.",
+        "save": "Spara layout",
+        "cancel": "Avbryt",
+        "reset": "Återställ",
+        "save_failed": "Layouten kunde inte sparas. Dina ändringar finns kvar — försök igen.",
+        "hidden_widgets": "Dolda widgetar",
+        "visible_stats": "Synliga nyckeltal",
+        "hidden_stats": "Dolda nyckeltal",
+        "empty_visible": "Dra ett nyckeltal hit för att visa det",
+        "empty_hidden": "Dra ett nyckeltal hit för att dölja det",
+        "a11y": {
+          "reorder": "Ändra ordning på {title}",
+          "hide": "Dölj {title}",
+          "show": "Visa {title}",
+          "grabbed": "{title} upplockad. Position {position} av {total}. Använd piltangenterna för att flytta, mellanslag för att släppa, escape för att avbryta.",
+          "moved": "{title} flyttad till position {position} av {total}.",
+          "dropped": "{title} släppt på position {position} av {total}.",
+          "cancelled": "Flytt av {title} avbruten.",
+          "parked": "{title} dold.",
+          "restored": "{title} visas."
+        }
       }
     },
     "customer_profile": {

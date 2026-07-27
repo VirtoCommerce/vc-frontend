@@ -49,6 +49,31 @@
           "orders_placed_mtd": "Ordini dall’inizio del mese",
           "my_customers": "I miei clienti"
         }
+      },
+      "layout": {
+        "edit": "Modifica layout",
+        "editing": "Modifica del layout",
+        "hint": "— trascina un blocco dalla maniglia per riordinarlo oppure nascondilo con ✕.",
+        "save": "Salva layout",
+        "cancel": "Annulla",
+        "reset": "Ripristina",
+        "save_failed": "Impossibile salvare il layout. Le modifiche sono ancora qui: riprova.",
+        "hidden_widgets": "Widget nascosti",
+        "visible_stats": "Statistiche visibili",
+        "hidden_stats": "Statistiche nascoste",
+        "empty_visible": "Trascina qui una statistica per mostrarla",
+        "empty_hidden": "Trascina qui una statistica per nasconderla",
+        "a11y": {
+          "reorder": "Riordina {title}",
+          "hide": "Nascondi {title}",
+          "show": "Mostra {title}",
+          "grabbed": "{title} preso. Posizione {position} di {total}. Usa le frecce per spostarlo, spazio per rilasciarlo, esc per annullare.",
+          "moved": "{title} spostato alla posizione {position} di {total}.",
+          "dropped": "{title} rilasciato alla posizione {position} di {total}.",
+          "cancelled": "Spostamento di {title} annullato.",
+          "parked": "{title} nascosto.",
+          "restored": "{title} mostrato."
+        }
       }
     },
     "customer_profile": {

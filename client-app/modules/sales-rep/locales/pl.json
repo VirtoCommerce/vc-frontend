@@ -49,6 +49,31 @@
           "orders_placed_mtd": "Zamówienia od początku miesiąca",
           "my_customers": "Moi klienci"
         }
+      },
+      "layout": {
+        "edit": "Edytuj układ",
+        "editing": "Edytowanie układu",
+        "hint": "— przeciągnij blok za uchwyt, aby zmienić kolejność, lub ukryj go przyciskiem ✕.",
+        "save": "Zapisz układ",
+        "cancel": "Anuluj",
+        "reset": "Przywróć domyślne",
+        "save_failed": "Nie udało się zapisać układu. Twoje zmiany nie przepadły — spróbuj ponownie.",
+        "hidden_widgets": "Ukryte widżety",
+        "visible_stats": "Widoczne wskaźniki",
+        "hidden_stats": "Ukryte wskaźniki",
+        "empty_visible": "Przeciągnij tutaj wskaźnik, aby go pokazać",
+        "empty_hidden": "Przeciągnij tutaj wskaźnik, aby go ukryć",
+        "a11y": {
+          "reorder": "Zmień kolejność: {title}",
+          "hide": "Ukryj {title}",
+          "show": "Pokaż {title}",
+          "grabbed": "Chwycono {title}. Pozycja {position} z {total}. Użyj strzałek, aby przenieść, spacji, aby upuścić, Escape, aby anulować.",
+          "moved": "Przeniesiono {title} na pozycję {position} z {total}.",
+          "dropped": "Upuszczono {title} na pozycji {position} z {total}.",
+          "cancelled": "Anulowano przenoszenie {title}.",
+          "parked": "Ukryto {title}.",
+          "restored": "Pokazano {title}."
+        }
       }
     },
     "customer_profile": {

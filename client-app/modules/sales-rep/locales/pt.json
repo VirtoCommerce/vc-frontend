@@ -49,6 +49,31 @@
           "orders_placed_mtd": "Pedidos no mês atual",
           "my_customers": "Meus clientes"
         }
+      },
+      "layout": {
+        "edit": "Editar disposição",
+        "editing": "A editar a disposição",
+        "hint": "— arraste um bloco pela pega para o reordenar, ou oculte-o com ✕.",
+        "save": "Guardar disposição",
+        "cancel": "Cancelar",
+        "reset": "Repor",
+        "save_failed": "Não foi possível guardar a disposição. As suas alterações continuam aqui — tente novamente.",
+        "hidden_widgets": "Widgets ocultos",
+        "visible_stats": "Métricas visíveis",
+        "hidden_stats": "Métricas ocultas",
+        "empty_visible": "Arraste uma métrica para aqui para a mostrar",
+        "empty_hidden": "Arraste uma métrica para aqui para a ocultar",
+        "a11y": {
+          "reorder": "Reordenar {title}",
+          "hide": "Ocultar {title}",
+          "show": "Mostrar {title}",
+          "grabbed": "{title} agarrado. Posição {position} de {total}. Use as setas para mover, espaço para largar, escape para cancelar.",
+          "moved": "{title} movido para a posição {position} de {total}.",
+          "dropped": "{title} largado na posição {position} de {total}.",
+          "cancelled": "Movimento de {title} cancelado.",
+          "parked": "{title} ocultado.",
+          "restored": "{title} mostrado."
+        }
       }
     },
     "customer_profile": {
