@@ -39,8 +39,7 @@ if (
 }
 
 // if a module does not have separated schema - use `core.schemaPath`
-// a module that is not installed on The Platform is reported as skipped and keeps the run green,
-// so there is no need to comment it out to get types for the other modules
+// a module missing from the target environment is skipped, so it need not be commented out
 const independentModules: ModuleType[] = [
   {
     name: "CustomerReviews",
@@ -160,7 +159,7 @@ async function runCodegen() {
   });
 
   if (coreOutcome.status !== "generated") {
-    // Every module request would fail the same way without the core schema, so there is nothing to continue with.
+    // Without the core schema every module would fail the same way.
     reportAbortedCore(coreOutcome);
     process.exitCode = 1;
     return;
@@ -168,8 +167,7 @@ async function runCodegen() {
 
   reportOutcome(coreOutcome);
 
-  // Reported as each module settles, so a slow environment keeps showing progress. The array itself
-  // stays in declaration order, which is what the summary reads.
+  // Reported as each module settles; the array keeps declaration order for the summary.
   const moduleOutcomes = await Promise.all(
     independentModules.map((module) =>
       generateTypes({
@@ -188,8 +186,7 @@ async function runCodegen() {
 
   printSummary([coreOutcome, ...moduleOutcomes]);
 
-  // Skipped modules are a normal state of a partially installed environment and keep the run green,
-  // a module that broke while its schema was reachable does not.
+  // A partially installed environment is normal and stays green; a broken module does not.
   if (moduleOutcomes.some(({ status }) => status === "failed")) {
     process.exitCode = 1;
   }
@@ -210,11 +207,9 @@ async function generateTypes({
   typesPath: string;
 }): Promise<OutcomeType> {
   if (await isSchemaEndpointAbsent(schemaUrl)) {
-    // The bare fact, so that both a skipped module and an aborted core can phrase it their own way.
     const reason = `"${schemaUrl}" answered 404`;
 
-    // Falling back to a committed types.ts is what makes skipping safe. Without one there is nothing
-    // to fall back on: the module's imports cannot type-check, so this is a failure, not a skip.
+    // Reusing a committed types.ts is what makes skipping safe; without one there is nothing to reuse.
     return existsSync(typesPath)
       ? { name, typesPath, status: "skipped", reason }
       : {
@@ -248,7 +243,6 @@ async function generateTypes({
   }
 }
 
-/** Returns the outcome so it can be reported inline while the results are being collected. */
 function reportOutcome(outcome: OutcomeType): OutcomeType {
   switch (outcome.status) {
     case "generated":
@@ -270,8 +264,7 @@ function reportSuccess({ name, typesPath }: OutcomeType): void {
 }
 
 function reportSkip({ name, typesPath, reason }: OutcomeType): void {
-  // 404 is what The Platform answers for a module it does not have, but it is evidence rather than
-  // proof — a mistyped or renamed endpoint answers the same way, so the wording stays factual.
+  // 404 is evidence, not proof: a renamed endpoint answers the same way, so the wording stays factual.
   console.warn(
     `${YELLOW}⚠${RESET} ${BOLD}${name}${RESET}: no schema at its endpoint, module skipped as not installed — keeping the committed "${typesPath}"\n  ${reason}`,
   );
@@ -298,7 +291,7 @@ function reportAbortedCore(outcome: OutcomeType): void {
 
 function printSummary(outcomes: OutcomeType[]): void {
   const { generated, skipped, failed } = groupByStatus(outcomes);
-  // A rule above the heading instead of a boxed frame: module lists are long and would break side borders.
+  // A rule above the heading rather than a box: module lists are long and would break side borders.
   const names = (group: OutcomeType[]) => group.map(({ name }) => name).join(", ");
 
   console.log(`\n${"━".repeat(SUMMARY_WIDTH)}\n${BOLD}GraphQL types generation summary${RESET}`);

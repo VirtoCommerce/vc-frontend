@@ -166,7 +166,6 @@ describe("describeErrorDetails", () => {
   });
 
   it("does not repeat the sources inside the message codegen joins them into", () => {
-    // How @graphql-codegen/cli actually builds it: wrapper message = nested messages joined.
     const error = new AggregateError(
       [new Error("cannot load schema A"), new Error("cannot load schema B")],
       "cannot load schema A\n\ncannot load schema B",
@@ -203,6 +202,12 @@ describe("describeErrorDetails", () => {
     expect(describeErrorDetails(null)).toBe("unknown error");
     expect(describeErrorDetails("plain rejection")).toBe("plain rejection");
     expect(describeErrorDetails(404)).toBe("404");
+    expect(describeErrorDetails(false)).toBe("false");
+    expect(describeErrorDetails(Symbol("nope"))).toBe("Symbol(nope)");
+  });
+
+  it("names a rejection that cannot be serialized at all", () => {
+    expect(describeErrorDetails(() => "thrown function")).toBe("[object Function]");
   });
 
   it("serializes an object rejection instead of reporting [object Object]", () => {

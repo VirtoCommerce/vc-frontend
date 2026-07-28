@@ -17,13 +17,13 @@ export type OutcomeType = {
   name: string;
   typesPath: string;
   status: OutcomeStatusType;
-  /** short human-readable explanation, set for `skipped` */
+  /** short explanation, set for `skipped` */
   reason?: string;
   /** the original error, set for `failed` */
   error?: unknown;
 };
 
-/** Codegen appends a long cheat sheet of the supported schema formats to schema loading failures. */
+/** Codegen appends a cheat sheet of the supported schema formats to every schema loading failure. */
 const CODEGEN_HINT_HEADING = "GraphQL Code Generator supports:";
 
 /** Enough of a failure to act on without pasting a whole response body into the terminal. */
@@ -31,10 +31,10 @@ const MAX_DETAILS_LENGTH = 2000;
 
 const PROBE_TIMEOUT_MS = 15_000;
 
-/** The cheapest valid query every GraphQL endpoint answers, used to tell 404 from a working module. */
+/** The cheapest query every GraphQL endpoint answers, so an endpoint that rejects GET still counts. */
 const PROBE_BODY = JSON.stringify({ query: "{__typename}" });
 
-/** `https://host/` and `https://host` must produce the same schema URL, `//graphql` answers 404. */
+/** A trailing slash would produce `//graphql`, which answers 404. */
 export function normalizeBackendUrl(url: string | undefined): string {
   let normalized = (url ?? "").trim();
 
@@ -47,10 +47,9 @@ export function normalizeBackendUrl(url: string | undefined): string {
 }
 
 /**
- * The Platform answers 404 on the scoped GraphQL endpoint of a module it does not have installed,
- * and that is the only response proving the module is absent. Every other outcome — 401, 500, an
- * HTML page, a connection error — means generation must be attempted and its error reported, so that
- * a broken or misconfigured endpoint is never silently mistaken for an uninstalled module.
+ * A 404 is the only answer The Platform gives for a module it does not have. Anything else — 401,
+ * 500, an HTML page, a connection error — means generation must be attempted and its error reported,
+ * so that a broken or misconfigured endpoint is never mistaken for an uninstalled module.
  */
 export async function isSchemaEndpointAbsent(url: string, fetchImpl: typeof fetch = fetch): Promise<boolean> {
   try {
@@ -63,17 +62,14 @@ export async function isSchemaEndpointAbsent(url: string, fetchImpl: typeof fetc
 
     return response.status === 404;
   } catch {
-    // Let codegen make the call: it reaches the endpoint on its own terms (proxies, TLS overrides).
+    // Codegen reaches the endpoint on its own terms (proxies, TLS overrides), so let it decide.
     return false;
   }
 }
 
 /**
- * Codegen wraps loader failures into an `AggregateError` holding one error per schema source, and
- * sets the wrapper's own message to those nested messages joined together. The leaves therefore
- * carry everything, and reporting the wrapper as well would print the same text twice.
- *
- * `seen` guards against a self-referential `errors` chain, which would otherwise recurse forever.
+ * Codegen sets an `AggregateError`'s own message to its nested messages joined together, so the
+ * leaves carry everything. `seen` guards against a self-referential `errors` chain.
  */
 export function collectErrorMessages(error: unknown, seen: Set<unknown> = new Set()): string[] {
   if (typeof error === "object" && error !== null) {
@@ -94,7 +90,7 @@ export function collectErrorMessages(error: unknown, seen: Set<unknown> = new Se
   return error instanceof Error && error.message ? [error.message] : [];
 }
 
-/** Turns a multi-line codegen message into one line, without the cheat sheet nobody reads. */
+/** Turns a multi-line codegen message into one line, without the cheat sheet. */
 export function stripCodegenHint(message: string): string {
   // eslint-disable-next-line sonarjs/null-dereference -- false positive: message is a typed string parameter
   const hintAt = message.indexOf(CODEGEN_HINT_HEADING);
@@ -107,9 +103,7 @@ export function truncate(text: string, maxLength: number): string {
   return text.length > maxLength ? `${text.slice(0, maxLength)}…` : text;
 }
 
-/** Everything known about a failure, readable enough to act on. */
 export function describeErrorDetails(error: unknown): string {
-  // Two schema sources can fail with the same message, and saying it twice helps nobody.
   const messages = [...new Set(collectErrorMessages(error).map(stripCodegenHint))];
 
   if (!messages.length) {
@@ -119,10 +113,7 @@ export function describeErrorDetails(error: unknown): string {
   return messages.map((message) => truncate(message, MAX_DETAILS_LENGTH)).join("\n  ");
 }
 
-/**
- * Last resort for a rejection that carries no error message. Stringifying an object would only
- * report "[object Object]", so serialize it instead — that is the only content it has to offer.
- */
+/** Last resort for a rejection with no error message: an object's content is all it has to offer. */
 function describeValue(value: unknown): string {
   if (value === null || value === undefined) {
     return "unknown error";
@@ -132,14 +123,24 @@ function describeValue(value: unknown): string {
     return value.name;
   }
 
-  if (typeof value !== "object") {
-    return String(value);
+  if (typeof value === "string") {
+    return truncate(value, MAX_DETAILS_LENGTH);
+  }
+
+  if (typeof value === "number" || typeof value === "bigint" || typeof value === "boolean") {
+    return value.toString();
+  }
+
+  if (typeof value === "symbol") {
+    return value.toString();
   }
 
   try {
-    return truncate(JSON.stringify(value), MAX_DETAILS_LENGTH);
+    // JSON.stringify answers undefined for a function.
+    const serialized: string | undefined = JSON.stringify(value);
+
+    return truncate(serialized ?? Object.prototype.toString.call(value), MAX_DETAILS_LENGTH);
   } catch {
-    // Circular or otherwise unserializable — there is nothing more to say about it.
     return "unserializable error object";
   }
 }
