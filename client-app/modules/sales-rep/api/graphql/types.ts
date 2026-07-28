@@ -136,6 +136,23 @@ export type CustomerOrderStatisticsPeriod = {
   total: MoneyType;
 };
 
+export type InputSendCustomerCommunicationType = {
+  /** Optional culture for localizing the email template (e.g. "en-US"). */
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  /** The Rep's message (required, max 1000 chars). May contain a URL. */
+  message: Scalars['String']['input'];
+  /** Customer organization whose members receive the message. */
+  organizationId: Scalars['String']['input'];
+  /** Send an email to the recipients. */
+  sendEmail: Scalars['Boolean']['input'];
+  /** Send an in-store push notification to the recipients. */
+  sendPush: Scalars['Boolean']['input'];
+  /** Store the message is sent on behalf of (scopes the email template and sender address). */
+  storeId: Scalars['String']['input'];
+  /** Optional message title/heading. */
+  title?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type MoneyType = {
   /** A decimal with the amount rounded to the significant number of decimal digits. */
   amount: Scalars['Decimal']['output'];
@@ -151,6 +168,15 @@ export type MoneyType = {
   formattedAmountWithoutPoint: Scalars['String']['output'];
   /** Formatted amount without point and currency. */
   formattedAmountWithoutPointAndCurrency: Scalars['String']['output'];
+};
+
+export type Mutations = {
+  sendCustomerCommunication?: Maybe<SalesRepCommunicationResult>;
+};
+
+
+export type MutationsSendCustomerCommunicationArgs = {
+  command: InputSendCustomerCommunicationType;
 };
 
 /** Information about pagination in a connection. */
@@ -349,6 +375,17 @@ export type SalesRepCartFilterRule = {
   localizedName?: Maybe<Scalars['String']['output']>;
   /** Stable kind id — send it back as the salesRepCustomerCartStatistics 'kinds' argument. */
   name: Scalars['String']['output'];
+};
+
+export type SalesRepCommunicationResult = {
+  /** Whether the email was accepted for delivery. */
+  emailSent: Scalars['Boolean']['output'];
+  /** Whether the push notification was accepted for delivery. */
+  pushSent: Scalars['Boolean']['output'];
+  /** True when at least one requested channel was accepted for delivery. */
+  succeeded: Scalars['Boolean']['output'];
+  /** Stable outcome codes for any channel that did not deliver (empty on full success). The storefront maps each code to a localized message. */
+  warnings: Array<Scalars['String']['output']>;
 };
 
 export type SalesRepContact = {
@@ -619,6 +656,13 @@ export type SalesRepTopSellerSortRule = {
   supportsDirection: Scalars['Boolean']['output'];
 };
 
+export type SendCustomerCommunicationMutationVariables = Exact<{
+  command: InputSendCustomerCommunicationType;
+}>;
+
+
+export type SendCustomerCommunicationMutation = { sendCustomerCommunication?: { succeeded: boolean, pushSent: boolean, emailSent: boolean, warnings: Array<string> } };
+
 export type CustomerSalesRepsQueryVariables = Exact<{
   storeId?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -787,6 +831,7 @@ export type SalesRepTopSellersQueryVariables = Exact<{
 export type SalesRepTopSellersQuery = { salesRepTopSellers?: Array<{ rank: number, productId: string, name?: string, sku?: string, imageUrl?: string, categoryId?: string, units: number, revenue: { amount: number, formattedAmount: string, currency: { code: string } } }> };
 
 
+export const SendCustomerCommunicationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SendCustomerCommunication"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"InputSendCustomerCommunicationType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sendCustomerCommunication"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"succeeded"}},{"kind":"Field","name":{"kind":"Name","value":"pushSent"}},{"kind":"Field","name":{"kind":"Name","value":"emailSent"}},{"kind":"Field","name":{"kind":"Name","value":"warnings"}}]}}]}}]} as unknown as DocumentNode<SendCustomerCommunicationMutation, SendCustomerCommunicationMutationVariables>;
 export const CustomerSalesRepsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CustomerSalesReps"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"keyword"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sort"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"customerSalesReps"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"storeId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}}},{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}},{"kind":"Argument","name":{"kind":"Name","value":"keyword"},"value":{"kind":"Variable","name":{"kind":"Name","value":"keyword"}}},{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sort"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalCount"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"fullName"}},{"kind":"Field","name":{"kind":"Name","value":"emails"}},{"kind":"Field","name":{"kind":"Name","value":"phones"}}]}}]}}]}}]} as unknown as DocumentNode<CustomerSalesRepsQuery, CustomerSalesRepsQueryVariables>;
 export const SalesRepCustomerDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SalesRepCustomer"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"organizationId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"salesRepCustomer"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"organizationId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"organizationId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"organizationId"}},{"kind":"Field","name":{"kind":"Name","value":"organizationName"}},{"kind":"Field","name":{"kind":"Name","value":"iconUrl"}},{"kind":"Field","name":{"kind":"Name","value":"accountType"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}},{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"city"}},{"kind":"Field","name":{"kind":"Name","value":"regionName"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primaryContact"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fullName"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]} as unknown as DocumentNode<SalesRepCustomerQuery, SalesRepCustomerQueryVariables>;
 export const SalesRepCustomerCartStatisticsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SalesRepCustomerCartStatistics"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"organizationId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"currencyCode"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"cultureName"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"cartFilter"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"weekFrom"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"DateTime"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"weekTo"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"DateTime"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"salesRepCustomerCartStatistics"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"organizationId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"organizationId"}}},{"kind":"Argument","name":{"kind":"Name","value":"storeId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}}},{"kind":"Argument","name":{"kind":"Name","value":"currencyCode"},"value":{"kind":"Variable","name":{"kind":"Name","value":"currencyCode"}}},{"kind":"Argument","name":{"kind":"Name","value":"cultureName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"cultureName"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"currencyCode"}},{"kind":"Field","alias":{"kind":"Name","value":"activeCarts"},"name":{"kind":"Name","value":"period"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"cartFilter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}},{"kind":"Field","name":{"kind":"Name","value":"total"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"formattedAmount"}}]}}]}},{"kind":"Field","alias":{"kind":"Name","value":"newCartsThisWeek"},"name":{"kind":"Name","value":"period"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"from"},"value":{"kind":"Variable","name":{"kind":"Name","value":"weekFrom"}}},{"kind":"Argument","name":{"kind":"Name","value":"to"},"value":{"kind":"Variable","name":{"kind":"Name","value":"weekTo"}}},{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"cartFilter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<SalesRepCustomerCartStatisticsQuery, SalesRepCustomerCartStatisticsQueryVariables>;
@@ -819,5 +864,8 @@ export const OperationNames = {
     SalesRepTopSellerFilterRules: 'SalesRepTopSellerFilterRules',
     SalesRepTopSellerSortRules: 'SalesRepTopSellerSortRules',
     SalesRepTopSellers: 'SalesRepTopSellers'
+  },
+  Mutation: {
+    SendCustomerCommunication: 'SendCustomerCommunication'
   }
 }

@@ -30,6 +30,7 @@
         "last_year": "Ano passado",
         "orders_count": "{count} pedidos",
         "all_customers": "Todos",
+        "actions": "Ações",
         "search_placeholder": "Pesquisar por nome",
         "search_aria": "Pesquisar clientes",
         "empty": "Nenhum cliente encontrado",
@@ -86,6 +87,37 @@
         "phone": "Telefone",
         "account_type": "Tipo de conta",
         "ship_to": "Enviar para"
+      }
+    },
+    "communication": {
+      "action": "Enviar e-mail",
+      "title": "Enviar uma mensagem",
+      "subtitle": "Alcança todos os membros de {organization}",
+      "title_label": "Título",
+      "message_label": "Mensagem",
+      "channels_label": "Enviar via",
+      "email_label": "E-mail",
+      "push_label": "Notificação push",
+      "send_button": "Enviar",
+      "cancel_button": "Cancelar",
+      "success_text": "Sua mensagem foi enviada.",
+      "error_text": "Não foi possível enviar a mensagem. Tente novamente.",
+      "partial_success_text": "A sua mensagem foi enviada, mas não em todos os canais:",
+      "warnings": {
+        "generic": "Não foi possível enviar a mensagem num dos canais selecionados.",
+        "NoRecipients": "Esta organização não tem contactos para notificar.",
+        "EmailUnavailable": "O e-mail está indisponível de momento. Contacte o seu administrador.",
+        "EmailStoreAccessDenied": "Não foi possível enviar o e-mail para a loja selecionada.",
+        "EmailNoRecipients": "Nenhum dos destinatários tem um endereço de e-mail.",
+        "EmailSendFailed": "Não foi possível enviar o e-mail. Tente novamente mais tarde.",
+        "PushSendFailed": "Não foi possível enviar a notificação push. Tente novamente mais tarde."
+      },
+      "quick_actions": {
+        "title": "Ações rápidas",
+        "order_on_behalf": "Pedir em nome de",
+        "send_email": "Enviar e-mail",
+        "create_quote": "Criar orçamento",
+        "schedule_call": "Agendar chamada"
       }
     },
     "orders": {

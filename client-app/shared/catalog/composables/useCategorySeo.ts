@@ -1,6 +1,7 @@
 import { useSeoMeta } from "@unhead/vue";
 import { computed } from "vue";
 import { usePageTitle } from "@/core/composables/usePageTitle";
+import { useSeoKeywords } from "@/core/composables/useSeoKeywords";
 import { globals } from "@/core/globals";
 import type { Category } from "@/core/api/graphql/types";
 import type { Ref } from "vue";
@@ -34,7 +35,6 @@ export function useCategorySeo({ category, allowSetMeta, categoryComponentAnchor
 
   useSeoMeta({
     title: () => (canSetMeta.value ? pageTitle.value : undefined),
-    keywords: () => (canSetMeta.value ? seoKeywords.value : undefined),
     description: () => (canSetMeta.value ? seoDescription.value : undefined),
     ogUrl: () => (canSetMeta.value ? seoUrl.value : undefined),
     ogTitle: () => (canSetMeta.value ? pageTitle.value : undefined),
@@ -42,4 +42,6 @@ export function useCategorySeo({ category, allowSetMeta, categoryComponentAnchor
     ogImage: () => (canSetMeta.value ? seoImageUrl.value : undefined),
     ogType: () => (canSetMeta.value ? "website" : undefined),
   });
+
+  useSeoKeywords(() => (canSetMeta.value ? seoKeywords.value : undefined));
 }

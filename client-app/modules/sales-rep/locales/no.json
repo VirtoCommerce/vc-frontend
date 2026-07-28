@@ -30,6 +30,7 @@
         "last_year": "I fjor",
         "orders_count": "{count} ordre",
         "all_customers": "Alle",
+        "actions": "Handlinger",
         "search_placeholder": "Søk etter navn",
         "search_aria": "Søk etter kunder",
         "empty": "Ingen kunder funnet",
@@ -86,6 +87,37 @@
         "phone": "Telefon",
         "account_type": "Kontotype",
         "ship_to": "Leveringsadresse"
+      }
+    },
+    "communication": {
+      "action": "Send e-post",
+      "title": "Send en melding",
+      "subtitle": "Når alle medlemmer i {organization}",
+      "title_label": "Tittel",
+      "message_label": "Melding",
+      "channels_label": "Send via",
+      "email_label": "E-post",
+      "push_label": "Push-varsel",
+      "send_button": "Send",
+      "cancel_button": "Avbryt",
+      "success_text": "Meldingen din er sendt.",
+      "error_text": "Meldingen kunne ikke sendes. Prøv igjen.",
+      "partial_success_text": "Meldingen din ble sendt, men ikke på alle kanaler:",
+      "warnings": {
+        "generic": "Meldingen kunne ikke sendes på en av de valgte kanalene.",
+        "NoRecipients": "Denne organisasjonen har ingen kontakter å varsle.",
+        "EmailUnavailable": "E-post er for øyeblikket utilgjengelig. Kontakt administratoren din.",
+        "EmailStoreAccessDenied": "E-posten kunne ikke sendes for den valgte butikken.",
+        "EmailNoRecipients": "Ingen av mottakerne har en e-postadresse.",
+        "EmailSendFailed": "E-posten kunne ikke sendes. Prøv igjen senere.",
+        "PushSendFailed": "Push-varselet kunne ikke sendes. Prøv igjen senere."
+      },
+      "quick_actions": {
+        "title": "Hurtighandlinger",
+        "order_on_behalf": "Bestill på vegne av",
+        "send_email": "Send e-post",
+        "create_quote": "Opprett tilbud",
+        "schedule_call": "Planlegg samtale"
       }
     },
     "orders": {

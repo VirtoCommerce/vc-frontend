@@ -39,6 +39,8 @@
         </div>
 
         <aside class="customer-profile__aside">
+          <CustomerProfileActions :organization-id="organizationId" />
+
           <CustomerProfileInfo :organization-id="organizationId" />
         </aside>
       </div>
@@ -50,6 +52,7 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
+import CustomerProfileActions from "../components/customer-profile-actions.vue";
 import CustomerProfileInfo from "../components/customer-profile-info.vue";
 import CustomerProfileWidgets from "../components/customer-profile-widgets.vue";
 import SalesRepOrders from "../components/sales-rep-orders.vue";

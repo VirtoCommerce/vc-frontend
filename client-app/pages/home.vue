@@ -97,6 +97,7 @@ import { useElementVisibility } from "@vueuse/core";
 import { shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageTitle } from "@/core/composables/usePageTitle";
+import { useSeoKeywords } from "@/core/composables/useSeoKeywords";
 import { LoginFormSection } from "@/shared/layout";
 
 const { t } = useI18n();
@@ -108,11 +109,12 @@ const { title: pageTitle } = usePageTitle(t("pages.home.meta.title"));
 
 useSeoMeta({
   title: () => (homePageAnchorIsVisible.value ? pageTitle.value : undefined),
-  keywords: () => (homePageAnchorIsVisible.value ? t("pages.home.meta.keywords") : undefined),
   description: () => (homePageAnchorIsVisible.value ? t("pages.home.meta.description") : undefined),
   ogUrl: () => (homePageAnchorIsVisible.value ? window.location.toString() : undefined),
   ogTitle: () => (homePageAnchorIsVisible.value ? t("pages.home.meta.title") : undefined),
   ogDescription: () => (homePageAnchorIsVisible.value ? t("pages.home.meta.description") : undefined),
   ogType: () => (homePageAnchorIsVisible.value ? "website" : undefined),
 });
+
+useSeoKeywords(() => (homePageAnchorIsVisible.value ? t("pages.home.meta.keywords") : undefined));
 </script>

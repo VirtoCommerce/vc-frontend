@@ -12,6 +12,7 @@ import { computed } from "vue";
 import { useRoute } from "vue-router";
 import { useBreadcrumbs } from "@/core/composables";
 import { usePageTitle } from "@/core/composables/usePageTitle";
+import { useSeoKeywords } from "@/core/composables/useSeoKeywords";
 import { globals } from "@/core/globals";
 import { useSlugInfo } from "@/shared/common";
 import Category from "@/shared/catalog/components/category.vue";
@@ -27,11 +28,12 @@ const { title: pageTitle } = usePageTitle(seoInfo.value?.pageTitle ?? catalogNam
 
 useSeoMeta({
   title: () => pageTitle.value,
-  keywords: () => seoInfo?.value?.metaKeywords,
   description: () => seoInfo?.value?.metaDescription,
   ogTitle: () => pageTitle.value,
   ogDescription: () => seoInfo?.value?.metaDescription,
 });
+
+useSeoKeywords(() => seoInfo?.value?.metaKeywords);
 
 const breadcrumbs = useBreadcrumbs(() => [
   {

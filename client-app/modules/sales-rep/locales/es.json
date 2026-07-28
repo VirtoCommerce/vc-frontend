@@ -30,6 +30,7 @@
         "last_year": "Año pasado",
         "orders_count": "{count} pedidos",
         "all_customers": "Todos",
+        "actions": "Acciones",
         "search_placeholder": "Buscar por nombre",
         "search_aria": "Buscar clientes",
         "empty": "No se encontraron clientes",
@@ -86,6 +87,37 @@
         "phone": "Teléfono",
         "account_type": "Tipo de cuenta",
         "ship_to": "Envío a"
+      }
+    },
+    "communication": {
+      "action": "Enviar correo",
+      "title": "Enviar un mensaje",
+      "subtitle": "Llega a todos los miembros de {organization}",
+      "title_label": "Título",
+      "message_label": "Mensaje",
+      "channels_label": "Enviar por",
+      "email_label": "Correo electrónico",
+      "push_label": "Notificación push",
+      "send_button": "Enviar",
+      "cancel_button": "Cancelar",
+      "success_text": "Su mensaje ha sido enviado.",
+      "error_text": "No se pudo enviar el mensaje. Inténtelo de nuevo.",
+      "partial_success_text": "Su mensaje se envió, pero no por todos los canales:",
+      "warnings": {
+        "generic": "El mensaje no se pudo enviar por uno de los canales seleccionados.",
+        "NoRecipients": "Esta organización no tiene contactos a los que notificar.",
+        "EmailUnavailable": "El correo electrónico no está disponible en este momento. Póngase en contacto con su administrador.",
+        "EmailStoreAccessDenied": "No se pudo enviar el correo electrónico para la tienda seleccionada.",
+        "EmailNoRecipients": "Ninguno de los destinatarios tiene una dirección de correo electrónico.",
+        "EmailSendFailed": "No se pudo enviar el correo electrónico. Inténtelo de nuevo más tarde.",
+        "PushSendFailed": "No se pudo enviar la notificación push. Inténtelo de nuevo más tarde."
+      },
+      "quick_actions": {
+        "title": "Acciones rápidas",
+        "order_on_behalf": "Pedir en nombre de",
+        "send_email": "Enviar correo",
+        "create_quote": "Crear presupuesto",
+        "schedule_call": "Programar llamada"
       }
     },
     "orders": {
