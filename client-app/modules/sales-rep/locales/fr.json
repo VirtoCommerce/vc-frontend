@@ -68,6 +68,7 @@
           "hide": "Masquer {title}",
           "show": "Afficher {title}",
           "grabbed": "{title} saisi. Position {position} sur {total}. Utilisez les flèches pour le déplacer, espace pour le déposer, échap pour annuler.",
+          "grabbed_parkable": "{title} saisi. Position {position} sur {total}. Utilisez les flèches gauche et droite pour le déplacer, haut et bas pour le masquer ou l'afficher, espace pour le déposer, échap pour annuler.",
           "moved": "{title} déplacé en position {position} sur {total}.",
           "dropped": "{title} déposé en position {position} sur {total}.",
           "cancelled": "Déplacement de {title} annulé.",

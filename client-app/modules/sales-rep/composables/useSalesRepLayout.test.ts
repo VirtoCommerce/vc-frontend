@@ -7,13 +7,21 @@ const apolloMock = await vi.hoisted(async () => {
   const loading = ref(false);
   const error = ref<Error | undefined>();
   const mutate = vi.fn();
+  const calls: { query?: unknown[]; mutation?: unknown[] } = {};
   return {
     result,
     loading,
     error,
     mutate,
-    useQuery: vi.fn(() => ({ result, loading, error, onError: vi.fn() })),
-    useMutation: vi.fn(() => ({ mutate, loading: ref(false) })),
+    calls,
+    useQuery: vi.fn((...args: unknown[]) => {
+      calls.query = args;
+      return { result, loading, error, onError: vi.fn() };
+    }),
+    useMutation: vi.fn((...args: unknown[]) => {
+      calls.mutation = args;
+      return { mutate, loading: ref(false) };
+    }),
   };
 });
 
@@ -142,6 +150,71 @@ describe("useSalesRepLayout", () => {
     expect(state.value.mainRight.find((entry) => entry.id === "info")?.hidden).toBe(true);
   });
 
+  // Reconciling a missing document yields registry defaults, so trusting the echo blindly would
+  // replace the arrangement with defaults and still report success.
+  it("treats a response without a document as a failed save", async () => {
+    apolloMock.result.value = { salesRepLayout: null };
+    apolloMock.mutate.mockResolvedValue({ data: { saveSalesRepLayout: null } });
+
+    const { startEdit, setHidden, save, editing, saveFailed, state } = useSalesRepLayout(scope);
+    startEdit();
+    setHidden("info", true);
+
+    await expect(save()).resolves.toBe(false);
+    expect(editing.value).toBe(true);
+    expect(saveFailed.value).toBe(true);
+    expect(state.value.mainRight.find((entry) => entry.id === "info")?.hidden).toBe(true);
+  });
+
+  // The mutation echoes the stored document and no refetch follows, so the echo — not what was sent —
+  // is what the rep ends up looking at.
+  it("reconciles the post-save layout from the echoed document", async () => {
+    apolloMock.result.value = { salesRepLayout: null };
+    apolloMock.mutate.mockResolvedValue({
+      data: {
+        saveSalesRepLayout: {
+          schemaVersion: 1,
+          regions: [
+            {
+              id: "mainRight",
+              blocks: [
+                { id: "info", type: "info", hidden: false, settings: [] },
+                { id: "actions", type: "actions", hidden: true, settings: [] },
+              ],
+            },
+          ],
+        },
+      },
+    });
+
+    const { startEdit, save, state } = useSalesRepLayout(scope);
+    startEdit();
+
+    await expect(save()).resolves.toBe(true);
+    expect(state.value.mainRight.map((entry) => entry.id)).toEqual(["info", "actions"]);
+    expect(state.value.mainRight[1].hidden).toBe(true);
+  });
+
+  // Mirrors the pages' `reorderHidden`: the hidden strip is reordered and stitched back after the
+  // visible half, which must leave the visible order untouched.
+  it("keeps the visible half intact when the hidden half is reordered", () => {
+    apolloMock.result.value = { salesRepLayout: null };
+
+    const { state, startEdit, setHidden, reorder, visibleIn, hiddenIn } = useSalesRepLayout(scope);
+    startEdit();
+    setHidden("info", true);
+    setHidden("actions", true);
+
+    reorder("mainRight", [
+      ...state.value.mainRight.filter((entry) => !entry.hidden),
+      ...["actions", "info"].map((id) => ({ id, hidden: true })),
+    ]);
+
+    expect(hiddenIn("mainRight").map((entry) => entry.id)).toEqual(["actions", "info"]);
+    expect(visibleIn("mainRight")).toEqual([]);
+    expect(visibleIn("mainLeft").map((entry) => entry.id)).toEqual(["orders"]);
+  });
+
   it("reset restores defaults into the draft but does not persist on its own", () => {
     apolloMock.result.value = {
       salesRepLayout: {
@@ -184,6 +257,32 @@ describe("useSalesRepLayout", () => {
     expect(hiddenIn("mainLeft").map((entry) => entry.id)).toEqual(["orders"]);
   });
 
+  // A cross-zone drag reports where it was dropped; without it the block lands wherever its old
+  // position fell among the other entries.
+  it("places a hidden block at the dropped position rather than its old slot", () => {
+    apolloMock.result.value = { salesRepLayout: null };
+
+    const { startEdit, setHidden, hiddenIn } = useSalesRepLayout(scope);
+    startEdit();
+
+    setHidden("info", true);
+    setHidden("actions", true, 0);
+
+    expect(hiddenIn("mainRight").map((entry) => entry.id)).toEqual(["actions", "info"]);
+  });
+
+  it("appends to the destination half when no position is given", () => {
+    apolloMock.result.value = { salesRepLayout: null };
+
+    const { startEdit, setHidden, hiddenIn } = useSalesRepLayout(scope);
+    startEdit();
+
+    setHidden("info", true);
+    setHidden("actions", true);
+
+    expect(hiddenIn("mainRight").map((entry) => entry.id)).toEqual(["info", "actions"]);
+  });
+
   it("splits a region into visible and hidden entries", () => {
     apolloMock.result.value = { salesRepLayout: null };
 
@@ -193,5 +292,35 @@ describe("useSalesRepLayout", () => {
 
     expect(visibleIn("mainRight").map((entry) => entry.id)).toEqual(["info"]);
     expect(hiddenIn("mainRight").map((entry) => entry.id)).toEqual(["actions"]);
+  });
+
+  // Types cannot catch this: `DeepReadonly<{ id, hidden }>` is assignable to `{ id, hidden }`.
+  it("keeps a reordered region writable, so its hidden blocks can still be restored", () => {
+    apolloMock.result.value = { salesRepLayout: null };
+
+    const { state, startEdit, setHidden, reorder, visibleIn, hiddenIn } = useSalesRepLayout(scope);
+    startEdit();
+    setHidden("actions", true);
+
+    // Exactly what the pages' `reorderVisible` does.
+    reorder("mainRight", [
+      ...visibleIn("mainRight").map((entry) => ({ id: entry.id, hidden: false })),
+      ...state.value.mainRight.filter((entry) => entry.hidden),
+    ]);
+
+    setHidden("actions", false);
+
+    expect(hiddenIn("mainRight")).toEqual([]);
+    expect(visibleIn("mainRight").map((entry) => entry.id)).toEqual(["info", "actions"]);
+  });
+
+  // Nothing else observes the collision, so the fetch policy itself is the assertion.
+  it("skips the Apollo cache, which would share region entities between the two surfaces", () => {
+    apolloMock.result.value = { salesRepLayout: null };
+
+    useSalesRepLayout(scope);
+
+    expect(apolloMock.calls.query?.[2]).toMatchObject({ fetchPolicy: "no-cache" });
+    expect(apolloMock.calls.mutation?.[1]).toMatchObject({ fetchPolicy: "no-cache" });
   });
 });

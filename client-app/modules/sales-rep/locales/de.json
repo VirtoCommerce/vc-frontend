@@ -68,6 +68,7 @@
           "hide": "{title} ausblenden",
           "show": "{title} einblenden",
           "grabbed": "{title} aufgenommen. Position {position} von {total}. Mit den Pfeiltasten verschieben, Leertaste zum Ablegen, Escape zum Abbrechen.",
+          "grabbed_parkable": "{title} aufgenommen. Position {position} von {total}. Mit den Pfeiltasten links und rechts verschieben, mit Pfeil nach oben und unten aus- oder einblenden, Leertaste zum Ablegen, Escape zum Abbrechen.",
           "moved": "{title} auf Position {position} von {total} verschoben.",
           "dropped": "{title} auf Position {position} von {total} abgelegt.",
           "cancelled": "Verschieben von {title} abgebrochen.",

@@ -14,6 +14,7 @@
         <button
           type="button"
           class="layout-hidden-tray__restore"
+          :data-restore-id="entry.id"
           :aria-label="t('sales_rep.hub.layout.a11y.show', { title: titleOf(entry.id) })"
           @click="$emit('restore', entry.id)"
         >

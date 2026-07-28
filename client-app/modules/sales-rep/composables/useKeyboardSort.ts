@@ -33,10 +33,18 @@ export function useKeyboardSort(options: IUseKeyboardSortOptions) {
     return grabbedId.value === id;
   }
 
-  // Vue moves the existing DOM node when the list reorders, which normally carries focus with it;
-  // re-focusing after the patch keeps that true even when a region re-renders instead.
+  // Vue reorders by moving the node with `insertBefore`, which blurs it in Chrome and WebKit. Since
+  // blur cancels a grab, an unguarded move would snap the block straight back — visible as arrows
+  // that work one way only, because Vue's diff moves the element that ends up earlier and leaves its
+  // neighbour alone. Ignore that self-inflicted blur until the queued refocus has run.
+  let refocusing = false;
+
   function refocus(handle: HTMLElement | undefined): void {
-    void nextTick(() => handle?.focus());
+    refocusing = true;
+    void nextTick(() => {
+      handle?.focus();
+      refocusing = false;
+    });
   }
 
   function grab(id: string): void {
@@ -47,7 +55,7 @@ export function useKeyboardSort(options: IUseKeyboardSortOptions) {
     }
     grabbedId.value = id;
     originIndex.value = index;
-    options.onSignal({ kind: "grabbed", id, index, total: items.length });
+    options.onSignal({ kind: "grabbed", id, index, total: items.length, parkable: !!options.onToggleHidden });
   }
 
   function drop(): void {
@@ -143,7 +151,7 @@ export function useKeyboardSort(options: IUseKeyboardSortOptions) {
   }
 
   function onBlur(id: string): void {
-    if (isGrabbed(id)) {
+    if (!refocusing && isGrabbed(id)) {
       cancel();
     }
   }

@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
+import { nextTick } from "vue";
 import { useKeyboardSort } from "./useKeyboardSort";
 import type { KeyboardSortOrientationType, KeyboardSortSignalType } from "../types/layout";
 
@@ -33,7 +34,7 @@ describe("useKeyboardSort", () => {
 
     press(" ", "b");
     expect(sort.isGrabbed("b")).toBe(true);
-    expect(signals.at(-1)).toEqual({ kind: "grabbed", id: "b", index: 1, total: 3 });
+    expect(signals.at(-1)).toEqual({ kind: "grabbed", id: "b", index: 1, total: 3, parkable: false });
 
     press(" ", "b");
     expect(sort.isGrabbed("b")).toBe(false);
@@ -96,15 +97,39 @@ describe("useKeyboardSort", () => {
     expect(signals.at(-1)).toEqual({ kind: "cancelled", id: "a" });
   });
 
-  it("blur cancels, so tabbing away cannot strand a half-finished move", () => {
+  it("blur cancels, so tabbing away cannot strand a half-finished move", async () => {
+    const { sort, press, order } = setup("vertical");
+
+    press(" ", "a");
+    press("ArrowDown", "a");
+    await nextTick();
+    sort.onBlur("a");
+
+    expect(order()).toEqual(["a", "b", "c"]);
+    expect(sort.isGrabbed("a")).toBe(false);
+  });
+
+  // Chrome and WebKit blur a focused node when Vue's patch moves it, which would otherwise cancel the
+  // grab and snap the block back — arrows appearing to work in one direction only.
+  it("ignores the blur its own reorder causes", () => {
     const { sort, press, order } = setup("vertical");
 
     press(" ", "a");
     press("ArrowDown", "a");
     sort.onBlur("a");
 
-    expect(order()).toEqual(["a", "b", "c"]);
-    expect(sort.isGrabbed("a")).toBe(false);
+    expect(order()).toEqual(["b", "a", "c"]);
+    expect(sort.isGrabbed("a")).toBe(true);
+  });
+
+  // The grab announcement is the only place the arrow keys are spelled out, so it has to know that
+  // this region can also park a block.
+  it("reports a parkable grab where hiding is wired", () => {
+    const { press, signals } = setup("horizontal", true);
+
+    press(" ", "b");
+
+    expect(signals.at(-1)).toMatchObject({ kind: "grabbed", parkable: true });
   });
 
   it("parks a grabbed stat with ArrowDown and releases the grab", () => {

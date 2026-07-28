@@ -17,7 +17,7 @@
       :drop-hidden="false"
       :empty-text="t('sales_rep.hub.layout.empty_visible')"
       @reorder="$emit('reorder', $event)"
-      @set-hidden="(id, hidden) => $emit('setHidden', id, hidden)"
+      @set-hidden="(id, hidden, index) => $emit('setHidden', id, hidden, index)"
       @announce="$emit('announce', $event)"
     >
       <template #default="{ entry }">
@@ -50,7 +50,7 @@
         drop-hidden
         :empty-text="t('sales_rep.hub.layout.empty_hidden')"
         @reorder="$emit('reorderHidden', $event)"
-        @set-hidden="(id, isHidden) => $emit('setHidden', id, isHidden)"
+        @set-hidden="(id, isHidden, index) => $emit('setHidden', id, isHidden, index)"
         @announce="$emit('announce', $event)"
       >
         <template #default="{ entry }">
@@ -85,7 +85,7 @@ interface IProps {
 
 interface IEmits {
   (event: "reorder" | "reorderHidden", ids: string[]): void;
-  (event: "setHidden", id: string, hidden: boolean): void;
+  (event: "setHidden", id: string, hidden: boolean, index?: number): void;
   (event: "announce", signal: KeyboardSortSignalType): void;
 }
 

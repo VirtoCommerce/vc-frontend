@@ -68,6 +68,7 @@
           "hide": "Nascondi {title}",
           "show": "Mostra {title}",
           "grabbed": "{title} preso. Posizione {position} di {total}. Usa le frecce per spostarlo, spazio per rilasciarlo, esc per annullare.",
+          "grabbed_parkable": "{title} preso. Posizione {position} di {total}. Usa le frecce sinistra e destra per spostarlo, su e giù per nasconderlo o mostrarlo, spazio per rilasciarlo, esc per annullare.",
           "moved": "{title} spostato alla posizione {position} di {total}.",
           "dropped": "{title} rilasciato alla posizione {position} di {total}.",
           "cancelled": "Spostamento di {title} annullato.",

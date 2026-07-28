@@ -68,6 +68,7 @@
           "hide": "{title} を非表示",
           "show": "{title} を表示",
           "grabbed": "{title} をつかみました。{total} 件中 {position} 番目。矢印キーで移動、スペースで配置、Esc でキャンセルします。",
+          "grabbed_parkable": "{title} をつかみました。{total} 件中 {position} 番目。左右の矢印キーで移動、上下キーで非表示または表示、スペースで配置、Esc でキャンセルします。",
           "moved": "{title} を {total} 件中 {position} 番目に移動しました。",
           "dropped": "{title} を {total} 件中 {position} 番目に配置しました。",
           "cancelled": "{title} の移動をキャンセルしました。",

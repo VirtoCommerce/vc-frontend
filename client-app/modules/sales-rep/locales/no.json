@@ -68,6 +68,7 @@
           "hide": "Skjul {title}",
           "show": "Vis {title}",
           "grabbed": "{title} tatt opp. Posisjon {position} av {total}. Bruk piltastene for å flytte, mellomrom for å slippe, escape for å avbryte.",
+          "grabbed_parkable": "{title} tatt opp. Posisjon {position} av {total}. Bruk venstre og høyre piltast for å flytte, opp og ned for å skjule eller vise, mellomrom for å slippe, escape for å avbryte.",
           "moved": "{title} flyttet til posisjon {position} av {total}.",
           "dropped": "{title} sluppet på posisjon {position} av {total}.",
           "cancelled": "Flytting av {title} avbrutt.",

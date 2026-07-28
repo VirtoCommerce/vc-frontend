@@ -21,12 +21,19 @@ export function useLayoutAnnouncer(scope: SalesRepLayoutScopeType) {
       case "grabbed":
       case "moved":
       case "dropped":
-        message.value = t(`sales_rep.hub.layout.a11y.${signal.kind}`, {
-          title,
-          // Signals carry array indices; announcements are read by people, so they count from one.
-          position: signal.index + 1,
-          total: signal.total,
-        });
+        message.value = t(
+          // The grab announcement is the only place the arrow keys are spelled out, so the stat row
+          // gets its own wording — there, up and down hide and restore rather than move.
+          signal.kind === "grabbed" && signal.parkable
+            ? "sales_rep.hub.layout.a11y.grabbed_parkable"
+            : `sales_rep.hub.layout.a11y.${signal.kind}`,
+          {
+            title,
+            // Signals carry array indices; announcements are read by people, so they count from one.
+            position: signal.index + 1,
+            total: signal.total,
+          },
+        );
         break;
       default:
         message.value = t(`sales_rep.hub.layout.a11y.${signal.kind}`, { title });

@@ -32,7 +32,11 @@
       <!-- Nothing block-shaped renders until the saved layout is known; see layout-skeleton.vue. -->
       <LayoutSkeleton v-if="layoutLoading" :stats="4" :blocks="2" />
 
-      <template v-else>
+      <!-- The overlay covers the edit bar too: a save is a full-document replace, so nothing may change
+           while one is in flight — including a drag, whose drop would land after the draft is gone. -->
+      <div v-else class="customer-profile__layout-wrapper">
+        <VcLoaderOverlay v-if="saving" />
+
         <LayoutEditBar
           v-if="editing"
           :saving="saving"
@@ -50,31 +54,41 @@
           :editing="editing"
           @reorder="reorderVisible('statistics', $event)"
           @reorder-hidden="reorderHidden('statistics', $event)"
-          @set-hidden="setHidden"
+          @set-hidden="toggleHidden"
           @announce="announce"
         />
 
         <div class="customer-profile__layout">
-          <LayoutRegion
-            class="customer-profile__main"
-            :scope="SCOPE"
-            :entries="visibleIn('mainLeft')"
-            orientation="vertical"
-            group="sales-rep-customer-main-left"
-            :editing="editing"
-            @reorder="reorderVisible('mainLeft', $event)"
-            @set-hidden="setHidden"
-            @announce="announce"
-          >
-            <template #default="{ entry }">
-              <component
-                :is="componentOf(entry.id)"
-                v-if="componentOf(entry.id)"
-                :organization-id="organizationId"
-                :title="t('sales_rep.orders.title')"
-              />
-            </template>
-          </LayoutRegion>
+          <div class="customer-profile__main-col">
+            <LayoutRegion
+              class="customer-profile__main"
+              :scope="SCOPE"
+              :entries="visibleIn('mainLeft')"
+              orientation="vertical"
+              group="sales-rep-customer-main-left"
+              :editing="editing"
+              @reorder="reorderVisible('mainLeft', $event)"
+              @set-hidden="toggleHidden"
+              @announce="announce"
+            >
+              <template #default="{ entry }">
+                <component
+                  :is="componentOf(entry.id)"
+                  v-if="componentOf(entry.id)"
+                  :organization-id="organizationId"
+                  :title="t('sales_rep.orders.title')"
+                />
+              </template>
+            </LayoutRegion>
+
+            <!-- Desktop: directly under the left column, per the design. Below xl the page is one
+                 column, so it moves to the very end instead. -->
+            <LayoutEditButton
+              v-if="canEdit && !isCompact"
+              :editing="editing"
+              @toggle="editing ? cancel() : startEdit()"
+            />
+          </div>
 
           <!-- Its own Sortable group, so a rail widget can never be dropped into the wide column. -->
           <LayoutRegion
@@ -86,7 +100,7 @@
             group="sales-rep-customer-main-right"
             :editing="editing"
             @reorder="reorderVisible('mainRight', $event)"
-            @set-hidden="setHidden"
+            @set-hidden="toggleHidden"
             @announce="announce"
           >
             <template #default="{ entry }">
@@ -99,22 +113,11 @@
           v-if="editing && hiddenWidgets.length"
           :scope="SCOPE"
           :entries="hiddenWidgets"
-          @restore="setHidden($event, false)"
+          @restore="toggleHidden($event, false)"
         />
 
-        <div>
-          <VcButton
-            v-if="canEdit"
-            size="xs"
-            color="primary"
-            variant="outline"
-            prepend-icon="adjustments"
-            @click="editing ? cancel() : startEdit()"
-          >
-            {{ editing ? t("sales_rep.hub.layout.editing") : t("sales_rep.hub.layout.edit") }}
-          </VcButton>
-        </div>
-      </template>
+        <LayoutEditButton v-if="canEdit && isCompact" :editing="editing" @toggle="editing ? cancel() : startEdit()" />
+      </div>
 
       <p class="customer-profile__announcer" aria-live="assertive" aria-atomic="true">{{ message }}</p>
     </template>
@@ -122,15 +125,18 @@
 </template>
 
 <script setup lang="ts">
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import LayoutEditBar from "../components/layout-edit-bar.vue";
+import LayoutEditButton from "../components/layout-edit-button.vue";
 import LayoutHiddenTray from "../components/layout-hidden-tray.vue";
 import LayoutRegion from "../components/layout-region.vue";
 import LayoutSkeleton from "../components/layout-skeleton.vue";
 import LayoutStats from "../components/layout-stats.vue";
 import { useLayoutAnnouncer } from "../composables/useLayoutAnnouncer";
+import { focusBlockControl } from "../composables/useLayoutFocus";
 import { useSalesRepCustomer } from "../composables/useSalesRepCustomer";
 import { useSalesRepLayout } from "../composables/useSalesRepLayout";
 import { MY_CUSTOMERS_ROUTE_NAME } from "../constants";
@@ -140,6 +146,9 @@ import type { SalesRepLayoutRegionIdType } from "../types/layout";
 const props = defineProps<IProps>();
 
 const SCOPE = "customerProfile" as const;
+
+// The aside splits off at xl; below that the page is a single column and the button belongs at its end.
+const isCompact = useBreakpoints(breakpointsTailwind).smaller("xl");
 
 interface IProps {
   organizationId: string;
@@ -189,6 +198,11 @@ function reorderHidden(regionId: SalesRepLayoutRegionIdType, ids: string[]): voi
     ...state.value[regionId].filter((entry) => !entry.hidden),
     ...ids.map((id) => ({ id, hidden: true })),
   ]);
+}
+
+function toggleHidden(id: string, hidden: boolean, index?: number): void {
+  setHidden(id, hidden, index);
+  focusBlockControl(id);
 }
 
 const myCustomersRouteName = MY_CUSTOMERS_ROUTE_NAME;
@@ -241,13 +255,22 @@ const breadcrumbs = useBreadcrumbs(() => [
   }
 
   // Single column through tablet; the aside splits off only on desktop (xl).
+  // `relative` anchors the absolutely-positioned save overlay.
+  &__layout-wrapper {
+    @apply relative flex flex-col gap-5;
+  }
+
   &__layout {
     @apply flex flex-col gap-5 xl:flex-row xl:items-start;
   }
 
   // Both columns are LayoutRegions now, which supply their own vertical stacking and gap.
+  &__main-col {
+    @apply flex min-w-0 flex-1 flex-col gap-5;
+  }
+
   &__main {
-    @apply min-w-0 flex-1;
+    @apply min-w-0;
   }
 
   &__aside {

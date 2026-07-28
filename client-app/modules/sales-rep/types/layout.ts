@@ -49,7 +49,9 @@ export type KeyboardSortOrientationType = "horizontal" | "vertical";
  * the localized text pushed to the `aria-live` region.
  */
 export type KeyboardSortSignalType =
-  | { kind: "grabbed" | "moved" | "dropped"; id: string; index: number; total: number }
+  /** `parkable` picks the wording: only the stat row can hide a block with the arrow keys. */
+  | { kind: "grabbed"; id: string; index: number; total: number; parkable: boolean }
+  | { kind: "moved" | "dropped"; id: string; index: number; total: number }
   | { kind: "cancelled" | "parked" | "restored"; id: string };
 
 // Minimal shape of a persisted document. The generated `SalesRepLayoutQuery` result is structurally

@@ -68,6 +68,7 @@
           "hide": "Dölj {title}",
           "show": "Visa {title}",
           "grabbed": "{title} upplockad. Position {position} av {total}. Använd piltangenterna för att flytta, mellanslag för att släppa, escape för att avbryta.",
+          "grabbed_parkable": "{title} upplockad. Position {position} av {total}. Använd vänster och höger piltangent för att flytta, upp och ner för att dölja eller visa, mellanslag för att släppa, escape för att avbryta.",
           "moved": "{title} flyttad till position {position} av {total}.",
           "dropped": "{title} släppt på position {position} av {total}.",
           "cancelled": "Flytt av {title} avbruten.",

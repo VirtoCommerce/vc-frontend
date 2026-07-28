@@ -68,6 +68,7 @@
           "hide": "Piilota {title}",
           "show": "Näytä {title}",
           "grabbed": "{title} tartuttu. Sijainti {position}/{total}. Siirrä nuolinäppäimillä, pudota välilyönnillä, peruuta Esc-näppäimellä.",
+          "grabbed_parkable": "{title} tartuttu. Sijainti {position}/{total}. Siirrä vasemmalla ja oikealla nuolinäppäimellä, piilota tai näytä ylä- ja alanuolinäppäimellä, pudota välilyönnillä, peruuta Esc-näppäimellä.",
           "moved": "{title} siirretty sijaintiin {position}/{total}.",
           "dropped": "{title} pudotettu sijaintiin {position}/{total}.",
           "cancelled": "Kohteen {title} siirto peruutettu.",

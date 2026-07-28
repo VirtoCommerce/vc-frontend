@@ -68,6 +68,7 @@
           "hide": "Ocultar {title}",
           "show": "Mostrar {title}",
           "grabbed": "{title} tomado. Posición {position} de {total}. Use las flechas para moverlo, espacio para soltarlo, escape para cancelar.",
+          "grabbed_parkable": "{title} tomado. Posición {position} de {total}. Use las flechas izquierda y derecha para moverlo, arriba y abajo para ocultarlo o mostrarlo, espacio para soltarlo, escape para cancelar.",
           "moved": "{title} movido a la posición {position} de {total}.",
           "dropped": "{title} soltado en la posición {position} de {total}.",
           "cancelled": "Movimiento de {title} cancelado.",

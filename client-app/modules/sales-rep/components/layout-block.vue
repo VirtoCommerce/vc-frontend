@@ -1,6 +1,4 @@
 <template>
-  <!-- `data-block-id` lets a cross-zone drop identify the block from the raw DOM node SortableJS
-       hands back, without keeping a parallel element-to-id map. -->
   <div
     :data-block-id="blockId"
     :class="[
@@ -9,6 +7,8 @@
     ]"
     v-bind="wholeHandleAttrs"
   >
+    <!-- Keep one root node. A root sibling — dev builds keep comments — makes this a fragment, and
+         SortableJS moves only the element, so Vue loses track of it and leaves a duplicate behind. -->
     <!--
       Widgets: the chrome is laid over the widget's own header — handle at the start, hide at the end
       — because those headers belong to components the layout does not own and cannot be slotted into

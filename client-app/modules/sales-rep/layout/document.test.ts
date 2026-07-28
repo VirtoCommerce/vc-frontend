@@ -146,4 +146,18 @@ describe("serializeLayout", () => {
 
     expect(reconcileLayout(serializeLayout(rearranged, "dashboard"), registry)).toEqual(rearranged);
   });
+
+  it("round-trips a layout with every block hidden", () => {
+    const allHidden = reconcileLayout(
+      doc(["stat-a", true], ["stat-b", true], ["stat-c", true], ["orders", true], ["news", true], ["actions", true]),
+      registry,
+    );
+
+    expect(
+      Object.values(allHidden)
+        .flat()
+        .every((entry) => entry.hidden),
+    ).toBe(true);
+    expect(reconcileLayout(serializeLayout(allHidden, "dashboard"), registry)).toEqual(allHidden);
+  });
 });

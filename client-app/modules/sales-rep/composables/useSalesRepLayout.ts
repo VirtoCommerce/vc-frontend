@@ -31,16 +31,29 @@ function cloneState(state: SalesRepLayoutStateType): SalesRepLayoutStateType {
 export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
   const registry = getBlockRegistry(scope);
 
-  const { result, loading, error, onError } = useQuery(SalesRepLayoutDocument, () => ({
-    scope,
-    storeId: globals.storeId,
-  }));
+  /**
+   * `no-cache` on both operations. Regions and blocks carry an `id`, so Apollo normalizes them — and
+   * region ids are fixed while `orders` is registered on both surfaces, making
+   * `SalesRepLayoutRegion:statistics` a single entity shared by every scope. Cached, one surface
+   * overwrites the other's regions, reconciliation drops the foreign types, and the rep silently gets
+   * registry defaults that the next save makes permanent. Skipping the cache rather than adding host
+   * `typePolicies` keeps the module portable as an MF remote (PORT_TO_MF.md).
+   */
+  const { result, loading, error, onError } = useQuery(
+    SalesRepLayoutDocument,
+    () => ({
+      scope,
+      storeId: globals.storeId,
+    }),
+    { fetchPolicy: "no-cache" },
+  );
 
   onError((queryError) => {
     Logger.error("[sales-rep] salesRepLayout failed:", queryError);
   });
 
-  const { mutate, loading: saving } = useMutation(SaveSalesRepLayoutDocument);
+  // A mutation writes its result to the cache too, so it needs the same policy.
+  const { mutate, loading: saving } = useMutation(SaveSalesRepLayoutDocument, { fetchPolicy: "no-cache" });
 
   // Layout as last persisted (or registry defaults when the rep has never saved this surface).
   const savedState = ref<SalesRepLayoutStateType | undefined>();
@@ -85,21 +98,45 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
     }
   }
 
-  /** Reorder within a region. Blocks never move between regions — region is owned by the registry. */
+  /**
+   * Reorder within a region. Blocks never move between regions — region is owned by the registry.
+   *
+   * Entries are copied, not stored as given: callers stitch this array out of `state`, which is
+   * exported `readonly()`, so a deep-readonly entry stored here would make the draft partly frozen
+   * and `setHidden`'s in-place write would fail silently in production.
+   */
   function reorder(regionId: SalesRepLayoutRegionIdType, entries: SalesRepLayoutEntryType[]): void {
     if (draft.value) {
-      draft.value[regionId] = entries;
+      draft.value[regionId] = entries.map((entry) => ({ id: entry.id, hidden: entry.hidden }));
     }
   }
 
-  function setHidden(id: string, hidden: boolean): void {
-    for (const regionId of Object.keys(draft.value ?? {}) as SalesRepLayoutRegionIdType[]) {
-      const entry = draft.value?.[regionId].find((candidate) => candidate.id === id);
-      if (entry) {
-        entry.hidden = hidden;
-        return;
-      }
+  /**
+   * Hide or restore a block. `index` places it within the half it moves into, so a cross-zone drag
+   * lands where the rep dropped it instead of wherever its old position happened to fall among the
+   * other entries; without one the block goes to the end of that half.
+   */
+  function setHidden(id: string, hidden: boolean, index?: number): void {
+    const regions = draft.value;
+    if (!regions) {
+      return;
     }
+
+    const regionId = (Object.keys(regions) as SalesRepLayoutRegionIdType[]).find((candidate) =>
+      regions[candidate].some((entry) => entry.id === id),
+    );
+    if (!regionId) {
+      return;
+    }
+
+    const rest = regions[regionId].filter((entry) => entry.id !== id);
+    const destination = rest.filter((entry) => entry.hidden === hidden);
+    const opposite = rest.filter((entry) => entry.hidden !== hidden);
+
+    destination.splice(index ?? destination.length, 0, { id, hidden });
+
+    // Visible first, then hidden — the order the reorder stitchers already produce.
+    regions[regionId] = hidden ? [...opposite, ...destination] : [...destination, ...opposite];
   }
 
   async function save(): Promise<boolean> {
@@ -110,8 +147,18 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
     const pending = draft.value;
     try {
       const response = await mutate({ command: serializeLayout(pending, scope, globals.storeId) });
+      const saved = response?.data?.saveSalesRepLayout;
+
+      // Without a document there is nothing to trust: reconciling `undefined` yields registry
+      // defaults, which would silently replace the rep's arrangement and report success.
+      if (!saved) {
+        Logger.error("[sales-rep] saveSalesRepLayout returned no document");
+        saveFailed.value = true;
+        return false;
+      }
+
       // The mutation echoes the stored document, so reconcile from it rather than refetching.
-      savedState.value = reconcileLayout(response?.data?.saveSalesRepLayout, registry);
+      savedState.value = reconcileLayout(saved, registry);
       draft.value = undefined;
       saveFailed.value = false;
       return true;

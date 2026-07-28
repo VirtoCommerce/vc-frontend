@@ -68,6 +68,7 @@
           "hide": "Ukryj {title}",
           "show": "Pokaż {title}",
           "grabbed": "Chwycono {title}. Pozycja {position} z {total}. Użyj strzałek, aby przenieść, spacji, aby upuścić, Escape, aby anulować.",
+          "grabbed_parkable": "Chwycono {title}. Pozycja {position} z {total}. Użyj strzałek w lewo i w prawo, aby przenieść, w górę i w dół, aby ukryć lub pokazać, spacji, aby upuścić, Escape, aby anulować.",
           "moved": "Przeniesiono {title} na pozycję {position} z {total}.",
           "dropped": "Upuszczono {title} na pozycji {position} z {total}.",
           "cancelled": "Anulowano przenoszenie {title}.",

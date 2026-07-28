@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import { useSortable } from "@vueuse/integrations/useSortable";
+import { insertNodeAt, removeNode, useSortable } from "@vueuse/integrations/useSortable";
 import { computed, ref, useTemplateRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useKeyboardSort } from "../composables/useKeyboardSort";
@@ -71,7 +71,7 @@ interface IProps {
 
 interface IEmits {
   (event: "reorder", ids: string[]): void;
-  (event: "setHidden", id: string, hidden: boolean): void;
+  (event: "setHidden", id: string, hidden: boolean, index?: number): void;
   (event: "announce", signal: KeyboardSortSignalType): void;
 }
 
@@ -81,12 +81,18 @@ const { t } = useI18n();
 const container = useTemplateRef<HTMLElement>("container");
 
 /**
- * Take SortableJS's DOM edit back out. Detaching rather than re-inserting is deliberate: Vue still
- * holds a vnode pointing at this node and will re-create it wherever state says it belongs, whereas
- * putting it back by hand risks leaving behind a node Vue no longer tracks.
+ * Put SortableJS's DOM edit back before state drives the re-render. Detaching the node instead
+ * (`item.remove()`) breaks Vue's keyed diff: it anchors moves against the elements it treats as
+ * stable, and for a move of one slot forward that is the dragged element itself — so Vue anchors
+ * against a node no longer in the document, throws `NotFoundError`, and the block disappears.
+ *
+ * `oldIndex` here, not `oldDraggableIndex`: this addresses the DOM, and `insertNodeAt` indexes
+ * `children`, which counts every element. The handlers below address `props.entries` and so need the
+ * draggable-only indices instead.
  */
-function detach(item: HTMLElement): void {
-  item.remove();
+function restore(event: Sortable.SortableEvent): void {
+  removeNode(event.item);
+  insertNodeAt(event.from, event.item, event.oldIndex ?? 0);
 }
 
 const titleOf = (id: string) => {
@@ -104,7 +110,7 @@ const titleOf = (id: string) => {
  * useSortable splices in place, so same-list reorders could go unnoticed entirely.)
  *
  * So `onUpdate` is overridden rather than left to useSortable, and the throwaway list below is never
- * read or written. Both handlers undo SortableJS's DOM edit and let state drive the re-render.
+ * read or written. Both handlers put SortableJS's DOM edit back and let state drive the re-render.
  */
 
 // Only here to satisfy useSortable's signature; overriding `onUpdate` means it is never touched.
@@ -137,14 +143,15 @@ const { option } = useSortable(container, unusedSortableList, {
   dragClass: "sortable-drag",
   disabled: initiallyDisabled,
 
-  // Reorder inside one list. Indices are positions among `.layout-block` children, which is exactly
-  // what `props.entries` is, so the new order is derived rather than read back out of the DOM.
+  // Reorder inside one list, deriving the new order from `props.entries` rather than reading the DOM.
+  // The draggable-only indices are the ones that match `props.entries`; `oldIndex`/`newIndex` count
+  // every element child, so a non-block child rendered above the blocks would shift them all by one.
   onUpdate: (event: Sortable.SortableEvent) => {
-    detach(event.item);
+    restore(event);
 
     const ids = props.entries.map((entry) => entry.id);
-    const [moved] = ids.splice(event.oldIndex ?? 0, 1);
-    ids.splice(event.newIndex ?? 0, 0, moved);
+    const [moved] = ids.splice(event.oldDraggableIndex ?? 0, 1);
+    ids.splice(event.newDraggableIndex ?? 0, 0, moved);
     emit("reorder", ids);
   },
 
@@ -155,11 +162,13 @@ const { option } = useSortable(container, unusedSortableList, {
       return; // same-list move, already handled by onUpdate
     }
 
-    detach(event.item);
+    // Back into the source list, not the target — state is what moves the block across.
+    restore(event);
 
     const id = event.item.dataset.blockId;
     if (id) {
-      emit("setHidden", id, event.to.dataset.dropHidden === "true");
+      // `newDraggableIndex`, not `newIndex`: an empty target zone also renders its hint paragraph.
+      emit("setHidden", id, event.to.dataset.dropHidden === "true", event.newDraggableIndex ?? undefined);
     }
   },
 });

@@ -9,6 +9,90 @@ A Sales Rep can reorder and hide the blocks on their **Dashboard** and their **C
 pages, and that arrangement survives reload, a new session and another device. One layout per rep
 per page — the customer-profile layout applies to *every* customer, not per-customer.
 
+## At a glance (as built)
+
+The sections below were written *before* implementation and a few names drifted (the registry landed
+at `layout/registry.ts`, and the composable exposes `reorder` / `setHidden` rather than `moveBlock` /
+`toggleHidden`). This section is the map of what actually shipped; read it first.
+
+**The whole feature in one equation.** The registry owns *structure*, the saved document owns only
+*arrangement*:
+
+```
+REGISTRY (code)                 SAVED DOC (backend)          RENDERED PAGE
+which blocks exist          +   order within a region    =   the layout the rep sees
+which region each lives in      hidden true/false
+```
+
+**Three fixed regions.** `mainLeft` and `mainRight` are not interchangeable — they hold widgets built
+for their width — so cross-column drags are impossible by construction (distinct Sortable groups),
+not by a runtime guard:
+
+```
+┌───────────────────────────────────────────────────┐
+│ statistics   [KPI][KPI][KPI][KPI]   horizontal, whole card is the handle
+├──────────────────────────────────┬────────────────┤
+│ mainLeft  (wide content)         │ mainRight      │  both vertical,
+│  [ Recent orders ]               │ [Quick actions]│  dragged by the
+│                                  │ [Customer info]│  widget header
+└──────────────────────────────────┴────────────────┘
+   dashboard      = statistics + mainLeft  (no rail registered yet)
+   customerProfile = all three
+```
+
+**Component tree.** `layout-region.vue` is the single reusable sortable list; everything else is
+chrome around it:
+
+```
+pages/dashboard.vue  |  pages/customer-profile.vue
+│   own useSalesRepLayout(scope) + useLayoutAnnouncer(scope)
+├── LayoutSkeleton         while the query is in flight — see §"nothing block-shaped renders"
+├── LayoutEditBar          Reset / Cancel / Save + the failed-save alert
+├── LayoutStats            the KPI row
+│   ├── LayoutRegion  visible zone  (drop-hidden=false)
+│   └── LayoutRegion  hidden zone   (drop-hidden=true, v-if editing)
+│         └── both share ONE Sortable group name → cards cross between them
+├── LayoutRegion  mainLeft   ─┐ distinct group names →
+├── LayoutRegion  mainRight  ─┘ a rail widget can never land in the wide column
+├── LayoutHiddenTray       hidden *widgets* return via a button, not a drag
+└── <p aria-live>          keyboard-sort announcements
+```
+
+Each item inside a region is wrapped in `layout-block.vue`, which overlays the edit chrome (drag
+handle + ✕) on the widget's own header, because those headers belong to components the layout does
+not own and cannot be slotted into from outside.
+
+|                | Stat card                        | Widget                      |
+| -------------- | -------------------------------- | --------------------------- |
+| drag by        | the whole card (`dragWhole`)     | its header / handle button   |
+| hide by        | dragging into the hidden zone    | ✕ button                     |
+| restore by     | dragging back out (or ↑ grabbed) | button in `LayoutHiddenTray` |
+
+**Data flow.**
+
+```
+LOAD    salesRepLayout(scope, storeId) ──null when never saved──┐
+                        │                                       ▼
+                        └──▶ reconcileLayout(saved, registry) ◀── registry defaults
+                                        │
+                                        ▼
+                        state = { statistics: [{id,hidden}], mainLeft: […], mainRight: […] }
+
+EDIT    startEdit()  draft = clone(persisted)          every change targets the DRAFT only
+        drag / arrows / ✕ / tray  →  reorder() | setHidden()
+        cancel() discards the draft      reset() refills it from registry defaults
+
+SAVE    serializeLayout(draft) ─▶ saveSalesRepLayout   (FULL-DOCUMENT REPLACE: every region,
+                                        │               every block, hidden ones included)
+                                        ▼
+                        mutation echoes the stored document → reconcile from it, no refetch
+                        on failure: keep edit mode AND the draft, show the alert
+```
+
+Two asymmetries worth remembering: a failed **write** keeps the draft, whereas a failed **read**
+disables editing entirely (§4) — because a full-replace save over a document we could not fetch is
+how an arrangement gets destroyed.
+
 ## Decisions (confirmed with requester)
 
 1. **Engine against existing blocks.** Build the layout mechanism over what the repo has today; the

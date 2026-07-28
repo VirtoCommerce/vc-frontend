@@ -68,6 +68,7 @@
           "hide": "Hide {title}",
           "show": "Show {title}",
           "grabbed": "{title} grabbed. Position {position} of {total}. Use the arrow keys to move it, space to drop it, escape to cancel.",
+          "grabbed_parkable": "{title} grabbed. Position {position} of {total}. Use the left and right arrow keys to move it, up and down to hide or show it, space to drop it, escape to cancel.",
           "moved": "{title} moved to position {position} of {total}.",
           "dropped": "{title} dropped at position {position} of {total}.",
           "cancelled": "Move of {title} cancelled.",

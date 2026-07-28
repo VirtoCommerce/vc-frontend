@@ -7,7 +7,11 @@
     <!-- Nothing block-shaped renders until the saved layout is known; see layout-skeleton.vue. -->
     <LayoutSkeleton v-if="layoutLoading" :stats="4" :blocks="1" />
 
-    <template v-else>
+    <!-- The overlay covers the edit bar too: a save is a full-document replace, so nothing may change
+         while one is in flight — including a drag, whose drop would land after the draft is gone. -->
+    <div v-else class="sales-rep-dashboard__layout">
+      <VcLoaderOverlay v-if="saving" />
+
       <LayoutEditBar
         v-if="editing"
         :saving="saving"
@@ -25,7 +29,7 @@
         :editing="editing"
         @reorder="reorderVisible('statistics', $event)"
         @reorder-hidden="reorderHidden('statistics', $event)"
-        @set-hidden="setHidden"
+        @set-hidden="toggleHidden"
         @announce="announce"
       />
 
@@ -38,7 +42,7 @@
         group="sales-rep-dashboard-main-left"
         :editing="editing"
         @reorder="reorderVisible('mainLeft', $event)"
-        @set-hidden="setHidden"
+        @set-hidden="toggleHidden"
         @announce="announce"
       >
         <template #default="{ entry }">
@@ -50,22 +54,11 @@
         v-if="editing && hiddenWidgets.length"
         :scope="SCOPE"
         :entries="hiddenWidgets"
-        @restore="setHidden($event, false)"
+        @restore="toggleHidden($event, false)"
       />
 
-      <div>
-        <VcButton
-          v-if="canEdit"
-          size="xs"
-          color="primary"
-          variant="outline"
-          prepend-icon="adjustments"
-          @click="editing ? cancel() : startEdit()"
-        >
-          {{ editing ? t("sales_rep.hub.layout.editing") : t("sales_rep.hub.layout.edit") }}
-        </VcButton>
-      </div>
-    </template>
+      <LayoutEditButton v-if="canEdit" :editing="editing" @toggle="editing ? cancel() : startEdit()" />
+    </div>
 
     <p class="sales-rep-dashboard__announcer" aria-live="assertive" aria-atomic="true">{{ message }}</p>
   </div>
@@ -75,11 +68,13 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import LayoutEditBar from "../components/layout-edit-bar.vue";
+import LayoutEditButton from "../components/layout-edit-button.vue";
 import LayoutHiddenTray from "../components/layout-hidden-tray.vue";
 import LayoutRegion from "../components/layout-region.vue";
 import LayoutSkeleton from "../components/layout-skeleton.vue";
 import LayoutStats from "../components/layout-stats.vue";
 import { useLayoutAnnouncer } from "../composables/useLayoutAnnouncer";
+import { focusBlockControl } from "../composables/useLayoutFocus";
 import { useSalesRepLayout } from "../composables/useSalesRepLayout";
 import { getBlock } from "../layout/registry";
 import type { SalesRepLayoutRegionIdType } from "../types/layout";
@@ -130,6 +125,11 @@ function reorderHidden(regionId: SalesRepLayoutRegionIdType, ids: string[]): voi
     ...ids.map((id) => ({ id, hidden: true })),
   ]);
 }
+
+function toggleHidden(id: string, hidden: boolean, index?: number): void {
+  setHidden(id, hidden, index);
+  focusBlockControl(id);
+}
 </script>
 
 <style lang="scss">
@@ -139,6 +139,11 @@ function reorderHidden(regionId: SalesRepLayoutRegionIdType, ids: string[]): voi
 
   &__title {
     @apply [word-break:break-word];
+  }
+
+  // `relative` anchors the absolutely-positioned save overlay.
+  &__layout {
+    @apply relative flex flex-col gap-5;
   }
 
   // Visually hidden, but announced. Keyboard sorting is silent without it.
