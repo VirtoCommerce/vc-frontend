@@ -174,6 +174,57 @@ describe("useKeyboardSort", () => {
     expect(signals.map((signal) => signal.kind)).not.toContain(wrongSignal);
   });
 
+  // Putting the block back moves its node, which blurs it — so Escape without a refocus drops the
+  // user at the top of the page. Blur-cancel must not refocus, or tabbing away would be a trap.
+  it("returns focus to the handle on Escape but not on blur-cancel", async () => {
+    const { sort, order } = setup("horizontal", true, false);
+    const handle = document.createElement("button");
+    const elsewhere = document.createElement("button");
+    document.body.append(handle, elsewhere);
+
+    const at = (target: HTMLElement, key: string) =>
+      ({ key, preventDefault: vi.fn(), currentTarget: target }) as unknown as KeyboardEvent;
+
+    sort.onKeydown(at(handle, " "), "b");
+    sort.onKeydown(at(handle, "ArrowRight"), "b");
+    await nextTick();
+
+    sort.onKeydown(at(handle, "Escape"), "b");
+    // What the browser does when Vue moves the node back; only cancel's own refocus can undo it.
+    handle.blur();
+    await nextTick();
+
+    expect(order()).toEqual(["a", "b", "c"]);
+    expect(document.activeElement).toBe(handle);
+
+    // Blur path. The move's own refocus has to settle first — that window is deliberately ignored —
+    // and then the user genuinely moves focus away.
+    sort.onKeydown(at(handle, " "), "b");
+    sort.onKeydown(at(handle, "ArrowRight"), "b");
+    await nextTick();
+    elsewhere.focus();
+    sort.onBlur("b");
+    await nextTick();
+
+    expect(sort.isGrabbed("b")).toBe(false);
+    expect(order()).toEqual(["a", "b", "c"]);
+    // Focus stays where the user put it; pulling it back would make tabbing away impossible.
+    expect(document.activeElement).toBe(elsewhere);
+
+    handle.remove();
+    elsewhere.remove();
+  });
+
+  it("announces the boundary instead of going silent at the end of the list", () => {
+    const { press, signals, order } = setup("horizontal", true, false);
+
+    press(" ", "a");
+    press("ArrowLeft", "a");
+
+    expect(order()).toEqual(["a", "b", "c"]);
+    expect(signals.at(-1)).toEqual({ kind: "edge", id: "a", index: 0, total: 3 });
+  });
+
   // Leaving edit mode unmounts the handles, and browsers fire no blur for an unmounted element — so
   // the grab has to be dropped explicitly or it outlives the UI that created it.
   it("release drops the grab without moving the block back", () => {

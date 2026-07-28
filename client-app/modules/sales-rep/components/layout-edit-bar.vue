@@ -5,6 +5,9 @@
     <p class="layout-edit-bar__text">
       <b>{{ t("sales_rep.hub.layout.editing") }}</b>
       {{ t("sales_rep.hub.layout.hint") }}
+      <!-- Visible, not just announced: the arrow-key gesture was otherwise discoverable only by
+           screen-reader users, who hear it on grab. -->
+      <span class="layout-edit-bar__keys">{{ t("sales_rep.hub.layout.hint_keyboard") }}</span>
     </p>
 
     <div class="layout-edit-bar__actions">
@@ -58,6 +61,10 @@ const { t } = useI18n();
 
   &__text {
     @apply m-0 min-w-0 text-[13px];
+  }
+
+  &__keys {
+    @apply block text-neutral-500;
   }
 
   &__actions {

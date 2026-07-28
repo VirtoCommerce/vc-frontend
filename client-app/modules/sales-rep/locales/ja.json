@@ -54,6 +54,7 @@
         "edit": "レイアウトを編集",
         "editing": "レイアウトを編集中",
         "hint": "— ハンドルをドラッグしてブロックを並べ替えるか、✕ で非表示にします。",
+        "hint_keyboard": "キーボード操作: スペースキーでブロックをつかみ、矢印キーで移動、スペースキーで確定、Esc でキャンセルします。",
         "save": "レイアウトを保存",
         "cancel": "キャンセル",
         "reset": "リセット",
@@ -71,6 +72,7 @@
           "grabbed_parkable": "{title} をつかみました。{total} 件中 {position} 番目。左右の矢印キーで移動、上下キーで非表示または表示、スペースで配置、Esc でキャンセルします。",
           "moved": "{title} を {total} 件中 {position} 番目に移動しました。",
           "dropped": "{title} を {total} 件中 {position} 番目に配置しました。",
+          "edge": "{title} はすでに {total} 件中 {position} 番目です。",
           "cancelled": "{title} の移動をキャンセルしました。",
           "parked": "{title} を非表示にしました。",
           "restored": "{title} を表示しました。"

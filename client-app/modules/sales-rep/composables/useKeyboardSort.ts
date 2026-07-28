@@ -70,7 +70,9 @@ export function useKeyboardSort(options: IUseKeyboardSortOptions) {
     options.onSignal({ kind: "dropped", id, index: items.indexOf(id), total: items.length });
   }
 
-  function cancel(): void {
+  // `handle` only from Escape: putting the block back blurs it, so focus needs restoring. Blur-cancel
+  // passes none — the user is tabbing away and pulling focus back would trap them.
+  function cancel(handle?: HTMLElement): void {
     const id = grabbedId.value;
     if (!id) {
       return;
@@ -78,6 +80,10 @@ export function useKeyboardSort(options: IUseKeyboardSortOptions) {
     options.onReorder(id, originIndex.value);
     grabbedId.value = undefined;
     options.onSignal({ kind: "cancelled", id });
+
+    if (handle) {
+      refocus(handle);
+    }
   }
 
   function step(delta: number, handle: HTMLElement | undefined): void {
@@ -88,7 +94,12 @@ export function useKeyboardSort(options: IUseKeyboardSortOptions) {
     const items = options.items();
     const from = items.indexOf(id);
     const to = from + delta;
-    if (from < 0 || to < 0 || to >= items.length) {
+    if (from < 0) {
+      return;
+    }
+    // Announced, so "nowhere further to go" is distinguishable from "arrows stopped working".
+    if (to < 0 || to >= items.length) {
+      options.onSignal({ kind: "edge", id, index: from, total: items.length });
       return;
     }
     options.onReorder(id, to);
@@ -102,10 +113,8 @@ export function useKeyboardSort(options: IUseKeyboardSortOptions) {
    */
   function toggleHidden(hidden: boolean): void {
     const id = grabbedId.value;
-    // Ignore the direction that leads out of the zone the block is already in. Without this the
-    // "move" resolves to an index-less `setHidden`, which appends — so the card silently jumps to the
-    // end of its own half, the grab is dropped, and the announcer reports a park or restore that
-    // never happened.
+    // The direction leading out of the zone the block is already in is a no-op: acting on it appends
+    // the block to the end of its own half and announces a move that never happened.
     if (!id || !options.onToggleHidden || hidden === options.hidden?.()) {
       return;
     }
@@ -129,14 +138,14 @@ export function useKeyboardSort(options: IUseKeyboardSortOptions) {
       return;
     }
 
-    if (event.key === "Escape") {
-      event.preventDefault();
-      cancel();
-      return;
-    }
-
     const horizontal = options.orientation === "horizontal";
     const handle = event.currentTarget as HTMLElement | undefined;
+
+    if (event.key === "Escape") {
+      event.preventDefault();
+      cancel(handle);
+      return;
+    }
 
     if (event.key === (horizontal ? "ArrowLeft" : "ArrowUp")) {
       event.preventDefault();
@@ -162,13 +171,8 @@ export function useKeyboardSort(options: IUseKeyboardSortOptions) {
     }
   }
 
-  /**
-   * Drop the grab without restoring the block's position, for when the surrounding UI goes away
-   * rather than the user letting go. Blur cannot cover this: browsers fire no blur when a focused
-   * element is unmounted, they just move focus to the body — so leaving edit mode mid-grab would
-   * otherwise strand `grabbedId`, and with it the grabbed styling (which is not gated on edit mode)
-   * and a stale `originIndex` that one later Escape would apply to a different draft.
-   */
+  // Let go without restoring position, for when the UI goes away rather than the user letting go.
+  // Blur cannot cover it: browsers fire none when a focused element is unmounted.
   function release(): void {
     grabbedId.value = undefined;
     originIndex.value = -1;

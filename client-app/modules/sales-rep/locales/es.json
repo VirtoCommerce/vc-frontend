@@ -54,6 +54,7 @@
         "edit": "Editar diseño",
         "editing": "Editando el diseño",
         "hint": "— arrastre un bloque por su asa para reordenarlo, u ocúltelo con ✕.",
+        "hint_keyboard": "Teclado: la barra espaciadora toma un bloque, las flechas lo mueven, espacio lo suelta, Esc cancela.",
         "save": "Guardar diseño",
         "cancel": "Cancelar",
         "reset": "Restablecer",
@@ -71,6 +72,7 @@
           "grabbed_parkable": "{title} tomado. Posición {position} de {total}. Use las flechas izquierda y derecha para moverlo, arriba y abajo para ocultarlo o mostrarlo, espacio para soltarlo, escape para cancelar.",
           "moved": "{title} movido a la posición {position} de {total}.",
           "dropped": "{title} soltado en la posición {position} de {total}.",
+          "edge": "{title} ya está en la posición {position} de {total}.",
           "cancelled": "Movimiento de {title} cancelado.",
           "parked": "{title} oculto.",
           "restored": "{title} visible."

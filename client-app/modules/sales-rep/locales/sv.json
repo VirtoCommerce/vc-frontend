@@ -54,6 +54,7 @@
         "edit": "Redigera layout",
         "editing": "Redigerar layout",
         "hint": "— dra ett block i handtaget för att ändra ordning, eller dölj det med ✕.",
+        "hint_keyboard": "Tangentbord: mellanslag tar tag i ett block, piltangenterna flyttar det, mellanslag släpper, Esc avbryter.",
         "save": "Spara layout",
         "cancel": "Avbryt",
         "reset": "Återställ",
@@ -71,6 +72,7 @@
           "grabbed_parkable": "{title} upplockad. Position {position} av {total}. Använd vänster och höger piltangent för att flytta, upp och ner för att dölja eller visa, mellanslag för att släppa, escape för att avbryta.",
           "moved": "{title} flyttad till position {position} av {total}.",
           "dropped": "{title} släppt på position {position} av {total}.",
+          "edge": "{title} är redan på plats {position} av {total}.",
           "cancelled": "Flytt av {title} avbruten.",
           "parked": "{title} dold.",
           "restored": "{title} visas."

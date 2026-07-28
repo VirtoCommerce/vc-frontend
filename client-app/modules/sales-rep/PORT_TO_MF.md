@@ -15,11 +15,13 @@ the same remap in reverse.
 
 | In-repo (host) | MF plugin (facade) |
 |---|---|
-| `useQuery` from `@vue/apollo-composable` (`composables/useSalesReps.ts`) | `useQuery` from `@vc-frontend/core` |
-| `useMutation` from `@vue/apollo-composable` (`composables/useSalesRepLayout.ts`) | `useMutation` from `@vc-frontend/core` |
-| `Logger` from `@/core/utilities` (`composables/useSalesReps.ts`) | remove import; use `console.error` |
+| `useQuery` / `useMutation` from `@vue/apollo-composable` (every `composables/useSalesRep*.ts`) | same names from `@vc-frontend/core` |
+| `Logger` from `@/core/utilities` (7 composables — grep, do not go by this list) | remove import; use `console.error` |
+| `globals` from `@/core/globals` (`composables/useSalesRepLayout.ts`, for `storeId`) | `globals` from `@vc-frontend/core` |
+| `useBreadcrumbs` / `usePageHead` from `@/core/composables` (`pages/customer-profile.vue`) | `@vc-frontend/core` |
+| `SaveChangesModal` from `@/shared/common` and `useModal` from `@/shared/modal` (`composables/useUnsavedLayoutGuard.ts`) | no facade equivalent — ship a module-local modal, or drop the guard |
 | `MenuType` from `@/core/types` (`menu.ts`) | `MenuType` from `@vc-frontend/core` |
-| Vc components **not imported** in `pages/sales-reps.vue` (globally registered by the host) | re-add `import { VcButton, VcEmptyView, VcInput, VcTable, VcTypography, VcWidget } from "@vc-frontend/core";` — MF has no global registration |
+| Vc components **not imported** anywhere in the module (globally registered by the host) | re-add explicit imports from `@vc-frontend/core` — MF has no global registration. Grep for `<Vc`; at time of writing the layout feature alone uses `VcAlert VcBreadcrumbs VcButton VcEmptyView VcIcon VcImage VcLoaderOverlay VcTypography VcWidget`, plus `VcInput VcTable` on the list page |
 | `useModuleSettings` from `@/core/composables/useModuleSettings` (`composables/useSalesRepsConfig.ts`) | `@vc-frontend/core` |
 
 ## 2. Entry point — `index.ts`
@@ -57,6 +59,11 @@ Restore the plugin repo's own config, which the host provides centrally and was 
 dropped: `package.json`, `vite.config.ts` (federation `exposes`/shared), `codegen.ts`,
 `tsconfig.json`, `eslint.config.js`, `.husky/`, `postcss.config.cjs`, `tailwind.config.cjs`,
 `src/shims-vue.d.ts`, `index.html`.
+
+**The old plugin `package.json` predates the saved-layout work** — it has no `sortablejs`
+(+`@types/sortablejs`) or `@vueuse/integrations`, both of which `components/layout-region.vue`
+needs, and `@vueuse/core` for `useBreakpoints` in `pages/customer-profile.vue`. Add them, and
+decide whether `sortablejs` is bundled into the remote or listed as federation `shared`.
 
 ## 5. Cosmetic (host-lint-driven, optional to revert)
 

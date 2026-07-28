@@ -54,6 +54,7 @@
         "edit": "Muokkaa asettelua",
         "editing": "Muokataan asettelua",
         "hint": "— vedä lohkoa kahvasta järjestääksesi sen uudelleen tai piilota se ✕-painikkeella.",
+        "hint_keyboard": "Näppäimistö: välilyönti nostaa lohkon, nuolinäppäimet siirtävät sitä, välilyönti pudottaa, Esc peruuttaa.",
         "save": "Tallenna asettelu",
         "cancel": "Peruuta",
         "reset": "Palauta oletukset",
@@ -71,6 +72,7 @@
           "grabbed_parkable": "{title} tartuttu. Sijainti {position}/{total}. Siirrä vasemmalla ja oikealla nuolinäppäimellä, piilota tai näytä ylä- ja alanuolinäppäimellä, pudota välilyönnillä, peruuta Esc-näppäimellä.",
           "moved": "{title} siirretty sijaintiin {position}/{total}.",
           "dropped": "{title} pudotettu sijaintiin {position}/{total}.",
+          "edge": "{title} on jo sijainnissa {position}/{total}.",
           "cancelled": "Kohteen {title} siirto peruutettu.",
           "parked": "{title} piilotettu.",
           "restored": "{title} näytetään."

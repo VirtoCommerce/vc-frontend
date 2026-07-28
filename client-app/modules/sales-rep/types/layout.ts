@@ -51,7 +51,8 @@ export type KeyboardSortOrientationType = "horizontal" | "vertical";
 export type KeyboardSortSignalType =
   /** `parkable` picks the wording: only the stat row can hide a block with the arrow keys. */
   | { kind: "grabbed"; id: string; index: number; total: number; parkable: boolean }
-  | { kind: "moved" | "dropped"; id: string; index: number; total: number }
+  /** `edge` reports a move that could not happen: silence leaves an SR user unable to tell why. */
+  | { kind: "moved" | "dropped" | "edge"; id: string; index: number; total: number }
   | { kind: "cancelled" | "parked" | "restored"; id: string };
 
 // Minimal shape of a persisted document. The generated `SalesRepLayoutQuery` result is structurally

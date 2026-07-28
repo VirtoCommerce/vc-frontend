@@ -69,7 +69,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import LayoutEditBar from "../components/layout-edit-bar.vue";
 import LayoutEditButton from "../components/layout-edit-button.vue";
@@ -77,18 +76,16 @@ import LayoutHiddenTray from "../components/layout-hidden-tray.vue";
 import LayoutRegion from "../components/layout-region.vue";
 import LayoutSkeleton from "../components/layout-skeleton.vue";
 import LayoutStats from "../components/layout-stats.vue";
-import { useLayoutAnnouncer } from "../composables/useLayoutAnnouncer";
-import { focusBlockControl, focusEditToggle } from "../composables/useLayoutFocus";
-import { useSalesRepLayout } from "../composables/useSalesRepLayout";
-import { getBlock } from "../layout/registry";
-import type { SalesRepLayoutRegionIdType } from "../types/layout";
+import { useLayoutPage } from "../composables/useLayoutPage";
+import { useUnsavedLayoutGuard } from "../composables/useUnsavedLayoutGuard";
+import { DASHBOARD_LAYOUT_SCOPE } from "../constants";
 
-const SCOPE = "dashboard" as const;
+const SCOPE = DASHBOARD_LAYOUT_SCOPE;
 
 const { t } = useI18n();
-const { message, announce } = useLayoutAnnouncer(SCOPE);
 const {
-  state,
+  message,
+  announce,
   loading: layoutLoading,
   saving,
   editing,
@@ -96,51 +93,18 @@ const {
   saveFailed,
   visibleIn,
   hiddenIn,
+  hiddenWidgets,
+  componentOf,
   startEdit,
   cancel,
   reset,
-  reorder,
-  setHidden,
+  reorderVisible,
+  reorderHidden,
+  toggleHidden,
   save,
-} = useSalesRepLayout(SCOPE);
+} = useLayoutPage(SCOPE);
 
-const hiddenWidgets = computed(() => hiddenIn("mainLeft").concat(hiddenIn("mainRight")));
-
-// eslint-disable-next-line sonarjs/function-return-type -- component or undefined by design
-const componentOf = (id: string) => {
-  const block = getBlock(SCOPE, id);
-  return block && "component" in block ? block.component : undefined;
-};
-
-/**
- * A region's visible and hidden entries are two views of one ordered array, so a reorder of either
- * view has to be stitched back into the whole before it is stored.
- */
-function reorderVisible(regionId: SalesRepLayoutRegionIdType, ids: string[]): void {
-  reorder(regionId, [
-    ...ids.map((id) => ({ id, hidden: false })),
-    ...state.value[regionId].filter((entry) => entry.hidden),
-  ]);
-}
-
-function reorderHidden(regionId: SalesRepLayoutRegionIdType, ids: string[]): void {
-  reorder(regionId, [
-    ...state.value[regionId].filter((entry) => !entry.hidden),
-    ...ids.map((id) => ({ id, hidden: true })),
-  ]);
-}
-
-function toggleHidden(id: string, hidden: boolean, index?: number): void {
-  setHidden(id, hidden, index);
-  focusBlockControl(id);
-}
-
-// Save and Cancel both unmount the edit bar they live on, taking focus with them.
-watch(editing, (now, was) => {
-  if (was && !now) {
-    focusEditToggle();
-  }
-});
+useUnsavedLayoutGuard({ editing, save, cancel });
 </script>
 
 <style lang="scss">
@@ -159,7 +123,7 @@ watch(editing, (now, was) => {
 
   // Visually hidden, but announced. Keyboard sorting is silent without it.
   &__announcer {
-    @apply absolute -m-px size-px overflow-hidden whitespace-nowrap border-0 p-0 [clip:rect(0,0,0,0)];
+    @apply sr-only;
   }
 }
 </style>

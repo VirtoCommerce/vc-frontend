@@ -54,6 +54,7 @@
         "edit": "Layout bearbeiten",
         "editing": "Layout wird bearbeitet",
         "hint": "— ziehen Sie einen Block am Griff, um ihn umzusortieren, oder blenden Sie ihn mit ✕ aus.",
+        "hint_keyboard": "Tastatur: Leertaste hebt einen Block an, Pfeiltasten verschieben ihn, Leertaste legt ihn ab, Esc bricht ab.",
         "save": "Layout speichern",
         "cancel": "Abbrechen",
         "reset": "Zurücksetzen",
@@ -71,6 +72,7 @@
           "grabbed_parkable": "{title} aufgenommen. Position {position} von {total}. Mit den Pfeiltasten links und rechts verschieben, mit Pfeil nach oben und unten aus- oder einblenden, Leertaste zum Ablegen, Escape zum Abbrechen.",
           "moved": "{title} auf Position {position} von {total} verschoben.",
           "dropped": "{title} auf Position {position} von {total} abgelegt.",
+          "edge": "{title} ist bereits an Position {position} von {total}.",
           "cancelled": "Verschieben von {title} abgebrochen.",
           "parked": "{title} ausgeblendet.",
           "restored": "{title} eingeblendet."

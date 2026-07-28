@@ -80,12 +80,9 @@ export function reconcileLayout(
 }
 
 /**
- * Whether a save's echoed document accounts for every block that was sent.
- *
- * Presence of a document is not enough to trust it. `reconcileLayout` fills anything absent from
- * registry defaults, so a partial echo — `regions: []` from a version-skewed backend, a half-written
- * document — reads as "the rep arranged nothing" and quietly replaces their layout with defaults.
- * Region grouping is deliberately ignored here, as everywhere else: only the set of types matters.
+ * Whether a save's echoed document accounts for every block that was sent. Presence alone is not
+ * enough to trust it: `reconcileLayout` fills anything absent from registry defaults, so a partial
+ * echo reads as "the rep arranged nothing". Region grouping is ignored, as everywhere else.
  */
 export function echoCoversSentBlocks(saved: SavedLayoutType | null | undefined, sent: InputSalesRepLayout): boolean {
   const echoed = new Set((saved?.regions ?? []).flatMap((region) => region.blocks.map((block) => block.type)));

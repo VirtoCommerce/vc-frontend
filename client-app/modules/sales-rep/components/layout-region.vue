@@ -30,7 +30,7 @@
 
 <script setup lang="ts">
 import { insertNodeAt, removeNode, useSortable } from "@vueuse/integrations/useSortable";
-import { computed, ref, useTemplateRef, watch } from "vue";
+import { ref, useTemplateRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useKeyboardSort } from "../composables/useKeyboardSort";
 import { getBlock } from "../layout/registry";
@@ -100,6 +100,25 @@ const titleOf = (id: string) => {
   return block ? t(block.titleKey) : id;
 };
 
+// A region's axis is structural: the stat row is always horizontal, a widget column always vertical.
+// eslint-disable-next-line vue/no-setup-props-reactivity-loss -- structural, read once by design
+const axis = props.orientation;
+
+const { isGrabbed, onKeydown, onBlur, release } = useKeyboardSort({
+  orientation: axis,
+  items: () => props.entries.map((entry) => entry.id),
+  // Every block in a zone shares the zone's hidden state, which is what `dropHidden` describes.
+  hidden: () => Boolean(props.dropHidden),
+  onReorder: (id, index) => {
+    const ids = props.entries.map((entry) => entry.id).filter((candidate) => candidate !== id);
+    ids.splice(index, 0, id);
+    emit("reorder", ids);
+  },
+  // Only the stat row can park a block with the arrow keys; widget columns hide via the ✕ button.
+  onToggleHidden: axis === "horizontal" ? (id, hidden) => emit("setHidden", id, hidden) : undefined,
+  onSignal: (signal) => emit("announce", signal),
+});
+
 /**
  * Every move is handled explicitly, and `props.entries` stays the only source of truth.
  *
@@ -143,6 +162,11 @@ const { option } = useSortable(container, unusedSortableList, {
   dragClass: "sortable-drag",
   disabled: initiallyDisabled,
 
+  // A keyboard grab must not stay live through a pointer drag: Sortable captures its indices at
+  // choose time, and a grab cancelled mid-drag reshuffles `entries` under them, dropping the wrong
+  // block. `release`, not `cancel` — restoring the position is the reshuffle to avoid.
+  onChoose: () => release(),
+
   // Reorder inside one list, deriving the new order from `props.entries` rather than reading the DOM.
   // The draggable-only indices are the ones that match `props.entries`; `oldIndex`/`newIndex` count
   // every element child, so a non-block child rendered above the blocks would shift them all by one.
@@ -173,25 +197,6 @@ const { option } = useSortable(container, unusedSortableList, {
   },
 });
 
-// A region's axis is structural: the stat row is always horizontal, a widget column always vertical.
-// eslint-disable-next-line vue/no-setup-props-reactivity-loss -- structural, read once by design
-const axis = props.orientation;
-
-const { isGrabbed, onKeydown, onBlur, release } = useKeyboardSort({
-  orientation: axis,
-  items: () => props.entries.map((entry) => entry.id),
-  // Every block in a zone shares the zone's hidden state, which is what `dropHidden` describes.
-  hidden: () => Boolean(props.dropHidden),
-  onReorder: (id, index) => {
-    const ids = props.entries.map((entry) => entry.id).filter((candidate) => candidate !== id);
-    ids.splice(index, 0, id);
-    emit("reorder", ids);
-  },
-  // Only the stat row can park a block with the arrow keys; widget columns hide via the ✕ button.
-  onToggleHidden: axis === "horizontal" ? (id, hidden) => emit("setHidden", id, hidden) : undefined,
-  onSignal: (signal) => emit("announce", signal),
-});
-
 // Sortable is created once and toggled, rather than torn down and rebuilt whenever edit mode flips.
 // No `immediate` — the constructor seeds the initial value, and an immediate run would fire before
 // the instance exists.
@@ -204,8 +209,6 @@ watch(
     }
   },
 );
-
-const emptyText = computed(() => props.emptyText ?? "");
 </script>
 
 <style lang="scss">

@@ -228,11 +228,15 @@ declares `sortablejs: "^1"` as an optional peer, so only `sortablejs` is added.
 - `handle` targets the block's drag handle.
 
 **`useSortable` does not cover cross-list drags.** It wires only `onUpdate`, which fires for a
-reorder *within* one list; moving a card between the paired stat zones fires `onRemove` on the source
-and `onAdd` on the target, which vueuse leaves unhandled. Left alone, SortableJS's DOM edit survives
-while the backing arrays stay unchanged and Vue's next patch fights it. `layout-region.vue` therefore
-supplies both handlers: each undoes the DOM move, and the receiving zone emits the state change
-(`setHidden`) so rendering stays driven by state. The dragged node is identified from
+reorder *within* one list; moving a card between the paired stat zones leaves vueuse with nothing.
+Left alone, SortableJS's DOM edit survives while the backing arrays stay unchanged and Vue's next
+patch fights it.
+
+*As built:* `layout-region.vue` handles this in a single `onEnd` rather than the `onAdd`/`onRemove`
+pair this section originally proposed — those fire on two different instances for one gesture and
+double-applied the change. `onEnd` fires once, on the source, and early-returns when
+`event.from === event.to` (that case is already `onUpdate`'s). Both handlers put SortableJS's DOM edit
+back with `insertNodeAt` and let state drive the re-render. The dragged node is identified from
 `data-block-id`, which avoids keeping a parallel element-to-id map.
 
 ### 6. Keyboard grab-and-move (`composables/useKeyboardSort.ts`)
@@ -292,8 +296,8 @@ Three states the prototype could not specify, decided here:
 - **The keyboard-grabbed state**, which the prototype has no concept of: reuse the dragging
   treatment plus a visible focus ring.
 
-The prototype's `--dense` stat variant (≥5 cards) is ported since it costs nothing, but its
-6-visible cap is not binding — there are 4 cards.
+The prototype's `--dense` stat variant (≥5 cards) is **not** ported: with 4 cards it would never
+render, so the flex basis rules in `layout-region.vue` cover every case on their own.
 
 ## Explicitly out of scope
 

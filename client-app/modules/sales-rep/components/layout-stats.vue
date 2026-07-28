@@ -1,12 +1,19 @@
 <template>
   <div class="layout-stats">
-    <p v-if="editing" class="layout-stats__label">{{ t("sales_rep.hub.layout.visible_stats") }}</p>
+    <p v-if="editing" :id="`${scope}-visible-stats`" class="layout-stats__label">
+      {{ t("sales_rep.hub.layout.visible_stats") }}
+    </p>
 
     <!--
       Always mounted, so its Sortable instance is created once and merely enabled/disabled as edit
       mode flips. The hidden zone below only exists while editing, which is when it can be a target.
+
+      Grouped and labelled while editing: both zones name their cards "Reorder {title}", so without
+      this a screen reader cannot tell a parked card from a visible one.
     -->
     <LayoutRegion
+      :role="editing ? 'group' : undefined"
+      :aria-labelledby="editing ? `${scope}-visible-stats` : undefined"
       :scope="scope"
       :entries="visible"
       orientation="horizontal"
@@ -33,12 +40,14 @@
     </LayoutRegion>
 
     <template v-if="editing">
-      <p class="layout-stats__label layout-stats__label--hidden">
+      <p :id="`${scope}-hidden-stats`" class="layout-stats__label layout-stats__label--hidden">
         <VcIcon name="eye-off" :size="14" />
         {{ t("sales_rep.hub.layout.hidden_stats") }}
       </p>
 
       <LayoutRegion
+        role="group"
+        :aria-labelledby="`${scope}-hidden-stats`"
         class="layout-stats__hidden"
         :scope="scope"
         :entries="hidden"

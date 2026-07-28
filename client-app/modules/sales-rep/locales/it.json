@@ -54,6 +54,7 @@
         "edit": "Modifica layout",
         "editing": "Modifica del layout",
         "hint": "— trascina un blocco dalla maniglia per riordinarlo oppure nascondilo con ✕.",
+        "hint_keyboard": "Tastiera: la barra spaziatrice afferra un blocco, le frecce lo spostano, spazio lo rilascia, Esc annulla.",
         "save": "Salva layout",
         "cancel": "Annulla",
         "reset": "Ripristina",
@@ -71,6 +72,7 @@
           "grabbed_parkable": "{title} preso. Posizione {position} di {total}. Usa le frecce sinistra e destra per spostarlo, su e giù per nasconderlo o mostrarlo, spazio per rilasciarlo, esc per annullare.",
           "moved": "{title} spostato alla posizione {position} di {total}.",
           "dropped": "{title} rilasciato alla posizione {position} di {total}.",
+          "edge": "{title} è già in posizione {position} di {total}.",
           "cancelled": "Spostamento di {title} annullato.",
           "parked": "{title} nascosto.",
           "restored": "{title} mostrato."

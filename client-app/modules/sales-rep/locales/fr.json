@@ -54,6 +54,7 @@
         "edit": "Modifier la disposition",
         "editing": "Modification de la disposition",
         "hint": "— faites glisser un bloc par sa poignée pour le réorganiser, ou masquez-le avec ✕.",
+        "hint_keyboard": "Clavier : la barre d'espace saisit un bloc, les flèches le déplacent, espace le dépose, Échap annule.",
         "save": "Enregistrer la disposition",
         "cancel": "Annuler",
         "reset": "Réinitialiser",
@@ -71,6 +72,7 @@
           "grabbed_parkable": "{title} saisi. Position {position} sur {total}. Utilisez les flèches gauche et droite pour le déplacer, haut et bas pour le masquer ou l'afficher, espace pour le déposer, échap pour annuler.",
           "moved": "{title} déplacé en position {position} sur {total}.",
           "dropped": "{title} déposé en position {position} sur {total}.",
+          "edge": "{title} est déjà en position {position} sur {total}.",
           "cancelled": "Déplacement de {title} annulé.",
           "parked": "{title} masqué.",
           "restored": "{title} affiché."

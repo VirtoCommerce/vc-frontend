@@ -92,12 +92,9 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
     saveFailed.value = false;
   }
 
-  /**
-   * `save` snapshots the payload synchronously and clears the draft when it resolves, so anything
-   * that edits the draft mid-flight is written to a document nobody will send and then thrown away.
-   * The pages also make the layout `inert` while saving; this is the guard behind that, covering the
-   * programmatic paths an attribute cannot.
-   */
+  // `save` snapshots the payload synchronously and clears the draft on resolve, so a mid-flight edit
+  // lands in a document nobody sends and is then discarded. The pages' `inert` covers the UI; this
+  // covers the programmatic paths an attribute cannot.
   function editable(): boolean {
     return draft.value !== undefined && !saving.value;
   }
@@ -105,6 +102,8 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
   function reset(): void {
     if (editable()) {
       draft.value = reconcileLayout(null, registry);
+      // Otherwise a previous failure's alert sits over a freshly rebuilt draft.
+      saveFailed.value = false;
     }
   }
 
@@ -168,10 +167,8 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
         return false;
       }
 
-      // The mutation echoes the stored document, so reconcile from it rather than refetching — but
-      // only once it accounts for what went out. An echo that does not is a broken backend, not a
-      // rep who arranged nothing, and the write itself did not error; keeping what they arranged is
-      // both closer to the truth and the only option that cannot destroy it.
+      // Reconcile from the echo rather than refetching — but only once it accounts for what went out.
+      // A short echo is a broken backend, not a rep who arranged nothing, and the write did not error.
       if (echoCoversSentBlocks(saved, command)) {
         savedState.value = reconcileLayout(saved, registry);
       } else {

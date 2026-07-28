@@ -6,6 +6,7 @@ import { useSalesRepLayout } from "../composables/useSalesRepLayout";
 import LayoutRegion from "./layout-region.vue";
 import LayoutStats from "./layout-stats.vue";
 import type { SalesRepLayoutRegionIdType } from "../types/layout";
+import type { Mock } from "vitest";
 
 const apolloMock = await vi.hoisted(async () => {
   const { ref, shallowRef } = await import("vue");
@@ -35,8 +36,9 @@ vi.mock("vue-i18n", () => ({ useI18n: () => ({ t: (key: string) => key }) }));
 const zones: ZoneType[] = [];
 vi.mock("@vueuse/integrations/useSortable", () => ({
   useSortable: (el: unknown, _list: unknown, options: Record<string, unknown>) => {
-    zones.push({ options, elRef: el as ZoneType["elRef"] });
-    return { option: vi.fn(), start: vi.fn(), stop: vi.fn() };
+    const option = vi.fn();
+    zones.push({ options, option, elRef: el as ZoneType["elRef"] });
+    return { option, start: vi.fn(), stop: vi.fn() };
   },
   removeNode: (node: Node) => {
     if (node.parentNode) {
@@ -47,7 +49,7 @@ vi.mock("@vueuse/integrations/useSortable", () => ({
 }));
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- replays SortableJS's event objects
-type ZoneType = { options: any; elRef: { value: HTMLElement | null } };
+type ZoneType = { options: any; option: Mock; elRef: { value: HTMLElement | null } };
 
 const SCOPE = "dashboard" as const;
 
@@ -238,6 +240,50 @@ describe("stat row drag and drop", () => {
     expect(wrapper.find('[data-block-id="orders_placed_mtd"]').element.className).not.toContain(
       "layout-block--grabbed",
     );
+  });
+
+  // The mock swallows every Sortable option, so nothing else in the suite would notice if the wiring
+  // that makes dragging possible at all were dropped.
+  it("wires the Sortable options the drag behaviour depends on", async () => {
+    const { api } = setup();
+    const [visible] = zones;
+
+    expect(visible.options.draggable).toBe(".layout-block");
+    expect(visible.options.group).toBe("sales-rep-stats-dashboard");
+    // Whole-card drag for stats, so no handle selector narrows it.
+    expect(visible.options.handle).toBeUndefined();
+    // Disabled until edit mode, and enabled by the watch rather than a rebuild.
+    expect(visible.options.disabled).toBe(true);
+
+    api.startEdit();
+    await nextTick();
+    expect(visible.option).toHaveBeenCalledWith("disabled", false);
+
+    api.cancel();
+    await nextTick();
+    expect(visible.option).toHaveBeenCalledWith("disabled", true);
+  });
+
+  // A pointer drag and a keyboard grab reordering the same array at once drops the wrong block.
+  it("releases a keyboard grab when a pointer drag is chosen", async () => {
+    const { wrapper, api } = setup();
+    api.startEdit();
+    await nextTick();
+
+    const card = wrapper.find('[data-block-id="orders_placed_mtd"]');
+    card.element.dispatchEvent(new KeyboardEvent("keydown", { key: " " }));
+    await nextTick();
+    expect(card.element.className).toContain("layout-block--grabbed");
+
+    const order = api.visibleIn("statistics").map((entry: { id: string }) => entry.id);
+    zones[0].options.onChoose({ item: card.element });
+    await nextTick();
+
+    expect(wrapper.find('[data-block-id="orders_placed_mtd"]').element.className).not.toContain(
+      "layout-block--grabbed",
+    );
+    // Released, not cancelled — a cancel would reshuffle the list mid-drag.
+    expect(api.visibleIn("statistics").map((entry: { id: string }) => entry.id)).toEqual(order);
   });
 
   it("ignores the park key for a card already in the zone that key leads to", async () => {

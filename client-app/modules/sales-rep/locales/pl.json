@@ -54,6 +54,7 @@
         "edit": "Edytuj układ",
         "editing": "Edytowanie układu",
         "hint": "— przeciągnij blok za uchwyt, aby zmienić kolejność, lub ukryj go przyciskiem ✕.",
+        "hint_keyboard": "Klawiatura: spacja chwyta blok, strzałki go przesuwają, spacja upuszcza, Esc anuluje.",
         "save": "Zapisz układ",
         "cancel": "Anuluj",
         "reset": "Przywróć domyślne",
@@ -71,6 +72,7 @@
           "grabbed_parkable": "Chwycono {title}. Pozycja {position} z {total}. Użyj strzałek w lewo i w prawo, aby przenieść, w górę i w dół, aby ukryć lub pokazać, spacji, aby upuścić, Escape, aby anulować.",
           "moved": "Przeniesiono {title} na pozycję {position} z {total}.",
           "dropped": "Upuszczono {title} na pozycji {position} z {total}.",
+          "edge": "{title} jest już na pozycji {position} z {total}.",
           "cancelled": "Anulowano przenoszenie {title}.",
           "parked": "Ukryto {title}.",
           "restored": "Pokazano {title}."
