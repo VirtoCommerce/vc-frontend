@@ -21,7 +21,9 @@
                 :items="pagedListItems"
                 :pending-items="pendingItems"
                 :editable="false"
+                :addable-to-cart="isRecommendedByRep"
                 :navigatable="false"
+                @update:cart-item="addOrUpdateCartItem"
                 @link-click="selectItemEvent"
               />
 
@@ -93,7 +95,7 @@ const { getModuleSettings } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 const { analytics } = useAnalytics();
 const { t } = useI18n();
 const { listLoading, list, fetchSharedWishList } = useWishlists();
-const { cart } = useShortCart();
+const { cart, addToCart, changeItemQuantity } = useShortCart();
 
 // Customer-scoped lists are published by a Sales Rep — surface that to the viewing org member (VCST-5332).
 // Only when the Sales Rep module is installed/enabled for the store (the "Recommended by Rep" concept exists then).
@@ -137,6 +139,31 @@ function selectItemEvent(item: Product | undefined): void {
   }
 
   analytics("selectItem", item, wishlistListProperties.value);
+}
+
+// Add a shared-list item to the viewer's own cart. The list itself stays read-only (not owned by the viewer):
+// we handle only the cart action, never a list-quantity save. Mirrors list-details' addOrUpdateCartItem.
+async function addOrUpdateCartItem(item: PreparedLineItemType, quantity: number): Promise<void> {
+  const lineItem = wishlistItems.value.find((listItem) => listItem.productId === item.productId);
+
+  if (!lineItem?.product || pendingItems.value[lineItem.id]) {
+    return;
+  }
+
+  const itemInCart = cart.value?.items?.find((cartItem) => cartItem.productId === item.productId);
+
+  pendingItems.value[lineItem.id] = true;
+  try {
+    if (itemInCart) {
+      if (itemInCart.quantity !== quantity) {
+        await changeItemQuantity(itemInCart.id, quantity);
+      }
+    } else {
+      await addToCart(lineItem.product.id, quantity);
+    }
+  } finally {
+    pendingItems.value[lineItem.id] = false;
+  }
 }
 
 watchEffect(async () => {
