@@ -2272,11 +2272,6 @@ export type InputLockUnlockOrganizationContactType = {
   memberId: Scalars['String']['input'];
 };
 
-export type InputRevokeOrganizationInviteType = {
-  /** Contact member ID */
-  memberId: Scalars['String']['input'];
-};
-
 export type InputMarkPushMessageReadType = {
   messageId: Scalars['String']['input'];
 };
@@ -2710,7 +2705,7 @@ export type InputResendOrganizationInviteType = {
   /** Optional message to include into the invitation email */
   message?: InputMaybe<Scalars['String']['input']>;
   /** Optional URL suffix: relative URL to the page which handles registration by invite */
-  urlSuffix: Scalars['String']['input'];
+  urlSuffix?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type InputResetPasswordByTokenType = {
@@ -2720,6 +2715,11 @@ export type InputResetPasswordByTokenType = {
   token: Scalars['String']['input'];
   /** User identifier */
   userId: Scalars['String']['input'];
+};
+
+export type InputRevokeOrganizationInviteType = {
+  /** Contact member ID */
+  memberId: Scalars['String']['input'];
 };
 
 export type InputSaveForLaterType = {
