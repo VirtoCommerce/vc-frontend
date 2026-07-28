@@ -15,6 +15,8 @@
 
       <span>{{ delta }}</span>
     </div>
+
+    <VcLoaderOverlay v-if="loading" />
   </div>
 </template>
 
@@ -31,10 +33,11 @@ interface IProps {
   delta?: string;
   deltaTone?: StatWidgetToneType;
   deltaIcon?: string;
+  // Shows a spinner overlay over the card while the statistics query is in flight.
+  loading?: boolean;
 }
 
-// accent/deltaTone need defaults — they build CSS class names (`--${accent}`). The optional
-// string props (sub/delta/deltaIcon) are only used in v-if/interpolation, so undefined is fine.
+// accent/deltaTone need defaults (they build CSS class names); other optional props are fine as undefined.
 withDefaults(defineProps<IProps>(), {
   accent: "neutral",
   deltaTone: "positive",
@@ -42,7 +45,7 @@ withDefaults(defineProps<IProps>(), {
 </script>
 
 <style lang="scss">
-// `@apply` keeps the module self-contained as an MF remote (no global utility layer). See PORT_TO_MF.md.
+// @apply: module is self-contained as an MF remote (no global utility layer).
 .stat-widget {
   $accents: (
     primary: var(--color-primary-500),
@@ -53,10 +56,10 @@ withDefaults(defineProps<IProps>(), {
     neutral: var(--color-neutral-400),
   );
 
-  @apply flex h-full flex-col gap-1.5 rounded-[--vc-radius] border border-neutral-200 bg-additional-50 p-4 shadow-sm;
+  // `relative` anchors the loader overlay; `overflow-hidden` clips its backdrop to the rounded corners.
+  @apply relative flex h-full flex-col gap-1.5 overflow-hidden rounded-[--vc-radius] border border-neutral-200 bg-additional-50 p-4 shadow-sm;
 
-  // Accent bar on the inline-start edge — logical property so it flips in RTL. A single custom
-  // property feeds both the bar and the icon, collapsing six near-identical modifiers into a loop.
+  // Logical property so the accent bar flips in RTL; one custom property feeds both bar and icon.
   border-inline-start: 4px solid var(--stat-widget-accent);
 
   @each $name, $color in $accents {
@@ -94,6 +97,10 @@ withDefaults(defineProps<IProps>(), {
 
     &--negative {
       @apply text-danger-600;
+    }
+
+    &--neutral {
+      @apply text-neutral-500;
     }
   }
 }

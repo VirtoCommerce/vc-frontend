@@ -1,0 +1,6 @@
+query SalesRepTopSellerFilterRules($storeId: String, $cultureName: String) {
+  salesRepTopSellerFilterRules(storeId: $storeId, cultureName: $cultureName) {
+    name
+    localizedName
+  }
+}

@@ -1,0 +1,28 @@
+query SalesRepCustomerCartStatistics(
+  $organizationId: String
+  $storeId: String
+  $currencyCode: String
+  $cultureName: String
+  $cartFilter: String
+  $weekFrom: DateTime
+  $weekTo: DateTime
+) {
+  salesRepCustomerCartStatistics(
+    organizationId: $organizationId
+    storeId: $storeId
+    currencyCode: $currencyCode
+    cultureName: $cultureName
+  ) {
+    currencyCode
+    activeCarts: period(filter: $cartFilter) {
+      count
+      total {
+        amount
+        formattedAmount
+      }
+    }
+    newCartsThisWeek: period(from: $weekFrom, to: $weekTo, filter: $cartFilter) {
+      count
+    }
+  }
+}

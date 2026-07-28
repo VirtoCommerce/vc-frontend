@@ -26,6 +26,10 @@
       "table": {
         "customer": "Cliente",
         "last_order": "Meu último pedido",
+        "ytd": "Compras YTD",
+        "last_year": "Ano passado",
+        "orders_count": "{count} pedidos",
+        "all_customers": "Todos",
         "actions": "Ações",
         "search_placeholder": "Pesquisar por nome",
         "search_aria": "Pesquisar clientes",
@@ -44,10 +48,25 @@
           "title": "Painel"
         },
         "widgets": {
-          "orders_on_hold": "Pedidos em espera",
-          "active_projects": "Projetos ativos",
+          "new_orders": "Novos pedidos",
+          "active_carts": "Carrinhos ativos",
+          "active_cart": "Carrinho ativo",
+          "orders_placed_week": "Pedidos desta semana",
           "orders_placed_mtd": "Pedidos no mês atual",
+          "purchased_mtd": "Compras no mês atual",
+          "orders_placed_ytd": "Pedidos do ano atual",
           "my_customers": "Meus clientes"
+        },
+        "stats": {
+          "value_total": "{amount} no total",
+          "vs_last_week": "{delta} vs semana passada",
+          "vs_last_month": "{delta} vs mês passado",
+          "vs_last_year": "{delta} vs ano passado",
+          "ordered_this_month": "{count} compraram este mês",
+          "new_customers": "{count} novos clientes",
+          "placed_today": "{count} feitos hoje",
+          "new_this_week": "{count} novos esta semana",
+          "mtd_of_ytd": "{percent}% do ano"
         }
       }
     },
@@ -56,10 +75,10 @@
       "not_found": "Cliente não encontrado ou não está nos seus clientes.",
       "back_to_customers": "Voltar aos meus clientes",
       "widgets": {
-        "ytd_purchases": "Compras no ano até agora",
-        "open_balance": "Saldo em aberto",
-        "avg_order_value": "Valor médio do pedido",
-        "orders_ytd": "Pedidos no ano até agora"
+        "avg_order_value": "Valor médio do pedido"
+      },
+      "stats": {
+        "per_order": "Média por pedido (YTD)"
       },
       "info": {
         "title": "Informações do cliente",
@@ -105,12 +124,31 @@
       "title": "Pedidos recentes",
       "view_all": "Todos os pedidos",
       "empty": "Ainda não há pedidos",
+      "no_results": "Nenhum pedido corresponde a este filtro",
       "number": "N.º do pedido",
       "customer": "Cliente",
       "date": "Data",
       "items": "Itens",
       "status": "Status",
-      "total": "Total"
+      "total": "Total",
+      "filter_all": "Todos"
+    },
+    "top_sellers": {
+      "title": "Mais vendidos",
+      "rank": "#",
+      "product": "Produto",
+      "units": "Unidades",
+      "revenue": "Receita",
+      "empty": "Sem vendas neste período",
+      "no_results": "Sem vendas nesta categoria",
+      "all_categories": "Todas as categorias"
+    },
+    "rules": {
+      "customer": {
+        "filter": {
+          "All": "Todos"
+        }
+      }
     }
   }
 }

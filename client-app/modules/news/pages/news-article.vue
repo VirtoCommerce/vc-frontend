@@ -22,7 +22,7 @@ import { useSeoMeta } from "@unhead/vue";
 import { computed, defineAsyncComponent, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
-import { usePageTitle, useBreadcrumbs } from "@/core/composables";
+import { usePageTitle, useBreadcrumbs, useSeoKeywords } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { getNewsArticle } from "../api/graphql/queries/newsArticle";
 import { MODULE_ID, USE_NEWS_PREFIX_IN_LINKS } from "../constants";
@@ -87,13 +87,14 @@ const fetchNewsArticle = async () => {
 
 useSeoMeta({
   title: () => pageTitle.value,
-  keywords: () => seoKeywords.value,
   description: () => seoDescription.value,
   ogUrl: () => seoUrl.value,
   ogTitle: () => pageTitle.value,
   ogDescription: () => seoDescription.value,
   ogType: () => "website",
 });
+
+useSeoKeywords(() => seoKeywords.value);
 
 watchEffect(fetchNewsArticle);
 </script>

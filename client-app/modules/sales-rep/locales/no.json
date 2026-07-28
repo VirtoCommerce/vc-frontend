@@ -26,6 +26,10 @@
       "table": {
         "customer": "Kunde",
         "last_order": "Min siste ordre",
+        "ytd": "Årets kjøp",
+        "last_year": "I fjor",
+        "orders_count": "{count} ordre",
+        "all_customers": "Alle",
         "actions": "Handlinger",
         "search_placeholder": "Søk etter navn",
         "search_aria": "Søk etter kunder",
@@ -44,10 +48,25 @@
           "title": "Dashbord"
         },
         "widgets": {
-          "orders_on_hold": "Ordrer på vent",
-          "active_projects": "Aktive prosjekter",
+          "new_orders": "Nye ordrer",
+          "active_carts": "Aktive handlekurver",
+          "active_cart": "Aktiv handlekurv",
+          "orders_placed_week": "Ordrer denne uken",
           "orders_placed_mtd": "Ordrer hittil denne måneden",
+          "purchased_mtd": "Kjøp hittil denne måneden",
+          "orders_placed_ytd": "Ordrer hittil i år",
           "my_customers": "Mine kunder"
+        },
+        "stats": {
+          "value_total": "{amount} totalt",
+          "vs_last_week": "{delta} vs forrige uke",
+          "vs_last_month": "{delta} vs forrige måned",
+          "vs_last_year": "{delta} vs i fjor",
+          "ordered_this_month": "{count} bestilte denne måneden",
+          "new_customers": "{count} nye kunder",
+          "placed_today": "{count} lagt inn i dag",
+          "new_this_week": "{count} nye denne uken",
+          "mtd_of_ytd": "{percent}% av året"
         }
       }
     },
@@ -56,10 +75,10 @@
       "not_found": "Kunden ble ikke funnet eller er ikke blant kundene dine.",
       "back_to_customers": "Tilbake til mine kunder",
       "widgets": {
-        "ytd_purchases": "Kjøp hittil i år",
-        "open_balance": "Utestående saldo",
-        "avg_order_value": "Gjennomsnittlig ordreverdi",
-        "orders_ytd": "Bestillinger hittil i år"
+        "avg_order_value": "Gjennomsnittlig ordreverdi"
+      },
+      "stats": {
+        "per_order": "Gjennomsnitt per ordre (hittil i år)"
       },
       "info": {
         "title": "Kundeinformasjon",
@@ -105,12 +124,31 @@
       "title": "Nylige ordrer",
       "view_all": "Alle bestillinger",
       "empty": "Ingen bestillinger ennå",
+      "no_results": "Ingen bestillinger samsvarer med dette filteret",
       "number": "Ordrenr.",
       "customer": "Kunde",
       "date": "Dato",
       "items": "Varer",
       "status": "Status",
-      "total": "Totalt"
+      "total": "Totalt",
+      "filter_all": "Alle"
+    },
+    "top_sellers": {
+      "title": "Toppselgere",
+      "rank": "#",
+      "product": "Produkt",
+      "units": "Enheter",
+      "revenue": "Inntekter",
+      "empty": "Ingen salg i denne perioden",
+      "no_results": "Ingen salg i denne kategorien",
+      "all_categories": "Alle kategorier"
+    },
+    "rules": {
+      "customer": {
+        "filter": {
+          "All": "Alle"
+        }
+      }
     }
   }
 }
