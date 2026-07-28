@@ -4,11 +4,11 @@
       {{ t("sales_rep.hub.dashboard.page.title") }}
     </VcTypography>
 
-    <!-- Full-width KPI row (mock until the rep dashboard stats query lands). -->
     <DashboardWidgets />
 
-    <!-- Cross-customer orders (real data: salesRepOrders). -->
-    <SalesRepOrders :title="t('sales_rep.orders.title')" />
+    <SalesRepOrders :title="t('sales_rep.orders.title')" filterable />
+
+    <TopSellers :title="t('sales_rep.top_sellers.title')" />
   </div>
 </template>
 
@@ -16,12 +16,13 @@
 import { useI18n } from "vue-i18n";
 import DashboardWidgets from "../components/dashboard-widgets.vue";
 import SalesRepOrders from "../components/sales-rep-orders.vue";
+import TopSellers from "../components/top-sellers.vue";
 
 const { t } = useI18n();
 </script>
 
 <style lang="scss">
-// `@apply` keeps the module self-contained as an MF remote (no global utility layer). See PORT_TO_MF.md.
+// @apply: module is self-contained as an MF remote (no global utility layer).
 .sales-rep-dashboard {
   @apply flex flex-col gap-5;
 

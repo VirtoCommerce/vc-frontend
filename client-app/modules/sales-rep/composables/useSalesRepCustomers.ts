@@ -3,16 +3,23 @@ import { computed, ref, watch } from "vue";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { SalesRepCustomersDocument } from "../api/graphql/types";
-import { formatCustomerLocation } from "../utils";
-import type { SalesRepCustomerType, SalesRepCustomerSortType } from "../types";
+import { buildStatisticsWindows, formatCustomerLocation } from "../utils";
+import type { SalesRepCustomerType } from "../types";
 
 export const PAGE_SIZE = 10;
 
 export function useSalesRepCustomers() {
   // Applied search term (committed on enter/click by the page), not the live input.
   const keyword = ref("");
-  const sort = ref<SalesRepCustomerSortType>({ column: "name", direction: "asc" });
+  // Selected customer filter-rule name (a segment); undefined → the "All" baseline.
+  const filter = ref<string | undefined>(undefined);
+  // Selected customer sort-rule name; undefined → the server default ("my-last-orders").
+  const sortRule = ref<string | undefined>(undefined);
   const page = ref(1);
+
+  // Windows resolved once per mount, not inside the variables computed — a fresh Date() on every
+  // change would drift the bounds and bust Apollo's cache-first (windows are part of the cache key).
+  const windows = buildStatisticsWindows();
 
   const variables = computed(() => ({
     // Scope to the current store so customers from other stores don't leak in.
@@ -21,7 +28,14 @@ export function useSalesRepCustomers() {
     // xAPI connections take the offset as the cursor.
     after: String((page.value - 1) * PAGE_SIZE),
     keyword: keyword.value,
-    sort: `${sort.value.column}:${sort.value.direction}`,
+    sort: sortRule.value,
+    filter: filter.value,
+    cultureName: globals.cultureName,
+    // Inline YTD / prior-year purchase columns (batched server-side per page, no N+1).
+    ytdFrom: windows.ytdFrom,
+    ytdTo: windows.ytdTo,
+    lastYearFrom: windows.lastYearFrom,
+    lastYearTo: windows.lastYearTo,
   }));
 
   // The rep's customer organizations are resolved server-side from the caller's claims.
@@ -38,7 +52,11 @@ export function useSalesRepCustomers() {
     (result.value?.salesRepCustomers?.items ?? []).map((customer) => ({
       organizationId: customer.organizationId,
       organizationName: customer.organizationName ?? "",
+      accountType: customer.accountType ?? "",
       location: formatCustomerLocation(customer.address, { withPostalCode: true }),
+      ytdTotal: customer.ytd?.total.formattedAmount ?? "",
+      ytdCount: customer.ytd?.count ?? 0,
+      lastYearTotal: customer.lastYear?.total.formattedAmount ?? "",
       lastOrder: customer.lastOrder?.id
         ? {
             id: customer.lastOrder.id,
@@ -58,5 +76,5 @@ export function useSalesRepCustomers() {
     }
   });
 
-  return { loading, keyword, sort, page, pages, items };
+  return { loading, keyword, filter, sortRule, page, pages, items };
 }

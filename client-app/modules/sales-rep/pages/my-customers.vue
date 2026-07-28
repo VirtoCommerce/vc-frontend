@@ -28,10 +28,22 @@
         </VcInput>
       </div>
 
+      <!-- Segment chips (an "All" baseline + any project segments); hidden unless there's a real segment to pick. -->
+      <div v-if="hasFilterOptions" class="my-customers__controls">
+        <SalesRepRuleChips
+          v-model="filter"
+          :rules="filterRules"
+          :all-label="t('sales_rep.my_customers.table.all_customers')"
+        />
+      </div>
+
+      <!-- Empty here means "nothing matches" (keyword/filter active), not "no customers"; reset is keyword-only. -->
       <VcEmptyView
         v-if="!items.length && !loading"
-        :text="keyword ? t('sales_rep.my_customers.table.no_results') : t('sales_rep.my_customers.table.empty')"
-        :variant="keyword ? 'search' : 'empty'"
+        :text="
+          keyword || filter ? t('sales_rep.my_customers.table.no_results') : t('sales_rep.my_customers.table.empty')
+        "
+        :variant="keyword || filter ? 'search' : 'empty'"
         icon="outline-order"
       >
         <template v-if="keyword" #button>
@@ -43,16 +55,17 @@
 
       <VcWidget v-else size="md">
         <template #default-container>
+          <!-- Sorting maps each header to a named backend rule; all three customer rules reverse on a second click. -->
           <VcTable
             :loading="loading"
             :items="items"
-            :sort="sort"
             :pages="pages"
             :page="page"
             :row-class="rowClass"
+            :sort="sortInfo"
             mobile-breakpoint="lg"
-            @header-click="applySorting"
             @page-changed="changePage"
+            @header-click="applySort"
           >
             <template #mobile-item="{ item }">
               <div class="my-customers__mobile-item">
@@ -66,6 +79,10 @@
                     </VcLink>
 
                     <span v-if="item.location" class="my-customers__location">{{ item.location }}</span>
+
+                    <span v-if="item.ytdTotal" class="my-customers__mobile-sub">
+                      {{ t("sales_rep.my_customers.table.ytd") }}: {{ item.ytdTotal }}
+                    </span>
 
                     <!-- Mobile has no column header, so caption the last-order link — a bare date/#number reads as an unlabeled link. -->
                     <div v-if="item.lastOrder" class="my-customers__mobile-order">
@@ -100,8 +117,12 @@
               </div>
             </template>
 
-            <!-- Only Customer (name) is sortable — the server sort is name-backed. -->
-            <VcTableColumn id="name" v-slot="{ item }" :title="t('sales_rep.my_customers.table.customer')" sortable>
+            <VcTableColumn
+              id="name"
+              v-slot="{ item }"
+              :title="t('sales_rep.my_customers.table.customer')"
+              :sortable="isColumnSortable('name')"
+            >
               <VcLink
                 class="my-customers__customer"
                 :to="{ name: CUSTOMER_PROFILE_ROUTE_NAME, params: { organizationId: item.organizationId } }"
@@ -112,7 +133,40 @@
               <div v-if="item.location" class="my-customers__location">{{ item.location }}</div>
             </VcTableColumn>
 
-            <VcTableColumn id="lastOrder" v-slot="{ item }" :title="t('sales_rep.my_customers.table.last_order')">
+            <!-- Inline per-row purchase columns (aliased orderStatistics slices; batched, no N+1). -->
+            <VcTableColumn
+              id="ytd"
+              v-slot="{ item }"
+              :title="t('sales_rep.my_customers.table.ytd')"
+              :sortable="isColumnSortable('ytd')"
+              align="right"
+            >
+              <template v-if="item.ytdTotal">
+                <div class="my-customers__amount">{{ item.ytdTotal }}</div>
+
+                <div class="my-customers__sub">
+                  {{ t("sales_rep.my_customers.table.orders_count", { count: item.ytdCount }) }}
+                </div>
+              </template>
+
+              <template v-else>—</template>
+            </VcTableColumn>
+
+            <VcTableColumn
+              id="lastYear"
+              v-slot="{ item }"
+              :title="t('sales_rep.my_customers.table.last_year')"
+              align="right"
+            >
+              {{ item.lastYearTotal || "—" }}
+            </VcTableColumn>
+
+            <VcTableColumn
+              id="lastOrder"
+              v-slot="{ item }"
+              :title="t('sales_rep.my_customers.table.last_order')"
+              :sortable="isColumnSortable('lastOrder')"
+            >
               <template v-if="item.lastOrder">
                 <div>{{ $d(item.lastOrder.createdDate) }}</div>
 
@@ -153,20 +207,47 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useModal } from "@/shared/modal";
 import CustomerCommunicationModal from "../components/customer-communication-modal.vue";
+import SalesRepRuleChips from "../components/sales-rep-rule-chips.vue";
+import { useSalesRepColumnSort } from "../composables/useSalesRepColumnSort";
 import { useSalesRepCustomers } from "../composables/useSalesRepCustomers";
+import { useSalesRepRules } from "../composables/useSalesRepRules";
 import { CUSTOMER_PROFILE_ROUTE_NAME } from "../constants";
-import type { SalesRepCustomerSortColumnType, SalesRepCustomerType } from "../types";
+import { selectableFilterRules } from "../utils";
+import type { SalesRepCustomerType } from "../types";
 
 const { t } = useI18n();
 const { openModal } = useModal();
-const { loading, keyword, sort, page, pages, items } = useSalesRepCustomers();
+const { loading, keyword, filter, sortRule, page, pages, items } = useSalesRepCustomers();
+
+const { rules: sortRules } = useSalesRepRules("customer", "sort");
+const { rules: filterRules } = useSalesRepRules("customer", "filter");
+
+// Show the segment chips only when the backend offers a real segment beyond the "All" baseline.
+const hasFilterOptions = computed(() => selectableFilterRules(filterRules.value).length > 0);
+
+// Header-click sorting: each sortable column maps to its backend sort-rule name; "my-last-orders" is the server default.
+const { sortInfo, isColumnSortable, applySort } = useSalesRepColumnSort({
+  sortRule,
+  columns: { name: "name", ytd: "ytd-purchases", lastOrder: "my-last-orders" },
+  defaultColumn: "lastOrder",
+  rules: sortRules,
+});
 
 // Unapplied search term; committed to the query on Enter or the search button.
 const localKeyword = ref("");
+
+// flush: "sync" resets the page before the variables watcher runs, so a filter/sort change fires one request, not two.
+watch(
+  [filter, sortRule],
+  () => {
+    page.value = 1;
+  },
+  { flush: "sync" },
+);
 
 function orderLabel(number: string): string {
   return `#${number}`;
@@ -195,11 +276,6 @@ function resetKeyword(): void {
   page.value = 1;
 }
 
-function applySorting(sortInfo: { column: string; direction: "asc" | "desc" }): void {
-  sort.value = { column: sortInfo.column as SalesRepCustomerSortColumnType, direction: sortInfo.direction };
-  page.value = 1;
-}
-
 function changePage(newPage: number): void {
   page.value = newPage;
   window.scroll({ top: 0, behavior: "smooth" });
@@ -207,7 +283,7 @@ function changePage(newPage: number): void {
 </script>
 
 <style lang="scss">
-// `@apply` keeps the module self-contained as an MF remote (no global utility layer). See PORT_TO_MF.md.
+// @apply: module is self-contained as an MF remote (no global utility layer).
 .my-customers {
   &__title {
     @apply [word-break:break-word];
@@ -224,6 +300,10 @@ function changePage(newPage: number): void {
 
   &__search-input {
     @apply w-full;
+  }
+
+  &__controls {
+    @apply flex flex-wrap items-center justify-between gap-3;
   }
 
   &__actions-col {
@@ -243,12 +323,18 @@ function changePage(newPage: number): void {
     }
   }
 
-  // Muted, small location line under the customer name — matches the design.
   &__location {
     @apply mt-0.5 text-sm text-neutral-500 [word-break:break-word];
   }
 
-  // Muted, small order number under the date — matches the design; hover hints it's clickable.
+  &__amount {
+    @apply font-medium;
+  }
+
+  &__sub {
+    @apply mt-0.5 text-sm text-neutral-500;
+  }
+
   &__order {
     @apply text-sm text-neutral-500 hover:text-[--link-color] hover:underline;
   }
