@@ -100,6 +100,24 @@ describe("VcRangeCalendar", () => {
     expect(emitted?.at(-1)?.[0]).toEqual({ start: "2026-10-10", end: "2026-10-20" });
   });
 
+  it("does not re-attribute an external end-only range to start", async () => {
+    // Silent-corruption regression: the popover content stays mounted while closed, so the calendar
+    // reactively receives an end-only partial range when the user fills ONLY the end segment. reka
+    // cannot represent an end-only range and rewrites the lone date as a fresh start anchor, echoing
+    // it back via update:modelValue / update:startValue. That echo must NOT be forwarded — the end
+    // value must never be silently moved into start.
+    const wrapper = mountCal({ modelValue: undefined });
+    await flushPromises();
+
+    await wrapper.setProps({ modelValue: { start: undefined, end: "2026-10-14" } });
+    await flushPromises();
+
+    const startAttributed = wrapper
+      .emitted("update:modelValue")
+      ?.some((call) => (call[0] as { start?: string } | undefined)?.start === "2026-10-14");
+    expect(startAttributed).toBeFalsy();
+  });
+
   describe("keyboard navigation (Home/End/PageUp/PageDown)", () => {
     // Oct 8, 2026 is a Thursday; week-starts-on Monday puts the week span at Oct 5–11.
     it("moves focus by week/month and scrolls the view across a month boundary", async () => {

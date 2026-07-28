@@ -210,11 +210,22 @@ let lastKnown: VcDateRange | undefined = props.modelValue;
 // range back down to a partial one. Cleared via nextTick — only ever relevant same-tick.
 let pendingCompleteRangeStart: string | undefined;
 
+// An EXTERNAL modelValue sync that is end-only (user filled only the end segment) can't be
+// represented by reka's RangeCalendarRoot: it rewrites the lone end date into a fresh start anchor
+// and echoes it straight back (update:modelValue and/or update:startValue, same tick). Forwarding
+// that echo silently re-attributes the end value to start. Set on the modelValue watch and
+// nextTick-cleared (like pendingCompleteRangeStart) to swallow reka's echoes for that one window;
+// real user interaction never coincides with an external sync, so nothing legitimate is dropped.
+let suppressExternalSyncEcho = false;
+
 function isSameRange(a: VcDateRange | undefined, b: VcDateRange | undefined): boolean {
   return a?.start === b?.start && a?.end === b?.end;
 }
 
 function emitRange(value: VcDateRange | undefined): void {
+  if (suppressExternalSyncEcho) {
+    return;
+  }
   if (isSameRange(value, lastKnown)) {
     return;
   }
@@ -395,6 +406,11 @@ watch(
     // External prop change is now the settled truth — resync so a later user pick that happens
     // to match an old self-emission isn't compared against stale state.
     lastKnown = props.modelValue;
+    // Swallow reka's same-tick re-attribution echo triggered by feeding it this external value.
+    suppressExternalSyncEcho = true;
+    void nextTick(() => {
+      suppressExternalSyncEcho = false;
+    });
     let targetIso = newEnd !== oldEnd ? newEnd : undefined;
     if (!targetIso && newStart !== oldStart) {
       targetIso = newStart;
@@ -677,10 +693,25 @@ defineExpose({ focusActiveCell });
       border-radius: var(--day-radius);
     }
 
+    /* backward preview: reka keeps the anchor as data-selection-start but marks it the run's
+       data-highlighted-end (the hovered target is earlier), so the anchor is visually the RIGHT
+       endpoint — mirror the start rounding: flat left, rounded right. The :not([data-highlighted-start])
+       guard excludes the lone anchor (a single-cell run is BOTH highlighted-start and -end), which
+       must keep its default left rounding. */
+    &[data-selection-start][data-highlighted-end]:not([data-highlighted-start]) {
+      border-start-start-radius: 0;
+      border-end-start-radius: 0;
+      border-start-end-radius: var(--day-radius);
+      border-end-end-radius: var(--day-radius);
+    }
+
     /* hover-preview band (picking 2nd endpoint): same tint, dashed bracket top+bottom.
        Excludes the endpoints — reka marks the anchor data-highlighted too while previewing,
-       and the solid endpoint fill above must keep winning over the preview tint. */
-    &[data-highlighted]:not([data-highlighted-end]):not([data-selection-start]):not([data-selection-end]) {
+       and the solid endpoint fill above must keep winning over the preview tint. Also excludes
+       the run's leading/trailing highlighted cells, which get the bracketed edges below. */
+    &[data-highlighted]:not([data-highlighted-start]):not([data-highlighted-end]):not([data-selection-start]):not(
+        [data-selection-end]
+      ) {
       @apply text-primary-800;
 
       background: var(--color-primary-100);
@@ -689,8 +720,9 @@ defineExpose({ focusActiveCell });
       border-radius: 0;
     }
 
-    /* preview end (hover target): deeper fill, closes the bracket on the end edge.
-       Excludes the anchor — hovering back past the start date makes it the preview "end" too. */
+    /* preview end (forward hover target): deeper fill, closes the bracket on the end edge.
+       Excludes the anchor — a backward hover makes the anchor the preview "end" too, but it
+       must keep its solid endpoint fill (rounding handled by the selection-start rule above). */
     &[data-highlighted-end]:not([data-selection-start]):not([data-selection-end]) {
       @apply font-bold text-primary-900;
 
@@ -698,6 +730,18 @@ defineExpose({ focusActiveCell });
       border: 1px dashed var(--color-primary-500);
       border-start-start-radius: 0;
       border-end-start-radius: 0;
+    }
+
+    /* preview start (backward hover target): mirror of preview end — deeper fill, closes the
+       bracket on the start edge (rounded left, flat right). Excludes the anchor for the same
+       reason as above (a forward hover makes the anchor the preview "start"). */
+    &[data-highlighted-start]:not([data-selection-start]):not([data-selection-end]) {
+      @apply font-bold text-primary-900;
+
+      background: var(--color-primary-200);
+      border: 1px dashed var(--color-primary-500);
+      border-start-end-radius: 0;
+      border-end-end-radius: 0;
     }
 
     /* today inside a middle/preview cell: keep the inset ring legible */

@@ -8,7 +8,7 @@
     @focusin="onFocusIn"
     @focusout="onFocusOut"
   >
-    <VcLabel v-if="label" :required="required" :error="error" class="vc-date-range-input__label">
+    <VcLabel v-if="label" :required="required" :error="computedError" class="vc-date-range-input__label">
       {{ label }}
     </VcLabel>
 
@@ -18,6 +18,7 @@
         seamless
         hide-details
         class="vc-date-range-input__segment"
+        :class="{ 'vc-date-range-input__segment--filled': !!modelValue?.start }"
         :model-value="modelValue?.start"
         :name="name ? `${name}-start` : undefined"
         :aria-label="startLabel"
@@ -25,7 +26,7 @@
         :size="size"
         :disabled="disabled"
         :readonly="readonly"
-        :error="error"
+        :error="computedError"
         :min="min"
         :max="max"
         :disabled-date="disabledDate"
@@ -42,6 +43,7 @@
         seamless
         hide-details
         class="vc-date-range-input__segment"
+        :class="{ 'vc-date-range-input__segment--filled': !!modelValue?.end }"
         :model-value="modelValue?.end"
         :name="name ? `${name}-end` : undefined"
         :aria-label="endLabel"
@@ -49,7 +51,7 @@
         :size="size"
         :disabled="disabled"
         :readonly="readonly"
-        :error="error"
+        :error="computedError"
         :min="min"
         :max="max"
         :disabled-date="disabledDate"
@@ -60,22 +62,24 @@
         @update:valid="onSegmentValid('end', $event)"
       />
 
-      <VcButton
-        v-if="clearable && (modelValue?.start || modelValue?.end) && !disabled && !readonly"
-        type="button"
-        icon="delete-thin"
-        color="neutral"
-        variant="ghost"
-        class="vc-date-range-input__clear"
-        :icon-size="size === 'md' ? '0.875rem' : '0.75rem'"
-        :aria-label="t('ui_kit.date_range_input.clear')"
-        @click="clearBoth"
-      />
+      <div class="vc-date-range-input__actions">
+        <VcButton
+          v-if="clearable && (modelValue?.start || modelValue?.end) && !disabled && !readonly"
+          type="button"
+          icon="delete-thin"
+          color="neutral"
+          variant="ghost"
+          class="vc-date-range-input__clear"
+          :icon-size="size === 'md' ? '0.875rem' : '0.75rem'"
+          :aria-label="t('ui_kit.date_range_input.clear')"
+          @click="clearBoth"
+        />
 
-      <slot name="append" />
+        <slot name="append" />
+      </div>
     </div>
 
-    <VcInputDetails :error="error" :message="message" :single-line="false" />
+    <VcInputDetails :error="computedError" :message="computedMessage" :single-line="false" />
   </div>
 </template>
 
@@ -155,15 +159,6 @@ provide<VcInputContextType>("inputContext", { size });
 const startFormatValid = ref(true);
 const endFormatValid = ref(true);
 
-const rootClasses = computed(() => [
-  `vc-date-range-input--size--${props.size}`,
-  {
-    "vc-date-range-input--error": props.error,
-    "vc-date-range-input--disabled": props.disabled,
-    "vc-date-range-input--readonly": props.readonly,
-  },
-]);
-
 // start <= end when BOTH are present; partial/empty ranges are always order-valid.
 const orderValid = computed<boolean>(() => {
   const start = props.modelValue?.start;
@@ -175,6 +170,35 @@ const orderValid = computed<boolean>(() => {
 });
 
 const isValid = computed<boolean>(() => startFormatValid.value && endFormatValid.value && orderValid.value);
+
+// Segments are hide-details, so the shell surfaces validity itself — mirrors VcDateInput's computedError/computedMessage.
+const internalErrorText = computed<string | undefined>(() => {
+  if (!startFormatValid.value || !endFormatValid.value) {
+    return t("ui_kit.date_input.invalid_format");
+  }
+  if (!orderValid.value) {
+    return t("ui_kit.date_range_input.invalid_range");
+  }
+  return undefined;
+});
+
+// External error/message props win over internal validation (same rule VcDateInput uses).
+const computedError = computed<boolean>(() => props.error || !!internalErrorText.value);
+const computedMessage = computed<string | undefined>(() => {
+  if (props.error) {
+    return props.message;
+  }
+  return internalErrorText.value ?? props.message;
+});
+
+const rootClasses = computed(() => [
+  `vc-date-range-input--size--${props.size}`,
+  {
+    "vc-date-range-input--error": computedError.value,
+    "vc-date-range-input--disabled": props.disabled,
+    "vc-date-range-input--readonly": props.readonly,
+  },
+]);
 
 // Emit initial validity (empty range is valid) and on every change.
 watch(isValid, (value) => emit("update:valid", value), { immediate: true });
@@ -242,6 +266,26 @@ defineExpose({
 
   --radius: var(--vc-input-radius, var(--vc-radius, 0.5rem));
 
+  @apply flex flex-col;
+
+  &--size {
+    &--xs {
+      --height: theme("spacing.8");
+      --text-size: theme("fontSize.sm[0]");
+    }
+
+    &--sm {
+      // No 2.375rem spacing token — literal, same as vc-input.
+      --height: 2.375rem;
+      --text-size: theme("fontSize.base[0]");
+    }
+
+    &--md {
+      --height: theme("spacing.11");
+      --text-size: theme("fontSize.base[0]");
+    }
+  }
+
   &--error {
     $error: &;
 
@@ -253,7 +297,9 @@ defineExpose({
   }
 
   &__field {
-    @apply relative flex items-center justify-start p-0.5 border border-neutral-400 rounded-[--radius] bg-additional-50;
+    @apply relative flex items-center p-0.5 border border-neutral-400 rounded-[--radius] bg-additional-50 h-[--height];
+
+    font-size: var(--text-size);
 
     &:focus-within {
       @apply ring ring-[--focus-color];
@@ -269,11 +315,24 @@ defineExpose({
   }
 
   &__segment {
-    @apply shrink-0 w-auto;
+    // 8em = empty/placeholder width; shrinks only when space runs out.
+    @apply grow-0 shrink basis-[8em] min-w-0;
+
+    // Smooth the empty->committed width snap; resize-driven shrink is flex-shrink, not basis, so it's unaffected.
+    transition: flex-basis 150ms ease;
+
+    // Committed date is narrower than the placeholder — tighten so trailing space isn't dead.
+    &--filled {
+      flex-basis: 6.75em;
+    }
   }
 
   &__separator {
-    @apply shrink-0 text-neutral-400 select-none;
+    @apply shrink-0 px-2 text-neutral-400 select-none;
+  }
+
+  &__actions {
+    @apply flex items-center shrink-0 ms-auto;
   }
 
   &__clear {

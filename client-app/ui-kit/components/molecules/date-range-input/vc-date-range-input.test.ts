@@ -54,6 +54,73 @@ describe("VcDateRangeInput", () => {
     expect(wrapper.emitted("clear")).toBeTruthy();
   });
 
+  describe("segment fill-state width", () => {
+    it("adds --filled only to the segment whose half of the model is set", () => {
+      const wrapper = mountInput({ modelValue: { start: "2026-10-08", end: undefined } });
+      const [startSeg, endSeg] = wrapper.findAllComponents({ name: "VcDateInput" });
+      expect(startSeg.classes()).toContain("vc-date-range-input__segment--filled");
+      expect(endSeg.classes()).not.toContain("vc-date-range-input__segment--filled");
+    });
+
+    it("marks both segments --filled for a full range", () => {
+      const wrapper = mountInput({ modelValue: { start: "2026-10-08", end: "2026-10-14" } });
+      const [startSeg, endSeg] = wrapper.findAllComponents({ name: "VcDateInput" });
+      expect(startSeg.classes()).toContain("vc-date-range-input__segment--filled");
+      expect(endSeg.classes()).toContain("vc-date-range-input__segment--filled");
+    });
+
+    it("marks neither segment --filled for an empty range", () => {
+      const wrapper = mountInput();
+      const segs = wrapper.findAllComponents({ name: "VcDateInput" });
+      segs.forEach((seg) => expect(seg.classes()).not.toContain("vc-date-range-input__segment--filled"));
+    });
+  });
+
+  describe("internal invalid feedback", () => {
+    it("turns the shell red and shows the format message when a segment is format-invalid", async () => {
+      const wrapper = mountInput();
+      const [startSeg] = wrapper.findAllComponents({ name: "VcDateInput" });
+      startSeg.vm.$emit("update:valid", false);
+      await wrapper.vm.$nextTick();
+      expect(wrapper.classes()).toContain("vc-date-range-input--error");
+      const details = wrapper.findComponent(VcInputDetails);
+      expect(details.props("error")).toBe(true);
+      expect(details.props("message")).toBe("ui_kit.date_input.invalid_format");
+    });
+
+    it("shows the range-order message when start > end", () => {
+      const wrapper = mountInput({ modelValue: { start: "2026-10-20", end: "2026-10-01" } });
+      expect(wrapper.classes()).toContain("vc-date-range-input--error");
+      expect(wrapper.findComponent(VcInputDetails).props("message")).toBe("ui_kit.date_range_input.invalid_range");
+    });
+
+    it("clears the internal error once the segment becomes valid again", async () => {
+      const wrapper = mountInput();
+      const [startSeg] = wrapper.findAllComponents({ name: "VcDateInput" });
+      startSeg.vm.$emit("update:valid", false);
+      await wrapper.vm.$nextTick();
+      expect(wrapper.classes()).toContain("vc-date-range-input--error");
+      startSeg.vm.$emit("update:valid", true);
+      await wrapper.vm.$nextTick();
+      expect(wrapper.classes()).not.toContain("vc-date-range-input--error");
+    });
+
+    it("keeps an empty range non-error", () => {
+      const wrapper = mountInput();
+      expect(wrapper.classes()).not.toContain("vc-date-range-input--error");
+      expect(wrapper.findComponent(VcInputDetails).props("message")).toBeUndefined();
+    });
+
+    it("lets external error/message props take precedence over internal validation", async () => {
+      const wrapper = mountInput({ error: true, message: "external" });
+      const [startSeg] = wrapper.findAllComponents({ name: "VcDateInput" });
+      startSeg.vm.$emit("update:valid", false);
+      await wrapper.vm.$nextTick();
+      expect(wrapper.classes()).toContain("vc-date-range-input--error");
+      expect(wrapper.findComponent(VcInputDetails).props("message")).toBe("external");
+    });
+  });
+
   describe("focus/blur shell boundary", () => {
     it("emits focus exactly once when focus enters the shell from outside", () => {
       const outside = document.createElement("button");
