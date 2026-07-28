@@ -211,7 +211,18 @@ async function generateTypes({
 }): Promise<OutcomeType> {
   if (await isSchemaEndpointAbsent(schemaUrl)) {
     // The bare fact, so that both a skipped module and an aborted core can phrase it their own way.
-    return { name, typesPath, status: "skipped", reason: `"${schemaUrl}" answered 404` };
+    const reason = `"${schemaUrl}" answered 404`;
+
+    // Falling back to a committed types.ts is what makes skipping safe. Without one there is nothing
+    // to fall back on: the module's imports cannot type-check, so this is a failure, not a skip.
+    return existsSync(typesPath)
+      ? { name, typesPath, status: "skipped", reason }
+      : {
+          name,
+          typesPath,
+          status: "failed",
+          error: new Error(`${reason} and "${typesPath}" has never been generated`),
+        };
   }
 
   try {
@@ -259,12 +270,10 @@ function reportSuccess({ name, typesPath }: OutcomeType): void {
 }
 
 function reportSkip({ name, typesPath, reason }: OutcomeType): void {
-  const consequence = existsSync(typesPath)
-    ? `keeping the committed "${typesPath}"`
-    : `"${typesPath}" is missing, imports from this module will not type-check`;
-
+  // 404 is what The Platform answers for a module it does not have, but it is evidence rather than
+  // proof — a mistyped or renamed endpoint answers the same way, so the wording stays factual.
   console.warn(
-    `${YELLOW}⚠${RESET} ${BOLD}${name}${RESET}: not installed on The Platform, module skipped — ${consequence}\n  ${reason}`,
+    `${YELLOW}⚠${RESET} ${BOLD}${name}${RESET}: no schema at its endpoint, module skipped as not installed — keeping the committed "${typesPath}"\n  ${reason}`,
   );
 }
 

@@ -100,16 +100,29 @@ describe("collectErrorMessages", () => {
     expect(collectErrorMessages(new Error("boom"))).toEqual(["boom"]);
   });
 
-  it("flattens the per-source errors of an aggregate error", () => {
-    const error = new AggregateError([new Error("first"), new Error("second")], "aggregate");
+  it("reports the per-source errors of an aggregate, not the wrapper's copy of them", () => {
+    // Codegen builds the wrapper message by joining the nested ones, so the wrapper adds nothing.
+    const error = new AggregateError([new Error("first"), new Error("second")], "first\n\nsecond");
 
-    expect(collectErrorMessages(error)).toEqual(["aggregate", "first", "second"]);
+    expect(collectErrorMessages(error)).toEqual(["first", "second"]);
   });
 
-  it("flattens nested aggregate errors", () => {
+  it("digs down to the leaves of nested aggregates", () => {
     const error = new AggregateError([new AggregateError([new Error("leaf")], "inner")], "outer");
 
-    expect(collectErrorMessages(error)).toEqual(["outer", "inner", "leaf"]);
+    expect(collectErrorMessages(error)).toEqual(["leaf"]);
+  });
+
+  it("keeps the wrapper message when its sources have nothing to say", () => {
+    expect(collectErrorMessages(new AggregateError([], "only the wrapper knows"))).toEqual(["only the wrapper knows"]);
+    expect(collectErrorMessages(new AggregateError([new Error("")], "wrapper"))).toEqual(["wrapper"]);
+  });
+
+  it("survives a self-referential error chain instead of overflowing the stack", () => {
+    const error: Error & { errors?: unknown[] } = new Error("recursive");
+    error.errors = [error];
+
+    expect(collectErrorMessages(error)).toEqual(["recursive"]);
   });
 
   it("ignores values that are not errors", () => {
@@ -143,13 +156,23 @@ describe("truncate", () => {
 });
 
 describe("describeErrorDetails", () => {
-  it("reports every distinct message of an aggregate error", () => {
+  it("reports one line per failing schema source", () => {
     const error = new AggregateError(
       [new Error("first source failed"), new Error("second source failed")],
       "aggregate",
     );
 
-    expect(describeErrorDetails(error)).toBe("aggregate\n  first source failed\n  second source failed");
+    expect(describeErrorDetails(error)).toBe("first source failed\n  second source failed");
+  });
+
+  it("does not repeat the sources inside the message codegen joins them into", () => {
+    // How @graphql-codegen/cli actually builds it: wrapper message = nested messages joined.
+    const error = new AggregateError(
+      [new Error("cannot load schema A"), new Error("cannot load schema B")],
+      "cannot load schema A\n\ncannot load schema B",
+    );
+
+    expect(describeErrorDetails(error)).toBe("cannot load schema A\n  cannot load schema B");
   });
 
   it("does not repeat the message an aggregate error copied from its only source", () => {

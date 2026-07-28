@@ -68,16 +68,30 @@ export async function isSchemaEndpointAbsent(url: string, fetchImpl: typeof fetc
   }
 }
 
-/** Codegen wraps loader failures into an `AggregateError` holding one error per schema source. */
-export function collectErrorMessages(error: unknown): string[] {
-  const messages = error instanceof Error && error.message ? [error.message] : [];
-  const nested = (error as { errors?: unknown } | null | undefined)?.errors;
+/**
+ * Codegen wraps loader failures into an `AggregateError` holding one error per schema source, and
+ * sets the wrapper's own message to those nested messages joined together. The leaves therefore
+ * carry everything, and reporting the wrapper as well would print the same text twice.
+ *
+ * `seen` guards against a self-referential `errors` chain, which would otherwise recurse forever.
+ */
+export function collectErrorMessages(error: unknown, seen: Set<unknown> = new Set()): string[] {
+  if (typeof error === "object" && error !== null) {
+    if (seen.has(error)) {
+      return [];
+    }
 
-  if (Array.isArray(nested)) {
-    messages.push(...nested.flatMap((item) => collectErrorMessages(item)));
+    seen.add(error);
   }
 
-  return messages;
+  const nested = (error as { errors?: unknown } | null | undefined)?.errors;
+  const nestedMessages = Array.isArray(nested) ? nested.flatMap((item) => collectErrorMessages(item, seen)) : [];
+
+  if (nestedMessages.length) {
+    return nestedMessages;
+  }
+
+  return error instanceof Error && error.message ? [error.message] : [];
 }
 
 /** Turns a multi-line codegen message into one line, without the cheat sheet nobody reads. */
@@ -95,7 +109,7 @@ export function truncate(text: string, maxLength: number): string {
 
 /** Everything known about a failure, readable enough to act on. */
 export function describeErrorDetails(error: unknown): string {
-  // An aggregate error repeats its only nested message as its own, printing it twice helps nobody.
+  // Two schema sources can fail with the same message, and saying it twice helps nobody.
   const messages = [...new Set(collectErrorMessages(error).map(stripCodegenHint))];
 
   if (!messages.length) {
