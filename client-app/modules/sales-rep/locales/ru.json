@@ -26,6 +26,11 @@
       "table": {
         "customer": "Клиент",
         "last_order": "Мой последний заказ",
+        "ytd": "Покупки за год",
+        "last_year": "Прошлый год",
+        "orders_count": "{count} заказов",
+        "all_customers": "Все",
+        "actions": "Действия",
         "search_placeholder": "Поиск по имени",
         "search_aria": "Поиск клиентов",
         "empty": "Клиенты не найдены",
@@ -43,10 +48,25 @@
           "title": "Дашборд"
         },
         "widgets": {
-          "orders_on_hold": "Заказы на удержании",
-          "active_projects": "Активные проекты",
+          "new_orders": "Новые заказы",
+          "active_carts": "Активные корзины",
+          "active_cart": "Активная корзина",
+          "orders_placed_week": "Заказы за эту неделю",
           "orders_placed_mtd": "Заказы с начала месяца",
+          "purchased_mtd": "Покупки с начала месяца",
+          "orders_placed_ytd": "Заказы с начала года",
           "my_customers": "Мои клиенты"
+        },
+        "stats": {
+          "value_total": "{amount} всего",
+          "vs_last_week": "{delta} к прошлой неделе",
+          "vs_last_month": "{delta} к прошлому месяцу",
+          "vs_last_year": "{delta} к прошлому году",
+          "ordered_this_month": "{count} заказали в этом месяце",
+          "new_customers": "{count} новых клиентов",
+          "placed_today": "{count} сегодня",
+          "new_this_week": "{count} новых за неделю",
+          "mtd_of_ytd": "{percent}% от года"
         }
       }
     },
@@ -55,10 +75,10 @@
       "not_found": "Клиент не найден или не входит в число ваших клиентов.",
       "back_to_customers": "Назад к моим клиентам",
       "widgets": {
-        "ytd_purchases": "Покупки с начала года",
-        "open_balance": "Открытый баланс",
-        "avg_order_value": "Средняя сумма заказа",
-        "orders_ytd": "Заказы с начала года"
+        "avg_order_value": "Средняя сумма заказа"
+      },
+      "stats": {
+        "per_order": "Среднее за заказ (за год)"
       },
       "info": {
         "title": "Информация о клиенте",
@@ -69,16 +89,66 @@
         "ship_to": "Адрес доставки"
       }
     },
+    "communication": {
+      "action": "Отправить эл. письмо",
+      "title": "Отправить сообщение",
+      "subtitle": "Получат все участники организации {organization}",
+      "title_label": "Заголовок",
+      "message_label": "Сообщение",
+      "channels_label": "Отправить через",
+      "email_label": "Эл. почта",
+      "push_label": "Push-уведомление",
+      "send_button": "Отправить",
+      "cancel_button": "Отмена",
+      "success_text": "Ваше сообщение отправлено.",
+      "error_text": "Не удалось отправить сообщение. Попробуйте ещё раз.",
+      "partial_success_text": "Ваше сообщение отправлено, но не по всем каналам:",
+      "warnings": {
+        "generic": "Не удалось отправить сообщение по одному из выбранных каналов.",
+        "NoRecipients": "В этой организации нет контактов для уведомления.",
+        "EmailUnavailable": "Электронная почта сейчас недоступна. Обратитесь к администратору.",
+        "EmailStoreAccessDenied": "Не удалось отправить письмо для выбранного магазина.",
+        "EmailNoRecipients": "Ни у одного из получателей нет адреса электронной почты.",
+        "EmailSendFailed": "Не удалось отправить письмо. Повторите попытку позже.",
+        "PushSendFailed": "Не удалось отправить push-уведомление. Повторите попытку позже."
+      },
+      "quick_actions": {
+        "title": "Быстрые действия",
+        "order_on_behalf": "Заказать от имени",
+        "send_email": "Отправить эл. письмо",
+        "create_quote": "Создать предложение",
+        "schedule_call": "Запланировать звонок"
+      }
+    },
     "orders": {
       "title": "Недавние заказы",
       "view_all": "Все заказы",
       "empty": "Пока нет заказов",
+      "no_results": "Нет заказов, соответствующих этому фильтру",
       "number": "№ заказа",
       "customer": "Клиент",
       "date": "Дата",
       "items": "Позиции",
       "status": "Статус",
-      "total": "Итого"
+      "total": "Итого",
+      "filter_all": "Все"
+    },
+    "top_sellers": {
+      "title": "Лучшие продавцы",
+      "rank": "№",
+      "product": "Товар",
+      "units": "Шт.",
+      "revenue": "Выручка",
+      "empty": "Нет продаж за этот период",
+      "no_results": "Нет продаж в этой категории",
+      "all_categories": "Все категории"
+    },
+    "rules": {
+      "customer": {
+        "filter": {
+          "All": "Все"
+        }
+      }
     }
   }
 }

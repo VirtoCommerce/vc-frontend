@@ -26,6 +26,11 @@
       "table": {
         "customer": "Klient",
         "last_order": "Moje ostatnie zamówienie",
+        "ytd": "Zakupy YTD",
+        "last_year": "W zeszłym roku",
+        "orders_count": "{count} zamówień",
+        "all_customers": "Wszyscy",
+        "actions": "Akcje",
         "search_placeholder": "Szukaj według nazwy",
         "search_aria": "Szukaj klientów",
         "empty": "Nie znaleziono klientów",
@@ -43,10 +48,25 @@
           "title": "Panel"
         },
         "widgets": {
-          "orders_on_hold": "Wstrzymane zamówienia",
-          "active_projects": "Aktywne projekty",
+          "new_orders": "Nowe zamówienia",
+          "active_carts": "Aktywne koszyki",
+          "active_cart": "Aktywny koszyk",
+          "orders_placed_week": "Zamówienia w tym tygodniu",
           "orders_placed_mtd": "Zamówienia od początku miesiąca",
+          "purchased_mtd": "Zakupy od początku miesiąca",
+          "orders_placed_ytd": "Zamówienia od początku roku",
           "my_customers": "Moi klienci"
+        },
+        "stats": {
+          "value_total": "{amount} łącznie",
+          "vs_last_week": "{delta} vs poprzedni tydzień",
+          "vs_last_month": "{delta} vs poprzedni miesiąc",
+          "vs_last_year": "{delta} vs poprzedni rok",
+          "ordered_this_month": "{count} zamówiło w tym miesiącu",
+          "new_customers": "{count} nowych klientów",
+          "placed_today": "{count} złożono dzisiaj",
+          "new_this_week": "{count} nowych w tym tygodniu",
+          "mtd_of_ytd": "{percent}% roku"
         }
       }
     },
@@ -55,10 +75,10 @@
       "not_found": "Nie znaleziono klienta lub nie należy do Twoich klientów.",
       "back_to_customers": "Powrót do moich klientów",
       "widgets": {
-        "ytd_purchases": "Zakupy od początku roku",
-        "open_balance": "Saldo otwarte",
-        "avg_order_value": "Średnia wartość zamówienia",
-        "orders_ytd": "Zamówienia od początku roku"
+        "avg_order_value": "Średnia wartość zamówienia"
+      },
+      "stats": {
+        "per_order": "Średnio na zamówienie (YTD)"
       },
       "info": {
         "title": "Informacje o kliencie",
@@ -69,16 +89,66 @@
         "ship_to": "Adres dostawy"
       }
     },
+    "communication": {
+      "action": "Wyślij e-mail",
+      "title": "Wyślij wiadomość",
+      "subtitle": "Dociera do każdego członka organizacji {organization}",
+      "title_label": "Tytuł",
+      "message_label": "Wiadomość",
+      "channels_label": "Wyślij przez",
+      "email_label": "E-mail",
+      "push_label": "Powiadomienie push",
+      "send_button": "Wyślij",
+      "cancel_button": "Anuluj",
+      "success_text": "Twoja wiadomość została wysłana.",
+      "error_text": "Nie udało się wysłać wiadomości. Spróbuj ponownie.",
+      "partial_success_text": "Twoja wiadomość została wysłana, ale nie wszystkimi kanałami:",
+      "warnings": {
+        "generic": "Nie udało się wysłać wiadomości jednym z wybranych kanałów.",
+        "NoRecipients": "Ta organizacja nie ma kontaktów do powiadomienia.",
+        "EmailUnavailable": "Poczta e-mail jest obecnie niedostępna. Skontaktuj się z administratorem.",
+        "EmailStoreAccessDenied": "Nie udało się wysłać wiadomości e-mail dla wybranego sklepu.",
+        "EmailNoRecipients": "Żaden z odbiorców nie ma adresu e-mail.",
+        "EmailSendFailed": "Nie udało się wysłać wiadomości e-mail. Spróbuj ponownie później.",
+        "PushSendFailed": "Nie udało się wysłać powiadomienia push. Spróbuj ponownie później."
+      },
+      "quick_actions": {
+        "title": "Szybkie akcje",
+        "order_on_behalf": "Zamów w imieniu",
+        "send_email": "Wyślij e-mail",
+        "create_quote": "Utwórz ofertę",
+        "schedule_call": "Zaplanuj rozmowę"
+      }
+    },
     "orders": {
       "title": "Ostatnie zamówienia",
       "view_all": "Wszystkie zamówienia",
       "empty": "Brak zamówień",
+      "no_results": "Żadne zamówienie nie pasuje do tego filtra",
       "number": "Nr zamówienia",
       "customer": "Klient",
       "date": "Data",
       "items": "Pozycje",
       "status": "Status",
-      "total": "Razem"
+      "total": "Razem",
+      "filter_all": "Wszyscy"
+    },
+    "top_sellers": {
+      "title": "Najlepsi sprzedawcy",
+      "rank": "#",
+      "product": "Produkt",
+      "units": "Sztuki",
+      "revenue": "Przychody",
+      "empty": "Brak sprzedaży w tym okresie",
+      "no_results": "Brak sprzedaży w tej kategorii",
+      "all_categories": "Wszystkie kategorie"
+    },
+    "rules": {
+      "customer": {
+        "filter": {
+          "All": "Wszyscy"
+        }
+      }
     }
   }
 }

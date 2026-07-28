@@ -26,16 +26,27 @@ vi.mock("@vue/apollo-composable", () => ({
   useQuery: queryMock.useQuery,
 }));
 
-vi.mock("@/core/globals", () => ({ globals: { storeId: "test-store" } }));
+vi.mock("@/core/globals", () => ({ globals: { storeId: "test-store", cultureName: "en-US" } }));
 
 function customersResult(totalCount: number, items: NonNullable<SalesRepCustomersQuery["salesRepCustomers"]>["items"]) {
   return { salesRepCustomers: { totalCount, items } };
 }
 
 /** The reactive `variables` computed the composable handed to useQuery. */
-function passedVariables(): { storeId?: string; first: number; after: string; keyword: string; sort: string } {
-  const variables = lastCallArgs()[1] as
-    { value: { storeId?: string; first: number; after: string; keyword: string; sort: string } } | undefined;
+function passedVariables(): {
+  storeId?: string;
+  first: number;
+  after: string;
+  keyword: string;
+  sort?: string;
+  filter?: string;
+  cultureName?: string;
+  ytdFrom?: string;
+  ytdTo?: string;
+  lastYearFrom?: string;
+  lastYearTo?: string;
+} {
+  const variables = lastCallArgs()[1] as { value: ReturnType<typeof passedVariables> } | undefined;
   if (!variables) {
     throw new Error("useQuery was not called with variables");
   }
@@ -50,23 +61,36 @@ beforeEach(() => {
 });
 
 describe("useSalesRepCustomers", () => {
-  it("queries server-side with offset-as-cursor paging, applied keyword, and column:direction sort", () => {
-    const { page, sort, keyword } = useSalesRepCustomers();
+  it("queries server-side with offset-as-cursor paging, applied keyword, and named sort/filter rules", () => {
+    const { page, sortRule, filter, keyword } = useSalesRepCustomers();
 
-    // Scoped to the current store (globals.storeId) so customers from another store don't leak in.
-    expect(passedVariables()).toEqual({
+    // Scoped to the current store (globals.storeId); default sort/filter omitted → server defaults
+    // (my-last-orders / All). The YTD / prior-year windows are asserted separately below.
+    expect(passedVariables()).toMatchObject({
       storeId: "test-store",
       first: PAGE_SIZE,
       after: "0",
       keyword: "",
-      sort: "name:asc",
+      cultureName: "en-US",
+      sort: undefined,
+      filter: undefined,
     });
+
+    // The inline YTD / prior-year purchase columns pass ISO date windows computed at runtime.
+    const windows = passedVariables();
+    for (const bound of [windows.ytdFrom, windows.ytdTo, windows.lastYearFrom, windows.lastYearTo]) {
+      expect(bound).toMatch(/^\d{4}-\d{2}-\d{2}T/);
+    }
 
     page.value = 3;
     expect(passedVariables().after).toBe(String((3 - 1) * PAGE_SIZE));
 
-    sort.value = { column: "name", direction: "desc" };
-    expect(passedVariables().sort).toBe("name:desc");
+    // Sort and filter are single named rules (a sort-rule name and a filter/segment name).
+    sortRule.value = "ytd-purchases";
+    expect(passedVariables().sort).toBe("ytd-purchases");
+
+    filter.value = "active";
+    expect(passedVariables().filter).toBe("active");
 
     // `keyword` is the applied term (the page sets it on enter/click) — it flows straight into
     // the query with no debounce of its own.
@@ -86,22 +110,38 @@ describe("useSalesRepCustomers", () => {
       {
         organizationId: "org-1",
         organizationName: "The Cottage Shop LLC",
+        accountType: "Garden Center",
         address: { postalCode: "22902", city: "Charlottesville", regionName: "Virginia" },
+        ytd: { count: 13, total: { amount: 72165, formattedAmount: "$72,165.00" } },
+        lastYear: { count: 11, total: { amount: 64420, formattedAmount: "$64,420.00" } },
         lastOrder: { id: "o-1", number: "21580221", createdDate: "2026-05-19T00:00:00Z" },
       },
-      { organizationId: "org-2", organizationName: "No Orders Inc" }, // address and lastOrder absent
+      { organizationId: "org-2", organizationName: "No Orders Inc" }, // address, stats and lastOrder absent
     ]);
 
     expect(items.value).toEqual([
       {
         organizationId: "org-1",
         organizationName: "The Cottage Shop LLC",
+        accountType: "Garden Center",
         // Postal code ("#"-prefixed), city and region as three middot-separated segments.
         location: "#22902 · Charlottesville · Virginia",
+        ytdTotal: "$72,165.00",
+        ytdCount: 13,
+        lastYearTotal: "$64,420.00",
         lastOrder: { id: "o-1", number: "21580221", createdDate: "2026-05-19T00:00:00Z" },
       },
-      // No address → empty location string, not undefined.
-      { organizationId: "org-2", organizationName: "No Orders Inc", location: "", lastOrder: undefined },
+      // No address/stats → empty strings and zero counts, not undefined.
+      {
+        organizationId: "org-2",
+        organizationName: "No Orders Inc",
+        accountType: "",
+        location: "",
+        ytdTotal: "",
+        ytdCount: 0,
+        lastYearTotal: "",
+        lastOrder: undefined,
+      },
     ]);
   });
 

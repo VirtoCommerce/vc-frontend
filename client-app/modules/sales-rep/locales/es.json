@@ -26,6 +26,11 @@
       "table": {
         "customer": "Cliente",
         "last_order": "Mi último pedido",
+        "ytd": "Compras YTD",
+        "last_year": "Año pasado",
+        "orders_count": "{count} pedidos",
+        "all_customers": "Todos",
+        "actions": "Acciones",
         "search_placeholder": "Buscar por nombre",
         "search_aria": "Buscar clientes",
         "empty": "No se encontraron clientes",
@@ -43,10 +48,25 @@
           "title": "Panel de control"
         },
         "widgets": {
-          "orders_on_hold": "Pedidos en espera",
-          "active_projects": "Proyectos activos",
+          "new_orders": "Pedidos nuevos",
+          "active_carts": "Carritos activos",
+          "active_cart": "Carrito activo",
+          "orders_placed_week": "Pedidos de esta semana",
           "orders_placed_mtd": "Pedidos del mes en curso",
+          "purchased_mtd": "Compras del mes en curso",
+          "orders_placed_ytd": "Pedidos del año en curso",
           "my_customers": "Mis clientes"
+        },
+        "stats": {
+          "value_total": "{amount} en total",
+          "vs_last_week": "{delta} vs. semana pasada",
+          "vs_last_month": "{delta} vs. mes pasado",
+          "vs_last_year": "{delta} vs. año pasado",
+          "ordered_this_month": "{count} compraron este mes",
+          "new_customers": "{count} clientes nuevos",
+          "placed_today": "{count} realizados hoy",
+          "new_this_week": "{count} nuevos esta semana",
+          "mtd_of_ytd": "{percent}% del año"
         }
       }
     },
@@ -55,10 +75,10 @@
       "not_found": "Cliente no encontrado o no está en tus clientes.",
       "back_to_customers": "Volver a mis clientes",
       "widgets": {
-        "ytd_purchases": "Compras del año en curso",
-        "open_balance": "Saldo pendiente",
-        "avg_order_value": "Valor medio del pedido",
-        "orders_ytd": "Pedidos del año en curso"
+        "avg_order_value": "Valor medio del pedido"
+      },
+      "stats": {
+        "per_order": "Promedio por pedido (YTD)"
       },
       "info": {
         "title": "Información del cliente",
@@ -69,16 +89,66 @@
         "ship_to": "Envío a"
       }
     },
+    "communication": {
+      "action": "Enviar correo",
+      "title": "Enviar un mensaje",
+      "subtitle": "Llega a todos los miembros de {organization}",
+      "title_label": "Título",
+      "message_label": "Mensaje",
+      "channels_label": "Enviar por",
+      "email_label": "Correo electrónico",
+      "push_label": "Notificación push",
+      "send_button": "Enviar",
+      "cancel_button": "Cancelar",
+      "success_text": "Su mensaje ha sido enviado.",
+      "error_text": "No se pudo enviar el mensaje. Inténtelo de nuevo.",
+      "partial_success_text": "Su mensaje se envió, pero no por todos los canales:",
+      "warnings": {
+        "generic": "El mensaje no se pudo enviar por uno de los canales seleccionados.",
+        "NoRecipients": "Esta organización no tiene contactos a los que notificar.",
+        "EmailUnavailable": "El correo electrónico no está disponible en este momento. Póngase en contacto con su administrador.",
+        "EmailStoreAccessDenied": "No se pudo enviar el correo electrónico para la tienda seleccionada.",
+        "EmailNoRecipients": "Ninguno de los destinatarios tiene una dirección de correo electrónico.",
+        "EmailSendFailed": "No se pudo enviar el correo electrónico. Inténtelo de nuevo más tarde.",
+        "PushSendFailed": "No se pudo enviar la notificación push. Inténtelo de nuevo más tarde."
+      },
+      "quick_actions": {
+        "title": "Acciones rápidas",
+        "order_on_behalf": "Pedir en nombre de",
+        "send_email": "Enviar correo",
+        "create_quote": "Crear presupuesto",
+        "schedule_call": "Programar llamada"
+      }
+    },
     "orders": {
       "title": "Pedidos recientes",
       "view_all": "Todos los pedidos",
       "empty": "Aún no hay pedidos",
+      "no_results": "Ningún pedido coincide con este filtro",
       "number": "N.º de pedido",
       "customer": "Cliente",
       "date": "Fecha",
       "items": "Artículos",
       "status": "Estado",
-      "total": "Total"
+      "total": "Total",
+      "filter_all": "Todos"
+    },
+    "top_sellers": {
+      "title": "Top vendedores",
+      "rank": "#",
+      "product": "Producto",
+      "units": "Unidades",
+      "revenue": "Ingresos",
+      "empty": "Sin ventas en este período",
+      "no_results": "Sin ventas en esta categoría",
+      "all_categories": "Todas las categorías"
+    },
+    "rules": {
+      "customer": {
+        "filter": {
+          "All": "Todos"
+        }
+      }
     }
   }
 }

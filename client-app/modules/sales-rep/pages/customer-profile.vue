@@ -29,15 +29,18 @@
         <p v-if="meta" class="customer-profile__meta">{{ meta }}</p>
       </div>
 
-      <!-- Full-width KPI row (mock until VCST-5309). -->
-      <CustomerProfileWidgets />
+      <CustomerProfileWidgets :organization-id="organizationId" />
 
       <div class="customer-profile__layout">
         <div class="customer-profile__main">
-          <SalesRepOrders :organization-id="organizationId" :title="t('sales_rep.orders.title')" />
+          <SalesRepOrders :organization-id="organizationId" :title="t('sales_rep.orders.title')" filterable />
+
+          <TopSellers :organization-id="organizationId" :title="t('sales_rep.top_sellers.title')" />
         </div>
 
         <aside class="customer-profile__aside">
+          <CustomerProfileActions :organization-id="organizationId" />
+
           <CustomerProfileInfo :organization-id="organizationId" />
         </aside>
       </div>
@@ -49,9 +52,11 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
+import CustomerProfileActions from "../components/customer-profile-actions.vue";
 import CustomerProfileInfo from "../components/customer-profile-info.vue";
 import CustomerProfileWidgets from "../components/customer-profile-widgets.vue";
 import SalesRepOrders from "../components/sales-rep-orders.vue";
+import TopSellers from "../components/top-sellers.vue";
 import { useSalesRepCustomer } from "../composables/useSalesRepCustomer";
 import { MY_CUSTOMERS_ROUTE_NAME } from "../constants";
 
@@ -126,8 +131,7 @@ const breadcrumbs = useBreadcrumbs(() => [
     @apply flex min-w-0 flex-col gap-5 xl:w-80 xl:shrink-0;
   }
 
-  // Cancel VcWidget's mobile full-bleed (-mx-4.5 in .vc-container) so blocks align with the KPI row
-  // and title. The extra `&` lifts specificity above VcWidget's own rule (avoids !important).
+  // Cancels VcWidget's mobile full-bleed so blocks align with the KPI row/title; the extra & avoids !important.
   & &__main .vc-widget,
   & &__aside .vc-widget {
     @apply mx-0;

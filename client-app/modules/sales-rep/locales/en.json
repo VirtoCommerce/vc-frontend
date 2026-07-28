@@ -26,6 +26,11 @@
       "table": {
         "customer": "Customer",
         "last_order": "My last order",
+        "ytd": "YTD purchases",
+        "last_year": "Last year",
+        "orders_count": "{count} orders",
+        "all_customers": "All",
+        "actions": "Actions",
         "search_placeholder": "Search by name",
         "search_aria": "Search customers",
         "empty": "No customers found",
@@ -43,10 +48,25 @@
           "title": "Dashboard"
         },
         "widgets": {
-          "orders_on_hold": "Orders on hold",
-          "active_projects": "Active projects",
+          "new_orders": "New orders",
+          "active_carts": "Active carts",
+          "active_cart": "Active cart",
+          "orders_placed_week": "Orders placed · WEEK",
           "orders_placed_mtd": "Orders placed · MTD",
+          "purchased_mtd": "Purchased · MTD",
+          "orders_placed_ytd": "Orders placed · YTD",
           "my_customers": "My customers"
+        },
+        "stats": {
+          "value_total": "{amount} total",
+          "vs_last_week": "{delta} vs last week",
+          "vs_last_month": "{delta} vs last month",
+          "vs_last_year": "{delta} vs last year",
+          "ordered_this_month": "{count} ordered this month",
+          "new_customers": "{count} new customers",
+          "placed_today": "{count} placed today",
+          "new_this_week": "{count} new this week",
+          "mtd_of_ytd": "{percent}% of YTD"
         }
       }
     },
@@ -55,10 +75,10 @@
       "not_found": "Customer not found or not in your customers.",
       "back_to_customers": "Back to my customers",
       "widgets": {
-        "ytd_purchases": "YTD purchases",
-        "open_balance": "Open balance",
-        "avg_order_value": "Avg order value",
-        "orders_ytd": "Orders YTD"
+        "avg_order_value": "Avg order value"
+      },
+      "stats": {
+        "per_order": "Average per order (YTD)"
       },
       "info": {
         "title": "Customer information",
@@ -69,16 +89,66 @@
         "ship_to": "Ship-to"
       }
     },
+    "communication": {
+      "action": "Send email",
+      "title": "Send a message",
+      "subtitle": "Reaches every member of {organization}",
+      "title_label": "Title",
+      "message_label": "Message",
+      "channels_label": "Send via",
+      "email_label": "Email",
+      "push_label": "Push notification",
+      "send_button": "Send",
+      "cancel_button": "Cancel",
+      "success_text": "Your message has been sent.",
+      "partial_success_text": "Your message was sent, but not on every channel:",
+      "error_text": "The message could not be sent. Please try again.",
+      "warnings": {
+        "generic": "The message could not be sent on one of the selected channels.",
+        "NoRecipients": "This organization has no contacts to notify.",
+        "EmailUnavailable": "Email is currently unavailable. Please contact your administrator.",
+        "EmailStoreAccessDenied": "Email could not be sent for the selected store.",
+        "EmailNoRecipients": "None of the recipients have an email address.",
+        "EmailSendFailed": "The email could not be sent. Please try again later.",
+        "PushSendFailed": "The push notification could not be sent. Please try again later."
+      },
+      "quick_actions": {
+        "title": "Quick actions",
+        "order_on_behalf": "Order on behalf",
+        "send_email": "Send email",
+        "create_quote": "Create quote",
+        "schedule_call": "Schedule call"
+      }
+    },
     "orders": {
       "title": "Recent orders",
       "view_all": "All orders",
       "empty": "No orders yet",
+      "no_results": "No orders match this filter",
       "number": "Order #",
       "customer": "Customer",
       "date": "Date",
       "items": "Items",
       "status": "Status",
-      "total": "Total"
+      "total": "Total",
+      "filter_all": "All"
+    },
+    "top_sellers": {
+      "title": "Top sellers",
+      "rank": "#",
+      "product": "Product",
+      "units": "Units",
+      "revenue": "Revenue",
+      "empty": "No sales in this period",
+      "no_results": "No sales in this category",
+      "all_categories": "All categories"
+    },
+    "rules": {
+      "customer": {
+        "filter": {
+          "All": "All"
+        }
+      }
     }
   }
 }

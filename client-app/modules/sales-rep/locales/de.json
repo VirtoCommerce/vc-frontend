@@ -26,6 +26,11 @@
       "table": {
         "customer": "Kunde",
         "last_order": "Meine letzte Bestellung",
+        "ytd": "Jahresumsatz",
+        "last_year": "Letztes Jahr",
+        "orders_count": "{count} Bestellungen",
+        "all_customers": "Alle",
+        "actions": "Aktionen",
         "search_placeholder": "Suche nach Name",
         "search_aria": "Kunden suchen",
         "empty": "Keine Kunden gefunden",
@@ -43,10 +48,25 @@
           "title": "Dashboard"
         },
         "widgets": {
-          "orders_on_hold": "Angehaltene Bestellungen",
-          "active_projects": "Aktive Projekte",
+          "new_orders": "Neue Bestellungen",
+          "active_carts": "Aktive Warenkörbe",
+          "active_cart": "Aktiver Warenkorb",
+          "orders_placed_week": "Bestellungen diese Woche",
           "orders_placed_mtd": "Bestellungen seit Monatsbeginn",
+          "purchased_mtd": "Umsatz seit Monatsbeginn",
+          "orders_placed_ytd": "Bestellungen seit Jahresbeginn",
           "my_customers": "Meine Kunden"
+        },
+        "stats": {
+          "value_total": "{amount} gesamt",
+          "vs_last_week": "{delta} ggü. Vorwoche",
+          "vs_last_month": "{delta} ggü. Vormonat",
+          "vs_last_year": "{delta} ggü. Vorjahr",
+          "ordered_this_month": "{count} in diesem Monat bestellt",
+          "new_customers": "{count} neue Kunden",
+          "placed_today": "{count} heute aufgegeben",
+          "new_this_week": "{count} neu diese Woche",
+          "mtd_of_ytd": "{percent}% des Jahres"
         }
       }
     },
@@ -55,10 +75,10 @@
       "not_found": "Kunde nicht gefunden oder nicht in Ihren Kunden.",
       "back_to_customers": "Zurück zu meinen Kunden",
       "widgets": {
-        "ytd_purchases": "Käufe seit Jahresbeginn",
-        "open_balance": "Offener Saldo",
-        "avg_order_value": "Durchschn. Bestellwert",
-        "orders_ytd": "Bestellungen seit Jahresbeginn"
+        "avg_order_value": "Durchschn. Bestellwert"
+      },
+      "stats": {
+        "per_order": "Durchschnitt pro Bestellung (YTD)"
       },
       "info": {
         "title": "Kundeninformationen",
@@ -69,16 +89,66 @@
         "ship_to": "Lieferadresse"
       }
     },
+    "communication": {
+      "action": "E-Mail senden",
+      "title": "Nachricht senden",
+      "subtitle": "Erreicht jedes Mitglied von {organization}",
+      "title_label": "Titel",
+      "message_label": "Nachricht",
+      "channels_label": "Senden über",
+      "email_label": "E-Mail",
+      "push_label": "Push-Benachrichtigung",
+      "send_button": "Senden",
+      "cancel_button": "Abbrechen",
+      "success_text": "Ihre Nachricht wurde gesendet.",
+      "error_text": "Die Nachricht konnte nicht gesendet werden. Bitte versuchen Sie es erneut.",
+      "partial_success_text": "Ihre Nachricht wurde gesendet, aber nicht über alle Kanäle:",
+      "warnings": {
+        "generic": "Die Nachricht konnte über einen der ausgewählten Kanäle nicht gesendet werden.",
+        "NoRecipients": "Diese Organisation hat keine Kontakte, die benachrichtigt werden können.",
+        "EmailUnavailable": "E-Mail ist derzeit nicht verfügbar. Bitte wenden Sie sich an Ihren Administrator.",
+        "EmailStoreAccessDenied": "Die E-Mail konnte für den ausgewählten Shop nicht gesendet werden.",
+        "EmailNoRecipients": "Keiner der Empfänger hat eine E-Mail-Adresse.",
+        "EmailSendFailed": "Die E-Mail konnte nicht gesendet werden. Bitte versuchen Sie es später erneut.",
+        "PushSendFailed": "Die Push-Benachrichtigung konnte nicht gesendet werden. Bitte versuchen Sie es später erneut."
+      },
+      "quick_actions": {
+        "title": "Schnellaktionen",
+        "order_on_behalf": "Im Namen bestellen",
+        "send_email": "E-Mail senden",
+        "create_quote": "Angebot erstellen",
+        "schedule_call": "Anruf planen"
+      }
+    },
     "orders": {
       "title": "Aktuelle Bestellungen",
       "view_all": "Alle Bestellungen",
       "empty": "Noch keine Bestellungen",
+      "no_results": "Keine Bestellungen entsprechen diesem Filter",
       "number": "Bestellnr.",
       "customer": "Kunde",
       "date": "Datum",
       "items": "Artikel",
       "status": "Status",
-      "total": "Gesamt"
+      "total": "Gesamt",
+      "filter_all": "Alle"
+    },
+    "top_sellers": {
+      "title": "Top-Seller",
+      "rank": "#",
+      "product": "Produkt",
+      "units": "Einheiten",
+      "revenue": "Umsatz",
+      "empty": "Keine Verkäufe in diesem Zeitraum",
+      "no_results": "Keine Verkäufe in dieser Kategorie",
+      "all_categories": "Alle Kategorien"
+    },
+    "rules": {
+      "customer": {
+        "filter": {
+          "All": "Alle"
+        }
+      }
     }
   }
 }

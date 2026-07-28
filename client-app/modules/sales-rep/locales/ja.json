@@ -26,6 +26,11 @@
       "table": {
         "customer": "顧客",
         "last_order": "私の最近の注文",
+        "ytd": "今年度の購入金額",
+        "last_year": "昨年",
+        "orders_count": "{count} 件の注文",
+        "all_customers": "すべて",
+        "actions": "アクション",
         "search_placeholder": "名前で検索",
         "search_aria": "顧客を検索",
         "empty": "顧客が見つかりません",
@@ -43,10 +48,25 @@
           "title": "ダッシュボード"
         },
         "widgets": {
-          "orders_on_hold": "保留中の注文",
-          "active_projects": "進行中のプロジェクト",
+          "new_orders": "新規注文",
+          "active_carts": "アクティブなカート",
+          "active_cart": "アクティブなカート",
+          "orders_placed_week": "今週の注文",
           "orders_placed_mtd": "今月の注文",
+          "purchased_mtd": "今月の購入額",
+          "orders_placed_ytd": "今年の注文",
           "my_customers": "担当顧客"
+        },
+        "stats": {
+          "value_total": "合計 {amount}",
+          "vs_last_week": "先週比 {delta}",
+          "vs_last_month": "先月比 {delta}",
+          "vs_last_year": "前年比 {delta}",
+          "ordered_this_month": "今月 {count} 件が注文",
+          "new_customers": "新規顧客 {count} 件",
+          "placed_today": "本日 {count} 件",
+          "new_this_week": "今週 新規 {count} 件",
+          "mtd_of_ytd": "年初来の {percent}%"
         }
       }
     },
@@ -55,10 +75,10 @@
       "not_found": "顧客が見つからないか、担当顧客に含まれていません。",
       "back_to_customers": "担当顧客に戻る",
       "widgets": {
-        "ytd_purchases": "年初来の購入額",
-        "open_balance": "未払い残高",
-        "avg_order_value": "平均注文額",
-        "orders_ytd": "年初来の注文数"
+        "avg_order_value": "平均注文額"
+      },
+      "stats": {
+        "per_order": "平均注文単価 (今年度)"
       },
       "info": {
         "title": "顧客情報",
@@ -69,16 +89,66 @@
         "ship_to": "配送先"
       }
     },
+    "communication": {
+      "action": "メールを送信",
+      "title": "メッセージを送信",
+      "subtitle": "{organization} のすべてのメンバーに届きます",
+      "title_label": "タイトル",
+      "message_label": "メッセージ",
+      "channels_label": "送信方法",
+      "email_label": "メール",
+      "push_label": "プッシュ通知",
+      "send_button": "送信",
+      "cancel_button": "キャンセル",
+      "success_text": "メッセージを送信しました。",
+      "error_text": "メッセージを送信できませんでした。もう一度お試しください。",
+      "partial_success_text": "メッセージは送信されましたが、一部のチャネルでは送信されませんでした:",
+      "warnings": {
+        "generic": "選択されたチャネルのいずれかでメッセージを送信できませんでした。",
+        "NoRecipients": "この組織には通知する連絡先がありません。",
+        "EmailUnavailable": "現在メールは利用できません。管理者にお問い合わせください。",
+        "EmailStoreAccessDenied": "選択したストアではメールを送信できませんでした。",
+        "EmailNoRecipients": "受信者の中にメールアドレスを持つ人がいません。",
+        "EmailSendFailed": "メールを送信できませんでした。しばらくしてからもう一度お試しください。",
+        "PushSendFailed": "プッシュ通知を送信できませんでした。しばらくしてからもう一度お試しください。"
+      },
+      "quick_actions": {
+        "title": "クイックアクション",
+        "order_on_behalf": "代理で注文",
+        "send_email": "メールを送信",
+        "create_quote": "見積もりを作成",
+        "schedule_call": "通話を予約"
+      }
+    },
     "orders": {
       "title": "最近の注文",
       "view_all": "すべての注文",
       "empty": "注文はまだありません",
+      "no_results": "このフィルターに一致する注文はありません",
       "number": "注文番号",
       "customer": "顧客",
       "date": "日付",
       "items": "商品数",
       "status": "ステータス",
-      "total": "合計"
+      "total": "合計",
+      "filter_all": "すべて"
+    },
+    "top_sellers": {
+      "title": "トップセラー",
+      "rank": "#",
+      "product": "商品",
+      "units": "個数",
+      "revenue": "収益",
+      "empty": "この期間の売上なし",
+      "no_results": "このカテゴリーの売上なし",
+      "all_categories": "全カテゴリー"
+    },
+    "rules": {
+      "customer": {
+        "filter": {
+          "All": "すべて"
+        }
+      }
     }
   }
 }
