@@ -83,6 +83,8 @@ export type CustomerCartStatisticsPeriod = {
   lastCartDate?: Maybe<Scalars['DateTime']['output']>;
   /** Sum of cart totals in the range (amount, formatted amount and currency). */
   total: MoneyType;
+  /** Non-null when the figures are partial because some carts were in an unconfigured currency and could not be converted; describes what was excluded. */
+  warning?: Maybe<Scalars['String']['output']>;
 };
 
 export type CustomerOrderStatistics = {
@@ -134,6 +136,8 @@ export type CustomerOrderStatisticsPeriod = {
   lastOrderDate?: Maybe<Scalars['DateTime']['output']>;
   /** Sum of order totals in the range (amount, formatted amount and currency). */
   total: MoneyType;
+  /** Non-null when the figures are partial because some orders were in an unconfigured currency and could not be converted; describes what was excluded. */
+  warning?: Maybe<Scalars['String']['output']>;
 };
 
 export type InputSendCustomerCommunicationType = {
@@ -636,6 +640,8 @@ export type SalesRepTopSeller = {
   sku?: Maybe<Scalars['String']['output']>;
   /** Total units sold (sum of line-item quantities). */
   units: Scalars['Int']['output'];
+  /** Non-null when Revenue is partial because some of this product's sales were in an unconfigured currency and could not be converted; describes what was excluded. */
+  warning?: Maybe<Scalars['String']['output']>;
 };
 
 export type SalesRepTopSellerFilterRule = {
