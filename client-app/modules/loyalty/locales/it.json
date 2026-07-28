@@ -48,6 +48,9 @@
       "missions": {
         "title": "Missioni e sfide",
         "description": "Completa le missioni per guadagnare punti bonus Virto Rewards.",
+        "load_error": "Impossibile caricare le tue missioni. Riprova.",
+        "retry_button": "Riprova",
+        "empty_list": "Non hai ancora missioni. Torna presto per scoprire nuovi modi per guadagnare punti.",
         "balance_banner": {
           "label": "Saldo Virto Rewards",
           "points": "punti",

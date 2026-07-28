@@ -48,6 +48,9 @@
       "missions": {
         "title": "Oppdrag og utfordringer",
         "description": "Fullfør oppdrag for å tjene bonuspoeng for Virto Rewards.",
+        "load_error": "Vi kunne ikke laste inn oppdragene dine. Prøv igjen.",
+        "retry_button": "Prøv igjen",
+        "empty_list": "Du har ingen oppdrag ennå. Kom tilbake snart for nye måter å tjene poeng på.",
         "balance_banner": {
           "label": "Virto Rewards-saldo",
           "points": "poeng",

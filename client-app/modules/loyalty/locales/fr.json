@@ -48,6 +48,9 @@
       "missions": {
         "title": "Missions et défis",
         "description": "Terminez des missions pour gagner des points bonus Virto Rewards.",
+        "load_error": "Nous n'avons pas pu charger vos missions. Veuillez réessayer.",
+        "retry_button": "Réessayer",
+        "empty_list": "Vous n'avez pas encore de missions. Revenez bientôt pour découvrir de nouvelles façons de gagner des points.",
         "balance_banner": {
           "label": "Solde Virto Rewards",
           "points": "points",

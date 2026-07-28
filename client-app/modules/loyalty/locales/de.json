@@ -48,6 +48,9 @@
       "missions": {
         "title": "Aufgaben & Herausforderungen",
         "description": "Schließe Aufgaben ab, um zusätzliche Virto Rewards-Punkte zu sammeln.",
+        "load_error": "Ihre Missionen konnten nicht geladen werden. Bitte versuchen Sie es erneut.",
+        "retry_button": "Erneut versuchen",
+        "empty_list": "Sie haben noch keine Missionen. Schauen Sie bald wieder vorbei, um neue Möglichkeiten zum Sammeln von Punkten zu entdecken.",
         "balance_banner": {
           "label": "Virto Rewards-Guthaben",
           "points": "Punkte",

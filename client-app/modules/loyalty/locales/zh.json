@@ -48,6 +48,9 @@
       "missions": {
         "title": "任务与挑战",
         "description": "完成任务即可赚取额外的 Virto Rewards 积分。",
+        "load_error": "无法加载您的任务。请重试。",
+        "retry_button": "重试",
+        "empty_list": "您还没有任何任务。请稍后再回来查看赚取积分的新方法。",
         "balance_banner": {
           "label": "Virto Rewards 余额",
           "points": "积分",

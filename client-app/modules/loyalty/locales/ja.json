@@ -48,6 +48,9 @@
       "missions": {
         "title": "ミッション＆チャレンジ",
         "description": "ミッションを完了して、ボーナスVirto Rewardsポイントを獲得しましょう。",
+        "load_error": "ミッションを読み込めませんでした。もう一度お試しください。",
+        "retry_button": "もう一度試す",
+        "empty_list": "まだミッションはありません。ポイントを獲得する新しい方法については、近日中にご確認ください。",
         "balance_banner": {
           "label": "Virto Rewards残高",
           "points": "ポイント",

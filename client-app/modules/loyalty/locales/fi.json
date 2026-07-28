@@ -48,6 +48,9 @@
       "missions": {
         "title": "Tehtävät & haasteet",
         "description": "Suorita tehtäviä ansaitaksesi bonus Virto Rewards -pisteitä.",
+        "load_error": "Emme saaneet ladattua tehtäviäsi. Yritä uudelleen.",
+        "retry_button": "Yritä uudelleen",
+        "empty_list": "Sinulla ei ole vielä tehtäviä. Tarkista pian uudelleen uusia tapoja ansaita pisteitä.",
         "balance_banner": {
           "label": "Virto Rewards -saldo",
           "points": "pistettä",
