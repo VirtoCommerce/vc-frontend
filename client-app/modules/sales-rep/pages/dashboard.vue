@@ -8,8 +8,12 @@
     <LayoutSkeleton v-if="layoutLoading" :stats="4" :blocks="1" />
 
     <!-- The overlay covers the edit bar too: a save is a full-document replace, so nothing may change
-         while one is in flight — including a drag, whose drop would land after the draft is gone. -->
-    <div v-else class="sales-rep-dashboard__layout">
+         while one is in flight — including a drag, whose drop would land after the draft is gone.
+         `inert` is what enforces that; the overlay alone only stops the pointer, leaving the buttons
+         and every drag handle reachable by keyboard. `|| undefined` so the attribute is dropped rather
+         than written as `inert="false"` — Vue does not treat `inert` as a boolean attribute, and the
+         attribute is presence-based, so a literal `false` would inert the layout permanently. -->
+    <div v-else class="sales-rep-dashboard__layout" :inert="saving || undefined">
       <VcLoaderOverlay v-if="saving" />
 
       <LayoutEditBar
@@ -65,7 +69,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import LayoutEditBar from "../components/layout-edit-bar.vue";
 import LayoutEditButton from "../components/layout-edit-button.vue";
@@ -74,7 +78,7 @@ import LayoutRegion from "../components/layout-region.vue";
 import LayoutSkeleton from "../components/layout-skeleton.vue";
 import LayoutStats from "../components/layout-stats.vue";
 import { useLayoutAnnouncer } from "../composables/useLayoutAnnouncer";
-import { focusBlockControl } from "../composables/useLayoutFocus";
+import { focusBlockControl, focusEditToggle } from "../composables/useLayoutFocus";
 import { useSalesRepLayout } from "../composables/useSalesRepLayout";
 import { getBlock } from "../layout/registry";
 import type { SalesRepLayoutRegionIdType } from "../types/layout";
@@ -130,6 +134,13 @@ function toggleHidden(id: string, hidden: boolean, index?: number): void {
   setHidden(id, hidden, index);
   focusBlockControl(id);
 }
+
+// Save and Cancel both unmount the edit bar they live on, taking focus with them.
+watch(editing, (now, was) => {
+  if (was && !now) {
+    focusEditToggle();
+  }
+});
 </script>
 
 <style lang="scss">

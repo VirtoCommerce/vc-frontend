@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { LAYOUT_SCHEMA_VERSION } from "../constants";
-import { reconcileLayout, serializeLayout } from "./document";
+import { echoCoversSentBlocks, reconcileLayout, serializeLayout } from "./document";
 import type { SalesRepBlockType, SalesRepLayoutStateType, SavedLayoutType } from "../types/layout";
 
 // A stand-in component; reconciliation never touches it, it only satisfies the widget-block type.
@@ -159,5 +159,38 @@ describe("serializeLayout", () => {
         .every((entry) => entry.hidden),
     ).toBe(true);
     expect(reconcileLayout(serializeLayout(allHidden, "dashboard"), registry)).toEqual(allHidden);
+  });
+});
+
+// Guards the save path: reconciling a document that is missing blocks fills the gaps from registry
+// defaults, which would read as "the rep arranged nothing" and overwrite what they actually did.
+describe("echoCoversSentBlocks", () => {
+  const sent = serializeLayout(reconcileLayout(null, registry), "dashboard");
+
+  it("accepts an echo carrying every block that was sent", () => {
+    expect(echoCoversSentBlocks(sent as unknown as SavedLayoutType, sent)).toBe(true);
+  });
+
+  it("accepts an echo that regrouped the blocks across regions", () => {
+    const flattened: SavedLayoutType = { regions: [{ blocks: sent.regions.flatMap((region) => region.blocks) }] };
+
+    expect(echoCoversSentBlocks(flattened, sent)).toBe(true);
+  });
+
+  it.each([
+    ["no regions at all", { regions: [] }],
+    ["regions but no blocks", { regions: [{ blocks: [] }] }],
+    ["null", null],
+    ["undefined", undefined],
+  ])("rejects an echo with %s", (_label, echo) => {
+    expect(echoCoversSentBlocks(echo as SavedLayoutType | null | undefined, sent)).toBe(false);
+  });
+
+  it("rejects an echo that dropped a single block", () => {
+    const short: SavedLayoutType = {
+      regions: sent.regions.map((region) => ({ blocks: region.blocks.slice(1) })),
+    };
+
+    expect(echoCoversSentBlocks(short, sent)).toBe(false);
   });
 });

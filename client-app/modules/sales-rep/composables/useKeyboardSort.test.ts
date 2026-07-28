@@ -3,7 +3,8 @@ import { nextTick } from "vue";
 import { useKeyboardSort } from "./useKeyboardSort";
 import type { KeyboardSortOrientationType, KeyboardSortSignalType } from "../types/layout";
 
-function setup(orientation: KeyboardSortOrientationType, withHiding = false) {
+// `hidden` is the state the list's own blocks already have — the zone's, as the region reports it.
+function setup(orientation: KeyboardSortOrientationType, withHiding = false, hidden?: boolean) {
   let items = ["a", "b", "c"];
   const signals: KeyboardSortSignalType[] = [];
   const onToggleHidden = vi.fn();
@@ -16,6 +17,7 @@ function setup(orientation: KeyboardSortOrientationType, withHiding = false) {
       items.splice(index, 0, id);
     },
     onToggleHidden: withHiding ? onToggleHidden : undefined,
+    hidden: hidden === undefined ? undefined : () => hidden,
     onSignal: (signal) => signals.push(signal),
   });
 
@@ -133,7 +135,7 @@ describe("useKeyboardSort", () => {
   });
 
   it("parks a grabbed stat with ArrowDown and releases the grab", () => {
-    const { sort, press, onToggleHidden, signals } = setup("horizontal", true);
+    const { sort, press, onToggleHidden, signals } = setup("horizontal", true, false);
 
     press(" ", "b");
     press("ArrowDown", "b");
@@ -144,13 +146,48 @@ describe("useKeyboardSort", () => {
   });
 
   it("restores a grabbed stat with ArrowUp", () => {
-    const { press, onToggleHidden, signals } = setup("horizontal", true);
+    const { press, onToggleHidden, signals } = setup("horizontal", true, true);
 
     press(" ", "b");
     press("ArrowUp", "b");
 
     expect(onToggleHidden).toHaveBeenCalledWith("b", false);
     expect(signals.at(-1)).toEqual({ kind: "restored", id: "b" });
+  });
+
+  // The direction leading out of the zone the block is already in is not a move. Acting on it appends
+  // the block to the end of its own half, drops the grab, and announces a park or restore that never
+  // happened — all from a keypress the user reads as doing nothing.
+  it.each([
+    ["ArrowUp", false, "restored"],
+    ["ArrowDown", true, "parked"],
+  ])("ignores %s in a zone whose blocks are already in that state", (key, zoneHidden, wrongSignal) => {
+    const { sort, press, onToggleHidden, signals, order } = setup("horizontal", true, zoneHidden);
+
+    press(" ", "b");
+    press(key, "b");
+
+    expect(onToggleHidden).not.toHaveBeenCalled();
+    expect(order()).toEqual(["a", "b", "c"]);
+    // The grab survives, and nothing is announced beyond the original grab.
+    expect(sort.isGrabbed("b")).toBe(true);
+    expect(signals.map((signal) => signal.kind)).not.toContain(wrongSignal);
+  });
+
+  // Leaving edit mode unmounts the handles, and browsers fire no blur for an unmounted element — so
+  // the grab has to be dropped explicitly or it outlives the UI that created it.
+  it("release drops the grab without moving the block back", () => {
+    const { sort, press, signals, order } = setup("horizontal", true, false);
+
+    press(" ", "b");
+    press("ArrowRight", "b");
+    expect(order()).toEqual(["a", "c", "b"]);
+
+    sort.release();
+
+    expect(sort.isGrabbed("b")).toBe(false);
+    expect(order()).toEqual(["a", "c", "b"]);
+    expect(signals.map((signal) => signal.kind)).not.toContain("cancelled");
   });
 
   it("leaves up/down inert in a horizontal region that cannot hide blocks", () => {

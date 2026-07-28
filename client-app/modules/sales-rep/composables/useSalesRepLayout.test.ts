@@ -7,12 +7,15 @@ const apolloMock = await vi.hoisted(async () => {
   const loading = ref(false);
   const error = ref<Error | undefined>();
   const mutate = vi.fn();
+  // `useMutation`'s own loading flag, which the real one holds true for the duration of the call.
+  const saving = ref(false);
   const calls: { query?: unknown[]; mutation?: unknown[] } = {};
   return {
     result,
     loading,
     error,
     mutate,
+    saving,
     calls,
     useQuery: vi.fn((...args: unknown[]) => {
       calls.query = args;
@@ -20,7 +23,7 @@ const apolloMock = await vi.hoisted(async () => {
     }),
     useMutation: vi.fn((...args: unknown[]) => {
       calls.mutation = args;
-      return { mutate, loading: ref(false) };
+      return { mutate, loading: saving };
     }),
   };
 });
@@ -36,8 +39,11 @@ beforeEach(() => {
   apolloMock.result.value = undefined;
   apolloMock.loading.value = false;
   apolloMock.error.value = undefined;
+  apolloMock.saving.value = false;
   apolloMock.mutate.mockReset();
 });
+
+const echoedBlock = (id: string) => ({ id, type: id, hidden: false, settings: [] });
 
 // The customer profile is the richer surface — it populates all three regions.
 const scope = "customerProfile" as const;
@@ -168,6 +174,8 @@ describe("useSalesRepLayout", () => {
 
   // The mutation echoes the stored document and no refetch follows, so the echo — not what was sent —
   // is what the rep ends up looking at.
+  // The echo is complete on purpose: a document missing blocks that were sent is not trusted, and
+  // this test is about the echo DRIVING state — `info` before `actions` inverts the registry order.
   it("reconciles the post-save layout from the echoed document", async () => {
     apolloMock.result.value = { salesRepLayout: null };
     apolloMock.mutate.mockResolvedValue({
@@ -175,12 +183,11 @@ describe("useSalesRepLayout", () => {
         saveSalesRepLayout: {
           schemaVersion: 1,
           regions: [
+            { id: "statistics", blocks: ["ytd", "open_balance", "aov", "orders_ytd"].map(echoedBlock) },
+            { id: "mainLeft", blocks: [echoedBlock("orders")] },
             {
               id: "mainRight",
-              blocks: [
-                { id: "info", type: "info", hidden: false, settings: [] },
-                { id: "actions", type: "actions", hidden: true, settings: [] },
-              ],
+              blocks: [echoedBlock("info"), { id: "actions", type: "actions", hidden: true, settings: [] }],
             },
           ],
         },
@@ -193,6 +200,75 @@ describe("useSalesRepLayout", () => {
     await expect(save()).resolves.toBe(true);
     expect(state.value.mainRight.map((entry) => entry.id)).toEqual(["info", "actions"]);
     expect(state.value.mainRight[1].hidden).toBe(true);
+  });
+
+  // A document is not enough to trust — reconciling a partial one fills the gaps from registry
+  // defaults, which silently replaces the rep's arrangement while reporting success.
+  it("keeps the rep's arrangement when the echoed document is missing blocks that were sent", async () => {
+    apolloMock.result.value = { salesRepLayout: null };
+    apolloMock.mutate.mockResolvedValue({ data: { saveSalesRepLayout: { schemaVersion: 1, regions: [] } } });
+
+    const { startEdit, setHidden, save, state, saveFailed } = useSalesRepLayout(scope);
+    startEdit();
+    setHidden("actions", true);
+
+    await expect(save()).resolves.toBe(true);
+
+    // Not defaults: `actions` stays parked, exactly as it was arranged.
+    expect(state.value.mainRight.find((entry) => entry.id === "actions")?.hidden).toBe(true);
+    expect(saveFailed.value).toBe(false);
+  });
+
+  // `save` snapshots the payload synchronously and clears the draft when it resolves, so an edit made
+  // mid-flight would be written to a document nobody sends and then discarded.
+  it("refuses draft edits while a save is in flight", async () => {
+    apolloMock.result.value = { salesRepLayout: null };
+    let release: (value: unknown) => void = () => {};
+    apolloMock.mutate.mockImplementation(() => {
+      apolloMock.saving.value = true;
+      return new Promise((resolve) => {
+        release = (value: unknown) => {
+          apolloMock.saving.value = false;
+          resolve(value);
+        };
+      });
+    });
+
+    const { startEdit, setHidden, reorder, reset, save, state } = useSalesRepLayout(scope);
+    startEdit();
+    setHidden("actions", true);
+
+    const sent = state.value.mainRight.map((entry) => `${entry.id}:${entry.hidden}`);
+    const pending = save();
+
+    // Each of these would otherwise land visibly — `reset` most of all, wiping the arrangement to
+    // defaults in front of the rep — only to be thrown away when the save resolves.
+    reset();
+    setHidden("info", true);
+    reorder("mainRight", [{ id: "info", hidden: false }]);
+
+    expect(state.value.mainRight.map((entry) => `${entry.id}:${entry.hidden}`)).toEqual(sent);
+
+    release({
+      data: {
+        saveSalesRepLayout: {
+          schemaVersion: 1,
+          regions: [
+            { id: "statistics", blocks: ["ytd", "open_balance", "aov", "orders_ytd"].map(echoedBlock) },
+            { id: "mainLeft", blocks: [echoedBlock("orders")] },
+            {
+              id: "mainRight",
+              blocks: [echoedBlock("info"), { id: "actions", type: "actions", hidden: true, settings: [] }],
+            },
+          ],
+        },
+      },
+    });
+
+    await expect(pending).resolves.toBe(true);
+    // The saved arrangement survived; none of the mid-flight calls left a mark.
+    expect(state.value.mainRight.find((entry) => entry.id === "actions")?.hidden).toBe(true);
+    expect(state.value.mainRight.map((entry) => entry.id)).toEqual(["info", "actions"]);
   });
 
   // Mirrors the pages' `reorderHidden`: the hidden strip is reordered and stitched back after the

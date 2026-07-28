@@ -13,6 +13,8 @@ interface IUseKeyboardSortOptions {
    * not reordering keys — that is what makes the stat row's visible/hidden zones keyboard-reachable.
    */
   onToggleHidden?: (id: string, hidden: boolean) => void;
+  /** Hidden state every block in this list already has, so ↑/↓ can ignore the direction that is a no-op. */
+  hidden?: () => boolean;
   /** Emitted for every state change so the caller can localize and announce it. */
   onSignal: (signal: KeyboardSortSignalType) => void;
 }
@@ -100,7 +102,11 @@ export function useKeyboardSort(options: IUseKeyboardSortOptions) {
    */
   function toggleHidden(hidden: boolean): void {
     const id = grabbedId.value;
-    if (!id || !options.onToggleHidden) {
+    // Ignore the direction that leads out of the zone the block is already in. Without this the
+    // "move" resolves to an index-less `setHidden`, which appends — so the card silently jumps to the
+    // end of its own half, the grab is dropped, and the announcer reports a park or restore that
+    // never happened.
+    if (!id || !options.onToggleHidden || hidden === options.hidden?.()) {
       return;
     }
     options.onToggleHidden(id, hidden);
@@ -156,5 +162,17 @@ export function useKeyboardSort(options: IUseKeyboardSortOptions) {
     }
   }
 
-  return { grabbedId: readonly(grabbedId), isGrabbed, onKeydown, onBlur };
+  /**
+   * Drop the grab without restoring the block's position, for when the surrounding UI goes away
+   * rather than the user letting go. Blur cannot cover this: browsers fire no blur when a focused
+   * element is unmounted, they just move focus to the body — so leaving edit mode mid-grab would
+   * otherwise strand `grabbedId`, and with it the grabbed styling (which is not gated on edit mode)
+   * and a stale `originIndex` that one later Escape would apply to a different draft.
+   */
+  function release(): void {
+    grabbedId.value = undefined;
+    originIndex.value = -1;
+  }
+
+  return { grabbedId: readonly(grabbedId), isGrabbed, onKeydown, onBlur, release };
 }

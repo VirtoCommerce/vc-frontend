@@ -1,7 +1,14 @@
 <template>
   <!-- Wrapped so the button keeps its intrinsic width inside a stretching flex column. -->
   <div>
-    <VcButton size="xs" color="primary" variant="outline" prepend-icon="adjustments" @click="$emit('toggle')">
+    <VcButton
+      size="xs"
+      color="primary"
+      variant="outline"
+      prepend-icon="adjustments"
+      data-layout-edit-toggle
+      @click="$emit('toggle')"
+    >
       {{ editing ? t("sales_rep.hub.layout.editing") : t("sales_rep.hub.layout.edit") }}
     </VcButton>
   </div>

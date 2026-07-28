@@ -33,8 +33,10 @@
       <LayoutSkeleton v-if="layoutLoading" :stats="4" :blocks="2" />
 
       <!-- The overlay covers the edit bar too: a save is a full-document replace, so nothing may change
-           while one is in flight — including a drag, whose drop would land after the draft is gone. -->
-      <div v-else class="customer-profile__layout-wrapper">
+           while one is in flight — including a drag, whose drop would land after the draft is gone.
+           `inert` is what enforces that; the overlay alone only stops the pointer, leaving the buttons
+           and every drag handle reachable by keyboard. See dashboard.vue for why `|| undefined`. -->
+      <div v-else class="customer-profile__layout-wrapper" :inert="saving || undefined">
         <VcLoaderOverlay v-if="saving" />
 
         <LayoutEditBar
@@ -126,7 +128,7 @@
 
 <script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { computed } from "vue";
+import { computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import LayoutEditBar from "../components/layout-edit-bar.vue";
@@ -136,7 +138,7 @@ import LayoutRegion from "../components/layout-region.vue";
 import LayoutSkeleton from "../components/layout-skeleton.vue";
 import LayoutStats from "../components/layout-stats.vue";
 import { useLayoutAnnouncer } from "../composables/useLayoutAnnouncer";
-import { focusBlockControl } from "../composables/useLayoutFocus";
+import { focusBlockControl, focusEditToggle } from "../composables/useLayoutFocus";
 import { useSalesRepCustomer } from "../composables/useSalesRepCustomer";
 import { useSalesRepLayout } from "../composables/useSalesRepLayout";
 import { MY_CUSTOMERS_ROUTE_NAME } from "../constants";
@@ -204,6 +206,13 @@ function toggleHidden(id: string, hidden: boolean, index?: number): void {
   setHidden(id, hidden, index);
   focusBlockControl(id);
 }
+
+// Save and Cancel both unmount the edit bar they live on, taking focus with them.
+watch(editing, (now, was) => {
+  if (was && !now) {
+    focusEditToggle();
+  }
+});
 
 const myCustomersRouteName = MY_CUSTOMERS_ROUTE_NAME;
 

@@ -8,11 +8,12 @@
     </p>
 
     <div class="layout-edit-bar__actions">
-      <VcButton size="sm" variant="no-background" color="secondary" @click="$emit('reset')">
+      <!-- Disabled, not just inert: `inert` on the layout stops the interaction but greys nothing out. -->
+      <VcButton size="sm" variant="no-background" color="secondary" :disabled="saving" @click="$emit('reset')">
         {{ t("sales_rep.hub.layout.reset") }}
       </VcButton>
 
-      <VcButton size="sm" variant="outline" color="secondary" @click="$emit('cancel')">
+      <VcButton size="sm" variant="outline" color="secondary" :disabled="saving" @click="$emit('cancel')">
         {{ t("sales_rep.hub.layout.cancel") }}
       </VcButton>
 

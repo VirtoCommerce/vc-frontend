@@ -173,21 +173,15 @@ const { option } = useSortable(container, unusedSortableList, {
   },
 });
 
-// Created once and toggled, rather than torn down and rebuilt whenever edit mode flips. No
-// `immediate` — the constructor seeds the initial value, and an immediate run would fire before the
-// instance exists.
-watch(
-  () => props.editing,
-  (editing) => option("disabled", !editing),
-);
-
 // A region's axis is structural: the stat row is always horizontal, a widget column always vertical.
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss -- structural, read once by design
 const axis = props.orientation;
 
-const { isGrabbed, onKeydown, onBlur } = useKeyboardSort({
+const { isGrabbed, onKeydown, onBlur, release } = useKeyboardSort({
   orientation: axis,
   items: () => props.entries.map((entry) => entry.id),
+  // Every block in a zone shares the zone's hidden state, which is what `dropHidden` describes.
+  hidden: () => Boolean(props.dropHidden),
   onReorder: (id, index) => {
     const ids = props.entries.map((entry) => entry.id).filter((candidate) => candidate !== id);
     ids.splice(index, 0, id);
@@ -197,6 +191,19 @@ const { isGrabbed, onKeydown, onBlur } = useKeyboardSort({
   onToggleHidden: axis === "horizontal" ? (id, hidden) => emit("setHidden", id, hidden) : undefined,
   onSignal: (signal) => emit("announce", signal),
 });
+
+// Sortable is created once and toggled, rather than torn down and rebuilt whenever edit mode flips.
+// No `immediate` — the constructor seeds the initial value, and an immediate run would fire before
+// the instance exists.
+watch(
+  () => props.editing,
+  (editing) => {
+    option("disabled", !editing);
+    if (!editing) {
+      release();
+    }
+  },
+);
 
 const emptyText = computed(() => props.emptyText ?? "");
 </script>

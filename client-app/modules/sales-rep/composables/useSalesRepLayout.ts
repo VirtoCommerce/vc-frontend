@@ -3,7 +3,7 @@ import { computed, readonly, ref } from "vue";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { SalesRepLayoutDocument, SaveSalesRepLayoutDocument } from "../api/graphql/types";
-import { reconcileLayout, serializeLayout } from "../layout/document";
+import { echoCoversSentBlocks, reconcileLayout, serializeLayout } from "../layout/document";
 import { getBlockRegistry } from "../layout/registry";
 import type {
   SalesRepLayoutEntryType,
@@ -92,8 +92,18 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
     saveFailed.value = false;
   }
 
+  /**
+   * `save` snapshots the payload synchronously and clears the draft when it resolves, so anything
+   * that edits the draft mid-flight is written to a document nobody will send and then thrown away.
+   * The pages also make the layout `inert` while saving; this is the guard behind that, covering the
+   * programmatic paths an attribute cannot.
+   */
+  function editable(): boolean {
+    return draft.value !== undefined && !saving.value;
+  }
+
   function reset(): void {
-    if (draft.value) {
+    if (editable()) {
       draft.value = reconcileLayout(null, registry);
     }
   }
@@ -106,7 +116,7 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
    * and `setHidden`'s in-place write would fail silently in production.
    */
   function reorder(regionId: SalesRepLayoutRegionIdType, entries: SalesRepLayoutEntryType[]): void {
-    if (draft.value) {
+    if (editable() && draft.value) {
       draft.value[regionId] = entries.map((entry) => ({ id: entry.id, hidden: entry.hidden }));
     }
   }
@@ -118,7 +128,7 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
    */
   function setHidden(id: string, hidden: boolean, index?: number): void {
     const regions = draft.value;
-    if (!regions) {
+    if (!regions || !editable()) {
       return;
     }
 
@@ -145,8 +155,9 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
     }
 
     const pending = draft.value;
+    const command = serializeLayout(pending, scope, globals.storeId);
     try {
-      const response = await mutate({ command: serializeLayout(pending, scope, globals.storeId) });
+      const response = await mutate({ command });
       const saved = response?.data?.saveSalesRepLayout;
 
       // Without a document there is nothing to trust: reconciling `undefined` yields registry
@@ -157,8 +168,17 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
         return false;
       }
 
-      // The mutation echoes the stored document, so reconcile from it rather than refetching.
-      savedState.value = reconcileLayout(saved, registry);
+      // The mutation echoes the stored document, so reconcile from it rather than refetching — but
+      // only once it accounts for what went out. An echo that does not is a broken backend, not a
+      // rep who arranged nothing, and the write itself did not error; keeping what they arranged is
+      // both closer to the truth and the only option that cannot destroy it.
+      if (echoCoversSentBlocks(saved, command)) {
+        savedState.value = reconcileLayout(saved, registry);
+      } else {
+        Logger.error("[sales-rep] saveSalesRepLayout echoed a document missing blocks that were sent");
+        savedState.value = cloneState(pending);
+      }
+
       draft.value = undefined;
       saveFailed.value = false;
       return true;

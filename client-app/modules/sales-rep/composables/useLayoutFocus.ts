@@ -6,6 +6,16 @@ import { nextTick } from "vue";
  * exactly one control representing it — a widget's drag handle, a stat card, or its restore button
  * once it moves to the hidden tray.
  */
+/**
+ * Send focus back to the edit toggle when edit mode ends. The edit bar unmounts with it, so focus was
+ * sitting on a button that no longer exists and would otherwise fall to the top of the page.
+ */
+export function focusEditToggle(): void {
+  void nextTick(() => {
+    document.querySelector<HTMLElement>("[data-layout-edit-toggle]")?.focus();
+  });
+}
+
 export function focusBlockControl(id: string): void {
   void nextTick(() => {
     const selectors = [

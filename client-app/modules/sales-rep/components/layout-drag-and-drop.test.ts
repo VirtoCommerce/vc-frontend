@@ -1,5 +1,5 @@
-import { mount } from "@vue/test-utils";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { enableAutoUnmount, mount } from "@vue/test-utils";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, nextTick } from "vue";
 import { focusBlockControl } from "../composables/useLayoutFocus";
 import { useSalesRepLayout } from "../composables/useSalesRepLayout";
@@ -50,6 +50,12 @@ vi.mock("@vueuse/integrations/useSortable", () => ({
 type ZoneType = { options: any; elRef: { value: HTMLElement | null } };
 
 const SCOPE = "dashboard" as const;
+
+// Every harness mounts with `attachTo: document.body`, and jsdom is reset per file rather than per
+// test — so without this each test leaves its DOM behind for the next one. `focusBlockControl` looks
+// its target up with a document-wide `querySelector`, which would then find an earlier test's card and
+// let a focus assertion pass while the wrapper under test was never touched.
+enableAutoUnmount(afterEach);
 
 beforeEach(() => {
   zones.length = 0;
@@ -204,6 +210,51 @@ describe("stat row drag and drop", () => {
 
     expect(api.hiddenIn("statistics").map((entry: { id: string }) => entry.id)).toEqual(["active_projects"]);
     expect(document.activeElement?.getAttribute("data-block-id")).toBe("active_projects");
+    // Identity is not enough — the id alone would match a leaked card from another test.
+    expect(wrapper.element.contains(document.activeElement)).toBe(true);
+  });
+
+  // `layout-block--grabbed` is not gated on edit mode, so a grab left behind keeps the card at 45%
+  // opacity with a drop shadow on the ordinary dashboard, and Space would drop rather than grab it.
+  it("drops a held card's grab when edit mode ends", async () => {
+    const { wrapper, api } = setup();
+    api.startEdit();
+    await nextTick();
+
+    const card = wrapper.find('[data-block-id="orders_placed_mtd"]');
+    card.element.dispatchEvent(new KeyboardEvent("keydown", { key: " " }));
+    await nextTick();
+    expect(card.element.className).toContain("layout-block--grabbed");
+
+    api.cancel();
+    await nextTick();
+
+    expect(wrapper.find('[data-block-id="orders_placed_mtd"]').element.className).not.toContain(
+      "layout-block--grabbed",
+    );
+
+    api.startEdit();
+    await nextTick();
+    expect(wrapper.find('[data-block-id="orders_placed_mtd"]').element.className).not.toContain(
+      "layout-block--grabbed",
+    );
+  });
+
+  it("ignores the park key for a card already in the zone that key leads to", async () => {
+    const { wrapper, api } = setup();
+    api.startEdit();
+    await nextTick();
+
+    const before = api.visibleIn("statistics").map((entry: { id: string }) => entry.id);
+    const card = wrapper.find(`[data-block-id="${before[0]}"]`);
+
+    // ArrowUp is "restore", and this card is already visible.
+    card.element.dispatchEvent(new KeyboardEvent("keydown", { key: " " }));
+    card.element.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowUp" }));
+    await nextTick();
+
+    expect(api.visibleIn("statistics").map((entry: { id: string }) => entry.id)).toEqual(before);
+    expect(api.hiddenIn("statistics")).toEqual([]);
   });
 
   // The region is one array and `hidden` is a flag, so without the drop index the card lands wherever
