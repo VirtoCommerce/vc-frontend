@@ -92,7 +92,7 @@ watch(
 
   $self: &;
 
-  @apply flex-none inline-block align-top size-[--size] leading-none fill-[--color] text-[--color];
+  @apply flex-none inline-block align-top size-[--size] leading-none text-[--color] fill-current;
 
   svg {
     @apply size-full;
@@ -104,8 +104,7 @@ watch(
     container-type: inline-size;
 
     svg :where(path, line, circle, rect, polyline, polygon, ellipse) {
-      fill: none;
-      stroke: var(--color);
+      stroke: currentColor;
       stroke-width: var(--vc-icon-stroke, var(--stroke-bucket, 1.5));
       stroke-linecap: round;
       stroke-linejoin: round;
