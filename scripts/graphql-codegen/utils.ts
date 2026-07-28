@@ -99,10 +99,35 @@ export function describeErrorDetails(error: unknown): string {
   const messages = [...new Set(collectErrorMessages(error).map(stripCodegenHint))];
 
   if (!messages.length) {
-    return String(error ?? "unknown error");
+    return describeValue(error);
   }
 
   return messages.map((message) => truncate(message, MAX_DETAILS_LENGTH)).join("\n  ");
+}
+
+/**
+ * Last resort for a rejection that carries no error message. Stringifying an object would only
+ * report "[object Object]", so serialize it instead — that is the only content it has to offer.
+ */
+function describeValue(value: unknown): string {
+  if (value === null || value === undefined) {
+    return "unknown error";
+  }
+
+  if (value instanceof Error) {
+    return value.name;
+  }
+
+  if (typeof value !== "object") {
+    return String(value);
+  }
+
+  try {
+    return truncate(JSON.stringify(value), MAX_DETAILS_LENGTH);
+  } catch {
+    // Circular or otherwise unserializable — there is nothing more to say about it.
+    return "unserializable error object";
+  }
 }
 
 export function groupByStatus(outcomes: OutcomeType[]): Record<OutcomeStatusType, OutcomeType[]> {

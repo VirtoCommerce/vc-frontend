@@ -175,9 +175,29 @@ describe("describeErrorDetails", () => {
     expect(details.endsWith("…")).toBe(true);
   });
 
-  it("falls back to the stringified value when there is no message", () => {
+  it("falls back to the value itself when there is no message", () => {
     expect(describeErrorDetails(undefined)).toBe("unknown error");
+    expect(describeErrorDetails(null)).toBe("unknown error");
     expect(describeErrorDetails("plain rejection")).toBe("plain rejection");
+    expect(describeErrorDetails(404)).toBe("404");
+  });
+
+  it("serializes an object rejection instead of reporting [object Object]", () => {
+    expect(describeErrorDetails({ code: 500, endpoint: "/graphql/news" })).toBe(
+      '{"code":500,"endpoint":"/graphql/news"}',
+    );
+  });
+
+  it("names an error that carries no message", () => {
+    expect(describeErrorDetails(new Error(""))).toBe("Error");
+    expect(describeErrorDetails(new AggregateError([], ""))).toBe("AggregateError");
+  });
+
+  it("survives an object that cannot be serialized", () => {
+    const circular: Record<string, unknown> = {};
+    circular.self = circular;
+
+    expect(describeErrorDetails(circular)).toBe("unserializable error object");
   });
 });
 
