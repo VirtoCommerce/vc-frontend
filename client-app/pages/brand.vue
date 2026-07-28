@@ -52,7 +52,7 @@ import { useBreakpoints, breakpointsTailwind } from "@vueuse/core";
 import { computed, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useGetBrand } from "@/core/api/graphql/catalog";
-import { useBreadcrumbs, usePageTitle } from "@/core/composables";
+import { useBreadcrumbs, usePageTitle, useSeoKeywords } from "@/core/composables";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { getFilterExpressionForBrand } from "@/core/utilities/search/facets";
 import Category from "@/shared/catalog/components/category.vue";
@@ -113,7 +113,6 @@ const breadcrumbs = useBreadcrumbs(() => [
 
 useSeoMeta({
   title: pageTitle,
-  keywords: brand.value?.name,
   description: brand?.value?.description,
   ogUrl: window.location.toString(),
   ogTitle: pageTitle,
@@ -121,6 +120,8 @@ useSeoMeta({
   ogImage: brand?.value?.logoUrl,
   ogType: "website",
 });
+
+useSeoKeywords(() => brand.value?.name);
 
 watch(
   brand,

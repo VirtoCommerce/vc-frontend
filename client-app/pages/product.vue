@@ -153,7 +153,7 @@ import { computed, defineAsyncComponent, ref, shallowRef, toRef, watch } from "v
 import { useRouter, useRoute } from "vue-router";
 import productTemplateDefault from "@/config/product-default.json";
 import productTemplateB2c from "@/config/product_b2c.json";
-import { useBreadcrumbs, useAnalytics, usePageTitle } from "@/core/composables";
+import { useBreadcrumbs, useAnalytics, usePageTitle, useSeoKeywords } from "@/core/composables";
 import { useHistoricalEvents } from "@/core/composables/useHistoricalEvents";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
@@ -451,7 +451,6 @@ function checkLineItemId() {
 
 useSeoMeta({
   title: () => (canSetMeta.value ? pageTitle.value : undefined),
-  keywords: () => (canSetMeta.value ? seoKeywords.value : undefined),
   description: () => (canSetMeta.value ? seoDescription.value : undefined),
   ogUrl: () => (canSetMeta.value ? seoUrl.value : undefined),
   ogTitle: () => (canSetMeta.value ? pageTitle.value : undefined),
@@ -459,6 +458,8 @@ useSeoMeta({
   ogImage: () => (canSetMeta.value ? seoImageUrl.value : undefined),
   ogType: () => (canSetMeta.value ? "website" : undefined),
 });
+
+useSeoKeywords(() => (canSetMeta.value ? seoKeywords.value : undefined));
 
 const MAX_PICKUP_LOCATIONS_COUNT = 1;
 

@@ -10,7 +10,7 @@ import { useSeoMeta } from "@unhead/vue";
 import { useElementVisibility } from "@vueuse/core";
 import { computed, onMounted, ref, shallowRef } from "vue";
 import { onBeforeRouteUpdate } from "vue-router";
-import { usePageTitle } from "@/core/composables";
+import { usePageTitle, useSeoKeywords } from "@/core/composables";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { globals } from "@/core/globals";
 import { useUser } from "@/shared/account";
@@ -103,9 +103,10 @@ const pageTitle = computed(() => usePageTitle(content.value?.data?.title).title.
 
 useSeoMeta({
   title: () => (canSetMeta.value ? pageTitle.value : undefined),
-  keywords: () => (canSetMeta.value ? (content.value?.data?.keywords as string) : undefined),
   description: () => (canSetMeta.value ? (content.value?.data?.description as string) : undefined),
 });
+
+useSeoKeywords(() => (canSetMeta.value ? (content.value?.data?.keywords as string) : undefined));
 
 const getRegisteredComponents = () => {
   return builderIOComponents;
