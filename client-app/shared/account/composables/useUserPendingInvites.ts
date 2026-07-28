@@ -1,5 +1,5 @@
 import { createGlobalState } from "@vueuse/core";
-import { computed, onMounted, readonly, ref } from "vue";
+import { onMounted, readonly, ref } from "vue";
 import { getPendingOrganizationInvites } from "@/core/api/graphql/account";
 import {
   acceptOrganizationInvite as _acceptOrganizationInvite,
@@ -13,20 +13,30 @@ import type { PendingOrganizationInviteType } from "@/core/api/graphql/account";
 const PAGE_SIZE = 50;
 
 function _useUserPendingInvites() {
-  const items = ref<PendingOrganizationInviteType[]>([]);
+  const pendingInvites = ref<PendingOrganizationInviteType[]>([]);
   const loading = ref(false);
   const initialized = ref(false);
-
-  const pendingInvites = computed(() =>
-    items.value.filter((item) => item.myStatusInOrganization === ContactStatus.Invited),
-  );
 
   async function fetchPendingInvites(): Promise<void> {
     loading.value = true;
 
     try {
-      const result = await getPendingOrganizationInvites({ first: PAGE_SIZE, statuses: [ContactStatus.Invited] });
-      items.value = result.items;
+      const invites: PendingOrganizationInviteType[] = [];
+      let after: string | undefined;
+      let hasNextPage = true;
+
+      while (hasNextPage) {
+        const result = await getPendingOrganizationInvites({
+          first: PAGE_SIZE,
+          after,
+          statuses: [ContactStatus.Invited],
+        });
+        invites.push(...result.items);
+        hasNextPage = result.pageInfo.hasNextPage && !!result.pageInfo.endCursor;
+        after = result.pageInfo.endCursor;
+      }
+
+      pendingInvites.value = invites;
       initialized.value = true;
     } catch (e) {
       Logger.error(`${_useUserPendingInvites.name}.${fetchPendingInvites.name}`, e);
@@ -52,8 +62,8 @@ function _useUserPendingInvites() {
 
     // useUserOrganizations only fetches once on mount, so the switcher needs an explicit refresh
     // to show the newly-accepted organization without a full page reload.
-    const { reset, search } = useUserOrganizations();
-    reset();
+    const { reset: resetOrganizations, search } = useUserOrganizations();
+    resetOrganizations();
     await search();
   }
 
@@ -79,7 +89,7 @@ function _useUserPendingInvites() {
   });
 
   return {
-    pendingInvites,
+    pendingInvites: readonly(pendingInvites),
     loading: readonly(loading),
     initialized: readonly(initialized),
     fetchPendingInvites,

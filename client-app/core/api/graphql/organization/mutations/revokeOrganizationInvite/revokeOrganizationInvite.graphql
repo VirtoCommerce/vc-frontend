@@ -1,4 +1,4 @@
-mutation RevokeOrganizationInvite($command: InputLockUnlockOrganizationContactType!) {
+mutation RevokeOrganizationInvite($command: InputRevokeOrganizationInviteType!) {
   revokeOrganizationInvite(command: $command) {
     id
   }

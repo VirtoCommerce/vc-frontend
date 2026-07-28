@@ -1,6 +1,6 @@
+import { GetOrganizationsDocument } from "@/core/api/graphql/types";
 import { graphqlClient } from "../../../client";
-import queryDocument from "./getOrganizations.graphql";
-import type { Organization } from "@/core/api/graphql/types";
+import type { GetOrganizationsQueryVariables, Organization } from "@/core/api/graphql/types";
 
 export type OrganizationFieldsType = Pick<Organization, "id" | "name">;
 
@@ -13,30 +13,9 @@ interface IOrganizationsType {
   };
 }
 
-interface IGetOrganizationsQuery {
-  me?: {
-    contact?: {
-      organizations?: {
-        items: OrganizationFieldsType[];
-        totalCount: number;
-        pageInfo: {
-          hasNextPage: boolean;
-          endCursor?: string;
-        };
-      };
-    };
-  };
-}
-
-export async function getOrganizations(payload: {
-  after?: string;
-  first?: number;
-  sort?: string;
-  searchPhrase?: string;
-  statuses?: string[];
-}): Promise<IOrganizationsType> {
-  const { data } = await graphqlClient.query<IGetOrganizationsQuery>({
-    query: queryDocument,
+export async function getOrganizations(payload: GetOrganizationsQueryVariables): Promise<IOrganizationsType> {
+  const { data } = await graphqlClient.query({
+    query: GetOrganizationsDocument,
     variables: payload,
   });
 
