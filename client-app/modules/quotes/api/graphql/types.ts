@@ -20,7 +20,6 @@ export type Scalars = {
   DynamicPropertyValue: { input: string | number | boolean | null; output: string | number | boolean | null; }
   Long: { input: number; output: number; }
   PropertyValue: { input: string | number | boolean | null; output: string | number | boolean | null; }
-  StoreAssetUrl: { input: any; output: any; }
 };
 
 export type AddQuoteAttachmentsCommandType = {
@@ -62,7 +61,7 @@ export type Asset = {
   /** The type ID of the asset. */
   typeId: Scalars['String']['output'];
   /** The URL of the asset. */
-  url: Scalars['StoreAssetUrl']['output'];
+  url: Scalars['String']['output'];
 };
 
 export type AvailabilityData = {
@@ -85,7 +84,7 @@ export type AvailabilityData = {
 };
 
 export type BrandType = {
-  bannerUrl?: Maybe<Scalars['StoreAssetUrl']['output']>;
+  bannerUrl?: Maybe<Scalars['String']['output']>;
   /** Brand property name. */
   brandPropertyName?: Maybe<Scalars['String']['output']>;
   /** Unlocalized brand name. */
@@ -95,7 +94,7 @@ export type BrandType = {
   featured?: Maybe<Scalars['Boolean']['output']>;
   /** Brand ID. */
   id: Scalars['String']['output'];
-  logoUrl?: Maybe<Scalars['StoreAssetUrl']['output']>;
+  logoUrl?: Maybe<Scalars['String']['output']>;
   /** Brand name. */
   name?: Maybe<Scalars['String']['output']>;
   permalink: Scalars['String']['output'];
@@ -159,7 +158,7 @@ export type Category = {
   /** Images */
   images: Array<ImageType>;
   /** The category image. */
-  imgSrc?: Maybe<Scalars['StoreAssetUrl']['output']>;
+  imgSrc?: Maybe<Scalars['String']['output']>;
   /** Level in hierarchy */
   level: Scalars['Int']['output'];
   /** The name of the category. */
@@ -389,7 +388,7 @@ export type ImageType = {
   /** Sort order */
   sortOrder: Scalars['Int']['output'];
   /** The URL of the image */
-  url: Scalars['StoreAssetUrl']['output'];
+  url: Scalars['String']['output'];
 };
 
 export type InputDynamicPropertyValueType = {
@@ -649,7 +648,7 @@ export type Product = {
   /** Product images */
   images: Array<ImageType>;
   /** The product main image URL. */
-  imgSrc?: Maybe<Scalars['StoreAssetUrl']['output']>;
+  imgSrc?: Maybe<Scalars['String']['output']>;
   /** Product added at least in one wishlist */
   inWishlist: Scalars['Boolean']['output'];
   /** Product is configurable */
@@ -1151,7 +1150,6 @@ export type UpdateQuoteDynamicPropertiesCommandType = {
 export type VariationType = {
   /** Assets */
   assets: Array<Asset>;
-  associations?: Maybe<ProductAssociationConnection>;
   /** Availability data */
   availabilityData: AvailabilityData;
   /** SKU of variation. */
@@ -1183,14 +1181,6 @@ export type VariationType = {
   slug?: Maybe<Scalars['String']['output']>;
   /** Product vendor */
   vendor?: Maybe<CommonVendor>;
-};
-
-
-export type VariationTypeAssociationsArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  group?: InputMaybe<Scalars['String']['input']>;
-  query?: InputMaybe<Scalars['String']['input']>;
 };
 
 /** A connection from an object to a list of objects of type `Video`. */

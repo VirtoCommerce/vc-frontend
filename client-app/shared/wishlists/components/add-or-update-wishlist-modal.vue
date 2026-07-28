@@ -15,7 +15,7 @@
         test-id-input="wishlist-name-input"
         :label="$t('shared.wishlists.add_or_update_wishlist_modal.list_name_label')"
         :placeholder="$t('shared.wishlists.add_or_update_wishlist_modal.list_name_placeholder')"
-        :disabled="loading"
+        :disabled="saving"
         :message="errors.name"
         :error="!!errors.name && meta.dirty"
         required
@@ -25,7 +25,7 @@
         v-model="description"
         data-test-id="wishlist-description-input"
         :label="$t('common.labels.description')"
-        :disabled="loading"
+        :disabled="saving"
         :message="errors.description"
         :error="!!errors.description && meta.dirty"
         rows="4"
@@ -39,7 +39,7 @@
           test-id-dropdown="wishlist-sharing-scope-select"
           :label="$t('shared.wishlists.add_or_update_wishlist_modal.sharing_scope_label')"
           :placeholder="$t('shared.wishlists.add_or_update_wishlist_modal.sharing_scope_placeholder')"
-          :disabled="loading"
+          :disabled="saving"
           :items="listSharingScopes"
           text-field="label"
           value-field="id"
@@ -66,34 +66,34 @@
 
         <template v-if="isCustomerScope">
           <VcSelect
-            v-model="selectedOrganizationIds"
-            test-id-dropdown="wishlist-share-customers-select"
+            v-model="selectedOrganizationId"
+            test-id-dropdown="wishlist-share-customer-select"
             :label="$t('shared.wishlists.add_or_update_wishlist_modal.share_customers_label')"
             :placeholder="$t('shared.wishlists.add_or_update_wishlist_modal.share_customers_placeholder')"
-            :disabled="shareLoading"
+            :disabled="saving"
             :items="customerOptions"
             text-field="organizationName"
             value-field="organizationId"
-            multiple
             autocomplete
+            clearable
           />
 
           <VcTextarea
             v-model="shareMessage"
             :label="$t('shared.wishlists.add_or_update_wishlist_modal.share_message_label')"
             :placeholder="$t('shared.wishlists.add_or_update_wishlist_modal.share_message_placeholder')"
-            :disabled="shareLoading"
+            :disabled="saving"
             rows="3"
             counter
             :max-length="SHARE_MESSAGE_MAX_LENGTH"
           />
 
           <div class="flex flex-wrap gap-x-6 gap-y-2">
-            <VcCheckbox v-model="shareSendEmail" :disabled="shareLoading">
+            <VcCheckbox v-model="shareSendEmail" :disabled="saving">
               {{ $t("shared.wishlists.add_or_update_wishlist_modal.share_send_email") }}
             </VcCheckbox>
 
-            <VcCheckbox v-model="shareSendPush" :disabled="shareLoading">
+            <VcCheckbox v-model="shareSendPush" :disabled="saving">
               {{ $t("shared.wishlists.add_or_update_wishlist_modal.share_send_push") }}
             </VcCheckbox>
           </div>
@@ -108,8 +108,8 @@
 
       <VcButton
         data-test-id="wishlist-settings-save-button"
-        :loading="loading || shareLoading"
-        :disabled="!canSave"
+        :loading="saving"
+        :disabled="!canSave || saving"
         class="ms-auto"
         @click="save(close)"
       >
@@ -131,8 +131,8 @@ import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { object, string } from "yup";
 import { WishlistScopeType } from "@/core/api/graphql/types";
+import { useSalesRepCommunication } from "@/modules/sales-rep/composables/useSalesRepCommunication";
 import { useSalesRepCustomerOptions } from "@/modules/sales-rep/composables/useSalesRepCustomerOptions";
-import { useSalesRepShareList } from "@/modules/sales-rep/composables/useSalesRepShareList";
 import { isSalesRepsEnabled } from "@/modules/sales-rep/composables/useSalesRepsConfig";
 import { SALES_REP_ACCESS_PERMISSION } from "@/modules/sales-rep/constants";
 import { useUser } from "@/shared/account/composables";
@@ -154,24 +154,29 @@ const notifications = useNotifications();
 const listName = computed<string | undefined>(() => props.list?.name);
 const listDescription = computed<string | undefined>(() => props.list?.description);
 const listSharingScope = computed<string | undefined>(() => props.list?.sharingSetting?.scope);
+const listSharedWithId = computed<string | undefined>(() => props.list?.sharingSetting?.sharedWithId ?? undefined);
 
-const { loading, createWishlist, updateWishlist } = useWishlists();
-const { shareList, loading: shareLoading } = useSalesRepShareList();
+const { createWishlist, updateWishlist } = useWishlists();
+const { sendCommunication } = useSalesRepCommunication();
+
+// Modal-owned busy flag for the save action. Driven with try/finally so the Save button can never get stuck
+// showing the loader (useWishlists' shared `loading` can leak true on error), and it guards against double-submit.
+const saving = ref(false);
 const { isCorporateMember, checkPermissions } = useUser();
 
 const isEditMode = computed<boolean>(() => !!props.list);
 
-// "Customer" scope (VCST-5332): a Sales Rep publishes an EXISTING list to specific customer organizations,
-// gated on the Sales Rep module being installed/enabled and the caller holding the rep permission.
-const canShareWithCustomers = computed(
-  () => isEditMode.value && isSalesRepsEnabled() && checkPermissions(SALES_REP_ACCESS_PERMISSION),
-);
+// "Customer" scope (VCST-5332): a Sales Rep publishes a list to specific customer organizations. Available in
+// both create and edit mode (on create the list is saved first to obtain an id, then shared). Gated on the
+// Sales Rep module being installed/enabled and the caller holding the rep permission.
+const canShareWithCustomers = computed(() => isSalesRepsEnabled() && checkPermissions(SALES_REP_ACCESS_PERMISSION));
 // Only fetched when the caller can share (avoids an authorized request for everyone else).
 const { options: customerOptions } = useSalesRepCustomerOptions(canShareWithCustomers);
 
 // Message cap leaves room for the shared-list link the backend appends (1000-char combined limit).
 const SHARE_MESSAGE_MAX_LENGTH = 900;
-const selectedOrganizationIds = ref<string[]>([]);
+// Pre-fill from the list's current target so re-opening a Customer-shared list shows the selected customer.
+const selectedOrganizationId = ref<string | undefined>(listSharedWithId.value);
 const shareMessage = ref("");
 const shareSendEmail = ref(true);
 const shareSendPush = ref(true);
@@ -238,67 +243,66 @@ const canSave = computed<boolean>(() => {
     return false;
   }
 
-  return isCustomerScope.value ? selectedOrganizationIds.value.length > 0 : meta.value.dirty;
+  return isCustomerScope.value ? !!selectedOrganizationId.value : meta.value.dirty;
 });
 
 async function save(closeHandle: () => void): Promise<void> {
-  if (!meta.value.valid) {
+  if (!meta.value.valid || saving.value) {
     return;
   }
 
-  if (isCustomerScope.value) {
-    if (await shareWithCustomers()) {
-      closeHandle();
+  saving.value = true;
+  try {
+    // Persist the list AND its sharing in a single mutation. For the "Customer" scope the chosen organization is
+    // passed as sharedWithId; the backend writes the scoped sharing setting.
+    const sharedWithId = isCustomerScope.value ? selectedOrganizationId.value : undefined;
+    const payload = {
+      listName: name.value?.trim(),
+      description: description.value?.trim(),
+      scope: sharingScope.value,
+      sharingKey: sharingKey.value,
+      sharedWithId,
+    };
+
+    if (isEditMode.value) {
+      await updateWishlist({ listId: props.list!.id, ...payload });
+    } else {
+      await createWishlist(payload);
     }
-    return;
-  }
 
-  if (isEditMode.value) {
-    await updateWishlist({
-      listId: props.list!.id,
-      listName: name.value?.trim(),
-      description: description.value?.trim(),
-      scope: sharingScope.value,
-      sharingKey: sharingKey.value,
-    });
-  } else {
-    await createWishlist({
-      listName: name.value?.trim(),
-      description: description.value?.trim(),
-      scope: sharingScope.value,
-      sharingKey: sharingKey.value,
-    });
-  }
+    // For a customer share, optionally notify the customer's members (reuses the VCST-5310 communication channel)
+    // with the Rep's message + the shared-list link.
+    if (isCustomerScope.value && sharedWithId) {
+      const notified = (!shareSendEmail.value && !shareSendPush.value) || (await notifyCustomer(sharedWithId));
+      notifications[notified ? "success" : "warning"]({
+        text: t(`shared.wishlists.add_or_update_wishlist_modal.${notified ? "share_success" : "share_partial"}`),
+        duration: 4000,
+        single: true,
+      });
+    }
 
-  closeHandle();
-}
-
-async function shareWithCustomers(): Promise<boolean> {
-  const result = await shareList({
-    listId: props.list!.id,
-    organizationIds: selectedOrganizationIds.value,
-    sendEmail: shareSendEmail.value,
-    sendPush: shareSendPush.value,
-    message: shareMessage.value.trim() || undefined,
-  });
-
-  if (!result.succeeded) {
+    closeHandle();
+  } catch {
+    // The underlying mutation already logs; surface a toast and let the user retry (the button resets below).
     notifications.error({
-      text: t("shared.wishlists.add_or_update_wishlist_modal.share_error"),
+      text: t("shared.wishlists.add_or_update_wishlist_modal.save_error"),
       single: true,
     });
-    return false;
+  } finally {
+    saving.value = false;
   }
+}
 
-  notifications[result.warnings.length ? "warning" : "success"]({
-    text: t(
-      `shared.wishlists.add_or_update_wishlist_modal.${result.warnings.length ? "share_partial" : "share_success"}`,
-    ),
-    duration: 4000,
-    single: true,
+async function notifyCustomer(organizationId: string): Promise<boolean> {
+  const message = [shareMessage.value.trim(), sharingLink.value].filter(Boolean).join("\n\n");
+  const result = await sendCommunication({
+    organizationId,
+    sendEmail: shareSendEmail.value,
+    sendPush: shareSendPush.value,
+    message,
   });
 
-  return true;
+  return result.succeeded;
 }
 
 async function copySharingLink() {
