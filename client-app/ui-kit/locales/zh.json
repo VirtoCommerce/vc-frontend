@@ -48,7 +48,8 @@
     },
     "date_range_input": {
       "aria_label": "日期范围",
-      "clear": "清除日期范围"
+      "clear": "清除日期范围",
+      "invalid_range": "结束日期必须在开始日期或之后"
     },
     "date_selector": {
       "min_date_error": "日期必须在{min}或之后",

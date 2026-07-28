@@ -48,7 +48,8 @@
     },
     "date_range_input": {
       "aria_label": "Datumintervall",
-      "clear": "Rensa datumintervall"
+      "clear": "Rensa datumintervall",
+      "invalid_range": "Slutdatumet måste vara på eller efter startdatumet"
     },
     "date_selector": {
       "min_date_error": "Datum måste vara på eller efter {min}",

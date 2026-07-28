@@ -48,7 +48,8 @@
     },
     "date_range_input": {
       "aria_label": "日付範囲",
-      "clear": "日付範囲をクリア"
+      "clear": "日付範囲をクリア",
+      "invalid_range": "終了日は開始日以降である必要があります"
     },
     "date_selector": {
       "min_date_error": "日付は{min}以降である必要があります",

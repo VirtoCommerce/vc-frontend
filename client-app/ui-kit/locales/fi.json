@@ -48,7 +48,8 @@
     },
     "date_range_input": {
       "aria_label": "Päivämääräväli",
-      "clear": "Tyhjennä päivämääräväli"
+      "clear": "Tyhjennä päivämääräväli",
+      "invalid_range": "Päättymispäivän on oltava sama tai myöhäisempi kuin alkamispäivä"
     },
     "date_selector": {
       "min_date_error": "Päivämäärän on oltava vähintään {min}",

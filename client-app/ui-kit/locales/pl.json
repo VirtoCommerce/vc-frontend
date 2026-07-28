@@ -48,7 +48,8 @@
     },
     "date_range_input": {
       "aria_label": "Zakres dat",
-      "clear": "Wyczyść zakres dat"
+      "clear": "Wyczyść zakres dat",
+      "invalid_range": "Data końcowa musi być nie wcześniejsza niż data początkowa"
     },
     "date_selector": {
       "min_date_error": "Data musi być nie wcześniejsza niż {min}",

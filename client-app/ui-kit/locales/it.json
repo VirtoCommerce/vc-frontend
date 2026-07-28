@@ -48,7 +48,8 @@
     },
     "date_range_input": {
       "aria_label": "Intervallo di date",
-      "clear": "Cancella intervallo di date"
+      "clear": "Cancella intervallo di date",
+      "invalid_range": "La data di fine deve essere successiva o uguale alla data di inizio"
     },
     "date_selector": {
       "min_date_error": "La data deve essere successiva o uguale a {min}",

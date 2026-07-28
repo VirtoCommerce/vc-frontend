@@ -48,7 +48,8 @@
     },
     "date_range_input": {
       "aria_label": "Date range",
-      "clear": "Clear date range"
+      "clear": "Clear date range",
+      "invalid_range": "End date must be on or after start date"
     },
     "date_selector": {
       "min_date_error": "Date must be on or after {min}",

@@ -48,7 +48,8 @@
     },
     "date_range_input": {
       "aria_label": "Rango de fechas",
-      "clear": "Limpiar rango de fechas"
+      "clear": "Limpiar rango de fechas",
+      "invalid_range": "La fecha de fin debe ser igual o posterior a la fecha de inicio"
     },
     "date_selector": {
       "min_date_error": "La fecha debe ser igual o posterior al {min}",
