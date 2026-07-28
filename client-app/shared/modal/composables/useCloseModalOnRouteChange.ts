@@ -9,8 +9,5 @@ import { useRoute } from "vue-router";
 export function useCloseModalOnRouteChange(close: () => void) {
   const route = useRoute();
 
-  watch(
-    () => route.path,
-    () => close(),
-  );
+  watch(() => route.path, close);
 }

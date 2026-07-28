@@ -10,79 +10,92 @@
       </p>
     </div>
 
-    <div class="missions__banners">
-      <!-- Balance banner -->
-      <div class="missions-banner missions-banner--light">
-        <div class="missions-banner__icon missions-banner__icon--light">
-          <VcIcon name="badge-check" variant="solid" class="text-primary" :size="28" />
+    <VcEmptyView v-if="loadError" variant="error" :text="$t('pages.account.missions.load_error')">
+      <template #button>
+        <VcButton @click="loadData">{{ $t("pages.account.missions.retry_button") }}</VcButton>
+      </template>
+    </VcEmptyView>
+
+    <template v-else>
+      <div class="missions__banners">
+        <!-- Balance banner -->
+        <div class="missions-banner missions-banner--light">
+          <div class="missions-banner__icon missions-banner__icon--light">
+            <VcIcon name="badge-check" variant="solid" class="text-primary" :size="28" />
+          </div>
+
+          <div class="missions-banner__body">
+            <span class="missions-banner__label">
+              {{ $t("pages.account.missions.balance_banner.label") }}
+            </span>
+
+            <div class="missions-banner__value">
+              <span v-if="balanceLoading" class="missions-banner__amount-skeleton"></span>
+
+              <template v-else>
+                <span class="missions-banner__amount">{{ $n(currentBalance ?? 0, "decimal") }}</span>
+
+                <span class="missions-banner__unit">{{ $t("pages.account.missions.balance_banner.points") }}</span>
+              </template>
+            </div>
+          </div>
+
+          <router-link :to="{ name: 'PointsHistory' }" class="missions-banner__link missions-banner__link--default">
+            {{ $t("pages.account.missions.balance_banner.points_history") }}
+          </router-link>
         </div>
 
-        <div class="missions-banner__body">
-          <span class="missions-banner__label">
-            {{ $t("pages.account.missions.balance_banner.label") }}
-          </span>
+        <!-- Redeem banner -->
+        <div class="missions-banner missions-banner--dark">
+          <div class="missions-banner__icon missions-banner__icon--dark">
+            <VcIcon name="gift" class="text-primary" variant="solid" :size="28" />
+          </div>
 
-          <div class="missions-banner__value">
-            <span v-if="balanceLoading" class="missions-banner__amount-skeleton"></span>
+          <div class="missions-banner__body">
+            <span class="missions-banner__title">
+              {{ $t("pages.account.missions.redeem_banner.title") }}
+            </span>
 
-            <template v-else>
-              <span class="missions-banner__amount">{{ $n(currentBalance ?? 0, "decimal") }}</span>
-
-              <span class="missions-banner__unit">{{ $t("pages.account.missions.balance_banner.points") }}</span>
-            </template>
+            <p class="missions-banner__subtitle">
+              {{ $t("pages.account.missions.redeem_banner.description") }}
+            </p>
           </div>
         </div>
-
-        <router-link :to="{ name: 'PointsHistory' }" class="missions-banner__link missions-banner__link--default">
-          {{ $t("pages.account.missions.balance_banner.points_history") }}
-        </router-link>
       </div>
 
-      <!-- Redeem banner -->
-      <div class="missions-banner missions-banner--dark">
-        <div class="missions-banner__icon missions-banner__icon--dark">
-          <VcIcon name="gift" class="text-primary" variant="solid" :size="28" />
+      <VcEmptyView
+        v-if="!missionsLoading && !missions.length"
+        icon="outline-lists"
+        :text="$t('pages.account.missions.empty_list')"
+      />
+
+      <template v-else>
+        <div class="missions__cards">
+          <MissionCard v-for="mission in missions" :key="mission.missionId!" :mission="mission" />
         </div>
 
-        <div class="missions-banner__body">
-          <span class="missions-banner__title">
-            {{ $t("pages.account.missions.redeem_banner.title") }}
-          </span>
-
-          <p class="missions-banner__subtitle">
-            {{ $t("pages.account.missions.redeem_banner.description") }}
-          </p>
-        </div>
-
-        <router-link v-if="false" :to="{ name: 'Catalog' }" class="missions-banner__link missions-banner__link--accent">
-          {{ $t("pages.account.missions.redeem_banner.catalog") }}
-          <VcIcon name="chevron-right" class="text-primary" size="xs" />
-        </router-link>
-      </div>
-    </div>
-
-    <div class="missions__cards">
-      <MissionCard v-for="mission in missions" :key="mission.missionId!" :mission="mission" />
-    </div>
-
-    <VcPagination
-      v-if="pagesCount > 1"
-      :page="page"
-      :pages="pagesCount"
-      class="missions__pagination"
-      @update:page="changePage"
-    />
+        <VcPagination
+          v-if="pagesCount > 1"
+          :page="page"
+          :pages="pagesCount"
+          class="missions__pagination"
+          @update:page="changePage"
+        />
+      </template>
+    </template>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
 import MissionCard from "../components/mission-card.vue";
 import { useLoyaltyBalance } from "../composables/useLoyaltyBalance";
 import { useMissions } from "../composables/useMissions";
 
 const { fetchLoyaltyBalance, loading: balanceLoading, currentBalance } = useLoyaltyBalance();
-const { fetchMissions, missions, page, pagesCount } = useMissions();
+const { fetchMissions, missions, page, pagesCount, loading: missionsLoading } = useMissions();
+
+const loadError = ref(false);
 
 async function changePage(newPage: number) {
   page.value = newPage;
@@ -90,9 +103,17 @@ async function changePage(newPage: number) {
   await fetchMissions();
 }
 
-onMounted(async () => {
-  await Promise.all([fetchLoyaltyBalance(), fetchMissions()]);
-});
+async function loadData() {
+  loadError.value = false;
+
+  try {
+    await Promise.all([fetchLoyaltyBalance(), fetchMissions()]);
+  } catch {
+    loadError.value = true;
+  }
+}
+
+onMounted(loadData);
 </script>
 
 <style lang="scss">
@@ -115,7 +136,7 @@ onMounted(async () => {
 }
 
 .missions-banner {
-  @apply flex items-center gap-4 rounded-lg border p-5 shadow-sm;
+  @apply flex items-center gap-4 rounded-[--vc-radius] border p-5 shadow-sm;
 
   &--light {
     @apply border-neutral-200 bg-additional-50;

@@ -2,8 +2,11 @@ import { computed, readonly, ref, shallowRef } from "vue";
 import { Logger } from "@/core/utilities";
 import { getLoyaltyMissionProgress } from "../api/graphql/queries";
 import { DEFAULT_MISSIONS_PER_PAGE } from "../constants";
+import { MISSION_STATUS } from "./useMissionCard";
 import type { MissionDataType } from "./useMissionCard";
 import type { Ref } from "vue";
+
+const VISIBLE_MISSION_STATUSES = [MISSION_STATUS.InProgress, MISSION_STATUS.Completed];
 
 export function useMissions() {
   const itemsPerPage = ref(DEFAULT_MISSIONS_PER_PAGE);
@@ -19,6 +22,7 @@ export function useMissions() {
       const response = await getLoyaltyMissionProgress({
         first: itemsPerPage.value,
         after: String((page.value - 1) * itemsPerPage.value),
+        statuses: VISIBLE_MISSION_STATUSES,
       });
 
       missions.value = response?.items ?? [];

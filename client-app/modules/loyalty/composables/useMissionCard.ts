@@ -52,7 +52,7 @@ type MissionPresenterType = (mission: MissionDataType) => {
 function presentPerSkuAll(mission: MissionDataType): ReturnType<MissionPresenterType> {
   const items = mission.items ?? [];
   const target = items.length;
-  const current = items.filter((item) => item.currentQuantity === item.targetQuantity).length;
+  const current = items.filter((item) => item.currentQuantity >= item.targetQuantity).length;
 
   return {
     typeLabelKey: `${CARD_I18N}.type_products`,

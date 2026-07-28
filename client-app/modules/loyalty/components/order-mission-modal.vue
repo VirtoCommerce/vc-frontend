@@ -1,6 +1,13 @@
 <template>
-  <VcModal ref="modalRef" :title="view.title" is-mobile-fullscreen dividers test-id="mission-details-modal">
-    <div class="order-mission-modal">
+  <VcModal
+    ref="modalRef"
+    class="order-mission-modal"
+    :title="view.title"
+    is-mobile-fullscreen
+    dividers
+    test-id="order-mission-modal"
+  >
+    <div class="order-mission-modal__content">
       <!-- Meta -->
       <div class="order-mission-modal__meta">
         <VcChip color="primary" variant="soft" size="sm" rounded>
@@ -45,10 +52,6 @@
       <VcButton color="secondary" variant="outline" @click="close">
         {{ $t("pages.account.missions.order_modal.close") }}
       </VcButton>
-
-      <VcButton v-if="false" :to="{ name: 'Catalog' }" append-icon="chevron-right">
-        {{ $t("pages.account.missions.order_modal.redeem_products") }}
-      </VcButton>
     </template>
   </VcModal>
 </template>
@@ -60,9 +63,11 @@ import { useCloseModalOnRouteChange } from "@/shared/modal";
 import { MISSION_TYPE, useMissionCard } from "../composables";
 import type { MissionDataType, MissionType } from "../composables";
 
-const props = defineProps<{
+interface IProps {
   mission: MissionDataType;
-}>();
+}
+
+const props = defineProps<IProps>();
 
 const { t } = useI18n();
 const { view } = useMissionCard(() => props.mission);
@@ -83,7 +88,9 @@ const requirementLabel = computed(() => {
 
 <style lang="scss">
 .order-mission-modal {
-  @apply flex flex-col gap-5 pb-4;
+  &__content {
+    @apply flex flex-col gap-5 pb-4;
+  }
 
   &__meta {
     @apply flex flex-wrap items-center gap-3;
@@ -98,7 +105,7 @@ const requirementLabel = computed(() => {
   }
 
   &__target {
-    @apply flex flex-col gap-3 rounded-lg bg-neutral-50 p-4 border-neutral-200 border;
+    @apply flex flex-col gap-3 rounded-[--vc-radius] bg-neutral-50 p-4 border-neutral-200 border;
   }
 
   &__target-label {
@@ -130,7 +137,7 @@ const requirementLabel = computed(() => {
   }
 
   &__percent {
-    @apply min-w-10 text-right text-sm font-black text-neutral-700;
+    @apply min-w-10 text-end text-sm font-black text-neutral-700;
   }
 }
 </style>

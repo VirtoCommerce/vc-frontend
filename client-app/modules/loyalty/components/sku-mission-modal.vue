@@ -1,13 +1,14 @@
 <template>
   <VcModal
     ref="modalRef"
+    class="sku-mission-modal"
     :title="view.title"
     max-width="42rem"
     is-mobile-fullscreen
     dividers
     test-id="sku-mission-modal"
   >
-    <div class="sku-mission-modal">
+    <div class="sku-mission-modal__content">
       <!-- Meta -->
       <div class="sku-mission-modal__meta">
         <VcChip color="primary" variant="soft" size="sm" rounded>
@@ -78,6 +79,7 @@
               allow-zero
               size="sm"
               @update:model-value="setQuantity(row.id, $event)"
+              @update:validation="setValidation(row.id, $event)"
             >
               <div class="sku-mission-modal__badges">
                 <InStock
@@ -144,20 +146,26 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, useTemplateRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBrowserTarget } from "@/core/composables";
 import { getProductRoute } from "@/core/utilities";
 import { useShortCart } from "@/shared/cart/composables";
 import { CountInCart, InStock } from "@/shared/catalog/components";
+import { useCloseModalOnRouteChange } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import { MISSION_STATUS, MISSION_TYPE, useMissionCard } from "../composables";
 import type { MissionDataType } from "../composables";
 import QuantityControl from "@/shared/common/components/quantity-control.vue";
 
-const props = defineProps<{
+interface IProps {
   mission: MissionDataType;
-}>();
+}
+
+const props = defineProps<IProps>();
+
+const modalRef = useTemplateRef<{ close: () => void }>("modalRef");
+useCloseModalOnRouteChange(() => modalRef.value?.close());
 
 const { view, formatCurrency } = useMissionCard(() => props.mission);
 const { cart, updateItemCartQuantity, changing: addToCartLoading } = useShortCart();
@@ -167,6 +175,7 @@ const { t } = useI18n();
 
 // Locally edited quantities, keyed by product id — only set once the user touches a stepper.
 const quantities = ref<Record<string, number>>({});
+const rowValidity = ref<Record<string, boolean>>({});
 
 const items = computed(() => (props.mission.items ?? []).filter((item) => item != null));
 
@@ -239,9 +248,15 @@ function setQuantity(id: string, value: number | undefined): void {
   quantities.value = { ...quantities.value, [id]: value ?? 0 };
 }
 
+function setValidation(id: string, validation: { isValid: true } | { isValid: false; errorMessage: string }): void {
+  rowValidity.value = { ...rowValidity.value, [id]: validation.isValid };
+}
+
 // Only rows whose quantity actually differs from what's already in the cart need to be submitted.
 const changedRows = computed(() => rows.value.filter((row) => row.quantity !== row.inCart));
-const hasItemsToAdd = computed(() => changedRows.value.length > 0);
+const hasItemsToAdd = computed(
+  () => changedRows.value.length > 0 && changedRows.value.every((row) => rowValidity.value[row.id] !== false),
+);
 
 async function addProductsToCart(close: () => void) {
   if (!changedRows.value.length) {
@@ -262,7 +277,9 @@ async function addProductsToCart(close: () => void) {
 
 <style lang="scss">
 .sku-mission-modal {
-  @apply flex flex-col gap-5 pb-4;
+  &__content {
+    @apply flex flex-col gap-5 pb-4;
+  }
 
   &__meta {
     @apply flex flex-wrap items-center gap-3;
@@ -285,7 +302,7 @@ async function addProductsToCart(close: () => void) {
   }
 
   &__image {
-    @apply size-18 shrink-0 rounded-md border border-neutral-200 bg-additional-50 object-contain;
+    @apply size-18 shrink-0 border border-neutral-200 bg-additional-50 object-contain;
   }
 
   &__info {
@@ -318,7 +335,7 @@ async function addProductsToCart(close: () => void) {
   }
 
   &__summary {
-    @apply flex flex-col gap-1.5 rounded-lg bg-neutral-50 p-4 border-neutral-200 border;
+    @apply flex flex-col gap-1.5 rounded-[--vc-radius] bg-neutral-50 p-4 border-neutral-200 border;
   }
 
   &__summary-row {

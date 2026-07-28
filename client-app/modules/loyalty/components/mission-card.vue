@@ -64,9 +64,11 @@ import SkuMissionModal from "./sku-mission-modal.vue";
 import type { MissionDataType, MissionType } from "../composables";
 import type { Component } from "vue";
 
-const props = defineProps<{
+interface IProps {
   mission: MissionDataType;
-}>();
+}
+
+const props = defineProps<IProps>();
 
 const { view } = useMissionCard(() => props.mission);
 const { openModal } = useModal();
