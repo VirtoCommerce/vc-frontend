@@ -26,6 +26,7 @@
       "table": {
         "customer": "Asiakas",
         "last_order": "Viimeisin tilaukseni",
+        "actions": "Toiminnot",
         "search_placeholder": "Hae nimellä",
         "search_aria": "Hae asiakkaita",
         "empty": "Asiakkaita ei löytynyt",
@@ -67,6 +68,37 @@
         "phone": "Puhelin",
         "account_type": "Tilin tyyppi",
         "ship_to": "Toimitusosoite"
+      }
+    },
+    "communication": {
+      "action": "Lähetä sähköposti",
+      "title": "Lähetä viesti",
+      "subtitle": "Tavoittaa kaikki organisaation {organization} jäsenet",
+      "title_label": "Otsikko",
+      "message_label": "Viesti",
+      "channels_label": "Lähetystapa",
+      "email_label": "Sähköposti",
+      "push_label": "Push-ilmoitus",
+      "send_button": "Lähetä",
+      "cancel_button": "Peruuta",
+      "success_text": "Viestisi on lähetetty.",
+      "error_text": "Viestiä ei voitu lähettää. Yritä uudelleen.",
+      "partial_success_text": "Viestisi lähetettiin, mutta ei kaikkien kanavien kautta:",
+      "warnings": {
+        "generic": "Viestiä ei voitu lähettää yhden valitun kanavan kautta.",
+        "NoRecipients": "Tällä organisaatiolla ei ole ilmoitettavia yhteyshenkilöitä.",
+        "EmailUnavailable": "Sähköposti ei ole tällä hetkellä käytettävissä. Ota yhteyttä järjestelmänvalvojaan.",
+        "EmailStoreAccessDenied": "Sähköpostia ei voitu lähettää valitulle myymälälle.",
+        "EmailNoRecipients": "Yhdelläkään vastaanottajalla ei ole sähköpostiosoitetta.",
+        "EmailSendFailed": "Sähköpostia ei voitu lähettää. Yritä myöhemmin uudelleen.",
+        "PushSendFailed": "Push-ilmoitusta ei voitu lähettää. Yritä myöhemmin uudelleen."
+      },
+      "quick_actions": {
+        "title": "Pikatoiminnot",
+        "order_on_behalf": "Tilaa asiakkaan puolesta",
+        "send_email": "Lähetä sähköposti",
+        "create_quote": "Luo tarjous",
+        "schedule_call": "Ajoita puhelu"
       }
     },
     "orders": {

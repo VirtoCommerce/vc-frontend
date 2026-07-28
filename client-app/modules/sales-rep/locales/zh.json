@@ -26,6 +26,7 @@
       "table": {
         "customer": "客户",
         "last_order": "我的最近订单",
+        "actions": "操作",
         "search_placeholder": "按名称搜索",
         "search_aria": "搜索客户",
         "empty": "未找到客户",
@@ -67,6 +68,37 @@
         "phone": "电话",
         "account_type": "账户类型",
         "ship_to": "收货地址"
+      }
+    },
+    "communication": {
+      "action": "发送电子邮件",
+      "title": "发送消息",
+      "subtitle": "将送达 {organization} 的所有成员",
+      "title_label": "标题",
+      "message_label": "消息",
+      "channels_label": "发送方式",
+      "email_label": "电子邮件",
+      "push_label": "推送通知",
+      "send_button": "发送",
+      "cancel_button": "取消",
+      "success_text": "您的消息已发送。",
+      "error_text": "消息发送失败，请重试。",
+      "partial_success_text": "您的消息已发送，但并非通过所有渠道：",
+      "warnings": {
+        "generic": "无法通过所选渠道之一发送消息。",
+        "NoRecipients": "该组织没有可通知的联系人。",
+        "EmailUnavailable": "电子邮件当前不可用。请联系您的管理员。",
+        "EmailStoreAccessDenied": "无法为所选商店发送电子邮件。",
+        "EmailNoRecipients": "没有收件人拥有电子邮件地址。",
+        "EmailSendFailed": "无法发送电子邮件。请稍后重试。",
+        "PushSendFailed": "无法发送推送通知。请稍后重试。"
+      },
+      "quick_actions": {
+        "title": "快捷操作",
+        "order_on_behalf": "代客下单",
+        "send_email": "发送电子邮件",
+        "create_quote": "创建报价",
+        "schedule_call": "安排通话"
       }
     },
     "orders": {
