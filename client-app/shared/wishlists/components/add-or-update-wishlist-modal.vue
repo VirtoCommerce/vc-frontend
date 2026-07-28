@@ -64,7 +64,7 @@
           </template>
         </VcInput>
 
-        <template v-if="isCustomerScope">
+        <template v-if="isCustomerSharing">
           <VcSelect
             v-model="selectedOrganizationId"
             test-id-dropdown="wishlist-share-customer-select"
@@ -78,25 +78,27 @@
             clearable
           />
 
-          <VcTextarea
-            v-model="shareMessage"
-            :label="$t('shared.wishlists.add_or_update_wishlist_modal.share_message_label')"
-            :placeholder="$t('shared.wishlists.add_or_update_wishlist_modal.share_message_placeholder')"
-            :disabled="saving"
-            rows="3"
-            counter
-            :max-length="SHARE_MESSAGE_MAX_LENGTH"
-          />
+          <template v-if="canNotify">
+            <VcTextarea
+              v-model="shareMessage"
+              :label="$t('shared.wishlists.add_or_update_wishlist_modal.share_message_label')"
+              :placeholder="$t('shared.wishlists.add_or_update_wishlist_modal.share_message_placeholder')"
+              :disabled="saving"
+              rows="3"
+              counter
+              :max-length="SHARE_MESSAGE_MAX_LENGTH"
+            />
 
-          <div class="flex flex-wrap gap-x-6 gap-y-2">
-            <VcCheckbox v-model="shareSendEmail" :disabled="saving">
-              {{ $t("shared.wishlists.add_or_update_wishlist_modal.share_send_email") }}
-            </VcCheckbox>
+            <div class="flex flex-wrap gap-x-6 gap-y-2">
+              <VcCheckbox v-model="shareSendEmail" :disabled="saving">
+                {{ $t("shared.wishlists.add_or_update_wishlist_modal.share_send_email") }}
+              </VcCheckbox>
 
-            <VcCheckbox v-model="shareSendPush" :disabled="saving">
-              {{ $t("shared.wishlists.add_or_update_wishlist_modal.share_send_push") }}
-            </VcCheckbox>
-          </div>
+              <VcCheckbox v-model="shareSendPush" :disabled="saving">
+                {{ $t("shared.wishlists.add_or_update_wishlist_modal.share_send_push") }}
+              </VcCheckbox>
+            </div>
+          </template>
         </template>
       </div>
     </div>
@@ -238,6 +240,20 @@ const { value: description } = useField<string | undefined>("description");
 const { value: sharingScope } = useField<string | undefined>("sharingScope");
 
 const isCustomerScope = computed(() => sharingScope.value === WishlistScopeType.Customer);
+
+// The rep-only customer-sharing controls. Requires the module installed/enabled AND the caller be a rep, so a
+// Customer-scoped list opened without that capability never exposes the rep UI/logic.
+const isCustomerSharing = computed(() => canShareWithCustomers.value && isCustomerScope.value);
+
+// Messaging is offered only when this edit sets a genuinely NEW customer target vs. what was persisted:
+// non-Customer -> Customer, or a change to a different customer. Re-selecting the original (incl. A->B->A) = none.
+const canNotify = computed(
+  () =>
+    isCustomerSharing.value &&
+    !!selectedOrganizationId.value &&
+    selectedOrganizationId.value !== listSharedWithId.value,
+);
+
 const canSave = computed<boolean>(() => {
   if (!meta.value.valid) {
     return false;
@@ -270,10 +286,10 @@ async function save(closeHandle: () => void): Promise<void> {
       await createWishlist(payload);
     }
 
-    // For a customer share, optionally notify the customer's members (reuses the VCST-5310 communication channel)
-    // with the Rep's message + the shared-list link.
-    if (isCustomerScope.value && sharedWithId) {
-      const notified = (!shareSendEmail.value && !shareSendPush.value) || (await notifyCustomer(sharedWithId));
+    // Notify the customer's members (reuses the VCST-5310 channel) only when messaging was offered — i.e. this
+    // edit set a genuinely new customer target — and a channel is selected.
+    if (canNotify.value && sharedWithId && (shareSendEmail.value || shareSendPush.value)) {
+      const notified = await notifyCustomer(sharedWithId);
       notifications[notified ? "success" : "warning"]({
         text: t(`shared.wishlists.add_or_update_wishlist_modal.${notified ? "share_success" : "share_partial"}`),
         duration: 4000,

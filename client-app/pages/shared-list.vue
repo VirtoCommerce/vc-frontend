@@ -75,6 +75,7 @@ import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { PAGE_LIMIT } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { prepareLineItem } from "@/core/utilities";
+import { isSalesRepsEnabled } from "@/modules/sales-rep/composables/useSalesRepsConfig";
 import { useShortCart } from "@/shared/cart";
 import { useWishlists, WishlistLineItems, WishlistProductsSkeleton, WishlistSummary } from "@/shared/wishlists";
 import type { LineItemType, Product } from "@/core/api/graphql/types";
@@ -95,7 +96,10 @@ const { listLoading, list, fetchSharedWishList } = useWishlists();
 const { cart } = useShortCart();
 
 // Customer-scoped lists are published by a Sales Rep — surface that to the viewing org member (VCST-5332).
-const isRecommendedByRep = computed(() => list.value?.sharingSetting?.scope === WishlistScopeType.Customer);
+// Only when the Sales Rep module is installed/enabled for the store (the "Recommended by Rep" concept exists then).
+const isRecommendedByRep = computed(
+  () => isSalesRepsEnabled() && list.value?.sharingSetting?.scope === WishlistScopeType.Customer,
+);
 
 const { continue_shopping_link } = getModuleSettings({
   [MODULE_XAPI_KEYS.CONTINUE_SHOPPING_LINK]: "continue_shopping_link",
