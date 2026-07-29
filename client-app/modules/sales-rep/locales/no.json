@@ -59,6 +59,7 @@
         "cancel": "Avbryt",
         "reset": "Tilbakestill",
         "save_failed": "Oppsettet kunne ikke lagres. Endringene dine er fortsatt her — prøv igjen.",
+        "load_failed": "Det lagrede oppsettet kunne ikke lastes, så standardrekkefølgen vises. Redigering er utilgjengelig til det er lastet — last siden på nytt.",
         "hidden_widgets": "Skjulte moduler",
         "visible_stats": "Synlige nøkkeltall",
         "hidden_stats": "Skjulte nøkkeltall",

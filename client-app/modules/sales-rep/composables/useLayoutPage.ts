@@ -2,7 +2,7 @@ import { computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { getBlock } from "../layout/registry";
 import { useLayoutAnnouncer } from "./useLayoutAnnouncer";
-import { focusBlockControl, focusEditToggle } from "./useLayoutFocus";
+import { focusBlockControl, focusEditToggle, focusSaveButton } from "./useLayoutFocus";
 import { useSalesRepLayout } from "./useSalesRepLayout";
 import type { SalesRepLayoutScopeType } from "../types/layout";
 
@@ -34,10 +34,12 @@ export function useLayoutPage(scope: SalesRepLayoutScopeType) {
     }
   });
 
-  // VcAlert carries no live-region semantics, so the failure is otherwise visual only.
+  // VcAlert carries no live-region semantics, so the failure is otherwise visual only. Focus has to
+  // come back too — `inert` dropped it to `<body>` when the save started, and edit mode is still on.
   watch(saveFailed, (failed) => {
     if (failed) {
       say(t("sales_rep.hub.layout.save_failed"));
+      focusSaveButton();
     }
   });
 
@@ -55,6 +57,7 @@ export function useLayoutPage(scope: SalesRepLayoutScopeType) {
     saving: layout.saving,
     editing: layout.editing,
     canEdit: layout.canEdit,
+    loadFailed: layout.loadFailed,
     saveFailed: layout.saveFailed,
     visibleIn: layout.visibleIn,
     hiddenIn: layout.hiddenIn,

@@ -90,6 +90,22 @@ describe("useSalesRepLayout", () => {
     expect(editing.value).toBe(false);
   });
 
+  // The pages render defaults and drop the edit button when the read fails; without this flag there is
+  // nothing to tell the rep why, so it reads as their arrangement having been lost.
+  it("reports a failed read so the surface can explain itself", () => {
+    apolloMock.error.value = new Error("boom");
+
+    const { loadFailed } = useSalesRepLayout(scope);
+
+    expect(loadFailed.value).toBe(true);
+  });
+
+  it("does not report a failed read for the ordinary never-saved case", () => {
+    apolloMock.result.value = { salesRepLayout: null };
+
+    expect(useSalesRepLayout(scope).loadFailed.value).toBe(false);
+  });
+
   it("allows editing when the query simply returned null", () => {
     apolloMock.result.value = { salesRepLayout: null };
 
@@ -269,6 +285,39 @@ describe("useSalesRepLayout", () => {
     // The saved arrangement survived; none of the mid-flight calls left a mark.
     expect(state.value.mainRight.visible).toEqual(["info"]);
     expect(state.value.mainRight.hidden).toEqual(["actions"]);
+  });
+
+  // The breadcrumbs sit outside the pages' `inert` wrapper, so the route guard can call `save` again
+  // while the first one is still in flight — a second full-document replace of the same document.
+  it("refuses a second save while one is in flight", async () => {
+    apolloMock.result.value = { salesRepLayout: null };
+    apolloMock.mutate.mockImplementation(() => {
+      apolloMock.saving.value = true;
+      return new Promise(() => {});
+    });
+
+    const { startEdit, save } = useSalesRepLayout(scope);
+    startEdit();
+
+    void save();
+    await expect(save()).resolves.toBe(false);
+
+    expect(apolloMock.mutate).toHaveBeenCalledTimes(1);
+  });
+
+  // Otherwise a previous failure's alert sits over a freshly rebuilt draft.
+  it("clears a failed-save alert when the draft is reset", async () => {
+    apolloMock.result.value = { salesRepLayout: null };
+    apolloMock.mutate.mockRejectedValue(new Error("network"));
+
+    const { startEdit, save, reset, saveFailed } = useSalesRepLayout(scope);
+    startEdit();
+
+    await save();
+    expect(saveFailed.value).toBe(true);
+
+    reset();
+    expect(saveFailed.value).toBe(false);
   });
 
   // Reordering one half must not disturb the other.

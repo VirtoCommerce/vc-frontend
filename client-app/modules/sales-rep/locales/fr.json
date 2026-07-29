@@ -59,6 +59,7 @@
         "cancel": "Annuler",
         "reset": "Réinitialiser",
         "save_failed": "La disposition n'a pas pu être enregistrée. Vos modifications sont conservées — réessayez.",
+        "load_failed": "La disposition enregistrée n'a pas pu être chargée, l'agencement par défaut est donc affiché. La modification est indisponible jusqu'au chargement — actualisez la page.",
         "hidden_widgets": "Widgets masqués",
         "visible_stats": "Indicateurs visibles",
         "hidden_stats": "Indicateurs masqués",

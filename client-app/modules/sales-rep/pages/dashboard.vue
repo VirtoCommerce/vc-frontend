@@ -4,6 +4,12 @@
       {{ t("sales_rep.hub.dashboard.page.title") }}
     </VcTypography>
 
+    <!-- A read failure is not silent: what renders below is registry defaults, not the rep's layout,
+         and the edit button is gone. Both need saying, or it reads as their arrangement being lost. -->
+    <VcAlert v-if="loadFailed" color="danger" size="sm" variant="solid-light" icon>
+      {{ t("sales_rep.hub.layout.load_failed") }}
+    </VcAlert>
+
     <!-- Nothing block-shaped renders until the saved layout is known; see layout-skeleton.vue. -->
     <LayoutSkeleton v-if="layoutLoading" :stats="4" :blocks="1" />
 
@@ -90,6 +96,7 @@ const {
   saving,
   editing,
   canEdit,
+  loadFailed,
   saveFailed,
   visibleIn,
   hiddenIn,

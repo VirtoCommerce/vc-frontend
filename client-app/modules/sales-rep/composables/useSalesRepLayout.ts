@@ -66,6 +66,10 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
    */
   const canEdit = computed(() => !loading.value && !error.value);
 
+  // Exposed so the surface can say why editing is unavailable: without it the rep sees registry
+  // defaults where their own arrangement should be, and no edit button, with nothing explaining either.
+  const loadFailed = computed(() => Boolean(error.value));
+
   function visibleIn(regionId: SalesRepLayoutRegionIdType): readonly string[] {
     return state.value[regionId].visible;
   }
@@ -140,8 +144,11 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
     }
   }
 
+  // `saving`, not just `draft`: the draft is only cleared when the first save resolves, and the
+  // breadcrumbs sit outside the pages' `inert` wrapper — so the route guard can reach `save` again
+  // mid-flight and fire a second full-document replace.
   async function save(): Promise<boolean> {
-    if (!draft.value) {
+    if (!draft.value || saving.value) {
       return false;
     }
 
@@ -185,6 +192,7 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
     saving,
     editing,
     canEdit,
+    loadFailed,
     saveFailed: readonly(saveFailed),
     visibleIn,
     hiddenIn,

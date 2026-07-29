@@ -20,7 +20,7 @@
         {{ t("sales_rep.hub.layout.cancel") }}
       </VcButton>
 
-      <VcButton size="sm" prepend-icon="save" :loading="saving" @click="$emit('save')">
+      <VcButton size="sm" prepend-icon="save" data-layout-save :loading="saving" @click="$emit('save')">
         {{ t("sales_rep.hub.layout.save") }}
       </VcButton>
     </div>

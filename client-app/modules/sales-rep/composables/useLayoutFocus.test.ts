@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { nextTick } from "vue";
-import { focusBlockControl, focusEditToggle } from "./useLayoutFocus";
+import { focusBlockControl, focusEditToggle, focusSaveButton } from "./useLayoutFocus";
 
 // Every argument below is a literal written in this file, never anything user-supplied.
 function render(markup: string): void {
@@ -28,6 +28,30 @@ describe("focusEditToggle", () => {
     elsewhere.focus();
 
     focusEditToggle();
+    await nextTick();
+
+    expect(document.activeElement).toBe(elsewhere);
+  });
+});
+
+// Starting a save makes the wrapper inert, which drops focus to <body>; a failure leaves the bar
+// mounted with nothing holding it, since edit mode never ends.
+describe("focusSaveButton", () => {
+  it("focuses the save button", async () => {
+    render(`<button data-layout-save>Save layout</button>`);
+
+    focusSaveButton();
+    await nextTick();
+
+    expect(document.activeElement).toBe(document.querySelector("[data-layout-save]"));
+  });
+
+  it("does nothing when the edit bar is gone", async () => {
+    render(`<button id="elsewhere"></button>`);
+    const elsewhere = document.querySelector<HTMLElement>("#elsewhere")!;
+    elsewhere.focus();
+
+    focusSaveButton();
     await nextTick();
 
     expect(document.activeElement).toBe(elsewhere);

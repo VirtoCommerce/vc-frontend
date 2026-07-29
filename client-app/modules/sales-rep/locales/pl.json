@@ -59,6 +59,7 @@
         "cancel": "Anuluj",
         "reset": "Przywróć domyślne",
         "save_failed": "Nie udało się zapisać układu. Twoje zmiany nie przepadły — spróbuj ponownie.",
+        "load_failed": "Nie udało się wczytać zapisanego układu, więc wyświetlany jest układ domyślny. Edycja jest niedostępna do czasu wczytania — odśwież stronę.",
         "hidden_widgets": "Ukryte widżety",
         "visible_stats": "Widoczne wskaźniki",
         "hidden_stats": "Ukryte wskaźniki",

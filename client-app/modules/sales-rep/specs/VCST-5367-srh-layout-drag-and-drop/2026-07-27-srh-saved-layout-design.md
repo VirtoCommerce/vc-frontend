@@ -12,8 +12,9 @@ per page — the customer-profile layout applies to *every* customer, not per-cu
 ## At a glance (as built)
 
 The sections below were written *before* implementation and a few names drifted (the registry landed
-at `layout/registry.ts`, and the composable exposes `reorder` / `setHidden` rather than `moveBlock` /
-`toggleHidden`). This section is the map of what actually shipped; read it first.
+at `layout/registry.ts`; the composable exposes `visibleIn` / `hiddenIn` for reading and
+`reorderVisible` / `reorderHidden` / `setHidden` for writing, rather than `regions` / `hiddenBlocks`
+and `moveBlock` / `toggleHidden`). This section is the map of what actually shipped; read it first.
 
 **The whole feature in one equation.** The registry owns *structure*, the saved document owns only
 *arrangement*:
@@ -76,10 +77,11 @@ LOAD    salesRepLayout(scope, storeId) ──null when never saved──┐
                         └──▶ reconcileLayout(saved, registry) ◀── registry defaults
                                         │
                                         ▼
-                        state = { statistics: [{id,hidden}], mainLeft: […], mainRight: […] }
+                        state = { statistics: {visible:[id], hidden:[id]}, mainLeft: {…}, mainRight: {…} }
+                        (two id arrays per region — the `hidden` flag exists only in the document)
 
 EDIT    startEdit()  draft = clone(persisted)          every change targets the DRAFT only
-        drag / arrows / ✕ / tray  →  reorder() | setHidden()
+        drag / arrows / ✕ / tray  →  reorderVisible() | reorderHidden() | setHidden()
         cancel() discards the draft      reset() refills it from registry defaults
 
 SAVE    serializeLayout(draft) ─▶ saveSalesRepLayout   (FULL-DOCUMENT REPLACE: every region,
@@ -103,7 +105,8 @@ how an arrangement gets destroyed.
    mutation. Not autosave-per-drop.
 4. **Keyboard: grab-and-move on the handle** (Space to grab, arrows to move, Space to drop, Escape
    to cancel) with `aria-live` announcements.
-5. **DnD library: `sortablejs` via `useSortable`.**
+5. **DnD library: `sortablejs`.** *As built:* used directly, not through
+   `@vueuse/integrations/useSortable` — see §5.
 6. **Customer profile is in scope** for this ticket.
 7. **Per-block `settings` is out of scope** — v1 persists order + hidden only.
 8. **Reset is in v1** — it needs no API.
@@ -194,8 +197,10 @@ Net effect: the persisted document is only ever *order + hidden*.
 
 ### 3. `useSalesRepLayout(scope)` — state machine (`composables/useSalesRepLayout.ts`)
 
-Loads via the query, reconciles, exposes `regions`, `hiddenBlocks`, `editing`, and
-`startEdit / save / cancel / reset` plus `moveBlock(id, region, index)` and `toggleHidden(id)`.
+Loads via the query, reconciles, and exposes `visibleIn(region)` / `hiddenIn(region)` for reading,
+`editing / canEdit / loading / saving / loadFailed / saveFailed` for status, and
+`startEdit / save / cancel / reset` plus `reorderVisible(region, ids)`, `reorderHidden(region, ids)`
+and `setHidden(id, hidden, index?)` for writing.
 
 - `startEdit` deep-copies current state into a draft; every mutation targets the draft.
 - `save` serializes all three regions — including hidden blocks — into one
@@ -208,16 +213,29 @@ Loads via the query, reconciles, exposes `regions`, `hiddenBlocks`, `editing`, a
 ### 4. Failure handling
 
 - **Mutation fails:** stay in edit mode, surface the error, keep the draft. The rep's work is never
-  silently discarded.
+  silently discarded. *As built:* focus returns to Save as well — starting the save makes the wrapper
+  `inert`, which drops focus to `<body>`, and unlike the success path no edit-mode exit reclaims it.
+  The unsaved-changes guard resolves on the save's own result, so a failed write aborts the navigation
+  rather than leaving with the draft.
 - **Query errors** (as distinct from returning `null`): render registry defaults but **disable Edit
   layout**. Saving is a full-document replace; offering to overwrite a document we failed to read is
   how a layout gets destroyed. `null` is the normal never-saved case and does *not* disable editing.
+  *As built:* `loadFailed` drives an alert on both pages — silently swapping in defaults with no edit
+  button reads as the rep's arrangement having been lost.
+- **A save already in flight:** `save` refuses. The draft is only cleared when the first one resolves,
+  and the breadcrumbs sit outside the `inert` wrapper, so the route guard can otherwise reach `save`
+  again and fire a second full-document replace.
 
 ### 5. Drag and drop
 
-`sortablejs` driven by `useSortable` from `@vueuse/integrations/useSortable`, initialised in
-`onMounted` (SSR-unsafe otherwise). `@vueuse/integrations` is already a direct dependency and
-declares `sortablejs: "^1"` as an optional peer, so only `sortablejs` is added.
+`sortablejs`, constructed in `onMounted` (SSR-unsafe otherwise).
+
+*As built:* used directly rather than through `useSortable` from `@vueuse/integrations`. That wrapper's
+only feature is a default `onUpdate` that mutates an array it owns, and every handler here is explicit
+anyway — the mirror it kept was a second source of truth that could disagree with state after a
+cross-zone drop. Construction moved inside `onMounted` for the same reason: every option reads a prop,
+and `useSortable` captured them at setup. `@vueuse/integrations` stays a dependency for `useAxios`;
+`sortablejs` (+ `@types/sortablejs`) is what this feature adds.
 
 - One sortable per region container, plus one for the stats hidden zone.
 - **`mainLeft` and `mainRight` get different `group` names**, making cross-column drags impossible
@@ -227,17 +245,22 @@ declares `sortablejs: "^1"` as an optional peer, so only `sortablejs` is added.
   This is what the prototype does too, and it keeps the tray out of the DnD graph.
 - `handle` targets the block's drag handle.
 
-**`useSortable` does not cover cross-list drags.** It wires only `onUpdate`, which fires for a
-reorder *within* one list; moving a card between the paired stat zones leaves vueuse with nothing.
-Left alone, SortableJS's DOM edit survives while the backing arrays stay unchanged and Vue's next
-patch fights it.
+**`onUpdate` alone does not cover cross-list drags.** It fires only for a reorder *within* one list;
+moving a card between the paired stat zones needs its own handler, or SortableJS's DOM edit survives
+while the backing arrays stay unchanged and Vue's next patch fights it.
 
 *As built:* `layout-region.vue` handles this in a single `onEnd` rather than the `onAdd`/`onRemove`
 pair this section originally proposed — those fire on two different instances for one gesture and
 double-applied the change. `onEnd` fires once, on the source, and early-returns when
 `event.from === event.to` (that case is already `onUpdate`'s). Both handlers put SortableJS's DOM edit
-back with `insertNodeAt` and let state drive the re-render. The dragged node is identified from
+back — `restore()`, which removes the node and re-inserts it at `event.oldIndex` in `event.from`,
+in that order — and let state drive the re-render. The dragged node is identified from
 `data-block-id`, which avoids keeping a parallel element-to-id map.
+
+The case that makes `restore()` load-bearing is a drop whose state change is *refused* (a save in
+flight): no re-render follows to correct the DOM, so without it the card simply stays where it was
+dropped. `layout-drag-and-drop.test.ts` pins both calls through exactly that path — when state does
+update, leaving SortableJS's edit in place happens to converge anyway, so nothing else distinguishes them.
 
 ### 6. Keyboard grab-and-move (`composables/useKeyboardSort.ts`)
 

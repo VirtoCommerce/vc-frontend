@@ -59,6 +59,7 @@
         "cancel": "Peruuta",
         "reset": "Palauta oletukset",
         "save_failed": "Asettelun tallentaminen epäonnistui. Muutoksesi ovat yhä tallessa — yritä uudelleen.",
+        "load_failed": "Tallennettua asettelua ei voitu ladata, joten näytössä on oletusjärjestys. Muokkaaminen ei ole käytettävissä ennen latausta — päivitä sivu.",
         "hidden_widgets": "Piilotetut widgetit",
         "visible_stats": "Näkyvät tunnusluvut",
         "hidden_stats": "Piilotetut tunnusluvut",

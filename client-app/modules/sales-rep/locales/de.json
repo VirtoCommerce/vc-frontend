@@ -59,6 +59,7 @@
         "cancel": "Abbrechen",
         "reset": "Zurücksetzen",
         "save_failed": "Das Layout konnte nicht gespeichert werden. Ihre Änderungen sind noch vorhanden — bitte erneut versuchen.",
+        "load_failed": "Das gespeicherte Layout konnte nicht geladen werden, daher wird die Standardanordnung angezeigt. Die Bearbeitung ist erst nach dem Laden möglich — bitte die Seite neu laden.",
         "hidden_widgets": "Ausgeblendete Widgets",
         "visible_stats": "Sichtbare Kennzahlen",
         "hidden_stats": "Ausgeblendete Kennzahlen",

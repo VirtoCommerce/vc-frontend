@@ -64,9 +64,17 @@ describe("reconcileLayout", () => {
     expect(ids(state.mainLeft)).toEqual(["news", "orders"]);
   });
 
-  it("orders several newcomers among themselves by registry order", () => {
-    const sparse = doc(["actions", false]);
-    const state = reconcileLayout(sparse, registry);
+  // Declared out of sequence deliberately: `registry.filter` preserves array order, so against an
+  // already-ascending registry the sort is invisible and deleting it fails nothing. `registerBlock`
+  // appends, so a widget registered later with a low `order` depends on this.
+  it("orders several newcomers among themselves by order, not by array position", () => {
+    const shuffled: SalesRepBlockType[] = [
+      { id: "stat-c", region: "statistics", titleKey: "c", order: 30 },
+      { id: "stat-a", region: "statistics", titleKey: "a", order: 10 },
+      { id: "stat-b", region: "statistics", titleKey: "b", order: 20 },
+    ];
+
+    const state = reconcileLayout(doc(["orders", false]), shuffled);
 
     expect(ids(state.statistics)).toEqual(["stat-a", "stat-b", "stat-c"]);
   });

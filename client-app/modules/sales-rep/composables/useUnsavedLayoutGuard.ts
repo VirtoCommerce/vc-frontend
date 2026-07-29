@@ -31,10 +31,12 @@ export function useUnsavedLayoutGuard(options: IUseUnsavedLayoutGuardOptions): v
         props: {
           title: t("sales_rep.hub.layout.editing"),
           message: t("common.messages.save_changes"),
+          // The save's own result decides: a failed write keeps the draft and edit mode, so leaving
+          // anyway would discard the arrangement the rep just asked to keep. `false` aborts the
+          // navigation instead, leaving them on the page with the alert and their layout intact.
           onConfirm: async () => {
             closeModal();
-            await options.save();
-            resolve(true);
+            resolve(await options.save());
           },
           onClose: () => {
             // Leaving without saving: drop the draft so it cannot resurface on the next surface.

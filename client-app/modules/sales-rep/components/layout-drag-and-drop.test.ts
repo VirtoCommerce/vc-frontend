@@ -385,3 +385,40 @@ describe("widget column drag and drop", () => {
     expect(blockIds(wrapper)).toEqual(["info"]);
   });
 });
+
+// The one case where SortableJS's DOM edit and the state it should produce disagree: the emit is
+// refused, so no re-render follows to correct the DOM. `restore()` is what keeps them in step —
+// without it the card stays where it was dropped and only snaps back on the next unrelated render.
+describe("a drop the draft refuses", () => {
+  it("puts the DOM back after a refused reorder", async () => {
+    const { wrapper, api } = setup();
+    api.startEdit();
+    await nextTick();
+
+    const before = [...api.visibleIn("statistics")];
+
+    // A save in flight — `editable()` is false, so `reorderVisible` is a no-op.
+    apolloMock.loading.value = true;
+    await moveWithin(zones[0], before[0], 1);
+    apolloMock.loading.value = false;
+
+    expect(api.visibleIn("statistics")).toEqual(before);
+    expect(blockIds(wrapper)).toEqual(before);
+  });
+
+  it("puts the DOM back after a refused cross-zone drop", async () => {
+    const { wrapper, api } = setup();
+    api.startEdit();
+    await nextTick();
+
+    const before = [...api.visibleIn("statistics")];
+    const [visible, hidden] = zones;
+
+    apolloMock.loading.value = true;
+    await dropInto(visible, hidden, "active_projects");
+    apolloMock.loading.value = false;
+
+    expect(api.hiddenIn("statistics")).toEqual([]);
+    expect(blockIds(wrapper)).toEqual(before);
+  });
+});

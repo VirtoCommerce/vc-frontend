@@ -11,6 +11,17 @@ export function focusEditToggle(): void {
 }
 
 /**
+ * Send focus back to Save after a failed save. Starting one makes the wrapper `inert`, which blurs the
+ * Save button the rep just pressed to `<body>`; on success edit mode ends and the toggle takes focus,
+ * but a failure keeps the bar mounted with nothing holding focus.
+ */
+export function focusSaveButton(): void {
+  void nextTick(() => {
+    document.querySelector<HTMLElement>("[data-layout-save]")?.focus({ preventScroll: true });
+  });
+}
+
+/**
  * Hiding, parking or restoring a block unmounts its control and mounts a new one elsewhere, which
  * drops focus to `<body>`. Focus follows the block instead: its region is fixed, so there is always
  * exactly one control representing it — a widget's drag handle, a stat card, or its restore button

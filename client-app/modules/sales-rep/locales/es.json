@@ -59,6 +59,7 @@
         "cancel": "Cancelar",
         "reset": "Restablecer",
         "save_failed": "No se pudo guardar el diseño. Sus cambios siguen aquí: inténtelo de nuevo.",
+        "load_failed": "No se pudo cargar el diseño guardado, por lo que se muestra la disposición predeterminada. La edición no está disponible hasta que se cargue: actualice la página.",
         "hidden_widgets": "Widgets ocultos",
         "visible_stats": "Métricas visibles",
         "hidden_stats": "Métricas ocultas",

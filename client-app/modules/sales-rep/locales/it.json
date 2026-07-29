@@ -59,6 +59,7 @@
         "cancel": "Annulla",
         "reset": "Ripristina",
         "save_failed": "Impossibile salvare il layout. Le modifiche sono ancora qui: riprova.",
+        "load_failed": "Impossibile caricare il layout salvato, quindi è mostrata la disposizione predefinita. La modifica non è disponibile fino al caricamento: aggiorna la pagina.",
         "hidden_widgets": "Widget nascosti",
         "visible_stats": "Statistiche visibili",
         "hidden_stats": "Statistiche nascoste",

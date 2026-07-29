@@ -59,6 +59,7 @@
         "cancel": "Cancel",
         "reset": "Reset",
         "save_failed": "The layout could not be saved. Your changes are still here — try again.",
+        "load_failed": "The saved layout could not be loaded, so the default arrangement is shown. Editing is unavailable until it loads — try refreshing the page.",
         "hidden_widgets": "Hidden widgets",
         "visible_stats": "Visible stats",
         "hidden_stats": "Hidden stats",

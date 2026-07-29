@@ -59,6 +59,7 @@
         "cancel": "Cancelar",
         "reset": "Repor",
         "save_failed": "Não foi possível guardar a disposição. As suas alterações continuam aqui — tente novamente.",
+        "load_failed": "Não foi possível carregar a disposição guardada, por isso é mostrada a disposição predefinida. A edição não está disponível até ser carregada — atualize a página.",
         "hidden_widgets": "Widgets ocultos",
         "visible_stats": "Métricas visíveis",
         "hidden_stats": "Métricas ocultas",

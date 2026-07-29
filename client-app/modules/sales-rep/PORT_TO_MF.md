@@ -61,9 +61,10 @@ dropped: `package.json`, `vite.config.ts` (federation `exposes`/shared), `codege
 `src/shims-vue.d.ts`, `index.html`.
 
 **The old plugin `package.json` predates the saved-layout work** — it has no `sortablejs`
-(+`@types/sortablejs`) or `@vueuse/integrations`, both of which `components/layout-region.vue`
-needs, and `@vueuse/core` for `useBreakpoints` in `pages/customer-profile.vue`. Add them, and
-decide whether `sortablejs` is bundled into the remote or listed as federation `shared`.
+(+`@types/sortablejs`), which `components/layout-region.vue` imports directly, nor `@vueuse/core`
+for `useBreakpoints` in `pages/customer-profile.vue`. Add both, and decide whether `sortablejs` is
+bundled into the remote or listed as federation `shared`. `@vueuse/integrations` is *not* needed —
+the layout used `useSortable` at one point and no longer does.
 
 ## 5. Cosmetic (host-lint-driven, optional to revert)
 

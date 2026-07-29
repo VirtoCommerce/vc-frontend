@@ -59,6 +59,7 @@
         "cancel": "取消",
         "reset": "重置",
         "save_failed": "布局保存失败。您的更改仍然保留，请重试。",
+        "load_failed": "无法加载已保存的布局，因此显示默认排列。加载成功前无法编辑，请刷新页面。",
         "hidden_widgets": "已隐藏的小组件",
         "visible_stats": "显示的指标",
         "hidden_stats": "隐藏的指标",

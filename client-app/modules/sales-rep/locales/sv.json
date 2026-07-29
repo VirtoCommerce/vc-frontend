@@ -59,6 +59,7 @@
         "cancel": "Avbryt",
         "reset": "Återställ",
         "save_failed": "Layouten kunde inte sparas. Dina ändringar finns kvar — försök igen.",
+        "load_failed": "Den sparade layouten kunde inte läsas in, så standardordningen visas. Redigering är inte tillgänglig förrän den lästs in — uppdatera sidan.",
         "hidden_widgets": "Dolda widgetar",
         "visible_stats": "Synliga nyckeltal",
         "hidden_stats": "Dolda nyckeltal",
