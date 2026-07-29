@@ -41,7 +41,26 @@ paths:
 props and slots; if neither covers the case, it is a design-system gap to raise, not to patch.
 Internal-structure overrides belong only in client projects, never in the theme.
 
-Other recurring points: colors come from the palette (never `text-gray-500`); font sizes come from
-the type scale (`text-[13px]` is not a size we have); Lato does not ship `font-medium`,
-`font-semibold` or `font-extrabold`; `fill-*` does not work on the outline icon set, use `text-*`.
-Check the browser console for deprecation warnings on components and props before pushing.
+**RTL-safe and themeable utilities.** ESLint and `scripts/check-style-conventions.mjs` both flag the
+wrong ones, but neither can tell you the replacement, so:
+
+| Instead of                   | Use                                                              |
+| ---------------------------- | ---------------------------------------------------------------- |
+| `ml-*` / `mr-*`              | `ms-*` / `me-*`                                                  |
+| `pl-*` / `pr-*`              | `ps-*` / `pe-*`                                                  |
+| `text-left` / `text-right`   | `text-start` / `text-end`                                        |
+| `border-l-*` / `border-r-*`  | `border-s-*` / `border-e-*`, or `border-inline-start` in raw CSS |
+| `float-left` / `float-right` | `float-start` / `float-end`                                      |
+| `rounded`, `rounded-lg` …    | `rounded-[--vc-radius]`, so it follows the theme's radius        |
+
+`rounded-full` is fine — it isn't a fixed radius.
+
+Colors come from the palette scale — `text-neutral-500`, `text-primary` — or from a semantic token
+where one exists, as in `text-[--link-color]`. Never a raw Tailwind ramp: `text-gray-500`,
+`text-slate-400` and friends don't follow the theme. (There are currently zero of these in
+`client-app`, so this is about keeping it that way.)
+
+Font sizes come from the type scale (`text-[13px]` is not a size we have). Lato does not ship
+`font-medium`, `font-semibold` or `font-extrabold`. `fill-*` does not work on the outline icon set —
+use `text-*`. Check the browser console for deprecation warnings on components and props before
+pushing.
