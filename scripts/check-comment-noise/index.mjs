@@ -18,12 +18,15 @@ const EXT = /\.(ts|vue|mjs|js)$/;
 
 /**
  * A comment block longer than this is asked to justify itself. Aimed low on purpose: nothing here
- * blocks, so a block that genuinely needs the room can keep it. Tagged JSDoc is exempt outright.
+ * blocks, so a block that genuinely needs the room can keep it. JSDoc is exempt outright.
  */
 const MAX_COMMENT_BLOCK_LINES = 5;
 
-/** `@param`/`@example` and friends mark API documentation, which is meant to be long. */
-const DOC_TAG = /@(?:param|returns?|example|description|see|deprecated|link|type|typedef|template|throws|file)\b/;
+/**
+ * Opening a block with `/**` is a deliberate choice to document a symbol, and API docs are meant
+ * to be long. The phrase rules still read every line of one.
+ */
+const JSDOC = /^\/\*\*/;
 
 /**
  * Whatever opens a comment, so a rule can anchor to the start of the text. Optional, because a
@@ -136,7 +139,7 @@ function checkLength(lines) {
   return commentBlocks(lines).flatMap((block) => {
     const size = block.end - block.start + 1;
 
-    if (size <= MAX_COMMENT_BLOCK_LINES || DOC_TAG.test(block.texts.join(" "))) {
+    if (size <= MAX_COMMENT_BLOCK_LINES || JSDOC.test(block.texts[0])) {
       return [];
     }
 

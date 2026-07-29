@@ -114,12 +114,26 @@ describe("block length", () => {
     expect(findings[0].message).toContain(`${MAX_COMMENT_BLOCK_LINES + 1} lines`);
   });
 
-  it("exempts jsdoc carrying tags, however long", () => {
-    const doc = ["/**", " * Does a thing.", " * @param a - the input", " * @returns the output"];
-
+  it.each([
+    ["carrying tags", ["/**", " * Does a thing.", " * @param a - the input", " * @returns the output"]],
+    ["of plain prose", ["/**", " * Does a thing."]],
+  ])("exempts jsdoc %s, however long", (_label, doc) => {
     expect(
       check([...doc, ...Array.from({ length: 12 }, (_, i) => ` * more ${i}`), " */", "const a = 1;"].join("\n")),
     ).toEqual([]);
+  });
+
+  it("still reads the phrase rules inside an exempt jsdoc block", () => {
+    const findings = check(["/**", " * @param a - the input", " * Switched to the batcher.", " */"].join("\n"));
+
+    expect(findings).toHaveLength(1);
+    expect(findings[0].line).toBe(3);
+  });
+
+  it("does not exempt an ordinary block comment", () => {
+    const block = ["/*", ...Array.from({ length: 8 }, (_, i) => ` prose ${i}`), "*/"].join("\n");
+
+    expect(check(block)).toHaveLength(1);
   });
 
   it("measures blocks separately when code splits them", () => {
