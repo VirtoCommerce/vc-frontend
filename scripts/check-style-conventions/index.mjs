@@ -19,10 +19,10 @@
  * With no file arguments it scans all .vue/.scss files under client-app/.
  */
 
-import { execFileSync } from "node:child_process";
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 import { pathToFileURL } from "node:url";
+import { changedLines } from "../lib/changed-lines.mjs";
 
 const ROOT = process.cwd();
 const STRICT = process.argv.includes("--strict");
@@ -193,46 +193,9 @@ function checkFile(file) {
   });
 }
 
-/**
- * Line numbers this file has uncommitted changes on, or `null` when that can't be determined
- * (not a git repo, git missing). An untracked file counts as entirely new.
- *
- * Without this the hook would re-report a legacy file's pre-existing violations on every edit,
- * which is noise the team would rightly switch off.
- */
-function changedLines(file) {
-  const git = (args) => execFileSync("git", args, { cwd: ROOT, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] });
-
-  try {
-    try {
-      git(["ls-files", "--error-unmatch", "--", file]);
-    } catch {
-      return null; // untracked - every line is new, so report everything
-    }
-
-    const lines = new Set();
-    const hunk = /^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@/gm;
-    const diff = git(["diff", "-U0", "--no-color", "HEAD", "--", file]);
-    let m;
-
-    while ((m = hunk.exec(diff)) !== null) {
-      const start = Number(m[1]);
-      const count = m[2] === undefined ? 1 : Number(m[2]);
-
-      for (let i = 0; i < count; i++) {
-        lines.add(start + i);
-      }
-    }
-
-    return lines;
-  } catch {
-    return null; // no git - fall back to reporting everything
-  }
-}
-
 // Exported for scripts/check-style-conventions/index.test.mjs. Everything below this line is CLI wiring
 // and only runs when the file is executed directly, so importing it has no side effects.
-export { RULES, CSS_RULES, checkFile, styleRanges, stripComments, changedLines };
+export { RULES, CSS_RULES, checkFile, styleRanges, stripComments };
 
 const isMain = process.argv[1] !== undefined && import.meta.url === pathToFileURL(process.argv[1]).href;
 
@@ -273,7 +236,7 @@ if (!isMain) {
 
   // Only surface findings on lines this change actually touched, so a legacy file's existing
   // violations stay quiet until someone edits those particular lines.
-  const touched = changedLines(file);
+  const touched = changedLines(file, ROOT);
   const scoped = touched === null ? findings : findings.filter((f) => touched.has(f.line));
 
   if (scoped.length === 0) {
@@ -306,7 +269,7 @@ if (!isMain) {
     }
 
     if (CHANGED_ONLY) {
-      const touched = changedLines(file);
+      const touched = changedLines(file, ROOT);
 
       findings = touched === null ? findings : findings.filter((f) => touched.has(f.line));
     }

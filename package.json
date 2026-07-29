@@ -48,7 +48,8 @@
     "check-locales": "yarn precheck && vite-node scripts/check-and-show-missing-locales.ts --source en.json locales client-app/ui-kit/locales client-app/modules/**/locales",
     "fix-locales": "yarn precheck && vite-node scripts/fix-missing-locales.ts --source en.json locales client-app/ui-kit/locales client-app/modules/**/locales",
     "check:icon-parity": "yarn precheck && vite-node scripts/check-icon-parity.ts",
-    "check:style-conventions": "yarn precheck && node scripts/check-style-conventions/index.mjs"
+    "check:style-conventions": "yarn precheck && node scripts/check-style-conventions/index.mjs",
+    "check:comment-noise": "yarn precheck && node scripts/check-comment-noise/index.mjs"
   },
   "dependencies": {
     "@apollo/client": "^3.14.1",
@@ -178,7 +179,8 @@
   },
   "lint-staged": {
     "*.{js,ts,vue}": [
-      "eslint --fix"
+      "eslint --fix",
+      "node scripts/check-comment-noise/index.mjs --changed"
     ],
     "*.{vue,scss}": [
       "node scripts/check-style-conventions/index.mjs --changed"

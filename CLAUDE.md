@@ -57,6 +57,17 @@ hook, so RTL and radius-token slips surface immediately rather than at commit ti
 - Reach for VueUse before hand-rolling (`useDebounceFn`, `useResizeObserver`, `useScriptTag`).
 - Routes go through the `ROUTES` constants in `client-app/router/routes/constants.ts`.
 
+## Comments
+
+Comment what the code cannot say: why a workaround exists, which upstream bug it dodges, an
+invariant that isn't visible locally, or a conventional approach that was tried and genuinely did
+not work — that last one saves the next person repeating it. Explaining what a block does is fine
+too; keep it short and skip whatever the line already makes obvious.
+
+Avoid the comment that only makes sense inside the session that produced it — "as requested",
+"per review", "for now", "temporary fix", "WAS: …". Those address whoever was in the room at the
+time. `yarn check:comment-noise` flags the common phrasings, on edit and on commit.
+
 ## i18n
 
 Localization is mandatory — never hardcode user-visible text. In components use
