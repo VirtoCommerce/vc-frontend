@@ -45,14 +45,14 @@ export function useLayoutPage(scope: SalesRepLayoutScopeType) {
 
   // Listed rather than spread, so this is the whole surface a page gets. `setHidden` is deliberately
   // absent: `toggleHidden` is the same call plus the focus move, and reaching past it would silently
-  // lose focus after every park.
+  // lose focus after every park. `state` is absent too — pages read halves through
+  // `visibleIn`/`hiddenIn`, so the whole object is a shape only the composable's own tests need.
   return {
     message,
     announce,
     hiddenWidgets,
     componentOf,
     toggleHidden,
-    state: layout.state,
     loading: layout.loading,
     saving: layout.saving,
     editing: layout.editing,

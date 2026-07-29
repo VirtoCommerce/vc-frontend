@@ -62,6 +62,9 @@ beforeEach(() => {
 function setup() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- the composable's full surface
   let api: any;
+  // Spied as well as applied: a same-list drag must emit no park at all, which surviving state alone
+  // cannot show — `setHidden` would no-op on a block already in the half it names.
+  const setHidden = vi.fn();
 
   const Harness = defineComponent({
     setup() {
@@ -69,6 +72,7 @@ function setup() {
 
       // As the pages do, so focus follows a parked block.
       function toggleHidden(id: string, hidden: boolean, index?: number): void {
+        setHidden(id, hidden, index);
         layout.setHidden(id, hidden, index);
         focusBlockControl(id);
       }
@@ -88,7 +92,7 @@ function setup() {
   });
 
   const wrapper = mount(Harness, { attachTo: document.body, global: { stubs: { VcIcon: true } } });
-  return { wrapper, api };
+  return { wrapper, api, setHidden };
 }
 
 /** Replay a drop into another zone: SortableJS's DOM move, then the handler it fires. */
@@ -111,7 +115,11 @@ async function dropInto(from: ZoneType, to: ZoneType, id: string, at?: number) {
   await nextTick();
 }
 
-/** Replay a reorder inside one zone, reporting both index flavours as SortableJS does. */
+/**
+ * Replay a reorder inside one zone, reporting both index flavours as SortableJS does — and firing
+ * `end` after `update`, which the real library always does for the same drop
+ * (sortable.esm.js:2002 then :2023). Without it nothing exercises `onEnd`'s same-list guard.
+ */
 async function moveWithin(zone: ZoneType, id: string, delta: number) {
   const el = zone.el;
   const item = el.querySelector(`[data-block-id="${id}"]`) as HTMLElement;
@@ -130,6 +138,7 @@ async function moveWithin(zone: ZoneType, id: string, delta: number) {
     oldDraggableIndex,
     newDraggableIndex: [...el.querySelectorAll(".layout-block")].indexOf(item),
   });
+  zone.options.onEnd({ from: el, to: el, item, oldIndex, newIndex: [...el.children].indexOf(item) });
   await nextTick();
 }
 
@@ -241,6 +250,19 @@ describe("stat row drag and drop", () => {
 
     expect(api.visibleIn("statistics")).toEqual([before[0], before[2], before[1], before[3]]);
     expect(blockIds(wrapper)).toEqual([before[0], before[2], before[1], before[3]]);
+  });
+
+  // SortableJS fires `end` after `update` for one same-list drop, so `onEnd` sees a gesture that
+  // `onUpdate` has already applied. Its `from === to` guard is what stops it acting twice.
+  it("does not park a card when a drag ends in the list it started in", async () => {
+    const { api, setHidden } = setup();
+    api.startEdit();
+    await nextTick();
+
+    await moveWithin(zones[0], api.visibleIn("statistics")[0], 1);
+
+    expect(setHidden).not.toHaveBeenCalled();
+    expect(api.hiddenIn("statistics")).toEqual([]);
   });
 
   // The mock swallows every Sortable option, so nothing else in the suite would notice if the wiring
