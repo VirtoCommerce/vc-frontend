@@ -14,13 +14,13 @@
 
     <div class="layout-skeleton__layout">
       <div v-for="column in columns" :key="column.name" :class="`layout-skeleton__${column.name}`">
-        <div v-for="block in column.blocks" :key="block" class="layout-skeleton__block">
+        <div v-for="id in column.blocks" :key="id" class="layout-skeleton__block">
           <div class="layout-skeleton__head">
             <span class="layout-skeleton__bar layout-skeleton__bar--title" />
           </div>
 
           <div class="layout-skeleton__body">
-            <span v-for="row in column.rows" :key="row" class="layout-skeleton__bar layout-skeleton__bar--row" />
+            <span v-for="row in rowsFor(id)" :key="row" class="layout-skeleton__bar layout-skeleton__bar--row" />
           </div>
         </div>
       </div>
@@ -30,7 +30,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { ORDERS_DEFAULT_LIMIT } from "../constants";
+import { ORDERS_DEFAULT_LIMIT, TOP_SELLERS_DEFAULT_TAKE } from "../constants";
 import { getBlockRegistry } from "../layout/registry";
 import type { SalesRepLayoutRegionIdType, SalesRepLayoutScopeType } from "../types/layout";
 
@@ -46,18 +46,26 @@ const props = defineProps<IProps>();
 const registry = computed(() => getBlockRegistry(props.scope));
 
 const visibleIn = (region: SalesRepLayoutRegionIdType) =>
-  registry.value.filter((block) => block.region === region && !block.defaultHidden).length;
+  registry.value.filter((block) => block.region === region && !block.defaultHidden).map((block) => block.id);
 
-// Rows stand in for the tallest thing each column holds: the orders table at its page size, and the
-// rail's short info lists.
+// Each widget's own page size, so a block is not drawn taller than what replaces it. Anything else
+// gets a short list.
+const ROWS_PER_BLOCK: Record<string, number> = {
+  orders: ORDERS_DEFAULT_LIMIT,
+  top_sellers: TOP_SELLERS_DEFAULT_TAKE,
+};
+const DEFAULT_ROWS = 3;
+
+const rowsFor = (id: string) => ROWS_PER_BLOCK[id] ?? DEFAULT_ROWS;
+
 const columns = computed(() =>
   [
-    { name: "main", blocks: visibleIn("mainLeft"), rows: ORDERS_DEFAULT_LIMIT },
-    { name: "aside", blocks: visibleIn("mainRight"), rows: 3 },
-  ].filter((column) => column.blocks > 0),
+    { name: "main", blocks: visibleIn("mainLeft") },
+    { name: "aside", blocks: visibleIn("mainRight") },
+  ].filter((column) => column.blocks.length > 0),
 );
 
-const stats = computed(() => visibleIn("statistics"));
+const stats = computed(() => visibleIn("statistics").length);
 </script>
 
 <style lang="scss">

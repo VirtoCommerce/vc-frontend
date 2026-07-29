@@ -130,7 +130,9 @@ function cardProps(id: string) {
 
 <style lang="scss">
 .layout-stats {
-  @apply flex flex-col gap-2;
+  // Zone frames are painted 12px outside their box, so the gap has to clear that band before it reads
+  // as space: 20px here plus the label's 4px margin leaves the same 12px the padded frame used to.
+  @apply flex flex-col gap-5;
 
   &__label {
     @apply m-0 mt-1 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-neutral-500;

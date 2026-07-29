@@ -19,12 +19,15 @@ vi.mock("@vue/apollo-composable", () => ({
     loading: apolloMock.loading,
     error: apolloMock.error,
     onError: vi.fn(),
+    refetch: vi.fn(),
   }),
   useMutation: () => ({ mutate: apolloMock.mutate, loading: apolloMock.saving }),
 }));
 vi.mock("@/core/globals", () => ({ globals: { storeId: "B2B-store", cultureName: "en-US" } }));
 vi.mock("@/core/utilities", () => ({ Logger: { error: vi.fn(), warn: vi.fn() } }));
 vi.mock("vue-i18n", () => ({ useI18n: () => ({ t: (key: string) => key }) }));
+
+const echoedBlock = (id: string) => ({ id, type: id, hidden: false, settings: [] });
 
 beforeEach(() => {
   apolloMock.result.value = { salesRepLayout: null };
@@ -69,7 +72,18 @@ describe("useLayoutPage", () => {
   });
 
   it("returns focus to the edit toggle when edit mode ends", async () => {
-    apolloMock.mutate.mockResolvedValue({ data: { saveSalesRepLayout: { schemaVersion: 1, regions: [] } } });
+    // A faithful echo: a short one is a refused save, which keeps edit mode and Save's focus.
+    apolloMock.mutate.mockResolvedValue({
+      data: {
+        saveSalesRepLayout: {
+          regions: [
+            { id: "statistics", blocks: ["new_orders", "active_cart", "mtd", "orders_ytd", "aov"].map(echoedBlock) },
+            { id: "mainLeft", blocks: ["orders", "top_sellers"].map(echoedBlock) },
+            { id: "mainRight", blocks: ["actions", "info"].map(echoedBlock) },
+          ],
+        },
+      },
+    });
     renderChrome();
 
     const { startEdit, save } = useLayoutPage("customerProfile");
@@ -102,5 +116,17 @@ describe("useLayoutPage", () => {
     toggleHidden("info", true);
 
     expect(hiddenWidgets.value).toEqual(["orders", "info"]);
+  });
+
+  // The registry is the only place a block's props are declared, and the pages bind them blind. A
+  // widget silently losing `filterable` drops the orders filter chips with nothing failing.
+  it("hands a block its registry props, and an empty object when it has none", () => {
+    const { propsOf } = useLayoutPage("dashboard");
+
+    expect(propsOf("orders")).toEqual({ filterable: true });
+    expect(propsOf("top_sellers")).toEqual({});
+    // Stat blocks declare no `props` at all, and an unknown id must not throw.
+    expect(propsOf("new_orders")).toEqual({});
+    expect(propsOf("nonexistent")).toEqual({});
   });
 });

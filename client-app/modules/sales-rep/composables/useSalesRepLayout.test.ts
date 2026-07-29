@@ -7,6 +7,7 @@ const apolloMock = await vi.hoisted(async () => {
   const loading = ref(false);
   const error = ref<Error | undefined>();
   const mutate = vi.fn();
+  const refetch = vi.fn();
   // `useMutation`'s own loading flag, which the real one holds true for the duration of the call.
   const saving = ref(false);
   const calls: { query?: unknown[]; mutation?: unknown[] } = {};
@@ -15,11 +16,12 @@ const apolloMock = await vi.hoisted(async () => {
     loading,
     error,
     mutate,
+    refetch,
     saving,
     calls,
     useQuery: vi.fn((...args: unknown[]) => {
       calls.query = args;
-      return { result, loading, error, onError: vi.fn() };
+      return { result, loading, error, onError: vi.fn(), refetch };
     }),
     useMutation: vi.fn((...args: unknown[]) => {
       calls.mutation = args;
@@ -41,6 +43,7 @@ beforeEach(() => {
   apolloMock.error.value = undefined;
   apolloMock.saving.value = false;
   apolloMock.mutate.mockReset();
+  apolloMock.refetch.mockReset();
 });
 
 const echoedBlock = (id: string) => ({ id, type: id, hidden: false, settings: [] });
@@ -50,6 +53,14 @@ const scope = "customerProfile" as const;
 
 // Registry order for this scope; an echo has to cover every sent block to be trusted.
 const CUSTOMER_STAT_IDS = ["new_orders", "active_cart", "mtd", "orders_ytd", "aov"];
+
+// The registry defaults, echoed back unchanged — what a well-behaved backend returns for an untouched
+// layout. Declared once because a save now only succeeds against an echo that covers every sent block.
+const DEFAULT_ECHO = [
+  { id: "statistics", blocks: CUSTOMER_STAT_IDS.map(echoedBlock) },
+  { id: "mainLeft", blocks: ["orders", "top_sellers"].map(echoedBlock) },
+  { id: "mainRight", blocks: ["actions", "info"].map(echoedBlock) },
+];
 
 describe("useSalesRepLayout", () => {
   it("falls back to registry defaults when the rep has never saved this surface", () => {
@@ -150,7 +161,8 @@ describe("useSalesRepLayout", () => {
 
   it("leaves edit mode after a successful save", async () => {
     apolloMock.result.value = { salesRepLayout: null };
-    apolloMock.mutate.mockResolvedValue({ data: { saveSalesRepLayout: { regions: [] } } });
+    // A faithful echo: an empty one is a mismatch now, which is a refused save rather than a clean one.
+    apolloMock.mutate.mockResolvedValue({ data: { saveSalesRepLayout: { regions: DEFAULT_ECHO } } });
 
     const { startEdit, save, editing, saveFailed } = useSalesRepLayout(scope);
     startEdit();
@@ -218,24 +230,26 @@ describe("useSalesRepLayout", () => {
 
   // A document is not enough to trust — reconciling a partial one fills the gaps from registry
   // defaults, which silently replaces the rep's arrangement while reporting success.
-  it("keeps the rep's arrangement when the echoed document is missing blocks that were sent", async () => {
+  it("refuses the save and refetches when the echoed document is missing blocks that were sent", async () => {
     apolloMock.result.value = { salesRepLayout: null };
     apolloMock.mutate.mockResolvedValue({ data: { saveSalesRepLayout: { regions: [] } } });
 
-    const { startEdit, setHidden, save, state, saveFailed } = useSalesRepLayout(scope);
+    const { startEdit, setHidden, save, state, saveFailed, editing } = useSalesRepLayout(scope);
     startEdit();
     setHidden("actions", true);
 
-    await expect(save()).resolves.toBe(true);
+    await expect(save()).resolves.toBe(false);
 
-    // Not defaults: `actions` stays parked, exactly as it was arranged.
+    // The draft survives, so `actions` stays parked and the rep can retry rather than losing the edit.
     expect(state.value.mainRight.hidden).toContain("actions");
-    expect(saveFailed.value).toBe(false);
+    expect(editing.value).toBe(true);
+    expect(saveFailed.value).toBe(true);
+    // Neither side is trusted; the canonical document is what resolves the disagreement.
+    expect(apolloMock.refetch).toHaveBeenCalled();
   });
 
-  // Every type comes back, so a presence-only check passes, but one `hidden` is inverted — adopting
-  // it would revert the rep's hide and still report success.
-  it("keeps the rep's arrangement when the echo contradicts a hidden flag", async () => {
+  // Every type comes back, so a presence-only check passes, but one `hidden` is inverted.
+  it("refuses the save when the echo contradicts a hidden flag", async () => {
     apolloMock.result.value = { salesRepLayout: null };
     apolloMock.mutate.mockResolvedValue({
       data: {
@@ -250,13 +264,15 @@ describe("useSalesRepLayout", () => {
       },
     });
 
-    const { startEdit, setHidden, save, hiddenIn } = useSalesRepLayout(scope);
+    const { startEdit, setHidden, save, hiddenIn, saveFailed } = useSalesRepLayout(scope);
     startEdit();
     setHidden("actions", true);
 
-    await expect(save()).resolves.toBe(true);
+    await expect(save()).resolves.toBe(false);
 
     expect(hiddenIn("mainRight")).toEqual(["actions"]);
+    expect(saveFailed.value).toBe(true);
+    expect(apolloMock.refetch).toHaveBeenCalled();
   });
 
   // `save` snapshots the payload synchronously and clears the draft when it resolves, so an edit made

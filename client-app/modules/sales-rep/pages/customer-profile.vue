@@ -78,14 +78,15 @@
               @set-hidden="toggleHidden"
               @announce="announce"
             >
-              <!-- `blockTitle`, not `title` — this page's `title` is the organization name. -->
+              <!-- `blockTitle`, not `title` — this page's `title` is the organization name. Registry
+                   props bind first so they cannot shadow the customer identity this page owns. -->
               <template #default="{ id, title: blockTitle }">
                 <component
                   :is="componentOf(id)"
                   v-if="componentOf(id)"
+                  v-bind="propsOf(id)"
                   :organization-id="organizationId"
                   :title="blockTitle"
-                  v-bind="propsOf(id)"
                 />
               </template>
             </LayoutRegion>
@@ -118,8 +119,8 @@
               <component
                 :is="componentOf(id)"
                 v-if="componentOf(id)"
-                :organization-id="organizationId"
                 v-bind="propsOf(id)"
+                :organization-id="organizationId"
               />
             </template>
           </LayoutRegion>

@@ -58,7 +58,8 @@
           @announce="announce"
         >
           <template #default="{ id, title }">
-            <component :is="componentOf(id)" v-if="componentOf(id)" :title="title" v-bind="propsOf(id)" />
+            <!-- Registry props bind first so they cannot shadow the title the layout owns. -->
+            <component :is="componentOf(id)" v-if="componentOf(id)" v-bind="propsOf(id)" :title="title" />
           </template>
         </LayoutRegion>
 

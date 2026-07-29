@@ -3,9 +3,16 @@ import { describe, expect, it, vi } from "vitest";
 import { h } from "vue";
 import { WIDGET_DRAG_HANDLE_SELECTOR } from "../constants";
 import LayoutBlock from "./layout-block.vue";
+import LayoutRegion from "./layout-region.vue";
 import VcWidget from "@/ui-kit/components/organisms/widget/vc-widget.vue";
 
 vi.mock("vue-i18n", () => ({ useI18n: () => ({ t: (key: string) => key }) }));
+vi.mock("sortablejs", () => ({
+  default: class {
+    option = vi.fn();
+    destroy = vi.fn();
+  },
+}));
 
 // Both sides of the drag-handle seam: the selector Sortable is given, and the element a real VcWidget
 // renders. Either drifting breaks header drags silently — the overlaid handle still works.
@@ -43,5 +50,34 @@ describe("LayoutBlock wrapping a real VcWidget", () => {
 
     expect(wrapper.find(".layout-block__chrome").exists()).toBe(false);
     expect(wrapper.find(".vc-widget__header-container").exists()).toBe(true);
+  });
+});
+
+// The pages render one generic `<component>` and take the heading from the slot, so a block whose
+// title stopped arriving would render a widget with a blank header.
+describe("LayoutRegion's slot payload", () => {
+  it("hands each block its localized registry title alongside its id", () => {
+    const seen: { id: string; title: string }[] = [];
+
+    mount(LayoutRegion, {
+      props: {
+        scope: "dashboard" as const,
+        entries: ["orders", "top_sellers"],
+        orientation: "vertical" as const,
+        group: "test",
+      },
+      slots: {
+        default: (payload: { id: string; title: string }) => {
+          seen.push({ ...payload });
+          return h("div");
+        },
+      },
+      global: { stubs: { VcIcon: true } },
+    });
+
+    expect(seen).toEqual([
+      { id: "orders", title: "sales_rep.orders.title" },
+      { id: "top_sellers", title: "sales_rep.top_sellers.title" },
+    ]);
   });
 });

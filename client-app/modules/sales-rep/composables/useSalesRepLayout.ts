@@ -25,7 +25,7 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
 
   // `no-cache` even with layout/cache-policies.ts in place: a save echoes `saveSalesRepLayout`, a
   // different root field, so it never refreshes a cached `salesRepLayout`.
-  const { result, loading, error, onError } = useQuery(
+  const { result, loading, error, onError, refetch } = useQuery(
     SalesRepLayoutDocument,
     () => ({
       scope,
@@ -153,15 +153,20 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
         return false;
       }
 
-      // Reconcile from the echo rather than refetching — but only once it agrees with what went out.
-      // A short or contradictory echo is a broken backend, not the rep's intent, and the write did not error.
-      if (echoMatchesSentBlocks(saved, command)) {
-        savedState.value = reconcileLayout(saved, registry);
-      } else {
+      // A contradictory echo means neither side can be trusted: adopting it would revert the rep's
+      // hides, and adopting the draft would make a document the backend never stored look canonical
+      // with no later read to correct it. So refetch, and report a failure the rep can retry.
+      if (!echoMatchesSentBlocks(saved, command)) {
         Logger.error("[sales-rep] saveSalesRepLayout echoed a document that disagrees with what was sent");
-        savedState.value = cloneState(pending);
+        // Cleared so `persisted` reads the refetch rather than a stale echo. The draft stays, so the
+        // rep keeps their arrangement and edit mode.
+        savedState.value = undefined;
+        void refetch();
+        saveFailed.value = true;
+        return false;
       }
 
+      savedState.value = reconcileLayout(saved, registry);
       draft.value = undefined;
       saveFailed.value = false;
       return true;

@@ -195,11 +195,7 @@ watch(
   // put in the container mid-drag. `grow basis-44` is the flex equivalent of the fixed row's
   // `repeat(auto-fit, minmax(11rem, 1fr))`, so wrapping stays count-agnostic.
   &--horizontal {
-    @apply flex flex-wrap gap-4 p-3;
-
-    // Padded outwards, and in both modes: inner padding narrows the row enough to wrap the sixth card
-    // onto a second line when edit mode adds the frame (six cards need 1136px, five 944px).
-    margin-inline: calc(-1 * theme("padding.3"));
+    @apply flex flex-wrap gap-4;
 
     > * {
       @apply min-w-0 grow basis-44;
@@ -212,10 +208,16 @@ watch(
     @apply pt-1;
   }
 
-  // Outline rather than border for the same reason: a border would add 2px the padding above cannot
-  // account for. Inset by its own width so it lands on the frame edge instead of outside it.
+  // Frame drawn entirely outside the box model — `box-shadow` fills the band, `outline` rules its edge,
+  // and neither affects layout. Padding and a border would narrow the row by 26px on entering edit
+  // mode, which is enough to wrap the sixth stat card (six need 1136px, five 944px) and shift the rest.
   &--zone {
-    @apply rounded-[--vc-radius] bg-neutral-50 outline-dashed outline-1 -outline-offset-1 outline-neutral-300;
+    --layout-zone-band: theme("padding.3");
+
+    @apply rounded-[--vc-radius] bg-neutral-50 outline-dashed outline-1 outline-neutral-300;
+
+    outline-offset: var(--layout-zone-band);
+    box-shadow: 0 0 0 var(--layout-zone-band) var(--color-neutral-50);
   }
 
   &__empty {
