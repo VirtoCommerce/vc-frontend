@@ -189,6 +189,21 @@ export default defineConfigWithVueTs(
       "vue/prefer-define-options": "warn",
       "vue/require-emit-validator": "warn",
       "vue/padding-line-between-tags": ["error", [{ blankLine: "always", prev: "*", next: "*" }]],
+      // RTL safety + theme tokens (mined from recurring PR review feedback).
+      // Physical-direction utilities break right-to-left locales; fixed corner radii ignore
+      // the `--vc-radius` theme customization. The `(^|:)` prefix is required so that
+      // variant-prefixed classes (`xl:ml-4`, `hover:rounded-lg`) are matched too.
+      // NOTE: this rule only sees `class` attributes in <template>. The equivalent
+      // `@apply` usage inside <style> blocks is covered by `yarn check:style-conventions`.
+      "vue/no-restricted-class": [
+        "warn",
+        "/(^|:)(ml|mr)-/", // use ms-* / me-*
+        "/(^|:)(pl|pr)-/", // use ps-* / pe-*
+        "/(^|:)text-(right|left)$/", // use text-start / text-end
+        "/(^|:)(border-l|border-r)-/", // use border-s-* / border-e-*
+        "/(^|:)float-(left|right)$/", // use float-start / float-end
+        "/(^|:)rounded(-(sm|md|lg|xl|2xl|3xl))?$/", // use rounded-[--vc-radius]
+      ],
       "vue/no-restricted-html-elements": [
         "warn",
         {
@@ -304,6 +319,16 @@ export default defineConfigWithVueTs(
               importNames: ["default"],
               message: "Please use useAxios from @/core/api/common instead",
             },
+            {
+              name: "lodash",
+              message: "Please import from lodash-es instead - `lodash` is not tree-shakable and breaks the build",
+            },
+          ],
+          patterns: [
+            {
+              group: ["lodash/*"],
+              message: "Please import from lodash-es instead - `lodash` is not tree-shakable and breaks the build",
+            },
           ],
         },
       ],
@@ -359,6 +384,14 @@ export default defineConfigWithVueTs(
     },
     rules: {
       "storybook/no-renderer-packages": "off",
+    },
+  },
+
+  // Node.js CLI helpers in scripts/: console output is their UX, same as scripts/**/*.ts below.
+  {
+    files: ["scripts/**/*.mjs"],
+    rules: {
+      "no-console": "off",
     },
   },
 
@@ -446,6 +479,11 @@ export default defineConfigWithVueTs(
   {
     rules: {
       curly: "error",
+      // Same situation: eslint-config-prettier blanket-disables `vue/html-self-closing`, but
+      // Prettier does not normalise `<span></span>` either way, so the convention was simply
+      // unenforced. Verified there is no fix-loop: `eslint --fix` rewrites to `<span />` and
+      // Prettier leaves that untouched.
+      "vue/html-self-closing": ["warn", { html: { normal: "always", void: "always", component: "always" } }],
     },
   },
 );
