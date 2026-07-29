@@ -181,17 +181,16 @@ function checkApplyDirectives(scrubbed, start, lineAt) {
 function checkFile(file) {
   const source = readFileSync(file, "utf8");
   const lineAt = (index) => lineNumberAt(source, index);
-  const findings = [];
 
-  for (const [start, end] of styleRanges(source, file)) {
+  return styleRanges(source, file).flatMap(([start, end]) => {
     const scrubbed = stripComments(source.slice(start, end));
 
-    findings.push(...checkApplyDirectives(scrubbed, start, lineAt));
-    // Raw CSS declarations apply to the whole style context.
-    findings.push(...collect(CSS_RULES, scrubbed, (index) => lineAt(start + index)));
-  }
-
-  return findings;
+    return [
+      ...checkApplyDirectives(scrubbed, start, lineAt),
+      // Raw CSS declarations apply to the whole style context, not just @apply.
+      ...collect(CSS_RULES, scrubbed, (index) => lineAt(start + index)),
+    ];
+  });
 }
 
 /**
