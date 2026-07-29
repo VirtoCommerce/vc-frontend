@@ -24,10 +24,13 @@ export interface ISalesRepStatBlock extends ISalesRepBlockBase {
   region: "statistics";
 }
 
-/** A widget in one of the two content columns. */
+/** A widget in one of the two content columns. Renders at VcWidget `size="md"` — layout-block.vue
+ * mirrors that size's header metrics to place its drag chrome. */
 export interface ISalesRepWidgetBlock extends ISalesRepBlockBase {
   region: "mainLeft" | "mainRight";
   component: Component;
+  /** Extra props for `component`. `title` comes from `titleKey` and is passed by the page. */
+  props?: Record<string, unknown>;
 }
 
 export type SalesRepBlockType = ISalesRepStatBlock | ISalesRepWidgetBlock;

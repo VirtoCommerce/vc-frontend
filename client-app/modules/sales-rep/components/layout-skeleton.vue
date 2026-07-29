@@ -87,18 +87,11 @@ const stats = computed(() => visibleIn("statistics"));
   }
 
   // `.stat-widget`, accent edge included — neutral here, since the accent belongs to real data.
+  // `grow basis-44` mirrors layout-region--horizontal, so the row wraps at the same widths.
   &__card {
-    @apply flex min-w-0 basis-full flex-col gap-1.5 rounded-[--vc-radius] border border-neutral-200 bg-additional-50 p-4 shadow-sm;
+    @apply flex min-w-0 grow basis-44 flex-col gap-1.5 rounded-[--vc-radius] border border-neutral-200 bg-additional-50 p-4 shadow-sm;
 
     border-inline-start: 4px solid theme("colors.neutral.200");
-
-    @media (min-width: theme("screens.sm")) {
-      @apply basis-[calc(50%-0.5rem)];
-    }
-
-    @media (min-width: theme("screens.xl")) {
-      @apply basis-0 grow;
-    }
   }
 
   &__block {

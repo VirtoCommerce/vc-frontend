@@ -96,6 +96,13 @@ The `scripts/graphql-codegen/generator.ts` file also plays a crucial role in han
   },
 ```
 
+Leave the entry in place even when the backend module is missing from the environment you generate
+against: such an endpoint answers `404`, so the module is reported as skipped, its committed
+`types.ts` is reused untouched and every other module is still generated. Anything else that goes
+wrong — an endpoint that answers but breaks generation, or an endpoint that answers `404` while the
+module has no committed `types.ts` to fall back on — fails the command. See "Types generation" in the root
+`README.md`.
+
 ---
 
 ### Registering Routes

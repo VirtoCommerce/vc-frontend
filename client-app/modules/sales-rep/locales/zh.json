@@ -26,6 +26,10 @@
       "table": {
         "customer": "客户",
         "last_order": "我的最近订单",
+        "ytd": "今年迄今购买量",
+        "last_year": "去年",
+        "orders_count": "{count} 笔订单",
+        "all_customers": "全部",
         "actions": "操作",
         "search_placeholder": "按名称搜索",
         "search_aria": "搜索客户",
@@ -44,10 +48,25 @@
           "title": "仪表板"
         },
         "widgets": {
-          "orders_on_hold": "暂挂订单",
-          "active_projects": "进行中的项目",
+          "new_orders": "新订单",
+          "active_carts": "活动购物车",
+          "active_cart": "活动购物车",
+          "orders_placed_week": "本周下单",
           "orders_placed_mtd": "本月至今下单",
+          "purchased_mtd": "本月至今采购额",
+          "orders_placed_ytd": "本年至今下单",
           "my_customers": "我的客户"
+        },
+        "stats": {
+          "value_total": "共 {amount}",
+          "vs_last_week": "较上周 {delta}",
+          "vs_last_month": "较上月 {delta}",
+          "vs_last_year": "较去年 {delta}",
+          "ordered_this_month": "本月 {count} 家下单",
+          "new_customers": "{count} 个新客户",
+          "placed_today": "今日 {count} 单",
+          "new_this_week": "本周新增 {count}",
+          "mtd_of_ytd": "占年初至今 {percent}%"
         }
       },
       "layout": {
@@ -85,10 +104,10 @@
       "not_found": "未找到客户，或该客户不在您的客户列表中。",
       "back_to_customers": "返回我的客户",
       "widgets": {
-        "ytd_purchases": "年初至今采购额",
-        "open_balance": "未结余额",
-        "avg_order_value": "平均订单金额",
-        "orders_ytd": "年初至今订单数"
+        "avg_order_value": "平均订单金额"
+      },
+      "stats": {
+        "per_order": "平均每笔订单 (今年迄今)"
       },
       "info": {
         "title": "客户信息",
@@ -134,12 +153,31 @@
       "title": "最近订单",
       "view_all": "全部订单",
       "empty": "暂无订单",
+      "no_results": "没有符合此筛选条件的订单",
       "number": "订单号",
       "customer": "客户",
       "date": "日期",
       "items": "商品",
       "status": "状态",
-      "total": "合计"
+      "total": "合计",
+      "filter_all": "全部"
+    },
+    "top_sellers": {
+      "title": "畅销商品",
+      "rank": "排名",
+      "product": "商品",
+      "units": "件数",
+      "revenue": "收入",
+      "empty": "此期间无销售",
+      "no_results": "此类别无销售",
+      "all_categories": "所有类别"
+    },
+    "rules": {
+      "customer": {
+        "filter": {
+          "All": "全部"
+        }
+      }
     }
   }
 }

@@ -1,5 +1,5 @@
 // View model for the table; mapped from the GraphQL SalesRepContact (see useSalesReps).
-// Only active reps ever reach the client — filtering is server-side (AC#5).
+// Only active reps ever reach the client; filtering is server-side.
 export type SalesRepType = { id: string; name: string; email: string; phone: string };
 export type SalesRepSortColumnType = "name" | "email" | "phone";
 export type SalesRepSortType = { column: SalesRepSortColumnType; direction: "asc" | "desc" };
@@ -9,13 +9,40 @@ export type SalesRepCustomerLastOrderType = { id: string; number: string; create
 export type SalesRepCustomerType = {
   organizationId: string;
   organizationName: string;
+  // Business category (Member.accountType), e.g. "Garden Center"; empty when unset.
+  accountType: string;
   // Default ship-to location, pre-formatted as "#postalCode · City · Region"; empty when no address.
   location: string;
+  // Inline per-row purchase columns (aliased orderStatistics slices; the backend batches, no N+1).
+  ytdTotal: string;
+  ytdCount: number;
+  lastYearTotal: string;
   lastOrder?: SalesRepCustomerLastOrderType;
 };
-// Only Name is sortable — the server sort is name-backed.
-export type SalesRepCustomerSortColumnType = "name";
-export type SalesRepCustomerSortType = { column: SalesRepCustomerSortColumnType; direction: "asc" | "desc" };
+
+export type SalesRepSortDirectionType = "asc" | "desc";
+
+// A server-defined filter/sort rule option surfaced as a chip or dropdown entry (see useSalesRepRules).
+// `defaultDirection`/`supportsDirection` are present on SORT rules only (absent on filter rules).
+export type SalesRepRuleType = {
+  name: string;
+  label: string;
+  defaultDirection?: SalesRepSortDirectionType;
+  supportsDirection?: boolean;
+};
+export type SalesRepRuleDomainType = "order" | "customer" | "topSeller";
+export type SalesRepRuleKindType = "filter" | "sort";
+
+// View model for a ranked Top Sellers row; `revenue` is the backend-formatted amount.
+export type SalesRepTopSellerRowType = {
+  rank: number;
+  productId: string;
+  name: string;
+  sku: string;
+  imageUrl: string;
+  units: number;
+  revenue: string;
+};
 
 // Rep → customer-org broadcast (VCST-5310). storeId/cultureName are added from globals in the composable,
 // not entered by the user; recipients (all org members) are resolved backend-side.
@@ -36,9 +63,8 @@ export type SalesRepCommunicationResultType = {
   warnings: string[];
 };
 
-// View model for a Sales Rep order row, shared by the customer profile (single org) and the hub
-// dashboard (cross-customer). `organizationName` backs the dashboard's Customer column;
-// `statusDisplayValue` is the localized status label; `total` is the backend-formatted amount.
+// Sales Rep order row, shared by the customer profile and hub dashboard; organizationName backs
+// the dashboard's Customer column.
 export type SalesRepOrderRowType = {
   id: string;
   number: string;

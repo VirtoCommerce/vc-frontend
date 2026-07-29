@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, nextTick } from "vue";
 import { focusBlockControl } from "../composables/useLayoutFocus";
 import { useSalesRepLayout } from "../composables/useSalesRepLayout";
+import { getBlockRegistry } from "../layout/registry";
 import LayoutRegion from "./layout-region.vue";
 import LayoutStats from "./layout-stats.vue";
 import type { Mock } from "vitest";
@@ -48,6 +49,12 @@ type ZoneType = { el: HTMLElement; options: any; option: Mock };
 
 const SCOPE = "dashboard" as const;
 
+// One card per registered statistics block, keyed as useSalesRepDashboardWidgets keys them — the row
+// renders nothing for an id with no matching card, which would empty every drag assertion below.
+const CARDS = getBlockRegistry(SCOPE)
+  .filter((block) => block.region === "statistics")
+  .map((block) => ({ key: block.id, labelKey: block.titleKey, icon: "cash", value: "1" }));
+
 // Every harness mounts with `attachTo: document.body`, and jsdom is reset per file rather than per
 // test — so without this each test leaves its DOM behind for the next one. `focusBlockControl` looks
 // its target up with a document-wide `querySelector`, which would then find an earlier test's card and
@@ -84,6 +91,7 @@ function setup() {
           scope: SCOPE,
           visible: layout.visibleIn("statistics"),
           hidden: layout.hiddenIn("statistics"),
+          cards: CARDS,
           editing: layout.editing.value,
           onReorder: (ids: string[]) => layout.reorderVisible("statistics", ids),
           onSetHidden: toggleHidden,
@@ -145,6 +153,18 @@ async function moveWithin(zone: ZoneType, id: string, delta: number) {
 const blockIds = (wrapper: ReturnType<typeof setup>["wrapper"]) =>
   wrapper.findAll("[data-block-id]").map((el) => el.attributes("data-block-id"));
 
+const STAT_IDS = CARDS.map((card) => card.key);
+
+/** The list with `from` re-inserted at `to` — the expected result of one move, at any list length. */
+function movedTo(ids: readonly string[], from: number, to: number): string[] {
+  const rest = [...ids];
+  const [item] = rest.splice(from, 1);
+  rest.splice(to, 0, item);
+  return rest;
+}
+
+const alphabetically = (a: unknown, b: unknown) => String(a).localeCompare(String(b));
+
 describe("stat row drag and drop", () => {
   // LayoutBlock must stay single-root. With a root sibling it renders as a fragment, SortableJS moves
   // only the element, and Vue can no longer unmount it — leaving the card in both zones at once.
@@ -155,20 +175,16 @@ describe("stat row drag and drop", () => {
 
     const [visible, hidden] = zones;
 
-    await dropInto(visible, hidden, "active_projects");
-    expect(blockIds(wrapper)).toEqual(["orders_on_hold", "orders_placed_mtd", "my_customers", "active_projects"]);
+    // Visible half first, then the parked one — the two zones render in that order.
+    await dropInto(visible, hidden, "active_carts");
+    expect(blockIds(wrapper)).toEqual([...STAT_IDS.filter((id) => id !== "active_carts"), "active_carts"]);
 
-    await moveWithin(visible, "orders_on_hold", 1);
-    await dropInto(hidden, visible, "active_projects");
+    await moveWithin(visible, "new_orders", 1);
+    await dropInto(hidden, visible, "active_carts");
 
     const ids = blockIds(wrapper);
     expect(new Set(ids).size).toBe(ids.length);
-    expect([...ids].sort((a, b) => String(a).localeCompare(String(b)))).toEqual([
-      "active_projects",
-      "my_customers",
-      "orders_on_hold",
-      "orders_placed_mtd",
-    ]);
+    expect([...ids].sort(alphabetically)).toEqual([...STAT_IDS].sort(alphabetically));
   });
 
   it("keeps a keyboard move that Chrome's focus-loss blur would otherwise cancel", async () => {
@@ -176,7 +192,7 @@ describe("stat row drag and drop", () => {
     api.startEdit();
     await nextTick();
 
-    const card = wrapper.find('[data-block-id="orders_placed_mtd"]');
+    const card = wrapper.find('[data-block-id="orders_placed_week"]');
 
     // Synchronous on purpose: the browser fires this blur while Vue's patch moves the node, before the
     // queued refocus. `trigger()` awaits nextTick and would miss that window.
@@ -185,12 +201,8 @@ describe("stat row drag and drop", () => {
     card.element.dispatchEvent(new FocusEvent("blur"));
     await nextTick();
 
-    expect(api.state.value.statistics.visible).toEqual([
-      "orders_on_hold",
-      "orders_placed_mtd",
-      "active_projects",
-      "my_customers",
-    ]);
+    // ArrowLeft moved index 2 to index 1; nothing else shifted.
+    expect(api.state.value.statistics.visible).toEqual(movedTo(STAT_IDS, 2, 1));
   });
 
   it("moves focus with a stat card that is parked by keyboard", async () => {
@@ -198,7 +210,7 @@ describe("stat row drag and drop", () => {
     api.startEdit();
     await nextTick();
 
-    const card = wrapper.find('[data-block-id="active_projects"]');
+    const card = wrapper.find('[data-block-id="active_carts"]');
     (card.element as HTMLElement).focus();
 
     card.element.dispatchEvent(new KeyboardEvent("keydown", { key: " " }));
@@ -206,8 +218,8 @@ describe("stat row drag and drop", () => {
     await nextTick();
     await nextTick();
 
-    expect(api.hiddenIn("statistics")).toEqual(["active_projects"]);
-    expect(document.activeElement?.getAttribute("data-block-id")).toBe("active_projects");
+    expect(api.hiddenIn("statistics")).toEqual(["active_carts"]);
+    expect(document.activeElement?.getAttribute("data-block-id")).toBe("active_carts");
     // Identity is not enough — the id alone would match a leaked card from another test.
     expect(wrapper.element.contains(document.activeElement)).toBe(true);
   });
@@ -219,7 +231,7 @@ describe("stat row drag and drop", () => {
     api.startEdit();
     await nextTick();
 
-    const card = wrapper.find('[data-block-id="orders_placed_mtd"]');
+    const card = wrapper.find('[data-block-id="orders_placed_week"]');
     card.element.dispatchEvent(new KeyboardEvent("keydown", { key: " " }));
     await nextTick();
     expect(card.element.className).toContain("layout-block--grabbed");
@@ -227,13 +239,13 @@ describe("stat row drag and drop", () => {
     api.cancel();
     await nextTick();
 
-    expect(wrapper.find('[data-block-id="orders_placed_mtd"]').element.className).not.toContain(
+    expect(wrapper.find('[data-block-id="orders_placed_week"]').element.className).not.toContain(
       "layout-block--grabbed",
     );
 
     api.startEdit();
     await nextTick();
-    expect(wrapper.find('[data-block-id="orders_placed_mtd"]').element.className).not.toContain(
+    expect(wrapper.find('[data-block-id="orders_placed_week"]').element.className).not.toContain(
       "layout-block--grabbed",
     );
   });
@@ -248,8 +260,9 @@ describe("stat row drag and drop", () => {
     const before = [...api.visibleIn("statistics")];
     await moveWithin(zones[0], before[2], -1);
 
-    expect(api.visibleIn("statistics")).toEqual([before[0], before[2], before[1], before[3]]);
-    expect(blockIds(wrapper)).toEqual([before[0], before[2], before[1], before[3]]);
+    const after = movedTo(before, 2, 1);
+    expect(api.visibleIn("statistics")).toEqual(after);
+    expect(blockIds(wrapper)).toEqual(after);
   });
 
   // SortableJS fires `end` after `update` for one same-list drop, so `onEnd` sees a gesture that
@@ -323,7 +336,7 @@ describe("stat row drag and drop", () => {
     api.startEdit();
     await nextTick();
 
-    const card = wrapper.find('[data-block-id="orders_placed_mtd"]');
+    const card = wrapper.find('[data-block-id="orders_placed_week"]');
     card.element.dispatchEvent(new KeyboardEvent("keydown", { key: " " }));
     await nextTick();
     expect(card.element.className).toContain("layout-block--grabbed");
@@ -332,7 +345,7 @@ describe("stat row drag and drop", () => {
     zones[0].options.onChoose({ item: card.element });
     await nextTick();
 
-    expect(wrapper.find('[data-block-id="orders_placed_mtd"]').element.className).not.toContain(
+    expect(wrapper.find('[data-block-id="orders_placed_week"]').element.className).not.toContain(
       "layout-block--grabbed",
     );
     // Released, not cancelled — a cancel would reshuffle the list mid-drag.
@@ -365,11 +378,11 @@ describe("stat row drag and drop", () => {
 
     const [visible, hidden] = zones;
 
-    // active_projects sits at array index 1, my_customers at 3.
-    await dropInto(visible, hidden, "active_projects");
+    // active_carts sits at array index 1, my_customers at 3.
+    await dropInto(visible, hidden, "active_carts");
     await dropInto(visible, hidden, "my_customers", 0);
 
-    expect(api.hiddenIn("statistics")).toEqual(["my_customers", "active_projects"]);
+    expect(api.hiddenIn("statistics")).toEqual(["my_customers", "active_carts"]);
   });
 });
 
@@ -467,7 +480,7 @@ describe("a drop the draft refuses", () => {
     const [visible, hidden] = zones;
 
     apolloMock.loading.value = true;
-    await dropInto(visible, hidden, "active_projects");
+    await dropInto(visible, hidden, "active_carts");
     apolloMock.loading.value = false;
 
     expect(api.hiddenIn("statistics")).toEqual([]);

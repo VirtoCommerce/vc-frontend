@@ -29,7 +29,10 @@ function passedVariables(): {
   storeId?: string;
   cultureName?: string;
   first: number;
-  sort: string;
+  sort?: string;
+  filter?: string;
+  periodFrom?: string;
+  periodTo?: string;
 } {
   const call = (queryMock.useQuery.mock.calls.at(-1) ?? []) as unknown[];
   const variables = call[1] as { value: ReturnType<typeof passedVariables> } | undefined;
@@ -47,7 +50,7 @@ beforeEach(() => {
 });
 
 describe("useSalesRepOrders", () => {
-  it("scopes to one customer and store, fetching the most recent N newest-first", () => {
+  it("scopes to one customer and store; sort/filter/period default to undefined (server default: recent)", () => {
     useSalesRepOrders({ organizationId: "cust-1" });
 
     expect(passedVariables()).toEqual({
@@ -55,7 +58,10 @@ describe("useSalesRepOrders", () => {
       storeId: "test-store",
       cultureName: "en-US",
       first: ORDERS_DEFAULT_LIMIT,
-      sort: "createdDate:desc",
+      sort: undefined,
+      filter: undefined,
+      periodFrom: undefined,
+      periodTo: undefined,
     });
   });
 
@@ -67,7 +73,27 @@ describe("useSalesRepOrders", () => {
       storeId: "test-store",
       cultureName: "en-US",
       first: 3,
-      sort: "createdDate:desc",
+      sort: undefined,
+      filter: undefined,
+      periodFrom: undefined,
+      periodTo: undefined,
+    });
+  });
+
+  it("passes the named filter, sort rule and created-date window through to the query", () => {
+    useSalesRepOrders({
+      organizationId: "cust-1",
+      filter: "New",
+      sort: "recent",
+      periodFrom: "2026-01-01T00:00:00.000Z",
+      periodTo: "2026-02-01T00:00:00.000Z",
+    });
+
+    expect(passedVariables()).toMatchObject({
+      filter: "New",
+      sort: "recent",
+      periodFrom: "2026-01-01T00:00:00.000Z",
+      periodTo: "2026-02-01T00:00:00.000Z",
     });
   });
 

@@ -13,6 +13,13 @@ type UseSalesRepOrdersOptionsType = {
   // "undefined" — Sonar S4782; getters/refs still yield undefined (see useProducts.ts).
   organizationId?: string | Ref<string | undefined> | (() => string | undefined);
   first?: number | Ref<number | undefined> | (() => number | undefined);
+  // A salesRepOrderFilterRules name (a status set); omit for the baseline (all the rep's orders).
+  filter?: string | Ref<string | undefined> | (() => string | undefined);
+  // A salesRepOrderSortRules name; omit for the server default ("recent", newest first).
+  sort?: string | Ref<string | undefined> | (() => string | undefined);
+  // Optional created-date window (ISO strings) passed inline as period { from, to }.
+  periodFrom?: string | Ref<string | undefined> | (() => string | undefined);
+  periodTo?: string | Ref<string | undefined> | (() => string | undefined);
 };
 
 export function useSalesRepOrders(options: UseSalesRepOrdersOptionsType = {}) {
@@ -24,7 +31,12 @@ export function useSalesRepOrders(options: UseSalesRepOrdersOptionsType = {}) {
     cultureName: globals.cultureName,
     // Most recent N; the full list lives on the "All orders" page.
     first: toValue(options.first) ?? ORDERS_DEFAULT_LIMIT,
-    sort: "createdDate:desc",
+    // A named sort rule; undefined lets the server apply its default ("recent").
+    sort: toValue(options.sort),
+    // A named filter rule; undefined → the baseline (all the rep's orders, security-scoped).
+    filter: toValue(options.filter),
+    periodFrom: toValue(options.periodFrom),
+    periodTo: toValue(options.periodTo),
   }));
 
   const { result, loading, onError } = useQuery(SalesRepOrdersDocument, variables);

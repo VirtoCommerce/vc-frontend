@@ -8,54 +8,70 @@ import type { SalesRepBlockType, SalesRepLayoutScopeType } from "../types/layout
 
 // `markRaw` keeps Vue from making the component definition reactive when it lands in layout state.
 const SalesRepOrders = markRaw(defineAsyncComponent(() => import("../components/sales-rep-orders.vue")));
+const TopSellers = markRaw(defineAsyncComponent(() => import("../components/top-sellers.vue")));
 const CustomerProfileActions = markRaw(
   defineAsyncComponent(() => import("../components/customer-profile-actions.vue")),
 );
 const CustomerProfileInfo = markRaw(defineAsyncComponent(() => import("../components/customer-profile-info.vue")));
 
-// Statistics-block ids are `StatWidgetCardType.key` values — the stat row renders them by key
-// rather than by component, so they carry no `component` of their own.
+// Statistics-block ids are `StatWidgetCardType.key` values from useSalesRepDashboardWidgets /
+// useSalesRepCustomerWidgets — the stat row renders them by key rather than by component, so they
+// carry no `component` of their own. A key that drifts from those composables renders nothing.
 const dashboardBlocks: SalesRepBlockType[] = [
+  { id: "new_orders", region: "statistics", titleKey: "sales_rep.hub.dashboard.widgets.new_orders", order: 10 },
+  { id: "active_carts", region: "statistics", titleKey: "sales_rep.hub.dashboard.widgets.active_carts", order: 20 },
   {
-    id: "orders_on_hold",
+    id: "orders_placed_week",
     region: "statistics",
-    titleKey: "sales_rep.hub.dashboard.widgets.orders_on_hold",
-    order: 10,
-  },
-  {
-    id: "active_projects",
-    region: "statistics",
-    titleKey: "sales_rep.hub.dashboard.widgets.active_projects",
-    order: 20,
+    titleKey: "sales_rep.hub.dashboard.widgets.orders_placed_week",
+    order: 30,
   },
   {
     id: "orders_placed_mtd",
     region: "statistics",
     titleKey: "sales_rep.hub.dashboard.widgets.orders_placed_mtd",
-    order: 30,
-  },
-  {
-    id: "my_customers",
-    region: "statistics",
-    titleKey: "sales_rep.hub.dashboard.widgets.my_customers",
     order: 40,
   },
-  // The dashboard has no right rail yet — `mainRight` stays empty and the grid collapses to one
+  {
+    id: "orders_placed_ytd",
+    region: "statistics",
+    titleKey: "sales_rep.hub.dashboard.widgets.orders_placed_ytd",
+    order: 50,
+  },
+  { id: "my_customers", region: "statistics", titleKey: "sales_rep.hub.dashboard.widgets.my_customers", order: 60 },
+  // The dashboard has no right rail yet — `mainRight` stays empty and the row collapses to one
   // column until a widget registers into it.
-  { id: "orders", region: "mainLeft", titleKey: "sales_rep.orders.title", order: 10, component: SalesRepOrders },
+  {
+    id: "orders",
+    region: "mainLeft",
+    titleKey: "sales_rep.orders.title",
+    order: 10,
+    component: SalesRepOrders,
+    props: { filterable: true },
+  },
+  { id: "top_sellers", region: "mainLeft", titleKey: "sales_rep.top_sellers.title", order: 20, component: TopSellers },
 ];
 
 const customerProfileBlocks: SalesRepBlockType[] = [
-  { id: "ytd", region: "statistics", titleKey: "sales_rep.customer_profile.widgets.ytd_purchases", order: 10 },
+  { id: "new_orders", region: "statistics", titleKey: "sales_rep.hub.dashboard.widgets.new_orders", order: 10 },
+  { id: "active_cart", region: "statistics", titleKey: "sales_rep.hub.dashboard.widgets.active_cart", order: 20 },
+  { id: "mtd", region: "statistics", titleKey: "sales_rep.hub.dashboard.widgets.purchased_mtd", order: 30 },
   {
-    id: "open_balance",
+    id: "orders_ytd",
     region: "statistics",
-    titleKey: "sales_rep.customer_profile.widgets.open_balance",
-    order: 20,
+    titleKey: "sales_rep.hub.dashboard.widgets.orders_placed_ytd",
+    order: 40,
   },
-  { id: "aov", region: "statistics", titleKey: "sales_rep.customer_profile.widgets.avg_order_value", order: 30 },
-  { id: "orders_ytd", region: "statistics", titleKey: "sales_rep.customer_profile.widgets.orders_ytd", order: 40 },
-  { id: "orders", region: "mainLeft", titleKey: "sales_rep.orders.title", order: 10, component: SalesRepOrders },
+  { id: "aov", region: "statistics", titleKey: "sales_rep.customer_profile.widgets.avg_order_value", order: 50 },
+  {
+    id: "orders",
+    region: "mainLeft",
+    titleKey: "sales_rep.orders.title",
+    order: 10,
+    component: SalesRepOrders,
+    props: { filterable: true },
+  },
+  { id: "top_sellers", region: "mainLeft", titleKey: "sales_rep.top_sellers.title", order: 20, component: TopSellers },
   {
     id: "actions",
     region: "mainRight",
@@ -90,7 +106,6 @@ export function getBlockRegistry(scope: SalesRepLayoutScopeType): readonly Sales
   return registries[scope];
 }
 
-// eslint-disable-next-line sonarjs/function-return-type -- block definition or undefined by design
 export function getBlock(scope: SalesRepLayoutScopeType, id: string): SalesRepBlockType | undefined {
   return registries[scope].find((block) => block.id === id);
 }

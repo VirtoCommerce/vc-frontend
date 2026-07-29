@@ -1,0 +1,9 @@
+query SalesRepCustomerCounts($organizationId: String, $storeId: String, $mtdFrom: DateTime, $mtdTo: DateTime) {
+  salesRepCustomerCounts(organizationId: $organizationId, storeId: $storeId) {
+    assignedCustomers
+    thisMonth: period(from: $mtdFrom, to: $mtdTo) {
+      orderingCustomers
+      newCustomers
+    }
+  }
+}

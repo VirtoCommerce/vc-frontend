@@ -48,6 +48,9 @@ const echoedBlock = (id: string) => ({ id, type: id, hidden: false, settings: []
 // The customer profile is the richer surface — it populates all three regions.
 const scope = "customerProfile" as const;
 
+// Registry order for this scope; an echo has to cover every sent block to be trusted.
+const CUSTOMER_STAT_IDS = ["new_orders", "active_cart", "mtd", "orders_ytd", "aov"];
+
 describe("useSalesRepLayout", () => {
   it("falls back to registry defaults when the rep has never saved this surface", () => {
     apolloMock.result.value = { salesRepLayout: null };
@@ -55,13 +58,12 @@ describe("useSalesRepLayout", () => {
     const { state } = useSalesRepLayout(scope);
 
     expect(state.value.mainRight.visible).toEqual(["actions", "info"]);
-    expect(state.value.mainLeft.visible).toEqual(["orders"]);
+    expect(state.value.mainLeft.visible).toEqual(["orders", "top_sellers"]);
   });
 
   it("applies a saved arrangement over the defaults", () => {
     apolloMock.result.value = {
       salesRepLayout: {
-        schemaVersion: 1,
         regions: [
           {
             id: "mainRight",
@@ -131,7 +133,7 @@ describe("useSalesRepLayout", () => {
 
   it("sends the complete document — every region, hidden blocks included", async () => {
     apolloMock.result.value = { salesRepLayout: null };
-    apolloMock.mutate.mockResolvedValue({ data: { saveSalesRepLayout: { schemaVersion: 1, regions: [] } } });
+    apolloMock.mutate.mockResolvedValue({ data: { saveSalesRepLayout: { regions: [] } } });
 
     const { startEdit, setHidden, save } = useSalesRepLayout(scope);
     startEdit();
@@ -148,7 +150,7 @@ describe("useSalesRepLayout", () => {
 
   it("leaves edit mode after a successful save", async () => {
     apolloMock.result.value = { salesRepLayout: null };
-    apolloMock.mutate.mockResolvedValue({ data: { saveSalesRepLayout: { schemaVersion: 1, regions: [] } } });
+    apolloMock.mutate.mockResolvedValue({ data: { saveSalesRepLayout: { regions: [] } } });
 
     const { startEdit, save, editing, saveFailed } = useSalesRepLayout(scope);
     startEdit();
@@ -196,10 +198,9 @@ describe("useSalesRepLayout", () => {
     apolloMock.mutate.mockResolvedValue({
       data: {
         saveSalesRepLayout: {
-          schemaVersion: 1,
           regions: [
-            { id: "statistics", blocks: ["ytd", "open_balance", "aov", "orders_ytd"].map(echoedBlock) },
-            { id: "mainLeft", blocks: [echoedBlock("orders")] },
+            { id: "statistics", blocks: CUSTOMER_STAT_IDS.map(echoedBlock) },
+            { id: "mainLeft", blocks: ["orders", "top_sellers"].map(echoedBlock) },
             { id: "mainRight", blocks: [echoedBlock("info"), echoedBlock("actions")] },
           ],
         },
@@ -219,7 +220,7 @@ describe("useSalesRepLayout", () => {
   // defaults, which silently replaces the rep's arrangement while reporting success.
   it("keeps the rep's arrangement when the echoed document is missing blocks that were sent", async () => {
     apolloMock.result.value = { salesRepLayout: null };
-    apolloMock.mutate.mockResolvedValue({ data: { saveSalesRepLayout: { schemaVersion: 1, regions: [] } } });
+    apolloMock.mutate.mockResolvedValue({ data: { saveSalesRepLayout: { regions: [] } } });
 
     const { startEdit, setHidden, save, state, saveFailed } = useSalesRepLayout(scope);
     startEdit();
@@ -239,10 +240,9 @@ describe("useSalesRepLayout", () => {
     apolloMock.mutate.mockResolvedValue({
       data: {
         saveSalesRepLayout: {
-          schemaVersion: 1,
           regions: [
-            { id: "statistics", blocks: ["ytd", "open_balance", "aov", "orders_ytd"].map(echoedBlock) },
-            { id: "mainLeft", blocks: [echoedBlock("orders")] },
+            { id: "statistics", blocks: CUSTOMER_STAT_IDS.map(echoedBlock) },
+            { id: "mainLeft", blocks: ["orders", "top_sellers"].map(echoedBlock) },
             // `actions` was sent hidden; the backend echoes it visible.
             { id: "mainRight", blocks: [echoedBlock("info"), echoedBlock("actions")] },
           ],
@@ -292,10 +292,9 @@ describe("useSalesRepLayout", () => {
     release({
       data: {
         saveSalesRepLayout: {
-          schemaVersion: 1,
           regions: [
-            { id: "statistics", blocks: ["ytd", "open_balance", "aov", "orders_ytd"].map(echoedBlock) },
-            { id: "mainLeft", blocks: [echoedBlock("orders")] },
+            { id: "statistics", blocks: CUSTOMER_STAT_IDS.map(echoedBlock) },
+            { id: "mainLeft", blocks: ["orders", "top_sellers"].map(echoedBlock) },
             {
               id: "mainRight",
               blocks: [echoedBlock("info"), { id: "actions", type: "actions", hidden: true, settings: [] }],
@@ -357,13 +356,12 @@ describe("useSalesRepLayout", () => {
 
     expect(hiddenIn("mainRight")).toEqual(["actions", "info"]);
     expect(visibleIn("mainRight")).toEqual([]);
-    expect(visibleIn("mainLeft")).toEqual(["orders"]);
+    expect(visibleIn("mainLeft")).toEqual(["orders", "top_sellers"]);
   });
 
   it("reset restores defaults into the draft but does not persist on its own", () => {
     apolloMock.result.value = {
       salesRepLayout: {
-        schemaVersion: 1,
         regions: [
           {
             id: "mainRight",
@@ -399,7 +397,7 @@ describe("useSalesRepLayout", () => {
     startEdit();
     setHidden("orders", true);
 
-    expect(visibleIn("mainLeft")).toEqual([]);
+    expect(visibleIn("mainLeft")).toEqual(["top_sellers"]);
     expect(hiddenIn("mainLeft")).toEqual(["orders"]);
   });
 

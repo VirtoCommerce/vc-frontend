@@ -289,11 +289,25 @@ One shared composable so every region behaves identically. The handle is a real 
 `grid-cols-1 / sm:2 / xl:4` grid. Cards do **not** become per-card components — the layout decides
 order and visibility, so the cards are data looked up by id.
 
-As built: the arrays moved to `layout/stat-cards.ts` (`getStatCard(scope, key)`), the grid and the
-drag behaviour moved into `layout-region.vue` (whose horizontal variant drives its xl column count
-from the number of visible cards), and `layout-stats.vue` composes the visible and hidden zones.
-All three of `dashboard-widgets.vue`, `customer-profile-widgets.vue` and `stat-widgets.vue` were
-deleted — only the two pages referenced them. `stat-widget.vue` itself is untouched.
+As built: the grid and the drag behaviour moved into `layout-region.vue`, and `layout-stats.vue`
+composes the visible and hidden zones. All three of `dashboard-widgets.vue`,
+`customer-profile-widgets.vue` and `stat-widgets.vue` were deleted — only the two pages referenced
+them. `stat-widget.vue` gained a `leading` slot for the drag affordance.
+
+**Superseded by VCST-5485 (2026-07-29).** That story landed real statistics on `dev` while this branch
+was in review, so the interim `layout/stat-cards.ts` mock is gone. Cards now come from
+`useSalesRepDashboardWidgets()` / `useSalesRepCustomerWidgets(orgId)` and reach `layout-stats.vue` as
+a `cards` prop from the page; the layout still only decides order and visibility, matching cards to
+layout ids by `key`. Two consequences:
+
+- **Registry statistics ids are those composables' card keys.** A key that drifts renders an empty
+  slot, so `layout/registry.ts` and the composables have to move together.
+- **`layout-region--horizontal` is count-agnostic** (`grow basis-44`), mirroring the
+  `repeat(auto-fit, minmax(11rem, 1fr))` VCST-5485 adopted — the dashboard has six cards and the
+  customer profile five, and hiding one must not leave a hole. `layout-skeleton.vue` matches.
+
+VCST-5485 also added a `top_sellers` widget to both surfaces' `mainLeft`, and `filterable` on the
+orders widget — the first per-block prop, which is why `ISalesRepWidgetBlock` gained optional `props`.
 
 ### 8. Visual treatment — ported from the design prototype
 

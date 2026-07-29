@@ -27,11 +27,14 @@
         @reset="reset"
       />
 
-      <!-- Full-width KPI row (mock until the rep dashboard stats query lands). -->
+      <!-- Full-width KPI row. Cards come from the statistics queries; the layout only decides which
+           of them show and in what order. -->
       <LayoutStats
         :scope="SCOPE"
         :visible="visibleIn('statistics')"
         :hidden="hiddenIn('statistics')"
+        :cards="cards"
+        :cards-loading="cardsLoading"
         :editing="editing"
         @reorder="reorderVisible('statistics', $event)"
         @reorder-hidden="reorderHidden('statistics', $event)"
@@ -42,7 +45,7 @@
       <!-- Two columns, but the rail only exists once a widget registers into `mainRight` — until then
            the row has one child and the content runs full width, matching the skeleton. -->
       <div class="sales-rep-dashboard__layout-row">
-        <!-- Cross-customer orders (real data: salesRepOrders). -->
+        <!-- Cross-customer orders and the top-sellers ranking. -->
         <LayoutRegion
           class="sales-rep-dashboard__main"
           :scope="SCOPE"
@@ -54,8 +57,8 @@
           @set-hidden="toggleHidden"
           @announce="announce"
         >
-          <template #default="{ id }">
-            <component :is="componentOf(id)" v-if="componentOf(id)" :title="t('sales_rep.orders.title')" />
+          <template #default="{ id, title }">
+            <component :is="componentOf(id)" v-if="componentOf(id)" :title="title" v-bind="propsOf(id)" />
           </template>
         </LayoutRegion>
 
@@ -73,8 +76,9 @@
           @set-hidden="toggleHidden"
           @announce="announce"
         >
+          <!-- No `title`: as on the customer profile, rail widgets set their own heading. -->
           <template #default="{ id }">
-            <component :is="componentOf(id)" v-if="componentOf(id)" />
+            <component :is="componentOf(id)" v-if="componentOf(id)" v-bind="propsOf(id)" />
           </template>
         </LayoutRegion>
       </div>
@@ -102,11 +106,13 @@ import LayoutRegion from "../components/layout-region.vue";
 import LayoutSkeleton from "../components/layout-skeleton.vue";
 import LayoutStats from "../components/layout-stats.vue";
 import { useLayoutPage } from "../composables/useLayoutPage";
+import { useSalesRepDashboardWidgets } from "../composables/useSalesRepDashboardWidgets";
 import { DASHBOARD_LAYOUT_SCOPE } from "../constants";
 
 const SCOPE = DASHBOARD_LAYOUT_SCOPE;
 
 const { t } = useI18n();
+const { cards, loading: cardsLoading } = useSalesRepDashboardWidgets();
 const {
   message,
   announce,
@@ -120,6 +126,7 @@ const {
   hiddenIn,
   hiddenWidgets,
   componentOf,
+  propsOf,
   startEdit,
   cancel,
   reset,
@@ -131,7 +138,7 @@ const {
 </script>
 
 <style lang="scss">
-// `@apply` keeps the module self-contained as an MF remote (no global utility layer). See PORT_TO_MF.md.
+// @apply: module is self-contained as an MF remote (no global utility layer).
 .sales-rep-dashboard {
   @apply flex flex-col gap-5;
 

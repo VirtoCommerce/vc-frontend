@@ -50,11 +50,14 @@
           @reset="reset"
         />
 
-        <!-- Full-width KPI row (mock until VCST-5309). -->
+        <!-- Full-width KPI row. Cards come from the statistics queries; the layout only decides which
+             of them show and in what order. -->
         <LayoutStats
           :scope="SCOPE"
           :visible="visibleIn('statistics')"
           :hidden="hiddenIn('statistics')"
+          :cards="cards"
+          :cards-loading="cardsLoading"
           :editing="editing"
           @reorder="reorderVisible('statistics', $event)"
           @reorder-hidden="reorderHidden('statistics', $event)"
@@ -75,12 +78,14 @@
               @set-hidden="toggleHidden"
               @announce="announce"
             >
-              <template #default="{ id }">
+              <!-- `blockTitle`, not `title` — this page's `title` is the organization name. -->
+              <template #default="{ id, title: blockTitle }">
                 <component
                   :is="componentOf(id)"
                   v-if="componentOf(id)"
                   :organization-id="organizationId"
-                  :title="t('sales_rep.orders.title')"
+                  :title="blockTitle"
+                  v-bind="propsOf(id)"
                 />
               </template>
             </LayoutRegion>
@@ -107,8 +112,15 @@
             @set-hidden="toggleHidden"
             @announce="announce"
           >
+            <!-- No `title` here: the rail widgets set their own VcWidget heading. The registry's
+                 `titleKey` still names them in the hidden tray and the drag announcements. -->
             <template #default="{ id }">
-              <component :is="componentOf(id)" v-if="componentOf(id)" :organization-id="organizationId" />
+              <component
+                :is="componentOf(id)"
+                v-if="componentOf(id)"
+                :organization-id="organizationId"
+                v-bind="propsOf(id)"
+              />
             </template>
           </LayoutRegion>
         </div>
@@ -141,6 +153,7 @@ import LayoutSkeleton from "../components/layout-skeleton.vue";
 import LayoutStats from "../components/layout-stats.vue";
 import { useLayoutPage } from "../composables/useLayoutPage";
 import { useSalesRepCustomer } from "../composables/useSalesRepCustomer";
+import { useSalesRepCustomerWidgets } from "../composables/useSalesRepCustomerWidgets";
 import { CUSTOMER_PROFILE_LAYOUT_SCOPE, MY_CUSTOMERS_ROUTE_NAME } from "../constants";
 
 interface IProps {
@@ -156,6 +169,7 @@ const isCompact = useBreakpoints(breakpointsTailwind).smaller("xl");
 
 const { t } = useI18n();
 const { customer, loading, notFound } = useSalesRepCustomer(() => props.organizationId);
+const { cards, loading: cardsLoading } = useSalesRepCustomerWidgets(() => props.organizationId);
 const {
   message,
   announce,
@@ -169,6 +183,7 @@ const {
   hiddenIn,
   hiddenWidgets,
   componentOf,
+  propsOf,
   startEdit,
   cancel,
   reset,
@@ -255,8 +270,7 @@ const breadcrumbs = useBreadcrumbs(() => [
     @apply sr-only;
   }
 
-  // Cancel VcWidget's mobile full-bleed (-mx-4.5 in .vc-container) so blocks align with the KPI row
-  // and title. The extra `&` lifts specificity above VcWidget's own rule (avoids !important).
+  // Cancels VcWidget's mobile full-bleed so blocks align with the KPI row/title; the extra & avoids !important.
   & &__main .vc-widget,
   & &__aside .vc-widget {
     @apply mx-0;

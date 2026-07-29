@@ -69,7 +69,6 @@ function sortPropertiesByDisplayOrder(props: Property[]): Property[] {
 }
 
 /** Extracts option value from properties array */
-
 function getOptionValue(props: Property[]): OptionValueType {
   if (!isMultiColorProperty(props)) {
     return normalizePropertyValue(props[0]);

@@ -26,6 +26,10 @@
       "table": {
         "customer": "Asiakas",
         "last_order": "Viimeisin tilaukseni",
+        "ytd": "Ostot tänä vuonna",
+        "last_year": "Viime vuosi",
+        "orders_count": "{count} tilaukset",
+        "all_customers": "Kaikki",
         "actions": "Toiminnot",
         "search_placeholder": "Hae nimellä",
         "search_aria": "Hae asiakkaita",
@@ -44,10 +48,25 @@
           "title": "Hallintapaneeli"
         },
         "widgets": {
-          "orders_on_hold": "Pidossa olevat tilaukset",
-          "active_projects": "Aktiiviset projektit",
+          "new_orders": "Uudet tilaukset",
+          "active_carts": "Aktiiviset ostoskorit",
+          "active_cart": "Aktiivinen ostoskori",
+          "orders_placed_week": "Tilaukset tällä viikolla",
           "orders_placed_mtd": "Tilaukset kuluvan kuun alusta",
+          "purchased_mtd": "Ostot kuluvan kuun alusta",
+          "orders_placed_ytd": "Tilaukset kuluvan vuoden alusta",
           "my_customers": "Omat asiakkaat"
+        },
+        "stats": {
+          "value_total": "{amount} yhteensä",
+          "vs_last_week": "{delta} vs viime viikko",
+          "vs_last_month": "{delta} vs viime kuu",
+          "vs_last_year": "{delta} vs viime vuosi",
+          "ordered_this_month": "{count} tilasi tässä kuussa",
+          "new_customers": "{count} uutta asiakasta",
+          "placed_today": "{count} tänään",
+          "new_this_week": "{count} uutta tällä viikolla",
+          "mtd_of_ytd": "{percent}% vuodesta"
         }
       },
       "layout": {
@@ -85,10 +104,10 @@
       "not_found": "Asiakasta ei löytynyt tai se ei kuulu asiakkaisiisi.",
       "back_to_customers": "Takaisin omiin asiakkaisiin",
       "widgets": {
-        "ytd_purchases": "Ostot vuoden alusta",
-        "open_balance": "Avoin saldo",
-        "avg_order_value": "Keskimääräinen tilausarvo",
-        "orders_ytd": "Tilaukset vuoden alusta"
+        "avg_order_value": "Keskimääräinen tilausarvo"
+      },
+      "stats": {
+        "per_order": "Keskim. per tilaus (tänä vuonna)"
       },
       "info": {
         "title": "Asiakastiedot",
@@ -134,12 +153,31 @@
       "title": "Viimeisimmät tilaukset",
       "view_all": "Kaikki tilaukset",
       "empty": "Ei vielä tilauksia",
+      "no_results": "Mikään tilaus ei vastaa tätä suodatinta",
       "number": "Tilausnro",
       "customer": "Asiakas",
       "date": "Päivämäärä",
       "items": "Tuotteet",
       "status": "Tila",
-      "total": "Yhteensä"
+      "total": "Yhteensä",
+      "filter_all": "Kaikki"
+    },
+    "top_sellers": {
+      "title": "Suosituimmat myyjät",
+      "rank": "#",
+      "product": "Tuote",
+      "units": "Yksiköt",
+      "revenue": "Tuotto",
+      "empty": "Ei myyntiä tällä kaudella",
+      "no_results": "Ei myyntiä tässä luokassa",
+      "all_categories": "Kaikki kategoriat"
+    },
+    "rules": {
+      "customer": {
+        "filter": {
+          "All": "Kaikki"
+        }
+      }
     }
   }
 }

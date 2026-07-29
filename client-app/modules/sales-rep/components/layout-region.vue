@@ -21,7 +21,7 @@
       @handle-keydown="onKeydown($event, id)"
       @handle-blur="onBlur(id)"
     >
-      <slot :id="id" />
+      <slot :id="id" :title="titleOf(id)" />
     </LayoutBlock>
 
     <!-- Always rendered while the zone is live; CSS hides it whenever the container holds a card. State
@@ -191,26 +191,14 @@ watch(
   }
 
   // Flex, not grid: a grid's track count comes from state, which lags the card SortableJS has already
-  // put in the container mid-drag — so the preview would not match the drop.
+  // put in the container mid-drag — so the preview would not match the drop. `basis` + `grow` is the
+  // flex equivalent of the `repeat(auto-fit, minmax(11rem, 1fr))` the fixed stat row uses, so the
+  // count-agnostic wrapping survives hiding a card (or a scope with five rather than six).
   &--horizontal {
     @apply flex flex-wrap gap-4;
 
     > * {
-      @apply min-w-0 basis-full;
-    }
-
-    @media (min-width: theme("screens.sm")) {
-      > * {
-        // Two per row; the gap is shared between them, hence half of it per card.
-        @apply basis-[calc(50%-0.5rem)];
-      }
-    }
-
-    @media (min-width: theme("screens.xl")) {
-      > * {
-        // One row, equal shares — hiding a card widens the rest instead of leaving a hole.
-        @apply basis-0 grow;
-      }
+      @apply min-w-0 grow basis-44;
     }
   }
 

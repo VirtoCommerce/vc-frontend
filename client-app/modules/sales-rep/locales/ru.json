@@ -26,6 +26,10 @@
       "table": {
         "customer": "Клиент",
         "last_order": "Мой последний заказ",
+        "ytd": "Покупки за год",
+        "last_year": "Прошлый год",
+        "orders_count": "{count} заказов",
+        "all_customers": "Все",
         "actions": "Действия",
         "search_placeholder": "Поиск по имени",
         "search_aria": "Поиск клиентов",
@@ -44,10 +48,25 @@
           "title": "Дашборд"
         },
         "widgets": {
-          "orders_on_hold": "Заказы на удержании",
-          "active_projects": "Активные проекты",
+          "new_orders": "Новые заказы",
+          "active_carts": "Активные корзины",
+          "active_cart": "Активная корзина",
+          "orders_placed_week": "Заказы за эту неделю",
           "orders_placed_mtd": "Заказы с начала месяца",
+          "purchased_mtd": "Покупки с начала месяца",
+          "orders_placed_ytd": "Заказы с начала года",
           "my_customers": "Мои клиенты"
+        },
+        "stats": {
+          "value_total": "{amount} всего",
+          "vs_last_week": "{delta} к прошлой неделе",
+          "vs_last_month": "{delta} к прошлому месяцу",
+          "vs_last_year": "{delta} к прошлому году",
+          "ordered_this_month": "{count} заказали в этом месяце",
+          "new_customers": "{count} новых клиентов",
+          "placed_today": "{count} сегодня",
+          "new_this_week": "{count} новых за неделю",
+          "mtd_of_ytd": "{percent}% от года"
         }
       },
       "layout": {
@@ -85,10 +104,10 @@
       "not_found": "Клиент не найден или не входит в число ваших клиентов.",
       "back_to_customers": "Назад к моим клиентам",
       "widgets": {
-        "ytd_purchases": "Покупки с начала года",
-        "open_balance": "Открытый баланс",
-        "avg_order_value": "Средняя сумма заказа",
-        "orders_ytd": "Заказы с начала года"
+        "avg_order_value": "Средняя сумма заказа"
+      },
+      "stats": {
+        "per_order": "Среднее за заказ (за год)"
       },
       "info": {
         "title": "Информация о клиенте",
@@ -134,12 +153,31 @@
       "title": "Недавние заказы",
       "view_all": "Все заказы",
       "empty": "Пока нет заказов",
+      "no_results": "Нет заказов, соответствующих этому фильтру",
       "number": "№ заказа",
       "customer": "Клиент",
       "date": "Дата",
       "items": "Позиции",
       "status": "Статус",
-      "total": "Итого"
+      "total": "Итого",
+      "filter_all": "Все"
+    },
+    "top_sellers": {
+      "title": "Лучшие продавцы",
+      "rank": "№",
+      "product": "Товар",
+      "units": "Шт.",
+      "revenue": "Выручка",
+      "empty": "Нет продаж за этот период",
+      "no_results": "Нет продаж в этой категории",
+      "all_categories": "Все категории"
+    },
+    "rules": {
+      "customer": {
+        "filter": {
+          "All": "Все"
+        }
+      }
     }
   }
 }

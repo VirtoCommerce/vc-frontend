@@ -16,10 +16,16 @@ export function useLayoutPage(scope: SalesRepLayoutScopeType) {
   // Widgets from both columns share one tray; the stat row has its own paired zone instead.
   const hiddenWidgets = computed(() => hiddenIn("mainLeft").concat(hiddenIn("mainRight")));
 
-  // eslint-disable-next-line sonarjs/function-return-type -- component or undefined by design
   const componentOf = (id: string) => {
     const block = getBlock(scope, id);
     return block && "component" in block ? block.component : undefined;
+  };
+
+  // Per-block props from the registry (e.g. `filterable` on the orders widget), so a page's slot stays
+  // one generic `<component>` instead of branching per id and drifting from the registry.
+  const propsOf = (id: string): Record<string, unknown> => {
+    const block = getBlock(scope, id);
+    return (block && "props" in block ? block.props : undefined) ?? {};
   };
 
   function toggleHidden(id: string, hidden: boolean, index?: number): void {
@@ -55,6 +61,7 @@ export function useLayoutPage(scope: SalesRepLayoutScopeType) {
     announce,
     hiddenWidgets,
     componentOf,
+    propsOf,
     toggleHidden,
     loading: layout.loading,
     saving: layout.saving,

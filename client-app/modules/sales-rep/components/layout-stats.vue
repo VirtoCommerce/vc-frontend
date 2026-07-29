@@ -75,15 +75,19 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { getStatCard } from "../layout/stat-cards";
 import LayoutRegion from "./layout-region.vue";
 import StatWidget from "./stat-widget.vue";
 import type { KeyboardSortSignalType, SalesRepLayoutScopeType } from "../types/layout";
+import type { StatWidgetCardType } from "../types/widgets";
 
 interface IProps {
   scope: SalesRepLayoutScopeType;
   visible: readonly string[];
   hidden: readonly string[];
+  /** Cards from the surface's statistics composable, matched to layout ids by `key`. */
+  cards: readonly StatWidgetCardType[];
+  /** The statistics queries are still in flight; each card shows its own spinner. */
+  cardsLoading?: boolean;
   editing?: boolean;
 }
 
@@ -101,7 +105,10 @@ const { t } = useI18n();
 // draggable from visible to hidden and back.
 const group = computed(() => `sales-rep-stats-${props.scope}`);
 
-const cardOf = (id: string) => getStatCard(props.scope, id);
+// Keyed lookup rather than a find per card: the row re-renders on every drag step.
+const byKey = computed(() => new Map(props.cards.map((card) => [card.key, card])));
+
+const cardOf = (id: string) => byKey.value.get(id);
 
 // Explicit, not spread: `key` and `labelKey` are not StatWidget props and would leak onto its root.
 // Total return keeps the required props non-optional; the template's `v-if` skips an unknown id.
@@ -116,6 +123,7 @@ function cardProps(id: string) {
     delta: card?.delta,
     deltaTone: card?.deltaTone,
     deltaIcon: card?.deltaIcon,
+    loading: props.cardsLoading,
   };
 }
 </script>
