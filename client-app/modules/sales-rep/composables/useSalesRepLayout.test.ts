@@ -493,4 +493,36 @@ describe("useSalesRepLayout", () => {
     expect(apolloMock.calls.query?.[2]).toMatchObject({ fetchPolicy: "no-cache" });
     expect(apolloMock.calls.mutation?.[1]).toMatchObject({ fetchPolicy: "no-cache" });
   });
+
+  // `refetch` flips the query's loading flag, and the pages swap the whole surface for the skeleton
+  // while it is true — which mid-edit would unmount the edit bar and the draft's focus with it.
+  it("does not blank the surface while it refetches after a disagreeing echo", async () => {
+    apolloMock.result.value = { salesRepLayout: null };
+    apolloMock.mutate.mockResolvedValue({ data: { saveSalesRepLayout: { regions: [] } } });
+    apolloMock.refetch.mockImplementation(() => {
+      apolloMock.loading.value = true;
+      return Promise.resolve();
+    });
+
+    const { startEdit, save, loading, editing } = useSalesRepLayout(scope);
+    startEdit();
+
+    await expect(save()).resolves.toBe(false);
+
+    expect(loading.value).toBe(false);
+    expect(editing.value).toBe(true);
+  });
+
+  // The refetch is fire-and-forget, so a rejection has to be caught or it surfaces as an unhandled one.
+  it("survives a refetch that fails", async () => {
+    apolloMock.result.value = { salesRepLayout: null };
+    apolloMock.mutate.mockResolvedValue({ data: { saveSalesRepLayout: { regions: [] } } });
+    apolloMock.refetch.mockRejectedValue(new Error("offline"));
+
+    const { startEdit, save, saveFailed } = useSalesRepLayout(scope);
+    startEdit();
+
+    await expect(save()).resolves.toBe(false);
+    expect(saveFailed.value).toBe(true);
+  });
 });

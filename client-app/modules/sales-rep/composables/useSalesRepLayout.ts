@@ -50,6 +50,11 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
   const persisted = computed(() => savedState.value ?? reconcileLayout(result.value?.salesRepLayout, registry));
   const state = computed(() => draft.value ?? persisted.value);
 
+  // Only a read with nothing to show yet blanks the surface. `refetch` sets `loading` true too
+  // (apollo-composable does it unconditionally, index.mjs:530), and swapping a live layout for the
+  // skeleton mid-edit would unmount the edit bar and take focus with it.
+  const initialLoading = computed(() => loading.value && !result.value && !savedState.value);
+
   // A save replaces the whole document, so a failed read must not be editable — we would overwrite an
   // arrangement we could not fetch. `null` is the never-saved case and stays editable.
   const canEdit = computed(() => !loading.value && !error.value);
@@ -161,7 +166,9 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
         // Cleared so `persisted` reads the refetch rather than a stale echo. The draft stays, so the
         // rep keeps their arrangement and edit mode.
         savedState.value = undefined;
-        void refetch();
+        refetch()?.catch((refetchError: unknown) => {
+          Logger.error("[sales-rep] salesRepLayout refetch after a disagreeing echo failed:", refetchError);
+        });
         saveFailed.value = true;
         return false;
       }
@@ -180,7 +187,7 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
 
   return {
     state: readonly(state),
-    loading,
+    loading: initialLoading,
     saving,
     editing,
     canEdit,
