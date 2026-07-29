@@ -50,7 +50,7 @@ Avoid the comment that only makes sense inside the session that produced it. Nar
 and git already records the change. Hedging ("not sure if", "hopefully this covers it") and
 restating the line below ("Set loading to true") are the same problem in other forms.
 
-Keep a block under eight lines unless it is JSDoc carrying `@param`/`@example`.
+Aim to keep a block to five lines unless it is JSDoc carrying `@param`/`@example`.
 `yarn check:comment-noise` flags the phrasings and the length, on edit and on commit; whether a
 comment merely restates its code is left to review.
 

@@ -123,7 +123,8 @@ describe("block length", () => {
   });
 
   it("measures blocks separately when code splits them", () => {
-    const half = Array.from({ length: 6 }, (_, i) => `// x ${i}`).join("\n");
+    // Two at-limit blocks that would exceed the limit if they were counted as one.
+    const half = Array.from({ length: MAX_COMMENT_BLOCK_LINES }, (_, i) => `// x ${i}`).join("\n");
 
     expect(check(`${half}\nconst a = 1;\n${half}\n`)).toEqual([]);
   });

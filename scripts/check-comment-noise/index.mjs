@@ -16,8 +16,11 @@ const CHANGED_ONLY = process.argv.includes("--changed");
 const FILE_ARGS = process.argv.slice(2).filter((arg) => !arg.startsWith("--"));
 const EXT = /\.(ts|vue|mjs|js)$/;
 
-/** A comment block longer than this is asked to justify itself. Tagged JSDoc is exempt. */
-const MAX_COMMENT_BLOCK_LINES = 8;
+/**
+ * A comment block longer than this is asked to justify itself. Aimed low on purpose: nothing here
+ * blocks, so a block that genuinely needs the room can keep it. Tagged JSDoc is exempt outright.
+ */
+const MAX_COMMENT_BLOCK_LINES = 5;
 
 /** `@param`/`@example` and friends mark API documentation, which is meant to be long. */
 const DOC_TAG = /@(?:param|returns?|example|description|see|deprecated|link|type|typedef|template|throws|file)\b/;
