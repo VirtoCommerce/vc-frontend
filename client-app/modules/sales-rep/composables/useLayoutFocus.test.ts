@@ -2,10 +2,9 @@ import { afterEach, describe, expect, it } from "vitest";
 import { nextTick } from "vue";
 import { focusBlockControl, focusEditToggle, focusSaveButton } from "./useLayoutFocus";
 
-// Every argument below is a literal written in this file, never anything user-supplied.
 function render(markup: string): void {
-  // eslint-disable-next-line no-unsanitized/property -- fixtures are literals from this file
-  document.body.innerHTML = markup;
+  const parsed = new DOMParser().parseFromString(markup, "text/html");
+  document.body.replaceChildren(...parsed.body.childNodes);
 }
 
 afterEach(() => {

@@ -34,7 +34,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  document.body.innerHTML = "";
+  document.body.replaceChildren();
 });
 
 // The edit bar and the toggle are never mounted together, which is the whole reason focus has to be
