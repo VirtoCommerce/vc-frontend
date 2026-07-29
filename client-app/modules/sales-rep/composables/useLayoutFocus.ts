@@ -1,20 +1,13 @@
 import { nextTick } from "vue";
 
-/**
- * Send focus back to the edit toggle when edit mode ends. The edit bar unmounts with it, so focus was
- * sitting on a button that no longer exists and would otherwise fall to the top of the page.
- */
+/** Edit mode ends with the bar unmounting, taking focus with it. */
 export function focusEditToggle(): void {
   void nextTick(() => {
     document.querySelector<HTMLElement>("[data-layout-edit-toggle]")?.focus({ preventScroll: true });
   });
 }
 
-/**
- * Send focus back to Save after a failed save. Starting one makes the wrapper `inert`, which blurs the
- * Save button the rep just pressed to `<body>`; on success edit mode ends and the toggle takes focus,
- * but a failure keeps the bar mounted with nothing holding focus.
- */
+/** Starting a save makes the wrapper `inert`, blurring Save to `<body>`; on failure nothing reclaims it. */
 export function focusSaveButton(): void {
   void nextTick(() => {
     document.querySelector<HTMLElement>("[data-layout-save]")?.focus({ preventScroll: true });
@@ -22,13 +15,9 @@ export function focusSaveButton(): void {
 }
 
 /**
- * Hiding, parking or restoring a block unmounts its control and mounts a new one elsewhere, which
- * drops focus to `<body>`. Focus follows the block instead: its region is fixed, so there is always
- * exactly one control representing it — a widget's drag handle, a stat card, or its restore button
- * once it moves to the hidden tray.
- *
- * `preventScroll` because a pointer drop lands here too, and yanking the viewport after a mouse drag
- * is not what the rep asked for.
+ * Hiding, parking or restoring unmounts a block's control and mounts another elsewhere, dropping focus
+ * to `<body>`. A block always has exactly one control, so focus can follow it. `preventScroll` because
+ * a pointer drop lands here too.
  */
 export function focusBlockControl(id: string): void {
   void nextTick(() => {

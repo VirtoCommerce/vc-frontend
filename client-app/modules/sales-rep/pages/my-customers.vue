@@ -207,7 +207,6 @@ function changePage(newPage: number): void {
 </script>
 
 <style lang="scss">
-// `@apply` keeps the module self-contained as an MF remote (no global utility layer). See PORT_TO_MF.md.
 .my-customers {
   &__title {
     @apply [word-break:break-word];

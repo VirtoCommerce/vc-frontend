@@ -7,6 +7,7 @@
       variant="outline"
       prepend-icon="adjustments"
       data-layout-edit-toggle
+      :aria-pressed="editing"
       @click="$emit('toggle')"
     >
       {{ editing ? t("sales_rep.hub.layout.editing") : t("sales_rep.hub.layout.edit") }}

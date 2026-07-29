@@ -277,6 +277,9 @@ describe("stat row drag and drop", () => {
     expect(visible.options.handle).toBeUndefined();
     // Disabled until edit mode, and enabled by the watch rather than a rebuild.
     expect(visible.options.disabled).toBe(true);
+    // Without a touch hold, a swipe starting on a card drags instead of scrolling the page.
+    expect(visible.options.delay).toBe(200);
+    expect(visible.options.delayOnTouchOnly).toBe(true);
 
     api.startEdit();
     await nextTick();

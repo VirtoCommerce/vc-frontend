@@ -33,6 +33,7 @@ import Sortable from "sortablejs";
 import { onMounted, onUnmounted, useTemplateRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useKeyboardSort } from "../composables/useKeyboardSort";
+import { WIDGET_DRAG_HANDLE_SELECTOR } from "../constants";
 import { getBlock } from "../layout/registry";
 import LayoutBlock from "./layout-block.vue";
 import type { KeyboardSortOrientationType, KeyboardSortSignalType, SalesRepLayoutScopeType } from "../types/layout";
@@ -43,19 +44,11 @@ interface IProps {
   entries: readonly string[];
   orientation: KeyboardSortOrientationType;
   editing?: boolean;
-  /**
-   * Groups that accept drops from a sibling list (the stat row's visible/hidden pair). Sharing a
-   * name is what makes a cross-zone drag legal; the two widget columns deliberately get distinct
-   * names so a rail widget can never be dropped into the wide column.
-   */
+  /** Shared name = cross-zone drags allowed. The two widget columns get distinct names on purpose. */
   group: string;
   /** Element to render as — `aside` for the customer profile's rail, `div` everywhere else. */
   tag?: string;
-  /**
-   * Blocks are dragged by the whole card rather than by a handle, and carry no hide button — the
-   * stat row, per the design. Widgets keep a handle because their headers belong to components the
-   * layout does not own.
-   */
+  /** Whole-card drag, no hide button — the stat row. Widgets use a handle instead. */
   dragWhole?: boolean;
   /** Renders the dashed drop-zone frame and an empty-state hint. */
   zone?: boolean;
@@ -76,14 +69,11 @@ const { t } = useI18n();
 const container = useTemplateRef<HTMLElement>("container");
 
 /**
- * Put SortableJS's DOM edit back before state drives the re-render. Detaching the node instead
- * (`item.remove()`) breaks Vue's keyed diff: it anchors moves against the elements it treats as
- * stable, and for a move of one slot forward that is the dragged element itself — so Vue anchors
- * against a node no longer in the document, throws `NotFoundError`, and the block disappears.
+ * Undo SortableJS's DOM edit so state drives the re-render. Detaching instead (`item.remove()`) makes
+ * Vue anchor a move against a node no longer in the document — `NotFoundError`, block gone.
  *
- * Remove first, then read the child index: computing the reference node before removal shifts it by
- * one when the block moves backwards within its own list. `oldIndex`, not `oldDraggableIndex` — this
- * addresses `children`, which counts every element; the handlers below address `props.entries`.
+ * Remove before reading the child index, or a backwards move is off by one. `oldIndex` addresses
+ * `children`; the handlers below address `props.entries`.
  */
 function restore(event: Sortable.SortableEvent): void {
   event.item.parentNode?.removeChild(event.item);
@@ -114,18 +104,11 @@ const { isGrabbed, onKeydown, onBlur, release } = useKeyboardSort({
   onSignal: (signal) => emit("announce", signal),
 });
 
-/**
- * Every move is handled explicitly, and `props.entries` stays the only source of truth.
- *
- * An earlier version let `useSortable` keep its own mirror of the list and watched it back. That mirror
- * was the bug: after a cross-zone drop it could still hold the moved block and emit a stale `reorder`,
- * which the page merged with the freshly-hidden entry — the same block twice, once per half. Sortable
- * is constructed directly so there is no mirror to disagree with state.
- */
+// Constructed directly rather than via `useSortable`: its internal mirror of the list could emit a
+// stale `reorder` after a cross-zone drop, landing the same block in both halves.
 let sortable: Sortable | undefined;
 
-// Built at mount, not at setup: every option below reads a prop, and reading them here means there is
-// no gap between what the instance is told and what the component currently is.
+// At mount, not setup: every option below reads a prop.
 onMounted(() => {
   if (!container.value) {
     return;
@@ -133,26 +116,27 @@ onMounted(() => {
 
   sortable = new Sortable(container.value, {
     group: props.group,
-    // Stat cards drag by the whole card. Widgets drag by their entire header — the design's affordance —
-    // with the handle button listed too, since it is overlaid on the header rather than inside it and so
-    // would not otherwise match `closest()`.
-    handle: props.dragWhole ? undefined : ".vc-widget__header-container, .layout-block__handle",
-    // Without this every child counts as an item, including the empty-zone hint paragraph — and the
-    // indices below would then not line up with `props.entries`.
+    // The handle button is listed too: it is overlaid on the header, not inside it, so it would not
+    // otherwise match `closest()`.
+    handle: props.dragWhole ? undefined : WIDGET_DRAG_HANDLE_SELECTOR,
+    // Otherwise the empty-zone hint counts as an item and the indices stop matching `props.entries`.
     draggable: ".layout-block",
     animation: 150,
     ghostClass: "sortable-ghost",
     dragClass: "sortable-drag",
     disabled: !props.editing,
 
-    // A keyboard grab must not stay live through a pointer drag: Sortable captures its indices at
-    // choose time, and a grab cancelled mid-drag reshuffles `entries` under them, dropping the wrong
-    // block. `release`, not `cancel` — restoring the position is the reshuffle to avoid.
+    // SortableJS defaults to `delay: 0` and preventDefaults every touchmove once a tap registers, so
+    // a swipe starting on a card drags instead of scrolling. `delayOnTouchOnly` exempts the mouse.
+    delay: 200,
+    delayOnTouchOnly: true,
+    touchStartThreshold: 5,
+
+    // Sortable captures indices at choose time, so a grab cancelled mid-drag reshuffles `entries`
+    // under them and drops the wrong block. `release`, not `cancel` — the restore is the reshuffle.
     onChoose: () => release(),
 
-    // Reorder inside one list, deriving the new order from `props.entries` rather than reading the DOM.
-    // The draggable-only indices are the ones that match `props.entries`; `oldIndex`/`newIndex` count
-    // every element child, so a non-block child rendered above the blocks would shift them all by one.
+    // Derived from `props.entries`, not the DOM. The draggable-only indices are the ones that match it.
     onUpdate: (event: Sortable.SortableEvent) => {
       restore(event);
 
@@ -162,8 +146,7 @@ onMounted(() => {
       emit("reorder", ids);
     },
 
-    // A drag that ended in a different list — the stat row's visible/hidden pair. `onEnd` fires once
-    // per drag, so this cannot double-apply the way separate onAdd/onRemove handlers did.
+    // Cross-zone. `onEnd` fires once per drag, unlike separate onAdd/onRemove which double-applied.
     onEnd: (event: Sortable.SortableEvent) => {
       if (event.from === event.to) {
         return; // same-list move, already handled by onUpdate
@@ -186,8 +169,8 @@ onUnmounted(() => {
   sortable = undefined;
 });
 
-// Toggled rather than torn down and rebuilt whenever edit mode flips. No `immediate` — the constructor
-// seeds the initial value, and an immediate run would fire before the instance exists.
+// Toggled rather than rebuilt. No `immediate` — the constructor seeds it, and an immediate run would
+// fire before the instance exists.
 watch(
   () => props.editing,
   (editing) => {
@@ -205,11 +188,8 @@ watch(
     @apply flex flex-col gap-5;
   }
 
-  // Flex rather than grid, deliberately. A grid needs its track count up front, which can only come
-  // from state — but mid-drag SortableJS has already put the incoming card in the container while
-  // state still says otherwise, so the row would keep its old column count and the two cards would
-  // stack. Sharing the row between actual children means the preview matches the drop: drag a second
-  // card in and the first halves to make room, exactly as it will look once released.
+  // Flex, not grid: a grid's track count comes from state, which lags the card SortableJS has already
+  // put in the container mid-drag — so the preview would not match the drop.
   &--horizontal {
     @apply flex flex-wrap gap-4;
 

@@ -215,16 +215,25 @@ and `setHidden(id, hidden, index?)` for writing.
 - **Mutation fails:** stay in edit mode, surface the error, keep the draft. The rep's work is never
   silently discarded. *As built:* focus returns to Save as well — starting the save makes the wrapper
   `inert`, which drops focus to `<body>`, and unlike the success path no edit-mode exit reclaims it.
-  The unsaved-changes guard resolves on the save's own result, so a failed write aborts the navigation
-  rather than leaving with the draft.
 - **Query errors** (as distinct from returning `null`): render registry defaults but **disable Edit
   layout**. Saving is a full-document replace; offering to overwrite a document we failed to read is
   how a layout gets destroyed. `null` is the normal never-saved case and does *not* disable editing.
   *As built:* `loadFailed` drives an alert on both pages — silently swapping in defaults with no edit
   button reads as the rep's arrangement having been lost.
-- **A save already in flight:** `save` refuses. The draft is only cleared when the first one resolves,
-  and the breadcrumbs sit outside the `inert` wrapper, so the route guard can otherwise reach `save`
-  again and fire a second full-document replace.
+- **A save already in flight:** `save` refuses. The draft is only cleared once the first one resolves,
+  so anything still holding a reference could otherwise fire a second full-document replace.
+- **Navigating away mid-edit: nothing is guarded, deliberately.** *Decided 2026-07-29:* an
+  unsaved-changes modal shipped first (`useUnsavedLayoutGuard`, router hooks + `SaveChangesModal`) and
+  was then **removed** — a layout arrangement is not worth prompting over, and the shared
+  `SaveChangesModal` has a dismissal hole that deadlocks navigation (Escape/backdrop/X reach
+  `VcModal`'s own `close`, which `save-changes-modal.vue` does not forward, so the guard's promise
+  never settles and `onBeforeRouteLeave` never returns — `edit-quote.vue` and `list-details.vue` share
+  the defect). Dropping the guard also drops this module's only `@/shared/common` + `@/shared/modal`
+  imports, which is a real gain for MF portability. Reintroduce on request, and fix the shared modal
+  first if so.
+- **Switching customers mid-edit:** the component is reused across `:organizationId`, so the draft and
+  edit mode carry over. Harmless — the customer-profile layout is scope-wide, not per-customer, so the
+  draft is equally valid for the next customer. Only the arrival in edit mode is surprising.
 
 ### 5. Drag and drop
 
@@ -305,11 +314,16 @@ tokens, so this is a translation into `@apply` + BEM, not a redesign.
 
 Three states the prototype could not specify, decided here:
 
-- **The SortableJS placeholder.** The prototype fades the *source* element to `.45` because native
-  HTML5 DnD gave it no placeholder — that opacity is a workaround, not a design. SortableJS adds
-  `.sortable-ghost` (the gap), `.sortable-drag` (the floating clone) and `.sortable-chosen`. The
-  ghost gets a dashed `primary-500` outline over `bg-primary-50` — the mock's own vocabulary applied
-  to a state it never drew.
+- **The SortableJS placeholder.** SortableJS adds `.sortable-ghost` (the dragged element, which it
+  moves to the insertion point), `.sortable-drag` (the clone under the pointer) and
+  `.sortable-chosen`. The ghost shows **the card itself at `.45`** under a dashed `primary-500`
+  outline; the clone stays solid.
+
+  *Corrected 2026-07-29:* this originally read the prototype's `.45` fade as a workaround for native
+  HTML5 DnD having no placeholder, and replaced it with an empty `bg-primary-50` slot. That was the
+  wrong call — the fade is the design. The rep should see a preview of what is about to land in that
+  spot, not an empty rectangle, and the faded card is also what `--grabbed` already does for keyboard
+  sorting, so the two paths now share one treatment.
 - **Dark mode — verified, no override needed.** The presets invert every token this feature uses:
   `neutral-50` #fafafa → #141415 and `neutral-100` #f5f5f5 → #2b2b2c (so the hatch keeps the same
   subtle step), `additional-50` #ffffff → #0a090b (cards do not glow white on the striped zone), and

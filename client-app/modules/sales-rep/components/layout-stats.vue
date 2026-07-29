@@ -4,13 +4,8 @@
       {{ t("sales_rep.hub.layout.visible_stats") }}
     </p>
 
-    <!--
-      Always mounted, so its Sortable instance is created once and merely enabled/disabled as edit
-      mode flips. The hidden zone below only exists while editing, which is when it can be a target.
-
-      Grouped and labelled while editing: both zones name their cards "Reorder {title}", so without
-      this a screen reader cannot tell a parked card from a visible one.
-    -->
+    <!-- Always mounted, so its Sortable instance is built once and toggled. Labelled while editing —
+         both zones name their cards "Reorder {title}", so the zone is all that tells them apart. -->
     <LayoutRegion
       :role="editing ? 'group' : undefined"
       :aria-labelledby="editing ? `${scope}-visible-stats` : undefined"
@@ -108,10 +103,8 @@ const group = computed(() => `sales-rep-stats-${props.scope}`);
 
 const cardOf = (id: string) => getStatCard(props.scope, id);
 
-// Built explicitly rather than spread: `key` and `labelKey` are not StatWidget props and would
-// otherwise leak onto its root element as stray attributes. The return stays total so the required
-// props keep their non-optional types — the template's `v-if` is what skips an unknown id, which
-// only happens if a registry block and its card data disagree.
+// Explicit, not spread: `key` and `labelKey` are not StatWidget props and would leak onto its root.
+// Total return keeps the required props non-optional; the template's `v-if` skips an unknown id.
 function cardProps(id: string) {
   const card = cardOf(id);
   return {
@@ -139,10 +132,8 @@ function cardProps(id: string) {
     }
   }
 
-  // Sits ahead of the card's accent icon and only signals "this is draggable" — the card is the
-  // control, so this stays decorative and out of the accessibility tree. It renders inside
-  // `.stat-widget` via the leading slot, so it inherits `--stat-widget-accent` and picks up the same
-  // colour as the card's edge bar and title icon, per the design.
+  // Decorative only — the card itself is the control. Inside `.stat-widget`, so it inherits
+  // `--stat-widget-accent` and matches the card's edge bar.
   &__handle {
     @apply -me-0.5 inline-flex;
 

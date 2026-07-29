@@ -5,11 +5,8 @@ import type { Component } from "vue";
 /** Layout surface. Free-form `String` server-side — the literals live in constants.ts. */
 export type SalesRepLayoutScopeType = "dashboard" | "customerProfile";
 
-/**
- * Fixed regions. A block's region is owned by the registry and is never read back from the saved
- * document: `mainLeft` (wide content) and `mainRight` (narrow rail) hold widgets built for their
- * width, so region is code, not user data.
- */
+/** Fixed regions. Owned by the registry, never read back from the document — widgets are built for
+ * their column's width, so region is code, not user data. */
 export type SalesRepLayoutRegionIdType = "statistics" | "mainLeft" | "mainRight";
 
 interface ISalesRepBlockBase {
@@ -36,12 +33,8 @@ export interface ISalesRepWidgetBlock extends ISalesRepBlockBase {
 export type SalesRepBlockType = ISalesRepStatBlock | ISalesRepWidgetBlock;
 
 /**
- * A region's two halves, each in render order.
- *
- * Two arrays rather than one flagged list: the UI only ever shows a half at a time, so ordering across
- * the boundary is state nothing can display. Holding it forced every edit to rebuild the whole region
- * visible-first, and let a redundant park silently relocate a block. The `hidden` flag the backend
- * stores is materialized only at the document boundary, in `layout/document.ts`.
+ * A region's two halves, each in render order. Two arrays rather than one flagged list — order across
+ * the boundary is state nothing can display. The `hidden` flag exists only in `layout/document.ts`.
  */
 export type SalesRepLayoutRegionType = { visible: string[]; hidden: string[] };
 
@@ -51,10 +44,7 @@ export type SalesRepLayoutStateType = Record<SalesRepLayoutRegionIdType, SalesRe
 /** Stat rows read left-to-right; widget columns read top-to-bottom. */
 export type KeyboardSortOrientationType = "horizontal" | "vertical";
 
-/**
- * What a keyboard sort just did. The composable stays free of i18n — the caller turns these into
- * the localized text pushed to the `aria-live` region.
- */
+/** What a keyboard sort just did; the caller localizes it for the `aria-live` region. */
 export type KeyboardSortSignalType =
   /** `parkable` picks the wording: only the stat row can hide a block with the arrow keys. */
   | { kind: "grabbed"; id: string; index: number; total: number; parkable: boolean }

@@ -1,12 +1,8 @@
-// Block registries for the two layout surfaces (VCST-5367).
+// Which blocks exist and which region each lives in; the saved document only adds order and hidden
+// flags. Registering here is all a widget needs to join drag-and-drop, hiding and persistence.
 //
-// The registry is the authority for which blocks exist and which region each one lives in; the
-// saved document only ever contributes order and hidden flags. Adding a widget here is all that is
-// needed for it to take part in drag-and-drop, hiding and persistence.
-//
-// Kept module-local rather than folded into `useExtensionRegistry`: that registry's entries are
-// `{ component, condition }` with no region, order or title, and its category map lives in
-// `@/shared/common/types`, a host dependency PORT_TO_MF.md works to avoid.
+// Module-local rather than `useExtensionRegistry`, whose entries are `{ component, condition }` with
+// no region, order or title.
 import { defineAsyncComponent, markRaw } from "vue";
 import type { SalesRepBlockType, SalesRepLayoutScopeType } from "../types/layout";
 

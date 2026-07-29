@@ -18,11 +18,7 @@ function emptyState(): SalesRepLayoutStateType {
   };
 }
 
-/**
- * Index the document by block type. Flattened across regions on purpose: the document's own region
- * grouping is not authoritative, only the relative order of the blocks the rep arranged. A repeated
- * type collapses to its first occurrence.
- */
+/** Index by block type, flattened — only relative order is authoritative. Repeats collapse to the first. */
 function indexPersistedBlocks(saved: SavedLayoutType | null | undefined) {
   const byType = new Map<string, { index: number; hidden: boolean }>();
   let index = 0;
@@ -39,20 +35,15 @@ function indexPersistedBlocks(saved: SavedLayoutType | null | undefined) {
 }
 
 /**
- * Merge a persisted document with the current block registry.
+ * Merge a persisted document with the current registry.
  *
- * - A persisted block whose `type` is not in the registry is DROPPED (the widget left the app).
- * - A registry block missing from the document is APPENDED to its region, after everything the rep
- *   arranged, ordered among its fellow newcomers by `order`. Appending rather than inserting keeps
- *   a newly shipped widget from shuffling an arrangement the rep already chose.
- * - Region always comes from the registry, never from the document — so when a widget moves
- *   rail-to-main in a later release, saved layouts follow the code instead of pinning a stale spot.
- * - Duplicate types in the document collapse to their first occurrence.
+ * - A persisted type absent from the registry is dropped (the widget left the app).
+ * - A registry block absent from the document is appended, so a newly shipped widget cannot shuffle
+ *   an arrangement the rep already chose; newcomers sort among themselves by `order`.
+ * - Region always comes from the registry, so a widget moved rail-to-main follows the code.
+ * - Duplicate types collapse to the first occurrence.
  *
- * `saved` of `null`/`undefined` is the normal never-saved case and yields pure registry defaults.
- *
- * The assembled order is split into the region's two halves last, so the flat document index still
- * decides relative order — within a half, which is the only place it shows.
+ * `null`/`undefined` is the never-saved case and yields registry defaults.
  */
 export function reconcileLayout(
   saved: SavedLayoutType | null | undefined,
@@ -92,20 +83,25 @@ export function reconcileLayout(
 }
 
 /**
- * Whether a save's echoed document accounts for every block that was sent. Presence alone is not
- * enough to trust it: `reconcileLayout` fills anything absent from registry defaults, so a partial
- * echo reads as "the rep arranged nothing". Region grouping is ignored, as everywhere else.
+ * Whether a save's echo agrees with what was sent: every block present, every `hidden` flag matching.
+ *
+ * A missing block reconciles to a registry default, reading as "the rep arranged nothing". A wrong
+ * `hidden` reverts a hide, since that is the field reconciliation reads back out of the echo. Region
+ * grouping is ignored, as everywhere else.
  */
-export function echoCoversSentBlocks(saved: SavedLayoutType | null | undefined, sent: InputSalesRepLayout): boolean {
-  const echoed = new Set((saved?.regions ?? []).flatMap((region) => region.blocks.map((block) => block.type)));
+export function echoMatchesSentBlocks(saved: SavedLayoutType | null | undefined, sent: InputSalesRepLayout): boolean {
+  const echoed = new Map(
+    (saved?.regions ?? []).flatMap((region) => region.blocks.map((block) => [block.type, block.hidden] as const)),
+  );
 
-  return sent.regions.every((region) => region.blocks.every((block) => echoed.has(block.type)));
+  return sent.regions.every((region) =>
+    region.blocks.every((block) => echoed.has(block.type) && echoed.get(block.type) === block.hidden),
+  );
 }
 
 /**
- * Build the mutation payload. Saves are a full-document replace, so every region and every block —
- * hidden ones included — must be present. `settings` is a required list; v1 persists order and
- * visibility only, so it always goes out empty.
+ * Build the mutation payload. A save is a full-document replace, so every region and block goes out,
+ * hidden included. `settings` is required but v1 persists order and visibility only, so it is empty.
  */
 export function serializeLayout(
   state: SalesRepLayoutStateType,

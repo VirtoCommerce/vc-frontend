@@ -27,9 +27,12 @@ export function useLayoutPage(scope: SalesRepLayoutScopeType) {
     focusBlockControl(id);
   }
 
-  // Save and Cancel both unmount the edit bar they live on, taking focus with them.
+  // Entry rewrites the surface with nothing announcing it, and the arrow keys are otherwise only
+  // discoverable by grabbing something. Exit unmounts the edit bar that held focus.
   watch(editing, (now, was) => {
-    if (was && !now) {
+    if (now && !was) {
+      say(`${t("sales_rep.hub.layout.editing")}. ${t("sales_rep.hub.layout.hint_keyboard")}`);
+    } else if (was && !now) {
       focusEditToggle();
     }
   });

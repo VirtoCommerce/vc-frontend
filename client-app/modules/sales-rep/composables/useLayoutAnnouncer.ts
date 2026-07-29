@@ -6,10 +6,8 @@ import type { KeyboardSortSignalType, SalesRepLayoutScopeType } from "../types/l
 const ZERO_WIDTH_SPACE = "\u200B";
 
 /**
- * Turns keyboard-sort signals into localized text for an `aria-live` region.
- *
- * Grab-and-move is invisible without it: a sighted pointer user sees the block follow the cursor,
- * whereas a keyboard user has only the announcement to tell them what moved and where it landed.
+ * Localizes keyboard-sort signals for an `aria-live` region — the only feedback a keyboard user gets,
+ * where a pointer user watches the block follow the cursor.
  */
 export function useLayoutAnnouncer(scope: SalesRepLayoutScopeType) {
   const { t } = useI18n();

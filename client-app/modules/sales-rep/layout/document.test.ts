@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { LAYOUT_SCHEMA_VERSION } from "../constants";
-import { echoCoversSentBlocks, reconcileLayout, serializeLayout } from "./document";
+import { echoMatchesSentBlocks, reconcileLayout, serializeLayout } from "./document";
 import type { SalesRepBlockType, SalesRepLayoutStateType, SavedLayoutType } from "../types/layout";
 
 // A stand-in component; reconciliation never touches it, it only satisfies the widget-block type.
@@ -171,19 +171,18 @@ describe("serializeLayout", () => {
   });
 });
 
-// Guards the save path: reconciling a document that is missing blocks fills the gaps from registry
-// defaults, which would read as "the rep arranged nothing" and overwrite what they actually did.
-describe("echoCoversSentBlocks", () => {
+// Two ways an echo can lie: omit blocks, or return them all with the wrong `hidden`.
+describe("echoMatchesSentBlocks", () => {
   const sent = serializeLayout(reconcileLayout(null, registry), "dashboard");
 
   it("accepts an echo carrying every block that was sent", () => {
-    expect(echoCoversSentBlocks(sent as unknown as SavedLayoutType, sent)).toBe(true);
+    expect(echoMatchesSentBlocks(sent as unknown as SavedLayoutType, sent)).toBe(true);
   });
 
   it("accepts an echo that regrouped the blocks across regions", () => {
     const flattened: SavedLayoutType = { regions: [{ blocks: sent.regions.flatMap((region) => region.blocks) }] };
 
-    expect(echoCoversSentBlocks(flattened, sent)).toBe(true);
+    expect(echoMatchesSentBlocks(flattened, sent)).toBe(true);
   });
 
   it.each([
@@ -192,7 +191,7 @@ describe("echoCoversSentBlocks", () => {
     ["null", null],
     ["undefined", undefined],
   ])("rejects an echo with %s", (_label, echo) => {
-    expect(echoCoversSentBlocks(echo as SavedLayoutType | null | undefined, sent)).toBe(false);
+    expect(echoMatchesSentBlocks(echo as SavedLayoutType | null | undefined, sent)).toBe(false);
   });
 
   it("rejects an echo that dropped a single block", () => {
@@ -200,6 +199,19 @@ describe("echoCoversSentBlocks", () => {
       regions: sent.regions.map((region) => ({ blocks: region.blocks.slice(1) })),
     };
 
-    expect(echoCoversSentBlocks(short, sent)).toBe(false);
+    expect(echoMatchesSentBlocks(short, sent)).toBe(false);
+  });
+
+  // Every type present, one flag inverted — the case a presence-only check waves through.
+  it("rejects an echo that returns every block but contradicts a hidden flag", () => {
+    const flipped: SavedLayoutType = {
+      regions: sent.regions.map((region, index) => ({
+        blocks: region.blocks.map((block, position) =>
+          index === 0 && position === 0 ? { type: block.type, hidden: !block.hidden } : block,
+        ),
+      })),
+    };
+
+    expect(echoMatchesSentBlocks(flipped, sent)).toBe(false);
   });
 });

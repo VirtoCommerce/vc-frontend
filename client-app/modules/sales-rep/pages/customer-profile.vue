@@ -29,8 +29,7 @@
         <p v-if="meta" class="customer-profile__meta">{{ meta }}</p>
       </div>
 
-      <!-- A read failure is not silent: what renders below is registry defaults, not the rep's layout,
-           and the edit button is gone. Both need saying, or it reads as their arrangement being lost. -->
+      <!-- What renders below is registry defaults, not the rep's layout, and there is no edit button. -->
       <VcAlert v-if="loadFailed" color="danger" size="sm" variant="solid-light" icon>
         {{ t("sales_rep.hub.layout.load_failed") }}
       </VcAlert>
@@ -38,10 +37,7 @@
       <!-- Nothing block-shaped renders until the saved layout is known; see layout-skeleton.vue. -->
       <LayoutSkeleton v-if="layoutLoading" :stats="4" :blocks="2" />
 
-      <!-- The overlay covers the edit bar too: a save is a full-document replace, so nothing may change
-           while one is in flight — including a drag, whose drop would land after the draft is gone.
-           `inert` is what enforces that; the overlay alone only stops the pointer, leaving the buttons
-           and every drag handle reachable by keyboard. See dashboard.vue for why `|| undefined`. -->
+      <!-- Nothing may change while a save is in flight, keyboard included. See dashboard.vue for `|| undefined`. -->
       <div v-else class="customer-profile__layout-wrapper" :inert="saving || undefined">
         <VcLoaderOverlay v-if="saving" />
 
@@ -145,7 +141,6 @@ import LayoutSkeleton from "../components/layout-skeleton.vue";
 import LayoutStats from "../components/layout-stats.vue";
 import { useLayoutPage } from "../composables/useLayoutPage";
 import { useSalesRepCustomer } from "../composables/useSalesRepCustomer";
-import { useUnsavedLayoutGuard } from "../composables/useUnsavedLayoutGuard";
 import { CUSTOMER_PROFILE_LAYOUT_SCOPE, MY_CUSTOMERS_ROUTE_NAME } from "../constants";
 
 interface IProps {
@@ -182,8 +177,6 @@ const {
   toggleHidden,
   save,
 } = useLayoutPage(SCOPE);
-
-useUnsavedLayoutGuard({ editing, save, cancel });
 
 const myCustomersRouteName = MY_CUSTOMERS_ROUTE_NAME;
 

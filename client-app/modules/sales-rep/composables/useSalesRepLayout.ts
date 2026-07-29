@@ -3,7 +3,7 @@ import { computed, readonly, ref } from "vue";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { SalesRepLayoutDocument, SaveSalesRepLayoutDocument } from "../api/graphql/types";
-import { echoCoversSentBlocks, reconcileLayout, serializeLayout } from "../layout/document";
+import { echoMatchesSentBlocks, reconcileLayout, serializeLayout } from "../layout/document";
 import { getBlockRegistry } from "../layout/registry";
 import type { SalesRepLayoutRegionIdType, SalesRepLayoutScopeType, SalesRepLayoutStateType } from "../types/layout";
 
@@ -16,24 +16,15 @@ function cloneState(state: SalesRepLayoutStateType): SalesRepLayoutStateType {
 }
 
 /**
- * Drives one layout surface: load, edit-mode draft, and save.
- *
- * Editing is explicit — `startEdit` snapshots the live layout into a draft, every change targets the
- * draft, and `save` writes the whole document in a single mutation (the backend replaces rather than
- * merges). `cancel` throws the draft away; `reset` refills it from registry defaults but still needs
- * a save to persist, so a stray click is recoverable.
+ * Drives one layout surface. `startEdit` snapshots into a draft, every change targets the draft, and
+ * `save` writes the whole document in one mutation (the backend replaces, not merges). `reset` refills
+ * the draft from registry defaults but still needs a save, so a stray click is recoverable.
  */
 export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
   const registry = getBlockRegistry(scope);
 
-  /**
-   * `no-cache` on both operations. Regions and blocks carry an `id`, so Apollo normalizes them — and
-   * region ids are fixed while `orders` is registered on both surfaces, making
-   * `SalesRepLayoutRegion:statistics` a single entity shared by every scope. Cached, one surface
-   * overwrites the other's regions, reconciliation drops the foreign types, and the rep silently gets
-   * registry defaults that the next save makes permanent. Skipping the cache rather than adding host
-   * `typePolicies` keeps the module portable as an MF remote (PORT_TO_MF.md).
-   */
+  // `no-cache` even with layout/cache-policies.ts in place: a save echoes `saveSalesRepLayout`, a
+  // different root field, so it never refreshes a cached `salesRepLayout`.
   const { result, loading, error, onError } = useQuery(
     SalesRepLayoutDocument,
     () => ({
@@ -59,11 +50,8 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
   const persisted = computed(() => savedState.value ?? reconcileLayout(result.value?.salesRepLayout, registry));
   const state = computed(() => draft.value ?? persisted.value);
 
-  /**
-   * A save replaces the entire document. If the read failed we do not know what is stored, so
-   * offering to overwrite it would risk destroying an arrangement we simply could not fetch. A
-   * `null` result is different — that is the ordinary never-saved case and editing stays available.
-   */
+  // A save replaces the whole document, so a failed read must not be editable — we would overwrite an
+  // arrangement we could not fetch. `null` is the never-saved case and stays editable.
   const canEdit = computed(() => !loading.value && !error.value);
 
   // Exposed so the surface can say why editing is unavailable: without it the rep sees registry
@@ -121,9 +109,8 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
   }
 
   /**
-   * Move a block between its region's halves. `index` is where it was dropped within the half it joins;
-   * without one it goes to the end. A block that is already in the destination is not found in the
-   * source half, so a redundant call is a no-op rather than a silent relocation.
+   * Move a block between its region's halves. `index` is where it was dropped, else the end. A block
+   * already in the destination is not in the source half, so a redundant call is a no-op.
    */
   function setHidden(id: string, hidden: boolean, index?: number): void {
     if (!draft.value || !editable()) {
@@ -144,9 +131,9 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
     }
   }
 
-  // `saving`, not just `draft`: the draft is only cleared when the first save resolves, and the
-  // breadcrumbs sit outside the pages' `inert` wrapper — so the route guard can reach `save` again
-  // mid-flight and fire a second full-document replace.
+  // `saving`, not just `draft`: the draft is only cleared once the first save resolves, so anything
+  // holding a reference could otherwise fire a second full-document replace mid-flight. The pages'
+  // `inert` covers the buttons; this covers the programmatic paths an attribute cannot.
   async function save(): Promise<boolean> {
     if (!draft.value || saving.value) {
       return false;
@@ -166,12 +153,12 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
         return false;
       }
 
-      // Reconcile from the echo rather than refetching — but only once it accounts for what went out.
-      // A short echo is a broken backend, not a rep who arranged nothing, and the write did not error.
-      if (echoCoversSentBlocks(saved, command)) {
+      // Reconcile from the echo rather than refetching — but only once it agrees with what went out.
+      // A short or contradictory echo is a broken backend, not the rep's intent, and the write did not error.
+      if (echoMatchesSentBlocks(saved, command)) {
         savedState.value = reconcileLayout(saved, registry);
       } else {
-        Logger.error("[sales-rep] saveSalesRepLayout echoed a document missing blocks that were sent");
+        Logger.error("[sales-rep] saveSalesRepLayout echoed a document that disagrees with what was sent");
         savedState.value = cloneState(pending);
       }
 

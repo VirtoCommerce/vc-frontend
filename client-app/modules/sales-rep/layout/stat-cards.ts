@@ -1,11 +1,7 @@
-// KPI card data for the two surfaces, keyed by the id the layout registry uses (VCST-5367).
+// KPI card data, keyed by the id the layout registry uses. Data rather than a component-owned list,
+// because the layout decides order and visibility.
 //
-// Previously these lived inside `dashboard-widgets.vue` / `customer-profile-widgets.vue`, which both
-// rendered a fixed array. The layout decides order and visibility now, so the cards are data the
-// page looks up by id rather than a list a component owns.
-//
-// MOCK — visual only. Real figures arrive with the rep dashboard stats query and, for the customer
-// profile, `salesRepCustomerOrderStatistics` (VCST-5309).
+// MOCK — visual only. Real figures arrive with the stats queries (VCST-5309).
 import type { SalesRepLayoutScopeType } from "../types/layout";
 import type { StatWidgetCardType } from "../types/widgets";
 

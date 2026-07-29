@@ -128,7 +128,6 @@ function changePage(newPage: number): void {
 </script>
 
 <style lang="scss">
-// `@apply` keeps the module self-contained as an MF remote (no global utility layer). See PORT_TO_MF.md.
 // No vertical margins: the account shell wraps the page root in `flex flex-col gap-y-5` and owns the spacing.
 .sales-reps {
   &__title {

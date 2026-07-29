@@ -8,10 +8,7 @@ interface IUseKeyboardSortOptions {
   items: () => string[];
   /** Move `id` to `index` within the list. */
   onReorder: (id: string, index: number) => void;
-  /**
-   * Park or restore a block. Only wired for horizontal regions, where ↑/↓ are free because they are
-   * not reordering keys — that is what makes the stat row's visible/hidden zones keyboard-reachable.
-   */
+  /** Only wired for horizontal regions, where ↑/↓ are free because they do not reorder. */
   onToggleHidden?: (id: string, hidden: boolean) => void;
   /** Hidden state every block in this list already has, so ↑/↓ can ignore the direction that is a no-op. */
   hidden?: () => boolean;
@@ -20,12 +17,8 @@ interface IUseKeyboardSortOptions {
 }
 
 /**
- * Grab-and-move sorting for keyboard users: Space/Enter grabs, arrows move, Space/Enter drops,
- * Escape restores the original position. Blur cancels too, so tabbing away can never strand a
- * half-finished move.
- *
- * Pointer users get the same result through SortableJS; this is the accessible path to it, not a
- * fallback — the design prototype had no keyboard story at all, so the semantics are defined here.
+ * Grab-and-move sorting: Space/Enter grabs and drops, arrows move, Escape restores, blur cancels so
+ * tabbing away cannot strand a half-finished move. The prototype had no keyboard story to copy.
  */
 export function useKeyboardSort(options: IUseKeyboardSortOptions) {
   const grabbedId = ref<string | undefined>();
@@ -35,10 +28,8 @@ export function useKeyboardSort(options: IUseKeyboardSortOptions) {
     return grabbedId.value === id;
   }
 
-  // Vue reorders by moving the node with `insertBefore`, which blurs it in Chrome and WebKit. Since
-  // blur cancels a grab, an unguarded move would snap the block straight back — visible as arrows
-  // that work one way only, because Vue's diff moves the element that ends up earlier and leaves its
-  // neighbour alone. Ignore that self-inflicted blur until the queued refocus has run.
+  // Vue's `insertBefore` blurs the moved node in Chrome and WebKit, and blur cancels a grab — so an
+  // unguarded move snaps straight back. Ignore that self-inflicted blur until the refocus has run.
   let refocusing = false;
 
   function refocus(handle: HTMLElement | undefined): void {
@@ -107,10 +98,7 @@ export function useKeyboardSort(options: IUseKeyboardSortOptions) {
     refocus(handle);
   }
 
-  /**
-   * Park or restore the grabbed block. The block leaves this list, so the grab is released rather
-   * than followed across containers — a move between zones is a complete action, not a step.
-   */
+  /** The block leaves this list, so the grab is released rather than followed across containers. */
   function toggleHidden(hidden: boolean): void {
     const id = grabbedId.value;
     // The direction leading out of the zone the block is already in is a no-op: acting on it appends

@@ -82,6 +82,17 @@ describe("useLayoutPage", () => {
     expect(activeMarker()).toBe("layoutEditToggle");
   });
 
+  // Nothing else tells a screen reader the surface changed, or that the arrow keys do anything.
+  it("announces edit mode and the keyboard gesture on entry", async () => {
+    const { startEdit, message } = useLayoutPage("customerProfile");
+
+    startEdit();
+    await nextTick();
+
+    expect(message.value).toContain("sales_rep.hub.layout.editing");
+    expect(message.value).toContain("sales_rep.hub.layout.hint_keyboard");
+  });
+
   // Both widget columns share one tray, so a page reads them as a single list.
   it("gathers hidden widgets from both columns", () => {
     const { startEdit, toggleHidden, hiddenWidgets } = useLayoutPage("customerProfile");

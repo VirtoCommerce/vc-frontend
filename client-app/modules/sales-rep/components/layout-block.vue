@@ -7,14 +7,9 @@
     ]"
     v-bind="wholeHandleAttrs"
   >
-    <!-- Keep one root node. A root sibling — dev builds keep comments — makes this a fragment, and
-         SortableJS moves only the element, so Vue loses track of it and leaves a duplicate behind. -->
-    <!--
-      Widgets: the chrome is laid over the widget's own header — handle at the start, hide at the end
-      — because those headers belong to components the layout does not own and cannot be slotted into
-      from here. Stat cards take the whole-block treatment instead: per the design they are dragged by
-      the card itself and cannot be hidden with a ✕, only parked in the unused zone.
-    -->
+    <!-- Keep one root node: a root sibling makes this a fragment, and SortableJS moves only the
+         element, so Vue loses track of it and leaves a duplicate behind. Stat cards get no chrome —
+         they drag by the card and park in the paired zone rather than hiding with a ✕. -->
     <div v-if="editing && !dragWhole" class="layout-block__chrome">
       <button
         type="button"
@@ -52,10 +47,7 @@ interface IProps {
   editing?: boolean;
   /** Held by the keyboard sorter; renders the same treatment as a pointer drag. */
   grabbed?: boolean;
-  /**
-   * The whole block is the drag handle and it carries no chrome (stat cards). Since there is no
-   * handle button to focus, the block itself becomes the keyboard control while editing.
-   */
+  /** Whole block is the handle (stat cards), so the block itself is the keyboard control. */
   dragWhole?: boolean;
 }
 
@@ -69,10 +61,8 @@ const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 const { t } = useI18n();
 
-// With no handle button to focus, the card itself has to be the control — but only while editing,
-// so it stays out of the tab order on a normal page view. Role, tabindex and the listeners are bound
-// together rather than as separate template attributes, so the element is never interactive without
-// also being announced as a control.
+// Bound as one object so the card is never focusable without also being announced as a button, and
+// only while editing — otherwise it sits in the tab order on an ordinary page view.
 const wholeHandleAttrs = computed(() =>
   props.dragWhole && props.editing
     ? {
@@ -88,14 +78,23 @@ const wholeHandleAttrs = computed(() =>
 </script>
 
 <style lang="scss">
-// `@apply` keeps the module self-contained as an MF remote (no global utility layer). See PORT_TO_MF.md.
 .layout-block {
+  // VcWidget declares `--header-min-h` / `--p-x` on itself, so the chrome — its sibling — cannot
+  // inherit them. Mirrored here for size md, which every registered widget uses.
+  --layout-block-header-h: 3.125rem;
+  --layout-block-header-p: theme("padding.4");
+  --layout-block-control: theme("spacing.7");
+  // The header's own text has to clear one control on each side.
+  --layout-block-header-inset: calc(var(--layout-block-header-p) + var(--layout-block-control) + theme("spacing.1"));
+
   @apply relative;
 
-  // Dashed outline rather than a border so the block's own box model is untouched in edit mode.
-  // The radius matters: an outline only follows rounded corners if the element itself is rounded,
-  // and this wrapper is otherwise square — without it the outline boxes a rounded card in sharp
-  // corners. `--vc-radius` is what the card and VcWidget use, so the two stay concentric.
+  @media (min-width: theme("screens.sm")) {
+    --layout-block-header-p: theme("padding.6");
+  }
+
+  // Outline, not border, so the box model is untouched. Rounded because an outline only follows
+  // corners the element itself has.
   &--editing {
     @apply rounded-[--vc-radius] outline-dashed outline-1 outline-offset-2 outline-neutral-300 transition-opacity;
   }
@@ -125,19 +124,12 @@ const wholeHandleAttrs = computed(() =>
     box-shadow: 0 12px 28px -8px rgb(0 0 0 / 0.3);
   }
 
-  // Widget chrome sits over the widget's own header rather than floating in the corner: handle at
-  // the start, hide at the end, matching the design. VcWidget's `--header-min-h` / `--p-x` live on
-  // `.vc-widget` itself, so they cannot be inherited from this parent — the md values are mirrored
-  // here instead, which is safe because every registered widget renders at `size="md"`.
+  // Overlaid on the widget's own header: handle at the start, hide at the end.
   &__chrome {
     @apply pointer-events-none absolute inset-x-0 top-0 z-10 flex items-center justify-between;
 
-    height: 3.125rem; // VcWidget --header-min-h, size md
-    padding-inline: theme("padding.4"); // VcWidget --p-x, size md
-
-    @media (min-width: theme("screens.sm")) {
-      padding-inline: theme("padding.6");
-    }
+    height: var(--layout-block-header-h);
+    padding-inline: var(--layout-block-header-p);
 
     // The bar itself must not swallow drags aimed at the header underneath it.
     > * {
@@ -156,13 +148,16 @@ const wholeHandleAttrs = computed(() =>
     }
 
     .vc-widget__header {
-      @apply ps-12 pe-12 sm:ps-14 sm:pe-14;
+      padding-inline: var(--layout-block-header-inset);
     }
   }
 
   &__handle,
   &__hide {
-    @apply flex size-7 items-center justify-center rounded transition-colors;
+    @apply flex items-center justify-center rounded transition-colors;
+
+    width: var(--layout-block-control);
+    height: var(--layout-block-control);
   }
 
   &__handle {
@@ -192,16 +187,13 @@ const wholeHandleAttrs = computed(() =>
   }
 }
 
-// SortableJS states. The prototype faded the source element because native HTML5 drag gives no
-// placeholder; with a real one, the gap carries the affordance and the clone stays solid.
+// `sortable-ghost` lands on the dragged element, which Sortable moves to the insertion point — so it
+// previews what will land there. Faded, not an empty slot, matching `--grabbed`.
 .layout-block.sortable-ghost {
-  @apply rounded-[--vc-radius] bg-primary-50 opacity-100 outline-dashed outline-1 outline-offset-2 outline-primary-500;
-
-  > *:not(.layout-block__chrome) {
-    @apply invisible;
-  }
+  @apply rounded-[--vc-radius] opacity-45 outline-dashed outline-1 outline-offset-2 outline-primary-500;
 }
 
+// The clone under the pointer stays solid, so the card being carried reads as the real one.
 .layout-block.sortable-drag {
   @apply opacity-100;
 }

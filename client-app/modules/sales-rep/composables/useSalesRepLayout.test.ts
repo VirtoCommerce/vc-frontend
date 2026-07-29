@@ -188,10 +188,9 @@ describe("useSalesRepLayout", () => {
     expect(state.value.mainRight.hidden).toContain("info");
   });
 
-  // The mutation echoes the stored document and no refetch follows, so the echo — not what was sent —
-  // is what the rep ends up looking at.
-  // The echo is complete on purpose: a document missing blocks that were sent is not trusted, and
-  // this test is about the echo DRIVING state — `info` before `actions` inverts the registry order.
+  // No refetch follows a save, so the echo — not what was sent — is what the rep ends up looking at.
+  // It has to agree on every `hidden` flag to be trusted, so ORDER is what proves it drives state:
+  // `info` before `actions` inverts the order that went out.
   it("reconciles the post-save layout from the echoed document", async () => {
     apolloMock.result.value = { salesRepLayout: null };
     apolloMock.mutate.mockResolvedValue({
@@ -201,10 +200,7 @@ describe("useSalesRepLayout", () => {
           regions: [
             { id: "statistics", blocks: ["ytd", "open_balance", "aov", "orders_ytd"].map(echoedBlock) },
             { id: "mainLeft", blocks: [echoedBlock("orders")] },
-            {
-              id: "mainRight",
-              blocks: [echoedBlock("info"), { id: "actions", type: "actions", hidden: true, settings: [] }],
-            },
+            { id: "mainRight", blocks: [echoedBlock("info"), echoedBlock("actions")] },
           ],
         },
       },
@@ -212,10 +208,11 @@ describe("useSalesRepLayout", () => {
 
     const { startEdit, save, state } = useSalesRepLayout(scope);
     startEdit();
+    // Registry order is actions, info — so the echo disagrees with what was sent.
+    expect(state.value.mainRight.visible).toEqual(["actions", "info"]);
 
     await expect(save()).resolves.toBe(true);
-    expect(state.value.mainRight.visible).toEqual(["info"]);
-    expect(state.value.mainRight.hidden).toEqual(["actions"]);
+    expect(state.value.mainRight.visible).toEqual(["info", "actions"]);
   });
 
   // A document is not enough to trust — reconciling a partial one fills the gaps from registry
@@ -233,6 +230,33 @@ describe("useSalesRepLayout", () => {
     // Not defaults: `actions` stays parked, exactly as it was arranged.
     expect(state.value.mainRight.hidden).toContain("actions");
     expect(saveFailed.value).toBe(false);
+  });
+
+  // Every type comes back, so a presence-only check passes, but one `hidden` is inverted — adopting
+  // it would revert the rep's hide and still report success.
+  it("keeps the rep's arrangement when the echo contradicts a hidden flag", async () => {
+    apolloMock.result.value = { salesRepLayout: null };
+    apolloMock.mutate.mockResolvedValue({
+      data: {
+        saveSalesRepLayout: {
+          schemaVersion: 1,
+          regions: [
+            { id: "statistics", blocks: ["ytd", "open_balance", "aov", "orders_ytd"].map(echoedBlock) },
+            { id: "mainLeft", blocks: [echoedBlock("orders")] },
+            // `actions` was sent hidden; the backend echoes it visible.
+            { id: "mainRight", blocks: [echoedBlock("info"), echoedBlock("actions")] },
+          ],
+        },
+      },
+    });
+
+    const { startEdit, setHidden, save, hiddenIn } = useSalesRepLayout(scope);
+    startEdit();
+    setHidden("actions", true);
+
+    await expect(save()).resolves.toBe(true);
+
+    expect(hiddenIn("mainRight")).toEqual(["actions"]);
   });
 
   // `save` snapshots the payload synchronously and clears the draft when it resolves, so an edit made

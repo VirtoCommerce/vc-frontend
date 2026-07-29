@@ -4,8 +4,7 @@
       {{ t("sales_rep.hub.dashboard.page.title") }}
     </VcTypography>
 
-    <!-- A read failure is not silent: what renders below is registry defaults, not the rep's layout,
-         and the edit button is gone. Both need saying, or it reads as their arrangement being lost. -->
+    <!-- What renders below is registry defaults, not the rep's layout, and there is no edit button. -->
     <VcAlert v-if="loadFailed" color="danger" size="sm" variant="solid-light" icon>
       {{ t("sales_rep.hub.layout.load_failed") }}
     </VcAlert>
@@ -13,12 +12,9 @@
     <!-- Nothing block-shaped renders until the saved layout is known; see layout-skeleton.vue. -->
     <LayoutSkeleton v-if="layoutLoading" :stats="4" :blocks="1" />
 
-    <!-- The overlay covers the edit bar too: a save is a full-document replace, so nothing may change
-         while one is in flight — including a drag, whose drop would land after the draft is gone.
-         `inert` is what enforces that; the overlay alone only stops the pointer, leaving the buttons
-         and every drag handle reachable by keyboard. `|| undefined` so the attribute is dropped rather
-         than written as `inert="false"` — Vue does not treat `inert` as a boolean attribute, and the
-         attribute is presence-based, so a literal `false` would inert the layout permanently. -->
+    <!-- Nothing may change while a save is in flight, keyboard included, so `inert` rather than the
+         overlay alone. `|| undefined` because Vue would otherwise write `inert="false"`, which is
+         presence-based and would inert the layout permanently. -->
     <div v-else class="sales-rep-dashboard__layout" :inert="saving || undefined">
       <VcLoaderOverlay v-if="saving" />
 
@@ -83,7 +79,6 @@ import LayoutRegion from "../components/layout-region.vue";
 import LayoutSkeleton from "../components/layout-skeleton.vue";
 import LayoutStats from "../components/layout-stats.vue";
 import { useLayoutPage } from "../composables/useLayoutPage";
-import { useUnsavedLayoutGuard } from "../composables/useUnsavedLayoutGuard";
 import { DASHBOARD_LAYOUT_SCOPE } from "../constants";
 
 const SCOPE = DASHBOARD_LAYOUT_SCOPE;
@@ -110,12 +105,9 @@ const {
   toggleHidden,
   save,
 } = useLayoutPage(SCOPE);
-
-useUnsavedLayoutGuard({ editing, save, cancel });
 </script>
 
 <style lang="scss">
-// `@apply` keeps the module self-contained as an MF remote (no global utility layer). See PORT_TO_MF.md.
 .sales-rep-dashboard {
   @apply flex flex-col gap-5;
 

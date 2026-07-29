@@ -19,7 +19,6 @@ the same remap in reverse.
 | `Logger` from `@/core/utilities` (7 composables — grep, do not go by this list) | remove import; use `console.error` |
 | `globals` from `@/core/globals` (`composables/useSalesRepLayout.ts`, for `storeId`) | `globals` from `@vc-frontend/core` |
 | `useBreadcrumbs` / `usePageHead` from `@/core/composables` (`pages/customer-profile.vue`) | `@vc-frontend/core` |
-| `SaveChangesModal` from `@/shared/common` and `useModal` from `@/shared/modal` (`composables/useUnsavedLayoutGuard.ts`) | no facade equivalent — ship a module-local modal, or drop the guard |
 | `MenuType` from `@/core/types` (`menu.ts`) | `MenuType` from `@vc-frontend/core` |
 | Vc components **not imported** anywhere in the module (globally registered by the host) | re-add explicit imports from `@vc-frontend/core` — MF has no global registration. Grep for `<Vc`; at time of writing the layout feature alone uses `VcAlert VcBreadcrumbs VcButton VcEmptyView VcIcon VcImage VcLoaderOverlay VcTypography VcWidget`, plus `VcInput VcTable` on the list page |
 | `useModuleSettings` from `@/core/composables/useModuleSettings` (`composables/useSalesRepsConfig.ts`) | `@vc-frontend/core` |
