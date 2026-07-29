@@ -53,7 +53,7 @@ const titleOf = (id: string) => {
 
 <style lang="scss">
 .layout-hidden-tray {
-  @apply flex flex-col gap-2.5 rounded-md border border-dashed border-neutral-300 bg-neutral-50 px-3.5 py-3;
+  @apply flex flex-col gap-2.5 rounded-[--vc-radius] border border-dashed border-neutral-300 bg-neutral-50 px-3.5 py-3;
 
   &__label {
     @apply m-0 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-neutral-500;
@@ -64,7 +64,7 @@ const titleOf = (id: string) => {
   }
 
   &__restore {
-    @apply flex items-center gap-2 rounded border border-neutral-200 bg-additional-50 px-2.5 py-1.5 text-[13px] font-semibold text-neutral-900 transition-colors;
+    @apply flex items-center gap-2 rounded-[--vc-radius] border border-neutral-200 bg-additional-50 px-2.5 py-1.5 text-sm font-semibold text-neutral-900 transition-colors;
 
     .vc-icon {
       @apply text-primary-500;

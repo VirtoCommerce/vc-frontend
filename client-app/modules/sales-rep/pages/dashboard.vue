@@ -10,7 +10,7 @@
     </VcAlert>
 
     <!-- Nothing block-shaped renders until the saved layout is known; see layout-skeleton.vue. -->
-    <LayoutSkeleton v-if="layoutLoading" :stats="4" :blocks="1" />
+    <LayoutSkeleton v-if="layoutLoading" :scope="SCOPE" />
 
     <!-- Nothing may change while a save is in flight, keyboard included, so `inert` rather than the
          overlay alone. `|| undefined` because Vue would otherwise write `inert="false"`, which is
@@ -39,22 +39,45 @@
         @announce="announce"
       />
 
-      <!-- Cross-customer orders (real data: salesRepOrders). The dashboard has no right rail yet, so
-         `mainRight` stays empty and this column runs full width. -->
-      <LayoutRegion
-        :scope="SCOPE"
-        :entries="visibleIn('mainLeft')"
-        orientation="vertical"
-        group="sales-rep-dashboard-main-left"
-        :editing="editing"
-        @reorder="reorderVisible('mainLeft', $event)"
-        @set-hidden="toggleHidden"
-        @announce="announce"
-      >
-        <template #default="{ id }">
-          <component :is="componentOf(id)" v-if="componentOf(id)" :title="t('sales_rep.orders.title')" />
-        </template>
-      </LayoutRegion>
+      <!-- Two columns, but the rail only exists once a widget registers into `mainRight` — until then
+           the row has one child and the content runs full width, matching the skeleton. -->
+      <div class="sales-rep-dashboard__layout-row">
+        <!-- Cross-customer orders (real data: salesRepOrders). -->
+        <LayoutRegion
+          class="sales-rep-dashboard__main"
+          :scope="SCOPE"
+          :entries="visibleIn('mainLeft')"
+          orientation="vertical"
+          group="sales-rep-dashboard-main-left"
+          :editing="editing"
+          @reorder="reorderVisible('mainLeft', $event)"
+          @set-hidden="toggleHidden"
+          @announce="announce"
+        >
+          <template #default="{ id }">
+            <component :is="componentOf(id)" v-if="componentOf(id)" :title="t('sales_rep.orders.title')" />
+          </template>
+        </LayoutRegion>
+
+        <!-- Its own Sortable group, so a rail widget can never be dropped into the wide column. -->
+        <LayoutRegion
+          v-if="visibleIn('mainRight').length"
+          class="sales-rep-dashboard__aside"
+          tag="aside"
+          :scope="SCOPE"
+          :entries="visibleIn('mainRight')"
+          orientation="vertical"
+          group="sales-rep-dashboard-main-right"
+          :editing="editing"
+          @reorder="reorderVisible('mainRight', $event)"
+          @set-hidden="toggleHidden"
+          @announce="announce"
+        >
+          <template #default="{ id }">
+            <component :is="componentOf(id)" v-if="componentOf(id)" />
+          </template>
+        </LayoutRegion>
+      </div>
 
       <LayoutHiddenTray
         v-if="editing && hiddenWidgets.length"
@@ -108,6 +131,7 @@ const {
 </script>
 
 <style lang="scss">
+// `@apply` keeps the module self-contained as an MF remote (no global utility layer). See PORT_TO_MF.md.
 .sales-rep-dashboard {
   @apply flex flex-col gap-5;
 
@@ -118,6 +142,20 @@ const {
   // `relative` anchors the absolutely-positioned save overlay.
   &__layout {
     @apply relative flex flex-col gap-5;
+  }
+
+  // Single column until a widget registers into `mainRight`, then the rail splits off at xl — the same
+  // shape as the customer profile, and what layout-skeleton.vue draws.
+  &__layout-row {
+    @apply flex flex-col gap-5 xl:flex-row xl:items-start;
+  }
+
+  &__main {
+    @apply min-w-0 flex-1;
+  }
+
+  &__aside {
+    @apply min-w-0 xl:w-80 xl:shrink-0;
   }
 
   // Visually hidden, but announced. Keyboard sorting is silent without it.

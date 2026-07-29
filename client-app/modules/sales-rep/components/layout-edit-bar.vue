@@ -53,14 +53,14 @@ const { t } = useI18n();
 
 <style lang="scss">
 .layout-edit-bar {
-  @apply flex flex-wrap items-center gap-3 rounded-md border border-primary-200 bg-primary-50 px-4 py-2.5 text-primary-700;
+  @apply flex flex-wrap items-center gap-3 rounded-[--vc-radius] border border-primary-200 bg-primary-50 px-4 py-2.5 text-primary-700;
 
   &__icon {
     @apply flex-none text-primary-500;
   }
 
   &__text {
-    @apply m-0 min-w-0 text-[13px];
+    @apply m-0 min-w-0 text-sm;
   }
 
   &__keys {

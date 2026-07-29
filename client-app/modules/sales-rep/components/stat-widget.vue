@@ -45,6 +45,7 @@ withDefaults(defineProps<IProps>(), {
 </script>
 
 <style lang="scss">
+// `@apply` keeps the module self-contained as an MF remote (no global utility layer). See PORT_TO_MF.md.
 .stat-widget {
   $accents: (
     primary: var(--color-primary-500),

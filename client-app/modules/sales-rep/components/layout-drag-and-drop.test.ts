@@ -265,6 +265,33 @@ describe("stat row drag and drop", () => {
     expect(api.hiddenIn("statistics")).toEqual([]);
   });
 
+  // Rendered even while cards are present, so CSS can hide it on `:has(.layout-block)` instead. Gated
+  // on `entries`, the hint only appeared on drop — dragging the last card out left the zone blank.
+  it("keeps the empty-zone hint mounted so it can track the drag rather than the drop", async () => {
+    const { wrapper, api } = setup();
+    api.startEdit();
+    await nextTick();
+
+    const hints = wrapper.findAll(".layout-region__empty");
+
+    // Both stat zones, even though the visible one is full and the hidden one is empty.
+    expect(hints).toHaveLength(2);
+  });
+
+  // The hint is a container child, so `restore()` reading `event.from.children` must still line up.
+  it("reorders correctly with the hint present as a trailing child", async () => {
+    const { wrapper, api } = setup();
+    api.startEdit();
+    await nextTick();
+
+    const before = [...api.visibleIn("statistics")];
+    await moveWithin(zones[0], before.at(-1), -1);
+
+    const expected = [...before.slice(0, -2), before.at(-1), before.at(-2)];
+    expect(api.visibleIn("statistics")).toEqual(expected);
+    expect(blockIds(wrapper)).toEqual(expected);
+  });
+
   // The mock swallows every Sortable option, so nothing else in the suite would notice if the wiring
   // that makes dragging possible at all were dropped.
   it("wires the Sortable options the drag behaviour depends on", async () => {

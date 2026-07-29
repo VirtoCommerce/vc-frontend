@@ -35,7 +35,7 @@
       </VcAlert>
 
       <!-- Nothing block-shaped renders until the saved layout is known; see layout-skeleton.vue. -->
-      <LayoutSkeleton v-if="layoutLoading" :stats="4" :blocks="2" />
+      <LayoutSkeleton v-if="layoutLoading" :scope="SCOPE" />
 
       <!-- Nothing may change while a save is in flight, keyboard included. See dashboard.vue for `|| undefined`. -->
       <div v-else class="customer-profile__layout-wrapper" :inert="saving || undefined">
@@ -224,7 +224,7 @@ const breadcrumbs = useBreadcrumbs(() => [
   }
 
   &__meta {
-    @apply mt-1.5 text-[13px] text-neutral-500;
+    @apply mt-1.5 text-sm text-neutral-500;
   }
 
   // Single column through tablet; the aside splits off only on desktop (xl).

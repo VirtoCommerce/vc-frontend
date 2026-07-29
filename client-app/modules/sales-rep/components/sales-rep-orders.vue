@@ -127,6 +127,7 @@ const { orders, loading } = useSalesRepOrders({
 </script>
 
 <style lang="scss">
+// `@apply` keeps the module self-contained as an MF remote (no global utility layer). See PORT_TO_MF.md.
 .sales-rep-orders {
   // Design insets the table ~6px from the widget edge; vertical matches the widget's own body padding.
   &__body {

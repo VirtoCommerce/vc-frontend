@@ -24,7 +24,9 @@
       <slot :id="id" />
     </LayoutBlock>
 
-    <p v-if="editing && zone && !entries.length" class="layout-region__empty">{{ emptyText }}</p>
+    <!-- Always rendered while the zone is live; CSS hides it whenever the container holds a card. State
+         only changes on drop, so gating on `entries` left the zone blank until then. -->
+    <p v-if="editing && zone" class="layout-region__empty">{{ emptyText }}</p>
   </component>
 </template>
 
@@ -218,16 +220,15 @@ watch(
   }
 
   &--zone {
-    @apply rounded-md border border-dashed border-neutral-300 bg-neutral-50 p-3;
+    @apply rounded-[--vc-radius] border border-dashed border-neutral-300 bg-neutral-50 p-3;
   }
 
   &__empty {
     @apply m-0 flex min-h-24 basis-full items-center justify-center text-center text-sm text-neutral-400;
   }
 
-  // The hint is driven by state, but mid-drag SortableJS has already parked the dragged node in this
-  // container while the zone is still empty as far as state is concerned — so "drag a stat here"
-  // would sit above the card you are dropping. Hide it the moment the container actually holds one.
+  // Emptiness is read from the DOM, not state, so the hint tracks the drag rather than the drop: it
+  // appears the moment the last card is dragged out, and hides the moment one is dragged in.
   &:has(.layout-block) &__empty {
     @apply hidden;
   }

@@ -324,7 +324,12 @@ Three states the prototype could not specify, decided here:
   wrong call — the fade is the design. The rep should see a preview of what is about to land in that
   spot, not an empty rectangle, and the faded card is also what `--grabbed` already does for keyboard
   sorting, so the two paths now share one treatment.
-- **Dark mode — verified, no override needed.** The presets invert every token this feature uses:
+- **Dark mode — no override needed, but "every token" was doing the work.** *Corrected 2026-07-29:*
+  the grabbed state carried a literal `box-shadow: … rgb(0 0 0 / 0.3)`, which no preset touches —
+  `--color-additional-950` is `#eceaef` in dark mode, so every other elevated surface lifts with a
+  light shadow while that one stayed black. Now `shadow-xl`. The audit below only covered colours.
+
+  The presets invert every token this feature uses:
   `neutral-50` #fafafa → #141415 and `neutral-100` #f5f5f5 → #2b2b2c (so the hatch keeps the same
   subtle step), `additional-50` #ffffff → #0a090b (cards do not glow white on the striped zone), and
   `primary-50`/`primary-700` swap ends so the edit bar stays legible. Confirmed by reading

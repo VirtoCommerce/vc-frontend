@@ -118,10 +118,10 @@ const wholeHandleAttrs = computed(() =>
   }
 
   // Matches the pointer-drag treatment; also applied while a keyboard sort holds the block.
+  // `shadow-xl`, not a literal: the theme's shadows are built on `--color-additional-950`, which is
+  // near-white in dark mode, so a hardcoded black one would be the only shadow not inverting.
   &--grabbed {
-    @apply opacity-45 outline-primary-500;
-
-    box-shadow: 0 12px 28px -8px rgb(0 0 0 / 0.3);
+    @apply opacity-45 shadow-xl outline-primary-500;
   }
 
   // Overlaid on the widget's own header: handle at the start, hide at the end.
@@ -154,7 +154,7 @@ const wholeHandleAttrs = computed(() =>
 
   &__handle,
   &__hide {
-    @apply flex items-center justify-center rounded transition-colors;
+    @apply flex items-center justify-center rounded-[--vc-radius] transition-colors;
 
     width: var(--layout-block-control);
     height: var(--layout-block-control);
