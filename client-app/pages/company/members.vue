@@ -552,6 +552,13 @@ function openLockOrUnlockModal(contact: ExtendedContactType, isUnlock?: boolean)
           } else {
             await lockContact(contact);
           }
+          notifications.success({
+            duration: 10000,
+            single: true,
+            text: isUnlock
+              ? t("shared.company.notifications.user_unblocked")
+              : t("shared.company.notifications.user_blocked"),
+          });
         } catch {
           notifications.error({ duration: 5000, single: true, text: t("common.messages.contact_lock_failed") });
         }
@@ -615,6 +622,11 @@ function openRevokeInviteModal(contact: ExtendedContactType): void {
       async onConfirm() {
         try {
           await revokeInvite(contact.id);
+          notifications.success({
+            duration: 10000,
+            single: true,
+            text: t("pages.company.members.notifications.invite_revoked"),
+          });
         } catch {
           notifications.error({ duration: 5000, single: true, text: t("common.messages.invite_revoke_failed") });
         }

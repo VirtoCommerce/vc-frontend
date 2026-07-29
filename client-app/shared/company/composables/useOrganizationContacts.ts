@@ -13,7 +13,6 @@ import {
 import { DEFAULT_PAGE_SIZE } from "@/core/constants";
 import { SortDirection } from "@/core/enums";
 import { getSortingExpression, Logger } from "@/core/utilities";
-import { useNotifications } from "@/shared/notification";
 import { convertToExtendedContact } from "../utils";
 import type {
   ContactType,
@@ -42,7 +41,6 @@ export function useOrganizationContacts(organizationId: MaybeRef<string>) {
   });
 
   const { t } = useI18n();
-  const notifications = useNotifications();
 
   async function fetchContacts() {
     loading.value = true;
@@ -87,12 +85,6 @@ export function useOrganizationContacts(organizationId: MaybeRef<string>) {
     }
 
     await fetchContacts();
-
-    notifications.success({
-      text: t("shared.company.notifications.user_blocked"),
-      duration: 10000,
-      single: true,
-    });
   }
 
   async function unlockContact(contact: ExtendedContactType): Promise<void> {
@@ -108,12 +100,6 @@ export function useOrganizationContacts(organizationId: MaybeRef<string>) {
     }
 
     await fetchContacts();
-
-    notifications.success({
-      text: t("shared.company.notifications.user_unblocked"),
-      duration: 10000,
-      single: true,
-    });
   }
 
   async function removeMemberFromOrganization(payload: InputRemoveMemberFromOrganizationType): Promise<void> {
@@ -146,12 +132,6 @@ export function useOrganizationContacts(organizationId: MaybeRef<string>) {
 
     page.value = 1;
     await fetchContacts();
-
-    notifications.success({
-      text: t("pages.company.members.notifications.invite_revoked"),
-      duration: 10000,
-      single: true,
-    });
   }
 
   async function resendInvite(payload: InputResendOrganizationInviteType): Promise<CustomIdentityResultType> {
