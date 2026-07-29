@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/no-os-command-from-path -- test-only `git` and `node`, same call the checker makes */
 import { execFileSync } from "node:child_process";
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";

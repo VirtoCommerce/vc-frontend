@@ -1,17 +1,4 @@
 import { execFileSync } from "node:child_process";
-import { existsSync } from "node:fs";
-
-/**
- * Where git is looked for, most standard first. Resolved here rather than left to a `PATH` search,
- * so a `git` planted earlier in a developer's `PATH` is not what a commit hook ends up running.
- * Every entry is a location only an administrator can write to.
- */
-const GIT = [
-  "/usr/bin/git",
-  "/usr/local/bin/git",
-  "/opt/homebrew/bin/git",
-  "C:\\Program Files\\Git\\cmd\\git.exe",
-].find((candidate) => existsSync(candidate));
 
 /**
  * Line numbers `file` has uncommitted changes on, or `null` when that can't be determined
@@ -22,11 +9,11 @@ const GIT = [
  * someone touches those particular lines — otherwise the noise gets the check switched off.
  */
 export function changedLines(file, root = process.cwd()) {
-  if (GIT === undefined) {
-    return null;
-  }
-
-  const git = (args) => execFileSync(GIT, args, { cwd: root, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] });
+  // Found on PATH rather than pinned to an absolute path (Sonar S4036, reviewed and accepted): the
+  // paths differ per platform, and a Windows per-user or NixOS install would miss the list and turn
+  // the filter off. Anyone able to plant a `git` can equally plant the `eslint` the same hook runs.
+  // eslint-disable-next-line sonarjs/no-os-command-from-path
+  const git = (args) => execFileSync("git", args, { cwd: root, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] });
 
   try {
     try {
