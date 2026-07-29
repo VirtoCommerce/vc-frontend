@@ -203,15 +203,19 @@
     <VcEmptyView
       v-if="!contacts.length && !contactsLoading"
       :text="
-        keyword || filter || roleIds.length
+        keyword || filter || roleIds.length || statuses.length
           ? $t('pages.company.members.no_results_message')
           : $t('pages.company.members.no_members_message')
       "
       icon="outline-order"
-      :variant="!!keyword || !!filter || !!roleIds.length ? 'search' : 'empty'"
+      :variant="!!keyword || !!filter || !!roleIds.length || !!statuses.length ? 'search' : 'empty'"
     >
       <template #button>
-        <VcButton v-if="keyword || filter || roleIds.length" prepend-icon="reset" @click="resetFiltersWithKeyword">
+        <VcButton
+          v-if="keyword || filter || roleIds.length || statuses.length"
+          prepend-icon="reset"
+          @click="resetFiltersWithKeyword"
+        >
           {{ $t("pages.company.members.buttons.reset_search") }}
         </VcButton>
 

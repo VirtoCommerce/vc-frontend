@@ -7,6 +7,7 @@ import {
 } from "@/core/api/graphql/organization";
 import { Logger } from "@/core/utilities";
 import { ContactStatus } from "@/shared/company/types";
+import { useUser } from "./useUser";
 import { useUserOrganizations } from "./useUserOrganizations";
 import type { PendingOrganizationInviteType } from "@/core/api/graphql/account";
 
@@ -58,13 +59,13 @@ function _useUserPendingInvites() {
       loading.value = false;
     }
 
-    await fetchPendingInvites();
-
-    // useUserOrganizations only fetches once on mount, so the switcher needs an explicit refresh
-    // to show the newly-accepted organization without a full page reload.
+    // Invite is already accepted server-side — these refreshes are independent, so one failing
+    // (already logged by each call) must not skip the others or fail this call.
     const { reset: resetOrganizations, search } = useUserOrganizations();
     resetOrganizations();
-    await search();
+    const { fetchUser } = useUser();
+
+    await Promise.allSettled([fetchPendingInvites(), search(), fetchUser()]);
   }
 
   async function rejectInvite(organizationId: string): Promise<void> {
@@ -79,7 +80,12 @@ function _useUserPendingInvites() {
       loading.value = false;
     }
 
-    await fetchPendingInvites();
+    // Invite is already rejected server-side, so a refresh failure here (already logged by fetchPendingInvites) must not fail this.
+    try {
+      await fetchPendingInvites();
+    } catch {
+      // Ignored — see comment above.
+    }
   }
 
   onMounted(() => {

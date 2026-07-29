@@ -14,14 +14,21 @@
               size="sm"
               variant="outline"
               color="secondary"
-              :disabled="loading"
+              :aria-label="`${$t('shared.account.pending_invites_widget.reject_button')} ${invite.name}`"
+              :disabled="!!processingOrgId || loading"
               :loading="processingOrgId === invite.id"
               @click="reject(invite.id)"
             >
               {{ $t("shared.account.pending_invites_widget.reject_button") }}
             </VcButton>
 
-            <VcButton size="sm" :disabled="loading" :loading="processingOrgId === invite.id" @click="accept(invite.id)">
+            <VcButton
+              size="sm"
+              :aria-label="`${$t('shared.account.pending_invites_widget.accept_button')} ${invite.name}`"
+              :disabled="!!processingOrgId || loading"
+              :loading="processingOrgId === invite.id"
+              @click="accept(invite.id)"
+            >
               {{ $t("shared.account.pending_invites_widget.accept_button") }}
             </VcButton>
           </div>

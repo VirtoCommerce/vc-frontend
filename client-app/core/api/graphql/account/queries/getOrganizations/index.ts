@@ -1,8 +1,8 @@
 import { GetOrganizationsDocument } from "@/core/api/graphql/types";
 import { graphqlClient } from "../../../client";
-import type { GetOrganizationsQueryVariables, Organization } from "@/core/api/graphql/types";
+import type { GetOrganizationsQueryVariables, OrganizationFieldsFragment } from "@/core/api/graphql/types";
 
-export type OrganizationFieldsType = Pick<Organization, "id" | "name">;
+export type OrganizationFieldsType = OrganizationFieldsFragment;
 
 interface IOrganizationsType {
   items: OrganizationFieldsType[];

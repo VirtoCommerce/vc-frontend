@@ -1,8 +1,15 @@
 import { GetPendingOrganizationInvitesDocument } from "@/core/api/graphql/types";
 import { graphqlClient } from "../../../client";
-import type { GetPendingOrganizationInvitesQueryVariables, Organization } from "@/core/api/graphql/types";
+import type {
+  GetPendingOrganizationInvitesQuery,
+  GetPendingOrganizationInvitesQueryVariables,
+} from "@/core/api/graphql/types";
 
-export type PendingOrganizationInviteType = Pick<Organization, "id" | "name" | "myStatusInOrganization">;
+type PendingOrganizationsConnectionType = NonNullable<
+  NonNullable<NonNullable<GetPendingOrganizationInvitesQuery["me"]>["contact"]>["organizations"]
+>;
+
+export type PendingOrganizationInviteType = NonNullable<PendingOrganizationsConnectionType["items"]>[number];
 
 interface IPendingOrganizationInvitesResult {
   items: PendingOrganizationInviteType[];
