@@ -1,8 +1,13 @@
+import { execFileSync } from "node:child_process";
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { checkFile, stripComments, styleRanges } from "./check-style-conventions.mjs";
+
+// Not `import.meta.url`: under the jsdom environment that resolves to an http:// URL, which
+// fileURLToPath rejects. Vitest sets `root` to the repo root, so cwd is reliable here.
+const SCRIPT = join(process.cwd(), "scripts/check-style-conventions.mjs");
 
 let dir;
 
@@ -159,5 +164,53 @@ describe("reported line numbers", () => {
     );
 
     expect(findings[0].line).toBe(7);
+  });
+});
+
+// The --changed path needs a real repository, so this drives the CLI in a throwaway one.
+describe("--changed only reports lines that differ from HEAD", () => {
+  let repo;
+
+  const git = (...args) => execFileSync("git", args, { cwd: repo, encoding: "utf8" });
+  const run = (...flags) => execFileSync("node", [SCRIPT, ...flags, "a.scss"], { cwd: repo, encoding: "utf8" });
+
+  beforeAll(() => {
+    repo = mkdtempSync(join(tmpdir(), "style-conventions-git-"));
+    git("init", "--quiet");
+    git("config", "user.email", "t@example.com");
+    git("config", "user.name", "t");
+    writeFileSync(join(repo, "a.scss"), ".legacy {\n  @apply ml-4;\n}\n");
+    git("add", "a.scss");
+    git("commit", "--quiet", "-m", "legacy violation");
+  });
+
+  afterAll(() => {
+    rmSync(repo, { recursive: true, force: true });
+  });
+
+  it("stays quiet when the committed violation is untouched", () => {
+    expect(run("--changed")).toContain("no issues");
+  });
+
+  it("still reports it without the flag, so the full audit is unaffected", () => {
+    expect(run()).toContain("ml-4");
+  });
+
+  it("reports only the newly added line", () => {
+    writeFileSync(join(repo, "a.scss"), ".legacy {\n  @apply ml-4;\n}\n.fresh {\n  @apply pr-9;\n}\n");
+
+    const out = run("--changed");
+
+    expect(out).toContain("pr-9");
+    expect(out).not.toContain("ml-4");
+  });
+
+  it("treats an untracked file as entirely new", () => {
+    writeFileSync(join(repo, "a.scss"), ".legacy {\n  @apply ml-4;\n}\n");
+    writeFileSync(join(repo, "b.scss"), ".b {\n  @apply pl-1;\n}\n");
+
+    const out = execFileSync("node", [SCRIPT, "--changed", "b.scss"], { cwd: repo, encoding: "utf8" });
+
+    expect(out).toContain("pl-1");
   });
 });

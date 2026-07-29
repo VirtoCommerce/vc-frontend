@@ -181,7 +181,7 @@
       "eslint --fix"
     ],
     "*.{vue,scss}": [
-      "node scripts/check-style-conventions.mjs"
+      "node scripts/check-style-conventions.mjs --changed"
     ],
     "*.{graphql,json}": [
       "prettier --write"

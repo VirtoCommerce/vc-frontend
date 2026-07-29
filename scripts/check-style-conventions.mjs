@@ -14,7 +14,7 @@
  * mirroring how the security rules were introduced in eslint.config.js. Pass --strict to
  * exit non-zero once the existing violations are remediated.
  *
- *   node scripts/check-style-conventions.mjs [--strict] [files...]
+ *   node scripts/check-style-conventions.mjs [--strict] [--changed] [files...]
  *
  * With no file arguments it scans all .vue/.scss files under client-app/.
  */
@@ -26,6 +26,9 @@ import { pathToFileURL } from "node:url";
 
 const ROOT = process.cwd();
 const STRICT = process.argv.includes("--strict");
+// `--changed` restricts findings to lines that differ from HEAD, so committing a legacy file does
+// not reprint violations someone else introduced. The full audit deliberately reports everything.
+const CHANGED_ONLY = process.argv.includes("--changed");
 const FILE_ARGS = process.argv.slice(2).filter((arg) => !arg.startsWith("--"));
 
 /**
@@ -303,6 +306,12 @@ if (!isMain) {
       continue; // unreadable / deleted staged file
     }
 
+    if (CHANGED_ONLY) {
+      const touched = changedLines(file);
+
+      findings = touched === null ? findings : findings.filter((f) => touched.has(f.line));
+    }
+
     if (findings.length === 0) {
       continue;
     }
@@ -321,7 +330,9 @@ if (!isMain) {
     process.exit(0);
   }
 
-  console.log(`\ncheck:style-conventions - ${total} issue(s) in ${files.length} file(s) scanned`);
+  const scope = CHANGED_ONLY ? " on changed lines" : "";
+
+  console.log(`\ncheck:style-conventions - ${total} issue(s)${scope} in ${files.length} file(s) scanned`);
   console.log("RTL-safe logical utilities and --vc-radius keep the theme customizable in every locale.");
 
   process.exit(STRICT ? 1 : 0);
