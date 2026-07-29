@@ -556,16 +556,18 @@ function openLockOrUnlockModal(contact: ExtendedContactType, isUnlock?: boolean)
           } else {
             await lockContact(contact);
           }
-          notifications.success({
-            duration: 10000,
-            single: true,
-            text: isUnlock
-              ? t("shared.company.notifications.user_unblocked")
-              : t("shared.company.notifications.user_blocked"),
-          });
         } catch {
           notifications.error({ duration: 5000, single: true, text: t("common.messages.contact_lock_failed") });
+          return;
         }
+
+        notifications.success({
+          duration: 10000,
+          single: true,
+          text: isUnlock
+            ? t("shared.company.notifications.user_unblocked")
+            : t("shared.company.notifications.user_blocked"),
+        });
         closeLockOrUnlockModal();
       },
     },
@@ -626,14 +628,16 @@ function openRevokeInviteModal(contact: ExtendedContactType): void {
       async onConfirm() {
         try {
           await revokeInvite(contact.id);
-          notifications.success({
-            duration: 10000,
-            single: true,
-            text: t("pages.company.members.notifications.invite_revoked"),
-          });
         } catch {
           notifications.error({ duration: 5000, single: true, text: t("common.messages.invite_revoke_failed") });
+          return;
         }
+
+        notifications.success({
+          duration: 10000,
+          single: true,
+          text: t("pages.company.members.notifications.invite_revoked"),
+        });
         closeRevokeInviteModal();
       },
     },
@@ -681,18 +685,18 @@ function openEditCustomerRoleModal(contact: ExtendedContactType): void {
           single: true,
         };
 
-        if (result?.succeeded) {
-          notifications.success({ ...notification, text: t("common.messages.role_update_successful") });
-
-          await fetchContacts();
-        } else {
+        if (!result?.succeeded) {
           notifications.error({
             ...notification,
 
             text: t("common.messages.role_update_failed"),
           });
+          return;
         }
 
+        notifications.success({ ...notification, text: t("common.messages.role_update_successful") });
+
+        await fetchContacts();
         closeEditCustomerRoleModal();
       },
     },

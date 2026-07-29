@@ -47,6 +47,14 @@ function _useUserPendingInvites() {
     }
   }
 
+  async function refreshAfterInviteAction(): Promise<void> {
+    const { reset: resetOrganizations, search } = useUserOrganizations();
+    resetOrganizations();
+    const { fetchUser } = useUser();
+
+    await Promise.allSettled([fetchPendingInvites(), search(), fetchUser()]);
+  }
+
   async function acceptInvite(organizationId: string): Promise<void> {
     loading.value = true;
 
@@ -59,13 +67,7 @@ function _useUserPendingInvites() {
       loading.value = false;
     }
 
-    // Invite is already accepted server-side — these refreshes are independent, so one failing
-    // (already logged by each call) must not skip the others or fail this call.
-    const { reset: resetOrganizations, search } = useUserOrganizations();
-    resetOrganizations();
-    const { fetchUser } = useUser();
-
-    await Promise.allSettled([fetchPendingInvites(), search(), fetchUser()]);
+    await refreshAfterInviteAction();
   }
 
   async function rejectInvite(organizationId: string): Promise<void> {
@@ -80,12 +82,7 @@ function _useUserPendingInvites() {
       loading.value = false;
     }
 
-    // Invite is already rejected server-side, so a refresh failure here (already logged by fetchPendingInvites) must not fail this.
-    try {
-      await fetchPendingInvites();
-    } catch {
-      // Ignored — see comment above.
-    }
+    await refreshAfterInviteAction();
   }
 
   onMounted(() => {
