@@ -26,7 +26,7 @@ const MAX_COMMENT_BLOCK_LINES = 5;
  * Opening a block with `/**` is a deliberate choice to document a symbol, and API docs are meant
  * to be long. The phrase rules still read every line of one.
  */
-const JSDOC = /^\/\*\*/;
+const JSDOC = "/**";
 
 /**
  * Whatever opens a comment, so a rule can anchor to the start of the text. Optional, because a
@@ -62,7 +62,7 @@ const RULES = [
     // Past tense and a following particle, deliberately: "Remove the specific filterValue from
     // termValues" is an ordinary imperative describing the next line, and reads all over this repo.
     pattern: new RegExp(
-      `^${OPENER}\\s*(?:updated|removed|renamed|switched|refactored|reverted|moved|extracted|simplified|replaced|converted|changed|fixed)\\s+(?:to|from|this|these|it|back|into|out|the|so)\\b`,
+      String.raw`^${OPENER}\s*(?:updated|removed|renamed|switched|refactored|reverted|moved|extracted|simplified|replaced|converted|changed|fixed)\s+(?:to|from|this|these|it|back|into|out|the|so)\b`,
       "i",
     ),
     message: "narrates the edit; git already records that",
@@ -70,7 +70,7 @@ const RULES = [
   {
     // Uppercase and a colon, deliberately: "Before that, ..." and "* After field stripping, ..."
     // are ordinary prose and start comments all over this codebase.
-    pattern: new RegExp(`^${OPENER}\\s*(?:NEW|OLD|WAS|BEFORE|AFTER|CHANGED|ADDED|REMOVED):`),
+    pattern: new RegExp(String.raw`^${OPENER}\s*(?:NEW|OLD|WAS|BEFORE|AFTER|CHANGED|ADDED|REMOVED):`),
     message: "narrates the edit; git already records that",
   },
 ];
@@ -139,7 +139,7 @@ function checkLength(lines) {
   return commentBlocks(lines).flatMap((block) => {
     const size = block.end - block.start + 1;
 
-    if (size <= MAX_COMMENT_BLOCK_LINES || JSDOC.test(block.texts[0])) {
+    if (size <= MAX_COMMENT_BLOCK_LINES || block.texts[0].startsWith(JSDOC)) {
       return [];
     }
 
