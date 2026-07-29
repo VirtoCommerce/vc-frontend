@@ -7,7 +7,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/check-style-conventions.mjs\" --hook"
+            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/check-style-conventions/index.mjs\" --hook"
           }
         ]
       }

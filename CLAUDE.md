@@ -30,7 +30,7 @@ the same PR, so the checklist grows with the codebase instead of living in one p
 
 Two more rule sets live in `.claude/rules/` and load only when Claude opens a matching file, to keep
 this file small: `styling.md` (`*.vue`, `*.scss`) and `graphql.md` (`**/api/graphql/**`, `*.graphql`).
-Editing a `.vue` or `.scss` file also runs `scripts/check-style-conventions.mjs` as a `PostToolUse`
+Editing a `.vue` or `.scss` file also runs `scripts/check-style-conventions/index.mjs` as a `PostToolUse`
 hook, so RTL and radius-token slips surface immediately rather than at commit time.
 
 ## Vue components
@@ -47,7 +47,12 @@ hook, so RTL and radius-token slips surface immediately rather than at commit ti
   `.filter((item): item is Product => !!item)`.
 - Use `useComponentId()` for DOM ids and `useTemplateRef()` for template refs.
 - Function declarations for named functions; arrow functions only for callbacks.
-- Named constants instead of magic numbers, with a self-describing name.
+- Named constants instead of magic numbers, with a self-describing name
+  (`PICKUP_LOCATIONS_QTY_TO_SHOW`, not `5`).
+- Name things for what they are. No one-letter variables beyond `e` and `i`, and reach for the
+  telling version when the bare word is ambiguous — `queryEnabled` rather than `enabled`.
+- `data-test-id` must be unique and specific enough to be an E2E selector, and belongs on the
+  interactive element inside the child component rather than on a wrapper.
 - Reach for VueUse before hand-rolling (`useDebounceFn`, `useResizeObserver`, `useScriptTag`).
 - Routes go through the `ROUTES` constants in `client-app/router/routes/constants.ts`.
 

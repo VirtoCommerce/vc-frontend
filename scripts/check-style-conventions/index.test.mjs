@@ -3,11 +3,11 @@ import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { checkFile, stripComments, styleRanges } from "./check-style-conventions.mjs";
+import { checkFile, stripComments, styleRanges } from "./index.mjs";
 
 // Not `import.meta.url`: under the jsdom environment that resolves to an http:// URL, which
 // fileURLToPath rejects. Vitest sets `root` to the repo root, so cwd is reliable here.
-const SCRIPT = join(process.cwd(), "scripts/check-style-conventions.mjs");
+const SCRIPT = join(process.cwd(), "scripts/check-style-conventions/index.mjs");
 
 let dir;
 

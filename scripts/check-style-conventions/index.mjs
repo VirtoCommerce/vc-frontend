@@ -14,7 +14,7 @@
  * mirroring how the security rules were introduced in eslint.config.js. Pass --strict to
  * exit non-zero once the existing violations are remediated.
  *
- *   node scripts/check-style-conventions.mjs [--strict] [--changed] [files...]
+ *   node scripts/check-style-conventions/index.mjs [--strict] [--changed] [files...]
  *
  * With no file arguments it scans all .vue/.scss files under client-app/.
  */
@@ -230,7 +230,7 @@ function changedLines(file) {
   }
 }
 
-// Exported for scripts/check-style-conventions.test.mjs. Everything below this line is CLI wiring
+// Exported for scripts/check-style-conventions/index.test.mjs. Everything below this line is CLI wiring
 // and only runs when the file is executed directly, so importing it has no side effects.
 export { RULES, CSS_RULES, checkFile, styleRanges, stripComments, changedLines };
 

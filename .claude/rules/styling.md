@@ -41,7 +41,7 @@ paths:
 props and slots; if neither covers the case, it is a design-system gap to raise, not to patch.
 Internal-structure overrides belong only in client projects, never in the theme.
 
-**RTL-safe and themeable utilities.** ESLint and `scripts/check-style-conventions.mjs` both flag the
+**RTL-safe and themeable utilities.** ESLint and `scripts/check-style-conventions/index.mjs` both flag the
 wrong ones, but neither can tell you the replacement, so:
 
 | Instead of                   | Use                                                              |
