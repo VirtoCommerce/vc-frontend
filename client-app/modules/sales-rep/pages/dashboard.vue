@@ -49,8 +49,8 @@
         @set-hidden="toggleHidden"
         @announce="announce"
       >
-        <template #default="{ entry }">
-          <component :is="componentOf(entry.id)" v-if="componentOf(entry.id)" :title="t('sales_rep.orders.title')" />
+        <template #default="{ id }">
+          <component :is="componentOf(id)" v-if="componentOf(id)" :title="t('sales_rep.orders.title')" />
         </template>
       </LayoutRegion>
 

@@ -11,7 +11,11 @@ import type {
 } from "../types/layout";
 
 function emptyState(): SalesRepLayoutStateType {
-  return { statistics: [], mainLeft: [], mainRight: [] };
+  return {
+    statistics: { visible: [], hidden: [] },
+    mainLeft: { visible: [], hidden: [] },
+    mainRight: { visible: [], hidden: [] },
+  };
 }
 
 /**
@@ -46,6 +50,9 @@ function indexPersistedBlocks(saved: SavedLayoutType | null | undefined) {
  * - Duplicate types in the document collapse to their first occurrence.
  *
  * `saved` of `null`/`undefined` is the normal never-saved case and yields pure registry defaults.
+ *
+ * The assembled order is split into the region's two halves last, so the flat document index still
+ * decides relative order — within a half, which is the only place it shows.
  */
 export function reconcileLayout(
   saved: SavedLayoutType | null | undefined,
@@ -70,10 +77,15 @@ export function reconcileLayout(
     arranged.sort((a, b) => a.index - b.index);
     newcomers.sort((a, b) => a.order - b.order);
 
-    state[regionId] = [
+    const entries = [
       ...arranged.map(({ id, hidden }) => ({ id, hidden })),
       ...newcomers.map((block) => ({ id: block.id, hidden: Boolean(block.defaultHidden) })),
     ];
+
+    state[regionId] = {
+      visible: entries.filter((entry) => !entry.hidden).map((entry) => entry.id),
+      hidden: entries.filter((entry) => entry.hidden).map((entry) => entry.id),
+    };
   }
 
   return state;
@@ -106,12 +118,10 @@ export function serializeLayout(
     schemaVersion: LAYOUT_SCHEMA_VERSION,
     regions: LAYOUT_REGION_IDS.map((regionId: SalesRepLayoutRegionIdType) => ({
       id: regionId,
-      blocks: state[regionId].map((entry) => ({
-        id: entry.id,
-        type: entry.id,
-        hidden: entry.hidden,
-        settings: [],
-      })),
+      blocks: [
+        ...state[regionId].visible.map((id) => ({ id, type: id, hidden: false, settings: [] })),
+        ...state[regionId].hidden.map((id) => ({ id, type: id, hidden: true, settings: [] })),
+      ],
     })),
   };
 }

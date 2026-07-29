@@ -35,11 +35,18 @@ export interface ISalesRepWidgetBlock extends ISalesRepBlockBase {
 
 export type SalesRepBlockType = ISalesRepStatBlock | ISalesRepWidgetBlock;
 
-/** One entry of the reconciled layout. Order is array position. */
-export type SalesRepLayoutEntryType = { id: string; hidden: boolean };
+/**
+ * A region's two halves, each in render order.
+ *
+ * Two arrays rather than one flagged list: the UI only ever shows a half at a time, so ordering across
+ * the boundary is state nothing can display. Holding it forced every edit to rebuild the whole region
+ * visible-first, and let a redundant park silently relocate a block. The `hidden` flag the backend
+ * stores is materialized only at the document boundary, in `layout/document.ts`.
+ */
+export type SalesRepLayoutRegionType = { visible: string[]; hidden: string[] };
 
 /** The reconciled layout — every region, in render order. */
-export type SalesRepLayoutStateType = Record<SalesRepLayoutRegionIdType, SalesRepLayoutEntryType[]>;
+export type SalesRepLayoutStateType = Record<SalesRepLayoutRegionIdType, SalesRepLayoutRegionType>;
 
 /** Stat rows read left-to-right; widget columns read top-to-bottom. */
 export type KeyboardSortOrientationType = "horizontal" | "vertical";

@@ -20,15 +20,15 @@
       drag-whole
       :group="group"
       :editing="editing"
-      :zone="editing"
+      zone
       :drop-hidden="false"
       :empty-text="t('sales_rep.hub.layout.empty_visible')"
       @reorder="$emit('reorder', $event)"
       @set-hidden="(id, hidden, index) => $emit('setHidden', id, hidden, index)"
       @announce="$emit('announce', $event)"
     >
-      <template #default="{ entry }">
-        <StatWidget v-if="cardOf(entry.id)" v-bind="cardProps(entry.id)">
+      <template #default="{ id }">
+        <StatWidget v-if="cardOf(id)" v-bind="cardProps(id)">
           <template v-if="editing" #leading>
             <!-- Decorative: the card itself is the control, so this must not be announced twice. -->
             <span class="layout-stats__handle" aria-hidden="true">
@@ -62,8 +62,8 @@
         @set-hidden="(id, isHidden, index) => $emit('setHidden', id, isHidden, index)"
         @announce="$emit('announce', $event)"
       >
-        <template #default="{ entry }">
-          <StatWidget v-if="cardOf(entry.id)" v-bind="cardProps(entry.id)">
+        <template #default="{ id }">
+          <StatWidget v-if="cardOf(id)" v-bind="cardProps(id)">
             <template v-if="editing" #leading>
               <!-- Decorative: the card itself is the control, so this must not be announced twice. -->
               <span class="layout-stats__handle" aria-hidden="true">
@@ -83,12 +83,12 @@ import { useI18n } from "vue-i18n";
 import { getStatCard } from "../layout/stat-cards";
 import LayoutRegion from "./layout-region.vue";
 import StatWidget from "./stat-widget.vue";
-import type { KeyboardSortSignalType, SalesRepLayoutEntryType, SalesRepLayoutScopeType } from "../types/layout";
+import type { KeyboardSortSignalType, SalesRepLayoutScopeType } from "../types/layout";
 
 interface IProps {
   scope: SalesRepLayoutScopeType;
-  visible: SalesRepLayoutEntryType[];
-  hidden: SalesRepLayoutEntryType[];
+  visible: readonly string[];
+  hidden: readonly string[];
   editing?: boolean;
 }
 

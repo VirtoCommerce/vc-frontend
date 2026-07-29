@@ -19,7 +19,7 @@ function doc(...blocks: [type: string, hidden: boolean][]): SavedLayoutType {
   return { regions: [{ blocks: blocks.map(([type, hidden]) => ({ type, hidden })) }] };
 }
 
-const ids = (entries: SalesRepLayoutStateType[keyof SalesRepLayoutStateType]) => entries.map((e) => e.id);
+const ids = (region: SalesRepLayoutStateType[keyof SalesRepLayoutStateType]) => [...region.visible, ...region.hidden];
 
 describe("reconcileLayout", () => {
   it("returns registry defaults when nothing was ever saved", () => {
@@ -33,7 +33,8 @@ describe("reconcileLayout", () => {
   it("honours defaultHidden for a never-saved layout", () => {
     const state = reconcileLayout(null, registry);
 
-    expect(state.statistics.map((e) => e.hidden)).toEqual([false, false, true]);
+    expect(state.statistics.visible).toEqual(["stat-a", "stat-b"]);
+    expect(state.statistics.hidden).toEqual(["stat-c"]);
   });
 
   it("preserves the saved order within a region", () => {
@@ -46,8 +47,8 @@ describe("reconcileLayout", () => {
     // stat-c defaults to hidden; the rep un-hid it. stat-a defaults visible; the rep hid it.
     const state = reconcileLayout(doc(["stat-a", true], ["stat-c", false]), registry);
 
-    expect(state.statistics.find((e) => e.id === "stat-a")?.hidden).toBe(true);
-    expect(state.statistics.find((e) => e.id === "stat-c")?.hidden).toBe(false);
+    expect(state.statistics.hidden).toContain("stat-a");
+    expect(state.statistics.visible).toContain("stat-c");
   });
 
   it("drops a persisted block that is no longer in the registry", () => {
@@ -92,12 +93,16 @@ describe("reconcileLayout", () => {
   it("collapses a duplicated type to its first occurrence", () => {
     const state = reconcileLayout(doc(["orders", true], ["orders", false]), registry);
 
-    expect(ids(state.mainLeft)).toEqual(["orders", "news"]);
-    expect(state.mainLeft[0].hidden).toBe(true);
+    expect(ids(state.mainLeft)).toEqual(["news", "orders"]);
+    expect(state.mainLeft.hidden).toEqual(["orders"]);
   });
 
   it("yields empty regions for an empty registry", () => {
-    expect(reconcileLayout(doc(["orders", false]), [])).toEqual({ statistics: [], mainLeft: [], mainRight: [] });
+    expect(reconcileLayout(doc(["orders", false]), [])).toEqual({
+      statistics: { visible: [], hidden: [] },
+      mainLeft: { visible: [], hidden: [] },
+      mainRight: { visible: [], hidden: [] },
+    });
   });
 });
 
@@ -153,11 +158,7 @@ describe("serializeLayout", () => {
       registry,
     );
 
-    expect(
-      Object.values(allHidden)
-        .flat()
-        .every((entry) => entry.hidden),
-    ).toBe(true);
+    expect(Object.values(allHidden).every((region) => region.visible.length === 0)).toBe(true);
     expect(reconcileLayout(serializeLayout(allHidden, "dashboard"), registry)).toEqual(allHidden);
   });
 });

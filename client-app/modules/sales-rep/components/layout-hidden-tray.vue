@@ -6,7 +6,7 @@
     </p>
 
     <ul class="layout-hidden-tray__list">
-      <li v-for="entry in entries" :key="entry.id">
+      <li v-for="id in entries" :key="id">
         <!--
           Restoring is a button rather than a drag target: a widget's region is fixed by the
           registry, so there is only ever one place it can go back to.
@@ -14,11 +14,11 @@
         <button
           type="button"
           class="layout-hidden-tray__restore"
-          :data-restore-id="entry.id"
-          :aria-label="t('sales_rep.hub.layout.a11y.show', { title: titleOf(entry.id) })"
-          @click="$emit('restore', entry.id)"
+          :data-restore-id="id"
+          :aria-label="t('sales_rep.hub.layout.a11y.show', { title: titleOf(id) })"
+          @click="$emit('restore', id)"
         >
-          <span>{{ titleOf(entry.id) }}</span>
+          <span>{{ titleOf(id) }}</span>
 
           <VcIcon name="eye" :size="16" />
         </button>
@@ -30,11 +30,11 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 import { getBlock } from "../layout/registry";
-import type { SalesRepLayoutEntryType, SalesRepLayoutScopeType } from "../types/layout";
+import type { SalesRepLayoutScopeType } from "../types/layout";
 
 interface IProps {
   scope: SalesRepLayoutScopeType;
-  entries: SalesRepLayoutEntryType[];
+  entries: readonly string[];
 }
 
 interface IEmits {

@@ -5,7 +5,6 @@ import { focusBlockControl } from "../composables/useLayoutFocus";
 import { useSalesRepLayout } from "../composables/useSalesRepLayout";
 import LayoutRegion from "./layout-region.vue";
 import LayoutStats from "./layout-stats.vue";
-import type { SalesRepLayoutRegionIdType } from "../types/layout";
 import type { Mock } from "vitest";
 
 const apolloMock = await vi.hoisted(async () => {
@@ -31,25 +30,21 @@ vi.mock("@/core/globals", () => ({ globals: { storeId: "B2B-store", cultureName:
 vi.mock("@/core/utilities", () => ({ Logger: { error: vi.fn(), warn: vi.fn() } }));
 vi.mock("vue-i18n", () => ({ useI18n: () => ({ t: (key: string) => key }) }));
 
-// Stand in for SortableJS: record the options each region registers so a drop can be replayed through
-// the real handlers, and keep the library's own DOM helpers.
+// Stand in for SortableJS: record the element and options each region constructs with, so a gesture can
+// be replayed through the real handlers. The component does its own DOM moves, so nothing else is needed.
 const zones: ZoneType[] = [];
-vi.mock("@vueuse/integrations/useSortable", () => ({
-  useSortable: (el: unknown, _list: unknown, options: Record<string, unknown>) => {
-    const option = vi.fn();
-    zones.push({ options, option, elRef: el as ZoneType["elRef"] });
-    return { option, start: vi.fn(), stop: vi.fn() };
-  },
-  removeNode: (node: Node) => {
-    if (node.parentNode) {
-      node.parentNode.removeChild(node);
+vi.mock("sortablejs", () => ({
+  default: class {
+    option = vi.fn();
+    destroy = vi.fn();
+    constructor(el: HTMLElement, options: Record<string, unknown>) {
+      zones.push({ el, options, option: this.option });
     }
   },
-  insertNodeAt: (parent: Element, el: Element, index: number) => parent.insertBefore(el, parent.children[index]),
 }));
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- replays SortableJS's event objects
-type ZoneType = { options: any; option: Mock; elRef: { value: HTMLElement | null } };
+type ZoneType = { el: HTMLElement; options: any; option: Mock };
 
 const SCOPE = "dashboard" as const;
 
@@ -72,14 +67,6 @@ function setup() {
     setup() {
       const layout = useSalesRepLayout(SCOPE);
 
-      // As pages/dashboard.vue stitches a region's two halves back together.
-      function reorderVisible(regionId: SalesRepLayoutRegionIdType, ids: string[]): void {
-        layout.reorder(regionId, [
-          ...ids.map((id) => ({ id, hidden: false })),
-          ...layout.state.value[regionId].filter((entry) => entry.hidden),
-        ]);
-      }
-
       // As the pages do, so focus follows a parked block.
       function toggleHidden(id: string, hidden: boolean, index?: number): void {
         layout.setHidden(id, hidden, index);
@@ -94,7 +81,7 @@ function setup() {
           visible: layout.visibleIn("statistics"),
           hidden: layout.hiddenIn("statistics"),
           editing: layout.editing.value,
-          onReorder: (ids: string[]) => reorderVisible("statistics", ids),
+          onReorder: (ids: string[]) => layout.reorderVisible("statistics", ids),
           onSetHidden: toggleHidden,
         });
     },
@@ -106,8 +93,8 @@ function setup() {
 
 /** Replay a drop into another zone: SortableJS's DOM move, then the handler it fires. */
 async function dropInto(from: ZoneType, to: ZoneType, id: string, at?: number) {
-  const fromEl = from.elRef.value!;
-  const toEl = to.elRef.value!;
+  const fromEl = from.el;
+  const toEl = to.el;
   const item = fromEl.querySelector(`[data-block-id="${id}"]`) as HTMLElement;
   const oldIndex = [...fromEl.children].indexOf(item);
   const blocks = [...toEl.querySelectorAll(".layout-block")];
@@ -126,7 +113,7 @@ async function dropInto(from: ZoneType, to: ZoneType, id: string, at?: number) {
 
 /** Replay a reorder inside one zone, reporting both index flavours as SortableJS does. */
 async function moveWithin(zone: ZoneType, id: string, delta: number) {
-  const el = zone.elRef.value!;
+  const el = zone.el;
   const item = el.querySelector(`[data-block-id="${id}"]`) as HTMLElement;
   const kids = [...el.children];
   const blocks = [...el.querySelectorAll(".layout-block")];
@@ -189,7 +176,7 @@ describe("stat row drag and drop", () => {
     card.element.dispatchEvent(new FocusEvent("blur"));
     await nextTick();
 
-    expect(api.state.value.statistics.map((entry: { id: string }) => entry.id)).toEqual([
+    expect(api.state.value.statistics.visible).toEqual([
       "orders_on_hold",
       "orders_placed_mtd",
       "active_projects",
@@ -210,7 +197,7 @@ describe("stat row drag and drop", () => {
     await nextTick();
     await nextTick();
 
-    expect(api.hiddenIn("statistics").map((entry: { id: string }) => entry.id)).toEqual(["active_projects"]);
+    expect(api.hiddenIn("statistics")).toEqual(["active_projects"]);
     expect(document.activeElement?.getAttribute("data-block-id")).toBe("active_projects");
     // Identity is not enough — the id alone would match a leaked card from another test.
     expect(wrapper.element.contains(document.activeElement)).toBe(true);
@@ -240,6 +227,20 @@ describe("stat row drag and drop", () => {
     expect(wrapper.find('[data-block-id="orders_placed_mtd"]').element.className).not.toContain(
       "layout-block--grabbed",
     );
+  });
+
+  // Backward is the direction that catches `restore()` reading the child index before removing the
+  // node: with the node still in place, the index it reads is one short and the card lands too early.
+  it("reorders a card backwards", async () => {
+    const { wrapper, api } = setup();
+    api.startEdit();
+    await nextTick();
+
+    const before = [...api.visibleIn("statistics")];
+    await moveWithin(zones[0], before[2], -1);
+
+    expect(api.visibleIn("statistics")).toEqual([before[0], before[2], before[1], before[3]]);
+    expect(blockIds(wrapper)).toEqual([before[0], before[2], before[1], before[3]]);
   });
 
   // The mock swallows every Sortable option, so nothing else in the suite would notice if the wiring
@@ -275,7 +276,7 @@ describe("stat row drag and drop", () => {
     await nextTick();
     expect(card.element.className).toContain("layout-block--grabbed");
 
-    const order = api.visibleIn("statistics").map((entry: { id: string }) => entry.id);
+    const order = api.visibleIn("statistics");
     zones[0].options.onChoose({ item: card.element });
     await nextTick();
 
@@ -283,7 +284,7 @@ describe("stat row drag and drop", () => {
       "layout-block--grabbed",
     );
     // Released, not cancelled — a cancel would reshuffle the list mid-drag.
-    expect(api.visibleIn("statistics").map((entry: { id: string }) => entry.id)).toEqual(order);
+    expect(api.visibleIn("statistics")).toEqual(order);
   });
 
   it("ignores the park key for a card already in the zone that key leads to", async () => {
@@ -291,7 +292,7 @@ describe("stat row drag and drop", () => {
     api.startEdit();
     await nextTick();
 
-    const before = api.visibleIn("statistics").map((entry: { id: string }) => entry.id);
+    const before = api.visibleIn("statistics");
     const card = wrapper.find(`[data-block-id="${before[0]}"]`);
 
     // ArrowUp is "restore", and this card is already visible.
@@ -299,7 +300,7 @@ describe("stat row drag and drop", () => {
     card.element.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowUp" }));
     await nextTick();
 
-    expect(api.visibleIn("statistics").map((entry: { id: string }) => entry.id)).toEqual(before);
+    expect(api.visibleIn("statistics")).toEqual(before);
     expect(api.hiddenIn("statistics")).toEqual([]);
   });
 
@@ -316,10 +317,7 @@ describe("stat row drag and drop", () => {
     await dropInto(visible, hidden, "active_projects");
     await dropInto(visible, hidden, "my_customers", 0);
 
-    expect(api.hiddenIn("statistics").map((entry: { id: string }) => entry.id)).toEqual([
-      "my_customers",
-      "active_projects",
-    ]);
+    expect(api.hiddenIn("statistics")).toEqual(["my_customers", "active_projects"]);
   });
 });
 
@@ -336,14 +334,8 @@ describe("widget column drag and drop", () => {
 
         api = layout;
 
-        function onReorder(ids: string[]): void {
-          const hidden = layout.state.value.mainRight.filter((entry) => entry.hidden);
-          layout.reorder("mainRight", [...ids.map((id) => ({ id, hidden: false })), ...hidden]);
-        }
-
-        function onSetHidden(id: string, hidden: boolean, index?: number): void {
-          layout.setHidden(id, hidden, index);
-        }
+        const onReorder = (ids: string[]) => layout.reorderVisible("mainRight", ids);
+        const onSetHidden = (id: string, hidden: boolean, index?: number) => layout.setHidden(id, hidden, index);
 
         const slots = { default: () => h("div", "widget") };
 
@@ -373,11 +365,11 @@ describe("widget column drag and drop", () => {
     api.startEdit();
     await nextTick();
 
-    expect(api.visibleIn("mainRight").map((entry: { id: string }) => entry.id)).toEqual(["actions", "info"]);
+    expect(api.visibleIn("mainRight")).toEqual(["actions", "info"]);
 
     await moveWithin(zones[0], "actions", 1);
 
-    expect(api.visibleIn("mainRight").map((entry: { id: string }) => entry.id)).toEqual(["info", "actions"]);
+    expect(api.visibleIn("mainRight")).toEqual(["info", "actions"]);
     const ids = blockIds(wrapper);
     expect(ids).toEqual(["info", "actions"]);
   });
@@ -389,7 +381,7 @@ describe("widget column drag and drop", () => {
 
     await wrapper.find('[data-block-id="actions"] .layout-block__hide').trigger("click");
 
-    expect(api.hiddenIn("mainRight").map((entry: { id: string }) => entry.id)).toEqual(["actions"]);
+    expect(api.hiddenIn("mainRight")).toEqual(["actions"]);
     expect(blockIds(wrapper)).toEqual(["info"]);
   });
 });

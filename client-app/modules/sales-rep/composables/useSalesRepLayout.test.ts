@@ -54,8 +54,8 @@ describe("useSalesRepLayout", () => {
 
     const { state } = useSalesRepLayout(scope);
 
-    expect(state.value.mainRight.map((entry) => entry.id)).toEqual(["actions", "info"]);
-    expect(state.value.mainLeft.map((entry) => entry.id)).toEqual(["orders"]);
+    expect(state.value.mainRight.visible).toEqual(["actions", "info"]);
+    expect(state.value.mainLeft.visible).toEqual(["orders"]);
   });
 
   it("applies a saved arrangement over the defaults", () => {
@@ -76,8 +76,8 @@ describe("useSalesRepLayout", () => {
 
     const { state } = useSalesRepLayout(scope);
 
-    expect(state.value.mainRight.map((entry) => entry.id)).toEqual(["info", "actions"]);
-    expect(state.value.mainRight[1].hidden).toBe(true);
+    expect(state.value.mainRight.visible).toEqual(["info"]);
+    expect(state.value.mainRight.hidden).toEqual(["actions"]);
   });
 
   it("blocks editing when the read failed, so a full-replace save cannot clobber an unread layout", () => {
@@ -107,10 +107,10 @@ describe("useSalesRepLayout", () => {
     startEdit();
     setHidden("info", true);
 
-    expect(state.value.mainRight.find((entry) => entry.id === "info")?.hidden).toBe(true);
+    expect(state.value.mainRight.hidden).toContain("info");
 
     cancel();
-    expect(state.value.mainRight.find((entry) => entry.id === "info")?.hidden).toBe(false);
+    expect(state.value.mainRight.visible).toContain("info");
   });
 
   it("sends the complete document — every region, hidden blocks included", async () => {
@@ -153,7 +153,7 @@ describe("useSalesRepLayout", () => {
     await expect(save()).resolves.toBe(false);
     expect(editing.value).toBe(true);
     expect(saveFailed.value).toBe(true);
-    expect(state.value.mainRight.find((entry) => entry.id === "info")?.hidden).toBe(true);
+    expect(state.value.mainRight.hidden).toContain("info");
   });
 
   // Reconciling a missing document yields registry defaults, so trusting the echo blindly would
@@ -169,7 +169,7 @@ describe("useSalesRepLayout", () => {
     await expect(save()).resolves.toBe(false);
     expect(editing.value).toBe(true);
     expect(saveFailed.value).toBe(true);
-    expect(state.value.mainRight.find((entry) => entry.id === "info")?.hidden).toBe(true);
+    expect(state.value.mainRight.hidden).toContain("info");
   });
 
   // The mutation echoes the stored document and no refetch follows, so the echo — not what was sent —
@@ -198,8 +198,8 @@ describe("useSalesRepLayout", () => {
     startEdit();
 
     await expect(save()).resolves.toBe(true);
-    expect(state.value.mainRight.map((entry) => entry.id)).toEqual(["info", "actions"]);
-    expect(state.value.mainRight[1].hidden).toBe(true);
+    expect(state.value.mainRight.visible).toEqual(["info"]);
+    expect(state.value.mainRight.hidden).toEqual(["actions"]);
   });
 
   // A document is not enough to trust — reconciling a partial one fills the gaps from registry
@@ -215,7 +215,7 @@ describe("useSalesRepLayout", () => {
     await expect(save()).resolves.toBe(true);
 
     // Not defaults: `actions` stays parked, exactly as it was arranged.
-    expect(state.value.mainRight.find((entry) => entry.id === "actions")?.hidden).toBe(true);
+    expect(state.value.mainRight.hidden).toContain("actions");
     expect(saveFailed.value).toBe(false);
   });
 
@@ -234,20 +234,20 @@ describe("useSalesRepLayout", () => {
       });
     });
 
-    const { startEdit, setHidden, reorder, reset, save, state } = useSalesRepLayout(scope);
+    const { startEdit, setHidden, reorderVisible, reset, save, state } = useSalesRepLayout(scope);
     startEdit();
     setHidden("actions", true);
 
-    const sent = state.value.mainRight.map((entry) => `${entry.id}:${entry.hidden}`);
+    const sent = { ...state.value.mainRight };
     const pending = save();
 
     // Each of these would otherwise land visibly — `reset` most of all, wiping the arrangement to
     // defaults in front of the rep — only to be thrown away when the save resolves.
     reset();
     setHidden("info", true);
-    reorder("mainRight", [{ id: "info", hidden: false }]);
+    reorderVisible("mainRight", ["info"]);
 
-    expect(state.value.mainRight.map((entry) => `${entry.id}:${entry.hidden}`)).toEqual(sent);
+    expect(state.value.mainRight).toEqual(sent);
 
     release({
       data: {
@@ -267,28 +267,24 @@ describe("useSalesRepLayout", () => {
 
     await expect(pending).resolves.toBe(true);
     // The saved arrangement survived; none of the mid-flight calls left a mark.
-    expect(state.value.mainRight.find((entry) => entry.id === "actions")?.hidden).toBe(true);
-    expect(state.value.mainRight.map((entry) => entry.id)).toEqual(["info", "actions"]);
+    expect(state.value.mainRight.visible).toEqual(["info"]);
+    expect(state.value.mainRight.hidden).toEqual(["actions"]);
   });
 
-  // Mirrors the pages' `reorderHidden`: the hidden strip is reordered and stitched back after the
-  // visible half, which must leave the visible order untouched.
+  // Reordering one half must not disturb the other.
   it("keeps the visible half intact when the hidden half is reordered", () => {
     apolloMock.result.value = { salesRepLayout: null };
 
-    const { state, startEdit, setHidden, reorder, visibleIn, hiddenIn } = useSalesRepLayout(scope);
+    const { startEdit, setHidden, reorderHidden, visibleIn, hiddenIn } = useSalesRepLayout(scope);
     startEdit();
     setHidden("info", true);
     setHidden("actions", true);
 
-    reorder("mainRight", [
-      ...state.value.mainRight.filter((entry) => !entry.hidden),
-      ...["actions", "info"].map((id) => ({ id, hidden: true })),
-    ]);
+    reorderHidden("mainRight", ["actions", "info"]);
 
-    expect(hiddenIn("mainRight").map((entry) => entry.id)).toEqual(["actions", "info"]);
+    expect(hiddenIn("mainRight")).toEqual(["actions", "info"]);
     expect(visibleIn("mainRight")).toEqual([]);
-    expect(visibleIn("mainLeft").map((entry) => entry.id)).toEqual(["orders"]);
+    expect(visibleIn("mainLeft")).toEqual(["orders"]);
   });
 
   it("reset restores defaults into the draft but does not persist on its own", () => {
@@ -311,12 +307,13 @@ describe("useSalesRepLayout", () => {
     startEdit();
     reset();
 
-    expect(state.value.mainRight.map((entry) => entry.id)).toEqual(["actions", "info"]);
+    expect(state.value.mainRight.visible).toEqual(["actions", "info"]);
     expect(apolloMock.mutate).not.toHaveBeenCalled();
 
-    // Cancelling after a reset returns to what is actually stored.
+    // Cancelling after a reset returns to what is actually stored — both visible, in the saved order.
     cancel();
-    expect(state.value.mainRight.map((entry) => entry.id)).toEqual(["info", "actions"]);
+    expect(state.value.mainRight.visible).toEqual(["info", "actions"]);
+    expect(state.value.mainRight.hidden).toEqual([]);
   });
 
   // The pages render components only for `visibleIn(...)`; the hidden tray renders names alone. A
@@ -330,7 +327,7 @@ describe("useSalesRepLayout", () => {
     setHidden("orders", true);
 
     expect(visibleIn("mainLeft")).toEqual([]);
-    expect(hiddenIn("mainLeft").map((entry) => entry.id)).toEqual(["orders"]);
+    expect(hiddenIn("mainLeft")).toEqual(["orders"]);
   });
 
   // A cross-zone drag reports where it was dropped; without it the block lands wherever its old
@@ -344,7 +341,7 @@ describe("useSalesRepLayout", () => {
     setHidden("info", true);
     setHidden("actions", true, 0);
 
-    expect(hiddenIn("mainRight").map((entry) => entry.id)).toEqual(["actions", "info"]);
+    expect(hiddenIn("mainRight")).toEqual(["actions", "info"]);
   });
 
   it("appends to the destination half when no position is given", () => {
@@ -356,7 +353,7 @@ describe("useSalesRepLayout", () => {
     setHidden("info", true);
     setHidden("actions", true);
 
-    expect(hiddenIn("mainRight").map((entry) => entry.id)).toEqual(["info", "actions"]);
+    expect(hiddenIn("mainRight")).toEqual(["info", "actions"]);
   });
 
   it("splits a region into visible and hidden entries", () => {
@@ -366,28 +363,38 @@ describe("useSalesRepLayout", () => {
     startEdit();
     setHidden("actions", true);
 
-    expect(visibleIn("mainRight").map((entry) => entry.id)).toEqual(["info"]);
-    expect(hiddenIn("mainRight").map((entry) => entry.id)).toEqual(["actions"]);
+    expect(visibleIn("mainRight")).toEqual(["info"]);
+    expect(hiddenIn("mainRight")).toEqual(["actions"]);
   });
 
-  // Types cannot catch this: `DeepReadonly<{ id, hidden }>` is assignable to `{ id, hidden }`.
-  it("keeps a reordered region writable, so its hidden blocks can still be restored", () => {
+  // The single-array model relocated the block to the end of the half it was already in — a visible
+  // "move" from a keypress the rep reads as doing nothing. Two arrays make it unreachable: the block
+  // is not in the source half, so there is nothing to move.
+  it("ignores a toggle to the state a block is already in", () => {
     apolloMock.result.value = { salesRepLayout: null };
 
-    const { state, startEdit, setHidden, reorder, visibleIn, hiddenIn } = useSalesRepLayout(scope);
+    const { startEdit, setHidden, visibleIn } = useSalesRepLayout(scope);
+    startEdit();
+    const before = [...visibleIn("mainRight")];
+
+    setHidden(before[0], false, 1);
+
+    expect(visibleIn("mainRight")).toEqual(before);
+  });
+
+  it("lets a parked block come back after the visible half has been reordered", () => {
+    apolloMock.result.value = { salesRepLayout: null };
+
+    const { startEdit, setHidden, reorderVisible, visibleIn, hiddenIn } = useSalesRepLayout(scope);
     startEdit();
     setHidden("actions", true);
 
-    // Exactly what the pages' `reorderVisible` does.
-    reorder("mainRight", [
-      ...visibleIn("mainRight").map((entry) => ({ id: entry.id, hidden: false })),
-      ...state.value.mainRight.filter((entry) => entry.hidden),
-    ]);
+    reorderVisible("mainRight", [...visibleIn("mainRight")]);
 
     setHidden("actions", false);
 
     expect(hiddenIn("mainRight")).toEqual([]);
-    expect(visibleIn("mainRight").map((entry) => entry.id)).toEqual(["info", "actions"]);
+    expect(visibleIn("mainRight")).toEqual(["info", "actions"]);
   });
 
   // Nothing else observes the collision, so the fetch policy itself is the assertion.

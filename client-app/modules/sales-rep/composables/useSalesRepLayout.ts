@@ -5,18 +5,13 @@ import { Logger } from "@/core/utilities";
 import { SalesRepLayoutDocument, SaveSalesRepLayoutDocument } from "../api/graphql/types";
 import { echoCoversSentBlocks, reconcileLayout, serializeLayout } from "../layout/document";
 import { getBlockRegistry } from "../layout/registry";
-import type {
-  SalesRepLayoutEntryType,
-  SalesRepLayoutRegionIdType,
-  SalesRepLayoutScopeType,
-  SalesRepLayoutStateType,
-} from "../types/layout";
+import type { SalesRepLayoutRegionIdType, SalesRepLayoutScopeType, SalesRepLayoutStateType } from "../types/layout";
 
 function cloneState(state: SalesRepLayoutStateType): SalesRepLayoutStateType {
   return {
-    statistics: state.statistics.map((entry) => ({ ...entry })),
-    mainLeft: state.mainLeft.map((entry) => ({ ...entry })),
-    mainRight: state.mainRight.map((entry) => ({ ...entry })),
+    statistics: { visible: [...state.statistics.visible], hidden: [...state.statistics.hidden] },
+    mainLeft: { visible: [...state.mainLeft.visible], hidden: [...state.mainLeft.hidden] },
+    mainRight: { visible: [...state.mainRight.visible], hidden: [...state.mainRight.hidden] },
   };
 }
 
@@ -71,12 +66,12 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
    */
   const canEdit = computed(() => !loading.value && !error.value);
 
-  function visibleIn(regionId: SalesRepLayoutRegionIdType): SalesRepLayoutEntryType[] {
-    return state.value[regionId].filter((entry) => !entry.hidden);
+  function visibleIn(regionId: SalesRepLayoutRegionIdType): readonly string[] {
+    return state.value[regionId].visible;
   }
 
-  function hiddenIn(regionId: SalesRepLayoutRegionIdType): SalesRepLayoutEntryType[] {
-    return state.value[regionId].filter((entry) => entry.hidden);
+  function hiddenIn(regionId: SalesRepLayoutRegionIdType): readonly string[] {
+    return state.value[regionId].hidden;
   }
 
   function startEdit(): void {
@@ -107,45 +102,42 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
     }
   }
 
-  /**
-   * Reorder within a region. Blocks never move between regions — region is owned by the registry.
-   *
-   * Entries are copied, not stored as given: callers stitch this array out of `state`, which is
-   * exported `readonly()`, so a deep-readonly entry stored here would make the draft partly frozen
-   * and `setHidden`'s in-place write would fail silently in production.
-   */
-  function reorder(regionId: SalesRepLayoutRegionIdType, entries: SalesRepLayoutEntryType[]): void {
+  // Ids are copied, not stored as given: callers read them out of `state`, which is exported
+  // `readonly()`, and Vue's readonly arrays are not assignable to a mutable draft.
+  function reorderVisible(regionId: SalesRepLayoutRegionIdType, ids: string[]): void {
     if (editable() && draft.value) {
-      draft.value[regionId] = entries.map((entry) => ({ id: entry.id, hidden: entry.hidden }));
+      draft.value[regionId].visible = [...ids];
+    }
+  }
+
+  function reorderHidden(regionId: SalesRepLayoutRegionIdType, ids: string[]): void {
+    if (editable() && draft.value) {
+      draft.value[regionId].hidden = [...ids];
     }
   }
 
   /**
-   * Hide or restore a block. `index` places it within the half it moves into, so a cross-zone drag
-   * lands where the rep dropped it instead of wherever its old position happened to fall among the
-   * other entries; without one the block goes to the end of that half.
+   * Move a block between its region's halves. `index` is where it was dropped within the half it joins;
+   * without one it goes to the end. A block that is already in the destination is not found in the
+   * source half, so a redundant call is a no-op rather than a silent relocation.
    */
   function setHidden(id: string, hidden: boolean, index?: number): void {
-    const regions = draft.value;
-    if (!regions || !editable()) {
+    if (!draft.value || !editable()) {
       return;
     }
 
-    const regionId = (Object.keys(regions) as SalesRepLayoutRegionIdType[]).find((candidate) =>
-      regions[candidate].some((entry) => entry.id === id),
-    );
-    if (!regionId) {
+    for (const region of Object.values(draft.value)) {
+      const from = hidden ? region.visible : region.hidden;
+      const at = from.indexOf(id);
+      if (at === -1) {
+        continue;
+      }
+
+      const to = hidden ? region.hidden : region.visible;
+      from.splice(at, 1);
+      to.splice(index ?? to.length, 0, id);
       return;
     }
-
-    const rest = regions[regionId].filter((entry) => entry.id !== id);
-    const destination = rest.filter((entry) => entry.hidden === hidden);
-    const opposite = rest.filter((entry) => entry.hidden !== hidden);
-
-    destination.splice(index ?? destination.length, 0, { id, hidden });
-
-    // Visible first, then hidden — the order the reorder stitchers already produce.
-    regions[regionId] = hidden ? [...opposite, ...destination] : [...destination, ...opposite];
   }
 
   async function save(): Promise<boolean> {
@@ -199,7 +191,8 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
     startEdit,
     cancel,
     reset,
-    reorder,
+    reorderVisible,
+    reorderHidden,
     setHidden,
     save,
   };

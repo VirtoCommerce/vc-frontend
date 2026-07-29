@@ -10,18 +10,18 @@
     :data-drop-hidden="String(Boolean(dropHidden))"
   >
     <LayoutBlock
-      v-for="entry in entries"
-      :key="entry.id"
-      :block-id="entry.id"
-      :title="titleOf(entry.id)"
+      v-for="id in entries"
+      :key="id"
+      :block-id="id"
+      :title="titleOf(id)"
       :editing="editing"
-      :grabbed="isGrabbed(entry.id)"
+      :grabbed="isGrabbed(id)"
       :drag-whole="dragWhole"
-      @hide="$emit('setHidden', entry.id, !entry.hidden)"
-      @handle-keydown="onKeydown($event, entry.id)"
-      @handle-blur="onBlur(entry.id)"
+      @hide="$emit('setHidden', id, !dropHidden)"
+      @handle-keydown="onKeydown($event, id)"
+      @handle-blur="onBlur(id)"
     >
-      <slot :entry="entry" />
+      <slot :id="id" />
     </LayoutBlock>
 
     <p v-if="editing && zone && !entries.length" class="layout-region__empty">{{ emptyText }}</p>
@@ -29,23 +29,18 @@
 </template>
 
 <script setup lang="ts">
-import { insertNodeAt, removeNode, useSortable } from "@vueuse/integrations/useSortable";
-import { ref, useTemplateRef, watch } from "vue";
+import Sortable from "sortablejs";
+import { onMounted, onUnmounted, useTemplateRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useKeyboardSort } from "../composables/useKeyboardSort";
 import { getBlock } from "../layout/registry";
 import LayoutBlock from "./layout-block.vue";
-import type {
-  KeyboardSortOrientationType,
-  KeyboardSortSignalType,
-  SalesRepLayoutEntryType,
-  SalesRepLayoutScopeType,
-} from "../types/layout";
-import type Sortable from "sortablejs";
+import type { KeyboardSortOrientationType, KeyboardSortSignalType, SalesRepLayoutScopeType } from "../types/layout";
 
 interface IProps {
   scope: SalesRepLayoutScopeType;
-  entries: SalesRepLayoutEntryType[];
+  /** Ids of the blocks this half holds, in render order. */
+  entries: readonly string[];
   orientation: KeyboardSortOrientationType;
   editing?: boolean;
   /**
@@ -86,13 +81,13 @@ const container = useTemplateRef<HTMLElement>("container");
  * stable, and for a move of one slot forward that is the dragged element itself — so Vue anchors
  * against a node no longer in the document, throws `NotFoundError`, and the block disappears.
  *
- * `oldIndex` here, not `oldDraggableIndex`: this addresses the DOM, and `insertNodeAt` indexes
- * `children`, which counts every element. The handlers below address `props.entries` and so need the
- * draggable-only indices instead.
+ * Remove first, then read the child index: computing the reference node before removal shifts it by
+ * one when the block moves backwards within its own list. `oldIndex`, not `oldDraggableIndex` — this
+ * addresses `children`, which counts every element; the handlers below address `props.entries`.
  */
 function restore(event: Sortable.SortableEvent): void {
-  removeNode(event.item);
-  insertNodeAt(event.from, event.item, event.oldIndex ?? 0);
+  event.item.parentNode?.removeChild(event.item);
+  event.from.insertBefore(event.item, event.from.children[event.oldIndex ?? 0] ?? null);
 }
 
 const titleOf = (id: string) => {
@@ -106,11 +101,11 @@ const axis = props.orientation;
 
 const { isGrabbed, onKeydown, onBlur, release } = useKeyboardSort({
   orientation: axis,
-  items: () => props.entries.map((entry) => entry.id),
+  items: () => [...props.entries],
   // Every block in a zone shares the zone's hidden state, which is what `dropHidden` describes.
   hidden: () => Boolean(props.dropHidden),
   onReorder: (id, index) => {
-    const ids = props.entries.map((entry) => entry.id).filter((candidate) => candidate !== id);
+    const ids = props.entries.filter((candidate) => candidate !== id);
     ids.splice(index, 0, id);
     emit("reorder", ids);
   },
@@ -122,88 +117,81 @@ const { isGrabbed, onKeydown, onBlur, release } = useKeyboardSort({
 /**
  * Every move is handled explicitly, and `props.entries` stays the only source of truth.
  *
- * The earlier version kept a local mirror of the list for useSortable to mutate and watched it back.
- * That mirror was the bug: after a cross-zone drop it could still hold the moved block and emit a
- * stale `reorder`, which the page then merged with the freshly-hidden entry — putting the same block
- * in the region twice, once visible and once hidden. (It was also watched without `deep`, while
- * useSortable splices in place, so same-list reorders could go unnoticed entirely.)
- *
- * So `onUpdate` is overridden rather than left to useSortable, and the throwaway list below is never
- * read or written. Both handlers put SortableJS's DOM edit back and let state drive the re-render.
+ * An earlier version let `useSortable` keep its own mirror of the list and watched it back. That mirror
+ * was the bug: after a cross-zone drop it could still hold the moved block and emit a stale `reorder`,
+ * which the page merged with the freshly-hidden entry — the same block twice, once per half. Sortable
+ * is constructed directly so there is no mirror to disagree with state.
  */
+let sortable: Sortable | undefined;
 
-// Only here to satisfy useSortable's signature; overriding `onUpdate` means it is never touched.
-const unusedSortableList = ref<SalesRepLayoutEntryType[]>([]);
+// Built at mount, not at setup: every option below reads a prop, and reading them here means there is
+// no gap between what the instance is told and what the component currently is.
+onMounted(() => {
+  if (!container.value) {
+    return;
+  }
 
-// A region never changes which Sortable group it belongs to, and Sortable reads it once anyway.
-// eslint-disable-next-line vue/no-setup-props-reactivity-loss -- structural, read once by design
-const sortableGroup = props.group;
+  sortable = new Sortable(container.value, {
+    group: props.group,
+    // Stat cards drag by the whole card. Widgets drag by their entire header — the design's affordance —
+    // with the handle button listed too, since it is overlaid on the header rather than inside it and so
+    // would not otherwise match `closest()`.
+    handle: props.dragWhole ? undefined : ".vc-widget__header-container, .layout-block__handle",
+    // Without this every child counts as an item, including the empty-zone hint paragraph — and the
+    // indices below would then not line up with `props.entries`.
+    draggable: ".layout-block",
+    animation: 150,
+    ghostClass: "sortable-ghost",
+    dragClass: "sortable-drag",
+    disabled: !props.editing,
 
-// Stat cards drag by the whole card. Widgets drag by their entire header — the design's affordance —
-// with the handle button listed too, since it is overlaid on the header rather than inside it and so
-// would not otherwise match `closest()`.
-// eslint-disable-next-line vue/no-setup-props-reactivity-loss -- structural, read once by design
-const dragHandle = props.dragWhole ? undefined : ".vc-widget__header-container, .layout-block__handle";
+    // A keyboard grab must not stay live through a pointer drag: Sortable captures its indices at
+    // choose time, and a grab cancelled mid-drag reshuffles `entries` under them, dropping the wrong
+    // block. `release`, not `cancel` — restoring the position is the reshuffle to avoid.
+    onChoose: () => release(),
 
-// Seeded from the current mode, NOT hard-coded true: the hidden zone is mounted by `v-if` when
-// editing is already on, and useSortable only builds its instance on mount — so the watch below has
-// nothing to talk to on its first run and would leave that zone disabled forever. The watch below
-// tracks every later change.
-const initiallyDisabled = !props.editing;
+    // Reorder inside one list, deriving the new order from `props.entries` rather than reading the DOM.
+    // The draggable-only indices are the ones that match `props.entries`; `oldIndex`/`newIndex` count
+    // every element child, so a non-block child rendered above the blocks would shift them all by one.
+    onUpdate: (event: Sortable.SortableEvent) => {
+      restore(event);
 
-const { option } = useSortable(container, unusedSortableList, {
-  group: sortableGroup,
-  handle: dragHandle,
-  // Without this every child counts as an item, including the empty-zone hint paragraph — and the
-  // indices below would then not line up with `props.entries`.
-  draggable: ".layout-block",
-  animation: 150,
-  ghostClass: "sortable-ghost",
-  dragClass: "sortable-drag",
-  disabled: initiallyDisabled,
+      const ids = [...props.entries];
+      const [moved] = ids.splice(event.oldDraggableIndex ?? 0, 1);
+      ids.splice(event.newDraggableIndex ?? 0, 0, moved);
+      emit("reorder", ids);
+    },
 
-  // A keyboard grab must not stay live through a pointer drag: Sortable captures its indices at
-  // choose time, and a grab cancelled mid-drag reshuffles `entries` under them, dropping the wrong
-  // block. `release`, not `cancel` — restoring the position is the reshuffle to avoid.
-  onChoose: () => release(),
+    // A drag that ended in a different list — the stat row's visible/hidden pair. `onEnd` fires once
+    // per drag, so this cannot double-apply the way separate onAdd/onRemove handlers did.
+    onEnd: (event: Sortable.SortableEvent) => {
+      if (event.from === event.to) {
+        return; // same-list move, already handled by onUpdate
+      }
 
-  // Reorder inside one list, deriving the new order from `props.entries` rather than reading the DOM.
-  // The draggable-only indices are the ones that match `props.entries`; `oldIndex`/`newIndex` count
-  // every element child, so a non-block child rendered above the blocks would shift them all by one.
-  onUpdate: (event: Sortable.SortableEvent) => {
-    restore(event);
+      // Back into the source list, not the target — state is what moves the block across.
+      restore(event);
 
-    const ids = props.entries.map((entry) => entry.id);
-    const [moved] = ids.splice(event.oldDraggableIndex ?? 0, 1);
-    ids.splice(event.newDraggableIndex ?? 0, 0, moved);
-    emit("reorder", ids);
-  },
-
-  // A drag that ended in a different list — the stat row's visible/hidden pair. `onEnd` fires once
-  // per drag, so this cannot double-apply the way separate onAdd/onRemove handlers did.
-  onEnd: (event: Sortable.SortableEvent) => {
-    if (event.from === event.to) {
-      return; // same-list move, already handled by onUpdate
-    }
-
-    // Back into the source list, not the target — state is what moves the block across.
-    restore(event);
-
-    const id = event.item.dataset.blockId;
-    if (id) {
-      // `newDraggableIndex`, not `newIndex`: an empty target zone also renders its hint paragraph.
-      emit("setHidden", id, event.to.dataset.dropHidden === "true", event.newDraggableIndex ?? undefined);
-    }
-  },
+      const id = event.item.dataset.blockId;
+      if (id) {
+        // `newDraggableIndex`, not `newIndex`: an empty target zone also renders its hint paragraph.
+        emit("setHidden", id, event.to.dataset.dropHidden === "true", event.newDraggableIndex ?? undefined);
+      }
+    },
+  });
 });
 
-// Sortable is created once and toggled, rather than torn down and rebuilt whenever edit mode flips.
-// No `immediate` — the constructor seeds the initial value, and an immediate run would fire before
-// the instance exists.
+onUnmounted(() => {
+  sortable?.destroy();
+  sortable = undefined;
+});
+
+// Toggled rather than torn down and rebuilt whenever edit mode flips. No `immediate` — the constructor
+// seeds the initial value, and an immediate run would fire before the instance exists.
 watch(
   () => props.editing,
   (editing) => {
-    option("disabled", !editing);
+    sortable?.option("disabled", !editing);
     if (!editing) {
       release();
     }

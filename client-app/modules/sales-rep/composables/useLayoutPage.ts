@@ -4,20 +4,14 @@ import { getBlock } from "../layout/registry";
 import { useLayoutAnnouncer } from "./useLayoutAnnouncer";
 import { focusBlockControl, focusEditToggle } from "./useLayoutFocus";
 import { useSalesRepLayout } from "./useSalesRepLayout";
-import type { SalesRepLayoutRegionIdType, SalesRepLayoutScopeType } from "../types/layout";
+import type { SalesRepLayoutScopeType } from "../types/layout";
 
-/**
- * Everything a layout surface needs on top of `useSalesRepLayout`.
- *
- * The stitchers live here, not in each page: a region's visible and hidden entries are two views of ONE
- * ordered array, and `reorder` trusts the caller to return the whole thing visible-first. Spread across
- * pages, a third surface stitching it differently would corrupt state with nothing to catch it.
- */
+/** Everything a layout surface needs on top of `useSalesRepLayout`. */
 export function useLayoutPage(scope: SalesRepLayoutScopeType) {
   const { t } = useI18n();
   const layout = useSalesRepLayout(scope);
   const { message, announce, say } = useLayoutAnnouncer(scope);
-  const { state, reorder, setHidden, hiddenIn, editing, saveFailed } = layout;
+  const { setHidden, hiddenIn, editing, saveFailed } = layout;
 
   // Widgets from both columns share one tray; the stat row has its own paired zone instead.
   const hiddenWidgets = computed(() => hiddenIn("mainLeft").concat(hiddenIn("mainRight")));
@@ -27,20 +21,6 @@ export function useLayoutPage(scope: SalesRepLayoutScopeType) {
     const block = getBlock(scope, id);
     return block && "component" in block ? block.component : undefined;
   };
-
-  function reorderVisible(regionId: SalesRepLayoutRegionIdType, ids: string[]): void {
-    reorder(regionId, [
-      ...ids.map((id) => ({ id, hidden: false })),
-      ...state.value[regionId].filter((entry) => entry.hidden),
-    ]);
-  }
-
-  function reorderHidden(regionId: SalesRepLayoutRegionIdType, ids: string[]): void {
-    reorder(regionId, [
-      ...state.value[regionId].filter((entry) => !entry.hidden),
-      ...ids.map((id) => ({ id, hidden: true })),
-    ]);
-  }
 
   function toggleHidden(id: string, hidden: boolean, index?: number): void {
     setHidden(id, hidden, index);
@@ -61,5 +41,28 @@ export function useLayoutPage(scope: SalesRepLayoutScopeType) {
     }
   });
 
-  return { ...layout, message, announce, hiddenWidgets, componentOf, reorderVisible, reorderHidden, toggleHidden };
+  // Listed rather than spread, so this is the whole surface a page gets. `setHidden` is deliberately
+  // absent: `toggleHidden` is the same call plus the focus move, and reaching past it would silently
+  // lose focus after every park.
+  return {
+    message,
+    announce,
+    hiddenWidgets,
+    componentOf,
+    toggleHidden,
+    state: layout.state,
+    loading: layout.loading,
+    saving: layout.saving,
+    editing: layout.editing,
+    canEdit: layout.canEdit,
+    saveFailed: layout.saveFailed,
+    visibleIn: layout.visibleIn,
+    hiddenIn: layout.hiddenIn,
+    startEdit: layout.startEdit,
+    cancel: layout.cancel,
+    reset: layout.reset,
+    reorderVisible: layout.reorderVisible,
+    reorderHidden: layout.reorderHidden,
+    save: layout.save,
+  };
 }
