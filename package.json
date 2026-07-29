@@ -27,7 +27,7 @@
     "validate:core-types": "yarn precheck && node client-app/core-api/build-types.mjs --check",
     "validate": "yarn precheck && yarn validate:types && yarn validate:dependencies",
     "commitlint": "yarn precheck && commitlint --edit",
-    "lint-staged": "yarn precheck && lint-staged",
+    "lint-staged": "yarn precheck && lint-staged --verbose",
     "lint": "yarn precheck && eslint . --cache --cache-location node_modules/.cache/.eslintcache --cache-strategy content",
     "lint:fix": "yarn precheck && eslint . --fix --cache --cache-location node_modules/.cache/.eslintcache --cache-strategy content",
     "lint:clear-cache": "node -e \"require('fs').rmSync('node_modules/.cache/.eslintcache', { force: true })\"",
