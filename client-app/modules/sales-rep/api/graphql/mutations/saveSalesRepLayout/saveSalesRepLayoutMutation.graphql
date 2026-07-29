@@ -1,17 +1,11 @@
 mutation SaveSalesRepLayout($command: InputSalesRepLayout!) {
   saveSalesRepLayout(command: $command) {
-    schemaVersion
-    modifiedDate
     regions {
       id
       blocks {
         id
         type
         hidden
-        settings {
-          key
-          value
-        }
       }
     }
   }
