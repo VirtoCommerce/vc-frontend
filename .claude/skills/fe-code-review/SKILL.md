@@ -5,37 +5,29 @@ description: Review frontend changes in vc-frontend (Vue 3 + TS + Tailwind + Apo
 
 # Frontend code review (vc-frontend)
 
-Derived from ~1,800 substantive human review comments on PRs #10–#2402.
-
 ## What already runs without you
 
-Every PR is scanned by **cursor Bugbot**, **GitHub Copilot**, **CodeQL** and **SonarCloud**, plus
-ESLint (with `sonarjs`, `vuejs-accessibility`, `tailwindcss`, `no-unsanitized`) and `vue-tsc`.
+SonarCloud comments on every PR. ESLint (`sonarjs`, `vuejs-accessibility`, `tailwindcss`,
+`no-unsanitized`) and `vue-tsc` run locally and on commit. Automated reviewers appear on some PRs.
 
-Do not spend the review re-deriving what they report. Their heavy overlap is: null/undefined
-dereferences, missing `aria-*`, unhandled promise rejections, obvious reactivity mistakes, formatting.
+Bot findings cluster on a11y attributes, null-safety, typing and casts, and reactivity. They also
+raise races, i18n gaps and cache issues, usually without establishing whether the path is reachable.
 
-Two consequences:
-
-1. **Your value is in what tools cannot see** — cross-file consistency, whether a code path is
-   actually reachable, backend contract mismatches, design-system compliance, and whether the change
-   is complete (locales, empty states, both breakpoints, both call sites).
-2. **Bot findings here are frequently wrong.** Maintainers routinely rebut them (#2363 named
-   functions that don't exist; #2138, #2123, #2117, #2261, #1998 all rebutted as false positives).
-   If you repeat a bot finding, you own verifying it first.
+Don't divide the work by topic — take those same categories further: trace the path, cite
+`file:line`, name the repro. Verify a bot finding before repeating it: #2363 named functions that
+don't exist, and #2138, #2123, #2188, #2261 and #1998 were answered as false positives.
 
 ## Process
 
 **1. Establish what changed and why.** Read the PR description and the linked Jira issue. A finding
 that ignores stated scope ("orders and quotes are a separate task") wastes everyone's time.
 
-**2. Read the full file, not the diff hunk.** Most real defects found here are interactions between
-the change and code outside it — the empty-state block further down, the other call site, the
-sibling component that wasn't updated.
+**2. Read the full file, not the diff hunk.** Defects here are usually interactions between the
+change and code outside it — the empty-state block further down, the other call site, the sibling
+component that wasn't updated.
 
 **3. If the change touches a backend contract, read the paired backend PR** before claiming a
-mismatch. Quote the resolver, not the data-layer criteria. Contract findings asserted from the
-frontend side alone have a poor hit rate.
+mismatch. Quote the resolver, not the data-layer criteria.
 
 **4. Verify before reporting.** For any behavioral claim, either trace the exact code path and cite
 `file:line`, or run it. "Verified in the browser" and a repro are what make a finding land. If you
@@ -51,7 +43,7 @@ when available.
 - New locale keys present in **all 13** locale files, actually translated (not English copied in),
   and in the right language. Run `yarn check-locales`.
 - Empty-state / reset-button conditions updated when a filter source moved.
-- Both the mobile and desktop paths updated, not just one.
+- Any separate mobile and desktop paths both updated.
 - Every call site of a changed composable or component updated.
 - Dead code not shipped: `v-if="false"` UI, emits nobody consumes, query fields nothing renders.
 
@@ -60,7 +52,8 @@ when available.
 - Concurrent mutations that each write the same Apollo cache entry — out-of-order responses clobber.
   Check whether the mutation is already deduped at the link layer (`UpdateShortCartItemQuantity`) or
   goes through `useMutationBatcher` (`ChangeShortCartItemQuantity`) before calling it a race.
-- Module-level singleton state reset between scopes and routes.
+- Module-level state a second scope or route can still read. Deliberate in places and defended as
+  safe in review (#2295), so establish that stale data is reachable before calling it a bug.
 - `localStorage` used where per-tab `sessionStorage` is the correct semantics.
 - Loading flags held for the whole operation, including any follow-up refetch.
 - A `catch` that also covers a post-mutation refresh, so success is reported as failure.
