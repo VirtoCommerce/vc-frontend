@@ -37,12 +37,11 @@ paths:
   not `@apply md:` variants.
 
 **Never reach into UI-kit internals.** Overriding classes like `.vc-widget__header-container` or
-`.vc-table__title` from a consumer is rejected in review every time it appears. Use the component's
-props and slots; if neither covers the case, it is a design-system gap to raise, not to patch.
+`.vc-table__title` from a consumer is not accepted. Use the component's props and slots; if neither
+covers the case, it is a design-system gap to raise, not to patch.
 Internal-structure overrides belong only in client projects, never in the theme.
 
-**RTL-safe and themeable utilities.** ESLint and `scripts/check-style-conventions/index.mjs` both flag the
-wrong ones, but neither can tell you the replacement, so:
+**RTL-safe and themeable utilities.**
 
 | Instead of                   | Use                                                              |
 | ---------------------------- | ---------------------------------------------------------------- |
@@ -57,8 +56,7 @@ wrong ones, but neither can tell you the replacement, so:
 
 Colors come from the palette scale — `text-neutral-500`, `text-primary` — or from a semantic token
 where one exists, as in `text-[--link-color]`. Never a raw Tailwind ramp: `text-gray-500`,
-`text-slate-400` and friends don't follow the theme. (There are currently zero of these in
-`client-app`, so this is about keeping it that way.)
+`text-slate-400` and friends don't follow the theme.
 
 Font sizes come from the type scale (`text-[13px]` is not a size we have). Lato does not ship
 `font-medium`, `font-semibold` or `font-extrabold`. `fill-*` does not work on the outline icon set —
