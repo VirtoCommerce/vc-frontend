@@ -2,7 +2,7 @@ import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { checkFile, commentLines } from "./index.mjs";
+import { MAX_COMMENT_BLOCK_LINES, checkFile, commentBlocks, commentLines } from "./index.mjs";
 
 let dir;
 
@@ -34,6 +34,10 @@ describe("comment extraction", () => {
     expect(commentLines("/**\n * body\n */\nconst a = 1;\n").map(([line]) => line)).toEqual([1, 2, 3]);
   });
 
+  it("picks up html comments, single and multi-line", () => {
+    expect(commentLines("<!-- one -->\n<div />\n<!--\n  two\n-->\n").map(([line]) => line)).toEqual([1, 3, 4, 5]);
+  });
+
   it("ignores code", () => {
     expect(commentLines("const url = 'https://x/y';\n")).toEqual([]);
   });
@@ -53,8 +57,24 @@ describe("session-only comments are flagged", () => {
     "// note to self: revisit",
     "// WAS: return null",
     "// CHANGED: use the batcher",
+    "// Switched to the grid layout.",
+    "// Removed the old fallback since it is dead.",
+    "// Reverted back to the previous version.",
+    "// Not sure if this is the right place.",
+    "// Hopefully this covers all the cases.",
+    "// I've extracted this into a helper.",
+    "// Commented out for testing.",
+    "// Leaving the original implementation below in case.",
+    "<!-- as requested, hide the badge -->",
   ])("flags %s", (comment) => {
     expect(check(`${comment}\nconst a = 1;\n`)).toHaveLength(1);
+  });
+
+  it("flags a narration line inside a multi-line html comment", () => {
+    const findings = check("<!--\n  Switched to the grid layout.\n-->\n");
+
+    expect(findings).toHaveLength(1);
+    expect(findings[0].line).toBe(2);
   });
 });
 
@@ -69,8 +89,56 @@ describe("comments that earn their place are left alone", () => {
     "// 3rd arg used to be the culture name.",
     "// Called when an in-flight request settles, if a flush was requested.",
     "/** A set of temporary ids assigned before the server responds. */",
+    "// Remove the specific filterValue from termValues",
+    "// Update the reactive reference",
+    "// undefined lets the server apply its default sort",
+    "// TODO: https://virtocommerce.atlassian.net/browse/ST-5119",
   ])("allows %s", (comment) => {
     expect(check(`${comment}\nconst a = 1;\n`)).toEqual([]);
+  });
+});
+
+describe("block length", () => {
+  const body = (n, line = "prose") =>
+    Array.from({ length: n }, (_, i) => `// ${line} ${i}`).join("\n") + "\nconst a = 1;\n";
+
+  it(`allows a block of exactly ${MAX_COMMENT_BLOCK_LINES} lines`, () => {
+    expect(check(body(MAX_COMMENT_BLOCK_LINES))).toEqual([]);
+  });
+
+  it("flags one line past the limit, reporting the block start", () => {
+    const findings = check(body(MAX_COMMENT_BLOCK_LINES + 1));
+
+    expect(findings).toHaveLength(1);
+    expect(findings[0].line).toBe(1);
+    expect(findings[0].message).toContain(`${MAX_COMMENT_BLOCK_LINES + 1} lines`);
+  });
+
+  it("exempts jsdoc carrying tags, however long", () => {
+    const doc = ["/**", " * Does a thing.", " * @param a - the input", " * @returns the output"];
+
+    expect(
+      check([...doc, ...Array.from({ length: 12 }, (_, i) => ` * more ${i}`), " */", "const a = 1;"].join("\n")),
+    ).toEqual([]);
+  });
+
+  it("measures blocks separately when code splits them", () => {
+    const half = Array.from({ length: 6 }, (_, i) => `// x ${i}`).join("\n");
+
+    expect(check(`${half}\nconst a = 1;\n${half}\n`)).toEqual([]);
+  });
+
+  it("groups only consecutive lines", () => {
+    expect(
+      commentBlocks([
+        [1, "// a"],
+        [2, "// b"],
+        [7, "// c"],
+      ]).map((b) => [b.start, b.end]),
+    ).toEqual([
+      [1, 2],
+      [7, 7],
+    ]);
   });
 });
 

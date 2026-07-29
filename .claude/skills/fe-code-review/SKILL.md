@@ -76,6 +76,15 @@ See `CLAUDE.md` for the full list. The ones most often flagged:
 - RTL-safe logical utilities and `rounded-[--vc-radius]` (ESLint + `yarn check:style-conventions`).
 - Never hand-edit generated `types.ts`.
 
+### Comments
+
+`yarn check:comment-noise` catches the surface phrasings and over-long blocks. What it cannot judge,
+and you can: a comment that restates the line under it (`// Set loading to true`), or one that
+explains a change rather than the code — those read as noise to everyone who wasn't in the room.
+A comment earns its place by saying what the code cannot: why a workaround exists, which upstream
+bug it dodges, an invariant that isn't visible locally, or a conventional approach that was tried
+and genuinely did not work. `TODO:` with a ticket link is used here deliberately; leave it.
+
 ### Tests
 
 - Stubs mirror the real component's semantics. A stub that emits more freely than the real component

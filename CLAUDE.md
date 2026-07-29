@@ -45,9 +45,14 @@ invariant that isn't visible locally, or a conventional approach that was tried 
 not work — that last one saves the next person repeating it. Explaining what a block does is fine
 too; keep it short and skip whatever the line already makes obvious.
 
-Avoid the comment that only makes sense inside the session that produced it — "as requested",
-"per review", "for now", "temporary fix", "WAS: …". Those address whoever was in the room at the
-time. `yarn check:comment-noise` flags the common phrasings, on edit and on commit.
+Avoid the comment that only makes sense inside the session that produced it. Narrating the edit
+("Switched to the batcher", "as requested", "WAS: …") addresses whoever was in the room at the time,
+and git already records the change. Hedging ("not sure if", "hopefully this covers it") and
+restating the line below ("Set loading to true") are the same problem in other forms.
+
+Keep a block under eight lines unless it is JSDoc carrying `@param`/`@example`.
+`yarn check:comment-noise` flags the phrasings and the length, on edit and on commit; whether a
+comment merely restates its code is left to review.
 
 ## i18n
 

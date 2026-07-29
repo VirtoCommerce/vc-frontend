@@ -178,7 +178,7 @@
     "uri-js": "npm:uri-js-replace@^1.0.0"
   },
   "lint-staged": {
-    "*.{js,ts,vue}": [
+    "*.{js,mjs,ts,vue}": [
       "eslint --fix",
       "node scripts/check-comment-noise/index.mjs --changed"
     ],
