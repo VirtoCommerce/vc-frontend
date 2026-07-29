@@ -71,14 +71,15 @@ const { t } = useI18n();
 const container = useTemplateRef<HTMLElement>("container");
 
 /**
- * Undo SortableJS's DOM edit so state drives the re-render. Detaching instead (`item.remove()`) makes
- * Vue anchor a move against a node no longer in the document — `NotFoundError`, block gone.
+ * Undo SortableJS's DOM edit so state drives the re-render. The re-insert is not optional: leaving the
+ * node detached makes Vue anchor a later move against a node outside the document — `NotFoundError`,
+ * block gone.
  *
  * Remove before reading the child index, or a backwards move is off by one. `oldIndex` addresses
  * `children`; the handlers below address `props.entries`.
  */
 function restore(event: Sortable.SortableEvent): void {
-  event.item.parentNode?.removeChild(event.item);
+  event.item.remove();
   event.from.insertBefore(event.item, event.from.children[event.oldIndex ?? 0] ?? null);
 }
 

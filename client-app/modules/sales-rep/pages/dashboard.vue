@@ -12,9 +12,9 @@
     <!-- Nothing block-shaped renders until the saved layout is known; see layout-skeleton.vue. -->
     <LayoutSkeleton v-if="layoutLoading" :scope="SCOPE" />
 
-    <!-- Nothing may change while a save is in flight, keyboard included, so `inert` rather than the
-         overlay alone. `|| undefined` because Vue would otherwise write `inert="false"`, which is
-         presence-based and would inert the layout permanently. -->
+    <!-- Nothing may change while a save is in flight, keyboard included, so inert rather than the
+         overlay alone. Coerced to undefined because inert is presence-based: Vue renders a false value
+         as the attribute itself, which would inert the layout permanently. -->
     <div v-else class="sales-rep-dashboard__layout" :inert="saving || undefined">
       <VcLoaderOverlay v-if="saving" />
 
