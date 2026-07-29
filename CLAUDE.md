@@ -49,12 +49,9 @@ hook, so RTL and radius-token slips surface immediately rather than at commit ti
 - Function declarations for named functions; arrow functions only for callbacks.
 - Named constants instead of magic numbers, with a self-describing name
   (`PICKUP_LOCATIONS_QTY_TO_SHOW`, not `5`).
-- Name things for what they are, and reach for the telling version when the bare word is
-  ambiguous — `queryEnabled` rather than `enabled`. The short names that earn their place are
-  `e` (event or error — `catch (e)` is the house form, 117 uses to 7), `i` (index), `a`/`b`
-  (comparator arguments) and `_` (deliberately unused); one letter outside that set usually wants
-  spelling out. Destructured API names are not a naming choice — `const { t } = useI18n()` stays
-  `t`.
+- Name things for what they are — `queryEnabled` rather than `enabled`. The short names that earn
+  their place are `e` (event or error; `catch (e)` is the house form), `i`, `a`/`b` for comparator
+  arguments and `_` for deliberately unused; one letter outside that set usually wants spelling out.
 - `data-test-id` must be unique and specific enough to be an E2E selector, and belongs on the
   interactive element inside the child component rather than on a wrapper.
 - Reach for VueUse before hand-rolling (`useDebounceFn`, `useResizeObserver`, `useScriptTag`).
