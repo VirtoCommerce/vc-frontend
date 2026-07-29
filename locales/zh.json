@@ -974,7 +974,8 @@
         "list_settings_button": "清单设置",
         "empty_list": "您的清单是空的",
         "empty_list_button": "继续浏览",
-        "list_icon": "清单图标"
+        "list_icon": "清单图标",
+        "recommended_by_rep": "您的销售代表推荐"
       },
       "add_to_wishlists_modal": {
         "title": "请选择清单",
@@ -1009,9 +1010,19 @@
         "sharing_scope": {
           "Private": "私密",
           "Organization": "组织",
-          "AnyoneAnonymous": "任何人（只读）"
+          "AnyoneAnonymous": "任何人（只读）",
+          "Customer": "客户"
         },
-        "clipboard_success": "链接已复制"
+        "clipboard_success": "链接已复制",
+        "share_customers_label": "客户",
+        "share_customers_placeholder": "选择客户",
+        "share_message_label": "消息",
+        "share_message_placeholder": "可选的附加消息",
+        "share_send_email": "电子邮件",
+        "share_send_push": "推送",
+        "share_success": "已与所选客户共享列表。",
+        "share_partial": "已共享列表，但部分通知无法送达。",
+        "save_error": "无法保存列表，请重试。"
       },
       "delete_wishlist_modal": {
         "title": "确认删除",

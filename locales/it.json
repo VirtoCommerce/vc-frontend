@@ -974,7 +974,8 @@
         "list_settings_button": "Impostazioni lista",
         "empty_list": "La tua lista è vuota",
         "empty_list_button": "Continua a navigare",
-        "list_icon": "Icona lista"
+        "list_icon": "Icona lista",
+        "recommended_by_rep": "Consigliato dal tuo rappresentante commerciale"
       },
       "add_to_wishlists_modal": {
         "title": "Seleziona lista",
@@ -1009,9 +1010,19 @@
         "sharing_scope": {
           "Private": "Privato",
           "Organization": "Organizzazione",
-          "AnyoneAnonymous": "Chiunque (sola lettura)"
+          "AnyoneAnonymous": "Chiunque (sola lettura)",
+          "Customer": "Cliente"
         },
-        "clipboard_success": "Link copiato"
+        "clipboard_success": "Link copiato",
+        "share_customers_label": "Cliente",
+        "share_customers_placeholder": "Seleziona cliente",
+        "share_message_label": "Messaggio",
+        "share_message_placeholder": "Messaggio facoltativo da includere",
+        "share_send_email": "Email",
+        "share_send_push": "Push",
+        "share_success": "Lista condivisa con i clienti selezionati.",
+        "share_partial": "Lista condivisa, ma alcune notifiche non sono state recapitate.",
+        "save_error": "Impossibile salvare la lista. Riprova."
       },
       "delete_wishlist_modal": {
         "title": "Conferma eliminazione",

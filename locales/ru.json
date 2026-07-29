@@ -974,7 +974,8 @@
         "list_settings_button": "Настройки списка",
         "empty_list": "Ваш список пуст",
         "empty_list_button": "Перейти в каталог",
-        "list_icon": "Иконка списка"
+        "list_icon": "Иконка списка",
+        "recommended_by_rep": "Рекомендовано вашим торговым представителем"
       },
       "add_to_wishlists_modal": {
         "title": "Выберите список",
@@ -1009,9 +1010,19 @@
         "sharing_scope": {
           "Private": "Приватный",
           "Organization": "Организация",
-          "AnyoneAnonymous": "Все (только чтение)"
+          "AnyoneAnonymous": "Все (только чтение)",
+          "Customer": "Клиент"
         },
-        "clipboard_success": "Ссылка скопирована"
+        "clipboard_success": "Ссылка скопирована",
+        "share_customers_label": "Клиент",
+        "share_customers_placeholder": "Выберите клиента",
+        "share_message_label": "Сообщение",
+        "share_message_placeholder": "Необязательное сообщение",
+        "share_send_email": "Эл. почта",
+        "share_send_push": "Push",
+        "share_success": "Список отправлен выбранным клиентам.",
+        "share_partial": "Список отправлен, но некоторые уведомления не удалось доставить.",
+        "save_error": "Не удалось сохранить список. Пожалуйста, попробуйте снова."
       },
       "delete_wishlist_modal": {
         "title": "Подтвердить удаление",

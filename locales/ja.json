@@ -974,7 +974,8 @@
         "list_settings_button": "List settings",
         "empty_list": "Your list is empty",
         "empty_list_button": "Continue browsing",
-        "list_icon": "List icon"
+        "list_icon": "List icon",
+        "recommended_by_rep": "営業担当者のおすすめ"
       },
       "add_to_wishlists_modal": {
         "title": "リストを選択してください",
@@ -1009,9 +1010,19 @@
         "sharing_scope": {
           "Private": "プライベート",
           "Organization": "組織",
-          "AnyoneAnonymous": "誰でも（閲覧専用）"
+          "AnyoneAnonymous": "誰でも（閲覧専用）",
+          "Customer": "顧客"
         },
-        "clipboard_success": "リンクをコピーしました"
+        "clipboard_success": "リンクをコピーしました",
+        "share_customers_label": "顧客",
+        "share_customers_placeholder": "顧客を選択",
+        "share_message_label": "メッセージ",
+        "share_message_placeholder": "任意のメッセージを入力",
+        "share_send_email": "メール",
+        "share_send_push": "プッシュ",
+        "share_success": "選択した顧客とリストを共有しました。",
+        "share_partial": "リストを共有しましたが、一部の通知を配信できませんでした。",
+        "save_error": "リストを保存できませんでした。もう一度お試しください。"
       },
       "delete_wishlist_modal": {
         "title": "Confirm Delete",

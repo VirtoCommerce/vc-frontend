@@ -974,7 +974,8 @@
         "list_settings_button": "Listinställningar",
         "empty_list": "Din lista är tom",
         "empty_list_button": "Fortsätt bläddra",
-        "list_icon": "Listikon"
+        "list_icon": "Listikon",
+        "recommended_by_rep": "Rekommenderas av din säljare"
       },
       "add_to_wishlists_modal": {
         "title": "Välj lista",
@@ -1009,9 +1010,19 @@
         "sharing_scope": {
           "Private": "Privat",
           "Organization": "Organisation",
-          "AnyoneAnonymous": "Alla (endast läsning)"
+          "AnyoneAnonymous": "Alla (endast läsning)",
+          "Customer": "Kund"
         },
-        "clipboard_success": "Länk kopierad"
+        "clipboard_success": "Länk kopierad",
+        "share_customers_label": "Kund",
+        "share_customers_placeholder": "Välj kund",
+        "share_message_label": "Meddelande",
+        "share_message_placeholder": "Valfritt meddelande",
+        "share_send_email": "E-post",
+        "share_send_push": "Push",
+        "share_success": "Listan delades med de valda kunderna.",
+        "share_partial": "Listan delades, men vissa aviseringar kunde inte levereras.",
+        "save_error": "Listan kunde inte sparas. Försök igen."
       },
       "delete_wishlist_modal": {
         "title": "Bekräfta radering",

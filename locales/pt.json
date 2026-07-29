@@ -974,7 +974,8 @@
         "list_settings_button": "Configurações da lista",
         "empty_list": "Sua lista está vazia",
         "empty_list_button": "Continuar navegando",
-        "list_icon": "Ícone da lista"
+        "list_icon": "Ícone da lista",
+        "recommended_by_rep": "Recomendado pelo seu representante de vendas"
       },
       "add_to_wishlists_modal": {
         "title": "Por favor, selecione a lista",
@@ -1009,9 +1010,19 @@
         "sharing_scope": {
           "Private": "Privado",
           "Organization": "Organização",
-          "AnyoneAnonymous": "Qualquer pessoa (somente leitura)"
+          "AnyoneAnonymous": "Qualquer pessoa (somente leitura)",
+          "Customer": "Cliente"
         },
-        "clipboard_success": "Link copiado"
+        "clipboard_success": "Link copiado",
+        "share_customers_label": "Cliente",
+        "share_customers_placeholder": "Selecionar cliente",
+        "share_message_label": "Mensagem",
+        "share_message_placeholder": "Mensagem opcional para incluir",
+        "share_send_email": "E-mail",
+        "share_send_push": "Push",
+        "share_success": "Lista compartilhada com os clientes selecionados.",
+        "share_partial": "Lista compartilhada, mas algumas notificações não puderam ser entregues.",
+        "save_error": "Não foi possível salvar a lista. Tente novamente."
       },
       "delete_wishlist_modal": {
         "title": "Confirmar Exclusão",

@@ -974,7 +974,8 @@
         "list_settings_button": "Listen Einstellungen",
         "empty_list": "Ihre Liste ist leer",
         "empty_list_button": "Weiter stöbern",
-        "list_icon": "Listen-Icon"
+        "list_icon": "Listen-Icon",
+        "recommended_by_rep": "Empfohlen von Ihrem Vertriebsmitarbeiter"
       },
       "add_to_wishlists_modal": {
         "title": "Bitte Liste auswählen",
@@ -1009,9 +1010,19 @@
         "sharing_scope": {
           "Private": "Privat",
           "Organization": "Organisation",
-          "AnyoneAnonymous": "Jeder (schreibgeschützt)"
+          "AnyoneAnonymous": "Jeder (schreibgeschützt)",
+          "Customer": "Kunde"
         },
-        "clipboard_success": "Link kopiert"
+        "clipboard_success": "Link kopiert",
+        "share_customers_label": "Kunde",
+        "share_customers_placeholder": "Kunde auswählen",
+        "share_message_label": "Nachricht",
+        "share_message_placeholder": "Optionale Nachricht hinzufügen",
+        "share_send_email": "E-Mail",
+        "share_send_push": "Push",
+        "share_success": "Liste für die ausgewählten Kunden freigegeben.",
+        "share_partial": "Liste freigegeben, einige Benachrichtigungen konnten jedoch nicht zugestellt werden.",
+        "save_error": "Die Liste konnte nicht gespeichert werden. Bitte versuchen Sie es erneut."
       },
       "delete_wishlist_modal": {
         "title": "Löschen bestätigen",

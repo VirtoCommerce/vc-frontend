@@ -974,7 +974,8 @@
         "list_settings_button": "Listeinnstillinger",
         "empty_list": "Listen din er tom",
         "empty_list_button": "Fortsett å bla",
-        "list_icon": "Listeikon"
+        "list_icon": "Listeikon",
+        "recommended_by_rep": "Anbefalt av din salgsrepresentant"
       },
       "add_to_wishlists_modal": {
         "title": "Velg liste",
@@ -1009,9 +1010,19 @@
         "sharing_scope": {
           "Private": "Privat",
           "Organization": "Organisasjon",
-          "AnyoneAnonymous": "Hvem som helst (skrivebeskyttet)"
+          "AnyoneAnonymous": "Hvem som helst (skrivebeskyttet)",
+          "Customer": "Kunde"
         },
-        "clipboard_success": "Lenke kopiert"
+        "clipboard_success": "Lenke kopiert",
+        "share_customers_label": "Kunde",
+        "share_customers_placeholder": "Velg kunde",
+        "share_message_label": "Melding",
+        "share_message_placeholder": "Valgfri melding",
+        "share_send_email": "E-post",
+        "share_send_push": "Push",
+        "share_success": "Listen ble delt med de valgte kundene.",
+        "share_partial": "Listen ble delt, men noen varsler kunne ikke leveres.",
+        "save_error": "Listen kunne ikke lagres. Prøv igjen."
       },
       "delete_wishlist_modal": {
         "title": "Bekreft sletting",
