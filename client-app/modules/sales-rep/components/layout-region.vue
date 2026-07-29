@@ -191,24 +191,30 @@ watch(
   }
 
   // Flex, not grid: a grid's track count comes from state, which lags the card SortableJS has already
-  // put in the container mid-drag — so the preview would not match the drop. `basis` + `grow` is the
-  // flex equivalent of the `repeat(auto-fit, minmax(11rem, 1fr))` the fixed stat row uses, so the
-  // count-agnostic wrapping survives hiding a card (or a scope with five rather than six).
+  // put in the container mid-drag. `grow basis-44` is the flex equivalent of the fixed row's
+  // `repeat(auto-fit, minmax(11rem, 1fr))`, so wrapping stays count-agnostic.
   &--horizontal {
-    @apply flex flex-wrap gap-4;
+    @apply flex flex-wrap gap-4 p-3;
+
+    // Padded outwards, and in both modes: inner padding narrows the row enough to wrap the sixth card
+    // onto a second line when edit mode adds the frame (six cards need 1136px, five 944px).
+    margin-inline: calc(-1 * theme("padding.3"));
 
     > * {
       @apply min-w-0 grow basis-44;
     }
   }
 
-  // Extra room for the chrome, which would otherwise overlap a widget's own header controls.
-  &--editing {
+  // Extra room for the chrome, which would otherwise overlap a widget's own header controls. Vertical
+  // only: stat cards drag whole and carry no chrome, and here it would fight the zone padding above.
+  &--vertical#{&}--editing {
     @apply pt-1;
   }
 
+  // Outline rather than border for the same reason: a border would add 2px the padding above cannot
+  // account for. Inset by its own width so it lands on the frame edge instead of outside it.
   &--zone {
-    @apply rounded-[--vc-radius] border border-dashed border-neutral-300 bg-neutral-50 p-3;
+    @apply rounded-[--vc-radius] bg-neutral-50 outline-dashed outline-1 -outline-offset-1 outline-neutral-300;
   }
 
   &__empty {
