@@ -182,6 +182,52 @@ function checkFile(file) {
   return findings;
 }
 
+/**
+ * `--hook` mode: run as a Claude Code PostToolUse hook. Reads the hook payload on stdin, checks
+ * only the file that was just edited, and exits 2 with the findings on stderr — the exit code that
+ * feeds stderr back to Claude as context. Everything else is silent, so a clean edit costs nothing.
+ */
+if (process.argv.includes("--hook")) {
+  const chunks = [];
+
+  for await (const chunk of process.stdin) {
+    chunks.push(chunk);
+  }
+
+  let file;
+
+  try {
+    file = JSON.parse(Buffer.concat(chunks).toString()).tool_input?.file_path;
+  } catch {
+    process.exit(0); // not a payload we understand - never get in the way of an edit
+  }
+
+  if (!file || !/\.(vue|scss)$/.test(file)) {
+    process.exit(0);
+  }
+
+  let findings = [];
+
+  try {
+    findings = checkFile(file);
+  } catch {
+    process.exit(0);
+  }
+
+  if (findings.length === 0) {
+    process.exit(0);
+  }
+
+  const lines = findings.map(({ line, token, message }) => `  ${line}:  ${token}  -  ${message}`);
+  const shown = relative(ROOT, file);
+
+  process.stderr.write(
+    `${shown.startsWith("..") ? file : shown} - style-convention issues introduced by this edit:\n${lines.join("\n")}\n` +
+      "RTL-safe logical utilities and --vc-radius keep the theme customizable in every locale.\n",
+  );
+  process.exit(2);
+}
+
 const files =
   FILE_ARGS.length > 0 ? FILE_ARGS.filter((f) => /\.(vue|scss)$/.test(f)) : collectFiles(join(ROOT, "client-app"));
 
