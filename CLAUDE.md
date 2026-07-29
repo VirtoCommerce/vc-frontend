@@ -49,8 +49,11 @@ hook, so RTL and radius-token slips surface immediately rather than at commit ti
 - Function declarations for named functions; arrow functions only for callbacks.
 - Named constants instead of magic numbers, with a self-describing name
   (`PICKUP_LOCATIONS_QTY_TO_SHOW`, not `5`).
-- Name things for what they are. No one-letter variables beyond `e` and `i`, and reach for the
-  telling version when the bare word is ambiguous — `queryEnabled` rather than `enabled`.
+- Name things for what they are, and reach for the telling version when the bare word is
+  ambiguous — `queryEnabled` rather than `enabled`. The single letters that are established here
+  are `t` (from `useI18n`, in 129 files), `e` (event or error — `catch (e)` over `catch (err)`),
+  `i` (index), `a`/`b` (comparator arguments) and `_` (deliberately unused). A one-letter name
+  outside that set usually wants spelling out.
 - `data-test-id` must be unique and specific enough to be an E2E selector, and belongs on the
   interactive element inside the child component rather than on a wrapper.
 - Reach for VueUse before hand-rolling (`useDebounceFn`, `useResizeObserver`, `useScriptTag`).
