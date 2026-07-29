@@ -328,7 +328,7 @@ defineExpose({
   }
 
   &__separator {
-    @apply shrink-0 px-2 text-neutral-400 select-none;
+    @apply shrink-0 text-neutral-400 select-none;
   }
 
   &__actions {
