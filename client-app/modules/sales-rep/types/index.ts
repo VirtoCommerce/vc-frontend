@@ -33,14 +33,15 @@ export type SalesRepRuleType = {
 export type SalesRepRuleDomainType = "order" | "customer" | "topSeller";
 export type SalesRepRuleKindType = "filter" | "sort";
 
-// View model for a ranked Top Sellers row; `revenue` is the backend-formatted amount.
+// View model for a ranked Top Sellers row. `units`/`revenue` are display-ready strings from the shared
+// stat formatters, so this table's figures group the same way as the KPI cards above it (VCST-5586).
 export type SalesRepTopSellerRowType = {
   rank: number;
   productId: string;
   name: string;
   sku: string;
   imageUrl: string;
-  units: number;
+  units: string;
   revenue: string;
 };
 
