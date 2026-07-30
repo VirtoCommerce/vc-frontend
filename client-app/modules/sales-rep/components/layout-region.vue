@@ -2,12 +2,7 @@
   <component
     :is="tag ?? 'div'"
     ref="container"
-    :class="[
-      'layout-region',
-      `layout-region--${orientation}`,
-      // `--editing` carries no styles of its own — it is the hook a project restyles edit mode through.
-      { 'layout-region--editing': editing, 'layout-region--zone': editing && zone },
-    ]"
+    :class="['layout-region', `layout-region--${orientation}`, { 'layout-region--zone': editing && zone }]"
     :data-drop-hidden="String(Boolean(dropHidden))"
   >
     <LayoutBlock
@@ -216,10 +211,8 @@ watch(
     @apply flex min-h-24 basis-full items-center justify-center text-center text-sm text-neutral-400;
   }
 
-  // Read from the DOM, not state, deliberately — a `v-if` cannot do this. Sortable moves the card in
-  // mid-drag and `restore()` puts it back, so `entries` only changes on drop: a state-driven hint would
-  // sit visible under a card already dragged in, and linger after the last one left.
-  &:has(.layout-block) &__empty {
+  // Not a `v-if`: Sortable moves a card in mid-drag, so `entries` only changes on drop.
+  &__empty:not(:only-child) {
     @apply hidden;
   }
 }

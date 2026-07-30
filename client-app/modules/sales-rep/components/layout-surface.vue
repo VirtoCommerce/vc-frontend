@@ -200,12 +200,5 @@ const bindingsOf = (id: string) => ({ ...propsOf(id), organizationId: props.orga
   &__announcer {
     @apply sr-only;
   }
-
-  // Cancels VcWidget's mobile full-bleed: a bleeding block misaligns with the KPI row and has its
-  // edit-mode outline clipped. Aimed at our own class on the same element; the extra & avoids !important.
-  & &__main .layout-widget,
-  & &__aside .layout-widget {
-    @apply mx-0;
-  }
 }
 </style>
