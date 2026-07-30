@@ -11,8 +11,8 @@
     <!-- aria-hidden: the dash is a visual placeholder; screen readers get aria-busy on the card instead. -->
     <div v-if="loading" class="stat-widget__value stat-widget__value--pending" aria-hidden="true">—</div>
 
-    <!-- <output> carries role="status" + aria-live="polite" natively, so the failure is announced when
-         it replaces the figures (Sonar Web:S6819 prefers it over role="status" on a div). -->
+    <!-- The output element natively carries a status role and a polite live region, so the failure is
+         announced when it replaces the figures. Preferred over role="status" on a div (Sonar S6819). -->
     <output v-else-if="errorText" class="stat-widget__error">
       <VcIcon name="exclamation-circle" :size="16" />
 
