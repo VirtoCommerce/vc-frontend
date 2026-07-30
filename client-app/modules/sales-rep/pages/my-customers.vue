@@ -80,7 +80,7 @@
 
                     <span v-if="item.location" class="my-customers__location">{{ item.location }}</span>
 
-                    <span v-if="item.ytdTotal" class="my-customers__mobile-sub">
+                    <span class="my-customers__mobile-sub">
                       {{ t("sales_rep.my_customers.table.ytd") }}: {{ item.ytdTotal }}
                     </span>
 
@@ -141,15 +141,11 @@
               :sortable="isColumnSortable('ytd')"
               align="right"
             >
-              <template v-if="item.ytdTotal">
-                <div class="my-customers__amount">{{ item.ytdTotal }}</div>
+              <div class="my-customers__amount">{{ item.ytdTotal }}</div>
 
-                <div class="my-customers__sub">
-                  {{ t("sales_rep.my_customers.table.orders_count", { count: item.ytdCount }) }}
-                </div>
-              </template>
-
-              <template v-else>—</template>
+              <div class="my-customers__sub">
+                {{ t("sales_rep.my_customers.table.orders_count", { count: item.ytdCount }) }}
+              </div>
             </VcTableColumn>
 
             <VcTableColumn
@@ -158,7 +154,7 @@
               :title="t('sales_rep.my_customers.table.last_year')"
               align="right"
             >
-              {{ item.lastYearTotal || "—" }}
+              {{ item.lastYearTotal }}
             </VcTableColumn>
 
             <VcTableColumn

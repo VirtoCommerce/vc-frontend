@@ -26,7 +26,7 @@ vi.mock("@vue/apollo-composable", () => ({
   useQuery: queryMock.useQuery,
 }));
 
-vi.mock("@/core/globals", () => ({ globals: { storeId: "test-store", cultureName: "en-US" } }));
+vi.mock("@/core/globals", () => ({ globals: { storeId: "test-store", cultureName: "en-US", currencyCode: "USD" } }));
 
 function customersResult(totalCount: number, items: NonNullable<SalesRepCustomersQuery["salesRepCustomers"]>["items"]) {
   return { salesRepCustomers: { totalCount, items } };
@@ -127,19 +127,19 @@ describe("useSalesRepCustomers", () => {
         // Postal code ("#"-prefixed), city and region as three middot-separated segments.
         location: "#22902 · Charlottesville · Virginia",
         ytdTotal: "$72,165.00",
-        ytdCount: 13,
+        ytdCount: "13",
         lastYearTotal: "$64,420.00",
         lastOrder: { id: "o-1", number: "21580221", createdDate: "2026-05-19T00:00:00Z" },
       },
-      // No address/stats → empty strings and zero counts, not undefined.
+      // No address → empty string; absent statistics read as zeros, never as blanks or dashes (VCST-5586).
       {
         organizationId: "org-2",
         organizationName: "No Orders Inc",
         accountType: "",
         location: "",
-        ytdTotal: "",
-        ytdCount: 0,
-        lastYearTotal: "",
+        ytdTotal: "$0.00",
+        ytdCount: "0",
+        lastYearTotal: "$0.00",
         lastOrder: undefined,
       },
     ]);

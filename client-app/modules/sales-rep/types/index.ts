@@ -15,7 +15,8 @@ export type SalesRepCustomerType = {
   location: string;
   // Inline per-row purchase columns (aliased orderStatistics slices; the backend batches, no N+1).
   ytdTotal: string;
-  ytdCount: number;
+  // Display-ready, like the other statistics figures in the module (VCST-5586).
+  ytdCount: string;
   lastYearTotal: string;
   lastOrder?: SalesRepCustomerLastOrderType;
 };
