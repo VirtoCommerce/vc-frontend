@@ -12,6 +12,7 @@
       :delta-tone="card.deltaTone"
       :delta-icon="card.deltaIcon"
       :loading="loading"
+      :error-text="failed ? t('sales_rep.hub.dashboard.stats.load_failed') : ''"
     />
   </StatWidgets>
 </template>
@@ -24,5 +25,5 @@ import StatWidgets from "./stat-widgets.vue";
 
 const { t } = useI18n();
 
-const { cards, loading } = useSalesRepDashboardWidgets();
+const { cards, loading, failed } = useSalesRepDashboardWidgets();
 </script>

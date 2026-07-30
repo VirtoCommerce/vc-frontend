@@ -12,6 +12,7 @@
       :delta-tone="card.deltaTone"
       :delta-icon="card.deltaIcon"
       :loading="loading"
+      :error-text="failed ? t('sales_rep.hub.dashboard.stats.load_failed') : ''"
     />
   </StatWidgets>
 </template>
@@ -30,5 +31,5 @@ const props = defineProps<IProps>();
 
 const { t } = useI18n();
 
-const { cards, loading } = useSalesRepCustomerWidgets(() => props.organizationId);
+const { cards, loading, failed } = useSalesRepCustomerWidgets(() => props.organizationId);
 </script>

@@ -26,13 +26,13 @@ export function useSalesRepCartStatistics(options: UseSalesRepCartStatisticsOpti
     };
   });
 
-  const { result, loading, onError } = useQuery(SalesRepCustomerCartStatisticsDocument, variables);
+  const { result, loading, error, onError } = useQuery(SalesRepCustomerCartStatisticsDocument, variables);
 
-  onError((error) => {
-    Logger.error("[sales-rep] salesRepCustomerCartStatistics failed:", error);
+  onError((err) => {
+    Logger.error("[sales-rep] salesRepCustomerCartStatistics failed:", err);
   });
 
   const statistics = computed(() => result.value?.salesRepCustomerCartStatistics);
 
-  return { statistics, loading };
+  return { statistics, loading, error };
 }

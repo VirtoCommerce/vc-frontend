@@ -66,7 +66,8 @@
           "new_customers": "{count} nya kunder",
           "placed_today": "{count} lagda i dag",
           "new_this_week": "{count} nya denna vecka",
-          "mtd_of_ytd": "{percent}% av året"
+          "mtd_of_ytd": "{percent}% av året",
+          "load_failed": "Kunde inte läsas in"
         }
       }
     },

@@ -1,6 +1,6 @@
 import { computed, toValue } from "vue";
 import { useI18n } from "vue-i18n";
-import { formatSignedPercent, formatStatCount } from "../utils";
+import { formatSignedPercent, formatStatCount, formatStatMoney } from "../utils";
 import { useSalesRepCartStatistics } from "./useSalesRepCartStatistics";
 import { useSalesRepOrderStatistics } from "./useSalesRepOrderStatistics";
 import type { StatWidgetCardType } from "../types/widgets";
@@ -12,10 +12,19 @@ export function useSalesRepCustomerWidgets(organizationId: MaybeRefOrGetter<stri
   const { t } = useI18n();
   const orgId = (): string => toValue(organizationId);
 
-  const { statistics: orderStatistics, loading: ordersLoading } = useSalesRepOrderStatistics({ organizationId: orgId });
-  const { statistics: cartStatistics, loading: cartsLoading } = useSalesRepCartStatistics({ organizationId: orgId });
+  const {
+    statistics: orderStatistics,
+    loading: ordersLoading,
+    error: ordersError,
+  } = useSalesRepOrderStatistics({ organizationId: orgId });
+  const {
+    statistics: cartStatistics,
+    loading: cartsLoading,
+    error: cartsError,
+  } = useSalesRepCartStatistics({ organizationId: orgId });
 
   const loading = computed(() => ordersLoading.value || cartsLoading.value);
+  const failed = computed(() => Boolean(ordersError.value ?? cartsError.value));
 
   const cards = computed<StatWidgetCardType[]>(() => {
     const orders = orderStatistics.value;
@@ -26,12 +35,13 @@ export function useSalesRepCustomerWidgets(organizationId: MaybeRefOrGetter<stri
     // Orders YTD compares vs last year on order COUNT (same metric as the dashboard "Orders placed · YTD").
     const ytdDelta = formatSignedPercent(orders?.ytdVsLastYear?.countChangePercent);
     // Plain green count (no chevron) — New-status orders placed today, for this customer.
-    const placedToday = orders?.newOrdersToday;
-    // Active cart: the summed total of this customer's non-empty carts; "—" when there is none.
+    const placedToday = formatStatCount(orders?.newOrdersToday?.count);
+    // Active cart: the summed total of this customer's non-empty carts.
     const activeCarts = carts?.activeCarts;
     // This month's revenue as a share of the year's — a client-side ratio, not a backend field.
+    // 0 with no YTD revenue to divide by, so the row reads like every other empty metric.
     const ytdAmount = ytd?.total.amount ?? 0;
-    const mtdShare = mtd && ytdAmount > 0 ? Math.round((mtd.total.amount / ytdAmount) * 100) : undefined;
+    const mtdShare = mtd && ytdAmount > 0 ? Math.round((mtd.total.amount / ytdAmount) * 100) : 0;
 
     return [
       {
@@ -40,10 +50,10 @@ export function useSalesRepCustomerWidgets(organizationId: MaybeRefOrGetter<stri
         icon: "exclamation-circle",
         accent: "warning",
         value: formatStatCount(orders?.newOrders?.count),
-        sub: orders?.newOrders
-          ? t("sales_rep.hub.dashboard.stats.value_total", { amount: orders.newOrders.total.formattedAmount })
-          : "",
-        delta: placedToday ? t("sales_rep.hub.dashboard.stats.placed_today", { count: placedToday.count }) : "",
+        sub: t("sales_rep.hub.dashboard.stats.value_total", {
+          amount: formatStatMoney(orders?.newOrders?.total),
+        }),
+        delta: t("sales_rep.hub.dashboard.stats.placed_today", { count: placedToday }),
         deltaTone: "positive",
       },
       {
@@ -52,8 +62,9 @@ export function useSalesRepCustomerWidgets(organizationId: MaybeRefOrGetter<stri
         labelKey: "sales_rep.hub.dashboard.widgets.active_cart",
         icon: "cart",
         accent: "success",
-        // One bold number — the active cart's total. No sub, no badge; "—" when the customer has no active cart.
-        value: activeCarts?.count ? activeCarts.total.formattedAmount : "—",
+        // One bold number — the active cart's total. No sub, no badge. No active cart means a zero
+        // total, which already reads correctly — no separate empty branch.
+        value: formatStatMoney(activeCarts?.total),
       },
       {
         key: "mtd",
@@ -61,9 +72,9 @@ export function useSalesRepCustomerWidgets(organizationId: MaybeRefOrGetter<stri
         labelKey: "sales_rep.hub.dashboard.widgets.purchased_mtd",
         icon: "cash",
         accent: "info",
-        value: mtd?.total.formattedAmount ?? "—",
+        value: formatStatMoney(mtd?.total),
         // Informational ratio (gray, no chevron): how much of the year's revenue landed this month.
-        delta: mtdShare != null ? t("sales_rep.hub.dashboard.stats.mtd_of_ytd", { percent: mtdShare }) : "",
+        delta: t("sales_rep.hub.dashboard.stats.mtd_of_ytd", { percent: mtdShare }),
         deltaTone: "neutral",
       },
       {
@@ -73,7 +84,7 @@ export function useSalesRepCustomerWidgets(organizationId: MaybeRefOrGetter<stri
         icon: "cash",
         accent: "info",
         value: formatStatCount(ytd?.count),
-        sub: ytd?.total.formattedAmount ?? "",
+        sub: formatStatMoney(ytd?.total),
         delta: ytdDelta ? t("sales_rep.hub.dashboard.stats.vs_last_year", { delta: ytdDelta.text }) : "",
         deltaTone: ytdDelta?.tone,
         deltaIcon: ytdDelta?.icon,
@@ -83,11 +94,11 @@ export function useSalesRepCustomerWidgets(organizationId: MaybeRefOrGetter<stri
         labelKey: "sales_rep.customer_profile.widgets.avg_order_value",
         icon: "presentation-chart-bar",
         accent: "secondary",
-        value: ytd?.average.formattedAmount ?? "—",
+        value: formatStatMoney(ytd?.average),
         sub: t("sales_rep.customer_profile.stats.per_order"),
       },
     ];
   });
 
-  return { cards, loading };
+  return { cards, loading, failed };
 }
