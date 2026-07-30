@@ -1,5 +1,5 @@
 import { useQuery } from "@vue/apollo-composable";
-import { computed } from "vue";
+import { computed, toValue } from "vue";
 import { useI18n } from "vue-i18n";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
@@ -18,6 +18,7 @@ import type {
   SalesRepSortDirectionType,
 } from "../types";
 import type { TypedDocumentNode } from "@graphql-typed-document-node/core";
+import type { MaybeRefOrGetter } from "vue";
 
 // Every discovery op returns the same { name, localizedName } shape under a domain-specific root field,
 // so one composable drives all six (3 domains × filter/sort).
@@ -28,7 +29,9 @@ type RuleNodeType = {
   supportsDirection?: boolean | null;
 };
 type RuleQueryResultType = Record<string, Array<RuleNodeType | null> | null | undefined>;
-type RuleQueryVariablesType = { storeId?: string; cultureName?: string };
+// organizationId is declared only by the ops that scope their vocabulary to one customer (order filter rules); the
+// others simply ignore the extra variable.
+type RuleQueryVariablesType = { storeId?: string; cultureName?: string; organizationId?: string };
 type RuleDocumentType = TypedDocumentNode<RuleQueryResultType, RuleQueryVariablesType>;
 type RuleSourceType = { document: RuleDocumentType; field: string };
 
@@ -58,13 +61,26 @@ const RULE_SOURCES: Record<`${SalesRepRuleDomainType}:${SalesRepRuleKindType}`, 
   },
 };
 
-export function useSalesRepRules(domain: SalesRepRuleDomainType, kind: SalesRepRuleKindType) {
+/**
+ * @param organizationId Scope the rules to one customer (the customer page). Data-derived vocabularies — the order
+ * statuses — are then read from that customer's orders, so every offered chip has orders behind it. Omit on the
+ * dashboard for all the rep's customers.
+ */
+export function useSalesRepRules(
+  domain: SalesRepRuleDomainType,
+  kind: SalesRepRuleKindType,
+  organizationId?: MaybeRefOrGetter<string | undefined>,
+) {
   const source = RULE_SOURCES[`${domain}:${kind}`];
   const { t, te } = useI18n();
 
   const { result, loading, onError } = useQuery(
     source.document,
-    () => ({ storeId: globals.storeId, cultureName: globals.cultureName }),
+    () => ({
+      storeId: globals.storeId,
+      cultureName: globals.cultureName,
+      organizationId: toValue(organizationId),
+    }),
     { fetchPolicy: "cache-first" },
   );
 

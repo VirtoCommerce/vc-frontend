@@ -1,5 +1,5 @@
-query SalesRepOrderFilterRules($storeId: String, $cultureName: String) {
-  salesRepOrderFilterRules(storeId: $storeId, cultureName: $cultureName) {
+query SalesRepOrderFilterRules($storeId: String, $cultureName: String, $organizationId: String) {
+  salesRepOrderFilterRules(storeId: $storeId, cultureName: $cultureName, organizationId: $organizationId) {
     name
     localizedName
   }

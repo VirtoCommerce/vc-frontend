@@ -6464,6 +6464,7 @@ export type QuerySalesRepCustomersArgs = {
 
 export type QuerySalesRepOrderFilterRulesArgs = {
   cultureName?: InputMaybe<Scalars['String']['input']>;
+  organizationId?: InputMaybe<Scalars['String']['input']>;
   storeId?: InputMaybe<Scalars['String']['input']>;
 };
 

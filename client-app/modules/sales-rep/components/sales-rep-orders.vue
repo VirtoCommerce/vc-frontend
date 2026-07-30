@@ -151,7 +151,8 @@ const filter = ref<string | undefined>(undefined);
 const sort = ref<string | undefined>(undefined);
 const { from: periodFrom, to: periodTo } = useSalesRepPeriodFilter();
 
-const { rules: filterRules } = useSalesRepRules("order", "filter");
+// The status chips are read from the orders in view, so the customer page scopes them to that customer.
+const { rules: filterRules } = useSalesRepRules("order", "filter", () => props.organizationId);
 const { rules: sortRules } = useSalesRepRules("order", "sort");
 
 // Show the filter chips only when the backend offers a real filter beyond the "All" baseline.
