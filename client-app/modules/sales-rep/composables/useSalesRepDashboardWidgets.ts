@@ -14,17 +14,15 @@ export function useSalesRepDashboardWidgets() {
   const { statistics: cartStatistics, loading: cartsLoading, error: cartsError } = useSalesRepCartStatistics();
   const { counts, loading: countsLoading, error: countsError } = useSalesRepCustomerCounts();
 
-  const loading = computed(() => ordersLoading.value || cartsLoading.value || countsLoading.value);
-
   const cards = computed<StatWidgetCardType[]>(() => {
     const orders = orderStatistics.value;
     const carts = cartStatistics.value;
     const customerCounts = counts.value;
 
-    // Each card reads exactly one query, so it carries that query's failure and no other's.
-    const ordersFailed = Boolean(ordersError.value);
-    const cartsFailed = Boolean(cartsError.value);
-    const countsFailed = Boolean(countsError.value);
+    // Each card reads exactly one query, so it carries that query's state and no other's.
+    const ordersState = { loading: ordersLoading.value, failed: Boolean(ordersError.value) };
+    const cartsState = { loading: cartsLoading.value, failed: Boolean(cartsError.value) };
+    const countsState = { loading: countsLoading.value, failed: Boolean(countsError.value) };
 
     // Plain "new activity" counts (green, no icon) — a count, not a comparison. Always rendered, so
     // an empty period reads as "0 placed today" rather than dropping the row (VCST-5586).
@@ -40,7 +38,7 @@ export function useSalesRepDashboardWidgets() {
     return [
       {
         key: "new_orders",
-        failed: ordersFailed,
+        ...ordersState,
         labelKey: "sales_rep.hub.dashboard.widgets.new_orders",
         icon: "exclamation-circle",
         accent: "warning",
@@ -54,7 +52,7 @@ export function useSalesRepDashboardWidgets() {
       },
       {
         key: "active_carts",
-        failed: cartsFailed,
+        ...cartsState,
         labelKey: "sales_rep.hub.dashboard.widgets.active_carts",
         icon: "cart",
         accent: "success",
@@ -66,7 +64,7 @@ export function useSalesRepDashboardWidgets() {
       },
       {
         key: "orders_placed_week",
-        failed: ordersFailed,
+        ...ordersState,
         labelKey: "sales_rep.hub.dashboard.widgets.orders_placed_week",
         icon: "cash",
         accent: "info",
@@ -78,7 +76,7 @@ export function useSalesRepDashboardWidgets() {
       },
       {
         key: "orders_placed_mtd",
-        failed: ordersFailed,
+        ...ordersState,
         labelKey: "sales_rep.hub.dashboard.widgets.orders_placed_mtd",
         icon: "cash",
         accent: "info",
@@ -90,7 +88,7 @@ export function useSalesRepDashboardWidgets() {
       },
       {
         key: "orders_placed_ytd",
-        failed: ordersFailed,
+        ...ordersState,
         labelKey: "sales_rep.hub.dashboard.widgets.orders_placed_ytd",
         icon: "cash",
         accent: "info",
@@ -102,7 +100,7 @@ export function useSalesRepDashboardWidgets() {
       },
       {
         key: "my_customers",
-        failed: countsFailed,
+        ...countsState,
         labelKey: "sales_rep.hub.dashboard.widgets.my_customers",
         icon: "users",
         accent: "neutral",
@@ -117,5 +115,5 @@ export function useSalesRepDashboardWidgets() {
     ];
   });
 
-  return { cards, loading };
+  return { cards };
 }

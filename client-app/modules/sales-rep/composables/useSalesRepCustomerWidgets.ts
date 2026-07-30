@@ -23,15 +23,13 @@ export function useSalesRepCustomerWidgets(organizationId: MaybeRefOrGetter<stri
     error: cartsError,
   } = useSalesRepCartStatistics({ organizationId: orgId });
 
-  const loading = computed(() => ordersLoading.value || cartsLoading.value);
-
   const cards = computed<StatWidgetCardType[]>(() => {
     const orders = orderStatistics.value;
     const carts = cartStatistics.value;
 
-    // Each card reads exactly one query, so it carries that query's failure and no other's.
-    const ordersFailed = Boolean(ordersError.value);
-    const cartsFailed = Boolean(cartsError.value);
+    // Each card reads exactly one query, so it carries that query's state and no other's.
+    const ordersState = { loading: ordersLoading.value, failed: Boolean(ordersError.value) };
+    const cartsState = { loading: cartsLoading.value, failed: Boolean(cartsError.value) };
     const ytd = orders?.ytd;
     const mtd = orders?.mtd;
 
@@ -49,7 +47,7 @@ export function useSalesRepCustomerWidgets(organizationId: MaybeRefOrGetter<stri
     return [
       {
         key: "new_orders",
-        failed: ordersFailed,
+        ...ordersState,
         labelKey: "sales_rep.hub.dashboard.widgets.new_orders",
         icon: "exclamation-circle",
         accent: "warning",
@@ -62,7 +60,7 @@ export function useSalesRepCustomerWidgets(organizationId: MaybeRefOrGetter<stri
       },
       {
         key: "active_cart",
-        failed: cartsFailed,
+        ...cartsState,
         // Profile shows the single cart's value (money), not a count — its own label vs the dashboard's "Active carts".
         labelKey: "sales_rep.hub.dashboard.widgets.active_cart",
         icon: "cart",
@@ -72,7 +70,7 @@ export function useSalesRepCustomerWidgets(organizationId: MaybeRefOrGetter<stri
       },
       {
         key: "mtd",
-        failed: ordersFailed,
+        ...ordersState,
         // Profile shows this month's order value (money), not the order count — hence "Purchased · MTD".
         labelKey: "sales_rep.hub.dashboard.widgets.purchased_mtd",
         icon: "cash",
@@ -85,7 +83,7 @@ export function useSalesRepCustomerWidgets(organizationId: MaybeRefOrGetter<stri
       {
         // Same metric as the dashboard "Orders placed · YTD" — reuse its label, icon and accent so the two match.
         key: "orders_ytd",
-        failed: ordersFailed,
+        ...ordersState,
         labelKey: "sales_rep.hub.dashboard.widgets.orders_placed_ytd",
         icon: "cash",
         accent: "info",
@@ -97,7 +95,7 @@ export function useSalesRepCustomerWidgets(organizationId: MaybeRefOrGetter<stri
       },
       {
         key: "aov",
-        failed: ordersFailed,
+        ...ordersState,
         labelKey: "sales_rep.customer_profile.widgets.avg_order_value",
         icon: "presentation-chart-bar",
         accent: "secondary",
@@ -107,5 +105,5 @@ export function useSalesRepCustomerWidgets(organizationId: MaybeRefOrGetter<stri
     ];
   });
 
-  return { cards, loading };
+  return { cards };
 }

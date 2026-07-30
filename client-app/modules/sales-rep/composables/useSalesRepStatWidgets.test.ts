@@ -1,5 +1,4 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { ref } from "vue";
 import { useSalesRepCustomerWidgets } from "./useSalesRepCustomerWidgets";
 import { useSalesRepDashboardWidgets } from "./useSalesRepDashboardWidgets";
 import type {
@@ -24,21 +23,32 @@ const sources = await vi.hoisted(async () => {
     ordersError: r<Error | null>(null),
     cartsError: r<Error | null>(null),
     countsError: r<Error | null>(null),
+    ordersLoading: r(false),
+    cartsLoading: r(false),
+    countsLoading: r(false),
   };
 });
 
 vi.mock("./useSalesRepOrderStatistics", () => ({
   useSalesRepOrderStatistics: () => ({
     statistics: sources.orders,
-    loading: ref(false),
+    loading: sources.ordersLoading,
     error: sources.ordersError,
   }),
 }));
 vi.mock("./useSalesRepCartStatistics", () => ({
-  useSalesRepCartStatistics: () => ({ statistics: sources.carts, loading: ref(false), error: sources.cartsError }),
+  useSalesRepCartStatistics: () => ({
+    statistics: sources.carts,
+    loading: sources.cartsLoading,
+    error: sources.cartsError,
+  }),
 }));
 vi.mock("./useSalesRepCustomerCounts", () => ({
-  useSalesRepCustomerCounts: () => ({ counts: sources.counts, loading: ref(false), error: sources.countsError }),
+  useSalesRepCustomerCounts: () => ({
+    counts: sources.counts,
+    loading: sources.countsLoading,
+    error: sources.countsError,
+  }),
 }));
 
 vi.mock("@/core/globals", () => ({ globals: { cultureName: "en-US", currencyCode: "USD" } }));
@@ -55,6 +65,9 @@ beforeEach(() => {
   sources.ordersError.value = null;
   sources.cartsError.value = null;
   sources.countsError.value = null;
+  sources.ordersLoading.value = false;
+  sources.cartsLoading.value = false;
+  sources.countsLoading.value = false;
 });
 
 const money = (amount: number, formattedAmount: string) => ({ amount, formattedAmount });
@@ -238,5 +251,33 @@ describe("stat cards when one statistics query fails", () => {
       "aov",
     ]);
     expect(cards.value.find((card) => card.key === "active_cart")).toMatchObject({ failed: false, value: "$7.00" });
+  });
+});
+
+describe("stat cards while one query is still in flight", () => {
+  // <StatWidget> gives loading precedence over the error, so an aggregate loading flag would hold the
+  // failed card at the pending placeholder and hide its error until the slowest query settled.
+  it("keeps a failed card in its error state while a sibling query is still loading", () => {
+    sources.counts.value = undefined;
+    sources.countsError.value = new Error("counts down");
+    sources.ordersLoading.value = true;
+
+    const { cards } = useSalesRepDashboardWidgets();
+    const byKey = (key: string) => cards.value.find((card) => card.key === key);
+
+    expect(byKey("my_customers")).toMatchObject({ loading: false, failed: true });
+    // The in-flight query's own cards are the only ones still pending.
+    expect(byKey("orders_placed_ytd")).toMatchObject({ loading: true, failed: false });
+    expect(byKey("active_carts")).toMatchObject({ loading: false, failed: false });
+  });
+
+  it("does not hold every card pending because one query is slow", () => {
+    sources.orders.value = emptyOrders();
+    sources.carts.value = { currencyCode: "USD", activeCarts: { count: 0, total: zeroMoney } };
+    sources.countsLoading.value = true;
+
+    const { cards } = useSalesRepDashboardWidgets();
+
+    expect(cards.value.filter((card) => card.loading).map((card) => card.key)).toEqual(["my_customers"]);
   });
 });
