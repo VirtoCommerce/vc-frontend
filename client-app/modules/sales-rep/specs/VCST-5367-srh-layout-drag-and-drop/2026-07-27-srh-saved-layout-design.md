@@ -76,7 +76,7 @@ height, and no rule outside the kit touches a `.vc-widget__*` class. A `LayoutWi
 |                | Stat card                        | Widget                      |
 | -------------- | -------------------------------- | --------------------------- |
 | drag by        | the whole card (`dragWhole`)     | its header / handle button   |
-| hide by        | dragging into the hidden zone    | ✕ button                     |
+| hide by        | dragging into the parked zone    | ✕ button                     |
 | restore by     | dragging back out (or ↑ grabbed) | button in `LayoutHiddenTray` |
 
 **Data flow.**
@@ -256,10 +256,10 @@ cross-zone drop. Construction moved inside `onMounted` for the same reason: ever
 and `useSortable` captured them at setup. `@vueuse/integrations` stays a dependency for `useAxios`;
 `sortablejs` (+ `@types/sortablejs`) is what this feature adds.
 
-- One sortable per region container, plus one for the stats hidden zone.
+- One sortable per region container, plus one for the stats parked zone.
 - **`mainLeft` and `mainRight` get different `group` names**, making cross-column drags impossible
   by construction rather than by the prototype's runtime guard.
-- The two stats zones share a group, so visible↔hidden is a real drag.
+- The two stats zones share a group, so visible↔parked is a real drag.
 - Widgets hide via a button and restore from the tray via a button — no drag into the widget tray.
   This is what the prototype does too, and it keeps the tray out of the DnD graph.
 - `handle` targets the block's drag handle.
@@ -286,7 +286,7 @@ update, leaving SortableJS's edit in place happens to converge anyway, so nothin
 One shared composable so every region behaves identically. The handle is a real `<button>`.
 
 - **Space/Enter** grabs; **Space/Enter** drops; **Escape** cancels and restores; tab-out cancels.
-- **Stats row is horizontal:** ←/→ reorder within the row, ↑/↓ move between visible and hidden.
+- **Stats row is horizontal:** ←/→ reorder within the row, ↑/↓ move between the visible and parked zones.
   **Widget columns are vertical:** ↑/↓ reorder.
 - An `aria-live="assertive"` region announces grab / move / drop / cancel with position
   ("Recent Orders grabbed, position 1 of 3"). Without the announcements the mechanism is unusable,
@@ -300,7 +300,7 @@ One shared composable so every region behaves identically. The handle is a real 
 order and visibility, so the cards are data looked up by id.
 
 As built: the grid and the drag behaviour moved into `layout-region.vue`, and `layout-stats.vue`
-composes the visible and hidden zones. All three of `dashboard-widgets.vue`,
+composes the visible and parked zones. All three of `dashboard-widgets.vue`,
 `customer-profile-widgets.vue` and `stat-widgets.vue` were deleted — only the two pages referenced
 them. `stat-widget.vue` gained a `leading` slot for the drag affordance.
 
@@ -332,7 +332,7 @@ tokens, so this is a translation into `@apply` + BEM, not a redesign.
 | Editable block | `outline: 1px dashed neutral-300`, `outline-offset: 2px` |
 | Dragging | `opacity: .45` · `shadow 0 12px 28px -8px` · outline → `primary-500` |
 | Drop zone | dashed `neutral-300` · `bg-neutral-50` · 12px padding |
-| Hidden stats zone | `opacity: .7` · 45° stripes, `neutral-50`/`neutral-100` at 9px |
+| Parked stats zone | `opacity: .7` · 45° stripes, `neutral-50`/`neutral-100` at 9px |
 | Empty zone | centred muted text, 96px min-height |
 | Handle / hide | `cursor: grab`, `secondary-500` / hover `danger-500` |
 | Hidden tray | dashed box, uppercase label, pill restore buttons |

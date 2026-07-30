@@ -5,6 +5,7 @@
     :class="[
       'layout-region',
       `layout-region--${orientation}`,
+      // `--editing` carries no styles of its own — it is the hook a project restyles edit mode through.
       { 'layout-region--editing': editing, 'layout-region--zone': editing && zone },
     ]"
     :data-drop-hidden="String(Boolean(dropHidden))"
@@ -184,8 +185,6 @@ watch(
 
 <style lang="scss">
 .layout-region {
-  $self: &;
-
   &--vertical {
     @apply flex flex-col gap-5;
   }
@@ -199,12 +198,6 @@ watch(
     > * {
       @apply min-w-0 grow basis-44;
     }
-  }
-
-  // Clearance for the first block's edit-mode outline, which is drawn 2px outside its box. Vertical
-  // only: in the stat row this would fight the zone band above it.
-  &--vertical#{$self}--editing {
-    @apply pt-1;
   }
 
   // Frame drawn entirely outside the box model — `box-shadow` fills the band, `outline` rules its edge,

@@ -15,10 +15,11 @@
     </div>
 
     <div class="layout-skeleton__row">
+      <!-- An empty column is skipped, matching layout-surface — on the dashboard, which registers no
+           rail widget, the content runs full width both before and after the layout arrives. At md, the
+           size every registered widget renders at, the kit's header comes out 3.125rem: the same as
+           VcWidget's own `--header-min-h`. Empty divs are its contract for a placeholder line. -->
       <div v-for="column in columns" :key="column.name" :class="`layout-skeleton__${column.name}`">
-        <!-- At md, the size every registered widget renders at: its header comes out 3.125rem, the same
-             as VcWidget's own `--header-min-h`, and its body takes the same padding. Empty divs are the
-             contract — the kit styles each as a placeholder line and varies the widths. -->
         <VcWidgetSkeleton v-for="id in column.blocks" :key="id" head size="md">
           <div v-for="row in BLOCK_ROWS" :key="row"></div>
         </VcWidgetSkeleton>

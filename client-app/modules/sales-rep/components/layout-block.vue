@@ -3,7 +3,13 @@
     :data-block-id="blockId"
     :class="[
       'layout-block',
-      { 'layout-block--editing': editing, 'layout-block--grabbed': grabbed, 'layout-block--whole': dragWhole },
+      // `--whole` carries edit mode with it: a card is only ever the drag surface while editing, and
+      // folding the two together keeps one flat class per rule below.
+      {
+        'layout-block--editing': editing,
+        'layout-block--grabbed': grabbed,
+        'layout-block--whole': dragWhole && editing,
+      },
     ]"
     v-bind="wholeHandleAttrs"
   >
@@ -68,8 +74,6 @@ provideBlockChrome({
 
 <style lang="scss">
 .layout-block {
-  $self: &;
-
   @apply relative;
 
   // Outline, not border, so the box model is untouched.
@@ -78,7 +82,7 @@ provideBlockChrome({
   }
 
   // Stat cards: the card itself is the handle.
-  &--whole#{$self}--editing {
+  &--whole {
     @apply cursor-grab select-none;
 
     &:active {

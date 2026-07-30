@@ -35,14 +35,14 @@
     </LayoutRegion>
 
     <template v-if="editing">
-      <div :id="`${scope}-hidden-stats`" class="layout-stats__label layout-stats__label--parked">
+      <div :id="`${scope}-parked-stats`" class="layout-stats__label layout-stats__label--parked">
         <VcIcon name="eye-off" :size="14" />
         {{ t("sales_rep.hub.layout.hidden_stats") }}
       </div>
 
       <LayoutRegion
         role="group"
-        :aria-labelledby="`${scope}-hidden-stats`"
+        :aria-labelledby="`${scope}-parked-stats`"
         class="layout-stats__parked-zone"
         :scope="scope"
         :entries="hidden"
