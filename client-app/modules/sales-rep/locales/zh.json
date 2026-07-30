@@ -35,7 +35,8 @@
         "search_aria": "搜索客户",
         "empty": "未找到客户",
         "no_results": "没有符合您搜索条件的客户",
-        "reset_search": "重置搜索"
+        "reset_search": "重置搜索",
+        "load_failed": "无法加载客户"
       }
     },
     "hub": {

@@ -39,13 +39,13 @@ export function useSalesRepCustomers() {
   }));
 
   // The rep's customer organizations are resolved server-side from the caller's claims.
-  const { result, loading, onError } = useQuery(SalesRepCustomersDocument, variables, {
+  const { result, loading, error, onError } = useQuery(SalesRepCustomersDocument, variables, {
     keepPreviousResult: true,
   });
 
-  onError((error) => {
-    // Keep the page functional (empty view); no toasts by design.
-    Logger.error("[sales-rep] salesRepCustomers failed:", error);
+  onError((err) => {
+    // No toast; the page's empty view names the failure instead (VCST-5586).
+    Logger.error("[sales-rep] salesRepCustomers failed:", err);
   });
 
   const items = computed<SalesRepCustomerType[]>(() =>
@@ -76,5 +76,5 @@ export function useSalesRepCustomers() {
     }
   });
 
-  return { loading, keyword, filter, sortRule, page, pages, items };
+  return { loading, error, keyword, filter, sortRule, page, pages, items };
 }

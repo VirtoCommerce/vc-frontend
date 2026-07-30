@@ -35,7 +35,8 @@
         "search_aria": "Søk etter kunder",
         "empty": "Ingen kunder funnet",
         "no_results": "Ingen kunder samsvarer med søket ditt",
-        "reset_search": "Tilbakestill søk"
+        "reset_search": "Tilbakestill søk",
+        "load_failed": "Kunne ikke laste kundene"
       }
     },
     "hub": {

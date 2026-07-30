@@ -35,7 +35,8 @@
         "search_aria": "Search customers",
         "empty": "No customers found",
         "no_results": "No customers match your search",
-        "reset_search": "Reset search"
+        "reset_search": "Reset search",
+        "load_failed": "Couldn't load customers"
       }
     },
     "hub": {

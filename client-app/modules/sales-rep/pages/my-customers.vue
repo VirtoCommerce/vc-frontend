@@ -37,9 +37,17 @@
         />
       </div>
 
+      <!-- A failure gets its own view: it must not land in the empty state, which would read as "no
+           customers" or, with a keyword active, offer a Reset search that can't help (VCST-5586). -->
+      <VcEmptyView
+        v-if="failed && !loading"
+        :text="t('sales_rep.my_customers.table.load_failed')"
+        icon="exclamation-circle"
+      />
+
       <!-- Empty here means "nothing matches" (keyword/filter active), not "no customers"; reset is keyword-only. -->
       <VcEmptyView
-        v-if="!items.length && !loading"
+        v-else-if="!items.length && !loading"
         :text="
           keyword || filter ? t('sales_rep.my_customers.table.no_results') : t('sales_rep.my_customers.table.empty')
         "
@@ -217,7 +225,9 @@ import type { SalesRepCustomerType } from "../types";
 
 const { t } = useI18n();
 const { openModal } = useModal();
-const { loading, keyword, filter, sortRule, page, pages, items } = useSalesRepCustomers();
+const { loading, error, keyword, filter, sortRule, page, pages, items } = useSalesRepCustomers();
+
+const failed = computed(() => Boolean(error.value));
 
 const { rules: sortRules } = useSalesRepRules("customer", "sort");
 const { rules: filterRules } = useSalesRepRules("customer", "filter");

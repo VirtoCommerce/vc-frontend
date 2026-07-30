@@ -35,7 +35,8 @@
         "search_aria": "Hae asiakkaita",
         "empty": "Asiakkaita ei löytynyt",
         "no_results": "Yksikään asiakas ei vastaa hakuasi",
-        "reset_search": "Tyhjennä haku"
+        "reset_search": "Tyhjennä haku",
+        "load_failed": "Asiakkaita ei voitu ladata"
       }
     },
     "hub": {

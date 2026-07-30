@@ -35,7 +35,8 @@
         "search_aria": "Szukaj klientów",
         "empty": "Nie znaleziono klientów",
         "no_results": "Żaden klient nie pasuje do wyszukiwania",
-        "reset_search": "Resetuj wyszukiwanie"
+        "reset_search": "Resetuj wyszukiwanie",
+        "load_failed": "Nie udało się wczytać klientów"
       }
     },
     "hub": {

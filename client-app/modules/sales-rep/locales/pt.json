@@ -35,7 +35,8 @@
         "search_aria": "Pesquisar clientes",
         "empty": "Nenhum cliente encontrado",
         "no_results": "Nenhum cliente corresponde à sua pesquisa",
-        "reset_search": "Redefinir pesquisa"
+        "reset_search": "Redefinir pesquisa",
+        "load_failed": "Falha ao carregar os clientes"
       }
     },
     "hub": {

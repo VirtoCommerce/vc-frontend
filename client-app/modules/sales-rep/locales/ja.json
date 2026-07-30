@@ -35,7 +35,8 @@
         "search_aria": "顧客を検索",
         "empty": "顧客が見つかりません",
         "no_results": "検索条件に一致する顧客がありません",
-        "reset_search": "検索をリセット"
+        "reset_search": "検索をリセット",
+        "load_failed": "顧客を読み込めませんでした"
       }
     },
     "hub": {
