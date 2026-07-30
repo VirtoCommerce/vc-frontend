@@ -1,5 +1,6 @@
 import { computed, toValue } from "vue";
 import { useI18n } from "vue-i18n";
+import { buildStatCards, CUSTOMER_PROFILE_STAT_CARDS } from "../layout/stat-cards";
 import { formatSignedPercent, formatStatCount } from "../utils";
 import { useSalesRepCartStatistics } from "./useSalesRepCartStatistics";
 import { useSalesRepOrderStatistics } from "./useSalesRepOrderStatistics";
@@ -33,12 +34,9 @@ export function useSalesRepCustomerWidgets(organizationId: MaybeRefOrGetter<stri
     const ytdAmount = ytd?.total.amount ?? 0;
     const mtdShare = mtd && ytdAmount > 0 ? Math.round((mtd.total.amount / ytdAmount) * 100) : undefined;
 
-    return [
-      {
-        key: "new_orders",
-        labelKey: "sales_rep.hub.dashboard.widgets.new_orders",
-        icon: "exclamation-circle",
-        accent: "warning",
+    // Caption, icon and accent come from the shared table; only what the queries decide is here.
+    return buildStatCards(CUSTOMER_PROFILE_STAT_CARDS, {
+      new_orders: {
         value: formatStatCount(orders?.newOrders?.count),
         sub: orders?.newOrders
           ? t("sales_rep.hub.dashboard.stats.value_total", { amount: orders.newOrders.total.formattedAmount })
@@ -46,47 +44,28 @@ export function useSalesRepCustomerWidgets(organizationId: MaybeRefOrGetter<stri
         delta: placedToday ? t("sales_rep.hub.dashboard.stats.placed_today", { count: placedToday.count }) : "",
         deltaTone: "positive",
       },
-      {
-        key: "active_cart",
-        // Profile shows the single cart's value (money), not a count — its own label vs the dashboard's "Active carts".
-        labelKey: "sales_rep.hub.dashboard.widgets.active_cart",
-        icon: "cart",
-        accent: "success",
-        // One bold number — the active cart's total. No sub, no badge; "—" when the customer has no active cart.
+      // One bold number — the active cart's total. No sub, no badge; "—" when there is no active cart.
+      active_cart: {
         value: activeCarts?.count ? activeCarts.total.formattedAmount : "—",
       },
-      {
-        key: "mtd",
-        // Profile shows this month's order value (money), not the order count — hence "Purchased · MTD".
-        labelKey: "sales_rep.hub.dashboard.widgets.purchased_mtd",
-        icon: "cash",
-        accent: "info",
+      mtd: {
         value: mtd?.total.formattedAmount ?? "—",
         // Informational ratio (gray, no chevron): how much of the year's revenue landed this month.
         delta: mtdShare != null ? t("sales_rep.hub.dashboard.stats.mtd_of_ytd", { percent: mtdShare }) : "",
         deltaTone: "neutral",
       },
-      {
-        // Same metric as the dashboard "Orders placed · YTD" — reuse its label, icon and accent so the two match.
-        key: "orders_ytd",
-        labelKey: "sales_rep.hub.dashboard.widgets.orders_placed_ytd",
-        icon: "cash",
-        accent: "info",
+      orders_ytd: {
         value: formatStatCount(ytd?.count),
         sub: ytd?.total.formattedAmount ?? "",
         delta: ytdDelta ? t("sales_rep.hub.dashboard.stats.vs_last_year", { delta: ytdDelta.text }) : "",
         deltaTone: ytdDelta?.tone,
         deltaIcon: ytdDelta?.icon,
       },
-      {
-        key: "aov",
-        labelKey: "sales_rep.customer_profile.widgets.avg_order_value",
-        icon: "presentation-chart-bar",
-        accent: "secondary",
+      aov: {
         value: ytd?.average.formattedAmount ?? "—",
         sub: t("sales_rep.customer_profile.stats.per_order"),
       },
-    ];
+    });
   });
 
   return { cards, loading };

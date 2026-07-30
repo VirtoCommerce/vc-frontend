@@ -12,7 +12,7 @@
 
     <div class="layout-edit-bar__actions">
       <!-- Disabled, not just inert: `inert` on the layout stops the interaction but greys nothing out. -->
-      <VcButton size="sm" variant="no-background" color="secondary" :disabled="saving" @click="$emit('reset')">
+      <VcButton size="sm" variant="ghost" color="secondary" :disabled="saving" @click="$emit('reset')">
         {{ t("sales_rep.hub.layout.reset") }}
       </VcButton>
 
@@ -26,7 +26,7 @@
     </div>
 
     <!-- A failed save keeps the draft, so the message sits beside the still-live Save button. -->
-    <VcAlert v-if="failed" class="layout-edit-bar__error" color="danger" size="sm" variant="solid-light" icon>
+    <VcAlert v-if="failed" class="layout-edit-bar__error" color="danger" size="sm" variant="soft" icon>
       {{ t("sales_rep.hub.layout.save_failed") }}
     </VcAlert>
   </div>

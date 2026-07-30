@@ -1,7 +1,9 @@
 <template>
   <div class="layout-skeleton">
     <div class="layout-skeleton__stats">
-      <div v-for="card in stats" :key="card" class="layout-skeleton__card">
+      <!-- The real card's own classes, so its box, padding and accent edge cannot drift from here. The
+           KPI card has no kit skeleton, so its four lines are the only ones drawn by hand. -->
+      <div v-for="card in statCount" :key="card" class="stat-widget stat-widget--neutral layout-skeleton__card">
         <span class="layout-skeleton__bar layout-skeleton__bar--label" />
 
         <span class="layout-skeleton__bar layout-skeleton__bar--value" />
@@ -12,17 +14,14 @@
       </div>
     </div>
 
-    <div class="layout-skeleton__layout">
+    <div class="layout-skeleton__row">
       <div v-for="column in columns" :key="column.name" :class="`layout-skeleton__${column.name}`">
-        <div v-for="id in column.blocks" :key="id" class="layout-skeleton__block">
-          <div class="layout-skeleton__head">
-            <span class="layout-skeleton__bar layout-skeleton__bar--title" />
-          </div>
-
-          <div class="layout-skeleton__body">
-            <span v-for="row in rowsFor(id)" :key="row" class="layout-skeleton__bar layout-skeleton__bar--row" />
-          </div>
-        </div>
+        <!-- At md, the size every registered widget renders at: its header comes out 3.125rem, the same
+             as VcWidget's own `--header-min-h`, and its body takes the same padding. Empty divs are the
+             contract — the kit styles each as a placeholder line and varies the widths. -->
+        <VcWidgetSkeleton v-for="id in column.blocks" :key="id" head size="md">
+          <div v-for="row in BLOCK_ROWS" :key="row"></div>
+        </VcWidgetSkeleton>
       </div>
     </div>
   </div>
@@ -30,7 +29,6 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { ORDERS_DEFAULT_LIMIT, TOP_SELLERS_DEFAULT_TAKE } from "../constants";
 import { getBlockRegistry } from "../layout/registry";
 import type { SalesRepLayoutRegionIdType, SalesRepLayoutScopeType } from "../types/layout";
 
@@ -40,41 +38,31 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
-// Counted from the registry, not passed in: the saved arrangement is exactly what is not known yet, so
-// registry defaults are the closest guess available — and a surface that registers a rail widget later
-// gets the matching skeleton with no edit here.
-const registry = computed(() => getBlockRegistry(props.scope));
+// One count for every block: matching each widget's page size was false precision, since the real
+// widget renders as many rows as the customer has orders.
+const BLOCK_ROWS = 5;
 
-const visibleIn = (region: SalesRepLayoutRegionIdType) =>
-  registry.value.filter((block) => block.region === region && !block.defaultHidden).map((block) => block.id);
+// From the registry, not passed in: the saved arrangement is exactly what is not known yet, so registry
+// defaults are the closest guess — and a later rail widget gets its skeleton with no edit here.
+const blocksIn = (region: SalesRepLayoutRegionIdType) =>
+  getBlockRegistry(props.scope)
+    .filter((block) => block.region === region && !block.defaultHidden)
+    .map((block) => block.id);
 
-// Each widget's own page size, so a block is not drawn taller than what replaces it. Anything else
-// gets a short list.
-const ROWS_PER_BLOCK: Record<string, number> = {
-  orders: ORDERS_DEFAULT_LIMIT,
-  top_sellers: TOP_SELLERS_DEFAULT_TAKE,
-};
-const DEFAULT_ROWS = 3;
-
-const rowsFor = (id: string) => ROWS_PER_BLOCK[id] ?? DEFAULT_ROWS;
+const statCount = computed(() => blocksIn("statistics").length);
 
 const columns = computed(() =>
   [
-    { name: "main", blocks: visibleIn("mainLeft") },
-    { name: "aside", blocks: visibleIn("mainRight") },
+    { name: "main", blocks: blocksIn("mainLeft") },
+    { name: "aside", blocks: blocksIn("mainRight") },
   ].filter((column) => column.blocks.length > 0),
 );
-
-const stats = computed(() => visibleIn("statistics").length);
 </script>
 
 <style lang="scss">
-// Stands in for the whole layout until the saved document arrives — rendering registry defaults first
-// and re-ordering on response would show the rep a layout that is not theirs, then shuffle it.
-//
-// Every box mirrors the real one it replaces (`.stat-widget`, `.vc-widget` at size md, the customer
-// profile's column split), so height comes from the same padding and type scale rather than a number
-// that drifts as those change.
+// Stands in for the whole layout until the saved document arrives: rendering registry defaults first
+// would show the rep a layout that is not theirs, then shuffle it. The boxes are the kit's own skeleton
+// and the real stat card, so all that is left here is the column split and the KPI card's lines.
 .layout-skeleton {
   @apply flex flex-col gap-5;
 
@@ -82,7 +70,7 @@ const stats = computed(() => visibleIn("statistics").length);
     @apply flex flex-wrap gap-4;
   }
 
-  &__layout {
+  &__row {
     @apply flex flex-col gap-5 xl:flex-row xl:items-start;
   }
 
@@ -94,33 +82,15 @@ const stats = computed(() => visibleIn("statistics").length);
     @apply flex min-w-0 flex-col gap-5 xl:w-80 xl:shrink-0;
   }
 
-  // `.stat-widget`, accent edge included — neutral here, since the accent belongs to real data.
-  // `grow basis-44` mirrors layout-region--horizontal, so the row wraps at the same widths.
+  // Mirrors layout-region--horizontal, so the row wraps at the same widths.
   &__card {
-    @apply flex min-w-0 grow basis-44 flex-col gap-1.5 rounded-[--vc-radius] border border-neutral-200 bg-additional-50 p-4 shadow-sm;
-
-    border-inline-start: 4px solid theme("colors.neutral.200");
+    @apply min-w-0 grow basis-44;
   }
 
-  &__block {
-    @apply flex flex-col rounded-[--vc-radius] border border-neutral-200 bg-additional-50 shadow-sm;
-  }
-
-  // VcWidget's `--header-min-h` and `--p-x` at size md, which every registered widget renders at.
-  &__head {
-    @apply flex items-center px-4 sm:px-6;
-
-    height: 3.125rem;
-  }
-
-  &__body {
-    @apply flex flex-col gap-6 border-t border-neutral-200 p-4 sm:px-6;
-  }
-
+  // Each bar is the line box of the stat-card text it stands in for.
   &__bar {
     @apply block rounded bg-neutral-100;
 
-    // Each bar is the line box of the text it stands in for.
     &--label {
       @apply h-4 w-2/3;
     }
@@ -135,14 +105,6 @@ const stats = computed(() => visibleIn("statistics").length);
 
     &--delta {
       @apply mt-auto h-5 w-1/2;
-    }
-
-    &--title {
-      @apply h-4 w-40;
-    }
-
-    &--row {
-      @apply h-4 w-full;
     }
   }
 }

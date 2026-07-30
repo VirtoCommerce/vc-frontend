@@ -4,6 +4,7 @@
 // Module-local rather than `useExtensionRegistry`, whose entries are `{ component, condition }` with
 // no region, order or title.
 import { defineAsyncComponent, markRaw } from "vue";
+import { STAT_CARDS } from "./stat-cards";
 import type { SalesRepBlockType, SalesRepLayoutScopeType } from "../types/layout";
 
 // `markRaw` keeps Vue from making the component definition reactive when it lands in layout state.
@@ -14,31 +15,18 @@ const CustomerProfileActions = markRaw(
 );
 const CustomerProfileInfo = markRaw(defineAsyncComponent(() => import("../components/customer-profile-info.vue")));
 
-// Statistics-block ids are `StatWidgetCardType.key` values from useSalesRepDashboardWidgets /
-// useSalesRepCustomerWidgets — the stat row renders them by key rather than by component, so they
-// carry no `component` of their own. A key that drifts from those composables renders nothing.
+// From the shared card table: the stat row renders these by key, not by component, so they carry none.
+// Order follows the table; a saved document overrides it.
+const statBlocks = (scope: SalesRepLayoutScopeType): SalesRepBlockType[] =>
+  STAT_CARDS[scope].map((card, index) => ({
+    id: card.key,
+    region: "statistics",
+    titleKey: card.labelKey,
+    order: (index + 1) * 10,
+  }));
+
 const dashboardBlocks: SalesRepBlockType[] = [
-  { id: "new_orders", region: "statistics", titleKey: "sales_rep.hub.dashboard.widgets.new_orders", order: 10 },
-  { id: "active_carts", region: "statistics", titleKey: "sales_rep.hub.dashboard.widgets.active_carts", order: 20 },
-  {
-    id: "orders_placed_week",
-    region: "statistics",
-    titleKey: "sales_rep.hub.dashboard.widgets.orders_placed_week",
-    order: 30,
-  },
-  {
-    id: "orders_placed_mtd",
-    region: "statistics",
-    titleKey: "sales_rep.hub.dashboard.widgets.orders_placed_mtd",
-    order: 40,
-  },
-  {
-    id: "orders_placed_ytd",
-    region: "statistics",
-    titleKey: "sales_rep.hub.dashboard.widgets.orders_placed_ytd",
-    order: 50,
-  },
-  { id: "my_customers", region: "statistics", titleKey: "sales_rep.hub.dashboard.widgets.my_customers", order: 60 },
+  ...statBlocks("dashboard"),
   // The dashboard has no right rail yet — `mainRight` stays empty and the row collapses to one
   // column until a widget registers into it.
   {
@@ -53,16 +41,7 @@ const dashboardBlocks: SalesRepBlockType[] = [
 ];
 
 const customerProfileBlocks: SalesRepBlockType[] = [
-  { id: "new_orders", region: "statistics", titleKey: "sales_rep.hub.dashboard.widgets.new_orders", order: 10 },
-  { id: "active_cart", region: "statistics", titleKey: "sales_rep.hub.dashboard.widgets.active_cart", order: 20 },
-  { id: "mtd", region: "statistics", titleKey: "sales_rep.hub.dashboard.widgets.purchased_mtd", order: 30 },
-  {
-    id: "orders_ytd",
-    region: "statistics",
-    titleKey: "sales_rep.hub.dashboard.widgets.orders_placed_ytd",
-    order: 40,
-  },
-  { id: "aov", region: "statistics", titleKey: "sales_rep.customer_profile.widgets.avg_order_value", order: 50 },
+  ...statBlocks("customerProfile"),
   {
     id: "orders",
     region: "mainLeft",

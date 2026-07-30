@@ -21,29 +21,27 @@ vi.mock("@/core/globals", () => ({ globals: { storeId: "B2B-store", cultureName:
 vi.mock("@/core/utilities", () => ({ Logger: { error: vi.fn(), warn: vi.fn() } }));
 vi.mock("vue-i18n", () => ({ useI18n: () => ({ t: (key: string) => key }) }));
 
-const statIds = (scope: SalesRepLayoutScopeType) =>
-  getBlockRegistry(scope)
-    .filter((block) => block.region === "statistics")
-    .map((block) => block.id);
+const statBlocks = (scope: SalesRepLayoutScopeType) =>
+  getBlockRegistry(scope).filter((block) => block.region === "statistics");
 
-const sorted = (ids: readonly string[]) => [...ids].sort((a, b) => a.localeCompare(b));
+const byKey = (entries: readonly { key: string; label: string }[]) =>
+  [...entries].sort((a, b) => a.key.localeCompare(b.key));
 
 /**
- * A registry stat id with no matching card still renders its `LayoutBlock`: an empty focusable column
- * that round-trips through saves. Nothing else fails, so this is all that catches a rename. Order is
- * not asserted — the saved layout owns it.
+ * `layout/stat-cards.ts` is the single source for both sides, so these now guard the derivation rather
+ * than two hand-kept lists: a card with no block is an id the layout cannot save, and a caption that
+ * disagrees leaves one wording on the card and another in the parked zone and the announcements. Order
+ * is not asserted — the saved layout owns it.
  */
-describe("stat cards and layout registry ids", () => {
-  it("dashboard: every registry stat id has a card and every card has an id", () => {
-    const { cards } = useSalesRepDashboardWidgets();
+describe("stat cards and layout registry", () => {
+  it.each([
+    ["dashboard", () => useSalesRepDashboardWidgets().cards.value],
+    ["customerProfile", () => useSalesRepCustomerWidgets(() => "org-1").cards.value],
+  ] as const)("%s: cards and blocks agree on every id and caption", (scope, getCards) => {
+    const cards = byKey(getCards().map((card) => ({ key: card.key, label: card.labelKey })));
+    const blocks = byKey(statBlocks(scope).map((block) => ({ key: block.id, label: block.titleKey })));
 
-    expect(sorted(cards.value.map((card) => card.key))).toEqual(sorted(statIds("dashboard")));
-  });
-
-  it("customer profile: every registry stat id has a card and every card has an id", () => {
-    const { cards } = useSalesRepCustomerWidgets(() => "org-1");
-
-    expect(sorted(cards.value.map((card) => card.key))).toEqual(sorted(statIds("customerProfile")));
+    expect(cards).toEqual(blocks);
   });
 
   // Values are placeholders until the queries resolve, but the card set must not shrink — a card
@@ -51,7 +49,7 @@ describe("stat cards and layout registry ids", () => {
   it("emits every card before any statistics have arrived", () => {
     apolloMock.result.value = undefined;
 
-    expect(useSalesRepDashboardWidgets().cards.value).toHaveLength(statIds("dashboard").length);
-    expect(useSalesRepCustomerWidgets(() => "org-1").cards.value).toHaveLength(statIds("customerProfile").length);
+    expect(useSalesRepDashboardWidgets().cards.value).toHaveLength(statBlocks("dashboard").length);
+    expect(useSalesRepCustomerWidgets(() => "org-1").cards.value).toHaveLength(statBlocks("customerProfile").length);
   });
 });

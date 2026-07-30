@@ -46,22 +46,32 @@ chrome around it:
 
 ```
 pages/dashboard.vue  |  pages/customer-profile.vue
-│   own useSalesRepLayout(scope) + useLayoutAnnouncer(scope)
-├── LayoutSkeleton         while the query is in flight — see §"nothing block-shaped renders"
-├── LayoutEditBar          Reset / Cancel / Save + the failed-save alert
-├── LayoutStats            the KPI row
-│   ├── LayoutRegion  visible zone  (drop-hidden=false)
-│   └── LayoutRegion  hidden zone   (drop-hidden=true, v-if editing)
-│         └── both share ONE Sortable group name → cards cross between them
-├── LayoutRegion  mainLeft   ─┐ distinct group names →
-├── LayoutRegion  mainRight  ─┘ a rail widget can never land in the wide column
-├── LayoutHiddenTray       hidden *widgets* return via a button, not a drag
-└── <p aria-live>          keyboard-sort announcements
+│   each renders its own identity (title / hero) and one LayoutSurface
+└── LayoutSurface           scope + cards + organizationId; owns useLayoutPage(scope)
+    ├── LayoutSkeleton         while the query is in flight — see §"nothing block-shaped renders"
+    ├── LayoutEditBar          Reset / Cancel / Save + the failed-save alert
+    ├── LayoutStats            the KPI row
+    │   ├── LayoutRegion  visible zone  (drop-hidden=false)
+    │   └── LayoutRegion  parked zone   (drop-hidden=true, v-if editing)
+    │         └── both share ONE Sortable group name → cards cross between them
+    ├── LayoutRegion  mainLeft   ─┐ distinct group names →
+    ├── LayoutRegion  mainRight  ─┘ a rail widget can never land in the wide column
+    ├── LayoutHiddenTray       hidden *widgets* return via a button, not a drag
+    └── <p aria-live>          keyboard-sort announcements
 ```
 
-Each item inside a region is wrapped in `layout-block.vue`, which overlays the edit chrome (drag
-handle + ✕) on the widget's own header, because those headers belong to components the layout does
-not own and cannot be slotted into from outside.
+The surface is one component rather than two page templates because everything in it was identical on
+both pages, down to the bindings. The pages differ only in what they render above it, the customer they
+name, and where the edit button sits. It renders the blocks itself rather than exposing a slot per
+region: which component a block is comes from the registry, so a slot would hand the page a job it
+could only do by re-deriving that.
+
+Each item inside a region is wrapped in `layout-block.vue`. It renders no chrome of its own: it
+`provide`s the controls (drag handle + ✕ + their keyboard handlers) and `layout-widget.vue` — the
+wrapper every sales-rep widget renders instead of `VcWidget` — injects them into `VcWidget`'s own
+`#prepend` / `#append` slots. So the controls are placed by the widget's real padding and header
+height, and no rule outside the kit touches a `.vc-widget__*` class. A `LayoutWidget` with no
+`LayoutBlock` above it injects nothing and is a plain widget.
 
 |                | Stat card                        | Widget                      |
 | -------------- | -------------------------------- | --------------------------- |
@@ -297,11 +307,13 @@ them. `stat-widget.vue` gained a `leading` slot for the drag affordance.
 **Superseded by VCST-5485 (2026-07-29).** That story landed real statistics on `dev` while this branch
 was in review, so the interim `layout/stat-cards.ts` mock is gone. Cards now come from
 `useSalesRepDashboardWidgets()` / `useSalesRepCustomerWidgets(orgId)` and reach `layout-stats.vue` as
-a `cards` prop from the page; the layout still only decides order and visibility, matching cards to
+a `cards` prop from the surface; the layout still only decides order and visibility, matching cards to
 layout ids by `key`. Two consequences:
 
-- **Registry statistics ids are those composables' card keys.** A key that drifts renders an empty
-  slot, so `layout/registry.ts` and the composables have to move together.
+- **Registry statistics ids are those composables' card keys.** Rather than keep two lists in step,
+  `layout/stat-cards.ts` came back — not as a mock but as the one table holding the half of a card no
+  query decides (id, caption, icon, accent). The registry derives its `statistics` blocks from it and
+  the composables fill in the values, so an id or a caption exists in exactly one place.
 - **`layout-region--horizontal` is count-agnostic** (`grow basis-44`), mirroring the
   `repeat(auto-fit, minmax(11rem, 1fr))` VCST-5485 adopted — the dashboard has six cards and the
   customer profile five, and hiding one must not leave a hole. `layout-skeleton.vue` matches.

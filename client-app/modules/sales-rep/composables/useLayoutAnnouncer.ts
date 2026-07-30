@@ -1,6 +1,6 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { getBlock } from "../layout/registry";
+import { useBlockTitle } from "./useBlockTitle";
 import type { KeyboardSortSignalType, SalesRepLayoutScopeType } from "../types/layout";
 
 const ZERO_WIDTH_SPACE = "\u200B";
@@ -11,6 +11,7 @@ const ZERO_WIDTH_SPACE = "\u200B";
  */
 export function useLayoutAnnouncer(scope: SalesRepLayoutScopeType) {
   const { t } = useI18n();
+  const { titleOf } = useBlockTitle(scope);
   const message = ref("");
 
   // An `aria-live` region is only read when its content changes, so the same words twice running
@@ -25,8 +26,7 @@ export function useLayoutAnnouncer(scope: SalesRepLayoutScopeType) {
   }
 
   function announce(signal: KeyboardSortSignalType): void {
-    const block = getBlock(scope, signal.id);
-    const title = block ? t(block.titleKey) : signal.id;
+    const title = titleOf(signal.id);
 
     switch (signal.kind) {
       case "grabbed":

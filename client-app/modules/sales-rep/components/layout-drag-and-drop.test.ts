@@ -3,10 +3,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, nextTick } from "vue";
 import { focusBlockControl } from "../composables/useLayoutFocus";
 import { useSalesRepLayout } from "../composables/useSalesRepLayout";
+import { WIDGET_DRAG_FILTER_SELECTOR, WIDGET_DRAG_HANDLE_SELECTOR } from "../constants";
 import { getBlockRegistry } from "../layout/registry";
 import LayoutRegion from "./layout-region.vue";
 import LayoutStats from "./layout-stats.vue";
+import LayoutWidget from "./layout-widget.vue";
 import type { Mock } from "vitest";
+import VcWidget from "@/ui-kit/components/organisms/widget/vc-widget.vue";
 
 const apolloMock = await vi.hoisted(async () => {
   const { ref, shallowRef } = await import("vue");
@@ -99,7 +102,12 @@ function setup() {
     },
   });
 
-  const wrapper = mount(Harness, { attachTo: document.body, global: { stubs: { VcIcon: true } } });
+  // Stubbed only to keep the log readable: both are reached through a `v-if` these harnesses never take,
+  // but the compiler hoists their resolution above that branch.
+  const wrapper = mount(Harness, {
+    attachTo: document.body,
+    global: { stubs: { VcIcon: true, VcShape: true, VcLoaderOverlay: true } },
+  });
   return { wrapper, api, setHidden };
 }
 
@@ -402,7 +410,9 @@ describe("widget column drag and drop", () => {
         const onReorder = (ids: string[]) => layout.reorderVisible("mainRight", ids);
         const onSetHidden = (id: string, hidden: boolean, index?: number) => layout.setHidden(id, hidden, index);
 
-        const slots = { default: () => h("div", "widget") };
+        // A real LayoutWidget, not a bare div: the hide button lives in the widget's own header now, so
+        // a stand-in would leave the button this suite clicks unrendered.
+        const slots = { default: () => h(LayoutWidget, { title: "widget" }, { default: () => "body" }) };
 
         return () =>
           h(
@@ -421,7 +431,11 @@ describe("widget column drag and drop", () => {
       },
     });
 
-    const wrapper = mount(Harness, { attachTo: document.body, global: { stubs: { VcIcon: true } } });
+    const wrapper = mount(Harness, {
+      attachTo: document.body,
+      // VcWidget is registered globally by the ui-kit plugin, which no test boots.
+      global: { components: { VcWidget }, stubs: { VcIcon: true, VcShape: true, VcLoaderOverlay: true } },
+    });
     return { wrapper, api };
   }
 
@@ -439,15 +453,35 @@ describe("widget column drag and drop", () => {
     expect(ids).toEqual(["info", "actions"]);
   });
 
-  it("hides a widget with the chrome button and keeps it out of the rendered set", async () => {
+  it("hides a widget with its ✕ and keeps it out of the rendered set", async () => {
     const { wrapper, api } = setupColumn();
     api.startEdit();
     await nextTick();
 
-    await wrapper.find('[data-block-id="actions"] .layout-block__hide').trigger("click");
+    await wrapper.find('[data-block-id="actions"] .layout-widget__hide').trigger("click");
 
     expect(api.hiddenIn("mainRight")).toEqual(["actions"]);
     expect(blockIds(wrapper)).toEqual(["info"]);
+  });
+
+  // ✕ now lives inside the drag surface, so `filter` is the only thing stopping a mousedown on it from
+  // starting a drag. Sortable is stubbed here, so this pins the wiring — the gesture is a manual check.
+  it("gives Sortable a header handle, and excludes the hide button from it", () => {
+    setupColumn();
+
+    expect(zones[0].options).toMatchObject({
+      handle: WIDGET_DRAG_HANDLE_SELECTOR,
+      filter: WIDGET_DRAG_FILTER_SELECTOR,
+      preventOnFilter: false,
+    });
+  });
+
+  // Stat cards drag whole and carry no ✕, so neither option applies.
+  it("leaves the stat row dragging whole, with no handle or filter", () => {
+    setup();
+
+    expect(zones[0].options.handle).toBeUndefined();
+    expect(zones[0].options.filter).toBeUndefined();
   });
 });
 

@@ -22,7 +22,7 @@ export function focusSaveButton(): void {
 export function focusBlockControl(id: string): void {
   void nextTick(() => {
     const selectors = [
-      `[data-block-id="${id}"] .layout-block__handle`,
+      `[data-block-id="${id}"] .layout-widget__handle`,
       `[data-block-id="${id}"][role="button"]`,
       `[data-restore-id="${id}"]`,
     ];

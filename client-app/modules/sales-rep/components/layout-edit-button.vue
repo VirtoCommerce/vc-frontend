@@ -1,6 +1,7 @@
 <template>
-  <!-- Wrapped so the button keeps its intrinsic width inside a stretching flex column. -->
-  <div>
+  <!-- Wrapped so the button keeps its intrinsic width inside a stretching flex column; classed so a
+       project can restyle it without reaching for the button inside. -->
+  <div class="layout-edit-button">
     <VcButton
       size="xs"
       color="primary"

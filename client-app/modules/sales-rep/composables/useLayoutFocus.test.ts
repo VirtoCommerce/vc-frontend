@@ -61,7 +61,7 @@ describe("focusBlockControl", () => {
   // Ordered by how specific the control is: a widget's handle, then a whole-card stat, then the
   // tray's restore button — a block is only ever rendered as one of the three.
   it.each([
-    ["widget handle", `<div data-block-id="orders"><button class="layout-block__handle"></button></div>`, "BUTTON"],
+    ["widget handle", `<div data-block-id="orders"><button class="layout-widget__handle"></button></div>`, "BUTTON"],
     ["whole stat card", `<div data-block-id="orders" role="button" tabindex="0"></div>`, "DIV"],
     ["tray restore button", `<button data-restore-id="orders"></button>`, "BUTTON"],
   ])("focuses the %s", async (_label, markup, tag) => {

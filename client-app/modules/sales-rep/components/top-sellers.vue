@@ -1,5 +1,5 @@
 <template>
-  <VcWidget :title="title" size="md" class="top-sellers">
+  <LayoutWidget :title="title" size="md" class="top-sellers">
     <template #default-container>
       <div class="top-sellers__body">
         <!-- Category filter chips: top-seller filter rules = the store catalog's top-level categories. -->
@@ -97,7 +97,7 @@
         </div>
       </div>
     </template>
-  </VcWidget>
+  </LayoutWidget>
 </template>
 
 <script setup lang="ts">
@@ -110,6 +110,7 @@ import { useSalesRepRules } from "../composables/useSalesRepRules";
 import { useSalesRepTopSellers } from "../composables/useSalesRepTopSellers";
 import { TOP_SELLERS_DEFAULT_TAKE } from "../constants";
 import { selectableFilterRules } from "../utils";
+import LayoutWidget from "./layout-widget.vue";
 import SalesRepRuleChips from "./sales-rep-rule-chips.vue";
 
 interface IProps {

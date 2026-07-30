@@ -29,114 +29,14 @@
         <p v-if="meta" class="customer-profile__meta">{{ meta }}</p>
       </div>
 
-      <!-- What renders below is registry defaults, not the rep's layout, and there is no edit button. -->
-      <VcAlert v-if="loadFailed" color="danger" size="sm" variant="solid-light" icon>
-        {{ t("sales_rep.hub.layout.load_failed") }}
-      </VcAlert>
-
-      <!-- Nothing block-shaped renders until the saved layout is known; see layout-skeleton.vue. -->
-      <LayoutSkeleton v-if="layoutLoading" :scope="SCOPE" />
-
-      <!-- Nothing may change while a save is in flight, keyboard included. See dashboard.vue for `|| undefined`. -->
-      <div v-else class="customer-profile__layout-wrapper" :inert="saving || undefined">
-        <VcLoaderOverlay v-if="saving" />
-
-        <LayoutEditBar
-          v-if="editing"
-          :saving="saving"
-          :failed="saveFailed"
-          @save="save"
-          @cancel="cancel"
-          @reset="reset"
-        />
-
-        <!-- Full-width KPI row. Cards come from the statistics queries; the layout only decides which
-             of them show and in what order. -->
-        <LayoutStats
-          :scope="SCOPE"
-          :visible="visibleIn('statistics')"
-          :hidden="hiddenIn('statistics')"
-          :cards="cards"
-          :cards-loading="cardsLoading"
-          :editing="editing"
-          @reorder="reorderVisible('statistics', $event)"
-          @reorder-hidden="reorderHidden('statistics', $event)"
-          @set-hidden="toggleHidden"
-          @announce="announce"
-        />
-
-        <div class="customer-profile__layout">
-          <div class="customer-profile__main-col">
-            <LayoutRegion
-              class="customer-profile__main"
-              :scope="SCOPE"
-              :entries="visibleIn('mainLeft')"
-              orientation="vertical"
-              group="sales-rep-customer-main-left"
-              :editing="editing"
-              @reorder="reorderVisible('mainLeft', $event)"
-              @set-hidden="toggleHidden"
-              @announce="announce"
-            >
-              <!-- `blockTitle`, not `title` — this page's `title` is the organization name. Registry
-                   props bind first so they cannot shadow the customer identity this page owns. -->
-              <template #default="{ id, title: blockTitle }">
-                <component
-                  :is="componentOf(id)"
-                  v-if="componentOf(id)"
-                  v-bind="propsOf(id)"
-                  :organization-id="organizationId"
-                  :title="blockTitle"
-                />
-              </template>
-            </LayoutRegion>
-
-            <!-- Desktop: directly under the left column, per the design. Below xl the page is one
-                 column, so it moves to the very end instead. -->
-            <LayoutEditButton
-              v-if="canEdit && !isCompact"
-              :editing="editing"
-              @toggle="editing ? cancel() : startEdit()"
-            />
-          </div>
-
-          <!-- Its own Sortable group, so a rail widget can never be dropped into the wide column. -->
-          <LayoutRegion
-            class="customer-profile__aside"
-            tag="aside"
-            :scope="SCOPE"
-            :entries="visibleIn('mainRight')"
-            orientation="vertical"
-            group="sales-rep-customer-main-right"
-            :editing="editing"
-            @reorder="reorderVisible('mainRight', $event)"
-            @set-hidden="toggleHidden"
-            @announce="announce"
-          >
-            <!-- No `title` here: the rail widgets set their own VcWidget heading. The registry's
-                 `titleKey` still names them in the hidden tray and the drag announcements. -->
-            <template #default="{ id }">
-              <component
-                :is="componentOf(id)"
-                v-if="componentOf(id)"
-                v-bind="propsOf(id)"
-                :organization-id="organizationId"
-              />
-            </template>
-          </LayoutRegion>
-        </div>
-
-        <LayoutHiddenTray
-          v-if="editing && hiddenWidgets.length"
-          :scope="SCOPE"
-          :entries="hiddenWidgets"
-          @restore="toggleHidden($event, false)"
-        />
-
-        <LayoutEditButton v-if="canEdit && isCompact" :editing="editing" @toggle="editing ? cancel() : startEdit()" />
-      </div>
-
-      <p class="customer-profile__announcer" aria-live="assertive" aria-atomic="true">{{ message }}</p>
+      <!-- Below xl the page is one column, so the edit button moves to the very end instead. -->
+      <LayoutSurface
+        :scope="SCOPE"
+        :cards="cards"
+        :cards-loading="cardsLoading"
+        :organization-id="organizationId"
+        :edit-button-placement="isCompact ? 'end' : 'mainColumn'"
+      />
     </template>
   </div>
 </template>
@@ -146,13 +46,7 @@ import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
-import LayoutEditBar from "../components/layout-edit-bar.vue";
-import LayoutEditButton from "../components/layout-edit-button.vue";
-import LayoutHiddenTray from "../components/layout-hidden-tray.vue";
-import LayoutRegion from "../components/layout-region.vue";
-import LayoutSkeleton from "../components/layout-skeleton.vue";
-import LayoutStats from "../components/layout-stats.vue";
-import { useLayoutPage } from "../composables/useLayoutPage";
+import LayoutSurface from "../components/layout-surface.vue";
 import { useSalesRepCustomer } from "../composables/useSalesRepCustomer";
 import { useSalesRepCustomerWidgets } from "../composables/useSalesRepCustomerWidgets";
 import { CUSTOMER_PROFILE_LAYOUT_SCOPE, MY_CUSTOMERS_ROUTE_NAME } from "../constants";
@@ -171,28 +65,6 @@ const isCompact = useBreakpoints(breakpointsTailwind).smaller("xl");
 const { t } = useI18n();
 const { customer, loading, notFound } = useSalesRepCustomer(() => props.organizationId);
 const { cards, loading: cardsLoading } = useSalesRepCustomerWidgets(() => props.organizationId);
-const {
-  message,
-  announce,
-  loading: layoutLoading,
-  saving,
-  editing,
-  canEdit,
-  loadFailed,
-  saveFailed,
-  visibleIn,
-  hiddenIn,
-  hiddenWidgets,
-  componentOf,
-  propsOf,
-  startEdit,
-  cancel,
-  reset,
-  reorderVisible,
-  reorderHidden,
-  toggleHidden,
-  save,
-} = useLayoutPage(SCOPE);
 
 const myCustomersRouteName = MY_CUSTOMERS_ROUTE_NAME;
 
@@ -241,40 +113,6 @@ const breadcrumbs = useBreadcrumbs(() => [
 
   &__meta {
     @apply mt-1.5 text-sm text-neutral-500;
-  }
-
-  // Single column through tablet; the aside splits off only on desktop (xl).
-  // `relative` anchors the absolutely-positioned save overlay.
-  &__layout-wrapper {
-    @apply relative flex flex-col gap-5;
-  }
-
-  &__layout {
-    @apply flex flex-col gap-5 xl:flex-row xl:items-start;
-  }
-
-  // Both columns are LayoutRegions now, which supply their own vertical stacking and gap.
-  &__main-col {
-    @apply flex min-w-0 flex-1 flex-col gap-5;
-  }
-
-  &__main {
-    @apply min-w-0;
-  }
-
-  &__aside {
-    @apply min-w-0 xl:w-80 xl:shrink-0;
-  }
-
-  // Visually hidden, but announced. Keyboard sorting is silent without it.
-  &__announcer {
-    @apply sr-only;
-  }
-
-  // Cancels VcWidget's mobile full-bleed so blocks align with the KPI row/title; the extra & avoids !important.
-  & &__main .vc-widget,
-  & &__aside .vc-widget {
-    @apply mx-0;
   }
 }
 </style>

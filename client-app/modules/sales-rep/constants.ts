@@ -49,7 +49,9 @@ export const DASHBOARD_LAYOUT_SCOPE = "dashboard";
 export const CUSTOMER_PROFILE_LAYOUT_SCOPE = "customerProfile";
 // Ordered so serialization always emits regions in a stable sequence.
 export const LAYOUT_REGION_IDS = ["statistics", "mainLeft", "mainRight"] as const;
-// What a widget can be dragged by. `.vc-widget__header-container` is a VcWidget internal, not a
-// published contract, so a rename there silently kills header drags — the overlaid handle keeps
-// working. `layout-block-widget.test.ts` mounts a real widget against this to catch it.
-export const WIDGET_DRAG_HANDLE_SELECTOR = ".vc-widget__header-container, .layout-block__handle";
+// What a widget can be dragged by: its whole header. `.vc-widget__header-container` is a VcWidget
+// internal, not a published contract, so a rename there silently kills header drags —
+// `layout-block-widget.test.ts` mounts a real widget against this to catch it.
+export const WIDGET_DRAG_HANDLE_SELECTOR = ".vc-widget__header-container";
+// The hide button sits inside that header, so without this a mousedown on ✕ starts a drag instead.
+export const WIDGET_DRAG_FILTER_SELECTOR = ".layout-widget__hide";

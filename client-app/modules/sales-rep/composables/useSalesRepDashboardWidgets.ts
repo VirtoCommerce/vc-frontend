@@ -1,5 +1,6 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
+import { buildStatCards, DASHBOARD_STAT_CARDS } from "../layout/stat-cards";
 import { formatSignedPercent, formatStatCount } from "../utils";
 import { useSalesRepCartStatistics } from "./useSalesRepCartStatistics";
 import { useSalesRepCustomerCounts } from "./useSalesRepCustomerCounts";
@@ -31,12 +32,9 @@ export function useSalesRepDashboardWidgets() {
     const mtdDelta = formatSignedPercent(orders?.mtdVsPrevMonth?.countChangePercent);
     const ytdDelta = formatSignedPercent(orders?.ytdVsLastYear?.countChangePercent);
 
-    return [
-      {
-        key: "new_orders",
-        labelKey: "sales_rep.hub.dashboard.widgets.new_orders",
-        icon: "exclamation-circle",
-        accent: "warning",
+    // Caption, icon and accent come from the shared table; only what the queries decide is here.
+    return buildStatCards(DASHBOARD_STAT_CARDS, {
+      new_orders: {
         value: formatStatCount(orders?.newOrders?.count),
         sub: orders?.newOrders
           ? t("sales_rep.hub.dashboard.stats.value_total", { amount: orders.newOrders.total.formattedAmount })
@@ -45,55 +43,35 @@ export function useSalesRepDashboardWidgets() {
         delta: placedToday ? t("sales_rep.hub.dashboard.stats.placed_today", { count: placedToday.count }) : "",
         deltaTone: "positive",
       },
-      {
-        key: "active_carts",
-        labelKey: "sales_rep.hub.dashboard.widgets.active_carts",
-        icon: "cart",
-        accent: "success",
+      active_carts: {
         value: formatStatCount(carts?.activeCarts?.count),
         sub: carts?.activeCarts?.total.formattedAmount ?? "",
         // "{n} new this week" — active carts created this week. Plain green count, no chevron.
         delta: newCarts ? t("sales_rep.hub.dashboard.stats.new_this_week", { count: newCarts.count }) : "",
         deltaTone: "positive",
       },
-      {
-        key: "orders_placed_week",
-        labelKey: "sales_rep.hub.dashboard.widgets.orders_placed_week",
-        icon: "cash",
-        accent: "info",
+      orders_placed_week: {
         value: formatStatCount(orders?.week?.count),
         sub: orders?.week?.total.formattedAmount ?? "",
         delta: weekDelta ? t("sales_rep.hub.dashboard.stats.vs_last_week", { delta: weekDelta.text }) : "",
         deltaTone: weekDelta?.tone,
         deltaIcon: weekDelta?.icon,
       },
-      {
-        key: "orders_placed_mtd",
-        labelKey: "sales_rep.hub.dashboard.widgets.orders_placed_mtd",
-        icon: "cash",
-        accent: "info",
+      orders_placed_mtd: {
         value: formatStatCount(orders?.mtd?.count),
         sub: orders?.mtd?.total.formattedAmount ?? "",
         delta: mtdDelta ? t("sales_rep.hub.dashboard.stats.vs_last_month", { delta: mtdDelta.text }) : "",
         deltaTone: mtdDelta?.tone,
         deltaIcon: mtdDelta?.icon,
       },
-      {
-        key: "orders_placed_ytd",
-        labelKey: "sales_rep.hub.dashboard.widgets.orders_placed_ytd",
-        icon: "cash",
-        accent: "info",
+      orders_placed_ytd: {
         value: formatStatCount(orders?.ytd?.count),
         sub: orders?.ytd?.total.formattedAmount ?? "",
         delta: ytdDelta ? t("sales_rep.hub.dashboard.stats.vs_last_year", { delta: ytdDelta.text }) : "",
         deltaTone: ytdDelta?.tone,
         deltaIcon: ytdDelta?.icon,
       },
-      {
-        key: "my_customers",
-        labelKey: "sales_rep.hub.dashboard.widgets.my_customers",
-        icon: "users",
-        accent: "neutral",
+      my_customers: {
         value: formatStatCount(customerCounts?.assignedCustomers),
         sub: thisMonth
           ? t("sales_rep.hub.dashboard.stats.ordered_this_month", { count: thisMonth.orderingCustomers })
@@ -102,7 +80,7 @@ export function useSalesRepDashboardWidgets() {
         delta: thisMonth ? t("sales_rep.hub.dashboard.stats.new_customers", { count: thisMonth.newCustomers }) : "",
         deltaTone: "positive",
       },
-    ];
+    });
   });
 
   return { cards, loading };

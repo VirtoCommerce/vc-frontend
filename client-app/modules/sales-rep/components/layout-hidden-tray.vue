@@ -1,9 +1,9 @@
 <template>
   <div class="layout-hidden-tray">
-    <p class="layout-hidden-tray__label">
+    <div class="layout-hidden-tray__label">
       <VcIcon name="eye-off" :size="16" />
       {{ t("sales_rep.hub.layout.hidden_widgets") }}
-    </p>
+    </div>
 
     <ul class="layout-hidden-tray__list">
       <li v-for="id in entries" :key="id">
@@ -29,7 +29,7 @@
 
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
-import { getBlock } from "../layout/registry";
+import { useBlockTitle } from "../composables/useBlockTitle";
 import type { SalesRepLayoutScopeType } from "../types/layout";
 
 interface IProps {
@@ -44,11 +44,7 @@ interface IEmits {
 defineEmits<IEmits>();
 const props = defineProps<IProps>();
 const { t } = useI18n();
-
-const titleOf = (id: string) => {
-  const block = getBlock(props.scope, id);
-  return block ? t(block.titleKey) : id;
-};
+const { titleOf } = useBlockTitle(() => props.scope);
 </script>
 
 <style lang="scss">
@@ -56,7 +52,7 @@ const titleOf = (id: string) => {
   @apply flex flex-col gap-2.5 rounded-[--vc-radius] border border-dashed border-neutral-300 bg-neutral-50 px-3.5 py-3;
 
   &__label {
-    @apply m-0 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-neutral-500;
+    @apply flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-neutral-500;
   }
 
   &__list {
@@ -64,11 +60,10 @@ const titleOf = (id: string) => {
   }
 
   &__restore {
-    @apply flex items-center gap-2 rounded-[--vc-radius] border border-neutral-200 bg-additional-50 px-2.5 py-1.5 text-sm font-semibold text-neutral-900 transition-colors;
+    // The kit's own hook, rather than a rule aimed at `.vc-icon` from outside it.
+    --vc-icon-color: var(--color-primary-500);
 
-    .vc-icon {
-      @apply text-primary-500;
-    }
+    @apply flex items-center gap-2 rounded-[--vc-radius] border border-neutral-200 bg-additional-50 px-2.5 py-1.5 text-sm font-semibold text-neutral-900 transition-colors;
 
     &:hover {
       @apply border-primary-500 text-primary-500;

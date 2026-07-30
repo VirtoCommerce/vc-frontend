@@ -1,8 +1,8 @@
 <template>
   <div class="layout-stats">
-    <p v-if="editing" :id="`${scope}-visible-stats`" class="layout-stats__label">
+    <div v-if="editing" :id="`${scope}-visible-stats`" class="layout-stats__label">
       {{ t("sales_rep.hub.layout.visible_stats") }}
-    </p>
+    </div>
 
     <!-- Always mounted, so its Sortable instance is built once and toggled. Labelled while editing —
          both zones name their cards "Reorder {title}", so the zone is all that tells them apart. -->
@@ -35,15 +35,15 @@
     </LayoutRegion>
 
     <template v-if="editing">
-      <p :id="`${scope}-hidden-stats`" class="layout-stats__label layout-stats__label--hidden">
+      <div :id="`${scope}-hidden-stats`" class="layout-stats__label layout-stats__label--parked">
         <VcIcon name="eye-off" :size="14" />
         {{ t("sales_rep.hub.layout.hidden_stats") }}
-      </p>
+      </div>
 
       <LayoutRegion
         role="group"
         :aria-labelledby="`${scope}-hidden-stats`"
-        class="layout-stats__hidden"
+        class="layout-stats__parked-zone"
         :scope="scope"
         :entries="hidden"
         orientation="horizontal"
@@ -135,9 +135,9 @@ function cardProps(id: string) {
   @apply flex flex-col gap-5;
 
   &__label {
-    @apply m-0 mt-1 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-neutral-500;
+    @apply mt-1 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-neutral-500;
 
-    &--hidden {
+    &--parked {
       @apply text-neutral-400;
     }
   }
@@ -150,8 +150,8 @@ function cardProps(id: string) {
     color: var(--stat-widget-accent);
   }
 
-  // Diagonal hatching marks the parked zone as inert without hiding what is in it.
-  &__hidden {
+  // Hatching marks the zone as set aside; the cards in it stay rendered and draggable.
+  &__parked-zone {
     @apply opacity-70;
 
     background: repeating-linear-gradient(
@@ -161,10 +161,6 @@ function cardProps(id: string) {
       var(--color-neutral-100) 9px,
       var(--color-neutral-100) 18px
     );
-
-    .stat-widget {
-      @apply bg-additional-50;
-    }
   }
 }
 </style>

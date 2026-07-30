@@ -24,8 +24,8 @@ export interface ISalesRepStatBlock extends ISalesRepBlockBase {
   region: "statistics";
 }
 
-/** A widget in one of the two content columns. Renders at VcWidget `size="md"` — layout-block.vue
- * mirrors that size's header metrics to place its drag chrome. */
+/** A widget in one of the two content columns. Renders through layout-widget.vue, which puts the drag
+ * controls in the widget's own header slots. */
 export interface ISalesRepWidgetBlock extends ISalesRepBlockBase {
   region: "mainLeft" | "mainRight";
   component: Component;

@@ -26,17 +26,16 @@
 
     <!-- Always rendered while the zone is live; CSS hides it whenever the container holds a card. State
          only changes on drop, so gating on `entries` left the zone blank until then. -->
-    <p v-if="editing && zone" class="layout-region__empty">{{ emptyText }}</p>
+    <div v-if="editing && zone" class="layout-region__empty">{{ emptyText }}</div>
   </component>
 </template>
 
 <script setup lang="ts">
 import Sortable from "sortablejs";
 import { onMounted, onUnmounted, useTemplateRef, watch } from "vue";
-import { useI18n } from "vue-i18n";
+import { useBlockTitle } from "../composables/useBlockTitle";
 import { useKeyboardSort } from "../composables/useKeyboardSort";
-import { WIDGET_DRAG_HANDLE_SELECTOR } from "../constants";
-import { getBlock } from "../layout/registry";
+import { WIDGET_DRAG_FILTER_SELECTOR, WIDGET_DRAG_HANDLE_SELECTOR } from "../constants";
 import LayoutBlock from "./layout-block.vue";
 import type { KeyboardSortOrientationType, KeyboardSortSignalType, SalesRepLayoutScopeType } from "../types/layout";
 
@@ -67,7 +66,7 @@ interface IEmits {
 
 const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
-const { t } = useI18n();
+const { titleOf } = useBlockTitle(() => props.scope);
 const container = useTemplateRef<HTMLElement>("container");
 
 /**
@@ -82,11 +81,6 @@ function restore(event: Sortable.SortableEvent): void {
   event.item.remove();
   event.from.insertBefore(event.item, event.from.children[event.oldIndex ?? 0] ?? null);
 }
-
-const titleOf = (id: string) => {
-  const block = getBlock(props.scope, id);
-  return block ? t(block.titleKey) : id;
-};
 
 // A region's axis is structural: the stat row is always horizontal, a widget column always vertical.
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss -- structural, read once by design
@@ -119,9 +113,12 @@ onMounted(() => {
 
   sortable = new Sortable(container.value, {
     group: props.group,
-    // The handle button is listed too: it is overlaid on the header, not inside it, so it would not
-    // otherwise match `closest()`.
+    // Widgets drag by their header; stat cards by the whole card.
     handle: props.dragWhole ? undefined : WIDGET_DRAG_HANDLE_SELECTOR,
+    // The hide button lives inside that header, so without this a mousedown on ✕ starts a drag.
+    // `preventOnFilter: false` keeps its click — the default preventDefaults the mousedown.
+    filter: props.dragWhole ? undefined : WIDGET_DRAG_FILTER_SELECTOR,
+    preventOnFilter: false,
     // Otherwise the empty-zone hint counts as an item and the indices stop matching `props.entries`.
     draggable: ".layout-block",
     animation: 150,
@@ -187,6 +184,8 @@ watch(
 
 <style lang="scss">
 .layout-region {
+  $self: &;
+
   &--vertical {
     @apply flex flex-col gap-5;
   }
@@ -202,9 +201,9 @@ watch(
     }
   }
 
-  // Extra room for the chrome, which would otherwise overlap a widget's own header controls. Vertical
-  // only: stat cards drag whole and carry no chrome, and here it would fight the zone padding above.
-  &--vertical#{&}--editing {
+  // Clearance for the first block's edit-mode outline, which is drawn 2px outside its box. Vertical
+  // only: in the stat row this would fight the zone band above it.
+  &--vertical#{$self}--editing {
     @apply pt-1;
   }
 
@@ -221,11 +220,12 @@ watch(
   }
 
   &__empty {
-    @apply m-0 flex min-h-24 basis-full items-center justify-center text-center text-sm text-neutral-400;
+    @apply flex min-h-24 basis-full items-center justify-center text-center text-sm text-neutral-400;
   }
 
-  // Emptiness is read from the DOM, not state, so the hint tracks the drag rather than the drop: it
-  // appears the moment the last card is dragged out, and hides the moment one is dragged in.
+  // Read from the DOM, not state, deliberately — a `v-if` cannot do this. Sortable moves the card in
+  // mid-drag and `restore()` puts it back, so `entries` only changes on drop: a state-driven hint would
+  // sit visible under a card already dragged in, and linger after the last one left.
   &:has(.layout-block) &__empty {
     @apply hidden;
   }

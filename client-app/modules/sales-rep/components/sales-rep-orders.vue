@@ -1,5 +1,5 @@
 <template>
-  <VcWidget :title="title" size="md" class="sales-rep-orders">
+  <LayoutWidget :title="title" size="md" class="sales-rep-orders">
     <template #append>
       <VcLink :to="{ name: 'Orders' }" class="sales-rep-orders__all-link" target="_blank" rel="noopener noreferrer">
         {{ t("sales_rep.orders.view_all") }}
@@ -111,7 +111,7 @@
         </div>
       </div>
     </template>
-  </VcWidget>
+  </LayoutWidget>
 </template>
 
 <script setup lang="ts">
@@ -123,6 +123,7 @@ import { useSalesRepPeriodFilter } from "../composables/useSalesRepPeriodFilter"
 import { useSalesRepRules } from "../composables/useSalesRepRules";
 import { ORDERS_DEFAULT_LIMIT } from "../constants";
 import { selectableFilterRules } from "../utils";
+import LayoutWidget from "./layout-widget.vue";
 import SalesRepRuleChips from "./sales-rep-rule-chips.vue";
 import OrderStatus from "@/shared/account/components/order-status.vue";
 
