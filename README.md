@@ -225,7 +225,22 @@ yarn generate:graphql-types
 ```
 
 Generates the `types.ts` files separately for `The Core App` and independent modules.
-If independent modules are not installed on `The Platform`, types can still be safely generated.
+
+Every schema endpoint is probed before generation, and a `404` is the only answer treated as "the module is
+not installed on the target `APP_BACKEND_URL`". Such a module is reported as `skipped, schema not available`,
+its committed `types.ts` is left untouched, the remaining modules are still generated and the command exits
+with `0` — there is no need to comment the module out in `scripts/graphql-codegen/generator.ts`.
+
+A `404` is strong evidence, not proof: a scoped endpoint that was renamed, or is missing for any other
+reason, answers the same way and is skipped too. The committed `types.ts` is then reused without being
+validated against any schema, which is why the module name and its endpoint are printed. A module that is
+skipped and has no committed `types.ts` at all is reported as a failure instead, since there is nothing to
+fall back on.
+
+Any other answer means the endpoint is there, so generation runs and anything it hits is reported as a
+failure with exit code `1` instead of being skipped — a protected or broken endpoint (`401`, `500`, an HTML
+page), or `.graphql` queries asking for fields the schema no longer has. A missing core schema aborts the run
+right away, as every module would fail with it.
 
 ## Dependency Analysis
 
