@@ -18,7 +18,7 @@ import type {
   SalesRepSortDirectionType,
 } from "../types";
 import type { TypedDocumentNode } from "@graphql-typed-document-node/core";
-import type { MaybeRefOrGetter } from "vue";
+import type { Ref } from "vue";
 
 // Every discovery op returns the same { name, localizedName } shape under a domain-specific root field,
 // so one composable drives all six (3 domains × filter/sort).
@@ -29,9 +29,15 @@ type RuleNodeType = {
   supportsDirection?: boolean | null;
 };
 type RuleQueryResultType = Record<string, Array<RuleNodeType | null> | null | undefined>;
-// organizationId is declared only by the ops that scope their vocabulary to one customer (order filter rules); the
-// others simply ignore the extra variable.
-type RuleQueryVariablesType = { storeId?: string; cultureName?: string; organizationId?: string };
+// organizationId/period are declared only by the ops whose vocabulary is derived from records (order statuses,
+// top-seller categories); the others simply ignore the extra variables.
+type RuleQueryVariablesType = {
+  storeId?: string;
+  cultureName?: string;
+  organizationId?: string;
+  periodFrom?: string;
+  periodTo?: string;
+};
 type RuleDocumentType = TypedDocumentNode<RuleQueryResultType, RuleQueryVariablesType>;
 type RuleSourceType = { document: RuleDocumentType; field: string };
 
@@ -62,14 +68,24 @@ const RULE_SOURCES: Record<`${SalesRepRuleDomainType}:${SalesRepRuleKindType}`, 
 };
 
 /**
- * @param organizationId Scope the rules to one customer (the customer page). Data-derived vocabularies — the order
- * statuses — are then read from that customer's orders, so every offered chip has orders behind it. Omit on the
- * dashboard for all the rep's customers.
+ * Scope for the data-derived vocabularies (order statuses, top-seller categories): they are read from the very records
+ * the list will show, so every offered rule has data behind it. Pass the SAME scope the list uses; omit on surfaces
+ * whose vocabulary is static (sort rules, customer segments).
  */
+// Values are expanded (not MaybeRefOrGetter<… | undefined>) so the `?` isn't a redundant second "undefined"
+// — Sonar S4782, same shape as useSalesRepOrders.
+type RuleScopeType = {
+  // One customer (the customer page); omit for all the rep's customers (the dashboard).
+  organizationId?: string | Ref<string | undefined> | (() => string | undefined);
+  // The selected period, mirroring the list's period filter.
+  periodFrom?: string | Ref<string | undefined> | (() => string | undefined);
+  periodTo?: string | Ref<string | undefined> | (() => string | undefined);
+};
+
 export function useSalesRepRules(
   domain: SalesRepRuleDomainType,
   kind: SalesRepRuleKindType,
-  organizationId?: MaybeRefOrGetter<string | undefined>,
+  scope: RuleScopeType = {},
 ) {
   const source = RULE_SOURCES[`${domain}:${kind}`];
   const { t, te } = useI18n();
@@ -79,7 +95,9 @@ export function useSalesRepRules(
     () => ({
       storeId: globals.storeId,
       cultureName: globals.cultureName,
-      organizationId: toValue(organizationId),
+      organizationId: toValue(scope.organizationId),
+      periodFrom: toValue(scope.periodFrom),
+      periodTo: toValue(scope.periodTo),
     }),
     { fetchPolicy: "cache-first" },
   );

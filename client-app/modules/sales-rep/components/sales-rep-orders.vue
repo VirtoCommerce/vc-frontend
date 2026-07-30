@@ -12,7 +12,12 @@
     <template #default-container>
       <div class="sales-rep-orders__body">
         <div v-if="filterable && hasFilterOptions" class="sales-rep-orders__filter">
-          <SalesRepRuleChips v-model="filter" :rules="filterRules" :all-label="t('sales_rep.orders.filter_all')" />
+          <SalesRepRuleChips
+            v-model="filter"
+            :rules="filterRules"
+            :loading="filterRulesLoading"
+            :all-label="t('sales_rep.orders.filter_all')"
+          />
         </div>
 
         <div class="sales-rep-orders__content">
@@ -151,8 +156,12 @@ const filter = ref<string | undefined>(undefined);
 const sort = ref<string | undefined>(undefined);
 const { from: periodFrom, to: periodTo } = useSalesRepPeriodFilter();
 
-// The status chips are read from the orders in view, so the customer page scopes them to that customer.
-const { rules: filterRules } = useSalesRepRules("order", "filter", () => props.organizationId);
+// The status chips are read from the orders in view — same customer, same period — so a chip always has orders behind it.
+const { rules: filterRules, loading: filterRulesLoading } = useSalesRepRules("order", "filter", {
+  organizationId: () => props.organizationId,
+  periodFrom,
+  periodTo,
+});
 const { rules: sortRules } = useSalesRepRules("order", "sort");
 
 // Show the filter chips only when the backend offers a real filter beyond the "All" baseline.

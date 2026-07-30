@@ -2,11 +2,12 @@
   <VcWidget :title="title" size="md" class="top-sellers">
     <template #default-container>
       <div class="top-sellers__body">
-        <!-- Category filter chips: top-seller filter rules = the store catalog's top-level categories. -->
+        <!-- Category filter chips: the top-level categories the rep sold into, in the selected period. -->
         <div v-if="hasFilterOptions" class="top-sellers__filter">
           <SalesRepRuleChips
             v-model="filter"
             :rules="filterRules"
+            :loading="filterRulesLoading"
             :all-label="t('sales_rep.top_sellers.all_categories')"
           />
         </div>
@@ -131,7 +132,12 @@ const filter = ref<string | undefined>(undefined);
 const { from: periodFrom, to: periodTo } = useSalesRepPeriodFilter("year");
 
 const { rules: sortRules } = useSalesRepRules("topSeller", "sort");
-const { rules: filterRules } = useSalesRepRules("topSeller", "filter");
+// The category chips are read from the sales in view — same customer, same period — so a chip always has sales behind it.
+const { rules: filterRules, loading: filterRulesLoading } = useSalesRepRules("topSeller", "filter", {
+  organizationId: () => props.organizationId,
+  periodFrom,
+  periodTo,
+});
 
 // Show the category chips only when the backend offers a real category beyond the "All" baseline.
 const hasFilterOptions = computed(() => selectableFilterRules(filterRules.value).length > 0);
