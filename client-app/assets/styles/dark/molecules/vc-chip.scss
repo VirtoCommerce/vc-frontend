@@ -21,14 +21,18 @@
     warning: 500,
   );
 
-  &[class*="vc-chip--solid--"]:not(.vc-chip--disabled) {
-    --text-color: var(--color-additional-950);
+  // Compound `&.vc-chip--solid--#{$color}` keeps the (0,3,0) specificity of the
+  // `[class*=]` selector it replaces.
+  @each $color in $colors {
+    &.vc-chip--solid--#{$color}:not(.vc-chip--disabled) {
+      --text-color: var(--color-vc-text-solid-#{$color}, var(--color-additional-950));
+    }
   }
 
   @each $color, $shade in $solid-bg {
     &--solid--#{$color} {
-      --bg-color: var(--color-#{$color}-#{$shade});
-      --border-color: var(--color-#{$color}-#{$shade});
+      --bg-color: var(--color-vc-background-solid-#{$color}, var(--color-#{$color}-#{$shade}));
+      --border-color: var(--color-vc-border-solid-#{$color}, var(--color-#{$color}-#{$shade}));
     }
   }
 
@@ -41,8 +45,8 @@
 
   @each $color in $colors {
     &--soft--#{$color}:not(.vc-chip--disabled) {
-      --bg-color: var(--color-#{$color}-100);
-      --text-color: var(--color-#{$color}-900);
+      --bg-color: var(--color-vc-background-soft-#{$color}, var(--color-#{$color}-100));
+      --text-color: var(--color-vc-text-soft-#{$color}, var(--color-#{$color}-900));
 
       &.vc-chip--clickable:not(.vc-chip--disabled) .vc-chip__content:hover {
         --bg-color: var(--color-#{$color}-200);
@@ -51,8 +55,8 @@
     }
 
     &--outline--#{$color}:not(.vc-chip--disabled) {
-      --text-color: var(--color-#{$color}-900);
-      --border-color: var(--color-#{$color}-600);
+      --text-color: var(--color-vc-text-outline-#{$color}, var(--color-#{$color}-900));
+      --border-color: var(--color-vc-border-outline-#{$color}, var(--color-#{$color}-600));
 
       &.vc-chip--clickable:not(.vc-chip--disabled) .vc-chip__content:hover {
         --bg-color: var(--color-#{$color}-100);
@@ -60,9 +64,9 @@
     }
 
     &--tonal--#{$color}:not(.vc-chip--disabled) {
-      --bg-color: var(--color-#{$color}-100);
-      --text-color: var(--color-#{$color}-900);
-      --border-color: var(--color-#{$color}-600);
+      --bg-color: var(--color-vc-background-tonal-#{$color}, var(--color-#{$color}-100));
+      --text-color: var(--color-vc-text-tonal-#{$color}, var(--color-#{$color}-900));
+      --border-color: var(--color-vc-border-tonal-#{$color}, var(--color-#{$color}-600));
 
       &.vc-chip--clickable:not(.vc-chip--disabled) .vc-chip__content:hover {
         --bg-color: var(--color-#{$color}-200);
@@ -70,7 +74,7 @@
     }
 
     &--surface--#{$color}:not(.vc-chip--disabled) {
-      --text-color: var(--color-#{$color}-900);
+      --text-color: var(--color-vc-text-surface-#{$color}, var(--color-#{$color}-900));
 
       &.vc-chip--clickable:not(.vc-chip--disabled) .vc-chip__content:hover {
         --bg-color: var(--color-#{$color}-100);
@@ -79,7 +83,7 @@
     }
 
     &--ghost--#{$color}:not(.vc-chip--disabled) {
-      --text-color: var(--color-#{$color}-900);
+      --text-color: var(--color-vc-text-ghost-#{$color}, var(--color-#{$color}-900));
 
       &.vc-chip--clickable:not(.vc-chip--disabled) .vc-chip__content:hover {
         --bg-color: var(--color-#{$color}-100);

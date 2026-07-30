@@ -36,14 +36,18 @@
     }
   }
 
-  &[class*="vc-button--solid--"] {
-    --text-color: var(--color-additional-950);
+  // Compound `&.vc-button--solid--#{$color}` keeps the (0,2,0) specificity of the
+  // `[class*=]` selector it replaces, so `--disabled` still wins over it.
+  @each $color in $colors {
+    &.vc-button--solid--#{$color} {
+      --text-color: var(--color-vc-text-solid-#{$color}, var(--color-additional-950));
+    }
   }
 
   @each $color, $shade in $solid-bg {
     &--solid--#{$color} {
-      --bg-color: var(--color-#{$color}-#{$shade});
-      --border-color: var(--color-#{$color}-#{$shade});
+      --bg-color: var(--color-vc-background-solid-#{$color}, var(--color-#{$color}-#{$shade}));
+      --border-color: var(--color-vc-border-solid-#{$color}, var(--color-#{$color}-#{$shade}));
     }
   }
 
@@ -56,20 +60,20 @@
 
   @each $color in $colors {
     &--outline--#{$color} {
-      --text-color: var(--color-#{$color}-900);
-      --border-color: var(--color-#{$color}-600);
+      --text-color: var(--color-vc-text-outline-#{$color}, var(--color-#{$color}-900));
+      --border-color: var(--color-vc-border-outline-#{$color}, var(--color-#{$color}-600));
     }
   }
 
   @each $color in $colors {
     &--surface--#{$color} {
-      --text-color: var(--color-#{$color}-900);
+      --text-color: var(--color-vc-text-surface-#{$color}, var(--color-#{$color}-900));
     }
   }
 
   @each $color in $colors {
     &--ghost--#{$color} {
-      --text-color: var(--color-#{$color}-900);
+      --text-color: var(--color-vc-text-ghost-#{$color}, var(--color-#{$color}-900));
     }
   }
 
@@ -98,9 +102,9 @@
 
   @each $color in $colors {
     &--soft--#{$color} {
-      --bg-color: var(--color-#{$color}-100);
-      --border-color: var(--color-#{$color}-100);
-      --text-color: var(--color-#{$color}-900);
+      --bg-color: var(--color-vc-background-soft-#{$color}, var(--color-#{$color}-100));
+      --border-color: var(--color-vc-border-soft-#{$color}, var(--color-#{$color}-100));
+      --text-color: var(--color-vc-text-soft-#{$color}, var(--color-#{$color}-900));
 
       &:hover:not(#{$loading}, #{$disabled}) {
         --bg-color: var(--color-#{$color}-200);
