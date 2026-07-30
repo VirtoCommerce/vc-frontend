@@ -12,11 +12,12 @@
         </div>
 
         <div class="top-sellers__content">
-          <!-- With a category filter active, an empty result means "nothing in this category", not "no sales at all". -->
+          <!-- With a category filter active, an empty result means "nothing in this category", not "no sales at
+               all"; a failed request is called out so it can't be mistaken for either (VCST-5586). -->
           <VcEmptyView
             v-if="!items.length && !loading"
-            :text="filter ? t('sales_rep.top_sellers.no_results') : t('sales_rep.top_sellers.empty')"
-            icon="outline-order"
+            :text="emptyText"
+            :icon="failed ? 'exclamation-circle' : 'outline-order'"
           />
 
           <!-- Sorting maps each header to a named backend rule; both top-seller rules are one-way (highest first). -->
@@ -144,12 +145,22 @@ const { sortInfo, isColumnSortable, applySort } = useSalesRepColumnSort({
   rules: sortRules,
 });
 
-const { items, loading } = useSalesRepTopSellers({
+const { items, loading, error } = useSalesRepTopSellers({
   organizationId: () => props.organizationId,
   sort: () => sort.value,
   filter: () => filter.value,
   periodFrom,
   periodTo,
+});
+
+const failed = computed(() => Boolean(error.value));
+// One empty view, three meanings: a failed request must not read as "no sales" (VCST-5586).
+const emptyText = computed(() => {
+  if (failed.value) {
+    return t("sales_rep.top_sellers.load_failed");
+  }
+
+  return filter.value ? t("sales_rep.top_sellers.no_results") : t("sales_rep.top_sellers.empty");
 });
 </script>
 

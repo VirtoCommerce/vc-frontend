@@ -132,7 +132,8 @@
       "items": "Items",
       "status": "Status",
       "total": "Total",
-      "filter_all": "All"
+      "filter_all": "All",
+      "load_failed": "Couldn't load orders"
     },
     "top_sellers": {
       "title": "Top sellers",
@@ -142,7 +143,8 @@
       "revenue": "Revenue",
       "empty": "No sales in this period",
       "no_results": "No sales in this category",
-      "all_categories": "All categories"
+      "all_categories": "All categories",
+      "load_failed": "Couldn't load top sellers"
     },
     "rules": {
       "customer": {

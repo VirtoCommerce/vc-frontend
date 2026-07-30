@@ -35,10 +35,10 @@ export function useSalesRepTopSellers(options: UseSalesRepTopSellersOptionsType 
     take: toValue(options.take) ?? TOP_SELLERS_DEFAULT_TAKE,
   }));
 
-  const { result, loading, onError } = useQuery(SalesRepTopSellersDocument, variables);
+  const { result, loading, error, onError } = useQuery(SalesRepTopSellersDocument, variables);
 
-  onError((error) => {
-    Logger.error("[sales-rep] salesRepTopSellers failed:", error);
+  onError((err) => {
+    Logger.error("[sales-rep] salesRepTopSellers failed:", err);
   });
 
   const items = computed<SalesRepTopSellerRowType[]>(() =>
@@ -55,5 +55,5 @@ export function useSalesRepTopSellers(options: UseSalesRepTopSellersOptionsType 
       })),
   );
 
-  return { items, loading };
+  return { items, loading, error };
 }

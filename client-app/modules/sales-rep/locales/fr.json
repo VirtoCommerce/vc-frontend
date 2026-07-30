@@ -132,7 +132,8 @@
       "items": "Articles",
       "status": "Statut",
       "total": "Total",
-      "filter_all": "Tous"
+      "filter_all": "Tous",
+      "load_failed": "Impossible de charger les commandes"
     },
     "top_sellers": {
       "title": "Meilleures ventes",
@@ -142,7 +143,8 @@
       "revenue": "Revenus",
       "empty": "Aucune vente sur cette période",
       "no_results": "Aucune vente dans cette catégorie",
-      "all_categories": "Toutes catégories"
+      "all_categories": "Toutes catégories",
+      "load_failed": "Impossible de charger les meilleures ventes"
     },
     "rules": {
       "customer": {

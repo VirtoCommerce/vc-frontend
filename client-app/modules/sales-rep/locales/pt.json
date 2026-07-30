@@ -132,7 +132,8 @@
       "items": "Itens",
       "status": "Status",
       "total": "Total",
-      "filter_all": "Todos"
+      "filter_all": "Todos",
+      "load_failed": "Falha ao carregar os pedidos"
     },
     "top_sellers": {
       "title": "Mais vendidos",
@@ -142,7 +143,8 @@
       "revenue": "Receita",
       "empty": "Sem vendas neste período",
       "no_results": "Sem vendas nesta categoria",
-      "all_categories": "Todas as categorias"
+      "all_categories": "Todas as categorias",
+      "load_failed": "Falha ao carregar os mais vendidos"
     },
     "rules": {
       "customer": {

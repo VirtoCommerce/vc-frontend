@@ -74,6 +74,6 @@ export type SalesRepOrderRowType = {
   createdDate: string;
   status: string;
   statusDisplayValue: string;
-  itemsCount: number;
+  itemsCount: string;
   total: string;
 };

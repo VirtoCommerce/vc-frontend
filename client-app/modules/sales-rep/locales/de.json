@@ -132,7 +132,8 @@
       "items": "Artikel",
       "status": "Status",
       "total": "Gesamt",
-      "filter_all": "Alle"
+      "filter_all": "Alle",
+      "load_failed": "Bestellungen konnten nicht geladen werden"
     },
     "top_sellers": {
       "title": "Top-Seller",
@@ -142,7 +143,8 @@
       "revenue": "Umsatz",
       "empty": "Keine Verkäufe in diesem Zeitraum",
       "no_results": "Keine Verkäufe in dieser Kategorie",
-      "all_categories": "Alle Kategorien"
+      "all_categories": "Alle Kategorien",
+      "load_failed": "Topseller konnten nicht geladen werden"
     },
     "rules": {
       "customer": {

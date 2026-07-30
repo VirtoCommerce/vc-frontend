@@ -132,7 +132,8 @@
       "items": "商品",
       "status": "状态",
       "total": "合计",
-      "filter_all": "全部"
+      "filter_all": "全部",
+      "load_failed": "无法加载订单"
     },
     "top_sellers": {
       "title": "畅销商品",
@@ -142,7 +143,8 @@
       "revenue": "收入",
       "empty": "此期间无销售",
       "no_results": "此类别无销售",
-      "all_categories": "所有类别"
+      "all_categories": "所有类别",
+      "load_failed": "无法加载热销商品"
     },
     "rules": {
       "customer": {

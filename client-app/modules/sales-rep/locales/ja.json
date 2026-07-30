@@ -132,7 +132,8 @@
       "items": "商品数",
       "status": "ステータス",
       "total": "合計",
-      "filter_all": "すべて"
+      "filter_all": "すべて",
+      "load_failed": "注文を読み込めませんでした"
     },
     "top_sellers": {
       "title": "トップセラー",
@@ -142,7 +143,8 @@
       "revenue": "収益",
       "empty": "この期間の売上なし",
       "no_results": "このカテゴリーの売上なし",
-      "all_categories": "全カテゴリー"
+      "all_categories": "全カテゴリー",
+      "load_failed": "売上上位を読み込めませんでした"
     },
     "rules": {
       "customer": {

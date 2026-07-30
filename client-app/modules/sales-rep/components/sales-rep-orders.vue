@@ -16,11 +16,12 @@
         </div>
 
         <div class="sales-rep-orders__content">
-          <!-- With a filter active, an empty result means "nothing matches this filter", not "never ordered". -->
+          <!-- With a filter active, an empty result means "nothing matches this filter", not "never ordered";
+               a failed request is called out so it can't be mistaken for either (VCST-5586). -->
           <VcEmptyView
             v-if="!orders.length && !loading"
-            :text="filter ? t('sales_rep.orders.no_results') : t('sales_rep.orders.empty')"
-            icon="outline-order"
+            :text="emptyText"
+            :icon="failed ? 'exclamation-circle' : 'outline-order'"
           />
 
           <!-- Skeleton rows match the page size; header clicks map to named backend sort rules (reversible ones toggle asc/desc). -->
@@ -165,13 +166,23 @@ const { sortInfo, isColumnSortable, applySort } = useSalesRepColumnSort({
   rules: sortRules,
 });
 
-const { orders, loading } = useSalesRepOrders({
+const { orders, loading, error } = useSalesRepOrders({
   organizationId: () => props.organizationId,
   first: () => props.limit,
   filter: () => filter.value,
   sort: () => sort.value,
   periodFrom,
   periodTo,
+});
+
+const failed = computed(() => Boolean(error.value));
+// One empty view, three meanings: a failed request must not read as "never ordered" (VCST-5586).
+const emptyText = computed(() => {
+  if (failed.value) {
+    return t("sales_rep.orders.load_failed");
+  }
+
+  return filter.value ? t("sales_rep.orders.no_results") : t("sales_rep.orders.empty");
 });
 </script>
 
