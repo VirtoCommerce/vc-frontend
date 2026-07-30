@@ -6,9 +6,8 @@
       <span class="stat-widget__label">{{ label }}</span>
     </div>
 
-    <!-- Figures are shown only for a received response, so a pending or failed metric can't be read
-         as a genuine 0 (VCST-5586). The placeholder holds the value line's height. Loading outranks
-         the error so a retry shows the spinner, not the previous attempt's failure. -->
+    <!-- Figures only for a received response, so a pending or failed metric can't read as a genuine 0.
+         Loading outranks the error so a retry shows the spinner, not the last failure (VCST-5586). -->
     <div v-if="loading" class="stat-widget__value stat-widget__value--pending">—</div>
 
     <div v-else-if="errorText" class="stat-widget__error">

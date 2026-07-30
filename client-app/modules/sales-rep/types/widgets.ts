@@ -16,4 +16,7 @@ export type StatWidgetCardType = {
   delta?: string;
   deltaTone?: StatWidgetToneType;
   deltaIcon?: string;
+  // Per-card, because each card is fed by exactly one statistics query: a failure must not blank the
+  // cards whose own data arrived fine (VCST-5586).
+  failed?: boolean;
 };

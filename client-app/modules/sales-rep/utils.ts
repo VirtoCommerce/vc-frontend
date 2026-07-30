@@ -112,13 +112,15 @@ export function formatStatCount(value?: number | null): string {
   return new Intl.NumberFormat(globals.cultureName).format(value ?? 0);
 }
 
-// Client-side currency formatting follows <VcTotalDisplay>; a money slot must not drop to a bare "0".
+// Client-side currency formatting follows <VcTotalDisplay>, so an absent amount reads as a currency
+// zero rather than a bare one — except before globals are bootstrapped, when there is no currency to
+// format with and a plain 0 is the honest answer.
 export function formatStatMoney(money?: Pick<MoneyType, "formattedAmount"> | null): string {
   if (money) {
     return money.formattedAmount;
   }
 
-  // Intl rejects style:"currency" without a currency, and globals may not be bootstrapped yet.
+  // Intl rejects style:"currency" without a currency.
   const currency: string | undefined = globals.currencyCode;
   if (!currency) {
     return EMPTY_STAT_VALUE;

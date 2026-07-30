@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ref } from "vue";
 import { useSalesRepCustomerWidgets } from "./useSalesRepCustomerWidgets";
 import { useSalesRepDashboardWidgets } from "./useSalesRepDashboardWidgets";
@@ -21,17 +21,24 @@ const sources = await vi.hoisted(async () => {
     orders: r<unknown>(undefined),
     carts: r<unknown>(undefined),
     counts: r<unknown>(undefined),
+    ordersError: r<Error | null>(null),
+    cartsError: r<Error | null>(null),
+    countsError: r<Error | null>(null),
   };
 });
 
 vi.mock("./useSalesRepOrderStatistics", () => ({
-  useSalesRepOrderStatistics: () => ({ statistics: sources.orders, loading: ref(false), error: ref(null) }),
+  useSalesRepOrderStatistics: () => ({
+    statistics: sources.orders,
+    loading: ref(false),
+    error: sources.ordersError,
+  }),
 }));
 vi.mock("./useSalesRepCartStatistics", () => ({
-  useSalesRepCartStatistics: () => ({ statistics: sources.carts, loading: ref(false), error: ref(null) }),
+  useSalesRepCartStatistics: () => ({ statistics: sources.carts, loading: ref(false), error: sources.cartsError }),
 }));
 vi.mock("./useSalesRepCustomerCounts", () => ({
-  useSalesRepCustomerCounts: () => ({ counts: sources.counts, loading: ref(false), error: ref(null) }),
+  useSalesRepCustomerCounts: () => ({ counts: sources.counts, loading: ref(false), error: sources.countsError }),
 }));
 
 vi.mock("@/core/globals", () => ({ globals: { cultureName: "en-US", currencyCode: "USD" } }));
@@ -42,6 +49,12 @@ vi.mock("vue-i18n", async () => {
   const en = await vi.importActual<typeof import("../locales/en.json")>("../locales/en.json");
   const i18n = createI18n({ locale: "en", legacy: false, messages: { en }, missingWarn: false });
   return { useI18n: () => ({ t: i18n.global.t }) };
+});
+
+beforeEach(() => {
+  sources.ordersError.value = null;
+  sources.cartsError.value = null;
+  sources.countsError.value = null;
 });
 
 const money = (amount: number, formattedAmount: string) => ({ amount, formattedAmount });
@@ -192,5 +205,38 @@ describe("stat cards for a customer with partial data", () => {
     expect(byKey(profile.cards.value, "aov")).toMatchObject({ value: "$46.02" });
     // MTD is absent while YTD is not: the share is 0, not a dropped row.
     expect(byKey(profile.cards.value, "mtd")).toMatchObject({ value: "$0.00", delta: "0% of YTD" });
+  });
+});
+
+describe("stat cards when one statistics query fails", () => {
+  // Every card reads exactly one query, so a single failure must not blank the cards that loaded.
+  it("marks only the cards fed by the failed query", () => {
+    sources.orders.value = emptyOrders();
+    sources.carts.value = { currencyCode: "USD", activeCarts: { count: 2, total: money(50, "$50.00") } };
+    sources.counts.value = { assignedCustomers: 9 };
+    sources.countsError.value = new Error("counts down");
+
+    const { cards } = useSalesRepDashboardWidgets();
+    const failedKeys = cards.value.filter((card) => card.failed).map((card) => card.key);
+
+    expect(failedKeys).toEqual(["my_customers"]);
+    // The healthy cards still carry their real figures rather than being hidden behind the error.
+    expect(cards.value.find((card) => card.key === "active_carts")).toMatchObject({ value: "2", sub: "$50.00" });
+  });
+
+  it("marks every card of the failed query on the customer page", () => {
+    sources.orders.value = emptyOrders();
+    sources.carts.value = { currencyCode: "USD", activeCarts: { count: 1, total: money(7, "$7.00") } };
+    sources.ordersError.value = new Error("orders down");
+
+    const { cards } = useSalesRepCustomerWidgets("org-1");
+
+    expect(cards.value.filter((card) => card.failed).map((card) => card.key)).toEqual([
+      "new_orders",
+      "mtd",
+      "orders_ytd",
+      "aov",
+    ]);
+    expect(cards.value.find((card) => card.key === "active_cart")).toMatchObject({ failed: false, value: "$7.00" });
   });
 });
