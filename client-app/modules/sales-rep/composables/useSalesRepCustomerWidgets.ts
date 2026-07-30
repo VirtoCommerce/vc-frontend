@@ -35,8 +35,9 @@ export function useSalesRepCustomerWidgets(organizationId: MaybeRefOrGetter<stri
 
     // Orders YTD compares vs last year on order COUNT (same metric as the dashboard "Orders placed · YTD").
     const ytdDelta = formatSignedPercent(orders?.ytdVsLastYear?.countChangePercent);
-    // Plain green count (no chevron) — New-status orders placed today, for this customer.
-    const placedToday = formatStatCount(orders?.newOrdersToday?.count);
+    // Plain green count (no chevron) — New-status orders placed today, for this customer. Formatted
+    // string renders; the raw number is vue-i18n's plural selector (see the dashboard mapper).
+    const placedToday = orders?.newOrdersToday?.count ?? 0;
     // Active cart: the summed total of this customer's non-empty carts.
     const activeCarts = carts?.activeCarts;
     // This month's revenue as a share of the year's — a client-side ratio, not a backend field.
@@ -55,7 +56,7 @@ export function useSalesRepCustomerWidgets(organizationId: MaybeRefOrGetter<stri
         sub: t("sales_rep.hub.dashboard.stats.value_total", {
           amount: formatStatMoney(orders?.newOrders?.total),
         }),
-        delta: t("sales_rep.hub.dashboard.stats.placed_today", { count: placedToday }),
+        delta: t("sales_rep.hub.dashboard.stats.placed_today", { count: formatStatCount(placedToday) }, placedToday),
         deltaTone: "positive",
       },
       {

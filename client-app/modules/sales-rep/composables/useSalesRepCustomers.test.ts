@@ -9,12 +9,14 @@ const queryMock = await vi.hoisted(async () => {
   const result = ref<SalesRepCustomersQuery | undefined>(undefined);
   const loading = ref(false);
   const onError = vi.fn();
+  const error = ref<Error | null>(null);
   const useQuery = vi.fn(() => ({
     result,
     loading,
+    error,
     onError,
   }));
-  return { result, loading, onError, useQuery };
+  return { result, loading, error, onError, useQuery };
 });
 
 /** The args of the most recent useQuery call (the impl is param-less, so read them here). */
@@ -127,7 +129,7 @@ describe("useSalesRepCustomers", () => {
         // Postal code ("#"-prefixed), city and region as three middot-separated segments.
         location: "#22902 · Charlottesville · Virginia",
         ytdTotal: "$72,165.00",
-        ytdCount: "13",
+        ytdCount: 13,
         lastYearTotal: "$64,420.00",
         lastOrder: { id: "o-1", number: "21580221", createdDate: "2026-05-19T00:00:00Z" },
       },
@@ -138,7 +140,7 @@ describe("useSalesRepCustomers", () => {
         accountType: "",
         location: "",
         ytdTotal: "$0.00",
-        ytdCount: "0",
+        ytdCount: 0,
         lastYearTotal: "$0.00",
         lastOrder: undefined,
       },
@@ -169,6 +171,12 @@ describe("useSalesRepCustomers", () => {
     await nextTick();
     expect(pages.value).toBe(1);
     expect(page.value).toBe(1); // clamped back to the last valid page
+  });
+
+  it("surfaces the query error so the page can show a failure state", () => {
+    const { error } = useSalesRepCustomers();
+
+    expect(error).toBe(queryMock.error);
   });
 
   it("passes loading through and registers an error handler", () => {

@@ -18,7 +18,7 @@
         <div class="sales-rep-orders__content">
           <!-- A failure replaces the table rather than sharing the empty view: apollo keeps the previous rows on a
                failed refetch, which would otherwise read as this filter's result (VCST-5586). -->
-          <VcEmptyView v-if="failed && !loading" :text="t('sales_rep.orders.load_failed')" icon="exclamation-circle" />
+          <VcEmptyView v-if="failed && !loading" :text="t('sales_rep.orders.load_failed')" variant="error" />
 
           <!-- With a filter active, an empty result means "nothing matches this filter", not "never ordered". -->
           <VcEmptyView

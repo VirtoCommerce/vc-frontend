@@ -103,9 +103,11 @@ export function buildStatisticsWindows(now: Date = new Date()): StatisticsWindow
   };
 }
 
-// The one formatting seam for every stat-card figure (VCST-5586): an absent metric reads as 0, never
-// as a blank or a dash. Loading and error aren't values, so <StatWidget> owns those, not this.
-// Culture/currency are the ones the statistics query was issued with, so fallbacks match real values.
+// The one formatting seam for every stat figure (VCST-5586): an absent metric reads as 0, never as a
+// blank or a dash. Loading and error aren't values, so <StatWidget> owns those, not this.
+// Fallbacks format in globals' culture/currency. The statistics queries send that same currencyCode,
+// so their fallbacks match; the customers/orders queries send none, so a fallback there assumes the
+// backend converted to the same currency.
 const EMPTY_STAT_VALUE = "0";
 
 export function formatStatCount(value?: number | null): string {
@@ -116,7 +118,9 @@ export function formatStatCount(value?: number | null): string {
 // zero rather than a bare one — except before globals are bootstrapped, when there is no currency to
 // format with and a plain 0 is the honest answer.
 export function formatStatMoney(money?: Pick<MoneyType, "formattedAmount"> | null): string {
-  if (money) {
+  // Checks the string, not just the object: an empty formattedAmount is legal on the wire and would
+  // otherwise render the exact blank this fix removes.
+  if (money?.formattedAmount) {
     return money.formattedAmount;
   }
 

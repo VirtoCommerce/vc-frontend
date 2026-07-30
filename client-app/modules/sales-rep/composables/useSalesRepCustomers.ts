@@ -3,7 +3,7 @@ import { computed, ref, watch } from "vue";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { SalesRepCustomersDocument } from "../api/graphql/types";
-import { buildStatisticsWindows, formatCustomerLocation, formatStatCount, formatStatMoney } from "../utils";
+import { buildStatisticsWindows, formatCustomerLocation, formatStatMoney } from "../utils";
 import type { SalesRepCustomerType } from "../types";
 
 export const PAGE_SIZE = 10;
@@ -55,7 +55,7 @@ export function useSalesRepCustomers() {
       accountType: customer.accountType ?? "",
       location: formatCustomerLocation(customer.address, { withPostalCode: true }),
       ytdTotal: formatStatMoney(customer.ytd?.total),
-      ytdCount: formatStatCount(customer.ytd?.count),
+      ytdCount: customer.ytd?.count ?? 0,
       lastYearTotal: formatStatMoney(customer.lastYear?.total),
       lastOrder: customer.lastOrder?.id
         ? {

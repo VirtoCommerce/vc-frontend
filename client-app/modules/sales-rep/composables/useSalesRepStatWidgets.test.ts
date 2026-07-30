@@ -62,6 +62,10 @@ vi.mock("vue-i18n", async () => {
 });
 
 beforeEach(() => {
+  // Reset the data refs too, or a later test silently inherits the previous one's payload.
+  sources.orders.value = undefined;
+  sources.carts.value = undefined;
+  sources.counts.value = undefined;
   sources.ordersError.value = null;
   sources.cartsError.value = null;
   sources.countsError.value = null;
@@ -225,8 +229,11 @@ describe("stat cards when one statistics query fails", () => {
   // Every card reads exactly one query, so a single failure must not blank the cards that loaded.
   it("marks only the cards fed by the failed query", () => {
     sources.orders.value = emptyOrders();
-    sources.carts.value = { currencyCode: "USD", activeCarts: { count: 2, total: money(50, "$50.00") } };
-    sources.counts.value = { assignedCustomers: 9 };
+    sources.carts.value = {
+      currencyCode: "USD",
+      activeCarts: { count: 2, total: money(50, "$50.00") },
+    } satisfies CartStatsType;
+    sources.counts.value = { assignedCustomers: 9 } satisfies CountsType;
     sources.countsError.value = new Error("counts down");
 
     const { cards } = useSalesRepDashboardWidgets();
@@ -239,7 +246,10 @@ describe("stat cards when one statistics query fails", () => {
 
   it("marks every card of the failed query on the customer page", () => {
     sources.orders.value = emptyOrders();
-    sources.carts.value = { currencyCode: "USD", activeCarts: { count: 1, total: money(7, "$7.00") } };
+    sources.carts.value = {
+      currencyCode: "USD",
+      activeCarts: { count: 1, total: money(7, "$7.00") },
+    } satisfies CartStatsType;
     sources.ordersError.value = new Error("orders down");
 
     const { cards } = useSalesRepCustomerWidgets("org-1");
@@ -273,7 +283,10 @@ describe("stat cards while one query is still in flight", () => {
 
   it("does not hold every card pending because one query is slow", () => {
     sources.orders.value = emptyOrders();
-    sources.carts.value = { currencyCode: "USD", activeCarts: { count: 0, total: zeroMoney } };
+    sources.carts.value = {
+      currencyCode: "USD",
+      activeCarts: { count: 0, total: zeroMoney },
+    } satisfies CartStatsType;
     sources.countsLoading.value = true;
 
     const { cards } = useSalesRepDashboardWidgets();

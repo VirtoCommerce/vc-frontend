@@ -26,9 +26,14 @@ export function useSalesRepDashboardWidgets() {
 
     // Plain "new activity" counts (green, no icon) — a count, not a comparison. Always rendered, so
     // an empty period reads as "0 placed today" rather than dropping the row (VCST-5586).
-    const placedToday = formatStatCount(orders?.newOrdersToday?.count);
-    const newCarts = formatStatCount(carts?.newCartsThisWeek?.count);
+    // Each is passed to t() as the formatted string plus the raw number: the string is what renders,
+    // the number is vue-i18n's plural selector, so locales that need plural forms (ru, pl) can add
+    // them without the grouped string breaking the choice.
+    const placedToday = orders?.newOrdersToday?.count ?? 0;
+    const newCarts = carts?.newCartsThisWeek?.count ?? 0;
     const thisMonth = customerCounts?.thisMonth;
+    const orderingCustomers = thisMonth?.orderingCustomers ?? 0;
+    const newCustomers = thisMonth?.newCustomers ?? 0;
 
     // Period-over-period comparisons on order count (tri-state; undefined when the previous period is zero).
     const weekDelta = formatSignedPercent(orders?.weekVsPrevWeek?.countChangePercent);
@@ -47,7 +52,7 @@ export function useSalesRepDashboardWidgets() {
           amount: formatStatMoney(orders?.newOrders?.total),
         }),
         // "{n} placed today" — orders whose created date is today. Plain green count, no chevron.
-        delta: t("sales_rep.hub.dashboard.stats.placed_today", { count: placedToday }),
+        delta: t("sales_rep.hub.dashboard.stats.placed_today", { count: formatStatCount(placedToday) }, placedToday),
         deltaTone: "positive",
       },
       {
@@ -59,7 +64,7 @@ export function useSalesRepDashboardWidgets() {
         value: formatStatCount(carts?.activeCarts?.count),
         sub: formatStatMoney(carts?.activeCarts?.total),
         // "{n} new this week" — active carts created this week. Plain green count, no chevron.
-        delta: t("sales_rep.hub.dashboard.stats.new_this_week", { count: newCarts }),
+        delta: t("sales_rep.hub.dashboard.stats.new_this_week", { count: formatStatCount(newCarts) }, newCarts),
         deltaTone: "positive",
       },
       {
@@ -105,11 +110,13 @@ export function useSalesRepDashboardWidgets() {
         icon: "users",
         accent: "neutral",
         value: formatStatCount(customerCounts?.assignedCustomers),
-        sub: t("sales_rep.hub.dashboard.stats.ordered_this_month", {
-          count: formatStatCount(thisMonth?.orderingCustomers),
-        }),
+        sub: t(
+          "sales_rep.hub.dashboard.stats.ordered_this_month",
+          { count: formatStatCount(orderingCustomers) },
+          orderingCustomers,
+        ),
         // "{n} new customers" — customers newly assigned to the rep this month (backend assignment date).
-        delta: t("sales_rep.hub.dashboard.stats.new_customers", { count: formatStatCount(thisMonth?.newCustomers) }),
+        delta: t("sales_rep.hub.dashboard.stats.new_customers", { count: formatStatCount(newCustomers) }, newCustomers),
         deltaTone: "positive",
       },
     ];

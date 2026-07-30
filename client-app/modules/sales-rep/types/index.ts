@@ -15,8 +15,8 @@ export type SalesRepCustomerType = {
   location: string;
   // Inline per-row purchase columns (aliased orderStatistics slices; the backend batches, no N+1).
   ytdTotal: string;
-  // Display-ready, like the other statistics figures in the module (VCST-5586).
-  ytdCount: string;
+  // Stays a number: it is interpolated into a sentence, so vue-i18n needs it for plural selection.
+  ytdCount: number;
   lastYearTotal: string;
   lastOrder?: SalesRepCustomerLastOrderType;
 };

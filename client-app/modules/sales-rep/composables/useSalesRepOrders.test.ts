@@ -16,8 +16,9 @@ const queryMock = await vi.hoisted(async () => {
   >(undefined);
   const loading = ref(false);
   const onError = vi.fn();
-  const useQuery = vi.fn(() => ({ result, loading, onError }));
-  return { result, loading, onError, useQuery };
+  const error = ref<Error | null>(null);
+  const useQuery = vi.fn(() => ({ result, loading, error, onError }));
+  return { result, loading, error, onError, useQuery };
 });
 
 vi.mock("@vue/apollo-composable", () => ({ useQuery: queryMock.useQuery }));
@@ -152,6 +153,12 @@ describe("useSalesRepOrders", () => {
         total: "$10.00",
       },
     ]);
+  });
+
+  it("surfaces the query error so the widget can show a failure state", () => {
+    const { error } = useSalesRepOrders({ organizationId: "cust-1" });
+
+    expect(error).toBe(queryMock.error);
   });
 
   it("passes loading through and registers an error handler", () => {

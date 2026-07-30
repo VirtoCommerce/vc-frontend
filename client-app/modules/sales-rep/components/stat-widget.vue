@@ -1,5 +1,5 @@
 <template>
-  <div class="stat-widget" :class="`stat-widget--${accent}`">
+  <div class="stat-widget" :class="`stat-widget--${accent}`" :aria-busy="loading || undefined">
     <div class="stat-widget__head">
       <VcIcon class="stat-widget__icon" :name="icon" :size="15" />
 
@@ -8,9 +8,10 @@
 
     <!-- Figures only for a received response, so a pending or failed metric can't read as a genuine 0.
          Loading outranks the error so a retry shows the spinner, not the last failure (VCST-5586). -->
-    <div v-if="loading" class="stat-widget__value stat-widget__value--pending">—</div>
+    <!-- aria-hidden: the dash is a visual placeholder; screen readers get aria-busy on the card instead. -->
+    <div v-if="loading" class="stat-widget__value stat-widget__value--pending" aria-hidden="true">—</div>
 
-    <div v-else-if="errorText" class="stat-widget__error">
+    <div v-else-if="errorText" class="stat-widget__error" role="status">
       <VcIcon name="exclamation-circle" :size="16" />
 
       <span>{{ errorText }}</span>
