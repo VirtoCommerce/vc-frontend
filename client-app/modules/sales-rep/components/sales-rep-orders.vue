@@ -16,12 +16,15 @@
         </div>
 
         <div class="sales-rep-orders__content">
-          <!-- With a filter active, an empty result means "nothing matches this filter", not "never ordered";
-               a failed request is called out so it can't be mistaken for either (VCST-5586). -->
+          <!-- A failure replaces the table rather than sharing the empty view: apollo keeps the previous rows on a
+               failed refetch, which would otherwise read as this filter's result (VCST-5586). -->
+          <VcEmptyView v-if="failed && !loading" :text="t('sales_rep.orders.load_failed')" icon="exclamation-circle" />
+
+          <!-- With a filter active, an empty result means "nothing matches this filter", not "never ordered". -->
           <VcEmptyView
-            v-if="!orders.length && !loading"
-            :text="emptyText"
-            :icon="failed ? 'exclamation-circle' : 'outline-order'"
+            v-else-if="!orders.length && !loading"
+            :text="filter ? t('sales_rep.orders.no_results') : t('sales_rep.orders.empty')"
+            icon="outline-order"
           />
 
           <!-- Skeleton rows match the page size; header clicks map to named backend sort rules (reversible ones toggle asc/desc). -->
@@ -176,14 +179,6 @@ const { orders, loading, error } = useSalesRepOrders({
 });
 
 const failed = computed(() => Boolean(error.value));
-// One empty view, three meanings: a failed request must not read as "never ordered" (VCST-5586).
-const emptyText = computed(() => {
-  if (failed.value) {
-    return t("sales_rep.orders.load_failed");
-  }
-
-  return filter.value ? t("sales_rep.orders.no_results") : t("sales_rep.orders.empty");
-});
 </script>
 
 <style lang="scss">
