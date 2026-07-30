@@ -1018,8 +1018,6 @@
         "share_customers_placeholder": "Seleziona cliente",
         "share_message_label": "Messaggio",
         "share_message_placeholder": "Messaggio facoltativo da includere",
-        "share_send_email": "Email",
-        "share_send_push": "Push",
         "share_success": "Lista condivisa con i clienti selezionati.",
         "share_partial": "Lista condivisa, ma alcune notifiche non sono state recapitate.",
         "save_error": "Impossibile salvare la lista. Riprova."

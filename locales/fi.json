@@ -1018,8 +1018,6 @@
         "share_customers_placeholder": "Valitse asiakas",
         "share_message_label": "Viesti",
         "share_message_placeholder": "Valinnainen viesti",
-        "share_send_email": "Sähköposti",
-        "share_send_push": "Push",
         "share_success": "Lista jaettu valituille asiakkaille.",
         "share_partial": "Lista jaettu, mutta joitakin ilmoituksia ei voitu toimittaa.",
         "save_error": "Listaa ei voitu tallentaa. Yritä uudelleen."

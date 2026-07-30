@@ -78,27 +78,16 @@
             clearable
           />
 
-          <template v-if="canNotify">
-            <VcTextarea
-              v-model="shareMessage"
-              :label="$t('shared.wishlists.add_or_update_wishlist_modal.share_message_label')"
-              :placeholder="$t('shared.wishlists.add_or_update_wishlist_modal.share_message_placeholder')"
-              :disabled="saving"
-              rows="3"
-              counter
-              :max-length="SHARE_MESSAGE_MAX_LENGTH"
-            />
-
-            <div class="flex flex-wrap gap-x-6 gap-y-2">
-              <VcCheckbox v-model="shareSendEmail" :disabled="saving">
-                {{ $t("shared.wishlists.add_or_update_wishlist_modal.share_send_email") }}
-              </VcCheckbox>
-
-              <VcCheckbox v-model="shareSendPush" :disabled="saving">
-                {{ $t("shared.wishlists.add_or_update_wishlist_modal.share_send_push") }}
-              </VcCheckbox>
-            </div>
-          </template>
+          <VcTextarea
+            v-if="canNotify"
+            v-model="shareMessage"
+            :label="$t('shared.wishlists.add_or_update_wishlist_modal.share_message_label')"
+            :placeholder="$t('shared.wishlists.add_or_update_wishlist_modal.share_message_placeholder')"
+            :disabled="saving"
+            rows="3"
+            counter
+            :max-length="SHARE_MESSAGE_MAX_LENGTH"
+          />
         </template>
       </div>
     </div>
@@ -180,8 +169,6 @@ const SHARE_MESSAGE_MAX_LENGTH = 900;
 // Pre-fill from the list's current target so re-opening a Customer-shared list shows the selected customer.
 const selectedOrganizationId = ref<string | undefined>(listSharedWithId.value);
 const shareMessage = ref("");
-const shareSendEmail = ref(true);
-const shareSendPush = ref(true);
 
 const listSharingScopes = computed(() => {
   const scopes = [
@@ -209,8 +196,15 @@ const listSharingScopes = computed(() => {
   return scopes;
 });
 
+// Scopes whose list is reachable by its link, so the owner can copy it (e.g. a rep pasting it into their own email).
+const LINKABLE_SCOPES: string[] = [
+  WishlistScopeType.AnyoneAnonymous,
+  WishlistScopeType.Organization,
+  WishlistScopeType.Customer,
+];
+
 const listSharingScopeSupportsLink = computed(
-  () => sharingScope.value == WishlistScopeType.AnyoneAnonymous || sharingScope.value == WishlistScopeType.Organization,
+  () => !!sharingScope.value && LINKABLE_SCOPES.includes(sharingScope.value),
 );
 const sharingKey = computed(() => props.list?.sharingSetting?.id ?? crypto.randomUUID());
 const sharingLink = computed(() => `${location.protocol}//${location.host}/shared-list/${sharingKey.value}`);
@@ -287,8 +281,8 @@ async function save(closeHandle: () => void): Promise<void> {
     }
 
     // Notify the customer's members (reuses the VCST-5310 channel) only when messaging was offered — i.e. this
-    // edit set a genuinely new customer target — and a channel is selected.
-    if (canNotify.value && sharedWithId && (shareSendEmail.value || shareSendPush.value)) {
+    // edit set a genuinely new customer target — and the rep actually wrote a message. Both channels are always used.
+    if (canNotify.value && sharedWithId && !!shareMessage.value.trim()) {
       const notified = await notifyCustomer(sharedWithId);
       notifications[notified ? "success" : "warning"]({
         text: t(`shared.wishlists.add_or_update_wishlist_modal.${notified ? "share_success" : "share_partial"}`),
@@ -313,8 +307,8 @@ async function notifyCustomer(organizationId: string): Promise<boolean> {
   const message = [shareMessage.value.trim(), sharingLink.value].filter(Boolean).join("\n\n");
   const result = await sendCommunication({
     organizationId,
-    sendEmail: shareSendEmail.value,
-    sendPush: shareSendPush.value,
+    sendEmail: true,
+    sendPush: true,
     message,
   });
 

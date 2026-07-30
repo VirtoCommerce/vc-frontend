@@ -1018,8 +1018,6 @@
         "share_customers_placeholder": "选择客户",
         "share_message_label": "消息",
         "share_message_placeholder": "可选的附加消息",
-        "share_send_email": "电子邮件",
-        "share_send_push": "推送",
         "share_success": "已与所选客户共享列表。",
         "share_partial": "已共享列表，但部分通知无法送达。",
         "save_error": "无法保存列表，请重试。"

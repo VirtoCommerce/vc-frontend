@@ -1018,8 +1018,6 @@
         "share_customers_placeholder": "Kunde auswählen",
         "share_message_label": "Nachricht",
         "share_message_placeholder": "Optionale Nachricht hinzufügen",
-        "share_send_email": "E-Mail",
-        "share_send_push": "Push",
         "share_success": "Liste für die ausgewählten Kunden freigegeben.",
         "share_partial": "Liste freigegeben, einige Benachrichtigungen konnten jedoch nicht zugestellt werden.",
         "save_error": "Die Liste konnte nicht gespeichert werden. Bitte versuchen Sie es erneut."

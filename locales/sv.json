@@ -1018,8 +1018,6 @@
         "share_customers_placeholder": "Välj kund",
         "share_message_label": "Meddelande",
         "share_message_placeholder": "Valfritt meddelande",
-        "share_send_email": "E-post",
-        "share_send_push": "Push",
         "share_success": "Listan delades med de valda kunderna.",
         "share_partial": "Listan delades, men vissa aviseringar kunde inte levereras.",
         "save_error": "Listan kunde inte sparas. Försök igen."

@@ -1018,8 +1018,6 @@
         "share_customers_placeholder": "Wybierz klienta",
         "share_message_label": "Wiadomość",
         "share_message_placeholder": "Opcjonalna wiadomość",
-        "share_send_email": "E-mail",
-        "share_send_push": "Push",
         "share_success": "Lista udostępniona wybranym klientom.",
         "share_partial": "Lista udostępniona, ale niektórych powiadomień nie udało się dostarczyć.",
         "save_error": "Nie udało się zapisać listy. Spróbuj ponownie."

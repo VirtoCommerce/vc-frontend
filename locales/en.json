@@ -1018,8 +1018,6 @@
         "share_customers_placeholder": "Select customer",
         "share_message_label": "Message",
         "share_message_placeholder": "Optional message to include",
-        "share_send_email": "Email",
-        "share_send_push": "Push",
         "share_success": "List shared with the selected customers.",
         "share_partial": "List shared, but some notifications could not be delivered.",
         "save_error": "The list could not be saved. Please try again."

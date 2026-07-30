@@ -1018,8 +1018,6 @@
         "share_customers_placeholder": "Выберите клиента",
         "share_message_label": "Сообщение",
         "share_message_placeholder": "Необязательное сообщение",
-        "share_send_email": "Эл. почта",
-        "share_send_push": "Push",
         "share_success": "Список отправлен выбранным клиентам.",
         "share_partial": "Список отправлен, но некоторые уведомления не удалось доставить.",
         "save_error": "Не удалось сохранить список. Пожалуйста, попробуйте снова."

@@ -1018,8 +1018,6 @@
         "share_customers_placeholder": "Velg kunde",
         "share_message_label": "Melding",
         "share_message_placeholder": "Valgfri melding",
-        "share_send_email": "E-post",
-        "share_send_push": "Push",
         "share_success": "Listen ble delt med de valgte kundene.",
         "share_partial": "Listen ble delt, men noen varsler kunne ikke leveres.",
         "save_error": "Listen kunne ikke lagres. Prøv igjen."
