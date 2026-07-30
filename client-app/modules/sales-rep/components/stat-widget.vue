@@ -11,11 +11,13 @@
     <!-- aria-hidden: the dash is a visual placeholder; screen readers get aria-busy on the card instead. -->
     <div v-if="loading" class="stat-widget__value stat-widget__value--pending" aria-hidden="true">—</div>
 
-    <div v-else-if="errorText" class="stat-widget__error" role="status">
+    <!-- <output> carries role="status" + aria-live="polite" natively, so the failure is announced when
+         it replaces the figures (Sonar Web:S6819 prefers it over role="status" on a div). -->
+    <output v-else-if="errorText" class="stat-widget__error">
       <VcIcon name="exclamation-circle" :size="16" />
 
       <span>{{ errorText }}</span>
-    </div>
+    </output>
 
     <template v-else>
       <div class="stat-widget__value">{{ value }}</div>
