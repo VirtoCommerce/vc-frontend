@@ -5,6 +5,7 @@ import { WIDGET_DRAG_FILTER_SELECTOR, WIDGET_DRAG_HANDLE_SELECTOR } from "../con
 import LayoutBlock from "./layout-block.vue";
 import LayoutRegion from "./layout-region.vue";
 import LayoutWidget from "./layout-widget.vue";
+import VcButton from "@/ui-kit/components/molecules/button/vc-button.vue";
 import VcWidget from "@/ui-kit/components/organisms/widget/vc-widget.vue";
 
 vi.mock("vue-i18n", () => ({ useI18n: () => ({ t: (key: string) => key }) }));
@@ -15,10 +16,11 @@ vi.mock("sortablejs", () => ({
   },
 }));
 
-// VcWidget is registered globally by the ui-kit plugin, which no test boots.
+// VcWidget and VcButton are registered globally by the ui-kit plugin, which no test boots. Both are
+// real: the controls are VcButtons, and it is their placement in VcWidget's header that is under test.
 // VcShape is only reachable through a `v-if` VcWidget never takes here, but the compiler hoists its
 // resolution above that branch, so it warns unless stubbed.
-const global = { components: { VcWidget }, stubs: { VcIcon: true, VcShape: true } };
+const global = { components: { VcButton, VcWidget }, stubs: { VcIcon: true, VcShape: true } };
 
 // The point of layout-widget.vue: the controls sit in the widget's own header, placed by VcWidget's
 // padding rather than metrics copied outside it. A real VcWidget, because that placement is under test.
@@ -40,6 +42,19 @@ describe("LayoutBlock wrapping a real LayoutWidget", () => {
 
     expect(header.querySelector(".layout-widget__handle")).not.toBeNull();
     expect(header.querySelector(".layout-widget__hide")).not.toBeNull();
+  });
+
+  // The controls are VcButtons, so the keyboard route into reordering only exists as long as VcButton
+  // lets `keydown` / `blur` fall through to the button it renders. Nothing else would notice if it stopped.
+  it("carries the handle's keyboard events through VcButton to the block", async () => {
+    const wrapper = mountBlock(true);
+    const handle = wrapper.get(".layout-widget__handle");
+
+    await handle.trigger("keydown", { key: " " });
+    await handle.trigger("blur");
+
+    expect(wrapper.emitted("handleKeydown")?.length).toBe(1);
+    expect(wrapper.emitted("handleBlur")?.length).toBe(1);
   });
 
   it("renders an element matching the selector Sortable is configured with", () => {

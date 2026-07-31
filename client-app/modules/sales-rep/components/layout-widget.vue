@@ -3,31 +3,35 @@
     <!-- Through VcWidget's own header slots, so placement comes from its padding instead of metrics
          mirrored outside it. -->
     <template v-if="draggable" #prepend>
-      <button
-        type="button"
+      <VcButton
         class="layout-widget__handle"
         :aria-label="t('sales_rep.hub.layout.a11y.reorder', { title: chrome?.title.value })"
         :aria-pressed="chrome?.grabbed.value"
+        icon="switch-vertical"
+        icon-size="1rem"
+        size="xs"
+        color="secondary"
+        variant="ghost"
         @keydown="chrome?.handleKeydown($event)"
         @blur="chrome?.handleBlur()"
-      >
-        <VcIcon name="switch-vertical" :size="16" />
-      </button>
+      />
     </template>
 
     <!-- Composed, not replaced: a widget's own header content (the orders "View all" link) stays put. -->
     <template v-if="draggable || $slots.append" #append>
       <slot name="append" />
 
-      <button
+      <VcButton
         v-if="draggable"
-        type="button"
         class="layout-widget__hide"
         :aria-label="t('sales_rep.hub.layout.a11y.hide', { title: chrome?.title.value })"
+        icon="x"
+        icon-size="1rem"
+        size="xs"
+        color="neutral"
+        variant="ghost"
         @click="chrome?.hide()"
-      >
-        <VcIcon name="x" :size="16" />
-      </button>
+      />
     </template>
 
     <template v-if="$slots['default-container']" #default-container>
@@ -73,48 +77,32 @@ const heading = computed(() => props.title ?? chrome?.title.value);
 
 <style lang="scss">
 // @apply: module is self-contained as an MF remote (no global utility layer).
+// Both controls are VcButtons, so box, colors and focus ring come from the kit. What is left here is
+// only what a button has no prop for: the grab cursor, the grabbed state, and the hide button's intent.
 .layout-widget {
-  --layout-widget-control: theme("spacing.7");
-
   // On the root, so it covers the header without a rule aimed at a VcWidget class.
   &--draggable {
     @apply select-none;
   }
 
   &__handle {
-    @apply flex cursor-grab items-center justify-center rounded-[--vc-radius] text-secondary-500 transition-colors;
-
-    width: var(--layout-widget-control);
-    height: var(--layout-widget-control);
-
-    &:hover {
-      @apply bg-neutral-100;
-    }
+    @apply cursor-grab;
 
     &:active {
       @apply cursor-grabbing;
     }
 
-    // The only keyboard route into reordering, so focus has to be legible and distinct from grabbed.
-    &:focus-visible {
-      @apply outline-2 outline-offset-1 outline-primary-500;
-    }
-
     // Stands in for the "I am holding this" feedback a pointer user gets from the cursor.
     &[aria-pressed="true"] {
-      @apply text-primary-500 ring-2 ring-primary-200;
+      --vc-icon-color: var(--color-primary-500);
+
+      @apply ring-2 ring-primary-200;
     }
   }
 
-  &__hide {
-    @apply flex items-center justify-center rounded-[--vc-radius] text-neutral-500 transition-colors;
-
-    width: var(--layout-widget-control);
-    height: var(--layout-widget-control);
-
-    &:hover {
-      @apply bg-danger-50 text-danger-500;
-    }
+  // Reversible — the widget comes back from the tray — so danger reads on hover only.
+  &__hide:hover {
+    --vc-icon-color: var(--color-danger-500);
   }
 }
 </style>

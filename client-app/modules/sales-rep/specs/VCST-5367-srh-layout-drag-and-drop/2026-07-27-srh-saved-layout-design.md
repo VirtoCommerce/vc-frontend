@@ -283,7 +283,8 @@ update, leaving SortableJS's edit in place happens to converge anyway, so nothin
 
 ### 6. Keyboard grab-and-move (`composables/useKeyboardSort.ts`)
 
-One shared composable so every region behaves identically. The handle is a real `<button>`.
+One shared composable so every region behaves identically. The handle is a real `<button>` — a
+`VcButton`, which renders one and lets `keydown` / `blur` fall through to it.
 
 - **Space/Enter** grabs; **Space/Enter** drops; **Escape** cancels and restores; tab-out cancels.
 - **Stats row is horizontal:** ←/→ reorder within the row, ↑/↓ move between the visible and parked zones.
@@ -334,7 +335,7 @@ tokens, so this is a translation into `@apply` + BEM, not a redesign.
 | Drop zone | dashed `neutral-300` · `bg-neutral-50` · 12px padding |
 | Parked stats zone | `opacity: .7` · 45° stripes, `neutral-50`/`neutral-100` at 9px |
 | Empty zone | centred muted text, 96px min-height |
-| Handle / hide | `cursor: grab`, `secondary-500` / hover `danger-500` |
+| Handle / hide | `VcButton` `xs` ghost — secondary / neutral, `cursor: grab`, hide hover `danger-500` |
 | Hidden tray | dashed box, uppercase label, pill restore buttons |
 | Edit layout button | xs outline-primary, `adjustments` icon, bottom of the left column |
 

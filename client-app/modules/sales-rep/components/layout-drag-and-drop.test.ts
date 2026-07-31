@@ -9,6 +9,7 @@ import LayoutRegion from "./layout-region.vue";
 import LayoutStats from "./layout-stats.vue";
 import LayoutWidget from "./layout-widget.vue";
 import type { Mock } from "vitest";
+import VcButton from "@/ui-kit/components/molecules/button/vc-button.vue";
 import VcWidget from "@/ui-kit/components/organisms/widget/vc-widget.vue";
 
 const apolloMock = await vi.hoisted(async () => {
@@ -433,8 +434,12 @@ describe("widget column drag and drop", () => {
 
     const wrapper = mount(Harness, {
       attachTo: document.body,
-      // VcWidget is registered globally by the ui-kit plugin, which no test boots.
-      global: { components: { VcWidget }, stubs: { VcIcon: true, VcShape: true, VcLoaderOverlay: true } },
+      // VcWidget and VcButton — the widget's controls — are registered globally by the ui-kit plugin,
+      // which no test boots.
+      global: {
+        components: { VcButton, VcWidget },
+        stubs: { VcIcon: true, VcShape: true, VcLoaderOverlay: true },
+      },
     });
     return { wrapper, api };
   }
