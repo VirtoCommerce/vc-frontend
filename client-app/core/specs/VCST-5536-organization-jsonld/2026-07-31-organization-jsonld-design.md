@@ -53,14 +53,44 @@ Consequence: **GPTBot, ClaudeBot and PerplexityBot do not execute JavaScript** a
 see this markup. Neither will social scrapers (Slack, LinkedIn, Facebook). It *is* visible
 to Googlebot, to Rich Results Test, and to any JS-rendering checker.
 
-Build-time injection into `index.html` was considered and rejected: store resolution is
-per-hostname at runtime (`app-runner.ts`, `domain = globalThis.location.hostname`
-→ `getPageContext({ domain })`), so one bundle deliberately serves many brands. Baking one
-brand into the shell contradicts that.
+So be plain about the value split: this delivers **Google/SEO** benefit, and delivers
+**nothing to the agent audience the ticket's first sentence names**. VCST-5536 should not be
+closed as if it had.
 
-Closing the gap requires per-request injection at the Cloudflare layer or in the storefront
-pod — neither is this repo. **Recommend a separate ticket**; this spec is the input to it,
-since it defines the exact node to inject.
+### Why build-time injection into `index.html` is not the answer
+
+It would land in the raw HTML, which is exactly where the agents look — so it is worth saying
+precisely why it is rejected. Not because of a code-capability inference, but because
+multi-brand-per-environment is a **documented, supported Virto configuration**:
+
+> "Virto Commerce allows you to configure multiple stores, each with its own domain, within a
+> single environment. This enables the management of diverse websites for different brands or
+> business entities using one platform and codebase."
+> — [configuring-multiple-stores.md](https://github.com/virtocommerce/vc-docs/blob/main/platform/developer-guide/docs/Tutorials-and-How-tos/How-tos/configuring-multiple-stores.md)
+
+Two mechanisms implement it: `VirtoCommerce:Stores:Domains` in `appsettings.json` maps domain
+→ store, and Virto Cloud's `environments.yml` takes a list of `routes:` entries each with its
+own `host:` and `root:` store. The same docs state that themes may be **shared across stores**.
+
+This repo is the shared upstream theme, not one customer's build. Baking one brand's identity
+into `index.html` would publish the wrong brand on every other domain served by that artifact
+— worse than emitting nothing.
+
+(Nuance: `environments.yml`'s `themes:` map is keyed by store code, so a given deployment *can*
+give each store its own artifact, in which case build-time would work for that deployment. It
+can equally point several stores at one artifact, and a product theme cannot assume which.)
+
+### The only correct fix
+
+Per-request injection, at the one layer that knows the `Host` header:
+
+- **Cloudflare Snippet / Worker** — the storefront already sits behind Cloudflare (`rocket-loader`,
+  `cf-fonts` appear in live responses). `HTMLRewriter` into `<head>` for `/`, brand data cached
+  per host. Small; the constraint is access to the zone, not difficulty.
+- **The storefront pod** — correct by construction, but a Virto Cloud infrastructure change.
+
+Neither is this repo. **Recommend a separate ticket**; this spec is its input, since it defines
+the exact node to inject.
 
 ## 4. Backend dependency — `brandProfile` on `StoreResponseType`
 
