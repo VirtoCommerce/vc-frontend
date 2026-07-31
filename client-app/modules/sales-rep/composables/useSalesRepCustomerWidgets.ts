@@ -1,7 +1,7 @@
 import { computed, toValue } from "vue";
 import { useI18n } from "vue-i18n";
 import { formatSignedPercent, formatStatCount } from "../utils";
-import { useSalesRepCartStatistics } from "./useSalesRepCartStatistics";
+import { useSalesRepActiveCartsCard } from "./useSalesRepActiveCartsCard";
 import { useSalesRepOrderStatistics } from "./useSalesRepOrderStatistics";
 import type { StatWidgetCardType } from "../types/widgets";
 import type { MaybeRefOrGetter } from "vue";
@@ -13,13 +13,13 @@ export function useSalesRepCustomerWidgets(organizationId: MaybeRefOrGetter<stri
   const orgId = (): string => toValue(organizationId);
 
   const { statistics: orderStatistics, loading: ordersLoading } = useSalesRepOrderStatistics({ organizationId: orgId });
-  const { statistics: cartStatistics, loading: cartsLoading } = useSalesRepCartStatistics({ organizationId: orgId });
+  // Same card as the hub dashboard's, scoped to this customer's organization.
+  const { card: activeCartsCard, loading: cartsLoading } = useSalesRepActiveCartsCard(orgId);
 
   const loading = computed(() => ordersLoading.value || cartsLoading.value);
 
   const cards = computed<StatWidgetCardType[]>(() => {
     const orders = orderStatistics.value;
-    const carts = cartStatistics.value;
     const ytd = orders?.ytd;
     const mtd = orders?.mtd;
 
@@ -27,10 +27,6 @@ export function useSalesRepCustomerWidgets(organizationId: MaybeRefOrGetter<stri
     const ytdDelta = formatSignedPercent(orders?.ytdVsLastYear?.countChangePercent);
     // Plain green count (no chevron) — New-status orders placed today, for this customer.
     const placedToday = orders?.newOrdersToday;
-    // Same metric as the dashboard "Active carts" card, but scoped to this customer's organization: quantities of
-    // the cart lines picked for checkout, the parked remainder, and the lines touched this week.
-    const activeCarts = carts?.activeCarts;
-    const weekItems = carts?.itemsThisWeek;
     // This month's revenue as a share of the year's — a client-side ratio, not a backend field.
     const ytdAmount = ytd?.total.amount ?? 0;
     const mtdShare = mtd && ytdAmount > 0 ? Math.round((mtd.total.amount / ytdAmount) * 100) : undefined;
@@ -48,20 +44,7 @@ export function useSalesRepCustomerWidgets(organizationId: MaybeRefOrGetter<stri
         delta: placedToday ? t("sales_rep.hub.dashboard.stats.placed_today", { count: placedToday.count }) : "",
         deltaTone: "positive",
       },
-      {
-        // Reuses the dashboard card's label, icon, accent and i18n keys — same metric, one organization.
-        key: "active_carts",
-        labelKey: "sales_rep.hub.dashboard.widgets.active_carts",
-        icon: "cart",
-        accent: "success",
-        value: formatStatCount(activeCarts?.selectedItemQuantity),
-        valueSuffix: activeCarts ? t("sales_rep.hub.dashboard.stats.items_unit", activeCarts.selectedItemQuantity) : "",
-        sub: activeCarts
-          ? t("sales_rep.hub.dashboard.stats.not_for_checkout", { count: activeCarts.unselectedItemQuantity })
-          : "",
-        delta: weekItems ? t("sales_rep.hub.dashboard.stats.items_this_week", weekItems.selectedItemQuantity) : "",
-        deltaTone: "positive",
-      },
+      activeCartsCard.value,
       {
         key: "mtd",
         // Profile shows this month's order value (money), not the order count — hence "Purchased · MTD".
