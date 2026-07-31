@@ -1,3 +1,5 @@
+import type { WatchQueryFetchPolicy } from "@apollo/client/core";
+
 export const MODULE_ID = "VirtoCommerce.SalesRep";
 // Boolean storefront setting shipped by the backend module (SalesRep.Enabled, default false).
 export const ENABLED_KEY = "SalesRep.Enabled";
@@ -39,3 +41,8 @@ export const NEW_ORDERS_FILTER = "New";
 export const ACTIVE_CARTS_FILTER = "active-carts";
 // Default number of ranked products shown by the Top Sellers block (backend max is 10).
 export const TOP_SELLERS_DEFAULT_TAKE = 5;
+
+// Statistics variables are day-stable by design (see buildStatisticsWindows), so under the client's
+// default cache-first policy a KPI card serves its first figure until a full page reload. Revalidating
+// on every mount, navigation and customer/period change is cheap — the backend caches these criteria.
+export const STATISTICS_FETCH_POLICY: WatchQueryFetchPolicy = "cache-and-network";
