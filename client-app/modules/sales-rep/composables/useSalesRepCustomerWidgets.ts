@@ -27,8 +27,10 @@ export function useSalesRepCustomerWidgets(organizationId: MaybeRefOrGetter<stri
     const ytdDelta = formatSignedPercent(orders?.ytdVsLastYear?.countChangePercent);
     // Plain green count (no chevron) — New-status orders placed today, for this customer.
     const placedToday = orders?.newOrdersToday;
-    // Active cart: the summed total of this customer's non-empty carts; "—" when there is none.
+    // Same metric as the dashboard "Active carts" card, but scoped to this customer's organization: quantities of
+    // the cart lines picked for checkout, the parked remainder, and the lines touched this week.
     const activeCarts = carts?.activeCarts;
+    const weekItems = carts?.itemsThisWeek;
     // This month's revenue as a share of the year's — a client-side ratio, not a backend field.
     const ytdAmount = ytd?.total.amount ?? 0;
     const mtdShare = mtd && ytdAmount > 0 ? Math.round((mtd.total.amount / ytdAmount) * 100) : undefined;
@@ -47,13 +49,18 @@ export function useSalesRepCustomerWidgets(organizationId: MaybeRefOrGetter<stri
         deltaTone: "positive",
       },
       {
-        key: "active_cart",
-        // Profile shows the single cart's value (money), not a count — its own label vs the dashboard's "Active carts".
-        labelKey: "sales_rep.hub.dashboard.widgets.active_cart",
+        // Reuses the dashboard card's label, icon, accent and i18n keys — same metric, one organization.
+        key: "active_carts",
+        labelKey: "sales_rep.hub.dashboard.widgets.active_carts",
         icon: "cart",
         accent: "success",
-        // One bold number — the active cart's total. No sub, no badge; "—" when the customer has no active cart.
-        value: activeCarts?.count ? activeCarts.total.formattedAmount : "—",
+        value: formatStatCount(activeCarts?.selectedItemQuantity),
+        valueSuffix: activeCarts ? t("sales_rep.hub.dashboard.stats.items_unit", activeCarts.selectedItemQuantity) : "",
+        sub: activeCarts
+          ? t("sales_rep.hub.dashboard.stats.not_for_checkout", { count: activeCarts.unselectedItemQuantity })
+          : "",
+        delta: weekItems ? t("sales_rep.hub.dashboard.stats.items_this_week", weekItems.selectedItemQuantity) : "",
+        deltaTone: "positive",
       },
       {
         key: "mtd",

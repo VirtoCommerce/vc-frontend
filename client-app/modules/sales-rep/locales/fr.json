@@ -50,7 +50,6 @@
         "widgets": {
           "new_orders": "Nouvelles commandes",
           "active_carts": "Paniers actifs",
-          "active_cart": "Panier actif",
           "orders_placed_week": "Commandes cette semaine",
           "orders_placed_mtd": "Commandes depuis le début du mois",
           "purchased_mtd": "Achats depuis le début du mois",

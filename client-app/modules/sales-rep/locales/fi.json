@@ -50,7 +50,6 @@
         "widgets": {
           "new_orders": "Uudet tilaukset",
           "active_carts": "Aktiiviset ostoskorit",
-          "active_cart": "Aktiivinen ostoskori",
           "orders_placed_week": "Tilaukset tällä viikolla",
           "orders_placed_mtd": "Tilaukset kuluvan kuun alusta",
           "purchased_mtd": "Ostot kuluvan kuun alusta",

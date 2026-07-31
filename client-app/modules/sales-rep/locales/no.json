@@ -50,7 +50,6 @@
         "widgets": {
           "new_orders": "Nye ordrer",
           "active_carts": "Aktive handlekurver",
-          "active_cart": "Aktiv handlekurv",
           "orders_placed_week": "Ordrer denne uken",
           "orders_placed_mtd": "Ordrer hittil denne måneden",
           "purchased_mtd": "Kjøp hittil denne måneden",

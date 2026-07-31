@@ -50,7 +50,6 @@
         "widgets": {
           "new_orders": "Neue Bestellungen",
           "active_carts": "Aktive Warenkörbe",
-          "active_cart": "Aktiver Warenkorb",
           "orders_placed_week": "Bestellungen diese Woche",
           "orders_placed_mtd": "Bestellungen seit Monatsbeginn",
           "purchased_mtd": "Umsatz seit Monatsbeginn",

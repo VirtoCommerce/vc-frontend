@@ -50,7 +50,6 @@
         "widgets": {
           "new_orders": "New orders",
           "active_carts": "Active carts",
-          "active_cart": "Active cart",
           "orders_placed_week": "Orders placed · WEEK",
           "orders_placed_mtd": "Orders placed · MTD",
           "purchased_mtd": "Purchased · MTD",
