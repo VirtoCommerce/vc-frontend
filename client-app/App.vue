@@ -27,7 +27,7 @@ import { useQueuedMutations } from "@/core/composables/useQueuedMutations";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import { ModalHost } from "@/shared/modal";
 import { NotificationsHost } from "@/shared/notification";
-import { useWhiteLabeling } from "./core/composables";
+import { useOrganizationSchema, useStoreSocialMeta, useWhiteLabeling } from "./core/composables";
 import { SecureLayout } from "./shared/layout";
 import type { Component } from "vue";
 import EnvironmentBadge from "@/shared/layout/components/environmentBadge/environment-badge.vue";
@@ -75,6 +75,11 @@ useHead({
         },
       ],
 });
+
+// Store identity markup. Mounted here rather than in `home.vue`, which does not mount when a
+// Builder.io or Virto Pages homepage wins the previewer chain for "/".
+useOrganizationSchema();
+useStoreSocialMeta();
 
 const layouts: Record<NonNullable<typeof route.meta.layout>, Component> = {
   Main: markRaw(MainLayout),

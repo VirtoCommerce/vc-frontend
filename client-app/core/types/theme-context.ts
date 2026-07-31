@@ -6,6 +6,8 @@ import type { GetStoreQuery } from "../api/graphql/types";
 export interface IThemeContext {
   storeId: string;
   storeName: string;
+  /** Store's configured public url. Present because `setThemeContext` spreads the whole store. */
+  storeUrl?: string;
   catalogId: string;
   defaultLanguage: ILanguage;
   defaultCurrency: ICurrency;
