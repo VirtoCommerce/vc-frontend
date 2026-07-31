@@ -28,6 +28,11 @@ export function formatCustomerLocation(address: LocationPartsType, options?: { w
 
 // ISO date windows shared by the statistics ops: current bounds end at NOW (not calendar end);
 // previous-period windows are elapsed-matched for a fair "vs last X" delta.
+//
+// Day/week/month/year boundaries are the USER'S calendar, not UTC's. The widgets have to agree with the
+// order lists next to them, and those render `createdDate` through `$d()` — i.e. in the browser's zone. On
+// UTC boundaries an order placed at 23:00 UTC is "tomorrow" for a UTC+3 rep, so it fell outside the
+// "created today" badge while still showing in the list and in the unbounded counter.
 export type StatisticsWindowsType = {
   // Month-to-date and the elapsed-matched slice of the previous month.
   mtdFrom: string;
@@ -44,40 +49,46 @@ export type StatisticsWindowsType = {
   weekTo: string;
   prevWeekFrom: string;
   prevWeekTo: string;
-  // Today (start of the current UTC day → now) — backs the "new orders placed today" count.
+  // Today (start of the user's current day → now) — backs the "new orders placed today" count.
   todayFrom: string;
   todayTo: string;
 };
 
-const DAY_MS = 86_400_000;
+// Local-time counterpart of Date.UTC: the instant at a wall-clock moment in the user's zone, with the same
+// over/underflow normalization (month − 1 === −1 → prev Dec; day − n <= 0 → prev month).
+const local = (year: number, month: number, day: number, hours = 0, minutes = 0, seconds = 0, ms = 0): number =>
+  new Date(year, month, day, hours, minutes, seconds, ms).getTime();
+
+// Every bound leaves here as a UTC instant — only *where* the user's day starts differs from UTC's.
+const iso = (ms: number): string => new Date(ms).toISOString();
 
 export function buildStatisticsWindows(now: Date = new Date()): StatisticsWindowsType {
-  const year = now.getUTCFullYear();
-  const month = now.getUTCMonth();
-  const day = now.getUTCDate();
+  const year = now.getFullYear();
+  const month = now.getMonth();
+  const day = now.getDate();
 
   // The upper bound of every "to-date" window (and the elapsed span the previous-period baselines are
-  // matched to) is the END of the current UTC day, not the exact instant. A raw `new Date()` upper bound
+  // matched to) is the END of the user's current day, not the exact instant. A raw `new Date()` upper bound
   // changes every request, so the backend statistics cache (keyed on the criteria, ToDate included) never
   // hits and every figure runs live. Rounding to day granularity keeps the key stable within the day so
   // the cache engages; since there are no future-dated orders, extending "now" to end-of-day never changes
   // a count.
-  const nowMs = Date.UTC(year, month, day, 23, 59, 59, 999);
-  const nowIso = new Date(nowMs).toISOString();
+  const nowMs = local(year, month, day, 23, 59, 59, 999);
+  const nowIso = iso(nowMs);
 
-  // Date.UTC normalizes over/underflow (month − 1 === −1 → prev Dec; day − n <= 0 → prev month).
-  const monthStart = Date.UTC(year, month, 1);
-  const prevMonthStart = Date.UTC(year, month - 1, 1);
-  const yearStart = Date.UTC(year, 0, 1);
-  const prevYearStart = Date.UTC(year - 1, 0, 1);
-  const todayStart = Date.UTC(year, month, day);
+  const monthStart = local(year, month, 1);
+  const prevMonthStart = local(year, month - 1, 1);
+  const yearStart = local(year, 0, 1);
+  const prevYearStart = local(year - 1, 0, 1);
+  const todayStart = local(year, month, day);
 
-  // Monday-start week: getUTCDay() is 0 (Sun)…6 (Sat); shift so Monday === 0.
-  const daysSinceMonday = (now.getUTCDay() + 6) % 7;
-  const weekStart = Date.UTC(year, month, day - daysSinceMonday);
-  const prevWeekStart = weekStart - 7 * DAY_MS;
+  // Monday-start week: getDay() is 0 (Sun)…6 (Sat); shift so Monday === 0.
+  const daysSinceMonday = (now.getDay() + 6) % 7;
+  const weekStart = local(year, month, day - daysSinceMonday);
+  // Calendar arithmetic rather than weekStart − 7×24h: a DST transition inside the week makes the elapsed
+  // millisecond span differ from seven days, which would land the bound an hour off midnight.
+  const prevWeekStart = local(year, month, day - daysSinceMonday - 7);
 
-  const iso = (ms: number): string => new Date(ms).toISOString();
   // Clamped to the previous period's own end, so a longer current elapsed span (e.g. 30 days into
   // March vs a 28-day Feb) can't spill past it and double count.
   const matched = (prevStart: number, currentStart: number): string =>
