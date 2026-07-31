@@ -8,9 +8,9 @@ const localIso = (year: number, month: number, day: number, h = 0, min = 0, s = 
   new Date(year, month, day, h, min, s, ms).toISOString();
 
 describe("buildStatisticsWindows", () => {
-  it("clamps the previous-month window to the current month start when the current month has run longer than the previous month", () => {
-    // Mar 31: ~30 days elapsed since Mar 1, but February is shorter — the elapsed-matched
-    // point (Feb 1 + 30d) would land in March and overlap the current MTD window.
+  it("clamps the previous-month window to the current month start when the day overflows the previous month", () => {
+    // Mar 31: "Feb 31" doesn't exist, so the matched position normalizes forward into March and would
+    // overlap the current MTD window.
     const now = new Date(2025, 2, 31, 12, 0, 0);
     const w = buildStatisticsWindows(now);
 
@@ -22,32 +22,26 @@ describe("buildStatisticsWindows", () => {
     expect(new Date(w.prevTo).getTime()).toBeLessThanOrEqual(new Date(w.mtdFrom).getTime());
   });
 
-  it("keeps the previous-month window elapsed-matched (no clamp) mid-month", () => {
-    // Mar 15: ~15 days into March (bound rounded to end of the local day); Feb 1 + that span = Feb 15,
-    // still inside February — no clamp.
+  it("matches the previous-month window to the same day of that month (no clamp) mid-month", () => {
+    // Mar 15 → the baseline runs Feb 1 through the end of Feb 15: equal spans, no overflow to clamp.
     const now = new Date(2025, 2, 15, 12, 0, 0);
     const w = buildStatisticsWindows(now);
 
     expect(w.prevFrom).toBe(localIso(2025, 1, 1));
-    // Elapsed-matched spans are millisecond arithmetic, so a DST transition between the two periods can
-    // shift the instant by an hour — the day it lands on is the contract, not the wall clock.
-    const prevTo = new Date(w.prevTo);
-    expect(prevTo.getMonth()).toBe(1);
-    expect(prevTo.getDate()).toBe(15);
-    expect(prevTo.getTime()).toBeLessThan(new Date(w.mtdFrom).getTime());
+    expect(w.prevTo).toBe(localIso(2025, 1, 15, 23, 59, 59, 999));
+    expect(new Date(w.prevTo).getTime()).toBeLessThan(new Date(w.mtdFrom).getTime());
   });
 
-  it("clamps the last-year window to the current year start on Dec 31 of a leap year", () => {
-    // 2024 is a leap year (366 days); 2023 is not. Elapsed since Jan 1 2024 (365d+) added to
-    // Jan 1 2023 would land in 2024 without the clamp.
+  it("keeps the last-year window inside the previous year on Dec 31 of a leap year", () => {
+    // 2024 is a leap year (366 days), 2023 is not — a day-count-based baseline would overshoot into 2024.
+    // The calendar move lands on the same month/day a year back, so it can't leave 2023 at all.
     const now = new Date(2024, 11, 31, 12, 0, 0);
     const w = buildStatisticsWindows(now);
 
     expect(w.ytdFrom).toBe(localIso(2024, 0, 1));
     expect(w.lastYearFrom).toBe(localIso(2023, 0, 1));
-    // Clamped to the year start (== ytdFrom).
-    expect(w.lastYearTo).toBe(localIso(2024, 0, 1));
-    expect(new Date(w.lastYearTo).getTime()).toBeLessThanOrEqual(new Date(w.ytdFrom).getTime());
+    expect(w.lastYearTo).toBe(localIso(2023, 11, 31, 23, 59, 59, 999));
+    expect(new Date(w.lastYearTo).getTime()).toBeLessThan(new Date(w.ytdFrom).getTime());
   });
 
   it("never clamps the weekly window (weeks are always 7 days)", () => {
@@ -57,8 +51,19 @@ describe("buildStatisticsWindows", () => {
     // Monday-start week, and the previous week starts exactly seven calendar days earlier.
     expect(w.weekFrom).toBe(localIso(2025, 2, 10));
     expect(w.prevWeekFrom).toBe(localIso(2025, 2, 3));
-    // The elapsed part of a week can't exceed a full previous week, so the previous-week end
-    // always stays strictly before the current week start.
+    // The baseline ends on the same weekday a week back, which is always at least a day before the
+    // current week starts.
+    expect(w.prevWeekTo).toBe(localIso(2025, 2, 5, 23, 59, 59, 999));
+    expect(new Date(w.prevWeekTo).getTime()).toBeLessThan(new Date(w.weekFrom).getTime());
+  });
+
+  it("keeps the weekly baseline clear of the week start on a DST fall-back Sunday", () => {
+    // Nov 2 2025 is the fall-back day in US zones, so the current week holds a 25-hour day. Projecting an
+    // elapsed millisecond span would overshoot seven days and collide the baseline end with weekFrom.
+    const w = buildStatisticsWindows(new Date(2025, 10, 2, 12, 0, 0));
+
+    expect(w.weekFrom).toBe(localIso(2025, 9, 27));
+    expect(w.prevWeekTo).toBe(localIso(2025, 9, 26, 23, 59, 59, 999));
     expect(new Date(w.prevWeekTo).getTime()).toBeLessThan(new Date(w.weekFrom).getTime());
   });
 
