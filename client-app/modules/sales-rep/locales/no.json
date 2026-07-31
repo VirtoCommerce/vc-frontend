@@ -65,7 +65,9 @@
           "ordered_this_month": "{count} bestilte denne måneden",
           "new_customers": "{count} nye kunder",
           "placed_today": "{count} lagt inn i dag",
-          "new_this_week": "{count} nye denne uken",
+          "items_unit": "vare | varer",
+          "not_for_checkout": "{count} ikke til kassen",
+          "items_this_week": "{count} vare denne uken | {count} varer denne uken",
           "mtd_of_ytd": "{percent}% av året"
         }
       }

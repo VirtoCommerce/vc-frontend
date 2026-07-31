@@ -981,12 +981,16 @@ export type CustomerCartStatisticsComparison = {
 export type CustomerCartStatisticsPeriod = {
   /** Average cart value in the range (amount, formatted amount and currency). */
   average: MoneyType;
-  /** Number of carts in the range (the primary widget metric, e.g. 'Active Projects'). */
+  /** Number of carts in the range. */
   count: Scalars['Int']['output'];
   /** Date of the most recent cart in the range. */
   lastCartDate?: Maybe<Scalars['DateTime']['output']>;
+  /** Summed quantity of the line items selected for checkout (the primary widget metric, e.g. 'Active carts · items'). Unlike the cart figures, the range bounds each LINE ITEM's modified date, so a cart created earlier still contributes the items touched inside the range. */
+  selectedItemQuantity: Scalars['Int']['output'];
   /** Sum of cart totals in the range (amount, formatted amount and currency). */
   total: MoneyType;
+  /** Summed quantity of the line items NOT selected for checkout, over the same line-item modified-date range as 'selectedItemQuantity'. */
+  unselectedItemQuantity: Scalars['Int']['output'];
   /** Non-null when the figures are partial because some carts were in an unconfigured currency and could not be converted; describes what was excluded. */
   warning?: Maybe<Scalars['String']['output']>;
 };

@@ -65,7 +65,9 @@
           "ordered_this_month": "本月 {count} 家下单",
           "new_customers": "{count} 个新客户",
           "placed_today": "今日 {count} 单",
-          "new_this_week": "本周新增 {count}",
+          "items_unit": "件商品",
+          "not_for_checkout": "{count} 件不结账",
+          "items_this_week": "本周 {count} 件商品",
           "mtd_of_ytd": "占年初至今 {percent}%"
         }
       }

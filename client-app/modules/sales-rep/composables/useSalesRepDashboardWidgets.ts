@@ -23,8 +23,12 @@ export function useSalesRepDashboardWidgets() {
 
     // Plain "new activity" counts (green, no icon) — a count, not a comparison.
     const placedToday = orders?.newOrdersToday;
-    const newCarts = carts?.newCartsThisWeek;
+    const weekItems = carts?.itemsThisWeek;
     const thisMonth = customerCounts?.thisMonth;
+
+    // The cart card counts ITEMS, not carts: quantities of the lines the customers picked for checkout, with the
+    // parked (not selected) quantity underneath.
+    const activeCarts = carts?.activeCarts;
 
     // Period-over-period comparisons on order count (tri-state; undefined when the previous period is zero).
     const weekDelta = formatSignedPercent(orders?.weekVsPrevWeek?.countChangePercent);
@@ -50,10 +54,14 @@ export function useSalesRepDashboardWidgets() {
         labelKey: "sales_rep.hub.dashboard.widgets.active_carts",
         icon: "cart",
         accent: "success",
-        value: formatStatCount(carts?.activeCarts?.count),
-        sub: carts?.activeCarts?.total.formattedAmount ?? "",
-        // "{n} new this week" — active carts created this week. Plain green count, no chevron.
-        delta: newCarts ? t("sales_rep.hub.dashboard.stats.new_this_week", { count: newCarts.count }) : "",
+        value: formatStatCount(activeCarts?.selectedItemQuantity),
+        // Plural forms ("item | items"): vue-i18n's count overload binds {count} and picks the form.
+        valueSuffix: activeCarts ? t("sales_rep.hub.dashboard.stats.items_unit", activeCarts.selectedItemQuantity) : "",
+        sub: activeCarts
+          ? t("sales_rep.hub.dashboard.stats.not_for_checkout", { count: activeCarts.unselectedItemQuantity })
+          : "",
+        // "{n} items this week" — the same selected-for-checkout quantity, but only the lines touched this week.
+        delta: weekItems ? t("sales_rep.hub.dashboard.stats.items_this_week", weekItems.selectedItemQuantity) : "",
         deltaTone: "positive",
       },
       {

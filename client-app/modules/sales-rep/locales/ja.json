@@ -65,7 +65,9 @@
           "ordered_this_month": "今月 {count} 件が注文",
           "new_customers": "新規顧客 {count} 件",
           "placed_today": "本日 {count} 件",
-          "new_this_week": "今週 新規 {count} 件",
+          "items_unit": "点",
+          "not_for_checkout": "{count} 点 レジ対象外",
+          "items_this_week": "今週 {count} 点",
           "mtd_of_ytd": "年初来の {percent}%"
         }
       }

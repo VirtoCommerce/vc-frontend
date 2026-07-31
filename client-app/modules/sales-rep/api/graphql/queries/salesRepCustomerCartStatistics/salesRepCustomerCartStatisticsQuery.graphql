@@ -16,13 +16,15 @@ query SalesRepCustomerCartStatistics(
     currencyCode
     activeCarts: period(filter: $cartFilter) {
       count
+      selectedItemQuantity
+      unselectedItemQuantity
       total {
         amount
         formattedAmount
       }
     }
-    newCartsThisWeek: period(from: $weekFrom, to: $weekTo, filter: $cartFilter) {
-      count
+    itemsThisWeek: period(from: $weekFrom, to: $weekTo, filter: $cartFilter) {
+      selectedItemQuantity
     }
   }
 }

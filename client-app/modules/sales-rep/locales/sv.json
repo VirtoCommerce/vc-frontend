@@ -65,7 +65,9 @@
           "ordered_this_month": "{count} beställde denna månad",
           "new_customers": "{count} nya kunder",
           "placed_today": "{count} lagda i dag",
-          "new_this_week": "{count} nya denna vecka",
+          "items_unit": "artikel | artiklar",
+          "not_for_checkout": "{count} inte till kassan",
+          "items_this_week": "{count} artikel denna vecka | {count} artiklar denna vecka",
           "mtd_of_ytd": "{percent}% av året"
         }
       }

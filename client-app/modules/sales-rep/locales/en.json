@@ -65,7 +65,9 @@
           "ordered_this_month": "{count} ordered this month",
           "new_customers": "{count} new customers",
           "placed_today": "{count} placed today",
-          "new_this_week": "{count} new this week",
+          "items_unit": "item | items",
+          "not_for_checkout": "{count} not for checkout",
+          "items_this_week": "{count} item this week | {count} items this week",
           "mtd_of_ytd": "{percent}% of YTD"
         }
       }

@@ -65,7 +65,9 @@
           "ordered_this_month": "{count} compraron este mes",
           "new_customers": "{count} clientes nuevos",
           "placed_today": "{count} realizados hoy",
-          "new_this_week": "{count} nuevos esta semana",
+          "items_unit": "artículo | artículos",
+          "not_for_checkout": "{count} fuera del pago",
+          "items_this_week": "{count} artículo esta semana | {count} artículos esta semana",
           "mtd_of_ytd": "{percent}% del año"
         }
       }

@@ -5,6 +5,7 @@
       :key="card.key"
       :label="t(card.labelKey)"
       :value="card.value"
+      :value-suffix="card.valueSuffix"
       :icon="card.icon"
       :accent="card.accent"
       :sub="card.sub"
