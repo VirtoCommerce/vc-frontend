@@ -12,7 +12,7 @@ route detection, degradation rules, unit tests.
 
 **Out of scope, deliberately:** server-side / edge emission of the markup (see §3), the
 backend `brandProfile` contract itself (§4 specifies it as a hand-off), and the adjacent
-defects catalogued in §10.
+pre-existing defects noted in §10.
 
 ## 2. Why the ticket exists (and what it does *not* do)
 
@@ -37,7 +37,7 @@ Priority should be set on "discoverability, cheap" — not on "unblocks conforma
 Documented up front because it bounds what the ticket can deliver.
 
 The storefront is a client-only SPA — `createHead()` from `@unhead/vue/client`
-(`client-app/app-runner.ts:176`), no SSR, no prerender, no HTML rewrite anywhere in the
+(`client-app/app-runner.ts`), no SSR, no prerender, no HTML rewrite anywhere in the
 serving path. Verified by probing the live QA host:
 
 ```
@@ -54,7 +54,7 @@ see this markup. Neither will social scrapers (Slack, LinkedIn, Facebook). It *i
 to Googlebot, to Rich Results Test, and to any JS-rendering checker.
 
 Build-time injection into `index.html` was considered and rejected: store resolution is
-per-hostname at runtime (`app-runner.ts:135-137`, `domain = globalThis.location.hostname`
+per-hostname at runtime (`app-runner.ts`, `domain = globalThis.location.hostname`
 → `getPageContext({ domain })`), so one bundle deliberately serves many brands. Baking one
 brand into the shell contradicts that.
 
@@ -173,7 +173,7 @@ nodes can reference it.
 **Mount point: `App.vue`.** Not `home.vue`. `/` has no dedicated route — it falls through
 `/:pathMatch(.*)*` to `pages/matcher/matcher.vue`, which picks by priority Builder.io (1) →
 Virto Pages CMS (2) → internal (3), and only the internal previewer maps `"/"` to
-`home.vue` (`pages/matcher/internal.vue:21`). If a CMS or Builder.io homepage exists,
+`home.vue` (`pages/matcher/internal.vue`). If a CMS or Builder.io homepage exists,
 `home.vue` never mounts and anything placed there is silently absent. `App.vue` is above
 that competition and already owns global head state.
 
@@ -181,8 +181,13 @@ that competition and already owns global head state.
 helper from `useLanguages()`:
 
 ```ts
-const isHomePage = computed(() => getUrlWithoutPossibleLocale(route.path) === "/");
+const isHomePage = computed(() => getUrlWithoutLocale(route.path) === "/");
 ```
+
+`getUrlWithoutLocale`, **not** the `...PossibleLocale` variant: the latter's regex matches any
+two-letter segment, so `/xy` would be treated as the homepage and publish Organization markup
+on a 404. `app-runner` uses the looser variant only because it runs before the store — and
+therefore the supported-language list — is available; `App.vue` has it.
 
 Per Google's guidance the markup belongs on the homepage or a single about page and should
 *not* be on every page — so gating is correct, not an optimisation.
@@ -239,15 +244,16 @@ useful and risks polluting entity resolution.
 
 ### 9.1 Existing state
 
-Three facts from the audit in [`findings.md`](./findings.md) bear on this design:
+Three facts bear on this design (verified on `dev` @ `a1e3cd1a4`; re-check before relying on
+them, deliberately stated without line references so they cannot silently rot):
 
-1. OG tags are already emitted in seven places, each a page-local `useSeoMeta` copy with no
-   shared owner. So there is no existing seam to extend.
-2. `ogSiteName` occurs nowhere in the codebase (0 matches).
-3. `builder-io.vue` and `vp-markdown.vue` set title and description only — **no OG tags at
-   all** — and they are previewer priorities 1 and 2 for `/`. So a Builder.io or Virto Pages
-   homepage today publishes zero Open Graph tags. That is the case the ticket's item 3 is
-   really about, and it is not fixable without touching those pages.
+1. OG tags are already emitted by several individual pages, each a page-local `useSeoMeta`
+   block with no shared owner. There is no existing seam to extend.
+2. `ogSiteName` occurs nowhere in the codebase.
+3. The Builder.io and Virto Pages previewers set title and description only — **no OG tags
+   at all** — and they outrank the internal previewer for `/`. So a CMS homepage today
+   publishes zero Open Graph tags. That is the case the ticket's item 3 is really about, and
+   it is not fixable without touching those previewer pages.
 
 ### 9.2 What this composable owns
 
@@ -260,9 +266,9 @@ Given the above, the only thing that can be added safely without touching seven 
 | `og:image` (site default) | this composable, homepage only, **Phase 2** (`brandProfile.shareImageUrl`) | unhead dedupes meta by `property`, so a page setting its own `og:image` still wins |
 
 `og:title` / `og:description` / `og:url` / `og:type` are **left with the pages**. Not because
-that is a good design — it is not — but because centralising them means editing seven call
-sites with seven different data sources and gating conventions. That is a refactor, and
-`findings.md` proposes it as its own ticket.
+that is a good design — it is not — but because centralising them means editing every page
+emitter, each with its own data source and gating convention. That is a refactor with its own
+ticket, not part of this one.
 
 Phase 1 therefore adds only `og:site_name` (from `store.storeName`). **No `og:image` in
 Phase 1** — the only available image is the logo, whose aspect ratio is wrong for a 1200×630
@@ -278,11 +284,12 @@ reason for the mount point, and it is why the JSON-LD does not inherit the same 
 
 ## 10. Adjacent defects
 
-Eight pre-existing defects surfaced while surveying the head/SEO code. None is fixed here
-and none affects this design; they are recorded with file/line and evidence in
-[`findings.md`](./findings.md) so they can be filed as tickets.
+Several pre-existing head/SEO defects surfaced while surveying. None is fixed here and none
+affects this design, so they are **not catalogued in this repo** — a point-in-time audit with
+file/line references would be stale within a commit or two and would read as current. They
+were handed over for ticketing instead.
 
-One is worth naming here because it interacts with §8: `index.html:32` ships
+One is worth naming because it interacts with §8: `index.html` ships
 `<meta name="robots" content="noindex">` to every environment, which conflicts with Google's
 requirement that the `logo` image be crawlable and indexable.
 
@@ -296,7 +303,8 @@ Unit tests via vitest, no DOM assertions:
   filtered; duplicate `sameAs` → de-duplicated.
 - `useBrandProfile` logo precedence, with `isOrganizationLogoUploaded: true` asserting the
   org logo is **not** used.
-- Homepage detection: `/`, `/fr`, `/fr/`, `/catalog`, `/fr/catalog`.
+- Homepage detection: `/`, `/fr`, `/fr/`, `/catalog`, `/fr/catalog`, **and `/xy`** — an
+  arbitrary two-letter path that is *not* a supported locale must not count as the homepage.
 
 Deliberately no `document.querySelector` assertions on injected tags — jsdom state leaks
 across tests within a file and such assertions can pass against a node left by an earlier
