@@ -4,10 +4,17 @@ import { globals, setGlobals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { useStaticPage } from "@/shared/static-content";
 import { templateBlocks } from "@/shared/static-content/components";
+import { addBuilderMessageListener, createPreviewLoadedNotifier } from "./builder-preview.protocol";
 import PreviewPage from "./components/preview-page.vue";
 import ScrollToElement from "./components/scroll-to-element.vue";
+import {
+  LINKED_COMPONENT_END_ANCHOR_ID,
+  LinkedComponentOverlay,
+  normalizeLinkedComponentBoundaries,
+} from "./linked-component-overlay";
 import { getRegisteredComponents } from "./register-components";
 import { getBuilderOrigin, getPreviewCultureName, getPreviewPageId } from "./utils";
+import type { TransferDataType } from "./builder-preview.protocol";
 import type { PageBuilderPluginOptionsType } from "./models/PageBuilderPluginOptionsType";
 import type { IThemeConfig } from "@/core/types";
 import type { IPageContent, IPageTemplate } from "@/shared/static-content/types";
@@ -18,20 +25,6 @@ import StaticPage from "@/pages/static-page.vue";
 templateBlocks["scroll-to"] = ScrollToElement;
 
 const { staticPagePreview } = useStaticPage();
-
-declare type TransferDataType = {
-  template: IPageTemplate;
-  model: IPageContent;
-  templateKey?: string;
-  source?: string;
-  type?: string;
-  sectionId?: string;
-  url?: string;
-  settings?: IThemeConfig;
-  token?: { access_token?: string } | null;
-  userId?: string | null;
-  cultureName?: string;
-};
 
 // Switch the storefront preview to the edited page's language without touching the URL (VCST-5219).
 // The designer preview runs on a fixed `/designer-preview` route (vue-router base ""), so we must not
@@ -67,17 +60,23 @@ function scrollToSection(sectionId: string) {
   });
 }
 
-async function updatePreview(data: TransferDataType, options: { router: Router }) {
+async function updatePreview(
+  data: TransferDataType,
+  options: { router: Router },
+  linkedComponentOverlay: LinkedComponentOverlay | null,
+) {
   const template = data.template;
-  if (data.model) {
-    template.content.push(data.model);
+  if (!template) {
+    return;
   }
 
+  const content = data.model ? [...template.content, data.model] : template.content;
   const newTemplate = { ...template, content: <IPageContent[]>[] };
 
-  template.content.forEach((block: IPageContent) => {
+  content.forEach((block: IPageContent) => {
     newTemplate.content.push({ type: "scroll-to", id: "__scroll__" + block.id }, block);
   });
+  newTemplate.content.push({ type: "scroll-to", id: `__scroll__${LINKED_COMPONENT_END_ANCHOR_ID}` });
 
   if (!data.templateKey) {
     if (templateUrl) {
@@ -88,6 +87,11 @@ async function updatePreview(data: TransferDataType, options: { router: Router }
     await options.router.push(templateUrl);
   }
   templateUrl = undefined;
+
+  linkedComponentOverlay?.update(
+    content.map((block) => block.id),
+    normalizeLinkedComponentBoundaries(data.linkedComponentBoundaries),
+  );
 
   // Remember the initially selected section for scroll restoration after auth changes
   if (data.sectionId) {
@@ -202,34 +206,56 @@ function modifyRequests() {
 /** Largest value a CSS `z-index` accepts (2^31 - 1) — keeps the blocker above every storefront element. */
 const MAX_Z_INDEX = 2147483647;
 
-function createOverlay() {
+function createOverlay(builderOrigin: string): {
+  bodyEl: HTMLElement | null;
+  linkedComponentOverlay: LinkedComponentOverlay | null;
+} {
   const bodyEl = document.getElementsByTagName("body").item(0);
 
-  if (bodyEl) {
-    bodyEl.style.visibility = "hidden";
-    bodyEl.style.position = "relative";
-    const interactiveBlocker = document.createElement("div");
-    // Cover the whole viewport and sit above every storefront element (sticky header, language
-    // selector, etc.) so no in-preview interaction is possible inside the designer. This is what
-    // prevents the user from switching the storefront language and hitting the `/fr/designer-preview`
-    // 404 — the preview simply follows the edited page's language instead (VCST-5219).
-    interactiveBlocker.style.position = "fixed";
-    interactiveBlocker.style.inset = "0";
-    interactiveBlocker.style.zIndex = String(MAX_Z_INDEX);
-    interactiveBlocker.style.background = "transparent";
-    interactiveBlocker.style.pointerEvents = "auto";
-    bodyEl.appendChild(interactiveBlocker);
+  if (!bodyEl) {
+    return { bodyEl: null, linkedComponentOverlay: null };
   }
 
-  return bodyEl;
+  bodyEl.style.visibility = "hidden";
+  bodyEl.style.position = "relative";
+  const interactiveBlocker = document.createElement("div");
+  // Cover the whole viewport and sit above every storefront element (sticky header, language
+  // selector, etc.) so no in-preview interaction is possible inside the designer. This is what
+  // prevents the user from switching the storefront language and hitting the `/fr/designer-preview`
+  // 404 — the preview simply follows the edited page's language instead (VCST-5219).
+  interactiveBlocker.style.position = "fixed";
+  interactiveBlocker.style.inset = "0";
+  interactiveBlocker.style.zIndex = String(MAX_Z_INDEX);
+  interactiveBlocker.style.background = "transparent";
+  interactiveBlocker.style.pointerEvents = "auto";
+  bodyEl.appendChild(interactiveBlocker);
+
+  const postSectionMessage = (type: "select" | "hover", sectionId: string | null) => {
+    window.parent.postMessage({ source: "preview", type, data: { sectionId } }, builderOrigin);
+  };
+  const linkedComponentOverlay = new LinkedComponentOverlay(
+    bodyEl,
+    interactiveBlocker,
+    (placementId) => postSectionMessage("select", placementId),
+    (placementId) => postSectionMessage("hover", placementId),
+  );
+
+  return { bodyEl, linkedComponentOverlay };
 }
 
 async function handleMessage(
   app: App,
   options: PageBuilderPluginOptionsType,
   bodyEl: HTMLElement | null,
+  linkedComponentOverlay: LinkedComponentOverlay | null,
+  loadedNotifier: ReturnType<typeof createPreviewLoadedNotifier>,
   data: TransferDataType,
 ) {
+  if (data.type === "connect") {
+    loadedNotifier.announce();
+    return;
+  }
+
   // Render the preview in the edited page's language before it becomes visible (VCST-5219),
   // so a non-default-language page never flashes in the store default language.
   await applyPreviewLocale(data.cultureName);
@@ -247,15 +273,19 @@ async function handleMessage(
     case "page":
     case "swap":
     case "preview":
-      await updatePreview(data, options);
+      await updatePreview(data, options, linkedComponentOverlay);
       break;
 
     case "hover":
-      // ignore now
+      linkedComponentOverlay?.highlight(data.sectionId ?? null);
       break;
     case "select":
-      initialSectionId = data.sectionId;
-      scrollToSection(data.sectionId!);
+      if (data.sectionId) {
+        initialSectionId = data.sectionId;
+        if (!linkedComponentOverlay?.scrollToPlacement(data.sectionId)) {
+          scrollToSection(data.sectionId);
+        }
+      }
       break;
     case "navigate": {
       // we will know about template it or not in the next message
@@ -263,7 +293,9 @@ async function handleMessage(
       break;
     }
     case "settings":
-      updateSettings(app, data.settings!);
+      if (data.settings) {
+        updateSettings(app, data.settings);
+      }
       break;
     case "auth": {
       previewToken = data.token?.access_token || null;
@@ -274,6 +306,7 @@ async function handleMessage(
       // Force remount of all blocks with new token and restore scroll afterward
       pendingScrollRestore = true;
       staticPagePreview.value = undefined;
+      linkedComponentOverlay?.update([], []);
       break;
     }
     default:
@@ -281,21 +314,22 @@ async function handleMessage(
   }
 }
 
-function handleMessages(app: App, options: PageBuilderPluginOptionsType, bodyEl: HTMLElement | null) {
-  const builderOrigin = getBuilderOrigin();
-
+function handleMessages(
+  app: App,
+  options: PageBuilderPluginOptionsType,
+  builderOrigin: string,
+  bodyEl: HTMLElement | null,
+  linkedComponentOverlay: LinkedComponentOverlay | null,
+  loadedNotifier: ReturnType<typeof createPreviewLoadedNotifier>,
+) {
   // Builder messages arrive as independent tasks, and each handler awaits (locale switch, router
   // navigation), so unqueued handlers would interleave: an older message could apply its template
   // after a newer one. Chaining them keeps preview state in the order the builder sent it.
   let messageQueue: Promise<void> = Promise.resolve();
 
-  window.addEventListener("message", (event: MessageEvent<TransferDataType>) => {
-    if (event.origin !== builderOrigin || event.data.source !== "builder") {
-      return;
-    }
-
+  return addBuilderMessageListener(window, builderOrigin, window.parent, (data) => {
     messageQueue = messageQueue.then(() =>
-      handleMessage(app, options, bodyEl, event.data).catch((error: unknown) => {
+      handleMessage(app, options, bodyEl, linkedComponentOverlay, loadedNotifier, data).catch((error: unknown) => {
         // Never break the chain: a failed message must not stall every following one.
         Logger.error("Failed to handle the builder preview message", error);
       }),
@@ -339,11 +373,12 @@ export default {
     modifyRoutes(options.router, builderOrigin ? "designer" : "preview");
 
     if (builderOrigin) {
-      const bodyEl = createOverlay();
-      handleMessages(app, options, bodyEl);
+      const loadedNotifier = createPreviewLoadedNotifier(window.parent, builderOrigin);
+      const { bodyEl, linkedComponentOverlay } = createOverlay(builderOrigin);
+      handleMessages(app, options, builderOrigin, bodyEl, linkedComponentOverlay, loadedNotifier);
 
       const customComponents = await getRegisteredComponents();
-      window.parent.postMessage({ source: "preview", type: "loaded", data: customComponents }, builderOrigin);
+      loadedNotifier.setData(customComponents);
       await options.router.push("/designer-preview");
     } else {
       // Preserve both pageId and cultureName so a refreshed or shared standalone-preview URL keeps
