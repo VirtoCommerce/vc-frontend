@@ -18,8 +18,8 @@ const SCHEMA_ORG_CONTEXT = "https://schema.org";
 const ORGANIZATION_TYPE = "OnlineStore";
 
 function nonBlank(value?: string): string | undefined {
-  const trimmed = value?.trim();
-  return trimmed ? trimmed : undefined;
+  // `||` not `??`: an empty string must collapse to undefined too.
+  return value?.trim() || undefined;
 }
 
 /**

@@ -112,18 +112,14 @@ describe("useBrandProfile", () => {
     expect(useBrandProfile().organizationFacts.value.url).toBe("https://store.example.com/");
   });
 
-  it("ignores a root-relative store url rather than resolving it against the browsing origin", () => {
-    mockContext({ storeUrl: "/shop" });
-    expect(useBrandProfile().organizationFacts.value.url).toBe("https://store.example.com/");
-  });
-
-  it("ignores a bare-path store url", () => {
-    mockContext({ storeUrl: "shop" });
-    expect(useBrandProfile().organizationFacts.value.url).toBe("https://store.example.com/");
-  });
-
-  it("ignores a non-http store url", () => {
-    mockContext({ storeUrl: "javascript:alert(1)" });
+  // Anything not already http(s) is rejected, never resolved against the browsing origin —
+  // resolving would publish the visitor's host as the brand's canonical url.
+  it.each([
+    ["root-relative", "/shop"],
+    ["bare path", "shop"],
+    ["non-http scheme", "javascript:alert(1)"],
+  ])("falls back to the origin for a %s store url", (_label, storeUrl) => {
+    mockContext({ storeUrl });
     expect(useBrandProfile().organizationFacts.value.url).toBe("https://store.example.com/");
   });
 

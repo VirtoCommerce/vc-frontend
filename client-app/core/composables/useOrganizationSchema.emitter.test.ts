@@ -65,29 +65,17 @@ describe("useOrganizationSchema", () => {
     });
   });
 
-  it("emits nothing on a non-homepage route", () => {
-    routePath.value = "/catalog";
-    expect(setup()()).toEqual([]);
-  });
-
-  it("emits on a locale-prefixed homepage", () => {
-    routePath.value = "/fr";
-    expect(setup()()).toHaveLength(1);
-  });
-
-  it("emits on a locale-prefixed homepage with a trailing slash", () => {
-    routePath.value = "/fr/";
-    expect(setup()()).toHaveLength(1);
-  });
-
-  it("emits nothing on a locale-prefixed inner page", () => {
-    routePath.value = "/fr/catalog";
-    expect(setup()()).toEqual([]);
-  });
-
-  it("emits nothing for a two-letter path that is not a supported locale", () => {
-    routePath.value = "/xy";
-    expect(setup()()).toEqual([]);
+  // "/xy" must NOT count: only locales the store actually supports are stripped.
+  it.each([
+    ["/", 1],
+    ["/fr", 1],
+    ["/fr/", 1],
+    ["/catalog", 0],
+    ["/fr/catalog", 0],
+    ["/xy", 0],
+  ])("route %s emits %i node(s)", (path: string, expected: number) => {
+    routePath.value = path;
+    expect(setup()()).toHaveLength(expected);
   });
 
   it("emits nothing when the store name is unavailable, even on the homepage", () => {
