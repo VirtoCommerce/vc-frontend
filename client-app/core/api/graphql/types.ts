@@ -972,10 +972,18 @@ export type CustomerCartStatisticsComparison = {
   countChange: Scalars['Int']['output'];
   /** Percentage change of count; null when the previous count is zero. */
   countChangePercent?: Maybe<Scalars['Decimal']['output']>;
+  /** Current selected-for-checkout quantity minus the previous one (e.g. this week's items against the lifetime figure). */
+  selectedItemQuantityChange: Scalars['Int']['output'];
+  /** Percentage change of the selected-for-checkout quantity; null when the previous quantity is zero. */
+  selectedItemQuantityChangePercent?: Maybe<Scalars['Decimal']['output']>;
   /** Current total minus previous total (amount, formatted amount and currency). */
   totalChange: MoneyType;
   /** Percentage change of total; null when the previous total is zero. */
   totalChangePercent?: Maybe<Scalars['Decimal']['output']>;
+  /** Current not-selected-for-checkout quantity minus the previous one. */
+  unselectedItemQuantityChange: Scalars['Int']['output'];
+  /** Percentage change of the not-selected-for-checkout quantity; null when the previous quantity is zero. */
+  unselectedItemQuantityChangePercent?: Maybe<Scalars['Decimal']['output']>;
 };
 
 export type CustomerCartStatisticsPeriod = {
