@@ -1016,10 +1016,17 @@
         "clipboard_success": "リンクをコピーしました",
         "share_customers_label": "顧客",
         "share_customers_placeholder": "顧客を選択",
+        "share_replace_hint": "以前に選択した顧客はこのリストにアクセスできなくなります。",
         "share_message_label": "メッセージ",
         "share_message_placeholder": "任意のメッセージを入力",
-        "share_success": "選択した顧客とリストを共有しました。",
+        "share_channels_label": "送信方法",
+        "share_email_label": "メール",
+        "share_push_label": "プッシュ通知",
+        "share_default_title": "営業担当者からの新しいリスト",
+        "share_default_message": "こんにちは。リスト「{listName}」をあなたの組織と共有しました。ぜひご覧ください：",
+        "share_success": "リストを顧客と共有しました。",
         "share_partial": "リストを共有しましたが、一部の通知を配信できませんでした。",
+        "share_notify_error": "リストは保存されましたが、顧客に通知できませんでした。",
         "save_error": "リストを保存できませんでした。もう一度お試しください。"
       },
       "delete_wishlist_modal": {
@@ -1037,7 +1044,8 @@
       "status": {
         "shared": "Shared",
         "private": "Private",
-        "shared_with_me": "共有"
+        "shared_with_me": "共有",
+        "shared_with_customer": "顧客と共有"
       }
     },
     "sorting": {

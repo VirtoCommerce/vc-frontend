@@ -1016,10 +1016,17 @@
         "clipboard_success": "Linkki kopioitu",
         "share_customers_label": "Asiakas",
         "share_customers_placeholder": "Valitse asiakas",
+        "share_replace_hint": "Aiemmin valittu asiakas menettää oikeuden tähän listaan.",
         "share_message_label": "Viesti",
         "share_message_placeholder": "Valinnainen viesti",
-        "share_success": "Lista jaettu valituille asiakkaille.",
-        "share_partial": "Lista jaettu, mutta joitakin ilmoituksia ei voitu toimittaa.",
+        "share_channels_label": "Lähetystapa",
+        "share_email_label": "Sähköposti",
+        "share_push_label": "Push-ilmoitus",
+        "share_default_title": "Uusi lista myyntiedustajaltasi",
+        "share_default_message": "Hei! Jaoin juuri listan ”{listName}” organisaatiollesi. Katso se täältä:",
+        "share_success": "Lista jaettiin asiakkaalle.",
+        "share_partial": "Lista jaettiin, mutta kaikkia ilmoituksia ei toimitettu.",
+        "share_notify_error": "Lista tallennettiin, mutta asiakkaalle ei voitu ilmoittaa.",
         "save_error": "Listaa ei voitu tallentaa. Yritä uudelleen."
       },
       "delete_wishlist_modal": {
@@ -1037,7 +1044,8 @@
       "status": {
         "shared": "Jaettu",
         "private": "Yksityinen",
-        "shared_with_me": "Jaettu kanssani"
+        "shared_with_me": "Jaettu kanssani",
+        "shared_with_customer": "Jaettu asiakkaalle"
       }
     },
     "sorting": {

@@ -1,12 +1,12 @@
 import { useQuery } from "@vue/apollo-composable";
-import { computed } from "vue";
+import { computed, watch } from "vue";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { SalesRepCustomersDocument } from "../api/graphql/types";
 import type { Ref } from "vue";
 
 // Upper bound of customer organizations offered in the share picker. The picker filters client-side (VcSelect
-// autocomplete), so a rep with more served customers than this would not see the overflow — logged below.
+// autocomplete), so a rep serving more customers than this cannot reach the overflow — see the warning below.
 const OPTIONS_LIMIT = 100;
 
 export type SalesRepCustomerOptionType = { organizationId: string; organizationName: string };
@@ -38,6 +38,16 @@ export function useSalesRepCustomerOptions(enabled?: Ref<boolean> | boolean) {
   );
 
   const totalCount = computed(() => result.value?.salesRepCustomers?.totalCount ?? 0);
+
+  // Client-side filtering silently hides everything past OPTIONS_LIMIT, which would look like a missing customer
+  // rather than a truncated list. Surface it until the picker moves to server-side keyword search.
+  watch(totalCount, (count) => {
+    if (count > OPTIONS_LIMIT) {
+      Logger.warn(
+        `[sales-rep] share picker lists only ${OPTIONS_LIMIT} of ${count} served customers; the rest are unreachable.`,
+      );
+    }
+  });
 
   return { options, totalCount, loading };
 }

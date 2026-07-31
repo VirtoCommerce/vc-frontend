@@ -1016,10 +1016,17 @@
         "clipboard_success": "Lien copié",
         "share_customers_label": "Client",
         "share_customers_placeholder": "Sélectionner un client",
+        "share_replace_hint": "Le client précédemment sélectionné perdra l'accès à cette liste.",
         "share_message_label": "Message",
         "share_message_placeholder": "Message facultatif à inclure",
-        "share_success": "Liste partagée avec les clients sélectionnés.",
-        "share_partial": "Liste partagée, mais certaines notifications n'ont pas pu être délivrées.",
+        "share_channels_label": "Envoyer par",
+        "share_email_label": "E-mail",
+        "share_push_label": "Notification push",
+        "share_default_title": "Une nouvelle liste de votre commercial",
+        "share_default_message": "Bonjour ! Je viens de partager la liste « {listName} » avec votre organisation. Découvrez-la :",
+        "share_success": "Liste partagée avec le client.",
+        "share_partial": "Liste partagée, mais toutes les notifications n'ont pas été délivrées.",
+        "share_notify_error": "La liste a été enregistrée, mais le client n'a pas pu être notifié.",
         "save_error": "La liste n'a pas pu être enregistrée. Veuillez réessayer."
       },
       "delete_wishlist_modal": {
@@ -1037,7 +1044,8 @@
       "status": {
         "shared": "Partagé",
         "private": "Privé",
-        "shared_with_me": "Partagés avec moi"
+        "shared_with_me": "Partagés avec moi",
+        "shared_with_customer": "Partagé avec le client"
       }
     },
     "sorting": {

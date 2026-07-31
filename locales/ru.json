@@ -1016,10 +1016,17 @@
         "clipboard_success": "Ссылка скопирована",
         "share_customers_label": "Клиент",
         "share_customers_placeholder": "Выберите клиента",
+        "share_replace_hint": "Ранее выбранный клиент потеряет доступ к этому списку.",
         "share_message_label": "Сообщение",
         "share_message_placeholder": "Необязательное сообщение",
-        "share_success": "Список отправлен выбранным клиентам.",
-        "share_partial": "Список отправлен, но некоторые уведомления не удалось доставить.",
+        "share_channels_label": "Отправить через",
+        "share_email_label": "Эл. почта",
+        "share_push_label": "Push-уведомление",
+        "share_default_title": "Новый список от вашего торгового представителя",
+        "share_default_message": "Здравствуйте! Я поделился с вашей организацией списком «{listName}». Посмотрите:",
+        "share_success": "Список отправлен клиенту.",
+        "share_partial": "Список отправлен, но не все уведомления доставлены.",
+        "share_notify_error": "Список сохранён, но уведомить клиента не удалось.",
         "save_error": "Не удалось сохранить список. Пожалуйста, попробуйте снова."
       },
       "delete_wishlist_modal": {
@@ -1037,7 +1044,8 @@
       "status": {
         "shared": "Общий",
         "private": "Приватный",
-        "shared_with_me": "Со мной поделились"
+        "shared_with_me": "Со мной поделились",
+        "shared_with_customer": "Отправлен клиенту"
       }
     },
     "sorting": {

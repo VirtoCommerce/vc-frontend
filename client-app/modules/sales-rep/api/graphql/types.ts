@@ -15,7 +15,6 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
-  AnyValue: { input: any; output: any; }
   DateTime: { input: any; output: any; }
   Decimal: { input: number; output: number; }
 };
@@ -141,42 +140,6 @@ export type CustomerOrderStatisticsPeriod = {
   warning?: Maybe<Scalars['String']['output']>;
 };
 
-export type InputSalesRepLayout = {
-  /** Top-level fixed regions with their blocks. */
-  regions: Array<InputSalesRepLayoutRegion>;
-  /** Document schema version. */
-  schemaVersion: Scalars['Int']['input'];
-  /** Layout surface identifier (e.g. "dashboard", "customerProfile"). */
-  scope: Scalars['String']['input'];
-  /** Optional store to scope the layout to. */
-  storeId?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type InputSalesRepLayoutBlock = {
-  /** Whether the block is parked in the hidden tray. */
-  hidden: Scalars['Boolean']['input'];
-  /** Instance id (frontend-generated, stable across saves, unique within the layout). */
-  id: Scalars['String']['input'];
-  /** Block-type-specific settings (send an empty list for none). */
-  settings: Array<InputSalesRepLayoutSetting>;
-  /** Block type discriminator (frontend-owned vocabulary). */
-  type: Scalars['String']['input'];
-};
-
-export type InputSalesRepLayoutRegion = {
-  /** Blocks in render order (array position is the order). */
-  blocks: Array<InputSalesRepLayoutBlock>;
-  /** Fixed region id (e.g. "statistics", "mainLeft", "mainRight"). */
-  id: Scalars['String']['input'];
-};
-
-export type InputSalesRepLayoutSetting = {
-  /** Setting key (block-type-specific, frontend-owned vocabulary). */
-  key: Scalars['String']['input'];
-  /** Scalar setting value (string, number, boolean). */
-  value?: InputMaybe<Scalars['AnyValue']['input']>;
-};
-
 export type InputSendCustomerCommunicationType = {
   /** Optional culture for localizing the email template (e.g. "en-US"). */
   cultureName?: InputMaybe<Scalars['String']['input']>;
@@ -212,13 +175,7 @@ export type MoneyType = {
 };
 
 export type Mutations = {
-  saveSalesRepLayout?: Maybe<SalesRepLayout>;
   sendCustomerCommunication?: Maybe<SalesRepCommunicationResult>;
-};
-
-
-export type MutationsSaveSalesRepLayoutArgs = {
-  command: InputSalesRepLayout;
 };
 
 
@@ -248,7 +205,6 @@ export type Query = {
   salesRepCustomerOrderStatistics?: Maybe<CustomerOrderStatistics>;
   salesRepCustomerSortRules?: Maybe<Array<Maybe<SalesRepCustomerSortRule>>>;
   salesRepCustomers?: Maybe<SalesRepCustomerConnection>;
-  salesRepLayout?: Maybe<SalesRepLayout>;
   salesRepOrderFilterRules?: Maybe<Array<Maybe<SalesRepOrderFilterRule>>>;
   salesRepOrderSortRules?: Maybe<Array<Maybe<SalesRepOrderSortRule>>>;
   salesRepOrders?: Maybe<SalesRepOrderConnection>;
@@ -319,12 +275,6 @@ export type QuerySalesRepCustomersArgs = {
   first?: InputMaybe<Scalars['Int']['input']>;
   keyword?: InputMaybe<Scalars['String']['input']>;
   sort?: InputMaybe<Scalars['String']['input']>;
-  storeId?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-export type QuerySalesRepLayoutArgs = {
-  scope: Scalars['String']['input'];
   storeId?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -605,40 +555,6 @@ export type SalesRepCustomerSortRule = {
   name: Scalars['String']['output'];
   /** Whether the client may choose the direction (e.g. 'name:desc'); false = a ':asc'/':desc' opposite of the default is rejected. */
   supportsDirection: Scalars['Boolean']['output'];
-};
-
-export type SalesRepLayout = {
-  /** When the layout was last saved (UTC). */
-  modifiedDate?: Maybe<Scalars['DateTime']['output']>;
-  /** Top-level fixed regions. */
-  regions: Array<SalesRepLayoutRegion>;
-  /** Document schema version, for frontend migration of older saved layouts. */
-  schemaVersion: Scalars['Int']['output'];
-};
-
-export type SalesRepLayoutBlock = {
-  /** Whether the block is parked in the hidden tray. */
-  hidden: Scalars['Boolean']['output'];
-  /** Instance id (frontend-generated, stable across saves, unique within the layout). */
-  id: Scalars['String']['output'];
-  /** Block-type-specific settings (may be empty). */
-  settings: Array<SalesRepLayoutSetting>;
-  /** Block type discriminator (frontend-owned vocabulary). */
-  type: Scalars['String']['output'];
-};
-
-export type SalesRepLayoutRegion = {
-  /** Blocks in render order (array position is the order). */
-  blocks: Array<SalesRepLayoutBlock>;
-  /** Fixed region id (e.g. "statistics", "mainLeft", "mainRight"). */
-  id: Scalars['String']['output'];
-};
-
-export type SalesRepLayoutSetting = {
-  /** Setting key (block-type-specific, frontend-owned vocabulary). */
-  key: Scalars['String']['output'];
-  /** Scalar setting value (string, number, boolean). */
-  value?: Maybe<Scalars['AnyValue']['output']>;
 };
 
 export type SalesRepOrder = {

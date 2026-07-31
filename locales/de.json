@@ -1016,10 +1016,17 @@
         "clipboard_success": "Link kopiert",
         "share_customers_label": "Kunde",
         "share_customers_placeholder": "Kunde auswählen",
+        "share_replace_hint": "Der zuvor ausgewählte Kunde verliert den Zugriff auf diese Liste.",
         "share_message_label": "Nachricht",
         "share_message_placeholder": "Optionale Nachricht hinzufügen",
-        "share_success": "Liste für die ausgewählten Kunden freigegeben.",
-        "share_partial": "Liste freigegeben, einige Benachrichtigungen konnten jedoch nicht zugestellt werden.",
+        "share_channels_label": "Senden über",
+        "share_email_label": "E-Mail",
+        "share_push_label": "Push-Benachrichtigung",
+        "share_default_title": "Eine neue Liste von Ihrem Vertriebsmitarbeiter",
+        "share_default_message": "Hallo! Ich habe die Liste „{listName}“ gerade für Ihre Organisation freigegeben. Schauen Sie sie sich an:",
+        "share_success": "Liste für den Kunden freigegeben.",
+        "share_partial": "Liste freigegeben, aber nicht alle Benachrichtigungen wurden zugestellt.",
+        "share_notify_error": "Die Liste wurde gespeichert, der Kunde konnte jedoch nicht benachrichtigt werden.",
         "save_error": "Die Liste konnte nicht gespeichert werden. Bitte versuchen Sie es erneut."
       },
       "delete_wishlist_modal": {
@@ -1037,7 +1044,8 @@
       "status": {
         "shared": "Geteilt",
         "private": "Privat",
-        "shared_with_me": "Mit mir geteilt"
+        "shared_with_me": "Mit mir geteilt",
+        "shared_with_customer": "Mit Kunde geteilt"
       }
     },
     "sorting": {

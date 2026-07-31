@@ -1016,10 +1016,17 @@
         "clipboard_success": "Lenke kopiert",
         "share_customers_label": "Kunde",
         "share_customers_placeholder": "Velg kunde",
+        "share_replace_hint": "Kunden som ble valgt tidligere, mister tilgangen til denne listen.",
         "share_message_label": "Melding",
         "share_message_placeholder": "Valgfri melding",
-        "share_success": "Listen ble delt med de valgte kundene.",
-        "share_partial": "Listen ble delt, men noen varsler kunne ikke leveres.",
+        "share_channels_label": "Send via",
+        "share_email_label": "E-post",
+        "share_push_label": "Push-varsel",
+        "share_default_title": "En ny liste fra din salgsrepresentant",
+        "share_default_message": "Hei! Jeg har nettopp delt listen «{listName}» med organisasjonen din. Ta en titt:",
+        "share_success": "Listen er delt med kunden.",
+        "share_partial": "Listen er delt, men ikke alle varsler ble levert.",
+        "share_notify_error": "Listen ble lagret, men kunden kunne ikke varsles.",
         "save_error": "Listen kunne ikke lagres. Prøv igjen."
       },
       "delete_wishlist_modal": {
@@ -1037,7 +1044,8 @@
       "status": {
         "shared": "Delt",
         "private": "Privat",
-        "shared_with_me": "Delt med meg"
+        "shared_with_me": "Delt med meg",
+        "shared_with_customer": "Delt med kunde"
       }
     },
     "sorting": {
