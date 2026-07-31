@@ -53,8 +53,14 @@
 
   @each $color, $shade in $solid-hover {
     &--solid--#{$color}:hover:not(#{$loading}, #{$disabled}) {
-      --bg-color: var(--color-#{$color}-#{$shade});
-      --border-color: var(--color-#{$color}-#{$shade});
+      // Darken the rest colour. Fallback stays the `$solid-hover` shade: presets without
+      // the override key have hover shades brighter than their dark rest fill.
+      --bg-color: color-mix(
+        in srgb,
+        var(--color-vc-background-solid-#{$color}, var(--color-#{$color}-#{$shade})),
+        black 8%
+      );
+      --border-color: var(--bg-color);
     }
   }
 
@@ -90,13 +96,19 @@
     &--ghost--#{$color}:hover:not(#{$loading}, #{$disabled}) {
       --bg-color: var(--color-#{$color}-100);
       --border-color: var(--color-#{$color}-100);
-      --text-color: var(--color-#{$color}-900);
+      // Re-assert rest text: masks the light base rule, which darkens a shade-500 fallback.
+      --text-color: var(--color-vc-text-ghost-#{$color}, var(--color-#{$color}-900));
     }
   }
 
   @each $color in $colors {
     &--tonal--#{$color}:hover:not(#{$loading}, #{$disabled}) {
-      --bg-color: var(--color-#{$color}-200);
+      // Derive from the rest colour (white, not black): dark ramps are not monotonic.
+      --bg-color: color-mix(
+        in srgb,
+        var(--color-vc-background-tonal-#{$color}, var(--color-#{$color}-200)),
+        white 8%
+      );
     }
   }
 
@@ -107,8 +119,12 @@
       --text-color: var(--color-vc-text-soft-#{$color}, var(--color-#{$color}-900));
 
       &:hover:not(#{$loading}, #{$disabled}) {
-        --bg-color: var(--color-#{$color}-200);
-        --border-color: var(--color-#{$color}-200);
+        --bg-color: color-mix(
+          in srgb,
+          var(--color-vc-background-soft-#{$color}, var(--color-#{$color}-200)),
+          white 8%
+        );
+        --border-color: var(--bg-color);
       }
     }
   }
