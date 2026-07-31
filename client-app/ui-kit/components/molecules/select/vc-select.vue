@@ -106,15 +106,17 @@
               @click.stop="clear"
             />
 
-            <button
+            <VcButton
               :aria-label="$t('ui_kit.buttons.toggle_dropdown')"
+              :disabled="disabled"
+              :icon="isShown ? 'chevron-up' : 'chevron-down'"
               type="button"
+              color="neutral"
+              variant="ghost"
               tabindex="-1"
               class="vc-select__arrow"
               @click="handleArrowClick($event, toggle)"
-            >
-              <VcIcon :name="isShown ? 'chevron-up' : 'chevron-down'" size="xs" />
-            </button>
+            />
           </template>
         </VcInput>
       </template>
@@ -542,16 +544,6 @@ function handleTab(event: KeyboardEvent, index: number) {
   }
 
   &__arrow {
-    @apply flex items-center h-full pe-3 ps-1 text-neutral-900;
-
-    &:hover {
-      @apply text-neutral;
-    }
-
-    #{$disabled} & {
-      @apply text-neutral;
-    }
-
     #{$readonly} & {
       @apply hidden;
     }
