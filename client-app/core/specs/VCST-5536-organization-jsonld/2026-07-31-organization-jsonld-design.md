@@ -69,28 +69,36 @@ None of the differentiating fields exist today. `StoreResponseType`
 `storeId, storeName, catalogId, storeUrl, assetPublicUrl, languages, currencies, settings,
 graphQLSettings, dynamicProperties`.
 
-Requested contract — a typed extension, implemented in `vc-module-ucp`'s already-scaffolded
-`VirtoCommerce.UCP.ExperienceApi` project (it can extend `StoreResponseType` via
-`ExtendableGraphType`):
+### 4.1 Already available — no backend work
+
+| JSON-LD / OG | Source |
+|---|---|
+| `name`, `og:site_name` | `store.storeName` |
+| `url` | `store.storeUrl` |
+| `logo` | `whiteLabelingSettings.logoUrl` (see the §7 buyer-org caveat) |
+| `contactPoint.telephone` | `Frontend.SupportPhoneNumber` — an existing xAPI module setting, already in the boot payload and already rendered by the header components |
+| `@id` | Derived client-side from the origin; needs nothing from the backend |
+
+### 4.2 Required by the ticket, missing from the backend
+
+These five are the ask. Each is named in VCST-5536 — in its JSON example, its prose, or its
+Open Graph block.
+
+| Field | Where the ticket asks for it |
+|---|---|
+| `sameAs: [String!]` | JSON example + prose ("social profiles") |
+| `description: String` | required as `og:description`; also reused for JSON-LD `description` |
+| `tagline: String` | implied by `og:title content="Yourstore — short tagline"` |
+| `shareImageUrl: String` | required as `og:image content=".../og-cover.jpg"`, ~1200x630 |
+| `foundingDate: String` | prose ("founding date"); ISO 8601. Absent from the ticket's own JSON example, and of limited use to shopping agents — but it is in the requirements, so it is in the contract |
 
 ```graphql
 type StoreBrandProfileType {
-  legalName: String        # "Acme Industrial Supply, Inc."
-  alternateName: String
-  description: String      # one sentence; feeds og:description + JSON-LD description
-  tagline: String          # short; feeds og:title suffix
-  logoUrl: String          # store brand logo, >= 112x112, absolute or store-relative
+  sameAs: [String!]        # social / knowledge-graph profile URLs
+  description: String      # one sentence on what the store sells
+  tagline: String          # short; suffixes og:title
   shareImageUrl: String    # og:image, ~1200x630
   foundingDate: String     # ISO 8601 date
-  sameAs: [String!]        # social / knowledge-graph profile URLs
-  contactPoints: [StoreContactPointType!]
-  returnPolicyUrl: String  # see note below
-}
-
-type StoreContactPointType {
-  contactType: String      # "Customer Service", "Sales", ...
-  telephone: String
-  email: String
 }
 
 extend type StoreResponseType {
@@ -98,17 +106,41 @@ extend type StoreResponseType {
 }
 ```
 
-Notes for whoever implements it:
+Of the five, only `description` already exists as data — `Store.Description` on the platform
+entity (`vc-module-store/.../Model/Store.cs`), merely unexposed. The other four are new store
+configuration.
 
-- `Store.Description` and `Store.Email` already exist on the platform entity
-  (`vc-module-store/.../Model/Store.cs`) and are simply not exposed — `description` and a
-  default `contactPoints` entry can be sourced from them rather than added as new config.
-- Google additionally recommends `hasMerchantReturnPolicy` and `hasShippingService` for
-  ecommerce organizations. Return policy is also a section in VCST-5537's `/llms.txt`
-  template — the same data serves both. `returnPolicyUrl` above is the minimum viable
-  version; a structured `MerchantReturnPolicy` is a later increment.
-- The same brand data should back VCST-5535's manifest and VCST-5537's `/llms.txt`, so a
-  typed contract (rather than store settings or dynamic properties) is the right call.
+### 4.3 Recommended, but NOT in the ticket
+
+Listed separately so the backend team can accept or decline them on their own merits. None is
+required to close VCST-5536, and none is assumed by this implementation.
+
+| Field | Why it might be worth it |
+|---|---|
+| `hasMerchantReturnPolicy` / `returnPolicyUrl` | Google's ecommerce-specific recommendation, and a section of VCST-5537's `/llms.txt` — one source would serve both. Arguably more useful to a shopping agent than `foundingDate`. |
+| `contactPoint.email` | `Store.Email` already exists and is unexposed; cheap |
+| `legalName`, `alternateName` | Helps entity disambiguation |
+| `hasShippingService` | Google recommendation for ecommerce orgs |
+
+A schema.org `address` is deliberately **not** listed: `Store.Country`/`Store.Region` exist but
+a `PostalAddress` needs street, city and postal code, which the `Store` entity does not carry.
+It is not cheaply derivable and should not be promised as such.
+
+### 4.4 Where it lands
+
+Ticket item 1 says the backend should "revert back during initialization query." The theme has
+two boot queries — `InitializeApplication` (module gates) and `GetPageContext` (store, user,
+white labeling). `brandProfile` belongs on `StoreResponseType`, which `pageContext` returns and
+which is already where `storeName` and `storeUrl` arrive. It should **not** be wired into
+`InitializeApplication`.
+
+Implementation home: `vc-module-ucp`'s already-scaffolded `VirtoCommerce.UCP.ExperienceApi`
+project, which can extend `StoreResponseType` via `ExtendableGraphType`. That keeps one source
+of brand data behind this ticket, VCST-5535's manifest and VCST-5537's `/llms.txt`.
+
+**Interim option:** `store.dynamicProperties` is already exposed, so a pilot store could set
+`sameAs` as a Store dynamic property with zero backend work while the typed contract is built.
+Untyped and undisciplined, so a bridge rather than the design.
 
 **Codegen:** once the field ships, regenerate with `yarn generate:graphql-types` against a
 backend that has the module installed. Never hand-edit `client-app/core/api/graphql/types.ts`.
@@ -122,8 +154,8 @@ already exists: `@id`, `@type`, `name`, `url`, `logo`, plus site-wide `og:site_n
 specifies **no required properties** for Organization, so a partial node is legitimate, not
 a stub.
 
-**Phase 2 — when `brandProfile` lands.** Add `description`, `alternateName`, `legalName`,
-`foundingDate`, `sameAs`, `contactPoint`, and the real `og:image` / og:description /
+**Phase 2 — when `brandProfile` lands.** Add `description`, `tagline`,
+`foundingDate`, `sameAs`, and the real `og:image` / og:description /
 og:title-with-tagline.
 
 Phase 1 is the deliverable of this ticket. Phase 2 is a follow-up PR against the same design.
