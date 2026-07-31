@@ -2,12 +2,10 @@ import { useHead } from "@unhead/vue";
 import { useBrandProfile } from "./useBrandProfile";
 
 /**
- * Emits the store-level Open Graph tags that no page owns.
+ * Emits `og:site_name` site-wide — a store property, not a page one, and previously unowned.
  *
- * `og:site_name` is a property of the store, not of a page, so it belongs here and applies
- * site-wide. The page-level tags (`og:title`, `og:description`, `og:url`, `og:type`) stay
- * with the individual page emitters — see the VCST-5536 spec for why consolidating them is a
- * separate refactor.
+ * `og:title`/`og:description`/`og:url`/`og:type` deliberately stay with the page emitters;
+ * consolidating them is a separate refactor (see the VCST-5536 spec).
  */
 export function useStoreSocialMeta() {
   const { storeName } = useBrandProfile();

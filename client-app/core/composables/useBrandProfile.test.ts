@@ -1,6 +1,5 @@
 /**
- * `useBrandProfile` absolutises urls against `location.origin`, so pin the document origin
- * instead of stubbing globals.
+ * Origin is pinned rather than stubbed, since urls resolve against `location.origin`.
  *
  * @vitest-environment jsdom
  * @vitest-environment-options { "url": "https://store.example.com/" }
@@ -111,6 +110,26 @@ describe("useBrandProfile", () => {
   it("falls back to the origin when the store url is unset", () => {
     mockContext({ storeUrl: undefined });
     expect(useBrandProfile().organizationFacts.value.url).toBe("https://store.example.com/");
+  });
+
+  it("ignores a root-relative store url rather than resolving it against the browsing origin", () => {
+    mockContext({ storeUrl: "/shop" });
+    expect(useBrandProfile().organizationFacts.value.url).toBe("https://store.example.com/");
+  });
+
+  it("ignores a bare-path store url", () => {
+    mockContext({ storeUrl: "shop" });
+    expect(useBrandProfile().organizationFacts.value.url).toBe("https://store.example.com/");
+  });
+
+  it("ignores a non-http store url", () => {
+    mockContext({ storeUrl: "javascript:alert(1)" });
+    expect(useBrandProfile().organizationFacts.value.url).toBe("https://store.example.com/");
+  });
+
+  it("normalises an absolute store url that omits the trailing slash", () => {
+    mockContext({ storeUrl: "https://www.acme.example" });
+    expect(useBrandProfile().organizationFacts.value.url).toBe("https://www.acme.example/");
   });
 
   it("carries the store name through as the organization name", () => {

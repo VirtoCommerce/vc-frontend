@@ -38,8 +38,7 @@ function setup(facts: OrganizationFactsType = FACTS) {
     organizationFacts: computed(() => facts),
   } as unknown as ReturnType<typeof useBrandProfile>);
 
-  // Mirrors the real `getUrlWithoutLocale`, which strips only *supported* locales (here fr/de),
-  // so an arbitrary two-letter segment is left alone.
+  // Mirrors the real getUrlWithoutLocale: strips only supported locales, here fr/de.
   vi.mocked(useLanguages).mockReturnValue({
     getUrlWithoutLocale: (path: string) => path.replace(/^\/(?:fr|de)(\/|$)/i, "/"),
   } as unknown as ReturnType<typeof useLanguages>);

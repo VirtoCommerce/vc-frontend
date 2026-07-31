@@ -76,8 +76,7 @@ useHead({
       ],
 });
 
-// Store identity markup. Mounted here rather than in `home.vue`, which does not mount when a
-// Builder.io or Virto Pages homepage wins the previewer chain for "/".
+// Here rather than home.vue, which never mounts when a CMS homepage wins the previewer chain.
 useOrganizationSchema();
 useStoreSocialMeta();
 

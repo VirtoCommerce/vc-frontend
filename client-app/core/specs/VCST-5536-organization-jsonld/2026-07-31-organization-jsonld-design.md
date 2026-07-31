@@ -195,7 +195,12 @@ Logo resolution order:
 2. `whiteLabelingSettings.logoUrl` **only when `isOrganizationLogoUploaded !== true`**.
 3. `themeContext.settings.logo_image` (theme default), resolved to absolute.
 
-**`url`** — `store.storeUrl` if absolute, else `location.origin`.
+**`url`** — `store.storeUrl` only when it already carries an http(s) scheme; otherwise the
+origin root. Note the deliberate asymmetry with `logo`: a relative logo is normal (the theme
+stores `logo_image` as a bare filename) and is resolved against the origin, but a relative
+`storeUrl` is misconfiguration and is **rejected rather than resolved** — resolving it would
+publish whichever host the visitor is on, e.g. a preview or staging domain, as the brand's
+canonical url.
 
 **`@id`** — `` `${location.origin}/#organization` ``. Stable per store domain, so other
 nodes can reference it.

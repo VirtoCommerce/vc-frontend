@@ -5,19 +5,16 @@ import { useBrandProfile } from "./useBrandProfile";
 import { useLanguages } from "./useLanguages";
 
 export type OrganizationFactsType = {
-  /** Stable JSON-LD `@id`, e.g. `https://store.example.com/#organization`. */
   id?: string;
   name?: string;
-  /** Absolute store URL. */
   url?: string;
-  /** Absolute URL of the *store brand* logo (never a buyer organization's logo). */
+  /** The *store brand* logo, never a buyer organization's. Expected already absolute. */
   logoUrl?: string;
 };
 
 const SCHEMA_ORG_CONTEXT = "https://schema.org";
 
-/** `OnlineStore` is a subtype of `OnlineBusiness` -> `Organization`, so consumers matching
- * on `Organization` still resolve it. */
+/** Subtype of `OnlineBusiness` -> `Organization`, so consumers matching `Organization` resolve it. */
 const ORGANIZATION_TYPE = "OnlineStore";
 
 function nonBlank(value?: string): string | undefined {
@@ -26,15 +23,13 @@ function nonBlank(value?: string): string | undefined {
 }
 
 /**
- * Builds the schema.org Organization node published on the homepage.
+ * Builds the homepage Organization node. Callers must pass already-sanitised urls
+ * (`useBrandProfile` does this) — the builder only drops blanks.
  *
- * A key is emitted only when its value resolves to a non-blank string — an empty `logo` or
- * `url` asserts something false, so omission is preferable. Returns `null` when the store
- * name is unavailable, since a nameless organization cannot be identified and would only
- * pollute entity resolution.
+ * Blank keys are omitted rather than emitted: an empty `logo` asserts something false. Returns
+ * `null` when the name is missing, since a nameless organization only pollutes entity resolution.
  */
-// The nullable return IS the contract: `null` means "do not publish a node", which the caller
-// must distinguish from an empty object.
+// The nullable return is the contract: `null` means "publish nothing".
 // eslint-disable-next-line sonarjs/function-return-type
 export function buildOrganizationNode(facts: OrganizationFactsType): Record<string, unknown> | null {
   const name = nonBlank(facts.name);
@@ -58,21 +53,16 @@ export function buildOrganizationNode(facts: OrganizationFactsType): Record<stri
 }
 
 /**
- * Publishes the store's Organization JSON-LD on the homepage.
+ * Publishes the store's Organization JSON-LD on the homepage only (Google recommends against
+ * every page).
  *
- * Mounted from `App.vue` rather than `home.vue`: `/` has no dedicated route and resolves
- * through the previewer priority chain (Builder.io -> Virto Pages -> internal), so
- * `home.vue` does not mount when a CMS homepage exists. `App.vue` sits above that.
- *
- * Google recommends this markup on the homepage or a single "about" page and explicitly not
- * on every page, hence the route gate. Locale-prefixed homepages ("/fr", "/fr/") count.
+ * Lives in `App.vue`, not `home.vue`: `/` has no route and resolves through the previewer chain
+ * (Builder.io -> Virto Pages -> internal), so `home.vue` never mounts when a CMS homepage exists.
  */
 export function useOrganizationSchema() {
   const route = useRoute();
-  // `getUrlWithoutLocale` (not the `...PossibleLocale` variant) strips only locales the store
-  // actually supports. The "possible" variant matches any two-letter segment, so it would treat
-  // an unrelated "/xy" as the homepage. `app-runner` uses that looser variant only because it
-  // runs before the store is loaded; by the time App.vue mounts, the real list is available.
+  // Strict helper: the `...PossibleLocale` variant matches any two-letter segment, so it would
+  // treat "/xy" as the homepage. app-runner uses the loose one only because it runs pre-store.
   const { getUrlWithoutLocale } = useLanguages();
   const { organizationFacts } = useBrandProfile();
 
