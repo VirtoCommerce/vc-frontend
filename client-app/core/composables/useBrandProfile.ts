@@ -31,7 +31,7 @@ export function toAbsoluteUrl(value: string | undefined, origin: string): string
  *
  * Phase 1 sources everything from data the storefront already has. When the backend
  * `store.brandProfile` contract lands (VCST-5536 phase 2) it takes precedence here, and the
- * remaining fields — description, sameAs, contactPoints, shareImageUrl — join it.
+ * remaining fields — sameAs, description, tagline, shareImageUrl, foundingDate — join it.
  */
 export function useBrandProfile() {
   const { themeContext } = useThemeContext();
