@@ -114,15 +114,19 @@ const VcTextarea = defineComponent({
 });
 
 const VcCheckbox = defineComponent({
-  props: { modelValue: { type: Boolean, default: false } },
+  props: { modelValue: { type: Boolean, default: false }, testId: { type: String, default: "" } },
   emits: ["update:modelValue"],
   setup(props, { emit }) {
+    // Mirrors the real component: the id lands on the input, not on a wrapper.
     return () =>
-      h("input", {
-        type: "checkbox",
-        checked: props.modelValue,
-        onChange: (event: Event) => emit("update:modelValue", (event.target as HTMLInputElement).checked),
-      });
+      h("div", [
+        h("input", {
+          type: "checkbox",
+          "data-test-id": props.testId,
+          checked: props.modelValue,
+          onChange: (event: Event) => emit("update:modelValue", (event.target as HTMLInputElement).checked),
+        }),
+      ]);
   },
 });
 
@@ -240,6 +244,24 @@ describe("WishlistCustomerSharing", () => {
 
       expect(customerSelect()).toHaveAttribute("aria-invalid", "true");
       expect(component.getByTestId("field-message")).toHaveTextContent(`${KEY}.share_customers_error`);
+    });
+
+    it("keeps a persisted target visible even when it is not among the loaded options", () => {
+      // Over the cap, or lost to a failed fetch: without seeding, VcSelect would fall back to its placeholder and the
+      // list would read as unshared.
+      mocks.options.value = [{ organizationId: "org-9", organizationName: "Initech" }];
+
+      renderSharing("org-outside-the-page");
+
+      expect(customerSelect()).toContainHTML('value="org-outside-the-page"');
+      expect(customerSelect()).toHaveValue("org-outside-the-page");
+    });
+
+    it("does not duplicate a persisted target that is already among the options", () => {
+      renderSharing("org-1");
+
+      const optionValues = [...customerSelect().querySelectorAll("option")].map((option) => option.value);
+      expect(optionValues.filter((value) => value === "org-1")).toHaveLength(1);
     });
 
     it("warns that moving the list detaches the previous customer", async () => {

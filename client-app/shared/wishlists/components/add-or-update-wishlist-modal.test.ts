@@ -27,6 +27,7 @@ const mocks = await vi.hoisted(async () => {
   return {
     createWishlist: vi.fn(),
     updateWishlist: vi.fn(),
+    fetchWishlists: vi.fn(),
     isCorporateMember: reactiveRef(true),
     notifications: { success: vi.fn(), warning: vi.fn(), error: vi.fn() },
     logger: { error: vi.fn(), warn: vi.fn() },
@@ -45,7 +46,11 @@ vi.mock("@vueuse/core", async (importOriginal) => ({
 }));
 
 vi.mock("../composables/useWishlists", () => ({
-  useWishlists: () => ({ createWishlist: mocks.createWishlist, updateWishlist: mocks.updateWishlist }),
+  useWishlists: () => ({
+    createWishlist: mocks.createWishlist,
+    updateWishlist: mocks.updateWishlist,
+    fetchWishlists: mocks.fetchWishlists,
+  }),
 }));
 
 vi.mock("@/shared/account/composables", () => ({
@@ -224,6 +229,7 @@ beforeAll(() => {
 beforeEach(() => {
   mocks.createWishlist.mockReset().mockResolvedValue("list-new");
   mocks.updateWishlist.mockReset().mockResolvedValue(undefined);
+  mocks.fetchWishlists.mockReset().mockResolvedValue(undefined);
   mocks.logger.error.mockReset();
   Object.values(mocks.notifications).forEach((spy) => spy.mockReset());
   mocks.isCorporateMember.value = true;
@@ -419,6 +425,20 @@ describe("AddOrUpdateWishlistModal — contributed sharing scopes", () => {
       expect(controls.onSaved).not.toHaveBeenCalled();
       expect(mocks.notifications.error).toHaveBeenCalledOnce();
       expect(mocks.notifications.error.mock.calls[0][0]).toMatchObject({ text: `${KEY}.save_error` });
+    });
+
+    it("still runs when refreshing the lists afterwards fails", async () => {
+      controls.canSave.value = true;
+      // The list is already persisted at this point; a refresh hiccup must not cost the customer their notification.
+      mocks.fetchWishlists.mockRejectedValue(new Error("refetch failed"));
+
+      renderModal();
+      await nameTheList();
+      await selectTargetedScope();
+      await fireEvent.click(saveButton());
+
+      expect(controls.onSaved).toHaveBeenCalledOnce();
+      expect(mocks.notifications.error).not.toHaveBeenCalled();
     });
 
     it("does not turn its own failure into a save error — the list is already saved", async () => {

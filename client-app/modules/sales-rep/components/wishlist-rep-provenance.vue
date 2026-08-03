@@ -1,5 +1,5 @@
 <template>
-  <VcAlert color="info" variant="solid-light" size="sm" icon class="wishlist-rep-provenance">
+  <VcAlert color="info" variant="soft" size="sm" icon class="wishlist-rep-provenance">
     {{ t("sales_rep.list_sharing.badge") }}
   </VcAlert>
 </template>

@@ -129,7 +129,11 @@ const listDescription = computed<string | undefined>(() => props.list?.descripti
 const listSharingScope = computed<string | undefined>(() => props.list?.sharingSetting?.scope);
 const listSharedWithId = computed<string | undefined>(() => props.list?.sharingSetting?.sharedWithId ?? undefined);
 
-const { createWishlist, updateWishlist } = useWishlists();
+// `autoRefetch: false` because the composable refetches *outside* its own try/catch and rethrows: a refetch hiccup
+// after a successful mutation would otherwise look like a failed save and skip the scope's follow-up entirely — for
+// customer sharing that means the customer gets access but never the email carrying the only link to it. The refresh
+// happens explicitly below, after the follow-up, where its failure stays a non-event.
+const { createWishlist, updateWishlist, fetchWishlists } = useWishlists({ autoRefetch: false });
 const { sharingScopes, getSharingScope, isSharingScopeAvailable } = useWishlistSharingScopes();
 
 // Modal-owned busy flag for the save action. Driven with try/finally so the Save button can never get stuck
@@ -231,7 +235,8 @@ async function save(closeHandle: () => void): Promise<void> {
       await createWishlist(payload);
     }
 
-    // The list is saved from here on, so a follow-up (e.g. notifying the target) must never surface as a save error.
+    // The list is saved from here on, so neither the follow-up nor the list refresh may surface as a save error.
+    // Both are awaited to keep the loader up, and both swallow their own failures.
     try {
       await scopeControls.value?.onSaved?.({
         listName: name.value?.trim() ?? "",
@@ -239,6 +244,12 @@ async function save(closeHandle: () => void): Promise<void> {
       });
     } catch (e) {
       Logger.error("AddOrUpdateWishlistModal: sharing scope onSaved failed", e);
+    }
+
+    try {
+      await fetchWishlists();
+    } catch (e) {
+      Logger.error("AddOrUpdateWishlistModal: refreshing the lists after save failed", e);
     }
 
     closeHandle();

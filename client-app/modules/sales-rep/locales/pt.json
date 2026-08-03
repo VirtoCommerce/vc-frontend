@@ -163,7 +163,7 @@
       "share_default_title": "Uma nova lista do seu representante de vendas",
       "share_default_message": "Olá! Acabei de compartilhar a lista \"{listName}\" com a sua organização. Confira:",
       "share_success": "Lista compartilhada com o cliente.",
-      "share_partial": "Lista compartilhada, mas não todas as notificações foram entregues.",
+      "share_partial": "Lista compartilhada, mas nem todas as notificações foram entregues.",
       "share_notify_error": "A lista foi salva, mas não foi possível notificar o cliente.",
       "scope_label": "Cliente",
       "status": "Compartilhada com cliente",

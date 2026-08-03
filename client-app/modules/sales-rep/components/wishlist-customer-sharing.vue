@@ -6,7 +6,7 @@
       :label="t('sales_rep.list_sharing.share_customers_label')"
       :placeholder="t('sales_rep.list_sharing.share_customers_placeholder')"
       :disabled="saving || loading"
-      :items="options"
+      :items="pickerOptions"
       :error="failed"
       :message="fieldMessage"
       text-field="organizationName"
@@ -34,11 +34,11 @@
         </VcLabel>
 
         <div class="wishlist-customer-sharing__channels">
-          <VcCheckbox v-model="sendEmail" :disabled="saving" data-test-id="wishlist-share-email-checkbox">
+          <VcCheckbox v-model="sendEmail" :disabled="saving" test-id="wishlist-share-email-checkbox">
             {{ t("sales_rep.list_sharing.share_email_label") }}
           </VcCheckbox>
 
-          <VcCheckbox v-model="sendPush" :disabled="saving" data-test-id="wishlist-share-push-checkbox">
+          <VcCheckbox v-model="sendPush" :disabled="saving" test-id="wishlist-share-push-checkbox">
             {{ t("sales_rep.list_sharing.share_push_label") }}
           </VcCheckbox>
         </div>
@@ -53,6 +53,7 @@ import { useI18n } from "vue-i18n";
 import { useNotifications } from "@/shared/notification";
 import { useSalesRepCommunication } from "../composables/useSalesRepCommunication";
 import { useSalesRepCustomerOptions } from "../composables/useSalesRepCustomerOptions";
+import type { SalesRepCustomerOptionType } from "../composables/useSalesRepCustomerOptions";
 import type { WishlistSharingScopeSavedContextType } from "@/shared/wishlists";
 
 interface IProps {
@@ -74,7 +75,7 @@ const { options, loading, failed } = useSalesRepCustomerOptions(true);
 // Measuring the actual link (its host varies per store) keeps a long domain from silently pushing an otherwise-valid
 // message over the limit.
 const NOTIFICATION_MESSAGE_LIMIT = 1000;
-const SEPARATOR_LENGTH = 2;
+const SEPARATOR = "\n\n";
 
 // Read through a ref so seeding below doesn't count as losing prop reactivity; the value is only ever a starting point.
 const persistedTarget = toRef(props, "sharedWithId");
@@ -86,7 +87,7 @@ const shareMessage = ref("");
 const sendEmail = ref(true);
 const sendPush = ref(true);
 
-const messageMaxLength = computed(() => NOTIFICATION_MESSAGE_LIMIT - props.sharingLink.length - SEPARATOR_LENGTH);
+const messageMaxLength = computed(() => NOTIFICATION_MESSAGE_LIMIT - props.sharingLink.length - SEPARATOR.length);
 
 // Messaging is offered only when this edit sets a genuinely NEW target vs. what was persisted: newly shared, or moved
 // to a different customer. Re-selecting the original (including A -> B -> A) counts as no change.
@@ -96,6 +97,20 @@ const isNewTarget = computed(
 
 // The backend keeps a single sharing setting per list, so targeting another customer detaches the current one.
 const replacesPreviousTarget = computed(() => isNewTarget.value && !!persistedTarget.value);
+
+// VcSelect derives the selected label from `items`, falling back to the placeholder when it finds nothing. Since the
+// options are capped, a target that is over the cap or lost to a failed fetch would render as "nothing selected" — and
+// re-picking would then detach a customer the rep never meant to touch. Seeding keeps the selection visible; the name
+// is unknown for a seeded entry, so the id stands in for it.
+const pickerOptions = computed<SalesRepCustomerOptionType[]>(() => {
+  const target = persistedTarget.value;
+
+  if (!target || options.value.some((option) => option.organizationId === target)) {
+    return options.value;
+  }
+
+  return [{ organizationId: target, organizationName: target }, ...options.value];
+});
 
 const fieldMessage = computed(() => {
   if (failed.value) {
@@ -123,7 +138,7 @@ async function notifyCustomer(organizationId: string, context: WishlistSharingSc
     sendEmail: sendEmail.value,
     sendPush: sendPush.value,
     title: t("sales_rep.list_sharing.share_default_title"),
-    message: [body, context.sharingLink].join("\n\n"),
+    message: [body, context.sharingLink].join(SEPARATOR),
   });
 
   // Per-channel detail, when the backend named a reason we can translate.
