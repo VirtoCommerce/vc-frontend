@@ -67,6 +67,8 @@ const swiper = ref<SwiperCore | null>(null);
 const options = computed<ICarouselOptions>(() => ({
   initialSlide: props.index,
   loop: props.images.length > 1,
+  // VcCarousel forwards `on` as Vue listeners; swiper/vue re-emits every native Swiper
+  // event through `onAny`, so `init` still delivers the instance here.
   on: {
     init: (instance: SwiperCore) => {
       swiper.value = instance;
