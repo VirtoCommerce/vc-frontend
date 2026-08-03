@@ -1,5 +1,5 @@
 import { useQuery } from "@vue/apollo-composable";
-import { computed, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { SalesRepCustomersDocument } from "../api/graphql/types";
@@ -24,10 +24,19 @@ export function useSalesRepCustomerOptions(enabled?: Ref<boolean> | boolean) {
 
   // `enabled` keeps the query from firing for users who can't share (non-reps / create mode), avoiding a
   // needless authorized request. Defaults to enabled for standalone callers.
-  const { result, loading, onError } = useQuery(SalesRepCustomersDocument, variables, { enabled });
+  const { result, loading, onError, onResult } = useQuery(SalesRepCustomersDocument, variables, { enabled });
+
+  // Without this the picker would just render an empty dropdown on a failed fetch, which reads as "this rep serves
+  // nobody" rather than "the list could not be loaded". Callers surface it on the field.
+  const failed = ref(false);
 
   onError((error) => {
+    failed.value = true;
     Logger.error("[sales-rep] salesRepCustomers (share options) failed:", error);
+  });
+
+  onResult(() => {
+    failed.value = false;
   });
 
   const options = computed<SalesRepCustomerOptionType[]>(() =>
@@ -49,5 +58,5 @@ export function useSalesRepCustomerOptions(enabled?: Ref<boolean> | boolean) {
     }
   });
 
-  return { options, totalCount, loading };
+  return { options, totalCount, loading, failed };
 }

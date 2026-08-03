@@ -149,6 +149,25 @@
           "All": "All"
         }
       }
+    },
+    "list_sharing": {
+      "share_customers_label": "Customer",
+      "share_customers_placeholder": "Select customer",
+      "share_customers_error": "The customer list could not be loaded. Please try again.",
+      "share_replace_hint": "The previously selected customer will lose access to this list.",
+      "share_message_label": "Message",
+      "share_message_placeholder": "Optional message to include",
+      "share_channels_label": "Send via",
+      "share_email_label": "Email",
+      "share_push_label": "Push notification",
+      "share_default_title": "A new list from your sales representative",
+      "share_default_message": "Hi! I've just shared the list \"{listName}\" with your organization. Take a look:",
+      "share_success": "List shared with the customer.",
+      "share_partial": "List shared, but not every notification was delivered.",
+      "share_notify_error": "The list was saved, but the customer could not be notified.",
+      "scope_label": "Customer",
+      "status": "Shared with customer",
+      "badge": "Recommended by your sales representative"
     }
   }
 }

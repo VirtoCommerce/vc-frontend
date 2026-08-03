@@ -2,9 +2,10 @@
    component-block padding would only add noise to them. */
 /* eslint-disable vue/require-emit-validator, vue/padding-lines-in-component-definition */
 import { render, fireEvent, cleanup, configure } from "@testing-library/vue";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, ref } from "vue";
 import { WishlistScopeType } from "@/core/api/graphql/types";
+import { useWishlistSharingScopes } from "../composables/useWishlistSharingScopes";
 import AddOrUpdateWishlistModal from "./add-or-update-wishlist-modal.vue";
 import type { WishlistType } from "@/core/api/graphql/types";
 import type { RenderResult } from "@testing-library/vue";
@@ -15,44 +16,31 @@ configure({ testIdAttribute: "data-test-id" });
 
 const KEY = "shared.wishlists.add_or_update_wishlist_modal";
 
+// A stand-in for whatever a module contributes. Deliberately not the Sales Rep scope: these tests cover the core
+// contract, and core must not know any contributed scope by name.
+const TARGETED_SCOPE = "TargetedTestScope";
+const SCOPE_LABEL_KEY = "test_module.targeted_scope.label";
+
 const mocks = await vi.hoisted(async () => {
   const { ref: reactiveRef } = await import("vue");
 
   return {
     createWishlist: vi.fn(),
     updateWishlist: vi.fn(),
-    sendCommunication: vi.fn(),
-    customerOptions: reactiveRef<{ organizationId: string; organizationName: string }[]>([]),
-    isSalesRepUser: vi.fn(() => true),
     isCorporateMember: reactiveRef(true),
     notifications: { success: vi.fn(), warning: vi.fn(), error: vi.fn() },
+    logger: { error: vi.fn(), warn: vi.fn() },
     copy: vi.fn(),
   };
 });
 
-// The warning codes the Sales Rep locale actually ships (see modules/sales-rep/locales/en.json). Anything else must
-// be treated as untranslatable, which is what a newly-added backend code looks like to a not-yet-updated storefront.
-const translatedWarningKeys = await vi.hoisted(() =>
-  [
-    "generic",
-    "NoRecipients",
-    "EmailUnavailable",
-    "EmailStoreAccessDenied",
-    "EmailNoRecipients",
-    "EmailSendFailed",
-    "PushSendFailed",
-  ].map((code) => `sales_rep.communication.warnings.${code}`),
-);
-
-// `t` echoes the key (plus interpolation params) so assertions read as the copy contract, not the English wording.
+// `t` echoes the key so assertions read as the copy contract rather than the English wording.
 vi.mock("vue-i18n", () => ({
-  useI18n: () => ({
-    t: (key: string, named?: Record<string, unknown>) => (named ? `${key}|${JSON.stringify(named)}` : key),
-    te: (key: string) => translatedWarningKeys.includes(key),
-  }),
+  useI18n: () => ({ t: (key: string) => key, te: () => true }),
 }));
 
-vi.mock("@vueuse/core", () => ({
+vi.mock("@vueuse/core", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@vueuse/core")>()),
   useClipboard: () => ({ copy: mocks.copy, isSupported: ref(true) }),
 }));
 
@@ -60,23 +48,44 @@ vi.mock("../composables/useWishlists", () => ({
   useWishlists: () => ({ createWishlist: mocks.createWishlist, updateWishlist: mocks.updateWishlist }),
 }));
 
-vi.mock("@/modules/sales-rep/composables/useSalesRepCommunication", () => ({
-  useSalesRepCommunication: () => ({ sendCommunication: mocks.sendCommunication }),
-}));
-
-vi.mock("@/modules/sales-rep/composables/useSalesRepCustomerOptions", () => ({
-  useSalesRepCustomerOptions: () => ({ options: mocks.customerOptions }),
-}));
-
-vi.mock("@/modules/sales-rep/composables/useSalesRepsConfig", () => ({
-  isSalesRepUser: mocks.isSalesRepUser,
-}));
-
 vi.mock("@/shared/account/composables", () => ({
   useUser: () => ({ isCorporateMember: mocks.isCorporateMember }),
 }));
 
 vi.mock("@/shared/notification", () => ({ useNotifications: () => mocks.notifications }));
+
+vi.mock("@/core/utilities", () => ({ Logger: mocks.logger }));
+
+/** Whether the contributed scope is on offer for the current user. */
+const scopeAvailable = ref(true);
+
+/** What the contributed scope's rendered element exposes back to the modal. */
+const controls = {
+  canSave: ref(false),
+  dirty: ref(false),
+  payload: ref<{ sharedWithId?: string }>({}),
+  onSaved: vi.fn(),
+};
+
+// Stands in for a module's per-scope controls: it owns state the modal cannot see and reports it through the
+// documented contract, which is the whole point of the seam.
+const ScopeControls = defineComponent({
+  props: {
+    sharedWithId: { type: String, default: undefined },
+    sharingLink: { type: String, default: "" },
+    saving: { type: Boolean, default: false },
+  },
+  setup(props, { expose }) {
+    expose(controls);
+    return () =>
+      h("div", {
+        "data-test-id": "scope-controls",
+        "data-shared-with-id": props.sharedWithId ?? "",
+        "data-sharing-link": props.sharingLink,
+        "data-saving": String(props.saving),
+      });
+  },
+});
 
 /**
  * The ui-kit widgets are replaced with native controls: the tests are about this modal's sharing logic, and the
@@ -92,10 +101,16 @@ const VcModal = defineComponent({
 });
 
 const VcInput = defineComponent({
-  props: { modelValue: { type: String, default: "" }, testIdInput: { type: String, default: "" } },
+  props: {
+    modelValue: { type: String, default: "" },
+    testIdInput: { type: String, default: "" },
+    label: { type: String, default: "" },
+  },
   emits: ["update:modelValue"],
   setup(props, { emit, slots }) {
     return () => [
+      // The label is rendered so tests can tell which fields the modal is actually offering.
+      props.label ? h("label", props.label) : null,
       h("input", {
         "data-test-id": props.testIdInput,
         value: props.modelValue,
@@ -124,42 +139,25 @@ const VcSelect = defineComponent({
     items: { type: Array as () => Record<string, string>[], default: () => [] },
     textField: { type: String, default: "" },
     valueField: { type: String, default: "" },
-    message: { type: String, default: "" },
     testIdDropdown: { type: String, default: "" },
   },
   emits: ["update:modelValue"],
   setup(props, { emit }) {
     return () =>
-      h("div", [
-        h(
-          "select",
-          {
-            "data-test-id": props.testIdDropdown,
-            value: props.modelValue,
-            onChange: (event: Event) => emit("update:modelValue", (event.target as HTMLSelectElement).value),
-          },
-          [
-            h("option", { value: "" }),
-            ...props.items.map((item) =>
-              h("option", { key: item[props.valueField], value: item[props.valueField] }, item[props.textField]),
-            ),
-          ],
-        ),
-        props.message ? h("span", props.message) : null,
-      ]);
-  },
-});
-
-const VcCheckbox = defineComponent({
-  props: { modelValue: { type: Boolean, default: false } },
-  emits: ["update:modelValue"],
-  setup(props, { emit }) {
-    return () =>
-      h("input", {
-        type: "checkbox",
-        checked: props.modelValue,
-        onChange: (event: Event) => emit("update:modelValue", (event.target as HTMLInputElement).checked),
-      });
+      h(
+        "select",
+        {
+          "data-test-id": props.testIdDropdown,
+          value: props.modelValue,
+          onChange: (event: Event) => emit("update:modelValue", (event.target as HTMLSelectElement).value),
+        },
+        [
+          h("option", { value: "" }),
+          ...props.items.map((item) =>
+            h("option", { key: item[props.valueField], value: item[props.valueField] }, item[props.textField]),
+          ),
+        ],
+      );
   },
 });
 
@@ -170,20 +168,13 @@ const VcButton = defineComponent({
   },
 });
 
-const VcLabel = defineComponent({
-  setup:
-    (_, { slots }) =>
-    () =>
-      h("label", slots.default?.()),
-});
-
 let component: RenderResult;
 
 function renderModal(list?: WishlistType) {
   component = render(AddOrUpdateWishlistModal, {
     props: { list },
     global: {
-      components: { VcModal, VcInput, VcTextarea, VcSelect, VcCheckbox, VcButton, VcLabel },
+      components: { VcModal, VcInput, VcTextarea, VcSelect, VcButton },
       mocks: { $t: (key: string) => key },
       stubs: { VcIcon: true },
     },
@@ -196,315 +187,270 @@ function scopeSelect() {
   return component.getByTestId<HTMLSelectElement>("wishlist-sharing-scope-select");
 }
 
-function customerSelect() {
-  return component.getByTestId<HTMLSelectElement>("wishlist-share-customer-select");
-}
-
-function shareMessageInput() {
-  return component.getByTestId<HTMLTextAreaElement>("wishlist-share-message-input");
-}
-
 function saveButton() {
   return component.getByTestId<HTMLElement>("wishlist-settings-save-button").closest("button")!;
 }
 
-function channelCheckboxes() {
-  return {
-    email: component.getByTestId<HTMLInputElement>("wishlist-share-email-checkbox"),
-    push: component.getByTestId<HTMLInputElement>("wishlist-share-push-checkbox"),
-  };
-}
-
-/** A list already published to `sharedWithId`, as returned by the wishlist queries. */
-function customerScopedList(sharedWithId: string): WishlistType {
+/** A list already published under the contributed scope, as the wishlist queries would return it. */
+function targetedList(sharedWithId?: string): WishlistType {
   return {
     id: "list-1",
     name: "Spring assortment",
     description: "",
-    sharingSetting: {
-      id: "sharing-key-1",
-      scope: WishlistScopeType.Customer,
-      sharedWithId,
-      isOwner: true,
-    },
-  } as WishlistType;
+    sharingSetting: { id: "sharing-key-1", scope: TARGETED_SCOPE, sharedWithId, isOwner: true },
+  } as unknown as WishlistType;
 }
 
-async function pickCustomer(organizationId: string) {
-  await fireEvent.update(customerSelect(), organizationId);
+async function selectTargetedScope() {
+  await fireEvent.update(scopeSelect(), TARGETED_SCOPE);
 }
 
-async function selectCustomerScope() {
-  await fireEvent.update(scopeSelect(), WishlistScopeType.Customer);
+async function nameTheList(name = "Spring assortment") {
+  await fireEvent.update(component.getByTestId("wishlist-name-input"), name);
 }
 
-const SUCCESS = { succeeded: true, pushSent: true, emailSent: true, warnings: [] };
+beforeAll(() => {
+  useWishlistSharingScopes().registerSharingScope({
+    scope: TARGETED_SCOPE,
+    labelKey: SCOPE_LABEL_KEY,
+    statusKey: "test_module.targeted_scope.status",
+    supportsLink: true,
+    shoppable: true,
+    isAvailable: () => scopeAvailable.value,
+    element: ScopeControls,
+  });
+});
 
 beforeEach(() => {
   mocks.createWishlist.mockReset().mockResolvedValue("list-new");
   mocks.updateWishlist.mockReset().mockResolvedValue(undefined);
-  mocks.sendCommunication.mockReset().mockResolvedValue(SUCCESS);
-  mocks.isSalesRepUser.mockReset().mockReturnValue(true);
-  mocks.isCorporateMember.value = true;
-  mocks.customerOptions.value = [
-    { organizationId: "org-1", organizationName: "Acme Inc." },
-    { organizationId: "org-2", organizationName: "Globex" },
-  ];
+  mocks.logger.error.mockReset();
   Object.values(mocks.notifications).forEach((spy) => spy.mockReset());
+  mocks.isCorporateMember.value = true;
+  scopeAvailable.value = true;
+  controls.canSave.value = false;
+  controls.dirty.value = false;
+  controls.payload.value = {};
+  controls.onSaved.mockReset().mockResolvedValue(undefined);
 });
 
 afterEach(() => {
   cleanup();
 });
 
-describe("AddOrUpdateWishlistModal — customer sharing scope", () => {
-  describe("scope availability", () => {
-    it("offers the Customer scope to a Sales Rep", () => {
+describe("AddOrUpdateWishlistModal — contributed sharing scopes", () => {
+  describe("which scopes are listed", () => {
+    it("always lists the scopes core owns", () => {
       renderModal();
 
-      expect(scopeSelect()).toContainHTML(`value="${WishlistScopeType.Customer}"`);
+      const select = scopeSelect();
+      expect(select).toContainHTML(`value="${WishlistScopeType.Private}"`);
+      expect(select).toContainHTML(`value="${WishlistScopeType.AnyoneAnonymous}"`);
+      expect(select).toContainHTML(`value="${WishlistScopeType.Organization}"`);
     });
 
-    it("hides the Customer scope when the caller is not a Sales Rep", () => {
-      mocks.isSalesRepUser.mockReturnValue(false);
+    it("lists a contributed scope, labelled from the provider's own key", () => {
+      renderModal();
+
+      expect(scopeSelect()).toContainHTML(`value="${TARGETED_SCOPE}"`);
+      expect(component.getByText(SCOPE_LABEL_KEY)).toBeInTheDocument();
+    });
+
+    it("hides a contributed scope the current user may not use", () => {
+      scopeAvailable.value = false;
 
       renderModal();
 
-      expect(scopeSelect()).not.toContainHTML(`value="${WishlistScopeType.Customer}"`);
+      expect(scopeSelect()).not.toContainHTML(`value="${TARGETED_SCOPE}"`);
     });
 
-    it("still shows the Customer scope of an already-shared list to a non-rep, so saving cannot overwrite it", () => {
-      mocks.isSalesRepUser.mockReturnValue(false);
+    it("still lists the scope a list already carries, so saving cannot silently rewrite it", () => {
+      scopeAvailable.value = false;
 
-      renderModal(customerScopedList("org-1"));
+      renderModal(targetedList("org-1"));
 
-      expect(scopeSelect()).toContainHTML(`value="${WishlistScopeType.Customer}"`);
-      // The rep-only controls stay hidden for them.
-      expect(component.queryByTestId("wishlist-share-customer-select")).toBeNull();
+      expect(scopeSelect()).toContainHTML(`value="${TARGETED_SCOPE}"`);
+    });
+
+    it("hides the provider's controls for a user who may not use that scope", () => {
+      scopeAvailable.value = false;
+
+      renderModal(targetedList("org-1"));
+
+      expect(component.queryByTestId("scope-controls")).toBeNull();
     });
   });
 
-  describe("saving the sharing target", () => {
-    it("passes the chosen organization as sharedWithId when creating", async () => {
+  describe("what the provider's controls receive", () => {
+    it("renders them only while their scope is selected", async () => {
       renderModal();
 
-      await fireEvent.update(component.getByTestId("wishlist-name-input"), "Spring assortment");
-      await selectCustomerScope();
-      await pickCustomer("org-1");
+      expect(component.queryByTestId("scope-controls")).toBeNull();
+
+      await selectTargetedScope();
+
+      expect(component.getByTestId("scope-controls")).toBeInTheDocument();
+    });
+
+    it("hands over the persisted target and the list's sharing link", () => {
+      renderModal(targetedList("org-1"));
+
+      const element = component.getByTestId("scope-controls");
+      expect(element).toHaveAttribute("data-shared-with-id", "org-1");
+      expect(element.getAttribute("data-sharing-link")).toContain("/shared-list/sharing-key-1");
+    });
+  });
+
+  describe("gating Save", () => {
+    it("keeps Save disabled while the provider reports incomplete input", async () => {
+      renderModal();
+      await nameTheList();
+      await selectTargetedScope();
+
+      expect(saveButton()).toBeDisabled();
+    });
+
+    it("enables Save once the provider reports its input complete", async () => {
+      renderModal();
+      await nameTheList();
+      await selectTargetedScope();
+
+      controls.canSave.value = true;
+      await fireEvent.update(scopeSelect(), TARGETED_SCOPE);
+
+      expect(saveButton()).not.toBeDisabled();
+    });
+
+    it("enables Save when only the provider's own state changed", async () => {
+      renderModal(targetedList("org-1"));
+
+      expect(saveButton()).toBeDisabled();
+
+      controls.canSave.value = true;
+      controls.dirty.value = true;
+      await fireEvent.update(scopeSelect(), TARGETED_SCOPE);
+
+      expect(saveButton()).not.toBeDisabled();
+    });
+
+    it("leaves Save disabled on an untouched list under a core scope", () => {
+      renderModal({
+        id: "list-1",
+        name: "Spring assortment",
+        description: "",
+        sharingSetting: { id: "k", scope: WishlistScopeType.Private, isOwner: true },
+      } as unknown as WishlistType);
+
+      expect(saveButton()).toBeDisabled();
+    });
+  });
+
+  describe("saving", () => {
+    it("merges the provider's contribution into the create command", async () => {
+      controls.canSave.value = true;
+      controls.payload.value = { sharedWithId: "org-1" };
+
+      renderModal();
+      await nameTheList();
+      await selectTargetedScope();
       await fireEvent.click(saveButton());
 
       expect(mocks.createWishlist).toHaveBeenCalledOnce();
       expect(mocks.createWishlist.mock.calls[0][0]).toMatchObject({
         listName: "Spring assortment",
-        scope: WishlistScopeType.Customer,
+        scope: TARGETED_SCOPE,
         sharedWithId: "org-1",
       });
     });
 
-    it("omits sharedWithId for the non-targeted scopes", async () => {
-      renderModal();
+    it("merges the provider's contribution into the change command", async () => {
+      controls.canSave.value = true;
+      controls.dirty.value = true;
+      controls.payload.value = { sharedWithId: "org-2" };
 
-      await fireEvent.update(component.getByTestId("wishlist-name-input"), "Internal picks");
-      await fireEvent.update(scopeSelect(), WishlistScopeType.Organization);
+      renderModal(targetedList("org-1"));
+      await fireEvent.update(scopeSelect(), TARGETED_SCOPE);
       await fireEvent.click(saveButton());
 
-      expect(mocks.createWishlist.mock.calls[0][0]).toMatchObject({
-        scope: WishlistScopeType.Organization,
-        sharedWithId: undefined,
+      expect(mocks.updateWishlist).toHaveBeenCalledOnce();
+      expect(mocks.updateWishlist.mock.calls[0][0]).toMatchObject({
+        listId: "list-1",
+        scope: TARGETED_SCOPE,
+        sharedWithId: "org-2",
       });
-      expect(mocks.sendCommunication).not.toHaveBeenCalled();
     });
 
-    it("enables Save when only the customer changed, which the form schema cannot see", async () => {
-      renderModal(customerScopedList("org-1"));
+    it("sends no target for a scope that contributes none", async () => {
+      renderModal(targetedList("org-1"));
 
-      // Nothing touched yet: the form is pristine and the target is unchanged.
-      expect(saveButton()).toBeDisabled();
+      await fireEvent.update(scopeSelect(), WishlistScopeType.Private);
+      await fireEvent.click(saveButton());
 
-      await pickCustomer("org-2");
-
-      expect(saveButton()).toBeEnabled();
-    });
-
-    it("keeps Save disabled when the customer is re-selected back to the persisted one", async () => {
-      renderModal(customerScopedList("org-1"));
-
-      await pickCustomer("org-2");
-      await pickCustomer("org-1");
-
-      expect(saveButton()).toBeDisabled();
+      expect(mocks.updateWishlist).toHaveBeenCalledOnce();
+      // The backend applies a null target for its non-targeted scopes, so the key is simply absent.
+      expect(mocks.updateWishlist.mock.calls[0][0]).not.toHaveProperty("sharedWithId");
     });
   });
 
-  describe("notifying the customer", () => {
-    async function shareWith(organizationId: string, list?: WishlistType) {
-      renderModal(list);
+  describe("the provider's follow-up after a save", () => {
+    it("runs once the list is persisted, with the saved name and the sharing link", async () => {
+      controls.canSave.value = true;
+      controls.payload.value = { sharedWithId: "org-1" };
 
-      if (!list) {
-        await fireEvent.update(component.getByTestId("wishlist-name-input"), "Spring assortment");
-        await selectCustomerScope();
-      }
-
-      await pickCustomer(organizationId);
-
-      return component;
-    }
-
-    it("sends on both channels by default, with a generated title and the default body plus the link", async () => {
-      await shareWith("org-1");
+      renderModal();
+      await nameTheList("Autumn picks");
+      await selectTargetedScope();
       await fireEvent.click(saveButton());
 
-      expect(mocks.sendCommunication).toHaveBeenCalledOnce();
-
-      const command = mocks.sendCommunication.mock.calls[0][0] as {
-        organizationId: string;
-        sendEmail: boolean;
-        sendPush: boolean;
-        title: string;
-        message: string;
-      };
-
-      expect(command.organizationId).toBe("org-1");
-      expect(command.sendEmail).toBe(true);
-      expect(command.sendPush).toBe(true);
-      expect(command.title).toBe(`${KEY}.share_default_title`);
-      // Default body carries the list name; the link is always appended so the customer can reach the list.
-      expect(command.message).toContain(`${KEY}.share_default_message|{"listName":"Spring assortment"}`);
-      expect(command.message).toContain("/shared-list/");
+      expect(controls.onSaved).toHaveBeenCalledOnce();
+      expect(controls.onSaved.mock.calls[0][0]).toMatchObject({ listName: "Autumn picks" });
+      expect(controls.onSaved.mock.calls[0][0].sharingLink).toContain("/shared-list/");
     });
 
-    it("uses the rep's own text instead of the default body, still appending the link", async () => {
-      await shareWith("org-1");
-      await fireEvent.update(shareMessageInput(), "New season is live, take a look.");
+    it("does not run when the list itself failed to save", async () => {
+      controls.canSave.value = true;
+      mocks.createWishlist.mockRejectedValue(new Error("boom"));
+
+      renderModal();
+      await nameTheList();
+      await selectTargetedScope();
       await fireEvent.click(saveButton());
 
-      const { message } = mocks.sendCommunication.mock.calls[0][0] as { message: string };
-
-      expect(message).toContain("New season is live, take a look.");
-      expect(message).not.toContain(`${KEY}.share_default_message`);
-      expect(message).toContain("/shared-list/");
+      expect(controls.onSaved).not.toHaveBeenCalled();
+      expect(mocks.notifications.error).toHaveBeenCalledOnce();
+      expect(mocks.notifications.error.mock.calls[0][0]).toMatchObject({ text: `${KEY}.save_error` });
     });
 
-    it("honours the channel checkboxes", async () => {
-      await shareWith("org-1");
-      await fireEvent.click(channelCheckboxes().email);
-      await fireEvent.click(saveButton());
+    it("does not turn its own failure into a save error — the list is already saved", async () => {
+      controls.canSave.value = true;
+      controls.onSaved.mockRejectedValue(new Error("notification failed"));
 
-      expect(mocks.sendCommunication.mock.calls[0][0]).toMatchObject({ sendEmail: false, sendPush: true });
-    });
-
-    it("saves without notifying when the rep clears both channels", async () => {
-      await shareWith("org-1");
-      const { email, push } = channelCheckboxes();
-      await fireEvent.click(email);
-      await fireEvent.click(push);
+      renderModal();
+      await nameTheList();
+      await selectTargetedScope();
       await fireEvent.click(saveButton());
 
       expect(mocks.createWishlist).toHaveBeenCalledOnce();
-      expect(mocks.sendCommunication).not.toHaveBeenCalled();
-    });
-
-    it("does not re-notify when the target is unchanged", async () => {
-      renderModal(customerScopedList("org-1"));
-
-      await fireEvent.update(component.getByTestId("wishlist-name-input"), "Spring assortment 2026");
-      await fireEvent.click(saveButton());
-
-      expect(mocks.updateWishlist).toHaveBeenCalledOnce();
-      expect(mocks.sendCommunication).not.toHaveBeenCalled();
-      // The messaging controls are not even offered for an edit that keeps the same customer.
-      expect(component.queryByTestId("wishlist-share-message-input")).toBeNull();
-    });
-
-    it("warns that the previous customer loses access when the target is replaced", async () => {
-      renderModal(customerScopedList("org-1"));
-
-      expect(component.queryByText(`${KEY}.share_replace_hint`)).toBeNull();
-
-      await pickCustomer("org-2");
-
-      expect(component.getByText(`${KEY}.share_replace_hint`)).toBeInTheDocument();
-    });
-
-    it("does not hint about a replacement on a list that had no customer yet", async () => {
-      await shareWith("org-1");
-
-      expect(component.queryByText(`${KEY}.share_replace_hint`)).toBeNull();
+      expect(mocks.notifications.error).not.toHaveBeenCalled();
+      expect(mocks.logger.error).toHaveBeenCalledOnce();
     });
   });
 
-  describe("delivery outcome", () => {
-    it("reports success once the list is saved and both channels are delivered", async () => {
-      renderModal(customerScopedList("org-1"));
-      await pickCustomer("org-2");
-      await fireEvent.click(saveButton());
+  describe("the sharing link field", () => {
+    it("is offered for a scope that declares its list link-reachable", async () => {
+      renderModal();
 
-      expect(mocks.notifications.success).toHaveBeenCalledOnce();
-      expect(mocks.notifications.success.mock.calls[0][0]).toMatchObject({ text: `${KEY}.share_success` });
+      await selectTargetedScope();
+
+      expect(component.getByText(`${KEY}.sharing_link_label`)).toBeInTheDocument();
     });
 
-    it("localizes the backend warning codes through the Sales Rep mapping on partial delivery", async () => {
-      mocks.sendCommunication.mockResolvedValue({ ...SUCCESS, emailSent: false, warnings: ["EmailUnavailable"] });
+    it("is not offered for a private list", async () => {
+      renderModal();
 
-      renderModal(customerScopedList("org-1"));
-      await pickCustomer("org-2");
-      await fireEvent.click(saveButton());
+      await fireEvent.update(scopeSelect(), WishlistScopeType.Private);
 
-      expect(mocks.notifications.warning).toHaveBeenCalledOnce();
-      expect(mocks.notifications.warning.mock.calls[0][0].text).toContain(
-        "sales_rep.communication.warnings.EmailUnavailable",
-      );
-    });
-
-    it("states the partial delivery once for a warning code it cannot translate", async () => {
-      mocks.sendCommunication.mockResolvedValue({ ...SUCCESS, warnings: ["SomethingBrandNew"] });
-
-      renderModal(customerScopedList("org-1"));
-      await pickCustomer("org-2");
-      await fireEvent.click(saveButton());
-
-      // Exact match: an untranslatable code must not append a second copy of the summary sentence.
-      expect(mocks.notifications.warning.mock.calls[0][0]).toMatchObject({ text: `${KEY}.share_partial` });
-    });
-
-    it("keeps the nothing-was-sent wording even when the reason cannot be translated", async () => {
-      mocks.sendCommunication.mockResolvedValue({
-        succeeded: false,
-        pushSent: false,
-        emailSent: false,
-        warnings: ["SomethingBrandNew"],
-      });
-
-      renderModal(customerScopedList("org-1"));
-      await pickCustomer("org-2");
-      await fireEvent.click(saveButton());
-
-      // Must not degrade into "shared, but not every notification was delivered" — nothing was delivered at all.
-      expect(mocks.notifications.warning.mock.calls[0][0]).toMatchObject({ text: `${KEY}.share_notify_error` });
-    });
-
-    it("warns rather than errors when the list saved but nothing could be sent", async () => {
-      mocks.sendCommunication.mockResolvedValue({ succeeded: false, pushSent: false, emailSent: false, warnings: [] });
-
-      renderModal(customerScopedList("org-1"));
-      await pickCustomer("org-2");
-      await fireEvent.click(saveButton());
-
-      expect(mocks.updateWishlist).toHaveBeenCalledOnce();
-      expect(mocks.notifications.error).not.toHaveBeenCalled();
-      expect(mocks.notifications.warning.mock.calls[0][0]).toMatchObject({ text: `${KEY}.share_notify_error` });
-    });
-
-    it("surfaces a save error and does not notify when the mutation fails", async () => {
-      mocks.updateWishlist.mockRejectedValue(new Error("boom"));
-
-      renderModal(customerScopedList("org-1"));
-      await pickCustomer("org-2");
-      await fireEvent.click(saveButton());
-
-      expect(mocks.notifications.error).toHaveBeenCalledOnce();
-      expect(mocks.notifications.error.mock.calls[0][0]).toMatchObject({ text: `${KEY}.save_error` });
-      expect(mocks.sendCommunication).not.toHaveBeenCalled();
+      expect(component.queryByText(`${KEY}.sharing_link_label`)).toBeNull();
     });
   });
 });

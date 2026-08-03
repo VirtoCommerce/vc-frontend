@@ -149,6 +149,25 @@
           "All": "Alla"
         }
       }
+    },
+    "list_sharing": {
+      "share_customers_label": "Kund",
+      "share_customers_placeholder": "Välj kund",
+      "share_customers_error": "Kundlistan kunde inte laddas. Försök igen.",
+      "share_replace_hint": "Kunden som valdes tidigare förlorar åtkomsten till den här listan.",
+      "share_message_label": "Meddelande",
+      "share_message_placeholder": "Valfritt meddelande",
+      "share_channels_label": "Skicka via",
+      "share_email_label": "E-post",
+      "share_push_label": "Push-avisering",
+      "share_default_title": "En ny lista från din säljare",
+      "share_default_message": "Hej! Jag har just delat listan ”{listName}” med din organisation. Ta en titt:",
+      "share_success": "Listan har delats med kunden.",
+      "share_partial": "Listan har delats, men alla aviseringar levererades inte.",
+      "share_notify_error": "Listan sparades, men kunden kunde inte meddelas.",
+      "scope_label": "Kund",
+      "status": "Delad med kund",
+      "badge": "Rekommenderas av din säljare"
     }
   }
 }

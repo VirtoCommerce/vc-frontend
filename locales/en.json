@@ -974,8 +974,7 @@
         "list_settings_button": "List settings",
         "empty_list": "Your list is empty",
         "empty_list_button": "Continue browsing",
-        "list_icon": "List icon",
-        "recommended_by_rep": "Recommended by your sales representative"
+        "list_icon": "List icon"
       },
       "add_to_wishlists_modal": {
         "title": "Please select list",
@@ -1010,23 +1009,9 @@
         "sharing_scope": {
           "Private": "Private",
           "Organization": "Organization",
-          "AnyoneAnonymous": "Anyone (readonly)",
-          "Customer": "Customer"
+          "AnyoneAnonymous": "Anyone (readonly)"
         },
         "clipboard_success": "Link copied",
-        "share_customers_label": "Customer",
-        "share_customers_placeholder": "Select customer",
-        "share_replace_hint": "The previously selected customer will lose access to this list.",
-        "share_message_label": "Message",
-        "share_message_placeholder": "Optional message to include",
-        "share_channels_label": "Send via",
-        "share_email_label": "Email",
-        "share_push_label": "Push notification",
-        "share_default_title": "A new list from your sales representative",
-        "share_default_message": "Hi! I've just shared the list \"{listName}\" with your organization. Take a look:",
-        "share_success": "List shared with the customer.",
-        "share_partial": "List shared, but not every notification was delivered.",
-        "share_notify_error": "The list was saved, but the customer could not be notified.",
         "save_error": "The list could not be saved. Please try again."
       },
       "delete_wishlist_modal": {
@@ -1044,8 +1029,7 @@
       "status": {
         "shared": "Shared",
         "private": "Private",
-        "shared_with_me": "Shared with me",
-        "shared_with_customer": "Shared with customer"
+        "shared_with_me": "Shared with me"
       }
     },
     "sorting": {

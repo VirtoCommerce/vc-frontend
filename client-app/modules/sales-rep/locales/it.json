@@ -149,6 +149,25 @@
           "All": "Tutti"
         }
       }
+    },
+    "list_sharing": {
+      "share_customers_label": "Cliente",
+      "share_customers_placeholder": "Seleziona cliente",
+      "share_customers_error": "Non è stato possibile caricare l'elenco dei clienti. Riprova.",
+      "share_replace_hint": "Il cliente selezionato in precedenza perderà l'accesso a questa lista.",
+      "share_message_label": "Messaggio",
+      "share_message_placeholder": "Messaggio facoltativo da includere",
+      "share_channels_label": "Invia tramite",
+      "share_email_label": "Email",
+      "share_push_label": "Notifica push",
+      "share_default_title": "Una nuova lista dal tuo rappresentante commerciale",
+      "share_default_message": "Ciao! Ho appena condiviso la lista \"{listName}\" con la tua organizzazione. Dai un'occhiata:",
+      "share_success": "Lista condivisa con il cliente.",
+      "share_partial": "Lista condivisa, ma non tutte le notifiche sono state consegnate.",
+      "share_notify_error": "La lista è stata salvata, ma non è stato possibile avvisare il cliente.",
+      "scope_label": "Cliente",
+      "status": "Condivisa con il cliente",
+      "badge": "Consigliato dal tuo rappresentante commerciale"
     }
   }
 }

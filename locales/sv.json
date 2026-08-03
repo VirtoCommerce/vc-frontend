@@ -974,8 +974,7 @@
         "list_settings_button": "Listinställningar",
         "empty_list": "Din lista är tom",
         "empty_list_button": "Fortsätt bläddra",
-        "list_icon": "Listikon",
-        "recommended_by_rep": "Rekommenderas av din säljare"
+        "list_icon": "Listikon"
       },
       "add_to_wishlists_modal": {
         "title": "Välj lista",
@@ -1010,23 +1009,9 @@
         "sharing_scope": {
           "Private": "Privat",
           "Organization": "Organisation",
-          "AnyoneAnonymous": "Alla (endast läsning)",
-          "Customer": "Kund"
+          "AnyoneAnonymous": "Alla (endast läsning)"
         },
         "clipboard_success": "Länk kopierad",
-        "share_customers_label": "Kund",
-        "share_customers_placeholder": "Välj kund",
-        "share_replace_hint": "Kunden som valdes tidigare förlorar åtkomsten till den här listan.",
-        "share_message_label": "Meddelande",
-        "share_message_placeholder": "Valfritt meddelande",
-        "share_channels_label": "Skicka via",
-        "share_email_label": "E-post",
-        "share_push_label": "Push-avisering",
-        "share_default_title": "En ny lista från din säljare",
-        "share_default_message": "Hej! Jag har just delat listan ”{listName}” med din organisation. Ta en titt:",
-        "share_success": "Listan har delats med kunden.",
-        "share_partial": "Listan har delats, men alla aviseringar levererades inte.",
-        "share_notify_error": "Listan sparades, men kunden kunde inte meddelas.",
         "save_error": "Listan kunde inte sparas. Försök igen."
       },
       "delete_wishlist_modal": {
@@ -1044,8 +1029,7 @@
       "status": {
         "shared": "Delad",
         "private": "Privat",
-        "shared_with_me": "Delad med mig",
-        "shared_with_customer": "Delad med kund"
+        "shared_with_me": "Delad med mig"
       }
     },
     "sorting": {

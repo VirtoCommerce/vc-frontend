@@ -4,9 +4,13 @@
       {{ list.name }}
     </VcTypography>
 
-    <VcAlert v-if="isRecommendedByRep" color="info" variant="solid-light" size="sm" icon class="shared-list__rep-badge">
-      {{ $t("shared.wishlists.list_details.recommended_by_rep") }}
-    </VcAlert>
+    <ExtensionPoint
+      v-if="$canRenderExtensionPoint('sharedList', EXTENSION_NAMES.sharedList.provenanceNote, list?.sharingSetting)"
+      :name="EXTENSION_NAMES.sharedList.provenanceNote"
+      category="sharedList"
+      :sharing-setting="list?.sharingSetting"
+      class="shared-list__provenance"
+    />
 
     <div ref="listElement" class="shared-list__content">
       <!-- Skeletons -->
@@ -21,7 +25,7 @@
                 :items="pagedListItems"
                 :pending-items="pendingItems"
                 :editable="false"
-                :addable-to-cart="isRecommendedByRep"
+                :addable-to-cart="isShoppable"
                 :navigatable="false"
                 @update:cart-item="addOrUpdateCartItem"
                 @link-click="selectItemEvent"
@@ -71,15 +75,20 @@
 import { cloneDeep, keyBy } from "lodash-es";
 import { computed, ref, watchEffect, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
-import { WishlistScopeType } from "@/core/api/graphql/types";
 import { useAnalytics, usePageHead } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { PAGE_LIMIT } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { prepareLineItem } from "@/core/utilities";
-import { isSalesRepsEnabled } from "@/modules/sales-rep/composables/useSalesRepsConfig";
 import { useShortCart } from "@/shared/cart";
-import { useWishlists, WishlistLineItems, WishlistProductsSkeleton, WishlistSummary } from "@/shared/wishlists";
+import { EXTENSION_NAMES } from "@/shared/common/constants/extensionPointsNames";
+import {
+  useWishlists,
+  useWishlistSharingScopes,
+  WishlistLineItems,
+  WishlistProductsSkeleton,
+  WishlistSummary,
+} from "@/shared/wishlists";
 import type { LineItemType, Product } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
 
@@ -96,12 +105,11 @@ const { analytics } = useAnalytics();
 const { t } = useI18n();
 const { listLoading, list, fetchSharedWishList } = useWishlists();
 const { cart, addToCart, changeItemQuantity } = useShortCart();
+const { getSharingScope } = useWishlistSharingScopes();
 
-// Customer-scoped lists are published by a Sales Rep — surface that to the viewing org member (VCST-5332).
-// Only when the Sales Rep module is installed/enabled for the store (the "Recommended by Rep" concept exists then).
-const isRecommendedByRep = computed(
-  () => isSalesRepsEnabled() && list.value?.sharingSetting?.scope === WishlistScopeType.Customer,
-);
+// Whether a viewer may put items from someone else's list into their own cart is a property of the sharing scope, so
+// the scope's provider declares it. The list itself stays read-only either way.
+const isShoppable = computed(() => !!getSharingScope(list.value?.sharingSetting?.scope)?.shoppable);
 
 const { continue_shopping_link } = getModuleSettings({
   [MODULE_XAPI_KEYS.CONTINUE_SHOPPING_LINK]: "continue_shopping_link",
@@ -189,6 +197,10 @@ watchEffect(() => {
   @apply relative max-lg:pb-12;
 
   &__name {
+    @apply mb-5;
+  }
+
+  &__provenance {
     @apply mb-5;
   }
 

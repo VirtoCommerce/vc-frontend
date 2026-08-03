@@ -1,14 +1,16 @@
 import { render, cleanup, configure } from "@testing-library/vue";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { nextTick } from "vue";
-import { WishlistScopeType } from "@/core/api/graphql/types";
 import SharedList from "./shared-list.vue";
 import type { CartType, LineItemType, WishlistType } from "@/core/api/graphql/types";
+import type { IWishlistSharingScopeType } from "@/shared/wishlists";
 import "@testing-library/jest-dom/vitest";
 
 configure({ testIdAttribute: "data-test-id" });
 
-const REP_BADGE = "shared.wishlists.list_details.recommended_by_rep";
+// Stand-ins for whatever a module contributes: this page must not know any contributed scope by name.
+const SHOPPABLE_SCOPE = "ShoppableTestScope";
+const PLAIN_SCOPE = "PlainTestScope";
 
 // Everything a vi.mock factory reaches for must live in the hoisted block — the factories run before this
 // module's own top-level bindings exist.
@@ -49,7 +51,9 @@ const mocks = await vi.hoisted(async () => {
     fetchSharedWishList: vi.fn(),
     addToCart: vi.fn(),
     changeItemQuantity: vi.fn(),
-    isSalesRepsEnabled: vi.fn(() => true),
+    // What the registry would resolve for a given scope value.
+    scopes: ref<Record<string, Partial<IWishlistSharingScopeType>>>({}),
+    canRenderExtensionPoint: vi.fn(() => false),
     analytics: vi.fn(),
     lineItemsSpy,
     WishlistLineItems,
@@ -75,10 +79,6 @@ vi.mock("@/core/utilities", () => ({
   prepareLineItem: (item: LineItemType, countInCart?: number) => ({ ...item, countInCart }),
 }));
 
-vi.mock("@/modules/sales-rep/composables/useSalesRepsConfig", () => ({
-  isSalesRepsEnabled: mocks.isSalesRepsEnabled,
-}));
-
 vi.mock("@/shared/cart", () => ({
   useShortCart: () => ({
     cart: mocks.cart,
@@ -92,6 +92,9 @@ vi.mock("@/shared/wishlists", () => ({
     list: mocks.list,
     listLoading: mocks.listLoading,
     fetchSharedWishList: mocks.fetchSharedWishList,
+  }),
+  useWishlistSharingScopes: () => ({
+    getSharingScope: (scope?: string | null) => (scope ? mocks.scopes.value[scope] : undefined),
   }),
   WishlistLineItems: mocks.WishlistLineItems,
   WishlistSummary: mocks.Empty,
@@ -110,13 +113,13 @@ function lineItem(overrides: Partial<LineItemType> = {}): LineItemType {
   } as LineItemType;
 }
 
-function wishlist(scope: WishlistScopeType, items: LineItemType[] = [lineItem()]): WishlistType {
+function wishlist(scope: string, items: LineItemType[] = [lineItem()]): WishlistType {
   return {
     id: "list-1",
     name: "Spring assortment",
     items,
     sharingSetting: { id: "sharing-key-1", scope, isOwner: false },
-  } as WishlistType;
+  } as unknown as WishlistType;
 }
 
 function cartWith(items: { id: string; productId: string; sku: string; quantity: number }[]): CartType {
@@ -127,13 +130,17 @@ function renderPage() {
   return render(SharedList, {
     props: { sharingKey: "sharing-key-1" },
     global: {
-      mocks: { $t: (key: string) => key },
+      mocks: {
+        $t: (key: string) => key,
+        $canRenderExtensionPoint: mocks.canRenderExtensionPoint,
+      },
       stubs: {
         VcContainer: { template: "<div><slot /></div>" },
         VcTypography: { template: "<div><slot /></div>" },
-        VcAlert: { template: "<div><slot /></div>" },
         VcLayout: { template: "<div><slot /><slot name='sidebar' /></div>" },
         VcWidget: { template: "<div><slot /></div>" },
+        // Records that the page offered the socket, without pulling in any provider.
+        ExtensionPoint: { template: '<div data-test-id="extension-point" />' },
         VcPagination: true,
         VcEmptyView: true,
         VcButton: true,
@@ -157,8 +164,12 @@ beforeEach(() => {
   mocks.fetchSharedWishList.mockReset();
   mocks.addToCart.mockReset();
   mocks.changeItemQuantity.mockReset();
-  mocks.isSalesRepsEnabled.mockReset().mockReturnValue(true);
   mocks.analytics.mockReset();
+  mocks.canRenderExtensionPoint.mockReset().mockReturnValue(false);
+  mocks.scopes.value = {
+    [SHOPPABLE_SCOPE]: { scope: SHOPPABLE_SCOPE, labelKey: "", shoppable: true },
+    [PLAIN_SCOPE]: { scope: PLAIN_SCOPE, labelKey: "" },
+  };
   lineItemsSpy.props = {};
   lineItemsSpy.emit = undefined;
 });
@@ -167,42 +178,63 @@ afterEach(() => {
   cleanup();
 });
 
-describe("SharedList — rep-published list", () => {
-  describe("the 'recommended by rep' treatment", () => {
-    it("marks a Customer-scoped list as recommended and makes it shoppable", async () => {
-      mocks.list.value = wishlist(WishlistScopeType.Customer);
+describe("SharedList", () => {
+  describe("where a list came from", () => {
+    it("offers the provenance socket to whichever module claims the list", async () => {
+      mocks.canRenderExtensionPoint.mockReturnValue(true);
+      mocks.list.value = wishlist(SHOPPABLE_SCOPE);
 
       const page = await renderSettled();
 
-      expect(page.getByText(REP_BADGE)).toBeInTheDocument();
+      expect(page.getByTestId("extension-point")).toBeInTheDocument();
+      // The provider decides from the sharing setting, so that is what it has to be asked with.
+      expect(mocks.canRenderExtensionPoint).toHaveBeenCalledWith(
+        "sharedList",
+        expect.any(String),
+        expect.objectContaining({ scope: SHOPPABLE_SCOPE }),
+      );
+    });
+
+    it("shows nothing there when no module claims it", async () => {
+      mocks.list.value = wishlist(PLAIN_SCOPE);
+
+      const page = await renderSettled();
+
+      expect(page.queryByTestId("extension-point")).toBeNull();
+    });
+  });
+
+  describe("whether the list can be shopped", () => {
+    it("allows adding to cart when the scope declares the list shoppable", async () => {
+      mocks.list.value = wishlist(SHOPPABLE_SCOPE);
+
+      await renderSettled();
+
       expect(lineItemsSpy.props.addableToCart).toBe(true);
       // The viewer does not own the list, so it must stay read-only regardless.
       expect(lineItemsSpy.props.editable).toBe(false);
     });
 
-    it("leaves a link-shared list unmarked and non-shoppable", async () => {
-      mocks.list.value = wishlist(WishlistScopeType.AnyoneAnonymous);
+    it("does not allow it for a scope that declares nothing", async () => {
+      mocks.list.value = wishlist(PLAIN_SCOPE);
 
-      const page = await renderSettled();
+      await renderSettled();
 
-      expect(page.queryByText(REP_BADGE)).toBeNull();
       expect(lineItemsSpy.props.addableToCart).toBe(false);
     });
 
-    it("stays unmarked when the Sales Rep module is not enabled for the store", async () => {
-      mocks.isSalesRepsEnabled.mockReturnValue(false);
-      mocks.list.value = wishlist(WishlistScopeType.Customer);
+    it("does not allow it for a scope the registry does not know", async () => {
+      mocks.list.value = wishlist("SomeRemovedScope");
 
-      const page = await renderSettled();
+      await renderSettled();
 
-      expect(page.queryByText(REP_BADGE)).toBeNull();
       expect(lineItemsSpy.props.addableToCart).toBe(false);
     });
   });
 
   describe("adding to the viewer's own cart", () => {
     async function shoppableList(items?: LineItemType[]) {
-      mocks.list.value = wishlist(WishlistScopeType.Customer, items);
+      mocks.list.value = wishlist(SHOPPABLE_SCOPE, items);
       await renderSettled();
     }
 

@@ -974,8 +974,7 @@
         "list_settings_button": "Configurações da lista",
         "empty_list": "Sua lista está vazia",
         "empty_list_button": "Continuar navegando",
-        "list_icon": "Ícone da lista",
-        "recommended_by_rep": "Recomendado pelo seu representante de vendas"
+        "list_icon": "Ícone da lista"
       },
       "add_to_wishlists_modal": {
         "title": "Por favor, selecione a lista",
@@ -1010,23 +1009,9 @@
         "sharing_scope": {
           "Private": "Privado",
           "Organization": "Organização",
-          "AnyoneAnonymous": "Qualquer pessoa (somente leitura)",
-          "Customer": "Cliente"
+          "AnyoneAnonymous": "Qualquer pessoa (somente leitura)"
         },
         "clipboard_success": "Link copiado",
-        "share_customers_label": "Cliente",
-        "share_customers_placeholder": "Selecionar cliente",
-        "share_replace_hint": "O cliente selecionado anteriormente perderá o acesso a esta lista.",
-        "share_message_label": "Mensagem",
-        "share_message_placeholder": "Mensagem opcional para incluir",
-        "share_channels_label": "Enviar via",
-        "share_email_label": "E-mail",
-        "share_push_label": "Notificação push",
-        "share_default_title": "Uma nova lista do seu representante de vendas",
-        "share_default_message": "Olá! Acabei de compartilhar a lista \"{listName}\" com a sua organização. Confira:",
-        "share_success": "Lista compartilhada com o cliente.",
-        "share_partial": "Lista compartilhada, mas não todas as notificações foram entregues.",
-        "share_notify_error": "A lista foi salva, mas não foi possível notificar o cliente.",
         "save_error": "Não foi possível salvar a lista. Tente novamente."
       },
       "delete_wishlist_modal": {
@@ -1044,8 +1029,7 @@
       "status": {
         "shared": "Compartilhada",
         "private": "Privada",
-        "shared_with_me": "Compartilhado comigo",
-        "shared_with_customer": "Compartilhada com cliente"
+        "shared_with_me": "Compartilhado comigo"
       }
     },
     "sorting": {

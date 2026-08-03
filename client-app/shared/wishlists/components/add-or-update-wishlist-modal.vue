@@ -8,7 +8,6 @@
     dividers
     is-mobile-fullscreen
     test-id="add-or-update-wishlist-modal"
-    class="add-or-update-wishlist-modal"
   >
     <div class="space-y-4">
       <VcInput
@@ -65,52 +64,14 @@
           </template>
         </VcInput>
 
-        <template v-if="isCustomerSharing">
-          <VcSelect
-            v-model="selectedOrganizationId"
-            test-id-dropdown="wishlist-share-customer-select"
-            :label="$t('shared.wishlists.add_or_update_wishlist_modal.share_customers_label')"
-            :placeholder="$t('shared.wishlists.add_or_update_wishlist_modal.share_customers_placeholder')"
-            :disabled="saving"
-            :items="customerOptions"
-            :message="
-              replacesPreviousTarget ? $t('shared.wishlists.add_or_update_wishlist_modal.share_replace_hint') : ''
-            "
-            text-field="organizationName"
-            value-field="organizationId"
-            autocomplete
-            clearable
-          />
-
-          <template v-if="isNewCustomerTarget">
-            <VcTextarea
-              v-model="shareMessage"
-              data-test-id="wishlist-share-message-input"
-              :label="$t('shared.wishlists.add_or_update_wishlist_modal.share_message_label')"
-              :placeholder="$t('shared.wishlists.add_or_update_wishlist_modal.share_message_placeholder')"
-              :disabled="saving"
-              rows="3"
-              counter
-              :max-length="shareMessageMaxLength"
-            />
-
-            <fieldset>
-              <VcLabel class="add-or-update-wishlist-modal__channels-label">
-                {{ $t("shared.wishlists.add_or_update_wishlist_modal.share_channels_label") }}
-              </VcLabel>
-
-              <div class="add-or-update-wishlist-modal__channels">
-                <VcCheckbox v-model="sendEmail" :disabled="saving" data-test-id="wishlist-share-email-checkbox">
-                  {{ $t("shared.wishlists.add_or_update_wishlist_modal.share_email_label") }}
-                </VcCheckbox>
-
-                <VcCheckbox v-model="sendPush" :disabled="saving" data-test-id="wishlist-share-push-checkbox">
-                  {{ $t("shared.wishlists.add_or_update_wishlist_modal.share_push_label") }}
-                </VcCheckbox>
-              </div>
-            </fieldset>
-          </template>
-        </template>
+        <component
+          :is="activeScopeElement"
+          v-if="activeScopeElement"
+          ref="scopeControls"
+          :shared-with-id="listSharedWithId"
+          :sharing-link="sharingLink"
+          :saving="saving"
+        />
       </div>
     </div>
 
@@ -140,16 +101,16 @@
 import { toTypedSchema } from "@vee-validate/yup";
 import { useClipboard } from "@vueuse/core";
 import { useField, useForm } from "vee-validate";
-import { computed, ref } from "vue";
+import { computed, ref, useTemplateRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { object, string } from "yup";
 import { WishlistScopeType } from "@/core/api/graphql/types";
-import { useSalesRepCommunication } from "@/modules/sales-rep/composables/useSalesRepCommunication";
-import { useSalesRepCustomerOptions } from "@/modules/sales-rep/composables/useSalesRepCustomerOptions";
-import { isSalesRepUser } from "@/modules/sales-rep/composables/useSalesRepsConfig";
+import { Logger } from "@/core/utilities";
 import { useUser } from "@/shared/account/composables";
 import { useNotifications } from "@/shared/notification";
+import { useWishlistSharingScopes } from "../composables/useWishlistSharingScopes";
 import { useWishlists } from "../composables/useWishlists";
+import type { IWishlistSharingScopeControlsType } from "../composables/useWishlistSharingScopes";
 import type { WishlistType } from "@/core/api/graphql/types";
 
 interface IProps {
@@ -158,7 +119,7 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
-const { t, te } = useI18n();
+const { t } = useI18n();
 
 const { copy: copyToClipboard, isSupported: isClipboardSupported } = useClipboard();
 const notifications = useNotifications();
@@ -169,7 +130,7 @@ const listSharingScope = computed<string | undefined>(() => props.list?.sharingS
 const listSharedWithId = computed<string | undefined>(() => props.list?.sharingSetting?.sharedWithId ?? undefined);
 
 const { createWishlist, updateWishlist } = useWishlists();
-const { sendCommunication } = useSalesRepCommunication();
+const { sharingScopes, getSharingScope, isSharingScopeAvailable } = useWishlistSharingScopes();
 
 // Modal-owned busy flag for the save action. Driven with try/finally so the Save button can never get stuck
 // showing the loader (useWishlists' shared `loading` can leak true on error), and it guards against double-submit.
@@ -178,64 +139,39 @@ const { isCorporateMember } = useUser();
 
 const isEditMode = computed<boolean>(() => !!props.list);
 
-// "Customer" scope (VCST-5332): a Sales Rep publishes a list to a customer organization. Available in both create
-// and edit mode. Gated on the shared rep predicate, so this surface can't drift from the hub's own gate.
-const canShareWithCustomers = computed(isSalesRepUser);
-// Only fetched when the caller can share (avoids an authorized request for everyone else).
-const { options: customerOptions } = useSalesRepCustomerOptions(canShareWithCustomers);
-
-// The backend rejects a combined message over 1000 chars, and the sharing link is appended to whatever the rep
-// writes. Measuring the actual link (its host varies per store) keeps a long domain from silently pushing an
-// otherwise-valid message over the limit.
-const NOTIFICATION_MESSAGE_LIMIT = 1000;
-const SEPARATOR_LENGTH = 2;
-// Pre-fill from the list's current target so re-opening a Customer-shared list shows the selected customer.
-const selectedOrganizationId = ref<string | undefined>(listSharedWithId.value);
-const shareMessage = ref("");
-// Both channels on by default: publishing to a customer is pointless if they hear about it on neither. Unlike the
-// rep's standalone "Send a message" modal, clearing both is allowed here — it just saves the list without notifying.
-const sendEmail = ref(true);
-const sendPush = ref(true);
+// Contributed scopes bring their own controls; this is how the modal reaches that instance's state.
+const scopeControls = useTemplateRef<IWishlistSharingScopeControlsType>("scopeControls");
 
 const listSharingScopes = computed(() => {
-  const scopes = [
-    {
-      id: WishlistScopeType.Private,
-      label: t(`shared.wishlists.add_or_update_wishlist_modal.sharing_scope.${WishlistScopeType.Private}`),
-    },
-    {
-      id: WishlistScopeType.AnyoneAnonymous,
-      label: t(`shared.wishlists.add_or_update_wishlist_modal.sharing_scope.${WishlistScopeType.AnyoneAnonymous}`),
-    },
-    {
-      id: WishlistScopeType.Organization,
-      label: t(`shared.wishlists.add_or_update_wishlist_modal.sharing_scope.${WishlistScopeType.Organization}`),
-    },
-  ];
+  const available = sharingScopes.value.filter(isSharingScopeAvailable);
 
-  // Also offered when the list already carries the scope, so a non-rep opening such a list sees its actual value
-  // instead of an empty select (and cannot silently overwrite the scope by saving).
-  if (canShareWithCustomers.value || listSharingScope.value === WishlistScopeType.Customer) {
-    scopes.push({
-      id: WishlistScopeType.Customer,
-      label: t(`shared.wishlists.add_or_update_wishlist_modal.sharing_scope.${WishlistScopeType.Customer}`),
-    });
+  // A scope the list already carries stays listed even when it isn't on offer — otherwise the select would render
+  // empty and saving would silently rewrite the scope. Covers both a revoked capability and an uninstalled provider,
+  // hence the fallback label built from the raw value rather than a known key.
+  const persisted = listSharingScope.value;
+  const isPersistedListed = available.some((scope) => scope.scope === persisted);
+  const scopes = [...available];
+
+  if (persisted && !isPersistedListed) {
+    const known = getSharingScope(persisted);
+    scopes.push({ ...(known ?? { scope: persisted, labelKey: "" }) });
   }
 
-  return scopes;
+  return scopes.map((scope) => ({
+    id: scope.scope,
+    label: scope.labelKey ? t(scope.labelKey) : scope.scope,
+  }));
 });
 
-// Scopes whose list is reachable by its link, so the owner can copy it (e.g. a rep pasting it into their own email).
-const LINKABLE_SCOPES = new Set<string>([
-  WishlistScopeType.AnyoneAnonymous,
-  WishlistScopeType.Organization,
-  WishlistScopeType.Customer,
-]);
-
-const listSharingScopeSupportsLink = computed(() => !!sharingScope.value && LINKABLE_SCOPES.has(sharingScope.value));
+const activeScope = computed(() => getSharingScope(sharingScope.value));
+// A scope the list carries but the current user may no longer use stays *listed* so saving cannot rewrite it, yet its
+// controls must not appear — that capability is exactly what this user lacks.
+const activeScopeElement = computed(() =>
+  activeScope.value && isSharingScopeAvailable(activeScope.value) ? activeScope.value.element : undefined,
+);
+const listSharingScopeSupportsLink = computed(() => !!activeScope.value?.supportsLink);
 const sharingKey = computed(() => props.list?.sharingSetting?.id ?? crypto.randomUUID());
 const sharingLink = computed(() => `${location.protocol}//${location.host}/shared-list/${sharingKey.value}`);
-const shareMessageMaxLength = computed(() => NOTIFICATION_MESSAGE_LIMIT - sharingLink.value.length - SEPARATOR_LENGTH);
 
 const MAX_DESCRIPTION_LENGTH = 250;
 
@@ -261,37 +197,15 @@ const { value: name } = useField<string | undefined>("name");
 const { value: description } = useField<string | undefined>("description");
 const { value: sharingScope } = useField<string | undefined>("sharingScope");
 
-const isCustomerScope = computed(() => sharingScope.value === WishlistScopeType.Customer);
+// A scope with its own controls decides for itself whether its input is complete. While such a component is still
+// resolving, Save stays disabled rather than letting the list be saved into a half-configured scope.
+const scopeCanSave = computed(() => (activeScopeElement.value ? !!scopeControls.value?.canSave : true));
+// Per-scope input lives outside the vee-validate schema, so the form's own `dirty` cannot see it.
+const scopeDirty = computed(() => !!scopeControls.value?.dirty);
 
-// The rep-only customer-sharing controls. Requires the module installed/enabled AND the caller be a rep, so a
-// Customer-scoped list opened without that capability never exposes the rep UI/logic.
-const isCustomerSharing = computed(() => canShareWithCustomers.value && isCustomerScope.value);
-
-// Messaging is offered only when this edit sets a genuinely NEW customer target vs. what was persisted:
-// non-Customer -> Customer, or a change to a different customer. Re-selecting the original (incl. A->B->A) = none.
-const isNewCustomerTarget = computed(
-  () =>
-    isCustomerSharing.value &&
-    !!selectedOrganizationId.value &&
-    selectedOrganizationId.value !== listSharedWithId.value,
+const canSave = computed<boolean>(
+  () => meta.value.valid && scopeCanSave.value && (meta.value.dirty || scopeDirty.value),
 );
-
-// The backend keeps a single sharing setting per list, so targeting another customer detaches the current one.
-const replacesPreviousTarget = computed(() => isNewCustomerTarget.value && !!listSharedWithId.value);
-
-const canSave = computed<boolean>(() => {
-  if (!meta.value.valid) {
-    return false;
-  }
-
-  // Picking a different customer is a change the form itself can't see (the target lives outside the vee-validate
-  // schema), so it counts as dirty on its own. Re-opening a Customer list and touching nothing leaves Save disabled.
-  if (isCustomerScope.value) {
-    return !!selectedOrganizationId.value && (meta.value.dirty || isNewCustomerTarget.value);
-  }
-
-  return meta.value.dirty;
-});
 
 async function save(closeHandle: () => void): Promise<void> {
   if (!meta.value.valid || saving.value) {
@@ -300,15 +214,15 @@ async function save(closeHandle: () => void): Promise<void> {
 
   saving.value = true;
   try {
-    // Persist the list AND its sharing in a single mutation. For the "Customer" scope the chosen organization is
-    // passed as sharedWithId; the backend writes the scoped sharing setting.
-    const sharedWithId = isCustomerScope.value ? selectedOrganizationId.value : undefined;
+    // Persist the list AND its sharing in a single mutation. A scope with controls contributes its own part of the
+    // command; a scope without any contributes nothing, and the backend applies a null target for such scopes itself.
+    const scopePayload = scopeControls.value?.payload ?? {};
     const payload = {
       listName: name.value?.trim(),
       description: description.value?.trim(),
       scope: sharingScope.value,
       sharingKey: sharingKey.value,
-      sharedWithId,
+      ...scopePayload,
     };
 
     if (isEditMode.value) {
@@ -317,10 +231,14 @@ async function save(closeHandle: () => void): Promise<void> {
       await createWishlist(payload);
     }
 
-    // Notify the customer's members (reuses the VCST-5310 channel) when this edit set a genuinely new target and
-    // at least one channel is on. The rep's own message is optional — a default one carries the link on its own.
-    if (isNewCustomerTarget.value && sharedWithId && (sendEmail.value || sendPush.value)) {
-      await notifyCustomer(sharedWithId);
+    // The list is saved from here on, so a follow-up (e.g. notifying the target) must never surface as a save error.
+    try {
+      await scopeControls.value?.onSaved?.({
+        listName: name.value?.trim() ?? "",
+        sharingLink: sharingLink.value,
+      });
+    } catch (e) {
+      Logger.error("AddOrUpdateWishlistModal: sharing scope onSaved failed", e);
     }
 
     closeHandle();
@@ -335,54 +253,6 @@ async function save(closeHandle: () => void): Promise<void> {
   }
 }
 
-// Localizes a backend warning code via the Sales Rep module's shared mapping (the codes are its domain). An unknown
-// code — or a store where the module locale isn't loaded — yields nothing, so the caller keeps its own summary alone
-// instead of repeating it once per code.
-function localizeWarning(code: string): string | undefined {
-  const moduleKey = `sales_rep.communication.warnings.${code}`;
-
-  return te(moduleKey) ? t(moduleKey) : undefined;
-}
-
-async function notifyCustomer(organizationId: string): Promise<void> {
-  const listNameValue = name.value?.trim() ?? "";
-  // The rep's own text replaces the default body; the link is always appended so the customer can reach the list.
-  const body =
-    shareMessage.value.trim() ||
-    t("shared.wishlists.add_or_update_wishlist_modal.share_default_message", { listName: listNameValue });
-
-  const result = await sendCommunication({
-    organizationId,
-    sendEmail: sendEmail.value,
-    sendPush: sendPush.value,
-    title: t("shared.wishlists.add_or_update_wishlist_modal.share_default_title"),
-    message: [body, sharingLink.value].join("\n\n"),
-  });
-
-  // Per-channel detail, when the backend named a reason we can translate.
-  const details = result.warnings.map(localizeWarning).filter(Boolean).join(" ");
-  // The list itself is already saved; a delivery problem is a warning about the notification, never a save error.
-  const summary = result.succeeded
-    ? t("shared.wishlists.add_or_update_wishlist_modal.share_partial")
-    : t("shared.wishlists.add_or_update_wishlist_modal.share_notify_error");
-
-  if (!result.succeeded || result.warnings.length) {
-    notifications.warning({
-      text: [summary, details].filter(Boolean).join(" "),
-      duration: 10000,
-      single: true,
-    });
-
-    return;
-  }
-
-  notifications.success({
-    text: t("shared.wishlists.add_or_update_wishlist_modal.share_success"),
-    duration: 10000,
-    single: true,
-  });
-}
-
 async function copySharingLink() {
   await copyToClipboard(sharingLink.value);
 
@@ -393,15 +263,3 @@ async function copySharingLink() {
   });
 }
 </script>
-
-<style lang="scss">
-.add-or-update-wishlist-modal {
-  &__channels-label {
-    @apply mb-2;
-  }
-
-  &__channels {
-    @apply flex flex-col gap-2;
-  }
-}
-</style>

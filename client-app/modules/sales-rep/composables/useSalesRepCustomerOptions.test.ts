@@ -10,8 +10,9 @@ const queryMock = await vi.hoisted(async () => {
   const result = reactiveRef<SalesRepCustomersQuery | undefined>(undefined);
   const loading = reactiveRef(false);
   const onError = vi.fn();
-  const useQuery = vi.fn(() => ({ result, loading, onError }));
-  return { result, loading, onError, useQuery };
+  const onResult = vi.fn();
+  const useQuery = vi.fn(() => ({ result, loading, onError, onResult }));
+  return { result, loading, onError, onResult, useQuery };
 });
 
 const loggerMock = await vi.hoisted(() => ({ warn: vi.fn(), error: vi.fn() }));
@@ -62,12 +63,18 @@ function buildWith(enabled: Ref<boolean>) {
   return scope.run(() => useSalesRepCustomerOptions(enabled))!;
 }
 
+/** Invokes the handler the composable registered with Apollo's onError. */
+function failQuery(error = new Error("boom")) {
+  (queryMock.onError.mock.calls[0][0] as (e: Error) => void)(error);
+}
+
 beforeEach(() => {
   scope = effectScope();
   queryMock.result.value = undefined;
   queryMock.loading.value = false;
   queryMock.useQuery.mockClear();
   queryMock.onError.mockClear();
+  queryMock.onResult.mockClear();
   loggerMock.warn.mockClear();
   loggerMock.error.mockClear();
 });
@@ -152,9 +159,34 @@ describe("useSalesRepCustomerOptions", () => {
   it("logs a query failure instead of throwing at the call site", () => {
     build();
 
-    const handler = queryMock.onError.mock.calls[0][0] as (error: Error) => void;
-    handler(new Error("boom"));
+    failQuery();
 
     expect(loggerMock.error).toHaveBeenCalledOnce();
+  });
+
+  describe("reporting a failed load", () => {
+    it("starts out not failed", () => {
+      const { failed } = build();
+
+      expect(failed.value).toBe(false);
+    });
+
+    it("flags a failure so the caller can say so on the field", () => {
+      const { failed } = build();
+
+      failQuery();
+
+      expect(failed.value).toBe(true);
+    });
+
+    it("clears the flag once a later attempt comes back", () => {
+      const { failed } = build();
+
+      failQuery();
+      // A retry (or a refetch after `enabled` flips) must not leave the field stuck in an error state.
+      (queryMock.onResult.mock.calls[0][0] as () => void)();
+
+      expect(failed.value).toBe(false);
+    });
   });
 });
