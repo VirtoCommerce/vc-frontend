@@ -16,7 +16,6 @@ export function useSalesRepCustomer(organizationId: MaybeRefOrGetter<string>) {
     Logger.error("[sales-rep] salesRepCustomer failed:", error);
   });
 
-  // eslint-disable-next-line sonarjs/function-return-type -- view model or undefined by design
   const customer = computed<SalesRepCustomerProfileType | undefined>(() => {
     const node = result.value?.salesRepCustomer;
     return node

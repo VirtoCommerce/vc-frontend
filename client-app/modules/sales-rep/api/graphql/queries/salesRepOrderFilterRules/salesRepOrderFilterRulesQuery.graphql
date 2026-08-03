@@ -1,0 +1,6 @@
+query SalesRepOrderFilterRules($storeId: String, $cultureName: String) {
+  salesRepOrderFilterRules(storeId: $storeId, cultureName: $cultureName) {
+    name
+    localizedName
+  }
+}

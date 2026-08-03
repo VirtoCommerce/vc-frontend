@@ -1,0 +1,8 @@
+query SalesRepCustomerSortRules($storeId: String, $cultureName: String) {
+  salesRepCustomerSortRules(storeId: $storeId, cultureName: $cultureName) {
+    name
+    localizedName
+    defaultDirection
+    supportsDirection
+  }
+}

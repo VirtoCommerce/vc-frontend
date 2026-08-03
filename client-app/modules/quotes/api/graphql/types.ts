@@ -20,6 +20,7 @@ export type Scalars = {
   DynamicPropertyValue: { input: string | number | boolean | null; output: string | number | boolean | null; }
   Long: { input: number; output: number; }
   PropertyValue: { input: string | number | boolean | null; output: string | number | boolean | null; }
+  StoreAssetUrl: { input: any; output: any; }
 };
 
 export type AddQuoteAttachmentsCommandType = {
@@ -61,7 +62,7 @@ export type Asset = {
   /** The type ID of the asset. */
   typeId: Scalars['String']['output'];
   /** The URL of the asset. */
-  url: Scalars['String']['output'];
+  url: Scalars['StoreAssetUrl']['output'];
 };
 
 export type AvailabilityData = {
@@ -84,7 +85,7 @@ export type AvailabilityData = {
 };
 
 export type BrandType = {
-  bannerUrl?: Maybe<Scalars['String']['output']>;
+  bannerUrl?: Maybe<Scalars['StoreAssetUrl']['output']>;
   /** Brand property name. */
   brandPropertyName?: Maybe<Scalars['String']['output']>;
   /** Unlocalized brand name. */
@@ -94,7 +95,7 @@ export type BrandType = {
   featured?: Maybe<Scalars['Boolean']['output']>;
   /** Brand ID. */
   id: Scalars['String']['output'];
-  logoUrl?: Maybe<Scalars['String']['output']>;
+  logoUrl?: Maybe<Scalars['StoreAssetUrl']['output']>;
   /** Brand name. */
   name?: Maybe<Scalars['String']['output']>;
   permalink: Scalars['String']['output'];
@@ -158,7 +159,7 @@ export type Category = {
   /** Images */
   images: Array<ImageType>;
   /** The category image. */
-  imgSrc?: Maybe<Scalars['String']['output']>;
+  imgSrc?: Maybe<Scalars['StoreAssetUrl']['output']>;
   /** Level in hierarchy */
   level: Scalars['Int']['output'];
   /** The name of the category. */
@@ -388,7 +389,7 @@ export type ImageType = {
   /** Sort order */
   sortOrder: Scalars['Int']['output'];
   /** The URL of the image */
-  url: Scalars['String']['output'];
+  url: Scalars['StoreAssetUrl']['output'];
 };
 
 export type InputDynamicPropertyValueType = {
@@ -648,7 +649,7 @@ export type Product = {
   /** Product images */
   images: Array<ImageType>;
   /** The product main image URL. */
-  imgSrc?: Maybe<Scalars['String']['output']>;
+  imgSrc?: Maybe<Scalars['StoreAssetUrl']['output']>;
   /** Product added at least in one wishlist */
   inWishlist: Scalars['Boolean']['output'];
   /** Product is configurable */

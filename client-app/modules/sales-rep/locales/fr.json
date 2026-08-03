@@ -26,6 +26,10 @@
       "table": {
         "customer": "Client",
         "last_order": "Ma dernière commande",
+        "ytd": "Achats YTD",
+        "last_year": "Année dernière",
+        "orders_count": "{count} commandes",
+        "all_customers": "Tous",
         "actions": "Actions",
         "search_placeholder": "Rechercher par nom",
         "search_aria": "Rechercher des clients",
@@ -44,10 +48,25 @@
           "title": "Tableau de bord"
         },
         "widgets": {
-          "orders_on_hold": "Commandes en attente",
-          "active_projects": "Projets actifs",
+          "new_orders": "Nouvelles commandes",
+          "active_carts": "Paniers actifs",
+          "active_cart": "Panier actif",
+          "orders_placed_week": "Commandes cette semaine",
           "orders_placed_mtd": "Commandes depuis le début du mois",
+          "purchased_mtd": "Achats depuis le début du mois",
+          "orders_placed_ytd": "Commandes depuis le début de l'année",
           "my_customers": "Mes clients"
+        },
+        "stats": {
+          "value_total": "{amount} au total",
+          "vs_last_week": "{delta} vs semaine dernière",
+          "vs_last_month": "{delta} vs mois dernier",
+          "vs_last_year": "{delta} vs année dernière",
+          "ordered_this_month": "{count} ont commandé ce mois-ci",
+          "new_customers": "{count} nouveaux clients",
+          "placed_today": "{count} passées aujourd'hui",
+          "new_this_week": "{count} nouveaux cette semaine",
+          "mtd_of_ytd": "{percent}% de l'année"
         }
       }
     },
@@ -56,10 +75,10 @@
       "not_found": "Client introuvable ou absent de vos clients.",
       "back_to_customers": "Retour à mes clients",
       "widgets": {
-        "ytd_purchases": "Achats depuis le début de l'année",
-        "open_balance": "Solde ouvert",
-        "avg_order_value": "Valeur moyenne des commandes",
-        "orders_ytd": "Commandes depuis le début de l'année"
+        "avg_order_value": "Valeur moyenne des commandes"
+      },
+      "stats": {
+        "per_order": "Moyenne par commande (YTD)"
       },
       "info": {
         "title": "Informations client",
@@ -105,12 +124,31 @@
       "title": "Commandes récentes",
       "view_all": "Toutes les commandes",
       "empty": "Aucune commande pour le moment",
+      "no_results": "Aucune commande ne correspond à ce filtre",
       "number": "N° de commande",
       "customer": "Client",
       "date": "Date",
       "items": "Articles",
       "status": "Statut",
-      "total": "Total"
+      "total": "Total",
+      "filter_all": "Tous"
+    },
+    "top_sellers": {
+      "title": "Meilleures ventes",
+      "rank": "#",
+      "product": "Produit",
+      "units": "Unités",
+      "revenue": "Revenus",
+      "empty": "Aucune vente sur cette période",
+      "no_results": "Aucune vente dans cette catégorie",
+      "all_categories": "Toutes catégories"
+    },
+    "rules": {
+      "customer": {
+        "filter": {
+          "All": "Tous"
+        }
+      }
     }
   }
 }
