@@ -3,7 +3,7 @@ import { computed, toValue } from "vue";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { SalesRepCustomerOrderStatisticsDocument } from "../api/graphql/types";
-import { NEW_ORDERS_FILTER, STATISTICS_FETCH_POLICY } from "../constants";
+import { HUB_FETCH_POLICY, NEW_ORDERS_FILTER } from "../constants";
 import { buildStatisticsWindows } from "../utils";
 import type { Ref } from "vue";
 
@@ -26,7 +26,7 @@ export function useSalesRepOrderStatistics(options: UseSalesRepOrderStatisticsOp
   }));
 
   const { result, loading, onError } = useQuery(SalesRepCustomerOrderStatisticsDocument, variables, {
-    fetchPolicy: STATISTICS_FETCH_POLICY,
+    fetchPolicy: HUB_FETCH_POLICY,
   });
 
   onError((error) => {

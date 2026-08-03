@@ -3,7 +3,7 @@ import { computed, toValue } from "vue";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { SalesRepCustomerCountsDocument } from "../api/graphql/types";
-import { STATISTICS_FETCH_POLICY } from "../constants";
+import { HUB_FETCH_POLICY } from "../constants";
 import { buildStatisticsWindows } from "../utils";
 import type { Ref } from "vue";
 
@@ -24,7 +24,7 @@ export function useSalesRepCustomerCounts(options: UseSalesRepCustomerCountsOpti
   });
 
   const { result, loading, onError } = useQuery(SalesRepCustomerCountsDocument, variables, {
-    fetchPolicy: STATISTICS_FETCH_POLICY,
+    fetchPolicy: HUB_FETCH_POLICY,
   });
 
   onError((error) => {

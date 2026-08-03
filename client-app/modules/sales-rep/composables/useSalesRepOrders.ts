@@ -3,7 +3,7 @@ import { computed, toValue } from "vue";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { SalesRepOrdersDocument } from "../api/graphql/types";
-import { ORDERS_DEFAULT_LIMIT } from "../constants";
+import { HUB_FETCH_POLICY, ORDERS_DEFAULT_LIMIT } from "../constants";
 import type { SalesRepOrderRowType } from "../types";
 import type { Ref } from "vue";
 
@@ -39,7 +39,11 @@ export function useSalesRepOrders(options: UseSalesRepOrdersOptionsType = {}) {
     periodTo: toValue(options.periodTo),
   }));
 
-  const { result, loading, onError } = useQuery(SalesRepOrdersDocument, variables);
+  // The list sits directly under the KPI cards, so it has to revalidate with them — a status changed
+  // elsewhere used to leave the row reading "New" beneath a card that already counted 0.
+  const { result, loading, onError } = useQuery(SalesRepOrdersDocument, variables, {
+    fetchPolicy: HUB_FETCH_POLICY,
+  });
 
   onError((error) => {
     // No toast; the block falls back to the empty view.

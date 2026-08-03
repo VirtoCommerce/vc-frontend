@@ -42,7 +42,10 @@ export const ACTIVE_CARTS_FILTER = "active-carts";
 // Default number of ranked products shown by the Top Sellers block (backend max is 10).
 export const TOP_SELLERS_DEFAULT_TAKE = 5;
 
-// Statistics variables are day-stable by design (see buildStatisticsWindows), so under the client's
-// default cache-first policy a KPI card serves its first figure until a full page reload. Revalidating
-// on every mount, navigation and customer/period change is cheap — the backend caches these criteria.
-export const STATISTICS_FETCH_POLICY: WatchQueryFetchPolicy = "cache-and-network";
+// Hub reads are day-stable by design (see buildStatisticsWindows), so under the client's default
+// cache-first policy a card, list or profile header serves what it first saw until a full page reload —
+// and a KPI that has moved on then contradicts the list beside it. Revalidating on every mount,
+// navigation and variable change is cheap: the backend caches these criteria, and the cached value
+// still paints immediately while the request is in flight. Static reference data (the filter/sort rule
+// lists in useSalesRepRules) deliberately stays cache-first.
+export const HUB_FETCH_POLICY: WatchQueryFetchPolicy = "cache-and-network";

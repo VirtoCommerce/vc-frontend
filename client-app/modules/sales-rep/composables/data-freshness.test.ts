@@ -4,9 +4,13 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { effectScope, nextTick, ref } from "vue";
 import { cache } from "@/core/api/graphql/config/cache";
 import { useSalesRepCartStatistics } from "./useSalesRepCartStatistics";
+import { useSalesRepCustomer } from "./useSalesRepCustomer";
 import { useSalesRepCustomerCounts } from "./useSalesRepCustomerCounts";
+import { useSalesRepCustomers } from "./useSalesRepCustomers";
+import { useSalesRepCustomersCount } from "./useSalesRepCustomersCount";
 import { useSalesRepOrderStatistics } from "./useSalesRepOrderStatistics";
-import type { Ref } from "vue";
+import { useSalesRepOrders } from "./useSalesRepOrders";
+import { useSalesRepTopSellers } from "./useSalesRepTopSellers";
 
 vi.mock("@/core/globals", () => ({
   globals: { storeId: "test-store", currencyCode: "USD", cultureName: "en-US" },
@@ -72,10 +76,96 @@ function customerCounts() {
   };
 }
 
+function orders() {
+  return {
+    salesRepOrders: {
+      __typename: "SalesRepOrderConnection",
+      totalCount: metric,
+      items: [
+        {
+          __typename: "SalesRepOrder",
+          id: "order-1",
+          number: "SO-1",
+          organizationId: "org-a",
+          organizationName: "Org A",
+          createdDate: "2026-08-03T00:00:00.000Z",
+          status: "New",
+          statusDisplayValue: "New",
+          // The row is a normalized entity, so this is where a stale read would replay the old figure.
+          itemsCount: metric,
+          total: { ...money(metric * 10), currency: { __typename: "CurrencyType", code: "USD", symbol: "$" } },
+        },
+      ],
+    },
+  };
+}
+
+function topSellers() {
+  return {
+    salesRepTopSellers: [
+      {
+        __typename: "SalesRepTopSeller",
+        rank: 1,
+        productId: "product-1",
+        name: "Product 1",
+        sku: "SKU-1",
+        imageUrl: "",
+        categoryId: "category-1",
+        units: metric,
+        revenue: { ...money(metric * 10), currency: { __typename: "CurrencyType", code: "USD" } },
+      },
+    ],
+  };
+}
+
+function customerDetails() {
+  return {
+    salesRepCustomer: {
+      __typename: "SalesRepCustomerDetails",
+      organizationId: "org-a",
+      organizationName: "Org A",
+      iconUrl: "",
+      accountType: "Garden Center",
+      // The details type selects no numeric field, so the phone carries the metric.
+      phone: String(metric),
+      address: { __typename: "SalesRepAddress", city: "Berlin", regionName: "Berlin" },
+      primaryContact: { __typename: "SalesRepContact", id: "contact-1", fullName: "Ann Lee", name: "ann" },
+    },
+  };
+}
+
+function customerRow() {
+  return {
+    __typename: "SalesRepCustomer",
+    organizationId: "org-a",
+    organizationName: "Org A",
+    accountType: "Garden Center",
+    address: { __typename: "SalesRepAddress", postalCode: "10115", zip: "", city: "Berlin", regionName: "Berlin" },
+    ytd: { __typename: "CustomerOrderStatisticsPeriod", total: money(metric * 10), count: metric },
+    lastYear: { __typename: "CustomerOrderStatisticsPeriod", total: money(metric * 10), count: metric },
+    lastOrder: { __typename: "SalesRepOrder", id: "order-1", number: "SO-1", createdDate: "2026-08-03T00:00:00.000Z" },
+  };
+}
+
+function customers() {
+  return {
+    salesRepCustomers: { __typename: "SalesRepCustomerConnection", totalCount: metric, items: [customerRow()] },
+  };
+}
+
+function customersCount() {
+  return { salesRepCustomers: { __typename: "SalesRepCustomerConnection", totalCount: metric } };
+}
+
 const responses: Record<string, () => Record<string, unknown>> = {
   SalesRepCustomerOrderStatistics: orderStatistics,
   SalesRepCustomerCartStatistics: cartStatistics,
   SalesRepCustomerCounts: customerCounts,
+  SalesRepOrders: orders,
+  SalesRepTopSellers: topSellers,
+  SalesRepCustomer: customerDetails,
+  SalesRepCustomers: customers,
+  SalesRepCustomersCount: customersCount,
 };
 
 const link = new ApolloLink(
@@ -117,23 +207,79 @@ beforeEach(async () => {
   provideApolloClient(new ApolloClient({ link, cache }));
 });
 
-// Statistics variables are day-stable, so a remount sends identical variables.
-const widgetSources: [string, () => { loading: Ref<boolean> }][] = [
-  ["order statistics", () => useSalesRepOrderStatistics()],
-  ["cart statistics", () => useSalesRepCartStatistics()],
-  ["customer counts", () => useSalesRepCustomerCounts()],
+// Every hub read, each paired with a probe on the field carrying `metric`. Waiting on the probe rather
+// than on "a request fired" is what makes these fail under cache-first: hub variables are day-stable, so
+// a remount sends an identical request and would otherwise replay the session's first figure forever.
+const widgetSources: [string, () => () => number | undefined][] = [
+  [
+    "order statistics",
+    () => {
+      const { statistics } = useSalesRepOrderStatistics();
+      return () => statistics.value?.newOrders?.count;
+    },
+  ],
+  [
+    "cart statistics",
+    () => {
+      const { statistics } = useSalesRepCartStatistics();
+      return () => statistics.value?.activeCarts?.count;
+    },
+  ],
+  [
+    "customer counts",
+    () => {
+      const { counts } = useSalesRepCustomerCounts();
+      return () => counts.value?.assignedCustomers;
+    },
+  ],
+  [
+    "orders list",
+    () => {
+      const { orders: rows } = useSalesRepOrders();
+      return () => rows.value[0]?.itemsCount;
+    },
+  ],
+  [
+    "top sellers",
+    () => {
+      const { items } = useSalesRepTopSellers();
+      return () => items.value[0]?.units;
+    },
+  ],
+  [
+    "customer profile header",
+    () => {
+      const { customer } = useSalesRepCustomer("org-a");
+      return () => (customer.value ? Number(customer.value.phone) : undefined);
+    },
+  ],
+  [
+    "my customers list",
+    () => {
+      const { items } = useSalesRepCustomers();
+      return () => items.value[0]?.ytdCount;
+    },
+  ],
+  [
+    "customers count badge",
+    () => {
+      const { count } = useSalesRepCustomersCount();
+      // The composable floors a missing count to 0; only a painted figure should settle the probe.
+      return () => count.value || undefined;
+    },
+  ],
 ];
 
 describe.each(widgetSources)("%s", (_name, use) => {
-  it("refetches when the widget mounts again, without a page reload", async () => {
+  it("serves the updated figure when it mounts again, without a page reload", async () => {
     const first = mountWidget(use);
-    await waitFor(() => !first.api.loading.value, "the first mount to settle");
+    await waitFor(() => first.api() === 1, "the first mount to paint");
     expect(requestCount).toBe(1);
     first.stop();
 
     metric = 5;
     const second = mountWidget(use);
-    await waitFor(() => !second.api.loading.value, "the remount to settle");
+    await waitFor(() => second.api() === 5, "the remount to serve the updated figure");
 
     expect(requestCount).toBe(2);
     second.stop();
