@@ -99,7 +99,7 @@
 <script lang="ts" setup>
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { cloneDeep, isEqual, keyBy, pick } from "lodash-es";
-import { computed, onMounted, ref, watchEffect } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRouter } from "vue-router";
 import { updateWishlistItems } from "@/core/api/graphql/account";
@@ -171,10 +171,10 @@ const isDirty = computed<boolean>(() => {
   return !isEqual(originalItemsToCompare, changedItemsToCompare);
 });
 const savedForLaterListProperties = computed(() => ({
-  item_list_id: "wishlist",
-  item_list_name: `Wishlist "${savedForLaterList.value?.name}"`,
+  item_list_id: "saved_for_later",
+  item_list_name: t("pages.cart.saved_for_later"),
   related_id: savedForLaterList.value?.id,
-  related_type: "wishlist",
+  related_type: "saved_for_later",
 }));
 
 const isMobile = breakpoints.smaller("lg");
@@ -191,6 +191,8 @@ async function moveLineItemsToCart(lineItemIds: string[]): Promise<void> {
 
   await moveFromSavedForLater(cart.value.id, lineItemIds);
   await Promise.all([getSavedForLater(), refetchCart()]);
+
+  savedForLaterItems.value = savedForLaterItems.value.filter((item) => !lineItemIds.includes(item.id));
 }
 
 async function addAllListItemsToCart(): Promise<void> {
@@ -198,9 +200,11 @@ async function addAllListItemsToCart(): Promise<void> {
     return;
   }
 
-  await moveLineItemsToCart(savedForLaterItems.value.map((item) => item.id));
+  const itemsToMove = savedForLaterItems.value;
 
-  const products = savedForLaterItems.value
+  await moveLineItemsToCart(itemsToMove.map((item) => item.id));
+
+  const products = itemsToMove
     .map((item) => item.product)
     .filter((product): product is NonNullable<typeof product> => !!product);
 
@@ -209,7 +213,7 @@ async function addAllListItemsToCart(): Promise<void> {
     void pushHistoricalEvent({ eventType: "addToCart", productIds: products.map((product) => product.id) });
   }
 
-  showResultModal(savedForLaterItems.value);
+  showResultModal(itemsToMove);
 }
 
 async function updateItems() {
@@ -217,17 +221,23 @@ async function updateItems() {
     return;
   }
 
-  await updateWishlistItems({
-    listId: savedForLaterList.value.id,
-    items: savedForLaterItems.value
-      .filter((el) => !!el.product)
-      .map((item) => ({
-        lineItemId: item.id,
-        quantity: item.quantity,
-      })),
-  });
+  try {
+    await updateWishlistItems({
+      listId: savedForLaterList.value.id,
+      items: savedForLaterItems.value
+        .filter((el) => !!el.product)
+        .map((item) => ({
+          lineItemId: item.id,
+          quantity: item.quantity,
+        })),
+    });
 
-  savedForLaterList.value.items = cloneDeep(savedForLaterItems.value);
+    await getSavedForLater();
+
+    savedForLaterItems.value = (cloneDeep(savedForLaterList.value?.items) ?? []) as LineItemType[];
+  } catch (e) {
+    Logger.error(`${updateItems.name}`, e);
+  }
 }
 
 async function openSaveChangesModal(): Promise<boolean> {
@@ -309,13 +319,21 @@ function openDeleteProductModal(values: string[]): void {
         loading: loading.value,
 
         onResult() {
+          const previousPagesCount = pagesCount.value;
+
           void broadcast.emit(dataChangedEvent);
+
+          savedForLaterItems.value = savedForLaterItems.value.filter((listItem) => listItem.id !== item.id);
 
           if (savedForLaterList.value) {
             savedForLaterList.value = {
               ...savedForLaterList.value,
               items: savedForLaterList.value.items?.filter((listItem) => listItem.id !== item.id),
             };
+          }
+
+          if (previousPagesCount > 1 && previousPagesCount === page.value && previousPagesCount > pagesCount.value) {
+            page.value -= 1;
           }
         },
       },
@@ -360,19 +378,15 @@ async function buyNow() {
 onBeforeRouteLeave(canChangeRoute);
 onBeforeRouteUpdate(canChangeRoute);
 
-onMounted(() => {
-  void getSavedForLater();
-});
+onMounted(async () => {
+  await getSavedForLater();
 
-watchEffect(() => {
   page.value = 1;
   savedForLaterItems.value = (cloneDeep(savedForLaterList.value?.items) ?? []) as LineItemType[];
-});
 
-/**
- * Send Google Analytics event for related products.
- */
-watchEffect(() => {
+  /**
+   * Send Google Analytics event for related products.
+   */
   const items = savedForLaterList.value?.items
     ?.map((item) => item.product!)
     // filtering of deleted products
