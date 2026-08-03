@@ -48,8 +48,7 @@ export function init(router: Router, i18n: I18n) {
   // "Sales reps" contact-info link for buyers (VCST-5409) — stays in the Corporate widget.
   mergeMenuSchema(salesRepMenuSchema);
 
-  // Publishing a list to a customer (VCST-5332). The scope value, its copy and its notification all stay here; core
-  // only learns that another sharing option exists and what it is capable of.
+  // Publishing a list to a customer (VCST-5332): core only learns that another sharing option exists.
   useWishlistSharingScopes().registerSharingScope({
     scope: CUSTOMER_SHARING_SCOPE,
     labelKey: "sales_rep.list_sharing.scope_label",
@@ -60,12 +59,10 @@ export function init(router: Router, i18n: I18n) {
     element: defineAsyncComponent(() => import("./components/wishlist-customer-sharing.vue")),
   });
 
-  // Tells the receiving org member where the list came from. Gated on the scope alone: the viewer is the customer,
-  // not a rep, so the rep predicate must not apply here.
+  // Gated on the scope alone: the viewer is the customer, not a rep.
   register("sharedList", EXTENSION_NAMES.sharedList.provenanceNote, {
     component: defineAsyncComponent(() => import("./components/wishlist-rep-provenance.vue")),
-    // The scope is compared as a plain string: this module owns the value, so the generated core enum is not
-    // its source of truth.
+    // Compared as a plain string: this module owns the value, not core's generated enum.
     condition: (sharingSetting) => (sharingSetting?.scope as string | undefined) === CUSTOMER_SHARING_SCOPE,
   });
 

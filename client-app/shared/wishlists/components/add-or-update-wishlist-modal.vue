@@ -129,10 +129,8 @@ const listDescription = computed<string | undefined>(() => props.list?.descripti
 const listSharingScope = computed<string | undefined>(() => props.list?.sharingSetting?.scope);
 const listSharedWithId = computed<string | undefined>(() => props.list?.sharingSetting?.sharedWithId ?? undefined);
 
-// `autoRefetch: false` because the composable refetches *outside* its own try/catch and rethrows: a refetch hiccup
-// after a successful mutation would otherwise look like a failed save and skip the scope's follow-up entirely — for
-// customer sharing that means the customer gets access but never the email carrying the only link to it. The refresh
-// happens explicitly below, after the follow-up, where its failure stays a non-event.
+// `autoRefetch: false`: the composable refetches outside its own try/catch and rethrows, so a refetch hiccup after a
+// successful mutation would look like a failed save and skip the scope's follow-up. Refreshed explicitly below instead.
 const { createWishlist, updateWishlist, fetchWishlists } = useWishlists({ autoRefetch: false });
 const { sharingScopes, getSharingScope, isSharingScopeAvailable } = useWishlistSharingScopes();
 
@@ -143,15 +141,13 @@ const { isCorporateMember } = useUser();
 
 const isEditMode = computed<boolean>(() => !!props.list);
 
-// Contributed scopes bring their own controls; this is how the modal reaches that instance's state.
 const scopeControls = useTemplateRef<IWishlistSharingScopeControlsType>("scopeControls");
 
 const listSharingScopes = computed(() => {
   const available = sharingScopes.value.filter(isSharingScopeAvailable);
 
-  // A scope the list already carries stays listed even when it isn't on offer — otherwise the select would render
-  // empty and saving would silently rewrite the scope. Covers both a revoked capability and an uninstalled provider,
-  // hence the fallback label built from the raw value rather than a known key.
+  // A scope the list already carries stays listed even when it isn't on offer, or the select would render empty and
+  // saving would silently rewrite it. The provider may be gone entirely, hence the fallback to the raw value.
   const persisted = listSharingScope.value;
   const isPersistedListed = available.some((scope) => scope.scope === persisted);
   const scopes = [...available];
@@ -168,8 +164,7 @@ const listSharingScopes = computed(() => {
 });
 
 const activeScope = computed(() => getSharingScope(sharingScope.value));
-// A scope the list carries but the current user may no longer use stays *listed* so saving cannot rewrite it, yet its
-// controls must not appear — that capability is exactly what this user lacks.
+// Such a scope stays listed (see above) but must not offer its controls — that capability is what this user lacks.
 const activeScopeElement = computed(() =>
   activeScope.value && isSharingScopeAvailable(activeScope.value) ? activeScope.value.element : undefined,
 );
@@ -201,10 +196,8 @@ const { value: name } = useField<string | undefined>("name");
 const { value: description } = useField<string | undefined>("description");
 const { value: sharingScope } = useField<string | undefined>("sharingScope");
 
-// A scope with its own controls decides for itself whether its input is complete. While such a component is still
-// resolving, Save stays disabled rather than letting the list be saved into a half-configured scope.
+// While the scope's component is still resolving, Save stays disabled rather than saving a half-configured scope.
 const scopeCanSave = computed(() => (activeScopeElement.value ? !!scopeControls.value?.canSave : true));
-// Per-scope input lives outside the vee-validate schema, so the form's own `dirty` cannot see it.
 const scopeDirty = computed(() => !!scopeControls.value?.dirty);
 
 const canSave = computed<boolean>(
@@ -218,8 +211,8 @@ async function save(closeHandle: () => void): Promise<void> {
 
   saving.value = true;
   try {
-    // Persist the list AND its sharing in a single mutation. A scope with controls contributes its own part of the
-    // command; a scope without any contributes nothing, and the backend applies a null target for such scopes itself.
+    // One mutation for the list and its sharing. A scope without controls contributes nothing: the backend applies a
+    // null target for its own non-targeted scopes.
     const scopePayload = scopeControls.value?.payload ?? {};
     const payload = {
       listName: name.value?.trim(),
@@ -235,8 +228,8 @@ async function save(closeHandle: () => void): Promise<void> {
       await createWishlist(payload);
     }
 
-    // The list is saved from here on, so neither the follow-up nor the list refresh may surface as a save error.
-    // Both are awaited to keep the loader up, and both swallow their own failures.
+    // Saved from here on, so neither the follow-up nor the refresh may surface as a save error. Both are awaited to
+    // keep the loader up.
     try {
       await scopeControls.value?.onSaved?.({
         listName: name.value?.trim() ?? "",

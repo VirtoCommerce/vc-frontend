@@ -16,8 +16,7 @@ configure({ testIdAttribute: "data-test-id" });
 
 const KEY = "shared.wishlists.add_or_update_wishlist_modal";
 
-// A stand-in for whatever a module contributes. Deliberately not the Sales Rep scope: these tests cover the core
-// contract, and core must not know any contributed scope by name.
+// Deliberately not the Sales Rep scope: core must not know any contributed scope by name.
 const TARGETED_SCOPE = "TargetedTestScope";
 const SCOPE_LABEL_KEY = "test_module.targeted_scope.label";
 
@@ -35,7 +34,7 @@ const mocks = await vi.hoisted(async () => {
   };
 });
 
-// `t` echoes the key so assertions read as the copy contract rather than the English wording.
+// `t` echoes the key so assertions read as the copy contract.
 vi.mock("vue-i18n", () => ({
   useI18n: () => ({ t: (key: string) => key, te: () => true }),
 }));
@@ -61,10 +60,8 @@ vi.mock("@/shared/notification", () => ({ useNotifications: () => mocks.notifica
 
 vi.mock("@/core/utilities", () => ({ Logger: mocks.logger }));
 
-/** Whether the contributed scope is on offer for the current user. */
 const scopeAvailable = ref(true);
 
-/** What the contributed scope's rendered element exposes back to the modal. */
 const controls = {
   canSave: ref(false),
   dirty: ref(false),
@@ -72,8 +69,7 @@ const controls = {
   onSaved: vi.fn(),
 };
 
-// Stands in for a module's per-scope controls: it owns state the modal cannot see and reports it through the
-// documented contract, which is the whole point of the seam.
+// Owns state the modal cannot see and reports it through the contract — the whole point of the seam.
 const ScopeControls = defineComponent({
   props: {
     sharedWithId: { type: String, default: undefined },
@@ -92,10 +88,7 @@ const ScopeControls = defineComponent({
   },
 });
 
-/**
- * The ui-kit widgets are replaced with native controls: the tests are about this modal's sharing logic, and the
- * kit's own dropdown/teleport behaviour is covered where it lives.
- */
+// Native controls stand in for the ui-kit: the kit's own dropdown/teleport behaviour is covered where it lives.
 const VcModal = defineComponent({
   props: { title: { type: String, default: "" } },
   emits: ["close"],
@@ -114,7 +107,6 @@ const VcInput = defineComponent({
   emits: ["update:modelValue"],
   setup(props, { emit, slots }) {
     return () => [
-      // The label is rendered so tests can tell which fields the modal is actually offering.
       props.label ? h("label", props.label) : null,
       h("input", {
         "data-test-id": props.testIdInput,
@@ -196,7 +188,6 @@ function saveButton() {
   return component.getByTestId<HTMLElement>("wishlist-settings-save-button").closest("button")!;
 }
 
-/** A list already published under the contributed scope, as the wishlist queries would return it. */
 function targetedList(sharedWithId?: string): WishlistType {
   return {
     id: "list-1",
@@ -393,7 +384,6 @@ describe("AddOrUpdateWishlistModal — contributed sharing scopes", () => {
       await fireEvent.click(saveButton());
 
       expect(mocks.updateWishlist).toHaveBeenCalledOnce();
-      // The backend applies a null target for its non-targeted scopes, so the key is simply absent.
       expect(mocks.updateWishlist.mock.calls[0][0]).not.toHaveProperty("sharedWithId");
     });
   });
@@ -429,7 +419,7 @@ describe("AddOrUpdateWishlistModal — contributed sharing scopes", () => {
 
     it("still runs when refreshing the lists afterwards fails", async () => {
       controls.canSave.value = true;
-      // The list is already persisted at this point; a refresh hiccup must not cost the customer their notification.
+      // Already persisted at this point, so a refresh hiccup must not cost the customer their notification.
       mocks.fetchWishlists.mockRejectedValue(new Error("refetch failed"));
 
       renderModal();

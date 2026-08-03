@@ -5,15 +5,13 @@ import { Logger } from "@/core/utilities";
 import { SalesRepCustomerOptionsDocument } from "../api/graphql/types";
 import type { Ref } from "vue";
 
-// Upper bound of customer organizations offered in the share picker. The picker filters client-side (VcSelect
-// autocomplete), so a rep serving more customers than this cannot reach the overflow — see the warning below.
+// The picker filters client-side, so a rep serving more customers than this cannot reach the overflow (warned below).
 const OPTIONS_LIMIT = 100;
 
 export type SalesRepCustomerOptionType = { organizationId: string; organizationName: string };
 
-// Flat list of the caller rep's served customer organizations for the "share with customer" picker (resolved
-// server-side from the caller's claims). Backed by its own narrow query rather than the one behind the My customers
-// table: that one also aggregates order statistics per customer, which is a lot of work for an id and a name.
+// The rep's served customer organizations, resolved server-side from their claims. Uses its own narrow query rather
+// than the My customers one, which also aggregates order statistics per customer — a lot of work for an id and a name.
 export function useSalesRepCustomerOptions(enabled?: Ref<boolean> | boolean) {
   const variables = computed(() => ({
     storeId: globals.storeId,
@@ -23,12 +21,10 @@ export function useSalesRepCustomerOptions(enabled?: Ref<boolean> | boolean) {
     sort: "name:asc",
   }));
 
-  // `enabled` keeps the query from firing for callers that cannot share at all, avoiding a needless authorized
-  // request. Defaults to enabled; the scope works in create mode too, so being new is not a reason to skip it.
+  // `enabled` skips the authorized request for callers that cannot share at all. Defaults to enabled.
   const { result, loading, onError, onResult } = useQuery(SalesRepCustomerOptionsDocument, variables, { enabled });
 
-  // Without this the picker would just render an empty dropdown on a failed fetch, which reads as "this rep serves
-  // nobody" rather than "the list could not be loaded". Callers surface it on the field.
+  // An empty dropdown on a failed fetch reads as "this rep serves nobody"; callers surface this on the field instead.
   const failed = ref(false);
 
   onError((error) => {
@@ -49,9 +45,8 @@ export function useSalesRepCustomerOptions(enabled?: Ref<boolean> | boolean) {
 
   const totalCount = computed(() => result.value?.salesRepCustomers?.totalCount ?? 0);
 
-  // Client-side filtering silently hides everything past OPTIONS_LIMIT, which would look like a missing customer
-  // rather than a truncated list. Surface it until the picker moves to server-side keyword search. `immediate`
-  // matters: a cache hit fills `result` during setup, so the count is already over the cap and never *changes*.
+  // Until the picker gains server-side search, overflow looks like a missing customer rather than a truncated list.
+  // `immediate` matters: a cache hit fills `result` during setup, so the count never *changes*.
   watch(
     totalCount,
     (count) => {

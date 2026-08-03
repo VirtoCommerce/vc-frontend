@@ -1,13 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { effectScope, nextTick, ref } from "vue";
 import { useSalesRepCustomerOptions } from "./useSalesRepCustomerOptions";
-import type { SalesRepCustomersQuery } from "../api/graphql/types";
+import type { SalesRepCustomerOptionsQuery } from "../api/graphql/types";
 import type { EffectScope, Ref } from "vue";
 
 // vi.hoisted runs before this file's imports, so it must import vue itself.
 const queryMock = await vi.hoisted(async () => {
   const { ref: reactiveRef } = await import("vue");
-  const result = reactiveRef<SalesRepCustomersQuery | undefined>(undefined);
+  const result = reactiveRef<SalesRepCustomerOptionsQuery | undefined>(undefined);
   const loading = reactiveRef(false);
   const onError = vi.fn();
   const onResult = vi.fn();
@@ -21,7 +21,7 @@ vi.mock("@vue/apollo-composable", () => ({ useQuery: queryMock.useQuery }));
 vi.mock("@/core/globals", () => ({ globals: { storeId: "test-store", cultureName: "en-US" } }));
 vi.mock("@/core/utilities", () => ({ Logger: loggerMock }));
 
-type CustomerItemsType = NonNullable<SalesRepCustomersQuery["salesRepCustomers"]>["items"];
+type CustomerItemsType = NonNullable<SalesRepCustomerOptionsQuery["salesRepCustomers"]>["items"];
 
 function customersResult(totalCount: number, items: CustomerItemsType) {
   return { salesRepCustomers: { totalCount, items } };
@@ -63,7 +63,6 @@ function buildWith(enabled: Ref<boolean>) {
   return scope.run(() => useSalesRepCustomerOptions(enabled))!;
 }
 
-/** Invokes the handler the composable registered with Apollo's onError. */
 function failQuery(error = new Error("boom")) {
   (queryMock.onError.mock.calls[0][0] as (e: Error) => void)(error);
 }
@@ -183,7 +182,7 @@ describe("useSalesRepCustomerOptions", () => {
       const { failed } = build();
 
       failQuery();
-      // A retry (or a refetch after `enabled` flips) must not leave the field stuck in an error state.
+      // A retry must not leave the field stuck in an error state.
       (queryMock.onResult.mock.calls[0][0] as () => void)();
 
       expect(failed.value).toBe(false);

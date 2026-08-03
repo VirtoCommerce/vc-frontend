@@ -3,8 +3,7 @@ export type CreateWishlistPayloadType = {
   description?: string;
   scope?: string;
   sharingKey?: string;
-  // Principal the list is shared with, when the scope defines a target (its id space is the scope's own). Simply
-  // omitted for scopes that have none: the backend applies `sharedWithId: null` for every non-targeted scope, so
-  // leaving a targeted scope detaches the target without the client having to say so.
+  // Principal the list is shared with, for scopes that define a target. Omitted otherwise: the backend applies a null
+  // target for its non-targeted scopes, so leaving one detaches the target without the client saying so.
   sharedWithId?: string;
 };

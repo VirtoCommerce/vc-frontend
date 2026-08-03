@@ -6,12 +6,11 @@ import WishlistStatus from "./wishlist-status.vue";
 import type { SharingSettingType } from "@/core/api/graphql/types";
 import "@testing-library/jest-dom/vitest";
 
-// A stand-in for a contributed scope: core must not know any of them by name.
+// Core must not know any contributed scope by name.
 const TARGETED_SCOPE = "TargetedTestScope";
 const TARGETED_STATUS_KEY = "test_module.targeted_scope.status";
 
-// `scope` is typed as the generated enum, but a contributed scope is by definition a value core does not enumerate —
-// which is exactly the case under test, hence the cast.
+// A contributed scope is by definition absent from the generated enum, hence the cast.
 function renderStatus(sharingSetting: { scope: string; isOwner: boolean }) {
   return render(WishlistStatus, {
     props: { sharingSetting: { id: "k", ...sharingSetting } as unknown as SharingSettingType },

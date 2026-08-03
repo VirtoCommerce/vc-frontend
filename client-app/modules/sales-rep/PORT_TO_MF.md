@@ -13,13 +13,13 @@ the same remap in reverse.
 
 ## 1. Import remap (host → `@vc-frontend/core` facade)
 
-| In-repo (host)                                                                                        | MF plugin (facade)                                                                                                                            |
-| ----------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `useQuery` from `@vue/apollo-composable` (`composables/useSalesReps.ts`)                              | `useQuery` from `@vc-frontend/core`                                                                                                           |
-| `Logger` from `@/core/utilities` (`composables/useSalesReps.ts`)                                      | remove import; use `console.error`                                                                                                            |
-| `MenuType` from `@/core/types` (`menu.ts`)                                                            | `MenuType` from `@vc-frontend/core`                                                                                                           |
-| Vc components **not imported** in `pages/sales-reps.vue` (globally registered by the host)            | re-add `import { VcButton, VcEmptyView, VcInput, VcTable, VcTypography, VcWidget } from "@vc-frontend/core";` — MF has no global registration |
-| `useModuleSettings` from `@/core/composables/useModuleSettings` (`composables/useSalesRepsConfig.ts`) | `@vc-frontend/core`                                                                                                                           |
+| In-repo (host) | MF plugin (facade) |
+|---|---|
+| `useQuery` from `@vue/apollo-composable` (`composables/useSalesReps.ts`) | `useQuery` from `@vc-frontend/core` |
+| `Logger` from `@/core/utilities` (`composables/useSalesReps.ts`) | remove import; use `console.error` |
+| `MenuType` from `@/core/types` (`menu.ts`) | `MenuType` from `@vc-frontend/core` |
+| Vc components **not imported** in `pages/sales-reps.vue` (globally registered by the host) | re-add `import { VcButton, VcEmptyView, VcInput, VcTable, VcTypography, VcWidget } from "@vc-frontend/core";` — MF has no global registration |
+| `useModuleSettings` from `@/core/composables/useModuleSettings` (`composables/useSalesRepsConfig.ts`) | `@vc-frontend/core` |
 
 ## 2. Entry point — `index.ts`
 

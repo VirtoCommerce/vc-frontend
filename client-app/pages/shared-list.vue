@@ -75,7 +75,8 @@
 import { cloneDeep, keyBy } from "lodash-es";
 import { computed, ref, watchEffect, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
-import { useAnalytics, usePageHead } from "@/core/composables";
+import { useAnalytics, useHistoricalEvents, usePageHead } from "@/core/composables";
+import { useAnalyticsUtils } from "@/core/composables/useAnalyticsUtils";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { PAGE_LIMIT } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
@@ -102,13 +103,14 @@ interface IProps {
 
 const { getModuleSettings } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 const { analytics } = useAnalytics();
+const { trackAddItemToCart } = useAnalyticsUtils();
+const { pushHistoricalEvent } = useHistoricalEvents();
 const { t } = useI18n();
 const { listLoading, list, fetchSharedWishList } = useWishlists();
 const { cart, addToCart, changeItemQuantity } = useShortCart();
 const { getSharingScope } = useWishlistSharingScopes();
 
-// Whether a viewer may put items from someone else's list into their own cart is a property of the sharing scope, so
-// the scope's provider declares it. The list itself stays read-only either way.
+// Declared by the scope's provider; the list itself stays read-only either way.
 const isShoppable = computed(() => !!getSharingScope(list.value?.sharingSetting?.scope)?.shoppable);
 
 const { continue_shopping_link } = getModuleSettings({
@@ -149,8 +151,8 @@ function selectItemEvent(item: Product | undefined): void {
   analytics("selectItem", item, wishlistListProperties.value);
 }
 
-// Add a shared-list item to the viewer's own cart. The list itself stays read-only (not owned by the viewer):
-// we handle only the cart action, never a list-quantity save. Mirrors list-details' addOrUpdateCartItem.
+// Follows list-details' addOrUpdateCartItem, minus the result modal. The list is not the viewer's, so this only
+// touches the cart, never a list quantity.
 async function addOrUpdateCartItem(item: PreparedLineItemType, quantity: number): Promise<void> {
   const lineItem = wishlistItems.value.find((listItem) => listItem.productId === item.productId);
 
@@ -168,6 +170,9 @@ async function addOrUpdateCartItem(item: PreparedLineItemType, quantity: number)
       }
     } else {
       await addToCart(lineItem.product.id, quantity);
+      // Only a genuine add is a conversion; a quantity change on an existing line is not.
+      trackAddItemToCart(lineItem.product, quantity);
+      void pushHistoricalEvent({ eventType: "addToCart", productId: lineItem.product.id });
     }
   } finally {
     pendingItems.value[lineItem.id] = false;

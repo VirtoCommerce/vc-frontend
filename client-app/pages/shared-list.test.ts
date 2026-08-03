@@ -8,7 +8,7 @@ import "@testing-library/jest-dom/vitest";
 
 configure({ testIdAttribute: "data-test-id" });
 
-// Stand-ins for whatever a module contributes: this page must not know any contributed scope by name.
+// This page must not know any contributed scope by name.
 const SHOPPABLE_SCOPE = "ShoppableTestScope";
 const PLAIN_SCOPE = "PlainTestScope";
 
@@ -51,10 +51,11 @@ const mocks = await vi.hoisted(async () => {
     fetchSharedWishList: vi.fn(),
     addToCart: vi.fn(),
     changeItemQuantity: vi.fn(),
-    // What the registry would resolve for a given scope value.
     scopes: ref<Record<string, Partial<IWishlistSharingScopeType>>>({}),
     canRenderExtensionPoint: vi.fn(() => false),
     analytics: vi.fn(),
+    trackAddItemToCart: vi.fn(),
+    pushHistoricalEvent: vi.fn(),
     lineItemsSpy,
     WishlistLineItems,
     Empty,
@@ -67,7 +68,12 @@ vi.mock("vue-i18n", () => ({ useI18n: () => ({ t: (key: string) => key }) }));
 
 vi.mock("@/core/composables", () => ({
   useAnalytics: () => ({ analytics: mocks.analytics }),
+  useHistoricalEvents: () => ({ pushHistoricalEvent: mocks.pushHistoricalEvent }),
   usePageHead: vi.fn(),
+}));
+
+vi.mock("@/core/composables/useAnalyticsUtils", () => ({
+  useAnalyticsUtils: () => ({ trackAddItemToCart: mocks.trackAddItemToCart }),
 }));
 
 vi.mock("@/core/composables/useModuleSettings", () => ({
@@ -165,6 +171,8 @@ beforeEach(() => {
   mocks.addToCart.mockReset();
   mocks.changeItemQuantity.mockReset();
   mocks.analytics.mockReset();
+  mocks.trackAddItemToCart.mockReset();
+  mocks.pushHistoricalEvent.mockReset().mockResolvedValue(undefined);
   mocks.canRenderExtensionPoint.mockReset().mockReturnValue(false);
   mocks.scopes.value = {
     [SHOPPABLE_SCOPE]: { scope: SHOPPABLE_SCOPE, labelKey: "", shoppable: true },
@@ -187,7 +195,7 @@ describe("SharedList", () => {
       const page = await renderSettled();
 
       expect(page.getByTestId("extension-point")).toBeInTheDocument();
-      // The provider decides from the sharing setting, so that is what it has to be asked with.
+      // The provider decides from the sharing setting, so that is what it must be asked with.
       expect(mocks.canRenderExtensionPoint).toHaveBeenCalledWith(
         "sharedList",
         expect.any(String),
@@ -257,6 +265,28 @@ describe("SharedList", () => {
 
       expect(mocks.changeItemQuantity).toHaveBeenCalledWith("cart-li-1", 5);
       expect(mocks.addToCart).not.toHaveBeenCalled();
+    });
+
+    it("reports the conversion when the product is genuinely added", async () => {
+      await shoppableList();
+
+      lineItemsSpy.emit!({ productId: "prod-1" }, 3);
+      await nextTick();
+
+      expect(mocks.trackAddItemToCart).toHaveBeenCalledWith(expect.objectContaining({ id: "prod-1" }), 3);
+      expect(mocks.pushHistoricalEvent).toHaveBeenCalledWith({ eventType: "addToCart", productId: "prod-1" });
+    });
+
+    it("does not report a conversion for a quantity change on an existing cart line", async () => {
+      mocks.cart.value = cartWith([{ id: "cart-li-1", productId: "prod-1", sku: "SKU-1", quantity: 1 }]);
+      await shoppableList();
+
+      lineItemsSpy.emit!({ productId: "prod-1" }, 5);
+      await nextTick();
+
+      expect(mocks.changeItemQuantity).toHaveBeenCalledOnce();
+      expect(mocks.trackAddItemToCart).not.toHaveBeenCalled();
+      expect(mocks.pushHistoricalEvent).not.toHaveBeenCalled();
     });
 
     it("does nothing when the requested quantity already matches the cart", async () => {

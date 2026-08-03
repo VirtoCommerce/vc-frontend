@@ -10,9 +10,7 @@ export function isSalesRepsEnabled(): boolean {
   return useModuleSettings(MODULE_ID).isEnabled(ENABLED_KEY);
 }
 
-// Single source of truth for "the caller may act as a Sales Rep": the module is on for the store AND the user holds
-// the permission. Every rep-only surface (hub routes, nav section, customer sharing) must gate on this same pair,
-// so it lives here rather than being spelled out per call site.
+// Single source of truth for "the caller may act as a Sales Rep", so rep-only surfaces cannot drift apart.
 export function isSalesRepUser(): boolean {
   return isSalesRepsEnabled() && useUser().checkPermissions(SALES_REP_ACCESS_PERMISSION);
 }

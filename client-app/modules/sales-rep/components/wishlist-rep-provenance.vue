@@ -7,7 +7,5 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 
-// Rendered through the `sharedList` extension point; whether this list came from a rep is decided by the registered
-// condition, so the component itself has nothing to check.
 const { t } = useI18n();
 </script>

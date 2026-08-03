@@ -14,8 +14,7 @@ configure({ testIdAttribute: "data-test-id" });
 const KEY = "sales_rep.list_sharing";
 const SHARING_LINK = "https://store.example.com/shared-list/sharing-key-1";
 
-// The warning codes the module locale actually ships. Anything else is what a newly-added backend code looks like to a
-// storefront that has not been updated yet.
+// What the module locale actually ships; anything else is a newly-added backend code an old storefront cannot map.
 const translatedWarningKeys = await vi.hoisted(() =>
   [
     "generic",
@@ -138,7 +137,7 @@ const VcLabel = defineComponent({
 });
 
 let component: RenderResult;
-/** The contract the modal consumes, reached exactly the way the modal reaches it — through a template ref. */
+/** Reached the way the modal reaches it — through a template ref. */
 let controls: IWishlistSharingScopeControlsType;
 
 function renderSharing(sharedWithId?: string) {
@@ -247,8 +246,7 @@ describe("WishlistCustomerSharing", () => {
     });
 
     it("keeps a persisted target visible even when it is not among the loaded options", () => {
-      // Over the cap, or lost to a failed fetch: without seeding, VcSelect would fall back to its placeholder and the
-      // list would read as unshared.
+      // Over the cap or lost to a failed fetch: without seeding this would read as unshared.
       mocks.options.value = [{ organizationId: "org-9", organizationName: "Initech" }];
 
       renderSharing("org-outside-the-page");
@@ -337,7 +335,6 @@ describe("WishlistCustomerSharing", () => {
       await fireEvent.update(customerSelect(), "org-2");
       expect(controls.dirty).toBe(true);
 
-      // Back to where it started — nothing to save, nothing to announce.
       await fireEvent.update(customerSelect(), "org-1");
       expect(controls.dirty).toBe(false);
     });
