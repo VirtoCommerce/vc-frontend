@@ -1,18 +1,17 @@
 {
   "ManifestVersion": "2.0",
-  "PlatformVersion": "3.1051.0",
+  "PlatformAssetUrl": "",
   "PlatformImage": "ghcr.io/virtocommerce/platform",
   "PlatformImageTag": "3.1051.0",
-  "PlatformAssetUrl": "",
+  "PlatformVersion": "3.1051.0",
   "Sources": [
     {
-      "Name": "AzureBlob",
       "Container": "packages",
-      "ServiceUri": "https://vc3prerelease.blob.core.windows.net",
-      "Modules": []
+      "Modules": [],
+      "Name": "AzureBlob",
+      "ServiceUri": "https://vc3prerelease.blob.core.windows.net"
     },
     {
-      "Name": "GithubReleases",
       "ModuleSources": ["https://raw.githubusercontent.com/VirtoCommerce/vc-modules/master/modules_v3.json"],
       "Modules": [
         {
@@ -193,7 +192,7 @@
         },
         {
           "Id": "VirtoCommerce.Pages",
-          "Version": "3.1007.0"
+          "Version": "3.1008.0"
         },
         {
           "Id": "VirtoCommerce.Sitemaps",
@@ -297,7 +296,7 @@
         },
         {
           "Id": "VirtoCommerce.PageBuilderModule",
-          "Version": "3.1017.0"
+          "Version": "3.1020.0"
         },
         {
           "Id": "VirtoCommerce.UCP",
@@ -363,7 +362,8 @@
           "Id": "VirtoCommerce.SalesRep",
           "Version": "3.1000.0"
         }
-      ]
+      ],
+      "Name": "GithubReleases"
     }
   ]
 }
