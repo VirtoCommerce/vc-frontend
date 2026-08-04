@@ -7,7 +7,13 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { computed, ref } from "vue";
 import { MODULE_XAPI_KEYS, MODULE_XFRONTEND_KEYS } from "@/core/constants/modules";
-import { toAbsoluteUrl, toIsoCalendarDate, toProfileUrls, useBrandProfile } from "./useBrandProfile";
+import {
+  toAbsoluteUrl,
+  toInternationalPhone,
+  toIsoCalendarDate,
+  toProfileUrls,
+  useBrandProfile,
+} from "./useBrandProfile";
 import { useModuleSettings } from "./useModuleSettings";
 import { useThemeContext } from "./useThemeContext";
 import { useWhiteLabeling } from "./useWhiteLabeling";
@@ -105,6 +111,35 @@ describe("toIsoCalendarDate", () => {
     ["undefined", undefined],
   ])("rejects %s", (_label, value) => {
     expect(toIsoCalendarDate(value)).toBeUndefined();
+  });
+});
+
+describe("toInternationalPhone", () => {
+  it.each([
+    ["a compact number", "+18005551234"],
+    ["a spaced and bracketed number", "+1 (213) 603 3536"],
+    ["a hyphenated number", "+1-800-000-0000"],
+    ["the 15-digit E.164 maximum", "+123456789012345"],
+  ])("accepts %s", (_label, phone) => {
+    expect(toInternationalPhone(phone)).toBe(phone);
+  });
+
+  it("trims surrounding whitespace", () => {
+    expect(toInternationalPhone("  +18005551234  ")).toBe("+18005551234");
+  });
+
+  it.each([
+    ["separators with no digits at all", "+------"],
+    ["brackets and dots only", "+ ( ) . -"],
+    ["too few digits", "+123456"],
+    ["more than the E.164 maximum", "+1234567890123456"],
+    ["a national-format number", "(800) 555-1234"],
+    ["an extension", "+1 800 555 1234 ext. 200"],
+    ["prose", "call us"],
+    ["a blank value", "   "],
+    ["undefined", undefined],
+  ])("rejects %s", (_label, phone) => {
+    expect(toInternationalPhone(phone)).toBeUndefined();
   });
 });
 
@@ -275,12 +310,8 @@ describe("useBrandProfile", () => {
     expect(contactPhone.value).toBeUndefined();
   });
 
-  it.each([
-    ["a national-format number", "(800) 555-1234"],
-    ["an extension", "+1 800 555 1234 ext. 200"],
-    ["prose", "call us"],
-  ])("drops %s from the contact phone", (_label, phone) => {
-    mockContext({ settings: { [MODULE_XFRONTEND_KEYS.BRAND_PROFILE_CONTACT_PHONE]: phone } });
+  it("drops a phone the validator rejects", () => {
+    mockContext({ settings: { [MODULE_XFRONTEND_KEYS.BRAND_PROFILE_CONTACT_PHONE]: "(800) 555-1234" } });
     expect(useBrandProfile().contactPhone.value).toBeUndefined();
   });
 
@@ -319,6 +350,13 @@ describe("useBrandProfile", () => {
       },
     });
     expect(useBrandProfile().description.value).toBe("Fasteners and fixings. Next-day delivery.");
+  });
+
+  it("carries the resolved logo into the organization facts", () => {
+    mockContext({
+      settings: { [MODULE_XFRONTEND_KEYS.BRAND_PROFILE_LOGO_URL]: "https://cdn.acme.example/brand.svg" },
+    });
+    expect(useBrandProfile().organizationFacts.value.logoUrl).toBe("https://cdn.acme.example/brand.svg");
   });
 
   it("carries the description into the organization facts", () => {
