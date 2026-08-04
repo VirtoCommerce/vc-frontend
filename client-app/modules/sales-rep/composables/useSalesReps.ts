@@ -3,6 +3,7 @@ import { computed, ref, watch } from "vue";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { CustomerSalesRepsDocument } from "../api/graphql/types";
+import { HUB_FETCH_POLICY } from "../constants";
 import type { SalesRepType, SalesRepSortType } from "../types";
 
 export const PAGE_SIZE = 10;
@@ -27,8 +28,11 @@ export function useSalesReps() {
 
   // The organization is resolved server-side from the caller's claims — no org variable.
   // Active-only filtering is a server responsibility too (AC#5).
+  // Assignments and contact details change in Admin, so the list revalidates rather than serving the
+  // one it first loaded; keepPreviousResult holds the current page while it does.
   const { result, loading, onError } = useQuery(CustomerSalesRepsDocument, variables, {
     keepPreviousResult: true,
+    fetchPolicy: HUB_FETCH_POLICY,
   });
 
   onError((error) => {

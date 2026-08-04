@@ -11,6 +11,7 @@ import { useSalesRepCustomersCount } from "./useSalesRepCustomersCount";
 import { useSalesRepOrderStatistics } from "./useSalesRepOrderStatistics";
 import { useSalesRepOrders } from "./useSalesRepOrders";
 import { useSalesRepTopSellers } from "./useSalesRepTopSellers";
+import { useSalesReps } from "./useSalesReps";
 
 vi.mock("@/core/globals", () => ({
   globals: { storeId: "test-store", currencyCode: "USD", cultureName: "en-US" },
@@ -157,6 +158,26 @@ function customersCount() {
   return { salesRepCustomers: { __typename: "SalesRepCustomerConnection", totalCount: metric } };
 }
 
+function customerSalesReps() {
+  return {
+    customerSalesReps: {
+      __typename: "SalesRepContactConnection",
+      totalCount: metric,
+      items: [
+        {
+          __typename: "SalesRepContact",
+          id: "rep-1",
+          name: "rep1",
+          fullName: "Rep One",
+          emails: ["rep1@example.com"],
+          // No numeric field is selected, so the phone carries the metric.
+          phones: [String(metric)],
+        },
+      ],
+    },
+  };
+}
+
 const responses: Record<string, () => Record<string, unknown>> = {
   SalesRepCustomerOrderStatistics: orderStatistics,
   SalesRepCustomerCartStatistics: cartStatistics,
@@ -166,6 +187,7 @@ const responses: Record<string, () => Record<string, unknown>> = {
   SalesRepCustomer: customerDetails,
   SalesRepCustomers: customers,
   SalesRepCustomersCount: customersCount,
+  CustomerSalesReps: customerSalesReps,
 };
 
 const link = new ApolloLink(
@@ -265,6 +287,13 @@ const widgetSources: [string, () => () => number | undefined][] = [
       const { count } = useSalesRepCustomersCount();
       // The composable floors a missing count to 0; only a painted figure should settle the probe.
       return () => count.value || undefined;
+    },
+  ],
+  [
+    "sales reps list",
+    () => {
+      const { items } = useSalesReps();
+      return () => (items.value[0] ? Number(items.value[0].phone) : undefined);
     },
   ],
 ];
