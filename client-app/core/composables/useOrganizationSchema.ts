@@ -1,8 +1,6 @@
 import { useHead } from "@unhead/vue";
-import { computed } from "vue";
-import { useRoute } from "vue-router";
 import { useBrandProfile } from "./useBrandProfile";
-import { useLanguages } from "./useLanguages";
+import { useIsHomePage } from "./useIsHomePage";
 
 export type OrganizationFactsType = {
   id?: string;
@@ -10,6 +8,15 @@ export type OrganizationFactsType = {
   url?: string;
   /** The *store brand* logo, never a buyer organization's. Expected already absolute. */
   logoUrl?: string;
+  /** One or two sentences on what the store sells. Expected already whitespace-collapsed. */
+  description?: string;
+  /** Absolute profile urls linking the domain to brands an agent already knows. */
+  sameAs?: string[];
+  tagline?: string;
+  /** Expected already validated as an international number. */
+  contactPhone?: string;
+  /** Expected already validated as an ISO 8601 calendar date. */
+  foundingDate?: string;
 };
 
 const SCHEMA_ORG_CONTEXT = "https://schema.org";
@@ -17,14 +24,16 @@ const SCHEMA_ORG_CONTEXT = "https://schema.org";
 /** Subtype of `OnlineBusiness` -> `Organization`, so consumers matching `Organization` resolve it. */
 const ORGANIZATION_TYPE = "OnlineStore";
 
+const CONTACT_TYPE = "Customer Service";
+
 function nonBlank(value?: string): string | undefined {
   // `||` not `??`: an empty string must collapse to undefined too.
   return value?.trim() || undefined;
 }
 
 /**
- * Builds the homepage Organization node. Callers must pass already-sanitised urls
- * (`useBrandProfile` does this) — the builder only drops blanks.
+ * Builds the homepage Organization node. Callers must pass already-sanitised urls, phone and
+ * date (`useBrandProfile` does this) — the builder only drops blanks.
  *
  * Blank keys are omitted rather than emitted: an empty `logo` asserts something false. Returns
  * `null` when the name is missing, since a nameless organization only pollutes entity resolution.
@@ -41,6 +50,11 @@ export function buildOrganizationNode(facts: OrganizationFactsType): Record<stri
   const id = nonBlank(facts.id);
   const url = nonBlank(facts.url);
   const logo = nonBlank(facts.logoUrl);
+  const description = nonBlank(facts.description);
+  const slogan = nonBlank(facts.tagline);
+  const foundingDate = nonBlank(facts.foundingDate);
+  const telephone = nonBlank(facts.contactPhone);
+  const sameAs = facts.sameAs?.map(nonBlank).filter((value): value is string => !!value) ?? [];
 
   return {
     "@context": SCHEMA_ORG_CONTEXT,
@@ -49,6 +63,11 @@ export function buildOrganizationNode(facts: OrganizationFactsType): Record<stri
     name,
     ...(url ? { url } : {}),
     ...(logo ? { logo } : {}),
+    ...(description ? { description } : {}),
+    ...(slogan ? { slogan } : {}),
+    ...(sameAs.length ? { sameAs } : {}),
+    ...(telephone ? { contactPoint: { "@type": "ContactPoint", telephone, contactType: CONTACT_TYPE } } : {}),
+    ...(foundingDate ? { foundingDate } : {}),
   };
 }
 
@@ -60,13 +79,8 @@ export function buildOrganizationNode(facts: OrganizationFactsType): Record<stri
  * (Builder.io -> Virto Pages -> internal), so `home.vue` never mounts when a CMS homepage exists.
  */
 export function useOrganizationSchema() {
-  const route = useRoute();
-  // Strict helper: the `...PossibleLocale` variant matches any two-letter segment, so it would
-  // treat "/xy" as the homepage. app-runner uses the loose one only because it runs pre-store.
-  const { getUrlWithoutLocale } = useLanguages();
+  const isHomePage = useIsHomePage();
   const { organizationFacts } = useBrandProfile();
-
-  const isHomePage = computed(() => getUrlWithoutLocale(route.path) === "/");
 
   return useHead({
     script: () => {

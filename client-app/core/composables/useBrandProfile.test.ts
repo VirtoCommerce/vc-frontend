@@ -6,12 +6,15 @@
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { computed, ref } from "vue";
-import { toAbsoluteUrl, useBrandProfile } from "./useBrandProfile";
+import { MODULE_XAPI_KEYS, MODULE_XFRONTEND_KEYS } from "@/core/constants/modules";
+import { toAbsoluteUrl, toIsoCalendarDate, toProfileUrls, useBrandProfile } from "./useBrandProfile";
+import { useModuleSettings } from "./useModuleSettings";
 import { useThemeContext } from "./useThemeContext";
 import { useWhiteLabeling } from "./useWhiteLabeling";
 
 vi.mock("./useThemeContext", () => ({ useThemeContext: vi.fn() }));
 vi.mock("./useWhiteLabeling", () => ({ useWhiteLabeling: vi.fn() }));
+vi.mock("./useModuleSettings", () => ({ useModuleSettings: vi.fn() }));
 
 const ORIGIN = "https://store.example.com";
 
@@ -21,6 +24,8 @@ type MockOptionsType = {
   themeLogoImage?: string;
   whiteLabelingLogoUrl?: string;
   isOrganizationLogoUploaded?: boolean;
+  settings?: Record<string, unknown>;
+  xapiSettings?: Record<string, unknown>;
 };
 
 function mockContext(options: MockOptionsType = {}) {
@@ -36,6 +41,18 @@ function mockContext(options: MockOptionsType = {}) {
     whiteLabelingLogoUrl: ref(options.whiteLabelingLogoUrl),
     isOrganizationLogoUploaded: ref(options.isOrganizationLogoUploaded),
   } as unknown as ReturnType<typeof useWhiteLabeling>);
+
+  const byModule: Record<string, Record<string, unknown>> = {
+    [MODULE_XFRONTEND_KEYS.MODULE_ID]: options.settings ?? {},
+    [MODULE_XAPI_KEYS.MODULE_ID]: options.xapiSettings ?? {},
+  };
+
+  vi.mocked(useModuleSettings).mockImplementation(
+    (moduleId: string) =>
+      ({
+        getSettingValue: (name: string) => byModule[moduleId]?.[name],
+      }) as unknown as ReturnType<typeof useModuleSettings>,
+  );
 }
 
 describe("toAbsoluteUrl", () => {
@@ -68,6 +85,64 @@ describe("toAbsoluteUrl", () => {
   });
 });
 
+describe("toIsoCalendarDate", () => {
+  it("accepts an ISO 8601 calendar date", () => {
+    expect(toIsoCalendarDate("1998-04-01")).toBe("1998-04-01");
+  });
+
+  it("trims surrounding whitespace", () => {
+    expect(toIsoCalendarDate("  1998-04-01  ")).toBe("1998-04-01");
+  });
+
+  // The setting is free ShortText, so anything that is not a real date must be dropped rather
+  // than published as invalid structured data.
+  it.each([
+    ["a prose value", "last spring"],
+    ["a year only", "1998"],
+    ["a US-ordered date", "04/01/1998"],
+    ["a datetime", "1998-04-01T00:00:00Z"],
+    ["an out-of-range day", "2026-02-30"],
+    ["an out-of-range month", "2026-13-01"],
+    ["a blank value", "   "],
+    ["undefined", undefined],
+  ])("rejects %s", (_label, value) => {
+    expect(toIsoCalendarDate(value)).toBeUndefined();
+  });
+});
+
+describe("toProfileUrls", () => {
+  it("splits the LongText setting on newlines", () => {
+    expect(toProfileUrls("https://x.com/acme\nhttps://linkedin.com/company/acme", ORIGIN)).toEqual([
+      "https://x.com/acme",
+      "https://linkedin.com/company/acme",
+    ]);
+  });
+
+  it("tolerates CRLF line endings and blank lines", () => {
+    expect(toProfileUrls("https://x.com/acme\r\n\r\n  \r\nhttps://acme.example/about", ORIGIN)).toEqual([
+      "https://x.com/acme",
+      "https://acme.example/about",
+    ]);
+  });
+
+  it("deduplicates repeated urls", () => {
+    expect(toProfileUrls("https://x.com/acme\nhttps://x.com/acme", ORIGIN)).toEqual(["https://x.com/acme"]);
+  });
+
+  // A profile is off-site by definition; resolving would claim the store as its own profile.
+  it("drops a relative value rather than resolving it against the origin", () => {
+    expect(toProfileUrls("/about\nhttps://x.com/acme", ORIGIN)).toEqual(["https://x.com/acme"]);
+  });
+
+  it("drops a non-http scheme", () => {
+    expect(toProfileUrls("javascript:alert(1)", ORIGIN)).toEqual([]);
+  });
+
+  it("returns an empty array for undefined", () => {
+    expect(toProfileUrls(undefined, ORIGIN)).toEqual([]);
+  });
+});
+
 describe("useBrandProfile", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -95,6 +170,25 @@ describe("useBrandProfile", () => {
   it("leaves the logo undefined when nothing resolves", () => {
     mockContext({});
     expect(useBrandProfile().storeBrandLogoUrl.value).toBeUndefined();
+  });
+
+  // The dedicated setting is the merchant's own logo, which is the whole point of it existing.
+  it("prefers the configured brand logo over white labeling", () => {
+    mockContext({
+      settings: { [MODULE_XFRONTEND_KEYS.BRAND_PROFILE_LOGO_URL]: "https://cdn.acme.example/brand.svg" },
+      whiteLabelingLogoUrl: "/assets/store-logo.svg",
+      isOrganizationLogoUploaded: false,
+    });
+    expect(useBrandProfile().storeBrandLogoUrl.value).toBe("https://cdn.acme.example/brand.svg");
+  });
+
+  it("falls through to white labeling when the configured brand logo is blank", () => {
+    mockContext({
+      settings: { [MODULE_XFRONTEND_KEYS.BRAND_PROFILE_LOGO_URL]: "   " },
+      whiteLabelingLogoUrl: "/assets/store-logo.svg",
+      isOrganizationLogoUploaded: false,
+    });
+    expect(useBrandProfile().storeBrandLogoUrl.value).toBe("https://store.example.com/assets/store-logo.svg");
   });
 
   it("exposes a stable @id anchored on the origin", () => {
@@ -131,5 +225,142 @@ describe("useBrandProfile", () => {
   it("carries the store name through as the organization name", () => {
     mockContext({ storeName: "Acme Industrial Supply" });
     expect(useBrandProfile().organizationFacts.value.name).toBe("Acme Industrial Supply");
+  });
+
+  it("reads the whole brand profile from the module settings", () => {
+    mockContext({
+      settings: {
+        [MODULE_XFRONTEND_KEYS.BRAND_PROFILE_DESCRIPTION]: "Fasteners and fixings for trade buyers.",
+        [MODULE_XFRONTEND_KEYS.BRAND_PROFILE_TAGLINE]: "Industrial supply, next day",
+        [MODULE_XFRONTEND_KEYS.BRAND_PROFILE_SAME_AS]: "https://x.com/acme\nhttps://linkedin.com/company/acme",
+        [MODULE_XFRONTEND_KEYS.BRAND_PROFILE_SHARE_IMAGE_URL]: "/assets/og-cover.jpg",
+        [MODULE_XFRONTEND_KEYS.BRAND_PROFILE_CONTACT_PHONE]: "+1-800-000-0000",
+        [MODULE_XFRONTEND_KEYS.BRAND_PROFILE_FOUNDING_DATE]: "1998-04-01",
+      },
+    });
+
+    const { description, tagline, sameAs, shareImageUrl, contactPhone, foundingDate } = useBrandProfile();
+
+    expect(description.value).toBe("Fasteners and fixings for trade buyers.");
+    expect(tagline.value).toBe("Industrial supply, next day");
+    expect(sameAs.value).toEqual(["https://x.com/acme", "https://linkedin.com/company/acme"]);
+    expect(shareImageUrl.value).toBe("https://store.example.com/assets/og-cover.jpg");
+    expect(contactPhone.value).toBe("+1-800-000-0000");
+    expect(foundingDate.value).toBe("1998-04-01");
+  });
+
+  it("degrades to bare facts when the module is absent, so nothing depends on it being installed", () => {
+    mockContext({ settings: {} });
+
+    const { description, tagline, sameAs, shareImageUrl, contactPhone, foundingDate } = useBrandProfile();
+
+    expect(description.value).toBeUndefined();
+    expect(tagline.value).toBeUndefined();
+    expect(sameAs.value).toEqual([]);
+    expect(shareImageUrl.value).toBeUndefined();
+    expect(contactPhone.value).toBeUndefined();
+    expect(foundingDate.value).toBeUndefined();
+  });
+
+  // Every brand profile setting is registered with DefaultValue = string.Empty.
+  it("treats the settings' empty-string defaults as unset", () => {
+    mockContext({
+      settings: {
+        [MODULE_XFRONTEND_KEYS.BRAND_PROFILE_TAGLINE]: "",
+        [MODULE_XFRONTEND_KEYS.BRAND_PROFILE_SAME_AS]: "",
+        [MODULE_XFRONTEND_KEYS.BRAND_PROFILE_CONTACT_PHONE]: "",
+      },
+    });
+
+    const { tagline, sameAs, contactPhone } = useBrandProfile();
+
+    expect(tagline.value).toBeUndefined();
+    expect(sameAs.value).toEqual([]);
+    expect(contactPhone.value).toBeUndefined();
+  });
+
+  // ShortText accepts anything; schema.org needs a dialable international number.
+  it.each([
+    ["a national-format number", "(800) 555-1234"],
+    ["an extension", "+1 800 555 1234 ext. 200"],
+    ["prose", "call us"],
+  ])("drops %s from the contact phone", (_label, phone) => {
+    mockContext({ settings: { [MODULE_XFRONTEND_KEYS.BRAND_PROFILE_CONTACT_PHONE]: phone } });
+    expect(useBrandProfile().contactPhone.value).toBeUndefined();
+  });
+
+  it("accepts a spaced international number", () => {
+    mockContext({ settings: { [MODULE_XFRONTEND_KEYS.BRAND_PROFILE_CONTACT_PHONE]: "+1 (213) 603 3536" } });
+    expect(useBrandProfile().contactPhone.value).toBe("+1 (213) 603 3536");
+  });
+
+  // The header's display number often already carries a country code, so an unconfigured store
+  // gets a contactPoint for free — but only through the same gate.
+  it("falls back to the header's support phone when the brand profile has none", () => {
+    mockContext({ xapiSettings: { [MODULE_XAPI_KEYS.SUPPORT_PHONE_NUMBER]: "+1 (213) 603 3536" } });
+    expect(useBrandProfile().contactPhone.value).toBe("+1 (213) 603 3536");
+  });
+
+  it("drops the header's support phone when it is not dialable internationally", () => {
+    mockContext({ xapiSettings: { [MODULE_XAPI_KEYS.SUPPORT_PHONE_NUMBER]: "(800) 555-1234 ext. 200" } });
+    expect(useBrandProfile().contactPhone.value).toBeUndefined();
+  });
+
+  it("prefers the brand profile phone over the header's", () => {
+    mockContext({
+      settings: { [MODULE_XFRONTEND_KEYS.BRAND_PROFILE_CONTACT_PHONE]: "+1-800-000-0000" },
+      xapiSettings: { [MODULE_XAPI_KEYS.SUPPORT_PHONE_NUMBER]: "+1 (213) 603 3536" },
+    });
+    expect(useBrandProfile().contactPhone.value).toBe("+1-800-000-0000");
+  });
+
+  // Falling through on a *rejected* brand profile value would silently publish a different
+  // number than the merchant configured.
+  it("does not fall back when the brand profile phone is set but invalid", () => {
+    mockContext({
+      settings: { [MODULE_XFRONTEND_KEYS.BRAND_PROFILE_CONTACT_PHONE]: "(800) 555-1234" },
+      xapiSettings: { [MODULE_XAPI_KEYS.SUPPORT_PHONE_NUMBER]: "+1 (213) 603 3536" },
+    });
+    expect(useBrandProfile().contactPhone.value).toBeUndefined();
+  });
+
+  it("carries the brand profile into the organization facts", () => {
+    mockContext({
+      settings: {
+        [MODULE_XFRONTEND_KEYS.BRAND_PROFILE_TAGLINE]: "Industrial supply, next day",
+        [MODULE_XFRONTEND_KEYS.BRAND_PROFILE_SAME_AS]: "https://x.com/acme",
+        [MODULE_XFRONTEND_KEYS.BRAND_PROFILE_CONTACT_PHONE]: "+1-800-000-0000",
+        [MODULE_XFRONTEND_KEYS.BRAND_PROFILE_FOUNDING_DATE]: "1998-04-01",
+      },
+    });
+
+    expect(useBrandProfile().organizationFacts.value).toMatchObject({
+      tagline: "Industrial supply, next day",
+      sameAs: ["https://x.com/acme"],
+      contactPhone: "+1-800-000-0000",
+      foundingDate: "1998-04-01",
+    });
+  });
+
+  // LongText keeps the merchant's line breaks; they must not survive into a meta content
+  // attribute or a JSON string.
+  it("collapses whitespace and newlines in the description", () => {
+    mockContext({
+      settings: {
+        [MODULE_XFRONTEND_KEYS.BRAND_PROFILE_DESCRIPTION]: "  Fasteners and fixings.\n\nNext-day   delivery.  ",
+      },
+    });
+    expect(useBrandProfile().description.value).toBe("Fasteners and fixings. Next-day delivery.");
+  });
+
+  it("carries the description into the organization facts", () => {
+    mockContext({ settings: { [MODULE_XFRONTEND_KEYS.BRAND_PROFILE_DESCRIPTION]: "Fasteners and fixings." } });
+    expect(useBrandProfile().organizationFacts.value).toMatchObject({ description: "Fasteners and fixings." });
+  });
+
+  // The share image is an Open Graph concern; the JSON-LD node has `logo` and must not carry it.
+  it("keeps the share image out of the organization facts", () => {
+    mockContext({ settings: { [MODULE_XFRONTEND_KEYS.BRAND_PROFILE_SHARE_IMAGE_URL]: "/assets/og-cover.jpg" } });
+    expect(useBrandProfile().organizationFacts.value).not.toHaveProperty("shareImageUrl");
   });
 });

@@ -9,6 +9,7 @@ export * from "./useCurrency";
 export * from "./useDarkMode";
 export * from "./useErrorsTranslator";
 export * from "./useHistoricalEvents";
+export * from "./useIsHomePage";
 export * from "./useModules";
 export * from "./useMutationBatcher";
 export * from "./useNavigations";

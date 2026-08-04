@@ -2,43 +2,59 @@ import { useHead } from "@unhead/vue";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { computed, ref } from "vue";
 import { useBrandProfile } from "./useBrandProfile";
+import { useIsHomePage } from "./useIsHomePage";
 import { useStoreSocialMeta } from "./useStoreSocialMeta";
 
 vi.mock("@unhead/vue", () => ({ useHead: vi.fn() }));
 vi.mock("./useBrandProfile", () => ({ useBrandProfile: vi.fn() }));
+vi.mock("./useIsHomePage", () => ({ useIsHomePage: vi.fn() }));
 
 type MetaEntryType = { property: string; content: string };
+
+const isHomePage = ref(false);
 
 function lastMetaGetter(): () => MetaEntryType[] {
   const input = vi.mocked(useHead).mock.calls.at(-1)?.[0] as { meta: () => MetaEntryType[] };
   return input.meta;
 }
 
-function mockStoreName(storeName?: string) {
+type BrandOptionsType = {
+  storeName?: string;
+  tagline?: string;
+  description?: string;
+  shareImageUrl?: string;
+};
+
+function mockBrand(options: BrandOptionsType = {}) {
   vi.mocked(useBrandProfile).mockReturnValue({
-    storeName: computed(() => storeName),
+    storeName: computed(() => options.storeName),
+    tagline: computed(() => options.tagline),
+    description: computed(() => options.description),
+    shareImageUrl: computed(() => options.shareImageUrl),
   } as unknown as ReturnType<typeof useBrandProfile>);
 }
 
 describe("useStoreSocialMeta", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    isHomePage.value = false;
+    vi.mocked(useIsHomePage).mockReturnValue(computed(() => isHomePage.value));
   });
 
   it("emits og:site_name from the store name", () => {
-    mockStoreName("Acme Industrial Supply");
+    mockBrand({ storeName: "Acme Industrial Supply" });
     useStoreSocialMeta();
     expect(lastMetaGetter()()).toEqual([{ property: "og:site_name", content: "Acme Industrial Supply" }]);
   });
 
   it("emits nothing when the store name is unavailable", () => {
-    mockStoreName();
+    mockBrand();
     useStoreSocialMeta();
     expect(lastMetaGetter()()).toEqual([]);
   });
 
   it("emits nothing when the store name is blank", () => {
-    mockStoreName("   ");
+    mockBrand({ storeName: "   " });
     useStoreSocialMeta();
     expect(lastMetaGetter()()).toEqual([]);
   });
@@ -47,6 +63,9 @@ describe("useStoreSocialMeta", () => {
     const source = ref<string | undefined>(undefined);
     vi.mocked(useBrandProfile).mockReturnValue({
       storeName: computed(() => source.value),
+      tagline: computed(() => undefined),
+      description: computed(() => undefined),
+      shareImageUrl: computed(() => undefined),
     } as unknown as ReturnType<typeof useBrandProfile>);
 
     useStoreSocialMeta();
@@ -55,5 +74,73 @@ describe("useStoreSocialMeta", () => {
 
     source.value = "Acme";
     expect(meta()).toEqual([{ property: "og:site_name", content: "Acme" }]);
+  });
+
+  // The share image describes the store, not a page, so it is the site-wide fallback.
+  it("emits og:image from the share image on any page", () => {
+    mockBrand({ storeName: "Acme", shareImageUrl: "https://store.example.com/og-cover.jpg" });
+    useStoreSocialMeta();
+    expect(lastMetaGetter()()).toContainEqual({
+      property: "og:image",
+      content: "https://store.example.com/og-cover.jpg",
+    });
+  });
+
+  it("omits og:image when no share image is configured", () => {
+    mockBrand({ storeName: "Acme" });
+    useStoreSocialMeta();
+    expect(lastMetaGetter()().map((tag) => tag.property)).not.toContain("og:image");
+  });
+
+  // The store description is the fallback anywhere a page has none — including the CMS
+  // homepage, where nothing emits og:description today.
+  it("emits og:description from the store description on any page", () => {
+    mockBrand({ storeName: "Acme", description: "Fasteners and fixings for trade buyers." });
+    useStoreSocialMeta();
+    expect(lastMetaGetter()()).toContainEqual({
+      property: "og:description",
+      content: "Fasteners and fixings for trade buyers.",
+    });
+  });
+
+  it("omits og:description when no store description is configured", () => {
+    mockBrand({ storeName: "Acme" });
+    useStoreSocialMeta();
+    expect(lastMetaGetter()().map((tag) => tag.property)).not.toContain("og:description");
+  });
+
+  it("emits the name — tagline og:title on the homepage", () => {
+    isHomePage.value = true;
+    mockBrand({ storeName: "Acme", tagline: "Industrial supply, next day" });
+    useStoreSocialMeta();
+    expect(lastMetaGetter()()).toContainEqual({
+      property: "og:title",
+      content: "Acme — Industrial supply, next day",
+    });
+  });
+
+  // Elsewhere the page's own emitter owns og:title, and a store-level one would only be noise.
+  it("omits og:title away from the homepage", () => {
+    mockBrand({ storeName: "Acme", tagline: "Industrial supply, next day" });
+    useStoreSocialMeta();
+    expect(lastMetaGetter()().map((tag) => tag.property)).not.toContain("og:title");
+  });
+
+  it("omits og:title on the homepage when no tagline is configured", () => {
+    isHomePage.value = true;
+    mockBrand({ storeName: "Acme" });
+    useStoreSocialMeta();
+    expect(lastMetaGetter()().map((tag) => tag.property)).not.toContain("og:title");
+  });
+
+  it("drops og:title on navigation away from the homepage", () => {
+    isHomePage.value = true;
+    mockBrand({ storeName: "Acme", tagline: "Industrial supply, next day" });
+    useStoreSocialMeta();
+    const meta = lastMetaGetter();
+    expect(meta().map((tag) => tag.property)).toContain("og:title");
+
+    isHomePage.value = false;
+    expect(meta().map((tag) => tag.property)).not.toContain("og:title");
   });
 });

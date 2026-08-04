@@ -94,6 +94,10 @@ the exact node to inject.
 
 ## 4. Backend dependency — `brandProfile` on `StoreResponseType`
 
+> **Delivered differently.** §4.1–4.4 record the ask as it was made. The backend answered with
+> public store *settings* rather than a typed field — see **§4.5** for the shipped contract and
+> the deltas the frontend had to absorb.
+
 None of the differentiating fields exist today. `StoreResponseType`
 (`vc-module-x-api/src/VirtoCommerce.Xapi.Core/Schemas/StoreResponseType.cs`) exposes only
 `storeId, storeName, catalogId, storeUrl, assetPublicUrl, languages, currencies, settings,
@@ -175,38 +179,90 @@ Untyped and undisciplined, so a bridge rather than the design.
 **Codegen:** once the field ships, regenerate with `yarn generate:graphql-types` against a
 backend that has the module installed. Never hand-edit `client-app/core/api/graphql/types.ts`.
 
+### 4.5 What the backend actually shipped
+
+[vc-module-x-frontend#10](https://github.com/VirtoCommerce/vc-module-x-frontend/pull/10) —
+six platform settings, all `IsPublic = true`, `GroupName = "Virto Commerce Frontend|Store
+Information"`, registered against the `Store` type:
+
+| Setting | Type | Maps to |
+|---|---|---|
+| `XFrontend.BrandProfile.Description` | LongText | `description`, `og:description` |
+| `XFrontend.BrandProfile.SameAs` | LongText, one url per line | `sameAs` |
+| `XFrontend.BrandProfile.Tagline` | ShortText | `slogan`, `og:title` suffix |
+| `XFrontend.BrandProfile.LogoUrl` | ShortText | `logo` |
+| `XFrontend.BrandProfile.ShareImageUrl` | ShortText | `og:image` |
+| `XFrontend.BrandProfile.ContactPhone` | ShortText | `contactPoint.telephone` |
+| `XFrontend.BrandProfile.FoundingDate` | ShortText | `foundingDate` |
+
+**Consequences for this repo.** Four, none of them blocking:
+
+1. **No codegen.** The values arrive through the `store.settings.modules[].settings{name value}`
+   passthrough the theme already queries, so `useModuleSettings("VirtoCommerce.XFrontend")` reads
+   them and `types.ts` is untouched.
+2. **Nothing is typed, so the frontend validates.** `sameAs` is one string to split on newlines;
+   `foundingDate` and `ContactPhone` are free ShortText. §7 lists what is enforced and why.
+3. **Every setting defaults to `string.Empty`,** so an unconfigured store sends `""` rather than
+   omitting the key. Blank collapses to `undefined` throughout.
+4. **`description` was added afterwards** — the first cut of #10 omitted it; see below.
+
+**`logoUrl` closes the buyer-org hole.** A store-level logo now exists, so the §7 fallback chain
+begins with it and only reaches white labeling when it is unset. That was the ugliest compromise
+in Phase 1.
+
+**The `description` gap, and how it was closed.** Ticket item 3 lists `og:description` and §4.2
+asked for it, but the first cut of #10 had no setting for it.
+
+Exposing `Store.Description` instead is **not possible from vc-module-x-frontend**:
+`StoreResponse` (`vc-module-x-api/.../Models/StoreResponse.cs`) carries only projected fields —
+`StoreId, StoreName, StoreUrl, AssetPublicUrl, CatalogId`, currencies, languages, `Settings`,
+`GraphQLSettings`, `DynamicProperties` — and never the `Store` entity, so it is unreachable from
+`StoreResponseType`'s resolver. It would mean changing vc-module-x-api's model, projection and
+schema, plus codegen here.
+
+A seventh setting was pushed to #10 instead (`f92f96f`), which is arguably the better source
+anyway: `Store.Description` is admin-facing free text with no audience discipline, and this value
+is published verbatim to search engines and social scrapers.
+
 ## 5. Phasing
 
-The frontend must not sit blocked on §4. Two increments:
+The frontend must not sit blocked on §4. Two increments, both now in PR #2415:
 
-**Phase 1 — ship now, zero backend dependency.** Emit a valid, useful node from data that
+**Phase 1 — zero backend dependency.** Emit a valid, useful node from data that
 already exists: `@id`, `@type`, `name`, `url`, `logo`, plus site-wide `og:site_name`. Google
 specifies **no required properties** for Organization, so a partial node is legitimate, not
 a stub.
 
-**Phase 2 — when `brandProfile` lands.** Add `description`, `tagline`,
-`foundingDate`, `sameAs`, and the real `og:image` / og:description /
-og:title-with-tagline.
+**Phase 2 — the brand profile settings.** Adds `description`, `slogan`, `sameAs`,
+`contactPoint`, `foundingDate`, the store-level `logo`, `og:description`, `og:image`, and the
+homepage `og:title` with the tagline. That is every field the ticket names.
 
-Phase 1 is the deliverable of this ticket. Phase 2 is a follow-up PR against the same design.
+Phase 2 was folded into the same PR rather than following it, because #10 landed while #2415
+was still unreviewed. The PR cannot merge before #10 ships and a store carries the settings;
+until then Phase 2 degrades to exactly the Phase 1 output.
 
 ## 6. Files
 
 ```
 client-app/core/composables/
-  useBrandProfile.ts          # data layer: resolves brand facts (new)
+  useBrandProfile.ts          # data layer: resolves and validates brand facts (new)
   useBrandProfile.test.ts
+  useIsHomePage.ts            # the homepage gate, shared by both emitters (new)
+  useIsHomePage.test.ts
   useOrganizationSchema.ts    # emits JSON-LD, homepage only (new)
   useOrganizationSchema.test.ts
-  useStoreSocialMeta.ts       # emits site-level OG tags (new)
+  useOrganizationSchema.emitter.test.ts
+  useStoreSocialMeta.ts       # emits store-level OG tags (new)
   useStoreSocialMeta.test.ts
 client-app/core/composables/index.ts   # re-export
+client-app/core/constants/modules.ts   # MODULE_XFRONTEND_KEYS
 client-app/App.vue                     # call the two emitters once
 ```
 
 Three units rather than one, because they have genuinely different lifetimes: the data layer
-is pure resolution, the JSON-LD is homepage-scoped, the OG tags are site-scoped. Each is
-independently testable.
+is pure resolution, the JSON-LD is homepage-scoped, the OG tags are mostly site-scoped. Each is
+independently testable. `useIsHomePage` exists only because Phase 2 gave the second emitter a
+homepage-only tag too, and the gate must not drift between them.
 
 ## 7. `useBrandProfile()` — the data layer
 
@@ -221,7 +277,7 @@ labeling swaps branding per logged-in org). Organization JSON-LD describes the *
 brand**, so publishing that would attribute a customer's logo to the merchant's identity.
 
 Logo resolution order:
-1. `store.brandProfile.logoUrl` (Phase 2) — explicit store brand logo, always preferred.
+1. `XFrontend.BrandProfile.LogoUrl` — explicit store brand logo, always preferred.
 2. `whiteLabelingSettings.logoUrl` **only when `isOrganizationLogoUploaded !== true`**.
 3. `themeContext.settings.logo_image` (theme default), resolved to absolute.
 
@@ -234,6 +290,20 @@ canonical url.
 
 **`@id`** — `` `${location.origin}/#organization` ``. Stable per store domain, so other
 nodes can reference it.
+
+**Validating the untyped settings (§4.5).** Nothing upstream constrains these values, and bad
+structured data is worse than absent structured data, so each is checked before it can reach
+the markup:
+
+| Value | Rule | Why |
+|---|---|---|
+| `sameAs` | split on newlines; keep only entries already carrying an http(s) scheme; dedupe | A profile is off-site by definition. Resolving a relative entry against the origin would claim one of the store's own pages as an external profile of itself. |
+| `foundingDate` | `YYYY-MM-DD`, round-tripped through `Date` | ShortText accepts prose. The round-trip is required, not belt-and-braces: `new Date("2026-02-30T00:00:00Z")` silently rolls over to 2026-03-02 rather than returning an invalid date. |
+| `contactPhone` | must start with `+`; falls back to `Frontend.SupportPhoneNumber` when unset | The number has to be dialable by an agent, and a national-format one is ambiguous. The header's display setting is free text — but where it *is* already international (QA's store has `+1 (213) 603 3536`) an unconfigured store gets a `contactPoint` for free. A brand-profile value that fails the gate does **not** fall through: publishing a different number than the merchant configured would be worse than omitting it. |
+| `shareImageUrl`, `logoUrl` | `toAbsoluteUrl` | Same rule as the theme logo: relative is normal for a same-host asset. |
+| `description` | whitespace collapsed | LongText preserves the merchant's line breaks, which would otherwise land inside a `content` attribute and a JSON string. |
+
+Anything failing its rule is dropped, not corrected, and the corresponding key is omitted.
 
 ## 8. `useOrganizationSchema()` — the JSON-LD
 
@@ -330,16 +400,23 @@ Given the above, the only thing that can be added safely without touching seven 
 | Tag | Owner | Why |
 |---|---|---|
 | `og:site_name` | this composable, **site-wide** | Nothing emits it today; it is a store-level fact, not a page fact |
-| `og:image` (site default) | this composable, homepage only, **Phase 2** (`brandProfile.shareImageUrl`) | unhead dedupes meta by `property`, so a page setting its own `og:image` still wins |
+| `og:image` | this composable, **site-wide fallback** (`XFrontend.BrandProfile.ShareImageUrl`) | A purpose-made share card for the store. Site-wide rather than homepage-only because it is the sensible default anywhere a page has no image of its own — and a page that does have one overrides it |
+| `og:description` | this composable, **site-wide fallback** (`XFrontend.BrandProfile.Description`) | Same reasoning. It is also the only thing that gives a CMS homepage an `og:description` at all (9.1 #3) |
+| `og:title` | this composable, **homepage only**, `name — tagline` | Nothing owns it on a CMS homepage (9.1 #3), which is exactly the case the ticket's item 3 describes. Elsewhere the page emitters own it |
 
-`og:title` / `og:description` / `og:url` / `og:type` are **left with the pages**. Not because
-that is a good design — it is not — but because centralising them means editing every page
+`og:url` / `og:type` are **left with the pages**: centralising them means editing every page
 emitter, each with its own data source and gating convention. That is a refactor with its own
-ticket, not part of this one.
+ticket.
 
-Phase 1 therefore adds only `og:site_name` (from `store.storeName`). **No `og:image` in
-Phase 1** — the only available image is the logo, whose aspect ratio is wrong for a 1200×630
-share card, and a badly-cropped card is worse than none.
+**Why the fallbacks are safe.** Verified in `unhead` 3.2.1 (`dedupeTags`): tags key on
+`meta:<property>`, and when two entries share a key the one with the higher `_p` — the later
+registration — replaces the earlier. `App.vue` registers before any page component mounts, so
+a page's own `useSeoMeta` always wins. The same-entry arraying path (`isMetaArrayDupeKey`, which
+matches `og:*`) does not apply, since these tags come from different entries.
+
+**No `og:image` from the logo.** Its aspect ratio is wrong for a 1200×630 share card, and a
+badly-cropped card is worse than none. The tag is emitted only when the store configures a real
+share image.
 
 ### 9.3 Interaction with the existing gating convention
 
@@ -397,12 +474,23 @@ preview to confirm the node is present on `/` and absent on `/catalog`.
 7. Type-check, lint and unit tests pass.
 8. Documented: the markup is client-rendered and therefore invisible to non-JS agent
    crawlers (§3).
+9. A store with the brand profile configured additionally publishes `description`, `slogan`,
+   `sameAs`, `contactPoint.telephone` and `foundingDate` in the node, `og:description` and
+   `og:image` site-wide, and `name — tagline` as the homepage `og:title`.
+10. A store with the settings unset, or without the `VirtoCommerce.XFrontend` module,
+    publishes exactly the AC 1–6 output — no empty keys, no empty tags.
+11. An invalid `FoundingDate` or a `ContactPhone` without a country code is omitted rather
+    than published (§7).
 
 ## 13. Open questions
 
-1. Does the `brandProfile` contract in §4 get accepted as specified, and by whom /
-   when? Phase 2 is blocked on it.
-2. Is a follow-up ticket opened for server/edge injection (§3), and does Oleg accept
+1. ~~Does the `brandProfile` contract in §4 get accepted as specified?~~ **Answered:**
+   delivered as public store settings instead — §4.5.
+2. ~~Does `description` get a source?~~ **Answered:** `XFrontend.BrandProfile.Description`
+   pushed to #10 as `f92f96f` — §4.5.
+3. Is a follow-up ticket opened for server/edge injection (§3), and does Oleg accept
    frontend-only as done for VCST-5536 given it is not a conformance blocker?
-3. Should `foundingDate` and `legalName` be in the first backend cut at all — neither
+4. Should `foundingDate` and `legalName` be in the first backend cut at all — neither
    affects agent shopping behaviour, unlike return policy and contact point.
+5. Live verification is pending: QA has `VirtoCommerce.XFrontend` installed but its public
+   settings list is still empty, so nothing can be configured until #10 merges and deploys.
