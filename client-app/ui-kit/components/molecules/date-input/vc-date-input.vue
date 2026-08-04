@@ -51,35 +51,24 @@ import {
 import type { VcDateFieldUpdateOnType } from "@/ui-kit/composables";
 
 interface IProps {
-  /** ISO YYYY-MM-DD canonical value. */
   modelValue?: string;
   size?: VcInputSizeType;
   label?: string;
-  /** Override the auto-derived locale hint (e.g. "MM/DD/YYYY"). */
   placeholder?: string;
   name?: string;
   disabled?: boolean;
   readonly?: boolean;
   required?: boolean;
-  /** Info/help text. Shown when no validation error is active. */
   message?: string;
-  /** External error flag (e.g. from vee-validate). Overrides internal validation display. */
   error?: boolean;
-  /** ISO YYYY-MM-DD min boundary. */
   min?: string;
-  /** ISO YYYY-MM-DD max boundary. */
   max?: string;
-  /** Predicate that returns true to mark a date unavailable. Receives ISO YYYY-MM-DD. */
   disabledDate?: VcCalendarDisabledDateType;
-  /** Override locale; defaults to i18n's active locale. */
   locale?: string;
-  /** When to commit user input. Default "blur". Enter always commits regardless. */
   updateOn?: VcDateFieldUpdateOnType;
-  /** Apply a locale-aware input mask. Default false. Paste of ISO or locale-short dates is reformatted; other paste flows through the mask. */
   mask?: boolean;
   clearable?: boolean;
   ariaLabel?: string;
-  /** Additional ARIA attributes forwarded to the underlying input element. */
   aria?: Record<string, string | number | null>;
   tabindex?: string | number;
   dataTestId?: string;
@@ -110,7 +99,7 @@ const props = withDefaults(defineProps<IProps>(), {
 const { locale: i18nLocale } = useI18n();
 const resolvedLocale = computed<string>(() => props.locale ?? i18nLocale.value);
 
-const { displayValue, errorText, isValid, onBlur, onEnter, onClear, commit } = useDateField({
+const { displayValue, errorText, isValid, onBlur, onEnter, onClear, reset, commit } = useDateField({
   modelValue: toRef(props, "modelValue"),
   locale: resolvedLocale,
   updateOn: toRef(props, "updateOn"),
@@ -168,9 +157,10 @@ const innerInputElement = computed<HTMLInputElement | null>(() => inputRef.value
 
 defineExpose({
   inputElement: innerInputElement,
+  reset,
 });
 
-// Intercept paste before maska reshapes it — well-formed dates would otherwise be corrupted by the mask transform.
+// maska's transform corrupts a well-formed pasted date, so intercept paste ahead of it.
 useEventListener(innerInputElement, "paste", (event: ClipboardEvent) => {
   if (!props.mask) {
     return;

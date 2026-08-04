@@ -187,8 +187,7 @@ const detailsId = componentId + "-details";
 const listeners = useListeners();
 const attrs = useAttrsOnly();
 
-// This binding sits after `v-bind="{ ...aria }"`, so it would blank out a forwarded aria-describedby.
-// aria-describedby is an id list: the own details row and a parent's shared one are both legitimate.
+// mergeProps assigns unconditionally, so this later binding would erase a forwarded aria-describedby.
 const describedById = computed<string | undefined>(() => {
   const forwarded = props.aria?.["aria-describedby"];
   const forwardedId = typeof forwarded === "string" ? forwarded : undefined;
@@ -355,7 +354,7 @@ provide<VcInputContextType>("inputContext", {
   &__container {
     @apply flex items-stretch p-0.5 border border-neutral-400 rounded-[--radius] bg-additional-50 select-none;
 
-    // Longhands instead of text-sm/text-base: only font-size is overridable, line-height is not.
+    // Longhands: text-sm/text-base would make line-height unoverridable.
     #{$sizeXs} & {
       @apply h-8;
 

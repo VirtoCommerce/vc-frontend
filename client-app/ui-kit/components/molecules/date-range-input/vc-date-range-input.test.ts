@@ -1,5 +1,6 @@
-import { mount } from "@vue/test-utils";
+import { flushPromises, mount } from "@vue/test-utils";
 import { describe, expect, it, vi } from "vitest";
+import { defineComponent, ref } from "vue";
 import { VcInputDetails } from "@/ui-kit/components/atoms";
 import VcDateInput from "../date-input/vc-date-input.vue";
 import VcInput from "../input/vc-input.vue";
@@ -51,7 +52,6 @@ describe("VcDateRangeInput", () => {
 
   it("flags update:valid=false when start > end", async () => {
     const wrapper = mountInput({ modelValue: { start: "2026-10-20", end: "2026-10-01" } });
-    // both segments format-valid, but order is wrong
     expect(wrapper.emitted("update:valid")?.at(-1)?.[0]).toBe(false);
   });
 
@@ -60,6 +60,48 @@ describe("VcDateRangeInput", () => {
     await wrapper.find(".vc-date-range-input__clear").trigger("click");
     expect(wrapper.emitted("update:modelValue")?.at(-1)?.[0]).toBeUndefined();
     expect(wrapper.emitted("clear")).toBeTruthy();
+  });
+
+  // A segment already holding an undefined model sees no prop change on clear, so nothing resyncs it.
+  it("drops uncommitted invalid text in an already-empty segment on clear", async () => {
+    const parent = mount(
+      defineComponent({
+        components: { VcDateRangeInput },
+
+        setup() {
+          const range = ref<VcDateRange | undefined>({ start: "2026-10-08", end: undefined });
+          const modelEmits = ref(0);
+          const valid = ref(true);
+          function onUpdate(value: VcDateRange | undefined): void {
+            modelEmits.value++;
+            range.value = value;
+          }
+          return { range, modelEmits, valid, onUpdate };
+        },
+
+        template: `<VcDateRangeInput
+          :model-value="range"
+          clearable
+          @update:model-value="onUpdate"
+          @update:valid="valid = $event"
+        />`,
+      }),
+      { global: { components: { VcDateInput, VcInput, VcInputDetails }, stubs, directives: { "html-safe": {} } } },
+    );
+
+    const [, endInput] = parent.findAll("input");
+    await endInput.setValue("99/99/9999");
+    await endInput.trigger("blur");
+    expect(parent.vm.valid).toBe(false);
+
+    const modelEmitsBeforeClear = parent.vm.modelEmits;
+
+    await parent.find(".vc-date-range-input__clear").trigger("click");
+    await flushPromises();
+
+    expect(parent.findAll("input").map((input) => input.element.value)).toEqual(["", ""]);
+    expect(parent.vm.valid).toBe(true);
+    expect(parent.vm.modelEmits - modelEmitsBeforeClear).toBe(1);
   });
 
   describe("segment fill-state width", () => {
@@ -129,7 +171,6 @@ describe("VcDateRangeInput", () => {
     });
   });
 
-  // hide-details drops each segment's own aria-describedby, so the shared row has to be wired by hand.
   describe("shared details a11y wiring", () => {
     it("points both segments at the shared details row and marks them invalid", () => {
       const wrapper = mountInput({ modelValue: { start: "2026-10-20", end: "2026-10-01" } });

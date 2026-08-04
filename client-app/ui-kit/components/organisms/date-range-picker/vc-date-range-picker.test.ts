@@ -14,8 +14,7 @@ import VcPopover from "@/ui-kit/components/molecules/popover/vc-popover.vue";
 
 vi.mock("vue-i18n", () => ({ useI18n: () => ({ t: (k: string) => k, locale: { value: "en" } }) }));
 
-// None of these are imported by the SFC itself (globally registered instead); mount() needs the
-// genuine implementations for open/close + toggle-button behavior, so only leaf atoms are stubbed.
+// Globally registered in the app; mount() needs the real open/close chain, so only leaf atoms are stubbed.
 const stubs = { VcLabel: true, VcIcon: true, VcTooltip: true };
 
 function mountPicker(props = {}, options: { attachTo?: Element } = {}) {
@@ -39,8 +38,7 @@ function mountPicker(props = {}, options: { attachTo?: Element } = {}) {
   });
 }
 
-// "split" nests two whole VcDatePickers, so it needs the single-date chain too. VcLabel stays real
-// here: the layout's whole point is that startLabel/endLabel become visible <label> elements.
+// "split" nests two whole VcDatePickers, and VcLabel stays real so startLabel/endLabel render.
 function mountSplit(props = {}, options: { attachTo?: Element } = {}) {
   return mount(VcDateRangePicker, {
     props: {
@@ -51,8 +49,7 @@ function mountSplit(props = {}, options: { attachTo?: Element } = {}) {
       ...props,
     },
     global: {
-      // VcDateRangeInput/VcRangeCalendar belong to the unrendered "combined" branch, but the compiled
-      // template resolves every component up front — registering them keeps the render warning-free.
+      // Unrendered "combined" branch, but the compiled template resolves every component up front.
       components: {
         VcDateInput,
         VcInput,
@@ -98,7 +95,6 @@ describe("VcDateRangePicker", () => {
   it("keeps the popover open when the calendar emits an anchor-only partial range", async () => {
     const wrapper = mountPicker({}, { attachTo: document.body });
 
-    // Open the popover via the calendar toggle button so its content becomes visible (display: block).
     await wrapper.find('button[aria-haspopup="dialog"]').trigger("click");
     const bodyBefore = wrapper.find(".vc-popover__body");
     expect(bodyBefore.attributes("style")).toContain("display: block");
@@ -107,7 +103,6 @@ describe("VcDateRangePicker", () => {
     await wrapper.vm.$nextTick();
 
     expect(wrapper.emitted("update:modelValue")?.at(-1)?.[0]).toEqual({ start: "2026-10-08" });
-    // Anchor partial (no `end`) must NOT trigger the popover's close() — content stays visible.
     const bodyAfter = wrapper.find(".vc-popover__body");
     expect(bodyAfter.attributes("style")).toContain("display: block");
 
@@ -127,11 +122,9 @@ describe("VcDateRangePicker", () => {
     await wrapper.vm.$nextTick();
 
     expect(wrapper.emitted("update:modelValue")?.at(-1)?.[0]).toEqual({ start: "2026-10-08", end: "2026-10-14" });
-    // Both endpoints committed — close() fires and content flips to display: none.
     const bodyAfter = wrapper.find(".vc-popover__body");
     expect(bodyAfter.attributes("style")).toContain("display: none");
 
-    // Focus must return to the START segment's own input, not just "some" input.
     const [startInput] = wrapper.findAllComponents({ name: "VcDateInput" });
     expect(document.activeElement).toBe(startInput.find("input").element);
 
@@ -255,8 +248,7 @@ describe("VcDateRangePicker — split layout", () => {
       expect(calendarBounds(wrapper).startMax).toBe("2026-10-20");
     });
 
-    // Clamping an already out-of-order range puts each boundary on the wrong side of that field's own
-    // value, so the month it opens on has every day disabled and the user cannot fix their own mistake.
+    // Clamping here would disable every day of the month the calendar opens on.
     describe("already out of order", () => {
       const outOfOrder = { start: "2026-12-01", end: "2026-10-14" };
 
@@ -378,7 +370,6 @@ describe("VcDateRangePicker — split layout", () => {
     expect(fields.every((field) => field.props("hideDetails"))).toBe(true);
   });
 
-  // hide-details drops each field's own aria-describedby, so the shared row has to be wired by hand.
   describe("shared details a11y wiring", () => {
     it("points both inputs at the shared details row and marks them invalid", () => {
       const wrapper = mountSplit({ modelValue: { start: "2026-10-20", end: "2026-10-01" } });

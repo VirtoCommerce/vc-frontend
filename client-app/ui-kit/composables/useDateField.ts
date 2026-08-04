@@ -9,25 +9,16 @@ import type { MaybeRef, Ref } from "vue";
 export type VcDateFieldUpdateOnType = "blur" | "enter";
 
 export interface IUseDateFieldOptions {
-  /** ISO YYYY-MM-DD from parent (the source of truth). */
   modelValue: Ref<string | undefined>;
-  /** Optional locale override; falls back to the i18n locale. */
   locale?: Ref<string | undefined>;
-  /** When to commit user input. Default "blur". Enter always commits regardless. */
   updateOn?: MaybeRef<VcDateFieldUpdateOnType>;
-  /** ISO YYYY-MM-DD min boundary. */
   min?: Ref<string | undefined>;
-  /** ISO YYYY-MM-DD max boundary. */
   max?: Ref<string | undefined>;
-  /** Predicate that returns true to mark a date unavailable. Receives ISO YYYY-MM-DD. */
   disabledDate?: Ref<VcCalendarDisabledDateType | undefined>;
   onCommit: (iso: string | undefined) => void;
 }
 
-/**
- * Owns the locale-formatted display text for a date-text input and commits canonical ISO upstream.
- * Invalid input is held in `displayValue` until corrected — `onCommit` is not called for it.
- */
+/** Holds invalid input in `displayValue` until corrected; only valid dates reach `onCommit`. */
 export function useDateField(opts: IUseDateFieldOptions) {
   const { t, locale: i18nLocale } = useI18n();
 
@@ -162,6 +153,11 @@ export function useDateField(opts: IUseDateFieldOptions) {
     }
   }
 
+  function reset(): void {
+    syncDisplayFromModel();
+    touched.value = false;
+  }
+
   return {
     displayValue,
     errorText,
@@ -169,7 +165,8 @@ export function useDateField(opts: IUseDateFieldOptions) {
     onBlur,
     onEnter,
     onClear,
-    /** Commit displayValue unconditionally (bypasses `updateOn`). Used for programmatic commits like paste. */
+    reset,
+    /** Commits unconditionally, bypassing `updateOn`. */
     commit,
   };
 }

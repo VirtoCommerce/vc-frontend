@@ -32,7 +32,7 @@ const meta: Meta<typeof VcDateRangePicker> = {
     },
   },
   argTypes: {
-    // VcDateRangePickerLayoutType is a global type alias, so docgen cannot infer the options.
+    // Global type alias — docgen cannot infer the options.
     layout: {
       control: "select",
       options: LAYOUTS,

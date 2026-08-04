@@ -191,31 +191,17 @@ const parsedModelValue = computed<RekaDateRangeType>(() => ({
   end: tryParseDate(props.modelValue?.end),
 }));
 
-// Empty range is valid; reka's own `update:validModelValue` carries a DateRange payload
-// (not a boolean — verified in node_modules), so range-order validity is left to VcDateRangeInput.
+// Permanent stub: reka's `update:validModelValue` carries a DateRange, not a boolean.
 emit("update:valid", true);
 
-// Dedup: reka's controlled round trip can fire update:startValue and update:modelValue
-// back-to-back within the same tick, before props.modelValue reflects the emission — so track
-// the last-emitted range ourselves instead of trusting the (still-stale) prop. Kept in sync with
-// external prop changes too (below), so a later user pick is never compared against a stale value.
-// Reactivity loss is intentional: this is a plain snapshot we resync manually, not a live binding.
+// Dedup snapshot: props.modelValue is still stale during reka's same-tick round trip.
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss
 let lastKnown: VcDateRange | undefined = props.modelValue;
 
-// Picking an earlier date than the anchor makes reka swap+commit the completed range
-// (update:modelValue fires first, correct) THEN resync its own start/end refs to match the
-// swap, which re-fires update:startValue for the SAME start as a trailing echo. Track that
-// echo here so onStartValueUpdate can swallow it instead of clobbering the just-committed
-// range back down to a partial one. Cleared via nextTick — only ever relevant same-tick.
+// Swallows reka's duplicate update:startValue echo after it swaps and commits a completed range.
 let pendingCompleteRangeStart: string | undefined;
 
-// An EXTERNAL modelValue sync that is end-only (user filled only the end segment) can't be
-// represented by reka's RangeCalendarRoot: it rewrites the lone end date into a fresh start anchor
-// and echoes it straight back (update:modelValue and/or update:startValue, same tick). Forwarding
-// that echo silently re-attributes the end value to start. Set on the modelValue watch and
-// nextTick-cleared (like pendingCompleteRangeStart) to swallow reka's echoes for that one window;
-// real user interaction never coincides with an external sync, so nothing legitimate is dropped.
+// reka cannot represent an end-only range and re-anchors it as start; that echo must not be forwarded.
 let suppressExternalSyncEcho = false;
 
 function isSameRange(a: VcDateRange | undefined, b: VcDateRange | undefined): boolean {
@@ -254,8 +240,7 @@ function onClearClick(): void {
   emitRange(undefined);
 }
 
-// reka handles only arrows/space/enter; we add Home/End/PageUp/PageDown (APG date-grid gap).
-// firstDayOfWeek is a number (0=Sunday); startOfWeek/endOfWeek expect a DayOfWeek string.
+// firstDayOfWeek is 0-based; startOfWeek/endOfWeek expect a DayOfWeek string.
 const DAY_OF_WEEK_NAMES = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as const;
 
 const mappedFirstDay = computed(() => {
@@ -287,7 +272,6 @@ function getFocusedCellDate(root: HTMLElement): DateValue | undefined {
   if (!root.contains(active)) {
     return undefined;
   }
-  // Only day cells carry this (empty-valued) marker; nav/footer do not.
   if (active.dataset.rekaCalendarCellTrigger === undefined) {
     return undefined;
   }
@@ -299,18 +283,17 @@ function getFocusedCellDate(root: HTMLElement): DateValue | undefined {
 }
 
 function focusCellByIso(root: HTMLElement, iso: string): void {
-  // Prefer the in-view cell; adjacent-month cells render with data-outside-view.
+  // Adjacent-month cells duplicate the same date — prefer the in-view one.
   const inView = root.querySelector<HTMLElement>(
     `[data-reka-calendar-cell-trigger][data-value="${iso}"]:not([data-outside-view])`,
   );
   const cell = inView ?? root.querySelector<HTMLElement>(`[data-reka-calendar-cell-trigger][data-value="${iso}"]`);
-  // preventScroll: VcRangeCalendar is body-portaled, so a default focus() would scroll the whole document to it.
+  // preventScroll: body-portaled, a default focus() would scroll the whole document.
   cell?.focus({ preventScroll: true });
 }
 
 type CalendarKeyTargetType = { target: DateValue };
 
-// Home/End: ctrl/meta = month (else week). PageUp/Down: shift = year (else month), per APG.
 type CalendarKeyModifiersType = { ctrlOrMeta: boolean; shift: boolean };
 
 function resolveKeyTarget(
@@ -372,7 +355,7 @@ function onCalendarKeydown(event: KeyboardEvent): void {
 
   const target = clampToBounds(resolvedKey.target);
 
-  // Scroll the grid when the target spills into an adjacent month.
+  // Scrolls the grid when the target spills into an adjacent month.
   placeholderRef.value = target;
 
   const targetIso = target.toString();
@@ -381,10 +364,6 @@ function onCalendarKeydown(event: KeyboardEvent): void {
   });
 }
 
-// Anchor-fill: forwards reka's first-pick event as a partial range so the start segment fills
-// immediately. emitRange's lastKnown check does the echo-guarding: a bare-anchor echo (lastKnown
-// already {start: iso, end: undefined}) is swallowed, but a committed range (end already set)
-// re-anchoring on the same start date differs from lastKnown and still clears end.
 function onStartValueUpdate(value: DateValue | undefined): void {
   const iso = dateValueToIso(value);
   if (!iso) {
@@ -397,16 +376,13 @@ function onStartValueUpdate(value: DateValue | undefined): void {
   emitRange({ start: iso, end: undefined });
 }
 
-// View-scroll: reka's placeholder scrolls the visible month. The single VcCalendar
-// syncs it from modelValue (vc-calendar.vue:373-384); use-calendar-base does NOT.
-// The visible month follows the LAST-EDITED endpoint (prefer end when both change).
+// use-calendar-base does not sync the placeholder — the visible month follows the last-edited endpoint.
 watch(
   () => [props.modelValue?.start, props.modelValue?.end] as const,
   ([newStart, newEnd], [oldStart, oldEnd]) => {
-    // External prop change is now the settled truth — resync so a later user pick that happens
-    // to match an old self-emission isn't compared against stale state.
+    // Resync so a later user pick isn't deduped against a stale snapshot.
     lastKnown = props.modelValue;
-    // Swallow reka's same-tick re-attribution echo triggered by feeding it this external value.
+    // Swallow reka's same-tick echo from being fed this external value.
     suppressExternalSyncEcho = true;
     void nextTick(() => {
       suppressExternalSyncEcho = false;
@@ -420,7 +396,6 @@ watch(
   },
 );
 
-// Focus-entry for the day grid: range start → today → first focusable in-view cell.
 function focusActiveCell(): void {
   const root = calendarRootRef.value?.$el;
   if (!(root instanceof HTMLElement)) {
@@ -670,7 +645,6 @@ defineExpose({ focusActiveCell });
       border-radius: 0;
     }
 
-    /* endpoints: solid fill, rounded on the outer edge only */
     &[data-selection-start],
     &[data-selection-end] {
       @apply font-bold text-additional-50;
@@ -693,11 +667,7 @@ defineExpose({ focusActiveCell });
       border-radius: var(--day-radius);
     }
 
-    /* backward preview: reka keeps the anchor as data-selection-start but marks it the run's
-       data-highlighted-end (the hovered target is earlier), so the anchor is visually the RIGHT
-       endpoint — mirror the start rounding: flat left, rounded right. The :not([data-highlighted-start])
-       guard excludes the lone anchor (a single-cell run is BOTH highlighted-start and -end), which
-       must keep its default left rounding. */
+    /* backward preview: the anchor is visually the right endpoint; :not excludes the lone anchor */
     &[data-selection-start][data-highlighted-end]:not([data-highlighted-start]) {
       border-start-start-radius: 0;
       border-end-start-radius: 0;
@@ -705,10 +675,7 @@ defineExpose({ focusActiveCell });
       border-end-end-radius: var(--day-radius);
     }
 
-    /* hover-preview band (picking 2nd endpoint): same tint, dashed bracket top+bottom.
-       Excludes the endpoints — reka marks the anchor data-highlighted too while previewing,
-       and the solid endpoint fill above must keep winning over the preview tint. Also excludes
-       the run's leading/trailing highlighted cells, which get the bracketed edges below. */
+    /* hover-preview band; endpoints and run edges are excluded so their own fills win */
     &[data-highlighted]:not([data-highlighted-start]):not([data-highlighted-end]):not([data-selection-start]):not(
         [data-selection-end]
       ) {
@@ -720,9 +687,7 @@ defineExpose({ focusActiveCell });
       border-radius: 0;
     }
 
-    /* preview end (forward hover target): deeper fill, closes the bracket on the end edge.
-       Excludes the anchor — a backward hover makes the anchor the preview "end" too, but it
-       must keep its solid endpoint fill (rounding handled by the selection-start rule above). */
+    /* preview end; the anchor is excluded so its solid endpoint fill wins */
     &[data-highlighted-end]:not([data-selection-start]):not([data-selection-end]) {
       @apply font-bold text-primary-900;
 
@@ -732,9 +697,7 @@ defineExpose({ focusActiveCell });
       border-end-start-radius: 0;
     }
 
-    /* preview start (backward hover target): mirror of preview end — deeper fill, closes the
-       bracket on the start edge (rounded left, flat right). Excludes the anchor for the same
-       reason as above (a forward hover makes the anchor the preview "start"). */
+    /* preview start; mirror of preview end */
     &[data-highlighted-start]:not([data-selection-start]):not([data-selection-end]) {
       @apply font-bold text-primary-900;
 

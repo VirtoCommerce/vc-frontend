@@ -179,6 +179,32 @@ describe("useDateField — onClear", () => {
   });
 });
 
+describe("useDateField — reset", () => {
+  test("drops uncommitted invalid text of an already-empty field without committing", () => {
+    const { field, onCommit } = setup({ modelValue: undefined });
+    field.displayValue.value = "99/99/9999";
+    field.onBlur();
+    expect(field.isValid.value).toBe(false);
+
+    field.reset();
+
+    expect(field.displayValue.value).toBe("");
+    expect(field.isValid.value).toBe(true);
+    expect(field.errorText.value).toBeUndefined();
+    expect(onCommit).not.toHaveBeenCalled();
+  });
+
+  test("repaints the display from the model and never commits", () => {
+    const { field, onCommit } = setup({ modelValue: "2026-10-15" });
+    field.displayValue.value = "garbage";
+
+    field.reset();
+
+    expect(field.displayValue.value).toBe("10/15/2026");
+    expect(onCommit).not.toHaveBeenCalled();
+  });
+});
+
 describe("useDateField — min/max validation", () => {
   test("rejects value below min and surfaces min error", () => {
     const { field, onCommit } = setup({
@@ -322,13 +348,11 @@ describe("useDateField — errorText touched-gating", () => {
     field.onBlur();
     expect(field.errorText.value).toBe("ui_kit.date_input.invalid_format");
 
-    // Locale change clears displayValue (modelValue is undefined) so error hides via isEmpty, NOT touched reset.
     locale!.value = "de-DE";
     await nextTick();
     expect(field.displayValue.value).toBe("");
     expect(field.errorText.value).toBeUndefined();
 
-    // Typing without blurring: error surfaces immediately, proving touched survived the locale change.
     field.displayValue.value = "garbage2";
     expect(field.errorText.value).toBe("ui_kit.date_input.invalid_format");
   });
@@ -394,7 +418,6 @@ describe("useDateField — disabledDate predicate", () => {
   });
 
   test("throwing predicate is swallowed: input treated as valid, no error surfaced, Logger.error called", () => {
-    // Mirror VcCalendar behavior — a consumer-supplied predicate that throws must not break the field.
     const loggerSpy = vi.spyOn(Logger, "error").mockImplementation(() => {});
     const { field, onCommit } = setup({
       modelValue: undefined,
@@ -404,11 +427,10 @@ describe("useDateField — disabledDate predicate", () => {
     });
     field.displayValue.value = "10/17/2026";
     field.onBlur();
-    // Predicate throws are swallowed → field stays valid and commits through.
     expect(field.isValid.value).toBe(true);
     expect(field.errorText.value).toBeUndefined();
     expect(onCommit).toHaveBeenCalledExactlyOnceWith("2026-10-17");
-    // Logger.error fires on every read of isDisabledDateHit — at minimum once (during isValid eval).
+    // isDisabledDateHit is read more than once per evaluation.
     expect(loggerSpy).toHaveBeenCalled();
     expect(loggerSpy.mock.calls[0][0]).toBe("VcDateInput: disabledDate predicate threw");
     loggerSpy.mockRestore();

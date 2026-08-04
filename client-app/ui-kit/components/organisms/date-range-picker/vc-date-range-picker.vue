@@ -161,7 +161,6 @@ interface IProps {
   weekdayFormat?: VcCalendarWeekdayFormatType;
   closeOnSelect?: boolean;
   placement?: VcPopoverPlacementType;
-  /** Field presentation. "combined" = one field with two segments. "split" = two separate labelled fields. */
   layout?: VcDateRangePickerLayoutType;
   dataTestId?: string;
 }
@@ -188,8 +187,7 @@ const { t } = useI18n();
 const rangeInputRef = useTemplateRef<{ startInputElement: HTMLInputElement | null } | null>("rangeInputRef");
 const calendarRef = useTemplateRef<{ focusActiveCell: () => void } | null>("calendarRef");
 
-// In "split" the two fields are hide-details, so the picker owns range validity itself;
-// in "combined" VcDateRangeInput owns it and reports through update:valid.
+// "split" fields are hide-details, so the picker owns range validity; "combined" delegates to VcDateRangeInput.
 const {
   isValid: splitValid,
   computedError,
@@ -205,8 +203,7 @@ const {
 
 const detailsId = useComponentId("date-range-picker") + "-details";
 
-// Two independent validity sources (field format+order, calendar in-range availability).
-// AND-aggregate them — piping both straight to the emit lets the later one overwrite the earlier.
+// AND-aggregated: piping both sources straight to the emit lets the later one overwrite the earlier.
 const inputValid = ref(true);
 const calendarValid = ref(true);
 const aggregatedValid = computed<boolean>(() => {
@@ -217,10 +214,8 @@ const aggregatedValid = computed<boolean>(() => {
 });
 watch(aggregatedValid, (value) => emit("update:valid", value), { immediate: true });
 
-// Intersect the caller's boundaries with the opposite endpoint so the calendars cannot pick an
-// out-of-order range. ISO YYYY-MM-DD compares lexicographically.
-// An already out-of-order range is exempt: clamping there puts each boundary on the wrong side of
-// that field's own value, disabling every day of the month it opens on — the user could not fix it.
+// Clamped to the opposite endpoint so the calendars cannot pick an out-of-order range.
+// An already out-of-order range is exempt: clamping there disables every day of the month it opens on.
 const startMax = computed<string | undefined>(() => {
   const end = props.modelValue?.end;
   if (!end || !orderValid.value) {
@@ -243,20 +238,17 @@ const endMin = computed<string | undefined>(() => {
   return props.min > start ? props.min : start;
 });
 
-// Start-align the start field's calendar so it does not overhang the separator, keeping the
-// caller's vertical side.
+// Start-aligned so the start field's calendar does not overhang the separator.
 const startPlacement = computed<VcPopoverPlacementType>(() => {
   return props.placement.startsWith("top") ? "top-start" : "bottom-start";
 });
 
-// Everything the two "split" fields share, so a new prop is forwarded in one place, not two.
 const sharedFieldProps = computed(() => ({
-  // hideDetails suppresses each field's own aria-describedby, so the shared row is wired by hand.
   hideDetails: true,
   aria: {
     "aria-invalid": computedError.value ? "true" : "false",
     "aria-describedby": computedMessage.value ? detailsId : null,
-    // The asterisk lives on the group label only, so the semantics have to be forwarded separately.
+    // The asterisk lives on the group label only.
     "aria-required": props.required ? "true" : null,
   },
   size: props.size,
@@ -317,8 +309,7 @@ function onSegment(which: "start" | "end", value: string | undefined): void {
   emit("update:modelValue", mergeRange(which, value));
 }
 
-// "split" focus/blur are shell-level: emit only when focus crosses the row boundary,
-// not when it moves between the two fields or their calendar buttons.
+// Shell-level: ignore focus moves between the two fields and their calendar buttons.
 function onFocusIn(event: FocusEvent): void {
   if (crossedFocusBoundary(event)) {
     emit("focus", event);
@@ -350,7 +341,7 @@ function onCalendarUpdate(close: () => void, value: VcDateRange | undefined): vo
     return;
   }
   emit("update:modelValue", value);
-  // Close only once BOTH endpoints are committed (2nd pick), not after the anchor.
+  // Close only once BOTH endpoints are committed, not after the anchor.
   if (props.closeOnSelect && value?.start && value?.end) {
     close();
     rangeInputRef.value?.startInputElement?.focus();
@@ -372,7 +363,7 @@ function onCalendarUpdate(close: () => void, value: VcDateRange | undefined): vo
       --field-height: 2.375rem;
     }
 
-    // "auto" leaves the input box content-sized, so a fixed separator height would decentre the dash.
+    // "auto" is content-sized; a fixed separator height would decentre the dash.
     &--auto {
       --field-height: auto;
     }
@@ -392,7 +383,7 @@ function onCalendarUpdate(close: () => void, value: VcDateRange | undefined): vo
     @apply grow shrink basis-0 min-w-0;
   }
 
-  // Labels sit above the inputs, so match the input box height and centre the dash inside it.
+  // Matches the input box height so the dash centres against it, not against the label row.
   &__separator {
     @apply flex shrink-0 items-center text-neutral-400 select-none h-[--field-height];
   }

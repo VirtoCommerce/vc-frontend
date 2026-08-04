@@ -4,16 +4,14 @@ import { DateFilterId } from "@/core/enums";
 import DateFilterSelect from "./date-filter-select.vue";
 import type { DateFilterType } from "@/core/types";
 
-// Only `dateFilterTypes` is read by the component; the rest of the composable pulls in
-// useUser/GraphQL, which is irrelevant here.
+// The rest of the composable pulls in useUser/GraphQL.
 vi.mock("../composables/useUserOrdersFilter", () => ({
   useUserOrdersFilter: () => ({
     dateFilterTypes: { value: [{ id: DateFilterId.CUSTOM, label: "Custom date" }] },
   }),
 }));
 
-// VcSelect and VcDateRangePicker are the consumer's direct children; their own behavior is
-// covered by their own test files. Stub both here and assert only the wiring between them.
+// Stubbed: their own behavior is covered by their own test files, only the wiring is asserted here.
 const stubs = { VcSelect: true, VcDateRangePicker: true };
 
 function mountWithCustomSelected(

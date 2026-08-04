@@ -16,10 +16,8 @@
       mask
       enable-teleport
       :layout="layout"
-      :error="!rangeValid"
       :start-label="$t('shared.account.orders_filter.start_date_label')"
       :end-label="$t('shared.account.orders_filter.end_date_label')"
-      :message="rangeValid ? undefined : $t('shared.account.orders_filter.invalid_range')"
       @update:valid="rangeValid = $event"
     />
   </div>
@@ -54,7 +52,7 @@ const { dateFilterType } = toRefs(props);
 
 const selectedDateFilter = ref<DateFilterType>(dateFilterType.value ?? dateFilterTypes.value[0]);
 
-// Default true — empty range is valid. The picker aggregates format + order validity.
+// An empty range is valid.
 const rangeValid = ref(true);
 
 const range = computed<VcDateRange>({
@@ -64,13 +62,11 @@ const range = computed<VcDateRange>({
   set(value) {
     selectedDateFilter.value.startDate = value?.start;
     selectedDateFilter.value.endDate = value?.end;
-    // Emit here, not via a template @update:model-value listener: setter-then-emit ordering is
-    // guaranteed, while template listener order depends on attribute order.
+    // Emitted here, not from a template listener, so it always runs after the setter.
     emit("change", selectedDateFilter.value);
   },
 });
 
-// Immediate to seed the valid mount state.
 watch(rangeValid, (valid) => emit("update:valid", valid), { immediate: true });
 
 function handleChangeType(): void {
@@ -78,7 +74,7 @@ function handleChangeType(): void {
     selectedDateFilter.value.startDate = undefined;
     selectedDateFilter.value.endDate = undefined;
   } else {
-    // Picker is unmounted and won't re-emit validity, so reset it here.
+    // The picker is unmounted and won't re-emit validity.
     rangeValid.value = true;
   }
 
@@ -91,6 +87,9 @@ function handleChangeType(): void {
   @apply flex flex-col;
 
   &__range {
+    // Combined layout packs two fields and two icon buttons into one row.
+    --vc-input-font-size: theme("fontSize.sm[0]");
+
     @apply mt-3;
 
     @media (width < theme("screens.lg")) {

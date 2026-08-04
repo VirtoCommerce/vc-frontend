@@ -48,6 +48,7 @@
       <span class="vc-date-range-input__separator" aria-hidden="true">–</span>
 
       <VcDateInput
+        ref="endInputRef"
         seamless
         hide-details
         class="vc-date-range-input__segment"
@@ -93,11 +94,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed, provide, useTemplateRef, watch } from "vue";
+import { computed, nextTick, provide, useTemplateRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useComponentId, useDateRangeField } from "@/ui-kit/composables";
 import { crossedFocusBoundary } from "@/ui-kit/utilities/focus";
 import type { VcDateFieldUpdateOnType } from "@/ui-kit/composables";
+
+interface IDateInputExposed {
+  inputElement: HTMLInputElement | null;
+  reset: () => void;
+}
 
 interface IProps {
   modelValue?: VcDateRange;
@@ -158,12 +164,13 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const { t } = useI18n();
 
-const startInputRef = useTemplateRef<{ inputElement: HTMLInputElement | null } | null>("startInputRef");
+const startInputRef = useTemplateRef<IDateInputExposed | null>("startInputRef");
+const endInputRef = useTemplateRef<IDateInputExposed | null>("endInputRef");
 const startInputElement = computed<HTMLInputElement | null>(() => startInputRef.value?.inputElement ?? null);
 
 const ariaGroupLabel = computed(() => t("ui_kit.date_range_input.aria_label"));
 
-// Auto-size slot buttons (clear + #append) the same way VcInput does for its own decorators.
+// Sizes slot buttons (clear + #append) the way VcInput sizes its own decorators.
 const size = computed(() => props.size);
 provide<VcInputContextType>("inputContext", { size });
 
@@ -176,23 +183,21 @@ const { isValid, computedError, computedMessage, setSegmentValid, mergeRange } =
 
 const detailsId = useComponentId("date-range-input") + "-details";
 
-// hideDetails suppresses each segment's own aria-describedby, so the shared row is wired by hand.
-// The asterisk lives on the group label only, so aria-required is forwarded separately too.
+// Segments are hide-details and the asterisk lives on the group label, so both are wired by hand.
 const segmentAria = computed<Record<string, string | null>>(() => ({
   "aria-invalid": computedError.value ? "true" : "false",
   "aria-describedby": computedMessage.value ? detailsId : null,
   "aria-required": props.required ? "true" : null,
 }));
 
-// Emit initial validity (empty range is valid) and on every change.
+// Immediate so the empty (valid) state is reported on mount.
 watch(isValid, (value) => emit("update:valid", value), { immediate: true });
 
 function onSegment(which: "start" | "end", value: string | undefined): void {
   emit("update:modelValue", mergeRange(which, value));
 }
 
-// focus/blur are shell-level: emit only when focus crosses the shell boundary,
-// not when it moves between segments or to the clear/toggle buttons.
+// Shell-level: ignore focus moves between the segments and the clear/toggle buttons.
 function onFocusIn(event: FocusEvent): void {
   if (crossedFocusBoundary(event)) {
     emit("focus", event);
@@ -208,6 +213,11 @@ function onFocusOut(event: FocusEvent): void {
 function clearBoth(): void {
   emit("update:modelValue", undefined);
   emit("clear");
+  // An already-empty segment sees no prop change; nextTick so reset() reads the cleared model, not the stale one.
+  void nextTick(() => {
+    startInputRef.value?.reset();
+    endInputRef.value?.reset();
+  });
 }
 
 defineExpose({

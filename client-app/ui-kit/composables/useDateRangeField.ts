@@ -3,26 +3,18 @@ import { useI18n } from "vue-i18n";
 import type { MaybeRefOrGetter } from "vue";
 
 export interface IUseDateRangeFieldOptions {
-  /** Range from parent (the source of truth). */
   modelValue: MaybeRefOrGetter<VcDateRange | undefined>;
-  /** External error flag. Overrides internal validation display. */
   error: MaybeRefOrGetter<boolean | undefined>;
-  /** Info/help text. Shown when no internal error is active. */
   message: MaybeRefOrGetter<string | undefined>;
 }
 
-/**
- * Range semantics shared by the combined field (`VcDateRangeInput`) and the split layout
- * (`VcDateRangePicker`): per-segment format validity, `start <= end` ordering and the
- * error/message the shell surfaces on behalf of its detail-less segments.
- */
 export function useDateRangeField(opts: IUseDateRangeFieldOptions) {
   const { t } = useI18n();
 
   const startFormatValid = ref(true);
   const endFormatValid = ref(true);
 
-  // start <= end when BOTH are present; partial/empty ranges are always order-valid.
+  // Partial and empty ranges are always order-valid.
   const orderValid = computed<boolean>(() => {
     const range = toValue(opts.modelValue);
     if (!range?.start || !range.end) {
@@ -43,7 +35,7 @@ export function useDateRangeField(opts: IUseDateRangeFieldOptions) {
     return undefined;
   });
 
-  // External error/message props win over internal validation (same rule VcDateInput uses).
+  // External error/message props win over internal validation, as in VcDateInput.
   const computedError = computed<boolean>(() => !!toValue(opts.error) || !!internalErrorText.value);
   const computedMessage = computed<string | undefined>(() => {
     if (toValue(opts.error)) {
@@ -60,7 +52,7 @@ export function useDateRangeField(opts: IUseDateRangeFieldOptions) {
     }
   }
 
-  /** Replace one endpoint; a range with neither endpoint collapses to `undefined`. */
+  /** A range with neither endpoint collapses to `undefined`. */
   function mergeRange(which: "start" | "end", value: string | undefined): VcDateRange | undefined {
     const range = toValue(opts.modelValue);
     const next: VcDateRange = {

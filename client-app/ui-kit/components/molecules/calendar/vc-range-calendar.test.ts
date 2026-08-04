@@ -15,8 +15,7 @@ function mountCal(props = {}, options: { attachTo?: Element } = {}) {
   });
 }
 
-// Dispatch a real (cancelable) keydown so `event.defaultPrevented` is observable;
-// vue-test-utils' `trigger` doesn't hand back the event.
+// vue-test-utils' `trigger` doesn't hand back the event, so `defaultPrevented` isn't observable.
 function pressKey(el: Element, key: string, modifiers: Partial<KeyboardEventInit> = {}): KeyboardEvent {
   const event = new KeyboardEvent("keydown", { key, bubbles: true, cancelable: true, ...modifiers });
   el.dispatchEvent(event);
@@ -75,8 +74,6 @@ describe("VcRangeCalendar", () => {
   });
 
   it("emits exactly once when reka fires update:startValue and update:modelValue back-to-back in the same tick", async () => {
-    // Controlled-mode round trip: props.modelValue is still stale (undefined) for both calls here,
-    // so a dedup keyed off the prop would let both through — this only closes with self-tracked state.
     const wrapper = mountCal({ modelValue: undefined });
     const root = wrapper.findComponent({ name: "RangeCalendarRoot" });
     root.vm.$emit("update:startValue", new CalendarDate(2026, 10, 8));
@@ -87,10 +84,7 @@ describe("VcRangeCalendar", () => {
   });
 
   it("keeps the swapped complete range when picking a date earlier than the anchor", async () => {
-    // Real reka sequence for anchor=Oct 20 then a same-tick pick of the earlier Oct 10: reka swaps
-    // and commits {start:10,end:20} via update:modelValue FIRST (correct), then resyncs its own
-    // start/end refs to match the swap, re-firing update:startValue(10) as a trailing echo. That
-    // echo must not clobber the just-committed range back down to a start-only partial.
+    // Real reka sequence: swap-commit, then a trailing update:startValue echo for the same start.
     const wrapper = mountCal({ modelValue: { start: "2026-10-20", end: undefined } });
     const root = wrapper.findComponent({ name: "RangeCalendarRoot" });
     root.vm.$emit("update:modelValue", { start: new CalendarDate(2026, 10, 10), end: new CalendarDate(2026, 10, 20) });
@@ -101,11 +95,7 @@ describe("VcRangeCalendar", () => {
   });
 
   it("does not re-attribute an external end-only range to start", async () => {
-    // Silent-corruption regression: the popover content stays mounted while closed, so the calendar
-    // reactively receives an end-only partial range when the user fills ONLY the end segment. reka
-    // cannot represent an end-only range and rewrites the lone date as a fresh start anchor, echoing
-    // it back via update:modelValue / update:startValue. That echo must NOT be forwarded — the end
-    // value must never be silently moved into start.
+    // reka rewrites an end-only range as a fresh start anchor; forwarding that echo moves end into start.
     const wrapper = mountCal({ modelValue: undefined });
     await flushPromises();
 
