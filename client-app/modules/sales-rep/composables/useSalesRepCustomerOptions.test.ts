@@ -110,10 +110,9 @@ describe("useSalesRepCustomerOptions", () => {
   });
 
   it("returns an empty list (not undefined) before the query resolves", () => {
-    const { options, totalCount } = build();
+    const { options } = build();
 
     expect(options.value).toEqual([]);
-    expect(totalCount.value).toBe(0);
   });
 
   it("warns when the rep serves more customers than the picker can list", async () => {

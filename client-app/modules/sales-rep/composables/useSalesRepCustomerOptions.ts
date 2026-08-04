@@ -57,5 +57,5 @@ export function useSalesRepCustomerOptions() {
     { immediate: true },
   );
 
-  return { options, totalCount, loading, failed };
+  return { options, loading, failed };
 }

@@ -33,8 +33,7 @@ const props = defineProps<IProps>();
 const { getSharingScope } = useWishlistSharingScopes();
 
 const statusKey = computed(() => {
-  // A scope may read differently for its owner than the generic "Shared" — e.g. one published to a single target
-  // rather than to everyone with the link. The wording belongs to whoever contributed the scope.
+  // A scope published to a single target reads differently for its owner than the generic "Shared".
   const contributed = getSharingScope(props.sharingSetting.scope)?.statusKey;
 
   if (props.sharingSetting.isOwner && contributed) {

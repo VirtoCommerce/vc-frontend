@@ -136,8 +136,7 @@ interface IProps {
   items: PreparedLineItemType[];
   pendingItems?: Record<string, boolean>;
   editable?: boolean;
-  // Show the add-to-cart control without enabling list editing (remove/quantity-save). Lets a read-only
-  // shared list stay shoppable (VCST-5332). Independent of `editable`.
+  // Lets a read-only shared list stay shoppable: the add-to-cart control without list editing (VCST-5332).
   addableToCart?: boolean;
   navigatable?: boolean;
 }
