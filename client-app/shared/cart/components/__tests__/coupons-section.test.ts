@@ -11,8 +11,8 @@ vi.mock("vue-i18n", () => ({
 }));
 
 const couponError = ref<{ code: string; type: string } | undefined>();
-const applyCoupon = vi.fn(() => Promise.resolve());
-const removeCoupon = vi.fn(() => Promise.resolve());
+const applyCoupon = vi.fn(() => Promise.resolve(true));
+const removeCoupon = vi.fn(() => Promise.resolve(true));
 const cart = ref<{ discountTotal?: { formattedAmount: string }; total?: { formattedAmount: string } } | undefined>();
 
 vi.mock("@/shared/cart", () => ({
@@ -100,9 +100,34 @@ describe("CouponsSection", () => {
   });
 
   it("stays silent when applying the coupon failed", async () => {
+    applyCoupon.mockImplementationOnce(() => Promise.resolve(false));
+    const wrapper = createComponent();
+
+    wrapper.findComponent(COUPON_CARD).vm.$emit("apply", "BAD");
+    await flushPromises();
+
+    expect(wrapper.get(LIVE_REGION).text()).toBe("");
+  });
+
+  // VCST-5533 / bugbot: `couponError` is module-level, so a concurrent operation on another card
+  // could previously suppress this call's success or fabricate one for its failure.
+  it("announces its own success even when a concurrent operation left the shared error set", async () => {
     applyCoupon.mockImplementationOnce(() => {
-      couponError.value = { code: "BAD", type: "invalid" };
-      return Promise.resolve();
+      couponError.value = { code: "OTHER", type: "invalid" };
+      return Promise.resolve(true);
+    });
+    const wrapper = createComponent();
+
+    wrapper.findComponent(COUPON_CARD).vm.$emit("apply", "ZUR10");
+    await flushPromises();
+
+    expect(wrapper.get(LIVE_REGION).text()).toContain("ZUR10");
+  });
+
+  it("stays silent on its own failure even when a concurrent operation cleared the shared error", async () => {
+    applyCoupon.mockImplementationOnce(() => {
+      couponError.value = undefined;
+      return Promise.resolve(false);
     });
     const wrapper = createComponent();
 

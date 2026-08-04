@@ -18,12 +18,14 @@ export function useCoupon() {
     couponError.value = undefined;
   }
 
-  async function applyCoupon(code: string) {
+  // Returns this call's own outcome: `couponError` is module-level, so a concurrent operation on
+  // another card can clear or overwrite it before the caller reads it.
+  async function applyCoupon(code: string): Promise<boolean> {
     clearError();
 
     const trimmed = code.trim();
     if (!trimmed) {
-      return;
+      return false;
     }
 
     try {
@@ -36,31 +38,39 @@ export function useCoupon() {
       const isValid = await validateCartCoupon(trimmed);
       if (!isValid) {
         couponError.value = { code: trimmed, type: "invalid" };
-        return;
+        return false;
       }
 
       await addCartCoupon(trimmed);
+
+      return true;
     } catch {
       couponError.value = { code: trimmed, type: "failed" };
+
+      return false;
     } finally {
       loadingCouponCode.value = undefined;
     }
   }
 
-  async function removeCoupon(code: string) {
+  async function removeCoupon(code: string): Promise<boolean> {
     clearError();
 
     const trimmed = code.trim();
     if (!trimmed) {
-      return;
+      return false;
     }
 
     try {
       loadingCouponCode.value = trimmed;
 
       await removeCartCoupon(trimmed);
+
+      return true;
     } catch {
       couponError.value = { code: trimmed, type: "failed" };
+
+      return false;
     } finally {
       loadingCouponCode.value = undefined;
     }

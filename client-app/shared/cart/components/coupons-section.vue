@@ -67,10 +67,8 @@ const announcement = ref("");
 async function handleApply(code: string) {
   announcement.value = "";
 
-  await applyCoupon(code);
-
   // Failures are already announced by the card's alert.
-  if (couponError.value) {
+  if (!(await applyCoupon(code))) {
     return;
   }
 
@@ -84,9 +82,7 @@ async function handleApply(code: string) {
 async function handleRemove(code: string) {
   announcement.value = "";
 
-  await removeCoupon(code);
-
-  if (couponError.value) {
+  if (!(await removeCoupon(code))) {
     return;
   }
 
