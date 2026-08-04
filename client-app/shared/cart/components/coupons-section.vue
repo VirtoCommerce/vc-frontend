@@ -9,8 +9,8 @@
           :view="getView(coupon.couponCode)"
           :error="getError(coupon.couponCode)"
           :loading="!!coupon.couponCode && coupon.couponCode === loadingCouponCode"
-          @apply="applyCoupon"
-          @remove="removeCoupon"
+          @apply="handleApply"
+          @remove="handleRemove"
         />
 
         <CouponCard
@@ -19,10 +19,17 @@
           :view="getView(customCode)"
           :error="getError(customCode)"
           :loading="!!customCode && customCode === loadingCouponCode"
-          @apply="applyCoupon"
-          @remove="removeCoupon"
+          @apply="handleApply"
+          @remove="handleRemove"
         />
       </div>
+
+      <!--
+        Applying or removing a coupon only changes the discount and total in the order summary and
+        flips the card's icon and button — none of which a screen reader reports (WCAG 4.1.3).
+        Announce the new figures here. Failures are already announced by the card's role="alert".
+      -->
+      <span class="sr-only" aria-live="polite" aria-atomic="true">{{ announcement }}</span>
 
       <router-link
         v-if="queryEnabled"
@@ -45,7 +52,7 @@ import { useModules } from "@/core/composables";
 import { MODULE_ID_MARKETING_EXPERIENCE_API } from "@/core/constants/modules";
 import { ROUTES } from "@/router/routes/constants";
 import { usePromotionCoupons, useUser } from "@/shared/account";
-import { useCoupon } from "@/shared/cart";
+import { useCoupon, useFullCart } from "@/shared/cart";
 import CouponCard from "./coupon-card.vue";
 
 const COUPONS_PER_PAGE = 4;
@@ -57,8 +64,41 @@ const isMarketingExperienceApiEnabled = computed(() => hasModule(MODULE_ID_MARKE
 const queryEnabled = computed(() => isAuthenticated.value && isMarketingExperienceApiEnabled.value);
 const { coupons } = usePromotionCoupons(COUPONS_PER_PAGE, undefined, queryEnabled);
 const { appliedCouponCode, couponError, loadingCouponCode, applyCoupon, removeCoupon } = useCoupon();
+const { cart } = useFullCart();
 
 const customCode = ref("");
+const announcement = ref("");
+
+async function handleApply(code: string) {
+  announcement.value = "";
+
+  await applyCoupon(code);
+
+  if (couponError.value) {
+    return;
+  }
+
+  announcement.value = t("shared.cart.coupons_section.applied_announcement", {
+    code,
+    discount: cart.value?.discountTotal?.formattedAmount ?? "",
+    total: cart.value?.total?.formattedAmount ?? "",
+  });
+}
+
+async function handleRemove(code: string) {
+  announcement.value = "";
+
+  await removeCoupon(code);
+
+  if (couponError.value) {
+    return;
+  }
+
+  announcement.value = t("shared.cart.coupons_section.removed_announcement", {
+    code,
+    total: cart.value?.total?.formattedAmount ?? "",
+  });
+}
 
 watchEffect(() => {
   const applied = appliedCouponCode.value;

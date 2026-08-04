@@ -701,7 +701,10 @@
         "enter_custom_code": "Skriv inn egendefinert kode",
         "all_coupons": "Se alle kuponger og kampanjer",
         "apply_aria": "Apply coupon {code}",
-        "remove_aria": "Remove coupon"
+        "remove_aria": "Remove coupon",
+        "coupon_code_aria": "Kupongkode",
+        "applied_announcement": "Kupong {code} brukt. Rabatt {discount}, ny totalsum {total}.",
+        "removed_announcement": "Kupong {code} fjernet. Ny totalsum {total}."
       }
     },
     "catalog": {
