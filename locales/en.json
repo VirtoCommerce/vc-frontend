@@ -222,6 +222,8 @@
       "role_update_successful": "The customer role has been updated successfully",
       "contact_lock_failed": "Failed to block/unblock the user.",
       "role_update_failed": "Errors occurred during the role updating.",
+      "invite_revoke_failed": "Failed to revoke the invitation.",
+      "invite_resend_failed": "Failed to resend the invitation.",
       "passwords_do_not_match": "The password fields must have matching values",
       "password_new_same_old": "Your current password and new password must be different",
       "blocked": "You have been blocked. You can not reach any information or create the order. For more details please ",
@@ -549,6 +551,14 @@
         "email_length_exceeded": "The maximum length of an email address is {maxValue} characters",
         "invalid_emails": "Incorrect email addresses: {invalidEmails}"
       },
+      "pending_invites_widget": {
+        "title": "Organization invitations",
+        "accept_button": "Accept",
+        "reject_button": "Decline",
+        "invite_accepted": "Invitation accepted",
+        "invite_rejected": "Invitation declined",
+        "action_failed": "Something went wrong. Please try again"
+      },
       "profile_update_success_modal": {
         "title": "Profile update",
         "message": "Profile successfully updated!",
@@ -617,6 +627,10 @@
       "delete_member_modal": {
         "title": "Delete member",
         "text": "Are you sure you want to delete the user {name} from the company members list?"
+      },
+      "revoke_invite_modal": {
+        "title": "Revoke invite",
+        "text": "Are you sure you want to revoke the invite sent to {name}?"
       },
       "notifications": {
         "user_blocked": "The user has been successfully blocked",
@@ -1408,7 +1422,9 @@
           "block_user": "Block user",
           "unblock_user": "Unblock user",
           "delete": "Delete",
-          "no_members": "Continue browsing"
+          "no_members": "Continue browsing",
+          "revoke_invite": "Revoke invite",
+          "resend_invite": "Resend invite"
         },
         "content_header": {
           "name": "Name",
@@ -1421,6 +1437,10 @@
           "inactive": "Inactive",
           "invited": "Invited",
           "blocked": "Blocked"
+        },
+        "notifications": {
+          "invite_revoked": "Invite revoked",
+          "invite_resent": "Invite resent"
         }
       }
     },
@@ -1666,6 +1686,7 @@
     }
   },
   "identity_error": {
+    "AlreadyMemberOfOrganization": "This person is already a member of this organization",
     "DuplicateEmail": "Email {0} is already taken",
     "DuplicateUserName": "Username {0} is already taken",
     "InvalidEmail": "Please enter a valid email address, e.g. johndoe@gmail.com",

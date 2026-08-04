@@ -6,9 +6,17 @@ query GetOrganizationContacts(
   $sort: String
   $searchPhrase: String
   $roleIds: [String]
+  $statuses: [String]
 ) {
   organization(id: $id, userId: $userId) {
-    contacts(first: $first, after: $after, sort: $sort, searchPhrase: $searchPhrase, roleIds: $roleIds) {
+    contacts(
+      first: $first
+      after: $after
+      sort: $sort
+      searchPhrase: $searchPhrase
+      roleIds: $roleIds
+      statuses: $statuses
+    ) {
       items {
         id
         name
@@ -17,6 +25,7 @@ query GetOrganizationContacts(
         fullName
         emails
         status
+        statusInOrganization
         isLockedInOrganization
         rolesInOrganization {
           id
