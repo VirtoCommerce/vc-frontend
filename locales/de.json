@@ -222,6 +222,8 @@
       "role_update_successful": "Die Kundenrolle wurde erfolgreich aktualisiert.",
       "contact_lock_failed": "Fehler beim Sperren/Entsperren des Benutzers.",
       "role_update_failed": "Es sind Fehler bei der Aktualisierung der Rolle aufgetreten.",
+      "invite_revoke_failed": "Die Einladung konnte nicht widerrufen werden.",
+      "invite_resend_failed": "Die Einladung konnte nicht erneut gesendet werden.",
       "passwords_do_not_match": "Die Passwortfelder müssen übereinstimmende Werte haben.",
       "password_new_same_old": "Ihr aktuelles Passwort und das neue Passwort müssen unterschiedlich sein.",
       "blocked": "Sie wurden blockiert. Sie können keine Informationen abrufen oder Bestellungen aufgeben. Für weitere Details ",
@@ -549,6 +551,14 @@
         "email_length_exceeded": "Die maximale Länge einer E-Mail-Adresse beträgt {maxValue} Zeichen",
         "invalid_emails": "Falsche E-Mail-Adressen: {invalidEmails}"
       },
+      "pending_invites_widget": {
+        "title": "Organisationseinladungen",
+        "accept_button": "Annehmen",
+        "reject_button": "Ablehnen",
+        "invite_accepted": "Einladung angenommen",
+        "invite_rejected": "Einladung abgelehnt",
+        "action_failed": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut"
+      },
       "profile_update_success_modal": {
         "title": "Profilaktualisierung",
         "message": "Profil erfolgreich aktualisiert!",
@@ -617,6 +627,10 @@
       "delete_member_modal": {
         "title": "Mitglied löschen",
         "text": "Sind Sie sicher, dass Sie den Benutzer {name} aus der Mitgliederliste des Unternehmens löschen möchten?"
+      },
+      "revoke_invite_modal": {
+        "title": "Einladung widerrufen",
+        "text": "Sind Sie sicher, dass Sie die an {name} gesendete Einladung widerrufen möchten?"
       },
       "notifications": {
         "user_blocked": "Der Benutzer wurde erfolgreich blockiert.",
@@ -1408,7 +1422,9 @@
           "block_user": "Benutzer blockieren",
           "unblock_user": "Benutzer entsperren",
           "delete": "Löschen",
-          "no_members": "Weiter stöbern"
+          "no_members": "Weiter stöbern",
+          "revoke_invite": "Einladung widerrufen",
+          "resend_invite": "Einladung erneut senden"
         },
         "content_header": {
           "name": "Name",
@@ -1421,6 +1437,10 @@
           "inactive": "Inaktiv",
           "invited": "Eingeladen",
           "blocked": "Blockiert"
+        },
+        "notifications": {
+          "invite_revoked": "Einladung widerrufen",
+          "invite_resent": "Einladung erneut gesendet"
         }
       }
     },
@@ -1666,6 +1686,7 @@
     }
   },
   "identity_error": {
+    "AlreadyMemberOfOrganization": "Diese Person ist bereits Mitglied dieser Organisation",
     "DuplicateEmail": "E-Mail {0} ist bereits vergeben",
     "DuplicateUserName": "Benutzername {0} ist bereits vergeben",
     "InvalidEmail": "Bitte geben Sie eine gültige E-Mail-Adresse ein, z.B. johndoe@gmail.com",

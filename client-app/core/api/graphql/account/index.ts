@@ -28,6 +28,7 @@ export * from "./queries/getCurrentCustomerAddresses";
 export * from "./queries/getMe";
 export * from "./queries/getMyAddresses";
 export * from "./queries/getOrganizations";
+export * from "./queries/getPendingOrganizationInvites";
 export * from "./queries/getPromotionCoupons";
 export * from "./queries/getSharedWishList";
 export * from "./queries/getWishList";
