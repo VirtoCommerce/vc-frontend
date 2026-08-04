@@ -19,9 +19,7 @@ const createWrapper = createWrapperFactory(mount, VcInput, {
 });
 
 describe("VcInput", () => {
-  // VCST-5533: `aria-describedby` is bound explicitly after `v-bind="{ ...aria }"`, so it used to
-  // override — and silently drop — any value passed through the `aria` prop. VcSelect relies on
-  // exactly that to describe its own error message, so the drop was a real, shipped defect.
+  // VCST-5533: VcSelect depends on this too.
   describe("aria-describedby", () => {
     it("keeps a consumer-supplied description id", () => {
       const wrapper = createWrapper({

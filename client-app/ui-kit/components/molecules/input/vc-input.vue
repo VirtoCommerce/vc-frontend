@@ -176,11 +176,7 @@ const detailsId = componentId + "-details";
 const listeners = useListeners();
 const attrs = useAttrsOnly();
 
-/**
- * `aria-describedby` is bound explicitly (after `v-bind="{ ...aria }"`), so it would otherwise
- * override — and silently drop — any value a consumer passes through the `aria` prop.
- * Merge both sources instead: the internal details element and the consumer's own description ids.
- */
+// Merged, not overwritten: the explicit binding below would otherwise drop `aria`'s own value.
 const describedBy = computed(() => {
   const ids = [props.counter || props.message ? detailsId : undefined, props.aria?.["aria-describedby"]]
     .filter(Boolean)

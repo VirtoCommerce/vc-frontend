@@ -35,7 +35,7 @@ vi.mock("@/core/composables", () => ({ useModules: () => ({ hasModule: () => fal
 
 const LIVE_REGION = "[aria-live='polite']";
 
-/** The real CouponCard is rendered on purpose — this exercises the actual emit → handler wiring. */
+// Real CouponCard, so the emit -> handler wiring is exercised.
 const COUPON_CARD = { name: "CouponCard" };
 
 describe("CouponsSection", () => {
@@ -60,8 +60,7 @@ describe("CouponsSection", () => {
     removeCoupon.mockClear();
   });
 
-  // VCST-5533 / WCAG 4.1.3: applying a coupon only changed the order-summary figures and the card's
-  // icon and button, none of which a screen reader reports. The new figures must be announced.
+  // VCST-5533: the new figures were not announced at all.
   it("exposes a polite, atomic live region", () => {
     const wrapper = createComponent();
 
@@ -100,8 +99,6 @@ describe("CouponsSection", () => {
     expect(text).toContain("$1,312.80");
   });
 
-  // A failure is already announced by the card's role="alert"; announcing here too would double up
-  // and would wrongly report a success.
   it("stays silent when applying the coupon failed", async () => {
     applyCoupon.mockImplementationOnce(() => {
       couponError.value = { code: "BAD", type: "invalid" };

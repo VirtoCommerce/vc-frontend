@@ -5,12 +5,7 @@ import { VcInputDetails } from "@/ui-kit/components/atoms";
 import { VcInput } from "@/ui-kit/components/molecules";
 import CouponCard from "../coupon-card.vue";
 
-/**
- * VCST-5533: coupon-card.test.ts stubs VcInput, so it proves what the card *passes down* but not
- * that the attributes survive VcInput itself — the `aria` prop is spread before `aria-describedby`
- * is bound explicitly, which is exactly where a value can get dropped. Mount the real VcInput here
- * and assert against the rendered <input>.
- */
+// coupon-card.test.ts stubs VcInput; this checks the attributes survive the real one.
 const createWrapper = createWrapperFactory(mount, CouponCard, {
   global: {
     components: { VcInput, VcInputDetails },

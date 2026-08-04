@@ -60,10 +60,10 @@ const VcButtonStub = defineComponent({
   },
 });
 
-type CouponCardProps = InstanceType<typeof CouponCard>["$props"];
+type CouponCardPropsType = InstanceType<typeof CouponCard>["$props"];
 
 describe("CouponCard", () => {
-  const createComponent = (props: Partial<CouponCardProps> = {}) => {
+  const createComponent = (props: Partial<CouponCardPropsType> = {}) => {
     return mount(CouponCard, {
       props: {
         custom: true,
@@ -108,8 +108,7 @@ describe("CouponCard", () => {
     expect(button.props("disabled")).toBe(false);
   });
 
-  // VCST-5533 / WCAG 3.3.2: the visible text next to the field must name it, so the accessible
-  // name matches what a sighted user reads. Previously only the placeholder named the input.
+  // VCST-5533: was named by the placeholder only.
   describe("accessible name", () => {
     it("labels the custom-code input with the visible 'Custom code' text", () => {
       const wrapper = createComponent({ custom: true });
@@ -152,8 +151,7 @@ describe("CouponCard", () => {
     });
   });
 
-  // VCST-5533 / WCAG 3.3.1: the invalid-coupon error was announced via role="alert" but was not
-  // tied to the field, so tabbing back into the input reported no error.
+  // VCST-5533: the error was announced but not tied to the field.
   describe("error association", () => {
     it("marks the input invalid and points it at the error message", () => {
       const wrapper = createComponent({ view: "error", error: "This code is not valid", modelValue: "BAD" });

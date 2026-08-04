@@ -77,11 +77,7 @@ const labelId = useId();
 const nameId = useId();
 const errorId = useId();
 
-/**
- * Name the field from the text that is actually visible next to it, so the accessible name matches
- * what a sighted user reads (WCAG 2.5.3). Only ids of rendered elements may be referenced.
- * When a preset coupon has neither label nor name, fall back to a generic aria-label.
- */
+// Only ids of elements that actually render may be referenced.
 const labelledBy = computed(() => {
   const ids = [
     !props.custom && props.coupon?.label ? labelId : undefined,

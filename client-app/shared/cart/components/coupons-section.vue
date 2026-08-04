@@ -24,11 +24,6 @@
         />
       </div>
 
-      <!--
-        Applying or removing a coupon only changes the discount and total in the order summary and
-        flips the card's icon and button — none of which a screen reader reports (WCAG 4.1.3).
-        Announce the new figures here. Failures are already announced by the card's role="alert".
-      -->
       <span class="sr-only" aria-live="polite" aria-atomic="true">{{ announcement }}</span>
 
       <router-link
@@ -74,6 +69,7 @@ async function handleApply(code: string) {
 
   await applyCoupon(code);
 
+  // Failures are already announced by the card's alert.
   if (couponError.value) {
     return;
   }
