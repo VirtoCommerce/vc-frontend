@@ -37,6 +37,22 @@ describe("VcInput aria-describedby", () => {
     const wrapper = createInputWrapper({ props: { modelValue: "", hideDetails: false, message: "x" } });
     expect(wrapper.find("input").attributes("aria-describedby")).toBeDefined();
   });
+
+  it("keeps a forwarded aria-describedby when it renders no details row of its own", () => {
+    const wrapper = createInputWrapper({
+      props: { modelValue: "", hideDetails: true, message: "x", aria: { "aria-describedby": "outer-id" } },
+    });
+    expect(wrapper.find("input").attributes("aria-describedby")).toBe("outer-id");
+  });
+
+  it("joins its own details id with a forwarded one — aria-describedby is an id list", () => {
+    const wrapper = createInputWrapper({
+      props: { modelValue: "", message: "x", aria: { "aria-describedby": "outer-id" } },
+    });
+    const ownId = wrapper.findComponent({ name: "VcInputDetails" }).attributes("id");
+    expect(ownId).toBeTruthy();
+    expect(wrapper.find("input").attributes("aria-describedby")).toBe(`${ownId} outer-id`);
+  });
 });
 
 describe("VcInput clearable", () => {

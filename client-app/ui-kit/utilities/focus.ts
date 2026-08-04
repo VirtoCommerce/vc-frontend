@@ -1,6 +1,13 @@
 export const FOCUSABLE_SELECTOR =
   'a[href]:not([data-skip-autofocus]), button:not(:disabled):not([data-skip-autofocus]), input:not(:disabled):not([data-skip-autofocus]), textarea:not(:disabled):not([data-skip-autofocus]), select:not(:disabled):not([data-skip-autofocus]), [tabindex]:not([tabindex="-1"]):not([data-skip-autofocus]), [contenteditable="true"]:not([data-skip-autofocus])';
 
+/** True when focus entered or left the whole shell, not just moved between its inner controls. */
+export function crossedFocusBoundary(event: FocusEvent): boolean {
+  const other = event.relatedTarget;
+  const shell = event.currentTarget as HTMLElement | null;
+  return !(other instanceof Node && shell?.contains(other));
+}
+
 export function findFirstFocusableElement(
   container: HTMLElement | string,
   { ignoreSelector, extendSelector }: { ignoreSelector?: string; extendSelector?: string },

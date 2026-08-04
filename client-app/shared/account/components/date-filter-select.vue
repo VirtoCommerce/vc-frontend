@@ -15,6 +15,7 @@
       class="date-filter-select__range"
       mask
       enable-teleport
+      :layout="layout"
       :error="!rangeValid"
       :start-label="$t('shared.account.orders_filter.start_date_label')"
       :end-label="$t('shared.account.orders_filter.end_date_label')"
@@ -38,11 +39,14 @@ interface IEmits {
 interface IProps {
   dateFilterType?: DateFilterType;
   label?: string;
+  layout?: VcDateRangePickerLayoutType;
 }
 
 const emit = defineEmits<IEmits>();
 
-const props = defineProps<IProps>();
+const props = withDefaults(defineProps<IProps>(), {
+  layout: "combined",
+});
 
 const { dateFilterTypes } = useUserOrdersFilter();
 

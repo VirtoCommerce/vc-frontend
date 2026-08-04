@@ -16,7 +16,9 @@ vi.mock("../composables/useUserOrdersFilter", () => ({
 // covered by their own test files. Stub both here and assert only the wiring between them.
 const stubs = { VcSelect: true, VcDateRangePicker: true };
 
-function mountWithCustomSelected(props: Partial<{ dateFilterType: DateFilterType; label: string }> = {}) {
+function mountWithCustomSelected(
+  props: Partial<{ dateFilterType: DateFilterType; label: string; layout: VcDateRangePickerLayoutType }> = {},
+) {
   return mount(DateFilterSelect, {
     props: { dateFilterType: { id: DateFilterId.CUSTOM, label: "Custom date" }, ...props },
     global: {
@@ -43,5 +45,15 @@ describe("DateFilterSelect", () => {
     picker.vm.$emit("update:modelValue", { start: "2026-10-08", end: undefined });
     await wrapper.vm.$nextTick();
     expect(wrapper.emitted("change")?.at(-1)).toBeTruthy();
+  });
+
+  it("forwards layout to the range picker", () => {
+    const wrapper = mountWithCustomSelected({ layout: "split" });
+    expect(wrapper.findComponent({ name: "VcDateRangePicker" }).attributes("layout")).toBe("split");
+  });
+
+  it("defaults layout to combined", () => {
+    const wrapper = mountWithCustomSelected();
+    expect(wrapper.findComponent({ name: "VcDateRangePicker" }).attributes("layout")).toBe("combined");
   });
 });

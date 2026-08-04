@@ -30,6 +30,7 @@
         :aria-label="ariaLabel"
         :aria="forwardedAria(triggerProps)"
         :tabindex="tabindex"
+        :hide-details="hideDetails"
         :data-test-id="dataTestId"
         @keydown.esc.stop="close"
         @update:model-value="onInputUpdate"
@@ -60,8 +61,8 @@
         ref="calendarRef"
         :model-value="modelValue"
         :size="calendarSize"
-        :min="min"
-        :max="max"
+        :min="calendarMin ?? min"
+        :max="calendarMax ?? max"
         :disabled-date="disabledDate"
         :locale="locale"
         :first-day-of-week="firstDayOfWeek"
@@ -79,6 +80,8 @@ import { computed, nextTick, useTemplateRef } from "vue";
 import { useI18n } from "vue-i18n";
 import type { VcDateFieldUpdateOnType } from "@/ui-kit/composables";
 
+type AriaAttributesType = Record<string, string | number | null>;
+
 interface IProps {
   /** ISO YYYY-MM-DD canonical value. */
   modelValue?: string;
@@ -95,6 +98,10 @@ interface IProps {
   min?: string;
   /** ISO YYYY-MM-DD max boundary. */
   max?: string;
+  /** Calendar-only lower boundary; defaults to `min`. Narrows what can be picked without blocking typed entry. */
+  calendarMin?: string;
+  /** Calendar-only upper boundary; defaults to `max`. */
+  calendarMax?: string;
   /** Predicate that returns true to mark a date unavailable (greyed out). */
   disabledDate?: VcCalendarDisabledDateType;
   /** Override locale; defaults to active i18n locale. */
@@ -115,7 +122,11 @@ interface IProps {
   /** Popover placement relative to the input. Default "bottom-end". */
   placement?: VcPopoverPlacementType;
   ariaLabel?: string;
+  /** Extra ARIA attributes for the underlying input, merged under the combobox wiring this picker owns. */
+  aria?: AriaAttributesType;
   tabindex?: string | number;
+  /** Drop the details row (message/error text) so a parent can render one for a group of fields. */
+  hideDetails?: boolean;
   dataTestId?: string;
 }
 
@@ -133,6 +144,7 @@ const props = withDefaults(defineProps<IProps>(), {
   updateOn: "blur",
   closeOnSelect: true,
   placement: "bottom-end",
+  hideDetails: false,
 });
 
 const { t } = useI18n();
@@ -150,8 +162,9 @@ const calendarSize = computed<VcCalendarSizeType>(() => {
   return props.size;
 });
 
-function forwardedAria(triggerProps: Record<string, unknown>): Record<string, string | number | null> {
-  const aria: Record<string, string | number | null> = {
+function forwardedAria(triggerProps: Record<string, unknown>): AriaAttributesType {
+  const aria: AriaAttributesType = {
+    ...props.aria,
     // combobox role makes aria-expanded/haspopup/controls valid on the input (a textbox disallows them).
     role: "combobox",
     "aria-haspopup": triggerProps["aria-haspopup"] as string,

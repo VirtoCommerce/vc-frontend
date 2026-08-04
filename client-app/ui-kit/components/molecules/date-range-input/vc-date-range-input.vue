@@ -1,7 +1,14 @@
 <template>
   <div
-    class="vc-date-range-input"
-    :class="rootClasses"
+    :class="[
+      'vc-date-range-input',
+      `vc-date-range-input--size--${size}`,
+      {
+        'vc-date-range-input--error': computedError,
+        'vc-date-range-input--disabled': disabled,
+        'vc-date-range-input--readonly': readonly,
+      },
+    ]"
     role="group"
     :aria-label="label || ariaGroupLabel"
     :data-test-id="dataTestId"
@@ -22,6 +29,7 @@
         :model-value="modelValue?.start"
         :name="name ? `${name}-start` : undefined"
         :aria-label="startLabel"
+        :aria="segmentAria"
         :placeholder="startPlaceholder"
         :size="size"
         :disabled="disabled"
@@ -34,7 +42,7 @@
         :update-on="updateOn"
         :mask="mask"
         @update:model-value="onSegment('start', $event)"
-        @update:valid="onSegmentValid('start', $event)"
+        @update:valid="setSegmentValid('start', $event)"
       />
 
       <span class="vc-date-range-input__separator" aria-hidden="true">–</span>
@@ -47,6 +55,7 @@
         :model-value="modelValue?.end"
         :name="name ? `${name}-end` : undefined"
         :aria-label="endLabel"
+        :aria="segmentAria"
         :placeholder="endPlaceholder"
         :size="size"
         :disabled="disabled"
@@ -59,7 +68,7 @@
         :update-on="updateOn"
         :mask="mask"
         @update:model-value="onSegment('end', $event)"
-        @update:valid="onSegmentValid('end', $event)"
+        @update:valid="setSegmentValid('end', $event)"
       />
 
       <div class="vc-date-range-input__actions">
@@ -79,13 +88,15 @@
       </div>
     </div>
 
-    <VcInputDetails :error="computedError" :message="computedMessage" :single-line="false" />
+    <VcInputDetails :id="detailsId" :error="computedError" :message="computedMessage" :single-line="false" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, provide, ref, useTemplateRef, watch } from "vue";
+import { computed, provide, useTemplateRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
+import { useComponentId, useDateRangeField } from "@/ui-kit/composables";
+import { crossedFocusBoundary } from "@/ui-kit/utilities/focus";
 import type { VcDateFieldUpdateOnType } from "@/ui-kit/composables";
 
 interface IProps {
@@ -156,94 +167,42 @@ const ariaGroupLabel = computed(() => t("ui_kit.date_range_input.aria_label"));
 const size = computed(() => props.size);
 provide<VcInputContextType>("inputContext", { size });
 
-const startFormatValid = ref(true);
-const endFormatValid = ref(true);
-
-// start <= end when BOTH are present; partial/empty ranges are always order-valid.
-const orderValid = computed<boolean>(() => {
-  const start = props.modelValue?.start;
-  const end = props.modelValue?.end;
-  if (!start || !end) {
-    return true;
-  }
-  return start <= end; // ISO YYYY-MM-DD compares lexicographically
+// Segments are hide-details, so the shell surfaces validity itself.
+const { isValid, computedError, computedMessage, setSegmentValid, mergeRange } = useDateRangeField({
+  modelValue: () => props.modelValue,
+  error: () => props.error,
+  message: () => props.message,
 });
 
-const isValid = computed<boolean>(() => startFormatValid.value && endFormatValid.value && orderValid.value);
+const detailsId = useComponentId("date-range-input") + "-details";
 
-// Segments are hide-details, so the shell surfaces validity itself — mirrors VcDateInput's computedError/computedMessage.
-const internalErrorText = computed<string | undefined>(() => {
-  if (!startFormatValid.value || !endFormatValid.value) {
-    return t("ui_kit.date_input.invalid_format");
-  }
-  if (!orderValid.value) {
-    return t("ui_kit.date_range_input.invalid_range");
-  }
-  return undefined;
-});
-
-// External error/message props win over internal validation (same rule VcDateInput uses).
-const computedError = computed<boolean>(() => props.error || !!internalErrorText.value);
-const computedMessage = computed<string | undefined>(() => {
-  if (props.error) {
-    return props.message;
-  }
-  return internalErrorText.value ?? props.message;
-});
-
-const rootClasses = computed(() => [
-  `vc-date-range-input--size--${props.size}`,
-  {
-    "vc-date-range-input--error": computedError.value,
-    "vc-date-range-input--disabled": props.disabled,
-    "vc-date-range-input--readonly": props.readonly,
-  },
-]);
+// hideDetails suppresses each segment's own aria-describedby, so the shared row is wired by hand.
+// The asterisk lives on the group label only, so aria-required is forwarded separately too.
+const segmentAria = computed<Record<string, string | null>>(() => ({
+  "aria-invalid": computedError.value ? "true" : "false",
+  "aria-describedby": computedMessage.value ? detailsId : null,
+  "aria-required": props.required ? "true" : null,
+}));
 
 // Emit initial validity (empty range is valid) and on every change.
 watch(isValid, (value) => emit("update:valid", value), { immediate: true });
 
-function mergeRange(next: VcDateRange): VcDateRange | undefined {
-  if (!next.start && !next.end) {
-    return undefined;
-  }
-  return next;
-}
-
 function onSegment(which: "start" | "end", value: string | undefined): void {
-  const next: VcDateRange = {
-    start: which === "start" ? value : props.modelValue?.start,
-    end: which === "end" ? value : props.modelValue?.end,
-  };
-  emit("update:modelValue", mergeRange(next));
-}
-
-function onSegmentValid(which: "start" | "end", valid: boolean): void {
-  if (which === "start") {
-    startFormatValid.value = valid;
-  } else {
-    endFormatValid.value = valid;
-  }
+  emit("update:modelValue", mergeRange(which, value));
 }
 
 // focus/blur are shell-level: emit only when focus crosses the shell boundary,
 // not when it moves between segments or to the clear/toggle buttons.
 function onFocusIn(event: FocusEvent): void {
-  const from = event.relatedTarget;
-  const shell = event.currentTarget as HTMLElement | null;
-  if (from instanceof Node && shell?.contains(from)) {
-    return;
+  if (crossedFocusBoundary(event)) {
+    emit("focus", event);
   }
-  emit("focus", event);
 }
 
 function onFocusOut(event: FocusEvent): void {
-  const to = event.relatedTarget;
-  const shell = event.currentTarget as HTMLElement | null;
-  if (to instanceof Node && shell?.contains(to)) {
-    return;
+  if (crossedFocusBoundary(event)) {
+    emit("blur", event);
   }
-  emit("blur", event);
 }
 
 function clearBoth(): void {
@@ -263,7 +222,6 @@ defineExpose({
 
   --color: var(--vc-input-base-color, theme("colors.primary.500"));
   --focus-color: rgb(from var(--color) r g b / 0.3);
-
   --radius: var(--vc-input-radius, var(--vc-radius, 0.5rem));
 
   @apply flex flex-col;
@@ -283,6 +241,7 @@ defineExpose({
     &--md {
       --height: theme("spacing.11");
       --text-size: theme("fontSize.base[0]");
+      --vc-input-padding-x: theme("padding.1");
     }
   }
 
@@ -297,7 +256,7 @@ defineExpose({
   }
 
   &__field {
-    @apply relative flex items-center p-0.5 border border-neutral-400 rounded-[--radius] bg-additional-50 h-[--height];
+    @apply relative flex items-center p-px border border-neutral-400 rounded-[--radius] bg-additional-50 h-[--height];
 
     font-size: var(--text-size);
 
@@ -315,15 +274,12 @@ defineExpose({
   }
 
   &__segment {
-    // 8em = empty/placeholder width; shrinks only when space runs out.
-    @apply grow-0 shrink basis-[8em] min-w-0;
+    @apply grow-0 shrink basis-[7.25em] min-w-0;
 
-    // Smooth the empty->committed width snap; resize-driven shrink is flex-shrink, not basis, so it's unaffected.
     transition: flex-basis 150ms ease;
 
-    // Committed date is narrower than the placeholder — tighten so trailing space isn't dead.
     &--filled {
-      flex-basis: 6.75em;
+      @apply basis-[6em];
     }
   }
 

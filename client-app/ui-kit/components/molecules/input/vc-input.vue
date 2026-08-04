@@ -43,7 +43,7 @@
         :step="stepValue"
         :autocomplete="computedAutocomplete"
         :aria-label="ariaLabel ?? label"
-        :aria-describedby="!hideDetails && (counter || message) ? detailsId : undefined"
+        :aria-describedby="describedById"
         :title="browserTooltip === 'enabled' ? message : ''"
         class="vc-input__input"
         :tabindex="tabindex"
@@ -186,6 +186,15 @@ const componentId = useComponentId("input");
 const detailsId = componentId + "-details";
 const listeners = useListeners();
 const attrs = useAttrsOnly();
+
+// This binding sits after `v-bind="{ ...aria }"`, so it would blank out a forwarded aria-describedby.
+// aria-describedby is an id list: the own details row and a parent's shared one are both legitimate.
+const describedById = computed<string | undefined>(() => {
+  const forwarded = props.aria?.["aria-describedby"];
+  const forwardedId = typeof forwarded === "string" ? forwarded : undefined;
+  const ownId = !props.hideDetails && (props.counter || props.message) ? detailsId : undefined;
+  return [ownId, forwardedId].filter(Boolean).join(" ") || undefined;
+});
 
 const computedAutocomplete = computed(() => {
   if (props.disableAutocomplete) {
@@ -346,16 +355,26 @@ provide<VcInputContextType>("inputContext", {
   &__container {
     @apply flex items-stretch p-0.5 border border-neutral-400 rounded-[--radius] bg-additional-50 select-none;
 
+    // Longhands instead of text-sm/text-base: only font-size is overridable, line-height is not.
     #{$sizeXs} & {
-      @apply h-8 text-sm;
+      @apply h-8;
+
+      font-size: var(--vc-input-font-size, theme("fontSize.sm[0]"));
+      line-height: theme("fontSize.sm[1].lineHeight");
     }
 
     #{$sizeSm} & {
-      @apply h-[2.375rem] text-base;
+      @apply h-[2.375rem];
+
+      font-size: var(--vc-input-font-size, theme("fontSize.base[0]"));
+      line-height: theme("fontSize.base[1].lineHeight");
     }
 
     #{$sizeMd} & {
-      @apply h-11 text-base;
+      @apply h-11;
+
+      font-size: var(--vc-input-font-size, theme("fontSize.base[0]"));
+      line-height: theme("fontSize.base[1].lineHeight");
     }
 
     &:has(input:focus) {
@@ -400,7 +419,9 @@ provide<VcInputContextType>("inputContext", {
   }
 
   &__input {
-    @apply relative m-px px-2 bg-transparent rounded-[3px] leading-none w-full min-w-0 appearance-none font-normal;
+    @apply relative m-px bg-transparent rounded-[3px] leading-none w-full min-w-0 appearance-none font-normal;
+
+    padding-inline: var(--vc-input-padding-x, theme("padding.2"));
 
     &::-webkit-search-cancel-button {
       @apply appearance-none;

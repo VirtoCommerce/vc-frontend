@@ -3,6 +3,7 @@ import VcDateRangePicker from "./vc-date-range-picker.vue";
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
 const SIZES = ["sm", "md"];
+const LAYOUTS = ["combined", "split"];
 const PLACEMENTS = [
   "top",
   "top-start",
@@ -31,6 +32,14 @@ const meta: Meta<typeof VcDateRangePicker> = {
     },
   },
   argTypes: {
+    // VcDateRangePickerLayoutType is a global type alias, so docgen cannot infer the options.
+    layout: {
+      control: "select",
+      options: LAYOUTS,
+      description: '"combined" = one field with two segments. "split" = two separate labelled fields.',
+      type: { name: "string", required: false },
+      table: { type: { summary: LAYOUTS.join(" | ") }, defaultValue: { summary: "combined" } },
+    },
     size: {
       control: "inline-radio",
       options: SIZES,
@@ -115,6 +124,49 @@ export const WithValue: StoryType = {
         code: `
           <!-- value ref starts at { start: "2026-10-08", end: "2026-10-14" } -->
           <VcDateRangePicker v-model="value" label="Order date range" />
+        `,
+      },
+    },
+  },
+  render: (args) => ({
+    components: { VcDateRangePicker },
+    setup() {
+      const value = ref<VcDateRange | undefined>({ start: "2026-10-08", end: "2026-10-14" });
+      return { args, value };
+    },
+    template: `
+      <div class="space-y-2">
+        <VcDateRangePicker v-bind="args" v-model="value" />
+        <div class="text-sm text-neutral-600">Range: {{ value ?? "(none)" }}</div>
+      </div>
+    `,
+  }),
+};
+
+export const Split: StoryType = {
+  args: {
+    label: "Order date range",
+    layout: "split",
+    startLabel: "Start date",
+    endLabel: "End date",
+    clearable: true,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`layout="split"` renders two independent `VcDatePicker`s with visible `startLabel` / `endLabel`, an em dash between them and ONE shared details row. Each calendar is cross-bounded by the opposite endpoint — the start calendar cannot go past the current end date and vice versa — so an out-of-order range is unreachable by mouse. Typing one is still possible, and surfaces the `invalid_range` message in the shared details row.',
+      },
+      source: {
+        code: `
+          <VcDateRangePicker
+            v-model="value"
+            layout="split"
+            label="Order date range"
+            start-label="Start date"
+            end-label="End date"
+            clearable
+          />
         `,
       },
     },
