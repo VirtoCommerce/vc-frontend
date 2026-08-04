@@ -39,8 +39,7 @@ export function useSalesRepOrders(options: UseSalesRepOrdersOptionsType = {}) {
     periodTo: toValue(options.periodTo),
   }));
 
-  // The list sits directly under the KPI cards, so it has to revalidate with them — a status changed
-  // elsewhere used to leave the row reading "New" beneath a card that already counted 0.
+  // Revalidates with the KPI cards above it: a stale row read "New" under a card already counting 0.
   const { result, loading, onError } = useQuery(SalesRepOrdersDocument, variables, {
     fetchPolicy: HUB_FETCH_POLICY,
   });

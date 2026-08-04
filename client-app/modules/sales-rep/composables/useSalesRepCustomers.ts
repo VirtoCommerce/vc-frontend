@@ -40,8 +40,8 @@ export function useSalesRepCustomers() {
   }));
 
   // The rep's customer organizations are resolved server-side from the caller's claims.
-  // The YTD / prior-year purchase columns are statistics in list form, over the same day-stable windows,
-  // so the list revalidates with the cards; keepPreviousResult holds the current page while it does.
+  // The YTD / prior-year columns are statistics in list form, so they revalidate with the cards;
+  // keepPreviousResult holds the current page while they do.
   const { result, loading, onError } = useQuery(SalesRepCustomersDocument, variables, {
     keepPreviousResult: true,
     fetchPolicy: HUB_FETCH_POLICY,

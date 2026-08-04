@@ -10,9 +10,8 @@ import type { MaybeRefOrGetter } from "vue";
 export function useSalesRepCustomer(organizationId: MaybeRefOrGetter<string>) {
   const variables = computed(() => ({ organizationId: toValue(organizationId) }));
 
-  // The profile header (name, phone, ship-to, primary contact) is editable outside the storefront, so it
-  // revalidates too. Three components on the page share this composable; Apollo's query deduplication
-  // (left enabled on the cached client) collapses their concurrent identical requests into one.
+  // The header is editable outside the storefront, so it revalidates too. Three components on the page
+  // share this composable; Apollo's deduplication collapses their concurrent identical requests into one.
   const { result, loading, onError } = useQuery(SalesRepCustomerDocument, variables, {
     fetchPolicy: HUB_FETCH_POLICY,
   });

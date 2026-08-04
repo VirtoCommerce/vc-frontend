@@ -34,8 +34,7 @@ export function useSalesRepTopSellers(options: UseSalesRepTopSellersOptionsType 
     take: toValue(options.take) ?? TOP_SELLERS_DEFAULT_TAKE,
   }));
 
-  // Ranked from the same orders as the KPI cards (and pinned to a day-stable period), so it revalidates
-  // with them rather than serving the session's first ranking.
+  // Ranked from the same orders as the KPI cards, so it revalidates with them.
   const { result, loading, onError } = useQuery(SalesRepTopSellersDocument, variables, {
     fetchPolicy: HUB_FETCH_POLICY,
   });

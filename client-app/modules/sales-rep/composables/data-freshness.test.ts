@@ -207,9 +207,8 @@ beforeEach(async () => {
   provideApolloClient(new ApolloClient({ link, cache }));
 });
 
-// Every hub read, each paired with a probe on the field carrying `metric`. Waiting on the probe rather
-// than on "a request fired" is what makes these fail under cache-first: hub variables are day-stable, so
-// a remount sends an identical request and would otherwise replay the session's first figure forever.
+// Every hub read, paired with a probe on the field carrying `metric`. Waiting on the probe rather than on
+// "a request fired" is what makes these fail under cache-first, whose remount replays the first figure.
 const widgetSources: [string, () => () => number | undefined][] = [
   [
     "order statistics",
