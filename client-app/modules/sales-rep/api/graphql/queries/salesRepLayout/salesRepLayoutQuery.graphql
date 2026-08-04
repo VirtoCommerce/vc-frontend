@@ -6,6 +6,10 @@ query SalesRepLayout($scope: String!, $storeId: String) {
         id
         type
         hidden
+        settings {
+          key
+          value
+        }
       }
     }
   }
