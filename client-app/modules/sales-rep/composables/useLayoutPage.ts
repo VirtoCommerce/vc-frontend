@@ -71,6 +71,8 @@ export function useLayoutPage(scope: SalesRepLayoutScopeType) {
     saveFailed: layout.saveFailed,
     visibleIn: layout.visibleIn,
     hiddenIn: layout.hiddenIn,
+    settingsOf: layout.settingsOf,
+    updateSettings: layout.updateSettings,
     startEdit: layout.startEdit,
     cancel: layout.cancel,
     reset: layout.reset,

@@ -5,13 +5,25 @@ import { Logger } from "@/core/utilities";
 import { SalesRepLayoutDocument, SaveSalesRepLayoutDocument } from "../api/graphql/types";
 import { echoMatchesSentBlocks, reconcileLayout, serializeLayout } from "../layout/document";
 import { getBlockRegistry } from "../layout/registry";
-import type { SalesRepLayoutRegionIdType, SalesRepLayoutScopeType, SalesRepLayoutStateType } from "../types/layout";
+import type {
+  SalesRepBlockSettingsType,
+  SalesRepLayoutRegionIdType,
+  SalesRepLayoutScopeType,
+  SalesRepLayoutStateType,
+} from "../types/layout";
+
+const EMPTY_SETTINGS: SalesRepBlockSettingsType = { hiddenTabs: [] };
 
 function cloneState(state: SalesRepLayoutStateType): SalesRepLayoutStateType {
   return {
-    statistics: { visible: [...state.statistics.visible], hidden: [...state.statistics.hidden] },
-    mainLeft: { visible: [...state.mainLeft.visible], hidden: [...state.mainLeft.hidden] },
-    mainRight: { visible: [...state.mainRight.visible], hidden: [...state.mainRight.hidden] },
+    regions: {
+      statistics: { visible: [...state.regions.statistics.visible], hidden: [...state.regions.statistics.hidden] },
+      mainLeft: { visible: [...state.regions.mainLeft.visible], hidden: [...state.regions.mainLeft.hidden] },
+      mainRight: { visible: [...state.regions.mainRight.visible], hidden: [...state.regions.mainRight.hidden] },
+    },
+    settings: Object.fromEntries(
+      Object.entries(state.settings).map(([id, values]) => [id, { ...values, hiddenTabs: [...values.hiddenTabs] }]),
+    ),
   };
 }
 
@@ -64,11 +76,24 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
   const loadFailed = computed(() => Boolean(error.value));
 
   function visibleIn(regionId: SalesRepLayoutRegionIdType): readonly string[] {
-    return state.value[regionId].visible;
+    return state.value.regions[regionId].visible;
   }
 
   function hiddenIn(regionId: SalesRepLayoutRegionIdType): readonly string[] {
-    return state.value[regionId].hidden;
+    return state.value.regions[regionId].hidden;
+  }
+
+  /** A block with no declared settings has none — the shared empty keeps callers from branching. */
+  function settingsOf(blockId: string): SalesRepBlockSettingsType {
+    return state.value.settings[blockId] ?? EMPTY_SETTINGS;
+  }
+
+  function updateSettings(blockId: string, patch: Partial<SalesRepBlockSettingsType>): void {
+    // Only a block the registry declared settings for: an unknown id would create an entry
+    // `serializeSettings` then drops, so the rep would see a change that never persists.
+    if (editable() && draft.value?.settings[blockId]) {
+      draft.value.settings[blockId] = { ...draft.value.settings[blockId], ...patch };
+    }
   }
 
   function startEdit(): void {
@@ -103,13 +128,13 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
   // `readonly()`, and Vue's readonly arrays are not assignable to a mutable draft.
   function reorderVisible(regionId: SalesRepLayoutRegionIdType, ids: string[]): void {
     if (editable() && draft.value) {
-      draft.value[regionId].visible = [...ids];
+      draft.value.regions[regionId].visible = [...ids];
     }
   }
 
   function reorderHidden(regionId: SalesRepLayoutRegionIdType, ids: string[]): void {
     if (editable() && draft.value) {
-      draft.value[regionId].hidden = [...ids];
+      draft.value.regions[regionId].hidden = [...ids];
     }
   }
 
@@ -122,7 +147,7 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
       return;
     }
 
-    for (const region of Object.values(draft.value)) {
+    for (const region of Object.values(draft.value.regions)) {
       const from = hidden ? region.visible : region.hidden;
       const at = from.indexOf(id);
       if (at === -1) {
@@ -145,7 +170,7 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
     }
 
     const pending = draft.value;
-    const command = serializeLayout(pending, scope, globals.storeId);
+    const command = serializeLayout(pending, scope, registry, globals.storeId);
     try {
       const response = await mutate({ command });
       const saved = response?.data?.saveSalesRepLayout;
@@ -195,6 +220,8 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
     saveFailed: readonly(saveFailed),
     visibleIn,
     hiddenIn,
+    settingsOf,
+    updateSettings,
     startEdit,
     cancel,
     reset,
