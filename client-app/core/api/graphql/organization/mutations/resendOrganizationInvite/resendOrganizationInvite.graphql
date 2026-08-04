@@ -1,0 +1,10 @@
+mutation ResendOrganizationInvite($command: InputResendOrganizationInviteType!) {
+  resendOrganizationInvite(command: $command) {
+    succeeded
+    errors {
+      code
+      description
+      parameter
+    }
+  }
+}

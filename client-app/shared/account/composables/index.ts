@@ -12,3 +12,4 @@ export * from "./useUserOrder";
 export * from "./useUserOrders";
 export * from "./useUserOrdersFilter";
 export * from "./useUserOrganizations";
+export * from "./useUserPendingInvites";
