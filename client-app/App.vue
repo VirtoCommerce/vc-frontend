@@ -76,7 +76,6 @@ useHead({
       ],
 });
 
-// Here rather than home.vue, which never mounts when a CMS homepage wins the previewer chain.
 useOrganizationSchema();
 useStoreSocialMeta();
 

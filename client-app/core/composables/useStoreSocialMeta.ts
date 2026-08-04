@@ -6,10 +6,9 @@ const TAGLINE_SEPARATOR = " — ";
 
 /**
  * Emits the store-level Open Graph tags: `og:site_name`, `og:description` and `og:image`
- * site-wide, `og:title` on the homepage. `og:url` and `og:type` belong to the page emitters.
+ * site-wide, `og:title` on the homepage.
  *
- * All but `og:site_name` act as fallbacks: a page's own `useSeoMeta` registers a later unhead
- * entry, and for a same-keyed `og:*` tag the later entry replaces this one.
+ * A page's own `useSeoMeta` registers a later unhead entry and replaces any of these it sets.
  */
 export function useStoreSocialMeta() {
   const { storeName, tagline, description, shareImageUrl } = useBrandProfile();

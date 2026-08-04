@@ -27,15 +27,12 @@ const ORGANIZATION_TYPE = "OnlineStore";
 const CONTACT_TYPE = "Customer Service";
 
 function nonBlank(value?: string): string | undefined {
-  // `||` not `??`: an empty string must collapse to undefined too.
   return value?.trim() || undefined;
 }
 
 /**
  * Builds the homepage Organization node from already-sanitised facts (`useBrandProfile` does
- * that); the builder only drops blanks, omitting the key rather than emitting an empty value.
- *
- * Returns `null` when the name is missing — publish nothing.
+ * that). Blank values are omitted; a missing name returns `null`.
  */
 // eslint-disable-next-line sonarjs/function-return-type
 export function buildOrganizationNode(facts: OrganizationFactsType): Record<string, unknown> | null {
@@ -69,13 +66,7 @@ export function buildOrganizationNode(facts: OrganizationFactsType): Record<stri
   };
 }
 
-/**
- * Publishes the store's Organization JSON-LD on the homepage only (Google recommends against
- * every page).
- *
- * Lives in `App.vue`, not `home.vue`: `/` has no route and resolves through the previewer chain
- * (Builder.io -> Virto Pages -> internal), so `home.vue` never mounts when a CMS homepage exists.
- */
+/** Publishes the store's Organization JSON-LD on the homepage only. */
 export function useOrganizationSchema() {
   const isHomePage = useIsHomePage();
   const { organizationFacts } = useBrandProfile();

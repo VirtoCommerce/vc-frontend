@@ -127,8 +127,7 @@ export function useBrandProfile() {
       return configured;
     }
 
-    // White labeling swaps logoUrl for the signed-in buyer organization's own logo. Publishing
-    // that would attribute a customer's branding to the merchant.
+    // White labeling swaps logoUrl for the signed-in buyer organization's own logo.
     if (whiteLabelingLogoUrl.value && !isOrganizationLogoUploaded.value) {
       return toAbsoluteUrl(whiteLabelingLogoUrl.value, origin);
     }
@@ -137,9 +136,7 @@ export function useBrandProfile() {
   });
 
   const storeUrl = computed(() => {
-    // A relative value is rejected, not resolved: unlike a logo filename, a relative storeUrl is
-    // misconfiguration, and resolving it would publish the visitor's host (e.g. a staging domain)
-    // as the brand's canonical url.
+    // Resolving a relative value would publish the visitor's host as the brand's canonical url.
     const configured = themeContext.value?.storeUrl?.trim();
     const absolute = configured && ABSOLUTE_URL.test(configured) ? toAbsoluteUrl(configured, origin) : undefined;
 
