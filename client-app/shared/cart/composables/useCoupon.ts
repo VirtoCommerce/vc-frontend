@@ -29,14 +29,14 @@ export function useCoupon() {
     try {
       loadingCouponCode.value = trimmed;
 
-      if (appliedCouponCode.value && appliedCouponCode.value !== trimmed) {
-        await removeCartCoupon(appliedCouponCode.value);
-      }
-
       const isValid = await validateCartCoupon(trimmed);
       if (!isValid) {
         couponError.value = { code: trimmed, type: "invalid" };
         return;
+      }
+
+      if (appliedCouponCode.value && appliedCouponCode.value !== trimmed) {
+        await removeCartCoupon(appliedCouponCode.value);
       }
 
       await addCartCoupon(trimmed);
