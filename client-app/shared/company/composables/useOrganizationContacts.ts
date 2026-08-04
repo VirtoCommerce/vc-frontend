@@ -5,19 +5,21 @@ import {
   getOrganizationContacts,
   lockOrganizationContact,
   removeMemberFromOrganization as _removeMemberFromOrganization,
+  resendOrganizationInvite as _resendOrganizationInvite,
+  revokeOrganizationInvite as _revokeOrganizationInvite,
   unlockOrganizationContact,
   changeOrganizationContactRole,
 } from "@/core/api/graphql";
 import { DEFAULT_PAGE_SIZE } from "@/core/constants";
 import { SortDirection } from "@/core/enums";
 import { getSortingExpression, Logger } from "@/core/utilities";
-import { useNotifications } from "@/shared/notification";
 import { convertToExtendedContact } from "../utils";
 import type {
   ContactType,
   CustomIdentityResultType,
   InputChangeOrganizationContactRoleType,
   InputRemoveMemberFromOrganizationType,
+  InputResendOrganizationInviteType,
 } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
 import type { ExtendedContactType } from "@/shared/company";
@@ -31,6 +33,7 @@ export function useOrganizationContacts(organizationId: MaybeRef<string>) {
   const keyword = ref("");
   const filter = ref("");
   const roleIds = ref<string[]>([]);
+  const statuses = ref<string[]>([]);
   const contacts = shallowRef<ExtendedContactType[]>([]);
   const sort = ref<ISortInfo>({
     column: "name",
@@ -38,7 +41,6 @@ export function useOrganizationContacts(organizationId: MaybeRef<string>) {
   });
 
   const { t } = useI18n();
-  const notifications = useNotifications();
 
   async function fetchContacts() {
     loading.value = true;
@@ -53,6 +55,7 @@ export function useOrganizationContacts(organizationId: MaybeRef<string>) {
         sort: sortingExpression,
         searchPhrase: filterExpression,
         roleIds: roleIds.value.length ? roleIds.value : undefined,
+        statuses: statuses.value.length ? statuses.value : undefined,
       });
 
       const contactFullNameFallback: string = t("pages.company.members.invite_sent");
@@ -82,12 +85,6 @@ export function useOrganizationContacts(organizationId: MaybeRef<string>) {
     }
 
     await fetchContacts();
-
-    notifications.success({
-      text: t("shared.company.notifications.user_blocked"),
-      duration: 10000,
-      single: true,
-    });
   }
 
   async function unlockContact(contact: ExtendedContactType): Promise<void> {
@@ -103,12 +100,6 @@ export function useOrganizationContacts(organizationId: MaybeRef<string>) {
     }
 
     await fetchContacts();
-
-    notifications.success({
-      text: t("shared.company.notifications.user_unblocked"),
-      duration: 10000,
-      single: true,
-    });
   }
 
   async function removeMemberFromOrganization(payload: InputRemoveMemberFromOrganizationType): Promise<void> {
@@ -125,6 +116,35 @@ export function useOrganizationContacts(organizationId: MaybeRef<string>) {
 
     page.value = 1;
     await fetchContacts();
+  }
+
+  async function revokeInvite(memberId: string): Promise<void> {
+    loading.value = true;
+
+    try {
+      await _revokeOrganizationInvite(memberId);
+    } catch (e) {
+      Logger.error(`${useOrganizationContacts.name}.${revokeInvite.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+
+    page.value = 1;
+    await fetchContacts();
+  }
+
+  async function resendInvite(payload: InputResendOrganizationInviteType): Promise<CustomIdentityResultType> {
+    loading.value = true;
+
+    try {
+      return await _resendOrganizationInvite(payload);
+    } catch (e) {
+      Logger.error(`${useOrganizationContacts.name}.${resendInvite.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
   }
 
   async function changeContactOrganizationRole(
@@ -149,10 +169,13 @@ export function useOrganizationContacts(organizationId: MaybeRef<string>) {
     keyword,
     filter,
     roleIds,
+    statuses,
     fetchContacts,
     lockContact,
     unlockContact,
     removeMemberFromOrganization,
+    revokeInvite,
+    resendInvite,
     changeContactOrganizationRole,
     pages: readonly(pages),
     loading: readonly(loading),
