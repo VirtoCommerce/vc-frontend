@@ -68,7 +68,7 @@ const props = defineProps<IProps>();
 const { t, te } = useI18n();
 const notifications = useNotifications();
 const { sendCommunication } = useSalesRepCommunication();
-const { options, loading, failed } = useSalesRepCustomerOptions(true);
+const { options, loading, failed } = useSalesRepCustomerOptions();
 
 // The backend rejects a combined message over 1000 chars. Measuring the actual link (its host varies per store) keeps
 // a long domain from pushing an otherwise-valid message over the limit.

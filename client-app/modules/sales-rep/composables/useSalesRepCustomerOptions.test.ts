@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { effectScope, nextTick, ref } from "vue";
+import { effectScope, nextTick } from "vue";
 import { useSalesRepCustomerOptions } from "./useSalesRepCustomerOptions";
 import type { SalesRepCustomerOptionsQuery } from "../api/graphql/types";
-import type { EffectScope, Ref } from "vue";
+import type { EffectScope } from "vue";
 
 // vi.hoisted runs before this file's imports, so it must import vue itself.
 const queryMock = await vi.hoisted(async () => {
@@ -44,11 +44,6 @@ function passedVariables() {
   return variables.value;
 }
 
-/** The options object (3rd arg) the composable handed to useQuery. */
-function passedOptions() {
-  return lastCallArgs()[2] as { enabled?: unknown } | undefined;
-}
-
 let scope: EffectScope;
 
 /**
@@ -57,10 +52,6 @@ let scope: EffectScope;
  */
 function build() {
   return scope.run(() => useSalesRepCustomerOptions())!;
-}
-
-function buildWith(enabled: Ref<boolean>) {
-  return scope.run(() => useSalesRepCustomerOptions(enabled))!;
 }
 
 function failQuery(error = new Error("boom")) {
@@ -94,14 +85,6 @@ describe("useSalesRepCustomerOptions", () => {
       keyword: "",
       sort: "name:asc",
     });
-  });
-
-  it("forwards the `enabled` gate to useQuery so non-reps never issue the authorized request", () => {
-    const enabled = ref(false);
-
-    buildWith(enabled);
-
-    expect(passedOptions()?.enabled).toBe(enabled);
   });
 
   it("maps items to {organizationId, organizationName} option shape", () => {
