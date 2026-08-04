@@ -5,14 +5,11 @@ import { useIsHomePage } from "./useIsHomePage";
 const TAGLINE_SEPARATOR = " — ";
 
 /**
- * Emits the store-level Open Graph tags: `og:site_name`, `og:image` and `og:description`
- * site-wide, and the `name — tagline` `og:title` on the homepage, which no page emitter owns
- * when a CMS page wins the previewer chain.
+ * Emits the store-level Open Graph tags: `og:site_name`, `og:description` and `og:image`
+ * site-wide, `og:title` on the homepage. `og:url` and `og:type` belong to the page emitters.
  *
- * All but `og:site_name` are fallbacks by construction. A page's own `useSeoMeta` registers a
- * later unhead entry, and for a same-keyed `og:*` tag the later entry replaces this one.
- *
- * `og:url`/`og:type` stay with the pages — consolidating them is a separate refactor.
+ * All but `og:site_name` act as fallbacks: a page's own `useSeoMeta` registers a later unhead
+ * entry, and for a same-keyed `og:*` tag the later entry replaces this one.
  */
 export function useStoreSocialMeta() {
   const { storeName, tagline, description, shareImageUrl } = useBrandProfile();

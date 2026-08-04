@@ -1,5 +1,5 @@
 import { computed } from "vue";
-import { MODULE_XAPI_KEYS, MODULE_XFRONTEND_KEYS } from "@/core/constants/modules";
+import { MODULE_XFRONTEND_KEYS } from "@/core/constants/modules";
 import { useModuleSettings } from "./useModuleSettings";
 import { useThemeContext } from "./useThemeContext";
 import { useWhiteLabeling } from "./useWhiteLabeling";
@@ -7,7 +7,6 @@ import { useWhiteLabeling } from "./useWhiteLabeling";
 const ALLOWED_PROTOCOLS = new Set(["http:", "https:"]);
 const ABSOLUTE_URL = /^https?:\/\//i;
 const ISO_CALENDAR_DATE = /^\d{4}-\d{2}-\d{2}$/;
-// schema.org wants a dialable international number; the setting's own help text says the same.
 const INTERNATIONAL_PHONE = /^\+[\d\s().-]{6,}$/;
 
 /** Resolves to an absolute http(s) url, or `undefined` — so a `javascript:` value can't reach the markup. */
@@ -26,10 +25,7 @@ export function toAbsoluteUrl(value: string | undefined, origin: string): string
   }
 }
 
-/**
- * Keeps only real calendar dates in `YYYY-MM-DD`. The setting is free ShortText, and
- * `foundingDate: "last spring"` is invalid structured data — better omitted than published.
- */
+/** Keeps only real calendar dates in `YYYY-MM-DD`; the setting itself is free text. */
 export function toIsoCalendarDate(value: string | undefined): string | undefined {
   const trimmed = value?.trim();
 
@@ -37,8 +33,7 @@ export function toIsoCalendarDate(value: string | undefined): string | undefined
     return undefined;
   }
 
-  // Round-tripped, not just parsed: an out-of-range day rolls over silently (2026-02-30 becomes
-  // 2026-03-02) instead of producing an invalid date.
+  // An out-of-range day rolls over silently: 2026-02-30 parses as 2026-03-02.
   const parsed = new Date(`${trimmed}T00:00:00Z`);
 
   return Number.isNaN(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== trimmed ? undefined : trimmed;
@@ -51,8 +46,7 @@ export function toProfileUrls(value: string | undefined, origin: string): string
   for (const line of value?.split(/\r?\n/) ?? []) {
     const trimmed = line.trim();
 
-    // A profile is off-site by definition. Resolving a relative value against the browsing
-    // origin would claim one of the store's own pages as an external profile of itself.
+    // A relative value resolved against the origin would list the store as its own profile.
     if (!ABSOLUTE_URL.test(trimmed)) {
       continue;
     }
@@ -70,20 +64,18 @@ export function toProfileUrls(value: string | undefined, origin: string): string
 /**
  * Store-level brand facts for the storefront's published identity (JSON-LD, Open Graph).
  *
- * Sourced from the public `XFrontend.BrandProfile.*` store settings (vc-module-x-frontend),
- * which arrive through the existing `store.settings.modules` passthrough — no typed field, so
- * every value is validated here before it can reach the markup.
+ * Sourced from the public `XFrontend.BrandProfile.*` store settings, which arrive untyped
+ * through the `store.settings.modules` passthrough and are validated here.
  */
 export function useBrandProfile() {
   const { themeContext } = useThemeContext();
   const { whiteLabelingLogoUrl, isOrganizationLogoUploaded } = useWhiteLabeling();
   const { getSettingValue } = useModuleSettings(MODULE_XFRONTEND_KEYS.MODULE_ID);
-  const { getSettingValue: getXapiSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 
   const origin = computed(() => globalThis.location.origin);
   const storeName = computed(() => themeContext.value?.storeName);
 
-  /** Settings are an untyped name/value list, and every brand-profile one defaults to "". */
+  /** Every brand-profile setting defaults to "", so blank collapses to undefined. */
   function settingText(name: string): string | undefined {
     const value = getSettingValue(name);
     return typeof value === "string" ? value.trim() || undefined : undefined;
@@ -91,8 +83,7 @@ export function useBrandProfile() {
 
   const tagline = computed(() => settingText(MODULE_XFRONTEND_KEYS.BRAND_PROFILE_TAGLINE));
 
-  // Collapsed, not just trimmed: LongText keeps the merchant's line breaks, and those would end
-  // up inside a `content` attribute and a JSON string.
+  // LongText, so it can carry line breaks that must not reach a `content` attribute.
   const description = computed(() =>
     settingText(MODULE_XFRONTEND_KEYS.BRAND_PROFILE_DESCRIPTION)?.replace(/\s+/g, " "),
   );
@@ -108,17 +99,9 @@ export function useBrandProfile() {
   );
 
   const contactPhone = computed(() => {
-    const displayed = getXapiSettingValue(MODULE_XAPI_KEYS.SUPPORT_PHONE_NUMBER);
+    const configured = settingText(MODULE_XFRONTEND_KEYS.BRAND_PROFILE_CONTACT_PHONE);
 
-    // The header's display number is the fallback, not the source: it is free text, so it is
-    // only usable when it happens to already be dialable. Both candidates face the same gate —
-    // an extension or a missing country code makes the number useless to an agent, and a wrong
-    // number published as structured data is worse than none.
-    const candidate =
-      settingText(MODULE_XFRONTEND_KEYS.BRAND_PROFILE_CONTACT_PHONE) ??
-      (typeof displayed === "string" ? displayed.trim() || undefined : undefined);
-
-    return candidate && INTERNATIONAL_PHONE.test(candidate) ? candidate : undefined;
+    return configured && INTERNATIONAL_PHONE.test(configured) ? configured : undefined;
   });
 
   const storeBrandLogoUrl = computed(() => {

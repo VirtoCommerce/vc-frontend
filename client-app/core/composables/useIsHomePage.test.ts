@@ -30,8 +30,6 @@ describe("useIsHomePage", () => {
     routePath.value = "/";
   });
 
-  // "/xy" must NOT count: only locales the store actually supports are stripped, otherwise
-  // store-level markup would be published on a 404.
   it.each([
     ["/", true],
     ["/fr", true],

@@ -32,13 +32,11 @@ function nonBlank(value?: string): string | undefined {
 }
 
 /**
- * Builds the homepage Organization node. Callers must pass already-sanitised urls, phone and
- * date (`useBrandProfile` does this) — the builder only drops blanks.
+ * Builds the homepage Organization node from already-sanitised facts (`useBrandProfile` does
+ * that); the builder only drops blanks, omitting the key rather than emitting an empty value.
  *
- * Blank keys are omitted rather than emitted: an empty `logo` asserts something false. Returns
- * `null` when the name is missing, since a nameless organization only pollutes entity resolution.
+ * Returns `null` when the name is missing — publish nothing.
  */
-// The nullable return is the contract: `null` means "publish nothing".
 // eslint-disable-next-line sonarjs/function-return-type
 export function buildOrganizationNode(facts: OrganizationFactsType): Record<string, unknown> | null {
   const name = nonBlank(facts.name);

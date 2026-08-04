@@ -94,8 +94,6 @@ describe("toIsoCalendarDate", () => {
     expect(toIsoCalendarDate("  1998-04-01  ")).toBe("1998-04-01");
   });
 
-  // The setting is free ShortText, so anything that is not a real date must be dropped rather
-  // than published as invalid structured data.
   it.each([
     ["a prose value", "last spring"],
     ["a year only", "1998"],
@@ -129,7 +127,6 @@ describe("toProfileUrls", () => {
     expect(toProfileUrls("https://x.com/acme\nhttps://x.com/acme", ORIGIN)).toEqual(["https://x.com/acme"]);
   });
 
-  // A profile is off-site by definition; resolving would claim the store as its own profile.
   it("drops a relative value rather than resolving it against the origin", () => {
     expect(toProfileUrls("/about\nhttps://x.com/acme", ORIGIN)).toEqual(["https://x.com/acme"]);
   });
@@ -172,7 +169,6 @@ describe("useBrandProfile", () => {
     expect(useBrandProfile().storeBrandLogoUrl.value).toBeUndefined();
   });
 
-  // The dedicated setting is the merchant's own logo, which is the whole point of it existing.
   it("prefers the configured brand logo over white labeling", () => {
     mockContext({
       settings: { [MODULE_XFRONTEND_KEYS.BRAND_PROFILE_LOGO_URL]: "https://cdn.acme.example/brand.svg" },
@@ -279,7 +275,6 @@ describe("useBrandProfile", () => {
     expect(contactPhone.value).toBeUndefined();
   });
 
-  // ShortText accepts anything; schema.org needs a dialable international number.
   it.each([
     ["a national-format number", "(800) 555-1234"],
     ["an extension", "+1 800 555 1234 ext. 200"],
@@ -294,33 +289,8 @@ describe("useBrandProfile", () => {
     expect(useBrandProfile().contactPhone.value).toBe("+1 (213) 603 3536");
   });
 
-  // The header's display number often already carries a country code, so an unconfigured store
-  // gets a contactPoint for free — but only through the same gate.
-  it("falls back to the header's support phone when the brand profile has none", () => {
+  it("ignores the header's support phone entirely", () => {
     mockContext({ xapiSettings: { [MODULE_XAPI_KEYS.SUPPORT_PHONE_NUMBER]: "+1 (213) 603 3536" } });
-    expect(useBrandProfile().contactPhone.value).toBe("+1 (213) 603 3536");
-  });
-
-  it("drops the header's support phone when it is not dialable internationally", () => {
-    mockContext({ xapiSettings: { [MODULE_XAPI_KEYS.SUPPORT_PHONE_NUMBER]: "(800) 555-1234 ext. 200" } });
-    expect(useBrandProfile().contactPhone.value).toBeUndefined();
-  });
-
-  it("prefers the brand profile phone over the header's", () => {
-    mockContext({
-      settings: { [MODULE_XFRONTEND_KEYS.BRAND_PROFILE_CONTACT_PHONE]: "+1-800-000-0000" },
-      xapiSettings: { [MODULE_XAPI_KEYS.SUPPORT_PHONE_NUMBER]: "+1 (213) 603 3536" },
-    });
-    expect(useBrandProfile().contactPhone.value).toBe("+1-800-000-0000");
-  });
-
-  // Falling through on a *rejected* brand profile value would silently publish a different
-  // number than the merchant configured.
-  it("does not fall back when the brand profile phone is set but invalid", () => {
-    mockContext({
-      settings: { [MODULE_XFRONTEND_KEYS.BRAND_PROFILE_CONTACT_PHONE]: "(800) 555-1234" },
-      xapiSettings: { [MODULE_XAPI_KEYS.SUPPORT_PHONE_NUMBER]: "+1 (213) 603 3536" },
-    });
     expect(useBrandProfile().contactPhone.value).toBeUndefined();
   });
 
@@ -342,8 +312,6 @@ describe("useBrandProfile", () => {
     });
   });
 
-  // LongText keeps the merchant's line breaks; they must not survive into a meta content
-  // attribute or a JSON string.
   it("collapses whitespace and newlines in the description", () => {
     mockContext({
       settings: {
@@ -358,7 +326,6 @@ describe("useBrandProfile", () => {
     expect(useBrandProfile().organizationFacts.value).toMatchObject({ description: "Fasteners and fixings." });
   });
 
-  // The share image is an Open Graph concern; the JSON-LD node has `logo` and must not carry it.
   it("keeps the share image out of the organization facts", () => {
     mockContext({ settings: { [MODULE_XFRONTEND_KEYS.BRAND_PROFILE_SHARE_IMAGE_URL]: "/assets/og-cover.jpg" } });
     expect(useBrandProfile().organizationFacts.value).not.toHaveProperty("shareImageUrl");

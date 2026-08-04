@@ -5,9 +5,8 @@ import { useLanguages } from "./useLanguages";
 /**
  * True on the storefront homepage, locale prefix or not.
  *
- * Uses the strict `getUrlWithoutLocale`: the `...PossibleLocale` variant matches any two-letter
- * segment, so it would treat "/xy" as the homepage and publish store-level markup on a 404.
- * `app-runner` uses the loose variant only because it runs before the store's language list is known.
+ * `getUrlWithoutLocale` strips only the store's real locales. The `...PossibleLocale` variant
+ * matches any two-letter segment, so it would report "/xy" as the homepage.
  */
 export function useIsHomePage() {
   const route = useRoute();

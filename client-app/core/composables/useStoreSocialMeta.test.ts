@@ -76,7 +76,6 @@ describe("useStoreSocialMeta", () => {
     expect(meta()).toEqual([{ property: "og:site_name", content: "Acme" }]);
   });
 
-  // The share image describes the store, not a page, so it is the site-wide fallback.
   it("emits og:image from the share image on any page", () => {
     mockBrand({ storeName: "Acme", shareImageUrl: "https://store.example.com/og-cover.jpg" });
     useStoreSocialMeta();
@@ -92,8 +91,6 @@ describe("useStoreSocialMeta", () => {
     expect(lastMetaGetter()().map((tag) => tag.property)).not.toContain("og:image");
   });
 
-  // The store description is the fallback anywhere a page has none — including the CMS
-  // homepage, where nothing emits og:description today.
   it("emits og:description from the store description on any page", () => {
     mockBrand({ storeName: "Acme", description: "Fasteners and fixings for trade buyers." });
     useStoreSocialMeta();
@@ -119,7 +116,6 @@ describe("useStoreSocialMeta", () => {
     });
   });
 
-  // Elsewhere the page's own emitter owns og:title, and a store-level one would only be noise.
   it("omits og:title away from the homepage", () => {
     mockBrand({ storeName: "Acme", tagline: "Industrial supply, next day" });
     useStoreSocialMeta();

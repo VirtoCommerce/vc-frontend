@@ -85,8 +85,6 @@ describe("buildOrganizationNode", () => {
       });
     });
 
-    // An empty sameAs array asserts "this brand has no other presence", which is not the same
-    // as "not configured".
     it("omits sameAs when no profile url survived validation", () => {
       expect(buildOrganizationNode({ ...brandFacts, sameAs: [] })).not.toHaveProperty("sameAs");
     });
@@ -101,7 +99,6 @@ describe("buildOrganizationNode", () => {
       });
     });
 
-    // contactPoint exists only to carry the phone; without one it is an empty shell.
     it("omits contactPoint entirely when the phone is unset", () => {
       expect(buildOrganizationNode({ ...brandFacts, contactPhone: undefined })).not.toHaveProperty("contactPoint");
     });
