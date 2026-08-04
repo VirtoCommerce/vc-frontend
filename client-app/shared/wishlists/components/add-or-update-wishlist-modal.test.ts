@@ -90,11 +90,16 @@ const ScopeControls = defineComponent({
 
 // Native controls stand in for the ui-kit: the kit's own dropdown/teleport behaviour is covered where it lives.
 const VcModal = defineComponent({
-  props: { title: { type: String, default: "" } },
+  props: { title: { type: String, default: "" }, isPersistent: { type: Boolean, default: false } },
   emits: ["close"],
-  setup(_, { slots, emit }) {
+  setup(props, { slots, emit }) {
     const close = () => emit("close");
-    return () => [slots.default?.(), slots.actions?.({ close })];
+    return () => [
+      // Mirrors the real modal: while persistent it refuses Esc, the backdrop and its own close button.
+      h("div", { "data-test-id": "modal", "data-persistent": String(props.isPersistent) }),
+      slots.default?.(),
+      slots.actions?.({ close }),
+    ];
   },
 });
 
@@ -188,6 +193,10 @@ function saveButton() {
   return component.getByTestId<HTMLElement>("wishlist-settings-save-button").closest("button")!;
 }
 
+function cancelButton() {
+  return component.getByTestId<HTMLElement>("wishlist-settings-cancel-button").closest("button")!;
+}
+
 function targetedList(sharedWithId?: string): WishlistType {
   return {
     id: "list-1",
@@ -275,6 +284,20 @@ describe("AddOrUpdateWishlistModal — contributed sharing scopes", () => {
       renderModal(targetedList("org-1"));
 
       expect(component.queryByTestId("scope-controls")).toBeNull();
+    });
+
+    it("keeps the persisted target when no controls are there to contribute it", async () => {
+      scopeAvailable.value = false;
+
+      renderModal(targetedList("org-1"));
+      await nameTheList("Renamed");
+      await fireEvent.click(saveButton());
+
+      // Dropping it would send a targeted scope with no target, which the backend refuses — so a user who lost the
+      // capability could no longer edit the rest of the list at all.
+      expect(mocks.updateWishlist).toHaveBeenCalledWith(
+        expect.objectContaining({ scope: TARGETED_SCOPE, sharedWithId: "org-1" }),
+      );
     });
   });
 
@@ -385,6 +408,37 @@ describe("AddOrUpdateWishlistModal — contributed sharing scopes", () => {
 
       expect(mocks.updateWishlist).toHaveBeenCalledOnce();
       expect(mocks.updateWishlist.mock.calls[0][0]).not.toHaveProperty("sharedWithId");
+    });
+  });
+
+  describe("staying put while a write is in flight", () => {
+    it("refuses dismissal and locks Cancel until the save settles", async () => {
+      controls.canSave.value = true;
+      controls.payload.value = { sharedWithId: "org-1" };
+      let settle: () => void = () => {};
+      mocks.updateWishlist.mockImplementation(() => new Promise<void>((resolve) => (settle = resolve)));
+
+      renderModal(targetedList("org-1"));
+      await fireEvent.update(scopeSelect(), TARGETED_SCOPE);
+      controls.dirty.value = true;
+      await fireEvent.click(saveButton());
+
+      // Unmounting here would null the exposed contract, dropping the follow-up without a trace.
+      expect(component.getByTestId("modal")).toHaveAttribute("data-persistent", "true");
+      expect(cancelButton()).toBeDisabled();
+
+      settle();
+
+      // The save awaits the follow-up and the list refresh before releasing, so poll rather than count ticks.
+      await vi.waitFor(() => expect(component.getByTestId("modal")).toHaveAttribute("data-persistent", "false"));
+      expect(cancelButton()).not.toBeDisabled();
+    });
+
+    it("leaves Cancel usable when nothing is being written", () => {
+      renderModal(targetedList("org-1"));
+
+      expect(component.getByTestId("modal")).toHaveAttribute("data-persistent", "false");
+      expect(cancelButton()).not.toBeDisabled();
     });
   });
 

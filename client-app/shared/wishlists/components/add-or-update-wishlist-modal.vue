@@ -8,6 +8,7 @@
     dividers
     is-mobile-fullscreen
     test-id="add-or-update-wishlist-modal"
+    :is-persistent="saving"
   >
     <div class="space-y-4">
       <VcInput
@@ -76,7 +77,15 @@
     </div>
 
     <template #actions="{ close }">
-      <VcButton color="secondary" variant="outline" @click="close">
+      <!-- Dismissing mid-save would unmount the tree the follow-up still needs, losing it without a trace.
+           `isPersistent` covers Esc, the backdrop and the header X; this button needs its own guard. -->
+      <VcButton
+        data-test-id="wishlist-settings-cancel-button"
+        color="secondary"
+        variant="outline"
+        :disabled="saving"
+        @click="close"
+      >
         {{ $t("shared.wishlists.add_or_update_wishlist_modal.cancel_button") }}
       </VcButton>
 
@@ -200,6 +209,14 @@ const { value: sharingScope } = useField<string | undefined>("sharingScope");
 const scopeCanSave = computed(() => (activeScopeElement.value ? !!scopeControls.value?.canSave : true));
 const scopeDirty = computed(() => !!scopeControls.value?.dirty);
 
+// A scope listed only because the list already carries it renders no controls, so nothing would contribute its target
+// — and a targeted scope arriving without one is rejected. Carry the persisted value through untouched instead, so a
+// rep who lost the capability can still edit the rest of the list.
+const carriesPersistedTarget = computed(
+  () =>
+    sharingScope.value === listSharingScope.value && !!activeScope.value && !isSharingScopeAvailable(activeScope.value),
+);
+
 const canSave = computed<boolean>(
   () => meta.value.valid && scopeCanSave.value && (meta.value.dirty || scopeDirty.value),
 );
@@ -211,9 +228,10 @@ async function save(closeHandle: () => void): Promise<void> {
 
   saving.value = true;
   try {
-    // One mutation for the list and its sharing. A scope without controls contributes nothing: the backend applies a
-    // null target for its own non-targeted scopes.
-    const scopePayload = scopeControls.value?.payload ?? {};
+    // One mutation for the list and its sharing. A scope without controls normally contributes nothing: the backend
+    // applies a null target for its own non-targeted scopes.
+    const scopePayload =
+      scopeControls.value?.payload ?? (carriesPersistedTarget.value ? { sharedWithId: listSharedWithId.value } : {});
     const payload = {
       listName: name.value?.trim(),
       description: description.value?.trim(),

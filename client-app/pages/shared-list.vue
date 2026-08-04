@@ -8,7 +8,6 @@
       v-if="$canRenderExtensionPoint('sharedList', EXTENSION_NAMES.sharedList.provenanceNote, list?.sharingSetting)"
       :name="EXTENSION_NAMES.sharedList.provenanceNote"
       category="sharedList"
-      :sharing-setting="list?.sharingSetting"
       class="shared-list__provenance"
     />
 
