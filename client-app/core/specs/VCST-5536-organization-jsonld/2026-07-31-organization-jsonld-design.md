@@ -32,35 +32,42 @@ Verified against the UCP spec and the live ucpchecker report for the QA store:
 
 Priority should be set on "discoverability, cheap" — not on "unblocks conformance."
 
-## 3. Known limitation: this markup is client-rendered
+## 3. Delivery: prerender covers most consumers, three agent crawlers it does not
 
-Documented up front because it bounds what the ticket can deliver.
+> **Corrected 2026-08-04.** An earlier revision of this section claimed there was "no prerender,
+> no HTML rewrite anywhere in the serving path". That was wrong: the original probe used a
+> browser user-agent, which never triggers the bot path. Re-probed per user-agent below.
 
 The storefront is a client-only SPA — `createHead()` from `@unhead/vue/client`
-(`client-app/app-runner.ts`), no SSR, no prerender, no HTML rewrite anywhere in the
-serving path. Verified by probing the live QA host:
+(`client-app/app-runner.ts`), no SSR. But a **prerender service sits in front of it**, keyed on
+user-agent. Responses to bot UAs carry `x-prerender-cache: HIT`.
 
-```
-Cloudflare → k8s ingress
-   ├─ /xapi/*  /ucp/*  /.well-known/ucp   → platform pod (.NET; App Insights appId, INGRESSCOOKIE)
-   └─ everything else                     → storefront pod (serves the theme's dist/, SPA fallback)
-```
+Measured against `https://vcst-qa-storefront.govirto.com/`, response size for `/`:
 
-`dist/index.html` still contains `<meta name="robots" content="noindex">` and that is
-byte-for-byte what the live site returns — nothing rewrites the shell.
+| User-agent | Bytes | Served |
+|---|---|---|
+| Googlebot | 296,022 | prerendered |
+| bingbot | 296,022 | prerendered |
+| facebookexternalhit | 296,022 | prerendered |
+| Slackbot-LinkExpanding | 296,022 | prerendered |
+| ordinary browser | 5,042 | SPA shell |
+| GPTBot | 5,042 | SPA shell |
+| ClaudeBot | 4,827 | SPA shell |
+| PerplexityBot | 4,827 | SPA shell |
 
-Consequence: **GPTBot, ClaudeBot and PerplexityBot do not execute JavaScript** and will not
-see this markup. Neither will social scrapers (Slack, LinkedIn, Facebook). It *is* visible
-to Googlebot, to Rich Results Test, and to any JS-rendering checker.
+Because the prerenderer executes JavaScript, it captures whatever `@unhead` has emitted — so
+this markup reaches **search engines and social scrapers** with no further work. The 296 KB
+responses currently contain no `ld+json` only because the deployed build predates this change.
 
-So be plain about the value split: this delivers **Google/SEO** benefit, and delivers
-**nothing to the agent audience the ticket's first sentence names**. VCST-5536 should not be
-closed as if it had.
+**The remaining gap is narrow and cheap.** GPTBot, ClaudeBot and PerplexityBot are simply not in
+the prerender service's bot list. Closing it means adding those user-agents to that list — an
+infra config change, not the Cloudflare `HTMLRewriter` or storefront-pod work an earlier
+revision of this section recommended. Still outside this repo, still worth its own ticket, but
+an order of magnitude smaller.
 
 ### Why build-time injection into `index.html` is not the answer
 
-It would land in the raw HTML, which is exactly where the agents look — so it is worth saying
-precisely why it is rejected. Not because of a code-capability inference, but because
+Moot now that prerender covers the path, but recorded because it was considered:
 multi-brand-per-environment is a **documented, supported Virto configuration**:
 
 > "Virto Commerce allows you to configure multiple stores, each with its own domain, within a
@@ -80,17 +87,10 @@ into `index.html` would publish the wrong brand on every other domain served by 
 give each store its own artifact, in which case build-time would work for that deployment. It
 can equally point several stores at one artifact, and a product theme cannot assume which.)
 
-### The only correct fix
+### The fix for the remaining three
 
-Per-request injection, at the one layer that knows the `Host` header:
-
-- **Cloudflare Snippet / Worker** — the storefront already sits behind Cloudflare (`rocket-loader`,
-  `cf-fonts` appear in live responses). `HTMLRewriter` into `<head>` for `/`, brand data cached
-  per host. Small; the constraint is access to the zone, not difficulty.
-- **The storefront pod** — correct by construction, but a Virto Cloud infrastructure change.
-
-Neither is this repo. **Recommend a separate ticket**; this spec is its input, since it defines
-the exact node to inject.
+Add `GPTBot`, `ClaudeBot` and `PerplexityBot` to the prerender service's user-agent list. Not
+this repo; **recommend a separate ticket**.
 
 ## 4. Backend dependency — `brandProfile` on `StoreResponseType`
 
@@ -387,10 +387,12 @@ them, deliberately stated without line references so they cannot silently rot):
 1. OG tags are already emitted by several individual pages, each a page-local `useSeoMeta`
    block with no shared owner. There is no existing seam to extend.
 2. `ogSiteName` occurs nowhere in the codebase.
-3. The Builder.io and Virto Pages previewers set title and description only — **no OG tags
-   at all** — and they outrank the internal previewer for `/`. So a CMS homepage today
-   publishes zero Open Graph tags. That is the case the ticket's item 3 is really about, and
-   it is not fixable without touching those previewer pages.
+3. ~~The Builder.io and Virto Pages previewers set title and description only — no OG tags at
+   all.~~ **Corrected 2026-08-04 against the running QA store:** the CMS homepage emits
+   `og:title`, `og:url` and `og:type` of its own. It emits no `og:description` or `og:image`,
+   which is what leaves room for the store-level fallbacks below — but the homepage `og:title`
+   in §9.2 is **overridden on this store** and the tagline never surfaces there. It applies
+   only where no page emitter claims the tag.
 
 ### 9.2 What this composable owns
 
@@ -402,7 +404,7 @@ Given the above, the only thing that can be added safely without touching seven 
 | `og:site_name` | this composable, **site-wide** | Nothing emits it today; it is a store-level fact, not a page fact |
 | `og:image` | this composable, **site-wide fallback** (`XFrontend.BrandProfile.ShareImageUrl`) | A purpose-made share card for the store. Site-wide rather than homepage-only because it is the sensible default anywhere a page has no image of its own — and a page that does have one overrides it |
 | `og:description` | this composable, **site-wide fallback** (`XFrontend.BrandProfile.Description`) | Same reasoning. It is also the only thing that gives a CMS homepage an `og:description` at all (9.1 #3) |
-| `og:title` | this composable, **homepage only**, `name — tagline` | Nothing owns it on a CMS homepage (9.1 #3), which is exactly the case the ticket's item 3 describes. Elsewhere the page emitters own it |
+| `og:title` | this composable, **homepage only**, `name — tagline` | The ticket's item 3 asks for it. In practice the QA CMS homepage emits its own and wins (9.1 #3), so this surfaces only where no page emitter claims the tag |
 
 `og:url` / `og:type` are **left with the pages**: centralising them means editing every page
 emitter, each with its own data source and gating convention. That is a refactor with its own
@@ -455,8 +457,17 @@ across tests within a file and such assertions can pass against a node left by a
 test.
 
 **Verification before the PR:** `yarn validate:types` (`vue-tsc --build --force`),
-`yarn lint`, `yarn test:unit`. Manual: Rich Results Test / `view-source` on a locally built
-preview to confirm the node is present on `/` and absent on `/catalog`.
+`yarn eslint`, `yarn vitest run --dir client-app` (a bare root run also collects
+`.claude/worktrees`).
+
+**Live, 2026-08-04**, dev server against the QA backend with all seven settings configured:
+
+| Route | Result |
+|---|---|
+| `/` | 1 node, every field present: `@id`, `name`, `url`, `logo`, `description`, `slogan`, 3 × `sameAs`, `contactPoint.telephone`, `foundingDate` |
+| `/de/` | 1 node, same `@id` |
+| `/catalog` | 0 nodes; page's own `og:description` wins, our `og:image` falls through |
+| `/xy` | 0 nodes |
 
 ## 12. Acceptance criteria
 
@@ -472,8 +483,8 @@ preview to confirm the node is present on `/` and absent on `/catalog`.
 6. A logged-in buyer whose organization has uploaded its own logo does **not** change the
    published `logo`.
 7. Type-check, lint and unit tests pass.
-8. Documented: the markup is client-rendered and therefore invisible to non-JS agent
-   crawlers (§3).
+8. Documented: prerender carries the markup to search engines and social scrapers; GPTBot,
+   ClaudeBot and PerplexityBot are outside its user-agent list (§3).
 9. A store with the brand profile configured additionally publishes `description`, `slogan`,
    `sameAs`, `contactPoint.telephone` and `foundingDate` in the node, `og:description` and
    `og:image` site-wide, and `name — tagline` as the homepage `og:title`.
@@ -488,9 +499,9 @@ preview to confirm the node is present on `/` and absent on `/catalog`.
    delivered as public store settings instead — §4.5.
 2. ~~Does `description` get a source?~~ **Answered:** `XFrontend.BrandProfile.Description`
    pushed to #10 as `f92f96f` — §4.5.
-3. Is a follow-up ticket opened for server/edge injection (§3), and does Oleg accept
-   frontend-only as done for VCST-5536 given it is not a conformance blocker?
+3. Is a follow-up ticket opened to add GPTBot / ClaudeBot / PerplexityBot to the prerender
+   user-agent list (§3)?
 4. Should `foundingDate` and `legalName` be in the first backend cut at all — neither
    affects agent shopping behaviour, unlike return policy and contact point.
-5. Live verification is pending: QA has `VirtoCommerce.XFrontend` installed but its public
-   settings list is still empty, so nothing can be configured until #10 merges and deploys.
+5. ~~Live verification is pending.~~ **Done 2026-08-04** against a configured QA store — see
+   §11.
