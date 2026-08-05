@@ -128,8 +128,31 @@ export function visibleTabRules<T extends { name: string }>(rules: readonly T[],
  * renders. Names the backend no longer returns fall out here too.
  */
 export function hiddenTabsInEffect(rules: readonly { name: string }[], hiddenTabs: readonly string[]): string[] {
+  // No catalog yet (the rules query has not resolved) is not evidence that a stored name is retired —
+  // treating it as such would read as the rep having chosen nothing.
+  if (!rules.length) {
+    return [...hiddenTabs];
+  }
+
   const shown = new Set(visibleTabRules(rules, hiddenTabs).map((rule) => rule.name));
   return rules.filter((rule) => !shown.has(rule.name)).map((rule) => rule.name);
+}
+
+/**
+ * The stored list with names the backend no longer returns dropped, and repeats collapsed.
+ *
+ * The only cleanup safe to apply on the rep's behalf, and deliberately not `hiddenTabsInEffect`: that
+ * one answers what the checkboxes render and collapses to nothing under the all-hidden fallback, so
+ * pruning on it would erase rules the rep hid that are still live. An empty catalog is not evidence
+ * that anything was retired.
+ */
+export function knownHiddenTabs(rules: readonly { name: string }[], hiddenTabs: readonly string[]): string[] {
+  if (!rules.length) {
+    return [...hiddenTabs];
+  }
+
+  const known = new Set(rules.map((rule) => rule.name));
+  return [...new Set(hiddenTabs.filter((name) => known.has(name)))];
 }
 
 /** Toggling from the edit-mode checkboxes; the last checked rule cannot be unchecked. */

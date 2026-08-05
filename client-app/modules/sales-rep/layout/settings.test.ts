@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   hiddenTabsInEffect,
+  knownHiddenTabs,
   maxRowsSetting,
   parseSettings,
   serializeSettings,
@@ -177,6 +178,32 @@ describe("hiddenTabsInEffect", () => {
 
   it("drops a stored name the backend no longer returns", () => {
     expect(hiddenTabsInEffect(rules, ["Processing", "Retired"])).toEqual(["Processing"]);
+  });
+
+  it("keeps the stored list when the catalog has not loaded", () => {
+    expect(hiddenTabsInEffect([], ["New", "Processing"])).toEqual(["New", "Processing"]);
+  });
+});
+
+describe("knownHiddenTabs", () => {
+  it("drops a name the backend no longer returns", () => {
+    expect(knownHiddenTabs(rules, ["Processing", "Retired"])).toEqual(["Processing"]);
+  });
+
+  // The rep hid New and Processing; Completed was retired, so every surviving rule is hidden and the
+  // display falls back to showing all. Pruning on that would erase two live choices.
+  it("keeps hidden names that are still live even when the fallback is showing every tab", () => {
+    const surviving = [{ name: "New" }, { name: "Processing" }];
+
+    expect(knownHiddenTabs(surviving, ["New", "Processing"])).toEqual(["New", "Processing"]);
+  });
+
+  it("keeps the stored list when the catalog has not loaded", () => {
+    expect(knownHiddenTabs([], ["New", "Processing"])).toEqual(["New", "Processing"]);
+  });
+
+  it("collapses a name stored twice", () => {
+    expect(knownHiddenTabs(rules, ["New", "New"])).toEqual(["New"]);
   });
 });
 
