@@ -84,6 +84,7 @@
         "hidden_stats": "Métricas ocultas",
         "empty_visible": "Arrastre una métrica aquí para mostrarla",
         "empty_hidden": "Arrastre una métrica aquí para ocultarla",
+        "max_rows": "Filas máximas",
         "a11y": {
           "reorder": "Reordenar {title}",
           "hide": "Ocultar {title}",
@@ -95,7 +96,8 @@
           "edge": "{title} ya está en la posición {position} de {total}.",
           "cancelled": "Movimiento de {title} cancelado.",
           "parked": "{title} oculto.",
-          "restored": "{title} visible."
+          "restored": "{title} visible.",
+          "max_rows": "Filas máximas mostradas por {title}, entre {min} y {max}"
         }
       }
     },

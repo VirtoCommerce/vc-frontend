@@ -84,6 +84,7 @@
         "hidden_stats": "Skjulte nøkkeltall",
         "empty_visible": "Dra et nøkkeltall hit for å vise det",
         "empty_hidden": "Dra et nøkkeltall hit for å skjule det",
+        "max_rows": "Maks. rader",
         "a11y": {
           "reorder": "Endre rekkefølge på {title}",
           "hide": "Skjul {title}",
@@ -95,7 +96,8 @@
           "edge": "{title} er allerede på plass {position} av {total}.",
           "cancelled": "Flytting av {title} avbrutt.",
           "parked": "{title} skjult.",
-          "restored": "{title} vist."
+          "restored": "{title} vist.",
+          "max_rows": "Maksimalt antall rader vist av {title}, mellom {min} og {max}"
         }
       }
     },

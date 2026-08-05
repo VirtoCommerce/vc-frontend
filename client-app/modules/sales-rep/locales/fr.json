@@ -84,6 +84,7 @@
         "hidden_stats": "Indicateurs masqués",
         "empty_visible": "Faites glisser un indicateur ici pour l'afficher",
         "empty_hidden": "Faites glisser un indicateur ici pour le masquer",
+        "max_rows": "Nombre de lignes max",
         "a11y": {
           "reorder": "Réorganiser {title}",
           "hide": "Masquer {title}",
@@ -95,7 +96,8 @@
           "edge": "{title} est déjà en position {position} sur {total}.",
           "cancelled": "Déplacement de {title} annulé.",
           "parked": "{title} masqué.",
-          "restored": "{title} affiché."
+          "restored": "{title} affiché.",
+          "max_rows": "Nombre de lignes max affiché par {title}, entre {min} et {max}"
         }
       }
     },

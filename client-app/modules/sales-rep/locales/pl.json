@@ -84,6 +84,7 @@
         "hidden_stats": "Ukryte wskaźniki",
         "empty_visible": "Przeciągnij tutaj wskaźnik, aby go pokazać",
         "empty_hidden": "Przeciągnij tutaj wskaźnik, aby go ukryć",
+        "max_rows": "Maks. wierszy",
         "a11y": {
           "reorder": "Zmień kolejność: {title}",
           "hide": "Ukryj {title}",
@@ -95,7 +96,8 @@
           "edge": "{title} jest już na pozycji {position} z {total}.",
           "cancelled": "Anulowano przenoszenie {title}.",
           "parked": "Ukryto {title}.",
-          "restored": "Pokazano {title}."
+          "restored": "Pokazano {title}.",
+          "max_rows": "Maksymalna liczba wierszy wyświetlanych przez {title}, od {min} do {max}"
         }
       }
     },

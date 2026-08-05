@@ -84,6 +84,7 @@
         "hidden_stats": "Ausgeblendete Kennzahlen",
         "empty_visible": "Ziehen Sie eine Kennzahl hierher, um sie einzublenden",
         "empty_hidden": "Ziehen Sie eine Kennzahl hierher, um sie auszublenden",
+        "max_rows": "Max Zeilen",
         "a11y": {
           "reorder": "{title} umsortieren",
           "hide": "{title} ausblenden",
@@ -95,7 +96,8 @@
           "edge": "{title} ist bereits an Position {position} von {total}.",
           "cancelled": "Verschieben von {title} abgebrochen.",
           "parked": "{title} ausgeblendet.",
-          "restored": "{title} eingeblendet."
+          "restored": "{title} eingeblendet.",
+          "max_rows": "Maximale Zeilen angezeigt von {title}, zwischen {min} und {max}"
         }
       }
     },

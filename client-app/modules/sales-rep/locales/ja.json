@@ -84,6 +84,7 @@
         "hidden_stats": "非表示の指標",
         "empty_visible": "指標をここにドラッグすると表示されます",
         "empty_hidden": "指標をここにドラッグすると非表示になります",
+        "max_rows": "最大行数",
         "a11y": {
           "reorder": "{title} を並べ替え",
           "hide": "{title} を非表示",
@@ -95,7 +96,8 @@
           "edge": "{title} はすでに {total} 件中 {position} 番目です。",
           "cancelled": "{title} の移動をキャンセルしました。",
           "parked": "{title} を非表示にしました。",
-          "restored": "{title} を表示しました。"
+          "restored": "{title} を表示しました。",
+          "max_rows": "{title}に表示される最大行数。{min}から{max}の間で選択できます"
         }
       }
     },

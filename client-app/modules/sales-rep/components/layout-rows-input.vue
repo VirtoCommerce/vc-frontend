@@ -1,6 +1,8 @@
 <template>
-  <label class="layout-rows-input">
-    <span class="layout-rows-input__label">{{ t("sales_rep.hub.layout.max_rows") }}</span>
+  <div class="layout-rows-input">
+    <!-- Decorative: `ariaLabel` below names the field, and VcInput generates the input's id internally,
+         so a `<label>` here could be associated with nothing. -->
+    <span class="layout-rows-input__label" aria-hidden="true">{{ t("sales_rep.hub.layout.max_rows") }}</span>
 
     <VcInput
       v-model="draft"
@@ -12,7 +14,7 @@
       :aria-label="t('sales_rep.hub.layout.a11y.max_rows', { title, min: setting.min, max: setting.max })"
       @blur="commit(true)"
     />
-  </label>
+  </div>
 </template>
 
 <script setup lang="ts">
