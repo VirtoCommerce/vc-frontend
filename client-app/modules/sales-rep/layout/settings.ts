@@ -36,9 +36,13 @@ export function defaultSettings(block: SalesRepBlockType): SalesRepBlockSettings
 }
 
 function clampRows(value: unknown, setting: Extract<SalesRepBlockSettingType, { kind: "maxRows" }>): number {
-  // `Number` rather than `parseInt`: a value the backend round-tripped as a number stays a number,
-  // and a string that is not entirely numeric ("5 rows") should fall back rather than read as 5.
-  const parsed = Math.trunc(Number(value));
+  // The type gate is load-bearing: `Number` maps `null` to 0 and `true` to 1, so without it a value
+  // that means nothing here would clamp to the minimum and look deliberate. Past it, `Number` rather
+  // than `parseInt`, so a string that is not entirely numeric ("5 rows") falls back instead of
+  // reading as 5.
+  const numeric = typeof value === "number" || (typeof value === "string" && value.trim() !== "");
+  const parsed = numeric ? Math.trunc(Number(value)) : Number.NaN;
+
   if (!Number.isFinite(parsed)) {
     return setting.default;
   }
@@ -112,10 +116,7 @@ export function serializeSettings(
  * saved before a status was retired can still hide every rule the backend returns today, and a tab
  * strip with no tabs cannot be recovered from the UI.
  */
-export function visibleTabRules<T extends { name: string }>(
-  rules: readonly T[],
-  hiddenTabs: readonly string[],
-): T[] {
+export function visibleTabRules<T extends { name: string }>(rules: readonly T[], hiddenTabs: readonly string[]): T[] {
   const visible = rules.filter((rule) => !hiddenTabs.includes(rule.name));
   return visible.length ? visible : [...rules];
 }

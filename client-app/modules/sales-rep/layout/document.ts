@@ -92,7 +92,7 @@ export function reconcileLayout(
 function settingsFingerprint(settings: readonly { key: string; value?: unknown }[] | undefined): string {
   return [...(settings ?? [])]
     .map((setting) => `${setting.key}=${String(setting.value)}`)
-    .sort()
+    .sort((a, b) => a.localeCompare(b))
     .join("|");
 }
 

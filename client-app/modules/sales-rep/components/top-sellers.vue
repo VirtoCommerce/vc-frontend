@@ -24,7 +24,7 @@
             v-else
             :loading="loading"
             :items="items"
-            :skeleton-rows="TOP_SELLERS_DEFAULT_TAKE"
+            :skeleton-rows="rowLimit"
             :sort="sortInfo"
             mobile-breakpoint="lg"
             @header-click="applySort"
@@ -104,6 +104,7 @@
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { getProductRoute } from "@/core/utilities/product";
+import { useBlockChrome } from "../composables/useBlockChrome";
 import { useSalesRepColumnSort } from "../composables/useSalesRepColumnSort";
 import { useSalesRepPeriodFilter } from "../composables/useSalesRepPeriodFilter";
 import { useSalesRepRules } from "../composables/useSalesRepRules";
@@ -145,12 +146,17 @@ const { sortInfo, isColumnSortable, applySort } = useSalesRepColumnSort({
   rules: sortRules,
 });
 
+// The layout's row cap when this renders inside one; the constant is the standalone fallback.
+const chrome = useBlockChrome();
+const rowLimit = computed(() => chrome?.settings.value.maxRows ?? TOP_SELLERS_DEFAULT_TAKE);
+
 const { items, loading } = useSalesRepTopSellers({
   organizationId: () => props.organizationId,
   sort: () => sort.value,
   filter: () => filter.value,
   periodFrom,
   periodTo,
+  take: () => rowLimit.value,
 });
 </script>
 

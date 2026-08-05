@@ -1,4 +1,6 @@
 import { inject, provide } from "vue";
+import type { SalesRepBlockSettingsType } from "../types/layout";
+import type { MaxRowsSettingType } from "./useLayoutSettings";
 import type { ComputedRef, InjectionKey } from "vue";
 
 /**
@@ -17,6 +19,13 @@ export interface ILayoutBlockChromeType {
   hide: () => void;
   handleKeydown: (event: KeyboardEvent) => void;
   handleBlur: () => void;
+  /** Edit mode itself. Distinct from `draggable`, which stat cards turn off while still editing. */
+  editing: ComputedRef<boolean>;
+  /** This block's settings as the rep has them in the draft (VCST-5649). */
+  settings: ComputedRef<SalesRepBlockSettingsType>;
+  /** Present only for a block whose registry entry declares a row cap. */
+  maxRows: ComputedRef<MaxRowsSettingType | undefined>;
+  updateSettings: (patch: Partial<SalesRepBlockSettingsType>) => void;
 }
 
 const LAYOUT_BLOCK_CHROME = Symbol("layoutBlockChrome") as InjectionKey<ILayoutBlockChromeType>;

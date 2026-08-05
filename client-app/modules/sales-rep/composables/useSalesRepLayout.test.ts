@@ -46,7 +46,14 @@ beforeEach(() => {
   apolloMock.refetch.mockReset();
 });
 
-const echoedBlock = (id: string) => ({ id, type: id, hidden: false, settings: [] });
+// Row caps the layout sends for the two list widgets. An echo has to return these too, or the save is
+// treated as disagreeing — a dropped setting reverts the rep's choice as silently as a reverted hide.
+const ECHOED_SETTINGS: Record<string, { key: string; value: unknown }[]> = {
+  orders: [{ key: "maxRows", value: 5 }],
+  top_sellers: [{ key: "maxRows", value: 5 }],
+};
+
+const echoedBlock = (id: string) => ({ id, type: id, hidden: false, settings: ECHOED_SETTINGS[id] ?? [] });
 
 // The customer profile is the richer surface — it populates all three regions.
 const scope = "customerProfile" as const;
@@ -68,8 +75,8 @@ describe("useSalesRepLayout", () => {
 
     const { state } = useSalesRepLayout(scope);
 
-    expect(state.value.mainRight.visible).toEqual(["actions", "info"]);
-    expect(state.value.mainLeft.visible).toEqual(["orders", "top_sellers"]);
+    expect(state.value.regions.mainRight.visible).toEqual(["actions", "info"]);
+    expect(state.value.regions.mainLeft.visible).toEqual(["orders", "top_sellers"]);
   });
 
   it("applies a saved arrangement over the defaults", () => {
@@ -89,8 +96,8 @@ describe("useSalesRepLayout", () => {
 
     const { state } = useSalesRepLayout(scope);
 
-    expect(state.value.mainRight.visible).toEqual(["info"]);
-    expect(state.value.mainRight.hidden).toEqual(["actions"]);
+    expect(state.value.regions.mainRight.visible).toEqual(["info"]);
+    expect(state.value.regions.mainRight.hidden).toEqual(["actions"]);
   });
 
   it("blocks editing when the read failed, so a full-replace save cannot clobber an unread layout", () => {
@@ -136,10 +143,10 @@ describe("useSalesRepLayout", () => {
     startEdit();
     setHidden("info", true);
 
-    expect(state.value.mainRight.hidden).toContain("info");
+    expect(state.value.regions.mainRight.hidden).toContain("info");
 
     cancel();
-    expect(state.value.mainRight.visible).toContain("info");
+    expect(state.value.regions.mainRight.visible).toContain("info");
   });
 
   it("sends the complete document — every region, hidden blocks included", async () => {
@@ -183,7 +190,7 @@ describe("useSalesRepLayout", () => {
     await expect(save()).resolves.toBe(false);
     expect(editing.value).toBe(true);
     expect(saveFailed.value).toBe(true);
-    expect(state.value.mainRight.hidden).toContain("info");
+    expect(state.value.regions.mainRight.hidden).toContain("info");
   });
 
   // Reconciling a missing document yields registry defaults, so trusting the echo blindly would
@@ -199,7 +206,7 @@ describe("useSalesRepLayout", () => {
     await expect(save()).resolves.toBe(false);
     expect(editing.value).toBe(true);
     expect(saveFailed.value).toBe(true);
-    expect(state.value.mainRight.hidden).toContain("info");
+    expect(state.value.regions.mainRight.hidden).toContain("info");
   });
 
   // No refetch follows a save, so the echo — not what was sent — is what the rep ends up looking at.
@@ -222,10 +229,10 @@ describe("useSalesRepLayout", () => {
     const { startEdit, save, state } = useSalesRepLayout(scope);
     startEdit();
     // Registry order is actions, info — so the echo disagrees with what was sent.
-    expect(state.value.mainRight.visible).toEqual(["actions", "info"]);
+    expect(state.value.regions.mainRight.visible).toEqual(["actions", "info"]);
 
     await expect(save()).resolves.toBe(true);
-    expect(state.value.mainRight.visible).toEqual(["info", "actions"]);
+    expect(state.value.regions.mainRight.visible).toEqual(["info", "actions"]);
   });
 
   // A document is not enough to trust — reconciling a partial one fills the gaps from registry
@@ -241,7 +248,7 @@ describe("useSalesRepLayout", () => {
     await expect(save()).resolves.toBe(false);
 
     // The draft survives, so `actions` stays parked and the rep can retry rather than losing the edit.
-    expect(state.value.mainRight.hidden).toContain("actions");
+    expect(state.value.regions.mainRight.hidden).toContain("actions");
     expect(editing.value).toBe(true);
     expect(saveFailed.value).toBe(true);
     // Neither side is trusted; the canonical document is what resolves the disagreement.
@@ -294,7 +301,7 @@ describe("useSalesRepLayout", () => {
     startEdit();
     setHidden("actions", true);
 
-    const sent = { ...state.value.mainRight };
+    const sent = { ...state.value.regions.mainRight };
     const pending = save();
 
     // Each of these would otherwise land visibly — `reset` most of all, wiping the arrangement to
@@ -303,7 +310,7 @@ describe("useSalesRepLayout", () => {
     setHidden("info", true);
     reorderVisible("mainRight", ["info"]);
 
-    expect(state.value.mainRight).toEqual(sent);
+    expect(state.value.regions.mainRight).toEqual(sent);
 
     release({
       data: {
@@ -322,8 +329,8 @@ describe("useSalesRepLayout", () => {
 
     await expect(pending).resolves.toBe(true);
     // The saved arrangement survived; none of the mid-flight calls left a mark.
-    expect(state.value.mainRight.visible).toEqual(["info"]);
-    expect(state.value.mainRight.hidden).toEqual(["actions"]);
+    expect(state.value.regions.mainRight.visible).toEqual(["info"]);
+    expect(state.value.regions.mainRight.hidden).toEqual(["actions"]);
   });
 
   // The breadcrumbs sit outside the pages' `inert` wrapper, so the route guard can call `save` again
@@ -394,13 +401,13 @@ describe("useSalesRepLayout", () => {
     startEdit();
     reset();
 
-    expect(state.value.mainRight.visible).toEqual(["actions", "info"]);
+    expect(state.value.regions.mainRight.visible).toEqual(["actions", "info"]);
     expect(apolloMock.mutate).not.toHaveBeenCalled();
 
     // Cancelling after a reset returns to what is actually stored — both visible, in the saved order.
     cancel();
-    expect(state.value.mainRight.visible).toEqual(["info", "actions"]);
-    expect(state.value.mainRight.hidden).toEqual([]);
+    expect(state.value.regions.mainRight.visible).toEqual(["info", "actions"]);
+    expect(state.value.regions.mainRight.hidden).toEqual([]);
   });
 
   // The pages render components only for `visibleIn(...)`; the hidden tray renders names alone. A

@@ -108,6 +108,9 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 import { useLayoutPage } from "../composables/useLayoutPage";
+import { provideLayoutSettings } from "../composables/useLayoutSettings";
+import { getBlock } from "../layout/registry";
+import { maxRowsSetting } from "../layout/settings";
 import LayoutEditBar from "./layout-edit-bar.vue";
 import LayoutEditButton from "./layout-edit-button.vue";
 import LayoutHiddenTray from "./layout-hidden-tray.vue";
@@ -160,8 +163,18 @@ const {
   reorderVisible,
   reorderHidden,
   toggleHidden,
+  settingsOf,
+  updateSettings,
   save,
 } = layout;
+
+// The only component that knows both the draft and the registry, so blocks resolve their own slice of
+// each through this.
+provideLayoutSettings({
+  valuesOf: settingsOf,
+  maxRowsOf: (id) => maxRowsSetting(getBlock(props.scope, id)),
+  update: updateSettings,
+});
 
 // Registry props (e.g. `filterable` on orders) plus the surface's, so each region stays one generic
 // `<component>`. The surface assembles these because only the registry knows a block's component.

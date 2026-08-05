@@ -17,9 +17,22 @@
       />
     </template>
 
-    <!-- Composed, not replaced: a widget's own header content (the orders "View all" link) stays put. -->
+    <!-- Composed, not replaced: a widget's own header content (the orders "View all" link) stays put —
+         except where the rows field takes its place, which is the only combination that overflows a
+         narrow header. -->
     <template v-if="draggable || $slots.append" #append>
-      <slot name="append" />
+      <slot v-if="!rowsSetting" name="append" />
+
+      <!-- Generic: any block whose registry entry declares a row cap gets this, no per-widget code.
+           `.layout-widget__rows` is in the drag filter, or a mousedown here would start a drag. -->
+      <LayoutRowsInput
+        v-if="rowsSetting && chrome"
+        class="layout-widget__rows"
+        :model-value="chrome.settings.value.maxRows ?? rowsSetting.default"
+        :setting="rowsSetting"
+        :title="chrome.title.value"
+        @update:model-value="chrome.updateSettings({ maxRows: $event })"
+      />
 
       <VcButton
         v-if="draggable"
@@ -48,6 +61,7 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { stopBlockChrome, useBlockChrome } from "../composables/useBlockChrome";
+import LayoutRowsInput from "./layout-rows-input.vue";
 
 interface IProps {
   title?: string;
@@ -67,6 +81,10 @@ const { t } = useI18n();
 // Absent outside a layout region — then this is a plain VcWidget.
 const chrome = useBlockChrome();
 const draggable = computed(() => chrome?.draggable.value ?? false);
+
+// Only while editing: outside it the header is the widget's own, and a row cap is not something to
+// change in passing.
+const rowsSetting = computed(() => (chrome?.editing.value ? chrome.maxRows.value : undefined));
 
 stopBlockChrome();
 

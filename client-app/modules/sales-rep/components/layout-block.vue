@@ -23,6 +23,10 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { provideBlockChrome } from "../composables/useBlockChrome";
+import { useLayoutSettings } from "../composables/useLayoutSettings";
+import type { SalesRepBlockSettingsType } from "../types/layout";
+
+const NO_SETTINGS: SalesRepBlockSettingsType = { hiddenTabs: [] };
 
 interface IProps {
   blockId: string;
@@ -60,6 +64,10 @@ const wholeHandleAttrs = computed(() =>
     : {},
 );
 
+// The surface owns the draft and the registry; this block only knows its own id, so its slice of both
+// is resolved here.
+const layoutSettings = useLayoutSettings();
+
 // Offered to whatever the slot renders; `layout-widget.vue` picks it up. Stat cards drag whole and park
 // in the paired zone, so they take neither control.
 provideBlockChrome({
@@ -69,6 +77,10 @@ provideBlockChrome({
   hide: () => emit("hide"),
   handleKeydown: (event: KeyboardEvent) => emit("handleKeydown", event),
   handleBlur: () => emit("handleBlur"),
+  editing: computed(() => Boolean(props.editing)),
+  settings: computed(() => layoutSettings?.valuesOf(props.blockId) ?? NO_SETTINGS),
+  maxRows: computed(() => layoutSettings?.maxRowsOf(props.blockId)),
+  updateSettings: (patch) => layoutSettings?.update(props.blockId, patch),
 });
 </script>
 
