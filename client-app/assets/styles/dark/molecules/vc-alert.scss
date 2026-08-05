@@ -7,35 +7,41 @@
     warning: 400,
   );
 
-  &[class*="vc-alert--solid--"] {
-    --text-color: var(--color-additional-950);
-    --icon-color: var(--color-additional-950);
-    --close-button-icon-color: var(--color-additional-950);
+  // Compound `&.vc-alert--solid--#{$color}` keeps the (0,2,0) specificity of the
+  // `[class*=]` selector it replaces.
+  // Icons fall back to the solid text token (as light mode does) so they track the text
+  // unless a preset overrides them; `--close-button-icon-color` has no token key of its own.
+  @each $color in $colors {
+    &.vc-alert--solid--#{$color} {
+      --text-color: var(--color-vc-text-solid-#{$color}, var(--color-additional-950));
+      --icon-color: var(--color-vc-icon-solid-#{$color}, var(--color-vc-text-solid-#{$color}, var(--color-additional-950)));
+      --close-button-icon-color: var(--color-vc-text-solid-#{$color}, var(--color-additional-950));
+    }
   }
 
   @each $color, $shade in $solid-bg {
     &--solid--#{$color} {
-      --bg-color: var(--color-#{$color}-#{$shade});
-      --border-color: var(--color-#{$color}-#{$shade});
+      --bg-color: var(--color-vc-background-solid-#{$color}, var(--color-#{$color}-#{$shade}));
+      --border-color: var(--color-vc-border-solid-#{$color}, var(--color-#{$color}-#{$shade}));
     }
   }
 
   @each $color in $colors {
     &--soft--#{$color} {
-      --bg-color: var(--color-#{$color}-100);
-      --border-color: var(--color-#{$color}-100);
-      --text-color: var(--color-#{$color}-900);
+      --bg-color: var(--color-vc-background-soft-#{$color}, var(--color-#{$color}-100));
+      --border-color: var(--color-vc-border-soft-#{$color}, var(--color-#{$color}-100));
+      --text-color: var(--color-vc-text-soft-#{$color}, var(--color-#{$color}-900));
     }
 
     &--outline--#{$color} {
-      --text-color: var(--color-#{$color}-900);
-      --border-color: var(--color-#{$color}-600);
+      --text-color: var(--color-vc-text-outline-#{$color}, var(--color-#{$color}-900));
+      --border-color: var(--color-vc-border-outline-#{$color}, var(--color-#{$color}-600));
     }
 
     &--tonal--#{$color} {
-      --bg-color: var(--color-#{$color}-100);
-      --text-color: var(--color-#{$color}-900);
-      --border-color: var(--color-#{$color}-600);
+      --bg-color: var(--color-vc-background-tonal-#{$color}, var(--color-#{$color}-100));
+      --text-color: var(--color-vc-text-tonal-#{$color}, var(--color-#{$color}-900));
+      --border-color: var(--color-vc-border-tonal-#{$color}, var(--color-#{$color}-600));
     }
   }
 }

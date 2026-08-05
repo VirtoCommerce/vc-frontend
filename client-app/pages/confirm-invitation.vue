@@ -129,6 +129,7 @@ const { translate } = useErrorsTranslator<IdentityErrorInfoType>("identity_error
 const userId = useRouteQueryParam<string>("userId");
 const email = useRouteQueryParam<string>("email");
 const token = useRouteQueryParam<string>("token");
+const organizationId = useRouteQueryParam<string>("organizationId");
 
 const schema = toTypedSchema(
   object({
@@ -168,6 +169,7 @@ const onSubmit = handleSubmit(async (data) => {
     firstName: data.firstName?.trim() || "",
     lastName: data.lastName?.trim() || "",
     password: data.password || "",
+    organizationId: organizationId.value,
   });
 
   if (result.succeeded) {

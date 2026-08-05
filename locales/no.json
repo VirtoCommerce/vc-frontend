@@ -222,6 +222,8 @@
       "role_update_successful": "Brukerrollen er oppdatert",
       "contact_lock_failed": "Kunne ikke blokkere/oppheve blokkering av brukeren.",
       "role_update_failed": "Feil ved oppdatering av rolle.",
+      "invite_revoke_failed": "Kunne ikke trekke tilbake invitasjonen.",
+      "invite_resend_failed": "Kunne ikke sende invitasjonen på nytt.",
       "passwords_do_not_match": "Passordfeltene samsvarer ikke",
       "password_new_same_old": "Ditt nåværende passord og det nye passordet kan ikke være det samme",
       "blocked": "Du er blokkert. Du kan ikke få tilgang til data eller legge inn en bestilling. For mer informasjon, kontakt ",
@@ -549,6 +551,14 @@
         "email_length_exceeded": "E-postadressens maksimale lengde er {maxValue} tegn",
         "invalid_emails": "Ugyldige e-postadresser: {invalidEmails}"
       },
+      "pending_invites_widget": {
+        "title": "Bedriftsinvitasjoner",
+        "accept_button": "Godta",
+        "reject_button": "Avslå",
+        "invite_accepted": "Invitasjonen er godtatt",
+        "invite_rejected": "Invitasjonen er avslått",
+        "action_failed": "Noe gikk galt. Prøv igjen"
+      },
       "profile_update_success_modal": {
         "title": "Profiloppdatering",
         "message": "Profilen er oppdatert!",
@@ -616,6 +626,10 @@
       "delete_member_modal": {
         "title": "Slett medlem",
         "text": "Er du sikker på at du vil slette brukeren {name} fra listen over bedriftsmedlemmer?"
+      },
+      "revoke_invite_modal": {
+        "title": "Trekk tilbake invitasjon",
+        "text": "Er du sikker på at du vil trekke tilbake invitasjonen som ble sendt til {name}?"
       },
       "notifications": {
         "user_blocked": "Brukeren er blokkert",
@@ -1407,7 +1421,9 @@
           "block_user": "Blokker bruker",
           "unblock_user": "Opphev blokkering av bruker",
           "delete": "Slett",
-          "no_members": "Fortsett å bla"
+          "no_members": "Fortsett å bla",
+          "revoke_invite": "Trekk tilbake invitasjon",
+          "resend_invite": "Send invitasjon på nytt"
         },
         "content_header": {
           "name": "Navn",
@@ -1420,6 +1436,10 @@
           "inactive": "Inaktiv",
           "invited": "Invitert",
           "blocked": "Blokkert"
+        },
+        "notifications": {
+          "invite_revoked": "Invitasjonen er trukket tilbake",
+          "invite_resent": "Invitasjonen er sendt på nytt"
         }
       }
     },
@@ -1665,6 +1685,7 @@
     }
   },
   "identity_error": {
+    "AlreadyMemberOfOrganization": "Denne personen er allerede medlem av denne organisasjonen",
     "DuplicateEmail": "E-post {0} er allerede i bruk",
     "DuplicateUserName": "Brukernavn {0} er allerede i bruk",
     "InvalidEmail": "Vennligst skriv inn en gyldig e-postadresse, for eksempel johndoe{'@'}gmail.com",

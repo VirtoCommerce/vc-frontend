@@ -13,6 +13,7 @@ export { default as OrdersTable } from "./orders/orders-table.vue";
 /** @deprecated PageToolbarBlock is deprecated. Consider using a custom implementation. */
 export { default as PageToolbarBlock } from "./page-toolbar-block.vue";
 export { default as PasswordTips } from "./password-tips.vue";
+export { default as PendingInvitesWidget } from "./pending-invites-widget.vue";
 export { default as ProfileUpdateSuccessModal } from "./profile-update-success-modal.vue";
 export { default as RegistrationSuccessModal } from "./registration-success-modal.vue";
 export { default as ResetPasswordForm } from "./reset-password-form.vue";

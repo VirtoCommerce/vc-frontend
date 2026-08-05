@@ -222,6 +222,8 @@
       "role_update_successful": "Käyttäjärooli on päivitetty onnistuneesti",
       "contact_lock_failed": "Käyttäjän esto/eston poisto epäonnistui.",
       "role_update_failed": "Virhe roolin päivityksessä.",
+      "invite_revoke_failed": "Kutsun peruuttaminen epäonnistui.",
+      "invite_resend_failed": "Kutsun lähettäminen uudelleen epäonnistui.",
       "passwords_do_not_match": "Salasanakenttien arvot eivät täsmää",
       "password_new_same_old": "Nykyinen salasanasi ja uusi salasana eivät saa olla samat",
       "blocked": "Sinut on estetty. Et voi käyttää tietoja tai tehdä tilausta. Lisätietoja saat ottamalla yhteyttä ",
@@ -549,6 +551,14 @@
         "email_length_exceeded": "Sähköpostiosoitteen enimmäispituus on {maxValue} merkkiä",
         "invalid_emails": "Virheelliset sähköpostiosoitteet: {invalidEmails}"
       },
+      "pending_invites_widget": {
+        "title": "Organisaatiokutsut",
+        "accept_button": "Hyväksy",
+        "reject_button": "Hylkää",
+        "invite_accepted": "Kutsu hyväksytty",
+        "invite_rejected": "Kutsu hylätty",
+        "action_failed": "Jokin meni pieleen. Yritä uudelleen"
+      },
       "profile_update_success_modal": {
         "title": "Profiilin päivitys",
         "message": "Profiili on päivitetty onnistuneesti!",
@@ -616,6 +626,10 @@
       "delete_member_modal": {
         "title": "Poista jäsen",
         "text": "Haluatko varmasti poistaa käyttäjän {name} yrityksen jäsenten luettelosta?"
+      },
+      "revoke_invite_modal": {
+        "title": "Peruuta kutsu",
+        "text": "Haluatko varmasti peruuttaa käyttäjälle {name} lähetetyn kutsun?"
       },
       "notifications": {
         "user_blocked": "Käyttäjä on estetty onnistuneesti",
@@ -1407,7 +1421,9 @@
           "block_user": "Estä käyttäjä",
           "unblock_user": "Poista esto käyttäjältä",
           "delete": "Poista",
-          "no_members": "Jatka selaamista"
+          "no_members": "Jatka selaamista",
+          "revoke_invite": "Peruuta kutsu",
+          "resend_invite": "Lähetä kutsu uudelleen"
         },
         "content_header": {
           "name": "Nimi",
@@ -1420,6 +1436,10 @@
           "inactive": "Ei-aktiivinen",
           "invited": "Kutsuttu",
           "blocked": "Estetty"
+        },
+        "notifications": {
+          "invite_revoked": "Kutsu peruutettu",
+          "invite_resent": "Kutsu lähetetty uudelleen"
         }
       }
     },
@@ -1665,6 +1685,7 @@
     }
   },
   "identity_error": {
+    "AlreadyMemberOfOrganization": "Tämä henkilö on jo tämän organisaation jäsen",
     "DuplicateEmail": "Sähköposti {0} on jo käytössä",
     "DuplicateUserName": "Käyttäjänimi {0} on jo käytössä",
     "InvalidEmail": "Syötä kelvollinen sähköpostiosoite, esimerkiksi johndoe{'@'}gmail.com",
