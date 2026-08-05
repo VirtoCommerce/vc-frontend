@@ -21,38 +21,53 @@
     warning: 500,
   );
 
-  &[class*="vc-chip--solid--"]:not(.vc-chip--disabled) {
-    --text-color: var(--color-additional-950);
+  // Compound `&.vc-chip--solid--#{$color}` keeps the (0,3,0) specificity of the
+  // `[class*=]` selector it replaces.
+  @each $color in $colors {
+    &.vc-chip--solid--#{$color}:not(.vc-chip--disabled) {
+      --text-color: var(--color-vc-text-solid-#{$color}, var(--color-additional-950));
+    }
   }
 
   @each $color, $shade in $solid-bg {
     &--solid--#{$color} {
-      --bg-color: var(--color-#{$color}-#{$shade});
-      --border-color: var(--color-#{$color}-#{$shade});
+      --bg-color: var(--color-vc-background-solid-#{$color}, var(--color-#{$color}-#{$shade}));
+      --border-color: var(--color-vc-border-solid-#{$color}, var(--color-#{$color}-#{$shade}));
     }
   }
 
   @each $color, $shade in $solid-hover {
     &--solid--#{$color}.vc-chip--clickable:not(.vc-chip--disabled) .vc-chip__content:hover {
-      --bg-color: var(--color-#{$color}-#{$shade});
-      --border-color: var(--color-#{$color}-#{$shade});
+      // Darken the rest colour. Fallback stays the `$solid-hover` shade: presets without
+      // the override key have hover shades brighter than their dark rest fill.
+      --bg-color: color-mix(
+        in srgb,
+        var(--color-vc-background-solid-#{$color}, var(--color-#{$color}-#{$shade})),
+        black 8%
+      );
+      --border-color: var(--bg-color);
     }
   }
 
   @each $color in $colors {
     &--soft--#{$color}:not(.vc-chip--disabled) {
-      --bg-color: var(--color-#{$color}-100);
-      --text-color: var(--color-#{$color}-900);
+      --bg-color: var(--color-vc-background-soft-#{$color}, var(--color-#{$color}-100));
+      --text-color: var(--color-vc-text-soft-#{$color}, var(--color-#{$color}-900));
 
       &.vc-chip--clickable:not(.vc-chip--disabled) .vc-chip__content:hover {
-        --bg-color: var(--color-#{$color}-200);
-        --border-color: var(--color-#{$color}-200);
+        // Derive from the rest colour (white, not black): dark ramps are not monotonic.
+        --bg-color: color-mix(
+          in srgb,
+          var(--color-vc-background-soft-#{$color}, var(--color-#{$color}-200)),
+          white 8%
+        );
+        --border-color: var(--bg-color);
       }
     }
 
     &--outline--#{$color}:not(.vc-chip--disabled) {
-      --text-color: var(--color-#{$color}-900);
-      --border-color: var(--color-#{$color}-600);
+      --text-color: var(--color-vc-text-outline-#{$color}, var(--color-#{$color}-900));
+      --border-color: var(--color-vc-border-outline-#{$color}, var(--color-#{$color}-600));
 
       &.vc-chip--clickable:not(.vc-chip--disabled) .vc-chip__content:hover {
         --bg-color: var(--color-#{$color}-100);
@@ -60,17 +75,21 @@
     }
 
     &--tonal--#{$color}:not(.vc-chip--disabled) {
-      --bg-color: var(--color-#{$color}-100);
-      --text-color: var(--color-#{$color}-900);
-      --border-color: var(--color-#{$color}-600);
+      --bg-color: var(--color-vc-background-tonal-#{$color}, var(--color-#{$color}-100));
+      --text-color: var(--color-vc-text-tonal-#{$color}, var(--color-#{$color}-900));
+      --border-color: var(--color-vc-border-tonal-#{$color}, var(--color-#{$color}-600));
 
       &.vc-chip--clickable:not(.vc-chip--disabled) .vc-chip__content:hover {
-        --bg-color: var(--color-#{$color}-200);
+        --bg-color: color-mix(
+          in srgb,
+          var(--color-vc-background-tonal-#{$color}, var(--color-#{$color}-200)),
+          white 8%
+        );
       }
     }
 
     &--surface--#{$color}:not(.vc-chip--disabled) {
-      --text-color: var(--color-#{$color}-900);
+      --text-color: var(--color-vc-text-surface-#{$color}, var(--color-#{$color}-900));
 
       &.vc-chip--clickable:not(.vc-chip--disabled) .vc-chip__content:hover {
         --bg-color: var(--color-#{$color}-100);
@@ -79,12 +98,13 @@
     }
 
     &--ghost--#{$color}:not(.vc-chip--disabled) {
-      --text-color: var(--color-#{$color}-900);
+      --text-color: var(--color-vc-text-ghost-#{$color}, var(--color-#{$color}-900));
 
       &.vc-chip--clickable:not(.vc-chip--disabled) .vc-chip__content:hover {
         --bg-color: var(--color-#{$color}-100);
         --border-color: var(--color-#{$color}-100);
-        --text-color: var(--color-#{$color}-900);
+        // Re-assert rest text: masks the light base rule, which darkens a shade-500 fallback.
+        --text-color: var(--color-vc-text-ghost-#{$color}, var(--color-#{$color}-900));
       }
     }
   }

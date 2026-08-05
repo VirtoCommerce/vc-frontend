@@ -1,7 +1,4 @@
-[class*="vc-badge--solid--"] {
-  --text-color: var(--color-additional-950);
-}
-
+$colors: primary, secondary, accent, neutral, success, danger, info, warning;
 $solid-bg: (
   primary: 200,
   secondary: 300,
@@ -13,29 +10,35 @@ $solid-bg: (
   warning: 400,
 );
 
-@each $color, $shade in $solid-bg {
+@each $color in $colors {
   .vc-badge--solid--#{$color} {
-    --bg-color: var(--color-#{$color}-#{$shade});
-    --border-color: var(--color-#{$color}-#{$shade});
+    --text-color: var(--color-vc-text-solid-#{$color}, var(--color-additional-950));
   }
 }
 
-@each $color in primary, secondary, accent, neutral, success, danger, info, warning {
+@each $color, $shade in $solid-bg {
+  .vc-badge--solid--#{$color} {
+    --bg-color: var(--color-vc-background-solid-#{$color}, var(--color-#{$color}-#{$shade}));
+    --border-color: var(--color-vc-border-solid-#{$color}, var(--color-#{$color}-#{$shade}));
+  }
+}
+
+@each $color in $colors {
   .vc-badge--outline--#{$color} {
-    --text-color: var(--color-#{$color}-900);
-    --border-color: var(--color-#{$color}-600);
+    --text-color: var(--color-vc-text-outline-#{$color}, var(--color-#{$color}-900));
+    --border-color: var(--color-vc-border-outline-#{$color}, var(--color-#{$color}-600));
   }
 
   .vc-badge--soft--#{$color} {
-    --bg-color: var(--color-#{$color}-100);
-    --text-color: var(--color-#{$color}-900);
+    --bg-color: var(--color-vc-background-soft-#{$color}, var(--color-#{$color}-100));
+    --text-color: var(--color-vc-text-soft-#{$color}, var(--color-#{$color}-900));
   }
 
   .vc-badge--surface--#{$color} {
-    --text-color: var(--color-#{$color}-900);
+    --text-color: var(--color-vc-text-surface-#{$color}, var(--color-#{$color}-900));
   }
 
   .vc-badge--ghost--#{$color} {
-    --text-color: var(--color-#{$color}-900);
+    --text-color: var(--color-vc-text-ghost-#{$color}, var(--color-#{$color}-900));
   }
 }
