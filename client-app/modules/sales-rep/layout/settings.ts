@@ -69,18 +69,20 @@ export function parseSettings(
 
   const rows = maxRowsSetting(block);
   const wantsTabs = blockHasSetting(block, "ruleTabs");
-  const hiddenTabs: string[] = [];
+  // A Set, so a name stored twice cannot go back out twice and make a save that succeeded read as a
+  // disagreeing echo against a backend that deduplicates.
+  const hiddenTabs = new Set<string>();
   let maxRows = rows?.default;
 
   for (const setting of saved ?? []) {
     if (rows && setting.key === SETTING_MAX_ROWS) {
       maxRows = clampRows(setting.value, rows);
     } else if (wantsTabs && setting.key.startsWith(SETTING_HIDDEN_TAB_PREFIX) && meansHidden(setting.value)) {
-      hiddenTabs.push(setting.key.slice(SETTING_HIDDEN_TAB_PREFIX.length));
+      hiddenTabs.add(setting.key.slice(SETTING_HIDDEN_TAB_PREFIX.length));
     }
   }
 
-  return { maxRows, hiddenTabs };
+  return { maxRows, hiddenTabs: [...hiddenTabs] };
 }
 
 /** The flat list that goes back to the backend. Values equal to the default are still written —

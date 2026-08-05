@@ -102,6 +102,17 @@ describe("parseSettings", () => {
     expect(parseSettings(topSellers, [{ key: "tab.New", value: false }]).hiddenTabs).toEqual([]);
   });
 
+  // Sent twice, a backend that stores one copy echoes one, and the fingerprints disagree — reporting a
+  // save that succeeded as failed.
+  it("collapses a name stored twice, so it cannot go back out twice", () => {
+    const saved: SavedLayoutSettingType[] = [
+      { key: "tab.New", value: false },
+      { key: "tab.New", value: false },
+    ];
+
+    expect(parseSettings(orders, saved).hiddenTabs).toEqual(["New"]);
+  });
+
   it("ignores a tab key that does not mean hidden", () => {
     expect(parseSettings(orders, [{ key: "tab.New", value: true }]).hiddenTabs).toEqual([]);
   });
