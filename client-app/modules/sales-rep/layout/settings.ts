@@ -1,9 +1,7 @@
 // Per-block settings: the translation between the UI's shape and the flat scalar key/value list the
-// backend stores (VCST-5649). Pure, like layout/document.ts — reading is where every validation and
-// fallback rule lives, so it is the part worth testing.
-//
-// `settings.value` is a scalar only; lists and objects are not valid, which is why the status-tab
-// selection is flattened into one sibling key per unchecked rule.
+// backend stores (VCST-5649). Pure, like layout/document.ts — reading is where the validation and
+// fallback rules live, so it is the part worth testing. `settings.value` is a scalar only, which is
+// why the status-tab selection is flattened into one sibling key per unchecked rule.
 import { SETTING_HIDDEN_TAB_PREFIX, SETTING_MAX_ROWS } from "../constants";
 import type {
   SalesRepBlockSettingsType,
