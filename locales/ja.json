@@ -222,6 +222,8 @@
       "role_update_successful": "権限を更新しました",
       "contact_lock_failed": "ユーザーのブロック/ブロック解除に失敗しました。",
       "role_update_failed": "権限の更新に失敗しました。",
+      "invite_revoke_failed": "招待の取り消しに失敗しました。",
+      "invite_resend_failed": "招待の再送信に失敗しました。",
       "passwords_do_not_match": "パスワードが一致しません",
       "password_new_same_old": "現在のパスワードと異なる必要があります",
       "blocked": "アカウントがブロックされています",
@@ -549,6 +551,14 @@
         "email_length_exceeded": "メールアドレスは{maxValue}文字以内で入力してください",
         "invalid_emails": "無効なメールアドレス: {invalidEmails}"
       },
+      "pending_invites_widget": {
+        "title": "組織への招待",
+        "accept_button": "承諾",
+        "reject_button": "拒否",
+        "invite_accepted": "招待を承諾しました",
+        "invite_rejected": "招待を拒否しました",
+        "action_failed": "エラーが発生しました。もう一度お試しください"
+      },
       "profile_update_success_modal": {
         "title": "プロフィール更新",
         "message": "プロフィールを更新しました！",
@@ -617,6 +627,10 @@
       "delete_member_modal": {
         "title": "メンバー削除",
         "text": "メンバーリストからユーザー「{name}」を削除しますか？"
+      },
+      "revoke_invite_modal": {
+        "title": "招待を取り消す",
+        "text": "{name} 宛に送信した招待を取り消しますか？"
       },
       "notifications": {
         "user_blocked": "ユーザーをブロックしました。",
@@ -1409,7 +1423,9 @@
           "block_user": "ユーザーをブロック",
           "unblock_user": "ブロックを解除",
           "delete": "削除",
-          "no_members": "閲覧を続ける"
+          "no_members": "閲覧を続ける",
+          "revoke_invite": "招待を取り消す",
+          "resend_invite": "招待を再送信"
         },
         "content_header": {
           "name": "名前",
@@ -1422,6 +1438,10 @@
           "inactive": "無効",
           "invited": "招待済み",
           "blocked": "ブロック"
+        },
+        "notifications": {
+          "invite_revoked": "招待を取り消しました",
+          "invite_resent": "招待を再送信しました"
         }
       }
     },
@@ -1667,6 +1687,7 @@
     }
   },
   "identity_error": {
+    "AlreadyMemberOfOrganization": "この人はすでにこの組織のメンバーです",
     "DuplicateEmail": "メールアドレス {0} は既に使用されています",
     "DuplicateUserName": "ユーザー名 {0} は既に使用されています",
     "InvalidEmail": "有効なメールアドレスを入力してください（例：johndoe@gmail.com）",

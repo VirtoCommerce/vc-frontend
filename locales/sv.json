@@ -222,6 +222,8 @@
       "role_update_successful": "Kundrollen har uppdaterats framgångsrikt",
       "contact_lock_failed": "Det gick inte att blockera/avblockera användaren.",
       "role_update_failed": "Fel uppstod vid uppdatering av rollen.",
+      "invite_revoke_failed": "Det gick inte att återkalla inbjudan.",
+      "invite_resend_failed": "Det gick inte att skicka om inbjudan.",
       "passwords_do_not_match": "Lösenordsfälten måste ha matchande värden",
       "password_new_same_old": "Ditt nuvarande lösenord och nya lösenord måste vara olika",
       "blocked": "Du har blockerats. Du kan inte nå någon information eller skapa beställningen. För mer information, vänligen ",
@@ -549,6 +551,14 @@
         "email_length_exceeded": "Den maximala längden på en e-postadress är {maxValue} tecken",
         "invalid_emails": "Felaktiga e-postadresser: {invalidEmails}"
       },
+      "pending_invites_widget": {
+        "title": "Organisationsinbjudningar",
+        "accept_button": "Acceptera",
+        "reject_button": "Avböj",
+        "invite_accepted": "Inbjudan accepterad",
+        "invite_rejected": "Inbjudan avböjd",
+        "action_failed": "Något gick fel. Försök igen"
+      },
       "profile_update_success_modal": {
         "title": "Profiluppdatering",
         "message": "Profilen har uppdaterats framgångsrikt!",
@@ -617,6 +627,10 @@
       "delete_member_modal": {
         "title": "Radera medlem",
         "text": "Är du säker på att du vill radera användaren {name} från listan över företagsmedlemmar?"
+      },
+      "revoke_invite_modal": {
+        "title": "Återkalla inbjudan",
+        "text": "Är du säker på att du vill återkalla inbjudan som skickats till {name}?"
       },
       "notifications": {
         "user_blocked": "Användaren har blockerats framgångsrikt",
@@ -1409,7 +1423,9 @@
           "block_user": "Blockera användare",
           "unblock_user": "Avblockera användare",
           "delete": "Radera",
-          "no_members": "Fortsätt bläddra"
+          "no_members": "Fortsätt bläddra",
+          "revoke_invite": "Återkalla inbjudan",
+          "resend_invite": "Skicka inbjudan igen"
         },
         "content_header": {
           "name": "Namn",
@@ -1422,6 +1438,10 @@
           "inactive": "Inaktiv",
           "invited": "Inbjuden",
           "blocked": "Blockerad"
+        },
+        "notifications": {
+          "invite_revoked": "Inbjudan återkallad",
+          "invite_resent": "Inbjudan skickad igen"
         }
       }
     },
@@ -1667,6 +1687,7 @@
     }
   },
   "identity_error": {
+    "AlreadyMemberOfOrganization": "Denna person är redan medlem i denna organisation",
     "DuplicateEmail": "E-post {0} är redan upptagen",
     "DuplicateUserName": "Användarnamn {0} är redan upptaget",
     "InvalidEmail": "Vänligen ange en giltig e-postadress, t.ex. johndoe@gmail.com",

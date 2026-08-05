@@ -2,8 +2,10 @@ import { GetOrganizationsDocument } from "@/core/api/graphql/types";
 import { graphqlClient } from "../../../client";
 import type { GetOrganizationsQueryVariables, OrganizationFieldsFragment } from "@/core/api/graphql/types";
 
+export type OrganizationFieldsType = OrganizationFieldsFragment;
+
 interface IOrganizationsType {
-  items: OrganizationFieldsFragment[];
+  items: OrganizationFieldsType[];
   totalCount: number;
   pageInfo: {
     hasNextPage: boolean;
