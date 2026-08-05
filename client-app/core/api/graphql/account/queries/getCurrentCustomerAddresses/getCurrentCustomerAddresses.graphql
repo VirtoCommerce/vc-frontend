@@ -8,6 +8,7 @@ query GetCurrentUserAddresses(
   $regionIds: [String]
   $cities: [String]
   $keyword: String
+  $ids: [String]
 ) {
   currentCustomerAddresses(
     after: $after
@@ -17,6 +18,7 @@ query GetCurrentUserAddresses(
     regionIds: $regionIds
     cities: $cities
     keyword: $keyword
+    ids: $ids
   ) {
     totalCount
     items {

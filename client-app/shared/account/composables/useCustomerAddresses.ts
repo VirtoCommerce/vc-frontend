@@ -7,7 +7,7 @@ import {
 import { SortDirection } from "@/core/enums";
 import { getSortingExpression, Logger, toInputAddress } from "@/core/utilities";
 import { useUser } from "./useUser";
-import type { InputMemberAddressType, MemberAddressFieldsFragment } from "@/core/api/graphql/types";
+import type { InputMemberAddressType, MemberAddressFieldsFragment, MemberAddressType } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
 import type { MaybeRefOrGetter, MaybeRef } from "vue";
 
@@ -42,16 +42,17 @@ export function useCustomerAddresses(itemsPerPage: MaybeRefOrGetter<number> = 6,
   const termFacets = computed(() => result.value?.currentCustomerAddresses?.term_facets ?? []);
   const pages = computed(() => Math.ceil(totalCount.value / toValue(itemsPerPage)));
 
-  async function addOrUpdateAddresses(items: MemberAddressFieldsFragment[]): Promise<void> {
+  async function addOrUpdateAddresses(items: MemberAddressFieldsFragment[]): Promise<MemberAddressType[]> {
     if (!items.length || !user.value.memberId) {
-      return;
+      return [];
     }
 
     const inputAddresses: InputMemberAddressType[] = items.map(toInputAddress);
 
     try {
-      await updateMemberAddresses(user.value.memberId, inputAddresses);
+      const updatedAddresses = await updateMemberAddresses(user.value.memberId, inputAddresses);
       void refetch();
+      return updatedAddresses;
     } catch (e) {
       Logger.error(`${useCustomerAddresses.name}.${addOrUpdateAddresses.name}`, e);
       throw e;
