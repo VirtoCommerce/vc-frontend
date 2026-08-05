@@ -26,12 +26,6 @@ import { provideBlockChrome } from "../composables/useBlockChrome";
 import { useLayoutSettings } from "../composables/useLayoutSettings";
 import type { SalesRepBlockSettingsType } from "../types/layout";
 
-const emit = defineEmits<IEmits>();
-
-const props = defineProps<IProps>();
-
-const NO_SETTINGS: SalesRepBlockSettingsType = { hiddenTabs: [] };
-
 interface IProps {
   blockId: string;
   /** Localized block name — used in the handle and hide button labels. */
@@ -48,6 +42,12 @@ interface IEmits {
   (event: "handleKeydown", payload: KeyboardEvent): void;
   (event: "handleBlur"): void;
 }
+
+const emit = defineEmits<IEmits>();
+
+const props = defineProps<IProps>();
+
+const NO_SETTINGS: SalesRepBlockSettingsType = { hiddenTabs: [] };
 
 const { t } = useI18n();
 

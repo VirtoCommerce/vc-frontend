@@ -59,14 +59,18 @@ const widgetSlot =
 function mountConfigurableBlock(options: {
   editing?: boolean;
   values?: SalesRepBlockSettingsType;
+  savedValues?: SalesRepBlockSettingsType;
   configurable?: boolean;
   widgetSlots?: Record<string, () => unknown>;
 }) {
   const update = vi.fn();
   const values = options.values ?? { maxRows: 5, hiddenTabs: [] };
+  // Distinct from the draft, as the real seam is while editing — sharing one object would let a test
+  // that confuses the two pass.
+  const savedValues = options.savedValues ?? values;
   const settings: ILayoutSettingsType = {
     valuesOf: () => values,
-    savedValuesOf: () => values,
+    savedValuesOf: () => savedValues,
     maxRowsOf: () => (options.configurable === false ? undefined : MAX_ROWS),
     update,
   };
@@ -117,6 +121,16 @@ describe("the max-rows field in a widget header", () => {
 
     expect(input.min).toBe("1");
     expect(input.max).toBe("20");
+  });
+
+  // The field edits the draft; only the query reads the saved value.
+  it("shows the drafted cap, not the saved one", () => {
+    const { wrapper } = mountConfigurableBlock({
+      values: { maxRows: 12, hiddenTabs: [] },
+      savedValues: { maxRows: 5, hiddenTabs: [] },
+    });
+
+    expect((wrapper.get(".layout-widget__rows input").element as HTMLInputElement).value).toBe("12");
   });
 
   it("commits an in-range value as it is typed", async () => {
