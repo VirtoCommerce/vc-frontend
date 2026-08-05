@@ -45,6 +45,12 @@ has been going out as `[]`. Only the two `.graphql` documents change, to *select
 4. **Stat cards get no settings.** Nothing about a KPI card is configurable.
 5. **Kit components are consumed through published slots and props only** — no `.vc-*` selectors,
    no `!important`, no inline fallbacks. See §5.
+6. **The row cap applies on save, not as you type** (2026-08-05). It is a query variable, so driving it
+   from the draft refired `salesRepOrders` on every keystroke — typing "15" fetched 1 row, then 15. The
+   ticket asks only that settings persist with the layout; the commit-as-typed behaviour came from a
+   prototype with no backend. Widgets fetch with the saved value, the field edits the draft. See §4.
+7. **No "at least one status tab" constraint** (2026-08-05). The "All" baseline makes it redundant —
+   see §2.
 
 ## Verified facts (from the codebase and the live backend)
 
@@ -161,16 +167,22 @@ compare settings too: a silently dropped setting reverts the rep's choice exactl
 ### 4. Plumbing — one provide, one inject
 
 ```
-layout-surface.vue    provides { settings, updateSettings, editing }   (whole record + updater)
+layout-surface.vue    provides { valuesOf, savedValuesOf, maxRowsOf, update }
 └── layout-region.vue   UNTOUCHED — it owns order, not configuration
     └── layout-block.vue  injects it, folds THIS block's slice into the chrome it already provides
-        └── layout-widget.vue   renders the rows input from chrome
-            └── sales-rep-orders.vue / top-sellers.vue   read their own values from chrome
+        └── layout-widget.vue   renders the rows input from the DRAFT
+            └── sales-rep-orders.vue / top-sellers.vue   fetch with the SAVED value
 ```
 
-`ILayoutBlockChromeType` gains `editing`, `settings` and `updateSettings`. Passing the record down
-through `layout-region.vue` as props was rejected: the region would be threading a concern it has
-no part in, for the same reason VCST-5367 chose provide/inject for the drag controls.
+`ILayoutBlockChromeType` gains `editing`, `settings` (draft), `savedSettings`, `maxRows` and
+`updateSettings`. Passing the record down through `layout-region.vue` as props was rejected: the region
+would be threading a concern it has no part in, for the same reason VCST-5367 chose provide/inject for
+the drag controls.
+
+**Two accessors, because a row cap is a query variable.** `settingsOf` reads the draft — what the rows
+field shows. `persistedSettingsOf` reads `savedState ?? reconcileLayout(query result)`, ignoring the
+draft — what the widgets fetch with, so an unsaved cap cannot refire the query (Decision 6). A failed
+save leaves the saved value untouched, so the widgets keep fetching what the backend actually holds.
 
 ### 5. UI — every kit touchpoint is a published slot or prop
 
@@ -200,9 +212,14 @@ Outside edit mode the chips row renders only the checked rules. The "All" baseli
 present and is not configurable — it is not one of the rules, and it is what makes hiding every rule
 safe. If the active filter's rule is unchecked mid-edit, the widget falls back to the baseline.
 
-**Consumption.** `sales-rep-orders.vue` reads `maxRows` from chrome for `first` and `:skeleton-rows`,
-falling back to its `limit` prop then `ORDERS_DEFAULT_LIMIT`; `top-sellers.vue` reads it for `take`
-(already supported by `useSalesRepTopSellers`) and `:skeleton-rows`.
+**Consumption.** Both widgets read the **saved** cap (`chrome.savedSettings`), never the draft, so it
+takes effect on save. `sales-rep-orders.vue` uses it for `first` and `:skeleton-rows` — the same
+computed, so the skeleton count can never disagree with what is fetched — falling back to its `limit`
+prop then `ORDERS_DEFAULT_LIMIT`; `top-sellers.vue` uses it for `take` (already supported by
+`useSalesRepTopSellers`) and `:skeleton-rows`, falling back to `TOP_SELLERS_DEFAULT_TAKE`.
+
+The rows field itself is bound to the draft, so it shows what the rep typed while the table still shows
+the saved cap until Save.
 
 ### 6. GraphQL
 
@@ -216,7 +233,7 @@ generate:graphql-types` — whose diff spans every module and must be pruned to 
 | ------------------------------- | ----------------------------------------------------------------------------------------- |
 | `layout/settings.test.ts` (new) | clamping, non-numeric fallback, unknown `tab.*` keys, an unloaded catalog, round-trip |
 | `layout/document.test.ts`       | the reshaped state, settings surviving reconcile, `settings` in the payload, the echo check |
-| `useSalesRepLayout.test.ts`     | reset restores defaults, cancel discards, save sends what the draft holds                  |
+| `useSalesRepLayout.test.ts`     | settings through cancel / reset / save / an in-flight save; draft vs saved accessors        |
 | component tests                 | the rows input's drag-filter class and clamping; the toggles' checked state               |
 
 ## Out of scope
@@ -225,3 +242,18 @@ generate:graphql-types` — whose diff spans every module and must be pruned to 
 - Any per-block setting beyond these two.
 - The four findings VCST-5367 reviewed and consciously deferred, and its deliberate absence of
   unsaved-draft guards — both still stand.
+
+## Reviewed and deferred (2026-08-05)
+
+Two findings from the review rounds, each judged not worth changing here:
+
+- **An echo mismatch drops the widgets back to the page-load document until the refetch lands.**
+  `save` clears `savedState` on a disagreeing echo so `persisted` reads the refetch rather than an
+  untrusted echo — a deliberate VCST-5367 decision. This ticket makes the row cap flow through
+  `persisted` too, so the same window now also shows a stale cap, and a failed refetch leaves it there.
+  Reachable only via a malformed echo, and self-correcting otherwise. Changing the recovery strategy
+  means revisiting VCST-5367's, which is out of scope here.
+- **Tab changes reach the live query before Save, while the row cap waits for it.** Unchecking the tab
+  that is the active filter clears the filter immediately (otherwise a selected chip would point at a
+  hidden tab), and Cancel does not restore the filter. So the two settings follow opposite semantics in
+  one edit session. Deferred rather than resolved either way.
