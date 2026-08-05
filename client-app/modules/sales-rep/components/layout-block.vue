@@ -26,6 +26,10 @@ import { provideBlockChrome } from "../composables/useBlockChrome";
 import { useLayoutSettings } from "../composables/useLayoutSettings";
 import type { SalesRepBlockSettingsType } from "../types/layout";
 
+const emit = defineEmits<IEmits>();
+
+const props = defineProps<IProps>();
+
 const NO_SETTINGS: SalesRepBlockSettingsType = { hiddenTabs: [] };
 
 interface IProps {
@@ -45,8 +49,6 @@ interface IEmits {
   (event: "handleBlur"): void;
 }
 
-const emit = defineEmits<IEmits>();
-const props = defineProps<IProps>();
 const { t } = useI18n();
 
 // One object, so the card is never focusable without also being announced as a button — and only while
@@ -79,6 +81,7 @@ provideBlockChrome({
   handleBlur: () => emit("handleBlur"),
   editing: computed(() => Boolean(props.editing)),
   settings: computed(() => layoutSettings?.valuesOf(props.blockId) ?? NO_SETTINGS),
+  savedSettings: computed(() => layoutSettings?.savedValuesOf(props.blockId) ?? NO_SETTINGS),
   maxRows: computed(() => layoutSettings?.maxRowsOf(props.blockId)),
   updateSettings: (patch) => layoutSettings?.update(props.blockId, patch),
 });

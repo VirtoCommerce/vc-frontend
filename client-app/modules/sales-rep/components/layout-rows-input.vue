@@ -1,7 +1,6 @@
 <template>
   <div class="layout-rows-input">
-    <!-- Decorative: `ariaLabel` below names the field, and VcInput generates the input's id internally,
-         so a `<label>` here could be associated with nothing. -->
+    <!-- Decorative: `ariaLabel` names the field, and VcInput generates the input's id internally. -->
     <span class="layout-rows-input__label" aria-hidden="true">{{ t("sales_rep.hub.layout.max_rows") }}</span>
 
     <VcInput

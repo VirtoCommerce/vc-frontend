@@ -66,6 +66,7 @@ function mountConfigurableBlock(options: {
   const values = options.values ?? { maxRows: 5, hiddenTabs: [] };
   const settings: ILayoutSettingsType = {
     valuesOf: () => values,
+    savedValuesOf: () => values,
     maxRowsOf: () => (options.configurable === false ? undefined : MAX_ROWS),
     update,
   };

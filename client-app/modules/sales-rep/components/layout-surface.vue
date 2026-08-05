@@ -164,6 +164,7 @@ const {
   reorderHidden,
   toggleHidden,
   settingsOf,
+  persistedSettingsOf,
   updateSettings,
   save,
 } = layout;
@@ -172,6 +173,7 @@ const {
 // each through this.
 provideLayoutSettings({
   valuesOf: settingsOf,
+  savedValuesOf: persistedSettingsOf,
   maxRowsOf: (id) => maxRowsSetting(getBlock(props.scope, id)),
   update: updateSettings,
 });

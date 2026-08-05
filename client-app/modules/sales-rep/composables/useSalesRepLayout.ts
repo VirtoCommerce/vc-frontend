@@ -88,6 +88,12 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
     return state.value.settings[blockId] ?? EMPTY_SETTINGS;
   }
 
+  /** The saved value, ignoring any draft: a row cap is a query variable, so it applies on save
+   * rather than refiring the query per keystroke. */
+  function persistedSettingsOf(blockId: string): SalesRepBlockSettingsType {
+    return persisted.value.settings[blockId] ?? EMPTY_SETTINGS;
+  }
+
   function updateSettings(blockId: string, patch: Partial<SalesRepBlockSettingsType>): void {
     // Only a block the registry declared settings for: an unknown id would create an entry
     // `serializeSettings` then drops, so the rep would see a change that never persists.
@@ -221,6 +227,7 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
     visibleIn,
     hiddenIn,
     settingsOf,
+    persistedSettingsOf,
     updateSettings,
     startEdit,
     cancel,

@@ -146,9 +146,9 @@ const { sortInfo, isColumnSortable, applySort } = useSalesRepColumnSort({
   rules: sortRules,
 });
 
-// The layout's row cap when this renders inside one; the constant is the standalone fallback.
+// The saved cap, not the draft: it is a query variable, so it applies on save.
 const chrome = useBlockChrome();
-const rowLimit = computed(() => chrome?.settings.value.maxRows ?? TOP_SELLERS_DEFAULT_TAKE);
+const rowLimit = computed(() => chrome?.savedSettings.value.maxRows ?? TOP_SELLERS_DEFAULT_TAKE);
 
 const { items, loading } = useSalesRepTopSellers({
   organizationId: () => props.organizationId,

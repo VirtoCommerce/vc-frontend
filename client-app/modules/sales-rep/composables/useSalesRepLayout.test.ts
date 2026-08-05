@@ -362,6 +362,18 @@ describe("useSalesRepLayout", () => {
     expect(settingsOf("orders")).toMatchObject({ maxRows: 5, hiddenTabs: [] });
   });
 
+  // A row cap is a query variable, so widgets fetch with the saved value and it applies on save.
+  it("keeps the saved row cap visible to widgets while the draft holds a different one", () => {
+    apolloMock.result.value = { salesRepLayout: null };
+
+    const { startEdit, updateSettings, settingsOf, persistedSettingsOf } = useSalesRepLayout(scope);
+    startEdit();
+    updateSettings("orders", { maxRows: 20 });
+
+    expect(settingsOf("orders").maxRows).toBe(20);
+    expect(persistedSettingsOf("orders").maxRows).toBe(5);
+  });
+
   it("restores the registry default row cap on reset", () => {
     apolloMock.result.value = {
       salesRepLayout: {

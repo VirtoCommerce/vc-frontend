@@ -188,9 +188,15 @@ const hasFilterOptions = computed(() => selectableRules.value.length > 0);
 // every rule the backend still returns — see layout/settings.ts.
 const visibleRules = computed(() => visibleTabRules(selectableRules.value, hiddenTabs.value));
 
-// What the checkboxes read — see `hiddenTabsInEffect`; the stored list and the rendered tabs disagree
-// under the all-hidden fallback.
+// What the checkboxes read; the stored list and the rendered tabs disagree under the all-hidden fallback.
 const effectiveHiddenTabs = computed(() => hiddenTabsInEffect(selectableRules.value, hiddenTabs.value));
+
+// Edit mode is where the widget knows the live catalog, so a dropped name is cleared from the store.
+watch(editingTabs, (editing) => {
+  if (editing && effectiveHiddenTabs.value.length !== hiddenTabs.value.length) {
+    chrome?.updateSettings({ hiddenTabs: effectiveHiddenTabs.value });
+  }
+});
 
 function toggleTab(name: string): void {
   chrome?.updateSettings({ hiddenTabs: toggleTabRule(selectableRules.value, effectiveHiddenTabs.value, name) });
@@ -212,8 +218,8 @@ const { sortInfo, isColumnSortable, applySort } = useSalesRepColumnSort({
   rules: sortRules,
 });
 
-// The layout's row cap when there is one; the prop is the fallback for a widget rendered outside it.
-const rowLimit = computed(() => chrome?.settings.value.maxRows ?? props.limit);
+// The saved cap, not the draft: it is a query variable, so it applies on save.
+const rowLimit = computed(() => chrome?.savedSettings.value.maxRows ?? props.limit);
 
 const { orders, loading } = useSalesRepOrders({
   organizationId: () => props.organizationId,

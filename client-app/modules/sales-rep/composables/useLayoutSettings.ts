@@ -10,6 +10,8 @@ export type MaxRowsSettingType = Extract<SalesRepBlockSettingType, { kind: "maxR
 
 export interface ILayoutSettingsType {
   valuesOf: (blockId: string) => SalesRepBlockSettingsType;
+  /** The saved values, ignoring the draft — what a widget fetches with, so typing does not refetch. */
+  savedValuesOf: (blockId: string) => SalesRepBlockSettingsType;
   /** The descriptor, not the value — the rows input needs its own block's bounds. */
   maxRowsOf: (blockId: string) => MaxRowsSettingType | undefined;
   update: (blockId: string, patch: Partial<SalesRepBlockSettingsType>) => void;

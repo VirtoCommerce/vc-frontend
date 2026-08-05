@@ -105,8 +105,8 @@ function settingsFingerprint(settings: readonly { key: string; value?: unknown }
  * these are the fields reconciliation reads back out of the echo. Region grouping is ignored, as
  * everywhere else.
  *
- * A type echoed twice is rejected outright: reconciliation keeps the FIRST copy of a duplicate, so
- * checking any one of them could agree with what was sent while the rep ends up looking at another.
+ * A type echoed twice is rejected: reconciliation keeps the first copy, so agreeing with one could
+ * leave the rep looking at another.
  */
 export function echoMatchesSentBlocks(saved: SavedLayoutType | null | undefined, sent: InputSalesRepLayout): boolean {
   const echoed = new Map<string, SavedLayoutBlockType>();

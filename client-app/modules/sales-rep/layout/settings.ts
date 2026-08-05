@@ -29,12 +29,8 @@ export function maxRowsSetting(
   return block && declaredSettings(block).find((setting) => setting.kind === "maxRows");
 }
 
-/**
- * A stored "this tab is hidden" flag. `AnyValue` is typed `any`, and the row cap already tolerates a
- * numeric string for the same reason, so the string form counts too — the echo guard compares values
- * stringified, and treating the two differently is what would let a save look agreed and read back
- * reverted.
- */
+/** The string form counts: the echo guard compares values stringified, so reading them differently
+ * would let a save look agreed and read back reverted. */
 function meansHidden(value: unknown): boolean {
   return value === false || value === "false";
 }
@@ -126,11 +122,10 @@ export function visibleTabRules<T extends { name: string }>(rules: readonly T[],
 }
 
 /**
- * Which rules are hidden *as the widget actually renders it* — the complement of `visibleTabRules`.
+ * The complement of `visibleTabRules` — what the editor's checkboxes read.
  *
- * What the editor's checkboxes read, rather than the stored list: under the all-hidden fallback the two
- * disagree, and the raw list would render every box unchecked while every tab renders. Names the
- * backend no longer returns fall out here too, having no box to belong to.
+ * Under the all-hidden fallback the stored list would render every box unchecked while every tab
+ * renders. Names the backend no longer returns fall out here too.
  */
 export function hiddenTabsInEffect(rules: readonly { name: string }[], hiddenTabs: readonly string[]): string[] {
   const shown = new Set(visibleTabRules(rules, hiddenTabs).map((rule) => rule.name));
