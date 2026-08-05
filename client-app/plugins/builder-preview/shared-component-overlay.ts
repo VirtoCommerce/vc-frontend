@@ -1,4 +1,4 @@
-export interface ILinkedComponentBoundary {
+export interface ISharedComponentBoundary {
   placementId: string;
   componentRef: string;
   startIndex: number;
@@ -7,19 +7,19 @@ export interface ILinkedComponentBoundary {
 }
 
 interface IRenderedBoundary {
-  boundary: ILinkedComponentBoundary;
+  boundary: ISharedComponentBoundary;
   element: HTMLDivElement;
 }
 
 const SCROLL_ANCHOR_PREFIX = "__scroll__";
-export const LINKED_COMPONENT_END_ANCHOR_ID = "linked-components-end";
+export const SHARED_COMPONENT_END_ANCHOR_ID = "shared-components-end";
 
-export function normalizeLinkedComponentBoundaries(value: unknown): ILinkedComponentBoundary[] {
+export function normalizeSharedComponentBoundaries(value: unknown): ISharedComponentBoundary[] {
   if (!Array.isArray(value)) {
     return [];
   }
 
-  return value.flatMap((candidate): ILinkedComponentBoundary[] => {
+  return value.flatMap((candidate): ISharedComponentBoundary[] => {
     if (!isRecord(candidate)) {
       return [];
     }
@@ -56,7 +56,7 @@ export function normalizeLinkedComponentBoundaries(value: unknown): ILinkedCompo
 
 export function getBoundaryAnchorIds(
   sectionIds: string[],
-  boundary: ILinkedComponentBoundary,
+  boundary: ISharedComponentBoundary,
 ): { startId?: string; endId?: string } {
   if (boundary.startIndex >= sectionIds.length || boundary.startIndex + boundary.count > sectionIds.length) {
     return {};
@@ -64,16 +64,16 @@ export function getBoundaryAnchorIds(
 
   return {
     startId: sectionIds[boundary.startIndex],
-    endId: sectionIds[boundary.startIndex + boundary.count] ?? LINKED_COMPONENT_END_ANCHOR_ID,
+    endId: sectionIds[boundary.startIndex + boundary.count] ?? SHARED_COMPONENT_END_ANCHOR_ID,
   };
 }
 
-export class LinkedComponentOverlay {
+export class SharedComponentOverlay {
   private readonly layer: HTMLDivElement;
   private readonly resizeObserver: ResizeObserver | undefined;
   private rendered: IRenderedBoundary[] = [];
   private sectionIds: string[] = [];
-  private boundaries: ILinkedComponentBoundary[] = [];
+  private boundaries: ISharedComponentBoundary[] = [];
   private highlightedPlacementId: string | null = null;
   private pendingScrollPlacementId: string | null = null;
   private pendingPointerPosition: { clientX: number; clientY: number } | null = null;
@@ -88,7 +88,7 @@ export class LinkedComponentOverlay {
     private readonly onHover: (placementId: string | null) => void,
   ) {
     this.layer = document.createElement("div");
-    this.layer.dataset.linkedComponentOverlay = "true";
+    this.layer.dataset.sharedComponentOverlay = "true";
     this.layer.setAttribute("aria-hidden", "true");
     Object.assign(this.layer.style, {
       position: "absolute",
@@ -109,7 +109,7 @@ export class LinkedComponentOverlay {
     }
   }
 
-  update(sectionIds: string[], boundaries: ILinkedComponentBoundary[]): void {
+  update(sectionIds: string[], boundaries: ISharedComponentBoundary[]): void {
     this.cancelPendingPointer();
     this.sectionIds = sectionIds;
     this.boundaries = boundaries;
@@ -230,9 +230,9 @@ export class LinkedComponentOverlay {
     return true;
   }
 
-  private createBoundaryElement(boundary: ILinkedComponentBoundary): HTMLDivElement {
+  private createBoundaryElement(boundary: ISharedComponentBoundary): HTMLDivElement {
     const element = document.createElement("div");
-    element.dataset.linkedComponentPlacement = boundary.placementId;
+    element.dataset.sharedComponentPlacement = boundary.placementId;
     Object.assign(element.style, {
       position: "absolute",
       boxSizing: "border-box",

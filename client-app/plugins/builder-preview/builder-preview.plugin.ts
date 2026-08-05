@@ -7,12 +7,12 @@ import { templateBlocks } from "@/shared/static-content/components";
 import { addBuilderMessageListener, createPreviewLoadedNotifier } from "./builder-preview.protocol";
 import PreviewPage from "./components/preview-page.vue";
 import ScrollToElement from "./components/scroll-to-element.vue";
-import {
-  LINKED_COMPONENT_END_ANCHOR_ID,
-  LinkedComponentOverlay,
-  normalizeLinkedComponentBoundaries,
-} from "./linked-component-overlay";
 import { getRegisteredComponents } from "./register-components";
+import {
+  SHARED_COMPONENT_END_ANCHOR_ID,
+  SharedComponentOverlay,
+  normalizeSharedComponentBoundaries,
+} from "./shared-component-overlay";
 import { getBuilderOrigin, getPreviewCultureName, getPreviewPageId } from "./utils";
 import type { TransferDataType } from "./builder-preview.protocol";
 import type { PageBuilderPluginOptionsType } from "./models/PageBuilderPluginOptionsType";
@@ -63,7 +63,7 @@ function scrollToSection(sectionId: string) {
 async function updatePreview(
   data: TransferDataType,
   options: { router: Router },
-  linkedComponentOverlay: LinkedComponentOverlay | null,
+  sharedComponentOverlay: SharedComponentOverlay | null,
 ) {
   const template = data.template;
   if (!template) {
@@ -76,7 +76,7 @@ async function updatePreview(
   content.forEach((block: IPageContent) => {
     newTemplate.content.push({ type: "scroll-to", id: "__scroll__" + block.id }, block);
   });
-  newTemplate.content.push({ type: "scroll-to", id: `__scroll__${LINKED_COMPONENT_END_ANCHOR_ID}` });
+  newTemplate.content.push({ type: "scroll-to", id: `__scroll__${SHARED_COMPONENT_END_ANCHOR_ID}` });
 
   if (!data.templateKey) {
     if (templateUrl) {
@@ -88,9 +88,9 @@ async function updatePreview(
   }
   templateUrl = undefined;
 
-  linkedComponentOverlay?.update(
+  sharedComponentOverlay?.update(
     content.map((block) => block.id),
-    normalizeLinkedComponentBoundaries(data.linkedComponentBoundaries),
+    normalizeSharedComponentBoundaries(data.sharedComponentBoundaries),
   );
 
   // Remember the initially selected section for scroll restoration after auth changes
@@ -208,12 +208,12 @@ const MAX_Z_INDEX = 2147483647;
 
 function createOverlay(builderOrigin: string): {
   bodyEl: HTMLElement | null;
-  linkedComponentOverlay: LinkedComponentOverlay | null;
+  sharedComponentOverlay: SharedComponentOverlay | null;
 } {
   const bodyEl = document.getElementsByTagName("body").item(0);
 
   if (!bodyEl) {
-    return { bodyEl: null, linkedComponentOverlay: null };
+    return { bodyEl: null, sharedComponentOverlay: null };
   }
 
   bodyEl.style.visibility = "hidden";
@@ -233,21 +233,21 @@ function createOverlay(builderOrigin: string): {
   const postSectionMessage = (type: "select" | "hover", sectionId: string | null) => {
     window.parent.postMessage({ source: "preview", type, data: { sectionId } }, builderOrigin);
   };
-  const linkedComponentOverlay = new LinkedComponentOverlay(
+  const sharedComponentOverlay = new SharedComponentOverlay(
     bodyEl,
     interactiveBlocker,
     (placementId) => postSectionMessage("select", placementId),
     (placementId) => postSectionMessage("hover", placementId),
   );
 
-  return { bodyEl, linkedComponentOverlay };
+  return { bodyEl, sharedComponentOverlay };
 }
 
 async function handleMessage(
   app: App,
   options: PageBuilderPluginOptionsType,
   bodyEl: HTMLElement | null,
-  linkedComponentOverlay: LinkedComponentOverlay | null,
+  sharedComponentOverlay: SharedComponentOverlay | null,
   loadedNotifier: ReturnType<typeof createPreviewLoadedNotifier>,
   data: TransferDataType,
 ) {
@@ -273,16 +273,16 @@ async function handleMessage(
     case "page":
     case "swap":
     case "preview":
-      await updatePreview(data, options, linkedComponentOverlay);
+      await updatePreview(data, options, sharedComponentOverlay);
       break;
 
     case "hover":
-      linkedComponentOverlay?.highlight(data.sectionId ?? null);
+      sharedComponentOverlay?.highlight(data.sectionId ?? null);
       break;
     case "select":
       if (data.sectionId) {
         initialSectionId = data.sectionId;
-        if (!linkedComponentOverlay?.scrollToPlacement(data.sectionId)) {
+        if (!sharedComponentOverlay?.scrollToPlacement(data.sectionId)) {
           scrollToSection(data.sectionId);
         }
       }
@@ -306,7 +306,7 @@ async function handleMessage(
       // Force remount of all blocks with new token and restore scroll afterward
       pendingScrollRestore = true;
       staticPagePreview.value = undefined;
-      linkedComponentOverlay?.update([], []);
+      sharedComponentOverlay?.update([], []);
       break;
     }
     default:
@@ -319,7 +319,7 @@ function handleMessages(
   options: PageBuilderPluginOptionsType,
   builderOrigin: string,
   bodyEl: HTMLElement | null,
-  linkedComponentOverlay: LinkedComponentOverlay | null,
+  sharedComponentOverlay: SharedComponentOverlay | null,
   loadedNotifier: ReturnType<typeof createPreviewLoadedNotifier>,
 ) {
   // Builder messages arrive as independent tasks, and each handler awaits (locale switch, router
@@ -329,7 +329,7 @@ function handleMessages(
 
   return addBuilderMessageListener(window, builderOrigin, window.parent, (data) => {
     messageQueue = messageQueue.then(() =>
-      handleMessage(app, options, bodyEl, linkedComponentOverlay, loadedNotifier, data).catch((error: unknown) => {
+      handleMessage(app, options, bodyEl, sharedComponentOverlay, loadedNotifier, data).catch((error: unknown) => {
         // Never break the chain: a failed message must not stall every following one.
         Logger.error("Failed to handle the builder preview message", error);
       }),
@@ -374,8 +374,8 @@ export default {
 
     if (builderOrigin) {
       const loadedNotifier = createPreviewLoadedNotifier(window.parent, builderOrigin);
-      const { bodyEl, linkedComponentOverlay } = createOverlay(builderOrigin);
-      handleMessages(app, options, builderOrigin, bodyEl, linkedComponentOverlay, loadedNotifier);
+      const { bodyEl, sharedComponentOverlay } = createOverlay(builderOrigin);
+      handleMessages(app, options, builderOrigin, bodyEl, sharedComponentOverlay, loadedNotifier);
 
       const customComponents = await getRegisteredComponents();
       loadedNotifier.setData(customComponents);

@@ -17,7 +17,7 @@ export type TransferDataType = {
   settings?: IThemeConfig;
   token?: { access_token?: string } | null;
   cultureName?: string;
-  linkedComponentBoundaries?: unknown;
+  sharedComponentBoundaries?: unknown;
 } & Partial<NullableBuilderMessageFieldsType>;
 
 const PREVIEW_UPDATE_TYPES = new Set(["changed", "update", "remove", "add", "reload", "page", "swap", "preview"]);
@@ -34,7 +34,7 @@ export function isBuilderMessage(value: unknown): value is TransferDataType {
       isOptionalString(value.templateKey) &&
       isOptionalString(value.cultureName) &&
       isOptionalSelection(value.sectionId) &&
-      (value.linkedComponentBoundaries === undefined || Array.isArray(value.linkedComponentBoundaries))
+      (value.sharedComponentBoundaries === undefined || Array.isArray(value.sharedComponentBoundaries))
     );
   }
 

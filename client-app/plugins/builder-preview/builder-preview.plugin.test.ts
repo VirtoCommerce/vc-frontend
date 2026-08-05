@@ -25,7 +25,7 @@ describe("Page Builder preview message protocol", () => {
           type,
           template: validTemplate,
           sectionId: "section-1",
-          linkedComponentBoundaries: [],
+          sharedComponentBoundaries: [],
         }),
       ).toBe(true);
     },
@@ -64,7 +64,7 @@ describe("Page Builder preview message protocol", () => {
     { source: "builder", type: "page", template: { settings: {}, content: {} } },
     { source: "builder", type: "page", template: validTemplate, sectionId: 42 },
     { source: "builder", type: "page", template: validTemplate, sectionId: "   " },
-    { source: "builder", type: "page", template: validTemplate, linkedComponentBoundaries: {} },
+    { source: "builder", type: "page", template: validTemplate, sharedComponentBoundaries: {} },
     { source: "builder", type: "hover" },
     { source: "builder", type: "hover", sectionId: 42 },
     { source: "builder", type: "select", sectionId: null },
@@ -109,7 +109,7 @@ describe("Page Builder preview message protocol", () => {
       type: "page",
       template: validTemplate,
       sectionId: "",
-      linkedComponentBoundaries: [],
+      sharedComponentBoundaries: [],
     };
 
     dispatchMessage("https://builder.example", window, message);

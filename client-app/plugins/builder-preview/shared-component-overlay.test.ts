@@ -1,13 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
-  LINKED_COMPONENT_END_ANCHOR_ID,
-  LinkedComponentOverlay,
+  SHARED_COMPONENT_END_ANCHOR_ID,
+  SharedComponentOverlay,
   getBoundaryAnchorIds,
-  normalizeLinkedComponentBoundaries,
-} from "./linked-component-overlay";
-import type { ILinkedComponentBoundary } from "./linked-component-overlay";
+  normalizeSharedComponentBoundaries,
+} from "./shared-component-overlay";
+import type { ISharedComponentBoundary } from "./shared-component-overlay";
 
-const boundary: ILinkedComponentBoundary = {
+const boundary: ISharedComponentBoundary = {
   placementId: "componentRef1",
   componentRef: "component-1",
   startIndex: 1,
@@ -17,7 +17,7 @@ const boundary: ILinkedComponentBoundary = {
 let animationFrames: Map<number, FrameRequestCallback>;
 let nextAnimationFrameId: number;
 let resizeObserver: ResizeObserverMock;
-let createdOverlays: LinkedComponentOverlay[];
+let createdOverlays: SharedComponentOverlay[];
 let originalScrollY: PropertyDescriptor | undefined;
 let originalInnerHeight: PropertyDescriptor | undefined;
 let originalBodyScrollHeight: PropertyDescriptor | undefined;
@@ -66,10 +66,10 @@ afterEach(() => {
   document.body.replaceChildren();
 });
 
-describe("linked component preview overlay", () => {
+describe("shared component preview overlay", () => {
   it("accepts only complete, non-empty boundary records", () => {
     expect(
-      normalizeLinkedComponentBoundaries([
+      normalizeSharedComponentBoundaries([
         { ...boundary, label: "  Shared · Used on 1 page  " },
         { ...boundary, placementId: "", startIndex: 0 },
         { ...boundary, count: 0 },
@@ -92,13 +92,13 @@ describe("linked component preview overlay", () => {
   it("uses the preview content end anchor for a component at the end of the page", () => {
     expect(getBoundaryAnchorIds(["before", "first", "second"], boundary)).toEqual({
       startId: "first",
-      endId: LINKED_COMPONENT_END_ANCHOR_ID,
+      endId: SHARED_COMPONENT_END_ANCHOR_ID,
     });
   });
 
   it("renders a permanent boundary and uses the terminal sentinel instead of the document footer", () => {
     appendAnchor("first", 100);
-    appendAnchor(LINKED_COMPONENT_END_ANCHOR_ID, 350);
+    appendAnchor(SHARED_COMPONENT_END_ANCHOR_ID, 350);
     Object.defineProperty(document.body, "scrollHeight", { configurable: true, value: 1200 });
 
     const { overlay } = createOverlay();
@@ -108,8 +108,8 @@ describe("linked component preview overlay", () => {
     );
     flushAnimationFrames();
 
-    const layer = document.querySelector<HTMLElement>("[data-linked-component-overlay]");
-    const rendered = document.querySelector<HTMLElement>("[data-linked-component-placement='componentRef1']");
+    const layer = document.querySelector<HTMLElement>("[data-shared-component-overlay]");
+    const rendered = document.querySelector<HTMLElement>("[data-shared-component-placement='componentRef1']");
     expect(layer?.getAttribute("aria-hidden")).toBe("true");
     expect(rendered?.style.top).toBe("100px");
     expect(rendered?.style.height).toBe("250px");
@@ -126,7 +126,7 @@ describe("linked component preview overlay", () => {
     overlay.update(["before", "first", "second", "after"], [boundary]);
     flushAnimationFrames();
 
-    const rendered = document.querySelector<HTMLElement>("[data-linked-component-placement='componentRef1']");
+    const rendered = document.querySelector<HTMLElement>("[data-shared-component-placement='componentRef1']");
     expect(rendered).not.toBeNull();
     expect(rendered?.querySelector("span")).toBeNull();
   });
@@ -140,7 +140,7 @@ describe("linked component preview overlay", () => {
     overlay.update(["before", "first", "second", "after"], [boundary]);
     flushAnimationFrames();
 
-    const rendered = document.querySelector<HTMLElement>("[data-linked-component-placement='componentRef1']")!;
+    const rendered = document.querySelector<HTMLElement>("[data-shared-component-placement='componentRef1']")!;
     const getRenderedRect = vi.fn(() => rect(0, 100, 500, 200));
     rendered.getBoundingClientRect = getRenderedRect;
 
@@ -174,7 +174,7 @@ describe("linked component preview overlay", () => {
     overlay.update(["before", "first", "second", "after"], [boundary]);
     flushAnimationFrames();
 
-    const rendered = document.querySelector<HTMLElement>("[data-linked-component-placement='componentRef1']")!;
+    const rendered = document.querySelector<HTMLElement>("[data-shared-component-placement='componentRef1']")!;
     rendered.getBoundingClientRect = vi.fn(() => rect(0, 100, 500, 200));
     blocker.dispatchEvent(new MouseEvent("mousemove", { clientX: 50, clientY: 150 }));
     overlay.update([], []);
@@ -212,18 +212,18 @@ describe("linked component preview overlay", () => {
     const { blocker, overlay } = createOverlay(onSelect);
     overlay.update(["before", "first", "second", "after"], [boundary]);
     flushAnimationFrames();
-    const firstBoundary = document.querySelector("[data-linked-component-placement='componentRef1']");
+    const firstBoundary = document.querySelector("[data-shared-component-placement='componentRef1']");
 
     window.dispatchEvent(new Event("resize"));
     flushAnimationFrames();
-    const rerenderedBoundary = document.querySelector<HTMLElement>("[data-linked-component-placement='componentRef1']");
+    const rerenderedBoundary = document.querySelector<HTMLElement>("[data-shared-component-placement='componentRef1']");
     expect(rerenderedBoundary).not.toBe(firstBoundary);
     expect(resizeObserver.observe).toHaveBeenCalledWith(document.body);
     rerenderedBoundary!.getBoundingClientRect = vi.fn(() => rect(0, 100, 500, 200));
 
     overlay.dispose();
     expect(resizeObserver.disconnect).toHaveBeenCalledOnce();
-    expect(document.querySelector("[data-linked-component-overlay]")).toBeNull();
+    expect(document.querySelector("[data-shared-component-overlay]")).toBeNull();
 
     const scheduledBeforeEvents = nextAnimationFrameId;
     window.dispatchEvent(new Event("resize"));
@@ -236,7 +236,7 @@ describe("linked component preview overlay", () => {
 function createOverlay(onSelect = vi.fn(), onHover = vi.fn()) {
   const blocker = document.createElement("div");
   document.body.appendChild(blocker);
-  const overlay = new LinkedComponentOverlay(document.body, blocker, onSelect, onHover);
+  const overlay = new SharedComponentOverlay(document.body, blocker, onSelect, onHover);
   createdOverlays.push(overlay);
   return {
     blocker,
