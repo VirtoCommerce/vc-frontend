@@ -8,7 +8,7 @@ import { SortDirection } from "@/core/enums";
 import { getSortingExpression, Logger, toInputAddress } from "@/core/utilities";
 import { useUser } from "./useUser";
 import type { ErrorNotificationsContextType } from "@/core/api/graphql/consts";
-import type { InputMemberAddressType, MemberAddressFieldsFragment } from "@/core/api/graphql/types";
+import type { InputMemberAddressType, MemberAddressFieldsFragment, MemberAddressType } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
 import type { MaybeRefOrGetter, MaybeRef } from "vue";
 
@@ -46,16 +46,17 @@ export function useCustomerAddresses(itemsPerPage: MaybeRefOrGetter<number> = 6,
   async function addOrUpdateAddresses(
     items: MemberAddressFieldsFragment[],
     context?: ErrorNotificationsContextType,
-  ): Promise<void> {
+  ): Promise<MemberAddressType[]> {
     if (!items.length || !user.value.memberId) {
-      return;
+      return [];
     }
 
     const inputAddresses: InputMemberAddressType[] = items.map(toInputAddress);
 
     try {
-      await updateMemberAddresses(user.value.memberId, inputAddresses, context);
+      const updatedAddresses = await updateMemberAddresses(user.value.memberId, inputAddresses, context);
       void refetch();
+      return updatedAddresses;
     } catch (e) {
       Logger.error(`${useCustomerAddresses.name}.${addOrUpdateAddresses.name}`, e);
       throw e;

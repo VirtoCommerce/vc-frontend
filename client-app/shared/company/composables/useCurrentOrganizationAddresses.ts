@@ -8,7 +8,7 @@ import {
 import { useGetCurrentOrganizationAddressesQuery } from "@/core/api/graphql/organization";
 import { SortDirection } from "@/core/enums";
 import { getSortingExpression, Logger, toInputAddress } from "@/core/utilities";
-import type { InputMemberAddressType, MemberAddressFieldsFragment } from "@/core/api/graphql/types";
+import type { InputMemberAddressType, MemberAddressFieldsFragment, MemberAddressType } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
 import type { MaybeRef, MaybeRefOrGetter } from "vue";
 
@@ -45,16 +45,17 @@ export function useCurrentOrganizationAddresses(
   const pages = computed(() => Math.ceil(totalCount.value / toValue(itemsPerPage)));
   const termFacets = computed(() => result.value?.currentOrganizationAddresses?.term_facets ?? []);
 
-  async function addOrUpdateAddresses(items: MemberAddressFieldsFragment[]): Promise<void> {
+  async function addOrUpdateAddresses(items: MemberAddressFieldsFragment[]): Promise<MemberAddressType[]> {
     if (!items.length || !toValue(organizationId)) {
-      return;
+      return [];
     }
 
     const inputAddresses: InputMemberAddressType[] = items.map(toInputAddress);
 
     try {
-      await updateMemberAddresses(toValue(organizationId), inputAddresses);
+      const updatedAddresses = await updateMemberAddresses(toValue(organizationId), inputAddresses);
       void refetch();
+      return updatedAddresses;
     } catch (e) {
       Logger.error(`${useCurrentOrganizationAddresses.name}.${addOrUpdateAddresses.name}`, e);
       throw e;
