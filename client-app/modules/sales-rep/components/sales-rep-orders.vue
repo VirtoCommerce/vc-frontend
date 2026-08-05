@@ -14,7 +14,12 @@
         <!-- In edit mode the tab strip becomes its own configuration: checked = offered as a tab.
              Replacing rather than adding, because ten statuses do not fit anywhere else. -->
         <div v-if="filterable && hasFilterOptions" class="sales-rep-orders__filter">
-          <SalesRepRuleToggles v-if="editingTabs" :rules="selectableRules" :hidden="hiddenTabs" @toggle="toggleTab" />
+          <SalesRepRuleToggles
+            v-if="editingTabs"
+            :rules="selectableRules"
+            :hidden="effectiveHiddenTabs"
+            @toggle="toggleTab"
+          />
 
           <SalesRepRuleChips
             v-else
@@ -132,7 +137,7 @@ import { useSalesRepOrders } from "../composables/useSalesRepOrders";
 import { useSalesRepPeriodFilter } from "../composables/useSalesRepPeriodFilter";
 import { useSalesRepRules } from "../composables/useSalesRepRules";
 import { ORDERS_DEFAULT_LIMIT } from "../constants";
-import { toggleTabRule, visibleTabRules } from "../layout/settings";
+import { hiddenTabsInEffect, toggleTabRule, visibleTabRules } from "../layout/settings";
 import { selectableFilterRules } from "../utils";
 import LayoutWidget from "./layout-widget.vue";
 import SalesRepRuleChips from "./sales-rep-rule-chips.vue";
@@ -183,8 +188,12 @@ const hasFilterOptions = computed(() => selectableRules.value.length > 0);
 // every rule the backend still returns — see layout/settings.ts.
 const visibleRules = computed(() => visibleTabRules(selectableRules.value, hiddenTabs.value));
 
+// What the checkboxes read — see `hiddenTabsInEffect`; the stored list and the rendered tabs disagree
+// under the all-hidden fallback.
+const effectiveHiddenTabs = computed(() => hiddenTabsInEffect(selectableRules.value, hiddenTabs.value));
+
 function toggleTab(name: string): void {
-  chrome?.updateSettings({ hiddenTabs: toggleTabRule(selectableRules.value, hiddenTabs.value, name) });
+  chrome?.updateSettings({ hiddenTabs: toggleTabRule(selectableRules.value, effectiveHiddenTabs.value, name) });
 }
 
 // The active filter can be unchecked from under the chips — leaving it selected would filter by a tab

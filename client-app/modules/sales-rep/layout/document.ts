@@ -104,9 +104,21 @@ function settingsFingerprint(settings: readonly { key: string; value?: unknown }
  * `hidden` reverts a hide, and a dropped setting reverts a row cap or a tab choice the same way —
  * these are the fields reconciliation reads back out of the echo. Region grouping is ignored, as
  * everywhere else.
+ *
+ * A type echoed twice is rejected outright: reconciliation keeps the FIRST copy of a duplicate, so
+ * checking any one of them could agree with what was sent while the rep ends up looking at another.
  */
 export function echoMatchesSentBlocks(saved: SavedLayoutType | null | undefined, sent: InputSalesRepLayout): boolean {
-  const echoed = new Map((saved?.regions ?? []).flatMap((region) => region.blocks.map((block) => [block.type, block])));
+  const echoed = new Map<string, SavedLayoutBlockType>();
+
+  for (const region of saved?.regions ?? []) {
+    for (const block of region.blocks) {
+      if (echoed.has(block.type)) {
+        return false;
+      }
+      echoed.set(block.type, block);
+    }
+  }
 
   return sent.regions.every((region) =>
     region.blocks.every((block) => {

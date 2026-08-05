@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
-  defaultSettings,
+  hiddenTabsInEffect,
   maxRowsSetting,
   parseSettings,
   serializeSettings,
@@ -36,16 +36,6 @@ const topSellers: SalesRepBlockType = {
 const plain: SalesRepBlockType = { id: "stat-a", region: "statistics", titleKey: "a", order: 10 };
 
 const rules = [{ name: "New" }, { name: "Processing" }, { name: "Completed" }];
-
-describe("defaultSettings", () => {
-  it("seeds the declared row cap", () => {
-    expect(defaultSettings(orders)).toEqual({ maxRows: 5, hiddenTabs: [] });
-  });
-
-  it("gives a block with no declared settings nothing to configure", () => {
-    expect(defaultSettings(plain)).toEqual({ hiddenTabs: [] });
-  });
-});
 
 describe("maxRowsSetting", () => {
   it("returns the block's own bounds, which differ per widget", () => {
@@ -111,8 +101,14 @@ describe("parseSettings", () => {
     expect(parseSettings(topSellers, [{ key: "tab.New", value: false }]).hiddenTabs).toEqual([]);
   });
 
-  it("ignores a tab key that is not explicitly false", () => {
+  it("ignores a tab key that does not mean hidden", () => {
     expect(parseSettings(orders, [{ key: "tab.New", value: true }]).hiddenTabs).toEqual([]);
+  });
+
+  // The echo guard compares values stringified, so `false` and `"false"` look alike to it. Reading
+  // them differently is what would let a save look agreed and read back reverted.
+  it("treats a stringified false as hidden, matching what the echo guard cannot tell apart", () => {
+    expect(parseSettings(orders, [{ key: "tab.New", value: "false" }]).hiddenTabs).toEqual(["New"]);
   });
 
   it("returns nothing configurable for a block with no declared settings", () => {
@@ -165,6 +161,22 @@ describe("visibleTabRules", () => {
 
   it("ignores a hidden name the backend no longer returns", () => {
     expect(visibleTabRules(rules, ["Retired"]).map((rule) => rule.name)).toEqual(["New", "Processing", "Completed"]);
+  });
+});
+
+describe("hiddenTabsInEffect", () => {
+  it("mirrors the stored list while at least one rule is shown", () => {
+    expect(hiddenTabsInEffect(rules, ["Processing"])).toEqual(["Processing"]);
+  });
+
+  // Otherwise the checkboxes would all render unchecked while the widget renders every tab, and
+  // checking one box would visibly remove another as the fallback stopped applying.
+  it("reports nothing hidden when the fallback is showing every rule", () => {
+    expect(hiddenTabsInEffect(rules, ["New", "Processing", "Completed"])).toEqual([]);
+  });
+
+  it("drops a stored name the backend no longer returns", () => {
+    expect(hiddenTabsInEffect(rules, ["Processing", "Retired"])).toEqual(["Processing"]);
   });
 });
 

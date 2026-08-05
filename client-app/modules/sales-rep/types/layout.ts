@@ -10,11 +10,7 @@ export type SalesRepLayoutScopeType = "dashboard" | "customerProfile";
  * their column's width, so region is code, not user data. */
 export type SalesRepLayoutRegionIdType = "statistics" | "mainLeft" | "mainRight";
 
-/**
- * A setting a block exposes in layout-edit mode (VCST-5649). A union rather than one generic
- * `{ key, type, default }` record: the two have nothing in common at read time — one clamps a number
- * against bounds, the other reconciles a set against a rule list the backend supplies at runtime.
- */
+/** A setting a block exposes in layout-edit mode (VCST-5649). */
 export type SalesRepBlockSettingType =
   /** Row cap for a list widget. `min`/`max` are per block: the top-seller API caps `take` at 10. */
   | { kind: "maxRows"; default: number; min: number; max: number }

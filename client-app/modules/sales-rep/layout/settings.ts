@@ -29,10 +29,14 @@ export function maxRowsSetting(
   return block && declaredSettings(block).find((setting) => setting.kind === "maxRows");
 }
 
-/** What a block shows before the rep has configured anything, and what Reset returns it to. */
-export function defaultSettings(block: SalesRepBlockType): SalesRepBlockSettingsType {
-  const rows = maxRowsSetting(block);
-  return rows ? { maxRows: rows.default, hiddenTabs: [] } : EMPTY_SETTINGS;
+/**
+ * A stored "this tab is hidden" flag. `AnyValue` is typed `any`, and the row cap already tolerates a
+ * numeric string for the same reason, so the string form counts too — the echo guard compares values
+ * stringified, and treating the two differently is what would let a save look agreed and read back
+ * reverted.
+ */
+function meansHidden(value: unknown): boolean {
+  return value === false || value === "false";
 }
 
 function clampRows(value: unknown, setting: Extract<SalesRepBlockSettingType, { kind: "maxRows" }>): number {
@@ -75,7 +79,7 @@ export function parseSettings(
   for (const setting of saved ?? []) {
     if (rows && setting.key === SETTING_MAX_ROWS) {
       maxRows = clampRows(setting.value, rows);
-    } else if (wantsTabs && setting.key.startsWith(SETTING_HIDDEN_TAB_PREFIX) && setting.value === false) {
+    } else if (wantsTabs && setting.key.startsWith(SETTING_HIDDEN_TAB_PREFIX) && meansHidden(setting.value)) {
       hiddenTabs.push(setting.key.slice(SETTING_HIDDEN_TAB_PREFIX.length));
     }
   }
@@ -119,6 +123,18 @@ export function serializeSettings(
 export function visibleTabRules<T extends { name: string }>(rules: readonly T[], hiddenTabs: readonly string[]): T[] {
   const visible = rules.filter((rule) => !hiddenTabs.includes(rule.name));
   return visible.length ? visible : [...rules];
+}
+
+/**
+ * Which rules are hidden *as the widget actually renders it* — the complement of `visibleTabRules`.
+ *
+ * What the editor's checkboxes read, rather than the stored list: under the all-hidden fallback the two
+ * disagree, and the raw list would render every box unchecked while every tab renders. Names the
+ * backend no longer returns fall out here too, having no box to belong to.
+ */
+export function hiddenTabsInEffect(rules: readonly { name: string }[], hiddenTabs: readonly string[]): string[] {
+  const shown = new Set(visibleTabRules(rules, hiddenTabs).map((rule) => rule.name));
+  return rules.filter((rule) => !shown.has(rule.name)).map((rule) => rule.name);
 }
 
 /** Toggling from the edit-mode checkboxes; the last checked rule cannot be unchecked. */

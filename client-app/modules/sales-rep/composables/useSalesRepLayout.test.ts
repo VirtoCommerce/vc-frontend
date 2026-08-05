@@ -69,6 +69,20 @@ const DEFAULT_ECHO = [
   { id: "mainRight", blocks: ["actions", "info"].map(echoedBlock) },
 ];
 
+/** The default echo with one block's settings replaced — a settings edit needs the echo to agree. */
+const echoWithSettings = (id: string, settings: { key: string; value: unknown }[]) =>
+  DEFAULT_ECHO.map((region) => ({
+    ...region,
+    blocks: region.blocks.map((block) => (block.type === id ? { ...block, settings } : block)),
+  }));
+
+const sentBlock = (id: string) => {
+  const payload = apolloMock.mutate.mock.calls[0][0].command as {
+    regions: { blocks: { type: string; settings: { key: string; value: unknown }[] }[] }[];
+  };
+  return payload.regions.flatMap((region) => region.blocks).find((block) => block.type === id);
+};
+
 describe("useSalesRepLayout", () => {
   it("falls back to registry defaults when the rep has never saved this surface", () => {
     apolloMock.result.value = { salesRepLayout: null };
@@ -331,6 +345,86 @@ describe("useSalesRepLayout", () => {
     // The saved arrangement survived; none of the mid-flight calls left a mark.
     expect(state.value.regions.mainRight.visible).toEqual(["info"]);
     expect(state.value.regions.mainRight.hidden).toEqual(["actions"]);
+  });
+
+  // Settings ride the same draft as the arrangement, so Cancel / Reset / Save cover them with no
+  // second state machine. These pin that they actually do.
+  it("keeps a settings edit in the draft only, so cancel discards it", () => {
+    apolloMock.result.value = { salesRepLayout: null };
+
+    const { startEdit, updateSettings, cancel, settingsOf } = useSalesRepLayout(scope);
+    startEdit();
+    updateSettings("orders", { maxRows: 9, hiddenTabs: ["New"] });
+
+    expect(settingsOf("orders")).toMatchObject({ maxRows: 9, hiddenTabs: ["New"] });
+
+    cancel();
+    expect(settingsOf("orders")).toMatchObject({ maxRows: 5, hiddenTabs: [] });
+  });
+
+  it("restores the registry default row cap on reset", () => {
+    apolloMock.result.value = {
+      salesRepLayout: {
+        regions: [
+          {
+            id: "mainLeft",
+            blocks: [{ id: "orders", type: "orders", hidden: false, settings: [{ key: "maxRows", value: 12 }] }],
+          },
+        ],
+      },
+    };
+
+    const { startEdit, reset, settingsOf } = useSalesRepLayout(scope);
+    expect(settingsOf("orders").maxRows).toBe(12);
+
+    startEdit();
+    reset();
+    expect(settingsOf("orders").maxRows).toBe(5);
+  });
+
+  it("sends the drafted settings, not the defaults the document was read with", async () => {
+    apolloMock.result.value = { salesRepLayout: null };
+    const settings = [
+      { key: "maxRows", value: 3 },
+      { key: "tab.New", value: false },
+    ];
+    apolloMock.mutate.mockResolvedValue({
+      data: { saveSalesRepLayout: { regions: echoWithSettings("orders", settings) } },
+    });
+
+    const { startEdit, updateSettings, save, settingsOf } = useSalesRepLayout(scope);
+    startEdit();
+    updateSettings("orders", { maxRows: 3, hiddenTabs: ["New"] });
+
+    await expect(save()).resolves.toBe(true);
+    expect(sentBlock("orders")?.settings).toEqual(settings);
+    // The echo agreed, so the saved state carries the choice rather than reverting to the default.
+    expect(settingsOf("orders")).toMatchObject({ maxRows: 3, hiddenTabs: ["New"] });
+  });
+
+  it("refuses a settings edit while a save is in flight", async () => {
+    apolloMock.result.value = { salesRepLayout: null };
+    let release: (value: unknown) => void = () => {};
+    apolloMock.mutate.mockImplementation(() => {
+      apolloMock.saving.value = true;
+      return new Promise((resolve) => {
+        release = (value: unknown) => {
+          apolloMock.saving.value = false;
+          resolve(value);
+        };
+      });
+    });
+
+    const { startEdit, updateSettings, save, settingsOf } = useSalesRepLayout(scope);
+    startEdit();
+    const pending = save();
+
+    updateSettings("orders", { maxRows: 17 });
+    expect(settingsOf("orders").maxRows).toBe(5);
+
+    release({ data: { saveSalesRepLayout: { regions: DEFAULT_ECHO } } });
+    await expect(pending).resolves.toBe(true);
+    expect(settingsOf("orders").maxRows).toBe(5);
   });
 
   // The breadcrumbs sit outside the pages' `inert` wrapper, so the route guard can call `save` again

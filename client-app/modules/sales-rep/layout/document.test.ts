@@ -289,6 +289,19 @@ describe("echoMatchesSentBlocks", () => {
     expect(echoMatchesSentBlocks(stripped, sent)).toBe(false);
   });
 
+  // Reconciliation keeps the FIRST copy of a duplicated type, so agreeing with any single copy would
+  // let the rep end up looking at a block the guard never checked.
+  it("rejects an echo that returns the same block type twice", () => {
+    const duplicated: SavedLayoutType = {
+      regions: [
+        { blocks: sent.regions.flatMap((region) => region.blocks) },
+        { blocks: [sent.regions.flatMap((region) => region.blocks)[0]] },
+      ],
+    };
+
+    expect(echoMatchesSentBlocks(duplicated, sent)).toBe(false);
+  });
+
   it("accepts an echo that returns the settings in a different order", () => {
     const shuffled: SavedLayoutType = {
       regions: sent.regions.map((region) => ({
