@@ -3,7 +3,7 @@
     :is="tag"
     ref="el"
     :data-test-id="testId"
-    :tabindex="focusable ? 0 : undefined"
+    :tabindex="isFocusable ? 0 : undefined"
     :class="[
       'vc-scrollbar',
       {
@@ -20,8 +20,8 @@
 </template>
 
 <script setup lang="ts">
-import { useThrottleFn } from "@vueuse/core";
-import { computed, provide, ref, useTemplateRef } from "vue";
+import { useResizeObserver, useThrottleFn } from "@vueuse/core";
+import { computed, nextTick, onMounted, onUpdated, provide, ref, useTemplateRef } from "vue";
 import { getColorValue } from "@/ui-kit/utilities";
 import { vcScrollbarKey } from "./vc-scrollbar-context";
 
@@ -62,6 +62,36 @@ const el = useTemplateRef<HTMLElement>("el");
 
 provide(vcScrollbarKey, { el });
 
+// A scrollable region must be keyboard-reachable (axe: scrollable-region-focusable).
+// The tab stop is added automatically when content actually overflows on an enabled axis;
+// the `focusable` prop remains as an explicit override.
+const hasOverflow = ref(false);
+
+const isFocusable = computed(
+  () => props.focusable || ((props.vertical || props.horizontal) && !props.disabled && hasOverflow.value),
+);
+
+function updateOverflow(): void {
+  const target = el.value;
+  if (!target) {
+    hasOverflow.value = false;
+    return;
+  }
+
+  const verticalOverflow = props.vertical && target.scrollHeight > target.clientHeight;
+  const horizontalOverflow = props.horizontal && target.scrollWidth > target.clientWidth;
+
+  hasOverflow.value = verticalOverflow || horizontalOverflow;
+}
+
+onMounted(() => {
+  void nextTick(updateOverflow);
+});
+
+onUpdated(updateOverflow);
+
+useResizeObserver(el, updateOverflow);
+
 const wasAtTop = ref(true);
 const wasAtBottom = ref(false);
 const wasAtLeft = ref(true);
@@ -73,6 +103,8 @@ const onScroll = useThrottleFn(
     if (!target) {
       return;
     }
+
+    updateOverflow();
 
     const { scrollTop, scrollLeft, scrollHeight, scrollWidth, clientHeight, clientWidth } = target;
     const threshold = props.edgeThreshold;
@@ -133,6 +165,10 @@ const _thumbColor = computed(() => getColorValue(props.thumbColor));
   --thumb-color: var(--vc-scrollbar-thumb-color, var(--props-thumb-color, theme("colors.neutral.400")));
 
   overflow: unset;
+
+  &:focus-visible {
+    @apply outline outline-2 -outline-offset-2 outline-[--color-primary-500];
+  }
 
   &--vertical {
     $vertical: &;

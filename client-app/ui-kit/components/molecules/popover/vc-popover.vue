@@ -4,7 +4,9 @@
       <slot :open="open" :close="close" :toggle="toggle" :opened="opened" :trigger-props="emitTriggerProps" />
     </div>
 
-    <div v-else-if="$slots.trigger" ref="reference" class="vc-popover__trigger" v-bind="emitTriggerProps">
+    <!-- Only event listeners are bound here: the slot may contain a real interactive element,
+         and an interactive role on the wrapper would nest interactive controls (axe: nested-interactive). -->
+    <div v-else-if="$slots.trigger" ref="reference" class="vc-popover__trigger" v-on="triggerListeners">
       <slot name="trigger" :open="open" :close="close" :toggle="toggle" :opened="opened" />
     </div>
 
@@ -100,17 +102,13 @@ const { placement, strategy, flipOptions, offsetOptions, shiftOptions } = toRefs
 
 const shouldRenderContent = computed(() => !props.lazy || hasBeenOpened.value);
 
-const emitTriggerProps = computed(() => ({
-  role: "button" as const,
-  "aria-haspopup": "dialog" as const,
-  "aria-expanded": opened.value,
-  "aria-controls": opened.value ? contentId : undefined,
-  onMouseenter: props.hover ? open : undefined,
-  onMouseleave: props.hover ? close : undefined,
-  onFocusin: props.hover ? open : undefined,
-  onFocusout: props.hover ? close : undefined,
-  onClick: props.hover ? undefined : toggle,
-  onKeyup: (e: KeyboardEvent) => {
+const triggerListeners = computed(() => ({
+  mouseenter: props.hover ? open : undefined,
+  mouseleave: props.hover ? close : undefined,
+  focusin: props.hover ? open : undefined,
+  focusout: props.hover ? close : undefined,
+  click: props.hover ? undefined : toggle,
+  keyup: (e: KeyboardEvent) => {
     if (e.key === "Enter") {
       open();
     }
@@ -118,6 +116,20 @@ const emitTriggerProps = computed(() => ({
       close();
     }
   },
+}));
+
+// For the scoped default-slot pattern: the consumer binds these to their own trigger element.
+const emitTriggerProps = computed(() => ({
+  role: "button" as const,
+  "aria-haspopup": "dialog" as const,
+  "aria-expanded": opened.value,
+  "aria-controls": opened.value ? contentId : undefined,
+  onMouseenter: triggerListeners.value.mouseenter,
+  onMouseleave: triggerListeners.value.mouseleave,
+  onFocusin: triggerListeners.value.focusin,
+  onFocusout: triggerListeners.value.focusout,
+  onClick: triggerListeners.value.click,
+  onKeyup: triggerListeners.value.keyup,
 }));
 
 const display = computed(() => (opened.value ? "block" : "none"));
