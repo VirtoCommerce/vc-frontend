@@ -5,7 +5,6 @@
       :key="rule.name"
       size="sm"
       :model-value="!hidden.includes(rule.name)"
-      :disabled="isLastShown(rule.name)"
       @update:model-value="$emit('toggle', rule.name)"
     >
       {{ rule.label }}
@@ -14,7 +13,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
 import type { SalesRepRuleType } from "../types";
 
 interface IProps {
@@ -29,15 +27,7 @@ interface IEmits {
 }
 
 defineEmits<IEmits>();
-const props = defineProps<IProps>();
-
-const shown = computed(() => props.rules.filter((rule) => !props.hidden.includes(rule.name)));
-
-// Disabling the last checked box is the whole enforcement of "at least one tab stays visible" — no
-// guard to bypass, and the rep can see why it will not move.
-function isLastShown(name: string): boolean {
-  return shown.value.length === 1 && shown.value[0]?.name === name;
-}
+defineProps<IProps>();
 </script>
 
 <style lang="scss">

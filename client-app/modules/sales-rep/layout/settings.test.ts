@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import {
-  hiddenTabsInEffect,
   knownHiddenTabs,
   maxRowsSetting,
   parseSettings,
@@ -165,34 +164,13 @@ describe("visibleTabRules", () => {
     expect(visibleTabRules(rules, ["Processing"]).map((rule) => rule.name)).toEqual(["New", "Completed"]);
   });
 
-  // The editor keeps one box checked, but a document saved before a status was retired can still
-  // hide every rule the backend returns today — and a tab strip with no tabs cannot be recovered.
-  it("falls back to the whole catalog when every rule is hidden", () => {
-    expect(visibleTabRules(rules, ["New", "Processing", "Completed"])).toEqual(rules);
+  // The chips row keeps its "All" baseline regardless, so an empty rule set is a usable strip.
+  it("offers no tabs when every rule is hidden", () => {
+    expect(visibleTabRules(rules, ["New", "Processing", "Completed"])).toEqual([]);
   });
 
   it("ignores a hidden name the backend no longer returns", () => {
     expect(visibleTabRules(rules, ["Retired"]).map((rule) => rule.name)).toEqual(["New", "Processing", "Completed"]);
-  });
-});
-
-describe("hiddenTabsInEffect", () => {
-  it("mirrors the stored list while at least one rule is shown", () => {
-    expect(hiddenTabsInEffect(rules, ["Processing"])).toEqual(["Processing"]);
-  });
-
-  // Otherwise the checkboxes would all render unchecked while the widget renders every tab, and
-  // checking one box would visibly remove another as the fallback stopped applying.
-  it("reports nothing hidden when the fallback is showing every rule", () => {
-    expect(hiddenTabsInEffect(rules, ["New", "Processing", "Completed"])).toEqual([]);
-  });
-
-  it("drops a stored name the backend no longer returns", () => {
-    expect(hiddenTabsInEffect(rules, ["Processing", "Retired"])).toEqual(["Processing"]);
-  });
-
-  it("keeps the stored list when the catalog has not loaded", () => {
-    expect(hiddenTabsInEffect([], ["New", "Processing"])).toEqual(["New", "Processing"]);
   });
 });
 
@@ -201,9 +179,9 @@ describe("knownHiddenTabs", () => {
     expect(knownHiddenTabs(rules, ["Processing", "Retired"])).toEqual(["Processing"]);
   });
 
-  // The rep hid New and Processing; Completed was retired, so every surviving rule is hidden and the
-  // display falls back to showing all. Pruning on that would erase two live choices.
-  it("keeps hidden names that are still live even when the fallback is showing every tab", () => {
+  // The rep hid New and Processing; Completed was retired, so every surviving rule is hidden. Both
+  // names are still live, so neither may be pruned.
+  it("keeps hidden names that are still live when every surviving rule is hidden", () => {
     const surviving = [{ name: "New" }, { name: "Processing" }];
 
     expect(knownHiddenTabs(surviving, ["New", "Processing"])).toEqual(["New", "Processing"]);
@@ -220,16 +198,15 @@ describe("knownHiddenTabs", () => {
 
 describe("toggleTabRule", () => {
   it("hides a shown rule", () => {
-    expect(toggleTabRule(rules, [], "New")).toEqual(["New"]);
+    expect(toggleTabRule([], "New")).toEqual(["New"]);
   });
 
   it("shows a hidden rule again", () => {
-    expect(toggleTabRule(rules, ["New", "Completed"], "New")).toEqual(["Completed"]);
+    expect(toggleTabRule(["New", "Completed"], "New")).toEqual(["Completed"]);
   });
 
-  it("refuses to hide the last shown rule", () => {
-    const hidden = ["New", "Processing"];
-
-    expect(toggleTabRule(rules, hidden, "Completed")).toEqual(hidden);
+  // The "All" baseline is always offered, so there is nothing to protect the rep from here.
+  it("hides the last shown rule too", () => {
+    expect(toggleTabRule(["New", "Processing"], "Completed")).toEqual(["New", "Processing", "Completed"]);
   });
 });

@@ -1,6 +1,6 @@
 // Per-block settings: the translation between the UI's shape and the flat scalar key/value list the
-// backend stores (VCST-5649). Pure, like layout/document.ts — reading is where every fallback rule
-// lives, so it is the part worth testing.
+// backend stores (VCST-5649). Pure, like layout/document.ts — reading is where every validation and
+// fallback rule lives, so it is the part worth testing.
 //
 // `settings.value` is a scalar only; lists and objects are not valid, which is why the status-tab
 // selection is flattened into one sibling key per unchecked rule.
@@ -55,8 +55,8 @@ function clampRows(value: unknown, setting: Extract<SalesRepBlockSettingType, { 
  * - A value the block does not declare is ignored, so a setting removed from the registry cannot
  *   resurrect itself, and a key from another block's vocabulary is inert.
  * - `maxRows` is coerced and clamped to the block's own bounds; anything non-numeric falls back.
- * - A `tab.` key naming a rule the backend no longer returns stays in state harmlessly — only the
- *   rules the widget actually renders are ever consulted.
+ * - A `tab.` key naming a rule the backend no longer returns is kept here and dropped by
+ *   `knownHiddenTabs`, which is the only place a live catalog is known.
  */
 export function parseSettings(
   block: SalesRepBlockType,
@@ -114,39 +114,19 @@ export function serializeSettings(
 /**
  * Which of a widget's filter rules to offer as tabs, in catalog order.
  *
- * The all-hidden fallback is not paranoia: the editor keeps at least one box checked, but a document
- * saved before a status was retired can still hide every rule the backend returns today, and a tab
- * strip with no tabs cannot be recovered from the UI.
+ * Hiding every rule is allowed: the chips row keeps its synthetic "All" baseline either way, so the
+ * strip is never empty and the rep can always see their unfiltered orders.
  */
 export function visibleTabRules<T extends { name: string }>(rules: readonly T[], hiddenTabs: readonly string[]): T[] {
-  const visible = rules.filter((rule) => !hiddenTabs.includes(rule.name));
-  return visible.length ? visible : [...rules];
+  return rules.filter((rule) => !hiddenTabs.includes(rule.name));
 }
 
 /**
- * The complement of `visibleTabRules` — what the editor's checkboxes read.
+ * The stored list with names the backend no longer returns dropped, and repeats collapsed — what the
+ * editor's checkboxes read, and the only cleanup safe to apply on the rep's behalf.
  *
- * Under the all-hidden fallback the stored list would render every box unchecked while every tab
- * renders. Names the backend no longer returns fall out here too.
- */
-export function hiddenTabsInEffect(rules: readonly { name: string }[], hiddenTabs: readonly string[]): string[] {
-  // No catalog yet (the rules query has not resolved) is not evidence that a stored name is retired —
-  // treating it as such would read as the rep having chosen nothing.
-  if (!rules.length) {
-    return [...hiddenTabs];
-  }
-
-  const shown = new Set(visibleTabRules(rules, hiddenTabs).map((rule) => rule.name));
-  return rules.filter((rule) => !shown.has(rule.name)).map((rule) => rule.name);
-}
-
-/**
- * The stored list with names the backend no longer returns dropped, and repeats collapsed.
- *
- * The only cleanup safe to apply on the rep's behalf, and deliberately not `hiddenTabsInEffect`: that
- * one answers what the checkboxes render and collapses to nothing under the all-hidden fallback, so
- * pruning on it would erase rules the rep hid that are still live. An empty catalog is not evidence
- * that anything was retired.
+ * An empty catalog means the rules query has not resolved (or failed, which leaves it empty for the
+ * session), not that everything was retired — pruning then would erase the rep's whole selection.
  */
 export function knownHiddenTabs(rules: readonly { name: string }[], hiddenTabs: readonly string[]): string[] {
   if (!rules.length) {
@@ -157,16 +137,9 @@ export function knownHiddenTabs(rules: readonly { name: string }[], hiddenTabs: 
   return [...new Set(hiddenTabs.filter((name) => known.has(name)))];
 }
 
-/** Toggling from the edit-mode checkboxes; the last checked rule cannot be unchecked. */
-export function toggleTabRule(
-  rules: readonly { name: string }[],
-  hiddenTabs: readonly string[],
-  name: string,
-): readonly string[] {
-  if (!hiddenTabs.includes(name)) {
-    return visibleTabRules(rules, hiddenTabs).length > 1 ? [...hiddenTabs, name] : hiddenTabs;
-  }
-  return hiddenTabs.filter((hidden) => hidden !== name);
+/** Toggling from the edit-mode checkboxes. Any rule can be unchecked, the last one included. */
+export function toggleTabRule(hiddenTabs: readonly string[], name: string): readonly string[] {
+  return hiddenTabs.includes(name) ? hiddenTabs.filter((hidden) => hidden !== name) : [...hiddenTabs, name];
 }
 
 /** Every configurable block's settings, read out of a persisted document (or its defaults). */

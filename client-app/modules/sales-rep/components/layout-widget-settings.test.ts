@@ -199,17 +199,18 @@ describe("SalesRepRuleToggles", () => {
     expect(wrapper.emitted("toggle")).toEqual([["Processing"]]);
   });
 
-  // Disabling the box is the whole enforcement of "at least one tab stays visible".
-  it("disables the last checked box", () => {
+  // The chips row always offers its "All" baseline, so no rule has to stay checked.
+  it("leaves every box enabled, including the last checked one", () => {
     const boxes = mountToggles(["Processing"]).findAll("input[type=checkbox]");
 
-    expect((boxes[0].element as HTMLInputElement).disabled).toBe(true);
-    expect((boxes[1].element as HTMLInputElement).disabled).toBe(false);
+    expect(boxes.every((box) => !(box.element as HTMLInputElement).disabled)).toBe(true);
   });
 
-  it("disables nothing while more than one rule is checked", () => {
-    const boxes = mountToggles([]).findAll("input[type=checkbox]");
+  it("reports a toggle for the last checked rule rather than refusing it", async () => {
+    const wrapper = mountToggles(["Processing"]);
 
-    expect(boxes.every((box) => !(box.element as HTMLInputElement).disabled)).toBe(true);
+    await wrapper.findAll("input[type=checkbox]")[0].setValue(false);
+
+    expect(wrapper.emitted("toggle")).toEqual([["New"]]);
   });
 });

@@ -31,7 +31,7 @@ has been going out as `[]`. Only the two `.graphql` documents change, to *select
 
 ## Decisions (confirmed with requester, 2026-08-04)
 
-1. **Default checked tab set = every rule the backend returns.** AC #2 names "New / On hold /
+1. **Default checked tab set = every rule the backend returns.** AC #2 named "New / On hold /
    Active / Fix-it", but those come from the prototype's fictional 10-status catalog
    (`HUB_ORDER_TAB_DEFS`). What actually ships reads `salesRepOrderFilterRules` at runtime — raw
    order statuses for the store, labelled by the backend's `localizedName`, with no frontend i18n
@@ -109,11 +109,18 @@ defensive in three places:
 
 - `maxRows` is coerced to an integer and clamped to the block's own `[min, max]`; anything
   non-numeric falls back to the descriptor's default.
-- `tab.*` keys naming a rule the backend no longer returns are ignored.
-- If a document hides *every* rule the backend returns, the whole set falls back to shown. A tab
-  strip with no tabs is unusable and unrecoverable from the UI, and only the editor can enforce
-  AC #2's "at least one must stay checked" — a document saved before a status was retired can
-  violate it without anyone doing anything wrong.
+- `tab.*` keys naming a rule the backend no longer returns are dropped by `knownHiddenTabs`, which is
+  the only place a live catalog is known. An empty catalog means the rules query has not resolved (or
+  failed, which leaves it empty for the session), not that everything was retired — pruning then would
+  erase the rep's whole selection.
+- A name stored twice collapses on read, so it cannot go back out twice and read as a disagreeing echo
+  against a backend that deduplicates.
+
+**Hiding every rule is allowed.** `sales-rep-rule-chips.vue` renders its synthetic "All" baseline
+outside the `v-for`, so the strip is never empty and the rep can always reach their unfiltered orders.
+That makes AC #2's "at least one must stay checked" redundant — the constraint it protected against
+cannot occur — so neither the editor guard nor an all-hidden display fallback exists. Removed from the
+ticket as well (2026-08-05).
 
 The runtime shape is deliberately not the wire shape:
 
@@ -186,13 +193,12 @@ adding one registry line.
 
 **Status checkboxes** are specific to the orders widget, which swaps its chips row for a checkbox
 row while editing — as the prototype does, and because a ten-status catalog does not fit in a
-header. New `sales-rep-rule-toggles.vue` renders one `VcCheckbox` per rule in catalog order.
-`disabled` on the last checked box is what enforces AC #2; no custom guard, no toast.
+header. New `sales-rep-rule-toggles.vue` renders one `VcCheckbox` per rule in catalog order, all of
+them always enabled — see "Hiding every rule is allowed" in §2.
 
 Outside edit mode the chips row renders only the checked rules. The "All" baseline chip is always
-present and is not configurable — it is not one of the rules, and removing it would leave a rep
-unable to see their unfiltered orders. If the active filter's rule is unchecked mid-edit, the
-widget falls back to the baseline.
+present and is not configurable — it is not one of the rules, and it is what makes hiding every rule
+safe. If the active filter's rule is unchecked mid-edit, the widget falls back to the baseline.
 
 **Consumption.** `sales-rep-orders.vue` reads `maxRows` from chrome for `first` and `:skeleton-rows`,
 falling back to its `limit` prop then `ORDERS_DEFAULT_LIMIT`; `top-sellers.vue` reads it for `take`
@@ -208,10 +214,10 @@ generate:graphql-types` — whose diff spans every module and must be pruned to 
 
 | file                            | covers                                                                                    |
 | ------------------------------- | ----------------------------------------------------------------------------------------- |
-| `layout/settings.test.ts` (new) | clamping, non-numeric fallback, unknown `tab.*` keys, the all-hidden fallback, round-trip  |
+| `layout/settings.test.ts` (new) | clamping, non-numeric fallback, unknown `tab.*` keys, an unloaded catalog, round-trip |
 | `layout/document.test.ts`       | the reshaped state, settings surviving reconcile, `settings` in the payload, the echo check |
 | `useSalesRepLayout.test.ts`     | reset restores defaults, cancel discards, save sends what the draft holds                  |
-| component tests                 | the rows input's drag-filter class and clamping; the toggles' last-checked-box rule        |
+| component tests                 | the rows input's drag-filter class and clamping; the toggles' checked state               |
 
 ## Out of scope
 

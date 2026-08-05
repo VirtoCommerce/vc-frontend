@@ -137,7 +137,7 @@ import { useSalesRepOrders } from "../composables/useSalesRepOrders";
 import { useSalesRepPeriodFilter } from "../composables/useSalesRepPeriodFilter";
 import { useSalesRepRules } from "../composables/useSalesRepRules";
 import { ORDERS_DEFAULT_LIMIT } from "../constants";
-import { hiddenTabsInEffect, knownHiddenTabs, toggleTabRule, visibleTabRules } from "../layout/settings";
+import { knownHiddenTabs, toggleTabRule, visibleTabRules } from "../layout/settings";
 import { selectableFilterRules } from "../utils";
 import LayoutWidget from "./layout-widget.vue";
 import SalesRepRuleChips from "./sales-rep-rule-chips.vue";
@@ -188,21 +188,19 @@ const hasFilterOptions = computed(() => selectableRules.value.length > 0);
 // every rule the backend still returns — see layout/settings.ts.
 const visibleRules = computed(() => visibleTabRules(selectableRules.value, hiddenTabs.value));
 
-// What the checkboxes read; the stored list and the rendered tabs disagree under the all-hidden fallback.
-const effectiveHiddenTabs = computed(() => hiddenTabsInEffect(selectableRules.value, hiddenTabs.value));
+// What the checkboxes read: the stored list minus anything the catalog no longer contains.
+const effectiveHiddenTabs = computed(() => knownHiddenTabs(selectableRules.value, hiddenTabs.value));
 
 // Edit mode is where the widget knows the live catalog, so a name it no longer returns is cleared from
 // the store. Keyed on the catalog too, which can arrive after edit mode was entered.
 watch([editingTabs, selectableRules], () => {
-  const pruned = knownHiddenTabs(selectableRules.value, hiddenTabs.value);
-
-  if (editingTabs.value && pruned.length !== hiddenTabs.value.length) {
-    chrome?.updateSettings({ hiddenTabs: pruned });
+  if (editingTabs.value && effectiveHiddenTabs.value.length !== hiddenTabs.value.length) {
+    chrome?.updateSettings({ hiddenTabs: effectiveHiddenTabs.value });
   }
 });
 
 function toggleTab(name: string): void {
-  chrome?.updateSettings({ hiddenTabs: toggleTabRule(selectableRules.value, effectiveHiddenTabs.value, name) });
+  chrome?.updateSettings({ hiddenTabs: toggleTabRule(effectiveHiddenTabs.value, name) });
 }
 
 // The active filter can be unchecked from under the chips — leaving it selected would filter by a tab
