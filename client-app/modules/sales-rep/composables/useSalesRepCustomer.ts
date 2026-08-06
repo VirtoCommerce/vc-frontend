@@ -2,6 +2,7 @@ import { useQuery } from "@vue/apollo-composable";
 import { computed, toValue } from "vue";
 import { Logger } from "@/core/utilities";
 import { SalesRepCustomerDocument } from "../api/graphql/types";
+import { HUB_FETCH_POLICY } from "../constants";
 import { formatCustomerLocation } from "../utils";
 import type { SalesRepCustomerProfileType } from "../types/customer-profile";
 import type { MaybeRefOrGetter } from "vue";
@@ -9,7 +10,11 @@ import type { MaybeRefOrGetter } from "vue";
 export function useSalesRepCustomer(organizationId: MaybeRefOrGetter<string>) {
   const variables = computed(() => ({ organizationId: toValue(organizationId) }));
 
-  const { result, loading, onError } = useQuery(SalesRepCustomerDocument, variables);
+  // The header is editable outside the storefront, so it revalidates too. Three components on the page
+  // share this composable; Apollo's deduplication collapses their concurrent identical requests into one.
+  const { result, loading, onError } = useQuery(SalesRepCustomerDocument, variables, {
+    fetchPolicy: HUB_FETCH_POLICY,
+  });
 
   onError((error) => {
     // No toast; the page falls back to the not-found view.

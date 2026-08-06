@@ -37,9 +37,13 @@
         />
       </div>
 
+      <!-- A failure gets its own view: it must not land in the empty state, which would read as "no
+           customers" or, with a keyword active, offer a Reset search that can't help (VCST-5586). -->
+      <VcEmptyView v-if="failed && !loading" :text="t('sales_rep.my_customers.table.load_failed')" variant="error" />
+
       <!-- Empty here means "nothing matches" (keyword/filter active), not "no customers"; reset is keyword-only. -->
       <VcEmptyView
-        v-if="!items.length && !loading"
+        v-else-if="!items.length && !loading"
         :text="
           keyword || filter ? t('sales_rep.my_customers.table.no_results') : t('sales_rep.my_customers.table.empty')
         "
@@ -80,7 +84,7 @@
 
                     <span v-if="item.location" class="my-customers__location">{{ item.location }}</span>
 
-                    <span v-if="item.ytdTotal" class="my-customers__mobile-sub">
+                    <span class="my-customers__mobile-sub">
                       {{ t("sales_rep.my_customers.table.ytd") }}: {{ item.ytdTotal }}
                     </span>
 
@@ -141,15 +145,17 @@
               :sortable="isColumnSortable('ytd')"
               align="right"
             >
-              <template v-if="item.ytdTotal">
-                <div class="my-customers__amount">{{ item.ytdTotal }}</div>
+              <div class="my-customers__amount">{{ item.ytdTotal }}</div>
 
-                <div class="my-customers__sub">
-                  {{ t("sales_rep.my_customers.table.orders_count", { count: item.ytdCount }) }}
-                </div>
-              </template>
-
-              <template v-else>—</template>
+              <div class="my-customers__sub">
+                {{
+                  t(
+                    "sales_rep.my_customers.table.orders_count",
+                    { count: formatStatCount(item.ytdCount) },
+                    item.ytdCount,
+                  )
+                }}
+              </div>
             </VcTableColumn>
 
             <VcTableColumn
@@ -158,7 +164,7 @@
               :title="t('sales_rep.my_customers.table.last_year')"
               align="right"
             >
-              {{ item.lastYearTotal || "—" }}
+              {{ item.lastYearTotal }}
             </VcTableColumn>
 
             <VcTableColumn
@@ -216,12 +222,14 @@ import { useSalesRepColumnSort } from "../composables/useSalesRepColumnSort";
 import { useSalesRepCustomers } from "../composables/useSalesRepCustomers";
 import { useSalesRepRules } from "../composables/useSalesRepRules";
 import { CUSTOMER_PROFILE_ROUTE_NAME } from "../constants";
-import { selectableFilterRules } from "../utils";
+import { formatStatCount, selectableFilterRules } from "../utils";
 import type { SalesRepCustomerType } from "../types";
 
 const { t } = useI18n();
 const { openModal } = useModal();
-const { loading, keyword, filter, sortRule, page, pages, items } = useSalesRepCustomers();
+const { loading, error, keyword, filter, sortRule, page, pages, items } = useSalesRepCustomers();
+
+const failed = computed(() => Boolean(error.value));
 
 const { rules: sortRules } = useSalesRepRules("customer", "sort");
 const { rules: filterRules } = useSalesRepRules("customer", "filter");
