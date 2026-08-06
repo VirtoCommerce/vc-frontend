@@ -4,7 +4,7 @@
       {{ t("sales_rep.hub.dashboard.page.title") }}
     </VcTypography>
 
-    <LayoutSurface :scope="SCOPE" :cards="cards" :cards-loading="cardsLoading" />
+    <LayoutSurface :scope="SCOPE" :cards="cards" />
   </div>
 </template>
 
@@ -17,7 +17,7 @@ import { DASHBOARD_LAYOUT_SCOPE } from "../constants";
 const SCOPE = DASHBOARD_LAYOUT_SCOPE;
 
 const { t } = useI18n();
-const { cards, loading: cardsLoading } = useSalesRepDashboardWidgets();
+const { cards } = useSalesRepDashboardWidgets();
 </script>
 
 <style lang="scss">

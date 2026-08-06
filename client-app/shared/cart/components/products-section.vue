@@ -68,11 +68,6 @@
           @save-for-later="$emit('saveForLater', $event)"
           @link-click="$emit('linkClick', $event)"
         />
-
-        <LoyaltyValidationAlert
-          v-if="!!loyaltyCurrencyCode && group.currencyCode === loyaltyCurrencyCode"
-          class="mt-3"
-        />
       </div>
     </template>
 
@@ -94,11 +89,9 @@
 
 <script setup lang="ts">
 import { VendorName } from "@/shared/common";
-import { useLoyaltySettings } from "@/shared/loyalty/composables/useLoyaltySettings";
 import type { LineItemType, ValidationErrorType } from "@/core/api/graphql/types";
 import type { CurrencyGroupType, VendorGroupType } from "@/core/types";
 import CartLineItems from "@/shared/cart/components/cart-line-items.vue";
-import LoyaltyValidationAlert from "@/shared/cart/components/loyalty-validation-alert.vue";
 
 interface IEmits {
   (event: "change:itemQuantity", value: { itemId: string; quantity: number }): void;
@@ -128,8 +121,6 @@ withDefaults(defineProps<IProps>(), {
   otherCurrencyGroups: () => [],
   validationErrors: () => [],
 });
-
-const { loyaltyCurrencyCode } = useLoyaltySettings();
 </script>
 
 <style lang="scss">

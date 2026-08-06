@@ -35,7 +35,8 @@
         "search_aria": "Cerca clienti",
         "empty": "Nessun cliente trovato",
         "no_results": "Nessun cliente corrisponde alla tua ricerca",
-        "reset_search": "Reimposta ricerca"
+        "reset_search": "Reimposta ricerca",
+        "load_failed": "Impossibile caricare i clienti"
       }
     },
     "hub": {
@@ -66,7 +67,8 @@
           "new_customers": "{count} nuovi clienti",
           "placed_today": "{count} effettuati oggi",
           "new_this_week": "{count} nuovi questa settimana",
-          "mtd_of_ytd": "{percent}% dell'anno"
+          "mtd_of_ytd": "{percent}% dell'anno",
+          "load_failed": "Caricamento non riuscito"
         }
       },
       "layout": {
@@ -160,7 +162,8 @@
       "items": "Articoli",
       "status": "Stato",
       "total": "Totale",
-      "filter_all": "Tutti"
+      "filter_all": "Tutti",
+      "load_failed": "Impossibile caricare gli ordini"
     },
     "top_sellers": {
       "title": "Top venditori",
@@ -170,7 +173,8 @@
       "revenue": "Entrate",
       "empty": "Nessuna vendita in questo periodo",
       "no_results": "Nessuna vendita in questa categoria",
-      "all_categories": "Tutte le categorie"
+      "all_categories": "Tutte le categorie",
+      "load_failed": "Impossibile caricare i più venduti"
     },
     "rules": {
       "customer": {

@@ -35,7 +35,8 @@
         "search_aria": "Sök kunder",
         "empty": "Inga kunder hittades",
         "no_results": "Inga kunder matchar din sökning",
-        "reset_search": "Återställ sökning"
+        "reset_search": "Återställ sökning",
+        "load_failed": "Kunde inte läsa in kunderna"
       }
     },
     "hub": {
@@ -66,7 +67,8 @@
           "new_customers": "{count} nya kunder",
           "placed_today": "{count} lagda i dag",
           "new_this_week": "{count} nya denna vecka",
-          "mtd_of_ytd": "{percent}% av året"
+          "mtd_of_ytd": "{percent}% av året",
+          "load_failed": "Kunde inte läsas in"
         }
       },
       "layout": {
@@ -160,7 +162,8 @@
       "items": "Artiklar",
       "status": "Status",
       "total": "Totalt",
-      "filter_all": "Alla"
+      "filter_all": "Alla",
+      "load_failed": "Kunde inte läsa in ordrarna"
     },
     "top_sellers": {
       "title": "Topp säljare",
@@ -170,7 +173,8 @@
       "revenue": "Intäkter",
       "empty": "Ingen försäljning under denna period",
       "no_results": "Ingen försäljning i denna kategori",
-      "all_categories": "Alla kategorier"
+      "all_categories": "Alla kategorier",
+      "load_failed": "Kunde inte läsa in bästsäljarna"
     },
     "rules": {
       "customer": {

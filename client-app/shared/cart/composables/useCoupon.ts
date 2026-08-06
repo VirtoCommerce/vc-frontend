@@ -4,8 +4,11 @@ import { useFullCart } from "@/shared/cart/composables/useCart";
 type ErrorType = "invalid" | "failed";
 type CouponErrorType = { code: string; type: ErrorType };
 
+const COUPON_ERROR_TIMEOUT = 7000;
+
 const couponError = ref<CouponErrorType>();
 const loadingCouponCode = ref<string>();
+let couponErrorTimeoutId: ReturnType<typeof setTimeout> | undefined;
 
 export function useCoupon() {
   const { cart, validateCartCoupon, addCartCoupon, removeCartCoupon } = useFullCart();
@@ -15,7 +18,15 @@ export function useCoupon() {
   );
 
   function clearError() {
+    clearTimeout(couponErrorTimeoutId);
+    couponErrorTimeoutId = undefined;
     couponError.value = undefined;
+  }
+
+  function setError(error: CouponErrorType) {
+    clearTimeout(couponErrorTimeoutId);
+    couponError.value = error;
+    couponErrorTimeoutId = setTimeout(clearError, COUPON_ERROR_TIMEOUT);
   }
 
   async function applyCoupon(code: string) {
@@ -29,19 +40,19 @@ export function useCoupon() {
     try {
       loadingCouponCode.value = trimmed;
 
+      const isValid = await validateCartCoupon(trimmed);
+      if (!isValid) {
+        setError({ code: trimmed, type: "invalid" });
+        return;
+      }
+
       if (appliedCouponCode.value && appliedCouponCode.value !== trimmed) {
         await removeCartCoupon(appliedCouponCode.value);
       }
 
-      const isValid = await validateCartCoupon(trimmed);
-      if (!isValid) {
-        couponError.value = { code: trimmed, type: "invalid" };
-        return;
-      }
-
       await addCartCoupon(trimmed);
     } catch {
-      couponError.value = { code: trimmed, type: "failed" };
+      setError({ code: trimmed, type: "failed" });
     } finally {
       loadingCouponCode.value = undefined;
     }
@@ -60,7 +71,7 @@ export function useCoupon() {
 
       await removeCartCoupon(trimmed);
     } catch {
-      couponError.value = { code: trimmed, type: "failed" };
+      setError({ code: trimmed, type: "failed" });
     } finally {
       loadingCouponCode.value = undefined;
     }

@@ -35,7 +35,8 @@
         "search_aria": "Поиск клиентов",
         "empty": "Клиенты не найдены",
         "no_results": "Нет клиентов, соответствующих вашему поисковому запросу",
-        "reset_search": "Сбросить поиск"
+        "reset_search": "Сбросить поиск",
+        "load_failed": "Не удалось загрузить клиентов"
       }
     },
     "hub": {
@@ -66,7 +67,8 @@
           "new_customers": "{count} новых клиентов",
           "placed_today": "{count} сегодня",
           "new_this_week": "{count} новых за неделю",
-          "mtd_of_ytd": "{percent}% от года"
+          "mtd_of_ytd": "{percent}% от года",
+          "load_failed": "Не удалось загрузить"
         }
       },
       "layout": {
@@ -160,7 +162,8 @@
       "items": "Позиции",
       "status": "Статус",
       "total": "Итого",
-      "filter_all": "Все"
+      "filter_all": "Все",
+      "load_failed": "Не удалось загрузить заказы"
     },
     "top_sellers": {
       "title": "Лучшие продавцы",
@@ -170,7 +173,8 @@
       "revenue": "Выручка",
       "empty": "Нет продаж за этот период",
       "no_results": "Нет продаж в этой категории",
-      "all_categories": "Все категории"
+      "all_categories": "Все категории",
+      "load_failed": "Не удалось загрузить топ товаров"
     },
     "rules": {
       "customer": {

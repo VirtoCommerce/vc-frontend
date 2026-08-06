@@ -33,7 +33,6 @@
       <LayoutSurface
         :scope="SCOPE"
         :cards="cards"
-        :cards-loading="cardsLoading"
         :organization-id="organizationId"
         :edit-button-placement="isCompact ? 'end' : 'mainColumn'"
       />
@@ -64,7 +63,7 @@ const isCompact = useBreakpoints(breakpointsTailwind).smaller("xl");
 
 const { t } = useI18n();
 const { customer, loading, notFound } = useSalesRepCustomer(() => props.organizationId);
-const { cards, loading: cardsLoading } = useSalesRepCustomerWidgets(() => props.organizationId);
+const { cards } = useSalesRepCustomerWidgets(() => props.organizationId);
 
 const myCustomersRouteName = MY_CUSTOMERS_ROUTE_NAME;
 

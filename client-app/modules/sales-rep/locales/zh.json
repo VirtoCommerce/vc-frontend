@@ -35,7 +35,8 @@
         "search_aria": "搜索客户",
         "empty": "未找到客户",
         "no_results": "没有符合您搜索条件的客户",
-        "reset_search": "重置搜索"
+        "reset_search": "重置搜索",
+        "load_failed": "无法加载客户"
       }
     },
     "hub": {
@@ -66,7 +67,8 @@
           "new_customers": "{count} 个新客户",
           "placed_today": "今日 {count} 单",
           "new_this_week": "本周新增 {count}",
-          "mtd_of_ytd": "占年初至今 {percent}%"
+          "mtd_of_ytd": "占年初至今 {percent}%",
+          "load_failed": "加载失败"
         }
       },
       "layout": {
@@ -160,7 +162,8 @@
       "items": "商品",
       "status": "状态",
       "total": "合计",
-      "filter_all": "全部"
+      "filter_all": "全部",
+      "load_failed": "无法加载订单"
     },
     "top_sellers": {
       "title": "畅销商品",
@@ -170,7 +173,8 @@
       "revenue": "收入",
       "empty": "此期间无销售",
       "no_results": "此类别无销售",
-      "all_categories": "所有类别"
+      "all_categories": "所有类别",
+      "load_failed": "无法加载热销商品"
     },
     "rules": {
       "customer": {
