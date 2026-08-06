@@ -202,6 +202,7 @@
       "max_value": "最大值为 {value}",
       "min_value": "最小值为 {value}",
       "empty_wish_list": "列表中没有商品",
+      "no_company_roles_available": "没有可用的角色。请联系您的店铺管理员。",
       "not_defined": "未定义",
       "invalid_coupon": "此代码无效",
       "failed_coupon": "优惠券出现问题。请重试。",

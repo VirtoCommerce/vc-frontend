@@ -2087,6 +2087,7 @@ export type InputChangeOrganizationContactRoleType = {
   memberId: Scalars['String']['input'];
   /** Role IDs or names to be assigned to the user within the organization */
   roleIds?: InputMaybe<Array<Scalars['String']['input']>>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type InputChangeOrganizationLogoCommandType = {
@@ -4691,6 +4692,7 @@ export type Organization = {
   /** Business category */
   businessCategory?: Maybe<Scalars['String']['output']>;
   contacts?: Maybe<ContactConnection>;
+  contactRoles?: Maybe<Array<RoleType>>;
   /** Default billing address */
   defaultBillingAddress?: Maybe<MemberAddressType>;
   /** Default shipping address */

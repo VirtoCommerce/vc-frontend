@@ -330,7 +330,6 @@ import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { usePageHead } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
-import { B2B_ROLES } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { PlatformPermissions, XApiPermissions } from "@/core/enums";
 import { getFilterExpressionFromFacets } from "@/core/utilities";
@@ -341,6 +340,7 @@ import {
   InviteMemberModal,
   MemberStatus,
   MembersDropdownMenu,
+  useCompanyMemberRoles,
   useOrganizationContacts,
 } from "@/shared/company";
 import { useOrganizationContactsFilterFacets } from "@/shared/company/composables/useOrganizationContactsFilterFacets";
@@ -389,7 +389,8 @@ const {
   applyFacets,
   resetFacets,
   resetFacetItem,
-} = useOrganizationContactsFilterFacets();
+} = useOrganizationContactsFilterFacets(organization.value!.id);
+const { roles: companyMemberRoles } = useCompanyMemberRoles();
 const { openModal } = useModal();
 const router = useRouter();
 const breakpoints = useBreakpoints(breakpointsTailwind);
@@ -670,14 +671,16 @@ function openEditCustomerRoleModal(contact: ExtendedContactType): void {
   const closeEditCustomerRoleModal = openModal({
     component: EditCustomerRoleModal,
     props: {
-      roles: B2B_ROLES,
+      roles: companyMemberRoles.value,
       currentRoleId: contact.extended.roles[0]?.id,
       loading: contactsLoading,
 
       async onConfirm(selectedRoleId: string): Promise<void> {
+        const selectedRole = companyMemberRoles.value.find((role) => role.id === selectedRoleId);
+
         const result = await changeContactOrganizationRole({
           memberId: contact.id,
-          roleIds: [selectedRoleId],
+          roleIds: [selectedRole?.name ?? selectedRoleId],
         });
 
         const notification: INotification = {

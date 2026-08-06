@@ -202,6 +202,7 @@
       "max_value": "Maksimumsverdi er {value}",
       "min_value": "Minimumsverdi er {value}",
       "empty_wish_list": "Listen inneholder ingen produkter",
+      "no_company_roles_available": "Det finnes ingen tilgjengelige roller. Kontakt butikkadministratoren din.",
       "not_defined": "Ikke definert",
       "invalid_coupon": "Denne koden er ikke gyldig",
       "failed_coupon": "Noe gikk galt med kupongen. Prøv igjen.",

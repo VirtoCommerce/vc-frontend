@@ -4,13 +4,17 @@
       <p v-for="error in commonErrors" :key="error">{{ error }}</p>
     </VcAlert>
 
+    <VcAlert v-if="!roles.length" color="warning" size="sm" variant="solid-light" class="mb-4">
+      {{ $t("common.messages.no_company_roles_available") }}
+    </VcAlert>
+
     <form class="space-y-4">
       <VcSelect
         v-model="roleId"
         :items="roles"
         :label="$t('shared.account.invite_member_modal.role_label')"
         :placeholder="$t('shared.account.invite_member_modal.role_placeholder')"
-        :disabled="loading"
+        :disabled="loading || !roles.length"
         :error="!!errors.roleId"
         :message="errors.roleId"
         text-field="normalizedName"
@@ -57,14 +61,14 @@
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
 import { useField, useForm } from "vee-validate";
-import { ref, useTemplateRef } from "vue";
+import { computed, ref, useTemplateRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { string } from "yup";
 import { useErrorsTranslator } from "@/core/composables";
-import { B2B_ROLES } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { useUser } from "@/shared/account";
+import { useCompanyMemberRoles } from "@/shared/company/composables/useCompanyMemberRoles";
 import { useNotifications } from "@/shared/notification";
 import { VcModal } from "@/ui-kit/components";
 import { getInvalidEmails, parseEmails, normalizeEmails } from "./emails";
@@ -89,14 +93,17 @@ const router = useRouter();
 const notifications = useNotifications();
 const { translate } = useErrorsTranslator<IdentityErrorInfoType>("identity_error");
 
-const roles = B2B_ROLES.map((role) => {
-  role.normalizedName = t("common.roles." + role.id);
-  return role;
-});
+const { roles: companyMemberRoles } = useCompanyMemberRoles();
+const roles = computed(() =>
+  companyMemberRoles.value.map((role) => ({
+    ...role,
+    normalizedName: t("common.roles." + role.id, role.name),
+  })),
+);
 
 const { errors, meta, handleSubmit } = useForm({
   initialValues: {
-    roleId: roles[0].id,
+    roleId: roles.value[0]?.id ?? "",
     message: "",
     emails: "",
   },
@@ -142,11 +149,13 @@ const send = handleSubmit(async (data) => {
   commonErrors.value = [];
   loading.value = true;
 
+  const selectedRole = roles.value.find((role) => role.id === data.roleId);
+
   const result = await inviteUser({
     storeId,
     urlSuffix: router.resolve({ name: "ConfirmInvitation" }).path,
     organizationId: organization.value!.id,
-    roleIds: [data.roleId],
+    roleIds: [selectedRole?.name ?? data.roleId],
     emails: normalizeEmails(parseEmails(data.emails)),
     message: data.message.trim(),
   });
