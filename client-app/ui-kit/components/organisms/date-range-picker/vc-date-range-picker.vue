@@ -223,7 +223,10 @@ const startMax = computed<string | undefined>(() => {
   if (!props.max) {
     return end;
   }
-  return props.max < end ? props.max : end;
+  if (props.max < end) {
+    return props.max;
+  }
+  return end;
 });
 
 const endMin = computed<string | undefined>(() => {
@@ -234,7 +237,10 @@ const endMin = computed<string | undefined>(() => {
   if (!props.min) {
     return start;
   }
-  return props.min > start ? props.min : start;
+  if (props.min > start) {
+    return props.min;
+  }
+  return start;
 });
 
 // Start-aligned so the start field's calendar does not overhang the separator.
