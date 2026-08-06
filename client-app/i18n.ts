@@ -21,6 +21,52 @@ export function getDefaultNumberFormats(currency: string): IntlNumberFormat {
   };
 }
 
+/**
+ * Slavic locales need four plural forms (zero | one | few | many); vue-i18n's default rule
+ * only distinguishes zero | one | other, which renders e.g. "2 отзывов" instead of "2 отзыва".
+ * Both rules keep working with legacy 2-3-form messages via the `choicesLength` guard.
+ */
+export function russianPluralRule(choice: number, choicesLength: number): number {
+  if (choice === 0) {
+    return 0;
+  }
+
+  const teen = choice > 10 && choice < 20;
+  const endsWithOne = choice % 10 === 1;
+
+  if (choicesLength < 4) {
+    return !teen && endsWithOne ? 1 : 2;
+  }
+
+  if (!teen && endsWithOne) {
+    return 1;
+  }
+
+  if (!teen && choice % 10 >= 2 && choice % 10 <= 4) {
+    return 2;
+  }
+
+  return 3;
+}
+
+export function polishPluralRule(choice: number, choicesLength: number): number {
+  if (choice === 0) {
+    return 0;
+  }
+
+  if (choice === 1) {
+    return 1;
+  }
+
+  if (choicesLength < 4) {
+    return 2;
+  }
+
+  const few = choice % 10 >= 2 && choice % 10 <= 4 && !(choice % 100 >= 12 && choice % 100 <= 14);
+
+  return few ? 2 : 3;
+}
+
 export function createI18n(locale: string, currency: string, fallback?: { locale: string; message: LocaleMessage }) {
   // `locale` may originate from user-controlled input (e.g. a `?cultureName=` query param) and is
   // used below as a dynamic object key. Only accept a plain locale identifier, otherwise fall back,
@@ -74,6 +120,10 @@ export function createI18n(locale: string, currency: string, fallback?: { locale
     },
     fallbackWarn: false,
     missingWarn: false,
+    pluralRules: {
+      ru: russianPluralRule,
+      pl: polishPluralRule,
+    },
     numberFormats: {
       [safeLocale]: getDefaultNumberFormats(currency),
     },

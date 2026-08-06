@@ -10,7 +10,7 @@
       "item_as_described_by_vendor": "Товар соответствует описанию продавца?",
       "product_review_image": "Изображение товара из отзыва",
       "product_review_image_of": "Изображение товара из отзыва {index} из {total}",
-      "reviews_count": "нет отзывов | {n} отзыв | {n} отзывов"
+      "reviews_count": "нет отзывов | {n} отзыв | {n} отзыва | {n} отзывов"
     },
     "messages": {
       "thanks_for_feedback": "Ваш отзыв успешно отправлен и ожидает подтверждения. Спасибо!"

@@ -170,7 +170,12 @@ function getButtonAriaLabel(index: number): string {
     @apply p-[--padding];
 
     &:focus-visible {
-      @apply outline outline-2 outline-offset-1 outline-primary-300 rounded;
+      // primary-600 keeps >= 3:1 non-text contrast (WCAG 1.4.11) in both light and dark presets;
+      // the bare `outline` class is avoided on purpose - it emits the config's default
+      // outline-color (primary-100) as a dead duplicate declaration.
+      @apply rounded outline-2 outline-offset-1 outline-primary-600;
+
+      outline-style: solid;
     }
 
     // WCAG 2.2 AA (SC 2.5.8): operable star buttons must be at least 24x24px;
