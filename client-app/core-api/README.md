@@ -96,6 +96,20 @@ the released tarball is immutable per version.
 
 ---
 
+## What belongs in the facade
+
+Three tiers, in order of preference. The tier decides the **shape** of the export; a
+request that fits none of them is a request to change the host, not to widen the facade.
+
+| Tier                       | Export                            | Use when                                                                                                                                                                                              |
+| -------------------------- | --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1. Capability              | composable or function            | Default. The plugin states intent, the host executes it — `registerCacheTypePolicies`, `useNavigations`, `useModal`.                                                                                    |
+| 2. Host-rendered chrome    | nothing — an extension-point entry | The result must look native. The plugin registers **data** and the host renders its own markup: an entry may omit `component` and carry only `props` (e.g. a nav badge `count`). See `useExtensionRegistry`. |
+| 3. Frozen component        | a `.vue` component                | The visual itself is the contract and re-implementing it would drift from per-store settings — `OrderStatus`. Its props become contract: renaming one is a **breaking** change.                          |
+
+Never export from a `_internal/` path. That folder is private by convention, and exporting
+from it freezes markup the host needs to keep free to change — Tier 2 exists for that case.
+
 ## How to extend the facade (developer flow)
 
 Say a plugin needs `useThemeContext`.

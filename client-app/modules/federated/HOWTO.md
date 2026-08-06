@@ -59,7 +59,7 @@ your code imports** as dev dependencies — Vue included:
 ```jsonc
 {
   "dependencies": {
-    "@vc-frontend/core": "https://github.com/VirtoCommerce/vc-frontend/releases/download/core-v1.0.0/vc-frontend-core-1.0.0.tgz",
+    "@vc-frontend/core": "https://github.com/VirtoCommerce/vc-frontend/releases/download/core-v1.2.0/vc-frontend-core-1.2.0.tgz",
   },
   "devDependencies": {
     // compile-time only - NOTHING below ships in your bundle (import: false);
@@ -96,6 +96,22 @@ built chunks reference the host's live instances. (Add `vue-i18n`, `@apollo/clie
 The facade dependency brings you the type contract (`contract/index.d.ts`) and the
 shared-dependency config (`@vc-frontend/core/federation`).
 
+### Everything else is just your dependency
+
+A package that is **not** in `MF_SHARED_RANGES` needs no ceremony: `yarn add` it and it
+gets bundled into your plugin, even when the host happens to use it too. A second copy is
+only a bundle-size cost, not a correctness one — that is exactly the criterion the shared
+list is built on (`federation.mjs`). The sales-rep hub's `sortablejs` (drag-and-drop
+layout) is the worked example: leaf DOM library, no cross-copy state, so it stays out of
+the shared list and rides along in the plugin bundle.
+
+> **The exception to watch: libraries whose state crosses the host/plugin boundary
+> through `provide`/`inject`.** `vee-validate` is the live case — sales-rep gets away with
+> its own copy only because its modal owns *both* the `useForm` and the `useField` inside
+> it. A plugin that instead contributes a **field into a host-owned form** would inject
+> from the host's copy and find nothing; that library would have to move into
+> `MF_SHARED_RANGES` (and its range verified against the host's `package.json`) first.
+
 ## Step 2 — wire the build
 
 `vite.config.ts` — the three things that matter are the **expose**, the **shared
@@ -117,7 +133,7 @@ export default defineConfig({
       createRemoteFederationOptions({
         name: "my-plugin",
         // CONTRACT GATE: the facade version this plugin is built against.
-        requiredHostVersion: "^1.0.0",
+        requiredHostVersion: "^1.2.0",
         // Optional: sharedOverrides / exposes when you need to deviate.
       }),
     ),

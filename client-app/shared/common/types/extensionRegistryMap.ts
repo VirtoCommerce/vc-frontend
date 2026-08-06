@@ -1,15 +1,17 @@
 import type { CustomerOrderType, Product } from "@/core/api/graphql/types";
 import type { ExtendedMenuLinkType } from "@/core/types";
-import type { Component } from "vue";
+import type { Component, MaybeRefOrGetter } from "vue";
 
 type ExtensionEntryType<
   Props = never,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Condition extends (parameter: any) => boolean = never,
 > = {
-  component: Component;
+  /** Omit to keep the host's own fallback rendering and only contribute `props` to it. */
+  component?: Component;
   condition?: Condition;
-  props?: Props;
+  /** Partial: the host supplies the rest (e.g. `item`) as attrs at the extension point. */
+  props?: Partial<Props>;
 };
 
 /**
@@ -18,7 +20,7 @@ type ExtensionEntryType<
  */
 export type ExtensionCategoryMapType = {
   headerMenu: ExtensionEntryType<{ item: ExtendedMenuLinkType }>;
-  mobileMenu: ExtensionEntryType<{ item: ExtendedMenuLinkType }>;
+  mobileMenu: ExtensionEntryType<{ item: ExtendedMenuLinkType; count?: MaybeRefOrGetter<number> }>;
   accountMenu: ExtensionEntryType<{ item: ExtendedMenuLinkType }>;
   mobileHeader: ExtensionEntryType;
   productCard: ExtensionEntryType<

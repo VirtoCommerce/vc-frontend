@@ -1,9 +1,10 @@
 import { computed, defineAsyncComponent } from "vue";
-import { cache } from "@/core/api/graphql/config";
+import { registerCacheTypePolicies } from "@/core/api/graphql/config/registerCacheTypePolicies";
 import { useNavigations } from "@/core/composables/useNavigations";
 import { useUser } from "@/shared/account/composables/useUser";
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import { loadModuleLocale } from "../utils";
+import { salesRepCustomersCount } from "./composables/sharedSalesRepCustomersCount";
 import { isSalesRepsEnabled } from "./composables/useSalesRepsConfig";
 import {
   DASHBOARD_NAV_LINK_ID,
@@ -14,7 +15,7 @@ import {
   MY_CUSTOMERS_ROUTE_NAME,
   SALES_REP_ACCESS_PERMISSION,
 } from "./constants";
-import { registerLayoutTypePolicies } from "./layout/cache-policies";
+import { layoutTypePolicies } from "./layout/cache-policies";
 import { salesRepMenuSchema } from "./menu";
 import { customerProfileRoute, dashboardRoute, myCustomersRoute, salesRepsRoute } from "./routes";
 import type { I18n } from "@/i18n";
@@ -35,13 +36,15 @@ export function init(router: Router, i18n: I18n) {
   const { mergeMenuSchema, registerAccountSection } = useNavigations();
   const { checkPermissions } = useUser();
 
-  // Custom My customers links that show the total-customer count badge (desktop + mobile).
+  // My customers links showing the total-customer count badge. Desktop needs its own
+  // component for the sibling-route highlight; mobile only contributes the count, so the
+  // host renders its own menu link with it.
   const { register } = useExtensionRegistry();
   register("accountMenu", MY_CUSTOMERS_NAV_LINK_ID, {
     component: defineAsyncComponent(() => import("./components/link-my-customers.vue")),
   });
   register("mobileMenu", MY_CUSTOMERS_NAV_LINK_ID, {
-    component: defineAsyncComponent(() => import("./components/link-my-customers-mobile.vue")),
+    props: { count: salesRepCustomersCount },
   });
 
   // "Sales reps" contact-info link for buyers (VCST-5409) — stays in the Corporate widget.
@@ -72,7 +75,7 @@ export function init(router: Router, i18n: I18n) {
 
   // Layout regions and blocks carry ids that repeat across surfaces, so Apollo would normalize them
   // into entities shared by every scope. See layout/cache-policies.ts.
-  registerLayoutTypePolicies(cache);
+  registerCacheTypePolicies(layoutTypePolicies);
 
   void loadModuleLocale(i18n, "sales-rep");
 }
