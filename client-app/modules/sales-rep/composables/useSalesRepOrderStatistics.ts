@@ -3,7 +3,7 @@ import { computed, toValue } from "vue";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { SalesRepCustomerOrderStatisticsDocument } from "../api/graphql/types";
-import { NEW_ORDERS_FILTER } from "../constants";
+import { HUB_FETCH_POLICY, NEW_ORDERS_FILTER } from "../constants";
 import { buildStatisticsWindows } from "../utils";
 import type { Ref } from "vue";
 
@@ -25,7 +25,9 @@ export function useSalesRepOrderStatistics(options: UseSalesRepOrderStatisticsOp
     ...buildStatisticsWindows(),
   }));
 
-  const { result, loading, error, onError } = useQuery(SalesRepCustomerOrderStatisticsDocument, variables);
+  const { result, loading, error, onError } = useQuery(SalesRepCustomerOrderStatisticsDocument, variables, {
+    fetchPolicy: HUB_FETCH_POLICY,
+  });
 
   onError((err) => {
     // No toast; `error` is surfaced on the cards themselves (VCST-5586).

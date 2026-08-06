@@ -3,6 +3,7 @@ import { computed, ref, watch } from "vue";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { SalesRepCustomersDocument } from "../api/graphql/types";
+import { HUB_FETCH_POLICY } from "../constants";
 import { buildStatisticsWindows, formatCustomerLocation, formatStatMoney } from "../utils";
 import type { SalesRepCustomerType } from "../types";
 
@@ -39,8 +40,11 @@ export function useSalesRepCustomers() {
   }));
 
   // The rep's customer organizations are resolved server-side from the caller's claims.
+  // The YTD / prior-year columns are statistics in list form, so they revalidate with the cards;
+  // keepPreviousResult holds the current page while they do.
   const { result, loading, error, onError } = useQuery(SalesRepCustomersDocument, variables, {
     keepPreviousResult: true,
+    fetchPolicy: HUB_FETCH_POLICY,
   });
 
   onError((err) => {

@@ -3,7 +3,7 @@ import { computed, toValue } from "vue";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { SalesRepCustomerCartStatisticsDocument } from "../api/graphql/types";
-import { ACTIVE_CARTS_FILTER } from "../constants";
+import { ACTIVE_CARTS_FILTER, HUB_FETCH_POLICY } from "../constants";
 import { buildStatisticsWindows } from "../utils";
 import type { Ref } from "vue";
 
@@ -26,7 +26,9 @@ export function useSalesRepCartStatistics(options: UseSalesRepCartStatisticsOpti
     };
   });
 
-  const { result, loading, error, onError } = useQuery(SalesRepCustomerCartStatisticsDocument, variables);
+  const { result, loading, error, onError } = useQuery(SalesRepCustomerCartStatisticsDocument, variables, {
+    fetchPolicy: HUB_FETCH_POLICY,
+  });
 
   onError((err) => {
     Logger.error("[sales-rep] salesRepCustomerCartStatistics failed:", err);

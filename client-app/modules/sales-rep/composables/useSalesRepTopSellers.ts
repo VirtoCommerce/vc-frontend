@@ -3,7 +3,7 @@ import { computed, toValue } from "vue";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { SalesRepTopSellersDocument } from "../api/graphql/types";
-import { TOP_SELLERS_DEFAULT_TAKE } from "../constants";
+import { HUB_FETCH_POLICY, TOP_SELLERS_DEFAULT_TAKE } from "../constants";
 import { formatStatCount, formatStatMoney } from "../utils";
 import type { SalesRepTopSellerRowType } from "../types";
 import type { Ref } from "vue";
@@ -35,7 +35,10 @@ export function useSalesRepTopSellers(options: UseSalesRepTopSellersOptionsType 
     take: toValue(options.take) ?? TOP_SELLERS_DEFAULT_TAKE,
   }));
 
-  const { result, loading, error, onError } = useQuery(SalesRepTopSellersDocument, variables);
+  // Ranked from the same orders as the KPI cards, so it revalidates with them.
+  const { result, loading, error, onError } = useQuery(SalesRepTopSellersDocument, variables, {
+    fetchPolicy: HUB_FETCH_POLICY,
+  });
 
   onError((err) => {
     Logger.error("[sales-rep] salesRepTopSellers failed:", err);
