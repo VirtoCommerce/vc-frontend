@@ -16,9 +16,13 @@
         </div>
 
         <div class="sales-rep-orders__content">
+          <!-- A failure replaces the table rather than sharing the empty view: apollo keeps the previous rows on a
+               failed refetch, which would otherwise read as this filter's result (VCST-5586). -->
+          <VcEmptyView v-if="failed && !loading" :text="t('sales_rep.orders.load_failed')" variant="error" />
+
           <!-- With a filter active, an empty result means "nothing matches this filter", not "never ordered". -->
           <VcEmptyView
-            v-if="!orders.length && !loading"
+            v-else-if="!orders.length && !loading"
             :text="filter ? t('sales_rep.orders.no_results') : t('sales_rep.orders.empty')"
             icon="outline-order"
           />
@@ -165,7 +169,7 @@ const { sortInfo, isColumnSortable, applySort } = useSalesRepColumnSort({
   rules: sortRules,
 });
 
-const { orders, loading } = useSalesRepOrders({
+const { orders, loading, error } = useSalesRepOrders({
   organizationId: () => props.organizationId,
   first: () => props.limit,
   filter: () => filter.value,
@@ -173,6 +177,8 @@ const { orders, loading } = useSalesRepOrders({
   periodFrom,
   periodTo,
 });
+
+const failed = computed(() => Boolean(error.value));
 </script>
 
 <style lang="scss">
