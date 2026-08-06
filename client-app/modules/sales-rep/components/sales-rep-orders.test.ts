@@ -39,6 +39,8 @@ const createWrapper = createWrapperFactory(mount, SalesRepOrders, {
     stubs: {
       // The content lives in a named slot, which a plain stub would not render.
       VcWidget: { template: '<div><slot name="default-container" /></div>' },
+      // LayoutWidget's drag controls: never rendered here, but the compiler resolves them anyway.
+      VcButton: true,
       VcTable: true,
       VcTableColumn: true,
       VcEmptyView: true,
