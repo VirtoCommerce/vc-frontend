@@ -172,14 +172,14 @@ describe("VcDateRangePicker — split layout", () => {
 
   it("exposes the row as a labelled group", () => {
     const wrapper = mountSplit({ label: "Order date range" });
-    const group = wrapper.find('[role="group"]');
+    const group = wrapper.find("fieldset");
     expect(group.exists()).toBe(true);
     expect(group.attributes("aria-label")).toBe("Order date range");
   });
 
   it("falls back to the generic group label when no label is given", () => {
     const wrapper = mountSplit();
-    expect(wrapper.find('[role="group"]').attributes("aria-label")).toBe("ui_kit.date_range_input.aria_label");
+    expect(wrapper.find("fieldset").attributes("aria-label")).toBe("ui_kit.date_range_input.aria_label");
   });
 
   describe("cross-bound calendars", () => {
@@ -512,9 +512,17 @@ describe("VcDateRangePicker — split layout", () => {
       expect(endField.props("placement")).toBe("top-end");
     });
 
+    it("passes side placements through untouched — they never overhang the separator", () => {
+      const [startField, endField] = mountSplit({ placement: "left-start" }).findAllComponents({
+        name: "VcDatePicker",
+      });
+      expect(startField.props("placement")).toBe("left-start");
+      expect(endField.props("placement")).toBe("left-start");
+    });
+
     it("puts dataTestId on the row root as well as the two fields", () => {
       const wrapper = mountSplit({ dataTestId: "order-date" });
-      expect(wrapper.find('[role="group"]').attributes("data-test-id")).toBe("order-date");
+      expect(wrapper.find("fieldset").attributes("data-test-id")).toBe("order-date");
       expect(wrapper.findAllComponents({ name: "VcDatePicker" }).map((field) => field.props("dataTestId"))).toEqual([
         "order-date-start",
         "order-date-end",

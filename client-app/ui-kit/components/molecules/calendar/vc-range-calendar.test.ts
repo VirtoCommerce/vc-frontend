@@ -1,6 +1,7 @@
 import { CalendarDate } from "@internationalized/date";
 import { flushPromises, mount } from "@vue/test-utils";
 import { describe, expect, it, vi } from "vitest";
+import { defineComponent, h, ref } from "vue";
 import VcRangeCalendar from "./vc-range-calendar.vue";
 
 vi.mock("vue-i18n", () => ({
@@ -13,6 +14,42 @@ function mountCal(props = {}, options: { attachTo?: Element } = {}) {
     global: { stubs: { VcIcon: true } },
     ...options,
   });
+}
+
+// The bug only reproduces through a real v-model round trip: the emitted value must flow back as a prop.
+function mountBoundCal(initial: VcDateRangeType | undefined) {
+  const state = ref<VcDateRangeType | undefined>(initial);
+  const emits: (VcDateRangeType | undefined)[] = [];
+
+  const Parent = defineComponent({
+    setup() {
+      return () =>
+        h(VcRangeCalendar, {
+          modelValue: state.value,
+          "onUpdate:modelValue": (value: VcDateRangeType | undefined) => {
+            state.value = value;
+            emits.push(value);
+          },
+        });
+    },
+  });
+
+  const wrapper = mount(Parent, { global: { stubs: { VcIcon: true } }, attachTo: document.body });
+  return { wrapper, state, emits };
+}
+
+// reka only builds a range from a real pointer path — a bare click leaves highlightedRange null.
+async function clickDay(iso: string): Promise<void> {
+  const cell = document.querySelector<HTMLElement>(
+    `[data-reka-calendar-cell-trigger][data-value="${iso}"]:not([data-outside-view])`,
+  );
+  if (!cell) {
+    throw new Error(`no in-view cell for ${iso}`);
+  }
+  cell.dispatchEvent(new MouseEvent("mouseenter", { bubbles: false }));
+  await flushPromises();
+  cell.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+  await flushPromises();
 }
 
 // vue-test-utils' `trigger` doesn't hand back the event, so `defaultPrevented` isn't observable.
@@ -101,6 +138,43 @@ describe("VcRangeCalendar", () => {
       .emitted("update:modelValue")
       ?.some((call) => (call[0] as { start?: string } | undefined)?.start === "2026-10-14");
     expect(startAttributed).toBeFalsy();
+  });
+
+  describe("end-only range", () => {
+    it("keeps the existing end when picking an earlier start", async () => {
+      const { wrapper, state, emits } = mountBoundCal({ start: undefined, end: "2026-10-14" });
+      await flushPromises();
+
+      await clickDay("2026-10-08");
+
+      expect(state.value).toEqual({ start: "2026-10-08", end: "2026-10-14" });
+      expect(emits.at(-1)).toEqual({ start: "2026-10-08", end: "2026-10-14" });
+      expect(emits).not.toContainEqual({ start: "2026-10-08", end: undefined });
+
+      wrapper.unmount();
+    });
+
+    it("keeps the existing end when picking a later date", async () => {
+      const { wrapper, state, emits } = mountBoundCal({ start: undefined, end: "2026-10-14" });
+      await flushPromises();
+
+      await clickDay("2026-10-20");
+
+      expect(state.value).toEqual({ start: "2026-10-14", end: "2026-10-20" });
+      expect(emits).not.toContainEqual({ start: "2026-10-20", end: undefined });
+
+      wrapper.unmount();
+    });
+
+    it("focuses the end endpoint when there is no start", async () => {
+      const wrapper = mountCal({ modelValue: { start: undefined, end: "2026-10-14" } }, { attachTo: document.body });
+      await flushPromises();
+
+      wrapper.vm.focusActiveCell();
+      expect(activeCellIso()).toBe("2026-10-14");
+
+      wrapper.unmount();
+    });
   });
 
   describe("keyboard navigation (Home/End/PageUp/PageDown)", () => {

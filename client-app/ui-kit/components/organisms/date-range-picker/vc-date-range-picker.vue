@@ -1,8 +1,7 @@
 <template>
-  <div
+  <fieldset
     v-if="layout === 'split'"
     :class="['vc-date-range-picker', `vc-date-range-picker--layout--${layout}`, `vc-date-range-picker--size--${size}`]"
-    role="group"
     :aria-label="label || t('ui_kit.date_range_input.aria_label')"
     :data-test-id="dataTestId"
     @focusin="onFocusIn"
@@ -48,7 +47,7 @@
     </div>
 
     <VcInputDetails :id="detailsId" :error="computedError" :message="computedMessage" :single-line="false" />
-  </div>
+  </fieldset>
 
   <VcPopover
     v-else
@@ -239,7 +238,11 @@ const endMin = computed<string | undefined>(() => {
 });
 
 // Start-aligned so the start field's calendar does not overhang the separator.
+// Side placements open beside the field, never across it, so they pass through untouched.
 const startPlacement = computed<VcPopoverPlacementType>(() => {
+  if (props.placement.startsWith("left") || props.placement.startsWith("right")) {
+    return props.placement;
+  }
   return props.placement.startsWith("top") ? "top-start" : "bottom-start";
 });
 
@@ -370,8 +373,10 @@ function onCalendarUpdate(close: () => void, value: VcDateRangeType | undefined)
   }
 
   &--layout {
+    // Root is a fieldset. Preflight zeroes its border/padding/margin; min-inline-size: min-content is
+    // the one UA default it misses, and it would stop the container query from ever narrowing the row.
     &--split {
-      @apply flex flex-col;
+      @apply flex flex-col min-w-0;
 
       container-type: inline-size;
     }

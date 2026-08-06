@@ -1,5 +1,5 @@
 <template>
-  <div
+  <fieldset
     :class="[
       'vc-date-range-input',
       `vc-date-range-input--size--${size}`,
@@ -9,7 +9,6 @@
         'vc-date-range-input--readonly': readonly,
       },
     ]"
-    role="group"
     :aria-label="label || t('ui_kit.date_range_input.aria_label')"
     :data-test-id="dataTestId"
     @focusin="onFocusIn"
@@ -92,7 +91,7 @@
     </div>
 
     <VcInputDetails :id="detailsId" :error="computedError" :message="computedMessage" :single-line="false" />
-  </div>
+  </fieldset>
 </template>
 
 <script setup lang="ts">
@@ -236,7 +235,9 @@ defineExpose({
   --focus-color: rgb(from var(--color) r g b / 0.3);
   --radius: var(--vc-input-radius, var(--vc-radius, 0.5rem));
 
-  @apply flex flex-col;
+  // Root is a fieldset. Preflight zeroes its border/padding/margin; min-inline-size: min-content is
+  // the one UA default it misses, and it would stop the field from shrinking with its container.
+  @apply flex flex-col min-w-0;
 
   &--size {
     &--xs {

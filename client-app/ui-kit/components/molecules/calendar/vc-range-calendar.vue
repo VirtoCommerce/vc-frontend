@@ -365,6 +365,9 @@ function onStartValueUpdate(value: DateValue | undefined): void {
     pendingCompleteRangeStart = undefined;
     return;
   }
+  if (lastKnown?.end && !lastKnown?.start) {
+    return;
+  }
   emitRange({ start: iso, end: undefined });
 }
 
@@ -394,9 +397,9 @@ function focusActiveCell(): void {
     return;
   }
 
-  const startIso = parsedModelValue.value.start?.toString();
-  if (startIso) {
-    focusCellByIso(root, startIso);
+  const selectedIso = parsedModelValue.value.start?.toString() ?? parsedModelValue.value.end?.toString();
+  if (selectedIso) {
+    focusCellByIso(root, selectedIso);
     if (getFocusedCellDate(root)) {
       return;
     }
