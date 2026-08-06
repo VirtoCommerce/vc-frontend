@@ -11,13 +11,21 @@ vi.mock("vue-i18n", () => ({
 }));
 
 const couponError = ref<{ code: string; type: string } | undefined>();
-const applyCoupon = vi.fn(() => Promise.resolve(true));
-const removeCoupon = vi.fn(() => Promise.resolve(true));
+const appliedCouponCode = ref<string | undefined>();
+// Success mirrors reality: the mutation returns the fresh cart, so the code becomes the applied one.
+const applyCoupon = vi.fn((code: string) => {
+  appliedCouponCode.value = code;
+  return Promise.resolve(true);
+});
+const removeCoupon = vi.fn(() => {
+  appliedCouponCode.value = undefined;
+  return Promise.resolve(true);
+});
 const cart = ref<{ discountTotal?: { formattedAmount: string }; total?: { formattedAmount: string } } | undefined>();
 
 vi.mock("@/shared/cart", () => ({
   useCoupon: () => ({
-    appliedCouponCode: computed(() => undefined),
+    appliedCouponCode,
     couponError,
     loadingCouponCode: computed(() => undefined),
     applyCoupon,
@@ -55,6 +63,7 @@ describe("CouponsSection", () => {
 
   beforeEach(() => {
     couponError.value = undefined;
+    appliedCouponCode.value = undefined;
     cart.value = { discountTotal: { formattedAmount: "$50.00" }, total: { formattedAmount: "$1,312.80" } };
     applyCoupon.mockClear();
     removeCoupon.mockClear();
@@ -96,6 +105,7 @@ describe("CouponsSection", () => {
     const text = wrapper.get(LIVE_REGION).text();
     expect(removeCoupon).toHaveBeenCalledWith("ZUR10");
     expect(text).toContain("removed_announcement");
+    expect(text).toContain("$50.00");
     expect(text).toContain("$1,312.80");
   });
 
@@ -112,8 +122,9 @@ describe("CouponsSection", () => {
   // VCST-5533 / bugbot: `couponError` is module-level, so a concurrent operation on another card
   // could previously suppress this call's success or fabricate one for its failure.
   it("announces its own success even when a concurrent operation left the shared error set", async () => {
-    applyCoupon.mockImplementationOnce(() => {
+    applyCoupon.mockImplementationOnce((code: string) => {
       couponError.value = { code: "OTHER", type: "invalid" };
+      appliedCouponCode.value = code;
       return Promise.resolve(true);
     });
     const wrapper = createComponent();
@@ -137,6 +148,51 @@ describe("CouponsSection", () => {
     expect(wrapper.get(LIVE_REGION).text()).toBe("");
   });
 
+  // The mutation can resolve without the coupon granting a discount; the announcement must
+  // then stay consistent with the card, which will not flip to "applied".
+  it("stays silent when the mutation resolved but the coupon did not apply", async () => {
+    applyCoupon.mockImplementationOnce(() => Promise.resolve(true));
+    const wrapper = createComponent();
+
+    wrapper.findComponent(COUPON_CARD).vm.$emit("apply", "GHOST");
+    await flushPromises();
+
+    expect(wrapper.get(LIVE_REGION).text()).toBe("");
+  });
+
+  // Swapping removes the old coupon before validating the new one; when that validation
+  // fails, the lost discount must still be announced.
+  it("announces the removal of the previous coupon when a swap fails after removing it", async () => {
+    appliedCouponCode.value = "OLD10";
+    applyCoupon.mockImplementationOnce(() => {
+      appliedCouponCode.value = undefined;
+      return Promise.resolve(false);
+    });
+    const wrapper = createComponent();
+
+    wrapper.findComponent(COUPON_CARD).vm.$emit("apply", "BAD");
+    await flushPromises();
+
+    const text = wrapper.get(LIVE_REGION).text();
+    expect(text).toContain("removed_announcement");
+    expect(text).toContain("OLD10");
+    expect(text).toContain("$50.00");
+    expect(text).toContain("$1,312.80");
+  });
+
+  it("stays silent about the previous coupon when the failed apply did not remove it", async () => {
+    appliedCouponCode.value = "OLD10";
+    applyCoupon.mockImplementationOnce(() => Promise.resolve(false));
+    const wrapper = createComponent();
+
+    wrapper.findComponent(COUPON_CARD).vm.$emit("apply", "BAD");
+    await flushPromises();
+
+    expect(wrapper.get(LIVE_REGION).text()).toBe("");
+  });
+
+  // `cart` being empty here is unreachable from the page (it renders only with a loaded cart);
+  // this covers the defensive typing only.
   it("does not break when the cart has no totals yet", async () => {
     cart.value = undefined;
     const wrapper = createComponent();

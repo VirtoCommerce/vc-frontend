@@ -704,7 +704,7 @@
         "remove_aria": "Remove coupon",
         "coupon_code_aria": "Kod kuponu",
         "applied_announcement": "Kupon {code} został zastosowany. Zniżka {discount}, nowa suma {total}.",
-        "removed_announcement": "Kupon {code} został usunięty. Nowa suma {total}."
+        "removed_announcement": "Kupon {code} został usunięty. Zniżka {discount}, nowa suma {total}."
       }
     },
     "catalog": {

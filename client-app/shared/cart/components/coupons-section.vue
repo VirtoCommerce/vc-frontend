@@ -66,9 +66,19 @@ const announcement = ref("");
 
 async function handleApply(code: string) {
   announcement.value = "";
+  const previous = appliedCouponCode.value;
 
-  // Failures are already announced by the card's alert.
   if (!(await applyCoupon(code))) {
+    // The swap removes the old coupon before validating the new one — announce that loss.
+    if (previous && appliedCouponCode.value !== previous) {
+      announcement.value = removedAnnouncement(previous);
+    }
+    return;
+  }
+
+  // A resolved mutation is not proof the coupon applied; same comparison as getView, so the
+  // announcement can never contradict the card.
+  if (appliedCouponCode.value !== code) {
     return;
   }
 
@@ -86,8 +96,13 @@ async function handleRemove(code: string) {
     return;
   }
 
-  announcement.value = t("shared.cart.coupons_section.removed_announcement", {
+  announcement.value = removedAnnouncement(code);
+}
+
+function removedAnnouncement(code: string): string {
+  return t("shared.cart.coupons_section.removed_announcement", {
     code,
+    discount: cart.value?.discountTotal?.formattedAmount ?? "",
     total: cart.value?.total?.formattedAmount ?? "",
   });
 }

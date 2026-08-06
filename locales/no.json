@@ -704,7 +704,7 @@
         "remove_aria": "Remove coupon",
         "coupon_code_aria": "Kupongkode",
         "applied_announcement": "Kupong {code} brukt. Rabatt {discount}, ny totalsum {total}.",
-        "removed_announcement": "Kupong {code} fjernet. Ny totalsum {total}."
+        "removed_announcement": "Kupong {code} fjernet. Rabatt {discount}, ny totalsum {total}."
       }
     },
     "catalog": {

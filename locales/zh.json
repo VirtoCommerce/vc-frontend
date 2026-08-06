@@ -704,7 +704,7 @@
         "remove_aria": "Remove coupon",
         "coupon_code_aria": "优惠券代码",
         "applied_announcement": "已应用优惠券 {code}。折扣 {discount}，新总计 {total}。",
-        "removed_announcement": "已移除优惠券 {code}。新总计 {total}。"
+        "removed_announcement": "已移除优惠券 {code}。折扣 {discount}，新总计 {total}。"
       }
     },
     "catalog": {
