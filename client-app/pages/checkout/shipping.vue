@@ -30,7 +30,7 @@
             </VcAlert>
           </transition>
 
-          <LoyaltyValidationAlert variant="compact" class="mt-4" />
+          <LoyaltyValidationAlert class="mt-4" />
         </template>
       </OrderSummary>
     </template>
