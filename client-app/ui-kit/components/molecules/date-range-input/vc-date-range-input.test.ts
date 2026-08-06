@@ -21,12 +21,12 @@ function mountInput(props = {}, options: { attachTo?: Element } = {}) {
 describe("VcDateRangeInput", () => {
   it("renders exactly two date-input segments", () => {
     const wrapper = mountInput();
-    expect(wrapper.findAllComponents({ name: "VcDateInput" }).length).toBe(2);
+    expect(wrapper.findAllComponents({ name: "VcDateInput" })).toHaveLength(2);
   });
 
   it("renders exactly one details row (segments hide theirs)", () => {
     const wrapper = mountInput({ error: true, message: "bad" });
-    expect(wrapper.findAllComponents({ name: "VcInputDetails" }).length).toBe(1);
+    expect(wrapper.findAllComponents({ name: "VcInputDetails" })).toHaveLength(1);
   });
 
   it("emits update:valid=true for an empty range on mount", () => {
@@ -34,7 +34,7 @@ describe("VcDateRangeInput", () => {
     expect(wrapper.emitted("update:valid")?.at(-1)?.[0]).toBe(true);
   });
 
-  it("emits a merged VcDateRange when the start segment commits", async () => {
+  it("emits a merged VcDateRangeType when the start segment commits", async () => {
     const wrapper = mountInput();
     const [startSeg] = wrapper.findAllComponents({ name: "VcDateInput" });
     startSeg.vm.$emit("update:modelValue", "2026-10-08");
@@ -42,7 +42,7 @@ describe("VcDateRangeInput", () => {
     expect(wrapper.emitted("update:modelValue")?.at(-1)?.[0]).toEqual({ start: "2026-10-08", end: undefined });
   });
 
-  it("emits a merged VcDateRange when the end segment commits", async () => {
+  it("emits a merged VcDateRangeType when the end segment commits", async () => {
     const wrapper = mountInput({ modelValue: { start: "2026-10-08", end: undefined } });
     const [, endSeg] = wrapper.findAllComponents({ name: "VcDateInput" });
     endSeg.vm.$emit("update:modelValue", "2026-10-14");
@@ -69,10 +69,10 @@ describe("VcDateRangeInput", () => {
         components: { VcDateRangeInput },
 
         setup() {
-          const range = ref<VcDateRange | undefined>({ start: "2026-10-08", end: undefined });
+          const range = ref<VcDateRangeType | undefined>({ start: "2026-10-08", end: undefined });
           const modelEmits = ref(0);
           const valid = ref(true);
-          function onUpdate(value: VcDateRange | undefined): void {
+          function onUpdate(value: VcDateRangeType | undefined): void {
             modelEmits.value++;
             range.value = value;
           }
@@ -136,6 +136,17 @@ describe("VcDateRangeInput", () => {
       const details = wrapper.findComponent(VcInputDetails);
       expect(details.props("error")).toBe(true);
       expect(details.props("message")).toBe("ui_kit.date_input.invalid_format");
+    });
+
+    it("shows the segment's own min message, not the format one, for a well-formed out-of-range date", async () => {
+      const wrapper = mountInput({ min: "2026-10-05" });
+      const [startInput] = wrapper.findAll("input");
+      await startInput.setValue("10/01/2026");
+      await startInput.trigger("blur");
+
+      const details = wrapper.findComponent(VcInputDetails);
+      expect(details.props("error")).toBe(true);
+      expect(details.props("message")).toBe("ui_kit.date_input.min_date_error");
     });
 
     it("shows the range-order message when start > end", () => {

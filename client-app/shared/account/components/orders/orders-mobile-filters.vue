@@ -15,6 +15,7 @@
 
       <template #dateFilterType>
         <DateFilterSelect
+          layout="split"
           :date-filter-type="selectedDateFilterType"
           @change="handleOrdersDateFilterChange"
           @update:valid="isDateRangeValid = $event"

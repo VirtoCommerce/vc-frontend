@@ -64,7 +64,7 @@ export const Default: StoryType = {
   render: (args) => ({
     components: { VcRangeCalendar },
     setup() {
-      const value = ref<VcDateRange | undefined>(undefined);
+      const value = ref<VcDateRangeType | undefined>(undefined);
       return { args, value };
     },
     template: `<VcRangeCalendar v-bind="args" v-model="value" />`,
@@ -89,7 +89,7 @@ export const CommittedRange: StoryType = {
   render: (args) => ({
     components: { VcRangeCalendar },
     setup() {
-      const value = ref<VcDateRange | undefined>({ start: "2026-10-08", end: "2026-10-14" });
+      const value = ref<VcDateRangeType | undefined>({ start: "2026-10-08", end: "2026-10-14" });
       return { args, value };
     },
     template: `
@@ -122,7 +122,7 @@ export const SingleDayRange: StoryType = {
   render: (args) => ({
     components: { VcRangeCalendar },
     setup() {
-      const value = ref<VcDateRange | undefined>({ start: "2026-10-08", end: "2026-10-08" });
+      const value = ref<VcDateRangeType | undefined>({ start: "2026-10-08", end: "2026-10-08" });
       return { args, value };
     },
     template: `<VcRangeCalendar v-bind="args" v-model="value" />`,
@@ -145,7 +145,7 @@ export const Small: StoryType = {
   render: (args) => ({
     components: { VcRangeCalendar },
     setup() {
-      const value = ref<VcDateRange | undefined>({ start: "2026-10-08", end: "2026-10-14" });
+      const value = ref<VcDateRangeType | undefined>({ start: "2026-10-08", end: "2026-10-14" });
       return { args, value };
     },
     template: `<VcRangeCalendar v-bind="args" v-model="value" />`,
@@ -168,7 +168,7 @@ export const WithFooter: StoryType = {
   render: (args) => ({
     components: { VcRangeCalendar },
     setup() {
-      const value = ref<VcDateRange | undefined>({ start: "2026-10-08", end: "2026-10-14" });
+      const value = ref<VcDateRangeType | undefined>({ start: "2026-10-08", end: "2026-10-14" });
       return { args, value };
     },
     template: `
@@ -204,7 +204,7 @@ export const MinMax: StoryType = {
   render: (args) => ({
     components: { VcRangeCalendar },
     setup() {
-      const value = ref<VcDateRange | undefined>({ start: "2026-10-08", end: "2026-10-14" });
+      const value = ref<VcDateRangeType | undefined>({ start: "2026-10-08", end: "2026-10-14" });
       return { args, value };
     },
     template: `<VcRangeCalendar v-bind="args" v-model="value" />`,
@@ -237,7 +237,7 @@ export const Unavailable: StoryType = {
   render: (args) => ({
     components: { VcRangeCalendar },
     setup() {
-      const value = ref<VcDateRange | undefined>({ start: "2026-10-08", end: "2026-10-14" });
+      const value = ref<VcDateRangeType | undefined>({ start: "2026-10-08", end: "2026-10-14" });
       const disabledDate = (iso: string) => {
         const d = new Date(`${iso}T00:00:00Z`);
         const dow = d.getUTCDay();

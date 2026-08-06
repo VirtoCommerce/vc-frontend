@@ -309,6 +309,17 @@ describe("VcDateRangePicker — split layout", () => {
       expect(details[0].props("message")).toBe("ui_kit.date_range_input.invalid_range");
     });
 
+    it("reports a field's own min message through the shared details row, not the format one", async () => {
+      const wrapper = mountSplit({ min: "2026-10-05" });
+      const [startInput] = wrapper.findAll("input");
+      await startInput.setValue("10/01/2026");
+      await startInput.trigger("blur");
+
+      const details = wrapper.findComponent(VcInputDetails);
+      expect(details.props("error")).toBe(true);
+      expect(details.props("message")).toBe("ui_kit.date_input.min_date_error");
+    });
+
     it("reports a segment's format error through the shared details row", async () => {
       const wrapper = mountSplit();
       const [startField] = wrapper.findAllComponents({ name: "VcDatePicker" });

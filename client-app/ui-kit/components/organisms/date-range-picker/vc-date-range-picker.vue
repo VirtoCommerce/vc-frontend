@@ -25,10 +25,11 @@
         :data-test-id="sideAttr(dataTestId, 'start')"
         @update:model-value="onSegment('start', $event)"
         @update:valid="setSegmentValid('start', $event)"
+        @update:error-text="setSegmentErrorText('start', $event)"
         @clear="onInputClear"
       />
 
-      <span class="vc-date-range-picker__separator" aria-hidden="true">—</span>
+      <span class="vc-date-range-picker__separator" aria-hidden="true">–</span>
 
       <VcDatePicker
         v-bind="sharedFieldProps"
@@ -41,6 +42,7 @@
         :data-test-id="sideAttr(dataTestId, 'end')"
         @update:model-value="onSegment('end', $event)"
         @update:valid="setSegmentValid('end', $event)"
+        @update:error-text="setSegmentErrorText('end', $event)"
         @clear="onInputClear"
       />
     </div>
@@ -121,7 +123,6 @@
         :show-footer="showFooter"
         @keydown.esc.stop="onEscapeClose(close)"
         @update:model-value="onCalendarUpdate(close, $event)"
-        @update:valid="calendarValid = $event"
       />
     </template>
   </VcPopover>
@@ -135,7 +136,7 @@ import { crossedFocusBoundary } from "@/ui-kit/utilities/focus";
 import type { VcDateFieldUpdateOnType } from "@/ui-kit/composables";
 
 interface IProps {
-  modelValue?: VcDateRange;
+  modelValue?: VcDateRangeType;
   size?: VcInputSizeType;
   label?: string;
   startLabel?: string;
@@ -166,7 +167,7 @@ interface IProps {
 }
 
 interface IEmits {
-  (event: "update:modelValue", value: VcDateRange | undefined): void;
+  (event: "update:modelValue", value: VcDateRangeType | undefined): void;
   (event: "update:valid", value: boolean): void;
   (event: "blur", focusEvent: FocusEvent): void;
   (event: "focus", focusEvent: FocusEvent): void;
@@ -194,6 +195,7 @@ const {
   computedMessage,
   orderValid,
   setSegmentValid,
+  setSegmentErrorText,
   mergeRange,
 } = useDateRangeField({
   modelValue: () => props.modelValue,
@@ -203,14 +205,12 @@ const {
 
 const detailsId = useComponentId("date-range-picker") + "-details";
 
-// AND-aggregated: piping both sources straight to the emit lets the later one overwrite the earlier.
 const inputValid = ref(true);
-const calendarValid = ref(true);
 const aggregatedValid = computed<boolean>(() => {
   if (props.layout === "split") {
     return splitValid.value;
   }
-  return inputValid.value && calendarValid.value;
+  return inputValid.value;
 });
 watch(aggregatedValid, (value) => emit("update:valid", value), { immediate: true });
 
@@ -289,7 +289,7 @@ function toggleAriaControls(triggerProps: Record<string, unknown>): string | und
   return typeof controls === "string" ? controls : undefined;
 }
 
-function onInputUpdate(value: VcDateRange | undefined): void {
+function onInputUpdate(value: VcDateRangeType | undefined): void {
   emit("update:modelValue", value);
 }
 
@@ -336,7 +336,7 @@ function onEscapeClose(close: () => void): void {
   rangeInputRef.value?.startInputElement?.focus();
 }
 
-function onCalendarUpdate(close: () => void, value: VcDateRange | undefined): void {
+function onCalendarUpdate(close: () => void, value: VcDateRangeType | undefined): void {
   if (props.disabled || props.readonly) {
     return;
   }
@@ -372,20 +372,36 @@ function onCalendarUpdate(close: () => void, value: VcDateRange | undefined): vo
   &--layout {
     &--split {
       @apply flex flex-col;
+
+      container-type: inline-size;
     }
   }
 
   &__fields {
     @apply flex items-end gap-2;
+
+    // Side by side, the two placeholder-width fields need ~250px; narrower than that they stack rather than truncate.
+    @container (width < 22rem) {
+      @apply flex-col items-stretch;
+    }
   }
 
   &__field {
     @apply grow shrink basis-0 min-w-0;
+
+    // basis-0 sizes the main axis, which is height once stacked.
+    @container (width < 22rem) {
+      @apply basis-auto;
+    }
   }
 
   // Matches the input box height so the dash centres against it, not against the label row.
   &__separator {
     @apply flex shrink-0 items-center text-neutral-400 select-none h-[--field-height];
+
+    @container (width < 22rem) {
+      @apply hidden;
+    }
   }
 }
 </style>

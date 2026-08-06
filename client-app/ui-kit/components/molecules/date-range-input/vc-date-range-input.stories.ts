@@ -51,7 +51,7 @@ export const Default: StoryType = {
   render: (args) => ({
     components: { VcDateRangeInput },
     setup() {
-      const value = ref<VcDateRange | undefined>(undefined);
+      const value = ref<VcDateRangeType | undefined>(undefined);
       return { args, value };
     },
     template: `
@@ -78,7 +78,7 @@ export const WithValue: StoryType = {
   render: (args) => ({
     components: { VcDateRangeInput },
     setup() {
-      const value = ref<VcDateRange | undefined>({ start: "2026-10-08", end: "2026-10-14" });
+      const value = ref<VcDateRangeType | undefined>({ start: "2026-10-08", end: "2026-10-14" });
       return { args, value };
     },
     template: `
@@ -102,7 +102,7 @@ export const Small: StoryType = {
   render: (args) => ({
     components: { VcDateRangeInput },
     setup() {
-      const value = ref<VcDateRange | undefined>({ start: "2026-10-08", end: "2026-10-14" });
+      const value = ref<VcDateRangeType | undefined>({ start: "2026-10-08", end: "2026-10-14" });
       return { args, value };
     },
     template: `<VcDateRangeInput v-bind="args" v-model="value" />`,
@@ -121,7 +121,7 @@ export const Disabled: StoryType = {
   render: (args) => ({
     components: { VcDateRangeInput },
     setup() {
-      const value = ref<VcDateRange | undefined>({ start: "2026-10-08", end: "2026-10-14" });
+      const value = ref<VcDateRangeType | undefined>({ start: "2026-10-08", end: "2026-10-14" });
       return { args, value };
     },
     template: `<VcDateRangeInput v-bind="args" v-model="value" />`,
@@ -150,7 +150,7 @@ export const ErrorState: StoryType = {
   render: (args) => ({
     components: { VcDateRangeInput },
     setup() {
-      const value = ref<VcDateRange | undefined>({ start: "2026-10-20", end: "2026-10-01" });
+      const value = ref<VcDateRangeType | undefined>({ start: "2026-10-20", end: "2026-10-01" });
       return { args, value };
     },
     template: `<VcDateRangeInput v-bind="args" v-model="value" />`,
@@ -172,7 +172,7 @@ export const Clearable: StoryType = {
   render: (args) => ({
     components: { VcDateRangeInput },
     setup() {
-      const value = ref<VcDateRange | undefined>({ start: "2026-10-08", end: "2026-10-14" });
+      const value = ref<VcDateRangeType | undefined>({ start: "2026-10-08", end: "2026-10-14" });
       return { args, value };
     },
     template: `
@@ -200,7 +200,7 @@ export const ClearableDisabled: StoryType = {
   render: (args) => ({
     components: { VcDateRangeInput },
     setup() {
-      const value = ref<VcDateRange | undefined>({ start: "2026-10-08", end: "2026-10-14" });
+      const value = ref<VcDateRangeType | undefined>({ start: "2026-10-08", end: "2026-10-14" });
       return { args, value };
     },
     template: `<VcDateRangeInput v-bind="args" v-model="value" />`,
@@ -225,7 +225,7 @@ export const PartialRange: StoryType = {
   render: (args) => ({
     components: { VcDateRangeInput },
     setup() {
-      const value = ref<VcDateRange | undefined>({ start: "2026-10-08", end: undefined });
+      const value = ref<VcDateRangeType | undefined>({ start: "2026-10-08", end: undefined });
       return { args, value };
     },
     template: `

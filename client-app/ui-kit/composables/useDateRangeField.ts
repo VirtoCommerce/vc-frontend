@@ -1,9 +1,10 @@
 import { computed, ref, toValue } from "vue";
 import { useI18n } from "vue-i18n";
+import { toDateOnlyString } from "@/ui-kit/utilities/date";
 import type { MaybeRefOrGetter } from "vue";
 
 export interface IUseDateRangeFieldOptions {
-  modelValue: MaybeRefOrGetter<VcDateRange | undefined>;
+  modelValue: MaybeRefOrGetter<VcDateRangeType | undefined>;
   error: MaybeRefOrGetter<boolean | undefined>;
   message: MaybeRefOrGetter<string | undefined>;
 }
@@ -13,21 +14,31 @@ export function useDateRangeField(opts: IUseDateRangeFieldOptions) {
 
   const startFormatValid = ref(true);
   const endFormatValid = ref(true);
+  const startErrorText = ref<string | undefined>(undefined);
+  const endErrorText = ref<string | undefined>(undefined);
 
   // Partial and empty ranges are always order-valid.
   const orderValid = computed<boolean>(() => {
     const range = toValue(opts.modelValue);
-    if (!range?.start || !range.end) {
+    // Date-only so a full-ISO endpoint still compares lexicographically against a bare YYYY-MM-DD.
+    const start = toDateOnlyString(range?.start);
+    const end = toDateOnlyString(range?.end);
+    if (!start || !end) {
       return true;
     }
-    return range.start <= range.end; // ISO YYYY-MM-DD compares lexicographically
+    return start <= end;
   });
 
   const isValid = computed<boolean>(() => startFormatValid.value && endFormatValid.value && orderValid.value);
 
+  // Segments are hide-details, so their own per-reason message is relayed here; it is absent while
+  // a segment is invalid but untouched, hence the format fallback.
   const internalErrorText = computed<string | undefined>(() => {
-    if (!startFormatValid.value || !endFormatValid.value) {
-      return t("ui_kit.date_input.invalid_format");
+    if (!startFormatValid.value) {
+      return startErrorText.value ?? t("ui_kit.date_input.invalid_format");
+    }
+    if (!endFormatValid.value) {
+      return endErrorText.value ?? t("ui_kit.date_input.invalid_format");
     }
     if (!orderValid.value) {
       return t("ui_kit.date_range_input.invalid_range");
@@ -52,10 +63,18 @@ export function useDateRangeField(opts: IUseDateRangeFieldOptions) {
     }
   }
 
+  function setSegmentErrorText(which: "start" | "end", text: string | undefined): void {
+    if (which === "start") {
+      startErrorText.value = text;
+    } else {
+      endErrorText.value = text;
+    }
+  }
+
   /** A range with neither endpoint collapses to `undefined`. */
-  function mergeRange(which: "start" | "end", value: string | undefined): VcDateRange | undefined {
+  function mergeRange(which: "start" | "end", value: string | undefined): VcDateRangeType | undefined {
     const range = toValue(opts.modelValue);
-    const next: VcDateRange = {
+    const next: VcDateRangeType = {
       start: which === "start" ? value : range?.start,
       end: which === "end" ? value : range?.end,
     };
@@ -71,6 +90,7 @@ export function useDateRangeField(opts: IUseDateRangeFieldOptions) {
     computedMessage,
     orderValid,
     setSegmentValid,
+    setSegmentErrorText,
     mergeRange,
   };
 }

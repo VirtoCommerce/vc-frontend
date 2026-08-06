@@ -27,7 +27,7 @@ function activeCellIso(): string | undefined {
 }
 
 describe("VcRangeCalendar", () => {
-  it("maps a VcDateRange modelValue into reka DateValue range", () => {
+  it("maps a VcDateRangeType modelValue into reka DateValue range", () => {
     const wrapper = mountCal();
     const root = wrapper.findComponent({ name: "RangeCalendarRoot" });
     const mv = root.props("modelValue") as { start?: CalendarDate; end?: CalendarDate };
@@ -35,18 +35,13 @@ describe("VcRangeCalendar", () => {
     expect(mv.end?.toString()).toBe("2026-10-14");
   });
 
-  it("emits VcDateRange ISO strings on reka update", async () => {
+  it("emits VcDateRangeType ISO strings on reka update", async () => {
     const wrapper = mountCal({ modelValue: undefined });
     const root = wrapper.findComponent({ name: "RangeCalendarRoot" });
     root.vm.$emit("update:modelValue", { start: new CalendarDate(2026, 10, 8), end: new CalendarDate(2026, 10, 14) });
     await wrapper.vm.$nextTick();
     const emitted = wrapper.emitted("update:modelValue");
     expect(emitted?.at(-1)?.[0]).toEqual({ start: "2026-10-08", end: "2026-10-14" });
-  });
-
-  it("emits update:valid=true for an empty range", () => {
-    const wrapper = mountCal({ modelValue: undefined });
-    expect(wrapper.emitted("update:valid")?.at(-1)?.[0]).toBe(true);
   });
 
   it("emits a partial range on anchor pick (reka update:startValue)", async () => {

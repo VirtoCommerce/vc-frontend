@@ -7,14 +7,14 @@ vi.mock("vue-i18n", () => ({
 }));
 
 interface IRunOptions {
-  modelValue?: VcDateRange;
+  modelValue?: VcDateRangeType;
   error?: boolean;
   message?: string;
 }
 
 function setup(options: IRunOptions = {}) {
   const scope = effectScope();
-  const modelValue = ref<VcDateRange | undefined>(options.modelValue);
+  const modelValue = ref<VcDateRangeType | undefined>(options.modelValue);
   const error = ref<boolean | undefined>(options.error);
   const message = ref<string | undefined>(options.message);
 
@@ -37,7 +37,7 @@ describe("useDateRangeField — order validity", () => {
     expect(field.isValid.value).toBe(true);
   });
 
-  test.each<[string, VcDateRange]>([
+  test.each<[string, VcDateRangeType]>([
     ["start only", { start: "2026-10-08", end: undefined }],
     ["end only", { start: undefined, end: "2026-10-01" }],
   ])("treats a partial range (%s) as valid", (_name, range) => {
@@ -49,6 +49,12 @@ describe("useDateRangeField — order validity", () => {
   test("treats start === end as valid", () => {
     const { field } = setup({ modelValue: { start: "2026-10-08", end: "2026-10-08" } });
     expect(field.orderValid.value).toBe(true);
+  });
+
+  test("treats a full-ISO start against a date-only end of the same day as valid", () => {
+    const { field } = setup({ modelValue: { start: "2026-10-08T00:00:00.000Z", end: "2026-10-08" } });
+    expect(field.orderValid.value).toBe(true);
+    expect(field.isValid.value).toBe(true);
   });
 
   test("flags start > end as invalid", () => {
@@ -88,12 +94,56 @@ describe("useDateRangeField — segment format validity", () => {
     expect(field.isValid.value).toBe(true);
   });
 
+  test("prefers the segment's own message over the format fallback", () => {
+    const { field } = setup();
+    field.setSegmentValid("start", false);
+    field.setSegmentErrorText("start", "ui_kit.date_input.min_date_error");
+    expect(field.computedMessage.value).toBe("ui_kit.date_input.min_date_error");
+  });
+
+  test("keeps the format fallback for a segment that reported no message", () => {
+    const { field } = setup();
+    field.setSegmentValid("end", false);
+    expect(field.computedMessage.value).toBe("ui_kit.date_input.invalid_format");
+  });
+
+  test("reports each segment's own message", () => {
+    const { field } = setup();
+    field.setSegmentErrorText("start", "ui_kit.date_input.min_date_error");
+    field.setSegmentErrorText("end", "ui_kit.date_input.max_date_error");
+
+    field.setSegmentValid("end", false);
+    expect(field.computedMessage.value).toBe("ui_kit.date_input.max_date_error");
+
+    field.setSegmentValid("start", false);
+    expect(field.computedMessage.value).toBe("ui_kit.date_input.min_date_error");
+  });
+
+  test("drops the segment message once that segment is valid again", () => {
+    const { field } = setup();
+    field.setSegmentValid("start", false);
+    field.setSegmentErrorText("start", "ui_kit.date_input.min_date_error");
+    expect(field.computedMessage.value).toBe("ui_kit.date_input.min_date_error");
+
+    field.setSegmentValid("start", true);
+    field.setSegmentErrorText("start", undefined);
+    expect(field.computedError.value).toBe(false);
+    expect(field.computedMessage.value).toBeUndefined();
+  });
+
   test("prefers invalid_format over invalid_range when a segment is malformed", () => {
     const { field } = setup({ modelValue: { start: "2026-10-20", end: "2026-10-01" } });
     expect(field.computedMessage.value).toBe("ui_kit.date_range_input.invalid_range");
 
     field.setSegmentValid("end", false);
     expect(field.computedMessage.value).toBe("ui_kit.date_input.invalid_format");
+  });
+
+  test("prefers a segment's own message over invalid_range too", () => {
+    const { field } = setup({ modelValue: { start: "2026-10-20", end: "2026-10-01" } });
+    field.setSegmentValid("end", false);
+    field.setSegmentErrorText("end", "ui_kit.date_input.max_date_error");
+    expect(field.computedMessage.value).toBe("ui_kit.date_input.max_date_error");
   });
 });
 

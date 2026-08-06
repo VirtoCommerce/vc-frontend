@@ -10,7 +10,7 @@
       },
     ]"
     role="group"
-    :aria-label="label || ariaGroupLabel"
+    :aria-label="label || t('ui_kit.date_range_input.aria_label')"
     :data-test-id="dataTestId"
     @focusin="onFocusIn"
     @focusout="onFocusOut"
@@ -43,6 +43,7 @@
         :mask="mask"
         @update:model-value="onSegment('start', $event)"
         @update:valid="setSegmentValid('start', $event)"
+        @update:error-text="setSegmentErrorText('start', $event)"
       />
 
       <span class="vc-date-range-input__separator" aria-hidden="true">–</span>
@@ -70,6 +71,7 @@
         :mask="mask"
         @update:model-value="onSegment('end', $event)"
         @update:valid="setSegmentValid('end', $event)"
+        @update:error-text="setSegmentErrorText('end', $event)"
       />
 
       <div class="vc-date-range-input__actions">
@@ -106,7 +108,7 @@ interface IDateInputExposed {
 }
 
 interface IProps {
-  modelValue?: VcDateRange;
+  modelValue?: VcDateRangeType;
   size?: VcInputSizeType;
   label?: string;
   startLabel?: string;
@@ -130,7 +132,7 @@ interface IProps {
 }
 
 interface IEmits {
-  (event: "update:modelValue", value: VcDateRange | undefined): void;
+  (event: "update:modelValue", value: VcDateRangeType | undefined): void;
   (event: "update:valid", value: boolean): void;
   (event: "blur", focusEvent: FocusEvent): void;
   (event: "focus", focusEvent: FocusEvent): void;
@@ -168,18 +170,18 @@ const startInputRef = useTemplateRef<IDateInputExposed | null>("startInputRef");
 const endInputRef = useTemplateRef<IDateInputExposed | null>("endInputRef");
 const startInputElement = computed<HTMLInputElement | null>(() => startInputRef.value?.inputElement ?? null);
 
-const ariaGroupLabel = computed(() => t("ui_kit.date_range_input.aria_label"));
-
 // Sizes slot buttons (clear + #append) the way VcInput sizes its own decorators.
 const size = computed(() => props.size);
 provide<VcInputContextType>("inputContext", { size });
 
 // Segments are hide-details, so the shell surfaces validity itself.
-const { isValid, computedError, computedMessage, setSegmentValid, mergeRange } = useDateRangeField({
-  modelValue: () => props.modelValue,
-  error: () => props.error,
-  message: () => props.message,
-});
+const { isValid, computedError, computedMessage, setSegmentValid, setSegmentErrorText, mergeRange } = useDateRangeField(
+  {
+    modelValue: () => props.modelValue,
+    error: () => props.error,
+    message: () => props.message,
+  },
+);
 
 const detailsId = useComponentId("date-range-input") + "-details";
 

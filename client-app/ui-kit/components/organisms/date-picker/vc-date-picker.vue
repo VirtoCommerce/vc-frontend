@@ -35,6 +35,7 @@
         @keydown.esc.stop="close"
         @update:model-value="onInputUpdate"
         @update:valid="emit('update:valid', $event)"
+        @update:error-text="emit('update:errorText', $event)"
         @blur="onInputBlur"
         @focus="onInputFocus"
         @clear="onInputClear"
@@ -94,6 +95,8 @@ interface IProps {
   error?: boolean;
   min?: string;
   max?: string;
+  // min/max gate field validation AND the calendar; these clamp the calendar only, so the range picker
+  // can block out-of-order picks without raising a field error.
   calendarMin?: string;
   calendarMax?: string;
   disabledDate?: VcCalendarDisabledDateType;
@@ -117,6 +120,8 @@ interface IProps {
 interface IEmits {
   (event: "update:modelValue", value: string | undefined): void;
   (event: "update:valid", value: boolean): void;
+  /** The per-reason message behind `update:valid`, for shells that render the details row themselves. */
+  (event: "update:errorText", value: string | undefined): void;
   (event: "blur", focusEvent: FocusEvent): void;
   (event: "focus", focusEvent: FocusEvent): void;
   (event: "clear"): void;

@@ -104,7 +104,7 @@ export const Default: StoryType = {
   render: (args) => ({
     components: { VcDateRangePicker },
     setup() {
-      const value = ref<VcDateRange | undefined>(undefined);
+      const value = ref<VcDateRangeType | undefined>(undefined);
       return { args, value };
     },
     template: `
@@ -131,7 +131,7 @@ export const WithValue: StoryType = {
   render: (args) => ({
     components: { VcDateRangePicker },
     setup() {
-      const value = ref<VcDateRange | undefined>({ start: "2026-10-08", end: "2026-10-14" });
+      const value = ref<VcDateRangeType | undefined>({ start: "2026-10-08", end: "2026-10-14" });
       return { args, value };
     },
     template: `
@@ -155,7 +155,7 @@ export const Split: StoryType = {
     docs: {
       description: {
         story:
-          '`layout="split"` renders two independent `VcDatePicker`s with visible `startLabel` / `endLabel`, an em dash between them and ONE shared details row. Each calendar is cross-bounded by the opposite endpoint — the start calendar cannot go past the current end date and vice versa — so an out-of-order range is unreachable by mouse. Typing one is still possible, and surfaces the `invalid_range` message in the shared details row.',
+          '`layout="split"` renders two independent `VcDatePicker`s with visible `startLabel` / `endLabel`, an en dash between them and ONE shared details row. Each calendar is cross-bounded by the opposite endpoint — the start calendar cannot go past the current end date and vice versa — so an out-of-order range is unreachable by mouse. Typing one is still possible, and surfaces the `invalid_range` message in the shared details row.',
       },
       source: {
         code: `
@@ -174,7 +174,7 @@ export const Split: StoryType = {
   render: (args) => ({
     components: { VcDateRangePicker },
     setup() {
-      const value = ref<VcDateRange | undefined>({ start: "2026-10-08", end: "2026-10-14" });
+      const value = ref<VcDateRangeType | undefined>({ start: "2026-10-08", end: "2026-10-14" });
       return { args, value };
     },
     template: `
@@ -198,7 +198,7 @@ export const Small: StoryType = {
   render: (args) => ({
     components: { VcDateRangePicker },
     setup() {
-      const value = ref<VcDateRange | undefined>({ start: "2026-10-08", end: "2026-10-14" });
+      const value = ref<VcDateRangeType | undefined>({ start: "2026-10-08", end: "2026-10-14" });
       return { args, value };
     },
     template: `<VcDateRangePicker v-bind="args" v-model="value" />`,
@@ -220,7 +220,7 @@ export const Disabled: StoryType = {
   render: (args) => ({
     components: { VcDateRangePicker },
     setup() {
-      const value = ref<VcDateRange | undefined>({ start: "2026-10-08", end: "2026-10-14" });
+      const value = ref<VcDateRangeType | undefined>({ start: "2026-10-08", end: "2026-10-14" });
       return { args, value };
     },
     template: `<VcDateRangePicker v-bind="args" v-model="value" />`,
@@ -250,7 +250,7 @@ export const ErrorState: StoryType = {
   render: (args) => ({
     components: { VcDateRangePicker },
     setup() {
-      const value = ref<VcDateRange | undefined>({ start: "2026-10-20", end: "2026-10-01" });
+      const value = ref<VcDateRangeType | undefined>({ start: "2026-10-20", end: "2026-10-01" });
       return { args, value };
     },
     template: `<VcDateRangePicker v-bind="args" v-model="value" />`,
@@ -272,7 +272,7 @@ export const Clearable: StoryType = {
   render: (args) => ({
     components: { VcDateRangePicker },
     setup() {
-      const value = ref<VcDateRange | undefined>({ start: "2026-10-08", end: "2026-10-14" });
+      const value = ref<VcDateRangeType | undefined>({ start: "2026-10-08", end: "2026-10-14" });
       return { args, value };
     },
     template: `
@@ -299,7 +299,7 @@ export const WithFooter: StoryType = {
   render: (args) => ({
     components: { VcDateRangePicker },
     setup() {
-      const value = ref<VcDateRange | undefined>(undefined);
+      const value = ref<VcDateRangeType | undefined>(undefined);
       return { args, value };
     },
     template: `
@@ -322,7 +322,7 @@ export const MinMax: StoryType = {
     docs: {
       description: {
         story:
-          "Both segments and the calendar enforce the same min/max boundary. Dates outside the range render as disabled cells in the calendar; typing an out-of-range date surfaces an inline validation error.",
+          'Both segments and the calendar enforce the same min/max boundary. Dates outside the range render as disabled cells in the calendar; typing an out-of-range date surfaces an inline validation error naming the boundary it broke, not a generic format complaint. Type `10/01/2026` (before `min`) into either layout and tab out: the shared details row reads "Date must be on or after 2026-10-05". `11/01/2026` (after `max`) reports the max boundary, and only genuinely unparseable text such as `99/99/9999` falls back to "Invalid date format". Both layouts are shown because each surfaces its segments\' messages through its own shared details row.',
       },
       source: {
         code: `
@@ -339,13 +339,21 @@ export const MinMax: StoryType = {
   render: (args) => ({
     components: { VcDateRangePicker },
     setup() {
-      const value = ref<VcDateRange | undefined>({ start: "2026-10-08", end: "2026-10-14" });
-      return { args, value };
+      const combined = ref<VcDateRangeType | undefined>({ start: "2026-10-08", end: "2026-10-14" });
+      const split = ref<VcDateRangeType | undefined>({ start: "2026-10-08", end: "2026-10-14" });
+      return { args, combined, split };
     },
     template: `
-      <div class="space-y-2">
-        <VcDateRangePicker v-bind="args" v-model="value" />
-        <div class="text-sm text-neutral-600">Range: {{ value ?? "(none)" }}</div>
+      <div class="space-y-6">
+        <div class="space-y-2">
+          <VcDateRangePicker v-bind="args" v-model="combined" layout="combined" />
+          <div class="text-sm text-neutral-600">Combined range: {{ combined ?? "(none)" }}</div>
+        </div>
+
+        <div class="space-y-2">
+          <VcDateRangePicker v-bind="args" v-model="split" layout="split" />
+          <div class="text-sm text-neutral-600">Split range: {{ split ?? "(none)" }}</div>
+        </div>
       </div>
     `,
   }),
@@ -371,7 +379,7 @@ export const Teleport: StoryType = {
   render: (args) => ({
     components: { VcDateRangePicker },
     setup() {
-      const value = ref<VcDateRange | undefined>(undefined);
+      const value = ref<VcDateRangeType | undefined>(undefined);
       return { args, value };
     },
     template: `

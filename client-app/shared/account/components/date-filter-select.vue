@@ -55,7 +55,7 @@ const selectedDateFilter = ref<DateFilterType>(dateFilterType.value ?? dateFilte
 // An empty range is valid.
 const rangeValid = ref(true);
 
-const range = computed<VcDateRange>({
+const range = computed<VcDateRangeType | undefined>({
   get() {
     return { start: selectedDateFilter.value.startDate, end: selectedDateFilter.value.endDate };
   },
@@ -87,9 +87,6 @@ function handleChangeType(): void {
   @apply flex flex-col;
 
   &__range {
-    // Combined layout packs two fields and two icon buttons into one row.
-    --vc-input-font-size: theme("fontSize.sm[0]");
-
     @apply mt-3;
 
     @media (width < theme("screens.lg")) {

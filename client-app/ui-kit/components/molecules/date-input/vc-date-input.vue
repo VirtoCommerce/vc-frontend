@@ -81,6 +81,8 @@ interface IProps {
 interface IEmits {
   (event: "update:modelValue", value: string | undefined): void;
   (event: "update:valid", value: boolean): void;
+  /** The per-reason message behind `update:valid`, for shells that render the details row themselves. */
+  (event: "update:errorText", value: string | undefined): void;
   (event: "blur", focusEvent: FocusEvent): void;
   (event: "focus", focusEvent: FocusEvent): void;
   (event: "clear"): void;
@@ -133,6 +135,7 @@ const computedMessage = computed<string | undefined>(() => {
 
 // Immediate so the empty (valid) state is reported on mount.
 watch(isValid, (v) => emit("update:valid", v), { immediate: true });
+watch(errorText, (v) => emit("update:errorText", v), { immediate: true });
 
 function onInputBlur(event: FocusEvent): void {
   onBlur();

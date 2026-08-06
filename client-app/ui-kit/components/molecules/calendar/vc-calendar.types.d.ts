@@ -7,7 +7,7 @@ declare global {
 
   type VcCalendarDisabledDateType = (date: string) => boolean;
 
-  type VcDateRange = { start?: string; end?: string };
+  type VcDateRangeType = { start?: string; end?: string };
 }
 
 export {};

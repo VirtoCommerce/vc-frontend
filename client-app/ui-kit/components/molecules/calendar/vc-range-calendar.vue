@@ -119,7 +119,7 @@ import type { ComponentPublicInstance } from "vue";
 type RekaDateRangeType = { start: DateValue | undefined; end: DateValue | undefined };
 
 interface IProps {
-  modelValue?: VcDateRange;
+  modelValue?: VcDateRangeType;
   size?: VcCalendarSizeType;
   min?: string;
   max?: string;
@@ -132,8 +132,7 @@ interface IProps {
 }
 
 interface IEmits {
-  (event: "update:modelValue", value: VcDateRange | undefined): void;
-  (event: "update:valid", value: boolean): void;
+  (event: "update:modelValue", value: VcDateRangeType | undefined): void;
 }
 
 const emit = defineEmits<IEmits>();
@@ -180,23 +179,16 @@ const {
 
 const calendarRootRef = useTemplateRef<ComponentPublicInstance | null>("calendarRootRef");
 
-const rootClasses = computed(() => [
-  "vc-range-calendar",
-  `vc-range-calendar--size--${props.size}`,
-  "vc-range-calendar--mode--range",
-]);
+const rootClasses = computed(() => ["vc-range-calendar", `vc-range-calendar--size--${props.size}`]);
 
 const parsedModelValue = computed<RekaDateRangeType>(() => ({
   start: tryParseDate(props.modelValue?.start),
   end: tryParseDate(props.modelValue?.end),
 }));
 
-// Permanent stub: reka's `update:validModelValue` carries a DateRange, not a boolean.
-emit("update:valid", true);
-
 // Dedup snapshot: props.modelValue is still stale during reka's same-tick round trip.
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss
-let lastKnown: VcDateRange | undefined = props.modelValue;
+let lastKnown: VcDateRangeType | undefined = props.modelValue;
 
 // Swallows reka's duplicate update:startValue echo after it swaps and commits a completed range.
 let pendingCompleteRangeStart: string | undefined;
@@ -204,11 +196,11 @@ let pendingCompleteRangeStart: string | undefined;
 // reka cannot represent an end-only range and re-anchors it as start; that echo must not be forwarded.
 let suppressExternalSyncEcho = false;
 
-function isSameRange(a: VcDateRange | undefined, b: VcDateRange | undefined): boolean {
+function isSameRange(a: VcDateRangeType | undefined, b: VcDateRangeType | undefined): boolean {
   return a?.start === b?.start && a?.end === b?.end;
 }
 
-function emitRange(value: VcDateRange | undefined): void {
+function emitRange(value: VcDateRangeType | undefined): void {
   if (suppressExternalSyncEcho) {
     return;
   }
@@ -601,42 +593,8 @@ defineExpose({ focusActiveCell });
       outline-offset: 1px;
       z-index: 1;
     }
-  }
 
-  &__footer {
-    @apply flex justify-between items-center pt-2 mt-1 border-t border-neutral-200;
-  }
-
-  &__footer-btn {
-    @apply bg-transparent border-0 cursor-pointer rounded-[--day-radius] uppercase text-primary-700 text-xs font-black tracking-wider;
-
-    font-family: inherit;
-    padding: 0.375rem 0.625rem;
-    transition: background 120ms ease;
-
-    &:hover {
-      @apply bg-primary-50;
-    }
-
-    &--ghost {
-      @apply text-neutral-600;
-
-      &:hover {
-        @apply bg-neutral-100 text-neutral-800;
-      }
-    }
-
-    &[disabled],
-    &[aria-disabled="true"] {
-      @apply text-neutral-400 cursor-not-allowed;
-
-      &:hover {
-        @apply bg-transparent text-neutral-400;
-      }
-    }
-  }
-
-  &--mode--range &__day {
+    /* Kept last: these tie with :hover and the state attributes above, so source order decides. */
     /* range-middle: reka marks ALL span cells data-selected, incl. endpoints — exclude them */
     &[data-selected]:not([data-selection-start]):not([data-selection-end]) {
       @apply text-primary-800;
@@ -717,6 +675,39 @@ defineExpose({ focusActiveCell });
     &[data-today][data-selection-start],
     &[data-today][data-selection-end] {
       box-shadow: inset 0 0 0 2px var(--color-additional-50);
+    }
+  }
+
+  &__footer {
+    @apply flex justify-between items-center pt-2 mt-1 border-t border-neutral-200;
+  }
+
+  &__footer-btn {
+    @apply bg-transparent border-0 cursor-pointer rounded-[--day-radius] uppercase text-primary-700 text-xs font-black tracking-wider;
+
+    font-family: inherit;
+    padding: 0.375rem 0.625rem;
+    transition: background 120ms ease;
+
+    &:hover {
+      @apply bg-primary-50;
+    }
+
+    &--ghost {
+      @apply text-neutral-600;
+
+      &:hover {
+        @apply bg-neutral-100 text-neutral-800;
+      }
+    }
+
+    &[disabled],
+    &[aria-disabled="true"] {
+      @apply text-neutral-400 cursor-not-allowed;
+
+      &:hover {
+        @apply bg-transparent text-neutral-400;
+      }
     }
   }
 }
