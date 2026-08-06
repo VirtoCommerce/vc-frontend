@@ -27,11 +27,17 @@ export function getDefaultNumberFormats(currency: string): IntlNumberFormat {
  * Both rules keep working with legacy 2-3-form messages via the `choicesLength` guard.
  */
 export function russianPluralRule(choice: number, choicesLength: number): number {
+  // Legacy two-form messages follow vue-i18n's default "singular | plural" convention.
+  if (choicesLength === 2) {
+    return choice === 1 ? 0 : 1;
+  }
+
   if (choice === 0) {
     return 0;
   }
 
-  const teen = choice > 10 && choice < 20;
+  // The teen exception repeats every hundred (111, 213, ...), so it is keyed to `% 100`.
+  const teen = choice % 100 > 10 && choice % 100 < 20;
   const endsWithOne = choice % 10 === 1;
 
   if (choicesLength < 4) {
@@ -50,6 +56,11 @@ export function russianPluralRule(choice: number, choicesLength: number): number
 }
 
 export function polishPluralRule(choice: number, choicesLength: number): number {
+  // Legacy two-form messages follow vue-i18n's default "singular | plural" convention.
+  if (choicesLength === 2) {
+    return choice === 1 ? 0 : 1;
+  }
+
   if (choice === 0) {
     return 0;
   }

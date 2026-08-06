@@ -19,6 +19,11 @@ describe("russianPluralRule", () => {
     [22, "22 отзыва"],
     [25, "25 отзывов"],
     [101, "101 отзыв"],
+    [111, "111 отзывов"],
+    [112, "112 отзывов"],
+    [114, "114 отзывов"],
+    [121, "121 отзыв"],
+    [211, "211 отзывов"],
   ])("renders correct form for %i", (count, expected) => {
     const i18n = createI18n("ru", "USD");
     i18n.global.setLocaleMessage("ru", { reviews: RU_REVIEWS });
@@ -33,6 +38,17 @@ describe("russianPluralRule", () => {
     expect(russianPluralRule(2, 3)).toBe(2);
     expect(russianPluralRule(5, 3)).toBe(2);
     expect(russianPluralRule(21, 3)).toBe(1);
+    expect(russianPluralRule(111, 3)).toBe(2);
+  });
+
+  it("keeps legacy two-form messages on the default vue-i18n convention", () => {
+    const i18n = createI18n("ru", "USD");
+    i18n.global.setLocaleMessage("ru", { results: "результат | результатов" });
+    i18n.global.locale.value = "ru";
+
+    expect(i18n.global.t("results", 1)).toBe("результат");
+    expect(i18n.global.t("results", 5)).toBe("результатов");
+    expect(i18n.global.t("results", 0)).toBe("результатов");
   });
 });
 
@@ -60,5 +76,15 @@ describe("polishPluralRule", () => {
     expect(polishPluralRule(1, 3)).toBe(1);
     expect(polishPluralRule(2, 3)).toBe(2);
     expect(polishPluralRule(21, 3)).toBe(2);
+  });
+
+  it("keeps legacy two-form messages on the default vue-i18n convention", () => {
+    const i18n = createI18n("pl", "USD");
+    i18n.global.setLocaleMessage("pl", { results: "wynik | wyników" });
+    i18n.global.locale.value = "pl";
+
+    expect(i18n.global.t("results", 1)).toBe("wynik");
+    expect(i18n.global.t("results", 5)).toBe("wyników");
+    expect(i18n.global.t("results", 0)).toBe("wyników");
   });
 });
