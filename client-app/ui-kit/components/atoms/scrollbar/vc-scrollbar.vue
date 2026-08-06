@@ -20,8 +20,8 @@
 </template>
 
 <script setup lang="ts">
-import { useResizeObserver, useThrottleFn } from "@vueuse/core";
-import { computed, nextTick, onMounted, onUpdated, provide, ref, useTemplateRef } from "vue";
+import { useDebounceFn, useMutationObserver, useResizeObserver, useThrottleFn } from "@vueuse/core";
+import { computed, nextTick, onMounted, provide, ref, useTemplateRef } from "vue";
 import { getColorValue } from "@/ui-kit/utilities";
 import { vcScrollbarKey } from "./vc-scrollbar-context";
 
@@ -62,35 +62,79 @@ const el = useTemplateRef<HTMLElement>("el");
 
 provide(vcScrollbarKey, { el });
 
-// A scrollable region must be keyboard-reachable (axe: scrollable-region-focusable).
-// The tab stop is added automatically when content actually overflows on an enabled axis;
-// the `focusable` prop remains as an explicit override.
-const hasOverflow = ref(false);
+// A scrollable region must be keyboard-reachable (axe: scrollable-region-focusable), but only
+// when nothing inside is focusable — axe passes regions with focusable content, and a tab stop
+// on e.g. an `aria-activedescendant`-driven listbox would break the combobox pattern.
+// The tab stop is added automatically when content overflows on an enabled axis AND the region
+// has no focusable descendants AND no interactive container role; `focusable` stays as an
+// explicit override.
+const INTERACTIVE_CONTAINER_ROLES = [
+  "listbox",
+  "menu",
+  "menubar",
+  "tree",
+  "treegrid",
+  "grid",
+  "tablist",
+  "combobox",
+  "radiogroup",
+];
 
-const isFocusable = computed(
-  () => props.focusable || ((props.vertical || props.horizontal) && !props.disabled && hasOverflow.value),
-);
+const FOCUSABLE_SELECTOR = [
+  "a[href]",
+  "area[href]",
+  "button:not([disabled])",
+  'input:not([disabled]):not([type="hidden"])',
+  "select:not([disabled])",
+  "textarea:not([disabled])",
+  '[tabindex]:not([tabindex="-1"])',
+  '[contenteditable="true"]',
+  "audio[controls]",
+  "video[controls]",
+  "summary",
+  "iframe",
+].join(", ");
 
-function updateOverflow(): void {
+const needsAutoTabStop = ref(false);
+
+const isFocusable = computed(() => props.focusable || needsAutoTabStop.value);
+
+function updateAutoTabStop(): void {
   const target = el.value;
-  if (!target) {
-    hasOverflow.value = false;
+
+  if (!target || props.disabled || (!props.vertical && !props.horizontal)) {
+    needsAutoTabStop.value = false;
     return;
   }
 
-  const verticalOverflow = props.vertical && target.scrollHeight > target.clientHeight;
-  const horizontalOverflow = props.horizontal && target.scrollWidth > target.clientWidth;
+  const overflows =
+    (props.vertical && target.scrollHeight > target.clientHeight) ||
+    (props.horizontal && target.scrollWidth > target.clientWidth);
 
-  hasOverflow.value = verticalOverflow || horizontalOverflow;
+  if (!overflows) {
+    needsAutoTabStop.value = false;
+    return;
+  }
+
+  const role = target.getAttribute("role");
+  if (role && INTERACTIVE_CONTAINER_ROLES.includes(role)) {
+    needsAutoTabStop.value = false;
+    return;
+  }
+
+  needsAutoTabStop.value = !target.querySelector(FOCUSABLE_SELECTOR);
 }
 
+const scheduleAutoTabStopUpdate = useDebounceFn(updateAutoTabStop, 100);
+
 onMounted(() => {
-  void nextTick(updateOverflow);
+  void nextTick(updateAutoTabStop);
 });
 
-onUpdated(updateOverflow);
-
-useResizeObserver(el, updateOverflow);
+// The element's own box (ResizeObserver) stays fixed while slot content rendered by OTHER
+// components grows (async lists, late images) — only a MutationObserver sees those changes.
+useResizeObserver(el, scheduleAutoTabStopUpdate);
+useMutationObserver(el, scheduleAutoTabStopUpdate, { childList: true, subtree: true });
 
 const wasAtTop = ref(true);
 const wasAtBottom = ref(false);
@@ -104,7 +148,7 @@ const onScroll = useThrottleFn(
       return;
     }
 
-    updateOverflow();
+    void scheduleAutoTabStopUpdate();
 
     const { scrollTop, scrollLeft, scrollHeight, scrollWidth, clientHeight, clientWidth } = target;
     const threshold = props.edgeThreshold;
