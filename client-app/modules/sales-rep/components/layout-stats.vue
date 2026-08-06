@@ -86,8 +86,6 @@ interface IProps {
   hidden: readonly string[];
   /** Cards from the surface's statistics composable, matched to layout ids by `key`. */
   cards: readonly StatWidgetCardType[];
-  /** The statistics queries are still in flight; each card shows its own spinner. */
-  cardsLoading?: boolean;
   editing?: boolean;
 }
 
@@ -123,7 +121,10 @@ function cardProps(id: string) {
     delta: card?.delta,
     deltaTone: card?.deltaTone,
     deltaIcon: card?.deltaIcon,
-    loading: props.cardsLoading,
+    // Per card, not per row: each is fed by exactly one statistics query (VCST-5586), so a slow or
+    // failed query must only mark its own cards.
+    loading: card?.loading,
+    errorText: card?.failed ? t("sales_rep.hub.dashboard.stats.load_failed") : "",
   };
 }
 </script>

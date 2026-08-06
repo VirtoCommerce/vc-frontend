@@ -32,7 +32,7 @@ vi.mock("../composables/useSalesRepRules", () => ({
 vi.mock("../composables/useSalesRepOrders", () => ({
   useSalesRepOrders: (options: typeof mocks.ordersOptions) => {
     mocks.ordersOptions = options;
-    return { orders: ref([]), loading: ref(false) };
+    return { orders: ref([]), loading: ref(false), error: ref<Error | null>(null) };
   },
 }));
 

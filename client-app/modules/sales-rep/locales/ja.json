@@ -35,7 +35,8 @@
         "search_aria": "顧客を検索",
         "empty": "顧客が見つかりません",
         "no_results": "検索条件に一致する顧客がありません",
-        "reset_search": "検索をリセット"
+        "reset_search": "検索をリセット",
+        "load_failed": "顧客を読み込めませんでした"
       }
     },
     "hub": {
@@ -66,7 +67,8 @@
           "new_customers": "新規顧客 {count} 件",
           "placed_today": "本日 {count} 件",
           "new_this_week": "今週 新規 {count} 件",
-          "mtd_of_ytd": "年初来の {percent}%"
+          "mtd_of_ytd": "年初来の {percent}%",
+          "load_failed": "読み込みに失敗しました"
         }
       },
       "layout": {
@@ -162,7 +164,8 @@
       "items": "商品数",
       "status": "ステータス",
       "total": "合計",
-      "filter_all": "すべて"
+      "filter_all": "すべて",
+      "load_failed": "注文を読み込めませんでした"
     },
     "top_sellers": {
       "title": "トップセラー",
@@ -172,7 +175,8 @@
       "revenue": "収益",
       "empty": "この期間の売上なし",
       "no_results": "このカテゴリーの売上なし",
-      "all_categories": "全カテゴリー"
+      "all_categories": "全カテゴリー",
+      "load_failed": "売上上位を読み込めませんでした"
     },
     "rules": {
       "customer": {

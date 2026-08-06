@@ -28,7 +28,6 @@
         :visible="visibleIn('statistics')"
         :hidden="hiddenIn('statistics')"
         :cards="cards"
-        :cards-loading="cardsLoading"
         :editing="editing"
         @reorder="reorderVisible('statistics', $event)"
         @reorder-hidden="reorderHidden('statistics', $event)"
@@ -122,9 +121,8 @@ import type { StatWidgetCardType } from "../types/widgets";
 
 interface IProps {
   scope: SalesRepLayoutScopeType;
-  /** Matched to layout ids by `key`. */
+  /** Matched to layout ids by `key`. Each carries its own query's loading/failed state. */
   cards: readonly StatWidgetCardType[];
-  cardsLoading?: boolean;
   /** The customer every block on this surface is scoped to. Absent on the cross-customer dashboard,
    *  which is what the widgets' own optional `organizationId` already means. */
   organizationId?: string;

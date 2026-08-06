@@ -35,7 +35,8 @@
         "search_aria": "Search customers",
         "empty": "No customers found",
         "no_results": "No customers match your search",
-        "reset_search": "Reset search"
+        "reset_search": "Reset search",
+        "load_failed": "Couldn't load customers"
       }
     },
     "hub": {
@@ -66,7 +67,8 @@
           "new_customers": "{count} new customers",
           "placed_today": "{count} placed today",
           "new_this_week": "{count} new this week",
-          "mtd_of_ytd": "{percent}% of YTD"
+          "mtd_of_ytd": "{percent}% of YTD",
+          "load_failed": "Couldn't load"
         }
       },
       "layout": {
@@ -162,7 +164,8 @@
       "items": "Items",
       "status": "Status",
       "total": "Total",
-      "filter_all": "All"
+      "filter_all": "All",
+      "load_failed": "Couldn't load orders"
     },
     "top_sellers": {
       "title": "Top sellers",
@@ -172,7 +175,8 @@
       "revenue": "Revenue",
       "empty": "No sales in this period",
       "no_results": "No sales in this category",
-      "all_categories": "All categories"
+      "all_categories": "All categories",
+      "load_failed": "Couldn't load top sellers"
     },
     "rules": {
       "customer": {

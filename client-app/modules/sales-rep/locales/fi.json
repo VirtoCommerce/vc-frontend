@@ -35,7 +35,8 @@
         "search_aria": "Hae asiakkaita",
         "empty": "Asiakkaita ei löytynyt",
         "no_results": "Yksikään asiakas ei vastaa hakuasi",
-        "reset_search": "Tyhjennä haku"
+        "reset_search": "Tyhjennä haku",
+        "load_failed": "Asiakkaita ei voitu ladata"
       }
     },
     "hub": {
@@ -66,7 +67,8 @@
           "new_customers": "{count} uutta asiakasta",
           "placed_today": "{count} tänään",
           "new_this_week": "{count} uutta tällä viikolla",
-          "mtd_of_ytd": "{percent}% vuodesta"
+          "mtd_of_ytd": "{percent}% vuodesta",
+          "load_failed": "Lataus epäonnistui"
         }
       },
       "layout": {
@@ -162,7 +164,8 @@
       "items": "Tuotteet",
       "status": "Tila",
       "total": "Yhteensä",
-      "filter_all": "Kaikki"
+      "filter_all": "Kaikki",
+      "load_failed": "Tilauksia ei voitu ladata"
     },
     "top_sellers": {
       "title": "Suosituimmat myyjät",
@@ -172,7 +175,8 @@
       "revenue": "Tuotto",
       "empty": "Ei myyntiä tällä kaudella",
       "no_results": "Ei myyntiä tässä luokassa",
-      "all_categories": "Kaikki kategoriat"
+      "all_categories": "Kaikki kategoriat",
+      "load_failed": "Myydyimpiä ei voitu ladata"
     },
     "rules": {
       "customer": {

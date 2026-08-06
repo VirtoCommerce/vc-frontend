@@ -134,7 +134,7 @@
         <template #sidebar>
           <OrderSummary :cart="cart" :selected-items="selectedLineItems" :no-shipping="allItemsAreDigital" footnote>
             <template #footer>
-              <LoyaltyValidationAlert variant="compact" class="mt-4" />
+              <LoyaltyValidationAlert class="mt-4" />
 
               <ProceedTo
                 v-if="$cfg.checkout_multistep_enabled"

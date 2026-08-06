@@ -1,5 +1,5 @@
 <template>
-  <div class="stat-widget" :class="`stat-widget--${accent}`">
+  <div class="stat-widget" :class="`stat-widget--${accent}`" :aria-busy="loading || undefined">
     <div class="stat-widget__head">
       <!-- Decorator slot ahead of the accent icon; the layout puts its drag affordance here. -->
       <slot name="leading" />
@@ -9,15 +9,29 @@
       <span class="stat-widget__label">{{ label }}</span>
     </div>
 
-    <div class="stat-widget__value">{{ value }}</div>
+    <!-- Figures only for a received response, so a pending or failed metric can't read as a genuine 0.
+         Loading outranks the error so a retry shows the spinner, not the last failure (VCST-5586). -->
+    <!-- aria-hidden: the dash is a visual placeholder; screen readers get aria-busy on the card instead. -->
+    <div v-if="loading" class="stat-widget__value stat-widget__value--pending" aria-hidden="true">—</div>
 
-    <div v-if="sub" class="stat-widget__sub">{{ sub }}</div>
+    <!-- Native live region, so a failure replacing the figures is announced (Sonar S6819). -->
+    <output v-else-if="errorText" class="stat-widget__error">
+      <VcIcon name="exclamation-circle" :size="16" />
 
-    <div v-if="delta" class="stat-widget__delta" :class="`stat-widget__delta--${deltaTone}`">
-      <VcIcon v-if="deltaIcon" :name="deltaIcon" :size="14" />
+      <span>{{ errorText }}</span>
+    </output>
 
-      <span>{{ delta }}</span>
-    </div>
+    <template v-else>
+      <div class="stat-widget__value">{{ value }}</div>
+
+      <div v-if="sub" class="stat-widget__sub">{{ sub }}</div>
+
+      <div v-if="delta" class="stat-widget__delta" :class="`stat-widget__delta--${deltaTone}`">
+        <VcIcon v-if="deltaIcon" :name="deltaIcon" :size="14" />
+
+        <span>{{ delta }}</span>
+      </div>
+    </template>
 
     <VcLoaderOverlay v-if="loading" />
   </div>
@@ -38,6 +52,8 @@ interface IProps {
   deltaIcon?: string;
   // Shows a spinner overlay over the card while the statistics query is in flight.
   loading?: boolean;
+  // Already-localized (like `label`); its presence *is* the error state and outranks the figures.
+  errorText?: string;
 }
 
 // accent/deltaTone need defaults (they build CSS class names); other optional props are fine as undefined.
@@ -85,6 +101,16 @@ withDefaults(defineProps<IProps>(), {
 
   &__value {
     @apply text-3xl font-bold leading-tight text-neutral-900;
+
+    // Muted so the placeholder doesn't read as a figure.
+    &--pending {
+      @apply text-neutral-300;
+    }
+  }
+
+  // `mt-auto` pins it where the delta row would sit, keeping card heights even.
+  &__error {
+    @apply mt-auto flex items-center gap-1.5 pt-1.5 text-sm font-bold text-danger-600;
   }
 
   &__sub {
