@@ -176,6 +176,8 @@ const { rules: sortRules } = useSalesRepRules("order", "sort");
 const chrome = useBlockChrome();
 const editingTabs = computed(() => Boolean(chrome?.editing.value));
 const hiddenTabs = computed(() => chrome?.settings.value.hiddenTabs ?? []);
+// The saved selection, not the draft: tabs apply on save, like the row cap.
+const savedHiddenTabs = computed(() => chrome?.savedSettings.value.hiddenTabs ?? []);
 
 // The backend's "All" passthrough would duplicate the baseline chip, so it is not offered as a tab
 // and cannot be unchecked either.
@@ -184,27 +186,29 @@ const selectableRules = computed(() => selectableFilterRules(filterRules.value))
 // Show the filter chips only when the backend offers a real filter beyond the "All" baseline.
 const hasFilterOptions = computed(() => selectableRules.value.length > 0);
 
-// The rep's chosen tabs, in catalog order. Falls back to the whole catalog if a saved document hides
-// every rule the backend still returns — see layout/settings.ts.
-const visibleRules = computed(() => visibleTabRules(selectableRules.value, hiddenTabs.value));
+// The tabs the chips offer, in catalog order. Unchecking every one is allowed — the "All" baseline stays.
+const visibleRules = computed(() => visibleTabRules(selectableRules.value, savedHiddenTabs.value));
 
 // What the checkboxes read: the stored list minus anything the catalog no longer contains.
 const effectiveHiddenTabs = computed(() => knownHiddenTabs(selectableRules.value, hiddenTabs.value));
 
-// Edit mode is where the widget knows the live catalog, so a name it no longer returns is cleared from
-// the store. Keyed on the catalog too, which can arrive after edit mode was entered.
-watch([editingTabs, selectableRules], () => {
-  if (editingTabs.value && effectiveHiddenTabs.value.length !== hiddenTabs.value.length) {
-    chrome?.updateSettings({ hiddenTabs: effectiveHiddenTabs.value });
-  }
-});
+// Edit mode is where the live catalog is known, so a retired name is cleared from the store there.
+// Immediate: a widget restored from the tray mounts mid-edit with the catalog already cached.
+watch(
+  [editingTabs, selectableRules],
+  () => {
+    if (editingTabs.value && effectiveHiddenTabs.value.length !== hiddenTabs.value.length) {
+      chrome?.updateSettings({ hiddenTabs: effectiveHiddenTabs.value });
+    }
+  },
+  { immediate: true },
+);
 
 function toggleTab(name: string): void {
   chrome?.updateSettings({ hiddenTabs: toggleTabRule(effectiveHiddenTabs.value, name) });
 }
 
-// The active filter can be unchecked from under the chips — leaving it selected would filter by a tab
-// the rep can no longer see or clear.
+// A save can retire the tab being filtered by, which the rep could then neither see nor clear.
 watch(visibleRules, (rules) => {
   if (filter.value && !rules.some((rule) => rule.name === filter.value)) {
     filter.value = undefined;
