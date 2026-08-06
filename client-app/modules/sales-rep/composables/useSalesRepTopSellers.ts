@@ -4,6 +4,7 @@ import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { SalesRepTopSellersDocument } from "../api/graphql/types";
 import { TOP_SELLERS_DEFAULT_TAKE } from "../constants";
+import { formatStatCount, formatStatMoney } from "../utils";
 import type { SalesRepTopSellerRowType } from "../types";
 import type { Ref } from "vue";
 
@@ -34,10 +35,10 @@ export function useSalesRepTopSellers(options: UseSalesRepTopSellersOptionsType 
     take: toValue(options.take) ?? TOP_SELLERS_DEFAULT_TAKE,
   }));
 
-  const { result, loading, onError } = useQuery(SalesRepTopSellersDocument, variables);
+  const { result, loading, error, onError } = useQuery(SalesRepTopSellersDocument, variables);
 
-  onError((error) => {
-    Logger.error("[sales-rep] salesRepTopSellers failed:", error);
+  onError((err) => {
+    Logger.error("[sales-rep] salesRepTopSellers failed:", err);
   });
 
   const items = computed<SalesRepTopSellerRowType[]>(() =>
@@ -49,10 +50,10 @@ export function useSalesRepTopSellers(options: UseSalesRepTopSellersOptionsType 
         name: row.name ?? "",
         sku: row.sku ?? "",
         imageUrl: row.imageUrl ?? "",
-        units: row.units,
-        revenue: row.revenue.formattedAmount,
+        units: formatStatCount(row.units),
+        revenue: formatStatMoney(row.revenue),
       })),
   );
 
-  return { items, loading };
+  return { items, loading, error };
 }

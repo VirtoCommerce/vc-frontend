@@ -16,8 +16,9 @@ const queryMock = await vi.hoisted(async () => {
   >(undefined);
   const loading = ref(false);
   const onError = vi.fn();
-  const useQuery = vi.fn(() => ({ result, loading, onError }));
-  return { result, loading, onError, useQuery };
+  const error = ref<Error | null>(null);
+  const useQuery = vi.fn(() => ({ result, loading, error, onError }));
+  return { result, loading, error, onError, useQuery };
 });
 
 vi.mock("@vue/apollo-composable", () => ({ useQuery: queryMock.useQuery }));
@@ -126,7 +127,8 @@ describe("useSalesRepOrders", () => {
       },
     };
 
-    // `total` is taken straight from the backend-formatted MoneyType.formattedAmount (no client formatting).
+    // `total` keeps the backend-formatted MoneyType.formattedAmount; `itemsCount` goes through the
+    // shared stat formatter so it groups like the figures in the widgets above (VCST-5586).
     expect(orders.value).toEqual([
       {
         id: "o1",
@@ -136,7 +138,7 @@ describe("useSalesRepOrders", () => {
         createdDate: "2026-07-10T00:00:00Z",
         status: "Completed",
         statusDisplayValue: "Completed",
-        itemsCount: 3,
+        itemsCount: "3",
         total: "$120.50",
       },
       {
@@ -147,10 +149,16 @@ describe("useSalesRepOrders", () => {
         createdDate: "2026-07-09T00:00:00Z",
         status: "",
         statusDisplayValue: "",
-        itemsCount: 1,
+        itemsCount: "1",
         total: "$10.00",
       },
     ]);
+  });
+
+  it("surfaces the query error so the widget can show a failure state", () => {
+    const { error } = useSalesRepOrders({ organizationId: "cust-1" });
+
+    expect(error).toBe(queryMock.error);
   });
 
   it("passes loading through and registers an error handler", () => {

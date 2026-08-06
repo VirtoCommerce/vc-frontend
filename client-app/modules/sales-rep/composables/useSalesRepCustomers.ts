@@ -3,7 +3,7 @@ import { computed, ref, watch } from "vue";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { SalesRepCustomersDocument } from "../api/graphql/types";
-import { buildStatisticsWindows, formatCustomerLocation } from "../utils";
+import { buildStatisticsWindows, formatCustomerLocation, formatStatMoney } from "../utils";
 import type { SalesRepCustomerType } from "../types";
 
 export const PAGE_SIZE = 10;
@@ -39,13 +39,13 @@ export function useSalesRepCustomers() {
   }));
 
   // The rep's customer organizations are resolved server-side from the caller's claims.
-  const { result, loading, onError } = useQuery(SalesRepCustomersDocument, variables, {
+  const { result, loading, error, onError } = useQuery(SalesRepCustomersDocument, variables, {
     keepPreviousResult: true,
   });
 
-  onError((error) => {
-    // Keep the page functional (empty view); no toasts by design.
-    Logger.error("[sales-rep] salesRepCustomers failed:", error);
+  onError((err) => {
+    // No toast; the page's empty view names the failure instead (VCST-5586).
+    Logger.error("[sales-rep] salesRepCustomers failed:", err);
   });
 
   const items = computed<SalesRepCustomerType[]>(() =>
@@ -54,9 +54,9 @@ export function useSalesRepCustomers() {
       organizationName: customer.organizationName ?? "",
       accountType: customer.accountType ?? "",
       location: formatCustomerLocation(customer.address, { withPostalCode: true }),
-      ytdTotal: customer.ytd?.total.formattedAmount ?? "",
+      ytdTotal: formatStatMoney(customer.ytd?.total),
       ytdCount: customer.ytd?.count ?? 0,
-      lastYearTotal: customer.lastYear?.total.formattedAmount ?? "",
+      lastYearTotal: formatStatMoney(customer.lastYear?.total),
       lastOrder: customer.lastOrder?.id
         ? {
             id: customer.lastOrder.id,
@@ -76,5 +76,5 @@ export function useSalesRepCustomers() {
     }
   });
 
-  return { loading, keyword, filter, sortRule, page, pages, items };
+  return { loading, error, keyword, filter, sortRule, page, pages, items };
 }

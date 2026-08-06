@@ -25,14 +25,14 @@ export function useSalesRepOrderStatistics(options: UseSalesRepOrderStatisticsOp
     ...buildStatisticsWindows(),
   }));
 
-  const { result, loading, onError } = useQuery(SalesRepCustomerOrderStatisticsDocument, variables);
+  const { result, loading, error, onError } = useQuery(SalesRepCustomerOrderStatisticsDocument, variables);
 
-  onError((error) => {
-    // No toast; the mapped cards fall back to placeholders.
-    Logger.error("[sales-rep] salesRepCustomerOrderStatistics failed:", error);
+  onError((err) => {
+    // No toast; `error` is surfaced on the cards themselves (VCST-5586).
+    Logger.error("[sales-rep] salesRepCustomerOrderStatistics failed:", err);
   });
 
   const statistics = computed(() => result.value?.salesRepCustomerOrderStatistics);
 
-  return { statistics, loading };
+  return { statistics, loading, error };
 }
