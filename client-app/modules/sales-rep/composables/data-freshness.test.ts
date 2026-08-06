@@ -257,14 +257,15 @@ const widgetSources: [string, () => () => number | undefined][] = [
     "orders list",
     () => {
       const { orders: rows } = useSalesRepOrders();
-      return () => rows.value[0]?.itemsCount;
+      // The row's count is Intl-formatted (VCST-5586), so the probe reads the figure back as a number.
+      return () => (rows.value[0] ? Number(rows.value[0].itemsCount) : undefined);
     },
   ],
   [
     "top sellers",
     () => {
       const { items } = useSalesRepTopSellers();
-      return () => items.value[0]?.units;
+      return () => (items.value[0] ? Number(items.value[0].units) : undefined);
     },
   ],
   [

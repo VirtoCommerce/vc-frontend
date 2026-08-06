@@ -4,6 +4,7 @@ import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { SalesRepOrdersDocument } from "../api/graphql/types";
 import { HUB_FETCH_POLICY, ORDERS_DEFAULT_LIMIT } from "../constants";
+import { formatStatCount, formatStatMoney } from "../utils";
 import type { SalesRepOrderRowType } from "../types";
 import type { Ref } from "vue";
 
@@ -40,13 +41,13 @@ export function useSalesRepOrders(options: UseSalesRepOrdersOptionsType = {}) {
   }));
 
   // Revalidates with the KPI cards above it: a stale row read "New" under a card already counting 0.
-  const { result, loading, onError } = useQuery(SalesRepOrdersDocument, variables, {
+  const { result, loading, error, onError } = useQuery(SalesRepOrdersDocument, variables, {
     fetchPolicy: HUB_FETCH_POLICY,
   });
 
-  onError((error) => {
-    // No toast; the block falls back to the empty view.
-    Logger.error("[sales-rep] salesRepOrders failed:", error);
+  onError((err) => {
+    // No toast; the widget's empty view names the failure instead (VCST-5586).
+    Logger.error("[sales-rep] salesRepOrders failed:", err);
   });
 
   const orders = computed<SalesRepOrderRowType[]>(() =>
@@ -61,10 +62,10 @@ export function useSalesRepOrders(options: UseSalesRepOrdersOptionsType = {}) {
         createdDate: order.createdDate,
         status: order.status ?? "",
         statusDisplayValue: order.statusDisplayValue ?? "",
-        itemsCount: order.itemsCount,
-        total: order.total.formattedAmount,
+        itemsCount: formatStatCount(order.itemsCount),
+        total: formatStatMoney(order.total),
       })),
   );
 
-  return { orders, loading };
+  return { orders, loading, error };
 }

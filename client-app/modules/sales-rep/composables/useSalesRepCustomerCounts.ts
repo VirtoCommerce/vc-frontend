@@ -23,15 +23,15 @@ export function useSalesRepCustomerCounts(options: UseSalesRepCustomerCountsOpti
     };
   });
 
-  const { result, loading, onError } = useQuery(SalesRepCustomerCountsDocument, variables, {
+  const { result, loading, error, onError } = useQuery(SalesRepCustomerCountsDocument, variables, {
     fetchPolicy: HUB_FETCH_POLICY,
   });
 
-  onError((error) => {
-    Logger.error("[sales-rep] salesRepCustomerCounts failed:", error);
+  onError((err) => {
+    Logger.error("[sales-rep] salesRepCustomerCounts failed:", err);
   });
 
   const counts = computed(() => result.value?.salesRepCustomerCounts);
 
-  return { counts, loading };
+  return { counts, loading, error };
 }

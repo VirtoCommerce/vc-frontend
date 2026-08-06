@@ -8,6 +8,7 @@ import mercuryDark from './mercury.dark.json'
 import mercury from './mercury.json'
 import purplePinkDark from './purple-pink.dark.json'
 import purplePink from './purple-pink.json'
+import redDark from './red.dark.json'
 import red from './red.json'
 import watermelonDark from './watermelon.dark.json'
 import watermelon from './watermelon.json'
@@ -30,4 +31,5 @@ export const darkPresets: Record<string, IThemeConfigPreset> = {
   mercury: mercuryDark,
   watermelon: watermelonDark,
   ['purple-pink']: purplePinkDark,
+  red: redDark,
 };
