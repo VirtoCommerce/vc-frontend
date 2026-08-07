@@ -12,9 +12,13 @@
         </div>
 
         <div class="top-sellers__content">
+          <!-- A failure replaces the table rather than sharing the empty view: apollo keeps the previous rows on a
+               failed refetch, which would otherwise read as this category's result (VCST-5586). -->
+          <VcEmptyView v-if="failed && !loading" :text="t('sales_rep.top_sellers.load_failed')" variant="error" />
+
           <!-- With a category filter active, an empty result means "nothing in this category", not "no sales at all". -->
           <VcEmptyView
-            v-if="!items.length && !loading"
+            v-else-if="!items.length && !loading"
             :text="filter ? t('sales_rep.top_sellers.no_results') : t('sales_rep.top_sellers.empty')"
             icon="outline-order"
           />
@@ -144,13 +148,15 @@ const { sortInfo, isColumnSortable, applySort } = useSalesRepColumnSort({
   rules: sortRules,
 });
 
-const { items, loading } = useSalesRepTopSellers({
+const { items, loading, error } = useSalesRepTopSellers({
   organizationId: () => props.organizationId,
   sort: () => sort.value,
   filter: () => filter.value,
   periodFrom,
   periodTo,
 });
+
+const failed = computed(() => Boolean(error.value));
 </script>
 
 <style lang="scss">

@@ -4,8 +4,11 @@ import { useFullCart } from "@/shared/cart/composables/useCart";
 type ErrorType = "invalid" | "failed";
 type CouponErrorType = { code: string; type: ErrorType };
 
+const COUPON_ERROR_TIMEOUT = 7000;
+
 const couponError = ref<CouponErrorType>();
 const loadingCouponCode = ref<string>();
+let couponErrorTimeoutId: ReturnType<typeof setTimeout> | undefined;
 
 export function useCoupon() {
   const { cart, validateCartCoupon, addCartCoupon, removeCartCoupon } = useFullCart();
@@ -15,7 +18,15 @@ export function useCoupon() {
   );
 
   function clearError() {
+    clearTimeout(couponErrorTimeoutId);
+    couponErrorTimeoutId = undefined;
     couponError.value = undefined;
+  }
+
+  function setError(error: CouponErrorType) {
+    clearTimeout(couponErrorTimeoutId);
+    couponError.value = error;
+    couponErrorTimeoutId = setTimeout(clearError, COUPON_ERROR_TIMEOUT);
   }
 
   // Returns this call's own outcome: `couponError` is module-level, so a concurrent operation on
@@ -31,21 +42,23 @@ export function useCoupon() {
     try {
       loadingCouponCode.value = trimmed;
 
-      if (appliedCouponCode.value && appliedCouponCode.value !== trimmed) {
-        await removeCartCoupon(appliedCouponCode.value);
-      }
-
+      // The new coupon is validated BEFORE the applied one is removed, so an invalid code can't
+      // silently drop a working coupon (VCST-5518).
       const isValid = await validateCartCoupon(trimmed);
       if (!isValid) {
-        couponError.value = { code: trimmed, type: "invalid" };
+        setError({ code: trimmed, type: "invalid" });
         return false;
+      }
+
+      if (appliedCouponCode.value && appliedCouponCode.value !== trimmed) {
+        await removeCartCoupon(appliedCouponCode.value);
       }
 
       await addCartCoupon(trimmed);
 
       return true;
     } catch {
-      couponError.value = { code: trimmed, type: "failed" };
+      setError({ code: trimmed, type: "failed" });
 
       return false;
     } finally {
@@ -68,7 +81,7 @@ export function useCoupon() {
 
       return true;
     } catch {
-      couponError.value = { code: trimmed, type: "failed" };
+      setError({ code: trimmed, type: "failed" });
 
       return false;
     } finally {

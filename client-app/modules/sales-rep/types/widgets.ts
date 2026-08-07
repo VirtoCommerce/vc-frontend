@@ -16,4 +16,10 @@ export type StatWidgetCardType = {
   delta?: string;
   deltaTone?: StatWidgetToneType;
   deltaIcon?: string;
+  // Both per-card, because each card is fed by exactly one statistics query (VCST-5586): one query
+  // failing must not blank the cards whose data arrived, and one query still being in flight must not
+  // hold every card at the pending placeholder — which would also hide a sibling card's error, since
+  // <StatWidget> gives loading precedence over it.
+  loading?: boolean;
+  failed?: boolean;
 };

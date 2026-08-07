@@ -222,6 +222,8 @@
       "role_update_successful": "El rol del cliente se ha actualizado con éxito.",
       "contact_lock_failed": "Error al bloquear/desbloquear el usuario.",
       "role_update_failed": "Se produjeron errores durante la actualización del rol.",
+      "invite_revoke_failed": "Error al revocar la invitación.",
+      "invite_resend_failed": "Error al reenviar la invitación.",
       "passwords_do_not_match": "Los campos de contraseña deben tener valores coincidentes.",
       "password_new_same_old": "Tu contraseña actual y la nueva deben ser diferentes.",
       "blocked": "Has sido bloqueado. No puedes acceder a ninguna información ni crear el pedido. Para más detalles, por favor ",
@@ -549,6 +551,14 @@
         "email_length_exceeded": "La longitud máxima de una dirección de correo electrónico es de {maxValue} caracteres",
         "invalid_emails": "Direcciones de correo electrónico incorrectas: {invalidEmails}"
       },
+      "pending_invites_widget": {
+        "title": "Invitaciones de la organización",
+        "accept_button": "Aceptar",
+        "reject_button": "Rechazar",
+        "invite_accepted": "Invitación aceptada",
+        "invite_rejected": "Invitación rechazada",
+        "action_failed": "Algo salió mal. Por favor, inténtalo de nuevo"
+      },
       "profile_update_success_modal": {
         "title": "Actualización de perfil",
         "message": "¡Perfil actualizado con éxito!",
@@ -617,6 +627,10 @@
       "delete_member_modal": {
         "title": "Eliminar miembro",
         "text": "¿Estás seguro de que deseas eliminar al usuario {name} de la lista de miembros de la empresa?"
+      },
+      "revoke_invite_modal": {
+        "title": "Revocar invitación",
+        "text": "¿Estás seguro de que deseas revocar la invitación enviada a {name}?"
       },
       "notifications": {
         "user_blocked": "El usuario ha sido bloqueado con éxito.",
@@ -1411,7 +1425,9 @@
           "block_user": "Bloquear usuario",
           "unblock_user": "Desbloquear usuario",
           "delete": "Eliminar",
-          "no_members": "Continuar navegando"
+          "no_members": "Continuar navegando",
+          "revoke_invite": "Revocar invitación",
+          "resend_invite": "Reenviar invitación"
         },
         "content_header": {
           "name": "Nombre",
@@ -1424,6 +1440,10 @@
           "inactive": "Inactivo",
           "invited": "Invitado",
           "blocked": "Bloqueado"
+        },
+        "notifications": {
+          "invite_revoked": "Invitación revocada",
+          "invite_resent": "Invitación reenviada"
         }
       }
     },
@@ -1669,6 +1689,7 @@
     }
   },
   "identity_error": {
+    "AlreadyMemberOfOrganization": "This person is already a member of this organization",
     "DuplicateEmail": "Email {0} is already taken",
     "DuplicateUserName": "Username {0} is already taken",
     "InvalidEmail": "Please enter a valid email address, e.g. johndoe@gmail.com",

@@ -222,6 +222,8 @@
       "role_update_successful": "Rola klienta została pomyślnie zaktualizowana.",
       "contact_lock_failed": "Nie udało się zablokować/odblokować użytkownika.",
       "role_update_failed": "Wystąpiły błędy podczas aktualizacji roli.",
+      "invite_revoke_failed": "Nie udało się cofnąć zaproszenia.",
+      "invite_resend_failed": "Nie udało się ponownie wysłać zaproszenia.",
       "passwords_do_not_match": "Pola hasła muszą mieć dopasowane wartości.",
       "password_new_same_old": "Twoje obecne hasło i nowe hasło muszą się różnić.",
       "blocked": "Zostałeś zablokowany. Nie możesz uzyskać dostępu do żadnych informacji ani złożyć zamówienia. Więcej informacji znajdziesz ",
@@ -549,6 +551,14 @@
         "email_length_exceeded": "Maksymalna długość adresu e-mail to {maxValue} znaków",
         "invalid_emails": "Nieprawidłowe adresy e-mail: {invalidEmails}"
       },
+      "pending_invites_widget": {
+        "title": "Zaproszenia do organizacji",
+        "accept_button": "Akceptuj",
+        "reject_button": "Odrzuć",
+        "invite_accepted": "Zaproszenie zaakceptowane",
+        "invite_rejected": "Zaproszenie odrzucone",
+        "action_failed": "Coś poszło nie tak. Spróbuj ponownie"
+      },
       "profile_update_success_modal": {
         "title": "Aktualizacja profilu",
         "message": "Profil został pomyślnie zaktualizowany!",
@@ -617,6 +627,10 @@
       "delete_member_modal": {
         "title": "Usuń członka",
         "text": "Czy na pewno chcesz usunąć użytkownika {name} z listy członków firmy?"
+      },
+      "revoke_invite_modal": {
+        "title": "Cofnij zaproszenie",
+        "text": "Czy na pewno chcesz cofnąć zaproszenie wysłane do {name}?"
       },
       "notifications": {
         "user_blocked": "Użytkownik został pomyślnie zablokowany.",
@@ -1411,7 +1425,9 @@
           "block_user": "Zablokuj użytkownika",
           "unblock_user": "Odblokuj użytkownika",
           "delete": "Usuń",
-          "no_members": "Kontynuuj przeglądanie"
+          "no_members": "Kontynuuj przeglądanie",
+          "revoke_invite": "Cofnij zaproszenie",
+          "resend_invite": "Wyślij zaproszenie ponownie"
         },
         "content_header": {
           "name": "Imię",
@@ -1424,6 +1440,10 @@
           "inactive": "Nieaktywny",
           "invited": "Zaprośony",
           "blocked": "Zablokowany"
+        },
+        "notifications": {
+          "invite_revoked": "Zaproszenie cofnięte",
+          "invite_resent": "Zaproszenie wysłane ponownie"
         }
       }
     },
@@ -1669,6 +1689,7 @@
     }
   },
   "identity_error": {
+    "AlreadyMemberOfOrganization": "Ta osoba jest już członkiem tej organizacji",
     "DuplicateEmail": "E-mail {0} jest już zajęty",
     "DuplicateUserName": "Nazwa użytkownika {0} jest już zajęta",
     "InvalidEmail": "Proszę wprowadzić prawidłowy adres e-mail, np. johndoe@gmail.com",

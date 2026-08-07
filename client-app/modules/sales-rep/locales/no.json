@@ -35,7 +35,8 @@
         "search_aria": "Søk etter kunder",
         "empty": "Ingen kunder funnet",
         "no_results": "Ingen kunder samsvarer med søket ditt",
-        "reset_search": "Tilbakestill søk"
+        "reset_search": "Tilbakestill søk",
+        "load_failed": "Kunne ikke laste kundene"
       }
     },
     "hub": {
@@ -66,7 +67,8 @@
           "new_customers": "{count} nye kunder",
           "placed_today": "{count} lagt inn i dag",
           "new_this_week": "{count} nye denne uken",
-          "mtd_of_ytd": "{percent}% av året"
+          "mtd_of_ytd": "{percent}% av året",
+          "load_failed": "Kunne ikke laste"
         }
       }
     },
@@ -131,7 +133,8 @@
       "items": "Varer",
       "status": "Status",
       "total": "Totalt",
-      "filter_all": "Alle"
+      "filter_all": "Alle",
+      "load_failed": "Kunne ikke laste ordrene"
     },
     "top_sellers": {
       "title": "Toppselgere",
@@ -141,7 +144,8 @@
       "revenue": "Inntekter",
       "empty": "Ingen salg i denne perioden",
       "no_results": "Ingen salg i denne kategorien",
-      "all_categories": "Alle kategorier"
+      "all_categories": "Alle kategorier",
+      "load_failed": "Kunne ikke laste bestselgerne"
     },
     "rules": {
       "customer": {
