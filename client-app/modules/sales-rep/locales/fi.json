@@ -184,6 +184,25 @@
           "All": "Kaikki"
         }
       }
+    },
+    "list_sharing": {
+      "share_customers_label": "Asiakas",
+      "share_customers_placeholder": "Valitse asiakas",
+      "share_customers_error": "Asiakaslistaa ei voitu ladata. Yritä uudelleen.",
+      "share_replace_hint": "Aiemmin valittu asiakas menettää oikeuden tähän listaan.",
+      "share_message_label": "Viesti",
+      "share_message_placeholder": "Valinnainen viesti",
+      "share_channels_label": "Lähetystapa",
+      "share_email_label": "Sähköposti",
+      "share_push_label": "Push-ilmoitus",
+      "share_default_title": "Uusi lista myyntiedustajaltasi",
+      "share_default_message": "Hei! Jaoin juuri listan ”{listName}” organisaatiollesi. Katso se täältä:",
+      "share_success": "Lista jaettiin asiakkaalle.",
+      "share_partial": "Lista jaettiin, mutta kaikkia ilmoituksia ei toimitettu.",
+      "share_notify_error": "Lista tallennettiin, mutta asiakkaalle ei voitu ilmoittaa.",
+      "scope_label": "Asiakas",
+      "status": "Jaettu asiakkaalle",
+      "badge": "Myyntiedustajasi suosittelema"
     }
   }
 }

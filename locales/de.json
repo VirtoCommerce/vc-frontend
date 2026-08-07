@@ -1025,7 +1025,8 @@
           "Organization": "Organisation",
           "AnyoneAnonymous": "Jeder (schreibgeschützt)"
         },
-        "clipboard_success": "Link kopiert"
+        "clipboard_success": "Link kopiert",
+        "save_error": "Die Liste konnte nicht gespeichert werden. Bitte versuchen Sie es erneut."
       },
       "delete_wishlist_modal": {
         "title": "Löschen bestätigen",
