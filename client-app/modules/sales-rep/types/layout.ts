@@ -1,5 +1,6 @@
 // Saved dashboard / customer-profile layout (VCST-5367). The backend stores a per-rep document of
 // block order + hidden flags; see ../specs/VCST-5367-srh-layout-drag-and-drop/.
+import type { SalesRepRuleDomainType } from "./index";
 import type { Component } from "vue";
 
 /** Layout surface. Free-form `String` server-side — the literals live in constants.ts. */
@@ -8,6 +9,23 @@ export type SalesRepLayoutScopeType = "dashboard" | "customerProfile";
 /** Fixed regions. Owned by the registry, never read back from the document — widgets are built for
  * their column's width, so region is code, not user data. */
 export type SalesRepLayoutRegionIdType = "statistics" | "mainLeft" | "mainRight";
+
+/** A setting a block exposes in layout-edit mode (VCST-5649). */
+export type SalesRepBlockSettingType =
+  /** Row cap for a list widget. `min`/`max` are per block: the top-seller API caps `take` at 10. */
+  | { kind: "maxRows"; default: number; min: number; max: number }
+  /** Which of the widget's filter-rule tabs to offer. The catalog is whatever the backend returns. */
+  | { kind: "ruleTabs"; domain: SalesRepRuleDomainType };
+
+/**
+ * A block's settings as the UI reads them — deliberately not the wire shape, which is a flat
+ * key/value list of scalars (see `layout/settings.ts`).
+ */
+export type SalesRepBlockSettingsType = {
+  maxRows?: number;
+  /** Rule names the rep unchecked. Absent means shown, so a rule added later needs no migration. */
+  hiddenTabs: readonly string[];
+};
 
 interface ISalesRepBlockBase {
   /** Stable id, persisted as BOTH block.id and block.type — a rep never holds two of one type. */
@@ -31,6 +49,8 @@ export interface ISalesRepWidgetBlock extends ISalesRepBlockBase {
   component: Component;
   /** Extra props for `component`. `title` comes from `titleKey` and is passed by the page. */
   props?: Record<string, unknown>;
+  /** What the rep can configure in edit mode. Absent = nothing, which is most blocks. */
+  settings?: readonly SalesRepBlockSettingType[];
 }
 
 export type SalesRepBlockType = ISalesRepStatBlock | ISalesRepWidgetBlock;
@@ -41,8 +61,16 @@ export type SalesRepBlockType = ISalesRepStatBlock | ISalesRepWidgetBlock;
  */
 export type SalesRepLayoutRegionType = { visible: string[]; hidden: string[] };
 
-/** The reconciled layout — every region, in render order. */
-export type SalesRepLayoutStateType = Record<SalesRepLayoutRegionIdType, SalesRepLayoutRegionType>;
+/**
+ * The reconciled layout — every region in render order, plus every configurable block's settings.
+ * One object rather than two, so the edit draft, Cancel and Reset cover settings with no second
+ * state machine to keep in step.
+ */
+export type SalesRepLayoutStateType = {
+  regions: Record<SalesRepLayoutRegionIdType, SalesRepLayoutRegionType>;
+  /** Keyed by block id. A block declaring no settings never appears. */
+  settings: Record<string, SalesRepBlockSettingsType>;
+};
 
 /** Stat rows read left-to-right; widget columns read top-to-bottom. */
 export type KeyboardSortOrientationType = "horizontal" | "vertical";
@@ -57,6 +85,7 @@ export type KeyboardSortSignalType =
 
 // Minimal shape of a persisted document. The generated `SalesRepLayoutQuery` result is structurally
 // assignable to these, which keeps the pure functions independent of codegen.
-export type SavedLayoutBlockType = { type: string; hidden: boolean };
+export type SavedLayoutSettingType = { key: string; value?: unknown };
+export type SavedLayoutBlockType = { type: string; hidden: boolean; settings?: readonly SavedLayoutSettingType[] };
 export type SavedLayoutRegionType = { blocks: readonly SavedLayoutBlockType[] };
 export type SavedLayoutType = { regions: readonly SavedLayoutRegionType[] };

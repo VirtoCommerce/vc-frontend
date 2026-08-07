@@ -86,6 +86,7 @@
         "hidden_stats": "Dolda nyckeltal",
         "empty_visible": "Dra ett nyckeltal hit för att visa det",
         "empty_hidden": "Dra ett nyckeltal hit för att dölja det",
+        "max_rows": "Max rader",
         "a11y": {
           "reorder": "Ändra ordning på {title}",
           "hide": "Dölj {title}",
@@ -97,7 +98,8 @@
           "edge": "{title} är redan på plats {position} av {total}.",
           "cancelled": "Flytt av {title} avbruten.",
           "parked": "{title} dold.",
-          "restored": "{title} visas."
+          "restored": "{title} visas.",
+          "max_rows": "Maximalt antal rader som visas av {title}, mellan {min} och {max}"
         }
       }
     },

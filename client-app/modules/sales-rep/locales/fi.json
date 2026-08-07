@@ -86,6 +86,7 @@
         "hidden_stats": "Piilotetut tunnusluvut",
         "empty_visible": "Vedä tunnusluku tähän näyttääksesi sen",
         "empty_hidden": "Vedä tunnusluku tähän piilottaaksesi sen",
+        "max_rows": "Maksimirivit",
         "a11y": {
           "reorder": "Järjestä {title}",
           "hide": "Piilota {title}",
@@ -97,7 +98,8 @@
           "edge": "{title} on jo sijainnissa {position}/{total}.",
           "cancelled": "Kohteen {title} siirto peruutettu.",
           "parked": "{title} piilotettu.",
-          "restored": "{title} näytetään."
+          "restored": "{title} näytetään.",
+          "max_rows": "Näytettävien rivien enimmäismäärä kohteessa {title}, välillä {min} ja {max}"
         }
       }
     },

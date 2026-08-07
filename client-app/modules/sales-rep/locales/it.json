@@ -86,6 +86,7 @@
         "hidden_stats": "Statistiche nascoste",
         "empty_visible": "Trascina qui una statistica per mostrarla",
         "empty_hidden": "Trascina qui una statistica per nasconderla",
+        "max_rows": "Righe massime",
         "a11y": {
           "reorder": "Riordina {title}",
           "hide": "Nascondi {title}",
@@ -97,7 +98,8 @@
           "edge": "{title} è già in posizione {position} di {total}.",
           "cancelled": "Spostamento di {title} annullato.",
           "parked": "{title} nascosto.",
-          "restored": "{title} mostrato."
+          "restored": "{title} mostrato.",
+          "max_rows": "Righe massime mostrate da {title}, tra {min} e {max}"
         }
       }
     },

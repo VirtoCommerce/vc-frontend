@@ -86,6 +86,7 @@
         "hidden_stats": "Hidden stats",
         "empty_visible": "Drag a stat here to show it",
         "empty_hidden": "Drag a stat here to hide it",
+        "max_rows": "Max rows",
         "a11y": {
           "reorder": "Reorder {title}",
           "hide": "Hide {title}",
@@ -97,7 +98,8 @@
           "edge": "{title} is already at position {position} of {total}.",
           "cancelled": "Move of {title} cancelled.",
           "parked": "{title} hidden.",
-          "restored": "{title} shown."
+          "restored": "{title} shown.",
+          "max_rows": "Maximum rows shown by {title}, between {min} and {max}"
         }
       }
     },

@@ -64,5 +64,21 @@ export const LAYOUT_REGION_IDS = ["statistics", "mainLeft", "mainRight"] as cons
 // internal, not a published contract, so a rename there silently kills header drags —
 // `layout-block-widget.test.ts` mounts a real widget against this to catch it.
 export const WIDGET_DRAG_HANDLE_SELECTOR = ".vc-widget__header-container";
-// The hide button sits inside that header, so without this a mousedown on ✕ starts a drag instead.
-export const WIDGET_DRAG_FILTER_SELECTOR = ".layout-widget__hide";
+// Controls that sit inside that header, so without this a mousedown on ✕ or in the rows field starts
+// a drag instead. SortableJS `filter` takes a comma-separated selector list.
+export const WIDGET_DRAG_FILTER_SELECTOR = ".layout-widget__hide, .layout-widget__rows";
+
+// Per-widget settings (VCST-5649), persisted as scalars in each block's `settings` list. Like the
+// scope and region ids above these strings are load-bearing: renaming one strands every saved value.
+export const SETTING_MAX_ROWS = "maxRows";
+// One sibling key per rule the rep unchecked; a checked rule writes nothing, so a status the backend
+// adds later shows up checked without a migration.
+export const SETTING_HIDDEN_TAB_PREFIX = "tab.";
+// Default row caps, per the design. Below the widgets' own page sizes, which stay the fallback for a
+// widget rendered outside a layout.
+export const ORDERS_DEFAULT_ROWS = 5;
+export const ORDERS_MAX_ROWS = 20;
+export const TOP_SELLERS_DEFAULT_ROWS = 5;
+// The salesRepTopSellers API caps `take` at 10, so the input must not offer more.
+export const TOP_SELLERS_MAX_ROWS = 10;
+export const MIN_ROWS = 1;

@@ -27,7 +27,13 @@ vi.mock("@/core/globals", () => ({ globals: { storeId: "B2B-store", cultureName:
 vi.mock("@/core/utilities", () => ({ Logger: { error: vi.fn(), warn: vi.fn() } }));
 vi.mock("vue-i18n", () => ({ useI18n: () => ({ t: (key: string) => key }) }));
 
-const echoedBlock = (id: string) => ({ id, type: id, hidden: false, settings: [] });
+// The two list widgets send a row cap, and a save only succeeds against an echo that returns it.
+const ECHOED_SETTINGS: Record<string, { key: string; value: unknown }[]> = {
+  orders: [{ key: "maxRows", value: 5 }],
+  top_sellers: [{ key: "maxRows", value: 5 }],
+};
+
+const echoedBlock = (id: string) => ({ id, type: id, hidden: false, settings: ECHOED_SETTINGS[id] ?? [] });
 
 beforeEach(() => {
   apolloMock.result.value = { salesRepLayout: null };

@@ -6,6 +6,10 @@ mutation SaveSalesRepLayout($command: InputSalesRepLayout!) {
         id
         type
         hidden
+        settings {
+          key
+          value
+        }
       }
     }
   }

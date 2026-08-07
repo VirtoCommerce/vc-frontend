@@ -211,7 +211,7 @@ describe("stat row drag and drop", () => {
     await nextTick();
 
     // ArrowLeft moved index 2 to index 1; nothing else shifted.
-    expect(api.state.value.statistics.visible).toEqual(movedTo(STAT_IDS, 2, 1));
+    expect(api.state.value.regions.statistics.visible).toEqual(movedTo(STAT_IDS, 2, 1));
   });
 
   it("moves focus with a stat card that is parked by keyboard", async () => {

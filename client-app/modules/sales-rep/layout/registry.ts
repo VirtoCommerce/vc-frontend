@@ -4,8 +4,15 @@
 // Module-local rather than `useExtensionRegistry`, whose entries are `{ component, condition }` with
 // no region, order or title.
 import { defineAsyncComponent, markRaw } from "vue";
+import {
+  MIN_ROWS,
+  ORDERS_DEFAULT_ROWS,
+  ORDERS_MAX_ROWS,
+  TOP_SELLERS_DEFAULT_ROWS,
+  TOP_SELLERS_MAX_ROWS,
+} from "../constants";
 import { STAT_CARDS } from "./stat-cards";
-import type { SalesRepBlockType, SalesRepLayoutScopeType } from "../types/layout";
+import type { SalesRepBlockSettingType, SalesRepBlockType, SalesRepLayoutScopeType } from "../types/layout";
 
 // `markRaw` keeps Vue from making the component definition reactive when it lands in layout state.
 const SalesRepOrders = markRaw(defineAsyncComponent(() => import("../components/sales-rep-orders.vue")));
@@ -25,6 +32,17 @@ const statBlocks = (scope: SalesRepLayoutScopeType): SalesRepBlockType[] =>
     order: (index + 1) * 10,
   }));
 
+// Both surfaces configure the same two list widgets; the row cap differs per widget, not per scope.
+// Shared arrays rather than repeated literals — nothing mutates a registered block, only the arrays
+// they sit in.
+const ordersSettings: SalesRepBlockSettingType[] = [
+  { kind: "maxRows", default: ORDERS_DEFAULT_ROWS, min: MIN_ROWS, max: ORDERS_MAX_ROWS },
+  { kind: "ruleTabs", domain: "order" },
+];
+const topSellersSettings: SalesRepBlockSettingType[] = [
+  { kind: "maxRows", default: TOP_SELLERS_DEFAULT_ROWS, min: MIN_ROWS, max: TOP_SELLERS_MAX_ROWS },
+];
+
 const dashboardBlocks: SalesRepBlockType[] = [
   ...statBlocks("dashboard"),
   // The dashboard has no right rail yet — `mainRight` stays empty and the row collapses to one
@@ -36,8 +54,16 @@ const dashboardBlocks: SalesRepBlockType[] = [
     order: 10,
     component: SalesRepOrders,
     props: { filterable: true },
+    settings: ordersSettings,
   },
-  { id: "top_sellers", region: "mainLeft", titleKey: "sales_rep.top_sellers.title", order: 20, component: TopSellers },
+  {
+    id: "top_sellers",
+    region: "mainLeft",
+    titleKey: "sales_rep.top_sellers.title",
+    order: 20,
+    component: TopSellers,
+    settings: topSellersSettings,
+  },
 ];
 
 const customerProfileBlocks: SalesRepBlockType[] = [
@@ -49,8 +75,16 @@ const customerProfileBlocks: SalesRepBlockType[] = [
     order: 10,
     component: SalesRepOrders,
     props: { filterable: true },
+    settings: ordersSettings,
   },
-  { id: "top_sellers", region: "mainLeft", titleKey: "sales_rep.top_sellers.title", order: 20, component: TopSellers },
+  {
+    id: "top_sellers",
+    region: "mainLeft",
+    titleKey: "sales_rep.top_sellers.title",
+    order: 20,
+    component: TopSellers,
+    settings: topSellersSettings,
+  },
   {
     id: "actions",
     region: "mainRight",
