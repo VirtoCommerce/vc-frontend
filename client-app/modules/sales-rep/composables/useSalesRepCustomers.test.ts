@@ -9,12 +9,14 @@ const queryMock = await vi.hoisted(async () => {
   const result = ref<SalesRepCustomersQuery | undefined>(undefined);
   const loading = ref(false);
   const onError = vi.fn();
+  const error = ref<Error | null>(null);
   const useQuery = vi.fn(() => ({
     result,
     loading,
+    error,
     onError,
   }));
-  return { result, loading, onError, useQuery };
+  return { result, loading, error, onError, useQuery };
 });
 
 /** The args of the most recent useQuery call (the impl is param-less, so read them here). */
@@ -26,7 +28,7 @@ vi.mock("@vue/apollo-composable", () => ({
   useQuery: queryMock.useQuery,
 }));
 
-vi.mock("@/core/globals", () => ({ globals: { storeId: "test-store", cultureName: "en-US" } }));
+vi.mock("@/core/globals", () => ({ globals: { storeId: "test-store", cultureName: "en-US", currencyCode: "USD" } }));
 
 function customersResult(totalCount: number, items: NonNullable<SalesRepCustomersQuery["salesRepCustomers"]>["items"]) {
   return { salesRepCustomers: { totalCount, items } };
@@ -131,15 +133,15 @@ describe("useSalesRepCustomers", () => {
         lastYearTotal: "$64,420.00",
         lastOrder: { id: "o-1", number: "21580221", createdDate: "2026-05-19T00:00:00Z" },
       },
-      // No address/stats → empty strings and zero counts, not undefined.
+      // No address → empty string; absent statistics read as zeros, never as blanks or dashes (VCST-5586).
       {
         organizationId: "org-2",
         organizationName: "No Orders Inc",
         accountType: "",
         location: "",
-        ytdTotal: "",
+        ytdTotal: "$0.00",
         ytdCount: 0,
-        lastYearTotal: "",
+        lastYearTotal: "$0.00",
         lastOrder: undefined,
       },
     ]);
@@ -169,6 +171,12 @@ describe("useSalesRepCustomers", () => {
     await nextTick();
     expect(pages.value).toBe(1);
     expect(page.value).toBe(1); // clamped back to the last valid page
+  });
+
+  it("surfaces the query error so the page can show a failure state", () => {
+    const { error } = useSalesRepCustomers();
+
+    expect(error).toBe(queryMock.error);
   });
 
   it("passes loading through and registers an error handler", () => {
