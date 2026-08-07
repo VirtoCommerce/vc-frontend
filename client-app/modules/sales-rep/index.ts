@@ -1,4 +1,5 @@
 import { computed, defineAsyncComponent } from "vue";
+import { cache } from "@/core/api/graphql/config";
 import { useNavigations } from "@/core/composables/useNavigations";
 import { useUser } from "@/shared/account/composables/useUser";
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
@@ -16,6 +17,7 @@ import {
   MY_CUSTOMERS_ROUTE_NAME,
   SALES_REP_ACCESS_PERMISSION,
 } from "./constants";
+import { registerLayoutTypePolicies } from "./layout/cache-policies";
 import { salesRepMenuSchema } from "./menu";
 import { customerProfileRoute, dashboardRoute, myCustomersRoute, salesRepsRoute } from "./routes";
 import type { I18n } from "@/i18n";
@@ -88,6 +90,10 @@ export function init(router: Router, i18n: I18n) {
     ],
     isVisible: computed(() => isSalesRepsEnabled() && checkPermissions(SALES_REP_ACCESS_PERMISSION)),
   });
+
+  // Layout regions and blocks carry ids that repeat across surfaces, so Apollo would normalize them
+  // into entities shared by every scope. See layout/cache-policies.ts.
+  registerLayoutTypePolicies(cache);
 
   void loadModuleLocale(i18n, "sales-rep");
 }

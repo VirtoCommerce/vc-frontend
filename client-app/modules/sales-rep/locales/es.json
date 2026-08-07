@@ -70,6 +70,35 @@
           "mtd_of_ytd": "{percent}% del año",
           "load_failed": "No se pudo cargar"
         }
+      },
+      "layout": {
+        "edit": "Editar diseño",
+        "editing": "Editando el diseño",
+        "hint": "— arrastre un bloque por su asa para reordenarlo, u ocúltelo con ✕.",
+        "hint_keyboard": "Teclado: la barra espaciadora toma un bloque, las flechas lo mueven, espacio lo suelta, Esc cancela.",
+        "save": "Guardar diseño",
+        "cancel": "Cancelar",
+        "reset": "Restablecer",
+        "save_failed": "No se pudo guardar el diseño. Sus cambios siguen aquí: inténtelo de nuevo.",
+        "load_failed": "No se pudo cargar el diseño guardado, por lo que se muestra la disposición predeterminada. La edición no está disponible hasta que se cargue: actualice la página.",
+        "hidden_widgets": "Widgets ocultos",
+        "visible_stats": "Métricas visibles",
+        "hidden_stats": "Métricas ocultas",
+        "empty_visible": "Arrastre una métrica aquí para mostrarla",
+        "empty_hidden": "Arrastre una métrica aquí para ocultarla",
+        "a11y": {
+          "reorder": "Reordenar {title}",
+          "hide": "Ocultar {title}",
+          "show": "Mostrar {title}",
+          "grabbed": "{title} tomado. Posición {position} de {total}. Use las flechas para moverlo, espacio para soltarlo, escape para cancelar.",
+          "grabbed_parkable": "{title} tomado. Posición {position} de {total}. Use las flechas izquierda y derecha para moverlo, arriba y abajo para ocultarlo o mostrarlo, espacio para soltarlo, escape para cancelar.",
+          "moved": "{title} movido a la posición {position} de {total}.",
+          "dropped": "{title} soltado en la posición {position} de {total}.",
+          "edge": "{title} ya está en la posición {position} de {total}.",
+          "cancelled": "Movimiento de {title} cancelado.",
+          "parked": "{title} oculto.",
+          "restored": "{title} visible."
+        }
       }
     },
     "customer_profile": {

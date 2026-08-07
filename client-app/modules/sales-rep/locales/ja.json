@@ -70,6 +70,35 @@
           "mtd_of_ytd": "年初来の {percent}%",
           "load_failed": "読み込みに失敗しました"
         }
+      },
+      "layout": {
+        "edit": "レイアウトを編集",
+        "editing": "レイアウトを編集中",
+        "hint": "— ハンドルをドラッグしてブロックを並べ替えるか、✕ で非表示にします。",
+        "hint_keyboard": "キーボード操作: スペースキーでブロックをつかみ、矢印キーで移動、スペースキーで確定、Esc でキャンセルします。",
+        "save": "レイアウトを保存",
+        "cancel": "キャンセル",
+        "reset": "リセット",
+        "save_failed": "レイアウトを保存できませんでした。変更は保持されています。もう一度お試しください。",
+        "load_failed": "保存されたレイアウトを読み込めませんでした。既定の配置を表示しています。読み込まれるまで編集できません。ページを再読み込みしてください。",
+        "hidden_widgets": "非表示のウィジェット",
+        "visible_stats": "表示中の指標",
+        "hidden_stats": "非表示の指標",
+        "empty_visible": "指標をここにドラッグすると表示されます",
+        "empty_hidden": "指標をここにドラッグすると非表示になります",
+        "a11y": {
+          "reorder": "{title} を並べ替え",
+          "hide": "{title} を非表示",
+          "show": "{title} を表示",
+          "grabbed": "{title} をつかみました。{total} 件中 {position} 番目。矢印キーで移動、スペースで配置、Esc でキャンセルします。",
+          "grabbed_parkable": "{title} をつかみました。{total} 件中 {position} 番目。左右の矢印キーで移動、上下キーで非表示または表示、スペースで配置、Esc でキャンセルします。",
+          "moved": "{title} を {total} 件中 {position} 番目に移動しました。",
+          "dropped": "{title} を {total} 件中 {position} 番目に配置しました。",
+          "edge": "{title} はすでに {total} 件中 {position} 番目です。",
+          "cancelled": "{title} の移動をキャンセルしました。",
+          "parked": "{title} を非表示にしました。",
+          "restored": "{title} を表示しました。"
+        }
       }
     },
     "customer_profile": {
