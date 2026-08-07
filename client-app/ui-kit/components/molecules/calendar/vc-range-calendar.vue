@@ -133,6 +133,7 @@ interface IProps {
 
 interface IEmits {
   (event: "update:modelValue", value: VcDateRangeType | undefined): void;
+  (event: "clear"): void;
 }
 
 const emit = defineEmits<IEmits>();
@@ -230,6 +231,8 @@ function onUpdate(value: RekaDateRangeType | undefined): void {
 
 function onClearClick(): void {
   emitRange(undefined);
+  // emitRange dedups an already-empty model, but shells still need to react to the explicit action.
+  emit("clear");
 }
 
 // firstDayOfWeek is 0-based; startOfWeek/endOfWeek expect a DayOfWeek string.

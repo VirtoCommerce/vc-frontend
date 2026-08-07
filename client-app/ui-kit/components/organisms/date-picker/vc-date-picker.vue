@@ -7,7 +7,7 @@
     :aria-label="t('ui_kit.accessibility.calendar')"
     @toggle="onPopoverToggle"
   >
-    <template #default="{ toggle, triggerProps, close }">
+    <template #default="{ toggle, triggerProps, close, opened }">
       <VcDateInput
         ref="dateInputRef"
         :model-value="modelValue"
@@ -32,7 +32,7 @@
         :tabindex="tabindex"
         :hide-details="hideDetails"
         :data-test-id="dataTestId"
-        @keydown.esc.stop="close"
+        @keydown.esc="onFieldEscape($event, opened, close)"
         @update:model-value="onInputUpdate"
         @update:valid="emit('update:valid', $event)"
         @update:error-text="emit('update:errorText', $event)"
@@ -50,7 +50,7 @@
             :disabled="disabled || readonly"
             :aria-label="t('ui_kit.accessibility.open_calendar')"
             @click="toggle"
-            @keydown.esc.stop="onEscapeClose(close)"
+            @keydown.esc="onTriggerEscape($event, opened, close)"
           />
         </template>
       </VcDateInput>
@@ -141,7 +141,7 @@ const { t } = useI18n();
 const dateInputRef = useTemplateRef<{ inputElement: HTMLInputElement | null } | null>("dateInputRef");
 const innerInputElement = computed<HTMLInputElement | null>(() => dateInputRef.value?.inputElement ?? null);
 
-const calendarRef = useTemplateRef<{ focusActiveCell: () => void } | null>("calendarRef");
+const calendarRef = useTemplateRef<{ focusActiveCell: () => void; $el?: Element | null } | null>("calendarRef");
 
 // VcCalendar doesn't model the "auto" size.
 const calendarSize = computed<VcCalendarSizeType>(() => {
@@ -184,12 +184,34 @@ function onInputClear(): void {
 
 function onPopoverToggle(opened: boolean): void {
   if (!opened) {
+    // Trigger-click / click-outside closes skip onEscapeClose; focus would stay in the hidden popover.
+    const calendarEl = calendarRef.value?.$el;
+    if (calendarEl instanceof HTMLElement && calendarEl.contains(document.activeElement)) {
+      innerInputElement.value?.focus();
+    }
     return;
   }
   // VcPopover doesn't focus its content, and it stays display:none until the open flush.
   void nextTick(() => {
     calendarRef.value?.focusActiveCell();
   });
+}
+
+// Escape must keep propagating to outer dismissible layers (dialogs, sidebars) while the popover is closed.
+function onFieldEscape(event: Event, opened: boolean, close: () => void): void {
+  if (!opened) {
+    return;
+  }
+  event.stopPropagation();
+  close();
+}
+
+function onTriggerEscape(event: Event, opened: boolean, close: () => void): void {
+  if (!opened) {
+    return;
+  }
+  event.stopPropagation();
+  onEscapeClose(close);
 }
 
 function onEscapeClose(close: () => void): void {

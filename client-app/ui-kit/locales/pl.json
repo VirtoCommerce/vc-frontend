@@ -49,7 +49,9 @@
     "date_range_input": {
       "aria_label": "Zakres dat",
       "clear": "Wyczyść zakres dat",
-      "invalid_range": "Data końcowa musi być nie wcześniejsza niż data początkowa"
+      "end_date": "Data końcowa",
+      "invalid_range": "Data końcowa musi być nie wcześniejsza niż data początkowa",
+      "start_date": "Data początkowa"
     },
     "date_selector": {
       "min_date_error": "Data musi być nie wcześniejsza niż {min}",

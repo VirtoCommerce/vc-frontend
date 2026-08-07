@@ -49,7 +49,9 @@
     "date_range_input": {
       "aria_label": "Datumsbereich",
       "clear": "Datumsbereich löschen",
-      "invalid_range": "Enddatum muss auf oder nach dem Startdatum liegen"
+      "end_date": "Enddatum",
+      "invalid_range": "Enddatum muss auf oder nach dem Startdatum liegen",
+      "start_date": "Startdatum"
     },
     "date_selector": {
       "min_date_error": "Datum muss am oder nach {min} liegen",

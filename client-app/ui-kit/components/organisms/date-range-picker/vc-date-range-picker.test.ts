@@ -1,4 +1,4 @@
-import { mount } from "@vue/test-utils";
+import { flushPromises, mount } from "@vue/test-utils";
 import { describe, expect, it, vi } from "vitest";
 import { VcInputDetails, VcLabel } from "@/ui-kit/components/atoms";
 import VcDatePicker from "../date-picker/vc-date-picker.vue";
@@ -131,6 +131,72 @@ describe("VcDateRangePicker", () => {
     wrapper.unmount();
   });
 
+  it("closes the popover and returns focus to the start segment when the calendar footer clears the range", async () => {
+    const wrapper = mountPicker(
+      { modelValue: { start: "2026-10-08", end: "2026-10-14" }, showFooter: true },
+      { attachTo: document.body },
+    );
+
+    await wrapper.find('button[aria-haspopup="dialog"]').trigger("click");
+    expect(wrapper.find(".vc-popover__body").attributes("style")).toContain("display: block");
+
+    await wrapper.find(".vc-range-calendar__footer-btn").trigger("click");
+
+    expect(wrapper.emitted("update:modelValue")?.at(-1)?.[0]).toBeUndefined();
+    expect(wrapper.find(".vc-popover__body").attributes("style")).toContain("display: none");
+
+    const [startInput] = wrapper.findAllComponents({ name: "VcDateInput" });
+    expect(document.activeElement).toBe(startInput.find("input").element);
+
+    wrapper.unmount();
+  });
+
+  it("closes the popover when the footer clears an already-empty range", async () => {
+    const wrapper = mountPicker({ showFooter: true }, { attachTo: document.body });
+
+    await wrapper.find('button[aria-haspopup="dialog"]').trigger("click");
+    await wrapper.find(".vc-range-calendar__footer-btn").trigger("click");
+
+    expect(wrapper.find(".vc-popover__body").attributes("style")).toContain("display: none");
+
+    wrapper.unmount();
+  });
+
+  it("returns focus to the start segment when the trigger click closes the popover with focus in the calendar", async () => {
+    const wrapper = mountPicker({}, { attachTo: document.body });
+    const trigger = wrapper.find('button[aria-haspopup="dialog"]');
+
+    await trigger.trigger("click");
+    await flushPromises();
+    const activeCell = document.activeElement as HTMLElement | null;
+    expect(activeCell?.dataset.rekaCalendarCellTrigger).toBeDefined();
+
+    await trigger.trigger("click");
+
+    const [startInput] = wrapper.findAllComponents({ name: "VcDateInput" });
+    expect(document.activeElement).toBe(startInput.find("input").element);
+
+    wrapper.unmount();
+  });
+
+  it("lets Escape propagate to outer layers while the popover is closed and swallows it once open", async () => {
+    const onEscape = vi.fn();
+    document.body.addEventListener("keydown", onEscape);
+    const wrapper = mountPicker({}, { attachTo: document.body });
+
+    const input = wrapper.find("input");
+    await input.trigger("keydown", { key: "Escape" });
+    expect(onEscape).toHaveBeenCalledTimes(1);
+
+    await wrapper.find('button[aria-haspopup="dialog"]').trigger("click");
+    await input.trigger("keydown", { key: "Escape" });
+    expect(onEscape).toHaveBeenCalledTimes(1);
+    expect(wrapper.find(".vc-popover__body").attributes("style")).toContain("display: none");
+
+    document.body.removeEventListener("keydown", onEscape);
+    wrapper.unmount();
+  });
+
   it("defaults to the combined layout", () => {
     const wrapper = mountPicker();
     expect(wrapper.props("layout")).toBe("combined");
@@ -180,6 +246,41 @@ describe("VcDateRangePicker — split layout", () => {
   it("falls back to the generic group label when no label is given", () => {
     const wrapper = mountSplit();
     expect(wrapper.find("fieldset").attributes("aria-label")).toBe("ui_kit.date_range_input.aria_label");
+  });
+
+  it("falls back to default accessible names for the fields when startLabel/endLabel are omitted", () => {
+    const inputs = mountSplit({ startLabel: undefined, endLabel: undefined }).findAll("input");
+    expect(inputs.map((input) => input.attributes("aria-label"))).toEqual([
+      "ui_kit.date_range_input.start_date",
+      "ui_kit.date_range_input.end_date",
+    ]);
+  });
+
+  it("keeps the visible labels as the fields' accessible names when provided", () => {
+    const inputs = mountSplit().findAll("input");
+    expect(inputs.map((input) => input.attributes("aria-label"))).toEqual(["Start date", "End date"]);
+  });
+
+  it("gates Escape per field popover and restores focus to that field's input", async () => {
+    const onEscape = vi.fn();
+    document.body.addEventListener("keydown", onEscape);
+    const wrapper = mountSplit({}, { attachTo: document.body });
+    const [startInput] = wrapper.findAll("input");
+
+    await startInput.trigger("keydown", { key: "Escape" });
+    expect(onEscape).toHaveBeenCalledTimes(1);
+
+    const [startTrigger] = wrapper.findAll('button[aria-label="ui_kit.accessibility.open_calendar"]');
+    await startTrigger.trigger("click");
+    await flushPromises();
+    await startInput.trigger("keydown", { key: "Escape" });
+
+    expect(onEscape).toHaveBeenCalledTimes(1);
+    expect(wrapper.find(".vc-popover__body").attributes("style")).toContain("display: none");
+    expect(document.activeElement).toBe(startInput.element);
+
+    document.body.removeEventListener("keydown", onEscape);
+    wrapper.unmount();
   });
 
   describe("cross-bound calendars", () => {

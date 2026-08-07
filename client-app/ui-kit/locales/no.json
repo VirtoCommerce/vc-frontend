@@ -49,7 +49,9 @@
     "date_range_input": {
       "aria_label": "Datointervall",
       "clear": "Tøm datointervall",
-      "invalid_range": "Sluttdatoen må være på eller etter startdatoen"
+      "end_date": "Sluttdato",
+      "invalid_range": "Sluttdatoen må være på eller etter startdatoen",
+      "start_date": "Startdato"
     },
     "date_selector": {
       "min_date_error": "Datoen må være på eller etter {min}",

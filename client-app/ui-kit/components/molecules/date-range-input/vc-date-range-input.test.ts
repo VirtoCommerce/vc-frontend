@@ -24,6 +24,19 @@ describe("VcDateRangeInput", () => {
     expect(wrapper.findAllComponents({ name: "VcDateInput" })).toHaveLength(2);
   });
 
+  it("falls back to default accessible names when startLabel/endLabel are omitted", () => {
+    const inputs = mountInput().findAll("input");
+    expect(inputs.map((input) => input.attributes("aria-label"))).toEqual([
+      "ui_kit.date_range_input.start_date",
+      "ui_kit.date_range_input.end_date",
+    ]);
+  });
+
+  it("prefers the caller's startLabel/endLabel as the segment names", () => {
+    const inputs = mountInput({ startLabel: "From", endLabel: "To" }).findAll("input");
+    expect(inputs.map((input) => input.attributes("aria-label"))).toEqual(["From", "To"]);
+  });
+
   it("renders exactly one details row (segments hide theirs)", () => {
     const wrapper = mountInput({ error: true, message: "bad" });
     expect(wrapper.findAllComponents({ name: "VcInputDetails" })).toHaveLength(1);

@@ -18,6 +18,7 @@
         :placement="startPlacement"
         :model-value="modelValue?.start"
         :label="startLabel"
+        :aria-label="startLabel ? undefined : t('ui_kit.date_range_input.start_date')"
         :placeholder="startPlaceholder"
         :name="sideAttr(name, 'start')"
         :calendar-max="startMax"
@@ -35,6 +36,7 @@
         class="vc-date-range-picker__field"
         :model-value="modelValue?.end"
         :label="endLabel"
+        :aria-label="endLabel ? undefined : t('ui_kit.date_range_input.end_date')"
         :placeholder="endPlaceholder"
         :name="sideAttr(name, 'end')"
         :calendar-min="endMin"
@@ -59,7 +61,7 @@
     :aria-label="t('ui_kit.accessibility.calendar')"
     @toggle="onPopoverToggle"
   >
-    <template #default="{ toggle, triggerProps, close }">
+    <template #default="{ toggle, triggerProps, close, opened }">
       <VcDateRangeInput
         ref="rangeInputRef"
         :model-value="modelValue"
@@ -88,7 +90,7 @@
         @blur="onInputBlur"
         @focus="onInputFocus"
         @clear="onInputClear"
-        @keydown.esc.stop="close"
+        @keydown.esc="onFieldEscape($event, opened, close)"
       >
         <template #append>
           <VcButton
@@ -102,7 +104,7 @@
             :aria-expanded="String(triggerProps['aria-expanded'] ?? false)"
             :aria-controls="toggleAriaControls(triggerProps)"
             @click="toggle"
-            @keydown.esc.stop="onEscapeClose(close)"
+            @keydown.esc="onTriggerEscape($event, opened, close)"
           />
         </template>
       </VcDateRangeInput>
@@ -122,6 +124,7 @@
         :show-footer="showFooter"
         @keydown.esc.stop="onEscapeClose(close)"
         @update:model-value="onCalendarUpdate(close, $event)"
+        @clear="onCalendarClear(close)"
       />
     </template>
   </VcPopover>
@@ -185,7 +188,7 @@ const props = withDefaults(defineProps<IProps>(), {
 const { t } = useI18n();
 
 const rangeInputRef = useTemplateRef<{ startInputElement: HTMLInputElement | null } | null>("rangeInputRef");
-const calendarRef = useTemplateRef<{ focusActiveCell: () => void } | null>("calendarRef");
+const calendarRef = useTemplateRef<{ focusActiveCell: () => void; $el?: Element | null } | null>("calendarRef");
 
 // "split" fields are hide-details, so the picker owns range validity; "combined" delegates to VcDateRangeInput.
 const {
@@ -333,11 +336,33 @@ function onFocusOut(event: FocusEvent): void {
 
 function onPopoverToggle(opened: boolean): void {
   if (!opened) {
+    // Trigger-click / click-outside closes skip onEscapeClose; focus would stay in the hidden popover.
+    const calendarEl = calendarRef.value?.$el;
+    if (calendarEl instanceof HTMLElement && calendarEl.contains(document.activeElement)) {
+      rangeInputRef.value?.startInputElement?.focus();
+    }
     return;
   }
   void nextTick(() => {
     calendarRef.value?.focusActiveCell();
   });
+}
+
+// Escape must keep propagating to outer dismissible layers (dialogs, sidebars) while the popover is closed.
+function onFieldEscape(event: Event, opened: boolean, close: () => void): void {
+  if (!opened) {
+    return;
+  }
+  event.stopPropagation();
+  close();
+}
+
+function onTriggerEscape(event: Event, opened: boolean, close: () => void): void {
+  if (!opened) {
+    return;
+  }
+  event.stopPropagation();
+  onEscapeClose(close);
 }
 
 function onEscapeClose(close: () => void): void {
@@ -352,6 +377,14 @@ function onCalendarUpdate(close: () => void, value: VcDateRangeType | undefined)
   emit("update:modelValue", value);
   // Close only once BOTH endpoints are committed, not after the anchor.
   if (props.closeOnSelect && value?.start && value?.end) {
+    close();
+    rangeInputRef.value?.startInputElement?.focus();
+  }
+}
+
+// The model update alone can't drive this: clearing an already-empty range emits nothing.
+function onCalendarClear(close: () => void): void {
+  if (props.closeOnSelect) {
     close();
     rangeInputRef.value?.startInputElement?.focus();
   }

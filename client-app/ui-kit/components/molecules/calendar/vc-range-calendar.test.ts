@@ -141,6 +141,16 @@ describe("VcRangeCalendar", () => {
   });
 
   describe("end-only range", () => {
+    it("does not re-anchor an initial end-only range on mount", async () => {
+      const { wrapper, state, emits } = mountBoundCal({ start: undefined, end: "2026-10-14" });
+      await flushPromises();
+
+      expect(emits).toEqual([]);
+      expect(state.value).toEqual({ start: undefined, end: "2026-10-14" });
+
+      wrapper.unmount();
+    });
+
     it("keeps the existing end when picking an earlier start", async () => {
       const { wrapper, state, emits } = mountBoundCal({ start: undefined, end: "2026-10-14" });
       await flushPromises();

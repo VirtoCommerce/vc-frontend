@@ -49,7 +49,9 @@
     "date_range_input": {
       "aria_label": "Plage de dates",
       "clear": "Effacer la plage de dates",
-      "invalid_range": "La date de fin doit être postérieure ou égale à la date de début"
+      "end_date": "Date de fin",
+      "invalid_range": "La date de fin doit être postérieure ou égale à la date de début",
+      "start_date": "Date de début"
     },
     "date_selector": {
       "min_date_error": "La date doit être à partir du {min}",
