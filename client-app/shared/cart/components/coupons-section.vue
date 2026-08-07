@@ -77,8 +77,12 @@ async function handleApply(code: string) {
   }
 
   // A resolved mutation is not proof the coupon applied; same comparison as getView, so the
-  // announcement can never contradict the card.
+  // announcement can never contradict the card. The swap may still have removed the previous
+  // coupon by this point — that loss must be announced even though nothing got applied.
   if (appliedCouponCode.value !== code) {
+    if (previous && appliedCouponCode.value !== previous) {
+      announcement.value = removedAnnouncement(previous);
+    }
     return;
   }
 
