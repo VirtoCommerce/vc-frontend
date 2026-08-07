@@ -1,5 +1,6 @@
 import { computed, readonly, ref } from "vue";
 import { useFullCart } from "@/shared/cart/composables/useCart";
+import { isSameCouponCode } from "@/shared/cart/utils";
 
 type ErrorType = "invalid" | "failed";
 type CouponErrorType = { code: string; type: ErrorType };
@@ -50,7 +51,7 @@ export function useCoupon() {
         return false;
       }
 
-      if (appliedCouponCode.value && appliedCouponCode.value.toLowerCase() !== trimmed.toLowerCase()) {
+      if (appliedCouponCode.value && !isSameCouponCode(appliedCouponCode.value, trimmed)) {
         await removeCartCoupon(appliedCouponCode.value);
       }
 
@@ -59,7 +60,7 @@ export function useCoupon() {
       // The mutation resolving is not proof the coupon applied: a valid reward can yield no
       // discount (zero amount, gift/shipping rewards), and the cart can drift between the two
       // round-trips. The cart is the truth; the backend matches codes case-insensitively.
-      if (appliedCouponCode.value?.toLowerCase() !== trimmed.toLowerCase()) {
+      if (!isSameCouponCode(appliedCouponCode.value, trimmed)) {
         setError({ code: trimmed, type: "invalid" });
 
         return false;
@@ -89,7 +90,7 @@ export function useCoupon() {
       await removeCartCoupon(trimmed);
 
       // The backend silently no-ops when the code is not in the cart.
-      return appliedCouponCode.value?.toLowerCase() !== trimmed.toLowerCase();
+      return !isSameCouponCode(appliedCouponCode.value, trimmed);
     } catch {
       setError({ code: trimmed, type: "failed" });
 

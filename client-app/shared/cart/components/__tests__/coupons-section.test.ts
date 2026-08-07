@@ -1,6 +1,6 @@
 import { mount, flushPromises } from "@vue/test-utils";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { computed, ref } from "vue";
+import { computed, nextTick, ref } from "vue";
 import CouponsSection from "../coupons-section.vue";
 
 const mockTranslate = (key: string, params?: Record<string, unknown>) =>
@@ -23,19 +23,23 @@ const removeCoupon = vi.fn(() => {
 });
 const cart = ref<{ discountTotal?: { formattedAmount: string }; total?: { formattedAmount: string } } | undefined>();
 
+const loadingCouponCode = ref<string | undefined>();
+
 vi.mock("@/shared/cart", () => ({
   useCoupon: () => ({
     appliedCouponCode,
     couponError,
-    loadingCouponCode: computed(() => undefined),
+    loadingCouponCode,
     applyCoupon,
     removeCoupon,
   }),
   useFullCart: () => ({ cart }),
 }));
 
+const promotionCoupons = ref<{ id: string; couponCode: string }[]>([]);
+
 vi.mock("@/shared/account", () => ({
-  usePromotionCoupons: () => ({ coupons: computed(() => []) }),
+  usePromotionCoupons: () => ({ coupons: computed(() => promotionCoupons.value) }),
   useUser: () => ({ isAuthenticated: computed(() => false) }),
 }));
 
@@ -64,6 +68,8 @@ describe("CouponsSection", () => {
   beforeEach(() => {
     couponError.value = undefined;
     appliedCouponCode.value = undefined;
+    loadingCouponCode.value = undefined;
+    promotionCoupons.value = [];
     cart.value = { discountTotal: { formattedAmount: "$50.00" }, total: { formattedAmount: "$1,312.80" } };
     applyCoupon.mockClear();
     removeCoupon.mockClear();
@@ -218,5 +224,57 @@ describe("CouponsSection", () => {
     expect(text).toContain("applied_announcement");
     expect(text).toContain("ZUR10");
     expect(text).not.toContain("totals_announcement");
+  });
+
+  // VCST-5533 / bugbot: the backend matches codes case-insensitively, so the card state must too —
+  // otherwise the live region says "applied" while the card still offers Apply.
+  it("marks a card whose code differs only in case from the applied one as applied", () => {
+    promotionCoupons.value = [{ id: "1", couponCode: "SAVE10" }];
+    appliedCouponCode.value = "save10";
+
+    expect(createComponent().findAllComponents(COUPON_CARD)[0].props("view")).toBe("applied");
+  });
+
+  // Both halves matter: without the message the card looks errored but carries no text and no
+  // `aria-invalid`/`aria-describedby` (see coupon-card.vue).
+  it("marks a card whose code differs only in case from the failed one as errored", () => {
+    promotionCoupons.value = [{ id: "1", couponCode: "SAVE10" }];
+    couponError.value = { code: "save10", type: "invalid" };
+
+    const card = createComponent().findAllComponents(COUPON_CARD)[0];
+
+    expect(card.props("view")).toBe("error");
+    expect(card.props("error")).toBe("common.messages.invalid_coupon");
+  });
+
+  // `loadingCouponCode` holds the trimmed code, while the custom field holds raw user input,
+  // so the two only line up once both are normalized.
+  it("keeps the custom card loading while its raw input is being applied", async () => {
+    const wrapper = createComponent();
+    const customCard = () => wrapper.findAllComponents(COUPON_CARD).at(-1)!;
+
+    customCard().vm.$emit("update:modelValue", " Save10 ");
+    loadingCouponCode.value = "save10";
+    await nextTick();
+
+    expect(customCard().props("loading")).toBe(true);
+  });
+
+  // A re-apply that differs only in case is not a swap: nothing was lost, so announcing a removal
+  // would tell the user their discount is gone when it never went anywhere.
+  it("does not announce a removal when the applied coupon is re-applied in a different case", async () => {
+    appliedCouponCode.value = "SAVE10";
+    applyCoupon.mockImplementationOnce(() => {
+      appliedCouponCode.value = "save10";
+      return Promise.resolve(true);
+    });
+    const wrapper = createComponent();
+
+    wrapper.findComponent(COUPON_CARD).vm.$emit("apply", "save10");
+    await flushPromises();
+
+    const text = wrapper.get(LIVE_REGION).text();
+    expect(text).toContain("applied_announcement");
+    expect(text).not.toContain("removed_announcement");
   });
 });

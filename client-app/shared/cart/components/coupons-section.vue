@@ -8,7 +8,7 @@
           :coupon="coupon"
           :view="getView(coupon.couponCode)"
           :error="getError(coupon.couponCode)"
-          :loading="!!coupon.couponCode && coupon.couponCode === loadingCouponCode"
+          :loading="isSameCouponCode(coupon.couponCode, loadingCouponCode)"
           @apply="handleApply"
           @remove="handleRemove"
         />
@@ -18,7 +18,7 @@
           custom
           :view="getView(customCode)"
           :error="getError(customCode)"
-          :loading="!!customCode && customCode === loadingCouponCode"
+          :loading="isSameCouponCode(customCode, loadingCouponCode)"
           @apply="handleApply"
           @remove="handleRemove"
         />
@@ -48,6 +48,7 @@ import { MODULE_ID_MARKETING_EXPERIENCE_API } from "@/core/constants/modules";
 import { ROUTES } from "@/router/routes/constants";
 import { usePromotionCoupons, useUser } from "@/shared/account";
 import { useCoupon, useFullCart } from "@/shared/cart";
+import { isSameCouponCode } from "@/shared/cart/utils";
 import CouponCard from "./coupon-card.vue";
 
 const COUPONS_PER_PAGE = 4;
@@ -66,7 +67,7 @@ const announcement = ref("");
 
 async function handleApply(code: string) {
   announcement.value = "";
-  const previous = appliedCouponCode.value;
+  const previous = appliedCouponCode.value?.trim();
 
   const isApplied = await applyCoupon(code);
 
@@ -74,7 +75,7 @@ async function handleApply(code: string) {
 
   // A swap can lose the previously applied coupon even when the new code ends up rejected —
   // that loss is a status change of its own and must be announced.
-  if (previous && appliedCouponCode.value !== previous) {
+  if (previous && !isSameCouponCode(appliedCouponCode.value, previous)) {
     parts.push(t("shared.cart.coupons_section.removed_announcement", { code: previous }));
   }
 
@@ -114,11 +115,11 @@ watchEffect(() => {
     return;
   }
 
-  const isInList = coupons.value.some((coupon) => coupon.couponCode === applied);
+  const isInList = coupons.value.some((coupon) => isSameCouponCode(coupon.couponCode, applied));
 
-  if (!isInList && customCode.value !== applied) {
+  if (!isInList && !isSameCouponCode(customCode.value, applied)) {
     customCode.value = applied;
-  } else if (isInList && customCode.value === applied) {
+  } else if (isInList && isSameCouponCode(customCode.value, applied)) {
     customCode.value = "";
   }
 });
@@ -127,20 +128,23 @@ function getView(code: string | undefined): "default" | "applied" | "error" {
   if (!code) {
     return "default";
   }
-  if (code === appliedCouponCode.value) {
+  if (isSameCouponCode(code, appliedCouponCode.value)) {
     return "applied";
   }
-  if (code === couponError.value?.code) {
+  if (isSameCouponCode(code, couponError.value?.code)) {
     return "error";
   }
   return "default";
 }
 
 function getError(code: string | undefined): string | undefined {
-  if (!code || code !== couponError.value?.code) {
+  const error = couponError.value;
+
+  if (!error || !isSameCouponCode(code, error.code)) {
     return undefined;
   }
-  return couponError.value.type === "failed" ? t("common.messages.failed_coupon") : t("common.messages.invalid_coupon");
+
+  return error.type === "failed" ? t("common.messages.failed_coupon") : t("common.messages.invalid_coupon");
 }
 </script>
 
