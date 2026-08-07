@@ -1,0 +1,90 @@
+// Which blocks exist and which region each lives in; the saved document only adds order and hidden
+// flags. Registering here is all a widget needs to join drag-and-drop, hiding and persistence.
+//
+// Module-local rather than `useExtensionRegistry`, whose entries are `{ component, condition }` with
+// no region, order or title.
+import { defineAsyncComponent, markRaw } from "vue";
+import { STAT_CARDS } from "./stat-cards";
+import type { SalesRepBlockType, SalesRepLayoutScopeType } from "../types/layout";
+
+// `markRaw` keeps Vue from making the component definition reactive when it lands in layout state.
+const SalesRepOrders = markRaw(defineAsyncComponent(() => import("../components/sales-rep-orders.vue")));
+const TopSellers = markRaw(defineAsyncComponent(() => import("../components/top-sellers.vue")));
+const CustomerProfileActions = markRaw(
+  defineAsyncComponent(() => import("../components/customer-profile-actions.vue")),
+);
+const CustomerProfileInfo = markRaw(defineAsyncComponent(() => import("../components/customer-profile-info.vue")));
+
+// From the shared card table: the stat row renders these by key, not by component, so they carry none.
+// Order follows the table; a saved document overrides it.
+const statBlocks = (scope: SalesRepLayoutScopeType): SalesRepBlockType[] =>
+  STAT_CARDS[scope].map((card, index) => ({
+    id: card.key,
+    region: "statistics",
+    titleKey: card.labelKey,
+    order: (index + 1) * 10,
+  }));
+
+const dashboardBlocks: SalesRepBlockType[] = [
+  ...statBlocks("dashboard"),
+  // The dashboard has no right rail yet — `mainRight` stays empty and the row collapses to one
+  // column until a widget registers into it.
+  {
+    id: "orders",
+    region: "mainLeft",
+    titleKey: "sales_rep.orders.title",
+    order: 10,
+    component: SalesRepOrders,
+    props: { filterable: true },
+  },
+  { id: "top_sellers", region: "mainLeft", titleKey: "sales_rep.top_sellers.title", order: 20, component: TopSellers },
+];
+
+const customerProfileBlocks: SalesRepBlockType[] = [
+  ...statBlocks("customerProfile"),
+  {
+    id: "orders",
+    region: "mainLeft",
+    titleKey: "sales_rep.orders.title",
+    order: 10,
+    component: SalesRepOrders,
+    props: { filterable: true },
+  },
+  { id: "top_sellers", region: "mainLeft", titleKey: "sales_rep.top_sellers.title", order: 20, component: TopSellers },
+  {
+    id: "actions",
+    region: "mainRight",
+    titleKey: "sales_rep.communication.quick_actions.title",
+    order: 10,
+    component: CustomerProfileActions,
+  },
+  {
+    id: "info",
+    region: "mainRight",
+    titleKey: "sales_rep.customer_profile.info.title",
+    order: 20,
+    component: CustomerProfileInfo,
+  },
+];
+
+const registries: Record<SalesRepLayoutScopeType, SalesRepBlockType[]> = {
+  dashboard: dashboardBlocks,
+  customerProfile: customerProfileBlocks,
+};
+
+/** Register a block into a surface at runtime — the seam for widgets shipped by later stories. */
+export function registerBlock(scope: SalesRepLayoutScopeType, block: SalesRepBlockType): void {
+  const blocks = registries[scope];
+  if (blocks.some((registered) => registered.id === block.id)) {
+    return;
+  }
+  blocks.push(block);
+}
+
+export function getBlockRegistry(scope: SalesRepLayoutScopeType): readonly SalesRepBlockType[] {
+  return registries[scope];
+}
+
+export function getBlock(scope: SalesRepLayoutScopeType, id: string): SalesRepBlockType | undefined {
+  return registries[scope].find((block) => block.id === id);
+}

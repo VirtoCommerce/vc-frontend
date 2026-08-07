@@ -70,6 +70,35 @@
           "mtd_of_ytd": "{percent}% of YTD",
           "load_failed": "Couldn't load"
         }
+      },
+      "layout": {
+        "edit": "Edit layout",
+        "editing": "Editing layout",
+        "hint": "— drag a block by its handle to reorder it, or hide it with ✕.",
+        "hint_keyboard": "Keyboard: press space on a block to pick it up, arrow keys to move it, space to drop, escape to cancel.",
+        "save": "Save layout",
+        "cancel": "Cancel",
+        "reset": "Reset",
+        "save_failed": "The layout could not be saved. Your changes are still here — try again.",
+        "load_failed": "The saved layout could not be loaded, so the default arrangement is shown. Editing is unavailable until it loads — try refreshing the page.",
+        "hidden_widgets": "Hidden widgets",
+        "visible_stats": "Visible stats",
+        "hidden_stats": "Hidden stats",
+        "empty_visible": "Drag a stat here to show it",
+        "empty_hidden": "Drag a stat here to hide it",
+        "a11y": {
+          "reorder": "Reorder {title}",
+          "hide": "Hide {title}",
+          "show": "Show {title}",
+          "grabbed": "{title} grabbed. Position {position} of {total}. Use the arrow keys to move it, space to drop it, escape to cancel.",
+          "grabbed_parkable": "{title} grabbed. Position {position} of {total}. Use the left and right arrow keys to move it, up and down to hide or show it, space to drop it, escape to cancel.",
+          "moved": "{title} moved to position {position} of {total}.",
+          "dropped": "{title} dropped at position {position} of {total}.",
+          "edge": "{title} is already at position {position} of {total}.",
+          "cancelled": "Move of {title} cancelled.",
+          "parked": "{title} hidden.",
+          "restored": "{title} shown."
+        }
       }
     },
     "customer_profile": {
