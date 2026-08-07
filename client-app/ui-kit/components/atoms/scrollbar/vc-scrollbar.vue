@@ -20,7 +20,7 @@
 </template>
 
 <script setup lang="ts">
-import { useDebounceFn, useMutationObserver, useResizeObserver, useThrottleFn } from "@vueuse/core";
+import { useDebounceFn, useEventListener, useMutationObserver, useResizeObserver, useThrottleFn } from "@vueuse/core";
 import { computed, nextTick, onMounted, provide, ref, useTemplateRef } from "vue";
 import { getColorValue } from "@/ui-kit/utilities";
 import { vcScrollbarKey } from "./vc-scrollbar-context";
@@ -132,9 +132,11 @@ onMounted(() => {
 });
 
 // The element's own box (ResizeObserver) stays fixed while slot content rendered by OTHER
-// components grows (async lists, late images) — only a MutationObserver sees those changes.
+// components grows: structural and text changes are seen by the MutationObserver, image loads
+// only by the capture-phase load listener (load doesn't bubble and isn't a mutation).
 useResizeObserver(el, scheduleAutoTabStopUpdate);
-useMutationObserver(el, scheduleAutoTabStopUpdate, { childList: true, subtree: true });
+useMutationObserver(el, scheduleAutoTabStopUpdate, { childList: true, subtree: true, characterData: true });
+useEventListener(el, "load", scheduleAutoTabStopUpdate, { capture: true });
 
 const wasAtTop = ref(true);
 const wasAtBottom = ref(false);
