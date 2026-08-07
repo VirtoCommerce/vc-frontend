@@ -35,7 +35,8 @@
         "search_aria": "Szukaj klientów",
         "empty": "Nie znaleziono klientów",
         "no_results": "Żaden klient nie pasuje do wyszukiwania",
-        "reset_search": "Resetuj wyszukiwanie"
+        "reset_search": "Resetuj wyszukiwanie",
+        "load_failed": "Nie udało się wczytać klientów"
       }
     },
     "hub": {
@@ -66,7 +67,8 @@
           "new_customers": "{count} nowych klientów",
           "placed_today": "{count} złożono dzisiaj",
           "new_this_week": "{count} nowych w tym tygodniu",
-          "mtd_of_ytd": "{percent}% roku"
+          "mtd_of_ytd": "{percent}% roku",
+          "load_failed": "Nie udało się wczytać"
         }
       }
     },
@@ -131,7 +133,8 @@
       "items": "Pozycje",
       "status": "Status",
       "total": "Razem",
-      "filter_all": "Wszyscy"
+      "filter_all": "Wszyscy",
+      "load_failed": "Nie udało się wczytać zamówień"
     },
     "top_sellers": {
       "title": "Najlepsi sprzedawcy",
@@ -141,7 +144,8 @@
       "revenue": "Przychody",
       "empty": "Brak sprzedaży w tym okresie",
       "no_results": "Brak sprzedaży w tej kategorii",
-      "all_categories": "Wszystkie kategorie"
+      "all_categories": "Wszystkie kategorie",
+      "load_failed": "Nie udało się wczytać bestsellerów"
     },
     "rules": {
       "customer": {

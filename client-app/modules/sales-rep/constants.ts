@@ -1,3 +1,5 @@
+import type { WatchQueryFetchPolicy } from "@apollo/client/core";
+
 export const MODULE_ID = "VirtoCommerce.SalesRep";
 // Boolean storefront setting shipped by the backend module (SalesRep.Enabled, default false).
 export const ENABLED_KEY = "SalesRep.Enabled";
@@ -43,3 +45,8 @@ export const NEW_ORDERS_FILTER = "New";
 export const ACTIVE_CARTS_FILTER = "active-carts";
 // Default number of ranked products shown by the Top Sellers block (backend max is 10).
 export const TOP_SELLERS_DEFAULT_TAKE = 5;
+
+// Hub variables are day-stable by design (see buildStatisticsWindows), so the client's default
+// cache-first serves what a card or list first saw until a page reload. Revalidating is cheap — the
+// backend caches these criteria. The rule lists in useSalesRepRules stay cache-first: static data.
+export const HUB_FETCH_POLICY: WatchQueryFetchPolicy = "cache-and-network";
