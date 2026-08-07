@@ -1,10 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { useCoupon } from "./useCoupon";
+import { ref } from "vue";
 
 const validateCartCouponMock = vi.hoisted(() => vi.fn());
 const addCartCouponMock = vi.hoisted(() => vi.fn());
 const removeCartCouponMock = vi.hoisted(() => vi.fn());
-const cartMock = vi.hoisted(() => ({ value: undefined as Record<string, unknown> | undefined }));
+// A real ref, so `appliedCouponCode` (a computed) sees cart changes made by the mutation mocks.
+const cartMock = ref<Record<string, unknown> | undefined>();
 
 vi.mock("@/shared/cart/composables/useCart", () => ({
   useFullCart: () => ({
@@ -14,6 +15,9 @@ vi.mock("@/shared/cart/composables/useCart", () => ({
     removeCartCoupon: removeCartCouponMock,
   }),
 }));
+
+// Imported lazily: the hoisted vi.mock factory closes over `cartMock`, which must exist first.
+const { useCoupon } = await import("./useCoupon");
 
 function setAppliedCoupon(code: string) {
   cartMock.value = { coupons: [{ code, isAppliedSuccessfully: true }] };
@@ -76,6 +80,18 @@ describe("useCoupon", () => {
       expect(removeCartCouponMock).not.toHaveBeenCalled();
       expect(addCartCouponMock).toHaveBeenCalledWith("QA");
     });
+
+    // The backend matches codes case-insensitively, so a case variant is the same coupon —
+    // treating it as a swap would risk dropping the working coupon if the re-add fails.
+    it("should NOT remove the working coupon when re-applying it in a different case", async () => {
+      setAppliedCoupon("FRIDAY");
+      validateCartCouponMock.mockResolvedValueOnce(true);
+
+      const { applyCoupon } = useCoupon();
+      await applyCoupon("friday");
+
+      expect(removeCartCouponMock).not.toHaveBeenCalled();
+    });
   });
 
   describe("applyCoupon with no coupon currently applied", () => {
@@ -87,6 +103,51 @@ describe("useCoupon", () => {
 
       expect(removeCartCouponMock).not.toHaveBeenCalled();
       expect(addCartCouponMock).toHaveBeenCalledWith("FIXED5");
+    });
+  });
+
+  // The mutation resolving is not proof anything changed: a valid reward can yield no discount,
+  // and removing an absent code is a backend no-op. The returned boolean must reflect the cart.
+  describe("applyCoupon outcome", () => {
+    it("should return true when the cart shows the coupon applied, matched case-insensitively", async () => {
+      validateCartCouponMock.mockResolvedValueOnce(true);
+      addCartCouponMock.mockImplementationOnce(async () => setAppliedCoupon("FRIDAY"));
+
+      const { applyCoupon } = useCoupon();
+
+      await expect(applyCoupon("FriDAY")).resolves.toBe(true);
+    });
+
+    it("should return false and report the code invalid when the mutation resolves without applying it", async () => {
+      validateCartCouponMock.mockResolvedValueOnce(true);
+      addCartCouponMock.mockResolvedValueOnce(undefined);
+
+      const { applyCoupon, couponError } = useCoupon();
+
+      await expect(applyCoupon("GHOST")).resolves.toBe(false);
+      expect(couponError.value).toEqual({ code: "GHOST", type: "invalid" });
+    });
+  });
+
+  describe("removeCoupon outcome", () => {
+    it("should return true when the coupon is gone from the cart", async () => {
+      setAppliedCoupon("QA");
+      removeCartCouponMock.mockImplementationOnce(async () => {
+        cartMock.value = { coupons: [] };
+      });
+
+      const { removeCoupon } = useCoupon();
+
+      await expect(removeCoupon("QA")).resolves.toBe(true);
+    });
+
+    it("should return false when the backend no-ops and the coupon stays applied", async () => {
+      setAppliedCoupon("QA");
+      removeCartCouponMock.mockResolvedValueOnce(undefined);
+
+      const { removeCoupon } = useCoupon();
+
+      await expect(removeCoupon("QA")).resolves.toBe(false);
     });
   });
 });

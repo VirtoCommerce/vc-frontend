@@ -717,8 +717,9 @@
         "apply_aria": "Apply coupon {code}",
         "remove_aria": "Remove coupon",
         "coupon_code_aria": "Kuponkikoodi",
-        "applied_announcement": "Kuponki {code} otettu käyttöön. Alennus {discount}, uusi loppusumma {total}.",
-        "removed_announcement": "Kuponki {code} poistettu. Alennus {discount}, uusi loppusumma {total}."
+        "applied_announcement": "Kuponki {code} otettu käyttöön.",
+        "removed_announcement": "Kuponki {code} poistettu.",
+        "totals_announcement": "Alennus {discount}, uusi loppusumma {total}."
       }
     },
     "catalog": {

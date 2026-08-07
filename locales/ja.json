@@ -717,8 +717,9 @@
         "apply_aria": "Apply coupon {code}",
         "remove_aria": "Remove coupon",
         "coupon_code_aria": "クーポンコード",
-        "applied_announcement": "クーポン {code} を適用しました。割引 {discount}、新しい合計 {total}。",
-        "removed_announcement": "クーポン {code} を削除しました。割引 {discount}、新しい合計 {total}。"
+        "applied_announcement": "クーポン {code} を適用しました。",
+        "removed_announcement": "クーポン {code} を削除しました。",
+        "totals_announcement": "割引 {discount}、新しい合計 {total}。"
       }
     },
     "catalog": {

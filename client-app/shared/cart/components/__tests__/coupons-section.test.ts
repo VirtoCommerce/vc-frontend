@@ -109,6 +109,16 @@ describe("CouponsSection", () => {
     expect(text).toContain("$1,312.80");
   });
 
+  it("stays silent when the removal did not go through", async () => {
+    removeCoupon.mockImplementationOnce(() => Promise.resolve(false));
+    const wrapper = createComponent();
+
+    wrapper.findComponent(COUPON_CARD).vm.$emit("remove", "ZUR10");
+    await flushPromises();
+
+    expect(wrapper.get(LIVE_REGION).text()).toBe("");
+  });
+
   it("stays silent when applying the coupon failed", async () => {
     applyCoupon.mockImplementationOnce(() => Promise.resolve(false));
     const wrapper = createComponent();
@@ -148,20 +158,24 @@ describe("CouponsSection", () => {
     expect(wrapper.get(LIVE_REGION).text()).toBe("");
   });
 
-  // The mutation can resolve without the coupon granting a discount; the announcement must
-  // then stay consistent with the card, which will not flip to "applied".
-  it("stays silent when the mutation resolved but the coupon did not apply", async () => {
-    applyCoupon.mockImplementationOnce(() => Promise.resolve(true));
+  // "Did it actually apply" lives in useCoupon (see useCoupon.test.ts); here the section trusts
+  // the boolean and must voice both status changes of a successful swap.
+  it("announces the removed previous coupon and the newly applied one on a successful swap", async () => {
+    appliedCouponCode.value = "OLD10";
     const wrapper = createComponent();
 
-    wrapper.findComponent(COUPON_CARD).vm.$emit("apply", "GHOST");
+    wrapper.findComponent(COUPON_CARD).vm.$emit("apply", "NEW20");
     await flushPromises();
 
-    expect(wrapper.get(LIVE_REGION).text()).toBe("");
+    const text = wrapper.get(LIVE_REGION).text();
+    expect(text).toContain("removed_announcement");
+    expect(text).toContain("OLD10");
+    expect(text).toContain("applied_announcement");
+    expect(text).toContain("NEW20");
   });
 
-  // Swapping removes the old coupon before validating the new one; when that validation
-  // fails, the lost discount must still be announced.
+  // A swap can remove the old coupon and still fail to apply the new one; the lost
+  // discount must then be announced on its own.
   it("announces the removal of the previous coupon when a swap fails after removing it", async () => {
     appliedCouponCode.value = "OLD10";
     applyCoupon.mockImplementationOnce(() => {
@@ -192,14 +206,17 @@ describe("CouponsSection", () => {
   });
 
   // `cart` being empty here is unreachable from the page (it renders only with a loaded cart);
-  // this covers the defensive typing only.
-  it("does not break when the cart has no totals yet", async () => {
+  // if it ever happens, the figures sentence is dropped instead of reading out empty slots.
+  it("announces without figures when the cart has no totals", async () => {
     cart.value = undefined;
     const wrapper = createComponent();
 
     wrapper.findComponent(COUPON_CARD).vm.$emit("apply", "ZUR10");
     await flushPromises();
 
-    expect(wrapper.get(LIVE_REGION).text()).toContain("ZUR10");
+    const text = wrapper.get(LIVE_REGION).text();
+    expect(text).toContain("applied_announcement");
+    expect(text).toContain("ZUR10");
+    expect(text).not.toContain("totals_announcement");
   });
 });

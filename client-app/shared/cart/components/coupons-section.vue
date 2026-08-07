@@ -68,29 +68,23 @@ async function handleApply(code: string) {
   announcement.value = "";
   const previous = appliedCouponCode.value;
 
-  if (!(await applyCoupon(code))) {
-    // The swap removes the old coupon before validating the new one — announce that loss.
-    if (previous && appliedCouponCode.value !== previous) {
-      announcement.value = removedAnnouncement(previous);
-    }
-    return;
+  const isApplied = await applyCoupon(code);
+
+  const parts: string[] = [];
+
+  // A swap can lose the previously applied coupon even when the new code ends up rejected —
+  // that loss is a status change of its own and must be announced.
+  if (previous && appliedCouponCode.value !== previous) {
+    parts.push(t("shared.cart.coupons_section.removed_announcement", { code: previous }));
   }
 
-  // A resolved mutation is not proof the coupon applied; same comparison as getView, so the
-  // announcement can never contradict the card. The swap may still have removed the previous
-  // coupon by this point — that loss must be announced even though nothing got applied.
-  if (appliedCouponCode.value !== code) {
-    if (previous && appliedCouponCode.value !== previous) {
-      announcement.value = removedAnnouncement(previous);
-    }
-    return;
+  if (isApplied) {
+    parts.push(t("shared.cart.coupons_section.applied_announcement", { code }));
   }
 
-  announcement.value = t("shared.cart.coupons_section.applied_announcement", {
-    code,
-    discount: cart.value?.discountTotal?.formattedAmount ?? "",
-    total: cart.value?.total?.formattedAmount ?? "",
-  });
+  if (parts.length > 0) {
+    announcement.value = withTotals(parts.join(" "));
+  }
 }
 
 async function handleRemove(code: string) {
@@ -100,15 +94,18 @@ async function handleRemove(code: string) {
     return;
   }
 
-  announcement.value = removedAnnouncement(code);
+  announcement.value = withTotals(t("shared.cart.coupons_section.removed_announcement", { code }));
 }
 
-function removedAnnouncement(code: string): string {
-  return t("shared.cart.coupons_section.removed_announcement", {
-    code,
-    discount: cart.value?.discountTotal?.formattedAmount ?? "",
-    total: cart.value?.total?.formattedAmount ?? "",
-  });
+function withTotals(message: string): string {
+  const discount = cart.value?.discountTotal?.formattedAmount;
+  const total = cart.value?.total?.formattedAmount;
+
+  if (!discount || !total) {
+    return message;
+  }
+
+  return `${message} ${t("shared.cart.coupons_section.totals_announcement", { discount, total })}`;
 }
 
 watchEffect(() => {

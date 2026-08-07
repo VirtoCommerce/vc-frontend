@@ -50,11 +50,20 @@ export function useCoupon() {
         return false;
       }
 
-      if (appliedCouponCode.value && appliedCouponCode.value !== trimmed) {
+      if (appliedCouponCode.value && appliedCouponCode.value.toLowerCase() !== trimmed.toLowerCase()) {
         await removeCartCoupon(appliedCouponCode.value);
       }
 
       await addCartCoupon(trimmed);
+
+      // The mutation resolving is not proof the coupon applied: a valid reward can yield no
+      // discount (zero amount, gift/shipping rewards), and the cart can drift between the two
+      // round-trips. The cart is the truth; the backend matches codes case-insensitively.
+      if (appliedCouponCode.value?.toLowerCase() !== trimmed.toLowerCase()) {
+        setError({ code: trimmed, type: "invalid" });
+
+        return false;
+      }
 
       return true;
     } catch {
@@ -79,7 +88,8 @@ export function useCoupon() {
 
       await removeCartCoupon(trimmed);
 
-      return true;
+      // The backend silently no-ops when the code is not in the cart.
+      return appliedCouponCode.value?.toLowerCase() !== trimmed.toLowerCase();
     } catch {
       setError({ code: trimmed, type: "failed" });
 
