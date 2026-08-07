@@ -1025,7 +1025,8 @@
           "Organization": "Организация",
           "AnyoneAnonymous": "Все (только чтение)"
         },
-        "clipboard_success": "Ссылка скопирована"
+        "clipboard_success": "Ссылка скопирована",
+        "save_error": "Не удалось сохранить список. Пожалуйста, попробуйте снова."
       },
       "delete_wishlist_modal": {
         "title": "Подтвердить удаление",

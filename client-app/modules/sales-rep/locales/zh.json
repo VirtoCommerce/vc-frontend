@@ -182,6 +182,25 @@
           "All": "全部"
         }
       }
+    },
+    "list_sharing": {
+      "share_customers_label": "客户",
+      "share_customers_placeholder": "选择客户",
+      "share_customers_error": "无法加载客户列表。请重试。",
+      "share_replace_hint": "先前选择的客户将无法再访问此列表。",
+      "share_message_label": "消息",
+      "share_message_placeholder": "可选的附加消息",
+      "share_channels_label": "发送方式",
+      "share_email_label": "电子邮件",
+      "share_push_label": "推送通知",
+      "share_default_title": "来自您的销售代表的新列表",
+      "share_default_message": "您好！我刚刚与您的组织共享了列表“{listName}”。欢迎查看：",
+      "share_success": "列表已与客户共享。",
+      "share_partial": "列表已共享，但部分通知未送达。",
+      "share_notify_error": "列表已保存，但无法通知客户。",
+      "scope_label": "客户",
+      "status": "与客户共享",
+      "badge": "您的销售代表推荐"
     }
   }
 }

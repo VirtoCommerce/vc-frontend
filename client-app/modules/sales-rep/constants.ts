@@ -21,6 +21,10 @@ export const HUB_NAV_PRIORITY = 5;
 // Permission that defines a Sales Rep (backend module VirtoCommerce.SalesRep, granted via a role).
 export const SALES_REP_ACCESS_PERMISSION = "sales-rep:access";
 
+// Mirrors the backend's ModuleConstants.Sharing.CustomerScope. Core declares `sharedWithId` but not this value —
+// only this module knows what a "Customer" target means.
+export const CUSTOMER_SHARING_SCOPE = "Customer";
+
 // Customer profile page: /company/my-customers/:organizationId, a sibling of the My customers list
 // under "Company" (the "Sales Rep hub" title comes from the left-rail section, not a URL segment).
 export const CUSTOMER_PROFILE_ROUTE_NAME = "SalesRepCustomerProfile";
