@@ -46,3 +46,19 @@ export const TOP_SELLERS_DEFAULT_TAKE = 5;
 // cache-first serves what a card or list first saw until a page reload. Revalidating is cheap — the
 // backend caches these criteria. The rule lists in useSalesRepRules stay cache-first: static data.
 export const HUB_FETCH_POLICY: WatchQueryFetchPolicy = "cache-and-network";
+
+// Saved layout (VCST-5367). The backend types `scope` and `region.id` as free-form `String`, not
+// enums — an unrecognized value does not error, it silently addresses a different (empty) document.
+// So these literals are load-bearing: changing one strands every layout already saved under the old
+// value. `layout/document.test.ts` and `composables/useSalesRepLayout.test.ts` pin them.
+export const LAYOUT_SCHEMA_VERSION = 1;
+export const DASHBOARD_LAYOUT_SCOPE = "dashboard";
+export const CUSTOMER_PROFILE_LAYOUT_SCOPE = "customerProfile";
+// Ordered so serialization always emits regions in a stable sequence.
+export const LAYOUT_REGION_IDS = ["statistics", "mainLeft", "mainRight"] as const;
+// What a widget can be dragged by: its whole header. `.vc-widget__header-container` is a VcWidget
+// internal, not a published contract, so a rename there silently kills header drags —
+// `layout-block-widget.test.ts` mounts a real widget against this to catch it.
+export const WIDGET_DRAG_HANDLE_SELECTOR = ".vc-widget__header-container";
+// The hide button sits inside that header, so without this a mousedown on ✕ starts a drag instead.
+export const WIDGET_DRAG_FILTER_SELECTOR = ".layout-widget__hide";

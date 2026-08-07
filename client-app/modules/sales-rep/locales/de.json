@@ -70,6 +70,35 @@
           "mtd_of_ytd": "{percent}% des Jahres",
           "load_failed": "Laden fehlgeschlagen"
         }
+      },
+      "layout": {
+        "edit": "Layout bearbeiten",
+        "editing": "Layout wird bearbeitet",
+        "hint": "— ziehen Sie einen Block am Griff, um ihn umzusortieren, oder blenden Sie ihn mit ✕ aus.",
+        "hint_keyboard": "Tastatur: Leertaste hebt einen Block an, Pfeiltasten verschieben ihn, Leertaste legt ihn ab, Esc bricht ab.",
+        "save": "Layout speichern",
+        "cancel": "Abbrechen",
+        "reset": "Zurücksetzen",
+        "save_failed": "Das Layout konnte nicht gespeichert werden. Ihre Änderungen sind noch vorhanden — bitte erneut versuchen.",
+        "load_failed": "Das gespeicherte Layout konnte nicht geladen werden, daher wird die Standardanordnung angezeigt. Die Bearbeitung ist erst nach dem Laden möglich — bitte die Seite neu laden.",
+        "hidden_widgets": "Ausgeblendete Widgets",
+        "visible_stats": "Sichtbare Kennzahlen",
+        "hidden_stats": "Ausgeblendete Kennzahlen",
+        "empty_visible": "Ziehen Sie eine Kennzahl hierher, um sie einzublenden",
+        "empty_hidden": "Ziehen Sie eine Kennzahl hierher, um sie auszublenden",
+        "a11y": {
+          "reorder": "{title} umsortieren",
+          "hide": "{title} ausblenden",
+          "show": "{title} einblenden",
+          "grabbed": "{title} aufgenommen. Position {position} von {total}. Mit den Pfeiltasten verschieben, Leertaste zum Ablegen, Escape zum Abbrechen.",
+          "grabbed_parkable": "{title} aufgenommen. Position {position} von {total}. Mit den Pfeiltasten links und rechts verschieben, mit Pfeil nach oben und unten aus- oder einblenden, Leertaste zum Ablegen, Escape zum Abbrechen.",
+          "moved": "{title} auf Position {position} von {total} verschoben.",
+          "dropped": "{title} auf Position {position} von {total} abgelegt.",
+          "edge": "{title} ist bereits an Position {position} von {total}.",
+          "cancelled": "Verschieben von {title} abgebrochen.",
+          "parked": "{title} ausgeblendet.",
+          "restored": "{title} eingeblendet."
+        }
       }
     },
     "customer_profile": {

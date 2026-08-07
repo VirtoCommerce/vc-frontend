@@ -1,0 +1,12 @@
+mutation SaveSalesRepLayout($command: InputSalesRepLayout!) {
+  saveSalesRepLayout(command: $command) {
+    regions {
+      id
+      blocks {
+        id
+        type
+        hidden
+      }
+    }
+  }
+}
