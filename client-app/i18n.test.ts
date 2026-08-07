@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { createI18n, polishPluralRule, russianPluralRule } from "./i18n";
+import { createI18n, createIntlPluralRule } from "./i18n";
 
 const RU_REVIEWS = "нет отзывов | {n} отзыв | {n} отзыва | {n} отзывов";
 const PL_REVIEWS = "brak opinii | {n} opinia | {n} opinie | {n} opinii";
 
-describe("russianPluralRule", () => {
+describe("createIntlPluralRule (ru)", () => {
   it.each([
     [0, "нет отзывов"],
     [1, "1 отзыв"],
@@ -32,13 +32,17 @@ describe("russianPluralRule", () => {
     expect(i18n.global.t("reviews", count)).toBe(expected);
   });
 
-  it("keeps legacy three-form messages working", () => {
-    // 3 forms follow the repo's zero | one | many layout
-    expect(russianPluralRule(1, 3)).toBe(1);
-    expect(russianPluralRule(2, 3)).toBe(2);
-    expect(russianPluralRule(5, 3)).toBe(2);
-    expect(russianPluralRule(21, 3)).toBe(1);
-    expect(russianPluralRule(111, 3)).toBe(2);
+  it("keeps legacy three-form messages on the default vue-i18n convention", () => {
+    // Slot layout must stay identical to `dev`: existing 3-form messages hardcode a literal "1"
+    // in their middle form, so a grammar-aware index for 21 would render wrong text.
+    const rule = createIntlPluralRule("ru");
+
+    expect(rule(0, 3)).toBe(0);
+    expect(rule(1, 3)).toBe(1);
+    expect(rule(2, 3)).toBe(2);
+    expect(rule(5, 3)).toBe(2);
+    expect(rule(21, 3)).toBe(2);
+    expect(rule(111, 3)).toBe(2);
   });
 
   it("keeps legacy two-form messages on the default vue-i18n convention", () => {
@@ -52,7 +56,7 @@ describe("russianPluralRule", () => {
   });
 });
 
-describe("polishPluralRule", () => {
+describe("createIntlPluralRule (pl)", () => {
   it.each([
     [0, "brak opinii"],
     [1, "1 opinia"],
@@ -72,12 +76,6 @@ describe("polishPluralRule", () => {
     expect(i18n.global.t("reviews", count)).toBe(expected);
   });
 
-  it("keeps legacy three-form messages working", () => {
-    expect(polishPluralRule(1, 3)).toBe(1);
-    expect(polishPluralRule(2, 3)).toBe(2);
-    expect(polishPluralRule(21, 3)).toBe(2);
-  });
-
   it("keeps legacy two-form messages on the default vue-i18n convention", () => {
     const i18n = createI18n("pl", "USD");
     i18n.global.setLocaleMessage("pl", { results: "wynik | wyników" });
@@ -86,5 +84,36 @@ describe("polishPluralRule", () => {
     expect(i18n.global.t("results", 1)).toBe("wynik");
     expect(i18n.global.t("results", 5)).toBe("wyników");
     expect(i18n.global.t("results", 0)).toBe("wyników");
+  });
+});
+
+describe("plural rules with full culture names", () => {
+  // The app's active locale is the store culture name ("ru-RU"), while vue-i18n matches
+  // `pluralRules` keys exactly against the locale a message was resolved under.
+
+  it("applies the rule to messages stored under the culture name (global messages)", () => {
+    const i18n = createI18n("ru-RU", "USD", undefined, ["ru-RU", "ru"]);
+    i18n.global.setLocaleMessage("ru-RU", { reviews: RU_REVIEWS });
+    i18n.global.locale.value = "ru-RU";
+
+    expect(i18n.global.t("reviews", 2)).toBe("2 отзыва");
+    expect(i18n.global.t("reviews", 21)).toBe("21 отзыв");
+  });
+
+  it("applies the rule to messages stored under the two-letter code (module messages)", () => {
+    const i18n = createI18n("ru-RU", "USD", { locale: "en", message: {} }, ["ru-RU", "ru"]);
+    i18n.global.setLocaleMessage("ru", { reviews: RU_REVIEWS });
+    i18n.global.locale.value = "ru-RU";
+
+    expect(i18n.global.t("reviews", 2)).toBe("2 отзыва");
+    expect(i18n.global.t("reviews", 21)).toBe("21 отзыв");
+  });
+
+  it("survives a malformed culture name, keeping the rules of valid ones", () => {
+    const i18n = createI18n("ru-RU", "USD", undefined, ["not a locale!", "ru-RU"]);
+    i18n.global.setLocaleMessage("ru-RU", { reviews: RU_REVIEWS });
+    i18n.global.locale.value = "ru-RU";
+
+    expect(i18n.global.t("reviews", 21)).toBe("21 отзыв");
   });
 });

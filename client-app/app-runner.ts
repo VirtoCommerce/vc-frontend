@@ -102,6 +102,7 @@ export default async () => {
     currentLanguage,
     currentMaybeShortLocale,
     defaultStoreCulture,
+    supportedLanguages,
     applyLocale,
     fetchLocaleMessages,
     mergeLocalesMessages,
@@ -180,7 +181,14 @@ export default async () => {
   const currentCultureName = normalizeToSupportedCulture(pageBuilderPreview.cultureName) ?? resolveLocale();
   const isDefaultLocaleInUse = defaultStoreCulture.value === currentCultureName;
 
-  const i18n = createI18n(currentCultureName, currentCurrency.value.code, fallback);
+  // Plural rules must be registered for every locale key messages can resolve under — full
+  // culture names (global messages) and two-letter codes (module/ui-kit messages) alike.
+  const pluralRuleLocales = supportedLanguages.value.flatMap((language) => [
+    language.cultureName,
+    language.twoLetterLanguageName,
+  ]);
+
+  const i18n = createI18n(currentCultureName, currentCurrency.value.code, fallback, pluralRuleLocales);
 
   // The UI kit loads its locale bundles through the shared locale-loader seam, so boot and any
   // runtime locale switch (e.g. builder preview, VCST-5219) share one copy of this logic.

@@ -1,7 +1,7 @@
 import { createI18n as _createI18n } from "vue-i18n";
 import { LOCALE_ID_REGEX } from "@/core/constants/locale";
 import type { LocaleMessage } from "@intlify/core-base";
-import type { IntlNumberFormat } from "vue-i18n";
+import type { IntlNumberFormat, PluralizationRule } from "vue-i18n";
 
 /**
  * Default per-locale number formats. Registered for the boot locale by `createI18n` and for every
@@ -22,63 +22,62 @@ export function getDefaultNumberFormats(currency: string): IntlNumberFormat {
 }
 
 /**
- * Slavic locales need four plural forms (zero | one | few | many); vue-i18n's default rule
- * only distinguishes zero | one | other, which renders e.g. "2 отзывов" instead of "2 отзыва".
- * Both rules keep working with legacy 2-3-form messages via the `choicesLength` guard.
+ * Slavic locales need four plural forms; vue-i18n's built-in rule is locale-blind
+ * (`Math.min(n, 2)`), which renders e.g. "2 отзывов" instead of "2 отзыва". `Intl.PluralRules`
+ * carries Unicode's CLDR plural data for every language, so the grammar is looked up instead of
+ * hand-written: `rules.select(21)` → "one" → slot 1. Intl says WHAT a number is
+ * ("one" / "few" / "many"); vue-i18n needs WHICH form to render (an index). This maps one onto
+ * the other for our 4-form messages: none | one | few | many.
  */
-export function russianPluralRule(choice: number, choicesLength: number): number {
-  // Legacy two-form messages follow vue-i18n's default "singular | plural" convention.
+const PLURAL_SLOT_BY_CATEGORY: Record<Intl.LDMLPluralRule, number> = {
+  zero: 0,
+  one: 1,
+  two: 2,
+  few: 2,
+  many: 3,
+  other: 3,
+};
+
+/**
+ * vue-i18n's own rule, replicated: intlify passes it as `orgRule` on every render, but the rule
+ * can also be called directly (e.g. in tests), where no `orgRule` is provided.
+ */
+function defaultPluralRule(choice: number, choicesLength: number): number {
+  const count = Math.abs(choice);
+
   if (choicesLength === 2) {
-    return choice === 1 ? 0 : 1;
+    return count === 1 ? 0 : 1;
   }
 
-  if (choice === 0) {
-    return 0;
-  }
-
-  // The teen exception repeats every hundred (111, 213, ...), so it is keyed to `% 100`.
-  const teen = choice % 100 > 10 && choice % 100 < 20;
-  const endsWithOne = choice % 10 === 1;
-
-  if (choicesLength < 4) {
-    return !teen && endsWithOne ? 1 : 2;
-  }
-
-  if (!teen && endsWithOne) {
-    return 1;
-  }
-
-  if (!teen && choice % 10 >= 2 && choice % 10 <= 4) {
-    return 2;
-  }
-
-  return 3;
+  return Math.min(count, 2);
 }
 
-export function polishPluralRule(choice: number, choicesLength: number): number {
-  // Legacy two-form messages follow vue-i18n's default "singular | plural" convention.
-  if (choicesLength === 2) {
-    return choice === 1 ? 0 : 1;
-  }
+export function createIntlPluralRule(locale: string): PluralizationRule {
+  const rules = new Intl.PluralRules(locale);
 
-  if (choice === 0) {
-    return 0;
-  }
+  return (choice, choicesLength, orgRule) => {
+    // Messages with fewer than four forms predate this rule and may hardcode a literal "1" in
+    // their singular slot (e.g. `pages.catalog.available_variations`), where grammar-aware
+    // indexes (21 → "one") would render wrong text. Let vue-i18n pick exactly as it always has.
+    if (choicesLength < 4) {
+      return (orgRule ?? defaultPluralRule)(choice, choicesLength);
+    }
 
-  if (choice === 1) {
-    return 1;
-  }
+    // Slot 0 is the "none" copy every 4-form message leads with; Intl itself files 0 under `many`.
+    if (choice === 0) {
+      return 0;
+    }
 
-  if (choicesLength < 4) {
-    return 2;
-  }
-
-  const few = choice % 10 >= 2 && choice % 10 <= 4 && !(choice % 100 >= 12 && choice % 100 <= 14);
-
-  return few ? 2 : 3;
+    return PLURAL_SLOT_BY_CATEGORY[rules.select(choice)];
+  };
 }
 
-export function createI18n(locale: string, currency: string, fallback?: { locale: string; message: LocaleMessage }) {
+export function createI18n(
+  locale: string,
+  currency: string,
+  fallback?: { locale: string; message: LocaleMessage },
+  pluralRuleLocales?: string[],
+) {
   // `locale` may originate from user-controlled input (e.g. a `?cultureName=` query param) and is
   // used below as a dynamic object key. Only accept a plain locale identifier, otherwise fall back,
   // so it can't inject an unexpected property name (CodeQL: remote property injection).
@@ -89,6 +88,19 @@ export function createI18n(locale: string, currency: string, fallback?: { locale
     fallbackMessage = {
       [fallback.locale]: fallback.message,
     };
+  }
+
+  // vue-i18n matches `pluralRules` keys exactly against the locale a message was resolved under:
+  // module and ui-kit messages live under two-letter codes ("ru") while global ones live under
+  // the store culture name ("ru-RU"), so both spellings of every supported language are needed.
+  const pluralRules: Record<string, PluralizationRule> = {};
+  for (const pluralRuleLocale of new Set([safeLocale, ...(pluralRuleLocales ?? [])])) {
+    try {
+      pluralRules[pluralRuleLocale] = createIntlPluralRule(pluralRuleLocale);
+    } catch {
+      // `Intl.PluralRules` throws on malformed language tags; a misconfigured culture name must
+      // not break boot — that locale just keeps vue-i18n's default rule, as before this feature.
+    }
   }
 
   return _createI18n({
@@ -131,10 +143,7 @@ export function createI18n(locale: string, currency: string, fallback?: { locale
     },
     fallbackWarn: false,
     missingWarn: false,
-    pluralRules: {
-      ru: russianPluralRule,
-      pl: polishPluralRule,
-    },
+    pluralRules,
     numberFormats: {
       [safeLocale]: getDefaultNumberFormats(currency),
     },
