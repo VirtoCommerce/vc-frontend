@@ -1,11 +1,13 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
-import { ALL_ROLES } from "@/core/constants";
+import { ALL_ROLES, ORGANIZATION_EMPLOYEE, ORGANIZATION_MAINTAINER, PURCHASING_AGENT } from "@/core/constants";
 import type { ExtendedRoleType } from "@/core/types/role";
 
 const CUSTOMER_MODULE_ID = "VirtoCommerce.Customer";
 const COMPANY_MEMBER_ROLES_SETTING = "Customer.MembershipRolesWhitelist";
+
+const DEFAULT_ROLES: ExtendedRoleType[] = [ORGANIZATION_EMPLOYEE, PURCHASING_AGENT, ORGANIZATION_MAINTAINER];
 
 function toRole(id: string, t: ReturnType<typeof useI18n>["t"]): ExtendedRoleType {
   const idLower = id.toLowerCase();
@@ -35,7 +37,7 @@ export function useCompanyMemberRoles() {
       }
     }
 
-    return ALL_ROLES;
+    return DEFAULT_ROLES;
   });
 
   return { roles };
