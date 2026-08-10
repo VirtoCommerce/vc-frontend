@@ -1,5 +1,8 @@
-import { describe, expect, it } from "vitest";
-import { buildStatisticsWindows } from "./utils";
+import { describe, expect, it, vi } from "vitest";
+import { buildStatisticsWindows, formatStatCount, formatStatMoney } from "./utils";
+
+// Pinned so the expectations don't depend on the runtime's default locale.
+vi.mock("@/core/globals", () => ({ globals: { cultureName: "en-US", currencyCode: "USD" } }));
 
 // The windows are the user's calendar days expressed as UTC instants, so every expectation is built with
 // local-time constructors too — that keeps the suite meaningful in whatever zone it runs in (CI, a dev box
@@ -114,5 +117,46 @@ describe("buildStatisticsWindows", () => {
       const date = new Date(bound);
       expect([date.getHours(), date.getMinutes(), date.getSeconds(), date.getMilliseconds()]).toEqual([0, 0, 0, 0]);
     }
+  });
+});
+
+describe("formatStatCount", () => {
+  it("renders an absent count as 0 rather than a placeholder", () => {
+    expect(formatStatCount()).toBe("0");
+    expect(formatStatCount(null)).toBe("0");
+  });
+
+  it("groups thousands so counts match the grouping of the money figures beside them", () => {
+    expect(formatStatCount(1234)).toBe("1,234");
+    expect(formatStatCount(1234567)).toBe("1,234,567");
+  });
+
+  it("keeps a real zero and small counts unchanged", () => {
+    expect(formatStatCount(0)).toBe("0");
+    expect(formatStatCount(7)).toBe("7");
+  });
+});
+
+describe("formatStatMoney", () => {
+  it("passes through the backend-formatted amount", () => {
+    expect(formatStatMoney({ formattedAmount: "$1,234.00" })).toBe("$1,234.00");
+    expect(formatStatMoney({ formattedAmount: "$0.00" })).toBe("$0.00");
+  });
+
+  it("renders absent money as a zero in the query's currency, so a money slot never shows a bare 0", () => {
+    expect(formatStatMoney()).toBe("$0.00");
+    expect(formatStatMoney(null)).toBe("$0.00");
+  });
+
+  it("falls back to a plain 0 instead of throwing when no currency is configured yet", async () => {
+    vi.doMock("@/core/globals", () => ({ globals: {} }));
+    vi.resetModules();
+    const { formatStatMoney: format } = await import("./utils");
+
+    expect(format()).toBe("0");
+    expect(format({ formattedAmount: "$5.00" })).toBe("$5.00");
+
+    vi.doUnmock("@/core/globals");
+    vi.resetModules();
   });
 });

@@ -1,5 +1,5 @@
 <template>
-  <VcWidget :title="t('sales_rep.communication.quick_actions.title')" size="md" class="customer-profile-actions">
+  <LayoutWidget :title="t('sales_rep.communication.quick_actions.title')" size="md" class="customer-profile-actions">
     <template #default-container>
       <div class="customer-profile-actions__grid">
         <button
@@ -55,7 +55,7 @@
         </button>
       </div>
     </template>
-  </VcWidget>
+  </LayoutWidget>
 </template>
 
 <script setup lang="ts">
@@ -63,6 +63,7 @@ import { useI18n } from "vue-i18n";
 import { useModal } from "@/shared/modal";
 import { useSalesRepCustomer } from "../composables/useSalesRepCustomer";
 import CustomerCommunicationModal from "./customer-communication-modal.vue";
+import LayoutWidget from "./layout-widget.vue";
 
 interface IProps {
   organizationId: string;

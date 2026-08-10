@@ -1,3 +1,6 @@
+#import "../../catalog/fragments/property.graphql"
+#import "../../catalog/fragments/availabilityData.graphql"
+
 fragment savedForLaterLineItem on LineItemType {
   id
   name
@@ -32,6 +35,12 @@ fragment savedForLaterLineItem on LineItemType {
     vendor {
       id
       name
+    }
+    availabilityData {
+      ...availabilityData
+    }
+    properties {
+      ...property
     }
     price {
       actual {

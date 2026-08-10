@@ -1,3 +1,5 @@
+import { globals } from "@/core/globals";
+import type { MoneyType } from "./api/graphql/types";
 import type { SalesRepRuleType } from "./types";
 import type { StatWidgetToneType } from "./types/widgets";
 
@@ -113,9 +115,34 @@ export function buildStatisticsWindows(now: Date = new Date()): StatisticsWindow
   };
 }
 
-// A KPI count for a stat card — an em dash placeholder while the source is still loading / absent.
+// The one formatting seam for every stat figure (VCST-5586): an absent metric reads as 0, never as a
+// blank or a dash. Loading and error aren't values, so <StatWidget> owns those, not this.
+// Fallbacks format in globals' culture/currency. The statistics queries send that same currencyCode,
+// so their fallbacks match; the customers/orders queries send none, so a fallback there assumes the
+// backend converted to the same currency.
+const EMPTY_STAT_VALUE = "0";
+
 export function formatStatCount(value?: number | null): string {
-  return value != null ? String(value) : "—";
+  return new Intl.NumberFormat(globals.cultureName).format(value ?? 0);
+}
+
+// Client-side currency formatting follows <VcTotalDisplay>, so an absent amount reads as a currency
+// zero rather than a bare one — except before globals are bootstrapped, when there is no currency to
+// format with and a plain 0 is the honest answer.
+export function formatStatMoney(money?: Pick<MoneyType, "formattedAmount"> | null): string {
+  // Checks the string, not just the object: an empty formattedAmount is legal on the wire and would
+  // otherwise render the exact blank this fix removes.
+  if (money?.formattedAmount) {
+    return money.formattedAmount;
+  }
+
+  // Intl rejects style:"currency" without a currency.
+  const currency: string | undefined = globals.currencyCode;
+  if (!currency) {
+    return EMPTY_STAT_VALUE;
+  }
+
+  return new Intl.NumberFormat(globals.cultureName, { style: "currency", currency }).format(0);
 }
 
 // Backend percent is already ×100 and null when the baseline is zero (no delta then); tri-state

@@ -35,7 +35,8 @@
         "search_aria": "Szukaj klientów",
         "empty": "Nie znaleziono klientów",
         "no_results": "Żaden klient nie pasuje do wyszukiwania",
-        "reset_search": "Resetuj wyszukiwanie"
+        "reset_search": "Resetuj wyszukiwanie",
+        "load_failed": "Nie udało się wczytać klientów"
       }
     },
     "hub": {
@@ -66,7 +67,39 @@
           "new_customers": "{count} nowych klientów",
           "placed_today": "{count} złożono dzisiaj",
           "new_this_week": "{count} nowych w tym tygodniu",
-          "mtd_of_ytd": "{percent}% roku"
+          "mtd_of_ytd": "{percent}% roku",
+          "load_failed": "Nie udało się wczytać"
+        }
+      },
+      "layout": {
+        "edit": "Edytuj układ",
+        "editing": "Edytowanie układu",
+        "hint": "— przeciągnij blok za uchwyt, aby zmienić kolejność, lub ukryj go przyciskiem ✕.",
+        "hint_keyboard": "Klawiatura: spacja chwyta blok, strzałki go przesuwają, spacja upuszcza, Esc anuluje.",
+        "save": "Zapisz układ",
+        "cancel": "Anuluj",
+        "reset": "Przywróć domyślne",
+        "save_failed": "Nie udało się zapisać układu. Twoje zmiany nie przepadły — spróbuj ponownie.",
+        "load_failed": "Nie udało się wczytać zapisanego układu, więc wyświetlany jest układ domyślny. Edycja jest niedostępna do czasu wczytania — odśwież stronę.",
+        "hidden_widgets": "Ukryte widżety",
+        "visible_stats": "Widoczne wskaźniki",
+        "hidden_stats": "Ukryte wskaźniki",
+        "empty_visible": "Przeciągnij tutaj wskaźnik, aby go pokazać",
+        "empty_hidden": "Przeciągnij tutaj wskaźnik, aby go ukryć",
+        "max_rows": "Maks. wierszy",
+        "a11y": {
+          "reorder": "Zmień kolejność: {title}",
+          "hide": "Ukryj {title}",
+          "show": "Pokaż {title}",
+          "grabbed": "Chwycono {title}. Pozycja {position} z {total}. Użyj strzałek, aby przenieść, spacji, aby upuścić, Escape, aby anulować.",
+          "grabbed_parkable": "Chwycono {title}. Pozycja {position} z {total}. Użyj strzałek w lewo i w prawo, aby przenieść, w górę i w dół, aby ukryć lub pokazać, spacji, aby upuścić, Escape, aby anulować.",
+          "moved": "Przeniesiono {title} na pozycję {position} z {total}.",
+          "dropped": "Upuszczono {title} na pozycji {position} z {total}.",
+          "edge": "{title} jest już na pozycji {position} z {total}.",
+          "cancelled": "Anulowano przenoszenie {title}.",
+          "parked": "Ukryto {title}.",
+          "restored": "Pokazano {title}.",
+          "max_rows": "Maksymalna liczba wierszy wyświetlanych przez {title}, od {min} do {max}"
         }
       }
     },
@@ -131,7 +164,8 @@
       "items": "Pozycje",
       "status": "Status",
       "total": "Razem",
-      "filter_all": "Wszyscy"
+      "filter_all": "Wszyscy",
+      "load_failed": "Nie udało się wczytać zamówień"
     },
     "top_sellers": {
       "title": "Najlepsi sprzedawcy",
@@ -141,7 +175,8 @@
       "revenue": "Przychody",
       "empty": "Brak sprzedaży w tym okresie",
       "no_results": "Brak sprzedaży w tej kategorii",
-      "all_categories": "Wszystkie kategorie"
+      "all_categories": "Wszystkie kategorie",
+      "load_failed": "Nie udało się wczytać bestsellerów"
     },
     "rules": {
       "customer": {
@@ -149,6 +184,25 @@
           "All": "Wszyscy"
         }
       }
+    },
+    "list_sharing": {
+      "share_customers_label": "Klient",
+      "share_customers_placeholder": "Wybierz klienta",
+      "share_customers_error": "Nie udało się wczytać listy klientów. Spróbuj ponownie.",
+      "share_replace_hint": "Wcześniej wybrany klient utraci dostęp do tej listy.",
+      "share_message_label": "Wiadomość",
+      "share_message_placeholder": "Opcjonalna wiadomość",
+      "share_channels_label": "Wyślij przez",
+      "share_email_label": "E-mail",
+      "share_push_label": "Powiadomienie push",
+      "share_default_title": "Nowa lista od Twojego przedstawiciela handlowego",
+      "share_default_message": "Cześć! Lista „{listName}” jest już dostępna dla Twojej organizacji. Sprawdź ją:",
+      "share_success": "Lista została udostępniona klientowi.",
+      "share_partial": "Lista została udostępniona, ale nie wszystkie powiadomienia zostały dostarczone.",
+      "share_notify_error": "Lista została zapisana, ale nie udało się powiadomić klienta.",
+      "scope_label": "Klient",
+      "status": "Udostępniona klientowi",
+      "badge": "Polecane przez Twojego przedstawiciela handlowego"
     }
   }
 }

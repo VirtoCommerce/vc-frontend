@@ -35,7 +35,8 @@
         "search_aria": "Rechercher des clients",
         "empty": "Aucun client trouvé",
         "no_results": "Aucun client ne correspond à votre recherche",
-        "reset_search": "Réinitialiser la recherche"
+        "reset_search": "Réinitialiser la recherche",
+        "load_failed": "Impossible de charger les clients"
       }
     },
     "hub": {
@@ -66,7 +67,39 @@
           "new_customers": "{count} nouveaux clients",
           "placed_today": "{count} passées aujourd'hui",
           "new_this_week": "{count} nouveaux cette semaine",
-          "mtd_of_ytd": "{percent}% de l'année"
+          "mtd_of_ytd": "{percent}% de l'année",
+          "load_failed": "Échec du chargement"
+        }
+      },
+      "layout": {
+        "edit": "Modifier la disposition",
+        "editing": "Modification de la disposition",
+        "hint": "— faites glisser un bloc par sa poignée pour le réorganiser, ou masquez-le avec ✕.",
+        "hint_keyboard": "Clavier : la barre d'espace saisit un bloc, les flèches le déplacent, espace le dépose, Échap annule.",
+        "save": "Enregistrer la disposition",
+        "cancel": "Annuler",
+        "reset": "Réinitialiser",
+        "save_failed": "La disposition n'a pas pu être enregistrée. Vos modifications sont conservées — réessayez.",
+        "load_failed": "La disposition enregistrée n'a pas pu être chargée, l'agencement par défaut est donc affiché. La modification est indisponible jusqu'au chargement — actualisez la page.",
+        "hidden_widgets": "Widgets masqués",
+        "visible_stats": "Indicateurs visibles",
+        "hidden_stats": "Indicateurs masqués",
+        "empty_visible": "Faites glisser un indicateur ici pour l'afficher",
+        "empty_hidden": "Faites glisser un indicateur ici pour le masquer",
+        "max_rows": "Nombre de lignes max",
+        "a11y": {
+          "reorder": "Réorganiser {title}",
+          "hide": "Masquer {title}",
+          "show": "Afficher {title}",
+          "grabbed": "{title} saisi. Position {position} sur {total}. Utilisez les flèches pour le déplacer, espace pour le déposer, échap pour annuler.",
+          "grabbed_parkable": "{title} saisi. Position {position} sur {total}. Utilisez les flèches gauche et droite pour le déplacer, haut et bas pour le masquer ou l'afficher, espace pour le déposer, échap pour annuler.",
+          "moved": "{title} déplacé en position {position} sur {total}.",
+          "dropped": "{title} déposé en position {position} sur {total}.",
+          "edge": "{title} est déjà en position {position} sur {total}.",
+          "cancelled": "Déplacement de {title} annulé.",
+          "parked": "{title} masqué.",
+          "restored": "{title} affiché.",
+          "max_rows": "Nombre de lignes max affiché par {title}, entre {min} et {max}"
         }
       }
     },
@@ -131,7 +164,8 @@
       "items": "Articles",
       "status": "Statut",
       "total": "Total",
-      "filter_all": "Tous"
+      "filter_all": "Tous",
+      "load_failed": "Impossible de charger les commandes"
     },
     "top_sellers": {
       "title": "Meilleures ventes",
@@ -141,7 +175,8 @@
       "revenue": "Revenus",
       "empty": "Aucune vente sur cette période",
       "no_results": "Aucune vente dans cette catégorie",
-      "all_categories": "Toutes catégories"
+      "all_categories": "Toutes catégories",
+      "load_failed": "Impossible de charger les meilleures ventes"
     },
     "rules": {
       "customer": {
@@ -149,6 +184,25 @@
           "All": "Tous"
         }
       }
+    },
+    "list_sharing": {
+      "share_customers_label": "Client",
+      "share_customers_placeholder": "Sélectionner un client",
+      "share_customers_error": "La liste des clients n'a pas pu être chargée. Veuillez réessayer.",
+      "share_replace_hint": "Le client précédemment sélectionné perdra l'accès à cette liste.",
+      "share_message_label": "Message",
+      "share_message_placeholder": "Message facultatif à inclure",
+      "share_channels_label": "Envoyer par",
+      "share_email_label": "E-mail",
+      "share_push_label": "Notification push",
+      "share_default_title": "Une nouvelle liste de votre commercial",
+      "share_default_message": "Bonjour ! Je viens de partager la liste « {listName} » avec votre organisation. Découvrez-la :",
+      "share_success": "Liste partagée avec le client.",
+      "share_partial": "Liste partagée, mais toutes les notifications n'ont pas été délivrées.",
+      "share_notify_error": "La liste a été enregistrée, mais le client n'a pas pu être notifié.",
+      "scope_label": "Client",
+      "status": "Partagé avec le client",
+      "badge": "Recommandé par votre commercial"
     }
   }
 }

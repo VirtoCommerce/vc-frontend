@@ -1025,7 +1025,8 @@
           "Organization": "Organisation",
           "AnyoneAnonymous": "Tout le monde (lecture seule)"
         },
-        "clipboard_success": "Lien copié"
+        "clipboard_success": "Lien copié",
+        "save_error": "La liste n'a pas pu être enregistrée. Veuillez réessayer."
       },
       "delete_wishlist_modal": {
         "title": "Confirmer la suppression",

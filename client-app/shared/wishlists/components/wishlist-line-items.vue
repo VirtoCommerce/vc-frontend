@@ -35,7 +35,11 @@
         @remove="() => removeSingleItem(item.id)"
         @link-click="$emit('linkClick', item.product)"
       >
-        <div v-if="editable && !item.deleted" ref="itemDefaultSlot" :style="{ width: itemDefaultSlotWidth }">
+        <div
+          v-if="(editable || addableToCart) && !item.deleted"
+          ref="itemDefaultSlot"
+          :style="{ width: itemDefaultSlotWidth }"
+        >
           <VcProductButton
             v-if="item.isConfigurable"
             no-wrap
@@ -93,7 +97,7 @@
             {{ $t("validation_error.CART_PRODUCT_UNAVAILABLE") }}
           </VcAlert>
 
-          <div v-if="editable && validationErrors.length" class="flex flex-col gap-1">
+          <div v-if="(editable || addableToCart) && validationErrors.length" class="flex flex-col gap-1">
             <template v-for="(validationError, index) in validationErrors" :key="index">
               <VcAlert
                 v-if="validationError.objectId === item.id && !!validationError.errorMessage"
@@ -132,6 +136,8 @@ interface IProps {
   items: PreparedLineItemType[];
   pendingItems?: Record<string, boolean>;
   editable?: boolean;
+  // Lets a read-only shared list stay shoppable: the add-to-cart control without list editing (VCST-5332).
+  addableToCart?: boolean;
   navigatable?: boolean;
 }
 
@@ -139,6 +145,7 @@ const emit = defineEmits<IEmits>();
 withDefaults(defineProps<IProps>(), {
   pendingItems: () => ({}),
   editable: true,
+  addableToCart: false,
   navigatable: true,
 });
 
