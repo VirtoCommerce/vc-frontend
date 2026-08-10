@@ -86,6 +86,8 @@
                   :aria-label="$t(isAllSelected ? 'ui_kit.table.deselect_all' : 'ui_kit.table.select_all')"
                   @change="toggleSelectAll"
                 />
+
+                <span v-else class="sr-only">{{ $t("ui_kit.table.selection_column") }}</span>
               </th>
 
               <th
