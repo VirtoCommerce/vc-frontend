@@ -71,7 +71,7 @@ const _bgColor = computed(() => getColorValue(props.bgColor));
   }
 
   &--loading {
-    @apply pointer-events-none opacity-50;
+    @apply pointer-events-none opacity-70;
   }
 
   &__bg {

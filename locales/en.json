@@ -1029,7 +1029,8 @@
           "Organization": "Organization",
           "AnyoneAnonymous": "Anyone (readonly)"
         },
-        "clipboard_success": "Link copied"
+        "clipboard_success": "Link copied",
+        "save_error": "The list could not be saved. Please try again."
       },
       "delete_wishlist_modal": {
         "title": "Confirm Delete",

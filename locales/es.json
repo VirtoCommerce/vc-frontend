@@ -1029,7 +1029,8 @@
           "Organization": "Organización",
           "AnyoneAnonymous": "Cualquiera (solo lectura)"
         },
-        "clipboard_success": "Enlace copiado"
+        "clipboard_success": "Enlace copiado",
+        "save_error": "No se pudo guardar la lista. Inténtalo de nuevo."
       },
       "delete_wishlist_modal": {
         "title": "Confirmar eliminación",

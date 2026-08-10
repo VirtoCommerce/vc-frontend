@@ -36,6 +36,8 @@ const createWrapper = createWrapperFactory(mount, TopSellers, {
     renderStubDefaultSlot: false,
     stubs: {
       VcWidget: { template: '<div><slot name="default-container" /></div>' },
+      // LayoutWidget's drag controls: never rendered here, but the compiler resolves them anyway.
+      VcButton: true,
       VcTable: true,
       VcTableColumn: true,
       VcEmptyView: true,

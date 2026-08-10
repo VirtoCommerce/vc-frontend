@@ -1029,7 +1029,8 @@
           "Organization": "Organizacja",
           "AnyoneAnonymous": "Każdy (tylko do odczytu)"
         },
-        "clipboard_success": "Link skopiowany"
+        "clipboard_success": "Link skopiowany",
+        "save_error": "Nie udało się zapisać listy. Spróbuj ponownie."
       },
       "delete_wishlist_modal": {
         "title": "Potwierdź usunięcie",
