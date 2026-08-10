@@ -65,7 +65,7 @@
           "vs_last_year": "{delta} vs poprzedni rok",
           "ordered_this_month": "{count} zamówiło w tym miesiącu",
           "new_customers": "{count} nowych klientów",
-          "placed_today": "{count} złożono dzisiaj",
+          "of_recent_orders": "z {count} w ciągu ostatnich 7 dni",
           "new_this_week": "{count} nowych w tym tygodniu",
           "mtd_of_ytd": "{percent}% roku",
           "load_failed": "Nie udało się wczytać"

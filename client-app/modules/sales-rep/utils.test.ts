@@ -62,8 +62,26 @@ describe("buildStatisticsWindows", () => {
     expect(w.mtdTo).toBe(dayEnd);
     expect(w.ytdTo).toBe(dayEnd);
     expect(w.weekTo).toBe(dayEnd);
-    expect(w.todayTo).toBe(dayEnd);
-    expect(w.todayFrom).toBe("2025-06-10T00:00:00.000Z");
+    expect(w.recentTo).toBe(dayEnd);
+  });
+
+  it("spans a full 7 days of the rolling window, today included", () => {
+    const now = new Date(Date.UTC(2025, 5, 10, 8, 15, 0)); // Tue Jun 10
+    const w = buildStatisticsWindows(now);
+
+    // Jun 4…Jun 10 inclusive — 6 days back, not 7, or the window would cover 8 calendar days.
+    expect(w.recentFrom).toBe("2025-06-04T00:00:00.000Z");
+    expect(w.recentTo).toBe("2025-06-10T23:59:59.999Z");
+  });
+
+  it("keeps the rolling window full on a Monday, when week-to-date would be nearly empty", () => {
+    // The reason this window is rolling: the New orders card it bounds must not reset every Monday.
+    const monday = new Date(Date.UTC(2025, 5, 9, 8, 15, 0));
+    const w = buildStatisticsWindows(monday);
+
+    expect(w.weekFrom).toBe("2025-06-09T00:00:00.000Z");
+    expect(w.recentFrom).toBe("2025-06-03T00:00:00.000Z");
+    expect(new Date(w.recentFrom).getTime()).toBeLessThan(new Date(w.weekFrom).getTime());
   });
 });
 

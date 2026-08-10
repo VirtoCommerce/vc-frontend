@@ -65,7 +65,7 @@
           "vs_last_year": "{delta} vs viime vuosi",
           "ordered_this_month": "{count} tilasi tässä kuussa",
           "new_customers": "{count} uutta asiakasta",
-          "placed_today": "{count} tänään",
+          "of_recent_orders": "{count} tilauksesta viimeisten 7 päivän aikana",
           "new_this_week": "{count} uutta tällä viikolla",
           "mtd_of_ytd": "{percent}% vuodesta",
           "load_failed": "Lataus epäonnistui"

@@ -65,7 +65,7 @@
           "vs_last_year": "{delta} к прошлому году",
           "ordered_this_month": "{count} заказали в этом месяце",
           "new_customers": "{count} новых клиентов",
-          "placed_today": "{count} сегодня",
+          "of_recent_orders": "из {count} за последние 7 дней",
           "new_this_week": "{count} новых за неделю",
           "mtd_of_ytd": "{percent}% от года",
           "load_failed": "Не удалось загрузить"

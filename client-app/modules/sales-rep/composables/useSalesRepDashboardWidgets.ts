@@ -25,12 +25,12 @@ export function useSalesRepDashboardWidgets() {
     const cartsState = { loading: cartsLoading.value, failed: Boolean(cartsError.value) };
     const countsState = { loading: countsLoading.value, failed: Boolean(countsError.value) };
 
-    // Plain "new activity" counts (green, no icon) — a count, not a comparison. Always rendered, so
-    // an empty period reads as "0 placed today" rather than dropping the row (VCST-5586).
+    // Plain counts (no icon) — a count, not a comparison. Always rendered, so an empty period reads
+    // as "0 new this week" rather than dropping the row (VCST-5586).
     // Each is passed to t() as the formatted string plus the raw number: the string is what renders,
     // the number is vue-i18n's plural selector, so locales that need plural forms (ru, pl) can add
     // them without the grouped string breaking the choice.
-    const placedToday = orders?.newOrdersToday?.count ?? 0;
+    const recentOrders = orders?.recentOrders?.count ?? 0;
     const newCarts = carts?.newCartsThisWeek?.count ?? 0;
     const thisMonth = customerCounts?.thisMonth;
     const orderingCustomers = thisMonth?.orderingCustomers ?? 0;
@@ -49,9 +49,13 @@ export function useSalesRepDashboardWidgets() {
         sub: t("sales_rep.hub.dashboard.stats.value_total", {
           amount: formatStatMoney(orders?.newOrders?.total),
         }),
-        // "{n} placed today" — orders whose created date is today. Plain green count, no chevron.
-        delta: t("sales_rep.hub.dashboard.stats.placed_today", { count: formatStatCount(placedToday) }, placedToday),
-        deltaTone: "positive",
+        // "of {n} in the last 7 days" — how much of the window's order flow still needs the rep.
+        delta: t(
+          "sales_rep.hub.dashboard.stats.of_recent_orders",
+          { count: formatStatCount(recentOrders) },
+          recentOrders,
+        ),
+        deltaTone: "neutral",
       },
       active_carts: {
         ...cartsState,

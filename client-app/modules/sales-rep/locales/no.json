@@ -65,7 +65,7 @@
           "vs_last_year": "{delta} vs i fjor",
           "ordered_this_month": "{count} bestilte denne måneden",
           "new_customers": "{count} nye kunder",
-          "placed_today": "{count} lagt inn i dag",
+          "of_recent_orders": "av {count} de siste 7 dagene",
           "new_this_week": "{count} nye denne uken",
           "mtd_of_ytd": "{percent}% av året",
           "load_failed": "Kunne ikke laste"

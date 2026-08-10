@@ -65,7 +65,7 @@
           "vs_last_year": "前年比 {delta}",
           "ordered_this_month": "今月 {count} 件が注文",
           "new_customers": "新規顧客 {count} 件",
-          "placed_today": "本日 {count} 件",
+          "of_recent_orders": "過去7日間の {count} 件中",
           "new_this_week": "今週 新規 {count} 件",
           "mtd_of_ytd": "年初来の {percent}%",
           "load_failed": "読み込みに失敗しました"
