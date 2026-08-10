@@ -129,7 +129,8 @@
       "retry": "Riprova",
       "select_row_number": "Select row {number}",
       "select_all": "Seleziona tutto",
-      "deselect_all": "Deseleziona tutto"
+      "deselect_all": "Deseleziona tutto",
+      "selection_column": "Selezione riga"
     },
     "slider": {
       "tooltip": "{count} articoli",
