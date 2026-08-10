@@ -111,7 +111,7 @@
         "avg_order_value": "Durchschn. Bestellwert"
       },
       "stats": {
-        "per_order": "Durchschnitt pro Bestellung (YTD)"
+        "per_order": "Durchschnitt pro Bestellung (seit Jahresbeginn)"
       },
       "info": {
         "title": "Kundeninformationen",

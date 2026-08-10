@@ -26,7 +26,7 @@
       "table": {
         "customer": "Client",
         "last_order": "Ma dernière commande",
-        "ytd": "Achats YTD",
+        "ytd": "Achats de l'année",
         "last_year": "Année dernière",
         "orders_count": "{count} commandes",
         "all_customers": "Tous",
@@ -111,7 +111,7 @@
         "avg_order_value": "Valeur moyenne des commandes"
       },
       "stats": {
-        "per_order": "Moyenne par commande (YTD)"
+        "per_order": "Moyenne par commande (année en cours)"
       },
       "info": {
         "title": "Informations client",
