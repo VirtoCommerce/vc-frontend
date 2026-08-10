@@ -1,5 +1,5 @@
 <template>
-  <VcWidget :title="title" size="md" class="top-sellers">
+  <LayoutWidget :title="title" size="md" class="top-sellers">
     <template #default-container>
       <div class="top-sellers__body">
         <!-- Category filter chips: top-seller filter rules = the store catalog's top-level categories. -->
@@ -28,7 +28,7 @@
             v-else
             :loading="loading"
             :items="items"
-            :skeleton-rows="TOP_SELLERS_DEFAULT_TAKE"
+            :skeleton-rows="rowLimit"
             :sort="sortInfo"
             mobile-breakpoint="lg"
             @header-click="applySort"
@@ -101,19 +101,21 @@
         </div>
       </div>
     </template>
-  </VcWidget>
+  </LayoutWidget>
 </template>
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { getProductRoute } from "@/core/utilities/product";
+import { useBlockChrome } from "../composables/useBlockChrome";
 import { useSalesRepColumnSort } from "../composables/useSalesRepColumnSort";
 import { useSalesRepPeriodFilter } from "../composables/useSalesRepPeriodFilter";
 import { useSalesRepRules } from "../composables/useSalesRepRules";
 import { useSalesRepTopSellers } from "../composables/useSalesRepTopSellers";
 import { TOP_SELLERS_DEFAULT_TAKE } from "../constants";
 import { selectableFilterRules } from "../utils";
+import LayoutWidget from "./layout-widget.vue";
 import SalesRepRuleChips from "./sales-rep-rule-chips.vue";
 
 interface IProps {
@@ -148,12 +150,17 @@ const { sortInfo, isColumnSortable, applySort } = useSalesRepColumnSort({
   rules: sortRules,
 });
 
+// The saved cap, not the draft: it is a query variable, so it applies on save.
+const chrome = useBlockChrome();
+const rowLimit = computed(() => chrome?.savedSettings.value.maxRows ?? TOP_SELLERS_DEFAULT_TAKE);
+
 const { items, loading, error } = useSalesRepTopSellers({
   organizationId: () => props.organizationId,
   sort: () => sort.value,
   filter: () => filter.value,
   periodFrom,
   periodTo,
+  take: () => rowLimit.value,
 });
 
 const failed = computed(() => Boolean(error.value));

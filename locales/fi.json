@@ -1026,7 +1026,8 @@
           "Organization": "Organisaatio",
           "AnyoneAnonymous": "Kuka tahansa (vain luku)"
         },
-        "clipboard_success": "Linkki kopioitu"
+        "clipboard_success": "Linkki kopioitu",
+        "save_error": "Listaa ei voitu tallentaa. Yritä uudelleen."
       },
       "delete_wishlist_modal": {
         "title": "Vahvista poisto",
