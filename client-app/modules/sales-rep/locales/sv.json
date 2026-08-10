@@ -35,7 +35,8 @@
         "search_aria": "Sök kunder",
         "empty": "Inga kunder hittades",
         "no_results": "Inga kunder matchar din sökning",
-        "reset_search": "Återställ sökning"
+        "reset_search": "Återställ sökning",
+        "load_failed": "Kunde inte läsa in kunderna"
       }
     },
     "hub": {
@@ -66,7 +67,39 @@
           "new_customers": "{count} nya kunder",
           "placed_today": "{count} lagda i dag",
           "new_this_week": "{count} nya denna vecka",
-          "mtd_of_ytd": "{percent}% av året"
+          "mtd_of_ytd": "{percent}% av året",
+          "load_failed": "Kunde inte läsas in"
+        }
+      },
+      "layout": {
+        "edit": "Redigera layout",
+        "editing": "Redigerar layout",
+        "hint": "— dra ett block i handtaget för att ändra ordning, eller dölj det med ✕.",
+        "hint_keyboard": "Tangentbord: mellanslag tar tag i ett block, piltangenterna flyttar det, mellanslag släpper, Esc avbryter.",
+        "save": "Spara layout",
+        "cancel": "Avbryt",
+        "reset": "Återställ",
+        "save_failed": "Layouten kunde inte sparas. Dina ändringar finns kvar — försök igen.",
+        "load_failed": "Den sparade layouten kunde inte läsas in, så standardordningen visas. Redigering är inte tillgänglig förrän den lästs in — uppdatera sidan.",
+        "hidden_widgets": "Dolda widgetar",
+        "visible_stats": "Synliga nyckeltal",
+        "hidden_stats": "Dolda nyckeltal",
+        "empty_visible": "Dra ett nyckeltal hit för att visa det",
+        "empty_hidden": "Dra ett nyckeltal hit för att dölja det",
+        "max_rows": "Max rader",
+        "a11y": {
+          "reorder": "Ändra ordning på {title}",
+          "hide": "Dölj {title}",
+          "show": "Visa {title}",
+          "grabbed": "{title} upplockad. Position {position} av {total}. Använd piltangenterna för att flytta, mellanslag för att släppa, escape för att avbryta.",
+          "grabbed_parkable": "{title} upplockad. Position {position} av {total}. Använd vänster och höger piltangent för att flytta, upp och ner för att dölja eller visa, mellanslag för att släppa, escape för att avbryta.",
+          "moved": "{title} flyttad till position {position} av {total}.",
+          "dropped": "{title} släppt på position {position} av {total}.",
+          "edge": "{title} är redan på plats {position} av {total}.",
+          "cancelled": "Flytt av {title} avbruten.",
+          "parked": "{title} dold.",
+          "restored": "{title} visas.",
+          "max_rows": "Maximalt antal rader som visas av {title}, mellan {min} och {max}"
         }
       }
     },
@@ -131,7 +164,8 @@
       "items": "Artiklar",
       "status": "Status",
       "total": "Totalt",
-      "filter_all": "Alla"
+      "filter_all": "Alla",
+      "load_failed": "Kunde inte läsa in ordrarna"
     },
     "top_sellers": {
       "title": "Topp säljare",
@@ -141,7 +175,8 @@
       "revenue": "Intäkter",
       "empty": "Ingen försäljning under denna period",
       "no_results": "Ingen försäljning i denna kategori",
-      "all_categories": "Alla kategorier"
+      "all_categories": "Alla kategorier",
+      "load_failed": "Kunde inte läsa in bästsäljarna"
     },
     "rules": {
       "customer": {
@@ -149,6 +184,25 @@
           "All": "Alla"
         }
       }
+    },
+    "list_sharing": {
+      "share_customers_label": "Kund",
+      "share_customers_placeholder": "Välj kund",
+      "share_customers_error": "Kundlistan kunde inte laddas. Försök igen.",
+      "share_replace_hint": "Kunden som valdes tidigare förlorar åtkomsten till den här listan.",
+      "share_message_label": "Meddelande",
+      "share_message_placeholder": "Valfritt meddelande",
+      "share_channels_label": "Skicka via",
+      "share_email_label": "E-post",
+      "share_push_label": "Push-avisering",
+      "share_default_title": "En ny lista från din säljare",
+      "share_default_message": "Hej! Jag har just delat listan ”{listName}” med din organisation. Ta en titt:",
+      "share_success": "Listan har delats med kunden.",
+      "share_partial": "Listan har delats, men alla aviseringar levererades inte.",
+      "share_notify_error": "Listan sparades, men kunden kunde inte meddelas.",
+      "scope_label": "Kund",
+      "status": "Delad med kund",
+      "badge": "Rekommenderas av din säljare"
     }
   }
 }

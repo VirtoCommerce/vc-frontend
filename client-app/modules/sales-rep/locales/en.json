@@ -35,7 +35,8 @@
         "search_aria": "Search customers",
         "empty": "No customers found",
         "no_results": "No customers match your search",
-        "reset_search": "Reset search"
+        "reset_search": "Reset search",
+        "load_failed": "Couldn't load customers"
       }
     },
     "hub": {
@@ -66,7 +67,39 @@
           "new_customers": "{count} new customers",
           "placed_today": "{count} placed today",
           "new_this_week": "{count} new this week",
-          "mtd_of_ytd": "{percent}% of YTD"
+          "mtd_of_ytd": "{percent}% of YTD",
+          "load_failed": "Couldn't load"
+        }
+      },
+      "layout": {
+        "edit": "Edit layout",
+        "editing": "Editing layout",
+        "hint": "— drag a block by its handle to reorder it, or hide it with ✕.",
+        "hint_keyboard": "Keyboard: press space on a block to pick it up, arrow keys to move it, space to drop, escape to cancel.",
+        "save": "Save layout",
+        "cancel": "Cancel",
+        "reset": "Reset",
+        "save_failed": "The layout could not be saved. Your changes are still here — try again.",
+        "load_failed": "The saved layout could not be loaded, so the default arrangement is shown. Editing is unavailable until it loads — try refreshing the page.",
+        "hidden_widgets": "Hidden widgets",
+        "visible_stats": "Visible stats",
+        "hidden_stats": "Hidden stats",
+        "empty_visible": "Drag a stat here to show it",
+        "empty_hidden": "Drag a stat here to hide it",
+        "max_rows": "Max rows",
+        "a11y": {
+          "reorder": "Reorder {title}",
+          "hide": "Hide {title}",
+          "show": "Show {title}",
+          "grabbed": "{title} grabbed. Position {position} of {total}. Use the arrow keys to move it, space to drop it, escape to cancel.",
+          "grabbed_parkable": "{title} grabbed. Position {position} of {total}. Use the left and right arrow keys to move it, up and down to hide or show it, space to drop it, escape to cancel.",
+          "moved": "{title} moved to position {position} of {total}.",
+          "dropped": "{title} dropped at position {position} of {total}.",
+          "edge": "{title} is already at position {position} of {total}.",
+          "cancelled": "Move of {title} cancelled.",
+          "parked": "{title} hidden.",
+          "restored": "{title} shown.",
+          "max_rows": "Maximum rows shown by {title}, between {min} and {max}"
         }
       }
     },
@@ -131,7 +164,8 @@
       "items": "Items",
       "status": "Status",
       "total": "Total",
-      "filter_all": "All"
+      "filter_all": "All",
+      "load_failed": "Couldn't load orders"
     },
     "top_sellers": {
       "title": "Top sellers",
@@ -141,7 +175,8 @@
       "revenue": "Revenue",
       "empty": "No sales in this period",
       "no_results": "No sales in this category",
-      "all_categories": "All categories"
+      "all_categories": "All categories",
+      "load_failed": "Couldn't load top sellers"
     },
     "rules": {
       "customer": {
@@ -149,6 +184,25 @@
           "All": "All"
         }
       }
+    },
+    "list_sharing": {
+      "share_customers_label": "Customer",
+      "share_customers_placeholder": "Select customer",
+      "share_customers_error": "The customer list could not be loaded. Please try again.",
+      "share_replace_hint": "The previously selected customer will lose access to this list.",
+      "share_message_label": "Message",
+      "share_message_placeholder": "Optional message to include",
+      "share_channels_label": "Send via",
+      "share_email_label": "Email",
+      "share_push_label": "Push notification",
+      "share_default_title": "A new list from your sales representative",
+      "share_default_message": "Hi! I've just shared the list \"{listName}\" with your organization. Take a look:",
+      "share_success": "List shared with the customer.",
+      "share_partial": "List shared, but not every notification was delivered.",
+      "share_notify_error": "The list was saved, but the customer could not be notified.",
+      "scope_label": "Customer",
+      "status": "Shared with customer",
+      "badge": "Recommended by your sales representative"
     }
   }
 }

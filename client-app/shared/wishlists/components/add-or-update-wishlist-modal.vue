@@ -8,6 +8,7 @@
     dividers
     is-mobile-fullscreen
     test-id="add-or-update-wishlist-modal"
+    :is-persistent="saving"
   >
     <div class="space-y-4">
       <VcInput
@@ -15,7 +16,7 @@
         test-id-input="wishlist-name-input"
         :label="$t('shared.wishlists.add_or_update_wishlist_modal.list_name_label')"
         :placeholder="$t('shared.wishlists.add_or_update_wishlist_modal.list_name_placeholder')"
-        :disabled="loading"
+        :disabled="saving"
         :message="errors.name"
         :error="!!errors.name && meta.dirty"
         required
@@ -25,7 +26,7 @@
         v-model="description"
         data-test-id="wishlist-description-input"
         :label="$t('common.labels.description')"
-        :disabled="loading"
+        :disabled="saving"
         :message="errors.description"
         :error="!!errors.description && meta.dirty"
         rows="4"
@@ -39,7 +40,7 @@
           test-id-dropdown="wishlist-sharing-scope-select"
           :label="$t('shared.wishlists.add_or_update_wishlist_modal.sharing_scope_label')"
           :placeholder="$t('shared.wishlists.add_or_update_wishlist_modal.sharing_scope_placeholder')"
-          :disabled="loading"
+          :disabled="saving"
           :items="listSharingScopes"
           text-field="label"
           value-field="id"
@@ -63,18 +64,35 @@
             />
           </template>
         </VcInput>
+
+        <component
+          :is="activeScopeElement"
+          v-if="activeScopeElement"
+          ref="scopeControls"
+          :shared-with-id="listSharedWithId"
+          :sharing-link="sharingLink"
+          :saving="saving"
+        />
       </div>
     </div>
 
     <template #actions="{ close }">
-      <VcButton color="secondary" variant="outline" @click="close">
+      <!-- Dismissing mid-save would unmount the tree the follow-up still needs, losing it without a trace.
+           `isPersistent` covers Esc, the backdrop and the header X; this button needs its own guard. -->
+      <VcButton
+        data-test-id="wishlist-settings-cancel-button"
+        color="secondary"
+        variant="outline"
+        :disabled="saving"
+        @click="close"
+      >
         {{ $t("shared.wishlists.add_or_update_wishlist_modal.cancel_button") }}
       </VcButton>
 
       <VcButton
         data-test-id="wishlist-settings-save-button"
-        :loading="loading"
-        :disabled="!canSave"
+        :loading="saving"
+        :disabled="!canSave || saving"
         class="ms-auto"
         @click="save(close)"
       >
@@ -92,13 +110,16 @@
 import { toTypedSchema } from "@vee-validate/yup";
 import { useClipboard } from "@vueuse/core";
 import { useField, useForm } from "vee-validate";
-import { computed } from "vue";
+import { computed, ref, useTemplateRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { object, string } from "yup";
 import { WishlistScopeType } from "@/core/api/graphql/types";
+import { Logger } from "@/core/utilities";
 import { useUser } from "@/shared/account/composables";
 import { useNotifications } from "@/shared/notification";
+import { useWishlistSharingScopes } from "../composables/useWishlistSharingScopes";
 import { useWishlists } from "../composables/useWishlists";
+import type { IWishlistSharingScopeControlsType } from "../composables/useWishlistSharingScopes";
 import type { WishlistType } from "@/core/api/graphql/types";
 
 interface IProps {
@@ -115,30 +136,48 @@ const notifications = useNotifications();
 const listName = computed<string | undefined>(() => props.list?.name);
 const listDescription = computed<string | undefined>(() => props.list?.description);
 const listSharingScope = computed<string | undefined>(() => props.list?.sharingSetting?.scope);
+const listSharedWithId = computed<string | undefined>(() => props.list?.sharingSetting?.sharedWithId ?? undefined);
 
-const { loading, createWishlist, updateWishlist } = useWishlists();
+// `autoRefetch: false`: the composable refetches outside its own try/catch and rethrows, so a refetch hiccup after a
+// successful mutation would look like a failed save and skip the scope's follow-up. Refreshed explicitly below instead.
+const { createWishlist, updateWishlist, fetchWishlists } = useWishlists({ autoRefetch: false });
+const { sharingScopes, getSharingScope, isSharingScopeAvailable } = useWishlistSharingScopes();
+
+// Modal-owned busy flag for the save action. Driven with try/finally so the Save button can never get stuck
+// showing the loader (useWishlists' shared `loading` can leak true on error), and it guards against double-submit.
+const saving = ref(false);
 const { isCorporateMember } = useUser();
 
+const isEditMode = computed<boolean>(() => !!props.list);
+
+const scopeControls = useTemplateRef<IWishlistSharingScopeControlsType>("scopeControls");
+
 const listSharingScopes = computed(() => {
-  return [
-    {
-      id: WishlistScopeType.Private,
-      label: t(`shared.wishlists.add_or_update_wishlist_modal.sharing_scope.${WishlistScopeType.Private}`),
-    },
-    {
-      id: WishlistScopeType.AnyoneAnonymous,
-      label: t(`shared.wishlists.add_or_update_wishlist_modal.sharing_scope.${WishlistScopeType.AnyoneAnonymous}`),
-    },
-    {
-      id: WishlistScopeType.Organization,
-      label: t(`shared.wishlists.add_or_update_wishlist_modal.sharing_scope.${WishlistScopeType.Organization}`),
-    },
-  ];
+  const available = sharingScopes.value.filter(isSharingScopeAvailable);
+
+  // A scope the list already carries stays listed even when it isn't on offer, or the select would render empty and
+  // saving would silently rewrite it. The provider may be gone entirely, hence the fallback to the raw value.
+  const persisted = listSharingScope.value;
+  const isPersistedListed = available.some((scope) => scope.scope === persisted);
+  const scopes = [...available];
+
+  if (persisted && !isPersistedListed) {
+    const known = getSharingScope(persisted);
+    scopes.push({ ...(known ?? { scope: persisted, labelKey: "" }) });
+  }
+
+  return scopes.map((scope) => ({
+    id: scope.scope,
+    label: scope.labelKey ? t(scope.labelKey) : scope.scope,
+  }));
 });
 
-const listSharingScopeSupportsLink = computed(
-  () => sharingScope.value == WishlistScopeType.AnyoneAnonymous || sharingScope.value == WishlistScopeType.Organization,
+const activeScope = computed(() => getSharingScope(sharingScope.value));
+// Such a scope stays listed (see above) but must not offer its controls — that capability is what this user lacks.
+const activeScopeElement = computed(() =>
+  activeScope.value && isSharingScopeAvailable(activeScope.value) ? activeScope.value.element : undefined,
 );
+const listSharingScopeSupportsLink = computed(() => !!activeScope.value?.supportsLink);
 const sharingKey = computed(() => props.list?.sharingSetting?.id ?? crypto.randomUUID());
 const sharingLink = computed(() => `${location.protocol}//${location.host}/shared-list/${sharingKey.value}`);
 
@@ -166,32 +205,74 @@ const { value: name } = useField<string | undefined>("name");
 const { value: description } = useField<string | undefined>("description");
 const { value: sharingScope } = useField<string | undefined>("sharingScope");
 
-const isEditMode = computed<boolean>(() => !!props.list);
-const canSave = computed<boolean>(() => meta.value.dirty && meta.value.valid);
+// While the scope's component is still resolving, Save stays disabled rather than saving a half-configured scope.
+const scopeCanSave = computed(() => (activeScopeElement.value ? !!scopeControls.value?.canSave : true));
+const scopeDirty = computed(() => !!scopeControls.value?.dirty);
+
+// A scope listed only because the list already carries it renders no controls, so nothing would contribute its target
+// — and a targeted scope arriving without one is rejected. Carry the persisted value through untouched instead, so a
+// rep who lost the capability can still edit the rest of the list.
+const carriesPersistedTarget = computed(
+  () =>
+    sharingScope.value === listSharingScope.value && !!activeScope.value && !isSharingScopeAvailable(activeScope.value),
+);
+
+const canSave = computed<boolean>(
+  () => meta.value.valid && scopeCanSave.value && (meta.value.dirty || scopeDirty.value),
+);
 
 async function save(closeHandle: () => void): Promise<void> {
-  if (!meta.value.valid) {
+  if (!meta.value.valid || saving.value) {
     return;
   }
 
-  if (isEditMode.value) {
-    await updateWishlist({
-      listId: props.list!.id,
+  saving.value = true;
+  try {
+    // One mutation for the list and its sharing. A scope without controls normally contributes nothing: the backend
+    // applies a null target for its own non-targeted scopes.
+    const scopePayload =
+      scopeControls.value?.payload ?? (carriesPersistedTarget.value ? { sharedWithId: listSharedWithId.value } : {});
+    const payload = {
       listName: name.value?.trim(),
       description: description.value?.trim(),
       scope: sharingScope.value,
       sharingKey: sharingKey.value,
-    });
-  } else {
-    await createWishlist({
-      listName: name.value?.trim(),
-      description: description.value?.trim(),
-      scope: sharingScope.value,
-      sharingKey: sharingKey.value,
-    });
-  }
+      ...scopePayload,
+    };
 
-  closeHandle();
+    if (isEditMode.value) {
+      await updateWishlist({ listId: props.list!.id, ...payload });
+    } else {
+      await createWishlist(payload);
+    }
+
+    // Saved from here on, so neither the follow-up nor the refresh may surface as a save error. Both are awaited to
+    // keep the loader up.
+    try {
+      await scopeControls.value?.onSaved?.({
+        listName: name.value?.trim() ?? "",
+        sharingLink: sharingLink.value,
+      });
+    } catch (e) {
+      Logger.error("AddOrUpdateWishlistModal: sharing scope onSaved failed", e);
+    }
+
+    try {
+      await fetchWishlists();
+    } catch (e) {
+      Logger.error("AddOrUpdateWishlistModal: refreshing the lists after save failed", e);
+    }
+
+    closeHandle();
+  } catch {
+    // The underlying mutation already logs; surface a toast and let the user retry (the button resets below).
+    notifications.error({
+      text: t("shared.wishlists.add_or_update_wishlist_modal.save_error"),
+      single: true,
+    });
+  } finally {
+    saving.value = false;
+  }
 }
 
 async function copySharingLink() {

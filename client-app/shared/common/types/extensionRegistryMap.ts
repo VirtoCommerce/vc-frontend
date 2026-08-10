@@ -1,4 +1,4 @@
-import type { CustomerOrderType, Product } from "@/core/api/graphql/types";
+import type { CustomerOrderType, Product, SharingSettingType } from "@/core/api/graphql/types";
 import type { ExtendedMenuLinkType } from "@/core/types";
 import type { Component } from "vue";
 
@@ -33,5 +33,10 @@ export type ExtensionCategoryMapType = {
   orderPaymentPage: ExtensionEntryType<
     { order: CustomerOrderType; paymentTypeName: string },
     ({ order, paymentTypeName }: { order: CustomerOrderType; paymentTypeName: string }) => boolean
+  >;
+  /** The publicly reachable shared-list page. A provider decides from the sharing setting whether it has anything to say. */
+  sharedList: ExtensionEntryType<
+    { sharingSetting?: SharingSettingType },
+    (sharingSetting?: SharingSettingType) => boolean
   >;
 };
