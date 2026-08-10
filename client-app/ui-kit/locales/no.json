@@ -129,7 +129,8 @@
       "retry": "Prøv igjen",
       "select_row_number": "Select row {number}",
       "select_all": "Velg alle",
-      "deselect_all": "Fjern alle valg"
+      "deselect_all": "Fjern alle valg",
+      "selection_column": "Radvalg"
     },
     "slider": {
       "tooltip": "{count} elementer",

@@ -1,9 +1,8 @@
 <template>
   <div class="vc-action-input">
-    <p v-if="label" class="vc-action-input__label">{{ label }}</p>
-
     <VcInput
       v-model="value"
+      :label="label"
       :placeholder="placeholder"
       :readonly="readonly"
       :disabled="applied || disabled"
@@ -66,11 +65,3 @@ const value = computed({
   set: (newValue) => emit("update:modelValue", newValue),
 });
 </script>
-
-<style lang="scss">
-.vc-action-input {
-  &__label {
-    @apply pb-2 text-base font-black;
-  }
-}
-</style>

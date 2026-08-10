@@ -1,0 +1,16 @@
+query SalesRepLayout($scope: String!, $storeId: String) {
+  salesRepLayout(scope: $scope, storeId: $storeId) {
+    regions {
+      id
+      blocks {
+        id
+        type
+        hidden
+        settings {
+          key
+          value
+        }
+      }
+    }
+  }
+}

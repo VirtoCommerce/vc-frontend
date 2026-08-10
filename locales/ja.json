@@ -1025,7 +1025,8 @@
           "Organization": "組織",
           "AnyoneAnonymous": "誰でも（閲覧専用）"
         },
-        "clipboard_success": "リンクをコピーしました"
+        "clipboard_success": "リンクをコピーしました",
+        "save_error": "リストを保存できませんでした。もう一度お試しください。"
       },
       "delete_wishlist_modal": {
         "title": "Confirm Delete",

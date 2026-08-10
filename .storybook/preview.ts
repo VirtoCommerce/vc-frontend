@@ -58,6 +58,7 @@ setThemeContext({
   availableLanguages: [],
   availableCurrencies: [],
   graphQLSettings: { keepAliveInterval: 30 },
+  plugins: [],
   settings: {
     image_thumbnails_enabled: true,
     image_thumbnails_suffixes: { sm: "sm", md: "md", lg: "lg" },
