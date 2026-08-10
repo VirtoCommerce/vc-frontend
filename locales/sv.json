@@ -1025,7 +1025,8 @@
           "Organization": "Organisation",
           "AnyoneAnonymous": "Alla (endast läsning)"
         },
-        "clipboard_success": "Länk kopierad"
+        "clipboard_success": "Länk kopierad",
+        "save_error": "Listan kunde inte sparas. Försök igen."
       },
       "delete_wishlist_modal": {
         "title": "Bekräfta radering",
