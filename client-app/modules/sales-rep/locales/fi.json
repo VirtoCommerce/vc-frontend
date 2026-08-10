@@ -35,7 +35,8 @@
         "search_aria": "Hae asiakkaita",
         "empty": "Asiakkaita ei löytynyt",
         "no_results": "Yksikään asiakas ei vastaa hakuasi",
-        "reset_search": "Tyhjennä haku"
+        "reset_search": "Tyhjennä haku",
+        "load_failed": "Asiakkaita ei voitu ladata"
       }
     },
     "hub": {
@@ -66,7 +67,39 @@
           "new_customers": "{count} uutta asiakasta",
           "placed_today": "{count} tänään",
           "new_this_week": "{count} uutta tällä viikolla",
-          "mtd_of_ytd": "{percent}% vuodesta"
+          "mtd_of_ytd": "{percent}% vuodesta",
+          "load_failed": "Lataus epäonnistui"
+        }
+      },
+      "layout": {
+        "edit": "Muokkaa asettelua",
+        "editing": "Muokataan asettelua",
+        "hint": "— vedä lohkoa kahvasta järjestääksesi sen uudelleen tai piilota se ✕-painikkeella.",
+        "hint_keyboard": "Näppäimistö: välilyönti nostaa lohkon, nuolinäppäimet siirtävät sitä, välilyönti pudottaa, Esc peruuttaa.",
+        "save": "Tallenna asettelu",
+        "cancel": "Peruuta",
+        "reset": "Palauta oletukset",
+        "save_failed": "Asettelun tallentaminen epäonnistui. Muutoksesi ovat yhä tallessa — yritä uudelleen.",
+        "load_failed": "Tallennettua asettelua ei voitu ladata, joten näytössä on oletusjärjestys. Muokkaaminen ei ole käytettävissä ennen latausta — päivitä sivu.",
+        "hidden_widgets": "Piilotetut widgetit",
+        "visible_stats": "Näkyvät tunnusluvut",
+        "hidden_stats": "Piilotetut tunnusluvut",
+        "empty_visible": "Vedä tunnusluku tähän näyttääksesi sen",
+        "empty_hidden": "Vedä tunnusluku tähän piilottaaksesi sen",
+        "max_rows": "Maksimirivit",
+        "a11y": {
+          "reorder": "Järjestä {title}",
+          "hide": "Piilota {title}",
+          "show": "Näytä {title}",
+          "grabbed": "{title} tartuttu. Sijainti {position}/{total}. Siirrä nuolinäppäimillä, pudota välilyönnillä, peruuta Esc-näppäimellä.",
+          "grabbed_parkable": "{title} tartuttu. Sijainti {position}/{total}. Siirrä vasemmalla ja oikealla nuolinäppäimellä, piilota tai näytä ylä- ja alanuolinäppäimellä, pudota välilyönnillä, peruuta Esc-näppäimellä.",
+          "moved": "{title} siirretty sijaintiin {position}/{total}.",
+          "dropped": "{title} pudotettu sijaintiin {position}/{total}.",
+          "edge": "{title} on jo sijainnissa {position}/{total}.",
+          "cancelled": "Kohteen {title} siirto peruutettu.",
+          "parked": "{title} piilotettu.",
+          "restored": "{title} näytetään.",
+          "max_rows": "Näytettävien rivien enimmäismäärä kohteessa {title}, välillä {min} ja {max}"
         }
       }
     },
@@ -131,7 +164,8 @@
       "items": "Tuotteet",
       "status": "Tila",
       "total": "Yhteensä",
-      "filter_all": "Kaikki"
+      "filter_all": "Kaikki",
+      "load_failed": "Tilauksia ei voitu ladata"
     },
     "top_sellers": {
       "title": "Suosituimmat myyjät",
@@ -141,7 +175,8 @@
       "revenue": "Tuotto",
       "empty": "Ei myyntiä tällä kaudella",
       "no_results": "Ei myyntiä tässä luokassa",
-      "all_categories": "Kaikki kategoriat"
+      "all_categories": "Kaikki kategoriat",
+      "load_failed": "Myydyimpiä ei voitu ladata"
     },
     "rules": {
       "customer": {
@@ -149,6 +184,25 @@
           "All": "Kaikki"
         }
       }
+    },
+    "list_sharing": {
+      "share_customers_label": "Asiakas",
+      "share_customers_placeholder": "Valitse asiakas",
+      "share_customers_error": "Asiakaslistaa ei voitu ladata. Yritä uudelleen.",
+      "share_replace_hint": "Aiemmin valittu asiakas menettää oikeuden tähän listaan.",
+      "share_message_label": "Viesti",
+      "share_message_placeholder": "Valinnainen viesti",
+      "share_channels_label": "Lähetystapa",
+      "share_email_label": "Sähköposti",
+      "share_push_label": "Push-ilmoitus",
+      "share_default_title": "Uusi lista myyntiedustajaltasi",
+      "share_default_message": "Hei! Jaoin juuri listan ”{listName}” organisaatiollesi. Katso se täältä:",
+      "share_success": "Lista jaettiin asiakkaalle.",
+      "share_partial": "Lista jaettiin, mutta kaikkia ilmoituksia ei toimitettu.",
+      "share_notify_error": "Lista tallennettiin, mutta asiakkaalle ei voitu ilmoittaa.",
+      "scope_label": "Asiakas",
+      "status": "Jaettu asiakkaalle",
+      "badge": "Myyntiedustajasi suosittelema"
     }
   }
 }

@@ -1,5 +1,5 @@
 <template>
-  <VcWidget :title="title" size="md" class="top-sellers">
+  <LayoutWidget :title="title" size="md" class="top-sellers">
     <template #default-container>
       <div class="top-sellers__body">
         <!-- Category filter chips: the top-level categories the rep sold into, in the selected period. -->
@@ -13,9 +13,13 @@
         </div>
 
         <div class="top-sellers__content">
+          <!-- A failure replaces the table rather than sharing the empty view: apollo keeps the previous rows on a
+               failed refetch, which would otherwise read as this category's result (VCST-5586). -->
+          <VcEmptyView v-if="failed && !loading" :text="t('sales_rep.top_sellers.load_failed')" variant="error" />
+
           <!-- With a category filter active, an empty result means "nothing in this category", not "no sales at all". -->
           <VcEmptyView
-            v-if="!items.length && !loading"
+            v-else-if="!items.length && !loading"
             :text="filter ? t('sales_rep.top_sellers.no_results') : t('sales_rep.top_sellers.empty')"
             icon="outline-order"
           />
@@ -25,7 +29,7 @@
             v-else
             :loading="loading"
             :items="items"
-            :skeleton-rows="TOP_SELLERS_DEFAULT_TAKE"
+            :skeleton-rows="rowLimit"
             :sort="sortInfo"
             mobile-breakpoint="lg"
             @header-click="applySort"
@@ -98,19 +102,21 @@
         </div>
       </div>
     </template>
-  </VcWidget>
+  </LayoutWidget>
 </template>
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { getProductRoute } from "@/core/utilities/product";
+import { useBlockChrome } from "../composables/useBlockChrome";
 import { useSalesRepColumnSort } from "../composables/useSalesRepColumnSort";
 import { useSalesRepPeriodFilter } from "../composables/useSalesRepPeriodFilter";
 import { useSalesRepRules } from "../composables/useSalesRepRules";
 import { useSalesRepTopSellers } from "../composables/useSalesRepTopSellers";
 import { TOP_SELLERS_DEFAULT_TAKE } from "../constants";
 import { selectableFilterRules } from "../utils";
+import LayoutWidget from "./layout-widget.vue";
 import SalesRepRuleChips from "./sales-rep-rule-chips.vue";
 
 interface IProps {
@@ -150,13 +156,20 @@ const { sortInfo, isColumnSortable, applySort } = useSalesRepColumnSort({
   rules: sortRules,
 });
 
-const { items, loading } = useSalesRepTopSellers({
+// The saved cap, not the draft: it is a query variable, so it applies on save.
+const chrome = useBlockChrome();
+const rowLimit = computed(() => chrome?.savedSettings.value.maxRows ?? TOP_SELLERS_DEFAULT_TAKE);
+
+const { items, loading, error } = useSalesRepTopSellers({
   organizationId: () => props.organizationId,
   sort: () => sort.value,
   filter: () => filter.value,
   periodFrom,
   periodTo,
+  take: () => rowLimit.value,
 });
+
+const failed = computed(() => Boolean(error.value));
 </script>
 
 <style lang="scss">

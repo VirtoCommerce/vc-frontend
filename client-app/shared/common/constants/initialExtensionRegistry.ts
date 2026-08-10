@@ -43,4 +43,5 @@ export const initialExtensionRegistry: ExtensionRegistryStateType = {
   productPage: {},
   paymentPage: {},
   orderPaymentPage: {},
+  sharedList: {},
 };
