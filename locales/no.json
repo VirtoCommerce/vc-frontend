@@ -1026,7 +1026,8 @@
           "Organization": "Organisasjon",
           "AnyoneAnonymous": "Hvem som helst (skrivebeskyttet)"
         },
-        "clipboard_success": "Lenke kopiert"
+        "clipboard_success": "Lenke kopiert",
+        "save_error": "Listen kunne ikke lagres. Prøv igjen."
       },
       "delete_wishlist_modal": {
         "title": "Bekreft sletting",

@@ -1026,7 +1026,8 @@
           "Organization": "Organização",
           "AnyoneAnonymous": "Qualquer pessoa (somente leitura)"
         },
-        "clipboard_success": "Link copiado"
+        "clipboard_success": "Link copiado",
+        "save_error": "Não foi possível salvar a lista. Tente novamente."
       },
       "delete_wishlist_modal": {
         "title": "Confirmar Exclusão",

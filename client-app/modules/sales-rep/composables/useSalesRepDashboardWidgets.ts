@@ -1,5 +1,6 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
+import { buildStatCards, DASHBOARD_STAT_CARDS } from "../layout/stat-cards";
 import { formatSignedPercent, formatStatCount, formatStatMoney } from "../utils";
 import { useSalesRepCartStatistics } from "./useSalesRepCartStatistics";
 import { useSalesRepCustomerCounts } from "./useSalesRepCustomerCounts";
@@ -40,13 +41,10 @@ export function useSalesRepDashboardWidgets() {
     const mtdDelta = formatSignedPercent(orders?.mtdVsPrevMonth?.countChangePercent);
     const ytdDelta = formatSignedPercent(orders?.ytdVsLastYear?.countChangePercent);
 
-    return [
-      {
-        key: "new_orders",
+    // Caption, icon and accent come from the shared table; only what the queries decide is here.
+    return buildStatCards(DASHBOARD_STAT_CARDS, {
+      new_orders: {
         ...ordersState,
-        labelKey: "sales_rep.hub.dashboard.widgets.new_orders",
-        icon: "exclamation-circle",
-        accent: "warning",
         value: formatStatCount(orders?.newOrders?.count),
         sub: t("sales_rep.hub.dashboard.stats.value_total", {
           amount: formatStatMoney(orders?.newOrders?.total),
@@ -55,60 +53,40 @@ export function useSalesRepDashboardWidgets() {
         delta: t("sales_rep.hub.dashboard.stats.placed_today", { count: formatStatCount(placedToday) }, placedToday),
         deltaTone: "positive",
       },
-      {
-        key: "active_carts",
+      active_carts: {
         ...cartsState,
-        labelKey: "sales_rep.hub.dashboard.widgets.active_carts",
-        icon: "cart",
-        accent: "success",
         value: formatStatCount(carts?.activeCarts?.count),
         sub: formatStatMoney(carts?.activeCarts?.total),
         // "{n} new this week" — active carts created this week. Plain green count, no chevron.
         delta: t("sales_rep.hub.dashboard.stats.new_this_week", { count: formatStatCount(newCarts) }, newCarts),
         deltaTone: "positive",
       },
-      {
-        key: "orders_placed_week",
+      orders_placed_week: {
         ...ordersState,
-        labelKey: "sales_rep.hub.dashboard.widgets.orders_placed_week",
-        icon: "cash",
-        accent: "info",
         value: formatStatCount(orders?.week?.count),
         sub: formatStatMoney(orders?.week?.total),
         delta: weekDelta ? t("sales_rep.hub.dashboard.stats.vs_last_week", { delta: weekDelta.text }) : "",
         deltaTone: weekDelta?.tone,
         deltaIcon: weekDelta?.icon,
       },
-      {
-        key: "orders_placed_mtd",
+      orders_placed_mtd: {
         ...ordersState,
-        labelKey: "sales_rep.hub.dashboard.widgets.orders_placed_mtd",
-        icon: "cash",
-        accent: "info",
         value: formatStatCount(orders?.mtd?.count),
         sub: formatStatMoney(orders?.mtd?.total),
         delta: mtdDelta ? t("sales_rep.hub.dashboard.stats.vs_last_month", { delta: mtdDelta.text }) : "",
         deltaTone: mtdDelta?.tone,
         deltaIcon: mtdDelta?.icon,
       },
-      {
-        key: "orders_placed_ytd",
+      orders_placed_ytd: {
         ...ordersState,
-        labelKey: "sales_rep.hub.dashboard.widgets.orders_placed_ytd",
-        icon: "cash",
-        accent: "info",
         value: formatStatCount(orders?.ytd?.count),
         sub: formatStatMoney(orders?.ytd?.total),
         delta: ytdDelta ? t("sales_rep.hub.dashboard.stats.vs_last_year", { delta: ytdDelta.text }) : "",
         deltaTone: ytdDelta?.tone,
         deltaIcon: ytdDelta?.icon,
       },
-      {
-        key: "my_customers",
+      my_customers: {
         ...countsState,
-        labelKey: "sales_rep.hub.dashboard.widgets.my_customers",
-        icon: "users",
-        accent: "neutral",
         value: formatStatCount(customerCounts?.assignedCustomers),
         sub: t(
           "sales_rep.hub.dashboard.stats.ordered_this_month",
@@ -119,7 +97,7 @@ export function useSalesRepDashboardWidgets() {
         delta: t("sales_rep.hub.dashboard.stats.new_customers", { count: formatStatCount(newCustomers) }, newCustomers),
         deltaTone: "positive",
       },
-    ];
+    });
   });
 
   return { cards };
