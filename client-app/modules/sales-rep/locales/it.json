@@ -28,7 +28,7 @@
         "last_order": "Il mio ultimo ordine",
         "ytd": "Acquisti YTD",
         "last_year": "Anno scorso",
-        "orders_count": "{count} ordini",
+        "orders_count": "{count} ordine | {count} ordini",
         "all_customers": "Tutti",
         "actions": "Azioni",
         "search_placeholder": "Cerca per nome",
@@ -63,10 +63,10 @@
           "vs_last_week": "{delta} vs settimana scorsa",
           "vs_last_month": "{delta} vs mese scorso",
           "vs_last_year": "{delta} vs anno scorso",
-          "ordered_this_month": "{count} hanno ordinato questo mese",
-          "new_customers": "{count} nuovi clienti",
-          "placed_today": "{count} effettuati oggi",
-          "new_this_week": "{count} nuovi questa settimana",
+          "ordered_this_month": "{count} ha ordinato questo mese | {count} hanno ordinato questo mese",
+          "new_customers": "{count} nuovo cliente | {count} nuovi clienti",
+          "placed_today": "{count} effettuato oggi | {count} effettuati oggi",
+          "new_this_week": "{count} nuovo questa settimana | {count} nuovi questa settimana",
           "mtd_of_ytd": "{percent}% dell'anno",
           "load_failed": "Caricamento non riuscito"
         }

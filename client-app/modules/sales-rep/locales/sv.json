@@ -28,7 +28,7 @@
         "last_order": "Min senaste order",
         "ytd": "Köp hittills",
         "last_year": "Förra året",
-        "orders_count": "{count} beställningar",
+        "orders_count": "{count} beställning | {count} beställningar",
         "all_customers": "Alla",
         "actions": "Åtgärder",
         "search_placeholder": "Sök efter namn",
@@ -64,9 +64,9 @@
           "vs_last_month": "{delta} vs förra månaden",
           "vs_last_year": "{delta} vs förra året",
           "ordered_this_month": "{count} beställde denna månad",
-          "new_customers": "{count} nya kunder",
-          "placed_today": "{count} lagda i dag",
-          "new_this_week": "{count} nya denna vecka",
+          "new_customers": "{count} ny kund | {count} nya kunder",
+          "placed_today": "{count} lagd i dag | {count} lagda i dag",
+          "new_this_week": "{count} ny denna vecka | {count} nya denna vecka",
           "mtd_of_ytd": "{percent}% av året",
           "load_failed": "Kunde inte läsas in"
         }

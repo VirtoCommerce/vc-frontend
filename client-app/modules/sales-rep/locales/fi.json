@@ -28,7 +28,7 @@
         "last_order": "Viimeisin tilaukseni",
         "ytd": "Ostot tänä vuonna",
         "last_year": "Viime vuosi",
-        "orders_count": "{count} tilaukset",
+        "orders_count": "{count} tilaus | {count} tilausta",
         "all_customers": "Kaikki",
         "actions": "Toiminnot",
         "search_placeholder": "Hae nimellä",
@@ -64,9 +64,9 @@
           "vs_last_month": "{delta} vs viime kuu",
           "vs_last_year": "{delta} vs viime vuosi",
           "ordered_this_month": "{count} tilasi tässä kuussa",
-          "new_customers": "{count} uutta asiakasta",
+          "new_customers": "{count} uusi asiakas | {count} uutta asiakasta",
           "placed_today": "{count} tänään",
-          "new_this_week": "{count} uutta tällä viikolla",
+          "new_this_week": "{count} uusi tällä viikolla | {count} uutta tällä viikolla",
           "mtd_of_ytd": "{percent}% vuodesta",
           "load_failed": "Lataus epäonnistui"
         }
