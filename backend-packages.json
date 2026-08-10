@@ -11,9 +11,6 @@
       "ServiceUri": "https://vc3prerelease.blob.core.windows.net",
       "Modules": [
         {
-          "BlobName": "VirtoCommerce.SalesRep_3.1001.0-pr-8-a07e.zip"
-        },
-        {
           "Id": "VirtoCommerce.Cart",
           "BlobName": "VirtoCommerce.Cart_3.1008.0-alpha.803-vcst-5332-customer-wishlist-sharing-scope.zip"
         },
