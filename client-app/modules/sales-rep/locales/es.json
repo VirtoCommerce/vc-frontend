@@ -49,7 +49,7 @@
           "title": "Panel de control"
         },
         "widgets": {
-          "new_orders": "Pedidos nuevos",
+          "new_orders": "Pedidos en estado «New»",
           "active_carts": "Carritos activos",
           "active_cart": "Carrito activo",
           "orders_placed_week": "Pedidos de esta semana",
@@ -65,7 +65,7 @@
           "vs_last_year": "{delta} vs. año pasado",
           "ordered_this_month": "{count} compraron este mes",
           "new_customers": "{count} clientes nuevos",
-          "of_recent_orders": "de {count} en los últimos 7 días",
+          "of_recent_orders": "de {count} creados en los últimos 7 días",
           "new_this_week": "{count} nuevos esta semana",
           "mtd_of_ytd": "{percent}% del año",
           "load_failed": "No se pudo cargar"

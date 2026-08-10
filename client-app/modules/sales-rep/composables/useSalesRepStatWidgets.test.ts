@@ -133,7 +133,7 @@ describe("stat cards for a customer with no data", () => {
 
     expectNoPlaceholders(cards.value);
     expect(cards.value.map((card) => [card.key, card.value, card.sub, card.delta])).toEqual([
-      ["new_orders", "0", "$0.00 total", "of 0 in the last 7 days"],
+      ["new_orders", "0", "$0.00 total", "of 0 created in the last 7 days"],
       ["active_carts", "0", "$0.00", "0 new this week"],
       // No previous-period baseline, so the "vs last X" comparison is absent rather than a false 0%.
       ["orders_placed_week", "0", "$0.00", ""],
@@ -155,7 +155,7 @@ describe("stat cards for a customer with no data", () => {
 
     expectNoPlaceholders(cards.value);
     expect(cards.value.map((card) => [card.key, card.value, card.sub, card.delta])).toEqual([
-      ["new_orders", "0", "$0.00 total", "of 0 in the last 7 days"],
+      ["new_orders", "0", "$0.00 total", "of 0 created in the last 7 days"],
       ["active_cart", "$0.00", undefined, undefined],
       ["mtd", "$0.00", undefined, "0% of YTD"],
       ["orders_ytd", "0", "$0.00", ""],
@@ -209,7 +209,7 @@ describe("stat cards for a customer with partial data", () => {
     expect(byKey(dashboard.cards.value, "new_orders")).toMatchObject({
       value: "0",
       sub: "$0.00 total",
-      delta: "of 0 in the last 7 days",
+      delta: "of 0 created in the last 7 days",
     });
     expect(byKey(dashboard.cards.value, "active_carts")).toMatchObject({ value: "0", sub: "$0.00" });
 

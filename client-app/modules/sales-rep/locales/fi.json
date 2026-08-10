@@ -49,7 +49,7 @@
           "title": "Hallintapaneeli"
         },
         "widgets": {
-          "new_orders": "Uudet tilaukset",
+          "new_orders": "Tilaukset tilassa ”New”",
           "active_carts": "Aktiiviset ostoskorit",
           "active_cart": "Aktiivinen ostoskori",
           "orders_placed_week": "Tilaukset tällä viikolla",
@@ -65,7 +65,7 @@
           "vs_last_year": "{delta} vs viime vuosi",
           "ordered_this_month": "{count} tilasi tässä kuussa",
           "new_customers": "{count} uutta asiakasta",
-          "of_recent_orders": "{count} tilauksesta viimeisten 7 päivän aikana",
+          "of_recent_orders": "{count} viimeisten 7 päivän tilauksesta",
           "new_this_week": "{count} uutta tällä viikolla",
           "mtd_of_ytd": "{percent}% vuodesta",
           "load_failed": "Lataus epäonnistui"

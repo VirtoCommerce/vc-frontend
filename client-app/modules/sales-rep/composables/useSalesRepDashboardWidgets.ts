@@ -49,7 +49,8 @@ export function useSalesRepDashboardWidgets() {
         sub: t("sales_rep.hub.dashboard.stats.value_total", {
           amount: formatStatMoney(orders?.newOrders?.total),
         }),
-        // "of {n} in the last 7 days" — how much of the window's order flow still needs the rep.
+        // "of {n} created in the last 7 days" — the all-status flow the New count is a slice of, and
+        // the line that pins the window to the created date rather than the status.
         delta: t(
           "sales_rep.hub.dashboard.stats.of_recent_orders",
           { count: formatStatCount(recentOrders) },

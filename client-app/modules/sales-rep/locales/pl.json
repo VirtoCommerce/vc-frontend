@@ -49,7 +49,7 @@
           "title": "Panel"
         },
         "widgets": {
-          "new_orders": "Nowe zamówienia",
+          "new_orders": "Zamówienia w statusie „New”",
           "active_carts": "Aktywne koszyki",
           "active_cart": "Aktywny koszyk",
           "orders_placed_week": "Zamówienia w tym tygodniu",
@@ -65,7 +65,7 @@
           "vs_last_year": "{delta} vs poprzedni rok",
           "ordered_this_month": "{count} zamówiło w tym miesiącu",
           "new_customers": "{count} nowych klientów",
-          "of_recent_orders": "z {count} w ciągu ostatnich 7 dni",
+          "of_recent_orders": "z {count} utworzonych w ciągu ostatnich 7 dni",
           "new_this_week": "{count} nowych w tym tygodniu",
           "mtd_of_ytd": "{percent}% roku",
           "load_failed": "Nie udało się wczytać"
