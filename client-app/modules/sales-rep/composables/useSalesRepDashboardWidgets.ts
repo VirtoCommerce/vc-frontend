@@ -1,7 +1,8 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { formatSignedPercent, formatStatCount } from "../utils";
-import { useSalesRepActiveCartsCard } from "./useSalesRepActiveCartsCard";
+import { buildStatCards, DASHBOARD_STAT_CARDS } from "../layout/stat-cards";
+import { formatSignedPercent, formatStatCount, formatStatMoney } from "../utils";
+import { useSalesRepCartStatistics } from "./useSalesRepCartStatistics";
 import { useSalesRepCustomerCounts } from "./useSalesRepCustomerCounts";
 import { useSalesRepOrderStatistics } from "./useSalesRepOrderStatistics";
 import type { StatWidgetCardType } from "../types/widgets";
@@ -10,88 +11,104 @@ import type { StatWidgetCardType } from "../types/widgets";
 // Deltas are either period-over-period % (chevron) or plain "new activity" counts (no chevron).
 export function useSalesRepDashboardWidgets() {
   const { t } = useI18n();
-  const { statistics: orderStatistics, loading: ordersLoading } = useSalesRepOrderStatistics();
-  const { card: activeCartsCard, loading: cartsLoading } = useSalesRepActiveCartsCard();
-  const { counts, loading: countsLoading } = useSalesRepCustomerCounts();
-
-  const loading = computed(() => ordersLoading.value || cartsLoading.value || countsLoading.value);
+  const { statistics: orderStatistics, loading: ordersLoading, error: ordersError } = useSalesRepOrderStatistics();
+  const { statistics: cartStatistics, loading: cartsLoading, error: cartsError } = useSalesRepCartStatistics();
+  const { counts, loading: countsLoading, error: countsError } = useSalesRepCustomerCounts();
 
   const cards = computed<StatWidgetCardType[]>(() => {
     const orders = orderStatistics.value;
+    const carts = cartStatistics.value;
     const customerCounts = counts.value;
 
-    // Plain "new activity" counts (green, no icon) — a count, not a comparison.
-    const placedToday = orders?.newOrdersToday;
+    // Each card reads exactly one query, so it carries that query's state and no other's.
+    const ordersState = { loading: ordersLoading.value, failed: Boolean(ordersError.value) };
+    const cartsState = { loading: cartsLoading.value, failed: Boolean(cartsError.value) };
+    const countsState = { loading: countsLoading.value, failed: Boolean(countsError.value) };
+
+    // Plain "new activity" counts (green, no icon) — a count, not a comparison. Always rendered, so
+    // an empty period reads as "0 placed today" rather than dropping the row (VCST-5586).
+    // Each is passed to t() as the formatted string plus the raw number: the string is what renders,
+    // the number is vue-i18n's plural selector, so locales that need plural forms (ru, pl) can add
+    // them without the grouped string breaking the choice.
+    const placedToday = orders?.newOrdersToday?.count ?? 0;
+    // The cart card counts ITEMS, not carts: quantities of the lines the customers picked for checkout,
+    // the parked remainder underneath, and the lines touched this week as the delta (VCST-5588).
+    const selectedItems = carts?.activeCarts?.selectedItemQuantity ?? 0;
+    const unselectedItems = carts?.activeCarts?.unselectedItemQuantity ?? 0;
+    const weekItems = carts?.itemsThisWeek?.selectedItemQuantity ?? 0;
     const thisMonth = customerCounts?.thisMonth;
+    const orderingCustomers = thisMonth?.orderingCustomers ?? 0;
+    const newCustomers = thisMonth?.newCustomers ?? 0;
 
     // Period-over-period comparisons on order count (tri-state; undefined when the previous period is zero).
     const weekDelta = formatSignedPercent(orders?.weekVsPrevWeek?.countChangePercent);
     const mtdDelta = formatSignedPercent(orders?.mtdVsPrevMonth?.countChangePercent);
     const ytdDelta = formatSignedPercent(orders?.ytdVsLastYear?.countChangePercent);
 
-    return [
-      {
-        key: "new_orders",
-        labelKey: "sales_rep.hub.dashboard.widgets.new_orders",
-        icon: "exclamation-circle",
-        accent: "warning",
+    // Caption, icon and accent come from the shared table; only what the queries decide is here.
+    return buildStatCards(DASHBOARD_STAT_CARDS, {
+      new_orders: {
+        ...ordersState,
         value: formatStatCount(orders?.newOrders?.count),
-        sub: orders?.newOrders
-          ? t("sales_rep.hub.dashboard.stats.value_total", { amount: orders.newOrders.total.formattedAmount })
-          : "",
+        sub: t("sales_rep.hub.dashboard.stats.value_total", {
+          amount: formatStatMoney(orders?.newOrders?.total),
+        }),
         // "{n} placed today" — orders whose created date is today. Plain green count, no chevron.
-        delta: placedToday ? t("sales_rep.hub.dashboard.stats.placed_today", { count: placedToday.count }) : "",
+        delta: t("sales_rep.hub.dashboard.stats.placed_today", { count: formatStatCount(placedToday) }, placedToday),
         deltaTone: "positive",
       },
-      activeCartsCard.value,
-      {
-        key: "orders_placed_week",
-        labelKey: "sales_rep.hub.dashboard.widgets.orders_placed_week",
-        icon: "cash",
-        accent: "info",
+      active_carts: {
+        ...cartsState,
+        value: formatStatCount(selectedItems),
+        // Plural forms ("item | items"); nothing to interpolate, so the count is only the selector.
+        valueSuffix: t("sales_rep.hub.dashboard.stats.items_unit", selectedItems),
+        sub: t(
+          "sales_rep.hub.dashboard.stats.not_for_checkout",
+          { count: formatStatCount(unselectedItems) },
+          unselectedItems,
+        ),
+        // "{n} items this week" — the same selected-for-checkout quantity, but only the lines touched this week.
+        delta: t("sales_rep.hub.dashboard.stats.items_this_week", { count: formatStatCount(weekItems) }, weekItems),
+        deltaTone: "positive",
+      },
+      orders_placed_week: {
+        ...ordersState,
         value: formatStatCount(orders?.week?.count),
-        sub: orders?.week?.total.formattedAmount ?? "",
+        sub: formatStatMoney(orders?.week?.total),
         delta: weekDelta ? t("sales_rep.hub.dashboard.stats.vs_last_week", { delta: weekDelta.text }) : "",
         deltaTone: weekDelta?.tone,
         deltaIcon: weekDelta?.icon,
       },
-      {
-        key: "orders_placed_mtd",
-        labelKey: "sales_rep.hub.dashboard.widgets.orders_placed_mtd",
-        icon: "cash",
-        accent: "info",
+      orders_placed_mtd: {
+        ...ordersState,
         value: formatStatCount(orders?.mtd?.count),
-        sub: orders?.mtd?.total.formattedAmount ?? "",
+        sub: formatStatMoney(orders?.mtd?.total),
         delta: mtdDelta ? t("sales_rep.hub.dashboard.stats.vs_last_month", { delta: mtdDelta.text }) : "",
         deltaTone: mtdDelta?.tone,
         deltaIcon: mtdDelta?.icon,
       },
-      {
-        key: "orders_placed_ytd",
-        labelKey: "sales_rep.hub.dashboard.widgets.orders_placed_ytd",
-        icon: "cash",
-        accent: "info",
+      orders_placed_ytd: {
+        ...ordersState,
         value: formatStatCount(orders?.ytd?.count),
-        sub: orders?.ytd?.total.formattedAmount ?? "",
+        sub: formatStatMoney(orders?.ytd?.total),
         delta: ytdDelta ? t("sales_rep.hub.dashboard.stats.vs_last_year", { delta: ytdDelta.text }) : "",
         deltaTone: ytdDelta?.tone,
         deltaIcon: ytdDelta?.icon,
       },
-      {
-        key: "my_customers",
-        labelKey: "sales_rep.hub.dashboard.widgets.my_customers",
-        icon: "users",
-        accent: "neutral",
+      my_customers: {
+        ...countsState,
         value: formatStatCount(customerCounts?.assignedCustomers),
-        sub: thisMonth
-          ? t("sales_rep.hub.dashboard.stats.ordered_this_month", { count: thisMonth.orderingCustomers })
-          : "",
+        sub: t(
+          "sales_rep.hub.dashboard.stats.ordered_this_month",
+          { count: formatStatCount(orderingCustomers) },
+          orderingCustomers,
+        ),
         // "{n} new customers" — customers newly assigned to the rep this month (backend assignment date).
-        delta: thisMonth ? t("sales_rep.hub.dashboard.stats.new_customers", { count: thisMonth.newCustomers }) : "",
+        delta: t("sales_rep.hub.dashboard.stats.new_customers", { count: formatStatCount(newCustomers) }, newCustomers),
         deltaTone: "positive",
       },
-    ];
+    });
   });
 
-  return { cards, loading };
+  return { cards };
 }

@@ -35,7 +35,8 @@
         "search_aria": "顧客を検索",
         "empty": "顧客が見つかりません",
         "no_results": "検索条件に一致する顧客がありません",
-        "reset_search": "検索をリセット"
+        "reset_search": "検索をリセット",
+        "load_failed": "顧客を読み込めませんでした"
       }
     },
     "hub": {
@@ -67,7 +68,39 @@
           "items_unit": "点",
           "not_for_checkout": "{count} 点 レジ対象外",
           "items_this_week": "今週 {count} 点",
-          "mtd_of_ytd": "年初来の {percent}%"
+          "mtd_of_ytd": "年初来の {percent}%",
+          "load_failed": "読み込みに失敗しました"
+        }
+      },
+      "layout": {
+        "edit": "レイアウトを編集",
+        "editing": "レイアウトを編集中",
+        "hint": "— ハンドルをドラッグしてブロックを並べ替えるか、✕ で非表示にします。",
+        "hint_keyboard": "キーボード操作: スペースキーでブロックをつかみ、矢印キーで移動、スペースキーで確定、Esc でキャンセルします。",
+        "save": "レイアウトを保存",
+        "cancel": "キャンセル",
+        "reset": "リセット",
+        "save_failed": "レイアウトを保存できませんでした。変更は保持されています。もう一度お試しください。",
+        "load_failed": "保存されたレイアウトを読み込めませんでした。既定の配置を表示しています。読み込まれるまで編集できません。ページを再読み込みしてください。",
+        "hidden_widgets": "非表示のウィジェット",
+        "visible_stats": "表示中の指標",
+        "hidden_stats": "非表示の指標",
+        "empty_visible": "指標をここにドラッグすると表示されます",
+        "empty_hidden": "指標をここにドラッグすると非表示になります",
+        "max_rows": "最大行数",
+        "a11y": {
+          "reorder": "{title} を並べ替え",
+          "hide": "{title} を非表示",
+          "show": "{title} を表示",
+          "grabbed": "{title} をつかみました。{total} 件中 {position} 番目。矢印キーで移動、スペースで配置、Esc でキャンセルします。",
+          "grabbed_parkable": "{title} をつかみました。{total} 件中 {position} 番目。左右の矢印キーで移動、上下キーで非表示または表示、スペースで配置、Esc でキャンセルします。",
+          "moved": "{title} を {total} 件中 {position} 番目に移動しました。",
+          "dropped": "{title} を {total} 件中 {position} 番目に配置しました。",
+          "edge": "{title} はすでに {total} 件中 {position} 番目です。",
+          "cancelled": "{title} の移動をキャンセルしました。",
+          "parked": "{title} を非表示にしました。",
+          "restored": "{title} を表示しました。",
+          "max_rows": "{title}に表示される最大行数。{min}から{max}の間で選択できます"
         }
       }
     },
@@ -132,7 +165,8 @@
       "items": "商品数",
       "status": "ステータス",
       "total": "合計",
-      "filter_all": "すべて"
+      "filter_all": "すべて",
+      "load_failed": "注文を読み込めませんでした"
     },
     "top_sellers": {
       "title": "トップセラー",
@@ -142,7 +176,8 @@
       "revenue": "収益",
       "empty": "この期間の売上なし",
       "no_results": "このカテゴリーの売上なし",
-      "all_categories": "全カテゴリー"
+      "all_categories": "全カテゴリー",
+      "load_failed": "売上上位を読み込めませんでした"
     },
     "rules": {
       "customer": {
@@ -150,6 +185,25 @@
           "All": "すべて"
         }
       }
+    },
+    "list_sharing": {
+      "share_customers_label": "顧客",
+      "share_customers_placeholder": "顧客を選択",
+      "share_customers_error": "顧客リストを読み込めませんでした。もう一度お試しください。",
+      "share_replace_hint": "以前に選択した顧客はこのリストにアクセスできなくなります。",
+      "share_message_label": "メッセージ",
+      "share_message_placeholder": "任意のメッセージを入力",
+      "share_channels_label": "送信方法",
+      "share_email_label": "メール",
+      "share_push_label": "プッシュ通知",
+      "share_default_title": "営業担当者からの新しいリスト",
+      "share_default_message": "こんにちは。リスト「{listName}」をあなたの組織と共有しました。ぜひご覧ください：",
+      "share_success": "リストを顧客と共有しました。",
+      "share_partial": "リストを共有しましたが、一部の通知を配信できませんでした。",
+      "share_notify_error": "リストは保存されましたが、顧客に通知できませんでした。",
+      "scope_label": "顧客",
+      "status": "顧客と共有",
+      "badge": "営業担当者のおすすめ"
     }
   }
 }

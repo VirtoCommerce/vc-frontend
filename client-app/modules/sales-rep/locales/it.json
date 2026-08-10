@@ -35,7 +35,8 @@
         "search_aria": "Cerca clienti",
         "empty": "Nessun cliente trovato",
         "no_results": "Nessun cliente corrisponde alla tua ricerca",
-        "reset_search": "Reimposta ricerca"
+        "reset_search": "Reimposta ricerca",
+        "load_failed": "Impossibile caricare i clienti"
       }
     },
     "hub": {
@@ -67,7 +68,39 @@
           "items_unit": "articolo | articoli",
           "not_for_checkout": "{count} fuori dal checkout",
           "items_this_week": "{count} articolo questa settimana | {count} articoli questa settimana",
-          "mtd_of_ytd": "{percent}% dell'anno"
+          "mtd_of_ytd": "{percent}% dell'anno",
+          "load_failed": "Caricamento non riuscito"
+        }
+      },
+      "layout": {
+        "edit": "Modifica layout",
+        "editing": "Modifica del layout",
+        "hint": "— trascina un blocco dalla maniglia per riordinarlo oppure nascondilo con ✕.",
+        "hint_keyboard": "Tastiera: la barra spaziatrice afferra un blocco, le frecce lo spostano, spazio lo rilascia, Esc annulla.",
+        "save": "Salva layout",
+        "cancel": "Annulla",
+        "reset": "Ripristina",
+        "save_failed": "Impossibile salvare il layout. Le modifiche sono ancora qui: riprova.",
+        "load_failed": "Impossibile caricare il layout salvato, quindi è mostrata la disposizione predefinita. La modifica non è disponibile fino al caricamento: aggiorna la pagina.",
+        "hidden_widgets": "Widget nascosti",
+        "visible_stats": "Statistiche visibili",
+        "hidden_stats": "Statistiche nascoste",
+        "empty_visible": "Trascina qui una statistica per mostrarla",
+        "empty_hidden": "Trascina qui una statistica per nasconderla",
+        "max_rows": "Righe massime",
+        "a11y": {
+          "reorder": "Riordina {title}",
+          "hide": "Nascondi {title}",
+          "show": "Mostra {title}",
+          "grabbed": "{title} preso. Posizione {position} di {total}. Usa le frecce per spostarlo, spazio per rilasciarlo, esc per annullare.",
+          "grabbed_parkable": "{title} preso. Posizione {position} di {total}. Usa le frecce sinistra e destra per spostarlo, su e giù per nasconderlo o mostrarlo, spazio per rilasciarlo, esc per annullare.",
+          "moved": "{title} spostato alla posizione {position} di {total}.",
+          "dropped": "{title} rilasciato alla posizione {position} di {total}.",
+          "edge": "{title} è già in posizione {position} di {total}.",
+          "cancelled": "Spostamento di {title} annullato.",
+          "parked": "{title} nascosto.",
+          "restored": "{title} mostrato.",
+          "max_rows": "Righe massime mostrate da {title}, tra {min} e {max}"
         }
       }
     },
@@ -132,7 +165,8 @@
       "items": "Articoli",
       "status": "Stato",
       "total": "Totale",
-      "filter_all": "Tutti"
+      "filter_all": "Tutti",
+      "load_failed": "Impossibile caricare gli ordini"
     },
     "top_sellers": {
       "title": "Top venditori",
@@ -142,7 +176,8 @@
       "revenue": "Entrate",
       "empty": "Nessuna vendita in questo periodo",
       "no_results": "Nessuna vendita in questa categoria",
-      "all_categories": "Tutte le categorie"
+      "all_categories": "Tutte le categorie",
+      "load_failed": "Impossibile caricare i più venduti"
     },
     "rules": {
       "customer": {
@@ -150,6 +185,25 @@
           "All": "Tutti"
         }
       }
+    },
+    "list_sharing": {
+      "share_customers_label": "Cliente",
+      "share_customers_placeholder": "Seleziona cliente",
+      "share_customers_error": "Non è stato possibile caricare l'elenco dei clienti. Riprova.",
+      "share_replace_hint": "Il cliente selezionato in precedenza perderà l'accesso a questa lista.",
+      "share_message_label": "Messaggio",
+      "share_message_placeholder": "Messaggio facoltativo da includere",
+      "share_channels_label": "Invia tramite",
+      "share_email_label": "Email",
+      "share_push_label": "Notifica push",
+      "share_default_title": "Una nuova lista dal tuo rappresentante commerciale",
+      "share_default_message": "Ciao! Ho appena condiviso la lista \"{listName}\" con la tua organizzazione. Dai un'occhiata:",
+      "share_success": "Lista condivisa con il cliente.",
+      "share_partial": "Lista condivisa, ma non tutte le notifiche sono state consegnate.",
+      "share_notify_error": "La lista è stata salvata, ma non è stato possibile avvisare il cliente.",
+      "scope_label": "Cliente",
+      "status": "Condivisa con il cliente",
+      "badge": "Consigliato dal tuo rappresentante commerciale"
     }
   }
 }

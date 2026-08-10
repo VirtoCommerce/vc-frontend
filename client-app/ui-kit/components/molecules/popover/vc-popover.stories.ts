@@ -63,8 +63,8 @@ export const Basic: StoryType = {
   render: (args) => ({
     setup: () => ({ args }),
     template: `<VcPopover v-bind="args">
-      <template #trigger>
-        <VcButton>Click to open</VcButton>
+      <template #trigger="{ triggerProps }">
+        <VcButton v-bind="triggerProps">Click to open</VcButton>
       </template>
       <template #content>
         <div class="rounded bg-additional-50 p-4 shadow-md text-sm">
@@ -78,8 +78,8 @@ export const Basic: StoryType = {
       source: {
         code: `
           <VcPopover>
-            <template #trigger>
-              <VcButton>Click to open</VcButton>
+            <template #trigger="{ triggerProps }">
+              <VcButton v-bind="triggerProps">Click to open</VcButton>
             </template>
             <template #content>
               <div class="rounded bg-additional-50 p-4 shadow-md">Popover content</div>
@@ -98,8 +98,8 @@ export const Hover: StoryType = {
   render: (args) => ({
     setup: () => ({ args }),
     template: `<VcPopover v-bind="args">
-      <template #trigger>
-        <VcButton>Hover to open</VcButton>
+      <template #trigger="{ triggerProps }">
+        <VcButton v-bind="triggerProps">Hover to open</VcButton>
       </template>
       <template #content>
         <div class="rounded bg-additional-50 p-4 shadow-md text-sm">
@@ -113,8 +113,8 @@ export const Hover: StoryType = {
       source: {
         code: `
           <VcPopover hover>
-            <template #trigger>
-              <VcButton>Hover to open</VcButton>
+            <template #trigger="{ triggerProps }">
+              <VcButton v-bind="triggerProps">Hover to open</VcButton>
             </template>
             <template #content>
               <div class="rounded bg-additional-50 p-4 shadow-md">Popover shown on hover</div>
@@ -133,8 +133,8 @@ export const Disabled: StoryType = {
   render: (args) => ({
     setup: () => ({ args }),
     template: `<VcPopover v-bind="args">
-      <template #trigger>
-        <VcButton disabled>Disabled popover</VcButton>
+      <template #trigger="{ triggerProps }">
+        <VcButton disabled v-bind="triggerProps">Disabled popover</VcButton>
       </template>
       <template #content>
         <div class="rounded bg-additional-50 p-4 shadow-md text-sm">
@@ -148,8 +148,8 @@ export const Disabled: StoryType = {
       source: {
         code: `
           <VcPopover disabled>
-            <template #trigger>
-              <VcButton disabled>Disabled popover</VcButton>
+            <template #trigger="{ triggerProps }">
+              <VcButton disabled v-bind="triggerProps">Disabled popover</VcButton>
             </template>
             <template #content>
               <div class="rounded bg-additional-50 p-4 shadow-md">This will never show</div>
@@ -168,8 +168,8 @@ export const TopPlacement: StoryType = {
   render: (args) => ({
     setup: () => ({ args }),
     template: `<VcPopover v-bind="args">
-      <template #trigger>
-        <VcButton>Opens above</VcButton>
+      <template #trigger="{ triggerProps }">
+        <VcButton v-bind="triggerProps">Opens above</VcButton>
       </template>
       <template #content>
         <div class="rounded bg-additional-50 p-4 shadow-md text-sm">
@@ -183,8 +183,8 @@ export const TopPlacement: StoryType = {
       source: {
         code: `
           <VcPopover placement="top">
-            <template #trigger>
-              <VcButton>Opens above</VcButton>
+            <template #trigger="{ triggerProps }">
+              <VcButton v-bind="triggerProps">Opens above</VcButton>
             </template>
             <template #content>
               <div class="rounded bg-additional-50 p-4 shadow-md">Top placement</div>

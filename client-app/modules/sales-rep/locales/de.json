@@ -35,7 +35,8 @@
         "search_aria": "Kunden suchen",
         "empty": "Keine Kunden gefunden",
         "no_results": "Keine Kunden entsprechen Ihrer Suche",
-        "reset_search": "Suche zurücksetzen"
+        "reset_search": "Suche zurücksetzen",
+        "load_failed": "Kunden konnten nicht geladen werden"
       }
     },
     "hub": {
@@ -67,7 +68,39 @@
           "items_unit": "Artikel",
           "not_for_checkout": "{count} nicht zur Kasse",
           "items_this_week": "{count} Artikel diese Woche",
-          "mtd_of_ytd": "{percent}% des Jahres"
+          "mtd_of_ytd": "{percent}% des Jahres",
+          "load_failed": "Laden fehlgeschlagen"
+        }
+      },
+      "layout": {
+        "edit": "Layout bearbeiten",
+        "editing": "Layout wird bearbeitet",
+        "hint": "— ziehen Sie einen Block am Griff, um ihn umzusortieren, oder blenden Sie ihn mit ✕ aus.",
+        "hint_keyboard": "Tastatur: Leertaste hebt einen Block an, Pfeiltasten verschieben ihn, Leertaste legt ihn ab, Esc bricht ab.",
+        "save": "Layout speichern",
+        "cancel": "Abbrechen",
+        "reset": "Zurücksetzen",
+        "save_failed": "Das Layout konnte nicht gespeichert werden. Ihre Änderungen sind noch vorhanden — bitte erneut versuchen.",
+        "load_failed": "Das gespeicherte Layout konnte nicht geladen werden, daher wird die Standardanordnung angezeigt. Die Bearbeitung ist erst nach dem Laden möglich — bitte die Seite neu laden.",
+        "hidden_widgets": "Ausgeblendete Widgets",
+        "visible_stats": "Sichtbare Kennzahlen",
+        "hidden_stats": "Ausgeblendete Kennzahlen",
+        "empty_visible": "Ziehen Sie eine Kennzahl hierher, um sie einzublenden",
+        "empty_hidden": "Ziehen Sie eine Kennzahl hierher, um sie auszublenden",
+        "max_rows": "Max Zeilen",
+        "a11y": {
+          "reorder": "{title} umsortieren",
+          "hide": "{title} ausblenden",
+          "show": "{title} einblenden",
+          "grabbed": "{title} aufgenommen. Position {position} von {total}. Mit den Pfeiltasten verschieben, Leertaste zum Ablegen, Escape zum Abbrechen.",
+          "grabbed_parkable": "{title} aufgenommen. Position {position} von {total}. Mit den Pfeiltasten links und rechts verschieben, mit Pfeil nach oben und unten aus- oder einblenden, Leertaste zum Ablegen, Escape zum Abbrechen.",
+          "moved": "{title} auf Position {position} von {total} verschoben.",
+          "dropped": "{title} auf Position {position} von {total} abgelegt.",
+          "edge": "{title} ist bereits an Position {position} von {total}.",
+          "cancelled": "Verschieben von {title} abgebrochen.",
+          "parked": "{title} ausgeblendet.",
+          "restored": "{title} eingeblendet.",
+          "max_rows": "Maximale Zeilen angezeigt von {title}, zwischen {min} und {max}"
         }
       }
     },
@@ -132,7 +165,8 @@
       "items": "Artikel",
       "status": "Status",
       "total": "Gesamt",
-      "filter_all": "Alle"
+      "filter_all": "Alle",
+      "load_failed": "Bestellungen konnten nicht geladen werden"
     },
     "top_sellers": {
       "title": "Top-Seller",
@@ -142,7 +176,8 @@
       "revenue": "Umsatz",
       "empty": "Keine Verkäufe in diesem Zeitraum",
       "no_results": "Keine Verkäufe in dieser Kategorie",
-      "all_categories": "Alle Kategorien"
+      "all_categories": "Alle Kategorien",
+      "load_failed": "Topseller konnten nicht geladen werden"
     },
     "rules": {
       "customer": {
@@ -150,6 +185,25 @@
           "All": "Alle"
         }
       }
+    },
+    "list_sharing": {
+      "share_customers_label": "Kunde",
+      "share_customers_placeholder": "Kunde auswählen",
+      "share_customers_error": "Die Kundenliste konnte nicht geladen werden. Bitte versuchen Sie es erneut.",
+      "share_replace_hint": "Der zuvor ausgewählte Kunde verliert den Zugriff auf diese Liste.",
+      "share_message_label": "Nachricht",
+      "share_message_placeholder": "Optionale Nachricht hinzufügen",
+      "share_channels_label": "Senden über",
+      "share_email_label": "E-Mail",
+      "share_push_label": "Push-Benachrichtigung",
+      "share_default_title": "Eine neue Liste von Ihrem Vertriebsmitarbeiter",
+      "share_default_message": "Hallo! Ich habe die Liste „{listName}“ gerade für Ihre Organisation freigegeben. Schauen Sie sie sich an:",
+      "share_success": "Liste für den Kunden freigegeben.",
+      "share_partial": "Liste freigegeben, aber nicht alle Benachrichtigungen wurden zugestellt.",
+      "share_notify_error": "Die Liste wurde gespeichert, der Kunde konnte jedoch nicht benachrichtigt werden.",
+      "scope_label": "Kunde",
+      "status": "Mit Kunde geteilt",
+      "badge": "Empfohlen von Ihrem Vertriebsmitarbeiter"
     }
   }
 }

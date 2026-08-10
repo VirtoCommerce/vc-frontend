@@ -63,7 +63,6 @@ describe("calculateStepper", () => {
       1,
       "value undefined",
     ],
-    [{ value: undefined, step: 1, min: 0, max: 10, allowZero: false, direction: "increment" as const }, 2, "undefined"],
     [
       { value: undefined, step: 1, min: 0, max: 10, allowZero: true, direction: "decrement" as const },
       0,

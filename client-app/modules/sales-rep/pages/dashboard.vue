@@ -4,21 +4,20 @@
       {{ t("sales_rep.hub.dashboard.page.title") }}
     </VcTypography>
 
-    <DashboardWidgets />
-
-    <SalesRepOrders :title="t('sales_rep.orders.title')" filterable />
-
-    <TopSellers :title="t('sales_rep.top_sellers.title')" />
+    <LayoutSurface :scope="SCOPE" :cards="cards" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
-import DashboardWidgets from "../components/dashboard-widgets.vue";
-import SalesRepOrders from "../components/sales-rep-orders.vue";
-import TopSellers from "../components/top-sellers.vue";
+import LayoutSurface from "../components/layout-surface.vue";
+import { useSalesRepDashboardWidgets } from "../composables/useSalesRepDashboardWidgets";
+import { DASHBOARD_LAYOUT_SCOPE } from "../constants";
+
+const SCOPE = DASHBOARD_LAYOUT_SCOPE;
 
 const { t } = useI18n();
+const { cards } = useSalesRepDashboardWidgets();
 </script>
 
 <style lang="scss">

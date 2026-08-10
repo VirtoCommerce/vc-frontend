@@ -1,7 +1,8 @@
 import { computed, toValue } from "vue";
 import { useI18n } from "vue-i18n";
-import { formatSignedPercent, formatStatCount } from "../utils";
-import { useSalesRepActiveCartsCard } from "./useSalesRepActiveCartsCard";
+import { buildStatCards, CUSTOMER_PROFILE_STAT_CARDS } from "../layout/stat-cards";
+import { formatSignedPercent, formatStatCount, formatStatMoney } from "../utils";
+import { useSalesRepCartStatistics } from "./useSalesRepCartStatistics";
 import { useSalesRepOrderStatistics } from "./useSalesRepOrderStatistics";
 import type { StatWidgetCardType } from "../types/widgets";
 import type { MaybeRefOrGetter } from "vue";
@@ -12,72 +13,88 @@ export function useSalesRepCustomerWidgets(organizationId: MaybeRefOrGetter<stri
   const { t } = useI18n();
   const orgId = (): string => toValue(organizationId);
 
-  const { statistics: orderStatistics, loading: ordersLoading } = useSalesRepOrderStatistics({ organizationId: orgId });
-  // Same card as the hub dashboard's, scoped to this customer's organization.
-  const { card: activeCartsCard, loading: cartsLoading } = useSalesRepActiveCartsCard(orgId);
-
-  const loading = computed(() => ordersLoading.value || cartsLoading.value);
+  const {
+    statistics: orderStatistics,
+    loading: ordersLoading,
+    error: ordersError,
+  } = useSalesRepOrderStatistics({ organizationId: orgId });
+  const {
+    statistics: cartStatistics,
+    loading: cartsLoading,
+    error: cartsError,
+  } = useSalesRepCartStatistics({ organizationId: orgId });
 
   const cards = computed<StatWidgetCardType[]>(() => {
     const orders = orderStatistics.value;
+    const carts = cartStatistics.value;
+
+    // Each card reads exactly one query, so it carries that query's state and no other's.
+    const ordersState = { loading: ordersLoading.value, failed: Boolean(ordersError.value) };
+    const cartsState = { loading: cartsLoading.value, failed: Boolean(cartsError.value) };
     const ytd = orders?.ytd;
     const mtd = orders?.mtd;
 
     // Orders YTD compares vs last year on order COUNT (same metric as the dashboard "Orders placed · YTD").
     const ytdDelta = formatSignedPercent(orders?.ytdVsLastYear?.countChangePercent);
-    // Plain green count (no chevron) — New-status orders placed today, for this customer.
-    const placedToday = orders?.newOrdersToday;
+    // Plain green count (no chevron) — New-status orders placed today, for this customer. Formatted
+    // string renders; the raw number is vue-i18n's plural selector (see the dashboard mapper).
+    const placedToday = orders?.newOrdersToday?.count ?? 0;
+    // Same metric as the dashboard "Active carts" card, scoped to this customer's organization: quantities
+    // of the cart lines picked for checkout, the parked remainder, and the lines touched this week (VCST-5588).
+    const selectedItems = carts?.activeCarts?.selectedItemQuantity ?? 0;
+    const unselectedItems = carts?.activeCarts?.unselectedItemQuantity ?? 0;
+    const weekItems = carts?.itemsThisWeek?.selectedItemQuantity ?? 0;
     // This month's revenue as a share of the year's — a client-side ratio, not a backend field.
+    // 0 with no YTD revenue to divide by, so the row reads like every other empty metric.
     const ytdAmount = ytd?.total.amount ?? 0;
-    const mtdShare = mtd && ytdAmount > 0 ? Math.round((mtd.total.amount / ytdAmount) * 100) : undefined;
+    const mtdShare = mtd && ytdAmount > 0 ? Math.round((mtd.total.amount / ytdAmount) * 100) : 0;
 
-    return [
-      {
-        key: "new_orders",
-        labelKey: "sales_rep.hub.dashboard.widgets.new_orders",
-        icon: "exclamation-circle",
-        accent: "warning",
+    // Caption, icon and accent come from the shared table; only what the queries decide is here.
+    return buildStatCards(CUSTOMER_PROFILE_STAT_CARDS, {
+      new_orders: {
+        ...ordersState,
         value: formatStatCount(orders?.newOrders?.count),
-        sub: orders?.newOrders
-          ? t("sales_rep.hub.dashboard.stats.value_total", { amount: orders.newOrders.total.formattedAmount })
-          : "",
-        delta: placedToday ? t("sales_rep.hub.dashboard.stats.placed_today", { count: placedToday.count }) : "",
+        sub: t("sales_rep.hub.dashboard.stats.value_total", {
+          amount: formatStatMoney(orders?.newOrders?.total),
+        }),
+        delta: t("sales_rep.hub.dashboard.stats.placed_today", { count: formatStatCount(placedToday) }, placedToday),
         deltaTone: "positive",
       },
-      activeCartsCard.value,
-      {
-        key: "mtd",
-        // Profile shows this month's order value (money), not the order count — hence "Purchased · MTD".
-        labelKey: "sales_rep.hub.dashboard.widgets.purchased_mtd",
-        icon: "cash",
-        accent: "info",
-        value: mtd?.total.formattedAmount ?? "—",
+      // The dashboard's card, one organization: same figures, same i18n keys, so the two cannot drift.
+      active_cart: {
+        ...cartsState,
+        value: formatStatCount(selectedItems),
+        valueSuffix: t("sales_rep.hub.dashboard.stats.items_unit", selectedItems),
+        sub: t(
+          "sales_rep.hub.dashboard.stats.not_for_checkout",
+          { count: formatStatCount(unselectedItems) },
+          unselectedItems,
+        ),
+        delta: t("sales_rep.hub.dashboard.stats.items_this_week", { count: formatStatCount(weekItems) }, weekItems),
+        deltaTone: "positive",
+      },
+      mtd: {
+        ...ordersState,
+        value: formatStatMoney(mtd?.total),
         // Informational ratio (gray, no chevron): how much of the year's revenue landed this month.
-        delta: mtdShare != null ? t("sales_rep.hub.dashboard.stats.mtd_of_ytd", { percent: mtdShare }) : "",
+        delta: t("sales_rep.hub.dashboard.stats.mtd_of_ytd", { percent: mtdShare }),
         deltaTone: "neutral",
       },
-      {
-        // Same metric as the dashboard "Orders placed · YTD" — reuse its label, icon and accent so the two match.
-        key: "orders_ytd",
-        labelKey: "sales_rep.hub.dashboard.widgets.orders_placed_ytd",
-        icon: "cash",
-        accent: "info",
+      orders_ytd: {
+        ...ordersState,
         value: formatStatCount(ytd?.count),
-        sub: ytd?.total.formattedAmount ?? "",
+        sub: formatStatMoney(ytd?.total),
         delta: ytdDelta ? t("sales_rep.hub.dashboard.stats.vs_last_year", { delta: ytdDelta.text }) : "",
         deltaTone: ytdDelta?.tone,
         deltaIcon: ytdDelta?.icon,
       },
-      {
-        key: "aov",
-        labelKey: "sales_rep.customer_profile.widgets.avg_order_value",
-        icon: "presentation-chart-bar",
-        accent: "secondary",
-        value: ytd?.average.formattedAmount ?? "—",
+      aov: {
+        ...ordersState,
+        value: formatStatMoney(ytd?.average),
         sub: t("sales_rep.customer_profile.stats.per_order"),
       },
-    ];
+    });
   });
 
-  return { cards, loading };
+  return { cards };
 }

@@ -35,7 +35,8 @@
         "search_aria": "Søk etter kunder",
         "empty": "Ingen kunder funnet",
         "no_results": "Ingen kunder samsvarer med søket ditt",
-        "reset_search": "Tilbakestill søk"
+        "reset_search": "Tilbakestill søk",
+        "load_failed": "Kunne ikke laste kundene"
       }
     },
     "hub": {
@@ -67,7 +68,39 @@
           "items_unit": "vare | varer",
           "not_for_checkout": "{count} ikke til kassen",
           "items_this_week": "{count} vare denne uken | {count} varer denne uken",
-          "mtd_of_ytd": "{percent}% av året"
+          "mtd_of_ytd": "{percent}% av året",
+          "load_failed": "Kunne ikke laste"
+        }
+      },
+      "layout": {
+        "edit": "Rediger oppsett",
+        "editing": "Redigerer oppsett",
+        "hint": "— dra en blokk etter håndtaket for å endre rekkefølgen, eller skjul den med ✕.",
+        "hint_keyboard": "Tastatur: mellomromstasten tar tak i en blokk, piltastene flytter den, mellomrom slipper den, Esc avbryter.",
+        "save": "Lagre oppsett",
+        "cancel": "Avbryt",
+        "reset": "Tilbakestill",
+        "save_failed": "Oppsettet kunne ikke lagres. Endringene dine er fortsatt her — prøv igjen.",
+        "load_failed": "Det lagrede oppsettet kunne ikke lastes, så standardrekkefølgen vises. Redigering er utilgjengelig til det er lastet — last siden på nytt.",
+        "hidden_widgets": "Skjulte moduler",
+        "visible_stats": "Synlige nøkkeltall",
+        "hidden_stats": "Skjulte nøkkeltall",
+        "empty_visible": "Dra et nøkkeltall hit for å vise det",
+        "empty_hidden": "Dra et nøkkeltall hit for å skjule det",
+        "max_rows": "Maks. rader",
+        "a11y": {
+          "reorder": "Endre rekkefølge på {title}",
+          "hide": "Skjul {title}",
+          "show": "Vis {title}",
+          "grabbed": "{title} tatt opp. Posisjon {position} av {total}. Bruk piltastene for å flytte, mellomrom for å slippe, escape for å avbryte.",
+          "grabbed_parkable": "{title} tatt opp. Posisjon {position} av {total}. Bruk venstre og høyre piltast for å flytte, opp og ned for å skjule eller vise, mellomrom for å slippe, escape for å avbryte.",
+          "moved": "{title} flyttet til posisjon {position} av {total}.",
+          "dropped": "{title} sluppet på posisjon {position} av {total}.",
+          "edge": "{title} er allerede på plass {position} av {total}.",
+          "cancelled": "Flytting av {title} avbrutt.",
+          "parked": "{title} skjult.",
+          "restored": "{title} vist.",
+          "max_rows": "Maksimalt antall rader vist av {title}, mellom {min} og {max}"
         }
       }
     },
@@ -132,7 +165,8 @@
       "items": "Varer",
       "status": "Status",
       "total": "Totalt",
-      "filter_all": "Alle"
+      "filter_all": "Alle",
+      "load_failed": "Kunne ikke laste ordrene"
     },
     "top_sellers": {
       "title": "Toppselgere",
@@ -142,7 +176,8 @@
       "revenue": "Inntekter",
       "empty": "Ingen salg i denne perioden",
       "no_results": "Ingen salg i denne kategorien",
-      "all_categories": "Alle kategorier"
+      "all_categories": "Alle kategorier",
+      "load_failed": "Kunne ikke laste bestselgerne"
     },
     "rules": {
       "customer": {
@@ -150,6 +185,25 @@
           "All": "Alle"
         }
       }
+    },
+    "list_sharing": {
+      "share_customers_label": "Kunde",
+      "share_customers_placeholder": "Velg kunde",
+      "share_customers_error": "Kundelisten kunne ikke lastes. Prøv igjen.",
+      "share_replace_hint": "Kunden som ble valgt tidligere, mister tilgangen til denne listen.",
+      "share_message_label": "Melding",
+      "share_message_placeholder": "Valgfri melding",
+      "share_channels_label": "Send via",
+      "share_email_label": "E-post",
+      "share_push_label": "Push-varsel",
+      "share_default_title": "En ny liste fra din salgsrepresentant",
+      "share_default_message": "Hei! Jeg har nettopp delt listen «{listName}» med organisasjonen din. Ta en titt:",
+      "share_success": "Listen er delt med kunden.",
+      "share_partial": "Listen er delt, men ikke alle varsler ble levert.",
+      "share_notify_error": "Listen ble lagret, men kunden kunne ikke varsles.",
+      "scope_label": "Kunde",
+      "status": "Delt med kunde",
+      "badge": "Anbefalt av din salgsrepresentant"
     }
   }
 }
