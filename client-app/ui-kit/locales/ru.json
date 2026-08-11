@@ -129,7 +129,8 @@
       "retry": "Повторить попытку",
       "select_row_number": "Select row {number}",
       "select_all": "Выбрать все",
-      "deselect_all": "Снять выбор со всех"
+      "deselect_all": "Снять выбор со всех",
+      "selection_column": "Выбор строки"
     },
     "slider": {
       "tooltip": "{count} элементов",

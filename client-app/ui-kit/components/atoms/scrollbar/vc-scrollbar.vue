@@ -3,7 +3,7 @@
     :is="tag"
     ref="el"
     :data-test-id="testId"
-    :tabindex="focusable ? 0 : undefined"
+    :tabindex="isFocusable ? 0 : undefined"
     :class="[
       'vc-scrollbar',
       {
@@ -20,8 +20,8 @@
 </template>
 
 <script setup lang="ts">
-import { useThrottleFn } from "@vueuse/core";
-import { computed, provide, ref, useTemplateRef } from "vue";
+import { useDebounceFn, useEventListener, useMutationObserver, useResizeObserver, useThrottleFn } from "@vueuse/core";
+import { computed, nextTick, onMounted, provide, ref, useTemplateRef } from "vue";
 import { getColorValue } from "@/ui-kit/utilities";
 import { vcScrollbarKey } from "./vc-scrollbar-context";
 
@@ -62,6 +62,82 @@ const el = useTemplateRef<HTMLElement>("el");
 
 provide(vcScrollbarKey, { el });
 
+// A scrollable region must be keyboard-reachable (axe: scrollable-region-focusable), but only
+// when nothing inside is focusable — axe passes regions with focusable content, and a tab stop
+// on e.g. an `aria-activedescendant`-driven listbox would break the combobox pattern.
+// The tab stop is added automatically when content overflows on an enabled axis AND the region
+// has no focusable descendants AND no interactive container role; `focusable` stays as an
+// explicit override.
+const INTERACTIVE_CONTAINER_ROLES = new Set([
+  "listbox",
+  "menu",
+  "menubar",
+  "tree",
+  "treegrid",
+  "grid",
+  "tablist",
+  "combobox",
+  "radiogroup",
+]);
+
+const FOCUSABLE_SELECTOR = [
+  "a[href]",
+  "area[href]",
+  "button:not([disabled])",
+  'input:not([disabled]):not([type="hidden"])',
+  "select:not([disabled])",
+  "textarea:not([disabled])",
+  '[tabindex]:not([tabindex="-1"])',
+  '[contenteditable="true"]',
+  "audio[controls]",
+  "video[controls]",
+  "summary",
+  "iframe",
+].join(", ");
+
+const needsAutoTabStop = ref(false);
+
+const isFocusable = computed(() => props.focusable || needsAutoTabStop.value);
+
+function updateAutoTabStop(): void {
+  const target = el.value;
+
+  if (!target || props.disabled || (!props.vertical && !props.horizontal)) {
+    needsAutoTabStop.value = false;
+    return;
+  }
+
+  const overflows =
+    (props.vertical && target.scrollHeight > target.clientHeight) ||
+    (props.horizontal && target.scrollWidth > target.clientWidth);
+
+  if (!overflows) {
+    needsAutoTabStop.value = false;
+    return;
+  }
+
+  const role = target.getAttribute("role");
+  if (role && INTERACTIVE_CONTAINER_ROLES.has(role)) {
+    needsAutoTabStop.value = false;
+    return;
+  }
+
+  needsAutoTabStop.value = !target.querySelector(FOCUSABLE_SELECTOR);
+}
+
+const scheduleAutoTabStopUpdate = useDebounceFn(updateAutoTabStop, 100);
+
+onMounted(() => {
+  void nextTick(updateAutoTabStop);
+});
+
+// The element's own box (ResizeObserver) stays fixed while slot content rendered by OTHER
+// components grows: structural and text changes are seen by the MutationObserver, image loads
+// only by the capture-phase load listener (load doesn't bubble and isn't a mutation).
+useResizeObserver(el, scheduleAutoTabStopUpdate);
+useMutationObserver(el, scheduleAutoTabStopUpdate, { childList: true, subtree: true, characterData: true });
+useEventListener(el, "load", scheduleAutoTabStopUpdate, { capture: true });
+
 const wasAtTop = ref(true);
 const wasAtBottom = ref(false);
 const wasAtLeft = ref(true);
@@ -73,6 +149,8 @@ const onScroll = useThrottleFn(
     if (!target) {
       return;
     }
+
+    void scheduleAutoTabStopUpdate();
 
     const { scrollTop, scrollLeft, scrollHeight, scrollWidth, clientHeight, clientWidth } = target;
     const threshold = props.edgeThreshold;
@@ -133,6 +211,10 @@ const _thumbColor = computed(() => getColorValue(props.thumbColor));
   --thumb-color: var(--vc-scrollbar-thumb-color, var(--props-thumb-color, theme("colors.neutral.400")));
 
   overflow: unset;
+
+  &:focus-visible {
+    @apply outline outline-2 -outline-offset-2 outline-[--color-primary-500];
+  }
 
   &--vertical {
     $vertical: &;

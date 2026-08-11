@@ -27,7 +27,7 @@ export const Basic: StoryType = {
       <div
         v-for="item in items"
         :key="item"
-        class="flex h-40 items-center justify-center rounded border bg-neutral-100 text-sm text-neutral-500"
+        class="flex h-40 items-center justify-center rounded border bg-neutral-100 text-sm text-neutral-600"
       >
         Product {{ item }}
       </div>
@@ -56,7 +56,7 @@ export const Short: StoryType = {
       <div
         v-for="item in items"
         :key="item"
-        class="flex h-40 items-center justify-center rounded border bg-neutral-100 text-sm text-neutral-500"
+        class="flex h-40 items-center justify-center rounded border bg-neutral-100 text-sm text-neutral-600"
       >
         Product {{ item }}
       </div>
