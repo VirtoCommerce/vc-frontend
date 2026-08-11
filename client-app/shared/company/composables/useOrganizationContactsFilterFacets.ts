@@ -5,6 +5,27 @@ import { ContactStatus } from "@/shared/company";
 import { useOrganizationContactRoles } from "@/shared/company/composables/useOrganizationContactRoles";
 import type { FacetItemType, FacetValueItemType } from "@/core/types";
 
+function mergeFacetValue(currentFacet: FacetItemType, updatedValue: FacetValueItemType): FacetValueItemType {
+  const currentValue = currentFacet.values.find((value) => value.value === updatedValue.value);
+  return currentValue ? { ...updatedValue, selected: currentValue.selected } : cloneDeep(updatedValue);
+}
+
+function mergeFacet(current: FacetItemType[], updatedFacet: FacetItemType): FacetItemType {
+  const currentFacet = current.find((facet) => facet.paramName === updatedFacet.paramName);
+  if (!currentFacet) {
+    return cloneDeep(updatedFacet);
+  }
+
+  return {
+    ...updatedFacet,
+    values: updatedFacet.values.map((updatedValue) => mergeFacetValue(currentFacet, updatedValue)),
+  };
+}
+
+function mergeFacetList(current: FacetItemType[], updated: FacetItemType[]): FacetItemType[] {
+  return updated.map((updatedFacet) => mergeFacet(current, updatedFacet));
+}
+
 export function useOrganizationContactsFilterFacets(organizationId: string) {
   const { t } = useI18n();
   const { contactRoles } = useOrganizationContactRoles(organizationId);
@@ -39,7 +60,12 @@ export function useOrganizationContactsFilterFacets(organizationId: string) {
   const appliedFacets = ref<FacetItemType[]>(cloneDeep(initialFacets.value));
   const selectableFacets = ref<FacetItemType[]>(cloneDeep(initialFacets.value));
 
-  watch(contactRoles, resetFacets, { once: true });
+  watch(contactRoles, mergeFacetsWithLatest, { once: true });
+
+  function mergeFacetsWithLatest() {
+    appliedFacets.value = mergeFacetList(appliedFacets.value, initialFacets.value);
+    selectableFacets.value = mergeFacetList(selectableFacets.value, initialFacets.value);
+  }
 
   const isFacetsDirty = computed<boolean>(() => {
     return !isEqual(appliedFacets.value, selectableFacets.value);

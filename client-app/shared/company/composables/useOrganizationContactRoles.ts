@@ -1,23 +1,23 @@
 import { onMounted, ref } from "vue";
 import { getOrganizationContactRoles } from "@/core/api/graphql";
 import { Logger } from "@/core/utilities";
+import { useCompanyMemberRoles } from "@/shared/company/composables/useCompanyMemberRoles";
 import type { RoleType } from "@/core/api/graphql/types";
 
+type ContactRoleType = Pick<RoleType, "id" | "name">;
+
 export function useOrganizationContactRoles(organizationId: string) {
-  const contactRoles = ref<RoleType[]>([]);
-  const loading = ref(false);
+  const { roles: companyMemberRoles } = useCompanyMemberRoles();
+  const contactRoles = ref<ContactRoleType[]>([]);
 
   onMounted(async () => {
-    loading.value = true;
-
     try {
       contactRoles.value = await getOrganizationContactRoles(organizationId);
     } catch (e) {
       Logger.error(`${useOrganizationContactRoles.name}`, e);
-    } finally {
-      loading.value = false;
+      contactRoles.value = companyMemberRoles.value;
     }
   });
 
-  return { contactRoles, loading };
+  return { contactRoles };
 }

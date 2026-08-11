@@ -668,19 +668,22 @@ async function handleResendInvite(contact: ExtendedContactType): Promise<void> {
 }
 
 function openEditCustomerRoleModal(contact: ExtendedContactType): void {
+  const currentRole = contact.extended.roles[0];
+  const currentRoleId =
+    companyMemberRoles.value.find((role) => role.id === currentRole?.id || role.name === currentRole?.name)?.id ??
+    currentRole?.id;
+
   const closeEditCustomerRoleModal = openModal({
     component: EditCustomerRoleModal,
     props: {
-      roles: companyMemberRoles.value,
-      currentRoleId: contact.extended.roles[0]?.id,
+      roles: companyMemberRoles.value.map((role) => ({ ...role, name: t("common.roles." + role.id, role.name) })),
+      currentRoleId,
       loading: contactsLoading,
 
       async onConfirm(selectedRoleId: string): Promise<void> {
-        const selectedRole = companyMemberRoles.value.find((role) => role.id === selectedRoleId);
-
         const result = await changeContactOrganizationRole({
           memberId: contact.id,
-          roleIds: [selectedRole?.name ?? selectedRoleId],
+          roleIds: [selectedRoleId],
         });
 
         const notification: INotification = {
