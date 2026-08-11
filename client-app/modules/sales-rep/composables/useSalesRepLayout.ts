@@ -1,10 +1,11 @@
 import { useMutation, useQuery } from "@vue/apollo-composable";
-import { computed, readonly, ref } from "vue";
+import { computed, onScopeDispose, readonly, ref, watchEffect } from "vue";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { SalesRepLayoutDocument, SaveSalesRepLayoutDocument } from "../api/graphql/types";
 import { echoMatchesSentBlocks, reconcileLayout, serializeLayout } from "../layout/document";
 import { getBlockRegistry } from "../layout/registry";
+import { clearStatVisibility, publishStatVisibility } from "./useStatDataNeeds";
 import type {
   SalesRepBlockSettingsType,
   SalesRepLayoutRegionIdType,
@@ -82,6 +83,26 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
   function hiddenIn(regionId: SalesRepLayoutRegionIdType): readonly string[] {
     return state.value.regions[regionId].hidden;
   }
+
+  // Settled = the document has been read, or the read failed and the surface is showing registry
+  // defaults. Either way the visible set is now the real one, which is what the statistics queries
+  // wait for. A failed read keeps the cards fed rather than leaving them empty behind an alert.
+  const settled = computed(() => Boolean(result.value) || Boolean(savedState.value) || Boolean(error.value));
+
+  // The statistics composables shape their queries from the cards this surface shows, so a hidden card
+  // costs no buckets and an unneeded query does not fire (VCST-5647). Published rather than returned:
+  // they are created by the PAGE, above the <LayoutSurface> that owns this layout.
+  watchEffect(() => {
+    publishStatVisibility(scope, {
+      settled: settled.value,
+      visible: visibleIn("statistics"),
+      editing: editing.value,
+    });
+  });
+
+  onScopeDispose(() => {
+    clearStatVisibility(scope);
+  });
 
   /** A block with no declared settings has none — the shared empty keeps callers from branching. */
   function settingsOf(blockId: string): SalesRepBlockSettingsType {

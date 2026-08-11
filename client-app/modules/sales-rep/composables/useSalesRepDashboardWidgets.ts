@@ -1,7 +1,8 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { newOrdersCardData } from "../layout/stat-card-data";
+import { DASHBOARD_LAYOUT_SCOPE } from "../constants";
 import { buildActiveCartsCardData } from "../layout/active-carts-card";
+import { newOrdersCardData } from "../layout/stat-card-data";
 import { buildStatCards, DASHBOARD_STAT_CARDS } from "../layout/stat-cards";
 import { formatSignedPercent, formatStatCount, formatStatMoney } from "../utils";
 import { useSalesRepCartStatistics } from "./useSalesRepCartStatistics";
@@ -11,11 +12,20 @@ import type { StatWidgetCardType } from "../types/widgets";
 
 // Shapes three statistics sources into the six dashboard KPI cards.
 // Deltas are either period-over-period % (chevron) or plain "new activity" counts (no chevron).
+//
+// The card set never shrinks — the layout decides what renders, and a card missing while loading would
+// blank its column. What the scope narrows is the fetching: each query asks only for the visible cards'
+// slices, and one whose cards are all hidden does not run.
 export function useSalesRepDashboardWidgets() {
   const { t } = useI18n();
-  const { statistics: orderStatistics, loading: ordersLoading, error: ordersError } = useSalesRepOrderStatistics();
-  const { statistics: cartStatistics, loading: cartsLoading, error: cartsError } = useSalesRepCartStatistics();
-  const { counts, loading: countsLoading, error: countsError } = useSalesRepCustomerCounts();
+  const scope = DASHBOARD_LAYOUT_SCOPE;
+  const {
+    statistics: orderStatistics,
+    loading: ordersLoading,
+    error: ordersError,
+  } = useSalesRepOrderStatistics({ scope });
+  const { statistics: cartStatistics, loading: cartsLoading, error: cartsError } = useSalesRepCartStatistics({ scope });
+  const { counts, loading: countsLoading, error: countsError } = useSalesRepCustomerCounts({ scope });
 
   const cards = computed<StatWidgetCardType[]>(() => {
     const orders = orderStatistics.value;

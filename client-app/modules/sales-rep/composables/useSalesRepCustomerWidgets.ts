@@ -1,7 +1,8 @@
 import { computed, toValue } from "vue";
 import { useI18n } from "vue-i18n";
-import { newOrdersCardData } from "../layout/stat-card-data";
+import { CUSTOMER_PROFILE_LAYOUT_SCOPE } from "../constants";
 import { buildActiveCartsCardData } from "../layout/active-carts-card";
+import { newOrdersCardData } from "../layout/stat-card-data";
 import { buildStatCards, CUSTOMER_PROFILE_STAT_CARDS } from "../layout/stat-cards";
 import { formatSignedPercent, formatStatCount, formatStatMoney } from "../utils";
 import { useSalesRepCartStatistics } from "./useSalesRepCartStatistics";
@@ -11,20 +12,24 @@ import type { MaybeRefOrGetter } from "vue";
 
 // Per-customer KPI cards; shared cards reuse the dashboard's i18n keys (hub.dashboard.*) so both
 // surfaces stay in sync across locales.
+//
+// This surface has no week card and no month-over-month delta, so the scope keeps it from fetching the
+// three buckets behind them — what VCST-5647 found it discarding.
 export function useSalesRepCustomerWidgets(organizationId: MaybeRefOrGetter<string>) {
   const { t } = useI18n();
+  const scope = CUSTOMER_PROFILE_LAYOUT_SCOPE;
   const orgId = (): string => toValue(organizationId);
 
   const {
     statistics: orderStatistics,
     loading: ordersLoading,
     error: ordersError,
-  } = useSalesRepOrderStatistics({ organizationId: orgId });
+  } = useSalesRepOrderStatistics({ scope, organizationId: orgId });
   const {
     statistics: cartStatistics,
     loading: cartsLoading,
     error: cartsError,
-  } = useSalesRepCartStatistics({ organizationId: orgId });
+  } = useSalesRepCartStatistics({ scope, organizationId: orgId });
 
   const cards = computed<StatWidgetCardType[]>(() => {
     const orders = orderStatistics.value;
