@@ -1303,6 +1303,18 @@ type SeoInfo = {
     semanticUrl: Scalars['String']['output'];
     storeId?: Maybe<Scalars['String']['output']>;
 };
+type SharingSettingType = {
+    /** Access (read or write) */
+    access?: Maybe<WishlistAccessType>;
+    /** Id (sharing key) */
+    id: Scalars['String']['output'];
+    /** Created by current user */
+    isOwner: Scalars['Boolean']['output'];
+    /** Scope (private, organization, etc.) */
+    scope?: Maybe<WishlistScopeType>;
+    /** Id of the principal the list is shared with (id space defined by scope); null for non-targeted scopes */
+    sharedWithId?: Maybe<Scalars['String']['output']>;
+};
 type TierPriceType = {
     /** Price */
     price: MoneyType;
@@ -1389,6 +1401,26 @@ type VideoType = {
     /** Video upload date */
     uploadDate?: Maybe<Scalars['DateTime']['output']>;
 };
+declare enum WishlistAccessType {
+    /** Readonly access */
+    Read = "Read",
+    /** Write access */
+    Write = "Write"
+}
+declare enum WishlistScopeType {
+    /** Anyone (anonymous) scope */
+    AnyoneAnonymous = "AnyoneAnonymous",
+    /** Anyone (authorized) scope */
+    AnyoneAuthorized = "AnyoneAuthorized",
+    /** Customer scope (shared by a Sales Rep with specific customer organizations) */
+    Customer = "Customer",
+    /** Organization scope */
+    Organization = "Organization",
+    /** Private scope */
+    Private = "Private",
+    /** User scope */
+    User = "User"
+}
 type GetMeQuery = {
     me?: {
         id: string;
@@ -1845,6 +1877,10 @@ type ExtensionCategoryMapType = {
         order: CustomerOrderType;
         paymentTypeName: string;
     }) => boolean>;
+    /** The publicly reachable shared-list page. A provider decides from the sharing setting whether it has anything to say. */
+    sharedList: ExtensionEntryType<{
+        sharingSetting?: SharingSettingType;
+    }, (sharingSetting?: SharingSettingType) => boolean>;
 };
 
 type ExtensionRegistryStateType = {
