@@ -68,7 +68,7 @@ import { string } from "yup";
 import { useErrorsTranslator } from "@/core/composables";
 import { globals } from "@/core/globals";
 import { useUser } from "@/shared/account";
-import { useCompanyMemberRoles } from "@/shared/company/composables/useCompanyMemberRoles";
+import { translateRoleName, useCompanyMemberRoles } from "@/shared/company/composables/useCompanyMemberRoles";
 import { useNotifications } from "@/shared/notification";
 import { VcModal } from "@/ui-kit/components";
 import { getInvalidEmails, parseEmails, normalizeEmails } from "./emails";
@@ -87,7 +87,7 @@ const modalComponent = useTemplateRef<InstanceType<typeof VcModal>>("modalCompon
 const loading = ref(false);
 const commonErrors = ref<string[]>([]);
 
-const { t } = useI18n();
+const { t, te } = useI18n();
 const { organization, inviteUser } = useUser();
 const router = useRouter();
 const notifications = useNotifications();
@@ -97,7 +97,7 @@ const { roles: companyMemberRoles } = useCompanyMemberRoles();
 const roles = computed(() =>
   companyMemberRoles.value.map((role) => ({
     ...role,
-    normalizedName: t("common.roles." + role.id, role.name),
+    normalizedName: translateRoleName(t, te, role),
   })),
 );
 

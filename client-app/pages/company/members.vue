@@ -340,6 +340,7 @@ import {
   InviteMemberModal,
   MemberStatus,
   MembersDropdownMenu,
+  translateRoleName,
   useCompanyMemberRoles,
   useOrganizationContacts,
 } from "@/shared/company";
@@ -351,7 +352,7 @@ import type { FacetItemType, FacetValueItemType, ISortInfo } from "@/core/types"
 import type { ExtendedContactType } from "@/shared/company";
 import type { INotification } from "@/shared/notification";
 
-const { t } = useI18n();
+const { t, te } = useI18n();
 
 usePageHead({
   title: t("pages.company.members.meta.title"),
@@ -676,7 +677,7 @@ function openEditCustomerRoleModal(contact: ExtendedContactType): void {
   const closeEditCustomerRoleModal = openModal({
     component: EditCustomerRoleModal,
     props: {
-      roles: companyMemberRoles.value.map((role) => ({ ...role, name: t("common.roles." + role.id, role.name) })),
+      roles: companyMemberRoles.value.map((role) => ({ ...role, name: translateRoleName(t, te, role) })),
       currentRoleId,
       loading: contactsLoading,
 

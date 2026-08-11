@@ -9,6 +9,20 @@ const COMPANY_MEMBER_ROLES_SETTING = "Customer.MembershipRolesWhitelist";
 
 const DEFAULT_ROLES: ExtendedRoleType[] = [ORGANIZATION_EMPLOYEE, PURCHASING_AGENT, ORGANIZATION_MAINTAINER];
 
+// role names are arbitrary data (whitelist setting values, custom role names), not translation
+// defaults: passing one through t()'s fallback arg compiles it as a message-format string, where
+// {, }, @ and | are meaningful and can throw ("a@b" -> "Invalid linked format") or silently mangle
+// the label ("Sales | Manager" -> "Sales"). Always check te() first and use the raw value untranslated
+// when no key exists, instead of handing it to t() as a default.
+export function translateRoleName(
+  t: ReturnType<typeof useI18n>["t"],
+  te: ReturnType<typeof useI18n>["te"],
+  role: Pick<ExtendedRoleType, "id" | "name">,
+): string {
+  const translationKey = `common.roles.${role.id}`;
+  return te(translationKey) ? t(translationKey) : role.name;
+}
+
 function toRole(
   id: string,
   t: ReturnType<typeof useI18n>["t"],
@@ -20,8 +34,8 @@ function toRole(
   if (knownRole) {
     return knownRole;
   }
-  const translationKey = `common.roles.${id}`;
-  return { id, name: te(translationKey) ? t(translationKey) : id };
+
+  return { id, name: translateRoleName(t, te, { id, name: id }) };
 }
 
 function dedupeById(roles: ExtendedRoleType[]): ExtendedRoleType[] {

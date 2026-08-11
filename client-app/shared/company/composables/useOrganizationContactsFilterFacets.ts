@@ -2,6 +2,7 @@ import { cloneDeep, isEqual } from "lodash-es";
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { ContactStatus } from "@/shared/company";
+import { translateRoleName } from "@/shared/company/composables/useCompanyMemberRoles";
 import { useOrganizationContactRoles } from "@/shared/company/composables/useOrganizationContactRoles";
 import type { FacetItemType, FacetValueItemType } from "@/core/types";
 
@@ -27,7 +28,7 @@ function mergeFacetList(current: FacetItemType[], updated: FacetItemType[]): Fac
 }
 
 export function useOrganizationContactsFilterFacets(organizationId: string) {
-  const { t } = useI18n();
+  const { t, te } = useI18n();
   const { contactRoles } = useOrganizationContactRoles(organizationId);
 
   const initialFacets = computed<FacetItemType[]>(() => {
@@ -37,7 +38,7 @@ export function useOrganizationContactsFilterFacets(organizationId: string) {
         paramName: "roleId",
         type: "terms",
         values: contactRoles.value.map((role) => ({
-          label: t("common.roles." + role.id, role.name),
+          label: translateRoleName(t, te, role),
           value: role.id,
           selected: false,
         })),
