@@ -129,7 +129,8 @@
       "retry": "Réessayer",
       "select_row_number": "Select row {number}",
       "select_all": "Tout sélectionner",
-      "deselect_all": "Tout désélectionner"
+      "deselect_all": "Tout désélectionner",
+      "selection_column": "Sélection de ligne"
     },
     "slider": {
       "tooltip": "{count} articles",

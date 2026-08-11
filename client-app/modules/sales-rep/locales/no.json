@@ -184,6 +184,25 @@
           "All": "Alle"
         }
       }
+    },
+    "list_sharing": {
+      "share_customers_label": "Kunde",
+      "share_customers_placeholder": "Velg kunde",
+      "share_customers_error": "Kundelisten kunne ikke lastes. Prøv igjen.",
+      "share_replace_hint": "Kunden som ble valgt tidligere, mister tilgangen til denne listen.",
+      "share_message_label": "Melding",
+      "share_message_placeholder": "Valgfri melding",
+      "share_channels_label": "Send via",
+      "share_email_label": "E-post",
+      "share_push_label": "Push-varsel",
+      "share_default_title": "En ny liste fra din salgsrepresentant",
+      "share_default_message": "Hei! Jeg har nettopp delt listen «{listName}» med organisasjonen din. Ta en titt:",
+      "share_success": "Listen er delt med kunden.",
+      "share_partial": "Listen er delt, men ikke alle varsler ble levert.",
+      "share_notify_error": "Listen ble lagret, men kunden kunne ikke varsles.",
+      "scope_label": "Kunde",
+      "status": "Delt med kunde",
+      "badge": "Anbefalt av din salgsrepresentant"
     }
   }
 }

@@ -3,10 +3,13 @@ import { registerCacheTypePolicies } from "@/core/api/graphql/config/registerCac
 import { useNavigations } from "@/core/composables/useNavigations";
 import { useUser } from "@/shared/account/composables/useUser";
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
+import { EXTENSION_NAMES } from "@/shared/common/constants/extensionPointsNames";
+import { useWishlistSharingScopes } from "@/shared/wishlists/composables/useWishlistSharingScopes";
 import { loadModuleLocale } from "../utils";
 import { salesRepCustomersCount } from "./composables/sharedSalesRepCustomersCount";
-import { isSalesRepsEnabled } from "./composables/useSalesRepsConfig";
+import { isSalesRepsEnabled, isSalesRepUser } from "./composables/useSalesRepsConfig";
 import {
+  CUSTOMER_SHARING_SCOPE,
   DASHBOARD_NAV_LINK_ID,
   DASHBOARD_ROUTE_NAME,
   HUB_NAV_PRIORITY,
@@ -49,6 +52,24 @@ export function init(router: Router, i18n: I18n) {
 
   // "Sales reps" contact-info link for buyers (VCST-5409) — stays in the Corporate widget.
   mergeMenuSchema(salesRepMenuSchema);
+
+  // Publishing a list to a customer (VCST-5332): core only learns that another sharing option exists.
+  useWishlistSharingScopes().registerSharingScope({
+    scope: CUSTOMER_SHARING_SCOPE,
+    labelKey: "sales_rep.list_sharing.scope_label",
+    statusKey: "sales_rep.list_sharing.status",
+    supportsLink: true,
+    shoppable: true,
+    isAvailable: isSalesRepUser,
+    element: defineAsyncComponent(() => import("./components/wishlist-customer-sharing.vue")),
+  });
+
+  // Gated on the scope alone: the viewer is the customer, not a rep.
+  register("sharedList", EXTENSION_NAMES.sharedList.provenanceNote, {
+    component: defineAsyncComponent(() => import("./components/wishlist-rep-provenance.vue")),
+    // Compared as a plain string: this module owns the value, not core's generated enum.
+    condition: (sharingSetting) => (sharingSetting?.scope as string | undefined) === CUSTOMER_SHARING_SCOPE,
+  });
 
   // "Sales Rep hub" left-rail widget — visible only when the user is a Sales Rep (VCST-5469).
   registerAccountSection({

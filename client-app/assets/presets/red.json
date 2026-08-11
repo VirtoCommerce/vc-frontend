@@ -98,6 +98,9 @@
   "color_additional_50": "#ffffff",
   "color_additional_950": "#000000",
 
+  "color_vc_background_solid_accent": "#2563eb",
+  "color_vc_border_solid_accent": "#2563eb",
+
   "color_vc_text_outline_accent": "#2563eb",
   "color_vc_text_surface_accent": "#2563eb",
   "color_vc_text_ghost_accent": "#2563eb",
