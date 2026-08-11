@@ -1900,6 +1900,29 @@ declare function _useExtensionRegistry(): {
 };
 declare const useExtensionRegistry: typeof _useExtensionRegistry;
 
+declare const EXTENSION_NAMES: {
+    [k: string]: {
+        [k: string]: string;
+    };
+} & {
+    productCard: {
+        cardButton: string;
+    };
+    productPage: {
+        sidebarButton: string;
+        variationItemButton: string;
+    };
+    paymentPage: {
+        paymentMethods: string;
+    };
+    orderPaymentPage: {
+        paymentMethods: string;
+    };
+    sharedList: {
+        provenanceNote: string;
+    };
+};
+
 /**
  * Non-cached version of Apollo Client
  */
@@ -2391,6 +2414,30 @@ declare function useNotifications(): {
     stack: vue.ComputedRef<INotificationExtended[]>;
 };
 
+/** An option of the list's "Sharing options" select. Modules contribute their own through `registerSharingScope`. */
+interface IWishlistSharingScopeType {
+    scope: string;
+    labelKey: string;
+    /** Status line for the list owner; falls back to the generic "Shared". */
+    statusKey?: string;
+    supportsLink?: boolean;
+    shoppable?: boolean;
+    /** Defaults to available. */
+    isAvailable?: MaybeRefOrGetter<boolean>;
+    element?: Component;
+}
+type WishlistSharingScopeSavedContextType = {
+    listName: string;
+    sharingLink: string;
+};
+declare function _useWishlistSharingScopes(): {
+    sharingScopes: vue.ComputedRef<IWishlistSharingScopeType[]>;
+    registerSharingScope: (scope: IWishlistSharingScopeType) => void;
+    getSharingScope: (scope?: string | null) => IWishlistSharingScopeType | undefined;
+    isSharingScopeAvailable: (scope: IWishlistSharingScopeType) => boolean;
+};
+declare const useWishlistSharingScopes: typeof _useWishlistSharingScopes;
+
 type LoggerType = {
     debug: (message: unknown, ...args: unknown[]) => void;
     info: (message: string, ...args: unknown[]) => void;
@@ -2465,5 +2512,5 @@ declare const globals: Readonly<Required<GlobalVariablesType>>;
 /** Contract version, single-sourced from core-api/package.json (managed by build:core-types / bump:core). */
 declare const CORE_VERSION: string;
 
-export { CORE_VERSION, Logger, _default as OrderStatus, _default$5 as VcButton, _default$7 as VcCheckbox, _default$4 as VcInput, _default$6 as VcMarkdownRender, _default$3 as VcModal, _default$2 as VcWidget, _default$1 as VcWidgetSkeleton, apolloClient, getProductRoute, globals, graphqlClient, registerCacheTypePolicies, useBreadcrumbs, useExtensionRegistry, useModal, useModuleSettings, useNavigations, useNotifications, usePageHead, useUser };
-export type { ExtendedMenuLinkType, I18n, MenuType };
+export { CORE_VERSION, EXTENSION_NAMES, Logger, _default as OrderStatus, _default$5 as VcButton, _default$7 as VcCheckbox, _default$4 as VcInput, _default$6 as VcMarkdownRender, _default$3 as VcModal, _default$2 as VcWidget, _default$1 as VcWidgetSkeleton, apolloClient, getProductRoute, globals, graphqlClient, registerCacheTypePolicies, useBreadcrumbs, useExtensionRegistry, useModal, useModuleSettings, useNavigations, useNotifications, usePageHead, useUser, useWishlistSharingScopes };
+export type { ExtendedMenuLinkType, I18n, MenuType, WishlistSharingScopeSavedContextType };
