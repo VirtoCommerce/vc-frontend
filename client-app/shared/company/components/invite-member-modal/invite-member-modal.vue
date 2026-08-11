@@ -149,13 +149,11 @@ const send = handleSubmit(async (data) => {
   commonErrors.value = [];
   loading.value = true;
 
-  const selectedRole = roles.value.find((role) => role.id === data.roleId);
-
   const result = await inviteUser({
     storeId,
     urlSuffix: router.resolve({ name: "ConfirmInvitation" }).path,
     organizationId: organization.value!.id,
-    roleIds: [selectedRole?.name ?? data.roleId],
+    roleIds: [data.roleId],
     emails: normalizeEmails(parseEmails(data.emails)),
     message: data.message.trim(),
   });
