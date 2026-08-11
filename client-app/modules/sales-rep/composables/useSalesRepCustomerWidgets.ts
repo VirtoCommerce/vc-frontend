@@ -1,5 +1,6 @@
 import { computed, toValue } from "vue";
 import { useI18n } from "vue-i18n";
+import { buildActiveCartsCardData } from "../layout/active-carts-card";
 import { buildStatCards, CUSTOMER_PROFILE_STAT_CARDS } from "../layout/stat-cards";
 import { formatSignedPercent, formatStatCount, formatStatMoney } from "../utils";
 import { useSalesRepCartStatistics } from "./useSalesRepCartStatistics";
@@ -39,11 +40,6 @@ export function useSalesRepCustomerWidgets(organizationId: MaybeRefOrGetter<stri
     // Plain green count (no chevron) — New-status orders placed today, for this customer. Formatted
     // string renders; the raw number is vue-i18n's plural selector (see the dashboard mapper).
     const placedToday = orders?.newOrdersToday?.count ?? 0;
-    // Same metric as the dashboard "Active carts" card, scoped to this customer's organization: quantities
-    // of the cart lines picked for checkout, the parked remainder, and the lines touched this week (VCST-5588).
-    const selectedItems = carts?.activeCarts?.selectedItemQuantity ?? 0;
-    const unselectedItems = carts?.activeCarts?.unselectedItemQuantity ?? 0;
-    const weekItems = carts?.itemsThisWeek?.selectedItemQuantity ?? 0;
     // This month's revenue as a share of the year's — a client-side ratio, not a backend field.
     // 0 with no YTD revenue to divide by, so the row reads like every other empty metric.
     const ytdAmount = ytd?.total.amount ?? 0;
@@ -60,19 +56,8 @@ export function useSalesRepCustomerWidgets(organizationId: MaybeRefOrGetter<stri
         delta: t("sales_rep.hub.dashboard.stats.placed_today", { count: formatStatCount(placedToday) }, placedToday),
         deltaTone: "positive",
       },
-      // The dashboard's card, one organization: same figures, same i18n keys, so the two cannot drift.
-      active_cart: {
-        ...cartsState,
-        value: formatStatCount(selectedItems),
-        valueSuffix: t("sales_rep.hub.dashboard.stats.items_unit", selectedItems),
-        sub: t(
-          "sales_rep.hub.dashboard.stats.not_for_checkout",
-          { count: formatStatCount(unselectedItems) },
-          unselectedItems,
-        ),
-        delta: t("sales_rep.hub.dashboard.stats.items_this_week", { count: formatStatCount(weekItems) }, weekItems),
-        deltaTone: "positive",
-      },
+      // The dashboard's card, one organization: same builder, so the two surfaces cannot drift.
+      active_cart: buildActiveCartsCardData(carts, cartsState, t),
       mtd: {
         ...ordersState,
         value: formatStatMoney(mtd?.total),

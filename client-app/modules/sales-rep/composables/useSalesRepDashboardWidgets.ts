@@ -1,5 +1,6 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
+import { buildActiveCartsCardData } from "../layout/active-carts-card";
 import { buildStatCards, DASHBOARD_STAT_CARDS } from "../layout/stat-cards";
 import { formatSignedPercent, formatStatCount, formatStatMoney } from "../utils";
 import { useSalesRepCartStatistics } from "./useSalesRepCartStatistics";
@@ -31,11 +32,6 @@ export function useSalesRepDashboardWidgets() {
     // the number is vue-i18n's plural selector, so locales that need plural forms (ru, pl) can add
     // them without the grouped string breaking the choice.
     const placedToday = orders?.newOrdersToday?.count ?? 0;
-    // The cart card counts ITEMS, not carts: quantities of the lines the customers picked for checkout,
-    // the parked remainder underneath, and the lines touched this week as the delta (VCST-5588).
-    const selectedItems = carts?.activeCarts?.selectedItemQuantity ?? 0;
-    const unselectedItems = carts?.activeCarts?.unselectedItemQuantity ?? 0;
-    const weekItems = carts?.itemsThisWeek?.selectedItemQuantity ?? 0;
     const thisMonth = customerCounts?.thisMonth;
     const orderingCustomers = thisMonth?.orderingCustomers ?? 0;
     const newCustomers = thisMonth?.newCustomers ?? 0;
@@ -57,20 +53,7 @@ export function useSalesRepDashboardWidgets() {
         delta: t("sales_rep.hub.dashboard.stats.placed_today", { count: formatStatCount(placedToday) }, placedToday),
         deltaTone: "positive",
       },
-      active_carts: {
-        ...cartsState,
-        value: formatStatCount(selectedItems),
-        // Plural forms ("item | items"); nothing to interpolate, so the count is only the selector.
-        valueSuffix: t("sales_rep.hub.dashboard.stats.items_unit", selectedItems),
-        sub: t(
-          "sales_rep.hub.dashboard.stats.not_for_checkout",
-          { count: formatStatCount(unselectedItems) },
-          unselectedItems,
-        ),
-        // "{n} items this week" — the same selected-for-checkout quantity, but only the lines touched this week.
-        delta: t("sales_rep.hub.dashboard.stats.items_this_week", { count: formatStatCount(weekItems) }, weekItems),
-        deltaTone: "positive",
-      },
+      active_carts: buildActiveCartsCardData(carts, cartsState, t),
       orders_placed_week: {
         ...ordersState,
         value: formatStatCount(orders?.week?.count),
