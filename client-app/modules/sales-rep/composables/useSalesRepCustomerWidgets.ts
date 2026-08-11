@@ -1,5 +1,6 @@
 import { computed, toValue } from "vue";
 import { useI18n } from "vue-i18n";
+import { newOrdersCardData } from "../layout/stat-card-data";
 import { buildStatCards, CUSTOMER_PROFILE_STAT_CARDS } from "../layout/stat-cards";
 import { formatSignedPercent, formatStatCount, formatStatMoney } from "../utils";
 import { useSalesRepCartStatistics } from "./useSalesRepCartStatistics";
@@ -36,9 +37,6 @@ export function useSalesRepCustomerWidgets(organizationId: MaybeRefOrGetter<stri
 
     // Orders YTD compares vs last year on order COUNT (same metric as the dashboard "Orders placed · YTD").
     const ytdDelta = formatSignedPercent(orders?.ytdVsLastYear?.countChangePercent);
-    // All-status volume over the same window as the New count beside it — context, not a delta.
-    // Formatted string renders; the raw number is vue-i18n's plural selector (see the dashboard mapper).
-    const recentOrders = orders?.recentOrders?.count ?? 0;
     // Active cart: the summed total of this customer's non-empty carts.
     const activeCarts = carts?.activeCarts;
     // This month's revenue as a share of the year's — a client-side ratio, not a backend field.
@@ -48,19 +46,8 @@ export function useSalesRepCustomerWidgets(organizationId: MaybeRefOrGetter<stri
 
     // Caption, icon and accent come from the shared table; only what the queries decide is here.
     return buildStatCards(CUSTOMER_PROFILE_STAT_CARDS, {
-      new_orders: {
-        ...ordersState,
-        value: formatStatCount(orders?.newOrders?.count),
-        sub: t("sales_rep.hub.dashboard.stats.value_total", {
-          amount: formatStatMoney(orders?.newOrders?.total),
-        }),
-        delta: t(
-          "sales_rep.hub.dashboard.stats.of_recent_orders",
-          { count: formatStatCount(recentOrders) },
-          recentOrders,
-        ),
-        deltaTone: "neutral",
-      },
+      // Identical on both surfaces, so it comes from the one shared builder.
+      new_orders: newOrdersCardData(orders, ordersState, t),
       // One bold number — the active cart's total. No sub, no badge; no cart means a zero total.
       active_cart: {
         ...cartsState,

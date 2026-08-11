@@ -46,16 +46,13 @@ export type StatisticsWindowsType = {
   weekTo: string;
   prevWeekFrom: string;
   prevWeekTo: string;
-  // Rolling 7 days — bounds the "New orders" card. Rolling rather than week-to-date, because a
+  // Rolling 7 days — bounds the `new_orders` card. Rolling rather than week-to-date, because a
   // Monday-start window reads ~0 first thing Monday, when the actionable backlog is at its largest.
+  // The locale strings spell the span out ("of {count} created in the last 7 days"), so changing it
+  // means retranslating them.
   recentFrom: string;
   recentTo: string;
 };
-
-const DAY_MS = 86_400_000;
-// Span of the rolling window above. The New orders card's locale strings name this number
-// ("of {count} in the last 7 days"), so changing it means retranslating them.
-const RECENT_WINDOW_DAYS = 7;
 
 export function buildStatisticsWindows(now: Date = new Date()): StatisticsWindowsType {
   const year = now.getUTCFullYear();
@@ -76,13 +73,13 @@ export function buildStatisticsWindows(now: Date = new Date()): StatisticsWindow
   const prevMonthStart = Date.UTC(year, month - 1, 1);
   const yearStart = Date.UTC(year, 0, 1);
   const prevYearStart = Date.UTC(year - 1, 0, 1);
-  // Today plus the preceding days, so the window keeps a constant length as the week turns over.
-  const recentStart = Date.UTC(year, month, day - (RECENT_WINDOW_DAYS - 1));
+  // 7 days *inclusive of today*, hence −6.
+  const recentStart = Date.UTC(year, month, day - 6);
 
   // Monday-start week: getUTCDay() is 0 (Sun)…6 (Sat); shift so Monday === 0.
   const daysSinceMonday = (now.getUTCDay() + 6) % 7;
   const weekStart = Date.UTC(year, month, day - daysSinceMonday);
-  const prevWeekStart = weekStart - 7 * DAY_MS;
+  const prevWeekStart = Date.UTC(year, month, day - daysSinceMonday - 7);
 
   const iso = (ms: number): string => new Date(ms).toISOString();
   // Clamped to the previous period's own end, so a longer current elapsed span (e.g. 30 days into

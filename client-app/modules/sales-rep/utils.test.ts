@@ -75,7 +75,6 @@ describe("buildStatisticsWindows", () => {
   });
 
   it("keeps the rolling window full on a Monday, when week-to-date would be nearly empty", () => {
-    // The reason this window is rolling: the New orders card it bounds must not reset every Monday.
     const monday = new Date(Date.UTC(2025, 5, 9, 8, 15, 0));
     const w = buildStatisticsWindows(monday);
 

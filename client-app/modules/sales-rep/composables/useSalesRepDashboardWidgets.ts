@@ -1,5 +1,6 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
+import { newOrdersCardData } from "../layout/stat-card-data";
 import { buildStatCards, DASHBOARD_STAT_CARDS } from "../layout/stat-cards";
 import { formatSignedPercent, formatStatCount, formatStatMoney } from "../utils";
 import { useSalesRepCartStatistics } from "./useSalesRepCartStatistics";
@@ -30,7 +31,6 @@ export function useSalesRepDashboardWidgets() {
     // Each is passed to t() as the formatted string plus the raw number: the string is what renders,
     // the number is vue-i18n's plural selector, so locales that need plural forms (ru, pl) can add
     // them without the grouped string breaking the choice.
-    const recentOrders = orders?.recentOrders?.count ?? 0;
     const newCarts = carts?.newCartsThisWeek?.count ?? 0;
     const thisMonth = customerCounts?.thisMonth;
     const orderingCustomers = thisMonth?.orderingCustomers ?? 0;
@@ -43,21 +43,8 @@ export function useSalesRepDashboardWidgets() {
 
     // Caption, icon and accent come from the shared table; only what the queries decide is here.
     return buildStatCards(DASHBOARD_STAT_CARDS, {
-      new_orders: {
-        ...ordersState,
-        value: formatStatCount(orders?.newOrders?.count),
-        sub: t("sales_rep.hub.dashboard.stats.value_total", {
-          amount: formatStatMoney(orders?.newOrders?.total),
-        }),
-        // "of {n} created in the last 7 days" — the all-status flow the New count is a slice of, and
-        // the line that pins the window to the created date rather than the status.
-        delta: t(
-          "sales_rep.hub.dashboard.stats.of_recent_orders",
-          { count: formatStatCount(recentOrders) },
-          recentOrders,
-        ),
-        deltaTone: "neutral",
-      },
+      // Identical on both surfaces, so it comes from the one shared builder.
+      new_orders: newOrdersCardData(orders, ordersState, t),
       active_carts: {
         ...cartsState,
         value: formatStatCount(carts?.activeCarts?.count),
