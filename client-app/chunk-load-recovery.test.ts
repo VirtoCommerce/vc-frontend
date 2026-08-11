@@ -51,8 +51,6 @@ describe("installChunkLoadRecovery", () => {
     vi.restoreAllMocks();
   });
 
-  // A rendered application can explain itself, so the user keeps control over when the page reloads
-  // — an unannounced reload would discard whatever they were typing.
   test("offers a reload instead of forcing one when the application is rendered", () => {
     renderApplication();
 
@@ -80,8 +78,6 @@ describe("installChunkLoadRecovery", () => {
     expect(useNotifications().stack.value).toHaveLength(0);
   });
 
-  // A chunk that is permanently missing keeps failing after the reload; reloading again on every
-  // failure would trap the tab in a loop.
   test("does not reload again while the previous automatic reload is still recent", () => {
     dispatchPreloadError();
     settleDecision();
@@ -108,8 +104,7 @@ describe("installChunkLoadRecovery", () => {
     expect(reload).toHaveBeenCalledTimes(2);
   });
 
-  // The storefront also runs inside preview iframes, where storage access can be denied. Without a
-  // record of the previous attempt there is no way to keep the reload from looping.
+  // Storage access is denied in the sandboxed preview iframes the storefront also runs in.
   test("does not reload when storage is unavailable", () => {
     vi.stubGlobal("sessionStorage", {
       getItem: () => {
@@ -129,16 +124,12 @@ describe("installChunkLoadRecovery", () => {
     expect(reload).not.toHaveBeenCalled();
   });
 
-  // Preventing the event makes the failed import resolve with `undefined` instead of rejecting,
-  // which hides the failure from Vue and the router.
   test("leaves the event un-prevented so the import still rejects", () => {
     renderApplication();
 
     expect(dispatchPreloadError().defaultPrevented).toBe(false);
   });
 
-  // Several imports degrade on purpose — an optional preview plugin, a locale bundle that falls back
-  // to English. Reacting to those would replace a working boot with a reload or a false alarm.
   test("stays silent about a failure the call site has claimed", () => {
     renderApplication();
 
@@ -164,8 +155,7 @@ describe("installChunkLoadRecovery", () => {
     expect(reload).not.toHaveBeenCalled();
   });
 
-  // Vite dispatches the event and rethrows the same error, so the call site's own handler runs one
-  // microtask later — the decision has to wait for it rather than read the claim too early.
+  // Vite rethrows the dispatched error, so the call site's handler runs one microtask later.
   test("lets a call site claim the failure in its own catch handler", async () => {
     const error = new Error("Failed to fetch dynamically imported module: /assets/plugin-abc123.js");
     const load = Promise.reject(error).catch(ignoreChunkLoadFailure);
@@ -179,7 +169,6 @@ describe("installChunkLoadRecovery", () => {
     expect(reload).not.toHaveBeenCalled();
   });
 
-  // The failed chunk may be one boot can finish without, and the check runs before that is known.
   test("does not reload when the application renders after the failure", () => {
     dispatchPreloadError();
     settleDecision();

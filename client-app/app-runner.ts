@@ -68,10 +68,7 @@ async function getUcpHandoffUserId(): Promise<string | undefined> {
   }
 }
 
-/**
- * The preview plugins are optional — a failed load leaves the app booting without them — so the
- * failure is claimed to keep the chunk-load recovery from reloading or messaging over it.
- */
+/** The preview plugins are optional: a failed load leaves the app booting without them. */
 function reportOptionalChunkFailure(error: unknown): undefined {
   ignoreChunkLoadFailure(error);
   Logger.error("Failed to load an optional plugin chunk.", error);
