@@ -1,18 +1,28 @@
 import { beforeAll, beforeEach, afterEach, describe, expect, test, vi } from "vitest";
-import { installChunkLoadRecovery } from "@/chunk-load-recovery";
+import { BOOT_SETTLE_DELAY, installChunkLoadRecovery } from "@/chunk-load-recovery";
 import { setGlobals } from "@/core/globals";
+import { ignoreChunkLoadFailure } from "@/core/utilities/optional-chunk";
 import { useNotifications } from "@/shared/notification";
 import type { I18n } from "@/i18n";
 
 const reload = vi.fn();
 
-function dispatchPreloadError(): VitePreloadErrorEvent {
+function dispatchPreloadError(payload = new Error("Unable to preload CSS for /assets/chunk-abc123.js")) {
   const event = new Event("vite:preloadError", { cancelable: true }) as VitePreloadErrorEvent;
-  event.payload = new Error("Unable to preload CSS for /assets/chunk-abc123.js");
+  event.payload = payload;
 
   window.dispatchEvent(event);
 
   return event;
+}
+
+/** Runs the deferred decision without giving boot the chance to finish. */
+function settleDecision(): void {
+  vi.advanceTimersByTime(0);
+}
+
+function settleBoot(): void {
+  vi.advanceTimersByTime(BOOT_SETTLE_DELAY);
 }
 
 function renderApplication(): void {
@@ -26,6 +36,7 @@ describe("installChunkLoadRecovery", () => {
   });
 
   beforeEach(() => {
+    vi.useFakeTimers();
     vi.spyOn(console, "error").mockImplementation(() => {});
     vi.stubGlobal("location", { reload });
     document.body.innerHTML = `<div id="app"></div>`;
@@ -35,6 +46,7 @@ describe("installChunkLoadRecovery", () => {
   });
 
   afterEach(() => {
+    vi.useRealTimers();
     vi.unstubAllGlobals();
     vi.restoreAllMocks();
   });
@@ -45,6 +57,7 @@ describe("installChunkLoadRecovery", () => {
     renderApplication();
 
     dispatchPreloadError();
+    settleDecision();
 
     const { stack } = useNotifications();
 
@@ -60,6 +73,8 @@ describe("installChunkLoadRecovery", () => {
 
   test("reloads the page when the failure happens before the application renders", () => {
     dispatchPreloadError();
+    settleDecision();
+    settleBoot();
 
     expect(reload).toHaveBeenCalledTimes(1);
     expect(useNotifications().stack.value).toHaveLength(0);
@@ -69,16 +84,26 @@ describe("installChunkLoadRecovery", () => {
   // failure would trap the tab in a loop.
   test("does not reload again while the previous automatic reload is still recent", () => {
     dispatchPreloadError();
+    settleDecision();
+    settleBoot();
+
     dispatchPreloadError();
+    settleDecision();
+    settleBoot();
 
     expect(reload).toHaveBeenCalledTimes(1);
   });
 
   test("reloads again once the cooldown has passed", () => {
     dispatchPreloadError();
+    settleDecision();
+    settleBoot();
 
-    vi.spyOn(Date, "now").mockReturnValue(Date.now() + 10001);
+    vi.advanceTimersByTime(10001);
+
     dispatchPreloadError();
+    settleDecision();
+    settleBoot();
 
     expect(reload).toHaveBeenCalledTimes(2);
   });
@@ -95,7 +120,12 @@ describe("installChunkLoadRecovery", () => {
       },
     });
 
-    expect(() => dispatchPreloadError()).not.toThrow();
+    dispatchPreloadError();
+
+    expect(() => {
+      settleDecision();
+      settleBoot();
+    }).not.toThrow();
     expect(reload).not.toHaveBeenCalled();
   });
 
@@ -105,5 +135,58 @@ describe("installChunkLoadRecovery", () => {
     renderApplication();
 
     expect(dispatchPreloadError().defaultPrevented).toBe(false);
+  });
+
+  // Several imports degrade on purpose — an optional preview plugin, a locale bundle that falls back
+  // to English. Reacting to those would replace a working boot with a reload or a false alarm.
+  test("stays silent about a failure the call site has claimed", () => {
+    renderApplication();
+
+    const error = new Error("Failed to fetch dynamically imported module: /assets/plugin-abc123.js");
+
+    ignoreChunkLoadFailure(error);
+    dispatchPreloadError(error);
+    settleDecision();
+    settleBoot();
+
+    expect(useNotifications().stack.value).toHaveLength(0);
+    expect(reload).not.toHaveBeenCalled();
+  });
+
+  test("does not reload for a claimed failure that happens before the application renders", () => {
+    const error = new Error("Failed to fetch dynamically imported module: /assets/en-abc123.js");
+
+    ignoreChunkLoadFailure(error);
+    dispatchPreloadError(error);
+    settleDecision();
+    settleBoot();
+
+    expect(reload).not.toHaveBeenCalled();
+  });
+
+  // Vite dispatches the event and rethrows the same error, so the call site's own handler runs one
+  // microtask later — the decision has to wait for it rather than read the claim too early.
+  test("lets a call site claim the failure in its own catch handler", async () => {
+    const error = new Error("Failed to fetch dynamically imported module: /assets/plugin-abc123.js");
+    const load = Promise.reject(error).catch(ignoreChunkLoadFailure);
+
+    dispatchPreloadError(error);
+    await load;
+
+    settleDecision();
+    settleBoot();
+
+    expect(reload).not.toHaveBeenCalled();
+  });
+
+  // The failed chunk may be one boot can finish without, and the check runs before that is known.
+  test("does not reload when the application renders after the failure", () => {
+    dispatchPreloadError();
+    settleDecision();
+
+    renderApplication();
+    settleBoot();
+
+    expect(reload).not.toHaveBeenCalled();
   });
 });

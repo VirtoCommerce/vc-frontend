@@ -1,10 +1,12 @@
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities/logger";
+import { isIgnoredChunkLoadFailure } from "@/core/utilities/optional-chunk";
 import { useNotifications } from "@/shared/notification";
 
 const APP_SELECTOR = "#app";
 const AUTO_RELOAD_TIMESTAMP_KEY = "chunk-load-auto-reload";
 const AUTO_RELOAD_COOLDOWN = 10000;
+export const BOOT_SETTLE_DELAY = 3000;
 
 let installed = false;
 
@@ -26,16 +28,37 @@ export function installChunkLoadRecovery(): void {
   installed = true;
 
   window.addEventListener("vite:preloadError", (event) => {
-    Logger.error("Failed to load an application chunk.", event.payload);
+    const { payload } = event;
 
     // The event is left un-prevented: preventing it makes the import resolve with `undefined`
     // instead of rejecting, which hides the failure from Vue and the router.
-    if (isApplicationRendered()) {
-      notifyLoadFailure();
-    } else {
+    //
+    // Vite rethrows `payload` right after dispatching, so a call site that degrades on its own gets
+    // it one microtask later. Deciding on the next macrotask gives that handler its turn to claim
+    // the failure, instead of reacting to an import that was always allowed to fail.
+    setTimeout(() => recover(payload));
+  });
+}
+
+function recover(error: Error): void {
+  if (isIgnoredChunkLoadFailure(error)) {
+    return;
+  }
+
+  Logger.error("Failed to load an application chunk.", error);
+
+  if (isApplicationRendered()) {
+    notifyLoadFailure();
+    return;
+  }
+
+  // Boot may still finish without the failed chunk — an optional plugin, a locale bundle. Reload only
+  // if nothing rendered by then, so a degrading import never costs the user a page load.
+  setTimeout(() => {
+    if (!isApplicationRendered()) {
       reloadOnce();
     }
-  });
+  }, BOOT_SETTLE_DELAY);
 }
 
 function isApplicationRendered(): boolean {

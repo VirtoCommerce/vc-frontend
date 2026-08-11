@@ -1,4 +1,5 @@
 import { Logger } from "@/core/utilities";
+import { ignoreChunkLoadFailure } from "@/core/utilities/optional-chunk";
 import { isMfFlagEnabled } from "@/core-api/federation.mjs";
 
 /**
@@ -46,6 +47,9 @@ export async function startFederatedModules(): Promise<void> {
       const { initFederatedModules } = await import("./index");
       await initFederatedModules();
     } catch (error) {
+      // A loader-chunk fetch failure degrades to "no plugins" here, so it must not reach the
+      // chunk-load recovery and turn a boot that succeeded into a reload.
+      ignoreChunkLoadFailure(error);
       Logger.error("[MF] Federated loader failed to start", error);
     }
   })();

@@ -25,6 +25,7 @@ import {
   permissionsPlugin,
 } from "@/core/plugins";
 import { extractHostname, Logger } from "@/core/utilities";
+import { ignoreChunkLoadFailure } from "@/core/utilities/optional-chunk";
 import { createI18n } from "@/i18n";
 import { init as initModuleBackInStock } from "@/modules/back-in-stock";
 import { init as initCustomerReviews } from "@/modules/customer-reviews";
@@ -65,6 +66,17 @@ async function getUcpHandoffUserId(): Promise<string | undefined> {
   } catch (error) {
     Logger.warn("Failed to pre-restore UCP handoff session", error);
   }
+}
+
+/**
+ * The preview plugins are optional — a failed load leaves the app booting without them — so the
+ * failure is claimed to keep the chunk-load recovery from reloading or messaging over it.
+ */
+function reportOptionalChunkFailure(error: unknown): undefined {
+  ignoreChunkLoadFailure(error);
+  Logger.error("Failed to load an optional plugin chunk.", error);
+
+  return undefined;
 }
 
 // eslint-disable-next-line no-restricted-exports
@@ -266,8 +278,9 @@ export default async () => {
   app.use(applicationInsightsPlugin, { router });
 
   if (pageBuilderPreview.isActive) {
-    const builderPreviewPlugin = (await import("@/plugins/builder-preview/builder-preview.plugin").catch(Logger.error))
-      ?.default;
+    const builderPreviewPlugin = (
+      await import("@/plugins/builder-preview/builder-preview.plugin").catch(reportOptionalChunkFailure)
+    )?.default;
     if (builderPreviewPlugin) {
       app.use(builderPreviewPlugin, { router });
     }
@@ -275,7 +288,7 @@ export default async () => {
 
   if (isBuilderIoPreviewMode()) {
     const builderIoPreviewPlugin = (
-      await import("@/plugins/builder-io-preview/builder-io-preview.plugin").catch(Logger.error)
+      await import("@/plugins/builder-io-preview/builder-io-preview.plugin").catch(reportOptionalChunkFailure)
     )?.default;
     if (builderIoPreviewPlugin) {
       app.use(builderIoPreviewPlugin, { router });
