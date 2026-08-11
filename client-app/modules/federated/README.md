@@ -108,11 +108,15 @@ host. No second Vue, no second router, no duplicate Apollo cache.
 
 **Current facade surface** (see `client-app/core-api/index.ts` for the authoritative list):
 
-- UI: `VcWidget`, `VcButton`, `VcMarkdownRender` (all `Vc*` are also globally registered)
-- Extension points: `useExtensionRegistry`
-- Data: `apolloClient`, `graphqlClient`
-- Config: `useModuleSettings`, `globals`
-- Meta: `CORE_VERSION`, `type I18n`
+- UI: `VcWidget`, `VcButton`, `VcInput`, `VcCheckbox`, `VcMarkdownRender`, `VcModal`,
+  `VcWidgetSkeleton`, and the themed `OrderStatus` (all `Vc*` are also globally registered)
+- Extension points: `useExtensionRegistry`, `EXTENSION_NAMES`
+- Data: `apolloClient`, `graphqlClient`, `registerCacheTypePolicies`
+- Composables: `useUser`, `useNavigations`, `useModal`, `useNotifications`, `useBreadcrumbs`,
+  `usePageHead`, `useWishlistSharingScopes`
+- Config / utilities: `useModuleSettings`, `globals`, `Logger`, `getProductRoute`
+- Meta: `CORE_VERSION`, and the types `I18n`, `MenuType`, `ExtendedMenuLinkType`,
+  `WishlistSharingScopeSavedContextType`
 
 > **Rule of thumb:** keep the facade **small and additive**. New export ⇒ minor
 > `CORE_VERSION` bump; removing/renaming ⇒ major (breaks _every_ plugin).

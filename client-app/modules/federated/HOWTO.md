@@ -266,10 +266,15 @@ Extension points let a plugin inject content into host screens **without owning
 them** (widgets on account pages, etc.). From a plugin it's one facade import:
 
 ```ts
-import { useExtensionRegistry } from "@vc-frontend/core";
+import { EXTENSION_NAMES, useExtensionRegistry } from "@vc-frontend/core";
 
-useExtensionRegistry().register(/* category, name, your component */);
+useExtensionRegistry().register("sharedList", EXTENSION_NAMES.sharedList.provenanceNote, {
+  component: YourComponent,
+});
 ```
+
+Take the name from `EXTENSION_NAMES`, not a literal — the host matches registrations against
+those keys.
 
 How the ExtensionPoint system works, the available categories, and payload shapes:
 [`client-app/shared/common/composables/extensionRegistry/README.md`](../../shared/common/composables/extensionRegistry/README.md).

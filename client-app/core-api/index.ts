@@ -23,8 +23,7 @@ export { default as OrderStatus } from "@/shared/account/components/order-status
 
 // Extension registry — backed by @vueuse createGlobalState (hence @vueuse is shared).
 export { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
-// The registration keys the host matches against; a plugin passing its own string
-// silently stops rendering when the host renames one.
+// The registration keys the host matches against.
 export { EXTENSION_NAMES } from "@/shared/common/constants/extensionPointsNames";
 
 // GraphQL / Apollo — same client, cache and auth link as the host.
@@ -40,9 +39,8 @@ export { usePageHead } from "@/core/composables/usePageHead";
 export { useUser } from "@/shared/account/composables/useUser";
 export { useModal } from "@/shared/modal/composables/useModal";
 export { useNotifications } from "@/shared/notification/composables/useNotifications";
-// A plugin contributes a list-sharing scope to the host's own sharing modal; the saved
-// context is what the modal hands back to the scope's `onSaved`.
 export { useWishlistSharingScopes } from "@/shared/wishlists/composables/useWishlistSharingScopes";
+// What the sharing modal hands a scope's `onSaved`.
 export type { WishlistSharingScopeSavedContextType } from "@/shared/wishlists/composables/useWishlistSharingScopes";
 
 export { Logger } from "@/core/utilities";

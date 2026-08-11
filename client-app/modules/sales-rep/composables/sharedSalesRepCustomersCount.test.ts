@@ -1,8 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { computed } from "vue";
 
-// The real composable issues a GraphQL query, so it is stubbed: what is under test here is
-// the laziness and app-lifetime sharing around it, not the query itself.
+// The real composable issues a GraphQL query, so it is stubbed and only counted.
 const h = vi.hoisted(() => ({ calls: 0 }));
 
 vi.mock("./useSalesRepCustomersCount", () => ({

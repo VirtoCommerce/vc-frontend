@@ -13,15 +13,23 @@ the same remap in reverse.
 
 ## 1. Import remap (host → `@vc-frontend/core` facade)
 
+Every runtime host import the module makes is a facade export — the remap is mechanical.
+Grep `from "@/` over the module rather than trusting the file lists below.
+
 | In-repo (host) | MF plugin (facade) |
 |---|---|
-| `useQuery` / `useMutation` from `@vue/apollo-composable` (every `composables/useSalesRep*.ts`) | same names from `@vc-frontend/core` |
-| `Logger` from `@/core/utilities` (7 composables — grep, do not go by this list) | remove import; use `console.error` |
-| `globals` from `@/core/globals` (`composables/useSalesRepLayout.ts`, for `storeId`) | `globals` from `@vc-frontend/core` |
-| `useBreadcrumbs` / `usePageHead` from `@/core/composables` (`pages/customer-profile.vue`) | `@vc-frontend/core` |
-| `MenuType` from `@/core/types` (`menu.ts`) | `MenuType` from `@vc-frontend/core` |
-| Vc components **not imported** anywhere in the module (globally registered by the host) | re-add explicit imports from `@vc-frontend/core` — MF has no global registration. Grep for `<Vc`; at time of writing the layout feature alone uses `VcAlert VcBreadcrumbs VcButton VcEmptyView VcIcon VcImage VcLoaderOverlay VcTypography VcWidget`, plus `VcInput VcTable` on the list page |
-| `useModuleSettings` from `@/core/composables/useModuleSettings` (`composables/useSalesRepsConfig.ts`) | `@vc-frontend/core` |
+| `useQuery` / `useMutation` from `@vue/apollo-composable` (14 composables) | **unchanged** — a federation shared singleton (`core-api/federation.mjs`), not a facade export |
+| `Logger` from `@/core/utilities` and `globals` from `@/core/globals` (13 files each) | same names from `@vc-frontend/core` |
+| `apolloClient` (`composables/sharedSalesRepCustomersCount.ts`) and `registerCacheTypePolicies` (`index.ts`) | `@vc-frontend/core` |
+| `useExtensionRegistry` and `EXTENSION_NAMES` (`index.ts`) | `@vc-frontend/core` |
+| `useWishlistSharingScopes` (`index.ts`) and `WishlistSharingScopeSavedContextType` (`components/wishlist-customer-sharing.vue`) | `@vc-frontend/core` |
+| `useUser` (`index.ts`, `routes.ts`, `composables/useSalesRepsConfig.ts`), `useModuleSettings`, `useNavigations` | `@vc-frontend/core` |
+| `useModal` (2 files), `useNotifications` (2 files), `useBreadcrumbs` / `usePageHead` (`pages/customer-profile.vue`), `getProductRoute` (`components/top-sellers.vue`) | `@vc-frontend/core` |
+| `OrderStatus` (`components/sales-rep-orders.vue`) and `VcModal` (`components/customer-communication-modal.vue`) | `@vc-frontend/core` |
+| `MenuType` (`menu.ts`), `ExtendedMenuLinkType` (`components/link-my-customers.vue`) | `@vc-frontend/core` |
+| `I18n` (`index.ts`) | drops out with the param-less entry — §2 |
+| Vc components used in templates but never imported | Grep `<Vc`; the module's templates reach for ~21 of them and the facade exports 7 (`VcWidget VcButton VcInput VcCheckbox VcMarkdownRender VcModal VcWidgetSkeleton`). Whether a remote's templates resolve the host's global registrations depends on the remote rendering inside the host's app instance — verify that on the pilot before relying on it, and note the standalone dev server has no host registrations at all |
+| Test-only: `createWrapperFactory` from `@/core/utilities/tests`, `cache` from `@/core/api/graphql/config/cache`, `IWishlistSharingScopeControlsType` from `@/shared/wishlists` | **not** facade exports — the plugin repo owns its own test setup (§3) |
 
 ## 2. Entry point — `index.ts`
 
@@ -44,8 +52,8 @@ entry and the module reads host singletons off `globals`. Rewrite `init` as:
 
 ## 3. Tests
 
-- `composables/useSalesReps.test.ts`: change `vi.mock("@vue/apollo-composable", …)` back to
-  `vi.mock("@vc-frontend/core", …)`.
+- `composables/useSalesReps.test.ts`: the `vi.mock("@vue/apollo-composable", …)` stays — the
+  plugin imports the composables from that package too (shared singleton, §1).
 - Re-add `src/mocks/vc-frontend-core.ts` and the vitest alias that makes the (types-only)
   `@vc-frontend/core` specifier resolvable in tests.
 - The MF-plumbing tests that were **not** ported (`index.test.ts`, `create-plugin.test.ts`,

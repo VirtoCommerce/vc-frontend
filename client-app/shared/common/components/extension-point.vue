@@ -14,8 +14,8 @@
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import type { ExtensionCategoryType } from "@/shared/common/types/extensionRegistry";
 
-// Exported (hence this second block) because `generic` makes the generated component type
-// reference it, and <script setup> cannot carry ES exports.
+// `generic` makes the generated component type reference this interface, and <script setup>
+// cannot carry ES exports.
 export interface IProps<C extends ExtensionCategoryType> {
   category: C;
   name?: string;
