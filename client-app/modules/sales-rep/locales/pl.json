@@ -65,9 +65,9 @@
           "ordered_this_month": "{count} zamówiło w tym miesiącu",
           "new_customers": "{count} nowych klientów",
           "placed_today": "{count} złożono dzisiaj",
-          "items_unit": "pozycja | pozycji",
+          "items_unit": "pozycji | pozycja | pozycje | pozycji",
           "not_for_checkout": "{count} nie do kasy",
-          "items_this_week": "{count} pozycja w tym tygodniu | {count} pozycji w tym tygodniu",
+          "items_this_week": "{count} pozycji w tym tygodniu | {count} pozycja w tym tygodniu | {count} pozycje w tym tygodniu | {count} pozycji w tym tygodniu",
           "mtd_of_ytd": "{percent}% roku",
           "load_failed": "Nie udało się wczytać"
         }

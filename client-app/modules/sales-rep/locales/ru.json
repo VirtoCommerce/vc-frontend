@@ -65,9 +65,9 @@
           "ordered_this_month": "{count} заказали в этом месяце",
           "new_customers": "{count} новых клиентов",
           "placed_today": "{count} сегодня",
-          "items_unit": "товар | товаров",
+          "items_unit": "товаров | товар | товара | товаров",
           "not_for_checkout": "{count} не к оформлению",
-          "items_this_week": "{count} товар за неделю | {count} товаров за неделю",
+          "items_this_week": "{count} товаров за неделю | {count} товар за неделю | {count} товара за неделю | {count} товаров за неделю",
           "mtd_of_ytd": "{percent}% от года",
           "load_failed": "Не удалось загрузить"
         }
