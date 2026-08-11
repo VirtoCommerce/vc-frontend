@@ -1,5 +1,6 @@
 import { useQuery } from "@vue/apollo-composable";
 import { computed, ref, watch } from "vue";
+import { SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT } from "@/core/api/graphql/consts";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { CustomerSalesRepsDocument } from "../api/graphql/types";
@@ -33,6 +34,7 @@ export function useSalesReps() {
   const { result, loading, onError } = useQuery(CustomerSalesRepsDocument, variables, {
     keepPreviousResult: true,
     fetchPolicy: HUB_FETCH_POLICY,
+    context: SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT,
   });
 
   onError((error) => {

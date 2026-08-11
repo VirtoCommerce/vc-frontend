@@ -1,6 +1,7 @@
 import { useQuery } from "@vue/apollo-composable";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
+import { SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT } from "@/core/api/graphql/consts";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import {
@@ -65,7 +66,7 @@ export function useSalesRepRules(domain: SalesRepRuleDomainType, kind: SalesRepR
   const { result, loading, onError } = useQuery(
     source.document,
     () => ({ storeId: globals.storeId, cultureName: globals.cultureName }),
-    { fetchPolicy: "cache-first" },
+    { fetchPolicy: "cache-first", context: SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT },
   );
 
   onError((error) => {

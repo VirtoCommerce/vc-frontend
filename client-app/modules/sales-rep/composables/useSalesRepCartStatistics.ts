@@ -1,5 +1,6 @@
 import { useQuery } from "@vue/apollo-composable";
 import { computed, toValue } from "vue";
+import { SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT } from "@/core/api/graphql/consts";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { SalesRepCustomerCartStatisticsDocument } from "../api/graphql/types";
@@ -28,6 +29,7 @@ export function useSalesRepCartStatistics(options: UseSalesRepCartStatisticsOpti
 
   const { result, loading, error, onError } = useQuery(SalesRepCustomerCartStatisticsDocument, variables, {
     fetchPolicy: HUB_FETCH_POLICY,
+    context: SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT,
   });
 
   onError((err) => {

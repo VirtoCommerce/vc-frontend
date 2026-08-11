@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import { computed, readonly, ref } from "vue";
+import { SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT } from "@/core/api/graphql/consts";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { SalesRepLayoutDocument, SaveSalesRepLayoutDocument } from "../api/graphql/types";
@@ -43,7 +44,7 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
       scope,
       storeId: globals.storeId,
     }),
-    { fetchPolicy: "no-cache" },
+    { fetchPolicy: "no-cache", context: SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT },
   );
 
   onError((queryError) => {

@@ -1,5 +1,6 @@
 import { useQuery } from "@vue/apollo-composable";
 import { computed, ref, watch } from "vue";
+import { SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT } from "@/core/api/graphql/consts";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { SalesRepCustomersDocument } from "../api/graphql/types";
@@ -45,6 +46,7 @@ export function useSalesRepCustomers() {
   const { result, loading, error, onError } = useQuery(SalesRepCustomersDocument, variables, {
     keepPreviousResult: true,
     fetchPolicy: HUB_FETCH_POLICY,
+    context: SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT,
   });
 
   onError((err) => {

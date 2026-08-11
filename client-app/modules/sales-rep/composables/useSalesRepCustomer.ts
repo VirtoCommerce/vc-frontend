@@ -1,5 +1,6 @@
 import { useQuery } from "@vue/apollo-composable";
 import { computed, toValue } from "vue";
+import { SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT } from "@/core/api/graphql/consts";
 import { Logger } from "@/core/utilities";
 import { SalesRepCustomerDocument } from "../api/graphql/types";
 import { HUB_FETCH_POLICY } from "../constants";
@@ -14,6 +15,7 @@ export function useSalesRepCustomer(organizationId: MaybeRefOrGetter<string>) {
   // share this composable; Apollo's deduplication collapses their concurrent identical requests into one.
   const { result, loading, onError } = useQuery(SalesRepCustomerDocument, variables, {
     fetchPolicy: HUB_FETCH_POLICY,
+    context: SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT,
   });
 
   onError((error) => {

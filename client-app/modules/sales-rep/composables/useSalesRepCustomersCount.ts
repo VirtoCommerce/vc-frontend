@@ -1,5 +1,6 @@
 import { useQuery } from "@vue/apollo-composable";
 import { computed } from "vue";
+import { SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT } from "@/core/api/graphql/consts";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { SalesRepCustomersCountDocument } from "../api/graphql/types";
@@ -11,6 +12,7 @@ export function useSalesRepCustomersCount() {
   // Shows the same number as the dashboard's "Assigned customers" card — cache-first let the two disagree.
   const { result, onError } = useQuery(SalesRepCustomersCountDocument, () => ({ storeId: globals.storeId }), {
     fetchPolicy: HUB_FETCH_POLICY,
+    context: SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT,
   });
 
   onError((error) => {

@@ -1,5 +1,6 @@
 import { useQuery } from "@vue/apollo-composable";
 import { computed, toValue } from "vue";
+import { SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT } from "@/core/api/graphql/consts";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { SalesRepOrdersDocument } from "../api/graphql/types";
@@ -43,6 +44,7 @@ export function useSalesRepOrders(options: UseSalesRepOrdersOptionsType = {}) {
   // Revalidates with the KPI cards above it: a stale row read "New" under a card already counting 0.
   const { result, loading, error, onError } = useQuery(SalesRepOrdersDocument, variables, {
     fetchPolicy: HUB_FETCH_POLICY,
+    context: SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT,
   });
 
   onError((err) => {

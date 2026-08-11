@@ -1,5 +1,6 @@
 import { useQuery } from "@vue/apollo-composable";
 import { computed, ref, watch } from "vue";
+import { SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT } from "@/core/api/graphql/consts";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { SalesRepCustomerOptionsDocument } from "../api/graphql/types";
@@ -20,7 +21,9 @@ export function useSalesRepCustomerOptions() {
     sort: "name:asc",
   }));
 
-  const { result, loading, onError, onResult } = useQuery(SalesRepCustomerOptionsDocument, variables);
+  const { result, loading, onError, onResult } = useQuery(SalesRepCustomerOptionsDocument, variables, {
+    context: SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT,
+  });
 
   // An empty dropdown on a failed fetch reads as "this rep serves nobody"; callers surface this on the field instead.
   const failed = ref(false);
