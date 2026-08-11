@@ -51,7 +51,6 @@
         "widgets": {
           "new_orders": "ステータス「New」の注文",
           "active_carts": "アクティブなカート",
-          "active_cart": "アクティブなカート",
           "orders_placed_week": "今週の注文",
           "orders_placed_mtd": "今月の注文",
           "purchased_mtd": "今月の購入額",
@@ -66,7 +65,9 @@
           "ordered_this_month": "今月 {count} 件が注文",
           "new_customers": "新規顧客 {count} 件",
           "of_recent_orders": "過去7日間に作成された {count} 件中",
-          "new_this_week": "今週 新規 {count} 件",
+          "items_unit": "点",
+          "not_for_checkout": "{count} 点 レジ対象外",
+          "items_this_week": "今週 {count} 点",
           "mtd_of_ytd": "年初来の {percent}%",
           "load_failed": "読み込みに失敗しました"
         }

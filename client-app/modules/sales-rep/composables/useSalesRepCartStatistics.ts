@@ -11,7 +11,7 @@ type UseSalesRepCartStatisticsOptionsType = {
   organizationId?: string | Ref<string | undefined> | (() => string | undefined);
 };
 
-// Two aliased slices from one query: activeCarts backs the "Active carts" card, newCartsThisWeek backs its delta.
+// Two aliased slices from one query: activeCarts backs the "Active carts" card, itemsThisWeek backs its delta.
 export function useSalesRepCartStatistics(options: UseSalesRepCartStatisticsOptionsType = {}) {
   const variables = computed(() => {
     const windows = buildStatisticsWindows();

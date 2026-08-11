@@ -51,7 +51,6 @@
         "widgets": {
           "new_orders": "Orders in “New” status",
           "active_carts": "Active carts",
-          "active_cart": "Active cart",
           "orders_placed_week": "Orders placed · WEEK",
           "orders_placed_mtd": "Orders placed · MTD",
           "purchased_mtd": "Purchased · MTD",
@@ -66,7 +65,9 @@
           "ordered_this_month": "{count} ordered this month",
           "new_customers": "{count} new customers",
           "of_recent_orders": "of {count} created in the last 7 days",
-          "new_this_week": "{count} new this week",
+          "items_unit": "item | items",
+          "not_for_checkout": "{count} not for checkout",
+          "items_this_week": "{count} item this week | {count} items this week",
           "mtd_of_ytd": "{percent}% of YTD",
           "load_failed": "Couldn't load"
         }

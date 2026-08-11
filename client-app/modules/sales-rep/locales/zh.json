@@ -51,7 +51,6 @@
         "widgets": {
           "new_orders": "状态为“New”的订单",
           "active_carts": "活动购物车",
-          "active_cart": "活动购物车",
           "orders_placed_week": "本周下单",
           "orders_placed_mtd": "本月至今下单",
           "purchased_mtd": "本月至今采购额",
@@ -66,7 +65,9 @@
           "ordered_this_month": "本月 {count} 家下单",
           "new_customers": "{count} 个新客户",
           "of_recent_orders": "近 7 天创建的 {count} 单中",
-          "new_this_week": "本周新增 {count}",
+          "items_unit": "件商品",
+          "not_for_checkout": "{count} 件不结账",
+          "items_this_week": "本周 {count} 件商品",
           "mtd_of_ytd": "占年初至今 {percent}%",
           "load_failed": "加载失败"
         }

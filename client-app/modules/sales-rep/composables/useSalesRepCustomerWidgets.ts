@@ -1,6 +1,7 @@
 import { computed, toValue } from "vue";
 import { useI18n } from "vue-i18n";
 import { newOrdersCardData } from "../layout/stat-card-data";
+import { buildActiveCartsCardData } from "../layout/active-carts-card";
 import { buildStatCards, CUSTOMER_PROFILE_STAT_CARDS } from "../layout/stat-cards";
 import { formatSignedPercent, formatStatCount, formatStatMoney } from "../utils";
 import { useSalesRepCartStatistics } from "./useSalesRepCartStatistics";
@@ -37,8 +38,6 @@ export function useSalesRepCustomerWidgets(organizationId: MaybeRefOrGetter<stri
 
     // Orders YTD compares vs last year on order COUNT (same metric as the dashboard "Orders placed · YTD").
     const ytdDelta = formatSignedPercent(orders?.ytdVsLastYear?.countChangePercent);
-    // Active cart: the summed total of this customer's non-empty carts.
-    const activeCarts = carts?.activeCarts;
     // This month's revenue as a share of the year's — a client-side ratio, not a backend field.
     // 0 with no YTD revenue to divide by, so the row reads like every other empty metric.
     const ytdAmount = ytd?.total.amount ?? 0;
@@ -48,11 +47,8 @@ export function useSalesRepCustomerWidgets(organizationId: MaybeRefOrGetter<stri
     return buildStatCards(CUSTOMER_PROFILE_STAT_CARDS, {
       // Identical on both surfaces, so it comes from the one shared builder.
       new_orders: newOrdersCardData(orders, ordersState, t),
-      // One bold number — the active cart's total. No sub, no badge; no cart means a zero total.
-      active_cart: {
-        ...cartsState,
-        value: formatStatMoney(activeCarts?.total),
-      },
+      // The dashboard's card, one organization: same builder, so the two surfaces cannot drift.
+      active_cart: buildActiveCartsCardData(carts, cartsState, t),
       mtd: {
         ...ordersState,
         value: formatStatMoney(mtd?.total),
