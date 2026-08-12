@@ -36,7 +36,13 @@ async function run(failure: FailureType, suppress = false): Promise<void> {
     () =>
       new Observable((observer) => {
         if (failure.networkError) {
-          observer.error(failure.networkError);
+          // A 401/403 arrives as a network error carrying the GraphQL errors on `result` — the shape
+          // @apollo/client's error link reads them from, and the only way the two co-occur.
+          observer.error(
+            failure.graphQLErrors
+              ? Object.assign(failure.networkError, { result: { errors: failure.graphQLErrors } })
+              : failure.networkError,
+          );
         } else {
           observer.next({ errors: failure.graphQLErrors });
           observer.complete();
@@ -94,7 +100,17 @@ describe("errorHandlerLink", () => {
     expect(emittedEvents()).toEqual([unauthorizedErrorEvent, forbiddenEvent, userLockedEvent, passwordExpiredEvent]);
   });
 
+  // `Unhandled` is the "no recognized code" bucket, and `toServerError` resolves it first, so an auth code
+  // sharing the response with one would otherwise be hidden behind the suppressed generic error.
   it("keeps the auth outcomes when an opted-out response also carries an unhandled error", async () => {
+    await run(
+      { graphQLErrors: [graphQLError(GraphQLErrorCode.Unhandled), graphQLError(GraphQLErrorCode.Unauthorized)] },
+      true,
+    );
+    await run(
+      { graphQLErrors: [graphQLError(GraphQLErrorCode.Unhandled), graphQLError(GraphQLErrorCode.Forbidden)] },
+      true,
+    );
     await run(
       { graphQLErrors: [graphQLError(GraphQLErrorCode.Unhandled), graphQLError(GraphQLErrorCode.UserLocked)] },
       true,
@@ -104,6 +120,21 @@ describe("errorHandlerLink", () => {
       true,
     );
 
-    expect(emittedEvents()).toEqual([userLockedEvent, passwordExpiredEvent]);
+    expect(emittedEvents()).toEqual([unauthorizedErrorEvent, forbiddenEvent, userLockedEvent, passwordExpiredEvent]);
+  });
+
+  it("stays silent for an opted-out network failure that carries no auth code", async () => {
+    await run({ networkError: new Error("Failed to fetch"), graphQLErrors: [{ message: "boom" }] }, true);
+
+    expect(emittedEvents()).toEqual([]);
+  });
+
+  it("keeps the auth outcome of an opted-out response that also failed at the network level", async () => {
+    await run(
+      { networkError: new Error("Failed to fetch"), graphQLErrors: [graphQLError(GraphQLErrorCode.Unauthorized)] },
+      true,
+    );
+
+    expect(emittedEvents()).toEqual([unauthorizedErrorEvent]);
   });
 });

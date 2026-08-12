@@ -16,7 +16,7 @@ type HubVariablesType<TVariables> = TVariables | Ref<TVariables> | (() => TVaria
  * widget must not read as a page-level outage (VCST-5682).
  *
  * Going through the wrapper is what makes that hold for the *next* widget too: the opt-out is a bare
- * operation context, so a call site that forgets it silently gets the toast back. `no-restricted-imports`
+ * operation context, so a call site that forgets it silently gets the toast back. `no-restricted-syntax`
  * in eslint.config.js keeps direct `useQuery` out of this folder. Mutations stay on `useMutation` — a
  * failed user action still deserves a toast.
  */

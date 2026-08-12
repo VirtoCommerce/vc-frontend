@@ -20,7 +20,7 @@ export function useSalesRepCustomerOptions() {
     sort: "name:asc",
   }));
 
-  const { result, loading, onError, onResult } = useSalesRepHubQuery(SalesRepCustomerOptionsDocument, variables, {});
+  const { result, loading, onError, onResult } = useSalesRepHubQuery(SalesRepCustomerOptionsDocument, variables);
 
   // An empty dropdown on a failed fetch reads as "this rep serves nobody"; callers surface this on the field instead.
   const failed = ref(false);
