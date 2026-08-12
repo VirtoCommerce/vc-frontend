@@ -27,21 +27,17 @@
 </template>
 
 <script setup lang="ts">
-import { useMutation } from "@vue/apollo-composable";
 import { useI18n } from "vue-i18n";
-import { DeleteSkyFlowCardDocument, OperationNames } from "@/core/api/graphql/types";
 import { globals } from "@/core/globals";
 import { replaceXFromBeginning } from "@/core/utilities";
+import { useDeleteSkyflowCard, useSkyflowCards } from "@/modules/skyflow";
 import { CreditCard, CreditCardSkeleton } from "@/shared/account";
 import { useModal } from "@/shared/modal";
-import { useSkyflowCards } from "@/shared/payment";
 
 const { t } = useI18n();
 const { openModal } = useModal();
 const { loading, skyflowCards, fetchSkyflowCards } = useSkyflowCards();
-const { mutate: deleteSkyflowCard } = useMutation(DeleteSkyFlowCardDocument, {
-  refetchQueries: [OperationNames.Query.GetSkyflowCards],
-});
+const { mutate: deleteSkyflowCard } = useDeleteSkyflowCard();
 const { storeId } = globals;
 
 function removeCreditCard(skyflowId: string): void {

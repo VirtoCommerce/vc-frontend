@@ -329,7 +329,7 @@ const props = defineProps<IProps>();
 // Loaded only when the Skyflow method is the active payment type, so the skyflow-js SDK
 // (~80 KB gzip) stays out of the eager bundle shared across checkout/account routes.
 const PaymentProcessingSkyflow = defineAsyncComponent(
-  () => import("@/shared/payment/components/payment-processing-skyflow.vue"),
+  () => import("@/modules/skyflow/components/payment-processing-skyflow.vue"),
 );
 
 interface IProps {
