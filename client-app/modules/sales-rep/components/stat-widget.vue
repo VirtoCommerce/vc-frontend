@@ -95,8 +95,11 @@ withDefaults(defineProps<IProps>(), {
     color: var(--stat-widget-accent);
   }
 
+  // Two line boxes, wrapped or not, so every figure in the row starts at the same height — a one-line
+  // caption used to pull its card's value 13px above its neighbours'. `lh` is the caption's own line
+  // box, so the reserve tracks the type scale; `flex` centers a short caption on the icon's line.
   &__label {
-    @apply text-xs font-bold uppercase tracking-wide text-neutral-500;
+    @apply flex min-h-[2lh] items-center text-xs font-bold uppercase tracking-wide text-neutral-500;
   }
 
   &__value {
