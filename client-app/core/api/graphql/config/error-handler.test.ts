@@ -93,4 +93,17 @@ describe("errorHandlerLink", () => {
 
     expect(emittedEvents()).toEqual([unauthorizedErrorEvent, forbiddenEvent, userLockedEvent, passwordExpiredEvent]);
   });
+
+  it("keeps the auth outcomes when an opted-out response also carries an unhandled error", async () => {
+    await run(
+      { graphQLErrors: [graphQLError(GraphQLErrorCode.Unhandled), graphQLError(GraphQLErrorCode.UserLocked)] },
+      true,
+    );
+    await run(
+      { graphQLErrors: [graphQLError(GraphQLErrorCode.Unhandled), graphQLError(GraphQLErrorCode.PasswordExpired)] },
+      true,
+    );
+
+    expect(emittedEvents()).toEqual([userLockedEvent, passwordExpiredEvent]);
+  });
 });

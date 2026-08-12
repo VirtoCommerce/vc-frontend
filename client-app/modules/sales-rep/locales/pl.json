@@ -14,7 +14,8 @@
       "search_aria": "Szukaj przedstawicieli handlowych",
       "empty": "Nie znaleziono przedstawicieli handlowych",
       "no_results": "Nie znaleziono przedstawicieli handlowych pasujących do Twojego wyszukiwania",
-      "reset_search": "Resetuj wyszukiwanie"
+      "reset_search": "Resetuj wyszukiwanie",
+      "load_failed": "Nie udało się wczytać przedstawicieli handlowych"
     },
     "my_customers": {
       "navigation": {

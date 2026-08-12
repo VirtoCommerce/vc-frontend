@@ -14,7 +14,8 @@
       "search_aria": "Cerca agenti commerciali",
       "empty": "Nessun agente commerciale trovato",
       "no_results": "Nessun agente commerciale corrisponde alla ricerca",
-      "reset_search": "Reimposta ricerca"
+      "reset_search": "Reimposta ricerca",
+      "load_failed": "Impossibile caricare gli agenti commerciali"
     },
     "my_customers": {
       "navigation": {

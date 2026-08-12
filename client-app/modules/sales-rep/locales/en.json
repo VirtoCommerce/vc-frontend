@@ -14,7 +14,8 @@
       "search_aria": "Search sales reps",
       "empty": "No sales reps found",
       "no_results": "No sales reps match your search",
-      "reset_search": "Reset search"
+      "reset_search": "Reset search",
+      "load_failed": "Couldn't load sales reps"
     },
     "my_customers": {
       "navigation": {

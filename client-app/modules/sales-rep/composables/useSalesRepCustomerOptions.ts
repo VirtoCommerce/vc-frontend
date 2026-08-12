@@ -1,9 +1,8 @@
-import { useQuery } from "@vue/apollo-composable";
 import { computed, ref, watch } from "vue";
-import { SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT } from "@/core/api/graphql/consts";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { SalesRepCustomerOptionsDocument } from "../api/graphql/types";
+import { useSalesRepHubQuery } from "./useSalesRepHubQuery";
 
 // The picker filters client-side, so a rep serving more customers than this cannot reach the overflow (warned below).
 const OPTIONS_LIMIT = 100;
@@ -21,9 +20,7 @@ export function useSalesRepCustomerOptions() {
     sort: "name:asc",
   }));
 
-  const { result, loading, onError, onResult } = useQuery(SalesRepCustomerOptionsDocument, variables, {
-    context: SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT,
-  });
+  const { result, loading, onError, onResult } = useSalesRepHubQuery(SalesRepCustomerOptionsDocument, variables, {});
 
   // An empty dropdown on a failed fetch reads as "this rep serves nobody"; callers surface this on the field instead.
   const failed = ref(false);

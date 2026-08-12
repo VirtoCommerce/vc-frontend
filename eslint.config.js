@@ -433,6 +433,27 @@ export default defineConfigWithVueTs(
       "no-console": ["off", { allow: ["warn", "error"] }],
     },
   },
+  // Every Sales Rep read opts out of the global error toast because the widget names its own failure
+  // (VCST-5682). That opt-out is an operation context a new call site can silently forget, so the module's
+  // reads go through useSalesRepHubQuery, which bakes it in — the wrapper itself is the exception below.
+  {
+    files: ["client-app/modules/sales-rep/**/*.ts", "client-app/modules/sales-rep/**/*.vue"],
+    ignores: [
+      "client-app/modules/sales-rep/composables/useSalesRepHubQuery.ts",
+      "client-app/modules/sales-rep/**/*.test.ts",
+    ],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector:
+            "ImportDeclaration[source.value='@vue/apollo-composable'] > ImportSpecifier[imported.name=/^use(Lazy)?Query$/]",
+          message:
+            "Sales Rep reads go through useSalesRepHubQuery, which opts the operation out of the global error toast. Mutations keep useMutation: a failed user action still deserves one.",
+        },
+      ],
+    },
+  },
   {
     files: ["**/*.js", "**/*.cjs"],
     ...tseslint.configs.disableTypeChecked,

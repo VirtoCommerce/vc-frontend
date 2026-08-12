@@ -1,10 +1,9 @@
-import { useQuery } from "@vue/apollo-composable";
 import { computed, toValue } from "vue";
-import { SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT } from "@/core/api/graphql/consts";
 import { Logger } from "@/core/utilities";
 import { SalesRepCustomerDocument } from "../api/graphql/types";
 import { HUB_FETCH_POLICY } from "../constants";
 import { formatCustomerLocation } from "../utils";
+import { useSalesRepHubQuery } from "./useSalesRepHubQuery";
 import type { SalesRepCustomerProfileType } from "../types/customer-profile";
 import type { MaybeRefOrGetter } from "vue";
 
@@ -13,9 +12,8 @@ export function useSalesRepCustomer(organizationId: MaybeRefOrGetter<string>) {
 
   // The header is editable outside the storefront, so it revalidates too. Three components on the page
   // share this composable; Apollo's deduplication collapses their concurrent identical requests into one.
-  const { result, loading, onError } = useQuery(SalesRepCustomerDocument, variables, {
+  const { result, loading, onError } = useSalesRepHubQuery(SalesRepCustomerDocument, variables, {
     fetchPolicy: HUB_FETCH_POLICY,
-    context: SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT,
   });
 
   onError((error) => {

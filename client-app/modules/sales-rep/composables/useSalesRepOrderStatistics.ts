@@ -1,11 +1,10 @@
-import { useQuery } from "@vue/apollo-composable";
 import { computed, toValue } from "vue";
-import { SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT } from "@/core/api/graphql/consts";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { SalesRepCustomerOrderStatisticsDocument } from "../api/graphql/types";
 import { HUB_FETCH_POLICY, NEW_ORDERS_FILTER } from "../constants";
 import { buildStatisticsWindows } from "../utils";
+import { useSalesRepHubQuery } from "./useSalesRepHubQuery";
 import type { Ref } from "vue";
 
 type UseSalesRepOrderStatisticsOptionsType = {
@@ -26,9 +25,8 @@ export function useSalesRepOrderStatistics(options: UseSalesRepOrderStatisticsOp
     ...buildStatisticsWindows(),
   }));
 
-  const { result, loading, error, onError } = useQuery(SalesRepCustomerOrderStatisticsDocument, variables, {
+  const { result, loading, error, onError } = useSalesRepHubQuery(SalesRepCustomerOrderStatisticsDocument, variables, {
     fetchPolicy: HUB_FETCH_POLICY,
-    context: SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT,
   });
 
   onError((err) => {

@@ -14,7 +14,8 @@
       "search_aria": "Hae myyntiedustajia",
       "empty": "Myyntiedustajia ei löytynyt",
       "no_results": "Hakuasi vastaavia myyntiedustajia ei löytynyt",
-      "reset_search": "Tyhjennä haku"
+      "reset_search": "Tyhjennä haku",
+      "load_failed": "Myyntiedustajia ei voitu ladata"
     },
     "my_customers": {
       "navigation": {

@@ -7,6 +7,7 @@ import { errorHandlerLink } from "@/core/api/graphql/config/error-handler";
 import { SalesRepCustomersCountDocument } from "../api/graphql/types";
 import { DASHBOARD_LAYOUT_SCOPE } from "../constants";
 import { useSalesRepCartStatistics } from "./useSalesRepCartStatistics";
+import { useSalesRepCommunication } from "./useSalesRepCommunication";
 import { useSalesRepCustomer } from "./useSalesRepCustomer";
 import { useSalesRepCustomerCounts } from "./useSalesRepCustomerCounts";
 import { useSalesRepCustomerOptions } from "./useSalesRepCustomerOptions";
@@ -96,6 +97,24 @@ describe.each(hubReads)("%s", (_name, use) => {
   it("raises no error notification when it fails", async () => {
     const stop = mountWidget(use);
     await waitForTheFailureToSettle();
+
+    expect(requestCount).toBeGreaterThan(0);
+    expect(emit).not.toHaveBeenCalled();
+    stop();
+  });
+});
+
+describe("customer communication", () => {
+  // The one opted-out mutation: the modal raises its own error toast naming the channel that failed, so the
+  // generic one would stack a second toast on the same action.
+  it("raises no error notification when the send fails", async () => {
+    let sent: Promise<unknown> | undefined;
+    const stop = mountWidget(() => {
+      const { sendCommunication } = useSalesRepCommunication();
+      sent = sendCommunication({ organizationId: "org-a", sendEmail: true, sendPush: false, message: "There" });
+    });
+    await waitForTheFailureToSettle();
+    await sent;
 
     expect(requestCount).toBeGreaterThan(0);
     expect(emit).not.toHaveBeenCalled();

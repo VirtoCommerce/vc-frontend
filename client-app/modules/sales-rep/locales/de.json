@@ -14,7 +14,8 @@
       "search_aria": "Vertriebsmitarbeiter suchen",
       "empty": "Keine Vertriebsmitarbeiter gefunden",
       "no_results": "Keine Vertriebsmitarbeiter entsprechen Ihrer Suche",
-      "reset_search": "Suche zurücksetzen"
+      "reset_search": "Suche zurücksetzen",
+      "load_failed": "Vertriebsmitarbeiter konnten nicht geladen werden"
     },
     "my_customers": {
       "navigation": {

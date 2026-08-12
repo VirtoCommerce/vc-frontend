@@ -14,7 +14,8 @@
       "search_aria": "Pesquisar representantes de vendas",
       "empty": "Nenhum representante de vendas encontrado",
       "no_results": "Nenhum representante de vendas corresponde à sua pesquisa",
-      "reset_search": "Redefinir pesquisa"
+      "reset_search": "Redefinir pesquisa",
+      "load_failed": "Falha ao carregar os representantes de vendas"
     },
     "my_customers": {
       "navigation": {

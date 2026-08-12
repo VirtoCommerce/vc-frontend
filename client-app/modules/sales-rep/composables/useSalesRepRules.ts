@@ -1,7 +1,5 @@
-import { useQuery } from "@vue/apollo-composable";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT } from "@/core/api/graphql/consts";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import {
@@ -12,6 +10,7 @@ import {
   SalesRepTopSellerFilterRulesDocument,
   SalesRepTopSellerSortRulesDocument,
 } from "../api/graphql/types";
+import { useSalesRepHubQuery } from "./useSalesRepHubQuery";
 import type {
   SalesRepRuleDomainType,
   SalesRepRuleKindType,
@@ -63,10 +62,10 @@ export function useSalesRepRules(domain: SalesRepRuleDomainType, kind: SalesRepR
   const source = RULE_SOURCES[`${domain}:${kind}`];
   const { t, te } = useI18n();
 
-  const { result, loading, onError } = useQuery(
+  const { result, loading, onError } = useSalesRepHubQuery(
     source.document,
     () => ({ storeId: globals.storeId, cultureName: globals.cultureName }),
-    { fetchPolicy: "cache-first", context: SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT },
+    { fetchPolicy: "cache-first" },
   );
 
   onError((error) => {

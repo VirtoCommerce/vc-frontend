@@ -15,12 +15,11 @@ export const errorHandlerLink = onError(({ operation, networkError, graphQLError
   const passwordExpired = hasErrorCode(graphQLErrors, GraphQLErrorCode.PasswordExpired);
   // See SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT: only the generic toasts are opt-out, the auth outcomes below are not.
   const { suppressErrorNotifications } = operation.getContext() as ErrorNotificationsContextType;
+  // `Unhandled` doubles as "no recognized code" (`code === ""`), so it can share a response with
+  // `UserLocked` / `PasswordExpired`; skipping this branch rather than returning early keeps those reachable.
+  const suppressedUnhandled = serverError === ServerError.Unhandled && suppressErrorNotifications === true;
 
-  if (serverError !== undefined) {
-    if (serverError === ServerError.Unhandled && suppressErrorNotifications) {
-      return;
-    }
-
+  if (serverError !== undefined && !suppressedUnhandled) {
     const errorData = networkError ? serializeError(networkError) : graphQLErrors;
     serverErrorHandler(serverError, JSON.stringify(errorData));
   } else if (userLockedError) {
