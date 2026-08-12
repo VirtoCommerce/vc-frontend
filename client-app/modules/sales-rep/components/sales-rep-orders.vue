@@ -25,6 +25,7 @@
             v-else
             v-model="filter"
             :rules="visibleRules"
+            :loading="filterRulesLoading"
             :all-label="t('sales_rep.orders.filter_all')"
           />
         </div>
@@ -173,7 +174,12 @@ const filter = ref<string | undefined>(undefined);
 const sort = ref<string | undefined>(undefined);
 const { from: periodFrom, to: periodTo } = useSalesRepPeriodFilter();
 
-const { rules: filterRules } = useSalesRepRules("order", "filter");
+// The status chips are read from the orders in view — same customer, same period — so a chip always has orders behind it.
+const { rules: filterRules, loading: filterRulesLoading } = useSalesRepRules("order", "filter", {
+  organizationId: () => props.organizationId,
+  periodFrom,
+  periodTo,
+});
 const { rules: sortRules } = useSalesRepRules("order", "sort");
 
 // Absent when this widget renders outside a layout, which then configures nothing.
