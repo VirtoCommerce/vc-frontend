@@ -1,4 +1,4 @@
-import { computed } from "vue";
+import { computed, toValue } from "vue";
 import { useI18n } from "vue-i18n";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
@@ -18,6 +18,7 @@ import type {
   SalesRepSortDirectionType,
 } from "../types";
 import type { TypedDocumentNode } from "@graphql-typed-document-node/core";
+import type { Ref } from "vue";
 
 // Every discovery op returns the same { name, localizedName } shape under a domain-specific root field,
 // so one composable drives all six (3 domains × filter/sort).
@@ -28,7 +29,15 @@ type RuleNodeType = {
   supportsDirection?: boolean | null;
 };
 type RuleQueryResultType = Record<string, Array<RuleNodeType | null> | null | undefined>;
-type RuleQueryVariablesType = { storeId?: string; cultureName?: string };
+// organizationId/period are declared only by the ops whose vocabulary is derived from records (order statuses,
+// top-seller categories); the others simply ignore the extra variables.
+type RuleQueryVariablesType = {
+  storeId?: string;
+  cultureName?: string;
+  organizationId?: string;
+  periodFrom?: string;
+  periodTo?: string;
+};
 type RuleDocumentType = TypedDocumentNode<RuleQueryResultType, RuleQueryVariablesType>;
 type RuleSourceType = { document: RuleDocumentType; field: string };
 
@@ -58,13 +67,38 @@ const RULE_SOURCES: Record<`${SalesRepRuleDomainType}:${SalesRepRuleKindType}`, 
   },
 };
 
-export function useSalesRepRules(domain: SalesRepRuleDomainType, kind: SalesRepRuleKindType) {
+/**
+ * Scope for the data-derived vocabularies (order statuses, top-seller categories): they are read from the very records
+ * the list will show, so every offered rule has data behind it. Pass the SAME scope the list uses; omit on surfaces
+ * whose vocabulary is static (sort rules, customer segments).
+ */
+// Values are expanded (not MaybeRefOrGetter<… | undefined>) so the `?` isn't a redundant second "undefined"
+// — Sonar S4782, same shape as useSalesRepOrders.
+type RuleScopeType = {
+  // One customer (the customer page); omit for all the rep's customers (the dashboard).
+  organizationId?: string | Ref<string | undefined> | (() => string | undefined);
+  // The selected period, mirroring the list's period filter.
+  periodFrom?: string | Ref<string | undefined> | (() => string | undefined);
+  periodTo?: string | Ref<string | undefined> | (() => string | undefined);
+};
+
+export function useSalesRepRules(
+  domain: SalesRepRuleDomainType,
+  kind: SalesRepRuleKindType,
+  scope: RuleScopeType = {},
+) {
   const source = RULE_SOURCES[`${domain}:${kind}`];
   const { t, te } = useI18n();
 
   const { result, loading, onError } = useSalesRepHubQuery(
     source.document,
-    () => ({ storeId: globals.storeId, cultureName: globals.cultureName }),
+    () => ({
+      storeId: globals.storeId,
+      cultureName: globals.cultureName,
+      organizationId: toValue(scope.organizationId),
+      periodFrom: toValue(scope.periodFrom),
+      periodTo: toValue(scope.periodTo),
+    }),
     { fetchPolicy: "cache-first" },
   );
 
