@@ -1,4 +1,5 @@
 import { useQuery } from "@vue/apollo-composable";
+import { createSharedComposable } from "@vueuse/core";
 import { computed } from "vue";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
@@ -22,3 +23,10 @@ export function useSalesRepCustomersCount() {
 
   return { count };
 }
+
+/**
+ * One query for however many nav surfaces show the badge at once, stopped when the last of them
+ * unmounts. The next mount builds it again, so the badge cannot keep painting a figure from
+ * earlier in the session.
+ */
+export const useSharedSalesRepCustomersCount = createSharedComposable(useSalesRepCustomersCount);

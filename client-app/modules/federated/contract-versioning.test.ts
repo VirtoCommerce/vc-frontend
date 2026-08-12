@@ -80,6 +80,38 @@ describe("decideVersionAction", () => {
     ).toEqual({ action: "none", reason: "major already bumped" });
   });
 
+  describe("pre-1.0 release line", () => {
+    const preRelease = { baseVersion: "0.1.0", currentVersion: "0.1.0", removedExports: [] as string[] };
+
+    it("auto-bumps patch for an additive change, so a caret range keeps resolving", () => {
+      expect(decideVersionAction({ ...preRelease, changed: true })).toEqual({ action: "bump-patch" });
+    });
+
+    it("requires only a minor bump for a removal, which a caret range already refuses", () => {
+      expect(decideVersionAction({ ...preRelease, changed: true, removedExports: ["VcButton"] })).toEqual({
+        action: "require-minor",
+        removedExports: ["VcButton"],
+      });
+    });
+
+    it("still requires the breaking bump when a removal follows an earlier additive patch bump", () => {
+      expect(
+        decideVersionAction({
+          changed: true,
+          baseVersion: "0.1.0",
+          currentVersion: "0.1.1",
+          removedExports: ["VcButton"],
+        }),
+      ).toEqual({ action: "require-minor", removedExports: ["VcButton"] });
+    });
+
+    it("accepts a removal once the MINOR version has been bumped past the baseline", () => {
+      expect(
+        decideVersionAction({ ...preRelease, changed: true, currentVersion: "0.2.0", removedExports: ["VcButton"] }),
+      ).toEqual({ action: "none", reason: "minor already bumped" });
+    });
+  });
+
   it("fails closed (requires major) on a removal when a version string is unparseable", () => {
     // majorOf() yields NaN for a malformed version; the NaN comparison must resolve to
     // require-major, never silently allow the breaking removal through.

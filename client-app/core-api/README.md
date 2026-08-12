@@ -104,11 +104,31 @@ request that fits none of them is a request to change the host, not to widen the
 | Tier                       | Export                            | Use when                                                                                                                                                                                              |
 | -------------------------- | --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 1. Capability              | composable or function            | Default. The plugin states intent, the host executes it — `registerCacheTypePolicies`, `useNavigations`, `useModal`.                                                                                    |
-| 2. Host-rendered chrome    | nothing — an extension-point entry | The result must look native. The plugin registers **data** and the host renders its own markup: an entry may omit `component` and carry only `props` (e.g. a nav badge `count`). See `useExtensionRegistry`. |
+| 2. Host-rendered chrome    | nothing — an extension-point entry | The result must look native. The plugin registers **data** and the host renders its own markup: an entry may omit `component` and contribute `props` (static) or `use()` (live). See `useExtensionRegistry`. |
 | 3. Frozen component        | a `.vue` component                | The visual itself is the contract and re-implementing it would drift from per-store settings — `OrderStatus`. Its props become contract: renaming one is a **breaking** change.                          |
 
 Never export from a `_internal/` path. That folder is private by convention, and exporting
 from it freezes markup the host needs to keep free to change — Tier 2 exists for that case.
+
+### Tier 2 only works where the host renders a fallback
+
+A component-less entry is only reachable in a category typed as **decoratable**
+(`DecoratableEntryType` in `extensionRegistryMap.ts` — today just `mobileMenu`). Everywhere
+else `component` stays required, because `isRegistered()` answers on the component alone: an
+entry without one is treated as unregistered, and consumers that gate on
+`$canRenderExtensionPoint` or render through `ExtensionPointList` would drop it silently. If a
+category needs Tier 2, give its host consumer a fallback slot first, then widen the type.
+
+Use `props` for a value that never changes and **`use()` for anything live**. `use()` is
+called by the extension point in its own setup, so a contribution may run a query and have it
+disposed when the extension point unmounts. A getter smuggled into `props` is invoked during
+render instead: it leaks its subscription and never refreshes.
+
+```ts
+register("mobileMenu", MY_CUSTOMERS_NAV_LINK_ID, {
+  use: useSharedSalesRepCustomersCount, // -> { count } , merged into the fallback slot's props
+});
+```
 
 ## How to extend the facade (developer flow)
 
@@ -128,16 +148,22 @@ Say a plugin needs `useThemeContext`.
 
    The build also **bumps the contract version automatically**: if the generated
    contract differs from the one on `origin/dev` and the version wasn't bumped yet, it
-   applies a **minor** bump to this `package.json` (the single version source) for you —
+   applies an additive bump to this `package.json` (the single version source) for you —
    running it again won't double-bump. Plugins that use the new export then declare
-   `requiredHostVersion: "^1.1.0"`, so older hosts correctly refuse them.
+   `requiredHostVersion: "^0.1.0"`, so older hosts correctly refuse them.
+
+   > **This contract is pre-1.0 and makes no stability promise yet.** While the major is
+   > `0`, the levels shift down one: an additive change is a **patch** (`0.1.0 → 0.1.1`,
+   > which `^0.1.0` still accepts) and a breaking change is a **minor** (`0.1.0 → 0.2.0`,
+   > which `^0.1.0` refuses). The automation follows the release line it is on, so this
+   > flips back to the ordinary minor/major mapping the moment the contract reaches 1.0.0.
 
 3. **Breaking change? That's the one manual step.** If you removed or renamed an
    export, the build **refuses** to auto-bump (removed exports are provably breaking)
    and asks you to decide explicitly:
 
    ```bash
-   yarn bump:core major    # then update the @vc-frontend/core range in federation.mjs
+   yarn bump:core minor    # pre-1.0 breaking level; then update the range in federation.mjs
    ```
 
    A changed type on a _kept_ export can also be breaking — no diff can prove intent,

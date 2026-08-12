@@ -20,7 +20,7 @@ export const MF_SHARED_RANGES = {
   "@apollo/client": "^3.14.0",
   "@vue/apollo-composable": "^4.2.0",
   graphql: "^16.14.0",
-  "@vc-frontend/core": "^1.0.0",
+  "@vc-frontend/core": "^0.1.0",
 };
 
 // One place for the per-entry defaults: base packages (buildSharedConfig) and packages

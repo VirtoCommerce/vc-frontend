@@ -85,6 +85,17 @@ function _useExtensionRegistry() {
     return entries.value[category]?.[name]?.props;
   }
 
+  /**
+   * The entry's `use()`, for the extension point to call from its own setup. Only categories
+   * typed as decoratable can carry one.
+   */
+  function getContribution<C extends ExtensionCategoryType, N extends keyof ExtensionRegistryStateType[C]>(
+    category: C,
+    name: N,
+  ): ExtensionRegistryStateType[C][N]["use"] {
+    return entries.value[category]?.[name]?.use;
+  }
+
   // To debug in development mode
   if (IS_DEVELOPMENT) {
     window.VCExtensionRegistry = {
@@ -94,6 +105,7 @@ function _useExtensionRegistry() {
       unregister,
 
       getComponent,
+      getContribution,
       getEntries,
       getProps,
 
@@ -109,6 +121,7 @@ function _useExtensionRegistry() {
     unregister,
 
     getComponent,
+    getContribution,
     getEntries,
     getProps,
 

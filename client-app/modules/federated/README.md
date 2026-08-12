@@ -219,7 +219,8 @@ Three design points worth calling out:
   incompatible (fail closed) — a plugin must declare `requiredHostVersion` to run
   (`createRemoteFederationOptions` makes it mandatory). A bare version like `"1.0.0"` is
   normalized to `"^1.0.0"` — so a host **major** bump correctly rejects plugins built
-  against the previous major.
+  against the previous major. While the contract is pre-1.0 the **minor** carries that role
+  instead: `^0.1.0` accepts `0.1.x` and refuses `0.2.0`.
 - **Every network step is time-budgeted** (two knobs via `initFederatedModules(options)`:
   manifest 3s; load and init 5s _each_ — one remote may legally take up to
   manifest + 2×load ≈ 13s). Because boot awaits this loader, a hung remote must degrade

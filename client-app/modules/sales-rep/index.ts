@@ -6,7 +6,7 @@ import { useExtensionRegistry } from "@/shared/common/composables/extensionRegis
 import { EXTENSION_NAMES } from "@/shared/common/constants/extensionPointsNames";
 import { useWishlistSharingScopes } from "@/shared/wishlists/composables/useWishlistSharingScopes";
 import { loadModuleLocale } from "../utils";
-import { salesRepCustomersCount } from "./composables/sharedSalesRepCustomersCount";
+import { useSharedSalesRepCustomersCount } from "./composables/useSalesRepCustomersCount";
 import { isSalesRepsEnabled, isSalesRepUser } from "./composables/useSalesRepsConfig";
 import {
   CUSTOMER_SHARING_SCOPE,
@@ -47,7 +47,7 @@ export function init(router: Router, i18n: I18n) {
     component: defineAsyncComponent(() => import("./components/link-my-customers.vue")),
   });
   register("mobileMenu", MY_CUSTOMERS_NAV_LINK_ID, {
-    props: { count: salesRepCustomersCount },
+    use: useSharedSalesRepCustomersCount,
   });
 
   // "Sales reps" contact-info link for buyers (VCST-5409) — stays in the Corporate widget.

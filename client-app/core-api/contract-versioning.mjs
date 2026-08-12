@@ -37,14 +37,36 @@ function majorOf(version) {
   return Number.parseInt(version, 10);
 }
 
+/** Minor component of a semver string ("1.2.0" -> 2). NaN for unparseable input. */
+function minorOf(version) {
+  return Number.parseInt(String(version).split(".")[1], 10);
+}
+
+/**
+ * Which semver component carries which meaning, for the release line `version` sits on.
+ *
+ * Pre-1.0 the contract promises nothing, so both levels shift down one: an additive change
+ * ships as a PATCH (a plugin pinned to `^0.1.0` keeps resolving it) and a breaking change as a
+ * MINOR (which `^0.1.0` correctly refuses). From 1.0.0 the ordinary semver mapping applies.
+ *
+ * An unparseable version yields NaN, which is never === 0, so it lands on the 1.x policy and
+ * the stricter MAJOR gate — the fail-closed behaviour the removal guard depends on.
+ */
+function policyFor(version) {
+  return majorOf(version) === 0
+    ? { additive: "patch", breaking: "minor", breakingComponentOf: minorOf }
+    : { additive: "minor", breaking: "major", breakingComponentOf: majorOf };
+}
+
 /**
  * The versioning policy in one place:
  * - contract unchanged -> nothing to do;
  * - changed with exports REMOVED -> provably breaking: satisfied only by a MAJOR bump,
  *   otherwise a human must run `yarn bump:core major`;
  * - changed additively but version already bumped -> nothing to do;
- * - changed additively with the version untouched -> minor, safe to apply automatically.
- * Returns { action: "none" | "bump-minor" | "require-major", ... }.
+ * - changed additively with the version untouched -> safe to apply automatically.
+ * Which component each level maps to depends on the release line — see policyFor().
+ * Returns { action: "none" | "bump-minor" | "bump-patch" | "require-major" | "require-minor", ... }.
  *
  * The breaking-change check comes BEFORE the "already bumped" short-circuit on purpose:
  * an earlier additive minor bump in the same release window must not mask a later
@@ -55,17 +77,21 @@ export function decideVersionAction({ changed, baseVersion, currentVersion, remo
   if (!changed) {
     return { action: "none", reason: "contract unchanged" };
   }
+
+  // The baseline decides which release line's rules apply: it is the version already published.
+  const { breaking, breakingComponentOf } = policyFor(baseVersion);
+
   if (removedExports.length > 0) {
-    // A removal is only acceptable once the MAJOR version has moved past the baseline;
-    // a minor/patch bump (or no bump) is not enough. NaN comparisons fail closed here,
-    // so an unparseable version still demands an explicit major bump.
-    if (majorOf(currentVersion) > majorOf(baseVersion)) {
-      return { action: "none", reason: "major already bumped" };
+    // A removal is only acceptable once the breaking component has moved past the baseline;
+    // a lesser bump (or no bump) is not enough. NaN comparisons fail closed here, so an
+    // unparseable version still demands an explicit major bump.
+    if (breakingComponentOf(currentVersion) > breakingComponentOf(baseVersion)) {
+      return { action: "none", reason: `${breaking} already bumped` };
     }
-    return { action: "require-major", removedExports };
+    return { action: `require-${breaking}`, removedExports };
   }
   if (baseVersion !== currentVersion) {
     return { action: "none", reason: "version already bumped" };
   }
-  return { action: "bump-minor" };
+  return { action: `bump-${policyFor(currentVersion).additive}` };
 }
