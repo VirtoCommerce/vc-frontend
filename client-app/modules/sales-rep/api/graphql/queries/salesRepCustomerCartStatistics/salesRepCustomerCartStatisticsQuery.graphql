@@ -1,19 +1,11 @@
 query SalesRepCustomerCartStatistics(
   $organizationId: String
   $storeId: String
-  $currencyCode: String
-  $cultureName: String
   $cartFilter: String
   $weekFrom: DateTime
   $weekTo: DateTime
 ) {
-  salesRepCustomerCartStatistics(
-    organizationId: $organizationId
-    storeId: $storeId
-    currencyCode: $currencyCode
-    cultureName: $cultureName
-  ) {
-    currencyCode
+  salesRepCustomerCartStatistics(organizationId: $organizationId, storeId: $storeId) {
     activeCarts: period(filter: $cartFilter) {
       selectedItemQuantity
       unselectedItemQuantity

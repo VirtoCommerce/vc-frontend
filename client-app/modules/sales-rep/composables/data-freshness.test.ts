@@ -63,7 +63,6 @@ function cartStatistics() {
   return {
     salesRepCustomerCartStatistics: {
       __typename: "CustomerCartStatistics",
-      currencyCode: "USD",
       activeCarts: {
         __typename: "CustomerCartStatisticsPeriod",
         selectedItemQuantity: metric,

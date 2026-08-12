@@ -120,7 +120,6 @@ describe("stat cards for a customer with no data", () => {
   it("renders every dashboard figure as a zero", () => {
     sources.orders.value = emptyOrders();
     sources.carts.value = {
-      currencyCode: "USD",
       activeCarts: { selectedItemQuantity: 0, unselectedItemQuantity: 0 },
       itemsThisWeek: { selectedItemQuantity: 0 },
     } satisfies CartStatsType;
@@ -147,7 +146,6 @@ describe("stat cards for a customer with no data", () => {
   it("renders every customer-profile figure as a zero", () => {
     sources.orders.value = emptyOrders();
     sources.carts.value = {
-      currencyCode: "USD",
       activeCarts: { selectedItemQuantity: 0, unselectedItemQuantity: 0 },
       itemsThisWeek: { selectedItemQuantity: 0 },
     } satisfies CartStatsType;
@@ -168,7 +166,7 @@ describe("stat cards for a customer with no data", () => {
   it("still renders zeros when the backend omits the period objects entirely", () => {
     // Periods are nullable in the schema; an absent one must read the same as an empty one.
     sources.orders.value = { currencyCode: "USD" } satisfies OrderStatsType;
-    sources.carts.value = { currencyCode: "USD" } satisfies CartStatsType;
+    sources.carts.value = {} satisfies CartStatsType;
     sources.counts.value = { assignedCustomers: 0 } satisfies CountsType;
 
     const dashboard = useSalesRepDashboardWidgets();
@@ -190,7 +188,7 @@ describe("stat cards for a customer with partial data", () => {
       ytd: { count: 1234, total: money(56789, "$56,789.00"), average: money(46, "$46.02") },
       ytdVsLastYear: { countChange: 12, countChangePercent: 12.4, totalChange: money(1, "$1.00") },
     } satisfies OrderStatsType;
-    sources.carts.value = { currencyCode: "USD" } satisfies CartStatsType;
+    sources.carts.value = {} satisfies CartStatsType;
     sources.counts.value = { assignedCustomers: 4321 } satisfies CountsType;
 
     const dashboard = useSalesRepDashboardWidgets();
@@ -233,7 +231,6 @@ describe("stat cards when one statistics query fails", () => {
   it("marks only the cards fed by the failed query", () => {
     sources.orders.value = emptyOrders();
     sources.carts.value = {
-      currencyCode: "USD",
       activeCarts: { selectedItemQuantity: 2, unselectedItemQuantity: 3 },
     } satisfies CartStatsType;
     sources.counts.value = { assignedCustomers: 9 } satisfies CountsType;
@@ -253,7 +250,6 @@ describe("stat cards when one statistics query fails", () => {
   it("marks every card of the failed query on the customer page", () => {
     sources.orders.value = emptyOrders();
     sources.carts.value = {
-      currencyCode: "USD",
       activeCarts: { selectedItemQuantity: 7, unselectedItemQuantity: 0 },
     } satisfies CartStatsType;
     sources.ordersError.value = new Error("orders down");
@@ -290,7 +286,6 @@ describe("stat cards while one query is still in flight", () => {
   it("does not hold every card pending because one query is slow", () => {
     sources.orders.value = emptyOrders();
     sources.carts.value = {
-      currencyCode: "USD",
       activeCarts: { selectedItemQuantity: 0, unselectedItemQuantity: 0 },
     } satisfies CartStatsType;
     sources.countsLoading.value = true;
