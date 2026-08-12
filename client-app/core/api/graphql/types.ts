@@ -443,6 +443,8 @@ export type CartType = {
   itemsCount: Scalars['Int']['output'];
   /** Quantity of items */
   itemsQuantity: Scalars['Int']['output'];
+  /** Get total points amount */
+  loyaltyPoints?: Maybe<MoneyType>;
   /** Shopping cart name */
   name: Scalars['String']['output'];
   /** Shopping cart organization ID */
@@ -6579,6 +6581,8 @@ export type QuerySalesRepLayoutArgs = {
 
 export type QuerySalesRepOrderFilterRulesArgs = {
   cultureName?: InputMaybe<Scalars['String']['input']>;
+  organizationId?: InputMaybe<Scalars['String']['input']>;
+  period?: InputMaybe<SalesRepStatisticsPeriodInput>;
   storeId?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -6604,6 +6608,8 @@ export type QuerySalesRepOrdersArgs = {
 
 export type QuerySalesRepTopSellerFilterRulesArgs = {
   cultureName?: InputMaybe<Scalars['String']['input']>;
+  organizationId?: InputMaybe<Scalars['String']['input']>;
+  period?: InputMaybe<SalesRepStatisticsPeriodInput>;
   storeId?: InputMaybe<Scalars['String']['input']>;
 };
 
