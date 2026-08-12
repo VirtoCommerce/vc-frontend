@@ -943,7 +943,7 @@ export type CustomIdentityResultType = {
 };
 
 export type CustomerCartStatistics = {
-  /** Compares two periods (current vs previous). Reuses the period results, so a bucket a 'period' selection already asked for on the same terms is not aggregated again. */
+  /** Compares two periods (current vs previous). Reuses the period results, so a bucket another selection already asked for is not aggregated again. */
   comparison?: Maybe<CustomerCartStatisticsComparison>;
   /** Currency the money figures below are converted to. */
   currencyCode: Scalars['String']['output'];
@@ -966,7 +966,7 @@ export type CustomerCartStatisticsPeriodArgs = {
 };
 
 export type CustomerCartStatisticsComparison = {
-  /** Current average minus previous average (amount, formatted amount and currency). */
+  /** Current average minus the previous one. */
   averageChange: MoneyType;
   /** Percentage change of the average; null when the previous average is zero. */
   averageChangePercent?: Maybe<Scalars['Decimal']['output']>;
@@ -974,11 +974,11 @@ export type CustomerCartStatisticsComparison = {
   countChange: Scalars['Int']['output'];
   /** Percentage change of the count; null when the previous count is zero. */
   countChangePercent?: Maybe<Scalars['Decimal']['output']>;
-  /** Current selected-for-checkout quantity minus the previous one (e.g. this week's items against the lifetime figure). */
+  /** Current selected-for-checkout quantity minus the previous one. */
   selectedItemQuantityChange: Scalars['Int']['output'];
   /** Percentage change of the selected-for-checkout quantity; null when the previous quantity is zero. */
   selectedItemQuantityChangePercent?: Maybe<Scalars['Decimal']['output']>;
-  /** Current goods subtotal minus the previous one (amount, formatted amount and currency). */
+  /** Current goods subtotal minus the previous one. */
   totalChange: MoneyType;
   /** Percentage change of the goods subtotal; null when the previous subtotal is zero. */
   totalChangePercent?: Maybe<Scalars['Decimal']['output']>;
@@ -989,17 +989,17 @@ export type CustomerCartStatisticsComparison = {
 };
 
 export type CustomerCartStatisticsPeriod = {
-  /** 'total' divided by 'count' — the average goods subtotal per contributing cart. */
+  /** 'total' divided by 'count'. */
   average: MoneyType;
-  /** Number of distinct carts contributing to 'total' — those holding at least one line picked for checkout in the range, gifts excluded. A cart whose lines are all parked therefore reports quantities but does not count. */
+  /** Number of distinct carts contributing to 'total'; a cart whose lines are all parked reports quantities but does not count. */
   count: Scalars['Int']['output'];
-  /** Summed quantity of the line items selected for checkout (the primary widget metric, e.g. 'Active carts · items'). */
+  /** Summed quantity of the line items selected for checkout. */
   selectedItemQuantity: Scalars['Int']['output'];
-  /** Goods subtotal of the lines in the range: list price less line discount, over the lines selected for checkout, gifts excluded. Shipping, taxes, fees and cart-level discounts are NOT included, so this is the carts' subtotal rather than their grand total. Read from the persisted line prices, which the platform only refreshes on a full-cart operation. */
+  /** Goods subtotal of the lines picked for checkout in the range (list price less line discount, gifts excluded). Excludes shipping, taxes, fees and cart-level discounts. */
   total: MoneyType;
   /** Summed quantity of the line items NOT selected for checkout. */
   unselectedItemQuantity: Scalars['Int']['output'];
-  /** Non-null when 'count'/'total'/'average' are partial because some line items were in an unconfigured currency and could not be converted; describes what was excluded. The item quantities are never affected — a quantity needs no exchange rate. */
+  /** Non-null when 'count'/'total'/'average' exclude line items in an unconfigured currency; describes what was excluded. Item quantities are never affected. */
   warning?: Maybe<Scalars['String']['output']>;
 };
 
@@ -1053,7 +1053,7 @@ export type CustomerOrderStatisticsPeriodArgs = {
 };
 
 export type CustomerOrderStatisticsComparison = {
-  /** Current average minus previous average (amount, formatted amount and currency). */
+  /** Current average minus the previous one. */
   averageChange: MoneyType;
   /** Percentage change of average; null when the previous average is zero. */
   averageChangePercent?: Maybe<Scalars['Decimal']['output']>;
