@@ -433,9 +433,8 @@ export default defineConfigWithVueTs(
       "no-console": ["off", { allow: ["warn", "error"] }],
     },
   },
-  // Every Sales Rep read opts out of the global error toast because the widget names its own failure
-  // (VCST-5682). That opt-out is an operation context a new call site can silently forget, so the module's
-  // reads go through useSalesRepHubQuery, which bakes it in — the wrapper itself is the exception below.
+  // A Sales Rep read opts out of the global error toast via an operation context a call site can silently
+  // forget, so the module's reads go through useSalesRepHubQuery, which bakes it in (VCST-5682).
   {
     files: ["client-app/modules/sales-rep/**/*.ts", "client-app/modules/sales-rep/**/*.vue"],
     ignores: [

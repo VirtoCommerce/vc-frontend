@@ -13,8 +13,7 @@ const FAILED_RESULT: SalesRepCommunicationResultType = {
 };
 
 export function useSalesRepCommunication() {
-  // Opted out unlike the other mutations: a rejected send already gets its own error toast from the modal,
-  // naming the channel that failed, so the generic one would only stack a second toast on the same action.
+  // Opted out unlike the other mutations: both callers raise their own error toast for a rejected send.
   const { mutate, loading } = useMutation(SendCustomerCommunicationDocument, {
     context: SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT,
   });

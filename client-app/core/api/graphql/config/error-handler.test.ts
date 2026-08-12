@@ -36,8 +36,8 @@ async function run(failure: FailureType, suppress = false): Promise<void> {
     () =>
       new Observable((observer) => {
         if (failure.networkError) {
-          // A 401/403 arrives as a network error carrying the GraphQL errors on `result` — the shape
-          // @apollo/client's error link reads them from, and the only way the two co-occur.
+          // A 401/403 arrives as a network error carrying its GraphQL errors on `result` — the shape
+          // @apollo/client's error link reads them from.
           observer.error(
             failure.graphQLErrors
               ? Object.assign(failure.networkError, { result: { errors: failure.graphQLErrors } })
@@ -100,8 +100,6 @@ describe("errorHandlerLink", () => {
     expect(emittedEvents()).toEqual([unauthorizedErrorEvent, forbiddenEvent, userLockedEvent, passwordExpiredEvent]);
   });
 
-  // `Unhandled` is the "no recognized code" bucket, and `toServerError` resolves it first, so an auth code
-  // sharing the response with one would otherwise be hidden behind the suppressed generic error.
   it("keeps the auth outcomes when an opted-out response also carries an unhandled error", async () => {
     await run(
       { graphQLErrors: [graphQLError(GraphQLErrorCode.Unhandled), graphQLError(GraphQLErrorCode.Unauthorized)] },

@@ -61,8 +61,7 @@ describe("SalesReps states", () => {
     expect(views[0].attributes("variant")).toBe("empty");
   });
 
-  // The query runs with keepPreviousResult, so rows survive a failed refetch and would otherwise be
-  // presented as the current result.
+  // keepPreviousResult keeps the rows through a failed refetch.
   it("replaces the table with the failure view when the query failed but stale rows remain", () => {
     state.items.value = [{ id: "r1", name: "Jane Doe", email: "jane@example.com", phone: "+1" }];
     state.error.value = new Error("boom");
@@ -75,8 +74,6 @@ describe("SalesReps states", () => {
     expect(views[0].attributes("variant")).toBe("error");
   });
 
-  // With a keyword active the no-data view renders its search variant plus a "Reset search" button —
-  // offering the customer a fix for a problem the search did not cause.
   it("shows the failure view rather than the search empty state when a keyword is active", () => {
     state.keyword.value = "jane";
     state.error.value = new Error("boom");

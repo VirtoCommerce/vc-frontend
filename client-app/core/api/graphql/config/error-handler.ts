@@ -14,9 +14,8 @@ export const errorHandlerLink = onError(({ operation, networkError, graphQLError
   // See SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT: only the generic toasts are opt-out, the auth outcomes below are not.
   const { suppressErrorNotifications } = operation.getContext() as ErrorNotificationsContextType;
 
-  // `Unhandled` is the "no recognized code" bucket (`code === ""`) and `toServerError` resolves it first, so a
-  // real auth code sharing the response would hide behind it. An opted-out operation therefore classifies what
-  // is left once the generic errors are dropped: the toast goes, the sign-in redirect / no-access page stays.
+  // Both inputs that only ever mean `Unhandled` are dropped for an opted-out operation — a network error, and
+  // the `""`-coded errors `toServerError` resolves ahead of the auth codes — so an auth code still gets through.
   const serverError = suppressErrorNotifications
     ? toServerError(
         undefined,

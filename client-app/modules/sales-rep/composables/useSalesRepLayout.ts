@@ -51,10 +51,8 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
     Logger.error("[sales-rep] salesRepLayout failed:", queryError);
   });
 
-  // A mutation writes its result to the cache too, so it needs the same policy. No suppress context: a
-  // failed save is a user action, and the inline alert beside the still-live Save button is a retry
-  // prompt rather than the failure notice — whether the toast on top of it is one signal too many is a
-  // UX call of its own (VCST-5682).
+  // A mutation writes its result to the cache too, so it needs the same policy. No suppress context: a failed
+  // save is a user action, so it keeps the toast (VCST-5682).
   const { mutate, loading: saving } = useMutation(SaveSalesRepLayoutDocument, { fetchPolicy: "no-cache" });
 
   // Layout as last persisted (or registry defaults when the rep has never saved this surface).

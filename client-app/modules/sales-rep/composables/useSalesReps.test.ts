@@ -130,8 +130,6 @@ describe("useSalesReps", () => {
     expect(queryMock.onError).toHaveBeenCalledTimes(1);
   });
 
-  // The page tells a failure apart from an empty list with this; without it a dead request renders as
-  // "no sales reps" — and the query opts out of the global error toast.
   it("surfaces the query error so the page can name the failure", () => {
     const { error } = useSalesReps();
 

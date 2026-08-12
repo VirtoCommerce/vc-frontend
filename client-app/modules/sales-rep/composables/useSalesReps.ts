@@ -36,8 +36,7 @@ export function useSalesReps() {
   });
 
   onError((err) => {
-    // No toast; the page's failure view names it instead (VCST-5586) — an empty view here would read as
-    // "this customer has no sales reps".
+    // No toast; the page's failure view names it instead (VCST-5586).
     Logger.error("[sales-rep] customerSalesReps failed:", err);
   });
 

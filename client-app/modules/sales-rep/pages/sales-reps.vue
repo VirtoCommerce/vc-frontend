@@ -29,8 +29,8 @@
       </VcInput>
     </div>
 
-    <!-- A failure gets its own view: it must not land in the empty state, which would read as "you have no
-         sales reps" or, with a keyword active, offer a Reset search that can't help (VCST-5586). -->
+    <!-- A failure must not land in the empty state, which with a keyword active offers a Reset search that
+         cannot help (VCST-5586). -->
     <VcEmptyView v-if="failed && !loading" :text="t('sales_rep.table.load_failed')" variant="error" />
 
     <!-- Empty view — outside the card, shown instead of it (Company members pattern).

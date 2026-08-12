@@ -105,8 +105,7 @@ describe.each(hubReads)("%s", (_name, use) => {
 });
 
 describe("customer communication", () => {
-  // The one opted-out mutation: the modal raises its own error toast naming the channel that failed, so the
-  // generic one would stack a second toast on the same action.
+  // The one opted-out mutation: its callers raise their own error toast.
   it("raises no error notification when the send fails", async () => {
     let sent: Promise<unknown> | undefined;
     const stop = mountWidget(() => {
