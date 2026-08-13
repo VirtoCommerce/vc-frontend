@@ -1,6 +1,6 @@
 import { ApolloClient, ApolloLink, Observable } from "@apollo/client/core";
 import { provideApolloClient } from "@vue/apollo-composable";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { effectScope, nextTick, ref } from "vue";
 import { cache } from "@/core/api/graphql/config/cache";
 import { CUSTOMER_PROFILE_LAYOUT_SCOPE, DASHBOARD_LAYOUT_SCOPE } from "../constants";
@@ -14,7 +14,7 @@ import { useSalesRepOrderStatistics } from "./useSalesRepOrderStatistics";
 import { useSalesRepOrders } from "./useSalesRepOrders";
 import { useSalesRepTopSellers } from "./useSalesRepTopSellers";
 import { useSalesReps } from "./useSalesReps";
-import { publishStatVisibility } from "./useStatDataNeeds";
+import { clearStatVisibility, publishStatVisibility } from "./useStatDataNeeds";
 
 vi.mock("@/core/globals", () => ({
   globals: { storeId: "test-store", currencyCode: "USD", cultureName: "en-US" },
@@ -249,6 +249,14 @@ beforeEach(async () => {
   showEveryCard();
   await cache.reset({ discardWatches: true });
   provideApolloClient(new ApolloClient({ link, cache }));
+});
+
+// Published visibility is module state, so it has to be torn down: otherwise it survives every test here
+// and a "must not fetch before the layout is read" case would pass without exercising the gate at all.
+afterEach(() => {
+  for (const scope of [DASHBOARD_LAYOUT_SCOPE, CUSTOMER_PROFILE_LAYOUT_SCOPE] as const) {
+    clearStatVisibility(scope);
+  }
 });
 
 // Every hub read, paired with a probe on the field carrying `metric`. Waiting on the probe rather than on
