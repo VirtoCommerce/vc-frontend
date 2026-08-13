@@ -5,8 +5,7 @@
     v-bind="{ ...getProps(category, name), ...$attrs }"
   />
 
-  <!-- A component-less entry contributes to the host's own fallback (e.g. a badge count)
-       instead of replacing it. -->
+  <!-- A component-less entry decorates this fallback instead of replacing it. -->
   <slot v-else v-bind="{ extensionProps: contributed }" />
 </template>
 
@@ -15,7 +14,7 @@ import { effectScope, onScopeDispose, shallowRef, watch } from "vue";
 import { Logger } from "@/core/utilities";
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import type { ExtensionCategoryType } from "@/shared/common/types/extensionRegistry";
-import type { ContributionType } from "@/shared/common/types/extensionRegistryMap";
+import type { ConditionParamType, ContributionType } from "@/shared/common/types/extensionRegistryMap";
 import type { EffectScope } from "vue";
 
 // `generic` makes the generated component type reference this interface, and <script setup>
@@ -23,6 +22,8 @@ import type { EffectScope } from "vue";
 export interface IProps<C extends ExtensionCategoryType> {
   category: C;
   name?: string;
+  /** Passed to the entry's `condition`. Declining leaves the fallback rendered but undecorated. */
+  conditionParameter?: ConditionParamType<C>;
 }
 </script>
 
@@ -33,10 +34,9 @@ defineOptions({
 
 const props = defineProps<IProps<C>>();
 
-const { getComponent, getContribution, getProps, hasComponent } = useExtensionRegistry();
+const { getComponent, getContribution, getProps, hasComponent, passesCondition } = useExtensionRegistry();
 
-// `use()` runs in setup, inside a scope stopped when the name changes or this unmounts, so a
-// contribution may fetch or subscribe.
+// `use()` runs in setup, in a scope stopped when the name changes or this unmounts.
 const contributed = shallowRef<ContributionType<C>>();
 
 let scope: EffectScope | undefined;
@@ -48,12 +48,18 @@ function stopContribution() {
 }
 
 watch(
-  () => props.name,
-  (name) => {
+  () => [props.name, props.conditionParameter] as const,
+  ([name, conditionParameter]) => {
     stopContribution();
 
-    // A component replaces the fallback, so nothing would read the contribution anyway.
-    const use = name && !hasComponent(props.category, name) ? getContribution(props.category, name) : undefined;
+    // A component replaces the fallback, so nothing would read a contribution.
+    if (!name || hasComponent(props.category, name)) {
+      return;
+    }
+
+    const use = passesCondition(props.category, name, conditionParameter as ConditionParamType<C>)
+      ? getContribution(props.category, name)
+      : undefined;
 
     if (!use) {
       return;

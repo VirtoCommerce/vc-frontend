@@ -24,9 +24,5 @@ export function useSalesRepCustomersCount() {
   return { count };
 }
 
-/**
- * One query for however many nav surfaces show the badge at once, stopped when the last of them
- * unmounts. The next mount builds it again, so the badge cannot keep painting a figure from
- * earlier in the session.
- */
+/** One query for however many nav surfaces show the badge, stopped when the last unmounts. */
 export const useSharedSalesRepCustomersCount = createSharedComposable(useSalesRepCustomersCount);

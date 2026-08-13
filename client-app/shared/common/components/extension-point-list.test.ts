@@ -18,6 +18,7 @@ vi.mock("@/shared/common/composables/extensionRegistry/useExtensionRegistry", ()
     getEntries: (category: string) => h.entries[category] ?? {},
     getProps: (category: string, name: string) => h.entries[category]?.[name]?.props,
     hasComponent: (category: string, name: string) => Boolean(h.entries[category]?.[name]?.component),
+    passesCondition: () => true,
   }),
 }));
 

@@ -8,6 +8,7 @@ type EntryType = {
   component?: Component;
   props?: Record<string, unknown>;
   use?: () => Record<string, unknown>;
+  condition?: (parameter: unknown) => boolean;
 };
 
 const h = vi.hoisted((): { entries: Record<string, Record<string, EntryType>> } => ({ entries: {} }));
@@ -18,12 +19,18 @@ vi.mock("@/shared/common/composables/extensionRegistry/useExtensionRegistry", ()
     getContribution: (category: string, name: string) => h.entries[category]?.[name]?.use,
     getProps: (category: string, name: string) => h.entries[category]?.[name]?.props,
     hasComponent: (category: string, name: string) => Boolean(h.entries[category]?.[name]?.component),
+    passesCondition: (category: string, name: string, parameter: unknown) => {
+      const condition = h.entries[category]?.[name]?.condition;
+      return typeof condition === "function" ? condition(parameter) : true;
+    },
   }),
 }));
 
-function mountWithSlot() {
+// VTU does not narrow the component's `C` generic from a props object, so the condition
+// parameter widens to the intersection of every category's. Cast once, here.
+function mountWithSlot(conditionParameter?: unknown) {
   return mount(ExtensionPoint, {
-    props: { category: "mobileMenu", name: "my-customers" },
+    props: { category: "mobileMenu", name: "my-customers", conditionParameter } as never,
     slots: {
       default: `<template #default="slotProps">fallback:{{ slotProps.extensionProps?.count }}</template>`,
     },
@@ -111,6 +118,34 @@ describe("ExtensionPoint", () => {
 
     expect(mountWithSlot().text()).toBe("registered");
     expect(calls).toBe(0);
+  });
+
+  it("skips the contribution when the entry's condition declines, keeping the fallback", () => {
+    let calls = 0;
+    h.entries = {
+      mobileMenu: {
+        "my-customers": {
+          condition: (parameter) => parameter === "wanted",
+          use: () => {
+            calls++;
+            return { count: 6 };
+          },
+        },
+      },
+    };
+
+    expect(mountWithSlot("not-wanted").text()).toBe("fallback:");
+    expect(calls).toBe(0);
+  });
+
+  it("runs the contribution when the entry's condition accepts", () => {
+    h.entries = {
+      mobileMenu: {
+        "my-customers": { condition: (parameter) => parameter === "wanted", use: () => ({ count: 6 }) },
+      },
+    };
+
+    expect(mountWithSlot("wanted").text()).toBe("fallback:6");
   });
 
   it("keeps the host's fallback rendering when use() throws", () => {

@@ -5,7 +5,11 @@ import { IS_DEVELOPMENT } from "@/core/constants";
 import { Logger } from "@/core/utilities";
 import { initialExtensionRegistry } from "@/shared/common/constants/initialExtensionRegistry";
 import type { ExtensionCategoryType, ExtensionRegistryStateType } from "@/shared/common/types/extensionRegistry";
-import type { ContributionType, ReplacePropsType } from "@/shared/common/types/extensionRegistryMap";
+import type {
+  ConditionParamType,
+  ContributionType,
+  ReplacePropsType,
+} from "@/shared/common/types/extensionRegistryMap";
 
 function _useExtensionRegistry() {
   const entries = shallowRef<ExtensionRegistryStateType>(initialExtensionRegistry);
@@ -43,7 +47,7 @@ function _useExtensionRegistry() {
     return entries.value[category]?.[name]?.component ?? null;
   }
 
-  /** Whether the entry renders its own markup — the question both extension points ask. */
+  /** Whether the entry renders its own markup. */
   function hasComponent<C extends ExtensionCategoryType, N extends keyof ExtensionRegistryStateType[C]>(
     category: C,
     name: N,
@@ -51,39 +55,35 @@ function _useExtensionRegistry() {
     return Boolean(entries.value[category]?.[name]?.component);
   }
 
-  /**
-   * @deprecated Answers "has a component", not "is registered" — a decorate-mode entry is
-   * registered and returns false here. Use {@link hasComponent}.
-   */
-  const isRegistered = hasComponent;
-
-  type ConditionParamType<C extends ExtensionCategoryType, N extends keyof ExtensionRegistryStateType[C]> =
-    NonNullable<ExtensionRegistryStateType[C][N]["condition"]> extends (arg: infer P) => boolean ? P : unknown;
-
-  function canRender<C extends ExtensionCategoryType, N extends keyof ExtensionRegistryStateType[C]>(
+  /** The entry's `condition` alone; true when it has none. Unlike `canRender`, ignores the component. */
+  function passesCondition<C extends ExtensionCategoryType>(
     category: C,
-    name: N,
-    parameter: ConditionParamType<C, N>,
+    name: string,
+    parameter: ConditionParamType<C>,
   ): boolean {
-    if (!hasComponent(category, name)) {
+    const condition = entries.value[category]?.[name]?.condition;
+
+    if (typeof condition !== "function") {
+      return true;
+    }
+
+    try {
+      return (condition as (parameter: ConditionParamType<C>) => boolean)(parameter);
+    } catch (error) {
+      Logger.error(
+        `useExtensionRegistry: Error in condition for component "${String(category)}/${String(name)}"`,
+        error,
+      );
       return false;
     }
+  }
 
-    const condition = entries.value[category]?.[name]?.condition as ExtensionRegistryStateType[C][N]["condition"];
-
-    if (condition && typeof condition === "function") {
-      try {
-        return (condition as (arg: ConditionParamType<C, N>) => boolean)(parameter);
-      } catch (error) {
-        Logger.error(
-          `useExtensionRegistry: Error in condition for component "${String(category)}/${String(name)}"`,
-          error,
-        );
-        return false;
-      }
-    }
-
-    return true;
+  function canRender<C extends ExtensionCategoryType>(
+    category: C,
+    name: string,
+    parameter: ConditionParamType<C>,
+  ): boolean {
+    return hasComponent(category, name) && passesCondition(category, name, parameter);
   }
 
   function getProps<C extends ExtensionCategoryType, N extends keyof ExtensionRegistryStateType[C]>(
@@ -94,10 +94,7 @@ function _useExtensionRegistry() {
     return entry?.props;
   }
 
-  /**
-   * The entry's `use()`, for the extension point to call from its own setup. Only a category that
-   * declares a contributed shape can carry one.
-   */
+  /** The entry's `use()`, for the extension point to call from its own setup. */
   function getContribution<C extends ExtensionCategoryType>(
     category: C,
     name: string,
@@ -117,10 +114,10 @@ function _useExtensionRegistry() {
       getComponent,
       getContribution,
       hasComponent,
+      passesCondition,
       getEntries,
       getProps,
 
-      isRegistered,
       canRender,
     };
   }
@@ -134,10 +131,10 @@ function _useExtensionRegistry() {
     getComponent,
     getContribution,
     hasComponent,
+    passesCondition,
     getEntries,
     getProps,
 
-    isRegistered,
     canRender,
   };
 }

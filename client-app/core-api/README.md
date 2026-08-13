@@ -132,6 +132,10 @@ register("mobileMenu", MY_CUSTOMERS_NAV_LINK_ID, {
 });
 ```
 
+A decorate entry may also carry a `condition`. The extension point evaluates it against
+`conditionParameter` before running `use()`. A condition that declines leaves the fallback
+rendered but undecorated — the markup is the host's, so only the contribution is withheld.
+
 ## How to extend the facade (developer flow)
 
 Say a plugin needs `useThemeContext`.

@@ -1839,11 +1839,8 @@ type ReplaceEntryType<Props = never, Condition extends (parameter: any) => boole
     props?: Props;
 };
 /**
- * The host keeps its own markup and the plugin contributes only what the host binds into it.
- *
- * `use()` is called by the extension point in its own setup and disposed when it unmounts, so a
- * contribution may fetch or subscribe. It is deliberately a composable rather than a value: a
- * getter passed as data would be invoked during render, where nothing can be cleaned up.
+ * The host keeps its own markup and the plugin contributes only what it binds into it.
+ * `use()` runs in the extension point's setup and is disposed with it, so it may fetch.
  */
 type DecorateEntryType<Contributed = never, Condition extends (parameter: any) => boolean = never> = {
     component?: never;
@@ -1851,10 +1848,9 @@ type DecorateEntryType<Contributed = never, Condition extends (parameter: any) =
     use: () => Contributed;
 };
 /**
- * Decorate mode exists for a category only if it declares a `Contributed` shape — which it may
- * only do once its host consumer renders a fallback slot to bind that data into. Categories that
- * leave `Contributed` at `never` get the replace-only shape, so a component-less registration
- * there is not merely useless but unrepresentable.
+ * A category gets decorate mode only by declaring a `Contributed` shape, which it may do once its
+ * host consumer renders a fallback slot. Leaving it at `never` makes a component-less entry there
+ * a compile error rather than a silent no-op.
  */
 type ExtensionEntryType<Props = never, Contributed = never, Condition extends (parameter: any) => boolean = never> = [Contributed] extends [never] ? ReplaceEntryType<Props, Condition> : ReplaceEntryType<Props, Condition> | DecorateEntryType<Contributed, Condition>;
 /**
@@ -1901,14 +1897,16 @@ type ExtensionCategoryMapType = {
         sharingSetting?: SharingSettingType;
     }, never, (sharingSetting?: SharingSettingType) => boolean>;
 };
-/** What a category's `use()` returns; never for a category with no decorate mode. */
+/** The parameter a category's `condition` accepts. */
+type ConditionParamType<C extends keyof ExtensionCategoryMapType> = NonNullable<ExtensionCategoryMapType[C]["condition"]> extends (parameter: infer P) => boolean ? P : unknown;
+/** What a category's `use()` returns; never when it has no decorate mode. */
 type DecorateMemberType<C extends keyof ExtensionCategoryMapType> = Extract<ExtensionCategoryMapType[C], {
     use: unknown;
 }>;
 type ContributionType<C extends keyof ExtensionCategoryMapType> = [DecorateMemberType<C>] extends [never] ? never : DecorateMemberType<C> extends {
     use: () => infer R;
 } ? R : never;
-/** The replace-mode props a category accepts, for the accessor that reads them. */
+/** The props a replace-mode entry may carry. */
 type ReplacePropsType<C extends keyof ExtensionCategoryMapType> = Extract<ExtensionCategoryMapType[C], {
     component: Component;
 }>["props"];
@@ -1925,10 +1923,10 @@ declare function _useExtensionRegistry(): {
     getComponent: <C extends ExtensionCategoryType, N extends keyof ExtensionRegistryStateType[C]>(category: C, name: N) => vue.Component | null;
     getContribution: <C extends ExtensionCategoryType>(category: C, name: string) => (() => ContributionType<C>) | undefined;
     hasComponent: <C extends ExtensionCategoryType, N extends keyof ExtensionRegistryStateType[C]>(category: C, name: N) => boolean;
+    passesCondition: <C extends ExtensionCategoryType>(category: C, name: string, parameter: ConditionParamType<C>) => boolean;
     getEntries: <C extends ExtensionCategoryType>(category: C, names?: string[]) => Readonly<Pick<ExtensionRegistryStateType[C], string>> | Readonly<ExtensionRegistryStateType[C]>;
     getProps: <C extends ExtensionCategoryType, N extends keyof ExtensionRegistryStateType[C]>(category: C, name: N) => ReplacePropsType<C>;
-    isRegistered: <C extends ExtensionCategoryType, N extends keyof ExtensionRegistryStateType[C]>(category: C, name: N) => boolean;
-    canRender: <C extends ExtensionCategoryType, N extends keyof ExtensionRegistryStateType[C]>(category: C, name: N, parameter: NonNullable<ExtensionRegistryStateType[C][N]["condition"]> extends (arg: infer P) => boolean ? P : unknown) => boolean;
+    canRender: <C extends ExtensionCategoryType>(category: C, name: string, parameter: ConditionParamType<C>) => boolean;
 };
 declare const useExtensionRegistry: typeof _useExtensionRegistry;
 
