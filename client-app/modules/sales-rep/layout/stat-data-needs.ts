@@ -95,10 +95,12 @@ export type StatQueryKeyType = "orders" | "carts" | "counts";
 
 export type StatQueryStateType = { loading: boolean; failed: boolean };
 
+// The query fields are nullable, so `NonNullable` keeps the `?` as the only source of undefined —
+// otherwise the two say the same thing twice (Sonar S4782).
 export type StatDataSourcesType = {
-  orders?: SalesRepCustomerOrderStatisticsQuery["salesRepCustomerOrderStatistics"];
-  carts?: SalesRepCustomerCartStatisticsQuery["salesRepCustomerCartStatistics"];
-  counts?: SalesRepCustomerCountsQuery["salesRepCustomerCounts"];
+  orders?: NonNullable<SalesRepCustomerOrderStatisticsQuery["salesRepCustomerOrderStatistics"]>;
+  carts?: NonNullable<SalesRepCustomerCartStatisticsQuery["salesRepCustomerCartStatistics"]>;
+  counts?: NonNullable<SalesRepCustomerCountsQuery["salesRepCustomerCounts"]>;
 };
 
 /**
