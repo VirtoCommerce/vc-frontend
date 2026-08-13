@@ -30,7 +30,8 @@ Grep `from "@/` over the module rather than trusting the file lists below.
 | `I18n` (`index.ts`) | drops out with the param-less entry — §2 |
 | Vc components used in templates but never imported | All 21 the module's templates reach for are facade exports. Global registrations still work when a remote renders inside the host's app instance; the explicit exports cover the plugin's own dev server, which has none |
 | `IWishlistSharingScopeControlsType` — the shape a scope's element exposes for the host's modal to read | `@vc-frontend/core` |
-| Test-only: `createWrapperFactory` from `@/core/utilities/tests`, `cache` from `@/core/api/graphql/config/cache` | Test infrastructure, so not the runtime contract. Either publish it as a `@vc-frontend/core/testing` subpath export — the pattern `/federation` and `/tailwind-preset` already use — or let the plugin repo supply both: `createWrapperFactory` is generic VTU boilerplate, and `data-freshness.test.ts` needs *an* Apollo cache, not the host's instance. **Decide before the facade release, not before the move:** a plugin pins the facade by tarball URL, so anything added to the package afterwards costs every plugin a re-pin (§3) |
+| `createWrapperFactory` from `@/core/utilities/tests` (4 specs) | `@vc-frontend/core/testing` — ships as real source, since a plugin's specs run with no host to inject anything |
+| `cache` from `@/core/api/graphql/config/cache` (`data-freshness.test.ts`) | Not exported. The spec needs *an* Apollo cache, not the host's instance: the host's own type policies are cart/checkout-specific, and the ones this spec exercises come from the module's `layout/cache-policies.ts`. Build a bare `new InMemoryCache()` in the plugin repo and register the module's policies onto it |
 
 ## 2. Entry point — `index.ts`
 

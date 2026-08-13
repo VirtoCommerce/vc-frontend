@@ -8,7 +8,9 @@
     "contract/index.d.ts",
     "contract/tailwind-preset.cjs",
     "federation.mjs",
-    "federation.d.mts"
+    "federation.d.mts",
+    "testing.mjs",
+    "testing.d.mts"
   ],
   "types": "./contract/index.d.ts",
   "exports": {
@@ -18,6 +20,10 @@
     "./federation": {
       "types": "./federation.d.mts",
       "import": "./federation.mjs"
+    },
+    "./testing": {
+      "types": "./testing.d.mts",
+      "import": "./testing.mjs"
     },
     "./tailwind-preset": "./contract/tailwind-preset.cjs"
   },
