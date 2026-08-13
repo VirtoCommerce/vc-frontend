@@ -65,6 +65,29 @@ export type SalesRepCommunicationResultType = {
   warnings: string[];
 };
 
+// View model for a shared library document (VCST-5730); mapped from the GraphQL SalesRepDocument.
+// `url` is the AUTHORIZED download endpoint (/api/sales-rep/documents/{id}) — the only URL the UI may
+// open or download; raw asset URLs are never constructed client-side. `previewUrl` is the only image
+// source usable in an <img> (the download endpoint needs auth headers a plain <img> cannot send).
+export type SalesRepDocumentType = {
+  id: string;
+  name: string;
+  // Subfolder name under the library root (e.g. "Catalogs"); empty when the file sits at the root.
+  category: string;
+  contentType: string;
+  size: number;
+  createdDate: string;
+  // Falls back to createdDate on the wire's null so "Updated …" always has a date to show.
+  modifiedDate: string;
+  url: string;
+  summary: string;
+  pageCount?: number;
+  previewUrl: string;
+};
+
+// A category tab on the browse-all page: subfolder name + document count.
+export type SalesRepDocumentCategoryType = { name: string; count: number };
+
 // Sales Rep order row, shared by the customer profile and hub dashboard; organizationName backs
 // the dashboard's Customer column.
 export type SalesRepOrderRowType = {

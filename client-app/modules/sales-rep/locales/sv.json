@@ -179,6 +179,41 @@
       "all_categories": "Alla kategorier",
       "load_failed": "Kunde inte läsa in bästsäljarna"
     },
+    "documents": {
+      "title": "Dokumentbibliotek",
+      "browse_all": "Bläddra bland alla",
+      "open": "Öppna",
+      "updated": "Uppdaterad {date}",
+      "empty": "Inga dokument ännu",
+      "load_failed": "Kunde inte läsa in dokumenten",
+      "navigation": {
+        "link": "Dokument"
+      },
+      "page": {
+        "title": "Dokument",
+        "search_placeholder": "Sök efter namn",
+        "search_aria": "Sök dokument",
+        "all_tab": "Alla {count}",
+        "results_count": "{count} dokument | {count} dokument",
+        "empty": "Inga dokument ännu",
+        "no_results": "Inga dokument matchar din sökning",
+        "reset_search": "Återställ sökning",
+        "load_failed": "Kunde inte läsa in dokumenten"
+      },
+      "details": {
+        "title": "Dokumentdetaljer",
+        "close": "Stäng detaljer",
+        "category": "Kategori",
+        "type": "Typ",
+        "size": "Storlek",
+        "created": "Skapad",
+        "updated": "Uppdaterad",
+        "pages": "Sidor",
+        "open": "Öppna i ny flik",
+        "download": "Ladda ner",
+        "not_found": "Det här dokumentet är inte längre tillgängligt."
+      }
+    },
     "rules": {
       "customer": {
         "filter": {

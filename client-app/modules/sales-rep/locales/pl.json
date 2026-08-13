@@ -179,6 +179,41 @@
       "all_categories": "Wszystkie kategorie",
       "load_failed": "Nie udało się wczytać bestsellerów"
     },
+    "documents": {
+      "title": "Biblioteka dokumentów",
+      "browse_all": "Przeglądaj wszystkie",
+      "open": "Otwórz",
+      "updated": "Zaktualizowano {date}",
+      "empty": "Brak dokumentów",
+      "load_failed": "Nie udało się wczytać dokumentów",
+      "navigation": {
+        "link": "Dokumenty"
+      },
+      "page": {
+        "title": "Dokumenty",
+        "search_placeholder": "Szukaj według nazwy",
+        "search_aria": "Szukaj dokumentów",
+        "all_tab": "Wszystkie {count}",
+        "results_count": "{count} dokumentów | {count} dokument | {count} dokumenty | {count} dokumentów",
+        "empty": "Brak dokumentów",
+        "no_results": "Żaden dokument nie pasuje do wyszukiwania",
+        "reset_search": "Resetuj wyszukiwanie",
+        "load_failed": "Nie udało się wczytać dokumentów"
+      },
+      "details": {
+        "title": "Szczegóły dokumentu",
+        "close": "Zamknij szczegóły",
+        "category": "Kategoria",
+        "type": "Typ",
+        "size": "Rozmiar",
+        "created": "Utworzono",
+        "updated": "Zaktualizowano",
+        "pages": "Strony",
+        "open": "Otwórz w nowej karcie",
+        "download": "Pobierz",
+        "not_found": "Ten dokument nie jest już dostępny."
+      }
+    },
     "rules": {
       "customer": {
         "filter": {

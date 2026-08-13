@@ -179,6 +179,41 @@
       "all_categories": "All categories",
       "load_failed": "Couldn't load top sellers"
     },
+    "documents": {
+      "title": "Document library",
+      "browse_all": "Browse all",
+      "open": "Open",
+      "updated": "Updated {date}",
+      "empty": "No documents yet",
+      "load_failed": "Couldn't load documents",
+      "navigation": {
+        "link": "Documents"
+      },
+      "page": {
+        "title": "Documents",
+        "search_placeholder": "Search by name",
+        "search_aria": "Search documents",
+        "all_tab": "All {count}",
+        "results_count": "{count} document | {count} documents",
+        "empty": "No documents yet",
+        "no_results": "No documents match your search",
+        "reset_search": "Reset search",
+        "load_failed": "Couldn't load documents"
+      },
+      "details": {
+        "title": "Document details",
+        "close": "Close details",
+        "category": "Category",
+        "type": "Type",
+        "size": "Size",
+        "created": "Created",
+        "updated": "Updated",
+        "pages": "Pages",
+        "open": "Open in new tab",
+        "download": "Download",
+        "not_found": "This document is no longer available."
+      }
+    },
     "rules": {
       "customer": {
         "filter": {

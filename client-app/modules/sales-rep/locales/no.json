@@ -179,6 +179,41 @@
       "all_categories": "Alle kategorier",
       "load_failed": "Kunne ikke laste bestselgerne"
     },
+    "documents": {
+      "title": "Dokumentbibliotek",
+      "browse_all": "Bla gjennom alle",
+      "open": "Åpne",
+      "updated": "Oppdatert {date}",
+      "empty": "Ingen dokumenter ennå",
+      "load_failed": "Kunne ikke laste dokumentene",
+      "navigation": {
+        "link": "Dokumenter"
+      },
+      "page": {
+        "title": "Dokumenter",
+        "search_placeholder": "Søk etter navn",
+        "search_aria": "Søk i dokumenter",
+        "all_tab": "Alle {count}",
+        "results_count": "{count} dokument | {count} dokumenter",
+        "empty": "Ingen dokumenter ennå",
+        "no_results": "Ingen dokumenter samsvarer med søket ditt",
+        "reset_search": "Tilbakestill søk",
+        "load_failed": "Kunne ikke laste dokumentene"
+      },
+      "details": {
+        "title": "Dokumentdetaljer",
+        "close": "Lukk detaljer",
+        "category": "Kategori",
+        "type": "Type",
+        "size": "Størrelse",
+        "created": "Opprettet",
+        "updated": "Oppdatert",
+        "pages": "Sider",
+        "open": "Åpne i ny fane",
+        "download": "Last ned",
+        "not_found": "Dette dokumentet er ikke lenger tilgjengelig."
+      }
+    },
     "rules": {
       "customer": {
         "filter": {

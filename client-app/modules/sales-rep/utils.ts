@@ -1,3 +1,4 @@
+import { ContentType } from "@/core/enums";
 import { globals } from "@/core/globals";
 import type { MoneyType } from "./api/graphql/types";
 import type { SalesRepRuleType } from "./types";
@@ -147,6 +148,46 @@ export function formatStatMoney(money?: Pick<MoneyType, "formattedAmount"> | nul
   }
 
   return new Intl.NumberFormat(globals.cultureName, { style: "currency", currency }).format(0);
+}
+
+// Document library (VCST-5730) display helpers, shared by the dashboard widget and the browse page.
+
+// Human file-type badge ("PDF", "XLSX"): the file extension is the most precise source (it tells
+// DOCX from DOC, which the aliased ContentType enum cannot), so it wins; the content-type subtype
+// is the fallback for extension-less names.
+const CONTENT_TYPE_BADGES: Record<string, string> = {
+  "application/pdf": "PDF",
+  "application/msword": "DOC",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "DOCX",
+  "application/vnd.ms-excel": "XLS",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "XLSX",
+  "application/vnd.ms-powerpoint": "PPT",
+  "application/vnd.openxmlformats-officedocument.presentationml.presentation": "PPTX",
+  "application/zip": "ZIP",
+  "image/jpeg": "JPG",
+  "image/png": "PNG",
+  "text/plain": "TXT",
+  "text/csv": "CSV",
+};
+
+export function documentTypeLabel(name: string, contentType?: string | null): string {
+  const extension = /\.([a-z\d]+)$/i.exec(name)?.[1];
+  if (extension) {
+    return extension.toUpperCase();
+  }
+
+  const type = contentType?.toLowerCase() ?? "";
+  return CONTENT_TYPE_BADGES[type] ?? type.split("/")[1]?.toUpperCase() ?? "";
+}
+
+// Mirrors VcFile's icon mapping (ui-kit vc-file.vue): a known ContentType resolves to its
+// assets/images/file-*.svg, anything else to the generic file icon. VcImage resolves the bare
+// filename to the theme's image folder.
+export function documentIcon(contentType?: string | null): string {
+  const known = Object.keys(ContentType).includes(contentType as ContentType)
+    ? ContentType[contentType as ContentType]
+    : undefined;
+  return `file-${known ? known.replace("/", "-") : "file"}.svg`;
 }
 
 // Backend percent is already ×100 and null when the baseline is zero (no delta then); tri-state

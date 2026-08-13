@@ -1,0 +1,15 @@
+query SalesRepDocument($id: String!) {
+  salesRepDocument(id: $id) {
+    id
+    name
+    category
+    contentType
+    size
+    createdDate
+    modifiedDate
+    url
+    summary
+    pageCount
+    previewUrl
+  }
+}

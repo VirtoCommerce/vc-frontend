@@ -179,6 +179,41 @@
       "all_categories": "Toutes catégories",
       "load_failed": "Impossible de charger les meilleures ventes"
     },
+    "documents": {
+      "title": "Bibliothèque de documents",
+      "browse_all": "Tout parcourir",
+      "open": "Ouvrir",
+      "updated": "Mis à jour le {date}",
+      "empty": "Aucun document pour le moment",
+      "load_failed": "Impossible de charger les documents",
+      "navigation": {
+        "link": "Documents"
+      },
+      "page": {
+        "title": "Documents",
+        "search_placeholder": "Rechercher par nom",
+        "search_aria": "Rechercher des documents",
+        "all_tab": "Tous {count}",
+        "results_count": "{count} document | {count} documents",
+        "empty": "Aucun document pour le moment",
+        "no_results": "Aucun document ne correspond à votre recherche",
+        "reset_search": "Réinitialiser la recherche",
+        "load_failed": "Impossible de charger les documents"
+      },
+      "details": {
+        "title": "Détails du document",
+        "close": "Fermer les détails",
+        "category": "Catégorie",
+        "type": "Type",
+        "size": "Taille",
+        "created": "Créé le",
+        "updated": "Mis à jour le",
+        "pages": "Pages",
+        "open": "Ouvrir dans un nouvel onglet",
+        "download": "Télécharger",
+        "not_found": "Ce document n'est plus disponible."
+      }
+    },
     "rules": {
       "customer": {
         "filter": {

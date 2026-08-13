@@ -1,0 +1,6 @@
+query SalesRepDocumentCategories {
+  salesRepDocumentCategories {
+    name
+    count
+  }
+}

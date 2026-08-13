@@ -179,6 +179,41 @@
       "all_categories": "Kaikki kategoriat",
       "load_failed": "Myydyimpiä ei voitu ladata"
     },
+    "documents": {
+      "title": "Dokumenttikirjasto",
+      "browse_all": "Selaa kaikkia",
+      "open": "Avaa",
+      "updated": "Päivitetty {date}",
+      "empty": "Ei vielä dokumentteja",
+      "load_failed": "Dokumentteja ei voitu ladata",
+      "navigation": {
+        "link": "Dokumentit"
+      },
+      "page": {
+        "title": "Dokumentit",
+        "search_placeholder": "Hae nimellä",
+        "search_aria": "Hae dokumentteja",
+        "all_tab": "Kaikki {count}",
+        "results_count": "{count} dokumentti | {count} dokumenttia",
+        "empty": "Ei vielä dokumentteja",
+        "no_results": "Yksikään dokumentti ei vastaa hakuasi",
+        "reset_search": "Tyhjennä haku",
+        "load_failed": "Dokumentteja ei voitu ladata"
+      },
+      "details": {
+        "title": "Dokumentin tiedot",
+        "close": "Sulje tiedot",
+        "category": "Kategoria",
+        "type": "Tyyppi",
+        "size": "Koko",
+        "created": "Luotu",
+        "updated": "Päivitetty",
+        "pages": "Sivut",
+        "open": "Avaa uudessa välilehdessä",
+        "download": "Lataa",
+        "not_found": "Tämä dokumentti ei ole enää saatavilla."
+      }
+    },
     "rules": {
       "customer": {
         "filter": {
