@@ -1,3 +1,4 @@
+import { Logger } from "@/core/utilities";
 import type { PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
 import type { IThemeConfig } from "@/core/types";
 import type { IPageContent, IPageTemplate } from "@/shared/static-content/types";
@@ -63,9 +64,21 @@ export function addBuilderMessageListener(
   onMessage: (message: TransferDataType) => void,
 ): () => void {
   const listener = (event: MessageEvent<unknown>) => {
-    if (event.origin === builderOrigin && event.source === parentWindow && isBuilderMessage(event.data)) {
-      onMessage(event.data);
+    if (event.origin !== builderOrigin || event.source !== parentWindow) {
+      // Not addressed to us. Foreign frames post to this window routinely, so stay quiet here.
+      return;
     }
+
+    if (!isBuilderMessage(event.data)) {
+      // The designer is the only sender that reaches this point, so a rejected payload means the two
+      // sides disagree about the protocol. Without this line "the preview does not update" leaves no trace.
+      Logger.warn("[builder-preview] Rejected a designer message that does not match the preview protocol", {
+        type: isRecord(event.data) ? event.data.type : typeof event.data,
+      });
+      return;
+    }
+
+    onMessage(event.data);
   };
 
   targetWindow.addEventListener("message", listener);

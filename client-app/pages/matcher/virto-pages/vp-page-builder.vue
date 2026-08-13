@@ -28,6 +28,7 @@
 <script setup lang="ts">
 import { computed, shallowRef, unref, watch } from "vue";
 import { useBreadcrumbs } from "@/core/composables";
+import { Logger } from "@/core/utilities";
 import { humanizeName } from "@/core/utilities/common";
 import { getBlockType } from "@/plugins/builder-preview/block-mapping";
 
@@ -47,6 +48,8 @@ interface IPageBuilderContent {
 }
 
 const props = defineProps<IProps>();
+
+const VP_PAGE_BUILDER_LOG_SCOPE = "[vp-page-builder]";
 
 // VCST-5274: prefer the live name derived from the permalink (which follows renames) over the
 // document's baked `settings.name`, which is written once at authoring time and never updated
@@ -80,10 +83,13 @@ function parsePageBuilderContent(content?: string): IPageBuilderContent | null {
         value.content.every(isPageBuilderBlock)
       ) {
         parsedContent = { settings: value.settings, content: value.content };
+      } else {
+        Logger.warn(`${VP_PAGE_BUILDER_LOG_SCOPE} Ignored a page document that is not Page Builder content`);
       }
-    } catch {
+    } catch (error) {
       // A cache-and-network update can temporarily replace the document. Do not keep rendering the
       // previous page when the latest payload is empty or malformed.
+      Logger.warn(`${VP_PAGE_BUILDER_LOG_SCOPE} Ignored a page document that is not valid JSON`, error);
     }
   }
 

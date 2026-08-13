@@ -344,5 +344,6 @@ export class SharedComponentOverlay {
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null;
+  // Same shape test the preview protocol applies, arrays included — a boundary is always a plain object.
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
