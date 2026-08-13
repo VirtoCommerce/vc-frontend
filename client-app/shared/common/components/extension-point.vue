@@ -1,20 +1,21 @@
 <template>
   <component
     :is="getComponent(category, name)"
-    v-if="name && isRegistered(category, name)"
+    v-if="name && hasComponent(category, name)"
     v-bind="{ ...getProps(category, name), ...$attrs }"
   />
 
-  <!-- An entry may contribute to the host's own fallback (e.g. a badge count) instead of
-       replacing it, through `props` or `use()`. -->
-  <slot v-else v-bind="{ extensionProps }" />
+  <!-- A component-less entry contributes to the host's own fallback (e.g. a badge count)
+       instead of replacing it. -->
+  <slot v-else v-bind="{ extensionProps: contributed }" />
 </template>
 
 <script lang="ts">
-import { computed, effectScope, onScopeDispose, shallowRef, watch } from "vue";
+import { effectScope, onScopeDispose, shallowRef, watch } from "vue";
 import { Logger } from "@/core/utilities";
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
-import type { ExtensionCategoryType, ExtensionRegistryStateType } from "@/shared/common/types/extensionRegistry";
+import type { ExtensionCategoryType } from "@/shared/common/types/extensionRegistry";
+import type { ContributionType } from "@/shared/common/types/extensionRegistryMap";
 import type { EffectScope } from "vue";
 
 // `generic` makes the generated component type reference this interface, and <script setup>
@@ -23,17 +24,6 @@ export interface IProps<C extends ExtensionCategoryType> {
   category: C;
   name?: string;
 }
-
-type ContributedType<C extends ExtensionCategoryType> =
-  NonNullable<ExtensionRegistryStateType[C][string]["use"]> extends () => infer R
-    ? R extends object
-      ? R
-      : Record<string, never>
-    : Record<string, never>;
-
-/** What the fallback slot receives: the entry's static props merged with its `use()` result. */
-type SlotPropsType<C extends ExtensionCategoryType> = NonNullable<ExtensionRegistryStateType[C][string]["props"]> &
-  ContributedType<C>;
 </script>
 
 <script setup lang="ts" generic="C extends ExtensionCategoryType">
@@ -43,11 +33,11 @@ defineOptions({
 
 const props = defineProps<IProps<C>>();
 
-const { getComponent, getContribution, getProps, isRegistered } = useExtensionRegistry();
+const { getComponent, getContribution, getProps, hasComponent } = useExtensionRegistry();
 
 // `use()` runs in setup, inside a scope stopped when the name changes or this unmounts, so a
-// contribution may open a subscription.
-const contributed = shallowRef<object>();
+// contribution may fetch or subscribe.
+const contributed = shallowRef<ContributionType<C>>();
 
 let scope: EffectScope | undefined;
 
@@ -62,7 +52,8 @@ watch(
   (name) => {
     stopContribution();
 
-    const use = name ? getContribution(props.category, name) : undefined;
+    // A component replaces the fallback, so nothing would read the contribution anyway.
+    const use = name && !hasComponent(props.category, name) ? getContribution(props.category, name) : undefined;
 
     if (!use) {
       return;
@@ -82,16 +73,4 @@ watch(
 );
 
 onScopeDispose(stopContribution);
-
-const extensionProps = computed<SlotPropsType<C> | undefined>(() => {
-  const registered = props.name ? getProps(props.category, props.name) : undefined;
-  const used = contributed.value;
-
-  if (!registered && !used) {
-    return undefined;
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- vue-tsc rejects the merge without it
-  return Object.assign({}, registered, used) as SlotPropsType<C>;
-});
 </script>

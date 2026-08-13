@@ -1576,9 +1576,9 @@ declare const __VLS_export$4: <T extends string | number | null>(__VLS_props: No
     props: vue.PublicProps & __VLS_PrettifyLocal<(IProps$4 & {
         modelValue?: T;
     }) & {
+        onClear?: (() => any) | undefined;
         onBlur?: ((blurEvent: FocusEvent) => any) | undefined;
         onFocus?: ((focusEvent: FocusEvent) => any) | undefined;
-        onClear?: (() => any) | undefined;
         "onUpdate:modelValue"?: ((value: T | undefined) => any) | undefined;
     }> & (typeof globalThis extends {
         __VLS_PROPS_FALLBACK: infer P;
@@ -1832,40 +1832,40 @@ declare const __VLS_export: vue.DefineComponent<IProps, {}, {}, {}, {}, vue.Comp
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
 declare const _default: typeof __VLS_export;
 
-type ExtensionEntryType<Props = never, Condition extends (parameter: any) => boolean = never> = {
+/** The plugin renders its own markup in place of the host's. */
+type ReplaceEntryType<Props = never, Condition extends (parameter: any) => boolean = never> = {
     component: Component;
     condition?: Condition;
     props?: Props;
-    use?: never;
 };
 /**
- * A category whose host consumer renders fallback markup of its own. An entry may replace that
- * markup with a `component`, or keep it and contribute only what the host binds into it:
- * static `props`, or a `use()` composable.
+ * The host keeps its own markup and the plugin contributes only what the host binds into it.
  *
- * `use()` is called by the extension point in its own setup and disposed when it unmounts, so
- * anything that fetches or subscribes belongs there rather than in `props`.
+ * `use()` is called by the extension point in its own setup and disposed when it unmounts, so a
+ * contribution may fetch or subscribe. It is deliberately a composable rather than a value: a
+ * getter passed as data would be invoked during render, where nothing can be cleaned up.
  */
-type DecoratableEntryType<Props = never, Contributed = never, Condition extends (parameter: any) => boolean = never> = {
-    /** Omit to keep the host's own fallback rendering and only contribute to it. */
-    component?: Component;
+type DecorateEntryType<Contributed = never, Condition extends (parameter: any) => boolean = never> = {
+    component?: never;
     condition?: Condition;
-    /** Partial: the host supplies the rest (e.g. `item`) as attrs at the extension point. */
-    props?: Partial<Props>;
-    use?: () => Contributed;
+    use: () => Contributed;
 };
+/**
+ * Decorate mode exists for a category only if it declares a `Contributed` shape — which it may
+ * only do once its host consumer renders a fallback slot to bind that data into. Categories that
+ * leave `Contributed` at `never` get the replace-only shape, so a component-less registration
+ * there is not merely useless but unrepresentable.
+ */
+type ExtensionEntryType<Props = never, Contributed = never, Condition extends (parameter: any) => boolean = never> = [Contributed] extends [never] ? ReplaceEntryType<Props, Condition> : ReplaceEntryType<Props, Condition> | DecorateEntryType<Contributed, Condition>;
 /**
  * Here we define the extension categories and the extension entries for each category.
- * ExtensionEntryType<Props, Condition> is a type that defines the extension entry for a given category.
- *
- * Only a category whose host consumer renders a fallback may use DecoratableEntryType. In every
- * other category an entry without a `component` renders nothing, so `component` stays required.
+ * ExtensionEntryType<Props, Contributed, Condition> defines the entry for a given category.
  */
 type ExtensionCategoryMapType = {
     headerMenu: ExtensionEntryType<{
         item: ExtendedMenuLinkType;
     }>;
-    mobileMenu: DecoratableEntryType<{
+    mobileMenu: ExtensionEntryType<{
         item: ExtendedMenuLinkType;
     }, {
         count?: MaybeRefOrGetter<number>;
@@ -1878,29 +1878,40 @@ type ExtensionCategoryMapType = {
         product?: Product;
         isTextShown?: boolean;
         lazy?: boolean;
-    }, (product: Product) => boolean>;
+    }, never, (product: Product) => boolean>;
     productPage: ExtensionEntryType<{
         product?: Product;
-    }, (product: Product) => boolean>;
+    }, never, (product: Product) => boolean>;
     paymentPage: ExtensionEntryType<{
         order: CustomerOrderType;
         paymentTypeName: string;
-    }, ({ order, paymentTypeName }: {
+    }, never, ({ order, paymentTypeName }: {
         order: CustomerOrderType;
         paymentTypeName: string;
     }) => boolean>;
     orderPaymentPage: ExtensionEntryType<{
         order: CustomerOrderType;
         paymentTypeName: string;
-    }, ({ order, paymentTypeName }: {
+    }, never, ({ order, paymentTypeName }: {
         order: CustomerOrderType;
         paymentTypeName: string;
     }) => boolean>;
     /** The publicly reachable shared-list page. A provider decides from the sharing setting whether it has anything to say. */
     sharedList: ExtensionEntryType<{
         sharingSetting?: SharingSettingType;
-    }, (sharingSetting?: SharingSettingType) => boolean>;
+    }, never, (sharingSetting?: SharingSettingType) => boolean>;
 };
+/** What a category's `use()` returns; never for a category with no decorate mode. */
+type DecorateMemberType<C extends keyof ExtensionCategoryMapType> = Extract<ExtensionCategoryMapType[C], {
+    use: unknown;
+}>;
+type ContributionType<C extends keyof ExtensionCategoryMapType> = [DecorateMemberType<C>] extends [never] ? never : DecorateMemberType<C> extends {
+    use: () => infer R;
+} ? R : never;
+/** The replace-mode props a category accepts, for the accessor that reads them. */
+type ReplacePropsType<C extends keyof ExtensionCategoryMapType> = Extract<ExtensionCategoryMapType[C], {
+    component: Component;
+}>["props"];
 
 type ExtensionRegistryStateType = {
     [K in keyof ExtensionCategoryMapType]: Record<string, ExtensionCategoryMapType[K]>;
@@ -1912,9 +1923,10 @@ declare function _useExtensionRegistry(): {
     register: <C extends ExtensionCategoryType, N extends string>(category: C, name: N, item: ExtensionRegistryStateType[C][N]) => void;
     unregister: <C extends ExtensionCategoryType>(category: C, name: string) => void;
     getComponent: <C extends ExtensionCategoryType, N extends keyof ExtensionRegistryStateType[C]>(category: C, name: N) => vue.Component | null;
-    getContribution: <C extends ExtensionCategoryType, N extends keyof ExtensionRegistryStateType[C]>(category: C, name: N) => ExtensionRegistryStateType[C][N]["use"];
+    getContribution: <C extends ExtensionCategoryType>(category: C, name: string) => (() => ContributionType<C>) | undefined;
+    hasComponent: <C extends ExtensionCategoryType, N extends keyof ExtensionRegistryStateType[C]>(category: C, name: N) => boolean;
     getEntries: <C extends ExtensionCategoryType>(category: C, names?: string[]) => Readonly<Pick<ExtensionRegistryStateType[C], string>> | Readonly<ExtensionRegistryStateType[C]>;
-    getProps: <C extends ExtensionCategoryType, N extends keyof ExtensionRegistryStateType[C]>(category: C, name: N) => ExtensionRegistryStateType[C][N]["props"];
+    getProps: <C extends ExtensionCategoryType, N extends keyof ExtensionRegistryStateType[C]>(category: C, name: N) => ReplacePropsType<C>;
     isRegistered: <C extends ExtensionCategoryType, N extends keyof ExtensionRegistryStateType[C]>(category: C, name: N) => boolean;
     canRender: <C extends ExtensionCategoryType, N extends keyof ExtensionRegistryStateType[C]>(category: C, name: N, parameter: NonNullable<ExtensionRegistryStateType[C][N]["condition"]> extends (arg: infer P) => boolean ? P : unknown) => boolean;
 };

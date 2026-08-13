@@ -104,29 +104,31 @@ request that fits none of them is a request to change the host, not to widen the
 | Tier                       | Export                            | Use when                                                                                                                                                                                              |
 | -------------------------- | --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 1. Capability              | composable or function            | Default. The plugin states intent, the host executes it — `registerCacheTypePolicies`, `useNavigations`, `useModal`.                                                                                    |
-| 2. Host-rendered chrome    | nothing — an extension-point entry | The result must look native. The plugin registers **data** and the host renders its own markup: an entry may omit `component` and contribute `props` (static) or `use()` (live). See `useExtensionRegistry`. |
+| 2. Host-rendered chrome    | nothing — an extension-point entry | The result must look native. The plugin registers **data** and the host renders its own markup: an entry omits `component` and contributes a `use()` composable. See `useExtensionRegistry`. |
 | 3. Frozen component        | a `.vue` component                | The visual itself is the contract and re-implementing it would drift from per-store settings — `OrderStatus`. Its props become contract: renaming one is a **breaking** change.                          |
 
 Never export from a `_internal/` path. That folder is private by convention, and exporting
 from it freezes markup the host needs to keep free to change — Tier 2 exists for that case.
 
-### Tier 2 only works where the host renders a fallback
+### Tier 2 only exists where the host renders a fallback
 
-A component-less entry is only reachable in a category typed as **decoratable**
-(`DecoratableEntryType` in `extensionRegistryMap.ts` — today just `mobileMenu`). Everywhere
-else `component` stays required, because `isRegistered()` answers on the component alone: an
-entry without one is treated as unregistered, and consumers that gate on
-`$canRenderExtensionPoint` or render through `ExtensionPointList` would drop it silently. If a
-category needs Tier 2, give its host consumer a fallback slot first, then widen the type.
+A category opts into Tier 2 by declaring a **contributed shape** as the second type argument
+of `ExtensionEntryType` (in `extensionRegistryMap.ts` — today only `mobileMenu`). A category
+that leaves it at `never` gets a replace-only entry type, so a component-less registration
+there does not compile at all. That matters because `canRender()` and both extension points
+answer on the component: an entry without one is skipped, and the six categories whose host
+consumers render no fallback slot would drop it in silence.
 
-Use `props` for a value that never changes and **`use()` for anything live**. `use()` is
-called by the extension point in its own setup, so a contribution may run a query and have it
-disposed when the extension point unmounts. A getter smuggled into `props` is invoked during
-render instead: it leaks its subscription and never refreshes.
+So the order is: give the host consumer a scoped fallback slot **first**, then declare the
+contributed shape. Never the other way round.
+
+`use()` is called by the extension point in its own setup and disposed when it unmounts, so a
+contribution may run a query. It is a composable rather than a plain value on purpose — a
+getter passed as data would be invoked during render, where nothing can be cleaned up.
 
 ```ts
 register("mobileMenu", MY_CUSTOMERS_NAV_LINK_ID, {
-  use: useSharedSalesRepCustomersCount, // -> { count } , merged into the fallback slot's props
+  use: useSharedSalesRepCustomersCount, // -> { count }, handed to the fallback slot
 });
 ```
 
@@ -150,7 +152,7 @@ Say a plugin needs `useThemeContext`.
    contract differs from the one on `origin/dev` and the version wasn't bumped yet, it
    applies an additive bump to this `package.json` (the single version source) for you —
    running it again won't double-bump. Plugins that use the new export then declare
-   `requiredHostVersion: "^0.1.0"`, so older hosts correctly refuse them.
+   `requiredHostVersion: "^0.2.0"`, so older hosts correctly refuse them.
 
    > **This contract is pre-1.0 and makes no stability promise yet.** While the major is
    > `0`, the levels shift down one: an additive change is a **patch** (`0.1.0 → 0.1.1`,

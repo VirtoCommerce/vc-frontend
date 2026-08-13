@@ -5,6 +5,7 @@ import { IS_DEVELOPMENT } from "@/core/constants";
 import { Logger } from "@/core/utilities";
 import { initialExtensionRegistry } from "@/shared/common/constants/initialExtensionRegistry";
 import type { ExtensionCategoryType, ExtensionRegistryStateType } from "@/shared/common/types/extensionRegistry";
+import type { ContributionType, ReplacePropsType } from "@/shared/common/types/extensionRegistryMap";
 
 function _useExtensionRegistry() {
   const entries = shallowRef<ExtensionRegistryStateType>(initialExtensionRegistry);
@@ -42,12 +43,19 @@ function _useExtensionRegistry() {
     return entries.value[category]?.[name]?.component ?? null;
   }
 
-  function isRegistered<C extends ExtensionCategoryType, N extends keyof ExtensionRegistryStateType[C]>(
+  /** Whether the entry renders its own markup — the question both extension points ask. */
+  function hasComponent<C extends ExtensionCategoryType, N extends keyof ExtensionRegistryStateType[C]>(
     category: C,
     name: N,
   ) {
     return Boolean(entries.value[category]?.[name]?.component);
   }
+
+  /**
+   * @deprecated Answers "has a component", not "is registered" — a decorate-mode entry is
+   * registered and returns false here. Use {@link hasComponent}.
+   */
+  const isRegistered = hasComponent;
 
   type ConditionParamType<C extends ExtensionCategoryType, N extends keyof ExtensionRegistryStateType[C]> =
     NonNullable<ExtensionRegistryStateType[C][N]["condition"]> extends (arg: infer P) => boolean ? P : unknown;
@@ -57,7 +65,7 @@ function _useExtensionRegistry() {
     name: N,
     parameter: ConditionParamType<C, N>,
   ): boolean {
-    if (!isRegistered(category, name)) {
+    if (!hasComponent(category, name)) {
       return false;
     }
 
@@ -81,19 +89,21 @@ function _useExtensionRegistry() {
   function getProps<C extends ExtensionCategoryType, N extends keyof ExtensionRegistryStateType[C]>(
     category: C,
     name: N,
-  ): ExtensionRegistryStateType[C][N]["props"] {
-    return entries.value[category]?.[name]?.props;
+  ): ReplacePropsType<C> {
+    const entry = entries.value[category]?.[name] as { props?: ReplacePropsType<C> } | undefined;
+    return entry?.props;
   }
 
   /**
-   * The entry's `use()`, for the extension point to call from its own setup. Only categories
-   * typed as decoratable can carry one.
+   * The entry's `use()`, for the extension point to call from its own setup. Only a category that
+   * declares a contributed shape can carry one.
    */
-  function getContribution<C extends ExtensionCategoryType, N extends keyof ExtensionRegistryStateType[C]>(
+  function getContribution<C extends ExtensionCategoryType>(
     category: C,
-    name: N,
-  ): ExtensionRegistryStateType[C][N]["use"] {
-    return entries.value[category]?.[name]?.use;
+    name: string,
+  ): (() => ContributionType<C>) | undefined {
+    const entry = entries.value[category]?.[name] as { use?: () => ContributionType<C> } | undefined;
+    return typeof entry?.use === "function" ? entry.use : undefined;
   }
 
   // To debug in development mode
@@ -106,6 +116,7 @@ function _useExtensionRegistry() {
 
       getComponent,
       getContribution,
+      hasComponent,
       getEntries,
       getProps,
 
@@ -122,6 +133,7 @@ function _useExtensionRegistry() {
 
     getComponent,
     getContribution,
+    hasComponent,
     getEntries,
     getProps,
 

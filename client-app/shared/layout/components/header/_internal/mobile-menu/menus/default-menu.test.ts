@@ -4,7 +4,7 @@ import { computed, defineComponent } from "vue";
 import DefaultMenu from "./default-menu.vue";
 import ExtensionPoint from "@/shared/common/components/extension-point.vue";
 
-type EntryType = { props?: Record<string, unknown>; use?: () => Record<string, unknown> };
+type EntryType = { use?: () => Record<string, unknown> };
 
 const h = vi.hoisted((): { entries: Record<string, Record<string, EntryType>> } => ({ entries: {} }));
 
@@ -12,8 +12,8 @@ vi.mock("@/shared/common/composables/extensionRegistry/useExtensionRegistry", ()
   useExtensionRegistry: () => ({
     getComponent: () => null,
     getContribution: (category: string, name: string) => h.entries[category]?.[name]?.use,
-    getProps: (category: string, name: string) => h.entries[category]?.[name]?.props,
-    isRegistered: () => false,
+    getProps: () => undefined,
+    hasComponent: () => false,
   }),
 }));
 
@@ -34,19 +34,13 @@ function mountMenu() {
 }
 
 describe("DefaultMenu", () => {
-  it("passes a mobileMenu entry's count to the native link", () => {
-    h.entries = { mobileMenu: { "my-customers": { props: { count: 5 } } } };
+  it("passes a contributed count to the native link", () => {
+    h.entries = { mobileMenu: { "my-customers": { use: () => ({ count: 5 }) } } };
 
     expect(mountMenu().text()).toContain("my customers:5");
   });
 
   it("unwraps a reactive count", () => {
-    h.entries = { mobileMenu: { "my-customers": { props: { count: computed(() => 12) } } } };
-
-    expect(mountMenu().text()).toContain("my customers:12");
-  });
-
-  it("unwraps a count contributed by use()", () => {
     h.entries = { mobileMenu: { "my-customers": { use: () => ({ count: computed(() => 12) }) } } };
 
     expect(mountMenu().text()).toContain("my customers:12");

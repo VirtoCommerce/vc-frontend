@@ -17,7 +17,7 @@ vi.mock("@/shared/common/composables/extensionRegistry/useExtensionRegistry", ()
     getComponent: (category: string, name: string) => h.entries[category]?.[name]?.component ?? null,
     getContribution: (category: string, name: string) => h.entries[category]?.[name]?.use,
     getProps: (category: string, name: string) => h.entries[category]?.[name]?.props,
-    isRegistered: (category: string, name: string) => Boolean(h.entries[category]?.[name]?.component),
+    hasComponent: (category: string, name: string) => Boolean(h.entries[category]?.[name]?.component),
   }),
 }));
 
@@ -31,12 +31,6 @@ function mountWithSlot() {
 }
 
 describe("ExtensionPoint", () => {
-  it("passes a component-less entry's props to the fallback slot", () => {
-    h.entries = { mobileMenu: { "my-customers": { props: { count: 7 } } } };
-
-    expect(mountWithSlot().text()).toBe("fallback:7");
-  });
-
   it("renders the fallback slot with undefined props when nothing is registered", () => {
     h.entries = {};
 
@@ -99,6 +93,24 @@ describe("ExtensionPoint", () => {
 
     wrapper.unmount();
     expect(disposed).toBe(true);
+  });
+
+  it("does not call use() when the entry also renders a component", () => {
+    let calls = 0;
+    h.entries = {
+      mobileMenu: {
+        "my-customers": {
+          component: { name: "Registered", template: `<span>registered</span>` },
+          use: () => {
+            calls++;
+            return { count: 4 };
+          },
+        },
+      },
+    };
+
+    expect(mountWithSlot().text()).toBe("registered");
+    expect(calls).toBe(0);
   });
 
   it("keeps the host's fallback rendering when use() throws", () => {
