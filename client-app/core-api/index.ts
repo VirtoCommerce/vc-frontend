@@ -6,12 +6,32 @@
  * Keep it SMALL and additive — removing/renaming an export breaks every plugin.
  */
 
-// UI kit — curated components for explicit imports (all VC* are also globally
-// registered by the host, so plugins can use them in templates without importing).
+// UI kit. The host also registers these globally, but a remote only resolves those
+// registrations when it renders inside the host's app instance — and a plugin's own dev
+// server has none at all, so every component a plugin's templates use is exported here.
 export { VcWidget } from "@/ui-kit/components";
-export { VcButton, VcInput } from "@/ui-kit/components/molecules";
-export { VcCheckbox, VcMarkdownRender } from "@/ui-kit/components/atoms";
-export { VcModal, VcWidgetSkeleton } from "@/ui-kit/components/organisms";
+export {
+  VcAlert,
+  VcButton,
+  VcEmptyView,
+  VcInput,
+  VcLoaderOverlay,
+  VcMenuItem,
+  VcSelect,
+  VcTextarea,
+  VcTypography,
+} from "@/ui-kit/components/molecules";
+export {
+  VcBadge,
+  VcBreadcrumbs,
+  VcCheckbox,
+  VcIcon,
+  VcImage,
+  VcLabel,
+  VcLink,
+  VcMarkdownRender,
+} from "@/ui-kit/components/atoms";
+export { VcModal, VcTable, VcTableColumn, VcWidgetSkeleton } from "@/ui-kit/components/organisms";
 
 /**
  * Themed order-status chip. Its status -> colour/icon mapping comes from per-store
