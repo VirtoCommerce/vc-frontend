@@ -41,6 +41,8 @@ query SalesRepCustomerOrderStatistics(
     currencyCode
     mtd: period(from: $mtdFrom, to: $mtdTo) @include(if: $withMtd) {
       total {
+        # The raw number only where a card does arithmetic on it: the customer profile divides this
+        # month's revenue by the year's. Everything else renders `formattedAmount` alone.
         amount
         formattedAmount
       }
@@ -54,20 +56,17 @@ query SalesRepCustomerOrderStatistics(
       count
       # Backs the customer profile's "Avg order value"; the dashboard has no such card.
       average @include(if: $withAverageOrderValue) {
-        amount
         formattedAmount
       }
     }
     week: period(from: $weekFrom, to: $weekTo) @include(if: $withWeek) {
       total {
-        amount
         formattedAmount
       }
       count
     }
     newOrders: period(from: $recentFrom, to: $recentTo, filter: $newOrdersFilter) @include(if: $withNewOrders) {
       total {
-        amount
         formattedAmount
       }
       count
@@ -76,43 +75,22 @@ query SalesRepCustomerOrderStatistics(
       count
     }
     # A comparison re-uses the bucket its `current` range already selected, so these cost only their
-    # baseline: the previous week, month and year respectively.
-    #
-    # Only `countChangePercent` is rendered today. The signed `totalChange`/`countChange` and
-    # `totalChangePercent` are kept selected pending the product decision in VCST-5647 (surface them, or
-    # stop asking) — with the gating above, that decision can now differ per surface.
+    # baseline: the previous week, month and year respectively. Order COUNT is the metric all three
+    # cards compare on, so the percent is the only delta selected.
     weekVsPrevWeek: comparison(
       current: { from: $weekFrom, to: $weekTo }
       previous: { from: $prevWeekFrom, to: $prevWeekTo }
     ) @include(if: $withWeek) {
-      totalChange {
-        amount
-        formattedAmount
-      }
-      totalChangePercent
-      countChange
       countChangePercent
     }
     mtdVsPrevMonth: comparison(current: { from: $mtdFrom, to: $mtdTo }, previous: { from: $prevFrom, to: $prevTo })
       @include(if: $withMonthOverMonth) {
-      totalChange {
-        amount
-        formattedAmount
-      }
-      totalChangePercent
-      countChange
       countChangePercent
     }
     ytdVsLastYear: comparison(
       current: { from: $ytdFrom, to: $ytdTo }
       previous: { from: $lastYearFrom, to: $lastYearTo }
     ) @include(if: $withYearOverYear) {
-      totalChange {
-        amount
-        formattedAmount
-      }
-      totalChangePercent
-      countChange
       countChangePercent
     }
   }

@@ -88,9 +88,9 @@ function emptyOrders(): OrderStatsType {
     newOrders: { count: 0, total: zeroMoney },
     recentOrders: { count: 0 },
     // No baseline to compare against, so the backend sends null percents.
-    weekVsPrevWeek: { countChange: 0, totalChange: zeroMoney },
-    mtdVsPrevMonth: { countChange: 0, totalChange: zeroMoney },
-    ytdVsLastYear: { countChange: 0, totalChange: zeroMoney },
+    weekVsPrevWeek: {},
+    mtdVsPrevMonth: {},
+    ytdVsLastYear: {},
   };
 }
 
@@ -186,7 +186,7 @@ describe("stat cards for a customer with partial data", () => {
       currencyCode: "USD",
       // Present: YTD has real activity. Absent: mtd/week/newOrders/recentOrders.
       ytd: { count: 1234, total: money(56789, "$56,789.00"), average: money(46, "$46.02") },
-      ytdVsLastYear: { countChange: 12, countChangePercent: 12.4, totalChange: money(1, "$1.00") },
+      ytdVsLastYear: { countChangePercent: 12.4 },
     } satisfies OrderStatsType;
     sources.carts.value = {} satisfies CartStatsType;
     sources.counts.value = { assignedCustomers: 4321 } satisfies CountsType;

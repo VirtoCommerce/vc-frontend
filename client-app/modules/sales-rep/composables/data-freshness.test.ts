@@ -32,13 +32,7 @@ function orderPeriod(count: number) {
 }
 
 function orderComparison() {
-  return {
-    __typename: "CustomerOrderStatisticsComparison",
-    totalChange: money(1),
-    totalChangePercent: 1,
-    countChange: 1,
-    countChangePercent: 1,
-  };
+  return { __typename: "CustomerOrderStatisticsComparison", countChangePercent: 1 };
 }
 
 // Apollo can't read a partial entry back from the cache, so every alias a document selects is answered.
