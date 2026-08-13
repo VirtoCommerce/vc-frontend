@@ -1,4 +1,5 @@
 import { Logger } from "@/core/utilities";
+import { ignoreChunkLoadFailure } from "@/core/utilities/optional-chunk";
 import type { LocaleMessageValue } from "vue-i18n";
 
 export async function getLocales(
@@ -9,12 +10,14 @@ export async function getLocales(
     const [fallbackMessages, messages] = await Promise.all<LocaleMessageValue[]>([
       locale !== fallbackLocale
         ? import(`../locales/${fallbackLocale}.json`).catch((error) => {
+            ignoreChunkLoadFailure(error);
             Logger.error(`Fallback locale: ${fallbackLocale} for the UI Kit not found`, error);
 
             return {};
           })
         : Promise.resolve({}),
       import(`../locales/${locale}.json`).catch((error) => {
+        ignoreChunkLoadFailure(error);
         Logger.error(`Locale: ${locale} for the UI Kit not found`, error);
 
         return {};
