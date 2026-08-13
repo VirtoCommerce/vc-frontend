@@ -65,4 +65,43 @@ describe("ExtensionPointList", () => {
 
     expect(mountList().text()).toBe("");
   });
+
+  // The attrs a call site binds now cross two components, both with inheritAttrs: false.
+  it("forwards attrs and listeners through to the registered component", async () => {
+    const received: Record<string, unknown>[] = [];
+    let succeeded = 0;
+
+    h.entries = {
+      paymentPage: {
+        "payment-methods": {
+          component: {
+            name: "PaymentMethod",
+            inheritAttrs: false,
+            props: { order: { type: Object, default: undefined }, paymentTypeName: String },
+            emits: ["success"],
+            setup(props: Record<string, unknown>) {
+              received.push({ order: props.order, paymentTypeName: props.paymentTypeName });
+            },
+            template: `<button @click="$emit('success')">pay</button>`,
+          },
+        },
+      },
+    };
+
+    const wrapper = mount(ExtensionPointList, {
+      props: { category: "paymentPage" },
+      attrs: {
+        order: { id: "order-1" },
+        paymentTypeName: "card",
+        onSuccess: () => {
+          succeeded++;
+        },
+      },
+    });
+
+    expect(received).toEqual([{ order: { id: "order-1" }, paymentTypeName: "card" }]);
+
+    await wrapper.find("button").trigger("click");
+    expect(succeeded).toBe(1);
+  });
 });
