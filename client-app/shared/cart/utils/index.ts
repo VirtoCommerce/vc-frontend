@@ -49,6 +49,19 @@ export function getLoyaltyValidationMessages(
   }, []);
 }
 
+/**
+ * Single definition of "these are the same coupon": the backend matches codes case-insensitively,
+ * so the cart domain must too, or the applied coupon and the card the user acted on disagree.
+ *
+ * A blank code never matches anything, itself included — callers therefore do not need their own
+ * `!!code` guard before comparing.
+ */
+export function isSameCouponCode(code: string | undefined, otherCode: string | undefined): boolean {
+  const normalized = code?.trim().toLowerCase();
+
+  return !!normalized && normalized === otherCode?.trim().toLowerCase();
+}
+
 export function getItemsForAddBulkItemsToCartResultsModal(
   inputItems: OrderLineItemType[] | LineItemType[],
   cart: ShortCartFragment,
