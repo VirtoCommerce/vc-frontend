@@ -156,7 +156,7 @@ Say a plugin needs `useThemeContext`.
    contract differs from the one on `origin/dev` and the version wasn't bumped yet, it
    applies an additive bump to this `package.json` (the single version source) for you —
    running it again won't double-bump. Plugins that use the new export then declare
-   `requiredHostVersion: "^0.2.0"`, so older hosts correctly refuse them.
+   `requiredHostVersion: "^0.1.0"`, so older hosts correctly refuse them.
 
    > **This contract is pre-1.0 and makes no stability promise yet.** While the major is
    > `0`, the levels shift down one: an additive change is a **patch** (`0.1.0 → 0.1.1`,

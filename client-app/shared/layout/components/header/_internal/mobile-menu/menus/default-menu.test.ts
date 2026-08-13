@@ -13,7 +13,7 @@ vi.mock("@/shared/common/composables/extensionRegistry/useExtensionRegistry", ()
     getComponent: () => null,
     getContribution: (category: string, name: string) => h.entries[category]?.[name]?.use,
     getProps: () => undefined,
-    hasComponent: () => false,
+    isRegistered: () => false,
     passesCondition: () => true,
   }),
 }));

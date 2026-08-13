@@ -1,7 +1,7 @@
 <template>
   <component
     :is="getComponent(category, name)"
-    v-if="name && hasComponent(category, name)"
+    v-if="name && isRegistered(category, name)"
     v-bind="{ ...getProps(category, name), ...$attrs }"
   />
 
@@ -34,7 +34,7 @@ defineOptions({
 
 const props = defineProps<IProps<C>>();
 
-const { getComponent, getContribution, getProps, hasComponent, passesCondition } = useExtensionRegistry();
+const { getComponent, getContribution, getProps, isRegistered, passesCondition } = useExtensionRegistry();
 
 // `use()` runs in setup, in a scope stopped when the name changes or this unmounts.
 const contributed = shallowRef<ContributionType<C>>();
@@ -53,7 +53,7 @@ watch(
     stopContribution();
 
     // A component replaces the fallback, so nothing would read a contribution.
-    if (!name || hasComponent(props.category, name)) {
+    if (!name || isRegistered(props.category, name)) {
       return;
     }
 

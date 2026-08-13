@@ -1922,7 +1922,7 @@ declare function _useExtensionRegistry(): {
     unregister: <C extends ExtensionCategoryType>(category: C, name: string) => void;
     getComponent: <C extends ExtensionCategoryType, N extends keyof ExtensionRegistryStateType[C]>(category: C, name: N) => vue.Component | null;
     getContribution: <C extends ExtensionCategoryType>(category: C, name: string) => (() => ContributionType<C>) | undefined;
-    hasComponent: <C extends ExtensionCategoryType, N extends keyof ExtensionRegistryStateType[C]>(category: C, name: N) => boolean;
+    isRegistered: <C extends ExtensionCategoryType, N extends keyof ExtensionRegistryStateType[C]>(category: C, name: N) => boolean;
     passesCondition: <C extends ExtensionCategoryType>(category: C, name: string, parameter: ConditionParamType<C>) => boolean;
     getEntries: <C extends ExtensionCategoryType>(category: C, names?: string[]) => Readonly<Pick<ExtensionRegistryStateType[C], string>> | Readonly<ExtensionRegistryStateType[C]>;
     getProps: <C extends ExtensionCategoryType, N extends keyof ExtensionRegistryStateType[C]>(category: C, name: N) => ReplacePropsType<C>;
@@ -2460,6 +2460,21 @@ type WishlistSharingScopeSavedContextType = {
     listName: string;
     sharingLink: string;
 };
+/**
+ * What a scope's `element` exposes so the modal can fold per-scope input into its single save. Comes from the rendered
+ * instance rather than the registration object: the registry is a global filled at module init, while the state these
+ * depend on is per-open.
+ */
+interface IWishlistSharingScopeControlsType {
+    canSave?: boolean;
+    /** The core form cannot see per-scope input, so a scope reports its own changes. */
+    dirty?: boolean;
+    payload?: {
+        sharedWithId?: string;
+    };
+    /** Must handle its own failures — the list is already persisted by then. */
+    onSaved?: (context: WishlistSharingScopeSavedContextType) => Promise<void> | void;
+}
 declare function _useWishlistSharingScopes(): {
     sharingScopes: vue.ComputedRef<IWishlistSharingScopeType[]>;
     registerSharingScope: (scope: IWishlistSharingScopeType) => void;
@@ -2543,4 +2558,4 @@ declare const globals: Readonly<Required<GlobalVariablesType>>;
 declare const CORE_VERSION: string;
 
 export { CORE_VERSION, EXTENSION_NAMES, Logger, _default as OrderStatus, _default$5 as VcButton, _default$7 as VcCheckbox, _default$4 as VcInput, _default$6 as VcMarkdownRender, _default$3 as VcModal, _default$2 as VcWidget, _default$1 as VcWidgetSkeleton, apolloClient, getProductRoute, globals, graphqlClient, registerCacheTypePolicies, useBreadcrumbs, useExtensionRegistry, useModal, useModuleSettings, useNavigations, useNotifications, usePageHead, useUser, useWishlistSharingScopes };
-export type { ExtendedMenuLinkType, I18n, MenuType, WishlistSharingScopeSavedContextType };
+export type { ExtendedMenuLinkType, I18n, IWishlistSharingScopeControlsType, MenuType, WishlistSharingScopeSavedContextType };

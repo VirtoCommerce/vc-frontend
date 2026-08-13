@@ -40,8 +40,12 @@ export { useUser } from "@/shared/account/composables/useUser";
 export { useModal } from "@/shared/modal/composables/useModal";
 export { useNotifications } from "@/shared/notification/composables/useNotifications";
 export { useWishlistSharingScopes } from "@/shared/wishlists/composables/useWishlistSharingScopes";
-// What the sharing modal hands a scope's `onSaved`.
-export type { WishlistSharingScopeSavedContextType } from "@/shared/wishlists/composables/useWishlistSharingScopes";
+// What the sharing modal hands a scope's `onSaved`, and the shape a scope's element must expose
+// for the modal to read it.
+export type {
+  IWishlistSharingScopeControlsType,
+  WishlistSharingScopeSavedContextType,
+} from "@/shared/wishlists/composables/useWishlistSharingScopes";
 
 export { Logger } from "@/core/utilities";
 export { getProductRoute } from "@/core/utilities/product";

@@ -18,7 +18,7 @@ vi.mock("@/shared/common/composables/extensionRegistry/useExtensionRegistry", ()
     getComponent: (category: string, name: string) => h.entries[category]?.[name]?.component ?? null,
     getContribution: (category: string, name: string) => h.entries[category]?.[name]?.use,
     getProps: (category: string, name: string) => h.entries[category]?.[name]?.props,
-    hasComponent: (category: string, name: string) => Boolean(h.entries[category]?.[name]?.component),
+    isRegistered: (category: string, name: string) => Boolean(h.entries[category]?.[name]?.component),
     passesCondition: (category: string, name: string, parameter: unknown) => {
       const condition = h.entries[category]?.[name]?.condition;
       return typeof condition === "function" ? condition(parameter) : true;

@@ -59,7 +59,7 @@ your code imports** as dev dependencies — Vue included:
 ```jsonc
 {
   "dependencies": {
-    "@vc-frontend/core": "https://github.com/VirtoCommerce/vc-frontend/releases/download/core-v0.2.0/vc-frontend-core-0.2.0.tgz",
+    "@vc-frontend/core": "https://github.com/VirtoCommerce/vc-frontend/releases/download/core-v0.1.0/vc-frontend-core-0.1.0.tgz",
   },
   "devDependencies": {
     // compile-time only - NOTHING below ships in your bundle (import: false);
@@ -133,7 +133,7 @@ export default defineConfig({
       createRemoteFederationOptions({
         name: "my-plugin",
         // CONTRACT GATE: the facade version this plugin is built against.
-        requiredHostVersion: "^0.2.0",
+        requiredHostVersion: "^0.1.0",
         // Optional: sharedOverrides / exposes when you need to deviate.
       }),
     ),
@@ -319,7 +319,7 @@ new URL (and your `requiredHostVersion` if you use the new exports).
 | --------------------------------------------------- | --------------------------------------------------------------------------------------- |
 | add a facade export                                 | `yarn build:core-types` auto-bumps the contract **patch** (e.g. 0.1.0 → 0.1.1)          |
 | remove/rename a facade export                       | the build refuses; you run `yarn bump:core minor` explicitly — this breaks every plugin |
-| build a plugin using a new export                   | declare `requiredHostVersion: "^0.2.0"` — older hosts will refuse it (CONTRACT GATE)    |
+| build a plugin using a new export                   | declare `requiredHostVersion: "^0.1.0"` — older hosts will refuse it (CONTRACT GATE)    |
 | build a plugin against a different Vue/Apollo major | the SHARED-DEPENDENCY GATE fails that plugin at load, in isolation                      |
 | consume a new facade version in your plugin         | bump the pinned tarball URL to `core-v<new>` **and** `requiredHostVersion` together     |
 | forget any of the regenerate/bump steps             | CI fails with the exact command to run                                                  |

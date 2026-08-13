@@ -29,7 +29,8 @@ Grep `from "@/` over the module rather than trusting the file lists below.
 | `MenuType` (`menu.ts`), `ExtendedMenuLinkType` (`components/link-my-customers.vue`) | `@vc-frontend/core` |
 | `I18n` (`index.ts`) | drops out with the param-less entry — §2 |
 | Vc components used in templates but never imported | Grep `<Vc`; the module's templates reach for ~21 of them and the facade exports 7 (`VcWidget VcButton VcInput VcCheckbox VcMarkdownRender VcModal VcWidgetSkeleton`). Whether a remote's templates resolve the host's global registrations depends on the remote rendering inside the host's app instance — verify that on the pilot before relying on it, and note the standalone dev server has no host registrations at all |
-| Test-only: `createWrapperFactory` from `@/core/utilities/tests`, `cache` from `@/core/api/graphql/config/cache`, `IWishlistSharingScopeControlsType` from `@/shared/wishlists` | **not** facade exports — the plugin repo owns its own test setup (§3) |
+| `IWishlistSharingScopeControlsType` — the shape a scope's element exposes for the host's modal to read | `@vc-frontend/core` |
+| Test-only: `createWrapperFactory` from `@/core/utilities/tests`, `cache` from `@/core/api/graphql/config/cache` | Test infrastructure, so not the runtime contract. Either publish it as a `@vc-frontend/core/testing` subpath export — the pattern `/federation` and `/tailwind-preset` already use — or let the plugin repo supply both: `createWrapperFactory` is generic VTU boilerplate, and `data-freshness.test.ts` needs *an* Apollo cache, not the host's instance. Decide before the module moves (§3) |
 
 ## 2. Entry point — `index.ts`
 

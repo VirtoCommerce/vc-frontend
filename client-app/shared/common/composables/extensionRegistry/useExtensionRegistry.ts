@@ -47,8 +47,8 @@ function _useExtensionRegistry() {
     return entries.value[category]?.[name]?.component ?? null;
   }
 
-  /** Whether the entry renders its own markup. */
-  function hasComponent<C extends ExtensionCategoryType, N extends keyof ExtensionRegistryStateType[C]>(
+  /** Answers whether the entry has a component, not whether one is registered: a decorate entry is false. */
+  function isRegistered<C extends ExtensionCategoryType, N extends keyof ExtensionRegistryStateType[C]>(
     category: C,
     name: N,
   ) {
@@ -83,7 +83,7 @@ function _useExtensionRegistry() {
     name: string,
     parameter: ConditionParamType<C>,
   ): boolean {
-    return hasComponent(category, name) && passesCondition(category, name, parameter);
+    return isRegistered(category, name) && passesCondition(category, name, parameter);
   }
 
   function getProps<C extends ExtensionCategoryType, N extends keyof ExtensionRegistryStateType[C]>(
@@ -113,7 +113,7 @@ function _useExtensionRegistry() {
 
       getComponent,
       getContribution,
-      hasComponent,
+      isRegistered,
       passesCondition,
       getEntries,
       getProps,
@@ -130,7 +130,7 @@ function _useExtensionRegistry() {
 
     getComponent,
     getContribution,
-    hasComponent,
+    isRegistered,
     passesCondition,
     getEntries,
     getProps,

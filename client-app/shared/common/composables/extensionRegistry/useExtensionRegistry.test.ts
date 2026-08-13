@@ -41,7 +41,7 @@ describe("useExtensionRegistry", () => {
       const entries = registry.getEntries("productCard");
       expect(entries).toEqual({ a: { component: DummyComponent } });
       expect(registry.getComponent("productCard", "a")).toBe(DummyComponent);
-      expect(registry.hasComponent("productCard", "a")).toBe(true);
+      expect(registry.isRegistered("productCard", "a")).toBe(true);
       expect(registry.canRender("productCard", "a", dummyProduct)).toBe(true);
     });
 
@@ -55,10 +55,10 @@ describe("useExtensionRegistry", () => {
 
     it("should unregister entries", () => {
       registry.register("productCard", "toRemove", { component: DummyComponent });
-      expect(registry.hasComponent("productCard", "toRemove")).toBe(true);
+      expect(registry.isRegistered("productCard", "toRemove")).toBe(true);
       registry.unregister("productCard", "toRemove");
       expect(registry.getEntries("productCard")).not.toContain("toRemove");
-      expect(registry.hasComponent("productCard", "toRemove")).toBe(false);
+      expect(registry.isRegistered("productCard", "toRemove")).toBe(false);
       expect(registry.getComponent("productCard", "toRemove")).toBeNull();
     });
 
@@ -130,7 +130,7 @@ describe("useExtensionRegistry", () => {
   describe("error handling", () => {
     it("should return false for unregistered entries", () => {
       expect(registry.getComponent("productCard", "unknown")).toBeNull();
-      expect(registry.hasComponent("productCard", "unknown")).toBe(false);
+      expect(registry.isRegistered("productCard", "unknown")).toBe(false);
       expect(registry.canRender("productCard", "unknown", dummyProduct)).toBe(false);
     });
 
