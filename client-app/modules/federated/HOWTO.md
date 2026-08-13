@@ -96,6 +96,23 @@ built chunks reference the host's live instances. (Add `vue-i18n`, `@apollo/clie
 The facade dependency brings you the type contract (`contract/index.d.ts`) and the
 shared-dependency config (`@vc-frontend/core/federation`).
 
+### Mount helpers for your specs
+
+`@vc-frontend/core/testing` ships the host's `createWrapperFactory` /
+`createShallowWrapperFactory` as real source — the root export is types-only because the host
+injects the implementation at runtime, and your specs run with no host to inject anything.
+Pass `mount` in rather than letting the helper import it, so it uses your copy:
+
+```ts
+import { createWrapperFactory } from "@vc-frontend/core/testing";
+import { mount } from "@vue/test-utils";
+
+const createWrapper = createWrapperFactory(mount, MyComponent);
+```
+
+It needs `vue-i18n` (already a shared singleton) and `lodash-es` as dev dependencies. Neither
+reaches your bundle: this module is only ever imported by specs.
+
 ### Everything else is just your dependency
 
 A package that is **not** in `MF_SHARED_RANGES` needs no ceremony: `yarn add` it and it
