@@ -86,6 +86,8 @@
                   :aria-label="$t(isAllSelected ? 'ui_kit.table.deselect_all' : 'ui_kit.table.select_all')"
                   @change="toggleSelectAll"
                 />
+
+                <span v-else class="sr-only">{{ $t("ui_kit.table.selection_column") }}</span>
               </th>
 
               <th
@@ -235,7 +237,7 @@
                 size="sm"
                 tabindex="-1"
                 :model-value="isRowSelected(item, rowIndex)"
-                :disabled="!isRowSelectable(item) && !isRowSelected(item, rowIndex)"
+                :disabled="!canSelectRow(item) && !isRowSelected(item, rowIndex)"
                 :aria-label="rowSelectionAriaLabel(item, rowIndex)"
                 @change="toggleRow(item, rowIndex)"
               />
@@ -253,7 +255,7 @@
                 :name="`sel-${tableId}-${getItemKey(item, rowIndex)}`"
                 :value="getItemKey(item, rowIndex)"
                 :model-value="isRowSelected(item, rowIndex) ? getItemKey(item, rowIndex) : undefined"
-                :disabled="!isRowSelectable(item) && !isRowSelected(item, rowIndex)"
+                :disabled="!canSelectRow(item) && !isRowSelected(item, rowIndex)"
                 :aria-label="rowSelectionAriaLabel(item, rowIndex)"
                 @click="toggleRow(item, rowIndex)"
               />
@@ -780,7 +782,7 @@ const showSelectionColumn = computed<boolean>(() => selectionEnabled.value && !s
 // Normalize to strings so comparisons match `getItemKey`, even for numeric input keys.
 const selectionSet = computed<Set<string>>(() => new Set(props.selection.map(String)));
 
-function isRowSelectable(item: T): boolean {
+function canSelectRow(item: T): boolean {
   return props.isRowSelectable ? props.isRowSelectable(item) : true;
 }
 
@@ -792,7 +794,7 @@ function isRowSelected(item: T, index: number): boolean {
 const selectableKeysOnPage = computed<string[]>(() => {
   const keys: string[] = [];
   props.items.forEach((item, index) => {
-    if (isRowSelectable(item)) {
+    if (canSelectRow(item)) {
       keys.push(getItemKey(item, index));
     }
   });
@@ -838,7 +840,7 @@ function toggleRow(item: T, index: number): void {
   const alreadySelected = selectionSet.value.has(key);
 
   // gate ADD only — deselect must always work, never trap a row
-  if (!alreadySelected && !isRowSelectable(item)) {
+  if (!alreadySelected && !canSelectRow(item)) {
     return;
   }
 
@@ -889,7 +891,7 @@ function selectionSlotScope(
   return {
     selected: isRowSelected(item, index),
     toggle: () => toggleRow(item, index),
-    selectable: isRowSelectable(item),
+    selectable: canSelectRow(item),
   };
 }
 

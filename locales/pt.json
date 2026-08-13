@@ -82,7 +82,8 @@
       "buy_now": "Comprar agora",
       "see_all": "Ver tudo",
       "report_a_problem": "Reportar um problema",
-      "copy_to_clipboard": "Copiar para a área de transferência"
+      "copy_to_clipboard": "Copiar para a área de transferência",
+      "reload_page": "Recarregar página"
     },
     "labels": {
       "actions": "Ações",
@@ -222,6 +223,8 @@
       "role_update_successful": "O papel do cliente foi atualizado com sucesso.",
       "contact_lock_failed": "Falha ao bloquear/desbloquear o usuário.",
       "role_update_failed": "Ocorreram erros durante a atualização do papel.",
+      "invite_revoke_failed": "Falha ao revogar o convite.",
+      "invite_resend_failed": "Falha ao reenviar o convite.",
       "passwords_do_not_match": "Os campos de senha devem ter valores correspondentes.",
       "password_new_same_old": "Sua senha atual e a nova senha devem ser diferentes.",
       "blocked": "Você foi bloqueado. Não pode acessar nenhuma informação ou criar o pedido. Para mais detalhes, por favor ",
@@ -231,7 +234,8 @@
       "outdated_backend_modules": "A aplicação frontend espera versões mais recentes da Plataforma e de um ou mais Módulos. <br> A Aplicação Frontend está rodando em um backend incompatível. Alguns recursos podem ficar indisponíveis, degradados ou instáveis até que a Plataforma e os Módulos sejam atualizados para atender aos requisitos da loja. Por favor, compartilhe o relatório abaixo com seu administrador.",
       "logo_changed": "O logotipo foi alterado com sucesso.",
       "logo_deleted": "O logotipo foi excluído.",
-      "pending_operations_leaving_page_confirmation": "Algumas operações ainda estão em andamento. Tem certeza de que deseja sair desta página? As alterações não salvas podem ser perdidas."
+      "pending_operations_leaving_page_confirmation": "Algumas operações ainda estão em andamento. Tem certeza de que deseja sair desta página? As alterações não salvas podem ser perdidas.",
+      "content_failed_to_load": "Não foi possível carregar parte do site. Recarregue a página para continuar."
     },
     "placeholders": {
       "enter_value": "Por favor, insira um valor",
@@ -549,6 +553,14 @@
         "email_length_exceeded": "O comprimento máximo de um endereço de e-mail é {maxValue} caracteres",
         "invalid_emails": "Endereços de e-mail incorretos: {invalidEmails}"
       },
+      "pending_invites_widget": {
+        "title": "Convites da organização",
+        "accept_button": "Aceitar",
+        "reject_button": "Recusar",
+        "invite_accepted": "Convite aceito",
+        "invite_rejected": "Convite recusado",
+        "action_failed": "Algo deu errado. Por favor, tente novamente"
+      },
       "profile_update_success_modal": {
         "title": "Atualização de perfil",
         "message": "Perfil atualizado com sucesso!",
@@ -617,6 +629,10 @@
       "delete_member_modal": {
         "title": "Excluir membro",
         "text": "Tem certeza de que deseja remover o usuário {name} da lista de membros da empresa?"
+      },
+      "revoke_invite_modal": {
+        "title": "Revogar convite",
+        "text": "Tem certeza de que deseja revogar o convite enviado a {name}?"
       },
       "notifications": {
         "user_blocked": "O usuário foi bloqueado com sucesso.",
@@ -1011,7 +1027,8 @@
           "Organization": "Organização",
           "AnyoneAnonymous": "Qualquer pessoa (somente leitura)"
         },
-        "clipboard_success": "Link copiado"
+        "clipboard_success": "Link copiado",
+        "save_error": "Não foi possível salvar a lista. Tente novamente."
       },
       "delete_wishlist_modal": {
         "title": "Confirmar Exclusão",
@@ -1408,7 +1425,9 @@
           "block_user": "Bloquear usuário",
           "unblock_user": "Desbloquear usuário",
           "delete": "Excluir",
-          "no_members": "Continuar navegando"
+          "no_members": "Continuar navegando",
+          "revoke_invite": "Revogar convite",
+          "resend_invite": "Reenviar convite"
         },
         "content_header": {
           "name": "Nome",
@@ -1421,6 +1440,10 @@
           "inactive": "Inativo",
           "invited": "Convidado",
           "blocked": "Bloqueado"
+        },
+        "notifications": {
+          "invite_revoked": "Convite revogado",
+          "invite_resent": "Convite reenviado"
         }
       }
     },
@@ -1666,6 +1689,7 @@
     }
   },
   "identity_error": {
+    "AlreadyMemberOfOrganization": "Esta pessoa já é membro desta organização",
     "DuplicateEmail": "E-mail {0} já está em uso",
     "DuplicateUserName": "Nome de usuário {0} já está em uso",
     "InvalidEmail": "Por favor, insira um endereço de e-mail válido, ex. johndoe@gmail.com",

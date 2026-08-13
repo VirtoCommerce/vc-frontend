@@ -82,7 +82,8 @@
       "buy_now": "立即购买",
       "see_all": "查看全部",
       "report_a_problem": "报告问题",
-      "copy_to_clipboard": "复制到剪贴板"
+      "copy_to_clipboard": "复制到剪贴板",
+      "reload_page": "重新加载页面"
     },
     "labels": {
       "actions": "操作",
@@ -222,6 +223,8 @@
       "role_update_successful": "客户角色已成功更新。",
       "contact_lock_failed": "阻止/取消阻止用户失败。",
       "role_update_failed": "更新角色时发生错误。",
+      "invite_revoke_failed": "撤销邀请失败。",
+      "invite_resend_failed": "重新发送邀请失败。",
       "passwords_do_not_match": "密码字段的值必须匹配。",
       "password_new_same_old": "您的当前密码和新密码必须不同。",
       "blocked": "您已被封锁。您无法访问任何信息或创建订单。如需更多信息，请 ",
@@ -231,7 +234,8 @@
       "outdated_backend_modules": "前端应用程序需要新版本的平台和模块。<br>前端应用程序正在运行不兼容的后端。在平台和模块升级以满足店面要求之前，某些功能可能不可用、降级或不稳定。请与您的管理员分享以下报告。",
       "logo_changed": "标志已成功更改。",
       "logo_deleted": "标志已被删除。",
-      "pending_operations_leaving_page_confirmation": "某些操作仍在进行中。确定要离开此页面吗？未保存的更改可能会丢失。"
+      "pending_operations_leaving_page_confirmation": "某些操作仍在进行中。确定要离开此页面吗？未保存的更改可能会丢失。",
+      "content_failed_to_load": "网站的部分内容无法加载。请重新加载页面以继续。"
     },
     "placeholders": {
       "enter_value": "请输入值",
@@ -549,6 +553,14 @@
         "email_length_exceeded": "电子邮件地址的最大长度为 {maxValue} 个字符",
         "invalid_emails": "不正确的电子邮件地址：{invalidEmails}"
       },
+      "pending_invites_widget": {
+        "title": "组织邀请",
+        "accept_button": "接受",
+        "reject_button": "拒绝",
+        "invite_accepted": "邀请已接受",
+        "invite_rejected": "邀请已拒绝",
+        "action_failed": "出了点问题。请重试"
+      },
       "profile_update_success_modal": {
         "title": "个人资料更新",
         "message": "个人资料已成功更新！",
@@ -617,6 +629,10 @@
       "delete_member_modal": {
         "title": "删除成员",
         "text": "您确定要从公司成员列表中删除用户 {name} 吗？"
+      },
+      "revoke_invite_modal": {
+        "title": "撤销邀请",
+        "text": "您确定要撤销发送给 {name} 的邀请吗？"
       },
       "notifications": {
         "user_blocked": "用户已成功封锁。",
@@ -1011,7 +1027,8 @@
           "Organization": "组织",
           "AnyoneAnonymous": "任何人（只读）"
         },
-        "clipboard_success": "链接已复制"
+        "clipboard_success": "链接已复制",
+        "save_error": "无法保存列表，请重试。"
       },
       "delete_wishlist_modal": {
         "title": "确认删除",
@@ -1408,7 +1425,9 @@
           "block_user": "封锁用户",
           "unblock_user": "解除封锁用户",
           "delete": "删除",
-          "no_members": "继续浏览"
+          "no_members": "继续浏览",
+          "revoke_invite": "撤销邀请",
+          "resend_invite": "重新发送邀请"
         },
         "content_header": {
           "name": "姓名",
@@ -1421,6 +1440,10 @@
           "inactive": "未激活",
           "invited": "已邀请",
           "blocked": "已封锁"
+        },
+        "notifications": {
+          "invite_revoked": "邀请已撤销",
+          "invite_resent": "邀请已重新发送"
         }
       }
     },
@@ -1666,6 +1689,7 @@
     }
   },
   "identity_error": {
+    "AlreadyMemberOfOrganization": "此人已经是该组织的成员",
     "DuplicateEmail": "电子邮件 {0} 已被占用",
     "DuplicateUserName": "用户名 {0} 已被占用",
     "InvalidEmail": "请输入有效的电子邮件地址，例如 johndoe@gmail.com",

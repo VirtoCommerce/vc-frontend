@@ -9,7 +9,7 @@ const meta: Meta<typeof VcDropdownMenu> = {
     template: `
   <VcDropdownMenu v-bind="args">
     <template #trigger="{ triggerProps }">
-      <span v-bind="triggerProps">Trigger</span>
+      <VcButton v-bind="triggerProps">Trigger</VcButton>
     </template>
 
     <template #content>

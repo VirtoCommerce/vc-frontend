@@ -129,7 +129,8 @@
       "retry": "再試行",
       "select_row_number": "Select row {number}",
       "select_all": "すべて選択",
-      "deselect_all": "すべて選択解除"
+      "deselect_all": "すべて選択解除",
+      "selection_column": "行の選択"
     },
     "slider": {
       "tooltip": "{count} アイテム",

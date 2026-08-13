@@ -1,5 +1,5 @@
 <template>
-  <VcWidget :title="t('sales_rep.customer_profile.info.title')" size="md" class="customer-profile-info">
+  <LayoutWidget :title="t('sales_rep.customer_profile.info.title')" size="md" class="customer-profile-info">
     <!-- Read-only per design (no edit action). -->
     <VcEmptyView v-if="!rows.length && !loading" :text="t('sales_rep.customer_profile.info.empty')" icon="user" />
 
@@ -13,13 +13,14 @@
         <dd class="customer-profile-info__value">{{ row.value }}</dd>
       </div>
     </dl>
-  </VcWidget>
+  </LayoutWidget>
 </template>
 
 <script setup lang="ts">
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useSalesRepCustomer } from "../composables/useSalesRepCustomer";
+import LayoutWidget from "./layout-widget.vue";
 
 interface IProps {
   organizationId: string;

@@ -82,7 +82,8 @@
       "buy_now": "Acheter",
       "see_all": "Voir tout",
       "report_a_problem": "Signaler un problème",
-      "copy_to_clipboard": "Copier dans le presse-papiers"
+      "copy_to_clipboard": "Copier dans le presse-papiers",
+      "reload_page": "Recharger la page"
     },
     "labels": {
       "actions": "Actions",
@@ -222,6 +223,8 @@
       "role_update_successful": "Le rôle du client a été mis à jour avec succès.",
       "contact_lock_failed": "Échec du blocage/déblocage de l'utilisateur.",
       "role_update_failed": "Des erreurs se sont produites lors de la mise à jour du rôle.",
+      "invite_revoke_failed": "Échec de la révocation de l'invitation.",
+      "invite_resend_failed": "Échec du renvoi de l'invitation.",
       "passwords_do_not_match": "Les champs de mot de passe doivent avoir des valeurs correspondantes.",
       "password_new_same_old": "Votre mot de passe actuel et votre nouveau mot de passe doivent être différents.",
       "blocked": "Vous avez été bloqué. Vous ne pouvez pas accéder à des informations ou créer la commande. Pour plus de détails, veuillez ",
@@ -231,7 +234,8 @@
       "outdated_backend_modules": "L'application frontend attend des versions plus récentes de la Plateforme et d'un ou plusieurs Modules. <br> L'application frontend fonctionne sur un backend incompatible. Certaines fonctionnalités peuvent être indisponibles, dégradées ou instables jusqu'à ce que la Plateforme et les Modules soient mis à niveau pour répondre aux exigences du magasin. Veuillez partager le rapport ci-dessous avec votre administrateur.",
       "logo_changed": "Le logo a été changé avec succès.",
       "logo_deleted": "Le logo a été supprimé.",
-      "pending_operations_leaving_page_confirmation": "Certaines opérations sont toujours en cours. Êtes-vous sûr de vouloir quitter cette page ? Les modifications non enregistrées pourraient être perdues."
+      "pending_operations_leaving_page_confirmation": "Certaines opérations sont toujours en cours. Êtes-vous sûr de vouloir quitter cette page ? Les modifications non enregistrées pourraient être perdues.",
+      "content_failed_to_load": "Une partie du site n'a pas pu être chargée. Veuillez recharger la page pour continuer."
     },
     "placeholders": {
       "enter_value": "Veuillez entrer une valeur",
@@ -549,6 +553,14 @@
         "email_length_exceeded": "La longueur maximale d'une adresse e-mail est de {maxValue} caractères",
         "invalid_emails": "Adresses e-mail incorrectes : {invalidEmails}"
       },
+      "pending_invites_widget": {
+        "title": "Invitations de l'organisation",
+        "accept_button": "Accepter",
+        "reject_button": "Refuser",
+        "invite_accepted": "Invitation acceptée",
+        "invite_rejected": "Invitation refusée",
+        "action_failed": "Une erreur s'est produite. Veuillez réessayer"
+      },
       "profile_update_success_modal": {
         "title": "Mise à jour du profil",
         "message": "Profil mis à jour avec succès !",
@@ -617,6 +629,10 @@
       "delete_member_modal": {
         "title": "Supprimer le membre",
         "text": "Êtes-vous sûr de vouloir supprimer l'utilisateur {name} de la liste des membres de l'entreprise ?"
+      },
+      "revoke_invite_modal": {
+        "title": "Révoquer l'invitation",
+        "text": "Êtes-vous sûr de vouloir révoquer l'invitation envoyée à {name} ?"
       },
       "notifications": {
         "user_blocked": "L'utilisateur a été bloqué avec succès.",
@@ -1011,7 +1027,8 @@
           "Organization": "Organisation",
           "AnyoneAnonymous": "Tout le monde (lecture seule)"
         },
-        "clipboard_success": "Lien copié"
+        "clipboard_success": "Lien copié",
+        "save_error": "La liste n'a pas pu être enregistrée. Veuillez réessayer."
       },
       "delete_wishlist_modal": {
         "title": "Confirmer la suppression",
@@ -1408,7 +1425,9 @@
           "block_user": "Bloquer l'utilisateur",
           "unblock_user": "Débloquer l'utilisateur",
           "delete": "Supprimer",
-          "no_members": "Continuer à naviguer"
+          "no_members": "Continuer à naviguer",
+          "revoke_invite": "Révoquer l'invitation",
+          "resend_invite": "Renvoyer l'invitation"
         },
         "content_header": {
           "name": "Nom",
@@ -1421,6 +1440,10 @@
           "inactive": "Inactif",
           "invited": "Invité",
           "blocked": "Bloqué"
+        },
+        "notifications": {
+          "invite_revoked": "Invitation révoquée",
+          "invite_resent": "Invitation renvoyée"
         }
       }
     },
@@ -1666,6 +1689,7 @@
     }
   },
   "identity_error": {
+    "AlreadyMemberOfOrganization": "Cette personne est déjà membre de cette organisation",
     "DuplicateEmail": "L'email {0} est déjà pris",
     "DuplicateUserName": "Le nom d'utilisateur {0} est déjà pris",
     "InvalidEmail": "Veuillez entrer une adresse email valide, par ex. johndoe@gmail.com",

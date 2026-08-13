@@ -15,6 +15,7 @@ export type SalesRepCustomerType = {
   location: string;
   // Inline per-row purchase columns (aliased orderStatistics slices; the backend batches, no N+1).
   ytdTotal: string;
+  // Stays a number: it is interpolated into a sentence, so vue-i18n needs it for plural selection.
   ytdCount: number;
   lastYearTotal: string;
   lastOrder?: SalesRepCustomerLastOrderType;
@@ -33,14 +34,15 @@ export type SalesRepRuleType = {
 export type SalesRepRuleDomainType = "order" | "customer" | "topSeller";
 export type SalesRepRuleKindType = "filter" | "sort";
 
-// View model for a ranked Top Sellers row; `revenue` is the backend-formatted amount.
+// View model for a ranked Top Sellers row. `units`/`revenue` are display-ready strings from the shared
+// stat formatters, so this table's figures group the same way as the KPI cards above it (VCST-5586).
 export type SalesRepTopSellerRowType = {
   rank: number;
   productId: string;
   name: string;
   sku: string;
   imageUrl: string;
-  units: number;
+  units: string;
   revenue: string;
 };
 
@@ -73,6 +75,6 @@ export type SalesRepOrderRowType = {
   createdDate: string;
   status: string;
   statusDisplayValue: string;
-  itemsCount: number;
+  itemsCount: string;
   total: string;
 };
