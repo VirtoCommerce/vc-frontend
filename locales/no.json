@@ -82,7 +82,8 @@
       "buy_now": "Kjøp nå",
       "see_all": "Se alle",
       "report_a_problem": "Rapporter et problem",
-      "copy_to_clipboard": "Kopier til utklippstavlen"
+      "copy_to_clipboard": "Kopier til utklippstavlen",
+      "reload_page": "Last inn siden på nytt"
     },
     "labels": {
       "actions": "Handlinger",
@@ -233,7 +234,8 @@
       "outdated_backend_modules": "Frontend-applikasjonen forventer nyere versjoner av plattformen og en eller flere moduler. <br> Frontend-applikasjonen kjører på en inkompatibel backend. Noen funksjoner kan være utilgjengelige, forringede eller ustabile inntil plattformen og modulene er oppgradert for å møte nettbutikkens krav. Vennligst del rapporten nedenfor med administratoren din.",
       "logo_changed": "Logoen er endret.",
       "logo_deleted": "Logoen er slettet.",
-      "pending_operations_leaving_page_confirmation": "Noen operasjoner er fortsatt i gang. Er du sikker på at du vil forlate denne siden? Endringer som ikke er lagret kan gå tapt."
+      "pending_operations_leaving_page_confirmation": "Noen operasjoner er fortsatt i gang. Er du sikker på at du vil forlate denne siden? Endringer som ikke er lagret kan gå tapt.",
+      "content_failed_to_load": "En del av nettstedet kunne ikke lastes inn. Last inn siden på nytt for å fortsette."
     },
     "placeholders": {
       "enter_value": "Skriv inn verdi",
