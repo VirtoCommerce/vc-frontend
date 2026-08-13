@@ -1783,6 +1783,15 @@ type __VLS_PrettifyLocal$1<T> = (T extends any ? {
     [K in keyof T as K]: T[K];
 }) & {};
 
+interface ILanguage {
+    cultureName: string;
+    nativeName: string;
+    threeLetterLanguageName: string;
+    twoLetterLanguageName: string;
+    twoLetterRegionName: string;
+    threeLetterRegionName: string;
+}
+
 type AccountNavigationSectionType = {
     id: string;
     title: string;
@@ -3075,6 +3084,23 @@ declare function createI18n(locale: string, currency: string, fallback?: {
 }, string, false>;
 type I18n = ReturnType<typeof createI18n>;
 
+/**
+ * Loads and merges extra locale messages (UI kit, module bundles, …) for the given language.
+ * Registered via `registerLocaleLoader` and re-run by `applyLocale` (see useLanguages) on every
+ * locale switch, so runtime switches (e.g. the builder preview applying the edited page's culture,
+ * VCST-5219) stay in sync with what boot loaded.
+ *
+ * Loaders run concurrently and must merge messages under namespaces they own (e.g. `ui_kit.*`,
+ * a module's own keys); overlapping keys across loaders would resolve last-writer-wins.
+ */
+type LocaleLoaderType = (i18n: I18n, language: ILanguage) => Promise<void>;
+/**
+ * Registers a locale loader under a stable key ("ui-kit", "module:quotes", …).
+ * Re-registering the same key overwrites the previous loader, so repeated boots
+ * (HMR, tests) don't accumulate duplicates.
+ */
+declare function registerLocaleLoader(key: string, loader: LocaleLoaderType): void;
+
 type GlobalVariablesType = {
     storeId?: string;
     catalogId?: string;
@@ -3099,5 +3125,5 @@ declare const globals: Readonly<Required<GlobalVariablesType>>;
 /** Contract version, single-sourced from core-api/package.json (managed by build:core-types / bump:core). */
 declare const CORE_VERSION: string;
 
-export { CORE_VERSION, EXTENSION_NAMES, Logger, _default as OrderStatus, _default$e as VcAlert, _default$m as VcBadge, _default$l as VcBreadcrumbs, _default$d as VcButton, _default$k as VcCheckbox, _default$c as VcEmptyView, _default$j as VcIcon, _default$i as VcImage, _default$b as VcInput, _default$h as VcLabel, _default$g as VcLink, _default$a as VcLoaderOverlay, _default$f as VcMarkdownRender, _default$9 as VcMenuItem, _default$5 as VcModal, _default$8 as VcSelect, _default$4 as VcTable, _default$3 as VcTableColumn, _default$7 as VcTextarea, _default$6 as VcTypography, _default$2 as VcWidget, _default$1 as VcWidgetSkeleton, apolloClient, getProductRoute, globals, graphqlClient, registerCacheTypePolicies, useBreadcrumbs, useExtensionRegistry, useModal, useModuleSettings, useNavigations, useNotifications, usePageHead, useUser, useWishlistSharingScopes };
-export type { ExtendedMenuLinkType, I18n, IWishlistSharingScopeControlsType, MenuType, WishlistSharingScopeSavedContextType };
+export { CORE_VERSION, EXTENSION_NAMES, Logger, _default as OrderStatus, _default$e as VcAlert, _default$m as VcBadge, _default$l as VcBreadcrumbs, _default$d as VcButton, _default$k as VcCheckbox, _default$c as VcEmptyView, _default$j as VcIcon, _default$i as VcImage, _default$b as VcInput, _default$h as VcLabel, _default$g as VcLink, _default$a as VcLoaderOverlay, _default$f as VcMarkdownRender, _default$9 as VcMenuItem, _default$5 as VcModal, _default$8 as VcSelect, _default$4 as VcTable, _default$3 as VcTableColumn, _default$7 as VcTextarea, _default$6 as VcTypography, _default$2 as VcWidget, _default$1 as VcWidgetSkeleton, apolloClient, getProductRoute, globals, graphqlClient, registerCacheTypePolicies, registerLocaleLoader, useBreadcrumbs, useExtensionRegistry, useModal, useModuleSettings, useNavigations, useNotifications, usePageHead, useUser, useWishlistSharingScopes };
+export type { ExtendedMenuLinkType, I18n, ILanguage, IWishlistSharingScopeControlsType, LocaleLoaderType, MenuType, WishlistSharingScopeSavedContextType };

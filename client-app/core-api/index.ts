@@ -69,8 +69,15 @@ export type {
 
 export { Logger } from "@/core/utilities";
 export { getProductRoute } from "@/core/utilities/product";
+// A plugin's messages must re-merge on every locale switch, not just at init: the host re-runs
+// every registered loader when the language changes. Merge with vue-i18n's own
+// `mergeLocaleMessage` — the host has no seam of its own for that.
+export { registerLocaleLoader } from "@/core/locale-loaders";
+export type { LocaleLoaderType } from "@/core/locale-loaders";
+
 export { globals } from "@/core/globals";
 export type { I18n } from "@/i18n";
+export type { ILanguage } from "@/core/types";
 export type { ExtendedMenuLinkType, MenuType } from "@/core/types";
 
 import { version } from "./package.json";
