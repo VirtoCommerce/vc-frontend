@@ -24,6 +24,9 @@ type DecorateEntryType<
 > = {
   component?: never;
   condition?: Condition;
+  // Excess-property checking is lenient against a union — without this, `props` would be
+  // accepted here because the replace branch has it, and then silently ignored.
+  props?: never;
   use: () => Contributed;
 };
 

@@ -3,7 +3,7 @@
 // Regenerate with: yarn build:core-types
 
 import * as vue from 'vue';
-import { ComputedRef, MaybeRef, Component, MaybeRefOrGetter, ComponentObjectPropsOptions } from 'vue';
+import { Plugin, ComputedRef, MaybeRef, Component, MaybeRefOrGetter, ComponentObjectPropsOptions } from 'vue';
 import * as vue_router from 'vue-router';
 import { RouteLocationRaw, RouteLocationNormalizedLoaded, Router } from 'vue-router';
 import { MaskOptions } from 'maska';
@@ -18,6 +18,8 @@ import { LocaleMessage } from '@intlify/core-base';
 import * as vue_i18n from 'vue-i18n';
 import { IntlNumberFormat } from 'vue-i18n';
 import * as _vue_shared from '@vue/shared';
+
+declare const uiKit: Plugin;
 
 interface IProps$k {
     color?: VcBadgeColorType;
@@ -2396,6 +2398,7 @@ type ReplaceEntryType<Props = never, Condition extends (parameter: any) => boole
 type DecorateEntryType<Contributed = never, Condition extends (parameter: any) => boolean = never> = {
     component?: never;
     condition?: Condition;
+    props?: never;
     use: () => Contributed;
 };
 /**
@@ -3121,9 +3124,15 @@ declare const globals: Readonly<Required<GlobalVariablesType>>;
  * host provides the live instance at runtime via the MF shared singleton.
  * Keep it SMALL and additive — removing/renaming an export breaks every plugin.
  */
+/**
+ * Registers every `Vc*` component globally: `app.use(uiKit)`. A plugin's own dev server needs
+ * this — the host's registrations only reach a remote that renders inside the host's app
+ * instance. It is also the only way to render an exported component that resolves its own
+ * children globally, as `OrderStatus` does with `VcChip` / `VcIcon` / `VcTooltip`.
+ */
 
 /** Contract version, single-sourced from core-api/package.json (managed by build:core-types / bump:core). */
 declare const CORE_VERSION: string;
 
-export { CORE_VERSION, EXTENSION_NAMES, Logger, _default as OrderStatus, _default$e as VcAlert, _default$m as VcBadge, _default$l as VcBreadcrumbs, _default$d as VcButton, _default$k as VcCheckbox, _default$c as VcEmptyView, _default$j as VcIcon, _default$i as VcImage, _default$b as VcInput, _default$h as VcLabel, _default$g as VcLink, _default$a as VcLoaderOverlay, _default$f as VcMarkdownRender, _default$9 as VcMenuItem, _default$5 as VcModal, _default$8 as VcSelect, _default$4 as VcTable, _default$3 as VcTableColumn, _default$7 as VcTextarea, _default$6 as VcTypography, _default$2 as VcWidget, _default$1 as VcWidgetSkeleton, apolloClient, getProductRoute, globals, graphqlClient, registerCacheTypePolicies, registerLocaleLoader, useBreadcrumbs, useExtensionRegistry, useModal, useModuleSettings, useNavigations, useNotifications, usePageHead, useUser, useWishlistSharingScopes };
+export { CORE_VERSION, EXTENSION_NAMES, Logger, _default as OrderStatus, _default$e as VcAlert, _default$m as VcBadge, _default$l as VcBreadcrumbs, _default$d as VcButton, _default$k as VcCheckbox, _default$c as VcEmptyView, _default$j as VcIcon, _default$i as VcImage, _default$b as VcInput, _default$h as VcLabel, _default$g as VcLink, _default$a as VcLoaderOverlay, _default$f as VcMarkdownRender, _default$9 as VcMenuItem, _default$5 as VcModal, _default$8 as VcSelect, _default$4 as VcTable, _default$3 as VcTableColumn, _default$7 as VcTextarea, _default$6 as VcTypography, _default$2 as VcWidget, _default$1 as VcWidgetSkeleton, apolloClient, getProductRoute, globals, graphqlClient, registerCacheTypePolicies, registerLocaleLoader, uiKit, useBreadcrumbs, useExtensionRegistry, useModal, useModuleSettings, useNavigations, useNotifications, usePageHead, useUser, useWishlistSharingScopes };
 export type { ExtendedMenuLinkType, I18n, ILanguage, IWishlistSharingScopeControlsType, LocaleLoaderType, MenuType, WishlistSharingScopeSavedContextType };

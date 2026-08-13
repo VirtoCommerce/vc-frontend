@@ -6,9 +6,15 @@
  * Keep it SMALL and additive — removing/renaming an export breaks every plugin.
  */
 
-// UI kit. The host also registers these globally, but a remote only resolves those
-// registrations when it renders inside the host's app instance — and a plugin's own dev
-// server has none at all, so every component a plugin's templates use is exported here.
+/**
+ * Registers every `Vc*` component globally: `app.use(uiKit)`. A plugin's own dev server needs
+ * this — the host's registrations only reach a remote that renders inside the host's app
+ * instance. It is also the only way to render an exported component that resolves its own
+ * children globally, as `OrderStatus` does with `VcChip` / `VcIcon` / `VcTooltip`.
+ */
+export { uiKit } from "@/ui-kit";
+
+// Curated components for explicit imports, so a plugin can name what it uses.
 export { VcWidget } from "@/ui-kit/components";
 export {
   VcAlert,
