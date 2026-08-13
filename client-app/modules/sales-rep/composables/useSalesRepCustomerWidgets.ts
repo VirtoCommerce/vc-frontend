@@ -35,9 +35,16 @@ export function useSalesRepCustomerWidgets(organizationId: MaybeRefOrGetter<stri
     const orders = orderStatistics.value;
     const carts = cartStatistics.value;
 
-    // Each card reads exactly one query, so it carries that query's state and no other's.
-    const ordersState = { loading: ordersLoading.value, failed: Boolean(ordersError.value) };
-    const cartsState = { loading: cartsLoading.value, failed: Boolean(cartsError.value) };
+    // buildStatCards derives each card's pending/failed state from the card's own `needs`, so a card
+    // whose slice already arrived keeps rendering while a sibling's query is still in flight.
+    const queries = {
+      sources: { orders, carts },
+      states: {
+        orders: { loading: ordersLoading.value, failed: Boolean(ordersError.value) },
+        carts: { loading: cartsLoading.value, failed: Boolean(cartsError.value) },
+        counts: { loading: false, failed: false },
+      },
+    };
     const ytd = orders?.ytd;
     const mtd = orders?.mtd;
 
@@ -49,32 +56,33 @@ export function useSalesRepCustomerWidgets(organizationId: MaybeRefOrGetter<stri
     const mtdShare = mtd && ytdAmount > 0 ? Math.round((mtd.total.amount / ytdAmount) * 100) : 0;
 
     // Caption, icon and accent come from the shared table; only what the queries decide is here.
-    return buildStatCards(CUSTOMER_PROFILE_STAT_CARDS, {
-      // Identical on both surfaces, so it comes from the one shared builder.
-      new_orders: newOrdersCardData(orders, ordersState, t),
-      // The dashboard's card, one organization: same builder, so the two surfaces cannot drift.
-      active_cart: buildActiveCartsCardData(carts, cartsState, t),
-      mtd: {
-        ...ordersState,
-        value: formatStatMoney(mtd?.total),
-        // Informational ratio (gray, no chevron): how much of the year's revenue landed this month.
-        delta: t("sales_rep.hub.dashboard.stats.mtd_of_ytd", { percent: mtdShare }),
-        deltaTone: "neutral",
+    return buildStatCards(
+      CUSTOMER_PROFILE_STAT_CARDS,
+      {
+        // Identical on both surfaces, so it comes from the one shared builder.
+        new_orders: newOrdersCardData(orders, t),
+        // The dashboard's card, one organization: same builder, so the two surfaces cannot drift.
+        active_cart: buildActiveCartsCardData(carts, t),
+        mtd: {
+          value: formatStatMoney(mtd?.total),
+          // Informational ratio (gray, no chevron): how much of the year's revenue landed this month.
+          delta: t("sales_rep.hub.dashboard.stats.mtd_of_ytd", { percent: mtdShare }),
+          deltaTone: "neutral",
+        },
+        orders_ytd: {
+          value: formatStatCount(ytd?.count),
+          sub: formatStatMoney(ytd?.total),
+          delta: ytdDelta ? t("sales_rep.hub.dashboard.stats.vs_last_year", { delta: ytdDelta.text }) : "",
+          deltaTone: ytdDelta?.tone,
+          deltaIcon: ytdDelta?.icon,
+        },
+        aov: {
+          value: formatStatMoney(ytd?.average),
+          sub: t("sales_rep.customer_profile.stats.per_order"),
+        },
       },
-      orders_ytd: {
-        ...ordersState,
-        value: formatStatCount(ytd?.count),
-        sub: formatStatMoney(ytd?.total),
-        delta: ytdDelta ? t("sales_rep.hub.dashboard.stats.vs_last_year", { delta: ytdDelta.text }) : "",
-        deltaTone: ytdDelta?.tone,
-        deltaIcon: ytdDelta?.icon,
-      },
-      aov: {
-        ...ordersState,
-        value: formatStatMoney(ytd?.average),
-        sub: t("sales_rep.customer_profile.stats.per_order"),
-      },
-    });
+      queries,
+    );
   });
 
   return { cards };

@@ -295,3 +295,66 @@ describe("stat cards while one query is still in flight", () => {
     expect(cards.value.filter((card) => card.loading).map((card) => card.key)).toEqual(["my_customers"]);
   });
 });
+
+// Opening the layout editor widens the `@include` flags, which is a variable change, which restarts the
+// order query — so the query is in flight again while its previous figures are still in hand
+// (`keepPreviousResult`). A per-query flag blanked all four order-fed cards for that round trip.
+describe("stat cards while a query the rep already has data for is refetching", () => {
+  it("keeps every card whose own slice is in hand rendering", () => {
+    sources.orders.value = {
+      currencyCode: "USD",
+      newOrders: { count: 3, total: money(30, "$30.00") },
+      recentOrders: { count: 9 },
+      week: { count: 4, total: money(40, "$40.00") },
+      mtd: { count: 5, total: money(50, "$50.00") },
+      ytd: { count: 6, total: money(60, "$60.00") },
+      mtdVsPrevMonth: { countChangePercent: 10 },
+      ytdVsLastYear: { countChangePercent: 20 },
+      weekVsPrevWeek: { countChangePercent: 30 },
+    } satisfies OrderStatsType;
+    sources.ordersLoading.value = true;
+
+    const { cards } = useSalesRepDashboardWidgets();
+    const byKey = (key: string) => cards.value.find((card) => card.key === key);
+
+    expect(cards.value.filter((card) => card.loading).map((card) => card.key)).toEqual([]);
+    expect(byKey("orders_placed_week")).toMatchObject({ loading: false, value: "4" });
+    expect(byKey("new_orders")).toMatchObject({ loading: false, value: "3" });
+  });
+
+  it("still holds the cards whose slice the widened query has not delivered", () => {
+    // The shape mid-restart when only some aliases have landed: `week` (and its comparison) missing.
+    sources.orders.value = {
+      currencyCode: "USD",
+      mtd: { count: 5, total: money(50, "$50.00") },
+      mtdVsPrevMonth: { countChangePercent: 10 },
+    } satisfies OrderStatsType;
+    sources.ordersLoading.value = true;
+
+    const { cards } = useSalesRepDashboardWidgets();
+    const byKey = (key: string) => cards.value.find((card) => card.key === key);
+
+    expect(byKey("orders_placed_mtd")).toMatchObject({ loading: false, value: "5" });
+    // Absent slices must stay pending rather than render formatStatCount(undefined) — a literal "0".
+    expect(byKey("orders_placed_week")).toMatchObject({ loading: true });
+    expect(byKey("orders_placed_ytd")).toMatchObject({ loading: true });
+    expect(byKey("new_orders")).toMatchObject({ loading: true });
+  });
+
+  it("treats the customer profile's average-order-value slice as its own", () => {
+    // `aov` needs ytd AND its `average` field: the ytd slice arriving without `average` (the dashboard's
+    // flags) must not let the card render a currency zero.
+    sources.orders.value = {
+      currencyCode: "USD",
+      ytd: { count: 6, total: money(60, "$60.00") },
+      ytdVsLastYear: { countChangePercent: 20 },
+    } satisfies OrderStatsType;
+    sources.ordersLoading.value = true;
+
+    const { cards } = useSalesRepCustomerWidgets("org-1");
+    const byKey = (key: string) => cards.value.find((card) => card.key === key);
+
+    expect(byKey("orders_ytd")).toMatchObject({ loading: false, value: "6" });
+    expect(byKey("aov")).toMatchObject({ loading: true });
+  });
+});

@@ -1,5 +1,7 @@
 // The half of a KPI card no query decides. The registry turns this table into `statistics` blocks and
 // useSalesRep*Widgets turns it into cards, so an id and a caption each exist in exactly one place.
+import { statCardState } from "./stat-data-needs";
+import type { StatDataSourcesType, StatQueryKeyType, StatQueryStateType } from "./stat-data-needs";
 import type { SalesRepLayoutScopeType } from "../types/layout";
 import type { StatDataNeedType, StatWidgetAccentType, StatWidgetCardType } from "../types/widgets";
 
@@ -18,8 +20,12 @@ export interface IStatCardDefType {
   needs: readonly StatDataNeedType[];
 }
 
-/** What is left for the statistics queries to fill in. */
-export type StatCardDataType = Omit<StatWidgetCardType, keyof IStatCardDefType>;
+/**
+ * What is left for the statistics queries to fill in. `loading`/`failed` are excluded on purpose:
+ * `buildStatCards` derives them from the card's own `needs`, so a mapper cannot hand a card the wrong
+ * pending state and a new card cannot forget one.
+ */
+export type StatCardDataType = Omit<StatWidgetCardType, keyof IStatCardDefType | "loading" | "failed">;
 
 export const DASHBOARD_STAT_CARDS = [
   {
@@ -122,6 +128,11 @@ export const STAT_CARDS: Record<SalesRepLayoutScopeType, readonly IStatCardDefTy
 export function buildStatCards<T extends readonly IStatCardDefType[]>(
   defs: T,
   data: Record<T[number]["key"], StatCardDataType>,
+  queries: { sources: StatDataSourcesType; states: Record<StatQueryKeyType, StatQueryStateType> },
 ): StatWidgetCardType[] {
-  return defs.map((def) => ({ ...def, ...data[def.key as T[number]["key"]] }));
+  return defs.map((def) => ({
+    ...def,
+    ...data[def.key as T[number]["key"]],
+    ...statCardState(def.needs, queries.sources, queries.states),
+  }));
 }

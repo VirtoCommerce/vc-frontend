@@ -1,7 +1,6 @@
 import { formatStatCount } from "../utils";
 import type { StatCardDataType } from "./stat-cards";
 import type { SalesRepCustomerCartStatisticsQuery } from "../api/graphql/types";
-import type { StatWidgetCardType } from "../types/widgets";
 import type { ComposerTranslation } from "vue-i18n";
 
 type CartStatisticsType = SalesRepCustomerCartStatisticsQuery["salesRepCustomerCartStatistics"];
@@ -12,17 +11,12 @@ type CartStatisticsType = SalesRepCustomerCartStatisticsQuery["salesRepCustomerC
  * quantities of the cart lines picked for checkout, the parked remainder underneath, and the lines
  * touched this week as the delta (VCST-5588).
  */
-export function buildActiveCartsCardData(
-  carts: CartStatisticsType,
-  state: Pick<StatWidgetCardType, "loading" | "failed">,
-  t: ComposerTranslation,
-): StatCardDataType {
+export function buildActiveCartsCardData(carts: CartStatisticsType, t: ComposerTranslation): StatCardDataType {
   const selectedItems = carts?.activeCarts?.selectedItemQuantity ?? 0;
   const unselectedItems = carts?.activeCarts?.unselectedItemQuantity ?? 0;
   const weekItems = carts?.itemsThisWeek?.selectedItemQuantity ?? 0;
 
   return {
-    ...state,
     value: formatStatCount(selectedItems),
     // The formatted string renders; the raw number is vue-i18n's plural selector (see the dashboard
     // mapper). `items_unit` has nothing to interpolate, so the count is only the selector.

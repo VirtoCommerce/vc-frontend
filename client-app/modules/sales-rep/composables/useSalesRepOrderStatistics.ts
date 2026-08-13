@@ -40,6 +40,7 @@ export function useSalesRepOrderStatistics(options: UseSalesRepOrderStatisticsOp
   const { result, loading, error, onError } = useQuery(SalesRepCustomerOrderStatisticsDocument, variables, {
     fetchPolicy: HUB_FETCH_POLICY,
     enabled,
+    keepPreviousResult: true,
   });
 
   onError((err) => {

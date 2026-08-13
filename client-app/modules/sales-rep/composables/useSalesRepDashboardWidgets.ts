@@ -32,10 +32,16 @@ export function useSalesRepDashboardWidgets() {
     const carts = cartStatistics.value;
     const customerCounts = counts.value;
 
-    // Each card reads exactly one query, so it carries that query's state and no other's.
-    const ordersState = { loading: ordersLoading.value, failed: Boolean(ordersError.value) };
-    const cartsState = { loading: cartsLoading.value, failed: Boolean(cartsError.value) };
-    const countsState = { loading: countsLoading.value, failed: Boolean(countsError.value) };
+    // buildStatCards derives each card's pending/failed state from the card's own `needs`, so a card
+    // whose slice already arrived keeps rendering while a sibling's query is still in flight.
+    const queries = {
+      sources: { orders, carts, counts: customerCounts },
+      states: {
+        orders: { loading: ordersLoading.value, failed: Boolean(ordersError.value) },
+        carts: { loading: cartsLoading.value, failed: Boolean(cartsError.value) },
+        counts: { loading: countsLoading.value, failed: Boolean(countsError.value) },
+      },
+    };
 
     // Plain counts (no icon) — a count, not a comparison. Always rendered, so an empty period reads
     // as "0 new this week" rather than dropping the row (VCST-5586).
@@ -52,47 +58,51 @@ export function useSalesRepDashboardWidgets() {
     const ytdDelta = formatSignedPercent(orders?.ytdVsLastYear?.countChangePercent);
 
     // Caption, icon and accent come from the shared table; only what the queries decide is here.
-    return buildStatCards(DASHBOARD_STAT_CARDS, {
-      // Identical on both surfaces, so it comes from the one shared builder.
-      new_orders: newOrdersCardData(orders, ordersState, t),
-      active_carts: buildActiveCartsCardData(carts, cartsState, t),
-      orders_placed_week: {
-        ...ordersState,
-        value: formatStatCount(orders?.week?.count),
-        sub: formatStatMoney(orders?.week?.total),
-        delta: weekDelta ? t("sales_rep.hub.dashboard.stats.vs_last_week", { delta: weekDelta.text }) : "",
-        deltaTone: weekDelta?.tone,
-        deltaIcon: weekDelta?.icon,
+    return buildStatCards(
+      DASHBOARD_STAT_CARDS,
+      {
+        // Identical on both surfaces, so it comes from the one shared builder.
+        new_orders: newOrdersCardData(orders, t),
+        active_carts: buildActiveCartsCardData(carts, t),
+        orders_placed_week: {
+          value: formatStatCount(orders?.week?.count),
+          sub: formatStatMoney(orders?.week?.total),
+          delta: weekDelta ? t("sales_rep.hub.dashboard.stats.vs_last_week", { delta: weekDelta.text }) : "",
+          deltaTone: weekDelta?.tone,
+          deltaIcon: weekDelta?.icon,
+        },
+        orders_placed_mtd: {
+          value: formatStatCount(orders?.mtd?.count),
+          sub: formatStatMoney(orders?.mtd?.total),
+          delta: mtdDelta ? t("sales_rep.hub.dashboard.stats.vs_last_month", { delta: mtdDelta.text }) : "",
+          deltaTone: mtdDelta?.tone,
+          deltaIcon: mtdDelta?.icon,
+        },
+        orders_placed_ytd: {
+          value: formatStatCount(orders?.ytd?.count),
+          sub: formatStatMoney(orders?.ytd?.total),
+          delta: ytdDelta ? t("sales_rep.hub.dashboard.stats.vs_last_year", { delta: ytdDelta.text }) : "",
+          deltaTone: ytdDelta?.tone,
+          deltaIcon: ytdDelta?.icon,
+        },
+        my_customers: {
+          value: formatStatCount(customerCounts?.assignedCustomers),
+          sub: t(
+            "sales_rep.hub.dashboard.stats.ordered_this_month",
+            { count: formatStatCount(orderingCustomers) },
+            orderingCustomers,
+          ),
+          // "{n} new customers" — customers newly assigned to the rep this month (backend assignment date).
+          delta: t(
+            "sales_rep.hub.dashboard.stats.new_customers",
+            { count: formatStatCount(newCustomers) },
+            newCustomers,
+          ),
+          deltaTone: "positive",
+        },
       },
-      orders_placed_mtd: {
-        ...ordersState,
-        value: formatStatCount(orders?.mtd?.count),
-        sub: formatStatMoney(orders?.mtd?.total),
-        delta: mtdDelta ? t("sales_rep.hub.dashboard.stats.vs_last_month", { delta: mtdDelta.text }) : "",
-        deltaTone: mtdDelta?.tone,
-        deltaIcon: mtdDelta?.icon,
-      },
-      orders_placed_ytd: {
-        ...ordersState,
-        value: formatStatCount(orders?.ytd?.count),
-        sub: formatStatMoney(orders?.ytd?.total),
-        delta: ytdDelta ? t("sales_rep.hub.dashboard.stats.vs_last_year", { delta: ytdDelta.text }) : "",
-        deltaTone: ytdDelta?.tone,
-        deltaIcon: ytdDelta?.icon,
-      },
-      my_customers: {
-        ...countsState,
-        value: formatStatCount(customerCounts?.assignedCustomers),
-        sub: t(
-          "sales_rep.hub.dashboard.stats.ordered_this_month",
-          { count: formatStatCount(orderingCustomers) },
-          orderingCustomers,
-        ),
-        // "{n} new customers" — customers newly assigned to the rep this month (backend assignment date).
-        delta: t("sales_rep.hub.dashboard.stats.new_customers", { count: formatStatCount(newCustomers) }, newCustomers),
-        deltaTone: "positive",
-      },
-    });
+      queries,
+    );
   });
 
   return { cards };

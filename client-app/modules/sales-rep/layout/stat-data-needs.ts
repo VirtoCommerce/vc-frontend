@@ -6,6 +6,11 @@
 // (VCST-5647). Here the selection is derived instead — declare a card's `needs` in stat-cards.ts and
 // both the document and the enabled/disabled decision follow.
 import { STAT_CARDS } from "./stat-cards";
+import type {
+  SalesRepCustomerCartStatisticsQuery,
+  SalesRepCustomerCountsQuery,
+  SalesRepCustomerOrderStatisticsQuery,
+} from "../api/graphql/types";
 import type { SalesRepLayoutScopeType } from "../types/layout";
 import type { StatDataNeedType } from "../types/widgets";
 
@@ -83,4 +88,64 @@ export function needsCartStatistics(needs: ReadonlySet<StatDataNeedType>): boole
 
 export function needsCustomerCounts(needs: ReadonlySet<StatDataNeedType>): boolean {
   return needs.has("customerCounts");
+}
+
+/** The three statistics queries a card can be fed by. */
+export type StatQueryKeyType = "orders" | "carts" | "counts";
+
+export type StatQueryStateType = { loading: boolean; failed: boolean };
+
+export type StatDataSourcesType = {
+  orders?: SalesRepCustomerOrderStatisticsQuery["salesRepCustomerOrderStatistics"];
+  carts?: SalesRepCustomerCartStatisticsQuery["salesRepCustomerCartStatistics"];
+  counts?: SalesRepCustomerCountsQuery["salesRepCustomerCounts"];
+};
+
+/**
+ * Which query answers a need, and how to tell that need's slice actually arrived — the mirror of
+ * `orderStatisticsFlags`: that turns needs into a request, this reads them back out of the response.
+ */
+const NEED_RESULTS: Record<
+  StatDataNeedType,
+  { query: StatQueryKeyType; arrived: (sources: StatDataSourcesType) => boolean }
+> = {
+  newOrders: { query: "orders", arrived: ({ orders }) => Boolean(orders?.newOrders && orders?.recentOrders) },
+  week: { query: "orders", arrived: ({ orders }) => Boolean(orders?.week) },
+  mtd: { query: "orders", arrived: ({ orders }) => Boolean(orders?.mtd) },
+  monthOverMonth: { query: "orders", arrived: ({ orders }) => Boolean(orders?.mtdVsPrevMonth) },
+  ytd: { query: "orders", arrived: ({ orders }) => Boolean(orders?.ytd) },
+  yearOverYear: { query: "orders", arrived: ({ orders }) => Boolean(orders?.ytdVsLastYear) },
+  averageOrderValue: { query: "orders", arrived: ({ orders }) => Boolean(orders?.ytd?.average) },
+  cartStatistics: { query: "carts", arrived: ({ carts }) => Boolean(carts?.activeCarts) },
+  customerCounts: { query: "counts", arrived: ({ counts }) => Boolean(counts) },
+};
+
+/**
+ * A card is pending only while a query it reads is in flight AND that query has not delivered the slice
+ * this card renders. Entering layout-edit mode widens the `@include` flags, which is a variable change,
+ * which restarts the order query — so a per-query flag would blank every order-fed card for a full round
+ * trip even though its figures are in hand (VCST-5647).
+ */
+export function statCardState(
+  needs: readonly StatDataNeedType[],
+  sources: StatDataSourcesType,
+  states: Record<StatQueryKeyType, StatQueryStateType>,
+): StatQueryStateType {
+  let loading = false;
+  let failed = false;
+
+  for (const need of needs) {
+    const { query, arrived } = NEED_RESULTS[need];
+    const state = states[query];
+
+    if (state.failed) {
+      failed = true;
+    }
+
+    if (state.loading && !arrived(sources)) {
+      loading = true;
+    }
+  }
+
+  return { loading, failed };
 }
