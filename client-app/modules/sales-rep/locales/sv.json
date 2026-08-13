@@ -49,9 +49,8 @@
           "title": "Instrumentpanel"
         },
         "widgets": {
-          "new_orders": "Nya order",
+          "new_orders": "Order med status ”New”",
           "active_carts": "Aktiva kundvagnar",
-          "active_cart": "Aktiv kundvagn",
           "orders_placed_week": "Order denna vecka",
           "orders_placed_mtd": "Order hittills denna månad",
           "purchased_mtd": "Köp hittills denna månad",
@@ -65,8 +64,10 @@
           "vs_last_year": "{delta} vs förra året",
           "ordered_this_month": "{count} beställde denna månad",
           "new_customers": "{count} nya kunder",
-          "placed_today": "{count} lagda i dag",
-          "new_this_week": "{count} nya denna vecka",
+          "of_recent_orders": "av {count} skapade de senaste 7 dagarna",
+          "items_unit": "artikel | artiklar",
+          "not_for_checkout": "{count} inte till kassan",
+          "items_this_week": "{count} artikel denna vecka | {count} artiklar denna vecka",
           "mtd_of_ytd": "{percent}% av året",
           "load_failed": "Kunde inte läsas in"
         }

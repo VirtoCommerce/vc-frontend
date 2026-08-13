@@ -945,11 +945,11 @@ export type CustomIdentityResultType = {
 };
 
 export type CustomerCartStatistics = {
-  /** Compares two periods (current vs previous). Reuses the period results, so a bucket shared with a 'period' selection is not queried again. */
+  /** Compares two periods (current vs previous). Reuses the period results, so a bucket another selection already asked for is not aggregated again. */
   comparison?: Maybe<CustomerCartStatisticsComparison>;
-  /** Currency all figures below are converted to. */
+  /** Currency the money figures below are converted to. */
   currencyCode: Scalars['String']['output'];
-  /** Cart statistics for a single date range. Omit both bounds for lifetime. */
+  /** Cart figures for a single date range. Omit both bounds for what is in the carts right now. */
   period?: Maybe<CustomerCartStatisticsPeriod>;
 };
 
@@ -968,30 +968,40 @@ export type CustomerCartStatisticsPeriodArgs = {
 };
 
 export type CustomerCartStatisticsComparison = {
-  /** Current average minus previous average (amount, formatted amount and currency). */
+  /** Current average minus the previous one. */
   averageChange: MoneyType;
-  /** Percentage change of average; null when the previous average is zero. */
+  /** Percentage change of the average; null when the previous average is zero. */
   averageChangePercent?: Maybe<Scalars['Decimal']['output']>;
-  /** Current count minus previous count. */
+  /** Current contributing-cart count minus the previous one. */
   countChange: Scalars['Int']['output'];
-  /** Percentage change of count; null when the previous count is zero. */
+  /** Percentage change of the count; null when the previous count is zero. */
   countChangePercent?: Maybe<Scalars['Decimal']['output']>;
-  /** Current total minus previous total (amount, formatted amount and currency). */
+  /** Current selected-for-checkout quantity minus the previous one. */
+  selectedItemQuantityChange: Scalars['Int']['output'];
+  /** Percentage change of the selected-for-checkout quantity; null when the previous quantity is zero. */
+  selectedItemQuantityChangePercent?: Maybe<Scalars['Decimal']['output']>;
+  /** Current goods subtotal minus the previous one. */
   totalChange: MoneyType;
-  /** Percentage change of total; null when the previous total is zero. */
+  /** Percentage change of the goods subtotal; null when the previous subtotal is zero. */
   totalChangePercent?: Maybe<Scalars['Decimal']['output']>;
+  /** Current not-selected-for-checkout quantity minus the previous one. */
+  unselectedItemQuantityChange: Scalars['Int']['output'];
+  /** Percentage change of the not-selected-for-checkout quantity; null when the previous quantity is zero. */
+  unselectedItemQuantityChangePercent?: Maybe<Scalars['Decimal']['output']>;
 };
 
 export type CustomerCartStatisticsPeriod = {
-  /** Average cart value in the range (amount, formatted amount and currency). */
+  /** 'total' divided by 'count'. */
   average: MoneyType;
-  /** Number of carts in the range (the primary widget metric, e.g. 'Active Projects'). */
+  /** Number of distinct carts contributing to 'total'; a cart whose lines are all parked reports quantities but does not count. */
   count: Scalars['Int']['output'];
-  /** Date of the most recent cart in the range. */
-  lastCartDate?: Maybe<Scalars['DateTime']['output']>;
-  /** Sum of cart totals in the range (amount, formatted amount and currency). */
+  /** Summed quantity of the line items selected for checkout. */
+  selectedItemQuantity: Scalars['Int']['output'];
+  /** Goods subtotal of the lines picked for checkout in the range (list price less line discount, gifts excluded). Excludes shipping, taxes, fees and cart-level discounts. */
   total: MoneyType;
-  /** Non-null when the figures are partial because some carts were in an unconfigured currency and could not be converted; describes what was excluded. */
+  /** Summed quantity of the line items NOT selected for checkout. */
+  unselectedItemQuantity: Scalars['Int']['output'];
+  /** Non-null when 'count'/'total'/'average' exclude line items in an unconfigured currency; describes what was excluded. Item quantities are never affected. */
   warning?: Maybe<Scalars['String']['output']>;
 };
 
@@ -1045,7 +1055,7 @@ export type CustomerOrderStatisticsPeriodArgs = {
 };
 
 export type CustomerOrderStatisticsComparison = {
-  /** Current average minus previous average (amount, formatted amount and currency). */
+  /** Current average minus the previous one. */
   averageChange: MoneyType;
   /** Percentage change of average; null when the previous average is zero. */
   averageChangePercent?: Maybe<Scalars['Decimal']['output']>;

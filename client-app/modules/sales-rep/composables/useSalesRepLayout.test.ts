@@ -1,5 +1,7 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { effectScope } from "vue";
 import { useSalesRepLayout } from "./useSalesRepLayout";
+import type { EffectScope } from "vue";
 
 const apolloMock = await vi.hoisted(async () => {
   const { ref, shallowRef } = await import("vue");
@@ -46,6 +48,22 @@ beforeEach(() => {
   apolloMock.refetch.mockReset();
 });
 
+// The composable registers a watchEffect and an onScopeDispose, so each call needs an owning scope: bare
+// calls make Vue warn, leave the effect running against shared visibility state, and never let
+// clearStatVisibility run — which is also the only way to exercise the publish/clear path.
+let scopes: EffectScope[] = [];
+
+function withLayout(layoutScope: Parameters<typeof useSalesRepLayout>[0]) {
+  const owner = effectScope();
+  scopes.push(owner);
+  return owner.run(() => useSalesRepLayout(layoutScope))!;
+}
+
+afterEach(() => {
+  scopes.forEach((owner) => owner.stop());
+  scopes = [];
+});
+
 // Row caps the layout sends for the two list widgets. An echo has to return these too, or the save is
 // treated as disagreeing — a dropped setting reverts the rep's choice as silently as a reverted hide.
 const ECHOED_SETTINGS: Record<string, { key: string; value: unknown }[]> = {
@@ -87,7 +105,7 @@ describe("useSalesRepLayout", () => {
   it("falls back to registry defaults when the rep has never saved this surface", () => {
     apolloMock.result.value = { salesRepLayout: null };
 
-    const { state } = useSalesRepLayout(scope);
+    const { state } = withLayout(scope);
 
     expect(state.value.regions.mainRight.visible).toEqual(["actions", "info"]);
     expect(state.value.regions.mainLeft.visible).toEqual(["orders", "top_sellers"]);
@@ -108,7 +126,7 @@ describe("useSalesRepLayout", () => {
       },
     };
 
-    const { state } = useSalesRepLayout(scope);
+    const { state } = withLayout(scope);
 
     expect(state.value.regions.mainRight.visible).toEqual(["info"]);
     expect(state.value.regions.mainRight.hidden).toEqual(["actions"]);
@@ -117,7 +135,7 @@ describe("useSalesRepLayout", () => {
   it("blocks editing when the read failed, so a full-replace save cannot clobber an unread layout", () => {
     apolloMock.error.value = new Error("boom");
 
-    const { canEdit, startEdit, editing } = useSalesRepLayout(scope);
+    const { canEdit, startEdit, editing } = withLayout(scope);
 
     expect(canEdit.value).toBe(false);
     startEdit();
@@ -129,7 +147,7 @@ describe("useSalesRepLayout", () => {
   it("reports a failed read so the surface can explain itself", () => {
     apolloMock.error.value = new Error("boom");
 
-    const { loadFailed } = useSalesRepLayout(scope);
+    const { loadFailed } = withLayout(scope);
 
     expect(loadFailed.value).toBe(true);
   });
@@ -137,13 +155,13 @@ describe("useSalesRepLayout", () => {
   it("does not report a failed read for the ordinary never-saved case", () => {
     apolloMock.result.value = { salesRepLayout: null };
 
-    expect(useSalesRepLayout(scope).loadFailed.value).toBe(false);
+    expect(withLayout(scope).loadFailed.value).toBe(false);
   });
 
   it("allows editing when the query simply returned null", () => {
     apolloMock.result.value = { salesRepLayout: null };
 
-    const { canEdit, startEdit, editing } = useSalesRepLayout(scope);
+    const { canEdit, startEdit, editing } = withLayout(scope);
 
     expect(canEdit.value).toBe(true);
     startEdit();
@@ -153,7 +171,7 @@ describe("useSalesRepLayout", () => {
   it("keeps draft edits out of the live layout until saved", () => {
     apolloMock.result.value = { salesRepLayout: null };
 
-    const { state, startEdit, setHidden, cancel } = useSalesRepLayout(scope);
+    const { state, startEdit, setHidden, cancel } = withLayout(scope);
     startEdit();
     setHidden("info", true);
 
@@ -167,7 +185,7 @@ describe("useSalesRepLayout", () => {
     apolloMock.result.value = { salesRepLayout: null };
     apolloMock.mutate.mockResolvedValue({ data: { saveSalesRepLayout: { regions: [] } } });
 
-    const { startEdit, setHidden, save } = useSalesRepLayout(scope);
+    const { startEdit, setHidden, save } = withLayout(scope);
     startEdit();
     setHidden("actions", true);
 
@@ -185,7 +203,7 @@ describe("useSalesRepLayout", () => {
     // A faithful echo: an empty one is a mismatch now, which is a refused save rather than a clean one.
     apolloMock.mutate.mockResolvedValue({ data: { saveSalesRepLayout: { regions: DEFAULT_ECHO } } });
 
-    const { startEdit, save, editing, saveFailed } = useSalesRepLayout(scope);
+    const { startEdit, save, editing, saveFailed } = withLayout(scope);
     startEdit();
 
     await expect(save()).resolves.toBe(true);
@@ -197,7 +215,7 @@ describe("useSalesRepLayout", () => {
     apolloMock.result.value = { salesRepLayout: null };
     apolloMock.mutate.mockRejectedValue(new Error("network"));
 
-    const { startEdit, setHidden, save, editing, state, saveFailed } = useSalesRepLayout(scope);
+    const { startEdit, setHidden, save, editing, state, saveFailed } = withLayout(scope);
     startEdit();
     setHidden("info", true);
 
@@ -213,7 +231,7 @@ describe("useSalesRepLayout", () => {
     apolloMock.result.value = { salesRepLayout: null };
     apolloMock.mutate.mockResolvedValue({ data: { saveSalesRepLayout: null } });
 
-    const { startEdit, setHidden, save, editing, saveFailed, state } = useSalesRepLayout(scope);
+    const { startEdit, setHidden, save, editing, saveFailed, state } = withLayout(scope);
     startEdit();
     setHidden("info", true);
 
@@ -240,7 +258,7 @@ describe("useSalesRepLayout", () => {
       },
     });
 
-    const { startEdit, save, state } = useSalesRepLayout(scope);
+    const { startEdit, save, state } = withLayout(scope);
     startEdit();
     // Registry order is actions, info — so the echo disagrees with what was sent.
     expect(state.value.regions.mainRight.visible).toEqual(["actions", "info"]);
@@ -255,7 +273,7 @@ describe("useSalesRepLayout", () => {
     apolloMock.result.value = { salesRepLayout: null };
     apolloMock.mutate.mockResolvedValue({ data: { saveSalesRepLayout: { regions: [] } } });
 
-    const { startEdit, setHidden, save, state, saveFailed, editing } = useSalesRepLayout(scope);
+    const { startEdit, setHidden, save, state, saveFailed, editing } = withLayout(scope);
     startEdit();
     setHidden("actions", true);
 
@@ -285,7 +303,7 @@ describe("useSalesRepLayout", () => {
       },
     });
 
-    const { startEdit, setHidden, save, hiddenIn, saveFailed } = useSalesRepLayout(scope);
+    const { startEdit, setHidden, save, hiddenIn, saveFailed } = withLayout(scope);
     startEdit();
     setHidden("actions", true);
 
@@ -311,7 +329,7 @@ describe("useSalesRepLayout", () => {
       });
     });
 
-    const { startEdit, setHidden, reorderVisible, reset, save, state } = useSalesRepLayout(scope);
+    const { startEdit, setHidden, reorderVisible, reset, save, state } = withLayout(scope);
     startEdit();
     setHidden("actions", true);
 
@@ -352,7 +370,7 @@ describe("useSalesRepLayout", () => {
   it("keeps a settings edit in the draft only, so cancel discards it", () => {
     apolloMock.result.value = { salesRepLayout: null };
 
-    const { startEdit, updateSettings, cancel, settingsOf } = useSalesRepLayout(scope);
+    const { startEdit, updateSettings, cancel, settingsOf } = withLayout(scope);
     startEdit();
     updateSettings("orders", { maxRows: 9, hiddenTabs: ["New"] });
 
@@ -366,7 +384,7 @@ describe("useSalesRepLayout", () => {
   it("keeps the saved row cap visible to widgets while the draft holds a different one", () => {
     apolloMock.result.value = { salesRepLayout: null };
 
-    const { startEdit, updateSettings, settingsOf, persistedSettingsOf } = useSalesRepLayout(scope);
+    const { startEdit, updateSettings, settingsOf, persistedSettingsOf } = withLayout(scope);
     startEdit();
     updateSettings("orders", { maxRows: 20 });
 
@@ -386,7 +404,7 @@ describe("useSalesRepLayout", () => {
       },
     };
 
-    const { startEdit, reset, settingsOf } = useSalesRepLayout(scope);
+    const { startEdit, reset, settingsOf } = withLayout(scope);
     expect(settingsOf("orders").maxRows).toBe(12);
 
     startEdit();
@@ -404,7 +422,7 @@ describe("useSalesRepLayout", () => {
       data: { saveSalesRepLayout: { regions: echoWithSettings("orders", settings) } },
     });
 
-    const { startEdit, updateSettings, save, settingsOf } = useSalesRepLayout(scope);
+    const { startEdit, updateSettings, save, settingsOf } = withLayout(scope);
     startEdit();
     updateSettings("orders", { maxRows: 3, hiddenTabs: ["New"] });
 
@@ -427,7 +445,7 @@ describe("useSalesRepLayout", () => {
       });
     });
 
-    const { startEdit, updateSettings, save, settingsOf } = useSalesRepLayout(scope);
+    const { startEdit, updateSettings, save, settingsOf } = withLayout(scope);
     startEdit();
     const pending = save();
 
@@ -448,7 +466,7 @@ describe("useSalesRepLayout", () => {
       return new Promise(() => {});
     });
 
-    const { startEdit, save } = useSalesRepLayout(scope);
+    const { startEdit, save } = withLayout(scope);
     startEdit();
 
     void save();
@@ -462,7 +480,7 @@ describe("useSalesRepLayout", () => {
     apolloMock.result.value = { salesRepLayout: null };
     apolloMock.mutate.mockRejectedValue(new Error("network"));
 
-    const { startEdit, save, reset, saveFailed } = useSalesRepLayout(scope);
+    const { startEdit, save, reset, saveFailed } = withLayout(scope);
     startEdit();
 
     await save();
@@ -476,7 +494,7 @@ describe("useSalesRepLayout", () => {
   it("keeps the visible half intact when the hidden half is reordered", () => {
     apolloMock.result.value = { salesRepLayout: null };
 
-    const { startEdit, setHidden, reorderHidden, visibleIn, hiddenIn } = useSalesRepLayout(scope);
+    const { startEdit, setHidden, reorderHidden, visibleIn, hiddenIn } = withLayout(scope);
     startEdit();
     setHidden("info", true);
     setHidden("actions", true);
@@ -503,7 +521,7 @@ describe("useSalesRepLayout", () => {
       },
     };
 
-    const { state, startEdit, reset, cancel } = useSalesRepLayout(scope);
+    const { state, startEdit, reset, cancel } = withLayout(scope);
     startEdit();
     reset();
 
@@ -522,7 +540,7 @@ describe("useSalesRepLayout", () => {
   it("drops a hidden widget out of the rendered set entirely", () => {
     apolloMock.result.value = { salesRepLayout: null };
 
-    const { startEdit, setHidden, visibleIn, hiddenIn } = useSalesRepLayout(scope);
+    const { startEdit, setHidden, visibleIn, hiddenIn } = withLayout(scope);
     startEdit();
     setHidden("orders", true);
 
@@ -535,7 +553,7 @@ describe("useSalesRepLayout", () => {
   it("places a hidden block at the dropped position rather than its old slot", () => {
     apolloMock.result.value = { salesRepLayout: null };
 
-    const { startEdit, setHidden, hiddenIn } = useSalesRepLayout(scope);
+    const { startEdit, setHidden, hiddenIn } = withLayout(scope);
     startEdit();
 
     setHidden("info", true);
@@ -547,7 +565,7 @@ describe("useSalesRepLayout", () => {
   it("appends to the destination half when no position is given", () => {
     apolloMock.result.value = { salesRepLayout: null };
 
-    const { startEdit, setHidden, hiddenIn } = useSalesRepLayout(scope);
+    const { startEdit, setHidden, hiddenIn } = withLayout(scope);
     startEdit();
 
     setHidden("info", true);
@@ -559,7 +577,7 @@ describe("useSalesRepLayout", () => {
   it("splits a region into visible and hidden entries", () => {
     apolloMock.result.value = { salesRepLayout: null };
 
-    const { startEdit, setHidden, visibleIn, hiddenIn } = useSalesRepLayout(scope);
+    const { startEdit, setHidden, visibleIn, hiddenIn } = withLayout(scope);
     startEdit();
     setHidden("actions", true);
 
@@ -573,7 +591,7 @@ describe("useSalesRepLayout", () => {
   it("ignores a toggle to the state a block is already in", () => {
     apolloMock.result.value = { salesRepLayout: null };
 
-    const { startEdit, setHidden, visibleIn } = useSalesRepLayout(scope);
+    const { startEdit, setHidden, visibleIn } = withLayout(scope);
     startEdit();
     const before = [...visibleIn("mainRight")];
 
@@ -585,7 +603,7 @@ describe("useSalesRepLayout", () => {
   it("lets a parked block come back after the visible half has been reordered", () => {
     apolloMock.result.value = { salesRepLayout: null };
 
-    const { startEdit, setHidden, reorderVisible, visibleIn, hiddenIn } = useSalesRepLayout(scope);
+    const { startEdit, setHidden, reorderVisible, visibleIn, hiddenIn } = withLayout(scope);
     startEdit();
     setHidden("actions", true);
 
@@ -601,7 +619,7 @@ describe("useSalesRepLayout", () => {
   it("skips the Apollo cache, which would share region entities between the two surfaces", () => {
     apolloMock.result.value = { salesRepLayout: null };
 
-    useSalesRepLayout(scope);
+    withLayout(scope);
 
     expect(apolloMock.calls.query?.[2]).toMatchObject({ fetchPolicy: "no-cache" });
     expect(apolloMock.calls.mutation?.[1]).toMatchObject({ fetchPolicy: "no-cache" });
@@ -617,7 +635,7 @@ describe("useSalesRepLayout", () => {
       return Promise.resolve();
     });
 
-    const { startEdit, save, loading, editing } = useSalesRepLayout(scope);
+    const { startEdit, save, loading, editing } = withLayout(scope);
     startEdit();
 
     await expect(save()).resolves.toBe(false);
@@ -632,7 +650,7 @@ describe("useSalesRepLayout", () => {
     apolloMock.mutate.mockResolvedValue({ data: { saveSalesRepLayout: { regions: [] } } });
     apolloMock.refetch.mockRejectedValue(new Error("offline"));
 
-    const { startEdit, save, saveFailed } = useSalesRepLayout(scope);
+    const { startEdit, save, saveFailed } = withLayout(scope);
     startEdit();
 
     await expect(save()).resolves.toBe(false);

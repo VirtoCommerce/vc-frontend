@@ -49,9 +49,8 @@
           "title": "Дашборд"
         },
         "widgets": {
-          "new_orders": "Новые заказы",
+          "new_orders": "Заказы в статусе «New»",
           "active_carts": "Активные корзины",
-          "active_cart": "Активная корзина",
           "orders_placed_week": "Заказы за эту неделю",
           "orders_placed_mtd": "Заказы с начала месяца",
           "purchased_mtd": "Покупки с начала месяца",
@@ -65,8 +64,10 @@
           "vs_last_year": "{delta} к прошлому году",
           "ordered_this_month": "{count} заказали в этом месяце",
           "new_customers": "{count} новых клиентов",
-          "placed_today": "{count} сегодня",
-          "new_this_week": "{count} новых за неделю",
+          "of_recent_orders": "из {count} созданных за последние 7 дней",
+          "items_unit": "товаров | товар | товара | товаров",
+          "not_for_checkout": "{count} не к оформлению",
+          "items_this_week": "{count} товаров за неделю | {count} товар за неделю | {count} товара за неделю | {count} товаров за неделю",
           "mtd_of_ytd": "{percent}% от года",
           "load_failed": "Не удалось загрузить"
         }

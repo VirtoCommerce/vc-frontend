@@ -49,9 +49,8 @@
           "title": "Tableau de bord"
         },
         "widgets": {
-          "new_orders": "Nouvelles commandes",
+          "new_orders": "Commandes au statut « New »",
           "active_carts": "Paniers actifs",
-          "active_cart": "Panier actif",
           "orders_placed_week": "Commandes cette semaine",
           "orders_placed_mtd": "Commandes depuis le début du mois",
           "purchased_mtd": "Achats depuis le début du mois",
@@ -65,8 +64,10 @@
           "vs_last_year": "{delta} vs année dernière",
           "ordered_this_month": "{count} ont commandé ce mois-ci",
           "new_customers": "{count} nouveaux clients",
-          "placed_today": "{count} passées aujourd'hui",
-          "new_this_week": "{count} nouveaux cette semaine",
+          "of_recent_orders": "sur {count} créées ces 7 derniers jours",
+          "items_unit": "article | articles",
+          "not_for_checkout": "{count} hors paiement",
+          "items_this_week": "{count} article cette semaine | {count} articles cette semaine",
           "mtd_of_ytd": "{percent}% de l'année",
           "load_failed": "Échec du chargement"
         }

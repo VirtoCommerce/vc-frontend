@@ -49,9 +49,8 @@
           "title": "Panel"
         },
         "widgets": {
-          "new_orders": "Nowe zamówienia",
+          "new_orders": "Zamówienia w statusie „New”",
           "active_carts": "Aktywne koszyki",
-          "active_cart": "Aktywny koszyk",
           "orders_placed_week": "Zamówienia w tym tygodniu",
           "orders_placed_mtd": "Zamówienia od początku miesiąca",
           "purchased_mtd": "Zakupy od początku miesiąca",
@@ -65,8 +64,10 @@
           "vs_last_year": "{delta} vs poprzedni rok",
           "ordered_this_month": "{count} zamówiło w tym miesiącu",
           "new_customers": "{count} nowych klientów",
-          "placed_today": "{count} złożono dzisiaj",
-          "new_this_week": "{count} nowych w tym tygodniu",
+          "of_recent_orders": "z {count} utworzonych w ciągu ostatnich 7 dni",
+          "items_unit": "pozycji | pozycja | pozycje | pozycji",
+          "not_for_checkout": "{count} nie do kasy",
+          "items_this_week": "{count} pozycji w tym tygodniu | {count} pozycja w tym tygodniu | {count} pozycje w tym tygodniu | {count} pozycji w tym tygodniu",
           "mtd_of_ytd": "{percent}% roku",
           "load_failed": "Nie udało się wczytać"
         }
