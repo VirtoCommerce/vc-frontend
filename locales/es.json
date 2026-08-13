@@ -717,7 +717,11 @@
         "enter_custom_code": "Ingresar código personalizado",
         "all_coupons": "Ver todos los cupones y promociones",
         "apply_aria": "Apply coupon {code}",
-        "remove_aria": "Remove coupon"
+        "remove_aria": "Remove coupon",
+        "coupon_code_aria": "Código de cupón",
+        "applied_announcement": "Cupón {code} aplicado.",
+        "removed_announcement": "Cupón {code} eliminado.",
+        "totals_announcement": "Descuento {discount}, nuevo total {total}."
       }
     },
     "catalog": {

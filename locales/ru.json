@@ -717,7 +717,11 @@
         "enter_custom_code": "Введите пользовательский код",
         "all_coupons": "Посмотреть все купоны и акции",
         "apply_aria": "Применить купон {code}",
-        "remove_aria": "Удалить купон"
+        "remove_aria": "Удалить купон",
+        "coupon_code_aria": "Код купона",
+        "applied_announcement": "Купон {code} применён.",
+        "removed_announcement": "Купон {code} удалён.",
+        "totals_announcement": "Скидка {discount}, новая сумма {total}."
       }
     },
     "catalog": {
