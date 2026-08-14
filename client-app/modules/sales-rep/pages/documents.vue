@@ -8,7 +8,8 @@
 
     <div class="documents-page__results">
       <!-- Featured panel (mock order: it leads the page): the explicit ?doc= selection, or the
-           newest document as the default. Selection is deep-linked via ?doc= (no separate route). -->
+           pinned document (newest when nothing is pinned) as the default. Selection is deep-linked
+           via ?doc= (no separate route). -->
       <section v-if="selectedId || featuredDocument" ref="featuredPanel" class="documents-page__featured">
         <template v-if="featuredDocument">
           <span class="documents-page__featured-preview">
@@ -17,7 +18,7 @@
             <VcImage
               v-if="featuredDocument.previewUrl"
               :src="featuredDocument.previewUrl"
-              :alt="featuredDocument.name"
+              :alt="featuredDocument.displayName"
               class="documents-page__featured-img"
               lazy
             />
@@ -31,8 +32,19 @@
           </span>
 
           <div class="documents-page__featured-content">
+            <!-- Pinned = the library's one highlighted release; the badge follows the document, so
+                 it also shows when the pinned document is featured via an explicit selection. -->
+            <VcBadge
+              v-if="featuredDocument.isPinned"
+              color="warning"
+              variant="soft"
+              class="documents-page__featured-badge"
+            >
+              {{ t("sales_rep.documents.details.latest_publication") }}
+            </VcBadge>
+
             <VcTypography tag="h2" variant="h3" class="documents-page__featured-name">
-              {{ featuredDocument.name }}
+              {{ featuredDocument.displayName }}
             </VcTypography>
 
             <p v-if="featuredDocument.summary" class="documents-page__summary">
@@ -67,7 +79,7 @@
               <li class="documents-page__meta-item">
                 <VcIcon name="calendar" size="xs" />
 
-                {{ t("sales_rep.documents.details.released", { date: $d(featuredDocument.createdDate) }) }}
+                {{ t("sales_rep.documents.published", { date: $d(featuredDocument.createdDate, "short") }) }}
               </li>
             </ul>
 
@@ -75,7 +87,7 @@
               <!-- Not a plain anchor: a browser navigation to `url` carries no bearer token, so the
                    open goes through the authenticated fetch → blob object URL (see files.ts). -->
               <VcButton
-                append-icon="external-link"
+                prepend-icon="eye"
                 @click="openAuthorizedFile(featuredDocument.url, featuredDocument.contentType)"
               >
                 {{ t("sales_rep.documents.details.open") }}
@@ -145,10 +157,6 @@
             />
           </template>
         </VcInput>
-
-        <div v-if="!failed && documents.length" class="documents-page__count">
-          {{ t("sales_rep.documents.page.results_count", { count: formatStatCount(totalCount) }, totalCount) }}
-        </div>
       </div>
 
       <!-- A failure gets its own view: it must not land in the empty state, which would read as "no
@@ -176,34 +184,68 @@
         </div>
 
         <div v-else class="documents-page__grid">
-          <button
+          <!-- Not one big <button>: the hover/focus overlay actions are buttons themselves, and
+               buttons must not nest. The select button is a sibling the overlay clicks never reach
+               (plus @click.stop as a belt), so an action never toggles the selection. -->
+          <div
             v-for="document in documents"
             :key="document.id"
-            type="button"
             :class="['document-card', { 'document-card--active': document.id === selectedId }]"
-            :aria-pressed="document.id === selectedId"
-            @click="selectDocument(document)"
           >
-            <span class="document-card__preview">
-              <!-- Only previewUrl may back an <img>: the download endpoint (`url`) needs auth
-                   headers a plain image request cannot send. No preview -> large file-type icon. -->
-              <VcImage
-                v-if="document.previewUrl"
-                :src="document.previewUrl"
-                :alt="document.name"
-                class="document-card__preview-img"
-                lazy
-              />
+            <button
+              type="button"
+              class="document-card__select"
+              :aria-pressed="document.id === selectedId"
+              @click="selectDocument(document)"
+            >
+              <span class="document-card__preview">
+                <!-- Only previewUrl may back an <img>: the download endpoint (`url`) needs auth
+                     headers a plain image request cannot send. No preview -> large file-type icon. -->
+                <VcImage
+                  v-if="document.previewUrl"
+                  :src="document.previewUrl"
+                  :alt="document.displayName"
+                  class="document-card__preview-img"
+                  lazy
+                />
 
-              <VcImage v-else :src="documentIcon(document.contentType)" alt="" class="document-card__preview-icon" />
+                <VcImage v-else :src="documentIcon(document.contentType)" alt="" class="document-card__preview-icon" />
 
-              <span class="document-card__badge">{{ documentTypeLabel(document.name, document.contentType) }}</span>
+                <span class="document-card__badge">{{ documentTypeLabel(document.name, document.contentType) }}</span>
+              </span>
+
+              <span class="document-card__name" :title="document.displayName">{{ document.displayName }}</span>
+
+              <span v-if="document.category" class="document-card__category">{{ document.category }}</span>
+
+              <span class="document-card__meta">{{ cardMetaOf(document) }}</span>
+            </button>
+
+            <!-- Quick actions, revealed on hover and on :focus-within so they stay keyboard-reachable
+                 (tabbing onto either button shows the overlay — never hover-only). -->
+            <span class="document-card__overlay">
+              <VcButton
+                class="document-card__action"
+                size="xs"
+                color="secondary"
+                prepend-icon="eye"
+                @click.stop="openAuthorizedFile(document.url, document.contentType)"
+              >
+                {{ t("sales_rep.documents.details.open") }}
+              </VcButton>
+
+              <VcButton
+                class="document-card__action"
+                size="xs"
+                color="secondary"
+                variant="outline"
+                prepend-icon="download"
+                @click.stop="downloadFile(document.url, document.name)"
+              >
+                {{ t("sales_rep.documents.details.download") }}
+              </VcButton>
             </span>
-
-            <span class="document-card__name" :title="document.name">{{ document.name }}</span>
-
-            <span v-if="document.category" class="document-card__category">{{ document.category }}</span>
-          </button>
+          </div>
         </div>
 
         <VcPagination
@@ -227,12 +269,13 @@ import { getFileSize } from "@/ui-kit/utilities";
 import SalesRepRuleChips from "../components/sales-rep-rule-chips.vue";
 import { useSalesRepDocument } from "../composables/useSalesRepDocument";
 import { useSalesRepDocuments } from "../composables/useSalesRepDocuments";
+import { useSalesRepPinnedDocument } from "../composables/useSalesRepPinnedDocument";
 import { DOCUMENTS_PAGE_SIZE } from "../constants";
 import { openAuthorizedFile } from "../files";
 import { documentIcon, documentTypeLabel, formatStatCount } from "../utils";
 import type { SalesRepDocumentType, SalesRepRuleType } from "../types";
 
-const { t, n } = useI18n();
+const { t, d, n } = useI18n();
 
 const {
   loading,
@@ -242,10 +285,9 @@ const {
   page,
   pages,
   items: documents,
-  totalCount,
   categories,
   categoriesLoading,
-} = useSalesRepDocuments({ withCategories: true });
+} = useSalesRepDocuments({ withCategories: true, sort: "isPinned:desc;createdDate:desc" });
 
 const failed = computed(() => Boolean(error.value));
 
@@ -312,9 +354,13 @@ watchEffect(() => {
   }
 });
 
-// The featured panel shows the explicit selection when there is one, else the newest document.
+// The library's pinned document — the default featured document when nothing is selected.
+const { document: pinnedDocument } = useSalesRepPinnedDocument();
+
+// The featured panel shows the explicit selection when there is one, else the pinned document,
+// falling back to the newest document while nothing is pinned.
 const featuredDocument = computed<SalesRepDocumentType | undefined>(() =>
-  selectedId.value ? selectedDocument.value : newestDocument.value,
+  selectedId.value ? selectedDocument.value : (pinnedDocument.value ?? newestDocument.value),
 );
 
 const featuredTypeLabel = computed(() =>
@@ -344,6 +390,18 @@ function clearSelection(): void {
 function formatSize(bytes: number): string {
   const size = getFileSize(bytes);
   return n(size.value, { notation: "compact", style: "unit", unit: size.unit, unitDisplay: "short" });
+}
+
+// "Published Jul 30, 2026 · 96 pages" (pages only when set) — mirrors the widget's meta wording.
+function cardMetaOf(document: SalesRepDocumentType): string {
+  return [
+    t("sales_rep.documents.published", { date: d(document.createdDate, "short") }),
+    document.pageCount
+      ? t("sales_rep.documents.details.pages_count", { count: formatStatCount(document.pageCount) }, document.pageCount)
+      : "",
+  ]
+    .filter(Boolean)
+    .join(" · ");
 }
 </script>
 
@@ -375,15 +433,12 @@ function formatSize(bytes: number): string {
     @apply flex flex-wrap items-center justify-between gap-3;
   }
 
-  &__count {
-    @apply shrink-0 whitespace-nowrap text-sm text-neutral-500;
-  }
-
-  // ~2 cards per row on phones, growing to 4–5 on desktop (auto-fill keeps it responsive).
+  // ~2 cards per row on phones, growing with the viewport (auto-fill keeps it responsive) but never
+  // past 5 per row: the column floor is 1/5th of the row minus the 4 gap-4 gutters (4rem).
   &__grid {
     @apply grid min-w-0 gap-4;
 
-    grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(max(10rem, calc((100% - 4rem) / 5)), 1fr));
   }
 
   &__skeleton {
@@ -409,6 +464,10 @@ function formatSize(bytes: number): string {
 
   &__featured-content {
     @apply flex min-w-0 flex-1 flex-col items-start gap-3;
+  }
+
+  &__featured-badge {
+    @apply self-start;
   }
 
   &__featured-name {
@@ -450,7 +509,7 @@ function formatSize(bytes: number): string {
 }
 
 .document-card {
-  @apply flex flex-col gap-2 rounded-[--vc-radius] border border-neutral-200 bg-additional-50 p-3 text-left transition-shadow;
+  @apply relative flex rounded-[--vc-radius] border border-neutral-200 bg-additional-50 transition-shadow;
 
   &:hover {
     @apply shadow-md;
@@ -458,6 +517,32 @@ function formatSize(bytes: number): string {
 
   &--active {
     @apply border-primary-500 ring-2 ring-primary-100;
+  }
+
+  // The whole former card body; a sibling of the overlay actions (buttons must not nest).
+  &__select {
+    @apply flex w-full min-w-0 flex-col gap-2 p-3 text-left;
+  }
+
+  // Quick actions over the card. Hidden = transparent AND click-through (pointer-events), so the
+  // invisible buttons never swallow a click meant to select the card; revealed on card hover and on
+  // :focus-within, which keeps them keyboard-reachable (tab focuses a button -> overlay shows).
+  &__overlay {
+    @apply pointer-events-none absolute inset-0 z-[1] flex flex-col items-center justify-center gap-2 rounded-[--vc-radius] bg-additional-50/80 opacity-0 transition-opacity;
+  }
+
+  &:hover .document-card__overlay,
+  &:focus-within .document-card__overlay {
+    @apply opacity-100;
+  }
+
+  &:hover .document-card__action,
+  &:focus-within .document-card__action {
+    @apply pointer-events-auto;
+  }
+
+  &__action {
+    @apply w-28;
   }
 
   &__preview {
@@ -482,6 +567,10 @@ function formatSize(bytes: number): string {
 
   &__category {
     @apply text-xs text-neutral-500;
+  }
+
+  &__meta {
+    @apply mt-0.5 text-xs text-neutral-400;
   }
 }
 </style>

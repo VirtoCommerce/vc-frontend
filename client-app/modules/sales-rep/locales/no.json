@@ -183,15 +183,13 @@
       "title": "Dokumentbibliotek",
       "browse_all": "Bla gjennom alle",
       "open": "Åpne",
-      "updated": "Oppdatert {date}",
       "empty": "Ingen dokumenter ennå",
       "load_failed": "Kunne ikke laste dokumentene",
       "page": {
-        "subtitle": "Kataloger, lookbooks, prislister og salgsguider — åpne eller last ned de nyeste utgivelsene.",
+        "subtitle": "Kataloger, lookbooks, prislister og salgsguider — åpne eller last ned den nyeste publikasjonen.",
         "search_placeholder": "Søk etter navn",
         "search_aria": "Søk i dokumenter",
         "all_tab": "Alle",
-        "results_count": "{count} dokument | {count} dokumenter",
         "empty": "Ingen dokumenter ennå",
         "no_results": "Ingen dokumenter samsvarer med søket ditt",
         "reset_search": "Tilbakestill søk",
@@ -199,12 +197,13 @@
       },
       "details": {
         "pages_count": "{count} side | {count} sider",
-        "released": "Utgitt {date}",
-        "open": "Åpne dokument",
+        "open": "Åpne",
         "download": "Last ned",
         "close": "Lukk detaljer",
-        "not_found": "Dette dokumentet er ikke lenger tilgjengelig."
-      }
+        "not_found": "Dette dokumentet er ikke lenger tilgjengelig.",
+        "latest_publication": "Nyeste publikasjon"
+      },
+      "published": "Publisert {date}"
     },
     "rules": {
       "customer": {

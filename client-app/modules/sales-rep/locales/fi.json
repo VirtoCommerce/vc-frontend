@@ -183,15 +183,13 @@
       "title": "Dokumenttikirjasto",
       "browse_all": "Selaa kaikkia",
       "open": "Avaa",
-      "updated": "Päivitetty {date}",
       "empty": "Ei vielä dokumentteja",
       "load_failed": "Dokumentteja ei voitu ladata",
       "page": {
-        "subtitle": "Kuvastot, lookbookit, hinnastot ja myyntioppaat — avaa tai lataa uusimmat julkaisut.",
+        "subtitle": "Kuvastot, lookbookit, hinnastot ja myyntioppaat — avaa tai lataa uusin julkaisu.",
         "search_placeholder": "Hae nimellä",
         "search_aria": "Hae dokumentteja",
         "all_tab": "Kaikki",
-        "results_count": "{count} dokumentti | {count} dokumenttia",
         "empty": "Ei vielä dokumentteja",
         "no_results": "Yksikään dokumentti ei vastaa hakuasi",
         "reset_search": "Tyhjennä haku",
@@ -199,12 +197,13 @@
       },
       "details": {
         "pages_count": "{count} sivu | {count} sivua",
-        "released": "Julkaistu {date}",
-        "open": "Avaa dokumentti",
+        "open": "Avaa",
         "download": "Lataa",
         "close": "Sulje tiedot",
-        "not_found": "Tämä dokumentti ei ole enää saatavilla."
-      }
+        "not_found": "Tämä dokumentti ei ole enää saatavilla.",
+        "latest_publication": "Uusin julkaisu"
+      },
+      "published": "Julkaistu {date}"
     },
     "rules": {
       "customer": {

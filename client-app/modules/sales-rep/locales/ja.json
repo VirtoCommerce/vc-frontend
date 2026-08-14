@@ -183,15 +183,13 @@
       "title": "ドキュメントライブラリ",
       "browse_all": "すべて表示",
       "open": "開く",
-      "updated": "更新日 {date}",
       "empty": "ドキュメントはまだありません",
       "load_failed": "ドキュメントを読み込めませんでした",
       "page": {
-        "subtitle": "カタログ、ルックブック、価格表、営業ガイド — 最新版を開くかダウンロードできます。",
+        "subtitle": "カタログ、ルックブック、価格表、営業ガイド — 最新の公開資料を開くかダウンロードできます。",
         "search_placeholder": "名前で検索",
         "search_aria": "ドキュメントを検索",
         "all_tab": "すべて",
-        "results_count": "{count} 件のドキュメント",
         "empty": "ドキュメントはまだありません",
         "no_results": "検索条件に一致するドキュメントがありません",
         "reset_search": "検索をリセット",
@@ -199,12 +197,13 @@
       },
       "details": {
         "pages_count": "{count} ページ",
-        "released": "公開日 {date}",
-        "open": "ドキュメントを開く",
+        "open": "開く",
         "download": "ダウンロード",
         "close": "詳細を閉じる",
-        "not_found": "このドキュメントは利用できなくなりました。"
-      }
+        "not_found": "このドキュメントは利用できなくなりました。",
+        "latest_publication": "最新の公開"
+      },
+      "published": "公開日: {date}"
     },
     "rules": {
       "customer": {

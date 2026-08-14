@@ -109,7 +109,9 @@ describe("useSalesRepDocuments", () => {
       {
         id: "doc-1",
         name: "Spring catalog.pdf",
+        displayName: "Spring catalog",
         category: "Catalogs",
+        isPinned: true,
         contentType: "application/pdf",
         size: 4400000,
         createdDate: "2026-05-01T00:00:00Z",
@@ -119,10 +121,11 @@ describe("useSalesRepDocuments", () => {
         pageCount: 48,
         previewUrl: "https://example.org/preview.png",
       },
-      // category/contentType/modifiedDate/summary/pageCount/previewUrl absent
+      // displayName/category/contentType/modifiedDate/summary/pageCount/previewUrl absent
       {
         id: "doc-2",
         name: "notes",
+        isPinned: false,
         size: 10,
         createdDate: "2026-01-01T00:00:00Z",
         url: "/api/sales-rep/documents/doc-2",
@@ -133,7 +136,9 @@ describe("useSalesRepDocuments", () => {
       {
         id: "doc-1",
         name: "Spring catalog.pdf",
+        displayName: "Spring catalog",
         category: "Catalogs",
+        isPinned: true,
         contentType: "application/pdf",
         size: 4400000,
         createdDate: "2026-05-01T00:00:00Z",
@@ -146,7 +151,10 @@ describe("useSalesRepDocuments", () => {
       {
         id: "doc-2",
         name: "notes",
+        // No display name on the wire → the raw file name stands in.
+        displayName: "notes",
         category: "",
+        isPinned: false,
         contentType: "",
         size: 10,
         createdDate: "2026-01-01T00:00:00Z",
@@ -188,6 +196,18 @@ describe("useSalesRepDocuments", () => {
     useSalesRepDocuments({ withCategories: true });
     options = callFor(SalesRepDocumentCategoriesDocument)?.[2] as { enabled?: boolean };
     expect(options.enabled).toBe(true);
+  });
+
+  // B2 (VCST-5730): tab counts must describe the keyword-filtered set, so the committed keyword
+  // flows into the categories query too (the server omits zero-count categories from the answer).
+  it("passes the committed keyword to the categories query", () => {
+    const { keyword } = useSalesRepDocuments({ withCategories: true });
+
+    const variables = callFor(SalesRepDocumentCategoriesDocument)?.[1] as { value: { keyword: string } };
+    expect(variables.value).toEqual({ keyword: "" });
+
+    keyword.value = "catalog";
+    expect(variables.value).toEqual({ keyword: "catalog" });
   });
 
   it("maps categories, skipping null entries", () => {

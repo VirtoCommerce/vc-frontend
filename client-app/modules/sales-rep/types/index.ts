@@ -73,9 +73,14 @@ export type SalesRepCommunicationResultType = {
 // source usable in an <img> (the download endpoint needs auth headers a plain <img> cannot send).
 export type SalesRepDocumentType = {
   id: string;
+  // Raw file name — what downloadFile saves the file as; every visible name renders displayName.
   name: string;
+  // Human-facing name; falls back to the raw file name on a blank wire value.
+  displayName: string;
   // Subfolder name under the library root (e.g. "Catalogs"); empty when the file sits at the root.
   category: string;
+  // The library's single highlighted document — featured by default and badged "Latest release".
+  isPinned: boolean;
   contentType: string;
   size: number;
   createdDate: string;

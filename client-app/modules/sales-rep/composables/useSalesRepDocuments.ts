@@ -16,7 +16,10 @@ export function mapSalesRepDocument(document: SalesRepDocumentWireType): SalesRe
   return {
     id: document.id,
     name: document.name,
+    // The backend never sends an empty displayName in practice; the raw name is a safety net.
+    displayName: document.displayName || document.name,
     category: document.category ?? "",
+    isPinned: document.isPinned,
     contentType: document.contentType ?? "",
     size: document.size,
     createdDate: document.createdDate as string,
@@ -35,6 +38,8 @@ type UseSalesRepDocumentsOptionsType = {
   pageSize?: number | Ref<number | undefined> | (() => number | undefined);
   // Also fetch the category tabs (the browse page); the widget skips that extra query.
   withCategories?: boolean;
+  // Server sort rule (e.g. "isPinned:desc;createdDate:desc"); omitted → server default (createdDate:desc).
+  sort?: string;
 };
 
 // Hidden-widget guarantee (VCST-5730): this composable fetches whenever it runs, so "hidden ⇒ zero
@@ -56,7 +61,8 @@ export function useSalesRepDocuments(options: UseSalesRepDocumentsOptionsType = 
     after: String((page.value - 1) * pageSize.value),
     keyword: keyword.value,
     category: category.value,
-    // No sort control yet: the server default (createdDate:desc) is the design's "latest first".
+    // No user-facing sort control; callers may pin a fixed rule (browse page: pinned-first).
+    sort: options.sort,
   }));
 
   // keepPreviousResult holds the current page while the next one loads, so the grid doesn't flash empty.
@@ -89,17 +95,19 @@ export function useSalesRepDocuments(options: UseSalesRepDocumentsOptionsType = 
   });
 
   // Category tabs (sorted by name server-side). `enabled: false` keeps the widget from paying for
-  // a query only the browse page renders.
+  // a query only the browse page renders. The committed keyword flows in so the tab counts describe
+  // the filtered set (zero-count categories are omitted by the server and their tabs disappear).
+  const categoriesVariables = computed(() => ({ keyword: keyword.value }));
+
   const {
     result: categoriesResult,
     loading: categoriesLoading,
     error: categoriesError,
     onError: onCategoriesError,
-  } = useQuery(
-    SalesRepDocumentCategoriesDocument,
-    {},
-    { fetchPolicy: HUB_FETCH_POLICY, enabled: options.withCategories === true },
-  );
+  } = useQuery(SalesRepDocumentCategoriesDocument, categoriesVariables, {
+    fetchPolicy: HUB_FETCH_POLICY,
+    enabled: options.withCategories === true,
+  });
 
   onCategoriesError((err) => {
     Logger.error("[sales-rep] salesRepDocumentCategories failed:", err);

@@ -70,7 +70,9 @@ function makeDocument(overrides: Partial<SalesRepDocumentType> = {}): SalesRepDo
   return {
     id: "doc-1",
     name: "Spring catalog.pdf",
+    displayName: "Spring catalog",
     category: "Catalogs",
+    isPinned: false,
     contentType: "application/pdf",
     size: 4400000,
     createdDate: "2026-05-01T00:00:00Z",
@@ -121,19 +123,38 @@ beforeEach(() => {
 });
 
 describe("SalesRepDocuments states", () => {
-  it("renders a row per document with the file meta line", () => {
-    state.items.value = [makeDocument(), makeDocument({ id: "doc-2", name: "Price list.xlsx" })];
+  it("renders a row per document, named by displayName, with the file meta line", () => {
+    state.items.value = [
+      makeDocument({ pageCount: 48 }),
+      makeDocument({ id: "doc-2", name: "Price list.xlsx", displayName: "Price list" }),
+    ];
 
     const wrapper = createWrapper();
     const rows = wrapper.findAll(".sales-rep-documents__row");
 
     expect(rows).toHaveLength(2);
-    expect(rows[0].find(".sales-rep-documents__name").text()).toBe("Spring catalog.pdf");
-    // "PDF · <size> · Updated <date>" — type badge from the extension, size unit from getFileSize.
+    // The display name, never the raw file name.
+    expect(rows[0].find(".sales-rep-documents__name").text()).toBe("Spring catalog");
+    expect(rows[1].find(".sales-rep-documents__name").text()).toBe("Price list");
+    // "<pages> · Published <date>" — the row icon already conveys the type; no size (team feedback).
     const meta = rows[0].find(".sales-rep-documents__meta").text();
-    expect(meta).toContain("PDF · ");
-    expect(meta).toContain("megabyte");
-    expect(meta).toContain("sales_rep.documents.updated");
+    expect(meta).toContain("sales_rep.documents.details.pages_count");
+    expect(meta).toContain("sales_rep.documents.published");
+    expect(meta).not.toContain("PDF");
+    expect(meta).not.toContain("megabyte");
+    // No page count -> the meta degrades to the published date alone.
+    const metaWithoutPages = rows[1].find(".sales-rep-documents__meta").text();
+    expect(metaWithoutPages).toBe("sales_rep.documents.published");
+  });
+
+  // Team feedback: the row action is a secondary (blue) button, not the primary (orange) default.
+  it("renders the Open action as a secondary outline button", () => {
+    state.items.value = [makeDocument()];
+
+    const wrapper = createWrapper();
+    const open = wrapper.find(".sales-rep-documents__open");
+
+    expect(open.classes()).toContain("vc-button--outline--secondary");
   });
 
   // Not an anchor: a browser navigation carries no bearer token, so Open goes through the

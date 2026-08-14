@@ -2,7 +2,9 @@ query SalesRepDocument($id: String!) {
   salesRepDocument(id: $id) {
     id
     name
+    displayName
     category
+    isPinned
     contentType
     size
     createdDate

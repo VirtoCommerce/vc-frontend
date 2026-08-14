@@ -183,15 +183,13 @@
       "title": "Bibliothèque de documents",
       "browse_all": "Tout parcourir",
       "open": "Ouvrir",
-      "updated": "Mis à jour le {date}",
       "empty": "Aucun document pour le moment",
       "load_failed": "Impossible de charger les documents",
       "page": {
-        "subtitle": "Catalogues, lookbooks, grilles tarifaires et guides de vente — ouvrez ou téléchargez les dernières versions.",
+        "subtitle": "Catalogues, lookbooks, grilles tarifaires et guides de vente — ouvrez ou téléchargez la dernière publication.",
         "search_placeholder": "Rechercher par nom",
         "search_aria": "Rechercher des documents",
         "all_tab": "Tous",
-        "results_count": "{count} document | {count} documents",
         "empty": "Aucun document pour le moment",
         "no_results": "Aucun document ne correspond à votre recherche",
         "reset_search": "Réinitialiser la recherche",
@@ -199,12 +197,13 @@
       },
       "details": {
         "pages_count": "{count} page | {count} pages",
-        "released": "Publié le {date}",
-        "open": "Ouvrir le document",
+        "open": "Ouvrir",
         "download": "Télécharger",
         "close": "Fermer les détails",
-        "not_found": "Ce document n'est plus disponible."
-      }
+        "not_found": "Ce document n'est plus disponible.",
+        "latest_publication": "Dernière publication"
+      },
+      "published": "Publié le {date}"
     },
     "rules": {
       "customer": {

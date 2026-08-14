@@ -183,15 +183,13 @@
       "title": "Biblioteca de documentos",
       "browse_all": "Ver todos",
       "open": "Abrir",
-      "updated": "Atualizado em {date}",
       "empty": "Ainda não há documentos",
       "load_failed": "Falha ao carregar os documentos",
       "page": {
-        "subtitle": "Catálogos, lookbooks, tabelas de preços e guias de vendas — abra ou baixe as versões mais recentes.",
+        "subtitle": "Catálogos, lookbooks, tabelas de preços e guias de vendas — abra ou baixe a publicação mais recente.",
         "search_placeholder": "Pesquisar por nome",
         "search_aria": "Pesquisar documentos",
         "all_tab": "Todos",
-        "results_count": "{count} documento | {count} documentos",
         "empty": "Ainda não há documentos",
         "no_results": "Nenhum documento corresponde à sua pesquisa",
         "reset_search": "Redefinir pesquisa",
@@ -199,12 +197,13 @@
       },
       "details": {
         "pages_count": "{count} página | {count} páginas",
-        "released": "Publicado em {date}",
-        "open": "Abrir documento",
+        "open": "Abrir",
         "download": "Baixar",
         "close": "Fechar detalhes",
-        "not_found": "Este documento não está mais disponível."
-      }
+        "not_found": "Este documento não está mais disponível.",
+        "latest_publication": "Publicação mais recente"
+      },
+      "published": "Publicado em {date}"
     },
     "rules": {
       "customer": {

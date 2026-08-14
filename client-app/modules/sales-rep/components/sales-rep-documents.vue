@@ -33,7 +33,7 @@
             <VcImage :src="documentIcon(document.contentType)" alt="" class="sales-rep-documents__icon" />
 
             <div class="sales-rep-documents__details">
-              <span class="sales-rep-documents__name" :title="document.name">{{ document.name }}</span>
+              <span class="sales-rep-documents__name" :title="document.displayName">{{ document.displayName }}</span>
 
               <span class="sales-rep-documents__meta">{{ metaOf(document) }}</span>
             </div>
@@ -43,6 +43,7 @@
             <VcButton
               class="sales-rep-documents__open"
               size="xs"
+              color="secondary"
               variant="outline"
               append-icon="external-link"
               @click="openAuthorizedFile(document.url, document.contentType)"
@@ -59,12 +60,11 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { getFileSize } from "@/ui-kit/utilities";
 import { useBlockChrome } from "../composables/useBlockChrome";
 import { useSalesRepDocuments } from "../composables/useSalesRepDocuments";
 import { DOCUMENTS_DEFAULT_ROWS, DOCUMENTS_ROUTE_NAME } from "../constants";
 import { openAuthorizedFile } from "../files";
-import { documentIcon, documentTypeLabel } from "../utils";
+import { documentIcon, formatStatCount } from "../utils";
 import LayoutWidget from "./layout-widget.vue";
 import type { SalesRepDocumentType } from "../types";
 
@@ -77,7 +77,7 @@ withDefaults(defineProps<IProps>(), {
   title: undefined,
 });
 
-const { t, d, n } = useI18n();
+const { t, d } = useI18n();
 
 // Absent when this widget renders outside a layout, which then configures nothing.
 const chrome = useBlockChrome();
@@ -87,18 +87,22 @@ const rowLimit = computed(() => chrome?.savedSettings.value.maxRows ?? DOCUMENTS
 
 // Hidden ⇒ zero requests: the layout mounts only visible blocks, so this composable (and its query)
 // exists only while the widget shows — see the note in useSalesRepDocuments.ts.
-const { items: documents, loading, error } = useSalesRepDocuments({ pageSize: () => rowLimit.value });
+const {
+  items: documents,
+  loading,
+  error,
+} = useSalesRepDocuments({ pageSize: () => rowLimit.value, sort: "isPinned:desc;createdDate:desc" });
 
 const failed = computed(() => Boolean(error.value));
 
-// "PDF · 4.2 MB · Updated May 22" — type badge, human size (vc-file's format) and last-touched date.
+// "96 pages · Published May 22" (date-only when no page count) — the row's icon already conveys
+// the file type, and createdDate not modifiedDate: metadata edits must not shift a "Published" date.
 function metaOf(document: SalesRepDocumentType): string {
-  const size = getFileSize(document.size);
-
   return [
-    documentTypeLabel(document.name, document.contentType),
-    n(size.value, { notation: "compact", style: "unit", unit: size.unit, unitDisplay: "short" }),
-    t("sales_rep.documents.updated", { date: d(document.modifiedDate) }),
+    document.pageCount
+      ? t("sales_rep.documents.details.pages_count", { count: formatStatCount(document.pageCount) }, document.pageCount)
+      : "",
+    t("sales_rep.documents.published", { date: d(document.createdDate, "short") }),
   ]
     .filter(Boolean)
     .join(" · ");

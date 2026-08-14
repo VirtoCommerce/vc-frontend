@@ -183,15 +183,13 @@
       "title": "Dokumentbibliothek",
       "browse_all": "Alle anzeigen",
       "open": "Öffnen",
-      "updated": "Aktualisiert {date}",
       "empty": "Noch keine Dokumente",
       "load_failed": "Dokumente konnten nicht geladen werden",
       "page": {
-        "subtitle": "Kataloge, Lookbooks, Preislisten und Vertriebsleitfäden — öffnen oder laden Sie die neuesten Versionen herunter.",
+        "subtitle": "Kataloge, Lookbooks, Preislisten und Vertriebsleitfäden — öffnen oder laden Sie die neueste Veröffentlichung herunter.",
         "search_placeholder": "Suche nach Name",
         "search_aria": "Dokumente suchen",
         "all_tab": "Alle",
-        "results_count": "{count} Dokument | {count} Dokumente",
         "empty": "Noch keine Dokumente",
         "no_results": "Keine Dokumente entsprechen Ihrer Suche",
         "reset_search": "Suche zurücksetzen",
@@ -199,12 +197,13 @@
       },
       "details": {
         "pages_count": "{count} Seite | {count} Seiten",
-        "released": "Veröffentlicht {date}",
-        "open": "Dokument öffnen",
+        "open": "Öffnen",
         "download": "Herunterladen",
         "close": "Details schließen",
-        "not_found": "Dieses Dokument ist nicht mehr verfügbar."
-      }
+        "not_found": "Dieses Dokument ist nicht mehr verfügbar.",
+        "latest_publication": "Neueste Veröffentlichung"
+      },
+      "published": "Veröffentlicht {date}"
     },
     "rules": {
       "customer": {

@@ -1,6 +1,7 @@
 import { mount } from "@vue/test-utils";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createWrapperFactory } from "@/core/utilities/tests";
+import { DOCUMENTS_PAGE_SIZE } from "../constants";
 import Documents from "./documents.vue";
 import type { SalesRepDocumentCategoryType, SalesRepDocumentType } from "../types";
 
@@ -17,6 +18,7 @@ const state = await vi.hoisted(async () => {
     totalCount: ref(0),
     categories: ref<SalesRepDocumentCategoryType[]>([]),
     selectedId: ref(""),
+    pinnedDocument: ref<SalesRepDocumentType | undefined>(undefined),
   };
 });
 
@@ -44,6 +46,13 @@ vi.mock("../composables/useSalesRepDocument", async () => {
     useSalesRepDocument: () => ({ document: ref(undefined), loading: ref(false), error: ref(null) }),
   };
 });
+// The pinned document (B1) — the featured panel's default when nothing is selected.
+vi.mock("../composables/useSalesRepPinnedDocument", async () => {
+  const { ref } = await import("vue");
+  return {
+    useSalesRepPinnedDocument: () => ({ document: state.pinnedDocument, loading: ref(false), error: ref(null) }),
+  };
+});
 // The ?doc= deep link; a plain ref stands in for the route-backed writable computed.
 vi.mock("@/core/composables/useRouteQueryParam", () => ({
   useRouteQueryParam: () => state.selectedId,
@@ -63,7 +72,9 @@ function makeDocument(overrides: Partial<SalesRepDocumentType> = {}): SalesRepDo
   return {
     id: "doc-1",
     name: "Spring catalog.pdf",
+    displayName: "Spring catalog",
     category: "Catalogs",
+    isPinned: false,
     contentType: "application/pdf",
     size: 4400000,
     createdDate: "2026-05-01T00:00:00Z",
@@ -107,6 +118,7 @@ beforeEach(() => {
   state.totalCount.value = 0;
   state.categories.value = [];
   state.selectedId.value = "";
+  state.pinnedDocument.value = undefined;
   downloadFileMock.mockClear();
   openAuthorizedFileMock.mockClear();
 });
@@ -129,8 +141,11 @@ describe("Documents category tabs", () => {
     ]);
 
     // The count is a separate accent-styled element (design mock), not baked into the label;
-    // the All baseline carries the library total.
+    // the All baseline carries the SUM of the (keyword-filtered) category counts.
     expect(tabs.map((tab) => tab.find(".sales-rep-rule-chips__count").text())).toEqual(["7", "2", "5"]);
+
+    // The "N documents" element next to the search field is gone — the tab counts carry the numbers.
+    expect(wrapper.find(".documents-page__count").exists()).toBe(false);
   });
 
   it("selects the category and resets the page when a tab is clicked", async () => {
@@ -208,35 +223,72 @@ describe("Documents page order", () => {
 });
 
 describe("Documents featured panel", () => {
-  it("features the newest document when nothing is selected", () => {
+  it("features the pinned document by default, badged 'Latest release'", () => {
+    state.items.value = [makeDocument(), makeDocument({ id: "doc-2", name: "Price list.xlsx" })];
+    // The pinned document need not sit in the loaded page at all — it comes from its own query.
+    state.pinnedDocument.value = makeDocument({
+      id: "doc-9",
+      name: "Summer lookbook.pdf",
+      displayName: "Summer lookbook",
+      isPinned: true,
+    });
+
+    const wrapper = createWrapper();
+    const featured = wrapper.find(".documents-page__featured");
+
+    expect(featured.exists()).toBe(true);
+    expect(featured.find(".documents-page__featured-name").text()).toBe("Summer lookbook");
+    expect(featured.find("vc-badge-stub").exists()).toBe(true);
+    // No explicit selection -> nothing to close.
+    expect(featured.find(".documents-page__featured-close").exists()).toBe(false);
+  });
+
+  it("falls back to the newest document, unbadged, when nothing is pinned", () => {
     state.items.value = [makeDocument(), makeDocument({ id: "doc-2", name: "Price list.xlsx" })];
 
     const wrapper = createWrapper();
     const featured = wrapper.find(".documents-page__featured");
 
     expect(featured.exists()).toBe(true);
-    // The list is server-sorted createdDate:desc, so the first item of the default list is the newest.
-    expect(featured.find(".documents-page__featured-name").text()).toBe("Spring catalog.pdf");
-    // No badge: the "Latest release" chip was removed pending a real tagging system.
+    // The list is server-sorted createdDate:desc, so the first item of the default list is the newest;
+    // the panel shows the display name, never the raw file name.
+    expect(featured.find(".documents-page__featured-name").text()).toBe("Spring catalog");
+    // The badge belongs to the pinned document only.
     expect(featured.find("vc-badge-stub").exists()).toBe(false);
-    // No explicit selection -> nothing to close.
     expect(featured.find(".documents-page__featured-close").exists()).toBe(false);
   });
 
   it("features the selected document when it is not the newest", async () => {
-    state.items.value = [makeDocument(), makeDocument({ id: "doc-2", name: "Price list.xlsx" })];
+    state.items.value = [
+      makeDocument(),
+      makeDocument({ id: "doc-2", name: "Price list.xlsx", displayName: "Price list" }),
+    ];
 
     const wrapper = createWrapper();
-    await wrapper.findAll(".document-card")[1].trigger("click");
+    await wrapper.findAll(".document-card__select")[1].trigger("click");
 
     expect(state.selectedId.value).toBe("doc-2");
-    expect(wrapper.find(".document-card--active").text()).toContain("Price list.xlsx");
+    expect(wrapper.find(".document-card--active").text()).toContain("Price list");
 
     const featured = wrapper.find(".documents-page__featured");
-    expect(featured.find(".documents-page__featured-name").text()).toBe("Price list.xlsx");
+    expect(featured.find(".documents-page__featured-name").text()).toBe("Price list");
     expect(featured.find("vc-badge-stub").exists()).toBe(false);
     expect(featured.find(".documents-page__featured-close").exists()).toBe(true);
     expect(featured.find(".documents-page__summary").exists()).toBe(true);
+  });
+
+  // The badge follows the document, not the default slot: an explicitly selected pinned document
+  // is still the latest release.
+  it("keeps the badge when the pinned document is featured via explicit selection", async () => {
+    state.items.value = [
+      makeDocument(),
+      makeDocument({ id: "doc-2", name: "Price list.xlsx", displayName: "Price list", isPinned: true }),
+    ];
+
+    const wrapper = createWrapper();
+    await wrapper.findAll(".document-card__select")[1].trigger("click");
+
+    expect(wrapper.find(".documents-page__featured").find("vc-badge-stub").exists()).toBe(true);
   });
 
   it("hides the panel entirely while the library is empty", () => {
@@ -262,5 +314,51 @@ describe("Documents featured panel", () => {
 
     await actions[1].trigger("click");
     expect(downloadFileMock).toHaveBeenCalledWith("/api/sales-rep/documents/doc-1", "Spring catalog.pdf");
+  });
+});
+
+describe("Documents card actions", () => {
+  // A2: hovering (or focusing into) a card reveals Open + Download. The actions are SIBLINGS of the
+  // select button (buttons must not nest), so triggering one must never toggle the selection.
+  it("gives every card an Open and a Download action that do not select the card", async () => {
+    state.items.value = [makeDocument()];
+
+    const wrapper = createWrapper();
+    const overlay = wrapper.find(".document-card__overlay");
+    const actions = overlay.findAll("vc-button-stub");
+
+    expect(actions).toHaveLength(2);
+
+    await actions[0].trigger("click");
+    expect(openAuthorizedFileMock).toHaveBeenCalledWith("/api/sales-rep/documents/doc-1", "application/pdf");
+
+    // Download saves under the RAW file name, not the display name.
+    await actions[1].trigger("click");
+    expect(downloadFileMock).toHaveBeenCalledWith("/api/sales-rep/documents/doc-1", "Spring catalog.pdf");
+
+    expect(state.selectedId.value).toBe("");
+  });
+
+  it("names the card by displayName while the type badge derives from the raw file name", () => {
+    state.items.value = [makeDocument()];
+
+    const wrapper = createWrapper();
+    const card = wrapper.find(".document-card");
+
+    expect(card.find(".document-card__name").text()).toBe("Spring catalog");
+    expect(card.find(".document-card__badge").text()).toBe("PDF");
+  });
+});
+
+describe("Documents grid density", () => {
+  // A3: the page size is three full rows of the grid's 5-card cap; the first-load placeholder
+  // grid renders one skeleton per future card, pinning the constant.
+  it("sizes the first-load skeleton grid to the 15-card page", () => {
+    state.loading.value = true;
+
+    const wrapper = createWrapper();
+
+    expect(DOCUMENTS_PAGE_SIZE).toBe(15);
+    expect(wrapper.findAll(".documents-page__skeleton")).toHaveLength(15);
   });
 });

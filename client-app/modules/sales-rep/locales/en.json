@@ -183,15 +183,13 @@
       "title": "Document library",
       "browse_all": "Browse all",
       "open": "Open",
-      "updated": "Updated {date}",
       "empty": "No documents yet",
       "load_failed": "Couldn't load documents",
       "page": {
-        "subtitle": "Catalogs, lookbooks, pricing sheets and sales guides — open or download the latest releases.",
+        "subtitle": "Catalogs, lookbooks, pricing sheets and sales guides — open or download the latest publication.",
         "search_placeholder": "Search by name",
         "search_aria": "Search documents",
         "all_tab": "All",
-        "results_count": "{count} document | {count} documents",
         "empty": "No documents yet",
         "no_results": "No documents match your search",
         "reset_search": "Reset search",
@@ -199,12 +197,13 @@
       },
       "details": {
         "pages_count": "{count} page | {count} pages",
-        "released": "Released {date}",
-        "open": "Open document",
+        "open": "Open",
         "download": "Download",
         "close": "Close details",
-        "not_found": "This document is no longer available."
-      }
+        "not_found": "This document is no longer available.",
+        "latest_publication": "Latest publication"
+      },
+      "published": "Published {date}"
     },
     "rules": {
       "customer": {

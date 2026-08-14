@@ -49,7 +49,8 @@ export const DOCUMENTS_ROUTE_NAME = "SalesRepDocuments";
 export const DOCUMENTS_ROUTE_SEGMENT = "documents";
 export const DOCUMENTS_NAV_LINK_ID = "sales-rep-documents";
 // Page size for the browse-all documents page (offset-as-cursor, like useSalesRepCustomers).
-export const DOCUMENTS_PAGE_SIZE = 10;
+// 15 = three full rows of the grid's 5-card cap, so the pager appears only past three rows.
+export const DOCUMENTS_PAGE_SIZE = 15;
 
 // Backs the "New orders" card; order filter rules are raw order statuses, so this uses the "New"
 // status (an unrecognized name fails closed — keep it aligned with a real status). The card's label
