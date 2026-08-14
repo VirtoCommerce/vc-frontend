@@ -77,6 +77,11 @@ export function getAnchorId(item: Record<string, unknown>): string | undefined {
  * @returns whether the anchor was found and scrolled to.
  */
 export async function scrollToAnchor(hash: string, timeoutMs = ANCHOR_WAIT_MS): Promise<boolean> {
+  // Claim the request before anything can return early. The page watchers call this on every path
+  // change, so a navigation without a hash has to invalidate a poll that is still running — else it
+  // could scroll a page it no longer belongs to.
+  const request = ++latestRequest;
+
   if (!hash) {
     return false;
   }
@@ -85,8 +90,6 @@ export async function scrollToAnchor(hash: string, timeoutMs = ANCHOR_WAIT_MS): 
   if (!id) {
     return false;
   }
-
-  const request = ++latestRequest;
 
   await nextTick();
 

@@ -156,6 +156,16 @@ describe("scrollToAnchor", () => {
     await expect(scrollToAnchor("#")).resolves.toBe(false);
   });
 
+  it("cancels a pending wait when the next navigation carries no hash", async () => {
+    const pending = scrollToAnchor("#products", 1000);
+    await scrollToAnchor("");
+
+    setTimeout(() => addSection("products"), 30);
+
+    await expect(pending).resolves.toBe(false);
+    expect(scrollIntoView).not.toHaveBeenCalled();
+  });
+
   it("survives a malformed percent escape in the hash", async () => {
     await expect(scrollToAnchor("#broken%", 30)).resolves.toBe(false);
   });
