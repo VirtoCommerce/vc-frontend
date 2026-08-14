@@ -74,7 +74,7 @@ const columns = computed(() =>
   }
 
   &__aside {
-    @apply flex min-w-0 flex-col gap-5 xl:w-80 xl:shrink-0;
+    @apply flex min-w-0 flex-col gap-5 xl:w-96 xl:shrink-0;
   }
 
   // Wraps like layout-region--horizontal; pulses like the kit's skeleton beside it.
