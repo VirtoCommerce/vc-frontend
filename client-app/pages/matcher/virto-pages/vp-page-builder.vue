@@ -18,6 +18,7 @@
         v-if="!item.hidden"
         :key="item.id"
         v-bind="item"
+        :id="getAnchorId(item)"
         :model="item"
         :settings="pageBuilderContent.settings"
       />
@@ -26,10 +27,11 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeMount, shallowRef, computed, unref } from "vue";
+import { onBeforeMount, onMounted, shallowRef, computed, unref } from "vue";
 import { useBreadcrumbs } from "@/core/composables";
 import { humanizeName } from "@/core/utilities/common";
 import { getBlockType } from "@/plugins/builder-preview/block-mapping";
+import { getAnchorId, scrollToAnchor } from "@/shared/static-content";
 
 interface IProps {
   content?: string;
@@ -71,6 +73,12 @@ onBeforeMount(() => {
   } else {
     clearState();
   }
+});
+
+// The page content is parsed after the route resolves, so the browser has already skipped the hash
+// by the time the anchor exists — an opened `/page#specifications` link has to scroll itself.
+onMounted(() => {
+  void scrollToAnchor(window.location.hash);
 });
 
 function trySetContent() {

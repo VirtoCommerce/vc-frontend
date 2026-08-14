@@ -18,6 +18,7 @@
         v-if="!item.hidden"
         :key="item.id"
         v-bind="item"
+        :id="getAnchorId(item)"
         :model="item"
         :settings="template.settings"
       />
@@ -28,13 +29,13 @@
 <script setup lang="ts">
 import { useSeoMeta } from "@unhead/vue";
 import { useElementVisibility } from "@vueuse/core";
-import { computed, shallowRef, unref } from "vue";
+import { computed, onMounted, shallowRef, unref } from "vue";
 import { useBreadcrumbs } from "@/core/composables";
 import { usePageTitle } from "@/core/composables/usePageTitle";
 import { useSeoKeywords } from "@/core/composables/useSeoKeywords";
 import { humanizeName } from "@/core/utilities/common";
 import { getBlockType } from "@/plugins/builder-preview/block-mapping";
-import { useStaticPage } from "@/shared/static-content";
+import { getAnchorId, scrollToAnchor, useStaticPage } from "@/shared/static-content";
 
 const { staticPage: template } = useStaticPage();
 
@@ -46,6 +47,12 @@ const templateName = computed(() =>
 );
 
 const breadcrumbs = useBreadcrumbs(() => [{ title: templateName.value }] as IBreadcrumb[]);
+
+// Static content renders after the route resolves, so the browser has already skipped the hash by
+// the time the anchor exists — an opened `/page#specifications` link has to scroll itself.
+onMounted(() => {
+  void scrollToAnchor(window.location.hash);
+});
 
 const staticPageAnchor = shallowRef<HTMLElement | null>(null);
 const staticPageAnchorVisible = useElementVisibility(staticPageAnchor);
