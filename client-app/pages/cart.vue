@@ -89,6 +89,7 @@
             changeItemQuantityBatchedOverflowed ||
             moveToSavedForLaterOverflowed ||
             selectionOverflowed ||
+            removeItemsOverflowed ||
             cartMutationsLocked
           "
           data-test-id="cart.products-section"
@@ -291,6 +292,7 @@ const {
   changeItemQuantityBatchedOverflowed,
   selectionOverflowed,
   removeItems,
+  removeItemsOverflowed,
   toggleGift,
   openClearCartModal,
   selectCartItems,
@@ -359,12 +361,12 @@ const isShowIncompleteDataWarning = computed(
   () => (!allItemsAreDigital.value && !isValidShipment.value) || !isValidPayment.value,
 );
 
-async function handleRemoveItems(itemIds: string[]): Promise<void> {
+function handleRemoveItems(itemIds: string[]): void {
   const cartBeforeRemove = cart.value!;
   const removedItems = cartBeforeRemove.items.filter((item) => itemIds.some((id) => id === item.id));
   const cartWillBeEmpty = cartBeforeRemove.items.length === removedItems.length;
 
-  await removeItems(itemIds);
+  removeItems(itemIds);
 
   /**
    * Send Google Analytics event for an item was removed from cart.
