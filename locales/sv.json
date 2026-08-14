@@ -717,7 +717,11 @@
         "enter_custom_code": "Ange anpassad kod",
         "all_coupons": "Visa alla kuponger & kampanjer",
         "apply_aria": "Apply coupon {code}",
-        "remove_aria": "Remove coupon"
+        "remove_aria": "Remove coupon",
+        "coupon_code_aria": "Kupongkod",
+        "applied_announcement": "Kupong {code} tillämpad.",
+        "removed_announcement": "Kupong {code} borttagen.",
+        "totals_announcement": "Rabatt {discount}, ny summa {total}."
       }
     },
     "catalog": {
