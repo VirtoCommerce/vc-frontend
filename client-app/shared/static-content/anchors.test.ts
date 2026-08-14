@@ -54,8 +54,6 @@ describe("scrollToAnchor", () => {
   beforeEach(() => {
     scrollIntoView = vi.fn();
     Element.prototype.scrollIntoView = scrollIntoView;
-    // jsdom exposes scrollY as a getter, so make it assignable to simulate the visitor scrolling.
-    Object.defineProperty(window, "scrollY", { value: 0, configurable: true, writable: true });
   });
 
   afterEach(() => {
@@ -90,12 +88,35 @@ describe("scrollToAnchor", () => {
     expect(scrollIntoView).not.toHaveBeenCalled();
   });
 
-  it("stops chasing the anchor once the visitor scrolls themselves", async () => {
+  it("stops chasing the anchor once the visitor takes over", async () => {
     const pending = scrollToAnchor("#products", 5000);
-    setTimeout(() => (window.scrollY = 400), 30);
+    setTimeout(() => window.dispatchEvent(new Event("wheel")), 30);
 
     await expect(pending).resolves.toBe(false);
     expect(scrollIntoView).not.toHaveBeenCalled();
+  });
+
+  it("ignores a programmatic scroll, which the router performs on every path change", async () => {
+    const pending = scrollToAnchor("#products", 500);
+    setTimeout(() => {
+      window.dispatchEvent(new Event("scroll"));
+      addSection("products");
+    }, 30);
+
+    await expect(pending).resolves.toBe(true);
+  });
+
+  it("does not mistake a meta tag of the same name for an anchor", async () => {
+    const meta = document.createElement("meta");
+    meta.setAttribute("name", "description");
+    document.head.appendChild(meta);
+
+    try {
+      await expect(scrollToAnchor("#description", 30)).resolves.toBe(false);
+      expect(scrollIntoView).not.toHaveBeenCalled();
+    } finally {
+      meta.remove();
+    }
   });
 
   it("does nothing without a hash", async () => {

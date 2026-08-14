@@ -8,8 +8,12 @@ import { safeDecode } from "@/core/utilities/common";
  */
 const ANCHOR_WAIT_MS = 3000;
 
-/** Manual scrolling beyond this many pixels means the visitor took over — stop chasing the anchor. */
-const TOOK_OVER_PX = 100;
+/**
+ * Input that means the visitor took over and no longer wants to be moved. Scroll position cannot be
+ * used for this: the router resets it to the top on every path change, which would read as the
+ * visitor scrolling.
+ */
+const TAKE_OVER_EVENTS = ["wheel", "touchmove", "keydown"] as const;
 
 /**
  * Normalizes an authored anchor into something usable in a `#hash` link.
@@ -70,27 +74,37 @@ export async function scrollToAnchor(hash: string, timeoutMs = ANCHOR_WAIT_MS): 
 
 function findAnchor(id: string): HTMLElement | null {
   // `<a name="...">` anchors authored inside rich text are not reachable through getElementById.
-  // getElementsByName takes the raw value, so no selector escaping is needed for it.
-  return document.getElementById(id) ?? document.getElementsByName(id)[0] ?? null;
+  // getElementsByName takes the raw value, so it needs no selector escaping, but it also matches
+  // `<meta name>` and form controls — and every page carries meta names such as `description`.
+  const named = Array.from(document.getElementsByName(id)).find((element) => element instanceof HTMLAnchorElement);
+
+  return document.getElementById(id) ?? named ?? null;
 }
 
 function waitForAnchor(id: string, timeoutMs: number): Promise<HTMLElement | null> {
   return new Promise((resolve) => {
     const deadline = performance.now() + timeoutMs;
-    const scrollAtStart = window.scrollY;
+    let tookOver = false;
+    const takeOver = () => (tookOver = true);
+
+    TAKE_OVER_EVENTS.forEach((name) => window.addEventListener(name, takeOver, { passive: true, once: true }));
+
+    const done = (target: HTMLElement | null) => {
+      TAKE_OVER_EVENTS.forEach((name) => window.removeEventListener(name, takeOver));
+      resolve(target);
+    };
 
     const poll = () => {
       const target = findAnchor(id);
       if (target) {
-        resolve(target);
+        done(target);
         return;
       }
 
-      // Give up once the budget is spent, or as soon as the visitor scrolls themselves — jumping the
-      // page seconds after it settled is worse than not jumping at all.
-      const tookOver = Math.abs(window.scrollY - scrollAtStart) > TOOK_OVER_PX;
+      // Give up once the budget is spent, or as soon as the visitor takes over — jumping the page
+      // seconds after it settled is worse than not jumping at all.
       if (tookOver || performance.now() >= deadline) {
-        resolve(null);
+        done(null);
         return;
       }
 

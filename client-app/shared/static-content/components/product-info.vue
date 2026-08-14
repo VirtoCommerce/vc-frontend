@@ -25,6 +25,7 @@
             <component
               :is="block.type"
               v-if="shouldShowBlock(block)"
+              :id="getAnchorId(block)"
               :key="block.id || index"
               :model="block"
               :product="product"
@@ -41,6 +42,7 @@
 import { computed, toRef } from "vue";
 import { ImageGallery, DiscountBadge, ProductVideos } from "@/shared/catalog";
 import { useProductVariationProperties } from "@/shared/catalog/composables/useProductVariationProperties";
+import { getAnchorId } from "@/shared/static-content/anchors";
 import type { IPageContent } from "../types";
 import type { Product } from "@/core/api/graphql/types";
 import BadgesWrapper from "@/shared/catalog/components/badges-wrapper.vue";

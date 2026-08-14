@@ -29,7 +29,8 @@
 <script setup lang="ts">
 import { useSeoMeta } from "@unhead/vue";
 import { useElementVisibility } from "@vueuse/core";
-import { computed, onMounted, shallowRef, unref } from "vue";
+import { computed, shallowRef, unref, watch } from "vue";
+import { useRoute } from "vue-router";
 import { useBreadcrumbs } from "@/core/composables";
 import { usePageTitle } from "@/core/composables/usePageTitle";
 import { useSeoKeywords } from "@/core/composables/useSeoKeywords";
@@ -49,10 +50,15 @@ const templateName = computed(() =>
 const breadcrumbs = useBreadcrumbs(() => [{ title: templateName.value }] as IBreadcrumb[]);
 
 // Static content renders after the route resolves, so the browser has already skipped the hash by
-// the time the anchor exists — an opened `/page#specifications` link has to scroll itself.
-onMounted(() => {
-  void scrollToAnchor(window.location.hash);
-});
+// the time the anchor exists — an opened `/page#specifications` link has to scroll itself. Watch the
+// route rather than only mounting: this component is not always torn down between content pages, and
+// the router resets the scroll to the top on a path change. Without a hash this is a no-op.
+const route = useRoute();
+watch(
+  () => [route.path, route.hash],
+  () => void scrollToAnchor(route.hash),
+  { immediate: true },
+);
 
 const staticPageAnchor = shallowRef<HTMLElement | null>(null);
 const staticPageAnchorVisible = useElementVisibility(staticPageAnchor);
