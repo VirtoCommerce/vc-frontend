@@ -30,9 +30,11 @@
 import { useI18n } from "vue-i18n";
 import { globals } from "@/core/globals";
 import { replaceXFromBeginning } from "@/core/utilities";
-import { useDeleteSkyflowCard, useSkyflowCards } from "@/modules/skyflow";
-import { CreditCard, CreditCardSkeleton } from "@/shared/account";
 import { useModal } from "@/shared/modal";
+import { useDeleteSkyflowCard } from "../api/graphql";
+import CreditCardSkeleton from "../components/credit-card-skeleton.vue";
+import CreditCard from "../components/credit-card.vue";
+import { useSkyflowCards } from "../composables";
 
 const { t } = useI18n();
 const { openModal } = useModal();
