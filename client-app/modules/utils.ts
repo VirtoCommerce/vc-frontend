@@ -2,6 +2,7 @@ import { useLanguages } from "@/core/composables/useLanguages";
 import { FALLBACK_LOCALE } from "@/core/constants";
 import { registerLocaleLoader } from "@/core/locale-loaders";
 import { Logger } from "@/core/utilities";
+import { ignoreChunkLoadFailure } from "@/core/utilities/optional-chunk";
 import type { ILanguage } from "@/core/types";
 import type { I18n } from "@/i18n";
 import type { LocaleMessageValue } from "vue-i18n";
@@ -26,12 +27,14 @@ async function mergeModuleLocales(i18n: I18n, moduleName: string, language?: ILa
     const [moduleFallbackMessages, moduleMessages] = await Promise.all<LocaleMessageValue[]>([
       locale !== FALLBACK_LOCALE
         ? import(`./${moduleName}/locales/${FALLBACK_LOCALE}.json`).catch((error) => {
+            ignoreChunkLoadFailure(error);
             Logger.error(`Fallback locale: ${FALLBACK_LOCALE} for the module ${moduleName} not found`, error);
 
             return {};
           })
         : Promise.resolve({}),
       import(`./${moduleName}/locales/${locale}.json`).catch((error) => {
+        ignoreChunkLoadFailure(error);
         Logger.error(`Locale: ${locale} for the module ${moduleName} not found`, error);
 
         return {};
