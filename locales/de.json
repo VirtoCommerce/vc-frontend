@@ -82,7 +82,8 @@
       "buy_now": "Jetzt kaufen",
       "see_all": "Alle anzeigen",
       "report_a_problem": "Problem melden",
-      "copy_to_clipboard": "In die Zwischenablage kopieren"
+      "copy_to_clipboard": "In die Zwischenablage kopieren",
+      "reload_page": "Seite neu laden"
     },
     "labels": {
       "actions": "Aktionen",
@@ -233,7 +234,8 @@
       "outdated_backend_modules": "Die Frontend-Anwendung erwartet neuere Versionen der Plattform und eines oder mehrerer Module. <br> Die Frontend-Anwendung läuft auf einem inkompatiblen Backend. Einige Funktionen sind möglicherweise nicht verfügbar, beeinträchtigt oder instabil, bis die Plattform und die Module aufgerüstet sind, um die Anforderungen des Shops zu erfüllen. Bitte teilen Sie den unten stehenden Bericht mit Ihrem Administrator.",
       "logo_changed": "Das Logo wurde erfolgreich geändert.",
       "logo_deleted": "Das Logo wurde gelöscht.",
-      "pending_operations_leaving_page_confirmation": "Einige Vorgänge sind noch in Bearbeitung. Möchten Sie diese Seite wirklich verlassen? Nicht gespeicherte Änderungen gehen möglicherweise verloren."
+      "pending_operations_leaving_page_confirmation": "Einige Vorgänge sind noch in Bearbeitung. Möchten Sie diese Seite wirklich verlassen? Nicht gespeicherte Änderungen gehen möglicherweise verloren.",
+      "content_failed_to_load": "Ein Teil der Website konnte nicht geladen werden. Bitte laden Sie die Seite neu, um fortzufahren."
     },
     "placeholders": {
       "enter_value": "Bitte geben Sie einen Wert ein",
@@ -715,7 +717,11 @@
         "enter_custom_code": "Benutzerdefinierten Code eingeben",
         "all_coupons": "Alle Gutscheine & Aktionen anzeigen",
         "apply_aria": "Apply coupon {code}",
-        "remove_aria": "Remove coupon"
+        "remove_aria": "Remove coupon",
+        "coupon_code_aria": "Gutscheincode",
+        "applied_announcement": "Gutschein {code} angewendet.",
+        "removed_announcement": "Gutschein {code} entfernt.",
+        "totals_announcement": "Rabatt {discount}, neue Summe {total}."
       }
     },
     "catalog": {
