@@ -96,6 +96,38 @@ describe("scrollToAnchor", () => {
     expect(scrollIntoView).not.toHaveBeenCalled();
   });
 
+  it("stops when the visitor presses a scrolling key", async () => {
+    const pending = scrollToAnchor("#products", 5000);
+    setTimeout(() => window.dispatchEvent(new KeyboardEvent("keydown", { key: "PageDown" })), 30);
+
+    await expect(pending).resolves.toBe(false);
+  });
+
+  it("keeps waiting while the visitor tabs around or types", async () => {
+    const pending = scrollToAnchor("#products", 1000);
+    setTimeout(() => {
+      window.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab" }));
+      window.dispatchEvent(new KeyboardEvent("keydown", { key: "a" }));
+    }, 20);
+    setTimeout(() => addSection("products"), 60);
+
+    await expect(pending).resolves.toBe(true);
+  });
+
+  it("lets a newer navigation supersede a wait that is still polling", async () => {
+    const stale = scrollToAnchor("#stale", 1000);
+    const fresh = scrollToAnchor("#fresh", 1000);
+
+    setTimeout(() => {
+      addSection("stale");
+      addSection("fresh");
+    }, 40);
+
+    await expect(stale).resolves.toBe(false);
+    await expect(fresh).resolves.toBe(true);
+    expect(scrollIntoView).toHaveBeenCalledOnce();
+  });
+
   it("ignores a programmatic scroll, which the router performs on every path change", async () => {
     const pending = scrollToAnchor("#products", 500);
     setTimeout(() => {

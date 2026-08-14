@@ -13,7 +13,29 @@ const ANCHOR_WAIT_MS = 3000;
  * used for this: the router resets it to the top on every path change, which would read as the
  * visitor scrolling.
  */
-const TAKE_OVER_EVENTS = ["wheel", "touchmove", "keydown"] as const;
+const TAKE_OVER_EVENTS = ["wheel", "touchmove"] as const;
+
+/**
+ * Keys that scroll the page. Any other key — Tab, shortcuts, plain typing — must not cancel the
+ * pending scroll, or a deep link would fail for anyone navigating by keyboard.
+ */
+const TAKE_OVER_KEYS = new Set([
+  " ",
+  "ArrowUp",
+  "ArrowDown",
+  "ArrowLeft",
+  "ArrowRight",
+  "End",
+  "Home",
+  "PageDown",
+  "PageUp",
+]);
+
+/**
+ * Only the most recent request may scroll: a navigation made while an earlier wait is still polling
+ * would otherwise be overridden the moment that older target shows up.
+ */
+let latestRequest = 0;
 
 /**
  * Normalizes an authored anchor into something usable in a `#hash` link.
@@ -64,12 +86,18 @@ export async function scrollToAnchor(hash: string, timeoutMs = ANCHOR_WAIT_MS): 
     return false;
   }
 
+  const request = ++latestRequest;
+
   await nextTick();
 
-  const target = await waitForAnchor(id, timeoutMs);
-  target?.scrollIntoView({ behavior: "smooth", block: "start" });
+  const target = await waitForAnchor(id, timeoutMs, () => request === latestRequest);
+  if (!target || request !== latestRequest) {
+    return false;
+  }
 
-  return !!target;
+  target.scrollIntoView({ behavior: "smooth", block: "start" });
+
+  return true;
 }
 
 function findAnchor(id: string): HTMLElement | null {
@@ -81,16 +109,23 @@ function findAnchor(id: string): HTMLElement | null {
   return document.getElementById(id) ?? named ?? null;
 }
 
-function waitForAnchor(id: string, timeoutMs: number): Promise<HTMLElement | null> {
+function waitForAnchor(id: string, timeoutMs: number, isCurrent: () => boolean): Promise<HTMLElement | null> {
   return new Promise((resolve) => {
     const deadline = performance.now() + timeoutMs;
     let tookOver = false;
     const takeOver = () => (tookOver = true);
+    const takeOverOnKey = (event: KeyboardEvent) => {
+      if (TAKE_OVER_KEYS.has(event.key)) {
+        tookOver = true;
+      }
+    };
 
-    TAKE_OVER_EVENTS.forEach((name) => window.addEventListener(name, takeOver, { passive: true, once: true }));
+    TAKE_OVER_EVENTS.forEach((name) => window.addEventListener(name, takeOver, { passive: true }));
+    window.addEventListener("keydown", takeOverOnKey, { passive: true });
 
     const done = (target: HTMLElement | null) => {
       TAKE_OVER_EVENTS.forEach((name) => window.removeEventListener(name, takeOver));
+      window.removeEventListener("keydown", takeOverOnKey);
       resolve(target);
     };
 
@@ -101,9 +136,9 @@ function waitForAnchor(id: string, timeoutMs: number): Promise<HTMLElement | nul
         return;
       }
 
-      // Give up once the budget is spent, or as soon as the visitor takes over — jumping the page
-      // seconds after it settled is worse than not jumping at all.
-      if (tookOver || performance.now() >= deadline) {
+      // Give up once a newer navigation replaced this one, the budget is spent, or the visitor takes
+      // over — jumping the page seconds after it settled is worse than not jumping at all.
+      if (!isCurrent() || tookOver || performance.now() >= deadline) {
         done(null);
         return;
       }
