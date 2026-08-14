@@ -186,14 +186,11 @@
       "updated": "Uppdaterad {date}",
       "empty": "Inga dokument ännu",
       "load_failed": "Kunde inte läsa in dokumenten",
-      "navigation": {
-        "link": "Dokument"
-      },
       "page": {
-        "title": "Dokument",
+        "subtitle": "Kataloger, lookbooks, prislistor och säljguider — öppna eller ladda ner de senaste utgåvorna.",
         "search_placeholder": "Sök efter namn",
         "search_aria": "Sök dokument",
-        "all_tab": "Alla {count}",
+        "all_tab": "Alla",
         "results_count": "{count} dokument | {count} dokument",
         "empty": "Inga dokument ännu",
         "no_results": "Inga dokument matchar din sökning",
@@ -201,16 +198,11 @@
         "load_failed": "Kunde inte läsa in dokumenten"
       },
       "details": {
-        "title": "Dokumentdetaljer",
-        "close": "Stäng detaljer",
-        "category": "Kategori",
-        "type": "Typ",
-        "size": "Storlek",
-        "created": "Skapad",
-        "updated": "Uppdaterad",
-        "pages": "Sidor",
-        "open": "Öppna i ny flik",
+        "pages_count": "{count} sida | {count} sidor",
+        "released": "Publicerad {date}",
+        "open": "Öppna dokument",
         "download": "Ladda ner",
+        "close": "Stäng detaljer",
         "not_found": "Det här dokumentet är inte längre tillgängligt."
       }
     },

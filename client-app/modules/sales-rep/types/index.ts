@@ -28,6 +28,8 @@ export type SalesRepSortDirectionType = "asc" | "desc";
 export type SalesRepRuleType = {
   name: string;
   label: string;
+  // Item count shown as a highlighted counter next to the label (document-category tabs only).
+  count?: number;
   defaultDirection?: SalesRepSortDirectionType;
   supportsDirection?: boolean;
 };

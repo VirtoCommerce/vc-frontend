@@ -1,10 +1,129 @@
 <template>
   <div class="documents-page">
     <VcTypography class="documents-page__title" tag="h1">
-      {{ t("sales_rep.documents.page.title") }}
+      {{ t("sales_rep.documents.title") }}
     </VcTypography>
 
+    <p class="documents-page__subtitle">{{ t("sales_rep.documents.page.subtitle") }}</p>
+
     <div class="documents-page__results">
+      <!-- Featured panel (mock order: it leads the page): the explicit ?doc= selection, or the
+           newest document as the default. Selection is deep-linked via ?doc= (no separate route). -->
+      <section v-if="selectedId || featuredDocument" ref="featuredPanel" class="documents-page__featured">
+        <template v-if="featuredDocument">
+          <span class="documents-page__featured-preview">
+            <!-- Only previewUrl may back an <img>: the download endpoint (`url`) needs auth
+                 headers a plain image request cannot send. No preview -> large file-type icon. -->
+            <VcImage
+              v-if="featuredDocument.previewUrl"
+              :src="featuredDocument.previewUrl"
+              :alt="featuredDocument.name"
+              class="documents-page__featured-img"
+              lazy
+            />
+
+            <VcImage
+              v-else
+              :src="documentIcon(featuredDocument.contentType)"
+              alt=""
+              class="documents-page__featured-icon"
+            />
+          </span>
+
+          <div class="documents-page__featured-content">
+            <VcTypography tag="h2" variant="h3" class="documents-page__featured-name">
+              {{ featuredDocument.name }}
+            </VcTypography>
+
+            <p v-if="featuredDocument.summary" class="documents-page__summary">
+              {{ featuredDocument.summary }}
+            </p>
+
+            <ul class="documents-page__meta">
+              <li v-if="featuredTypeLabel" class="documents-page__meta-item">
+                <VcIcon name="file-text" size="xs" />
+
+                {{ featuredTypeLabel }}
+              </li>
+
+              <li v-if="featuredDocument.pageCount" class="documents-page__meta-item">
+                <VcIcon name="files" size="xs" />
+
+                {{
+                  t(
+                    "sales_rep.documents.details.pages_count",
+                    { count: formatStatCount(featuredDocument.pageCount) },
+                    featuredDocument.pageCount,
+                  )
+                }}
+              </li>
+
+              <li class="documents-page__meta-item">
+                <VcIcon name="hard-drive" size="xs" />
+
+                {{ formatSize(featuredDocument.size) }}
+              </li>
+
+              <li class="documents-page__meta-item">
+                <VcIcon name="calendar" size="xs" />
+
+                {{ t("sales_rep.documents.details.released", { date: $d(featuredDocument.createdDate) }) }}
+              </li>
+            </ul>
+
+            <div class="documents-page__actions">
+              <!-- Not a plain anchor: a browser navigation to `url` carries no bearer token, so the
+                   open goes through the authenticated fetch → blob object URL (see files.ts). -->
+              <VcButton
+                append-icon="external-link"
+                @click="openAuthorizedFile(featuredDocument.url, featuredDocument.contentType)"
+              >
+                {{ t("sales_rep.documents.details.open") }}
+              </VcButton>
+
+              <VcButton
+                variant="outline"
+                prepend-icon="download"
+                @click="downloadFile(featuredDocument.url, featuredDocument.name)"
+              >
+                {{ t("sales_rep.documents.details.download") }}
+              </VcButton>
+            </div>
+          </div>
+        </template>
+
+        <!-- A deep-linked id that resolved to nothing (deleted, or not readable). -->
+        <div v-else-if="!detailsLoading" class="documents-page__details-empty">
+          {{ t("sales_rep.documents.details.not_found") }}
+        </div>
+
+        <!-- A deep-linked id still resolving. -->
+        <div v-else class="documents-page__featured-skeleton" aria-hidden="true" />
+
+        <VcButton
+          v-if="selectedId"
+          class="documents-page__featured-close"
+          :aria-label="t('sales_rep.documents.details.close')"
+          icon="x"
+          icon-size="1rem"
+          size="xs"
+          color="neutral"
+          variant="ghost"
+          @click="clearSelection"
+        />
+      </section>
+
+      <!-- Category tabs with highlighted counts ("All 10 | Catalogs 2 | …"); hidden until there is a category to pick. -->
+      <div v-if="categoryRules.length" class="documents-page__controls">
+        <SalesRepRuleChips
+          v-model="category"
+          :rules="categoryRules"
+          :loading="categoriesLoading"
+          :all-label="t('sales_rep.documents.page.all_tab')"
+          :all-count="totalInLibrary"
+        />
+      </div>
+
       <div class="documents-page__search">
         <VcInput
           v-model="localKeyword"
@@ -26,16 +145,10 @@
             />
           </template>
         </VcInput>
-      </div>
 
-      <!-- Category tabs with counts ("All 10 | Catalogs 2 | …"); hidden until there is a category to pick. -->
-      <div v-if="categoryRules.length" class="documents-page__controls">
-        <SalesRepRuleChips
-          v-model="category"
-          :rules="categoryRules"
-          :loading="categoriesLoading"
-          :all-label="allTabLabel"
-        />
+        <div v-if="!failed && documents.length" class="documents-page__count">
+          {{ t("sales_rep.documents.page.results_count", { count: formatStatCount(totalCount) }, totalCount) }}
+        </div>
       </div>
 
       <!-- A failure gets its own view: it must not land in the empty state, which would read as "no
@@ -57,133 +170,40 @@
       </VcEmptyView>
 
       <template v-else>
-        <div class="documents-page__count">
-          {{ t("sales_rep.documents.page.results_count", { count: formatStatCount(totalCount) }, totalCount) }}
+        <!-- First load: placeholder cards, so the grid keeps its footprint. -->
+        <div v-if="loading && !documents.length" class="documents-page__grid" aria-hidden="true">
+          <div v-for="index in DOCUMENTS_PAGE_SIZE" :key="index" class="documents-page__skeleton" />
         </div>
 
-        <div class="documents-page__layout">
-          <!-- First load: placeholder cards, so the grid keeps its footprint. -->
-          <div v-if="loading && !documents.length" class="documents-page__grid" aria-hidden="true">
-            <div v-for="index in DOCUMENTS_PAGE_SIZE" :key="index" class="documents-page__skeleton" />
-          </div>
+        <div v-else class="documents-page__grid">
+          <button
+            v-for="document in documents"
+            :key="document.id"
+            type="button"
+            :class="['document-card', { 'document-card--active': document.id === selectedId }]"
+            :aria-pressed="document.id === selectedId"
+            @click="selectDocument(document)"
+          >
+            <span class="document-card__preview">
+              <!-- Only previewUrl may back an <img>: the download endpoint (`url`) needs auth
+                   headers a plain image request cannot send. No preview -> large file-type icon. -->
+              <VcImage
+                v-if="document.previewUrl"
+                :src="document.previewUrl"
+                :alt="document.name"
+                class="document-card__preview-img"
+                lazy
+              />
 
-          <div v-else class="documents-page__grid">
-            <button
-              v-for="document in documents"
-              :key="document.id"
-              type="button"
-              :class="['document-card', { 'document-card--active': document.id === selectedId }]"
-              :aria-pressed="document.id === selectedId"
-              @click="selectDocument(document)"
-            >
-              <span class="document-card__preview">
-                <!-- Only previewUrl may back an <img>: the download endpoint (`url`) needs auth
-                     headers a plain image request cannot send. No preview -> large file-type icon. -->
-                <VcImage
-                  v-if="document.previewUrl"
-                  :src="document.previewUrl"
-                  :alt="document.name"
-                  class="document-card__preview-img"
-                  lazy
-                />
+              <VcImage v-else :src="documentIcon(document.contentType)" alt="" class="document-card__preview-icon" />
 
-                <VcImage v-else :src="documentIcon(document.contentType)" alt="" class="document-card__preview-icon" />
+              <span class="document-card__badge">{{ documentTypeLabel(document.name, document.contentType) }}</span>
+            </span>
 
-                <span class="document-card__badge">{{ documentTypeLabel(document.name, document.contentType) }}</span>
-              </span>
+            <span class="document-card__name" :title="document.name">{{ document.name }}</span>
 
-              <span class="document-card__name" :title="document.name">{{ document.name }}</span>
-
-              <span v-if="document.category" class="document-card__category">{{ document.category }}</span>
-            </button>
-          </div>
-
-          <!-- Inline details panel (no separate route); selection is deep-linked via ?doc=. -->
-          <aside v-if="selectedId" class="documents-page__panel">
-            <VcWidget size="sm" :title="selectedDocument?.name ?? t('sales_rep.documents.details.title')">
-              <template #append>
-                <VcButton
-                  :aria-label="t('sales_rep.documents.details.close')"
-                  icon="x"
-                  icon-size="1rem"
-                  size="xs"
-                  color="neutral"
-                  variant="ghost"
-                  @click="clearSelection"
-                />
-              </template>
-
-              <div v-if="selectedDocument" class="documents-page__details">
-                <VcImage
-                  v-if="selectedDocument.previewUrl"
-                  :src="selectedDocument.previewUrl"
-                  :alt="selectedDocument.name"
-                  class="documents-page__details-preview"
-                  lazy
-                />
-
-                <dl class="documents-page__meta">
-                  <template v-if="selectedDocument.category">
-                    <dt>{{ t("sales_rep.documents.details.category") }}</dt>
-
-                    <dd>{{ selectedDocument.category }}</dd>
-                  </template>
-
-                  <dt>{{ t("sales_rep.documents.details.type") }}</dt>
-
-                  <dd>{{ documentTypeLabel(selectedDocument.name, selectedDocument.contentType) }}</dd>
-
-                  <dt>{{ t("sales_rep.documents.details.size") }}</dt>
-
-                  <dd>{{ formatSize(selectedDocument.size) }}</dd>
-
-                  <dt>{{ t("sales_rep.documents.details.created") }}</dt>
-
-                  <dd>{{ $d(selectedDocument.createdDate) }}</dd>
-
-                  <dt>{{ t("sales_rep.documents.details.updated") }}</dt>
-
-                  <dd>{{ $d(selectedDocument.modifiedDate) }}</dd>
-
-                  <template v-if="selectedDocument.pageCount">
-                    <dt>{{ t("sales_rep.documents.details.pages") }}</dt>
-
-                    <dd>{{ formatStatCount(selectedDocument.pageCount) }}</dd>
-                  </template>
-                </dl>
-
-                <p v-if="selectedDocument.summary" class="documents-page__summary">
-                  {{ selectedDocument.summary }}
-                </p>
-
-                <div class="documents-page__actions">
-                  <!-- Not a plain anchor: a browser navigation to `url` carries no bearer token, so the
-                       open goes through the authenticated fetch → blob object URL (see files.ts). -->
-                  <VcButton
-                    size="sm"
-                    append-icon="external-link"
-                    @click="openAuthorizedFile(selectedDocument.url, selectedDocument.contentType)"
-                  >
-                    {{ t("sales_rep.documents.details.open") }}
-                  </VcButton>
-
-                  <VcButton
-                    size="sm"
-                    variant="outline"
-                    prepend-icon="download"
-                    @click="downloadFile(selectedDocument.url, selectedDocument.name)"
-                  >
-                    {{ t("sales_rep.documents.details.download") }}
-                  </VcButton>
-                </div>
-              </div>
-
-              <!-- A deep-linked id that resolved to nothing (deleted, or not readable). -->
-              <div v-else-if="!detailsLoading" class="documents-page__details-empty">
-                {{ t("sales_rep.documents.details.not_found") }}
-              </div>
-            </VcWidget>
-          </aside>
+            <span v-if="document.category" class="document-card__category">{{ document.category }}</span>
+          </button>
         </div>
 
         <VcPagination
@@ -199,7 +219,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, nextTick, ref, watch, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouteQueryParam } from "@/core/composables/useRouteQueryParam";
 import { downloadFile } from "@/shared/files";
@@ -229,16 +249,14 @@ const {
 
 const failed = computed(() => Boolean(error.value));
 
-// Category tabs reuse the shared rule chips: each category is a "rule" labeled "{name} {count}",
-// and the synthetic baseline tab is "All {total}".
+// Category tabs reuse the shared rule chips: each category is a "rule" named after the subfolder,
+// with its document count rendered by the chips as a highlighted counter; the synthetic baseline
+// tab is "All" carrying the library total.
 const categoryRules = computed<SalesRepRuleType[]>(() =>
-  categories.value.map((entry) => ({ name: entry.name, label: `${entry.name} ${formatStatCount(entry.count)}` })),
+  categories.value.map((entry) => ({ name: entry.name, label: entry.name, count: entry.count })),
 );
 
 const totalInLibrary = computed(() => categories.value.reduce((sum, entry) => sum + entry.count, 0));
-const allTabLabel = computed(() =>
-  t("sales_rep.documents.page.all_tab", { count: formatStatCount(totalInLibrary.value) }),
-);
 
 // Unapplied search term; committed to the query on Enter or the search button.
 const localKeyword = ref("");
@@ -283,6 +301,38 @@ const selectedDocument = computed<SalesRepDocumentType | undefined>(
   () => selectedFromPage.value ?? fetchedDocument.value,
 );
 
+// The newest document in the library = the first item of the DEFAULT list (server sorts
+// createdDate:desc). Captured sticky from the unfiltered first page — which is always the first
+// load — so a later tab/search/page change doesn't re-anoint some other document as "newest".
+const newestDocument = ref<SalesRepDocumentType>();
+
+watchEffect(() => {
+  if (!keyword.value && !category.value && page.value === 1 && documents.value.length) {
+    newestDocument.value = documents.value[0];
+  }
+});
+
+// The featured panel shows the explicit selection when there is one, else the newest document.
+const featuredDocument = computed<SalesRepDocumentType | undefined>(() =>
+  selectedId.value ? selectedDocument.value : newestDocument.value,
+);
+
+const featuredTypeLabel = computed(() =>
+  featuredDocument.value ? documentTypeLabel(featuredDocument.value.name, featuredDocument.value.contentType) : "",
+);
+
+const featuredPanel = ref<HTMLElement>();
+
+// The panel sits above the grid, so picking a card far down the page would otherwise change it
+// off-screen. Optional call: jsdom has no scrollIntoView.
+watch(selectedId, async (id) => {
+  if (!id) {
+    return;
+  }
+  await nextTick();
+  featuredPanel.value?.scrollIntoView?.({ behavior: "smooth", block: "nearest" });
+});
+
 function selectDocument(document: SalesRepDocumentType): void {
   selectedId.value = document.id;
 }
@@ -304,17 +354,21 @@ function formatSize(bytes: number): string {
     @apply [word-break:break-word];
   }
 
+  &__subtitle {
+    @apply -mt-2 mb-2 text-sm text-neutral-600;
+  }
+
   // Own the search→content spacing (gap-4 = 1rem, matching My customers).
   &__results {
     @apply flex flex-col gap-4;
   }
 
   &__search {
-    @apply flex;
+    @apply flex items-center gap-4;
   }
 
   &__search-input {
-    @apply w-full;
+    @apply w-full flex-1;
   }
 
   &__controls {
@@ -322,17 +376,12 @@ function formatSize(bytes: number): string {
   }
 
   &__count {
-    @apply text-sm text-neutral-500;
-  }
-
-  // Grid + optional details rail; the rail splits off at xl, mirroring the hub dashboard.
-  &__layout {
-    @apply flex flex-col gap-5 xl:flex-row xl:items-start;
+    @apply shrink-0 whitespace-nowrap text-sm text-neutral-500;
   }
 
   // ~2 cards per row on phones, growing to 4–5 on desktop (auto-fill keeps it responsive).
   &__grid {
-    @apply grid min-w-0 flex-1 gap-4;
+    @apply grid min-w-0 gap-4;
 
     grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
   }
@@ -341,32 +390,50 @@ function formatSize(bytes: number): string {
     @apply h-52 animate-pulse rounded-[--vc-radius] bg-neutral-100;
   }
 
-  &__panel {
-    @apply min-w-0 xl:w-80 xl:shrink-0;
+  // Featured/selected document panel — leads the page, preview left (~1/3), content right.
+  &__featured {
+    @apply relative flex flex-col gap-4 rounded-[--vc-radius] border border-neutral-200 bg-additional-50 p-4 md:flex-row md:gap-6 md:p-5;
   }
 
-  &__details {
-    @apply flex flex-col gap-3;
+  &__featured-preview {
+    @apply flex min-h-40 items-center justify-center overflow-hidden rounded bg-neutral-50 md:w-1/3 md:shrink-0;
   }
 
-  &__details-preview {
-    @apply max-h-40 w-full rounded border border-neutral-200 object-contain;
+  &__featured-img {
+    @apply max-h-64 w-full object-contain;
+  }
+
+  &__featured-icon {
+    @apply size-20;
+  }
+
+  &__featured-content {
+    @apply flex min-w-0 flex-1 flex-col items-start gap-3;
+  }
+
+  &__featured-name {
+    @apply [word-break:break-word];
+  }
+
+  &__featured-close {
+    @apply absolute right-2 top-2;
+  }
+
+  &__featured-skeleton {
+    @apply h-40 w-full animate-pulse rounded bg-neutral-100;
   }
 
   &__details-empty {
     @apply text-sm text-neutral-500;
   }
 
+  // Icon + text meta line ("PDF · 96 pages · 18.6 MB · Released …").
   &__meta {
-    @apply m-0 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm;
+    @apply m-0 flex list-none flex-wrap items-center gap-x-4 gap-y-1 p-0 text-sm text-neutral-500;
+  }
 
-    dt {
-      @apply font-medium text-neutral-500;
-    }
-
-    dd {
-      @apply m-0 [word-break:break-word];
-    }
+  &__meta-item {
+    @apply inline-flex items-center gap-1.5;
   }
 
   &__summary {

@@ -81,14 +81,15 @@ const createWrapper = createWrapperFactory(mount, Documents, {
     renderStubDefaultSlot: false,
     mocks: { $d: (value: unknown) => String(value) },
     stubs: {
-      VcTypography: true,
+      // Renders its slot so tests can read which document the featured panel names.
+      VcTypography: { template: "<div><slot /></div>" },
       VcInput: true,
       VcButton: true,
+      VcBadge: true,
       VcIcon: true,
       VcImage: true,
       VcEmptyView: true,
       VcPagination: true,
-      VcWidget: { template: '<div><slot name="append" /><slot /></div>' },
     },
   },
 });
@@ -111,7 +112,7 @@ beforeEach(() => {
 });
 
 describe("Documents category tabs", () => {
-  it("renders a tab per category, labeled with its count, after the All baseline", () => {
+  it("renders a tab per category with a highlighted count, after the All baseline", () => {
     state.items.value = [makeDocument()];
     state.categories.value = [
       { name: "Catalogs", count: 2 },
@@ -121,11 +122,15 @@ describe("Documents category tabs", () => {
     const wrapper = createWrapper();
     const tabs = wrapper.findAll(".sales-rep-rule-chips__tab");
 
-    expect(tabs.map((tab) => tab.text())).toEqual([
-      "sales_rep.documents.page.all_tab", // t() is mocked to the key; the count is its parameter
-      "Catalogs 2",
-      "Guides 5",
+    expect(tabs.map((tab) => tab.find(".sales-rep-rule-chips__label").text())).toEqual([
+      "sales_rep.documents.page.all_tab", // t() is mocked to the key
+      "Catalogs",
+      "Guides",
     ]);
+
+    // The count is a separate accent-styled element (design mock), not baked into the label;
+    // the All baseline carries the library total.
+    expect(tabs.map((tab) => tab.find(".sales-rep-rule-chips__count").text())).toEqual(["7", "2", "5"]);
   });
 
   it("selects the category and resets the page when a tab is clicked", async () => {
@@ -183,19 +188,61 @@ describe("Documents states", () => {
   });
 });
 
-describe("Documents selection", () => {
-  it("marks the selected card and shows the inline details panel with both actions", async () => {
+describe("Documents page order", () => {
+  // The mock's layout: featured panel first, then the category tabs, then the search field, then the grid.
+  it("renders featured panel -> category tabs -> search -> grid", () => {
+    state.items.value = [makeDocument()];
+    state.categories.value = [{ name: "Catalogs", count: 2 }];
+
+    const html = createWrapper().html();
+    const order = [
+      html.indexOf("documents-page__featured"),
+      html.indexOf("sales-rep-rule-chips"),
+      html.indexOf("documents-page__search"),
+      html.indexOf("documents-page__grid"),
+    ];
+
+    expect(order.every((index) => index >= 0)).toBe(true);
+    expect(order).toEqual([...order].sort((left, right) => left - right));
+  });
+});
+
+describe("Documents featured panel", () => {
+  it("features the newest document when nothing is selected", () => {
     state.items.value = [makeDocument(), makeDocument({ id: "doc-2", name: "Price list.xlsx" })];
 
     const wrapper = createWrapper();
-    expect(wrapper.find(".documents-page__panel").exists()).toBe(false);
+    const featured = wrapper.find(".documents-page__featured");
 
+    expect(featured.exists()).toBe(true);
+    // The list is server-sorted createdDate:desc, so the first item of the default list is the newest.
+    expect(featured.find(".documents-page__featured-name").text()).toBe("Spring catalog.pdf");
+    // No badge: the "Latest release" chip was removed pending a real tagging system.
+    expect(featured.find("vc-badge-stub").exists()).toBe(false);
+    // No explicit selection -> nothing to close.
+    expect(featured.find(".documents-page__featured-close").exists()).toBe(false);
+  });
+
+  it("features the selected document when it is not the newest", async () => {
+    state.items.value = [makeDocument(), makeDocument({ id: "doc-2", name: "Price list.xlsx" })];
+
+    const wrapper = createWrapper();
     await wrapper.findAll(".document-card")[1].trigger("click");
 
     expect(state.selectedId.value).toBe("doc-2");
     expect(wrapper.find(".document-card--active").text()).toContain("Price list.xlsx");
-    expect(wrapper.find(".documents-page__panel").exists()).toBe(true);
-    expect(wrapper.find(".documents-page__summary").exists()).toBe(true);
+
+    const featured = wrapper.find(".documents-page__featured");
+    expect(featured.find(".documents-page__featured-name").text()).toBe("Price list.xlsx");
+    expect(featured.find("vc-badge-stub").exists()).toBe(false);
+    expect(featured.find(".documents-page__featured-close").exists()).toBe(true);
+    expect(featured.find(".documents-page__summary").exists()).toBe(true);
+  });
+
+  it("hides the panel entirely while the library is empty", () => {
+    const wrapper = createWrapper();
+
+    expect(wrapper.find(".documents-page__featured").exists()).toBe(false);
   });
 
   // Open must not be an anchor (a navigation carries no bearer token); it goes through the

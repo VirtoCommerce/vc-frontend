@@ -96,7 +96,8 @@ export function init(router: Router, i18n: I18n) {
     ? [
         {
           id: DOCUMENTS_NAV_LINK_ID,
-          title: "sales_rep.documents.navigation.link",
+          // The one "Document library" label — shared by this nav link, the page H1 and the widget.
+          title: "sales_rep.documents.title",
           icon: "document-text",
           route: { name: DOCUMENTS_ROUTE_NAME },
         },

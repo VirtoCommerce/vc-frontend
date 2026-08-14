@@ -186,14 +186,11 @@
       "updated": "Zaktualizowano {date}",
       "empty": "Brak dokumentów",
       "load_failed": "Nie udało się wczytać dokumentów",
-      "navigation": {
-        "link": "Dokumenty"
-      },
       "page": {
-        "title": "Dokumenty",
+        "subtitle": "Katalogi, lookbooki, cenniki i przewodniki sprzedażowe — otwieraj lub pobieraj najnowsze wydania.",
         "search_placeholder": "Szukaj według nazwy",
         "search_aria": "Szukaj dokumentów",
-        "all_tab": "Wszystkie {count}",
+        "all_tab": "Wszystkie",
         "results_count": "{count} dokumentów | {count} dokument | {count} dokumenty | {count} dokumentów",
         "empty": "Brak dokumentów",
         "no_results": "Żaden dokument nie pasuje do wyszukiwania",
@@ -201,16 +198,11 @@
         "load_failed": "Nie udało się wczytać dokumentów"
       },
       "details": {
-        "title": "Szczegóły dokumentu",
-        "close": "Zamknij szczegóły",
-        "category": "Kategoria",
-        "type": "Typ",
-        "size": "Rozmiar",
-        "created": "Utworzono",
-        "updated": "Zaktualizowano",
-        "pages": "Strony",
-        "open": "Otwórz w nowej karcie",
+        "pages_count": "{count} stron | {count} strona | {count} strony | {count} stron",
+        "released": "Opublikowano {date}",
+        "open": "Otwórz dokument",
         "download": "Pobierz",
+        "close": "Zamknij szczegóły",
         "not_found": "Ten dokument nie jest już dostępny."
       }
     },

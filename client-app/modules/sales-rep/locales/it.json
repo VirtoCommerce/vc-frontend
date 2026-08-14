@@ -186,14 +186,11 @@
       "updated": "Aggiornato {date}",
       "empty": "Ancora nessun documento",
       "load_failed": "Impossibile caricare i documenti",
-      "navigation": {
-        "link": "Documenti"
-      },
       "page": {
-        "title": "Documenti",
+        "subtitle": "Cataloghi, lookbook, listini prezzi e guide alle vendite — apri o scarica le ultime versioni.",
         "search_placeholder": "Cerca per nome",
         "search_aria": "Cerca documenti",
-        "all_tab": "Tutti {count}",
+        "all_tab": "Tutti",
         "results_count": "{count} documento | {count} documenti",
         "empty": "Ancora nessun documento",
         "no_results": "Nessun documento corrisponde alla tua ricerca",
@@ -201,16 +198,11 @@
         "load_failed": "Impossibile caricare i documenti"
       },
       "details": {
-        "title": "Dettagli del documento",
-        "close": "Chiudi dettagli",
-        "category": "Categoria",
-        "type": "Tipo",
-        "size": "Dimensione",
-        "created": "Creato",
-        "updated": "Aggiornato",
-        "pages": "Pagine",
-        "open": "Apri in una nuova scheda",
+        "pages_count": "{count} pagina | {count} pagine",
+        "released": "Pubblicato {date}",
+        "open": "Apri documento",
         "download": "Scarica",
+        "close": "Chiudi dettagli",
         "not_found": "Questo documento non è più disponibile."
       }
     },
