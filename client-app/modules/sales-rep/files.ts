@@ -27,7 +27,7 @@ export async function openAuthorizedFile(fileUrl: string, contentType?: string):
     link.rel = "noopener noreferrer";
     document.body.appendChild(link);
     link.click();
-    document.body.removeChild(link);
+    link.remove();
 
     setTimeout(() => URL.revokeObjectURL(url), OBJECT_URL_REVOKE_DELAY_MS);
   } catch (error) {
