@@ -49,7 +49,7 @@
           "title": "Dashbord"
         },
         "widgets": {
-          "new_orders": "Nye ordrer",
+          "new_orders": "Ordrer med status «New»",
           "active_carts": "Aktive handlekurver",
           "orders_placed_week": "Ordrer denne uken",
           "orders_placed_mtd": "Ordrer hittil denne måneden",
@@ -64,7 +64,7 @@
           "vs_last_year": "{delta} vs i fjor",
           "ordered_this_month": "{count} bestilte denne måneden",
           "new_customers": "{count} nye kunder",
-          "placed_today": "{count} lagt inn i dag",
+          "of_recent_orders": "av {count} opprettet de siste 7 dagene",
           "items_unit": "vare | varer",
           "not_for_checkout": "{count} ikke til kassen",
           "items_this_week": "{count} vare denne uken | {count} varer denne uken",

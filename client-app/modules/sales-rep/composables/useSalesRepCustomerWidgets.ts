@@ -1,6 +1,6 @@
 import { computed, toValue } from "vue";
 import { useI18n } from "vue-i18n";
-import { buildActiveCartsCardData } from "../layout/active-carts-card";
+import { activeCartsCardData, newOrdersCardData } from "../layout/stat-card-data";
 import { buildStatCards, CUSTOMER_PROFILE_STAT_CARDS } from "../layout/stat-cards";
 import { formatSignedPercent, formatStatCount, formatStatMoney } from "../utils";
 import { useSalesRepCartStatistics } from "./useSalesRepCartStatistics";
@@ -37,9 +37,6 @@ export function useSalesRepCustomerWidgets(organizationId: MaybeRefOrGetter<stri
 
     // Orders YTD compares vs last year on order COUNT (same metric as the dashboard "Orders placed · YTD").
     const ytdDelta = formatSignedPercent(orders?.ytdVsLastYear?.countChangePercent);
-    // Plain green count (no chevron) — New-status orders placed today, for this customer. Formatted
-    // string renders; the raw number is vue-i18n's plural selector (see the dashboard mapper).
-    const placedToday = orders?.newOrdersToday?.count ?? 0;
     // This month's revenue as a share of the year's — a client-side ratio, not a backend field.
     // 0 with no YTD revenue to divide by, so the row reads like every other empty metric.
     const ytdAmount = ytd?.total.amount ?? 0;
@@ -47,17 +44,10 @@ export function useSalesRepCustomerWidgets(organizationId: MaybeRefOrGetter<stri
 
     // Caption, icon and accent come from the shared table; only what the queries decide is here.
     return buildStatCards(CUSTOMER_PROFILE_STAT_CARDS, {
-      new_orders: {
-        ...ordersState,
-        value: formatStatCount(orders?.newOrders?.count),
-        sub: t("sales_rep.hub.dashboard.stats.value_total", {
-          amount: formatStatMoney(orders?.newOrders?.total),
-        }),
-        delta: t("sales_rep.hub.dashboard.stats.placed_today", { count: formatStatCount(placedToday) }, placedToday),
-        deltaTone: "positive",
-      },
+      // Identical on both surfaces, so it comes from the one shared builder.
+      new_orders: newOrdersCardData(orders, ordersState, t),
       // The dashboard's card, one organization: same builder, so the two surfaces cannot drift.
-      active_cart: buildActiveCartsCardData(carts, cartsState, t),
+      active_cart: activeCartsCardData(carts, cartsState, t),
       mtd: {
         ...ordersState,
         value: formatStatMoney(mtd?.total),

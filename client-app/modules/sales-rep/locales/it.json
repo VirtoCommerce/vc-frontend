@@ -49,7 +49,7 @@
           "title": "Dashboard"
         },
         "widgets": {
-          "new_orders": "Nuovi ordini",
+          "new_orders": "Ordini in stato «New»",
           "active_carts": "Carrelli attivi",
           "orders_placed_week": "Ordini di questa settimana",
           "orders_placed_mtd": "Ordini dall’inizio del mese",
@@ -64,7 +64,7 @@
           "vs_last_year": "{delta} vs anno scorso",
           "ordered_this_month": "{count} hanno ordinato questo mese",
           "new_customers": "{count} nuovi clienti",
-          "placed_today": "{count} effettuati oggi",
+          "of_recent_orders": "su {count} creati negli ultimi 7 giorni",
           "items_unit": "articolo | articoli",
           "not_for_checkout": "{count} fuori dal checkout",
           "items_this_week": "{count} articolo questa settimana | {count} articoli questa settimana",

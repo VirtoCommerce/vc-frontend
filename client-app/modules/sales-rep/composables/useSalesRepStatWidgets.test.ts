@@ -86,7 +86,7 @@ function emptyOrders(): OrderStatsType {
     ytd: period,
     week: { count: 0, total: zeroMoney },
     newOrders: { count: 0, total: zeroMoney },
-    newOrdersToday: { count: 0 },
+    recentOrders: { count: 0 },
     // No baseline to compare against, so the backend sends null percents.
     weekVsPrevWeek: { countChange: 0, totalChange: zeroMoney },
     mtdVsPrevMonth: { countChange: 0, totalChange: zeroMoney },
@@ -133,7 +133,7 @@ describe("stat cards for a customer with no data", () => {
 
     expectNoPlaceholders(cards.value);
     expect(cards.value.map((card) => [card.key, card.value, card.sub, card.delta])).toEqual([
-      ["new_orders", "0", "$0.00 total", "0 placed today"],
+      ["new_orders", "0", "$0.00 total", "of 0 created in the last 7 days"],
       // Item quantities, not a cart count plus money (VCST-5588).
       ["active_carts", "0", "0 not for checkout", "0 items this week"],
       // No previous-period baseline, so the "vs last X" comparison is absent rather than a false 0%.
@@ -156,7 +156,7 @@ describe("stat cards for a customer with no data", () => {
 
     expectNoPlaceholders(cards.value);
     expect(cards.value.map((card) => [card.key, card.value, card.sub, card.delta])).toEqual([
-      ["new_orders", "0", "$0.00 total", "0 placed today"],
+      ["new_orders", "0", "$0.00 total", "of 0 created in the last 7 days"],
       // The dashboard's card, scoped to one organization — same figures, same wording.
       ["active_cart", "0", "0 not for checkout", "0 items this week"],
       ["mtd", "$0.00", undefined, "0% of YTD"],
@@ -186,7 +186,7 @@ describe("stat cards for a customer with partial data", () => {
   it("keeps present figures and zeroes only the absent ones", () => {
     sources.orders.value = {
       currencyCode: "USD",
-      // Present: YTD has real activity. Absent: mtd/week/newOrders/newOrdersToday.
+      // Present: YTD has real activity. Absent: mtd/week/newOrders/recentOrders.
       ytd: { count: 1234, total: money(56789, "$56,789.00"), average: money(46, "$46.02") },
       ytdVsLastYear: { countChange: 12, countChangePercent: 12.4, totalChange: money(1, "$1.00") },
     } satisfies OrderStatsType;
@@ -212,7 +212,7 @@ describe("stat cards for a customer with partial data", () => {
     expect(byKey(dashboard.cards.value, "new_orders")).toMatchObject({
       value: "0",
       sub: "$0.00 total",
-      delta: "0 placed today",
+      delta: "of 0 created in the last 7 days",
     });
     expect(byKey(dashboard.cards.value, "active_carts")).toMatchObject({ value: "0", sub: "0 not for checkout" });
 

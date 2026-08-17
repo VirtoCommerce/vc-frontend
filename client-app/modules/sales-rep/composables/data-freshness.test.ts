@@ -48,7 +48,7 @@ function orderStatistics() {
       ytd: orderPeriod(metric),
       week: orderPeriod(metric),
       newOrders: orderPeriod(metric),
-      newOrdersToday: orderPeriod(metric),
+      recentOrders: orderPeriod(metric),
       weekVsPrevWeek: orderComparison(),
       mtdVsPrevMonth: orderComparison(),
       ytdVsLastYear: orderComparison(),

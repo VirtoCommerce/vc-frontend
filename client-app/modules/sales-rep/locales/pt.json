@@ -49,7 +49,7 @@
           "title": "Painel"
         },
         "widgets": {
-          "new_orders": "Novos pedidos",
+          "new_orders": "Pedidos com status «New»",
           "active_carts": "Carrinhos ativos",
           "orders_placed_week": "Pedidos desta semana",
           "orders_placed_mtd": "Pedidos no mês atual",
@@ -64,7 +64,7 @@
           "vs_last_year": "{delta} vs ano passado",
           "ordered_this_month": "{count} compraram este mês",
           "new_customers": "{count} novos clientes",
-          "placed_today": "{count} feitos hoje",
+          "of_recent_orders": "de {count} criados nos últimos 7 dias",
           "items_unit": "item | itens",
           "not_for_checkout": "{count} fora do checkout",
           "items_this_week": "{count} item esta semana | {count} itens esta semana",
