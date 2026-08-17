@@ -95,14 +95,15 @@ const {
 
 const failed = computed(() => Boolean(error.value));
 
-// "96 pages · Published May 22" (date-only when no page count) — the row's icon already conveys
-// the file type, and createdDate not modifiedDate: metadata edits must not shift a "Published" date.
+// "Published May 22 · 96 pages" (date only when no page count) — same order as the browse-page cards;
+// the row's icon already conveys the file type, and createdDate not modifiedDate so metadata edits
+// don't shift a "Published" date.
 function metaOf(document: SalesRepDocumentType): string {
   return [
+    t("sales_rep.documents.published", { date: d(document.createdDate, "short") }),
     document.pageCount
       ? t("sales_rep.documents.details.pages_count", { count: formatStatCount(document.pageCount) }, document.pageCount)
       : "",
-    t("sales_rep.documents.published", { date: d(document.createdDate, "short") }),
   ]
     .filter(Boolean)
     .join(" · ");
