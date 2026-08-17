@@ -35,7 +35,7 @@
             <div class="sales-rep-documents__details">
               <span class="sales-rep-documents__name" :title="document.displayName">{{ document.displayName }}</span>
 
-              <span class="sales-rep-documents__meta">{{ metaOf(document) }}</span>
+              <span class="sales-rep-documents__meta">{{ documentMeta(document, t, d) }}</span>
             </div>
 
             <!-- Not a plain anchor: a browser navigation to `url` carries no bearer token, so the
@@ -64,9 +64,8 @@ import { useBlockChrome } from "../composables/useBlockChrome";
 import { useSalesRepDocuments } from "../composables/useSalesRepDocuments";
 import { DOCUMENTS_DEFAULT_ROWS, DOCUMENTS_ROUTE_NAME } from "../constants";
 import { openAuthorizedFile } from "../files";
-import { documentIcon, formatStatCount } from "../utils";
+import { documentIcon, documentMeta } from "../utils";
 import LayoutWidget from "./layout-widget.vue";
-import type { SalesRepDocumentType } from "../types";
 
 interface IProps {
   // Widget heading; omit inside a layout, where LayoutWidget falls back to the block's titleKey.
@@ -94,20 +93,6 @@ const {
 } = useSalesRepDocuments({ pageSize: () => rowLimit.value, sort: "isPinned:desc;createdDate:desc" });
 
 const failed = computed(() => Boolean(error.value));
-
-// "Published May 22 · 96 pages" (date only when no page count) — same order as the browse-page cards;
-// the row's icon already conveys the file type, and createdDate not modifiedDate so metadata edits
-// don't shift a "Published" date.
-function metaOf(document: SalesRepDocumentType): string {
-  return [
-    t("sales_rep.documents.published", { date: d(document.createdDate, "short") }),
-    document.pageCount
-      ? t("sales_rep.documents.details.pages_count", { count: formatStatCount(document.pageCount) }, document.pageCount)
-      : "",
-  ]
-    .filter(Boolean)
-    .join(" · ");
-}
 </script>
 
 <style lang="scss">

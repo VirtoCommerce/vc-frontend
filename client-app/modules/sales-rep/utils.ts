@@ -1,8 +1,9 @@
 import { ContentType } from "@/core/enums";
 import { globals } from "@/core/globals";
 import type { MoneyType } from "./api/graphql/types";
-import type { SalesRepRuleType } from "./types";
+import type { SalesRepDocumentType, SalesRepRuleType } from "./types";
 import type { StatWidgetToneType } from "./types/widgets";
+import type { ComposerTranslation } from "vue-i18n";
 
 // Selectable filter options exclude the backend "all" rule (chips already prepend a synthetic "All" baseline).
 export function selectableFilterRules(rules: SalesRepRuleType[]): SalesRepRuleType[] {
@@ -170,8 +171,10 @@ const CONTENT_TYPE_BADGES: Record<string, string> = {
   "text/csv": "CSV",
 };
 
+const FILE_EXTENSION_RE = /\.([a-z\d]+)$/i;
+
 export function documentTypeLabel(name: string, contentType?: string | null): string {
-  const extension = /\.([a-z\d]+)$/i.exec(name)?.[1];
+  const extension = FILE_EXTENSION_RE.exec(name)?.[1];
   if (extension) {
     return extension.toUpperCase();
   }
@@ -183,11 +186,28 @@ export function documentTypeLabel(name: string, contentType?: string | null): st
 // Mirrors VcFile's icon mapping (ui-kit vc-file.vue): a known ContentType resolves to its
 // assets/images/file-*.svg, anything else to the generic file icon. VcImage resolves the bare
 // filename to the theme's image folder.
+const CONTENT_TYPE_KEYS = new Set<string>(Object.keys(ContentType));
+
 export function documentIcon(contentType?: string | null): string {
-  const known = Object.keys(ContentType).includes(contentType as ContentType)
-    ? ContentType[contentType as ContentType]
-    : undefined;
+  const known = CONTENT_TYPE_KEYS.has(contentType as ContentType) ? ContentType[contentType as ContentType] : undefined;
   return `file-${known ? known.replace("/", "-") : "file"}.svg`;
+}
+
+// "Published May 22 · 96 pages" (date only when no page count) — shared by the widget rows and the
+// browse-page cards. t/d are passed in so the string stays reactive to the caller's locale.
+export function documentMeta(
+  document: SalesRepDocumentType,
+  t: ComposerTranslation,
+  d: (value: number | Date | string, format: string) => string,
+): string {
+  return [
+    t("sales_rep.documents.published", { date: d(document.createdDate, "short") }),
+    document.pageCount
+      ? t("sales_rep.documents.details.pages_count", { count: formatStatCount(document.pageCount) }, document.pageCount)
+      : "",
+  ]
+    .filter(Boolean)
+    .join(" · ");
 }
 
 // Backend percent is already ×100 and null when the baseline is zero (no delta then); tri-state

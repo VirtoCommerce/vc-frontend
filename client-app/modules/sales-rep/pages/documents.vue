@@ -218,7 +218,7 @@
 
               <span v-if="document.category" class="document-card__category">{{ document.category }}</span>
 
-              <span class="document-card__meta">{{ cardMetaOf(document) }}</span>
+              <span class="document-card__meta">{{ documentMeta(document, t, d) }}</span>
             </button>
 
             <!-- Quick actions, revealed on hover and on :focus-within so they stay keyboard-reachable
@@ -272,7 +272,7 @@ import { useSalesRepDocuments } from "../composables/useSalesRepDocuments";
 import { useSalesRepPinnedDocument } from "../composables/useSalesRepPinnedDocument";
 import { DOCUMENTS_PAGE_SIZE } from "../constants";
 import { openAuthorizedFile } from "../files";
-import { documentIcon, documentTypeLabel, formatStatCount } from "../utils";
+import { documentIcon, documentMeta, documentTypeLabel, formatStatCount } from "../utils";
 import type { SalesRepDocumentType, SalesRepRuleType } from "../types";
 
 const { t, d, n } = useI18n();
@@ -390,18 +390,6 @@ function clearSelection(): void {
 function formatSize(bytes: number): string {
   const size = getFileSize(bytes);
   return n(size.value, { notation: "compact", style: "unit", unit: size.unit, unitDisplay: "short" });
-}
-
-// "Published Jul 30, 2026 · 96 pages" (pages only when set) — mirrors the widget's meta wording.
-function cardMetaOf(document: SalesRepDocumentType): string {
-  return [
-    t("sales_rep.documents.published", { date: d(document.createdDate, "short") }),
-    document.pageCount
-      ? t("sales_rep.documents.details.pages_count", { count: formatStatCount(document.pageCount) }, document.pageCount)
-      : "",
-  ]
-    .filter(Boolean)
-    .join(" · ");
 }
 </script>
 
