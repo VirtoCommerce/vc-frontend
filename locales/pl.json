@@ -717,7 +717,11 @@
         "enter_custom_code": "Wprowadź niestandardowy kod",
         "all_coupons": "Zobacz wszystkie kupony i promocje",
         "apply_aria": "Apply coupon {code}",
-        "remove_aria": "Remove coupon"
+        "remove_aria": "Remove coupon",
+        "coupon_code_aria": "Kod kuponu",
+        "applied_announcement": "Kupon {code} został zastosowany.",
+        "removed_announcement": "Kupon {code} został usunięty.",
+        "totals_announcement": "Zniżka {discount}, nowa suma {total}."
       }
     },
     "catalog": {
