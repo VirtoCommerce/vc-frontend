@@ -51,9 +51,12 @@ export type StatisticsWindowsType = {
   weekTo: string;
   prevWeekFrom: string;
   prevWeekTo: string;
-  // Today (start of the user's current day → now) — backs the "new orders placed today" count.
-  todayFrom: string;
-  todayTo: string;
+  // Rolling 7 days of the user's calendar — bounds the `new_orders` card. Rolling rather than
+  // week-to-date, because a Monday-start window reads ~0 first thing Monday, when the actionable
+  // backlog is at its largest. The locale strings spell the span out ("of {count} created in the
+  // last 7 days"), so changing it means retranslating them.
+  recentFrom: string;
+  recentTo: string;
 };
 
 // Local-time counterpart of Date.UTC: the instant at a wall-clock moment in the user's zone, with the same
@@ -83,7 +86,8 @@ export function buildStatisticsWindows(now: Date = new Date()): StatisticsWindow
   const prevMonthStart = local(year, month - 1, 1);
   const yearStart = local(year, 0, 1);
   const prevYearStart = local(year - 1, 0, 1);
-  const todayStart = local(year, month, day);
+  // 7 days *inclusive of today*, hence −6.
+  const recentStart = local(year, month, day - 6);
 
   // Monday-start week: getDay() is 0 (Sun)…6 (Sat); shift so Monday === 0.
   const daysSinceMonday = (now.getDay() + 6) % 7;
@@ -110,8 +114,8 @@ export function buildStatisticsWindows(now: Date = new Date()): StatisticsWindow
     weekTo: nowIso,
     prevWeekFrom: iso(prevWeekStart),
     prevWeekTo: matched(eod(year, month, day - 7), weekStart),
-    todayFrom: iso(todayStart),
-    todayTo: nowIso,
+    recentFrom: iso(recentStart),
+    recentTo: nowIso,
   };
 }
 

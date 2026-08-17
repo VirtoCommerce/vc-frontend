@@ -49,7 +49,7 @@
           "title": "仪表板"
         },
         "widgets": {
-          "new_orders": "新订单",
+          "new_orders": "状态为“New”的订单",
           "active_carts": "活动购物车",
           "active_cart": "活动购物车",
           "orders_placed_week": "本周下单",
@@ -65,7 +65,7 @@
           "vs_last_year": "较去年 {delta}",
           "ordered_this_month": "本月 {count} 家下单",
           "new_customers": "{count} 个新客户",
-          "placed_today": "今日 {count} 单",
+          "of_recent_orders": "近 7 天创建的 {count} 单中",
           "new_this_week": "本周新增 {count}",
           "mtd_of_ytd": "占年初至今 {percent}%",
           "load_failed": "加载失败"
