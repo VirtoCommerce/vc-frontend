@@ -55,8 +55,10 @@ vi.mock("@/shared/files", () => ({
 }));
 
 // The authenticated open path (VCST-5730): a plain anchor would navigate without a bearer token.
+// Keep the real isInlineRenderable (it drives the Open button's v-if); only stub the side-effecting open.
 const openAuthorizedFileMock = vi.hoisted(() => vi.fn());
-vi.mock("../files", () => ({
+vi.mock("../files", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../files")>()),
   openAuthorizedFile: openAuthorizedFileMock,
 }));
 
@@ -311,6 +313,26 @@ describe("Documents featured panel", () => {
     await actions[1].trigger("click");
     expect(downloadFileMock).toHaveBeenCalledWith("/api/sales-rep/documents/doc-1", "Spring catalog.pdf");
   });
+
+  it("hides Open on the featured panel for a type that cannot be viewed in a tab", async () => {
+    // A .docx is not inline-renderable, so Open would only fall back to a download — hide it instead
+    // of letting the caption contradict the behavior. Download stays.
+    state.items.value = [
+      makeDocument({
+        name: "Report.docx",
+        contentType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      }),
+    ];
+    state.selectedId.value = "doc-1";
+
+    const wrapper = createWrapper();
+    const actions = wrapper.find(".documents-page__actions").findAll("vc-button-stub");
+
+    expect(actions).toHaveLength(1);
+    await actions[0].trigger("click");
+    expect(openAuthorizedFileMock).not.toHaveBeenCalled();
+    expect(downloadFileMock).toHaveBeenCalledWith("/api/sales-rep/documents/doc-1", "Report.docx");
+  });
 });
 
 describe("Documents card actions", () => {
@@ -337,6 +359,23 @@ describe("Documents card actions", () => {
     expect(downloadFileMock).toHaveBeenCalledWith("/api/sales-rep/documents/doc-1", "Spring catalog.pdf");
 
     expect(state.selectedId.value).toBe("");
+  });
+
+  it("hides Open on a card for a non-viewable type, leaving only Download", async () => {
+    state.items.value = [
+      makeDocument({
+        name: "Report.docx",
+        contentType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      }),
+    ];
+
+    const wrapper = createWrapper();
+    const actions = wrapper.find(".document-card__overlay").findAll("vc-button-stub");
+
+    expect(actions).toHaveLength(1);
+    await actions[0].trigger("click");
+    expect(openAuthorizedFileMock).not.toHaveBeenCalled();
+    expect(downloadFileMock).toHaveBeenCalledWith("/api/sales-rep/documents/doc-1", "Report.docx");
   });
 
   it("names the card by displayName while the type badge derives from the raw file name", () => {

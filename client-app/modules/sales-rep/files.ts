@@ -21,14 +21,22 @@ const INLINE_RENDERABLE_TYPES = new Set([
   "text/plain",
 ]);
 
+// The single source of truth for "can this be viewed in a tab": the surfaces gate their Open button
+// on it so the button never promises an in-tab view we won't give, and openAuthorizedFile guards on
+// the same predicate. An unknown/empty type is not renderable.
+export function isInlineRenderable(contentType?: string): boolean {
+  const type = contentType?.toLowerCase();
+  return !!type && INLINE_RENDERABLE_TYPES.has(type);
+}
+
 // Views a protected library file. A plain anchor navigation carries NO bearer token (the theme has
 // no auth cookie), so the backend can't authenticate it — fetch through the authenticated path
 // (auth.plugin attaches the Authorization header), then hand the tab the blob's object URL.
 export async function openAuthorizedFile(fileUrl: string, contentType?: string, fileName?: string): Promise<void> {
   // Only known-inert types render inline; everything else is downloaded rather than opened
-  // same-origin. downloadFile fetches through the same authenticated path.
-  const normalizedType = contentType?.toLowerCase();
-  if (!normalizedType || !INLINE_RENDERABLE_TYPES.has(normalizedType)) {
+  // same-origin. downloadFile fetches through the same authenticated path. Callers hide Open for
+  // these types, so this is a safety net for an unknown type rather than the usual path.
+  if (!isInlineRenderable(contentType)) {
     await downloadFile(fileUrl, fileName ?? "");
     return;
   }

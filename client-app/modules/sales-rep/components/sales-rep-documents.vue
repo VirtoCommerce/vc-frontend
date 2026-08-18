@@ -41,6 +41,7 @@
             <!-- Not a plain anchor: a browser navigation to `url` carries no bearer token, so the
                  open goes through the authenticated fetch → blob object URL (see files.ts). -->
             <VcButton
+              v-if="isInlineRenderable(document.contentType)"
               class="sales-rep-documents__open"
               size="xs"
               color="secondary"
@@ -63,7 +64,7 @@ import { useI18n } from "vue-i18n";
 import { useBlockChrome } from "../composables/useBlockChrome";
 import { useSalesRepDocuments } from "../composables/useSalesRepDocuments";
 import { DOCUMENTS_DEFAULT_ROWS, DOCUMENTS_ROUTE_NAME } from "../constants";
-import { openAuthorizedFile } from "../files";
+import { isInlineRenderable, openAuthorizedFile } from "../files";
 import { documentIcon, documentMeta } from "../utils";
 import LayoutWidget from "./layout-widget.vue";
 

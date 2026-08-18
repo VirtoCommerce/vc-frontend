@@ -25,8 +25,10 @@ vi.mock("../composables/useSalesRepDocuments", () => ({
 }));
 
 // The authenticated open path (VCST-5730): a plain anchor would navigate without a bearer token.
+// Keep the real isInlineRenderable (it drives the Open button's v-if); only stub the side-effecting open.
 const openAuthorizedFileMock = vi.hoisted(() => vi.fn());
-vi.mock("../files", () => ({
+vi.mock("../files", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../files")>()),
   openAuthorizedFile: openAuthorizedFileMock,
 }));
 
@@ -175,6 +177,17 @@ describe("SalesRepDocuments states", () => {
       "application/pdf",
       "Spring catalog.pdf",
     );
+  });
+
+  it("hides Open for a type that cannot be viewed in a tab", () => {
+    // Open only ever opens; a non-inline type would fall back to a download, so the button is hidden.
+    state.items.value = [
+      makeDocument({ contentType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" }),
+    ];
+
+    const wrapper = createWrapper();
+
+    expect(wrapper.find(".sales-rep-documents__open").exists()).toBe(false);
   });
 
   it("asks for the default row cap when rendered outside a layout", () => {

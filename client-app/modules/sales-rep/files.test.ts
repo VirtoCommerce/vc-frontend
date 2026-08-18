@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ref } from "vue";
-import { openAuthorizedFile } from "./files";
+import { isInlineRenderable, openAuthorizedFile } from "./files";
 import type { Mock } from "vitest";
 
 const useFetchMock = vi.hoisted(() => vi.fn());
@@ -20,6 +20,25 @@ vi.mock("@/core/utilities", () => ({ Logger: { error: loggerErrorMock } }));
 function mockFetchedBlob(blob: Blob): void {
   useFetchMock.mockReturnValue({ blob: () => Promise.resolve({ data: ref(blob) }) });
 }
+
+describe("isInlineRenderable", () => {
+  it.each(["application/pdf", "image/png", "image/jpeg", "image/gif", "image/webp", "text/plain", "IMAGE/PNG"])(
+    "allows the inline-viewable type %s (case-insensitively)",
+    (type) => {
+      expect(isInlineRenderable(type)).toBe(true);
+    },
+  );
+
+  it.each([
+    undefined,
+    "",
+    "image/svg+xml", // scriptable — deliberately excluded
+    "text/html", // scriptable — deliberately excluded
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  ])("rejects the non-viewable/unknown type %s", (type) => {
+    expect(isInlineRenderable(type)).toBe(false);
+  });
+});
 
 describe("openAuthorizedFile", () => {
   let openSpy: Mock;

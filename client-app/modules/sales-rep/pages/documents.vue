@@ -87,6 +87,7 @@
               <!-- Not a plain anchor: a browser navigation to `url` carries no bearer token, so the
                    open goes through the authenticated fetch → blob object URL (see files.ts). -->
               <VcButton
+                v-if="isInlineRenderable(featuredDocument.contentType)"
                 prepend-icon="eye"
                 @click="openAuthorizedFile(featuredDocument.url, featuredDocument.contentType, featuredDocument.name)"
               >
@@ -225,6 +226,7 @@
                  (tabbing onto either button shows the overlay — never hover-only). -->
             <span class="document-card__overlay">
               <VcButton
+                v-if="isInlineRenderable(document.contentType)"
                 class="document-card__action"
                 size="xs"
                 color="secondary"
@@ -270,7 +272,7 @@ import SalesRepRuleChips from "../components/sales-rep-rule-chips.vue";
 import { useSalesRepDocument } from "../composables/useSalesRepDocument";
 import { useSalesRepDocuments } from "../composables/useSalesRepDocuments";
 import { DOCUMENTS_PAGE_SIZE } from "../constants";
-import { openAuthorizedFile } from "../files";
+import { isInlineRenderable, openAuthorizedFile } from "../files";
 import { documentIcon, documentMeta, documentTypeLabel, formatStatCount } from "../utils";
 import type { SalesRepDocumentType, SalesRepRuleType } from "../types";
 
