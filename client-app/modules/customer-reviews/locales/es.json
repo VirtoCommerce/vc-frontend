@@ -4,11 +4,13 @@
       "leave_feedback": "Dejar comentario"
     },
     "labels": {
-      "feedback": "Comentario",
+      "feedback": "Comentarios",
       "rating": "Calificación",
       "rate_product": "Calificar producto",
       "item_as_described_by_vendor": "¿El artículo es como lo describe el vendedor?",
-      "product_review_image": "Imagen de reseña de producto"
+      "product_review_image": "Imagen de reseña de producto",
+      "product_review_image_of": "Imagen de reseña de producto {index} de {total}",
+      "reviews_count": "sin reseñas | {n} reseña | {n} reseñas"
     },
     "messages": {
       "thanks_for_feedback": "Tu comentario ha sido enviado y está pendiente de confirmación. ¡Gracias!"

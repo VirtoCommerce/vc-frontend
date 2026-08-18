@@ -14,7 +14,8 @@
       "search_aria": "搜索销售代表",
       "empty": "未找到销售代表",
       "no_results": "没有销售代表符合您的搜索条件",
-      "reset_search": "重置搜索"
+      "reset_search": "重置搜索",
+      "load_failed": "无法加载销售代表"
     },
     "my_customers": {
       "navigation": {
