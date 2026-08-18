@@ -123,6 +123,14 @@
         "ship_to": "Leveransadress"
       }
     },
+    "customer_orders": {
+      "page": {
+        "title": "Beställningar för {customer}",
+        "title_fallback": "Beställningar"
+      },
+      "breadcrumb": "Beställningar",
+      "back_to_customer": "Tillbaka till kunden"
+    },
     "communication": {
       "action": "Skicka e-post",
       "title": "Skicka ett meddelande",

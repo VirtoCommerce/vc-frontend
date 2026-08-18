@@ -123,6 +123,14 @@
         "ship_to": "Ship-to"
       }
     },
+    "customer_orders": {
+      "page": {
+        "title": "{customer} orders",
+        "title_fallback": "Orders"
+      },
+      "breadcrumb": "Orders",
+      "back_to_customer": "Back to customer"
+    },
     "communication": {
       "action": "Send email",
       "title": "Send a message",

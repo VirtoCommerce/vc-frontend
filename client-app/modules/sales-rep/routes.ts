@@ -1,6 +1,8 @@
 import { useUser } from "@/shared/account/composables/useUser";
 import { isSalesRepsEnabled } from "./composables/useSalesRepsConfig";
 import {
+  CUSTOMER_ORDERS_ROUTE_NAME,
+  CUSTOMER_ORDERS_ROUTE_SEGMENT,
   CUSTOMER_PROFILE_ROUTE_NAME,
   CUSTOMER_PROFILE_ROUTE_SEGMENT,
   DASHBOARD_ROUTE_NAME,
@@ -11,9 +13,10 @@ import {
   ROUTE_SEGMENT,
   SALES_REP_ACCESS_PERMISSION,
 } from "./constants";
-import type { RouteRecordRaw } from "vue-router";
+import type { NavigationGuardNext, RouteLocationNormalized, RouteRecordRaw } from "vue-router";
 
 const SalesRepsPage = () => import("./pages/sales-reps.vue");
+const CustomerOrdersPage = () => import("./pages/customer-orders.vue");
 const MyCustomersPage = () => import("./pages/my-customers.vue");
 const CustomerProfilePage = () => import("./pages/customer-profile.vue");
 const DashboardPage = () => import("./pages/dashboard.vue");
@@ -70,6 +73,20 @@ export const myCustomersRoute: RouteRecordRaw = {
   },
 };
 
+// Reps-only gate + deep-link id check for the pages addressed by an organizationId; the
+// not-served/unknown-org case is handled on the page itself.
+function guardCustomerRoute(to: RouteLocationNormalized, next: NavigationGuardNext): void {
+  if (!guardSalesRep(next)) {
+    return;
+  }
+  const id = to.params.organizationId;
+  if (id && typeof id === "string") {
+    next();
+  } else {
+    next({ name: MY_CUSTOMERS_ROUTE_NAME });
+  }
+}
+
 // Customer profile (VCST-5308) -> /company/my-customers/:organizationId.
 export const customerProfileRoute: RouteRecordRaw = {
   path: CUSTOMER_PROFILE_ROUTE_SEGMENT,
@@ -77,16 +94,19 @@ export const customerProfileRoute: RouteRecordRaw = {
   component: CustomerProfilePage,
   props: true,
   meta: repRouteMeta,
-  // Reps-only gate + deep-link id check; the not-served/unknown-org case is handled on the page.
   beforeEnter(to, _from, next) {
-    if (!guardSalesRep(next)) {
-      return;
-    }
-    const id = to.params.organizationId;
-    if (id && typeof id === "string") {
-      next();
-    } else {
-      next({ name: MY_CUSTOMERS_ROUTE_NAME });
-    }
+    guardCustomerRoute(to, next);
+  },
+};
+
+// The customer's own orders (VCST-5733) -> /company/my-customers/:organizationId/orders.
+export const customerOrdersRoute: RouteRecordRaw = {
+  path: CUSTOMER_ORDERS_ROUTE_SEGMENT,
+  name: CUSTOMER_ORDERS_ROUTE_NAME,
+  component: CustomerOrdersPage,
+  props: true,
+  meta: repRouteMeta,
+  beforeEnter(to, _from, next) {
+    guardCustomerRoute(to, next);
   },
 };

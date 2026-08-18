@@ -123,6 +123,14 @@
         "ship_to": "Enviar para"
       }
     },
+    "customer_orders": {
+      "page": {
+        "title": "Pedidos de {customer}",
+        "title_fallback": "Pedidos"
+      },
+      "breadcrumb": "Pedidos",
+      "back_to_customer": "Voltar ao cliente"
+    },
     "communication": {
       "action": "Enviar e-mail",
       "title": "Enviar uma mensagem",

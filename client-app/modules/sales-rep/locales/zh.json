@@ -123,6 +123,14 @@
         "ship_to": "收货地址"
       }
     },
+    "customer_orders": {
+      "page": {
+        "title": "{customer} 的订单",
+        "title_fallback": "订单"
+      },
+      "breadcrumb": "订单",
+      "back_to_customer": "返回客户"
+    },
     "communication": {
       "action": "发送电子邮件",
       "title": "发送消息",

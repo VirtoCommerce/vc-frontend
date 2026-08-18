@@ -1,7 +1,12 @@
 <template>
   <LayoutWidget :title="title" size="md" class="sales-rep-orders">
     <template #append>
-      <VcLink :to="{ name: 'Orders' }" class="sales-rep-orders__all-link" target="_blank" rel="noopener noreferrer">
+      <VcLink
+        :to="allOrdersRoute"
+        class="sales-rep-orders__all-link"
+        :target="isCrossCustomer ? '_blank' : undefined"
+        :rel="isCrossCustomer ? 'noopener noreferrer' : undefined"
+      >
         {{ t("sales_rep.orders.view_all") }}
 
         <VcIcon name="arrow-right" size="xs" />
@@ -141,7 +146,7 @@ import { useSalesRepColumnSort } from "../composables/useSalesRepColumnSort";
 import { useSalesRepOrders } from "../composables/useSalesRepOrders";
 import { useSalesRepPeriodFilter } from "../composables/useSalesRepPeriodFilter";
 import { useSalesRepRules } from "../composables/useSalesRepRules";
-import { ORDERS_DEFAULT_LIMIT } from "../constants";
+import { CUSTOMER_ORDERS_ROUTE_NAME, ORDERS_DEFAULT_LIMIT } from "../constants";
 import { knownHiddenTabs, toggleTabRule, visibleTabRules } from "../layout/settings";
 import { selectableFilterRules } from "../utils";
 import LayoutWidget from "./layout-widget.vue";
@@ -168,6 +173,14 @@ const props = withDefaults(defineProps<IProps>(), {
 const { t } = useI18n();
 
 const isCrossCustomer = computed(() => !props.organizationId);
+
+// One customer -> their own order list, in place, so the rep keeps the customer's context. Cross-customer
+// -> the buyer-facing orders page, the only list that spans customers.
+const allOrdersRoute = computed(() =>
+  props.organizationId
+    ? { name: CUSTOMER_ORDERS_ROUTE_NAME, params: { organizationId: props.organizationId } }
+    : { name: "Orders" },
+);
 
 // Selected named rules; undefined → the server default (baseline filter / "recent" sort).
 const filter = ref<string | undefined>(undefined);

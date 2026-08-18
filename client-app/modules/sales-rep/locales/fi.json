@@ -123,6 +123,14 @@
         "ship_to": "Toimitusosoite"
       }
     },
+    "customer_orders": {
+      "page": {
+        "title": "Asiakkaan {customer} tilaukset",
+        "title_fallback": "Tilaukset"
+      },
+      "breadcrumb": "Tilaukset",
+      "back_to_customer": "Takaisin asiakkaan tietoihin"
+    },
     "communication": {
       "action": "Lähetä sähköposti",
       "title": "Lähetä viesti",

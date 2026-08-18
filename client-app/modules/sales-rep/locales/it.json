@@ -123,6 +123,14 @@
         "ship_to": "Indirizzo di spedizione"
       }
     },
+    "customer_orders": {
+      "page": {
+        "title": "Ordini di {customer}",
+        "title_fallback": "Ordini"
+      },
+      "breadcrumb": "Ordini",
+      "back_to_customer": "Torna al cliente"
+    },
     "communication": {
       "action": "Invia email",
       "title": "Invia un messaggio",

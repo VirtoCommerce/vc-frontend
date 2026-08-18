@@ -123,6 +123,14 @@
         "ship_to": "Адрес доставки"
       }
     },
+    "customer_orders": {
+      "page": {
+        "title": "Заказы {customer}",
+        "title_fallback": "Заказы"
+      },
+      "breadcrumb": "Заказы",
+      "back_to_customer": "Назад к клиенту"
+    },
     "communication": {
       "action": "Отправить эл. письмо",
       "title": "Отправить сообщение",

@@ -123,6 +123,14 @@
         "ship_to": "配送先"
       }
     },
+    "customer_orders": {
+      "page": {
+        "title": "{customer} の注文",
+        "title_fallback": "注文"
+      },
+      "breadcrumb": "注文",
+      "back_to_customer": "顧客に戻る"
+    },
     "communication": {
       "action": "メールを送信",
       "title": "メッセージを送信",

@@ -123,6 +123,14 @@
         "ship_to": "Lieferadresse"
       }
     },
+    "customer_orders": {
+      "page": {
+        "title": "Bestellungen von {customer}",
+        "title_fallback": "Bestellungen"
+      },
+      "breadcrumb": "Bestellungen",
+      "back_to_customer": "Zurück zum Kunden"
+    },
     "communication": {
       "action": "E-Mail senden",
       "title": "Nachricht senden",

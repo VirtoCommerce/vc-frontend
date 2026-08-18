@@ -1,4 +1,4 @@
-import { computed, readonly, ref, shallowRef } from "vue";
+import { computed, readonly, ref, shallowRef, toValue } from "vue";
 import { getOrders, getOrganizationOrders } from "@/core/api/graphql/orders";
 import { CUSTOMER_NAME_FACET_NAME, DEFAULT_ORDERS_PER_PAGE, STATUS_ORDERS_FACET_NAME } from "@/core/constants";
 import { SortDirection } from "@/core/enums";
@@ -6,12 +6,14 @@ import { Sort } from "@/core/types";
 import { Logger } from "@/core/utilities";
 import type { CustomerOrderType } from "@/core/api/graphql/types";
 import type { OrderFacetType } from "@/shared/account";
-import type { MaybeRef, Ref } from "vue";
+import type { MaybeRef, MaybeRefOrGetter, Ref } from "vue";
 
 export const facets = shallowRef<OrderFacetType[] | undefined>();
 
 export interface IUseUserOrdersOptions {
   itemsPerPage?: MaybeRef<number>;
+  // Read one organization's orders instead of the caller's own (a sales rep on a customer page).
+  organizationId?: MaybeRefOrGetter<string>;
 }
 
 export function useUserOrders(options: IUseUserOrdersOptions) {
@@ -29,6 +31,8 @@ export function useUserOrders(options: IUseUserOrdersOptions) {
     loading.value = true;
 
     try {
+      const organizationId = toValue(options.organizationId);
+
       const payload = {
         sort: sort.value.toString(),
         first: itemsPerPage.value,
@@ -38,6 +42,8 @@ export function useUserOrders(options: IUseUserOrdersOptions) {
           scope === "organization"
             ? `${STATUS_ORDERS_FACET_NAME} ${CUSTOMER_NAME_FACET_NAME}`
             : STATUS_ORDERS_FACET_NAME,
+        // Spread over getOrganizationOrders' own default, so the key stays absent rather than undefined.
+        ...(organizationId ? { organizationId } : {}),
       };
 
       const response = scope === "organization" ? await getOrganizationOrders(payload) : await getOrders(payload);

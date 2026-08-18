@@ -19,7 +19,7 @@ import {
 } from "./constants";
 import { registerLayoutTypePolicies } from "./layout/cache-policies";
 import { salesRepMenuSchema } from "./menu";
-import { customerProfileRoute, dashboardRoute, myCustomersRoute, salesRepsRoute } from "./routes";
+import { customerOrdersRoute, customerProfileRoute, dashboardRoute, myCustomersRoute, salesRepsRoute } from "./routes";
 import type { I18n } from "@/i18n";
 import type { Router } from "vue-router";
 
@@ -34,6 +34,8 @@ export function init(router: Router, i18n: I18n) {
   router.addRoute("Company", myCustomersRoute);
   // Customer profile (VCST-5308) -> /company/my-customers/:organizationId.
   router.addRoute("Company", customerProfileRoute);
+  // The customer's own orders (VCST-5733) -> /company/my-customers/:organizationId/orders.
+  router.addRoute("Company", customerOrdersRoute);
 
   const { mergeMenuSchema, registerAccountSection } = useNavigations();
   const { checkPermissions } = useUser();
