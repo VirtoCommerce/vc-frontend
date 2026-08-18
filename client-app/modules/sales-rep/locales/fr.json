@@ -14,7 +14,8 @@
       "search_aria": "Rechercher des commerciaux",
       "empty": "Aucun commercial trouvé",
       "no_results": "Aucun commercial ne correspond à votre recherche",
-      "reset_search": "Réinitialiser la recherche"
+      "reset_search": "Réinitialiser la recherche",
+      "load_failed": "Impossible de charger les commerciaux"
     },
     "my_customers": {
       "navigation": {

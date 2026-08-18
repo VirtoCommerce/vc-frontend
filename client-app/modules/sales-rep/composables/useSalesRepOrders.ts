@@ -1,10 +1,10 @@
-import { useQuery } from "@vue/apollo-composable";
 import { computed, toValue } from "vue";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { SalesRepOrdersDocument } from "../api/graphql/types";
 import { HUB_FETCH_POLICY, ORDERS_DEFAULT_LIMIT } from "../constants";
 import { formatStatCount, formatStatMoney } from "../utils";
+import { useSalesRepHubQuery } from "./useSalesRepHubQuery";
 import type { SalesRepOrderRowType } from "../types";
 import type { Ref } from "vue";
 
@@ -41,7 +41,7 @@ export function useSalesRepOrders(options: UseSalesRepOrdersOptionsType = {}) {
   }));
 
   // Revalidates with the KPI cards above it: a stale row read "New" under a card already counting 0.
-  const { result, loading, error, onError } = useQuery(SalesRepOrdersDocument, variables, {
+  const { result, loading, error, onError } = useSalesRepHubQuery(SalesRepOrdersDocument, variables, {
     fetchPolicy: HUB_FETCH_POLICY,
   });
 

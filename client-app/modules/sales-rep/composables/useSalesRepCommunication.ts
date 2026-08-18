@@ -1,4 +1,5 @@
 import { useMutation } from "@vue/apollo-composable";
+import { SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT } from "@/core/api/graphql/consts";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { SendCustomerCommunicationDocument } from "../api/graphql/types";
@@ -12,7 +13,10 @@ const FAILED_RESULT: SalesRepCommunicationResultType = {
 };
 
 export function useSalesRepCommunication() {
-  const { mutate, loading } = useMutation(SendCustomerCommunicationDocument);
+  // Opted out unlike the other mutations: both callers raise their own error toast for a rejected send.
+  const { mutate, loading } = useMutation(SendCustomerCommunicationDocument, {
+    context: SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT,
+  });
 
   async function sendCommunication(input: SalesRepCommunicationInputType): Promise<SalesRepCommunicationResultType> {
     const { storeId, cultureName } = globals;

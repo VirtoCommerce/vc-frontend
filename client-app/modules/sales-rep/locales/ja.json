@@ -14,7 +14,8 @@
       "search_aria": "営業担当者を検索",
       "empty": "営業担当者が見つかりませんでした",
       "no_results": "営業担当者が見つかりませんでした",
-      "reset_search": "検索をリセット"
+      "reset_search": "検索をリセット",
+      "load_failed": "営業担当者を読み込めませんでした"
     },
     "my_customers": {
       "navigation": {
