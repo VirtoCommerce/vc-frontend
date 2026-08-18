@@ -29,6 +29,7 @@ export function mapSalesRepDocument(document: SalesRepDocumentWireType): SalesRe
 }
 
 type UseSalesRepDocumentsOptionsType = {
+  // Expanded union (not MaybeRefOrGetter<… | undefined>) to avoid the redundant "undefined" — Sonar S4782.
   pageSize?: number | Ref<number | undefined> | (() => number | undefined);
   // Also fetch the category tabs (the browse page); the widget skips that extra query.
   withCategories?: boolean;

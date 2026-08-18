@@ -231,7 +231,7 @@ describe("Documents page order", () => {
 });
 
 describe("Documents featured panel", () => {
-  it("features the pinned document by default, badged 'Latest release'", () => {
+  it("features the pinned document by default, badged 'Latest publication'", () => {
     // The server sorts the library pinned-first, so the pinned document is the first row of the
     // default list — the featured panel reads it from there, not a separate query.
     state.items.value = [

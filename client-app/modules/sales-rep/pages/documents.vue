@@ -78,7 +78,6 @@
             </ul>
 
             <div class="documents-page__actions">
-              <!-- Not a plain anchor: `url` carries no bearer token, so open via the authenticated fetch → blob URL (see files.ts). -->
               <VcButton
                 v-if="isInlineRenderable(featuredDocument.contentType)"
                 prepend-icon="eye"
@@ -185,7 +184,6 @@
               @click="selectDocument(document)"
             >
               <span class="document-card__preview">
-                <!-- Only previewUrl may back an <img>; the download endpoint (`url`) needs auth headers a plain image request can't send. -->
                 <VcImage
                   v-if="document.previewUrl"
                   :src="document.previewUrl"
@@ -319,7 +317,6 @@ const selectedId = useRouteQueryParam<string>("doc", { defaultValue: "" });
 
 const selectedFromPage = computed(() => documents.value.find((document) => document.id === selectedId.value));
 
-// The by-id query covers a deep-linked document sitting on another page or behind another filter.
 const { document: fetchedDocument, loading: detailsLoading } = useSalesRepDocument(
   () => selectedId.value || undefined,
   { enabled: () => !selectedFromPage.value },

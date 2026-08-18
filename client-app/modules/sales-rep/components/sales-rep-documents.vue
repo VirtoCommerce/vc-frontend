@@ -36,7 +36,6 @@
               <span class="sales-rep-documents__meta">{{ documentMeta(document, t, d) }}</span>
             </div>
 
-            <!-- Not a plain anchor: `url` carries no bearer token, so open via the authenticated fetch → blob URL (see files.ts). -->
             <VcButton
               v-if="isInlineRenderable(document.contentType)"
               class="sales-rep-documents__open"
