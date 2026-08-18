@@ -185,6 +185,7 @@
       "open": "Öffnen",
       "empty": "Noch keine Dokumente",
       "load_failed": "Dokumente konnten nicht geladen werden",
+      "open_failed": "Dokument konnte nicht geöffnet werden",
       "page": {
         "subtitle": "Kataloge, Lookbooks, Preislisten und Vertriebsleitfäden — öffnen oder laden Sie die neueste Veröffentlichung herunter.",
         "search_placeholder": "Suche nach Name",

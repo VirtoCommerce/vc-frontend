@@ -185,6 +185,7 @@
       "open": "Otwórz",
       "empty": "Brak dokumentów",
       "load_failed": "Nie udało się wczytać dokumentów",
+      "open_failed": "Nie udało się otworzyć dokumentu",
       "page": {
         "subtitle": "Katalogi, lookbooki, cenniki i przewodniki sprzedażowe — otwieraj lub pobieraj najnowszą publikację.",
         "search_placeholder": "Szukaj według nazwy",

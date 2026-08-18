@@ -185,6 +185,7 @@
       "open": "打开",
       "empty": "暂无文档",
       "load_failed": "无法加载文档",
+      "open_failed": "无法打开文档",
       "page": {
         "subtitle": "目录、造型手册、价目表和销售指南 — 打开或下载最新发布。",
         "search_placeholder": "按名称搜索",

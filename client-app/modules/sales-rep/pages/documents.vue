@@ -88,7 +88,7 @@
                    open goes through the authenticated fetch → blob object URL (see files.ts). -->
               <VcButton
                 prepend-icon="eye"
-                @click="openAuthorizedFile(featuredDocument.url, featuredDocument.contentType)"
+                @click="openAuthorizedFile(featuredDocument.url, featuredDocument.contentType, featuredDocument.name)"
               >
                 {{ t("sales_rep.documents.details.open") }}
               </VcButton>
@@ -132,7 +132,7 @@
           :rules="categoryRules"
           :loading="categoriesLoading"
           :all-label="t('sales_rep.documents.page.all_tab')"
-          :all-count="totalInLibrary"
+          :all-count="allCount"
         />
       </div>
 
@@ -229,7 +229,7 @@
                 size="xs"
                 color="secondary"
                 prepend-icon="eye"
-                @click.stop="openAuthorizedFile(document.url, document.contentType)"
+                @click.stop="openAuthorizedFile(document.url, document.contentType, document.name)"
               >
                 {{ t("sales_rep.documents.details.open") }}
               </VcButton>
@@ -269,7 +269,6 @@ import { getFileSize } from "@/ui-kit/utilities";
 import SalesRepRuleChips from "../components/sales-rep-rule-chips.vue";
 import { useSalesRepDocument } from "../composables/useSalesRepDocument";
 import { useSalesRepDocuments } from "../composables/useSalesRepDocuments";
-import { useSalesRepPinnedDocument } from "../composables/useSalesRepPinnedDocument";
 import { DOCUMENTS_PAGE_SIZE } from "../constants";
 import { openAuthorizedFile } from "../files";
 import { documentIcon, documentMeta, documentTypeLabel, formatStatCount } from "../utils";
@@ -285,6 +284,7 @@ const {
   page,
   pages,
   items: documents,
+  totalCount,
   categories,
   categoriesLoading,
 } = useSalesRepDocuments({ withCategories: true, sort: "isPinned:desc;createdDate:desc" });
@@ -298,7 +298,16 @@ const categoryRules = computed<SalesRepRuleType[]>(() =>
   categories.value.map((entry) => ({ name: entry.name, label: entry.name, count: entry.count })),
 );
 
-const totalInLibrary = computed(() => categories.value.reduce((sum, entry) => sum + entry.count, 0));
+// The "All" tab count is the connection total for the current keyword (root/empty-category documents
+// included). Summing the category buckets would undercount: the backend omits empty-category
+// documents from every bucket. Captured sticky while the All tab is active (no category selected), so
+// switching to a category tab keeps the library total instead of showing a category subtotal.
+const allCount = ref(0);
+watchEffect(() => {
+  if (!category.value) {
+    allCount.value = totalCount.value;
+  }
+});
 
 // Unapplied search term; committed to the query on Enter or the search button.
 const localKeyword = ref("");
@@ -343,24 +352,22 @@ const selectedDocument = computed<SalesRepDocumentType | undefined>(
   () => selectedFromPage.value ?? fetchedDocument.value,
 );
 
-// The newest document in the library = the first item of the DEFAULT list (server sorts
-// createdDate:desc). Captured sticky from the unfiltered first page — which is always the first
-// load — so a later tab/search/page change doesn't re-anoint some other document as "newest".
-const newestDocument = ref<SalesRepDocumentType>();
+// The default featured document = the first row of the DEFAULT list. The server sorts the library
+// pinned-first (isPinned:desc, then createdDate:desc), so documents[0] is the pinned document when
+// one is pinned, otherwise the newest — no separate query needed. Captured sticky from the unfiltered
+// first page (always the first load) so a later tab/search/page change doesn't re-anoint another row.
+const defaultFeaturedDocument = ref<SalesRepDocumentType>();
 
 watchEffect(() => {
   if (!keyword.value && !category.value && page.value === 1 && documents.value.length) {
-    newestDocument.value = documents.value[0];
+    defaultFeaturedDocument.value = documents.value[0];
   }
 });
 
-// The library's pinned document — the default featured document when nothing is selected.
-const { document: pinnedDocument } = useSalesRepPinnedDocument();
-
-// The featured panel shows the explicit selection when there is one, else the pinned document,
-// falling back to the newest document while nothing is pinned.
+// The featured panel shows the explicit selection when there is one, else the default (pinned, or
+// newest while nothing is pinned).
 const featuredDocument = computed<SalesRepDocumentType | undefined>(() =>
-  selectedId.value ? selectedDocument.value : (pinnedDocument.value ?? newestDocument.value),
+  selectedId.value ? selectedDocument.value : defaultFeaturedDocument.value,
 );
 
 const featuredTypeLabel = computed(() =>

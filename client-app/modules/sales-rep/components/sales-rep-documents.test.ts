@@ -170,7 +170,11 @@ describe("SalesRepDocuments states", () => {
 
     await open.trigger("click");
 
-    expect(openAuthorizedFileMock).toHaveBeenCalledWith("/api/sales-rep/documents/doc-1", "application/pdf");
+    expect(openAuthorizedFileMock).toHaveBeenCalledWith(
+      "/api/sales-rep/documents/doc-1",
+      "application/pdf",
+      "Spring catalog.pdf",
+    );
   });
 
   it("asks for the default row cap when rendered outside a layout", () => {

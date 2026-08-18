@@ -185,6 +185,7 @@
       "open": "Åpne",
       "empty": "Ingen dokumenter ennå",
       "load_failed": "Kunne ikke laste dokumentene",
+      "open_failed": "Kunne ikke åpne dokumentet",
       "page": {
         "subtitle": "Kataloger, lookbooks, prislister og salgsguider — åpne eller last ned den nyeste publikasjonen.",
         "search_placeholder": "Søk etter navn",

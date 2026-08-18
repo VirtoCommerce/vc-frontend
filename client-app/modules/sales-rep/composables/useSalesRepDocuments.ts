@@ -38,7 +38,8 @@ type UseSalesRepDocumentsOptionsType = {
   pageSize?: number | Ref<number | undefined> | (() => number | undefined);
   // Also fetch the category tabs (the browse page); the widget skips that extra query.
   withCategories?: boolean;
-  // Server sort rule (e.g. "isPinned:desc;createdDate:desc"); omitted → server default (createdDate:desc).
+  // Server sort rule; omitted → server default, which is already "isPinned:desc;createdDate:desc"
+  // (the browse page and widget still pass it explicitly so pinned-first doesn't rely on that default).
   sort?: string;
 };
 

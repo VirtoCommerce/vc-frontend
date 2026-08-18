@@ -18,7 +18,6 @@ const state = await vi.hoisted(async () => {
     totalCount: ref(0),
     categories: ref<SalesRepDocumentCategoryType[]>([]),
     selectedId: ref(""),
-    pinnedDocument: ref<SalesRepDocumentType | undefined>(undefined),
   };
 });
 
@@ -44,13 +43,6 @@ vi.mock("../composables/useSalesRepDocument", async () => {
   const { ref } = await import("vue");
   return {
     useSalesRepDocument: () => ({ document: ref(undefined), loading: ref(false), error: ref(null) }),
-  };
-});
-// The pinned document (B1) — the featured panel's default when nothing is selected.
-vi.mock("../composables/useSalesRepPinnedDocument", async () => {
-  const { ref } = await import("vue");
-  return {
-    useSalesRepPinnedDocument: () => ({ document: state.pinnedDocument, loading: ref(false), error: ref(null) }),
   };
 });
 // The ?doc= deep link; a plain ref stands in for the route-backed writable computed.
@@ -118,7 +110,6 @@ beforeEach(() => {
   state.totalCount.value = 0;
   state.categories.value = [];
   state.selectedId.value = "";
-  state.pinnedDocument.value = undefined;
   downloadFileMock.mockClear();
   openAuthorizedFileMock.mockClear();
 });
@@ -130,6 +121,9 @@ describe("Documents category tabs", () => {
       { name: "Catalogs", count: 2 },
       { name: "Guides", count: 5 },
     ];
+    // The library total exceeds the category sum (2 + 5) because empty-category documents sit at the
+    // root and the backend omits them from every category bucket.
+    state.totalCount.value = 9;
 
     const wrapper = createWrapper();
     const tabs = wrapper.findAll(".sales-rep-rule-chips__tab");
@@ -140,9 +134,9 @@ describe("Documents category tabs", () => {
       "Guides",
     ]);
 
-    // The count is a separate accent-styled element (design mock), not baked into the label;
-    // the All baseline carries the SUM of the (keyword-filtered) category counts.
-    expect(tabs.map((tab) => tab.find(".sales-rep-rule-chips__count").text())).toEqual(["7", "2", "5"]);
+    // The count is a separate accent-styled element (design mock), not baked into the label; the All
+    // baseline is the library total (root documents included), NOT the category sum which undercounts.
+    expect(tabs.map((tab) => tab.find(".sales-rep-rule-chips__count").text())).toEqual(["9", "2", "5"]);
 
     // The "N documents" element next to the search field is gone — the tab counts carry the numbers.
     expect(wrapper.find(".documents-page__count").exists()).toBe(false);
@@ -224,14 +218,12 @@ describe("Documents page order", () => {
 
 describe("Documents featured panel", () => {
   it("features the pinned document by default, badged 'Latest release'", () => {
-    state.items.value = [makeDocument(), makeDocument({ id: "doc-2", name: "Price list.xlsx" })];
-    // The pinned document need not sit in the loaded page at all — it comes from its own query.
-    state.pinnedDocument.value = makeDocument({
-      id: "doc-9",
-      name: "Summer lookbook.pdf",
-      displayName: "Summer lookbook",
-      isPinned: true,
-    });
+    // The server sorts the library pinned-first, so the pinned document is the first row of the
+    // default list — the featured panel reads it from there, not a separate query.
+    state.items.value = [
+      makeDocument({ id: "doc-9", name: "Summer lookbook.pdf", displayName: "Summer lookbook", isPinned: true }),
+      makeDocument({ id: "doc-2", name: "Price list.xlsx" }),
+    ];
 
     const wrapper = createWrapper();
     const featured = wrapper.find(".documents-page__featured");
@@ -250,7 +242,7 @@ describe("Documents featured panel", () => {
     const featured = wrapper.find(".documents-page__featured");
 
     expect(featured.exists()).toBe(true);
-    // The list is server-sorted createdDate:desc, so the first item of the default list is the newest;
+    // Nothing pinned, so the first row of the pinned-first default list is simply the newest;
     // the panel shows the display name, never the raw file name.
     expect(featured.find(".documents-page__featured-name").text()).toBe("Spring catalog");
     // The badge belongs to the pinned document only.
@@ -310,7 +302,11 @@ describe("Documents featured panel", () => {
     expect(actions[0].attributes("externallink")).toBeUndefined();
 
     await actions[0].trigger("click");
-    expect(openAuthorizedFileMock).toHaveBeenCalledWith("/api/sales-rep/documents/doc-1", "application/pdf");
+    expect(openAuthorizedFileMock).toHaveBeenCalledWith(
+      "/api/sales-rep/documents/doc-1",
+      "application/pdf",
+      "Spring catalog.pdf",
+    );
 
     await actions[1].trigger("click");
     expect(downloadFileMock).toHaveBeenCalledWith("/api/sales-rep/documents/doc-1", "Spring catalog.pdf");
@@ -330,7 +326,11 @@ describe("Documents card actions", () => {
     expect(actions).toHaveLength(2);
 
     await actions[0].trigger("click");
-    expect(openAuthorizedFileMock).toHaveBeenCalledWith("/api/sales-rep/documents/doc-1", "application/pdf");
+    expect(openAuthorizedFileMock).toHaveBeenCalledWith(
+      "/api/sales-rep/documents/doc-1",
+      "application/pdf",
+      "Spring catalog.pdf",
+    );
 
     // Download saves under the RAW file name, not the display name.
     await actions[1].trigger("click");

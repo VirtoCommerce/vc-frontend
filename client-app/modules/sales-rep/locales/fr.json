@@ -185,6 +185,7 @@
       "open": "Ouvrir",
       "empty": "Aucun document pour le moment",
       "load_failed": "Impossible de charger les documents",
+      "open_failed": "Impossible d'ouvrir le document",
       "page": {
         "subtitle": "Catalogues, lookbooks, grilles tarifaires et guides de vente — ouvrez ou téléchargez la dernière publication.",
         "search_placeholder": "Rechercher par nom",

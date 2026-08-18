@@ -46,7 +46,7 @@
               color="secondary"
               variant="outline"
               append-icon="external-link"
-              @click="openAuthorizedFile(document.url, document.contentType)"
+              @click="openAuthorizedFile(document.url, document.contentType, document.name)"
             >
               {{ t("sales_rep.documents.open") }}
             </VcButton>

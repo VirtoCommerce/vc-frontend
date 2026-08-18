@@ -66,7 +66,7 @@ describe("useSalesRepDocuments", () => {
   it("queries with offset-as-cursor paging, applied keyword and category, no explicit sort", () => {
     const { page, keyword, category } = useSalesRepDocuments();
 
-    // Default sort omitted → the server default (createdDate:desc).
+    // Default sort omitted → the server default (isPinned:desc, then createdDate:desc).
     expect(passedVariables()).toEqual({
       first: DOCUMENTS_PAGE_SIZE,
       after: "0",

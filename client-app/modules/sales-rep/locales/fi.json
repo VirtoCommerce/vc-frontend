@@ -185,6 +185,7 @@
       "open": "Avaa",
       "empty": "Ei vielä dokumentteja",
       "load_failed": "Dokumentteja ei voitu ladata",
+      "open_failed": "Asiakirjaa ei voitu avata",
       "page": {
         "subtitle": "Kuvastot, lookbookit, hinnastot ja myyntioppaat — avaa tai lataa uusin julkaisu.",
         "search_placeholder": "Hae nimellä",
