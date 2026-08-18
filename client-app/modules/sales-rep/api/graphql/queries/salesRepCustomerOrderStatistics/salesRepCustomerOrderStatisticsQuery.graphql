@@ -15,8 +15,8 @@ query SalesRepCustomerOrderStatistics(
   $weekTo: DateTime
   $prevWeekFrom: DateTime
   $prevWeekTo: DateTime
-  $todayFrom: DateTime
-  $todayTo: DateTime
+  $recentFrom: DateTime
+  $recentTo: DateTime
   $newOrdersFilter: String
 ) {
   salesRepCustomerOrderStatistics(
@@ -55,14 +55,14 @@ query SalesRepCustomerOrderStatistics(
       }
       count
     }
-    newOrders: period(filter: $newOrdersFilter) {
+    newOrders: period(from: $recentFrom, to: $recentTo, filter: $newOrdersFilter) {
       total {
         amount
         formattedAmount
       }
       count
     }
-    newOrdersToday: period(from: $todayFrom, to: $todayTo, filter: $newOrdersFilter) {
+    recentOrders: period(from: $recentFrom, to: $recentTo) {
       count
     }
     weekVsPrevWeek: comparison(

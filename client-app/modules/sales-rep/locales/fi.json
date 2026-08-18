@@ -14,7 +14,8 @@
       "search_aria": "Hae myyntiedustajia",
       "empty": "Myyntiedustajia ei löytynyt",
       "no_results": "Hakuasi vastaavia myyntiedustajia ei löytynyt",
-      "reset_search": "Tyhjennä haku"
+      "reset_search": "Tyhjennä haku",
+      "load_failed": "Myyntiedustajia ei voitu ladata"
     },
     "my_customers": {
       "navigation": {
@@ -49,7 +50,7 @@
           "title": "Hallintapaneeli"
         },
         "widgets": {
-          "new_orders": "Uudet tilaukset",
+          "new_orders": "Tilaukset tilassa ”New”",
           "active_carts": "Aktiiviset ostoskorit",
           "active_cart": "Aktiivinen ostoskori",
           "orders_placed_week": "Tilaukset tällä viikolla",
@@ -65,7 +66,7 @@
           "vs_last_year": "{delta} vs viime vuosi",
           "ordered_this_month": "{count} tilasi tässä kuussa",
           "new_customers": "{count} uusi asiakas | {count} uutta asiakasta",
-          "placed_today": "{count} tänään",
+          "of_recent_orders": "{count} viimeisten 7 päivän tilauksesta",
           "new_this_week": "{count} uusi tällä viikolla | {count} uutta tällä viikolla",
           "mtd_of_ytd": "{percent}% vuodesta",
           "load_failed": "Lataus epäonnistui"

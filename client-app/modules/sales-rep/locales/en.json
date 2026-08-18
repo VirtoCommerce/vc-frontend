@@ -14,7 +14,8 @@
       "search_aria": "Search sales reps",
       "empty": "No sales reps found",
       "no_results": "No sales reps match your search",
-      "reset_search": "Reset search"
+      "reset_search": "Reset search",
+      "load_failed": "Couldn't load sales reps"
     },
     "my_customers": {
       "navigation": {
@@ -49,7 +50,7 @@
           "title": "Dashboard"
         },
         "widgets": {
-          "new_orders": "New orders",
+          "new_orders": "Orders in “New” status",
           "active_carts": "Active carts",
           "active_cart": "Active cart",
           "orders_placed_week": "Orders placed · WEEK",
@@ -65,7 +66,7 @@
           "vs_last_year": "{delta} vs last year",
           "ordered_this_month": "{count} ordered this month",
           "new_customers": "{count} new customer | {count} new customers",
-          "placed_today": "{count} placed today",
+          "of_recent_orders": "of {count} created in the last 7 days",
           "new_this_week": "{count} new this week",
           "mtd_of_ytd": "{percent}% of YTD",
           "load_failed": "Couldn't load"

@@ -1,5 +1,6 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
+import { newOrdersCardData } from "../layout/stat-card-data";
 import { buildStatCards, DASHBOARD_STAT_CARDS } from "../layout/stat-cards";
 import { formatSignedPercent, formatStatCount, formatStatMoney } from "../utils";
 import { useSalesRepCartStatistics } from "./useSalesRepCartStatistics";
@@ -25,12 +26,11 @@ export function useSalesRepDashboardWidgets() {
     const cartsState = { loading: cartsLoading.value, failed: Boolean(cartsError.value) };
     const countsState = { loading: countsLoading.value, failed: Boolean(countsError.value) };
 
-    // Plain "new activity" counts (green, no icon) — a count, not a comparison. Always rendered, so
-    // an empty period reads as "0 placed today" rather than dropping the row (VCST-5586).
+    // Plain counts (no icon) — a count, not a comparison. Always rendered, so an empty period reads
+    // as "0 new this week" rather than dropping the row (VCST-5586).
     // Each is passed to t() as the formatted string plus the raw number: the string is what renders,
     // the number is vue-i18n's plural selector, so locales that need plural forms (ru, pl) can add
     // them without the grouped string breaking the choice.
-    const placedToday = orders?.newOrdersToday?.count ?? 0;
     const newCarts = carts?.newCartsThisWeek?.count ?? 0;
     const thisMonth = customerCounts?.thisMonth;
     const orderingCustomers = thisMonth?.orderingCustomers ?? 0;
@@ -43,16 +43,8 @@ export function useSalesRepDashboardWidgets() {
 
     // Caption, icon and accent come from the shared table; only what the queries decide is here.
     return buildStatCards(DASHBOARD_STAT_CARDS, {
-      new_orders: {
-        ...ordersState,
-        value: formatStatCount(orders?.newOrders?.count),
-        sub: t("sales_rep.hub.dashboard.stats.value_total", {
-          amount: formatStatMoney(orders?.newOrders?.total),
-        }),
-        // "{n} placed today" — orders whose created date is today. Plain green count, no chevron.
-        delta: t("sales_rep.hub.dashboard.stats.placed_today", { count: formatStatCount(placedToday) }, placedToday),
-        deltaTone: "positive",
-      },
+      // Identical on both surfaces, so it comes from the one shared builder.
+      new_orders: newOrdersCardData(orders, ordersState, t),
       active_carts: {
         ...cartsState,
         value: formatStatCount(carts?.activeCarts?.count),

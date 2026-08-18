@@ -14,7 +14,8 @@
       "search_aria": "Rechercher des commerciaux",
       "empty": "Aucun commercial trouvé",
       "no_results": "Aucun commercial ne correspond à votre recherche",
-      "reset_search": "Réinitialiser la recherche"
+      "reset_search": "Réinitialiser la recherche",
+      "load_failed": "Impossible de charger les commerciaux"
     },
     "my_customers": {
       "navigation": {
@@ -26,7 +27,7 @@
       "table": {
         "customer": "Client",
         "last_order": "Ma dernière commande",
-        "ytd": "Achats YTD",
+        "ytd": "Achats de l'année",
         "last_year": "Année dernière",
         "orders_count": "{count} commande | {count} commande | {count} commandes",
         "all_customers": "Tous",
@@ -49,7 +50,7 @@
           "title": "Tableau de bord"
         },
         "widgets": {
-          "new_orders": "Nouvelles commandes",
+          "new_orders": "Commandes au statut « New »",
           "active_carts": "Paniers actifs",
           "active_cart": "Panier actif",
           "orders_placed_week": "Commandes cette semaine",
@@ -65,7 +66,7 @@
           "vs_last_year": "{delta} vs année dernière",
           "ordered_this_month": "{count} a commandé ce mois-ci | {count} a commandé ce mois-ci | {count} ont commandé ce mois-ci",
           "new_customers": "{count} nouveau client | {count} nouveau client | {count} nouveaux clients",
-          "placed_today": "{count} passée aujourd'hui | {count} passée aujourd'hui | {count} passées aujourd'hui",
+          "of_recent_orders": "sur {count} créées ces 7 derniers jours",
           "new_this_week": "{count} nouveau cette semaine | {count} nouveau cette semaine | {count} nouveaux cette semaine",
           "mtd_of_ytd": "{percent}% de l'année",
           "load_failed": "Échec du chargement"
@@ -111,7 +112,7 @@
         "avg_order_value": "Valeur moyenne des commandes"
       },
       "stats": {
-        "per_order": "Moyenne par commande (YTD)"
+        "per_order": "Moyenne par commande (année en cours)"
       },
       "info": {
         "title": "Informations client",

@@ -14,7 +14,8 @@
       "search_aria": "Sök efter säljare",
       "empty": "Inga säljare hittades",
       "no_results": "Inga säljare matchar din sökning",
-      "reset_search": "Återställ sökning"
+      "reset_search": "Återställ sökning",
+      "load_failed": "Kunde inte läsa in säljarna"
     },
     "my_customers": {
       "navigation": {
@@ -49,7 +50,7 @@
           "title": "Instrumentpanel"
         },
         "widgets": {
-          "new_orders": "Nya order",
+          "new_orders": "Order med status ”New”",
           "active_carts": "Aktiva kundvagnar",
           "active_cart": "Aktiv kundvagn",
           "orders_placed_week": "Order denna vecka",
@@ -65,7 +66,7 @@
           "vs_last_year": "{delta} vs förra året",
           "ordered_this_month": "{count} beställde denna månad",
           "new_customers": "{count} ny kund | {count} nya kunder",
-          "placed_today": "{count} lagd i dag | {count} lagda i dag",
+          "of_recent_orders": "av {count} skapade de senaste 7 dagarna",
           "new_this_week": "{count} ny denna vecka | {count} nya denna vecka",
           "mtd_of_ytd": "{percent}% av året",
           "load_failed": "Kunde inte läsas in"

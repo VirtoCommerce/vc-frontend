@@ -14,7 +14,8 @@
       "search_aria": "Vertriebsmitarbeiter suchen",
       "empty": "Keine Vertriebsmitarbeiter gefunden",
       "no_results": "Keine Vertriebsmitarbeiter entsprechen Ihrer Suche",
-      "reset_search": "Suche zurücksetzen"
+      "reset_search": "Suche zurücksetzen",
+      "load_failed": "Vertriebsmitarbeiter konnten nicht geladen werden"
     },
     "my_customers": {
       "navigation": {
@@ -49,7 +50,7 @@
           "title": "Dashboard"
         },
         "widgets": {
-          "new_orders": "Neue Bestellungen",
+          "new_orders": "Bestellungen im Status „New“",
           "active_carts": "Aktive Warenkörbe",
           "active_cart": "Aktiver Warenkorb",
           "orders_placed_week": "Bestellungen diese Woche",
@@ -65,7 +66,7 @@
           "vs_last_year": "{delta} ggü. Vorjahr",
           "ordered_this_month": "{count} in diesem Monat bestellt",
           "new_customers": "{count} neuer Kunde | {count} neue Kunden",
-          "placed_today": "{count} heute aufgegeben",
+          "of_recent_orders": "von {count} aus den letzten 7 Tagen",
           "new_this_week": "{count} neu diese Woche",
           "mtd_of_ytd": "{percent}% des Jahres",
           "load_failed": "Laden fehlgeschlagen"
@@ -111,7 +112,7 @@
         "avg_order_value": "Durchschn. Bestellwert"
       },
       "stats": {
-        "per_order": "Durchschnitt pro Bestellung (YTD)"
+        "per_order": "Durchschnitt pro Bestellung (seit Jahresbeginn)"
       },
       "info": {
         "title": "Kundeninformationen",
