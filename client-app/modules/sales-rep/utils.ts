@@ -151,11 +151,9 @@ export function formatStatMoney(money?: Pick<MoneyType, "formattedAmount"> | nul
   return new Intl.NumberFormat(globals.cultureName, { style: "currency", currency }).format(0);
 }
 
-// Document library (VCST-5730) display helpers, shared by the dashboard widget and the browse page.
+// Document library display helpers.
 
-// Human file-type badge ("PDF", "XLSX"): the file extension is the most precise source (it tells
-// DOCX from DOC, which the aliased ContentType enum cannot), so it wins; the content-type subtype
-// is the fallback for extension-less names.
+// File-type badge: the extension is the most precise source (tells DOCX from DOC), so it wins over content-type.
 const CONTENT_TYPE_BADGES: Record<string, string> = {
   "application/pdf": "PDF",
   "application/msword": "DOC",
@@ -183,9 +181,7 @@ export function documentTypeLabel(name: string, contentType?: string | null): st
   return CONTENT_TYPE_BADGES[type] ?? type.split("/")[1]?.toUpperCase() ?? "";
 }
 
-// Mirrors VcFile's icon mapping (ui-kit vc-file.vue): a known ContentType resolves to its
-// assets/images/file-*.svg, anything else to the generic file icon. VcImage resolves the bare
-// filename to the theme's image folder.
+// Mirrors VcFile's icon mapping (ui-kit vc-file.vue); unknown types get the generic file icon.
 const CONTENT_TYPE_KEYS = new Set<string>(Object.keys(ContentType));
 
 export function documentIcon(contentType?: string | null): string {
@@ -193,8 +189,7 @@ export function documentIcon(contentType?: string | null): string {
   return `file-${known ? known.replace("/", "-") : "file"}.svg`;
 }
 
-// "Published May 22 · 96 pages" (date only when no page count) — shared by the widget rows and the
-// browse-page cards. t/d are passed in so the string stays reactive to the caller's locale.
+// "Published May 22 · 96 pages" (date only when no page count).
 export function documentMeta(
   document: SalesRepDocumentType,
   t: ComposerTranslation,

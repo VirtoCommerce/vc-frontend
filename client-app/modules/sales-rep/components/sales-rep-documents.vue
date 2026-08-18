@@ -8,11 +8,10 @@
       </VcLink>
     </template>
 
-    <!-- VcWidget has no padding prop; #default-container is our seam for the inset, not .vc-widget__slot. -->
+    <!-- VcWidget has no padding prop; #default-container is our seam for the inset. -->
     <template #default-container>
       <div class="sales-rep-documents__body">
-        <!-- A failure replaces the rows rather than sharing the empty view: apollo keeps the previous
-             rows on a failed refetch, which would otherwise read as the current result (VCST-5586). -->
+        <!-- A failure replaces the rows: apollo keeps the previous rows on a failed refetch. -->
         <VcEmptyView v-if="failed && !loading" :text="t('sales_rep.documents.load_failed')" variant="error" />
 
         <VcEmptyView
@@ -21,7 +20,6 @@
           icon="file-text"
         />
 
-        <!-- First load: placeholder rows sized to the row cap, so the widget keeps its height. -->
         <ul v-else-if="loading && !documents.length" class="sales-rep-documents__list" aria-hidden="true">
           <li v-for="index in rowLimit" :key="index" class="sales-rep-documents__row">
             <div class="sales-rep-documents__skeleton" />
@@ -38,8 +36,7 @@
               <span class="sales-rep-documents__meta">{{ documentMeta(document, t, d) }}</span>
             </div>
 
-            <!-- Not a plain anchor: a browser navigation to `url` carries no bearer token, so the
-                 open goes through the authenticated fetch → blob object URL (see files.ts). -->
+            <!-- Not a plain anchor: `url` carries no bearer token, so open via the authenticated fetch → blob URL (see files.ts). -->
             <VcButton
               v-if="isInlineRenderable(document.contentType)"
               class="sales-rep-documents__open"
@@ -69,7 +66,7 @@ import { documentIcon, documentMeta } from "../utils";
 import LayoutWidget from "./layout-widget.vue";
 
 interface IProps {
-  // Widget heading; omit inside a layout, where LayoutWidget falls back to the block's titleKey.
+  // Omit inside a layout; LayoutWidget then falls back to the block's titleKey.
   title?: string;
 }
 
@@ -79,14 +76,13 @@ withDefaults(defineProps<IProps>(), {
 
 const { t, d } = useI18n();
 
-// Absent when this widget renders outside a layout, which then configures nothing.
+// Absent when this widget renders outside a layout.
 const chrome = useBlockChrome();
 
 // The saved cap, not the draft: it is a query variable, so it applies on save.
 const rowLimit = computed(() => chrome?.savedSettings.value.maxRows ?? DOCUMENTS_DEFAULT_ROWS);
 
-// Hidden ⇒ zero requests: the layout mounts only visible blocks, so this composable (and its query)
-// exists only while the widget shows — see the note in useSalesRepDocuments.ts.
+// Hidden ⇒ zero requests: the layout mounts only visible blocks (see useSalesRepDocuments.ts).
 const {
   items: documents,
   loading,

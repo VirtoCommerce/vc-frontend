@@ -7,11 +7,8 @@ import { useSalesRepHubQuery } from "./useSalesRepHubQuery";
 import type { SalesRepDocumentType } from "../types";
 import type { Ref } from "vue";
 
-// By-id lookup backing the browse page's `?doc=` deep link: the selected document usually sits in
-// the loaded page (no request then — the caller keeps `enabled` off), but a shared link can point at
-// a document on another page or behind another filter, and this fetches that one.
+// By-id lookup backing the browse page's `?doc=` deep link, for a document not in the loaded page.
 export function useSalesRepDocument(
-  // Expanded union (not MaybeRefOrGetter<… | undefined>) — Sonar S4782.
   id: string | Ref<string | undefined> | (() => string | undefined),
   options: { enabled?: Ref<boolean> | (() => boolean) } = {},
 ) {
@@ -26,11 +23,10 @@ export function useSalesRepDocument(
   });
 
   onError((err) => {
-    // No toast; the details panel shows its own error view instead (VCST-5586).
+    // No toast; the details panel shows its own error view instead.
     Logger.error("[sales-rep] salesRepDocument failed:", err);
   });
 
-  // `null` from the backend means "no such document (or not readable)" — mapped to undefined.
   const document = computed<SalesRepDocumentType | undefined>(() =>
     result.value?.salesRepDocument ? mapSalesRepDocument(result.value.salesRepDocument) : undefined,
   );

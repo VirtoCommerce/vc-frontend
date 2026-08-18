@@ -3,13 +3,10 @@ import { useFetch } from "@/core/api/common";
 import { Logger } from "@/core/utilities";
 import { downloadFile } from "@/shared/files";
 
-// The new tab reads the object URL asynchronously; revoking right after navigation breaks it.
+// Revoked lazily so the new tab can still read the object URL.
 const OBJECT_URL_REVOKE_DELAY_MS = 60_000;
 
-// Content types we render inline in a same-origin blob tab. A blob URL inherits the storefront
-// origin, so an .html/.svg from the library (upload only checks the platform extension allow-list)
-// would execute script alongside the SPA, where the auth tokens live in localStorage["auth"]. The
-// types below don't run script; anything else — or an unknown type — is downloaded, never opened.
+// Inline-renderable types only; .html/.svg etc. could run script on the storefront origin, so they're downloaded, never opened.
 const INLINE_RENDERABLE_TYPES = new Set([
   "application/pdf",
   "image/png",
@@ -19,38 +16,28 @@ const INLINE_RENDERABLE_TYPES = new Set([
   "text/plain",
 ]);
 
-// The single source of truth for "can this be viewed in a tab": the surfaces gate their Open button
-// on it so the button never promises an in-tab view we won't give, and openAuthorizedFile guards on
-// the same predicate. An unknown/empty type is not renderable.
 export function isInlineRenderable(contentType?: string): boolean {
   const type = contentType?.toLowerCase();
   return !!type && INLINE_RENDERABLE_TYPES.has(type);
 }
 
-// Views a protected library file. A plain anchor navigation carries NO bearer token (the theme has
-// no auth cookie), so the backend can't authenticate it — fetch through the authenticated path
-// (auth.plugin attaches the Authorization header), then hand the tab the blob's object URL.
+// A plain anchor carries no bearer token, so fetch through the authenticated path, then hand the tab the blob's object URL.
 export async function openAuthorizedFile(fileUrl: string, contentType: string, fileName: string): Promise<void> {
-  // Only known-inert types render inline; everything else is downloaded rather than opened
-  // same-origin. downloadFile fetches through the same authenticated path. Callers hide Open for
-  // these types, so this is a safety net for an unknown type rather than the usual path.
   if (!isInlineRenderable(contentType)) {
     await downloadFile(fileUrl, fileName);
     return;
   }
 
-  // Open the tab synchronously, inside the click gesture: a tab opened after `await` is outside the
-  // gesture and Safari/Firefox block it. It stays blank until the blob is ready.
+  // Opened in the click gesture: a tab opened after `await` is popup-blocked by Safari/Firefox.
   const tab = window.open("", "_blank");
   if (tab) {
-    tab.opener = null; // sever the opener reference, as rel="noopener" would.
+    tab.opener = null; // sever the opener, as rel="noopener" would.
   }
 
   try {
     const { data } = await useFetch(fileUrl).blob();
     let blob = toValue(data) as Blob;
 
-    // Re-type when needed: a typeless blob prompts a download instead of rendering.
     if (blob.type !== contentType) {
       blob = new Blob([blob], { type: contentType });
     }
@@ -61,13 +48,12 @@ export async function openAuthorizedFile(fileUrl: string, contentType: string, f
       tab.location.href = url;
       setTimeout(() => URL.revokeObjectURL(url), OBJECT_URL_REVOKE_DELAY_MS);
     } else {
-      // Popup blocked: fall back to a download so the click isn't silently lost.
+      // Popup blocked: fall back to a download.
       URL.revokeObjectURL(url);
       await downloadFile(fileUrl, fileName);
     }
   } catch (error) {
-    // useFetch already routed the HTTP error through the global handler (generic toast, or NoAccess on
-    // 403) — same as Download — so just close the blank tab we opened and log; no second toast.
+    // No second toast: useFetch already surfaced the HTTP error globally (same as Download).
     tab?.close();
     Logger.error(openAuthorizedFile.name, error);
   }
