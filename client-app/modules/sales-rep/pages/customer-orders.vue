@@ -80,9 +80,7 @@
                   <span>{{ item.total }}</span>
                 </div>
 
-                <div class="customer-orders__mobile-sub">
-                  {{ $d(item.createdDate, "short") }} · {{ item.itemsCount }}
-                </div>
+                <div class="customer-orders__mobile-sub">{{ $d(item.createdDate, "short") }}</div>
 
                 <OrderStatus :status="item.status" :display-value="item.statusDisplayValue" />
               </div>
@@ -101,10 +99,6 @@
               :sortable="isColumnSortable('date')"
             >
               {{ $d(item.createdDate, "short") }}
-            </VcTableColumn>
-
-            <VcTableColumn id="items" v-slot="{ item }" :title="t('sales_rep.orders.items')">
-              {{ item.itemsCount }}
             </VcTableColumn>
 
             <VcTableColumn id="status" v-slot="{ item }" :title="t('sales_rep.orders.status')">
