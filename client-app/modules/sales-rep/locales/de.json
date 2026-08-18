@@ -107,6 +107,7 @@
     "customer_profile": {
       "loading": "Wird geladen…",
       "not_found": "Kunde nicht gefunden oder nicht in Ihren Kunden.",
+      "load_failed": "Dieser Kunde konnte nicht geladen werden. Bitte die Seite neu laden.",
       "back_to_customers": "Zurück zu meinen Kunden",
       "widgets": {
         "avg_order_value": "Durchschn. Bestellwert"
@@ -180,6 +181,11 @@
       "load_failed": "Topseller konnten nicht geladen werden"
     },
     "rules": {
+      "load_failed": {
+        "filter": "Die Filter konnten nicht geladen werden, daher wird die vollständige Liste angezeigt. Bitte die Seite neu laden.",
+        "sort": "Die Sortieroptionen konnten nicht geladen werden, daher wird die Standardsortierung verwendet. Bitte die Seite neu laden.",
+        "both": "Die Filter und Sortieroptionen konnten nicht geladen werden, daher wird die vollständige Liste in der Standardsortierung angezeigt. Bitte die Seite neu laden."
+      },
       "customer": {
         "filter": {
           "All": "Alle"

@@ -107,6 +107,7 @@
     "customer_profile": {
       "loading": "加载中…",
       "not_found": "未找到客户，或该客户不在您的客户列表中。",
+      "load_failed": "无法加载此客户。请刷新页面。",
       "back_to_customers": "返回我的客户",
       "widgets": {
         "avg_order_value": "平均订单金额"
@@ -180,6 +181,11 @@
       "load_failed": "无法加载热销商品"
     },
     "rules": {
+      "load_failed": {
+        "filter": "无法加载筛选条件，因此显示完整列表。请刷新页面。",
+        "sort": "无法加载排序选项，因此使用默认排序。请刷新页面。",
+        "both": "无法加载筛选条件和排序选项，因此按默认排序显示完整列表。请刷新页面。"
+      },
       "customer": {
         "filter": {
           "All": "全部"

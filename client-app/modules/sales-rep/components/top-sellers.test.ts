@@ -9,6 +9,8 @@ const state = await vi.hoisted(async () => {
     items: ref<Record<string, unknown>[]>([]),
     loading: ref(false),
     error: ref<Error | null>(null),
+    filterRulesFailed: ref(false),
+    sortRulesFailed: ref(false),
   };
 });
 
@@ -17,7 +19,13 @@ vi.mock("../composables/useSalesRepTopSellers", () => ({
 }));
 vi.mock("../composables/useSalesRepRules", async () => {
   const { ref } = await import("vue");
-  return { useSalesRepRules: () => ({ rules: ref([]) }) };
+  return {
+    useSalesRepRules: (_domain: string, kind: string) => ({
+      rules: ref([]),
+      loading: ref(false),
+      failed: kind === "filter" ? state.filterRulesFailed : state.sortRulesFailed,
+    }),
+  };
 });
 vi.mock("../composables/useSalesRepPeriodFilter", async () => {
   const { ref } = await import("vue");
@@ -44,6 +52,8 @@ const createWrapper = createWrapperFactory(mount, TopSellers, {
       VcIcon: true,
       VcLink: true,
       VcImage: true,
+      // Rendered rather than stubbed away: the assertion is about which message the alert carries.
+      VcAlert: { template: '<div class="vc-alert"><slot /></div>' },
       SalesRepRuleChips: true,
     },
   },
@@ -55,6 +65,26 @@ beforeEach(() => {
   state.items.value = [];
   state.loading.value = false;
   state.error.value = null;
+  state.filterRulesFailed.value = false;
+  state.sortRulesFailed.value = false;
+});
+
+// The category chips and the sortable headers vanish without their rules, with nothing saying why (VCST-5682).
+describe("TopSellers degraded controls", () => {
+  it("names the controls that could not be loaded", () => {
+    state.filterRulesFailed.value = true;
+    state.sortRulesFailed.value = true;
+
+    const wrapper = createWrapper();
+
+    expect(wrapper.find(".vc-alert").text()).toContain("sales_rep.rules.load_failed.both");
+  });
+
+  it("keeps quiet while the rules load", () => {
+    const wrapper = createWrapper();
+
+    expect(wrapper.find(".vc-alert").exists()).toBe(false);
+  });
 });
 
 describe("TopSellers states", () => {

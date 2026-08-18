@@ -107,6 +107,7 @@
     "customer_profile": {
       "loading": "Ladataan…",
       "not_found": "Asiakasta ei löytynyt tai se ei kuulu asiakkaisiisi.",
+      "load_failed": "Tätä asiakasta ei voitu ladata. Päivitä sivu.",
       "back_to_customers": "Takaisin omiin asiakkaisiin",
       "widgets": {
         "avg_order_value": "Keskimääräinen tilausarvo"
@@ -180,6 +181,11 @@
       "load_failed": "Myydyimpiä ei voitu ladata"
     },
     "rules": {
+      "load_failed": {
+        "filter": "Suodattimia ei voitu ladata, joten koko luettelo näytetään. Päivitä sivu.",
+        "sort": "Lajitteluvalintoja ei voitu ladata, joten käytetään oletusjärjestystä. Päivitä sivu.",
+        "both": "Suodattimia ja lajitteluvalintoja ei voitu ladata, joten koko luettelo näytetään oletusjärjestyksessä. Päivitä sivu."
+      },
       "customer": {
         "filter": {
           "All": "Kaikki"
