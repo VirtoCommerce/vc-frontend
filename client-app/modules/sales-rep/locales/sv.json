@@ -186,7 +186,6 @@
       "open": "Öppna",
       "empty": "Inga dokument ännu",
       "load_failed": "Kunde inte läsa in dokumenten",
-      "open_failed": "Det gick inte att öppna dokumentet",
       "page": {
         "subtitle": "Kataloger, lookbooks, prislistor och säljguider — öppna eller ladda ner den senaste publikationen.",
         "search_placeholder": "Sök efter namn",

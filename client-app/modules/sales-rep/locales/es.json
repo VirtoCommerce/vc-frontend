@@ -186,7 +186,6 @@
       "open": "Abrir",
       "empty": "Aún no hay documentos",
       "load_failed": "No se pudieron cargar los documentos",
-      "open_failed": "No se pudo abrir el documento",
       "page": {
         "subtitle": "Catálogos, lookbooks, listas de precios y guías de ventas: abra o descargue la última publicación.",
         "search_placeholder": "Buscar por nombre",

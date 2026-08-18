@@ -325,6 +325,10 @@ watch(
 
 function applyKeyword(): void {
   keyword.value = localKeyword.value.trim();
+  // Search is library-wide: drop any active category so the results span every category, and so the
+  // "All" count (captured only while no category is selected) tracks the search instead of showing
+  // the previous query's number.
+  category.value = undefined;
   page.value = 1;
 }
 

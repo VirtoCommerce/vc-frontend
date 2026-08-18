@@ -9,11 +9,6 @@ vi.mock("@/core/api/common", () => ({ useFetch: useFetchMock }));
 const downloadFileMock = vi.hoisted(() => vi.fn());
 vi.mock("@/shared/files", () => ({ downloadFile: downloadFileMock }));
 
-const notifyErrorMock = vi.hoisted(() => vi.fn());
-vi.mock("@/shared/notification", () => ({ useNotifications: () => ({ error: notifyErrorMock }) }));
-
-vi.mock("@/core/globals", () => ({ globals: { i18n: { global: { t: (key: string) => key } } } }));
-
 const loggerErrorMock = vi.hoisted(() => vi.fn());
 vi.mock("@/core/utilities", () => ({ Logger: { error: loggerErrorMock } }));
 
@@ -52,7 +47,6 @@ describe("openAuthorizedFile", () => {
     openSpy = vi.spyOn(window, "open").mockReturnValue(fakeTab as unknown as Window) as unknown as Mock;
     useFetchMock.mockReset();
     downloadFileMock.mockReset();
-    notifyErrorMock.mockReset();
     loggerErrorMock.mockClear();
   });
 
@@ -93,8 +87,8 @@ describe("openAuthorizedFile", () => {
     expect(useFetchMock).not.toHaveBeenCalled();
   });
 
-  it("downloads when the content type is unknown", async () => {
-    await openAuthorizedFile("/api/sales-rep/documents/doc-1", undefined, "mystery.bin");
+  it("downloads when the content type is empty/unknown", async () => {
+    await openAuthorizedFile("/api/sales-rep/documents/doc-1", "", "mystery.bin");
 
     expect(downloadFileMock).toHaveBeenCalledWith("/api/sales-rep/documents/doc-1", "mystery.bin");
     expect(openSpy).not.toHaveBeenCalled();
@@ -120,7 +114,7 @@ describe("openAuthorizedFile", () => {
     expect(URL.revokeObjectURL).toHaveBeenCalledWith("blob:mock-url");
   });
 
-  it("closes the tab, logs, and toasts when the fetch fails", async () => {
+  it("closes the tab and logs when the fetch fails (no second toast — useFetch already surfaced it)", async () => {
     useFetchMock.mockReturnValue({ blob: () => Promise.reject(new Error("403")) });
 
     await expect(
@@ -129,6 +123,5 @@ describe("openAuthorizedFile", () => {
 
     expect(fakeTab.close).toHaveBeenCalled();
     expect(loggerErrorMock).toHaveBeenCalled();
-    expect(notifyErrorMock).toHaveBeenCalled();
   });
 });

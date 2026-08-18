@@ -1,9 +1,7 @@
 import { toValue } from "vue";
 import { useFetch } from "@/core/api/common";
-import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { downloadFile } from "@/shared/files";
-import { useNotifications } from "@/shared/notification";
 
 // The new tab reads the object URL asynchronously; revoking right after navigation breaks it.
 const OBJECT_URL_REVOKE_DELAY_MS = 60_000;
@@ -32,12 +30,12 @@ export function isInlineRenderable(contentType?: string): boolean {
 // Views a protected library file. A plain anchor navigation carries NO bearer token (the theme has
 // no auth cookie), so the backend can't authenticate it — fetch through the authenticated path
 // (auth.plugin attaches the Authorization header), then hand the tab the blob's object URL.
-export async function openAuthorizedFile(fileUrl: string, contentType?: string, fileName?: string): Promise<void> {
+export async function openAuthorizedFile(fileUrl: string, contentType: string, fileName: string): Promise<void> {
   // Only known-inert types render inline; everything else is downloaded rather than opened
   // same-origin. downloadFile fetches through the same authenticated path. Callers hide Open for
   // these types, so this is a safety net for an unknown type rather than the usual path.
   if (!isInlineRenderable(contentType)) {
-    await downloadFile(fileUrl, fileName ?? "");
+    await downloadFile(fileUrl, fileName);
     return;
   }
 
@@ -65,11 +63,12 @@ export async function openAuthorizedFile(fileUrl: string, contentType?: string, 
     } else {
       // Popup blocked: fall back to a download so the click isn't silently lost.
       URL.revokeObjectURL(url);
-      await downloadFile(fileUrl, fileName ?? "");
+      await downloadFile(fileUrl, fileName);
     }
   } catch (error) {
+    // useFetch already routed the HTTP error through the global handler (generic toast, or NoAccess on
+    // 403) — same as Download — so just close the blank tab we opened and log; no second toast.
     tab?.close();
     Logger.error(openAuthorizedFile.name, error);
-    useNotifications().error({ text: globals.i18n.global.t("sales_rep.documents.open_failed"), single: true });
   }
 }

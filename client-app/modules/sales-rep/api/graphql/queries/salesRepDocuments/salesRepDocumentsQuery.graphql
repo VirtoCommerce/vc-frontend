@@ -1,19 +1,5 @@
-query SalesRepDocuments(
-  $first: Int
-  $after: String
-  $keyword: String
-  $sort: String
-  $category: String
-  $pinned: Boolean
-) {
-  salesRepDocuments(
-    first: $first
-    after: $after
-    keyword: $keyword
-    sort: $sort
-    category: $category
-    pinned: $pinned
-  ) {
+query SalesRepDocuments($first: Int, $after: String, $keyword: String, $sort: String, $category: String) {
+  salesRepDocuments(first: $first, after: $after, keyword: $keyword, sort: $sort, category: $category) {
     totalCount
     items {
       id

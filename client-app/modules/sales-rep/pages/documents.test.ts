@@ -163,6 +163,18 @@ describe("Documents category tabs", () => {
 
     expect(wrapper.find(".sales-rep-rule-chips").exists()).toBe(false);
   });
+
+  it("clears the active category when a search is submitted, so search is library-wide", async () => {
+    // Otherwise the "All" count (captured only while no category is selected) would keep showing the
+    // pre-search number while a category tab stayed active.
+    state.items.value = [makeDocument()];
+    state.category.value = "Catalogs";
+
+    const wrapper = createWrapper();
+    await wrapper.find(".documents-page__search-input").trigger("keydown.enter");
+
+    expect(state.category.value).toBeUndefined();
+  });
 });
 
 describe("Documents states", () => {
