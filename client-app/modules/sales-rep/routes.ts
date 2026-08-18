@@ -73,8 +73,7 @@ export const myCustomersRoute: RouteRecordRaw = {
   },
 };
 
-// Reps-only gate + deep-link id check for the pages addressed by an organizationId; the
-// not-served/unknown-org case is handled on the page itself.
+// Reps-only gate + deep-link id check; the not-served/unknown-org case is handled on the page.
 function guardCustomerRoute(to: RouteLocationNormalized, next: NavigationGuardNext): void {
   if (!guardSalesRep(next)) {
     return;

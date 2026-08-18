@@ -174,8 +174,7 @@ const { t } = useI18n();
 
 const isCrossCustomer = computed(() => !props.organizationId);
 
-// One customer -> their own order list, in place, so the rep keeps the customer's context. Cross-customer
-// -> the buyer-facing orders page, the only list that spans customers.
+// One customer -> their own list, in place; cross-customer -> the buyer-facing orders page.
 const allOrdersRoute = computed(() =>
   props.organizationId
     ? { name: CUSTOMER_ORDERS_ROUTE_NAME, params: { organizationId: props.organizationId } }

@@ -44,7 +44,7 @@ vi.mock("../composables/useSalesRepCustomer", async () => {
   };
 });
 vi.mock("@/core/composables/usePageHead", () => ({ usePageHead: vi.fn() }));
-// Row clicks resolve the order route through apollo-backed slug info, which this page does not own.
+// goToOrderDetails resolves the route through apollo-backed slug info.
 vi.mock("@/shared/account/composables/useOrderNavigation", () => ({
   useOrderNavigation: () => ({ goToOrderDetails: vi.fn() }),
 }));
@@ -65,7 +65,7 @@ const createWrapper = createWrapperFactory(mount, CustomerOrders, {
     renderStubDefaultSlot: false,
     stubs: {
       VcWidget: { template: '<div><slot name="default-container" /></div>' },
-      // A real input: the keyword commits on Enter, which a plain stub would swallow.
+      // A real input: Enter has to reach the page's handler.
       VcInput: {
         props: ["modelValue"],
         emits: ["update:modelValue", "clear"],
@@ -89,7 +89,7 @@ vi.stubGlobal("scroll", vi.fn());
 
 enableAutoUnmount(afterEach);
 
-// findComponent by selector is typed as WrapperLike, which exposes none of what a stub is read for.
+// findComponent by selector is typed as WrapperLike, which exposes neither vm nor props.
 type StubType = {
   exists: () => boolean;
   props: () => Record<string, unknown>;
@@ -117,8 +117,6 @@ beforeEach(() => {
 });
 
 describe("CustomerOrders", () => {
-  // organizationOrders has no store scoping of its own, so without the clause a multi-store
-  // deployment would list orders the rep cannot see anywhere else in the hub.
   it("reads the customer's orders scoped to the current store", () => {
     createWrapper();
 
@@ -159,7 +157,6 @@ describe("CustomerOrders", () => {
     expect(state.fetchOrders).toHaveBeenCalledTimes(2);
   });
 
-  // The rep may only read orders of organizations they serve; an unserved id must not reach the query.
   it("never reads orders for a customer the rep does not serve", () => {
     state.notFound.value = true;
 
@@ -178,8 +175,6 @@ describe("CustomerOrders", () => {
     expect(state.fetchOrders).toHaveBeenCalledTimes(2);
   });
 
-  // fetchOrders rethrows, and the rows from the previous read stay on screen, so an untouched
-  // empty view would present them as this filter's result.
   it("names the failure instead of showing the stale rows as a result", async () => {
     state.fetchOrders.mockRejectedValueOnce(new Error("denied"));
 
@@ -191,7 +186,6 @@ describe("CustomerOrders", () => {
     expect(views[0].attributes("variant")).toBe("error");
   });
 
-  // The customer crumb is the way back to the profile — the AC's "return without losing context".
   it("links the breadcrumb trail back to the customer profile", () => {
     const wrapper = createWrapper();
 

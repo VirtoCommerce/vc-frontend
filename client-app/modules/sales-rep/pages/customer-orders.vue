@@ -6,7 +6,6 @@
       {{ heading }}
     </VcTypography>
 
-    <!-- Not served, unknown, or errored — the same view the profile shows, and no order read at all. -->
     <VcEmptyView v-if="notFound" :text="t('sales_rep.customer_profile.not_found')" icon="outline-404">
       <template #button>
         <VcButton :to="{ name: CUSTOMER_PROFILE_ROUTE_NAME, params: { organizationId } }" prepend-icon="arrow-left">
@@ -65,11 +64,9 @@
         </VcChip>
       </div>
 
-      <!-- A failed read gets its own view: the previous rows stay in place, so the empty view would
-           otherwise read as this filter's result. -->
+      <!-- A failed read keeps the previous rows, so the failure needs its own view. -->
       <VcEmptyView v-if="failed && !loading" :text="t('sales_rep.orders.load_failed')" variant="error" />
 
-      <!-- With a search or filter active, empty means "nothing matches", not "never ordered". -->
       <VcEmptyView
         v-else-if="!orders.length && !loading"
         :text="hasSearch ? t('pages.account.orders.no_results_message') : t('pages.account.orders.no_orders_message')"
@@ -85,8 +82,7 @@
 
       <VcWidget v-else size="lg">
         <template #default-container>
-          <!-- The buyer-facing table, in its organization scope: the buyer-name column then names which
-               member of the customer placed each order. -->
+          <!-- Organization scope: the buyer-name column names which member of the customer ordered. -->
           <OrdersTable
             :loading="loading"
             :orders="orders"
@@ -134,8 +130,7 @@ const isMobile = useBreakpoints(breakpointsTailwind).smaller("sm");
 
 const { customer, loading: customerLoading, notFound } = useSalesRepCustomer(() => props.organizationId);
 
-// The customer's own orders, read through the buyer-facing organization query — the module's
-// salesRepOrders narrows to orders the rep placed themselves.
+// The customer's own orders: salesRepOrders narrows to the ones the rep placed themselves.
 const {
   orders,
   loading: ordersLoading,
@@ -158,7 +153,6 @@ const {
 const { goToOrderDetails } = useOrderNavigation();
 
 const failed = ref(false);
-// Unapplied search term; committed to the query on Enter or the search button.
 const localKeyword = ref("");
 
 const loading = computed(() => ordersLoading.value || customerLoading.value);
@@ -171,7 +165,7 @@ const heading = computed(() =>
     : t("sales_rep.customer_orders.page.title_fallback"),
 );
 
-// organizationOrders carries no store scoping, so this clause is what keeps another store's orders out.
+// organizationOrders is not store-scoped.
 function buildFilter(): string {
   return [getFilterExpression(keyword.value, appliedFilterData.value), `storeid:"${globals.storeId}"`]
     .filter(Boolean)
@@ -203,7 +197,7 @@ async function resetKeyword(): Promise<void> {
   }
 }
 
-// Clearing the filters re-reads through the watcher below, so this adds no second request.
+// The watcher below re-reads, so this adds no second request.
 function resetSearch(): void {
   localKeyword.value = "";
   keyword.value = "";
@@ -223,8 +217,7 @@ async function applySorting(sortInfo: ISortInfo): Promise<void> {
   await reload();
 }
 
-// Filters live in state shared with the buyer's own Orders list, so a selection left there would
-// silently narrow this customer's orders. Cleared before the watcher below, so it counts as no change.
+// Filter state is shared with the buyer's own Orders list; cleared before the watcher, so it is not a change.
 resetFilters();
 
 watch(
@@ -236,7 +229,7 @@ watch(
   { deep: true },
 );
 
-// The read waits for the customer: an organization the rep does not serve must never reach the query.
+// An organization the rep does not serve must never reach the query.
 const canRead = computed(() => !customerLoading.value && !notFound.value);
 
 watch(

@@ -21,13 +21,23 @@ describe("useUserOrders organization scope", () => {
     expect(api.getOrganizationOrders).toHaveBeenCalledWith(expect.objectContaining({ organizationId: "org-1" }));
   });
 
-  // getOrganizationOrders defaults the id from globals; an explicit `undefined` would overwrite that default.
+  // getOrganizationOrders defaults the id from globals, which an explicit `undefined` would overwrite.
   it("omits the key entirely when no organizationId is given", async () => {
     const { fetchOrders } = useUserOrders({});
 
     await fetchOrders("organization");
 
     const payload = api.getOrganizationOrders.mock.calls.at(-1)?.[0] as Record<string, unknown>;
+    expect(payload).not.toHaveProperty("organizationId");
+  });
+
+  // The GetOrders operation declares no such variable.
+  it("keeps the organizationId out of the private-scope query", async () => {
+    const { fetchOrders } = useUserOrders({ organizationId: "org-1" });
+
+    await fetchOrders("private");
+
+    const payload = api.getOrders.mock.calls.at(-1)?.[0] as Record<string, unknown>;
     expect(payload).not.toHaveProperty("organizationId");
   });
 });

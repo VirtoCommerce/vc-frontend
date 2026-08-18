@@ -106,7 +106,7 @@ describe("SalesRepOrders states", () => {
   });
 });
 
-// findComponent by selector is typed as WrapperLike, which exposes none of what a stub is read for.
+// findComponent by selector is typed as WrapperLike, which does not expose props.
 type StubType = {
   exists: () => boolean;
   props: () => Record<string, unknown>;
@@ -118,7 +118,6 @@ describe("SalesRepOrders all-orders link", () => {
   const allOrdersLink = (wrapper: ReturnType<typeof createWrapper>) =>
     wrapper.findComponent("a.sales-rep-orders__all-link") as unknown as StubType;
 
-  // The rep is reading one customer, so "All orders" must stay in that customer's context.
   it("points at the customer's own order list, in the same tab", () => {
     const wrapper = createWrapper({ props: { title: "Recent orders", organizationId: "org-1" } });
 
@@ -128,7 +127,6 @@ describe("SalesRepOrders all-orders link", () => {
     expect(link.attributes("target")).toBeUndefined();
   });
 
-  // The hub dashboard lists every customer, which no single customer's page can show.
   it("keeps the cross-customer widget on the buyer-facing orders page", () => {
     const wrapper = createWrapper();
 

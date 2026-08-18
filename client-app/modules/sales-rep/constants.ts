@@ -30,8 +30,7 @@ export const CUSTOMER_SHARING_SCOPE = "Customer";
 export const CUSTOMER_PROFILE_ROUTE_NAME = "SalesRepCustomerProfile";
 export const CUSTOMER_PROFILE_ROUTE_SEGMENT = `${MY_CUSTOMERS_ROUTE_SEGMENT}/:organizationId`;
 
-// The customer's full order history: /company/my-customers/:organizationId/orders. A child URL of the
-// profile, so the crumbs back to the customer and to My customers follow from the path.
+// The customer's full order history: /company/my-customers/:organizationId/orders.
 export const CUSTOMER_ORDERS_ROUTE_NAME = "SalesRepCustomerOrders";
 export const CUSTOMER_ORDERS_ROUTE_SEGMENT = `${CUSTOMER_PROFILE_ROUTE_SEGMENT}/orders`;
 // Default page size for the shared Orders widget; callers may override via the `limit` prop.
