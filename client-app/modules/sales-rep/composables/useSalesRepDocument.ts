@@ -1,9 +1,9 @@
-import { useQuery } from "@vue/apollo-composable";
 import { computed, toValue } from "vue";
 import { Logger } from "@/core/utilities";
 import { SalesRepDocumentDocument } from "../api/graphql/types";
 import { HUB_FETCH_POLICY } from "../constants";
 import { mapSalesRepDocument } from "./useSalesRepDocuments";
+import { useSalesRepHubQuery } from "./useSalesRepHubQuery";
 import type { SalesRepDocumentType } from "../types";
 import type { Ref } from "vue";
 
@@ -20,7 +20,7 @@ export function useSalesRepDocument(
   // Never queried without an id: the backend types `id` as non-null.
   const enabled = computed(() => Boolean(toValue(id)) && (toValue(options.enabled) ?? true));
 
-  const { result, loading, error, onError } = useQuery(SalesRepDocumentDocument, variables, {
+  const { result, loading, error, onError } = useSalesRepHubQuery(SalesRepDocumentDocument, variables, {
     fetchPolicy: HUB_FETCH_POLICY,
     enabled,
   });

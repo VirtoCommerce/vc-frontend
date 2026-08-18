@@ -14,7 +14,8 @@
       "search_aria": "Sök efter säljare",
       "empty": "Inga säljare hittades",
       "no_results": "Inga säljare matchar din sökning",
-      "reset_search": "Återställ sökning"
+      "reset_search": "Återställ sökning",
+      "load_failed": "Kunde inte läsa in säljarna"
     },
     "my_customers": {
       "navigation": {

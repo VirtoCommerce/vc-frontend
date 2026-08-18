@@ -1,4 +1,3 @@
-import { useQuery } from "@vue/apollo-composable";
 import { computed, toValue } from "vue";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
@@ -6,6 +5,7 @@ import { SalesRepCustomerOrderStatisticsDocument } from "../api/graphql/types";
 import { HUB_FETCH_POLICY, NEW_ORDERS_FILTER } from "../constants";
 import { needsOrderStatistics, orderStatisticsFlags } from "../layout/stat-data-needs";
 import { buildStatisticsWindows } from "../utils";
+import { useSalesRepHubQuery } from "./useSalesRepHubQuery";
 import { useStatDataNeeds } from "./useStatDataNeeds";
 import type { SalesRepLayoutScopeType } from "../types/layout";
 import type { Ref } from "vue";
@@ -37,7 +37,7 @@ export function useSalesRepOrderStatistics(options: UseSalesRepOrderStatisticsOp
 
   const enabled = computed(() => ready.value && needsOrderStatistics(needs.value));
 
-  const { result, loading, error, onError } = useQuery(SalesRepCustomerOrderStatisticsDocument, variables, {
+  const { result, loading, error, onError } = useSalesRepHubQuery(SalesRepCustomerOrderStatisticsDocument, variables, {
     fetchPolicy: HUB_FETCH_POLICY,
     enabled,
     keepPreviousResult: true,

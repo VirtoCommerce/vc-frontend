@@ -14,7 +14,8 @@
       "search_aria": "Pesquisar representantes de vendas",
       "empty": "Nenhum representante de vendas encontrado",
       "no_results": "Nenhum representante de vendas corresponde à sua pesquisa",
-      "reset_search": "Redefinir pesquisa"
+      "reset_search": "Redefinir pesquisa",
+      "load_failed": "Falha ao carregar os representantes de vendas"
     },
     "my_customers": {
       "navigation": {
@@ -26,7 +27,7 @@
       "table": {
         "customer": "Cliente",
         "last_order": "Meu último pedido",
-        "ytd": "Compras YTD",
+        "ytd": "Compras do ano",
         "last_year": "Ano passado",
         "orders_count": "{count} pedidos",
         "all_customers": "Todos",
@@ -112,7 +113,7 @@
         "avg_order_value": "Valor médio do pedido"
       },
       "stats": {
-        "per_order": "Média por pedido (YTD)"
+        "per_order": "Média por pedido (ano atual)"
       },
       "info": {
         "title": "Informações do cliente",

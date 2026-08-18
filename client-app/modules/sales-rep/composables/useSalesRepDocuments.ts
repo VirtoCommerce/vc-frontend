@@ -1,8 +1,8 @@
-import { useQuery } from "@vue/apollo-composable";
 import { computed, ref, toValue, watch } from "vue";
 import { Logger } from "@/core/utilities";
 import { SalesRepDocumentCategoriesDocument, SalesRepDocumentsDocument } from "../api/graphql/types";
 import { DOCUMENTS_PAGE_SIZE, HUB_FETCH_POLICY } from "../constants";
+import { useSalesRepHubQuery } from "./useSalesRepHubQuery";
 import type { SalesRepDocumentsQuery } from "../api/graphql/types";
 import type { SalesRepDocumentCategoryType, SalesRepDocumentType } from "../types";
 import type { Ref } from "vue";
@@ -67,7 +67,7 @@ export function useSalesRepDocuments(options: UseSalesRepDocumentsOptionsType = 
   }));
 
   // keepPreviousResult holds the current page while the next one loads, so the grid doesn't flash empty.
-  const { result, loading, error, onError } = useQuery(SalesRepDocumentsDocument, variables, {
+  const { result, loading, error, onError } = useSalesRepHubQuery(SalesRepDocumentsDocument, variables, {
     keepPreviousResult: true,
     fetchPolicy: HUB_FETCH_POLICY,
   });
@@ -105,7 +105,7 @@ export function useSalesRepDocuments(options: UseSalesRepDocumentsOptionsType = 
     loading: categoriesLoading,
     error: categoriesError,
     onError: onCategoriesError,
-  } = useQuery(SalesRepDocumentCategoriesDocument, categoriesVariables, {
+  } = useSalesRepHubQuery(SalesRepDocumentCategoriesDocument, categoriesVariables, {
     fetchPolicy: HUB_FETCH_POLICY,
     enabled: options.withCategories === true,
   });

@@ -1,4 +1,3 @@
-import { useQuery } from "@vue/apollo-composable";
 import { computed, toValue } from "vue";
 import { useI18n } from "vue-i18n";
 import { globals } from "@/core/globals";
@@ -11,6 +10,7 @@ import {
   SalesRepTopSellerFilterRulesDocument,
   SalesRepTopSellerSortRulesDocument,
 } from "../api/graphql/types";
+import { useSalesRepHubQuery } from "./useSalesRepHubQuery";
 import type {
   SalesRepRuleDomainType,
   SalesRepRuleKindType,
@@ -90,7 +90,7 @@ export function useSalesRepRules(
   const source = RULE_SOURCES[`${domain}:${kind}`];
   const { t, te } = useI18n();
 
-  const { result, loading, onError } = useQuery(
+  const { result, loading, onError } = useSalesRepHubQuery(
     source.document,
     () => ({
       storeId: globals.storeId,

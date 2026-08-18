@@ -14,7 +14,8 @@
       "search_aria": "Szukaj przedstawicieli handlowych",
       "empty": "Nie znaleziono przedstawicieli handlowych",
       "no_results": "Nie znaleziono przedstawicieli handlowych pasujących do Twojego wyszukiwania",
-      "reset_search": "Resetuj wyszukiwanie"
+      "reset_search": "Resetuj wyszukiwanie",
+      "load_failed": "Nie udało się wczytać przedstawicieli handlowych"
     },
     "my_customers": {
       "navigation": {
@@ -26,7 +27,7 @@
       "table": {
         "customer": "Klient",
         "last_order": "Moje ostatnie zamówienie",
-        "ytd": "Zakupy YTD",
+        "ytd": "Zakupy w tym roku",
         "last_year": "W zeszłym roku",
         "orders_count": "{count} zamówień",
         "all_customers": "Wszyscy",
@@ -112,7 +113,7 @@
         "avg_order_value": "Średnia wartość zamówienia"
       },
       "stats": {
-        "per_order": "Średnio na zamówienie (YTD)"
+        "per_order": "Średnio na zamówienie (od początku roku)"
       },
       "info": {
         "title": "Informacje o kliencie",
