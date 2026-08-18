@@ -129,7 +129,10 @@
         "title_fallback": "注文"
       },
       "breadcrumb": "注文",
-      "back_to_customer": "顧客に戻る"
+      "back_to_customer": "顧客に戻る",
+      "search_placeholder": "番号、名前、その他で検索",
+      "search_aria": "注文検索",
+      "reset_search": "検索をリセット"
     },
     "communication": {
       "action": "メールを送信",

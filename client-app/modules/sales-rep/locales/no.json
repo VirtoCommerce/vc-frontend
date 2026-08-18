@@ -129,7 +129,10 @@
         "title_fallback": "Bestillinger"
       },
       "breadcrumb": "Bestillinger",
-      "back_to_customer": "Tilbake til kunden"
+      "back_to_customer": "Tilbake til kunden",
+      "search_placeholder": "Søk etter nummer, navn eller andre data",
+      "search_aria": "Søk i bestillinger",
+      "reset_search": "Tilbakestill søk"
     },
     "communication": {
       "action": "Send e-post",

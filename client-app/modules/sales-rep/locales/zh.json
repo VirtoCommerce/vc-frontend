@@ -129,7 +129,10 @@
         "title_fallback": "订单"
       },
       "breadcrumb": "订单",
-      "back_to_customer": "返回客户"
+      "back_to_customer": "返回客户",
+      "search_placeholder": "按号码、姓名或其他数据搜索",
+      "search_aria": "搜索订单",
+      "reset_search": "重置搜索"
     },
     "communication": {
       "action": "发送电子邮件",

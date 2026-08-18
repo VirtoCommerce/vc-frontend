@@ -129,7 +129,10 @@
         "title_fallback": "Zamówienia"
       },
       "breadcrumb": "Zamówienia",
-      "back_to_customer": "Powrót do klienta"
+      "back_to_customer": "Powrót do klienta",
+      "search_placeholder": "Szukaj po numerze, nazwisku lub innych danych",
+      "search_aria": "Szukaj zamówień",
+      "reset_search": "Resetuj wyszukiwanie"
     },
     "communication": {
       "action": "Wyślij e-mail",

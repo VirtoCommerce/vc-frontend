@@ -1,6 +1,6 @@
 import { globals } from "@/core/globals";
-import type { MoneyType } from "./api/graphql/types";
-import type { SalesRepRuleType } from "./types";
+import type { MoneyType, SalesRepOrdersQuery } from "./api/graphql/types";
+import type { SalesRepOrderRowType, SalesRepRuleType } from "./types";
 import type { StatWidgetToneType } from "./types/widgets";
 
 // Selectable filter options exclude the backend "all" rule (chips already prepend a synthetic "All" baseline).
@@ -167,4 +167,26 @@ export function formatSignedPercent(percent?: number | null): SignedPercentType 
     return { text: `${rounded}%`, tone: "negative", icon: "chevron-down" };
   }
   return { text: "0%", tone: "neutral", icon: "minus" };
+}
+
+// Connection items → table rows, shared by the orders widget and the customer orders page.
+type OrderNodeType = NonNullable<NonNullable<SalesRepOrdersQuery["salesRepOrders"]>["items"]>[number];
+
+export function toSalesRepOrderRows(items?: OrderNodeType[]): SalesRepOrderRowType[] {
+  return (
+    (items ?? [])
+      // Skip null connection items so one bad row doesn't blank the list.
+      .filter((order): order is NonNullable<OrderNodeType> => order != null)
+      .map((order) => ({
+        id: order.id,
+        number: order.number ?? "",
+        organizationId: order.organizationId ?? "",
+        organizationName: order.organizationName ?? "",
+        createdDate: order.createdDate,
+        status: order.status ?? "",
+        statusDisplayValue: order.statusDisplayValue ?? "",
+        itemsCount: formatStatCount(order.itemsCount),
+        total: formatStatMoney(order.total),
+      }))
+  );
 }

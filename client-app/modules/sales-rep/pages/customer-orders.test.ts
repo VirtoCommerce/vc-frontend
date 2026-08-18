@@ -14,45 +14,51 @@ const state = await vi.hoisted(async () => {
     pages: ref(4),
     page: ref(1),
     keyword: ref(""),
-    sort: ref<unknown>(undefined),
-    isFilterEmpty: ref(true),
+    filter: ref<string | undefined>(undefined),
+    sortRule: ref<string | undefined>(undefined),
     customer: ref<{ organizationName: string } | undefined>({ organizationName: "MERCURY123" }),
     notFound: ref(false),
-    resetFilters: vitest.fn(),
+    rules: ref<{ name: string; label: string }[]>([]),
+    applySort: vitest.fn(),
   };
 });
 
-vi.mock("../composables/useSalesRepCustomerOrders", async () => {
+vi.mock("../composables/useSalesRepCustomerOrders", () => ({
+  PAGE_SIZE: 10,
+  useSalesRepCustomerOrders: () => ({
+    customer: state.customer,
+    notFound: state.notFound,
+    orders: state.orders,
+    loading: state.loading,
+    failed: state.failed,
+    page: state.page,
+    pages: state.pages,
+    keyword: state.keyword,
+    filter: state.filter,
+    sortRule: state.sortRule,
+  }),
+}));
+vi.mock("../composables/useSalesRepRules", async () => {
+  const { ref } = await import("vue");
+  return { useSalesRepRules: () => ({ rules: state.rules, loading: ref(false) }) };
+});
+vi.mock("../composables/useSalesRepColumnSort", async () => {
   const { ref } = await import("vue");
   return {
-    useSalesRepCustomerOrders: () => ({
-      customer: state.customer,
-      notFound: state.notFound,
-      orders: state.orders,
-      loading: state.loading,
-      failed: state.failed,
-      page: state.page,
-      pages: state.pages,
-      keyword: state.keyword,
-      sort: state.sort,
-      isFilterEmpty: state.isFilterEmpty,
-      filterChipsItems: ref([]),
-      resetFilters: state.resetFilters,
-      removeFilterChipsItem: vi.fn(),
+    useSalesRepColumnSort: () => ({
+      sortInfo: ref(undefined),
+      isColumnSortable: () => true,
+      applySort: state.applySort,
     }),
   };
 });
-// goToOrderDetails resolves the route through apollo-backed slug info.
-vi.mock("@/shared/account/composables/useOrderNavigation", () => ({
-  useOrderNavigation: () => ({ goToOrderDetails: vi.fn() }),
-}));
 vi.mock("@/core/composables/usePageHead", () => ({ usePageHead: vi.fn() }));
+// useBreadcrumbs reads the current route.
 vi.mock("vue-router", async () => {
   const actual = await vi.importActual<typeof import("vue-router")>("vue-router");
   return {
     ...actual,
     useRoute: () => ({ path: "/company/my-customers/org-1/orders", params: { organizationId: "org-1" } }),
-    useRouter: () => ({ resolve: () => ({ href: "/account/orders/o-1" }), push: vi.fn() }),
   };
 });
 
@@ -72,14 +78,15 @@ const createWrapper = createWrapperFactory(mount, CustomerOrders, {
           '<input class="search-input" :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" />',
       },
       VcBreadcrumbs: BreadcrumbsStub,
+      VcTable: true,
+      VcTableColumn: true,
       VcTypography: true,
       VcButton: true,
-      VcChip: true,
       VcIcon: true,
+      VcLink: true,
       VcEmptyView: true,
-      OrdersTable: true,
-      OrdersDesktopFilters: true,
-      OrdersMobileFilters: true,
+      SalesRepRuleChips: true,
+      OrderStatus: true,
     },
   },
 });
@@ -99,7 +106,7 @@ type StubType = {
 const stub = (wrapper: ReturnType<typeof createWrapper>, selector: string) =>
   wrapper.findComponent(selector) as unknown as StubType;
 
-const table = (wrapper: ReturnType<typeof createWrapper>) => stub(wrapper, "orders-table-stub");
+const table = (wrapper: ReturnType<typeof createWrapper>) => stub(wrapper, "vc-table-stub");
 
 beforeEach(() => {
   state.orders.value = [{ id: "o-1", number: "CO260812-00002" }];
@@ -108,11 +115,12 @@ beforeEach(() => {
   state.pages.value = 4;
   state.page.value = 1;
   state.keyword.value = "";
-  state.sort.value = undefined;
-  state.isFilterEmpty.value = true;
+  state.filter.value = undefined;
+  state.sortRule.value = undefined;
   state.customer.value = { organizationName: "MERCURY123" };
   state.notFound.value = false;
-  state.resetFilters.mockClear();
+  state.rules.value = [];
+  state.applySort.mockClear();
 });
 
 describe("CustomerOrders", () => {
@@ -135,13 +143,32 @@ describe("CustomerOrders", () => {
     expect(state.page.value).toBe(2);
   });
 
-  it("hands the clicked column to the query", () => {
+  it("hands the clicked column to the sort rules", () => {
     const wrapper = createWrapper();
 
     table(wrapper).vm.$emit("headerClick", { column: "total", direction: "asc" });
 
-    expect(String(state.sort.value)).toBe("total:asc");
+    expect(state.applySort).toHaveBeenCalledWith({ column: "total", direction: "asc" });
+  });
+
+  it("returns to the first page when the filter changes", async () => {
+    createWrapper();
+    state.page.value = 3;
+
+    state.filter.value = "on-hold";
+    await flushPromises();
+
     expect(state.page.value).toBe(1);
+  });
+
+  it("offers the status chips only when the backend has a rule beyond the All baseline", async () => {
+    const wrapper = createWrapper();
+    expect(wrapper.find("sales-rep-rule-chips-stub").exists()).toBe(false);
+
+    state.rules.value = [{ name: "on-hold", label: "On hold" }];
+    await flushPromises();
+
+    expect(wrapper.find("sales-rep-rule-chips-stub").exists()).toBe(true);
   });
 
   it("shows the not-found view instead of the list for a customer the rep does not serve", () => {

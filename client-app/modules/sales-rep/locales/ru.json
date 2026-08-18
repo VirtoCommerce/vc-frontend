@@ -129,7 +129,10 @@
         "title_fallback": "Заказы"
       },
       "breadcrumb": "Заказы",
-      "back_to_customer": "Назад к клиенту"
+      "back_to_customer": "Назад к клиенту",
+      "search_placeholder": "По номеру, имени или другим данным",
+      "search_aria": "Поиск заказов",
+      "reset_search": "Очистить поиск"
     },
     "communication": {
       "action": "Отправить эл. письмо",

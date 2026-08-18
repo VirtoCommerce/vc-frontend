@@ -129,7 +129,10 @@
         "title_fallback": "Pedidos"
       },
       "breadcrumb": "Pedidos",
-      "back_to_customer": "Volver al cliente"
+      "back_to_customer": "Volver al cliente",
+      "search_placeholder": "Buscar por número, nombre u otros datos",
+      "search_aria": "Buscar pedidos",
+      "reset_search": "Restablecer búsqueda"
     },
     "communication": {
       "action": "Enviar correo",

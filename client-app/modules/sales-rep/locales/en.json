@@ -129,7 +129,10 @@
         "title_fallback": "Orders"
       },
       "breadcrumb": "Orders",
-      "back_to_customer": "Back to customer"
+      "back_to_customer": "Back to customer",
+      "search_placeholder": "Search by number, name or other data",
+      "search_aria": "Search orders",
+      "reset_search": "Reset search"
     },
     "communication": {
       "action": "Send email",

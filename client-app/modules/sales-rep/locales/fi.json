@@ -129,7 +129,10 @@
         "title_fallback": "Tilaukset"
       },
       "breadcrumb": "Tilaukset",
-      "back_to_customer": "Takaisin asiakkaan tietoihin"
+      "back_to_customer": "Takaisin asiakkaan tietoihin",
+      "search_placeholder": "Hae numerolla, nimellä tai muilla tiedoilla",
+      "search_aria": "Hae tilauksia",
+      "reset_search": "Nollaa haku"
     },
     "communication": {
       "action": "Lähetä sähköposti",

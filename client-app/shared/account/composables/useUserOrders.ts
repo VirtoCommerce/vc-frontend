@@ -1,4 +1,4 @@
-import { computed, readonly, ref, shallowRef, toValue } from "vue";
+import { computed, readonly, ref, shallowRef } from "vue";
 import { getOrders, getOrganizationOrders } from "@/core/api/graphql/orders";
 import { CUSTOMER_NAME_FACET_NAME, DEFAULT_ORDERS_PER_PAGE, STATUS_ORDERS_FACET_NAME } from "@/core/constants";
 import { SortDirection } from "@/core/enums";
@@ -6,13 +6,12 @@ import { Sort } from "@/core/types";
 import { Logger } from "@/core/utilities";
 import type { CustomerOrderType } from "@/core/api/graphql/types";
 import type { OrderFacetType } from "@/shared/account";
-import type { MaybeRef, MaybeRefOrGetter, Ref } from "vue";
+import type { MaybeRef, Ref } from "vue";
 
 export const facets = shallowRef<OrderFacetType[] | undefined>();
 
 export interface IUseUserOrdersOptions {
   itemsPerPage?: MaybeRef<number>;
-  organizationId?: MaybeRefOrGetter<string>;
 }
 
 export function useUserOrders(options: IUseUserOrdersOptions) {
@@ -41,12 +40,7 @@ export function useUserOrders(options: IUseUserOrdersOptions) {
             : STATUS_ORDERS_FACET_NAME,
       };
 
-      const organizationId = toValue(options.organizationId);
-      // Absent rather than undefined: getOrganizationOrders defaults the id from globals.
-      const organizationPayload = organizationId ? { ...payload, organizationId } : payload;
-
-      const response =
-        scope === "organization" ? await getOrganizationOrders(organizationPayload) : await getOrders(payload);
+      const response = scope === "organization" ? await getOrganizationOrders(payload) : await getOrders(payload);
 
       // TODO as CustomerOrderType[] and as OrderFacetType[] - infer them from query
       orders.value = (response?.items ?? []) as CustomerOrderType[];

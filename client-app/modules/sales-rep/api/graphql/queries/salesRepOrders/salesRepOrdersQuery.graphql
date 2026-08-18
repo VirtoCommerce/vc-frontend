@@ -3,6 +3,8 @@ query SalesRepOrders(
   $storeId: String
   $cultureName: String
   $first: Int
+  $after: String
+  $keyword: String
   $sort: String
   $filter: String
   $periodFrom: DateTime
@@ -13,6 +15,8 @@ query SalesRepOrders(
     storeId: $storeId
     cultureName: $cultureName
     first: $first
+    after: $after
+    keyword: $keyword
     sort: $sort
     filter: $filter
     period: { from: $periodFrom, to: $periodTo }
