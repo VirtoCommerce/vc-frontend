@@ -132,7 +132,23 @@
       "back_to_customer": "Tilbake til kunden",
       "search_placeholder": "Søk etter nummer, navn eller andre data",
       "search_aria": "Søk i bestillinger",
-      "reset_search": "Tilbakestill søk"
+      "reset_search": "Tilbakestill søk",
+      "filters": {
+        "button": "Filtre",
+        "title": "Filtre",
+        "created_date": "Opprettelsesdato",
+        "start_date": "Startdato",
+        "end_date": "Sluttdato",
+        "invalid_range": "Ugyldig datoområde.",
+        "order_status": "Velg bestillingsstatus",
+        "reset": "Tilbakestill",
+        "apply": "Bruk",
+        "custom_date": "Tilpasset dato",
+        "last_day": "Siste dag",
+        "last_week": "Siste uke",
+        "last_month": "Siste måned",
+        "last_year": "Siste år"
+      }
     },
     "communication": {
       "action": "Send e-post",

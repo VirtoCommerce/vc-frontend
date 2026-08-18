@@ -78,3 +78,12 @@ export type SalesRepOrderRowType = {
   itemsCount: string;
   total: string;
 };
+
+// Draft/applied state of the customer orders Filters panel.
+export type SalesRepOrdersFilterDataType = {
+  // Selected status rule names. The backend takes one name, so only the first reaches the query.
+  statuses: string[];
+  // Date-only bounds ("YYYY-MM-DD").
+  startDate?: string;
+  endDate?: string;
+};

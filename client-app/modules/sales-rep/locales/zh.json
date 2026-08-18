@@ -132,7 +132,23 @@
       "back_to_customer": "返回客户",
       "search_placeholder": "按号码、姓名或其他数据搜索",
       "search_aria": "搜索订单",
-      "reset_search": "重置搜索"
+      "reset_search": "重置搜索",
+      "filters": {
+        "button": "过滤器",
+        "title": "过滤器",
+        "created_date": "创建日期",
+        "start_date": "开始日期",
+        "end_date": "结束日期",
+        "invalid_range": "日期范围无效。",
+        "order_status": "@:common.labels.status",
+        "reset": "重置",
+        "apply": "应用",
+        "custom_date": "自定义日期",
+        "last_day": "最后一天",
+        "last_week": "上周",
+        "last_month": "上个月",
+        "last_year": "去年"
+      }
     },
     "communication": {
       "action": "发送电子邮件",

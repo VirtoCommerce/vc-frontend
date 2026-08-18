@@ -132,7 +132,23 @@
       "back_to_customer": "顧客に戻る",
       "search_placeholder": "番号、名前、その他で検索",
       "search_aria": "注文検索",
-      "reset_search": "検索をリセット"
+      "reset_search": "検索をリセット",
+      "filters": {
+        "button": "フィルター",
+        "title": "フィルター",
+        "created_date": "作成日",
+        "start_date": "開始日",
+        "end_date": "終了日",
+        "invalid_range": "無効な日付範囲です。",
+        "order_status": "@:common.labels.status",
+        "reset": "リセット",
+        "apply": "適用",
+        "custom_date": "日付指定",
+        "last_day": "昨日",
+        "last_week": "先週",
+        "last_month": "先月",
+        "last_year": "昨年"
+      }
     },
     "communication": {
       "action": "メールを送信",

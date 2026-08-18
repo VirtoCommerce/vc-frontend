@@ -132,7 +132,23 @@
       "back_to_customer": "Takaisin asiakkaan tietoihin",
       "search_placeholder": "Hae numerolla, nimellä tai muilla tiedoilla",
       "search_aria": "Hae tilauksia",
-      "reset_search": "Nollaa haku"
+      "reset_search": "Nollaa haku",
+      "filters": {
+        "button": "Suodattimet",
+        "title": "Suodattimet",
+        "created_date": "Luontipäivämäärä",
+        "start_date": "Aloituspäivämäärä",
+        "end_date": "Lopetuspäivämäärä",
+        "invalid_range": "Virheellinen päivämääräväli.",
+        "order_status": "Valitse tilauksen tila",
+        "reset": "Nollaa",
+        "apply": "Käytä",
+        "custom_date": "Mukautettu päivämäärä",
+        "last_day": "Viimeinen päivä",
+        "last_week": "Viime viikko",
+        "last_month": "Viime kuukausi",
+        "last_year": "Viime vuosi"
+      }
     },
     "communication": {
       "action": "Lähetä sähköposti",

@@ -132,7 +132,23 @@
       "back_to_customer": "Назад к клиенту",
       "search_placeholder": "По номеру, имени или другим данным",
       "search_aria": "Поиск заказов",
-      "reset_search": "Очистить поиск"
+      "reset_search": "Очистить поиск",
+      "filters": {
+        "button": "Фильтры",
+        "title": "Фильтры",
+        "created_date": "Дата создания",
+        "start_date": "Дата начала",
+        "end_date": "Дата окончания",
+        "invalid_range": "Некорректный диапазон дат.",
+        "order_status": "@:common.labels.status",
+        "reset": "Очистить",
+        "apply": "Применить",
+        "custom_date": "Произвольная дата",
+        "last_day": "Последний день",
+        "last_week": "Последняя неделя",
+        "last_month": "Последний месяц",
+        "last_year": "Последний год"
+      }
     },
     "communication": {
       "action": "Отправить эл. письмо",

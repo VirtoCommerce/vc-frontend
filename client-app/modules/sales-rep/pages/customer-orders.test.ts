@@ -1,5 +1,6 @@
 import { enableAutoUnmount, flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { toEndDateFilterValue, toStartDateFilterValue } from "@/core/utilities/date";
 import { createWrapperFactory } from "@/core/utilities/tests";
 import { CUSTOMER_PROFILE_ROUTE_NAME } from "../constants";
 import CustomerOrders from "./customer-orders.vue";
@@ -16,6 +17,8 @@ const state = await vi.hoisted(async () => {
     keyword: ref(""),
     filter: ref<string | undefined>(undefined),
     sortRule: ref<string | undefined>(undefined),
+    periodFrom: ref<string | undefined>(undefined),
+    periodTo: ref<string | undefined>(undefined),
     customer: ref<{ organizationName: string } | undefined>({ organizationName: "MERCURY123" }),
     notFound: ref(false),
     rules: ref<{ name: string; label: string }[]>([]),
@@ -36,6 +39,8 @@ vi.mock("../composables/useSalesRepCustomerOrders", () => ({
     keyword: state.keyword,
     filter: state.filter,
     sortRule: state.sortRule,
+    periodFrom: state.periodFrom,
+    periodTo: state.periodTo,
   }),
 }));
 vi.mock("../composables/useSalesRepRules", async () => {
@@ -85,7 +90,7 @@ const createWrapper = createWrapperFactory(mount, CustomerOrders, {
       VcIcon: true,
       VcLink: true,
       VcEmptyView: true,
-      SalesRepRuleChips: true,
+      SalesRepOrdersFilters: true,
       OrderStatus: true,
     },
   },
@@ -117,6 +122,8 @@ beforeEach(() => {
   state.keyword.value = "";
   state.filter.value = undefined;
   state.sortRule.value = undefined;
+  state.periodFrom.value = undefined;
+  state.periodTo.value = undefined;
   state.customer.value = { organizationName: "MERCURY123" };
   state.notFound.value = false;
   state.rules.value = [];
@@ -151,24 +158,56 @@ describe("CustomerOrders", () => {
     expect(state.applySort).toHaveBeenCalledWith({ column: "total", direction: "asc" });
   });
 
-  it("returns to the first page when the filter changes", async () => {
+  it("returns to the first page when the sort rule changes", async () => {
     createWrapper();
     state.page.value = 3;
 
-    state.filter.value = "on-hold";
+    state.sortRule.value = "total:asc";
     await flushPromises();
 
     expect(state.page.value).toBe(1);
   });
 
-  it("offers the status chips only when the backend has a rule beyond the All baseline", async () => {
+  // salesRepOrders takes one rule name, so a multi-status selection cannot be sent yet.
+  it("applies the panel's first status and its date range as the query period", () => {
     const wrapper = createWrapper();
-    expect(wrapper.find("sales-rep-rule-chips-stub").exists()).toBe(false);
+    state.page.value = 3;
 
-    state.rules.value = [{ name: "on-hold", label: "On hold" }];
+    stub(wrapper, "sales-rep-orders-filters-stub").vm.$emit("change", {
+      statuses: ["on-hold", "new"],
+      startDate: "2026-05-01",
+      endDate: "2026-05-31",
+    });
+
+    expect(state.filter.value).toBe("on-hold");
+    expect(state.periodFrom.value).toBe(toStartDateFilterValue("2026-05-01"));
+    expect(state.periodTo.value).toBe(toEndDateFilterValue("2026-05-31"));
+    expect(state.page.value).toBe(1);
+  });
+
+  it("clears the query filter when the panel is reset", () => {
+    const wrapper = createWrapper();
+    state.filter.value = "on-hold";
+    state.periodFrom.value = "2026-05-01T00:00:00.000Z";
+
+    stub(wrapper, "sales-rep-orders-filters-stub").vm.$emit("change", { statuses: [] });
+
+    expect(state.filter.value).toBeUndefined();
+    expect(state.periodFrom.value).toBeUndefined();
+    expect(state.periodTo.value).toBeUndefined();
+  });
+
+  it("passes the backend status rules to the panel, minus the All baseline", async () => {
+    const wrapper = createWrapper();
+    state.rules.value = [
+      { name: "all", label: "All" },
+      { name: "on-hold", label: "On hold" },
+    ];
     await flushPromises();
 
-    expect(wrapper.find("sales-rep-rule-chips-stub").exists()).toBe(true);
+    expect(stub(wrapper, "sales-rep-orders-filters-stub").props().rules).toEqual([
+      { name: "on-hold", label: "On hold" },
+    ]);
   });
 
   it("shows the not-found view instead of the list for a customer the rep does not serve", () => {

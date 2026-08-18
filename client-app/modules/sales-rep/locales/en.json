@@ -132,7 +132,23 @@
       "back_to_customer": "Back to customer",
       "search_placeholder": "Search by number, name or other data",
       "search_aria": "Search orders",
-      "reset_search": "Reset search"
+      "reset_search": "Reset search",
+      "filters": {
+        "button": "Filters",
+        "title": "Filters",
+        "created_date": "Created date",
+        "start_date": "Start date",
+        "end_date": "End date",
+        "invalid_range": "Invalid date range.",
+        "order_status": "Select order status",
+        "reset": "Reset",
+        "apply": "Apply",
+        "custom_date": "Custom date",
+        "last_day": "Last day",
+        "last_week": "Last week",
+        "last_month": "Last month",
+        "last_year": "Last year"
+      }
     },
     "communication": {
       "action": "Send email",

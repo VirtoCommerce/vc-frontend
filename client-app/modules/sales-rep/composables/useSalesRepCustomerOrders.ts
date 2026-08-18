@@ -21,6 +21,9 @@ export function useSalesRepCustomerOrders(organizationId: MaybeRefOrGetter<strin
   const filter = ref<string | undefined>(undefined);
   // Selected sort-rule name, optionally suffixed ":asc"/":desc"; undefined → the server default.
   const sortRule = ref<string | undefined>(undefined);
+  // Created-date bounds as instants; undefined → no bound.
+  const periodFrom = ref<string | undefined>(undefined);
+  const periodTo = ref<string | undefined>(undefined);
   const page = ref(1);
 
   const variables = computed(() => ({
@@ -35,6 +38,8 @@ export function useSalesRepCustomerOrders(organizationId: MaybeRefOrGetter<strin
     keyword: keyword.value,
     sort: sortRule.value,
     filter: filter.value,
+    periodFrom: periodFrom.value,
+    periodTo: periodTo.value,
   }));
 
   // Orders are placed outside the storefront, so the list revalidates rather than serving the one it
@@ -76,5 +81,7 @@ export function useSalesRepCustomerOrders(organizationId: MaybeRefOrGetter<strin
     keyword,
     filter,
     sortRule,
+    periodFrom,
+    periodTo,
   };
 }

@@ -132,7 +132,23 @@
       "back_to_customer": "Tillbaka till kunden",
       "search_placeholder": "Sök efter nummer, namn eller andra uppgifter",
       "search_aria": "Sök beställningar",
-      "reset_search": "Återställ sökning"
+      "reset_search": "Återställ sökning",
+      "filters": {
+        "button": "Filter",
+        "title": "Filter",
+        "created_date": "Skapat datum",
+        "start_date": "Startdatum",
+        "end_date": "Slutdatum",
+        "invalid_range": "Ogiltigt datumintervall.",
+        "order_status": "Välj beställningsstatus",
+        "reset": "Återställ",
+        "apply": "Tillämpa",
+        "custom_date": "Anpassat datum",
+        "last_day": "Sista dagen",
+        "last_week": "Förra veckan",
+        "last_month": "Förra månaden",
+        "last_year": "Förra året"
+      }
     },
     "communication": {
       "action": "Skicka e-post",

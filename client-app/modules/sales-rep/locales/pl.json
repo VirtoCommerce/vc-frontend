@@ -132,7 +132,23 @@
       "back_to_customer": "Powrót do klienta",
       "search_placeholder": "Szukaj po numerze, nazwisku lub innych danych",
       "search_aria": "Szukaj zamówień",
-      "reset_search": "Resetuj wyszukiwanie"
+      "reset_search": "Resetuj wyszukiwanie",
+      "filters": {
+        "button": "Filtry",
+        "title": "Filtry",
+        "created_date": "Data utworzenia",
+        "start_date": "Data rozpoczęcia",
+        "end_date": "Data zakończenia",
+        "invalid_range": "Nieprawidłowy zakres dat.",
+        "order_status": "@:common.labels.status",
+        "reset": "Resetuj",
+        "apply": "Zastosuj",
+        "custom_date": "Data niestandardowa",
+        "last_day": "Ostatni dzień",
+        "last_week": "Ostatni tydzień",
+        "last_month": "Ostatni miesiąc",
+        "last_year": "Ostatni rok"
+      }
     },
     "communication": {
       "action": "Wyślij e-mail",

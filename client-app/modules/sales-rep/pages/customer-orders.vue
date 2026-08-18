@@ -15,7 +15,7 @@
     </VcEmptyView>
 
     <template v-else>
-      <div class="customer-orders__search">
+      <div class="customer-orders__toolbar">
         <VcInput
           v-model="localKeyword"
           maxlength="64"
@@ -36,16 +36,8 @@
             />
           </template>
         </VcInput>
-      </div>
 
-      <!-- Status chips are read from this customer's own orders, so a chip always has orders behind it. -->
-      <div v-if="hasFilterOptions" class="customer-orders__controls">
-        <SalesRepRuleChips
-          v-model="filter"
-          :rules="selectableRules"
-          :loading="filterRulesLoading"
-          :all-label="t('sales_rep.orders.filter_all')"
-        />
+        <SalesRepOrdersFilters :rules="statusRules" :disabled="loading" @change="applyFilters" />
       </div>
 
       <!-- A failed read keeps the previous rows, so the failure needs its own view (VCST-5586). -->
@@ -141,12 +133,14 @@ import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs } from "@/core/composables/useBreadcrumbs";
 import { usePageHead } from "@/core/composables/usePageHead";
-import SalesRepRuleChips from "../components/sales-rep-rule-chips.vue";
+import { toEndDateFilterValue, toStartDateFilterValue } from "@/core/utilities/date";
+import SalesRepOrdersFilters from "../components/sales-rep-orders-filters.vue";
 import { useSalesRepColumnSort } from "../composables/useSalesRepColumnSort";
 import { PAGE_SIZE, useSalesRepCustomerOrders } from "../composables/useSalesRepCustomerOrders";
 import { useSalesRepRules } from "../composables/useSalesRepRules";
 import { CUSTOMER_PROFILE_ROUTE_NAME, MY_CUSTOMERS_ROUTE_NAME } from "../constants";
 import { selectableFilterRules } from "../utils";
+import type { SalesRepOrdersFilterDataType } from "../types";
 import type { RouteLocationRaw } from "vue-router";
 import OrderStatus from "@/shared/account/components/order-status.vue";
 
@@ -158,17 +152,17 @@ const props = defineProps<IProps>();
 
 const { t } = useI18n();
 
-const { customer, notFound, orders, loading, failed, page, pages, keyword, filter, sortRule } =
+const { customer, notFound, orders, loading, failed, page, pages, keyword, filter, sortRule, periodFrom, periodTo } =
   useSalesRepCustomerOrders(() => props.organizationId);
 
-const { rules: filterRules, loading: filterRulesLoading } = useSalesRepRules("order", "filter", {
+// The status vocabulary is read from this customer's own orders, so every option has orders behind it.
+const { rules: filterRules } = useSalesRepRules("order", "filter", {
   organizationId: () => props.organizationId,
 });
 const { rules: sortRules } = useSalesRepRules("order", "sort");
 
-// The backend's "All" passthrough would duplicate the baseline chip the chips already prepend.
-const selectableRules = computed(() => selectableFilterRules(filterRules.value));
-const hasFilterOptions = computed(() => selectableRules.value.length > 0);
+// The backend's "all" passthrough is the unfiltered baseline, which is what an empty selection already means.
+const statusRules = computed(() => selectableFilterRules(filterRules.value));
 
 // Date → "recent" (one-way, newest first); Total → "total" (reversible). Direction support is backend-driven.
 const { sortInfo, isColumnSortable, applySort } = useSalesRepColumnSort({
@@ -181,7 +175,7 @@ const { sortInfo, isColumnSortable, applySort } = useSalesRepColumnSort({
 // Unapplied search term; committed to the query on Enter or the search button.
 const localKeyword = ref("");
 
-const hasSearch = computed(() => Boolean(keyword.value) || Boolean(filter.value));
+const hasSearch = computed(() => Boolean(keyword.value) || Boolean(filter.value) || Boolean(periodFrom.value));
 
 const customerName = computed(() => customer.value?.organizationName ?? "");
 const heading = computed(() =>
@@ -190,14 +184,23 @@ const heading = computed(() =>
     : t("sales_rep.customer_orders.page.title_fallback"),
 );
 
-// flush: "sync" resets the page before the variables watcher runs, so a filter/sort change fires one request, not two.
+// flush: "sync" resets the page before the variables watcher runs, so a sort change fires one request, not two.
 watch(
-  [filter, sortRule],
+  sortRule,
   () => {
     page.value = 1;
   },
   { flush: "sync" },
 );
+
+// salesRepOrders takes ONE status rule name, so a multi-status selection cannot be sent yet — only
+// the first reaches the query until the backend accepts a list.
+function applyFilters(value: SalesRepOrdersFilterDataType): void {
+  filter.value = value.statuses[0];
+  periodFrom.value = toStartDateFilterValue(value.startDate);
+  periodTo.value = toEndDateFilterValue(value.endDate);
+  page.value = 1;
+}
 
 function orderRoute(orderId: string): RouteLocationRaw {
   return { name: "OrderDetails", params: { orderId } };
@@ -240,16 +243,12 @@ const breadcrumbs = useBreadcrumbs(() => [
     @apply [word-break:break-word];
   }
 
-  &__search {
-    @apply flex grow;
+  &__toolbar {
+    @apply flex items-start gap-x-3;
   }
 
   &__search-input {
-    @apply w-full;
-  }
-
-  &__controls {
-    @apply flex flex-wrap gap-x-3 gap-y-2;
+    @apply grow;
   }
 
   &__order-link {
