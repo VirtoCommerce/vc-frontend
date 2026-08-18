@@ -1,6 +1,5 @@
 import { enableAutoUnmount, flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { setGlobals } from "@/core/globals";
 import { createWrapperFactory } from "@/core/utilities/tests";
 import { CUSTOMER_PROFILE_ROUTE_NAME } from "../constants";
 import CustomerOrders from "./customer-orders.vue";
@@ -11,43 +10,43 @@ const state = await vi.hoisted(async () => {
   return {
     orders: shallowRef<Record<string, unknown>[]>([]),
     loading: ref(false),
-    pages: ref(1),
+    failed: ref(false),
+    pages: ref(4),
     page: ref(1),
     keyword: ref(""),
     sort: ref<unknown>(undefined),
-    fetchOrders: vitest.fn(),
+    isFilterEmpty: ref(true),
     customer: ref<{ organizationName: string } | undefined>({ organizationName: "MERCURY123" }),
     notFound: ref(false),
+    resetFilters: vitest.fn(),
   };
 });
 
-vi.mock("@/shared/account/composables/useUserOrders", async () => {
-  const { ref, shallowRef } = await import("vue");
+vi.mock("../composables/useSalesRepCustomerOrders", async () => {
+  const { ref } = await import("vue");
   return {
-    facets: shallowRef([]),
-    useUserOrders: () => ({
+    useSalesRepCustomerOrders: () => ({
+      customer: state.customer,
+      notFound: state.notFound,
       orders: state.orders,
       loading: state.loading,
-      pages: state.pages,
+      failed: state.failed,
       page: state.page,
+      pages: state.pages,
       keyword: state.keyword,
       sort: state.sort,
-      itemsPerPage: ref(10),
-      fetchOrders: state.fetchOrders,
+      isFilterEmpty: state.isFilterEmpty,
+      filterChipsItems: ref([]),
+      resetFilters: state.resetFilters,
+      removeFilterChipsItem: vi.fn(),
     }),
   };
 });
-vi.mock("../composables/useSalesRepCustomer", async () => {
-  const { ref } = await import("vue");
-  return {
-    useSalesRepCustomer: () => ({ customer: state.customer, loading: ref(false), notFound: state.notFound }),
-  };
-});
-vi.mock("@/core/composables/usePageHead", () => ({ usePageHead: vi.fn() }));
 // goToOrderDetails resolves the route through apollo-backed slug info.
 vi.mock("@/shared/account/composables/useOrderNavigation", () => ({
   useOrderNavigation: () => ({ goToOrderDetails: vi.fn() }),
 }));
+vi.mock("@/core/composables/usePageHead", () => ({ usePageHead: vi.fn() }));
 vi.mock("vue-router", async () => {
   const actual = await vi.importActual<typeof import("vue-router")>("vue-router");
   return {
@@ -101,30 +100,22 @@ const stub = (wrapper: ReturnType<typeof createWrapper>, selector: string) =>
   wrapper.findComponent(selector) as unknown as StubType;
 
 const table = (wrapper: ReturnType<typeof createWrapper>) => stub(wrapper, "orders-table-stub");
-const lastFilter = () => String(state.fetchOrders.mock.calls.at(-1)?.[1] ?? "");
 
 beforeEach(() => {
-  setGlobals({ storeId: "B2B-store", cultureName: "en-US" });
   state.orders.value = [{ id: "o-1", number: "CO260812-00002" }];
   state.loading.value = false;
-  state.pages.value = 3;
+  state.failed.value = false;
+  state.pages.value = 4;
   state.page.value = 1;
   state.keyword.value = "";
   state.sort.value = undefined;
+  state.isFilterEmpty.value = true;
   state.customer.value = { organizationName: "MERCURY123" };
   state.notFound.value = false;
-  state.fetchOrders.mockClear();
+  state.resetFilters.mockClear();
 });
 
 describe("CustomerOrders", () => {
-  it("reads the customer's orders scoped to the current store", () => {
-    createWrapper();
-
-    expect(state.fetchOrders).toHaveBeenCalledTimes(1);
-    expect(state.fetchOrders.mock.calls[0][0]).toBe("organization");
-    expect(lastFilter()).toContain('storeid:"B2B-store"');
-  });
-
   it("commits the keyword on Enter and returns to the first page", async () => {
     const wrapper = createWrapper();
     state.page.value = 3;
@@ -132,51 +123,38 @@ describe("CustomerOrders", () => {
     await wrapper.find("input.search-input").setValue("CO260812");
     await wrapper.find("input.search-input").trigger("keydown.enter");
 
-    expect(lastFilter()).toContain("CO260812");
+    expect(state.keyword.value).toBe("CO260812");
     expect(state.page.value).toBe(1);
   });
 
-  it("keeps the store scope when paging", async () => {
+  it("hands the requested page to the query", () => {
     const wrapper = createWrapper();
 
     table(wrapper).vm.$emit("pageChanged", 2);
-    await flushPromises();
 
     expect(state.page.value).toBe(2);
-    expect(state.fetchOrders).toHaveBeenCalledTimes(2);
-    expect(lastFilter()).toContain('storeid:"B2B-store"');
   });
 
-  it("re-reads with the clicked column's sort", async () => {
+  it("hands the clicked column to the query", () => {
     const wrapper = createWrapper();
 
     table(wrapper).vm.$emit("headerClick", { column: "total", direction: "asc" });
-    await flushPromises();
 
     expect(String(state.sort.value)).toBe("total:asc");
-    expect(state.fetchOrders).toHaveBeenCalledTimes(2);
+    expect(state.page.value).toBe(1);
   });
 
-  it("never reads orders for a customer the rep does not serve", () => {
+  it("shows the not-found view instead of the list for a customer the rep does not serve", () => {
     state.notFound.value = true;
 
     const wrapper = createWrapper();
 
-    expect(state.fetchOrders).not.toHaveBeenCalled();
     expect(wrapper.findAll("vc-empty-view-stub")).toHaveLength(1);
     expect(table(wrapper).exists()).toBe(false);
   });
 
-  it("reloads when the route switches to another customer", async () => {
-    const wrapper = createWrapper();
-
-    await wrapper.setProps({ organizationId: "org-2" });
-
-    expect(state.fetchOrders).toHaveBeenCalledTimes(2);
-  });
-
   it("names the failure instead of showing the stale rows as a result", async () => {
-    state.fetchOrders.mockRejectedValueOnce(new Error("denied"));
+    state.failed.value = true;
 
     const wrapper = createWrapper();
     await flushPromises();
@@ -184,6 +162,16 @@ describe("CustomerOrders", () => {
     const views = wrapper.findAll("vc-empty-view-stub");
     expect(views).toHaveLength(1);
     expect(views[0].attributes("variant")).toBe("error");
+  });
+
+  it("offers a search reset only while a search is active", async () => {
+    state.orders.value = [];
+    state.keyword.value = "nothing";
+
+    const wrapper = createWrapper();
+    await flushPromises();
+
+    expect(wrapper.find("vc-empty-view-stub").attributes("variant")).toBe("search");
   });
 
   it("links the breadcrumb trail back to the customer profile", () => {

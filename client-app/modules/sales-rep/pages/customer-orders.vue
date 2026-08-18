@@ -102,16 +102,13 @@
 
 <script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { computed, ref, watch } from "vue";
+import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs } from "@/core/composables/useBreadcrumbs";
 import { usePageHead } from "@/core/composables/usePageHead";
-import { globals } from "@/core/globals";
 import { Sort } from "@/core/types";
 import { useOrderNavigation } from "@/shared/account/composables/useOrderNavigation";
-import { facets, useUserOrders } from "@/shared/account/composables/useUserOrders";
-import { getFilterExpression, useUserOrdersFilter } from "@/shared/account/composables/useUserOrdersFilter";
-import { useSalesRepCustomer } from "../composables/useSalesRepCustomer";
+import { useSalesRepCustomerOrders } from "../composables/useSalesRepCustomerOrders";
 import { CUSTOMER_PROFILE_ROUTE_NAME, MY_CUSTOMERS_ROUTE_NAME } from "../constants";
 import type { ISortInfo } from "@/core/types";
 import OrdersDesktopFilters from "@/shared/account/components/orders/orders-desktop-filters.vue";
@@ -128,34 +125,26 @@ const { t } = useI18n();
 
 const isMobile = useBreakpoints(breakpointsTailwind).smaller("sm");
 
-const { customer, loading: customerLoading, notFound } = useSalesRepCustomer(() => props.organizationId);
-
-// The customer's own orders: salesRepOrders narrows to the ones the rep placed themselves.
 const {
+  customer,
+  notFound,
   orders,
-  loading: ordersLoading,
-  pages,
+  loading,
+  failed,
   page,
+  pages,
   keyword,
   sort,
-  fetchOrders,
-} = useUserOrders({ organizationId: () => props.organizationId });
-
-const {
-  appliedFilterData,
   isFilterEmpty,
   filterChipsItems,
   resetFilters,
   removeFilterChipsItem,
-  setFacetsLocalization,
-} = useUserOrdersFilter("organization");
+} = useSalesRepCustomerOrders(() => props.organizationId);
 
 const { goToOrderDetails } = useOrderNavigation();
 
-const failed = ref(false);
 const localKeyword = ref("");
 
-const loading = computed(() => ordersLoading.value || customerLoading.value);
 const hasSearch = computed(() => Boolean(keyword.value) || !isFilterEmpty.value);
 
 const customerName = computed(() => customer.value?.organizationName ?? "");
@@ -165,39 +154,19 @@ const heading = computed(() =>
     : t("sales_rep.customer_orders.page.title_fallback"),
 );
 
-// organizationOrders is not store-scoped.
-function buildFilter(): string {
-  return [getFilterExpression(keyword.value, appliedFilterData.value), `storeid:"${globals.storeId}"`]
-    .filter(Boolean)
-    .join(" ");
-}
-
-async function reload(): Promise<void> {
-  try {
-    await fetchOrders("organization", buildFilter());
-    failed.value = false;
-  } catch {
-    failed.value = true;
-  }
-
-  setFacetsLocalization(facets.value);
-}
-
-async function applyKeyword(): Promise<void> {
+function applyKeyword(): void {
   keyword.value = localKeyword.value.trim();
   page.value = 1;
-  await reload();
 }
 
-async function resetKeyword(): Promise<void> {
+function resetKeyword(): void {
   localKeyword.value = "";
 
   if (keyword.value) {
-    await applyKeyword();
+    applyKeyword();
   }
 }
 
-// The watcher below re-reads, so this adds no second request.
 function resetSearch(): void {
   localKeyword.value = "";
   keyword.value = "";
@@ -205,43 +174,15 @@ function resetSearch(): void {
   resetFilters();
 }
 
-async function changePage(newPage: number): Promise<void> {
+function changePage(newPage: number): void {
   page.value = newPage;
   window.scroll({ top: 0, behavior: "smooth" });
-  await reload();
 }
 
-async function applySorting(sortInfo: ISortInfo): Promise<void> {
+function applySorting(sortInfo: ISortInfo): void {
   sort.value = new Sort(sortInfo.column, sortInfo.direction);
   page.value = 1;
-  await reload();
 }
-
-// Filter state is shared with the buyer's own Orders list; cleared before the watcher, so it is not a change.
-resetFilters();
-
-watch(
-  appliedFilterData,
-  async () => {
-    page.value = 1;
-    await reload();
-  },
-  { deep: true },
-);
-
-// An organization the rep does not serve must never reach the query.
-const canRead = computed(() => !customerLoading.value && !notFound.value);
-
-watch(
-  [canRead, () => props.organizationId],
-  ([allowed]) => {
-    if (allowed) {
-      page.value = 1;
-      void reload();
-    }
-  },
-  { immediate: true },
-);
 
 usePageHead({ title: heading });
 
