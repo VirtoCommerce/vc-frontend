@@ -14,7 +14,8 @@
       "search_aria": "Cerca agenti commerciali",
       "empty": "Nessun agente commerciale trovato",
       "no_results": "Nessun agente commerciale corrisponde alla ricerca",
-      "reset_search": "Reimposta ricerca"
+      "reset_search": "Reimposta ricerca",
+      "load_failed": "Impossibile caricare gli agenti commerciali"
     },
     "my_customers": {
       "navigation": {
@@ -26,7 +27,7 @@
       "table": {
         "customer": "Cliente",
         "last_order": "Il mio ultimo ordine",
-        "ytd": "Acquisti YTD",
+        "ytd": "Acquisti dell'anno",
         "last_year": "Anno scorso",
         "orders_count": "{count} ordini",
         "all_customers": "Tutti",
@@ -112,7 +113,7 @@
         "avg_order_value": "Valore medio ordine"
       },
       "stats": {
-        "per_order": "Media per ordine (YTD)"
+        "per_order": "Media per ordine (anno in corso)"
       },
       "info": {
         "title": "Informazioni cliente",

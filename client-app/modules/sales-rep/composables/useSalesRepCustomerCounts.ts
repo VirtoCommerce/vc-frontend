@@ -1,4 +1,3 @@
-import { useQuery } from "@vue/apollo-composable";
 import { computed, toValue } from "vue";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
@@ -6,6 +5,7 @@ import { SalesRepCustomerCountsDocument } from "../api/graphql/types";
 import { HUB_FETCH_POLICY } from "../constants";
 import { needsCustomerCounts } from "../layout/stat-data-needs";
 import { buildStatisticsWindows } from "../utils";
+import { useSalesRepHubQuery } from "./useSalesRepHubQuery";
 import { useStatDataNeeds } from "./useStatDataNeeds";
 import type { SalesRepLayoutScopeType } from "../types/layout";
 import type { Ref } from "vue";
@@ -33,7 +33,7 @@ export function useSalesRepCustomerCounts(options: UseSalesRepCustomerCountsOpti
 
   const enabled = computed(() => ready.value && needsCustomerCounts(needs.value));
 
-  const { result, loading, error, onError } = useQuery(SalesRepCustomerCountsDocument, variables, {
+  const { result, loading, error, onError } = useSalesRepHubQuery(SalesRepCustomerCountsDocument, variables, {
     fetchPolicy: HUB_FETCH_POLICY,
     enabled,
   });
