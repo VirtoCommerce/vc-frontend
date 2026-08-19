@@ -14,7 +14,8 @@
       "search_aria": "搜索销售代表",
       "empty": "未找到销售代表",
       "no_results": "没有销售代表符合您的搜索条件",
-      "reset_search": "重置搜索"
+      "reset_search": "重置搜索",
+      "load_failed": "无法加载销售代表"
     },
     "my_customers": {
       "navigation": {
@@ -49,7 +50,7 @@
           "title": "仪表板"
         },
         "widgets": {
-          "new_orders": "新订单",
+          "new_orders": "状态为“New”的订单",
           "active_carts": "活动购物车",
           "active_cart": "活动购物车",
           "orders_placed_week": "本周下单",
@@ -65,7 +66,7 @@
           "vs_last_year": "较去年 {delta}",
           "ordered_this_month": "本月 {count} 家下单",
           "new_customers": "{count} 个新客户",
-          "placed_today": "今日 {count} 单",
+          "of_recent_orders": "近 7 天创建的 {count} 单中",
           "new_this_week": "本周新增 {count}",
           "mtd_of_ytd": "占年初至今 {percent}%",
           "load_failed": "加载失败"

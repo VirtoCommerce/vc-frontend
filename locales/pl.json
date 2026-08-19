@@ -82,7 +82,8 @@
       "buy_now": "Kup teraz",
       "see_all": "Zobacz wszystko",
       "report_a_problem": "Zgłoś problem",
-      "copy_to_clipboard": "Kopiuj do schowka"
+      "copy_to_clipboard": "Kopiuj do schowka",
+      "reload_page": "Odśwież stronę"
     },
     "labels": {
       "actions": "Akcje",
@@ -234,7 +235,8 @@
       "outdated_backend_modules": "Aplikacja frontendowa oczekuje nowszych wersji Platformy i jednego lub więcej Modułów. <br> Aplikacja frontendowa działa na niekompatybilnym zapleczu. Niektóre funkcje mogą być niedostępne, zdegradowane lub niestabilne, dopóki Platforma i Moduły nie zostaną zaktualizowane, aby spełnić wymagania sklepu. Udostępnij poniższy raport swojemu administratorowi.",
       "logo_changed": "Logo zostało pomyślnie zmienione.",
       "logo_deleted": "Logo zostało usunięte.",
-      "pending_operations_leaving_page_confirmation": "Niektóre operacje są w toku. Czy na pewno chcesz opuścić tę stronę? Niezapisane zmiany mogą zostać utracone."
+      "pending_operations_leaving_page_confirmation": "Niektóre operacje są w toku. Czy na pewno chcesz opuścić tę stronę? Niezapisane zmiany mogą zostać utracone.",
+      "content_failed_to_load": "Nie udało się załadować części witryny. Odśwież stronę, aby kontynuować."
     },
     "placeholders": {
       "enter_value": "Proszę wprowadzić wartość",
@@ -716,7 +718,11 @@
         "enter_custom_code": "Wprowadź niestandardowy kod",
         "all_coupons": "Zobacz wszystkie kupony i promocje",
         "apply_aria": "Apply coupon {code}",
-        "remove_aria": "Remove coupon"
+        "remove_aria": "Remove coupon",
+        "coupon_code_aria": "Kod kuponu",
+        "applied_announcement": "Kupon {code} został zastosowany.",
+        "removed_announcement": "Kupon {code} został usunięty.",
+        "totals_announcement": "Zniżka {discount}, nowa suma {total}."
       }
     },
     "catalog": {

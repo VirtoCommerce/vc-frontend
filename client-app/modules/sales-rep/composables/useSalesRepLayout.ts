@@ -1,10 +1,11 @@
-import { useMutation, useQuery } from "@vue/apollo-composable";
+import { useMutation } from "@vue/apollo-composable";
 import { computed, readonly, ref } from "vue";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { SalesRepLayoutDocument, SaveSalesRepLayoutDocument } from "../api/graphql/types";
 import { echoMatchesSentBlocks, reconcileLayout, serializeLayout } from "../layout/document";
 import { getBlockRegistry } from "../layout/registry";
+import { useSalesRepHubQuery } from "./useSalesRepHubQuery";
 import type {
   SalesRepBlockSettingsType,
   SalesRepLayoutRegionIdType,
@@ -37,7 +38,7 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
 
   // `no-cache` even with layout/cache-policies.ts in place: a save echoes `saveSalesRepLayout`, a
   // different root field, so it never refreshes a cached `salesRepLayout`.
-  const { result, loading, error, onError, refetch } = useQuery(
+  const { result, loading, error, onError, refetch } = useSalesRepHubQuery(
     SalesRepLayoutDocument,
     () => ({
       scope,
@@ -50,7 +51,8 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
     Logger.error("[sales-rep] salesRepLayout failed:", queryError);
   });
 
-  // A mutation writes its result to the cache too, so it needs the same policy.
+  // A mutation writes its result to the cache too, so it needs the same policy. No suppress context: a failed
+  // save is a user action, so it keeps the toast (VCST-5682).
   const { mutate, loading: saving } = useMutation(SaveSalesRepLayoutDocument, { fetchPolicy: "no-cache" });
 
   // Layout as last persisted (or registry defaults when the rep has never saved this surface).

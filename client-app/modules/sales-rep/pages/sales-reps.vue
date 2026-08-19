@@ -29,10 +29,14 @@
       </VcInput>
     </div>
 
+    <!-- A failure must not land in the empty state, which with a keyword active offers a Reset search that
+         cannot help (VCST-5586). -->
+    <VcEmptyView v-if="failed && !loading" :text="t('sales_rep.table.load_failed')" variant="error" />
+
     <!-- Empty view — outside the card, shown instead of it (Company members pattern).
          Distinguishes "no reps at all" from "your search matched nothing" (+ reset). -->
     <VcEmptyView
-      v-if="!items.length && !loading"
+      v-else-if="!items.length && !loading"
       :text="keyword ? t('sales_rep.table.no_results') : t('sales_rep.table.empty')"
       :variant="keyword ? 'search' : 'empty'"
       icon="outline-order"
@@ -90,7 +94,9 @@ import { useSalesReps } from "../composables/useSalesReps";
 import type { SalesRepSortColumnType } from "../types";
 
 const { t } = useI18n();
-const { loading, keyword, sort, page, pages, items } = useSalesReps();
+const { loading, error, keyword, sort, page, pages, items } = useSalesReps();
+
+const failed = computed(() => Boolean(error.value));
 
 // Local (unapplied) search term; committed to the query on Enter or the search button,
 // matching the Company members page interaction.

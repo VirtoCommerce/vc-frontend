@@ -36,7 +36,7 @@
           </span>
         </VcCopyText>
 
-        <ProductRating v-if="productReviewsEnabled && product.rating" :rating="product.rating" />
+        <ProductRating v-if="productReviewsEnabled && product.rating" :rating="product.rating" with-review-count />
       </div>
 
       <VcLayout sidebar-position="right" sticky class="mt-5">

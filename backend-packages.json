@@ -9,21 +9,16 @@
       "Name": "AzureBlob",
       "Container": "packages",
       "ServiceUri": "https://vc3prerelease.blob.core.windows.net",
-      "Modules": [
-        {
-          "Id": "VirtoCommerce.Cart",
-          "BlobName": "VirtoCommerce.Cart_3.1008.0-alpha.803-vcst-5332-customer-wishlist-sharing-scope.zip"
-        },
-        {
-          "Id": "VirtoCommerce.XCart",
-          "BlobName": "VirtoCommerce.XCart_3.1029.0-alpha.270-vcst-5332-customer-wishlist-sharing-scope.zip"
-        }
-      ]
+      "Modules": []
     },
     {
       "Name": "GithubReleases",
       "ModuleSources": ["https://raw.githubusercontent.com/VirtoCommerce/vc-modules/master/modules_v3.json"],
       "Modules": [
+        {
+          "Id": "VirtoCommerce.Cart",
+          "Version": "3.1009.0"
+        },
         {
           "Id": "VirtoCommerce.Loyalty",
           "Version": "3.1005.0"
@@ -302,11 +297,11 @@
         },
         {
           "Id": "VirtoCommerce.PageBuilderModule",
-          "Version": "3.1020.0"
+          "Version": "3.1021.0"
         },
         {
           "Id": "VirtoCommerce.SalesRep",
-          "Version": "3.1000.0"
+          "Version": "3.1002.0"
         },
         {
           "Id": "VirtoCommerce.Shipping",
@@ -342,11 +337,15 @@
         },
         {
           "Id": "VirtoCommerce.XFrontend",
-          "Version": "3.1005.0"
+          "Version": "3.1006.0"
         },
         {
           "Id": "VirtoCommerce.Catalog",
           "Version": "3.1040.0"
+        },
+        {
+          "Id": "VirtoCommerce.XCart",
+          "Version": "3.1029.0"
         },
         {
           "Id": "VirtoCommerce.XCatalog",
@@ -354,7 +353,7 @@
         },
         {
           "Id": "VirtoCommerce.Customer",
-          "Version": "3.1021.0"
+          "Version": "3.1022.0"
         },
         {
           "Id": "VirtoCommerce.ProfileExperienceApiModule",

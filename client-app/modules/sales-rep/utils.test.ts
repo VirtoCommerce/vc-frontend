@@ -4,66 +4,136 @@ import { buildStatisticsWindows, formatStatCount, formatStatMoney } from "./util
 // Pinned so the expectations don't depend on the runtime's default locale.
 vi.mock("@/core/globals", () => ({ globals: { cultureName: "en-US", currencyCode: "USD" } }));
 
+// The windows are the user's calendar days expressed as UTC instants, so every expectation is built with
+// local-time constructors too — that keeps the suite meaningful in whatever zone it runs in (CI, a dev box
+// at UTC−5, a rep at UTC+3) instead of only passing at UTC.
+const localIso = (year: number, month: number, day: number, h = 0, min = 0, s = 0, ms = 0): string =>
+  new Date(year, month, day, h, min, s, ms).toISOString();
+
 describe("buildStatisticsWindows", () => {
-  it("clamps the previous-month window to the current month start when the current month has run longer than the previous month", () => {
-    // Mar 31: ~30 days elapsed since Mar 1, but February is shorter — the elapsed-matched
-    // point (Feb 1 + 30d) would land in March and overlap the current MTD window.
-    const now = new Date(Date.UTC(2025, 2, 31, 12, 0, 0));
+  it("clamps the previous-month window to the current month start when the day overflows the previous month", () => {
+    // Mar 31: "Feb 31" doesn't exist, so the matched position normalizes forward into March and would
+    // overlap the current MTD window.
+    const now = new Date(2025, 2, 31, 12, 0, 0);
     const w = buildStatisticsWindows(now);
 
-    expect(w.mtdFrom).toBe("2025-03-01T00:00:00.000Z");
-    expect(w.prevFrom).toBe("2025-02-01T00:00:00.000Z");
-    // Clamped to the month start (== mtdFrom); without the clamp it would be 2025-03-03T12:00:00Z.
-    expect(w.prevTo).toBe("2025-03-01T00:00:00.000Z");
+    expect(w.mtdFrom).toBe(localIso(2025, 2, 1));
+    expect(w.prevFrom).toBe(localIso(2025, 1, 1));
+    // Clamped to the month start (== mtdFrom); without the clamp it would land on Mar 3.
+    expect(w.prevTo).toBe(localIso(2025, 2, 1));
     // The previous window must never reach into the current period.
     expect(new Date(w.prevTo).getTime()).toBeLessThanOrEqual(new Date(w.mtdFrom).getTime());
   });
 
-  it("keeps the previous-month window elapsed-matched (no clamp) mid-month", () => {
-    // Mar 15: ~15 days into March (bound rounded to end of the UTC day); Feb 1 + that span = Feb 15,
-    // still inside February — no clamp.
-    const now = new Date(Date.UTC(2025, 2, 15, 12, 0, 0));
+  it("matches the previous-month window to the same day of that month (no clamp) mid-month", () => {
+    // Mar 15 → the baseline runs Feb 1 through the end of Feb 15: equal spans, no overflow to clamp.
+    const now = new Date(2025, 2, 15, 12, 0, 0);
     const w = buildStatisticsWindows(now);
 
-    expect(w.prevFrom).toBe("2025-02-01T00:00:00.000Z");
-    expect(w.prevTo).toBe("2025-02-15T23:59:59.999Z");
+    expect(w.prevFrom).toBe(localIso(2025, 1, 1));
+    expect(w.prevTo).toBe(localIso(2025, 1, 15, 23, 59, 59, 999));
     expect(new Date(w.prevTo).getTime()).toBeLessThan(new Date(w.mtdFrom).getTime());
   });
 
-  it("clamps the last-year window to the current year start on Dec 31 of a leap year", () => {
-    // 2024 is a leap year (366 days); 2023 is not. Elapsed since Jan 1 2024 (365d12h) added to
-    // Jan 1 2023 would land in 2024 without the clamp.
-    const now = new Date(Date.UTC(2024, 11, 31, 12, 0, 0));
+  it("keeps the last-year window inside the previous year on Dec 31 of a leap year", () => {
+    // 2024 is a leap year (366 days), 2023 is not — a day-count-based baseline would overshoot into 2024.
+    // The calendar move lands on the same month/day a year back, so it can't leave 2023 at all.
+    const now = new Date(2024, 11, 31, 12, 0, 0);
     const w = buildStatisticsWindows(now);
 
-    expect(w.ytdFrom).toBe("2024-01-01T00:00:00.000Z");
-    expect(w.lastYearFrom).toBe("2023-01-01T00:00:00.000Z");
-    // Clamped to the year start (== ytdFrom); without the clamp it would be 2024-01-01T12:00:00Z.
-    expect(w.lastYearTo).toBe("2024-01-01T00:00:00.000Z");
-    expect(new Date(w.lastYearTo).getTime()).toBeLessThanOrEqual(new Date(w.ytdFrom).getTime());
+    expect(w.ytdFrom).toBe(localIso(2024, 0, 1));
+    expect(w.lastYearFrom).toBe(localIso(2023, 0, 1));
+    expect(w.lastYearTo).toBe(localIso(2023, 11, 31, 23, 59, 59, 999));
+    expect(new Date(w.lastYearTo).getTime()).toBeLessThan(new Date(w.ytdFrom).getTime());
   });
 
   it("never clamps the weekly window (weeks are always 7 days)", () => {
-    const now = new Date(Date.UTC(2025, 2, 12, 9, 30, 0)); // a Wednesday
+    const now = new Date(2025, 2, 12, 9, 30, 0); // a Wednesday
     const w = buildStatisticsWindows(now);
 
-    // The elapsed part of a week can't exceed a full previous week, so the previous-week end
-    // always stays strictly before the current week start.
+    // Monday-start week, and the previous week starts exactly seven calendar days earlier.
+    expect(w.weekFrom).toBe(localIso(2025, 2, 10));
+    expect(w.prevWeekFrom).toBe(localIso(2025, 2, 3));
+    // The baseline ends on the same weekday a week back, which is always at least a day before the
+    // current week starts.
+    expect(w.prevWeekTo).toBe(localIso(2025, 2, 5, 23, 59, 59, 999));
     expect(new Date(w.prevWeekTo).getTime()).toBeLessThan(new Date(w.weekFrom).getTime());
   });
 
-  it("rounds the upper bound of every current-period window to the end of the UTC day (for cache stability)", () => {
+  it("keeps the weekly baseline clear of the week start on a DST fall-back Sunday", () => {
+    // Nov 2 2025 is the fall-back day in US zones, so the current week holds a 25-hour day. Projecting an
+    // elapsed millisecond span would overshoot seven days and collide the baseline end with weekFrom.
+    const w = buildStatisticsWindows(new Date(2025, 10, 2, 12, 0, 0));
+
+    expect(w.weekFrom).toBe(localIso(2025, 9, 27));
+    expect(w.prevWeekTo).toBe(localIso(2025, 9, 26, 23, 59, 59, 999));
+    expect(new Date(w.prevWeekTo).getTime()).toBeLessThan(new Date(w.weekFrom).getTime());
+  });
+
+  it("rounds the upper bound of every current-period window to the end of the user's day (for cache stability)", () => {
     // Any instant within the day maps to the same end-of-day bound, so co-occurring requests share
     // a cache key regardless of the exact time they fire.
-    const now = new Date(Date.UTC(2025, 5, 10, 8, 15, 0));
-    const dayEnd = "2025-06-10T23:59:59.999Z";
+    const now = new Date(2025, 5, 10, 8, 15, 0);
+    const dayEnd = localIso(2025, 5, 10, 23, 59, 59, 999);
     const w = buildStatisticsWindows(now);
 
     expect(w.mtdTo).toBe(dayEnd);
     expect(w.ytdTo).toBe(dayEnd);
     expect(w.weekTo).toBe(dayEnd);
-    expect(w.todayTo).toBe(dayEnd);
-    expect(w.todayFrom).toBe("2025-06-10T00:00:00.000Z");
+    expect(w.recentTo).toBe(dayEnd);
+  });
+
+  it("spans a full 7 days of the rolling window, today included", () => {
+    const now = new Date(2025, 5, 10, 8, 15, 0); // Tue Jun 10
+    const w = buildStatisticsWindows(now);
+
+    // Jun 4…Jun 10 inclusive — 6 days back, not 7, or the window would cover 8 calendar days.
+    expect(w.recentFrom).toBe(localIso(2025, 5, 4));
+    expect(w.recentTo).toBe(localIso(2025, 5, 10, 23, 59, 59, 999));
+  });
+
+  it("keeps the rolling window full on a Monday, when week-to-date would be nearly empty", () => {
+    const monday = new Date(2025, 5, 9, 8, 15, 0);
+    const w = buildStatisticsWindows(monday);
+
+    expect(w.weekFrom).toBe(localIso(2025, 5, 9));
+    expect(w.recentFrom).toBe(localIso(2025, 5, 3));
+    expect(new Date(w.recentFrom).getTime()).toBeLessThan(new Date(w.weekFrom).getTime());
+  });
+
+  it("puts the day boundary at the user's midnight, not UTC's", () => {
+    // The reported defect: on UTC boundaries an order placed at 23:00 UTC is already "tomorrow" for a
+    // UTC+3 rep (and "yesterday" evening lands in UTC today for a UTC−5 one), so the widget disagreed
+    // with the order list beside it, which renders createdDate in the browser's zone.
+    const now = new Date(2026, 6, 31, 10, 0, 0);
+    const w = buildStatisticsWindows(now);
+
+    const from = new Date(w.recentFrom);
+    const to = new Date(w.recentTo);
+
+    // Midnight → 23:59:59.999 on the *user's* clock.
+    expect([from.getHours(), from.getMinutes(), from.getSeconds(), from.getMilliseconds()]).toEqual([0, 0, 0, 0]);
+    expect([to.getHours(), to.getMinutes(), to.getSeconds(), to.getMilliseconds()]).toEqual([23, 59, 59, 999]);
+    expect(from.getDate()).toBe(25);
+    expect(to.getDate()).toBe(31);
+
+    // An order the rep sees stamped inside the window is inside it at both ends…
+    const justAfterMidnight = new Date(2026, 6, 25, 0, 30, 0).getTime();
+    const lateEvening = new Date(2026, 6, 31, 23, 30, 0).getTime();
+    expect(justAfterMidnight).toBeGreaterThanOrEqual(from.getTime());
+    expect(lateEvening).toBeLessThanOrEqual(to.getTime());
+
+    // …and the late evening before the window stays out of it.
+    expect(new Date(2026, 6, 24, 23, 30, 0).getTime()).toBeLessThan(from.getTime());
+  });
+
+  it("anchors every period start to the user's midnight", () => {
+    const w = buildStatisticsWindows(new Date(2025, 4, 21, 16, 45, 0));
+
+    for (const bound of [w.mtdFrom, w.prevFrom, w.ytdFrom, w.lastYearFrom, w.weekFrom, w.prevWeekFrom, w.recentFrom]) {
+      const date = new Date(bound);
+      expect([date.getHours(), date.getMinutes(), date.getSeconds(), date.getMilliseconds()]).toEqual([0, 0, 0, 0]);
+    }
   });
 });
 

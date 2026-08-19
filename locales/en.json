@@ -82,7 +82,8 @@
       "buy_now": "Buy now",
       "see_all": "See all",
       "report_a_problem": "Report a problem",
-      "copy_to_clipboard": "Copy to clipboard"
+      "copy_to_clipboard": "Copy to clipboard",
+      "reload_page": "Reload page"
     },
     "labels": {
       "actions": "Actions",
@@ -234,7 +235,8 @@
       "outdated_backend_modules": "The frontend application expects newer versions of the Platform and one or more Modules. <br> Frontend Application is running on an incompatible backend. Some features may be unavailable, degraded, or unstable until the Platform and Modules are upgraded to meet the storefront's requirements. Please share the report below with your administrator.",
       "logo_changed": "Logo was successfully changed.",
       "logo_deleted": "Logo was deleted.",
-      "pending_operations_leaving_page_confirmation": "Some operations are still in progress. Are you sure you want to leave this page? Unsaved changes may be lost."
+      "pending_operations_leaving_page_confirmation": "Some operations are still in progress. Are you sure you want to leave this page? Unsaved changes may be lost.",
+      "content_failed_to_load": "Part of the site could not be loaded. Please reload the page to continue."
     },
     "placeholders": {
       "enter_value": "Enter a value",
@@ -716,7 +718,11 @@
         "enter_custom_code": "Enter custom code",
         "all_coupons": "View all coupons & promotions",
         "apply_aria": "Apply coupon {code}",
-        "remove_aria": "Remove coupon"
+        "remove_aria": "Remove coupon",
+        "coupon_code_aria": "Coupon code",
+        "applied_announcement": "Coupon {code} applied.",
+        "removed_announcement": "Coupon {code} removed.",
+        "totals_announcement": "Discount {discount}, new total {total}."
       }
     },
     "catalog": {

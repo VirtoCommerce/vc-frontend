@@ -82,7 +82,8 @@
       "buy_now": "Acheter",
       "see_all": "Voir tout",
       "report_a_problem": "Signaler un problème",
-      "copy_to_clipboard": "Copier dans le presse-papiers"
+      "copy_to_clipboard": "Copier dans le presse-papiers",
+      "reload_page": "Recharger la page"
     },
     "labels": {
       "actions": "Actions",
@@ -234,7 +235,8 @@
       "outdated_backend_modules": "L'application frontend attend des versions plus récentes de la Plateforme et d'un ou plusieurs Modules. <br> L'application frontend fonctionne sur un backend incompatible. Certaines fonctionnalités peuvent être indisponibles, dégradées ou instables jusqu'à ce que la Plateforme et les Modules soient mis à niveau pour répondre aux exigences du magasin. Veuillez partager le rapport ci-dessous avec votre administrateur.",
       "logo_changed": "Le logo a été changé avec succès.",
       "logo_deleted": "Le logo a été supprimé.",
-      "pending_operations_leaving_page_confirmation": "Certaines opérations sont toujours en cours. Êtes-vous sûr de vouloir quitter cette page ? Les modifications non enregistrées pourraient être perdues."
+      "pending_operations_leaving_page_confirmation": "Certaines opérations sont toujours en cours. Êtes-vous sûr de vouloir quitter cette page ? Les modifications non enregistrées pourraient être perdues.",
+      "content_failed_to_load": "Une partie du site n'a pas pu être chargée. Veuillez recharger la page pour continuer."
     },
     "placeholders": {
       "enter_value": "Veuillez entrer une valeur",
@@ -716,7 +718,11 @@
         "enter_custom_code": "Entrez un code personnalisé",
         "all_coupons": "Voir tous les coupons et promotions",
         "apply_aria": "Apply coupon {code}",
-        "remove_aria": "Remove coupon"
+        "remove_aria": "Remove coupon",
+        "coupon_code_aria": "Code de coupon",
+        "applied_announcement": "Coupon {code} appliqué.",
+        "removed_announcement": "Coupon {code} supprimé.",
+        "totals_announcement": "Remise {discount}, nouveau total {total}."
       }
     },
     "catalog": {

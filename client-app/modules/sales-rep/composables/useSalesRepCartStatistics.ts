@@ -1,10 +1,10 @@
-import { useQuery } from "@vue/apollo-composable";
 import { computed, toValue } from "vue";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { SalesRepCustomerCartStatisticsDocument } from "../api/graphql/types";
 import { ACTIVE_CARTS_FILTER, HUB_FETCH_POLICY } from "../constants";
 import { buildStatisticsWindows } from "../utils";
+import { useSalesRepHubQuery } from "./useSalesRepHubQuery";
 import type { Ref } from "vue";
 
 type UseSalesRepCartStatisticsOptionsType = {
@@ -26,7 +26,7 @@ export function useSalesRepCartStatistics(options: UseSalesRepCartStatisticsOpti
     };
   });
 
-  const { result, loading, error, onError } = useQuery(SalesRepCustomerCartStatisticsDocument, variables, {
+  const { result, loading, error, onError } = useSalesRepHubQuery(SalesRepCustomerCartStatisticsDocument, variables, {
     fetchPolicy: HUB_FETCH_POLICY,
   });
 
