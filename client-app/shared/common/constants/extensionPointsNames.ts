@@ -29,9 +29,11 @@ const CUSTOM_EXTENSION_NAMES = {
   },
   paymentPage: {
     paymentMethods: "payment-methods",
+    skyflowPaymentMethod: "skyflow-payment-method",
   },
   orderPaymentPage: {
     paymentMethods: "payment-methods",
+    skyflowPaymentMethod: "skyflow-payment-method",
   },
   sharedList: {
     provenanceNote: "provenance-note",

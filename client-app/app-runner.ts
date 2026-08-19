@@ -281,7 +281,7 @@ export default async () => {
   void initNews(router, i18n);
   void initLoyalty(router, i18n);
   void initSalesRep(router, i18n);
-  void initSkyflow(router);
+  void initSkyflow(router, i18n);
 
   // Plugins
   app.use(head);
