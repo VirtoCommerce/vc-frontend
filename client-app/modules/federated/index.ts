@@ -17,10 +17,9 @@ import { checkHostCompatibility } from "./version-gate";
  *   13s). bootstrap.ts additionally holds a BOOT_BACKSTOP_MS above that sum — a true
  *   backstop that fires only when these budgets malfunction or the loader chunk fetch
  *   itself hangs; keep it > manifest + 2×load when changing the defaults here.
- * Discovery has two sources: the platform's plugin list (xAPI `store.plugins(appId:"vc-frontend")`,
- * passed in by the caller) and `APP_MODULES_FEDERATION_REMOTES` for local plugin development.
- * The env var WINS when set, so a plugin author's local remote is never overridden by whatever the
- * backend happens to serve. The harness ships no built-in remote.
+ * Discovery has two sources: the platform's plugin list (xAPI `store.plugins`, passed in by the
+ * caller) and `APP_MODULES_FEDERATION_REMOTES`, which wins when set so a local remote is never
+ * overridden by what the backend serves. The harness ships no built-in remote.
  */
 
 /** The contract every federated plugin's `./plugin` expose must satisfy. */
@@ -30,33 +29,15 @@ interface IFederatedPlugin {
 
 interface IRemoteDescriptor {
   name: string;
-  /**
-   * Manifest URL — read by the version gate, then handed to registerRemotes.
-   *
-   * It must be the MANIFEST, never `remoteEntry.js` itself: the MF runtime picks its loading
-   * strategy from the ".json" substring, and a "pure remote entry" is injected as a classic
-   * `<script>` — which an ESM remoteEntry (what @module-federation/vite emits) answers with
-   * "Cannot use import statement outside a module". Verified the hard way.
-   *
-   * Consequence for freshness: the platform's `?v={hash}` reaches the manifest but not the entry
-   * filename the manifest points at, and module files are served by a plain UseStaticFiles with no
-   * Cache-Control. Chunks are content-hashed, so only `remoteEntry.js` itself relies on ETag
-   * revalidation. Fixing that belongs on the platform side (a Cache-Control on module statics).
-   */
+  /** Manifest URL, never remoteEntry.js — see the ".json" rule in resolveEnvRemotes. */
   entry: string;
-  /** MF expose key to load. The platform defaults it to "./Module"; our scaffold emits "./plugin". */
+  /** MF expose key: "./Module" by the platform's default, "./plugin" from our scaffold. */
   exposed: string;
-  /** Permission the current user must hold for this plugin to run. Evaluated host-side. */
   permission?: string;
-  /** Stylesheets the plugin ships separately from its entry chunk. */
   styles: string[];
 }
 
-/**
- * One plugin as the platform describes it, projected by xAPI (`store.plugins`). Declared
- * structurally rather than imported from the generated types so the loader stays free of
- * the core GraphQL layer — the call site is what type-checks the two against each other.
- */
+/** One plugin as xAPI projects it (`store.plugins`); structural so the loader stays off the core GraphQL layer. */
 export interface IPlatformPlugin {
   id: string;
   permission?: string | null;
@@ -80,12 +61,11 @@ export interface IFederatedLoadResult {
 }
 
 export interface IFederatedLoaderOptions {
-  /** What the platform advertises for this store (xAPI `store.plugins`). Ignored when the env override is set. */
+  /** What the platform advertises for this store; ignored when the env override is set. */
   plugins?: readonly IPlatformPlugin[];
   /**
-   * Host-side permission check. The platform serves ONE cached plugin list to every caller and
-   * deliberately does not filter it per user, so a plugin declaring a permission is gated here.
-   * Absent callback + declared permission => skipped (fail closed).
+   * The platform serves one cached list to every caller and does not filter it per user, so a
+   * declared permission is gated here. No callback + declared permission => skipped (fail closed).
    */
   hasPermission?: (permission: string) => boolean;
   /** Budget for reading one remote's manifest JSON; exceeded => skipped (fail closed). */
@@ -166,15 +146,9 @@ interface IResolvedRemotes {
   invalidNames: string[];
 }
 
-/**
- * Expose key of a remote built by our own scaffold (createRemoteFederationOptions).
- * The platform's default is "./Module"; a plugin says which one it uses through
- * `plugin.json`, so only the env path — where nobody declares it — assumes ours.
- */
+/** Assumed only on the env path, where no descriptor declares an expose key. */
 const SCAFFOLD_EXPOSE_KEY = "./plugin";
-/** The platform's documented default when `plugin.json` declares no `remote.exposed`. */
 const PLATFORM_EXPOSE_KEY = "./Module";
-/** Emitted next to remoteEntry.js by @module-federation/vite; carries the contract-gate metadata. */
 const MF_MANIFEST_FILE = "mf-manifest.json";
 
 /**
@@ -232,7 +206,7 @@ function resolveEnvRemotes(): IResolvedRemotes | undefined {
   return resolved;
 }
 
-/** Same-origin absolute URL for a platform path. The `$(ModuleId)` token must survive verbatim. */
+/** The `$(ModuleId)` token in a platform path must survive verbatim — the platform's routes contain it. */
 function toAbsoluteUrl(path: string): string | undefined {
   try {
     return new URL(path, globalThis.location.origin).toString();
@@ -241,7 +215,6 @@ function toAbsoluteUrl(path: string): string | undefined {
   }
 }
 
-/** Swaps the last path segment for the MF manifest that sits next to the entry. */
 function toManifestUrl(entryUrl: string): string {
   const url = new URL(entryUrl);
   const path = url.pathname;
@@ -249,7 +222,6 @@ function toManifestUrl(entryUrl: string): string {
   return url.toString();
 }
 
-/** The platform's per-file cache-busting token, applied the way its guide prescribes (`?v={hash}`). */
 function withCacheBuster(url: string, hash?: string | null): string {
   if (!hash) {
     return url;
@@ -275,9 +247,9 @@ function collectStyles(plugin: IPlatformPlugin): string[] {
   return styles;
 }
 
+/** Guards against stacking <link>s when a remote is registered twice (HMR, a second boot in tests). */
 const injectedStyles = new Set<string>();
 
-/** Idempotent: re-registering a remote (HMR, a second boot in tests) must not stack <link>s. */
 function injectStyles(urls: string[]): void {
   for (const href of urls) {
     if (injectedStyles.has(href)) {
@@ -292,13 +264,8 @@ function injectStyles(urls: string[]): void {
 }
 
 /**
- * Turns the platform's plugin descriptors into remote descriptors.
- *
- * The platform serves `remoteEntry.js` under a same-origin `/modules/...` path. The CONTRACT
- * GATE needs the MF manifest instead, which sits next to it — hence the rewrite to
- * `mf-manifest.json`, which is also the form registerRemotes needs (see resolveEnvRemotes on
- * the ".json" rule). A plugin shipping no manifest fails the gate and is skipped: that is the
- * intended fail-closed behaviour, an unverifiable contract must not execute.
+ * The platform serves `remoteEntry.js`; the gate needs the manifest beside it, so the entry is
+ * rewritten. A plugin shipping no manifest fails the gate and is skipped.
  */
 function resolvePlatformRemotes(plugins: readonly IPlatformPlugin[]): IResolvedRemotes {
   const resolved: IResolvedRemotes = { remotes: [], invalidNames: [] };
@@ -405,8 +372,7 @@ export async function initFederatedModules(options?: IFederatedLoaderOptions): P
   // summary log as version-gate skips — never a silent drop.
   result.skipped.push(...invalidNames);
 
-  // Permission is checked before the manifest fetch: a plugin the user may not run should
-  // cost no network at all.
+  // Before the manifest fetch: a plugin the user may not run should cost no network at all.
   const permitted = remotes.filter((remote) => {
     if (!remote.permission || options?.hasPermission?.(remote.permission)) {
       return true;
@@ -459,8 +425,6 @@ export async function initFederatedModules(options?: IFederatedLoaderOptions): P
         // still executed the remote's module scope (top-level side effects like a CSS
         // import), and an init() that started keeps running — raceWithLateLogging logs
         // both late settlements so the "failed" outcome is never silently contradicted.
-        // A plugin may ship CSS the platform lists separately from the entry chunk; it must be
-        // in the document before the plugin renders anything.
         injectStyles(remote.styles);
         const plugin = await raceWithLateLogging(
           loadRemote<IFederatedPlugin>(`${remote.name}/${remote.exposed.replace(/^\.\//, "")}`),

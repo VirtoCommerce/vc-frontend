@@ -4,12 +4,7 @@ import { isMfFlagEnabled } from "@/core-api/federation.mjs";
 import type { IPlatformPlugin } from "./index";
 
 interface IStartOptions {
-  /** What the platform advertises for this store; ignored when the env override is set. */
   plugins?: readonly IPlatformPlugin[];
-  /**
-   * Host-side permission check. Passed in rather than imported: this module stays a thin shim over
-   * the dynamically-imported loader, and the caller already holds the user.
-   */
   hasPermission?: (permission: string) => boolean;
 }
 

@@ -269,9 +269,8 @@ export default async () => {
 
   // Module Federation host: load federated plugins if APP_MODULES_FEDERATION_ENABLED is on.
   // Awaited before app.use(router) so plugin routes exist for the first navigation.
-  // The plugin list rides along on the boot store query, so discovery costs no extra request.
-  // The user is already set by this point, so a permission-gated plugin is evaluated against the
-  // real claims rather than an anonymous default.
+  // The plugin list rides along on the boot store query; the user is already set, so a
+  // permission-gated plugin is evaluated against real claims.
   const federatedModulesReady = startFederatedModules({
     plugins: initialStore?.plugins,
     hasPermission: checkPermissions,
