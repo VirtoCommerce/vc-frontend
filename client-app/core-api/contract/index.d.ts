@@ -2526,6 +2526,11 @@ declare const apolloClient: ApolloClient<_apollo_client_cache.NormalizedCacheObj
  */
 declare function registerCacheTypePolicies(policies: TypePolicies): void;
 
+type ErrorNotificationsContextType = {
+    suppressErrorNotifications?: boolean;
+};
+declare const SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT: ErrorNotificationsContextType;
+
 declare const useModuleSettings: _vueuse_core.UseMemoizeReturn<{
     getModuleSettings: <T extends Record<string, string>>(settingsMapping: T) => { [K in T[keyof T]]?: string | number | boolean | null | undefined; };
     getSettingValue: (name: string) => string | number | boolean | null | undefined;
@@ -3037,6 +3042,19 @@ declare function _useWishlistSharingScopes(): {
 };
 declare const useWishlistSharingScopes: typeof _useWishlistSharingScopes;
 
+/**
+ * Converts ISO 8601 date-only (YYYY-MM-DD) to full date (YYYY-MM-DDTHH:mm:ss.sssZ)
+ * @param dateOnly ISO 8601 date without time (YYYY-MM-DD)
+ * @returns ISO 8601 date with time (YYYY-MM-DDTHH:mm:ss.sssZ)
+ */
+declare function toStartDateFilterValue(dateOnly?: string): string | undefined;
+/**
+ * Converts ISO 8610 date-only (YYYY-MM-DD) to full date (YYYY-MM-DDTHH:mm:ss.sssZ) and adds 1 day without 1 millisecond
+ * @param dateOnly ISO 8601 date without time (YYYY-MM-DD)
+ * @returns ISO 8601 date with time (YYYY-MM-DDTHH:mm:ss.sssZ) + 1 day - 1 millisecond (means full day of 13 Dec)
+ */
+declare function toEndDateFilterValue(dateOnly?: string): string | undefined;
+
 type LoggerType = {
     debug: (message: unknown, ...args: unknown[]) => void;
     info: (message: string, ...args: unknown[]) => void;
@@ -3134,5 +3152,5 @@ declare const globals: Readonly<Required<GlobalVariablesType>>;
 /** Contract version, single-sourced from core-api/package.json (managed by build:core-types / bump:core). */
 declare const CORE_VERSION: string;
 
-export { CORE_VERSION, EXTENSION_NAMES, Logger, _default as OrderStatus, _default$e as VcAlert, _default$m as VcBadge, _default$l as VcBreadcrumbs, _default$d as VcButton, _default$k as VcCheckbox, _default$c as VcEmptyView, _default$j as VcIcon, _default$i as VcImage, _default$b as VcInput, _default$h as VcLabel, _default$g as VcLink, _default$a as VcLoaderOverlay, _default$f as VcMarkdownRender, _default$9 as VcMenuItem, _default$5 as VcModal, _default$8 as VcSelect, _default$4 as VcTable, _default$3 as VcTableColumn, _default$7 as VcTextarea, _default$6 as VcTypography, _default$2 as VcWidget, _default$1 as VcWidgetSkeleton, apolloClient, getProductRoute, globals, graphqlClient, registerCacheTypePolicies, registerLocaleLoader, uiKit, useBreadcrumbs, useExtensionRegistry, useModal, useModuleSettings, useNavigations, useNotifications, usePageHead, useUser, useWishlistSharingScopes };
+export { CORE_VERSION, EXTENSION_NAMES, Logger, _default as OrderStatus, SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT, _default$e as VcAlert, _default$m as VcBadge, _default$l as VcBreadcrumbs, _default$d as VcButton, _default$k as VcCheckbox, _default$c as VcEmptyView, _default$j as VcIcon, _default$i as VcImage, _default$b as VcInput, _default$h as VcLabel, _default$g as VcLink, _default$a as VcLoaderOverlay, _default$f as VcMarkdownRender, _default$9 as VcMenuItem, _default$5 as VcModal, _default$8 as VcSelect, _default$4 as VcTable, _default$3 as VcTableColumn, _default$7 as VcTextarea, _default$6 as VcTypography, _default$2 as VcWidget, _default$1 as VcWidgetSkeleton, apolloClient, getProductRoute, globals, graphqlClient, registerCacheTypePolicies, registerLocaleLoader, toEndDateFilterValue, toStartDateFilterValue, uiKit, useBreadcrumbs, useExtensionRegistry, useModal, useModuleSettings, useNavigations, useNotifications, usePageHead, useUser, useWishlistSharingScopes };
 export type { ExtendedMenuLinkType, I18n, ILanguage, IWishlistSharingScopeControlsType, LocaleLoaderType, MenuType, WishlistSharingScopeSavedContextType };

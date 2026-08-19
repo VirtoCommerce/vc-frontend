@@ -55,6 +55,8 @@ export { EXTENSION_NAMES } from "@/shared/common/constants/extensionPointsNames"
 // GraphQL / Apollo — same client, cache and auth link as the host.
 export { apolloClient, graphqlClient } from "@/core/api/graphql/client";
 export { registerCacheTypePolicies } from "@/core/api/graphql/config/registerCacheTypePolicies";
+// Opts one operation out of the host's global error toast, for a read that names its own failure inline.
+export { SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT } from "@/core/api/graphql/consts";
 
 // Composables. Subpath imports, not barrels — a barrel re-exports the whole module
 // graph and turns the contract's type graph (and Rollup's chunk graph) circular.
@@ -75,6 +77,9 @@ export type {
 
 export { Logger } from "@/core/utilities";
 export { getProductRoute } from "@/core/utilities/product";
+// A date-only bound ("YYYY-MM-DD") to the instant a filter needs: local midnight, or the last
+// millisecond of that day. A plugin filtering by date has to land on the host's boundaries, not its own.
+export { toEndDateFilterValue, toStartDateFilterValue } from "@/core/utilities/date";
 // A plugin's messages must re-merge on every locale switch, not just at init: the host re-runs
 // every registered loader when the language changes. Merge with vue-i18n's own
 // `mergeLocaleMessage` — the host has no seam of its own for that.
