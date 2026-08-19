@@ -274,7 +274,6 @@
       "company_info": "公司信息",
       "company_members": "公司成员",
       "contact_administrator": "联系网站管理员",
-      "saved_credit_cards": "已保存的信用卡",
       "skip_to_main_content": "跳至主要内容",
       "skip_to_footer": "跳至页脚"
     },
@@ -368,8 +367,7 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "稍后保存",
-            "lists": "@:common.links.lists",
-            "saved_credit_cards": "@:common.links.saved_credit_cards"
+            "lists": "@:common.links.lists"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -485,8 +483,7 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members",
-          "saved_credit_cards": "@:common.links.saved_credit_cards"
+          "company_members": "@:common.links.company_members"
         }
       },
       "change_password_form": {
@@ -1341,13 +1338,6 @@
         "create_list_button": "创建清单",
         "create_list_button_mobile": "创建",
         "lists_icon": "清单图标"
-      },
-      "saved_credit_cards": {
-        "no_cards": "您尚未保存任何信用卡",
-        "delete_credit_card_modal": {
-          "title": "确认删除",
-          "message": "您确定要移除信用卡吗？"
-        }
       },
       "list_details": {
         "meta": {

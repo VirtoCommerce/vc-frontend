@@ -18,9 +18,11 @@ export const EXTENSION_NAMES = merge({}, INITIAL_EXTENSION_NAMES, {
   },
   paymentPage: {
     paymentMethods: "payment-methods",
+    skyflowPaymentMethod: "skyflow-payment-method",
   },
   orderPaymentPage: {
     paymentMethods: "payment-methods",
+    skyflowPaymentMethod: "skyflow-payment-method",
   },
   sharedList: {
     provenanceNote: "provenance-note",

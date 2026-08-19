@@ -274,7 +274,6 @@
       "company_info": "Информация о компании",
       "company_members": "Сотрудники компании",
       "contact_administrator": "свяжитесь с администратором сайта",
-      "saved_credit_cards": "Сохраненные кредитные карты",
       "skip_to_main_content": "Перейти к основному содержанию",
       "skip_to_footer": "Перейти к подвалу"
     },
@@ -368,8 +367,7 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "Отложено",
-            "lists": "@:common.links.lists",
-            "saved_credit_cards": "@:common.links.saved_credit_cards"
+            "lists": "@:common.links.lists"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -485,8 +483,7 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members",
-          "saved_credit_cards": "@:common.links.saved_credit_cards"
+          "company_members": "@:common.links.company_members"
         }
       },
       "change_password_form": {
@@ -1341,13 +1338,6 @@
         "create_list_button": "Создать список",
         "create_list_button_mobile": "Создать",
         "lists_icon": "Иконка списка"
-      },
-      "saved_credit_cards": {
-        "no_cards": "У вас нет сохраненных кредитных карт",
-        "delete_credit_card_modal": {
-          "title": "Подтвердить удаление",
-          "message": "Вы уверены, что хотите удалить кредитную карту?"
-        }
       },
       "list_details": {
         "meta": {

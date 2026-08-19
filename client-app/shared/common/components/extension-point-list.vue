@@ -2,7 +2,7 @@
   <template v-for="(entry, name) in getEntries(category, names)" :key="name">
     <component
       :is="entry.component"
-      v-if="name && isRegistered(category, name)"
+      v-if="name && canRender(category, name as never, conditionParams as never)"
       v-bind="{ ...getProps(category, name), ...$attrs }"
     />
 
@@ -17,6 +17,8 @@ import type { ExtensionCategoryType } from "@/shared/common/types/extensionRegis
 interface IProps {
   category: ExtensionCategoryType;
   names?: string[];
+  /** Passed to each registered entry's `condition`; entries without a condition always render. */
+  conditionParams?: unknown;
 }
 
 defineOptions({
@@ -25,5 +27,5 @@ defineOptions({
 
 defineProps<IProps>();
 
-const { getEntries, getProps, isRegistered } = useExtensionRegistry();
+const { getEntries, getProps, canRender } = useExtensionRegistry();
 </script>

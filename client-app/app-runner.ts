@@ -258,7 +258,7 @@ export default async () => {
   void initNews(router, i18n);
   void initLoyalty(router, i18n);
   void initSalesRep(router, i18n);
-  void initSkyflow(router);
+  void initSkyflow(router, i18n);
 
   // Module Federation host: load federated plugins if APP_MODULES_FEDERATION_ENABLED is on.
   // Awaited before app.use(router) so plugin routes exist for the first navigation.
