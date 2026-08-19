@@ -232,7 +232,8 @@ function toAbsoluteUrl(path: string): string | undefined {
 /** Swaps the last path segment for the MF manifest that sits next to the entry. */
 function toManifestUrl(entryUrl: string): string {
   const url = new URL(entryUrl);
-  url.pathname = url.pathname.replace(/[^/]*$/, MF_MANIFEST_FILE);
+  const path = url.pathname;
+  url.pathname = path.slice(0, path.lastIndexOf("/") + 1) + MF_MANIFEST_FILE;
   return url.toString();
 }
 

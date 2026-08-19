@@ -1,7 +1,7 @@
-import { useUser } from "@/shared/account/composables/useUser";
 import { Logger } from "@/core/utilities";
 import { ignoreChunkLoadFailure } from "@/core/utilities/optional-chunk";
 import { isMfFlagEnabled } from "@/core-api/federation.mjs";
+import { useUser } from "@/shared/account/composables/useUser";
 import type { IPlatformPlugin } from "./index";
 
 /**

@@ -147,7 +147,9 @@ describe("platform-served plugin discovery", () => {
     await initFederatedModules({ plugins: [plugin] });
 
     const hrefs = Array.from(document.head.querySelectorAll("link")).map((link) => link.getAttribute("href"));
-    expect(hrefs).toEqual([`${globalThis.location.origin}/modules/$(VirtoCommerce.SalesRep)/plugins/vc-frontend/style.css?v=AA11`]);
+    expect(hrefs).toEqual([
+      `${globalThis.location.origin}/modules/$(VirtoCommerce.SalesRep)/plugins/vc-frontend/style.css?v=AA11`,
+    ]);
   });
 
   it("lets the env override win over the platform list", async () => {

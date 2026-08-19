@@ -34,14 +34,17 @@ yarn build-only --mode=development && yarn preview
 - `APP_MODULES_FEDERATION_ENABLED` → turns the host into a federation host (build + runtime). Only
   `"true"`, `"1"`, `"yes"` or `"on"` enable it — any other value counts as off (allowlist:
   enabling remote code loading is the dangerous direction).
-- `APP_MODULES_FEDERATION_REMOTES` → a JSON map of `remoteName → manifestUrl`. No var = no remotes = no-op.
-  URLs must be **https** (http is allowed for localhost only).
+- `APP_MODULES_FEDERATION_REMOTES` → a JSON map of `remoteName → manifestUrl`, the **local/dev
+  override**. URLs must be **https** (http is allowed for localhost only). When set it replaces
+  the platform list entirely, so a local remote is never mixed with the deployed ones.
 
-> **Both vars are inlined at BUILD time** (Vite `import.meta.env`): changing the remote
-> list means rebuilding the host, not just flipping a deployment variable. Runtime,
-> settings-driven discovery is the planned replacement (see `TODO.md` #2 and
-> `specs/2026-07-06-discovery-hosting-decision.md`; `APP_MODULES_FEDERATION_REMOTES` then stays as the
-> local/dev override).
+Without that override the list comes from the **platform** at runtime: every installed module
+that ships `plugins/vc-frontend/` is advertised through `store.plugins(appId: "vc-frontend")`,
+which rides along on the boot store query. Installing a module is therefore enough to add a
+plugin — no host rebuild.
+
+> `APP_MODULES_FEDERATION_ENABLED` is still inlined at BUILD time (Vite `import.meta.env`), so
+> turning the host into a federation host is a rebuild; which plugins it then loads is not.
 
 That's the whole operator surface. Everything below is _why_ and _how_.
 
@@ -79,11 +82,13 @@ That's the whole operator surface. Everything below is _why_ and _how_.
         └────────────────────────┘                  └────────────────────────┘
 ```
 
-**How host and remotes find each other:** the host holds a list of remotes
-(`APP_MODULES_FEDERATION_REMOTES`). Each entry points at the plugin's `mf-manifest.json`, a small JSON
-index that tells the MF runtime where the plugin's code (`remoteEntry.js` + chunks) lives.
-The host reads that manifest, checks compatibility, then loads the plugin's `./plugin`
-entry and calls its `init()`. The plugin, in turn, reaches back into the host **only**
+**How host and remotes find each other:** the host gets a list of remotes — from the platform
+(`store.plugins(appId: "vc-frontend")`) or, when set, from `APP_MODULES_FEDERATION_REMOTES`. Either
+way it resolves to the plugin's `mf-manifest.json`, a small JSON index that tells the MF runtime
+where the plugin's code (`remoteEntry.js` + chunks) lives; platform entries point at
+`remoteEntry.js`, so the host rewrites the last segment to reach the manifest beside it. The host
+reads that manifest, checks compatibility, then loads the expose key the descriptor declares
+(`./plugin` for our scaffold, `./Module` by the platform's default) and calls its `init()`. The plugin, in turn, reaches back into the host **only**
 through the shared `@vc-frontend/core` facade — never by importing host source directly.
 
 ---
@@ -182,9 +187,11 @@ startFederatedModules()            bootstrap.ts
   │  dynamic import("./index")              ← keeps MF runtime out of non-MF builds
   ▼
 initFederatedModules()             index.ts
-  1. resolveRemotes()              parse + validate APP_MODULES_FEDERATION_REMOTES → [{name, entry}]
+  1. resolveRemotes(plugins)       env override if set, else the platform's descriptors
                                    (empty ⇒ done; non-string / non-https / non-".json"
                                    entries are reported as SKIPPED, never silently dropped)
+  1a. permission filter            a plugin declaring a permission the user lacks is SKIPPED
+                                   before any fetch — the platform serves one list to everyone
   2. isCompatible(remote)          fetch manifest JSON (3s budget), evaluate
                                    requiredHostVersion (semver version or RANGE) against
                                    CORE_VERSION. Incompatible, malformed, unreadable or
@@ -325,7 +332,7 @@ Once built and deployed, add it to the host's `APP_MODULES_FEDERATION_REMOTES` a
 | Var              | Scope                | Meaning                                                                                                              |
 | ---------------- | -------------------- | -------------------------------------------------------------------------------------------------------------------- |
 | `APP_MODULES_FEDERATION_ENABLED`    | build time (inlined) | Enables the MF host plugin in Vite **and** the runtime bootstrap. Off (unset/`""`/`"false"`/`"0"`) ⇒ complete no-op. |
-| `APP_MODULES_FEDERATION_REMOTES` | build time (inlined) | JSON `{ "<name>": "<manifestUrl>" }`, https-only. Absent/invalid ⇒ no remotes loaded.                                |
+| `APP_MODULES_FEDERATION_REMOTES` | build time (inlined) | Local/dev override: JSON `{ "<name>": "<manifestUrl>" }`, https-only. Absent ⇒ the platform's list is used; invalid ⇒ no remotes loaded. |
 
 ---
 

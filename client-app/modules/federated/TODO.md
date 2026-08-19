@@ -23,21 +23,24 @@ Definition and rationale: *Pilot* section of the discovery spec.
       permission/guard primitive in the facade yet. Likely a pilot blocker for real users.
 - [ ] Facade additions the plugin turns out to need (→ #7 guard rails).
 
-## 2. Settings-driven discovery & enablement (runtime, per-env)
+## 2. Runtime discovery — done, via the platform rather than a store setting
 
-Decided, not built — the step from hardcoded `APP_MODULES_FEDERATION_REMOTES` to per-env runtime config.
-Full design + review corrections: discovery spec. Until implemented, the build-time
-`APP_MODULES_FEDERATION_REMOTES` env remains the only path (manual, deploy-owned, rebuild per change, no
-runtime toggle).
+The platform shipped its own answer (x-api 3.1016.0 / x-frontend 3.1005.0): `AppManifestService`
+advertises every installed module carrying `plugins/vc-frontend/`, xAPI projects that as
+`store.plugins(appId:)`, and the loader consumes it. Installing a module now adds a plugin with no
+host rebuild, and `APP_MODULES_FEDERATION_REMOTES` stayed the local override — the precedence this
+section had already decided.
 
-- [ ] Central **`ModuleFederation.Remotes`** store setting + one small dedicated platform
-      module (+ an edit permission). Source-agnostic, not tied to any plugin's BE module.
-- [ ] **Versioned normalized descriptor** `{ name, url, enabled, version?,
-      requiredHostVersion?, hash?, source }` with per-source adapters.
-- [ ] **`resolveRemotes()` precedence** — canonical resolution + truth table over
-      {theme switch × store `Enabled` × store list × `APP_MODULES_FEDERATION_REMOTES`}, incl.
-      present-vs-empty, replace-vs-merge, name-collision dedup. Decided: local
-      `APP_MODULES_FEDERATION_REMOTES` **overrides** the runtime setting.
+Dropped with it: the central `ModuleFederation.Remotes` store setting, its dedicated platform
+module, and the per-source descriptor adapters. The platform's descriptor is the only shape now, so
+there is nothing left to normalize between sources.
+
+Still open:
+
+- [ ] **Freshness of the list** — it rides on the boot store query, which localStorage-caches for
+      an hour, so a newly installed plugin can take that long to appear. Acceptable for now (the
+      platform caches its own manifest for the process lifetime); revisit if operators expect an
+      immediate effect.
 - [ ] **Theme master switch** in `client-app/config/settings_data.json` for the runtime
       role of `APP_MODULES_FEDERATION_ENABLED` — while keeping a build-time bundling gate
       (`vite.federation.ts` can import the JSON, or a build switch survives).
