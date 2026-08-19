@@ -30,7 +30,19 @@ interface IFederatedPlugin {
 
 interface IRemoteDescriptor {
   name: string;
-  /** Manifest URL — read by the version gate, then handed to registerRemotes. */
+  /**
+   * Manifest URL — read by the version gate, then handed to registerRemotes.
+   *
+   * It must be the MANIFEST, never `remoteEntry.js` itself: the MF runtime picks its loading
+   * strategy from the ".json" substring, and a "pure remote entry" is injected as a classic
+   * `<script>` — which an ESM remoteEntry (what @module-federation/vite emits) answers with
+   * "Cannot use import statement outside a module". Verified the hard way.
+   *
+   * Consequence for freshness: the platform's `?v={hash}` reaches the manifest but not the entry
+   * filename the manifest points at, and module files are served by a plain UseStaticFiles with no
+   * Cache-Control. Chunks are content-hashed, so only `remoteEntry.js` itself relies on ETag
+   * revalidation. Fixing that belongs on the platform side (a Cache-Control on module statics).
+   */
   entry: string;
   /** MF expose key to load. The platform defaults it to "./Module"; our scaffold emits "./plugin". */
   exposed: string;

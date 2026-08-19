@@ -105,7 +105,7 @@ export default async () => {
 
   app.use(authPlugin);
 
-  const { setUser, user, isAuthenticated, savedUserId } = useUser();
+  const { setUser, user, isAuthenticated, savedUserId, checkPermissions } = useUser();
   const { themeContext, addPresetToThemeContext, setThemeContext } = useThemeContext();
   const {
     currentLanguage,
@@ -270,7 +270,12 @@ export default async () => {
   // Module Federation host: load federated plugins if APP_MODULES_FEDERATION_ENABLED is on.
   // Awaited before app.use(router) so plugin routes exist for the first navigation.
   // The plugin list rides along on the boot store query, so discovery costs no extra request.
-  const federatedModulesReady = startFederatedModules(initialStore?.plugins);
+  // The user is already set by this point, so a permission-gated plugin is evaluated against the
+  // real claims rather than an anonymous default.
+  const federatedModulesReady = startFederatedModules({
+    plugins: initialStore?.plugins,
+    hasPermission: checkPermissions,
+  });
 
   // Plugins
   app.use(head);
