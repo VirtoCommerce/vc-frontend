@@ -27,13 +27,6 @@
             @fail="onPaymentResult(false)"
           />
 
-          <PaymentProcessingSkyflow
-            v-else-if="paymentTypeName === 'SkyflowPaymentMethod'"
-            :order="placedOrder"
-            @success="onPaymentResult(true)"
-            @fail="onPaymentResult(false)"
-          />
-
           <PaymentProcessingCyberSource
             v-else-if="paymentTypeName === 'CyberSourcePaymentMethod'"
             :order="placedOrder"
@@ -49,14 +42,9 @@
           />
 
           <ExtensionPointList
-            v-else-if="
-              paymentTypeName &&
-              $canRenderExtensionPoint('paymentPage', 'payment-methods', {
-                order: placedOrder,
-                paymentTypeName: paymentTypeName,
-              })
-            "
+            v-else-if="paymentTypeName"
             category="paymentPage"
+            :condition-params="{ order: placedOrder, paymentTypeName }"
             :order="placedOrder"
             :payment-type-name="paymentTypeName"
             @success="onPaymentResult(true)"
@@ -73,7 +61,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineAsyncComponent } from "vue";
+import { computed } from "vue";
 import { useRouter } from "vue-router";
 import { OrderSummary, useCheckout } from "@/shared/checkout";
 import { PaymentActionType, PaymentProcessingRedirection } from "@/shared/payment";
@@ -81,12 +69,6 @@ import type { PaymentInType } from "@/core/api/graphql/types";
 import PaymentProcessingAuthorizeNet from "@/shared/payment/components/payment-processing-authorize-net.vue";
 import PaymentProcessingCyberSource from "@/shared/payment/components/payment-processing-cyber-source.vue";
 import PaymentProcessingDatatrans from "@/shared/payment/components/payment-processing-datatrans.vue";
-
-// Loaded only when the Skyflow method is the active payment type, so the skyflow-js SDK
-// (~80 KB gzip) stays out of the eager bundle shared across checkout/account routes.
-const PaymentProcessingSkyflow = defineAsyncComponent(
-  () => import("@/modules/skyflow/components/payment-processing-skyflow.vue"),
-);
 
 const router = useRouter();
 const { placedOrder, allOrderItemsAreDigital } = useCheckout();

@@ -1,7 +1,7 @@
 <template>
   <div>
     <VcTypography tag="h1">
-      {{ $t("shared.account.navigation.links.saved_credit_cards") }}
+      {{ $t("skyflow.saved_credit_cards.menu_title") }}
     </VcTypography>
 
     <!-- Skeletons -->
@@ -22,7 +22,7 @@
     </div>
 
     <!-- Empty View -->
-    <VcEmptyView v-else :text="$t('pages.account.saved_credit_cards.no_cards')" icon="credit-card" />
+    <VcEmptyView v-else :text="$t('skyflow.saved_credit_cards.no_cards')" icon="credit-card" />
   </div>
 </template>
 
@@ -47,8 +47,8 @@ function removeCreditCard(skyflowId: string): void {
     component: "VcConfirmationModal",
     props: {
       variant: "danger",
-      title: t("pages.account.saved_credit_cards.delete_credit_card_modal.title"),
-      text: t("pages.account.saved_credit_cards.delete_credit_card_modal.message"),
+      title: t("skyflow.saved_credit_cards.delete_credit_card_modal.title"),
+      text: t("skyflow.saved_credit_cards.delete_credit_card_modal.message"),
 
       async onConfirm(): Promise<void> {
         closeModal();

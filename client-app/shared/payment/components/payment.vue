@@ -27,7 +27,13 @@
       :payment="payment"
     />
 
-    <!-- TODO: Add support for Datatrans, and extension point payment methods for cart payments when available. -->
+    <!--
+      TODO: Add support for Datatrans, and an extension point for cart payments when available.
+      Unlike the checkout/order payment pages (paymentPage/orderPaymentPage extension points),
+      this cart-stage payment step has no extension point yet, so Skyflow is still imported
+      directly here — a known, intentional exception to modules/README.md's "Core never imports
+      a module" rule until this extension point exists.
+    -->
   </div>
 </template>
 

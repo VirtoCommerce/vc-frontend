@@ -51,5 +51,3 @@ export const LOYALTY_MODE_KEY = "Loyalty.Mode";
 export const LOYALTY_CURRENCY_KEY = "Loyalty.Currency";
 
 export const MODULE_ID_MARKETING_EXPERIENCE_API = "VirtoCommerce.MarketingExperienceApi";
-
-export const MODULE_ID_SKYFLOW = "VirtoCommerce.Skyflow";
