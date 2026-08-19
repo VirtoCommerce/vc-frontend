@@ -80,11 +80,13 @@ entry and the module reads host singletons off `globals`. Rewrite `init` as:
 
 ## 4. Standalone scaffolding (from the plugin repo, not the host)
 
-The old plugin still exists as a **local-only** checkout at `vc-plugins/sales-rep-plugin` — no git
-remote is configured, and no matching repository exists under the VirtoCommerce org, so publishing it
-needs a home decided first. Its `main` stops at 2026-07-08, before the layout, statistics, dashboard
-and filter work, which makes it a source of **scaffolding**, not of code: take its config and
-`src/mocks/`, and copy the module's current source over the rest.
+The port is done and lives in the **backend module**: `vc-module-sales-rep`, folder
+`src/VirtoCommerce.SalesRep.Web/StorefrontApp/` next to the VC-Shell admin `App/`, building into
+`plugins/vc-frontend/` — the folder the platform probes (draft PR
+[vc-module-sales-rep#13](https://github.com/VirtoCommerce/vc-module-sales-rep/pull/13)). The older
+standalone checkout at `vc-plugins/sales-rep-plugin` never had a git remote; it stops at 2026-07-08,
+before the layout, statistics, dashboard and filter work, which makes it a source of **scaffolding**,
+not of code: take its config and `src/mocks/`, and copy the module's current source over the rest.
 
 Restore the plugin repo's own config, which the host provides centrally and was therefore
 dropped: `package.json`, `vite.config.ts` (federation `exposes`/shared), `codegen.ts`,
