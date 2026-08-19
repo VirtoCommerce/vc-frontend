@@ -1,6 +1,8 @@
+import { useUser } from "@/shared/account/composables/useUser";
 import { Logger } from "@/core/utilities";
 import { ignoreChunkLoadFailure } from "@/core/utilities/optional-chunk";
 import { isMfFlagEnabled } from "@/core-api/federation.mjs";
+import type { IPlatformPlugin } from "./index";
 
 /**
  * App-runner entry for Module Federation. Kept free of static MF-runtime
@@ -23,7 +25,7 @@ import { isMfFlagEnabled } from "@/core-api/federation.mjs";
 // Exported for the invariant test only (backstop > manifest + 2×load defaults).
 export const BOOT_BACKSTOP_MS = 20_000;
 
-export async function startFederatedModules(): Promise<void> {
+export async function startFederatedModules(plugins?: readonly IPlatformPlugin[]): Promise<void> {
   if (!isMfFlagEnabled(import.meta.env.APP_MODULES_FEDERATION_ENABLED)) {
     return;
   }
@@ -45,7 +47,10 @@ export async function startFederatedModules(): Promise<void> {
   const work = (async () => {
     try {
       const { initFederatedModules } = await import("./index");
-      await initFederatedModules();
+      // The user is already set by this point in app-runner, so a permission-gated plugin is
+      // evaluated against the real claims rather than an anonymous default.
+      const { checkPermissions } = useUser();
+      await initFederatedModules({ plugins, hasPermission: (permission) => checkPermissions(permission) });
     } catch (error) {
       // A loader-chunk fetch failure degrades to "no plugins" here, not to a reload.
       ignoreChunkLoadFailure(error);

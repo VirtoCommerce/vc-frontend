@@ -147,8 +147,9 @@ export default async () => {
     : globalThis.location.hostname;
   const userId = (await getUcpHandoffUserId()) ?? savedUserId.value;
 
+  let initialStore: Awaited<ReturnType<typeof initializeApplication>> | undefined;
   try {
-    const initialStore = await initializeApplication(domain);
+    initialStore = await initializeApplication(domain);
     setModules(initialStore?.settings?.modules);
   } catch (e) {
     Logger.warn("Failed to verify backend module versions", e);
@@ -268,7 +269,8 @@ export default async () => {
 
   // Module Federation host: load federated plugins if APP_MODULES_FEDERATION_ENABLED is on.
   // Awaited before app.use(router) so plugin routes exist for the first navigation.
-  const federatedModulesReady = startFederatedModules();
+  // The plugin list rides along on the boot store query, so discovery costs no extra request.
+  const federatedModulesReady = startFederatedModules(initialStore?.plugins);
 
   // Plugins
   app.use(head);
