@@ -51,7 +51,7 @@ my-plugin/
 ```
 
 In `package.json`: pin the facade to its **versioned tarball URL** — a Release asset
-of the (public) host repo, published by the *Core Facade Release* workflow. No
+of the (public) host repo, published by the _Core Facade Release_ workflow. No
 registry, token, or account; any package manager installs it, and your lockfile
 records the tarball checksum so the pin is tamper-evident. Then install **everything
 your code imports** as dev dependencies — Vue included:
@@ -83,7 +83,7 @@ built chunks reference the host's live instances. (Add `vue-i18n`, `@apollo/clie
 `@vue/apollo-composable`, `@vueuse/core` the same way if you import them.)
 
 > **Type-peers — install them even if your code never imports them.** The facade's
-> `contract/index.d.ts` *references* external libraries in its own types (e.g. `useModuleSettings`
+> `contract/index.d.ts` _references_ external libraries in its own types (e.g. `useModuleSettings`
 > pulls in `@vueuse/core`, `apolloClient` pulls in `@apollo/client`). If a referenced
 > package isn't installed, TypeScript **silently degrades that whole facade export to
 > `any`** — the plugin tsconfig ships `skipLibCheck: true`, so you get no "Cannot find
@@ -124,7 +124,7 @@ the shared list and rides along in the plugin bundle.
 
 > **The exception to watch: libraries whose state crosses the host/plugin boundary
 > through `provide`/`inject`.** `vee-validate` is the live case — sales-rep gets away with
-> its own copy only because its modal owns *both* the `useForm` and the `useField` inside
+> its own copy only because its modal owns _both_ the `useForm` and the `useField` inside
 > it. A plugin that instead contributes a **field into a host-owned form** would inject
 > from the host's copy and find nothing; that library would have to move into
 > `MF_SHARED_RANGES` (and its range verified against the host's `package.json`) first.
@@ -211,7 +211,7 @@ yarn build-only --mode=development && yarn preview  # -> https://localhost:3000
 Notes on the host side:
 
 - **build + preview is the canonical run** — it matches what CI/prod produce, so it is the
-  default for *running* the host. (`yarn dev` also works and additionally gives HMR — see
+  default for _running_ the host. (`yarn dev` also works and additionally gives HMR — see
   [**The dev inner loop**](#the-dev-inner-loop) below — reach for it as the iteration loop.)
   `yarn preview` proxies API calls to `APP_BACKEND_URL` exactly like dev does, so your usual
   `.env.local` backend applies.
@@ -254,7 +254,7 @@ Once the two servers are up, how you iterate depends on which side you're changi
   content-hashed chunks on reload. Do a cache-bypassing reload (DevTools "Disable cache")
   so a stale `mf-manifest.json` isn't served.
 - **HMR (no reload):** run the plugin as its own dev server — `yarn dev` (`vite --port
-  3001`, which serves `mf-manifest.json` in dev too) instead of `build`+`preview` — **and**
+3001`, which serves `mf-manifest.json` in dev too) instead of `build`+`preview` — **and**
   run the host with `yarn dev` instead of `build-only`+`preview`. The plugin's HMR client is
   injected into the host page, so edits hot-update live across the MF boundary. Verified on
   this harness for route / UI-kit / `useModuleSettings` plugins **and** for a plugin that
@@ -274,6 +274,63 @@ never need a host rebuild.
    (the remote list is inlined at build time — settings-driven runtime discovery
    is a planned follow-up, `TODO.md` #2).
 3. Add the plugin origin to the storefront CSP (`script-src`, `connect-src`).
+
+### The other route: shipping inside a Virto Commerce module
+
+The platform released a second way for a storefront plugin to reach a browser, on
+2026-08-03 — `vc-module-x-api` **3.1016.0** and `vc-module-x-frontend` **3.1005.0**. Instead
+of its own hosting, the plugin rides in a backend module's artifacts and the platform both
+serves and announces it:
+
+- the module declares a dependency on x-frontend, and its build writes the bundle to
+  `{MODULE_FOLDER}/plugins/vc-frontend/`;
+- the environment yml routes `- path: /modules  route: platform`;
+- the storefront asks for the list rather than being told at build time:
+
+```graphql
+query InitializeApplication($domain: String!) {
+  store(domain: $domain) {
+    storeUrl
+    plugins(appId: "vc-frontend") {
+      id
+      version
+      permission
+      entry {
+        type
+        path
+      }
+      remote {
+        name
+        exposed
+      }
+      contentFiles {
+        hash
+        path
+      }
+    }
+  }
+}
+```
+
+Same origin as the storefront, so no per-plugin CSP entry and no external hosting to buy.
+
+**This host does not consume that yet**, and two things have to move first:
+
+1. The loader reads `APP_MODULES_FEDERATION_REMOTES` — the build-time env described above —
+   not `plugins(appId:)`. That is `TODO.md` #2.
+2. The loader **requires a manifest JSON URL** and skips anything else (see the "entry must
+   be a manifest JSON URL" guard in `index.ts`), while the platform advertises
+   `.../remoteEntry.js`. Either the loader learns to take a remoteEntry, or the platform's
+   entry path points at `mf-manifest.json`.
+
+For the packaging half there is a working reference:
+`vc-module-system-operations/samples/VirtoCommerce.SystemOperations.SampleExtension` —
+`@module-federation/vite`, remote `name` set to the .NET module id, `outDir` writing straight
+into the discovery folder, and `remoteEntry.js` deliberately left unhashed because the
+platform synthesizes that exact path. Read it for the build config only: that sample is a
+plugin for the **System Operations admin app**, so its `./Module` expose and
+`install(host, ctx)` shape are that app's contract — this host's are `./plugin` and `init()`,
+as in Steps 2 and 3.
 
 ---
 
@@ -327,7 +384,7 @@ cd vc-frontend && yarn core:yalc-push
 `.yalc/` and `yalc.lock` are gitignored by the scaffold, but the `package.json` edit is
 not — before pushing, run `yalc remove @vc-frontend/core` and restore the pinned tarball
 URL. Never commit a `file:` facade dependency. Once the facade change is merged and the
-*Core Facade Release* workflow has published `core-v<new-version>`, bump your pin to the
+_Core Facade Release_ workflow has published `core-v<new-version>`, bump your pin to the
 new URL (and your `requiredHostVersion` if you use the new exports).
 
 ## Versioning cheat sheet
