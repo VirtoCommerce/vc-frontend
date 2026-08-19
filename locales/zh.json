@@ -82,7 +82,8 @@
       "buy_now": "立即购买",
       "see_all": "查看全部",
       "report_a_problem": "报告问题",
-      "copy_to_clipboard": "复制到剪贴板"
+      "copy_to_clipboard": "复制到剪贴板",
+      "reload_page": "重新加载页面"
     },
     "labels": {
       "actions": "操作",
@@ -233,7 +234,8 @@
       "outdated_backend_modules": "前端应用程序需要新版本的平台和模块。<br>前端应用程序正在运行不兼容的后端。在平台和模块升级以满足店面要求之前，某些功能可能不可用、降级或不稳定。请与您的管理员分享以下报告。",
       "logo_changed": "标志已成功更改。",
       "logo_deleted": "标志已被删除。",
-      "pending_operations_leaving_page_confirmation": "某些操作仍在进行中。确定要离开此页面吗？未保存的更改可能会丢失。"
+      "pending_operations_leaving_page_confirmation": "某些操作仍在进行中。确定要离开此页面吗？未保存的更改可能会丢失。",
+      "content_failed_to_load": "网站的部分内容无法加载。请重新加载页面以继续。"
     },
     "placeholders": {
       "enter_value": "请输入值",
@@ -715,7 +717,11 @@
         "enter_custom_code": "输入自定义代码",
         "all_coupons": "查看所有优惠券和促销活动",
         "apply_aria": "Apply coupon {code}",
-        "remove_aria": "Remove coupon"
+        "remove_aria": "Remove coupon",
+        "coupon_code_aria": "优惠券代码",
+        "applied_announcement": "已应用优惠券 {code}。",
+        "removed_announcement": "已移除优惠券 {code}。",
+        "totals_announcement": "折扣 {discount}，新总计 {total}。"
       }
     },
     "catalog": {

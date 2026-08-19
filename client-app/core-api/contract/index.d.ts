@@ -3051,7 +3051,7 @@ declare function getProductRoute(productId: string, productSlug?: string, basePa
 declare function createI18n(locale: string, currency: string, fallback?: {
     locale: string;
     message: LocaleMessage;
-}): vue_i18n.I18n<{}, {
+}, pluralRuleLocales?: string[]): vue_i18n.I18n<{}, {
     en: {
         short: {
             year: "numeric";

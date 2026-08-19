@@ -39,7 +39,8 @@ export const DASHBOARD_ROUTE_SEGMENT = "dashboard";
 export const DASHBOARD_NAV_LINK_ID = "sales-rep-dashboard";
 
 // Backs the "New orders" card; order filter rules are raw order statuses, so this uses the "New"
-// status (an unrecognized name fails closed — keep it aligned with a real status).
+// status (an unrecognized name fails closed — keep it aligned with a real status). The card's label
+// quotes this status name in every locale, so changing it means retranslating those strings too.
 export const NEW_ORDERS_FILTER = "New";
 // Cart filter-rule name for the built-in "active carts" kind — backs the "Active carts" card.
 export const ACTIVE_CARTS_FILTER = "active-carts";

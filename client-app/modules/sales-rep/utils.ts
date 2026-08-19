@@ -30,6 +30,11 @@ export function formatCustomerLocation(address: LocationPartsType, options?: { w
 
 // ISO date windows shared by the statistics ops: current bounds end at NOW (not calendar end);
 // previous-period windows are elapsed-matched for a fair "vs last X" delta.
+//
+// Day/week/month/year boundaries are the USER'S calendar, not UTC's. The widgets have to agree with the
+// order lists next to them, and those render `createdDate` through `$d()` — i.e. in the browser's zone. On
+// UTC boundaries an order placed at 23:00 UTC is "tomorrow" for a UTC+3 rep, so it fell outside the
+// "created today" badge while still showing in the list and in the unbounded counter.
 export type StatisticsWindowsType = {
   // Month-to-date and the elapsed-matched slice of the previous month.
   mtdFrom: string;
@@ -46,60 +51,71 @@ export type StatisticsWindowsType = {
   weekTo: string;
   prevWeekFrom: string;
   prevWeekTo: string;
-  // Today (start of the current UTC day → now) — backs the "new orders placed today" count.
-  todayFrom: string;
-  todayTo: string;
+  // Rolling 7 days of the user's calendar — bounds the `new_orders` card. Rolling rather than
+  // week-to-date, because a Monday-start window reads ~0 first thing Monday, when the actionable
+  // backlog is at its largest. The locale strings spell the span out ("of {count} created in the
+  // last 7 days"), so changing it means retranslating them.
+  recentFrom: string;
+  recentTo: string;
 };
 
-const DAY_MS = 86_400_000;
+// Local-time counterpart of Date.UTC: the instant at a wall-clock moment in the user's zone, with the same
+// over/underflow normalization (month − 1 === −1 → prev Dec; day − n <= 0 → prev month).
+const local = (year: number, month: number, day: number, hours = 0, minutes = 0, seconds = 0, ms = 0): number =>
+  new Date(year, month, day, hours, minutes, seconds, ms).getTime();
+
+// End of a day on the user's clock — the inclusive upper bound every "to" window uses.
+const eod = (year: number, month: number, day: number): number => local(year, month, day, 23, 59, 59, 999);
+
+// Every bound leaves here as a UTC instant — only *where* the user's day starts differs from UTC's.
+const iso = (ms: number): string => new Date(ms).toISOString();
 
 export function buildStatisticsWindows(now: Date = new Date()): StatisticsWindowsType {
-  const year = now.getUTCFullYear();
-  const month = now.getUTCMonth();
-  const day = now.getUTCDate();
+  const year = now.getFullYear();
+  const month = now.getMonth();
+  const day = now.getDate();
 
-  // The upper bound of every "to-date" window (and the elapsed span the previous-period baselines are
-  // matched to) is the END of the current UTC day, not the exact instant. A raw `new Date()` upper bound
-  // changes every request, so the backend statistics cache (keyed on the criteria, ToDate included) never
-  // hits and every figure runs live. Rounding to day granularity keeps the key stable within the day so
-  // the cache engages; since there are no future-dated orders, extending "now" to end-of-day never changes
-  // a count.
-  const nowMs = Date.UTC(year, month, day, 23, 59, 59, 999);
-  const nowIso = new Date(nowMs).toISOString();
+  // The upper bound of every "to-date" window is the END of the user's current day, not the exact instant.
+  // A raw `new Date()` upper bound changes every request, so the backend statistics cache (keyed on the
+  // criteria, ToDate included) never hits and every figure runs live. Rounding to day granularity keeps the
+  // key stable within the day so the cache engages; since there are no future-dated orders, extending "now"
+  // to end-of-day never changes a count.
+  const nowIso = iso(eod(year, month, day));
 
-  // Date.UTC normalizes over/underflow (month − 1 === −1 → prev Dec; day − n <= 0 → prev month).
-  const monthStart = Date.UTC(year, month, 1);
-  const prevMonthStart = Date.UTC(year, month - 1, 1);
-  const yearStart = Date.UTC(year, 0, 1);
-  const prevYearStart = Date.UTC(year - 1, 0, 1);
-  const todayStart = Date.UTC(year, month, day);
+  const monthStart = local(year, month, 1);
+  const prevMonthStart = local(year, month - 1, 1);
+  const yearStart = local(year, 0, 1);
+  const prevYearStart = local(year - 1, 0, 1);
+  // 7 days *inclusive of today*, hence −6.
+  const recentStart = local(year, month, day - 6);
 
-  // Monday-start week: getUTCDay() is 0 (Sun)…6 (Sat); shift so Monday === 0.
-  const daysSinceMonday = (now.getUTCDay() + 6) % 7;
-  const weekStart = Date.UTC(year, month, day - daysSinceMonday);
-  const prevWeekStart = weekStart - 7 * DAY_MS;
+  // Monday-start week: getDay() is 0 (Sun)…6 (Sat); shift so Monday === 0.
+  const daysSinceMonday = (now.getDay() + 6) % 7;
+  const weekStart = local(year, month, day - daysSinceMonday);
+  const prevWeekStart = local(year, month, day - daysSinceMonday - 7);
 
-  const iso = (ms: number): string => new Date(ms).toISOString();
-  // Clamped to the previous period's own end, so a longer current elapsed span (e.g. 30 days into
-  // March vs a 28-day Feb) can't spill past it and double count.
-  const matched = (prevStart: number, currentStart: number): string =>
-    iso(Math.min(prevStart + (nowMs - currentStart), currentStart));
+  // A baseline window ends at the same calendar position one period back (Apr 9 → Mar 9, end of day), so
+  // "vs last X" compares equal spans. Calendar move rather than `prevStart + elapsed`: a DST transition in
+  // either period skews an elapsed millisecond span by an hour, and at 23:59:59.999 that rolls the bound
+  // onto the next day. Clamped to the current period's start so a day-of-month overflow (Mar 31 → "Feb 31",
+  // which normalizes to Mar 3) can't reach into the current window and double count.
+  const matched = (prevEnd: number, currentStart: number): string => iso(Math.min(prevEnd, currentStart));
 
   return {
     mtdFrom: iso(monthStart),
     mtdTo: nowIso,
     prevFrom: iso(prevMonthStart),
-    prevTo: matched(prevMonthStart, monthStart),
+    prevTo: matched(eod(year, month - 1, day), monthStart),
     ytdFrom: iso(yearStart),
     ytdTo: nowIso,
     lastYearFrom: iso(prevYearStart),
-    lastYearTo: matched(prevYearStart, yearStart),
+    lastYearTo: matched(eod(year - 1, month, day), yearStart),
     weekFrom: iso(weekStart),
     weekTo: nowIso,
     prevWeekFrom: iso(prevWeekStart),
-    prevWeekTo: matched(prevWeekStart, weekStart),
-    todayFrom: iso(todayStart),
-    todayTo: nowIso,
+    prevWeekTo: matched(eod(year, month, day - 7), weekStart),
+    recentFrom: iso(recentStart),
+    recentTo: nowIso,
   };
 }
 

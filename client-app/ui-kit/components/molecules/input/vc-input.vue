@@ -41,7 +41,7 @@
         :step="stepValue"
         :autocomplete="computedAutocomplete"
         :aria-label="ariaLabel ?? label"
-        :aria-describedby="counter || message ? detailsId : undefined"
+        :aria-describedby="describedBy"
         :title="browserTooltip === 'enabled' ? message : ''"
         class="vc-input__input"
         :tabindex="tabindex"
@@ -176,6 +176,15 @@ const componentId = useComponentId("input");
 const detailsId = componentId + "-details";
 const listeners = useListeners();
 const attrs = useAttrsOnly();
+
+// Merged, not overwritten: the explicit binding below would otherwise drop `aria`'s own value.
+const describedBy = computed(() => {
+  const ids = [props.counter || props.message ? detailsId : undefined, props.aria?.["aria-describedby"]]
+    .filter(Boolean)
+    .join(" ");
+
+  return ids || undefined;
+});
 
 const computedAutocomplete = computed(() => {
   if (props.disableAutocomplete) {

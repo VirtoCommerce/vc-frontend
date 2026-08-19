@@ -25,6 +25,7 @@ import {
   permissionsPlugin,
 } from "@/core/plugins";
 import { extractHostname, Logger } from "@/core/utilities";
+import { ignoreChunkLoadFailure } from "@/core/utilities/optional-chunk";
 import { createI18n } from "@/i18n";
 import { init as initModuleBackInStock } from "@/modules/back-in-stock";
 import { init as initCustomerReviews } from "@/modules/customer-reviews";
@@ -67,6 +68,14 @@ async function getUcpHandoffUserId(): Promise<string | undefined> {
   }
 }
 
+/** The preview plugins are optional: a failed load leaves the app booting without them. */
+function reportOptionalChunkFailure(error: unknown): undefined {
+  ignoreChunkLoadFailure(error);
+  Logger.error("Failed to load an optional plugin chunk.", error);
+
+  return undefined;
+}
+
 // eslint-disable-next-line no-restricted-exports
 export default async () => {
   const appSelector = "#app";
@@ -102,6 +111,7 @@ export default async () => {
     currentLanguage,
     currentMaybeShortLocale,
     defaultStoreCulture,
+    supportedLanguages,
     applyLocale,
     fetchLocaleMessages,
     mergeLocalesMessages,
@@ -180,7 +190,14 @@ export default async () => {
   const currentCultureName = normalizeToSupportedCulture(pageBuilderPreview.cultureName) ?? resolveLocale();
   const isDefaultLocaleInUse = defaultStoreCulture.value === currentCultureName;
 
-  const i18n = createI18n(currentCultureName, currentCurrency.value.code, fallback);
+  // Plural rules must be registered for every locale key messages can resolve under — full
+  // culture names (global messages) and two-letter codes (module/ui-kit messages) alike.
+  const pluralRuleLocales = supportedLanguages.value.flatMap((language) => [
+    language.cultureName,
+    language.twoLetterLanguageName,
+  ]);
+
+  const i18n = createI18n(currentCultureName, currentCurrency.value.code, fallback, pluralRuleLocales);
 
   // The UI kit loads its locale bundles through the shared locale-loader seam, so boot and any
   // runtime locale switch (e.g. builder preview, VCST-5219) share one copy of this logic.
@@ -266,8 +283,9 @@ export default async () => {
   app.use(applicationInsightsPlugin, { router });
 
   if (pageBuilderPreview.isActive) {
-    const builderPreviewPlugin = (await import("@/plugins/builder-preview/builder-preview.plugin").catch(Logger.error))
-      ?.default;
+    const builderPreviewPlugin = (
+      await import("@/plugins/builder-preview/builder-preview.plugin").catch(reportOptionalChunkFailure)
+    )?.default;
     if (builderPreviewPlugin) {
       app.use(builderPreviewPlugin, { router });
     }
@@ -275,7 +293,7 @@ export default async () => {
 
   if (isBuilderIoPreviewMode()) {
     const builderIoPreviewPlugin = (
-      await import("@/plugins/builder-io-preview/builder-io-preview.plugin").catch(Logger.error)
+      await import("@/plugins/builder-io-preview/builder-io-preview.plugin").catch(reportOptionalChunkFailure)
     )?.default;
     if (builderIoPreviewPlugin) {
       app.use(builderIoPreviewPlugin, { router });
