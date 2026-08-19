@@ -8,7 +8,9 @@
       "rating": "Betyg",
       "rate_product": "Betygsätt produkt",
       "item_as_described_by_vendor": "Produkten överensstämmer med leverantörens beskrivning?",
-      "product_review_image": "Bild för produktrecension"
+      "product_review_image": "Bild för produktrecension",
+      "product_review_image_of": "Bild för produktrecension {index} av {total}",
+      "reviews_count": "inga recensioner | {n} recension | {n} recensioner"
     },
     "messages": {
       "thanks_for_feedback": "Din feedback har skickats in framgångsrikt och väntar på bekräftelse. Tack!"

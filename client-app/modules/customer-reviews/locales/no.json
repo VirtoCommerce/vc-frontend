@@ -8,7 +8,9 @@
       "rating": "Vurdering",
       "rate_product": "Vurder produkt",
       "item_as_described_by_vendor": "Stemmer produktet med leverandørens beskrivelse?",
-      "product_review_image": "Bilde for produktvurdering"
+      "product_review_image": "Bilde for produktvurdering",
+      "product_review_image_of": "Bilde for produktvurdering {index} av {total}",
+      "reviews_count": "ingen omtaler | {n} omtale | {n} omtaler"
     },
     "messages": {
       "thanks_for_feedback": "Tilbakemeldingen din er sendt og venter på bekreftelse. Takk!"
