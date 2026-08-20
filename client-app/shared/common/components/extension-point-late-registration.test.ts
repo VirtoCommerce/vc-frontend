@@ -21,7 +21,7 @@ describe("ExtensionPoint against the real registry", () => {
     const wrapper = mountPoint("late-badge");
     expect(wrapper.text()).toBe("fallback:");
 
-    useExtensionRegistry().register("mobileMenu", "late-badge", { use: () => ({ count: 7 }) });
+    useExtensionRegistry().registerContribution("mobileMenu", "late-badge", { use: () => ({ count: 7 }) });
     await nextTick();
 
     expect(wrapper.text()).toBe("fallback:7");
@@ -41,9 +41,9 @@ describe("ExtensionPoint against the real registry", () => {
 
   it("drops the contribution when the entry is unregistered", async () => {
     const wrapper = mountPoint("transient-badge");
-    const { register, unregister } = useExtensionRegistry();
+    const { registerContribution, unregister } = useExtensionRegistry();
 
-    register("mobileMenu", "transient-badge", { use: () => ({ count: 3 }) });
+    registerContribution("mobileMenu", "transient-badge", { use: () => ({ count: 3 }) });
     await nextTick();
     expect(wrapper.text()).toBe("fallback:3");
 

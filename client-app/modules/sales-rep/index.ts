@@ -43,11 +43,11 @@ export function init(router: Router, i18n: I18n) {
   // My customers links showing the total-customer count badge. Desktop needs its own
   // component for the sibling-route highlight; mobile only contributes the count, so the
   // host renders its own menu link with it.
-  const { register } = useExtensionRegistry();
+  const { register, registerContribution } = useExtensionRegistry();
   register("accountMenu", MY_CUSTOMERS_NAV_LINK_ID, {
     component: defineAsyncComponent(() => import("./components/link-my-customers.vue")),
   });
-  register("mobileMenu", MY_CUSTOMERS_NAV_LINK_ID, {
+  registerContribution("mobileMenu", MY_CUSTOMERS_NAV_LINK_ID, {
     use: useSharedSalesRepCustomersCount,
   });
 

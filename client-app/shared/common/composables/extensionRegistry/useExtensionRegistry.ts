@@ -7,29 +7,55 @@ import { initialExtensionRegistry } from "@/shared/common/constants/initialExten
 import type { ExtensionCategoryType, ExtensionRegistryStateType } from "@/shared/common/types/extensionRegistry";
 import type {
   ConditionParamType,
+  ContributionEntryOfType,
+  ExtensionCategoryMapType,
   ContributionType,
+  DecorateCapableCategoryType,
+  ReplaceEntryOfType,
   ReplacePropsType,
 } from "@/shared/common/types/extensionRegistryMap";
+
+type AnyEntryType = ExtensionCategoryMapType[ExtensionCategoryType];
 
 function _useExtensionRegistry() {
   const entries = shallowRef<ExtensionRegistryStateType>(initialExtensionRegistry);
 
-  function register<C extends ExtensionCategoryType, N extends string>(
-    category: C,
-    name: N,
-    item: ExtensionRegistryStateType[C][N],
-  ) {
-    if (!entries.value[category]) {
-      entries.value[category] = {};
-    }
-    if (!entries.value[category][name]) {
-      entries.value[category][name] = item;
-      // shallowRef only tracks `.value` reassignment, so a nested write needs an explicit trigger
-      // or a plugin registering after its host mounted would never appear.
-      triggerRef(entries);
-    } else {
+  // The store's value type is per-category, and TypeScript refuses a write through a generic index.
+  // The two public wrappers below are what constrain the entry to its category's shape; this
+  // addresses the store by the widest one.
+  function add(category: ExtensionCategoryType, name: string, item: AnyEntryType) {
+    const store = entries.value as Record<string, Record<string, AnyEntryType> | undefined>;
+    const bucket = (store[category] ??= {});
+
+    if (bucket[name]) {
       Logger.warn(`useExtensionRegistry: Component "${category}/${name}" already registered`);
+      return;
     }
+
+    bucket[name] = item;
+    // shallowRef only tracks `.value` reassignment, so a nested write needs an explicit trigger
+    // or a plugin registering after its host mounted would never appear.
+    triggerRef(entries);
+  }
+
+  /** Registers a component that REPLACES the host's markup at this extension point. */
+  function register<C extends ExtensionCategoryType>(category: C, name: string, item: ReplaceEntryOfType<C>) {
+    add(category, name, item);
+  }
+
+  /**
+   * Registers data the host binds into its OWN markup (`use()` runs in the extension point's setup
+   * and is disposed with it, so it may fetch). Only categories that declared a contributed shape
+   * accept one — the rest render no fallback slot to receive it, so an entry there would be a
+   * silent no-op. That is why this is a separate entry point: a caller whose `category` widens to
+   * the whole union fails here on the argument instead of landing in `register()`'s wider shape.
+   */
+  function registerContribution<C extends DecorateCapableCategoryType>(
+    category: C,
+    name: string,
+    item: ContributionEntryOfType<C>,
+  ) {
+    add(category, name, item);
   }
 
   function unregister<C extends ExtensionCategoryType>(category: C, name: string) {
@@ -121,6 +147,7 @@ function _useExtensionRegistry() {
       entries,
 
       register,
+      registerContribution,
       unregister,
 
       getComponent,
@@ -138,6 +165,7 @@ function _useExtensionRegistry() {
     entries,
 
     register,
+    registerContribution,
     unregister,
 
     getComponent,

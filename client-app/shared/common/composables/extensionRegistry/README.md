@@ -63,6 +63,34 @@
    ```
 3. Your registered components will then be automatically rendered at the corresponding extension points in the core app.
 
+### 3. Contributing data instead of markup
+
+Some extension points are host chrome: the host wants to keep its own markup and take only a value
+from you (the mobile menu's "My customers" link takes a count badge). Register a `use()` instead of
+a component:
+
+```ts
+const { registerContribution } = useExtensionRegistry();
+registerContribution("mobileMenu", EXTENSION_NAMES.mobileMenu.myCustomers, { use: useMyCount });
+```
+
+The rules, because they are not obvious:
+
+- **Only categories that declare a contributed shape accept one.** A category declares it as the
+  second parameter of `ExtensionEntryType<Props, Contributed, Condition>` in
+  `extensionRegistryMap.ts`, and it may only do so once its host consumer renders a **scoped**
+  fallback slot (`<template #default="{ extensionProps }">`). Without that slot nothing reads the
+  contribution — which is why `registerContribution()` refuses every other category.
+- **`use()` runs in the extension point's setup**, inside a scope stopped when the entry unmounts
+  or its name changes, so it may start a query. Keep it synchronous, and do not let it throw:
+  wrap global state in `createSharedComposable` and catch inside, or a failed first call leaves
+  every later surface reading `undefined`.
+- **A late registration runs `use()` outside a component context.** If the entry lands after the
+  point mounted (an asynchronously loaded plugin), the call comes from Vue's scheduler, where
+  `inject()` does not resolve — so an injection-dependent composable degrades there.
+- **`$canRenderExtensionPoint` is false for a contribution** (it answers "has a component"). Never
+  gate a decorate-capable point on it.
+
 > **Recommendation**
 >
 > For consistent extension identifiers and to avoid typos, import the `EXTENSION_NAMES` constant from `@/shared/common/constants/extensionPointsNames.ts` and use its properties:
@@ -75,4 +103,6 @@
 
 > [!TIP]
 >
-> **Dev tip:** In dev mode the registry is available as `window.VCExtensionRegistry`.
+> **Dev tip:** In dev mode the registry is available as `window.VCExtensionRegistry`, and the
+> ownership of Apollo type policies registered through `registerCacheTypePolicies` as
+> `window.modulesCacheDebug`.

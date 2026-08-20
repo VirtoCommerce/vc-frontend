@@ -93,8 +93,24 @@ export type ContributionType<C extends keyof ExtensionCategoryMapType> = [Decora
     ? R
     : never;
 
-/** The props a replace-mode entry may carry. */
-export type ReplacePropsType<C extends keyof ExtensionCategoryMapType> = Extract<
+/** A category's replace-mode entry: the only shape `register()` accepts. */
+export type ReplaceEntryOfType<C extends keyof ExtensionCategoryMapType> = Extract<
   ExtensionCategoryMapType[C],
   { component: Component }
->["props"];
+>;
+
+/** The props a replace-mode entry may carry. */
+export type ReplacePropsType<C extends keyof ExtensionCategoryMapType> = ReplaceEntryOfType<C>["props"];
+
+/**
+ * The categories that declared a contributed shape, i.e. the ones whose host consumer renders a
+ * fallback slot to receive it. `registerContribution()` accepts nothing else, so a helper that
+ * widens its category argument to `ExtensionCategoryType` fails on the argument rather than
+ * slipping a component-less entry into a category that would silently discard it.
+ */
+export type DecorateCapableCategoryType = {
+  [C in keyof ExtensionCategoryMapType]: [ContributionType<C>] extends [never] ? never : C;
+}[keyof ExtensionCategoryMapType];
+
+/** A category's decorate-mode entry: the only shape `registerContribution()` accepts. */
+export type ContributionEntryOfType<C extends DecorateCapableCategoryType> = DecorateMemberType<C>;

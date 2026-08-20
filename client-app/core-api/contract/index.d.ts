@@ -2459,10 +2459,23 @@ type DecorateMemberType<C extends keyof ExtensionCategoryMapType> = Extract<Exte
 type ContributionType<C extends keyof ExtensionCategoryMapType> = [DecorateMemberType<C>] extends [never] ? never : DecorateMemberType<C> extends {
     use: () => infer R;
 } ? R : never;
-/** The props a replace-mode entry may carry. */
-type ReplacePropsType<C extends keyof ExtensionCategoryMapType> = Extract<ExtensionCategoryMapType[C], {
+/** A category's replace-mode entry: the only shape `register()` accepts. */
+type ReplaceEntryOfType<C extends keyof ExtensionCategoryMapType> = Extract<ExtensionCategoryMapType[C], {
     component: Component;
-}>["props"];
+}>;
+/** The props a replace-mode entry may carry. */
+type ReplacePropsType<C extends keyof ExtensionCategoryMapType> = ReplaceEntryOfType<C>["props"];
+/**
+ * The categories that declared a contributed shape, i.e. the ones whose host consumer renders a
+ * fallback slot to receive it. `registerContribution()` accepts nothing else, so a helper that
+ * widens its category argument to `ExtensionCategoryType` fails on the argument rather than
+ * slipping a component-less entry into a category that would silently discard it.
+ */
+type DecorateCapableCategoryType = {
+    [C in keyof ExtensionCategoryMapType]: [ContributionType<C>] extends [never] ? never : C;
+}[keyof ExtensionCategoryMapType];
+/** A category's decorate-mode entry: the only shape `registerContribution()` accepts. */
+type ContributionEntryOfType<C extends DecorateCapableCategoryType> = DecorateMemberType<C>;
 
 type ExtensionRegistryStateType = {
     [K in keyof ExtensionCategoryMapType]: Record<string, ExtensionCategoryMapType[K]>;
@@ -2471,7 +2484,8 @@ type ExtensionCategoryType = keyof ExtensionCategoryMapType;
 
 declare function _useExtensionRegistry(): {
     entries: vue.ShallowRef<ExtensionRegistryStateType, ExtensionRegistryStateType>;
-    register: <C extends ExtensionCategoryType, N extends string>(category: C, name: N, item: ExtensionRegistryStateType[C][N]) => void;
+    register: <C extends ExtensionCategoryType>(category: C, name: string, item: ReplaceEntryOfType<C>) => void;
+    registerContribution: <C extends DecorateCapableCategoryType>(category: C, name: string, item: ContributionEntryOfType<C>) => void;
     unregister: <C extends ExtensionCategoryType>(category: C, name: string) => void;
     getComponent: <C extends ExtensionCategoryType, N extends keyof ExtensionRegistryStateType[C]>(category: C, name: N) => vue.Component | null;
     getContribution: <C extends ExtensionCategoryType>(category: C, name: string) => (() => ContributionType<C>) | undefined;
@@ -2522,8 +2536,19 @@ declare const apolloClient: ApolloClient<_apollo_client_cache.NormalizedCacheObj
  *
  * Call before the plugin issues its first query — policies do not apply retroactively
  * to data already in the cache.
+ *
+ * One typename, one owner: Apollo would let a later `keyFields` replace an earlier one silently,
+ * so a registration that collides with a policy held at an equal or higher priority is REFUSED
+ * (the rest of the batch still applies). Pass `owner` so the refusal names someone, and `priority`
+ * only when a plugin is deliberately meant to outrank another. The host's own policies sit at
+ * {@link HOST_PRIORITY}, so no plugin can take one over.
+ *
+ * In development the ownership map and every refusal are readable as `window.modulesCacheDebug`.
  */
-declare function registerCacheTypePolicies(policies: TypePolicies): void;
+declare function registerCacheTypePolicies(policies: TypePolicies, { owner, priority }?: {
+    owner?: string;
+    priority?: number;
+}): void;
 
 type ErrorNotificationsContextType = {
     suppressErrorNotifications?: boolean;
