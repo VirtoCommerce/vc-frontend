@@ -254,7 +254,7 @@ jobs:
     needs: ci
     if: ${{ ((github.ref == 'refs/heads/dev') && (github.event_name == 'push')) ||
         (github.event_name == 'workflow_dispatch') || (github.base_ref == 'dev') && (github.event_name == 'pull_request') }}
-    uses: VirtoCommerce/.github/.github/workflows/pytest-tests.yml@VCST-5146 #v3.800.39
+    uses: VirtoCommerce/.github/.github/workflows/pytest-tests.yml@v3.800.39
     with:
       installModules: 'false'
       installCustomModule: 'false'
@@ -268,20 +268,20 @@ jobs:
       testSecretEnvFile: ${{ secrets.VC_TESTING_MODULE_ENV_FILE }}
       sendgridApiKey: ${{ secrets.SENDGRID_APIKEY_4E2E_AUTOTESTS }}
   
-  # deploy-cloud:
-  #   if: ${{ github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'}}
-  #   needs: ci
-  #   uses: ./.github/workflows/deploy-cloud.yml
-  #   with:
-  #     cmPath: 'theme/artifact.json'
-  #     artifactKey: 'URL'
-  #     artifactUrl: ${{ needs.ci.outputs.artifactUrl }}
-  #     environmentId: ${{ ((github.event_name == 'pull_request' && github.base_ref == 'dev') || github.ref == 'refs/heads/master') && 'qa' || 'dev' }}
-  #     jiraKeys: ${{ needs.ci.outputs.jira-keys }}
-  #     forceCommit: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' }}
-  #   secrets:
-  #     REPO_TOKEN: ${{ secrets.REPO_TOKEN }}
-  #     VIRTOCLOUD_KEY_VCPT_VCST: ${{ secrets.VIRTOCLOUD_KEY_VCPT_VCST }}
-  #     CLOUD_INSTANCE_BASE_URL: ${{ secrets.CLOUD_INSTANCE_BASE_URL }}
-  #     CLIENT_ID: ${{ secrets.CLIENT_ID }}
-  #     CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+  deploy-cloud:
+    if: ${{ github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'}}
+    needs: ci
+    uses: ./.github/workflows/deploy-cloud.yml
+    with:
+      cmPath: 'theme/artifact.json'
+      artifactKey: 'URL'
+      artifactUrl: ${{ needs.ci.outputs.artifactUrl }}
+      environmentId: ${{ ((github.event_name == 'pull_request' && github.base_ref == 'dev') || github.ref == 'refs/heads/master') && 'qa' || 'dev' }}
+      jiraKeys: ${{ needs.ci.outputs.jira-keys }}
+      forceCommit: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' }}
+    secrets:
+      REPO_TOKEN: ${{ secrets.REPO_TOKEN }}
+      VIRTOCLOUD_KEY_VCPT_VCST: ${{ secrets.VIRTOCLOUD_KEY_VCPT_VCST }}
+      CLOUD_INSTANCE_BASE_URL: ${{ secrets.CLOUD_INSTANCE_BASE_URL }}
+      CLIENT_ID: ${{ secrets.CLIENT_ID }}
+      CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}

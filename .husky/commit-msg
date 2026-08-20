@@ -1,1 +1,6 @@
+# See .husky/pre-commit: commits confined to .github/ must not need Node/Yarn.
+if [ -z "$(git diff --cached --name-only --diff-filter=ACMR | grep -v '^\.github/')" ]; then
+  exit 0
+fi
+
 yarn commitlint ${1}

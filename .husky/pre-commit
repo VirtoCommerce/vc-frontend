@@ -1,3 +1,12 @@
-if [ -z $(git rev-parse -q --verify MERGE_HEAD) ]; then
-  yarn lint-staged
+if [ -n "$(git rev-parse -q --verify MERGE_HEAD)" ]; then
+  exit 0
 fi
+
+# .github/ contains only workflow YAML, Markdown and CODEOWNERS, none of which
+# match a lint-staged pattern. Skip the Node/Yarn toolchain for commits confined
+# to it so CI-config changes don't require a provisioned dev environment.
+if [ -z "$(git diff --cached --name-only --diff-filter=ACMR | grep -v '^\.github/')" ]; then
+  exit 0
+fi
+
+yarn lint-staged
