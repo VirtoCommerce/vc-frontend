@@ -26,6 +26,7 @@ export function useSalesRepCartStatistics(options: UseSalesRepCartStatisticsOpti
     return {
       organizationId: toValue(options.organizationId),
       storeId: globals.storeId,
+      currencyCode: globals.currencyCode,
       cartFilter: ACTIVE_CARTS_FILTER,
       weekFrom: windows.weekFrom,
       weekTo: windows.weekTo,
