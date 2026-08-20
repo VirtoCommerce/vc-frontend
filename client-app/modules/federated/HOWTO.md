@@ -110,8 +110,42 @@ import { mount } from "@vue/test-utils";
 const createWrapper = createWrapperFactory(mount, MyComponent);
 ```
 
-It needs `vue-i18n` (already a shared singleton) and `lodash-es` as dev dependencies. Neither
-reaches your bundle: this module is only ever imported by specs.
+It needs `vue-i18n` (already a shared singleton) and `lodash-es` as dev dependencies, plus
+`@vue/test-utils` — the helpers take `mount` as an argument rather than importing it. None of the
+three reaches your bundle: this module is only ever imported by specs.
+
+#### Making `@vc-frontend/core` resolvable in specs
+
+The helpers are not enough on their own. Your components import VALUES from the root specifier
+(`Logger`, `globals`, `useUser`), and at runtime the host hands those over through the shared
+scope — but under vitest there is no host, and the root export carries only a `types` condition.
+So the first spec that mounts such a component dies on module resolution, before any assertion.
+
+Alias the specifier to a mock you own:
+
+```ts
+// vitest.config.ts
+resolve: {
+  alias: {
+    "@vc-frontend/core": fileURLToPath(new URL("./src/mocks/vc-frontend-core.ts", import.meta.url)),
+  },
+},
+```
+
+```ts
+// src/mocks/vc-frontend-core.ts — the facade symbols your plugin actually touches
+export const Logger = { debug() {}, warn() {}, error() {} };
+export const globals = { storeId: "store-id" };
+```
+
+Then keep it to **one `vi.mock("@vc-frontend/core", …)` per spec file**, listing every facade
+symbol the subject's whole module graph imports. Two `vi.mock` calls on the same specifier
+override each other, and a partial facade mock silently breaks the imports it left out.
+
+Two consequences worth planning for: a spec cannot mount a REAL `Vc*` component (it resolves to
+your mock, so it is a stub — assertions that depend on a real component's behaviour, like a click
+landing on a `VcButton`, belong on the host side), and neither `OrderStatus` nor `VcImage` renders
+standalone at all, since both read the host's theme context.
 
 ### Everything else is just your dependency
 

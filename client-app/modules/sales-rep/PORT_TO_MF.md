@@ -68,7 +68,8 @@ entry and the module reads host singletons off `globals`. Rewrite `init` as:
 - `composables/useSalesReps.test.ts`: the `vi.mock("@vue/apollo-composable", …)` stays — the
   plugin imports the composables from that package too (shared singleton, §1).
 - Re-add `src/mocks/vc-frontend-core.ts` and the vitest alias that makes the (types-only)
-  `@vc-frontend/core` specifier resolvable in tests.
+  `@vc-frontend/core` specifier resolvable in tests — the mechanics are generic and now live in
+  [`HOWTO.md`](../federated/HOWTO.md) ("Making `@vc-frontend/core` resolvable in specs").
 - **The remap is not a rename inside `vi.mock`.** 17 specs mock host paths by string —
   `vi.mock("@/core/globals", …)`, `vi.mock("@/core/utilities", …)`, `vi.mock("@/shared/notification", …)`,
   `vi.mock("@/core/composables/useModuleSettings", …)` — and a `from "@/…"` sweep does not touch them.
