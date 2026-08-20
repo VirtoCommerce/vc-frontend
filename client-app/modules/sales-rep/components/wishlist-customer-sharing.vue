@@ -16,34 +16,17 @@
       clearable
     />
 
-    <template v-if="isNewTarget">
-      <VcTextarea
-        v-model="shareMessage"
-        data-test-id="wishlist-share-message-input"
-        :label="t('sales_rep.list_sharing.share_message_label')"
-        :placeholder="t('sales_rep.list_sharing.share_message_placeholder')"
-        :disabled="saving"
-        rows="3"
-        counter
-        :max-length="messageMaxLength"
-      />
-
-      <fieldset>
-        <VcLabel class="wishlist-customer-sharing__channels-label">
-          {{ t("sales_rep.list_sharing.share_channels_label") }}
-        </VcLabel>
-
-        <div class="wishlist-customer-sharing__channels">
-          <VcCheckbox v-model="sendEmail" :disabled="saving" test-id="wishlist-share-email-checkbox">
-            {{ t("sales_rep.list_sharing.share_email_label") }}
-          </VcCheckbox>
-
-          <VcCheckbox v-model="sendPush" :disabled="saving" test-id="wishlist-share-push-checkbox">
-            {{ t("sales_rep.list_sharing.share_push_label") }}
-          </VcCheckbox>
-        </div>
-      </fieldset>
-    </template>
+    <VcTextarea
+      v-if="isNewTarget"
+      v-model="shareMessage"
+      data-test-id="wishlist-share-message-input"
+      :label="t('sales_rep.list_sharing.share_message_label')"
+      :placeholder="t('sales_rep.list_sharing.share_message_placeholder')"
+      :disabled="saving"
+      rows="3"
+      counter
+      :max-length="messageMaxLength"
+    />
   </div>
 </template>
 
@@ -78,10 +61,6 @@ const SEPARATOR = "\n\n";
 const persistedTarget = toRef(props, "sharedWithId");
 const selectedOrganizationId = ref<string | undefined>(persistedTarget.value ?? undefined);
 const shareMessage = ref("");
-// On by default: publishing to a customer is pointless if they hear about it on neither. Clearing both is allowed —
-// the list then just saves without notifying.
-const sendEmail = ref(true);
-const sendPush = ref(true);
 
 const messageMaxLength = computed(() => NOTIFICATION_MESSAGE_LIMIT - props.sharingLink.length - SEPARATOR.length);
 
@@ -127,8 +106,8 @@ async function notifyCustomer(organizationId: string, context: WishlistSharingSc
 
   const result = await sendCommunication({
     organizationId,
-    sendEmail: sendEmail.value,
-    sendPush: sendPush.value,
+    sendEmail: true,
+    sendPush: true,
     title: t("sales_rep.list_sharing.share_default_title"),
     message: [body, context.sharingLink].join(SEPARATOR),
   });
@@ -161,7 +140,7 @@ defineExpose({
   dirty: isNewTarget,
   payload: computed(() => ({ sharedWithId: selectedOrganizationId.value })),
   onSaved: async (context: WishlistSharingScopeSavedContextType) => {
-    if (!isNewTarget.value || !selectedOrganizationId.value || !(sendEmail.value || sendPush.value)) {
+    if (!isNewTarget.value || !selectedOrganizationId.value) {
       return;
     }
 
@@ -173,13 +152,5 @@ defineExpose({
 <style lang="scss">
 .wishlist-customer-sharing {
   @apply space-y-4;
-
-  &__channels-label {
-    @apply mb-2;
-  }
-
-  &__channels {
-    @apply flex flex-col gap-2;
-  }
 }
 </style>
