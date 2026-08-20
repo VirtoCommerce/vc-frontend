@@ -328,7 +328,7 @@ import { breakpointsTailwind, onClickOutside, useBreakpoints } from "@vueuse/cor
 import { computed, onMounted, ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
-import { usePageHead } from "@/core/composables";
+import { useErrorsTranslator, usePageHead } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { PlatformPermissions, XApiPermissions } from "@/core/enums";
@@ -348,11 +348,13 @@ import { useOrganizationContactsFilterFacets } from "@/shared/company/composable
 import { ContactStatus } from "@/shared/company/types";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
+import type { IdentityErrorInfoType } from "@/core/api/graphql/types";
 import type { FacetItemType, FacetValueItemType, ISortInfo } from "@/core/types";
 import type { ExtendedContactType } from "@/shared/company";
 import type { INotification } from "@/shared/notification";
 
 const { t, te } = useI18n();
+const { translate: translateIdentityError } = useErrorsTranslator<IdentityErrorInfoType>("identity_error");
 
 usePageHead({
   title: t("pages.company.members.meta.title"),
@@ -693,10 +695,15 @@ function openEditCustomerRoleModal(contact: ExtendedContactType): void {
         };
 
         if (!result?.succeeded) {
+          const errorText = result?.errors
+            ?.map((error) => error && translateIdentityError(error))
+            .filter((message): message is string => !!message)
+            .join(" ");
+
           notifications.error({
             ...notification,
 
-            text: t("common.messages.role_update_failed"),
+            text: errorText || t("common.messages.role_update_failed"),
           });
           return;
         }
