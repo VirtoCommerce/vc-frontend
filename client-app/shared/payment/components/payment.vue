@@ -32,7 +32,7 @@
       Unlike the checkout/order payment pages (paymentPage/orderPaymentPage extension points),
       this cart-stage payment step has no extension point yet, so Skyflow is still imported
       directly here — a known, intentional exception to modules/README.md's "Core never imports
-      a module" rule until this extension point exists.
+      a module" rule until this extension point exists (VCST-5757).
     -->
   </div>
 </template>
