@@ -112,7 +112,9 @@ host. No second Vue, no second router, no duplicate Apollo cache.
   `VcEmptyView`, `VcIcon`, `VcImage`, `VcInput`, `VcLabel`, `VcLink`, `VcLoaderOverlay`,
   `VcMarkdownRender`, `VcMenuItem`, `VcModal`, `VcSelect`, `VcTable`, `VcTableColumn`,
   `VcTextarea`, `VcTypography`, `VcWidget`, `VcWidgetSkeleton`; the themed `OrderStatus`
-  (host-only — it reads the store's `orders_statuses` settings); and `uiKit`, the plugin that
+  (host-only — its colours come from the THEME's `orders_statuses` in
+  `config/settings_data.json`, which no query serves, and it throws until the host has set the
+  theme context, so it renders inside the host and nowhere else); and `uiKit`, the plugin that
   registers every `Vc*` globally (all `Vc*` are already registered inside the host)
 - Extension points: `useExtensionRegistry`, `EXTENSION_NAMES`
 - Data: `apolloClient`, `graphqlClient`, `registerCacheTypePolicies`,

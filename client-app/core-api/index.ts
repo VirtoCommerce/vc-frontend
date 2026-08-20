@@ -42,13 +42,16 @@ export {
 export { VcModal, VcTable, VcTableColumn, VcWidgetSkeleton } from "@/ui-kit/components/organisms";
 
 /**
- * Themed order-status chip. Its status -> colour/icon mapping comes from per-store
- * settings (`orders_statuses`), so a plugin that renders its own chip would show
- * different colours than the host for the same status. Props are contract: renaming
- * or removing one is a breaking change.
+ * Themed order-status chip. Its status -> colour/icon mapping comes from the THEME's
+ * `orders_statuses` (config/settings_data.json, reached as `themeContext.settings`) — not from
+ * the store settings the backend returns, which land on `themeContext.storeSettings`. There is
+ * no query that serves it, so a plugin rendering its own chip would drift from the host on a
+ * theme it cannot read. Props are contract: renaming or removing one is a breaking change.
  *
  * Renders only inside the host: `useThemeContext`'s getter throws "Theme context is missing."
- * until `setThemeContext` has run, which happens at boot in `app-runner.ts`.
+ * until `setThemeContext` has run, which happens at boot in `app-runner.ts`. That is also why
+ * it cannot be rendered from a plugin's own process — a remote always runs inside the host,
+ * and the root export is types-only outside the MF shared scope.
  */
 export { default as OrderStatus } from "@/shared/account/components/order-status.vue";
 
