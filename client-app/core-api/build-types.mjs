@@ -155,6 +155,18 @@ if (code.includes("@/")) {
 // the prop it types to `any`. Copy the declarations in; step 2b then proves the result compiles.
 step("inlining the ui-kit ambient type declarations…");
 
+/**
+ * Codepoint order, not locale collation: locale-aware comparison depends on the runtime's ICU
+ * build, and this ordering reaches the emitted contract — same determinism requirement as the
+ * sorted walk below.
+ */
+const byCodepoint = (a, b) => {
+  if (a < b) {
+    return -1;
+  }
+  return a > b ? 1 : 0;
+};
+
 function collectDtsFiles(dir, found = []) {
   // Sorted: readdir order is filesystem-dependent, and the inlined declarations are emitted in
   // traversal order — an unsorted walk makes the committed contract differ between machines.
@@ -307,8 +319,7 @@ if (inlinedDeclarations.length) {
     importsByModule.set(moduleName, [...(importsByModule.get(moduleName) ?? []), imported]);
   }
   const importLines = [...importsByModule].map(
-    ([moduleName, names]) =>
-      `import type { ${names.sort((a, b) => a.localeCompare(b)).join(", ")} } from "${moduleName}";`,
+    ([moduleName, names]) => `import type { ${names.sort(byCodepoint).join(", ")} } from "${moduleName}";`,
   );
   code = [
     ...importLines,
@@ -322,7 +333,7 @@ if (inlinedDeclarations.length) {
 // Guard: every package the contract's types import must be one create-plugin installs. An
 // unlisted one never errors in a plugin — skipLibCheck turns it into `any` — so catch it here.
 const externals = [...new Set([...code.matchAll(/from ['"]([^'".][^'"]*)['"]/g)].map((match) => match[1]))].sort(
-  (a, b) => a.localeCompare(b),
+  byCodepoint,
 );
 /** "unhead/types" -> "unhead", "@unhead/vue" -> "@unhead/vue". */
 const packageNameOf = (specifier) =>
@@ -381,7 +392,7 @@ for (const diagnostic of gateDiagnostics) {
   }
 }
 
-const unexpected = [...unresolvedGlobals].filter((name) => !(name in KNOWN_UNRESOLVED_GLOBALS)).sort();
+const unexpected = [...unresolvedGlobals].filter((name) => !(name in KNOWN_UNRESOLVED_GLOBALS)).sort(byCodepoint);
 if (unexpected.length || otherErrors.length) {
   if (otherErrors.length) {
     console.error(otherErrors.join("\n"));
