@@ -156,7 +156,9 @@ if (code.includes("@/")) {
 step("inlining the ui-kit ambient type declarations…");
 
 function collectDtsFiles(dir, found = []) {
-  for (const entry of readdirSync(dir)) {
+  // Sorted: readdir order is filesystem-dependent, and the inlined declarations are emitted in
+  // traversal order — an unsorted walk makes the committed contract differ between machines.
+  for (const entry of readdirSync(dir).sort()) {
     const path = join(dir, entry);
     if (statSync(path).isDirectory()) {
       collectDtsFiles(path, found);
