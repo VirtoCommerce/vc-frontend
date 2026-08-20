@@ -1,6 +1,6 @@
 import { mount } from "@vue/test-utils";
 import { describe, expect, it, vi } from "vitest";
-import { defineComponent, nextTick } from "vue";
+import { defineComponent, inject, nextTick } from "vue";
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import ExtensionPoint from "./extension-point.vue";
 
@@ -13,6 +13,7 @@ function mountPoint(name: string) {
   return mount(ExtensionPoint, {
     props: { category: "mobileMenu", name } as never,
     slots: { default: `<template #default="s">fallback:{{ s.extensionProps?.count }}</template>` },
+    global: { provide: { COUNT_SOURCE: 9 } },
   });
 }
 
@@ -37,6 +38,17 @@ describe("ExtensionPoint against the real registry", () => {
     await nextTick();
 
     expect(wrapper.text()).toBe("late");
+  });
+
+  it("gives a late contribution an injection context, so use() may resolve host singletons", async () => {
+    const wrapper = mountPoint("injecting-badge");
+
+    useExtensionRegistry().registerContribution("mobileMenu", "injecting-badge", {
+      use: () => ({ count: inject<number>("COUNT_SOURCE") }),
+    });
+    await nextTick();
+
+    expect(wrapper.text()).toBe("fallback:9");
   });
 
   it("drops the contribution when the entry is unregistered", async () => {
