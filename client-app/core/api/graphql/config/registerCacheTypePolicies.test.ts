@@ -21,6 +21,15 @@ const query = gql`
 
 const data = { testPluginWidget: { __typename: "TestPluginWidget", id: "shared-id", name: "first" } };
 
+const lateQuery = gql`
+  query TestPluginLate {
+    testPluginLate {
+      id
+      name
+    }
+  }
+`;
+
 describe("registerCacheTypePolicies", () => {
   it("applies a plugin's keyFields policy so repeated ids are not normalized into one entity", () => {
     registerCacheTypePolicies({ TestPluginWidget: { keyFields: false } });
@@ -30,6 +39,22 @@ describe("registerCacheTypePolicies", () => {
     // keyFields: false stores the object inline under ROOT_QUERY instead of as its own entity.
     expect(Object.keys(cache.extract())).not.toContain("TestPluginWidget:shared-id");
     expect(cache.readQuery({ query })).toEqual(data);
+  });
+
+  it("warns when the typename is already normalized in the cache", () => {
+    const warn = vi.spyOn(Logger, "warn").mockImplementation(() => {});
+
+    cache.writeQuery({
+      query: lateQuery,
+      data: { testPluginLate: { __typename: "TestPluginLate", id: "1", name: "cached before the policy" } },
+    });
+
+    registerCacheTypePolicies({ TestPluginLate: { keyFields: false } });
+
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining("TestPluginLate"));
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining("already normalized"));
+
+    warn.mockRestore();
   });
 
   it("warns when another caller already registered the same typename", () => {
