@@ -126,10 +126,13 @@
     "customer_orders": {
       "page": {
         "title": "Pedidos de {customer}",
+        "all_title": "Pedidos de clientes",
         "title_fallback": "Pedidos"
       },
       "breadcrumb": "Pedidos",
       "back_to_customer": "Volver al cliente",
+      "back_to_orders": "Volver a los pedidos",
+      "order_not_found": "Pedido no encontrado",
       "search_placeholder": "Buscar por número, nombre u otros datos",
       "search_aria": "Buscar pedidos",
       "reset_search": "Restablecer búsqueda",
@@ -141,6 +144,7 @@
         "end_date": "Fecha de finalización",
         "invalid_range": "Rango de fechas no válido.",
         "order_status": "@:common.labels.status",
+        "status_option": "{0} ({1})",
         "reset": "Restablecer",
         "apply": "Aplicar",
         "custom_date": "Fecha personalizada",

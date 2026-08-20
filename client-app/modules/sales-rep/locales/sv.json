@@ -126,10 +126,13 @@
     "customer_orders": {
       "page": {
         "title": "Beställningar för {customer}",
+        "all_title": "Kundorder",
         "title_fallback": "Beställningar"
       },
       "breadcrumb": "Beställningar",
       "back_to_customer": "Tillbaka till kunden",
+      "back_to_orders": "Tillbaka till order",
+      "order_not_found": "Ordern hittades inte",
       "search_placeholder": "Sök efter nummer, namn eller andra uppgifter",
       "search_aria": "Sök beställningar",
       "reset_search": "Återställ sökning",
@@ -141,6 +144,7 @@
         "end_date": "Slutdatum",
         "invalid_range": "Ogiltigt datumintervall.",
         "order_status": "Välj beställningsstatus",
+        "status_option": "{0} ({1})",
         "reset": "Återställ",
         "apply": "Tillämpa",
         "custom_date": "Anpassat datum",

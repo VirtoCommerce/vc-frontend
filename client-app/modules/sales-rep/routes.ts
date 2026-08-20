@@ -1,8 +1,12 @@
 import { useUser } from "@/shared/account/composables/useUser";
 import { isSalesRepsEnabled } from "./composables/useSalesRepsConfig";
 import {
+  ALL_CUSTOMER_ORDERS_ROUTE_NAME,
+  ALL_CUSTOMER_ORDERS_ROUTE_SEGMENT,
   CUSTOMER_ORDERS_ROUTE_NAME,
   CUSTOMER_ORDERS_ROUTE_SEGMENT,
+  CUSTOMER_ORDER_ROUTE_NAME,
+  CUSTOMER_ORDER_ROUTE_SEGMENT,
   CUSTOMER_PROFILE_ROUTE_NAME,
   CUSTOMER_PROFILE_ROUTE_SEGMENT,
   DASHBOARD_ROUTE_NAME,
@@ -17,6 +21,7 @@ import type { NavigationGuardNext, RouteLocationNormalized, RouteRecordRaw } fro
 
 const SalesRepsPage = () => import("./pages/sales-reps.vue");
 const CustomerOrdersPage = () => import("./pages/customer-orders.vue");
+const CustomerOrderDetailsPage = () => import("./pages/customer-order-details.vue");
 const MyCustomersPage = () => import("./pages/my-customers.vue");
 const CustomerProfilePage = () => import("./pages/customer-profile.vue");
 const DashboardPage = () => import("./pages/dashboard.vue");
@@ -98,7 +103,7 @@ export const customerProfileRoute: RouteRecordRaw = {
   },
 };
 
-// The customer's own orders (VCST-5733) -> /company/my-customers/:organizationId/orders.
+// The customer's whole order history (VCST-5733) -> /company/my-customers/:organizationId/orders.
 export const customerOrdersRoute: RouteRecordRaw = {
   path: CUSTOMER_ORDERS_ROUTE_SEGMENT,
   name: CUSTOMER_ORDERS_ROUTE_NAME,
@@ -107,5 +112,29 @@ export const customerOrdersRoute: RouteRecordRaw = {
   meta: repRouteMeta,
   beforeEnter(to, _from, next) {
     guardCustomerRoute(to, next);
+  },
+};
+
+// One of those orders, read-only -> /company/my-customers/:organizationId/orders/:orderId.
+export const customerOrderRoute: RouteRecordRaw = {
+  path: CUSTOMER_ORDER_ROUTE_SEGMENT,
+  name: CUSTOMER_ORDER_ROUTE_NAME,
+  component: CustomerOrderDetailsPage,
+  props: true,
+  meta: repRouteMeta,
+  beforeEnter(to, _from, next) {
+    guardCustomerRoute(to, next);
+  },
+};
+
+// Every served customer's orders (VCST-5733) -> /company/customer-orders. No customer in the route, so the
+// page needs no id check — only the reps-only gate.
+export const allCustomerOrdersRoute: RouteRecordRaw = {
+  path: ALL_CUSTOMER_ORDERS_ROUTE_SEGMENT,
+  name: ALL_CUSTOMER_ORDERS_ROUTE_NAME,
+  component: CustomerOrdersPage,
+  meta: repRouteMeta,
+  beforeEnter(_to, _from, next) {
+    guardSalesRep(next);
   },
 };

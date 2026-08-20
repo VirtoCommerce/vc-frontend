@@ -37,7 +37,7 @@
           </template>
         </VcInput>
 
-        <SalesRepOrdersFilters :rules="statusRules" :disabled="loading" @change="applyFilters" />
+        <SalesRepOrdersFilters :statuses="statusOptions" :disabled="loading" @change="applyFilters" />
       </div>
 
       <!-- A failed read keeps the previous rows, so the failure needs its own view (VCST-5586). -->
@@ -58,7 +58,7 @@
 
       <VcWidget v-else size="lg">
         <template #default-container>
-          <!-- Header clicks map to named backend sort rules; reversible ones toggle asc/desc. -->
+          <!-- Header clicks map to the index fields the backend sorts on; both reverse. -->
           <VcTable
             :loading="loading"
             :items="orders"
@@ -73,12 +73,14 @@
             <template #mobile-item="{ item }">
               <div class="customer-orders__mobile-item">
                 <div class="customer-orders__mobile-row">
-                  <VcLink class="customer-orders__order-link" :to="orderRoute(item.id)">
+                  <VcLink class="customer-orders__order-link" :to="orderRoute(item)">
                     {{ item.number }}
                   </VcLink>
 
                   <span>{{ item.total }}</span>
                 </div>
+
+                <div v-if="!hasCustomer" class="customer-orders__mobile-sub">{{ item.organizationName }}</div>
 
                 <div class="customer-orders__mobile-sub">{{ $d(item.createdDate, "short") }}</div>
 
@@ -87,17 +89,16 @@
             </template>
 
             <VcTableColumn id="number" v-slot="{ item }" :title="t('sales_rep.orders.number')">
-              <VcLink class="customer-orders__order-link" :to="orderRoute(item.id)">
+              <VcLink class="customer-orders__order-link" :to="orderRoute(item)">
                 {{ item.number }}
               </VcLink>
             </VcTableColumn>
 
-            <VcTableColumn
-              id="date"
-              v-slot="{ item }"
-              :title="t('sales_rep.orders.date')"
-              :sortable="isColumnSortable('date')"
-            >
+            <VcTableColumn v-if="!hasCustomer" id="customer" v-slot="{ item }" :title="t('sales_rep.orders.customer')">
+              {{ item.organizationName }}
+            </VcTableColumn>
+
+            <VcTableColumn id="date" v-slot="{ item }" :title="t('sales_rep.orders.date')" sortable>
               {{ $d(item.createdDate, "short") }}
             </VcTableColumn>
 
@@ -109,7 +110,7 @@
               id="total"
               v-slot="{ item }"
               :title="t('sales_rep.orders.total')"
-              :sortable="isColumnSortable('total')"
+              sortable
               align="right"
               class="font-bold"
             >
@@ -127,41 +128,48 @@ import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs } from "@/core/composables/useBreadcrumbs";
 import { usePageHead } from "@/core/composables/usePageHead";
-import { toEndDateFilterValue, toStartDateFilterValue } from "@/core/utilities/date";
 import SalesRepOrdersFilters from "../components/sales-rep-orders-filters.vue";
 import { useSalesRepColumnSort } from "../composables/useSalesRepColumnSort";
 import { PAGE_SIZE, useSalesRepCustomerOrders } from "../composables/useSalesRepCustomerOrders";
-import { useSalesRepRules } from "../composables/useSalesRepRules";
-import { CUSTOMER_PROFILE_ROUTE_NAME, MY_CUSTOMERS_ROUTE_NAME } from "../constants";
-import { selectableFilterRules } from "../utils";
-import type { SalesRepOrdersFilterDataType } from "../types";
+import {
+  CUSTOMER_ORDERS_SORT_FIELDS,
+  CUSTOMER_ORDER_ROUTE_NAME,
+  CUSTOMER_PROFILE_ROUTE_NAME,
+  MY_CUSTOMERS_ROUTE_NAME,
+} from "../constants";
+import type { SalesRepCustomerOrderRowType, SalesRepOrdersFilterDataType } from "../types";
 import type { RouteLocationRaw } from "vue-router";
 import OrderStatus from "@/shared/account/components/order-status.vue";
 
 interface IProps {
-  organizationId: string;
+  // Absent on /company/customer-orders, which lists every served customer's orders.
+  organizationId?: string;
 }
 
 const props = defineProps<IProps>();
 
 const { t } = useI18n();
 
-const { customer, notFound, orders, loading, failed, page, pages, keyword, filter, sortRule, periodFrom, periodTo } =
-  useSalesRepCustomerOrders(() => props.organizationId);
-
-// The status vocabulary is read from this customer's own orders, so every option has orders behind it.
-const { rules: filterRules } = useSalesRepRules("order", "filter", {
-  organizationId: () => props.organizationId,
-});
-const { rules: sortRules } = useSalesRepRules("order", "sort");
-
-// The backend's "all" passthrough is the unfiltered baseline, which is what an empty selection already means.
-const statusRules = computed(() => selectableFilterRules(filterRules.value));
-
-// Date → "recent" (one-way, newest first); Total → "total" (reversible). Direction support is backend-driven.
-const { sortInfo, isColumnSortable, applySort } = useSalesRepColumnSort({
+const {
+  customer,
+  hasCustomer,
+  notFound,
+  orders,
+  statusOptions,
+  sortRules,
+  loading,
+  failed,
+  page,
+  pages,
+  keyword,
+  filters,
   sortRule,
-  columns: { date: "recent", total: "total" },
+} = useSalesRepCustomerOrders(() => props.organizationId);
+
+// Date → "createdDate", Total → "total"; both reverse on a repeat click.
+const { sortInfo, applySort } = useSalesRepColumnSort({
+  sortRule,
+  columns: CUSTOMER_ORDERS_SORT_FIELDS,
   defaultColumn: "date",
   rules: sortRules,
 });
@@ -169,14 +177,19 @@ const { sortInfo, isColumnSortable, applySort } = useSalesRepColumnSort({
 // Unapplied search term; committed to the query on Enter or the search button.
 const localKeyword = ref("");
 
-const hasSearch = computed(() => Boolean(keyword.value) || Boolean(filter.value) || Boolean(periodFrom.value));
+const hasSearch = computed(
+  () => Boolean(keyword.value) || filters.value.statuses.length > 0 || Boolean(filters.value.startDate),
+);
 
 const customerName = computed(() => customer.value?.organizationName ?? "");
-const heading = computed(() =>
-  customerName.value
+const heading = computed(() => {
+  if (!hasCustomer.value) {
+    return t("sales_rep.customer_orders.page.all_title");
+  }
+  return customerName.value
     ? t("sales_rep.customer_orders.page.title", { customer: customerName.value })
-    : t("sales_rep.customer_orders.page.title_fallback"),
-);
+    : t("sales_rep.customer_orders.page.title_fallback");
+});
 
 // flush: "sync" resets the page before the variables watcher runs, so a sort change fires one request, not two.
 watch(
@@ -187,17 +200,17 @@ watch(
   { flush: "sync" },
 );
 
-// salesRepOrders takes ONE status rule name, so a multi-status selection cannot be sent yet — only
-// the first reaches the query until the backend accepts a list.
 function applyFilters(value: SalesRepOrdersFilterDataType): void {
-  filter.value = value.statuses[0];
-  periodFrom.value = toStartDateFilterValue(value.startDate);
-  periodTo.value = toEndDateFilterValue(value.endDate);
+  filters.value = value;
   page.value = 1;
 }
 
-function orderRoute(orderId: string): RouteLocationRaw {
-  return { name: "OrderDetails", params: { orderId } };
+// Rows carry their own customer, so the all-customers list still opens each order in its customer's context.
+function orderRoute(item: SalesRepCustomerOrderRowType): RouteLocationRaw {
+  return {
+    name: CUSTOMER_ORDER_ROUTE_NAME,
+    params: { organizationId: props.organizationId ?? item.organizationId, orderId: item.id },
+  };
 }
 
 function applyKeyword(): void {
@@ -218,16 +231,23 @@ function changePage(newPage: number): void {
 
 usePageHead({ title: heading });
 
-const breadcrumbs = useBreadcrumbs(() => [
-  { title: t("common.links.account"), route: { name: "Account" } },
-  { title: t("sales_rep.hub.title") },
-  { title: t("sales_rep.my_customers.page.title"), route: { name: MY_CUSTOMERS_ROUTE_NAME } },
-  {
-    title: customerName.value,
-    route: { name: CUSTOMER_PROFILE_ROUTE_NAME, params: { organizationId: props.organizationId } },
-  },
-  { title: t("sales_rep.customer_orders.breadcrumb") },
-]);
+const breadcrumbs = useBreadcrumbs(() => {
+  const trail = [{ title: t("common.links.account"), route: { name: "Account" } }, { title: t("sales_rep.hub.title") }];
+
+  if (!hasCustomer.value) {
+    return [...trail, { title: t("sales_rep.customer_orders.breadcrumb") }];
+  }
+
+  return [
+    ...trail,
+    { title: t("sales_rep.my_customers.page.title"), route: { name: MY_CUSTOMERS_ROUTE_NAME } },
+    {
+      title: customerName.value,
+      route: { name: CUSTOMER_PROFILE_ROUTE_NAME, params: { organizationId: props.organizationId } },
+    },
+    { title: t("sales_rep.customer_orders.breadcrumb") },
+  ];
+});
 </script>
 
 <style lang="scss">

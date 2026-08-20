@@ -126,10 +126,13 @@
     "customer_orders": {
       "page": {
         "title": "Заказы {customer}",
+        "all_title": "Заказы клиентов",
         "title_fallback": "Заказы"
       },
       "breadcrumb": "Заказы",
       "back_to_customer": "Назад к клиенту",
+      "back_to_orders": "Назад к заказам",
+      "order_not_found": "Заказ не найден",
       "search_placeholder": "По номеру, имени или другим данным",
       "search_aria": "Поиск заказов",
       "reset_search": "Очистить поиск",
@@ -141,6 +144,7 @@
         "end_date": "Дата окончания",
         "invalid_range": "Некорректный диапазон дат.",
         "order_status": "@:common.labels.status",
+        "status_option": "{0} ({1})",
         "reset": "Очистить",
         "apply": "Применить",
         "custom_date": "Произвольная дата",

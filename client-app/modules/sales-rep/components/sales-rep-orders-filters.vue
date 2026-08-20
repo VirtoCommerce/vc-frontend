@@ -58,12 +58,12 @@
                 />
               </template>
 
-              <div v-if="rules.length" class="sales-rep-orders-filters__statuses">
+              <div v-if="statuses.length" class="sales-rep-orders-filters__statuses">
                 <VcLabel>{{ t("sales_rep.customer_orders.filters.order_status") }}</VcLabel>
 
                 <VcCheckboxGroup v-model="draft.statuses" class="sales-rep-orders-filters__status-list">
-                  <VcCheckbox v-for="rule in rules" :key="rule.name" :value="rule.name">
-                    {{ rule.label }}
+                  <VcCheckbox v-for="status in statuses" :key="status.name" :value="status.name">
+                    {{ t("sales_rep.customer_orders.filters.status_option", [status.label, status.count]) }}
                   </VcCheckbox>
                 </VcCheckboxGroup>
               </div>
@@ -102,11 +102,11 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import type { SalesRepOrdersFilterDataType, SalesRepRuleType } from "../types";
+import type { SalesRepOrderStatusOptionType, SalesRepOrdersFilterDataType } from "../types";
 
 interface IProps {
-  // Status rules offered for this customer, from salesRepOrderFilterRules.
-  rules: SalesRepRuleType[];
+  // Statuses the listed orders carry, with their counts, from the list's own status facet.
+  statuses: SalesRepOrderStatusOptionType[];
   disabled?: boolean;
 }
 

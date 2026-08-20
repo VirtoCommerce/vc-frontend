@@ -5,7 +5,7 @@ import { createWrapperFactory } from "@/core/utilities/tests";
 import SalesRepOrdersFilters from "./sales-rep-orders-filters.vue";
 
 const createWrapper = createWrapperFactory(mount, SalesRepOrdersFilters, {
-  props: { rules: [{ name: "on-hold", label: "On hold" }] },
+  props: { statuses: [{ name: "on-hold", label: "On hold", count: 4 }] },
   global: {
     renderStubDefaultSlot: false,
     stubs: {
@@ -124,11 +124,11 @@ describe("SalesRepOrdersFilters", () => {
     expect(lastChange(wrapper)).toEqual({ statuses: [], startDate: undefined, endDate: undefined });
   });
 
-  it("renders no status block when the backend offers no rules", async () => {
+  it("renders no status block when the listed orders carry no statuses", async () => {
     const wrapper = createWrapper();
     expect(statuses(wrapper).exists()).toBe(true);
 
-    await wrapper.setProps({ rules: [] });
+    await wrapper.setProps({ statuses: [] });
 
     expect(statuses(wrapper).exists()).toBe(false);
   });

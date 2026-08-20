@@ -126,10 +126,13 @@
     "customer_orders": {
       "page": {
         "title": "{customer} orders",
+        "all_title": "Customer orders",
         "title_fallback": "Orders"
       },
       "breadcrumb": "Orders",
       "back_to_customer": "Back to customer",
+      "back_to_orders": "Back to orders",
+      "order_not_found": "Order not found",
       "search_placeholder": "Search by number, name or other data",
       "search_aria": "Search orders",
       "reset_search": "Reset search",
@@ -141,6 +144,7 @@
         "end_date": "End date",
         "invalid_range": "Invalid date range.",
         "order_status": "Select order status",
+        "status_option": "{0} ({1})",
         "reset": "Reset",
         "apply": "Apply",
         "custom_date": "Custom date",

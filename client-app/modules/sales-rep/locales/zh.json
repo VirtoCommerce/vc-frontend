@@ -126,10 +126,13 @@
     "customer_orders": {
       "page": {
         "title": "{customer} 的订单",
+        "all_title": "客户订单",
         "title_fallback": "订单"
       },
       "breadcrumb": "订单",
       "back_to_customer": "返回客户",
+      "back_to_orders": "返回订单列表",
+      "order_not_found": "未找到订单",
       "search_placeholder": "按号码、姓名或其他数据搜索",
       "search_aria": "搜索订单",
       "reset_search": "重置搜索",
@@ -141,6 +144,7 @@
         "end_date": "结束日期",
         "invalid_range": "日期范围无效。",
         "order_status": "@:common.labels.status",
+        "status_option": "{0} ({1})",
         "reset": "重置",
         "apply": "应用",
         "custom_date": "自定义日期",

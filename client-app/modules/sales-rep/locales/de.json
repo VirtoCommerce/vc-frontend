@@ -126,10 +126,13 @@
     "customer_orders": {
       "page": {
         "title": "Bestellungen von {customer}",
+        "all_title": "Kundenbestellungen",
         "title_fallback": "Bestellungen"
       },
       "breadcrumb": "Bestellungen",
       "back_to_customer": "Zurück zum Kunden",
+      "back_to_orders": "Zurück zu den Bestellungen",
+      "order_not_found": "Bestellung nicht gefunden",
       "search_placeholder": "Nach Nummer, Name oder anderen Daten",
       "search_aria": "Bestellungen durchsuchen",
       "reset_search": "Suche zurücksetzen",
@@ -141,6 +144,7 @@
         "end_date": "Enddatum",
         "invalid_range": "Ungültiger Datumsbereich.",
         "order_status": "@:common.labels.status",
+        "status_option": "{0} ({1})",
         "reset": "Zurücksetzen",
         "apply": "Anwenden",
         "custom_date": "Benutzerdefiniertes Datum",

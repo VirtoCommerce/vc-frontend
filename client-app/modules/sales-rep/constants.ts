@@ -33,6 +33,23 @@ export const CUSTOMER_PROFILE_ROUTE_SEGMENT = `${MY_CUSTOMERS_ROUTE_SEGMENT}/:or
 // The customer's full order history: /company/my-customers/:organizationId/orders.
 export const CUSTOMER_ORDERS_ROUTE_NAME = "SalesRepCustomerOrders";
 export const CUSTOMER_ORDERS_ROUTE_SEGMENT = `${CUSTOMER_PROFILE_ROUTE_SEGMENT}/orders`;
+// One order, read-only: /company/my-customers/:organizationId/orders/:orderId.
+export const CUSTOMER_ORDER_ROUTE_NAME = "SalesRepCustomerOrder";
+export const CUSTOMER_ORDER_ROUTE_SEGMENT = `${CUSTOMER_ORDERS_ROUTE_SEGMENT}/:orderId`;
+
+// Every served customer's orders: /company/customer-orders. A sibling of My customers rather than a child,
+// since "my-customers/orders" would match the :organizationId segment.
+export const ALL_CUSTOMER_ORDERS_ROUTE_NAME = "SalesRepAllCustomerOrders";
+export const ALL_CUSTOMER_ORDERS_ROUTE_SEGMENT = "customer-orders";
+
+// Index field the customer-orders list aggregates over: the status options and their counts come back with
+// the page itself, in term_facets, rather than from a separate rules query.
+export const ORDER_STATUS_FACET = "status";
+// Sortable columns of the customer-orders table, mapped to the index fields the backend sorts on. Both are
+// freely reversible, and both read newest/biggest first, so the expression always carries a direction.
+export const CUSTOMER_ORDERS_SORT_FIELDS = { date: "createdDate", total: "total" } as const;
+export const CUSTOMER_ORDERS_SORT_DIRECTION = "desc" as const;
+
 // Default page size for the shared Orders widget; callers may override via the `limit` prop.
 export const ORDERS_DEFAULT_LIMIT = 7;
 

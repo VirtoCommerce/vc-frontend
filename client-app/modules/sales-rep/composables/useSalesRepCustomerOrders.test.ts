@@ -1,12 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { nextTick, shallowRef } from "vue";
 import { PAGE_SIZE, useSalesRepCustomerOrders } from "./useSalesRepCustomerOrders";
-import type { SalesRepOrdersQuery } from "../api/graphql/types";
+import type { SalesRepCustomerOrdersQuery } from "../api/graphql/types";
 
 // vi.hoisted runs before this file's imports, so it must import vue itself.
 const queryMock = await vi.hoisted(async () => {
   const { ref } = await import("vue");
-  const result = ref<SalesRepOrdersQuery | undefined>(undefined);
+  const result = ref<SalesRepCustomerOrdersQuery | undefined>(undefined);
   const loading = ref(false);
   const error = ref<Error | null>(null);
   const onError = vi.fn();
@@ -15,8 +15,9 @@ const queryMock = await vi.hoisted(async () => {
 });
 
 const customerMock = await vi.hoisted(async () => {
-  const { ref } = await import("vue");
-  return { loading: ref(false), notFound: ref(false) };
+  const vue = await import("vue");
+  // shallowRef: a deep ref would unwrap the captured options' own refs before the test reads them.
+  return { loading: vue.ref(false), notFound: vue.ref(false), options: vue.shallowRef<unknown>(undefined) };
 });
 
 vi.mock("@vue/apollo-composable", () => ({ useQuery: queryMock.useQuery }));
@@ -24,13 +25,17 @@ vi.mock("@vue/apollo-composable", () => ({ useQuery: queryMock.useQuery }));
 vi.mock("@/core/globals", () => ({ globals: { storeId: "test-store", cultureName: "en-US", currencyCode: "USD" } }));
 
 vi.mock("./useSalesRepCustomer", async () => {
-  const { ref } = await import("vue");
+  const { computed, ref, toValue } = await import("vue");
   return {
-    useSalesRepCustomer: () => ({
-      customer: ref({ organizationName: "MERCURY123" }),
-      loading: customerMock.loading,
-      notFound: customerMock.notFound,
-    }),
+    // Mirrors the real composable, which reports not-found only while it is enabled.
+    useSalesRepCustomer: (_id: unknown, options?: { enabled?: unknown }) => {
+      customerMock.options.value = options;
+      return {
+        customer: ref({ organizationName: "MERCURY123" }),
+        loading: customerMock.loading,
+        notFound: computed(() => (toValue(options?.enabled) ?? true) && customerMock.notFound.value),
+      };
+    },
   };
 });
 
@@ -45,9 +50,9 @@ function passedVariables(): {
   cultureName?: string;
   first: number;
   after: string;
-  keyword: string;
   sort?: string;
   filter?: string;
+  facet?: string;
 } {
   const variables = lastCallArgs()[1] as { value: ReturnType<typeof passedVariables> } | undefined;
   if (!variables) {
@@ -56,8 +61,14 @@ function passedVariables(): {
   return variables.value;
 }
 
-function ordersResult(totalCount: number, items: NonNullable<SalesRepOrdersQuery["salesRepOrders"]>["items"]) {
-  return { salesRepOrders: { totalCount, items } };
+type ConnectionType = NonNullable<SalesRepCustomerOrdersQuery["salesRepCustomerOrders"]>;
+
+function ordersResult(
+  totalCount: number,
+  items: ConnectionType["items"],
+  term_facets: ConnectionType["term_facets"] = [],
+) {
+  return { salesRepCustomerOrders: { totalCount, items, term_facets } };
 }
 
 beforeEach(() => {
@@ -67,11 +78,12 @@ beforeEach(() => {
   queryMock.useQuery.mockClear();
   customerMock.loading.value = false;
   customerMock.notFound.value = false;
+  customerMock.options.value = undefined;
 });
 
 describe("useSalesRepCustomerOrders", () => {
-  it("queries the customer's orders with offset-as-cursor paging and named sort/filter rules", () => {
-    const { page, keyword, sortRule, filter } = useSalesRepCustomerOrders("org-1");
+  it("queries one customer's orders with offset-as-cursor paging and the status facet", () => {
+    const { page } = useSalesRepCustomerOrders("org-1");
 
     expect(passedVariables()).toMatchObject({
       organizationId: "org-1",
@@ -80,22 +92,51 @@ describe("useSalesRepCustomerOrders", () => {
       cultureName: "en-US",
       first: PAGE_SIZE,
       after: "0",
-      keyword: "",
+      filter: "",
+      // The status options and their counts come back with the page itself.
+      facet: "status",
       sort: undefined,
-      filter: undefined,
     });
 
     page.value = 3;
     expect(passedVariables().after).toBe(String((3 - 1) * PAGE_SIZE));
+  });
+
+  it("folds the keyword, the selected statuses and the date range into one search phrase", () => {
+    const { keyword, filters } = useSalesRepCustomerOrders("org-1");
 
     keyword.value = "CO260812";
-    expect(passedVariables().keyword).toBe("CO260812");
+    expect(passedVariables().filter).toBe("CO260812");
+
+    // Several statuses narrow to their union — the panel is a multi-select.
+    filters.value = { statuses: ["New", "Completed"], startDate: undefined, endDate: undefined };
+    expect(passedVariables().filter).toBe('CO260812 status:"New","Completed"');
+
+    filters.value = { statuses: [], startDate: "2026-05-01", endDate: "2026-05-31" };
+    expect(passedVariables().filter).toContain("createddate:[");
+  });
+
+  it("always sends a direction, since a bare field name would sort ascending", () => {
+    const { sortRule } = useSalesRepCustomerOrders("org-1");
+
+    sortRule.value = "total";
+    expect(passedVariables().sort).toBe("total:desc");
 
     sortRule.value = "total:asc";
     expect(passedVariables().sort).toBe("total:asc");
+  });
 
-    filter.value = "on-hold";
-    expect(passedVariables().filter).toBe("on-hold");
+  it("lists every served customer's orders when no organization is given", () => {
+    const { hasCustomer, notFound } = useSalesRepCustomerOrders();
+
+    expect(passedVariables().organizationId).toBeUndefined();
+    expect(hasCustomer.value).toBe(false);
+
+    // No customer in scope, so the customer lookup is off and its not-found view never shows.
+    const options = customerMock.options.value as { enabled: { value: boolean } };
+    expect(options.enabled.value).toBe(false);
+    customerMock.notFound.value = true;
+    expect(notFound.value).toBe(false);
   });
 
   it("requests keepPreviousResult so the table doesn't flash empty between pages", () => {
@@ -105,7 +146,7 @@ describe("useSalesRepCustomerOrders", () => {
     expect(options.keepPreviousResult).toBe(true);
   });
 
-  it("maps SalesRepOrder to the view shape, tolerating missing fields", () => {
+  it("maps the order connection to the view shape, tolerating missing fields", () => {
     const { orders } = useSalesRepCustomerOrders("org-1");
 
     queryMock.result.value = ordersResult(2, [
@@ -117,15 +158,14 @@ describe("useSalesRepCustomerOrders", () => {
         createdDate: "2026-05-19T00:00:00Z",
         status: "New",
         statusDisplayValue: "New",
-        itemsCount: 3,
         total: { amount: 1200, formattedAmount: "$1,200.00", currency: { code: "USD", symbol: "$" } },
       },
-      // number, status and total absent on the wire
+      // number, organizationName and status absent on the wire
       {
         id: "o-2",
+        number: "",
         organizationId: "org-1",
         createdDate: "2026-05-18T00:00:00Z",
-        itemsCount: 0,
         total: { amount: 0, formattedAmount: "", currency: { code: "USD", symbol: "$" } },
       },
     ]);
@@ -139,7 +179,6 @@ describe("useSalesRepCustomerOrders", () => {
         createdDate: "2026-05-19T00:00:00Z",
         status: "New",
         statusDisplayValue: "New",
-        itemsCount: "3",
         total: "$1,200.00",
       },
       // Absent values read as blanks or a currency zero, never as a missing row (VCST-5586).
@@ -151,9 +190,31 @@ describe("useSalesRepCustomerOrders", () => {
         createdDate: "2026-05-18T00:00:00Z",
         status: "",
         statusDisplayValue: "",
-        itemsCount: "0",
         total: "$0.00",
       },
+    ]);
+  });
+
+  it("offers the statuses the listed orders carry, with their counts", () => {
+    const { statusOptions } = useSalesRepCustomerOrders("org-1");
+
+    queryMock.result.value = ordersResult(
+      3,
+      [],
+      [
+        {
+          name: "status",
+          terms: [
+            { term: "New", label: "New", count: 1, isSelected: false },
+            { term: "Completed", label: "Completed", count: 2, isSelected: false },
+          ],
+        },
+      ],
+    );
+
+    expect(statusOptions.value).toEqual([
+      { name: "New", label: "New", count: 1 },
+      { name: "Completed", label: "Completed", count: 2 },
     ]);
   });
 

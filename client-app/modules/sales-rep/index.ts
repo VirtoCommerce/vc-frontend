@@ -19,7 +19,15 @@ import {
 } from "./constants";
 import { registerLayoutTypePolicies } from "./layout/cache-policies";
 import { salesRepMenuSchema } from "./menu";
-import { customerOrdersRoute, customerProfileRoute, dashboardRoute, myCustomersRoute, salesRepsRoute } from "./routes";
+import {
+  allCustomerOrdersRoute,
+  customerOrderRoute,
+  customerOrdersRoute,
+  customerProfileRoute,
+  dashboardRoute,
+  myCustomersRoute,
+  salesRepsRoute,
+} from "./routes";
 import type { I18n } from "@/i18n";
 import type { Router } from "vue-router";
 
@@ -34,8 +42,11 @@ export function init(router: Router, i18n: I18n) {
   router.addRoute("Company", myCustomersRoute);
   // Customer profile (VCST-5308) -> /company/my-customers/:organizationId.
   router.addRoute("Company", customerProfileRoute);
-  // The customer's own orders (VCST-5733) -> /company/my-customers/:organizationId/orders.
+  // The customer's whole order history (VCST-5733) -> /company/my-customers/:organizationId/orders,
+  // one order of it, and the same list across every served customer.
   router.addRoute("Company", customerOrdersRoute);
+  router.addRoute("Company", customerOrderRoute);
+  router.addRoute("Company", allCustomerOrdersRoute);
 
   const { mergeMenuSchema, registerAccountSection } = useNavigations();
   const { checkPermissions } = useUser();

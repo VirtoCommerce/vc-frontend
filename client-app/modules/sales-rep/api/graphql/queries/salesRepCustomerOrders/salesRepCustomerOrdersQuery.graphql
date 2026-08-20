@@ -1,0 +1,49 @@
+query SalesRepCustomerOrders(
+  $organizationId: String
+  $storeId: String
+  $cultureName: String
+  $first: Int
+  $after: String
+  $sort: String
+  $filter: String
+  $facet: String
+) {
+  salesRepCustomerOrders(
+    organizationId: $organizationId
+    storeId: $storeId
+    cultureName: $cultureName
+    first: $first
+    after: $after
+    sort: $sort
+    filter: $filter
+    facet: $facet
+  ) {
+    totalCount
+    items {
+      id
+      number
+      organizationId
+      organizationName
+      createdDate
+      status
+      statusDisplayValue
+      total {
+        amount
+        formattedAmount
+        currency {
+          code
+          symbol
+        }
+      }
+    }
+    term_facets {
+      name
+      terms {
+        term
+        label
+        count
+        isSelected
+      }
+    }
+  }
+}

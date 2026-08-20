@@ -7,13 +7,21 @@ import { useSalesRepHubQuery } from "./useSalesRepHubQuery";
 import type { SalesRepCustomerProfileType } from "../types/customer-profile";
 import type { MaybeRefOrGetter } from "vue";
 
-export function useSalesRepCustomer(organizationId: MaybeRefOrGetter<string>) {
+type OptionsType = {
+  // Off on a surface that has no customer in scope (the all-customers order list), where an empty
+  // organizationId would otherwise be read as "customer not found".
+  enabled?: MaybeRefOrGetter<boolean>;
+};
+
+export function useSalesRepCustomer(organizationId: MaybeRefOrGetter<string>, options: OptionsType = {}) {
+  const enabled = computed(() => toValue(options.enabled) ?? true);
   const variables = computed(() => ({ organizationId: toValue(organizationId) }));
 
   // The header is editable outside the storefront, so it revalidates too. Three components on the page
   // share this composable; Apollo's deduplication collapses their concurrent identical requests into one.
   const { result, loading, onError } = useSalesRepHubQuery(SalesRepCustomerDocument, variables, {
     fetchPolicy: HUB_FETCH_POLICY,
+    enabled,
   });
 
   onError((error) => {
@@ -37,7 +45,7 @@ export function useSalesRepCustomer(organizationId: MaybeRefOrGetter<string>) {
   });
 
   // Not served / unknown / errored all settle to the same not-found view once loading finishes.
-  const notFound = computed(() => !loading.value && !customer.value);
+  const notFound = computed(() => enabled.value && !loading.value && !customer.value);
 
   return { customer, loading, notFound };
 }

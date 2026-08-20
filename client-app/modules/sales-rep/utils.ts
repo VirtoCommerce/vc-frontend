@@ -1,6 +1,11 @@
 import { globals } from "@/core/globals";
-import type { MoneyType, SalesRepOrdersQuery } from "./api/graphql/types";
-import type { SalesRepOrderRowType, SalesRepRuleType } from "./types";
+import type { MoneyType, SalesRepCustomerOrdersQuery, SalesRepOrdersQuery } from "./api/graphql/types";
+import type {
+  SalesRepCustomerOrderRowType,
+  SalesRepOrderRowType,
+  SalesRepOrderStatusOptionType,
+  SalesRepRuleType,
+} from "./types";
 import type { StatWidgetToneType } from "./types/widgets";
 
 // Selectable filter options exclude the backend "all" rule (chips already prepend a synthetic "All" baseline).
@@ -189,4 +194,36 @@ export function toSalesRepOrderRows(items?: OrderNodeType[]): SalesRepOrderRowTy
         total: formatStatMoney(order.total),
       }))
   );
+}
+
+// Connection items -> customer-orders rows. The shared CustomerOrder type carries no items count, so this
+// row has no Items column (unlike the dashboard widget's).
+type CustomerOrderNodeType = NonNullable<
+  NonNullable<SalesRepCustomerOrdersQuery["salesRepCustomerOrders"]>["items"]
+>[number];
+
+export function toSalesRepCustomerOrderRows(items?: CustomerOrderNodeType[]): SalesRepCustomerOrderRowType[] {
+  return (items ?? [])
+    .filter((order): order is NonNullable<CustomerOrderNodeType> => order != null)
+    .map((order) => ({
+      id: order.id,
+      number: order.number ?? "",
+      organizationId: order.organizationId ?? "",
+      organizationName: order.organizationName ?? "",
+      createdDate: order.createdDate,
+      status: order.status ?? "",
+      statusDisplayValue: order.statusDisplayValue ?? "",
+      total: formatStatMoney(order.total),
+    }));
+}
+
+// The status facet of a customer-orders page -> the Filters panel's options. A status with no orders behind
+// it never reaches the facet, so there is nothing to filter out here.
+export function toOrderStatusOptions(
+  facets?: NonNullable<SalesRepCustomerOrdersQuery["salesRepCustomerOrders"]>["term_facets"],
+): SalesRepOrderStatusOptionType[] {
+  return (facets ?? [])
+    .flatMap((facet) => facet?.terms ?? [])
+    .filter((term) => term != null)
+    .map((term) => ({ name: term.term, label: term.label || term.term, count: term.count }));
 }

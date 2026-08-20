@@ -79,11 +79,33 @@ export type SalesRepOrderRowType = {
   total: string;
 };
 
-// Draft/applied state of the customer orders Filters panel.
+// Draft/applied state of the customer orders Filters panel. Structurally the storefront's
+// OrdersFilterDataType, so getFilterExpression turns it into the same search phrase.
 export type SalesRepOrdersFilterDataType = {
-  // Selected status rule names. The backend takes one name, so only the first reaches the query.
+  // Selected order statuses; several narrow to their union.
   statuses: string[];
   // Date-only bounds ("YYYY-MM-DD").
   startDate?: string;
   endDate?: string;
+};
+
+// A status the customer's orders actually carry, with how many of them do. Read from the list's own
+// term_facets, so every option has orders behind it and the count follows the other filters.
+export type SalesRepOrderStatusOptionType = {
+  name: string;
+  label: string;
+  count: number;
+};
+
+// Customer-orders table row. No items column: the row comes from the shared CustomerOrder type, which
+// counts line items only by returning them.
+export type SalesRepCustomerOrderRowType = {
+  id: string;
+  number: string;
+  organizationId: string;
+  organizationName: string;
+  createdDate: string;
+  status: string;
+  statusDisplayValue: string;
+  total: string;
 };

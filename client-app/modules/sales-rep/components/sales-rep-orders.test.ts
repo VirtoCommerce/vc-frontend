@@ -1,7 +1,7 @@
 import { mount } from "@vue/test-utils";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createWrapperFactory } from "@/core/utilities/tests";
-import { CUSTOMER_ORDERS_ROUTE_NAME } from "../constants";
+import { ALL_CUSTOMER_ORDERS_ROUTE_NAME, CUSTOMER_ORDERS_ROUTE_NAME } from "../constants";
 import SalesRepOrders from "./sales-rep-orders.vue";
 
 const state = await vi.hoisted(async () => {
@@ -127,9 +127,9 @@ describe("SalesRepOrders all-orders link", () => {
     expect(link.attributes("target")).toBeUndefined();
   });
 
-  it("keeps the cross-customer widget on the buyer-facing orders page", () => {
+  it("sends the cross-customer widget to every served customer's orders", () => {
     const wrapper = createWrapper();
 
-    expect(allOrdersLink(wrapper).props().to).toEqual({ name: "Orders" });
+    expect(allOrdersLink(wrapper).props().to).toEqual({ name: ALL_CUSTOMER_ORDERS_ROUTE_NAME });
   });
 });

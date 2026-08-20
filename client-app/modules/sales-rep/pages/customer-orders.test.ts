@@ -1,6 +1,5 @@
 import { enableAutoUnmount, flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { toEndDateFilterValue, toStartDateFilterValue } from "@/core/utilities/date";
 import { createWrapperFactory } from "@/core/utilities/tests";
 import { CUSTOMER_PROFILE_ROUTE_NAME } from "../constants";
 import CustomerOrders from "./customer-orders.vue";
@@ -15,13 +14,12 @@ const state = await vi.hoisted(async () => {
     pages: ref(4),
     page: ref(1),
     keyword: ref(""),
-    filter: ref<string | undefined>(undefined),
+    filters: ref<Record<string, unknown>>({ statuses: [], startDate: undefined, endDate: undefined }),
     sortRule: ref<string | undefined>(undefined),
-    periodFrom: ref<string | undefined>(undefined),
-    periodTo: ref<string | undefined>(undefined),
     customer: ref<{ organizationName: string } | undefined>({ organizationName: "MERCURY123" }),
+    hasCustomer: ref(true),
     notFound: ref(false),
-    rules: ref<{ name: string; label: string }[]>([]),
+    statusOptions: ref<{ name: string; label: string; count: number }[]>([]),
     applySort: vitest.fn(),
   };
 });
@@ -30,23 +28,20 @@ vi.mock("../composables/useSalesRepCustomerOrders", () => ({
   PAGE_SIZE: 10,
   useSalesRepCustomerOrders: () => ({
     customer: state.customer,
+    hasCustomer: state.hasCustomer,
     notFound: state.notFound,
     orders: state.orders,
+    statusOptions: state.statusOptions,
+    sortRules: [],
     loading: state.loading,
     failed: state.failed,
     page: state.page,
     pages: state.pages,
     keyword: state.keyword,
-    filter: state.filter,
+    filters: state.filters,
     sortRule: state.sortRule,
-    periodFrom: state.periodFrom,
-    periodTo: state.periodTo,
   }),
 }));
-vi.mock("../composables/useSalesRepRules", async () => {
-  const { ref } = await import("vue");
-  return { useSalesRepRules: () => ({ rules: state.rules, loading: ref(false) }) };
-});
 vi.mock("../composables/useSalesRepColumnSort", async () => {
   const { ref } = await import("vue");
   return {
@@ -120,13 +115,12 @@ beforeEach(() => {
   state.pages.value = 4;
   state.page.value = 1;
   state.keyword.value = "";
-  state.filter.value = undefined;
+  state.filters.value = { statuses: [], startDate: undefined, endDate: undefined };
   state.sortRule.value = undefined;
-  state.periodFrom.value = undefined;
-  state.periodTo.value = undefined;
   state.customer.value = { organizationName: "MERCURY123" };
+  state.hasCustomer.value = true;
   state.notFound.value = false;
-  state.rules.value = [];
+  state.statusOptions.value = [];
   state.applySort.mockClear();
 });
 
@@ -168,46 +162,48 @@ describe("CustomerOrders", () => {
     expect(state.page.value).toBe(1);
   });
 
-  // salesRepOrders takes one rule name, so a multi-status selection cannot be sent yet.
-  it("applies the panel's first status and its date range as the query period", () => {
+  it("applies the panel's whole selection, several statuses included", () => {
     const wrapper = createWrapper();
     state.page.value = 3;
 
-    stub(wrapper, "sales-rep-orders-filters-stub").vm.$emit("change", {
-      statuses: ["on-hold", "new"],
-      startDate: "2026-05-01",
-      endDate: "2026-05-31",
-    });
+    const selection = { statuses: ["on-hold", "new"], startDate: "2026-05-01", endDate: "2026-05-31" };
+    stub(wrapper, "sales-rep-orders-filters-stub").vm.$emit("change", selection);
 
-    expect(state.filter.value).toBe("on-hold");
-    expect(state.periodFrom.value).toBe(toStartDateFilterValue("2026-05-01"));
-    expect(state.periodTo.value).toBe(toEndDateFilterValue("2026-05-31"));
+    expect(state.filters.value).toEqual(selection);
     expect(state.page.value).toBe(1);
   });
 
-  it("clears the query filter when the panel is reset", () => {
+  it("clears the selection when the panel is reset", () => {
     const wrapper = createWrapper();
-    state.filter.value = "on-hold";
-    state.periodFrom.value = "2026-05-01T00:00:00.000Z";
+    state.filters.value = { statuses: ["on-hold"], startDate: "2026-05-01", endDate: undefined };
 
-    stub(wrapper, "sales-rep-orders-filters-stub").vm.$emit("change", { statuses: [] });
+    stub(wrapper, "sales-rep-orders-filters-stub").vm.$emit("change", {
+      statuses: [],
+      startDate: undefined,
+      endDate: undefined,
+    });
 
-    expect(state.filter.value).toBeUndefined();
-    expect(state.periodFrom.value).toBeUndefined();
-    expect(state.periodTo.value).toBeUndefined();
+    expect(state.filters.value).toEqual({ statuses: [], startDate: undefined, endDate: undefined });
   });
 
-  it("passes the backend status rules to the panel, minus the All baseline", async () => {
+  it("passes the statuses the listed orders carry, with their counts, to the panel", async () => {
     const wrapper = createWrapper();
-    state.rules.value = [
-      { name: "all", label: "All" },
-      { name: "on-hold", label: "On hold" },
-    ];
+    state.statusOptions.value = [{ name: "on-hold", label: "On hold", count: 4 }];
     await flushPromises();
 
-    expect(stub(wrapper, "sales-rep-orders-filters-stub").props().rules).toEqual([
-      { name: "on-hold", label: "On hold" },
+    expect(stub(wrapper, "sales-rep-orders-filters-stub").props().statuses).toEqual([
+      { name: "on-hold", label: "On hold", count: 4 },
     ]);
+  });
+
+  it("drops the customer out of the breadcrumbs when listing every served customer", async () => {
+    state.hasCustomer.value = false;
+
+    const wrapper = createWrapper();
+    await flushPromises();
+
+    const items = stub(wrapper, "nav.crumbs").props().items as IBreadcrumb[];
+    expect(items.some((item) => item.title === "MERCURY123")).toBe(false);
   });
 
   it("shows the not-found view instead of the list for a customer the rep does not serve", () => {

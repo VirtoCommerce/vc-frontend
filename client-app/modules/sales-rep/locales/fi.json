@@ -126,10 +126,13 @@
     "customer_orders": {
       "page": {
         "title": "Asiakkaan {customer} tilaukset",
+        "all_title": "Asiakkaiden tilaukset",
         "title_fallback": "Tilaukset"
       },
       "breadcrumb": "Tilaukset",
       "back_to_customer": "Takaisin asiakkaan tietoihin",
+      "back_to_orders": "Takaisin tilauksiin",
+      "order_not_found": "Tilausta ei löytynyt",
       "search_placeholder": "Hae numerolla, nimellä tai muilla tiedoilla",
       "search_aria": "Hae tilauksia",
       "reset_search": "Nollaa haku",
@@ -141,6 +144,7 @@
         "end_date": "Lopetuspäivämäärä",
         "invalid_range": "Virheellinen päivämääräväli.",
         "order_status": "Valitse tilauksen tila",
+        "status_option": "{0} ({1})",
         "reset": "Nollaa",
         "apply": "Käytä",
         "custom_date": "Mukautettu päivämäärä",

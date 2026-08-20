@@ -126,10 +126,13 @@
     "customer_orders": {
       "page": {
         "title": "Commandes de {customer}",
+        "all_title": "Commandes des clients",
         "title_fallback": "Commandes"
       },
       "breadcrumb": "Commandes",
       "back_to_customer": "Retour au client",
+      "back_to_orders": "Retour aux commandes",
+      "order_not_found": "Commande introuvable",
       "search_placeholder": "Rechercher par numéro, nom ou autres données",
       "search_aria": "Rechercher des commandes",
       "reset_search": "Réinitialiser la recherche",
@@ -141,6 +144,7 @@
         "end_date": "Date de fin",
         "invalid_range": "Plage de dates non valide.",
         "order_status": "@:common.labels.status",
+        "status_option": "{0} ({1})",
         "reset": "Réinitialiser",
         "apply": "Appliquer",
         "custom_date": "Date personnalisée",
