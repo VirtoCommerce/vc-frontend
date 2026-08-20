@@ -185,6 +185,41 @@ module.exports = {
         dependencyTypes: ["npm-peer"],
       },
     },
+    {
+      name: "no-module-to-host-internal",
+      comment:
+        "A module reached into a host '_internal/' folder. Those are private: once a module " +
+        "depends on one, the host can no longer restyle its own chrome without breaking it - and " +
+        "a module that ships as a Module Federation plugin cannot follow the host's refactors at " +
+        "all. Contribute through an extension point instead (see shared/common/composables/" +
+        "extensionRegistry/README.md). The two push-messages links are known debt; do not add more.",
+      severity: "error",
+      from: {
+        path: "^client-app/modules/",
+        pathNot: [
+          "^client-app/modules/push-messages/components/link-push-messages[.]vue$",
+          "^client-app/modules/push-messages/components/link-push-messages-mobile[.]vue$",
+        ],
+      },
+      to: {
+        path: "/_internal/",
+      },
+    },
+    {
+      name: "no-host-to-sales-rep-internals",
+      comment:
+        "The host reached past 'modules/sales-rep/index.ts'. That module is being extracted into " +
+        "its own repository, so its entry point is the only surface the host may depend on. Widen " +
+        "this rule to the next module as it is prepared for extraction.",
+      severity: "error",
+      from: {
+        pathNot: "^client-app/modules/sales-rep/",
+      },
+      to: {
+        path: "^client-app/modules/sales-rep/",
+        pathNot: "^client-app/modules/sales-rep/index[.]ts$",
+      },
+    },
   ],
   options: {
     // The generated @vc-frontend/core type contract, its build/versioning scripts and
