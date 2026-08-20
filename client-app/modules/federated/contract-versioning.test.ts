@@ -110,6 +110,17 @@ describe("decideVersionAction", () => {
         decideVersionAction({ ...preRelease, changed: true, currentVersion: "0.2.0", removedExports: ["VcButton"] }),
       ).toEqual({ action: "none", reason: "minor already bumped" });
     });
+
+    it("accepts a removal carried by the promotion out of the pre-1.0 line", () => {
+      expect(
+        decideVersionAction({
+          changed: true,
+          baseVersion: "0.9.0",
+          currentVersion: "1.0.0",
+          removedExports: ["VcButton"],
+        }),
+      ).toEqual({ action: "none", reason: "minor already bumped" });
+    });
   });
 
   it("fails closed (requires major) on a removal when a version string is unparseable", () => {

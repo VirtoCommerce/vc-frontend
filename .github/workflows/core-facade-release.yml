@@ -70,7 +70,8 @@ jobs:
           if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
             echo "::error::Release $TAG already exists — releases are immutable." \
               "Bump the contract version (yarn build:core-types auto-bumps on facade" \
-              "changes; yarn bump:core major for breaking ones) and re-run."
+              "changes; for a breaking one run yarn bump:core with the level that"\
+              "release line uses - minor on 0.x, major from 1.0.0) and re-run."
             exit 1
           fi
           if git ls-remote --exit-code --tags origin "refs/tags/$TAG" > /dev/null 2>&1; then

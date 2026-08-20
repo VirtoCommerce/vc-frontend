@@ -10,6 +10,10 @@ export interface IVersionFacts {
 }
 
 export type VersionActionType =
-  { action: "none"; reason: string } | { action: "bump-minor" } | { action: "require-major"; removedExports: string[] };
+  | { action: "none"; reason: string }
+  | { action: "bump-minor" }
+  | { action: "bump-patch" }
+  | { action: "require-major"; removedExports: string[] }
+  | { action: "require-minor"; removedExports: string[] };
 
 export declare function decideVersionAction(facts: IVersionFacts): VersionActionType;

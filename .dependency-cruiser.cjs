@@ -193,7 +193,7 @@ module.exports = {
     // semver, and /testing imports vue-i18n as a consumer peer — all resolved from the
     // ROOT package.json, not the facade's, and none of it is in the app dependency graph.
     exclude: {
-      path: "client-app/core-api/(contract/|build-types\\.mjs$|bump-version\\.mjs$|testing\\.mjs$)",
+      path: "client-app/core-api/(contract/|build-types\\.mjs$|bump-version\\.mjs$|contract-versioning\\.mjs$|testing\\.mjs$)",
     },
     doNotFollow: {
       path: "node_modules",

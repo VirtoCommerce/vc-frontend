@@ -1,8 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { checkHostCompatibility } from "./version-gate";
 
-// Versions use the FACADE contract scheme (CORE_VERSION, starts at 1.0.0 and is
-// independent of the host app version) - not the theme's app version shape.
+// Versions use the FACADE contract scheme (CORE_VERSION, starts at 0.1.0 and is
+// independent of the host app version) - not the theme's app version shape. The 1.x
+// literals below are range-matching fixtures, not statements about the current line.
 describe("checkHostCompatibility", () => {
   it("fails closed when the plugin declares no requirement", () => {
     const undefinedResult = checkHostCompatibility("1.4.0", undefined);
