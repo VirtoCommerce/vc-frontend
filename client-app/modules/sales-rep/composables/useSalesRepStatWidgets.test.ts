@@ -88,9 +88,9 @@ function emptyOrders(): OrderStatsType {
     newOrders: { count: 0, total: zeroMoney },
     recentOrders: { count: 0 },
     // No baseline to compare against, so the backend sends null percents.
-    weekVsPrevWeek: { countChange: 0, totalChange: zeroMoney },
-    mtdVsPrevMonth: { countChange: 0, totalChange: zeroMoney },
-    ytdVsLastYear: { countChange: 0, totalChange: zeroMoney },
+    weekVsPrevWeek: {},
+    mtdVsPrevMonth: {},
+    ytdVsLastYear: {},
   };
 }
 
@@ -120,7 +120,6 @@ describe("stat cards for a customer with no data", () => {
   it("renders every dashboard figure as a zero", () => {
     sources.orders.value = emptyOrders();
     sources.carts.value = {
-      currencyCode: "USD",
       activeCarts: { selectedItemQuantity: 0, unselectedItemQuantity: 0 },
       itemsThisWeek: { selectedItemQuantity: 0 },
     } satisfies CartStatsType;
@@ -147,7 +146,6 @@ describe("stat cards for a customer with no data", () => {
   it("renders every customer-profile figure as a zero", () => {
     sources.orders.value = emptyOrders();
     sources.carts.value = {
-      currencyCode: "USD",
       activeCarts: { selectedItemQuantity: 0, unselectedItemQuantity: 0 },
       itemsThisWeek: { selectedItemQuantity: 0 },
     } satisfies CartStatsType;
@@ -168,7 +166,7 @@ describe("stat cards for a customer with no data", () => {
   it("still renders zeros when the backend omits the period objects entirely", () => {
     // Periods are nullable in the schema; an absent one must read the same as an empty one.
     sources.orders.value = { currencyCode: "USD" } satisfies OrderStatsType;
-    sources.carts.value = { currencyCode: "USD" } satisfies CartStatsType;
+    sources.carts.value = {} satisfies CartStatsType;
     sources.counts.value = { assignedCustomers: 0 } satisfies CountsType;
 
     const dashboard = useSalesRepDashboardWidgets();
@@ -188,9 +186,9 @@ describe("stat cards for a customer with partial data", () => {
       currencyCode: "USD",
       // Present: YTD has real activity. Absent: mtd/week/newOrders/recentOrders.
       ytd: { count: 1234, total: money(56789, "$56,789.00"), average: money(46, "$46.02") },
-      ytdVsLastYear: { countChange: 12, countChangePercent: 12.4, totalChange: money(1, "$1.00") },
+      ytdVsLastYear: { countChangePercent: 12.4 },
     } satisfies OrderStatsType;
-    sources.carts.value = { currencyCode: "USD" } satisfies CartStatsType;
+    sources.carts.value = {} satisfies CartStatsType;
     sources.counts.value = { assignedCustomers: 4321 } satisfies CountsType;
 
     const dashboard = useSalesRepDashboardWidgets();
@@ -233,7 +231,6 @@ describe("stat cards when one statistics query fails", () => {
   it("marks only the cards fed by the failed query", () => {
     sources.orders.value = emptyOrders();
     sources.carts.value = {
-      currencyCode: "USD",
       activeCarts: { selectedItemQuantity: 2, unselectedItemQuantity: 3 },
     } satisfies CartStatsType;
     sources.counts.value = { assignedCustomers: 9 } satisfies CountsType;
@@ -253,7 +250,6 @@ describe("stat cards when one statistics query fails", () => {
   it("marks every card of the failed query on the customer page", () => {
     sources.orders.value = emptyOrders();
     sources.carts.value = {
-      currencyCode: "USD",
       activeCarts: { selectedItemQuantity: 7, unselectedItemQuantity: 0 },
     } satisfies CartStatsType;
     sources.ordersError.value = new Error("orders down");
@@ -290,7 +286,6 @@ describe("stat cards while one query is still in flight", () => {
   it("does not hold every card pending because one query is slow", () => {
     sources.orders.value = emptyOrders();
     sources.carts.value = {
-      currencyCode: "USD",
       activeCarts: { selectedItemQuantity: 0, unselectedItemQuantity: 0 },
     } satisfies CartStatsType;
     sources.countsLoading.value = true;
@@ -298,5 +293,68 @@ describe("stat cards while one query is still in flight", () => {
     const { cards } = useSalesRepDashboardWidgets();
 
     expect(cards.value.filter((card) => card.loading).map((card) => card.key)).toEqual(["my_customers"]);
+  });
+});
+
+// Opening the layout editor widens the `@include` flags, which is a variable change, which restarts the
+// order query — so the query is in flight again while its previous figures are still in hand
+// (`keepPreviousResult`). A per-query flag blanked all four order-fed cards for that round trip.
+describe("stat cards while a query the rep already has data for is refetching", () => {
+  it("keeps every card whose own slice is in hand rendering", () => {
+    sources.orders.value = {
+      currencyCode: "USD",
+      newOrders: { count: 3, total: money(30, "$30.00") },
+      recentOrders: { count: 9 },
+      week: { count: 4, total: money(40, "$40.00") },
+      mtd: { count: 5, total: money(50, "$50.00") },
+      ytd: { count: 6, total: money(60, "$60.00") },
+      mtdVsPrevMonth: { countChangePercent: 10 },
+      ytdVsLastYear: { countChangePercent: 20 },
+      weekVsPrevWeek: { countChangePercent: 30 },
+    } satisfies OrderStatsType;
+    sources.ordersLoading.value = true;
+
+    const { cards } = useSalesRepDashboardWidgets();
+    const byKey = (key: string) => cards.value.find((card) => card.key === key);
+
+    expect(cards.value.filter((card) => card.loading).map((card) => card.key)).toEqual([]);
+    expect(byKey("orders_placed_week")).toMatchObject({ loading: false, value: "4" });
+    expect(byKey("new_orders")).toMatchObject({ loading: false, value: "3" });
+  });
+
+  it("still holds the cards whose slice the widened query has not delivered", () => {
+    // The shape mid-restart when only some aliases have landed: `week` (and its comparison) missing.
+    sources.orders.value = {
+      currencyCode: "USD",
+      mtd: { count: 5, total: money(50, "$50.00") },
+      mtdVsPrevMonth: { countChangePercent: 10 },
+    } satisfies OrderStatsType;
+    sources.ordersLoading.value = true;
+
+    const { cards } = useSalesRepDashboardWidgets();
+    const byKey = (key: string) => cards.value.find((card) => card.key === key);
+
+    expect(byKey("orders_placed_mtd")).toMatchObject({ loading: false, value: "5" });
+    // Absent slices must stay pending rather than render formatStatCount(undefined) — a literal "0".
+    expect(byKey("orders_placed_week")).toMatchObject({ loading: true });
+    expect(byKey("orders_placed_ytd")).toMatchObject({ loading: true });
+    expect(byKey("new_orders")).toMatchObject({ loading: true });
+  });
+
+  it("treats the customer profile's average-order-value slice as its own", () => {
+    // `aov` needs ytd AND its `average` field: the ytd slice arriving without `average` (the dashboard's
+    // flags) must not let the card render a currency zero.
+    sources.orders.value = {
+      currencyCode: "USD",
+      ytd: { count: 6, total: money(60, "$60.00") },
+      ytdVsLastYear: { countChangePercent: 20 },
+    } satisfies OrderStatsType;
+    sources.ordersLoading.value = true;
+
+    const { cards } = useSalesRepCustomerWidgets("org-1");
+    const byKey = (key: string) => cards.value.find((card) => card.key === key);
+
+    expect(byKey("orders_ytd")).toMatchObject({ loading: false, value: "6" });
+    expect(byKey("aov")).toMatchObject({ loading: true });
   });
 });

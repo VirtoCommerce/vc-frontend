@@ -1,3 +1,9 @@
+# Every slice is gated, because the two surfaces that run this op render different cards and a rep can
+# hide any of them. The flags come from the visible cards (layout/stat-data-needs.ts) — an excluded
+# slice is a bucket the backend never aggregates, its batch loader being keyed on the date range.
+# `average` rides along inside its own bucket, so it is gated for bytes rather than for a query.
+# The flags are required rather than defaulted (as in searchProductsQuery): a forgotten one should be a
+# compile error, not a surface quietly fetching a slice it does not render.
 query SalesRepCustomerOrderStatistics(
   $organizationId: String
   $storeId: String
@@ -18,6 +24,13 @@ query SalesRepCustomerOrderStatistics(
   $recentFrom: DateTime
   $recentTo: DateTime
   $newOrdersFilter: String
+  $withNewOrders: Boolean!
+  $withWeek: Boolean!
+  $withMtd: Boolean!
+  $withMonthOverMonth: Boolean!
+  $withYtd: Boolean!
+  $withYearOverYear: Boolean!
+  $withAverageOrderValue: Boolean!
 ) {
   salesRepCustomerOrderStatistics(
     organizationId: $organizationId
@@ -26,76 +39,58 @@ query SalesRepCustomerOrderStatistics(
     cultureName: $cultureName
   ) {
     currencyCode
-    mtd: period(from: $mtdFrom, to: $mtdTo) {
+    mtd: period(from: $mtdFrom, to: $mtdTo) @include(if: $withMtd) {
+      total {
+        # The raw number only where a card does arithmetic on it: the customer profile divides this
+        # month's revenue by the year's. Everything else renders `formattedAmount` alone.
+        amount
+        formattedAmount
+      }
+      count
+    }
+    ytd: period(from: $ytdFrom, to: $ytdTo) @include(if: $withYtd) {
       total {
         amount
         formattedAmount
       }
       count
-      average {
-        amount
+      # Backs the customer profile's "Avg order value"; the dashboard has no such card.
+      average @include(if: $withAverageOrderValue) {
         formattedAmount
       }
     }
-    ytd: period(from: $ytdFrom, to: $ytdTo) {
+    week: period(from: $weekFrom, to: $weekTo) @include(if: $withWeek) {
       total {
-        amount
         formattedAmount
       }
       count
-      average {
-        amount
-        formattedAmount
-      }
     }
-    week: period(from: $weekFrom, to: $weekTo) {
+    newOrders: period(from: $recentFrom, to: $recentTo, filter: $newOrdersFilter) @include(if: $withNewOrders) {
       total {
-        amount
         formattedAmount
       }
       count
     }
-    newOrders: period(from: $recentFrom, to: $recentTo, filter: $newOrdersFilter) {
-      total {
-        amount
-        formattedAmount
-      }
+    recentOrders: period(from: $recentFrom, to: $recentTo) @include(if: $withNewOrders) {
       count
     }
-    recentOrders: period(from: $recentFrom, to: $recentTo) {
-      count
-    }
+    # A comparison re-uses the bucket its `current` range already selected, so these cost only their
+    # baseline: the previous week, month and year respectively. Order COUNT is the metric all three
+    # cards compare on, so the percent is the only delta selected.
     weekVsPrevWeek: comparison(
       current: { from: $weekFrom, to: $weekTo }
       previous: { from: $prevWeekFrom, to: $prevWeekTo }
-    ) {
-      totalChange {
-        amount
-        formattedAmount
-      }
-      totalChangePercent
-      countChange
+    ) @include(if: $withWeek) {
       countChangePercent
     }
-    mtdVsPrevMonth: comparison(current: { from: $mtdFrom, to: $mtdTo }, previous: { from: $prevFrom, to: $prevTo }) {
-      totalChange {
-        amount
-        formattedAmount
-      }
-      totalChangePercent
-      countChange
+    mtdVsPrevMonth: comparison(current: { from: $mtdFrom, to: $mtdTo }, previous: { from: $prevFrom, to: $prevTo })
+      @include(if: $withMonthOverMonth) {
       countChangePercent
     }
     ytdVsLastYear: comparison(
       current: { from: $ytdFrom, to: $ytdTo }
       previous: { from: $lastYearFrom, to: $lastYearTo }
-    ) {
-      totalChange {
-        amount
-        formattedAmount
-      }
-      totalChangePercent
-      countChange
+    ) @include(if: $withYearOverYear) {
       countChangePercent
     }
   }

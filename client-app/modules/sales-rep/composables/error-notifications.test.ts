@@ -6,6 +6,7 @@ import { cache } from "@/core/api/graphql/config/cache";
 import { errorHandlerLink } from "@/core/api/graphql/config/error-handler";
 import { SalesRepCustomersCountDocument } from "../api/graphql/types";
 import { DASHBOARD_LAYOUT_SCOPE } from "../constants";
+import { STAT_CARDS } from "../layout/stat-cards";
 import { useSalesRepCartStatistics } from "./useSalesRepCartStatistics";
 import { useSalesRepCommunication } from "./useSalesRepCommunication";
 import { useSalesRepCustomer } from "./useSalesRepCustomer";
@@ -19,6 +20,7 @@ import { useSalesRepOrders } from "./useSalesRepOrders";
 import { useSalesRepRules } from "./useSalesRepRules";
 import { useSalesRepTopSellers } from "./useSalesRepTopSellers";
 import { useSalesReps } from "./useSalesReps";
+import { publishStatVisibility } from "./useStatDataNeeds";
 
 const emit = vi.hoisted(() => vi.fn());
 
@@ -69,9 +71,23 @@ async function waitForTheFailureToSettle(): Promise<void> {
   throw new Error("Timed out waiting for the query to fail");
 }
 
+/**
+ * Stands in for a mounted <LayoutSurface> whose layout has been read and shows every card. The three
+ * statistics reads shape their queries from the visible cards (VCST-5647), so without this they would
+ * correctly never fire and the assertions below would have nothing to observe.
+ */
+function showEveryCard(): void {
+  publishStatVisibility(DASHBOARD_LAYOUT_SCOPE, {
+    settled: true,
+    visible: STAT_CARDS[DASHBOARD_LAYOUT_SCOPE].map((card) => card.key),
+    editing: false,
+  });
+}
+
 beforeEach(async () => {
   requestCount = 0;
   emit.mockClear();
+  showEveryCard();
   await cache.reset({ discardWatches: true });
   provideApolloClient(new ApolloClient({ link: ApolloLink.from([errorHandlerLink, failingLink]), cache }));
 });
@@ -79,9 +95,9 @@ beforeEach(async () => {
 // Every hub read. Each one names its own failure — an inline card error, an empty view, a not-found page —
 // so a failing widget must not also raise the page-level error toast.
 const hubReads: [string, () => unknown][] = [
-  ["order statistics", () => useSalesRepOrderStatistics()],
-  ["cart statistics", () => useSalesRepCartStatistics()],
-  ["customer counts", () => useSalesRepCustomerCounts()],
+  ["order statistics", () => useSalesRepOrderStatistics({ scope: DASHBOARD_LAYOUT_SCOPE })],
+  ["cart statistics", () => useSalesRepCartStatistics({ scope: DASHBOARD_LAYOUT_SCOPE })],
+  ["customer counts", () => useSalesRepCustomerCounts({ scope: DASHBOARD_LAYOUT_SCOPE })],
   ["customers count badge", () => useSalesRepCustomersCount()],
   ["my customers list", () => useSalesRepCustomers()],
   ["orders list", () => useSalesRepOrders()],
