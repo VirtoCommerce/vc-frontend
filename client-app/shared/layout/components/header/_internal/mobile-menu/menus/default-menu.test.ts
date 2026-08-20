@@ -1,6 +1,6 @@
 import { mount } from "@vue/test-utils";
 import { describe, expect, it, vi } from "vitest";
-import { computed, defineComponent } from "vue";
+import { computed, defineComponent, nextTick, ref } from "vue";
 import DefaultMenu from "./default-menu.vue";
 import ExtensionPoint from "@/shared/common/components/extension-point.vue";
 
@@ -45,6 +45,19 @@ describe("DefaultMenu", () => {
     h.entries = { mobileMenu: { "my-customers": { use: () => ({ count: computed(() => 12) }) } } };
 
     expect(mountMenu().text()).toContain("my customers:12");
+  });
+
+  it("repaints when the contributed count settles after mount", async () => {
+    const count = ref(0);
+    h.entries = { mobileMenu: { "my-customers": { use: () => ({ count: computed(() => count.value) }) } } };
+
+    const wrapper = mountMenu();
+    expect(wrapper.text()).toContain("my customers:0");
+
+    count.value = 3;
+    await nextTick();
+
+    expect(wrapper.text()).toContain("my customers:3");
   });
 
   it("renders no count when the entry carries none", () => {

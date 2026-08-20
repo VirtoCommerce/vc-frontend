@@ -1,6 +1,6 @@
 import { createGlobalState } from "@vueuse/core";
 import { pick } from "lodash-es";
-import { shallowReadonly, shallowRef } from "vue";
+import { shallowReadonly, shallowRef, triggerRef } from "vue";
 import { IS_DEVELOPMENT } from "@/core/constants";
 import { Logger } from "@/core/utilities";
 import { initialExtensionRegistry } from "@/shared/common/constants/initialExtensionRegistry";
@@ -24,13 +24,21 @@ function _useExtensionRegistry() {
     }
     if (!entries.value[category][name]) {
       entries.value[category][name] = item;
+      // shallowRef only tracks `.value` reassignment, so a nested write needs an explicit trigger
+      // or a plugin registering after its host mounted would never appear.
+      triggerRef(entries);
     } else {
       Logger.warn(`useExtensionRegistry: Component "${category}/${name}" already registered`);
     }
   }
 
   function unregister<C extends ExtensionCategoryType>(category: C, name: string) {
+    if (!entries.value[category]?.[name]) {
+      return;
+    }
+
     delete entries.value[category]?.[name];
+    triggerRef(entries);
   }
 
   function getEntries<C extends ExtensionCategoryType>(category: C, names?: string[]) {

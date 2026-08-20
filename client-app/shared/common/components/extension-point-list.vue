@@ -2,11 +2,12 @@
   <ExtensionPoint
     v-for="(entry, name) in getEntries(category, names)"
     :key="name"
+    v-bind="$attrs"
     :category="category"
     :name="String(name)"
-    v-bind="$attrs"
   >
-    <template #default="{ extensionProps }">
+    <!-- Forwarding an empty slot would tell every ExtensionPoint it has a fallback. -->
+    <template v-if="$slots.default" #default="{ extensionProps }">
       <slot v-bind="{ name: String(name), entry, extensionProps }" />
     </template>
   </ExtensionPoint>

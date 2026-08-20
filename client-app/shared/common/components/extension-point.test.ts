@@ -74,10 +74,47 @@ describe("ExtensionPoint", () => {
     };
 
     const wrapper = mountWithSlot();
-    await wrapper.setProps({ category: "mobileMenu" });
+    await wrapper.vm.$forceUpdate();
     await wrapper.vm.$forceUpdate();
 
     expect(calls).toBe(1);
+  });
+
+  it("disposes the old contribution and runs the new one when the name changes", async () => {
+    const calls: string[] = [];
+    let disposedA = false;
+
+    h.entries = {
+      mobileMenu: {
+        a: {
+          use: () => {
+            calls.push("a");
+            onScopeDispose(() => {
+              disposedA = true;
+            });
+            return { count: 1 };
+          },
+        },
+        b: {
+          use: () => {
+            calls.push("b");
+            return { count: 2 };
+          },
+        },
+      },
+    };
+
+    const wrapper = mount(ExtensionPoint, {
+      props: { category: "mobileMenu", name: "a" } as never,
+      slots: { default: `<template #default="s">fallback:{{ s.extensionProps?.count }}</template>` },
+    });
+    expect(wrapper.text()).toBe("fallback:1");
+
+    await wrapper.setProps({ name: "b" });
+
+    expect(calls).toEqual(["a", "b"]);
+    expect(disposedA).toBe(true);
+    expect(wrapper.text()).toBe("fallback:2");
   });
 
   it("disposes the contribution when the extension point unmounts", () => {
@@ -146,6 +183,45 @@ describe("ExtensionPoint", () => {
     };
 
     expect(mountWithSlot("wanted").text()).toBe("fallback:6");
+  });
+
+  it("does not run use() when the call site renders no fallback slot", () => {
+    let calls = 0;
+    h.entries = {
+      mobileMenu: {
+        "my-customers": {
+          use: () => {
+            calls++;
+            return { count: 4 };
+          },
+        },
+      },
+    };
+
+    const wrapper = mount(ExtensionPoint, { props: { category: "mobileMenu", name: "my-customers" } as never });
+
+    expect(calls).toBe(0);
+    expect(wrapper.text()).toBe("");
+  });
+
+  it("stops the scope of a use() that threw, so its effects do not keep running", () => {
+    let disposed = false;
+    h.entries = {
+      mobileMenu: {
+        "my-customers": {
+          use: () => {
+            onScopeDispose(() => {
+              disposed = true;
+            });
+            throw new Error("plugin blew up after registering an effect");
+          },
+        },
+      },
+    };
+
+    mountWithSlot();
+
+    expect(disposed).toBe(true);
   });
 
   it("keeps the host's fallback rendering when use() throws", () => {
