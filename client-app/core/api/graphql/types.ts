@@ -1055,7 +1055,7 @@ export type CustomerOrderStatisticsPeriodArgs = {
 };
 
 export type CustomerOrderStatisticsComparison = {
-  /** Current average minus the previous one. */
+  /** Current average minus previous average (amount, formatted amount and currency). */
   averageChange: MoneyType;
   /** Percentage change of average; null when the previous average is zero. */
   averageChangePercent?: Maybe<Scalars['Decimal']['output']>;
