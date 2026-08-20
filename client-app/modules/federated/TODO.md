@@ -14,7 +14,7 @@ Prove the full loop (build → host → gate → `loadRemote` → `init`) with a
 Definition and rationale: *Pilot* section of the discovery spec.
 
 - [ ] **Publish the first facade release** — run the *Core Facade Release* workflow once
-      so the `core-v1.0.0` URL that fresh scaffolds pin actually resolves.
+      so the `core-v0.1.0` URL that fresh scaffolds pin actually resolves.
 - [ ] Scaffold the plugin (`yarn create:plugin`) into **its own repo**; host `dist/` on
       jsDelivr / GitHub Pages; wire into the host via hardcoded `APP_MODULES_FEDERATION_REMOTES`.
 - [ ] **Plugin-repo CI guard:** fail the plugin build if the committed `@vc-frontend/core`

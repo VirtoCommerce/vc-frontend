@@ -393,7 +393,7 @@ new URL (and your `requiredHostVersion` if you use the new exports).
 | --------------------------------------------------- | --------------------------------------------------------------------------------------- |
 | add a facade export                                 | `yarn build:core-types` auto-bumps the contract **patch** (e.g. 0.1.0 → 0.1.1)          |
 | remove/rename a facade export                       | the build refuses; you run `yarn bump:core minor` explicitly — this breaks every plugin |
-| build a plugin using a new export                   | declare `requiredHostVersion: "^0.1.0"` — older hosts will refuse it (CONTRACT GATE)    |
+| build a plugin using a new export                   | declare `requiredHostVersion` = the version that ADDED the export (`^0.1.1`, not the line floor `^0.1.0`) — older hosts then refuse it (CONTRACT GATE) |
 | build a plugin against a different Vue/Apollo major | the SHARED-DEPENDENCY GATE fails that plugin at load, in isolation                      |
 | consume a new facade version in your plugin         | bump the pinned tarball URL to `core-v<new>` **and** `requiredHostVersion` together     |
-| forget any of the regenerate/bump steps             | CI fails with the exact command to run                                                  |
+| forget any of the regenerate/bump steps             | Caught by `yarn validate:core-types` — run it by hand; during the MF pilot it is not in CI |

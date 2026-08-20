@@ -37,7 +37,7 @@ Files in this folder:
 | `contract/index.d.ts`          | **Generated** type contract. Never edit; regenerate and commit.                                                   |
 | `contract/tailwind-preset.cjs` | **Generated** self-contained snapshot of the host's Tailwind design system (`@vc-frontend/core/tailwind-preset`). Source: the root `tailwind.config.ts`. Never edit; regenerate and commit. |
 | `federation.mjs`           | Shared-singleton contract (`createHostShared` / `createRemoteShared` + defaults) for both host and plugin builds; types in `federation.d.mts`. |
-| `bump-version.mjs`         | `yarn bump:core <level>` — manual contract-version bump (majors; minors are automatic).                           |
+| `bump-version.mjs`         | `yarn bump:core <level>` — manual bump for a BREAKING change (`minor` on 0.x, `major` from 1.0.0); additive bumps are automatic. |
 | `create-plugin.mjs`        | `yarn create:plugin` — scaffolds a new plugin project: versions read from the host, facade pinned to its release tarball. |
 | `build-types.mjs`          | The generator (below) — emits both the type contract and the tailwind preset snapshot.                            |
 | `contract-versioning.mjs`  | Pure decision logic for the version bumps/guards (side-effect-free so it is unit-testable). |
@@ -72,12 +72,14 @@ Guards that run with it (any failure = non-zero exit):
   unrelated host files are tolerated — they never reach the rolled-up contract.)
 - **After bundling:** if any `@/...` reference survived, the build fails — the whole
   point is zero host coupling.
-- **In CI:** `yarn validate:core-types` (part of `yarn validate`, which `yarn build`
-  runs) regenerates the contract in memory and **fails if the committed file differs**.
-  You cannot merge a facade change with a stale contract.
-- **In CI (bump guard):** if the contract **changed relative to `origin/dev`** but
+- **At release:** `yarn validate:core-types` regenerates the contract in memory and **fails if
+  the committed file differs**. During the MF pilot it is deliberately **out of `yarn validate`**,
+  so it does not gate a PR — the Core Facade Release workflow runs it before packing the tarball.
+  Run it by hand after a facade change; a stale contract is caught at release, not at merge.
+- **At release (bump guard):** if the contract **changed relative to `origin/dev`** but
   `CORE_VERSION` did not (someone bypassed the build or hand-edited version files),
-  the check fails and points at `yarn build:core-types` / `yarn bump:core major`.
+  the check fails and points at `yarn build:core-types` / `yarn bump:core <breaking level>`
+  (`minor` on the 0.x line, `major` from 1.0.0 — the check names the right one).
   (Base ref overridable via `MF_CONTRACT_BASE_REF`. With no baseline to diff against —
   shallow checkout, missing base ref — the auto-bump skips quietly and the check
   **warns loudly** that the guard is not enforced.)
@@ -132,9 +134,12 @@ register("mobileMenu", MY_CUSTOMERS_NAV_LINK_ID, {
 });
 ```
 
-A decorate entry may also carry a `condition`. The extension point evaluates it against
-`conditionParameter` before running `use()`. A condition that declines leaves the fallback
-rendered but undecorated — the markup is the host's, so only the contribution is withheld.
+A decorate entry may also carry a `condition` — the extension point evaluates it against
+`conditionParameter` before running `use()`, and a condition that declines leaves the fallback
+rendered but undecorated (the markup is the host's, so only the contribution is withheld).
+The runtime supports this, but no category enables it yet: a `condition` is only accepted once
+the category declares its `Condition` type parameter, and `mobileMenu` — the only decorate-capable
+category today — leaves it at `never`, so passing one there is a compile error.
 
 ## How to extend the facade (developer flow)
 
@@ -156,7 +161,8 @@ Say a plugin needs `useThemeContext`.
    contract differs from the one on `origin/dev` and the version wasn't bumped yet, it
    applies an additive bump to this `package.json` (the single version source) for you —
    running it again won't double-bump. Plugins that use the new export then declare
-   `requiredHostVersion: "^0.1.0"`, so older hosts correctly refuse them.
+   `requiredHostVersion: "^0.1.1"` — the version that introduced the export, not the floor of
+   the line — so older hosts correctly refuse them.
 
    > **This contract is pre-1.0 and makes no stability promise yet.** While the major is
    > `0`, the levels shift down one: an additive change is a **patch** (`0.1.0 → 0.1.1`,
