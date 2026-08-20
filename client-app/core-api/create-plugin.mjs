@@ -16,7 +16,7 @@ import { createRequire } from "node:module";
 import { dirname, join, relative, resolve } from "node:path";
 import * as readline from "node:readline/promises";
 import { fileURLToPath } from "node:url";
-import { MF_SHARED_RANGES } from "./federation.mjs";
+import { CONTRACT_TYPE_PEERS, MF_SHARED_RANGES } from "./federation.mjs";
 
 const CORE_API_DIR = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(CORE_API_DIR, "../..");
@@ -220,7 +220,12 @@ const pkgJson = {
   // MF-shared (import: false, borrowed from the host at runtime); the rest are type-peers
   // and tooling, tree-shaken away. `typePeerNames` ensures every facade type-peer is present
   // even when its optional runtime group wasn't selected (see the note at the top of file).
-  devDependencies: mergeDeps(sortedEntries(runtimeDeps), sortedEntries(toolDeps), sortedEntries(typePeerNames)),
+  devDependencies: mergeDeps(
+    sortedEntries(runtimeDeps),
+    sortedEntries(toolDeps),
+    sortedEntries(typePeerNames),
+    CONTRACT_TYPE_PEERS,
+  ),
 };
 
 const viteConfig = `import { federation } from "@module-federation/vite";

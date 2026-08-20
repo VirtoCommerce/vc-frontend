@@ -2,6 +2,7 @@
 // Self-contained public type contract of @vc-frontend/core.
 // Regenerate with: yarn build:core-types
 
+import type { FlipOptions, OffsetOptions, Placement, ShiftOptions, Strategy } from "@floating-ui/vue";
 import * as vue from 'vue';
 import { Plugin, ComputedRef, MaybeRef, Component, MaybeRefOrGetter, ComponentObjectPropsOptions } from 'vue';
 import * as vue_router from 'vue-router';
@@ -11,8 +12,6 @@ import * as _apollo_client_cache from '@apollo/client/cache';
 import { ApolloClient, TypePolicies } from '@apollo/client/core';
 import * as _vueuse_core from '@vueuse/core';
 import { DeepPartial } from 'utility-types';
-import * as unhead_types from 'unhead/types';
-import * as _unhead_vue from '@unhead/vue';
 import * as _intlify_core_base from '@intlify/core-base';
 import { LocaleMessage } from '@intlify/core-base';
 import * as vue_i18n from 'vue-i18n';
@@ -2588,7 +2587,7 @@ declare const useNavigations: typeof _useNavigations;
  */
 declare function useBreadcrumbs(sources: (() => IBreadcrumb[]) | MaybeRef<IBreadcrumb[]>): ComputedRef<IBreadcrumb[]>;
 
-declare function usePageHead(data?: IUsePageSeoData): unhead_types.ActiveHeadEntry<_unhead_vue.UseHeadInput<_Deprecated>>;
+declare function usePageHead(data?: IUsePageSeoData): void;
 
 type UserType = GetMeQuery["me"];
 
@@ -3143,10 +3142,12 @@ declare const globals: Readonly<Required<GlobalVariablesType>>;
  * Keep it SMALL and additive — removing/renaming an export breaks every plugin.
  */
 /**
- * Registers every `Vc*` component globally: `app.use(uiKit)`. A plugin's own dev server needs
- * this — the host's registrations only reach a remote that renders inside the host's app
- * instance. It is also the only way to render an exported component that resolves its own
- * children globally, as `OrderStatus` does with `VcChip` / `VcIcon` / `VcTooltip`.
+ * Registers every `Vc*` component globally: `app.use(uiKit)`. Needed by any app instance that
+ * renders `OrderStatus`, which resolves `VcChip` / `VcIcon` / `VcTooltip` globally.
+ *
+ * Inert until the package grows a runtime entry: the root export is types-only, so
+ * `@vc-frontend/core` does not resolve at runtime outside the MF shared scope, and inside the
+ * host `app.use(uiKit)` has already run at boot.
  */
 
 /** Contract version, single-sourced from core-api/package.json (managed by build:core-types / bump:core). */
@@ -3154,3 +3155,87 @@ declare const CORE_VERSION: string;
 
 export { CORE_VERSION, EXTENSION_NAMES, Logger, _default as OrderStatus, SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT, _default$e as VcAlert, _default$m as VcBadge, _default$l as VcBreadcrumbs, _default$d as VcButton, _default$k as VcCheckbox, _default$c as VcEmptyView, _default$j as VcIcon, _default$i as VcImage, _default$b as VcInput, _default$h as VcLabel, _default$g as VcLink, _default$a as VcLoaderOverlay, _default$f as VcMarkdownRender, _default$9 as VcMenuItem, _default$5 as VcModal, _default$8 as VcSelect, _default$4 as VcTable, _default$3 as VcTableColumn, _default$7 as VcTextarea, _default$6 as VcTypography, _default$2 as VcWidget, _default$1 as VcWidgetSkeleton, apolloClient, getProductRoute, globals, graphqlClient, registerCacheTypePolicies, registerLocaleLoader, toEndDateFilterValue, toStartDateFilterValue, uiKit, useBreadcrumbs, useExtensionRegistry, useModal, useModuleSettings, useNavigations, useNotifications, usePageHead, useUser, useWishlistSharingScopes };
 export type { ExtendedMenuLinkType, I18n, ILanguage, IWishlistSharingScopeControlsType, LocaleLoaderType, MenuType, WishlistSharingScopeSavedContextType };
+
+// ── host ui-kit ambient types, inlined so this contract stands alone ──
+type VcBadgeColorType = VcMainColorType;
+type VcBadgeVariantType =
+    | "solid"
+    | "soft"
+    | "outline"
+    | "surface"
+    | "ghost"
+    | "tonal"
+    /** @deprecated Use "soft" instead. */
+    | "solid-light"
+    /** @deprecated Use "tonal" instead. */
+    | "outline-dark";
+type VcBadgeSizeType = "xs" | "sm" | "md" | "lg";
+type VcIconSizeType = "xxs" | "xs" | "sm" | "md" | "lg" | "xl" | "xxl" | number | (string & {});
+type VcAlertColorType = "info" | "success" | "warning" | "danger";
+type VcAlertVariantType =
+    | "solid"
+    | "soft"
+    | "outline"
+    | "tonal"
+    /** @deprecated Use "soft" instead. */
+    | "solid-light"
+    /** @deprecated Use "tonal" instead. */
+    | "outline-dark";
+type VcAlertSizeType = "sm" | "md";
+type VcButtonColorType = VcMainColorType;
+type VcButtonVariantType =
+    | "solid"
+    | "outline"
+    | "soft"
+    | "surface"
+    | "ghost"
+    | "tonal"
+    /** @deprecated Use "soft" instead. */
+    | "solid-light"
+    /** @deprecated Use "surface" instead. */
+    | "no-border"
+    /** @deprecated Use "ghost" instead. */
+    | "no-background";
+type VcButtonTypeType = "button" | "reset" | "submit";
+type VcButtonSizeType = "xxs" | "xs" | "sm" | "md" | "lg";
+type VcEmptyViewVariantType = "empty" | "search" | "error";
+type VcInputSizeType = "xs" | "sm" | "md" | "auto";
+type VcMenuItemColorType = VcMainColorType;
+type VcPopoverPlacementType = Placement;
+type VcTypographyVariantType = "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "base";
+type VcTableAlignType = "center" | "right" | "left";
+type VcTableColumnType = {
+    id: string;
+    title?: string;
+    sortable?: boolean;
+    align?: VcTableAlignType;
+    classes?: string;
+    /** Column width (e.g., "150px"). When used with `fixed`, defaults to "150px" if not specified. */
+    width?: string;
+    /** Pins the column to the start or end edge. The column is automatically reordered to the corresponding edge of the table. Uses a default width of 150px if `width` is not specified. */
+    fixed?: "start" | "end";
+  };
+type VcTableSortInfoType = {
+    column: string;
+    direction: VcTableSortDirectionType;
+  };
+type VcTableSelectionModeType = "single" | "multiple";
+type VcTableSelectionKeyType = string | number;
+type VcTableSelectionMetaType<T = unknown> = {
+    action: "select" | "deselect" | "select-all" | "deselect-all";
+    row?: T;
+  };
+interface IBreadcrumb {
+    title: string;
+    /**
+     * Not needed for last element
+     */
+    route?: RouteLocationRaw;
+  }
+type BreakpointsType = "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
+type VcTableItemType = {
+    id?: string | number;
+    [key: string]: unknown;
+  };
+type VcTableSortDirectionType = "asc" | "desc";
+type VcMainColorType = "primary" | "secondary" | "neutral" | "accent" | "info" | "success" | "warning" | "danger";

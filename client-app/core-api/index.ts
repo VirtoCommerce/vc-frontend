@@ -7,10 +7,12 @@
  */
 
 /**
- * Registers every `Vc*` component globally: `app.use(uiKit)`. A plugin's own dev server needs
- * this — the host's registrations only reach a remote that renders inside the host's app
- * instance. It is also the only way to render an exported component that resolves its own
- * children globally, as `OrderStatus` does with `VcChip` / `VcIcon` / `VcTooltip`.
+ * Registers every `Vc*` component globally: `app.use(uiKit)`. Needed by any app instance that
+ * renders `OrderStatus`, which resolves `VcChip` / `VcIcon` / `VcTooltip` globally.
+ *
+ * Inert until the package grows a runtime entry: the root export is types-only, so
+ * `@vc-frontend/core` does not resolve at runtime outside the MF shared scope, and inside the
+ * host `app.use(uiKit)` has already run at boot.
  */
 export { uiKit } from "@/ui-kit";
 
@@ -44,6 +46,9 @@ export { VcModal, VcTable, VcTableColumn, VcWidgetSkeleton } from "@/ui-kit/comp
  * settings (`orders_statuses`), so a plugin that renders its own chip would show
  * different colours than the host for the same status. Props are contract: renaming
  * or removing one is a breaking change.
+ *
+ * Renders only inside the host: `useThemeContext`'s getter throws "Theme context is missing."
+ * until `setThemeContext` has run, which happens at boot in `app-runner.ts`.
  */
 export { default as OrderStatus } from "@/shared/account/components/order-status.vue";
 
@@ -81,8 +86,9 @@ export { getProductRoute } from "@/core/utilities/product";
 // millisecond of that day. A plugin filtering by date has to land on the host's boundaries, not its own.
 export { toEndDateFilterValue, toStartDateFilterValue } from "@/core/utilities/date";
 // A plugin's messages must re-merge on every locale switch, not just at init: the host re-runs
-// every registered loader when the language changes. Merge with vue-i18n's own
-// `mergeLocaleMessage` — the host has no seam of its own for that.
+// every registered loader when the language changes. Merge the way the host does — read the
+// existing messages and `setLocaleMessage(locale, merge({}, existing, yours))`; vue-i18n's
+// `mergeLocaleMessage` mutates the stored object in place.
 export { registerLocaleLoader } from "@/core/locale-loaders";
 export type { LocaleLoaderType } from "@/core/locale-loaders";
 

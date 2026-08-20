@@ -23,6 +23,23 @@ export const MF_SHARED_RANGES = {
   "@vc-frontend/core": "^0.1.0",
 };
 
+/**
+ * Packages the contract's TYPES reference that are not MF shared singletons. create-plugin
+ * installs them; without them `skipLibCheck` silently degrades those facade types to `any`.
+ *
+ * Ranges are pinned here because several are transitive in the host (`@intlify/core-base`,
+ * `@vue/shared`, `unhead`), so there is no host declaration to read.
+ */
+export const CONTRACT_TYPE_PEERS = {
+  "@floating-ui/vue": "^2.0.1",
+  "@intlify/core-base": "^11.4.6",
+  "@unhead/vue": "^3.2.1",
+  "@vue/shared": "^3.5.40",
+  maska: "^3.2.0",
+  unhead: "^3.2.1",
+  "utility-types": "^3.11.0",
+};
+
 // One place for the per-entry defaults: base packages (buildSharedConfig) and packages
 // ADDED via overrides (mergeSharedConfig) must get identical semantics.
 const SHARED_DEFAULTS = { singleton: true, strictVersion: true };
@@ -87,7 +104,7 @@ export const REMOTE_SHARED = /* @__PURE__ */ createRemoteShared();
 
 /**
  * One-call federation() options for a PLUGIN build:
- *   federation(createRemoteFederationOptions({ name: "news", requiredHostVersion: "^1.0.0" }))
+ *   federation(createRemoteFederationOptions({ name: "news", requiredHostVersion: "^0.1.0" }))
  * The harness owns the wiring conventions (expose key, manifest metadata, shared
  * singletons, entry filename), so plugins pick convention changes up by updating
  * their host checkout instead of hand-editing config. Pure data - deliberately
