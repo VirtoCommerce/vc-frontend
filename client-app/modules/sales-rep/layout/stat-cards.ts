@@ -51,8 +51,9 @@ export const CUSTOMER_PROFILE_STAT_CARDS = [
     icon: "exclamation-circle",
     accent: "warning",
   },
-  // The profile shows the cart's value, not a count — hence its own label.
-  { key: "active_cart", labelKey: "sales_rep.hub.dashboard.widgets.active_cart", icon: "cart", accent: "success" },
+  // Same metric as the dashboard's "Active carts" (item quantities), so it reuses its label; the block id
+  // stays singular so saved customer-profile layouts keep matching.
+  { key: "active_cart", labelKey: "sales_rep.hub.dashboard.widgets.active_carts", icon: "cart", accent: "success" },
   // This month's order value, not the count — hence "Purchased · MTD".
   { key: "mtd", labelKey: "sales_rep.hub.dashboard.widgets.purchased_mtd", icon: "cash", accent: "info" },
   // Same metric as the dashboard's "Orders placed · YTD", so it reuses its label, icon and accent.

@@ -3,10 +3,12 @@
 // and the customer profile agree on it completely; the per-surface mappers keep the cards that diverge.
 import { formatStatCount, formatStatMoney } from "../utils";
 import type { StatCardDataType } from "./stat-cards";
-import type { SalesRepCustomerOrderStatisticsQuery } from "../api/graphql/types";
+import type { SalesRepCustomerCartStatisticsQuery, SalesRepCustomerOrderStatisticsQuery } from "../api/graphql/types";
 import type { Composer } from "vue-i18n";
 
 type OrderStatisticsType = SalesRepCustomerOrderStatisticsQuery["salesRepCustomerOrderStatistics"];
+
+type CartStatisticsType = SalesRepCustomerCartStatisticsQuery["salesRepCustomerCartStatistics"];
 
 /** Every card carries its own query's state and no other's (VCST-5586). */
 type QueryStateType = { loading: boolean; failed: boolean };
@@ -31,5 +33,33 @@ export function newOrdersCardData(
     // plural forms (ru, pl) can add them without the grouped string breaking the choice.
     delta: t("sales_rep.hub.dashboard.stats.of_recent_orders", { count: formatStatCount(recent) }, recent),
     deltaTone: "neutral",
+  };
+}
+
+/**
+ * "Active carts" (VCST-5588): the card counts ITEMS, not carts — quantities of the cart lines picked
+ * for checkout, the parked remainder underneath, and the lines touched this week as the delta.
+ */
+export function activeCartsCardData(
+  carts: CartStatisticsType,
+  state: QueryStateType,
+  t: Composer["t"],
+): StatCardDataType {
+  const selectedItems = carts?.activeCarts?.selectedItemQuantity ?? 0;
+  const unselectedItems = carts?.activeCarts?.unselectedItemQuantity ?? 0;
+  const weekItems = carts?.itemsThisWeek?.selectedItemQuantity ?? 0;
+
+  return {
+    ...state,
+    value: formatStatCount(selectedItems),
+    // Nothing to interpolate into the unit, so the count is only the plural selector.
+    valueSuffix: t("sales_rep.hub.dashboard.stats.items_unit", selectedItems),
+    sub: t(
+      "sales_rep.hub.dashboard.stats.not_for_checkout",
+      { count: formatStatCount(unselectedItems) },
+      unselectedItems,
+    ),
+    delta: t("sales_rep.hub.dashboard.stats.items_this_week", { count: formatStatCount(weekItems) }, weekItems),
+    deltaTone: "positive",
   };
 }

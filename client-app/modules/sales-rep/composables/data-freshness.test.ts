@@ -61,8 +61,12 @@ function cartStatistics() {
     salesRepCustomerCartStatistics: {
       __typename: "CustomerCartStatistics",
       currencyCode: "USD",
-      activeCarts: { __typename: "CustomerCartStatisticsPeriod", count: metric, total: money(metric * 10) },
-      newCartsThisWeek: { __typename: "CustomerCartStatisticsPeriod", count: metric },
+      activeCarts: {
+        __typename: "CustomerCartStatisticsPeriod",
+        selectedItemQuantity: metric,
+        unselectedItemQuantity: metric,
+      },
+      itemsThisWeek: { __typename: "CustomerCartStatisticsPeriod", selectedItemQuantity: metric },
     },
   };
 }
@@ -243,7 +247,7 @@ const widgetSources: [string, () => () => number | undefined][] = [
     "cart statistics",
     () => {
       const { statistics } = useSalesRepCartStatistics();
-      return () => statistics.value?.activeCarts?.count;
+      return () => statistics.value?.activeCarts?.selectedItemQuantity;
     },
   ],
   [
