@@ -86,6 +86,10 @@ function _useExtensionRegistry() {
     }
   }
 
+  /**
+   * Whether a REPLACE entry would render. A decorate entry has no component, so this is false for
+   * it — never gate a decorate-capable extension point on this, or the contribution silently dies.
+   */
   function canRender<C extends ExtensionCategoryType>(
     category: C,
     name: string,
