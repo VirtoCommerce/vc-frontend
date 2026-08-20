@@ -1,11 +1,16 @@
 query SalesRepCustomerCartStatistics(
   $organizationId: String
   $storeId: String
+  $currencyCode: String
   $cartFilter: String
   $weekFrom: DateTime
   $weekTo: DateTime
 ) {
-  salesRepCustomerCartStatistics(organizationId: $organizationId, storeId: $storeId) {
+  # currencyCode is a data filter here, not just a money conversion target: the storefront keeps one cart
+  # per currency and mirrors the lines into each, so the backend scopes the cart set - and therefore the
+  # item quantities below - to this currency. Omitting it falls back to the store default, which need not be
+  # the currency the rep is looking at.
+  salesRepCustomerCartStatistics(organizationId: $organizationId, storeId: $storeId, currencyCode: $currencyCode) {
     activeCarts: period(filter: $cartFilter) {
       selectedItemQuantity
       unselectedItemQuantity
