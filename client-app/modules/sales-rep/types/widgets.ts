@@ -12,6 +12,8 @@ export type StatWidgetCardType = {
   // Optional to match <StatWidget>'s contract: accent/deltaTone have defaults, and
   // sub/delta/deltaIcon are v-if-guarded, so a card can omit any of them.
   accent?: StatWidgetAccentType;
+  // De-emphasized unit rendered right after `value` (e.g. "items" in "34 items").
+  valueSuffix?: string;
   sub?: string;
   delta?: string;
   deltaTone?: StatWidgetToneType;

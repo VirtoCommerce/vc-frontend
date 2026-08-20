@@ -976,21 +976,33 @@ export type CustomerCartStatisticsComparison = {
   countChange: Scalars['Int']['output'];
   /** Percentage change of count; null when the previous count is zero. */
   countChangePercent?: Maybe<Scalars['Decimal']['output']>;
+  /** Current selected-for-checkout quantity minus the previous one (e.g. this week's items against the lifetime figure). */
+  selectedItemQuantityChange: Scalars['Int']['output'];
+  /** Percentage change of the selected-for-checkout quantity; null when the previous quantity is zero. */
+  selectedItemQuantityChangePercent?: Maybe<Scalars['Decimal']['output']>;
   /** Current total minus previous total (amount, formatted amount and currency). */
   totalChange: MoneyType;
   /** Percentage change of total; null when the previous total is zero. */
   totalChangePercent?: Maybe<Scalars['Decimal']['output']>;
+  /** Current not-selected-for-checkout quantity minus the previous one. */
+  unselectedItemQuantityChange: Scalars['Int']['output'];
+  /** Percentage change of the not-selected-for-checkout quantity; null when the previous quantity is zero. */
+  unselectedItemQuantityChangePercent?: Maybe<Scalars['Decimal']['output']>;
 };
 
 export type CustomerCartStatisticsPeriod = {
   /** Average cart value in the range (amount, formatted amount and currency). */
   average: MoneyType;
-  /** Number of carts in the range (the primary widget metric, e.g. 'Active Projects'). */
+  /** Number of carts in the range. */
   count: Scalars['Int']['output'];
   /** Date of the most recent cart in the range. */
   lastCartDate?: Maybe<Scalars['DateTime']['output']>;
+  /** Summed quantity of the line items selected for checkout (the primary widget metric, e.g. 'Active carts · items'). Unlike the cart figures, the range bounds each LINE ITEM's modified date, so a cart created earlier still contributes the items touched inside the range. */
+  selectedItemQuantity: Scalars['Int']['output'];
   /** Sum of cart totals in the range (amount, formatted amount and currency). */
   total: MoneyType;
+  /** Summed quantity of the line items NOT selected for checkout, over the same line-item modified-date range as 'selectedItemQuantity'. */
+  unselectedItemQuantity: Scalars['Int']['output'];
   /** Non-null when the figures are partial because some carts were in an unconfigured currency and could not be converted; describes what was excluded. */
   warning?: Maybe<Scalars['String']['output']>;
 };

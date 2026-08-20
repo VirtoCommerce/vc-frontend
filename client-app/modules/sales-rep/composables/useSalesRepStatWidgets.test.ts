@@ -121,8 +121,8 @@ describe("stat cards for a customer with no data", () => {
     sources.orders.value = emptyOrders();
     sources.carts.value = {
       currencyCode: "USD",
-      activeCarts: { count: 0, total: zeroMoney },
-      newCartsThisWeek: { count: 0 },
+      activeCarts: { selectedItemQuantity: 0, unselectedItemQuantity: 0 },
+      itemsThisWeek: { selectedItemQuantity: 0 },
     } satisfies CartStatsType;
     sources.counts.value = {
       assignedCustomers: 0,
@@ -134,7 +134,8 @@ describe("stat cards for a customer with no data", () => {
     expectNoPlaceholders(cards.value);
     expect(cards.value.map((card) => [card.key, card.value, card.sub, card.delta])).toEqual([
       ["new_orders", "0", "$0.00 total", "of 0 created in the last 7 days"],
-      ["active_carts", "0", "$0.00", "0 new this week"],
+      // Item quantities, not a cart count plus money (VCST-5588).
+      ["active_carts", "0", "0 not for checkout", "0 items this week"],
       // No previous-period baseline, so the "vs last X" comparison is absent rather than a false 0%.
       ["orders_placed_week", "0", "$0.00", ""],
       ["orders_placed_mtd", "0", "$0.00", ""],
@@ -147,8 +148,8 @@ describe("stat cards for a customer with no data", () => {
     sources.orders.value = emptyOrders();
     sources.carts.value = {
       currencyCode: "USD",
-      activeCarts: { count: 0, total: zeroMoney },
-      newCartsThisWeek: { count: 0 },
+      activeCarts: { selectedItemQuantity: 0, unselectedItemQuantity: 0 },
+      itemsThisWeek: { selectedItemQuantity: 0 },
     } satisfies CartStatsType;
 
     const { cards } = useSalesRepCustomerWidgets("org-1");
@@ -156,7 +157,8 @@ describe("stat cards for a customer with no data", () => {
     expectNoPlaceholders(cards.value);
     expect(cards.value.map((card) => [card.key, card.value, card.sub, card.delta])).toEqual([
       ["new_orders", "0", "$0.00 total", "of 0 created in the last 7 days"],
-      ["active_cart", "$0.00", undefined, undefined],
+      // The dashboard's card, scoped to one organization — same figures, same wording.
+      ["active_cart", "0", "0 not for checkout", "0 items this week"],
       ["mtd", "$0.00", undefined, "0% of YTD"],
       ["orders_ytd", "0", "$0.00", ""],
       ["aov", "$0.00", "Average per order (YTD)", undefined],
@@ -175,7 +177,8 @@ describe("stat cards for a customer with no data", () => {
     expectNoPlaceholders(dashboard.cards.value);
     expectNoPlaceholders(profile.cards.value);
     expect(dashboard.cards.value.map((card) => card.value)).toEqual(["0", "0", "0", "0", "0", "0"]);
-    expect(profile.cards.value.map((card) => card.value)).toEqual(["0", "$0.00", "$0.00", "0", "$0.00"]);
+    // active_cart is a quantity now, so it reads "0" like the counts rather than a currency zero.
+    expect(profile.cards.value.map((card) => card.value)).toEqual(["0", "0", "$0.00", "0", "$0.00"]);
   });
 });
 
@@ -211,7 +214,7 @@ describe("stat cards for a customer with partial data", () => {
       sub: "$0.00 total",
       delta: "of 0 created in the last 7 days",
     });
-    expect(byKey(dashboard.cards.value, "active_carts")).toMatchObject({ value: "0", sub: "$0.00" });
+    expect(byKey(dashboard.cards.value, "active_carts")).toMatchObject({ value: "0", sub: "0 not for checkout" });
 
     // The same metric renders identically on the customer page (E2).
     expect(byKey(profile.cards.value, "orders_ytd")).toMatchObject({
@@ -231,7 +234,7 @@ describe("stat cards when one statistics query fails", () => {
     sources.orders.value = emptyOrders();
     sources.carts.value = {
       currencyCode: "USD",
-      activeCarts: { count: 2, total: money(50, "$50.00") },
+      activeCarts: { selectedItemQuantity: 2, unselectedItemQuantity: 3 },
     } satisfies CartStatsType;
     sources.counts.value = { assignedCustomers: 9 } satisfies CountsType;
     sources.countsError.value = new Error("counts down");
@@ -241,14 +244,17 @@ describe("stat cards when one statistics query fails", () => {
 
     expect(failedKeys).toEqual(["my_customers"]);
     // The healthy cards still carry their real figures rather than being hidden behind the error.
-    expect(cards.value.find((card) => card.key === "active_carts")).toMatchObject({ value: "2", sub: "$50.00" });
+    expect(cards.value.find((card) => card.key === "active_carts")).toMatchObject({
+      value: "2",
+      sub: "3 not for checkout",
+    });
   });
 
   it("marks every card of the failed query on the customer page", () => {
     sources.orders.value = emptyOrders();
     sources.carts.value = {
       currencyCode: "USD",
-      activeCarts: { count: 1, total: money(7, "$7.00") },
+      activeCarts: { selectedItemQuantity: 7, unselectedItemQuantity: 0 },
     } satisfies CartStatsType;
     sources.ordersError.value = new Error("orders down");
 
@@ -260,7 +266,7 @@ describe("stat cards when one statistics query fails", () => {
       "orders_ytd",
       "aov",
     ]);
-    expect(cards.value.find((card) => card.key === "active_cart")).toMatchObject({ failed: false, value: "$7.00" });
+    expect(cards.value.find((card) => card.key === "active_cart")).toMatchObject({ failed: false, value: "7" });
   });
 });
 
@@ -285,7 +291,7 @@ describe("stat cards while one query is still in flight", () => {
     sources.orders.value = emptyOrders();
     sources.carts.value = {
       currencyCode: "USD",
-      activeCarts: { count: 0, total: zeroMoney },
+      activeCarts: { selectedItemQuantity: 0, unselectedItemQuantity: 0 },
     } satisfies CartStatsType;
     sources.countsLoading.value = true;
 

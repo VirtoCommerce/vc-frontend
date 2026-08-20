@@ -52,7 +52,6 @@
         "widgets": {
           "new_orders": "Ordrer med status «New»",
           "active_carts": "Aktive handlekurver",
-          "active_cart": "Aktiv handlekurv",
           "orders_placed_week": "Ordrer denne uken",
           "orders_placed_mtd": "Ordrer hittil denne måneden",
           "purchased_mtd": "Kjøp hittil denne måneden",
@@ -67,7 +66,9 @@
           "ordered_this_month": "{count} bestilte denne måneden",
           "new_customers": "{count} nye kunder",
           "of_recent_orders": "av {count} opprettet de siste 7 dagene",
-          "new_this_week": "{count} nye denne uken",
+          "items_unit": "vare | varer",
+          "not_for_checkout": "{count} ikke til kassen",
+          "items_this_week": "{count} vare denne uken | {count} varer denne uken",
           "mtd_of_ytd": "{percent}% av året",
           "load_failed": "Kunne ikke laste"
         }
