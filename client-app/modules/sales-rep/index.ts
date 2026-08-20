@@ -97,7 +97,7 @@ export function init(router: Router, i18n: I18n) {
 
   // Layout regions and blocks carry ids that repeat across surfaces, so Apollo would normalize them
   // into entities shared by every scope. See layout/cache-policies.ts.
-  registerCacheTypePolicies(layoutTypePolicies);
+  registerCacheTypePolicies(layoutTypePolicies, { owner: "sales-rep" });
 
   void loadModuleLocale(i18n, "sales-rep");
 }

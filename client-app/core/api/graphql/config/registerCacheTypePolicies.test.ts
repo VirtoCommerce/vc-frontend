@@ -57,14 +57,50 @@ describe("registerCacheTypePolicies", () => {
     warn.mockRestore();
   });
 
-  it("warns when another caller already registered the same typename", () => {
+  it("refuses a second owner for the same typename and keeps the policy in place", () => {
     const warn = vi.spyOn(Logger, "warn").mockImplementation(() => {});
 
-    registerCacheTypePolicies({ TestPluginConflict: { keyFields: false } });
-    registerCacheTypePolicies({ TestPluginConflict: { keyFields: ["code"] } });
+    registerCacheTypePolicies({ TestPluginConflict: { keyFields: false } }, { owner: "first-plugin" });
+    registerCacheTypePolicies({ TestPluginConflict: { keyFields: ["code"] } }, { owner: "second-plugin" });
 
-    expect(warn).toHaveBeenCalledWith(expect.stringContaining("TestPluginConflict"));
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining("second-plugin"));
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining("first-plugin"));
+    expect(window.modulesCacheDebug.owners.get("TestPluginConflict")).toEqual({
+      owner: "first-plugin",
+      priority: 0,
+    });
+    expect(window.modulesCacheDebug.rejected).toContainEqual({
+      typename: "TestPluginConflict",
+      owner: "second-plugin",
+      priority: 0,
+      heldBy: { owner: "first-plugin", priority: 0 },
+    });
 
     warn.mockRestore();
+  });
+
+  it("refuses a plugin's policy for a typename the host owns", () => {
+    const warn = vi.spyOn(Logger, "warn").mockImplementation(() => {});
+
+    registerCacheTypePolicies({ Product: { keyFields: false } }, { owner: "greedy-plugin" });
+
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining("host"));
+    expect(window.modulesCacheDebug.owners.get("Product")).toEqual({ owner: "host", priority: 100 });
+
+    warn.mockRestore();
+  });
+
+  it("lets a deliberately higher priority take a typename over from another plugin", () => {
+    vi.spyOn(Logger, "warn").mockImplementation(() => {});
+
+    registerCacheTypePolicies({ TestPluginPriority: { keyFields: false } }, { owner: "first-plugin" });
+    registerCacheTypePolicies({ TestPluginPriority: { keyFields: ["code"] } }, { owner: "louder-plugin", priority: 1 });
+
+    expect(window.modulesCacheDebug.owners.get("TestPluginPriority")).toEqual({
+      owner: "louder-plugin",
+      priority: 1,
+    });
+
+    vi.mocked(Logger.warn).mockRestore();
   });
 });
