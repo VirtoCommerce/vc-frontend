@@ -52,7 +52,6 @@
         "widgets": {
           "new_orders": "Commandes au statut « New »",
           "active_carts": "Paniers actifs",
-          "active_cart": "Panier actif",
           "orders_placed_week": "Commandes cette semaine",
           "orders_placed_mtd": "Commandes depuis le début du mois",
           "purchased_mtd": "Achats depuis le début du mois",
@@ -67,7 +66,9 @@
           "ordered_this_month": "{count} a commandé ce mois-ci | {count} a commandé ce mois-ci | {count} ont commandé ce mois-ci",
           "new_customers": "{count} nouveau client | {count} nouveau client | {count} nouveaux clients",
           "of_recent_orders": "sur {count} créée ces 7 derniers jours | sur {count} créée ces 7 derniers jours | sur {count} créées ces 7 derniers jours",
-          "new_this_week": "{count} nouveau cette semaine | {count} nouveau cette semaine | {count} nouveaux cette semaine",
+          "items_unit": "article | articles",
+          "not_for_checkout": "{count} hors paiement",
+          "items_this_week": "{count} article cette semaine | {count} articles cette semaine",
           "mtd_of_ytd": "{percent}% de l'année",
           "load_failed": "Échec du chargement"
         }
@@ -193,9 +194,6 @@
       "share_replace_hint": "Le client précédemment sélectionné perdra l'accès à cette liste.",
       "share_message_label": "Message",
       "share_message_placeholder": "Message facultatif à inclure",
-      "share_channels_label": "Envoyer par",
-      "share_email_label": "E-mail",
-      "share_push_label": "Notification push",
       "share_default_title": "Une nouvelle liste de votre commercial",
       "share_default_message": "Bonjour ! Je viens de partager la liste « {listName} » avec votre organisation. Découvrez-la :",
       "share_success": "Liste partagée avec le client.",

@@ -10,7 +10,7 @@ const PT_ZERO_FORMS: [string, string][] = [
   ["sales_rep.hub.dashboard.stats.ordered_this_month", "0 compraram este mês"],
   ["sales_rep.hub.dashboard.stats.new_customers", "0 novos clientes"],
   ["sales_rep.hub.dashboard.stats.of_recent_orders", "de 0 criados nos últimos 7 dias"],
-  ["sales_rep.hub.dashboard.stats.new_this_week", "0 novos esta semana"],
+  ["sales_rep.hub.dashboard.stats.items_this_week", "0 itens esta semana"],
 ];
 
 describe("pt plural forms", () => {

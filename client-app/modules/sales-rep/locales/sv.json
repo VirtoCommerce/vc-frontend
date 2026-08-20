@@ -52,7 +52,6 @@
         "widgets": {
           "new_orders": "Order med status ”New”",
           "active_carts": "Aktiva kundvagnar",
-          "active_cart": "Aktiv kundvagn",
           "orders_placed_week": "Order denna vecka",
           "orders_placed_mtd": "Order hittills denna månad",
           "purchased_mtd": "Köp hittills denna månad",
@@ -67,7 +66,9 @@
           "ordered_this_month": "{count} beställde denna månad",
           "new_customers": "{count} ny kund | {count} nya kunder",
           "of_recent_orders": "av {count} skapad de senaste 7 dagarna | av {count} skapade de senaste 7 dagarna",
-          "new_this_week": "{count} ny denna vecka | {count} nya denna vecka",
+          "items_unit": "artikel | artiklar",
+          "not_for_checkout": "{count} inte till kassan",
+          "items_this_week": "{count} artikel denna vecka | {count} artiklar denna vecka",
           "mtd_of_ytd": "{percent}% av året",
           "load_failed": "Kunde inte läsas in"
         }
@@ -193,9 +194,6 @@
       "share_replace_hint": "Kunden som valdes tidigare förlorar åtkomsten till den här listan.",
       "share_message_label": "Meddelande",
       "share_message_placeholder": "Valfritt meddelande",
-      "share_channels_label": "Skicka via",
-      "share_email_label": "E-post",
-      "share_push_label": "Push-avisering",
       "share_default_title": "En ny lista från din säljare",
       "share_default_message": "Hej! Jag har just delat listan ”{listName}” med din organisation. Ta en titt:",
       "share_success": "Listan har delats med kunden.",
