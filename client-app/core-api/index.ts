@@ -29,6 +29,10 @@ export {
   VcTextarea,
   VcTypography,
 } from "@/ui-kit/components/molecules";
+// `VcImage` needs the host too: its thumbnail logic reads the theme's `image_thumbnails_*`
+// settings, and `useThemeContext`'s getter THROWS ("Theme context is missing.") until the host has
+// set the context at boot. Only a filename-only `src` returns before that read — any URL `src`
+// throws outside the host, so a plugin's own dev server or specs must stub it.
 export {
   VcBadge,
   VcBreadcrumbs,
@@ -94,6 +98,13 @@ export { toEndDateFilterValue, toStartDateFilterValue } from "@/core/utilities/d
 // `mergeLocaleMessage` mutates the stored object in place.
 export { registerLocaleLoader } from "@/core/locale-loaders";
 export type { LocaleLoaderType } from "@/core/locale-loaders";
+
+// Host route names a plugin mounts its own routes under (`router.addRoute(ROUTES.COMPANY.NAME, …)`)
+// or links to. Vue Router throws on an unknown parent, so these names are contract: without this
+// export a plugin hard-codes "Company"/"Account" and a host rename breaks it with every gate green.
+// Exporting the whole map is deliberate — it puts every route name a plugin could reach for under
+// the contract, so a rename shows up as a contract diff (a minor on 0.x) instead of a silent break.
+export { ROUTES } from "@/router/routes/constants";
 
 export { globals } from "@/core/globals";
 export type { I18n } from "@/i18n";

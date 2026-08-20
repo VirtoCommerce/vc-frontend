@@ -1,6 +1,7 @@
 import { computed, defineAsyncComponent } from "vue";
 import { registerCacheTypePolicies } from "@/core/api/graphql/config/registerCacheTypePolicies";
 import { useNavigations } from "@/core/composables/useNavigations";
+import { ROUTES } from "@/router/routes/constants";
 import { useUser } from "@/shared/account/composables/useUser";
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import { EXTENSION_NAMES } from "@/shared/common/constants/extensionPointsNames";
@@ -29,12 +30,12 @@ export function init(router: Router, i18n: I18n) {
     return;
   }
 
-  // Relative routes -> mount under the "Company" parent (/company/sales-reps, /company/dashboard, /company/my-customers).
-  router.addRoute("Company", salesRepsRoute);
-  router.addRoute("Company", dashboardRoute);
-  router.addRoute("Company", myCustomersRoute);
+  // Relative routes -> mount under the Company parent (/company/sales-reps, /company/dashboard, /company/my-customers).
+  router.addRoute(ROUTES.COMPANY.NAME, salesRepsRoute);
+  router.addRoute(ROUTES.COMPANY.NAME, dashboardRoute);
+  router.addRoute(ROUTES.COMPANY.NAME, myCustomersRoute);
   // Customer profile (VCST-5308) -> /company/my-customers/:organizationId.
-  router.addRoute("Company", customerProfileRoute);
+  router.addRoute(ROUTES.COMPANY.NAME, customerProfileRoute);
 
   const { mergeMenuSchema, registerAccountSection } = useNavigations();
   const { checkPermissions } = useUser();

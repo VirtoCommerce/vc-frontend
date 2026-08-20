@@ -111,7 +111,9 @@ host. No second Vue, no second router, no duplicate Apollo cache.
 - UI (22 components): `VcAlert`, `VcBadge`, `VcBreadcrumbs`, `VcButton`, `VcCheckbox`,
   `VcEmptyView`, `VcIcon`, `VcImage`, `VcInput`, `VcLabel`, `VcLink`, `VcLoaderOverlay`,
   `VcMarkdownRender`, `VcMenuItem`, `VcModal`, `VcSelect`, `VcTable`, `VcTableColumn`,
-  `VcTextarea`, `VcTypography`, `VcWidget`, `VcWidgetSkeleton`; the themed `OrderStatus`
+  `VcTextarea`, `VcTypography`, `VcWidget`, `VcWidgetSkeleton` (`VcImage` is host-bound too —
+  its thumbnail logic reads theme settings through a getter that throws until the host sets the
+  theme context, so only a filename-only `src` renders standalone); the themed `OrderStatus`
   (host-only — its colours come from the THEME's `orders_statuses` in
   `config/settings_data.json`, which no query serves, and it throws until the host has set the
   theme context, so it renders inside the host and nowhere else); and `uiKit`, the plugin that
@@ -122,7 +124,8 @@ host. No second Vue, no second router, no duplicate Apollo cache.
 - Composables: `useUser`, `useNavigations`, `useModal`, `useNotifications`, `useBreadcrumbs`,
   `usePageHead`, `useWishlistSharingScopes`
 - Config / utilities: `useModuleSettings`, `globals`, `Logger`, `getProductRoute`,
-  `toStartDateFilterValue`, `toEndDateFilterValue`, `registerLocaleLoader`
+  `toStartDateFilterValue`, `toEndDateFilterValue`, `registerLocaleLoader`, `ROUTES` (the host
+  route names a plugin mounts under or links to)
 - Meta: `CORE_VERSION`, and the types `I18n`, `ILanguage`, `LocaleLoaderType`, `MenuType`,
   `ExtendedMenuLinkType`, `IWishlistSharingScopeControlsType`,
   `WishlistSharingScopeSavedContextType`
