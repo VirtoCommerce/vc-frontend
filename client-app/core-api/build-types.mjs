@@ -23,6 +23,8 @@ import { decideVersionAction, extractExportNames } from "./contract-versioning.m
 import { CONTRACT_TYPE_PEERS, MF_SHARED_RANGES } from "./federation.mjs";
 
 const CHECK_MODE = process.argv.includes("--check");
+/** The auto-bump's baseline: "did I change the contract since I branched". Overridable for one-offs. */
+const DEFAULT_BASE_REF = process.env.MF_CONTRACT_BASE_REF || "origin/dev";
 
 const CORE_API_DIR = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(CORE_API_DIR, "../..");
@@ -506,16 +508,29 @@ const GIT_BIN = [
   String.raw`C:\Program Files\Git\cmd\git.exe`,
 ].find((candidate) => existsSync(candidate));
 
-function compareContractToBase(currentContract, currentPreset) {
+// maxBuffer: node's 1MB default would KILL the child once a committed artifact
+// outgrows it (status becomes null) — indistinguishable from "no baseline" below,
+// silently disabling the auto-bump and the require-major gate. Size the buffer so
+// that can't happen before anyone notices.
+const git = (args) => spawnSync(GIT_BIN, args, { cwd: REPO_ROOT, encoding: "utf8", maxBuffer: 32 * 1024 * 1024 });
+
+/**
+ * The newest published contract tag, or "" when nothing has been released yet (or tags were not
+ * fetched). This is what a plugin actually installs, so it — not the base branch — is the baseline
+ * the RELEASE check has to judge a version level against.
+ */
+function lastReleasedContractTag() {
+  if (!GIT_BIN) {
+    return "";
+  }
+  const described = git(["describe", "--tags", "--match", "core-v*", "--abbrev=0"]);
+  return described.status === 0 ? described.stdout.trim() : "";
+}
+
+function compareContractToBase(currentContract, currentPreset, baseRef = DEFAULT_BASE_REF) {
   if (!GIT_BIN) {
     return null;
   }
-  const baseRef = process.env.MF_CONTRACT_BASE_REF || "origin/dev";
-  // maxBuffer: node's 1MB default would KILL the child once a committed artifact
-  // outgrows it (status becomes null) — indistinguishable from "no baseline" below,
-  // silently disabling the auto-bump and the require-major gate. Size the buffer so
-  // that can't happen before anyone notices.
-  const git = (args) => spawnSync(GIT_BIN, args, { cwd: REPO_ROOT, encoding: "utf8", maxBuffer: 32 * 1024 * 1024 });
   const mergeBase = git(["merge-base", "HEAD", baseRef]);
   const baseSha = mergeBase.status === 0 ? mergeBase.stdout.trim() : "";
   const baseContract = baseSha ? git(["show", `${baseSha}:client-app/core-api/contract/index.d.ts`]) : { status: 1 };
@@ -588,8 +603,11 @@ if (CHECK_MODE) {
     fail("committed contract/tailwind-preset.cjs is stale — run `yarn build:core-types` and commit the result.");
   }
   step("check passed: committed contract and tailwind preset match the facade.");
-  // Safety net for anyone who edited the version by hand or bypassed the build.
-  const base = compareContractToBase(contract, tailwindPreset);
+  // Safety net for anyone who edited the version by hand or bypassed the build. Judged against the
+  // last PUBLISHED contract: the release job dispatches from the base branch, where a base-branch
+  // baseline collapses onto HEAD and the removal gate would compare the contract with itself.
+  const releaseTag = process.env.MF_CONTRACT_BASE_REF ? "" : lastReleasedContractTag();
+  const base = compareContractToBase(contract, tailwindPreset, releaseTag || DEFAULT_BASE_REF);
   if (base) {
     const decision = decideVersionAction({ ...base, currentVersion: corePkg.version });
     if (decision.action.startsWith("require-")) {
@@ -611,17 +629,22 @@ if (CHECK_MODE) {
   }
   if (base) {
     step(`bump guard passed (base ${base.baseRef} @ ${base.baseSha.slice(0, 8)}).`);
+  } else if (releaseTag) {
+    // A published tag exists but its contract is unreadable: shallow checkout, or the tag was
+    // fetched without its objects. Passing here would retire the only gate that can still refuse a
+    // breaking release, so fail instead.
+    fail(
+      `cannot read the published contract at ${releaseTag} — the bump guard would not be enforced. ` +
+        "Fetch the full history and tags (e.g. fetch-depth: 0) and re-run.",
+    );
   } else {
-    // The removal gate can only run against a committed baseline contract. It is
-    // legitimately absent while this contract is first introduced, but once it exists on
-    // the base branch a missing baseline means a shallow/misconfigured checkout — which
-    // would silently disable the strongest gate. Warn loudly (esp. in CI) rather than
-    // pass quietly; the drift guard above and an explicit `yarn bump:core <breaking level>`
-    // remain the backstop.
+    // No published contract to diff against. Legitimate while the first version is unreleased —
+    // nothing is installed anywhere yet — so warn loudly rather than block. Once a core-v* tag
+    // exists, the branch above turns this into a hard failure.
     const where = process.env.CI ? "CI" : "local";
     console.warn(
-      `[build-types] ⚠ bump guard NOT enforced (${where}): no committed baseline contract to diff against. ` +
-        "If the contract already exists on the base branch, ensure the base ref is fetched (e.g. fetch-depth: 0).",
+      `[build-types] ⚠ bump guard NOT enforced (${where}): no published core-v* contract to diff against. ` +
+        "Expected only before the first facade release; otherwise ensure tags are fetched (e.g. fetch-depth: 0).",
     );
   }
 } else {

@@ -76,13 +76,16 @@ Guards that run with it (any failure = non-zero exit):
   the committed file differs**. During the MF pilot it is deliberately **out of `yarn validate`**,
   so it does not gate a PR — the Core Facade Release workflow runs it before packing the tarball.
   Run it by hand after a facade change; a stale contract is caught at release, not at merge.
-- **At release (bump guard):** if the contract **changed relative to `origin/dev`** but
-  `CORE_VERSION` did not (someone bypassed the build or hand-edited version files),
-  the check fails and points at `yarn build:core-types` / `yarn bump:core <breaking level>`
-  (`minor` on the 0.x line, `major` from 1.0.0 — the check names the right one).
-  (Base ref overridable via `MF_CONTRACT_BASE_REF`. With no baseline to diff against —
-  shallow checkout, missing base ref — the auto-bump skips quietly and the check
-  **warns loudly** that the guard is not enforced.)
+- **At release (bump guard):** the baseline is the **last published `core-v*` tag** — what a
+  plugin actually installs. If the contract changed relative to it but `CORE_VERSION` did not
+  (someone bypassed the build or hand-edited version files), the check fails and points at
+  `yarn build:core-types` / `yarn bump:core <breaking level>` (`minor` on the 0.x line, `major`
+  from 1.0.0 — the check names the right one). A removed export is only ever satisfied by the
+  breaking level. If a tag exists but its contract cannot be read (shallow checkout), the check
+  **fails** rather than passing quietly; before the first release there is nothing to diff
+  against, so it warns instead. The auto-bump uses a different baseline on purpose — the branch
+  point (`origin/dev`), since it answers "did I change the contract", not "does this differ from
+  what is published". Both are overridable via `MF_CONTRACT_BASE_REF`.
 
 The output is deterministic: same source ⇒ byte-identical file, so the git diff of
 `contract/index.d.ts` is a readable review artifact of "what did the public API change".
@@ -189,9 +192,11 @@ Say a plugin needs `useThemeContext`.
    (A facade change touches `contract/index.d.ts`; a design-token change in the root
    `tailwind.config.ts` touches `contract/tailwind-preset.cjs` — same flow, same guards.)
 
-You can't forget any of this: CI fails on a stale contract (forgot step 2) and on a
-changed contract without a version change (bypassed the build), each time printing the
-exact command to run.
+Mind the pilot's gap: **no PR check runs any of this** (`validate:core-types` is deliberately
+out of `yarn validate`). The Core Facade Release workflow is where a stale contract (forgot
+step 2) and a changed contract without a version change (bypassed the build) are caught, each
+time printing the exact command to run — so a facade PR that skips step 2 lands green and the
+debt surfaces at release. Run `yarn validate:core-types` by hand before asking for review.
 
 Rules of thumb for what to export:
 
