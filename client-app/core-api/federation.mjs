@@ -28,7 +28,8 @@ export const MF_SHARED_RANGES = {
  * installs them; without them `skipLibCheck` silently degrades those facade types to `any`.
  *
  * Ranges are pinned here because several are transitive in the host (`@intlify/core-base`,
- * `@vue/shared`, `unhead`), so there is no host declaration to read.
+ * `@vue/shared`, `unhead`), so there is no host declaration to read. build-types.mjs checks
+ * every pin against the INSTALLED version instead - the copy the contract is emitted from.
  */
 export const CONTRACT_TYPE_PEERS = {
   "@floating-ui/vue": "^2.0.1",

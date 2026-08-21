@@ -72,6 +72,40 @@ function fail(msg) {
 const corePkg = require("./package.json");
 const hostPkg = require(resolve(REPO_ROOT, "package.json"));
 
+/**
+ * Version of an installed package, read from its manifest BY PATH — `require.resolve` is
+ * not an option here: many packages' "exports" hide "./package.json", and ESM-only ones
+ * are not requireable at all. Returns null when the package is not hoisted to the repo
+ * root (nested copy, or a linker other than node-modules), so the caller can degrade
+ * instead of breaking the build.
+ */
+function readInstalledVersion(name) {
+  const manifest = resolve(REPO_ROOT, "node_modules", name, "package.json");
+  if (!existsSync(manifest)) {
+    return null;
+  }
+  try {
+    return JSON.parse(readFileSync(manifest, "utf8")).version ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/** Shared shape of both range guards below: the pin must include what is actually installed. */
+function checkInstalledAgainstPin(source, name, range, consequence) {
+  const installed = readInstalledVersion(name);
+  if (!installed) {
+    console.warn(
+      `[build-types] ⚠ ${source} range "${range}" for "${name}" NOT verified against the installed copy: ` +
+        "no manifest at node_modules/<pkg>/package.json (not installed, not hoisted, or a non-node-modules linker).",
+    );
+    return;
+  }
+  if (!satisfies(installed, range)) {
+    fail(`${source} range "${range}" for "${name}" does not include the installed ${installed} — ${consequence}`);
+  }
+}
+
 // The shared-singleton ranges (federation.mjs) must stay compatible with what the
 // host actually installs — otherwise the MF runtime would reject the host's own deps.
 for (const [name, range] of Object.entries(MF_SHARED_RANGES)) {
@@ -88,6 +122,17 @@ for (const [name, range] of Object.entries(MF_SHARED_RANGES)) {
   if (!intersects(range, declared)) {
     fail(`federation.mjs range "${range}" for "${name}" does not intersect host package.json "${declared}".`);
   }
+  // `intersects` compares two RANGES, so a pin raised above what the lockfile resolved still
+  // passes it (^3.16.0 intersects a declared ^3.14.1). At runtime the host provides the
+  // INSTALLED version and strictVersion turns a miss into a thrown loadRemote() — for every
+  // plugin at once. Same check the @vc-frontend/core branch above already does.
+  checkInstalledAgainstPin(
+    "federation.mjs",
+    name,
+    range,
+    "the host provides that copy to plugins as the MF singleton, and strictVersion makes every " +
+      "plugin built against this range fail to load. Update the pin in federation.mjs (or the host dependency).",
+  );
 }
 // Where the host declares a type-peer too, the pinned range must not drift from it.
 for (const [name, range] of Object.entries(CONTRACT_TYPE_PEERS)) {
@@ -95,6 +140,19 @@ for (const [name, range] of Object.entries(CONTRACT_TYPE_PEERS)) {
   if (declared && !intersects(range, declared)) {
     fail(`CONTRACT_TYPE_PEERS range "${range}" for "${name}" does not intersect host package.json "${declared}".`);
   }
+  // Several peers are transitive (@intlify/core-base, @vue/shared, unhead), so the check
+  // above is a no-op for exactly the pins that have nothing else watching them. The
+  // contract's types are emitted from what is INSTALLED, so verify the pin against that:
+  // it is exact rather than an intersection, and it covers declared and transitive alike.
+  // A plugin resolving different typings than the contract was generated from is the whole
+  // failure mode — and skipLibCheck means it surfaces as `any`, never as an error.
+  checkInstalledAgainstPin(
+    "CONTRACT_TYPE_PEERS",
+    name,
+    range,
+    "the contract's types are emitted from the installed copy, so a plugin would type-check against a " +
+      "different version. Update the pin in federation.mjs (or the host dependency).",
+  );
 }
 step("contract consistency guards passed (shared-dep and type-peer ranges).");
 
