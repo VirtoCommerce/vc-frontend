@@ -264,10 +264,10 @@ function collectStyles(plugin: IPlatformPlugin): string[] {
 const STYLE_MARKER = "data-mf-plugin-style";
 
 /**
- * Deliberately NOT wrapped in a cascade layer: a layer outranks specificity, which would cancel
- * the `data-v` attribute a plugin's `<style scoped>` relies on to override a host utility on its
- * own markup. Containment is the plugin's job (scoped styles, no global utility layer), not a
- * fence here. The marker attribute doubles as the dedupe key, so a second boot adds nothing.
+ * No cascade fence here yet: containment needs the HOST's own CSS layered too, so the plugin layer
+ * can sit below the host's utilities and above its component styles (VCST-5760). Wrapping only the
+ * plugin's sheet would put it above everything unlayered instead. The marker attribute doubles as
+ * the dedupe key, so a second boot adds nothing.
  */
 function injectStyles(urls: string[]): void {
   const present = new Set(

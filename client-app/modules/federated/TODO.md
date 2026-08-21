@@ -48,16 +48,20 @@ Still open:
 - [ ] **Backend-capability gate** — `requiredBackendModules` precondition checked against
       the installed module list before load; unmet ⇒ `skipped` with a distinct reason
       (decided in review: discovery-decoupling ≠ functional-decoupling).
-- [ ] **Plugin styling containment — decided, not built, and its prototype is not landing.** The
-      answer is `<style scoped>` + `@apply` with **no global utility layer**: Vue compiles a scoped
-      rule to `.card[data-v-abc]`, which cannot match host markup and still beats a host utility on
-      the plugin's own (0-2-0 vs 0-1-0), so overriding needs no `!important`. Prototyped and
-      browser-verified on `feat/VCST-5409-sales-reps` (PR #2372), which is **abandoned** — so the
-      scaffold change has to be redone here. Today `create:plugin` emits
-      `@tailwind components; @tailwind utilities;` into `src/styles.css`, i.e. a global layer that
-      hits every page, with precedence against lazily-loaded host CSS decided by navigation order.
-      A cascade layer on the HOST side is not the fix: it outranks specificity and would cancel the
-      `data-v` advantage the convention depends on (measured in-browser).
+- [ ] **Plugin styling containment — decided, tracked as VCST-5760** (sprint 26-17). Full analysis,
+      measurements and the rejected alternatives: `specs/2026-08-21-plugin-css-cascade-layers.md`.
+      Native cascade layers, order declared by the host:
+      `@layer host-base, host-components, plugin, host-utilities, plugin-overrides;`. `plugin` below
+      `host-utilities` means a plugin's copy of a host utility can never win on host markup; above
+      `host-components` means `class="p-6"` in a plugin template is not silently beaten by the host
+      globals that reach into its DOM (236 of 262 host SFC style blocks are global); and
+      `plugin-overrides` on top makes a deliberate override deterministic without `!important`.
+      The plugin author does nothing — plain utilities in templates, `@apply` in styles, no prefix.
+      Measured regression surface for moving the host's utilities into a top layer: **one** rule,
+      `shared/static-content/components/call-to-action.vue:3`. Earlier answers are superseded: a
+      Tailwind `prefix` (rejected on DX), `@scope` (rejected — `<Teleport>` escapes the scope root),
+      and `<style scoped>` + `@apply` with no global layer (rejected — a plugin that is three widgets
+      has nowhere to put shared styles), which was the PR #2372 prototype that is not landing.
 - [x] **Name-collision dedup** — first descriptor wins, the rest are skipped with a loud log.
       Previously both were registered (`{ force: true }` keeps the last) and both loaded, so one
       plugin's code never ran while still being reported as loaded.

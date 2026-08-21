@@ -101,13 +101,14 @@ reads that manifest, checks compatibility, then loads the expose key the descrip
 plugin, in turn, reaches back into the host **only** through the shared `@vc-frontend/core`
 facade — never by importing host source directly.
 
-**Plugin CSS** is your responsibility to contain: style components with `<style scoped>` + `@apply`
-and ship **no global utility layer**. Vue compiles a scoped rule to `.card[data-v-abc]`, which both
-keeps it off host markup (the attribute exists only on your components) and lets it beat a host
-utility on your own (0-2-0 against 0-1-0) — so overriding host styling needs no `!important`.
-Global CSS in `contentFiles` is not fenced by the host: it will hit every page, and whether it beats
-a lazily-loaded host route's CSS depends on where the user has been. Note the scaffold does not yet
-help you here — it still emits a global utility layer (`TODO.md` #1).
+**Plugin CSS is not fenced by the host yet.** A plugin's stylesheet is linked into `document.head`
+as-is, so it hits every page and whether it beats a lazily-loaded host route's CSS depends on where
+the user has been — and the copy of the host's utility classes that Tailwind generates inside your
+build can override the host's own on host markup if the presets have drifted. The fix is decided
+and scoped as VCST-5760: native cascade layers, `plugin` between the host's component styles and
+the host's utilities, plus a `plugin-overrides` layer for deliberate overrides. Until it lands,
+prefer `<style scoped>` for anything you would be unhappy to see applied outside your own markup.
+See `specs/2026-08-21-plugin-css-cascade-layers.md`.
 
 ---
 
