@@ -365,8 +365,17 @@ run \`yalc remove @vc-frontend/core\` and restore the pinned URL before pushing 
 commit a \`file:.yalc/...\` dependency.
 `;
 
+// Platform discovery descriptor. Without it AppManifestService assumes its own defaults —
+// remote name = the .NET module id and expose "./Module" — and the host would loadRemote a key this
+// plugin does not export. Vite copies `public/` into `dist/`, next to remoteEntry.js.
+const pluginJson = {
+  id: pluginName,
+  remote: { name: pluginName, exposed: "./plugin" },
+};
+
 // ── write ─────────────────────────────────────────────────────────────────────
 mkdirSync(join(targetDir, "src", "pages"), { recursive: true });
+mkdirSync(join(targetDir, "public"), { recursive: true });
 writeFileSync(join(targetDir, "package.json"), JSON.stringify(pkgJson, null, 2) + "\n");
 writeFileSync(join(targetDir, "index.html"), indexHtml);
 writeFileSync(join(targetDir, "vite.config.ts"), viteConfig);
@@ -380,6 +389,7 @@ if (selected.tailwind) {
   writeFileSync(join(targetDir, "postcss.config.cjs"), postcssConfig);
   writeFileSync(join(targetDir, "src", "styles.css"), stylesCss);
 }
+writeFileSync(join(targetDir, "public", "plugin.json"), JSON.stringify(pluginJson, null, 2) + "\n");
 writeFileSync(join(targetDir, "src", "shims-vue.d.ts"), shimsVue);
 writeFileSync(join(targetDir, "README.md"), readme);
 // yalc artifacts (local facade co-dev) must never be committed - see README.
