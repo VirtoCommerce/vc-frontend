@@ -110,4 +110,6 @@ export type SalesRepCustomerOrderRowType = {
   status: string;
   statusDisplayValue: string;
   total: string;
+  // The rep placed this one themselves, so it opens on the buyer-facing page where they can still act on it.
+  isOwn: boolean;
 };

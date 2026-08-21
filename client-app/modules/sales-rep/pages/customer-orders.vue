@@ -136,12 +136,8 @@ import { usePageHead } from "@/core/composables/usePageHead";
 import SalesRepOrdersFilters from "../components/sales-rep-orders-filters.vue";
 import { useSalesRepColumnSort } from "../composables/useSalesRepColumnSort";
 import { PAGE_SIZE, useSalesRepCustomerOrders } from "../composables/useSalesRepCustomerOrders";
-import {
-  CUSTOMER_ORDERS_SORT_FIELDS,
-  CUSTOMER_ORDER_ROUTE_NAME,
-  CUSTOMER_PROFILE_ROUTE_NAME,
-  MY_CUSTOMERS_ROUTE_NAME,
-} from "../constants";
+import { CUSTOMER_ORDERS_SORT_FIELDS, CUSTOMER_PROFILE_ROUTE_NAME, MY_CUSTOMERS_ROUTE_NAME } from "../constants";
+import { salesRepOrderRoute } from "../utils";
 import type { SalesRepCustomerOrderRowType, SalesRepOrdersFilterDataType } from "../types";
 import type { RouteLocationRaw } from "vue-router";
 import OrderStatus from "@/shared/account/components/order-status.vue";
@@ -215,12 +211,8 @@ function applyFilters(value: SalesRepOrdersFilterDataType): void {
   page.value = 1;
 }
 
-// Rows carry their own customer, so the all-customers list still opens each order in its customer's context.
 function orderRoute(item: SalesRepCustomerOrderRowType): RouteLocationRaw {
-  return {
-    name: CUSTOMER_ORDER_ROUTE_NAME,
-    params: { organizationId: props.organizationId ?? item.organizationId, orderId: item.id },
-  };
+  return salesRepOrderRoute(item, props.organizationId);
 }
 
 function applyKeyword(): void {

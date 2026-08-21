@@ -37,6 +37,10 @@ export const CUSTOMER_ORDERS_ROUTE_SEGMENT = `${CUSTOMER_PROFILE_ROUTE_SEGMENT}/
 export const CUSTOMER_ORDER_ROUTE_NAME = "SalesRepCustomerOrder";
 export const CUSTOMER_ORDER_ROUTE_SEGMENT = `${CUSTOMER_ORDERS_ROUTE_SEGMENT}/:orderId`;
 
+// The storefront's own order page. An order the rep placed opens there, where the buyer actions they are
+// entitled to (paying, reordering) still work — the hub's page is read-only for everyone.
+export const BUYER_ORDER_ROUTE_NAME = "OrderDetails";
+
 // Every served customer's orders: /company/customer-orders. A sibling of My customers rather than a child,
 // since "my-customers/orders" would match the :organizationId segment.
 export const ALL_CUSTOMER_ORDERS_ROUTE_NAME = "SalesRepAllCustomerOrders";

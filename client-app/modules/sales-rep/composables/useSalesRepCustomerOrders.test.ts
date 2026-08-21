@@ -22,7 +22,9 @@ const customerMock = await vi.hoisted(async () => {
 
 vi.mock("@vue/apollo-composable", () => ({ useQuery: queryMock.useQuery }));
 
-vi.mock("@/core/globals", () => ({ globals: { storeId: "test-store", cultureName: "en-US", currencyCode: "USD" } }));
+vi.mock("@/core/globals", () => ({
+  globals: { storeId: "test-store", cultureName: "en-US", currencyCode: "USD", userId: "rep-1" },
+}));
 
 vi.mock("./useSalesRepCustomer", async () => {
   const { computed, ref, toValue } = await import("vue");
@@ -170,14 +172,16 @@ describe("useSalesRepCustomerOrders", () => {
         createdDate: "2026-05-19T00:00:00Z",
         status: "New",
         statusDisplayValue: "New",
+        customerId: "rep-1",
         total: { amount: 1200, formattedAmount: "$1,200.00", currency: { code: "USD", symbol: "$" } },
       },
-      // number, organizationName and status absent on the wire
+      // number, organizationName and status absent on the wire; placed by someone else
       {
         id: "o-2",
         number: "",
         organizationId: "org-1",
         createdDate: "2026-05-18T00:00:00Z",
+        customerId: "another-rep",
         total: { amount: 0, formattedAmount: "", currency: { code: "USD", symbol: "$" } },
       },
     ]);
@@ -192,6 +196,7 @@ describe("useSalesRepCustomerOrders", () => {
         status: "New",
         statusDisplayValue: "New",
         total: "$1,200.00",
+        isOwn: true,
       },
       // Absent values read as blanks or a currency zero, never as a missing row (VCST-5586).
       {
@@ -203,6 +208,7 @@ describe("useSalesRepCustomerOrders", () => {
         status: "",
         statusDisplayValue: "",
         total: "$0.00",
+        isOwn: false,
       },
     ]);
   });

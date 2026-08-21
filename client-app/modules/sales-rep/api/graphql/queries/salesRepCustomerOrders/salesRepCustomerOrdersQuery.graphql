@@ -24,6 +24,7 @@ query SalesRepCustomerOrders(
       number
       organizationId
       organizationName
+      customerId
       createdDate
       status
       statusDisplayValue

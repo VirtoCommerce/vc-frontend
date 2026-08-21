@@ -1,4 +1,5 @@
 import { globals } from "@/core/globals";
+import { BUYER_ORDER_ROUTE_NAME, CUSTOMER_ORDER_ROUTE_NAME } from "./constants";
 import type { MoneyType, SalesRepCustomerOrdersQuery, SalesRepOrdersQuery } from "./api/graphql/types";
 import type {
   SalesRepCustomerOrderRowType,
@@ -7,6 +8,7 @@ import type {
   SalesRepRuleType,
 } from "./types";
 import type { StatWidgetToneType } from "./types/widgets";
+import type { RouteLocationRaw } from "vue-router";
 
 // Selectable filter options exclude the backend "all" rule (chips already prepend a synthetic "All" baseline).
 export function selectableFilterRules(rules: SalesRepRuleType[]): SalesRepRuleType[] {
@@ -214,6 +216,9 @@ export function toSalesRepCustomerOrderRows(items?: CustomerOrderNodeType[]): Sa
       status: order.status ?? "",
       statusDisplayValue: order.statusDisplayValue ?? "",
       total: formatStatMoney(order.total),
+      // A rep-placed order records the rep as its customer — the same field the backend scopes the
+      // dashboard's own-orders list by.
+      isOwn: Boolean(globals.userId) && order.customerId === globals.userId,
     }));
 }
 
@@ -228,4 +233,18 @@ export function toFacetOptions(
     .flatMap((facet) => facet.terms ?? [])
     .filter((term) => term != null)
     .map((term) => ({ name: term.term, label: term.label || term.term, count: term.count }));
+}
+
+// An order the rep placed is theirs to act on, so it opens on the buyer-facing page the way Recent orders
+// already opens it. Everyone else's opens read-only in the hub — the row carries its own customer, so the
+// all-customers list still lands each one in its customer's context.
+export function salesRepOrderRoute(order: SalesRepCustomerOrderRowType, organizationId?: string): RouteLocationRaw {
+  if (order.isOwn) {
+    return { name: BUYER_ORDER_ROUTE_NAME, params: { orderId: order.id } };
+  }
+
+  return {
+    name: CUSTOMER_ORDER_ROUTE_NAME,
+    params: { organizationId: organizationId ?? order.organizationId, orderId: order.id },
+  };
 }
