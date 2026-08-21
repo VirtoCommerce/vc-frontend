@@ -108,6 +108,7 @@
     "customer_profile": {
       "loading": "Ładowanie…",
       "not_found": "Nie znaleziono klienta lub nie należy do Twoich klientów.",
+      "load_failed": "Nie udało się wczytać tego klienta. Odśwież stronę.",
       "back_to_customers": "Powrót do moich klientów",
       "widgets": {
         "avg_order_value": "Średnia wartość zamówienia"
@@ -181,6 +182,11 @@
       "load_failed": "Nie udało się wczytać bestsellerów"
     },
     "rules": {
+      "load_failed": {
+        "filter": "Nie udało się wczytać filtrów, więc wyświetlana jest pełna lista. Odśwież stronę.",
+        "sort": "Nie udało się wczytać opcji sortowania, więc używana jest kolejność domyślna. Odśwież stronę.",
+        "both": "Nie udało się wczytać filtrów ani opcji sortowania, więc pełna lista jest wyświetlana w kolejności domyślnej. Odśwież stronę."
+      },
       "customer": {
         "filter": {
           "All": "Wszyscy"

@@ -108,6 +108,7 @@
     "customer_profile": {
       "loading": "Loading…",
       "not_found": "Customer not found or not in your customers.",
+      "load_failed": "This customer couldn't be loaded. Try refreshing the page.",
       "back_to_customers": "Back to my customers",
       "widgets": {
         "avg_order_value": "Avg order value"
@@ -181,6 +182,11 @@
       "load_failed": "Couldn't load top sellers"
     },
     "rules": {
+      "load_failed": {
+        "filter": "The filters couldn't be loaded, so the full list is shown. Try refreshing the page.",
+        "sort": "The sorting options couldn't be loaded, so the default order is used. Try refreshing the page.",
+        "both": "The filters and sorting options couldn't be loaded, so the full list is shown in the default order. Try refreshing the page."
+      },
       "customer": {
         "filter": {
           "All": "All"

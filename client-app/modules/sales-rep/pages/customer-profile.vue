@@ -2,7 +2,14 @@
   <div class="customer-profile">
     <VcBreadcrumbs :items="breadcrumbs" />
 
-    <VcEmptyView v-if="notFound" :text="t('sales_rep.customer_profile.not_found')" icon="outline-404">
+    <!-- A failed read gets its own wording: a server error must not read as "this customer isn't yours".
+         `icon` belongs to the not-found branch; the error variant brings its own illustration. -->
+    <VcEmptyView
+      v-if="failed || notFound"
+      :text="failed ? t('sales_rep.customer_profile.load_failed') : t('sales_rep.customer_profile.not_found')"
+      :variant="failed ? 'error' : 'empty'"
+      icon="outline-404"
+    >
       <template #button>
         <VcButton :to="{ name: myCustomersRouteName }" prepend-icon="arrow-left">
           {{ t("sales_rep.customer_profile.back_to_customers") }}
@@ -62,7 +69,7 @@ const SCOPE = CUSTOMER_PROFILE_LAYOUT_SCOPE;
 const isCompact = useBreakpoints(breakpointsTailwind).smaller("xl");
 
 const { t } = useI18n();
-const { customer, loading, notFound } = useSalesRepCustomer(() => props.organizationId);
+const { customer, loading, failed, notFound } = useSalesRepCustomer(() => props.organizationId);
 const { cards } = useSalesRepCustomerWidgets(() => props.organizationId);
 
 const myCustomersRouteName = MY_CUSTOMERS_ROUTE_NAME;

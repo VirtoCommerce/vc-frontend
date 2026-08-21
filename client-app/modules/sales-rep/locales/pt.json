@@ -108,6 +108,7 @@
     "customer_profile": {
       "loading": "Carregando…",
       "not_found": "Cliente não encontrado ou não está nos seus clientes.",
+      "load_failed": "Não foi possível carregar este cliente. Atualize a página.",
       "back_to_customers": "Voltar aos meus clientes",
       "widgets": {
         "avg_order_value": "Valor médio do pedido"
@@ -181,6 +182,11 @@
       "load_failed": "Falha ao carregar os mais vendidos"
     },
     "rules": {
+      "load_failed": {
+        "filter": "Não foi possível carregar os filtros, por isso é exibida a lista completa. Atualize a página.",
+        "sort": "Não foi possível carregar as opções de ordenação, por isso é usada a ordem padrão. Atualize a página.",
+        "both": "Não foi possível carregar os filtros nem as opções de ordenação, por isso a lista completa é exibida na ordem padrão. Atualize a página."
+      },
       "customer": {
         "filter": {
           "All": "Todos"

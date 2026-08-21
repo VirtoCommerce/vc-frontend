@@ -90,7 +90,7 @@ export function useSalesRepRules(
   const source = RULE_SOURCES[`${domain}:${kind}`];
   const { t, te } = useI18n();
 
-  const { result, loading, onError } = useSalesRepHubQuery(
+  const { result, loading, error, onError } = useSalesRepHubQuery(
     source.document,
     () => ({
       storeId: globals.storeId,
@@ -102,9 +102,9 @@ export function useSalesRepRules(
     { fetchPolicy: "cache-first" },
   );
 
-  onError((error) => {
-    // Keep the control functional (renders empty); no toasts by design.
-    Logger.error(`[sales-rep] ${domain}:${kind} rules failed:`, error);
+  onError((queryError) => {
+    // Keep the control functional (renders empty); no toasts by design — the surface says so inline.
+    Logger.error(`[sales-rep] ${domain}:${kind} rules failed:`, queryError);
   });
 
   const rules = computed<SalesRepRuleType[]>(() =>
@@ -125,5 +125,8 @@ export function useSalesRepRules(
     return te(key) ? t(key) : localizedName || name;
   }
 
-  return { rules, loading };
+  // An empty catalog and a failed read look identical in `rules`, so the surface needs this to say which.
+  const failed = computed(() => Boolean(error.value));
+
+  return { rules, loading, failed };
 }

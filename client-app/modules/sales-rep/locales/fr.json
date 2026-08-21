@@ -108,6 +108,7 @@
     "customer_profile": {
       "loading": "Chargement…",
       "not_found": "Client introuvable ou absent de vos clients.",
+      "load_failed": "Ce client n'a pas pu être chargé. Veuillez actualiser la page.",
       "back_to_customers": "Retour à mes clients",
       "widgets": {
         "avg_order_value": "Valeur moyenne des commandes"
@@ -181,6 +182,11 @@
       "load_failed": "Impossible de charger les meilleures ventes"
     },
     "rules": {
+      "load_failed": {
+        "filter": "Les filtres n'ont pas pu être chargés, la liste complète est donc affichée. Veuillez actualiser la page.",
+        "sort": "Les options de tri n'ont pas pu être chargées, l'ordre par défaut est donc utilisé. Veuillez actualiser la page.",
+        "both": "Les filtres et les options de tri n'ont pas pu être chargés, la liste complète est donc affichée dans l'ordre par défaut. Veuillez actualiser la page."
+      },
       "customer": {
         "filter": {
           "All": "Tous"

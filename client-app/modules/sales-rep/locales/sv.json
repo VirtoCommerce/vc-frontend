@@ -108,6 +108,7 @@
     "customer_profile": {
       "loading": "Laddar…",
       "not_found": "Kunden hittades inte eller finns inte bland dina kunder.",
+      "load_failed": "Den här kunden kunde inte läsas in. Uppdatera sidan.",
       "back_to_customers": "Tillbaka till mina kunder",
       "widgets": {
         "avg_order_value": "Genomsnittligt ordervärde"
@@ -181,6 +182,11 @@
       "load_failed": "Kunde inte läsa in bästsäljarna"
     },
     "rules": {
+      "load_failed": {
+        "filter": "Filtren kunde inte läsas in, så hela listan visas. Uppdatera sidan.",
+        "sort": "Sorteringsalternativen kunde inte läsas in, så standardordningen används. Uppdatera sidan.",
+        "both": "Filtren och sorteringsalternativen kunde inte läsas in, så hela listan visas i standardordningen. Uppdatera sidan."
+      },
       "customer": {
         "filter": {
           "All": "Alla"
