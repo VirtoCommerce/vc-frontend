@@ -1,4 +1,5 @@
 import { computed, ref, toValue, watch } from "vue";
+import { STATUS_ORDERS_FACET_NAME } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { getFilterExpression } from "@/shared/account/composables/useUserOrdersFilter";
@@ -8,7 +9,6 @@ import {
   CUSTOMER_ORDERS_SORT_FIELDS,
   HUB_FETCH_POLICY,
   ORDER_CUSTOMER_FACET,
-  ORDER_STATUS_FACET,
 } from "../constants";
 import { toFacetOptions, toSalesRepCustomerOrderRows } from "../utils";
 import { useSalesRepCustomer } from "./useSalesRepCustomer";
@@ -94,7 +94,7 @@ export function useSalesRepCustomerOrders(organizationId?: MaybeRefOrGetter<stri
     sort: withDirection(sortRule.value),
     filter: filterExpression.value,
     // The all-customers list also offers a customer filter, so it aggregates that field too.
-    facet: hasCustomer.value ? ORDER_STATUS_FACET : `${ORDER_STATUS_FACET} ${ORDER_CUSTOMER_FACET}`,
+    facet: hasCustomer.value ? STATUS_ORDERS_FACET_NAME : `${STATUS_ORDERS_FACET_NAME} ${ORDER_CUSTOMER_FACET}`,
   }));
 
   // Orders are placed outside the storefront, so the list revalidates rather than serving the one it
@@ -112,7 +112,7 @@ export function useSalesRepCustomerOrders(organizationId?: MaybeRefOrGetter<stri
   const orders = computed(() => toSalesRepCustomerOrderRows(result.value?.salesRepCustomerOrders?.items));
 
   const facets = computed(() => result.value?.salesRepCustomerOrders?.term_facets);
-  const statusOptions = computed(() => toFacetOptions(facets.value, ORDER_STATUS_FACET));
+  const statusOptions = computed(() => toFacetOptions(facets.value, STATUS_ORDERS_FACET_NAME));
   const customerOptions = computed(() => toFacetOptions(facets.value, ORDER_CUSTOMER_FACET));
 
   const pages = computed(() =>

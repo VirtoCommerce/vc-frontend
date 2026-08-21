@@ -179,23 +179,41 @@ export function formatSignedPercent(percent?: number | null): SignedPercentType 
 // Connection items → table rows, shared by the orders widget and the customer orders page.
 type OrderNodeType = NonNullable<NonNullable<SalesRepOrdersQuery["salesRepOrders"]>["items"]>[number];
 
+// Absent values read as blanks or a currency zero, never as a missing row (VCST-5586).
+type OrderRowSourceType = {
+  id: string;
+  number?: string;
+  organizationId?: string;
+  organizationName?: string;
+  createdDate: string;
+  status?: string;
+  statusDisplayValue?: string;
+  total?: Pick<MoneyType, "formattedAmount"> | null;
+};
+
+function toOrderRowBase(order: OrderRowSourceType) {
+  return {
+    id: order.id,
+    number: order.number ?? "",
+    organizationId: order.organizationId ?? "",
+    organizationName: order.organizationName ?? "",
+    createdDate: order.createdDate,
+    status: order.status ?? "",
+    statusDisplayValue: order.statusDisplayValue ?? "",
+    total: formatStatMoney(order.total),
+  };
+}
+
+// Skip null connection items so one bad row doesn't blank the list.
+function presentOrders<T>(items?: (T | null)[]): NonNullable<T>[] {
+  return (items ?? []).filter((order): order is NonNullable<T> => order != null);
+}
+
 export function toSalesRepOrderRows(items?: OrderNodeType[]): SalesRepOrderRowType[] {
-  return (
-    (items ?? [])
-      // Skip null connection items so one bad row doesn't blank the list.
-      .filter((order): order is NonNullable<OrderNodeType> => order != null)
-      .map((order) => ({
-        id: order.id,
-        number: order.number ?? "",
-        organizationId: order.organizationId ?? "",
-        organizationName: order.organizationName ?? "",
-        createdDate: order.createdDate,
-        status: order.status ?? "",
-        statusDisplayValue: order.statusDisplayValue ?? "",
-        itemsCount: formatStatCount(order.itemsCount),
-        total: formatStatMoney(order.total),
-      }))
-  );
+  return presentOrders(items).map((order) => ({
+    ...toOrderRowBase(order),
+    itemsCount: formatStatCount(order.itemsCount),
+  }));
 }
 
 // Connection items -> customer-orders rows. The shared CustomerOrder type carries no items count, so this
@@ -205,21 +223,12 @@ type CustomerOrderNodeType = NonNullable<
 >[number];
 
 export function toSalesRepCustomerOrderRows(items?: CustomerOrderNodeType[]): SalesRepCustomerOrderRowType[] {
-  return (items ?? [])
-    .filter((order): order is NonNullable<CustomerOrderNodeType> => order != null)
-    .map((order) => ({
-      id: order.id,
-      number: order.number ?? "",
-      organizationId: order.organizationId ?? "",
-      organizationName: order.organizationName ?? "",
-      createdDate: order.createdDate,
-      status: order.status ?? "",
-      statusDisplayValue: order.statusDisplayValue ?? "",
-      total: formatStatMoney(order.total),
-      // A rep-placed order records the rep as its customer — the same field the backend scopes the
-      // dashboard's own-orders list by.
-      isOwn: Boolean(globals.userId) && order.customerId === globals.userId,
-    }));
+  return presentOrders(items).map((order) => ({
+    ...toOrderRowBase(order),
+    // A rep-placed order records the rep as its customer — the same field the backend scopes the
+    // dashboard's own-orders list by.
+    isOwn: Boolean(globals.userId) && order.customerId === globals.userId,
+  }));
 }
 
 // One facet of a customer-orders page -> the Filters panel's options for it. A value no order in scope

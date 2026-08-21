@@ -57,7 +57,7 @@
                 <div class="sales-rep-orders__mobile-row">
                   <VcLink
                     class="sales-rep-orders__order-link"
-                    :to="{ name: 'OrderDetails', params: { orderId: item.id } }"
+                    :to="{ name: BUYER_ORDER_ROUTE_NAME, params: { orderId: item.id } }"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -82,7 +82,7 @@
             <VcTableColumn id="number" v-slot="{ item }" :title="t('sales_rep.orders.number')">
               <VcLink
                 class="sales-rep-orders__order-link"
-                :to="{ name: 'OrderDetails', params: { orderId: item.id } }"
+                :to="{ name: BUYER_ORDER_ROUTE_NAME, params: { orderId: item.id } }"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -141,7 +141,12 @@ import { useSalesRepColumnSort } from "../composables/useSalesRepColumnSort";
 import { useSalesRepOrders } from "../composables/useSalesRepOrders";
 import { useSalesRepPeriodFilter } from "../composables/useSalesRepPeriodFilter";
 import { useSalesRepRules } from "../composables/useSalesRepRules";
-import { ALL_CUSTOMER_ORDERS_ROUTE_NAME, CUSTOMER_ORDERS_ROUTE_NAME, ORDERS_DEFAULT_LIMIT } from "../constants";
+import {
+  ALL_CUSTOMER_ORDERS_ROUTE_NAME,
+  BUYER_ORDER_ROUTE_NAME,
+  CUSTOMER_ORDERS_ROUTE_NAME,
+  ORDERS_DEFAULT_LIMIT,
+} from "../constants";
 import { knownHiddenTabs, toggleTabRule, visibleTabRules } from "../layout/settings";
 import { selectableFilterRules } from "../utils";
 import LayoutWidget from "./layout-widget.vue";

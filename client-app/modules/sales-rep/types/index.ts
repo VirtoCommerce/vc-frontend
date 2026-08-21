@@ -1,3 +1,5 @@
+import type { OrdersFilterDataType } from "@/shared/account/types";
+
 // View model for the table; mapped from the GraphQL SalesRepContact (see useSalesReps).
 // Only active reps ever reach the client; filtering is server-side.
 export type SalesRepType = { id: string; name: string; email: string; phone: string };
@@ -79,17 +81,10 @@ export type SalesRepOrderRowType = {
   total: string;
 };
 
-// Draft/applied state of the customer orders Filters panel. Structurally the storefront's
-// OrdersFilterDataType, so getFilterExpression turns it into the same search phrase.
-export type SalesRepOrdersFilterDataType = {
-  // Selected order statuses; several narrow to their union.
-  statuses: string[];
-  // Selected customers, by organization name. Offered only where the list spans customers.
-  customerNames?: string[];
-  // Date-only bounds ("YYYY-MM-DD").
-  startDate?: string;
-  endDate?: string;
-};
+// Draft/applied state of the customer orders Filters panel — the storefront's own filter shape, so
+// getFilterExpression turns it into the same search phrase. `customerNames` means the owning organization
+// here (see useSalesRepCustomerOrders), not the buyer the shared helper reads it as.
+export type SalesRepOrdersFilterDataType = OrdersFilterDataType;
 
 // A value the listed orders actually carry — a status, a customer — with how many of them do. Read from
 // the list's own term_facets, so every option has orders behind it and the count follows the other filters.

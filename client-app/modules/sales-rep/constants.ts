@@ -46,11 +46,9 @@ export const BUYER_ORDER_ROUTE_NAME = "OrderDetails";
 export const ALL_CUSTOMER_ORDERS_ROUTE_NAME = "SalesRepAllCustomerOrders";
 export const ALL_CUSTOMER_ORDERS_ROUTE_SEGMENT = "customer-orders";
 
-// Index field the customer-orders list aggregates over: the status options and their counts come back with
-// the page itself, in term_facets, rather than from a separate rules query.
-export const ORDER_STATUS_FACET = "status";
-// Second facet on the all-customers list: which customer each order belongs to. Faceted by name rather
-// than id so the options carry a readable label without a second lookup.
+// Second facet on the all-customers list: which customer each order belongs to. Deliberately NOT core's
+// CUSTOMER_NAME_FACET_NAME ("customername") — that is the buyer who placed the order, this is the
+// organization it belongs to. The status facet reuses core's STATUS_ORDERS_FACET_NAME.
 export const ORDER_CUSTOMER_FACET = "organizationname";
 // Sortable columns of the customer-orders table, mapped to the index fields the backend sorts on. Both are
 // freely reversible, and both read newest/biggest first, so the expression always carries a direction.

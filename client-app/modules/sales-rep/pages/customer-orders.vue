@@ -39,7 +39,7 @@
 
         <SalesRepOrdersFilters
           :statuses="statusOptions"
-          :customers="hasCustomer ? [] : customerOptions"
+          :customers="customerOptions"
           :disabled="loading"
           @change="applyFilters"
         />
@@ -184,7 +184,8 @@ const hasSearch = computed(
     Boolean(keyword.value) ||
     filters.value.statuses.length > 0 ||
     Boolean(filters.value.customerNames?.length) ||
-    Boolean(filters.value.startDate),
+    Boolean(filters.value.startDate) ||
+    Boolean(filters.value.endDate),
 );
 
 const customerName = computed(() => customer.value?.organizationName ?? "");
@@ -197,7 +198,8 @@ const heading = computed(() => {
     : t("sales_rep.customer_orders.page.title_fallback");
 });
 
-// flush: "sync" resets the page before the variables watcher runs, so a sort change fires one request, not two.
+// Sorting starts over from the first page. (Apollo collapses the two variable changes into one request on
+// its own — the sync flush only keeps `page` and `sort` consistent within the same tick.)
 watch(
   sortRule,
   () => {

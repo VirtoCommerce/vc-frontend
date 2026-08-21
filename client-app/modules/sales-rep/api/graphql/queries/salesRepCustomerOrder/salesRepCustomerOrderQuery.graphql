@@ -3,5 +3,7 @@
 query SalesRepCustomerOrder($id: String!, $cultureName: String) {
   salesRepCustomerOrder(id: $id, cultureName: $cultureName) {
     ...fullOrderFields
+    organizationId
+    organizationName
   }
 }

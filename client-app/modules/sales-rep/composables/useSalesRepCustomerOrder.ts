@@ -16,7 +16,7 @@ import type { MaybeRefOrGetter } from "vue";
 export function useSalesRepCustomerOrder(orderId: MaybeRefOrGetter<string>) {
   const variables = computed(() => ({ id: toValue(orderId), cultureName: globals.cultureName }));
 
-  const { result, loading, error, onError } = useSalesRepHubQuery(SalesRepCustomerOrderDocument, variables, {
+  const { result, loading, onError } = useSalesRepHubQuery(SalesRepCustomerOrderDocument, variables, {
     fetchPolicy: HUB_FETCH_POLICY,
   });
 
@@ -36,7 +36,6 @@ export function useSalesRepCustomerOrder(orderId: MaybeRefOrGetter<string>) {
     order,
     loading,
     notFound,
-    failed: computed(() => Boolean(error.value)),
     ...useOrderView(order),
   };
 }

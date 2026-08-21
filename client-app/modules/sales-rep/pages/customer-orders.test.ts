@@ -199,15 +199,13 @@ describe("CustomerOrders", () => {
     ]);
   });
 
-  it("offers the customer filter only where the list spans customers", async () => {
+  // Whether customers are offered at all is decided by the composable, which only requests that facet on the
+  // all-customers route (pinned in useSalesRepCustomerOrders.test.ts) — the page just passes them through.
+  it("passes the customers the listed orders belong to, with their counts, to the panel", async () => {
+    state.hasCustomer.value = false;
     state.customerOptions.value = [{ name: "ACME", label: "ACME", count: 3 }];
 
     const wrapper = createWrapper();
-    await flushPromises();
-
-    expect(stub(wrapper, "sales-rep-orders-filters-stub").props().customers).toEqual([]);
-
-    state.hasCustomer.value = false;
     await flushPromises();
 
     expect(stub(wrapper, "sales-rep-orders-filters-stub").props().customers).toEqual([

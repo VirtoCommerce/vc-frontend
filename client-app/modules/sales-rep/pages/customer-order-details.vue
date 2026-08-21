@@ -157,7 +157,6 @@ import { OrderLineItems, OrderStatus } from "@/shared/account";
 import { AcceptedGifts, OrderCommentSection, OrderSummary } from "@/shared/checkout";
 import { BOPIS_CODE } from "@/shared/checkout/composables/useBopis";
 import { AddressInfo, VendorName } from "@/shared/common";
-import { useSalesRepCustomer } from "../composables/useSalesRepCustomer";
 import { useSalesRepCustomerOrder } from "../composables/useSalesRepCustomerOrder";
 import { CUSTOMER_ORDERS_ROUTE_NAME, CUSTOMER_PROFILE_ROUTE_NAME, MY_CUSTOMERS_ROUTE_NAME } from "../constants";
 import type { RouteLocationRaw } from "vue-router";
@@ -185,9 +184,9 @@ const {
   allItemsAreDigital,
 } = useSalesRepCustomerOrder(() => props.orderId);
 
-const { customer } = useSalesRepCustomer(() => props.organizationId);
-
-const customerName = computed(() => customer.value?.organizationName ?? "");
+// Read off the order itself rather than looking the customer up again: a second query would cost a round trip
+// and would name whichever customer the URL happened to carry, not the one the order belongs to.
+const customerName = computed(() => order.value?.organizationName ?? "");
 
 const isCancelled = computed(
   () => String(order.value?.status).toLowerCase() === String(OrderStatusCode.CANCELLED).toLowerCase(),

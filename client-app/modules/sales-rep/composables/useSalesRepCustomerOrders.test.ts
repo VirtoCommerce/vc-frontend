@@ -173,7 +173,7 @@ describe("useSalesRepCustomerOrders", () => {
         status: "New",
         statusDisplayValue: "New",
         customerId: "rep-1",
-        total: { amount: 1200, formattedAmount: "$1,200.00", currency: { code: "USD", symbol: "$" } },
+        total: { formattedAmount: "$1,200.00" },
       },
       // number, organizationName and status absent on the wire; placed by someone else
       {
@@ -182,7 +182,7 @@ describe("useSalesRepCustomerOrders", () => {
         organizationId: "org-1",
         createdDate: "2026-05-18T00:00:00Z",
         customerId: "another-rep",
-        total: { amount: 0, formattedAmount: "", currency: { code: "USD", symbol: "$" } },
+        total: { formattedAmount: "" },
       },
     ]);
 
@@ -223,13 +223,13 @@ describe("useSalesRepCustomerOrders", () => {
         {
           name: "status",
           terms: [
-            { term: "New", label: "New", count: 1, isSelected: false },
-            { term: "Completed", label: "Completed", count: 2, isSelected: false },
+            { term: "New", label: "New", count: 1 },
+            { term: "Completed", label: "Completed", count: 2 },
           ],
         },
         {
           name: "organizationname",
-          terms: [{ term: "ACME", label: "ACME", count: 3, isSelected: false }],
+          terms: [{ term: "ACME", label: "ACME", count: 3 }],
         },
       ],
     );

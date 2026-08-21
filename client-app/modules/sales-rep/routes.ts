@@ -17,7 +17,7 @@ import {
   ROUTE_SEGMENT,
   SALES_REP_ACCESS_PERMISSION,
 } from "./constants";
-import type { NavigationGuardNext, RouteLocationNormalized, RouteRecordRaw } from "vue-router";
+import type { NavigationGuard, RouteRecordRaw } from "vue-router";
 
 const SalesRepsPage = () => import("./pages/sales-reps.vue");
 const CustomerOrdersPage = () => import("./pages/customer-orders.vue");
@@ -44,6 +44,25 @@ function guardSalesRep(next: (to?: { name: string }) => void): boolean {
 // guards below still enforce reps-only access. VCST-5494.
 const repRouteMeta = { requiresOrganization: false };
 
+const guardCustomerRoute: NavigationGuard = (to, _from, next) => {
+  if (!guardSalesRep(next)) {
+    return;
+  }
+  const id = to.params.organizationId;
+  if (id && typeof id === "string") {
+    next();
+  } else {
+    next({ name: MY_CUSTOMERS_ROUTE_NAME });
+  }
+};
+
+// Reps only, with no customer id to check.
+const guardRepRoute: NavigationGuard = (_to, _from, next) => {
+  if (guardSalesRep(next)) {
+    next();
+  }
+};
+
 // Relative path -> mounts under the "Company" parent (/company/sales-reps).
 export const salesRepsRoute: RouteRecordRaw = {
   path: ROUTE_SEGMENT,
@@ -57,12 +76,8 @@ export const dashboardRoute: RouteRecordRaw = {
   name: DASHBOARD_ROUTE_NAME,
   component: DashboardPage,
   meta: repRouteMeta,
-  // Reps only — non-reps who hit the URL directly are bounced to the account dashboard.
-  beforeEnter(_to, _from, next) {
-    if (guardSalesRep(next)) {
-      next();
-    }
-  },
+  // Non-reps who hit the URL directly are bounced to the account dashboard.
+  beforeEnter: guardRepRoute,
 };
 
 export const myCustomersRoute: RouteRecordRaw = {
@@ -70,26 +85,10 @@ export const myCustomersRoute: RouteRecordRaw = {
   name: MY_CUSTOMERS_ROUTE_NAME,
   component: MyCustomersPage,
   meta: repRouteMeta,
-  // Reps only — non-reps who hit the URL directly are bounced to the dashboard.
-  beforeEnter(_to, _from, next) {
-    if (guardSalesRep(next)) {
-      next();
-    }
-  },
+  beforeEnter: guardRepRoute,
 };
 
 // Reps-only gate + deep-link id check; the not-served/unknown-org case is handled on the page.
-function guardCustomerRoute(to: RouteLocationNormalized, next: NavigationGuardNext): void {
-  if (!guardSalesRep(next)) {
-    return;
-  }
-  const id = to.params.organizationId;
-  if (id && typeof id === "string") {
-    next();
-  } else {
-    next({ name: MY_CUSTOMERS_ROUTE_NAME });
-  }
-}
 
 // Customer profile (VCST-5308) -> /company/my-customers/:organizationId.
 export const customerProfileRoute: RouteRecordRaw = {
@@ -98,9 +97,7 @@ export const customerProfileRoute: RouteRecordRaw = {
   component: CustomerProfilePage,
   props: true,
   meta: repRouteMeta,
-  beforeEnter(to, _from, next) {
-    guardCustomerRoute(to, next);
-  },
+  beforeEnter: guardCustomerRoute,
 };
 
 // The customer's whole order history (VCST-5733) -> /company/my-customers/:organizationId/orders.
@@ -110,9 +107,7 @@ export const customerOrdersRoute: RouteRecordRaw = {
   component: CustomerOrdersPage,
   props: true,
   meta: repRouteMeta,
-  beforeEnter(to, _from, next) {
-    guardCustomerRoute(to, next);
-  },
+  beforeEnter: guardCustomerRoute,
 };
 
 // One of those orders, read-only -> /company/my-customers/:organizationId/orders/:orderId.
@@ -122,9 +117,7 @@ export const customerOrderRoute: RouteRecordRaw = {
   component: CustomerOrderDetailsPage,
   props: true,
   meta: repRouteMeta,
-  beforeEnter(to, _from, next) {
-    guardCustomerRoute(to, next);
-  },
+  beforeEnter: guardCustomerRoute,
 };
 
 // Every served customer's orders (VCST-5733) -> /company/customer-orders. No customer in the route, so the
@@ -134,10 +127,5 @@ export const allCustomerOrdersRoute: RouteRecordRaw = {
   name: ALL_CUSTOMER_ORDERS_ROUTE_NAME,
   component: CustomerOrdersPage,
   meta: repRouteMeta,
-  // Reps only — no customer id to check, so the shared guard is used directly.
-  beforeEnter(_to, _from, next) {
-    if (guardSalesRep(next)) {
-      next();
-    }
-  },
+  beforeEnter: guardRepRoute,
 };

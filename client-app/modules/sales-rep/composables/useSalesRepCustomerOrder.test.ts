@@ -64,15 +64,6 @@ describe("useSalesRepCustomerOrder", () => {
     expect(notFound.value).toBe(true);
   });
 
-  it("reports a failed read", () => {
-    const { failed } = useSalesRepCustomerOrder("o-1");
-
-    expect(failed.value).toBe(false);
-
-    queryMock.error.value = new Error("denied");
-    expect(failed.value).toBe(true);
-  });
-
   // The page renders the order through the storefront's own components, so it needs the same derived state.
   it("derives the same item splits the buyer-facing order page uses", () => {
     const { giftItems, mainCurrencyOrderItems } = useSalesRepCustomerOrder("o-1");
