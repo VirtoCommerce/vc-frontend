@@ -1,0 +1,23 @@
+query GetStorePlugins($domain: String!) {
+  store(domain: $domain) {
+    plugins(appId: "vc-frontend") {
+      id
+      version
+      permission
+      entry {
+        type
+        path
+        hash
+      }
+      contentFiles {
+        type
+        path
+        hash
+      }
+      remote {
+        name
+        exposed
+      }
+    }
+  }
+}

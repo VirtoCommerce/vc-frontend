@@ -1,7 +1,7 @@
 import { createHead } from "@unhead/vue/client";
 import { DefaultApolloClient } from "@vue/apollo-composable";
 import { createApp, h, provide } from "vue";
-import { apolloClient, getPageContext, initializeApplication } from "@/core/api/graphql";
+import { apolloClient, getPageContext, getStorePlugins, initializeApplication } from "@/core/api/graphql";
 import { GetSlugInfoDocument } from "@/core/api/graphql/types";
 import {
   useCurrency,
@@ -147,9 +147,8 @@ export default async () => {
     : globalThis.location.hostname;
   const userId = (await getUcpHandoffUserId()) ?? savedUserId.value;
 
-  let initialStore: Awaited<ReturnType<typeof initializeApplication>> | undefined;
   try {
-    initialStore = await initializeApplication(domain);
+    const initialStore = await initializeApplication(domain);
     setModules(initialStore?.settings?.modules);
   } catch (e) {
     Logger.warn("Failed to verify backend module versions", e);
@@ -267,12 +266,10 @@ export default async () => {
   void initLoyalty(router, i18n);
   void initSalesRep(router, i18n);
 
-  // Module Federation host: load federated plugins if APP_MODULES_FEDERATION_ENABLED is on.
   // Awaited before app.use(router) so plugin routes exist for the first navigation.
-  // The plugin list rides along on the boot store query; the user is already set, so a
-  // permission-gated plugin is evaluated against real claims.
+  // The user is already set, so a permission-gated plugin is evaluated against real claims.
   const federatedModulesReady = startFederatedModules({
-    plugins: initialStore?.plugins,
+    fetchPlugins: () => getStorePlugins(domain),
     hasPermission: checkPermissions,
   });
 

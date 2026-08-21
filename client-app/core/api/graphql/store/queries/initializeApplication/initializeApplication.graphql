@@ -11,24 +11,5 @@ query InitializeApplication($domain: String!) {
         }
       }
     }
-    plugins(appId: "vc-frontend") {
-      id
-      version
-      permission
-      entry {
-        type
-        path
-        hash
-      }
-      contentFiles {
-        type
-        path
-        hash
-      }
-      remote {
-        name
-        exposed
-      }
-    }
   }
 }

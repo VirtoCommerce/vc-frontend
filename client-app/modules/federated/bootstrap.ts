@@ -1,11 +1,11 @@
 import { Logger } from "@/core/utilities";
 import { ignoreChunkLoadFailure } from "@/core/utilities/optional-chunk";
 import { isMfFlagEnabled } from "@/core-api/federation.mjs";
-import type { IPlatformPlugin } from "./index";
+import type { IFederatedLoaderOptions, IPlatformPlugin } from "./index";
 
-interface IStartOptions {
-  plugins?: readonly IPlatformPlugin[];
-  hasPermission?: (permission: string) => boolean;
+interface IStartOptions extends Pick<IFederatedLoaderOptions, "hasPermission"> {
+  /** A function, not a list, so the flag check below is the only thing that can issue the query. */
+  fetchPlugins?: () => Promise<readonly IPlatformPlugin[] | undefined>;
 }
 
 /**
@@ -50,8 +50,14 @@ export async function startFederatedModules(options?: IStartOptions): Promise<vo
   // degrades to "no plugins" and can never break boot.
   const work = (async () => {
     try {
-      const { initFederatedModules } = await import("./index");
-      await initFederatedModules(options);
+      const [plugins, { initFederatedModules }] = await Promise.all([
+        options?.fetchPlugins?.().catch((error) => {
+          Logger.error("[MF] Could not read the platform's plugin list", error);
+          return undefined;
+        }),
+        import("./index"),
+      ]);
+      await initFederatedModules({ plugins, hasPermission: options?.hasPermission });
     } catch (error) {
       // A loader-chunk fetch failure degrades to "no plugins" here, not to a reload.
       ignoreChunkLoadFailure(error);
