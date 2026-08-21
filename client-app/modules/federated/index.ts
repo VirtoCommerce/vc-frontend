@@ -5,7 +5,7 @@ import { checkHostCompatibility } from "./version-gate";
 
 /**
  * Host-side loader for Module Federation plugins. For each configured
- * remote: read its manifest, version-check it, `loadRemote` its `./plugin` expose, and
+ * remote: read its manifest, version-check it, `loadRemote` its declared expose, and
  * call `init()`. Plugins bind to the host's live services via the shared facade.
  * - Version safety: an incompatible remote is skipped before any of its code runs.
  * - Isolation: one bad remote can't abort the others; outcomes are logged/returned.
@@ -17,12 +17,12 @@ import { checkHostCompatibility } from "./version-gate";
  *   13s). bootstrap.ts additionally holds a BOOT_BACKSTOP_MS above that sum — a true
  *   backstop that fires only when these budgets malfunction or the loader chunk fetch
  *   itself hangs; keep it > manifest + 2×load when changing the defaults here.
- * Discovery has two sources: the platform's plugin list (xAPI `store.plugins`, passed in by the
+ * Discovery has two sources: the platform's plugin list (xAPI `store.plugins`, fetched by the
  * caller) and `APP_MODULES_FEDERATION_REMOTES`, which wins when set so a local remote is never
  * overridden by what the backend serves. The harness ships no built-in remote.
  */
 
-/** The contract every federated plugin's `./plugin` expose must satisfy. */
+/** The contract every federated plugin's declared expose must satisfy. */
 interface IFederatedPlugin {
   init?: () => void | Promise<void>;
 }
@@ -64,8 +64,8 @@ export interface IFederatedLoaderOptions {
   /** What the platform advertises for this store; ignored when the env override is set. */
   plugins?: readonly IPlatformPlugin[];
   /**
-   * The platform serves one cached list to every caller and does not filter it per user, so a
-   * declared permission is gated here. No callback + declared permission => skipped (fail closed).
+   * xAPI does not filter the list per user, so a declared permission is gated here.
+   * No callback + declared permission => skipped (fail closed).
    */
   hasPermission?: (permission: string) => boolean;
   /** Budget for reading one remote's manifest JSON; exceeded => skipped (fail closed). */
@@ -118,12 +118,13 @@ async function raceWithLateLogging<T>(work: Promise<T>, ms: number, label: strin
 }
 
 /**
- * Remote code executes with full app privileges, so the entry URL must not be
- * downgradable: https only, with http allowed solely for localhost development.
- * NOTE: this validates the MANIFEST url only. The manifest then declares its own
- * remoteEntry.js/chunk URLs, which loadRemote fetches as-is — they are NOT re-checked
- * here. The trust boundary is therefore the configured remote: whoever controls that
- * https manifest is trusted to point at code URLs of their choosing.
+ * The env override is the only cross-origin path, so its entry must not be downgradable: https
+ * only, with http allowed solely for localhost development. Platform entries answer to
+ * isSameOrigin instead.
+ * NOTE: either way this validates the MANIFEST url only. The manifest then declares its own
+ * remoteEntry.js/chunk URLs, which loadRemote fetches as-is — they are NOT re-checked, so a
+ * same-origin manifest can still point at code elsewhere. Whoever controls the manifest is
+ * trusted to choose its code URLs.
  */
 function isAllowedRemoteUrl(entry: string): boolean {
   let url: URL;
@@ -146,28 +147,24 @@ interface IResolvedRemotes {
   invalidNames: string[];
 }
 
-/** Assumed only on the env path, where no descriptor declares an expose key. */
+/** Assumed on the env path only — no env descriptor declares an expose key. */
 const SCAFFOLD_EXPOSE_KEY = "./plugin";
 const PLATFORM_EXPOSE_KEY = "./Module";
 const MF_MANIFEST_FILE = "mf-manifest.json";
 
 /**
- * Parses and validates APP_MODULES_FEDERATION_REMOTES. The full entry-URL contract
- * lives HERE (every discovery source must route through this function, not just
- * isAllowedRemoteUrl): the value must be a string, an allowed https/localhost URL, and
- * contain ".json" — the MF runtime decides manifest-vs-remoteEntry by that substring
- * (isPureRemoteEntry in @module-federation/runtime-core does `!entry.includes(".json")`),
- * so a manifest URL without it would pass the version gate (it fetches fine as JSON)
- * but then be <script>-loaded as JS by loadRemote — a SyntaxError far from the real
- * cause. Rejected here, at configuration time, with the real reason instead.
+ * Parses and validates APP_MODULES_FEDERATION_REMOTES: a string, an allowed https/localhost URL,
+ * and it must contain ".json" — the MF runtime picks manifest-vs-remoteEntry by that substring
+ * (isPureRemoteEntry does `!entry.includes(".json")`), so a manifest URL without it passes the
+ * version gate and is then <script>-loaded as JS, failing far from the cause. The platform path
+ * satisfies the same rule by building MF_MANIFEST_FILE; keep it that way.
  */
 function resolveEnvRemotes(): IResolvedRemotes | undefined {
   const resolved: IResolvedRemotes = { remotes: [], invalidNames: [] };
   const raw = import.meta.env.APP_MODULES_FEDERATION_REMOTES;
   if (!raw) {
-    // Not configured -> let the platform list decide. A CONFIGURED but unusable value still
-    // returns a (possibly empty) result below, so a typo surfaces as skips instead of being
-    // papered over by whatever the backend serves.
+    // Unset -> platform list. Set but unusable still returns below, so a typo surfaces as
+    // skips rather than being papered over by whatever the backend serves.
     return undefined;
   }
 
@@ -206,6 +203,19 @@ function resolveEnvRemotes(): IResolvedRemotes | undefined {
   return resolved;
 }
 
+/**
+ * The platform serves plugin files from the storefront's own origin, so that — not the scheme — is
+ * the check for a platform entry. `toAbsoluteUrl` ignores its base for an already-absolute or
+ * protocol-relative path, so without this a descriptor could name any host.
+ */
+function isSameOrigin(url: string): boolean {
+  try {
+    return new URL(url).origin === globalThis.location.origin;
+  } catch {
+    return false;
+  }
+}
+
 /** The `$(ModuleId)` token in a platform path must survive verbatim — the platform's routes contain it. */
 function toAbsoluteUrl(path: string): string | undefined {
   try {
@@ -238,8 +248,8 @@ function collectStyles(plugin: IPlatformPlugin): string[] {
       continue;
     }
     const url = toAbsoluteUrl(file.path);
-    if (!url || !isAllowedRemoteUrl(url)) {
-      Logger.error(`[MF] Ignoring stylesheet "${file.path}" of plugin "${plugin.id}": not a usable https URL`);
+    if (!url || !isSameOrigin(url)) {
+      Logger.error(`[MF] Ignoring stylesheet "${file.path}" of plugin "${plugin.id}": not same-origin`);
       continue;
     }
     styles.push(withCacheBuster(url, file.hash));
@@ -279,8 +289,8 @@ function resolvePlatformRemotes(plugins: readonly IPlatformPlugin[]): IResolvedR
       continue;
     }
     const entryUrl = toAbsoluteUrl(path);
-    if (!entryUrl || !isAllowedRemoteUrl(entryUrl)) {
-      Logger.error(`[MF] Skipping plugin "${plugin.id}": entry "${path}" is not a usable https URL`);
+    if (!entryUrl || !isSameOrigin(entryUrl)) {
+      Logger.error(`[MF] Skipping plugin "${plugin.id}": entry "${path}" is not same-origin`);
       resolved.invalidNames.push(name);
       continue;
     }

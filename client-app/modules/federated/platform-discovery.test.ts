@@ -161,4 +161,34 @@ describe("platform-served plugin discovery", () => {
     expect(result.loaded).toEqual(["local"]);
     expect(loadRemoteMock).toHaveBeenCalledWith("local/plugin");
   });
+  it.each([
+    ["an absolute foreign URL", "https://evil.example/plugins/remoteEntry.js"],
+    ["a protocol-relative URL", "//evil.example/plugins/remoteEntry.js"],
+  ])("skips a plugin whose entry path is %s", async (_label, path) => {
+    const fetchMock = stubManifestFetch();
+
+    const result = await initFederatedModules({
+      plugins: [platformPlugin({ entry: { type: "script", path, hash: "CC33" } })],
+    });
+
+    expect(result.skipped).toEqual(["sales-rep"]);
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(registerRemotesMock).not.toHaveBeenCalled();
+    expect(loadRemoteMock).not.toHaveBeenCalled();
+  });
+
+  it("ignores a stylesheet served from another origin", async () => {
+    stubManifestFetch();
+
+    const result = await initFederatedModules({
+      plugins: [
+        platformPlugin({
+          contentFiles: [{ type: "style", path: "https://evil.example/theme.css", hash: "DD44" }],
+        }),
+      ],
+    });
+
+    expect(result.loaded).toEqual(["sales-rep"]);
+    expect(document.head.querySelectorAll("link")).toHaveLength(0);
+  });
 });
