@@ -85,9 +85,11 @@ Still open:
       Tailwind `prefix` (rejected on DX), `@scope` (rejected — `<Teleport>` escapes the scope root),
       and `<style scoped>` + `@apply` with no global layer (rejected — a plugin that is three widgets
       has nowhere to put shared styles), which was the PR #2372 prototype that is not landing.
-- [x] **Name-collision dedup** — first descriptor wins, the rest are skipped with a loud log.
-      Previously both were registered (`{ force: true }` keeps the last) and both loaded, so one
-      plugin's code never ran while still being reported as loaded.
+- [x] **Name-collision dedup** — the first descriptor to survive validation wins; a later plugin
+      claiming the same name is reported in `skipped` under its own id, since the contested name
+      belongs to the winner. Previously both were registered and both loaded, so one plugin's code
+      never ran while still being reported as loaded. `{ force: true }` has since been dropped from
+      `registerRemotes` — see below.
 
 ## 3. Artifact integrity for remote code
 
@@ -218,7 +220,9 @@ authorization moved to #1 — it likely blocks the pilot.)
 - **Multi-store vs env granularity** — one env/backend serves many stores → per-store remote
   lists but a per-env ingress CSP that must allowlist the *union* of every store's origins.
 - **Discovery depends on x-api ≥ 3.1016.0** — an older backend cannot answer `store.plugins`, so
-  discovery fails closed to no-remotes. Its own query keeps that failure off the boot store query.
+  discovery fails closed to no-remotes. Its own query keeps that failure off the boot store query,
+  and `SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT` keeps it off the user's screen — without that context
+  the global handler broadcasts a generic error toast to every open tab.
 
 ## 7. Facade surface review (ongoing guard rails)
 

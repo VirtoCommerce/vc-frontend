@@ -212,7 +212,9 @@ gaps it found are tracked in `TODO.md`):
 - **Precedence is underspecified.** Define one canonical `resolveRemotes()` resolution + a
   truth table over {theme switch × store `Enabled` × store list × `APP_MODULES_FEDERATION_REMOTES`}:
   present-vs-empty, replace-vs-merge, and **name-collision dedup**
-  (`registerRemotes({force:true})` silently overrides a duplicate). **Decided:** local
+  (`registerRemotes({force:true})` silently overrides a duplicate — since corrected: `force` is no
+  longer passed, because without it a known name is a no-op while `force` tears the remote down and
+  re-runs its `init()`). **Decided:** local
   `APP_MODULES_FEDERATION_REMOTES` **overrides** the runtime setting (true dev/local override).
 - **Say "provider/hosting-agnostic," not "host-agnostic."** Authoring is coupled to this
   host's `@vc-frontend/core` + `./plugin` + `requiredHostVersion`; external authorship

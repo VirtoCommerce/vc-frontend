@@ -376,8 +376,14 @@ decision for the storefront. What the harness enforces today:
 - **Same-origin platform entries** — a platform descriptor may only name the storefront's own
   origin; an absolute or protocol-relative URL pointing elsewhere is skipped, entries and
   stylesheets alike. The env override is the only way to load cross-origin code, and it is
-  build-time. This bounds the *descriptor*, not the manifest's contents: a same-origin manifest
-  may still declare chunk URLs on another host, and the MF runtime fetches those unchecked.
+  build-time. The manifest *response* is re-checked too, since `fetch` follows redirects and a
+  same-origin entry could otherwise land off-origin. What this does not bound is the manifest's
+  contents: a same-origin manifest may still declare chunk URLs on another host, and the MF runtime
+  fetches those unchecked.
+- **No silent host-route takeover** — `router.addRoute` evicts whatever root-level route already
+  carries the new record's name, and vue-router's warning for it is dev-only. For the span of a
+  plugin's `init()` the loader refuses a claim on a name that already resolves. It covers takeover,
+  not authorization, and only inside that window.
 - **No tenant-editable remote list** — there is no store setting to edit. The runtime list is
   whatever modules are installed, so a platform administrator with install rights decides which
   plugins the storefront loads; the env override stays build-time. It is still backend-supplied
