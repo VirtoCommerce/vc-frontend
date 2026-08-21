@@ -166,7 +166,7 @@ describe("initFederatedModules", () => {
 
     const result = await initFederatedModules();
 
-    expect(registerRemotesMock).toHaveBeenCalledWith([{ name: "news", entry: REMOTE_URL }], { force: true });
+    expect(registerRemotesMock).toHaveBeenCalledWith([{ name: "news", entry: REMOTE_URL }]);
     expect(loadRemoteMock).toHaveBeenCalledWith("news/plugin");
     expect(initMock).toHaveBeenCalledOnce();
     expect(result).toEqual({ loaded: ["news"], failed: [], skipped: [] });

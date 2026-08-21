@@ -160,6 +160,7 @@ const SCAFFOLD_EXPOSE_KEY = "./plugin";
 const PLATFORM_EXPOSE_KEY = "./Module";
 const MF_MANIFEST_FILE = "mf-manifest.json";
 const PLATFORM_SCRIPT_ENTRY_TYPE = "script";
+const PLATFORM_STYLE_FILE_TYPE = "style";
 
 /**
  * Parses and validates APP_MODULES_FEDERATION_REMOTES: a string, an allowed https/localhost URL,
@@ -253,7 +254,13 @@ function withCacheBuster(url: string, hash?: string | null): string {
 function collectStyles(plugin: IPlatformPlugin): string[] {
   const styles: string[] = [];
   for (const file of plugin.contentFiles ?? []) {
-    if (file?.type !== "style" || !file.path) {
+    if (!file?.path) {
+      continue;
+    }
+    // The platform documents these kinds as lower-case by contract, but a dropped stylesheet is
+    // invisible otherwise: the plugin loads and renders unstyled with nothing to point at.
+    if (file.type?.toLowerCase() !== PLATFORM_STYLE_FILE_TYPE) {
+      Logger.info(`[MF] Plugin "${plugin.id}": ignoring content file of kind "${file.type}"`);
       continue;
     }
     const url = toAbsoluteUrl(file.path);
@@ -302,21 +309,15 @@ function resolvePlatformRemotes(plugins: readonly IPlatformPlugin[]): IResolvedR
 
   for (const plugin of plugins) {
     const name = plugin.remote?.name || plugin.id;
-    // MF keeps only the last registration of a name, but the load loop still runs per
-    // descriptor: the loser's code never executes yet would be reported as loaded.
-    if (seen.has(name)) {
-      Logger.error(`[MF] Skipping plugin "${plugin.id}": remote name "${name}" is already taken`);
-      continue;
-    }
-    seen.add(name);
     const path = plugin.entry?.path;
     if (!path) {
       Logger.error(`[MF] Skipping plugin "${plugin.id}": the platform declared no entry path`);
       resolved.invalidNames.push(name);
       continue;
     }
-    // Only a script entry is an MF remote; anything else would be loaded as one by mistake.
-    const type = plugin.entry?.type;
+    // Only a script entry is an MF remote; anything else would be loaded as one by mistake. An
+    // absent type is accepted: the platform declares the field optional.
+    const type = plugin.entry?.type?.toLowerCase();
     if (type && type !== PLATFORM_SCRIPT_ENTRY_TYPE) {
       Logger.error(`[MF] Skipping plugin "${plugin.id}": entry type "${type}" is not supported`);
       resolved.invalidNames.push(name);
@@ -328,6 +329,16 @@ function resolvePlatformRemotes(plugins: readonly IPlatformPlugin[]): IResolvedR
       resolved.invalidNames.push(name);
       continue;
     }
+    // Claimed only now: a descriptor rejected above must not hold a name against a later, valid
+    // plugin. MF keeps only the last registration of a name while the load loop still runs per
+    // descriptor, so the loser's code would never execute yet be reported as loaded — it is
+    // reported by id instead, since the name itself belongs to the winner.
+    if (seen.has(name)) {
+      Logger.error(`[MF] Skipping plugin "${plugin.id}": remote name "${name}" is already taken`);
+      resolved.invalidNames.push(plugin.id);
+      continue;
+    }
+    seen.add(name);
     resolved.remotes.push({
       name,
       entry: withCacheBuster(toManifestUrl(entryUrl), plugin.entry?.hash),
@@ -402,6 +413,11 @@ async function isCompatible(remote: IRemoteDescriptor, manifestTimeoutMs: number
         // even if a fetch implementation ignores the signal.
         signal: AbortSignal.timeout(manifestTimeoutMs),
       });
+      // The descriptor was checked for origin, the response was not: redirects are followed, so a
+      // same-origin entry can still land off-origin. A same-origin redirect stays allowed.
+      if (response.url && !isSameOrigin(response.url)) {
+        throw new Error(`manifest for "${remote.name}" redirected off-origin to ${response.url}`);
+      }
       if (!response.ok) {
         throw new Error(`manifest HTTP ${response.status}`);
       }
@@ -502,14 +518,14 @@ export async function initFederatedModules(options?: IFederatedLoaderOptions): P
   }
 
   try {
-    registerRemotes(
-      compatible.map((remote) => ({ name: remote.name, entry: remote.entry })),
-      // Re-registering the same remote across HMR reloads must not throw.
-      { force: true },
-    );
+    // No `force`: re-registering a known name is already a silent no-op in the MF runtime, while
+    // `force` tears the remote down first (module cache, global entry name, share scope) and a
+    // second boot would then re-run the plugin's module scope and its init().
+    registerRemotes(compatible.map((remote) => ({ name: remote.name, entry: remote.entry })));
   } catch (error) {
-    // Registration is all-or-nothing, so a throw here fails every compatible remote at
-    // once — but it must still resolve (not reject) to keep the "never rejects" contract.
+    // registerRemotes registers one remote at a time, so a throw can leave earlier ones registered;
+    // every compatible remote is still reported failed, and this must resolve (not reject) to keep
+    // the "never rejects" contract.
     compatible.forEach((remote) => result.failed.push(remote.name));
     Logger.error("[MF] registerRemotes failed", error);
     reportOutcome(result, versions);
@@ -544,7 +560,9 @@ export async function initFederatedModules(options?: IFederatedLoaderOptions): P
           // contract; its module scope ran, but nothing registered anything.
           Logger.warn(`[MF] "${remote.name}" exposes no init() — nothing was registered`);
         }
-        // Only now: a plugin that failed must leave no CSS behind.
+        // Only now, so a failed plugin leaves no `contentFiles` link behind. A Vite-built plugin
+        // ships its CSS inside its own chunks, which arrive during loadRemote and are not ours to
+        // withhold or roll back.
         injectStyles(remote.styles);
         result.loaded.push(remote.name);
       } catch (error) {

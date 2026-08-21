@@ -43,12 +43,17 @@ separate from the host repo:
 
 ```
 my-plugin/
+├── public/
+│   └── plugin.json       # tells the platform the expose key (step 5)
 ├── src/
 │   ├── index.ts          # the plugin entry: exports init()
-│   └── pages/MyPage.vue
+│   └── pages/my-page.vue
 ├── vite.config.ts
 └── package.json
 ```
+
+Version pins below are illustrative — the generator copies the host's own, so read them from the
+output rather than from here.
 
 In `package.json`: pin the facade to its **versioned tarball URL** — a Release asset
 of the (public) host repo, published by the *Core Facade Release* workflow. No
@@ -59,7 +64,7 @@ your code imports** as dev dependencies — Vue included:
 ```jsonc
 {
   "dependencies": {
-    "@vc-frontend/core": "https://github.com/VirtoCommerce/vc-frontend/releases/download/core-v1.0.0/vc-frontend-core-1.0.0.tgz",
+    "@vc-frontend/core": "https://github.com/VirtoCommerce/vc-frontend/releases/download/core-v<CORE_VERSION>/vc-frontend-core-<CORE_VERSION>.tgz",
   },
   "devDependencies": {
     // compile-time only - NOTHING below ships in your bundle (import: false);
@@ -124,6 +129,9 @@ export default defineConfig({
   ],
   build: { target: "esnext" }, // MF entry uses top-level await
   server: { port: 3001, cors: true, origin: "http://localhost:3001" },
+  // `yarn preview` needs this too: Vite 7 defaults preview CORS to off, and the host fetches
+  // your manifest cross-origin.
+  preview: { cors: true },
 });
 ```
 
@@ -260,7 +268,8 @@ scaffolder already wrote it as `public/plugin.json`, which Vite copies into `dis
 
 1. Build and upload `dist/` (manifest + chunks) to trusted **https** hosting.
 2. Add the manifest URL to the host's `APP_MODULES_FEDERATION_REMOTES` and rebuild the host.
-3. Add the plugin origin to the storefront CSP (`script-src`, `connect-src`).
+3. Add the plugin origin to the storefront CSP (`script-src`, `connect-src`, `style-src` — your
+   stylesheets arrive by URL too).
 
 ---
 

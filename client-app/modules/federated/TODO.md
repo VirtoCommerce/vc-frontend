@@ -13,11 +13,13 @@ Roughly in priority order.
 Prove the full loop (build → host → gate → `loadRemote` → `init`) with a real feature.
 Definition and rationale: *Pilot* section of the discovery spec.
 
-- [ ] **Publish the first facade release** — run the *Core Facade Release* workflow once
-      so the `core-v1.0.0` URL that fresh scaffolds pin actually resolves.
+- [ ] **Publish the first facade release** — run the *Core Facade Release* workflow once so the
+      `core-v<CORE_VERSION>` URL that fresh scaffolds pin actually resolves. The scaffolder reads the
+      host's current version, so do not hardcode one here.
 - [ ] Scaffold the plugin (`yarn create:plugin`) into `vc-module-sales-rep`, building into its
-      `plugins/vc-frontend/` folder so the platform advertises it (#2). Needs a `plugin.json`
-      declaring `exposed: "./plugin"` — the platform's default is `./Module`.
+      `plugins/vc-frontend/` folder so the platform advertises it (#2). The scaffolder emits the
+      `public/plugin.json` that declares `exposed: "./plugin"` — verify it lands in `dist/`, since
+      the platform's default is `./Module`.
 - [ ] **Plugin-repo CI guard:** fail the plugin build if the committed `@vc-frontend/core`
       value isn't the pinned release URL (catches a stray `file:`/`portal:`/yalc leak).
 - [ ] **Route authorization** — sales-rep is rep-only; plugin `addRoute` has no
@@ -76,8 +78,10 @@ Still open:
       globals that reach into its DOM (236 of 262 host SFC style blocks are global); and
       `plugin-overrides` on top makes a deliberate override deterministic without `!important`.
       The plugin author does nothing — plain utilities in templates, `@apply` in styles, no prefix.
-      Measured regression surface for moving the host's utilities into a top layer: **one** rule,
-      `shared/static-content/components/call-to-action.vue:3`. Earlier answers are superseded: a
+      Measured regression surface for moving the host's utilities into a top layer: **four** rules —
+      one to repair (`shared/static-content/components/call-to-action.vue:42`) and three that flip
+      toward the caller's intent (`<VcMarkdownRender class="text-sm">` twice,
+      `<ChangePasswordForm class="lg:w-1/2">` once). Earlier answers are superseded: a
       Tailwind `prefix` (rejected on DX), `@scope` (rejected — `<Teleport>` escapes the scope root),
       and `<style scoped>` + `@apply` with no global layer (rejected — a plugin that is three widgets
       has nowhere to put shared styles), which was the PR #2372 prototype that is not landing.
@@ -90,8 +94,15 @@ Still open:
 Remotes load over https from trusted hosting, but there is no integrity/signature check
 on the manifest or chunks (MF has no native SRI story). This also covers the known
 **TOCTOU** window: the gate fetches the manifest, then the MF runtime independently
-fetches it again for loading (its cache is not publicly seedable) — a redeploy between
-the two requests means validated ≠ executed, plus a second round trip per remote.
+fetches it again for loading — a redeploy between the two requests means validated ≠ executed,
+plus a second round trip per remote.
+
+- [ ] **Seed the validated manifest through the runtime's `fetch` loader hook.** Worth doing on its
+      own, independent of integrity. `SnapshotHandler.getManifestJson` emits
+      `loaderHook.lifecycle.fetch` before its own `fetch` and uses a returned `Response`, so an MF
+      host plugin that replies with the body the gate already read makes validated bytes == executed
+      bytes and removes the second round trip per remote. Earlier notes here claimed the cache was
+      not seedable; that was wrong.
 
 The 2026-07-06 review called this **a prerequisite for enabling runtime discovery in prod, not a
 later hardening pass**, on the grounds that a store-editable setting plus a mutable origin is a
@@ -122,7 +133,10 @@ section of the discovery spec.
 
 - [ ] Introduce the CSP at the nginx ingress (per-env, git+PR): `configuration-snippet`
       annotation or controller custom-headers ConfigMap.
-- [ ] **Path-scope** plugin origins (e.g. `script-src https://cdn.jsdelivr.net/gh/VirtoCommerce/`).
+- [ ] **Path-scope** plugin origins. Platform plugins are same-origin, so their baseline is a plain
+      `self`; path-scoping applies to the env-override/external-hosting case
+      (e.g. `script-src https://cdn.jsdelivr.net/gh/VirtoCommerce/`). The discovery spec's
+      *Security guard* section argued this for the abandoned external-CDN model — read it as history.
 - [ ] Validate configured remote origins against the env CSP (two-control-plane drift);
       surface CSP-blocked loads as a **distinct, observable** loader outcome.
 - [ ] Keep a build-time exact-URL allowlist as complementary defense-in-depth (CSP gates
@@ -164,8 +178,8 @@ third-party authors, runtime discovery, broad store rollout); the kill switch an
 two to treat as prerequisites for *that* stage (artifact integrity is not — see #3). (Route
 authorization moved to #1 — it likely blocks the pilot.)
 
-- **Inter-plugin isolation** — route-path collisions, duplicate remote names, extension-key
-  clobbering between plugins are unhandled (only host-vs-plugin isolation exists).
+- **Inter-plugin isolation** — route-path collisions and extension-key clobbering between plugins
+  are unhandled (only host-vs-plugin isolation exists). Duplicate remote names are handled — see #2.
 - **Kill switch** — killing a bad plugin means uninstalling its module (or a host rebuild when it
   came from the env override); there is no per-plugin toggle. Gate prod exposure on CSP.
 - **Boot cost ∝ N** — all remotes are manifest-fetched / loaded / `init`'d eagerly before

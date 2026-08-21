@@ -41,12 +41,13 @@ escape is `!important`.
 Native cascade layers, order declared once by the host:
 
 ```css
-@layer host-base, host-components, plugin, host-utilities, plugin-overrides;
+@layer host-base, vendor, host-components, plugin, host-utilities, plugin-overrides;
 ```
 
 | layer | contents |
 | --- | --- |
 | `host-base` | `preflight.scss` (`@tailwind base`) |
+| `vendor` | third-party CSS the host loads — `vendors.scss` (swiper, builder-io), lazily imported vendor sheets. Its own `<link>` in `index.html`, so without a slot it would stay unlayered and outrank everything |
 | `host-components` | host SCSS partials and SFC style blocks |
 | `plugin` | all of a plugin's CSS — its utilities and its component styles |
 | `host-utilities` | the host's `@tailwind utilities` |
@@ -55,7 +56,11 @@ Native cascade layers, order declared once by the host:
 Each position earns its place:
 
 - `plugin` **below** `host-utilities` — a plugin's copy of a host utility can never win on host
-  markup. Problem 1 is gone by construction, without prefixes.
+  markup. That closes the utility-copy channel without prefixes — but not every channel: a
+  plugin's ordinary global selector that happens to share a name with a host component class
+  (`.order-card`, `.currency-selector`, `.text-block` all exist) now beats the host's rule
+  deterministically, where today it is a load-order coin flip. Containing that is still convention
+  and `<style scoped>`, nothing structural.
 - `plugin` **above** `host-components` and `host-base` — `class="p-6"` in a plugin template beats
   preflight and beats the global host rules that reach into the plugin's own DOM. No silent no-ops,
   which is the failure mode that makes the reverse order unacceptable.
@@ -63,12 +68,15 @@ Each position earns its place:
   specificity games, and is opt-in by the act of putting the rule in that layer. That is the
   "deliberate" half of the requirement.
 
-A plugin author does nothing: plain `p-6` in templates, `@apply p-6` in styles, no prefixes, no
-wrapper markup. `@apply` never leaked in the first place — it inlines declarations into the
-plugin's own selector rather than shipping a copy of the class, so only template usage was ever the
-problem.
+A plugin author writes plain `p-6` in templates and `@apply p-6` in styles — no prefixes, no
+wrapper markup, no new syntax. The one thing to learn is where an override goes: the plugin's
+PostCSS step maps `src/overrides.css` (and only that file) to `plugin-overrides`, everything else to
+`plugin`. Deliberate overrides live in that file; nothing else reaches the top layer by accident.
 
-## Measured regression surface: one place
+`@apply` never leaked in the first place — it inlines declarations into the plugin's own selector
+rather than shipping a copy of the class, so only template usage was ever the problem.
+
+## Measured regression surface: four rules, one of them a repair
 
 Moving `@tailwind utilities` into a top layer means utilities start beating host component CSS.
 Scans over `client-app`, every hit hand-verified in the file:
@@ -83,7 +91,7 @@ Scans over `client-app`, every hit hand-verified in the file:
   `.my-customers`, `.order-card`, `.order-status`, `.text-block`, `.top-header-link`,
   `.top-header-organizations`, `.top-sellers`.
 - The one real specificity override is
-  `shared/static-content/components/call-to-action.vue:3` —
+  `shared/static-content/components/call-to-action.vue:42` —
   `.call-to-action-block.bg-neutral-800 .text-50 { color: white }`. It must move to a layer above
   `host-utilities` (or keep its win another way). The other four candidates
   (`products-block`, `products-carousel`, `slider`, `features`) use `&.bg-neutral-800` as a state
@@ -94,8 +102,10 @@ Scans over `client-app`, every hit hand-verified in the file:
   The two false positives were `card-labels` (`ml-6` vs `mt-5` — different sides) and
   `currency-selector` (`h-full` vs `h-full` — same value).
 
-Scan blind spot: only static `class="..."` attributes were parsed. `:class` bindings carrying a
-literal utility token are 27 of 3007 class-bearing attributes — 0.9%.
+Scan defects, for the record: line numbers the scans printed were counted inside the extracted
+`<style>` blocks rather than in the file, so treat any line number from them as approximate and
+re-locate by selector. Blind spot: only static `class="..."` attributes were parsed — `:class`
+bindings carrying a literal utility token are 27 of 3007 class-bearing attributes, 0.9%.
 
 `!important` is unaffected: important beats normal regardless of layer, so all 27 existing
 `!important` declarations keep working — including the ones that exist precisely to beat a utility.
@@ -137,6 +147,12 @@ literal utility token are 27 of 3007 class-bearing attributes — 0.9%.
   no name overlap either way — the SCSS `:root` blocks declare derived vars
   (`--body-bg-color: var(--color-body-bg, …)`) while the preset injects the source vars
   (`--color-body-bg`).
+- **A real plugin's CSS does not come through `contentFiles`.** The pilot bundle
+  (`vc-module-sales-rep/.../plugins/vc-frontend/`) ships 14 `assets/*.css` files referenced from its
+  own JS chunks, and its `plugin.json` declares no `contentFiles` at all — so the host's
+  `injectStyles` handles nothing, and the sheets arrive during `loadRemote`, before `init()`. The
+  layer this spec assigns to `plugin` therefore has to be applied by the plugin's own PostCSS step,
+  which is what the note below says; there is no host-side fallback for a plugin that skips it.
 - **Nothing else escapes the pipeline.** No remote `@import url()` remains after `postcss-import`,
   vendor CSS from `node_modules` goes through the same PostCSS, and the two `<link>` tags in
   `index.html` point at `.scss` files that Vite processes. The Google Fonts `<link>` carries only

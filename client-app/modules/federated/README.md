@@ -216,15 +216,17 @@ initFederatedModules()             index.ts
                                    requiredHostVersion (semver version or RANGE) against
                                    CORE_VERSION. Incompatible, malformed, unreadable or
                                    timed out ⇒ SKIP (fail closed — no plugin code has run)
-  3. registerRemotes(compatible)   { force: true } so HMR re-registration won't throw
+  3. registerRemotes(compatible)   no force: a known name is already a no-op in the runtime
   4. loadRemote(`${name}/${exposed}`) ⇒ plugin module ⇒ await its init() if it has one (3s
                                    budget each); a module without init() still counts as loaded
   5. Promise.allSettled            one bad plugin cannot abort the others
   6. reportOutcome({loaded,failed,skipped})   logs (Logger is live in dev, no-op in prod)
 ```
 
-In production `Logger` is a no-op, so failed/skipped plugins currently surface through
-the loader's returned outcome only — there is no telemetry signal yet. Reporting
+In production `Logger` is a no-op for **every** level, `error` included, and
+`startFederatedModules` discards the loader's result and returns `void`. So a plugin that is
+skipped, failed or lost to the backstop produces no production signal at all — the operator's only
+symptom is that the feature is absent. Reporting
 outcomes to Application Insights (`trackException` for **failed** — something broke; a
 `trackEvent` for **skipped** — a gate doing its job, kept out of the exceptions blade
 so it cannot drown real failures) is a tracked stage-2 follow-up in `TODO.md`; the
@@ -404,10 +406,11 @@ What **you** must provide when enabling MF in an environment:
 Known limitation (documented, accepted for now): the gate fetches the manifest itself,
 and the MF runtime fetches it **again** for loading — a remote redeployed between the
 two requests means the manifest that was validated is not guaranteed to be the one
-executed (TOCTOU), and remote boot pays a second round trip. The MF runtime exposes no
-public way to seed its manifest cache. Closing the window means immutable versioned URLs, which
-only matters once plugins can come from somewhere other than the backend that already serves the
-host — see `TODO.md` #3 for why that is not worth doing today.
+executed (TOCTOU), and remote boot pays a second round trip. Both are fixable and neither is done
+yet: the runtime's `fetch` loader hook is emitted before it fetches a manifest and takes a
+`Response` in reply (`runtime-core/.../SnapshotHandler.js`), so handing back the body the gate
+already read makes validated bytes == executed bytes **and** removes the extra request. Tracked in
+`TODO.md` #3.
 
 ---
 

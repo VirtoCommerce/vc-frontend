@@ -2,11 +2,12 @@ import { describe, expect, it, vi } from "vitest";
 
 /**
  * Executes the real app-runner and records the order its calls actually happen in, so a call moved
- * into a callback or a branch is caught too — not just a moved line. The loader mock throws, which
- * ends the run at the only point this test cares about, so nothing past it needs mocking.
+ * into a callback or a branch is caught too — not just a moved line.
  *
- * The invariant: plugins resolve store settings through the facade's useModuleSettings, and the
- * permission gate reads user.value at call time, so both must be in place before the loader starts.
+ * Three invariants, all load-bearing. Plugins resolve store settings through the facade's
+ * useModuleSettings and the permission gate reads user.value at call time, so setThemeContext and
+ * setUser must precede the loader. And the router must not be installed until the loader settles,
+ * or a deep link to a plugin route resolves before the plugin registered it.
  */
 
 const order: string[] = [];
@@ -19,8 +20,11 @@ const LOADER_REACHED = new Error("loader reached - nothing past this point is un
 
 const ref = <T>(value: T) => ({ value });
 
+// Rejects rather than throwing at the call site: the run must reach `await federatedModulesReady`
+// for the rejection to surface, so deleting that await turns this into an unhandled rejection and
+// the assertion below stops seeing a rejected run.
 vi.mock("@/modules/federated/bootstrap", () => ({
-  startFederatedModules: vi.fn(() => {
+  startFederatedModules: vi.fn(async () => {
     order.push("startFederatedModules");
     throw LOADER_REACHED;
   }),
@@ -51,7 +55,17 @@ const LANGUAGES = {
 };
 vi.mock("@/core/composables/useLanguages", () => ({ useLanguages: () => LANGUAGES }));
 
-vi.mock("@/router", () => ({ createRouter: () => ({ addRoute: vi.fn(), beforeEach: vi.fn() }) }));
+// `install` is what `app.use(router)` calls, so it doubles as the recorder for the router install.
+vi.mock("@/router", () => ({
+  createRouter: () => ({
+    addRoute: vi.fn(),
+    beforeEach: vi.fn(),
+    isReady: vi.fn(async () => undefined),
+    install: () => {
+      order.push("app.use(router)");
+    },
+  }),
+}));
 vi.mock("./App.vue", () => ({ default: {} }));
 vi.mock("@/App.vue", () => ({ default: {} }));
 vi.mock("@/ui-kit", () => ({ uiKit: { install: vi.fn() } }));
@@ -135,11 +149,15 @@ vi.mock("@/core/api/graphql", () => ({
 }));
 
 describe("app-runner boot order", () => {
-  it("has the theme context and the user in place before the loader starts", async () => {
+  it("puts the theme context and the user in place before the loader, and the router after it", async () => {
     document.body.innerHTML = '<div id="app"></div>';
     const runner = (await import("@/app-runner")).default;
 
     await expect(runner()).rejects.toThrow("loader reached");
+
+    // The router must not be installed until the loader has settled, or a deep link to a plugin
+    // route resolves before the plugin registered it.
+    expect(order, `order was ${order.join(" -> ")}`).not.toContain("app.use(router)");
 
     // Only what the loader actually depends on: both are in place before it starts. Their order
     // relative to each other is not part of the contract.

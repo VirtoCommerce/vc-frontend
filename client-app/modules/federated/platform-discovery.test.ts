@@ -64,7 +64,7 @@ describe("platform-served plugin discovery", () => {
 
     const expected = `${globalThis.location.origin}/modules/$(VirtoCommerce.SalesRep)/plugins/vc-frontend/mf-manifest.json?v=8DBA4F3C`;
     expect(fetchMock).toHaveBeenCalledWith(expected, expect.anything());
-    expect(registerRemotesMock).toHaveBeenCalledWith([{ name: "sales-rep", entry: expected }], { force: true });
+    expect(registerRemotesMock).toHaveBeenCalledWith([{ name: "sales-rep", entry: expected }]);
     expect(result.loaded).toEqual(["sales-rep"]);
   });
 
@@ -219,9 +219,9 @@ describe("platform-served plugin discovery", () => {
 
     expect(result.loaded).toEqual(["sales-rep"]);
     expect(loadRemoteMock).toHaveBeenCalledTimes(1);
-    expect(registerRemotesMock).toHaveBeenCalledWith([expect.objectContaining({ name: "sales-rep" })], {
-      force: true,
-    });
+    expect(registerRemotesMock).toHaveBeenCalledWith([expect.objectContaining({ name: "sales-rep" })]);
+    // The loser is reported by id: the name it lost belongs to the winner.
+    expect(result.skipped).toEqual(["Second"]);
   });
 
   it("still counts a plugin with no init() as loaded, with a warning", async () => {

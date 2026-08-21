@@ -52,9 +52,24 @@ describe("create-plugin scaffolder", () => {
   it("scaffolds a default plugin whose generated TS parses and whose JSON is valid", () => {
     const dir = scaffoldExpectingSuccess("my-plugin", ["--yes"]);
 
-    for (const file of ["package.json", "vite.config.ts", "tsconfig.json", "src/index.ts", "index.html"]) {
+    for (const file of [
+      "package.json",
+      "vite.config.ts",
+      "tsconfig.json",
+      "src/index.ts",
+      "index.html",
+      "public/plugin.json",
+    ]) {
       expect(existsSync(join(dir, file)), `${file} should exist`).toBe(true);
     }
+
+    // The platform reads this to learn the expose key; without it it assumes "./Module" and the
+    // host would loadRemote a key this plugin does not export.
+    const descriptor = JSON.parse(readFileSync(join(dir, "public", "plugin.json"), "utf8")) as {
+      id: string;
+      remote: { name: string; exposed: string };
+    };
+    expect(descriptor).toEqual({ id: "my-plugin", remote: { name: "my-plugin", exposed: "./plugin" } });
 
     const pkg = JSON.parse(readFileSync(join(dir, "package.json"), "utf8")) as {
       name: string;
