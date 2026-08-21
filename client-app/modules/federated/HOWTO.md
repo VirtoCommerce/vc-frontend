@@ -187,8 +187,8 @@ Notes on the host side:
   renders an empty page. A development-mode build resolves the store from
   `APP_BACKEND_URL`, exactly like `yarn dev`.
 - The preview server is **https** (same local certificate as the dev server).
-- The remote list is inlined at **build** time — changing `APP_MODULES_FEDERATION_REMOTES` means
-  rebuilding the host.
+- The env override is inlined at **build** time — changing `APP_MODULES_FEDERATION_REMOTES` means
+  rebuilding the host. (A plugin shipped through the platform needs no host rebuild; see Step 5.)
 
 Open `https://localhost:3000/my-plugin` — your separately-built page renders inside the
 live storefront. In a development-mode build the console confirms the load with
@@ -230,16 +230,27 @@ Once the two servers are up, how you iterate depends on which side you're changi
   longer reproduces). `build`+`preview` is still the canonical run because it matches
   CI/prod; use `yarn dev` when you want the HMR loop.
 
-**Changing the host** — you only rebuild the host when the **remote list/name** changes
-(`APP_MODULES_FEDERATION_REMOTES` is inlined at build time) or host source changes; plain plugin edits
-never need a host rebuild.
+**Changing the host** — you only rebuild the host when the **remote list/name** in the env override
+changes (it is inlined at build time) or host source changes; plain plugin edits never need a host
+rebuild.
 
 ## Step 5 — ship it
 
+**Primary path — inside a backend module.** Build `dist/` into the module's
+`plugins/vc-frontend/` folder and the platform advertises it; no host rebuild. The module must
+depend on `VirtoCommerce.XFrontend`, and a `plugin.json` beside the bundle must declare the expose
+key — the platform otherwise defaults to `./Module`, while this scaffold exposes `./plugin`:
+
+```json
+{ "remote": { "name": "my-plugin", "exposed": "./plugin" } }
+```
+
+Ship it as `public/plugin.json` so Vite copies it into `dist/`.
+
+**Externally hosted alternative.**
+
 1. Build and upload `dist/` (manifest + chunks) to trusted **https** hosting.
-2. Add the manifest URL to the host's `APP_MODULES_FEDERATION_REMOTES` and rebuild the host
-   (the remote list is inlined at build time — settings-driven runtime discovery
-   is a planned follow-up, `TODO.md` #2).
+2. Add the manifest URL to the host's `APP_MODULES_FEDERATION_REMOTES` and rebuild the host.
 3. Add the plugin origin to the storefront CSP (`script-src`, `connect-src`).
 
 ---
