@@ -1,6 +1,7 @@
 import { createHead } from "@unhead/vue/client";
 import { DefaultApolloClient } from "@vue/apollo-composable";
 import { createApp, h, provide } from "vue";
+import { isMfFlagEnabled } from "@/core-api/federation.mjs";
 import { apolloClient, getPageContext, getStorePlugins, initializeApplication } from "@/core/api/graphql";
 import { GetSlugInfoDocument } from "@/core/api/graphql/types";
 import {
@@ -154,6 +155,14 @@ export default async () => {
     Logger.warn("Failed to verify backend module versions", e);
   }
 
+  // Issued here so its round trip overlaps the boot queries instead of following them. The flag is
+  // still what decides whether it happens at all. The no-op handler only marks a rejection as
+  // observed until startFederatedModules attaches the one that logs and degrades to "no plugins".
+  const storePluginsPromise = isMfFlagEnabled(import.meta.env.APP_MODULES_FEDERATION_ENABLED)
+    ? getStorePlugins(domain)
+    : undefined;
+  void storePluginsPromise?.catch(() => {});
+
   const getPageContextPromise = getPageContext({
     domain: domain,
     userId: userId,
@@ -269,7 +278,7 @@ export default async () => {
   // Awaited before app.use(router) so plugin routes exist for the first navigation.
   // The user is already set, so a permission-gated plugin is evaluated against real claims.
   const federatedModulesReady = startFederatedModules({
-    fetchPlugins: () => getStorePlugins(domain),
+    fetchPlugins: () => storePluginsPromise ?? Promise.resolve(undefined),
     hasPermission: checkPermissions,
   });
 

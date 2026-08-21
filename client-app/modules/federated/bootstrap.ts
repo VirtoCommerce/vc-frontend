@@ -16,7 +16,7 @@ interface IStartOptions extends Pick<IFederatedLoaderOptions, "hasPermission"> {
 
 /**
  * BACKSTOP, not a budget: the loader's own per-phase budgets (./index — two knobs;
- * a remote may legally take up to manifest + 2×load, 13s with the 3s/5s defaults)
+ * a remote may legally take up to manifest + 2×load, 8s with the 2s/3s defaults)
  * already bound how long a compliant remote can hold boot. This outer cap exists for
  * what those budgets cannot cover — the fetch of the loader chunk itself hanging, or
  * an inner timeout malfunctioning — so it must stay ABOVE the per-phase sum: a remote
@@ -27,7 +27,7 @@ interface IStartOptions extends Pick<IFederatedLoaderOptions, "hasPermission"> {
  * (TODO.md), so a backstop overrun currently leaves NO prod signal.
  */
 // Exported for the invariant test only (backstop > manifest + 2×load defaults).
-export const BOOT_BACKSTOP_MS = 20_000;
+export const BOOT_BACKSTOP_MS = 10_000;
 
 export async function startFederatedModules(options?: IStartOptions): Promise<void> {
   if (!isMfFlagEnabled(import.meta.env.APP_MODULES_FEDERATION_ENABLED)) {

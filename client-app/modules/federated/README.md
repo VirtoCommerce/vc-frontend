@@ -210,13 +210,14 @@ initFederatedModules()             index.ts
                                    (empty ⇒ done; non-string / non-https / non-".json"
                                    entries are reported as SKIPPED, never silently dropped)
   1a. permission filter            a plugin declaring a permission the user lacks is SKIPPED
-                                   before any fetch — the platform serves one list to everyone
-  2. isCompatible(remote)          fetch manifest JSON (3s budget), evaluate
+                                   before any fetch — the platform serves one list to everyone.
+                                   A UX/latency filter, not a boundary (see Security model)
+  2. isCompatible(remote)          fetch manifest JSON (2s budget), evaluate
                                    requiredHostVersion (semver version or RANGE) against
                                    CORE_VERSION. Incompatible, malformed, unreadable or
                                    timed out ⇒ SKIP (fail closed — no plugin code has run)
   3. registerRemotes(compatible)   { force: true } so HMR re-registration won't throw
-  4. loadRemote(`${name}/${exposed}`) ⇒ plugin module ⇒ await its init() if it has one (5s
+  4. loadRemote(`${name}/${exposed}`) ⇒ plugin module ⇒ await its init() if it has one (3s
                                    budget each); a module without init() still counts as loaded
   5. Promise.allSettled            one bad plugin cannot abort the others
   6. reportOutcome({loaded,failed,skipped})   logs (Logger is live in dev, no-op in prod)
@@ -244,10 +245,11 @@ Three design points worth calling out:
   normalized to `"^1.0.0"` — so a host **major** bump correctly rejects plugins built
   against the previous major.
 - **Every network step is time-budgeted** (two knobs via `initFederatedModules(options)`:
-  manifest 3s; load and init 5s _each_ — one remote may legally take up to
-  manifest + 2×load ≈ 13s). Because boot awaits this loader, a hung remote must degrade
-  to a `failed`/`skipped` plugin — never a blank storefront. `bootstrap.ts` adds a
-  20s **backstop** above that sum, covering what the budgets cannot (the loader chunk
+  manifest 2s; load and init 3s _each_ — one remote may legally take up to
+  manifest + 2×load ≈ 8s). Boot awaits this loader, so that sum is also blank-screen time:
+  a hung remote delays first paint by up to 8s and is then reported `failed`/`skipped`.
+  `bootstrap.ts` adds a
+  10s **backstop** above that sum, covering what the budgets cannot (the loader chunk
   fetch itself hanging, an inner timeout malfunctioning) — a remote operating within
   its budgets never trips it, preserving the deep-link guarantee. Containment
   semantics: a `loadRemote` that resolves _after_ its budget never gets its `init()`
@@ -379,6 +381,14 @@ decision for the storefront. What the harness enforces today:
   plugins the storefront loads; the env override stays build-time. It is still backend-supplied
   data, so whoever controls the GraphQL response controls the list — bounded, since that origin
   also serves the host bundle.
+
+- **The permission filter is not a security boundary.** It decides what a user's browser bothers
+  to load, nothing more. The MF runtime fetches a remote with an injected `<script>`, which carries
+  no credentials, so any visitor can read a plugin's code and stylesheets straight from their URLs;
+  and the plugin list itself — ids, entry paths, the permission strings — is served to anonymous
+  visitors too. Treat it as latency and clutter control. **Every plugin must have its data access
+  authorized by the backend independently**; a plugin that relies on the host skipping it for the
+  wrong user is not protected.
 
 What **you** must provide when enabling MF in an environment:
 

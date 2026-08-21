@@ -2,13 +2,23 @@ import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { initFederatedModules } from "./index";
 
-const { loadRemoteMock, registerRemotesMock, loggerErrorMock, loggerWarnMock, loggerInfoMock } = vi.hoisted(() => ({
-  loadRemoteMock: vi.fn(),
-  registerRemotesMock: vi.fn(),
-  loggerErrorMock: vi.fn(),
-  loggerWarnMock: vi.fn(),
-  loggerInfoMock: vi.fn(),
-}));
+interface IRouterStub {
+  addRoute: (...args: unknown[]) => unknown;
+  hasRoute: (name: unknown) => boolean;
+}
+
+const { loadRemoteMock, registerRemotesMock, loggerErrorMock, loggerWarnMock, loggerInfoMock, globalsMock } =
+  vi.hoisted(() => {
+    const hostGlobals: { router?: IRouterStub } = {};
+    return {
+      loadRemoteMock: vi.fn(),
+      registerRemotesMock: vi.fn(),
+      loggerErrorMock: vi.fn(),
+      loggerWarnMock: vi.fn(),
+      loggerInfoMock: vi.fn(),
+      globalsMock: hostGlobals,
+    };
+  });
 
 vi.mock("@module-federation/enhanced/runtime", () => ({
   loadRemote: loadRemoteMock,
@@ -20,6 +30,8 @@ vi.mock("@/core/utilities", () => ({
 }));
 
 vi.mock("@/core-api/package.json", () => ({ version: "1.4.0" }));
+
+vi.mock("@/core/globals", () => ({ globals: globalsMock }));
 
 const REMOTE_URL = "https://plugins.example.com/news/mf-manifest.json";
 
@@ -51,6 +63,7 @@ describe("initFederatedModules", () => {
   afterEach(() => {
     vi.unstubAllEnvs();
     vi.unstubAllGlobals();
+    delete globalsMock.router;
   });
 
   it("is a no-op when APP_MODULES_FEDERATION_REMOTES is not set", async () => {
@@ -171,6 +184,41 @@ describe("initFederatedModules", () => {
     const result = await initFederatedModules();
 
     expect(result.loaded).toEqual(["news"]);
+  });
+
+  it("refuses a plugin route that would evict an existing host route", async () => {
+    const addRoute = vi.fn();
+    const router = { addRoute, hasRoute: (name: unknown) => name === "Cart" };
+    globalsMock.router = router;
+    stubManifestFetch();
+    stubRemotesEnv({ news: REMOTE_URL });
+    loadRemoteMock.mockResolvedValue({
+      init: () => {
+        router.addRoute({ name: "Cart", path: "/cart" });
+        router.addRoute({ name: "News", path: "/news" });
+      },
+    });
+
+    const result = await initFederatedModules();
+
+    expect(addRoute).toHaveBeenCalledTimes(1);
+    expect(addRoute).toHaveBeenCalledWith({ name: "News", path: "/news" });
+    expect(result.loaded).toEqual(["news"]);
+    expect(loggerErrorMock).toHaveBeenCalledWith(expect.stringContaining('tried to replace the existing route "Cart"'));
+  });
+
+  it("restores the router after init so a later host add is not guarded", async () => {
+    const addRoute = vi.fn();
+    const router = { addRoute, hasRoute: () => true };
+    globalsMock.router = router;
+    stubManifestFetch();
+    stubRemotesEnv({ news: REMOTE_URL });
+    loadRemoteMock.mockResolvedValue({ init: vi.fn() });
+
+    await initFederatedModules();
+    router.addRoute({ name: "Cart", path: "/cart" });
+
+    expect(addRoute).toHaveBeenCalledTimes(1);
   });
 
   it("skips an incompatible plugin before loading any of its code", async () => {

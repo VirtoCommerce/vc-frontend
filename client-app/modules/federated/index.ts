@@ -1,7 +1,9 @@
 import { loadRemote, registerRemotes } from "@module-federation/enhanced/runtime";
+import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { version as CORE_VERSION } from "@/core-api/package.json";
 import { checkHostCompatibility } from "./version-gate";
+import type { RouteRecordRaw, Router } from "vue-router";
 
 /**
  * Host-side loader for Module Federation plugins. For each configured
@@ -13,8 +15,8 @@ import { checkHostCompatibility } from "./version-gate";
  *   installing the router, so a hung remote is *bounded* — it degrades to failed/skipped
  *   within its budget rather than hanging boot forever. There are TWO budget knobs
  *   (manifestTimeoutMs, loadTimeoutMs — the latter bounds load and init separately),
- *   so one remote may legally take up to manifest + 2×load (defaults: 3s + 5s + 5s =
- *   13s). bootstrap.ts additionally holds a BOOT_BACKSTOP_MS above that sum — a true
+ *   so one remote may legally take up to manifest + 2×load (defaults: 2s + 3s + 3s =
+ *   8s). bootstrap.ts additionally holds a BOOT_BACKSTOP_MS above that sum — a true
  *   backstop that fires only when these budgets malfunction or the loader chunk fetch
  *   itself hangs; keep it > manifest + 2×load when changing the defaults here.
  * Discovery has two sources: the platform's plugin list (xAPI `store.plugins`, fetched by the
@@ -67,8 +69,11 @@ export interface IFederatedLoaderOptions {
   /** What the platform advertises for this store; ignored when the env override is set. */
   plugins?: readonly IPlatformPlugin[];
   /**
-   * xAPI does not filter the list per user, so a declared permission is gated here.
-   * No callback + declared permission => skipped (fail closed).
+   * xAPI does not filter the list per user, so a declared permission is evaluated here. This is a
+   * UX and latency filter, NOT an authorization boundary: the bundle is fetched by an injected
+   * <script> that carries no credentials, so its code and stylesheets stay publicly readable by
+   * URL. Each plugin's data access has to be authorized by the backend on its own.
+   * No callback + declared permission => skipped.
    */
   hasPermission?: (permission: string) => boolean;
   /** Budget for reading one remote's manifest JSON; exceeded => skipped (fail closed). */
@@ -82,8 +87,8 @@ export interface IFederatedLoaderOptions {
 }
 
 // Exported for the invariant test only (bootstrap's backstop must exceed their sum).
-export const DEFAULT_MANIFEST_TIMEOUT_MS = 3_000;
-export const DEFAULT_LOAD_TIMEOUT_MS = 5_000;
+export const DEFAULT_MANIFEST_TIMEOUT_MS = 2_000;
+export const DEFAULT_LOAD_TIMEOUT_MS = 3_000;
 
 /** Distinguishes a budget expiry from the work's own failure (see raceWithLateLogging). */
 class TimeoutError extends Error {}
@@ -358,6 +363,36 @@ function resolveRemotes(plugins: readonly IPlatformPlugin[]): IResolvedRemotes {
  * timeout — all fail closed. Shared-library versions (vue, apollo, ...) are guarded
  * separately by the SHARED-DEPENDENCY GATE at loadRemote() time.
  */
+/**
+ * `router.addRoute` evicts whatever root-level route already carries the new record's name —
+ * vue-router calls `removeRoute` for it, and its own warning is dev-only. A plugin naming its
+ * route `Checkout` would take the host's page over in silence, so refuse the eviction for the
+ * span of `init()`, which is where a plugin is documented to register. A claim made after `init()`
+ * settles (or after its budget expires) is outside the window.
+ */
+async function runInitGuarded(name: string, init: () => unknown, budgetMs: number): Promise<void> {
+  const router: Router | undefined = globals.router;
+  const original = router && (router.addRoute.bind(router) as (...args: unknown[]) => () => void);
+  if (router && original) {
+    const guarded = (...args: unknown[]) => {
+      const claimed = args.length === 1 ? (args[0] as RouteRecordRaw).name : undefined;
+      if (claimed !== undefined && router.hasRoute(claimed)) {
+        Logger.error(`[MF] "${name}" tried to replace the existing route "${String(claimed)}" - refused`);
+        return () => {};
+      }
+      return original(...args);
+    };
+    router.addRoute = guarded;
+  }
+  try {
+    await raceWithLateLogging(Promise.resolve(init()), budgetMs, `plugin "${name}" init`, "state is indeterminate");
+  } finally {
+    if (router && original) {
+      router.addRoute = original;
+    }
+  }
+}
+
 async function isCompatible(remote: IRemoteDescriptor, manifestTimeoutMs: number): Promise<boolean> {
   try {
     const readManifest = async (): Promise<IRemoteManifest> => {
@@ -503,12 +538,7 @@ export async function initFederatedModules(options?: IFederatedLoaderOptions): P
           throw new Error(`plugin "${remote.name}" load resolved to null - no module was delivered`);
         }
         if (plugin.init) {
-          await raceWithLateLogging(
-            Promise.resolve(plugin.init()),
-            loadTimeoutMs,
-            `plugin "${remote.name}" init`,
-            "state is indeterminate",
-          );
+          await runInitGuarded(remote.name, plugin.init, loadTimeoutMs);
         } else {
           // Most likely the platform's default "./Module" expose against the admin-shell
           // contract; its module scope ran, but nothing registered anything.

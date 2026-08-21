@@ -152,8 +152,18 @@ Rules of the road:
   something the facade doesn't export, that's a facade extension request (below).
 - `init()` runs **before the host installs the router**, so routes you add here work
   even on a direct deep link.
-- Keep `init()` fast: it has a time budget (5s — the loader's per-phase `loadTimeoutMs`),
+- Keep `init()` fast: it has a time budget (3s — the loader's per-phase `loadTimeoutMs`),
   and the whole app boot waits for it.
+- **Don't name a route after a host route.** `router.addRoute` evicts an existing root-level route
+  that shares the new record's name, so `name: "Checkout"` would take the host's page over. The
+  loader refuses such a claim during `init()` and logs it; pick names nobody else can plausibly use.
+- **Authorize on the backend, always.** The `permission` your plugin declares only decides whether
+  the host bothers to load it. Your bundle is fetched by a plain `<script>` with no credentials, so
+  anyone can read its code by URL. Every query your plugin makes must be authorized server-side.
+- **`requiredHostVersion` is your promise, not a check.** The scaffolder writes `^<facade version>`,
+  which is the range you were actually built against. You may widen it — a plugin that uses almost
+  nothing from the facade legitimately can — but the loader takes the range at face value, so
+  anything you admit is something you are claiming to work with.
 - **Styling:** your components ship their own CSS (plain styles in SFCs work as-is).
   For **Tailwind**, scaffold with `--with-tailwind` (or copy its output): the plugin
   runs its own utility pass with the **host's design system as preset**

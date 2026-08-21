@@ -22,6 +22,25 @@ Definition and rationale: *Pilot* section of the discovery spec.
       value isn't the pinned release URL (catches a stray `file:`/`portal:`/yalc leak).
 - [ ] **Route authorization** — sales-rep is rep-only; plugin `addRoute` has no
       permission/guard primitive in the facade yet. Likely a pilot blocker for real users.
+      Partly addressed: the loader now refuses a plugin claim on a name that already resolves,
+      for the span of `init()` (`router.addRoute` evicts a same-named root route, and vue-router's
+      own warning is dev-only). That covers takeover, not authorization, and only inside the
+      window — a claim made after `init()` settles is unguarded.
+- [ ] **Declare plugin routes in `plugin.json` so boot stops blocking on the loader** — VCST-5761.
+      Today `app.mount()` waits for the whole loader, so a slow plugin is blank-screen time for the
+      entire storefront. If a plugin declares the paths it intends to take, the host can register a
+      placeholder that shows a loading state and resolves once the plugin settles, install the
+      router immediately, and pay nothing at first paint. It also removes the backstop's
+      "late plugins register routes after the first navigation" hole, and makes the plugin count N
+      stop mattering (no cap needed while boot is not on the critical path). Needs a fallback: if
+      the loader settles and the plugin never claimed the path, the placeholder 404s.
+- [ ] **Extension-registry precedence: the host must win regardless of order** — VCST-5762.
+      Host module inits are fire-and-forget while the plugin's `init()` is awaited, and
+      `useExtensionRegistry.register` keeps the first claim with a dev-only warn. So which of a
+      host module and a plugin owns a `category/name` is decided by whichever continuation lands
+      first. The fix needs `register` to know the caller (host claim overwrites a plugin-held key
+      and is reported; plugin claim on a host-held key is refused into the loader's outcome), which
+      changes a facade-exported signature — hence a contract rebuild, hence not in the discovery PR.
 - [ ] Facade additions the plugin turns out to need (→ #7 guard rails).
 
 ## 2. Runtime discovery — done, via the platform rather than a store setting
