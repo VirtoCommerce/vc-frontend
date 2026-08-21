@@ -69,9 +69,6 @@ on the manifest or chunks (MF has no native SRI story). This also covers the kno
 **TOCTOU** window: the gate fetches the manifest, then the MF runtime independently
 fetches it again for loading (its cache is not publicly seedable) — a redeploy between
 the two requests means validated ≠ executed, plus a second round trip per remote.
-Evaluate: signed manifests, hash pinning, or CSP `strict-dynamic` + nonce approaches.
-The platform already passes `entry.hash`, but the loader spends it as a cache-buster on the
-manifest URL, not as a pin — so it is the natural home for one.
 
 The 2026-07-06 review called this **a prerequisite for enabling runtime discovery in prod, not a
 later hardening pass**, on the grounds that a store-editable setting plus a mutable origin is a
@@ -83,9 +80,14 @@ change does NOT cover:
 - [x] Platform entries and stylesheets are checked for **same-origin** (`isSameOrigin`), so a
       descriptor cannot name a foreign host. `isAllowedRemoteUrl`'s https rule now covers the env
       override only, where cross-origin is the point.
-- [ ] No integrity check on what actually executes. Immutable **versioned URLs** are the cheapest
-      form: they close the TOCTOU window by making both fetches return the same bytes — they do
-      not remove the second fetch itself.
+- [x] No integrity check on what actually executes — **reviewed, deliberately not done**. Writing
+      the artifacts requires access to the backend that serves them, and from there an attacker
+      returns hostile code on the *first* fetch; the TOCTOU window is a sub-case of a position
+      already lost. Nor is it implementable host-side: MF loads `remoteEntry.js` through an
+      injected `<script>`, so the executed bytes are never ours to hash, and `entry.hash`
+      (`8DBA4F3C`) is a cache-buster, not an SRI digest. If plugins ever come from a host other
+      than our own backend, revisit — immutable **versioned URLs** are then the cheapest form
+      (they make both fetches return the same bytes, though the second fetch remains).
 
 ## 4. CSP at the vc-deploy ingress (prod prerequisite)
 
@@ -126,23 +128,23 @@ type-check — including from the real tarball), but only manually. Remaining:
 - [x] **Guard test for the load-bearing boot ordering** — `setThemeContext(store)` and
       `setUser(userResult)` must both run before `startFederatedModules()`; plugins resolve store
       settings through `useModuleSettings`, and the permission gate reads `user.value` at call
-      time. `boot-order.test.ts` asserts the relative order in the `app-runner.ts` source (a
-      behavioural test would mean mocking a 400-line boot routine ending in `app.mount()`).
+      time. `boot-order.test.ts` executes the real `app-runner` against mocked collaborators and
+      asserts the order the calls actually happen in, so moving one into a callback or a branch
+      fails too — not only moving its line.
 
 ## 6. Stage 2 — hardening & scale-out (not yet designed)
 
 From the 2026-07-06 review. None of these block shipping the harness — it is off by
 default, and flag-on with a build-pinned list of trusted plugins fails closed and is
 bounded. They become relevant when scaling past a controlled pilot (more plugins,
-third-party authors, runtime discovery, broad store rollout); the kill switch and
-CSP/integrity are the two to treat as prerequisites for *that* stage. (Route
+third-party authors, runtime discovery, broad store rollout); the kill switch and CSP are the
+two to treat as prerequisites for *that* stage (artifact integrity is not — see #3). (Route
 authorization moved to #1 — it likely blocks the pilot.)
 
 - **Inter-plugin isolation** — route-path collisions, duplicate remote names, extension-key
   clobbering between plugins are unhandled (only host-vs-plugin isolation exists).
 - **Kill switch** — killing a bad plugin means uninstalling its module (or a host rebuild when it
-  came from the env override); there is no per-plugin toggle. Gate prod exposure on CSP +
-  integrity.
+  came from the env override); there is no per-plugin toggle. Gate prod exposure on CSP.
 - **Boot cost ∝ N** — all remotes are manifest-fetched / loaded / `init`'d eagerly before
   `app.use(router)`; add a lazy/route-triggered tier for non-critical plugins.
 - **Route fallback** — deep links to a skipped/failed plugin route degrade to a generic

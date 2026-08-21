@@ -239,13 +239,12 @@ rebuild.
 **Primary path — inside a backend module.** Build `dist/` into the module's
 `plugins/vc-frontend/` folder and the platform advertises it; no host rebuild. The module must
 depend on `VirtoCommerce.XFrontend`, and a `plugin.json` beside the bundle must declare the expose
-key — the platform otherwise defaults to `./Module`, while this scaffold exposes `./plugin`:
+key — the platform otherwise defaults to `./Module`, while this scaffold exposes `./plugin`. The
+scaffolder already wrote it as `public/plugin.json`, which Vite copies into `dist/`:
 
 ```json
-{ "remote": { "name": "my-plugin", "exposed": "./plugin" } }
+{ "id": "my-plugin", "remote": { "name": "my-plugin", "exposed": "./plugin" } }
 ```
-
-Ship it as `public/plugin.json` so Vite copies it into `dist/`.
 
 **Externally hosted alternative.**
 

@@ -387,15 +387,16 @@ What **you** must provide when enabling MF in an environment:
   origin restriction mean anything.
 - **Trusted hosting** for plugin artifacts at the host bundle's trust level — including
   `contentFiles` stylesheets, linked into `document.head` once the plugin loads, with no integrity
-  check and no cascade fence. Integrity/signing is an open follow-up in `TODO.md`.
+  check and no cascade fence. Integrity checking was reviewed and deliberately left out while
+  plugins are served by our own backend (`TODO.md` #3).
 
 Known limitation (documented, accepted for now): the gate fetches the manifest itself,
 and the MF runtime fetches it **again** for loading — a remote redeployed between the
 two requests means the manifest that was validated is not guaranteed to be the one
 executed (TOCTOU), and remote boot pays a second round trip. The MF runtime exposes no
-public way to seed its manifest cache; the real fix is hash-pinned artifacts. The platform does
-pass `entry.hash`, but the loader spends it as a cache-buster, not as an integrity pin (see
-`TODO.md` #3).
+public way to seed its manifest cache. Closing the window means immutable versioned URLs, which
+only matters once plugins can come from somewhere other than the backend that already serves the
+host — see `TODO.md` #3 for why that is not worth doing today.
 
 ---
 
@@ -416,5 +417,5 @@ pass `entry.hash`, but the loader spends it as a cache-buster, not as an integri
   @apollo/client, …): plugins pin against the facade version, so a breaking shared
   dep must surface there.
 
-See [`TODO.md`](./TODO.md) for what's intentionally deferred (remote discovery via a
-central manifest, artifact integrity, a reference plugin in CI, etc.).
+See [`TODO.md`](./TODO.md) for what's intentionally deferred (a CSP at the ingress, per-plugin
+route authorization, a reference plugin in CI, etc.).
