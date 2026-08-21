@@ -35,11 +35,14 @@ interface IRemoteDescriptor {
   exposed: string;
   permission?: string;
   styles: string[];
+  /** The platform module's version, for logs only — compatibility rides on requiredHostVersion. */
+  version?: string;
 }
 
 /** One plugin as xAPI projects it (`store.plugins`); structural so the loader stays off the core GraphQL layer. */
 export interface IPlatformPlugin {
   id: string;
+  version?: string | null;
   permission?: string | null;
   entry?: { type?: string | null; path?: string | null; hash?: string | null } | null;
   contentFiles?: readonly ({ type?: string | null; path?: string | null; hash?: string | null } | null)[] | null;
@@ -151,6 +154,7 @@ interface IResolvedRemotes {
 const SCAFFOLD_EXPOSE_KEY = "./plugin";
 const PLATFORM_EXPOSE_KEY = "./Module";
 const MF_MANIFEST_FILE = "mf-manifest.json";
+const PLATFORM_SCRIPT_ENTRY_TYPE = "script";
 
 /**
  * Parses and validates APP_MODULES_FEDERATION_REMOTES: a string, an allowed https/localhost URL,
@@ -257,17 +261,26 @@ function collectStyles(plugin: IPlatformPlugin): string[] {
   return styles;
 }
 
-/** Guards against stacking <link>s when a remote is registered twice (HMR, a second boot in tests). */
-const injectedStyles = new Set<string>();
+const STYLE_MARKER = "data-mf-plugin-style";
 
+/**
+ * Deliberately NOT wrapped in a cascade layer: a layer outranks specificity, which would cancel
+ * the `data-v` attribute a plugin's `<style scoped>` relies on to override a host utility on its
+ * own markup. Containment is the plugin's job (scoped styles, no global utility layer), not a
+ * fence here. The marker attribute doubles as the dedupe key, so a second boot adds nothing.
+ */
 function injectStyles(urls: string[]): void {
+  const present = new Set(
+    Array.from(document.head.querySelectorAll(`link[${STYLE_MARKER}]`), (node) => node.getAttribute(STYLE_MARKER)),
+  );
   for (const href of urls) {
-    if (injectedStyles.has(href)) {
+    if (present.has(href)) {
       continue;
     }
-    injectedStyles.add(href);
+    present.add(href);
     const link = document.createElement("link");
     link.rel = "stylesheet";
+    link.setAttribute(STYLE_MARKER, href);
     link.href = href;
     document.head.append(link);
   }
@@ -280,11 +293,27 @@ function injectStyles(urls: string[]): void {
 function resolvePlatformRemotes(plugins: readonly IPlatformPlugin[]): IResolvedRemotes {
   const resolved: IResolvedRemotes = { remotes: [], invalidNames: [] };
 
+  const seen = new Set<string>();
+
   for (const plugin of plugins) {
     const name = plugin.remote?.name || plugin.id;
+    // MF keeps only the last registration of a name, but the load loop still runs per
+    // descriptor: the loser's code never executes yet would be reported as loaded.
+    if (seen.has(name)) {
+      Logger.error(`[MF] Skipping plugin "${plugin.id}": remote name "${name}" is already taken`);
+      continue;
+    }
+    seen.add(name);
     const path = plugin.entry?.path;
     if (!path) {
       Logger.error(`[MF] Skipping plugin "${plugin.id}": the platform declared no entry path`);
+      resolved.invalidNames.push(name);
+      continue;
+    }
+    // Only a script entry is an MF remote; anything else would be loaded as one by mistake.
+    const type = plugin.entry?.type;
+    if (type && type !== PLATFORM_SCRIPT_ENTRY_TYPE) {
+      Logger.error(`[MF] Skipping plugin "${plugin.id}": entry type "${type}" is not supported`);
       resolved.invalidNames.push(name);
       continue;
     }
@@ -300,6 +329,7 @@ function resolvePlatformRemotes(plugins: readonly IPlatformPlugin[]): IResolvedR
       exposed: plugin.remote?.exposed || PLATFORM_EXPOSE_KEY,
       permission: plugin.permission ?? undefined,
       styles: collectStyles(plugin),
+      version: plugin.version ?? undefined,
     });
   }
   return resolved;
@@ -307,7 +337,17 @@ function resolvePlatformRemotes(plugins: readonly IPlatformPlugin[]): IResolvedR
 
 /** Env wins when set — a local remote must not be replaced by whatever the backend serves. */
 function resolveRemotes(plugins: readonly IPlatformPlugin[]): IResolvedRemotes {
-  return resolveEnvRemotes() ?? resolvePlatformRemotes(plugins);
+  const env = resolveEnvRemotes();
+  if (!env) {
+    return resolvePlatformRemotes(plugins);
+  }
+  if (plugins.length > 0) {
+    // A configured-but-empty override is the quiet way to lose every deployed plugin.
+    Logger.warn(
+      `[MF] APP_MODULES_FEDERATION_REMOTES is set, so ${plugins.length} platform plugin(s) are ignored; it resolved to ${env.remotes.length} remote(s)`,
+    );
+  }
+  return env;
 }
 
 /**
@@ -352,8 +392,12 @@ async function isCompatible(remote: IRemoteDescriptor, manifestTimeoutMs: number
  * no prod signal yet — reporting them to Application Insights (exceptions for
  * `failed`, customEvents for `skipped`) is a tracked stage-2 follow-up: see TODO.md.
  */
-function reportOutcome(result: IFederatedLoadResult): void {
+function reportOutcome(result: IFederatedLoadResult, versions?: ReadonlyMap<string, string>): void {
   const { loaded, failed, skipped } = result;
+  const label = (name: string): string => {
+    const version = versions?.get(name);
+    return version ? `${name}@${version}` : name;
+  };
   if (failed.length === 0 && skipped.length === 0) {
     // Happy path: no prod noise (Logger is a no-op in production builds). But a plugin
     // author running the prescribed local flow (build --mode=development + preview,
@@ -361,11 +405,13 @@ function reportOutcome(result: IFederatedLoadResult): void {
     // invisible for extension-point-only plugins that render no route. One positive
     // line closes that gap.
     if (loaded.length > 0) {
-      Logger.info(`[MF] plugins loaded=[${loaded.join(", ")}]`);
+      Logger.info(`[MF] plugins loaded=[${loaded.map(label).join(", ")}]`);
     }
     return;
   }
-  Logger.warn(`[MF] plugins loaded=${loaded.length} failed=[${failed.join(", ")}] skipped=[${skipped.join(", ")}]`);
+  Logger.warn(
+    `[MF] plugins loaded=${loaded.length} failed=[${failed.map(label).join(", ")}] skipped=[${skipped.map(label).join(", ")}]`,
+  );
 }
 
 /**
@@ -381,20 +427,29 @@ export async function initFederatedModules(options?: IFederatedLoaderOptions): P
   // Config-invalid remotes count as skipped so they surface through the same loud
   // summary log as version-gate skips — never a silent drop.
   result.skipped.push(...invalidNames);
+  const versions = new Map(
+    remotes.filter((remote) => remote.version).map((remote) => [remote.name, remote.version as string]),
+  );
 
   // Before the manifest fetch: a plugin the user may not run should cost no network at all.
   const permitted = remotes.filter((remote) => {
-    if (!remote.permission || options?.hasPermission?.(remote.permission)) {
-      return true;
+    const permission = remote.permission?.trim();
+    try {
+      if (!permission || options?.hasPermission?.(permission)) {
+        return true;
+      }
+      Logger.info(`[MF] Skipping "${remote.name}": requires permission "${permission}"`);
+    } catch (error) {
+      // Host-supplied callback: one bad evaluation must cost one plugin, not the batch.
+      Logger.error(`[MF] Skipping "${remote.name}": the permission check threw`, error);
     }
-    Logger.info(`[MF] Skipping "${remote.name}": requires permission "${remote.permission}"`);
     result.skipped.push(remote.name);
     return false;
   });
 
   if (permitted.length === 0) {
     if (result.skipped.length > 0) {
-      reportOutcome(result);
+      reportOutcome(result, versions);
     }
     return result;
   }
@@ -407,7 +462,7 @@ export async function initFederatedModules(options?: IFederatedLoaderOptions): P
   compatibility.filter((entry) => !entry.ok).forEach((entry) => result.skipped.push(entry.remote.name));
 
   if (compatible.length === 0) {
-    reportOutcome(result);
+    reportOutcome(result, versions);
     return result;
   }
 
@@ -422,7 +477,7 @@ export async function initFederatedModules(options?: IFederatedLoaderOptions): P
     // once — but it must still resolve (not reject) to keep the "never rejects" contract.
     compatible.forEach((remote) => result.failed.push(remote.name));
     Logger.error("[MF] registerRemotes failed", error);
-    reportOutcome(result);
+    reportOutcome(result, versions);
     return result;
   }
 
@@ -435,7 +490,6 @@ export async function initFederatedModules(options?: IFederatedLoaderOptions): P
         // still executed the remote's module scope (top-level side effects like a CSS
         // import), and an init() that started keeps running — raceWithLateLogging logs
         // both late settlements so the "failed" outcome is never silently contradicted.
-        injectStyles(remote.styles);
         const plugin = await raceWithLateLogging(
           loadRemote<IFederatedPlugin>(`${remote.name}/${remote.exposed.replace(/^\.\//, "")}`),
           loadTimeoutMs,
@@ -455,7 +509,13 @@ export async function initFederatedModules(options?: IFederatedLoaderOptions): P
             `plugin "${remote.name}" init`,
             "state is indeterminate",
           );
+        } else {
+          // Most likely the platform's default "./Module" expose against the admin-shell
+          // contract; its module scope ran, but nothing registered anything.
+          Logger.warn(`[MF] "${remote.name}" exposes no init() — nothing was registered`);
         }
+        // Only now: a plugin that failed must leave no CSS behind.
+        injectStyles(remote.styles);
         result.loaded.push(remote.name);
       } catch (error) {
         result.failed.push(remote.name);
@@ -464,6 +524,6 @@ export async function initFederatedModules(options?: IFederatedLoaderOptions): P
     }),
   );
 
-  reportOutcome(result);
+  reportOutcome(result, versions);
   return result;
 }

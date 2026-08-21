@@ -33,6 +33,7 @@ function stubManifestFetch(manifest: unknown = COMPATIBLE_MANIFEST): ReturnType<
 function platformPlugin(overrides: Partial<IPlatformPlugin> = {}): IPlatformPlugin {
   return {
     id: "VirtoCommerce.SalesRep",
+    version: "3.1000.0",
     entry: {
       type: "script",
       path: "/modules/$(VirtoCommerce.SalesRep)/plugins/vc-frontend/remoteEntry.js",
@@ -48,7 +49,7 @@ describe("platform-served plugin discovery", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     loadRemoteMock.mockResolvedValue({ init: vi.fn() });
-    document.head.querySelectorAll("link").forEach((link) => link.remove());
+    document.head.querySelectorAll("link[data-mf-plugin-style]").forEach((node) => node.remove());
   });
 
   afterEach(() => {
@@ -146,10 +147,10 @@ describe("platform-served plugin discovery", () => {
     await initFederatedModules({ plugins: [plugin] });
     await initFederatedModules({ plugins: [plugin] });
 
-    const hrefs = Array.from(document.head.querySelectorAll("link")).map((link) => link.getAttribute("href"));
-    expect(hrefs).toEqual([
-      `${globalThis.location.origin}/modules/$(VirtoCommerce.SalesRep)/plugins/vc-frontend/style.css?v=AA11`,
-    ]);
+    const injected = Array.from(document.head.querySelectorAll("link[data-mf-plugin-style]"));
+    const expected = `${globalThis.location.origin}/modules/$(VirtoCommerce.SalesRep)/plugins/vc-frontend/style.css?v=AA11`;
+    expect(injected.map((node) => node.getAttribute("href"))).toEqual([expected]);
+    expect(injected[0].getAttribute("rel")).toBe("stylesheet");
   });
 
   it("lets the env override win over the platform list", async () => {
@@ -189,6 +190,114 @@ describe("platform-served plugin discovery", () => {
     });
 
     expect(result.loaded).toEqual(["sales-rep"]);
-    expect(document.head.querySelectorAll("link")).toHaveLength(0);
+    expect(document.head.querySelectorAll("link[data-mf-plugin-style]")).toHaveLength(0);
+  });
+  it("leaves no stylesheet behind when the plugin fails to load", async () => {
+    stubManifestFetch();
+    loadRemoteMock.mockRejectedValue(new Error("boom"));
+    const plugin = platformPlugin({
+      contentFiles: [
+        { type: "style", path: "/modules/$(VirtoCommerce.SalesRep)/plugins/vc-frontend/fail.css", hash: "EE55" },
+      ],
+    });
+
+    const result = await initFederatedModules({ plugins: [plugin] });
+
+    expect(result.failed).toEqual(["sales-rep"]);
+    expect(document.head.querySelectorAll("link[data-mf-plugin-style]")).toHaveLength(0);
+  });
+
+  it("keeps only the first plugin when two declare the same remote name", async () => {
+    stubManifestFetch();
+
+    const result = await initFederatedModules({
+      plugins: [
+        platformPlugin({ id: "First" }),
+        platformPlugin({ id: "Second", entry: { type: "script", path: "/modules/b/remoteEntry.js" } }),
+      ],
+    });
+
+    expect(result.loaded).toEqual(["sales-rep"]);
+    expect(loadRemoteMock).toHaveBeenCalledTimes(1);
+    expect(registerRemotesMock).toHaveBeenCalledWith([expect.objectContaining({ name: "sales-rep" })], {
+      force: true,
+    });
+  });
+
+  it("still counts a plugin with no init() as loaded, with a warning", async () => {
+    stubManifestFetch();
+    loadRemoteMock.mockResolvedValue({});
+
+    const result = await initFederatedModules({ plugins: [platformPlugin()] });
+
+    expect(result.loaded).toEqual(["sales-rep"]);
+    expect(loggerWarnMock).toHaveBeenCalledWith(expect.stringContaining("exposes no init()"));
+  });
+
+  it("treats a blank permission as no permission at all", async () => {
+    stubManifestFetch();
+    const hasPermission = vi.fn().mockReturnValue(false);
+
+    const result = await initFederatedModules({ plugins: [platformPlugin({ permission: "  " })], hasPermission });
+
+    expect(result.loaded).toEqual(["sales-rep"]);
+    expect(hasPermission).not.toHaveBeenCalled();
+  });
+
+  it("skips only the plugin whose permission check throws", async () => {
+    stubManifestFetch();
+    const hasPermission = vi.fn().mockImplementation((permission: string) => {
+      if (permission === "explodes") {
+        throw new Error("nope");
+      }
+      return true;
+    });
+
+    const result = await initFederatedModules({
+      plugins: [
+        platformPlugin({ id: "A", remote: { name: "a", exposed: "./plugin" }, permission: "explodes" }),
+        platformPlugin({ id: "B", remote: { name: "b", exposed: "./plugin" }, permission: "fine" }),
+      ],
+      hasPermission,
+    });
+
+    expect(result.skipped).toEqual(["a"]);
+    expect(result.loaded).toEqual(["b"]);
+  });
+
+  it("says so when the env override suppresses a non-empty platform list", async () => {
+    stubManifestFetch();
+    vi.stubEnv("APP_MODULES_FEDERATION_REMOTES", "{}");
+
+    await initFederatedModules({ plugins: [platformPlugin()] });
+
+    expect(loggerWarnMock).toHaveBeenCalledWith(expect.stringContaining("1 platform plugin(s) are ignored"));
+  });
+  it("skips a plugin whose entry is not a script", async () => {
+    const fetchMock = stubManifestFetch();
+
+    const result = await initFederatedModules({
+      plugins: [platformPlugin({ entry: { type: "importmap", path: "/modules/a/x.json", hash: "FF66" } })],
+    });
+
+    expect(result.skipped).toEqual(["sales-rep"]);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("accepts a plugin whose entry declares no type", async () => {
+    stubManifestFetch();
+
+    const result = await initFederatedModules({
+      plugins: [platformPlugin({ entry: { path: "/modules/a/remoteEntry.js" } })],
+    });
+
+    expect(result.loaded).toEqual(["sales-rep"]);
+  });
+  it("names the platform module version in the outcome log", async () => {
+    stubManifestFetch();
+
+    await initFederatedModules({ plugins: [platformPlugin()] });
+
+    expect(loggerInfoMock).toHaveBeenCalledWith("[MF] plugins loaded=[sales-rep@3.1000.0]");
   });
 });
