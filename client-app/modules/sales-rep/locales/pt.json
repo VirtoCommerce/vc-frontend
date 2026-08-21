@@ -144,6 +144,7 @@
         "end_date": "Data de término",
         "invalid_range": "Intervalo de datas inválido.",
         "order_status": "@:common.labels.status",
+        "customer": "Selecionar cliente",
         "status_option": "{0} ({1})",
         "reset": "Reiniciar",
         "apply": "Aplicar",

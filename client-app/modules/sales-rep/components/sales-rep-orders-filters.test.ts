@@ -121,7 +121,23 @@ describe("SalesRepOrdersFilters", () => {
     await applyButton(wrapper).trigger("click");
     await resetButton(wrapper).trigger("click");
 
-    expect(lastChange(wrapper)).toEqual({ statuses: [], startDate: undefined, endDate: undefined });
+    expect(lastChange(wrapper)).toEqual({
+      statuses: [],
+      customerNames: [],
+      startDate: undefined,
+      endDate: undefined,
+    });
+  });
+
+  it("offers a customer group only where the page passes customers", async () => {
+    const wrapper = createWrapper();
+    const groups = () => wrapper.findAll(".sales-rep-orders-filters__statuses");
+
+    expect(groups()).toHaveLength(1);
+
+    await wrapper.setProps({ customers: [{ name: "ACME", label: "ACME", count: 3 }] });
+
+    expect(groups()).toHaveLength(2);
   });
 
   it("renders no status block when the listed orders carry no statuses", async () => {

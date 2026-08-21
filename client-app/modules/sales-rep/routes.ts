@@ -134,7 +134,10 @@ export const allCustomerOrdersRoute: RouteRecordRaw = {
   name: ALL_CUSTOMER_ORDERS_ROUTE_NAME,
   component: CustomerOrdersPage,
   meta: repRouteMeta,
+  // Reps only — no customer id to check, so the shared guard is used directly.
   beforeEnter(_to, _from, next) {
-    guardSalesRep(next);
+    if (guardSalesRep(next)) {
+      next();
+    }
   },
 };

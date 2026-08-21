@@ -144,6 +144,7 @@
         "end_date": "Date de fin",
         "invalid_range": "Plage de dates non valide.",
         "order_status": "@:common.labels.status",
+        "customer": "Sélectionner un client",
         "status_option": "{0} ({1})",
         "reset": "Réinitialiser",
         "apply": "Appliquer",

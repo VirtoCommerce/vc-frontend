@@ -37,7 +37,12 @@
           </template>
         </VcInput>
 
-        <SalesRepOrdersFilters :statuses="statusOptions" :disabled="loading" @change="applyFilters" />
+        <SalesRepOrdersFilters
+          :statuses="statusOptions"
+          :customers="hasCustomer ? [] : customerOptions"
+          :disabled="loading"
+          @change="applyFilters"
+        />
       </div>
 
       <!-- A failed read keeps the previous rows, so the failure needs its own view (VCST-5586). -->
@@ -156,6 +161,7 @@ const {
   notFound,
   orders,
   statusOptions,
+  customerOptions,
   sortRules,
   loading,
   failed,
@@ -178,7 +184,11 @@ const { sortInfo, applySort } = useSalesRepColumnSort({
 const localKeyword = ref("");
 
 const hasSearch = computed(
-  () => Boolean(keyword.value) || filters.value.statuses.length > 0 || Boolean(filters.value.startDate),
+  () =>
+    Boolean(keyword.value) ||
+    filters.value.statuses.length > 0 ||
+    Boolean(filters.value.customerNames?.length) ||
+    Boolean(filters.value.startDate),
 );
 
 const customerName = computed(() => customer.value?.organizationName ?? "");

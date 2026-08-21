@@ -116,6 +116,16 @@ describe("useSalesRepCustomerOrders", () => {
     expect(passedVariables().filter).toContain("createddate:[");
   });
 
+  // Not the shared helper's own customerNames, which means the buyer who placed the order.
+  it("narrows by owning organization, not by the buyer who placed the order", () => {
+    const { filters } = useSalesRepCustomerOrders();
+
+    filters.value = { statuses: [], customerNames: ["ACME", "Umbrella"], startDate: undefined, endDate: undefined };
+
+    expect(passedVariables().filter).toBe('organizationname:"ACME","Umbrella"');
+    expect(passedVariables().filter).not.toContain("customername:");
+  });
+
   it("always sends a direction, since a bare field name would sort ascending", () => {
     const { sortRule } = useSalesRepCustomerOrders("org-1");
 
@@ -131,6 +141,8 @@ describe("useSalesRepCustomerOrders", () => {
 
     expect(passedVariables().organizationId).toBeUndefined();
     expect(hasCustomer.value).toBe(false);
+    // Spanning customers, so it also aggregates which customer each order belongs to.
+    expect(passedVariables().facet).toBe("status organizationname");
 
     // No customer in scope, so the customer lookup is off and its not-found view never shows.
     const options = customerMock.options.value as { enabled: { value: boolean } };
@@ -195,8 +207,8 @@ describe("useSalesRepCustomerOrders", () => {
     ]);
   });
 
-  it("offers the statuses the listed orders carry, with their counts", () => {
-    const { statusOptions } = useSalesRepCustomerOrders("org-1");
+  it("keeps each facet's options apart, with their counts", () => {
+    const { statusOptions, customerOptions } = useSalesRepCustomerOrders();
 
     queryMock.result.value = ordersResult(
       3,
@@ -209,6 +221,10 @@ describe("useSalesRepCustomerOrders", () => {
             { term: "Completed", label: "Completed", count: 2, isSelected: false },
           ],
         },
+        {
+          name: "organizationname",
+          terms: [{ term: "ACME", label: "ACME", count: 3, isSelected: false }],
+        },
       ],
     );
 
@@ -216,6 +232,7 @@ describe("useSalesRepCustomerOrders", () => {
       { name: "New", label: "New", count: 1 },
       { name: "Completed", label: "Completed", count: 2 },
     ]);
+    expect(customerOptions.value).toEqual([{ name: "ACME", label: "ACME", count: 3 }]);
   });
 
   it("derives pages from totalCount, never below 1", () => {

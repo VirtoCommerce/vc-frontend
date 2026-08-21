@@ -20,6 +20,7 @@ const state = await vi.hoisted(async () => {
     hasCustomer: ref(true),
     notFound: ref(false),
     statusOptions: ref<{ name: string; label: string; count: number }[]>([]),
+    customerOptions: ref<{ name: string; label: string; count: number }[]>([]),
     applySort: vitest.fn(),
   };
 });
@@ -32,6 +33,7 @@ vi.mock("../composables/useSalesRepCustomerOrders", () => ({
     notFound: state.notFound,
     orders: state.orders,
     statusOptions: state.statusOptions,
+    customerOptions: state.customerOptions,
     sortRules: [],
     loading: state.loading,
     failed: state.failed,
@@ -121,6 +123,7 @@ beforeEach(() => {
   state.hasCustomer.value = true;
   state.notFound.value = false;
   state.statusOptions.value = [];
+  state.customerOptions.value = [];
   state.applySort.mockClear();
 });
 
@@ -193,6 +196,22 @@ describe("CustomerOrders", () => {
 
     expect(stub(wrapper, "sales-rep-orders-filters-stub").props().statuses).toEqual([
       { name: "on-hold", label: "On hold", count: 4 },
+    ]);
+  });
+
+  it("offers the customer filter only where the list spans customers", async () => {
+    state.customerOptions.value = [{ name: "ACME", label: "ACME", count: 3 }];
+
+    const wrapper = createWrapper();
+    await flushPromises();
+
+    expect(stub(wrapper, "sales-rep-orders-filters-stub").props().customers).toEqual([]);
+
+    state.hasCustomer.value = false;
+    await flushPromises();
+
+    expect(stub(wrapper, "sales-rep-orders-filters-stub").props().customers).toEqual([
+      { name: "ACME", label: "ACME", count: 3 },
     ]);
   });
 

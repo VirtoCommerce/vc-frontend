@@ -144,6 +144,7 @@
         "end_date": "End date",
         "invalid_range": "Invalid date range.",
         "order_status": "Select order status",
+        "customer": "Select customer",
         "status_option": "{0} ({1})",
         "reset": "Reset",
         "apply": "Apply",

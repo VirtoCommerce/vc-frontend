@@ -144,6 +144,7 @@
         "end_date": "Enddatum",
         "invalid_range": "Ungültiger Datumsbereich.",
         "order_status": "@:common.labels.status",
+        "customer": "Kunde auswählen",
         "status_option": "{0} ({1})",
         "reset": "Zurücksetzen",
         "apply": "Anwenden",

@@ -144,6 +144,7 @@
         "end_date": "終了日",
         "invalid_range": "無効な日付範囲です。",
         "order_status": "@:common.labels.status",
+        "customer": "顧客を選択",
         "status_option": "{0} ({1})",
         "reset": "リセット",
         "apply": "適用",

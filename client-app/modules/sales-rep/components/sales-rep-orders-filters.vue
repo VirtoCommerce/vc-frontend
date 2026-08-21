@@ -67,6 +67,17 @@
                   </VcCheckbox>
                 </VcCheckboxGroup>
               </div>
+
+              <!-- Only where the list spans customers; on a customer's own page every order is theirs. -->
+              <div v-if="customers.length" class="sales-rep-orders-filters__statuses">
+                <VcLabel>{{ t("sales_rep.customer_orders.filters.customer") }}</VcLabel>
+
+                <VcCheckboxGroup v-model="draft.customerNames" class="sales-rep-orders-filters__status-list">
+                  <VcCheckbox v-for="customer in customers" :key="customer.name" :value="customer.name">
+                    {{ t("sales_rep.customer_orders.filters.status_option", [customer.label, customer.count]) }}
+                  </VcCheckbox>
+                </VcCheckboxGroup>
+              </div>
             </div>
           </VcDialogContent>
 
@@ -102,11 +113,13 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import type { SalesRepOrderStatusOptionType, SalesRepOrdersFilterDataType } from "../types";
+import type { SalesRepFacetOptionType, SalesRepOrdersFilterDataType } from "../types";
 
 interface IProps {
   // Statuses the listed orders carry, with their counts, from the list's own status facet.
-  statuses: SalesRepOrderStatusOptionType[];
+  statuses: SalesRepFacetOptionType[];
+  // Customers those orders belong to; empty on a single customer's page.
+  customers?: SalesRepFacetOptionType[];
   disabled?: boolean;
 }
 
@@ -116,7 +129,7 @@ interface IEmits {
 
 const emit = defineEmits<IEmits>();
 
-withDefaults(defineProps<IProps>(), { disabled: false });
+withDefaults(defineProps<IProps>(), { customers: () => [], disabled: false });
 
 const { t } = useI18n();
 
@@ -125,7 +138,7 @@ const CUSTOM_RANGE_ID = "custom";
 type RangeType = { id: string; label: string; startDate?: string; endDate?: string };
 
 function emptyFilter(): SalesRepOrdersFilterDataType {
-  return { statuses: [], startDate: undefined, endDate: undefined };
+  return { statuses: [], customerNames: [], startDate: undefined, endDate: undefined };
 }
 
 // Date-only bounds ("YYYY-MM-DD"); the page turns them into the query's period instants.
@@ -196,8 +209,8 @@ const showRangeError = computed(
 const isRangeValid = computed(() => startValid.value && endValid.value && isRangeOrderValid.value);
 
 const isEmpty = computed(() => {
-  const { statuses, startDate, endDate } = applied.value;
-  return !statuses.length && !startDate && !endDate;
+  const { statuses, customerNames, startDate, endDate } = applied.value;
+  return !statuses.length && !customerNames?.length && !startDate && !endDate;
 });
 
 const isDirty = computed(() => JSON.stringify(draft.value) !== JSON.stringify(applied.value));
@@ -218,7 +231,11 @@ function applyRange(range: RangeType): void {
 }
 
 function apply(): void {
-  applied.value = { ...draft.value, statuses: [...draft.value.statuses] };
+  applied.value = {
+    ...draft.value,
+    statuses: [...draft.value.statuses],
+    customerNames: [...(draft.value.customerNames ?? [])],
+  };
   emit("change", applied.value);
 }
 

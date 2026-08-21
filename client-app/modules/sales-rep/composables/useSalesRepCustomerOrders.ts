@@ -5,11 +5,12 @@ import { getFilterExpression } from "@/shared/account/composables/useUserOrdersF
 import { SalesRepCustomerOrdersDocument } from "../api/graphql/types";
 import {
   CUSTOMER_ORDERS_SORT_DIRECTION,
-  HUB_FETCH_POLICY,
-  ORDER_STATUS_FACET,
   CUSTOMER_ORDERS_SORT_FIELDS,
+  HUB_FETCH_POLICY,
+  ORDER_CUSTOMER_FACET,
+  ORDER_STATUS_FACET,
 } from "../constants";
-import { toOrderStatusOptions, toSalesRepCustomerOrderRows } from "../utils";
+import { toFacetOptions, toSalesRepCustomerOrderRows } from "../utils";
 import { useSalesRepCustomer } from "./useSalesRepCustomer";
 import { useSalesRepHubQuery } from "./useSalesRepHubQuery";
 import type { SalesRepOrdersFilterDataType, SalesRepRuleType } from "../types";
@@ -54,15 +55,32 @@ export function useSalesRepCustomerOrders(organizationId?: MaybeRefOrGetter<stri
 
   // Applied search term (committed on enter/click by the page), not the live input.
   const keyword = ref("");
-  // Applied Filters-panel state: selected statuses and date-only bounds.
-  const filters = ref<SalesRepOrdersFilterDataType>({ statuses: [], startDate: undefined, endDate: undefined });
+  // Applied Filters-panel state: selected statuses, customers and date-only bounds.
+  const filters = ref<SalesRepOrdersFilterDataType>({
+    statuses: [],
+    customerNames: [],
+    startDate: undefined,
+    endDate: undefined,
+  });
   // Selected sort expression ("createdDate:desc"); undefined → the server default.
   const sortRule = ref<string | undefined>(undefined);
   const page = ref(1);
 
-  // One search phrase carries the keyword, the status union and the created-date range — the same syntax the
-  // storefront's own order list builds.
-  const filterExpression = computed(() => getFilterExpression(keyword.value, filters.value));
+  // One search phrase carries the keyword, the status union, the customers and the created-date range —
+  // the same syntax the storefront's own order list builds.
+  const filterExpression = computed(() => {
+    const { customerNames = [], ...rest } = filters.value;
+    // Held back from getFilterExpression on purpose: its own customerNames emits `customername`, the buyer
+    // who placed the order, while this list groups by the organization the order belongs to.
+    const phrase = getFilterExpression(keyword.value, rest);
+    if (customerNames.length === 0) {
+      return phrase;
+    }
+
+    const quoted = customerNames.map((name) => JSON.stringify(name)).join(",");
+    const clause = `${ORDER_CUSTOMER_FACET}:${quoted}`;
+    return phrase ? `${phrase} ${clause}` : clause;
+  });
 
   const variables = computed(() => ({
     organizationId: orgId(),
@@ -75,7 +93,8 @@ export function useSalesRepCustomerOrders(organizationId?: MaybeRefOrGetter<stri
     after: String((page.value - 1) * PAGE_SIZE),
     sort: withDirection(sortRule.value),
     filter: filterExpression.value,
-    facet: ORDER_STATUS_FACET,
+    // The all-customers list also offers a customer filter, so it aggregates that field too.
+    facet: hasCustomer.value ? ORDER_STATUS_FACET : `${ORDER_STATUS_FACET} ${ORDER_CUSTOMER_FACET}`,
   }));
 
   // Orders are placed outside the storefront, so the list revalidates rather than serving the one it
@@ -92,7 +111,9 @@ export function useSalesRepCustomerOrders(organizationId?: MaybeRefOrGetter<stri
 
   const orders = computed(() => toSalesRepCustomerOrderRows(result.value?.salesRepCustomerOrders?.items));
 
-  const statusOptions = computed(() => toOrderStatusOptions(result.value?.salesRepCustomerOrders?.term_facets));
+  const facets = computed(() => result.value?.salesRepCustomerOrders?.term_facets);
+  const statusOptions = computed(() => toFacetOptions(facets.value, ORDER_STATUS_FACET));
+  const customerOptions = computed(() => toFacetOptions(facets.value, ORDER_CUSTOMER_FACET));
 
   const pages = computed(() =>
     Math.max(1, Math.ceil((result.value?.salesRepCustomerOrders?.totalCount ?? 0) / PAGE_SIZE)),
@@ -116,6 +137,7 @@ export function useSalesRepCustomerOrders(organizationId?: MaybeRefOrGetter<stri
     notFound,
     orders,
     statusOptions,
+    customerOptions,
     sortRules: SORT_RULES,
     loading: computed(() => loading.value || customerLoading.value),
     failed: computed(() => Boolean(error.value)),

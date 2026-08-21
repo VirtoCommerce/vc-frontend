@@ -3,7 +3,7 @@ import type { MoneyType, SalesRepCustomerOrdersQuery, SalesRepOrdersQuery } from
 import type {
   SalesRepCustomerOrderRowType,
   SalesRepOrderRowType,
-  SalesRepOrderStatusOptionType,
+  SalesRepFacetOptionType,
   SalesRepRuleType,
 } from "./types";
 import type { StatWidgetToneType } from "./types/widgets";
@@ -217,13 +217,15 @@ export function toSalesRepCustomerOrderRows(items?: CustomerOrderNodeType[]): Sa
     }));
 }
 
-// The status facet of a customer-orders page -> the Filters panel's options. A status with no orders behind
-// it never reaches the facet, so there is nothing to filter out here.
-export function toOrderStatusOptions(
-  facets?: NonNullable<SalesRepCustomerOrdersQuery["salesRepCustomerOrders"]>["term_facets"],
-): SalesRepOrderStatusOptionType[] {
+// One facet of a customer-orders page -> the Filters panel's options for it. A value no order in scope
+// carries never reaches the facet, so there is nothing to filter out here.
+export function toFacetOptions(
+  facets: NonNullable<SalesRepCustomerOrdersQuery["salesRepCustomerOrders"]>["term_facets"] | undefined,
+  facetName: string,
+): SalesRepFacetOptionType[] {
   return (facets ?? [])
-    .flatMap((facet) => facet?.terms ?? [])
+    .filter((facet) => facet?.name === facetName)
+    .flatMap((facet) => facet.terms ?? [])
     .filter((term) => term != null)
     .map((term) => ({ name: term.term, label: term.label || term.term, count: term.count }));
 }

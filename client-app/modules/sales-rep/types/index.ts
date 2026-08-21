@@ -84,14 +84,16 @@ export type SalesRepOrderRowType = {
 export type SalesRepOrdersFilterDataType = {
   // Selected order statuses; several narrow to their union.
   statuses: string[];
+  // Selected customers, by organization name. Offered only where the list spans customers.
+  customerNames?: string[];
   // Date-only bounds ("YYYY-MM-DD").
   startDate?: string;
   endDate?: string;
 };
 
-// A status the customer's orders actually carry, with how many of them do. Read from the list's own
-// term_facets, so every option has orders behind it and the count follows the other filters.
-export type SalesRepOrderStatusOptionType = {
+// A value the listed orders actually carry — a status, a customer — with how many of them do. Read from
+// the list's own term_facets, so every option has orders behind it and the count follows the other filters.
+export type SalesRepFacetOptionType = {
   name: string;
   label: string;
   count: number;

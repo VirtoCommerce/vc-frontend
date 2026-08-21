@@ -22,6 +22,8 @@ const backendUrl = normalizeBackendUrl(process.env.APP_BACKEND_URL);
 const core = {
   apiPath: "client-app/core/api/graphql",
   commonFragmentsPath: "client-app/core/api/graphql/common/fragments",
+  fragmentsPath: "client-app/core/api/graphql/fragments",
+  catalogFragmentsPath: "client-app/core/api/graphql/catalog/fragments",
   schemaPath: `${backendUrl}/graphql`,
   clientDirectivesPath: "client-app/core/api/graphql/_clientDirectives.graphql",
 } as const;
@@ -80,6 +82,17 @@ const independentModules: ModuleType[] = [
     name: "SalesRep",
     apiPath: "client-app/modules/sales-rep/api/graphql",
     schemaPath: `${backendUrl}/graphql/sales-rep`,
+    // The read-only order page renders the same CustomerOrderType the storefront does, through the
+    // storefront's own fragment — these are what it pulls in (VCST-5733).
+    requiredCommonFragments: [
+      `${core.commonFragmentsPath}/money.graphql`,
+      `${core.commonFragmentsPath}/currency.graphql`,
+      `${core.catalogFragmentsPath}/property.graphql`,
+      `${core.fragmentsPath}/fullOrderFields.graphql`,
+      `${core.fragmentsPath}/shortOrderFields.graphql`,
+      `${core.fragmentsPath}/orderAddressFields.graphql`,
+      `${core.fragmentsPath}/orderLineItemFields.graphql`,
+    ],
   },
   /* EXPERIMENTAL FEATURE
   {
