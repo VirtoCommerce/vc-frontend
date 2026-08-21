@@ -18,8 +18,8 @@ import type { MaybeRefOrGetter } from "vue";
 
 export const PAGE_SIZE = 10;
 
-// Both sortable columns read newest/biggest first and reverse freely, so the expression always carries a
-// direction — a bare field name would mean ascending to the backend.
+// Both sortable columns reverse freely, so the expression always carries a direction — a bare field name
+// would mean ascending to the backend.
 const SORT_RULES: SalesRepRuleType[] = Object.values(CUSTOMER_ORDERS_SORT_FIELDS).map((name) => ({
   name,
   label: name,
@@ -35,12 +35,6 @@ function withDirection(expression?: string): string | undefined {
   return `${field}:${direction}`;
 }
 
-/**
- * The orders of one served customer, or of every customer the rep serves when no organization is given.
- * Unlike the dashboard's Recent orders, this list is not scoped to the orders the rep placed — it is the
- * customer's whole history (VCST-5733). Statuses, their counts and the search all ride one request: the
- * status options come back as the list's own facet.
- */
 export function useSalesRepCustomerOrders(organizationId?: MaybeRefOrGetter<string | undefined>) {
   const orgId = () => toValue(organizationId);
   const hasCustomer = computed(() => Boolean(orgId()));
@@ -53,25 +47,20 @@ export function useSalesRepCustomerOrders(organizationId?: MaybeRefOrGetter<stri
     enabled: hasCustomer,
   });
 
-  // Applied search term (committed on enter/click by the page), not the live input.
   const keyword = ref("");
-  // Applied Filters-panel state: selected statuses, customers and date-only bounds.
   const filters = ref<SalesRepOrdersFilterDataType>({
     statuses: [],
     customerNames: [],
     startDate: undefined,
     endDate: undefined,
   });
-  // Selected sort expression ("createdDate:desc"); undefined → the server default.
   const sortRule = ref<string | undefined>(undefined);
   const page = ref(1);
 
-  // One search phrase carries the keyword, the status union, the customers and the created-date range —
-  // the same syntax the storefront's own order list builds.
   const filterExpression = computed(() => {
     const { customerNames = [], ...rest } = filters.value;
-    // Held back from getFilterExpression on purpose: its own customerNames emits `customername`, the buyer
-    // who placed the order, while this list groups by the organization the order belongs to.
+    // Held back from getFilterExpression: its own customerNames emits `customername`, the buyer who placed
+    // the order, while this list groups by the organization the order belongs to.
     const phrase = getFilterExpression(keyword.value, rest);
     if (customerNames.length === 0) {
       return phrase;
@@ -84,28 +73,22 @@ export function useSalesRepCustomerOrders(organizationId?: MaybeRefOrGetter<stri
 
   const variables = computed(() => ({
     organizationId: orgId(),
-    // Scope to the rep's store so other-store orders don't leak in.
     storeId: globals.storeId,
-    // Localizes statusDisplayValue and the facet labels.
     cultureName: globals.cultureName,
     first: PAGE_SIZE,
     // xAPI connections accept the offset as the cursor (host-wide convention).
     after: String((page.value - 1) * PAGE_SIZE),
     sort: withDirection(sortRule.value),
     filter: filterExpression.value,
-    // The all-customers list also offers a customer filter, so it aggregates that field too.
     facet: hasCustomer.value ? STATUS_ORDERS_FACET_NAME : `${STATUS_ORDERS_FACET_NAME} ${ORDER_CUSTOMER_FACET}`,
   }));
 
-  // Orders are placed outside the storefront, so the list revalidates rather than serving the one it
-  // first loaded; keepPreviousResult holds the current page while it does.
   const { result, loading, error, onError } = useSalesRepHubQuery(SalesRepCustomerOrdersDocument, variables, {
     keepPreviousResult: true,
     fetchPolicy: HUB_FETCH_POLICY,
   });
 
   onError((err) => {
-    // No toast; the page's failure view names it instead (VCST-5586).
     Logger.error("[sales-rep] salesRepCustomerOrders failed:", err);
   });
 
@@ -119,14 +102,12 @@ export function useSalesRepCustomerOrders(organizationId?: MaybeRefOrGetter<stri
     Math.max(1, Math.ceil((result.value?.salesRepCustomerOrders?.totalCount ?? 0) / PAGE_SIZE)),
   );
 
-  // Clamp back to the last valid page when the set shrinks below the current page.
   watch(pages, (total) => {
     if (page.value > total) {
       page.value = total;
     }
   });
 
-  // Switching customers restarts the list rather than landing on a page that may not exist there.
   watch(orgId, () => {
     page.value = 1;
   });

@@ -56,7 +56,6 @@ const guardCustomerRoute: NavigationGuard = (to, _from, next) => {
   }
 };
 
-// Reps only, with no customer id to check.
 const guardRepRoute: NavigationGuard = (_to, _from, next) => {
   if (guardSalesRep(next)) {
     next();
@@ -76,7 +75,6 @@ export const dashboardRoute: RouteRecordRaw = {
   name: DASHBOARD_ROUTE_NAME,
   component: DashboardPage,
   meta: repRouteMeta,
-  // Non-reps who hit the URL directly are bounced to the account dashboard.
   beforeEnter: guardRepRoute,
 };
 
@@ -88,8 +86,6 @@ export const myCustomersRoute: RouteRecordRaw = {
   beforeEnter: guardRepRoute,
 };
 
-// Reps-only gate + deep-link id check; the not-served/unknown-org case is handled on the page.
-
 // Customer profile (VCST-5308) -> /company/my-customers/:organizationId.
 export const customerProfileRoute: RouteRecordRaw = {
   path: CUSTOMER_PROFILE_ROUTE_SEGMENT,
@@ -100,7 +96,6 @@ export const customerProfileRoute: RouteRecordRaw = {
   beforeEnter: guardCustomerRoute,
 };
 
-// The customer's whole order history (VCST-5733) -> /company/my-customers/:organizationId/orders.
 export const customerOrdersRoute: RouteRecordRaw = {
   path: CUSTOMER_ORDERS_ROUTE_SEGMENT,
   name: CUSTOMER_ORDERS_ROUTE_NAME,
@@ -110,7 +105,6 @@ export const customerOrdersRoute: RouteRecordRaw = {
   beforeEnter: guardCustomerRoute,
 };
 
-// One of those orders, read-only -> /company/my-customers/:organizationId/orders/:orderId.
 export const customerOrderRoute: RouteRecordRaw = {
   path: CUSTOMER_ORDER_ROUTE_SEGMENT,
   name: CUSTOMER_ORDER_ROUTE_NAME,
@@ -120,8 +114,7 @@ export const customerOrderRoute: RouteRecordRaw = {
   beforeEnter: guardCustomerRoute,
 };
 
-// Every served customer's orders (VCST-5733) -> /company/customer-orders. No customer in the route, so the
-// page needs no id check — only the reps-only gate.
+// No customer in the route, so the page needs no id check — only the reps-only gate.
 export const allCustomerOrdersRoute: RouteRecordRaw = {
   path: ALL_CUSTOMER_ORDERS_ROUTE_SEGMENT,
   name: ALL_CUSTOMER_ORDERS_ROUTE_NAME,

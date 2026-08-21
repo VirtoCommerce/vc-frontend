@@ -8,8 +8,6 @@ import type { SalesRepCustomerProfileType } from "../types/customer-profile";
 import type { MaybeRefOrGetter } from "vue";
 
 type OptionsType = {
-  // Off on a surface that has no customer in scope (the all-customers order list), where an empty
-  // organizationId would otherwise be read as "customer not found".
   enabled?: MaybeRefOrGetter<boolean>;
 };
 

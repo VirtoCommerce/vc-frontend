@@ -174,8 +174,6 @@ const { t } = useI18n();
 
 const isCrossCustomer = computed(() => !props.organizationId);
 
-// One customer -> their own order history; cross-customer -> the same list across every served customer.
-// Either way this widget shows the orders the rep placed, while the link opens the customers' whole history.
 const allOrdersRoute = computed(() =>
   props.organizationId
     ? { name: CUSTOMER_ORDERS_ROUTE_NAME, params: { organizationId: props.organizationId } }

@@ -82,20 +82,15 @@ export type SalesRepOrderRowType = {
 };
 
 // Draft/applied state of the customer orders Filters panel — the storefront's own filter shape, so
-// getFilterExpression turns it into the same search phrase. `customerNames` means the owning organization
-// here (see useSalesRepCustomerOrders), not the buyer the shared helper reads it as.
 export type SalesRepOrdersFilterDataType = OrdersFilterDataType;
 
 // A value the listed orders actually carry — a status, a customer — with how many of them do. Read from
-// the list's own term_facets, so every option has orders behind it and the count follows the other filters.
 export type SalesRepFacetOptionType = {
   name: string;
   label: string;
   count: number;
 };
 
-// Customer-orders table row. No items column: the row comes from the shared CustomerOrder type, which
-// counts line items only by returning them.
 export type SalesRepCustomerOrderRowType = {
   id: string;
   number: string;
@@ -105,6 +100,5 @@ export type SalesRepCustomerOrderRowType = {
   status: string;
   statusDisplayValue: string;
   total: string;
-  // The rep placed this one themselves, so it opens on the buyer-facing page where they can still act on it.
   isOwn: boolean;
 };

@@ -38,7 +38,6 @@ const createWrapper = createWrapperFactory(mount, SalesRepOrders, {
     // scoped-slots with no row. This test only cares which of the three branches renders.
     renderStubDefaultSlot: false,
     stubs: {
-      // The content lives in named slots, which a plain stub would not render.
       VcWidget: { template: '<div><slot name="append" /><slot name="default-container" /></div>' },
       // LayoutWidget's drag controls: never rendered here, but the compiler resolves them anyway.
       VcButton: true,

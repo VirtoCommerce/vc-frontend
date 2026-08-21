@@ -55,7 +55,6 @@ vi.mock("../composables/useSalesRepColumnSort", async () => {
   };
 });
 vi.mock("@/core/composables/usePageHead", () => ({ usePageHead: vi.fn() }));
-// useBreadcrumbs reads the current route.
 vi.mock("vue-router", async () => {
   const actual = await vi.importActual<typeof import("vue-router")>("vue-router");
   return {
@@ -72,7 +71,6 @@ const createWrapper = createWrapperFactory(mount, CustomerOrders, {
     renderStubDefaultSlot: false,
     stubs: {
       VcWidget: { template: '<div><slot name="default-container" /></div>' },
-      // A real input: Enter has to reach the page's handler.
       VcInput: {
         props: ["modelValue"],
         emits: ["update:modelValue", "clear"],
@@ -199,8 +197,6 @@ describe("CustomerOrders", () => {
     ]);
   });
 
-  // Whether customers are offered at all is decided by the composable, which only requests that facet on the
-  // all-customers route (pinned in useSalesRepCustomerOrders.test.ts) — the page just passes them through.
   it("passes the customers the listed orders belong to, with their counts, to the panel", async () => {
     state.hasCustomer.value = false;
     state.customerOptions.value = [{ name: "ACME", label: "ACME", count: 3 }];

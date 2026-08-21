@@ -193,7 +193,6 @@ describe("salesRepOrderRoute", () => {
     isOwn,
   });
 
-  // The rep placed it, so it opens where they can still pay or reorder it.
   it("sends an order the rep placed to the buyer-facing page", () => {
     expect(salesRepOrderRoute(row(true), "org-in-the-url")).toEqual({
       name: BUYER_ORDER_ROUTE_NAME,
@@ -208,7 +207,6 @@ describe("salesRepOrderRoute", () => {
     });
   });
 
-  // The all-customers list has no organization in its own route, so each row supplies its own.
   it("falls back to the order's own customer when the page has none", () => {
     expect(salesRepOrderRoute(row(false))).toEqual({
       name: CUSTOMER_ORDER_ROUTE_NAME,

@@ -42,8 +42,6 @@ export function init(router: Router, i18n: I18n) {
   router.addRoute("Company", myCustomersRoute);
   // Customer profile (VCST-5308) -> /company/my-customers/:organizationId.
   router.addRoute("Company", customerProfileRoute);
-  // The customer's whole order history (VCST-5733) -> /company/my-customers/:organizationId/orders,
-  // one order of it, and the same list across every served customer.
   router.addRoute("Company", customerOrdersRoute);
   router.addRoute("Company", customerOrderRoute);
   router.addRoute("Company", allCustomerOrdersRoute);

@@ -52,7 +52,6 @@ describe("useSalesRepCustomerOrder", () => {
     expect(order.value?.number).toBe("CO260812-00002");
   });
 
-  // An order of a customer the rep does not serve comes back null, the same as an unknown id.
   it("reads a null order as not found, but only once the read has settled", () => {
     const { notFound } = useSalesRepCustomerOrder("o-1");
 
@@ -64,7 +63,6 @@ describe("useSalesRepCustomerOrder", () => {
     expect(notFound.value).toBe(true);
   });
 
-  // The page renders the order through the storefront's own components, so it needs the same derived state.
   it("derives the same item splits the buyer-facing order page uses", () => {
     const { giftItems, mainCurrencyOrderItems } = useSalesRepCustomerOrder("o-1");
 

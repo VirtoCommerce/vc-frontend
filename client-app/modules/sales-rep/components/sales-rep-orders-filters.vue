@@ -116,9 +116,7 @@ import { useI18n } from "vue-i18n";
 import type { SalesRepFacetOptionType, SalesRepOrdersFilterDataType } from "../types";
 
 interface IProps {
-  // Statuses the listed orders carry, with their counts, from the list's own status facet.
   statuses: SalesRepFacetOptionType[];
-  // Customers those orders belong to; empty on a single customer's page.
   customers?: SalesRepFacetOptionType[];
   disabled?: boolean;
 }
@@ -141,7 +139,6 @@ function emptyFilter(): SalesRepOrdersFilterDataType {
   return { statuses: [], customerNames: [], startDate: undefined, endDate: undefined };
 }
 
-// Date-only bounds ("YYYY-MM-DD"); the page turns them into the query's period instants.
 function toDateOnly(date: Date): string {
   return date.toISOString().split("T")[0];
 }
@@ -192,7 +189,6 @@ const selectedRange = ref<RangeType>(ranges.value[0]);
 const startValid = ref(true);
 const endValid = ref(true);
 
-// Start must not be after end; empty and partial ranges are valid.
 const isRangeOrderValid = computed(() => {
   const { startDate, endDate } = draft.value;
   if (!startDate || !endDate) {
@@ -201,7 +197,6 @@ const isRangeOrderValid = computed(() => {
   return new Date(startDate).getTime() <= new Date(endDate).getTime();
 });
 
-// The message names a wrong order, so a malformed input must not raise it — the pickers flag that themselves.
 const showRangeError = computed(
   () => !isRangeOrderValid.value && Boolean(draft.value.startDate) && Boolean(draft.value.endDate),
 );
@@ -215,7 +210,6 @@ const isEmpty = computed(() => {
 
 const isDirty = computed(() => JSON.stringify(draft.value) !== JSON.stringify(applied.value));
 
-// A preset fills the bounds; "Custom date" clears them for the pickers to take over.
 function applyRange(range: RangeType): void {
   if (range.id === CUSTOM_RANGE_ID) {
     draft.value.startDate = undefined;
@@ -225,7 +219,6 @@ function applyRange(range: RangeType): void {
 
   draft.value.startDate = range.startDate;
   draft.value.endDate = range.endDate;
-  // The pickers unmount without re-emitting validity.
   startValid.value = true;
   endValid.value = true;
 }

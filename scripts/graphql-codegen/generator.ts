@@ -82,8 +82,8 @@ const independentModules: ModuleType[] = [
     name: "SalesRep",
     apiPath: "client-app/modules/sales-rep/api/graphql",
     schemaPath: `${backendUrl}/graphql/sales-rep`,
-    // The read-only order page renders the same CustomerOrderType the storefront does, through the
-    // storefront's own fragment — these are what it pulls in (VCST-5733).
+    // Codegen does not follow #import outside a module's own apiPath, so the storefront fragments the
+    // read-only order page reuses have to be listed here.
     requiredCommonFragments: [
       `${core.commonFragmentsPath}/money.graphql`,
       `${core.commonFragmentsPath}/currency.graphql`,
@@ -213,7 +213,6 @@ async function generateTypes({
   typesPath,
 }: {
   name: string;
-  /** the endpoint to check for presence, `schema` may additionally hold local files */
   schemaUrl: string;
   schema: string | string[];
   documents: string[];

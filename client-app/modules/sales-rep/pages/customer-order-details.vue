@@ -184,8 +184,6 @@ const {
   allItemsAreDigital,
 } = useSalesRepCustomerOrder(() => props.orderId);
 
-// Read off the order itself rather than looking the customer up again: a second query would cost a round trip
-// and would name whichever customer the URL happened to carry, not the one the order belongs to.
 const customerName = computed(() => order.value?.organizationName ?? "");
 
 const isCancelled = computed(

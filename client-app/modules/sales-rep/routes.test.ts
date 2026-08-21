@@ -30,13 +30,10 @@ describe("sales-rep routes", () => {
     expect(route.meta?.requiresOrganization).toBe(false);
   });
 
-  // The customer's order list is a child URL of the customer, so the crumb trail back to the profile
-  // and to My customers stays derivable from the path alone.
   it("nests the customer orders list under the customer", () => {
     expect(customerOrdersRoute.path).toBe("my-customers/:organizationId/orders");
   });
 
-  // Same reason for one order: the trail back through the list, the profile and My customers is in the path.
   it("nests one order under the customer's order list", () => {
     expect(customerOrderRoute.path).toBe("my-customers/:organizationId/orders/:orderId");
   });
@@ -46,8 +43,8 @@ describe("sales-rep routes", () => {
     expect(allCustomerOrdersRoute.path).toBe("customer-orders");
   });
 
-  // guardSalesRep only calls next() to bounce a non-rep, so a route whose beforeEnter forgets to call it
-  // on the way through leaves the click doing nothing at all.
+  // guardSalesRep only calls next() to bounce a non-rep, so a beforeEnter that forgets to call it on the way
+  // through leaves the click doing nothing at all.
   it.each([
     ["dashboard", dashboardRoute],
     ["my customers", myCustomersRoute],

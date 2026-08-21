@@ -30,28 +30,22 @@ export const CUSTOMER_SHARING_SCOPE = "Customer";
 export const CUSTOMER_PROFILE_ROUTE_NAME = "SalesRepCustomerProfile";
 export const CUSTOMER_PROFILE_ROUTE_SEGMENT = `${MY_CUSTOMERS_ROUTE_SEGMENT}/:organizationId`;
 
-// The customer's full order history: /company/my-customers/:organizationId/orders.
 export const CUSTOMER_ORDERS_ROUTE_NAME = "SalesRepCustomerOrders";
 export const CUSTOMER_ORDERS_ROUTE_SEGMENT = `${CUSTOMER_PROFILE_ROUTE_SEGMENT}/orders`;
-// One order, read-only: /company/my-customers/:organizationId/orders/:orderId.
 export const CUSTOMER_ORDER_ROUTE_NAME = "SalesRepCustomerOrder";
 export const CUSTOMER_ORDER_ROUTE_SEGMENT = `${CUSTOMER_ORDERS_ROUTE_SEGMENT}/:orderId`;
 
-// The storefront's own order page. An order the rep placed opens there, where the buyer actions they are
-// entitled to (paying, reordering) still work — the hub's page is read-only for everyone.
+// The storefront's own order page: an order the rep placed opens there, where their buyer actions still
+// work. The hub's page is read-only for everyone.
 export const BUYER_ORDER_ROUTE_NAME = "OrderDetails";
 
-// Every served customer's orders: /company/customer-orders. A sibling of My customers rather than a child,
-// since "my-customers/orders" would match the :organizationId segment.
+// A sibling of My customers rather than a child, since "my-customers/orders" would match the
+// :organizationId segment.
 export const ALL_CUSTOMER_ORDERS_ROUTE_NAME = "SalesRepAllCustomerOrders";
 export const ALL_CUSTOMER_ORDERS_ROUTE_SEGMENT = "customer-orders";
 
-// Second facet on the all-customers list: which customer each order belongs to. Deliberately NOT core's
 // CUSTOMER_NAME_FACET_NAME ("customername") — that is the buyer who placed the order, this is the
-// organization it belongs to. The status facet reuses core's STATUS_ORDERS_FACET_NAME.
 export const ORDER_CUSTOMER_FACET = "organizationname";
-// Sortable columns of the customer-orders table, mapped to the index fields the backend sorts on. Both are
-// freely reversible, and both read newest/biggest first, so the expression always carries a direction.
 export const CUSTOMER_ORDERS_SORT_FIELDS = { date: "createdDate", total: "total" } as const;
 export const CUSTOMER_ORDERS_SORT_DIRECTION = "desc" as const;
 

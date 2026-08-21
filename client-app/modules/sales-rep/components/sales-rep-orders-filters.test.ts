@@ -9,7 +9,6 @@ const createWrapper = createWrapperFactory(mount, SalesRepOrdersFilters, {
   global: {
     renderStubDefaultSlot: false,
     stubs: {
-      // The panel lives in the popover's content slot, so both slots have to render.
       VcPopover: {
         template: '<div><slot :trigger-props="{}" /><slot name="content" :close="close" /></div>',
         methods: { close: () => {} },
@@ -51,7 +50,6 @@ const createWrapper = createWrapperFactory(mount, SalesRepOrdersFilters, {
 
 type WrapperType = ReturnType<typeof createWrapper>;
 
-// Footer order: Reset, then Apply. The first button is the popover trigger.
 const footerButtons = (wrapper: WrapperType) => wrapper.findAll("button").slice(1);
 const applyButton = (wrapper: WrapperType) => footerButtons(wrapper)[1];
 const resetButton = (wrapper: WrapperType) => footerButtons(wrapper)[0];
@@ -92,7 +90,6 @@ describe("SalesRepOrdersFilters", () => {
       startDate: "2026-05-01",
       endDate: "2026-05-08",
     });
-    // The click is swallowed while Apply still renders disabled.
     await nextTick();
 
     await applyButton(wrapper).trigger("click");

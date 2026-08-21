@@ -143,7 +143,6 @@ import type { RouteLocationRaw } from "vue-router";
 import OrderStatus from "@/shared/account/components/order-status.vue";
 
 interface IProps {
-  // Absent on /company/customer-orders, which lists every served customer's orders.
   organizationId?: string;
 }
 
@@ -168,7 +167,6 @@ const {
   sortRule,
 } = useSalesRepCustomerOrders(() => props.organizationId);
 
-// Date → "createdDate", Total → "total"; both reverse on a repeat click.
 const { sortInfo, applySort } = useSalesRepColumnSort({
   sortRule,
   columns: CUSTOMER_ORDERS_SORT_FIELDS,
@@ -176,7 +174,6 @@ const { sortInfo, applySort } = useSalesRepColumnSort({
   rules: sortRules,
 });
 
-// Unapplied search term; committed to the query on Enter or the search button.
 const localKeyword = ref("");
 
 const hasSearch = computed(
@@ -198,8 +195,6 @@ const heading = computed(() => {
     : t("sales_rep.customer_orders.page.title_fallback");
 });
 
-// Sorting starts over from the first page. (Apollo collapses the two variable changes into one request on
-// its own — the sync flush only keeps `page` and `sort` consistent within the same tick.)
 watch(
   sortRule,
   () => {

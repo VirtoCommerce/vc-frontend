@@ -16,7 +16,6 @@ const queryMock = await vi.hoisted(async () => {
 
 const customerMock = await vi.hoisted(async () => {
   const vue = await import("vue");
-  // shallowRef: a deep ref would unwrap the captured options' own refs before the test reads them.
   return { loading: vue.ref(false), notFound: vue.ref(false), options: vue.shallowRef<unknown>(undefined) };
 });
 
@@ -29,7 +28,6 @@ vi.mock("@/core/globals", () => ({
 vi.mock("./useSalesRepCustomer", async () => {
   const { computed, ref, toValue } = await import("vue");
   return {
-    // Mirrors the real composable, which reports not-found only while it is enabled.
     useSalesRepCustomer: (_id: unknown, options?: { enabled?: unknown }) => {
       customerMock.options.value = options;
       return {
@@ -45,7 +43,6 @@ function lastCallArgs(): unknown[] {
   return queryMock.useQuery.mock.calls.at(-1) ?? [];
 }
 
-/** The reactive `variables` computed the composable handed to useQuery. */
 function passedVariables(): {
   organizationId?: string;
   storeId?: string;
@@ -89,13 +86,11 @@ describe("useSalesRepCustomerOrders", () => {
 
     expect(passedVariables()).toMatchObject({
       organizationId: "org-1",
-      // Scoped to the current store so other-store orders don't leak in.
       storeId: "test-store",
       cultureName: "en-US",
       first: PAGE_SIZE,
       after: "0",
       filter: "",
-      // The status options and their counts come back with the page itself.
       facet: "status",
       sort: undefined,
     });
@@ -110,7 +105,6 @@ describe("useSalesRepCustomerOrders", () => {
     keyword.value = "CO260812";
     expect(passedVariables().filter).toBe("CO260812");
 
-    // Several statuses narrow to their union — the panel is a multi-select.
     filters.value = { statuses: ["New", "Completed"], startDate: undefined, endDate: undefined };
     expect(passedVariables().filter).toBe('CO260812 status:"New","Completed"');
 
@@ -118,7 +112,6 @@ describe("useSalesRepCustomerOrders", () => {
     expect(passedVariables().filter).toContain("createddate:[");
   });
 
-  // Not the shared helper's own customerNames, which means the buyer who placed the order.
   it("narrows by owning organization, not by the buyer who placed the order", () => {
     const { filters } = useSalesRepCustomerOrders();
 
@@ -143,10 +136,8 @@ describe("useSalesRepCustomerOrders", () => {
 
     expect(passedVariables().organizationId).toBeUndefined();
     expect(hasCustomer.value).toBe(false);
-    // Spanning customers, so it also aggregates which customer each order belongs to.
     expect(passedVariables().facet).toBe("status organizationname");
 
-    // No customer in scope, so the customer lookup is off and its not-found view never shows.
     const options = customerMock.options.value as { enabled: { value: boolean } };
     expect(options.enabled.value).toBe(false);
     customerMock.notFound.value = true;
@@ -175,7 +166,6 @@ describe("useSalesRepCustomerOrders", () => {
         customerId: "rep-1",
         total: { formattedAmount: "$1,200.00" },
       },
-      // number, organizationName and status absent on the wire; placed by someone else
       {
         id: "o-2",
         number: "",
@@ -198,7 +188,6 @@ describe("useSalesRepCustomerOrders", () => {
         total: "$1,200.00",
         isOwn: true,
       },
-      // Absent values read as blanks or a currency zero, never as a missing row (VCST-5586).
       {
         id: "o-2",
         number: "",

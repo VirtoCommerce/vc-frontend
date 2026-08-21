@@ -179,7 +179,6 @@ export function formatSignedPercent(percent?: number | null): SignedPercentType 
 // Connection items → table rows, shared by the orders widget and the customer orders page.
 type OrderNodeType = NonNullable<NonNullable<SalesRepOrdersQuery["salesRepOrders"]>["items"]>[number];
 
-// Absent values read as blanks or a currency zero, never as a missing row (VCST-5586).
 type OrderRowSourceType = {
   id: string;
   number?: string;
@@ -204,7 +203,6 @@ function toOrderRowBase(order: OrderRowSourceType) {
   };
 }
 
-// Skip null connection items so one bad row doesn't blank the list.
 function presentOrders<T>(items?: (T | null)[]): NonNullable<T>[] {
   return (items ?? []).filter((order): order is NonNullable<T> => order != null);
 }
@@ -216,8 +214,6 @@ export function toSalesRepOrderRows(items?: OrderNodeType[]): SalesRepOrderRowTy
   }));
 }
 
-// Connection items -> customer-orders rows. The shared CustomerOrder type carries no items count, so this
-// row has no Items column (unlike the dashboard widget's).
 type CustomerOrderNodeType = NonNullable<
   NonNullable<SalesRepCustomerOrdersQuery["salesRepCustomerOrders"]>["items"]
 >[number];
@@ -225,14 +221,11 @@ type CustomerOrderNodeType = NonNullable<
 export function toSalesRepCustomerOrderRows(items?: CustomerOrderNodeType[]): SalesRepCustomerOrderRowType[] {
   return presentOrders(items).map((order) => ({
     ...toOrderRowBase(order),
-    // A rep-placed order records the rep as its customer — the same field the backend scopes the
-    // dashboard's own-orders list by.
+    // A rep-placed order records the rep as its customer — the field the backend scopes own-orders by.
     isOwn: Boolean(globals.userId) && order.customerId === globals.userId,
   }));
 }
 
-// One facet of a customer-orders page -> the Filters panel's options for it. A value no order in scope
-// carries never reaches the facet, so there is nothing to filter out here.
 export function toFacetOptions(
   facets: NonNullable<SalesRepCustomerOrdersQuery["salesRepCustomerOrders"]>["term_facets"] | undefined,
   facetName: string,
@@ -244,9 +237,8 @@ export function toFacetOptions(
     .map((term) => ({ name: term.term, label: term.label || term.term, count: term.count }));
 }
 
-// An order the rep placed is theirs to act on, so it opens on the buyer-facing page the way Recent orders
-// already opens it. Everyone else's opens read-only in the hub — the row carries its own customer, so the
-// all-customers list still lands each one in its customer's context.
+// An order the rep placed opens on the buyer-facing page, where they can still act on it; everyone else's
+// opens read-only in the hub.
 export function salesRepOrderRoute(order: SalesRepCustomerOrderRowType, organizationId?: string): RouteLocationRaw {
   if (order.isOwn) {
     return { name: BUYER_ORDER_ROUTE_NAME, params: { orderId: order.id } };
