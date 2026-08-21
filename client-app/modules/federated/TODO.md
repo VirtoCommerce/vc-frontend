@@ -48,9 +48,19 @@ Still open:
 - [ ] **Backend-capability gate** — `requiredBackendModules` precondition checked against
       the installed module list before load; unmet ⇒ `skipped` with a distinct reason
       (decided in review: discovery-decoupling ≠ functional-decoupling).
-- [ ] **Name-collision dedup** — two descriptors resolving to the same `remote.name` are both
-      registered (`{ force: true }` keeps the last) and both loaded, so one plugin's code never
-      runs while still being reported as loaded.
+- [ ] **Plugin styling containment — decided, not built, and its prototype is not landing.** The
+      answer is `<style scoped>` + `@apply` with **no global utility layer**: Vue compiles a scoped
+      rule to `.card[data-v-abc]`, which cannot match host markup and still beats a host utility on
+      the plugin's own (0-2-0 vs 0-1-0), so overriding needs no `!important`. Prototyped and
+      browser-verified on `feat/VCST-5409-sales-reps` (PR #2372), which is **abandoned** — so the
+      scaffold change has to be redone here. Today `create:plugin` emits
+      `@tailwind components; @tailwind utilities;` into `src/styles.css`, i.e. a global layer that
+      hits every page, with precedence against lazily-loaded host CSS decided by navigation order.
+      A cascade layer on the HOST side is not the fix: it outranks specificity and would cancel the
+      `data-v` advantage the convention depends on (measured in-browser).
+- [x] **Name-collision dedup** — first descriptor wins, the rest are skipped with a loud log.
+      Previously both were registered (`{ force: true }` keeps the last) and both loaded, so one
+      plugin's code never ran while still being reported as loaded.
 
 ## 3. Artifact integrity for remote code
 
@@ -111,8 +121,8 @@ type-check — including from the real tarball), but only manually. Remaining:
       shallow to see the base branch's committed contract. Needs `fetch-depth: 0` (or an
       explicit `git fetch origin dev`) in the theme CI checkout.
 - [ ] A live `loadRemote` smoke against a running host build.
-- [ ] Remaining `resolveRemotes` coverage: name-collision dedup, and the env override set to a
-      valid-but-empty `{}` (it suppresses the platform list silently).
+- [x] `resolveRemotes` coverage for name collisions and for a valid-but-empty `{}` override, which
+      now says so in the log instead of suppressing the platform list silently.
 - [x] **Guard test for the load-bearing boot ordering** — `setThemeContext(store)` and
       `setUser(userResult)` must both run before `startFederatedModules()`; plugins resolve store
       settings through `useModuleSettings`, and the permission gate reads `user.value` at call

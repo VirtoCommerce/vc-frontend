@@ -46,6 +46,11 @@ That list has its own query, issued only by a host built as a federation host. K
 the boot store query is deliberate: `store.plugins` needs x-api 3.1016.0, and a single unknown
 field fails the whole GraphQL document — which would take `settings.modules` down with it.
 
+Only a `script` entry is loaded; the platform advertising any other `entry.type` is skipped rather
+than fed to the MF runtime. Locally the plugin folder is proxied to `APP_BACKEND_URL`
+(`^/modules/.*/plugins/vc-frontend/` in `vite.config.ts`, dev and preview alike), so the platform
+path works in `yarn dev` and `yarn preview` — not just against a deployed host.
+
 > `APP_MODULES_FEDERATION_ENABLED` is still inlined at BUILD time (Vite `import.meta.env`), so
 > turning the host into a federation host is a rebuild; which plugins it then loads is not.
 
@@ -95,6 +100,14 @@ reads that manifest, checks compatibility, then loads the expose key the descrip
 (`./plugin` for our scaffold, `./Module` by the platform's default) and calls its `init()`. The
 plugin, in turn, reaches back into the host **only** through the shared `@vc-frontend/core`
 facade — never by importing host source directly.
+
+**Plugin CSS** is your responsibility to contain: style components with `<style scoped>` + `@apply`
+and ship **no global utility layer**. Vue compiles a scoped rule to `.card[data-v-abc]`, which both
+keeps it off host markup (the attribute exists only on your components) and lets it beat a host
+utility on your own (0-2-0 against 0-1-0) — so overriding host styling needs no `!important`.
+Global CSS in `contentFiles` is not fenced by the host: it will hit every page, and whether it beats
+a lazily-loaded host route's CSS depends on where the user has been. Note the scaffold does not yet
+help you here — it still emits a global utility layer (`TODO.md` #1).
 
 ---
 
@@ -368,14 +381,13 @@ decision for the storefront. What the harness enforces today:
 
 What **you** must provide when enabling MF in an environment:
 
-- **CSP**: same-origin platform plugins fit a `self` policy. An externally hosted remote needs its
-  origin in `script-src` and `connect-src`, and its `contentFiles` stylesheets in `style-src`.
-  Without CSP, any XSS can `import()` arbitrary code anyway — CSP is what makes an origin
-  restriction mean anything.
+- **CSP**: same-origin platform plugins fit a `self` policy — code and stylesheets alike, since both
+  arrive by URL. An externally hosted remote needs its origin in `script-src`, `connect-src` and
+  `style-src`. Without CSP, any XSS can `import()` arbitrary code anyway — CSP is what makes an
+  origin restriction mean anything.
 - **Trusted hosting** for plugin artifacts at the host bundle's trust level — including
-  `contentFiles` stylesheets, which are linked into `document.head` with no integrity and no
-  cascade isolation, so plugin CSS can restyle the whole storefront. Integrity/signing is an open
-  follow-up in `TODO.md`.
+  `contentFiles` stylesheets, linked into `document.head` once the plugin loads, with no integrity
+  check and no cascade fence. Integrity/signing is an open follow-up in `TODO.md`.
 
 Known limitation (documented, accepted for now): the gate fetches the manifest itself,
 and the MF runtime fetches it **again** for loading — a remote redeployed between the
