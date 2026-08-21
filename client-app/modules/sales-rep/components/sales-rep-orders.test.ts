@@ -9,6 +9,8 @@ const state = await vi.hoisted(async () => {
     orders: ref<Record<string, unknown>[]>([]),
     loading: ref(false),
     error: ref<Error | null>(null),
+    filterRulesFailed: ref(false),
+    sortRulesFailed: ref(false),
   };
 });
 
@@ -17,7 +19,13 @@ vi.mock("../composables/useSalesRepOrders", () => ({
 }));
 vi.mock("../composables/useSalesRepRules", async () => {
   const { ref } = await import("vue");
-  return { useSalesRepRules: () => ({ rules: ref([]) }) };
+  return {
+    useSalesRepRules: (_domain: string, kind: string) => ({
+      rules: ref([]),
+      loading: ref(false),
+      failed: kind === "filter" ? state.filterRulesFailed : state.sortRulesFailed,
+    }),
+  };
 });
 vi.mock("../composables/useSalesRepPeriodFilter", async () => {
   const { ref } = await import("vue");
@@ -46,6 +54,8 @@ const createWrapper = createWrapperFactory(mount, SalesRepOrders, {
       VcEmptyView: true,
       VcIcon: true,
       VcLink: true,
+      // Rendered rather than stubbed away: the assertions are about which message the alert carries.
+      VcAlert: { template: '<div class="vc-alert"><slot /></div>' },
       SalesRepRuleChips: true,
       OrderStatus: true,
     },
@@ -54,10 +64,57 @@ const createWrapper = createWrapperFactory(mount, SalesRepOrders, {
 
 const emptyViews = (wrapper: ReturnType<typeof createWrapper>) => wrapper.findAll("vc-empty-view-stub");
 
+const ruleAlert = (wrapper: ReturnType<typeof createWrapper>) => wrapper.find(".vc-alert");
+
 beforeEach(() => {
   state.orders.value = [];
   state.loading.value = false;
   state.error.value = null;
+  state.filterRulesFailed.value = false;
+  state.sortRulesFailed.value = false;
+});
+
+// Without the rules the tab row and the sortable headers are simply absent, which read as "this widget
+// has no filters" rather than as a failure (VCST-5682).
+describe("SalesRepOrders degraded controls", () => {
+  it("says the filters could not be loaded when the widget offers them", () => {
+    state.filterRulesFailed.value = true;
+
+    const wrapper = createWrapper({ props: { title: "Recent orders", filterable: true } });
+
+    expect(ruleAlert(wrapper).text()).toContain("sales_rep.rules.load_failed.filter");
+  });
+
+  it("stays silent about filters the widget never offers", () => {
+    state.filterRulesFailed.value = true;
+
+    const wrapper = createWrapper();
+
+    expect(ruleAlert(wrapper).exists()).toBe(false);
+  });
+
+  it("says the sorting options could not be loaded", () => {
+    state.sortRulesFailed.value = true;
+
+    const wrapper = createWrapper();
+
+    expect(ruleAlert(wrapper).text()).toContain("sales_rep.rules.load_failed.sort");
+  });
+
+  it("names both when neither rule list loaded", () => {
+    state.filterRulesFailed.value = true;
+    state.sortRulesFailed.value = true;
+
+    const wrapper = createWrapper({ props: { title: "Recent orders", filterable: true } });
+
+    expect(ruleAlert(wrapper).text()).toContain("sales_rep.rules.load_failed.both");
+  });
+
+  it("keeps quiet while the rules load", () => {
+    const wrapper = createWrapper({ props: { title: "Recent orders", filterable: true } });
+
+    expect(ruleAlert(wrapper).exists()).toBe(false);
+  });
 });
 
 describe("SalesRepOrders states", () => {
