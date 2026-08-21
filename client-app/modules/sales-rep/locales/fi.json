@@ -187,7 +187,7 @@
       }
     },
     "orders": {
-      "title": "Viimeisimmät tilaukset",
+      "title": "Omat viimeisimmät tilaukset",
       "view_all": "Kaikki tilaukset",
       "empty": "Ei vielä tilauksia",
       "no_results": "Mikään tilaus ei vastaa tätä suodatinta",

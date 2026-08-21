@@ -187,7 +187,7 @@
       }
     },
     "orders": {
-      "title": "Nylige ordrer",
+      "title": "Mine nylige ordrer",
       "view_all": "Alle bestillinger",
       "empty": "Ingen bestillinger ennå",
       "no_results": "Ingen bestillinger samsvarer med dette filteret",

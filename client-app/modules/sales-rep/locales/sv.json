@@ -187,7 +187,7 @@
       }
     },
     "orders": {
-      "title": "Senaste ordrar",
+      "title": "Mina senaste ordrar",
       "view_all": "Alla beställningar",
       "empty": "Inga beställningar ännu",
       "no_results": "Inga ordrar matchar detta filter",

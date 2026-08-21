@@ -187,7 +187,7 @@
       }
     },
     "orders": {
-      "title": "Recent orders",
+      "title": "My recent orders",
       "view_all": "All orders",
       "empty": "No orders yet",
       "no_results": "No orders match this filter",

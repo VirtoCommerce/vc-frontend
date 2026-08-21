@@ -187,7 +187,7 @@
       }
     },
     "orders": {
-      "title": "Commandes récentes",
+      "title": "Mes commandes récentes",
       "view_all": "Toutes les commandes",
       "empty": "Aucune commande pour le moment",
       "no_results": "Aucune commande ne correspond à ce filtre",

@@ -187,7 +187,7 @@
       }
     },
     "orders": {
-      "title": "Pedidos recientes",
+      "title": "Mis pedidos recientes",
       "view_all": "Todos los pedidos",
       "empty": "Aún no hay pedidos",
       "no_results": "Ningún pedido coincide con este filtro",

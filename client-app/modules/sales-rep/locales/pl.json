@@ -187,7 +187,7 @@
       }
     },
     "orders": {
-      "title": "Ostatnie zamówienia",
+      "title": "Moje ostatnie zamówienia",
       "view_all": "Wszystkie zamówienia",
       "empty": "Brak zamówień",
       "no_results": "Żadne zamówienie nie pasuje do tego filtra",
