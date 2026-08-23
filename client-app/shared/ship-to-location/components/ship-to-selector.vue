@@ -72,7 +72,7 @@
 
           <VcDialogContent>
             <template #container>
-              <div v-if="isListLoading" class="ship-to-selector__loading">
+              <div v-if="isSearchPending" class="ship-to-selector__loading">
                 <VcLoader />
               </div>
 
@@ -223,16 +223,25 @@ const addresses = computed(() => {
 
 const hasAddresses = computed(() => addresses.value.length > 0);
 
+// filter (the search box) updates instantly; keyword (the server-side filter that allAddresses/
+// totalCount are actually scoped to) only catches up once the debounce below fires and its query
+// resolves. Treat that window, plus the request itself, as pending - hasAnyAddresses/showSearch/the
+// loader below must not react to totalCount while it's still scoped to a stale keyword, or clearing
+// a zero-result search would collapse the popover/search field before the real total comes back.
+const isSearchPending = computed(() => (isPaginated.value && (filter.value ?? "") !== keyword.value) || loading.value);
+
 // Based on the true total, not the current (possibly filtered) view, so an empty search result
 // doesn't hide the whole dropdown behind the "add new address" button.
 const hasAnyAddresses = computed(() =>
-  isPaginated.value ? totalCount.value > 0 || !!filter.value : allAddresses.value.length > 0,
+  isPaginated.value ? totalCount.value > 0 || !!filter.value || isSearchPending.value : allAddresses.value.length > 0,
 );
 
 const showSearch = computed(
   () =>
     !!filter.value ||
-    (isPaginated.value ? totalCount.value > MAX_ADDRESSES_NUMBER : allAddresses.value.length > MAX_ADDRESSES_NUMBER),
+    (isPaginated.value
+      ? totalCount.value > MAX_ADDRESSES_NUMBER || isSearchPending.value
+      : allAddresses.value.length > MAX_ADDRESSES_NUMBER),
 );
 
 const canAddNewAddress = computed(
@@ -247,15 +256,6 @@ const applyKeyword = useDebounceFn((value: string | undefined) => {
 }, SEARCH_DEBOUNCE_IN_MS);
 
 watch(filter, applyKeyword);
-
-// filter (the search box) updates instantly; keyword (the server-side filter actually applied to
-// `allAddresses`) only catches up after the debounce above fires and its query resolves. In
-// between - e.g. if isPaginated flips true mid-typing because the org/personal list just loaded -
-// `allAddresses` can reflect a different keyword than what's currently typed. Treat that window as
-// loading rather than rendering a list that doesn't match the search box, so a stale address can't
-// be clicked by mistake.
-const isSearchSyncing = computed(() => isPaginated.value && filter.value !== keyword.value);
-const isListLoading = computed(() => loading.value || isSearchSyncing.value);
 </script>
 
 <style lang="scss">
