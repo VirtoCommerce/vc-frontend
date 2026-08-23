@@ -28,32 +28,35 @@ export function formatCustomerLocation(address: LocationPartsType, options?: { w
   return [code, address?.city, address?.regionName].filter(Boolean).join(" · ");
 }
 
-// ISO date windows shared by the statistics ops: current bounds end at NOW (not calendar end);
-// previous-period windows are elapsed-matched for a fair "vs last X" delta.
+// ISO date windows shared by the statistics ops: current bounds end at the END of the user's current day
+// (see `nowIso`), previous-period windows at the same calendar position one period back (see `matched`).
 //
 // Day/week/month/year boundaries are the USER'S calendar, not UTC's. The widgets have to agree with the
 // order lists next to them, and those render `createdDate` through `$d()` — i.e. in the browser's zone. On
-// UTC boundaries an order placed at 23:00 UTC is "tomorrow" for a UTC+3 rep, so it fell outside the
-// "created today" badge while still showing in the list and in the unbounded counter.
+// UTC boundaries an order placed at 23:00 UTC is "tomorrow" for a UTC+3 rep, so it fell outside the window
+// the badge counted while still showing in the list and in the unbounded counter.
 export type StatisticsWindowsType = {
-  // Month-to-date and the elapsed-matched slice of the previous month.
+  // Month-to-date and the calendar-matched slice of the previous month.
   mtdFrom: string;
   mtdTo: string;
   prevFrom: string;
   prevTo: string;
-  // Year-to-date and the elapsed-matched slice of the previous year.
+  // Year-to-date and the calendar-matched slice of the previous year.
   ytdFrom: string;
   ytdTo: string;
   lastYearFrom: string;
   lastYearTo: string;
-  // Week-to-date (Monday-start) and the elapsed-matched slice of the previous week.
+  // Week-to-date (Monday-start) and the calendar-matched slice of the previous week.
   weekFrom: string;
   weekTo: string;
   prevWeekFrom: string;
   prevWeekTo: string;
-  // Today (start of the user's current day → now) — backs the "new orders placed today" count.
-  todayFrom: string;
-  todayTo: string;
+  // Rolling 7 days — bounds the `new_orders` card. Rolling rather than week-to-date, because a
+  // Monday-start window reads ~0 first thing Monday, when the actionable backlog is at its largest.
+  // The locale strings spell the span out ("of {count} created in the last 7 days"), so changing it
+  // means retranslating them.
+  recentFrom: string;
+  recentTo: string;
 };
 
 // Local-time counterpart of Date.UTC: the instant at a wall-clock moment in the user's zone, with the same
@@ -83,7 +86,8 @@ export function buildStatisticsWindows(now: Date = new Date()): StatisticsWindow
   const prevMonthStart = local(year, month - 1, 1);
   const yearStart = local(year, 0, 1);
   const prevYearStart = local(year - 1, 0, 1);
-  const todayStart = local(year, month, day);
+  // 7 days *inclusive of today*, hence −6.
+  const recentStart = local(year, month, day - 6);
 
   // Monday-start week: getDay() is 0 (Sun)…6 (Sat); shift so Monday === 0.
   const daysSinceMonday = (now.getDay() + 6) % 7;
@@ -110,8 +114,8 @@ export function buildStatisticsWindows(now: Date = new Date()): StatisticsWindow
     weekTo: nowIso,
     prevWeekFrom: iso(prevWeekStart),
     prevWeekTo: matched(eod(year, month, day - 7), weekStart),
-    todayFrom: iso(todayStart),
-    todayTo: nowIso,
+    recentFrom: iso(recentStart),
+    recentTo: nowIso,
   };
 }
 

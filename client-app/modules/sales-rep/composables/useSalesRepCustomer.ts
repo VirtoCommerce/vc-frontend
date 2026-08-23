@@ -1,9 +1,9 @@
-import { useQuery } from "@vue/apollo-composable";
 import { computed, toValue } from "vue";
 import { Logger } from "@/core/utilities";
 import { SalesRepCustomerDocument } from "../api/graphql/types";
 import { HUB_FETCH_POLICY } from "../constants";
 import { formatCustomerLocation } from "../utils";
+import { useSalesRepHubQuery } from "./useSalesRepHubQuery";
 import type { SalesRepCustomerProfileType } from "../types/customer-profile";
 import type { MaybeRefOrGetter } from "vue";
 
@@ -12,13 +12,13 @@ export function useSalesRepCustomer(organizationId: MaybeRefOrGetter<string>) {
 
   // The header is editable outside the storefront, so it revalidates too. Three components on the page
   // share this composable; Apollo's deduplication collapses their concurrent identical requests into one.
-  const { result, loading, onError } = useQuery(SalesRepCustomerDocument, variables, {
+  const { result, loading, error, onError } = useSalesRepHubQuery(SalesRepCustomerDocument, variables, {
     fetchPolicy: HUB_FETCH_POLICY,
   });
 
-  onError((error) => {
-    // No toast; the page falls back to the not-found view.
-    Logger.error("[sales-rep] salesRepCustomer failed:", error);
+  onError((queryError) => {
+    // No toast; the page names the failure itself.
+    Logger.error("[sales-rep] salesRepCustomer failed:", queryError);
   });
 
   const customer = computed<SalesRepCustomerProfileType | undefined>(() => {
@@ -36,8 +36,11 @@ export function useSalesRepCustomer(organizationId: MaybeRefOrGetter<string>) {
       : undefined;
   });
 
-  // Not served / unknown / errored all settle to the same not-found view once loading finishes.
-  const notFound = computed(() => !loading.value && !customer.value);
+  // A failed read says nothing about whether the rep serves this customer, so the page words it differently.
+  const failed = computed(() => Boolean(error.value));
 
-  return { customer, loading, notFound };
+  // Not served / unknown settle to the not-found view once loading finishes.
+  const notFound = computed(() => !loading.value && !failed.value && !customer.value);
+
+  return { customer, loading, failed, notFound };
 }

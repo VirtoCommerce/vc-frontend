@@ -20,9 +20,10 @@ const queryMock = await vi.hoisted(async () => {
     | undefined
   >(undefined);
   const loading = r(false);
+  const error = r<Error | null>(null);
   const onError = vi.fn();
-  const useQuery = vi.fn(() => ({ result, loading, onError }));
-  return { result, loading, onError, useQuery };
+  const useQuery = vi.fn(() => ({ result, loading, error, onError }));
+  return { result, loading, error, onError, useQuery };
 });
 
 vi.mock("@vue/apollo-composable", () => ({ useQuery: queryMock.useQuery }));
@@ -42,6 +43,7 @@ function passedVariables(): { organizationId: string } {
 beforeEach(() => {
   queryMock.result.value = undefined;
   queryMock.loading.value = false;
+  queryMock.error.value = null;
   queryMock.useQuery.mockClear();
   queryMock.onError.mockClear();
 });
@@ -113,6 +115,18 @@ describe("useSalesRepCustomer", () => {
     queryMock.result.value = { salesRepCustomer: null };
     expect(customer.value).toBeUndefined();
     expect(notFound.value).toBe(true);
+  });
+
+  // A failed read says nothing about whether the rep serves this customer, so the page must not
+  // present it as "not found" (VCST-5682).
+  it("keeps a failed read out of notFound", () => {
+    const { failed, notFound } = useSalesRepCustomer("org-1");
+
+    queryMock.error.value = new Error("Failed to fetch");
+    queryMock.result.value = undefined;
+
+    expect(failed.value).toBe(true);
+    expect(notFound.value).toBe(false);
   });
 
   it("passes loading through and registers an error handler", () => {

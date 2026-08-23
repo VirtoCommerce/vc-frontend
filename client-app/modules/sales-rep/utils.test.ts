@@ -80,40 +80,57 @@ describe("buildStatisticsWindows", () => {
     expect(w.mtdTo).toBe(dayEnd);
     expect(w.ytdTo).toBe(dayEnd);
     expect(w.weekTo).toBe(dayEnd);
-    expect(w.todayTo).toBe(dayEnd);
-    expect(w.todayFrom).toBe(localIso(2025, 5, 10));
+    expect(w.recentTo).toBe(dayEnd);
+  });
+
+  it("spans a full 7 days of the rolling window, today included", () => {
+    const now = new Date(2025, 5, 10, 8, 15, 0); // Tue Jun 10
+    const w = buildStatisticsWindows(now);
+
+    // Jun 4…Jun 10 inclusive — 6 days back, not 7, or the window would cover 8 calendar days.
+    expect(w.recentFrom).toBe(localIso(2025, 5, 4));
+    expect(w.recentTo).toBe(localIso(2025, 5, 10, 23, 59, 59, 999));
+  });
+
+  it("keeps the rolling window full on a Monday, when week-to-date would be nearly empty", () => {
+    const monday = new Date(2025, 5, 9, 8, 15, 0);
+    const w = buildStatisticsWindows(monday);
+
+    expect(w.weekFrom).toBe(localIso(2025, 5, 9));
+    expect(w.recentFrom).toBe(localIso(2025, 5, 3));
+    expect(new Date(w.recentFrom).getTime()).toBeLessThan(new Date(w.weekFrom).getTime());
   });
 
   it("puts the day boundary at the user's midnight, not UTC's", () => {
     // The reported defect: on UTC boundaries an order placed at 23:00 UTC is already "tomorrow" for a
-    // UTC+3 rep (and "yesterday" evening lands in UTC today for a UTC−5 one), so the "created today"
-    // badge disagreed with the order list beside it, which renders createdDate in the browser's zone.
+    // UTC+3 rep (and "yesterday" evening lands in UTC today for a UTC−5 one), so the recent-orders badge
+    // disagreed with the order list beside it, which renders createdDate in the browser's zone.
     const now = new Date(2026, 6, 31, 10, 0, 0);
     const w = buildStatisticsWindows(now);
 
-    const from = new Date(w.todayFrom);
-    const to = new Date(w.todayTo);
+    const from = new Date(w.recentFrom);
+    const to = new Date(w.recentTo);
 
     // Midnight → 23:59:59.999 on the *user's* clock.
     expect([from.getHours(), from.getMinutes(), from.getSeconds(), from.getMilliseconds()]).toEqual([0, 0, 0, 0]);
     expect([to.getHours(), to.getMinutes(), to.getSeconds(), to.getMilliseconds()]).toEqual([23, 59, 59, 999]);
-    expect(from.getDate()).toBe(31);
+    expect(from.getDate()).toBe(25);
     expect(to.getDate()).toBe(31);
 
-    // An order the rep sees stamped "today" is inside the window at both ends of the day…
-    const justAfterMidnight = new Date(2026, 6, 31, 0, 30, 0).getTime();
-    const lateEvening = new Date(2026, 6, 31, 23, 30, 0).getTime();
-    expect(justAfterMidnight).toBeGreaterThanOrEqual(from.getTime());
-    expect(lateEvening).toBeLessThanOrEqual(to.getTime());
+    // An order the rep sees stamped inside the window stays inside it at both ends of the span…
+    const firstDayJustAfterMidnight = new Date(2026, 6, 25, 0, 30, 0).getTime();
+    const lastDayLateEvening = new Date(2026, 6, 31, 23, 30, 0).getTime();
+    expect(firstDayJustAfterMidnight).toBeGreaterThanOrEqual(from.getTime());
+    expect(lastDayLateEvening).toBeLessThanOrEqual(to.getTime());
 
-    // …and yesterday's late-evening order stays out of it.
-    expect(new Date(2026, 6, 30, 23, 30, 0).getTime()).toBeLessThan(from.getTime());
+    // …and the late-evening order from the day before the window stays out of it.
+    expect(new Date(2026, 6, 24, 23, 30, 0).getTime()).toBeLessThan(from.getTime());
   });
 
   it("anchors every period start to the user's midnight", () => {
     const w = buildStatisticsWindows(new Date(2025, 4, 21, 16, 45, 0));
 
-    for (const bound of [w.mtdFrom, w.prevFrom, w.ytdFrom, w.lastYearFrom, w.weekFrom, w.prevWeekFrom, w.todayFrom]) {
+    for (const bound of [w.mtdFrom, w.prevFrom, w.ytdFrom, w.lastYearFrom, w.weekFrom, w.prevWeekFrom, w.recentFrom]) {
       const date = new Date(bound);
       expect([date.getHours(), date.getMinutes(), date.getSeconds(), date.getMilliseconds()]).toEqual([0, 0, 0, 0]);
     }

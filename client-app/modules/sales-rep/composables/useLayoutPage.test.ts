@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { nextTick } from "vue";
+import { effectScope, nextTick } from "vue";
 import { useLayoutPage } from "./useLayoutPage";
+import type { EffectScope } from "vue";
 
 const apolloMock = await vi.hoisted(async () => {
   const { ref, shallowRef } = await import("vue");
@@ -42,7 +43,19 @@ beforeEach(() => {
   apolloMock.mutate.mockReset();
 });
 
+// useLayoutPage wraps useSalesRepLayout, which registers a watchEffect and an onScopeDispose — so these
+// calls need an owning scope too, or the effects outlive the test against shared visibility state.
+let scopes: EffectScope[] = [];
+
+function withPage(scope: Parameters<typeof useLayoutPage>[0]) {
+  const owner = effectScope();
+  scopes.push(owner);
+  return owner.run(() => useLayoutPage(scope))!;
+}
+
 afterEach(() => {
+  scopes.forEach((owner) => owner.stop());
+  scopes = [];
   document.body.replaceChildren();
 });
 
@@ -66,7 +79,7 @@ describe("useLayoutPage", () => {
     apolloMock.mutate.mockRejectedValue(new Error("network"));
     renderChrome();
 
-    const { startEdit, save, editing } = useLayoutPage("customerProfile");
+    const { startEdit, save, editing } = withPage("customerProfile");
     startEdit();
 
     await save();
@@ -92,7 +105,7 @@ describe("useLayoutPage", () => {
     });
     renderChrome();
 
-    const { startEdit, save } = useLayoutPage("customerProfile");
+    const { startEdit, save } = withPage("customerProfile");
     startEdit();
 
     await save();
@@ -104,7 +117,7 @@ describe("useLayoutPage", () => {
 
   // Nothing else tells a screen reader the surface changed, or that the arrow keys do anything.
   it("announces edit mode and the keyboard gesture on entry", async () => {
-    const { startEdit, message } = useLayoutPage("customerProfile");
+    const { startEdit, message } = withPage("customerProfile");
 
     startEdit();
     await nextTick();
@@ -115,7 +128,7 @@ describe("useLayoutPage", () => {
 
   // Both widget columns share one tray, so a page reads them as a single list.
   it("gathers hidden widgets from both columns", () => {
-    const { startEdit, toggleHidden, hiddenWidgets } = useLayoutPage("customerProfile");
+    const { startEdit, toggleHidden, hiddenWidgets } = withPage("customerProfile");
     startEdit();
 
     toggleHidden("orders", true);
@@ -127,7 +140,7 @@ describe("useLayoutPage", () => {
   // The registry is the only place a block's props are declared, and the pages bind them blind. A
   // widget silently losing `filterable` drops the orders filter chips with nothing failing.
   it("hands a block its registry props, and an empty object when it has none", () => {
-    const { propsOf } = useLayoutPage("dashboard");
+    const { propsOf } = withPage("dashboard");
 
     expect(propsOf("orders")).toEqual({ filterable: true });
     expect(propsOf("top_sellers")).toEqual({});

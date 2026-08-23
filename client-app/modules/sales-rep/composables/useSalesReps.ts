@@ -1,9 +1,9 @@
-import { useQuery } from "@vue/apollo-composable";
 import { computed, ref, watch } from "vue";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { CustomerSalesRepsDocument } from "../api/graphql/types";
 import { HUB_FETCH_POLICY } from "../constants";
+import { useSalesRepHubQuery } from "./useSalesRepHubQuery";
 import type { SalesRepType, SalesRepSortType } from "../types";
 
 export const PAGE_SIZE = 10;
@@ -30,14 +30,14 @@ export function useSalesReps() {
   // Active-only filtering is a server responsibility too (AC#5).
   // Assignments and contact details change in Admin, so the list revalidates rather than serving the
   // one it first loaded; keepPreviousResult holds the current page while it does.
-  const { result, loading, onError } = useQuery(CustomerSalesRepsDocument, variables, {
+  const { result, loading, error, onError } = useSalesRepHubQuery(CustomerSalesRepsDocument, variables, {
     keepPreviousResult: true,
     fetchPolicy: HUB_FETCH_POLICY,
   });
 
-  onError((error) => {
-    // Keep the page functional (empty list + empty view); no toasts by design.
-    Logger.error("[sales-rep] customerSalesReps failed:", error);
+  onError((err) => {
+    // No toast; the page's failure view names it instead (VCST-5586).
+    Logger.error("[sales-rep] customerSalesReps failed:", err);
   });
 
   const items = computed<SalesRepType[]>(() =>
@@ -60,5 +60,5 @@ export function useSalesReps() {
     }
   });
 
-  return { loading, keyword, sort, page, pages, items };
+  return { loading, error, keyword, sort, page, pages, items };
 }

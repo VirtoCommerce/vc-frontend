@@ -1,10 +1,12 @@
-import { useMutation, useQuery } from "@vue/apollo-composable";
-import { computed, readonly, ref } from "vue";
+import { useMutation } from "@vue/apollo-composable";
+import { computed, onScopeDispose, readonly, ref, watchEffect } from "vue";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { SalesRepLayoutDocument, SaveSalesRepLayoutDocument } from "../api/graphql/types";
 import { echoMatchesSentBlocks, reconcileLayout, serializeLayout } from "../layout/document";
 import { getBlockRegistry } from "../layout/registry";
+import { useSalesRepHubQuery } from "./useSalesRepHubQuery";
+import { clearStatVisibility, publishStatVisibility } from "./useStatDataNeeds";
 import type {
   SalesRepBlockSettingsType,
   SalesRepLayoutRegionIdType,
@@ -37,7 +39,7 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
 
   // `no-cache` even with layout/cache-policies.ts in place: a save echoes `saveSalesRepLayout`, a
   // different root field, so it never refreshes a cached `salesRepLayout`.
-  const { result, loading, error, onError, refetch } = useQuery(
+  const { result, loading, error, onError, refetch } = useSalesRepHubQuery(
     SalesRepLayoutDocument,
     () => ({
       scope,
@@ -50,7 +52,8 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
     Logger.error("[sales-rep] salesRepLayout failed:", queryError);
   });
 
-  // A mutation writes its result to the cache too, so it needs the same policy.
+  // A mutation writes its result to the cache too, so it needs the same policy. No suppress context: a failed
+  // save is a user action, so it keeps the toast (VCST-5682).
   const { mutate, loading: saving } = useMutation(SaveSalesRepLayoutDocument, { fetchPolicy: "no-cache" });
 
   // Layout as last persisted (or registry defaults when the rep has never saved this surface).
@@ -82,6 +85,26 @@ export function useSalesRepLayout(scope: SalesRepLayoutScopeType) {
   function hiddenIn(regionId: SalesRepLayoutRegionIdType): readonly string[] {
     return state.value.regions[regionId].hidden;
   }
+
+  // Settled = the document has been read, or the read failed and the surface is showing registry
+  // defaults. Either way the visible set is now the real one, which is what the statistics queries
+  // wait for. A failed read keeps the cards fed rather than leaving them empty behind an alert.
+  const settled = computed(() => Boolean(result.value) || Boolean(savedState.value) || Boolean(error.value));
+
+  // The statistics composables shape their queries from the cards this surface shows, so a hidden card
+  // costs no buckets and an unneeded query does not fire (VCST-5647). Published rather than returned:
+  // they are created by the PAGE, above the <LayoutSurface> that owns this layout.
+  watchEffect(() => {
+    publishStatVisibility(scope, {
+      settled: settled.value,
+      visible: visibleIn("statistics"),
+      editing: editing.value,
+    });
+  });
+
+  onScopeDispose(() => {
+    clearStatVisibility(scope);
+  });
 
   /** A block with no declared settings has none — the shared empty keeps callers from branching. */
   function settingsOf(blockId: string): SalesRepBlockSettingsType {
