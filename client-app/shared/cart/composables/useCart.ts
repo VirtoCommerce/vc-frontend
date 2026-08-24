@@ -74,14 +74,6 @@ const CartItemsSelectionFragment = gql`
   }
 `;
 
-const CartItemsFragment = gql`
-  fragment CartItemsFragment on CartType {
-    items {
-      id
-    }
-  }
-`;
-
 /**
  * Reactive shared access to the current cart state using the GetShortCart GraphQL query.
  *
@@ -501,33 +493,18 @@ export function _useFullCart(cartId?: string) {
   }
 
   const { mutate: _removeItems, loading: removeItemsLoading } = useMutation(RemoveCartItemsDocument);
-  const {
-    add: _removeItemsBatched,
-    overflowed: removeItemsOverflowed,
-    loading: removeItemsBatchedLoading,
-  } = useMutationBatcher(_removeItems, {
-    mergeStrategy: getMergeStrategyUniqueBy((id) => id),
-    debounce: EXTENDED_DEBOUNCE_IN_MS,
-  });
-
-  function updateRemovalCache(ids: string[]) {
-    if (!cart.value) {
-      return;
-    }
-    client.cache.updateFragment(
+  async function removeItems(lineItemIds: string[]): Promise<void> {
+    await _removeItems(
+      { command: { lineItemIds, ...commonVariables }, skipQuery: false },
       {
-        id: client.cache.identify(cart.value),
-        fragment: CartItemsFragment,
+        optimisticResponse: {
+          removeCartItems: {
+            ...cart.value!,
+            items: cart.value!.items.filter((item) => !lineItemIds.includes(item.id)),
+          },
+        },
       },
-      (data: { items: LineItemType[] | undefined } | null) => ({
-        items: data?.items?.filter((item) => !ids.includes(item.id)),
-      }),
     );
-  }
-
-  function removeItems(lineItemIds: string[]): void {
-    updateRemovalCache(lineItemIds);
-    void _removeItemsBatched({ command: { lineItemIds, ...commonVariables }, skipQuery: false });
   }
 
   const { mutate: _changeItemQuantity, loading: changeItemQuantityLoading } = useMutation(
@@ -751,7 +728,6 @@ export function _useFullCart(cartId?: string) {
     unselectCartItems,
     selectionOverflowed,
     removeItems,
-    removeItemsOverflowed,
     validateCartCoupon,
     addCartCoupon,
     removeCartCoupon,
@@ -771,7 +747,6 @@ export function _useFullCart(cartId?: string) {
         selectionLoading.value ||
         clearCartLoading.value ||
         removeItemsLoading.value ||
-        removeItemsBatchedLoading.value ||
         changeItemQuantityLoading.value ||
         changeItemsQuantityLoading.value ||
         validateCouponLoading.value ||

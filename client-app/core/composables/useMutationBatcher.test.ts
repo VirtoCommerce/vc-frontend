@@ -281,19 +281,4 @@ describe("getMergeStrategyUniqueBy", () => {
       },
     });
   });
-
-  it("should dedupe a plain array of ids using an identity-function iteratee", () => {
-    type LineItemIdsArgumentsType = { command: { lineItemIds: string[] } };
-    const mergeStrategy = getMergeStrategyUniqueBy((id) => id);
-
-    const a: LineItemIdsArgumentsType = { command: { lineItemIds: ["item_1"] } };
-    const b: LineItemIdsArgumentsType = { command: { lineItemIds: ["item_2"] } };
-    const c: LineItemIdsArgumentsType = { command: { lineItemIds: ["item_1"] } };
-
-    const result = mergeStrategy(a, b);
-    expect(result).toEqual({ command: { lineItemIds: ["item_1", "item_2"] } });
-
-    const result2 = mergeStrategy(result, c);
-    expect(result2).toEqual({ command: { lineItemIds: ["item_2", "item_1"] } });
-  });
 });
