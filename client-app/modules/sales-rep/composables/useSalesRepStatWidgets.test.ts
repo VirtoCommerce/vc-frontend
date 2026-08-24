@@ -88,9 +88,9 @@ function emptyOrders(): OrderStatsType {
     newOrders: { count: 0, total: zeroMoney },
     recentOrders: { count: 0 },
     // No baseline to compare against, so the backend sends null percents.
-    weekVsPrevWeek: { countChange: 0, totalChange: zeroMoney },
-    mtdVsPrevMonth: { countChange: 0, totalChange: zeroMoney },
-    ytdVsLastYear: { countChange: 0, totalChange: zeroMoney },
+    weekVsPrevWeek: {},
+    mtdVsPrevMonth: {},
+    ytdVsLastYear: {},
   };
 }
 
@@ -120,9 +120,8 @@ describe("stat cards for a customer with no data", () => {
   it("renders every dashboard figure as a zero", () => {
     sources.orders.value = emptyOrders();
     sources.carts.value = {
-      currencyCode: "USD",
-      activeCarts: { count: 0, total: zeroMoney },
-      newCartsThisWeek: { count: 0 },
+      activeCarts: { selectedItemQuantity: 0, unselectedItemQuantity: 0 },
+      itemsThisWeek: { selectedItemQuantity: 0 },
     } satisfies CartStatsType;
     sources.counts.value = {
       assignedCustomers: 0,
@@ -134,7 +133,8 @@ describe("stat cards for a customer with no data", () => {
     expectNoPlaceholders(cards.value);
     expect(cards.value.map((card) => [card.key, card.value, card.sub, card.delta])).toEqual([
       ["new_orders", "0", "$0.00 total", "of 0 created in the last 7 days"],
-      ["active_carts", "0", "$0.00", "0 new this week"],
+      // Item quantities, not a cart count plus money (VCST-5588).
+      ["active_carts", "0", "0 not for checkout", "0 items this week"],
       // No previous-period baseline, so the "vs last X" comparison is absent rather than a false 0%.
       ["orders_placed_week", "0", "$0.00", ""],
       ["orders_placed_mtd", "0", "$0.00", ""],
@@ -146,9 +146,8 @@ describe("stat cards for a customer with no data", () => {
   it("renders every customer-profile figure as a zero", () => {
     sources.orders.value = emptyOrders();
     sources.carts.value = {
-      currencyCode: "USD",
-      activeCarts: { count: 0, total: zeroMoney },
-      newCartsThisWeek: { count: 0 },
+      activeCarts: { selectedItemQuantity: 0, unselectedItemQuantity: 0 },
+      itemsThisWeek: { selectedItemQuantity: 0 },
     } satisfies CartStatsType;
 
     const { cards } = useSalesRepCustomerWidgets("org-1");
@@ -156,7 +155,8 @@ describe("stat cards for a customer with no data", () => {
     expectNoPlaceholders(cards.value);
     expect(cards.value.map((card) => [card.key, card.value, card.sub, card.delta])).toEqual([
       ["new_orders", "0", "$0.00 total", "of 0 created in the last 7 days"],
-      ["active_cart", "$0.00", undefined, undefined],
+      // The dashboard's card, scoped to one organization — same figures, same wording.
+      ["active_cart", "0", "0 not for checkout", "0 items this week"],
       ["mtd", "$0.00", undefined, "0% of YTD"],
       ["orders_ytd", "0", "$0.00", ""],
       ["aov", "$0.00", "Average per order (YTD)", undefined],
@@ -166,7 +166,7 @@ describe("stat cards for a customer with no data", () => {
   it("still renders zeros when the backend omits the period objects entirely", () => {
     // Periods are nullable in the schema; an absent one must read the same as an empty one.
     sources.orders.value = { currencyCode: "USD" } satisfies OrderStatsType;
-    sources.carts.value = { currencyCode: "USD" } satisfies CartStatsType;
+    sources.carts.value = {} satisfies CartStatsType;
     sources.counts.value = { assignedCustomers: 0 } satisfies CountsType;
 
     const dashboard = useSalesRepDashboardWidgets();
@@ -175,7 +175,8 @@ describe("stat cards for a customer with no data", () => {
     expectNoPlaceholders(dashboard.cards.value);
     expectNoPlaceholders(profile.cards.value);
     expect(dashboard.cards.value.map((card) => card.value)).toEqual(["0", "0", "0", "0", "0", "0"]);
-    expect(profile.cards.value.map((card) => card.value)).toEqual(["0", "$0.00", "$0.00", "0", "$0.00"]);
+    // active_cart is a quantity now, so it reads "0" like the counts rather than a currency zero.
+    expect(profile.cards.value.map((card) => card.value)).toEqual(["0", "0", "$0.00", "0", "$0.00"]);
   });
 });
 
@@ -185,9 +186,9 @@ describe("stat cards for a customer with partial data", () => {
       currencyCode: "USD",
       // Present: YTD has real activity. Absent: mtd/week/newOrders/recentOrders.
       ytd: { count: 1234, total: money(56789, "$56,789.00"), average: money(46, "$46.02") },
-      ytdVsLastYear: { countChange: 12, countChangePercent: 12.4, totalChange: money(1, "$1.00") },
+      ytdVsLastYear: { countChangePercent: 12.4 },
     } satisfies OrderStatsType;
-    sources.carts.value = { currencyCode: "USD" } satisfies CartStatsType;
+    sources.carts.value = {} satisfies CartStatsType;
     sources.counts.value = { assignedCustomers: 4321 } satisfies CountsType;
 
     const dashboard = useSalesRepDashboardWidgets();
@@ -211,7 +212,7 @@ describe("stat cards for a customer with partial data", () => {
       sub: "$0.00 total",
       delta: "of 0 created in the last 7 days",
     });
-    expect(byKey(dashboard.cards.value, "active_carts")).toMatchObject({ value: "0", sub: "$0.00" });
+    expect(byKey(dashboard.cards.value, "active_carts")).toMatchObject({ value: "0", sub: "0 not for checkout" });
 
     // The same metric renders identically on the customer page (E2).
     expect(byKey(profile.cards.value, "orders_ytd")).toMatchObject({
@@ -230,8 +231,7 @@ describe("stat cards when one statistics query fails", () => {
   it("marks only the cards fed by the failed query", () => {
     sources.orders.value = emptyOrders();
     sources.carts.value = {
-      currencyCode: "USD",
-      activeCarts: { count: 2, total: money(50, "$50.00") },
+      activeCarts: { selectedItemQuantity: 2, unselectedItemQuantity: 3 },
     } satisfies CartStatsType;
     sources.counts.value = { assignedCustomers: 9 } satisfies CountsType;
     sources.countsError.value = new Error("counts down");
@@ -241,14 +241,16 @@ describe("stat cards when one statistics query fails", () => {
 
     expect(failedKeys).toEqual(["my_customers"]);
     // The healthy cards still carry their real figures rather than being hidden behind the error.
-    expect(cards.value.find((card) => card.key === "active_carts")).toMatchObject({ value: "2", sub: "$50.00" });
+    expect(cards.value.find((card) => card.key === "active_carts")).toMatchObject({
+      value: "2",
+      sub: "3 not for checkout",
+    });
   });
 
   it("marks every card of the failed query on the customer page", () => {
     sources.orders.value = emptyOrders();
     sources.carts.value = {
-      currencyCode: "USD",
-      activeCarts: { count: 1, total: money(7, "$7.00") },
+      activeCarts: { selectedItemQuantity: 7, unselectedItemQuantity: 0 },
     } satisfies CartStatsType;
     sources.ordersError.value = new Error("orders down");
 
@@ -260,7 +262,7 @@ describe("stat cards when one statistics query fails", () => {
       "orders_ytd",
       "aov",
     ]);
-    expect(cards.value.find((card) => card.key === "active_cart")).toMatchObject({ failed: false, value: "$7.00" });
+    expect(cards.value.find((card) => card.key === "active_cart")).toMatchObject({ failed: false, value: "7" });
   });
 });
 
@@ -284,13 +286,75 @@ describe("stat cards while one query is still in flight", () => {
   it("does not hold every card pending because one query is slow", () => {
     sources.orders.value = emptyOrders();
     sources.carts.value = {
-      currencyCode: "USD",
-      activeCarts: { count: 0, total: zeroMoney },
+      activeCarts: { selectedItemQuantity: 0, unselectedItemQuantity: 0 },
     } satisfies CartStatsType;
     sources.countsLoading.value = true;
 
     const { cards } = useSalesRepDashboardWidgets();
 
     expect(cards.value.filter((card) => card.loading).map((card) => card.key)).toEqual(["my_customers"]);
+  });
+});
+
+// Opening the layout editor widens the `@include` flags, which is a variable change, which restarts the
+// order query — so the query is in flight again while its previous figures are still in hand
+// (`keepPreviousResult`). A per-query flag blanked all four order-fed cards for that round trip.
+describe("stat cards while a query the rep already has data for is refetching", () => {
+  it("keeps every card whose own slice is in hand rendering", () => {
+    sources.orders.value = {
+      currencyCode: "USD",
+      newOrders: { count: 3, total: money(30, "$30.00") },
+      recentOrders: { count: 9 },
+      week: { count: 4, total: money(40, "$40.00") },
+      mtd: { count: 5, total: money(50, "$50.00") },
+      ytd: { count: 6, total: money(60, "$60.00") },
+      mtdVsPrevMonth: { countChangePercent: 10 },
+      ytdVsLastYear: { countChangePercent: 20 },
+      weekVsPrevWeek: { countChangePercent: 30 },
+    } satisfies OrderStatsType;
+    sources.ordersLoading.value = true;
+
+    const { cards } = useSalesRepDashboardWidgets();
+    const byKey = (key: string) => cards.value.find((card) => card.key === key);
+
+    expect(cards.value.filter((card) => card.loading).map((card) => card.key)).toEqual([]);
+    expect(byKey("orders_placed_week")).toMatchObject({ loading: false, value: "4" });
+    expect(byKey("new_orders")).toMatchObject({ loading: false, value: "3" });
+  });
+
+  it("still holds the cards whose slice the widened query has not delivered", () => {
+    // The shape mid-restart when only some aliases have landed: `week` (and its comparison) missing.
+    sources.orders.value = {
+      currencyCode: "USD",
+      mtd: { count: 5, total: money(50, "$50.00") },
+      mtdVsPrevMonth: { countChangePercent: 10 },
+    } satisfies OrderStatsType;
+    sources.ordersLoading.value = true;
+
+    const { cards } = useSalesRepDashboardWidgets();
+    const byKey = (key: string) => cards.value.find((card) => card.key === key);
+
+    expect(byKey("orders_placed_mtd")).toMatchObject({ loading: false, value: "5" });
+    // Absent slices must stay pending rather than render formatStatCount(undefined) — a literal "0".
+    expect(byKey("orders_placed_week")).toMatchObject({ loading: true });
+    expect(byKey("orders_placed_ytd")).toMatchObject({ loading: true });
+    expect(byKey("new_orders")).toMatchObject({ loading: true });
+  });
+
+  it("treats the customer profile's average-order-value slice as its own", () => {
+    // `aov` needs ytd AND its `average` field: the ytd slice arriving without `average` (the dashboard's
+    // flags) must not let the card render a currency zero.
+    sources.orders.value = {
+      currencyCode: "USD",
+      ytd: { count: 6, total: money(60, "$60.00") },
+      ytdVsLastYear: { countChangePercent: 20 },
+    } satisfies OrderStatsType;
+    sources.ordersLoading.value = true;
+
+    const { cards } = useSalesRepCustomerWidgets("org-1");
+    const byKey = (key: string) => cards.value.find((card) => card.key === key);
+
+    expect(byKey("orders_ytd")).toMatchObject({ loading: false, value: "6" });
+    expect(byKey("aov")).toMatchObject({ loading: true });
   });
 });

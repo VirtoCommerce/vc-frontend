@@ -52,7 +52,6 @@
         "widgets": {
           "new_orders": "状态为“New”的订单",
           "active_carts": "活动购物车",
-          "active_cart": "活动购物车",
           "orders_placed_week": "本周下单",
           "orders_placed_mtd": "本月至今下单",
           "purchased_mtd": "本月至今采购额",
@@ -67,7 +66,9 @@
           "ordered_this_month": "本月 {count} 家下单",
           "new_customers": "{count} 个新客户",
           "of_recent_orders": "近 7 天创建的 {count} 单中",
-          "new_this_week": "本周新增 {count}",
+          "items_unit": "件商品",
+          "not_for_checkout": "{count} 件不结账",
+          "items_this_week": "本周 {count} 件商品",
           "mtd_of_ytd": "占年初至今 {percent}%",
           "load_failed": "加载失败"
         }
@@ -107,6 +108,7 @@
     "customer_profile": {
       "loading": "加载中…",
       "not_found": "未找到客户，或该客户不在您的客户列表中。",
+      "load_failed": "无法加载此客户。请刷新页面。",
       "back_to_customers": "返回我的客户",
       "widgets": {
         "avg_order_value": "平均订单金额"
@@ -180,6 +182,11 @@
       "load_failed": "无法加载热销商品"
     },
     "rules": {
+      "load_failed": {
+        "filter": "无法加载筛选条件，因此显示完整列表。请刷新页面。",
+        "sort": "无法加载排序选项，因此使用默认排序。请刷新页面。",
+        "both": "无法加载筛选条件和排序选项，因此按默认排序显示完整列表。请刷新页面。"
+      },
       "customer": {
         "filter": {
           "All": "全部"
@@ -193,9 +200,6 @@
       "share_replace_hint": "先前选择的客户将无法再访问此列表。",
       "share_message_label": "消息",
       "share_message_placeholder": "可选的附加消息",
-      "share_channels_label": "发送方式",
-      "share_email_label": "电子邮件",
-      "share_push_label": "推送通知",
       "share_default_title": "来自您的销售代表的新列表",
       "share_default_message": "您好！我刚刚与您的组织共享了列表“{listName}”。欢迎查看：",
       "share_success": "列表已与客户共享。",
