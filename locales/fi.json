@@ -82,7 +82,8 @@
       "buy_now": "Osta nyt",
       "see_all": "Katso kaikki",
       "report_a_problem": "Ilmoita ongelmasta",
-      "copy_to_clipboard": "Kopioi leikepöydälle"
+      "copy_to_clipboard": "Kopioi leikepöydälle",
+      "reload_page": "Lataa sivu uudelleen"
     },
     "labels": {
       "actions": "Toiminnot",
@@ -233,7 +234,8 @@
       "outdated_backend_modules": "Frontend-sovellus odottaa uudempaa versiota alustasta ja yhdestä tai useammasta moduulista. <br> Frontend-sovellus käyttää yhteensopimatonta taustajärjestelmää. Jotkin ominaisuudet eivät välttämättä ole käytettävissä, toimivat heikosti tai ovat epävakaita, kunnes alusta ja moduulit on päivitetty vastaamaan verkkokaupan vaatimuksia. Jaa alla oleva raportti järjestelmänvalvojallesi.",
       "logo_changed": "Logo on vaihdettu onnistuneesti.",
       "logo_deleted": "Logo on poistettu.",
-      "pending_operations_leaving_page_confirmation": "Osa toimintoja on vielä käynnissä. Haluatko varmasti poistua tältä sivulta? Tallentamattomat muutokset saattavat kadota."
+      "pending_operations_leaving_page_confirmation": "Osa toimintoja on vielä käynnissä. Haluatko varmasti poistua tältä sivulta? Tallentamattomat muutokset saattavat kadota.",
+      "content_failed_to_load": "Osaa sivustosta ei voitu ladata. Lataa sivu uudelleen jatkaaksesi."
     },
     "placeholders": {
       "enter_value": "Syötä arvo",
@@ -715,7 +717,11 @@
         "enter_custom_code": "Syötä mukautettu koodi",
         "all_coupons": "Näytä kaikki kupongit & tarjoukset",
         "apply_aria": "Apply coupon {code}",
-        "remove_aria": "Remove coupon"
+        "remove_aria": "Remove coupon",
+        "coupon_code_aria": "Kuponkikoodi",
+        "applied_announcement": "Kuponki {code} otettu käyttöön.",
+        "removed_announcement": "Kuponki {code} poistettu.",
+        "totals_announcement": "Alennus {discount}, uusi loppusumma {total}."
       }
     },
     "catalog": {
@@ -1025,7 +1031,8 @@
           "Organization": "Organisaatio",
           "AnyoneAnonymous": "Kuka tahansa (vain luku)"
         },
-        "clipboard_success": "Linkki kopioitu"
+        "clipboard_success": "Linkki kopioitu",
+        "save_error": "Listaa ei voitu tallentaa. Yritä uudelleen."
       },
       "delete_wishlist_modal": {
         "title": "Vahvista poisto",

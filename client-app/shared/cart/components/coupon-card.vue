@@ -5,17 +5,21 @@
     </div>
 
     <div class="coupon-card__content">
-      <h3 v-if="!custom && coupon?.label" class="coupon-card__label">{{ coupon.label }}</h3>
+      <h3 v-if="!custom && coupon?.label" :id="labelId" class="coupon-card__label">{{ coupon.label }}</h3>
 
-      <p v-if="custom" class="coupon-card__name">{{ $t("shared.cart.coupons_section.custom_code") }}</p>
+      <p v-if="custom" :id="nameId" class="coupon-card__name">
+        {{ $t("shared.cart.coupons_section.custom_code") }}
+      </p>
 
-      <p v-else-if="coupon?.name" class="coupon-card__name">{{ coupon.name }}</p>
+      <p v-else-if="coupon?.name" :id="nameId" class="coupon-card__name">{{ coupon.name }}</p>
 
       <VcInput
         v-model="code"
         size="xs"
         :readonly="!custom || view === 'applied' || loading"
         :placeholder="$t('shared.cart.coupons_section.enter_custom_code')"
+        :aria-label="labelledBy ? undefined : $t('shared.cart.coupons_section.coupon_code_aria')"
+        :aria="inputAria"
       >
         <template #append>
           <VcButton v-bind="viewConfig.button" :loading="loading" @click="handleClick" />
@@ -26,13 +30,13 @@
         {{ $t("shared.cart.coupons_section.expires") }} {{ $d(coupon.endDate, "short") }}
       </p>
 
-      <p v-if="view === 'error' && !!error" role="alert" class="coupon-card__error">{{ error }}</p>
+      <p v-if="view === 'error' && !!error" :id="errorId" role="alert" class="coupon-card__error">{{ error }}</p>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, useId } from "vue";
 import { useI18n } from "vue-i18n";
 import type { GetPromotionCouponsQuery } from "@/core/api/graphql/types";
 
@@ -68,6 +72,28 @@ const emit = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), { custom: false, modelValue: "", loading: false });
 
 const { t } = useI18n();
+
+const labelId = useId();
+const nameId = useId();
+const errorId = useId();
+
+// Only ids of elements that actually render may be referenced.
+const labelledBy = computed(() => {
+  const ids = [
+    !props.custom && props.coupon?.label ? labelId : undefined,
+    props.custom || props.coupon?.name ? nameId : undefined,
+  ].filter(Boolean);
+
+  return ids.length ? ids.join(" ") : undefined;
+});
+
+const hasError = computed(() => props.view === "error" && !!props.error);
+
+const inputAria = computed<Record<string, string | number | null>>(() => ({
+  "aria-labelledby": labelledBy.value ?? null,
+  "aria-invalid": hasError.value ? "true" : null,
+  "aria-describedby": hasError.value ? errorId : null,
+}));
 
 const code = computed({
   get: () => (props.custom ? props.modelValue : (props.coupon?.couponCode ?? "")),

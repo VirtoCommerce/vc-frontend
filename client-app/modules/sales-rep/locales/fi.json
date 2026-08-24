@@ -14,7 +14,8 @@
       "search_aria": "Hae myyntiedustajia",
       "empty": "Myyntiedustajia ei löytynyt",
       "no_results": "Hakuasi vastaavia myyntiedustajia ei löytynyt",
-      "reset_search": "Tyhjennä haku"
+      "reset_search": "Tyhjennä haku",
+      "load_failed": "Myyntiedustajia ei voitu ladata"
     },
     "my_customers": {
       "navigation": {
@@ -28,7 +29,7 @@
         "last_order": "Viimeisin tilaukseni",
         "ytd": "Ostot tänä vuonna",
         "last_year": "Viime vuosi",
-        "orders_count": "{count} tilaukset",
+        "orders_count": "{count} tilaus | {count} tilausta",
         "all_customers": "Kaikki",
         "actions": "Toiminnot",
         "search_placeholder": "Hae nimellä",
@@ -49,9 +50,8 @@
           "title": "Hallintapaneeli"
         },
         "widgets": {
-          "new_orders": "Uudet tilaukset",
+          "new_orders": "Tilaukset tilassa ”New”",
           "active_carts": "Aktiiviset ostoskorit",
-          "active_cart": "Aktiivinen ostoskori",
           "orders_placed_week": "Tilaukset tällä viikolla",
           "orders_placed_mtd": "Tilaukset kuluvan kuun alusta",
           "purchased_mtd": "Ostot kuluvan kuun alusta",
@@ -64,17 +64,51 @@
           "vs_last_month": "{delta} vs viime kuu",
           "vs_last_year": "{delta} vs viime vuosi",
           "ordered_this_month": "{count} tilasi tässä kuussa",
-          "new_customers": "{count} uutta asiakasta",
-          "placed_today": "{count} tänään",
-          "new_this_week": "{count} uutta tällä viikolla",
+          "new_customers": "{count} uusi asiakas | {count} uutta asiakasta",
+          "of_recent_orders": "{count} viimeisten 7 päivän tilauksesta",
+          "items_unit": "tuote | tuotetta",
+          "not_for_checkout": "{count} ei kassalle",
+          "items_this_week": "{count} tuote tällä viikolla | {count} tuotetta tällä viikolla",
           "mtd_of_ytd": "{percent}% vuodesta",
           "load_failed": "Lataus epäonnistui"
+        }
+      },
+      "layout": {
+        "edit": "Muokkaa asettelua",
+        "editing": "Muokataan asettelua",
+        "hint": "— vedä lohkoa kahvasta järjestääksesi sen uudelleen tai piilota se ✕-painikkeella.",
+        "hint_keyboard": "Näppäimistö: välilyönti nostaa lohkon, nuolinäppäimet siirtävät sitä, välilyönti pudottaa, Esc peruuttaa.",
+        "save": "Tallenna asettelu",
+        "cancel": "Peruuta",
+        "reset": "Palauta oletukset",
+        "save_failed": "Asettelun tallentaminen epäonnistui. Muutoksesi ovat yhä tallessa — yritä uudelleen.",
+        "load_failed": "Tallennettua asettelua ei voitu ladata, joten näytössä on oletusjärjestys. Muokkaaminen ei ole käytettävissä ennen latausta — päivitä sivu.",
+        "hidden_widgets": "Piilotetut widgetit",
+        "visible_stats": "Näkyvät tunnusluvut",
+        "hidden_stats": "Piilotetut tunnusluvut",
+        "empty_visible": "Vedä tunnusluku tähän näyttääksesi sen",
+        "empty_hidden": "Vedä tunnusluku tähän piilottaaksesi sen",
+        "max_rows": "Maksimirivit",
+        "a11y": {
+          "reorder": "Järjestä {title}",
+          "hide": "Piilota {title}",
+          "show": "Näytä {title}",
+          "grabbed": "{title} tartuttu. Sijainti {position}/{total}. Siirrä nuolinäppäimillä, pudota välilyönnillä, peruuta Esc-näppäimellä.",
+          "grabbed_parkable": "{title} tartuttu. Sijainti {position}/{total}. Siirrä vasemmalla ja oikealla nuolinäppäimellä, piilota tai näytä ylä- ja alanuolinäppäimellä, pudota välilyönnillä, peruuta Esc-näppäimellä.",
+          "moved": "{title} siirretty sijaintiin {position}/{total}.",
+          "dropped": "{title} pudotettu sijaintiin {position}/{total}.",
+          "edge": "{title} on jo sijainnissa {position}/{total}.",
+          "cancelled": "Kohteen {title} siirto peruutettu.",
+          "parked": "{title} piilotettu.",
+          "restored": "{title} näytetään.",
+          "max_rows": "Näytettävien rivien enimmäismäärä kohteessa {title}, välillä {min} ja {max}"
         }
       }
     },
     "customer_profile": {
       "loading": "Ladataan…",
       "not_found": "Asiakasta ei löytynyt tai se ei kuulu asiakkaisiisi.",
+      "load_failed": "Tätä asiakasta ei voitu ladata. Päivitä sivu.",
       "back_to_customers": "Takaisin omiin asiakkaisiin",
       "widgets": {
         "avg_order_value": "Keskimääräinen tilausarvo"
@@ -148,11 +182,32 @@
       "load_failed": "Myydyimpiä ei voitu ladata"
     },
     "rules": {
+      "load_failed": {
+        "filter": "Suodattimia ei voitu ladata, joten koko luettelo näytetään. Päivitä sivu.",
+        "sort": "Lajitteluvalintoja ei voitu ladata, joten käytetään oletusjärjestystä. Päivitä sivu.",
+        "both": "Suodattimia ja lajitteluvalintoja ei voitu ladata, joten koko luettelo näytetään oletusjärjestyksessä. Päivitä sivu."
+      },
       "customer": {
         "filter": {
           "All": "Kaikki"
         }
       }
+    },
+    "list_sharing": {
+      "share_customers_label": "Asiakas",
+      "share_customers_placeholder": "Valitse asiakas",
+      "share_customers_error": "Asiakaslistaa ei voitu ladata. Yritä uudelleen.",
+      "share_replace_hint": "Aiemmin valittu asiakas menettää oikeuden tähän listaan.",
+      "share_message_label": "Viesti",
+      "share_message_placeholder": "Valinnainen viesti",
+      "share_default_title": "Uusi lista myyntiedustajaltasi",
+      "share_default_message": "Hei! Jaoin juuri listan ”{listName}” organisaatiollesi. Katso se täältä:",
+      "share_success": "Lista jaettiin asiakkaalle.",
+      "share_partial": "Lista jaettiin, mutta kaikkia ilmoituksia ei toimitettu.",
+      "share_notify_error": "Lista tallennettiin, mutta asiakkaalle ei voitu ilmoittaa.",
+      "scope_label": "Asiakas",
+      "status": "Jaettu asiakkaalle",
+      "badge": "Myyntiedustajasi suosittelema"
     }
   }
 }

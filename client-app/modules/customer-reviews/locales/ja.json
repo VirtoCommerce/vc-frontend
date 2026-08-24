@@ -8,7 +8,9 @@
       "rating": "評価",
       "rate_product": "商品を評価する",
       "item_as_described_by_vendor": "商品はベンダーの説明通りですか？",
-      "product_review_image": "商品レビュー画像"
+      "product_review_image": "商品レビュー画像",
+      "product_review_image_of": "商品レビュー画像 {index} / {total}",
+      "reviews_count": "レビューなし | {n} 件のレビュー | {n} 件のレビュー"
     },
     "messages": {
       "thanks_for_feedback": "フィードバックが送信され、確認待ちです。ありがとうございます！"

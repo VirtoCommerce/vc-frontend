@@ -3101,7 +3101,7 @@ export const SelectionWithDisabledRows: StoryType = {
       <div>
         <div class="mb-4 p-3 bg-neutral-100 rounded text-sm">
           Selected keys: <strong>{{ selection.length ? selection.join(", ") : "none" }}</strong>
-          <div class="text-neutral-500 mt-1">Inactive users are not selectable.</div>
+          <div class="text-neutral-600 mt-1">Inactive users are not selectable.</div>
         </div>
 
         <VcTable

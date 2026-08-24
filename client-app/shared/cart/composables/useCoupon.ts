@@ -1,5 +1,6 @@
 import { computed, readonly, ref } from "vue";
 import { useFullCart } from "@/shared/cart/composables/useCart";
+import { isSameCouponCode } from "@/shared/cart/utils";
 
 type ErrorType = "invalid" | "failed";
 type CouponErrorType = { code: string; type: ErrorType };
@@ -29,49 +30,71 @@ export function useCoupon() {
     couponErrorTimeoutId = setTimeout(clearError, COUPON_ERROR_TIMEOUT);
   }
 
-  async function applyCoupon(code: string) {
+  // Returns this call's own outcome: `couponError` is module-level, so a concurrent operation on
+  // another card can clear or overwrite it before the caller reads it.
+  async function applyCoupon(code: string): Promise<boolean> {
     clearError();
 
     const trimmed = code.trim();
     if (!trimmed) {
-      return;
+      return false;
     }
 
     try {
       loadingCouponCode.value = trimmed;
 
+      // The new coupon is validated BEFORE the applied one is removed, so an invalid code can't
+      // silently drop a working coupon (VCST-5518).
       const isValid = await validateCartCoupon(trimmed);
       if (!isValid) {
         setError({ code: trimmed, type: "invalid" });
-        return;
+        return false;
       }
 
-      if (appliedCouponCode.value && appliedCouponCode.value !== trimmed) {
+      if (appliedCouponCode.value && !isSameCouponCode(appliedCouponCode.value, trimmed)) {
         await removeCartCoupon(appliedCouponCode.value);
       }
 
       await addCartCoupon(trimmed);
+
+      // The mutation resolving is not proof the coupon applied: a valid reward can yield no
+      // discount (zero amount, gift/shipping rewards), and the cart can drift between the two
+      // round-trips. The cart is the truth; the backend matches codes case-insensitively.
+      if (!isSameCouponCode(appliedCouponCode.value, trimmed)) {
+        setError({ code: trimmed, type: "invalid" });
+
+        return false;
+      }
+
+      return true;
     } catch {
       setError({ code: trimmed, type: "failed" });
+
+      return false;
     } finally {
       loadingCouponCode.value = undefined;
     }
   }
 
-  async function removeCoupon(code: string) {
+  async function removeCoupon(code: string): Promise<boolean> {
     clearError();
 
     const trimmed = code.trim();
     if (!trimmed) {
-      return;
+      return false;
     }
 
     try {
       loadingCouponCode.value = trimmed;
 
       await removeCartCoupon(trimmed);
+
+      // The backend silently no-ops when the code is not in the cart.
+      return !isSameCouponCode(appliedCouponCode.value, trimmed);
     } catch {
       setError({ code: trimmed, type: "failed" });
+
+      return false;
     } finally {
       loadingCouponCode.value = undefined;
     }

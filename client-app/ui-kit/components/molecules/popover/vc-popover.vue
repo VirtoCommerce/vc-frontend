@@ -4,8 +4,18 @@
       <slot :open="open" :close="close" :toggle="toggle" :opened="opened" :trigger-props="emitTriggerProps" />
     </div>
 
-    <div v-else-if="$slots.trigger" ref="reference" class="vc-popover__trigger" v-bind="emitTriggerProps">
-      <slot name="trigger" :open="open" :close="close" :toggle="toggle" :opened="opened" />
+    <!-- Only event listeners are bound here: the slot may contain a real interactive element,
+         and an interactive role on the wrapper would nest interactive controls (axe: nested-interactive).
+         The slot exposes role-free aria trigger props for the consumer to bind on their own element. -->
+    <div v-else-if="$slots.trigger" ref="reference" class="vc-popover__trigger" v-on="triggerListeners">
+      <slot
+        name="trigger"
+        :open="open"
+        :close="close"
+        :toggle="toggle"
+        :opened="opened"
+        :trigger-props="ariaTriggerProps"
+      />
     </div>
 
     <teleport :to="teleportSelector" :disabled="!shouldTeleport">
@@ -100,24 +110,39 @@ const { placement, strategy, flipOptions, offsetOptions, shiftOptions } = toRefs
 
 const shouldRenderContent = computed(() => !props.lazy || hasBeenOpened.value);
 
-const emitTriggerProps = computed(() => ({
-  role: "button" as const,
-  "aria-haspopup": "dialog" as const,
-  "aria-expanded": opened.value,
-  "aria-controls": opened.value ? contentId : undefined,
-  onMouseenter: props.hover ? open : undefined,
-  onMouseleave: props.hover ? close : undefined,
-  onFocusin: props.hover ? open : undefined,
-  onFocusout: props.hover ? close : undefined,
-  onClick: props.hover ? undefined : toggle,
-  onKeyup: (e: KeyboardEvent) => {
-    if (e.key === "Enter") {
-      open();
-    }
+const triggerListeners = computed(() => ({
+  mouseenter: props.hover ? open : undefined,
+  mouseleave: props.hover ? close : undefined,
+  focusin: props.hover ? open : undefined,
+  focusout: props.hover ? close : undefined,
+  click: props.hover ? undefined : toggle,
+  // Escape only. No Enter branch: native buttons/links already activate via `click` on keydown,
+  // so a keyup `open()` would instantly reopen a popover the click just closed.
+  keyup: (e: KeyboardEvent) => {
     if (e.key === "Escape") {
       close();
     }
   },
+}));
+
+// Role-free aria state for the #trigger slot: bound by the consumer on their own
+// (already interactive) element, so no role may be forced here.
+const ariaTriggerProps = computed(() => ({
+  "aria-haspopup": "dialog" as const,
+  "aria-expanded": opened.value,
+  "aria-controls": opened.value ? contentId : undefined,
+}));
+
+// For the scoped default-slot pattern: the consumer binds these to their own trigger element.
+const emitTriggerProps = computed(() => ({
+  role: "button" as const,
+  ...ariaTriggerProps.value,
+  onMouseenter: triggerListeners.value.mouseenter,
+  onMouseleave: triggerListeners.value.mouseleave,
+  onFocusin: triggerListeners.value.focusin,
+  onFocusout: triggerListeners.value.focusout,
+  onClick: triggerListeners.value.click,
+  onKeyup: triggerListeners.value.keyup,
 }));
 
 const display = computed(() => (opened.value ? "block" : "none"));

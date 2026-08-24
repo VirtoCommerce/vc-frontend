@@ -14,7 +14,8 @@
       "search_aria": "Sök efter säljare",
       "empty": "Inga säljare hittades",
       "no_results": "Inga säljare matchar din sökning",
-      "reset_search": "Återställ sökning"
+      "reset_search": "Återställ sökning",
+      "load_failed": "Kunde inte läsa in säljarna"
     },
     "my_customers": {
       "navigation": {
@@ -28,7 +29,7 @@
         "last_order": "Min senaste order",
         "ytd": "Köp hittills",
         "last_year": "Förra året",
-        "orders_count": "{count} beställningar",
+        "orders_count": "{count} beställning | {count} beställningar",
         "all_customers": "Alla",
         "actions": "Åtgärder",
         "search_placeholder": "Sök efter namn",
@@ -49,9 +50,8 @@
           "title": "Instrumentpanel"
         },
         "widgets": {
-          "new_orders": "Nya order",
+          "new_orders": "Order med status ”New”",
           "active_carts": "Aktiva kundvagnar",
-          "active_cart": "Aktiv kundvagn",
           "orders_placed_week": "Order denna vecka",
           "orders_placed_mtd": "Order hittills denna månad",
           "purchased_mtd": "Köp hittills denna månad",
@@ -64,17 +64,51 @@
           "vs_last_month": "{delta} vs förra månaden",
           "vs_last_year": "{delta} vs förra året",
           "ordered_this_month": "{count} beställde denna månad",
-          "new_customers": "{count} nya kunder",
-          "placed_today": "{count} lagda i dag",
-          "new_this_week": "{count} nya denna vecka",
+          "new_customers": "{count} ny kund | {count} nya kunder",
+          "of_recent_orders": "av {count} skapad de senaste 7 dagarna | av {count} skapade de senaste 7 dagarna",
+          "items_unit": "artikel | artiklar",
+          "not_for_checkout": "{count} inte till kassan",
+          "items_this_week": "{count} artikel denna vecka | {count} artiklar denna vecka",
           "mtd_of_ytd": "{percent}% av året",
           "load_failed": "Kunde inte läsas in"
+        }
+      },
+      "layout": {
+        "edit": "Redigera layout",
+        "editing": "Redigerar layout",
+        "hint": "— dra ett block i handtaget för att ändra ordning, eller dölj det med ✕.",
+        "hint_keyboard": "Tangentbord: mellanslag tar tag i ett block, piltangenterna flyttar det, mellanslag släpper, Esc avbryter.",
+        "save": "Spara layout",
+        "cancel": "Avbryt",
+        "reset": "Återställ",
+        "save_failed": "Layouten kunde inte sparas. Dina ändringar finns kvar — försök igen.",
+        "load_failed": "Den sparade layouten kunde inte läsas in, så standardordningen visas. Redigering är inte tillgänglig förrän den lästs in — uppdatera sidan.",
+        "hidden_widgets": "Dolda widgetar",
+        "visible_stats": "Synliga nyckeltal",
+        "hidden_stats": "Dolda nyckeltal",
+        "empty_visible": "Dra ett nyckeltal hit för att visa det",
+        "empty_hidden": "Dra ett nyckeltal hit för att dölja det",
+        "max_rows": "Max rader",
+        "a11y": {
+          "reorder": "Ändra ordning på {title}",
+          "hide": "Dölj {title}",
+          "show": "Visa {title}",
+          "grabbed": "{title} upplockad. Position {position} av {total}. Använd piltangenterna för att flytta, mellanslag för att släppa, escape för att avbryta.",
+          "grabbed_parkable": "{title} upplockad. Position {position} av {total}. Använd vänster och höger piltangent för att flytta, upp och ner för att dölja eller visa, mellanslag för att släppa, escape för att avbryta.",
+          "moved": "{title} flyttad till position {position} av {total}.",
+          "dropped": "{title} släppt på position {position} av {total}.",
+          "edge": "{title} är redan på plats {position} av {total}.",
+          "cancelled": "Flytt av {title} avbruten.",
+          "parked": "{title} dold.",
+          "restored": "{title} visas.",
+          "max_rows": "Maximalt antal rader som visas av {title}, mellan {min} och {max}"
         }
       }
     },
     "customer_profile": {
       "loading": "Laddar…",
       "not_found": "Kunden hittades inte eller finns inte bland dina kunder.",
+      "load_failed": "Den här kunden kunde inte läsas in. Uppdatera sidan.",
       "back_to_customers": "Tillbaka till mina kunder",
       "widgets": {
         "avg_order_value": "Genomsnittligt ordervärde"
@@ -148,11 +182,32 @@
       "load_failed": "Kunde inte läsa in bästsäljarna"
     },
     "rules": {
+      "load_failed": {
+        "filter": "Filtren kunde inte läsas in, så hela listan visas. Uppdatera sidan.",
+        "sort": "Sorteringsalternativen kunde inte läsas in, så standardordningen används. Uppdatera sidan.",
+        "both": "Filtren och sorteringsalternativen kunde inte läsas in, så hela listan visas i standardordningen. Uppdatera sidan."
+      },
       "customer": {
         "filter": {
           "All": "Alla"
         }
       }
+    },
+    "list_sharing": {
+      "share_customers_label": "Kund",
+      "share_customers_placeholder": "Välj kund",
+      "share_customers_error": "Kundlistan kunde inte laddas. Försök igen.",
+      "share_replace_hint": "Kunden som valdes tidigare förlorar åtkomsten till den här listan.",
+      "share_message_label": "Meddelande",
+      "share_message_placeholder": "Valfritt meddelande",
+      "share_default_title": "En ny lista från din säljare",
+      "share_default_message": "Hej! Jag har just delat listan ”{listName}” med din organisation. Ta en titt:",
+      "share_success": "Listan har delats med kunden.",
+      "share_partial": "Listan har delats, men alla aviseringar levererades inte.",
+      "share_notify_error": "Listan sparades, men kunden kunde inte meddelas.",
+      "scope_label": "Kund",
+      "status": "Delad med kund",
+      "badge": "Rekommenderas av din säljare"
     }
   }
 }

@@ -14,7 +14,8 @@
       "search_aria": "Vertriebsmitarbeiter suchen",
       "empty": "Keine Vertriebsmitarbeiter gefunden",
       "no_results": "Keine Vertriebsmitarbeiter entsprechen Ihrer Suche",
-      "reset_search": "Suche zurücksetzen"
+      "reset_search": "Suche zurücksetzen",
+      "load_failed": "Vertriebsmitarbeiter konnten nicht geladen werden"
     },
     "my_customers": {
       "navigation": {
@@ -28,7 +29,7 @@
         "last_order": "Meine letzte Bestellung",
         "ytd": "Jahresumsatz",
         "last_year": "Letztes Jahr",
-        "orders_count": "{count} Bestellungen",
+        "orders_count": "{count} Bestellung | {count} Bestellungen",
         "all_customers": "Alle",
         "actions": "Aktionen",
         "search_placeholder": "Suche nach Name",
@@ -49,9 +50,8 @@
           "title": "Dashboard"
         },
         "widgets": {
-          "new_orders": "Neue Bestellungen",
+          "new_orders": "Bestellungen im Status „New“",
           "active_carts": "Aktive Warenkörbe",
-          "active_cart": "Aktiver Warenkorb",
           "orders_placed_week": "Bestellungen diese Woche",
           "orders_placed_mtd": "Bestellungen seit Monatsbeginn",
           "purchased_mtd": "Umsatz seit Monatsbeginn",
@@ -64,23 +64,57 @@
           "vs_last_month": "{delta} ggü. Vormonat",
           "vs_last_year": "{delta} ggü. Vorjahr",
           "ordered_this_month": "{count} in diesem Monat bestellt",
-          "new_customers": "{count} neue Kunden",
-          "placed_today": "{count} heute aufgegeben",
-          "new_this_week": "{count} neu diese Woche",
+          "new_customers": "{count} neuer Kunde | {count} neue Kunden",
+          "of_recent_orders": "von {count} aus den letzten 7 Tagen",
+          "items_unit": "Artikel",
+          "not_for_checkout": "{count} nicht zur Kasse",
+          "items_this_week": "{count} Artikel diese Woche",
           "mtd_of_ytd": "{percent}% des Jahres",
           "load_failed": "Laden fehlgeschlagen"
+        }
+      },
+      "layout": {
+        "edit": "Layout bearbeiten",
+        "editing": "Layout wird bearbeitet",
+        "hint": "— ziehen Sie einen Block am Griff, um ihn umzusortieren, oder blenden Sie ihn mit ✕ aus.",
+        "hint_keyboard": "Tastatur: Leertaste hebt einen Block an, Pfeiltasten verschieben ihn, Leertaste legt ihn ab, Esc bricht ab.",
+        "save": "Layout speichern",
+        "cancel": "Abbrechen",
+        "reset": "Zurücksetzen",
+        "save_failed": "Das Layout konnte nicht gespeichert werden. Ihre Änderungen sind noch vorhanden — bitte erneut versuchen.",
+        "load_failed": "Das gespeicherte Layout konnte nicht geladen werden, daher wird die Standardanordnung angezeigt. Die Bearbeitung ist erst nach dem Laden möglich — bitte die Seite neu laden.",
+        "hidden_widgets": "Ausgeblendete Widgets",
+        "visible_stats": "Sichtbare Kennzahlen",
+        "hidden_stats": "Ausgeblendete Kennzahlen",
+        "empty_visible": "Ziehen Sie eine Kennzahl hierher, um sie einzublenden",
+        "empty_hidden": "Ziehen Sie eine Kennzahl hierher, um sie auszublenden",
+        "max_rows": "Max Zeilen",
+        "a11y": {
+          "reorder": "{title} umsortieren",
+          "hide": "{title} ausblenden",
+          "show": "{title} einblenden",
+          "grabbed": "{title} aufgenommen. Position {position} von {total}. Mit den Pfeiltasten verschieben, Leertaste zum Ablegen, Escape zum Abbrechen.",
+          "grabbed_parkable": "{title} aufgenommen. Position {position} von {total}. Mit den Pfeiltasten links und rechts verschieben, mit Pfeil nach oben und unten aus- oder einblenden, Leertaste zum Ablegen, Escape zum Abbrechen.",
+          "moved": "{title} auf Position {position} von {total} verschoben.",
+          "dropped": "{title} auf Position {position} von {total} abgelegt.",
+          "edge": "{title} ist bereits an Position {position} von {total}.",
+          "cancelled": "Verschieben von {title} abgebrochen.",
+          "parked": "{title} ausgeblendet.",
+          "restored": "{title} eingeblendet.",
+          "max_rows": "Maximale Zeilen angezeigt von {title}, zwischen {min} und {max}"
         }
       }
     },
     "customer_profile": {
       "loading": "Wird geladen…",
       "not_found": "Kunde nicht gefunden oder nicht in Ihren Kunden.",
+      "load_failed": "Dieser Kunde konnte nicht geladen werden. Bitte die Seite neu laden.",
       "back_to_customers": "Zurück zu meinen Kunden",
       "widgets": {
         "avg_order_value": "Durchschn. Bestellwert"
       },
       "stats": {
-        "per_order": "Durchschnitt pro Bestellung (YTD)"
+        "per_order": "Durchschnitt pro Bestellung (seit Jahresbeginn)"
       },
       "info": {
         "title": "Kundeninformationen",
@@ -148,11 +182,32 @@
       "load_failed": "Topseller konnten nicht geladen werden"
     },
     "rules": {
+      "load_failed": {
+        "filter": "Die Filter konnten nicht geladen werden, daher wird die vollständige Liste angezeigt. Bitte die Seite neu laden.",
+        "sort": "Die Sortieroptionen konnten nicht geladen werden, daher wird die Standardsortierung verwendet. Bitte die Seite neu laden.",
+        "both": "Die Filter und Sortieroptionen konnten nicht geladen werden, daher wird die vollständige Liste in der Standardsortierung angezeigt. Bitte die Seite neu laden."
+      },
       "customer": {
         "filter": {
           "All": "Alle"
         }
       }
+    },
+    "list_sharing": {
+      "share_customers_label": "Kunde",
+      "share_customers_placeholder": "Kunde auswählen",
+      "share_customers_error": "Die Kundenliste konnte nicht geladen werden. Bitte versuchen Sie es erneut.",
+      "share_replace_hint": "Der zuvor ausgewählte Kunde verliert den Zugriff auf diese Liste.",
+      "share_message_label": "Nachricht",
+      "share_message_placeholder": "Optionale Nachricht hinzufügen",
+      "share_default_title": "Eine neue Liste von Ihrem Vertriebsmitarbeiter",
+      "share_default_message": "Hallo! Ich habe die Liste „{listName}“ gerade für Ihre Organisation freigegeben. Schauen Sie sie sich an:",
+      "share_success": "Liste für den Kunden freigegeben.",
+      "share_partial": "Liste freigegeben, aber nicht alle Benachrichtigungen wurden zugestellt.",
+      "share_notify_error": "Die Liste wurde gespeichert, der Kunde konnte jedoch nicht benachrichtigt werden.",
+      "scope_label": "Kunde",
+      "status": "Mit Kunde geteilt",
+      "badge": "Empfohlen von Ihrem Vertriebsmitarbeiter"
     }
   }
 }

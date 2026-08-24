@@ -17,6 +17,21 @@ export const MODULE_XAPI_KEYS = {
   CONTINUE_SHOPPING_LINK: "Frontend.ContinueShoppingLink",
 } as const;
 
+/**
+ * Per-store brand identity, published as schema.org Organization / Open Graph data.
+ * Registered by vc-module-x-frontend against the `Store` type, all public.
+ */
+export const MODULE_XFRONTEND_KEYS = {
+  MODULE_ID: "VirtoCommerce.XFrontend",
+  BRAND_PROFILE_DESCRIPTION: "XFrontend.BrandProfile.Description",
+  BRAND_PROFILE_SAME_AS: "XFrontend.BrandProfile.SameAs",
+  BRAND_PROFILE_TAGLINE: "XFrontend.BrandProfile.Tagline",
+  BRAND_PROFILE_LOGO_URL: "XFrontend.BrandProfile.LogoUrl",
+  BRAND_PROFILE_SHARE_IMAGE_URL: "XFrontend.BrandProfile.ShareImageUrl",
+  BRAND_PROFILE_CONTACT_PHONE: "XFrontend.BrandProfile.ContactPhone",
+  BRAND_PROFILE_FOUNDING_DATE: "XFrontend.BrandProfile.FoundingDate",
+} as const;
+
 export const MODULE_ID_SHIPPING = "VirtoCommerce.Shipping";
 export const BOPIS_MAP_ENABLED_KEY = "Shipping.Bopis.GoogleMaps.Enabled";
 export const BOPIS_MAP_API_KEY = "Shipping.Bopis.GoogleMaps.ApiKey";
