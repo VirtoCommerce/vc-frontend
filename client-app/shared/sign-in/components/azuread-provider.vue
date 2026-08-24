@@ -7,7 +7,7 @@ import { useIdentityProvider } from "@/shared/sign-in/components/useIdentityProv
 import IdentityProvider from "./identity-provider.vue";
 
 interface IProps {
-  returnUrl?: string;
+  returnUrl: string;
 }
 
 const props = defineProps<IProps>();

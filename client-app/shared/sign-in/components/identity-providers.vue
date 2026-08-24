@@ -27,7 +27,7 @@ const loadProviderComponent = (providerName: string) => {
 
 interface IProps {
   providers: string[];
-  returnUrl?: string;
+  returnUrl: string;
 }
 </script>
 

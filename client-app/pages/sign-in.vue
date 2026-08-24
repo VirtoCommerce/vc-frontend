@@ -11,11 +11,12 @@
     <IdentityProviders
       v-if="hasOnlyIdentityProviders"
       :providers="identityProviders"
+      :return-url="getReturnUrl()"
       class="sign-in__providers sign-in__providers--only"
     />
 
     <template v-if="hasIdentityProviders && !hasOnlyIdentityProviders" #side>
-      <IdentityProvidersPanel :providers="identityProviders" />
+      <IdentityProvidersPanel :providers="identityProviders" :return-url="getReturnUrl()" />
     </template>
   </VcEmptyPage>
 </template>
@@ -23,7 +24,7 @@
 <script setup lang="ts">
 import { defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
-import { usePageHead } from "@/core/composables";
+import { usePageHead, useReturnUrl } from "@/core/composables";
 import { SignInForm } from "@/shared/account";
 import { useIdentityProviders } from "@/shared/sign-in/composables/useIdentityProviders";
 
@@ -34,6 +35,7 @@ const IdentityProvidersPanel = defineAsyncComponent(
 
 const { identityProviders, hasIdentityProviders, hasOnlyIdentityProviders, hasPasswordAuthentication } =
   useIdentityProviders();
+const { getReturnUrl } = useReturnUrl();
 
 const { t } = useI18n();
 

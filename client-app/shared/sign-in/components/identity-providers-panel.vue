@@ -13,7 +13,7 @@ import IdentityProviders from "./identity-providers.vue";
 
 interface IProps {
   providers: string[];
-  returnUrl?: string;
+  returnUrl: string;
 }
 
 defineProps<IProps>();
