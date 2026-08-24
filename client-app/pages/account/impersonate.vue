@@ -41,6 +41,10 @@
         {{ $t("shared.account.impersonate_form.description") }}
       </p>
 
+      <VcAlert v-if="isAuthenticated" class="impersonate__denied" color="danger" variant="outline-dark" size="sm" icon>
+        {{ $t("pages.account.impersonate.error") }}
+      </VcAlert>
+
       <ImpersonateForm
         v-if="hasPasswordAuthentication"
         :target-user-id="userId"
@@ -80,6 +84,7 @@ import { PlatformPermissions } from "@/core/enums";
 import { ImpersonateForm, useImpersonate, useUser } from "@/shared/account";
 import { useIdentityProviders } from "@/shared/sign-in/composables/useIdentityProviders";
 import type { IdentityErrorType } from "@/core/api/graphql/types";
+import SignInDivider from "@/shared/sign-in/components/sign-in-divider.vue";
 
 interface IProps {
   userId: string;
@@ -88,7 +93,6 @@ interface IProps {
 const props = defineProps<IProps>();
 
 const IdentityProviders = defineAsyncComponent(() => import("@/shared/sign-in/components/identity-providers.vue"));
-const SignInDivider = defineAsyncComponent(() => import("@/shared/sign-in/components/sign-in-divider.vue"));
 
 const route = useRoute();
 const router = useRouter();
@@ -188,6 +192,10 @@ watch(
     @media (width > theme("screens.lg")) {
       @apply w-[30rem] gap-16;
     }
+  }
+
+  &__denied {
+    @apply mb-6;
   }
 
   &__cancel {

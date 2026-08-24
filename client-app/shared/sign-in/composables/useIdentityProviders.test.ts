@@ -6,7 +6,7 @@ const themeContext = ref<{ storeSettings: { authenticationTypes?: string[] } }>(
   storeSettings: { authenticationTypes: [] },
 });
 
-vi.mock("@/core/composables", () => ({
+vi.mock("@/core/composables/useThemeContext", () => ({
   useThemeContext: () => ({ themeContext }),
 }));
 

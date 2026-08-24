@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { useIdentityProvider } from "@/shared/sign-in/components/useIdentityProvider";
+import { useIdentityProvider } from "@/shared/sign-in/composables/useIdentityProvider";
 import IdentityProvider from "./identity-provider.vue";
 
 interface IProps {

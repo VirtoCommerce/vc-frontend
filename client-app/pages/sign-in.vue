@@ -11,7 +11,7 @@
     <IdentityProviders
       v-if="hasOnlyIdentityProviders"
       :providers="identityProviders"
-      :return-url="getReturnUrl()"
+      :return-url="returnUrl"
       class="sign-in__providers sign-in__providers--only"
     />
 
@@ -19,25 +19,29 @@
       <div class="sign-in__side">
         <SignInDivider>{{ $t("pages.sign_in.divider_text") }}</SignInDivider>
 
-        <IdentityProviders :providers="identityProviders" :return-url="getReturnUrl()" class="sign-in__providers" />
+        <IdentityProviders :providers="identityProviders" :return-url="returnUrl" class="sign-in__providers" />
       </div>
     </template>
   </VcEmptyPage>
 </template>
 
 <script setup lang="ts">
-import { defineAsyncComponent } from "vue";
+import { computed, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
+import { useRoute } from "vue-router";
 import { usePageHead, useReturnUrl } from "@/core/composables";
 import { SignInForm } from "@/shared/account";
 import { useIdentityProviders } from "@/shared/sign-in/composables/useIdentityProviders";
+import SignInDivider from "@/shared/sign-in/components/sign-in-divider.vue";
 
 const IdentityProviders = defineAsyncComponent(() => import("@/shared/sign-in/components/identity-providers.vue"));
-const SignInDivider = defineAsyncComponent(() => import("@/shared/sign-in/components/sign-in-divider.vue"));
 
 const { identityProviders, hasIdentityProviders, hasOnlyIdentityProviders, hasPasswordAuthentication } =
   useIdentityProviders();
 const { getReturnUrl } = useReturnUrl();
+const route = useRoute();
+
+const returnUrl = computed<string>(() => getReturnUrl(route.fullPath));
 
 const { t } = useI18n();
 

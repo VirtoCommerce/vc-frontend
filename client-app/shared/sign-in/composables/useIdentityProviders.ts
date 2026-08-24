@@ -1,5 +1,5 @@
 import { computed } from "vue";
-import { useThemeContext } from "@/core/composables";
+import { useThemeContext } from "@/core/composables/useThemeContext";
 
 const PASSWORD_AUTHENTICATION_TYPE = "Password";
 

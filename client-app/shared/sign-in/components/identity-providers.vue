@@ -16,14 +16,26 @@ import type { Component } from "vue";
 
 defineProps<IProps>();
 
-const loadProviderComponent = (providerName: string) => {
-  return defineAsyncComponent<Component>({
-    loader: () => import(`./${providerName.toLowerCase()}-provider.vue`),
-    onError(error) {
-      Logger.error(`Failed to load ${providerName} provider component`, error);
-    },
-  });
-};
+const providerComponents = new Map<string, Component>();
+
+function loadProviderComponent(providerName: string): Component {
+  const name = providerName.toLowerCase();
+
+  if (!providerComponents.has(name)) {
+    providerComponents.set(
+      name,
+      defineAsyncComponent<Component>({
+        loader: () => import(`./${name}-provider.vue`),
+        onError(error, _retry, fail) {
+          Logger.error(`Failed to load ${providerName} provider component`, error);
+          fail();
+        },
+      }),
+    );
+  }
+
+  return providerComponents.get(name)!;
+}
 
 interface IProps {
   providers: string[];

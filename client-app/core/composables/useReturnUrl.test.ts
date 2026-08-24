@@ -49,6 +49,22 @@ describe("useReturnUrl", () => {
     expect(useReturnUrl().getReturnUrl()).toBe("/default-page");
   });
 
+  it("reduces a requested page of the current origin to a path", () => {
+    mockLocation("http://localhost:3000/sign-in?returnUrl=http://localhost:3000/account/orders%3Fpage%3D2%23list");
+
+    expect(useReturnUrl().getReturnUrl()).toBe("/account/orders?page=2#list");
+  });
+
+  it("returns the home page when the store default leaves the origin", () => {
+    themeContext.value = { settings: { default_return_url: "//example.com/phishing" } };
+
+    expect(useReturnUrl().getReturnUrl()).toBe("/");
+  });
+
+  it("reads the requested page from the given url", () => {
+    expect(useReturnUrl().getReturnUrl("/sign-in?returnUrl=/account/orders")).toBe("/account/orders");
+  });
+
   it("reads the location on every call", () => {
     const { getReturnUrl } = useReturnUrl();
 
