@@ -2,13 +2,15 @@
   <VcDropdownMenu :y-offset="4" :x-offset="0" placement="bottom-end">
     <template #trigger="{ triggerProps }">
       <VcButton
-        data-test-id="wishlist-card-menu-button"
-        icon="cog"
+        :aria-label="$t('common.labels.actions')"
+        icon
         color="secondary"
         variant="outline"
         size="xs"
         v-bind="triggerProps"
-      />
+      >
+        <VcIcon name="cog" variant="solid" />
+      </VcButton>
     </template>
 
     <template #content>
