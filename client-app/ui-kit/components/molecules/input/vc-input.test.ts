@@ -27,15 +27,11 @@ describe("VcInput hideDetails", () => {
   });
 });
 
+// VCST-5533: VcSelect depends on this too.
 describe("VcInput aria-describedby", () => {
   it("omits aria-describedby when hideDetails is true", () => {
     const wrapper = createInputWrapper({ props: { modelValue: "", hideDetails: true, message: "x" } });
     expect(wrapper.find("input").attributes("aria-describedby")).toBeUndefined();
-  });
-
-  it("sets aria-describedby when hideDetails is false and message is set", () => {
-    const wrapper = createInputWrapper({ props: { modelValue: "", hideDetails: false, message: "x" } });
-    expect(wrapper.find("input").attributes("aria-describedby")).toBeDefined();
   });
 
   it("keeps a forwarded aria-describedby when it renders no details row of its own", () => {
@@ -45,13 +41,49 @@ describe("VcInput aria-describedby", () => {
     expect(wrapper.find("input").attributes("aria-describedby")).toBe("outer-id");
   });
 
-  it("joins its own details id with a forwarded one — aria-describedby is an id list", () => {
+  it("keeps a consumer-supplied description id", () => {
     const wrapper = createInputWrapper({
-      props: { modelValue: "", message: "x", aria: { "aria-describedby": "outer-id" } },
+      props: { aria: { "aria-describedby": "external-error" } },
     });
-    const ownId = wrapper.findComponent({ name: "VcInputDetails" }).attributes("id");
-    expect(ownId).toBeTruthy();
-    expect(wrapper.find("input").attributes("aria-describedby")).toBe(`${ownId} outer-id`);
+
+    expect(wrapper.get("input").attributes("aria-describedby")).toBe("external-error");
+  });
+
+  it("references the details element when only a message is set", () => {
+    const wrapper = createInputWrapper({ props: { message: "Too short" } });
+
+    const detailsId = wrapper.get(".vc-input-details").attributes("id");
+    expect(wrapper.get("input").attributes("aria-describedby")).toBe(detailsId);
+  });
+
+  it("merges the consumer-supplied id with the internal details id", () => {
+    const wrapper = createInputWrapper({
+      props: { message: "Too short", aria: { "aria-describedby": "external-error" } },
+    });
+
+    const describedBy = wrapper.get("input").attributes("aria-describedby")!.split(" ");
+    const detailsId = wrapper.get(".vc-input-details").attributes("id");
+
+    expect(detailsId).toBeTruthy();
+    expect(describedBy).toContain(detailsId);
+    expect(describedBy).toContain("external-error");
+  });
+
+  it("is absent when there is nothing to describe", () => {
+    const wrapper = createInputWrapper();
+
+    expect(wrapper.get("input").attributes("aria-describedby")).toBeUndefined();
+  });
+
+  it("every referenced id resolves to a rendered element", () => {
+    const wrapper = createInputWrapper({
+      props: { message: "Too short", counter: true, maxlength: 10 },
+    });
+
+    const describedBy = wrapper.get("input").attributes("aria-describedby")!.split(" ");
+    describedBy.forEach((id) => {
+      expect(wrapper.find(`#${id}`).exists()).toBe(true);
+    });
   });
 });
 

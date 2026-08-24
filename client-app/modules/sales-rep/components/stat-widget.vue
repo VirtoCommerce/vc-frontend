@@ -1,6 +1,9 @@
 <template>
   <div class="stat-widget" :class="`stat-widget--${accent}`" :aria-busy="loading || undefined">
     <div class="stat-widget__head">
+      <!-- Decorator slot ahead of the accent icon; the layout puts its drag affordance here. -->
+      <slot name="leading" />
+
       <VcIcon class="stat-widget__icon" :name="icon" :size="15" />
 
       <span class="stat-widget__label">{{ label }}</span>
@@ -19,7 +22,11 @@
     </output>
 
     <template v-else>
-      <div class="stat-widget__value">{{ value }}</div>
+      <div class="stat-widget__value">
+        {{ value }}
+
+        <span v-if="valueSuffix" class="stat-widget__unit">{{ valueSuffix }}</span>
+      </div>
 
       <div v-if="sub" class="stat-widget__sub">{{ sub }}</div>
 
@@ -43,6 +50,8 @@ interface IProps {
   value: string;
   icon: string;
   accent?: StatWidgetAccentType;
+  // Unit label after the value ("items"), rendered smaller so the number stays the focal point.
+  valueSuffix?: string;
   sub?: string;
   delta?: string;
   deltaTone?: StatWidgetToneType;
@@ -92,8 +101,11 @@ withDefaults(defineProps<IProps>(), {
     color: var(--stat-widget-accent);
   }
 
+  // Two line boxes, wrapped or not, so every figure in the row starts at the same height — a one-line
+  // caption used to pull its card's value 13px above its neighbours'. `lh` is the caption's own line
+  // box, so the reserve tracks the type scale; `flex` centers a short caption on the icon's line.
   &__label {
-    @apply text-xs font-bold uppercase tracking-wide text-neutral-500;
+    @apply flex min-h-[2lh] items-center text-xs font-bold uppercase tracking-wide text-neutral-500;
   }
 
   &__value {
@@ -108,6 +120,10 @@ withDefaults(defineProps<IProps>(), {
   // `mt-auto` pins it where the delta row would sit, keeping card heights even.
   &__error {
     @apply mt-auto flex items-center gap-1.5 pt-1.5 text-sm font-bold text-danger-600;
+  }
+
+  &__unit {
+    @apply text-sm font-normal text-neutral-500;
   }
 
   &__sub {

@@ -57,13 +57,13 @@
       <div v-if="clearable && model && !disabled && !readonly" class="vc-input__decorator">
         <VcButton
           :disabled="disabled"
+          :aria-label="$t('ui_kit.buttons.clear')"
           type="button"
           icon="delete-thin"
           color="neutral"
           variant="ghost"
           class="vc-input__clear"
           :icon-size="size === 'md' ? '0.875rem' : '0.75rem'"
-          :aria-label="$t('ui_kit.buttons.clear')"
           @keydown.enter.stop.prevent
           @keyup.enter.stop.prevent="clear"
           @click.stop="clear"

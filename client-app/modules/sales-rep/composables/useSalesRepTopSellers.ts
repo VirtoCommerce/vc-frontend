@@ -1,10 +1,10 @@
-import { useQuery } from "@vue/apollo-composable";
 import { computed, toValue } from "vue";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { SalesRepTopSellersDocument } from "../api/graphql/types";
 import { HUB_FETCH_POLICY, TOP_SELLERS_DEFAULT_TAKE } from "../constants";
 import { formatStatCount, formatStatMoney } from "../utils";
+import { useSalesRepHubQuery } from "./useSalesRepHubQuery";
 import type { SalesRepTopSellerRowType } from "../types";
 import type { Ref } from "vue";
 
@@ -36,7 +36,7 @@ export function useSalesRepTopSellers(options: UseSalesRepTopSellersOptionsType 
   }));
 
   // Ranked from the same orders as the KPI cards, so it revalidates with them.
-  const { result, loading, error, onError } = useQuery(SalesRepTopSellersDocument, variables, {
+  const { result, loading, error, onError } = useSalesRepHubQuery(SalesRepTopSellersDocument, variables, {
     fetchPolicy: HUB_FETCH_POLICY,
   });
 

@@ -1,8 +1,10 @@
 import { ApolloClient, ApolloLink, Observable } from "@apollo/client/core";
 import { provideApolloClient } from "@vue/apollo-composable";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { effectScope, nextTick, ref } from "vue";
 import { cache } from "@/core/api/graphql/config/cache";
+import { CUSTOMER_PROFILE_LAYOUT_SCOPE, DASHBOARD_LAYOUT_SCOPE } from "../constants";
+import { STAT_CARDS } from "../layout/stat-cards";
 import { useSalesRepCartStatistics } from "./useSalesRepCartStatistics";
 import { useSalesRepCustomer } from "./useSalesRepCustomer";
 import { useSalesRepCustomerCounts } from "./useSalesRepCustomerCounts";
@@ -12,6 +14,7 @@ import { useSalesRepOrderStatistics } from "./useSalesRepOrderStatistics";
 import { useSalesRepOrders } from "./useSalesRepOrders";
 import { useSalesRepTopSellers } from "./useSalesRepTopSellers";
 import { useSalesReps } from "./useSalesReps";
+import { clearStatVisibility, publishStatVisibility } from "./useStatDataNeeds";
 
 vi.mock("@/core/globals", () => ({
   globals: { storeId: "test-store", currencyCode: "USD", cultureName: "en-US" },
@@ -29,13 +32,7 @@ function orderPeriod(count: number) {
 }
 
 function orderComparison() {
-  return {
-    __typename: "CustomerOrderStatisticsComparison",
-    totalChange: money(1),
-    totalChangePercent: 1,
-    countChange: 1,
-    countChangePercent: 1,
-  };
+  return { __typename: "CustomerOrderStatisticsComparison", countChangePercent: 1 };
 }
 
 // Apollo can't read a partial entry back from the cache, so every alias a document selects is answered.
@@ -48,7 +45,7 @@ function orderStatistics() {
       ytd: orderPeriod(metric),
       week: orderPeriod(metric),
       newOrders: orderPeriod(metric),
-      newOrdersToday: orderPeriod(metric),
+      recentOrders: orderPeriod(metric),
       weekVsPrevWeek: orderComparison(),
       mtdVsPrevMonth: orderComparison(),
       ytdVsLastYear: orderComparison(),
@@ -60,9 +57,12 @@ function cartStatistics() {
   return {
     salesRepCustomerCartStatistics: {
       __typename: "CustomerCartStatistics",
-      currencyCode: "USD",
-      activeCarts: { __typename: "CustomerCartStatisticsPeriod", count: metric, total: money(metric * 10) },
-      newCartsThisWeek: { __typename: "CustomerCartStatisticsPeriod", count: metric },
+      activeCarts: {
+        __typename: "CustomerCartStatisticsPeriod",
+        selectedItemQuantity: metric,
+        unselectedItemQuantity: metric,
+      },
+      itemsThisWeek: { __typename: "CustomerCartStatisticsPeriod", selectedItemQuantity: metric },
     },
   };
 }
@@ -222,11 +222,35 @@ async function waitFor(condition: () => boolean, description: string): Promise<v
   throw new Error(`Timed out waiting for ${description}`);
 }
 
+/**
+ * Stands in for a mounted <LayoutSurface> whose layout has been read and shows every card, which is
+ * what the statistics composables wait for: they shape their queries from the visible cards, so with
+ * nothing published they would (correctly) never fetch at all.
+ */
+function showEveryCard(): void {
+  for (const scope of [DASHBOARD_LAYOUT_SCOPE, CUSTOMER_PROFILE_LAYOUT_SCOPE] as const) {
+    publishStatVisibility(scope, {
+      settled: true,
+      visible: STAT_CARDS[scope].map((card) => card.key),
+      editing: false,
+    });
+  }
+}
+
 beforeEach(async () => {
   requestCount = 0;
   metric = 1;
+  showEveryCard();
   await cache.reset({ discardWatches: true });
   provideApolloClient(new ApolloClient({ link, cache }));
+});
+
+// Published visibility is module state, so it has to be torn down: otherwise it survives every test here
+// and a "must not fetch before the layout is read" case would pass without exercising the gate at all.
+afterEach(() => {
+  for (const scope of [DASHBOARD_LAYOUT_SCOPE, CUSTOMER_PROFILE_LAYOUT_SCOPE] as const) {
+    clearStatVisibility(scope);
+  }
 });
 
 // Every hub read, paired with a probe on the field carrying `metric`. Waiting on the probe rather than on
@@ -235,21 +259,21 @@ const widgetSources: [string, () => () => number | undefined][] = [
   [
     "order statistics",
     () => {
-      const { statistics } = useSalesRepOrderStatistics();
+      const { statistics } = useSalesRepOrderStatistics({ scope: DASHBOARD_LAYOUT_SCOPE });
       return () => statistics.value?.newOrders?.count;
     },
   ],
   [
     "cart statistics",
     () => {
-      const { statistics } = useSalesRepCartStatistics();
-      return () => statistics.value?.activeCarts?.count;
+      const { statistics } = useSalesRepCartStatistics({ scope: DASHBOARD_LAYOUT_SCOPE });
+      return () => statistics.value?.activeCarts?.selectedItemQuantity;
     },
   ],
   [
     "customer counts",
     () => {
-      const { counts } = useSalesRepCustomerCounts();
+      const { counts } = useSalesRepCustomerCounts({ scope: DASHBOARD_LAYOUT_SCOPE });
       return () => counts.value?.assignedCustomers;
     },
   ],
@@ -326,7 +350,9 @@ describe("customer-scoped statistics", () => {
   // customer's figures into another's card.
   it("keys the cache per customer rather than collapsing both into one entry", async () => {
     const organizationId = ref("org-a");
-    const widget = mountWidget(() => useSalesRepOrderStatistics({ organizationId }));
+    const widget = mountWidget(() =>
+      useSalesRepOrderStatistics({ scope: CUSTOMER_PROFILE_LAYOUT_SCOPE, organizationId }),
+    );
     await waitFor(() => widget.api.statistics.value != null, "org-a's figures");
 
     metric = 5;

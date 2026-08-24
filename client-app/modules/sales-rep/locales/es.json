@@ -14,7 +14,8 @@
       "search_aria": "Buscar representantes de ventas",
       "empty": "No se encontraron representantes de ventas",
       "no_results": "No hay representantes de ventas que coincidan con tu búsqueda",
-      "reset_search": "Restablecer búsqueda"
+      "reset_search": "Restablecer búsqueda",
+      "load_failed": "No se pudieron cargar los representantes de ventas"
     },
     "my_customers": {
       "navigation": {
@@ -26,9 +27,9 @@
       "table": {
         "customer": "Cliente",
         "last_order": "Mi último pedido",
-        "ytd": "Compras YTD",
+        "ytd": "Compras del año",
         "last_year": "Año pasado",
-        "orders_count": "{count} pedidos",
+        "orders_count": "{count} pedido | {count} pedidos",
         "all_customers": "Todos",
         "actions": "Acciones",
         "search_placeholder": "Buscar por nombre",
@@ -49,9 +50,8 @@
           "title": "Panel de control"
         },
         "widgets": {
-          "new_orders": "Pedidos nuevos",
+          "new_orders": "Pedidos en estado «New»",
           "active_carts": "Carritos activos",
-          "active_cart": "Carrito activo",
           "orders_placed_week": "Pedidos de esta semana",
           "orders_placed_mtd": "Pedidos del mes en curso",
           "purchased_mtd": "Compras del mes en curso",
@@ -63,24 +63,58 @@
           "vs_last_week": "{delta} vs. semana pasada",
           "vs_last_month": "{delta} vs. mes pasado",
           "vs_last_year": "{delta} vs. año pasado",
-          "ordered_this_month": "{count} compraron este mes",
-          "new_customers": "{count} clientes nuevos",
-          "placed_today": "{count} realizados hoy",
-          "new_this_week": "{count} nuevos esta semana",
+          "ordered_this_month": "{count} compró este mes | {count} compraron este mes",
+          "new_customers": "{count} cliente nuevo | {count} clientes nuevos",
+          "of_recent_orders": "de {count} creado en los últimos 7 días | de {count} creados en los últimos 7 días",
+          "items_unit": "artículo | artículos",
+          "not_for_checkout": "{count} fuera del pago",
+          "items_this_week": "{count} artículo esta semana | {count} artículos esta semana",
           "mtd_of_ytd": "{percent}% del año",
           "load_failed": "No se pudo cargar"
+        }
+      },
+      "layout": {
+        "edit": "Editar diseño",
+        "editing": "Editando el diseño",
+        "hint": "— arrastre un bloque por su asa para reordenarlo, u ocúltelo con ✕.",
+        "hint_keyboard": "Teclado: la barra espaciadora toma un bloque, las flechas lo mueven, espacio lo suelta, Esc cancela.",
+        "save": "Guardar diseño",
+        "cancel": "Cancelar",
+        "reset": "Restablecer",
+        "save_failed": "No se pudo guardar el diseño. Sus cambios siguen aquí: inténtelo de nuevo.",
+        "load_failed": "No se pudo cargar el diseño guardado, por lo que se muestra la disposición predeterminada. La edición no está disponible hasta que se cargue: actualice la página.",
+        "hidden_widgets": "Widgets ocultos",
+        "visible_stats": "Métricas visibles",
+        "hidden_stats": "Métricas ocultas",
+        "empty_visible": "Arrastre una métrica aquí para mostrarla",
+        "empty_hidden": "Arrastre una métrica aquí para ocultarla",
+        "max_rows": "Filas máximas",
+        "a11y": {
+          "reorder": "Reordenar {title}",
+          "hide": "Ocultar {title}",
+          "show": "Mostrar {title}",
+          "grabbed": "{title} tomado. Posición {position} de {total}. Use las flechas para moverlo, espacio para soltarlo, escape para cancelar.",
+          "grabbed_parkable": "{title} tomado. Posición {position} de {total}. Use las flechas izquierda y derecha para moverlo, arriba y abajo para ocultarlo o mostrarlo, espacio para soltarlo, escape para cancelar.",
+          "moved": "{title} movido a la posición {position} de {total}.",
+          "dropped": "{title} soltado en la posición {position} de {total}.",
+          "edge": "{title} ya está en la posición {position} de {total}.",
+          "cancelled": "Movimiento de {title} cancelado.",
+          "parked": "{title} oculto.",
+          "restored": "{title} visible.",
+          "max_rows": "Filas máximas mostradas por {title}, entre {min} y {max}"
         }
       }
     },
     "customer_profile": {
       "loading": "Cargando…",
       "not_found": "Cliente no encontrado o no está en tus clientes.",
+      "load_failed": "No se pudo cargar este cliente. Actualice la página.",
       "back_to_customers": "Volver a mis clientes",
       "widgets": {
         "avg_order_value": "Valor medio del pedido"
       },
       "stats": {
-        "per_order": "Promedio por pedido (YTD)"
+        "per_order": "Promedio por pedido (año en curso)"
       },
       "info": {
         "title": "Información del cliente",
@@ -148,11 +182,32 @@
       "load_failed": "No se pudieron cargar los más vendidos"
     },
     "rules": {
+      "load_failed": {
+        "filter": "No se pudieron cargar los filtros, por lo que se muestra la lista completa. Actualice la página.",
+        "sort": "No se pudieron cargar las opciones de ordenación, por lo que se usa el orden predeterminado. Actualice la página.",
+        "both": "No se pudieron cargar los filtros ni las opciones de ordenación, por lo que se muestra la lista completa en el orden predeterminado. Actualice la página."
+      },
       "customer": {
         "filter": {
           "All": "Todos"
         }
       }
+    },
+    "list_sharing": {
+      "share_customers_label": "Cliente",
+      "share_customers_placeholder": "Seleccionar cliente",
+      "share_customers_error": "No se pudo cargar la lista de clientes. Inténtelo de nuevo.",
+      "share_replace_hint": "El cliente seleccionado anteriormente perderá el acceso a esta lista.",
+      "share_message_label": "Mensaje",
+      "share_message_placeholder": "Mensaje opcional para incluir",
+      "share_default_title": "Una nueva lista de tu representante de ventas",
+      "share_default_message": "¡Hola! Acabo de compartir la lista «{listName}» con tu organización. Échale un vistazo:",
+      "share_success": "Lista compartida con el cliente.",
+      "share_partial": "Lista compartida, pero no se entregaron todas las notificaciones.",
+      "share_notify_error": "La lista se guardó, pero no se pudo notificar al cliente.",
+      "scope_label": "Cliente",
+      "status": "Compartida con cliente",
+      "badge": "Recomendado por tu representante de ventas"
     }
   }
 }

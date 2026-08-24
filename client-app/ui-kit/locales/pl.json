@@ -136,7 +136,8 @@
       "retry": "Spróbuj ponownie",
       "select_row_number": "Select row {number}",
       "select_all": "Zaznacz wszystko",
-      "deselect_all": "Odznacz wszystko"
+      "deselect_all": "Odznacz wszystko",
+      "selection_column": "Wybór wiersza"
     },
     "slider": {
       "tooltip": "{count} przedmiotów",

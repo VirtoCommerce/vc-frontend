@@ -136,7 +136,8 @@
       "retry": "Erneut versuchen",
       "select_row_number": "Select row {number}",
       "select_all": "Alle auswählen",
-      "deselect_all": "Alle abwählen"
+      "deselect_all": "Alle abwählen",
+      "selection_column": "Zeilenauswahl"
     },
     "slider": {
       "tooltip": "{count} Artikel",

@@ -1,3 +1,4 @@
+import { ref } from "vue";
 import { VcRating } from "..";
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
@@ -82,9 +83,32 @@ export const WithoutText: StoryType = {
 
 export const HalfRating: StoryType = {
   args: {
-    value: 4.5,
+    value: 3.5,
     mode: "full",
     readOnly: true,
+  },
+};
+
+export const FractionalRating: StoryType = {
+  args: {
+    value: 3.4,
+    mode: "full",
+    readOnly: true,
+  },
+};
+
+export const Interactive: StoryType = {
+  render: (args) => ({
+    setup: () => {
+      const currentValue = ref(args.value ?? 0);
+      return { args, currentValue };
+    },
+    template: '<VcRating v-bind="args" :value="currentValue" :read-only="false" @set-rating="currentValue = $event" />',
+  }),
+  args: {
+    value: 3,
+    mode: "full",
+    withText: false,
   },
 };
 

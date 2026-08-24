@@ -82,7 +82,8 @@
       "buy_now": "Acquista ora",
       "see_all": "Vedi tutto",
       "report_a_problem": "Segnala un problema",
-      "copy_to_clipboard": "Copia negli appunti"
+      "copy_to_clipboard": "Copia negli appunti",
+      "reload_page": "Ricarica la pagina"
     },
     "labels": {
       "actions": "Azioni",
@@ -233,7 +234,8 @@
       "outdated_backend_modules": "L'applicazione frontend si aspetta versioni più recenti della Piattaforma e di uno o più Moduli. <br> L'applicazione frontend è in esecuzione su un backend incompatibile. Alcune funzionalità potrebbero non essere disponibili, degradate o instabili fino a quando la Piattaforma e i Moduli non verranno aggiornati per soddisfare i requisiti del negozio. Condividi il report sottostante con il tuo amministratore.",
       "logo_changed": "Il logo è stato modificato con successo.",
       "logo_deleted": "Il logo è stato eliminato.",
-      "pending_operations_leaving_page_confirmation": "Alcune operazioni sono ancora in corso. Vuoi veramente lasciare questa pagina? Le modifiche non salvate potrebbero andare perse."
+      "pending_operations_leaving_page_confirmation": "Alcune operazioni sono ancora in corso. Vuoi veramente lasciare questa pagina? Le modifiche non salvate potrebbero andare perse.",
+      "content_failed_to_load": "Non è stato possibile caricare una parte del sito. Ricarica la pagina per continuare."
     },
     "placeholders": {
       "enter_value": "Inserisci un valore",
@@ -714,7 +716,11 @@
         "enter_custom_code": "Inserisci codice personalizzato",
         "all_coupons": "Visualizza tutti i coupon e le promozioni",
         "apply_aria": "Apply coupon {code}",
-        "remove_aria": "Remove coupon"
+        "remove_aria": "Remove coupon",
+        "coupon_code_aria": "Codice coupon",
+        "applied_announcement": "Coupon {code} applicato.",
+        "removed_announcement": "Coupon {code} rimosso.",
+        "totals_announcement": "Sconto {discount}, nuovo totale {total}."
       }
     },
     "catalog": {
@@ -1024,7 +1030,8 @@
           "Organization": "Organizzazione",
           "AnyoneAnonymous": "Chiunque (sola lettura)"
         },
-        "clipboard_success": "Link copiato"
+        "clipboard_success": "Link copiato",
+        "save_error": "Impossibile salvare la lista. Riprova."
       },
       "delete_wishlist_modal": {
         "title": "Conferma eliminazione",

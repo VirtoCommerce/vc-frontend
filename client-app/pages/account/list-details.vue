@@ -50,7 +50,6 @@
           </VcButton>
 
           <VcButton
-            v-if="!hideSettings"
             :disabled="loading || !list"
             size="sm"
             variant="outline"
@@ -153,19 +152,11 @@ import AddBulkItemsToCartResultsModal from "@/shared/cart/components/add-bulk-it
 
 interface IProps {
   listId: string;
-  hideSettings?: boolean;
   listName?: string;
-  kind?: "wishlist" | "saved-for-later";
 }
-
-const emit = defineEmits<{
-  (e: "add-to-cart", item: LineItemType, quantity: number): void;
-  (e: "add-all-to-cart", items: LineItemType[]): void;
-}>();
 
 const props = withDefaults(defineProps<IProps>(), {
   listName: undefined,
-  kind: "wishlist",
 });
 
 const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
@@ -246,12 +237,8 @@ async function addAllListItemsToCart(): Promise<void> {
     return;
   }
 
-  if (props.kind === "saved-for-later") {
-    emit("add-all-to-cart", wishlistItems.value);
-  } else {
-    const newCartItems = wishlistItems.value.map(({ productId, quantity }) => ({ productId, quantity }));
-    await addItemsToCart(newCartItems);
-  }
+  const newCartItems = wishlistItems.value.map(({ productId, quantity }) => ({ productId, quantity }));
+  await addItemsToCart(newCartItems);
 
   const products = wishlistItems.value
     .map((item) => item.product)
@@ -334,11 +321,7 @@ async function addOrUpdateCartItem(item: PreparedLineItemType, quantity: number)
         await changeItemQuantity(itemInCart.id, quantity);
       }
     } else {
-      if (props.kind === "saved-for-later") {
-        emit("add-to-cart", lineItem, quantity);
-      } else {
-        await addToCart(lineItem.product.id, quantity);
-      }
+      await addToCart(lineItem.product.id, quantity);
       trackAddItemToCart(lineItem.product, quantity);
       void pushHistoricalEvent({ eventType: "addToCart", productId: lineItem.product.id });
     }

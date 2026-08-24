@@ -9,6 +9,7 @@ import * as _apollo_client_cache from '@apollo/client/cache';
 import { ApolloClient } from '@apollo/client/core';
 import * as _vueuse_core from '@vueuse/core';
 import * as vue_i18n from 'vue-i18n';
+import { IntlNumberFormat } from 'vue-i18n';
 import { LocaleMessage } from '@intlify/core-base';
 
 interface IProps$2 {
@@ -87,6 +88,11 @@ type Scalars = {
         input: number;
         output: number;
     };
+    /** Asset URL string. When the store defines an asset public URL, the value is resolved against it. */
+    StoreAssetUrl: {
+        input: any;
+        output: any;
+    };
 };
 type Asset = {
     /** Culture name */
@@ -108,7 +114,7 @@ type Asset = {
     /** The type ID of the asset. */
     typeId: Scalars['String']['output'];
     /** The URL of the asset. */
-    url: Scalars['String']['output'];
+    url: Scalars['StoreAssetUrl']['output'];
 };
 type AvailabilityData = {
     /** Available quantity */
@@ -129,7 +135,7 @@ type AvailabilityData = {
     isTrackInventory: Scalars['Boolean']['output'];
 };
 type BrandType = {
-    bannerUrl?: Maybe<Scalars['String']['output']>;
+    bannerUrl?: Maybe<Scalars['StoreAssetUrl']['output']>;
     /** Brand property name. */
     brandPropertyName?: Maybe<Scalars['String']['output']>;
     /** Unlocalized brand name. */
@@ -139,7 +145,7 @@ type BrandType = {
     featured?: Maybe<Scalars['Boolean']['output']>;
     /** Brand ID. */
     id: Scalars['String']['output'];
-    logoUrl?: Maybe<Scalars['String']['output']>;
+    logoUrl?: Maybe<Scalars['StoreAssetUrl']['output']>;
     /** Brand name. */
     name?: Maybe<Scalars['String']['output']>;
     permalink: Scalars['String']['output'];
@@ -190,7 +196,7 @@ type Category = {
     /** Images */
     images: Array<ImageType>;
     /** The category image. */
-    imgSrc?: Maybe<Scalars['String']['output']>;
+    imgSrc?: Maybe<Scalars['StoreAssetUrl']['output']>;
     /** Level in hierarchy */
     level: Scalars['Int']['output'];
     /** The name of the category. */
@@ -424,7 +430,7 @@ type ImageType = {
     /** Sort order */
     sortOrder: Scalars['Int']['output'];
     /** The URL of the image */
-    url: Scalars['String']['output'];
+    url: Scalars['StoreAssetUrl']['output'];
 };
 type InventoryInfo = {
     /** Allow backorder */
@@ -534,6 +540,8 @@ type OrderConfigurationItemType = {
     salePrice: MoneyType;
     /** Configuration item section ID */
     sectionId: Scalars['String']['output'];
+    /** Configuration item section name */
+    sectionName?: Maybe<Scalars['String']['output']>;
     /** Configuration item SKU */
     sku?: Maybe<Scalars['String']['output']>;
     /** Configuration item type. Possible values: 'Product', 'Variation', 'Text', 'File' */
@@ -944,7 +952,7 @@ type Product = {
     /** Product images */
     images: Array<ImageType>;
     /** The product main image URL. */
-    imgSrc?: Maybe<Scalars['String']['output']>;
+    imgSrc?: Maybe<Scalars['StoreAssetUrl']['output']>;
     /** Product added at least in one wishlist */
     inWishlist: Scalars['Boolean']['output'];
     /** Product is configurable */
@@ -1287,13 +1295,13 @@ declare const __VLS_base$1: vue.DefineComponent<IProps$1, {
 }>, {
     type: VcButtonTypeType;
     to: RouteLocationRaw | null;
-    disabled: boolean;
-    truncate: boolean;
-    tabindex: string | number;
-    color: VcButtonColorType;
     variant: VcButtonVariantType;
-    tag: string;
     loading: boolean;
+    tag: string;
+    truncate: boolean;
+    color: VcButtonColorType;
+    disabled: boolean;
+    tabindex: string | number;
     noWrap: boolean;
     fullWidth: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;
@@ -1466,7 +1474,7 @@ declare const useModuleSettings: _vueuse_core.UseMemoizeReturn<{
 declare function createI18n(locale: string, currency: string, fallback?: {
     locale: string;
     message: LocaleMessage;
-}): vue_i18n.I18n<{}, {
+}, pluralRuleLocales?: string[]): vue_i18n.I18n<{}, {
     en: {
         short: {
             year: "numeric";
@@ -1498,16 +1506,7 @@ declare function createI18n(locale: string, currency: string, fallback?: {
         };
     };
 }, {
-    [locale]: {
-        decimal: {
-            style: "decimal";
-        };
-        currency: {
-            style: "currency";
-            notation: "standard";
-            currency: string;
-        };
-    };
+    [x: string]: IntlNumberFormat;
 }, string, false>;
 type I18n = ReturnType<typeof createI18n>;
 

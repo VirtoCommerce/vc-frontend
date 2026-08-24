@@ -136,7 +136,8 @@
       "retry": "Försök igen",
       "select_row_number": "Select row {number}",
       "select_all": "Välj alla",
-      "deselect_all": "Avmarkera alla"
+      "deselect_all": "Avmarkera alla",
+      "selection_column": "Radval"
     },
     "slider": {
       "tooltip": "{count} objekt",

@@ -136,7 +136,8 @@
       "retry": "Yritä uudelleen",
       "select_row_number": "Select row {number}",
       "select_all": "Valitse kaikki",
-      "deselect_all": "Poista kaikki valinnat"
+      "deselect_all": "Poista kaikki valinnat",
+      "selection_column": "Rivin valinta"
     },
     "slider": {
       "tooltip": "{count} kohdetta",

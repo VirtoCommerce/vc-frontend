@@ -2,7 +2,14 @@
   <div class="customer-profile">
     <VcBreadcrumbs :items="breadcrumbs" />
 
-    <VcEmptyView v-if="notFound" :text="t('sales_rep.customer_profile.not_found')" icon="outline-404">
+    <!-- A failed read gets its own wording: a server error must not read as "this customer isn't yours".
+         `icon` belongs to the not-found branch; the error variant brings its own illustration. -->
+    <VcEmptyView
+      v-if="failed || notFound"
+      :text="failed ? t('sales_rep.customer_profile.load_failed') : t('sales_rep.customer_profile.not_found')"
+      :variant="failed ? 'error' : 'empty'"
+      icon="outline-404"
+    >
       <template #button>
         <VcButton :to="{ name: myCustomersRouteName }" prepend-icon="arrow-left">
           {{ t("sales_rep.customer_profile.back_to_customers") }}
@@ -29,36 +36,26 @@
         <p v-if="meta" class="customer-profile__meta">{{ meta }}</p>
       </div>
 
-      <CustomerProfileWidgets :organization-id="organizationId" />
-
-      <div class="customer-profile__layout">
-        <div class="customer-profile__main">
-          <SalesRepOrders :organization-id="organizationId" :title="t('sales_rep.orders.title')" filterable />
-
-          <TopSellers :organization-id="organizationId" :title="t('sales_rep.top_sellers.title')" />
-        </div>
-
-        <aside class="customer-profile__aside">
-          <CustomerProfileActions :organization-id="organizationId" />
-
-          <CustomerProfileInfo :organization-id="organizationId" />
-        </aside>
-      </div>
+      <!-- Below xl the page is one column, so the edit button moves to the very end instead. -->
+      <LayoutSurface
+        :scope="SCOPE"
+        :cards="cards"
+        :organization-id="organizationId"
+        :edit-button-placement="isCompact ? 'end' : 'mainColumn'"
+      />
     </template>
   </div>
 </template>
 
 <script setup lang="ts">
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
-import CustomerProfileActions from "../components/customer-profile-actions.vue";
-import CustomerProfileInfo from "../components/customer-profile-info.vue";
-import CustomerProfileWidgets from "../components/customer-profile-widgets.vue";
-import SalesRepOrders from "../components/sales-rep-orders.vue";
-import TopSellers from "../components/top-sellers.vue";
+import LayoutSurface from "../components/layout-surface.vue";
 import { useSalesRepCustomer } from "../composables/useSalesRepCustomer";
-import { MY_CUSTOMERS_ROUTE_NAME } from "../constants";
+import { useSalesRepCustomerWidgets } from "../composables/useSalesRepCustomerWidgets";
+import { CUSTOMER_PROFILE_LAYOUT_SCOPE, MY_CUSTOMERS_ROUTE_NAME } from "../constants";
 
 interface IProps {
   organizationId: string;
@@ -66,8 +63,14 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
+const SCOPE = CUSTOMER_PROFILE_LAYOUT_SCOPE;
+
+// The aside splits off at xl; below that the page is a single column and the button belongs at its end.
+const isCompact = useBreakpoints(breakpointsTailwind).smaller("xl");
+
 const { t } = useI18n();
-const { customer, loading, notFound } = useSalesRepCustomer(() => props.organizationId);
+const { customer, loading, failed, notFound } = useSalesRepCustomer(() => props.organizationId);
+const { cards } = useSalesRepCustomerWidgets(() => props.organizationId);
 
 const myCustomersRouteName = MY_CUSTOMERS_ROUTE_NAME;
 
@@ -115,26 +118,7 @@ const breadcrumbs = useBreadcrumbs(() => [
   }
 
   &__meta {
-    @apply mt-1.5 text-[13px] text-neutral-500;
-  }
-
-  // Single column through tablet; the aside splits off only on desktop (xl).
-  &__layout {
-    @apply flex flex-col gap-5 xl:flex-row xl:items-start;
-  }
-
-  &__main {
-    @apply flex min-w-0 flex-1 flex-col gap-5;
-  }
-
-  &__aside {
-    @apply flex min-w-0 flex-col gap-5 xl:w-80 xl:shrink-0;
-  }
-
-  // Cancels VcWidget's mobile full-bleed so blocks align with the KPI row/title; the extra & avoids !important.
-  & &__main .vc-widget,
-  & &__aside .vc-widget {
-    @apply mx-0;
+    @apply mt-1.5 text-sm text-neutral-500;
   }
 }
 </style>

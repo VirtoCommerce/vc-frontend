@@ -22,4 +22,7 @@ export const EXTENSION_NAMES = merge({}, INITIAL_EXTENSION_NAMES, {
   orderPaymentPage: {
     paymentMethods: "payment-methods",
   },
+  sharedList: {
+    provenanceNote: "provenance-note",
+  },
 });

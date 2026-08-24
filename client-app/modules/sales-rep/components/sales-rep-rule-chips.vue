@@ -26,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, watch } from "vue";
 import { selectableFilterRules } from "../utils";
 import type { SalesRepRuleType } from "../types";
 
@@ -35,12 +35,31 @@ interface IProps {
   rules: SalesRepRuleType[];
   // Label for the synthetic baseline tab (the "All" / no-filter option).
   allLabel: string;
+  // Whether `rules` is still being fetched — an in-flight refetch must not look like "the rule is gone".
+  loading?: boolean;
 }
 
 const props = defineProps<IProps>();
 
 // undefined = baseline (first tab); single source of this convention across all rule-tab surfaces.
 const modelValue = defineModel<string | undefined>();
+
+// Data-derived vocabularies change with the scope (period, customer), so a selected rule can stop being offered — e.g.
+// no order carries that status in the newly picked period. Fall back to the baseline instead of leaving a selection
+// active that no tab shows (which would render an empty list with nothing looking selected).
+watch(
+  () => [props.loading, props.rules] as const,
+  ([isLoading, rules]) => {
+    if (isLoading || !modelValue.value) {
+      return;
+    }
+
+    if (!rules.some((rule) => rule.name === modelValue.value)) {
+      modelValue.value = undefined;
+    }
+  },
+  { immediate: true },
+);
 
 // A backend "All" passthrough rule (customer segments carry one) would duplicate the baseline tab — drop it.
 const selectableRules = computed(() => selectableFilterRules(props.rules));

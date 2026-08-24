@@ -4,6 +4,13 @@
       {{ list.name }}
     </VcTypography>
 
+    <ExtensionPoint
+      v-if="$canRenderExtensionPoint('sharedList', EXTENSION_NAMES.sharedList.provenanceNote, list?.sharingSetting)"
+      :name="EXTENSION_NAMES.sharedList.provenanceNote"
+      category="sharedList"
+      class="shared-list__provenance"
+    />
+
     <div ref="listElement" class="shared-list__content">
       <!-- Skeletons -->
       <WishlistProductsSkeleton v-if="listLoading" :itemsCount="actualPageRowsCount" />
@@ -17,7 +24,9 @@
                 :items="pagedListItems"
                 :pending-items="pendingItems"
                 :editable="false"
+                :addable-to-cart="isShoppable"
                 :navigatable="false"
+                @update:cart-item="addOrUpdateCartItem"
                 @link-click="selectItemEvent"
               />
 
@@ -65,13 +74,21 @@
 import { cloneDeep, keyBy } from "lodash-es";
 import { computed, ref, watchEffect, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
-import { useAnalytics, usePageHead } from "@/core/composables";
+import { useAnalytics, useHistoricalEvents, usePageHead } from "@/core/composables";
+import { useAnalyticsUtils } from "@/core/composables/useAnalyticsUtils";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { PAGE_LIMIT } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { prepareLineItem } from "@/core/utilities";
 import { useShortCart } from "@/shared/cart";
-import { useWishlists, WishlistLineItems, WishlistProductsSkeleton, WishlistSummary } from "@/shared/wishlists";
+import { EXTENSION_NAMES } from "@/shared/common/constants/extensionPointsNames";
+import {
+  useWishlists,
+  useWishlistSharingScopes,
+  WishlistLineItems,
+  WishlistProductsSkeleton,
+  WishlistSummary,
+} from "@/shared/wishlists";
 import type { LineItemType, Product } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
 
@@ -85,9 +102,15 @@ interface IProps {
 
 const { getModuleSettings } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 const { analytics } = useAnalytics();
+const { trackAddItemToCart } = useAnalyticsUtils();
+const { pushHistoricalEvent } = useHistoricalEvents();
 const { t } = useI18n();
 const { listLoading, list, fetchSharedWishList } = useWishlists();
-const { cart } = useShortCart();
+const { cart, addToCart, changeItemQuantity } = useShortCart();
+const { getSharingScope } = useWishlistSharingScopes();
+
+// Declared by the scope's provider; the list itself stays read-only either way.
+const isShoppable = computed(() => !!getSharingScope(list.value?.sharingSetting?.scope)?.shoppable);
 
 const { continue_shopping_link } = getModuleSettings({
   [MODULE_XAPI_KEYS.CONTINUE_SHOPPING_LINK]: "continue_shopping_link",
@@ -127,6 +150,34 @@ function selectItemEvent(item: Product | undefined): void {
   analytics("selectItem", item, wishlistListProperties.value);
 }
 
+// Follows list-details' addOrUpdateCartItem, minus the result modal. The list is not the viewer's, so this only
+// touches the cart, never a list quantity.
+async function addOrUpdateCartItem(item: PreparedLineItemType, quantity: number): Promise<void> {
+  const lineItem = wishlistItems.value.find((listItem) => listItem.productId === item.productId);
+
+  if (!lineItem?.product || pendingItems.value[lineItem.id]) {
+    return;
+  }
+
+  const itemInCart = cart.value?.items?.find((cartItem) => cartItem.productId === item.productId);
+
+  pendingItems.value[lineItem.id] = true;
+  try {
+    if (itemInCart) {
+      if (itemInCart.quantity !== quantity) {
+        await changeItemQuantity(itemInCart.id, quantity);
+      }
+    } else {
+      await addToCart(lineItem.product.id, quantity);
+      // Only a genuine add is a conversion; a quantity change on an existing line is not.
+      trackAddItemToCart(lineItem.product, quantity);
+      void pushHistoricalEvent({ eventType: "addToCart", productId: lineItem.product.id });
+    }
+  } finally {
+    pendingItems.value[lineItem.id] = false;
+  }
+}
+
 watchEffect(async () => {
   await fetchSharedWishList(props.sharingKey);
   page.value = 1;
@@ -150,6 +201,10 @@ watchEffect(() => {
   @apply relative max-lg:pb-12;
 
   &__name {
+    @apply mb-5;
+  }
+
+  &__provenance {
     @apply mb-5;
   }
 

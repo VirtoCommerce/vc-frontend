@@ -136,7 +136,8 @@
       "retry": "Try again",
       "select_row_number": "Select row {number}",
       "select_all": "Select all",
-      "deselect_all": "Deselect all"
+      "deselect_all": "Deselect all",
+      "selection_column": "Row selection"
     },
     "slider": {
       "tooltip": "{count} items",

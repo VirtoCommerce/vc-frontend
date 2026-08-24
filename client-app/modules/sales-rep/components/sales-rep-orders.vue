@@ -1,5 +1,5 @@
 <template>
-  <VcWidget :title="title" size="md" class="sales-rep-orders">
+  <LayoutWidget :title="title" size="md" class="sales-rep-orders">
     <template #append>
       <VcLink :to="{ name: 'Orders' }" class="sales-rep-orders__all-link" target="_blank" rel="noopener noreferrer">
         {{ t("sales_rep.orders.view_all") }}
@@ -11,8 +11,30 @@
     <!-- VcWidget has no padding prop; #default-container is our seam for the inset, not .vc-widget__slot. -->
     <template #default-container>
       <div class="sales-rep-orders__body">
+        <!-- Without it the tab row and the sortable headers just aren't there, with nothing saying why. -->
+        <SalesRepRuleAlert
+          class="sales-rep-orders__notice"
+          :filter-failed="filterable && filterRulesFailed"
+          :sort-failed="sortRulesFailed"
+        />
+
+        <!-- In edit mode the tab strip becomes its own configuration: checked = offered as a tab.
+             Replacing rather than adding, because ten statuses do not fit anywhere else. -->
         <div v-if="filterable && hasFilterOptions" class="sales-rep-orders__filter">
-          <SalesRepRuleChips v-model="filter" :rules="filterRules" :all-label="t('sales_rep.orders.filter_all')" />
+          <SalesRepRuleToggles
+            v-if="editingTabs"
+            :rules="selectableRules"
+            :hidden="effectiveHiddenTabs"
+            @toggle="toggleTab"
+          />
+
+          <SalesRepRuleChips
+            v-else
+            v-model="filter"
+            :rules="visibleRules"
+            :loading="filterRulesLoading"
+            :all-label="t('sales_rep.orders.filter_all')"
+          />
         </div>
 
         <div class="sales-rep-orders__content">
@@ -32,7 +54,7 @@
             v-else
             :loading="loading"
             :items="orders"
-            :skeleton-rows="limit"
+            :skeleton-rows="rowLimit"
             :sort="sortInfo"
             mobile-breakpoint="lg"
             @header-click="applySort"
@@ -115,19 +137,24 @@
         </div>
       </div>
     </template>
-  </VcWidget>
+  </LayoutWidget>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
+import { useBlockChrome } from "../composables/useBlockChrome";
 import { useSalesRepColumnSort } from "../composables/useSalesRepColumnSort";
 import { useSalesRepOrders } from "../composables/useSalesRepOrders";
 import { useSalesRepPeriodFilter } from "../composables/useSalesRepPeriodFilter";
 import { useSalesRepRules } from "../composables/useSalesRepRules";
 import { ORDERS_DEFAULT_LIMIT } from "../constants";
+import { knownHiddenTabs, toggleTabRule, visibleTabRules } from "../layout/settings";
 import { selectableFilterRules } from "../utils";
+import LayoutWidget from "./layout-widget.vue";
+import SalesRepRuleAlert from "./sales-rep-rule-alert.vue";
 import SalesRepRuleChips from "./sales-rep-rule-chips.vue";
+import SalesRepRuleToggles from "./sales-rep-rule-toggles.vue";
 import OrderStatus from "@/shared/account/components/order-status.vue";
 
 interface IProps {
@@ -155,11 +182,60 @@ const filter = ref<string | undefined>(undefined);
 const sort = ref<string | undefined>(undefined);
 const { from: periodFrom, to: periodTo } = useSalesRepPeriodFilter();
 
-const { rules: filterRules } = useSalesRepRules("order", "filter");
-const { rules: sortRules } = useSalesRepRules("order", "sort");
+// The status chips are read from the orders in view — same customer, same period — so a chip always has orders behind it.
+const {
+  rules: filterRules,
+  loading: filterRulesLoading,
+  failed: filterRulesFailed,
+} = useSalesRepRules("order", "filter", {
+  organizationId: () => props.organizationId,
+  periodFrom,
+  periodTo,
+});
+const { rules: sortRules, failed: sortRulesFailed } = useSalesRepRules("order", "sort");
+
+// Absent when this widget renders outside a layout, which then configures nothing.
+const chrome = useBlockChrome();
+const editingTabs = computed(() => Boolean(chrome?.editing.value));
+const hiddenTabs = computed(() => chrome?.settings.value.hiddenTabs ?? []);
+// The saved selection, not the draft: tabs apply on save, like the row cap.
+const savedHiddenTabs = computed(() => chrome?.savedSettings.value.hiddenTabs ?? []);
+
+// The backend's "All" passthrough would duplicate the baseline chip, so it is not offered as a tab
+// and cannot be unchecked either.
+const selectableRules = computed(() => selectableFilterRules(filterRules.value));
 
 // Show the filter chips only when the backend offers a real filter beyond the "All" baseline.
-const hasFilterOptions = computed(() => selectableFilterRules(filterRules.value).length > 0);
+const hasFilterOptions = computed(() => selectableRules.value.length > 0);
+
+// The tabs the chips offer, in catalog order. Unchecking every one is allowed — the "All" baseline stays.
+const visibleRules = computed(() => visibleTabRules(selectableRules.value, savedHiddenTabs.value));
+
+// What the checkboxes read: the stored list minus anything the catalog no longer contains.
+const effectiveHiddenTabs = computed(() => knownHiddenTabs(selectableRules.value, hiddenTabs.value));
+
+// Edit mode is where the live catalog is known, so a retired name is cleared from the store there.
+// Immediate: a widget restored from the tray mounts mid-edit with the catalog already cached.
+watch(
+  [editingTabs, selectableRules],
+  () => {
+    if (editingTabs.value && effectiveHiddenTabs.value.length !== hiddenTabs.value.length) {
+      chrome?.updateSettings({ hiddenTabs: effectiveHiddenTabs.value });
+    }
+  },
+  { immediate: true },
+);
+
+function toggleTab(name: string): void {
+  chrome?.updateSettings({ hiddenTabs: toggleTabRule(effectiveHiddenTabs.value, name) });
+}
+
+// A save can retire the tab being filtered by, which the rep could then neither see nor clear.
+watch(visibleRules, (rules) => {
+  if (filter.value && !rules.some((rule) => rule.name === filter.value)) {
+    filter.value = undefined;
+  }
+});
 
 // Header sort: Date → "recent" (one-way, newest first); Total → "total" (reversible). Direction support is backend-driven.
 const { sortInfo, isColumnSortable, applySort } = useSalesRepColumnSort({
@@ -169,9 +245,12 @@ const { sortInfo, isColumnSortable, applySort } = useSalesRepColumnSort({
   rules: sortRules,
 });
 
+// The saved cap, not the draft: it is a query variable, so it applies on save.
+const rowLimit = computed(() => chrome?.savedSettings.value.maxRows ?? props.limit);
+
 const { orders, loading, error } = useSalesRepOrders({
   organizationId: () => props.organizationId,
-  first: () => props.limit,
+  first: () => rowLimit.value,
   filter: () => filter.value,
   sort: () => sort.value,
   periodFrom,
@@ -186,6 +265,10 @@ const failed = computed(() => Boolean(error.value));
 .sales-rep-orders {
   &__body {
     @apply flex flex-col;
+  }
+
+  &__notice {
+    @apply mx-6 mt-3;
   }
 
   // px-6 aligns the tabs with the widget header title.

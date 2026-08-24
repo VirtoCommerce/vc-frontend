@@ -136,7 +136,8 @@
       "retry": "Tentar novamente",
       "select_row_number": "Select row {number}",
       "select_all": "Selecionar tudo",
-      "deselect_all": "Desmarcar tudo"
+      "deselect_all": "Desmarcar tudo",
+      "selection_column": "Seleção de linha"
     },
     "slider": {
       "tooltip": "{count} itens",
