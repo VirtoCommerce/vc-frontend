@@ -1,4 +1,4 @@
 // Higher alpha than light mode: 8% primary is nearly invisible on dark surfaces.
 .vc-table {
-  --vc-table-selected-bg: rgb(from var(--color-primary-500) r g b / 0.16);
+  --vc-table-selected-bg-color: rgb(from var(--color-primary-500) r g b / 0.16);
 }

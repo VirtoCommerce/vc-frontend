@@ -54,35 +54,26 @@
       :style="scrollbarStyle"
       class="vc-table__scrollbar"
     >
-      <table :class="['vc-table__desktop', { 'vc-table__desktop--scrollable': scrollable }]">
+      <table ref="desktopTableRef" :class="['vc-table__desktop', { 'vc-table__desktop--scrollable': scrollable }]">
         <caption v-if="description" class="vc-table__caption">
           {{
             description
           }}
         </caption>
 
-        <slot name="header">
+        <slot name="header" v-bind="headerSlotScope">
           <thead
             v-if="!hideDefaultHeader && orderedColumns.length"
             :class="['vc-table__head', { 'vc-table__head--sticky': stickyHeader || maxHeight }]"
           >
             <tr class="vc-table__head-row">
-              <th
-                v-if="showSelectionColumn"
-                scope="col"
-                :class="[
-                  'vc-table__title',
-                  'vc-table__selection-cell',
-                  { 'vc-table__title--fixed': selectionColumnSticky },
-                ]"
-                :style="selectionColumnStyle"
-              >
+              <th v-if="showSelectionColumn" scope="col" v-bind="selectionColumnAttrs">
                 <VcCheckbox
                   v-if="selectionMode === 'multiple'"
                   size="sm"
                   :model-value="isAllSelected"
                   :indeterminate="isSomeSelected"
-                  :disabled="!selectableKeysOnPage.length"
+                  :disabled="!canSelectAll"
                   :aria-label="$t(isAllSelected ? 'ui_kit.table.deselect_all' : 'ui_kit.table.select_all')"
                   @change="toggleSelectAll"
                 />
@@ -323,6 +314,7 @@ import {
   provide,
   ref,
   useSlots,
+  useTemplateRef,
   watch,
 } from "vue";
 import { useI18n } from "vue-i18n";
@@ -356,6 +348,7 @@ const props = withDefaults(
     page?: number;
     loading?: boolean;
     error?: boolean;
+    /** Hides the built-in header row; body rows keep their selection cell, but the select-all goes with the header. */
     hideDefaultHeader?: boolean;
     hideDefaultFooter?: boolean;
     description?: string;
@@ -422,7 +415,7 @@ const props = withDefaults(
 const { t } = useI18n();
 
 const FIXED_COLUMN_DEFAULT_WIDTH = "150px";
-const SELECTION_COLUMN_WIDTH = "3rem";
+const SELECTION_COLUMN_WIDTH = "var(--vc-table-selection-cell-width, 3rem)";
 
 // Track columns registered by VcTableColumn children
 const childColumns = ref<Map<string, VcTableColumnRegistrationType>>(new Map());
@@ -587,6 +580,12 @@ const selectionColumnStyle = computed<Record<string, string>>(() => {
   return base;
 });
 
+// Shared by the default header and the `#header` slot scope.
+const selectionColumnAttrs = computed<VcTableSelectionColumnAttrsType>(() => ({
+  class: ["vc-table__title", "vc-table__selection-cell", { "vc-table__title--fixed": selectionColumnSticky.value }],
+  style: selectionColumnStyle.value,
+}));
+
 // Colspan for full-width state cells (empty/error), including the selection column.
 const stateColspan = computed<number>(() => orderedColumns.value.length + (showSelectionColumn.value ? 1 : 0));
 
@@ -635,6 +634,45 @@ function syncRetryListener() {
   hasRetryListener.value = !!instance?.vnode.props?.onRetry;
 }
 
+const desktopTableRef = useTemplateRef<HTMLTableElement | null>("desktopTableRef");
+let headerAlignmentWarned = false;
+
+// Only the default skeleton and the VcTableColumn rows inject selection cells;
+// `#desktop-skeleton`, `#desktop-body` and `#desktop-item` rows are consumer-authored.
+const bodyRendersSelectionCell = computed<boolean>(() =>
+  props.loading ? !slots["desktop-skeleton"] : hasColumnSlots.value,
+);
+
+function warnOnMisalignedCustomHeader(): void {
+  if (headerAlignmentWarned || !showSelectionColumn.value || !bodyRendersSelectionCell.value) {
+    return;
+  }
+
+  const rows = desktopTableRef.value?.querySelectorAll<HTMLTableRowElement>("thead tr");
+
+  if (!rows?.length) {
+    return;
+  }
+
+  // Widest row wins: a grouped header spreads columns over several rows, and a selection
+  // cell with `rowspan` lives only in the first one.
+  const renderedColumns = Math.max(
+    ...[...rows].map((row) => [...row.cells].reduce((total, cell) => total + cell.colSpan, 0)),
+  );
+
+  // One cell short is the dropped selection cell; any other shape is a deliberate layout.
+  if (!renderedColumns || renderedColumns !== stateColspan.value - 1) {
+    return;
+  }
+
+  headerAlignmentWarned = true;
+
+  // eslint-disable-next-line no-console
+  console.warn(
+    "VcTable: the `#header` slot replaces the default header, selection cell included, while body rows keep theirs. Render a selection `<th>` from the slot scope (`showSelectionColumn`, `selectionColumnAttrs`, `toggleSelectAll`, …), or the columns will be misaligned by one.",
+  );
+}
+
 onMounted(() => {
   syncRowClickListener();
   syncRetryListener();
@@ -644,6 +682,11 @@ onMounted(() => {
     console.warn(
       "VcTable: `selectionMode` is not supported with the `#desktop-body` slot — the component can't inject a selection cell per row. Use `#desktop-item` (exposes `selected`/`toggle`/`selectable`) or VcTableColumn slots for row selection.",
     );
+  }
+
+  if (import.meta.env.DEV && slots.header) {
+    // columns register on child mount, so the header renders a tick later
+    void nextTick(warnOnMisalignedCustomHeader);
   }
 });
 
@@ -803,8 +846,10 @@ const selectedCountOnPage = computed<number>(() => {
   return selectableKeysOnPage.value.filter((key) => selectionSet.value.has(key)).length;
 });
 
+const canSelectAll = computed<boolean>(() => selectableKeysOnPage.value.length > 0);
+
 const isAllSelected = computed<boolean>(() => {
-  return selectableKeysOnPage.value.length > 0 && selectedCountOnPage.value === selectableKeysOnPage.value.length;
+  return canSelectAll.value && selectedCountOnPage.value === selectableKeysOnPage.value.length;
 });
 
 const isSomeSelected = computed<boolean>(() => {
@@ -861,6 +906,11 @@ function toggleRow(item: T, index: number): void {
 }
 
 function toggleSelectAll(): void {
+  // Slot scope exposes `toggleSelectAll` in every mode; only `multiple` has a select-all.
+  if (props.selectionMode !== "multiple") {
+    return;
+  }
+
   if (isAllSelected.value) {
     // clear all page keys (incl. stuck non-selectable), keep off-page
     const pageKeySet = new Set(props.items.map((item, index) => getItemKey(item, index)));
@@ -876,6 +926,29 @@ function toggleSelectAll(): void {
     commitSelection(keys, { action: "select-all" });
   }
 }
+
+const headerSlotScope = computed<VcTableHeaderSlotScopeType>(() => ({
+  showSelectionColumn: showSelectionColumn.value,
+  selectionMode: props.selectionMode,
+  isAllSelected: isAllSelected.value,
+  isSomeSelected: isSomeSelected.value,
+  canSelectAll: canSelectAll.value,
+  toggleSelectAll,
+  selectionColumnAttrs: selectionColumnAttrs.value,
+}));
+
+// Selection can be switched on after mount. Watching it instead of hooking `onUpdated` keeps
+// a correctly written header from re-querying the DOM on every render. `hasColumnSlots` is
+// deliberately not a source: reading it here would invoke the default slot outside render.
+watch(
+  [showSelectionColumn, () => props.loading],
+  () => {
+    if (import.meta.env.DEV && slots.header) {
+      warnOnMisalignedCustomHeader();
+    }
+  },
+  { flush: "post" },
+);
 
 // Scope helpers exposed to #desktop-item / #mobile-item slots.
 function selectionSlotScope(
@@ -1024,7 +1097,7 @@ watch(
 
   --radius: var(--vc-table-radius, var(--vc-radius, 0.5rem));
   // Selected-row highlight; dark override bumps the alpha for dark surfaces.
-  --vc-table-selected-bg: rgb(from var(--color-primary-500) r g b / 0.08);
+  --vc-table-selected-bg-color: rgb(from var(--color-primary-500) r g b / 0.08);
   --desktop-radius: v-bind(desktopRadius);
   --desktop-border-width: v-bind(desktopBorderWidth);
   --mobile-border-width: v-bind(mobileBorderWidth);
@@ -1155,7 +1228,7 @@ watch(
       &,
       &:nth-child(even),
       &:hover {
-        background-color: var(--vc-table-selected-bg);
+        background-color: var(--vc-table-selected-bg-color);
       }
     }
   }
@@ -1202,7 +1275,7 @@ watch(
 
       // Keep the highlight on sticky (opaque) cells of a selected row.
       .vc-table__row--selected & {
-        background-color: var(--vc-table-selected-bg);
+        background-color: var(--vc-table-selected-bg-color);
       }
 
       @include fixed-column-separators;

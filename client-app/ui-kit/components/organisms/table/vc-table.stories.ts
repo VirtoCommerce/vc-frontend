@@ -3241,3 +3241,98 @@ export const SelectionMobile: StoryType = {
     },
   },
 };
+
+// 32. SelectionCustomHeader — custom #header keeping the selection column aligned
+export const SelectionCustomHeader: StoryType = {
+  args: {
+    items: sampleItems,
+    pages: 1,
+    page: 1,
+    bordered: true,
+    selectionMode: "multiple",
+  },
+  render: (args) => ({
+    components: { VcTable, VcTableColumn, VcCheckbox },
+    setup: () => {
+      const selection = ref<VcTableSelectionKeyType[]>([]);
+      return { args, selection };
+    },
+    template: `
+      <div>
+        <div class="mb-4 p-3 bg-neutral-100 rounded text-sm">
+          Selected keys: <strong>{{ selection.length ? selection.join(", ") : "none" }}</strong>
+        </div>
+
+        <VcTable
+          :items="args.items"
+          :pages="args.pages"
+          :page="args.page"
+          :bordered="args.bordered"
+          selection-mode="multiple"
+          v-model:selection="selection"
+        >
+          <template #header="{ showSelectionColumn, selectionMode, isAllSelected, isSomeSelected, canSelectAll, toggleSelectAll, selectionColumnAttrs }">
+            <thead>
+              <tr class="bg-primary-50">
+                <th v-if="showSelectionColumn" scope="col" v-bind="selectionColumnAttrs">
+                  <VcCheckbox
+                    v-if="selectionMode === 'multiple'"
+                    size="sm"
+                    :model-value="isAllSelected"
+                    :indeterminate="isSomeSelected"
+                    :disabled="!canSelectAll"
+                    :aria-label="isAllSelected ? 'Deselect all rows' : 'Select all rows'"
+                    @change="toggleSelectAll"
+                  />
+                </th>
+
+                <th scope="col" class="p-3 text-start font-black uppercase">Person</th>
+                <th scope="col" class="p-3 text-start font-black uppercase">Contact</th>
+              </tr>
+            </thead>
+          </template>
+
+          <VcTableColumn id="name" title="Name" v-slot="{ item }">{{ item.name }}</VcTableColumn>
+          <VcTableColumn id="email" title="Email" v-slot="{ item }">{{ item.email }}</VcTableColumn>
+        </VcTable>
+      </div>
+    `,
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "A custom `#header` replaces the built-in header row, selection cell included, while body rows keep theirs — so the header has to render its own, spreading `selectionColumnAttrs` on the `<th>` for the matching width and sticky behavior. Guard the select-all control with `selectionMode === 'multiple'`, as the built-in header does — in `single` mode the cell stays empty. Omit the cell entirely and every column shifts by one; in DEV, VcTable warns about it in the console. The labels below are plain strings for the demo: in app code translate them, the way the built-in header uses `ui_kit.table.select_all` / `ui_kit.table.deselect_all`.",
+      },
+      source: {
+        code: `
+<VcTable :items="items" selection-mode="multiple" v-model:selection="selection">
+  <template #header="{ showSelectionColumn, selectionMode, isAllSelected, isSomeSelected, canSelectAll, toggleSelectAll, selectionColumnAttrs }">
+    <thead>
+      <tr>
+        <th v-if="showSelectionColumn" scope="col" v-bind="selectionColumnAttrs">
+          <VcCheckbox
+            v-if="selectionMode === 'multiple'"
+            size="sm"
+            :model-value="isAllSelected"
+            :indeterminate="isSomeSelected"
+            :disabled="!canSelectAll"
+            :aria-label="$t(isAllSelected ? 'ui_kit.table.deselect_all' : 'ui_kit.table.select_all')"
+            @change="toggleSelectAll"
+          />
+        </th>
+
+        <th scope="col">Person</th>
+        <th scope="col">Contact</th>
+      </tr>
+    </thead>
+  </template>
+
+  <VcTableColumn id="name" title="Name" v-slot="{ item }">{{ item.name }}</VcTableColumn>
+  <VcTableColumn id="email" title="Email" v-slot="{ item }">{{ item.email }}</VcTableColumn>
+</VcTable>
+        `,
+      },
+    },
+  },
+};

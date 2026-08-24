@@ -65,6 +65,33 @@ declare global {
   };
 
   /**
+   * Classes and inline style of the leading selection header cell — fixed width, plus
+   * sticky positioning when the table has fixed-start columns. `v-bind` onto a `<th>`
+   * to match the built-in cell.
+   */
+  type VcTableSelectionColumnAttrsType = {
+    class: (string | Record<string, boolean>)[];
+    style: Record<string, string>;
+  };
+
+  /**
+   * Scope passed to the `#header` slot. A custom header replaces the default one entirely,
+   * so it must render its own leading selection cell whenever `showSelectionColumn` is
+   * `true`, or every column shifts by one. Only `"multiple"` has a select-all control —
+   * in `"single"` mode the cell stays empty and `toggleSelectAll` is a no-op.
+   */
+  type VcTableHeaderSlotScopeType = {
+    showSelectionColumn: boolean;
+    selectionMode?: VcTableSelectionModeType;
+    isAllSelected: boolean;
+    isSomeSelected: boolean;
+    /** `false` when no row on the current page is selectable. */
+    canSelectAll: boolean;
+    toggleSelectAll: () => void;
+    selectionColumnAttrs: VcTableSelectionColumnAttrsType;
+  };
+
+  /**
    * Slot scope type for custom column header rendering.
    * Receives the column metadata.
    */
