@@ -48,12 +48,13 @@
         @cancel="onCancel"
       />
 
-      <IdentityProviders
-        v-else-if="hasOnlyIdentityProviders"
-        :providers="identityProviders"
-        :return-url="returnUrl"
-        class="impersonate__providers"
-      />
+      <template v-else-if="hasOnlyIdentityProviders">
+        <IdentityProviders :providers="identityProviders" :return-url="returnUrl" class="impersonate__providers" />
+
+        <VcButton class="impersonate__cancel" variant="outline" no-wrap @click="onCancel">
+          {{ $t("shared.account.impersonate_form.cancel_button") }}
+        </VcButton>
+      </template>
     </div>
 
     <template v-if="!canSkipVerification && hasIdentityProviders && !hasOnlyIdentityProviders" #side>
@@ -183,6 +184,10 @@ watch(
     @media (width > theme("screens.lg")) {
       @apply w-[30rem] gap-16;
     }
+  }
+
+  &__cancel {
+    @apply mt-6 self-start;
   }
 
   &__providers {
