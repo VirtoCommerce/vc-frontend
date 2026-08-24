@@ -81,10 +81,10 @@ export type SalesRepOrderRowType = {
   total: string;
 };
 
-// Draft/applied state of the customer orders Filters panel — the storefront's own filter shape, so
+// The storefront's filter shape, but `customerNames` here is the owning organization, not the buyer.
 export type SalesRepOrdersFilterDataType = OrdersFilterDataType;
 
-// A value the listed orders actually carry — a status, a customer — with how many of them do. Read from
+// A facet option from the list's own term_facets, so every option offered has orders behind it.
 export type SalesRepFacetOptionType = {
   name: string;
   label: string;

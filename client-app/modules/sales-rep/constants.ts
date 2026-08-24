@@ -44,7 +44,7 @@ export const BUYER_ORDER_ROUTE_NAME = "OrderDetails";
 export const ALL_CUSTOMER_ORDERS_ROUTE_NAME = "SalesRepAllCustomerOrders";
 export const ALL_CUSTOMER_ORDERS_ROUTE_SEGMENT = "customer-orders";
 
-// CUSTOMER_NAME_FACET_NAME ("customername") — that is the buyer who placed the order, this is the
+// The organization an order belongs to — not core's CUSTOMER_NAME_FACET_NAME, which is the buyer who placed it.
 export const ORDER_CUSTOMER_FACET = "organizationname";
 export const CUSTOMER_ORDERS_SORT_FIELDS = { date: "createdDate", total: "total" } as const;
 export const CUSTOMER_ORDERS_SORT_DIRECTION = "desc" as const;

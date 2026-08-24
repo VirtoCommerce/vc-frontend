@@ -213,6 +213,7 @@ async function generateTypes({
   typesPath,
 }: {
   name: string;
+  /** the endpoint to check for presence, `schema` may additionally hold local files */
   schemaUrl: string;
   schema: string | string[];
   documents: string[];
