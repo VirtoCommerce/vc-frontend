@@ -57,11 +57,11 @@
     </div>
 
     <template v-if="!canSkipVerification && hasIdentityProviders && !hasOnlyIdentityProviders" #side>
-      <IdentityProvidersPanel
-        :providers="identityProviders"
-        :return-url="returnUrl"
-        :divider-text="$t('pages.sign_in.divider_text')"
-      />
+      <div class="impersonate__side">
+        <SignInDivider>{{ $t("pages.sign_in.divider_text") }}</SignInDivider>
+
+        <IdentityProviders :providers="identityProviders" :return-url="returnUrl" class="impersonate__providers" />
+      </div>
     </template>
   </VcEmptyPage>
 </template>
@@ -83,9 +83,7 @@ interface IProps {
 const props = defineProps<IProps>();
 
 const IdentityProviders = defineAsyncComponent(() => import("@/shared/sign-in/components/identity-providers.vue"));
-const IdentityProvidersPanel = defineAsyncComponent(
-  () => import("@/shared/sign-in/components/identity-providers-panel.vue"),
-);
+const SignInDivider = defineAsyncComponent(() => import("@/shared/sign-in/components/sign-in-divider.vue"));
 
 const route = useRoute();
 const router = useRouter();
@@ -173,6 +171,18 @@ watch(
 
   &__description {
     @apply mb-6 text-sm text-neutral-700;
+  }
+
+  &__side {
+    @apply mt-8 flex w-full flex-col gap-8;
+
+    @media (width > theme("screens.sm")) {
+      @apply w-72 flex-row gap-6;
+    }
+
+    @media (width > theme("screens.lg")) {
+      @apply w-[30rem] gap-16;
+    }
   }
 
   &__providers {
