@@ -49,7 +49,11 @@
       />
 
       <template v-else-if="hasOnlyIdentityProviders">
-        <IdentityProviders :providers="identityProviders" :return-url="returnUrl" class="impersonate__providers" />
+        <IdentityProviders
+          :providers="identityProviders"
+          :return-url="returnUrl"
+          class="impersonate__providers impersonate__providers--only"
+        />
 
         <VcButton class="impersonate__cancel" variant="outline" no-wrap @click="onCancel">
           {{ $t("shared.account.impersonate_form.cancel_button") }}
@@ -159,7 +163,7 @@ watch(
   }
 
   &__verify {
-    @apply mx-auto flex w-full max-w-md flex-col text-start;
+    @apply order-first mx-auto flex w-full max-w-md flex-col text-start;
   }
 
   &__title {
@@ -195,6 +199,14 @@ watch(
 
     @media (width > theme("screens.lg")) {
       @apply w-60;
+    }
+
+    &--only {
+      @apply w-full max-sm:mx-0;
+
+      @media (width > theme("screens.lg")) {
+        @apply w-full;
+      }
     }
   }
 }
