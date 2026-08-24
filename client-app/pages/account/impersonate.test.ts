@@ -1,5 +1,5 @@
-import { flushPromises, mount } from "@vue/test-utils";
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { enableAutoUnmount, flushPromises, mount } from "@vue/test-utils";
+import { afterEach, describe, it, expect, vi, beforeEach } from "vitest";
 import { computed, ref } from "vue";
 import ImpersonatePage from "./impersonate.vue";
 
@@ -9,7 +9,8 @@ const checkPermissions = vi.fn<() => boolean>(() => false);
 const impersonateAuthenticated = vi.fn<(userId: string) => Promise<void>>(() => Promise.resolve());
 const push = vi.fn();
 
-const authenticationTypes = ref<string[]>(["Password"]);
+const identityProviders = ref<string[]>([]);
+const hasPasswordAuthentication = ref(true);
 
 vi.mock("@/shared/account", () => ({
   ImpersonateForm: { name: "ImpersonateForm", template: "<form />" },
@@ -18,18 +19,12 @@ vi.mock("@/shared/account", () => ({
 }));
 
 vi.mock("@/shared/sign-in/composables/useIdentityProviders", () => ({
-  useIdentityProviders: () => {
-    const identityProviders = computed(() => authenticationTypes.value.filter((type) => type !== "Password"));
-    const hasPasswordAuthentication = computed(() => authenticationTypes.value.includes("Password"));
-    const hasIdentityProviders = computed(() => identityProviders.value.length > 0);
-
-    return {
-      identityProviders,
-      hasIdentityProviders,
-      hasPasswordAuthentication,
-      hasOnlyIdentityProviders: computed(() => hasIdentityProviders.value && !hasPasswordAuthentication.value),
-    };
-  },
+  useIdentityProviders: () => ({
+    identityProviders,
+    hasPasswordAuthentication,
+    hasIdentityProviders: computed(() => identityProviders.value.length > 0),
+    hasOnlyIdentityProviders: computed(() => identityProviders.value.length > 0 && !hasPasswordAuthentication.value),
+  }),
 }));
 
 vi.mock("vue-i18n", () => ({
@@ -64,6 +59,8 @@ function mountPage() {
   });
 }
 
+enableAutoUnmount(afterEach);
+
 describe("impersonate page", () => {
   beforeEach(() => {
     isAuthenticated.value = false;
@@ -71,7 +68,8 @@ describe("impersonate page", () => {
     checkPermissions.mockReturnValue(false);
     impersonateAuthenticated.mockClear();
     push.mockClear();
-    authenticationTypes.value = ["Password"];
+    identityProviders.value = [];
+    hasPasswordAuthentication.value = true;
   });
 
   it("starts the impersonation without verification for an operator that may impersonate", async () => {
@@ -95,7 +93,7 @@ describe("impersonate page", () => {
   });
 
   it("offers the providers next to the form when the store has both", async () => {
-    authenticationTypes.value = ["Password", "AzureAD"];
+    identityProviders.value = ["AzureAD"];
 
     const wrapper = mountPage();
     await flushPromises();
@@ -108,7 +106,7 @@ describe("impersonate page", () => {
   });
 
   it("comes back to this page after an external sign in", async () => {
-    authenticationTypes.value = ["Password", "AzureAD"];
+    identityProviders.value = ["AzureAD"];
 
     const wrapper = mountPage();
     await flushPromises();
@@ -119,7 +117,8 @@ describe("impersonate page", () => {
   });
 
   it("offers the providers alone, with a way out, when the store has no password authentication", async () => {
-    authenticationTypes.value = ["AzureAD", "GoogleSSO"];
+    identityProviders.value = ["AzureAD", "GoogleSSO"];
+    hasPasswordAuthentication.value = false;
 
     const wrapper = mountPage();
     await flushPromises();
@@ -132,14 +131,45 @@ describe("impersonate page", () => {
     expect(push).toHaveBeenCalledWith("/");
   });
 
+  it("starts the impersonation as soon as the operator is authenticated, and only once", async () => {
+    checkPermissions.mockReturnValue(true);
+
+    mountPage();
+    await flushPromises();
+
+    expect(impersonateAuthenticated).not.toHaveBeenCalled();
+
+    isAuthenticated.value = true;
+    await flushPromises();
+
+    expect(impersonateAuthenticated).toHaveBeenCalledOnce();
+
+    isAuthenticated.value = false;
+    isAuthenticated.value = true;
+    await flushPromises();
+
+    expect(impersonateAuthenticated).toHaveBeenCalledOnce();
+  });
+
+  it("starts the impersonation for an operator that is already impersonating someone", async () => {
+    isAuthenticated.value = true;
+    operator.value = { userName: "support" };
+
+    mountPage();
+    await flushPromises();
+
+    expect(impersonateAuthenticated).toHaveBeenCalledWith("user-id");
+  });
+
   it("tells a signed in operator that may not impersonate why the verification is shown again", async () => {
     isAuthenticated.value = true;
-    authenticationTypes.value = ["AzureAD"];
+    identityProviders.value = ["AzureAD"];
+    hasPasswordAuthentication.value = false;
 
     const wrapper = mountPage();
     await flushPromises();
 
     expect(impersonateAuthenticated).not.toHaveBeenCalled();
-    expect(wrapper.find(".alert").text()).toBe("pages.account.impersonate.error");
+    expect(wrapper.find(".alert").text()).toBe("pages.account.impersonate.no_permission");
   });
 });

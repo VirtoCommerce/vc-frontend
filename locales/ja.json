@@ -515,8 +515,6 @@
         }
       },
       "impersonate_form": {
-        "subtitle": "続行するには本人確認をしてください",
-        "description": "お客様の代わりにログインしています。このセッションは監査のため記録されます。",
         "email_label": "メール",
         "email_placeholder": "メールアドレスを入力してください",
         "password_label": "パスワード",
@@ -1366,6 +1364,9 @@
       },
       "impersonate": {
         "title": "セキュリティ確認",
+        "subtitle": "続行するには本人確認をしてください",
+        "description": "お客様の代わりにログインしています。このセッションは監査のため記録されます。",
+        "no_permission": "このアカウントには顧客の代理でログインする権限がありません。",
         "back_to_home": "ホームに戻る",
         "switching_in_progress": "お客様の画面に切り替えます…",
         "error": "代理ログイン中に問題が発生しました。権限を確認してください"

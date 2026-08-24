@@ -3,8 +3,10 @@ import type { RouteLocationRaw, RouteLocationNormalizedLoaded, RouteLocationNorm
 
 const RETURN_URL_KEYS = ["returnUrl", "ReturnUrl"] as const;
 
-export function getReturnUrlValue(url: string = location.href): string | null {
-  const { searchParams, origin, hostname } = new URL(url, location.origin);
+export function getReturnUrlValue(url?: string): string | null {
+  const { href } = location;
+  const { origin, hostname } = new URL(href);
+  const { searchParams } = url === undefined ? new URL(href) : new URL(url, href);
 
   // Try each return URL key until we find one
   for (const key of RETURN_URL_KEYS) {

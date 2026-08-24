@@ -515,8 +515,6 @@
         }
       },
       "impersonate_form": {
-        "subtitle": "Potwierdź swoją tożsamość, aby kontynuować",
-        "description": "Logujesz się w imieniu klienta. Sesja zostanie zarejestrowana w celach audytu.",
         "email_label": "Email",
         "email_placeholder": "Wprowadź email",
         "password_label": "Hasło",
@@ -1366,6 +1364,9 @@
       },
       "impersonate": {
         "title": "Weryfikacja bezpieczeństwa",
+        "subtitle": "Potwierdź swoją tożsamość, aby kontynuować",
+        "description": "Logujesz się w imieniu klienta. Sesja zostanie zarejestrowana w celach audytu.",
+        "no_permission": "To konto nie ma uprawnień do logowania się w imieniu klienta.",
         "back_to_home": "Powrót do strony głównej",
         "switching_in_progress": "Przełączanie do widoku klienta…",
         "error": "Wystąpiły problemy podczas podrabiania. Sprawdź swoje uprawnienia"

@@ -41,6 +41,28 @@ describe("getReturnUrlValue", () => {
     expect(result).toBe("/home");
   });
 
+  it("reads the parameter from a given url instead of the location", () => {
+    Object.defineProperty(window, "location", {
+      configurable: true,
+      value: {
+        href: "http://example.com/sign-in?returnUrl=/home",
+      },
+    });
+
+    expect(getReturnUrlValue("/sign-in?returnUrl=/account/orders")).toBe("/account/orders");
+  });
+
+  it("checks the host of a given url against the location, not against itself", () => {
+    Object.defineProperty(window, "location", {
+      configurable: true,
+      value: {
+        href: "http://example.com/sign-in",
+      },
+    });
+
+    expect(getReturnUrlValue("https://evil.com/x?returnUrl=https://evil.com/steal")).toBeNull();
+  });
+
   it("should return the value of ReturnUrl parameter (case-insensitive)", () => {
     // Mock location.href
     Object.defineProperty(window, "location", {

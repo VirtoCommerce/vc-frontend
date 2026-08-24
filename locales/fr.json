@@ -515,8 +515,6 @@
         }
       },
       "impersonate_form": {
-        "subtitle": "Confirmez votre identité pour continuer",
-        "description": "Vous vous connectez au nom d'un client. La session sera auditée.",
         "email_label": "E-mail",
         "email_placeholder": "Saisissez votre e-mail",
         "password_label": "Mot de passe",
@@ -1366,6 +1364,9 @@
       },
       "impersonate": {
         "title": "Vérification de sécurité",
+        "subtitle": "Confirmez votre identité pour continuer",
+        "description": "Vous vous connectez au nom d'un client. La session sera auditée.",
+        "no_permission": "Ce compte n'est pas autorisé à se connecter au nom d'un client.",
         "back_to_home": "Retour à l'accueil",
         "switching_in_progress": "Basculement vers la vue client…",
         "error": "Des problèmes sont survenus lors de l'imitation. Vérifiez vos autorisations"

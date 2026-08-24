@@ -34,15 +34,23 @@
       </VcTypography>
 
       <p class="impersonate__subtitle">
-        {{ $t("shared.account.impersonate_form.subtitle") }}
+        {{ $t("pages.account.impersonate.subtitle") }}
       </p>
 
       <p class="impersonate__description">
-        {{ $t("shared.account.impersonate_form.description") }}
+        {{ $t("pages.account.impersonate.description") }}
       </p>
 
-      <VcAlert v-if="isAuthenticated" class="impersonate__denied" color="danger" variant="outline-dark" size="sm" icon>
-        {{ $t("pages.account.impersonate.error") }}
+      <VcAlert
+        v-if="isAuthenticated"
+        class="impersonate__denied"
+        color="danger"
+        variant="outline-dark"
+        size="sm"
+        icon
+        data-test-id="impersonate-no-permission-alert"
+      >
+        {{ $t("pages.account.impersonate.no_permission") }}
       </VcAlert>
 
       <ImpersonateForm
@@ -52,20 +60,26 @@
         @cancel="onCancel"
       />
 
-      <template v-else-if="hasOnlyIdentityProviders">
+      <template v-else>
         <IdentityProviders
           :providers="identityProviders"
           :return-url="returnUrl"
           class="impersonate__providers impersonate__providers--only"
         />
 
-        <VcButton class="impersonate__cancel" variant="outline" no-wrap @click="onCancel">
+        <VcButton
+          class="impersonate__cancel"
+          variant="outline"
+          no-wrap
+          data-test-id="impersonate-providers-cancel-button"
+          @click="onCancel"
+        >
           {{ $t("shared.account.impersonate_form.cancel_button") }}
         </VcButton>
       </template>
     </div>
 
-    <template v-if="!canSkipVerification && hasIdentityProviders && !hasOnlyIdentityProviders" #side>
+    <template v-if="showProvidersAside" #side>
       <div class="impersonate__side">
         <SignInDivider>{{ $t("pages.sign_in.divider_text") }}</SignInDivider>
 
@@ -114,6 +128,10 @@ const canSkipVerification = computed<boolean>(
 // is skipped and the impersonation starts automatically.
 const returnUrl = computed<string>(() => route.fullPath);
 
+const showProvidersAside = computed<boolean>(
+  () => !canSkipVerification.value && hasIdentityProviders.value && !hasOnlyIdentityProviders.value,
+);
+
 const { translate } = useErrorsTranslator<IdentityErrorType>("shared.account.impersonate_form.errors");
 
 const translatedSilentErrors = computed<string[]>(() => {
@@ -151,7 +169,7 @@ watch(
 <style lang="scss">
 .impersonate {
   &__silent {
-    @apply relative mx-auto flex min-h-32 w-full max-w-md flex-col gap-4 text-start;
+    @apply relative order-first mx-auto flex min-h-32 w-full max-w-md flex-col gap-4 text-start;
   }
 
   &__silent-message {

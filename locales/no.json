@@ -515,8 +515,6 @@
         }
       },
       "impersonate_form": {
-        "subtitle": "Bekreft identiteten din for å fortsette",
-        "description": "Du logger inn på vegne av en kunde. Økten vil bli loggført for revisjon.",
         "email_label": "E-post",
         "email_placeholder": "Skriv inn e-posten din",
         "password_label": "Passord",
@@ -1366,6 +1364,9 @@
       },
       "impersonate": {
         "title": "Sikkerhetsverifisering",
+        "subtitle": "Bekreft identiteten din for å fortsette",
+        "description": "Du logger inn på vegne av en kunde. Økten vil bli loggført for revisjon.",
+        "no_permission": "Denne kontoen har ikke tillatelse til å logge inn på vegne av en kunde.",
         "back_to_home": "Tilbake til hjem",
         "switching_in_progress": "Bytter til kundevisning…",
         "error": "Problemer med identitetsetterligning. Kontroller tilgangsrettighetene dine"

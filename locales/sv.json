@@ -515,8 +515,6 @@
         }
       },
       "impersonate_form": {
-        "subtitle": "Bekräfta din identitet för att fortsätta",
-        "description": "Du loggar in å en kunds vägnar. Sessionen kommer att granskas.",
         "email_label": "E-post",
         "email_placeholder": "Ange din e-post",
         "password_label": "Lösenord",
@@ -1366,6 +1364,9 @@
       },
       "impersonate": {
         "title": "Säkerhetsverifiering",
+        "subtitle": "Bekräfta din identitet för att fortsätta",
+        "description": "Du loggar in å en kunds vägnar. Sessionen kommer att granskas.",
+        "no_permission": "Det här kontot har inte behörighet att logga in för en kunds räkning.",
         "back_to_home": "Tillbaka till start",
         "switching_in_progress": "Växlar till kundvyn…",
         "error": "Några problem uppstod under impersonation. Kontrollera dina behörigheter"

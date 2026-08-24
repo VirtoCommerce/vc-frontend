@@ -515,8 +515,6 @@
         }
       },
       "impersonate_form": {
-        "subtitle": "Bestätigen Sie Ihre Identität, um fortzufahren",
-        "description": "Sie melden sich im Namen eines Kunden an. Die Sitzung wird zur Überprüfung aufgezeichnet.",
         "email_label": "E-Mail",
         "email_placeholder": "E-Mail eingeben",
         "password_label": "Passwort",
@@ -1366,6 +1364,9 @@
       },
       "impersonate": {
         "title": "Sicherheitsüberprüfung",
+        "subtitle": "Bestätigen Sie Ihre Identität, um fortzufahren",
+        "description": "Sie melden sich im Namen eines Kunden an. Die Sitzung wird zur Überprüfung aufgezeichnet.",
+        "no_permission": "Dieses Konto darf sich nicht im Namen eines Kunden anmelden.",
         "back_to_home": "Zurück zur Startseite",
         "switching_in_progress": "Wechsel zur Kundenansicht…",
         "error": "Einige Probleme während der Nachahmung. Überprüfen Sie Ihre Berechtigungen"
