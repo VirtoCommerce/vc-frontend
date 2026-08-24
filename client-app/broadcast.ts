@@ -5,7 +5,7 @@ import { OperationNames } from "@/core/api/graphql/types";
 import { useReturnUrl, useSupportReports } from "@/core/composables";
 import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { globals } from "@/core/globals";
-import { buildRedirectUrl } from "@/core/utilities";
+import { buildRedirectUrl, toSameOriginPath } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
 import { useSignMeOut, useUser } from "@/shared/account";
 import {
@@ -154,7 +154,7 @@ export function setupBroadcastGlobalListeners() {
     });
   });
   on(openReturnUrl, () => {
-    location.href = getReturnUrl();
+    location.href = toSameOriginPath(getReturnUrl());
   });
 
   on(forbiddenEvent, () => {

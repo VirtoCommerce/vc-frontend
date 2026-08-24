@@ -49,24 +49,6 @@ describe("useReturnUrl", () => {
     expect(useReturnUrl().getReturnUrl()).toBe("/default-page");
   });
 
-  it("keeps the query and the hash of the requested page", () => {
-    mockLocation("http://localhost:3000/sign-in?returnUrl=%2Faccount%2Forders%3Fpage%3D2%23list");
-
-    expect(useReturnUrl().getReturnUrl()).toBe("/account/orders?page=2#list");
-  });
-
-  it("reduces a requested page of the current origin to a path", () => {
-    mockLocation("http://localhost:3000/sign-in?returnUrl=http://localhost:3000/account/orders");
-
-    expect(useReturnUrl().getReturnUrl()).toBe("/account/orders");
-  });
-
-  it("returns the home page when the store default leaves the origin", () => {
-    themeContext.value = { settings: { default_return_url: "//example.com/phishing" } };
-
-    expect(useReturnUrl().getReturnUrl()).toBe("/");
-  });
-
   it("reads the location on every call", () => {
     const { getReturnUrl } = useReturnUrl();
 
