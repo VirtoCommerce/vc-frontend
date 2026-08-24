@@ -1,6 +1,11 @@
 <template>
   <div class="identity-providers">
-    <component :is="loadProviderComponent(providerName)" v-for="providerName in providers" :key="providerName" />
+    <component
+      :is="loadProviderComponent(providerName)"
+      v-for="providerName in providers"
+      :key="providerName"
+      :return-url="returnUrl"
+    />
   </div>
 </template>
 
@@ -22,6 +27,7 @@ const loadProviderComponent = (providerName: string) => {
 
 interface IProps {
   providers: string[];
+  returnUrl?: string;
 }
 </script>
 

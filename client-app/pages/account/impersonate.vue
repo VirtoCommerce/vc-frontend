@@ -28,17 +28,48 @@
       </template>
     </div>
 
-    <ImpersonateForm v-else :target-user-id="userId" @success="onSuccess" @cancel="onCancel" />
+    <div v-else class="impersonate__verify">
+      <VcTypography tag="h1" class="impersonate__title">
+        {{ $t("pages.account.impersonate.title") }}
+      </VcTypography>
+
+      <p class="impersonate__subtitle">
+        {{ $t("shared.account.impersonate_form.subtitle") }}
+      </p>
+
+      <p class="impersonate__description">
+        {{ $t("shared.account.impersonate_form.description") }}
+      </p>
+
+      <ImpersonateForm
+        v-if="hasPasswordAuthentication"
+        :target-user-id="userId"
+        @success="onSuccess"
+        @cancel="onCancel"
+      />
+
+      <IdentityProviders
+        v-else-if="hasOnlyIdentityProviders"
+        :providers="identityProviders"
+        :return-url="returnUrl"
+        class="impersonate__providers"
+      />
+    </div>
+
+    <template v-if="!canSkipVerification && hasIdentityProviders && !hasOnlyIdentityProviders" #side>
+      <IdentityProvidersPanel :providers="identityProviders" :return-url="returnUrl" />
+    </template>
   </VcEmptyPage>
 </template>
 
 <script setup lang="ts">
-import { computed, watch } from "vue";
+import { computed, defineAsyncComponent, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useErrorsTranslator, usePageHead } from "@/core/composables";
 import { PlatformPermissions } from "@/core/enums";
 import { ImpersonateForm, useImpersonate, useUser } from "@/shared/account";
+import { useIdentityProviders } from "@/shared/sign-in/composables/useIdentityProviders";
 import type { IdentityErrorType } from "@/core/api/graphql/types";
 
 interface IProps {
@@ -47,10 +78,18 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
+const IdentityProviders = defineAsyncComponent(() => import("@/shared/sign-in/components/identity-providers.vue"));
+const IdentityProvidersPanel = defineAsyncComponent(
+  () => import("@/shared/sign-in/components/identity-providers-panel.vue"),
+);
+
+const route = useRoute();
 const router = useRouter();
 const { t } = useI18n();
 const { isAuthenticated, checkPermissions, operator } = useUser();
 const { impersonateAuthenticated, errors } = useImpersonate();
+const { identityProviders, hasIdentityProviders, hasOnlyIdentityProviders, hasPasswordAuthentication } =
+  useIdentityProviders();
 
 usePageHead({
   title: t("pages.account.impersonate.title"),
@@ -59,6 +98,10 @@ usePageHead({
 const canSkipVerification = computed<boolean>(
   () => isAuthenticated.value && (!!operator.value || checkPermissions(PlatformPermissions.CanImpersonate)),
 );
+
+// Identity providers bring the operator back to this page, where the verification
+// is skipped and the impersonation starts automatically.
+const returnUrl = computed<string>(() => route.fullPath);
 
 const { translate } = useErrorsTranslator<IdentityErrorType>("shared.account.impersonate_form.errors");
 
@@ -110,6 +153,30 @@ watch(
 
   &__back {
     @apply self-start;
+  }
+
+  &__verify {
+    @apply mx-auto flex w-full max-w-md flex-col text-start;
+  }
+
+  &__title {
+    @apply mb-2;
+  }
+
+  &__subtitle {
+    @apply mb-2 text-base font-semibold text-neutral-900;
+  }
+
+  &__description {
+    @apply mb-6 text-sm text-neutral-700;
+  }
+
+  &__providers {
+    @apply max-sm:mx-auto;
+
+    @media (width > theme("screens.lg")) {
+      @apply w-60;
+    }
   }
 }
 </style>

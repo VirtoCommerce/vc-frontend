@@ -6,5 +6,11 @@
 import { useIdentityProvider } from "@/shared/sign-in/components/useIdentityProvider";
 import IdentityProvider from "./identity-provider.vue";
 
-const { signIn } = useIdentityProvider("AzureAD", "/signin-oidc");
+interface IProps {
+  returnUrl?: string;
+}
+
+const props = defineProps<IProps>();
+
+const { signIn } = useIdentityProvider("AzureAD", "/signin-oidc", () => props.returnUrl);
 </script>

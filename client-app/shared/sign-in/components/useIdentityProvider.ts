@@ -1,13 +1,20 @@
+import { toValue } from "vue";
 import { useThemeContext } from "@/core/composables";
 import { globals } from "@/core/globals";
 import { getReturnUrlValue } from "@/core/utilities";
+import type { MaybeRefOrGetter } from "vue";
 
-export function useIdentityProvider(authType: string, oidcUrl: string) {
+export function useIdentityProvider(
+  authType: string,
+  oidcUrl: string,
+  returnUrlOverride?: MaybeRefOrGetter<string | undefined>,
+) {
   const { themeContext } = useThemeContext();
 
   function signIn() {
     const origin = location.origin;
-    const returnUrl = getReturnUrlValue() ?? themeContext.value.settings.default_return_url ?? "/";
+    const returnUrl =
+      toValue(returnUrlOverride) ?? getReturnUrlValue() ?? themeContext.value.settings.default_return_url ?? "/";
 
     const oidcUrlObject = new URL(oidcUrl, origin);
     const callbackUrl = new URL("/auth/callback", origin);

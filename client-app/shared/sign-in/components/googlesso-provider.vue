@@ -6,5 +6,11 @@
 import { useIdentityProvider } from "@/shared/sign-in/components/useIdentityProvider";
 import IdentityProvider from "./identity-provider.vue";
 
-const { signIn } = useIdentityProvider("GoogleSSO", "/signin-google");
+interface IProps {
+  returnUrl?: string;
+}
+
+const props = defineProps<IProps>();
+
+const { signIn } = useIdentityProvider("GoogleSSO", "/signin-google", () => props.returnUrl);
 </script>
