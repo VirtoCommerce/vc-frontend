@@ -11,6 +11,13 @@
     <!-- VcWidget has no padding prop; #default-container is our seam for the inset, not .vc-widget__slot. -->
     <template #default-container>
       <div class="sales-rep-orders__body">
+        <!-- Without it the tab row and the sortable headers just aren't there, with nothing saying why. -->
+        <SalesRepRuleAlert
+          class="sales-rep-orders__notice"
+          :filter-failed="filterable && filterRulesFailed"
+          :sort-failed="sortRulesFailed"
+        />
+
         <!-- In edit mode the tab strip becomes its own configuration: checked = offered as a tab.
              Replacing rather than adding, because ten statuses do not fit anywhere else. -->
         <div v-if="filterable && hasFilterOptions" class="sales-rep-orders__filter">
@@ -150,6 +157,7 @@ import {
 import { knownHiddenTabs, toggleTabRule, visibleTabRules } from "../layout/settings";
 import { selectableFilterRules } from "../utils";
 import LayoutWidget from "./layout-widget.vue";
+import SalesRepRuleAlert from "./sales-rep-rule-alert.vue";
 import SalesRepRuleChips from "./sales-rep-rule-chips.vue";
 import SalesRepRuleToggles from "./sales-rep-rule-toggles.vue";
 import OrderStatus from "@/shared/account/components/order-status.vue";
@@ -186,12 +194,16 @@ const sort = ref<string | undefined>(undefined);
 const { from: periodFrom, to: periodTo } = useSalesRepPeriodFilter();
 
 // The status chips are read from the orders in view — same customer, same period — so a chip always has orders behind it.
-const { rules: filterRules, loading: filterRulesLoading } = useSalesRepRules("order", "filter", {
+const {
+  rules: filterRules,
+  loading: filterRulesLoading,
+  failed: filterRulesFailed,
+} = useSalesRepRules("order", "filter", {
   organizationId: () => props.organizationId,
   periodFrom,
   periodTo,
 });
-const { rules: sortRules } = useSalesRepRules("order", "sort");
+const { rules: sortRules, failed: sortRulesFailed } = useSalesRepRules("order", "sort");
 
 // Absent when this widget renders outside a layout, which then configures nothing.
 const chrome = useBlockChrome();
@@ -264,6 +276,10 @@ const failed = computed(() => Boolean(error.value));
 .sales-rep-orders {
   &__body {
     @apply flex flex-col;
+  }
+
+  &__notice {
+    @apply mx-6 mt-3;
   }
 
   // px-6 aligns the tabs with the widget header title.

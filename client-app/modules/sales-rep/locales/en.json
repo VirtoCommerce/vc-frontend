@@ -29,7 +29,7 @@
         "last_order": "My last order",
         "ytd": "YTD purchases",
         "last_year": "Last year",
-        "orders_count": "{count} orders",
+        "orders_count": "{count} order | {count} orders",
         "all_customers": "All",
         "actions": "Actions",
         "search_placeholder": "Search by name",
@@ -52,7 +52,6 @@
         "widgets": {
           "new_orders": "Orders in “New” status",
           "active_carts": "Active carts",
-          "active_cart": "Active cart",
           "orders_placed_week": "Orders placed · WEEK",
           "orders_placed_mtd": "Orders placed · MTD",
           "purchased_mtd": "Purchased · MTD",
@@ -65,9 +64,11 @@
           "vs_last_month": "{delta} vs last month",
           "vs_last_year": "{delta} vs last year",
           "ordered_this_month": "{count} ordered this month",
-          "new_customers": "{count} new customers",
+          "new_customers": "{count} new customer | {count} new customers",
           "of_recent_orders": "of {count} created in the last 7 days",
-          "new_this_week": "{count} new this week",
+          "items_unit": "item | items",
+          "not_for_checkout": "{count} not for checkout",
+          "items_this_week": "{count} item this week | {count} items this week",
           "mtd_of_ytd": "{percent}% of YTD",
           "load_failed": "Couldn't load"
         }
@@ -107,6 +108,7 @@
     "customer_profile": {
       "loading": "Loading…",
       "not_found": "Customer not found or not in your customers.",
+      "load_failed": "This customer couldn't be loaded. Try refreshing the page.",
       "back_to_customers": "Back to my customers",
       "widgets": {
         "avg_order_value": "Avg order value"
@@ -212,6 +214,11 @@
       "load_failed": "Couldn't load top sellers"
     },
     "rules": {
+      "load_failed": {
+        "filter": "The filters couldn't be loaded, so the full list is shown. Try refreshing the page.",
+        "sort": "The sorting options couldn't be loaded, so the default order is used. Try refreshing the page.",
+        "both": "The filters and sorting options couldn't be loaded, so the full list is shown in the default order. Try refreshing the page."
+      },
       "customer": {
         "filter": {
           "All": "All"
@@ -225,9 +232,6 @@
       "share_replace_hint": "The previously selected customer will lose access to this list.",
       "share_message_label": "Message",
       "share_message_placeholder": "Optional message to include",
-      "share_channels_label": "Send via",
-      "share_email_label": "Email",
-      "share_push_label": "Push notification",
       "share_default_title": "A new list from your sales representative",
       "share_default_message": "Hi! I've just shared the list \"{listName}\" with your organization. Take a look:",
       "share_success": "List shared with the customer.",

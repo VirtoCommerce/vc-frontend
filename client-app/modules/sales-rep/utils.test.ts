@@ -105,8 +105,8 @@ describe("buildStatisticsWindows", () => {
 
   it("puts the day boundary at the user's midnight, not UTC's", () => {
     // The reported defect: on UTC boundaries an order placed at 23:00 UTC is already "tomorrow" for a
-    // UTC+3 rep (and "yesterday" evening lands in UTC today for a UTC−5 one), so the widget disagreed
-    // with the order list beside it, which renders createdDate in the browser's zone.
+    // UTC+3 rep (and "yesterday" evening lands in UTC today for a UTC−5 one), so the recent-orders badge
+    // disagreed with the order list beside it, which renders createdDate in the browser's zone.
     const now = new Date(2026, 6, 31, 10, 0, 0);
     const w = buildStatisticsWindows(now);
 
@@ -119,13 +119,13 @@ describe("buildStatisticsWindows", () => {
     expect(from.getDate()).toBe(25);
     expect(to.getDate()).toBe(31);
 
-    // An order the rep sees stamped inside the window is inside it at both ends…
-    const justAfterMidnight = new Date(2026, 6, 25, 0, 30, 0).getTime();
-    const lateEvening = new Date(2026, 6, 31, 23, 30, 0).getTime();
-    expect(justAfterMidnight).toBeGreaterThanOrEqual(from.getTime());
-    expect(lateEvening).toBeLessThanOrEqual(to.getTime());
+    // An order the rep sees stamped inside the window stays inside it at both ends of the span…
+    const firstDayJustAfterMidnight = new Date(2026, 6, 25, 0, 30, 0).getTime();
+    const lastDayLateEvening = new Date(2026, 6, 31, 23, 30, 0).getTime();
+    expect(firstDayJustAfterMidnight).toBeGreaterThanOrEqual(from.getTime());
+    expect(lastDayLateEvening).toBeLessThanOrEqual(to.getTime());
 
-    // …and the late evening before the window stays out of it.
+    // …and the late-evening order from the day before the window stays out of it.
     expect(new Date(2026, 6, 24, 23, 30, 0).getTime()).toBeLessThan(from.getTime());
   });
 

@@ -8,23 +8,15 @@ import type { Composer } from "vue-i18n";
 
 type OrderStatisticsType = SalesRepCustomerOrderStatisticsQuery["salesRepCustomerOrderStatistics"];
 
-/** Every card carries its own query's state and no other's (VCST-5586). */
-type QueryStateType = { loading: boolean; failed: boolean };
-
 /**
  * "New orders" (VCST-5587): `New`-status orders created in the rolling window, over the all-status
  * volume of that same window. The secondary line is context, not a period-over-period comparison —
  * hence the neutral tone and no chevron.
  */
-export function newOrdersCardData(
-  orders: OrderStatisticsType,
-  state: QueryStateType,
-  t: Composer["t"],
-): StatCardDataType {
+export function newOrdersCardData(orders: OrderStatisticsType, t: Composer["t"]): StatCardDataType {
   const recent = orders?.recentOrders?.count ?? 0;
 
   return {
-    ...state,
     value: formatStatCount(orders?.newOrders?.count),
     sub: t("sales_rep.hub.dashboard.stats.value_total", { amount: formatStatMoney(orders?.newOrders?.total) }),
     // Formatted string renders; the raw number is vue-i18n's plural selector, so locales that need

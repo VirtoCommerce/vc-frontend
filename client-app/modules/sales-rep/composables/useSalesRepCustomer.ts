@@ -17,14 +17,14 @@ export function useSalesRepCustomer(organizationId: MaybeRefOrGetter<string>, op
 
   // The header is editable outside the storefront, so it revalidates too. Three components on the page
   // share this composable; Apollo's deduplication collapses their concurrent identical requests into one.
-  const { result, loading, onError } = useSalesRepHubQuery(SalesRepCustomerDocument, variables, {
+  const { result, loading, error, onError } = useSalesRepHubQuery(SalesRepCustomerDocument, variables, {
     fetchPolicy: HUB_FETCH_POLICY,
     enabled,
   });
 
-  onError((error) => {
-    // No toast; the page falls back to the not-found view.
-    Logger.error("[sales-rep] salesRepCustomer failed:", error);
+  onError((queryError) => {
+    // No toast; the page names the failure itself.
+    Logger.error("[sales-rep] salesRepCustomer failed:", queryError);
   });
 
   const customer = computed<SalesRepCustomerProfileType | undefined>(() => {
@@ -42,8 +42,11 @@ export function useSalesRepCustomer(organizationId: MaybeRefOrGetter<string>, op
       : undefined;
   });
 
-  // Not served / unknown / errored all settle to the same not-found view once loading finishes.
-  const notFound = computed(() => enabled.value && !loading.value && !customer.value);
+  // A failed read says nothing about whether the rep serves this customer, so the page words it differently.
+  const failed = computed(() => Boolean(error.value));
 
-  return { customer, loading, notFound };
+  // Not served / unknown settle to the not-found view once loading finishes.
+  const notFound = computed(() => enabled.value && !loading.value && !failed.value && !customer.value);
+
+  return { customer, loading, failed, notFound };
 }
