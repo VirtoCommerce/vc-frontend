@@ -57,7 +57,11 @@
     </div>
 
     <template v-if="!canSkipVerification && hasIdentityProviders && !hasOnlyIdentityProviders" #side>
-      <IdentityProvidersPanel :providers="identityProviders" :return-url="returnUrl" />
+      <IdentityProvidersPanel
+        :providers="identityProviders"
+        :return-url="returnUrl"
+        :divider-text="$t('pages.sign_in.divider_text')"
+      />
     </template>
   </VcEmptyPage>
 </template>

@@ -1,7 +1,7 @@
 <template>
   <div class="identity-providers-panel">
     <div class="identity-providers-panel__divider">
-      {{ $t("pages.sign_in.divider_text") }}
+      {{ dividerText }}
     </div>
 
     <IdentityProviders :providers="providers" :return-url="returnUrl" class="identity-providers-panel__providers" />
@@ -14,6 +14,7 @@ import IdentityProviders from "./identity-providers.vue";
 interface IProps {
   providers: string[];
   returnUrl: string;
+  dividerText: string;
 }
 
 defineProps<IProps>();

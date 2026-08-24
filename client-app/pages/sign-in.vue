@@ -16,7 +16,11 @@
     />
 
     <template v-if="hasIdentityProviders && !hasOnlyIdentityProviders" #side>
-      <IdentityProvidersPanel :providers="identityProviders" :return-url="getReturnUrl()" />
+      <IdentityProvidersPanel
+        :providers="identityProviders"
+        :return-url="getReturnUrl()"
+        :divider-text="$t('pages.sign_in.divider_text')"
+      />
     </template>
   </VcEmptyPage>
 </template>
