@@ -2,10 +2,11 @@ import { mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, nextTick, ref } from "vue";
 import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
-import SearchBar from "../search-bar.vue";
+import SearchBar from "./search-bar.vue";
 import type { VueWrapper } from "@vue/test-utils";
 
-const mockTranslate = (key: string) => key;
+const mockTranslate = (key: string, params?: Record<string, unknown>) =>
+  params ? `${key}:${JSON.stringify(params)}` : key;
 
 vi.mock("vue-i18n", () => ({
   useI18n: () => ({ t: mockTranslate }),
@@ -45,16 +46,34 @@ vi.mock("@/shared/layout/composables/useSearchBar", () => ({
   }),
 }));
 
-vi.mock("../../search-dropdown.vue", () => ({ default: { name: "SearchDropdown", render: () => null } }));
-vi.mock("../barcode-scanner.vue", () => ({ default: { name: "BarcodeScanner", render: () => null } }));
+vi.mock("../search-dropdown.vue", () => ({
+  default: defineComponent({
+    name: "SearchDropdown",
+    props: ["filterExpression", "categoriesFilterExpression", "isCategoryScope", "searchPhrase", "visible"],
 
-/** Renders only the `prepend` slot — that is where the scope indicators live. */
+    setup(props) {
+      return () =>
+        h("div", {
+          "data-testid": "search-dropdown",
+          "data-filter-expression": props.filterExpression ?? "",
+          "data-is-category-scope": String(props.isCategoryScope),
+        });
+    },
+  }),
+}));
+vi.mock("./barcode-scanner.vue", () => ({ default: { name: "BarcodeScanner", render: () => null } }));
+
+/** Renders the `prepend` slot (where the scope indicators live) and the `placeholder` attr passed to VcInput. */
 const VcInputStub = defineComponent({
   name: "VcInput",
   inheritAttrs: false,
 
-  setup(_props, { slots }) {
-    return () => h("div", { class: "input" }, slots.prepend?.());
+  setup(_props, { slots, attrs }) {
+    return () =>
+      h("div", { class: "input" }, [
+        h("span", { "data-testid": "placeholder" }, attrs.placeholder as string),
+        slots.prepend?.(),
+      ]);
   },
 });
 
@@ -68,6 +87,8 @@ const VcButtonStub = defineComponent({
 });
 
 const LOADING_INDICATOR_SELECTOR = '[aria-label="shared.layout.search_bar.scope_loading_label"]';
+const PLACEHOLDER_SELECTOR = '[data-testid="placeholder"]';
+const DROPDOWN_SELECTOR = '[data-testid="search-dropdown"]';
 
 const { searchScopeData, preparingScope } = useSearchScore();
 
@@ -131,15 +152,57 @@ describe("SearchBar scope indicators", () => {
     expect(wrapper.findAll("[data-search-scope]")).toHaveLength(0);
   });
 
-  it("shows the scope chip once preparation finished", () => {
+  it("shows the scope chip once preparation finished", async () => {
     setCategoryScope("parent-category", "Parent category");
+    preparingScope.value = true;
 
     const wrapper = createComponent();
+
+    expect(wrapper.findAll(LOADING_INDICATOR_SELECTOR)).toHaveLength(1);
+    expect(wrapper.findAll("[data-search-scope]")).toHaveLength(0);
+
+    preparingScope.value = false;
+    await nextTick();
 
     expect(wrapper.findAll(LOADING_INDICATOR_SELECTOR)).toHaveLength(0);
 
     const chips = wrapper.findAll("[data-search-scope]");
     expect(chips).toHaveLength(1);
     expect(chips[0].text()).toBe("Parent category");
+  });
+});
+
+describe("SearchBar scope placeholder and filter expression", () => {
+  // The chip is not the only place the stale category surfaces — the input placeholder and the
+  // dropdown's filter expression both read the same scope state and must be gated the same way.
+  it("falls back to the generic placeholder while the category scope is being prepared", () => {
+    setCategoryScope("child-category", "Child category");
+    preparingScope.value = true;
+
+    const wrapper = createComponent();
+
+    expect(wrapper.get(PLACEHOLDER_SELECTOR).text()).toBe("shared.layout.search_bar.enter_keyword_placeholder");
+  });
+
+  it("shows the category placeholder once the scope is no longer being prepared", () => {
+    setCategoryScope("parent-category", "Parent category");
+    preparingScope.value = false;
+
+    const wrapper = createComponent();
+
+    expect(wrapper.get(PLACEHOLDER_SELECTOR).text()).toContain(
+      "shared.layout.search_bar.enter_keyword_placeholder_category",
+    );
+    expect(wrapper.get(PLACEHOLDER_SELECTOR).text()).toContain("Parent category");
+  });
+
+  it("keeps the dropdown scoped to the category filter while preparing the next category", () => {
+    setCategoryScope("child-category", "Child category");
+    preparingScope.value = true;
+
+    const wrapper = createComponent();
+
+    expect(wrapper.get(DROPDOWN_SELECTOR).attributes("data-is-category-scope")).toBe("true");
+    expect(wrapper.get(DROPDOWN_SELECTOR).attributes("data-filter-expression")).toContain("category.id:child-category");
   });
 });

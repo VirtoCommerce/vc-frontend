@@ -162,7 +162,7 @@ const categoriesFilterExpression = computed(() => {
 });
 
 const searchPlaceholder = computed(() => {
-  return isCategoryScope.value
+  return isCategoryScope.value && !preparingScope.value
     ? t("shared.layout.search_bar.enter_keyword_placeholder_category", { category: getCategoriesNames() })
     : t("shared.layout.search_bar.enter_keyword_placeholder");
 });
