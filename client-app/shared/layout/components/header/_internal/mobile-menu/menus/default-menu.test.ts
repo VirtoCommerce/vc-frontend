@@ -63,6 +63,10 @@ describe("DefaultMenu", () => {
   it("renders no count when the entry carries none", () => {
     h.entries = {};
 
-    expect(mountMenu().text()).toContain("my customers:");
+    // `toContain("my customers:")` passed with a count too - "my customers:3" contains it - so the
+    // assertion could not fail. The absence has to be asserted as an absence.
+    const text = mountMenu().text();
+    expect(text).toContain("my customers:");
+    expect(text).not.toMatch(/my customers:\S/);
   });
 });
