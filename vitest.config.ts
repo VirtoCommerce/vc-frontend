@@ -16,7 +16,7 @@ export default defineConfig((env) =>
         // --noEmit does not follow. Zero files were checked and every .test-d.ts reported green
         // regardless of content. The Build step's `vue-tsc --build` caught them; the step named
         // after typing did not.
-        typecheck: { tsconfig: "./tsconfig.vitest.json" },
+        typecheck: { tsconfig: "./tsconfig.typecheck.json" },
         coverage: {
           provider: "v8",
           reporter: ["text", "json", "html"],

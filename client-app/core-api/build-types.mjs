@@ -280,6 +280,19 @@ function declaredNamesIn(text) {
  * same tsconfig the emit step uses, since that is the one where `@/` resolves.
  */
 let aliasResolver;
+/**
+ * Matches `name` as a whole identifier. Two reasons this is not `new RegExp(`\\b${name}\\b`)`:
+ * the name is interpolated into a pattern, so a regex metacharacter in it would change the pattern
+ * (`$` is an END ANCHOR, and the collectors explicitly accept `$` in identifiers - `\b$VcTheme\b`
+ * can never match, so such a declaration was skipped with no diagnostic); and `\b` is defined
+ * against `\w`, which excludes `$`, so the boundary itself is wrong for those names. Lookarounds
+ * over `[\w$]` are correct for both shapes.
+ */
+function identifierPattern(name) {
+  const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
+  return new RegExp(String.raw`(?<![\w$])${escaped}(?![\w$])`);
+}
+
 function resolveAliasToLiteral(name, declaration) {
   if (!ts.isTypeAliasDeclaration(declaration.node)) {
     return undefined;
@@ -337,12 +350,12 @@ for (let pass = 0; pass < 10; pass++) {
   const added = [];
 
   for (const [name, declaration] of ambientGlobals) {
-    if (declared.has(name) || !new RegExp(`\\b${name}\\b`).test(resolvedText)) {
+    if (declared.has(name) || !identifierPattern(name).test(resolvedText)) {
       continue;
     }
 
     const usedImports = declaration.imports.filter((statement) =>
-      importedNamesOf(statement).some((imported) => new RegExp(`\\b${imported}\\b`).test(declaration.text)),
+      importedNamesOf(statement).some((imported) => identifierPattern(imported).test(declaration.text)),
     );
     if (usedImports.some((statement) => statement.includes('"@/'))) {
       const resolved = resolveAliasToLiteral(name, declaration);
@@ -360,7 +373,7 @@ for (let pass = 0; pass < 10; pass++) {
         continue;
       }
       // Only names the rolled contract does not already have: a second binding would collide.
-      for (const imported of importedNamesOf(statement).filter((n) => !new RegExp(`\\b${n}\\b`).test(code))) {
+      for (const imported of importedNamesOf(statement).filter((n) => !identifierPattern(n).test(code))) {
         inlinedImports.set(`${moduleName}:${imported}`, { moduleName, imported });
       }
     }
@@ -502,16 +515,19 @@ try {
   });
   gateDiagnostics = ts
     .getPreEmitDiagnostics(program)
-    .filter((diagnostic) => diagnostic.file?.fileName === GATE_FILE.replace(/\\/g, "/"));
+    .filter((diagnostic) => diagnostic.file?.fileName === GATE_FILE.replaceAll("\\", "/"));
 } finally {
   rmSync(GATE_FILE, { force: true });
 }
+
+/** Module scope so the regex is compiled once, and `exec` rather than `match` (Sonar S6594). */
+const CANNOT_FIND_NAME = /Cannot find name '([^']+)'/;
 
 const unresolvedGlobals = new Set();
 const otherErrors = [];
 for (const diagnostic of gateDiagnostics) {
   const message = ts.flattenDiagnosticMessageText(diagnostic.messageText, " ");
-  const missingName = diagnostic.code === 2304 ? message.match(/Cannot find name '([^']+)'/)?.[1] : undefined;
+  const missingName = diagnostic.code === 2304 ? CANNOT_FIND_NAME.exec(message)?.[1] : undefined;
   if (missingName) {
     unresolvedGlobals.add(missingName);
   } else {

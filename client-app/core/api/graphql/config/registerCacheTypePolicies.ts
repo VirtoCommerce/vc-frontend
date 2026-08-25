@@ -189,12 +189,24 @@ function typenamesInCache(snapshot: unknown): Set<string> {
   return found;
 }
 
-/** `pluginList({"after":"x"})` and `pluginList:{"filter":"a"}` both belong to the field `pluginList`. */
+/**
+ * `pluginList({"after":"x"})` and `pluginList:{"filter":"a"}` both belong to the field `pluginList`.
+ * Cut at the first separator by index rather than with a `[(:].*$` replace: the trailing `.*$` is
+ * what Sonar S8786 flags for super-linear backtracking, and a search-and-slice is both linear and
+ * plainer about what it does.
+ */
+const FIELD_KEY_SEPARATOR = /[(:]/;
+
 function storedFieldNames(rootEntry: unknown): Set<string> {
   if (!rootEntry || typeof rootEntry !== "object") {
     return new Set();
   }
-  return new Set(Object.keys(rootEntry as Record<string, unknown>).map((key) => key.replace(/[(:].*$/, "")));
+  return new Set(
+    Object.keys(rootEntry as Record<string, unknown>).map((key) => {
+      const separator = key.search(FIELD_KEY_SEPARATOR);
+      return separator === -1 ? key : key.slice(0, separator);
+    }),
+  );
 }
 
 /**

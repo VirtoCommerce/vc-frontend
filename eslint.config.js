@@ -25,13 +25,13 @@ import vueParser from "vue-eslint-parser";
 const IMPORT_SOURCE_NODES = "ImportDeclaration, ExportNamedDeclaration, ExportAllDeclaration, ImportExpression";
 
 const NO_HOST_INTERNAL_IMPORT = {
-  selector: `:matches(${IMPORT_SOURCE_NODES})[source.value=/_internal/]`,
+  selector: String.raw`:matches(${IMPORT_SOURCE_NODES})[source.value=/_internal/]`,
   message:
     "A module reached into a host '_internal/' folder. Those are private: once a module depends on one, the host can no longer restyle its own chrome without breaking it, and a module shipping as a Module Federation plugin cannot follow the host's refactors at all. Contribute through an extension point instead - see shared/common/composables/extensionRegistry/README.md.",
 };
 
 const NO_DEEP_SALES_REP_IMPORT = {
-  selector: `:matches(${IMPORT_SOURCE_NODES})[source.value=/^@\\/modules\\/sales-rep\\/.+/]`,
+  selector: String.raw`:matches(${IMPORT_SOURCE_NODES})[source.value=/^@\/modules\/sales-rep\/.+/]`,
   message:
     "The host reached past 'modules/sales-rep/index.ts'. That module is being extracted into its own repository, so its entry point is the only surface the host may depend on. Import from '@/modules/sales-rep' instead.",
 };
