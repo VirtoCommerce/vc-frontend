@@ -94,6 +94,10 @@ The rules, because they are not obvious:
   `ExtensionContribution`, so `use()` runs in a real setup: `inject()` resolves, and an
   injection-dependent composable — which is every Apollo one, i.e. the whole reason `use()` is a
   function — works there. `extension-point-late-registration.test.ts` pins it.
+- **Replacing an entry means `unregister()` then register — and both may land in the same tick.**
+  That works: the extension point keys the contribution on the FUNCTION it registered, not on the
+  name, so the old one is disposed and the new one starts. Keying on the name alone used to leave
+  the old contribution running with its query alive while the replacement was never called.
 - **`$canRenderExtensionPoint` is false for a contribution** (it answers "has a component"). Never
   gate a decorate-capable point on it.
 

@@ -35,7 +35,7 @@ Files in this folder:
 | -------------------------- | ----------------------------------------------------------------------------------------------------------------- |
 | `index.ts`                 | **The facade source** — a list of re-exports. This is the API. Edit this.                                         |
 | `contract/index.d.ts`          | **Generated** type contract. Never edit; regenerate and commit.                                                   |
-| `contract/tailwind-preset.cjs` | **Generated** self-contained snapshot of the host's Tailwind design system (`@vc-frontend/core/tailwind-preset`). Source: the root `tailwind.config.ts`. Never edit; regenerate and commit. |
+| `contract/tailwind-preset.cjs` | **Generated** self-contained snapshot of the host's Tailwind design system (`@vc-frontend/core/tailwind-preset`). Source: the root `tailwind.config.ts`. Never edit; regenerate and commit. Its `types` condition points at the hand-written `tailwind-preset.d.cts` — without one a plugin whose `tailwind.config.ts` is TypeScript fails with TS7016, which `skipLibCheck` does not suppress. |
 | `federation.mjs`           | Shared-singleton contract (`createHostShared` / `createRemoteShared` + defaults) for both host and plugin builds; types in `federation.d.mts`. |
 | `bump-version.mjs`         | `yarn bump:core <level>` — manual bump for a BREAKING change (`minor` on 0.x, `major` from 1.0.0); additive bumps are automatic. |
 | `create-plugin.mjs`        | `yarn create:plugin` — scaffolds a new plugin project: versions read from the host, facade pinned to its release tarball. |
@@ -68,10 +68,21 @@ Guards that run with it (any failure = non-zero exit):
 - **Before emit:** `federation.mjs` ranges must be compatible with the host
   `package.json`. (The contract version has a single source — this `package.json` —
   so there is no sync to check.)
-- **During emit:** a type error **inside `core-api/`** fails the build. (Errors in
-  unrelated host files are tolerated — they never reach the rolled-up contract.)
+- **During emit:** ANY type error in the emitted graph fails the build — not just ones inside
+  `core-api/`. `tsconfig.types.json` pulls in the ui-kit ambient graph, so that surface is large,
+  and an unrelated `.vue` picking up an error will block `yarn build:core-types` and the release
+  step that runs it. (The comment in the code says "Fail on ANY diagnostic in the emitted graph";
+  this line used to claim unrelated host errors were tolerated, which they are not.)
 - **After bundling:** if any `@/...` reference survived, the build fails — the whole
   point is zero host coupling.
+- **Peer declaration:** every external package the PUBLISHED files import — all of `files`, not
+  just the rolled contract — must appear in `peerDependencies`, and the build prints the exact
+  object to paste when it does not. `peerDependencies` is the only list a package manager reads:
+  `MF_SHARED_RANGES` and `CONTRACT_TYPE_PEERS` are build-time JS objects, so a consumer installing
+  the tarball by hand got neither, and `skipLibCheck: true` in the scaffold kept the type half of
+  that silent. Required vs optional follows reachability — a package the root contract imports is
+  needed by everyone, one reachable only through `./testing` or `./tailwind-preset` is declared
+  optional. `create-plugin` installs both, so a scaffolded plugin never sees the distinction.
 - **At release:** `yarn validate:core-types` regenerates the contract in memory and **fails if
   the committed file differs**. During the MF pilot it is deliberately **out of `yarn validate`**,
   so it does not gate a PR — the Core Facade Release workflow runs it before packing the tarball.
@@ -81,9 +92,14 @@ Guards that run with it (any failure = non-zero exit):
   (someone bypassed the build or hand-edited version files), the check fails and points at
   `yarn build:core-types` / `yarn bump:core <breaking level>` (`minor` on the 0.x line, `major`
   from 1.0.0 — the check names the right one). A removed export is only ever satisfied by the
-  breaking level. If a tag exists but its contract cannot be read (shallow checkout), the check
-  **fails** rather than passing quietly; before the first release there is nothing to diff
-  against, so it warns instead. The auto-bump uses a different baseline on purpose — the branch
+  breaking level, **and only by a version that moved UP**: every version below the baseline is also
+  outside `^baseVersion`, so a regressed number (a bad merge, a reverted bump) used to read as proof
+  the breaking bump had happened. A lower version is now refused outright, before levels are
+  reasoned about at all. That check is skipped while nothing is published, because resetting the
+  line is legitimate then — this facade itself went 1.2.0 → 0.1.0. If a tag exists but its contract
+  cannot be read (shallow checkout), the check **fails** rather than passing quietly; before the
+  first release there is nothing to diff against, so it warns instead — and says so rather than
+  printing "bump guard passed" over a comparison of the contract with itself. The auto-bump uses a different baseline on purpose — the branch
   point (`origin/dev`), since it answers "did I change the contract", not "does this differ from
   what is published". Both are overridable via `MF_CONTRACT_BASE_REF`.
 

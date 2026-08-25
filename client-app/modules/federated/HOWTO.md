@@ -114,6 +114,11 @@ It needs `vue-i18n` (already a shared singleton) and `lodash-es` as dev dependen
 `@vue/test-utils` — the helpers take `mount` as an argument rather than importing it. None of the
 three reaches your bundle: this module is only ever imported by specs.
 
+All three are declared `peerDependencies` of `@vc-frontend/core`, and `yarn create:plugin` copies
+that whole list into the generated `devDependencies` — so a scaffolded plugin has them. A
+hand-assembled repo does not: no package manager installs peers for you, and the failure is a bare
+`Cannot find module 'lodash-es'` on the first spec that imports these helpers.
+
 #### Making `@vc-frontend/core` resolvable in specs
 
 The helpers are not enough on their own. Your components import VALUES from the root specifier
