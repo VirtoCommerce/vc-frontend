@@ -14,7 +14,8 @@
       "search_aria": "Pesquisar representantes de vendas",
       "empty": "Nenhum representante de vendas encontrado",
       "no_results": "Nenhum representante de vendas corresponde à sua pesquisa",
-      "reset_search": "Redefinir pesquisa"
+      "reset_search": "Redefinir pesquisa",
+      "load_failed": "Falha ao carregar os representantes de vendas"
     },
     "my_customers": {
       "navigation": {
@@ -26,9 +27,9 @@
       "table": {
         "customer": "Cliente",
         "last_order": "Meu último pedido",
-        "ytd": "Compras YTD",
+        "ytd": "Compras do ano",
         "last_year": "Ano passado",
-        "orders_count": "{count} pedidos",
+        "orders_count": "{count} pedidos | {count} pedido | {count} pedidos",
         "all_customers": "Todos",
         "actions": "Ações",
         "search_placeholder": "Pesquisar por nome",
@@ -49,9 +50,8 @@
           "title": "Painel"
         },
         "widgets": {
-          "new_orders": "Novos pedidos",
+          "new_orders": "Pedidos com status «New»",
           "active_carts": "Carrinhos ativos",
-          "active_cart": "Carrinho ativo",
           "orders_placed_week": "Pedidos desta semana",
           "orders_placed_mtd": "Pedidos no mês atual",
           "purchased_mtd": "Compras no mês atual",
@@ -63,10 +63,12 @@
           "vs_last_week": "{delta} vs semana passada",
           "vs_last_month": "{delta} vs mês passado",
           "vs_last_year": "{delta} vs ano passado",
-          "ordered_this_month": "{count} compraram este mês",
-          "new_customers": "{count} novos clientes",
-          "placed_today": "{count} feitos hoje",
-          "new_this_week": "{count} novos esta semana",
+          "ordered_this_month": "{count} compraram este mês | {count} comprou este mês | {count} compraram este mês",
+          "new_customers": "{count} novos clientes | {count} novo cliente | {count} novos clientes",
+          "of_recent_orders": "de {count} criados nos últimos 7 dias | de {count} criado nos últimos 7 dias | de {count} criados nos últimos 7 dias",
+          "items_unit": "item | itens",
+          "not_for_checkout": "{count} fora do checkout",
+          "items_this_week": "{count} item esta semana | {count} itens esta semana",
           "mtd_of_ytd": "{percent}% do ano",
           "load_failed": "Falha ao carregar"
         }
@@ -106,12 +108,13 @@
     "customer_profile": {
       "loading": "Carregando…",
       "not_found": "Cliente não encontrado ou não está nos seus clientes.",
+      "load_failed": "Não foi possível carregar este cliente. Atualize a página.",
       "back_to_customers": "Voltar aos meus clientes",
       "widgets": {
         "avg_order_value": "Valor médio do pedido"
       },
       "stats": {
-        "per_order": "Média por pedido (YTD)"
+        "per_order": "Média por pedido (ano atual)"
       },
       "info": {
         "title": "Informações do cliente",
@@ -179,6 +182,11 @@
       "load_failed": "Falha ao carregar os mais vendidos"
     },
     "rules": {
+      "load_failed": {
+        "filter": "Não foi possível carregar os filtros, por isso é exibida a lista completa. Atualize a página.",
+        "sort": "Não foi possível carregar as opções de ordenação, por isso é usada a ordem padrão. Atualize a página.",
+        "both": "Não foi possível carregar os filtros nem as opções de ordenação, por isso a lista completa é exibida na ordem padrão. Atualize a página."
+      },
       "customer": {
         "filter": {
           "All": "Todos"
@@ -192,9 +200,6 @@
       "share_replace_hint": "O cliente selecionado anteriormente perderá o acesso a esta lista.",
       "share_message_label": "Mensagem",
       "share_message_placeholder": "Mensagem opcional para incluir",
-      "share_channels_label": "Enviar via",
-      "share_email_label": "E-mail",
-      "share_push_label": "Notificação push",
       "share_default_title": "Uma nova lista do seu representante de vendas",
       "share_default_message": "Olá! Acabei de compartilhar a lista \"{listName}\" com a sua organização. Confira:",
       "share_success": "Lista compartilhada com o cliente.",

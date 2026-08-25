@@ -82,7 +82,8 @@
       "buy_now": "Köp nu",
       "see_all": "Se alla",
       "report_a_problem": "Rapportera ett problem",
-      "copy_to_clipboard": "Kopiera till urklipp"
+      "copy_to_clipboard": "Kopiera till urklipp",
+      "reload_page": "Ladda om sidan"
     },
     "labels": {
       "actions": "Åtgärder",
@@ -233,7 +234,8 @@
       "outdated_backend_modules": "Frontend-applikationen förväntar sig nyare versioner av plattformen och en eller flera moduler. <br> Frontend-applikationen körs på en inkompatibel backend. Vissa funktioner kan vara otillgängliga, nedgraderade eller instabila tills plattformen och modulerna uppgraderas för att uppfylla butikens krav. Vänligen dela rapporten nedan med din administratör.",
       "logo_changed": "Logotypen har ändrats framgångsrikt.",
       "logo_deleted": "Logotypen har raderats.",
-      "pending_operations_leaving_page_confirmation": "Vissa åtgärder pågår fortfarande. Vill du verkligen lämna den här sidan? Ändringar som inte sparats kan gå förlorade."
+      "pending_operations_leaving_page_confirmation": "Vissa åtgärder pågår fortfarande. Vill du verkligen lämna den här sidan? Ändringar som inte sparats kan gå förlorade.",
+      "content_failed_to_load": "En del av webbplatsen kunde inte laddas. Ladda om sidan för att fortsätta."
     },
     "placeholders": {
       "enter_value": "Ange ett värde",
@@ -715,7 +717,11 @@
         "enter_custom_code": "Ange anpassad kod",
         "all_coupons": "Visa alla kuponger & kampanjer",
         "apply_aria": "Apply coupon {code}",
-        "remove_aria": "Remove coupon"
+        "remove_aria": "Remove coupon",
+        "coupon_code_aria": "Kupongkod",
+        "applied_announcement": "Kupong {code} tillämpad.",
+        "removed_announcement": "Kupong {code} borttagen.",
+        "totals_announcement": "Rabatt {discount}, ny summa {total}."
       }
     },
     "catalog": {
