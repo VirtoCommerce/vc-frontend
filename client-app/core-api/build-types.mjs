@@ -701,7 +701,9 @@ function autoBumpIfContractChanged(currentContract, currentPreset, currentVersio
     step("version auto-bump skipped: no committed contract baseline (set MF_CONTRACT_BASE_REF to override).");
     return;
   }
-  const decision = decideVersionAction({ ...base, currentVersion });
+  // released: false — this baseline is a branch, not a published contract, so a deliberate reset of
+  // the line (the 1.2.0 -> 0.1.0 this facade did before its first release) is not a regression.
+  const decision = decideVersionAction({ ...base, currentVersion, released: false });
   if (decision.action.startsWith("require-")) {
     fail(
       `exports removed from the public contract (${decision.removedExports.join(", ")}) — that is BREAKING. ` +
@@ -733,7 +735,20 @@ if (CHECK_MODE) {
   const releaseTag = process.env.MF_CONTRACT_BASE_REF ? "" : lastReleasedContractTag();
   const base = compareContractToBase(contract, tailwindPreset, releaseTag || DEFAULT_BASE_REF);
   if (base) {
-    const decision = decideVersionAction({ ...base, currentVersion: corePkg.version });
+    const decision = decideVersionAction({
+      ...base,
+      currentVersion: corePkg.version,
+      // Only a core-v* baseline is published; the origin/dev fallback is not.
+      released: Boolean(releaseTag),
+    });
+    if (decision.action === "require-forward-version") {
+      fail(
+        `CORE_VERSION ${decision.currentVersion} is lower than the published ${decision.baseVersion} at ` +
+          `${base.baseRef}. A released line only moves forward — a regressed number is not evidence of a ` +
+          "bump, and publishing it would put a smaller contract under an earlier version. Restore the " +
+          "version (a bad merge or revert is the usual cause) and bump from there.",
+      );
+    }
     if (decision.action.startsWith("require-")) {
       // Reachable even when an additive bump already happened (base != current): a removal
       // is only satisfied by the breaking bump, so report the current version, not the base.
@@ -751,8 +766,16 @@ if (CHECK_MODE) {
       );
     }
   }
-  if (base) {
+  if (base && releaseTag) {
     step(`bump guard passed (base ${base.baseRef} @ ${base.baseSha.slice(0, 8)}).`);
+  } else if (base) {
+    // Reached on a release run dispatched from the base branch before the first release: the
+    // baseline collapses onto HEAD, so the comparison is the contract against itself. Saying
+    // "passed" there claimed a check that never ran.
+    console.warn(
+      `[build-types] ⚠ bump guard NOT enforced: no published core-v* contract, so ${base.baseRef} was ` +
+        "compared against itself. Expected only before the first facade release.",
+    );
   } else if (releaseTag) {
     // A published tag exists but its contract is unreadable: shallow checkout, or the tag was
     // fetched without its objects. Passing here would retire the only gate that can still refuse a

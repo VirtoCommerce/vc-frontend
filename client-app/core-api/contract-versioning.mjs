@@ -3,7 +3,7 @@
  * filesystem/git — callers supply the facts) and separate from build-types.mjs:
  * that script executes its pipeline on import, so tests can only import THIS module.
  */
-import { satisfies, valid } from "semver";
+import { gt, satisfies, valid } from "semver";
 
 /**
  * Collects PUBLIC exported names from `export { ... }` statements of a rolled-up .d.ts.
@@ -39,15 +39,28 @@ function majorOf(version) {
 }
 
 /**
- * Has `currentVersion` left the range a consumer pinned to `^baseVersion` accepts? That is what
- * "the breaking bump happened" means on every release line: `^1.2.0` refuses 2.0.0, `^0.1.0`
- * refuses 0.2.0, `^0.9.0` refuses 1.0.0. Fails closed on an unparseable version.
+ * Has `currentVersion` left the range a consumer pinned to `^baseVersion` accepts, by going UP?
+ * That is what "the breaking bump happened" means on every release line: `^1.2.0` refuses 2.0.0,
+ * `^0.1.0` refuses 0.2.0, `^0.9.0` refuses 1.0.0. Fails closed on an unparseable version.
+ *
+ * The direction is load-bearing. Every version BELOW the baseline is also outside `^baseVersion`,
+ * so without `gt` a REGRESSED number read as proof the bump had happened: 1.2.0 -> 1.1.0 with an
+ * export removed returned "major already bumped" and the release went out with fewer exports than
+ * the earlier version number. A regression is never evidence of anything.
  */
 function escapesCaretRange(currentVersion, baseVersion) {
   if (!valid(currentVersion) || !valid(baseVersion)) {
     return false;
   }
-  return !satisfies(currentVersion, `^${baseVersion}`);
+  return gt(currentVersion, baseVersion) && !satisfies(currentVersion, `^${baseVersion}`);
+}
+
+/** A published line only ever moves forward. Unparseable input is left to the checks downstream. */
+function regressed(currentVersion, baseVersion) {
+  if (!valid(currentVersion) || !valid(baseVersion)) {
+    return false;
+  }
+  return currentVersion !== baseVersion && !gt(currentVersion, baseVersion);
 }
 
 /**
@@ -72,16 +85,26 @@ function policyFor(version) {
  * - changed additively but version already bumped -> nothing to do;
  * - changed additively with the version untouched -> safe to apply automatically.
  * Which component each level maps to depends on the release line — see policyFor().
- * Returns { action: "none" | "bump-minor" | "bump-patch" | "require-major" | "require-minor", ... }.
+ * Returns { action: "none" | "bump-minor" | "bump-patch" | "require-major" | "require-minor"
+ * | "require-forward-version", ... }.
  *
  * The breaking-change check comes BEFORE the "already bumped" short-circuit on purpose:
  * an earlier additive minor bump in the same release window must not mask a later
  * breaking removal, which would otherwise ship a major change under a minor version and
  * defeat the CONTRACT GATE.
+ *
+ * `released` says whether `baseVersion` is a PUBLISHED contract. It gates the regression check
+ * only: before the first release nothing is installed anywhere, so deliberately resetting the line
+ * (1.2.0 -> 0.1.0, which is what this facade did) is legitimate. Once a version is out, the line
+ * only moves forward.
  */
-export function decideVersionAction({ changed, baseVersion, currentVersion, removedExports }) {
+export function decideVersionAction({ changed, baseVersion, currentVersion, removedExports, released = true }) {
   if (!changed) {
     return { action: "none", reason: "contract unchanged" };
+  }
+
+  if (released && regressed(currentVersion, baseVersion)) {
+    return { action: "require-forward-version", baseVersion, currentVersion, removedExports };
   }
 
   // The baseline names the level a human is asked for: it is the version already published.
