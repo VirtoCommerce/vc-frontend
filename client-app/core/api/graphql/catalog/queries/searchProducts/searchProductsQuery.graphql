@@ -117,6 +117,7 @@ query SearchProducts(
         ...rating
       }
       breadcrumbs {
+        itemId
         title
         typeName
       }

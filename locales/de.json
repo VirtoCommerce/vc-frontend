@@ -643,24 +643,6 @@
         "message": "Möchten Sie wirklich das aktuelle Logo der Organisation entfernen? Dieser Vorgang ist irreversibel."
       }
     },
-    "compare": {
-      "add_to_compare": {
-        "tooltips": {
-          "add": "Zur Vergleichsliste hinzufügen",
-          "remove": "Vom Vergleich entfernen"
-        }
-      },
-      "notifications": {
-        "limit_reached": "Es können nur {productsLimit} Produkte verglichen werden",
-        "added_html": "Produkt <span class=\"hidden lg:inline\">„<strong>{productName}</strong>“</span> wurde der Vergleichsliste hinzugefügt <span class=\"hidden lg:inline\">(verbleibende Artikel - {itemsLeft})</span>",
-        "removed_html": "Produkt <span class=\"hidden lg:inline\">„<strong>{productName}</strong>“</span> wurde aus der Vergleichsliste entfernt",
-        "compare_button": "Vergleichen"
-      },
-      "clear_list_modal": {
-        "title": "Löschung bestätigen",
-        "message": "Bestätigen Sie die Entfernung aller Produkte aus der Vergleichsliste?"
-      }
-    },
     "cart": {
       "add_to_cart": {
         "errors": {
@@ -1060,6 +1042,45 @@
       "price_high_to_low": "Preis absteigend",
       "date_new_to_old": "Datum, neu nach alt",
       "date_old_to_new": "Datum, alt bis neu"
+    },
+    "compare": {
+      "add_to_compare": {
+        "tooltips": {
+          "add": "Zum Vergleich hinzufügen",
+          "remove": "Aus dem Vergleich entfernen"
+        }
+      },
+      "notifications": {
+        "limit_reached": "Nur {productsLimit} Produkte aus derselben Kategorie können verglichen werden",
+        "added_html": "Produkt <span class=\"hidden lg:inline\">„<strong>{productName}</strong>“</span> wurde zur Vergleichsliste hinzugefügt <span class=\"hidden lg:inline\">(verbleibende Artikel - {itemsLeft})</span>",
+        "removed_html": "Produkt <span class=\"hidden lg:inline\">„<strong>{productName}</strong>“</span> wurde aus der Vergleichsliste entfernt",
+        "compare_button": "Vergleichen",
+        "added_to_cart_html": "<strong>{productName}</strong> zum Warenkorb hinzugefügt"
+      },
+      "table": {
+        "tabs": {
+          "all": "Alle",
+          "differences": "Unterschiede"
+        },
+        "differ_rows": "Unterschiede: {count} von {total} Zeilen",
+        "clear_category": "Kategorie löschen",
+        "remove_product": "Aus dem Vergleich entfernen",
+        "add_to_cart": "In den Warenkorb legen",
+        "add_product": "Produkt hinzufügen",
+        "fields": {
+          "price_per_unit": "Preis pro Einheit",
+          "customer_rating": "Kundenbewertung",
+          "availability": "Verfügbarkeit",
+          "sku": "@:common.labels.sku",
+          "min_order_qty": "Mindestbestellmenge"
+        },
+        "pin": {
+          "pin_title": "Oben anheften",
+          "unpin_title": "Anheftung aufheben",
+          "pin_label": "„{label}“ anheften",
+          "unpin_label": "„{label}“ anheften aufheben"
+        }
+      }
     }
   },
   "pages": {
@@ -1635,33 +1656,6 @@
     "loyalty_catalog": {
       "title": "Treueprogramm-Katalog"
     },
-    "compare": {
-      "meta": {
-        "title": "Produkte vergleichen",
-        "keywords": "test, vergleichen, produkte, seite, schlüsselwörter",
-        "description": "Beschreibung der Testseite zum Vergleichen von Produkten"
-      },
-      "empty_list": {
-        "title": "Produkte vergleichen",
-        "message": "Ihre Produktvergleichsliste ist leer",
-        "button_text": "Hier weiter browsen",
-        "img_alt": "emptyCart",
-        "img_alt_mobile": "emptyCartMobile"
-      },
-      "header_block": {
-        "title": "Produkte vergleichen",
-        "counter_message": "{productsNumber} Artikel von {productsLimit} hinzugefügt",
-        "differences_checkbox_label": "Nur Unterschiede anzeigen",
-        "clear_button": "Liste leeren"
-      },
-      "main_block": {
-        "price_label": "@:common.labels.product_price"
-      },
-      "links": {
-        "home": "@:common.links.home",
-        "compare_products": "Produkte vergleichen"
-      }
-    },
     "branch": {
       "address": "Adresse",
       "phone": "Telefon: ",
@@ -1690,6 +1684,33 @@
     },
     "brand": {
       "products_title": "Produkte"
+    },
+    "compare": {
+      "title": "Produkte vergleichen",
+      "meta": {
+        "keywords": "Produkte vergleichen, Produktvergleich, nebeneinanderliegender Vergleich",
+        "description": "Vergleichen Sie Produkte nebeneinander, um die beste Option für Ihre Bedürfnisse zu finden."
+      },
+      "added_count": "von {total} hinzugefügt",
+      "added_count_in_category": "von {total} in {category} hinzugefügt",
+      "actions": {
+        "clear_all": "Alle löschen",
+        "share": "Teilen"
+      },
+      "clear_all_modal": {
+        "title": "Alle löschen",
+        "message": "Alle 1 Produkte werden aus dem Vergleich entfernt. | Alle {n} Produkte werden aus dem Vergleich entfernt."
+      },
+      "clear_category_modal": {
+        "title": "Kategorie löschen",
+        "message": "Alle 1 Produkte in {category} werden aus dem Vergleich entfernt. | Alle {n} Produkte in {category} werden aus dem Vergleich entfernt."
+      },
+      "empty": {
+        "title": "Ihre Vergleichsliste ist leer",
+        "description": "Fügen Sie Produkte aus dem Katalog hinzu, um deren Eigenschaften nebeneinander zu vergleichen. Sie können bis zu {limit} Produkte pro Kategorie vergleichen.",
+        "restore_button": "Produkte wiederherstellen",
+        "add_button": "Produkte hinzufügen"
+      }
     }
   },
   "identity_error": {
