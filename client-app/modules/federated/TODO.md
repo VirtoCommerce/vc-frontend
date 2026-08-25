@@ -24,10 +24,12 @@ Definition and rationale: *Pilot* section of the discovery spec.
       value isn't the pinned release URL (catches a stray `file:`/`portal:`/yalc leak).
 - [ ] **Route authorization** — sales-rep is rep-only; plugin `addRoute` has no
       permission/guard primitive in the facade yet. Likely a pilot blocker for real users.
-      Partly addressed: the loader now refuses a plugin claim on a name that already resolves,
-      for the span of `init()` (`router.addRoute` evicts a same-named root route, and vue-router's
-      own warning is dev-only). That covers takeover, not authorization, and only inside the
-      window — a claim made after `init()` settles is unguarded.
+      Partly addressed: the loader wraps the router for the whole load-and-init phase and refuses a
+      plugin claim on a name the host owns (`router.addRoute` evicts a same-named root route, and
+      vue-router's own warning is dev-only). It covers every name one call would claim — both
+      `addRoute` overloads and each named entry in `children` — and `removeRoute` of a host name,
+      so remove-then-add cannot launder a squat. That covers takeover, not authorization, and only
+      inside the window: a claim made after the phase settles is unguarded.
 - [ ] **Declare plugin routes in `plugin.json` so boot stops blocking on the loader** — VCST-5761.
       Today `app.mount()` waits for the whole loader, so a slow plugin is blank-screen time for the
       entire storefront. If a plugin declares the paths it intends to take, the host can register a
@@ -114,8 +116,18 @@ capability), and the origin is no longer mutable — it is checked, not assumed.
 change does NOT cover:
 
 - [x] Platform entries and stylesheets are checked for **same-origin** (`isSameOrigin`), so a
-      descriptor cannot name a foreign host. `isAllowedRemoteUrl`'s https rule now covers the env
-      override only, where cross-origin is the point.
+      descriptor cannot name a foreign host, and a platform entry must resolve to an **http(s)**
+      URL after the manifest rewrite (a `blob:` URL shares this origin but has an opaque path, which
+      makes the rewrite a no-op and would leave MF script-loading the entry as code).
+      `isAllowedRemoteUrl`'s https rule covers the env override, where cross-origin is the point —
+      and the manifest RESPONSE is re-checked against the rule of the source it came from, not
+      against same-origin for both, which would have killed the env override outright.
+- [x] **Remote names are validated** on both paths (`/^[A-Za-z0-9][A-Za-z0-9._-]*$/`). MF resolves a
+      `loadRemote` id by prefix, so `a/plugin` could answer the request meant for `a` and serve its
+      expose from the wrong bundle with both reported loaded; exact-name dedup cannot see it.
+- [x] **Malformed descriptors cost one plugin, not the batch.** Every field is read through a string
+      guard and the list is checked for arrayness — a non-string `permission` or `entry.type` used
+      to throw out of the loader and lose every plugin, contradicting "isolation is total".
 - [x] No integrity check on what actually executes — **reviewed, deliberately not done**. Writing
       the artifacts requires access to the backend that serves them, and from there an attacker
       returns hostile code on the *first* fetch; the TOCTOU window is a sub-case of a position

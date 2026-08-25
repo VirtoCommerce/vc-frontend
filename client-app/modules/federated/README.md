@@ -206,9 +206,13 @@ startFederatedModules()            bootstrap.ts
   │  dynamic import("./index")              ← keeps MF runtime out of non-MF builds
   ▼
 initFederatedModules()             index.ts
+  0. fetchPlugins()                the platform's list, on its own 2s budget (bootstrap.ts).
+                                   Slow or failing ⇒ no plugins, never a stalled boot
   1. resolveRemotes(plugins)       env override if set, else the platform's descriptors
-                                   (empty ⇒ done; non-string / non-https / non-".json"
-                                   entries are reported as SKIPPED, never silently dropped)
+                                   (empty ⇒ done; a name that is not /^[A-Za-z0-9][\w.-]*$/,
+                                   a non-string / non-https / non-".json" env entry, a
+                                   platform entry that is not same-origin http(s), or a
+                                   non-string field anywhere ⇒ SKIPPED, never silently dropped)
   1a. permission filter            a plugin declaring a permission the user lacks is SKIPPED
                                    before any fetch — the platform serves one list to everyone.
                                    A UX/latency filter, not a boundary (see Security model)
@@ -217,8 +221,10 @@ initFederatedModules()             index.ts
                                    CORE_VERSION. Incompatible, malformed, unreadable or
                                    timed out ⇒ SKIP (fail closed — no plugin code has run)
   3. registerRemotes(compatible)   no force: a known name is already a no-op in the runtime
-  4. loadRemote(`${name}/${exposed}`) ⇒ plugin module ⇒ await its init() if it has one (3s
-                                   budget each); a module without init() still counts as loaded
+  3a. installRouteGuard()          wraps addRoute/removeRoute for the whole phase below
+  4. loadRemote(`${name}/${exposed}`) ⇒ inject its contentFiles styles ⇒ await its init() if it
+                                   has one (3s budget each); a module without init() still
+                                   counts as loaded
   5. Promise.allSettled            one bad plugin cannot abort the others
   6. reportOutcome({loaded,failed,skipped})   logs (Logger is live in dev, no-op in prod)
 ```
@@ -248,12 +254,18 @@ Three design points worth calling out:
   against the previous major.
 - **Every network step is time-budgeted** (two knobs via `initFederatedModules(options)`:
   manifest 2s; load and init 3s _each_ — one remote may legally take up to
-  manifest + 2×load ≈ 8s). Boot awaits this loader, so that sum is also blank-screen time:
+  manifest + 2×load ≈ 8s), plus `DISCOVERY_TIMEOUT_MS` (2s) on the plugin-list query in
+  `bootstrap.ts`. Boot awaits this loader, so that sum is also blank-screen time:
   a hung remote delays first paint by up to 8s and is then reported `failed`/`skipped`.
   `bootstrap.ts` adds a
-  10s **backstop** above that sum, covering what the budgets cannot (the loader chunk
-  fetch itself hanging, an inner timeout malfunctioning) — a remote operating within
-  its budgets never trips it, preserving the deep-link guarantee. Containment
+  12s **backstop** above the budgeted legs (2 + 2 + 3 + 3 = 10s), covering what the budgets
+  do not: the loader chunk's own fetch, and an inner timeout malfunctioning.
+  **The remaining 2s is all the headroom that unbudgeted chunk fetch gets** — a
+  budget-compliant remote behind a slower one can still trip the cap, so the guarantee is
+  "never, unless the chunk fetch is slower than the leftover", not a flat "never". The chunk
+  is deliberately left unbudgeted: bounding it is what the backstop is _for_, and a second
+  timer would only drop every plugin sooner on a bad connection. Widen the cap, not the
+  promise, if 2s proves tight. Containment
   semantics: a `loadRemote` that resolves _after_ its budget never gets its `init()`
   called; an `init()` that already started cannot be cancelled — the plugin is reported
   `failed`, and any late settlement (success or the real failure cause) is logged as
@@ -375,11 +387,21 @@ decision for the storefront. What the harness enforces today:
   never gets its code executed.
 - **Same-origin platform entries** — a platform descriptor may only name the storefront's own
   origin; an absolute or protocol-relative URL pointing elsewhere is skipped, entries and
-  stylesheets alike. The env override is the only way to load cross-origin code, and it is
-  build-time. The manifest *response* is re-checked too, since `fetch` follows redirects and a
-  same-origin entry could otherwise land off-origin. What this does not bound is the manifest's
-  contents: a same-origin manifest may still declare chunk URLs on another host, and the MF runtime
-  fetches those unchecked.
+  stylesheets alike. It must also resolve to an **http(s)** URL after the rewrite to
+  `mf-manifest.json`: a `blob:` URL shares this origin and has an opaque path, which makes the
+  path rewrite a no-op, so the entry would carry no `.json` and the MF runtime would script-load
+  it as code. The env override is the only way to load cross-origin code, and it is build-time.
+  The manifest *response* is re-checked too, since `fetch` follows redirects and an entry could
+  otherwise land somewhere its source does not allow — **each source keeps its own rule**: a
+  platform response must stay same-origin, an env response must still satisfy the https/loopback
+  rule. Demanding same-origin for both would kill the env override, whose whole purpose is
+  cross-origin. What none of this bounds is the manifest's *contents*: a same-origin manifest may
+  still declare chunk URLs on another host, and the MF runtime fetches those unchecked.
+- **Remote names are validated** (`/^[A-Za-z0-9][A-Za-z0-9._-]*$/`, both discovery paths). MF
+  resolves a `loadRemote` id by PREFIX, so with remotes `a` and `a/plugin` the request meant for
+  the second matches the first and is served out of *its* bundle — one plugin's code never runs
+  while both are reported loaded. Exact-name deduplication cannot see that, in this loader or in
+  MF itself.
 - **No silent host-route takeover** — `router.addRoute` evicts whatever root-level route already
   carries the new record's name, and vue-router's warning for it is dev-only. For the span of the
   load-and-init phase the loader wraps the router and refuses a claim on a name the host already
@@ -430,7 +452,11 @@ already read makes validated bytes == executed bytes **and** removes the extra r
 ## Gotchas & guarantees
 
 - **Off by default.** No flag, no cost — the loader isn't even imported.
-- **Isolation is total.** `initFederatedModules()` never rejects; a failing plugin is
+- **Isolation is total**, malformed descriptors included. Every descriptor field is read through
+  a string guard and the list itself is checked for arrayness, because the projection is a
+  hand-written structural type and nothing else guards its shape — a non-string `permission` or
+  `entry.type` used to throw out of the loader and lose every plugin instead of skipping one.
+  `initFederatedModules()` never rejects; a failing plugin is
   logged and reported, others still load. A hung remote is cut off by the time budgets.
 - **Fail closed on version.** Can't read/parse/satisfy a manifest ⇒ skip that remote.
 - **The `.d.ts` is generated and drift-guarded.** After any facade change, run

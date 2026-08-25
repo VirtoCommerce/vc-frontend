@@ -164,7 +164,14 @@ Rules of the road:
   and the whole app boot waits for it.
 - **Don't name a route after a host route.** `router.addRoute` evicts an existing root-level route
   that shares the new record's name, so `name: "Checkout"` would take the host's page over. The
-  loader refuses such a claim during `init()` and logs it; pick names nobody else can plausibly use.
+  loader refuses such a claim for the whole load-and-init phase and logs it — including a name
+  nested in `children` (vue-router adds those at root level too), the two-argument
+  `addRoute(parentName, record)` form, and a `removeRoute` of a host name, so remove-then-add does
+  not get you there either. You can still remove routes you added yourself. Pick names nobody else
+  can plausibly use.
+- **Your remote name must match `/^[A-Za-z0-9][A-Za-z0-9._-]*$/`.** No slashes: MF resolves a
+  `loadRemote` id by prefix, so a name containing one can swallow another plugin's request. The
+  scaffolder already writes a compliant name; a hand-edited `plugin.json` is where this bites.
 - **Authorize on the backend, always.** The `permission` your plugin declares only decides whether
   the host bothers to load it. Your bundle is fetched by a plain `<script>` with no credentials, so
   anyone can read its code by URL. Every query your plugin makes must be authorized server-side.
@@ -172,7 +179,10 @@ Rules of the road:
   which is the range you were actually built against. You may widen it — a plugin that uses almost
   nothing from the facade legitimately can — but the loader takes the range at face value, so
   anything you admit is something you are claiming to work with.
-- **Styling:** your components ship their own CSS (plain styles in SFCs work as-is).
+- **Styling:** your components ship their own CSS (plain styles in SFCs work as-is). Separate
+  stylesheets declared as `contentFiles` are linked into `document.head` right after your module
+  loads, before `init()` runs — so a plugin whose `init()` fails or overruns is still styled rather
+  than rendering a live page with no CSS.
   For **Tailwind**, scaffold with `--with-tailwind` (or copy its output): the plugin
   runs its own utility pass with the **host's design system as preset**
   (`require("@vc-frontend/core/tailwind-preset")` in `tailwind.config.cjs` — colors

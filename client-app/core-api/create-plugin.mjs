@@ -236,9 +236,10 @@ export default defineConfig({
     federation(
       createRemoteFederationOptions({
         name: "${pluginName}",
-        // CONTRACT GATE: the facade version this plugin is built against. The loader accepts
-        // whatever range is declared here, so widening it is a claim of compatibility, not a
-        // request for one - a host outside the range you were built against will still load you.
+        // CONTRACT GATE: the facade version this plugin is built against. The loader takes this
+        // range at face value, so widening it is a claim of compatibility, not a request for one:
+        // a host whose version falls INSIDE the range still loads you even if you never tested
+        // against it. A host OUTSIDE the range is refused before any of your code runs.
         requiredHostVersion: "^${corePkg.version}",${sharedOverridesArg}
       }),
     ),
