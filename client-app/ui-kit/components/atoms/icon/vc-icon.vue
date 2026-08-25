@@ -103,66 +103,95 @@ watch(
 
     container-type: inline-size;
 
+    // Outline icons all share a 24-unit viewBox, so the screen-px stroke values below are
+    // converted to user units by hand — vector-effect: non-scaling-stroke, which did this,
+    // is drawn at half width by Chrome 151.
+    $view-box: 24;
+
     svg :where(path, line, circle, rect, polyline, polygon, ellipse) {
       stroke: currentColor;
-      stroke-width: var(--vc-icon-stroke, var(--stroke-bucket, 1.5));
+      stroke-width: calc(
+        var(--vc-icon-stroke, var(--stroke-bucket, 1.5)) * #{$view-box} / var(--size-anchor, #{$view-box})
+      );
       stroke-linecap: round;
       stroke-linejoin: round;
-      vector-effect: non-scaling-stroke;
     }
 
     // fixed stroke grid keyed to real rendered px
     @container (width <= 10px) {
       svg {
         --stroke-bucket: 1;
+        --size-anchor: 10;
       }
     }
 
     @container (10px < width <= 12px) {
       svg {
         --stroke-bucket: 1.1;
+        --size-anchor: 12;
       }
     }
 
     @container (12px < width <= 14px) {
       svg {
         --stroke-bucket: 1.3;
+        --size-anchor: 14;
       }
     }
 
     @container (14px < width <= 16px) {
       svg {
         --stroke-bucket: 1.5;
+        --size-anchor: 16;
       }
     }
 
     @container (16px < width <= 20px) {
       svg {
         --stroke-bucket: 1.6;
+        --size-anchor: 20;
       }
     }
 
     @container (20px < width <= 24px) {
       svg {
         --stroke-bucket: 1.75;
+        --size-anchor: 24;
       }
     }
 
     @container (24px < width <= 28px) {
       svg {
         --stroke-bucket: 1.8;
+        --size-anchor: 28;
       }
     }
 
     @container (28px < width <= 36px) {
       svg {
         --stroke-bucket: 2;
+        --size-anchor: 32;
       }
     }
 
-    @container (width > 36px) {
+    @container (36px < width <= 44px) {
       svg {
         --stroke-bucket: 2.7;
+        --size-anchor: 40;
+      }
+    }
+
+    @container (44px < width <= 56px) {
+      svg {
+        --stroke-bucket: 2.7;
+        --size-anchor: 48;
+      }
+    }
+
+    @container (width > 56px) {
+      svg {
+        --stroke-bucket: 2.7;
+        --size-anchor: 64;
       }
     }
 
