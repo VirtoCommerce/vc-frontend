@@ -180,6 +180,26 @@
       "all_categories": "Alla kategorier",
       "load_failed": "Kunde inte läsa in bästsäljarna"
     },
+    "customer_insights": {
+      "top": "Topp",
+      "recent": "Senaste",
+      "not_configured": "Analys är inte ansluten för den här butiken",
+      "tracked_caveat": "Baserat endast på spårad aktivitet",
+      "data_as_of": "Data per {date}",
+      "search_history": {
+        "title": "Sökhistorik",
+        "empty": "Inga spårade sökningar under den här perioden",
+        "count": "{n} sökning | {n} sökningar",
+        "last_searched": "Senast sökt {date}",
+        "load_failed": "Det gick inte att läsa in sökhistoriken"
+      },
+      "browse_history": {
+        "title": "Visningshistorik",
+        "empty": "Inga spårade produktvisningar under den här perioden",
+        "views": "{n} visning | {n} visningar",
+        "load_failed": "Det gick inte att läsa in visningshistoriken"
+      }
+    },
     "rules": {
       "customer": {
         "filter": {

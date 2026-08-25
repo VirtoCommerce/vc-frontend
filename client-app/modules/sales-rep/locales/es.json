@@ -180,6 +180,26 @@
       "all_categories": "Todas las categorías",
       "load_failed": "No se pudieron cargar los más vendidos"
     },
+    "customer_insights": {
+      "top": "Top",
+      "recent": "Recientes",
+      "not_configured": "Analytics no está conectado para esta tienda",
+      "tracked_caveat": "Basado solo en la actividad registrada",
+      "data_as_of": "Datos a {date}",
+      "search_history": {
+        "title": "Historial de búsqueda",
+        "empty": "No hay búsquedas registradas en este período",
+        "count": "{n} búsqueda | {n} búsquedas",
+        "last_searched": "Última búsqueda: {date}",
+        "load_failed": "No se pudo cargar el historial de búsqueda"
+      },
+      "browse_history": {
+        "title": "Historial de navegación",
+        "empty": "No hay vistas de productos registradas en este período",
+        "views": "{n} vista | {n} vistas",
+        "load_failed": "No se pudo cargar el historial de navegación"
+      }
+    },
     "rules": {
       "customer": {
         "filter": {

@@ -180,6 +180,26 @@
       "all_categories": "Alle kategorier",
       "load_failed": "Kunne ikke laste bestselgerne"
     },
+    "customer_insights": {
+      "top": "Topp",
+      "recent": "Nylige",
+      "not_configured": "Analyse er ikke koblet til for denne butikken",
+      "tracked_caveat": "Basert kun på sporet aktivitet",
+      "data_as_of": "Data per {date}",
+      "search_history": {
+        "title": "Søkehistorikk",
+        "empty": "Ingen sporede søk i denne perioden",
+        "count": "{n} søk | {n} søk",
+        "last_searched": "Sist søkt {date}",
+        "load_failed": "Kunne ikke laste søkehistorikken"
+      },
+      "browse_history": {
+        "title": "Visningshistorikk",
+        "empty": "Ingen sporede produktvisninger i denne perioden",
+        "views": "{n} visning | {n} visninger",
+        "load_failed": "Kunne ikke laste visningshistorikken"
+      }
+    },
     "rules": {
       "customer": {
         "filter": {

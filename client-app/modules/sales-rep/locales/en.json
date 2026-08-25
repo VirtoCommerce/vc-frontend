@@ -180,6 +180,26 @@
       "all_categories": "All categories",
       "load_failed": "Couldn't load top sellers"
     },
+    "customer_insights": {
+      "top": "Top",
+      "recent": "Recent",
+      "not_configured": "Analytics is not connected for this store",
+      "tracked_caveat": "Based on tracked activity only",
+      "data_as_of": "Data as of {date}",
+      "search_history": {
+        "title": "Search history",
+        "empty": "No tracked searches in this period",
+        "count": "{n} search | {n} searches",
+        "last_searched": "Last searched {date}",
+        "load_failed": "Couldn't load search history"
+      },
+      "browse_history": {
+        "title": "Browse history",
+        "empty": "No tracked product views in this period",
+        "views": "{n} view | {n} views",
+        "load_failed": "Couldn't load browse history"
+      }
+    },
     "rules": {
       "customer": {
         "filter": {

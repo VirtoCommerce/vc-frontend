@@ -180,6 +180,26 @@
       "all_categories": "Kaikki kategoriat",
       "load_failed": "Myydyimpiä ei voitu ladata"
     },
+    "customer_insights": {
+      "top": "Suosituimmat",
+      "recent": "Viimeisimmät",
+      "not_configured": "Analytiikkaa ei ole yhdistetty tähän kauppaan",
+      "tracked_caveat": "Perustuu vain seurattuun toimintaan",
+      "data_as_of": "Tiedot: {date}",
+      "search_history": {
+        "title": "Hakuhistoria",
+        "empty": "Ei seurattuja hakuja tällä ajanjaksolla",
+        "count": "{n} haku | {n} hakua",
+        "last_searched": "Viimeksi haettu {date}",
+        "load_failed": "Hakuhistorian lataaminen epäonnistui"
+      },
+      "browse_history": {
+        "title": "Selaushistoria",
+        "empty": "Ei seurattuja tuotekatseluja tällä ajanjaksolla",
+        "views": "{n} katselukerta | {n} katselukertaa",
+        "load_failed": "Selaushistorian lataaminen epäonnistui"
+      }
+    },
     "rules": {
       "customer": {
         "filter": {

@@ -83,3 +83,11 @@ export const TOP_SELLERS_DEFAULT_ROWS = 5;
 // The salesRepTopSellers API caps `take` at 10, so the input must not offer more.
 export const TOP_SELLERS_MAX_ROWS = 10;
 export const MIN_ROWS = 1;
+
+// Customer-insights rail widgets (VCST-5337). Sort names come from the proposed
+// salesRepCustomerInsights contract (design doc §5): "count" ranks by occurrences (top),
+// "date" by the latest hour bucket GA reports (recent).
+export const INSIGHTS_DEFAULT_ROWS = 5;
+export const INSIGHTS_MAX_ROWS = 20;
+export const INSIGHTS_SORT_BY_COUNT = "count";
+export const INSIGHTS_SORT_BY_DATE = "date";

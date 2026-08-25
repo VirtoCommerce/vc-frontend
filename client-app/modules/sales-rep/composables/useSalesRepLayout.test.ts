@@ -69,6 +69,8 @@ afterEach(() => {
 const ECHOED_SETTINGS: Record<string, { key: string; value: unknown }[]> = {
   orders: [{ key: "maxRows", value: 5 }],
   top_sellers: [{ key: "maxRows", value: 5 }],
+  search_history: [{ key: "maxRows", value: 5 }],
+  browse_history: [{ key: "maxRows", value: 5 }],
 };
 
 const echoedBlock = (id: string) => ({ id, type: id, hidden: false, settings: ECHOED_SETTINGS[id] ?? [] });
@@ -84,7 +86,7 @@ const CUSTOMER_STAT_IDS = ["new_orders", "active_cart", "mtd", "orders_ytd", "ao
 const DEFAULT_ECHO = [
   { id: "statistics", blocks: CUSTOMER_STAT_IDS.map(echoedBlock) },
   { id: "mainLeft", blocks: ["orders", "top_sellers"].map(echoedBlock) },
-  { id: "mainRight", blocks: ["actions", "info"].map(echoedBlock) },
+  { id: "mainRight", blocks: ["actions", "info", "search_history", "browse_history"].map(echoedBlock) },
 ];
 
 /** The default echo with one block's settings replaced — a settings edit needs the echo to agree. */
@@ -107,7 +109,7 @@ describe("useSalesRepLayout", () => {
 
     const { state } = withLayout(scope);
 
-    expect(state.value.regions.mainRight.visible).toEqual(["actions", "info"]);
+    expect(state.value.regions.mainRight.visible).toEqual(["actions", "info", "search_history", "browse_history"]);
     expect(state.value.regions.mainLeft.visible).toEqual(["orders", "top_sellers"]);
   });
 
@@ -128,7 +130,8 @@ describe("useSalesRepLayout", () => {
 
     const { state } = withLayout(scope);
 
-    expect(state.value.regions.mainRight.visible).toEqual(["info"]);
+    // Blocks the registry gained after the save (the insights widgets) append as visible.
+    expect(state.value.regions.mainRight.visible).toEqual(["info", "search_history", "browse_history"]);
     expect(state.value.regions.mainRight.hidden).toEqual(["actions"]);
   });
 
@@ -252,7 +255,10 @@ describe("useSalesRepLayout", () => {
           regions: [
             { id: "statistics", blocks: CUSTOMER_STAT_IDS.map(echoedBlock) },
             { id: "mainLeft", blocks: ["orders", "top_sellers"].map(echoedBlock) },
-            { id: "mainRight", blocks: [echoedBlock("info"), echoedBlock("actions")] },
+            {
+              id: "mainRight",
+              blocks: ["info", "actions", "search_history", "browse_history"].map(echoedBlock),
+            },
           ],
         },
       },
@@ -261,10 +267,10 @@ describe("useSalesRepLayout", () => {
     const { startEdit, save, state } = withLayout(scope);
     startEdit();
     // Registry order is actions, info — so the echo disagrees with what was sent.
-    expect(state.value.regions.mainRight.visible).toEqual(["actions", "info"]);
+    expect(state.value.regions.mainRight.visible).toEqual(["actions", "info", "search_history", "browse_history"]);
 
     await expect(save()).resolves.toBe(true);
-    expect(state.value.regions.mainRight.visible).toEqual(["info", "actions"]);
+    expect(state.value.regions.mainRight.visible).toEqual(["info", "actions", "search_history", "browse_history"]);
   });
 
   // A document is not enough to trust — reconciling a partial one fills the gaps from registry
@@ -352,7 +358,12 @@ describe("useSalesRepLayout", () => {
             { id: "mainLeft", blocks: ["orders", "top_sellers"].map(echoedBlock) },
             {
               id: "mainRight",
-              blocks: [echoedBlock("info"), { id: "actions", type: "actions", hidden: true, settings: [] }],
+              blocks: [
+                echoedBlock("info"),
+                { id: "actions", type: "actions", hidden: true, settings: [] },
+                echoedBlock("search_history"),
+                echoedBlock("browse_history"),
+              ],
             },
           ],
         },
@@ -361,7 +372,7 @@ describe("useSalesRepLayout", () => {
 
     await expect(pending).resolves.toBe(true);
     // The saved arrangement survived; none of the mid-flight calls left a mark.
-    expect(state.value.regions.mainRight.visible).toEqual(["info"]);
+    expect(state.value.regions.mainRight.visible).toEqual(["info", "search_history", "browse_history"]);
     expect(state.value.regions.mainRight.hidden).toEqual(["actions"]);
   });
 
@@ -502,7 +513,7 @@ describe("useSalesRepLayout", () => {
     reorderHidden("mainRight", ["actions", "info"]);
 
     expect(hiddenIn("mainRight")).toEqual(["actions", "info"]);
-    expect(visibleIn("mainRight")).toEqual([]);
+    expect(visibleIn("mainRight")).toEqual(["search_history", "browse_history"]);
     expect(visibleIn("mainLeft")).toEqual(["orders", "top_sellers"]);
   });
 
@@ -525,12 +536,13 @@ describe("useSalesRepLayout", () => {
     startEdit();
     reset();
 
-    expect(state.value.regions.mainRight.visible).toEqual(["actions", "info"]);
+    expect(state.value.regions.mainRight.visible).toEqual(["actions", "info", "search_history", "browse_history"]);
     expect(apolloMock.mutate).not.toHaveBeenCalled();
 
-    // Cancelling after a reset returns to what is actually stored — both visible, in the saved order.
+    // Cancelling after a reset returns to what is actually stored — both visible, in the saved order,
+    // with the blocks the registry gained since (the insights widgets) appended.
     cancel();
-    expect(state.value.regions.mainRight.visible).toEqual(["info", "actions"]);
+    expect(state.value.regions.mainRight.visible).toEqual(["info", "actions", "search_history", "browse_history"]);
     expect(state.value.regions.mainRight.hidden).toEqual([]);
   });
 
@@ -581,7 +593,7 @@ describe("useSalesRepLayout", () => {
     startEdit();
     setHidden("actions", true);
 
-    expect(visibleIn("mainRight")).toEqual(["info"]);
+    expect(visibleIn("mainRight")).toEqual(["info", "search_history", "browse_history"]);
     expect(hiddenIn("mainRight")).toEqual(["actions"]);
   });
 
@@ -612,7 +624,7 @@ describe("useSalesRepLayout", () => {
     setHidden("actions", false);
 
     expect(hiddenIn("mainRight")).toEqual([]);
-    expect(visibleIn("mainRight")).toEqual(["info", "actions"]);
+    expect(visibleIn("mainRight")).toEqual(["info", "search_history", "browse_history", "actions"]);
   });
 
   // Nothing else observes the collision, so the fetch policy itself is the assertion.

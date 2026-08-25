@@ -180,6 +180,26 @@
       "all_categories": "Alle Kategorien",
       "load_failed": "Topseller konnten nicht geladen werden"
     },
+    "customer_insights": {
+      "top": "Top",
+      "recent": "Zuletzt",
+      "not_configured": "Analytics ist für diesen Shop nicht verbunden",
+      "tracked_caveat": "Nur auf Basis erfasster Aktivitäten",
+      "data_as_of": "Datenstand: {date}",
+      "search_history": {
+        "title": "Suchverlauf",
+        "empty": "Keine erfassten Suchanfragen in diesem Zeitraum",
+        "count": "{n} Suchanfrage | {n} Suchanfragen",
+        "last_searched": "Zuletzt gesucht am {date}",
+        "load_failed": "Suchverlauf konnte nicht geladen werden"
+      },
+      "browse_history": {
+        "title": "Angesehene Produkte",
+        "empty": "Keine erfassten Produktansichten in diesem Zeitraum",
+        "views": "{n} Aufruf | {n} Aufrufe",
+        "load_failed": "Angesehene Produkte konnten nicht geladen werden"
+      }
+    },
     "rules": {
       "customer": {
         "filter": {
