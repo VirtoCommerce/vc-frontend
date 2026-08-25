@@ -115,6 +115,7 @@ function cardProps(id: string) {
   return {
     label: card ? t(card.labelKey) : id,
     value: card?.value ?? "",
+    valueSuffix: card?.valueSuffix,
     icon: card?.icon ?? "",
     accent: card?.accent,
     sub: card?.sub,
