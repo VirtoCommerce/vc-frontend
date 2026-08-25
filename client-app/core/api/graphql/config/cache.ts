@@ -3,8 +3,12 @@ import type { TypePolicies } from "@apollo/client/core";
 
 /**
  * The host's own type policies. Exported so `registerCacheTypePolicies` can seed its ownership map
- * from the same object the cache is built with — one source of truth, so a plugin cannot quietly
- * take over a typename the host normalizes.
+ * from the same object the cache is built with — one source of truth for what the host RESERVES.
+ *
+ * Reserved means declared here. It is NOT the set of typenames the host stores: anything Apollo
+ * normalizes by its default `id` rule holds no policy, so it is unclaimed and a plugin registering
+ * `keyFields` for it is accepted. Widening the reservation to the host's whole cache surface would
+ * mean maintaining a list of every typename it queries — tracked separately, not promised here.
  */
 export const hostTypePolicies: TypePolicies = {
   CartType: {

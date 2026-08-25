@@ -30,6 +30,19 @@ const lateQuery = gql`
   }
 `;
 
+/**
+ * The debug global is optional by declaration, since only a development build assigns it. This spec
+ * forces IS_DEVELOPMENT, so a missing value means the mock above stopped applying — worth failing
+ * loudly on rather than reading through a `!`.
+ */
+function cacheDebug() {
+  const debug = window.modulesCacheDebug;
+  if (!debug) {
+    throw new Error("window.modulesCacheDebug is unset — the IS_DEVELOPMENT mock did not apply");
+  }
+  return debug;
+}
+
 describe("registerCacheTypePolicies", () => {
   it("applies a plugin's keyFields policy so repeated ids are not normalized into one entity", () => {
     registerCacheTypePolicies({ TestPluginWidget: { keyFields: false } });
@@ -52,7 +65,9 @@ describe("registerCacheTypePolicies", () => {
     registerCacheTypePolicies({ TestPluginLate: { keyFields: false } });
 
     expect(warn).toHaveBeenCalledWith(expect.stringContaining("TestPluginLate"));
-    expect(warn).toHaveBeenCalledWith(expect.stringContaining("already normalized"));
+    // "has data" rather than "normalized": the check now also catches a typename stored inline,
+    // which has no normalized key at all.
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining("already has data in the cache"));
 
     warn.mockRestore();
   });
@@ -65,11 +80,11 @@ describe("registerCacheTypePolicies", () => {
 
     expect(warn).toHaveBeenCalledWith(expect.stringContaining("second-plugin"));
     expect(warn).toHaveBeenCalledWith(expect.stringContaining("first-plugin"));
-    expect(window.modulesCacheDebug.owners.get("TestPluginConflict")).toEqual({
+    expect(cacheDebug().owners.get("TestPluginConflict")).toEqual({
       owner: "first-plugin",
       priority: 0,
     });
-    expect(window.modulesCacheDebug.rejected).toContainEqual({
+    expect(cacheDebug().rejected).toContainEqual({
       typename: "TestPluginConflict",
       owner: "second-plugin",
       priority: 0,
@@ -79,13 +94,94 @@ describe("registerCacheTypePolicies", () => {
     warn.mockRestore();
   });
 
-  it("refuses a plugin's policy for a typename the host owns", () => {
+  it("refuses a plugin's keyFields for a typename the host holds only field policies on", () => {
     const warn = vi.spyOn(Logger, "warn").mockImplementation(() => {});
 
+    // The host declares `Product: { fields: { properties: … } }` and no keyFields, so it holds
+    // `Product.properties`. keyFields re-keys the whole entity, so it must still be refused - the
+    // asymmetry is the point: most host policies are fields-only, and reading ownership per field
+    // alone would leave the host's identity rules open to a plugin.
     registerCacheTypePolicies({ Product: { keyFields: false } }, { owner: "greedy-plugin" });
 
     expect(warn).toHaveBeenCalledWith(expect.stringContaining("host"));
-    expect(window.modulesCacheDebug.owners.get("Product")).toEqual({ owner: "host", priority: 100 });
+    expect(cacheDebug().owners.get("Product.properties")).toEqual({
+      owner: "host",
+      priority: 100,
+    });
+    expect(cacheDebug().owners.has("Product")).toBe(false);
+
+    warn.mockRestore();
+  });
+
+  it("lets two plugins hold policies for different fields of the same root type", () => {
+    const warn = vi.spyOn(Logger, "warn").mockImplementation(() => {});
+
+    // Apollo merges `fields` per field name, so there is nothing to protect here - refusing the
+    // second plugin would block a registration Apollo would have accepted additively.
+    registerCacheTypePolicies({ Query: { fields: { aList: { keyArgs: ["filter"] } } } }, { owner: "plugin-a" });
+    registerCacheTypePolicies({ Query: { fields: { bList: { keyArgs: ["filter"] } } } }, { owner: "plugin-b" });
+
+    expect(cacheDebug().owners.get("Query.aList")).toEqual({ owner: "plugin-a", priority: 0 });
+    expect(cacheDebug().owners.get("Query.bList")).toEqual({ owner: "plugin-b", priority: 0 });
+    expect(warn).not.toHaveBeenCalled();
+
+    warn.mockRestore();
+  });
+
+  it("still refuses a type-level claim on a root type another plugin holds a field of", () => {
+    const warn = vi.spyOn(Logger, "warn").mockImplementation(() => {});
+
+    registerCacheTypePolicies({ Mutation: { fields: { doThing: { merge: false } } } }, { owner: "plugin-a" });
+    registerCacheTypePolicies({ Mutation: { merge: false } }, { owner: "plugin-b" });
+
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining("plugin-a"));
+    expect(cacheDebug().owners.has("Mutation")).toBe(false);
+
+    warn.mockRestore();
+  });
+
+  it("treats the same owner re-registering its own claim as a no-op, not a collision", () => {
+    const warn = vi.spyOn(Logger, "warn").mockImplementation(() => {});
+
+    // What HMR and a second init() both look like. Reporting it as a conflict sent the reader
+    // hunting for a second plugin that does not exist.
+    registerCacheTypePolicies({ TestPluginIdempotent: { keyFields: false } }, { owner: "same-plugin" });
+    registerCacheTypePolicies({ TestPluginIdempotent: { keyFields: false } }, { owner: "same-plugin" });
+
+    expect(warn).not.toHaveBeenCalled();
+    expect(cacheDebug().owners.get("TestPluginIdempotent")).toEqual({
+      owner: "same-plugin",
+      priority: 0,
+    });
+
+    warn.mockRestore();
+  });
+
+  it("warns about a late root-field policy, which has no normalized key to look for", () => {
+    const warn = vi.spyOn(Logger, "warn").mockImplementation(() => {});
+
+    const rootFieldQuery = gql`
+      query TestPluginRootField {
+        testPluginRootField {
+          id
+        }
+      }
+    `;
+    cache.writeQuery({
+      query: rootFieldQuery,
+      data: { testPluginRootField: { __typename: "TestPluginRootField", id: "1" } },
+    });
+
+    // `Query` never becomes a `Query:<id>` entity - its fields live under ROOT_QUERY - so the old
+    // `startsWith("Query:")` check could not see this, and a late keyArgs orphaned everything
+    // already stored under the old field key with no warning at all.
+    registerCacheTypePolicies(
+      { Query: { fields: { testPluginRootField: { keyArgs: ["id"] } } } },
+      { owner: "late-plugin" },
+    );
+
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining("Query.testPluginRootField"));
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining("already has data in the cache"));
 
     warn.mockRestore();
   });
@@ -96,7 +192,7 @@ describe("registerCacheTypePolicies", () => {
     registerCacheTypePolicies({ TestPluginPriority: { keyFields: false } }, { owner: "first-plugin" });
     registerCacheTypePolicies({ TestPluginPriority: { keyFields: ["code"] } }, { owner: "louder-plugin", priority: 1 });
 
-    expect(window.modulesCacheDebug.owners.get("TestPluginPriority")).toEqual({
+    expect(cacheDebug().owners.get("TestPluginPriority")).toEqual({
       owner: "louder-plugin",
       priority: 1,
     });

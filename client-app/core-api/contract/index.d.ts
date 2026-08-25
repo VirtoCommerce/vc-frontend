@@ -2530,18 +2530,23 @@ declare const graphqlClient: ApolloClient<_apollo_client_cache.NormalizedCacheOb
 declare const apolloClient: ApolloClient<_apollo_client_cache.NormalizedCacheObject>;
 
 /**
- * Adds type policies to the host's Apollo cache. Exposed to Module Federation plugins
- * through `@vc-frontend/core` so a plugin can normalize its own GraphQL types without
- * importing the cache instance.
+ * Adds type policies to the host's Apollo cache. Exposed to Module Federation plugins through
+ * `@vc-frontend/core` so a plugin can normalize its own GraphQL types without importing the cache.
  *
- * Call before the plugin issues its first query — policies do not apply retroactively
- * to data already in the cache.
+ * Call before the plugin issues its first query — policies do not apply retroactively to data
+ * already in the cache. Registering late is warned about in development, not refused.
  *
- * One typename, one owner: Apollo would let a later `keyFields` replace an earlier one silently,
- * so a registration that collides with a policy held at an equal or higher priority is REFUSED
- * (the rest of the batch still applies). Pass `owner` so the refusal names someone, and `priority`
- * only when a plugin is deliberately meant to outrank another. The host's own policies sit at
- * {@link HOST_PRIORITY}, so no plugin can take one over.
+ * One claim, one owner, at the granularity Apollo merges at (see {@link claimsOf} and
+ * {@link blockedBy}). A claim held at an equal or higher priority is refused, and only that claim —
+ * the rest of the policy, and the rest of the batch, still applies. Pass `owner` so a refusal names
+ * someone, and `priority` only when a plugin is deliberately meant to outrank another. The host's
+ * own policies sit at {@link HOST_PRIORITY}, so no plugin can take one over.
+ *
+ * WHAT THIS DOES NOT PROTECT: only the policies the host DECLARES are reserved. The host stores far
+ * more typenames than it writes policies for — anything Apollo normalizes by its default `id` rule
+ * holds no policy and is therefore unclaimed, so a plugin registering `keyFields` for one of those
+ * is accepted. The check is a collision guard between declared policies, not a fence around the
+ * host's whole cache surface.
  *
  * In development the ownership map and every refusal are readable as `window.modulesCacheDebug`.
  */
