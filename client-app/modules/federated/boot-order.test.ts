@@ -1,4 +1,6 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
+import type { IPlatformPlugin } from "./index";
 
 /**
  * Executes the real app-runner and records the order its calls actually happen in, so a call moved
@@ -18,14 +20,21 @@ const record = (name: string) =>
 
 const LOADER_REACHED = new Error("loader reached - nothing past this point is under test");
 
+const { getStorePluginsMock, loaderOptions } = vi.hoisted(() => {
+  // The options app-runner hands the loader, so the discovery wiring itself is assertable.
+  const captured: { current?: { fetchPlugins?: () => Promise<unknown> } } = {};
+  return { getStorePluginsMock: vi.fn(), loaderOptions: captured };
+});
+
 const ref = <T>(value: T) => ({ value });
 
 // Rejects rather than throwing at the call site: the run must reach `await federatedModulesReady`
 // for the rejection to surface, so deleting that await turns this into an unhandled rejection and
 // the assertion below stops seeing a rejected run.
 vi.mock("@/modules/federated/bootstrap", () => ({
-  startFederatedModules: vi.fn(async () => {
+  startFederatedModules: vi.fn(async (options?: { fetchPlugins?: () => Promise<unknown> }) => {
     order.push("startFederatedModules");
+    loaderOptions.current = options;
     throw LOADER_REACHED;
   }),
 }));
@@ -144,16 +153,34 @@ vi.mock("@/core/api/graphql", () => ({
     whiteLabelingSettings: {},
     slugInfo: undefined,
   })),
-  getStorePlugins: vi.fn(async () => []),
+  getStorePlugins: getStorePluginsMock,
   initializeApplication: vi.fn(async () => ({ settings: { modules: [] } })),
 }));
 
-describe("app-runner boot order", () => {
-  it("puts the theme context and the user in place before the loader, and the router after it", async () => {
-    document.body.innerHTML = '<div id="app"></div>';
-    const runner = (await import("@/app-runner")).default;
+/** Each case runs the real app-runner again, so nothing may carry over between them. */
+async function runBoot() {
+  document.body.innerHTML = '<div id="app"></div>';
+  const runner = (await import("@/app-runner")).default;
+  await expect(runner()).rejects.toThrow("loader reached");
+}
 
-    await expect(runner()).rejects.toThrow("loader reached");
+describe("app-runner boot order", () => {
+  beforeEach(() => {
+    vi.resetModules();
+    vi.clearAllMocks();
+    // Shared across cases: without this a later case reads an earlier one's recording and can
+    // pass on entries its own run never produced.
+    order.length = 0;
+    loaderOptions.current = undefined;
+    getStorePluginsMock.mockResolvedValue([]);
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it("puts the theme context and the user in place before the loader, and the router after it", async () => {
+    await runBoot();
 
     // The router must not be installed until the loader has settled, or a deep link to a plugin
     // route resolves before the plugin registered it.
@@ -167,5 +194,42 @@ describe("app-runner boot order", () => {
     expect(order.indexOf("setThemeContext")).toBeLessThan(loaderAt);
     expect(order.indexOf("setUser"), "setUser did not run before the loader").toBeGreaterThan(-1);
     expect(order.indexOf("setUser")).toBeLessThan(loaderAt);
+  });
+  describe("discovery wiring", () => {
+    const PLUGINS = [{ id: "sales-rep" }] as unknown as readonly IPlatformPlugin[];
+
+    it("issues the plugin-list query and hands its result to the loader when the flag is on", async () => {
+      vi.stubEnv("APP_MODULES_FEDERATION_ENABLED", "true");
+      getStorePluginsMock.mockResolvedValue(PLUGINS);
+
+      await runBoot();
+
+      // Not just "the query ran": the promise it returned must be what reaches the loader, which
+      // is the wiring a deleted call site would break while every loader spec stayed green.
+      expect(getStorePluginsMock).toHaveBeenCalledTimes(1);
+      await expect(loaderOptions.current?.fetchPlugins?.()).resolves.toBe(PLUGINS);
+    });
+
+    it("issues nothing and resolves to no plugins when the flag is off", async () => {
+      await runBoot();
+
+      expect(getStorePluginsMock).not.toHaveBeenCalled();
+      await expect(loaderOptions.current?.fetchPlugins?.()).resolves.toBeUndefined();
+    });
+
+    it("starts the query before it awaits the page context, so the round trips overlap", async () => {
+      vi.stubEnv("APP_MODULES_FEDERATION_ENABLED", "true");
+      getStorePluginsMock.mockImplementation(() => {
+        order.push("getStorePlugins");
+        return Promise.resolve([]);
+      });
+
+      await runBoot();
+
+      // Ahead of the loader by a lot: awaiting it there instead would add a serial round trip to
+      // boot, which is the whole reason the call site sits where it does.
+      expect(order.indexOf("getStorePlugins")).toBeGreaterThan(-1);
+      expect(order.indexOf("getStorePlugins")).toBeLessThan(order.indexOf("startFederatedModules"));
+    });
   });
 });
