@@ -10,7 +10,8 @@
     "federation.mjs",
     "federation.d.mts",
     "testing.mjs",
-    "testing.d.mts"
+    "testing.d.mts",
+    "tailwind-preset.d.cts"
   ],
   "types": "./contract/index.d.ts",
   "exports": {
@@ -25,7 +26,11 @@
       "types": "./testing.d.mts",
       "import": "./testing.mjs"
     },
-    "./tailwind-preset": "./contract/tailwind-preset.cjs"
+    "./tailwind-preset": {
+      "types": "./tailwind-preset.d.cts",
+      "require": "./contract/tailwind-preset.cjs",
+      "default": "./contract/tailwind-preset.cjs"
+    }
   },
   "peerDependencies": {
     "@apollo/client": "^3.14.0",

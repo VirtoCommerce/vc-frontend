@@ -230,7 +230,9 @@ const byCodepoint = (a, b) => {
 function collectDtsFiles(dir, found = []) {
   // Sorted: readdir order is filesystem-dependent, and the inlined declarations are emitted in
   // traversal order — an unsorted walk makes the committed contract differ between machines.
-  for (const entry of readdirSync(dir).sort()) {
+  // Same order the default comparator gives for strings (UTF-16 code units), stated explicitly:
+  // determinism is what this sort is for, and a bare .sort() reads as a latent numeric-sort bug.
+  for (const entry of readdirSync(dir).sort(byCodepoint)) {
     const path = join(dir, entry);
     if (statSync(path).isDirectory()) {
       collectDtsFiles(path, found);
