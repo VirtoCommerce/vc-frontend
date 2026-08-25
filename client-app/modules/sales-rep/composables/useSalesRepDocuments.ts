@@ -10,15 +10,17 @@ import type { Ref } from "vue";
 type SalesRepDocumentWireType = NonNullable<NonNullable<SalesRepDocumentsQuery["salesRepDocuments"]>["items"]>[number];
 
 // Shared mapper for the list and the by-id lookup. An absent modifiedDate falls back to createdDate.
+// name/contentType/size are null on a corrupted row (the file record is gone; the download 404s) —
+// normalized here like every other wire null: name borrows the display name, size renders as 0.
 export function mapSalesRepDocument(document: SalesRepDocumentWireType): SalesRepDocumentType {
   return {
     id: document.id,
-    name: document.name,
-    displayName: document.displayName || document.name,
+    name: document.name || document.displayName || "",
+    displayName: document.displayName || document.name || "",
     category: document.category ?? "",
     isPinned: document.isPinned,
     contentType: document.contentType ?? "",
-    size: document.size,
+    size: document.size ?? 0,
     createdDate: document.createdDate as string,
     modifiedDate: (document.modifiedDate ?? document.createdDate) as string,
     url: document.url,

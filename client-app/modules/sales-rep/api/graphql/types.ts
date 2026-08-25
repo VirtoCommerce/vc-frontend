@@ -662,17 +662,17 @@ export type SalesRepDocument = {
   isPinned: Scalars['Boolean']['output'];
   /** Last modification date. */
   modifiedDate?: Maybe<Scalars['DateTime']['output']>;
-  /** Original file name (also the download file name). */
-  name: Scalars['String']['output'];
+  /** Original file name (also the download file name); null when the file record is missing (out-of-band corruption). */
+  name?: Maybe<Scalars['String']['output']>;
   /** Optional page count. */
   pageCount?: Maybe<Scalars['Int']['output']>;
   /** Optional preview image URL for the card grid. */
   previewUrl?: Maybe<Scalars['String']['output']>;
-  /** File size in bytes. */
-  size: Scalars['Long']['output'];
+  /** File size in bytes; null when the file record is missing (out-of-band corruption). */
+  size?: Maybe<Scalars['Long']['output']>;
   /** Optional short description. */
   summary?: Maybe<Scalars['String']['output']>;
-  /** Authorized download URL (the file-experience-api endpoint — never a raw blob URL). */
+  /** Authorized download URL (the file-experience-api endpoint — never a raw blob URL); always resolvable — for a corrupted document the download returns the server error (404). */
   url: Scalars['String']['output'];
 };
 
@@ -984,7 +984,7 @@ export type SalesRepDocumentQueryVariables = Exact<{
 }>;
 
 
-export type SalesRepDocumentQuery = { salesRepDocument?: { id: string, name: string, displayName?: string, category?: string, isPinned: boolean, contentType?: string, size: number, createdDate: any, modifiedDate?: any, url: string, summary?: string, pageCount?: number, previewUrl?: string } };
+export type SalesRepDocumentQuery = { salesRepDocument?: { id: string, name?: string, displayName?: string, category?: string, isPinned: boolean, contentType?: string, size?: number, createdDate: any, modifiedDate?: any, url: string, summary?: string, pageCount?: number, previewUrl?: string } };
 
 export type SalesRepDocumentCategoriesQueryVariables = Exact<{
   keyword?: InputMaybe<Scalars['String']['input']>;
@@ -1002,7 +1002,7 @@ export type SalesRepDocumentsQueryVariables = Exact<{
 }>;
 
 
-export type SalesRepDocumentsQuery = { salesRepDocuments?: { totalCount?: number, items?: Array<{ id: string, name: string, displayName?: string, category?: string, isPinned: boolean, contentType?: string, size: number, createdDate: any, modifiedDate?: any, url: string, summary?: string, pageCount?: number, previewUrl?: string }> } };
+export type SalesRepDocumentsQuery = { salesRepDocuments?: { totalCount?: number, items?: Array<{ id: string, name?: string, displayName?: string, category?: string, isPinned: boolean, contentType?: string, size?: number, createdDate: any, modifiedDate?: any, url: string, summary?: string, pageCount?: number, previewUrl?: string }> } };
 
 export type SalesRepLayoutQueryVariables = Exact<{
   scope: Scalars['String']['input'];
