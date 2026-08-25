@@ -188,10 +188,26 @@ watch(
       }
     }
 
-    @container (width > 56px) {
+    @container (56px < width <= 72px) {
       svg {
         --stroke-bucket: 2.7;
         --size-anchor: 64;
+      }
+    }
+
+    @container (72px < width <= 96px) {
+      svg {
+        --stroke-bucket: 2.7;
+        --size-anchor: 86;
+      }
+    }
+
+    // Past the ladder the stroke grows with the icon instead of staying pinned: no size this
+    // large occurs here, and a hairline on a huge glyph reads anemic.
+    @container (width > 96px) {
+      svg {
+        --stroke-bucket: 2.7;
+        --size-anchor: 96;
       }
     }
 
