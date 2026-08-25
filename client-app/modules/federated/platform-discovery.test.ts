@@ -322,6 +322,33 @@ describe("platform-served plugin discovery", () => {
     expect(loadRemoteMock).not.toHaveBeenCalled();
   });
 
+  it("skips a plugin whose remote name could swallow another remote's loadRemote id", async () => {
+    stubManifestFetch();
+    loadRemoteMock.mockResolvedValue({ init: vi.fn() });
+
+    // MF matches a loadRemote id by prefix, so "a/plugin" would answer the request meant for "a"
+    // and serve its expose out of the wrong bundle - with both plugins reported loaded.
+    const result = await initFederatedModules({
+      plugins: [platformPlugin({ id: "sneaky", remote: { name: "a/plugin", exposed: "./plugin" } })],
+    });
+
+    expect(result.skipped).toEqual(["sneaky"]);
+    expect(registerRemotesMock).not.toHaveBeenCalled();
+  });
+
+  it("skips an entry whose URL has an opaque path, which the manifest rewrite cannot touch", async () => {
+    stubManifestFetch();
+
+    // blob: has this origin, so the same-origin check accepts it, but its pathname setter is a
+    // no-op - the rewrite would return the input and MF would script-load it as code.
+    const result = await initFederatedModules({
+      plugins: [platformPlugin({ entry: { type: "script", path: `blob:${globalThis.location.origin}/deadbeef` } })],
+    });
+
+    expect(result.skipped).toEqual(["sales-rep"]);
+    expect(registerRemotesMock).not.toHaveBeenCalled();
+  });
+
   describe("descriptors the platform should never send", () => {
     // The projection is a hand-written structural type, so nothing type-checks what arrives. One
     // bad field must cost one plugin - it used to throw out of the loader and lose the whole batch.

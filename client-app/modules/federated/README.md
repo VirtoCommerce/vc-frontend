@@ -381,9 +381,16 @@ decision for the storefront. What the harness enforces today:
   contents: a same-origin manifest may still declare chunk URLs on another host, and the MF runtime
   fetches those unchecked.
 - **No silent host-route takeover** — `router.addRoute` evicts whatever root-level route already
-  carries the new record's name, and vue-router's warning for it is dev-only. For the span of a
-  plugin's `init()` the loader refuses a claim on a name that already resolves. It covers takeover,
-  not authorization, and only inside that window.
+  carries the new record's name, and vue-router's warning for it is dev-only. For the span of the
+  load-and-init phase the loader wraps the router and refuses a claim on a name the host already
+  owns, checking every name one call would claim: both `addRoute` overloads and each named entry in
+  `children`, since vue-router treats those as root adds too. `removeRoute` is wrapped in the same
+  window and refuses a host name, because remove-then-add would otherwise leave the name free by the
+  time the add is checked — a plugin may still remove routes it added itself. One wrapper covers the
+  whole phase, not one per plugin: plugins init concurrently, and a per-plugin save/restore leaks one
+  plugin's wrapper onto the host router while the next runs unguarded. It covers takeover, not
+  authorization, and only inside that window — a claim made from a continuation after the phase ends
+  is outside it, and the name it is refused under cannot be attributed to a single plugin.
 - **No tenant-editable remote list** — there is no store setting to edit. The runtime list is
   whatever modules are installed, so a platform administrator with install rights decides which
   plugins the storefront loads; the env override stays build-time. It is still backend-supplied

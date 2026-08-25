@@ -19,10 +19,17 @@ interface IStartOptions extends Pick<IFederatedLoaderOptions, "hasPermission"> {
  * a remote may legally take up to manifest + 2×load, 8s with the 2s/3s defaults),
  * plus DISCOVERY_TIMEOUT_MS for the plugin list, already bound how long a compliant
  * remote can hold boot. This outer cap exists for what those budgets cannot cover —
- * the fetch of the loader chunk itself hanging, or an inner timeout malfunctioning —
- * so it must stay ABOVE the sum of ALL of them: a remote
- * operating within its budgets must never trip it (its routes are guaranteed to exist
- * for the first navigation). Past the backstop, boot proceeds and the loader finishes
+ * the fetch of THIS loader's own chunk hanging, or an inner timeout malfunctioning — so
+ * it must stay above the sum of all the budgeted legs: 2 + 2 + 3 + 3 = 10s of the 12s.
+ *
+ * Which is the honest statement of the guarantee, and it is narrower than "never":
+ * the remaining 2s is all the headroom the UNBUDGETED loader-chunk fetch gets. A
+ * budget-compliant remote behind a chunk fetch slower than that can still trip the cap.
+ * Deliberately not given a budget of its own: bounding it IS what this backstop is for,
+ * and a second timer would only mean dropping every plugin sooner on a slow connection.
+ * Widen the cap, not the promise, if that 2s ever proves too tight.
+ *
+ * Past the backstop, boot proceeds and the loader finishes
  * detached: late plugins may register routes after the first navigation, and the only
  * signal is dev logging — production telemetry is a tracked stage-2 follow-up
  * (TODO.md), so a backstop overrun currently leaves NO prod signal.

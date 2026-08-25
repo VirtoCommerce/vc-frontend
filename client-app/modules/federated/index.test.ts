@@ -4,7 +4,27 @@ import { initFederatedModules } from "./index";
 
 interface IRouterStub {
   addRoute: (...args: unknown[]) => unknown;
+  removeRoute: (...args: unknown[]) => unknown;
   hasRoute: (name: unknown) => boolean;
+  getRoutes: () => { name?: unknown }[];
+}
+
+/**
+ * Router-shaped on purpose: the loader's guard reads `getRoutes()` to learn which names the HOST
+ * owns and wraps `removeRoute` as well as `addRoute`. A stub missing either silently disables the
+ * half of the guard that depends on it.
+ */
+function routerStub(existing: string[] = []) {
+  const owned = new Set(existing);
+  const addRoute = vi.fn();
+  const removeRoute = vi.fn((name: unknown) => owned.delete(String(name)));
+  const router: IRouterStub = {
+    addRoute,
+    removeRoute,
+    hasRoute: (name: unknown) => owned.has(String(name)),
+    getRoutes: () => [...owned].map((name) => ({ name })),
+  };
+  return { addRoute, removeRoute, router };
 }
 
 const { loadRemoteMock, registerRemotesMock, loggerErrorMock, loggerWarnMock, loggerInfoMock, globalsMock } =
@@ -192,8 +212,7 @@ describe("initFederatedModules", () => {
   });
 
   it("refuses a plugin route that would evict an existing host route", async () => {
-    const addRoute = vi.fn();
-    const router = { addRoute, hasRoute: (name: unknown) => name === "Cart" };
+    const { addRoute, router } = routerStub(["Cart"]);
     globalsMock.router = router;
     stubManifestFetch();
     stubRemotesEnv({ news: REMOTE_URL });
@@ -213,8 +232,7 @@ describe("initFederatedModules", () => {
   });
 
   it("restores the router after init so a later host add is not guarded", async () => {
-    const addRoute = vi.fn();
-    const router = { addRoute, hasRoute: () => true };
+    const { addRoute, router } = routerStub(["Cart"]);
     globalsMock.router = router;
     stubManifestFetch();
     stubRemotesEnv({ news: REMOTE_URL });
@@ -378,9 +396,10 @@ describe("initFederatedModules", () => {
     const { BOOT_BACKSTOP_MS, DISCOVERY_TIMEOUT_MS } = await import("./bootstrap");
     const { DEFAULT_MANIFEST_TIMEOUT_MS, DEFAULT_LOAD_TIMEOUT_MS } = await import("./index");
 
-    // Every leg the backstop races, in the order `work` runs them: the plugin list, then one
-    // remote's manifest, then its load and its init. Leaving the plugin list out of this sum is
-    // what let a compliant remote trip the backstop and lose its deep-link guarantee.
+    // Every BUDGETED leg, in the order `work` runs them: the plugin list, then one remote's
+    // manifest, then its load and its init. Leaving the plugin list out of this sum is what let a
+    // compliant remote trip the backstop. What is left over is the headroom the unbudgeted
+    // loader-chunk fetch gets — see the BOOT_BACKSTOP_MS comment for why it has no budget.
     expect(BOOT_BACKSTOP_MS).toBeGreaterThan(
       DISCOVERY_TIMEOUT_MS + DEFAULT_MANIFEST_TIMEOUT_MS + 2 * DEFAULT_LOAD_TIMEOUT_MS,
     );
@@ -474,10 +493,9 @@ describe("initFederatedModules", () => {
 
   describe("route squatting", () => {
     function hostRouter(existing: string[]) {
-      const addRoute = vi.fn();
-      const router = { addRoute, hasRoute: (name: unknown) => existing.includes(String(name)) };
-      globalsMock.router = router;
-      return { addRoute, router };
+      const stub = routerStub(existing);
+      globalsMock.router = stub.router;
+      return stub;
     }
 
     it("refuses a named child route that would evict a host route", async () => {
@@ -525,6 +543,42 @@ describe("initFederatedModules", () => {
       await initFederatedModules();
 
       expect(addRoute).toHaveBeenCalledWith("Account", { name: "News", path: "news" });
+    });
+
+    it("refuses removing a host route, so remove-then-add cannot launder a squat", async () => {
+      const { addRoute, removeRoute, router } = hostRouter(["Checkout"]);
+      stubManifestFetch();
+      stubRemotesEnv({ news: REMOTE_URL });
+      loadRemoteMock.mockResolvedValue({
+        init: () => {
+          // hasRoute alone could not stop this: after the remove the name IS free. The host's own
+          // builder-preview plugin uses remove-then-add, so it is a normal shape, not a contrivance.
+          router.removeRoute("Checkout");
+          router.addRoute({ name: "Checkout", path: "/hijacked" });
+        },
+      });
+
+      await initFederatedModules();
+
+      expect(removeRoute).not.toHaveBeenCalled();
+      expect(addRoute).not.toHaveBeenCalled();
+      expect(loggerErrorMock).toHaveBeenCalledWith(expect.stringContaining('remove the host route "Checkout"'));
+    });
+
+    it("lets a plugin remove a route it added itself", async () => {
+      const { removeRoute, router } = hostRouter(["Checkout"]);
+      stubManifestFetch();
+      stubRemotesEnv({ news: REMOTE_URL });
+      loadRemoteMock.mockResolvedValue({
+        init: () => {
+          router.addRoute({ name: "News", path: "/news" });
+          router.removeRoute("News");
+        },
+      });
+
+      await initFederatedModules();
+
+      expect(removeRoute).toHaveBeenCalledWith("News");
     });
 
     it("hands the host its own router back after two plugins have both run init", async () => {
