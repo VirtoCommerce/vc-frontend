@@ -111,9 +111,29 @@ request that fits none of them is a request to change the host, not to widen the
 | 1. Capability              | composable or function            | Default. The plugin states intent, the host executes it — `registerCacheTypePolicies`, `useNavigations`, `useModal`.                                                                                    |
 | 2. Host-rendered chrome    | nothing — an extension-point entry | The result must look native. The plugin registers **data** and the host renders its own markup: an entry omits `component` and contributes a `use()` composable. See `useExtensionRegistry`. |
 | 3. Frozen component        | a `.vue` component                | The visual itself is the contract and re-implementing it would drift from per-store settings — `OrderStatus`. Its props become contract: renaming one is a **breaking** change.                          |
+| 4. ui-kit primitive        | a `Vc*` component                 | Bulk exception, admitted by ONE rule: the component is already globally registered by the host AND a plugin template uses it. Nothing else qualifies — see below.                                        |
 
 Never export from a `_internal/` path. That folder is private by convention, and exporting
 from it freezes markup the host needs to keep free to change — Tier 2 exists for that case.
+
+### Tier 4 is a bulk exception, and its promise is not yet enforced
+
+The facade exports 22 `Vc*` components plus `uiKit`, not one. That is not tier 3 by another
+name: none of them is a visual whose per-store settings are the contract. They are there for a
+mechanical reason — the host registers ui-kit globally, so a plugin's template resolves `VcButton`
+inside the host but **not** on the plugin's own dev server, which has no host app instance. Without
+the export a plugin cannot build or run its specs standalone.
+
+The admission rule is therefore narrow and checkable: **globally registered by the host, and used
+by a plugin template.** A ui-kit component no plugin template reaches for does not belong here, and
+a request for anything that is not a ui-kit primitive is a tier 1–3 request.
+
+Known gap, stated rather than implied: tier 3's promise that "renaming a prop is breaking" is **not
+enforced for these**. The version gate compares exported NAMES (`extractExportNames`), so a renamed
+or removed prop on `VcButton` regenerates the contract, auto-bumps a patch, and every plugin pinned
+to the range keeps resolving it — then breaks at runtime on a prop that no longer exists. Making
+that promise real needs a prop-level diff between contract versions; until then, treat a ui-kit prop
+rename as a manual breaking bump.
 
 ### Tier 2 only exists where the host renders a fallback
 

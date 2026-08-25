@@ -70,8 +70,12 @@ from you (the mobile menu's "My customers" link takes a count badge). Register a
 a component:
 
 ```ts
+// The id belongs to the plugin, so the plugin owns the constant — as `sales-rep` does with
+// MY_CUSTOMERS_NAV_LINK_ID, which it also reuses for its `accountMenu` entry and its menu link.
+// `EXTENSION_NAMES` carries the HOST's own ids; asking it for a name it does not declare is a
+// compile error, not an `undefined` you find out about when the badge never appears.
 const { registerContribution } = useExtensionRegistry();
-registerContribution("mobileMenu", EXTENSION_NAMES.mobileMenu.myCustomers, { use: useMyCount });
+registerContribution("mobileMenu", MY_COUNT_ID, { use: useMyCount });
 ```
 
 The rules, because they are not obvious:
@@ -85,9 +89,11 @@ The rules, because they are not obvious:
   or its name changes, so it may start a query. Keep it synchronous, and do not let it throw:
   wrap global state in `createSharedComposable` and catch inside, or a failed first call leaves
   every later surface reading `undefined`.
-- **A late registration runs `use()` outside a component context.** If the entry lands after the
-  point mounted (an asynchronously loaded plugin), the call comes from Vue's scheduler, where
-  `inject()` does not resolve — so an injection-dependent composable degrades there.
+- **A late registration still gets a component context.** If the entry lands after the point
+  mounted (an asynchronously loaded plugin), the invalidated computed mounts a fresh
+  `ExtensionContribution`, so `use()` runs in a real setup: `inject()` resolves, and an
+  injection-dependent composable — which is every Apollo one, i.e. the whole reason `use()` is a
+  function — works there. `extension-point-late-registration.test.ts` pins it.
 - **`$canRenderExtensionPoint` is false for a contribution** (it answers "has a component"). Never
   gate a decorate-capable point on it.
 

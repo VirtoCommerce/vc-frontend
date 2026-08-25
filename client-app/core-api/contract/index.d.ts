@@ -2497,28 +2497,36 @@ declare function _useExtensionRegistry(): {
 };
 declare const useExtensionRegistry: typeof _useExtensionRegistry;
 
-declare const EXTENSION_NAMES: {
-    [k: string]: {
-        [k: string]: string;
+/**
+ * The names a caller may reference. Declared as its own literal so a name that is NOT here is a
+ * COMPILE error: `INITIAL_EXTENSION_NAMES` comes out of `Object.fromEntries`, whose index signature
+ * made `EXTENSION_NAMES.<category>.<anything>` type-check as `string` and evaluate to `undefined` —
+ * the README's own `mobileMenu.myCustomers` example registered an extension under the literal string
+ * "undefined", with nothing anywhere to point at.
+ *
+ * The built-in entry names stay in the merged VALUE for compatibility but are deliberately not in
+ * this type: nothing references them, and a plugin's own id belongs to the plugin, not here. Need
+ * one? Add it above, so there is a single visible source.
+ */
+declare const CUSTOM_EXTENSION_NAMES: {
+    readonly productCard: {
+        readonly cardButton: "card-button";
     };
-} & {
-    productCard: {
-        cardButton: string;
+    readonly productPage: {
+        readonly sidebarButton: "sidebar-button";
+        readonly variationItemButton: "variation-item-button";
     };
-    productPage: {
-        sidebarButton: string;
-        variationItemButton: string;
+    readonly paymentPage: {
+        readonly paymentMethods: "payment-methods";
     };
-    paymentPage: {
-        paymentMethods: string;
+    readonly orderPaymentPage: {
+        readonly paymentMethods: "payment-methods";
     };
-    orderPaymentPage: {
-        paymentMethods: string;
-    };
-    sharedList: {
-        provenanceNote: string;
+    readonly sharedList: {
+        readonly provenanceNote: "provenance-note";
     };
 };
+declare const EXTENSION_NAMES: typeof CUSTOM_EXTENSION_NAMES;
 
 /**
  * Non-cached version of Apollo Client
