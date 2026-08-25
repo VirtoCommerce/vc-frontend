@@ -23,8 +23,20 @@ vi.mock("@/core-api/package.json", () => ({ version: "1.4.0" }));
 
 const COMPATIBLE_MANIFEST = { metaData: { requiredHostVersion: "^1.0.0" } };
 
-function stubManifestFetch(manifest: unknown = COMPATIBLE_MANIFEST): ReturnType<typeof vi.fn> {
-  const fetchMock = vi.fn().mockResolvedValue({ ok: true, status: 200, json: () => Promise.resolve(manifest) });
+function stubManifestFetch(
+  manifest: unknown = COMPATIBLE_MANIFEST,
+  init?: { servedFrom?: string },
+): ReturnType<typeof vi.fn> {
+  // `url` is the post-redirect URL a real Response carries; without it the loader's response-origin
+  // check silently never runs in any test.
+  const fetchMock = vi.fn().mockImplementation((requested: string) =>
+    Promise.resolve({
+      ok: true,
+      status: 200,
+      url: init?.servedFrom ?? requested,
+      json: () => Promise.resolve(manifest),
+    }),
+  );
   vi.stubGlobal("fetch", fetchMock);
   return fetchMock;
 }
@@ -299,5 +311,46 @@ describe("platform-served plugin discovery", () => {
     await initFederatedModules({ plugins: [platformPlugin()] });
 
     expect(loggerInfoMock).toHaveBeenCalledWith("[MF] plugins loaded=[sales-rep@3.1000.0]");
+  });
+  it("skips a plugin whose manifest is served from another origin", async () => {
+    stubManifestFetch(COMPATIBLE_MANIFEST, { servedFrom: "https://evil.example.com/mf-manifest.json" });
+
+    const result = await initFederatedModules({ plugins: [platformPlugin()] });
+
+    expect(result.skipped).toEqual(["sales-rep"]);
+    expect(registerRemotesMock).not.toHaveBeenCalled();
+    expect(loadRemoteMock).not.toHaveBeenCalled();
+  });
+
+  describe("descriptors the platform should never send", () => {
+    // The projection is a hand-written structural type, so nothing type-checks what arrives. One
+    // bad field must cost one plugin - it used to throw out of the loader and lose the whole batch.
+    it.each([
+      ["permission", { permission: 7 as unknown as string }],
+      ["entry.type", { entry: { type: 7, path: "/m/a/remoteEntry.js" } as unknown as IPlatformPlugin["entry"] }],
+      [
+        "contentFiles[].type",
+        { contentFiles: [{ type: 7, path: "/m/a/a.css" }] as unknown as IPlatformPlugin["contentFiles"] },
+      ],
+      ["remote.name", { remote: { name: 7 } as unknown as IPlatformPlugin["remote"] }],
+    ])("skips only the plugin whose %s is not a string", async (_field, overrides) => {
+      stubManifestFetch();
+      loadRemoteMock.mockResolvedValue({ init: vi.fn() });
+      const healthy = platformPlugin({ id: "healthy", remote: { name: "healthy", exposed: "./plugin" } });
+
+      const result = await initFederatedModules({ plugins: [platformPlugin(overrides), healthy] });
+
+      expect(result.loaded).toContain("healthy");
+    });
+
+    it("resolves, rather than throwing, when the plugin list is not an array", async () => {
+      stubManifestFetch();
+
+      const result = await initFederatedModules({
+        plugins: { nope: true } as unknown as readonly IPlatformPlugin[],
+      });
+
+      expect(result).toEqual({ loaded: [], failed: [], skipped: [] });
+    });
   });
 });

@@ -16,9 +16,10 @@ import type { RouteRecordRaw, Router } from "vue-router";
  *   within its budget rather than hanging boot forever. There are TWO budget knobs
  *   (manifestTimeoutMs, loadTimeoutMs — the latter bounds load and init separately),
  *   so one remote may legally take up to manifest + 2×load (defaults: 2s + 3s + 3s =
- *   8s). bootstrap.ts additionally holds a BOOT_BACKSTOP_MS above that sum — a true
- *   backstop that fires only when these budgets malfunction or the loader chunk fetch
- *   itself hangs; keep it > manifest + 2×load when changing the defaults here.
+ *   8s). bootstrap.ts additionally holds a BOOT_BACKSTOP_MS above that sum PLUS its own
+ *   DISCOVERY_TIMEOUT_MS — a true backstop that fires only when these budgets malfunction
+ *   or the loader chunk fetch itself hangs; keep it > discovery + manifest + 2×load when
+ *   changing the defaults here.
  * Discovery has two sources: the platform's plugin list (xAPI `store.plugins`, fetched by the
  * caller) and `APP_MODULES_FEDERATION_REMOTES`, which wins when set so a local remote is never
  * overridden by what the backend serves. The harness ships no built-in remote.
@@ -37,6 +38,12 @@ interface IRemoteDescriptor {
   exposed: string;
   permission?: string;
   styles: string[];
+  /**
+   * Env descriptors may legitimately live on another origin (see isAllowedRemoteUrl); platform
+   * descriptors may not. Carried on the descriptor because isCompatible re-checks the manifest
+   * RESPONSE url and cannot otherwise tell the two sources apart.
+   */
+  allowCrossOrigin?: boolean;
   /** The platform module's version, for logs only — compatibility rides on requiredHostVersion. */
   version?: string;
 }
@@ -208,7 +215,7 @@ function resolveEnvRemotes(): IResolvedRemotes | undefined {
       resolved.invalidNames.push(name);
       continue;
     }
-    resolved.remotes.push({ name, entry: value, exposed: SCAFFOLD_EXPOSE_KEY, styles: [] });
+    resolved.remotes.push({ name, entry: value, exposed: SCAFFOLD_EXPOSE_KEY, styles: [], allowCrossOrigin: true });
   }
   return resolved;
 }
@@ -224,6 +231,15 @@ function isSameOrigin(url: string): boolean {
   } catch {
     return false;
   }
+}
+
+/**
+ * Descriptor fields are backend data behind a hand-written structural type, not codegen — a
+ * non-string arriving here (schema drift, a bad module) must cost one plugin, not throw out of
+ * the batch and lose every plugin with it.
+ */
+function asString(value: unknown): string | undefined {
+  return typeof value === "string" ? value : undefined;
 }
 
 /** The `$(ModuleId)` token in a platform path must survive verbatim — the platform's routes contain it. */
@@ -253,22 +269,24 @@ function withCacheBuster(url: string, hash?: string | null): string {
 
 function collectStyles(plugin: IPlatformPlugin): string[] {
   const styles: string[] = [];
-  for (const file of plugin.contentFiles ?? []) {
-    if (!file?.path) {
+  for (const file of Array.isArray(plugin.contentFiles) ? plugin.contentFiles : []) {
+    const filePath = asString(file?.path);
+    if (!filePath) {
       continue;
     }
     // The platform documents these kinds as lower-case by contract, but a dropped stylesheet is
     // invisible otherwise: the plugin loads and renders unstyled with nothing to point at.
-    if (file.type?.toLowerCase() !== PLATFORM_STYLE_FILE_TYPE) {
-      Logger.info(`[MF] Plugin "${plugin.id}": ignoring content file of kind "${file.type}"`);
+    const fileType = asString(file?.type);
+    if (fileType?.toLowerCase() !== PLATFORM_STYLE_FILE_TYPE) {
+      Logger.info(`[MF] Plugin "${plugin.id}": ignoring content file of kind "${String(file?.type)}"`);
       continue;
     }
-    const url = toAbsoluteUrl(file.path);
+    const url = toAbsoluteUrl(filePath);
     if (!url || !isSameOrigin(url)) {
-      Logger.error(`[MF] Ignoring stylesheet "${file.path}" of plugin "${plugin.id}": not same-origin`);
+      Logger.error(`[MF] Ignoring stylesheet "${filePath}" of plugin "${plugin.id}": not same-origin`);
       continue;
     }
-    styles.push(withCacheBuster(url, file.hash));
+    styles.push(withCacheBuster(url, asString(file?.hash)));
   }
   return styles;
 }
@@ -307,45 +325,52 @@ function resolvePlatformRemotes(plugins: readonly IPlatformPlugin[]): IResolvedR
 
   const seen = new Set<string>();
 
-  for (const plugin of plugins) {
-    const name = plugin.remote?.name || plugin.id;
-    const path = plugin.entry?.path;
+  // Not `?? []`: a non-array (schema drift, a bad gateway) is not iterable and would throw out of
+  // the whole loader — the batch must survive whatever shape arrives.
+  for (const plugin of Array.isArray(plugins) ? plugins : []) {
+    const name = asString(plugin?.remote?.name) || asString(plugin?.id) || "";
+    const path = asString(plugin?.entry?.path);
+    if (!name) {
+      Logger.error("[MF] Skipping a plugin the platform advertised with no usable id or remote name");
+      continue;
+    }
     if (!path) {
-      Logger.error(`[MF] Skipping plugin "${plugin.id}": the platform declared no entry path`);
+      Logger.error(`[MF] Skipping plugin "${name}": the platform declared no entry path`);
       resolved.invalidNames.push(name);
       continue;
     }
     // Only a script entry is an MF remote; anything else would be loaded as one by mistake. An
     // absent type is accepted: the platform declares the field optional.
-    const type = plugin.entry?.type?.toLowerCase();
+    const type = asString(plugin?.entry?.type)?.toLowerCase();
     if (type && type !== PLATFORM_SCRIPT_ENTRY_TYPE) {
-      Logger.error(`[MF] Skipping plugin "${plugin.id}": entry type "${type}" is not supported`);
+      Logger.error(`[MF] Skipping plugin "${name}": entry type "${type}" is not supported`);
       resolved.invalidNames.push(name);
       continue;
     }
     const entryUrl = toAbsoluteUrl(path);
     if (!entryUrl || !isSameOrigin(entryUrl)) {
-      Logger.error(`[MF] Skipping plugin "${plugin.id}": entry "${path}" is not same-origin`);
+      Logger.error(`[MF] Skipping plugin "${name}": entry "${path}" is not same-origin`);
       resolved.invalidNames.push(name);
       continue;
     }
     // Claimed only now: a descriptor rejected above must not hold a name against a later, valid
-    // plugin. MF keeps only the last registration of a name while the load loop still runs per
-    // descriptor, so the loser's code would never execute yet be reported as loaded — it is
-    // reported by id instead, since the name itself belongs to the winner.
+    // plugin. Registering a name twice is a no-op in the MF runtime (no `force` — see
+    // registerRemotes below), so the second descriptor's code would never execute while the load
+    // loop still ran per descriptor and reported it loaded. The loser is reported by id instead,
+    // since the name itself belongs to the winner.
     if (seen.has(name)) {
-      Logger.error(`[MF] Skipping plugin "${plugin.id}": remote name "${name}" is already taken`);
-      resolved.invalidNames.push(plugin.id);
+      Logger.error(`[MF] Skipping plugin "${String(plugin?.id)}": remote name "${name}" is already taken`);
+      resolved.invalidNames.push(asString(plugin?.id) || name);
       continue;
     }
     seen.add(name);
     resolved.remotes.push({
       name,
-      entry: withCacheBuster(toManifestUrl(entryUrl), plugin.entry?.hash),
-      exposed: plugin.remote?.exposed || PLATFORM_EXPOSE_KEY,
-      permission: plugin.permission ?? undefined,
+      entry: withCacheBuster(toManifestUrl(entryUrl), asString(plugin?.entry?.hash)),
+      exposed: asString(plugin?.remote?.exposed) || PLATFORM_EXPOSE_KEY,
+      permission: asString(plugin?.permission),
       styles: collectStyles(plugin),
-      version: plugin.version ?? undefined,
+      version: asString(plugin?.version),
     });
   }
   return resolved;
@@ -375,33 +400,92 @@ function resolveRemotes(plugins: readonly IPlatformPlugin[]): IResolvedRemotes {
  * separately by the SHARED-DEPENDENCY GATE at loadRemote() time.
  */
 /**
+ * Every name ONE `addRoute` call would claim at root level. vue-router computes
+ * `isRootAdd = !originalRecord` and recurses into `children` before assigning it, so each named
+ * child is a root add too and evicts its namesake — checking only the top-level `name` would let
+ * `{ name: "Mine", children: [{ name: "Checkout" }] }` through.
+ */
+function claimedRouteNames(record: unknown, into: NonNullable<RouteRecordRaw["name"]>[] = []) {
+  if (!record || typeof record !== "object") {
+    return into;
+  }
+  const { name, children } = record as { name?: unknown; children?: unknown };
+  if (typeof name === "string" || typeof name === "symbol") {
+    into.push(name);
+  }
+  for (const child of Array.isArray(children) ? children : []) {
+    claimedRouteNames(child, into);
+  }
+  return into;
+}
+
+/** Set for the synchronous span of a plugin's init() so a refusal names the right plugin. */
+let initingPlugin: string | undefined;
+
+/**
  * `router.addRoute` evicts whatever root-level route already carries the new record's name —
  * vue-router calls `removeRoute` for it, and its own warning is dev-only. A plugin naming its
- * route `Checkout` would take the host's page over in silence, so refuse the eviction for the
- * span of `init()`, which is where a plugin is documented to register. A claim made after `init()`
- * settles (or after its budget expires) is outside the window.
+ * route `Checkout` would take the host's page over in silence, so refuse the eviction.
+ *
+ * Installed ONCE for the whole load+init phase, not per plugin: plugins are loaded and initialised
+ * concurrently, so a per-plugin save/restore captures whatever `addRoute` it observed — which is
+ * the PREVIOUS plugin's wrapper — and hands that back on the way out, leaving the host router
+ * permanently guarded by a closure belonging to one plugin while the next plugin ran unguarded.
+ * Covering the whole phase also covers a remote's module scope, which executes during loadRemote,
+ * before any init() is called.
+ *
+ * Both overloads add at root level: `addRoute(record)` and `addRoute(parentName, record)`. What it
+ * still does not cover is a claim made after the phase ends — see the README's security model.
  */
-async function runInitGuarded(name: string, init: () => unknown, budgetMs: number): Promise<void> {
+function installRouteGuard(): () => void {
   const router: Router | undefined = globals.router;
-  const original = router && (router.addRoute.bind(router) as (...args: unknown[]) => () => void);
-  if (router && original) {
-    const guarded = (...args: unknown[]) => {
-      const claimed = args.length === 1 ? (args[0] as RouteRecordRaw).name : undefined;
-      if (claimed !== undefined && router.hasRoute(claimed)) {
-        Logger.error(`[MF] "${name}" tried to replace the existing route "${String(claimed)}" - refused`);
-        return () => {};
-      }
-      return original(...args);
-    };
-    router.addRoute = guarded;
+  if (!router) {
+    return () => {};
   }
-  try {
-    await raceWithLateLogging(Promise.resolve(init()), budgetMs, `plugin "${name}" init`, "state is indeterminate");
-  } finally {
-    if (router && original) {
+  // Captured unbound and applied with the router as receiver, so the host gets its own method
+  // back - restoring a bound copy would leave `router.addRoute` permanently replaced.
+  const original = router.addRoute as (...args: unknown[]) => () => void;
+  const guarded = (...args: unknown[]) => {
+    const record = args.length >= 2 ? args[1] : args[0];
+    const taken = claimedRouteNames(record).find((claimed) => router.hasRoute(claimed));
+    if (taken !== undefined) {
+      // initingPlugin is set for the synchronous span of init() only; a claim made from a
+      // continuation after that cannot be attributed to one plugin.
+      const who = initingPlugin ? `"${initingPlugin}"` : "a plugin";
+      Logger.error(`[MF] ${who} tried to replace the existing route "${String(taken)}" - refused`);
+      return () => {};
+    }
+    return original.apply(router, args);
+  };
+  router.addRoute = guarded;
+  return () => {
+    // Only undo our own install: a plugin that replaced addRoute itself keeps what it chose,
+    // and restoring blindly would resurrect a wrapper the plugin deliberately shadowed.
+    if (router.addRoute === guarded) {
       router.addRoute = original;
     }
+  };
+}
+
+/**
+ * `plugin.init()` — called ON the module, so a module shaped `{ services, init() { this.services } }`
+ * (the natural form of the platform's default `./Module` expose) keeps its receiver. Passing the
+ * detached function would make `this` undefined and report the plugin failed with no hint why.
+ */
+async function runInit(name: string, plugin: IFederatedPlugin, budgetMs: number): Promise<void> {
+  let started: void | Promise<void>;
+  initingPlugin = name;
+  try {
+    started = plugin.init?.();
+  } finally {
+    initingPlugin = undefined;
   }
+  await raceWithLateLogging(Promise.resolve(started), budgetMs, `plugin "${name}" init`, "state is indeterminate");
+}
+
+/** Post-redirect rule, per discovery source — see the `allowCrossOrigin` note on IRemoteDescriptor. */
+function isResponseOriginAllowed(remote: IRemoteDescriptor, url: string): boolean {
+  return remote.allowCrossOrigin ? isAllowedRemoteUrl(url) : isSameOrigin(url);
 }
 
 async function isCompatible(remote: IRemoteDescriptor, manifestTimeoutMs: number): Promise<boolean> {
@@ -413,10 +497,14 @@ async function isCompatible(remote: IRemoteDescriptor, manifestTimeoutMs: number
         // even if a fetch implementation ignores the signal.
         signal: AbortSignal.timeout(manifestTimeoutMs),
       });
-      // The descriptor was checked for origin, the response was not: redirects are followed, so a
-      // same-origin entry can still land off-origin. A same-origin redirect stays allowed.
-      if (response.url && !isSameOrigin(response.url)) {
-        throw new Error(`manifest for "${remote.name}" redirected off-origin to ${response.url}`);
+      // The descriptor was checked, the response was not: redirects are followed, so an entry can
+      // still land somewhere its source does not allow. Each source keeps ITS OWN rule — a
+      // platform entry must stay same-origin, an env entry must stay https (or loopback http) —
+      // because demanding same-origin here would kill the env override, whose whole purpose is
+      // cross-origin. A redirect within the source's own rule stays allowed.
+      const servedFrom = asString(response.url);
+      if (servedFrom && !isResponseOriginAllowed(remote, servedFrom)) {
+        throw new Error(`manifest for "${remote.name}" was served from ${servedFrom}, which its source does not allow`);
       }
       if (!response.ok) {
         throw new Error(`manifest HTTP ${response.status}`);
@@ -532,6 +620,8 @@ export async function initFederatedModules(options?: IFederatedLoaderOptions): P
     return result;
   }
 
+  // One guard for the whole phase — see installRouteGuard on why it must not be per plugin.
+  const releaseRouteGuard = installRouteGuard();
   await Promise.allSettled(
     compatible.map(async (remote) => {
       try {
@@ -554,7 +644,7 @@ export async function initFederatedModules(options?: IFederatedLoaderOptions): P
           throw new Error(`plugin "${remote.name}" load resolved to null - no module was delivered`);
         }
         if (plugin.init) {
-          await runInitGuarded(remote.name, plugin.init, loadTimeoutMs);
+          await runInit(remote.name, plugin, loadTimeoutMs);
         } else {
           // Most likely the platform's default "./Module" expose against the admin-shell
           // contract; its module scope ran, but nothing registered anything.
@@ -571,6 +661,7 @@ export async function initFederatedModules(options?: IFederatedLoaderOptions): P
       }
     }),
   );
+  releaseRouteGuard();
 
   reportOutcome(result, versions);
   return result;
