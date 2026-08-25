@@ -1,6 +1,6 @@
 import { mount } from "@vue/test-utils";
 import { describe, expect, it, vi } from "vitest";
-import { defineComponent, inject, nextTick } from "vue";
+import { defineComponent, inject, nextTick, onScopeDispose } from "vue";
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import ExtensionPoint from "./extension-point.vue";
 
@@ -49,6 +49,36 @@ describe("ExtensionPoint against the real registry", () => {
     await nextTick();
 
     expect(wrapper.text()).toBe("fallback:9");
+  });
+
+  it("runs the replacement when an entry is swapped under the same name in one tick", async () => {
+    const calls: string[] = [];
+    let disposedOld = false;
+    const { registerContribution, unregister } = useExtensionRegistry();
+
+    registerContribution("mobileMenu", "swap", {
+      use: () => {
+        calls.push("old");
+        onScopeDispose(() => {
+          disposedOld = true;
+        });
+        return { count: 1 };
+      },
+    });
+    const wrapper = mountPoint("swap");
+    expect(wrapper.text()).toBe("fallback:1");
+
+    // The name does not change, so keying the child on `name` alone left the key untouched: Vue
+    // patched the existing instance, which reads `use` once in setup, so the replacement never ran
+    // and the old scope never stopped. register() refuses a duplicate, which is why a swap has to
+    // be unregister + register - and README step 2 teaches exactly that pattern.
+    unregister("mobileMenu", "swap");
+    registerContribution("mobileMenu", "swap", { use: () => ({ count: 2 }) });
+    await nextTick();
+
+    expect(calls).toEqual(["old"]);
+    expect(wrapper.text()).toBe("fallback:2");
+    expect(disposedOld).toBe(true);
   });
 
   it("drops the contribution when the entry is unregistered", async () => {

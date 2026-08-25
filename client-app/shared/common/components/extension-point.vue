@@ -7,9 +7,10 @@
 
   <!--
     A component-less entry decorates the fallback instead of replacing it. The contribution runs in
-    ExtensionContribution's setup, keyed by name so a new entry gets a fresh one.
+    ExtensionContribution's setup, keyed by the contribution ITSELF so replacing the entry gets a
+    fresh one — see contributionId.
   -->
-  <ExtensionContribution v-else-if="contribution && $slots.default" :key="name" :use="contribution">
+  <ExtensionContribution v-else-if="contribution && $slots.default" :key="contributionKey" :use="contribution">
     <!-- The cast re-states what ExtensionContribution was handed: a generic slot prop arrives
          ref-unwrapped, which does not reduce while C is still open. -->
     <template #default="{ extensionProps }">
@@ -27,6 +28,29 @@ import { Logger } from "@/core/utilities";
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import type { ExtensionCategoryType } from "@/shared/common/types/extensionRegistry";
 import type { ConditionParamType, ContributionType } from "@/shared/common/types/extensionRegistryMap";
+
+/**
+ * A stable id per contribution function, so the child's key changes when the entry behind a name is
+ * replaced. Keying on the name alone kept the OLD contribution running: `unregister` followed by
+ * `registerContribution` under the same name in one tick leaves the key untouched, so Vue patches
+ * the existing ExtensionContribution instead of remounting it — and that component reads `use` once
+ * in its setup, so the replacement was never called and the old effect scope never stopped.
+ *
+ * Module scope on purpose: a `<script setup>` top-level binding is per instance. A WeakMap keeps the
+ * ids off the functions themselves and lets a discarded contribution be collected.
+ */
+const contributionIds = new WeakMap<object, number>();
+let lastContributionId = 0;
+
+function idOf(use: object): number {
+  const known = contributionIds.get(use);
+  if (known !== undefined) {
+    return known;
+  }
+  lastContributionId += 1;
+  contributionIds.set(use, lastContributionId);
+  return lastContributionId;
+}
 
 // `generic` makes the generated component type reference this interface, and <script setup>
 // cannot carry ES exports.
@@ -69,6 +93,12 @@ const contribution = computed(() => {
   return passesCondition(category, name, conditionParameter as ConditionParamType<C>)
     ? getContribution(category, name)
     : undefined;
+});
+
+// Vue types `key` as string | number | symbol, so the identity travels as part of a string.
+const contributionKey = computed(() => {
+  const use = contribution.value;
+  return use ? `${String(props.name)}:${idOf(use)}` : undefined;
 });
 
 // Without a fallback slot nothing can read `extensionProps`, so the contribution is not started at
