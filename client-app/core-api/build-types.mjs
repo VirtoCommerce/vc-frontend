@@ -408,6 +408,72 @@ if (unlisted.length) {
   );
 }
 
+/**
+ * Guard: peerDependencies must cover what EVERY published file imports, not just the contract.
+ *
+ * The guard above reads the rolled-up `.d.ts` only, so `testing.mjs` — real source, shipped in
+ * `files`, importing lodash-es at RUNTIME — went unchecked and the /testing subpath threw
+ * `Cannot find module` for the only consumer it exists for. And peerDependencies is the only list
+ * a package manager reads: MF_SHARED_RANGES and CONTRACT_TYPE_PEERS are build-time JS objects, so
+ * a consumer installing the tarball by hand (a supported path — see PORT_TO_MF.md) got neither,
+ * and `skipLibCheck: true` in the scaffold's own tsconfig made the type half of that silent.
+ *
+ * Required vs optional follows reachability: a package the ROOT contract imports is needed by
+ * every consumer, one reachable only through a subpath (`./testing`, `./tailwind-preset`) is not.
+ * create-plugin installs both, so a scaffolded plugin is unaffected by the split.
+ */
+const KNOWN_RANGES = { ...MF_SHARED_RANGES, ...CONTRACT_TYPE_PEERS };
+/** `from "x"`, `require("x")` and the `import("x")` form the .d.mts files use for type-only refs. */
+const externalsIn = (source) =>
+  [
+    ...source.matchAll(/from ['"]([^'".][^'"]*)['"]/g),
+    ...source.matchAll(/require\(['"]([^'".][^'"]*)['"]\)/g),
+    ...source.matchAll(/import\(['"]([^'".][^'"]*)['"]\)/g),
+  ].map((match) => packageNameOf(match[1]));
+
+const requiredPeers = new Set(externals.map(packageNameOf));
+const optionalPeers = new Set();
+for (const relative of corePkg.files ?? []) {
+  const absolute = resolve(CORE_API_DIR, relative);
+  // The contract is `code` above (already in requiredPeers) and may not be on disk yet.
+  if (absolute === OUT_FILE || !existsSync(absolute)) {
+    continue;
+  }
+  for (const name of externalsIn(readFileSync(absolute, "utf8"))) {
+    if (!requiredPeers.has(name)) {
+      optionalPeers.add(name);
+    }
+  }
+}
+requiredPeers.delete(corePkg.name);
+optionalPeers.delete(corePkg.name);
+
+const rangeFor = (name) =>
+  KNOWN_RANGES[name] ?? hostPkg.dependencies?.[name] ?? hostPkg.devDependencies?.[name] ?? null;
+const expectedPeers = Object.fromEntries(
+  [...requiredPeers, ...optionalPeers].sort(byCodepoint).map((name) => [name, rangeFor(name)]),
+);
+const unranged = Object.entries(expectedPeers).filter(([, range]) => !range);
+if (unranged.length) {
+  fail(
+    `published files import ${unranged.map(([name]) => name).join(", ")}, for which no range is known. ` +
+      "Add them to CONTRACT_TYPE_PEERS in federation.mjs, or to the host's package.json.",
+  );
+}
+const expectedMeta = Object.fromEntries([...optionalPeers].sort(byCodepoint).map((name) => [name, { optional: true }]));
+const declaredPeers = corePkg.peerDependencies ?? {};
+const declaredMeta = corePkg.peerDependenciesMeta ?? {};
+const peersMatch =
+  JSON.stringify(declaredPeers) === JSON.stringify(expectedPeers) &&
+  JSON.stringify(declaredMeta) === JSON.stringify(expectedMeta);
+if (!peersMatch) {
+  fail(
+    "core-api/package.json does not declare what the published files import. Set peerDependencies to:\n" +
+      `${JSON.stringify(expectedPeers, null, 2)}\nand peerDependenciesMeta to:\n${JSON.stringify(expectedMeta, null, 2)}`,
+  );
+}
+step(`peer declaration covers ${requiredPeers.size} required + ${optionalPeers.size} subpath-only package(s).`);
+
 const contract = BANNER + "\n" + code;
 
 // 2b ── prove the contract compiles on its own ────────────────────────────────

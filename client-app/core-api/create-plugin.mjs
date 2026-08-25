@@ -220,11 +220,16 @@ const pkgJson = {
   // MF-shared (import: false, borrowed from the host at runtime); the rest are type-peers
   // and tooling, tree-shaken away. `typePeerNames` ensures every facade type-peer is present
   // even when its optional runtime group wasn't selected (see the note at the top of file).
+  // The facade's own peerDependencies come last and cover everything its PUBLISHED files import,
+  // optional subpath peers included — a package manager installs none of them on its own, and
+  // `lodash-es` (imported at runtime by @vc-frontend/core/testing) is why the first spec in a
+  // scaffolded plugin used to die on `Cannot find module`. build-types.mjs keeps that list honest.
   devDependencies: mergeDeps(
     sortedEntries(runtimeDeps),
     sortedEntries(toolDeps),
     sortedEntries(typePeerNames),
     CONTRACT_TYPE_PEERS,
+    corePkg.peerDependencies ?? {},
   ),
 };
 
