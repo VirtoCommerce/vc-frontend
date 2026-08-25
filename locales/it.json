@@ -643,24 +643,6 @@
         "message": "Vuoi davvero rimuovere l'attuale logo dell'organizzazione? Questo processo è irreversibile."
       }
     },
-    "compare": {
-      "add_to_compare": {
-        "tooltips": {
-          "add": "Aggiungi al confronto",
-          "remove": "Rimuovi dal confronto"
-        }
-      },
-      "notifications": {
-        "limit_reached": "È possibile confrontare solo {productsLimit} prodotti",
-        "added_html": "Prodotto <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> aggiunto alla lista di confronto <span class=\"hidden lg:inline\">(elementi rimanenti - {itemsLeft})</span>",
-        "removed_html": "Prodotto <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> rimosso dalla lista di confronto",
-        "compare_button": "Confronta"
-      },
-      "clear_list_modal": {
-        "title": "Conferma cancellazione",
-        "message": "Confermi la rimozione di tutti i prodotti dalla lista di confronto?"
-      }
-    },
     "cart": {
       "add_to_cart": {
         "errors": {
@@ -1060,6 +1042,45 @@
       "price_high_to_low": "Prezzo, dal più caro al più economico",
       "date_new_to_old": "Data, dal più recente",
       "date_old_to_new": "Data, dal meno recente al più recente"
+    },
+    "compare": {
+      "add_to_compare": {
+        "tooltips": {
+          "add": "Aggiungi al confronto",
+          "remove": "Rimuovi dal confronto"
+        }
+      },
+      "notifications": {
+        "limit_reached": "Solo {productsLimit} prodotti della stessa categoria possono essere confrontati",
+        "added_html": "Prodotto <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> aggiunto all'elenco di confronto <span class=\"hidden lg:inline\">(articoli rimasti - {itemsLeft})</span>",
+        "removed_html": "Prodotto <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> rimosso dall'elenco di confronto",
+        "compare_button": "Confronta",
+        "added_to_cart_html": "Aggiunto <strong>{productName}</strong> al carrello"
+      },
+      "table": {
+        "tabs": {
+          "all": "Tutti",
+          "differences": "Differenze"
+        },
+        "differ_rows": "Differiscono: {count} di {total} righe",
+        "clear_category": "Cancella categoria",
+        "remove_product": "Rimuovi dal confronto",
+        "add_to_cart": "Aggiungi al carrello",
+        "add_product": "Aggiungi prodotto",
+        "fields": {
+          "price_per_unit": "Prezzo per unità",
+          "customer_rating": "Valutazione cliente",
+          "availability": "Disponibilità",
+          "sku": "@:common.labels.sku",
+          "min_order_qty": "Quantità minima d'ordine"
+        },
+        "pin": {
+          "pin_title": "Fissa in alto",
+          "unpin_title": "Rimuovi fissaggio",
+          "pin_label": "Fissa “{label}”",
+          "unpin_label": "Rimuovi fissaggio “{label}”"
+        }
+      }
     }
   },
   "pages": {
@@ -1635,33 +1656,6 @@
     "loyalty_catalog": {
       "title": "Catalogo fedeltà"
     },
-    "compare": {
-      "meta": {
-        "title": "Confronta prodotti",
-        "keywords": "test, confronta, prodotti, pagina, parole chiave",
-        "description": "Descrizione della pagina di confronto prodotti di test"
-      },
-      "empty_list": {
-        "title": "Confronta prodotti",
-        "message": "La tua lista di confronto prodotti è vuota",
-        "button_text": "Continua a navigare qui",
-        "img_alt": "carrelloVuoto",
-        "img_alt_mobile": "carrelloVuotoMobile"
-      },
-      "header_block": {
-        "title": "Confronta prodotti",
-        "counter_message": "{productsNumber} articoli su {productsLimit} aggiunti",
-        "differences_checkbox_label": "Mostra solo differenze",
-        "clear_button": "Cancella lista"
-      },
-      "main_block": {
-        "price_label": "@:common.labels.product_price"
-      },
-      "links": {
-        "home": "@:common.links.home",
-        "compare_products": "Confronta prodotti"
-      }
-    },
     "branch": {
       "address": "Indirizzo",
       "phone": "Telefono: ",
@@ -1690,6 +1684,33 @@
     },
     "brand": {
       "products_title": "Prodotti"
+    },
+    "compare": {
+      "title": "Confronta prodotti",
+      "meta": {
+        "keywords": "confronta prodotti, confronto prodotti, confronto affiancato",
+        "description": "Confronta prodotti fianco a fianco per trovare l'opzione migliore per le tue esigenze."
+      },
+      "added_count": "di {total} aggiunti",
+      "added_count_in_category": "di {total} aggiunti in {category}",
+      "actions": {
+        "clear_all": "Cancella tutto",
+        "share": "Condividi"
+      },
+      "clear_all_modal": {
+        "title": "Cancella tutto",
+        "message": "Tutti 1 prodotto verrà rimosso dal confronto. | Tutti {n} prodotti verranno rimossi dal confronto."
+      },
+      "clear_category_modal": {
+        "title": "Cancella categoria",
+        "message": "Tutti 1 prodotto in {category} verrà rimosso dal confronto. | Tutti {n} prodotti in {category} verranno rimossi dal confronto."
+      },
+      "empty": {
+        "title": "Il tuo elenco di confronto è vuoto",
+        "description": "Aggiungi prodotti dal catalogo per confrontare le loro caratteristiche fianco a fianco. Puoi confrontare fino a {limit} prodotti per categoria.",
+        "restore_button": "Ripristina prodotti",
+        "add_button": "Aggiungi prodotti"
+      }
     }
   },
   "identity_error": {

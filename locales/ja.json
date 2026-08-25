@@ -643,24 +643,6 @@
         "message": "本当に組織の現在のロゴを削除しますか？この操作は元に戻せません。"
       }
     },
-    "compare": {
-      "add_to_compare": {
-        "tooltips": {
-          "add": "比較リストに追加",
-          "remove": "比較リストから削除"
-        }
-      },
-      "notifications": {
-        "limit_reached": "{productsLimit}個の商品のみ比較できます",
-        "added_html": "商品<span class=\"hidden lg:inline\">「<strong>{productName}</strong>」</span>を比較リストに追加しました<span class=\"hidden lg:inline\">（残り{itemsLeft}個）</span>",
-        "removed_html": "商品<span class=\"hidden lg:inline\">「<strong>{productName}</strong>」</span>を比較リストから削除しました",
-        "compare_button": "比較"
-      },
-      "clear_list_modal": {
-        "title": "クリアの確認",
-        "message": "比較リストから全ての商品を削除しますか？"
-      }
-    },
     "cart": {
       "add_to_cart": {
         "errors": {
@@ -1060,6 +1042,45 @@
       "price_high_to_low": "価格（高い順）",
       "date_new_to_old": "日付、新しい順",
       "date_old_to_new": "日付、古い順"
+    },
+    "compare": {
+      "add_to_compare": {
+        "tooltips": {
+          "add": "比較に追加",
+          "remove": "比較から削除"
+        }
+      },
+      "notifications": {
+        "limit_reached": "同じカテゴリからは{productsLimit}個までしか比較できません",
+        "added_html": "商品<span class=\"hidden lg:inline\">「<strong>{productName}</strong>」</span>を比較リストに追加しました<span class=\"hidden lg:inline\">（残り{itemsLeft}個）</span>",
+        "removed_html": "商品<span class=\"hidden lg:inline\">「<strong>{productName}</strong>」</span>を比較リストから削除しました",
+        "compare_button": "比較",
+        "added_to_cart_html": "<strong>{productName}</strong>をカートに追加しました"
+      },
+      "table": {
+        "tabs": {
+          "all": "すべて",
+          "differences": "違い"
+        },
+        "differ_rows": "{total}行中{count}行が異なります",
+        "clear_category": "カテゴリをクリア",
+        "remove_product": "比較から削除",
+        "add_to_cart": "カートに追加",
+        "add_product": "商品を追加",
+        "fields": {
+          "price_per_unit": "単価",
+          "customer_rating": "顧客評価",
+          "availability": "在庫状況",
+          "sku": "@:common.labels.sku",
+          "min_order_qty": "最小注文数量"
+        },
+        "pin": {
+          "pin_title": "トップに固定",
+          "unpin_title": "固定解除",
+          "pin_label": "「{label}」を固定",
+          "unpin_label": "「{label}」の固定を解除"
+        }
+      }
     }
   },
   "pages": {
@@ -1635,33 +1656,6 @@
     "loyalty_catalog": {
       "title": "ロイヤルティカタログ"
     },
-    "compare": {
-      "meta": {
-        "title": "商品比較",
-        "keywords": "テスト, 比較, 商品, ページ, キーワード",
-        "description": "テスト商品比較ページの説明"
-      },
-      "empty_list": {
-        "title": "商品比較",
-        "message": "比較リストが空です",
-        "button_text": "買い物を続ける",
-        "img_alt": "空のカート",
-        "img_alt_mobile": "空のカート（モバイル）"
-      },
-      "header_block": {
-        "title": "商品比較",
-        "counter_message": "{productsLimit}個中{productsNumber}個を追加",
-        "differences_checkbox_label": "違いのみを表示",
-        "clear_button": "リストをクリア"
-      },
-      "main_block": {
-        "price_label": "@:common.labels.product_price"
-      },
-      "links": {
-        "home": "@:common.links.home",
-        "compare_products": "商品比較"
-      }
-    },
     "branch": {
       "address": "住所",
       "phone": "電話番号：",
@@ -1690,6 +1684,33 @@
     },
     "brand": {
       "products_title": "製品"
+    },
+    "compare": {
+      "title": "商品比較",
+      "meta": {
+        "keywords": "比較商品、商品比較、並べて比較",
+        "description": "ニーズに最適なオプションを見つけるために、商品を並べて比較してください。"
+      },
+      "added_count": "{total}個中{total}個追加済み",
+      "added_count_in_category": "{category}で{total}個中{total}個追加済み",
+      "actions": {
+        "clear_all": "すべてクリア",
+        "share": "共有"
+      },
+      "clear_all_modal": {
+        "title": "すべてクリア",
+        "message": "比較から商品1個が削除されます。 | 比較から商品{n}個が削除されます。"
+      },
+      "clear_category_modal": {
+        "title": "カテゴリをクリア",
+        "message": "{category}内の商品1個が比較から削除されます。 | {category}内の商品{n}個が比較から削除されます。"
+      },
+      "empty": {
+        "title": "比較リストは空です",
+        "description": "カタログから商品を追加して、特性を並べて比較してください。カテゴリごとに最大{limit}個の商品を比較できます。",
+        "restore_button": "商品を復元",
+        "add_button": "商品を追加"
+      }
     }
   },
   "identity_error": {

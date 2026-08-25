@@ -1,288 +1,353 @@
 import { useMutation } from "@vue/apollo-composable";
-import { pickBy, uniq, uniqBy } from "lodash-es";
-import { ref, computed, watch } from "vue";
+import { uniqBy } from "lodash-es";
+import { computed, ref, shallowRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { CreateConfiguredLineItemDocument } from "@/core/api/graphql/types";
 import { useAnalytics } from "@/core/composables";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { globals } from "@/core/globals";
 import { getPropertyValue, Logger } from "@/core/utilities";
+import {
+  ENABLED_KEY as CUSTOMER_REVIEWS_ENABLED_KEY,
+  MODULE_ID as CUSTOMER_REVIEWS_MODULE_ID,
+} from "@/modules/customer-reviews/constants";
 import { useProducts } from "@/shared/catalog/composables/useProducts";
-import { useCompareProducts } from "@/shared/compare/composables/useCompareProducts";
-import type { IConfigProductToCompare } from "../types";
-import type { CreateConfiguredLineItemMutation, Product, MoneyType } from "@/core/api/graphql/types";
+import { getDisplayPrice, getProductCategoryLabel } from "../utilities";
+import { useCompareProducts } from "./useCompareProducts";
+import type { ICompareCategoryTab, ICompareDisplayProduct, ICompareProductEntry, ICompareTableRow } from "../types";
+import type { CreateConfiguredLineItemMutation, MoneyType, Product } from "@/core/api/graphql/types";
 
 const EMPTY_VALUE_PLACEHOLDER = "–";
 
-interface ICompareProductProperties {
-  [key: string]: { label: string; values: string[] };
-}
-
 type ConfiguredLineItemType = CreateConfiguredLineItemMutation["createConfiguredLineItem"];
 
+function getProductPropertyValue(product: Product, propertyName: string): string {
+  const property = product.properties.find((prop) => prop.name.toLowerCase() === propertyName);
+  return property ? (getPropertyValue(property) ?? EMPTY_VALUE_PLACEHOLDER) : EMPTY_VALUE_PLACEHOLDER;
+}
+
+function getConfigPropertyValue(entry: ICompareProductEntry, label: string): string {
+  const property = entry.properties?.find((prop) => prop.label === label);
+  return property?.value ?? EMPTY_VALUE_PLACEHOLDER;
+}
+
+function applyPriceOverride(
+  originalPrice: MoneyType,
+  overridePrice?: NonNullable<ConfiguredLineItemType>["salePrice"],
+): MoneyType {
+  if (!overridePrice) {
+    return originalPrice;
+  }
+
+  return {
+    ...originalPrice,
+    amount: overridePrice.amount,
+    formattedAmount: overridePrice.formattedAmount,
+    formattedAmountWithoutCurrency: overridePrice.formattedAmountWithoutCurrency,
+  };
+}
+
+// Price can differ per selected configuration (option price deltas), so the base product.price
+// isn't enough for a configured entry — same approach as the old compare feature: ask the server
+// for the priced line item and override actual/list with it before display.
+function withConfiguredPrice(product: Product, configuredLineItem?: ConfiguredLineItemType): Product {
+  if (!configuredLineItem) {
+    return product;
+  }
+
+  return {
+    ...product,
+    price: {
+      ...product.price,
+      actual: applyPriceOverride(product.price.actual, configuredLineItem.salePrice),
+      list: applyPriceOverride(product.price.list, configuredLineItem.listPrice),
+    },
+  };
+}
+
 export function useCompareProductsPage() {
-  const { t } = useI18n();
-  const { storeId, currencyCode, cultureName } = globals;
-
+  const { t, n } = useI18n();
+  const { products, getCategoryProductsCount } = useCompareProducts();
+  const { fetchProducts, products: fetchedProducts, fetchingProducts } = useProducts();
+  const { isEnabled } = useModuleSettings(CUSTOMER_REVIEWS_MODULE_ID);
+  const customerRatingEnabled = isEnabled(CUSTOMER_REVIEWS_ENABLED_KEY);
   const { mutate: createConfiguredLineItemMutation } = useMutation(CreateConfiguredLineItemDocument);
+  const { storeId, currencyCode, cultureName } = globals;
   const { analytics } = useAnalytics();
-  const { fetchProducts, products } = useProducts();
-  const { removeFromCompareList, productsIds, configProductsToCompare } = useCompareProducts();
 
-  const showOnlyDifferences = ref(false);
-  const properties = ref<ICompareProductProperties>({});
-  const configProductsConfiguredItems = ref<CreateConfiguredLineItemMutation["createConfiguredLineItem"][]>([]);
+  const productIds = computed(() => products.value.map((entry) => entry.productId));
 
-  const allProductIdsToShow = computed(() => {
-    const configProductsIds = configProductsToCompare.value.map((configProduct) => configProduct.productId);
-    return [...productsIds.value, ...configProductsIds];
-  });
-
-  const allProductIdsForFetch = computed(() => uniq(allProductIdsToShow.value));
-
-  const productsToShow = computed(() =>
-    allProductIdsToShow.value.map(buildProductForDisplay).filter((p): p is Product => p !== null),
+  const configuredEntries = computed(() =>
+    products.value.filter((entry) => entry.localId && entry.configurationSectionInput?.length),
   );
 
-  const propertiesDiffs = computed<ICompareProductProperties>(() => {
-    return pickBy(properties.value, (prop) => uniq(prop.values).length !== 1);
+  const configuredLineItemsByLocalId = shallowRef<Record<string, ConfiguredLineItemType>>({});
+
+  watch(
+    configuredEntries,
+    async (entries) => {
+      if (!entries.length) {
+        return;
+      }
+
+      try {
+        const responses = await Promise.all(
+          entries.map((entry) =>
+            createConfiguredLineItemMutation({
+              command: {
+                configurableProductId: entry.productId,
+                configurationSections: entry.configurationSectionInput,
+                storeId,
+                currencyCode,
+                cultureName,
+              },
+            }),
+          ),
+        );
+
+        const nextConfiguredLineItems: Record<string, ConfiguredLineItemType> = {};
+        entries.forEach((entry, index) => {
+          if (entry.localId) {
+            nextConfiguredLineItems[entry.localId] = responses[index]?.data?.createConfiguredLineItem;
+          }
+        });
+        configuredLineItemsByLocalId.value = nextConfiguredLineItems;
+      } catch (e) {
+        Logger.error("useCompareProductsPage.fetchConfiguredLineItems", e);
+      }
+    },
+    { immediate: true },
+  );
+
+  const categoryTabs = computed<ICompareCategoryTab[]>(() => {
+    const tabsByCategoryKey = new Map<string, ICompareCategoryTab>();
+
+    products.value.forEach((entry) => {
+      if (tabsByCategoryKey.has(entry.categoryKey)) {
+        return;
+      }
+
+      const product = fetchedProducts.value.find((_product) => _product.id === entry.productId);
+
+      tabsByCategoryKey.set(entry.categoryKey, {
+        categoryKey: entry.categoryKey,
+        label: product ? getProductCategoryLabel(product) : "",
+        count: getCategoryProductsCount(entry.categoryKey),
+      });
+    });
+
+    return Array.from(tabsByCategoryKey.values());
   });
 
-  const compareProductsListProperties = computed(() => ({
-    item_list_id: "compare_products",
-    item_list_name: t("pages.compare.header_block.title"),
-  }));
+  const selectedCategoryKey = ref("");
 
-  function normalizeProductProperties(product: Product) {
-    return {
-      ...product,
-      properties: product.properties.map((prop) => ({
-        ...prop,
-        name: prop.name.toLowerCase(),
-      })),
-    };
-  }
+  const selectedCategoryTab = computed(() =>
+    categoryTabs.value.find((tab) => tab.categoryKey === selectedCategoryKey.value),
+  );
 
-  function getConfiguredLineItemByIndex(index: number) {
-    const configProductIndex = index - productsIds.value.length;
-    return configProductsConfiguredItems.value[configProductIndex];
-  }
+  const selectedCategoryLabel = computed(() => selectedCategoryTab.value?.label ?? "");
+  const selectedCategoryCount = computed(() => selectedCategoryTab.value?.count ?? 0);
 
-  function applyPriceOverride(
-    originalPrice: MoneyType,
-    overridePrice?: {
-      amount: number;
-      formattedAmount: string;
-      formattedAmountWithoutCurrency: string;
-    },
-  ): MoneyType {
-    if (!overridePrice) {
-      return originalPrice;
-    }
-    return {
-      ...originalPrice,
-      amount: overridePrice.amount,
-      formattedAmount: overridePrice.formattedAmount,
-      formattedAmountWithoutCurrency: overridePrice.formattedAmountWithoutCurrency,
-    };
-  }
+  // One item per compare entry, not per unique product id — the same product can be in the list
+  // several times with different configurations, and each of those needs its own column.
+  const selectedCategoryProducts = computed<ICompareDisplayProduct[]>(() =>
+    products.value
+      .filter((entry) => entry.categoryKey === selectedCategoryKey.value)
+      .map((entry) => {
+        const product = fetchedProducts.value.find((_product) => _product.id === entry.productId);
 
-  function withConfiguredPrices(product: Product, configuredItem?: ConfiguredLineItemType): Product {
-    if (!configuredItem || !product.price) {
-      return product;
+        if (!product) {
+          return null;
+        }
+
+        const configuredLineItem = entry.localId ? configuredLineItemsByLocalId.value[entry.localId] : undefined;
+        return { product: withConfiguredPrice(product, configuredLineItem), entry };
+      })
+      .filter((item): item is ICompareDisplayProduct => item !== null),
+  );
+
+  const customFieldRows = computed<ICompareTableRow[]>(() => {
+    const items = selectedCategoryProducts.value;
+
+    if (!items.length) {
+      return [];
     }
 
-    return {
-      ...product,
-      price: {
-        ...product.price,
-        actual: applyPriceOverride(product.price.actual, configuredItem.salePrice),
-        list: applyPriceOverride(product.price.list, configuredItem.listPrice),
-      },
-    };
-  }
-
-  function buildProductForDisplay(productId: string, index: number) {
-    const product = products.value.find((_product) => _product.id === productId);
-    if (!product) {
-      return null;
+    function makeRow(key: string, label: string, kind: ICompareTableRow["kind"], values: string[]): ICompareTableRow {
+      return { key, label, kind, values, differs: new Set(values).size > 1 };
     }
 
-    const normalized = normalizeProductProperties(product);
-    const configuredItem = getConfiguredLineItemByIndex(index);
-    return withConfiguredPrices(normalized, configuredItem);
-  }
+    const rows: ICompareTableRow[] = [
+      makeRow(
+        "price",
+        t("shared.compare.table.fields.price_per_unit"),
+        "price",
+        items.map(({ product }) => getDisplayPrice(product).actual.formattedAmount),
+      ),
+    ];
 
-  function getConfigurationProductByIndex(index: number) {
-    const configProductIndex = index - productsIds.value.length;
-    return configProductsToCompare.value[configProductIndex];
-  }
-
-  function getProductPropertyValue(product: Product, propertyName: string): string {
-    const property = product.properties.find((prop) => prop.name === propertyName);
-    return property ? (getPropertyValue(property) ?? EMPTY_VALUE_PLACEHOLDER) : EMPTY_VALUE_PLACEHOLDER;
-  }
-
-  function getConfigProductPropertyValue(
-    configProduct: IConfigProductToCompare,
-    propertyInfo: { name: string; label: string },
-  ): string {
-    return (
-      configProduct.properties.find((prop: { label: string; value?: string }) => prop.label === propertyInfo.name)
-        ?.value ?? EMPTY_VALUE_PLACEHOLDER
-    );
-  }
-
-  async function refreshProducts(): Promise<void> {
-    try {
-      await fetchProducts({ productIds: allProductIdsForFetch.value });
-
-      const configProductsConfiguredItemsResponses = await Promise.all(
-        configProductsToCompare.value.map((configProduct) =>
-          createConfiguredLineItemMutation({
-            command: {
-              configurableProductId: configProduct.productId,
-              configurationSections: configProduct.configurationSectionInput,
-              storeId,
-              currencyCode,
-              cultureName,
-            },
-          }),
+    if (customerRatingEnabled && items.some(({ product }) => product.rating)) {
+      rows.push(
+        makeRow(
+          "rating",
+          t("shared.compare.table.fields.customer_rating"),
+          "rating",
+          items.map(({ product }) =>
+            product.rating
+              ? n(product.rating.value, { minimumFractionDigits: 1, maximumFractionDigits: 1 })
+              : EMPTY_VALUE_PLACEHOLDER,
+          ),
         ),
       );
-      configProductsConfiguredItems.value = configProductsConfiguredItemsResponses.map(
-        (response) => response?.data?.createConfiguredLineItem,
-      );
-
-      getProperties();
-    } catch (e) {
-      Logger.error(refreshProducts.name, e);
-    }
-  }
-
-  function getProperties() {
-    properties.value = {};
-
-    if (!products.value.length) {
-      return;
     }
 
-    const normalizedPropertyNames = computeNormalizedPropertyNames();
-    const baseProperties = buildBasePropertiesMap(normalizedPropertyNames);
-    const configOnlyProperties = buildConfigurationPropertiesMap();
+    rows.push(
+      // InStock renders the quantity inline when in stock, so a separate "units in stock" row
+      // would just duplicate it — differs is still keyed off isInStock only.
+      makeRow(
+        "availability",
+        t("shared.compare.table.fields.availability"),
+        "availability",
+        items.map(({ product }) => String(product.availabilityData.isInStock)),
+      ),
+      makeRow(
+        "sku",
+        t("shared.compare.table.fields.sku"),
+        "text",
+        items.map(({ product }) => product.code || EMPTY_VALUE_PLACEHOLDER),
+      ),
+      makeRow(
+        "minOrderQty",
+        t("shared.compare.table.fields.min_order_qty"),
+        "text",
+        items.map(({ product }) => (product.minQuantity != null ? n(product.minQuantity) : EMPTY_VALUE_PLACEHOLDER)),
+      ),
+    );
 
-    properties.value = {
-      ...baseProperties,
-      ...configOnlyProperties,
-    };
-  }
+    return rows;
+  });
 
-  function computeNormalizedPropertyNames() {
-    const propertiesCombined = products.value.flatMap((product) => product.properties);
-
-    return uniqBy(
-      propertiesCombined.map((prop) => ({
-        name: prop.name.toLowerCase(),
-        label: prop.label,
-      })),
+  const propertyRows = computed<ICompareTableRow[]>(() => {
+    const propertyNames = uniqBy(
+      selectedCategoryProducts.value.flatMap(({ product }) =>
+        product.properties.map((prop) => ({ name: prop.name.toLowerCase(), label: prop.label })),
+      ),
       "name",
     );
-  }
 
-  function computeConfigurationProductsProperties() {
-    return uniqBy(
-      configProductsToCompare.value.flatMap((configProduct) => {
-        return configProduct.properties.map((prop: { label: string }) => ({
-          name: prop.label,
-          label: prop.label,
-        }));
-      }),
-      "name",
-    );
-  }
+    return propertyNames.map(({ name, label }) => {
+      const values = selectedCategoryProducts.value.map(({ product }) => getProductPropertyValue(product, name));
 
-  function buildBasePropertiesMap(propertiesNames: { name: string; label: string }[]) {
-    const map: ICompareProductProperties = {};
-
-    propertiesNames.forEach(({ name, label }) => {
-      map[name] = {
+      return {
+        key: name,
         label,
-        values: productsToShow.value.map((product) => getProductPropertyValue(product, name)),
+        kind: "text" as const,
+        values,
+        differs: new Set(values).size > 1,
       };
     });
+  });
 
-    return map;
-  }
+  // Extra rows for whichever configuration options were selected on each configured entry
+  // (e.g. "Color", "Size") — captured at add-time onto entry.properties, same as old compare's
+  // configOnlyProperties. Non-configured entries (or ones missing this particular option) just
+  // show the placeholder.
+  const configPropertyRows = computed<ICompareTableRow[]>(() => {
+    const items = selectedCategoryProducts.value;
+    const configPropertyLabels = uniqBy(
+      items.flatMap(({ entry }) => entry.properties ?? []),
+      "label",
+    ).map((prop) => prop.label);
 
-  function buildConfigurationPropertiesMap() {
-    const configurationProductsProperties = computeConfigurationProductsProperties();
+    return configPropertyLabels.map((label) => {
+      const values = items.map(({ entry }) => getConfigPropertyValue(entry, label));
 
-    if (!configurationProductsProperties.length) {
-      return {};
-    }
-
-    const map: ICompareProductProperties = {};
-    const regularProductsValuesOffset = Array.from({ length: productsIds.value.length }).fill(
-      EMPTY_VALUE_PLACEHOLDER,
-    ) as string[];
-
-    configurationProductsProperties.forEach((propertyInfo) => {
-      const values = configProductsToCompare.value.map((configProduct) =>
-        getConfigProductPropertyValue(configProduct, propertyInfo),
-      );
-
-      map[propertyInfo.name] = {
-        label: propertyInfo.label,
-        values: [...regularProductsValuesOffset, ...values],
+      return {
+        key: `config:${label}`,
+        label,
+        kind: "text" as const,
+        values,
+        differs: new Set(values).size > 1,
       };
     });
+  });
 
-    return map;
-  }
+  const tableRows = computed<ICompareTableRow[]>(() => [
+    ...customFieldRows.value,
+    ...propertyRows.value,
+    ...configPropertyRows.value,
+  ]);
+
+  const differRowsCount = computed(() => tableRows.value.filter((row) => row.differs).length);
+
+  // Same GA event shape as the old compare feature (client-app/shared/compare/composables/useCompareProductsPage.ts).
+  const compareProductsListProperties = computed(() => ({
+    item_list_id: "compare_products",
+    item_list_name: t("pages.compare.title"),
+  }));
 
   function selectItemEvent(product: Product) {
     analytics("selectItem", product, compareProductsListProperties.value);
   }
 
-  function handleRemoveFromCompareList(product: Product, index: number) {
-    const isInConfigurableGroup = product.isConfigurable && index >= productsIds.value.length;
-
-    if (isInConfigurableGroup) {
-      const configProductIndex = index - productsIds.value.length;
-      const configurationSectionInput = configProductsToCompare.value[configProductIndex].configurationSectionInput;
-      removeFromCompareList(product, configurationSectionInput);
-    } else {
-      removeFromCompareList(product);
-    }
-  }
-
-  function getConfigurationId(product: Product, index: number) {
-    const isInConfigurableGroup = product.isConfigurable && index >= productsIds.value.length;
-    return isInConfigurableGroup ? getConfigurationProductByIndex(index).localId : undefined;
-  }
-
-  watch(allProductIdsToShow, refreshProducts, { immediate: true });
-
+  // Only the currently selected category tab's products are actually visible, so that's what
+  // gets tracked as "viewed" — unlike old compare's single flat list.
   watch(
-    products,
-    (productsValue) => {
-      if (!productsValue.length) {
+    selectedCategoryProducts,
+    (items) => {
+      if (!items.length) {
         return;
       }
 
-      analytics("viewItemList", productsValue, compareProductsListProperties.value);
+      analytics(
+        "viewItemList",
+        items.map(({ product }) => product),
+        compareProductsListProperties.value,
+      );
+    },
+    { immediate: true },
+  );
+
+  function selectCategory(categoryKey: string) {
+    selectedCategoryKey.value = categoryKey;
+  }
+
+  watch(
+    categoryTabs,
+    (tabs) => {
+      if (!tabs.some((tab) => tab.categoryKey === selectedCategoryKey.value)) {
+        selectedCategoryKey.value = tabs[0]?.categoryKey ?? "";
+      }
+    },
+    { immediate: true },
+  );
+
+  watch(
+    productIds,
+    async (ids) => {
+      if (!ids.length) {
+        return;
+      }
+
+      try {
+        await fetchProducts({ productIds: ids });
+      } catch (e) {
+        Logger.error("useCompareProductsPage.fetchProducts", e);
+      }
     },
     { immediate: true },
   );
 
   return {
-    hasProducts: computed(() => allProductIdsToShow.value.length > 0),
-    productsCount: computed(() => allProductIdsToShow.value.length),
-    productsToShow,
-    properties,
-    propertiesDiffs,
-    showOnlyDifferences,
-    handleRemoveFromCompareList,
-    getConfigurationId,
+    categoryTabs,
+    selectedCategoryKey,
+    selectedCategoryLabel,
+    selectedCategoryCount,
+    selectedCategoryProducts,
+    tableRows,
+    differRowsCount,
+    fetchingProducts,
+    selectCategory,
     selectItemEvent,
   };
 }

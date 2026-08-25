@@ -129,6 +129,7 @@ query GetSearchResults(
         }
       }
       breadcrumbs {
+        itemId
         title
         typeName
       }

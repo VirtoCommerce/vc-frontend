@@ -643,24 +643,6 @@
         "message": "Вы действительно хотите удалить текущий логотип организации? Этот процесс необратим."
       }
     },
-    "compare": {
-      "add_to_compare": {
-        "tooltips": {
-          "add": "Добавить в сравнение",
-          "remove": "Удалить из сравнения"
-        }
-      },
-      "notifications": {
-        "limit_reached": "Можно сравнить не более {productsLimit} товаров",
-        "added_html": "Товар <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> добавлен в список сравнения <span class=\"hidden lg:inline\">(осталось товаров - {itemsLeft})</span>",
-        "removed_html": "Товар <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> был удален из списка сравнения",
-        "compare_button": "Сравнить"
-      },
-      "clear_list_modal": {
-        "title": "Подтвердить удаление",
-        "message": "Вы подтверждаете удаление всех товаров из списка?"
-      }
-    },
     "cart": {
       "add_to_cart": {
         "errors": {
@@ -1060,6 +1042,45 @@
       "price_high_to_low": "Цена: от высокой к низкой",
       "date_new_to_old": "Дата, от новых к старым",
       "date_old_to_new": "Дата: сначала старые"
+    },
+    "compare": {
+      "add_to_compare": {
+        "tooltips": {
+          "add": "Добавить к сравнению",
+          "remove": "Удалить из сравнения"
+        }
+      },
+      "notifications": {
+        "limit_reached": "Только {productsLimit} товаров из одной категории можно сравнивать",
+        "added_html": "Товар <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> добавлен в список сравнения <span class=\"hidden lg:inline\">(осталось - {itemsLeft})</span>",
+        "removed_html": "Товар <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> удален из списка сравнения",
+        "compare_button": "Сравнить",
+        "added_to_cart_html": "<strong>{productName}</strong> добавлен в корзину"
+      },
+      "table": {
+        "tabs": {
+          "all": "Все",
+          "differences": "Различия"
+        },
+        "differ_rows": "Различаются: {count} из {total} строк",
+        "clear_category": "Очистить категорию",
+        "remove_product": "Удалить из сравнения",
+        "add_to_cart": "Добавить в корзину",
+        "add_product": "Добавить товар",
+        "fields": {
+          "price_per_unit": "Цена за единицу",
+          "customer_rating": "Рейтинг покупателей",
+          "availability": "Наличие",
+          "sku": "@:common.labels.sku",
+          "min_order_qty": "Мин. кол-во для заказа"
+        },
+        "pin": {
+          "pin_title": "Закрепить сверху",
+          "unpin_title": "Открепить",
+          "pin_label": "Закрепить “{label}”",
+          "unpin_label": "Открепить “{label}”"
+        }
+      }
     }
   },
   "pages": {
@@ -1635,33 +1656,6 @@
     "loyalty_catalog": {
       "title": "Каталог лояльности"
     },
-    "compare": {
-      "meta": {
-        "title": "Сравнение товаров",
-        "keywords": "тест, сравнить, товары, страница, ключевые слова",
-        "description": "Описание тестовой страницы сравнения товаров"
-      },
-      "empty_list": {
-        "title": "Сравнение товаров",
-        "message": "Нет товаров для сравнения",
-        "button_text": "Перейти в каталог",
-        "img_alt": "пустаяКорзина",
-        "img_alt_mobile": "пустаяКорзинаMobile"
-      },
-      "header_block": {
-        "title": "Сравнение товаров",
-        "counter_message": "Добавлено {productsNumber} из {productsLimit}",
-        "differences_checkbox_label": "Показать только отличия",
-        "clear_button": "Очистить список"
-      },
-      "main_block": {
-        "price_label": "@:common.labels.product_price"
-      },
-      "links": {
-        "home": "@:common.links.home",
-        "compare_products": "Сравнение товаров"
-      }
-    },
     "branch": {
       "address": "Адрес",
       "phone": "Телефон: ",
@@ -1690,6 +1684,33 @@
     },
     "brand": {
       "products_title": "Товары"
+    },
+    "compare": {
+      "title": "Сравнение товаров",
+      "meta": {
+        "keywords": "сравнить товары, сравнение товаров, сравнение бок о бок",
+        "description": "Сравнивайте товары бок о бок, чтобы найти лучший вариант для ваших нужд."
+      },
+      "added_count": "из {total} добавлено",
+      "added_count_in_category": "из {total} добавлено в {category}",
+      "actions": {
+        "clear_all": "Очистить все",
+        "share": "Поделиться"
+      },
+      "clear_all_modal": {
+        "title": "Очистить все",
+        "message": "Будет удален 1 товар из сравнения. | Будет удалено {n} товаров из сравнения."
+      },
+      "clear_category_modal": {
+        "title": "Очистить категорию",
+        "message": "Будет удален 1 товар из категории {category}. | Будет удалено {n} товаров из категории {category}."
+      },
+      "empty": {
+        "title": "Ваш список сравнения пуст",
+        "description": "Добавляйте товары из каталога, чтобы сравнивать их характеристики бок о бок. Вы можете сравнивать до {limit} товаров в категории.",
+        "restore_button": "Восстановить товары",
+        "add_button": "Добавить товары"
+      }
     }
   },
   "identity_error": {

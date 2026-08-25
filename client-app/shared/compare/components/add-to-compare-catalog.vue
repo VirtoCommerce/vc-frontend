@@ -31,37 +31,37 @@ const { t } = useI18n();
 const { isInCompareList: isInCompareListFn, addToCompareList, removeFromCompareList } = useCompareProducts();
 const { configuration, selectedConfiguration, selectedConfigurationInput } = useConfigurableProduct(product.value.id);
 
-const isInCompareList = computed(() => {
-  const selectedConfigurationInputWithoutFiles = selectedConfigurationInput.value.filter(
-    (section) => section.type !== CONFIGURABLE_SECTION_TYPES.file,
-  );
-  return isInCompareListFn(product.value, selectedConfigurationInputWithoutFiles as ConfigurationSectionInput[]);
-});
+const selectedConfigurationInputWithoutFiles = computed(
+  () =>
+    selectedConfigurationInput.value.filter(
+      (section) => section.type !== CONFIGURABLE_SECTION_TYPES.file,
+    ) as ConfigurationSectionInput[],
+);
 
-const tooltipText = computed<string>(() =>
+const isInCompareList = computed(() => isInCompareListFn(product.value, selectedConfigurationInputWithoutFiles.value));
+
+const tooltipText = computed(() =>
   isInCompareList.value
     ? t("shared.compare.add_to_compare.tooltips.remove")
     : t("shared.compare.add_to_compare.tooltips.add"),
 );
 
-const toggle = () => {
-  const selectedConfigurationInputWithoutFiles = selectedConfigurationInput.value.filter(
-    (section) => section.type !== CONFIGURABLE_SECTION_TYPES.file,
-  );
+function toggle() {
   if (isInCompareList.value) {
-    removeFromCompareList(product.value, selectedConfigurationInputWithoutFiles as ConfigurationSectionInput[]);
-  } else {
-    const properties = Object.entries(selectedConfiguration.value)
-      .filter((entry) => !entry[1]?.files.length)
-      .map(([sectionId, _section]) => {
-        const section = configuration.value.find((s) => s.id === sectionId);
-        return {
-          id: sectionId,
-          label: section?.name ?? "",
-          value: _section?.selectedOptionTextValue ?? "",
-        };
-      });
-    addToCompareList(product.value, selectedConfigurationInput.value as ConfigurationSectionInput[], properties);
+    removeFromCompareList(product.value, selectedConfigurationInputWithoutFiles.value);
+    return;
   }
-};
+
+  const properties = Object.entries(selectedConfiguration.value)
+    .filter((entry) => !entry[1]?.files.length)
+    .map(([sectionId, section]) => {
+      const matchedConfiguration = configuration.value.find((s) => s.id === sectionId);
+      return {
+        label: matchedConfiguration?.name ?? "",
+        value: section?.selectedOptionTextValue ?? "",
+      };
+    });
+
+  addToCompareList(product.value, selectedConfigurationInput.value as ConfigurationSectionInput[], properties);
+}
 </script>

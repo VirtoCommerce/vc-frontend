@@ -1,0 +1,623 @@
+<template>
+  <VcWidget class="compare-table" :shadow="false">
+    <template #default-container>
+      <!-- Below md, the design moves this block above the header row entirely — teleported
+           there (rather than duplicated) so there's one tabs/differ instance and one activeTab. -->
+      <div ref="mobileTabsBarRef" class="compare-table__mobile-tabs-bar"></div>
+
+      <div class="compare-table__header-row" :class="{ 'compare-table__header-row--stuck': isCompact }">
+        <div class="compare-table__controls" :class="{ 'compare-table__controls--stuck': isCompact }">
+          <Teleport v-if="mobileTabsBarRef" :to="mobileTabsBarRef" :disabled="!isMobile">
+            <div class="compare-table__controls-top">
+              <div class="compare-table__tabs">
+                <VcTabSwitch
+                  :model-value="activeTab"
+                  class="compare-table__tab"
+                  size="sm"
+                  value="all"
+                  :label="t('shared.compare.table.tabs.all')"
+                  :disabled="isTabSwitchDisabled"
+                  @change="activeTab = $event"
+                />
+
+                <VcTabSwitch
+                  :model-value="activeTab"
+                  class="compare-table__tab"
+                  size="sm"
+                  value="differences"
+                  :label="t('shared.compare.table.tabs.differences')"
+                  :disabled="isTabSwitchDisabled"
+                  @change="activeTab = $event"
+                />
+              </div>
+
+              <p v-if="!isCompact" class="compare-table__differ">
+                {{ t("shared.compare.table.differ_rows", { count: differCount, total: totalRows }) }}
+              </p>
+            </div>
+          </Teleport>
+
+          <VcButton
+            v-if="!isCompact"
+            class="compare-table__clear-category"
+            variant="soft"
+            color="neutral"
+            size="xs"
+            prepend-icon="x"
+            @click="emit('clearCategory')"
+          >
+            {{ t("shared.compare.table.clear_category") }}
+          </VcButton>
+        </div>
+
+        <div class="compare-table__header-scroll">
+          <div class="compare-table__header-inner" :style="{ transform: `translateX(${-bodyScrollLeft}px)` }">
+            <div
+              v-for="item in products"
+              :key="item.entry.localId ?? item.product.id"
+              class="compare-table__product"
+              :class="{ 'compare-table__product--compact': isCompact }"
+            >
+              <template v-if="isCompact">
+                <div class="compare-table__product-summary">
+                  <div class="compare-table__product-summary-image-wrap">
+                    <VcImage
+                      class="compare-table__product-summary-image"
+                      :src="item.product.imgSrc"
+                      :alt="item.product.name"
+                    />
+                  </div>
+
+                  <VcProductTitle
+                    class="compare-table__product-summary-title"
+                    :to="getProductRoute(item.product.id, item.product.slug)"
+                    :title="item.product.name"
+                    :lines-number="1"
+                    @click="emit('selectItem', item.product)"
+                  >
+                    {{ item.product.name }}
+                  </VcProductTitle>
+                </div>
+
+                <VcButton
+                  v-if="item.product.isConfigurable"
+                  class="compare-table__product-cart-button"
+                  prepend-icon="cube-transparent"
+                  size="sm"
+                  :to="getConfigurationLink(item)"
+                  :target="browserTarget"
+                  :aria-label="t('pages.catalog.customize_button')"
+                >
+                  <span class="compare-table__product-cart-button-text">
+                    {{ t("pages.catalog.customize_button") }}
+                  </span>
+                </VcButton>
+
+                <VcButton
+                  v-else-if="item.product.hasVariations"
+                  class="compare-table__product-cart-button"
+                  prepend-icon="layers"
+                  size="sm"
+                  :to="getProductRoute(item.product.id, item.product.slug)"
+                  :target="browserTarget"
+                  :aria-label="t('pages.catalog.variations_button', [(item.product.variations?.length || 0) + 1])"
+                >
+                  <span class="compare-table__product-cart-button-text">
+                    {{ t("pages.catalog.variations_button", [(item.product.variations?.length || 0) + 1]) }}
+                  </span>
+                </VcButton>
+
+                <VcButton
+                  v-else
+                  class="compare-table__product-cart-button"
+                  prepend-icon="shopping-cart"
+                  size="sm"
+                  :loading="isAddingToCart(item)"
+                  :disabled="isAddToCartDisabled(item.product) || isAddingToCart(item)"
+                  :aria-label="t('shared.compare.table.add_to_cart')"
+                  @click="onAddToCart(item)"
+                >
+                  <span class="compare-table__product-cart-button-text">
+                    {{ t("shared.compare.table.add_to_cart") }}
+                  </span>
+                </VcButton>
+              </template>
+
+              <template v-else>
+                <div class="compare-table__product-image-wrap">
+                  <VcImage class="compare-table__product-image" :src="item.product.imgSrc" :alt="item.product.name" />
+
+                  <VcProductActions class="compare-table__product-remove" with-background>
+                    <VcProductActionsButton
+                      icon="trash-2"
+                      :tooltip-text="t('shared.compare.table.remove_product')"
+                      @click="emit('removeProduct', item)"
+                    />
+                  </VcProductActions>
+                </div>
+
+                <div class="compare-table__product-footer">
+                  <VcProductTitle
+                    class="compare-table__product-title"
+                    :to="getProductRoute(item.product.id, item.product.slug)"
+                    :title="item.product.name"
+                    :lines-number="2"
+                    @click="emit('selectItem', item.product)"
+                  >
+                    {{ item.product.name }}
+                  </VcProductTitle>
+
+                  <VcButton
+                    v-if="item.product.isConfigurable"
+                    icon="cube-transparent"
+                    size="sm"
+                    :to="getConfigurationLink(item)"
+                    :target="browserTarget"
+                    :aria-label="t('pages.catalog.customize_button')"
+                  />
+
+                  <VcButton
+                    v-else-if="item.product.hasVariations"
+                    icon="layers"
+                    size="sm"
+                    :to="getProductRoute(item.product.id, item.product.slug)"
+                    :target="browserTarget"
+                    :aria-label="t('pages.catalog.variations_button', [(item.product.variations?.length || 0) + 1])"
+                  />
+
+                  <VcButton
+                    v-else
+                    icon="shopping-cart"
+                    size="sm"
+                    :loading="isAddingToCart(item)"
+                    :disabled="isAddToCartDisabled(item.product) || isAddingToCart(item)"
+                    :aria-label="t('shared.compare.table.add_to_cart')"
+                    @click="onAddToCart(item)"
+                  />
+                </div>
+              </template>
+            </div>
+
+            <div v-if="canAddProduct" class="compare-table__add-product">
+              <button type="button" class="compare-table__add-product-box">
+                <VcIcon name="plus" :size="28" />
+
+                <span class="compare-table__add-product-text" v-if="!isCompact">
+                  {{ t("shared.compare.table.add_product") }}
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div ref="bodyScrollRef" class="compare-table__scroll" @scroll="onBodyScroll">
+        <div
+          v-for="(row, index) in visibleRows"
+          :key="row.key"
+          class="compare-table__row"
+          :class="{ 'compare-table__row--alt': index % 2 === 1 }"
+        >
+          <div class="compare-table__row-label">
+            <span class="compare-table__row-label-text">{{ row.label }}</span>
+
+            <VcButton
+              class="compare-table__row-pin"
+              :class="{ 'compare-table__row-pin--active': isRowPinned(row.key) }"
+              size="xxs"
+              variant="ghost"
+              :color="isRowPinned(row.key) ? 'secondary' : 'neutral'"
+              icon
+              :aria-pressed="isRowPinned(row.key)"
+              :aria-label="
+                t(
+                  isRowPinned(row.key) ? 'shared.compare.table.pin.unpin_label' : 'shared.compare.table.pin.pin_label',
+                  { label: row.label },
+                )
+              "
+              :title="
+                t(isRowPinned(row.key) ? 'shared.compare.table.pin.unpin_title' : 'shared.compare.table.pin.pin_title')
+              "
+              @click="togglePin(row.key)"
+            >
+              <!-- VcButton's `icon` prop takes a name string only (no variant), so the solid/outline
+                   swap for the pinned state is rendered manually here instead. -->
+              <VcIcon name="pin" :variant="isRowPinned(row.key) ? 'solid' : 'outline'" />
+            </VcButton>
+          </div>
+
+          <div
+            v-for="(value, index) in row.values"
+            :key="products[index]?.entry.localId ?? products[index]?.product.id ?? index"
+            class="compare-table__row-value"
+          >
+            <VcProductPrice
+              v-if="row.kind === 'price' && products[index]"
+              class="compare-table__price"
+              align="start"
+              single-line
+              :actual-price="getDisplayPrice(products[index]!.product).actual"
+              :list-price="getDisplayPrice(products[index]!.product).list"
+              :with-from-label="products[index]!.product.hasVariations"
+            />
+
+            <ProductRating
+              v-else-if="row.kind === 'rating' && products[index]?.product.rating"
+              :rating="products[index]!.product.rating!"
+              size="xs"
+            />
+
+            <InStock
+              v-else-if="row.kind === 'availability' && products[index]"
+              :is-in-stock="products[index]!.product.availabilityData.isInStock"
+              :is-available="products[index]!.product.availabilityData.isAvailable"
+              :is-digital="products[index]!.product.productType === ProductType.Digital"
+              :quantity="products[index]!.product.availabilityData.availableQuantity"
+            />
+
+            <template v-else>{{ value }}</template>
+          </div>
+
+          <div v-if="canAddProduct" class="compare-table__row-value"></div>
+        </div>
+      </div>
+    </template>
+  </VcWidget>
+</template>
+
+<script setup lang="ts">
+import { useBreakpoints } from "@vueuse/core";
+import { computed, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
+import { useBrowserTarget } from "@/core/composables";
+import { ProductType } from "@/core/enums";
+import { getProductRoute } from "@/core/utilities";
+import { BREAKPOINTS } from "@/ui-kit/constants";
+import { useCompareAddToCart, useCompareTableRowPins } from "../composables";
+import { getConfigurationLink, getDisplayPrice } from "../utilities";
+import type { ICompareDisplayProduct, ICompareTableRow } from "../types";
+import type { Product } from "@/core/api/graphql/types";
+import ProductRating from "@/modules/customer-reviews/components/product-rating.vue";
+import InStock from "@/shared/catalog/components/in-stock.vue";
+
+interface IEmits {
+  (e: "clearCategory"): void;
+  (e: "removeProduct", item: ICompareDisplayProduct): void;
+  (e: "selectItem", product: Product): void;
+}
+
+interface IProps {
+  products: ICompareDisplayProduct[];
+  rows?: ICompareTableRow[];
+  differCount?: number;
+  totalRows?: number;
+  canAddProduct?: boolean;
+}
+
+const emit = defineEmits<IEmits>();
+
+const props = withDefaults(defineProps<IProps>(), {
+  rows: () => [],
+  differCount: 0,
+  totalRows: 0,
+  canAddProduct: true,
+});
+
+// Always shown even under the "Differences" filter, regardless of row.differs.
+const PERMANENT_ROW_KEYS = ["price", "availability"];
+
+const { t } = useI18n();
+const { browserTarget } = useBrowserTarget();
+const { isAddingToCart, isAddToCartDisabled, onAddToCart } = useCompareAddToCart();
+
+// Below md the tabs/differ block is teleported above the header row (see the design) instead of
+// being duplicated in two places with two templates to keep in sync.
+const isMobile = useBreakpoints(BREAKPOINTS).smaller("md");
+
+const { isRowPinned, togglePin, pinnedRows, unpinnedRows } = useCompareTableRowPins(() => props.rows);
+
+const isCompact = ref(false);
+const activeTab = ref("all");
+const bodyScrollRef = ref<HTMLElement | null>(null);
+const bodyScrollLeft = ref(0);
+const mobileTabsBarRef = ref<HTMLElement | null>(null);
+
+const isTabSwitchDisabled = computed(() => props.products.length <= 1);
+// Pinned rows always stay visible at the top, even under the "Differences" filter.
+const visibleRows = computed(() => {
+  const rest =
+    activeTab.value === "differences"
+      ? unpinnedRows.value.filter((row) => row.differs || PERMANENT_ROW_KEYS.includes(row.key))
+      : unpinnedRows.value;
+
+  return [...pinnedRows.value, ...rest];
+});
+
+function onBodyScroll() {
+  bodyScrollLeft.value = bodyScrollRef.value?.scrollLeft ?? 0;
+}
+
+watch(
+  isTabSwitchDisabled,
+  (disabled) => {
+    if (disabled) {
+      activeTab.value = "all";
+    }
+  },
+  { immediate: true },
+);
+</script>
+
+<style lang="scss">
+.compare-table {
+  &__scroll {
+    @apply overflow-x-auto rounded-b-[--radius];
+  }
+
+  &__header-row {
+    @apply flex overflow-hidden rounded-t-[--radius] border-b border-neutral-200 bg-additional-50;
+
+    // The mobile tabs bar owns the top corners below md instead.
+    @media (width < theme("screens.md")) {
+      @apply rounded-t-none;
+    }
+  }
+
+  // Empty on desktop — the tabs/differ block only teleports in here below md (see script setup).
+  &__mobile-tabs-bar {
+    @apply hidden;
+
+    @media (width < theme("screens.md")) {
+      @apply flex rounded-t-[--radius] border-b border-neutral-200 bg-additional-50 px-3 py-2.5;
+    }
+  }
+
+  // Its own clip boundary, sized to the remaining width after __controls — keeps the translated
+  // __header-inner from visually sliding under __controls while scrolling, and lets __product
+  // cells divide up exactly the same available width as __row-value does (same sizing algorithm
+  // on both sides, so header and body columns line up).
+  &__header-scroll {
+    @apply min-w-0 flex-1 overflow-hidden;
+  }
+
+  &__header-inner {
+    @apply flex items-stretch;
+  }
+
+  &__controls {
+    @apply flex w-60 shrink-0 flex-col justify-between gap-3 border-e border-neutral-200 py-3 pe-4 ps-3;
+
+    @media (width < theme("screens.md")) {
+      @apply w-28;
+    }
+
+    &--stuck {
+      @apply justify-center;
+    }
+  }
+
+  &__controls-top {
+    @apply flex flex-col gap-3;
+
+    // Teleported into __mobile-tabs-bar below md — laid out as one row there (tabs, then differ
+    // count) instead of stacked, matching the design.
+    @media (width < theme("screens.md")) {
+      @apply w-full flex-row items-center justify-between gap-3;
+    }
+  }
+
+  &__clear-category {
+    @apply self-start;
+
+    @media (width < theme("screens.md")) {
+      @apply hidden;
+    }
+  }
+
+  &__tabs {
+    // Grid rather than flex: with a flex parent that isn't stretched to a fixed width (e.g. the
+    // mobile tabs bar, sized to fit its content), flex-1 children just fall back to their own
+    // text-driven width, so "All" and "Differences" end up unequal. A 1fr/1fr grid always sizes
+    // both columns to the wider label's width, regardless of whether this container is stretched
+    // or shrink-to-fit — same result on desktop, but also correct here.
+    @apply grid grid-cols-2 gap-0.5 rounded-lg bg-neutral-100 p-1.5;
+  }
+
+  &__tab {
+    @apply w-full;
+
+    .vc-tab-switch__input:not(:checked) ~ .vc-tab-switch__button {
+      @apply border-transparent;
+    }
+  }
+
+  &__differ {
+    @apply text-xs text-neutral-500;
+  }
+
+  &__product {
+    @apply flex min-w-48 max-w-60 flex-1 flex-col gap-3 p-3;
+
+    @media (width < theme("screens.md")) {
+      @apply w-28 min-w-0 max-w-none flex-none;
+    }
+
+    &:not(:last-child) {
+      @apply border-e border-neutral-200;
+    }
+
+    &--compact {
+      @apply justify-between gap-2 py-2.5;
+    }
+  }
+
+  &__product-image-wrap {
+    @apply relative h-44 overflow-hidden rounded-lg border border-neutral-300;
+
+    // Closest Tailwind scale step to ~90px.
+    @media (width < theme("screens.md")) {
+      @apply h-24;
+    }
+  }
+
+  &__product-image {
+    @apply size-full object-cover;
+  }
+
+  &__product-remove {
+    @apply absolute end-1 top-1;
+
+    .vc-product-actions {
+      @apply p-0.5;
+    }
+
+    .vc-product-actions-button {
+      @apply min-h-0 min-w-0 p-1;
+    }
+  }
+
+  &__product-footer {
+    @apply flex items-end gap-2;
+
+    @media (width < theme("screens.md")) {
+      @apply flex-col items-start;
+    }
+  }
+
+  &__product-title {
+    --vc-product-title-font-size: theme("fontSize.sm");
+
+    @apply min-w-0 flex-1;
+  }
+
+  &__product-summary {
+    @apply flex items-center gap-2.5;
+  }
+
+  &__product-summary-image-wrap {
+    @apply size-10 shrink-0 overflow-hidden rounded-lg border border-neutral-300;
+  }
+
+  &__product-summary-image {
+    @apply size-full object-cover;
+  }
+
+  &__product-summary-title {
+    --vc-product-title-font-size: theme("fontSize.sm");
+
+    @apply min-w-0 flex-1;
+  }
+
+  &__product-cart-button {
+    @apply w-full;
+
+    @media (width < theme("screens.md")) {
+      .vc-button__icon {
+        @apply me-0;
+      }
+    }
+  }
+
+  &__product-cart-button-text {
+    @media (width < theme("screens.md")) {
+      @apply hidden;
+    }
+  }
+
+  &__add-product {
+    @apply flex min-w-48 max-w-60 flex-1 self-stretch p-3;
+
+    @media (width < theme("screens.md")) {
+      @apply w-28 min-w-0 max-w-none flex-none;
+    }
+  }
+
+  &__add-product-box {
+    @apply flex size-full flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-neutral-300 bg-additional-50 text-sm font-bold text-neutral-900;
+  }
+
+  &__add-product-text {
+    @apply text-sm;
+
+    @media (width < theme("screens.md")) {
+      @apply text-xs;
+    }
+  }
+
+  &__row {
+    // w-fit + min-w-full: 100% wide when content fits (so cells still stretch evenly), but grows
+    // to the full overflowing content width once cells hit their min-width — otherwise the row's
+    // own background/border stop at the container edge instead of following the scrolled content.
+    @apply flex min-h-[50px] w-fit min-w-full items-stretch;
+
+    &:not(:last-child) {
+      @apply border-b border-neutral-200;
+    }
+
+    &:hover {
+      @apply bg-secondary-100;
+
+      .compare-table__row-pin {
+        @apply opacity-100;
+      }
+
+      .compare-table__row-label {
+        @apply bg-secondary-100;
+      }
+    }
+  }
+
+  &__row--alt {
+    @apply bg-neutral-50;
+
+    .compare-table__row-label {
+      @apply bg-neutral-50;
+    }
+  }
+
+  &__row-label {
+    // Sticky so it stays put while the values/products scroll horizontally underneath it —
+    // needs its own opaque background (kept in sync with the row's alt/hover state above) so
+    // the scrolled-away cells don't show through.
+    @apply sticky start-0 z-[1] flex w-60 shrink-0 items-center gap-1 border-e border-neutral-200 bg-additional-50 px-3 py-2.5 text-xs text-neutral-600;
+
+    @media (width < theme("screens.md")) {
+      @apply w-28;
+    }
+  }
+
+  &__row-label-text {
+    @apply min-w-0 flex-1 truncate;
+  }
+
+  // Hidden until the row is hovered/focused, unless the row is pinned — matches the design's
+  // reveal-on-hover pin affordance.
+  &__row-pin {
+    @apply shrink-0 opacity-0 transition-opacity;
+
+    &:focus-visible {
+      @apply opacity-100;
+    }
+
+    &--active {
+      @apply opacity-100;
+    }
+  }
+
+  &__row-value {
+    @apply flex min-w-48 max-w-60 flex-1 items-center break-words px-3 py-2.5 text-sm font-normal text-neutral-900;
+
+    @media (width < theme("screens.md")) {
+      @apply w-28 min-w-0 max-w-none flex-none;
+    }
+
+    &:not(:last-child) {
+      @apply border-e border-neutral-200;
+    }
+  }
+
+  &__price {
+    --vc-product-price-font-size: theme("fontSize.sm");
+  }
+}
+</style>
