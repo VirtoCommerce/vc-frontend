@@ -1068,10 +1068,12 @@
         "add_to_cart": "Lisää ostoskoriin",
         "fields": {
           "price_per_unit": "Hinta per yksikkö",
+          "price_per_unit_tooltip": "Hinta, ALV:n ulkop., per yksikkö.",
           "customer_rating": "Asiakasarvio",
           "availability": "Saatavuus",
           "sku": "@:common.labels.sku",
-          "min_order_qty": "Min. tilausmäärä"
+          "min_order_qty": "Min. tilausmäärä",
+          "min_order_qty_tooltip": "MOQ — vähimmäismäärä yksiköitä per tilaus."
         },
         "pin": {
           "pin_title": "Kiinnitä ylös",

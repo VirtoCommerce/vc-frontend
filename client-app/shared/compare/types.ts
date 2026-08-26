@@ -37,4 +37,5 @@ export interface ICompareTableRow {
   kind: CompareRowKindType;
   values: string[];
   differs: boolean;
+  description?: string;
 }

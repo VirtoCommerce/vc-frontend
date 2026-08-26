@@ -1068,10 +1068,12 @@
         "add_to_cart": "添加到购物车",
         "fields": {
           "price_per_unit": "每件价格",
+          "price_per_unit_tooltip": "每单位价格（不含增值税）。",
           "customer_rating": "客户评分",
           "availability": "可用性",
           "sku": "@:common.labels.sku",
-          "min_order_qty": "最小起订量"
+          "min_order_qty": "最小起订量",
+          "min_order_qty_tooltip": "起订量 — 每笔订单的最低单位数量。"
         },
         "pin": {
           "pin_title": "固定到顶部",

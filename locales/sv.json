@@ -1068,10 +1068,12 @@
         "add_to_cart": "Lägg till i kundvagnen",
         "fields": {
           "price_per_unit": "Pris per enhet",
+          "price_per_unit_tooltip": "Pris, exkl. moms, per enhet.",
           "customer_rating": "Kundbetyg",
           "availability": "Tillgänglighet",
           "sku": "@:common.labels.sku",
-          "min_order_qty": "Min. beställningsantal"
+          "min_order_qty": "Min. beställningsantal",
+          "min_order_qty_tooltip": "MOQ — minsta antal enheter per beställning."
         },
         "pin": {
           "pin_title": "Fäst överst",

@@ -198,8 +198,14 @@ export function useCompareProductsPage() {
       return [];
     }
 
-    function makeRow(key: string, label: string, kind: ICompareTableRow["kind"], values: string[]): ICompareTableRow {
-      return { key, label, kind, values, differs: new Set(values).size > 1 };
+    function makeRow(
+      key: string,
+      label: string,
+      kind: ICompareTableRow["kind"],
+      values: string[],
+      description?: string,
+    ): ICompareTableRow {
+      return { key, label, kind, values, differs: new Set(values).size > 1, description };
     }
 
     const rows: ICompareTableRow[] = [
@@ -208,6 +214,7 @@ export function useCompareProductsPage() {
         t("shared.compare.table.fields.price_per_unit"),
         "price",
         items.map(({ product }) => getDisplayPrice(product).actual.formattedAmount),
+        t("shared.compare.table.fields.price_per_unit_tooltip"),
       ),
     ];
 
@@ -244,6 +251,7 @@ export function useCompareProductsPage() {
         t("shared.compare.table.fields.min_order_qty"),
         "text",
         items.map(({ product }) => (product.minQuantity != null ? n(product.minQuantity) : EMPTY_VALUE_PLACEHOLDER)),
+        t("shared.compare.table.fields.min_order_qty_tooltip"),
       ),
     );
 

@@ -1068,10 +1068,12 @@
         "add_to_cart": "Legg i handlekurv",
         "fields": {
           "price_per_unit": "Pris per enhet",
+          "price_per_unit_tooltip": "Pris, ekskl. mva, per enhet.",
           "customer_rating": "Kunderangering",
           "availability": "Tilgjengelighet",
           "sku": "@:common.labels.sku",
-          "min_order_qty": "Min. bestillingsantall"
+          "min_order_qty": "Min. bestillingsantall",
+          "min_order_qty_tooltip": "MOQ — minimum antall enheter per bestilling."
         },
         "pin": {
           "pin_title": "Fest øverst",

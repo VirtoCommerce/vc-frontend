@@ -1068,10 +1068,12 @@
         "add_to_cart": "Añadir al carrito",
         "fields": {
           "price_per_unit": "Precio por unidad",
+          "price_per_unit_tooltip": "Precio, sin IVA, por unidad.",
           "customer_rating": "Valoración del cliente",
           "availability": "Disponibilidad",
           "sku": "@:common.labels.sku",
-          "min_order_qty": "Cantidad mínima de pedido"
+          "min_order_qty": "Cantidad mínima de pedido",
+          "min_order_qty_tooltip": "MOQ — número mínimo de unidades por pedido."
         },
         "pin": {
           "pin_title": "Fijar en la parte superior",

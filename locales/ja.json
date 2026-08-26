@@ -1068,10 +1068,12 @@
         "add_to_cart": "カートに追加",
         "fields": {
           "price_per_unit": "単価",
+          "price_per_unit_tooltip": "単価（税抜）",
           "customer_rating": "顧客評価",
           "availability": "在庫状況",
           "sku": "@:common.labels.sku",
-          "min_order_qty": "最小注文数量"
+          "min_order_qty": "最小注文数量",
+          "min_order_qty_tooltip": "MOQ — 1回の注文あたりの最小ユニット数。"
         },
         "pin": {
           "pin_title": "トップに固定",

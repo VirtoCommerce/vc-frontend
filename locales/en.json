@@ -1068,10 +1068,12 @@
         "add_to_cart": "Add to cart",
         "fields": {
           "price_per_unit": "Price per unit",
+          "price_per_unit_tooltip": "Price, excl. VAT, per unit.",
           "customer_rating": "Customer rating",
           "availability": "Availability",
           "sku": "@:common.labels.sku",
-          "min_order_qty": "Min. order qty"
+          "min_order_qty": "Min. order qty",
+          "min_order_qty_tooltip": "MOQ — minimum number of units per order."
         },
         "pin": {
           "pin_title": "Pin to top",

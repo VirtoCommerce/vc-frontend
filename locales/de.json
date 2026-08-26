@@ -1068,10 +1068,12 @@
         "add_to_cart": "In den Warenkorb legen",
         "fields": {
           "price_per_unit": "Preis pro Einheit",
+          "price_per_unit_tooltip": "Preis, exkl. MwSt., pro Einheit.",
           "customer_rating": "Kundenbewertung",
           "availability": "Verfügbarkeit",
           "sku": "@:common.labels.sku",
-          "min_order_qty": "Mindestbestellmenge"
+          "min_order_qty": "Mindestbestellmenge",
+          "min_order_qty_tooltip": "MOQ – Mindestanzahl an Einheiten pro Bestellung."
         },
         "pin": {
           "pin_title": "Oben anheften",

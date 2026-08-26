@@ -1068,10 +1068,12 @@
         "add_to_cart": "Dodaj do koszyka",
         "fields": {
           "price_per_unit": "Cena za sztukę",
+          "price_per_unit_tooltip": "Cena, bez VAT, za sztukę.",
           "customer_rating": "Ocena klienta",
           "availability": "Dostępność",
           "sku": "@:common.labels.sku",
-          "min_order_qty": "Min. ilość zamówienia"
+          "min_order_qty": "Min. ilość zamówienia",
+          "min_order_qty_tooltip": "MOQ — minimalna liczba sztuk w zamówieniu."
         },
         "pin": {
           "pin_title": "Przypnij u góry",

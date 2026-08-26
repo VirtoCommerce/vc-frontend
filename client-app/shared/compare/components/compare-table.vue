@@ -193,7 +193,25 @@
           :class="{ 'compare-table__row--alt': index % 2 === 1 }"
         >
           <div class="compare-table__row-label">
-            <span class="compare-table__row-label-text">{{ row.label }}</span>
+            <span class="compare-table__row-label-info-wrap">
+              <span class="compare-table__row-label-text">{{ row.label }}</span>
+
+              <VcTooltip
+                v-if="row.description"
+                class="compare-table__row-info"
+                placement="top"
+                strategy="fixed"
+                enable-teleport
+              >
+                <template #trigger>
+                  <VcIcon name="information-circle" size="xs" :aria-label="row.description" />
+                </template>
+
+                <template #content>
+                  {{ row.description }}
+                </template>
+              </VcTooltip>
+            </span>
 
             <VcButton
               class="compare-table__row-pin"
@@ -568,8 +586,16 @@ watch(
     }
   }
 
+  &__row-label-info-wrap {
+    @apply flex min-w-0 flex-1 items-center gap-1.5;
+  }
+
   &__row-label-text {
-    @apply min-w-0 flex-1 truncate;
+    @apply min-w-0 truncate;
+  }
+
+  &__row-info {
+    @apply shrink-0 text-neutral-500;
   }
 
   &__row-pin {

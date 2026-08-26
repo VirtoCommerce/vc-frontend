@@ -1068,10 +1068,12 @@
         "add_to_cart": "Добавить в корзину",
         "fields": {
           "price_per_unit": "Цена за единицу",
+          "price_per_unit_tooltip": "Цена без НДС за единицу.",
           "customer_rating": "Рейтинг покупателей",
           "availability": "Наличие",
           "sku": "@:common.labels.sku",
-          "min_order_qty": "Мин. кол-во для заказа"
+          "min_order_qty": "Мин. кол-во для заказа",
+          "min_order_qty_tooltip": "MOQ — минимальное количество единиц в заказе."
         },
         "pin": {
           "pin_title": "Закрепить сверху",

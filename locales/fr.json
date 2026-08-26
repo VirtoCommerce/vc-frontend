@@ -1068,10 +1068,12 @@
         "add_to_cart": "Ajouter au panier",
         "fields": {
           "price_per_unit": "Prix par unité",
+          "price_per_unit_tooltip": "Prix, hors TVA, par unité.",
           "customer_rating": "Note client",
           "availability": "Disponibilité",
           "sku": "@:common.labels.sku",
-          "min_order_qty": "Qté min. commande"
+          "min_order_qty": "Qté min. commande",
+          "min_order_qty_tooltip": "MOQ — nombre minimum d'unités par commande."
         },
         "pin": {
           "pin_title": "Épingler en haut",
