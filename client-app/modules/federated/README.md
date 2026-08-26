@@ -255,8 +255,9 @@ Three design points worth calling out:
 - **Every network step is time-budgeted** (two knobs via `initFederatedModules(options)`:
   manifest 2s; load and init 3s _each_ — one remote may legally take up to
   manifest + 2×load ≈ 8s), plus `DISCOVERY_TIMEOUT_MS` (2s) on the plugin-list query in
-  `bootstrap.ts`. Boot awaits this loader, so that sum is also blank-screen time:
-  a hung remote delays first paint by up to 8s and is then reported `failed`/`skipped`.
+  `bootstrap.ts`. Boot awaits this loader, so those budgets are also blank-screen time:
+  a hung remote delays first paint until it is reported `failed`/`skipped` — up to 8s of
+  per-remote budget, 10s counting the discovery leg, and never longer than the backstop below.
   `bootstrap.ts` adds a
   12s **backstop** above the budgeted legs (2 + 2 + 3 + 3 = 10s), covering what the budgets
   do not: the loader chunk's own fetch, and an inner timeout malfunctioning.
@@ -370,7 +371,7 @@ hosted remote.
 | Var              | Scope                | Meaning                                                                                                              |
 | ---------------- | -------------------- | -------------------------------------------------------------------------------------------------------------------- |
 | `APP_MODULES_FEDERATION_ENABLED`    | build time (inlined) | Enables the MF host plugin in Vite **and** the runtime bootstrap. Off (unset/`""`/`"false"`/`"0"`) ⇒ complete no-op. |
-| `APP_MODULES_FEDERATION_REMOTES` | build time (inlined) | Local/dev override: JSON `{ "<name>": "<manifestUrl>" }`, https-only. Absent ⇒ the platform's list is used. Set to anything else — including `{}` or invalid JSON — ⇒ it still replaces the platform list, so no remotes load. |
+| `APP_MODULES_FEDERATION_REMOTES` | build time (inlined) | Local/dev override: JSON `{ "<name>": "<manifestUrl>" }`, https-only. Absent ⇒ the platform's list is used. Set to anything else — including `{}` or invalid JSON — ⇒ it still replaces the platform list, so no remotes load, and the host does not ask the platform for one. |
 
 ---
 
@@ -410,9 +411,13 @@ decision for the storefront. What the harness enforces today:
   window and refuses a host name, because remove-then-add would otherwise leave the name free by the
   time the add is checked — a plugin may still remove routes it added itself. One wrapper covers the
   whole phase, not one per plugin: plugins init concurrently, and a per-plugin save/restore leaks one
-  plugin's wrapper onto the host router while the next runs unguarded. It covers takeover, not
-  authorization, and only inside that window — a claim made from a continuation after the phase ends
-  is outside it, and the name it is refused under cannot be attributed to a single plugin.
+  plugin's wrapper onto the host router while the next runs unguarded. The wrapper cannot tell a host
+  call from a plugin's, which is why `app-runner` starts the loader only after its own route-mutating
+  installs (builder-preview does remove-then-add) — inside the window those would be refused and
+  logged against a plugin. It covers takeover, not authorization, and only inside that window — a
+  claim made from a continuation after the phase ends is outside it, and the name it is refused under
+  cannot be attributed to a single plugin. The window is not bounded by the backstop either: boot may
+  proceed at the cap with the wrapper still installed, since the loader keeps running detached.
 - **No tenant-editable remote list** — there is no store setting to edit. The runtime list is
   whatever modules are installed, so a platform administrator with install rights decides which
   plugins the storefront loads; the env override stays build-time. It is still backend-supplied

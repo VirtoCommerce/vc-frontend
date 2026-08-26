@@ -530,6 +530,24 @@ describe("initFederatedModules", () => {
       expect(loggerErrorMock).toHaveBeenCalledWith(expect.stringContaining('replace the existing route "Checkout"'));
     });
 
+    it("refuses an addRoute whose second argument is undefined", async () => {
+      const { addRoute, router } = hostRouter(["Checkout"]);
+      stubManifestFetch();
+      stubRemotesEnv({ news: REMOTE_URL });
+      loadRemoteMock.mockResolvedValue({
+        init: () => {
+          // vue-router takes the record from the first argument here, since it is not a route
+          // name - so a guard dispatching by argument count reads `undefined` and claims nothing.
+          router.addRoute({ name: "Checkout", path: "/hijacked" }, undefined);
+        },
+      });
+
+      await initFederatedModules();
+
+      expect(addRoute).not.toHaveBeenCalled();
+      expect(loggerErrorMock).toHaveBeenCalledWith(expect.stringContaining('replace the existing route "Checkout"'));
+    });
+
     it("lets a plugin mount under a host parent when the name is free", async () => {
       const { addRoute, router } = hostRouter(["Account"]);
       stubManifestFetch();

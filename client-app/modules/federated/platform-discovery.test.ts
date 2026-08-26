@@ -165,6 +165,41 @@ describe("platform-served plugin discovery", () => {
     expect(injected[0].getAttribute("rel")).toBe("stylesheet");
   });
 
+  it.each([
+    ["declares an unsupported kind", "script"],
+    ["declares no kind at all", undefined],
+  ])("says which content file it ignored when the file %s", async (_label, type) => {
+    stubManifestFetch();
+
+    const result = await initFederatedModules({
+      plugins: [
+        platformPlugin({
+          contentFiles: [{ type, path: "/modules/$(VirtoCommerce.SalesRep)/plugins/vc-frontend/extra.css" }],
+        }),
+      ],
+    });
+
+    // Without a diagnostic the plugin just loads and renders unstyled, with nothing to point at.
+    expect(result.loaded).toEqual(["sales-rep"]);
+    expect(document.head.querySelectorAll("link[data-mf-plugin-style]")).toHaveLength(0);
+    expect(loggerInfoMock).toHaveBeenCalledWith(expect.stringContaining("ignoring content file"));
+  });
+
+  it("reports a descriptor carrying neither id nor remote name by its position in the list", async () => {
+    stubManifestFetch();
+
+    const result = await initFederatedModules({
+      plugins: [
+        platformPlugin(),
+        { entry: { type: "script", path: "/modules/X/plugins/vc-frontend/remoteEntry.js" } } as IPlatformPlugin,
+      ],
+    });
+
+    // Logger is a no-op at every level in production, so the outcome is the only signal there is.
+    expect(result.loaded).toEqual(["sales-rep"]);
+    expect(result.skipped).toEqual(["plugin #2"]);
+  });
+
   it("lets the env override win over the platform list", async () => {
     stubManifestFetch();
     vi.stubEnv("APP_MODULES_FEDERATION_REMOTES", JSON.stringify({ local: "http://localhost:3001/mf-manifest.json" }));

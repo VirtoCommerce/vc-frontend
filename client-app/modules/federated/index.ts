@@ -293,11 +293,8 @@ function collectStyles(plugin: IPlatformPlugin): string[] {
     // invisible otherwise: the plugin loads and renders unstyled with nothing to point at.
     const fileType = asString(file?.type);
     if (fileType?.toLowerCase() !== PLATFORM_STYLE_FILE_TYPE) {
-      // Only when a kind was actually declared: `kind "undefined"` read like a platform bug rather
-      // than an asset this loader simply has no use for.
-      if (fileType) {
-        Logger.info(`[MF] Plugin "${String(plugin?.id)}": ignoring content file of kind "${fileType}"`);
-      }
+      const kind = fileType ? `"${fileType}"` : "(none declared)";
+      Logger.info(`[MF] Plugin "${String(plugin?.id)}": ignoring content file "${filePath}" of kind ${kind}`);
       continue;
     }
     const url = toAbsoluteUrl(filePath);
@@ -384,16 +381,15 @@ function resolvePlatformRemotes(plugins: readonly IPlatformPlugin[]): IResolvedR
 
   // Not `?? []`: a non-array (schema drift, a bad gateway) is not iterable and would throw out of
   // the whole loader — the batch must survive whatever shape arrives.
-  for (const plugin of Array.isArray(plugins) ? plugins : []) {
+  for (const [index, plugin] of (Array.isArray(plugins) ? plugins : []).entries()) {
     const name = asString(plugin?.remote?.name) || asString(plugin?.id) || "";
     const path = asString(plugin?.entry?.path);
     if (!SAFE_REMOTE_NAME.test(name)) {
-      const label = asString(plugin?.id) || name;
+      // Reported under whatever identifies it, so the outcome summary never drops a plugin
+      // silently; one carrying neither id nor remote name has only its position to be named by.
+      const label = asString(plugin?.id) || name || `plugin #${index + 1}`;
       Logger.error(`[MF] Skipping plugin "${label}": remote name "${name}" must match ${String(SAFE_REMOTE_NAME)}`);
-      // Reported under whatever identifies it, so the outcome summary never drops a plugin silently.
-      if (label) {
-        resolved.invalidNames.push(label);
-      }
+      resolved.invalidNames.push(label);
       continue;
     }
     if (!path) {
@@ -522,7 +518,10 @@ function installRouteGuard(): () => void {
   const originalRemove = router.removeRoute as (...args: unknown[]) => void;
 
   const guardedAdd = (...args: unknown[]) => {
-    const record = args.length >= 2 ? args[1] : args[0];
+    // Which argument holds the record is decided as vue-router decides it (isRouteName), not by
+    // argument count: `addRoute(record, undefined)` passes two arguments but the record is first.
+    const [first, second] = args;
+    const record = typeof first === "string" || typeof first === "symbol" ? second : first;
     const taken = claimedRouteNames(record).find((claimed) => router.hasRoute(claimed) || hostRouteNames.has(claimed));
     if (taken !== undefined) {
       Logger.error(`[MF] ${who()} tried to replace the existing route "${String(taken)}" - refused`);
@@ -709,47 +708,50 @@ export async function initFederatedModules(options?: IFederatedLoaderOptions): P
 
   // One guard for the whole phase — see installRouteGuard on why it must not be per plugin.
   const releaseRouteGuard = installRouteGuard();
-  await Promise.allSettled(
-    compatible.map(async (remote) => {
-      try {
-        // Load and init are raced SEPARATELY: a timed-out plugin's init() is never
-        // invoked - the timeout is real containment for the init phase. Neither phase
-        // can be CANCELLED though: a loadRemote that resolves after its budget has
-        // still executed the remote's module scope (top-level side effects like a CSS
-        // import), and an init() that started keeps running — raceWithLateLogging logs
-        // both late settlements so the "failed" outcome is never silently contradicted.
-        const plugin = await raceWithLateLogging(
-          loadRemote<IFederatedPlugin>(`${remote.name}/${remote.exposed.replace(/^\.\//, "")}`),
-          loadTimeoutMs,
-          `plugin "${remote.name}" load`,
-          "its module scope has executed (init() is NOT called); state is indeterminate",
-        );
-        // The MF runtime resolves null instead of rejecting when an errorLoadRemote
-        // failover hook is registered. None is today, but "no module delivered"
-        // must never count (silently) as loaded if one ever appears.
-        if (plugin === null) {
-          throw new Error(`plugin "${remote.name}" load resolved to null - no module was delivered`);
+  try {
+    await Promise.allSettled(
+      compatible.map(async (remote) => {
+        try {
+          // Load and init are raced SEPARATELY: a timed-out plugin's init() is never
+          // invoked - the timeout is real containment for the init phase. Neither phase
+          // can be CANCELLED though: a loadRemote that resolves after its budget has
+          // still executed the remote's module scope (top-level side effects like a CSS
+          // import), and an init() that started keeps running — raceWithLateLogging logs
+          // both late settlements so the "failed" outcome is never silently contradicted.
+          const plugin = await raceWithLateLogging(
+            loadRemote<IFederatedPlugin>(`${remote.name}/${remote.exposed.replace(/^\.\//, "")}`),
+            loadTimeoutMs,
+            `plugin "${remote.name}" load`,
+            "its module scope has executed (init() is NOT called); state is indeterminate",
+          );
+          // The MF runtime resolves null instead of rejecting when an errorLoadRemote
+          // failover hook is registered. None is today, but "no module delivered"
+          // must never count (silently) as loaded if one ever appears.
+          if (plugin === null) {
+            throw new Error(`plugin "${remote.name}" load resolved to null - no module was delivered`);
+          }
+          // BEFORE init(), not after: a timeout does not cancel init(), so whatever it registered
+          // synchronously stays. Withholding the sheets then left the plugin's page live and
+          // UNSTYLED - strictly worse than an orphan <link> on a plugin that never renders. The
+          // plugin's own chunk CSS already arrived during loadRemote and could not be withheld either.
+          injectStyles(remote.styles);
+          if (plugin.init) {
+            await runInit(remote.name, plugin, loadTimeoutMs);
+          } else {
+            // Most likely the platform's default "./Module" expose against the admin-shell
+            // contract; its module scope ran, but nothing registered anything.
+            Logger.warn(`[MF] "${remote.name}" exposes no init() — nothing was registered`);
+          }
+          result.loaded.push(remote.name);
+        } catch (error) {
+          result.failed.push(remote.name);
+          Logger.error(`[MF] Failed to load federated plugin "${remote.name}"`, error);
         }
-        // BEFORE init(), not after: a timeout does not cancel init(), so whatever it registered
-        // synchronously stays. Withholding the sheets then left the plugin's page live and
-        // UNSTYLED - strictly worse than an orphan <link> on a plugin that never renders. The
-        // plugin's own chunk CSS already arrived during loadRemote and could not be withheld either.
-        injectStyles(remote.styles);
-        if (plugin.init) {
-          await runInit(remote.name, plugin, loadTimeoutMs);
-        } else {
-          // Most likely the platform's default "./Module" expose against the admin-shell
-          // contract; its module scope ran, but nothing registered anything.
-          Logger.warn(`[MF] "${remote.name}" exposes no init() — nothing was registered`);
-        }
-        result.loaded.push(remote.name);
-      } catch (error) {
-        result.failed.push(remote.name);
-        Logger.error(`[MF] Failed to load federated plugin "${remote.name}"`, error);
-      }
-    }),
-  );
-  releaseRouteGuard();
+      }),
+    );
+  } finally {
+    releaseRouteGuard();
+  }
 
   reportOutcome(result, versions);
   return result;

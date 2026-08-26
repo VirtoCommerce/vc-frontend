@@ -69,6 +69,13 @@ async function getUcpHandoffUserId(): Promise<string | undefined> {
   }
 }
 
+/**
+ * The env override skips the query: that list wins in the loader anyway, so asking would cost the
+ * plugin author's dev loop a round trip per boot, and an error against a backend without the field.
+ */
+const ASK_PLATFORM_FOR_PLUGINS =
+  isMfFlagEnabled(import.meta.env.APP_MODULES_FEDERATION_ENABLED) && !import.meta.env.APP_MODULES_FEDERATION_REMOTES;
+
 /** The preview plugins are optional: a failed load leaves the app booting without them. */
 function reportOptionalChunkFailure(error: unknown): undefined {
   ignoreChunkLoadFailure(error);
@@ -155,13 +162,12 @@ export default async () => {
     Logger.warn("Failed to verify backend module versions", e);
   }
 
-  // Issued here so its round trip overlaps the boot queries instead of following them. The flag is
-  // still what decides whether it happens at all. The no-op handler only marks a rejection as
-  // observed until startFederatedModules attaches the one that logs and degrades to "no plugins".
-  const storePluginsPromise = isMfFlagEnabled(import.meta.env.APP_MODULES_FEDERATION_ENABLED)
-    ? getStorePlugins(domain)
-    : undefined;
-  void storePluginsPromise?.catch(() => {});
+  // Issued here so its round trip overlaps the boot queries instead of following them.
+  const storePluginsPromise = ASK_PLATFORM_FOR_PLUGINS ? getStorePlugins(domain) : undefined;
+  // The loader owns the error log and the degradation to "no plugins", but only attaches its handler
+  // once it runs; until then an unobserved rejection reaches the global handler. Handling it here
+  // does not consume it — the loader still sees and reports the failure.
+  void storePluginsPromise?.catch((error: unknown) => Logger.debug("[MF] the plugin-list query failed", error));
 
   const getPageContextPromise = getPageContext({
     domain: domain,
@@ -275,13 +281,6 @@ export default async () => {
   void initLoyalty(router, i18n);
   void initSalesRep(router, i18n);
 
-  // Awaited before app.use(router) so plugin routes exist for the first navigation.
-  // The user is already set, so a permission-gated plugin is evaluated against real claims.
-  const federatedModulesReady = startFederatedModules({
-    fetchPlugins: () => storePluginsPromise ?? Promise.resolve(undefined),
-    hasPermission: checkPermissions,
-  });
-
   // Plugins
   app.use(head);
   app.use(i18n);
@@ -311,6 +310,15 @@ export default async () => {
       app.use(builderIoPreviewPlugin, { router });
     }
   }
+
+  // Started once no host plugin can still touch the router: the loader guards it against route
+  // takeover for the whole phase and cannot tell a host call from a plugin's, so builder-preview's
+  // remove-then-add would be refused. Outside preview mode nothing above awaits, so this costs no
+  // boot time. The user is already set, so a permission-gated plugin sees real claims.
+  const federatedModulesReady = startFederatedModules({
+    fetchPlugins: () => storePluginsPromise ?? Promise.resolve(undefined),
+    hasPermission: checkPermissions,
+  });
 
   // Federated plugin routes must exist before the router is installed. Never rejects.
   await federatedModulesReady;

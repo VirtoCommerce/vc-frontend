@@ -6,6 +6,9 @@ import type { IPlatformPlugin } from "./index";
  * Executes the real app-runner and records the order its calls actually happen in, so a call moved
  * into a callback or a branch is caught too — not just a moved line.
  *
+ * MAINTENANCE: a module added to app-runner needs a mock added below, or every case here fails with
+ * whatever that module breaks first - "Theme context is missing." - which points nowhere near it.
+ *
  * Three invariants, all load-bearing. Plugins resolve store settings through the facade's
  * useModuleSettings and the permission gate reads user.value at call time, so setThemeContext and
  * setUser must precede the loader. And the router must not be installed until the loader settles,
@@ -20,10 +23,14 @@ const record = (name: string) =>
 
 const LOADER_REACHED = new Error("loader reached - nothing past this point is under test");
 
-const { getStorePluginsMock, loaderOptions } = vi.hoisted(() => {
+const { getStorePluginsMock, loaderOptions, previewBoot } = vi.hoisted(() => {
   // The options app-runner hands the loader, so the discovery wiring itself is assertable.
   const captured: { current?: { fetchPlugins?: () => Promise<unknown> } } = {};
-  return { getStorePluginsMock: vi.fn(), loaderOptions: captured };
+  return {
+    getStorePluginsMock: vi.fn(),
+    loaderOptions: captured,
+    previewBoot: { isActive: false },
+  };
 });
 
 const ref = <T>(value: T) => ({ value });
@@ -114,7 +121,11 @@ vi.mock("@/modules/push-messages", () => ({ init: vi.fn() }));
 vi.mock("@/modules/quotes", () => ({ init: vi.fn() }));
 vi.mock("@/modules/sales-rep", () => ({ init: vi.fn() }));
 vi.mock("@/plugins/builder-io-preview/utils", () => ({ isPreviewMode: () => false }));
-vi.mock("@/plugins/builder-preview/utils", () => ({ getPreviewBootOptions: () => ({ isActive: false }) }));
+vi.mock("@/plugins/builder-preview/utils", () => ({ getPreviewBootOptions: () => previewBoot }));
+// Imported by app-runner in preview mode; its install() is where the host mutates routes.
+vi.mock("@/plugins/builder-preview/builder-preview.plugin", () => ({
+  default: { install: record("builderPreview.install") },
+}));
 vi.mock("@/pages/matcher/builderIo/console-ignored-errors", () => ({
   BUILDER_IO_TRACE_MARKER: "x",
   consoleIgnoredErrors: [],
@@ -147,12 +158,15 @@ vi.mock("@/shared/notification", () => ({ useNotifications: () => ({ error: vi.f
 
 vi.mock("@/core/api/graphql", () => ({
   apolloClient: {},
-  getPageContext: vi.fn(async () => ({
-    store: { storeId: "s" },
-    user: { id: "u1" },
-    whiteLabelingSettings: {},
-    slugInfo: undefined,
-  })),
+  getPageContext: vi.fn(async () => {
+    order.push("getPageContext");
+    return {
+      store: { storeId: "s" },
+      user: { id: "u1" },
+      whiteLabelingSettings: {},
+      slugInfo: undefined,
+    };
+  }),
   getStorePlugins: getStorePluginsMock,
   initializeApplication: vi.fn(async () => ({ settings: { modules: [] } })),
 }));
@@ -172,6 +186,7 @@ describe("app-runner boot order", () => {
     // pass on entries its own run never produced.
     order.length = 0;
     loaderOptions.current = undefined;
+    previewBoot.isActive = false;
     getStorePluginsMock.mockResolvedValue([]);
   });
 
@@ -226,10 +241,34 @@ describe("app-runner boot order", () => {
 
       await runBoot();
 
-      // Ahead of the loader by a lot: awaiting it there instead would add a serial round trip to
-      // boot, which is the whole reason the call site sits where it does.
+      // Against the page context, not the loader: a later call site still precedes the loader, so
+      // comparing with that one passes wherever the query is issued.
+      expect(order.indexOf("getPageContext"), `order was ${order.join(" -> ")}`).toBeGreaterThan(-1);
       expect(order.indexOf("getStorePlugins")).toBeGreaterThan(-1);
-      expect(order.indexOf("getStorePlugins")).toBeLessThan(order.indexOf("startFederatedModules"));
+      expect(order.indexOf("getStorePlugins")).toBeLessThan(order.indexOf("getPageContext"));
     });
+
+    it("issues nothing when the env override is set, since that list wins anyway", async () => {
+      vi.stubEnv("APP_MODULES_FEDERATION_ENABLED", "true");
+      vi.stubEnv("APP_MODULES_FEDERATION_REMOTES", '{"local":"http://localhost:3001/mf-manifest.json"}');
+
+      await runBoot();
+
+      expect(getStorePluginsMock).not.toHaveBeenCalled();
+      await expect(loaderOptions.current?.fetchPlugins?.()).resolves.toBeUndefined();
+    });
+  });
+
+  it("starts the loader only after the host plugin that mutates routes has installed", async () => {
+    // The loader's route guard cannot tell a host call from a plugin's, so a host install running
+    // inside its phase has its own routes refused.
+    vi.stubEnv("APP_MODULES_FEDERATION_ENABLED", "true");
+    previewBoot.isActive = true;
+
+    await runBoot();
+
+    const installedAt = order.indexOf("builderPreview.install");
+    expect(installedAt, `preview plugin never installed; order was ${order.join(" -> ")}`).toBeGreaterThan(-1);
+    expect(installedAt).toBeLessThan(order.indexOf("startFederatedModules"));
   });
 });
