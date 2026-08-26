@@ -58,7 +58,9 @@ const rangeValid = ref(true);
 
 const range = computed<VcDateRangeType | undefined>({
   get() {
-    return { start: selectedDateFilter.value.startDate, end: selectedDateFilter.value.endDate };
+    const { startDate, endDate } = selectedDateFilter.value;
+    // Collapsed to undefined for an empty range, as the picker's own merge does.
+    return startDate || endDate ? { start: startDate, end: endDate } : undefined;
   },
   set(value) {
     selectedDateFilter.value.startDate = value?.start;

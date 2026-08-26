@@ -248,6 +248,31 @@ describe("VcDateRangeInput", () => {
       expect(wrapper.findComponent(VcInputDetails).props("message")).toBe("ui_kit.date_range_input.invalid_range");
     });
 
+    // A parent that owns its own details row needs the message, not just the boolean validity.
+    it("relays its validation message upward as update:errorText", async () => {
+      const wrapper = mountInput({ modelValue: { start: "2026-10-20", end: "2026-10-01" } });
+      await wrapper.vm.$nextTick();
+      expect(wrapper.emitted("update:errorText")?.at(-1)).toEqual(["ui_kit.date_range_input.invalid_range"]);
+
+      await wrapper.setProps({ modelValue: { start: "2026-10-01", end: "2026-10-20" } });
+      expect(wrapper.emitted("update:errorText")?.at(-1)).toEqual([undefined]);
+    });
+
+    it("relays a segment's own message, not the order one", async () => {
+      const wrapper = mountInput();
+      const [startSeg] = wrapper.findAllComponents({ name: "VcDateInput" });
+      startSeg.vm.$emit("update:errorText", "ui_kit.date_input.min_date_error");
+      await wrapper.vm.$nextTick();
+      expect(wrapper.emitted("update:errorText")?.at(-1)).toEqual(["ui_kit.date_input.min_date_error"]);
+    });
+
+    it("keeps the external message out of the relay", async () => {
+      const wrapper = mountInput({ message: "Pick a delivery window" });
+      await wrapper.vm.$nextTick();
+      expect(wrapper.emitted("update:errorText")?.at(-1)).toEqual([undefined]);
+      expect(wrapper.findComponent(VcInputDetails).props("message")).toBe("Pick a delivery window");
+    });
+
     it("clears the internal error once the segment stops reporting a message", async () => {
       const wrapper = mountInput();
       const [startSeg] = wrapper.findAllComponents({ name: "VcDateInput" });

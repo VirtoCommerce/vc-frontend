@@ -374,6 +374,11 @@ provide<VcInputContextType>("inputContext", {
       &:has(input:focus) {
         @apply ring-0;
       }
+
+      // Outspecifies the disabled fill above: :has() lands at (0,2,1), a bare seamless rule at (0,2,0).
+      &:has(input:disabled) {
+        @apply bg-transparent;
+      }
     }
 
     #{$seamless}#{$sizeXs} &,

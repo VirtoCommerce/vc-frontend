@@ -147,6 +147,25 @@ describe("VcDateRangePicker", () => {
     expect(wrapper.emitted("update:valid")?.at(-1)?.[0]).toBe(false);
   });
 
+  // Whichever layout owns the details row, the message has to reach a parent that renders its own.
+  it("re-emits update:errorText from the input in the combined layout", async () => {
+    const wrapper = mountPicker();
+    wrapper
+      .findComponent({ name: "VcDateRangeInput" })
+      .vm.$emit("update:errorText", "ui_kit.date_input.max_date_error");
+    await wrapper.vm.$nextTick();
+    expect(wrapper.emitted("update:errorText")?.at(-1)).toEqual(["ui_kit.date_input.max_date_error"]);
+  });
+
+  it("emits its own update:errorText in the split layout", async () => {
+    const wrapper = mountSplit({ modelValue: { start: "2026-10-20", end: "2026-10-01" } });
+    await wrapper.vm.$nextTick();
+    expect(wrapper.emitted("update:errorText")?.at(-1)).toEqual(["ui_kit.date_range_input.invalid_range"]);
+
+    await wrapper.setProps({ modelValue: { start: "2026-10-01", end: "2026-10-20" } });
+    expect(wrapper.emitted("update:errorText")?.at(-1)).toEqual([undefined]);
+  });
+
   it("keeps the popover open when the calendar emits an anchor-only partial range", async () => {
     const wrapper = mountPicker({}, { attachTo: document.body });
 

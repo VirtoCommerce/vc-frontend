@@ -94,6 +94,7 @@
         :data-test-id="dataTestId"
         @update:model-value="onInputUpdate"
         @update:valid="inputValid = $event"
+        @update:error-text="inputErrorText = $event"
         @blur="onInputBlur"
         @focus="onInputFocus"
         @clear="onInputClear"
@@ -205,7 +206,10 @@ interface IProps {
    * is start-aligned for the start field's calendar; side placements pass through unchanged.
    */
   placement?: VcPopoverPlacementType;
-  /** "combined" = one field with two segments and one range calendar. "split" = two labelled VcDatePickers. */
+  /**
+   * "combined" (default) = one field with two segments and one range calendar.
+   * "split" = two labelled VcDatePickers, the layout both order-filter call sites ship today.
+   */
   layout?: VcDateRangePickerLayoutType;
   dataTestId?: string;
 }
@@ -214,6 +218,8 @@ interface IEmits {
   (event: "update:modelValue", value: VcDateRangeType | undefined): void;
   /** Both endpoints parse AND `start <= end`. Empty and partial ranges report true. */
   (event: "update:valid", value: boolean): void;
+  /** Touched-gated validation message, so a parent can own the details row. Not the `message` prop. */
+  (event: "update:errorText", value: string | undefined): void;
   /** Focus left the whole control; moves between its own fields, buttons and calendar are not reported. */
   (event: "blur", focusEvent: FocusEvent): void;
   /** Focus entered the whole control; see `blur` for the boundary rule. */
@@ -249,6 +255,7 @@ const detailsId = useComponentId("date-range-picker") + "-details";
 // "split" fields are hide-details, so the picker owns range validity; "combined" delegates to VcDateRangeInput.
 const {
   isValid: splitValid,
+  internalErrorText: splitErrorText,
   computedError,
   computedMessage,
   orderValid,
@@ -266,6 +273,7 @@ const {
 
 // Seeded from the order check so an out-of-order initial model never reports a transient true.
 const inputValid = ref(orderValid.value);
+const inputErrorText = ref<string | undefined>(undefined);
 const aggregatedValid = computed<boolean>(() => {
   if (props.layout === "split") {
     return splitValid.value;
@@ -273,6 +281,12 @@ const aggregatedValid = computed<boolean>(() => {
   return inputValid.value;
 });
 watch(aggregatedValid, (value) => emit("update:valid", value), { immediate: true });
+
+// "split" owns the message itself; "combined" forwards what VcDateRangeInput reported.
+const aggregatedErrorText = computed<string | undefined>(() =>
+  props.layout === "split" ? splitErrorText.value : inputErrorText.value,
+);
+watch(aggregatedErrorText, (value) => emit("update:errorText", value), { immediate: true });
 
 // Clamped to the opposite endpoint so the calendars cannot pick an out-of-order range.
 // The clamp is dropped whenever it would cross the caller's own opposite bound — an out-of-order

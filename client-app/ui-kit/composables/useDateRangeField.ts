@@ -102,6 +102,8 @@ export function useDateRangeField(opts: IUseDateRangeFieldOptions) {
 
   return {
     isValid,
+    /** Validation message the shell produced itself; external `message` is not part of it. */
+    internalErrorText,
     computedError,
     computedMessage,
     orderValid,

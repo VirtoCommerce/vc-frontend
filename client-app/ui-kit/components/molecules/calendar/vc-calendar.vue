@@ -189,7 +189,7 @@ const {
   focusActiveCell,
 } = base;
 
-const rootClasses = computed(() => ["vc-calendar", `vc-calendar--size--${props.size}`, "vc-calendar--mode--single"]);
+const rootClasses = computed(() => ["vc-calendar", `vc-calendar--size--${props.size}`]);
 
 function onUpdate(value: DateValue | DateValue[] | undefined): void {
   const single = Array.isArray(value) ? value[0] : value;
@@ -453,12 +453,21 @@ defineExpose({
     }
   }
 
-  &--mode--single &__day[data-selected] {
+  // Kept last: this ties with the :hover and state rules inside __day, so source order decides.
+  // The nested hovers outspecify [data-outside-view]:hover, which would otherwise repaint a selected
+  // day belonging to a neighbouring month.
+  &__day[data-selected] {
     @apply font-bold;
 
     background: var(--color-primary-500);
     color: var(--color-additional-50);
     box-shadow: none;
+
+    &:hover,
+    &[data-outside-view]:hover {
+      background: var(--color-primary-500);
+      color: var(--color-additional-50);
+    }
   }
 }
 </style>

@@ -160,6 +160,8 @@ interface IEmits {
   (event: "update:modelValue", value: VcDateRangeType | undefined): void;
   /** Both segments parse AND `start <= end`. Empty and partial ranges report true. */
   (event: "update:valid", value: boolean): void;
+  /** Touched-gated validation message, so a parent can own the details row. Not the `message` prop. */
+  (event: "update:errorText", value: string | undefined): void;
   /** Focus left the whole field; moves between the segments and the action buttons are not reported. */
   (event: "blur", focusEvent: FocusEvent): void;
   /** Focus entered the whole field; see `blur` for the boundary rule. */
@@ -215,17 +217,26 @@ provide<VcInputContextType>("inputContext", { size });
 const detailsId = useComponentId("date-range-input") + "-details";
 
 // Segments are hide-details, so the shell surfaces validity itself.
-const { isValid, computedError, computedMessage, segmentAria, setSegmentValid, setSegmentErrorText, mergeRange } =
-  useDateRangeField({
-    modelValue: () => props.modelValue,
-    error: () => props.error,
-    message: () => props.message,
-    required: () => props.required,
-    detailsId,
-  });
+const {
+  isValid,
+  internalErrorText,
+  computedError,
+  computedMessage,
+  segmentAria,
+  setSegmentValid,
+  setSegmentErrorText,
+  mergeRange,
+} = useDateRangeField({
+  modelValue: () => props.modelValue,
+  error: () => props.error,
+  message: () => props.message,
+  required: () => props.required,
+  detailsId,
+});
 
 // Immediate so the empty (valid) state is reported on mount.
 watch(isValid, (value) => emit("update:valid", value), { immediate: true });
+watch(internalErrorText, (value) => emit("update:errorText", value), { immediate: true });
 
 function onSegment(which: "start" | "end", value: string | undefined): void {
   emit("update:modelValue", mergeRange(which, value));

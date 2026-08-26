@@ -6,16 +6,74 @@ vi.mock("vue-i18n", () => ({
   useI18n: () => ({ t: (k: string) => k, locale: { value: "en" } }),
 }));
 
-function mountCal(props = {}) {
+function mountCal(props = {}, options: { attachTo?: Element } = {}) {
   return mount(VcCalendar, {
     props: { modelValue: undefined, ...props },
     global: { stubs: { VcIcon: true } },
+    ...options,
   });
+}
+
+// vue-test-utils' `trigger` doesn't hand back the event, so `defaultPrevented` isn't observable.
+function pressKey(el: Element, key: string, modifiers: Partial<KeyboardEventInit> = {}): KeyboardEvent {
+  const event = new KeyboardEvent("keydown", { key, bubbles: true, cancelable: true, ...modifiers });
+  el.dispatchEvent(event);
+  return event;
+}
+
+function activeCellIso(): string | undefined {
+  return (document.activeElement as HTMLElement | null)?.dataset.value;
 }
 
 function inViewCell(wrapper: ReturnType<typeof mountCal>, iso: string) {
   return wrapper.find(`[data-reka-calendar-cell-trigger][data-value="${iso}"]:not([data-outside-view])`);
 }
+
+// This is the calendar the app actually renders (VcDatePicker ← split layout), so its own wiring to
+// the shared base needs holding down, not just the range twin's.
+describe("VcCalendar — keyboard navigation and focus entry", () => {
+  it("moves focus by week/month/year and leaves unrelated keys alone", async () => {
+    const wrapper = mountCal({ modelValue: "2026-10-08", firstDayOfWeek: 1 }, { attachTo: document.body });
+    wrapper.vm.focusActiveCell();
+    expect(activeCellIso()).toBe("2026-10-08");
+
+    const root = wrapper.find('[role="group"]').element;
+
+    const homeEvent = pressKey(root, "Home");
+    await flushPromises();
+    expect(activeCellIso()).toBe("2026-10-05");
+    expect(homeEvent.defaultPrevented).toBe(true);
+
+    pressKey(root, "End");
+    await flushPromises();
+    expect(activeCellIso()).toBe("2026-10-11");
+
+    pressKey(root, "PageDown");
+    await flushPromises();
+    expect(activeCellIso()).toBe("2026-11-11");
+
+    pressKey(root, "PageUp", { shiftKey: true });
+    await flushPromises();
+    expect(activeCellIso()).toBe("2025-11-11");
+
+    const unrelatedEvent = pressKey(root, "a");
+    await flushPromises();
+    expect(unrelatedEvent.defaultPrevented).toBe(false);
+    expect(activeCellIso()).toBe("2025-11-11");
+
+    wrapper.unmount();
+  });
+
+  it("opens with focus on the selected date, not on today", async () => {
+    const wrapper = mountCal({ modelValue: "2026-10-08" }, { attachTo: document.body });
+    await flushPromises();
+
+    wrapper.vm.focusActiveCell();
+    expect(activeCellIso()).toBe("2026-10-08");
+
+    wrapper.unmount();
+  });
+});
 
 describe("VcCalendar — re-picking the selected date", () => {
   it("keeps the date instead of clearing it", async () => {
