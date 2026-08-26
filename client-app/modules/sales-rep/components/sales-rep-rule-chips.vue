@@ -5,10 +5,11 @@
       type="button"
       :class="['sales-rep-rule-chips__tab', { 'sales-rep-rule-chips__tab--active': !modelValue }]"
       :aria-pressed="!modelValue"
-      :data-text="allLabel"
       @click="modelValue = undefined"
     >
-      {{ allLabel }}
+      <span class="sales-rep-rule-chips__label" :data-text="allLabel">{{ allLabel }}</span>
+
+      <span v-if="allCount !== undefined" class="sales-rep-rule-chips__count">{{ formatStatCount(allCount) }}</span>
     </button>
 
     <button
@@ -17,17 +18,18 @@
       type="button"
       :class="['sales-rep-rule-chips__tab', { 'sales-rep-rule-chips__tab--active': modelValue === rule.name }]"
       :aria-pressed="modelValue === rule.name"
-      :data-text="rule.label"
       @click="modelValue = rule.name"
     >
-      {{ rule.label }}
+      <span class="sales-rep-rule-chips__label" :data-text="rule.label">{{ rule.label }}</span>
+
+      <span v-if="rule.count !== undefined" class="sales-rep-rule-chips__count">{{ formatStatCount(rule.count) }}</span>
     </button>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, watch } from "vue";
-import { selectableFilterRules } from "../utils";
+import { formatStatCount, selectableFilterRules } from "../utils";
 import type { SalesRepRuleType } from "../types";
 
 interface IProps {
@@ -35,6 +37,8 @@ interface IProps {
   rules: SalesRepRuleType[];
   // Label for the synthetic baseline tab (the "All" / no-filter option).
   allLabel: string;
+  // Item count for the baseline tab; rendered as a highlighted counter when present (like `rule.count`).
+  allCount?: number;
   // Whether `rules` is still being fetched — an in-flight refetch must not look like "the rule is gone".
   loading?: boolean;
 }
@@ -73,14 +77,7 @@ const selectableRules = computed(() => selectableFilterRules(props.rules));
   // The transparent border keeps every tab the same size so selecting one causes no layout shift.
   &__tab {
     // Radius follows the app-wide `--vc-radius` token so it tracks the theme's roundness setting.
-    @apply inline-flex cursor-pointer flex-col items-center rounded-[--vc-radius] border border-transparent px-3 py-1.5 text-sm font-medium text-neutral-500;
-
-    // Invisible ::after reserves the bold width so toggling font-weight never resizes the tab (avoids reflow).
-    &::after {
-      @apply invisible h-0 overflow-hidden font-semibold;
-
-      content: attr(data-text);
-    }
+    @apply inline-flex cursor-pointer items-center gap-1 rounded-[--vc-radius] border border-transparent px-3 py-1.5 text-sm font-medium text-neutral-500;
 
     &:hover {
       @apply text-neutral-900;
@@ -89,6 +86,22 @@ const selectableRules = computed(() => selectableFilterRules(props.rules));
     &--active {
       @apply border-neutral-200 bg-additional-50 font-semibold text-neutral-900 shadow;
     }
+  }
+
+  &__label {
+    @apply inline-flex flex-col items-center;
+
+    // Invisible ::after reserves the bold width so toggling font-weight never resizes the tab (avoids reflow).
+    &::after {
+      @apply invisible h-0 overflow-hidden font-semibold;
+
+      content: attr(data-text);
+    }
+  }
+
+  // Always bold + accent (the count doesn't dim with an unselected label), per the documents mock.
+  &__count {
+    @apply font-semibold text-primary-500;
   }
 }
 </style>
