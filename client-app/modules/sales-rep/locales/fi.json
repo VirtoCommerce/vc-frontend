@@ -213,6 +213,32 @@
       "all_categories": "Kaikki kategoriat",
       "load_failed": "Myydyimpiä ei voitu ladata"
     },
+    "documents": {
+      "title": "Dokumenttikirjasto",
+      "browse_all": "Selaa kaikkia",
+      "open": "Avaa",
+      "empty": "Ei vielä dokumentteja",
+      "load_failed": "Dokumentteja ei voitu ladata",
+      "page": {
+        "subtitle": "Kuvastot, lookbookit, hinnastot ja myyntioppaat — avaa tai lataa uusin julkaisu.",
+        "search_placeholder": "Hae nimellä",
+        "search_aria": "Hae dokumentteja",
+        "all_tab": "Kaikki",
+        "empty": "Ei vielä dokumentteja",
+        "no_results": "Yksikään dokumentti ei vastaa hakuasi",
+        "reset_search": "Tyhjennä haku",
+        "load_failed": "Dokumentteja ei voitu ladata"
+      },
+      "details": {
+        "pages_count": "{count} sivu | {count} sivua",
+        "open": "Avaa",
+        "download": "Lataa",
+        "close": "Sulje tiedot",
+        "not_found": "Tämä dokumentti ei ole enää saatavilla.",
+        "latest_publication": "Uusin julkaisu"
+      },
+      "published": "Julkaistu {date}"
+    },
     "rules": {
       "load_failed": {
         "filter": "Suodattimia ei voitu ladata, joten koko luettelo näytetään. Päivitä sivu.",

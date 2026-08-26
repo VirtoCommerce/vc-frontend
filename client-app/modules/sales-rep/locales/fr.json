@@ -213,6 +213,32 @@
       "all_categories": "Toutes catégories",
       "load_failed": "Impossible de charger les meilleures ventes"
     },
+    "documents": {
+      "title": "Bibliothèque de documents",
+      "browse_all": "Tout parcourir",
+      "open": "Ouvrir",
+      "empty": "Aucun document pour le moment",
+      "load_failed": "Impossible de charger les documents",
+      "page": {
+        "subtitle": "Catalogues, lookbooks, grilles tarifaires et guides de vente — ouvrez ou téléchargez la dernière publication.",
+        "search_placeholder": "Rechercher par nom",
+        "search_aria": "Rechercher des documents",
+        "all_tab": "Tous",
+        "empty": "Aucun document pour le moment",
+        "no_results": "Aucun document ne correspond à votre recherche",
+        "reset_search": "Réinitialiser la recherche",
+        "load_failed": "Impossible de charger les documents"
+      },
+      "details": {
+        "pages_count": "{count} page | {count} pages",
+        "open": "Ouvrir",
+        "download": "Télécharger",
+        "close": "Fermer les détails",
+        "not_found": "Ce document n'est plus disponible.",
+        "latest_publication": "Dernière publication"
+      },
+      "published": "Publié le {date}"
+    },
     "rules": {
       "load_failed": {
         "filter": "Les filtres n'ont pas pu être chargés, la liste complète est donc affichée. Veuillez actualiser la page.",

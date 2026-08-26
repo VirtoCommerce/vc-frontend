@@ -5,6 +5,7 @@ import {
   customerOrdersRoute,
   customerProfileRoute,
   dashboardRoute,
+  documentsRoute,
   myCustomersRoute,
   salesRepsRoute,
 } from "./routes";
@@ -26,6 +27,7 @@ describe("sales-rep routes", () => {
     ["customer orders", customerOrdersRoute],
     ["customer order", customerOrderRoute],
     ["all customer orders", allCustomerOrdersRoute],
+    ["documents", documentsRoute],
   ])("clears requiresOrganization on the rep-facing %s route", (_name, route) => {
     expect(route.meta?.requiresOrganization).toBe(false);
   });

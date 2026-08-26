@@ -213,6 +213,32 @@
       "all_categories": "Alla kategorier",
       "load_failed": "Kunde inte läsa in bästsäljarna"
     },
+    "documents": {
+      "title": "Dokumentbibliotek",
+      "browse_all": "Bläddra bland alla",
+      "open": "Öppna",
+      "empty": "Inga dokument ännu",
+      "load_failed": "Kunde inte läsa in dokumenten",
+      "page": {
+        "subtitle": "Kataloger, lookbooks, prislistor och säljguider — öppna eller ladda ner den senaste publikationen.",
+        "search_placeholder": "Sök efter namn",
+        "search_aria": "Sök dokument",
+        "all_tab": "Alla",
+        "empty": "Inga dokument ännu",
+        "no_results": "Inga dokument matchar din sökning",
+        "reset_search": "Återställ sökning",
+        "load_failed": "Kunde inte läsa in dokumenten"
+      },
+      "details": {
+        "pages_count": "{count} sida | {count} sidor",
+        "open": "Öppna",
+        "download": "Ladda ner",
+        "close": "Stäng detaljer",
+        "not_found": "Det här dokumentet är inte längre tillgängligt.",
+        "latest_publication": "Senaste publikation"
+      },
+      "published": "Publicerad {date}"
+    },
     "rules": {
       "load_failed": {
         "filter": "Filtren kunde inte läsas in, så hela listan visas. Uppdatera sidan.",

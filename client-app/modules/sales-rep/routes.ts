@@ -11,11 +11,14 @@ import {
   CUSTOMER_PROFILE_ROUTE_SEGMENT,
   DASHBOARD_ROUTE_NAME,
   DASHBOARD_ROUTE_SEGMENT,
+  DOCUMENTS_ROUTE_NAME,
+  DOCUMENTS_ROUTE_SEGMENT,
   MY_CUSTOMERS_ROUTE_NAME,
   MY_CUSTOMERS_ROUTE_SEGMENT,
   ROUTE_NAME,
   ROUTE_SEGMENT,
   SALES_REP_ACCESS_PERMISSION,
+  SALES_REP_DOCUMENTS_READ_PERMISSION,
 } from "./constants";
 import type { NavigationGuard, RouteRecordRaw } from "vue-router";
 
@@ -25,11 +28,13 @@ const CustomerOrderDetailsPage = () => import("./pages/customer-order-details.vu
 const MyCustomersPage = () => import("./pages/my-customers.vue");
 const CustomerProfilePage = () => import("./pages/customer-profile.vue");
 const DashboardPage = () => import("./pages/dashboard.vue");
+const DocumentsPage = () => import("./pages/documents.vue");
 
-// Reps only: reuse the My customers gate (SalesRep.Enabled + sales-rep:access), else -> Dashboard.
-function guardSalesRep(next: (to?: { name: string }) => void): boolean {
+// Reps only: the My customers gate (SalesRep.Enabled + sales-rep:access) AND every extra permission
+// the page names (checkPermissions is a variadic AND; admins pass), else -> Dashboard.
+function guardSalesRep(next: (to?: { name: string }) => void, ...extraPermissions: string[]): boolean {
   const { checkPermissions } = useUser();
-  if (isSalesRepsEnabled() && checkPermissions(SALES_REP_ACCESS_PERMISSION)) {
+  if (isSalesRepsEnabled() && checkPermissions(SALES_REP_ACCESS_PERMISSION, ...extraPermissions)) {
     return true;
   }
   next({ name: "Dashboard" });
@@ -84,6 +89,20 @@ export const myCustomersRoute: RouteRecordRaw = {
   component: MyCustomersPage,
   meta: repRouteMeta,
   beforeEnter: guardRepRoute,
+};
+
+// Document library (VCST-5730) -> /company/documents. Beyond rep access it needs the documents
+// read permission — the same gate that hides the nav link and the dashboard widget.
+export const documentsRoute: RouteRecordRaw = {
+  path: DOCUMENTS_ROUTE_SEGMENT,
+  name: DOCUMENTS_ROUTE_NAME,
+  component: DocumentsPage,
+  meta: repRouteMeta,
+  beforeEnter(_to, _from, next) {
+    if (guardSalesRep(next, SALES_REP_DOCUMENTS_READ_PERMISSION)) {
+      next();
+    }
+  },
 };
 
 // Customer profile (VCST-5308) -> /company/my-customers/:organizationId.

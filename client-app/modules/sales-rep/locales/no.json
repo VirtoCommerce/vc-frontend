@@ -213,6 +213,32 @@
       "all_categories": "Alle kategorier",
       "load_failed": "Kunne ikke laste bestselgerne"
     },
+    "documents": {
+      "title": "Dokumentbibliotek",
+      "browse_all": "Bla gjennom alle",
+      "open": "Åpne",
+      "empty": "Ingen dokumenter ennå",
+      "load_failed": "Kunne ikke laste dokumentene",
+      "page": {
+        "subtitle": "Kataloger, lookbooks, prislister og salgsguider — åpne eller last ned den nyeste publikasjonen.",
+        "search_placeholder": "Søk etter navn",
+        "search_aria": "Søk i dokumenter",
+        "all_tab": "Alle",
+        "empty": "Ingen dokumenter ennå",
+        "no_results": "Ingen dokumenter samsvarer med søket ditt",
+        "reset_search": "Tilbakestill søk",
+        "load_failed": "Kunne ikke laste dokumentene"
+      },
+      "details": {
+        "pages_count": "{count} side | {count} sider",
+        "open": "Åpne",
+        "download": "Last ned",
+        "close": "Lukk detaljer",
+        "not_found": "Dette dokumentet er ikke lenger tilgjengelig.",
+        "latest_publication": "Nyeste publikasjon"
+      },
+      "published": "Publisert {date}"
+    },
     "rules": {
       "load_failed": {
         "filter": "Filtrene kunne ikke lastes, så hele listen vises. Last siden på nytt.",
