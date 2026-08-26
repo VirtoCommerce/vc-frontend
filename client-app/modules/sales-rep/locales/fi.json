@@ -29,7 +29,7 @@
         "last_order": "Viimeisin tilaukseni",
         "ytd": "Ostot tänä vuonna",
         "last_year": "Viime vuosi",
-        "orders_count": "{count} tilaukset",
+        "orders_count": "{count} tilaus | {count} tilausta",
         "all_customers": "Kaikki",
         "actions": "Toiminnot",
         "search_placeholder": "Hae nimellä",
@@ -64,7 +64,7 @@
           "vs_last_month": "{delta} vs viime kuu",
           "vs_last_year": "{delta} vs viime vuosi",
           "ordered_this_month": "{count} tilasi tässä kuussa",
-          "new_customers": "{count} uutta asiakasta",
+          "new_customers": "{count} uusi asiakas | {count} uutta asiakasta",
           "of_recent_orders": "{count} viimeisten 7 päivän tilauksesta",
           "items_unit": "tuote | tuotetta",
           "not_for_checkout": "{count} ei kassalle",
@@ -108,6 +108,7 @@
     "customer_profile": {
       "loading": "Ladataan…",
       "not_found": "Asiakasta ei löytynyt tai se ei kuulu asiakkaisiisi.",
+      "load_failed": "Tätä asiakasta ei voitu ladata. Päivitä sivu.",
       "back_to_customers": "Takaisin omiin asiakkaisiin",
       "widgets": {
         "avg_order_value": "Keskimääräinen tilausarvo"
@@ -207,6 +208,11 @@
       "published": "Julkaistu {date}"
     },
     "rules": {
+      "load_failed": {
+        "filter": "Suodattimia ei voitu ladata, joten koko luettelo näytetään. Päivitä sivu.",
+        "sort": "Lajitteluvalintoja ei voitu ladata, joten käytetään oletusjärjestystä. Päivitä sivu.",
+        "both": "Suodattimia ja lajitteluvalintoja ei voitu ladata, joten koko luettelo näytetään oletusjärjestyksessä. Päivitä sivu."
+      },
       "customer": {
         "filter": {
           "All": "Kaikki"
@@ -220,9 +226,6 @@
       "share_replace_hint": "Aiemmin valittu asiakas menettää oikeuden tähän listaan.",
       "share_message_label": "Viesti",
       "share_message_placeholder": "Valinnainen viesti",
-      "share_channels_label": "Lähetystapa",
-      "share_email_label": "Sähköposti",
-      "share_push_label": "Push-ilmoitus",
       "share_default_title": "Uusi lista myyntiedustajaltasi",
       "share_default_message": "Hei! Jaoin juuri listan ”{listName}” organisaatiollesi. Katso se täältä:",
       "share_success": "Lista jaettiin asiakkaalle.",

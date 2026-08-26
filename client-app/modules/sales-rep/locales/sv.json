@@ -29,7 +29,7 @@
         "last_order": "Min senaste order",
         "ytd": "Köp hittills",
         "last_year": "Förra året",
-        "orders_count": "{count} beställningar",
+        "orders_count": "{count} beställning | {count} beställningar",
         "all_customers": "Alla",
         "actions": "Åtgärder",
         "search_placeholder": "Sök efter namn",
@@ -64,8 +64,8 @@
           "vs_last_month": "{delta} vs förra månaden",
           "vs_last_year": "{delta} vs förra året",
           "ordered_this_month": "{count} beställde denna månad",
-          "new_customers": "{count} nya kunder",
-          "of_recent_orders": "av {count} skapade de senaste 7 dagarna",
+          "new_customers": "{count} ny kund | {count} nya kunder",
+          "of_recent_orders": "av {count} skapad de senaste 7 dagarna | av {count} skapade de senaste 7 dagarna",
           "items_unit": "artikel | artiklar",
           "not_for_checkout": "{count} inte till kassan",
           "items_this_week": "{count} artikel denna vecka | {count} artiklar denna vecka",
@@ -108,6 +108,7 @@
     "customer_profile": {
       "loading": "Laddar…",
       "not_found": "Kunden hittades inte eller finns inte bland dina kunder.",
+      "load_failed": "Den här kunden kunde inte läsas in. Uppdatera sidan.",
       "back_to_customers": "Tillbaka till mina kunder",
       "widgets": {
         "avg_order_value": "Genomsnittligt ordervärde"
@@ -207,6 +208,11 @@
       "published": "Publicerad {date}"
     },
     "rules": {
+      "load_failed": {
+        "filter": "Filtren kunde inte läsas in, så hela listan visas. Uppdatera sidan.",
+        "sort": "Sorteringsalternativen kunde inte läsas in, så standardordningen används. Uppdatera sidan.",
+        "both": "Filtren och sorteringsalternativen kunde inte läsas in, så hela listan visas i standardordningen. Uppdatera sidan."
+      },
       "customer": {
         "filter": {
           "All": "Alla"
@@ -220,9 +226,6 @@
       "share_replace_hint": "Kunden som valdes tidigare förlorar åtkomsten till den här listan.",
       "share_message_label": "Meddelande",
       "share_message_placeholder": "Valfritt meddelande",
-      "share_channels_label": "Skicka via",
-      "share_email_label": "E-post",
-      "share_push_label": "Push-avisering",
       "share_default_title": "En ny lista från din säljare",
       "share_default_message": "Hej! Jag har just delat listan ”{listName}” med din organisation. Ta en titt:",
       "share_success": "Listan har delats med kunden.",

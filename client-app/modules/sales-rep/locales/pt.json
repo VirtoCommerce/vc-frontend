@@ -29,7 +29,7 @@
         "last_order": "Meu último pedido",
         "ytd": "Compras do ano",
         "last_year": "Ano passado",
-        "orders_count": "{count} pedidos",
+        "orders_count": "{count} pedidos | {count} pedido | {count} pedidos",
         "all_customers": "Todos",
         "actions": "Ações",
         "search_placeholder": "Pesquisar por nome",
@@ -63,9 +63,9 @@
           "vs_last_week": "{delta} vs semana passada",
           "vs_last_month": "{delta} vs mês passado",
           "vs_last_year": "{delta} vs ano passado",
-          "ordered_this_month": "{count} compraram este mês",
-          "new_customers": "{count} novos clientes",
-          "of_recent_orders": "de {count} criados nos últimos 7 dias",
+          "ordered_this_month": "{count} compraram este mês | {count} comprou este mês | {count} compraram este mês",
+          "new_customers": "{count} novos clientes | {count} novo cliente | {count} novos clientes",
+          "of_recent_orders": "de {count} criados nos últimos 7 dias | de {count} criado nos últimos 7 dias | de {count} criados nos últimos 7 dias",
           "items_unit": "item | itens",
           "not_for_checkout": "{count} fora do checkout",
           "items_this_week": "{count} item esta semana | {count} itens esta semana",
@@ -108,6 +108,7 @@
     "customer_profile": {
       "loading": "Carregando…",
       "not_found": "Cliente não encontrado ou não está nos seus clientes.",
+      "load_failed": "Não foi possível carregar este cliente. Atualize a página.",
       "back_to_customers": "Voltar aos meus clientes",
       "widgets": {
         "avg_order_value": "Valor médio do pedido"
@@ -207,6 +208,11 @@
       "published": "Publicado em {date}"
     },
     "rules": {
+      "load_failed": {
+        "filter": "Não foi possível carregar os filtros, por isso é exibida a lista completa. Atualize a página.",
+        "sort": "Não foi possível carregar as opções de ordenação, por isso é usada a ordem padrão. Atualize a página.",
+        "both": "Não foi possível carregar os filtros nem as opções de ordenação, por isso a lista completa é exibida na ordem padrão. Atualize a página."
+      },
       "customer": {
         "filter": {
           "All": "Todos"
@@ -220,9 +226,6 @@
       "share_replace_hint": "O cliente selecionado anteriormente perderá o acesso a esta lista.",
       "share_message_label": "Mensagem",
       "share_message_placeholder": "Mensagem opcional para incluir",
-      "share_channels_label": "Enviar via",
-      "share_email_label": "E-mail",
-      "share_push_label": "Notificação push",
       "share_default_title": "Uma nova lista do seu representante de vendas",
       "share_default_message": "Olá! Acabei de compartilhar a lista \"{listName}\" com a sua organização. Confira:",
       "share_success": "Lista compartilhada com o cliente.",

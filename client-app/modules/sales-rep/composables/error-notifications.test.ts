@@ -95,8 +95,9 @@ beforeEach(async () => {
   publishStatVisibility(DASHBOARD_LAYOUT_SCOPE, { settled: true, visible: [], editing: true });
 });
 
-// Every hub read. Each one names its own failure — an inline card error, an empty view, a not-found page —
-// so a failing widget must not also raise the page-level error toast.
+// Every hub read. Each one names its own failure — an inline card error, an empty view, a load-failure page,
+// a degraded-controls notice — so a failing widget must not also raise the page-level error toast. The one
+// exception is the customers-count badge: it just drops the number, deliberately (VCST-5682).
 const hubReads: [string, () => unknown][] = [
   ["order statistics", () => useSalesRepOrderStatistics({ scope: DASHBOARD_LAYOUT_SCOPE })],
   ["cart statistics", () => useSalesRepCartStatistics({ scope: DASHBOARD_LAYOUT_SCOPE })],
