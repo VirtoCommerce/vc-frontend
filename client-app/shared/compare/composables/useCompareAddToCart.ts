@@ -24,6 +24,22 @@ function getQuantity(product: Product): number {
   return packSize ? Math.ceil(minQuantity / packSize) * packSize : minQuantity;
 }
 
+function isAddToCartDisabled(product: Product): boolean {
+  const availability = product.availabilityData;
+
+  if (!availability?.isActive || !availability?.isAvailable || !availability?.isBuyable || !availability?.isInStock) {
+    return true;
+  }
+
+  const quantity = getQuantity(product);
+
+  if (availability.availableQuantity != null && availability.availableQuantity < quantity) {
+    return true;
+  }
+
+  return !!product.maxQuantity && quantity > product.maxQuantity;
+}
+
 /**
  * "Add to cart" for the compare table's plain (non-configurable, non-variation) products — no
  * stepper, just a button — but still respecting availability/minimum-order-quantity/pack-size/
@@ -43,24 +59,6 @@ export function useCompareAddToCart() {
 
   function isAddingToCart(item: ICompareDisplayProduct): boolean {
     return addingProductKeys.value.has(getProductKey(item));
-  }
-
-  function isAddToCartDisabled(product: Product): boolean {
-    const availability = product.availabilityData;
-
-    if (!availability?.isActive || !availability?.isAvailable || !availability?.isBuyable || !availability?.isInStock) {
-      return true;
-    }
-
-    // getQuantity is always pack-aligned by construction, so the only way it can still be
-    // unorderable is if that aligned amount itself doesn't fit within what's actually allowed.
-    const quantity = getQuantity(product);
-
-    if (availability.availableQuantity != null && availability.availableQuantity < quantity) {
-      return true;
-    }
-
-    return !!product.maxQuantity && quantity > product.maxQuantity;
   }
 
   async function onAddToCart(item: ICompareDisplayProduct) {

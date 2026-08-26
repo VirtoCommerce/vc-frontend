@@ -61,6 +61,54 @@ function getCategoryEntries(categoryKey: string): ICompareProductEntry[] {
   return products.value.filter((entry) => entry.categoryKey === categoryKey);
 }
 
+// clearCompareList/clearCategory/restoreProducts only ever touch the module-level storage refs
+// above — nothing from useCompareProducts()'s own scope (themeContext/notifications/t) — so they
+// live at module scope too, rather than being recreated on every useCompareProducts() call.
+function clearCompareList() {
+  if (!products.value.length) {
+    return;
+  }
+
+  lastRemovedEntries.value = products.value;
+  lastRemovedConfigurations.value = localProductConfigurations.value;
+  products.value = [];
+  localProductConfigurations.value = [];
+}
+
+function clearCategory(categoryKey: string) {
+  const categoryEntries = getCategoryEntries(categoryKey);
+
+  if (!categoryEntries.length) {
+    return;
+  }
+
+  // Clearing the only remaining category empties the whole list — same situation as
+  // clearCompareList, so it should be restorable the same way.
+  const isLastCategory = categoryEntries.length === products.value.length;
+  const localIds = new Set(categoryEntries.map((entry) => entry.localId).filter(Boolean));
+  const categoryConfigurations = localProductConfigurations.value.filter((config) => localIds.has(config.localId));
+
+  products.value = products.value.filter((entry) => entry.categoryKey !== categoryKey);
+  localProductConfigurations.value = localProductConfigurations.value.filter((config) => !localIds.has(config.localId));
+
+  if (isLastCategory) {
+    lastRemovedEntries.value = categoryEntries;
+    lastRemovedConfigurations.value = categoryConfigurations;
+  }
+}
+
+function restoreProducts() {
+  if (!lastRemovedEntries.value.length) {
+    return;
+  }
+
+  products.value = [...products.value, ...lastRemovedEntries.value];
+  localProductConfigurations.value = [...localProductConfigurations.value, ...lastRemovedConfigurations.value];
+
+  lastRemovedEntries.value = [];
+  lastRemovedConfigurations.value = [];
+}
+
 export function useCompareProducts() {
   const { themeContext } = useThemeContext();
   const notifications = useNotifications();
@@ -175,53 +223,6 @@ export function useCompareProducts() {
         productName: truncate(product.name, COMPARE_NOTIFICATION_PRODUCT_NAME_MAX_LENGTH),
       }),
     });
-  }
-
-  function clearCompareList() {
-    if (!products.value.length) {
-      return;
-    }
-
-    lastRemovedEntries.value = products.value;
-    lastRemovedConfigurations.value = localProductConfigurations.value;
-    products.value = [];
-    localProductConfigurations.value = [];
-  }
-
-  function clearCategory(categoryKey: string) {
-    const categoryEntries = getCategoryEntries(categoryKey);
-
-    if (!categoryEntries.length) {
-      return;
-    }
-
-    // Clearing the only remaining category empties the whole list — same situation as
-    // clearCompareList, so it should be restorable the same way.
-    const isLastCategory = categoryEntries.length === products.value.length;
-    const localIds = new Set(categoryEntries.map((entry) => entry.localId).filter(Boolean));
-    const categoryConfigurations = localProductConfigurations.value.filter((config) => localIds.has(config.localId));
-
-    products.value = products.value.filter((entry) => entry.categoryKey !== categoryKey);
-    localProductConfigurations.value = localProductConfigurations.value.filter(
-      (config) => !localIds.has(config.localId),
-    );
-
-    if (isLastCategory) {
-      lastRemovedEntries.value = categoryEntries;
-      lastRemovedConfigurations.value = categoryConfigurations;
-    }
-  }
-
-  function restoreProducts() {
-    if (!lastRemovedEntries.value.length) {
-      return;
-    }
-
-    products.value = [...products.value, ...lastRemovedEntries.value];
-    localProductConfigurations.value = [...localProductConfigurations.value, ...lastRemovedConfigurations.value];
-
-    lastRemovedEntries.value = [];
-    lastRemovedConfigurations.value = [];
   }
 
   return {
