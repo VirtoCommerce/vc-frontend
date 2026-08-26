@@ -49,6 +49,12 @@ describe("useReturnUrl", () => {
     expect(useReturnUrl().getReturnUrl()).toBe("/default-page");
   });
 
+  it("ignores a requested page that does not parse", () => {
+    mockLocation("http://localhost:3000/sign-in?returnUrl=https://[not-valid-ipv6");
+
+    expect(useReturnUrl().getReturnUrl()).toBe("/default-page");
+  });
+
   it("reduces a requested page of the current origin to a path", () => {
     mockLocation("http://localhost:3000/sign-in?returnUrl=http://localhost:3000/account/orders%3Fpage%3D2%23list");
 
