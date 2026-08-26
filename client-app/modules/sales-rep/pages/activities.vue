@@ -194,24 +194,29 @@ watch(category, () => {
   modeChip.value = undefined;
 });
 
-// Counts-only run (take: 0) backs the tabs: unfiltered by category, so every tab keeps its total
-// while one is selected.
-const {
-  categoryCounts,
-  totalCount: allCount,
-  loading: countsLoading,
-} = useSalesRepActivities({
+// ONE query per view: the connection returns items + categoryCounts + totalCount together, so the
+// tab badges always share the rows' vintage. A separate counts-only run (take: 0) hit a different
+// backend cache entry and could disagree with the rows while new analytics data landed.
+const { items, categoryCounts, totalCount, loading, error } = useSalesRepActivities({
   organizationId: () => props.organizationId,
+  categories: () => (category.value ? [category.value] : undefined),
   periodFrom,
   periodTo,
-  take: 0,
+  take: ACTIVITY_PAGE_SIZE,
+  skip: () => (page.value - 1) * ACTIVITY_PAGE_SIZE,
 });
 
 const countOf = (name: string) => categoryCounts.value.find((entry) => entry.category === name)?.count ?? 0;
 
-// While the first counts run is in flight the tabs stay up without figures — a premature "(0)" on
-// every tab reads as a real count, then jumps.
-const countsPending = computed(() => countsLoading.value && !allCount.value);
+// "All" sums the same categoryCounts the tab badges read — totalCount is category-scoped once a tab
+// filters the rows, so it can't back the All badge.
+const allCount = computed(() => categoryCounts.value.reduce((sum, entry) => sum + entry.count, 0));
+
+// keepPreviousResult holds the outgoing response during any refetch, so badges keep their last-known
+// figures across tab/period switches and while a Top view shows (the insights ops carry no
+// categoryCounts). Only the very first load has nothing to hold: the tabs stay up without figures —
+// a premature "(0)" on every tab reads as a real count, then jumps.
+const countsPending = computed(() => loading.value && !categoryCounts.value.length);
 
 // Fixed vocabulary + counts. Zero-count categories keep their tab by design — a rep must see that a
 // category exists and is quiet, not wonder where it went.
@@ -227,15 +232,6 @@ const allTabLabel = computed(() =>
     ? t("sales_rep.activity.tabs.all")
     : `${t("sales_rep.activity.tabs.all")} (${formatStatCount(allCount.value)})`,
 );
-
-const { items, totalCount, loading, error } = useSalesRepActivities({
-  organizationId: () => props.organizationId,
-  categories: () => (category.value ? [category.value] : undefined),
-  periodFrom,
-  periodTo,
-  take: ACTIVITY_PAGE_SIZE,
-  skip: () => (page.value - 1) * ACTIVITY_PAGE_SIZE,
-});
 
 const failed = computed(() => Boolean(error.value));
 
