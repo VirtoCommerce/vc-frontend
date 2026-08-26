@@ -3,8 +3,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, nextTick } from "vue";
 import { focusBlockControl } from "../composables/useLayoutFocus";
 import { useSalesRepLayout } from "../composables/useSalesRepLayout";
-import { WIDGET_DRAG_FILTER_SELECTOR, WIDGET_DRAG_HANDLE_SELECTOR } from "../constants";
-import { getBlockRegistry } from "../layout/registry";
+import { DASHBOARD_LAYOUT_SCOPE, WIDGET_DRAG_FILTER_SELECTOR, WIDGET_DRAG_HANDLE_SELECTOR } from "../constants";
+import { documentsBlock } from "../layout/documents-block";
+import { getBlockRegistry, registerBlock } from "../layout/registry";
+import LayoutHiddenTray from "./layout-hidden-tray.vue";
 import LayoutRegion from "./layout-region.vue";
 import LayoutStats from "./layout-stats.vue";
 import LayoutWidget from "./layout-widget.vue";
@@ -52,6 +54,11 @@ vi.mock("sortablejs", () => ({
 type ZoneType = { el: HTMLElement; options: any; option: Mock };
 
 const SCOPE = "dashboard" as const;
+
+// As init() does for a rep carrying documents:read (VCST-5730) — the documents widget joins the
+// dashboard registry through the runtime seam, not the defaults, so hiding it exercises a
+// dynamically registered block.
+registerBlock(DASHBOARD_LAYOUT_SCOPE, documentsBlock);
 
 // One card per registered statistics block, keyed as useSalesRepDashboardWidgets keys them — the row
 // renders nothing for an id with no matching card, which would empty every drag assertion below.
@@ -487,6 +494,118 @@ describe("widget column drag and drop", () => {
 
     expect(zones[0].options.handle).toBeUndefined();
     expect(zones[0].options.filter).toBeUndefined();
+  });
+});
+
+// The dashboard's right rail holds only the dynamically registered documents widget (VCST-5730), so
+// this is the regression net for a block that joins a surface through `registerBlock` rather than the
+// registry defaults: its ✕ must move it to the hidden half, the tray must offer it back, and the
+// restore must re-render it — the same contract the built-in widgets get from the suites above.
+describe("dashboard rail with the runtime-registered documents widget", () => {
+  function setupRail() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- the composable's full surface
+    let api: any;
+
+    const Harness = defineComponent({
+      setup() {
+        const layout = useSalesRepLayout(SCOPE);
+
+        api = layout;
+
+        // As useLayoutPage's toggleHidden does — both the region's ✕ and the tray's restore land here.
+        function toggleHidden(id: string, hidden: boolean, index?: number): void {
+          layout.setHidden(id, hidden, index);
+          focusBlockControl(id);
+        }
+
+        const slots = { default: () => h(LayoutWidget, { title: "widget" }, { default: () => "body" }) };
+
+        return () =>
+          h("div", [
+            h(
+              LayoutRegion,
+              {
+                scope: SCOPE,
+                entries: layout.visibleIn("mainRight"),
+                orientation: "vertical",
+                group: `sales-rep-${SCOPE}-main-right`,
+                editing: layout.editing.value,
+                onReorder: (ids: string[]) => layout.reorderVisible("mainRight", ids),
+                onSetHidden: toggleHidden,
+              },
+              slots,
+            ),
+            // The tray, gated as layout-surface.vue gates it, so the restore path is the real button.
+            ...(layout.editing.value && layout.hiddenIn("mainRight").length
+              ? [
+                  h(LayoutHiddenTray, {
+                    scope: SCOPE,
+                    entries: layout.hiddenIn("mainRight"),
+                    onRestore: (id: string) => toggleHidden(id, false),
+                  }),
+                ]
+              : []),
+          ]);
+      },
+    });
+
+    const wrapper = mount(Harness, {
+      attachTo: document.body,
+      global: {
+        components: { VcButton, VcWidget },
+        stubs: { VcIcon: true, VcShape: true, VcLoaderOverlay: true },
+      },
+    });
+    return { wrapper, api };
+  }
+
+  it("hides the documents widget into the tray with its ✕", async () => {
+    const { wrapper, api } = setupRail();
+    api.startEdit();
+    await nextTick();
+
+    expect(api.visibleIn("mainRight")).toEqual(["documents"]);
+
+    await wrapper.find('[data-block-id="documents"] .layout-widget__hide').trigger("click");
+
+    expect(api.hiddenIn("mainRight")).toEqual(["documents"]);
+    expect(api.visibleIn("mainRight")).toEqual([]);
+    expect(wrapper.find('[data-block-id="documents"]').exists()).toBe(false);
+    expect(wrapper.find('[data-restore-id="documents"]').exists()).toBe(true);
+  });
+
+  it("restores it from the tray", async () => {
+    const { wrapper, api } = setupRail();
+    api.startEdit();
+    await nextTick();
+
+    await wrapper.find('[data-block-id="documents"] .layout-widget__hide').trigger("click");
+    await wrapper.find('[data-restore-id="documents"]').trigger("click");
+
+    expect(api.visibleIn("mainRight")).toEqual(["documents"]);
+    expect(api.hiddenIn("mainRight")).toEqual([]);
+    expect(wrapper.find('[data-block-id="documents"]').exists()).toBe(true);
+    expect(wrapper.find('[data-restore-id="documents"]').exists()).toBe(false);
+  });
+
+  // SAVE LAYOUT sends the draft as one full-document replace, so a hide only survives if the hidden
+  // documents block is in the payload — a block missing from it is simply gone after the save.
+  it("sends the hidden documents block in the save payload", async () => {
+    const { wrapper, api } = setupRail();
+    api.startEdit();
+    await nextTick();
+
+    await wrapper.find('[data-block-id="documents"] .layout-widget__hide').trigger("click");
+    apolloMock.mutate.mockReset();
+    void api.save();
+
+    const command = apolloMock.mutate.mock.calls[0][0].command as {
+      regions: { id: string; blocks: { id: string; type: string; hidden: boolean }[] }[];
+    };
+    const mainRight = command.regions.find((region) => region.id === "mainRight");
+    expect(mainRight?.blocks).toContainEqual(
+      expect.objectContaining({ id: "documents", type: "documents", hidden: true }),
+    );
   });
 });
 

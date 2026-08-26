@@ -181,6 +181,32 @@
       "all_categories": "所有类别",
       "load_failed": "无法加载热销商品"
     },
+    "documents": {
+      "title": "文档库",
+      "browse_all": "浏览全部",
+      "open": "打开",
+      "empty": "暂无文档",
+      "load_failed": "无法加载文档",
+      "page": {
+        "subtitle": "目录、造型手册、价目表和销售指南 — 打开或下载最新发布。",
+        "search_placeholder": "按名称搜索",
+        "search_aria": "搜索文档",
+        "all_tab": "全部",
+        "empty": "暂无文档",
+        "no_results": "没有符合您搜索条件的文档",
+        "reset_search": "重置搜索",
+        "load_failed": "无法加载文档"
+      },
+      "details": {
+        "pages_count": "{count} 页",
+        "open": "打开",
+        "download": "下载",
+        "close": "关闭详情",
+        "not_found": "该文档已不再可用。",
+        "latest_publication": "最新发布"
+      },
+      "published": "发布于 {date}"
+    },
     "rules": {
       "load_failed": {
         "filter": "无法加载筛选条件，因此显示完整列表。请刷新页面。",

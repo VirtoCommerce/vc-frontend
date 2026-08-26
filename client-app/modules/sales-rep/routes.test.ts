@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { customerProfileRoute, dashboardRoute, myCustomersRoute, salesRepsRoute } from "./routes";
+import { customerProfileRoute, dashboardRoute, documentsRoute, myCustomersRoute, salesRepsRoute } from "./routes";
 
 // The rep-facing hub pages mount under the org-gated "/company" parent but must stay reachable for a
 // sales rep with zero org memberships (their access is `sales-rep:access`, not org membership). They
@@ -9,6 +9,7 @@ describe("sales-rep routes", () => {
     ["dashboard", dashboardRoute],
     ["my customers", myCustomersRoute],
     ["customer profile", customerProfileRoute],
+    ["documents", documentsRoute],
   ])("clears requiresOrganization on the rep-facing %s route", (_name, route) => {
     expect(route.meta?.requiresOrganization).toBe(false);
   });
