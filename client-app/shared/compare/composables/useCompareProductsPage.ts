@@ -2,6 +2,7 @@ import { useMutation } from "@vue/apollo-composable";
 import { uniqBy } from "lodash-es";
 import { computed, ref, shallowRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
+import { useRoute } from "vue-router";
 import { CreateConfiguredLineItemDocument } from "@/core/api/graphql/types";
 import { useAnalytics } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
@@ -86,6 +87,7 @@ function withConfiguredPrice(product: Product, configuredLineItem?: ConfiguredLi
 
 export function useCompareProductsPage() {
   const { t, n } = useI18n();
+  const route = useRoute();
   const { products, getCategoryProductsCount } = useCompareProducts();
   const { fetchProducts, products: fetchedProducts, fetchingProducts } = useProducts();
   const { isEnabled } = useModuleSettings(CUSTOMER_REVIEWS_MODULE_ID);
@@ -158,7 +160,11 @@ export function useCompareProductsPage() {
     return Array.from(tabsByCategoryKey.values());
   });
 
-  const selectedCategoryKey = ref("");
+  // Seeded from ?category= when arriving via the "added to compare" toast's button (see
+  // addToCompareList in useCompareProducts.ts), so it opens straight into that product's
+  // category instead of whichever one would otherwise be picked by default.
+  const initialCategoryKey = typeof route.query.category === "string" ? route.query.category : "";
+  const selectedCategoryKey = ref(initialCategoryKey);
 
   const selectedCategoryTab = computed(() =>
     categoryTabs.value.find((tab) => tab.categoryKey === selectedCategoryKey.value),
@@ -335,6 +341,12 @@ export function useCompareProductsPage() {
   watch(
     categoryTabs,
     (tabs) => {
+      // Tabs are still empty before products finish fetching — leave a pending selection (e.g.
+      // initialCategoryKey from the URL) alone rather than clobbering it with "" ahead of time.
+      if (!tabs.length) {
+        return;
+      }
+
       if (!tabs.some((tab) => tab.categoryKey === selectedCategoryKey.value)) {
         selectedCategoryKey.value = tabs[0]?.categoryKey ?? "";
       }

@@ -141,7 +141,7 @@ export function useCompareProducts() {
       }),
       button: {
         text: t("shared.compare.notifications.compare_button"),
-        to: { path: "/compare" },
+        to: { path: "/compare", query: { category: categoryKey } },
         clickHandler() {
           notifications.clear(NOTIFICATIONS_GROUP);
         },
