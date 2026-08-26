@@ -1,6 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { PropertyValueTypes } from "@/core/api/graphql/types";
 import { ProductType } from "@/core/enums";
+import {
+  AVAILABILITY_ROW_KEY,
+  PRICE_ROW_KEY,
+  PROPERTY_ROW_KEY_PREFIX,
+  RATING_ROW_KEY,
+  SKU_ROW_KEY,
+} from "../constants";
 import type { ICompareProductEntry } from "../types";
 import type { AvailabilityData, Product, Property } from "@/core/api/graphql/types";
 
@@ -211,7 +218,7 @@ describe("useCompareProductsPage", () => {
       setUpCategory([product("p1", overridesA), product("p2", overridesB)]);
 
       const { tableRows } = useCompareProductsPage();
-      const availabilityRow = tableRows.value.find((row) => row.key === "availability");
+      const availabilityRow = tableRows.value.find((row) => row.key === AVAILABILITY_ROW_KEY);
 
       expect(availabilityRow?.differs).toBe(expected);
     });
@@ -225,7 +232,7 @@ describe("useCompareProductsPage", () => {
       ]);
 
       const { tableRows } = useCompareProductsPage();
-      const availabilityRow = tableRows.value.find((row) => row.key === "availability");
+      const availabilityRow = tableRows.value.find((row) => row.key === AVAILABILITY_ROW_KEY);
 
       expect(availabilityRow?.differs).toBe(false);
     });
@@ -240,7 +247,7 @@ describe("useCompareProductsPage", () => {
       ];
 
       const { tableRows } = useCompareProductsPage();
-      const priceRow = tableRows.value.find((row) => row.key === "price");
+      const priceRow = tableRows.value.find((row) => row.key === PRICE_ROW_KEY);
 
       expect(priceRow?.differs).toBe(true);
     });
@@ -250,7 +257,7 @@ describe("useCompareProductsPage", () => {
       hoisted.state.fetchedProducts.value = [product("p1", { code: undefined })];
 
       const { tableRows } = useCompareProductsPage();
-      const skuRow = tableRows.value.find((row) => row.key === "sku");
+      const skuRow = tableRows.value.find((row) => row.key === SKU_ROW_KEY);
 
       expect(skuRow?.values).toEqual(["–"]);
     });
@@ -274,7 +281,7 @@ describe("useCompareProductsPage", () => {
       ];
 
       const { tableRows } = useCompareProductsPage();
-      const colorRow = tableRows.value.find((row) => row.key === "color");
+      const colorRow = tableRows.value.find((row) => row.key === `${PROPERTY_ROW_KEY_PREFIX}color`);
 
       expect(colorRow?.differs).toBe(true);
     });
@@ -287,7 +294,7 @@ describe("useCompareProductsPage", () => {
       ];
 
       const { tableRows } = useCompareProductsPage();
-      const colorRow = tableRows.value.find((row) => row.key === "color");
+      const colorRow = tableRows.value.find((row) => row.key === `${PROPERTY_ROW_KEY_PREFIX}color`);
 
       expect(colorRow?.differs).toBe(false);
     });
@@ -301,7 +308,7 @@ describe("useCompareProductsPage", () => {
 
       const { tableRows } = useCompareProductsPage();
 
-      expect(tableRows.value.some((row) => row.key === "color")).toBe(false);
+      expect(tableRows.value.some((row) => row.key === `${PROPERTY_ROW_KEY_PREFIX}color`)).toBe(false);
     });
 
     it("keeps the row when at least one product has a value for that property", () => {
@@ -313,7 +320,7 @@ describe("useCompareProductsPage", () => {
 
       const { tableRows } = useCompareProductsPage();
 
-      expect(tableRows.value.some((row) => row.key === "color")).toBe(true);
+      expect(tableRows.value.some((row) => row.key === `${PROPERTY_ROW_KEY_PREFIX}color`)).toBe(true);
     });
   });
 
@@ -341,7 +348,7 @@ describe("useCompareProductsPage", () => {
 
       const { tableRows } = useCompareProductsPage();
 
-      expect(tableRows.value.some((row) => row.key === "rating")).toBe(false);
+      expect(tableRows.value.some((row) => row.key === RATING_ROW_KEY)).toBe(false);
     });
 
     it("is included when the module is enabled and at least one product has a rating", () => {
@@ -351,7 +358,7 @@ describe("useCompareProductsPage", () => {
 
       const { tableRows } = useCompareProductsPage();
 
-      expect(tableRows.value.some((row) => row.key === "rating")).toBe(true);
+      expect(tableRows.value.some((row) => row.key === RATING_ROW_KEY)).toBe(true);
     });
   });
 });

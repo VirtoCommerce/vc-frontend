@@ -50,7 +50,13 @@
               {{ t("pages.compare.empty.restore_button") }}
             </VcButton>
 
-            <VcButton variant="outline" size="sm" prepend-icon="plus">
+            <VcButton
+              variant="outline"
+              size="sm"
+              prepend-icon="plus"
+              :external-link="continueShoppingLink"
+              :to="continueShoppingLink ? undefined : '/'"
+            >
               {{ t("pages.compare.empty.add_button") }}
             </VcButton>
           </div>
@@ -106,6 +112,8 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
+import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { CompareTable, useCompareProducts, useCompareProductsPage } from "@/shared/compare";
 import { useModal } from "@/shared/modal";
 import { VcConfirmationModal } from "@/ui-kit/components";
@@ -115,6 +123,11 @@ const { t } = useI18n();
 const { openModal, closeModal } = useModal();
 
 const breadcrumbs = useBreadcrumbs([{ title: t("pages.compare.title") }]);
+
+const { getModuleSettings } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
+const { continue_shopping_link: continueShoppingLink } = getModuleSettings({
+  [MODULE_XAPI_KEYS.CONTINUE_SHOPPING_LINK]: "continue_shopping_link",
+});
 
 const {
   products,

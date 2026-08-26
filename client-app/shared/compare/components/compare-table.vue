@@ -248,7 +248,10 @@
               single-line
               :actual-price="getDisplayPrice(products[index]!.product).actual"
               :list-price="getDisplayPrice(products[index]!.product).list"
-              :with-from-label="products[index]!.product.hasVariations"
+              :with-from-label="
+                products[index]!.product.hasVariations ||
+                (products[index]!.product.isConfigurable && !products[index]!.entry.configurationSectionInput?.length)
+              "
             />
 
             <ProductRating
@@ -282,6 +285,7 @@ import { ProductType } from "@/core/enums";
 import { getProductRoute } from "@/core/utilities";
 import { BREAKPOINTS } from "@/ui-kit/constants";
 import { useCompareAddToCart, useCompareTableRowPins } from "../composables";
+import { AVAILABILITY_ROW_KEY, PRICE_ROW_KEY } from "../constants";
 import { getConfigurationLink, getDisplayPrice } from "../utilities";
 import type { ICompareDisplayProduct, ICompareTableRow } from "../types";
 import type { Product } from "@/core/api/graphql/types";
@@ -310,7 +314,7 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 // Always shown even under the "Differences" filter, regardless of row.differs.
-const PERMANENT_ROW_KEYS = ["price", "availability"];
+const PERMANENT_ROW_KEYS = [PRICE_ROW_KEY, AVAILABILITY_ROW_KEY];
 
 const { t } = useI18n();
 const { browserTarget } = useBrowserTarget();

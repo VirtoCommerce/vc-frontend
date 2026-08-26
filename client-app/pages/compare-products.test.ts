@@ -71,6 +71,10 @@ vi.mock("@/shared/modal", () => ({
   useModal: () => ({ openModal: mocks.openModal, closeModal: mocks.closeModal }),
 }));
 
+vi.mock("@/core/composables/useModuleSettings", () => ({
+  useModuleSettings: () => ({ getModuleSettings: () => ({}) }),
+}));
+
 vi.mock("@/shared/compare", () => ({
   CompareTable: mocks.CompareTable,
   useCompareProducts: () => ({

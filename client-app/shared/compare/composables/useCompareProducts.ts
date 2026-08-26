@@ -39,7 +39,10 @@ function findMatchingEntryIndex(product: Product, configuration?: ConfigurationS
 
   if (product.isConfigurable && normalizedConfiguration?.length) {
     return products.value.findIndex((entry) => {
-      if (entry.productId !== product.id || !entry.configurationSectionInput?.length) {
+      if (
+        entry.productId !== product.id ||
+        entry.configurationSectionInput?.length !== normalizedConfiguration.length
+      ) {
         return false;
       }
 

@@ -9,12 +9,21 @@ import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MAX_DISPLAY_IN_STOCK_QUANTITY } from "@/core/constants";
 import { ProductType } from "@/core/enums";
 import { globals } from "@/core/globals";
-import { getPropertyValue, Logger } from "@/core/utilities";
+import { getPropertiesGroupedByName, getPropertyValue, Logger } from "@/core/utilities";
 import {
   ENABLED_KEY as CUSTOMER_REVIEWS_ENABLED_KEY,
   MODULE_ID as CUSTOMER_REVIEWS_MODULE_ID,
 } from "@/modules/customer-reviews/constants";
 import { useProducts } from "@/shared/catalog/composables/useProducts";
+import {
+  AVAILABILITY_ROW_KEY,
+  CONFIG_PROPERTY_ROW_KEY_PREFIX,
+  MIN_ORDER_QTY_ROW_KEY,
+  PRICE_ROW_KEY,
+  PROPERTY_ROW_KEY_PREFIX,
+  RATING_ROW_KEY,
+  SKU_ROW_KEY,
+} from "../constants";
 import { getDisplayPrice, getProductCategoryLabel } from "../utilities";
 import { useCompareProducts } from "./useCompareProducts";
 import type { ICompareCategoryTab, ICompareDisplayProduct, ICompareProductEntry, ICompareTableRow } from "../types";
@@ -25,7 +34,12 @@ const EMPTY_VALUE_PLACEHOLDER = "–";
 type ConfiguredLineItemType = CreateConfiguredLineItemMutation["createConfiguredLineItem"];
 
 function getProductPropertyValue(product: Product, propertyName: string): string {
-  const property = product.properties.find((prop) => prop.name.toLowerCase() === propertyName);
+  // Reuses getPropertiesGroupedByName so hidden properties are excluded and multivalue properties
+  // (several Property entries sharing the same name) are merged, matching how the product page
+  // itself displays properties.
+  const property = Object.values(getPropertiesGroupedByName(product.properties)).find(
+    (prop) => prop.name.toLowerCase() === propertyName,
+  );
   return property ? (getPropertyValue(property) ?? EMPTY_VALUE_PLACEHOLDER) : EMPTY_VALUE_PLACEHOLDER;
 }
 
@@ -106,36 +120,48 @@ export function useCompareProductsPage() {
 
   watch(
     configuredEntries,
-    async (entries) => {
+    async (entries, _prevEntries, onCleanup) => {
       if (!entries.length) {
+        configuredLineItemsByLocalId.value = {};
         return;
       }
 
-      try {
-        const responses = await Promise.all(
-          entries.map((entry) =>
-            createConfiguredLineItemMutation({
-              command: {
-                configurableProductId: entry.productId,
-                configurationSections: entry.configurationSectionInput,
-                storeId,
-                currencyCode,
-                cultureName,
-              },
-            }),
-          ),
-        );
+      let cancelled = false;
+      onCleanup(() => {
+        cancelled = true;
+      });
 
-        const nextConfiguredLineItems: Record<string, ConfiguredLineItemType> = {};
-        entries.forEach((entry, index) => {
-          if (entry.localId) {
-            nextConfiguredLineItems[entry.localId] = responses[index]?.data?.createConfiguredLineItem;
-          }
-        });
-        configuredLineItemsByLocalId.value = nextConfiguredLineItems;
-      } catch (e) {
-        Logger.error("useCompareProductsPage.fetchConfiguredLineItems", e);
+      const results = await Promise.allSettled(
+        entries.map((entry) =>
+          createConfiguredLineItemMutation({
+            command: {
+              configurableProductId: entry.productId,
+              configurationSections: entry.configurationSectionInput,
+              storeId,
+              currencyCode,
+              cultureName,
+            },
+          }),
+        ),
+      );
+
+      if (cancelled) {
+        return;
       }
+
+      const nextConfiguredLineItems: Record<string, ConfiguredLineItemType> = {};
+      entries.forEach((entry, index) => {
+        const result = results[index];
+
+        if (result.status === "fulfilled") {
+          if (entry.localId) {
+            nextConfiguredLineItems[entry.localId] = result.value?.data?.createConfiguredLineItem;
+          }
+        } else {
+          Logger.error("useCompareProductsPage.fetchConfiguredLineItems", result.reason);
+        }
+      });
+      configuredLineItemsByLocalId.value = nextConfiguredLineItems;
     },
     { immediate: true },
   );
@@ -210,7 +236,7 @@ export function useCompareProductsPage() {
 
     const rows: ICompareTableRow[] = [
       makeRow(
-        "price",
+        PRICE_ROW_KEY,
         t("shared.compare.table.fields.price_per_unit"),
         "price",
         items.map(({ product }) => getDisplayPrice(product).actual.formattedAmount),
@@ -221,7 +247,7 @@ export function useCompareProductsPage() {
     if (customerRatingEnabled && items.some(({ product }) => product.rating)) {
       rows.push(
         makeRow(
-          "rating",
+          RATING_ROW_KEY,
           t("shared.compare.table.fields.customer_rating"),
           "rating",
           items.map(({ product }) =>
@@ -235,19 +261,19 @@ export function useCompareProductsPage() {
 
     rows.push(
       makeRow(
-        "availability",
+        AVAILABILITY_ROW_KEY,
         t("shared.compare.table.fields.availability"),
         "availability",
         items.map(({ product }) => getAvailabilitySignature(product)),
       ),
       makeRow(
-        "sku",
+        SKU_ROW_KEY,
         t("shared.compare.table.fields.sku"),
         "text",
         items.map(({ product }) => product.code || EMPTY_VALUE_PLACEHOLDER),
       ),
       makeRow(
-        "minOrderQty",
+        MIN_ORDER_QTY_ROW_KEY,
         t("shared.compare.table.fields.min_order_qty"),
         "text",
         items.map(({ product }) => (product.minQuantity != null ? n(product.minQuantity) : EMPTY_VALUE_PLACEHOLDER)),
@@ -261,7 +287,10 @@ export function useCompareProductsPage() {
   const propertyRows = computed<ICompareTableRow[]>(() => {
     const propertyNames = uniqBy(
       selectedCategoryProducts.value.flatMap(({ product }) =>
-        product.properties.map((prop) => ({ name: prop.name.toLowerCase(), label: prop.label })),
+        Object.values(getPropertiesGroupedByName(product.properties)).map((prop) => ({
+          name: prop.name.toLowerCase(),
+          label: prop.label,
+        })),
       ),
       "name",
     );
@@ -271,7 +300,7 @@ export function useCompareProductsPage() {
         const values = selectedCategoryProducts.value.map(({ product }) => getProductPropertyValue(product, name));
 
         return {
-          key: name,
+          key: `${PROPERTY_ROW_KEY_PREFIX}${name}`,
           label,
           kind: "text" as const,
           values,
@@ -293,7 +322,7 @@ export function useCompareProductsPage() {
         const values = items.map(({ entry }) => getConfigPropertyValue(entry, label));
 
         return {
-          key: `config:${label}`,
+          key: `${CONFIG_PROPERTY_ROW_KEY_PREFIX}${label}`,
           label,
           kind: "text" as const,
           values,
@@ -354,18 +383,25 @@ export function useCompareProductsPage() {
     { immediate: true },
   );
 
+  // fetchProducts writes straight into shared state with no cancellation hook of its own, so
+  // overlapping calls must be serialized here — otherwise an older, slower response can land after
+  // a newer one and leave stale products displayed.
+  let fetchProductsQueue = Promise.resolve();
+
   watch(
     productIds,
-    async (ids) => {
+    (ids) => {
       if (!ids.length) {
         return;
       }
 
-      try {
-        await fetchProducts({ productIds: ids });
-      } catch (e) {
-        Logger.error("useCompareProductsPage.fetchProducts", e);
-      }
+      fetchProductsQueue = fetchProductsQueue.then(async () => {
+        try {
+          await fetchProducts({ productIds: ids });
+        } catch (e) {
+          Logger.error("useCompareProductsPage.fetchProducts", e);
+        }
+      });
     },
     { immediate: true },
   );
