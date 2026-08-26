@@ -90,16 +90,22 @@
       </div>
     </div>
 
-    <VcInputDetails :id="detailsId" :error="computedError" :message="computedMessage" :single-line="false" />
+    <VcInputDetails
+      :id="detailsId"
+      :error="computedError"
+      :message="computedMessage"
+      :single-line="false"
+      :show-empty="showEmptyDetails"
+    />
   </fieldset>
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, provide, useTemplateRef, watch } from "vue";
+import { computed, nextTick, onUnmounted, provide, useTemplateRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useComponentId, useDateRangeField } from "@/ui-kit/composables";
 import { getInputClearIconSize } from "@/ui-kit/utilities";
-import { shellFocusEntered, shellFocusLeft } from "@/ui-kit/utilities/focus";
+import { classifyShellFocusOut, shellFocusEntered, watchFocusLeavingOwnPopover } from "@/ui-kit/utilities/focus";
 import type { VcDateFieldUpdateOnType } from "@/ui-kit/composables";
 
 interface IDateInputExposed {
@@ -145,6 +151,8 @@ interface IProps {
   mask?: boolean;
   /** Show one shell-level clear button that resets both endpoints, including uncommitted text. */
   clearable?: boolean;
+  /** Keep the details row's height reserved while it has no message, so the layout below never shifts. */
+  showEmptyDetails?: boolean;
   dataTestId?: string;
 }
 
@@ -181,6 +189,7 @@ const props = withDefaults(defineProps<IProps>(), {
   updateOn: "blur",
   mask: false,
   clearable: false,
+  showEmptyDetails: false,
   dataTestId: undefined,
 });
 
@@ -222,6 +231,10 @@ function onSegment(which: "start" | "end", value: string | undefined): void {
   emit("update:modelValue", mergeRange(which, value));
 }
 
+// The calendar lives outside this fieldset, so its own focusout never reports the real departure.
+let stopPopoverFocusWatch: (() => void) | undefined;
+onUnmounted(() => stopPopoverFocusWatch?.());
+
 function onFocusIn(event: FocusEvent): void {
   if (shellFocusEntered(event)) {
     emit("focus", event);
@@ -229,8 +242,14 @@ function onFocusIn(event: FocusEvent): void {
 }
 
 function onFocusOut(event: FocusEvent): void {
-  if (shellFocusLeft(event)) {
+  const exit = classifyShellFocusOut(event);
+  if (exit === "left") {
     emit("blur", event);
+    return;
+  }
+  if (exit === "own-popover") {
+    stopPopoverFocusWatch?.();
+    stopPopoverFocusWatch = watchFocusLeavingOwnPopover(event, (blurEvent) => emit("blur", blurEvent));
   }
 }
 

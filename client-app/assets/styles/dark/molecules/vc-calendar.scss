@@ -1,0 +1,6 @@
+// Focus ring: bump opacity for dark-mode visibility, as dark/molecules/vc-range-calendar.scss does
+// for the range twin. At the light-mode 0.35 the outline on day cells and nav buttons is near-invisible
+// on a dark surface, failing WCAG 2.4.7.
+.vc-calendar {
+  --focus-ring: rgb(from var(--color-primary-500) r g b / 0.8);
+}

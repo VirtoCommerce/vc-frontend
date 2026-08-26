@@ -9,32 +9,69 @@ function crossedFocusBoundary(event: FocusEvent): boolean {
 
 // Ownership is read from the shell's own trigger(s): the popover body is teleported out of the shell's
 // subtree, and mere containment would also match an unrelated popover opened elsewhere on the page.
-function focusMovedIntoOwnPopover(event: FocusEvent): boolean {
+function ownPopoverBodyId(event: FocusEvent): string {
   const other = event.relatedTarget;
   const shell = event.currentTarget;
   if (!(other instanceof Element) || !(shell instanceof Element)) {
-    return false;
+    return "";
   }
   const bodyId = other.closest(".vc-popover__body")?.id;
   if (!bodyId) {
-    return false;
+    return "";
   }
-  return [...shell.querySelectorAll("[aria-controls]")].some(
+  const owned = [...shell.querySelectorAll("[aria-controls]")].some(
     (trigger) => trigger.getAttribute("aria-controls") === bodyId,
   );
+  return owned ? bodyId : "";
 }
 
-/** `focusin`: focus entered the whole shell, not just moved between its inner controls. */
+/** `focusin`: focus entered the whole shell. Coming back from its own popover is not an entry. */
 export function shellFocusEntered(event: FocusEvent): boolean {
-  return crossedFocusBoundary(event);
+  return !ownPopoverBodyId(event) && crossedFocusBoundary(event);
 }
 
 /**
- * `focusout`: focus left the whole shell. Moving into a popover the shell itself owns (its calendar)
- * is not leaving; the shell's own controls and any other popover on the page are.
+ * `focusout`: where focus went relative to the shell. "own-popover" is not a departure — but the
+ * popover body sits outside the shell's subtree, so no later focusout reports the real one either;
+ * hand that event to `watchFocusLeavingOwnPopover`.
  */
-export function shellFocusLeft(event: FocusEvent): boolean {
-  return !focusMovedIntoOwnPopover(event) && crossedFocusBoundary(event);
+export function classifyShellFocusOut(event: FocusEvent): "left" | "own-popover" | "internal" {
+  if (ownPopoverBodyId(event)) {
+    return "own-popover";
+  }
+  return crossedFocusBoundary(event) ? "left" : "internal";
+}
+
+/**
+ * Pays back the blur suppressed by an "own-popover" focusout: reports the one moment focus leaves the
+ * popover for anywhere outside the shell. Returns a stop function; call it before starting another
+ * watch and on unmount.
+ */
+export function watchFocusLeavingOwnPopover(event: FocusEvent, onLeft: (blurEvent: FocusEvent) => void): () => void {
+  const noop = (): void => {};
+  const shell = event.currentTarget;
+  const popover = document.getElementById(ownPopoverBodyId(event));
+  if (!(shell instanceof Element) || !popover) {
+    return noop;
+  }
+
+  const onDocumentFocusOut = (documentEvent: FocusEvent): void => {
+    if (!(documentEvent.target instanceof Node) || !popover.contains(documentEvent.target)) {
+      return;
+    }
+    const next = documentEvent.relatedTarget;
+    if (next instanceof Node && popover.contains(next)) {
+      return;
+    }
+    document.removeEventListener("focusout", onDocumentFocusOut, true);
+    if (next instanceof Node && shell.contains(next)) {
+      return;
+    }
+    onLeft(new FocusEvent("blur", { relatedTarget: next }));
+  };
+
+  document.addEventListener("focusout", onDocumentFocusOut, true);
+  return () => document.removeEventListener("focusout", onDocumentFocusOut, true);
 }
 
 export function findFirstFocusableElement(

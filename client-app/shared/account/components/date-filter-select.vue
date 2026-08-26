@@ -15,6 +15,7 @@
       class="date-filter-select__range"
       mask
       enable-teleport
+      show-empty-details
       :layout="layout"
       :start-label="$t('shared.account.orders_filter.start_date_label')"
       :end-label="$t('shared.account.orders_filter.end_date_label')"

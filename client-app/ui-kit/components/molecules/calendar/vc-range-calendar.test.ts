@@ -204,6 +204,35 @@ describe("VcRangeCalendar", () => {
     });
   });
 
+  // reka deselects an endpoint that is picked twice; here that silently dropped a committed date.
+  describe("re-picking an endpoint", () => {
+    it("keeps the anchor when it is re-picked from the keyboard", async () => {
+      const { wrapper, state } = mountBoundCal({ start: "2026-10-08", end: undefined });
+      await flushPromises();
+
+      const cell = document.querySelector<HTMLElement>(
+        `[data-reka-calendar-cell-trigger][data-value="2026-10-08"]:not([data-outside-view])`,
+      )!;
+      pressKey(cell, "Enter");
+      await flushPromises();
+
+      expect(state.value?.start).toBe("2026-10-08");
+
+      wrapper.unmount();
+    });
+
+    it("closes the anchor into a single-day range when it is clicked again", async () => {
+      const { wrapper, state } = mountBoundCal({ start: "2026-10-08", end: undefined });
+      await flushPromises();
+
+      await clickDay("2026-10-08");
+
+      expect(state.value).toEqual({ start: "2026-10-08", end: "2026-10-08" });
+
+      wrapper.unmount();
+    });
+  });
+
   describe("placeholder clamping to [min, max]", () => {
     function inViewCell(wrapper: ReturnType<typeof mountCal>, iso: string) {
       return wrapper.find(`[data-reka-calendar-cell-trigger][data-value="${iso}"]:not([data-outside-view])`);

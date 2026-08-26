@@ -13,6 +13,7 @@
     :max-value="maxDateValue"
     :is-date-unavailable="isDateUnavailable"
     fixed-weeks
+    prevent-deselect
     :class="rootClasses"
     :data-test-id="dataTestId"
     @update:model-value="onUpdate"

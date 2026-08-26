@@ -317,6 +317,48 @@ describe("VcDateRangePicker", () => {
       outside.remove();
     });
 
+    // The suppressed blur still has to be paid back: leaving through the calendar is a real departure,
+    // and the shell sees no focusout of its own for it.
+    it("combined: blurs exactly once when focus leaves the calendar for the outside", async () => {
+      const outside = document.createElement("button");
+      document.body.appendChild(outside);
+      const wrapper = mountPicker({}, { attachTo: document.body });
+
+      const [startInput] = wrapper.findAll("input");
+      startInput.element.focus();
+
+      const trigger = wrapper.find('button[aria-haspopup="dialog"]');
+      (trigger.element as HTMLButtonElement).focus();
+      await trigger.trigger("click");
+      await flushPromises();
+      expect(wrapper.emitted("blur")).toBeUndefined();
+
+      outside.focus();
+      expect(wrapper.emitted("blur")).toHaveLength(1);
+
+      wrapper.unmount();
+      outside.remove();
+    });
+
+    it("combined: does not blur when focus returns from the calendar to the field", async () => {
+      const wrapper = mountPicker({}, { attachTo: document.body });
+
+      const [startInput] = wrapper.findAll("input");
+      startInput.element.focus();
+      const focusCount = wrapper.emitted("focus")?.length;
+
+      const trigger = wrapper.find('button[aria-haspopup="dialog"]');
+      (trigger.element as HTMLButtonElement).focus();
+      await trigger.trigger("click");
+      await flushPromises();
+
+      startInput.element.focus();
+      expect(wrapper.emitted("blur")).toBeUndefined();
+      expect(wrapper.emitted("focus")?.length).toBe(focusCount);
+
+      wrapper.unmount();
+    });
+
     it.each([
       ["split with teleport", true],
       ["split without teleport", false],

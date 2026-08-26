@@ -17,6 +17,15 @@ function inViewCell(wrapper: ReturnType<typeof mountCal>, iso: string) {
   return wrapper.find(`[data-reka-calendar-cell-trigger][data-value="${iso}"]:not([data-outside-view])`);
 }
 
+describe("VcCalendar — re-picking the selected date", () => {
+  it("keeps the date instead of clearing it", async () => {
+    const wrapper = mountCal({ modelValue: "2020-06-10", max: "2020-06-15" });
+    await inViewCell(wrapper, "2020-06-10").trigger("click");
+    await flushPromises();
+    expect(wrapper.emitted("update:modelValue")?.at(-1)).toEqual(["2020-06-10"]);
+  });
+});
+
 describe("VcCalendar — placeholder clamping to [min, max]", () => {
   it("opens on the max month instead of today's fully-disabled month when max is in the past", () => {
     const wrapper = mountCal({ max: "2020-06-15" });

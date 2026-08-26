@@ -48,7 +48,13 @@
       />
     </div>
 
-    <VcInputDetails :id="detailsId" :error="computedError" :message="computedMessage" :single-line="false" />
+    <VcInputDetails
+      :id="detailsId"
+      :error="computedError"
+      :message="computedMessage"
+      :single-line="false"
+      :show-empty="showEmptyDetails"
+    />
   </fieldset>
 
   <VcPopover
@@ -84,6 +90,7 @@
         :update-on="updateOn"
         :mask="mask"
         :clearable="clearable"
+        :show-empty-details="showEmptyDetails"
         :data-test-id="dataTestId"
         @update:model-value="onInputUpdate"
         @update:valid="inputValid = $event"
@@ -131,10 +138,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, useTemplateRef, watch } from "vue";
+import { computed, onUnmounted, ref, useTemplateRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useCalendarPopover, useComponentId, useDateRangeField } from "@/ui-kit/composables";
-import { shellFocusEntered, shellFocusLeft } from "@/ui-kit/utilities/focus";
+import { classifyShellFocusOut, shellFocusEntered, watchFocusLeavingOwnPopover } from "@/ui-kit/utilities/focus";
 import type { VcDateFieldUpdateOnType } from "@/ui-kit/composables";
 
 interface IProps {
@@ -180,6 +187,8 @@ interface IProps {
    * "split" forwards it to each field, so each button clears only its own endpoint.
    */
   clearable?: boolean;
+  /** Keep the details row's height reserved while it has no message, so the layout below never shifts. */
+  showEmptyDetails?: boolean;
   /** Teleport the popover into #popover-host — use inside clipping containers (modal, overflow:hidden). */
   enableTeleport?: boolean;
   /** Show the calendar footer: Clear in "combined", Today + Clear in "split"'s single-date calendars. */
@@ -365,6 +374,11 @@ function onSegment(which: "start" | "end", value: string | undefined): void {
   emit("update:modelValue", mergeRange(which, value));
 }
 
+// Each split field's calendar is teleported out of this fieldset, so its own focusout never reports
+// the real departure.
+let stopPopoverFocusWatch: (() => void) | undefined;
+onUnmounted(() => stopPopoverFocusWatch?.());
+
 function onFocusIn(event: FocusEvent): void {
   if (shellFocusEntered(event)) {
     emit("focus", event);
@@ -372,8 +386,14 @@ function onFocusIn(event: FocusEvent): void {
 }
 
 function onFocusOut(event: FocusEvent): void {
-  if (shellFocusLeft(event)) {
+  const exit = classifyShellFocusOut(event);
+  if (exit === "left") {
     emit("blur", event);
+    return;
+  }
+  if (exit === "own-popover") {
+    stopPopoverFocusWatch?.();
+    stopPopoverFocusWatch = watchFocusLeavingOwnPopover(event, (blurEvent) => emit("blur", blurEvent));
   }
 }
 
