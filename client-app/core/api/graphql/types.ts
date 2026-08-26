@@ -443,8 +443,6 @@ export type CartType = {
   itemsCount: Scalars['Int']['output'];
   /** Quantity of items */
   itemsQuantity: Scalars['Int']['output'];
-  /** Get total points amount */
-  loyaltyPoints?: Maybe<MoneyType>;
   /** Shopping cart name */
   name: Scalars['String']['output'];
   /** Shopping cart organization ID */
@@ -1055,7 +1053,7 @@ export type CustomerOrderStatisticsPeriodArgs = {
 };
 
 export type CustomerOrderStatisticsComparison = {
-  /** Current average minus the previous one. */
+  /** Current average minus previous average (amount, formatted amount and currency). */
   averageChange: MoneyType;
   /** Percentage change of average; null when the previous average is zero. */
   averageChangePercent?: Maybe<Scalars['Decimal']['output']>;
@@ -5855,6 +5853,9 @@ export type Query = {
   salesRepCustomerOrderStatistics?: Maybe<CustomerOrderStatistics>;
   salesRepCustomerSortRules?: Maybe<Array<Maybe<SalesRepCustomerSortRule>>>;
   salesRepCustomers?: Maybe<SalesRepCustomerConnection>;
+  salesRepDocument?: Maybe<SalesRepDocument>;
+  salesRepDocumentCategories?: Maybe<Array<Maybe<SalesRepDocumentCategory>>>;
+  salesRepDocuments?: Maybe<SalesRepDocumentConnection>;
   salesRepLayout?: Maybe<SalesRepLayout>;
   salesRepOrderFilterRules?: Maybe<Array<Maybe<SalesRepOrderFilterRule>>>;
   salesRepOrderSortRules?: Maybe<Array<Maybe<SalesRepOrderSortRule>>>;
@@ -6571,6 +6572,26 @@ export type QuerySalesRepCustomersArgs = {
 };
 
 
+export type QuerySalesRepDocumentArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type QuerySalesRepDocumentCategoriesArgs = {
+  keyword?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QuerySalesRepDocumentsArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  category?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  keyword?: InputMaybe<Scalars['String']['input']>;
+  pinned?: InputMaybe<Scalars['Boolean']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
+};
+
+
 export type QuerySalesRepLayoutArgs = {
   scope: Scalars['String']['input'];
   storeId?: InputMaybe<Scalars['String']['input']>;
@@ -7263,6 +7284,64 @@ export type SalesRepCustomerSortRule = {
   name: Scalars['String']['output'];
   /** Whether the client may choose the direction (e.g. 'name:desc'); false = a ':asc'/':desc' opposite of the default is rejected. */
   supportsDirection: Scalars['Boolean']['output'];
+};
+
+export type SalesRepDocument = {
+  /** Category from the document metadata — a salesRepDocumentCategories 'name'. */
+  category?: Maybe<Scalars['String']['output']>;
+  /** MIME content type of the file. */
+  contentType?: Maybe<Scalars['String']['output']>;
+  /** Upload date (the default sort key, newest first). */
+  createdDate: Scalars['DateTime']['output'];
+  /** Display name — the metadata name when set, otherwise the file name. */
+  displayName?: Maybe<Scalars['String']['output']>;
+  /** Id of the underlying library file. */
+  fileId: Scalars['String']['output'];
+  /** Document id. */
+  id: Scalars['String']['output'];
+  /** Whether this is the single pinned document of the library. */
+  isPinned: Scalars['Boolean']['output'];
+  /** Last modification date. */
+  modifiedDate?: Maybe<Scalars['DateTime']['output']>;
+  /** Original file name (also the download file name); null when the file record is missing (out-of-band corruption). */
+  name?: Maybe<Scalars['String']['output']>;
+  /** Optional page count. */
+  pageCount?: Maybe<Scalars['Int']['output']>;
+  /** Optional preview image URL for the card grid. */
+  previewUrl?: Maybe<Scalars['String']['output']>;
+  /** File size in bytes; null when the file record is missing (out-of-band corruption). */
+  size?: Maybe<Scalars['Long']['output']>;
+  /** Optional short description. */
+  summary?: Maybe<Scalars['String']['output']>;
+  /** Authorized download URL (the file-experience-api endpoint — never a raw blob URL); always resolvable — for a corrupted document the download returns the server error (404). */
+  url: Scalars['String']['output'];
+};
+
+export type SalesRepDocumentCategory = {
+  /** Number of documents in the category. */
+  count: Scalars['Int']['output'];
+  /** Category name — send it back in the salesRepDocuments 'category' argument. */
+  name: Scalars['String']['output'];
+};
+
+/** A connection from an object to a list of objects of type `SalesRepDocument`. */
+export type SalesRepDocumentConnection = {
+  /** A list of all of the edges returned in the connection. */
+  edges?: Maybe<Array<Maybe<SalesRepDocumentEdge>>>;
+  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
+  items?: Maybe<Array<Maybe<SalesRepDocument>>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
+  totalCount?: Maybe<Scalars['Int']['output']>;
+};
+
+/** An edge in a connection from an object to another object of type `SalesRepDocument`. */
+export type SalesRepDocumentEdge = {
+  /** A cursor for use in pagination */
+  cursor: Scalars['String']['output'];
+  /** The item at the end of the edge */
+  node?: Maybe<SalesRepDocument>;
 };
 
 export type SalesRepLayout = {
