@@ -25,10 +25,6 @@
         <VcButton variant="outline" size="sm" :disabled="isEmpty" prepend-icon="trash-2" @click="openClearAllModal">
           {{ t("pages.compare.actions.clear_all") }}
         </VcButton>
-
-        <VcButton variant="outline" size="sm" :disabled="isEmpty" prepend-icon="share-2">
-          {{ t("pages.compare.actions.share") }}
-        </VcButton>
       </div>
     </div>
 
@@ -96,7 +92,6 @@
         class="compare-products__table"
         :products="selectedCategoryProducts"
         :rows="tableRows"
-        :can-add-product="selectedCategoryCount < productsLimit"
         :differ-count="differRowsCount"
         :total-rows="tableRows.length"
         @clear-category="openClearCategoryModal"

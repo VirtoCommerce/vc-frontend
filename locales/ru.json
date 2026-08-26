@@ -1066,7 +1066,6 @@
         "clear_category": "Очистить категорию",
         "remove_product": "Удалить из сравнения",
         "add_to_cart": "Добавить в корзину",
-        "add_product": "Добавить товар",
         "fields": {
           "price_per_unit": "Цена за единицу",
           "customer_rating": "Рейтинг покупателей",
@@ -1694,8 +1693,7 @@
       "added_count": "из {total} добавлено",
       "added_count_in_category": "из {total} добавлено в {category}",
       "actions": {
-        "clear_all": "Очистить все",
-        "share": "Поделиться"
+        "clear_all": "Очистить все"
       },
       "clear_all_modal": {
         "title": "Очистить все",

@@ -1066,7 +1066,6 @@
         "clear_category": "Fjern kategori",
         "remove_product": "Fjern fra sammenligning",
         "add_to_cart": "Legg i handlekurv",
-        "add_product": "Legg til produkt",
         "fields": {
           "price_per_unit": "Pris per enhet",
           "customer_rating": "Kunderangering",
@@ -1694,8 +1693,7 @@
       "added_count": "av {total} lagt til",
       "added_count_in_category": "av {total} lagt til i {category}",
       "actions": {
-        "clear_all": "Fjern alle",
-        "share": "Del"
+        "clear_all": "Fjern alle"
       },
       "clear_all_modal": {
         "title": "Fjern alle",

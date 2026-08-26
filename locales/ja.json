@@ -1066,7 +1066,6 @@
         "clear_category": "カテゴリをクリア",
         "remove_product": "比較から削除",
         "add_to_cart": "カートに追加",
-        "add_product": "商品を追加",
         "fields": {
           "price_per_unit": "単価",
           "customer_rating": "顧客評価",
@@ -1694,8 +1693,7 @@
       "added_count": "{total}個中{total}個追加済み",
       "added_count_in_category": "{category}で{total}個中{total}個追加済み",
       "actions": {
-        "clear_all": "すべてクリア",
-        "share": "共有"
+        "clear_all": "すべてクリア"
       },
       "clear_all_modal": {
         "title": "すべてクリア",

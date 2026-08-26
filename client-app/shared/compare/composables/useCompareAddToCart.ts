@@ -14,9 +14,6 @@ function getProductKey(item: ICompareDisplayProduct): string {
   return item.entry.localId ?? item.product.id;
 }
 
-// Fixed quantity this button adds — the smallest orderable amount, same as the first "+" click
-// on the shared stepper would land on (see minAligned in ui-kit/utilities/quantity-stepper.ts):
-// minQuantity rounded UP to the nearest packSize multiple, never a non-pack-aligned amount.
 function getQuantity(product: Product): number {
   const minQuantity = product.minQuantity || 1;
   const packSize = product.packSize;

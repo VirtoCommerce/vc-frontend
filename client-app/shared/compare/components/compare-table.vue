@@ -181,16 +181,6 @@
                 </div>
               </template>
             </div>
-
-            <div v-if="canAddProduct" class="compare-table__add-product">
-              <button type="button" class="compare-table__add-product-box">
-                <VcIcon name="plus" :size="28" />
-
-                <span class="compare-table__add-product-text" v-if="!isCompact">
-                  {{ t("shared.compare.table.add_product") }}
-                </span>
-              </button>
-            </div>
           </div>
         </div>
       </div>
@@ -224,8 +214,6 @@
               "
               @click="togglePin(row.key)"
             >
-              <!-- VcButton's `icon` prop takes a name string only (no variant), so the solid/outline
-                   swap for the pinned state is rendered manually here instead. -->
               <VcIcon name="pin" :variant="isRowPinned(row.key) ? 'solid' : 'outline'" />
             </VcButton>
           </div>
@@ -261,8 +249,6 @@
 
             <template v-else>{{ value }}</template>
           </div>
-
-          <div v-if="canAddProduct" class="compare-table__row-value"></div>
         </div>
       </div>
     </template>
@@ -295,7 +281,6 @@ interface IProps {
   rows?: ICompareTableRow[];
   differCount?: number;
   totalRows?: number;
-  canAddProduct?: boolean;
 }
 
 const emit = defineEmits<IEmits>();
@@ -304,7 +289,6 @@ const props = withDefaults(defineProps<IProps>(), {
   rows: () => [],
   differCount: 0,
   totalRows: 0,
-  canAddProduct: true,
 });
 
 // Always shown even under the "Differences" filter, regardless of row.differs.
@@ -328,9 +312,6 @@ const headerRowRef = ref<HTMLElement | null>(null);
 
 // Kept live by VcHeader/MobileHeader — the app header's exact current height (it's shorter on
 // mobile), so the table's own header row can stick flush below it instead of under/away from it.
-// `observe: true` is required here: without it useCssVar only reads the var once on mount and
-// never again, so it'd go stale the moment the app header swaps its desktop/mobile layout later
-// (e.g. the viewport is resized across a breakpoint) instead of picking up the new height.
 const appHeaderHeightVar = useCssVar("--vc-app-header-height", undefined, { observe: true });
 const appHeaderHeight = computed(() => Number.parseFloat(appHeaderHeightVar.value ?? "0") || 0);
 
@@ -387,7 +368,6 @@ watch(
     // which keep this var updated with the header's live, current height).
     top: var(--vc-app-header-height, 0px);
 
-    // The mobile tabs bar owns the top corners below md instead.
     @media (width < theme("screens.md")) {
       @apply rounded-t-none;
     }
@@ -435,8 +415,6 @@ watch(
   &__controls-top {
     @apply flex flex-col gap-3;
 
-    // Teleported into __mobile-tabs-bar below md — laid out as one row there (tabs, then differ
-    // count) instead of stacked, matching the design.
     @media (width < theme("screens.md")) {
       @apply w-full flex-row items-center justify-between gap-3;
     }
@@ -485,7 +463,6 @@ watch(
   &__product-image-wrap {
     @apply relative h-44 overflow-hidden rounded-lg border border-neutral-300;
 
-    // Closest Tailwind scale step to ~90px.
     @media (width < theme("screens.md")) {
       @apply h-24;
     }
@@ -555,30 +532,7 @@ watch(
     }
   }
 
-  &__add-product {
-    @apply flex min-w-48 max-w-60 flex-1 self-stretch p-3;
-
-    @media (width < theme("screens.md")) {
-      @apply w-28 min-w-0 max-w-none flex-none;
-    }
-  }
-
-  &__add-product-box {
-    @apply flex size-full flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-neutral-300 bg-additional-50 text-sm font-bold text-neutral-900;
-  }
-
-  &__add-product-text {
-    @apply text-sm;
-
-    @media (width < theme("screens.md")) {
-      @apply text-xs;
-    }
-  }
-
   &__row {
-    // w-fit + min-w-full: 100% wide when content fits (so cells still stretch evenly), but grows
-    // to the full overflowing content width once cells hit their min-width — otherwise the row's
-    // own background/border stop at the container edge instead of following the scrolled content.
     @apply flex min-h-[50px] w-fit min-w-full items-stretch;
 
     &:not(:last-child) {
@@ -607,9 +561,6 @@ watch(
   }
 
   &__row-label {
-    // Sticky so it stays put while the values/products scroll horizontally underneath it —
-    // needs its own opaque background (kept in sync with the row's alt/hover state above) so
-    // the scrolled-away cells don't show through.
     @apply sticky start-0 z-[1] flex w-60 shrink-0 items-center gap-1 border-e border-neutral-200 bg-additional-50 px-3 py-2.5 text-xs text-neutral-600;
 
     @media (width < theme("screens.md")) {
@@ -621,8 +572,6 @@ watch(
     @apply min-w-0 flex-1 truncate;
   }
 
-  // Hidden until the row is hovered/focused, unless the row is pinned — matches the design's
-  // reveal-on-hover pin affordance.
   &__row-pin {
     @apply shrink-0 opacity-0 transition-opacity;
 

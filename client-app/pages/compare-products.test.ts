@@ -18,7 +18,6 @@ const mocks = await vi.hoisted(async () => {
     props: {
       products: { type: Array, default: () => [] },
       rows: { type: Array, default: () => [] },
-      canAddProduct: { type: Boolean, default: true },
       differCount: { type: Number, default: 0 },
       totalRows: { type: Number, default: 0 },
     },
@@ -199,16 +198,7 @@ describe("CompareProducts", () => {
     expect(mocks.selectCategory).toHaveBeenCalledWith("cat-b");
   });
 
-  it("passes canAddProduct=true to CompareTable only while under the category limit", () => {
-    mocks.products.value = [{ productId: "p1", categoryKey: "cat-a" }];
-    mocks.selectedCategoryCount.value = mocks.productsLimit; // at the limit
-
-    renderPage();
-
-    expect(mocks.compareTableSpy.props.canAddProduct).toBe(false);
-  });
-
-  it("disables Clear all / Share while the list is empty, and enables them once it has products", () => {
+  it("disables Clear all while the list is empty, and enables it once it has products", () => {
     mocks.products.value = [];
     const emptyPage = renderPage();
     const clearAllWhenEmpty = emptyPage.getByText("pages.compare.actions.clear_all").closest("button");

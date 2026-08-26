@@ -1066,7 +1066,6 @@
         "clear_category": "清除类别",
         "remove_product": "从比较中移除",
         "add_to_cart": "添加到购物车",
-        "add_product": "添加产品",
         "fields": {
           "price_per_unit": "每件价格",
           "customer_rating": "客户评分",
@@ -1694,8 +1693,7 @@
       "added_count": "已添加 {total} 中的 {total}",
       "added_count_in_category": "{category} 中已添加 {total} 中的 {total}",
       "actions": {
-        "clear_all": "全部清除",
-        "share": "分享"
+        "clear_all": "全部清除"
       },
       "clear_all_modal": {
         "title": "清除全部",

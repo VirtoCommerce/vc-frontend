@@ -1066,7 +1066,6 @@
         "clear_category": "Wyczyść kategorię",
         "remove_product": "Usuń z porównania",
         "add_to_cart": "Dodaj do koszyka",
-        "add_product": "Dodaj produkt",
         "fields": {
           "price_per_unit": "Cena za sztukę",
           "customer_rating": "Ocena klienta",
@@ -1694,8 +1693,7 @@
       "added_count": "z {total} dodanych",
       "added_count_in_category": "z {total} dodanych w {category}",
       "actions": {
-        "clear_all": "Wyczyść wszystko",
-        "share": "Udostępnij"
+        "clear_all": "Wyczyść wszystko"
       },
       "clear_all_modal": {
         "title": "Wyczyść wszystko",

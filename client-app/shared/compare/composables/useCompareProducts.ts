@@ -61,9 +61,6 @@ function getCategoryEntries(categoryKey: string): ICompareProductEntry[] {
   return products.value.filter((entry) => entry.categoryKey === categoryKey);
 }
 
-// clearCompareList/clearCategory/restoreProducts only ever touch the module-level storage refs
-// above — nothing from useCompareProducts()'s own scope (themeContext/notifications/t) — so they
-// live at module scope too, rather than being recreated on every useCompareProducts() call.
 function clearCompareList() {
   if (!products.value.length) {
     return;
@@ -82,8 +79,6 @@ function clearCategory(categoryKey: string) {
     return;
   }
 
-  // Clearing the only remaining category empties the whole list — same situation as
-  // clearCompareList, so it should be restorable the same way.
   const isLastCategory = categoryEntries.length === products.value.length;
   const localIds = new Set(categoryEntries.map((entry) => entry.localId).filter(Boolean));
   const categoryConfigurations = localProductConfigurations.value.filter((config) => localIds.has(config.localId));

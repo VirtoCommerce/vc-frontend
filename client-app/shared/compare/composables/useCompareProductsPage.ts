@@ -29,9 +29,6 @@ function getProductPropertyValue(product: Product, propertyName: string): string
   return property ? (getPropertyValue(property) ?? EMPTY_VALUE_PLACEHOLDER) : EMPTY_VALUE_PLACEHOLDER;
 }
 
-// Mirrors exactly what InStock renders (compare-table.vue), so "differs" reacts to anything the
-// user can actually see there — not just isInStock, which used to leave e.g. differing stock
-// quantities or a digital-vs-physical product pair marked as "same".
 function getAvailabilitySignature(product: Product): string {
   if (product.productType === ProductType.Digital) {
     return "digital";
@@ -68,8 +65,7 @@ function applyPriceOverride(
 }
 
 // Price can differ per selected configuration (option price deltas), so the base product.price
-// isn't enough for a configured entry — same approach as the old compare feature: ask the server
-// for the priced line item and override actual/list with it before display.
+// isn't enough for a configured entry.
 function withConfiguredPrice(product: Product, configuredLineItem?: ConfiguredLineItemType): Product {
   if (!configuredLineItem) {
     return product;
@@ -227,9 +223,6 @@ export function useCompareProductsPage() {
     }
 
     rows.push(
-      // InStock renders the quantity inline when in stock, so a separate "units in stock" row
-      // would just duplicate it — the values below still drive `differs` off everything InStock
-      // actually displays (see getAvailabilitySignature) even though nothing extra is rendered.
       makeRow(
         "availability",
         t("shared.compare.table.fields.availability"),
@@ -274,10 +267,6 @@ export function useCompareProductsPage() {
     });
   });
 
-  // Extra rows for whichever configuration options were selected on each configured entry
-  // (e.g. "Color", "Size") — captured at add-time onto entry.properties, same as old compare's
-  // configOnlyProperties. Non-configured entries (or ones missing this particular option) just
-  // show the placeholder.
   const configPropertyRows = computed<ICompareTableRow[]>(() => {
     const items = selectedCategoryProducts.value;
     const configPropertyLabels = uniqBy(
@@ -306,7 +295,6 @@ export function useCompareProductsPage() {
 
   const differRowsCount = computed(() => tableRows.value.filter((row) => row.differs).length);
 
-  // Same GA event shape as the old compare feature (client-app/shared/compare/composables/useCompareProductsPage.ts).
   const compareProductsListProperties = computed(() => ({
     item_list_id: "compare_products",
     item_list_name: t("pages.compare.title"),
@@ -316,8 +304,6 @@ export function useCompareProductsPage() {
     analytics("selectItem", product, compareProductsListProperties.value);
   }
 
-  // Only the currently selected category tab's products are actually visible, so that's what
-  // gets tracked as "viewed" — unlike old compare's single flat list.
   watch(
     selectedCategoryProducts,
     (items) => {
@@ -341,8 +327,6 @@ export function useCompareProductsPage() {
   watch(
     categoryTabs,
     (tabs) => {
-      // Tabs are still empty before products finish fetching — leave a pending selection (e.g.
-      // initialCategoryKey from the URL) alone rather than clobbering it with "" ahead of time.
       if (!tabs.length) {
         return;
       }

@@ -1066,7 +1066,6 @@
         "clear_category": "Rensa kategori",
         "remove_product": "Ta bort från jämförelse",
         "add_to_cart": "Lägg till i kundvagnen",
-        "add_product": "Lägg till produkt",
         "fields": {
           "price_per_unit": "Pris per enhet",
           "customer_rating": "Kundbetyg",
@@ -1694,8 +1693,7 @@
       "added_count": "av {total} tillagda",
       "added_count_in_category": "av {total} tillagda i {category}",
       "actions": {
-        "clear_all": "Rensa alla",
-        "share": "Dela"
+        "clear_all": "Rensa alla"
       },
       "clear_all_modal": {
         "title": "Rensa alla",

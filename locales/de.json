@@ -1066,7 +1066,6 @@
         "clear_category": "Kategorie löschen",
         "remove_product": "Aus dem Vergleich entfernen",
         "add_to_cart": "In den Warenkorb legen",
-        "add_product": "Produkt hinzufügen",
         "fields": {
           "price_per_unit": "Preis pro Einheit",
           "customer_rating": "Kundenbewertung",
@@ -1694,8 +1693,7 @@
       "added_count": "von {total} hinzugefügt",
       "added_count_in_category": "von {total} in {category} hinzugefügt",
       "actions": {
-        "clear_all": "Alle löschen",
-        "share": "Teilen"
+        "clear_all": "Alle löschen"
       },
       "clear_all_modal": {
         "title": "Alle löschen",

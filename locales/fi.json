@@ -1066,7 +1066,6 @@
         "clear_category": "Tyhjennä kategoria",
         "remove_product": "Poista vertailusta",
         "add_to_cart": "Lisää ostoskoriin",
-        "add_product": "Lisää tuote",
         "fields": {
           "price_per_unit": "Hinta per yksikkö",
           "customer_rating": "Asiakasarvio",
@@ -1694,8 +1693,7 @@
       "added_count": "lisätty {total}:sta",
       "added_count_in_category": "lisätty {total}:sta kategoriassa {category}",
       "actions": {
-        "clear_all": "Tyhjennä kaikki",
-        "share": "Jaa"
+        "clear_all": "Tyhjennä kaikki"
       },
       "clear_all_modal": {
         "title": "Tyhjennä kaikki",

@@ -1066,7 +1066,6 @@
         "clear_category": "Clear category",
         "remove_product": "Remove from compare",
         "add_to_cart": "Add to cart",
-        "add_product": "Add product",
         "fields": {
           "price_per_unit": "Price per unit",
           "customer_rating": "Customer rating",
@@ -1694,8 +1693,7 @@
       "added_count": "of {total} added",
       "added_count_in_category": "of {total} added in {category}",
       "actions": {
-        "clear_all": "Clear all",
-        "share": "Share"
+        "clear_all": "Clear all"
       },
       "clear_all_modal": {
         "title": "Clear all",
