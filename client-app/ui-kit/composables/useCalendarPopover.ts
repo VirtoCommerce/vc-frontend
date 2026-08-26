@@ -14,6 +14,15 @@ export interface IUseCalendarPopoverOptions {
   getCalendar: () => ICalendarExposed | null | undefined;
 }
 
+// Escape must keep propagating to outer dismissible layers (dialogs, sidebars) while the popover is closed.
+function onFieldEscape(event: Event, opened: boolean, close: () => void): void {
+  if (!opened) {
+    return;
+  }
+  event.stopPropagation();
+  close();
+}
+
 /** Escape/focus wiring shared by VcDatePicker and VcDateRangePicker: both host a calendar in a VcPopover. */
 export function useCalendarPopover(opts: IUseCalendarPopoverOptions) {
   const calendarSize = computed<VcCalendarSizeType>(() => {
@@ -46,15 +55,6 @@ export function useCalendarPopover(opts: IUseCalendarPopoverOptions) {
   function onEscapeClose(close: () => void): void {
     close();
     focusField();
-  }
-
-  // Escape must keep propagating to outer dismissible layers (dialogs, sidebars) while the popover is closed.
-  function onFieldEscape(event: Event, opened: boolean, close: () => void): void {
-    if (!opened) {
-      return;
-    }
-    event.stopPropagation();
-    close();
   }
 
   function onTriggerEscape(event: Event, opened: boolean, close: () => void): void {
