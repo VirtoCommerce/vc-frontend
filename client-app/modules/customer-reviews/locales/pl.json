@@ -4,11 +4,13 @@
       "leave_feedback": "Zostaw opinię"
     },
     "labels": {
-      "feedback": "Opinia",
+      "feedback": "Opinie",
       "rating": "Ocena",
       "rate_product": "Oceń produkt",
       "item_as_described_by_vendor": "Czy produkt jest zgodny z opisem sprzedawcy?",
-      "product_review_image": "Obraz przeglądu produktu"
+      "product_review_image": "Obraz przeglądu produktu",
+      "product_review_image_of": "Obraz przeglądu produktu {index} z {total}",
+      "reviews_count": "brak opinii | {n} opinia | {n} opinie | {n} opinii"
     },
     "messages": {
       "thanks_for_feedback": "Twoja opinia została przesłana i oczekuje na potwierdzenie. Dziękujemy!"

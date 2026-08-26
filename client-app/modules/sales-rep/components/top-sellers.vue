@@ -2,6 +2,13 @@
   <LayoutWidget :title="title" size="md" class="top-sellers">
     <template #default-container>
       <div class="top-sellers__body">
+        <!-- Without it the category chips and the sortable headers just aren't there, with nothing saying why. -->
+        <SalesRepRuleAlert
+          class="top-sellers__notice"
+          :filter-failed="filterRulesFailed"
+          :sort-failed="sortRulesFailed"
+        />
+
         <!-- Category filter chips: the top-level categories the rep sold into, in the selected period. -->
         <div v-if="hasFilterOptions" class="top-sellers__filter">
           <SalesRepRuleChips
@@ -117,6 +124,7 @@ import { useSalesRepTopSellers } from "../composables/useSalesRepTopSellers";
 import { TOP_SELLERS_DEFAULT_TAKE } from "../constants";
 import { selectableFilterRules } from "../utils";
 import LayoutWidget from "./layout-widget.vue";
+import SalesRepRuleAlert from "./sales-rep-rule-alert.vue";
 import SalesRepRuleChips from "./sales-rep-rule-chips.vue";
 
 interface IProps {
@@ -137,9 +145,13 @@ const filter = ref<string | undefined>(undefined);
 
 const { from: periodFrom, to: periodTo } = useSalesRepPeriodFilter("year");
 
-const { rules: sortRules } = useSalesRepRules("topSeller", "sort");
+const { rules: sortRules, failed: sortRulesFailed } = useSalesRepRules("topSeller", "sort");
 // The category chips are read from the sales in view — same customer, same period — so a chip always has sales behind it.
-const { rules: filterRules, loading: filterRulesLoading } = useSalesRepRules("topSeller", "filter", {
+const {
+  rules: filterRules,
+  loading: filterRulesLoading,
+  failed: filterRulesFailed,
+} = useSalesRepRules("topSeller", "filter", {
   organizationId: () => props.organizationId,
   periodFrom,
   periodTo,
@@ -177,6 +189,10 @@ const failed = computed(() => Boolean(error.value));
 .top-sellers {
   &__body {
     @apply flex flex-col;
+  }
+
+  &__notice {
+    @apply mx-6 mt-3;
   }
 
   // px-6 aligns the tabs with the widget header title.

@@ -22,7 +22,11 @@
     </output>
 
     <template v-else>
-      <div class="stat-widget__value">{{ value }}</div>
+      <div class="stat-widget__value">
+        {{ value }}
+
+        <span v-if="valueSuffix" class="stat-widget__unit">{{ valueSuffix }}</span>
+      </div>
 
       <div v-if="sub" class="stat-widget__sub">{{ sub }}</div>
 
@@ -46,6 +50,8 @@ interface IProps {
   value: string;
   icon: string;
   accent?: StatWidgetAccentType;
+  // Unit label after the value ("items"), rendered smaller so the number stays the focal point.
+  valueSuffix?: string;
   sub?: string;
   delta?: string;
   deltaTone?: StatWidgetToneType;
@@ -114,6 +120,10 @@ withDefaults(defineProps<IProps>(), {
   // `mt-auto` pins it where the delta row would sit, keeping card heights even.
   &__error {
     @apply mt-auto flex items-center gap-1.5 pt-1.5 text-sm font-bold text-danger-600;
+  }
+
+  &__unit {
+    @apply text-sm font-normal text-neutral-500;
   }
 
   &__sub {
