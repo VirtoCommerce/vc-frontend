@@ -181,6 +181,32 @@
       "all_categories": "Tutte le categorie",
       "load_failed": "Impossibile caricare i più venduti"
     },
+    "documents": {
+      "title": "Libreria documenti",
+      "browse_all": "Sfoglia tutti",
+      "open": "Apri",
+      "empty": "Ancora nessun documento",
+      "load_failed": "Impossibile caricare i documenti",
+      "page": {
+        "subtitle": "Cataloghi, lookbook, listini prezzi e guide alle vendite — apri o scarica l'ultima pubblicazione.",
+        "search_placeholder": "Cerca per nome",
+        "search_aria": "Cerca documenti",
+        "all_tab": "Tutti",
+        "empty": "Ancora nessun documento",
+        "no_results": "Nessun documento corrisponde alla tua ricerca",
+        "reset_search": "Reimposta ricerca",
+        "load_failed": "Impossibile caricare i documenti"
+      },
+      "details": {
+        "pages_count": "{count} pagina | {count} pagine",
+        "open": "Apri",
+        "download": "Scarica",
+        "close": "Chiudi dettagli",
+        "not_found": "Questo documento non è più disponibile.",
+        "latest_publication": "Ultima pubblicazione"
+      },
+      "published": "Pubblicato {date}"
+    },
     "rules": {
       "load_failed": {
         "filter": "Non è stato possibile caricare i filtri, quindi viene mostrato l'elenco completo. Aggiorna la pagina.",
