@@ -291,6 +291,30 @@ describe("useCompareProductsPage", () => {
 
       expect(colorRow?.differs).toBe(false);
     });
+
+    it("hides the row entirely when no product has a value for that property", () => {
+      hoisted.state.compareEntries.value = [entry("p1", "cat-a"), entry("p2", "cat-a")];
+      hoisted.state.fetchedProducts.value = [
+        product("p1", { properties: [property({ name: "color", value: undefined })] }),
+        product("p2", { properties: [property({ name: "color", value: undefined })] }),
+      ];
+
+      const { tableRows } = useCompareProductsPage();
+
+      expect(tableRows.value.some((row) => row.key === "color")).toBe(false);
+    });
+
+    it("keeps the row when at least one product has a value for that property", () => {
+      hoisted.state.compareEntries.value = [entry("p1", "cat-a"), entry("p2", "cat-a")];
+      hoisted.state.fetchedProducts.value = [
+        product("p1", { properties: [property({ name: "color", value: "Red" })] }),
+        product("p2", { properties: [property({ name: "color", value: undefined })] }),
+      ];
+
+      const { tableRows } = useCompareProductsPage();
+
+      expect(tableRows.value.some((row) => row.key === "color")).toBe(true);
+    });
   });
 
   describe("differRowsCount", () => {

@@ -48,6 +48,10 @@ function getConfigPropertyValue(entry: ICompareProductEntry, label: string): str
   return property?.value ?? EMPTY_VALUE_PLACEHOLDER;
 }
 
+function hasAnyValue(values: string[]): boolean {
+  return values.some((value) => value !== EMPTY_VALUE_PLACEHOLDER);
+}
+
 function applyPriceOverride(
   originalPrice: MoneyType,
   overridePrice?: NonNullable<ConfiguredLineItemType>["salePrice"],
@@ -254,17 +258,19 @@ export function useCompareProductsPage() {
       "name",
     );
 
-    return propertyNames.map(({ name, label }) => {
-      const values = selectedCategoryProducts.value.map(({ product }) => getProductPropertyValue(product, name));
+    return propertyNames
+      .map(({ name, label }) => {
+        const values = selectedCategoryProducts.value.map(({ product }) => getProductPropertyValue(product, name));
 
-      return {
-        key: name,
-        label,
-        kind: "text" as const,
-        values,
-        differs: new Set(values).size > 1,
-      };
-    });
+        return {
+          key: name,
+          label,
+          kind: "text" as const,
+          values,
+          differs: new Set(values).size > 1,
+        };
+      })
+      .filter((row) => hasAnyValue(row.values));
   });
 
   const configPropertyRows = computed<ICompareTableRow[]>(() => {
@@ -274,17 +280,19 @@ export function useCompareProductsPage() {
       "label",
     ).map((prop) => prop.label);
 
-    return configPropertyLabels.map((label) => {
-      const values = items.map(({ entry }) => getConfigPropertyValue(entry, label));
+    return configPropertyLabels
+      .map((label) => {
+        const values = items.map(({ entry }) => getConfigPropertyValue(entry, label));
 
-      return {
-        key: `config:${label}`,
-        label,
-        kind: "text" as const,
-        values,
-        differs: new Set(values).size > 1,
-      };
-    });
+        return {
+          key: `config:${label}`,
+          label,
+          kind: "text" as const,
+          values,
+          differs: new Set(values).size > 1,
+        };
+      })
+      .filter((row) => hasAnyValue(row.values));
   });
 
   const tableRows = computed<ICompareTableRow[]>(() => [
