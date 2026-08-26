@@ -108,6 +108,7 @@
     "customer_profile": {
       "loading": "加载中…",
       "not_found": "未找到客户，或该客户不在您的客户列表中。",
+      "load_failed": "无法加载此客户。请刷新页面。",
       "back_to_customers": "返回我的客户",
       "widgets": {
         "avg_order_value": "平均订单金额"
@@ -207,6 +208,11 @@
       "published": "发布于 {date}"
     },
     "rules": {
+      "load_failed": {
+        "filter": "无法加载筛选条件，因此显示完整列表。请刷新页面。",
+        "sort": "无法加载排序选项，因此使用默认排序。请刷新页面。",
+        "both": "无法加载筛选条件和排序选项，因此按默认排序显示完整列表。请刷新页面。"
+      },
       "customer": {
         "filter": {
           "All": "全部"
@@ -220,9 +226,6 @@
       "share_replace_hint": "先前选择的客户将无法再访问此列表。",
       "share_message_label": "消息",
       "share_message_placeholder": "可选的附加消息",
-      "share_channels_label": "发送方式",
-      "share_email_label": "电子邮件",
-      "share_push_label": "推送通知",
       "share_default_title": "来自您的销售代表的新列表",
       "share_default_message": "您好！我刚刚与您的组织共享了列表“{listName}”。欢迎查看：",
       "share_success": "列表已与客户共享。",

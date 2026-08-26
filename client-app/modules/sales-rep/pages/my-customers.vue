@@ -28,6 +28,9 @@
         </VcInput>
       </div>
 
+      <!-- Without it the segment chips and the sortable headers just aren't there, with nothing saying why. -->
+      <SalesRepRuleAlert :filter-failed="filterRulesFailed" :sort-failed="sortRulesFailed" />
+
       <!-- Segment chips (an "All" baseline + any project segments); hidden unless there's a real segment to pick. -->
       <div v-if="hasFilterOptions" class="my-customers__controls">
         <SalesRepRuleChips
@@ -217,6 +220,7 @@ import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useModal } from "@/shared/modal";
 import CustomerCommunicationModal from "../components/customer-communication-modal.vue";
+import SalesRepRuleAlert from "../components/sales-rep-rule-alert.vue";
 import SalesRepRuleChips from "../components/sales-rep-rule-chips.vue";
 import { useSalesRepColumnSort } from "../composables/useSalesRepColumnSort";
 import { useSalesRepCustomers } from "../composables/useSalesRepCustomers";
@@ -231,8 +235,8 @@ const { loading, error, keyword, filter, sortRule, page, pages, items } = useSal
 
 const failed = computed(() => Boolean(error.value));
 
-const { rules: sortRules } = useSalesRepRules("customer", "sort");
-const { rules: filterRules } = useSalesRepRules("customer", "filter");
+const { rules: sortRules, failed: sortRulesFailed } = useSalesRepRules("customer", "sort");
+const { rules: filterRules, failed: filterRulesFailed } = useSalesRepRules("customer", "filter");
 
 // Show the segment chips only when the backend offers a real segment beyond the "All" baseline.
 const hasFilterOptions = computed(() => selectableFilterRules(filterRules.value).length > 0);
