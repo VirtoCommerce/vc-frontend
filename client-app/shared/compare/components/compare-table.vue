@@ -54,8 +54,8 @@
           </VcButton>
         </div>
 
-        <div class="compare-table__header-scroll">
-          <div class="compare-table__header-inner" :style="{ transform: `translateX(${-bodyScrollLeft}px)` }">
+        <div ref="headerScrollRef" class="compare-table__header-scroll" @scroll="onHorizontalScroll">
+          <div class="compare-table__header-inner">
             <div
               v-for="item in products"
               :key="item.entry.localId ?? item.product.id"
@@ -195,7 +195,7 @@
         </div>
       </div>
 
-      <div ref="bodyScrollRef" class="compare-table__scroll" @scroll="onBodyScroll">
+      <div ref="bodyScrollRef" class="compare-table__scroll" @scroll="onHorizontalScroll">
         <div
           v-for="(row, index) in visibleRows"
           :key="row.key"
@@ -322,7 +322,7 @@ const { isRowPinned, togglePin, pinnedRows, unpinnedRows } = useCompareTableRowP
 
 const activeTab = ref("all");
 const bodyScrollRef = ref<HTMLElement | null>(null);
-const bodyScrollLeft = ref(0);
+const headerScrollRef = ref<HTMLElement | null>(null);
 const mobileTabsBarRef = ref<HTMLElement | null>(null);
 const headerRowRef = ref<HTMLElement | null>(null);
 
@@ -341,13 +341,10 @@ const appHeaderHeight = computed(() => Number.parseFloat(appHeaderHeightVar.valu
 const { top: headerRowTop, update: updateHeaderRowBounding } = useElementBounding(headerRowRef);
 const isCompact = computed(() => !isMobile.value && headerRowTop.value <= appHeaderHeight.value + 1);
 
-// A change to appHeaderHeight repositions the sticky row (its top offset) without firing a
-// window "resize"/"scroll" event, so headerRowTop wouldn't otherwise be recomputed against the
-// new offset until the next scroll — leaving isCompact stuck comparing against a stale position.
 watch(appHeaderHeight, () => updateHeaderRowBounding());
 
 const isTabSwitchDisabled = computed(() => props.products.length <= 1);
-// Pinned rows always stay visible at the top, even under the "Differences" filter.
+
 const visibleRows = computed(() => {
   const rest =
     activeTab.value === "differences"
@@ -357,8 +354,13 @@ const visibleRows = computed(() => {
   return [...pinnedRows.value, ...rest];
 });
 
-function onBodyScroll() {
-  bodyScrollLeft.value = bodyScrollRef.value?.scrollLeft ?? 0;
+function onHorizontalScroll(event: Event) {
+  const source = event.currentTarget as HTMLElement;
+  const target = source === bodyScrollRef.value ? headerScrollRef.value : bodyScrollRef.value;
+
+  if (target) {
+    target.scrollLeft = source.scrollLeft;
+  }
 }
 
 watch(
@@ -395,7 +397,6 @@ watch(
     }
   }
 
-  // Empty on desktop — the tabs/differ block only teleports in here below md (see script setup).
   &__mobile-tabs-bar {
     @apply hidden;
 
@@ -404,12 +405,15 @@ watch(
     }
   }
 
-  // Its own clip boundary, sized to the remaining width after __controls — keeps the translated
-  // __header-inner from visually sliding under __controls while scrolling, and lets __product
-  // cells divide up exactly the same available width as __row-value does (same sizing algorithm
-  // on both sides, so header and body columns line up).
   &__header-scroll {
-    @apply min-w-0 flex-1 overflow-hidden;
+    @apply min-w-0 flex-1 overflow-x-auto;
+
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
 
   &__header-inner {
@@ -447,11 +451,6 @@ watch(
   }
 
   &__tabs {
-    // Grid rather than flex: with a flex parent that isn't stretched to a fixed width (e.g. the
-    // mobile tabs bar, sized to fit its content), flex-1 children just fall back to their own
-    // text-driven width, so "All" and "Differences" end up unequal. A 1fr/1fr grid always sizes
-    // both columns to the wider label's width, regardless of whether this container is stretched
-    // or shrink-to-fit — same result on desktop, but also correct here.
     @apply grid grid-cols-2 gap-0.5 rounded-lg bg-neutral-100 p-1.5;
   }
 
