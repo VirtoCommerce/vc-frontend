@@ -53,7 +53,7 @@
             :disabled="loading || !list"
             size="sm"
             variant="outline"
-            prepend-icon="cog"
+            prepend-icon="settings"
             class="grow"
             @click="openListSettingsModal"
           >

@@ -29,7 +29,7 @@
         "last_order": "Mi último pedido",
         "ytd": "Compras del año",
         "last_year": "Año pasado",
-        "orders_count": "{count} pedidos",
+        "orders_count": "{count} pedido | {count} pedidos",
         "all_customers": "Todos",
         "actions": "Acciones",
         "search_placeholder": "Buscar por nombre",
@@ -63,9 +63,9 @@
           "vs_last_week": "{delta} vs. semana pasada",
           "vs_last_month": "{delta} vs. mes pasado",
           "vs_last_year": "{delta} vs. año pasado",
-          "ordered_this_month": "{count} compraron este mes",
-          "new_customers": "{count} clientes nuevos",
-          "of_recent_orders": "de {count} creados en los últimos 7 días",
+          "ordered_this_month": "{count} compró este mes | {count} compraron este mes",
+          "new_customers": "{count} cliente nuevo | {count} clientes nuevos",
+          "of_recent_orders": "de {count} creado en los últimos 7 días | de {count} creados en los últimos 7 días",
           "items_unit": "artículo | artículos",
           "not_for_checkout": "{count} fuera del pago",
           "items_this_week": "{count} artículo esta semana | {count} artículos esta semana",
@@ -108,6 +108,7 @@
     "customer_profile": {
       "loading": "Cargando…",
       "not_found": "Cliente no encontrado o no está en tus clientes.",
+      "load_failed": "No se pudo cargar este cliente. Actualice la página.",
       "back_to_customers": "Volver a mis clientes",
       "widgets": {
         "avg_order_value": "Valor medio del pedido"
@@ -253,7 +254,38 @@
         "load_failed": "No se pudo cargar la actividad del cliente"
       }
     },
+    "documents": {
+      "title": "Biblioteca de documentos",
+      "browse_all": "Ver todos",
+      "open": "Abrir",
+      "empty": "Aún no hay documentos",
+      "load_failed": "No se pudieron cargar los documentos",
+      "page": {
+        "subtitle": "Catálogos, lookbooks, listas de precios y guías de ventas: abra o descargue la última publicación.",
+        "search_placeholder": "Buscar por nombre",
+        "search_aria": "Buscar documentos",
+        "all_tab": "Todos",
+        "empty": "Aún no hay documentos",
+        "no_results": "Ningún documento coincide con su búsqueda",
+        "reset_search": "Restablecer búsqueda",
+        "load_failed": "No se pudieron cargar los documentos"
+      },
+      "details": {
+        "pages_count": "{count} página | {count} páginas",
+        "open": "Abrir",
+        "download": "Descargar",
+        "close": "Cerrar detalles",
+        "not_found": "Este documento ya no está disponible.",
+        "latest_publication": "Última publicación"
+      },
+      "published": "Publicado {date}"
+    },
     "rules": {
+      "load_failed": {
+        "filter": "No se pudieron cargar los filtros, por lo que se muestra la lista completa. Actualice la página.",
+        "sort": "No se pudieron cargar las opciones de ordenación, por lo que se usa el orden predeterminado. Actualice la página.",
+        "both": "No se pudieron cargar los filtros ni las opciones de ordenación, por lo que se muestra la lista completa en el orden predeterminado. Actualice la página."
+      },
       "customer": {
         "filter": {
           "All": "Todos"

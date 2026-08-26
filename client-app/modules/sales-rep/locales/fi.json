@@ -29,7 +29,7 @@
         "last_order": "Viimeisin tilaukseni",
         "ytd": "Ostot tänä vuonna",
         "last_year": "Viime vuosi",
-        "orders_count": "{count} tilaukset",
+        "orders_count": "{count} tilaus | {count} tilausta",
         "all_customers": "Kaikki",
         "actions": "Toiminnot",
         "search_placeholder": "Hae nimellä",
@@ -64,7 +64,7 @@
           "vs_last_month": "{delta} vs viime kuu",
           "vs_last_year": "{delta} vs viime vuosi",
           "ordered_this_month": "{count} tilasi tässä kuussa",
-          "new_customers": "{count} uutta asiakasta",
+          "new_customers": "{count} uusi asiakas | {count} uutta asiakasta",
           "of_recent_orders": "{count} viimeisten 7 päivän tilauksesta",
           "items_unit": "tuote | tuotetta",
           "not_for_checkout": "{count} ei kassalle",
@@ -108,6 +108,7 @@
     "customer_profile": {
       "loading": "Ladataan…",
       "not_found": "Asiakasta ei löytynyt tai se ei kuulu asiakkaisiisi.",
+      "load_failed": "Tätä asiakasta ei voitu ladata. Päivitä sivu.",
       "back_to_customers": "Takaisin omiin asiakkaisiin",
       "widgets": {
         "avg_order_value": "Keskimääräinen tilausarvo"
@@ -253,7 +254,38 @@
         "load_failed": "Asiakkaan aktiviteettia ei voitu ladata"
       }
     },
+    "documents": {
+      "title": "Dokumenttikirjasto",
+      "browse_all": "Selaa kaikkia",
+      "open": "Avaa",
+      "empty": "Ei vielä dokumentteja",
+      "load_failed": "Dokumentteja ei voitu ladata",
+      "page": {
+        "subtitle": "Kuvastot, lookbookit, hinnastot ja myyntioppaat — avaa tai lataa uusin julkaisu.",
+        "search_placeholder": "Hae nimellä",
+        "search_aria": "Hae dokumentteja",
+        "all_tab": "Kaikki",
+        "empty": "Ei vielä dokumentteja",
+        "no_results": "Yksikään dokumentti ei vastaa hakuasi",
+        "reset_search": "Tyhjennä haku",
+        "load_failed": "Dokumentteja ei voitu ladata"
+      },
+      "details": {
+        "pages_count": "{count} sivu | {count} sivua",
+        "open": "Avaa",
+        "download": "Lataa",
+        "close": "Sulje tiedot",
+        "not_found": "Tämä dokumentti ei ole enää saatavilla.",
+        "latest_publication": "Uusin julkaisu"
+      },
+      "published": "Julkaistu {date}"
+    },
     "rules": {
+      "load_failed": {
+        "filter": "Suodattimia ei voitu ladata, joten koko luettelo näytetään. Päivitä sivu.",
+        "sort": "Lajitteluvalintoja ei voitu ladata, joten käytetään oletusjärjestystä. Päivitä sivu.",
+        "both": "Suodattimia ja lajitteluvalintoja ei voitu ladata, joten koko luettelo näytetään oletusjärjestyksessä. Päivitä sivu."
+      },
       "customer": {
         "filter": {
           "All": "Kaikki"

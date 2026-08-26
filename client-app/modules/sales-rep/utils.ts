@@ -1,7 +1,9 @@
+import { ContentType } from "@/core/enums";
 import { globals } from "@/core/globals";
 import type { MoneyType } from "./api/graphql/types";
-import type { SalesRepRuleType } from "./types";
+import type { SalesRepDocumentType, SalesRepRuleType } from "./types";
 import type { StatWidgetToneType } from "./types/widgets";
+import type { ComposerTranslation } from "vue-i18n";
 
 // Selectable filter options exclude the backend "all" rule (chips already prepend a synthetic "All" baseline).
 export function selectableFilterRules(rules: SalesRepRuleType[]): SalesRepRuleType[] {
@@ -190,6 +192,60 @@ export function formatTimeAgo(isoDate: string, now: Date = new Date()): string {
 // Wall-clock hour label ("2:00 PM") for the honest "during the hour of …" phrasing on hour-bucket rows.
 export function formatHourLabel(isoDate: string): string {
   return new Intl.DateTimeFormat(globals.cultureName, { hour: "numeric", minute: "2-digit" }).format(new Date(isoDate));
+}
+
+// Document library display helpers.
+
+// File-type badge: the extension is the most precise source (tells DOCX from DOC), so it wins over content-type.
+const CONTENT_TYPE_BADGES: Record<string, string> = {
+  "application/pdf": "PDF",
+  "application/msword": "DOC",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "DOCX",
+  "application/vnd.ms-excel": "XLS",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "XLSX",
+  "application/vnd.ms-powerpoint": "PPT",
+  "application/vnd.openxmlformats-officedocument.presentationml.presentation": "PPTX",
+  "application/zip": "ZIP",
+  "image/jpeg": "JPG",
+  "image/png": "PNG",
+  "text/plain": "TXT",
+  "text/csv": "CSV",
+};
+
+const FILE_EXTENSION_RE = /\.([a-z\d]+)$/i;
+
+export function documentTypeLabel(name: string, contentType?: string | null): string {
+  const extension = FILE_EXTENSION_RE.exec(name)?.[1];
+  if (extension) {
+    return extension.toUpperCase();
+  }
+
+  const type = contentType?.toLowerCase() ?? "";
+  return CONTENT_TYPE_BADGES[type] ?? type.split("/")[1]?.toUpperCase() ?? "";
+}
+
+// Mirrors VcFile's icon mapping (ui-kit vc-file.vue); unknown types get the generic file icon.
+const CONTENT_TYPE_KEYS = new Set<string>(Object.keys(ContentType));
+
+export function documentIcon(contentType?: string | null): string {
+  const known = CONTENT_TYPE_KEYS.has(contentType as ContentType) ? ContentType[contentType as ContentType] : undefined;
+  return `file-${known ? known.replace("/", "-") : "file"}.svg`;
+}
+
+// "Published May 22 · 96 pages" (date only when no page count).
+export function documentMeta(
+  document: SalesRepDocumentType,
+  t: ComposerTranslation,
+  d: (value: number | Date | string, format: string) => string,
+): string {
+  return [
+    t("sales_rep.documents.published", { date: d(document.createdDate, "short") }),
+    document.pageCount
+      ? t("sales_rep.documents.details.pages_count", { count: formatStatCount(document.pageCount) }, document.pageCount)
+      : "",
+  ]
+    .filter(Boolean)
+    .join(" · ");
 }
 
 // Backend percent is already ×100 and null when the baseline is zero (no delta then); tri-state

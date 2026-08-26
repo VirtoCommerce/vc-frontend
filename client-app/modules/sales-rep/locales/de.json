@@ -29,7 +29,7 @@
         "last_order": "Meine letzte Bestellung",
         "ytd": "Jahresumsatz",
         "last_year": "Letztes Jahr",
-        "orders_count": "{count} Bestellungen",
+        "orders_count": "{count} Bestellung | {count} Bestellungen",
         "all_customers": "Alle",
         "actions": "Aktionen",
         "search_placeholder": "Suche nach Name",
@@ -64,7 +64,7 @@
           "vs_last_month": "{delta} ggü. Vormonat",
           "vs_last_year": "{delta} ggü. Vorjahr",
           "ordered_this_month": "{count} in diesem Monat bestellt",
-          "new_customers": "{count} neue Kunden",
+          "new_customers": "{count} neuer Kunde | {count} neue Kunden",
           "of_recent_orders": "von {count} aus den letzten 7 Tagen",
           "items_unit": "Artikel",
           "not_for_checkout": "{count} nicht zur Kasse",
@@ -108,6 +108,7 @@
     "customer_profile": {
       "loading": "Wird geladen…",
       "not_found": "Kunde nicht gefunden oder nicht in Ihren Kunden.",
+      "load_failed": "Dieser Kunde konnte nicht geladen werden. Bitte die Seite neu laden.",
       "back_to_customers": "Zurück zu meinen Kunden",
       "widgets": {
         "avg_order_value": "Durchschn. Bestellwert"
@@ -253,7 +254,38 @@
         "load_failed": "Kundenaktivität konnte nicht geladen werden"
       }
     },
+    "documents": {
+      "title": "Dokumentbibliothek",
+      "browse_all": "Alle anzeigen",
+      "open": "Öffnen",
+      "empty": "Noch keine Dokumente",
+      "load_failed": "Dokumente konnten nicht geladen werden",
+      "page": {
+        "subtitle": "Kataloge, Lookbooks, Preislisten und Vertriebsleitfäden — öffnen oder laden Sie die neueste Veröffentlichung herunter.",
+        "search_placeholder": "Suche nach Name",
+        "search_aria": "Dokumente suchen",
+        "all_tab": "Alle",
+        "empty": "Noch keine Dokumente",
+        "no_results": "Keine Dokumente entsprechen Ihrer Suche",
+        "reset_search": "Suche zurücksetzen",
+        "load_failed": "Dokumente konnten nicht geladen werden"
+      },
+      "details": {
+        "pages_count": "{count} Seite | {count} Seiten",
+        "open": "Öffnen",
+        "download": "Herunterladen",
+        "close": "Details schließen",
+        "not_found": "Dieses Dokument ist nicht mehr verfügbar.",
+        "latest_publication": "Neueste Veröffentlichung"
+      },
+      "published": "Veröffentlicht {date}"
+    },
     "rules": {
+      "load_failed": {
+        "filter": "Die Filter konnten nicht geladen werden, daher wird die vollständige Liste angezeigt. Bitte die Seite neu laden.",
+        "sort": "Die Sortieroptionen konnten nicht geladen werden, daher wird die Standardsortierung verwendet. Bitte die Seite neu laden.",
+        "both": "Die Filter und Sortieroptionen konnten nicht geladen werden, daher wird die vollständige Liste in der Standardsortierung angezeigt. Bitte die Seite neu laden."
+      },
       "customer": {
         "filter": {
           "All": "Alle"

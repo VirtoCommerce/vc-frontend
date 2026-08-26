@@ -29,7 +29,7 @@
         "last_order": "Il mio ultimo ordine",
         "ytd": "Acquisti dell'anno",
         "last_year": "Anno scorso",
-        "orders_count": "{count} ordini",
+        "orders_count": "{count} ordine | {count} ordini",
         "all_customers": "Tutti",
         "actions": "Azioni",
         "search_placeholder": "Cerca per nome",
@@ -63,9 +63,9 @@
           "vs_last_week": "{delta} vs settimana scorsa",
           "vs_last_month": "{delta} vs mese scorso",
           "vs_last_year": "{delta} vs anno scorso",
-          "ordered_this_month": "{count} hanno ordinato questo mese",
-          "new_customers": "{count} nuovi clienti",
-          "of_recent_orders": "su {count} creati negli ultimi 7 giorni",
+          "ordered_this_month": "{count} ha ordinato questo mese | {count} hanno ordinato questo mese",
+          "new_customers": "{count} nuovo cliente | {count} nuovi clienti",
+          "of_recent_orders": "su {count} creato negli ultimi 7 giorni | su {count} creati negli ultimi 7 giorni",
           "items_unit": "articolo | articoli",
           "not_for_checkout": "{count} fuori dal checkout",
           "items_this_week": "{count} articolo questa settimana | {count} articoli questa settimana",
@@ -108,6 +108,7 @@
     "customer_profile": {
       "loading": "Caricamento…",
       "not_found": "Cliente non trovato o non presente tra i tuoi clienti.",
+      "load_failed": "Non è stato possibile caricare questo cliente. Aggiorna la pagina.",
       "back_to_customers": "Torna ai miei clienti",
       "widgets": {
         "avg_order_value": "Valore medio ordine"
@@ -253,7 +254,38 @@
         "load_failed": "Impossibile caricare l'attività del cliente"
       }
     },
+    "documents": {
+      "title": "Libreria documenti",
+      "browse_all": "Sfoglia tutti",
+      "open": "Apri",
+      "empty": "Ancora nessun documento",
+      "load_failed": "Impossibile caricare i documenti",
+      "page": {
+        "subtitle": "Cataloghi, lookbook, listini prezzi e guide alle vendite — apri o scarica l'ultima pubblicazione.",
+        "search_placeholder": "Cerca per nome",
+        "search_aria": "Cerca documenti",
+        "all_tab": "Tutti",
+        "empty": "Ancora nessun documento",
+        "no_results": "Nessun documento corrisponde alla tua ricerca",
+        "reset_search": "Reimposta ricerca",
+        "load_failed": "Impossibile caricare i documenti"
+      },
+      "details": {
+        "pages_count": "{count} pagina | {count} pagine",
+        "open": "Apri",
+        "download": "Scarica",
+        "close": "Chiudi dettagli",
+        "not_found": "Questo documento non è più disponibile.",
+        "latest_publication": "Ultima pubblicazione"
+      },
+      "published": "Pubblicato {date}"
+    },
     "rules": {
+      "load_failed": {
+        "filter": "Non è stato possibile caricare i filtri, quindi viene mostrato l'elenco completo. Aggiorna la pagina.",
+        "sort": "Non è stato possibile caricare le opzioni di ordinamento, quindi viene usato l'ordine predefinito. Aggiorna la pagina.",
+        "both": "Non è stato possibile caricare i filtri e le opzioni di ordinamento, quindi l'elenco completo viene mostrato nell'ordine predefinito. Aggiorna la pagina."
+      },
       "customer": {
         "filter": {
           "All": "Tutti"

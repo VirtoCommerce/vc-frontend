@@ -28,6 +28,8 @@ export type SalesRepSortDirectionType = "asc" | "desc";
 export type SalesRepRuleType = {
   name: string;
   label: string;
+  // Item count shown as a highlighted counter next to the label (document-category tabs only).
+  count?: number;
   defaultDirection?: SalesRepSortDirectionType;
   supportsDirection?: boolean;
 };
@@ -109,6 +111,34 @@ export type SalesRepCustomerActivitySummaryType = {
   lastViewedProduct?: SalesRepActivityProductType;
   isAnalyticsConfigured: boolean;
 };
+
+// View model for a shared library document (VCST-5730); mapped from the GraphQL SalesRepDocument.
+// `url` is the AUTHORIZED download endpoint (/api/sales-rep/documents/{id}) — the only URL the UI may
+// open or download; raw asset URLs are never constructed client-side. `previewUrl` is the only image
+// source usable in an <img> (the download endpoint needs auth headers a plain <img> cannot send).
+export type SalesRepDocumentType = {
+  id: string;
+  // Raw file name — what downloadFile saves the file as; every visible name renders displayName.
+  name: string;
+  // Human-facing name; falls back to the raw file name on a blank wire value.
+  displayName: string;
+  // Subfolder name under the library root (e.g. "Catalogs"); empty when the file sits at the root.
+  category: string;
+  // The library's single highlighted document — featured by default and badged "Latest release".
+  isPinned: boolean;
+  contentType: string;
+  size: number;
+  createdDate: string;
+  // Falls back to createdDate on the wire's null so "Updated …" always has a date to show.
+  modifiedDate: string;
+  url: string;
+  summary: string;
+  pageCount?: number;
+  previewUrl: string;
+};
+
+// A category tab on the browse-all page: subfolder name + document count.
+export type SalesRepDocumentCategoryType = { name: string; count: number };
 
 // Sales Rep order row, shared by the customer profile and hub dashboard; organizationName backs
 // the dashboard's Customer column.

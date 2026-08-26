@@ -29,7 +29,7 @@
         "last_order": "Meu último pedido",
         "ytd": "Compras do ano",
         "last_year": "Ano passado",
-        "orders_count": "{count} pedidos",
+        "orders_count": "{count} pedidos | {count} pedido | {count} pedidos",
         "all_customers": "Todos",
         "actions": "Ações",
         "search_placeholder": "Pesquisar por nome",
@@ -63,9 +63,9 @@
           "vs_last_week": "{delta} vs semana passada",
           "vs_last_month": "{delta} vs mês passado",
           "vs_last_year": "{delta} vs ano passado",
-          "ordered_this_month": "{count} compraram este mês",
-          "new_customers": "{count} novos clientes",
-          "of_recent_orders": "de {count} criados nos últimos 7 dias",
+          "ordered_this_month": "{count} compraram este mês | {count} comprou este mês | {count} compraram este mês",
+          "new_customers": "{count} novos clientes | {count} novo cliente | {count} novos clientes",
+          "of_recent_orders": "de {count} criados nos últimos 7 dias | de {count} criado nos últimos 7 dias | de {count} criados nos últimos 7 dias",
           "items_unit": "item | itens",
           "not_for_checkout": "{count} fora do checkout",
           "items_this_week": "{count} item esta semana | {count} itens esta semana",
@@ -108,6 +108,7 @@
     "customer_profile": {
       "loading": "Carregando…",
       "not_found": "Cliente não encontrado ou não está nos seus clientes.",
+      "load_failed": "Não foi possível carregar este cliente. Atualize a página.",
       "back_to_customers": "Voltar aos meus clientes",
       "widgets": {
         "avg_order_value": "Valor médio do pedido"
@@ -253,7 +254,38 @@
         "load_failed": "Não foi possível carregar a atividade do cliente"
       }
     },
+    "documents": {
+      "title": "Biblioteca de documentos",
+      "browse_all": "Ver todos",
+      "open": "Abrir",
+      "empty": "Ainda não há documentos",
+      "load_failed": "Falha ao carregar os documentos",
+      "page": {
+        "subtitle": "Catálogos, lookbooks, tabelas de preços e guias de vendas — abra ou baixe a publicação mais recente.",
+        "search_placeholder": "Pesquisar por nome",
+        "search_aria": "Pesquisar documentos",
+        "all_tab": "Todos",
+        "empty": "Ainda não há documentos",
+        "no_results": "Nenhum documento corresponde à sua pesquisa",
+        "reset_search": "Redefinir pesquisa",
+        "load_failed": "Falha ao carregar os documentos"
+      },
+      "details": {
+        "pages_count": "{count} página | {count} páginas",
+        "open": "Abrir",
+        "download": "Baixar",
+        "close": "Fechar detalhes",
+        "not_found": "Este documento não está mais disponível.",
+        "latest_publication": "Publicação mais recente"
+      },
+      "published": "Publicado em {date}"
+    },
     "rules": {
+      "load_failed": {
+        "filter": "Não foi possível carregar os filtros, por isso é exibida a lista completa. Atualize a página.",
+        "sort": "Não foi possível carregar as opções de ordenação, por isso é usada a ordem padrão. Atualize a página.",
+        "both": "Não foi possível carregar os filtros nem as opções de ordenação, por isso a lista completa é exibida na ordem padrão. Atualize a página."
+      },
       "customer": {
         "filter": {
           "All": "Todos"

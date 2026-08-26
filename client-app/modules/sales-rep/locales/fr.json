@@ -29,7 +29,7 @@
         "last_order": "Ma dernière commande",
         "ytd": "Achats de l'année",
         "last_year": "Année dernière",
-        "orders_count": "{count} commandes",
+        "orders_count": "{count} commande | {count} commande | {count} commandes",
         "all_customers": "Tous",
         "actions": "Actions",
         "search_placeholder": "Rechercher par nom",
@@ -63,12 +63,12 @@
           "vs_last_week": "{delta} vs semaine dernière",
           "vs_last_month": "{delta} vs mois dernier",
           "vs_last_year": "{delta} vs année dernière",
-          "ordered_this_month": "{count} ont commandé ce mois-ci",
-          "new_customers": "{count} nouveaux clients",
-          "of_recent_orders": "sur {count} créées ces 7 derniers jours",
-          "items_unit": "article | articles",
+          "ordered_this_month": "{count} a commandé ce mois-ci | {count} a commandé ce mois-ci | {count} ont commandé ce mois-ci",
+          "new_customers": "{count} nouveau client | {count} nouveau client | {count} nouveaux clients",
+          "of_recent_orders": "sur {count} créée ces 7 derniers jours | sur {count} créée ces 7 derniers jours | sur {count} créées ces 7 derniers jours",
+          "items_unit": "article | article | articles",
           "not_for_checkout": "{count} hors paiement",
-          "items_this_week": "{count} article cette semaine | {count} articles cette semaine",
+          "items_this_week": "{count} article cette semaine | {count} article cette semaine | {count} articles cette semaine",
           "mtd_of_ytd": "{percent}% de l'année",
           "load_failed": "Échec du chargement"
         }
@@ -108,6 +108,7 @@
     "customer_profile": {
       "loading": "Chargement…",
       "not_found": "Client introuvable ou absent de vos clients.",
+      "load_failed": "Ce client n'a pas pu être chargé. Veuillez actualiser la page.",
       "back_to_customers": "Retour à mes clients",
       "widgets": {
         "avg_order_value": "Valeur moyenne des commandes"
@@ -253,7 +254,38 @@
         "load_failed": "Impossible de charger l'activité du client"
       }
     },
+    "documents": {
+      "title": "Bibliothèque de documents",
+      "browse_all": "Tout parcourir",
+      "open": "Ouvrir",
+      "empty": "Aucun document pour le moment",
+      "load_failed": "Impossible de charger les documents",
+      "page": {
+        "subtitle": "Catalogues, lookbooks, grilles tarifaires et guides de vente — ouvrez ou téléchargez la dernière publication.",
+        "search_placeholder": "Rechercher par nom",
+        "search_aria": "Rechercher des documents",
+        "all_tab": "Tous",
+        "empty": "Aucun document pour le moment",
+        "no_results": "Aucun document ne correspond à votre recherche",
+        "reset_search": "Réinitialiser la recherche",
+        "load_failed": "Impossible de charger les documents"
+      },
+      "details": {
+        "pages_count": "{count} page | {count} pages",
+        "open": "Ouvrir",
+        "download": "Télécharger",
+        "close": "Fermer les détails",
+        "not_found": "Ce document n'est plus disponible.",
+        "latest_publication": "Dernière publication"
+      },
+      "published": "Publié le {date}"
+    },
     "rules": {
+      "load_failed": {
+        "filter": "Les filtres n'ont pas pu être chargés, la liste complète est donc affichée. Veuillez actualiser la page.",
+        "sort": "Les options de tri n'ont pas pu être chargées, l'ordre par défaut est donc utilisé. Veuillez actualiser la page.",
+        "both": "Les filtres et les options de tri n'ont pas pu être chargés, la liste complète est donc affichée dans l'ordre par défaut. Veuillez actualiser la page."
+      },
       "customer": {
         "filter": {
           "All": "Tous"

@@ -29,7 +29,7 @@
         "last_order": "Moje ostatnie zamówienie",
         "ytd": "Zakupy w tym roku",
         "last_year": "W zeszłym roku",
-        "orders_count": "{count} zamówień",
+        "orders_count": "{count} zamówień | {count} zamówienie | {count} zamówienia | {count} zamówień",
         "all_customers": "Wszyscy",
         "actions": "Akcje",
         "search_placeholder": "Szukaj według nazwy",
@@ -63,9 +63,9 @@
           "vs_last_week": "{delta} vs poprzedni tydzień",
           "vs_last_month": "{delta} vs poprzedni miesiąc",
           "vs_last_year": "{delta} vs poprzedni rok",
-          "ordered_this_month": "{count} zamówiło w tym miesiącu",
-          "new_customers": "{count} nowych klientów",
-          "of_recent_orders": "z {count} utworzonych w ciągu ostatnich 7 dni",
+          "ordered_this_month": "{count} zamówiło w tym miesiącu | {count} zamówił w tym miesiącu | {count} zamówili w tym miesiącu | {count} zamówiło w tym miesiącu",
+          "new_customers": "{count} nowych klientów | {count} nowy klient | {count} nowi klienci | {count} nowych klientów",
+          "of_recent_orders": "z {count} utworzonych w ciągu ostatnich 7 dni | z {count} utworzonego w ciągu ostatnich 7 dni | z {count} utworzonych w ciągu ostatnich 7 dni | z {count} utworzonych w ciągu ostatnich 7 dni",
           "items_unit": "pozycji | pozycja | pozycje | pozycji",
           "not_for_checkout": "{count} nie do kasy",
           "items_this_week": "{count} pozycji w tym tygodniu | {count} pozycja w tym tygodniu | {count} pozycje w tym tygodniu | {count} pozycji w tym tygodniu",
@@ -108,6 +108,7 @@
     "customer_profile": {
       "loading": "Ładowanie…",
       "not_found": "Nie znaleziono klienta lub nie należy do Twoich klientów.",
+      "load_failed": "Nie udało się wczytać tego klienta. Odśwież stronę.",
       "back_to_customers": "Powrót do moich klientów",
       "widgets": {
         "avg_order_value": "Średnia wartość zamówienia"
@@ -253,7 +254,38 @@
         "load_failed": "Nie udało się załadować aktywności klienta"
       }
     },
+    "documents": {
+      "title": "Biblioteka dokumentów",
+      "browse_all": "Przeglądaj wszystkie",
+      "open": "Otwórz",
+      "empty": "Brak dokumentów",
+      "load_failed": "Nie udało się wczytać dokumentów",
+      "page": {
+        "subtitle": "Katalogi, lookbooki, cenniki i przewodniki sprzedażowe — otwieraj lub pobieraj najnowszą publikację.",
+        "search_placeholder": "Szukaj według nazwy",
+        "search_aria": "Szukaj dokumentów",
+        "all_tab": "Wszystkie",
+        "empty": "Brak dokumentów",
+        "no_results": "Żaden dokument nie pasuje do wyszukiwania",
+        "reset_search": "Resetuj wyszukiwanie",
+        "load_failed": "Nie udało się wczytać dokumentów"
+      },
+      "details": {
+        "pages_count": "{count} stron | {count} strona | {count} strony | {count} stron",
+        "open": "Otwórz",
+        "download": "Pobierz",
+        "close": "Zamknij szczegóły",
+        "not_found": "Ten dokument nie jest już dostępny.",
+        "latest_publication": "Najnowsza publikacja"
+      },
+      "published": "Opublikowano {date}"
+    },
     "rules": {
+      "load_failed": {
+        "filter": "Nie udało się wczytać filtrów, więc wyświetlana jest pełna lista. Odśwież stronę.",
+        "sort": "Nie udało się wczytać opcji sortowania, więc używana jest kolejność domyślna. Odśwież stronę.",
+        "both": "Nie udało się wczytać filtrów ani opcji sortowania, więc pełna lista jest wyświetlana w kolejności domyślnej. Odśwież stronę."
+      },
       "customer": {
         "filter": {
           "All": "Wszyscy"

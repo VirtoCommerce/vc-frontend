@@ -29,7 +29,7 @@
         "last_order": "My last order",
         "ytd": "YTD purchases",
         "last_year": "Last year",
-        "orders_count": "{count} orders",
+        "orders_count": "{count} order | {count} orders",
         "all_customers": "All",
         "actions": "Actions",
         "search_placeholder": "Search by name",
@@ -64,7 +64,7 @@
           "vs_last_month": "{delta} vs last month",
           "vs_last_year": "{delta} vs last year",
           "ordered_this_month": "{count} ordered this month",
-          "new_customers": "{count} new customers",
+          "new_customers": "{count} new customer | {count} new customers",
           "of_recent_orders": "of {count} created in the last 7 days",
           "items_unit": "item | items",
           "not_for_checkout": "{count} not for checkout",
@@ -108,6 +108,7 @@
     "customer_profile": {
       "loading": "Loading…",
       "not_found": "Customer not found or not in your customers.",
+      "load_failed": "This customer couldn't be loaded. Try refreshing the page.",
       "back_to_customers": "Back to my customers",
       "widgets": {
         "avg_order_value": "Avg order value"
@@ -253,7 +254,38 @@
         "load_failed": "Couldn't load customer activity"
       }
     },
+    "documents": {
+      "title": "Document library",
+      "browse_all": "Browse all",
+      "open": "Open",
+      "empty": "No documents yet",
+      "load_failed": "Couldn't load documents",
+      "page": {
+        "subtitle": "Catalogs, lookbooks, pricing sheets and sales guides — open or download the latest publication.",
+        "search_placeholder": "Search by name",
+        "search_aria": "Search documents",
+        "all_tab": "All",
+        "empty": "No documents yet",
+        "no_results": "No documents match your search",
+        "reset_search": "Reset search",
+        "load_failed": "Couldn't load documents"
+      },
+      "details": {
+        "pages_count": "{count} page | {count} pages",
+        "open": "Open",
+        "download": "Download",
+        "close": "Close details",
+        "not_found": "This document is no longer available.",
+        "latest_publication": "Latest publication"
+      },
+      "published": "Published {date}"
+    },
     "rules": {
+      "load_failed": {
+        "filter": "The filters couldn't be loaded, so the full list is shown. Try refreshing the page.",
+        "sort": "The sorting options couldn't be loaded, so the default order is used. Try refreshing the page.",
+        "both": "The filters and sorting options couldn't be loaded, so the full list is shown in the default order. Try refreshing the page."
+      },
       "customer": {
         "filter": {
           "All": "All"

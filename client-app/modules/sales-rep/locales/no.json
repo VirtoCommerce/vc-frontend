@@ -29,7 +29,7 @@
         "last_order": "Min siste ordre",
         "ytd": "Årets kjøp",
         "last_year": "I fjor",
-        "orders_count": "{count} ordre",
+        "orders_count": "{count} ordre | {count} ordrer",
         "all_customers": "Alle",
         "actions": "Handlinger",
         "search_placeholder": "Søk etter navn",
@@ -64,7 +64,7 @@
           "vs_last_month": "{delta} vs forrige måned",
           "vs_last_year": "{delta} vs i fjor",
           "ordered_this_month": "{count} bestilte denne måneden",
-          "new_customers": "{count} nye kunder",
+          "new_customers": "{count} ny kunde | {count} nye kunder",
           "of_recent_orders": "av {count} opprettet de siste 7 dagene",
           "items_unit": "vare | varer",
           "not_for_checkout": "{count} ikke til kassen",
@@ -108,6 +108,7 @@
     "customer_profile": {
       "loading": "Laster…",
       "not_found": "Kunden ble ikke funnet eller er ikke blant kundene dine.",
+      "load_failed": "Denne kunden kunne ikke lastes. Last siden på nytt.",
       "back_to_customers": "Tilbake til mine kunder",
       "widgets": {
         "avg_order_value": "Gjennomsnittlig ordreverdi"
@@ -253,7 +254,38 @@
         "load_failed": "Kunne ikke laste kundeaktivitet"
       }
     },
+    "documents": {
+      "title": "Dokumentbibliotek",
+      "browse_all": "Bla gjennom alle",
+      "open": "Åpne",
+      "empty": "Ingen dokumenter ennå",
+      "load_failed": "Kunne ikke laste dokumentene",
+      "page": {
+        "subtitle": "Kataloger, lookbooks, prislister og salgsguider — åpne eller last ned den nyeste publikasjonen.",
+        "search_placeholder": "Søk etter navn",
+        "search_aria": "Søk i dokumenter",
+        "all_tab": "Alle",
+        "empty": "Ingen dokumenter ennå",
+        "no_results": "Ingen dokumenter samsvarer med søket ditt",
+        "reset_search": "Tilbakestill søk",
+        "load_failed": "Kunne ikke laste dokumentene"
+      },
+      "details": {
+        "pages_count": "{count} side | {count} sider",
+        "open": "Åpne",
+        "download": "Last ned",
+        "close": "Lukk detaljer",
+        "not_found": "Dette dokumentet er ikke lenger tilgjengelig.",
+        "latest_publication": "Nyeste publikasjon"
+      },
+      "published": "Publisert {date}"
+    },
     "rules": {
+      "load_failed": {
+        "filter": "Filtrene kunne ikke lastes, så hele listen vises. Last siden på nytt.",
+        "sort": "Sorteringsalternativene kunne ikke lastes, så standardrekkefølgen brukes. Last siden på nytt.",
+        "both": "Filtrene og sorteringsalternativene kunne ikke lastes, så hele listen vises i standardrekkefølgen. Last siden på nytt."
+      },
       "customer": {
         "filter": {
           "All": "Alle"
