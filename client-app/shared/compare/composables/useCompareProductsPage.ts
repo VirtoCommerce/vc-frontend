@@ -5,6 +5,8 @@ import { useI18n } from "vue-i18n";
 import { CreateConfiguredLineItemDocument } from "@/core/api/graphql/types";
 import { useAnalytics } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
+import { MAX_DISPLAY_IN_STOCK_QUANTITY } from "@/core/constants";
+import { ProductType } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { getPropertyValue, Logger } from "@/core/utilities";
 import {
@@ -24,6 +26,23 @@ type ConfiguredLineItemType = CreateConfiguredLineItemMutation["createConfigured
 function getProductPropertyValue(product: Product, propertyName: string): string {
   const property = product.properties.find((prop) => prop.name.toLowerCase() === propertyName);
   return property ? (getPropertyValue(property) ?? EMPTY_VALUE_PLACEHOLDER) : EMPTY_VALUE_PLACEHOLDER;
+}
+
+// Mirrors exactly what InStock renders (compare-table.vue), so "differs" reacts to anything the
+// user can actually see there — not just isInStock, which used to leave e.g. differing stock
+// quantities or a digital-vs-physical product pair marked as "same".
+function getAvailabilitySignature(product: Product): string {
+  if (product.productType === ProductType.Digital) {
+    return "digital";
+  }
+
+  if (!product.availabilityData.isInStock) {
+    return `out-of-stock:${product.availabilityData.isAvailable}`;
+  }
+
+  const quantity = product.availabilityData.availableQuantity;
+  const displayQuantity = quantity > MAX_DISPLAY_IN_STOCK_QUANTITY ? `${MAX_DISPLAY_IN_STOCK_QUANTITY}+` : quantity;
+  return `in-stock:${displayQuantity}`;
 }
 
 function getConfigPropertyValue(entry: ICompareProductEntry, label: string): string {
@@ -203,12 +222,13 @@ export function useCompareProductsPage() {
 
     rows.push(
       // InStock renders the quantity inline when in stock, so a separate "units in stock" row
-      // would just duplicate it — differs is still keyed off isInStock only.
+      // would just duplicate it — the values below still drive `differs` off everything InStock
+      // actually displays (see getAvailabilitySignature) even though nothing extra is rendered.
       makeRow(
         "availability",
         t("shared.compare.table.fields.availability"),
         "availability",
-        items.map(({ product }) => String(product.availabilityData.isInStock)),
+        items.map(({ product }) => getAvailabilitySignature(product)),
       ),
       makeRow(
         "sku",

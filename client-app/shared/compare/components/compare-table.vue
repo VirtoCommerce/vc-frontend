@@ -5,7 +5,11 @@
            there (rather than duplicated) so there's one tabs/differ instance and one activeTab. -->
       <div ref="mobileTabsBarRef" class="compare-table__mobile-tabs-bar"></div>
 
-      <div class="compare-table__header-row" :class="{ 'compare-table__header-row--stuck': isCompact }">
+      <div
+        ref="headerRowRef"
+        class="compare-table__header-row"
+        :class="{ 'compare-table__header-row--stuck': isCompact }"
+      >
         <div class="compare-table__controls" :class="{ 'compare-table__controls--stuck': isCompact }">
           <Teleport v-if="mobileTabsBarRef" :to="mobileTabsBarRef" :disabled="!isMobile">
             <div class="compare-table__controls-top">
@@ -266,7 +270,7 @@
 </template>
 
 <script setup lang="ts">
-import { useBreakpoints } from "@vueuse/core";
+import { useBreakpoints, useCssVar, useElementBounding } from "@vueuse/core";
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBrowserTarget } from "@/core/composables";
@@ -316,11 +320,31 @@ const isMobile = useBreakpoints(BREAKPOINTS).smaller("md");
 
 const { isRowPinned, togglePin, pinnedRows, unpinnedRows } = useCompareTableRowPins(() => props.rows);
 
-const isCompact = ref(false);
 const activeTab = ref("all");
 const bodyScrollRef = ref<HTMLElement | null>(null);
 const bodyScrollLeft = ref(0);
 const mobileTabsBarRef = ref<HTMLElement | null>(null);
+const headerRowRef = ref<HTMLElement | null>(null);
+
+// Kept live by VcHeader/MobileHeader — the app header's exact current height (it's shorter on
+// mobile), so the table's own header row can stick flush below it instead of under/away from it.
+// `observe: true` is required here: without it useCssVar only reads the var once on mount and
+// never again, so it'd go stale the moment the app header swaps its desktop/mobile layout later
+// (e.g. the viewport is resized across a breakpoint) instead of picking up the new height.
+const appHeaderHeightVar = useCssVar("--vc-app-header-height", undefined, { observe: true });
+const appHeaderHeight = computed(() => Number.parseFloat(appHeaderHeightVar.value ?? "0") || 0);
+
+// `top` below mirrors appHeaderHeight (see style block), so once the row's own top has scrolled
+// up to meet it, position: sticky has pinned the row in place — that's what "compact" reacts to.
+// Below md the row still sticks, but always in its full (non-compact) layout — there's no
+// space to gain from compacting it there since it's already the single-column mobile layout.
+const { top: headerRowTop, update: updateHeaderRowBounding } = useElementBounding(headerRowRef);
+const isCompact = computed(() => !isMobile.value && headerRowTop.value <= appHeaderHeight.value + 1);
+
+// A change to appHeaderHeight repositions the sticky row (its top offset) without firing a
+// window "resize"/"scroll" event, so headerRowTop wouldn't otherwise be recomputed against the
+// new offset until the next scroll — leaving isCompact stuck comparing against a stale position.
+watch(appHeaderHeight, () => updateHeaderRowBounding());
 
 const isTabSwitchDisabled = computed(() => props.products.length <= 1);
 // Pinned rows always stay visible at the top, even under the "Differences" filter.
@@ -355,11 +379,19 @@ watch(
   }
 
   &__header-row {
-    @apply flex overflow-hidden rounded-t-[--radius] border-b border-neutral-200 bg-additional-50;
+    @apply sticky z-10 flex overflow-hidden rounded-t-[--radius] border-b border-neutral-200 bg-additional-50;
+
+    // Sits flush below the app header (shorter on mobile — see vc-header.vue/mobile-header.vue,
+    // which keep this var updated with the header's live, current height).
+    top: var(--vc-app-header-height, 0px);
 
     // The mobile tabs bar owns the top corners below md instead.
     @media (width < theme("screens.md")) {
       @apply rounded-t-none;
+    }
+
+    &--stuck {
+      @apply shadow-md;
     }
   }
 

@@ -194,6 +194,8 @@ usePageHead({
 
 <style lang="scss">
 .compare-products {
+  overflow-anchor: none;
+
   &__breadcrumbs {
     @apply mb-3;
   }

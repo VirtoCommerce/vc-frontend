@@ -41,6 +41,10 @@ const { themeContext } = useThemeContext();
 
 const stickyHeader = ref<HTMLElement | null>(null);
 const headerHeightVar = useCssVar("--vc-layout-sidebar-offset-top");
+// Exact sticky header height (no offset buffer), so other components (e.g. sticky elements that
+// need to sit flush below the app header) can rely on it too. Only updated here for desktop —
+// MobileHeader owns this var while it's the one rendered (see mobile-header.vue).
+const appHeaderHeightVar = useCssVar("--vc-app-header-height");
 
 // For optimization on mobile devices
 const isMobile = breakpoints.smaller("lg");
@@ -48,8 +52,13 @@ const { height: headerHeight } = useElementBounding(stickyHeader);
 
 const desktopMenuMode = computed(() => themeContext.value?.settings?.desktop_menu_mode);
 
-watch(headerHeight, (value) => {
+watch([headerHeight, isMobile], ([value, mobile]) => {
+  if (mobile) {
+    return;
+  }
+
   headerHeightVar.value = `${value + OFFSET_TOP}px`;
+  appHeaderHeightVar.value = `${value}px`;
 });
 
 const { isAuthenticated } = useUser();
