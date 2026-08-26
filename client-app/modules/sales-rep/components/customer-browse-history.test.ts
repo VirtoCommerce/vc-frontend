@@ -27,9 +27,6 @@ const createWrapper = createWrapperFactory(mount, CustomerBrowseHistory, {
   global: {
     renderStubDefaultSlot: false,
     stubs: {
-      VcWidget: { template: '<div><slot name="default-container" /></div>' },
-      // LayoutWidget's drag controls: never rendered here, but the compiler resolves them anyway.
-      VcButton: true,
       VcEmptyView: true,
       VcIcon: true,
       VcImage: true,

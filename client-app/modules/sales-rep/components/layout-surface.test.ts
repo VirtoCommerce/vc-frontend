@@ -144,9 +144,7 @@ describe("LayoutSurface with an emptied rail", () => {
   // Seeded from a saved document rather than by clicking each ✕: a hidden block never renders, so this
   // needs none of the shipped widgets' async imports.
   async function mountWithHiddenRail() {
-    const railBlocks = ["actions", "info", "search_history", "browse_history", "customer_activity", PROBE_ID].map(
-      (type) => ({ type, hidden: true }),
-    );
+    const railBlocks = ["actions", "info", "customer_activity", PROBE_ID].map((type) => ({ type, hidden: true }));
     apolloMock.result.value = { salesRepLayout: { regions: [{ blocks: railBlocks }] } };
 
     const wrapper = mountSurface();

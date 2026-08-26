@@ -9,12 +9,15 @@ import type { Ref } from "vue";
 
 // Expanded unions (not MaybeRefOrGetter<… | undefined>) to avoid the redundant "undefined" — Sonar S4782.
 type UseSalesRepSearchHistoryOptionsType = {
-  organizationId: string | Ref<string> | (() => string);
+  // Scope to one customer; omit for insights aggregated across every organization the rep serves.
+  organizationId?: string | Ref<string | undefined> | (() => string | undefined);
   // "count" (top) or "date" (recent), from the salesRepCustomerInsights contract.
   sort?: string | Ref<string | undefined> | (() => string | undefined);
   periodFrom?: string | Ref<string | undefined> | (() => string | undefined);
   periodTo?: string | Ref<string | undefined> | (() => string | undefined);
   take?: number | Ref<number | undefined> | (() => number | undefined);
+  // Apollo's `enabled`: lets a surface that shows the list on demand skip the query until then.
+  enabled?: boolean | Ref<boolean>;
 };
 
 // Owns the searchTerms half of the salesRepCustomerInsights op (VCST-5337).
@@ -31,6 +34,7 @@ export function useSalesRepSearchHistory(options: UseSalesRepSearchHistoryOption
 
   const { result, loading, error, onError } = useSalesRepHubQuery(SalesRepCustomerSearchTermsDocument, variables, {
     fetchPolicy: HUB_FETCH_POLICY,
+    enabled: options.enabled ?? true,
   });
 
   onError((err) => {

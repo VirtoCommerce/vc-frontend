@@ -1,92 +1,81 @@
 <template>
-  <LayoutWidget
-    :title="t('sales_rep.customer_insights.browse_history.title')"
-    size="md"
-    class="customer-browse-history"
-  >
-    <template #default-container>
-      <div class="customer-browse-history__body">
-        <div class="customer-browse-history__filter">
-          <SalesRepRuleChips
-            v-model="sortChip"
-            :rules="sortChipRules"
-            :all-label="t('sales_rep.customer_insights.recent')"
-          />
-        </div>
+  <!-- Chrome-less panel: rendered inside the Customer activity widget's "Product views" sub-view (it
+       used to be a widget of its own), so the widget box and title belong to the container. -->
+  <div class="customer-browse-history">
+    <div class="customer-browse-history__filter">
+      <SalesRepRuleChips
+        v-model="sortChip"
+        :rules="sortChipRules"
+        :all-label="t('sales_rep.customer_insights.recent')"
+      />
+    </div>
 
-        <div class="customer-browse-history__content">
-          <!-- A failure replaces stale rows — same state ladder as top-sellers.vue (VCST-5586). -->
-          <VcEmptyView
-            v-if="failed && !loading"
-            :text="t('sales_rep.customer_insights.browse_history.load_failed')"
-            variant="error"
-          />
+    <div class="customer-browse-history__content">
+      <!-- A failure replaces stale rows — same state ladder as top-sellers.vue (VCST-5586). -->
+      <VcEmptyView
+        v-if="failed && !loading"
+        :text="t('sales_rep.customer_insights.browse_history.load_failed')"
+        variant="error"
+      />
 
-          <VcEmptyView
-            v-else-if="notConfigured && !loading"
-            :text="t('sales_rep.customer_insights.not_configured')"
-            icon="eye"
-          />
+      <VcEmptyView
+        v-else-if="notConfigured && !loading"
+        :text="t('sales_rep.customer_insights.not_configured')"
+        icon="eye"
+      />
 
-          <VcEmptyView
-            v-else-if="!items.length && !loading"
-            :text="t('sales_rep.customer_insights.browse_history.empty')"
-            icon="eye"
-          />
+      <VcEmptyView
+        v-else-if="!items.length && !loading"
+        :text="t('sales_rep.customer_insights.browse_history.empty')"
+        icon="eye"
+      />
+
+      <template v-else>
+        <ul class="customer-browse-history__list">
+          <template v-if="loading && !items.length">
+            <li v-for="index in rowLimit" :key="index" class="customer-browse-history__skeleton" aria-hidden="true" />
+          </template>
 
           <template v-else>
-            <ul class="customer-browse-history__list">
-              <template v-if="loading && !items.length">
-                <li
-                  v-for="index in rowLimit"
-                  :key="index"
-                  class="customer-browse-history__skeleton"
-                  aria-hidden="true"
+            <li v-for="item in items" :key="item.productId" class="customer-browse-history__row">
+              <span class="customer-browse-history__thumb">
+                <VcImage
+                  v-if="item.imageUrl"
+                  :src="item.imageUrl"
+                  :alt="item.name"
+                  class="customer-browse-history__thumb-img"
                 />
-              </template>
 
-              <template v-else>
-                <li v-for="item in items" :key="item.productId" class="customer-browse-history__row">
-                  <span class="customer-browse-history__thumb">
-                    <VcImage
-                      v-if="item.imageUrl"
-                      :src="item.imageUrl"
-                      :alt="item.name"
-                      class="customer-browse-history__thumb-img"
-                    />
+                <VcIcon v-else name="cube" aria-hidden="true" />
+              </span>
 
-                    <VcIcon v-else name="cube" aria-hidden="true" />
-                  </span>
+              <span class="customer-browse-history__text">
+                <!-- GA stores the product CODE in item_id; a slug proves the backend resolved it to a
+                     real product. Without one a link would 404, so the row degrades to plain text. -->
+                <VcLink
+                  v-if="item.slug"
+                  :to="getProductRoute(item.productId, item.slug)"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="customer-browse-history__name"
+                >
+                  {{ item.name }}
+                </VcLink>
 
-                  <span class="customer-browse-history__text">
-                    <!-- GA stores the product CODE in item_id; a slug proves the backend resolved it to a
-                         real product. Without one a link would 404, so the row degrades to plain text. -->
-                    <VcLink
-                      v-if="item.slug"
-                      :to="getProductRoute(item.productId, item.slug)"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      class="customer-browse-history__name"
-                    >
-                      {{ item.name }}
-                    </VcLink>
+                <span v-else class="customer-browse-history__name">{{ item.name || item.sku }}</span>
 
-                    <span v-else class="customer-browse-history__name">{{ item.name || item.sku }}</span>
+                <span v-if="item.sku && item.name" class="customer-browse-history__sku">{{ item.sku }}</span>
 
-                    <span v-if="item.sku && item.name" class="customer-browse-history__sku">{{ item.sku }}</span>
-
-                    <span class="customer-browse-history__meta">{{ rowMeta(item) }}</span>
-                  </span>
-                </li>
-              </template>
-            </ul>
-
-            <p v-if="items.length" class="customer-browse-history__caveat">{{ caveat }}</p>
+                <span class="customer-browse-history__meta">{{ rowMeta(item) }}</span>
+              </span>
+            </li>
           </template>
-        </div>
-      </div>
-    </template>
-  </LayoutWidget>
+        </ul>
+
+        <p v-if="items.length" class="customer-browse-history__caveat">{{ caveat }}</p>
+      </template>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -98,7 +87,6 @@ import { useInsightsCaveat } from "../composables/useInsightsCaveat";
 import { useSalesRepBrowseHistory } from "../composables/useSalesRepBrowseHistory";
 import { useSalesRepPeriodFilter } from "../composables/useSalesRepPeriodFilter";
 import { INSIGHTS_DEFAULT_ROWS, INSIGHTS_SORT_BY_COUNT, INSIGHTS_SORT_BY_DATE } from "../constants";
-import LayoutWidget from "./layout-widget.vue";
 import SalesRepRuleChips from "./sales-rep-rule-chips.vue";
 import type { SalesRepRuleType } from "../types";
 import type { SalesRepBrowsedProductRowType } from "../types/insights";
@@ -148,9 +136,7 @@ const caveat = useInsightsCaveat(dataAsOf);
 <style lang="scss">
 // @apply: module is self-contained as an MF remote (no global utility layer).
 .customer-browse-history {
-  &__body {
-    @apply flex flex-col;
-  }
+  @apply flex flex-col;
 
   // px-6 aligns the chips with the widget header title.
   &__filter {

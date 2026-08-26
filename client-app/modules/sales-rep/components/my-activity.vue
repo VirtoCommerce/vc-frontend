@@ -15,7 +15,16 @@
         <VcEmptyView v-if="failed && !loading" :text="t('sales_rep.activity.load_failed')" variant="error" />
 
         <!-- Analytics absence is zero rows by contract, not an error — same view as "quiet week". -->
-        <VcEmptyView v-else-if="!items.length && !loading" :text="t('sales_rep.activity.empty')" icon="activity" />
+        <VcEmptyView
+          v-else-if="!items.length && !loading"
+          :text="t('sales_rep.activity.empty_period')"
+          icon="activity"
+        />
+
+        <!-- Same first-load skeleton as the insights widgets — the GA-backed query can run for seconds. -->
+        <div v-else-if="loading && !items.length" class="my-activity__skeletons" aria-hidden="true">
+          <div v-for="index in skeletonRows" :key="index" class="my-activity__skeleton" />
+        </div>
 
         <div v-else class="my-activity__list">
           <ActivityRow v-for="(item, index) in items" :key="index" :item="item" compact show-organization />
@@ -41,18 +50,31 @@ const activitiesRouteName = ACTIVITIES_ROUTE_NAME;
 // surface; the full feed lives on the Activities page.
 const { items, loading, error } = useSalesRepActivities({ take: MY_ACTIVITY_TAKE });
 
+// As many skeleton rows as the widget will show, so the height holds when data arrives.
+const skeletonRows = MY_ACTIVITY_TAKE;
+
 const failed = computed(() => Boolean(error.value));
 </script>
 
 <style lang="scss">
 // @apply: module is self-contained as an MF remote (no global utility layer).
 .my-activity {
+  // min-height ≈ the five compact rows, so the card holds its footprint across
+  // skeleton → rows / empty instead of collapsing and re-expanding.
   &__body {
-    @apply px-6 pb-4 pt-1;
+    @apply min-h-60 px-6 pb-4 pt-1;
   }
 
   &__list {
     @apply flex flex-col divide-y divide-neutral-100;
+  }
+
+  &__skeletons {
+    @apply flex flex-col;
+  }
+
+  &__skeleton {
+    @apply my-3 h-12 animate-pulse rounded-[--vc-radius] bg-neutral-100;
   }
 
   &__all-link {

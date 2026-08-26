@@ -236,6 +236,7 @@
       },
       "caveat": "Sökningar, produktvisningar och inloggningar baseras på spårad butiksaktivitet och är ungefärliga.",
       "empty": "Ingen aktivitet ännu",
+      "empty_period": "Ingen spårad aktivitet under denna period",
       "no_results": "Ingen aktivitet i denna kategori",
       "load_failed": "Kunde inte ladda aktivitet",
       "view_all": "All aktivitet",
@@ -244,6 +245,11 @@
       },
       "customer": {
         "title": "Kundaktivitet",
+        "views": {
+          "summary": "Sammanfattning",
+          "searches": "Sökningar",
+          "product_views": "Produktvisningar"
+        },
         "created_on": "Skapad",
         "last_web_login": "Senaste webbinloggning",
         "visits": "Besök",

@@ -236,6 +236,7 @@
       },
       "caveat": "Las búsquedas, vistas de producto e inicios de sesión se basan en la actividad registrada de la tienda y son aproximados.",
       "empty": "Aún no hay actividad",
+      "empty_period": "No hay actividad registrada en este período",
       "no_results": "No hay actividad en esta categoría",
       "load_failed": "No se pudo cargar la actividad",
       "view_all": "Toda la actividad",
@@ -244,6 +245,11 @@
       },
       "customer": {
         "title": "Actividad del cliente",
+        "views": {
+          "summary": "Resumen",
+          "searches": "Búsquedas",
+          "product_views": "Vistas de producto"
+        },
         "created_on": "Creado el",
         "last_web_login": "Último inicio de sesión web",
         "visits": "Visitas",

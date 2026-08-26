@@ -236,6 +236,7 @@
       },
       "caveat": "Haut, tuotekatselut ja kirjautumiset perustuvat seurattuun verkkokaupan toimintaan ja ovat likimääräisiä.",
       "empty": "Ei vielä aktiviteettia",
+      "empty_period": "Ei seurattua aktiviteettia tällä ajanjaksolla",
       "no_results": "Ei aktiviteettia tässä kategoriassa",
       "load_failed": "Aktiviteettia ei voitu ladata",
       "view_all": "Kaikki aktiviteetit",
@@ -244,6 +245,11 @@
       },
       "customer": {
         "title": "Asiakkaan aktiviteetti",
+        "views": {
+          "summary": "Yhteenveto",
+          "searches": "Haut",
+          "product_views": "Tuotekatselut"
+        },
         "created_on": "Luotu",
         "last_web_login": "Viimeisin verkkokirjautuminen",
         "visits": "Käynnit",

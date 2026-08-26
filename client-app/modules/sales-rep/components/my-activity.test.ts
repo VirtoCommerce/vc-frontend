@@ -47,6 +47,20 @@ describe("MyActivity states", () => {
 
     expect(views).toHaveLength(1);
     expect(views[0].attributes("variant")).toBeUndefined();
+    expect(views[0].attributes("text")).toBe("sales_rep.activity.empty_period");
+    // The all-activity link stays alongside the empty state.
+    expect(wrapper.find("vc-link-stub").exists()).toBe(true);
+  });
+
+  // The GA-backed query can run for seconds on a cold read — a blank card reads as broken.
+  it("renders skeleton rows on first load, before any rows exist", () => {
+    state.loading.value = true;
+
+    const wrapper = createWrapper();
+
+    expect(wrapper.findAll(".my-activity__skeleton")).toHaveLength(5);
+    expect(emptyViews(wrapper)).toHaveLength(0);
+    expect(wrapper.find("activity-row-stub").exists()).toBe(false);
   });
 
   it("replaces the list with the failure view when the query failed but stale rows remain", () => {

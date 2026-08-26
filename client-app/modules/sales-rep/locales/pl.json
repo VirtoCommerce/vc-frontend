@@ -236,6 +236,7 @@
       },
       "caveat": "Wyszukiwania, wyświetlenia produktów i logowania opierają się na śledzonej aktywności sklepu i są przybliżone.",
       "empty": "Brak aktywności",
+      "empty_period": "Brak śledzonej aktywności w tym okresie",
       "no_results": "Brak aktywności w tej kategorii",
       "load_failed": "Nie udało się załadować aktywności",
       "view_all": "Cała aktywność",
@@ -244,6 +245,11 @@
       },
       "customer": {
         "title": "Aktywność klienta",
+        "views": {
+          "summary": "Podsumowanie",
+          "searches": "Wyszukiwania",
+          "product_views": "Wyświetlenia produktów"
+        },
         "created_on": "Data utworzenia",
         "last_web_login": "Ostatnie logowanie w sieci",
         "visits": "Wizyty",

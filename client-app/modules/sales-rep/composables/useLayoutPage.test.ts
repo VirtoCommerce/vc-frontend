@@ -32,8 +32,6 @@ vi.mock("vue-i18n", () => ({ useI18n: () => ({ t: (key: string) => key }) }));
 const ECHOED_SETTINGS: Record<string, { key: string; value: unknown }[]> = {
   orders: [{ key: "maxRows", value: 5 }],
   top_sellers: [{ key: "maxRows", value: 5 }],
-  search_history: [{ key: "maxRows", value: 5 }],
-  browse_history: [{ key: "maxRows", value: 5 }],
 };
 
 const echoedBlock = (id: string) => ({ id, type: id, hidden: false, settings: ECHOED_SETTINGS[id] ?? [] });
@@ -100,10 +98,7 @@ describe("useLayoutPage", () => {
           regions: [
             { id: "statistics", blocks: ["new_orders", "active_cart", "mtd", "orders_ytd", "aov"].map(echoedBlock) },
             { id: "mainLeft", blocks: ["orders", "top_sellers"].map(echoedBlock) },
-            {
-              id: "mainRight",
-              blocks: ["actions", "info", "search_history", "browse_history", "customer_activity"].map(echoedBlock),
-            },
+            { id: "mainRight", blocks: ["actions", "info", "customer_activity"].map(echoedBlock) },
           ],
         },
       },

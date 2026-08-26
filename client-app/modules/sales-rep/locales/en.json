@@ -236,6 +236,7 @@
       },
       "caveat": "Searches, product views and sign-ins are based on tracked storefront activity and are approximate.",
       "empty": "No activity yet",
+      "empty_period": "No tracked activity in this period",
       "no_results": "No activity in this category",
       "load_failed": "Couldn't load activity",
       "view_all": "All activity",
@@ -244,6 +245,11 @@
       },
       "customer": {
         "title": "Customer activity",
+        "views": {
+          "summary": "Summary",
+          "searches": "Searches",
+          "product_views": "Product views"
+        },
         "created_on": "Created on",
         "last_web_login": "Last web login",
         "visits": "Visits",

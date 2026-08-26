@@ -236,6 +236,7 @@
       },
       "caveat": "Suchanfragen, Produktansichten und Anmeldungen basieren auf erfasster Storefront-Aktivität und sind Näherungswerte.",
       "empty": "Noch keine Aktivität",
+      "empty_period": "Keine erfasste Aktivität in diesem Zeitraum",
       "no_results": "Keine Aktivität in dieser Kategorie",
       "load_failed": "Aktivität konnte nicht geladen werden",
       "view_all": "Alle Aktivitäten",
@@ -244,6 +245,11 @@
       },
       "customer": {
         "title": "Kundenaktivität",
+        "views": {
+          "summary": "Übersicht",
+          "searches": "Suchanfragen",
+          "product_views": "Produktansichten"
+        },
         "created_on": "Erstellt am",
         "last_web_login": "Letzte Web-Anmeldung",
         "visits": "Besuche",

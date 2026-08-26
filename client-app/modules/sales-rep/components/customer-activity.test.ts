@@ -21,6 +21,22 @@ vi.mock("../composables/useSalesRepCustomerActivitySummary", () => ({
   }),
 }));
 
+// The sub-view panels own their queries; here only their mount/visibility contract matters.
+vi.mock("./customer-search-history.vue", () => ({
+  default: {
+    name: "CustomerSearchHistoryStub",
+    props: ["organizationId"],
+    template: '<div class="search-history-panel" />',
+  },
+}));
+vi.mock("./customer-browse-history.vue", () => ({
+  default: {
+    name: "CustomerBrowseHistoryStub",
+    props: ["organizationId"],
+    template: '<div class="browse-history-panel" />',
+  },
+}));
+
 function summaryFixture(
   overrides: Partial<SalesRepCustomerActivitySummaryType> = {},
 ): SalesRepCustomerActivitySummaryType {
@@ -38,12 +54,13 @@ function summaryFixture(
 // Slot-rendering stub: the product label lives in the link's slot, which a default stub would drop.
 const VcLinkStub = { name: "VcLinkStub", props: ["to"], template: "<a><slot /></a>" };
 
+// SalesRepRuleChips stays real — the sub-view tests below click its tabs.
 const createWrapper = createWrapperFactory(mount, CustomerActivity, {
   props: { organizationId: "org1" },
   global: {
     renderStubDefaultSlot: false,
     stubs: {
-      VcWidget: { template: '<div><slot name="append" /><slot /></div>' },
+      VcWidget: { template: '<div><slot name="append" /><slot name="default-container" /></div>' },
       VcButton: true,
       VcEmptyView: true,
       VcIcon: true,
@@ -52,13 +69,16 @@ const createWrapper = createWrapperFactory(mount, CustomerActivity, {
   },
 });
 
+// The chip row renders the baseline (Summary) first, then the declared rules in order.
+const chips = (wrapper: ReturnType<typeof createWrapper>) => wrapper.findAll(".sales-rep-rule-chips__tab");
+
 beforeEach(() => {
   state.summary.value = undefined;
   state.loading.value = false;
   state.error.value = null;
 });
 
-describe("CustomerActivity states", () => {
+describe("CustomerActivity summary states", () => {
   it("shows the failure view when the query failed", () => {
     state.error.value = new Error("boom");
 
@@ -67,6 +87,17 @@ describe("CustomerActivity states", () => {
 
     expect(views).toHaveLength(1);
     expect(views[0].attributes("variant")).toBe("error");
+  });
+
+  // The GA-backed summary can run for seconds on a cold read — a blank card reads as broken.
+  it("renders skeleton rows while the summary loads", () => {
+    state.loading.value = true;
+
+    const wrapper = createWrapper();
+
+    expect(wrapper.findAll(".customer-activity__skeleton")).toHaveLength(5);
+    expect(wrapper.findAll("vc-empty-view-stub")).toHaveLength(0);
+    expect(wrapper.findAll(".customer-activity__row")).toHaveLength(0);
   });
 
   it("renders every definition row when analytics is configured", () => {
@@ -107,5 +138,55 @@ describe("CustomerActivity states", () => {
 
     expect(productRow.text()).toContain("GONE-1");
     expect(productRow.findComponent({ name: "VcLinkStub" }).exists()).toBe(false);
+  });
+});
+
+describe("CustomerActivity sub-views", () => {
+  // Opening the profile must fire only the summary query — the panels' GA-backed queries wait for
+  // their chip, which means the panels must not even mount (a mounted panel fetches).
+  it("defaults to Summary with neither panel mounted", () => {
+    state.summary.value = summaryFixture();
+
+    const wrapper = createWrapper();
+
+    expect(wrapper.find(".customer-activity__summary").isVisible()).toBe(true);
+    expect(wrapper.find(".search-history-panel").exists()).toBe(false);
+    expect(wrapper.find(".browse-history-panel").exists()).toBe(false);
+  });
+
+  it("mounts the Searches panel when its chip is selected, and hides the summary", async () => {
+    state.summary.value = summaryFixture();
+
+    const wrapper = createWrapper();
+    await chips(wrapper)[1].trigger("click");
+
+    expect(wrapper.find(".search-history-panel").isVisible()).toBe(true);
+    expect(wrapper.find(".browse-history-panel").exists()).toBe(false);
+    expect(wrapper.find(".customer-activity__summary").isVisible()).toBe(false);
+    expect(wrapper.findComponent({ name: "CustomerSearchHistoryStub" }).props("organizationId")).toBe("org1");
+  });
+
+  it("mounts the Product views panel when its chip is selected", async () => {
+    state.summary.value = summaryFixture();
+
+    const wrapper = createWrapper();
+    await chips(wrapper)[2].trigger("click");
+
+    expect(wrapper.find(".browse-history-panel").isVisible()).toBe(true);
+    expect(wrapper.find(".search-history-panel").exists()).toBe(false);
+    expect(wrapper.findComponent({ name: "CustomerBrowseHistoryStub" }).props("organizationId")).toBe("org1");
+  });
+
+  // Returning to a visited view must not remount its panel — a remount refires the GA-backed query.
+  it("keeps a visited panel mounted, hidden, when switching back to Summary", async () => {
+    state.summary.value = summaryFixture();
+
+    const wrapper = createWrapper();
+    await chips(wrapper)[1].trigger("click");
+    await chips(wrapper)[0].trigger("click");
+
+    expect(wrapper.find(".customer-activity__summary").isVisible()).toBe(true);
+    expect(wrapper.find(".search-history-panel").exists()).toBe(true);
+    expect(wrapper.find(".search-history-panel").isVisible()).toBe(false);
   });
 });

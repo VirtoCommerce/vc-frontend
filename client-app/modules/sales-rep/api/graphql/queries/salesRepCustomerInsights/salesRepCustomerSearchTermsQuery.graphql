@@ -1,5 +1,5 @@
 query SalesRepCustomerSearchTerms(
-  $organizationId: String!
+  $organizationId: String
   $storeId: String
   $cultureName: String
   $periodFrom: DateTime

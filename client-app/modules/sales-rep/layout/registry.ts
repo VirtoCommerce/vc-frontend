@@ -5,8 +5,6 @@
 // no region, order or title.
 import { defineAsyncComponent, markRaw } from "vue";
 import {
-  INSIGHTS_DEFAULT_ROWS,
-  INSIGHTS_MAX_ROWS,
   MIN_ROWS,
   ORDERS_DEFAULT_ROWS,
   ORDERS_MAX_ROWS,
@@ -23,10 +21,9 @@ const CustomerProfileActions = markRaw(
   defineAsyncComponent(() => import("../components/customer-profile-actions.vue")),
 );
 const CustomerProfileInfo = markRaw(defineAsyncComponent(() => import("../components/customer-profile-info.vue")));
-const CustomerSearchHistory = markRaw(defineAsyncComponent(() => import("../components/customer-search-history.vue")));
-const CustomerBrowseHistory = markRaw(defineAsyncComponent(() => import("../components/customer-browse-history.vue")));
 // Not gated on any frontend module check: the backend's nulls / isAnalyticsConfigured are the
-// availability signal, and the widgets render their own states from them (VCST-5337).
+// availability signal, and the widgets render their own states from them (VCST-5337). Search and
+// browse history are sub-views of this widget now, not blocks of their own.
 const MyActivity = markRaw(defineAsyncComponent(() => import("../components/my-activity.vue")));
 const CustomerActivity = markRaw(defineAsyncComponent(() => import("../components/customer-activity.vue")));
 
@@ -49,9 +46,6 @@ const ordersSettings: SalesRepBlockSettingType[] = [
 ];
 const topSellersSettings: SalesRepBlockSettingType[] = [
   { kind: "maxRows", default: TOP_SELLERS_DEFAULT_ROWS, min: MIN_ROWS, max: TOP_SELLERS_MAX_ROWS },
-];
-const insightsSettings: SalesRepBlockSettingType[] = [
-  { kind: "maxRows", default: INSIGHTS_DEFAULT_ROWS, min: MIN_ROWS, max: INSIGHTS_MAX_ROWS },
 ];
 
 const dashboardBlocks: SalesRepBlockType[] = [
@@ -116,26 +110,10 @@ const customerProfileBlocks: SalesRepBlockType[] = [
     component: CustomerProfileInfo,
   },
   {
-    id: "search_history",
-    region: "mainRight",
-    titleKey: "sales_rep.customer_insights.search_history.title",
-    order: 30,
-    component: CustomerSearchHistory,
-    settings: insightsSettings,
-  },
-  {
-    id: "browse_history",
-    region: "mainRight",
-    titleKey: "sales_rep.customer_insights.browse_history.title",
-    order: 40,
-    component: CustomerBrowseHistory,
-    settings: insightsSettings,
-  },
-  {
     id: "customer_activity",
     region: "mainRight",
     titleKey: "sales_rep.activity.customer.title",
-    order: 50,
+    order: 30,
     component: CustomerActivity,
   },
 ];

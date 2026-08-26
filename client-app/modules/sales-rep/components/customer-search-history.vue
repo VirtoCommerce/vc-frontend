@@ -1,73 +1,58 @@
 <template>
-  <LayoutWidget
-    :title="t('sales_rep.customer_insights.search_history.title')"
-    size="md"
-    class="customer-search-history"
-  >
-    <template #default-container>
-      <div class="customer-search-history__body">
-        <div class="customer-search-history__filter">
-          <SalesRepRuleChips
-            v-model="sortChip"
-            :rules="sortChipRules"
-            :all-label="t('sales_rep.customer_insights.top')"
-          />
-        </div>
+  <!-- Chrome-less panel: rendered inside the Customer activity widget's "Searches" sub-view (it used
+       to be a widget of its own), so the widget box and title belong to the container. -->
+  <div class="customer-search-history">
+    <div class="customer-search-history__filter">
+      <SalesRepRuleChips v-model="sortChip" :rules="sortChipRules" :all-label="t('sales_rep.customer_insights.top')" />
+    </div>
 
-        <div class="customer-search-history__content">
-          <!-- A failure replaces stale rows — same state ladder as top-sellers.vue (VCST-5586). -->
-          <VcEmptyView
-            v-if="failed && !loading"
-            :text="t('sales_rep.customer_insights.search_history.load_failed')"
-            variant="error"
-          />
+    <div class="customer-search-history__content">
+      <!-- A failure replaces stale rows — same state ladder as top-sellers.vue (VCST-5586). -->
+      <VcEmptyView
+        v-if="failed && !loading"
+        :text="t('sales_rep.customer_insights.search_history.load_failed')"
+        variant="error"
+      />
 
-          <VcEmptyView
-            v-else-if="notConfigured && !loading"
-            :text="t('sales_rep.customer_insights.not_configured')"
-            icon="search"
-          />
+      <VcEmptyView
+        v-else-if="notConfigured && !loading"
+        :text="t('sales_rep.customer_insights.not_configured')"
+        icon="search"
+      />
 
-          <VcEmptyView
-            v-else-if="!items.length && !loading"
-            :text="t('sales_rep.customer_insights.search_history.empty')"
-            icon="search"
-          />
+      <VcEmptyView
+        v-else-if="!items.length && !loading"
+        :text="t('sales_rep.customer_insights.search_history.empty')"
+        icon="search"
+      />
+
+      <template v-else>
+        <ul class="customer-search-history__list">
+          <template v-if="loading && !items.length">
+            <li v-for="index in rowLimit" :key="index" class="customer-search-history__skeleton" aria-hidden="true" />
+          </template>
 
           <template v-else>
-            <ul class="customer-search-history__list">
-              <template v-if="loading && !items.length">
-                <li
-                  v-for="index in rowLimit"
-                  :key="index"
-                  class="customer-search-history__skeleton"
-                  aria-hidden="true"
-                />
-              </template>
+            <li v-for="item in items" :key="item.term" class="customer-search-history__row">
+              <span class="customer-search-history__term-line">
+                <span class="customer-search-history__term">{{ item.term }}</span>
 
-              <template v-else>
-                <li v-for="item in items" :key="item.term" class="customer-search-history__row">
-                  <span class="customer-search-history__term-line">
-                    <span class="customer-search-history__term">{{ item.term }}</span>
+                <span class="customer-search-history__count">
+                  {{ t("sales_rep.customer_insights.search_history.count", item.count) }}
+                </span>
+              </span>
 
-                    <span class="customer-search-history__count">
-                      {{ t("sales_rep.customer_insights.search_history.count", item.count) }}
-                    </span>
-                  </span>
-
-                  <span v-if="item.lastSearchedDate" class="customer-search-history__date">
-                    {{ lastSearchedLabel(item.lastSearchedDate) }}
-                  </span>
-                </li>
-              </template>
-            </ul>
-
-            <p v-if="items.length" class="customer-search-history__caveat">{{ caveat }}</p>
+              <span v-if="item.lastSearchedDate" class="customer-search-history__date">
+                {{ lastSearchedLabel(item.lastSearchedDate) }}
+              </span>
+            </li>
           </template>
-        </div>
-      </div>
-    </template>
-  </LayoutWidget>
+        </ul>
+
+        <p v-if="items.length" class="customer-search-history__caveat">{{ caveat }}</p>
+      </template>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -78,7 +63,6 @@ import { useInsightsCaveat } from "../composables/useInsightsCaveat";
 import { useSalesRepPeriodFilter } from "../composables/useSalesRepPeriodFilter";
 import { useSalesRepSearchHistory } from "../composables/useSalesRepSearchHistory";
 import { INSIGHTS_DEFAULT_ROWS, INSIGHTS_SORT_BY_COUNT, INSIGHTS_SORT_BY_DATE } from "../constants";
-import LayoutWidget from "./layout-widget.vue";
 import SalesRepRuleChips from "./sales-rep-rule-chips.vue";
 import type { SalesRepRuleType } from "../types";
 
@@ -122,9 +106,7 @@ const caveat = useInsightsCaveat(dataAsOf);
 <style lang="scss">
 // @apply: module is self-contained as an MF remote (no global utility layer).
 .customer-search-history {
-  &__body {
-    @apply flex flex-col;
-  }
+  @apply flex flex-col;
 
   // px-6 aligns the chips with the widget header title.
   &__filter {

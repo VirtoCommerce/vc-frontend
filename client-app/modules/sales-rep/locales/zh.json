@@ -236,6 +236,7 @@
       },
       "caveat": "搜索、商品浏览和登录基于跟踪到的商店活动，为近似值。",
       "empty": "暂无活动",
+      "empty_period": "此期间没有跟踪到的活动",
       "no_results": "此类别暂无活动",
       "load_failed": "无法加载活动",
       "view_all": "全部活动",
@@ -244,6 +245,11 @@
       },
       "customer": {
         "title": "客户活动",
+        "views": {
+          "summary": "概览",
+          "searches": "搜索",
+          "product_views": "商品浏览"
+        },
         "created_on": "创建日期",
         "last_web_login": "最近网站登录",
         "visits": "访问次数",
