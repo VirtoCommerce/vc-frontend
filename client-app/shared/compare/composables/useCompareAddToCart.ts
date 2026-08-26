@@ -1,6 +1,7 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { useErrorsTranslator } from "@/core/composables";
+import { useErrorsTranslator, useHistoricalEvents } from "@/core/composables";
+import { useAnalyticsUtils } from "@/core/composables/useAnalyticsUtils";
 import { ValidationErrorObjectType } from "@/core/enums";
 import { truncate } from "@/core/utilities";
 import { useShortCart } from "@/shared/cart/composables";
@@ -13,16 +14,30 @@ function getProductKey(item: ICompareDisplayProduct): string {
   return item.entry.localId ?? item.product.id;
 }
 
+// Fixed quantity this button adds — the smallest orderable amount, same as the first "+" click
+// on the shared stepper would land on (see minAligned in ui-kit/utilities/quantity-stepper.ts):
+// minQuantity rounded UP to the nearest packSize multiple, never a non-pack-aligned amount.
+function getQuantity(product: Product): number {
+  const minQuantity = product.minQuantity || 1;
+  const packSize = product.packSize;
+
+  return packSize ? Math.ceil(minQuantity / packSize) * packSize : minQuantity;
+}
+
 /**
  * "Add to cart" for the compare table's plain (non-configurable, non-variation) products — no
- * stepper, just a button — but still respecting availability/minimum-order-quantity, with
- * per-entry loading state so adding one product doesn't disable the whole table.
+ * stepper, just a button — but still respecting availability/minimum-order-quantity/pack-size/
+ * max-quantity the same way the shared QuantityControl validation would (see
+ * useQuantityValidationSchema), with per-entry loading state so adding one product doesn't
+ * disable the whole table.
  */
 export function useCompareAddToCart() {
   const { t } = useI18n();
   const { translate } = useErrorsTranslator<ValidationErrorType>("validation_error");
   const { addToCart } = useShortCart();
   const notifications = useNotifications();
+  const { trackAddItemToCart } = useAnalyticsUtils();
+  const { pushHistoricalEvent } = useHistoricalEvents();
 
   const addingProductKeys = ref(new Set<string>());
 
@@ -33,13 +48,19 @@ export function useCompareAddToCart() {
   function isAddToCartDisabled(product: Product): boolean {
     const availability = product.availabilityData;
 
-    if (!availability?.isAvailable || !availability?.isBuyable || availability?.isInStock === false) {
+    if (!availability?.isActive || !availability?.isAvailable || !availability?.isBuyable || !availability?.isInStock) {
       return true;
     }
 
-    const minQuantity = product.minQuantity || 1;
+    // getQuantity is always pack-aligned by construction, so the only way it can still be
+    // unorderable is if that aligned amount itself doesn't fit within what's actually allowed.
+    const quantity = getQuantity(product);
 
-    return availability.availableQuantity != null && availability.availableQuantity < minQuantity;
+    if (availability.availableQuantity != null && availability.availableQuantity < quantity) {
+      return true;
+    }
+
+    return !!product.maxQuantity && quantity > product.maxQuantity;
   }
 
   async function onAddToCart(item: ICompareDisplayProduct) {
@@ -52,7 +73,7 @@ export function useCompareAddToCart() {
     addingProductKeys.value.add(key);
 
     try {
-      const quantity = item.product.minQuantity || 1;
+      const quantity = getQuantity(item.product);
       const updatedCart = await addToCart(item.product.id, quantity);
       const validationMessages =
         updatedCart?.validationErrors
@@ -69,6 +90,9 @@ export function useCompareAddToCart() {
           duration: 4000,
         });
       } else {
+        trackAddItemToCart(item.product, quantity, { source_block: "compare" });
+        void pushHistoricalEvent({ eventType: "addToCart", productId: item.product.id });
+
         notifications.success({
           html: t("shared.compare.notifications.added_to_cart_html", {
             productName: truncate(item.product.name, COMPARE_NOTIFICATION_PRODUCT_NAME_MAX_LENGTH),
