@@ -12,8 +12,10 @@ export function useSalesRepCustomer(organizationId: MaybeRefOrGetter<string>) {
 
   // The header is editable outside the storefront, so it revalidates too. Three components on the page
   // share this composable; Apollo's deduplication collapses their concurrent identical requests into one.
+  // Callers with an optional scope (the Activities page) pass "" — no id means nothing to resolve.
   const { result, loading, onError } = useSalesRepHubQuery(SalesRepCustomerDocument, variables, {
     fetchPolicy: HUB_FETCH_POLICY,
+    enabled: computed(() => Boolean(toValue(organizationId))),
   });
 
   onError((error) => {

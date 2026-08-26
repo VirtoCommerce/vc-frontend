@@ -1,11 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useSalesRepSearchHistory } from "./useSalesRepSearchHistory";
-import type { SalesRepCustomerSearchTermsQueryType } from "../api/proposed/salesRepCustomerInsights";
+import type { SalesRepCustomerSearchTermsQuery } from "../api/graphql/types";
 
 // vi.hoisted runs before this file's imports, so it must import vue itself.
 const queryMock = await vi.hoisted(async () => {
   const { ref } = await import("vue");
-  const result = ref<SalesRepCustomerSearchTermsQueryType | undefined>(undefined);
+  const result = ref<SalesRepCustomerSearchTermsQuery | undefined>(undefined);
   const loading = ref(false);
   const onError = vi.fn();
   const error = ref<Error | null>(null);
@@ -29,7 +29,7 @@ describe("useSalesRepSearchHistory", () => {
         dataAsOf: "2026-08-20T00:00:00Z",
         searchTerms: [{ term: "gloves", count: 12, lastSearchedDate: "2026-08-19T10:00:00Z" }],
       },
-    } satisfies SalesRepCustomerSearchTermsQueryType;
+    } satisfies SalesRepCustomerSearchTermsQuery;
 
     const { items, dataAsOf, notConfigured } = useSalesRepSearchHistory({ organizationId: "org-1" });
 
@@ -44,9 +44,9 @@ describe("useSalesRepSearchHistory", () => {
     // No result yet (loading or failed) must not read as "not configured".
     expect(notConfigured.value).toBe(false);
 
-    // The backend answers null for "no insights provider"; the type mirrors codegen's Maybe<T> = T,
-    // which erases the null, so the fixture casts to what actually arrives on the wire.
-    queryMock.result.value = { salesRepCustomerInsights: null } as unknown as SalesRepCustomerSearchTermsQueryType;
+    // The backend answers null for "no insights provider"; codegen's Maybe<T> = T mapping erases
+    // the null, so the fixture casts to what actually arrives on the wire.
+    queryMock.result.value = { salesRepCustomerInsights: null } as unknown as SalesRepCustomerSearchTermsQuery;
 
     expect(notConfigured.value).toBe(true);
   });

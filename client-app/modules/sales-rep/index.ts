@@ -8,6 +8,8 @@ import { useWishlistSharingScopes } from "@/shared/wishlists/composables/useWish
 import { loadModuleLocale } from "../utils";
 import { isSalesRepsEnabled, isSalesRepUser } from "./composables/useSalesRepsConfig";
 import {
+  ACTIVITIES_NAV_LINK_ID,
+  ACTIVITIES_ROUTE_NAME,
   CUSTOMER_SHARING_SCOPE,
   DASHBOARD_NAV_LINK_ID,
   DASHBOARD_ROUTE_NAME,
@@ -19,7 +21,7 @@ import {
 } from "./constants";
 import { registerLayoutTypePolicies } from "./layout/cache-policies";
 import { salesRepMenuSchema } from "./menu";
-import { customerProfileRoute, dashboardRoute, myCustomersRoute, salesRepsRoute } from "./routes";
+import { activitiesRoute, customerProfileRoute, dashboardRoute, myCustomersRoute, salesRepsRoute } from "./routes";
 import type { I18n } from "@/i18n";
 import type { Router } from "vue-router";
 
@@ -34,6 +36,8 @@ export function init(router: Router, i18n: I18n) {
   router.addRoute("Company", myCustomersRoute);
   // Customer profile (VCST-5308) -> /company/my-customers/:organizationId.
   router.addRoute("Company", customerProfileRoute);
+  // All-activity feed (VCST-5337) -> /company/activities.
+  router.addRoute("Company", activitiesRoute);
 
   const { mergeMenuSchema, registerAccountSection } = useNavigations();
   const { checkPermissions } = useUser();
@@ -86,6 +90,12 @@ export function init(router: Router, i18n: I18n) {
         title: "sales_rep.my_customers.navigation.link",
         icon: "users",
         route: { name: MY_CUSTOMERS_ROUTE_NAME },
+      },
+      {
+        id: ACTIVITIES_NAV_LINK_ID,
+        title: "sales_rep.activity.navigation.link",
+        icon: "activity",
+        route: { name: ACTIVITIES_ROUTE_NAME },
       },
     ],
     isVisible: computed(() => isSalesRepsEnabled() && checkPermissions(SALES_REP_ACCESS_PERMISSION)),

@@ -65,6 +65,51 @@ export type SalesRepCommunicationResultType = {
   warnings: string[];
 };
 
+// One activity feed row (VCST-5337). Flat + discriminators, mirroring the wire shape: `category`
+// groups for tabs/icons, `type` picks the wording, and the optional payload depends on the type.
+export type SalesRepActivityItemType = {
+  category: string;
+  type: string;
+  // UTC instant; for `precision: "hour"` rows it is the hour-bucket start, never an exact moment.
+  occurredAt: string;
+  precision: "exact" | "hour";
+  // Occurrences this row aggregates (1 for exact rows; the bucket size for analytics hour rows).
+  count: number;
+  organizationId: string;
+  organizationName: string;
+  orderId: string;
+  orderNumber: string;
+  status: string;
+  statusDisplayValue: string;
+  orderTotal: string;
+  searchTerm: string;
+  productId: string;
+  productCode: string;
+  productName: string;
+  productSlug: string;
+  productImageUrl: string;
+};
+
+export type SalesRepActivityCategoryCountType = { category: string; count: number };
+
+// Per-customer activity summary (VCST-5337). GA-sourced fields are null/0 with
+// `isAnalyticsConfigured: false` when analytics is absent; `createdOn` still comes from the DB.
+export type SalesRepActivityProductType = {
+  code: string;
+  productId: string;
+  name: string;
+  slug: string;
+  imageUrl: string;
+};
+export type SalesRepCustomerActivitySummaryType = {
+  createdOn?: string;
+  lastWebLogin?: string;
+  visitsCount: number;
+  lastSearchTerm: string;
+  lastViewedProduct?: SalesRepActivityProductType;
+  isAnalyticsConfigured: boolean;
+};
+
 // Sales Rep order row, shared by the customer profile and hub dashboard; organizationName backs
 // the dashboard's Customer column.
 export type SalesRepOrderRowType = {

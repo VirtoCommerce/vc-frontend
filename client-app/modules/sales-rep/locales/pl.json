@@ -200,6 +200,59 @@
         "load_failed": "Nie udało się wczytać historii przeglądania"
       }
     },
+    "activity": {
+      "navigation": {
+        "link": "Aktywności"
+      },
+      "page": {
+        "title": "Aktywności",
+        "scoped_to": "Aktywność klienta {organization}"
+      },
+      "tabs": {
+        "all": "Wszystkie",
+        "orders": "Zamówienia",
+        "customers": "Klienci",
+        "searches": "Wyszukiwania",
+        "productViews": "Wyświetlenia produktów",
+        "logins": "Logowania"
+      },
+      "period": {
+        "all_time": "Cały okres",
+        "month": "Ten miesiąc",
+        "year": "Ten rok"
+      },
+      "rows": {
+        "order_placed": "Złożono zamówienie",
+        "customer_assigned": "Przypisano nowego klienta",
+        "searched_for": "Wyszukiwano",
+        "viewed_product": "Wyświetlono",
+        "logins": "{count} logowań | {count} logowanie | {count} logowania | {count} logowań",
+        "count_suffix": "×{count}",
+        "unknown": "Aktywność"
+      },
+      "time": {
+        "during_hour": "{date}, w godzinie {time}"
+      },
+      "caveat": "Wyszukiwania, wyświetlenia produktów i logowania opierają się na śledzonej aktywności sklepu i są przybliżone.",
+      "empty": "Brak aktywności",
+      "no_results": "Brak aktywności w tej kategorii",
+      "load_failed": "Nie udało się załadować aktywności",
+      "view_all": "Cała aktywność",
+      "my_activity": {
+        "title": "Moja aktywność"
+      },
+      "customer": {
+        "title": "Aktywność klienta",
+        "created_on": "Data utworzenia",
+        "last_web_login": "Ostatnie logowanie w sieci",
+        "visits": "Wizyty",
+        "last_search_term": "Ostatnie wyszukiwane hasło",
+        "last_viewed_product": "Ostatnio oglądany produkt",
+        "not_configured": "Aktywność w sieci nie jest jeszcze śledzona — analityka nie jest skonfigurowana dla tego sklepu.",
+        "empty": "Brak danych o aktywności",
+        "load_failed": "Nie udało się załadować aktywności klienta"
+      }
+    },
     "rules": {
       "customer": {
         "filter": {

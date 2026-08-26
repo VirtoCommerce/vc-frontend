@@ -200,6 +200,59 @@
         "load_failed": "Não foi possível carregar o histórico de navegação"
       }
     },
+    "activity": {
+      "navigation": {
+        "link": "Atividades"
+      },
+      "page": {
+        "title": "Atividades",
+        "scoped_to": "Atividade de {organization}"
+      },
+      "tabs": {
+        "all": "Todas",
+        "orders": "Pedidos",
+        "customers": "Clientes",
+        "searches": "Pesquisas",
+        "productViews": "Visualizações de produto",
+        "logins": "Logins"
+      },
+      "period": {
+        "all_time": "Todo o período",
+        "month": "Este mês",
+        "year": "Este ano"
+      },
+      "rows": {
+        "order_placed": "Pedido realizado",
+        "customer_assigned": "Novo cliente atribuído",
+        "searched_for": "Pesquisou por",
+        "viewed_product": "Visualizou",
+        "logins": "{count} login | {count} logins",
+        "count_suffix": "×{count}",
+        "unknown": "Atividade"
+      },
+      "time": {
+        "during_hour": "{date}, durante a hora de {time}"
+      },
+      "caveat": "Pesquisas, visualizações de produto e logins baseiam-se na atividade monitorada da loja e são aproximados.",
+      "empty": "Ainda não há atividade",
+      "no_results": "Nenhuma atividade nesta categoria",
+      "load_failed": "Não foi possível carregar a atividade",
+      "view_all": "Toda a atividade",
+      "my_activity": {
+        "title": "Minha atividade"
+      },
+      "customer": {
+        "title": "Atividade do cliente",
+        "created_on": "Criado em",
+        "last_web_login": "Último login na web",
+        "visits": "Visitas",
+        "last_search_term": "Último termo pesquisado",
+        "last_viewed_product": "Último produto visualizado",
+        "not_configured": "A atividade na web ainda não é monitorada — o analytics não está configurado para esta loja.",
+        "empty": "Sem dados de atividade",
+        "load_failed": "Não foi possível carregar a atividade do cliente"
+      }
+    },
     "rules": {
       "customer": {
         "filter": {

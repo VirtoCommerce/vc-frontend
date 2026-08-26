@@ -1,0 +1,27 @@
+query SalesRepCustomerActivitySummary(
+  $organizationId: String!
+  $storeId: String
+  $cultureName: String
+  $periodFrom: DateTime
+  $periodTo: DateTime
+) {
+  salesRepCustomerActivitySummary(
+    organizationId: $organizationId
+    storeId: $storeId
+    cultureName: $cultureName
+    period: { from: $periodFrom, to: $periodTo }
+  ) {
+    createdOn
+    lastWebLogin
+    visitsCount
+    lastSearchTerm
+    isAnalyticsConfigured
+    lastViewedProduct {
+      code
+      productId
+      name
+      slug
+      imageUrl
+    }
+  }
+}

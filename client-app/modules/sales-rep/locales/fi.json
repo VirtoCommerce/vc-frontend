@@ -200,6 +200,59 @@
         "load_failed": "Selaushistorian lataaminen epäonnistui"
       }
     },
+    "activity": {
+      "navigation": {
+        "link": "Aktiviteetit"
+      },
+      "page": {
+        "title": "Aktiviteetit",
+        "scoped_to": "Aktiviteetti asiakkaalle {organization}"
+      },
+      "tabs": {
+        "all": "Kaikki",
+        "orders": "Tilaukset",
+        "customers": "Asiakkaat",
+        "searches": "Haut",
+        "productViews": "Tuotekatselut",
+        "logins": "Kirjautumiset"
+      },
+      "period": {
+        "all_time": "Koko ajalta",
+        "month": "Tämä kuukausi",
+        "year": "Tämä vuosi"
+      },
+      "rows": {
+        "order_placed": "Tilaus tehty",
+        "customer_assigned": "Uusi asiakas määritetty",
+        "searched_for": "Haki",
+        "viewed_product": "Katseli",
+        "logins": "{count} kirjautuminen | {count} kirjautumista",
+        "count_suffix": "×{count}",
+        "unknown": "Aktiviteetti"
+      },
+      "time": {
+        "during_hour": "{date}, tunnin {time} aikana"
+      },
+      "caveat": "Haut, tuotekatselut ja kirjautumiset perustuvat seurattuun verkkokaupan toimintaan ja ovat likimääräisiä.",
+      "empty": "Ei vielä aktiviteettia",
+      "no_results": "Ei aktiviteettia tässä kategoriassa",
+      "load_failed": "Aktiviteettia ei voitu ladata",
+      "view_all": "Kaikki aktiviteetit",
+      "my_activity": {
+        "title": "Oma aktiviteetti"
+      },
+      "customer": {
+        "title": "Asiakkaan aktiviteetti",
+        "created_on": "Luotu",
+        "last_web_login": "Viimeisin verkkokirjautuminen",
+        "visits": "Käynnit",
+        "last_search_term": "Viimeisin hakusana",
+        "last_viewed_product": "Viimeksi katseltu tuote",
+        "not_configured": "Verkkotoimintaa ei vielä seurata — analytiikkaa ei ole määritetty tälle kaupalle.",
+        "empty": "Ei aktiviteettitietoja",
+        "load_failed": "Asiakkaan aktiviteettia ei voitu ladata"
+      }
+    },
     "rules": {
       "customer": {
         "filter": {

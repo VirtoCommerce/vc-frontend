@@ -200,6 +200,59 @@
         "load_failed": "閲覧履歴を読み込めませんでした"
       }
     },
+    "activity": {
+      "navigation": {
+        "link": "アクティビティ"
+      },
+      "page": {
+        "title": "アクティビティ",
+        "scoped_to": "{organization} のアクティビティ"
+      },
+      "tabs": {
+        "all": "すべて",
+        "orders": "注文",
+        "customers": "顧客",
+        "searches": "検索",
+        "productViews": "商品閲覧",
+        "logins": "ログイン"
+      },
+      "period": {
+        "all_time": "全期間",
+        "month": "今月",
+        "year": "今年"
+      },
+      "rows": {
+        "order_placed": "注文が行われました",
+        "customer_assigned": "新しい顧客が割り当てられました",
+        "searched_for": "検索:",
+        "viewed_product": "閲覧:",
+        "logins": "{count} 回のログイン",
+        "count_suffix": "×{count}",
+        "unknown": "アクティビティ"
+      },
+      "time": {
+        "during_hour": "{date} {time} 台"
+      },
+      "caveat": "検索・商品閲覧・ログインはトラッキングされたストア活動に基づく概算値です。",
+      "empty": "まだアクティビティはありません",
+      "no_results": "このカテゴリにアクティビティはありません",
+      "load_failed": "アクティビティを読み込めませんでした",
+      "view_all": "すべてのアクティビティ",
+      "my_activity": {
+        "title": "マイアクティビティ"
+      },
+      "customer": {
+        "title": "顧客アクティビティ",
+        "created_on": "作成日",
+        "last_web_login": "最終ウェブログイン",
+        "visits": "訪問数",
+        "last_search_term": "最後の検索キーワード",
+        "last_viewed_product": "最後に閲覧した商品",
+        "not_configured": "ウェブ活動はまだトラッキングされていません — このストアにはアナリティクスが設定されていません。",
+        "empty": "アクティビティデータがありません",
+        "load_failed": "顧客アクティビティを読み込めませんでした"
+      }
+    },
     "rules": {
       "customer": {
         "filter": {

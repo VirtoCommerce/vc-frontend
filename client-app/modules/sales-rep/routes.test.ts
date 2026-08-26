@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { customerProfileRoute, dashboardRoute, myCustomersRoute, salesRepsRoute } from "./routes";
+import { activitiesRoute, customerProfileRoute, dashboardRoute, myCustomersRoute, salesRepsRoute } from "./routes";
 
 // The rep-facing hub pages mount under the org-gated "/company" parent but must stay reachable for a
 // sales rep with zero org memberships (their access is `sales-rep:access`, not org membership). They
@@ -9,8 +9,20 @@ describe("sales-rep routes", () => {
     ["dashboard", dashboardRoute],
     ["my customers", myCustomersRoute],
     ["customer profile", customerProfileRoute],
+    ["activities", activitiesRoute],
   ])("clears requiresOrganization on the rep-facing %s route", (_name, route) => {
     expect(route.meta?.requiresOrganization).toBe(false);
+  });
+
+  // The per-customer variant arrives as ?organizationId=; anything else must not reach the page prop.
+  it("maps only a string organizationId query param into the activities page prop", () => {
+    const props = activitiesRoute.props as (route: { query: Record<string, unknown> }) => {
+      organizationId?: string;
+    };
+
+    expect(props({ query: { organizationId: "org1" } })).toEqual({ organizationId: "org1" });
+    expect(props({ query: {} })).toEqual({ organizationId: undefined });
+    expect(props({ query: { organizationId: ["a", "b"] } })).toEqual({ organizationId: undefined });
   });
 
   // No `requiresOrganization: false` override -> it keeps the "/company" parent's org gate.

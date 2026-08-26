@@ -200,6 +200,59 @@
         "load_failed": "无法加载浏览历史"
       }
     },
+    "activity": {
+      "navigation": {
+        "link": "活动"
+      },
+      "page": {
+        "title": "活动",
+        "scoped_to": "{organization} 的活动"
+      },
+      "tabs": {
+        "all": "全部",
+        "orders": "订单",
+        "customers": "客户",
+        "searches": "搜索",
+        "productViews": "商品浏览",
+        "logins": "登录"
+      },
+      "period": {
+        "all_time": "全部时间",
+        "month": "本月",
+        "year": "今年"
+      },
+      "rows": {
+        "order_placed": "已下订单",
+        "customer_assigned": "已分配新客户",
+        "searched_for": "搜索了",
+        "viewed_product": "浏览了",
+        "logins": "{count} 次登录",
+        "count_suffix": "×{count}",
+        "unknown": "活动"
+      },
+      "time": {
+        "during_hour": "{date} {time} 时段内"
+      },
+      "caveat": "搜索、商品浏览和登录基于跟踪到的商店活动，为近似值。",
+      "empty": "暂无活动",
+      "no_results": "此类别暂无活动",
+      "load_failed": "无法加载活动",
+      "view_all": "全部活动",
+      "my_activity": {
+        "title": "我的活动"
+      },
+      "customer": {
+        "title": "客户活动",
+        "created_on": "创建日期",
+        "last_web_login": "最近网站登录",
+        "visits": "访问次数",
+        "last_search_term": "最近搜索词",
+        "last_viewed_product": "最近浏览的商品",
+        "not_configured": "尚未跟踪网站活动 — 此商店未配置分析。",
+        "empty": "暂无活动数据",
+        "load_failed": "无法加载客户活动"
+      }
+    },
     "rules": {
       "customer": {
         "filter": {

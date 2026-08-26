@@ -1,6 +1,8 @@
 import { useUser } from "@/shared/account/composables/useUser";
 import { isSalesRepsEnabled } from "./composables/useSalesRepsConfig";
 import {
+  ACTIVITIES_ROUTE_NAME,
+  ACTIVITIES_ROUTE_SEGMENT,
   CUSTOMER_PROFILE_ROUTE_NAME,
   CUSTOMER_PROFILE_ROUTE_SEGMENT,
   DASHBOARD_ROUTE_NAME,
@@ -17,6 +19,7 @@ const SalesRepsPage = () => import("./pages/sales-reps.vue");
 const MyCustomersPage = () => import("./pages/my-customers.vue");
 const CustomerProfilePage = () => import("./pages/customer-profile.vue");
 const DashboardPage = () => import("./pages/dashboard.vue");
+const ActivitiesPage = () => import("./pages/activities.vue");
 
 // Reps only: reuse the My customers gate (SalesRep.Enabled + sales-rep:access), else -> Dashboard.
 function guardSalesRep(next: (to?: { name: string }) => void): boolean {
@@ -62,6 +65,24 @@ export const myCustomersRoute: RouteRecordRaw = {
   name: MY_CUSTOMERS_ROUTE_NAME,
   component: MyCustomersPage,
   meta: repRouteMeta,
+  // Reps only — non-reps who hit the URL directly are bounced to the dashboard.
+  beforeEnter(_to, _from, next) {
+    if (guardSalesRep(next)) {
+      next();
+    }
+  },
+};
+
+// All-activity feed (VCST-5337) -> /company/activities; ?organizationId= narrows to one customer.
+export const activitiesRoute: RouteRecordRaw = {
+  path: ACTIVITIES_ROUTE_SEGMENT,
+  name: ACTIVITIES_ROUTE_NAME,
+  component: ActivitiesPage,
+  meta: repRouteMeta,
+  // The optional narrowing arrives as a query param; unknown/foreign orgs null server-side.
+  props: (route) => ({
+    organizationId: typeof route.query.organizationId === "string" ? route.query.organizationId : undefined,
+  }),
   // Reps only — non-reps who hit the URL directly are bounced to the dashboard.
   beforeEnter(_to, _from, next) {
     if (guardSalesRep(next)) {

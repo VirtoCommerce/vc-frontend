@@ -38,6 +38,20 @@ export const DASHBOARD_ROUTE_NAME = "SalesRepDashboard";
 export const DASHBOARD_ROUTE_SEGMENT = "dashboard";
 export const DASHBOARD_NAV_LINK_ID = "sales-rep-dashboard";
 
+// All-activity page (VCST-5337); a sibling of the hub pages under "Company".
+export const ACTIVITIES_ROUTE_NAME = "SalesRepActivities";
+export const ACTIVITIES_ROUTE_SEGMENT = "activities";
+export const ACTIVITIES_NAV_LINK_ID = "sales-rep-activities";
+// Backend paging: take defaults to 20 and caps at 50; take 0 returns counts only (backs the tabs).
+export const ACTIVITY_PAGE_SIZE = 20;
+// Compact "My activity" dashboard widget shows the latest few events across all assigned accounts.
+export const MY_ACTIVITY_TAKE = 5;
+// Category vocabulary of salesRepActivities (the backend types it as free-form String). Ordered —
+// the page renders its tabs in this order, whatever order categoryCounts arrives in.
+export const ACTIVITY_CATEGORIES = ["orders", "customers", "searches", "productViews", "logins"] as const;
+// Categories sourced from tracked analytics (hour-precision buckets), named by the caveat line.
+export const GA_ACTIVITY_CATEGORIES = ["searches", "productViews", "logins"] as const;
+
 // Backs the "New orders" card; order filter rules are raw order statuses, so this uses the "New"
 // status (an unrecognized name fails closed — keep it aligned with a real status). The card's label
 // quotes this status name in every locale, so changing it means retranslating those strings too.

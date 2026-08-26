@@ -1,7 +1,7 @@
 import { computed, toValue } from "vue";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
-import { SalesRepCustomerSearchTermsDocument } from "../api/proposed/salesRepCustomerInsights";
+import { SalesRepCustomerSearchTermsDocument } from "../api/graphql/types";
 import { HUB_FETCH_POLICY, INSIGHTS_DEFAULT_ROWS } from "../constants";
 import { useSalesRepHubQuery } from "./useSalesRepHubQuery";
 import type { SalesRepSearchTermRowType } from "../types/insights";
@@ -10,7 +10,7 @@ import type { Ref } from "vue";
 // Expanded unions (not MaybeRefOrGetter<… | undefined>) to avoid the redundant "undefined" — Sonar S4782.
 type UseSalesRepSearchHistoryOptionsType = {
   organizationId: string | Ref<string> | (() => string);
-  // "count" (top) or "date" (recent), from the proposed salesRepCustomerInsights contract.
+  // "count" (top) or "date" (recent), from the salesRepCustomerInsights contract.
   sort?: string | Ref<string | undefined> | (() => string | undefined);
   periodFrom?: string | Ref<string | undefined> | (() => string | undefined);
   periodTo?: string | Ref<string | undefined> | (() => string | undefined);
@@ -39,16 +39,16 @@ export function useSalesRepSearchHistory(options: UseSalesRepSearchHistoryOption
 
   const payload = computed(() => result.value?.salesRepCustomerInsights);
 
-  // Null payload = no insights provider for the store (see the note on the contract type).
+  // Null payload = no insights provider for the store — an expected state, not an error.
   const notConfigured = computed(() => Boolean(result.value) && !payload.value);
 
-  const dataAsOf = computed(() => payload.value?.dataAsOf);
+  const dataAsOf = computed(() => payload.value?.dataAsOf as string | undefined);
 
   const items = computed<SalesRepSearchTermRowType[]>(() =>
     (payload.value?.searchTerms ?? []).map((row) => ({
       term: row.term,
       count: row.count,
-      lastSearchedDate: row.lastSearchedDate,
+      lastSearchedDate: row.lastSearchedDate as string | undefined,
     })),
   );
 

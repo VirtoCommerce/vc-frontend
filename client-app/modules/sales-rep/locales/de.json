@@ -200,6 +200,59 @@
         "load_failed": "Angesehene Produkte konnten nicht geladen werden"
       }
     },
+    "activity": {
+      "navigation": {
+        "link": "Aktivitäten"
+      },
+      "page": {
+        "title": "Aktivitäten",
+        "scoped_to": "Aktivität für {organization}"
+      },
+      "tabs": {
+        "all": "Alle",
+        "orders": "Bestellungen",
+        "customers": "Kunden",
+        "searches": "Suchanfragen",
+        "productViews": "Produktansichten",
+        "logins": "Anmeldungen"
+      },
+      "period": {
+        "all_time": "Gesamter Zeitraum",
+        "month": "Dieser Monat",
+        "year": "Dieses Jahr"
+      },
+      "rows": {
+        "order_placed": "Bestellung aufgegeben",
+        "customer_assigned": "Neuer Kunde zugewiesen",
+        "searched_for": "Gesucht nach",
+        "viewed_product": "Angesehen",
+        "logins": "{count} Anmeldung | {count} Anmeldungen",
+        "count_suffix": "×{count}",
+        "unknown": "Aktivität"
+      },
+      "time": {
+        "during_hour": "{date}, in der Stunde von {time}"
+      },
+      "caveat": "Suchanfragen, Produktansichten und Anmeldungen basieren auf erfasster Storefront-Aktivität und sind Näherungswerte.",
+      "empty": "Noch keine Aktivität",
+      "no_results": "Keine Aktivität in dieser Kategorie",
+      "load_failed": "Aktivität konnte nicht geladen werden",
+      "view_all": "Alle Aktivitäten",
+      "my_activity": {
+        "title": "Meine Aktivität"
+      },
+      "customer": {
+        "title": "Kundenaktivität",
+        "created_on": "Erstellt am",
+        "last_web_login": "Letzte Web-Anmeldung",
+        "visits": "Besuche",
+        "last_search_term": "Letzter Suchbegriff",
+        "last_viewed_product": "Zuletzt angesehenes Produkt",
+        "not_configured": "Web-Aktivität wird noch nicht erfasst — Analytics ist für diesen Store nicht konfiguriert.",
+        "empty": "Keine Aktivitätsdaten",
+        "load_failed": "Kundenaktivität konnte nicht geladen werden"
+      }
+    },
     "rules": {
       "customer": {
         "filter": {

@@ -200,6 +200,59 @@
         "load_failed": "Kunne ikke laste visningshistorikken"
       }
     },
+    "activity": {
+      "navigation": {
+        "link": "Aktiviteter"
+      },
+      "page": {
+        "title": "Aktiviteter",
+        "scoped_to": "Aktivitet for {organization}"
+      },
+      "tabs": {
+        "all": "Alle",
+        "orders": "Ordrer",
+        "customers": "Kunder",
+        "searches": "Søk",
+        "productViews": "Produktvisninger",
+        "logins": "Pålogginger"
+      },
+      "period": {
+        "all_time": "Hele perioden",
+        "month": "Denne måneden",
+        "year": "I år"
+      },
+      "rows": {
+        "order_placed": "Ordre lagt inn",
+        "customer_assigned": "Ny kunde tildelt",
+        "searched_for": "Søkte etter",
+        "viewed_product": "Så på",
+        "logins": "{count} pålogging | {count} pålogginger",
+        "count_suffix": "×{count}",
+        "unknown": "Aktivitet"
+      },
+      "time": {
+        "during_hour": "{date}, i timen {time}"
+      },
+      "caveat": "Søk, produktvisninger og pålogginger er basert på sporet butikkaktivitet og er omtrentlige.",
+      "empty": "Ingen aktivitet ennå",
+      "no_results": "Ingen aktivitet i denne kategorien",
+      "load_failed": "Kunne ikke laste aktivitet",
+      "view_all": "All aktivitet",
+      "my_activity": {
+        "title": "Min aktivitet"
+      },
+      "customer": {
+        "title": "Kundeaktivitet",
+        "created_on": "Opprettet",
+        "last_web_login": "Siste nettpålogging",
+        "visits": "Besøk",
+        "last_search_term": "Siste søkeord",
+        "last_viewed_product": "Sist viste produkt",
+        "not_configured": "Nettaktivitet spores ikke ennå — analyse er ikke konfigurert for denne butikken.",
+        "empty": "Ingen aktivitetsdata",
+        "load_failed": "Kunne ikke laste kundeaktivitet"
+      }
+    },
     "rules": {
       "customer": {
         "filter": {

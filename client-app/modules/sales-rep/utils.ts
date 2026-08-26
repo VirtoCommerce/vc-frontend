@@ -149,6 +149,49 @@ export function formatStatMoney(money?: Pick<MoneyType, "formattedAmount"> | nul
   return new Intl.NumberFormat(globals.cultureName, { style: "currency", currency }).format(0);
 }
 
+// Icon per activity category (canonical Lucide names); unknown categories get a neutral mark so a
+// backend-added category renders instead of breaking the row.
+const ACTIVITY_CATEGORY_ICONS: Readonly<Record<string, string>> = {
+  orders: "file-text",
+  customers: "user-plus",
+  searches: "search",
+  productViews: "eye",
+  logins: "log-in",
+};
+
+export function activityCategoryIcon(category: string): string {
+  return ACTIVITY_CATEGORY_ICONS[category] ?? "activity";
+}
+
+// Relative "time ago" for the compact activity rows, in the active culture. Coarse on purpose:
+// analytics rows are hour-buckets, so anything finer than minutes would imply precision they lack.
+const TIME_AGO_UNITS: readonly { unit: Intl.RelativeTimeFormatUnit; seconds: number }[] = [
+  { unit: "year", seconds: 31536000 },
+  { unit: "month", seconds: 2592000 },
+  { unit: "week", seconds: 604800 },
+  { unit: "day", seconds: 86400 },
+  { unit: "hour", seconds: 3600 },
+  { unit: "minute", seconds: 60 },
+];
+
+export function formatTimeAgo(isoDate: string, now: Date = new Date()): string {
+  const elapsedSeconds = Math.max(0, Math.round((now.getTime() - new Date(isoDate).getTime()) / 1000));
+  const formatter = new Intl.RelativeTimeFormat(globals.cultureName, { numeric: "auto" });
+
+  const match = TIME_AGO_UNITS.find(({ seconds }) => elapsedSeconds >= seconds);
+  if (!match) {
+    // Sub-minute — "now"-style wording comes from numeric: "auto".
+    return formatter.format(0, "minute");
+  }
+
+  return formatter.format(-Math.floor(elapsedSeconds / match.seconds), match.unit);
+}
+
+// Wall-clock hour label ("2:00 PM") for the honest "during the hour of …" phrasing on hour-bucket rows.
+export function formatHourLabel(isoDate: string): string {
+  return new Intl.DateTimeFormat(globals.cultureName, { hour: "numeric", minute: "2-digit" }).format(new Date(isoDate));
+}
+
 // Backend percent is already ×100 and null when the baseline is zero (no delta then); tri-state
 // tone: up = green, down = red/orange, unchanged = neutral.
 export type SignedPercentType = { text: string; tone: StatWidgetToneType; icon: string };

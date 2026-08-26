@@ -200,6 +200,59 @@
         "load_failed": "Couldn't load browse history"
       }
     },
+    "activity": {
+      "navigation": {
+        "link": "Activities"
+      },
+      "page": {
+        "title": "Activities",
+        "scoped_to": "Activity for {organization}"
+      },
+      "tabs": {
+        "all": "All",
+        "orders": "Orders",
+        "customers": "Customers",
+        "searches": "Searches",
+        "productViews": "Product views",
+        "logins": "Logins"
+      },
+      "period": {
+        "all_time": "All time",
+        "month": "This month",
+        "year": "This year"
+      },
+      "rows": {
+        "order_placed": "Order placed",
+        "customer_assigned": "New customer assigned",
+        "searched_for": "Searched for",
+        "viewed_product": "Viewed",
+        "logins": "{count} sign-in | {count} sign-ins",
+        "count_suffix": "×{count}",
+        "unknown": "Activity"
+      },
+      "time": {
+        "during_hour": "{date}, during the hour of {time}"
+      },
+      "caveat": "Searches, product views and sign-ins are based on tracked storefront activity and are approximate.",
+      "empty": "No activity yet",
+      "no_results": "No activity in this category",
+      "load_failed": "Couldn't load activity",
+      "view_all": "All activity",
+      "my_activity": {
+        "title": "My activity"
+      },
+      "customer": {
+        "title": "Customer activity",
+        "created_on": "Created on",
+        "last_web_login": "Last web login",
+        "visits": "Visits",
+        "last_search_term": "Last search term",
+        "last_viewed_product": "Last viewed product",
+        "not_configured": "Web activity isn't tracked yet — analytics is not configured for this store.",
+        "empty": "No activity data",
+        "load_failed": "Couldn't load customer activity"
+      }
+    },
     "rules": {
       "customer": {
         "filter": {

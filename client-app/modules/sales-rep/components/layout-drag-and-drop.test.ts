@@ -449,13 +449,25 @@ describe("widget column drag and drop", () => {
     api.startEdit();
     await nextTick();
 
-    expect(api.visibleIn("mainRight")).toEqual(["actions", "info", "search_history", "browse_history"]);
+    expect(api.visibleIn("mainRight")).toEqual([
+      "actions",
+      "info",
+      "search_history",
+      "browse_history",
+      "customer_activity",
+    ]);
 
     await moveWithin(zones[0], "actions", 1);
 
-    expect(api.visibleIn("mainRight")).toEqual(["info", "actions", "search_history", "browse_history"]);
+    expect(api.visibleIn("mainRight")).toEqual([
+      "info",
+      "actions",
+      "search_history",
+      "browse_history",
+      "customer_activity",
+    ]);
     const ids = blockIds(wrapper);
-    expect(ids).toEqual(["info", "actions", "search_history", "browse_history"]);
+    expect(ids).toEqual(["info", "actions", "search_history", "browse_history", "customer_activity"]);
   });
 
   it("hides a widget with its ✕ and keeps it out of the rendered set", async () => {
@@ -466,7 +478,7 @@ describe("widget column drag and drop", () => {
     await wrapper.find('[data-block-id="actions"] .layout-widget__hide').trigger("click");
 
     expect(api.hiddenIn("mainRight")).toEqual(["actions"]);
-    expect(blockIds(wrapper)).toEqual(["info", "search_history", "browse_history"]);
+    expect(blockIds(wrapper)).toEqual(["info", "search_history", "browse_history", "customer_activity"]);
   });
 
   // ✕ now lives inside the drag surface, so `filter` is the only thing stopping a mousedown on it from
