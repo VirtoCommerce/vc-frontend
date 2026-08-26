@@ -25,6 +25,13 @@ export type CacheTypePoliciesDebugType = {
 const HOST_OWNER = "host";
 /** The host outranks every plugin: its policies are the ones the storefront itself depends on. */
 const HOST_PRIORITY = 100;
+/**
+ * The ceiling for a CALLER-supplied priority. The host seeds its own claims straight into `owners`
+ * below, never through the public function, so capping here costs it nothing and makes the promise
+ * in {@link registerCacheTypePolicies} true: escalation stays available plugin-vs-plugin, and
+ * `>= HOST_PRIORITY` becomes unreachable from outside.
+ */
+const MAX_PLUGIN_PRIORITY = HOST_PRIORITY - 1;
 
 /** Apollo keeps root-type fields under these ids; a root type never becomes a `Query:<id>` entity. */
 const ROOT_IDS: Record<string, string | undefined> = {
@@ -70,7 +77,8 @@ const rejected: CacheTypePolicyRejectionType[] = [];
  *
  * The same owner re-registering its own claim is never a collision: HMR and a second `init()` both
  * land here, and reporting that as a conflict points the reader at a second plugin that does not
- * exist.
+ * exist. That exemption is why `owner` is REQUIRED — a shared default would make two unrelated
+ * plugins the same owner and exempt them from each other.
  */
 function blockedBy(typename: string, key: string, typeLevel: boolean, owner: string, priority: number) {
   const prefix = `${typename}.`;
@@ -130,9 +138,10 @@ function claimWhatIsFree(typename: string, policy: TypePolicy, owner: string, pr
  *
  * One claim, one owner, at the granularity Apollo merges at (see {@link claimsOf} and
  * {@link blockedBy}). A claim held at an equal or higher priority is refused, and only that claim —
- * the rest of the policy, and the rest of the batch, still applies. Pass `owner` so a refusal names
- * someone, and `priority` only when a plugin is deliberately meant to outrank another. The host's
- * own policies sit at {@link HOST_PRIORITY}, so no plugin can take one over.
+ * the rest of the policy, and the rest of the batch, still applies. `owner` is required so a refusal
+ * names someone; pass `priority` only when a plugin is deliberately meant to outrank another. It is
+ * capped at {@link MAX_PLUGIN_PRIORITY}, so the host's own policies at {@link HOST_PRIORITY} cannot
+ * be taken over however high a caller aims.
  *
  * WHAT THIS DOES NOT PROTECT: only the policies the host DECLARES are reserved. The host stores far
  * more typenames than it writes policies for — anything Apollo normalizes by its default `id` rule
@@ -144,12 +153,15 @@ function claimWhatIsFree(typename: string, policy: TypePolicy, owner: string, pr
  */
 export function registerCacheTypePolicies(
   policies: TypePolicies,
-  { owner = "unknown", priority = 0 }: { owner?: string; priority?: number } = {},
+  { owner, priority = 0 }: { owner: string; priority?: number },
 ): void {
+  // Sanitized once, at the boundary: a non-finite priority would make every `>=` comparison in
+  // blockedBy() false and so refuse nothing at all.
+  const effectivePriority = Math.min(Number.isFinite(priority) ? priority : 0, MAX_PLUGIN_PRIORITY);
   const accepted: TypePolicies = {};
 
   for (const [typename, policy] of Object.entries(policies)) {
-    const acceptedPolicy = policy && claimWhatIsFree(typename, policy, owner, priority);
+    const acceptedPolicy = policy && claimWhatIsFree(typename, policy, owner, effectivePriority);
     if (acceptedPolicy && Object.keys(acceptedPolicy).length) {
       accepted[typename] = acceptedPolicy;
     }

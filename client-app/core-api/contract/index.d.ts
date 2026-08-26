@@ -2546,9 +2546,10 @@ declare const apolloClient: ApolloClient<_apollo_client_cache.NormalizedCacheObj
  *
  * One claim, one owner, at the granularity Apollo merges at (see {@link claimsOf} and
  * {@link blockedBy}). A claim held at an equal or higher priority is refused, and only that claim —
- * the rest of the policy, and the rest of the batch, still applies. Pass `owner` so a refusal names
- * someone, and `priority` only when a plugin is deliberately meant to outrank another. The host's
- * own policies sit at {@link HOST_PRIORITY}, so no plugin can take one over.
+ * the rest of the policy, and the rest of the batch, still applies. `owner` is required so a refusal
+ * names someone; pass `priority` only when a plugin is deliberately meant to outrank another. It is
+ * capped at {@link MAX_PLUGIN_PRIORITY}, so the host's own policies at {@link HOST_PRIORITY} cannot
+ * be taken over however high a caller aims.
  *
  * WHAT THIS DOES NOT PROTECT: only the policies the host DECLARES are reserved. The host stores far
  * more typenames than it writes policies for — anything Apollo normalizes by its default `id` rule
@@ -2558,8 +2559,8 @@ declare const apolloClient: ApolloClient<_apollo_client_cache.NormalizedCacheObj
  *
  * In development the ownership map and every refusal are readable as `window.modulesCacheDebug`.
  */
-declare function registerCacheTypePolicies(policies: TypePolicies, { owner, priority }?: {
-    owner?: string;
+declare function registerCacheTypePolicies(policies: TypePolicies, { owner, priority }: {
+    owner: string;
     priority?: number;
 }): void;
 

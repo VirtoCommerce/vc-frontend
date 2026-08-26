@@ -3,7 +3,7 @@
  * filesystem/git — callers supply the facts) and separate from build-types.mjs:
  * that script executes its pipeline on import, so tests can only import THIS module.
  */
-import { gt, satisfies, valid } from "semver";
+import { diff, gt, satisfies, valid } from "semver";
 
 /**
  * Collects PUBLIC exported names from `export { ... }` statements of a rolled-up .d.ts.
@@ -107,12 +107,15 @@ export function decideVersionAction({ changed, baseVersion, currentVersion, remo
     return { action: "require-forward-version", baseVersion, currentVersion, removedExports };
   }
 
-  // The baseline names the level a human is asked for: it is the version already published.
+  // The baseline names the level a human is ASKED for: it is the version already published.
   const { breaking } = policyFor(baseVersion);
 
   if (removedExports.length > 0) {
     if (escapesCaretRange(currentVersion, baseVersion)) {
-      return { action: "none", reason: `${breaking} already bumped` };
+      // What the human actually DID, which is not always the level they were asked for: a bump out
+      // of the 0.x line satisfies a `require-minor` by moving the major, so reporting `breaking`
+      // here would call a 0.9.0 -> 1.0.0 release a minor.
+      return { action: "none", reason: `${diff(baseVersion, currentVersion)} already bumped` };
     }
     return { action: `require-${breaking}`, removedExports };
   }

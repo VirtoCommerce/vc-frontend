@@ -468,6 +468,9 @@ export default defineConfigWithVueTs(
   {
     files: ["client-app/modules/sales-rep/**/*.ts", "client-app/modules/sales-rep/**/*.vue"],
     ignores: [
+      // Waived from NO_RAW_APOLLO_QUERY only - the block at the end of this file restates
+      // NO_HOST_INTERNAL_IMPORT for them, since the two boundary blocks below skip all of sales-rep
+      // and would otherwise leave these paths matching no no-restricted-syntax block at all.
       "client-app/modules/sales-rep/composables/useSalesRepHubQuery.ts",
       "client-app/modules/sales-rep/**/*.test.ts",
     ],
@@ -498,6 +501,20 @@ export default defineConfigWithVueTs(
     ],
     rules: {
       "no-restricted-syntax": ["error", NO_DEEP_SALES_REP_IMPORT, NO_HOST_INTERNAL_IMPORT],
+    },
+  },
+  // The two paths the sales-rep block waives NO_RAW_APOLLO_QUERY for. Every block above either
+  // ignores them or ignores all of sales-rep, so without this they carry no _internal ban - and a
+  // spec travels with the module when it is extracted, so a host component mounted in one breaks
+  // the extraction exactly as a source import would. Last block wins, so this is the whole list
+  // that applies to these files.
+  {
+    files: [
+      "client-app/modules/sales-rep/**/*.test.ts",
+      "client-app/modules/sales-rep/composables/useSalesRepHubQuery.ts",
+    ],
+    rules: {
+      "no-restricted-syntax": ["error", NO_HOST_INTERNAL_IMPORT],
     },
   },
   {

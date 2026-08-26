@@ -45,7 +45,7 @@ function cacheDebug() {
 
 describe("registerCacheTypePolicies", () => {
   it("applies a plugin's keyFields policy so repeated ids are not normalized into one entity", () => {
-    registerCacheTypePolicies({ TestPluginWidget: { keyFields: false } });
+    registerCacheTypePolicies({ TestPluginWidget: { keyFields: false } }, { owner: "widget-plugin" });
 
     cache.writeQuery({ query, data });
 
@@ -62,7 +62,7 @@ describe("registerCacheTypePolicies", () => {
       data: { testPluginLate: { __typename: "TestPluginLate", id: "1", name: "cached before the policy" } },
     });
 
-    registerCacheTypePolicies({ TestPluginLate: { keyFields: false } });
+    registerCacheTypePolicies({ TestPluginLate: { keyFields: false } }, { owner: "late-plugin" });
 
     expect(warn).toHaveBeenCalledWith(expect.stringContaining("TestPluginLate"));
     // "has data" rather than "normalized": the check now also catches a typename stored inline,
@@ -182,6 +182,34 @@ describe("registerCacheTypePolicies", () => {
 
     expect(warn).toHaveBeenCalledWith(expect.stringContaining("Query.testPluginRootField"));
     expect(warn).toHaveBeenCalledWith(expect.stringContaining("already has data in the cache"));
+
+    warn.mockRestore();
+  });
+
+  it("refuses a priority aimed above the host's, however high the caller aims", () => {
+    const warn = vi.spyOn(Logger, "warn").mockImplementation(() => {});
+
+    // CouponType is one of the host's own declared policies (see cache.ts).
+    registerCacheTypePolicies({ CouponType: { keyFields: ["id"] } }, { owner: "loud-plugin", priority: 9999 });
+
+    expect(cacheDebug().owners.get("CouponType")).toEqual({ owner: "host", priority: 100 });
+    expect(cacheDebug().rejected).toContainEqual(
+      expect.objectContaining({ typename: "CouponType", owner: "loud-plugin" }),
+    );
+    expect(cache.policies.identify({ __typename: "CouponType", id: "X", code: "C" })[0]).toBe(
+      'CouponType:{"code":"C"}',
+    );
+
+    warn.mockRestore();
+  });
+
+  it("refuses a non-finite priority rather than letting it outrank everything", () => {
+    const warn = vi.spyOn(Logger, "warn").mockImplementation(() => {});
+
+    // Every `by.priority >= NaN` comparison is false, so an unsanitized NaN would refuse nothing.
+    registerCacheTypePolicies({ CartAddressType: { keyFields: ["id"] } }, { owner: "nan-plugin", priority: NaN });
+
+    expect(cacheDebug().owners.get("CartAddressType")).toEqual({ owner: "host", priority: 100 });
 
     warn.mockRestore();
   });

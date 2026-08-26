@@ -14,7 +14,9 @@
 </template>
 
 <script lang="ts">
+import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import type { ExtensionCategoryType } from "@/shared/common/types/extensionRegistry";
+import ExtensionPoint from "@/shared/common/components/extension-point.vue";
 
 // `generic` makes the generated component type reference this interface, and <script setup>
 // cannot carry ES exports.
@@ -25,9 +27,6 @@ export interface IProps<C extends ExtensionCategoryType> {
 </script>
 
 <script setup lang="ts" generic="C extends ExtensionCategoryType">
-import ExtensionPoint from "@/shared/common/components/extension-point.vue";
-import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
-
 defineOptions({
   inheritAttrs: false,
 });

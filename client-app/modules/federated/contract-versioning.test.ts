@@ -119,7 +119,9 @@ describe("decideVersionAction", () => {
           currentVersion: "1.0.0",
           removedExports: ["VcButton"],
         }),
-      ).toEqual({ action: "none", reason: "minor already bumped" });
+        // The pre-1.0 policy ASKS for a minor, and a promotion to 1.0.0 satisfies it by moving the
+        // major instead. The reason names the bump that happened, not the one that was required.
+      ).toEqual({ action: "none", reason: "major already bumped" });
     });
   });
 
