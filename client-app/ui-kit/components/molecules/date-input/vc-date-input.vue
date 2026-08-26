@@ -18,9 +18,7 @@
     :tabindex="tabindex"
     :clearable="clearable"
     :test-id-input="dataTestId"
-    :no-border="noBorder"
     :seamless="seamless"
-    :align="align"
     :hide-details="hideDetails"
     @blur="onInputBlur"
     @focus="onInputFocus"
@@ -51,30 +49,41 @@ import {
 import type { VcDateFieldUpdateOnType } from "@/ui-kit/composables";
 
 interface IProps {
+  /** ISO YYYY-MM-DD canonical value. */
   modelValue?: string;
   size?: VcInputSizeType;
   label?: string;
+  /** Override the auto-derived locale hint (e.g. "MM/DD/YYYY"). */
   placeholder?: string;
   name?: string;
   disabled?: boolean;
   readonly?: boolean;
   required?: boolean;
+  /** Info/help text. Shown when no validation error is active. */
   message?: string;
+  /** External error flag (e.g. from vee-validate). Overrides internal validation display. */
   error?: boolean;
+  /** ISO YYYY-MM-DD min boundary. */
   min?: string;
+  /** ISO YYYY-MM-DD max boundary. */
   max?: string;
+  /** Predicate that returns true to mark a date unavailable. Receives ISO YYYY-MM-DD. */
   disabledDate?: VcCalendarDisabledDateType;
+  /** Override locale; defaults to i18n's active locale. */
   locale?: string;
+  /** When to commit user input. Default "blur". Enter always commits regardless. */
   updateOn?: VcDateFieldUpdateOnType;
+  /** Apply a locale-aware input mask. Default false. Paste of ISO or locale-short dates is reformatted; other paste flows through the mask. */
   mask?: boolean;
   clearable?: boolean;
   ariaLabel?: string;
+  /** Additional ARIA attributes forwarded to the underlying input element. */
   aria?: Record<string, string | number | null>;
   tabindex?: string | number;
   dataTestId?: string;
-  noBorder?: boolean;
+  /** Strip border, background, focus ring and fixed height so a parent shell can own the chrome. Pair with `hideDetails`. */
   seamless?: boolean;
-  align?: VcInputAlignType;
+  /** Drop the details row (message/error text) so a parent can render one for a group of fields. */
   hideDetails?: boolean;
 }
 
@@ -92,9 +101,7 @@ const emit = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   size: "md",
   updateOn: "blur",
-  noBorder: false,
   seamless: false,
-  align: "start",
   hideDetails: false,
 });
 
@@ -158,9 +165,13 @@ function onInputClear(): void {
 const inputRef = useTemplateRef<{ inputElement: HTMLInputElement | null } | null>("inputRef");
 const innerInputElement = computed<HTMLInputElement | null>(() => inputRef.value?.inputElement ?? null);
 
+// Uncommitted text never reaches the model; shells gating a clear affordance need the display state too.
+const hasText = computed<boolean>(() => displayValue.value.trim().length > 0);
+
 defineExpose({
   inputElement: innerInputElement,
   reset,
+  hasText,
 });
 
 // maska's transform corrupts a well-formed pasted date, so intercept paste ahead of it.

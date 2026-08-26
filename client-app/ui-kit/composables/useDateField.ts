@@ -1,24 +1,32 @@
 import { computed, ref, toValue, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { Logger } from "@/core/utilities";
-import { tryParseDate } from "@/ui-kit/components/molecules/calendar/use-calendar-base";
-import { formatDateLocale, parseDateInput } from "@/ui-kit/utilities/date";
+import { formatDateLocale, parseDateInput, tryParseDate } from "@/ui-kit/utilities/date";
 import type { CalendarDate } from "@internationalized/date";
 import type { MaybeRef, Ref } from "vue";
 
 export type VcDateFieldUpdateOnType = "blur" | "enter";
 
 export interface IUseDateFieldOptions {
+  /** ISO YYYY-MM-DD from parent (the source of truth). */
   modelValue: Ref<string | undefined>;
+  /** Optional locale override; falls back to the i18n locale. */
   locale?: Ref<string | undefined>;
+  /** When to commit user input. Default "blur". Enter always commits regardless. */
   updateOn?: MaybeRef<VcDateFieldUpdateOnType>;
+  /** ISO YYYY-MM-DD min boundary. */
   min?: Ref<string | undefined>;
+  /** ISO YYYY-MM-DD max boundary. */
   max?: Ref<string | undefined>;
+  /** Predicate that returns true to mark a date unavailable. Receives ISO YYYY-MM-DD. */
   disabledDate?: Ref<VcCalendarDisabledDateType | undefined>;
   onCommit: (iso: string | undefined) => void;
 }
 
-/** Holds invalid input in `displayValue` until corrected; only valid dates reach `onCommit`. */
+/**
+ * Owns the locale-formatted display text for a date-text input and commits canonical ISO upstream.
+ * Invalid input is held in `displayValue` until corrected — `onCommit` is not called for it.
+ */
 export function useDateField(opts: IUseDateFieldOptions) {
   const { t, locale: i18nLocale } = useI18n();
 
@@ -166,7 +174,7 @@ export function useDateField(opts: IUseDateFieldOptions) {
     onEnter,
     onClear,
     reset,
-    /** Commits unconditionally, bypassing `updateOn`. */
+    /** Commit displayValue unconditionally (bypasses `updateOn`). Used for programmatic commits like paste. */
     commit,
   };
 }

@@ -59,7 +59,7 @@
     :enable-teleport="enableTeleport"
     role="dialog"
     :aria-label="t('ui_kit.accessibility.calendar')"
-    @toggle="onPopoverToggle"
+    @toggle="onToggle"
   >
     <template #default="{ toggle, triggerProps, close, opened }">
       <VcDateRangeInput
@@ -131,47 +131,83 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, ref, useTemplateRef, watch } from "vue";
+import { computed, ref, useTemplateRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { useComponentId, useDateRangeField } from "@/ui-kit/composables";
-import { crossedFocusBoundary } from "@/ui-kit/utilities/focus";
+import { useCalendarPopover, useComponentId, useDateRangeField } from "@/ui-kit/composables";
+import { shellFocusEntered, shellFocusLeft } from "@/ui-kit/utilities/focus";
 import type { VcDateFieldUpdateOnType } from "@/ui-kit/composables";
 
 interface IProps {
+  /** Both endpoints as ISO YYYY-MM-DD. Either side may be undefined — a partial range is valid. */
   modelValue?: VcDateRangeType;
   size?: VcInputSizeType;
+  /** Group label. In "split" it labels the pair; in "combined" it labels the single field. */
   label?: string;
+  /** Start field label. Visible text in "split"; an aria-label on the segment in "combined". */
   startLabel?: string;
+  /** End field label. Visible text in "split"; an aria-label on the segment in "combined". */
   endLabel?: string;
+  /** Override the auto-derived locale hint on the start field (e.g. "MM/DD/YYYY"). */
   startPlaceholder?: string;
+  /** Override the auto-derived locale hint on the end field. */
   endPlaceholder?: string;
+  /** Base form name; the two fields get `-start` / `-end` suffixes. */
   name?: string;
   disabled?: boolean;
   readonly?: boolean;
   required?: boolean;
+  /** Info/help text for the shared details row. Shown when no validation error is active. */
   message?: string;
+  /** External error flag (e.g. from vee-validate). Overrides internal validation display. */
   error?: boolean;
+  /**
+   * ISO YYYY-MM-DD min boundary. Gates both fields plus the calendar behind them — the single range
+   * calendar in "combined", each field's own calendar in "split".
+   */
   min?: string;
+  /** ISO YYYY-MM-DD max boundary. See `min`. */
   max?: string;
+  /** Predicate that returns true to mark a date unavailable (greyed out). Receives ISO YYYY-MM-DD. */
   disabledDate?: VcCalendarDisabledDateType;
+  /** Override locale; defaults to active i18n locale. */
   locale?: string;
+  /** When to commit typed input. Default "blur". Enter always commits. */
   updateOn?: VcDateFieldUpdateOnType;
+  /** Apply a locale-aware input mask on the text inputs. See VcDateInput for semantics. */
   mask?: boolean;
+  /**
+   * Show a clear affordance. "combined" gets ONE shell-level button that resets both endpoints;
+   * "split" forwards it to each field, so each button clears only its own endpoint.
+   */
   clearable?: boolean;
+  /** Teleport the popover into #popover-host — use inside clipping containers (modal, overflow:hidden). */
   enableTeleport?: boolean;
+  /** Show the calendar footer: Clear in "combined", Today + Clear in "split"'s single-date calendars. */
   showFooter?: boolean;
   firstDayOfWeek?: VcCalendarFirstDayOfWeekType;
   weekdayFormat?: VcCalendarWeekdayFormatType;
+  /**
+   * Close the popover once a range is selected via calendar. Default true.
+   * "combined" closes only after BOTH endpoints are picked; "split" closes each field on its own pick.
+   */
   closeOnSelect?: boolean;
+  /**
+   * Popover placement relative to the field. Default "bottom-end". In "split" a top/bottom placement
+   * is start-aligned for the start field's calendar; side placements pass through unchanged.
+   */
   placement?: VcPopoverPlacementType;
+  /** "combined" = one field with two segments and one range calendar. "split" = two labelled VcDatePickers. */
   layout?: VcDateRangePickerLayoutType;
   dataTestId?: string;
 }
 
 interface IEmits {
   (event: "update:modelValue", value: VcDateRangeType | undefined): void;
+  /** Both endpoints parse AND `start <= end`. Empty and partial ranges report true. */
   (event: "update:valid", value: boolean): void;
+  /** Focus left the whole control; moves between its own fields, buttons and calendar are not reported. */
   (event: "blur", focusEvent: FocusEvent): void;
+  /** Focus entered the whole control; see `blur` for the boundary rule. */
   (event: "focus", focusEvent: FocusEvent): void;
   (event: "clear"): void;
 }
@@ -187,8 +223,19 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const { t } = useI18n();
 
-const rangeInputRef = useTemplateRef<{ startInputElement: HTMLInputElement | null } | null>("rangeInputRef");
+const rangeInputRef = useTemplateRef<{
+  startInputElement: HTMLInputElement | null;
+  resetSegments: () => void;
+} | null>("rangeInputRef");
 const calendarRef = useTemplateRef<{ focusActiveCell: () => void; $el?: Element | null } | null>("calendarRef");
+
+const { calendarSize, focusField, onToggle, onEscapeClose, onFieldEscape, onTriggerEscape } = useCalendarPopover({
+  size: () => props.size,
+  getFocusTarget: () => rangeInputRef.value?.startInputElement,
+  getCalendar: () => calendarRef.value,
+});
+
+const detailsId = useComponentId("date-range-picker") + "-details";
 
 // "split" fields are hide-details, so the picker owns range validity; "combined" delegates to VcDateRangeInput.
 const {
@@ -196,6 +243,7 @@ const {
   computedError,
   computedMessage,
   orderValid,
+  segmentAria,
   setSegmentValid,
   setSegmentErrorText,
   mergeRange,
@@ -203,11 +251,12 @@ const {
   modelValue: () => props.modelValue,
   error: () => props.error,
   message: () => props.message,
+  required: () => props.required,
+  detailsId,
 });
 
-const detailsId = useComponentId("date-range-picker") + "-details";
-
-const inputValid = ref(true);
+// Seeded from the order check so an out-of-order initial model never reports a transient true.
+const inputValid = ref(orderValid.value);
 const aggregatedValid = computed<boolean>(() => {
   if (props.layout === "split") {
     return splitValid.value;
@@ -217,10 +266,14 @@ const aggregatedValid = computed<boolean>(() => {
 watch(aggregatedValid, (value) => emit("update:valid", value), { immediate: true });
 
 // Clamped to the opposite endpoint so the calendars cannot pick an out-of-order range.
-// An already out-of-order range is exempt: clamping there disables every day of the month it opens on.
+// The clamp is dropped whenever it would cross the caller's own opposite bound — an out-of-order
+// range, or an endpoint outside [min, max]: clamping there disables every day of every reachable month.
 const startMax = computed<string | undefined>(() => {
   const end = props.modelValue?.end;
   if (!end || !orderValid.value) {
+    return props.max;
+  }
+  if (props.min && end < props.min) {
     return props.max;
   }
   if (!props.max) {
@@ -235,6 +288,9 @@ const startMax = computed<string | undefined>(() => {
 const endMin = computed<string | undefined>(() => {
   const start = props.modelValue?.start;
   if (!start || !orderValid.value) {
+    return props.min;
+  }
+  if (props.max && start > props.max) {
     return props.min;
   }
   if (!props.min) {
@@ -257,12 +313,7 @@ const startPlacement = computed<VcPopoverPlacementType>(() => {
 
 const sharedFieldProps = computed(() => ({
   hideDetails: true,
-  aria: {
-    "aria-invalid": computedError.value ? "true" : "false",
-    "aria-describedby": computedMessage.value ? detailsId : null,
-    // The asterisk lives on the group label only.
-    "aria-required": props.required ? "true" : null,
-  },
+  aria: segmentAria.value,
   size: props.size,
   disabled: props.disabled,
   readonly: props.readonly,
@@ -289,13 +340,6 @@ function sideAttr(value: string | undefined, side: "start" | "end"): string | un
   return `${value}-${side}`;
 }
 
-const calendarSize = computed<VcCalendarSizeType>(() => {
-  if (props.size === "auto") {
-    return "md";
-  }
-  return props.size;
-});
-
 function toggleAriaControls(triggerProps: Record<string, unknown>): string | undefined {
   const controls = triggerProps["aria-controls"];
   return typeof controls === "string" ? controls : undefined;
@@ -321,53 +365,16 @@ function onSegment(which: "start" | "end", value: string | undefined): void {
   emit("update:modelValue", mergeRange(which, value));
 }
 
-// Shell-level: ignore focus moves between the two fields and their calendar buttons.
 function onFocusIn(event: FocusEvent): void {
-  if (crossedFocusBoundary(event)) {
+  if (shellFocusEntered(event)) {
     emit("focus", event);
   }
 }
 
 function onFocusOut(event: FocusEvent): void {
-  if (crossedFocusBoundary(event)) {
+  if (shellFocusLeft(event)) {
     emit("blur", event);
   }
-}
-
-function onPopoverToggle(opened: boolean): void {
-  if (!opened) {
-    // Trigger-click / click-outside closes skip onEscapeClose; focus would stay in the hidden popover.
-    const calendarEl = calendarRef.value?.$el;
-    if (calendarEl instanceof HTMLElement && calendarEl.contains(document.activeElement)) {
-      rangeInputRef.value?.startInputElement?.focus();
-    }
-    return;
-  }
-  void nextTick(() => {
-    calendarRef.value?.focusActiveCell();
-  });
-}
-
-// Escape must keep propagating to outer dismissible layers (dialogs, sidebars) while the popover is closed.
-function onFieldEscape(event: Event, opened: boolean, close: () => void): void {
-  if (!opened) {
-    return;
-  }
-  event.stopPropagation();
-  close();
-}
-
-function onTriggerEscape(event: Event, opened: boolean, close: () => void): void {
-  if (!opened) {
-    return;
-  }
-  event.stopPropagation();
-  onEscapeClose(close);
-}
-
-function onEscapeClose(close: () => void): void {
-  close();
-  rangeInputRef.value?.startInputElement?.focus();
 }
 
 function onCalendarUpdate(close: () => void, value: VcDateRangeType | undefined): void {
@@ -378,21 +385,27 @@ function onCalendarUpdate(close: () => void, value: VcDateRangeType | undefined)
   // Close only once BOTH endpoints are committed, not after the anchor.
   if (props.closeOnSelect && value?.start && value?.end) {
     close();
-    rangeInputRef.value?.startInputElement?.focus();
+    focusField();
   }
 }
 
 // The model update alone can't drive this: clearing an already-empty range emits nothing.
 function onCalendarClear(close: () => void): void {
+  emit("clear");
+  // Uncommitted segment text isn't cleared by the model round trip, exactly as in clearBoth.
+  rangeInputRef.value?.resetSegments();
   if (props.closeOnSelect) {
     close();
-    rangeInputRef.value?.startInputElement?.focus();
+    focusField();
   }
 }
 </script>
 
 <style lang="scss">
 .vc-date-range-picker {
+  // Below this width the split row stacks; container queries can't read CSS custom properties.
+  $fields-stack-breakpoint: 22rem;
+
   --field-height: theme("spacing.11");
 
   &--size {
@@ -424,8 +437,8 @@ function onCalendarClear(close: () => void): void {
   &__fields {
     @apply flex items-end gap-2;
 
-    // Side by side, the two placeholder-width fields need ~250px; narrower than that they stack rather than truncate.
-    @container (width < 22rem) {
+    // Side by side, the two placeholder-width fields need 22rem (352px); narrower than that they stack rather than truncate.
+    @container (width < #{$fields-stack-breakpoint}) {
       @apply flex-col items-stretch;
     }
   }
@@ -434,7 +447,7 @@ function onCalendarClear(close: () => void): void {
     @apply grow shrink basis-0 min-w-0;
 
     // basis-0 sizes the main axis, which is height once stacked.
-    @container (width < 22rem) {
+    @container (width < #{$fields-stack-breakpoint}) {
       @apply basis-auto;
     }
   }
@@ -443,7 +456,7 @@ function onCalendarClear(close: () => void): void {
   &__separator {
     @apply flex shrink-0 items-center text-neutral-400 select-none h-[--field-height];
 
-    @container (width < 22rem) {
+    @container (width < #{$fields-stack-breakpoint}) {
       @apply hidden;
     }
   }

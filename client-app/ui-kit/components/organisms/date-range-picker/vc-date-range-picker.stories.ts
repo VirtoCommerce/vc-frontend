@@ -2,7 +2,7 @@ import { ref } from "vue";
 import VcDateRangePicker from "./vc-date-range-picker.vue";
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
-const SIZES = ["sm", "md"];
+const SIZES = ["xs", "sm", "md", "auto"];
 const LAYOUTS = ["combined", "split"];
 const PLACEMENTS = [
   "top",
@@ -27,7 +27,7 @@ const meta: Meta<typeof VcDateRangePicker> = {
     docs: {
       description: {
         component:
-          'Date-range picker organism composing `VcDateRangeInput`, a calendar trigger button (`VcButton` in the input\'s append slot), and a `VcPopover` anchored to the input that hosts a `VcRangeCalendar`. ARIA: the combobox semantics live on the calendar toggle button (`aria-haspopup="dialog"`, `aria-expanded`), not on the segment inputs — the popover content carries `role="dialog"` with a localized `aria-label`. Picking the SECOND endpoint via the calendar closes the popover by default (`closeOnSelect`) and returns focus to the input; picking the first (anchor) endpoint keeps it open.',
+          'Date-range picker organism composing `VcDateRangeInput`, a calendar trigger button (`VcButton` in the input\'s append slot), and a `VcPopover` anchored to the input that hosts a `VcRangeCalendar`. That is the default `combined` layout; `split` composes two `VcDatePicker`s instead (see the Split story). ARIA: the popup semantics live on the calendar toggle button (`aria-haspopup="dialog"`, `aria-expanded`, `aria-controls`), not on the segment inputs, which stay plain textboxes — the popover content carries `role="dialog"` with a localized `aria-label`. Picking the SECOND endpoint via the calendar closes the popover by default (`closeOnSelect`) and returns focus to the input; picking the first (anchor) endpoint keeps it open.',
       },
     },
   },
@@ -155,7 +155,7 @@ export const Split: StoryType = {
     docs: {
       description: {
         story:
-          '`layout="split"` renders two independent `VcDatePicker`s with visible `startLabel` / `endLabel`, an en dash between them and ONE shared details row. Each calendar is cross-bounded by the opposite endpoint — the start calendar cannot go past the current end date and vice versa — so an out-of-order range is unreachable by mouse. Typing one is still possible, and surfaces the `invalid_range` message in the shared details row.',
+          '`layout="split"` renders two independent `VcDatePicker`s with visible `startLabel` / `endLabel`, an en dash between them and ONE shared details row. `clearable` is forwarded to both fields, so each renders its own clear button that resets only its endpoint. While the range is in order AND both endpoints sit inside the `min` / `max` given to the picker, each calendar is cross-bounded by the opposite endpoint — the start calendar cannot go past the current end date and vice versa — so a mouse pick cannot break the order. The cross-bound is deliberately dropped whenever it would fight those outer bounds (an out-of-order range, or an endpoint outside `min` / `max`), because clamping there would disable every day of every reachable month; in that state a mouse pick can produce an out-of-order range. Typing one is always possible. Either way it surfaces the `invalid_range` message in the shared details row.',
       },
       source: {
         code: `

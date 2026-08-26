@@ -37,12 +37,12 @@ describe("DateFilterSelect", () => {
     expect(change.endDate).toBe("2026-10-14");
   });
 
-  it("keeps a one-sided range valid", async () => {
+  it("re-emits update:valid from the range picker", async () => {
     const wrapper = mountWithCustomSelected();
     const picker = wrapper.findComponent({ name: "VcDateRangePicker" });
-    picker.vm.$emit("update:modelValue", { start: "2026-10-08", end: undefined });
+    picker.vm.$emit("update:valid", false);
     await wrapper.vm.$nextTick();
-    expect(wrapper.emitted("change")?.at(-1)).toBeTruthy();
+    expect(wrapper.emitted("update:valid")?.at(-1)?.[0]).toBe(false);
   });
 
   it("forwards layout to the range picker", () => {

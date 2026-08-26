@@ -4,7 +4,6 @@ import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
 const SIZES = ["xs", "sm", "md", "auto"];
 const TYPES = ["text", "password", "number"];
-const ALIGNS = ["start", "center", "end"];
 
 const meta: Meta = {
   title: "Components/Molecules/VcInput",
@@ -42,13 +41,6 @@ const meta: Meta = {
         },
       },
     },
-    align: {
-      control: "inline-radio",
-      options: ALIGNS,
-      description:
-        "Logical text alignment (RTL-safe: `end` renders right in LTR, left in RTL). Use `center` for composed segments (e.g. date parts) and `end` for numeric/currency values. Overlaps with the deprecated `center` prop — if both are set, `align` wins because its CSS rule comes later in the stylesheet.",
-      table: { type: { summary: ALIGNS.join(" | ") }, defaultValue: { summary: "start" } },
-    },
     seamless: {
       control: "boolean",
       description:
@@ -75,12 +67,8 @@ const meta: Meta = {
         "Truncates overflowing text with an ellipsis instead of wrapping. Only visible when narrower than its content.",
     },
     center: {
-      control: false,
-      description: 'DEPRECATED: use `align="center"` instead.',
-      table: {
-        category: "Deprecated",
-        type: { summary: "boolean" },
-      },
+      control: "boolean",
+      description: "Centres the input text. Use it for composed segments (e.g. date parts) rather than page-wide.",
     },
     min: { table: { type: { summary: "string|number" } } },
     max: { table: { type: { summary: "string|number" } } },
@@ -105,7 +93,6 @@ const meta: Meta = {
     showEmptyDetails: false,
     type: "text",
     size: "md",
-    align: "start",
     seamless: false,
     hideDetails: false,
     truncate: false,
@@ -317,23 +304,22 @@ export const Readonly: StoryType = {
   },
 };
 
-export const Align: StoryType = {
+export const Center: StoryType = {
   render: () => ({
     components: { VcInput },
     template: `<div class="space-y-4">
-      <VcInput label="start (default)" align="start" model-value="123.45" />
-      <VcInput label="center" align="center" model-value="123.45" />
-      <VcInput label="end" align="end" model-value="123.45" />
+      <VcInput label="default" model-value="123.45" />
+      <VcInput label="center" center model-value="123.45" />
     </div>`,
   }),
   parameters: {
     docs: {
       description: {
         story:
-          "Logical alignment, RTL-safe (`end` renders right in LTR, left in RTL — never hard-code `text-right`/`text-left` on top of this). Use `center` when composing multiple segments into one field (e.g. VcDateRangeInput's date parts) and `end` for numeric/currency values. Supersedes the deprecated `center` boolean.",
+          "`center` centres the input text. It is meant for narrow composed fields (quantity steppers, add-to-cart), not for ordinary page inputs where start-aligned text reads better.",
       },
       source: {
-        code: `<VcInput label="Quantity" align="end" v-model="value" />`,
+        code: `<VcInput label="Quantity" center v-model="value" />`,
       },
     },
   },
@@ -351,9 +337,9 @@ export const Seamless: StoryType = {
       <div>
         <div class="mb-2 text-sm font-medium text-neutral-700">Correct usage — composed inside one shared shell</div>
         <div class="flex h-11 items-center rounded-lg border border-neutral-400 bg-additional-50 p-0.5">
-          <VcInput seamless align="center" hide-details placeholder="Start" class="flex-1" />
+          <VcInput seamless hide-details placeholder="Start" class="flex-1" />
           <span class="px-1 text-neutral-400" aria-hidden="true">–</span>
-          <VcInput seamless align="center" hide-details placeholder="End" class="flex-1" />
+          <VcInput seamless hide-details placeholder="End" class="flex-1" />
         </div>
       </div>
 
@@ -388,13 +374,13 @@ export const Seamless: StoryType = {
     docs: {
       description: {
         story:
-          '`seamless` strips border, background, focus ring, and fixed height — it is a composition primitive, not a standalone style, so it looks broken used bare on a page (top example). The real use case is embedding one or more segments inside a single parent-owned bordered shell that supplies the chrome instead — see VcDateRangeInput, which renders two `seamless align="center" hide-details` segments inside one shared shell. The `message`/`counter` row is an independent concern from the chrome: `seamless` alone still renders it for both `message` (bottom-left) and `counter` (bottom-center) — only pair it with `hide-details` (bottom-right) when the parent owns error display and description association itself.',
+          "`seamless` strips border, background, focus ring, and fixed height — it is a composition primitive, not a standalone style, so it looks broken used bare on a page (top example). The real use case is embedding one or more segments inside a single parent-owned bordered shell that supplies the chrome instead — see VcDateRangeInput, which renders two `seamless hide-details` segments inside one shared shell. The `message`/`counter` row is an independent concern from the chrome: `seamless` alone still renders it for both `message` (bottom-left) and `counter` (bottom-center) — only pair it with `hide-details` (bottom-right) when the parent owns error display and description association itself.",
       },
       source: {
         code: `<div class="flex h-11 items-center rounded-lg border border-neutral-400 bg-additional-50 p-0.5">
-  <VcInput seamless align="center" hide-details v-model="range.start" class="flex-1" />
+  <VcInput seamless hide-details v-model="range.start" class="flex-1" />
   <span aria-hidden="true">–</span>
-  <VcInput seamless align="center" hide-details v-model="range.end" class="flex-1" />
+  <VcInput seamless hide-details v-model="range.end" class="flex-1" />
 </div>`,
       },
     },
@@ -572,9 +558,6 @@ export const WithMessageAndCounter: StoryType = {
 const DATE_TYPE_DEPRECATION =
   '`type="date"` is deprecated — use **VcDatePicker** (calendar popover) or **VcDateInput** (input-only) instead. It still renders for backward compatibility and emits a one-time dev console warning.';
 
-const CENTER_DEPRECATION =
-  '`center` is deprecated — use `align="center"` instead. Both still work, but if both are set, `align` wins: its CSS rule comes later in the stylesheet and overrides `center` when they disagree.';
-
 export const Deprecations: StoryType = {
   tags: ["deprecated"],
   parameters: {
@@ -586,17 +569,12 @@ export const Deprecations: StoryType = {
   },
   render: () => ({
     components: { VcInput, VcAlert, VcMarkdownRender },
-    setup: () => ({ dateMessage: DATE_TYPE_DEPRECATION, centerMessage: CENTER_DEPRECATION }),
+    setup: () => ({ dateMessage: DATE_TYPE_DEPRECATION }),
     template: `<div class="space-y-3">
       <VcAlert color="warning" variant="outline" icon title="Deprecated">
         <VcMarkdownRender :src="dateMessage" />
       </VcAlert>
       <VcInput type="date" label="Date input (deprecated)" />
-
-      <VcAlert color="warning" variant="outline" icon title="Deprecated">
-        <VcMarkdownRender :src="centerMessage" />
-      </VcAlert>
-      <VcInput label="Legacy center prop (still works)" center placeholder="Centered text" />
     </div>`,
   }),
 };

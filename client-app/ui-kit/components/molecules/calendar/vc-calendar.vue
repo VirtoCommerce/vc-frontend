@@ -98,7 +98,6 @@
 </template>
 
 <script setup lang="ts">
-import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from "@internationalized/date";
 import {
   CalendarCell,
   CalendarCellTrigger,
@@ -112,9 +111,10 @@ import {
   CalendarPrev,
   CalendarRoot,
 } from "reka-ui";
-import { computed, nextTick, toRef, useTemplateRef, watch } from "vue";
+import { computed, toRef, useTemplateRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { dateValueToIso, todayDate, tryParseDate, useCalendarBase } from "./use-calendar-base";
+import { tryParseDate } from "@/ui-kit/utilities/date";
+import { dateValueToIso, todayDate, useCalendarBase } from "./use-calendar-base";
 import type { DateValue } from "@internationalized/date";
 import type { ComponentPublicInstance } from "vue";
 
@@ -156,12 +156,20 @@ function getInitialPlaceholder(): DateValue {
 
 const { t } = useI18n();
 
+// reka's CalendarRoot forwards its root element via `$el`.
+const calendarRootRef = useTemplateRef<ComponentPublicInstance | null>("calendarRootRef");
+
+const parsedModelValue = computed<DateValue | undefined>(() => tryParseDate(props.modelValue));
+
 const base = useCalendarBase({
   locale: toRef(props, "locale"),
   min: toRef(props, "min"),
   max: toRef(props, "max"),
   disabledDate: toRef(props, "disabledDate"),
+  firstDayOfWeek: toRef(props, "firstDayOfWeek"),
   initialPlaceholder: getInitialPlaceholder,
+  getRoot: () => calendarRootRef.value?.$el as Element | null | undefined,
+  getSelectedIso: () => parsedModelValue.value?.toString(),
 });
 
 const {
@@ -175,14 +183,12 @@ const {
   onPlaceholderUpdate,
   goToPreviousYear,
   goToNextYear,
+  clampToBounds,
+  onCalendarKeydown,
+  focusActiveCell,
 } = base;
 
-// reka's CalendarRoot forwards its root element via `$el`.
-const calendarRootRef = useTemplateRef<ComponentPublicInstance | null>("calendarRootRef");
-
 const rootClasses = computed(() => ["vc-calendar", `vc-calendar--size--${props.size}`, "vc-calendar--mode--single"]);
-
-const parsedModelValue = computed<DateValue | undefined>(() => tryParseDate(props.modelValue));
 
 function onUpdate(value: DateValue | DateValue[] | undefined): void {
   const single = Array.isArray(value) ? value[0] : value;
@@ -218,168 +224,13 @@ function onClearClick(): void {
   emit("update:modelValue", undefined);
 }
 
-// reka handles only arrows/space/enter; we add Home/End/PageUp/PageDown (APG date-grid gap).
-// firstDayOfWeek is a number (0=Sunday); startOfWeek/endOfWeek expect a DayOfWeek string.
-const DAY_OF_WEEK_NAMES = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as const;
-
-const mappedFirstDay = computed(() => {
-  const value = props.firstDayOfWeek;
-  if (value === undefined) {
-    return undefined;
-  }
-  return DAY_OF_WEEK_NAMES[value];
-});
-
-function clampToBounds(date: DateValue): DateValue {
-  let result = date;
-  const min = minDateValue.value;
-  const max = maxDateValue.value;
-  if (min && result.compare(min) < 0) {
-    result = min;
-  }
-  if (max && result.compare(max) > 0) {
-    result = max;
-  }
-  return result;
-}
-
-function getFocusedCellDate(root: HTMLElement): DateValue | undefined {
-  const active = document.activeElement;
-  if (!(active instanceof HTMLElement)) {
-    return undefined;
-  }
-  if (!root.contains(active)) {
-    return undefined;
-  }
-  // Only day cells carry this (empty-valued) marker; nav/footer do not.
-  if (active.dataset.rekaCalendarCellTrigger === undefined) {
-    return undefined;
-  }
-  const iso = active.dataset.value;
-  if (!iso) {
-    return undefined;
-  }
-  return tryParseDate(iso);
-}
-
-function focusCellByIso(root: HTMLElement, iso: string): void {
-  // Prefer the in-view cell; adjacent-month cells render with data-outside-view.
-  const inView = root.querySelector<HTMLElement>(
-    `[data-reka-calendar-cell-trigger][data-value="${iso}"]:not([data-outside-view])`,
-  );
-  const cell = inView ?? root.querySelector<HTMLElement>(`[data-reka-calendar-cell-trigger][data-value="${iso}"]`);
-  // preventScroll: VcCalendar is body-portaled, so a default focus() would scroll the whole document to it.
-  cell?.focus({ preventScroll: true });
-}
-
-// Focus-entry for the day grid: selected → today → first focusable in-view cell.
-function focusActiveCell(): void {
-  const root = calendarRootRef.value?.$el;
-  if (!(root instanceof HTMLElement)) {
-    return;
-  }
-
-  const selected = parsedModelValue.value;
-  if (selected) {
-    focusCellByIso(root, selected.toString());
-    if (getFocusedCellDate(root)) {
-      return;
-    }
-  }
-
-  const now = todayDate();
-  focusCellByIso(root, now.toString());
-  if (getFocusedCellDate(root)) {
-    return;
-  }
-
-  const firstInView = root.querySelector<HTMLElement>("[data-reka-calendar-cell-trigger]:not([data-outside-view])");
-  firstInView?.focus({ preventScroll: true });
-}
-
-type CalendarKeyTargetType = { target: DateValue };
-
-// Home/End: ctrl/meta = month (else week). PageUp/Down: shift = year (else month), per APG.
-type CalendarKeyModifiersType = { ctrlOrMeta: boolean; shift: boolean };
-
-function resolveKeyTarget(
-  key: string,
-  focused: DateValue,
-  modifiers: CalendarKeyModifiersType,
-): CalendarKeyTargetType | undefined {
-  const { ctrlOrMeta, shift } = modifiers;
-  let target: DateValue;
-
-  switch (key) {
-    case "Home":
-      if (ctrlOrMeta) {
-        target = startOfMonth(focused);
-      } else {
-        target = startOfWeek(focused, resolvedLocale.value, mappedFirstDay.value);
-      }
-      break;
-    case "End":
-      if (ctrlOrMeta) {
-        target = endOfMonth(focused);
-      } else {
-        target = endOfWeek(focused, resolvedLocale.value, mappedFirstDay.value);
-      }
-      break;
-    case "PageDown":
-      target = shift ? focused.add({ years: 1 }) : focused.add({ months: 1 });
-      break;
-    case "PageUp":
-      target = shift ? focused.add({ years: -1 }) : focused.add({ months: -1 });
-      break;
-    default:
-      // Let reka handle arrows/space/enter.
-      return undefined;
-  }
-
-  return { target };
-}
-
-function onCalendarKeydown(event: KeyboardEvent): void {
-  const root = event.currentTarget;
-  if (!(root instanceof HTMLElement)) {
-    return;
-  }
-
-  const focused = getFocusedCellDate(root);
-  if (!focused) {
-    return;
-  }
-
-  const ctrlOrMeta = event.ctrlKey || event.metaKey;
-  const shift = event.shiftKey;
-  const resolvedKey = resolveKeyTarget(event.key, focused, { ctrlOrMeta, shift });
-  if (!resolvedKey) {
-    return;
-  }
-
-  event.preventDefault();
-
-  const target = clampToBounds(resolvedKey.target);
-
-  // Scroll the grid when the target spills into an adjacent month.
-  placeholderRef.value = target;
-
-  const targetIso = target.toString();
-  void nextTick(() => {
-    focusCellByIso(root, targetIso);
-  });
-}
-
 // Sync placeholder to incoming model value so external state changes scroll the view.
+// Clamped so an out-of-bounds seed (e.g. today after a past max) cannot open a fully-disabled month.
 watch(
   () => props.modelValue,
   (next) => {
     const parsed = tryParseDate(next);
-    if (parsed) {
-      placeholderRef.value = parsed;
-    } else {
-      placeholderRef.value = getInitialPlaceholder();
-    }
+    placeholderRef.value = clampToBounds(parsed ?? getInitialPlaceholder());
   },
 );
 

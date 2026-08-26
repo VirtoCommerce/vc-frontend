@@ -5,7 +5,7 @@
     :enable-teleport="enableTeleport"
     role="dialog"
     :aria-label="t('ui_kit.accessibility.calendar')"
-    @toggle="onPopoverToggle"
+    @toggle="onToggle"
   >
     <template #default="{ toggle, triggerProps, close, opened }">
       <VcDateInput
@@ -76,13 +76,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, useTemplateRef } from "vue";
+import { computed, useTemplateRef } from "vue";
 import { useI18n } from "vue-i18n";
+import { useCalendarPopover } from "@/ui-kit/composables";
 import type { VcDateFieldUpdateOnType } from "@/ui-kit/composables";
 
 type AriaAttributesType = Record<string, string | number | null>;
 
 interface IProps {
+  /** ISO YYYY-MM-DD canonical value. */
   modelValue?: string;
   size?: VcInputSizeType;
   label?: string;
@@ -93,26 +95,41 @@ interface IProps {
   required?: boolean;
   message?: string;
   error?: boolean;
+  /** ISO YYYY-MM-DD min boundary. */
   min?: string;
+  /** ISO YYYY-MM-DD max boundary. */
   max?: string;
-  // min/max gate field validation AND the calendar; these clamp the calendar only, so the range picker
-  // can block out-of-order picks without raising a field error.
+  /**
+   * Calendar-only lower boundary; defaults to `min`. min/max gate field validation AND the calendar;
+   * this clamps the calendar only, so the range picker can block out-of-order picks without raising a field error.
+   */
   calendarMin?: string;
+  /** Calendar-only upper boundary; defaults to `max`. See `calendarMin`. */
   calendarMax?: string;
+  /** Predicate that returns true to mark a date unavailable (greyed out). */
   disabledDate?: VcCalendarDisabledDateType;
+  /** Override locale; defaults to active i18n locale. */
   locale?: string;
+  /** When to commit user input on the text input. Default "blur". Enter always commits. */
   updateOn?: VcDateFieldUpdateOnType;
+  /** Apply a locale-aware input mask on the text input. See VcDateInput for semantics. */
   mask?: boolean;
   clearable?: boolean;
+  /** Teleport the popover into #popover-host — use inside clipping containers (modal, overflow:hidden). */
   enableTeleport?: boolean;
+  /** Show the calendar footer (Today / Clear buttons). */
   showFooter?: boolean;
   firstDayOfWeek?: VcCalendarFirstDayOfWeekType;
   weekdayFormat?: VcCalendarWeekdayFormatType;
+  /** Close the popover when a date is selected via calendar. Default true. */
   closeOnSelect?: boolean;
+  /** Popover placement relative to the input. Default "bottom-end". */
   placement?: VcPopoverPlacementType;
   ariaLabel?: string;
+  /** Extra ARIA attributes for the underlying input, merged under the combobox wiring this picker owns. */
   aria?: AriaAttributesType;
   tabindex?: string | number;
+  /** Drop the details row (message/error text) so a parent can render one for a group of fields. */
   hideDetails?: boolean;
   dataTestId?: string;
 }
@@ -143,12 +160,10 @@ const innerInputElement = computed<HTMLInputElement | null>(() => dateInputRef.v
 
 const calendarRef = useTemplateRef<{ focusActiveCell: () => void; $el?: Element | null } | null>("calendarRef");
 
-// VcCalendar doesn't model the "auto" size.
-const calendarSize = computed<VcCalendarSizeType>(() => {
-  if (props.size === "auto") {
-    return "md";
-  }
-  return props.size;
+const { calendarSize, focusField, onToggle, onEscapeClose, onFieldEscape, onTriggerEscape } = useCalendarPopover({
+  size: () => props.size,
+  getFocusTarget: () => innerInputElement.value,
+  getCalendar: () => calendarRef.value,
 });
 
 function forwardedAria(triggerProps: Record<string, unknown>): AriaAttributesType {
@@ -182,43 +197,6 @@ function onInputClear(): void {
   emit("clear");
 }
 
-function onPopoverToggle(opened: boolean): void {
-  if (!opened) {
-    // Trigger-click / click-outside closes skip onEscapeClose; focus would stay in the hidden popover.
-    const calendarEl = calendarRef.value?.$el;
-    if (calendarEl instanceof HTMLElement && calendarEl.contains(document.activeElement)) {
-      innerInputElement.value?.focus();
-    }
-    return;
-  }
-  // VcPopover doesn't focus its content, and it stays display:none until the open flush.
-  void nextTick(() => {
-    calendarRef.value?.focusActiveCell();
-  });
-}
-
-// Escape must keep propagating to outer dismissible layers (dialogs, sidebars) while the popover is closed.
-function onFieldEscape(event: Event, opened: boolean, close: () => void): void {
-  if (!opened) {
-    return;
-  }
-  event.stopPropagation();
-  close();
-}
-
-function onTriggerEscape(event: Event, opened: boolean, close: () => void): void {
-  if (!opened) {
-    return;
-  }
-  event.stopPropagation();
-  onEscapeClose(close);
-}
-
-function onEscapeClose(close: () => void): void {
-  close();
-  innerInputElement.value?.focus();
-}
-
 function onCalendarUpdate(close: () => void, value: string | undefined): void {
   if (props.disabled || props.readonly) {
     return;
@@ -226,7 +204,7 @@ function onCalendarUpdate(close: () => void, value: string | undefined): void {
   emit("update:modelValue", value);
   if (props.closeOnSelect) {
     close();
-    innerInputElement.value?.focus();
+    focusField();
   }
 }
 

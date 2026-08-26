@@ -3,7 +3,6 @@
     :class="[
       'vc-input',
       `vc-input--size--${size}`,
-      `vc-input--align--${align}`,
       {
         'vc-input--readonly': readonly,
         'vc-input--disabled': disabled,
@@ -63,7 +62,7 @@
           color="neutral"
           variant="ghost"
           class="vc-input__clear"
-          :icon-size="size === 'md' ? '0.875rem' : '0.75rem'"
+          :icon-size="getInputClearIconSize(size)"
           @keydown.enter.stop.prevent
           @keyup.enter.stop.prevent="clear"
           @click.stop="clear"
@@ -106,6 +105,7 @@
 import { vMaska } from "maska/vue";
 import { provide, computed, ref, useTemplateRef } from "vue";
 import { useAttrsOnly, useComponentId, useListeners } from "@/ui-kit/composables";
+import { getInputClearIconSize } from "@/ui-kit/utilities";
 import type { MaskOptions } from "maska";
 
 export interface IProps {
@@ -132,10 +132,8 @@ export interface IProps {
   step?: string | number;
   minlength?: string | number;
   maxlength?: string | number;
-  /** @deprecated Use align="center" instead. */
   center?: boolean;
   truncate?: boolean;
-  align?: VcInputAlignType;
   type?:
     | "text"
     | "password"
@@ -172,7 +170,6 @@ const props = withDefaults(defineProps<IProps>(), {
   tabindex: 0,
   hideDetails: false,
   seamless: false,
-  align: "start",
 });
 
 if (import.meta.env.DEV && props.type === "date") {
@@ -286,8 +283,6 @@ provide<VcInputContextType>("inputContext", {
   $seamless: "";
   $center: "";
   $truncate: "";
-  $alignCenter: "";
-  $alignEnd: "";
 
   --color: var(--vc-input-base-color, theme("colors.primary.500"));
   --focus-color: rgb(from var(--color) r g b / 0.3);
@@ -341,39 +336,19 @@ provide<VcInputContextType>("inputContext", {
     $truncate: &;
   }
 
-  &--align {
-    &--center {
-      $alignCenter: &;
-    }
-
-    &--end {
-      $alignEnd: &;
-    }
-  }
-
   &__container {
     @apply flex items-stretch p-0.5 border border-neutral-400 rounded-[--radius] bg-additional-50 select-none;
 
-    // Longhands: text-sm/text-base would make line-height unoverridable.
     #{$sizeXs} & {
-      @apply h-8;
-
-      font-size: var(--vc-input-font-size, theme("fontSize.sm[0]"));
-      line-height: theme("fontSize.sm[1].lineHeight");
+      @apply h-8 text-sm;
     }
 
     #{$sizeSm} & {
-      @apply h-[2.375rem];
-
-      font-size: var(--vc-input-font-size, theme("fontSize.base[0]"));
-      line-height: theme("fontSize.base[1].lineHeight");
+      @apply h-[2.375rem] text-base;
     }
 
     #{$sizeMd} & {
-      @apply h-11;
-
-      font-size: var(--vc-input-font-size, theme("fontSize.base[0]"));
-      line-height: theme("fontSize.base[1].lineHeight");
+      @apply h-11 text-base;
     }
 
     &:has(input:focus) {
@@ -474,14 +449,6 @@ provide<VcInputContextType>("inputContext", {
 
     #{$truncate} & {
       @apply truncate;
-    }
-
-    #{$alignCenter} & {
-      @apply text-center;
-    }
-
-    #{$alignEnd} & {
-      @apply text-end;
     }
   }
 }

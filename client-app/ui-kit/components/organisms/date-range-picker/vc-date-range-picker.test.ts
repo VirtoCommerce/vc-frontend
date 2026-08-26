@@ -1,5 +1,6 @@
 import { flushPromises, mount } from "@vue/test-utils";
 import { describe, expect, it, vi } from "vitest";
+import { defineComponent, h, ref } from "vue";
 import { VcInputDetails, VcLabel } from "@/ui-kit/components/atoms";
 import VcDatePicker from "../date-picker/vc-date-picker.vue";
 import VcDateRangePicker from "./vc-date-range-picker.vue";
@@ -68,6 +69,60 @@ function mountSplit(props = {}, options: { attachTo?: Element } = {}) {
     },
     ...options,
   });
+}
+
+// Escape reverts through reka's internals, which only a real v-model round trip exercises.
+function mountBoundPicker(initial: VcDateRangeType | undefined) {
+  const state = ref<VcDateRangeType | undefined>(initial);
+  const emits: (VcDateRangeType | undefined)[] = [];
+
+  const Parent = defineComponent({
+    setup() {
+      return () =>
+        h(VcDateRangePicker, {
+          modelValue: state.value,
+          "onUpdate:modelValue": (value: VcDateRangeType | undefined) => {
+            state.value = value;
+            emits.push(value);
+          },
+        });
+    },
+  });
+
+  const wrapper = mount(Parent, {
+    global: {
+      components: {
+        VcDateInput,
+        VcInput,
+        VcInputDetails,
+        VcButton,
+        VcPopover,
+        VcRangeCalendar,
+        VcDateRangeInput,
+        VcDatePicker,
+      },
+      stubs,
+      directives: { "html-safe": {} },
+    },
+    attachTo: document.body,
+  });
+
+  return { wrapper, state, emits };
+}
+
+// reka only builds a range from a real pointer path — a bare click leaves highlightedRange null.
+async function clickDay(iso: string): Promise<HTMLElement> {
+  const cell = document.querySelector<HTMLElement>(
+    `[data-reka-calendar-cell-trigger][data-value="${iso}"]:not([data-outside-view])`,
+  );
+  if (!cell) {
+    throw new Error(`no in-view cell for ${iso}`);
+  }
+  cell.dispatchEvent(new MouseEvent("mouseenter", { bubbles: false }));
+  await flushPromises();
+  cell.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+  await flushPromises();
+  return cell;
 }
 
 describe("VcDateRangePicker", () => {
@@ -158,8 +213,44 @@ describe("VcDateRangePicker", () => {
     await wrapper.find(".vc-range-calendar__footer-btn").trigger("click");
 
     expect(wrapper.find(".vc-popover__body").attributes("style")).toContain("display: none");
+    expect(wrapper.emitted("clear")).toHaveLength(1);
 
     wrapper.unmount();
+  });
+
+  it("drops uncommitted garbage text from the segments when the calendar footer clears", async () => {
+    const wrapper = mountPicker({ showFooter: true, mask: true }, { attachTo: document.body });
+
+    const [startInput] = wrapper.findAll("input");
+    await startInput.setValue("99/99/9999");
+    expect(startInput.element.value).toBe("99/99/9999");
+
+    await wrapper.find('button[aria-haspopup="dialog"]').trigger("click");
+    await wrapper.find(".vc-range-calendar__footer-btn").trigger("click");
+    await flushPromises();
+
+    expect(wrapper.findAll("input").map((input) => input.element.value)).toEqual(["", ""]);
+
+    wrapper.unmount();
+  });
+
+  it("re-emits clear when the calendar footer clears a filled range", async () => {
+    const wrapper = mountPicker(
+      { modelValue: { start: "2026-10-08", end: "2026-10-14" }, showFooter: true },
+      { attachTo: document.body },
+    );
+
+    await wrapper.find('button[aria-haspopup="dialog"]').trigger("click");
+    await wrapper.find(".vc-range-calendar__footer-btn").trigger("click");
+
+    expect(wrapper.emitted("clear")).toHaveLength(1);
+
+    wrapper.unmount();
+  });
+
+  it("emits update:valid exactly once, as false, for an out-of-order initial model", () => {
+    const wrapper = mountPicker({ modelValue: { start: "2026-10-20", end: "2026-10-01" } });
+    expect(wrapper.emitted("update:valid")).toEqual([[false]]);
   });
 
   it("returns focus to the start segment when the trigger click closes the popover with focus in the calendar", async () => {
@@ -197,12 +288,231 @@ describe("VcDateRangePicker", () => {
     wrapper.unmount();
   });
 
+  describe("opening the calendar does not blur the field", () => {
+    it("combined: no blur on opening; blur still fires when focus truly leaves", async () => {
+      const outside = document.createElement("button");
+      document.body.appendChild(outside);
+      const wrapper = mountPicker({}, { attachTo: document.body });
+
+      const [startInput] = wrapper.findAll("input");
+      startInput.element.focus();
+      expect(wrapper.emitted("focus")).toHaveLength(1);
+
+      const trigger = wrapper.find('button[aria-haspopup="dialog"]');
+      (trigger.element as HTMLButtonElement).focus();
+      await trigger.trigger("click");
+      await flushPromises();
+
+      const activeCell = document.activeElement as HTMLElement | null;
+      expect(activeCell?.dataset.rekaCalendarCellTrigger).toBeDefined();
+      expect(wrapper.emitted("blur")).toBeUndefined();
+
+      // Trigger-click close returns focus to the start input; leaving from there must still blur.
+      await trigger.trigger("click");
+      expect(document.activeElement).toBe(startInput.element);
+      outside.focus();
+      expect(wrapper.emitted("blur")).toHaveLength(1);
+
+      wrapper.unmount();
+      outside.remove();
+    });
+
+    it.each([
+      ["split with teleport", true],
+      ["split without teleport", false],
+    ])("%s: no blur on opening; blur still fires when focus truly leaves", async (_name, enableTeleport) => {
+      // VcPopover teleports into the app's popover host, which the test DOM must provide.
+      const popoverHost = document.createElement("div");
+      popoverHost.id = "popover-host";
+      document.body.appendChild(popoverHost);
+      const outside = document.createElement("button");
+      document.body.appendChild(outside);
+      const wrapper = mountSplit({ enableTeleport }, { attachTo: document.body });
+
+      const [startInput] = wrapper.findAll("input");
+      startInput.element.focus();
+      expect(wrapper.emitted("focus")).toHaveLength(1);
+
+      const [startTrigger] = wrapper.findAll('button[aria-label="ui_kit.accessibility.open_calendar"]');
+      (startTrigger.element as HTMLButtonElement).focus();
+      await startTrigger.trigger("click");
+      await flushPromises();
+
+      const activeCell = document.activeElement as HTMLElement | null;
+      expect(activeCell?.dataset.rekaCalendarCellTrigger).toBeDefined();
+      expect(wrapper.emitted("blur")).toBeUndefined();
+
+      // Escape closes the popover and restores focus to the field; leaving from there must still blur.
+      await startInput.trigger("keydown", { key: "Escape" });
+      expect(document.activeElement).toBe(startInput.element);
+      outside.focus();
+      expect(wrapper.emitted("blur")).toHaveLength(1);
+
+      wrapper.unmount();
+      outside.remove();
+      popoverHost.remove();
+    });
+  });
+
+  // Re-anchoring is a legitimate partial; Escape must undo it whole, not leave a half-reverted range.
+  it("restores the committed range when Escape follows a re-anchoring calendar click", async () => {
+    const { wrapper, state, emits } = mountBoundPicker({ start: "2026-10-08", end: "2026-10-14" });
+
+    await wrapper.find('button[aria-haspopup="dialog"]').trigger("click");
+    await flushPromises();
+
+    const cell = await clickDay("2026-10-20");
+    expect(state.value).toEqual({ start: "2026-10-20", end: undefined });
+
+    cell.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true }));
+    await flushPromises();
+
+    expect(state.value).toEqual({ start: "2026-10-08", end: "2026-10-14" });
+    expect(emits.at(-1)).toEqual({ start: "2026-10-08", end: "2026-10-14" });
+    expect(emits.filter((value) => !value?.end)).toHaveLength(1);
+
+    const [startInput, endInput] = wrapper.findAll("input");
+    expect(startInput.element.value).not.toBe("");
+    expect(endInput.element.value).not.toBe("");
+
+    wrapper.unmount();
+  });
+
   it("defaults to the combined layout", () => {
     const wrapper = mountPicker();
     expect(wrapper.props("layout")).toBe("combined");
     expect(wrapper.classes()).toContain("vc-date-range-picker--layout--combined");
     expect(wrapper.findComponent({ name: "VcDateRangeInput" }).exists()).toBe(true);
     expect(wrapper.findComponent({ name: "VcDatePicker" }).exists()).toBe(false);
+  });
+});
+
+// Production renders this row inside VcPopover's #content, so a `.vc-popover__body` WRAPS the shell.
+// Treating any popover in the relatedTarget's ancestry as "the field's own calendar" swallowed every blur.
+describe("VcDateRangePicker — hosted inside a popover body", () => {
+  type MountedType = ReturnType<typeof mountSplit>;
+
+  function inPopoverBody<T>(mounter: (options: { attachTo: Element }) => T) {
+    const body = document.createElement("div");
+    body.className = "vc-popover__body";
+    document.body.appendChild(body);
+    const sibling = document.createElement("button");
+    body.appendChild(sibling);
+    return { wrapper: mounter({ attachTo: body }), body, sibling };
+  }
+
+  function teleportHost(): HTMLElement {
+    const host = document.createElement("div");
+    host.id = "popover-host";
+    document.body.appendChild(host);
+    return host;
+  }
+
+  function expectBlurWhenLeavingToSibling(wrapper: MountedType, sibling: HTMLElement): void {
+    const [startInput] = wrapper.findAll("input");
+    startInput.element.focus();
+    expect(wrapper.emitted("focus")).toHaveLength(1);
+
+    sibling.focus();
+    expect(wrapper.emitted("blur")).toHaveLength(1);
+  }
+
+  async function expectNoBlurWhenOpeningOwnCalendar(wrapper: MountedType): Promise<void> {
+    const [trigger] = wrapper.findAll('button[aria-label="ui_kit.accessibility.open_calendar"]');
+    (trigger.element as HTMLButtonElement).focus();
+    await trigger.trigger("click");
+    await flushPromises();
+
+    expect((document.activeElement as HTMLElement | null)?.dataset.rekaCalendarCellTrigger).toBeDefined();
+    expect(wrapper.emitted("blur")).toBeUndefined();
+  }
+
+  it("combined: emits blur when focus leaves for a sibling inside the enclosing popover", () => {
+    const { wrapper, body, sibling } = inPopoverBody((options) => mountPicker({}, options));
+    expectBlurWhenLeavingToSibling(wrapper, sibling);
+    wrapper.unmount();
+    body.remove();
+  });
+
+  it("split with teleport: emits blur when focus leaves for a sibling inside the enclosing popover", () => {
+    const host = teleportHost();
+    const { wrapper, body, sibling } = inPopoverBody((options) => mountSplit({ enableTeleport: true }, options));
+    expectBlurWhenLeavingToSibling(wrapper, sibling);
+    wrapper.unmount();
+    body.remove();
+    host.remove();
+  });
+
+  it("split without teleport: emits blur when focus leaves for a sibling inside the enclosing popover", () => {
+    const { wrapper, body, sibling } = inPopoverBody((options) => mountSplit({ enableTeleport: false }, options));
+    expectBlurWhenLeavingToSibling(wrapper, sibling);
+    wrapper.unmount();
+    body.remove();
+  });
+
+  it("combined: still swallows the focus move into its own calendar", async () => {
+    const { wrapper, body } = inPopoverBody((options) => mountPicker({}, options));
+    await expectNoBlurWhenOpeningOwnCalendar(wrapper);
+    wrapper.unmount();
+    body.remove();
+  });
+
+  it("split with teleport: still swallows the focus move into the field's own calendar", async () => {
+    const host = teleportHost();
+    const { wrapper, body } = inPopoverBody((options) => mountSplit({ enableTeleport: true }, options));
+    await expectNoBlurWhenOpeningOwnCalendar(wrapper);
+    wrapper.unmount();
+    body.remove();
+    host.remove();
+  });
+
+  it("split without teleport: still swallows the focus move into the field's own calendar", async () => {
+    const { wrapper, body } = inPopoverBody((options) => mountSplit({ enableTeleport: false }, options));
+    await expectNoBlurWhenOpeningOwnCalendar(wrapper);
+    wrapper.unmount();
+    body.remove();
+  });
+});
+
+// Ownership is read from the shell's own aria-controls, so any OTHER popover on the page — a select
+// listbox teleported beside the field — still counts as focus leaving, even while the calendar is open.
+describe("VcDateRangePicker — focus moving into an unrelated popover", () => {
+  function unrelatedPopover(): HTMLElement {
+    const body = document.createElement("div");
+    body.className = "vc-popover__body";
+    body.id = "vc-popover-unrelated";
+    const option = document.createElement("button");
+    body.appendChild(option);
+    document.body.appendChild(body);
+    return option;
+  }
+
+  async function expectBlur(wrapper: ReturnType<typeof mountSplit>, option: HTMLElement): Promise<void> {
+    const [trigger] = wrapper.findAll('button[aria-label="ui_kit.accessibility.open_calendar"]');
+    await trigger.trigger("click");
+    await flushPromises();
+
+    const [startInput] = wrapper.findAll("input");
+    startInput.element.focus();
+    option.focus();
+
+    expect(wrapper.emitted("blur")).toHaveLength(1);
+  }
+
+  it("combined: emits blur", async () => {
+    const option = unrelatedPopover();
+    const wrapper = mountPicker({}, { attachTo: document.body });
+    await expectBlur(wrapper, option);
+    wrapper.unmount();
+    option.parentElement?.remove();
+  });
+
+  it("split: emits blur", async () => {
+    const option = unrelatedPopover();
+    const wrapper = mountSplit({}, { attachTo: document.body });
+    await expectBlur(wrapper, option);
+    wrapper.unmount();
+    option.parentElement?.remove();
   });
 });
 
@@ -294,6 +604,13 @@ describe("VcDateRangePicker — split layout", () => {
       };
     }
 
+    function enabledDayCount(calendar: DOMWrapper<Element> | VueWrapper): number {
+      const cells = calendar.findAll("[data-reka-calendar-cell-trigger]:not([data-outside-view])");
+      return cells.filter(
+        (cell) => cell.attributes("data-disabled") === undefined && cell.attributes("aria-disabled") !== "true",
+      ).length;
+    }
+
     it("clamps each calendar to the opposite endpoint", () => {
       const wrapper = mountSplit({ modelValue: { start: "2026-10-08", end: "2026-10-14" } });
       const bounds = calendarBounds(wrapper);
@@ -353,13 +670,6 @@ describe("VcDateRangePicker — split layout", () => {
     describe("already out of order", () => {
       const outOfOrder = { start: "2026-12-01", end: "2026-10-14" };
 
-      function enabledDayCount(calendar: DOMWrapper<Element> | VueWrapper): number {
-        const cells = calendar.findAll("[data-reka-calendar-cell-trigger]:not([data-outside-view])");
-        return cells.filter(
-          (cell) => cell.attributes("data-disabled") === undefined && cell.attributes("aria-disabled") !== "true",
-        ).length;
-      }
-
       it("drops the cross-bound clamp entirely when no caller boundary applies", () => {
         const bounds = calendarBounds(mountSplit({ modelValue: outOfOrder }));
         expect(bounds.startMax).toBeUndefined();
@@ -385,6 +695,79 @@ describe("VcDateRangePicker — split layout", () => {
         const bounds = calendarBounds(wrapper);
         expect(bounds.startMax).toBe("2026-10-14");
         expect(bounds.endMin).toBe("2026-10-01");
+      });
+    });
+
+    // The caller's own min/max still reach each field, so a clamp past them would hand the calendar
+    // an inverted pair (min after max) and disable every day of every month it can reach.
+    describe("an in-order range that sits outside the caller's own bounds", () => {
+      it("drops the start clamp when the persisted end predates props.min", () => {
+        const bounds = calendarBounds(
+          mountSplit({ min: "2026-08-25", modelValue: { start: "2026-03-01", end: "2026-03-20" } }),
+        );
+        expect(bounds.startMin).toBe("2026-08-25");
+        expect(bounds.startMax).toBeUndefined();
+      });
+
+      it("drops the end clamp when the persisted start postdates props.max", () => {
+        const bounds = calendarBounds(
+          mountSplit({ max: "2026-08-25", modelValue: { start: "2027-03-01", end: "2027-03-20" } }),
+        );
+        expect(bounds.endMax).toBe("2026-08-25");
+        expect(bounds.endMin).toBeUndefined();
+      });
+
+      it("never hands a calendar a min later than its max, in either direction", () => {
+        const past = calendarBounds(
+          mountSplit({ min: "2026-08-25", max: "2026-12-31", modelValue: { start: "2026-03-01", end: "2026-03-20" } }),
+        );
+        expect(past.startMin! <= past.startMax!).toBe(true);
+
+        const future = calendarBounds(
+          mountSplit({ min: "2026-01-01", max: "2026-08-25", modelValue: { start: "2027-03-01", end: "2027-03-20" } }),
+        );
+        expect(future.endMin! <= future.endMax!).toBe(true);
+      });
+
+      it("keeps days selectable in the month each calendar opens on", () => {
+        const startCalendar = mountSplit({
+          min: "2026-08-25",
+          max: "2026-12-31",
+          modelValue: { start: "2026-03-01", end: "2026-03-20" },
+        }).findAllComponents(VcCalendar)[0];
+        expect(enabledDayCount(startCalendar)).toBeGreaterThan(0);
+
+        const endCalendar = mountSplit({
+          min: "2026-01-01",
+          max: "2026-08-25",
+          modelValue: { start: "2027-03-01", end: "2027-03-20" },
+        }).findAllComponents(VcCalendar)[1];
+        expect(enabledDayCount(endCalendar)).toBeGreaterThan(0);
+      });
+    });
+
+    // The opposite endpoint is typed after mount, so the derived bound lands on an already-open calendar.
+    describe("a cross-bound that arrives after mount", () => {
+      it("re-clamps the start calendar's view to the new max", async () => {
+        const wrapper = mountSplit();
+        await wrapper.setProps({ modelValue: { start: undefined, end: "2020-06-15" } });
+        await flushPromises();
+
+        const [startCalendar] = wrapper.findAllComponents(VcCalendar);
+        expect(startCalendar.props("max")).toBe("2020-06-15");
+        expect(startCalendar.find('[data-reka-calendar-cell-trigger][data-value="2020-06-15"]').exists()).toBe(true);
+        expect(enabledDayCount(startCalendar)).toBeGreaterThan(0);
+      });
+
+      it("re-clamps the end calendar's view to the new min", async () => {
+        const wrapper = mountSplit();
+        await wrapper.setProps({ modelValue: { start: "2031-01-15", end: undefined } });
+        await flushPromises();
+
+        const [, endCalendar] = wrapper.findAllComponents(VcCalendar);
+        expect(endCalendar.props("min")).toBe("2031-01-15");
+        expect(endCalendar.find('[data-reka-calendar-cell-trigger][data-value="2031-01-15"]').exists()).toBe(true);
+        expect(enabledDayCount(endCalendar)).toBeGreaterThan(0);
       });
     });
   });
@@ -425,10 +808,22 @@ describe("VcDateRangePicker — split layout", () => {
       const wrapper = mountSplit();
       const [startField] = wrapper.findAllComponents({ name: "VcDatePicker" });
       startField.vm.$emit("update:valid", false);
+      startField.vm.$emit("update:errorText", "ui_kit.date_input.invalid_format");
       await wrapper.vm.$nextTick();
 
       expect(wrapper.emitted("update:valid")?.at(-1)?.[0]).toBe(false);
       expect(wrapper.findComponent(VcInputDetails).props("message")).toBe("ui_kit.date_input.invalid_format");
+    });
+
+    it("keeps the shared details row quiet while a segment is invalid but untouched", async () => {
+      const wrapper = mountSplit();
+      const [startField] = wrapper.findAllComponents({ name: "VcDatePicker" });
+      startField.vm.$emit("update:valid", false);
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.emitted("update:valid")?.at(-1)?.[0]).toBe(false);
+      expect(wrapper.findComponent(VcInputDetails).props("message")).toBeUndefined();
+      expect(wrapper.findComponent(VcInputDetails).props("error")).toBe(false);
     });
   });
 
@@ -461,6 +856,42 @@ describe("VcDateRangePicker — split layout", () => {
       endField.vm.$emit("update:modelValue", undefined);
       await wrapper.vm.$nextTick();
       expect(wrapper.emitted("update:modelValue")?.at(-1)?.[0]).toBeUndefined();
+    });
+
+    // Clearing one field commits the other's typed text in the same task, before the prop can update.
+    it("keeps a just-typed end date when the start field is cleared in the same task", async () => {
+      const wrapper = mountSplit(
+        { modelValue: { start: "2026-08-08", end: undefined }, clearable: true },
+        { attachTo: document.body },
+      );
+
+      const [, endInput] = wrapper.findAll("input");
+      endInput.element.focus();
+      await endInput.setValue("08/20/2026");
+
+      const [clearButton] = wrapper.findAll('button[aria-label="ui_kit.buttons.clear"]');
+      await clearButton.trigger("click");
+      await flushPromises();
+
+      expect(wrapper.emitted("update:modelValue")?.at(-1)?.[0]).toEqual({ start: undefined, end: "2026-08-20" });
+      expect(endInput.element.value).toBe("08/20/2026");
+
+      wrapper.unmount();
+    });
+
+    // Uncontrolled parent: the model prop never changes, so a snapshot kept past the task would
+    // resurrect the start date the parent already rejected.
+    it("drops the previous emit's snapshot when the parent does not apply it", async () => {
+      const wrapper = mountSplit();
+
+      const [startInput, endInput] = wrapper.findAll("input");
+      await startInput.setValue("06/15/2026");
+      await startInput.trigger("blur");
+      expect(wrapper.emitted("update:modelValue")?.at(-1)?.[0]).toEqual({ start: "2026-06-15", end: undefined });
+
+      await endInput.setValue("07/20/2026");
+      await endInput.trigger("blur");
+      expect(wrapper.emitted("update:modelValue")?.at(-1)?.[0]).toEqual({ start: undefined, end: "2026-07-20" });
     });
 
     it("re-emits clear from either field", async () => {

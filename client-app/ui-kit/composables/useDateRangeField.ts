@@ -1,44 +1,41 @@
-import { computed, ref, toValue } from "vue";
+import { computed, nextTick, ref, toValue, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { toDateOnlyString } from "@/ui-kit/utilities/date";
+import { isDateRangeInOrder } from "@/ui-kit/utilities/date";
 import type { MaybeRefOrGetter } from "vue";
 
 export interface IUseDateRangeFieldOptions {
   modelValue: MaybeRefOrGetter<VcDateRangeType | undefined>;
   error: MaybeRefOrGetter<boolean | undefined>;
   message: MaybeRefOrGetter<string | undefined>;
+  required: MaybeRefOrGetter<boolean | undefined>;
+  /** Id of the shell's details row; the segments reference it through `aria-describedby`. */
+  detailsId: string;
 }
 
 export function useDateRangeField(opts: IUseDateRangeFieldOptions) {
   const { t } = useI18n();
 
-  const startFormatValid = ref(true);
-  const endFormatValid = ref(true);
+  const startSegmentValid = ref(true);
+  const endSegmentValid = ref(true);
   const startErrorText = ref<string | undefined>(undefined);
   const endErrorText = ref<string | undefined>(undefined);
 
-  // Partial and empty ranges are always order-valid.
+  // Partial, empty, and unparseable endpoints are always order-valid.
   const orderValid = computed<boolean>(() => {
     const range = toValue(opts.modelValue);
-    // Date-only so a full-ISO endpoint still compares lexicographically against a bare YYYY-MM-DD.
-    const start = toDateOnlyString(range?.start);
-    const end = toDateOnlyString(range?.end);
-    if (!start || !end) {
-      return true;
-    }
-    return start <= end;
+    return isDateRangeInOrder(range?.start, range?.end);
   });
 
-  const isValid = computed<boolean>(() => startFormatValid.value && endFormatValid.value && orderValid.value);
+  const isValid = computed<boolean>(() => startSegmentValid.value && endSegmentValid.value && orderValid.value);
 
-  // Segments are hide-details, so their own per-reason message is relayed here; it is absent while
-  // a segment is invalid but untouched, hence the format fallback.
+  // Segments are hide-details, so their touched-gated per-reason message is relayed here.
+  // An invalid-but-untouched segment shows nothing, matching standalone VcDateInput.
   const internalErrorText = computed<string | undefined>(() => {
-    if (!startFormatValid.value) {
-      return startErrorText.value ?? t("ui_kit.date_input.invalid_format");
+    if (startErrorText.value) {
+      return startErrorText.value;
     }
-    if (!endFormatValid.value) {
-      return endErrorText.value ?? t("ui_kit.date_input.invalid_format");
+    if (endErrorText.value) {
+      return endErrorText.value;
     }
     if (!orderValid.value) {
       return t("ui_kit.date_range_input.invalid_range");
@@ -55,11 +52,18 @@ export function useDateRangeField(opts: IUseDateRangeFieldOptions) {
     return internalErrorText.value ?? toValue(opts.message);
   });
 
+  // Segments are hide-details and the asterisk lives on the group label, so both are wired by hand.
+  const segmentAria = computed<Record<string, string | null>>(() => ({
+    "aria-invalid": computedError.value ? "true" : "false",
+    "aria-describedby": computedMessage.value ? opts.detailsId : null,
+    "aria-required": toValue(opts.required) ? "true" : null,
+  }));
+
   function setSegmentValid(which: "start" | "end", valid: boolean): void {
     if (which === "start") {
-      startFormatValid.value = valid;
+      startSegmentValid.value = valid;
     } else {
-      endFormatValid.value = valid;
+      endSegmentValid.value = valid;
     }
   }
 
@@ -71,17 +75,29 @@ export function useDateRangeField(opts: IUseDateRangeFieldOptions) {
     }
   }
 
+  // Two commits in one task (clear a segment while the other holds uncommitted text) both read the
+  // pre-update prop, dropping the first edit. Boxed so an emitted `undefined` stays distinguishable.
+  let lastEmitted: { range: VcDateRangeType | undefined } | undefined;
+
+  function dropLastEmitted(): void {
+    lastEmitted = undefined;
+  }
+
+  watch(() => toValue(opts.modelValue), dropLastEmitted);
+
   /** A range with neither endpoint collapses to `undefined`. */
   function mergeRange(which: "start" | "end", value: string | undefined): VcDateRangeType | undefined {
-    const range = toValue(opts.modelValue);
+    const range = lastEmitted ? lastEmitted.range : toValue(opts.modelValue);
     const next: VcDateRangeType = {
       start: which === "start" ? value : range?.start,
       end: which === "end" ? value : range?.end,
     };
-    if (!next.start && !next.end) {
-      return undefined;
-    }
-    return next;
+    const merged = !next.start && !next.end ? undefined : next;
+    lastEmitted = { range: merged };
+    // The snapshot only has to bridge two commits within one task. An uncontrolled parent never
+    // changes the model, so the watch alone would leave it stale and merge into a rejected endpoint.
+    void nextTick(dropLastEmitted);
+    return merged;
   }
 
   return {
@@ -89,6 +105,7 @@ export function useDateRangeField(opts: IUseDateRangeFieldOptions) {
     computedError,
     computedMessage,
     orderValid,
+    segmentAria,
     setSegmentValid,
     setSegmentErrorText,
     mergeRange,

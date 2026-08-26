@@ -1,10 +1,42 @@
 import { CalendarDate, parseDate } from "@internationalized/date";
+import { Logger } from "@/core/utilities";
 
 export function toDateOnlyString(isoDate?: string): string | undefined {
   if (!isoDate) {
     return undefined;
   }
   return isoDate.split("T")[0];
+}
+
+/** Parses ISO YYYY-MM-DD; ISO datetime strings are accepted and truncated to the date portion. */
+export function tryParseDate(value: string | undefined): CalendarDate | undefined {
+  if (!value) {
+    return undefined;
+  }
+
+  const dateOnly = toDateOnlyString(value);
+  if (!dateOnly) {
+    return undefined;
+  }
+
+  try {
+    return parseDate(dateOnly);
+  } catch (error) {
+    if (import.meta.env.DEV) {
+      Logger.warn(`tryParseDate: "${value}" is not a parseable ISO date`, error);
+    }
+    return undefined;
+  }
+}
+
+/** True unless both endpoints parse to dates and start is after end; an unparseable endpoint counts as absent. */
+export function isDateRangeInOrder(start: string | undefined, end: string | undefined): boolean {
+  const startDate = tryParseDate(start);
+  const endDate = tryParseDate(end);
+  if (!startDate || !endDate) {
+    return true;
+  }
+  return startDate.compare(endDate) <= 0;
 }
 
 const ISO_DATE_REGEX = /^(\d{4})-(\d{2})-(\d{2})$/;

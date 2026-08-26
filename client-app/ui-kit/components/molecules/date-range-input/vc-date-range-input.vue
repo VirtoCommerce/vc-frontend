@@ -75,13 +75,13 @@
 
       <div class="vc-date-range-input__actions">
         <VcButton
-          v-if="clearable && (modelValue?.start || modelValue?.end) && !disabled && !readonly"
+          v-if="clearable && hasClearableContent && !disabled && !readonly"
           type="button"
           icon="delete-thin"
           color="neutral"
           variant="ghost"
           class="vc-date-range-input__clear"
-          :icon-size="size === 'md' ? '0.875rem' : '0.75rem'"
+          :icon-size="getInputClearIconSize(size)"
           :aria-label="t('ui_kit.date_range_input.clear')"
           @click="clearBoth"
         />
@@ -98,42 +98,63 @@
 import { computed, nextTick, provide, useTemplateRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useComponentId, useDateRangeField } from "@/ui-kit/composables";
-import { crossedFocusBoundary } from "@/ui-kit/utilities/focus";
+import { getInputClearIconSize } from "@/ui-kit/utilities";
+import { shellFocusEntered, shellFocusLeft } from "@/ui-kit/utilities/focus";
 import type { VcDateFieldUpdateOnType } from "@/ui-kit/composables";
 
 interface IDateInputExposed {
   inputElement: HTMLInputElement | null;
   reset: () => void;
+  hasText: boolean;
 }
 
 interface IProps {
+  /** Both endpoints as ISO YYYY-MM-DD. Either side may be undefined — a partial range is valid. */
   modelValue?: VcDateRangeType;
   size?: VcInputSizeType;
+  /** Group label for the whole field; falls back to a localized ARIA label when absent. */
   label?: string;
+  /** Accessible name for the start segment. Rendered as an aria-label, not visible text. */
   startLabel?: string;
+  /** Accessible name for the end segment. Rendered as an aria-label, not visible text. */
   endLabel?: string;
+  /** Override the auto-derived locale hint on the start segment (e.g. "MM/DD/YYYY"). */
   startPlaceholder?: string;
+  /** Override the auto-derived locale hint on the end segment. */
   endPlaceholder?: string;
+  /** Base form name; the segments get `-start` / `-end` suffixes. */
   name?: string;
   disabled?: boolean;
   readonly?: boolean;
   required?: boolean;
+  /** Info/help text for the shared details row. Shown when no validation error is active. */
   message?: string;
+  /** External error flag (e.g. from vee-validate). Overrides internal validation display. */
   error?: boolean;
+  /** ISO YYYY-MM-DD min boundary, applied to both segments. */
   min?: string;
+  /** ISO YYYY-MM-DD max boundary, applied to both segments. */
   max?: string;
+  /** Predicate that returns true to mark a date unavailable. Receives ISO YYYY-MM-DD. */
   disabledDate?: VcCalendarDisabledDateType;
+  /** Override locale; defaults to active i18n locale. */
   locale?: string;
+  /** When to commit user input on either segment. Default "blur". Enter always commits. */
   updateOn?: VcDateFieldUpdateOnType;
+  /** Apply a locale-aware input mask on both segments. See VcDateInput for semantics. */
   mask?: boolean;
+  /** Show one shell-level clear button that resets both endpoints, including uncommitted text. */
   clearable?: boolean;
   dataTestId?: string;
 }
 
 interface IEmits {
   (event: "update:modelValue", value: VcDateRangeType | undefined): void;
+  /** Both segments parse AND `start <= end`. Empty and partial ranges report true. */
   (event: "update:valid", value: boolean): void;
+  /** Focus left the whole field; moves between the segments and the action buttons are not reported. */
   (event: "blur", focusEvent: FocusEvent): void;
+  /** Focus entered the whole field; see `blur` for the boundary rule. */
   (event: "focus", focusEvent: FocusEvent): void;
   (event: "clear"): void;
 }
@@ -169,27 +190,30 @@ const startInputRef = useTemplateRef<IDateInputExposed | null>("startInputRef");
 const endInputRef = useTemplateRef<IDateInputExposed | null>("endInputRef");
 const startInputElement = computed<HTMLInputElement | null>(() => startInputRef.value?.inputElement ?? null);
 
+// Model-or-display-text: uncommitted (possibly invalid) text must stay clearable even with an empty model.
+const hasClearableContent = computed<boolean>(
+  () =>
+    !!props.modelValue?.start ||
+    !!props.modelValue?.end ||
+    !!startInputRef.value?.hasText ||
+    !!endInputRef.value?.hasText,
+);
+
 // Sizes slot buttons (clear + #append) the way VcInput sizes its own decorators.
 const size = computed(() => props.size);
 provide<VcInputContextType>("inputContext", { size });
 
+const detailsId = useComponentId("date-range-input") + "-details";
+
 // Segments are hide-details, so the shell surfaces validity itself.
-const { isValid, computedError, computedMessage, setSegmentValid, setSegmentErrorText, mergeRange } = useDateRangeField(
-  {
+const { isValid, computedError, computedMessage, segmentAria, setSegmentValid, setSegmentErrorText, mergeRange } =
+  useDateRangeField({
     modelValue: () => props.modelValue,
     error: () => props.error,
     message: () => props.message,
-  },
-);
-
-const detailsId = useComponentId("date-range-input") + "-details";
-
-// Segments are hide-details and the asterisk lives on the group label, so both are wired by hand.
-const segmentAria = computed<Record<string, string | null>>(() => ({
-  "aria-invalid": computedError.value ? "true" : "false",
-  "aria-describedby": computedMessage.value ? detailsId : null,
-  "aria-required": props.required ? "true" : null,
-}));
+    required: () => props.required,
+    detailsId,
+  });
 
 // Immediate so the empty (valid) state is reported on mount.
 watch(isValid, (value) => emit("update:valid", value), { immediate: true });
@@ -198,31 +222,38 @@ function onSegment(which: "start" | "end", value: string | undefined): void {
   emit("update:modelValue", mergeRange(which, value));
 }
 
-// Shell-level: ignore focus moves between the segments and the clear/toggle buttons.
 function onFocusIn(event: FocusEvent): void {
-  if (crossedFocusBoundary(event)) {
+  if (shellFocusEntered(event)) {
     emit("focus", event);
   }
 }
 
 function onFocusOut(event: FocusEvent): void {
-  if (crossedFocusBoundary(event)) {
+  if (shellFocusLeft(event)) {
     emit("blur", event);
   }
 }
 
-function clearBoth(): void {
-  emit("update:modelValue", undefined);
-  emit("clear");
-  // An already-empty segment sees no prop change; nextTick so reset() reads the cleared model, not the stale one.
+// An already-empty segment sees no prop change on clear; nextTick so reset() reads the cleared model.
+function resetSegments(): void {
   void nextTick(() => {
     startInputRef.value?.reset();
     endInputRef.value?.reset();
   });
 }
 
+function clearBoth(): void {
+  // Refocus before the button unmounts, as VcInput.clear() does; focus lost to body would emit a false blur.
+  startInputElement.value?.focus();
+  emit("update:modelValue", undefined);
+  emit("clear");
+  resetSegments();
+}
+
 defineExpose({
   startInputElement,
+  /** Drops uncommitted segment text; for shells whose clear action bypasses this component. */
+  resetSegments,
 });
 </script>
 
@@ -234,6 +265,10 @@ defineExpose({
   --color: var(--vc-input-base-color, theme("colors.primary.500"));
   --focus-color: rgb(from var(--color) r g b / 0.3);
   --radius: var(--vc-input-radius, var(--vc-radius, 0.5rem));
+  --vc-button-radius: calc(var(--radius) - 2px);
+
+  // The separator supplies the gap between the segments, so they sit tighter than a standalone input.
+  --vc-input-padding-x: theme("padding.1");
 
   // Root is a fieldset. Preflight zeroes its border/padding/margin; min-inline-size: min-content is
   // the one UA default it misses, and it would stop the field from shrinking with its container.
@@ -254,7 +289,6 @@ defineExpose({
     &--md {
       --height: theme("spacing.11");
       --text-size: theme("fontSize.base[0]");
-      --vc-input-padding-x: theme("padding.1");
     }
   }
 
@@ -273,7 +307,8 @@ defineExpose({
 
     font-size: var(--text-size);
 
-    &:focus-within {
+    // Not :focus-within — the clear/calendar buttons paint their own outline, so the shell must not double-ring.
+    &:has(input:focus) {
       @apply ring ring-[--focus-color];
     }
 

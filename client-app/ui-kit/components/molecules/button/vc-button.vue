@@ -248,8 +248,6 @@ defineExpose({
 
   &--disabled {
     $disabled: &;
-
-    @apply cursor-not-allowed;
   }
 
   &--loading {
@@ -391,8 +389,11 @@ defineExpose({
     }
   }
 
+  // :not($loading) throughout — loading also marks the button --disabled, but it is busy, not denied.
   &#{$disabled}:not(#{$loading}),
   &:disabled#{$disabled}:not(#{$loading}) {
+    @apply cursor-not-allowed;
+
     --vc-icon-color: var(--color-neutral-400);
     --text-color: var(--color-neutral-600);
 

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
-import { effectScope, ref } from "vue";
+import { effectScope, nextTick, ref } from "vue";
 import { useDateRangeField } from "@/ui-kit/composables";
 
 vi.mock("vue-i18n", () => ({
@@ -10,6 +10,8 @@ interface IRunOptions {
   modelValue?: VcDateRangeType;
   error?: boolean;
   message?: string;
+  required?: boolean;
+  detailsId?: string;
 }
 
 function setup(options: IRunOptions = {}) {
@@ -17,13 +19,15 @@ function setup(options: IRunOptions = {}) {
   const modelValue = ref<VcDateRangeType | undefined>(options.modelValue);
   const error = ref<boolean | undefined>(options.error);
   const message = ref<string | undefined>(options.message);
+  const required = ref<boolean | undefined>(options.required);
+  const detailsId = options.detailsId ?? "range-details";
 
   let field!: ReturnType<typeof useDateRangeField>;
   scope.run(() => {
-    field = useDateRangeField({ modelValue, error, message });
+    field = useDateRangeField({ modelValue, error, message, required, detailsId });
   });
 
-  return { field, modelValue, error, message, scope };
+  return { field, modelValue, error, message, required, detailsId, scope };
 }
 
 beforeEach(() => {
@@ -72,13 +76,13 @@ describe("useDateRangeField — order validity", () => {
   });
 });
 
-describe("useDateRangeField — segment format validity", () => {
-  test("marks the field invalid while a segment reports a bad format", () => {
+describe("useDateRangeField — segment validity", () => {
+  test("marks the field invalid but message-free while a segment is invalid and untouched", () => {
     const { field } = setup();
     field.setSegmentValid("start", false);
     expect(field.isValid.value).toBe(false);
-    expect(field.computedError.value).toBe(true);
-    expect(field.computedMessage.value).toBe("ui_kit.date_input.invalid_format");
+    expect(field.computedError.value).toBe(false);
+    expect(field.computedMessage.value).toBeUndefined();
   });
 
   test("tracks each segment independently", () => {
@@ -94,28 +98,33 @@ describe("useDateRangeField — segment format validity", () => {
     expect(field.isValid.value).toBe(true);
   });
 
-  test("prefers the segment's own message over the format fallback", () => {
+  test("relays a touched segment's own message", () => {
     const { field } = setup();
+    field.setSegmentValid("start", false);
+    field.setSegmentErrorText("start", "ui_kit.date_input.min_date_error");
+    expect(field.computedError.value).toBe(true);
+    expect(field.computedMessage.value).toBe("ui_kit.date_input.min_date_error");
+  });
+
+  test("reports each segment's own message", () => {
+    const { field } = setup();
+    field.setSegmentValid("end", false);
+    field.setSegmentErrorText("end", "ui_kit.date_input.max_date_error");
+    expect(field.computedMessage.value).toBe("ui_kit.date_input.max_date_error");
+
+    field.setSegmentValid("end", true);
+    field.setSegmentErrorText("end", undefined);
     field.setSegmentValid("start", false);
     field.setSegmentErrorText("start", "ui_kit.date_input.min_date_error");
     expect(field.computedMessage.value).toBe("ui_kit.date_input.min_date_error");
   });
 
-  test("keeps the format fallback for a segment that reported no message", () => {
+  test("prefers the start segment's message when both segments report one", () => {
     const { field } = setup();
-    field.setSegmentValid("end", false);
-    expect(field.computedMessage.value).toBe("ui_kit.date_input.invalid_format");
-  });
-
-  test("reports each segment's own message", () => {
-    const { field } = setup();
-    field.setSegmentErrorText("start", "ui_kit.date_input.min_date_error");
-    field.setSegmentErrorText("end", "ui_kit.date_input.max_date_error");
-
-    field.setSegmentValid("end", false);
-    expect(field.computedMessage.value).toBe("ui_kit.date_input.max_date_error");
-
     field.setSegmentValid("start", false);
+    field.setSegmentErrorText("start", "ui_kit.date_input.min_date_error");
+    field.setSegmentValid("end", false);
+    field.setSegmentErrorText("end", "ui_kit.date_input.max_date_error");
     expect(field.computedMessage.value).toBe("ui_kit.date_input.min_date_error");
   });
 
@@ -131,12 +140,12 @@ describe("useDateRangeField — segment format validity", () => {
     expect(field.computedMessage.value).toBeUndefined();
   });
 
-  test("prefers invalid_format over invalid_range when a segment is malformed", () => {
+  test("keeps invalid_range while a malformed segment is still untouched", () => {
     const { field } = setup({ modelValue: { start: "2026-10-20", end: "2026-10-01" } });
     expect(field.computedMessage.value).toBe("ui_kit.date_range_input.invalid_range");
 
     field.setSegmentValid("end", false);
-    expect(field.computedMessage.value).toBe("ui_kit.date_input.invalid_format");
+    expect(field.computedMessage.value).toBe("ui_kit.date_range_input.invalid_range");
   });
 
   test("prefers a segment's own message over invalid_range too", () => {
@@ -183,10 +192,45 @@ describe("useDateRangeField — error/message precedence", () => {
   });
 });
 
+describe("useDateRangeField — segment ARIA", () => {
+  test("keeps the optional keys off while the field is clean", () => {
+    const { field } = setup();
+    expect(field.segmentAria.value).toEqual({
+      "aria-invalid": "false",
+      "aria-describedby": null,
+      "aria-required": null,
+    });
+  });
+
+  test("points aria-describedby at the details row whenever a message is shown", () => {
+    const { field, detailsId } = setup({ message: "Pick a range" });
+    expect(field.segmentAria.value["aria-describedby"]).toBe(detailsId);
+    expect(field.segmentAria.value["aria-invalid"]).toBe("false");
+  });
+
+  test("raises aria-invalid together with the shell error", () => {
+    const { field, detailsId } = setup({ modelValue: { start: "2026-10-20", end: "2026-10-01" } });
+    expect(field.segmentAria.value["aria-invalid"]).toBe("true");
+    expect(field.segmentAria.value["aria-describedby"]).toBe(detailsId);
+  });
+
+  test("tracks the required option", () => {
+    const { field, required } = setup({ required: true });
+    expect(field.segmentAria.value["aria-required"]).toBe("true");
+
+    required.value = false;
+    expect(field.segmentAria.value["aria-required"]).toBeNull();
+  });
+});
+
 describe("useDateRangeField — mergeRange", () => {
-  test("replaces only the requested endpoint", () => {
+  test("replaces only the start endpoint", () => {
     const { field } = setup({ modelValue: { start: "2026-10-08", end: "2026-10-14" } });
     expect(field.mergeRange("start", "2026-10-01")).toEqual({ start: "2026-10-01", end: "2026-10-14" });
+  });
+
+  test("replaces only the end endpoint", () => {
+    const { field } = setup({ modelValue: { start: "2026-10-08", end: "2026-10-14" } });
     expect(field.mergeRange("end", "2026-10-20")).toEqual({ start: "2026-10-08", end: "2026-10-20" });
   });
 
@@ -209,5 +253,49 @@ describe("useDateRangeField — mergeRange", () => {
     const { field, modelValue } = setup();
     modelValue.value = { start: "2026-10-08", end: undefined };
     expect(field.mergeRange("end", "2026-10-14")).toEqual({ start: "2026-10-08", end: "2026-10-14" });
+  });
+});
+
+// The prop is still the pre-update value for a second commit in the same task (clearing one segment
+// commits the other's typed text), so merging into it silently drops the first edit.
+describe("useDateRangeField — two commits before the prop updates", () => {
+  test("keeps both edits", () => {
+    const { field } = setup({ modelValue: { start: "2026-08-08", end: undefined } });
+    expect(field.mergeRange("end", "2026-08-20")).toEqual({ start: "2026-08-08", end: "2026-08-20" });
+    expect(field.mergeRange("start", undefined)).toEqual({ start: undefined, end: "2026-08-20" });
+  });
+
+  test("keeps both edits in the opposite commit order", () => {
+    const { field } = setup({ modelValue: { start: "2026-08-08", end: undefined } });
+    expect(field.mergeRange("start", undefined)).toBeUndefined();
+    expect(field.mergeRange("end", "2026-08-20")).toEqual({ start: undefined, end: "2026-08-20" });
+  });
+
+  test("does not resurrect an endpoint that a collapsed range already dropped", () => {
+    const { field } = setup({ modelValue: { start: "2026-08-08", end: "2026-08-20" } });
+    expect(field.mergeRange("start", undefined)).toEqual({ start: undefined, end: "2026-08-20" });
+    expect(field.mergeRange("end", undefined)).toBeUndefined();
+    expect(field.mergeRange("start", "2026-09-01")).toEqual({ start: "2026-09-01", end: undefined });
+  });
+
+  // An uncontrolled parent never applies the emit, so the model watch never fires and only the
+  // end-of-task drop stops the next commit from merging into a rejected endpoint.
+  test("goes back to the prop once the task ends, even if the model never changed", async () => {
+    const { field } = setup();
+    expect(field.mergeRange("start", "2026-06-15")).toEqual({ start: "2026-06-15", end: undefined });
+
+    await nextTick();
+
+    expect(field.mergeRange("end", "2026-07-20")).toEqual({ start: undefined, end: "2026-07-20" });
+  });
+
+  test("goes back to the prop once the model has actually changed", async () => {
+    const { field, modelValue } = setup({ modelValue: { start: "2026-08-08", end: undefined } });
+    expect(field.mergeRange("end", "2026-08-20")).toEqual({ start: "2026-08-08", end: "2026-08-20" });
+
+    modelValue.value = { start: "2026-01-01", end: "2026-01-31" };
+    await nextTick();
+
+    expect(field.mergeRange("start", "2026-01-05")).toEqual({ start: "2026-01-05", end: "2026-01-31" });
   });
 });

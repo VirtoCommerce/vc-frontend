@@ -2,6 +2,7 @@ import { flushPromises, mount } from "@vue/test-utils";
 import { describe, expect, it, vi } from "vitest";
 import { defineComponent, ref } from "vue";
 import { VcInputDetails } from "@/ui-kit/components/atoms";
+import VcButton from "../button/vc-button.vue";
 import VcDateInput from "../date-input/vc-date-input.vue";
 import VcInput from "../input/vc-input.vue";
 import VcDateRangeInput from "./vc-date-range-input.vue";
@@ -68,11 +69,67 @@ describe("VcDateRangeInput", () => {
     expect(wrapper.emitted("update:valid")?.at(-1)?.[0]).toBe(false);
   });
 
+  it("returns focus to the start input on clear instead of emitting a false blur", async () => {
+    const parent = mount(
+      defineComponent({
+        components: { VcDateRangeInput },
+
+        setup() {
+          const range = ref<VcDateRangeType | undefined>({ start: "2026-10-08", end: "2026-10-14" });
+          const blurs = ref(0);
+          return { range, blurs };
+        },
+
+        template: `<VcDateRangeInput v-model="range" clearable @blur="blurs++" />`,
+      }),
+      {
+        global: {
+          components: { VcDateInput, VcInput, VcInputDetails, VcButton },
+          stubs: { VcLabel: true, VcIcon: true, VcTooltip: true },
+          directives: { "html-safe": {} },
+          mocks: { $t: (key: string) => key },
+        },
+        attachTo: document.body,
+      },
+    );
+
+    const [startInput] = parent.findAll("input");
+    startInput.element.focus();
+
+    const clearButton = parent.find<HTMLButtonElement>(".vc-date-range-input__clear");
+    clearButton.element.focus();
+    await clearButton.trigger("click");
+    await flushPromises();
+
+    expect(parent.vm.range).toBeUndefined();
+    expect(document.activeElement).toBe(startInput.element);
+    expect(parent.vm.blurs).toBe(0);
+
+    parent.unmount();
+  });
+
   it("clears both halves via the single shell clear", async () => {
     const wrapper = mountInput({ modelValue: { start: "2026-10-08", end: "2026-10-14" }, clearable: true });
     await wrapper.find(".vc-date-range-input__clear").trigger("click");
     expect(wrapper.emitted("update:modelValue")?.at(-1)?.[0]).toBeUndefined();
     expect(wrapper.emitted("clear")).toBeTruthy();
+  });
+
+  it("offers the clear button for uncommitted garbage despite an empty model, and clears the displays", async () => {
+    const wrapper = mountInput({ clearable: true });
+    expect(wrapper.find(".vc-date-range-input__clear").exists()).toBe(false);
+
+    const [startInput] = wrapper.findAll("input");
+    await startInput.setValue("99/99/9999");
+
+    const clearButton = wrapper.find(".vc-date-range-input__clear");
+    expect(clearButton.exists()).toBe(true);
+
+    await clearButton.trigger("click");
+    await flushPromises();
+
+    expect(wrapper.findAll("input").map((input) => input.element.value)).toEqual(["", ""]);
+    expect(wrapper.emitted("update:modelValue")).toEqual([[undefined]]);
   });
 
   // A segment already holding an undefined model sees no prop change on clear, so nothing resyncs it.
@@ -140,11 +197,34 @@ describe("VcDateRangeInput", () => {
   });
 
   describe("internal invalid feedback", () => {
-    it("turns the shell red and shows the format message when a segment is format-invalid", async () => {
+    it("keeps the shell quiet while a segment is invalid but untouched", async () => {
       const wrapper = mountInput();
       const [startSeg] = wrapper.findAllComponents({ name: "VcDateInput" });
       startSeg.vm.$emit("update:valid", false);
       await wrapper.vm.$nextTick();
+      expect(wrapper.emitted("update:valid")?.at(-1)?.[0]).toBe(false);
+      expect(wrapper.classes()).not.toContain("vc-date-range-input--error");
+      const details = wrapper.findComponent(VcInputDetails);
+      expect(details.props("error")).toBe(false);
+      expect(details.props("message")).toBeUndefined();
+    });
+
+    it("stays quiet on the first keystroke but reports update:valid=false", async () => {
+      const wrapper = mountInput();
+      const [startInput] = wrapper.findAll("input");
+      await startInput.setValue("1");
+
+      expect(wrapper.emitted("update:valid")?.at(-1)?.[0]).toBe(false);
+      expect(wrapper.classes()).not.toContain("vc-date-range-input--error");
+      expect(wrapper.findComponent(VcInputDetails).props("message")).toBeUndefined();
+    });
+
+    it("shows the format message once the malformed segment is blurred", async () => {
+      const wrapper = mountInput();
+      const [startInput] = wrapper.findAll("input");
+      await startInput.setValue("99/99/9999");
+      await startInput.trigger("blur");
+
       expect(wrapper.classes()).toContain("vc-date-range-input--error");
       const details = wrapper.findComponent(VcInputDetails);
       expect(details.props("error")).toBe(true);
@@ -168,13 +248,15 @@ describe("VcDateRangeInput", () => {
       expect(wrapper.findComponent(VcInputDetails).props("message")).toBe("ui_kit.date_range_input.invalid_range");
     });
 
-    it("clears the internal error once the segment becomes valid again", async () => {
+    it("clears the internal error once the segment stops reporting a message", async () => {
       const wrapper = mountInput();
       const [startSeg] = wrapper.findAllComponents({ name: "VcDateInput" });
       startSeg.vm.$emit("update:valid", false);
+      startSeg.vm.$emit("update:errorText", "ui_kit.date_input.invalid_format");
       await wrapper.vm.$nextTick();
       expect(wrapper.classes()).toContain("vc-date-range-input--error");
       startSeg.vm.$emit("update:valid", true);
+      startSeg.vm.$emit("update:errorText", undefined);
       await wrapper.vm.$nextTick();
       expect(wrapper.classes()).not.toContain("vc-date-range-input--error");
     });

@@ -19,6 +19,7 @@
     @update:start-value="onStartValueUpdate"
     @update:placeholder="onPlaceholderUpdate"
     @keydown="onCalendarKeydown"
+    @pointerdown="endEscapeRevert"
   >
     <div class="vc-range-calendar__header">
       <button
@@ -96,7 +97,6 @@
 </template>
 
 <script setup lang="ts">
-import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from "@internationalized/date";
 import {
   RangeCalendarCell,
   RangeCalendarCellTrigger,
@@ -112,19 +112,25 @@ import {
 } from "reka-ui";
 import { computed, nextTick, toRef, useTemplateRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { dateValueToIso, todayDate, tryParseDate, useCalendarBase } from "./use-calendar-base";
+import { tryParseDate } from "@/ui-kit/utilities/date";
+import { dateValueToIso, todayDate, useCalendarBase } from "./use-calendar-base";
 import type { DateValue } from "@internationalized/date";
+import type { DateRange } from "reka-ui";
 import type { ComponentPublicInstance } from "vue";
 
-type RekaDateRangeType = { start: DateValue | undefined; end: DateValue | undefined };
-
 interface IProps {
+  /** Both endpoints as ISO YYYY-MM-DD. A start-only value renders as an in-progress pick. */
   modelValue?: VcDateRangeType;
   size?: VcCalendarSizeType;
+  /** ISO YYYY-MM-DD min boundary; earlier days render disabled. */
   min?: string;
+  /** ISO YYYY-MM-DD max boundary; later days render disabled. */
   max?: string;
+  /** Predicate that returns true to mark a date unavailable (hatched, distinct from min/max). Receives ISO YYYY-MM-DD. */
   disabledDate?: VcCalendarDisabledDateType;
+  /** Show the footer (Clear button). */
   showFooter?: boolean;
+  /** Override locale; defaults to active i18n locale. */
   locale?: string;
   firstDayOfWeek?: VcCalendarFirstDayOfWeekType;
   weekdayFormat?: VcCalendarWeekdayFormatType;
@@ -132,7 +138,9 @@ interface IProps {
 }
 
 interface IEmits {
+  /** Fires for the anchor pick (start only) as well as the completed range. */
   (event: "update:modelValue", value: VcDateRangeType | undefined): void;
+  /** The footer Clear button was pressed, even when the range was already empty. */
   (event: "clear"): void;
 }
 
@@ -157,12 +165,22 @@ function getInitialPlaceholder(): DateValue {
 
 const { t } = useI18n();
 
+const calendarRootRef = useTemplateRef<ComponentPublicInstance | null>("calendarRootRef");
+
+const parsedModelValue = computed<DateRange>(() => ({
+  start: tryParseDate(props.modelValue?.start),
+  end: tryParseDate(props.modelValue?.end),
+}));
+
 const base = useCalendarBase({
   locale: toRef(props, "locale"),
   min: toRef(props, "min"),
   max: toRef(props, "max"),
   disabledDate: toRef(props, "disabledDate"),
+  firstDayOfWeek: toRef(props, "firstDayOfWeek"),
   initialPlaceholder: getInitialPlaceholder,
+  getRoot: () => calendarRootRef.value?.$el as Element | null | undefined,
+  getSelectedIso: () => parsedModelValue.value.start?.toString() ?? parsedModelValue.value.end?.toString(),
 });
 
 const {
@@ -176,16 +194,12 @@ const {
   onPlaceholderUpdate,
   goToPreviousYear,
   goToNextYear,
+  clampToBounds,
+  onCalendarKeydown: baseOnCalendarKeydown,
+  focusActiveCell,
 } = base;
 
-const calendarRootRef = useTemplateRef<ComponentPublicInstance | null>("calendarRootRef");
-
 const rootClasses = computed(() => ["vc-range-calendar", `vc-range-calendar--size--${props.size}`]);
-
-const parsedModelValue = computed<RekaDateRangeType>(() => ({
-  start: tryParseDate(props.modelValue?.start),
-  end: tryParseDate(props.modelValue?.end),
-}));
 
 // Dedup snapshot: props.modelValue is still stale during reka's same-tick round trip.
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss
@@ -196,6 +210,10 @@ let pendingCompleteRangeStart: string | undefined;
 
 // reka cannot represent an end-only range and re-anchors it as start; that echo must not be forwarded.
 let suppressExternalSyncEcho = false;
+
+// reka reverts an in-progress pick by restoring startValue and endValue separately: the start-only
+// intermediate must not leave as a fresh partial pick, only the whole range it settles on.
+let pendingEscapeRevert = false;
 
 function isSameRange(a: VcDateRangeType | undefined, b: VcDateRangeType | undefined): boolean {
   return a?.start === b?.start && a?.end === b?.end;
@@ -212,7 +230,11 @@ function emitRange(value: VcDateRangeType | undefined): void {
   emit("update:modelValue", value);
 }
 
-function onUpdate(value: RekaDateRangeType | undefined): void {
+function onUpdate(value: DateRange | undefined): void {
+  // update:modelValue is the authoritative end of an Escape revert. Clearing the guard here rather
+  // than after N ticks is what makes it browser-proof: the gap between reka's two restores is one
+  // microtask in jsdom but a whole task later in a real browser.
+  endEscapeRevert();
   const start = dateValueToIso(value?.start);
   const end = dateValueToIso(value?.end);
   if (!start && !end) {
@@ -235,131 +257,25 @@ function onClearClick(): void {
   emit("clear");
 }
 
-// firstDayOfWeek is 0-based; startOfWeek/endOfWeek expect a DayOfWeek string.
-const DAY_OF_WEEK_NAMES = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as const;
-
-const mappedFirstDay = computed(() => {
-  const value = props.firstDayOfWeek;
-  if (value === undefined) {
-    return undefined;
-  }
-  return DAY_OF_WEEK_NAMES[value];
-});
-
-function clampToBounds(date: DateValue): DateValue {
-  let result = date;
-  const min = minDateValue.value;
-  const max = maxDateValue.value;
-  if (min && result.compare(min) < 0) {
-    result = min;
-  }
-  if (max && result.compare(max) > 0) {
-    result = max;
-  }
-  return result;
-}
-
-function getFocusedCellDate(root: HTMLElement): DateValue | undefined {
-  const active = document.activeElement;
-  if (!(active instanceof HTMLElement)) {
-    return undefined;
-  }
-  if (!root.contains(active)) {
-    return undefined;
-  }
-  if (active.dataset.rekaCalendarCellTrigger === undefined) {
-    return undefined;
-  }
-  const iso = active.dataset.value;
-  if (!iso) {
-    return undefined;
-  }
-  return tryParseDate(iso);
-}
-
-function focusCellByIso(root: HTMLElement, iso: string): void {
-  // Adjacent-month cells duplicate the same date — prefer the in-view one.
-  const inView = root.querySelector<HTMLElement>(
-    `[data-reka-calendar-cell-trigger][data-value="${iso}"]:not([data-outside-view])`,
-  );
-  const cell = inView ?? root.querySelector<HTMLElement>(`[data-reka-calendar-cell-trigger][data-value="${iso}"]`);
-  // preventScroll: body-portaled, a default focus() would scroll the whole document.
-  cell?.focus({ preventScroll: true });
-}
-
-type CalendarKeyTargetType = { target: DateValue };
-
-type CalendarKeyModifiersType = { ctrlOrMeta: boolean; shift: boolean };
-
-function resolveKeyTarget(
-  key: string,
-  focused: DateValue,
-  modifiers: CalendarKeyModifiersType,
-): CalendarKeyTargetType | undefined {
-  const { ctrlOrMeta, shift } = modifiers;
-  let target: DateValue;
-
-  switch (key) {
-    case "Home":
-      if (ctrlOrMeta) {
-        target = startOfMonth(focused);
-      } else {
-        target = startOfWeek(focused, resolvedLocale.value, mappedFirstDay.value);
-      }
-      break;
-    case "End":
-      if (ctrlOrMeta) {
-        target = endOfMonth(focused);
-      } else {
-        target = endOfWeek(focused, resolvedLocale.value, mappedFirstDay.value);
-      }
-      break;
-    case "PageDown":
-      target = shift ? focused.add({ years: 1 }) : focused.add({ months: 1 });
-      break;
-    case "PageUp":
-      target = shift ? focused.add({ years: -1 }) : focused.add({ months: -1 });
-      break;
-    default:
-      // Let reka handle arrows/space/enter.
-      return undefined;
-  }
-
-  return { target };
-}
-
 function onCalendarKeydown(event: KeyboardEvent): void {
-  const root = event.currentTarget;
-  if (!(root instanceof HTMLElement)) {
+  if (event.key === "Escape") {
+    pendingEscapeRevert = true;
     return;
   }
+  endEscapeRevert();
+  baseOnCalendarKeydown(event);
+}
 
-  const focused = getFocusedCellDate(root);
-  if (!focused) {
-    return;
-  }
-
-  const ctrlOrMeta = event.ctrlKey || event.metaKey;
-  const shift = event.shiftKey;
-  const resolvedKey = resolveKeyTarget(event.key, focused, { ctrlOrMeta, shift });
-  if (!resolvedKey) {
-    return;
-  }
-
-  event.preventDefault();
-
-  const target = clampToBounds(resolvedKey.target);
-
-  // Scrolls the grid when the target spills into an adjacent month.
-  placeholderRef.value = target;
-
-  const targetIso = target.toString();
-  void nextTick(() => {
-    focusCellByIso(root, targetIso);
-  });
+// Any fresh gesture means the revert has either landed or will never come; a guard left armed would
+// swallow the next anchor pick.
+function endEscapeRevert(): void {
+  pendingEscapeRevert = false;
 }
 
 function onStartValueUpdate(value: DateValue | undefined): void {
+  if (pendingEscapeRevert) {
+    return;
+  }
   const iso = dateValueToIso(value);
   if (!iso) {
     return;
@@ -374,7 +290,7 @@ function onStartValueUpdate(value: DateValue | undefined): void {
   emitRange({ start: iso, end: undefined });
 }
 
-// use-calendar-base does not sync the placeholder — the visible month follows the last-edited endpoint.
+// use-calendar-base does not sync the placeholder on model changes — this watch does.
 watch(
   () => [props.modelValue?.start, props.modelValue?.end] as const,
   ([newStart, newEnd], [oldStart, oldEnd]) => {
@@ -385,38 +301,20 @@ watch(
     void nextTick(() => {
       suppressExternalSyncEcho = false;
     });
-    let targetIso = newEnd !== oldEnd ? newEnd : undefined;
-    if (!targetIso && newStart !== oldStart) {
+    // A changed start must win: reka's placeholder-follows-startValue watcher overrides any
+    // end-preference later in the flush. End-only changes still render the end month.
+    const startChanged = newStart !== oldStart;
+    const endChanged = newEnd !== oldEnd;
+    let targetIso: string | undefined;
+    if (startChanged) {
       targetIso = newStart;
+    } else if (endChanged) {
+      targetIso = newEnd;
     }
     const parsed = tryParseDate(targetIso) ?? tryParseDate(newEnd) ?? tryParseDate(newStart);
-    placeholderRef.value = parsed ?? todayDate();
+    placeholderRef.value = clampToBounds(parsed ?? todayDate());
   },
 );
-
-function focusActiveCell(): void {
-  const root = calendarRootRef.value?.$el;
-  if (!(root instanceof HTMLElement)) {
-    return;
-  }
-
-  const selectedIso = parsedModelValue.value.start?.toString() ?? parsedModelValue.value.end?.toString();
-  if (selectedIso) {
-    focusCellByIso(root, selectedIso);
-    if (getFocusedCellDate(root)) {
-      return;
-    }
-  }
-
-  const now = todayDate();
-  focusCellByIso(root, now.toString());
-  if (getFocusedCellDate(root)) {
-    return;
-  }
-
-  const firstInView = root.querySelector<HTMLElement>("[data-reka-calendar-cell-trigger]:not([data-outside-view])");
-  firstInView?.focus({ preventScroll: true });
-}
 
 defineExpose({ focusActiveCell });
 </script>
@@ -591,6 +489,11 @@ defineExpose({ focusActiveCell });
         var(--color-neutral-200) 4px,
         var(--color-neutral-200) 5px
       );
+
+      /* The endpoint fill below overrides both the hatch and the muted text; currentColor keeps the
+         strike legible on either surface, so it is the cue that survives on an unavailable endpoint. */
+      text-decoration: line-through;
+      text-decoration-thickness: 1px;
     }
 
     &:focus-visible {
@@ -688,32 +591,17 @@ defineExpose({ focusActiveCell });
     @apply flex justify-between items-center pt-2 mt-1 border-t border-neutral-200;
   }
 
+  // Clear is the footer's only action here, and it is a ghost one — VcCalendar's primary Today button
+  // has no counterpart in a range calendar.
   &__footer-btn {
-    @apply bg-transparent border-0 cursor-pointer rounded-[--day-radius] uppercase text-primary-700 text-xs font-black tracking-wider;
+    @apply bg-transparent border-0 cursor-pointer rounded-[--day-radius] uppercase text-neutral-600 text-xs font-black tracking-wider;
 
     font-family: inherit;
     padding: 0.375rem 0.625rem;
     transition: background 120ms ease;
 
     &:hover {
-      @apply bg-primary-50;
-    }
-
-    &--ghost {
-      @apply text-neutral-600;
-
-      &:hover {
-        @apply bg-neutral-100 text-neutral-800;
-      }
-    }
-
-    &[disabled],
-    &[aria-disabled="true"] {
-      @apply text-neutral-400 cursor-not-allowed;
-
-      &:hover {
-        @apply bg-transparent text-neutral-400;
-      }
+      @apply bg-neutral-100 text-neutral-800;
     }
   }
 }

@@ -2,7 +2,7 @@ import { ref } from "vue";
 import VcDateRangeInput from "./vc-date-range-input.vue";
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
-const SIZES = ["sm", "md"];
+const SIZES = ["xs", "sm", "md"];
 
 const meta: Meta<typeof VcDateRangeInput> = {
   title: "Components/Molecules/VcDateRangeInput",

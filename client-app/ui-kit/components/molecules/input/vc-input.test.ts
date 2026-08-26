@@ -94,21 +94,15 @@ describe("VcInput clearable", () => {
   });
 });
 
-describe("VcInput seamless/align", () => {
-  it("renders without seamless/align modifier classes by default", () => {
+describe("VcInput seamless", () => {
+  it("renders without the seamless modifier class by default", () => {
     const wrapper = createInputWrapper({ props: { modelValue: "" } });
     expect(wrapper.classes()).not.toContain("vc-input--seamless");
-    expect(wrapper.classes()).toContain("vc-input--align--start");
   });
 
   it("adds vc-input--seamless when seamless is true", () => {
     const wrapper = createInputWrapper({ props: { modelValue: "", seamless: true } });
     expect(wrapper.classes()).toContain("vc-input--seamless");
-  });
-
-  it("adds vc-input--align--center when align is center", () => {
-    const wrapper = createInputWrapper({ props: { modelValue: "", align: "center" } });
-    expect(wrapper.classes()).toContain("vc-input--align--center");
   });
 });
 
@@ -121,10 +115,5 @@ describe("VcDateInput passthrough props", () => {
   it("forwards seamless to VcInput", () => {
     const wrapper = createDateInputWrapper({ props: { modelValue: "", seamless: true } });
     expect(wrapper.findComponent({ name: "VcInput" }).classes()).toContain("vc-input--seamless");
-  });
-
-  it("forwards align to VcInput", () => {
-    const wrapper = createDateInputWrapper({ props: { modelValue: "", align: "center" } });
-    expect(wrapper.findComponent({ name: "VcInput" }).classes()).toContain("vc-input--align--center");
   });
 });

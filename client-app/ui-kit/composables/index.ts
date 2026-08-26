@@ -1,4 +1,5 @@
 export * from "./useAttrsOnly";
+export * from "./useCalendarPopover";
 export * from "./useComponentId";
 export * from "./useDateField";
 export * from "./useDateRangeField";
