@@ -1,44 +1,46 @@
 <template>
-  <VcWidget class="compare-table" :shadow="false">
+  <VcWidget class="compare-table" :shadow="false" :style="{ '--compare-table-scroll-x': `${bodyScrollLeft}px` }">
     <template #default-container>
-      <!-- Below md, the design moves this block above the header row entirely — teleported
-           there (rather than duplicated) so there's one tabs/differ instance and one activeTab. -->
+      <!-- One tabs/differ instance shared by three hosts — the bar above the header row below md,
+           the header row itself, and the compact bar once it is stuck — rather than three
+           templates to keep in sync. -->
+      <Teleport v-if="tabsHost" :to="tabsHost">
+        <div class="compare-table__controls-top">
+          <div class="compare-table__tabs">
+            <VcTabSwitch
+              :model-value="activeTab"
+              class="compare-table__tab"
+              size="sm"
+              value="all"
+              :label="t('shared.compare.table.tabs.all')"
+              :disabled="isTabSwitchDisabled"
+              @change="activeTab = $event"
+            />
+
+            <VcTabSwitch
+              :model-value="activeTab"
+              class="compare-table__tab"
+              size="sm"
+              value="differences"
+              :label="t('shared.compare.table.tabs.differences')"
+              :disabled="isTabSwitchDisabled"
+              @change="activeTab = $event"
+            />
+          </div>
+
+          <p v-if="!isTabsInCompactBar" class="compare-table__differ">
+            {{ t("shared.compare.table.differ_rows", { count: differCount, total: totalRows }) }}
+          </p>
+        </div>
+      </Teleport>
+
       <div ref="mobileTabsBarRef" class="compare-table__mobile-tabs-bar"></div>
 
-      <div class="compare-table__header-row" :class="{ 'compare-table__header-row--stuck': isCompact }">
-        <div class="compare-table__controls" :class="{ 'compare-table__controls--stuck': isCompact }">
-          <Teleport v-if="mobileTabsBarRef" :to="mobileTabsBarRef" :disabled="!isMobile">
-            <div class="compare-table__controls-top">
-              <div class="compare-table__tabs">
-                <VcTabSwitch
-                  :model-value="activeTab"
-                  class="compare-table__tab"
-                  size="sm"
-                  value="all"
-                  :label="t('shared.compare.table.tabs.all')"
-                  :disabled="isTabSwitchDisabled"
-                  @change="activeTab = $event"
-                />
-
-                <VcTabSwitch
-                  :model-value="activeTab"
-                  class="compare-table__tab"
-                  size="sm"
-                  value="differences"
-                  :label="t('shared.compare.table.tabs.differences')"
-                  :disabled="isTabSwitchDisabled"
-                  @change="activeTab = $event"
-                />
-              </div>
-
-              <p v-if="!isCompact" class="compare-table__differ">
-                {{ t("shared.compare.table.differ_rows", { count: differCount, total: totalRows }) }}
-              </p>
-            </div>
-          </Teleport>
+      <div ref="headerRowRef" class="compare-table__header-row" :inert="isCompact || undefined">
+        <div class="compare-table__controls">
+          <div ref="fullTabsHostRef" class="compare-table__tabs-host"></div>
 
           <VcButton
-            v-if="!isCompact"
             class="compare-table__clear-category"
             variant="soft"
             color="neutral"
@@ -51,14 +53,90 @@
         </div>
 
         <div class="compare-table__header-scroll">
-          <div class="compare-table__header-inner" :style="{ transform: `translateX(${-bodyScrollLeft}px)` }">
-            <div
-              v-for="item in products"
-              :key="item.entry.localId ?? item.product.id"
-              class="compare-table__product"
-              :class="{ 'compare-table__product--compact': isCompact }"
-            >
-              <template v-if="isCompact">
+          <div class="compare-table__header-inner">
+            <div v-for="item in products" :key="item.entry.localId ?? item.product.id" class="compare-table__product">
+              <div class="compare-table__product-image-wrap">
+                <VcImage class="compare-table__product-image" :src="item.product.imgSrc" :alt="item.product.name" />
+
+                <VcProductActions class="compare-table__product-remove" with-background>
+                  <VcProductActionsButton
+                    icon="trash-2"
+                    :tooltip-text="t('shared.compare.table.remove_product')"
+                    @click="emit('removeProduct', item)"
+                  />
+                </VcProductActions>
+              </div>
+
+              <div class="compare-table__product-footer">
+                <VcProductTitle
+                  class="compare-table__product-title"
+                  :to="getProductRoute(item.product.id, item.product.slug)"
+                  :title="item.product.name"
+                  :lines-number="2"
+                  @click="emit('selectItem', item.product)"
+                >
+                  {{ item.product.name }}
+                </VcProductTitle>
+
+                <VcButton
+                  v-if="item.product.isConfigurable"
+                  icon="cube-transparent"
+                  size="sm"
+                  :to="getConfigurationLink(item)"
+                  :target="browserTarget"
+                  :aria-label="t('pages.catalog.customize_button')"
+                />
+
+                <VcButton
+                  v-else-if="item.product.hasVariations"
+                  icon="layers"
+                  size="sm"
+                  :to="getProductRoute(item.product.id, item.product.slug)"
+                  :target="browserTarget"
+                  :aria-label="t('pages.catalog.variations_button', [(item.product.variations?.length || 0) + 1])"
+                />
+
+                <VcButton
+                  v-else
+                  icon="shopping-cart"
+                  size="sm"
+                  :loading="isAddingToCart(item)"
+                  :disabled="isAddToCartDisabled(item.product) || isAddingToCart(item)"
+                  :aria-label="t('shared.compare.table.add_to_cart')"
+                  @click="onAddToCart(item)"
+                />
+              </div>
+            </div>
+
+            <div v-if="canAddProduct" class="compare-table__add-product">
+              <button type="button" class="compare-table__add-product-box">
+                <VcIcon name="plus" :size="28" />
+
+                <span class="compare-table__add-product-text">
+                  {{ t("shared.compare.table.add_product") }}
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rendered even while hidden, so the tabs' teleport host stays put across the switch. -->
+      <div class="compare-table__compact-slot">
+        <div
+          class="compare-table__compact-bar"
+          :class="{ 'compare-table__compact-bar--visible': isCompact }"
+          :inert="!isCompact || undefined"
+        >
+          <div ref="compactTabsHostRef" class="compare-table__controls compare-table__controls--compact"></div>
+
+          <div class="compare-table__header-scroll">
+            <div class="compare-table__header-inner">
+              <div
+                v-for="item in products"
+                :key="item.entry.localId ?? item.product.id"
+                class="compare-table__product compare-table__product--compact"
+              >
                 <div class="compare-table__product-summary">
                   <div class="compare-table__product-summary-image-wrap">
                     <VcImage
@@ -121,71 +199,17 @@
                     {{ t("shared.compare.table.add_to_cart") }}
                   </span>
                 </VcButton>
-              </template>
+              </div>
 
-              <template v-else>
-                <div class="compare-table__product-image-wrap">
-                  <VcImage class="compare-table__product-image" :src="item.product.imgSrc" :alt="item.product.name" />
-
-                  <VcProductActions class="compare-table__product-remove" with-background>
-                    <VcProductActionsButton
-                      icon="trash-2"
-                      :tooltip-text="t('shared.compare.table.remove_product')"
-                      @click="emit('removeProduct', item)"
-                    />
-                  </VcProductActions>
-                </div>
-
-                <div class="compare-table__product-footer">
-                  <VcProductTitle
-                    class="compare-table__product-title"
-                    :to="getProductRoute(item.product.id, item.product.slug)"
-                    :title="item.product.name"
-                    :lines-number="2"
-                    @click="emit('selectItem', item.product)"
-                  >
-                    {{ item.product.name }}
-                  </VcProductTitle>
-
-                  <VcButton
-                    v-if="item.product.isConfigurable"
-                    icon="cube-transparent"
-                    size="sm"
-                    :to="getConfigurationLink(item)"
-                    :target="browserTarget"
-                    :aria-label="t('pages.catalog.customize_button')"
-                  />
-
-                  <VcButton
-                    v-else-if="item.product.hasVariations"
-                    icon="layers"
-                    size="sm"
-                    :to="getProductRoute(item.product.id, item.product.slug)"
-                    :target="browserTarget"
-                    :aria-label="t('pages.catalog.variations_button', [(item.product.variations?.length || 0) + 1])"
-                  />
-
-                  <VcButton
-                    v-else
-                    icon="shopping-cart"
-                    size="sm"
-                    :loading="isAddingToCart(item)"
-                    :disabled="isAddToCartDisabled(item.product) || isAddingToCart(item)"
-                    :aria-label="t('shared.compare.table.add_to_cart')"
-                    @click="onAddToCart(item)"
-                  />
-                </div>
-              </template>
-            </div>
-
-            <div v-if="canAddProduct" class="compare-table__add-product">
-              <button type="button" class="compare-table__add-product-box">
-                <VcIcon name="plus" :size="28" />
-
-                <span class="compare-table__add-product-text" v-if="!isCompact">
-                  {{ t("shared.compare.table.add_product") }}
-                </span>
-              </button>
+              <div v-if="canAddProduct" class="compare-table__add-product">
+                <button
+                  type="button"
+                  class="compare-table__add-product-box"
+                  :aria-label="t('shared.compare.table.add_product')"
+                >
+                  <VcIcon name="plus" :size="28" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -266,7 +290,7 @@
 </template>
 
 <script setup lang="ts">
-import { useBreakpoints } from "@vueuse/core";
+import { useBreakpoints, useCssVar, useElementBounding } from "@vueuse/core";
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBrowserTarget } from "@/core/composables";
@@ -310,17 +334,39 @@ const { t } = useI18n();
 const { browserTarget } = useBrowserTarget();
 const { isAddingToCart, isAddToCartDisabled, onAddToCart } = useCompareAddToCart();
 
-// Below md the tabs/differ block is teleported above the header row (see the design) instead of
-// being duplicated in two places with two templates to keep in sync.
 const isMobile = useBreakpoints(BREAKPOINTS).smaller("md");
 
 const { isRowPinned, togglePin, pinnedRows, unpinnedRows } = useCompareTableRowPins(() => props.rows);
 
-const isCompact = ref(false);
 const activeTab = ref("all");
 const bodyScrollRef = ref<HTMLElement | null>(null);
 const bodyScrollLeft = ref(0);
 const mobileTabsBarRef = ref<HTMLElement | null>(null);
+const fullTabsHostRef = ref<HTMLElement | null>(null);
+const compactTabsHostRef = ref<HTMLElement | null>(null);
+const headerRowRef = ref<HTMLElement | null>(null);
+
+const { bottom: headerRowBottom } = useElementBounding(headerRowRef);
+// Same value the compact bar sticks at, read from the one source both sides share. Comparing two
+// separately observed elements instead would tear: their scroll listeners run in sequence, so
+// there is a frame where one has moved and the other has not.
+const layoutHeaderHeight = useCssVar("--vc-layout-header-height", undefined, { observe: true });
+const stickyTop = computed(() => Number.parseFloat(layoutHeaderHeight.value ?? "") || 0);
+
+// The full header has gone under the site header. Measured on the header row alone, whose position
+// does not depend on `isCompact` — the compact bar is out of the flow — so the switch cannot feed
+// back into its own trigger.
+const isCompact = computed(() => headerRowBottom.value < stickyTop.value);
+
+const tabsHost = computed(() => {
+  if (isMobile.value) {
+    return mobileTabsBarRef.value;
+  }
+
+  return isCompact.value ? compactTabsHostRef.value : fullTabsHostRef.value;
+});
+
+const isTabsInCompactBar = computed(() => !isMobile.value && isCompact.value);
 
 const isTabSwitchDisabled = computed(() => props.products.length <= 1);
 // Pinned rows always stay visible at the top, even under the "Differences" filter.
@@ -380,8 +426,12 @@ watch(
     @apply min-w-0 flex-1 overflow-hidden;
   }
 
+  // Follows the body's horizontal scroll. Driven by one custom property on the block so the full
+  // header and the compact bar cannot drift apart.
   &__header-inner {
     @apply flex items-stretch;
+
+    transform: translateX(calc(var(--compare-table-scroll-x, 0px) * -1));
   }
 
   &__controls {
@@ -391,8 +441,23 @@ watch(
       @apply w-28;
     }
 
-    &--stuck {
+    &--compact {
       @apply justify-center;
+    }
+  }
+
+  // Zero height: the bar hangs out of the flow so the rows below keep their place when it shows.
+  &__compact-slot {
+    @apply sticky z-[2] h-0;
+
+    top: var(--vc-layout-header-height, 0px);
+  }
+
+  &__compact-bar {
+    @apply pointer-events-none flex overflow-hidden border-b border-neutral-200 bg-additional-50 opacity-0 shadow-md transition-opacity duration-150;
+
+    &--visible {
+      @apply pointer-events-auto opacity-100;
     }
   }
 

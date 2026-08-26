@@ -119,8 +119,8 @@
 </template>
 
 <script setup lang="ts">
-import { syncRefs, useElementSize, useScrollLock } from "@vueuse/core";
-import { computed, ref } from "vue";
+import { syncRefs, useCssVar, useElementSize, useScrollLock } from "@vueuse/core";
+import { computed, ref, watch } from "vue";
 import { useWhiteLabeling } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
@@ -143,12 +143,19 @@ const { customSlots, isAnimated } = useNestedMobileHeader();
 const { searchBarVisible, toggleSearchBar } = useSearchBar();
 
 const { height } = useElementSize(headerElement);
+// Same contract as the desktop header (vc-header.vue) — the mobile header is fixed, so page
+// elements that stick below it need its height too.
+const layoutHeaderHeightVar = useCssVar("--vc-layout-header-height");
 const { cart } = useShortCart();
 const { logoUrl } = useWhiteLabeling();
 
 const placeholderStyle = computed<StyleValue | undefined>(() =>
   height.value ? { height: height.value + "px" } : undefined,
 );
+
+watch(height, (value) => {
+  layoutHeaderHeightVar.value = `${value}px`;
+});
 
 const isScrollLocked = computed(() => mobileMenuVisible.value || searchBarVisible.value);
 const scrollLock = useScrollLock(document.body);

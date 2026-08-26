@@ -41,6 +41,8 @@ const { themeContext } = useThemeContext();
 
 const stickyHeader = ref<HTMLElement | null>(null);
 const headerHeightVar = useCssVar("--vc-layout-sidebar-offset-top");
+// Bare height, without OFFSET_TOP: for elements that must sit flush against the header's bottom.
+const layoutHeaderHeightVar = useCssVar("--vc-layout-header-height");
 
 // For optimization on mobile devices
 const isMobile = breakpoints.smaller("lg");
@@ -50,6 +52,7 @@ const desktopMenuMode = computed(() => themeContext.value?.settings?.desktop_men
 
 watch(headerHeight, (value) => {
   headerHeightVar.value = `${value + OFFSET_TOP}px`;
+  layoutHeaderHeightVar.value = `${value}px`;
 });
 
 const { isAuthenticated } = useUser();
