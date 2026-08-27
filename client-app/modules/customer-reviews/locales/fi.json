@@ -8,7 +8,9 @@
       "rating": "Arvosana",
       "rate_product": "Arvostele tuote",
       "item_as_described_by_vendor": "Tuote vastasi myyjän kuvausta?",
-      "product_review_image": "Tuotearvostelun kuva"
+      "product_review_image": "Tuotearvostelun kuva",
+      "product_review_image_of": "Tuotearvostelun kuva {index}/{total}",
+      "reviews_count": "ei arvosteluja | {n} arvostelu | {n} arvostelua"
     },
     "messages": {
       "thanks_for_feedback": "Palautteesi on lähetetty onnistuneesti ja odottaa vahvistusta. Kiitos!"

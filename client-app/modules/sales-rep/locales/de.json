@@ -14,7 +14,8 @@
       "search_aria": "Vertriebsmitarbeiter suchen",
       "empty": "Keine Vertriebsmitarbeiter gefunden",
       "no_results": "Keine Vertriebsmitarbeiter entsprechen Ihrer Suche",
-      "reset_search": "Suche zurücksetzen"
+      "reset_search": "Suche zurücksetzen",
+      "load_failed": "Vertriebsmitarbeiter konnten nicht geladen werden"
     },
     "my_customers": {
       "navigation": {
@@ -28,7 +29,7 @@
         "last_order": "Meine letzte Bestellung",
         "ytd": "Jahresumsatz",
         "last_year": "Letztes Jahr",
-        "orders_count": "{count} Bestellungen",
+        "orders_count": "{count} Bestellung | {count} Bestellungen",
         "all_customers": "Alle",
         "actions": "Aktionen",
         "search_placeholder": "Suche nach Name",
@@ -49,9 +50,8 @@
           "title": "Dashboard"
         },
         "widgets": {
-          "new_orders": "Neue Bestellungen",
+          "new_orders": "Bestellungen im Status „New“",
           "active_carts": "Aktive Warenkörbe",
-          "active_cart": "Aktiver Warenkorb",
           "orders_placed_week": "Bestellungen diese Woche",
           "orders_placed_mtd": "Bestellungen seit Monatsbeginn",
           "purchased_mtd": "Umsatz seit Monatsbeginn",
@@ -64,9 +64,11 @@
           "vs_last_month": "{delta} ggü. Vormonat",
           "vs_last_year": "{delta} ggü. Vorjahr",
           "ordered_this_month": "{count} in diesem Monat bestellt",
-          "new_customers": "{count} neue Kunden",
-          "placed_today": "{count} heute aufgegeben",
-          "new_this_week": "{count} neu diese Woche",
+          "new_customers": "{count} neuer Kunde | {count} neue Kunden",
+          "of_recent_orders": "von {count} aus den letzten 7 Tagen",
+          "items_unit": "Artikel",
+          "not_for_checkout": "{count} nicht zur Kasse",
+          "items_this_week": "{count} Artikel diese Woche",
           "mtd_of_ytd": "{percent}% des Jahres",
           "load_failed": "Laden fehlgeschlagen"
         }
@@ -106,12 +108,13 @@
     "customer_profile": {
       "loading": "Wird geladen…",
       "not_found": "Kunde nicht gefunden oder nicht in Ihren Kunden.",
+      "load_failed": "Dieser Kunde konnte nicht geladen werden. Bitte die Seite neu laden.",
       "back_to_customers": "Zurück zu meinen Kunden",
       "widgets": {
         "avg_order_value": "Durchschn. Bestellwert"
       },
       "stats": {
-        "per_order": "Durchschnitt pro Bestellung (YTD)"
+        "per_order": "Durchschnitt pro Bestellung (seit Jahresbeginn)"
       },
       "info": {
         "title": "Kundeninformationen",
@@ -178,7 +181,38 @@
       "all_categories": "Alle Kategorien",
       "load_failed": "Topseller konnten nicht geladen werden"
     },
+    "documents": {
+      "title": "Dokumentbibliothek",
+      "browse_all": "Alle anzeigen",
+      "open": "Öffnen",
+      "empty": "Noch keine Dokumente",
+      "load_failed": "Dokumente konnten nicht geladen werden",
+      "page": {
+        "subtitle": "Kataloge, Lookbooks, Preislisten und Vertriebsleitfäden — öffnen oder laden Sie die neueste Veröffentlichung herunter.",
+        "search_placeholder": "Suche nach Name",
+        "search_aria": "Dokumente suchen",
+        "all_tab": "Alle",
+        "empty": "Noch keine Dokumente",
+        "no_results": "Keine Dokumente entsprechen Ihrer Suche",
+        "reset_search": "Suche zurücksetzen",
+        "load_failed": "Dokumente konnten nicht geladen werden"
+      },
+      "details": {
+        "pages_count": "{count} Seite | {count} Seiten",
+        "open": "Öffnen",
+        "download": "Herunterladen",
+        "close": "Details schließen",
+        "not_found": "Dieses Dokument ist nicht mehr verfügbar.",
+        "latest_publication": "Neueste Veröffentlichung"
+      },
+      "published": "Veröffentlicht {date}"
+    },
     "rules": {
+      "load_failed": {
+        "filter": "Die Filter konnten nicht geladen werden, daher wird die vollständige Liste angezeigt. Bitte die Seite neu laden.",
+        "sort": "Die Sortieroptionen konnten nicht geladen werden, daher wird die Standardsortierung verwendet. Bitte die Seite neu laden.",
+        "both": "Die Filter und Sortieroptionen konnten nicht geladen werden, daher wird die vollständige Liste in der Standardsortierung angezeigt. Bitte die Seite neu laden."
+      },
       "customer": {
         "filter": {
           "All": "Alle"
@@ -192,9 +226,6 @@
       "share_replace_hint": "Der zuvor ausgewählte Kunde verliert den Zugriff auf diese Liste.",
       "share_message_label": "Nachricht",
       "share_message_placeholder": "Optionale Nachricht hinzufügen",
-      "share_channels_label": "Senden über",
-      "share_email_label": "E-Mail",
-      "share_push_label": "Push-Benachrichtigung",
       "share_default_title": "Eine neue Liste von Ihrem Vertriebsmitarbeiter",
       "share_default_message": "Hallo! Ich habe die Liste „{listName}“ gerade für Ihre Organisation freigegeben. Schauen Sie sie sich an:",
       "share_success": "Liste für den Kunden freigegeben.",

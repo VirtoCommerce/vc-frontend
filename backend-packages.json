@@ -1,8 +1,8 @@
 {
   "ManifestVersion": "2.0",
-  "PlatformVersion": "3.1058.0",
+  "PlatformVersion": "3.1061.0",
   "PlatformImage": "ghcr.io/virtocommerce/platform",
-  "PlatformImageTag": "3.1058.0",
+  "PlatformImageTag": "3.1061.0",
   "PlatformAssetUrl": "",
   "Sources": [
     {
@@ -26,10 +26,6 @@
         {
           "Id": "VirtoCommerce.ElasticSearch",
           "Version": "3.806.0"
-        },
-        {
-          "Id": "VirtoCommerce.OpenTelemetry",
-          "Version": "3.1000.0"
         },
         {
           "Id": "VirtoCommerce.Contentful",
@@ -132,10 +128,6 @@
           "Version": "3.1002.0"
         },
         {
-          "Id": "VirtoCommerce.ImageTools",
-          "Version": "3.1003.0"
-        },
-        {
           "Id": "VirtoCommerce.LuceneSearch",
           "Version": "3.1004.0"
         },
@@ -152,16 +144,8 @@
           "Version": "3.1003.0"
         },
         {
-          "Id": "VirtoCommerce.Sitemaps",
-          "Version": "3.1003.0"
-        },
-        {
           "Id": "VirtoCommerce.CatalogPublishing",
           "Version": "3.1005.0"
-        },
-        {
-          "Id": "VirtoCommerce.CatalogCsvImportModule",
-          "Version": "3.1002.0"
         },
         {
           "Id": "VirtoCommerce.AuthorizeNetPayment",
@@ -173,7 +157,7 @@
         },
         {
           "Id": "VirtoCommerce.Subscription",
-          "Version": "3.1002.0"
+          "Version": "3.1003.0"
         },
         {
           "Id": "VirtoCommerce.GDPR",
@@ -186,10 +170,6 @@
         {
           "Id": "VirtoCommerce.DynamicAssociationsModule",
           "Version": "3.1002.0"
-        },
-        {
-          "Id": "VirtoCommerce.Inventory",
-          "Version": "3.1004.0"
         },
         {
           "Id": "VirtoCommerce.Marketing",
@@ -208,36 +188,16 @@
           "Version": "3.1006.0"
         },
         {
-          "Id": "VirtoCommerce.Search",
-          "Version": "3.1006.0"
-        },
-        {
-          "Id": "VirtoCommerce.Store",
-          "Version": "3.1006.0"
-        },
-        {
           "Id": "VirtoCommerce.BackupRestore",
           "Version": "3.1003.0"
-        },
-        {
-          "Id": "VirtoCommerce.Orders",
-          "Version": "3.1013.0"
         },
         {
           "Id": "VirtoCommerce.AzureSearch",
           "Version": "3.1005.0"
         },
         {
-          "Id": "VirtoCommerce.BackgroundJobs",
-          "Version": "3.1050.0"
-        },
-        {
           "Id": "VirtoCommerce.ProductSnapshot",
           "Version": "3.1003.0"
-        },
-        {
-          "Id": "VirtoCommerce.UCP",
-          "Version": "3.1004.0"
         },
         {
           "Id": "VirtoCommerce.BackInStock",
@@ -253,7 +213,7 @@
         },
         {
           "Id": "VirtoCommerce.Skyflow",
-          "Version": "3.1004.0"
+          "Version": "3.1005.0"
         },
         {
           "Id": "VirtoCommerce.MarketingExperienceApi",
@@ -269,7 +229,7 @@
         },
         {
           "Id": "VirtoCommerce.XOrder",
-          "Version": "3.1008.0"
+          "Version": "3.1009.0"
         },
         {
           "Id": "VirtoCommerce.XRecommend",
@@ -281,7 +241,7 @@
         },
         {
           "Id": "VirtoCommerce.WhiteLabeling",
-          "Version": "3.1003.0"
+          "Version": "3.1004.0"
         },
         {
           "Id": "VirtoCommerce.Contracts",
@@ -289,7 +249,7 @@
         },
         {
           "Id": "VirtoCommerce.XPickup",
-          "Version": "3.1003.0"
+          "Version": "3.1004.0"
         },
         {
           "Id": "VirtoCommerce.TaskManagement",
@@ -301,7 +261,7 @@
         },
         {
           "Id": "VirtoCommerce.SalesRep",
-          "Version": "3.1002.0"
+          "Version": "3.1006.0"
         },
         {
           "Id": "VirtoCommerce.Shipping",
@@ -328,28 +288,20 @@
           "Version": "3.1008.0"
         },
         {
-          "Id": "VirtoCommerce.Pricing",
-          "Version": "3.1005.0"
-        },
-        {
           "Id": "VirtoCommerce.Xapi",
-          "Version": "3.1016.0"
+          "Version": "3.1019.0"
         },
         {
           "Id": "VirtoCommerce.XFrontend",
           "Version": "3.1006.0"
         },
         {
-          "Id": "VirtoCommerce.Catalog",
-          "Version": "3.1040.0"
-        },
-        {
           "Id": "VirtoCommerce.XCart",
-          "Version": "3.1029.0"
+          "Version": "3.1030.0"
         },
         {
           "Id": "VirtoCommerce.XCatalog",
-          "Version": "3.1016.0"
+          "Version": "3.1018.0"
         },
         {
           "Id": "VirtoCommerce.Customer",
@@ -357,11 +309,59 @@
         },
         {
           "Id": "VirtoCommerce.ProfileExperienceApiModule",
-          "Version": "3.1015.0"
+          "Version": "3.1016.0"
         },
         {
           "Id": "VirtoCommerce.CustomerReviews",
           "Version": "3.1006.0"
+        },
+        {
+          "Id": "VirtoCommerce.Catalog",
+          "Version": "3.1041.0"
+        },
+        {
+          "Id": "VirtoCommerce.Orders",
+          "Version": "3.1014.0"
+        },
+        {
+          "Id": "VirtoCommerce.Pricing",
+          "Version": "3.1006.0"
+        },
+        {
+          "Id": "VirtoCommerce.Store",
+          "Version": "3.1007.0"
+        },
+        {
+          "Id": "VirtoCommerce.Sitemaps",
+          "Version": "3.1004.0"
+        },
+        {
+          "Id": "VirtoCommerce.Inventory",
+          "Version": "3.1007.0"
+        },
+        {
+          "Id": "VirtoCommerce.UCP",
+          "Version": "3.1005.0"
+        },
+        {
+          "Id": "VirtoCommerce.OpenTelemetry",
+          "Version": "3.1001.0"
+        },
+        {
+          "Id": "VirtoCommerce.BackgroundJobs",
+          "Version": "3.1050.0"
+        },
+        {
+          "Id": "VirtoCommerce.ImageTools",
+          "Version": "3.1003.0"
+        },
+        {
+          "Id": "VirtoCommerce.Search",
+          "Version": "3.1006.0"
+        },
+        {
+          "Id": "VirtoCommerce.CatalogCsvImportModule",
+          "Version": "3.1004.0"
         }
       ]
     }

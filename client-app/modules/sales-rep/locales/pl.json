@@ -14,7 +14,8 @@
       "search_aria": "Szukaj przedstawicieli handlowych",
       "empty": "Nie znaleziono przedstawicieli handlowych",
       "no_results": "Nie znaleziono przedstawicieli handlowych pasujących do Twojego wyszukiwania",
-      "reset_search": "Resetuj wyszukiwanie"
+      "reset_search": "Resetuj wyszukiwanie",
+      "load_failed": "Nie udało się wczytać przedstawicieli handlowych"
     },
     "my_customers": {
       "navigation": {
@@ -26,9 +27,9 @@
       "table": {
         "customer": "Klient",
         "last_order": "Moje ostatnie zamówienie",
-        "ytd": "Zakupy YTD",
+        "ytd": "Zakupy w tym roku",
         "last_year": "W zeszłym roku",
-        "orders_count": "{count} zamówień",
+        "orders_count": "{count} zamówień | {count} zamówienie | {count} zamówienia | {count} zamówień",
         "all_customers": "Wszyscy",
         "actions": "Akcje",
         "search_placeholder": "Szukaj według nazwy",
@@ -49,9 +50,8 @@
           "title": "Panel"
         },
         "widgets": {
-          "new_orders": "Nowe zamówienia",
+          "new_orders": "Zamówienia w statusie „New”",
           "active_carts": "Aktywne koszyki",
-          "active_cart": "Aktywny koszyk",
           "orders_placed_week": "Zamówienia w tym tygodniu",
           "orders_placed_mtd": "Zamówienia od początku miesiąca",
           "purchased_mtd": "Zakupy od początku miesiąca",
@@ -63,10 +63,12 @@
           "vs_last_week": "{delta} vs poprzedni tydzień",
           "vs_last_month": "{delta} vs poprzedni miesiąc",
           "vs_last_year": "{delta} vs poprzedni rok",
-          "ordered_this_month": "{count} zamówiło w tym miesiącu",
-          "new_customers": "{count} nowych klientów",
-          "placed_today": "{count} złożono dzisiaj",
-          "new_this_week": "{count} nowych w tym tygodniu",
+          "ordered_this_month": "{count} zamówiło w tym miesiącu | {count} zamówił w tym miesiącu | {count} zamówili w tym miesiącu | {count} zamówiło w tym miesiącu",
+          "new_customers": "{count} nowych klientów | {count} nowy klient | {count} nowi klienci | {count} nowych klientów",
+          "of_recent_orders": "z {count} utworzonych w ciągu ostatnich 7 dni | z {count} utworzonego w ciągu ostatnich 7 dni | z {count} utworzonych w ciągu ostatnich 7 dni | z {count} utworzonych w ciągu ostatnich 7 dni",
+          "items_unit": "pozycji | pozycja | pozycje | pozycji",
+          "not_for_checkout": "{count} nie do kasy",
+          "items_this_week": "{count} pozycji w tym tygodniu | {count} pozycja w tym tygodniu | {count} pozycje w tym tygodniu | {count} pozycji w tym tygodniu",
           "mtd_of_ytd": "{percent}% roku",
           "load_failed": "Nie udało się wczytać"
         }
@@ -106,12 +108,13 @@
     "customer_profile": {
       "loading": "Ładowanie…",
       "not_found": "Nie znaleziono klienta lub nie należy do Twoich klientów.",
+      "load_failed": "Nie udało się wczytać tego klienta. Odśwież stronę.",
       "back_to_customers": "Powrót do moich klientów",
       "widgets": {
         "avg_order_value": "Średnia wartość zamówienia"
       },
       "stats": {
-        "per_order": "Średnio na zamówienie (YTD)"
+        "per_order": "Średnio na zamówienie (od początku roku)"
       },
       "info": {
         "title": "Informacje o kliencie",
@@ -178,7 +181,38 @@
       "all_categories": "Wszystkie kategorie",
       "load_failed": "Nie udało się wczytać bestsellerów"
     },
+    "documents": {
+      "title": "Biblioteka dokumentów",
+      "browse_all": "Przeglądaj wszystkie",
+      "open": "Otwórz",
+      "empty": "Brak dokumentów",
+      "load_failed": "Nie udało się wczytać dokumentów",
+      "page": {
+        "subtitle": "Katalogi, lookbooki, cenniki i przewodniki sprzedażowe — otwieraj lub pobieraj najnowszą publikację.",
+        "search_placeholder": "Szukaj według nazwy",
+        "search_aria": "Szukaj dokumentów",
+        "all_tab": "Wszystkie",
+        "empty": "Brak dokumentów",
+        "no_results": "Żaden dokument nie pasuje do wyszukiwania",
+        "reset_search": "Resetuj wyszukiwanie",
+        "load_failed": "Nie udało się wczytać dokumentów"
+      },
+      "details": {
+        "pages_count": "{count} stron | {count} strona | {count} strony | {count} stron",
+        "open": "Otwórz",
+        "download": "Pobierz",
+        "close": "Zamknij szczegóły",
+        "not_found": "Ten dokument nie jest już dostępny.",
+        "latest_publication": "Najnowsza publikacja"
+      },
+      "published": "Opublikowano {date}"
+    },
     "rules": {
+      "load_failed": {
+        "filter": "Nie udało się wczytać filtrów, więc wyświetlana jest pełna lista. Odśwież stronę.",
+        "sort": "Nie udało się wczytać opcji sortowania, więc używana jest kolejność domyślna. Odśwież stronę.",
+        "both": "Nie udało się wczytać filtrów ani opcji sortowania, więc pełna lista jest wyświetlana w kolejności domyślnej. Odśwież stronę."
+      },
       "customer": {
         "filter": {
           "All": "Wszyscy"
@@ -192,9 +226,6 @@
       "share_replace_hint": "Wcześniej wybrany klient utraci dostęp do tej listy.",
       "share_message_label": "Wiadomość",
       "share_message_placeholder": "Opcjonalna wiadomość",
-      "share_channels_label": "Wyślij przez",
-      "share_email_label": "E-mail",
-      "share_push_label": "Powiadomienie push",
       "share_default_title": "Nowa lista od Twojego przedstawiciela handlowego",
       "share_default_message": "Cześć! Lista „{listName}” jest już dostępna dla Twojej organizacji. Sprawdź ją:",
       "share_success": "Lista została udostępniona klientowi.",

@@ -14,7 +14,8 @@
       "search_aria": "Cerca agenti commerciali",
       "empty": "Nessun agente commerciale trovato",
       "no_results": "Nessun agente commerciale corrisponde alla ricerca",
-      "reset_search": "Reimposta ricerca"
+      "reset_search": "Reimposta ricerca",
+      "load_failed": "Impossibile caricare gli agenti commerciali"
     },
     "my_customers": {
       "navigation": {
@@ -26,9 +27,9 @@
       "table": {
         "customer": "Cliente",
         "last_order": "Il mio ultimo ordine",
-        "ytd": "Acquisti YTD",
+        "ytd": "Acquisti dell'anno",
         "last_year": "Anno scorso",
-        "orders_count": "{count} ordini",
+        "orders_count": "{count} ordine | {count} ordini",
         "all_customers": "Tutti",
         "actions": "Azioni",
         "search_placeholder": "Cerca per nome",
@@ -49,9 +50,8 @@
           "title": "Dashboard"
         },
         "widgets": {
-          "new_orders": "Nuovi ordini",
+          "new_orders": "Ordini in stato «New»",
           "active_carts": "Carrelli attivi",
-          "active_cart": "Carrello attivo",
           "orders_placed_week": "Ordini di questa settimana",
           "orders_placed_mtd": "Ordini dall’inizio del mese",
           "purchased_mtd": "Acquisti dall’inizio del mese",
@@ -63,10 +63,12 @@
           "vs_last_week": "{delta} vs settimana scorsa",
           "vs_last_month": "{delta} vs mese scorso",
           "vs_last_year": "{delta} vs anno scorso",
-          "ordered_this_month": "{count} hanno ordinato questo mese",
-          "new_customers": "{count} nuovi clienti",
-          "placed_today": "{count} effettuati oggi",
-          "new_this_week": "{count} nuovi questa settimana",
+          "ordered_this_month": "{count} ha ordinato questo mese | {count} hanno ordinato questo mese",
+          "new_customers": "{count} nuovo cliente | {count} nuovi clienti",
+          "of_recent_orders": "su {count} creato negli ultimi 7 giorni | su {count} creati negli ultimi 7 giorni",
+          "items_unit": "articolo | articoli",
+          "not_for_checkout": "{count} fuori dal checkout",
+          "items_this_week": "{count} articolo questa settimana | {count} articoli questa settimana",
           "mtd_of_ytd": "{percent}% dell'anno",
           "load_failed": "Caricamento non riuscito"
         }
@@ -106,12 +108,13 @@
     "customer_profile": {
       "loading": "Caricamento…",
       "not_found": "Cliente non trovato o non presente tra i tuoi clienti.",
+      "load_failed": "Non è stato possibile caricare questo cliente. Aggiorna la pagina.",
       "back_to_customers": "Torna ai miei clienti",
       "widgets": {
         "avg_order_value": "Valore medio ordine"
       },
       "stats": {
-        "per_order": "Media per ordine (YTD)"
+        "per_order": "Media per ordine (anno in corso)"
       },
       "info": {
         "title": "Informazioni cliente",
@@ -178,7 +181,38 @@
       "all_categories": "Tutte le categorie",
       "load_failed": "Impossibile caricare i più venduti"
     },
+    "documents": {
+      "title": "Libreria documenti",
+      "browse_all": "Sfoglia tutti",
+      "open": "Apri",
+      "empty": "Ancora nessun documento",
+      "load_failed": "Impossibile caricare i documenti",
+      "page": {
+        "subtitle": "Cataloghi, lookbook, listini prezzi e guide alle vendite — apri o scarica l'ultima pubblicazione.",
+        "search_placeholder": "Cerca per nome",
+        "search_aria": "Cerca documenti",
+        "all_tab": "Tutti",
+        "empty": "Ancora nessun documento",
+        "no_results": "Nessun documento corrisponde alla tua ricerca",
+        "reset_search": "Reimposta ricerca",
+        "load_failed": "Impossibile caricare i documenti"
+      },
+      "details": {
+        "pages_count": "{count} pagina | {count} pagine",
+        "open": "Apri",
+        "download": "Scarica",
+        "close": "Chiudi dettagli",
+        "not_found": "Questo documento non è più disponibile.",
+        "latest_publication": "Ultima pubblicazione"
+      },
+      "published": "Pubblicato {date}"
+    },
     "rules": {
+      "load_failed": {
+        "filter": "Non è stato possibile caricare i filtri, quindi viene mostrato l'elenco completo. Aggiorna la pagina.",
+        "sort": "Non è stato possibile caricare le opzioni di ordinamento, quindi viene usato l'ordine predefinito. Aggiorna la pagina.",
+        "both": "Non è stato possibile caricare i filtri e le opzioni di ordinamento, quindi l'elenco completo viene mostrato nell'ordine predefinito. Aggiorna la pagina."
+      },
       "customer": {
         "filter": {
           "All": "Tutti"
@@ -192,9 +226,6 @@
       "share_replace_hint": "Il cliente selezionato in precedenza perderà l'accesso a questa lista.",
       "share_message_label": "Messaggio",
       "share_message_placeholder": "Messaggio facoltativo da includere",
-      "share_channels_label": "Invia tramite",
-      "share_email_label": "Email",
-      "share_push_label": "Notifica push",
       "share_default_title": "Una nuova lista dal tuo rappresentante commerciale",
       "share_default_message": "Ciao! Ho appena condiviso la lista \"{listName}\" con la tua organizzazione. Dai un'occhiata:",
       "share_success": "Lista condivisa con il cliente.",

@@ -14,7 +14,8 @@
       "search_aria": "Hae myyntiedustajia",
       "empty": "Myyntiedustajia ei löytynyt",
       "no_results": "Hakuasi vastaavia myyntiedustajia ei löytynyt",
-      "reset_search": "Tyhjennä haku"
+      "reset_search": "Tyhjennä haku",
+      "load_failed": "Myyntiedustajia ei voitu ladata"
     },
     "my_customers": {
       "navigation": {
@@ -28,7 +29,7 @@
         "last_order": "Viimeisin tilaukseni",
         "ytd": "Ostot tänä vuonna",
         "last_year": "Viime vuosi",
-        "orders_count": "{count} tilaukset",
+        "orders_count": "{count} tilaus | {count} tilausta",
         "all_customers": "Kaikki",
         "actions": "Toiminnot",
         "search_placeholder": "Hae nimellä",
@@ -49,9 +50,8 @@
           "title": "Hallintapaneeli"
         },
         "widgets": {
-          "new_orders": "Uudet tilaukset",
+          "new_orders": "Tilaukset tilassa ”New”",
           "active_carts": "Aktiiviset ostoskorit",
-          "active_cart": "Aktiivinen ostoskori",
           "orders_placed_week": "Tilaukset tällä viikolla",
           "orders_placed_mtd": "Tilaukset kuluvan kuun alusta",
           "purchased_mtd": "Ostot kuluvan kuun alusta",
@@ -64,9 +64,11 @@
           "vs_last_month": "{delta} vs viime kuu",
           "vs_last_year": "{delta} vs viime vuosi",
           "ordered_this_month": "{count} tilasi tässä kuussa",
-          "new_customers": "{count} uutta asiakasta",
-          "placed_today": "{count} tänään",
-          "new_this_week": "{count} uutta tällä viikolla",
+          "new_customers": "{count} uusi asiakas | {count} uutta asiakasta",
+          "of_recent_orders": "{count} viimeisten 7 päivän tilauksesta",
+          "items_unit": "tuote | tuotetta",
+          "not_for_checkout": "{count} ei kassalle",
+          "items_this_week": "{count} tuote tällä viikolla | {count} tuotetta tällä viikolla",
           "mtd_of_ytd": "{percent}% vuodesta",
           "load_failed": "Lataus epäonnistui"
         }
@@ -106,6 +108,7 @@
     "customer_profile": {
       "loading": "Ladataan…",
       "not_found": "Asiakasta ei löytynyt tai se ei kuulu asiakkaisiisi.",
+      "load_failed": "Tätä asiakasta ei voitu ladata. Päivitä sivu.",
       "back_to_customers": "Takaisin omiin asiakkaisiin",
       "widgets": {
         "avg_order_value": "Keskimääräinen tilausarvo"
@@ -178,7 +181,38 @@
       "all_categories": "Kaikki kategoriat",
       "load_failed": "Myydyimpiä ei voitu ladata"
     },
+    "documents": {
+      "title": "Dokumenttikirjasto",
+      "browse_all": "Selaa kaikkia",
+      "open": "Avaa",
+      "empty": "Ei vielä dokumentteja",
+      "load_failed": "Dokumentteja ei voitu ladata",
+      "page": {
+        "subtitle": "Kuvastot, lookbookit, hinnastot ja myyntioppaat — avaa tai lataa uusin julkaisu.",
+        "search_placeholder": "Hae nimellä",
+        "search_aria": "Hae dokumentteja",
+        "all_tab": "Kaikki",
+        "empty": "Ei vielä dokumentteja",
+        "no_results": "Yksikään dokumentti ei vastaa hakuasi",
+        "reset_search": "Tyhjennä haku",
+        "load_failed": "Dokumentteja ei voitu ladata"
+      },
+      "details": {
+        "pages_count": "{count} sivu | {count} sivua",
+        "open": "Avaa",
+        "download": "Lataa",
+        "close": "Sulje tiedot",
+        "not_found": "Tämä dokumentti ei ole enää saatavilla.",
+        "latest_publication": "Uusin julkaisu"
+      },
+      "published": "Julkaistu {date}"
+    },
     "rules": {
+      "load_failed": {
+        "filter": "Suodattimia ei voitu ladata, joten koko luettelo näytetään. Päivitä sivu.",
+        "sort": "Lajitteluvalintoja ei voitu ladata, joten käytetään oletusjärjestystä. Päivitä sivu.",
+        "both": "Suodattimia ja lajitteluvalintoja ei voitu ladata, joten koko luettelo näytetään oletusjärjestyksessä. Päivitä sivu."
+      },
       "customer": {
         "filter": {
           "All": "Kaikki"
@@ -192,9 +226,6 @@
       "share_replace_hint": "Aiemmin valittu asiakas menettää oikeuden tähän listaan.",
       "share_message_label": "Viesti",
       "share_message_placeholder": "Valinnainen viesti",
-      "share_channels_label": "Lähetystapa",
-      "share_email_label": "Sähköposti",
-      "share_push_label": "Push-ilmoitus",
       "share_default_title": "Uusi lista myyntiedustajaltasi",
       "share_default_message": "Hei! Jaoin juuri listan ”{listName}” organisaatiollesi. Katso se täältä:",
       "share_success": "Lista jaettiin asiakkaalle.",

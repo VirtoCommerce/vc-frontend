@@ -8,13 +8,15 @@ const queryMock = await vi.hoisted(async () => {
   const { ref } = await import("vue");
   const result = ref<CustomerSalesRepsQuery | undefined>(undefined);
   const loading = ref(false);
+  const error = ref<Error | null>(null);
   const onError = vi.fn();
   const useQuery = vi.fn(() => ({
     result,
     loading,
+    error,
     onError,
   }));
-  return { result, loading, onError, useQuery };
+  return { result, loading, error, onError, useQuery };
 });
 
 /** The args of the most recent useQuery call (the impl is param-less, so read them here). */
@@ -126,5 +128,14 @@ describe("useSalesReps", () => {
     expect(loading.value).toBe(true);
 
     expect(queryMock.onError).toHaveBeenCalledTimes(1);
+  });
+
+  it("surfaces the query error so the page can name the failure", () => {
+    const { error } = useSalesReps();
+
+    expect(error.value).toBeNull();
+
+    queryMock.error.value = new Error("boom");
+    expect(error.value).toBeInstanceOf(Error);
   });
 });

@@ -14,7 +14,8 @@
       "search_aria": "Search sales reps",
       "empty": "No sales reps found",
       "no_results": "No sales reps match your search",
-      "reset_search": "Reset search"
+      "reset_search": "Reset search",
+      "load_failed": "Couldn't load sales reps"
     },
     "my_customers": {
       "navigation": {
@@ -28,7 +29,7 @@
         "last_order": "My last order",
         "ytd": "YTD purchases",
         "last_year": "Last year",
-        "orders_count": "{count} orders",
+        "orders_count": "{count} order | {count} orders",
         "all_customers": "All",
         "actions": "Actions",
         "search_placeholder": "Search by name",
@@ -49,9 +50,8 @@
           "title": "Dashboard"
         },
         "widgets": {
-          "new_orders": "New orders",
+          "new_orders": "Orders in “New” status",
           "active_carts": "Active carts",
-          "active_cart": "Active cart",
           "orders_placed_week": "Orders placed · WEEK",
           "orders_placed_mtd": "Orders placed · MTD",
           "purchased_mtd": "Purchased · MTD",
@@ -64,9 +64,11 @@
           "vs_last_month": "{delta} vs last month",
           "vs_last_year": "{delta} vs last year",
           "ordered_this_month": "{count} ordered this month",
-          "new_customers": "{count} new customers",
-          "placed_today": "{count} placed today",
-          "new_this_week": "{count} new this week",
+          "new_customers": "{count} new customer | {count} new customers",
+          "of_recent_orders": "of {count} created in the last 7 days",
+          "items_unit": "item | items",
+          "not_for_checkout": "{count} not for checkout",
+          "items_this_week": "{count} item this week | {count} items this week",
           "mtd_of_ytd": "{percent}% of YTD",
           "load_failed": "Couldn't load"
         }
@@ -106,6 +108,7 @@
     "customer_profile": {
       "loading": "Loading…",
       "not_found": "Customer not found or not in your customers.",
+      "load_failed": "This customer couldn't be loaded. Try refreshing the page.",
       "back_to_customers": "Back to my customers",
       "widgets": {
         "avg_order_value": "Avg order value"
@@ -178,7 +181,38 @@
       "all_categories": "All categories",
       "load_failed": "Couldn't load top sellers"
     },
+    "documents": {
+      "title": "Document library",
+      "browse_all": "Browse all",
+      "open": "Open",
+      "empty": "No documents yet",
+      "load_failed": "Couldn't load documents",
+      "page": {
+        "subtitle": "Catalogs, lookbooks, pricing sheets and sales guides — open or download the latest publication.",
+        "search_placeholder": "Search by name",
+        "search_aria": "Search documents",
+        "all_tab": "All",
+        "empty": "No documents yet",
+        "no_results": "No documents match your search",
+        "reset_search": "Reset search",
+        "load_failed": "Couldn't load documents"
+      },
+      "details": {
+        "pages_count": "{count} page | {count} pages",
+        "open": "Open",
+        "download": "Download",
+        "close": "Close details",
+        "not_found": "This document is no longer available.",
+        "latest_publication": "Latest publication"
+      },
+      "published": "Published {date}"
+    },
     "rules": {
+      "load_failed": {
+        "filter": "The filters couldn't be loaded, so the full list is shown. Try refreshing the page.",
+        "sort": "The sorting options couldn't be loaded, so the default order is used. Try refreshing the page.",
+        "both": "The filters and sorting options couldn't be loaded, so the full list is shown in the default order. Try refreshing the page."
+      },
       "customer": {
         "filter": {
           "All": "All"
@@ -192,9 +226,6 @@
       "share_replace_hint": "The previously selected customer will lose access to this list.",
       "share_message_label": "Message",
       "share_message_placeholder": "Optional message to include",
-      "share_channels_label": "Send via",
-      "share_email_label": "Email",
-      "share_push_label": "Push notification",
       "share_default_title": "A new list from your sales representative",
       "share_default_message": "Hi! I've just shared the list \"{listName}\" with your organization. Take a look:",
       "share_success": "List shared with the customer.",

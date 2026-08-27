@@ -14,7 +14,8 @@
       "search_aria": "搜索销售代表",
       "empty": "未找到销售代表",
       "no_results": "没有销售代表符合您的搜索条件",
-      "reset_search": "重置搜索"
+      "reset_search": "重置搜索",
+      "load_failed": "无法加载销售代表"
     },
     "my_customers": {
       "navigation": {
@@ -49,9 +50,8 @@
           "title": "仪表板"
         },
         "widgets": {
-          "new_orders": "新订单",
+          "new_orders": "状态为“New”的订单",
           "active_carts": "活动购物车",
-          "active_cart": "活动购物车",
           "orders_placed_week": "本周下单",
           "orders_placed_mtd": "本月至今下单",
           "purchased_mtd": "本月至今采购额",
@@ -65,8 +65,10 @@
           "vs_last_year": "较去年 {delta}",
           "ordered_this_month": "本月 {count} 家下单",
           "new_customers": "{count} 个新客户",
-          "placed_today": "今日 {count} 单",
-          "new_this_week": "本周新增 {count}",
+          "of_recent_orders": "近 7 天创建的 {count} 单中",
+          "items_unit": "件商品",
+          "not_for_checkout": "{count} 件不结账",
+          "items_this_week": "本周 {count} 件商品",
           "mtd_of_ytd": "占年初至今 {percent}%",
           "load_failed": "加载失败"
         }
@@ -106,6 +108,7 @@
     "customer_profile": {
       "loading": "加载中…",
       "not_found": "未找到客户，或该客户不在您的客户列表中。",
+      "load_failed": "无法加载此客户。请刷新页面。",
       "back_to_customers": "返回我的客户",
       "widgets": {
         "avg_order_value": "平均订单金额"
@@ -178,7 +181,38 @@
       "all_categories": "所有类别",
       "load_failed": "无法加载热销商品"
     },
+    "documents": {
+      "title": "文档库",
+      "browse_all": "浏览全部",
+      "open": "打开",
+      "empty": "暂无文档",
+      "load_failed": "无法加载文档",
+      "page": {
+        "subtitle": "目录、造型手册、价目表和销售指南 — 打开或下载最新发布。",
+        "search_placeholder": "按名称搜索",
+        "search_aria": "搜索文档",
+        "all_tab": "全部",
+        "empty": "暂无文档",
+        "no_results": "没有符合您搜索条件的文档",
+        "reset_search": "重置搜索",
+        "load_failed": "无法加载文档"
+      },
+      "details": {
+        "pages_count": "{count} 页",
+        "open": "打开",
+        "download": "下载",
+        "close": "关闭详情",
+        "not_found": "该文档已不再可用。",
+        "latest_publication": "最新发布"
+      },
+      "published": "发布于 {date}"
+    },
     "rules": {
+      "load_failed": {
+        "filter": "无法加载筛选条件，因此显示完整列表。请刷新页面。",
+        "sort": "无法加载排序选项，因此使用默认排序。请刷新页面。",
+        "both": "无法加载筛选条件和排序选项，因此按默认排序显示完整列表。请刷新页面。"
+      },
       "customer": {
         "filter": {
           "All": "全部"
@@ -192,9 +226,6 @@
       "share_replace_hint": "先前选择的客户将无法再访问此列表。",
       "share_message_label": "消息",
       "share_message_placeholder": "可选的附加消息",
-      "share_channels_label": "发送方式",
-      "share_email_label": "电子邮件",
-      "share_push_label": "推送通知",
       "share_default_title": "来自您的销售代表的新列表",
       "share_default_message": "您好！我刚刚与您的组织共享了列表“{listName}”。欢迎查看：",
       "share_success": "列表已与客户共享。",
