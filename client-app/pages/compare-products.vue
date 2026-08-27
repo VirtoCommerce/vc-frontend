@@ -149,6 +149,7 @@ const {
   clearCategory,
   restoreProducts,
   canRestoreProducts,
+  getCategoryProductsCount,
 } = useCompareProducts();
 const {
   categoryTabs,
@@ -185,6 +186,11 @@ function openClearAllModal() {
 }
 
 function openClearCategoryModal() {
+  // The confirmation must count what will actually be removed from storage — selectedCategoryCount
+  // is the *resolved* count now (see useCompareProductsPage's categoryTabs), which can undercount
+  // if some of the category's products failed to fetch.
+  const categoryEntryCount = getCategoryProductsCount(selectedCategoryKey.value);
+
   openModal({
     component: VcConfirmationModal,
     props: {
@@ -192,8 +198,8 @@ function openClearCategoryModal() {
       title: t("pages.compare.clear_category_modal.title"),
       text: t(
         "pages.compare.clear_category_modal.message",
-        { n: selectedCategoryCount.value, category: selectedCategoryLabel.value },
-        selectedCategoryCount.value,
+        { n: categoryEntryCount, category: selectedCategoryLabel.value },
+        categoryEntryCount,
       ),
       onConfirm() {
         clearCategory(selectedCategoryKey.value);

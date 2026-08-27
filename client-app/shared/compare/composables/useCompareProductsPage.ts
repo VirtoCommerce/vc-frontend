@@ -15,6 +15,7 @@ import {
   MODULE_ID as CUSTOMER_REVIEWS_MODULE_ID,
 } from "@/modules/customer-reviews/constants";
 import { useProducts } from "@/shared/catalog/composables/useProducts";
+import { useNotifications } from "@/shared/notification";
 import {
   AVAILABILITY_ROW_KEY,
   CONFIG_PROPERTY_ROW_KEY_PREFIX,
@@ -30,6 +31,7 @@ import type { ICompareCategoryTab, ICompareDisplayProduct, ICompareProductEntry,
 import type { CreateConfiguredLineItemMutation, MoneyType, Product } from "@/core/api/graphql/types";
 
 const EMPTY_VALUE_PLACEHOLDER = "–";
+const FETCH_ERROR_NOTIFICATIONS_GROUP = "compare-products-fetch-error";
 
 type ConfiguredLineItemType = CreateConfiguredLineItemMutation["createConfiguredLineItem"];
 
@@ -64,6 +66,12 @@ function getConfigPropertyValue(entry: ICompareProductEntry, label: string): str
 
 function hasAnyValue(values: string[]): boolean {
   return values.some((value) => value !== EMPTY_VALUE_PLACEHOLDER);
+}
+
+function resolveEntryProducts(entries: ICompareProductEntry[], fetchedProducts: Product[]): Product[] {
+  return entries
+    .map((entry) => fetchedProducts.find((product) => product.id === entry.productId))
+    .filter((product): product is Product => !!product);
 }
 
 function applyPriceOverride(
@@ -102,7 +110,7 @@ function withConfiguredPrice(product: Product, configuredLineItem?: ConfiguredLi
 export function useCompareProductsPage() {
   const { t, n } = useI18n();
   const route = useRoute();
-  const { products, getCategoryProductsCount } = useCompareProducts();
+  const { products } = useCompareProducts();
   // preserveProductsWhileFetching: without it, useProducts.fetchProducts clears its results to
   // empty at the start of every call, including the refetch the productIds watch below triggers
   // on every add/remove — categoryTabs and selectedCategoryProducts would flash empty on every
@@ -115,6 +123,7 @@ export function useCompareProductsPage() {
   } = useProducts({
     preserveProductsWhileFetching: true,
   });
+  const notifications = useNotifications();
   const { isEnabled } = useModuleSettings(CUSTOMER_REVIEWS_MODULE_ID);
   const customerRatingEnabled = isEnabled(CUSTOMER_REVIEWS_ENABLED_KEY);
   const { mutate: createConfiguredLineItemMutation } = useMutation(CreateConfiguredLineItemDocument);
@@ -178,23 +187,49 @@ export function useCompareProductsPage() {
   );
 
   const categoryTabs = computed<ICompareCategoryTab[]>(() => {
-    const tabsByCategoryKey = new Map<string, ICompareCategoryTab>();
+    const entriesByCategoryKey = new Map<string, ICompareProductEntry[]>();
 
     products.value.forEach((entry) => {
-      if (tabsByCategoryKey.has(entry.categoryKey)) {
-        return;
+      const entries = entriesByCategoryKey.get(entry.categoryKey);
+      if (entries) {
+        entries.push(entry);
+      } else {
+        entriesByCategoryKey.set(entry.categoryKey, [entry]);
       }
-
-      const product = fetchedProducts.value.find((_product) => _product.id === entry.productId);
-
-      tabsByCategoryKey.set(entry.categoryKey, {
-        categoryKey: entry.categoryKey,
-        label: product ? getProductCategoryLabel(product) : "",
-        count: getCategoryProductsCount(entry.categoryKey),
-      });
     });
 
-    return Array.from(tabsByCategoryKey.values());
+    return Array.from(entriesByCategoryKey.entries())
+      .map(([categoryKey, entries]) => {
+        // Per entry, not just the first one — an earlier entry in the same category can still be
+        // unresolved (>16 cap, deleted product, failed fetch) while a later one fetched fine.
+        const resolvedProducts = resolveEntryProducts(entries, fetchedProducts.value);
+
+        // getProductCategoryKey returns "" when a product has no Category breadcrumb — every
+        // such product shares this one bucket, so it needs its own label rather than blank.
+        // resolvedProducts[0] can still be undefined here for the currently selected category
+        // (kept below even at count 0, mid-refetch) — stay blank rather than throw.
+        let label = "";
+        if (categoryKey === "") {
+          label = t("shared.compare.table.uncategorized");
+        } else if (resolvedProducts[0]) {
+          label = getProductCategoryLabel(resolvedProducts[0]);
+        }
+
+        return {
+          categoryKey,
+          label,
+          // Resolved entries only, so this always matches what actually renders below — raw
+          // storage count (getCategoryProductsCount) stays available separately for anything
+          // that needs "how many will actually be removed" (e.g. Clear category).
+          count: resolvedProducts.length,
+        };
+      })
+      .filter((tab) => tab.count > 0 || tab.categoryKey === selectedCategoryKey.value);
+    // A category with zero resolved products (still loading, >16 cap, deleted product, or a
+    // failed fetch — see the notifications.warning below) has nothing to show and no real label
+    // to show it with, so drop it from the tab bar entirely rather than render it broken. Keep
+    // the currently selected one visible regardless, or a mid-refetch tab would vanish out from
+    // under the user and the categoryTabs watch below would immediately bounce them elsewhere.
   });
 
   // Seeded from ?category= when arriving via the "added to compare" toast's button (see
@@ -414,6 +449,14 @@ export function useCompareProductsPage() {
           await fetchProducts({ productIds: ids, itemsPerPage: ids.length });
         } catch (e) {
           Logger.error("useCompareProductsPage.fetchProducts", e);
+          // Otherwise a failed fetch is indistinguishable from a successful-but-empty one — see
+          // the categoryTabs fallback label above for how the affected tabs read in this case.
+          notifications.warning({
+            duration: 15000,
+            group: FETCH_ERROR_NOTIFICATIONS_GROUP,
+            singleInGroup: true,
+            text: t("shared.compare.notifications.fetch_failed"),
+          });
         }
       });
     },

@@ -44,6 +44,7 @@ const mocks = await vi.hoisted(async () => {
     clearCategory: vi.fn(),
     restoreProducts: vi.fn(),
     canRestoreProducts: ref(false),
+    getCategoryProductsCount: vi.fn(() => 0),
     categoryTabs: ref<ICompareCategoryTab[]>([]),
     selectedCategoryKey: ref(""),
     selectedCategoryLabel: ref(""),
@@ -90,6 +91,7 @@ vi.mock("@/shared/compare", () => ({
     clearCategory: mocks.clearCategory,
     restoreProducts: mocks.restoreProducts,
     canRestoreProducts: mocks.canRestoreProducts,
+    getCategoryProductsCount: mocks.getCategoryProductsCount,
   }),
   useCompareProductsPage: () => ({
     categoryTabs: mocks.categoryTabs,

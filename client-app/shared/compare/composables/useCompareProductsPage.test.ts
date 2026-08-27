@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { PropertyValueTypes } from "@/core/api/graphql/types";
 import { ProductType } from "@/core/enums";
+import { useNotifications } from "@/shared/notification";
 import {
   AVAILABILITY_ROW_KEY,
   PRICE_ROW_KEY,
@@ -144,12 +145,17 @@ describe("useCompareProductsPage", () => {
     hoisted.state.fetchingProducts.value = false;
     hoisted.state.route.query = {};
     hoisted.fns.isEnabled.mockReturnValue(false);
+    useNotifications().clear();
     vi.clearAllMocks();
   });
 
   describe("category selection", () => {
     it("defaults to the first tab when there is no ?category= in the URL", () => {
       hoisted.state.compareEntries.value = [entry("p1", "cat-a"), entry("p2", "cat-b")];
+      // A tab with nothing resolved yet is hidden (see "categoryTabs — unresolved entries" below)
+      // unless it's already selected, so give both categories something to resolve to here —
+      // this test is about the default-selection logic, not resolution.
+      hoisted.state.fetchedProducts.value = [product("p1"), product("p2")];
 
       const { selectedCategoryKey } = useCompareProductsPage();
 
@@ -168,6 +174,7 @@ describe("useCompareProductsPage", () => {
     it("falls back to the first tab when ?category= does not match any tab (stale link)", () => {
       hoisted.state.route.query = { category: "cat-nonexistent" };
       hoisted.state.compareEntries.value = [entry("p1", "cat-a")];
+      hoisted.state.fetchedProducts.value = [product("p1")];
 
       const { selectedCategoryKey } = useCompareProductsPage();
 
@@ -190,6 +197,68 @@ describe("useCompareProductsPage", () => {
       selectCategory("cat-b");
 
       expect(selectedCategoryKey.value).toBe("cat-b");
+    });
+  });
+
+  describe("categoryTabs — unresolved entries", () => {
+    it("labels a category whose entries have no Category breadcrumb (categoryKey === '') instead of leaving it blank", () => {
+      hoisted.state.compareEntries.value = [entry("p1", "")];
+      hoisted.state.fetchedProducts.value = [product("p1", { breadcrumbs: [] })];
+
+      const { categoryTabs } = useCompareProductsPage();
+
+      expect(categoryTabs.value).toEqual([{ categoryKey: "", label: "shared.compare.table.uncategorized", count: 1 }]);
+    });
+
+    it("hides a category entirely once nothing in it has resolved (still loading, >16 cap, deleted product, or a failed fetch) — the fetch-failure toast, tested below, is what surfaces that", () => {
+      hoisted.state.compareEntries.value = [entry("p1", "cat-a"), entry("p2", "cat-b")];
+      hoisted.state.fetchedProducts.value = [product("p2")]; // p1/cat-a never resolved
+
+      const { categoryTabs } = useCompareProductsPage();
+
+      expect(categoryTabs.value).toEqual([{ categoryKey: "cat-b", label: "p2", count: 1 }]);
+    });
+
+    it("keeps the currently selected category visible (blank label) even at zero resolved, so a mid-refetch doesn't yank the user to a different tab", () => {
+      hoisted.state.route.query = { category: "cat-a" };
+      hoisted.state.compareEntries.value = [entry("p1", "cat-a")];
+      hoisted.state.fetchedProducts.value = [];
+
+      const { categoryTabs, selectedCategoryKey } = useCompareProductsPage();
+
+      expect(selectedCategoryKey.value).toBe("cat-a");
+      expect(categoryTabs.value).toEqual([{ categoryKey: "cat-a", label: "", count: 0 }]);
+    });
+
+    it("uses a later entry's resolved product for the label when an earlier entry in the same category is unresolved", () => {
+      hoisted.state.compareEntries.value = [entry("p1", "cat-a"), entry("p2", "cat-a")];
+      hoisted.state.fetchedProducts.value = [product("p2")]; // p1 never resolved
+
+      const { categoryTabs } = useCompareProductsPage();
+
+      expect(categoryTabs.value).toEqual([{ categoryKey: "cat-a", label: "p2", count: 1 }]);
+    });
+
+    it("counts only resolved entries, not the raw number of entries in storage", () => {
+      hoisted.state.compareEntries.value = [entry("p1", "cat-a"), entry("p2", "cat-a"), entry("p3", "cat-a")];
+      hoisted.state.fetchedProducts.value = [product("p1"), product("p2")]; // p3 unresolved
+
+      const { categoryTabs } = useCompareProductsPage();
+
+      expect(categoryTabs.value[0].count).toBe(2);
+    });
+
+    it("shows a warning notification when a refetch fails, since a failed fetch would otherwise look identical to a successful-but-empty one", async () => {
+      hoisted.fns.fetchProducts.mockRejectedValueOnce(new Error("network error"));
+      hoisted.state.compareEntries.value = [entry("p1", "cat-a")];
+
+      useCompareProductsPage();
+
+      await vi.waitFor(() => {
+        expect(useNotifications().stack.value.some((n) => n.text === "shared.compare.notifications.fetch_failed")).toBe(
+          true,
+        );
+      });
     });
   });
 

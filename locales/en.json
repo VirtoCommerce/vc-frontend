@@ -1055,13 +1055,15 @@
         "added_html": "Product <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> is added to compare list <span class=\"hidden lg:inline\">(items left - {itemsLeft})</span>",
         "removed_html": "Product <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> was removed from the compare list",
         "compare_button": "Compare",
-        "added_to_cart_html": "Added <strong>{productName}</strong> to cart"
+        "added_to_cart_html": "Added <strong>{productName}</strong> to cart",
+        "fetch_failed": "Couldn't load some compared products. Please try again."
       },
       "table": {
         "tabs": {
           "all": "All",
           "differences": "Differences"
         },
+        "uncategorized": "Uncategorized",
         "differ_rows": "Differ: {count} of {total} rows",
         "clear_category": "Clear category",
         "remove_product": "Remove from compare",
