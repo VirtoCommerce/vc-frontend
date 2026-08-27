@@ -2,14 +2,11 @@
   <div class="activities">
     <VcBreadcrumbs :items="breadcrumbs" />
 
+    <!-- Narrowed to one customer via the ?organizationId= query param (the customer widget links
+         here): the heading names that customer, exactly as the customer-orders page does. -->
     <VcTypography class="activities__title" tag="h1">
-      {{ t("sales_rep.activity.page.title") }}
+      {{ heading }}
     </VcTypography>
-
-    <!-- Narrowed to one customer via the ?organizationId= query param (the customer widget links here). -->
-    <p v-if="organizationId && customerName" class="activities__scope">
-      {{ t("sales_rep.activity.page.scoped_to", { organization: customerName }) }}
-    </p>
 
     <div class="activities__results">
       <div class="activities__controls">
@@ -129,6 +126,7 @@ import { useSalesRepSearchHistory } from "../composables/useSalesRepSearchHistor
 import {
   ACTIVITY_CATEGORIES,
   ACTIVITY_PAGE_SIZE,
+  CUSTOMER_PROFILE_ROUTE_NAME,
   GA_ACTIVITY_CATEGORIES,
   INSIGHTS_SORT_BY_COUNT,
   MY_CUSTOMERS_ROUTE_NAME,
@@ -343,6 +341,17 @@ const showCaveat = computed(() => !category.value || gaCategories.has(category.v
 const { customer } = useSalesRepCustomer(() => props.organizationId ?? "");
 const customerName = computed(() => (props.organizationId ? customer.value?.organizationName : undefined));
 
+// One line, no subtitle: rep-wide names whose feed this is, the narrowed mode names the customer.
+// The bare noun stands in until the name resolves, so the heading never renders half-written.
+const heading = computed(() => {
+  if (!props.organizationId) {
+    return t("sales_rep.activity.page.title");
+  }
+  return customerName.value
+    ? t("sales_rep.activity.page.customer_title", { customer: customerName.value })
+    : t("sales_rep.activity.page.title_fallback");
+});
+
 function searchRoute(term: string) {
   return { name: ROUTES.SEARCH.NAME, query: { [QueryParamName.SearchPhrase]: term } };
 }
@@ -351,21 +360,26 @@ function scrollToTop(): void {
   window.scroll({ top: 0, behavior: "smooth" });
 }
 
-usePageHead({
-  title: computed(() => t("sales_rep.activity.page.title")),
-});
+usePageHead({ title: heading });
 
-const breadcrumbs = useBreadcrumbs(() => [
-  { title: t("common.links.account"), route: { name: "Account" } },
-  { title: t("sales_rep.hub.title") },
-  ...(props.organizationId && customerName.value
-    ? [
-        { title: t("sales_rep.my_customers.page.title"), route: { name: MY_CUSTOMERS_ROUTE_NAME } },
-        { title: customerName.value },
-      ]
-    : []),
-  { title: t("sales_rep.activity.page.title") },
-]);
+const breadcrumbs = useBreadcrumbs(() => {
+  const trail = [{ title: t("common.links.account"), route: { name: "Account" } }, { title: t("sales_rep.hub.title") }];
+
+  // The customer segment waits for the name — a crumb with an empty title is worse than no crumb.
+  if (!props.organizationId || !customerName.value) {
+    return [...trail, { title: t("sales_rep.activity.breadcrumb") }];
+  }
+
+  return [
+    ...trail,
+    { title: t("sales_rep.my_customers.page.title"), route: { name: MY_CUSTOMERS_ROUTE_NAME } },
+    {
+      title: customerName.value,
+      route: { name: CUSTOMER_PROFILE_ROUTE_NAME, params: { organizationId: props.organizationId } },
+    },
+    { title: t("sales_rep.activity.breadcrumb") },
+  ];
+});
 </script>
 
 <style lang="scss">
@@ -373,10 +387,6 @@ const breadcrumbs = useBreadcrumbs(() => [
 .activities {
   &__title {
     @apply [word-break:break-word];
-  }
-
-  &__scope {
-    @apply mt-1.5 text-sm text-neutral-500;
   }
 
   &__results {

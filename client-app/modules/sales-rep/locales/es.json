@@ -203,12 +203,14 @@
     },
     "activity": {
       "navigation": {
-        "link": "Actividades"
+        "link": "Mi actividad"
       },
       "page": {
-        "title": "Actividades",
-        "scoped_to": "Actividad de {organization}"
+        "title": "Mi actividad",
+        "customer_title": "Actividad de {customer}",
+        "title_fallback": "Actividad"
       },
+      "breadcrumb": "Actividad",
       "tabs": {
         "all": "Todas",
         "orders": "Pedidos",

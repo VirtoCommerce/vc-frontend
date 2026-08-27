@@ -203,12 +203,14 @@
     },
     "activity": {
       "navigation": {
-        "link": "Активность"
+        "link": "Моя активность"
       },
       "page": {
-        "title": "Активность",
-        "scoped_to": "Активность клиента {organization}"
+        "title": "Моя активность",
+        "customer_title": "Активность клиента {customer}",
+        "title_fallback": "Активность"
       },
+      "breadcrumb": "Активность",
       "tabs": {
         "all": "Все",
         "orders": "Заказы",

@@ -203,12 +203,14 @@
     },
     "activity": {
       "navigation": {
-        "link": "活动"
+        "link": "我的活动"
       },
       "page": {
-        "title": "活动",
-        "scoped_to": "{organization} 的活动"
+        "title": "我的活动",
+        "customer_title": "{customer} 的活动",
+        "title_fallback": "活动"
       },
+      "breadcrumb": "活动",
       "tabs": {
         "all": "全部",
         "orders": "订单",

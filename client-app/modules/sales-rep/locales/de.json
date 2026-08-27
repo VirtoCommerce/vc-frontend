@@ -203,12 +203,14 @@
     },
     "activity": {
       "navigation": {
-        "link": "Aktivitäten"
+        "link": "Meine Aktivität"
       },
       "page": {
-        "title": "Aktivitäten",
-        "scoped_to": "Aktivität für {organization}"
+        "title": "Meine Aktivität",
+        "customer_title": "Aktivität von {customer}",
+        "title_fallback": "Aktivität"
       },
+      "breadcrumb": "Aktivität",
       "tabs": {
         "all": "Alle",
         "orders": "Bestellungen",
@@ -239,7 +241,7 @@
       "empty_period": "Keine erfasste Aktivität in diesem Zeitraum",
       "no_results": "Keine Aktivität in dieser Kategorie",
       "load_failed": "Aktivität konnte nicht geladen werden",
-      "view_all": "Alle Aktivitäten",
+      "view_all": "Gesamte Aktivität",
       "my_activity": {
         "title": "Meine Aktivität"
       },

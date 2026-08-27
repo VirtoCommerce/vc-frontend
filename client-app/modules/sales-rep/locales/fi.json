@@ -203,12 +203,14 @@
     },
     "activity": {
       "navigation": {
-        "link": "Aktiviteetit"
+        "link": "Oma aktiviteetti"
       },
       "page": {
-        "title": "Aktiviteetit",
-        "scoped_to": "Aktiviteetti asiakkaalle {organization}"
+        "title": "Oma aktiviteetti",
+        "customer_title": "Asiakkaan {customer} aktiviteetti",
+        "title_fallback": "Aktiviteetti"
       },
+      "breadcrumb": "Aktiviteetti",
       "tabs": {
         "all": "Kaikki",
         "orders": "Tilaukset",
@@ -239,7 +241,7 @@
       "empty_period": "Ei seurattua aktiviteettia tällä ajanjaksolla",
       "no_results": "Ei aktiviteettia tässä kategoriassa",
       "load_failed": "Aktiviteettia ei voitu ladata",
-      "view_all": "Kaikki aktiviteetit",
+      "view_all": "Kaikki aktiviteetti",
       "my_activity": {
         "title": "Oma aktiviteetti"
       },

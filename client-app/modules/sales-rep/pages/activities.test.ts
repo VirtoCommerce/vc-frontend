@@ -2,7 +2,7 @@ import { mount } from "@vue/test-utils";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { nextTick, toValue } from "vue";
 import { createWrapperFactory } from "@/core/utilities/tests";
-import { ACTIVITY_PAGE_SIZE } from "../constants";
+import { ACTIVITY_PAGE_SIZE, CUSTOMER_PROFILE_ROUTE_NAME } from "../constants";
 import Activities from "./activities.vue";
 import type { SalesRepActivityCategoryCountType, SalesRepActivityItemType, SalesRepRuleType } from "../types";
 import type { Ref } from "vue";
@@ -87,13 +87,32 @@ vi.mock("../composables/useSalesRepBrowseHistory", async () => {
     },
   };
 });
-vi.mock("../composables/useSalesRepCustomer", async () => {
+// The heading and the breadcrumb both name the customer, so tests need to control when the name resolves.
+const customerState = await vi.hoisted(async () => {
   const { ref } = await import("vue");
-  return { useSalesRepCustomer: () => ({ customer: ref(undefined), loading: ref(false), notFound: ref(false) }) };
+  return { organizationName: ref<string | undefined>(undefined) };
 });
+vi.mock("../composables/useSalesRepCustomer", async () => {
+  const { computed, ref } = await import("vue");
+  return {
+    useSalesRepCustomer: () => ({
+      customer: computed(() =>
+        customerState.organizationName.value ? { organizationName: customerState.organizationName.value } : undefined,
+      ),
+      loading: ref(false),
+      notFound: ref(false),
+    }),
+  };
+});
+// useBreadcrumbs is stubbed out, so capture the trail factory the page hands it and evaluate that —
+// asserting the rendered stub would only prove the mock returns [].
+const breadcrumbCalls = vi.hoisted(() => ({ factory: undefined as (() => unknown[]) | undefined }));
 vi.mock("@/core/composables", async (importOriginal) => ({
   ...(await importOriginal<object>()),
-  useBreadcrumbs: () => [],
+  useBreadcrumbs: (factory: () => unknown[]) => {
+    breadcrumbCalls.factory = factory;
+    return [];
+  },
   usePageHead: vi.fn(),
 }));
 vi.mock("@/core/globals", () => ({ globals: { storeId: "test-store", cultureName: "en-US", currencyCode: "USD" } }));
@@ -112,7 +131,8 @@ const createWrapper = createWrapperFactory(mount, Activities, {
     stubs: {
       VcWidget: { template: '<div><slot name="default-container" /></div>' },
       VcBreadcrumbs: true,
-      VcTypography: true,
+      // Slot-rendering stub: the heading text is asserted below.
+      VcTypography: { name: "VcTypographyStub", template: "<h1><slot /></h1>" },
       VcPagination: true,
       VcEmptyView: true,
       VcIcon: true,
@@ -143,6 +163,7 @@ async function switchToTop(wrapper: ReturnType<typeof createWrapper>): Promise<v
 }
 
 beforeEach(() => {
+  customerState.organizationName.value = undefined;
   activityCalls.options.length = 0;
   state.items.value = [];
   state.categoryCounts.value = [];
@@ -474,5 +495,64 @@ describe("Activities page — Top|Recent mode", () => {
     expect(toValue(insights.browseOptions!.enabled)).toBe(false);
     expect(topRows(wrapper)).toHaveLength(0);
     expect(findRows(wrapper)).toHaveLength(1);
+  });
+});
+
+// i18n is mounted without messages, so t() echoes the key — asserting the key pins which string
+// each mode uses, which is exactly what these three surfaces differ by.
+type BreadcrumbItemType = { title: string; route?: { name: string; params?: Record<string, string> } };
+const breadcrumbItems = () => (breadcrumbCalls.factory?.() ?? []) as BreadcrumbItemType[];
+
+describe("heading and breadcrumbs", () => {
+  it("names whose feed it is on the rep-wide page", () => {
+    const wrapper = createWrapper();
+
+    expect(wrapper.find("h1").text()).toBe("sales_rep.activity.page.title");
+    expect(breadcrumbItems().map((x) => x.title)).toEqual([
+      "common.links.account",
+      "sales_rep.hub.title",
+      "sales_rep.activity.breadcrumb",
+    ]);
+  });
+
+  it("names the customer in a single-line heading, with no subtitle", async () => {
+    customerState.organizationName.value = "PerfOrg 000101";
+
+    const wrapper = createWrapper({ props: { organizationId: "org-1" } });
+    await nextTick();
+
+    expect(wrapper.find("h1").text()).toBe("sales_rep.activity.page.customer_title");
+    expect(wrapper.find(".activities__scope").exists()).toBe(false);
+  });
+
+  it("links the customer breadcrumb to that customer's profile", async () => {
+    customerState.organizationName.value = "PerfOrg 000101";
+
+    createWrapper({ props: { organizationId: "org-1" } });
+    await nextTick();
+
+    const items = breadcrumbItems();
+    expect(items.map((x) => x.title)).toEqual([
+      "common.links.account",
+      "sales_rep.hub.title",
+      "sales_rep.my_customers.page.title",
+      "PerfOrg 000101",
+      "sales_rep.activity.breadcrumb",
+    ]);
+    expect(items[3].route).toEqual({
+      name: CUSTOMER_PROFILE_ROUTE_NAME,
+      params: { organizationId: "org-1" },
+    });
+  });
+
+  it("shows the bare noun and no customer crumb until the name resolves", () => {
+    const wrapper = createWrapper({ props: { organizationId: "org-1" } });
+
+    expect(wrapper.find("h1").text()).toBe("sales_rep.activity.page.title_fallback");
+    expect(breadcrumbItems().map((x) => x.title)).toEqual([
+      "common.links.account",
+      "sales_rep.hub.title",
+      "sales_rep.activity.breadcrumb",
+    ]);
   });
 });

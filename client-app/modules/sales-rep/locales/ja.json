@@ -203,12 +203,14 @@
     },
     "activity": {
       "navigation": {
-        "link": "アクティビティ"
+        "link": "マイアクティビティ"
       },
       "page": {
-        "title": "アクティビティ",
-        "scoped_to": "{organization} のアクティビティ"
+        "title": "マイアクティビティ",
+        "customer_title": "{customer} のアクティビティ",
+        "title_fallback": "アクティビティ"
       },
+      "breadcrumb": "アクティビティ",
       "tabs": {
         "all": "すべて",
         "orders": "注文",
