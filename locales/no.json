@@ -1699,11 +1699,11 @@
       },
       "clear_all_modal": {
         "title": "Fjern alle",
-        "message": "Alle 1 produkter vil bli fjernet fra sammenligningen. | Alle {n} produkter vil bli fjernet fra sammenligningen."
+        "message": "Ingen produkter vil bli fjernet fra sammenligningen. | 1 produkt vil bli fjernet fra sammenligningen. | Alle {n} produkter vil bli fjernet fra sammenligningen. | Alle {n} produkter vil bli fjernet fra sammenligningen."
       },
       "clear_category_modal": {
         "title": "Fjern kategori",
-        "message": "Alle 1 produkter i {category} vil bli fjernet fra sammenligningen. | Alle {n} produkter i {category} vil bli fjernet fra sammenligningen."
+        "message": "Ingen produkter i {category} vil bli fjernet fra sammenligningen. | 1 produkt i {category} vil bli fjernet fra sammenligningen. | Alle {n} produkter i {category} vil bli fjernet fra sammenligningen. | Alle {n} produkter i {category} vil bli fjernet fra sammenligningen."
       },
       "empty": {
         "title": "Sammenligningslisten din er tom",

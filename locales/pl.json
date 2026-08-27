@@ -1699,11 +1699,11 @@
       },
       "clear_all_modal": {
         "title": "Wyczyść wszystko",
-        "message": "Wszystkie 1 produkty zostaną usunięte z porównania. | Wszystkie {n} produkty zostaną usunięte z porównania."
+        "message": "Żaden produkt nie zostanie usunięty z porównania. | 1 produkt zostanie usunięty z porównania. | {n} produkty zostaną usunięte z porównania. | {n} produktów zostanie usuniętych z porównania."
       },
       "clear_category_modal": {
         "title": "Wyczyść kategorię",
-        "message": "Wszystkie 1 produkty w {category} zostaną usunięte z porównania. | Wszystkie {n} produkty w {category} zostaną usunięte z porównania."
+        "message": "Żaden produkt w {category} nie zostanie usunięty z porównania. | 1 produkt w {category} zostanie usunięty z porównania. | {n} produkty w {category} zostaną usunięte z porównania. | {n} produktów w {category} zostanie usuniętych z porównania."
       },
       "empty": {
         "title": "Twoja lista porównawcza jest pusta",

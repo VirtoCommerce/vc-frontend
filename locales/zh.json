@@ -1699,11 +1699,11 @@
       },
       "clear_all_modal": {
         "title": "清除全部",
-        "message": "将移除所有1件产品。 | 将移除所有{n}件产品。"
+        "message": "不会移除任何产品。 | 将移除1件产品。 | 将移除所有{n}件产品。 | 将移除所有{n}件产品。"
       },
       "clear_category_modal": {
         "title": "清除类别",
-        "message": "将移除{category}中的所有1件产品。 | 将移除{category}中的所有{n}件产品。"
+        "message": "不会移除{category}中的任何产品。 | 将移除{category}中的1件产品。 | 将移除{category}中的所有{n}件产品。 | 将移除{category}中的所有{n}件产品。"
       },
       "empty": {
         "title": "您的比较列表为空",

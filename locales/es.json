@@ -1699,11 +1699,11 @@
       },
       "clear_all_modal": {
         "title": "Limpiar todo",
-        "message": "Se eliminará 1 producto de la comparación. | Se eliminarán {n} productos de la comparación."
+        "message": "No se eliminará ningún producto de la comparación. | Se eliminará 1 producto de la comparación. | Se eliminarán {n} productos de la comparación. | Se eliminarán {n} productos de la comparación."
       },
       "clear_category_modal": {
         "title": "Limpiar categoría",
-        "message": "Se eliminará 1 producto en {category} de la comparación. | Se eliminarán {n} productos en {category} de la comparación."
+        "message": "No se eliminará ningún producto de {category} de la comparación. | Se eliminará 1 producto en {category} de la comparación. | Se eliminarán {n} productos en {category} de la comparación. | Se eliminarán {n} productos en {category} de la comparación."
       },
       "empty": {
         "title": "Tu lista de comparación está vacía",

@@ -1699,11 +1699,11 @@
       },
       "clear_all_modal": {
         "title": "Tyhjennä kaikki",
-        "message": "Kaikki 1 tuote poistetaan vertailusta. | Kaikki {n} tuotetta poistetaan vertailusta."
+        "message": "Yhtään tuotetta ei poisteta vertailusta. | 1 tuote poistetaan vertailusta. | Kaikki {n} tuotetta poistetaan vertailusta. | Kaikki {n} tuotetta poistetaan vertailusta."
       },
       "clear_category_modal": {
         "title": "Tyhjennä kategoria",
-        "message": "Kaikki 1 tuote kategoriassa {category} poistetaan vertailusta. | Kaikki {n} tuotetta kategoriassa {category} poistetaan vertailusta."
+        "message": "Yhtään tuotetta kategoriasta {category} ei poisteta vertailusta. | 1 tuote kategoriassa {category} poistetaan vertailusta. | Kaikki {n} tuotetta kategoriassa {category} poistetaan vertailusta. | Kaikki {n} tuotetta kategoriassa {category} poistetaan vertailusta."
       },
       "empty": {
         "title": "Vertailulistasi on tyhjä",

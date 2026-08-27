@@ -1701,11 +1701,11 @@
       },
       "clear_all_modal": {
         "title": "Clear all",
-        "message": "All 1 product will be removed from comparison. | All {n} products will be removed from comparison."
+        "message": "No products will be removed from comparison. | All 1 product will be removed from comparison. | All {n} products will be removed from comparison. | All {n} products will be removed from comparison."
       },
       "clear_category_modal": {
         "title": "Clear category",
-        "message": "All 1 product in {category} will be removed from comparison. | All {n} products in {category} will be removed from comparison."
+        "message": "No products in {category} will be removed from comparison. | All 1 product in {category} will be removed from comparison. | All {n} products in {category} will be removed from comparison. | All {n} products in {category} will be removed from comparison."
       },
       "empty": {
         "title": "Your compare list is empty",

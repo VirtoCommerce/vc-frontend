@@ -1699,11 +1699,11 @@
       },
       "clear_all_modal": {
         "title": "Alle löschen",
-        "message": "Alle 1 Produkte werden aus dem Vergleich entfernt. | Alle {n} Produkte werden aus dem Vergleich entfernt."
+        "message": "Es wird kein Produkt aus dem Vergleich entfernt. | 1 Produkt wird aus dem Vergleich entfernt. | Alle {n} Produkte werden aus dem Vergleich entfernt. | Alle {n} Produkte werden aus dem Vergleich entfernt."
       },
       "clear_category_modal": {
         "title": "Kategorie löschen",
-        "message": "Alle 1 Produkte in {category} werden aus dem Vergleich entfernt. | Alle {n} Produkte in {category} werden aus dem Vergleich entfernt."
+        "message": "Es wird kein Produkt aus {category} aus dem Vergleich entfernt. | 1 Produkt in {category} wird aus dem Vergleich entfernt. | Alle {n} Produkte in {category} werden aus dem Vergleich entfernt. | Alle {n} Produkte in {category} werden aus dem Vergleich entfernt."
       },
       "empty": {
         "title": "Ihre Vergleichsliste ist leer",
