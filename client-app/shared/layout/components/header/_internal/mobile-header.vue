@@ -119,8 +119,8 @@
 </template>
 
 <script setup lang="ts">
-import { syncRefs, useElementSize, useScrollLock } from "@vueuse/core";
-import { computed, ref } from "vue";
+import { syncRefs, useCssVar, useElementSize, useScrollLock } from "@vueuse/core";
+import { computed, ref, watch } from "vue";
 import { useWhiteLabeling } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
@@ -149,6 +149,12 @@ const { logoUrl } = useWhiteLabeling();
 const placeholderStyle = computed<StyleValue | undefined>(() =>
   height.value ? { height: height.value + "px" } : undefined,
 );
+
+const scrollPaddingVar = useCssVar("--vc-header-height");
+
+watch(height, (value) => {
+  scrollPaddingVar.value = `${value}px`;
+});
 
 const isScrollLocked = computed(() => mobileMenuVisible.value || searchBarVisible.value);
 const scrollLock = useScrollLock(document.body);

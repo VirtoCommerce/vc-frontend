@@ -19,7 +19,7 @@ export function useAnchorScroll(content?: () => unknown): void {
       const movedToAnotherPage = currentPath !== undefined && currentPath !== route.path;
       currentPath = route.path;
 
-      if (movedToAnotherPage && content) {
+      if (content && (movedToAnotherPage || awaitingContent)) {
         cancelAnchorScroll();
         awaitingContent = true;
         return;

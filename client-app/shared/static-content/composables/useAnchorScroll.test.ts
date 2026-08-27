@@ -86,6 +86,25 @@ describe("useAnchorScroll", () => {
     expect(scrollToAnchor).toHaveBeenCalledWith("#text2");
   });
 
+  it("keeps waiting when the hash changes before the new page's content is in", async () => {
+    const content = shallowRef({ id: "page-a" });
+    mountPage(() => content.value);
+    scrollToAnchor.mockClear();
+
+    routePath.value = "/page-b";
+    await flushPromises();
+
+    routeHash.value = "#text9";
+    await flushPromises();
+
+    expect(scrollToAnchor).not.toHaveBeenCalled();
+
+    content.value = { id: "page-b" };
+    await flushPromises();
+
+    expect(scrollToAnchor).toHaveBeenCalledWith("#text9");
+  });
+
   it("scrolls right away on a path change when the page tracks no content", async () => {
     mountPage();
     scrollToAnchor.mockClear();
