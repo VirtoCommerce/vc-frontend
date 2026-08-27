@@ -86,6 +86,7 @@
           size="xs"
           color="secondary"
           :variant="tab.categoryKey === selectedCategoryKey ? 'solid' : 'outline'"
+          :aria-pressed="tab.categoryKey === selectedCategoryKey"
           @click="selectCategory(tab.categoryKey)"
         >
           <span class="compare-products__category-tab-content">
