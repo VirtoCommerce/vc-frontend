@@ -122,11 +122,11 @@ export const Default: StoryType = {
 };
 
 export const WithLabel: StoryType = {
-  args: { label: "Order date" },
+  args: { label: "Date" },
   parameters: {
     docs: {
       source: {
-        code: `<VcDatePicker v-model="value" label="Order date" />`,
+        code: `<VcDatePicker v-model="value" label="Date" />`,
       },
     },
   },
@@ -141,13 +141,13 @@ export const WithLabel: StoryType = {
 };
 
 export const WithValue: StoryType = {
-  args: { label: "Order date" },
+  args: { label: "Date" },
   parameters: {
     docs: {
       source: {
         code: `
           <!-- value ref starts at "2026-10-15" -->
-          <VcDatePicker v-model="value" label="Order date" />
+          <VcDatePicker v-model="value" label="Date" />
         `,
       },
     },
@@ -169,7 +169,7 @@ export const WithValue: StoryType = {
 
 export const WithMinMax: StoryType = {
   args: {
-    label: "Order date",
+    label: "Date",
     min: "2026-10-05",
     max: "2026-10-25",
     message: "Pick a date between 2026-10-05 and 2026-10-25",
@@ -184,7 +184,7 @@ export const WithMinMax: StoryType = {
         code: `
           <VcDatePicker
             v-model="value"
-            label="Order date"
+            label="Date"
             min="2026-10-05"
             max="2026-10-25"
           />
@@ -209,7 +209,7 @@ export const WithMinMax: StoryType = {
 
 export const ValidityEvent: StoryType = {
   args: {
-    label: "Order date",
+    label: "Date",
     min: "2026-10-05",
     max: "2026-10-25",
     message: "Pick a date between 2026-10-05 and 2026-10-25",
@@ -226,7 +226,7 @@ export const ValidityEvent: StoryType = {
           <!-- isValid ref tracks the picker's validity -->
           <VcDatePicker
             v-model="value"
-            label="Order date"
+            label="Date"
             min="2026-10-05"
             max="2026-10-25"
             @update:valid="isValid = $event"
@@ -263,7 +263,7 @@ export const ValidityEvent: StoryType = {
 
 export const WithDisabledDates: StoryType = {
   args: {
-    label: "Order date",
+    label: "Date",
     firstDayOfWeek: 1,
   },
   parameters: {
@@ -277,7 +277,7 @@ export const WithDisabledDates: StoryType = {
           <!-- disabledDate returns true for weekends -->
           <VcDatePicker
             v-model="value"
-            label="Order date"
+            label="Date"
             :first-day-of-week="1"
             :disabled-date="(iso) => [0, 6].includes(new Date(iso + 'T00:00:00Z').getUTCDay())"
           />
@@ -302,7 +302,7 @@ export const WithDisabledDates: StoryType = {
 
 export const FocusEntryOnOpen: StoryType = {
   args: {
-    label: "Order date",
+    label: "Date",
   },
   parameters: {
     docs: {
@@ -313,7 +313,7 @@ export const FocusEntryOnOpen: StoryType = {
       source: {
         code: `
           <!-- value ref starts at "2026-10-15"; opening the popover focuses that day cell -->
-          <VcDatePicker v-model="value" label="Order date" />
+          <VcDatePicker v-model="value" label="Date" />
         `,
       },
     },
@@ -335,7 +335,7 @@ export const FocusEntryOnOpen: StoryType = {
 
 export const WithFooter: StoryType = {
   args: {
-    label: "Order date",
+    label: "Date",
     firstDayOfWeek: 1,
     showFooter: true,
   },
@@ -345,7 +345,7 @@ export const WithFooter: StoryType = {
         story: "`showFooter: true` exposes Today / Clear buttons inside the calendar.",
       },
       source: {
-        code: `<VcDatePicker v-model="value" label="Order date" :first-day-of-week="1" show-footer />`,
+        code: `<VcDatePicker v-model="value" label="Date" :first-day-of-week="1" show-footer />`,
       },
     },
   },
@@ -365,14 +365,14 @@ export const WithFooter: StoryType = {
 };
 
 export const Disabled: StoryType = {
-  args: { label: "Order date", disabled: true },
+  args: { label: "Date", disabled: true },
   parameters: {
     docs: {
       description: {
         story: "Disabled state — input is non-interactive and the calendar trigger is also disabled.",
       },
       source: {
-        code: `<VcDatePicker v-model="value" label="Order date" disabled />`,
+        code: `<VcDatePicker v-model="value" label="Date" disabled />`,
       },
     },
   },
@@ -388,7 +388,7 @@ export const Disabled: StoryType = {
 
 export const WithExternalError: StoryType = {
   args: {
-    label: "Order date",
+    label: "Date",
     error: true,
     message: "Required field",
   },
@@ -399,7 +399,7 @@ export const WithExternalError: StoryType = {
           "Simulates a vee-validate error: when `error` is `true`, the external `message` wins and the input's internal locale/range validation messaging is suppressed.",
       },
       source: {
-        code: `<VcDatePicker v-model="value" label="Order date" :error="true" message="Required field" />`,
+        code: `<VcDatePicker v-model="value" label="Date" :error="true" message="Required field" />`,
       },
     },
   },
@@ -414,7 +414,7 @@ export const WithExternalError: StoryType = {
 };
 
 export const Clearable: StoryType = {
-  args: { label: "Order date", clearable: true },
+  args: { label: "Date", clearable: true },
   parameters: {
     docs: {
       description: {
@@ -422,7 +422,7 @@ export const Clearable: StoryType = {
           "Clear button appears in the input while there is text; clicking emits both `clear` and `update:modelValue(undefined)`. The calendar trigger remains available.",
       },
       source: {
-        code: `<VcDatePicker v-model="value" label="Order date" clearable />`,
+        code: `<VcDatePicker v-model="value" label="Date" clearable />`,
       },
     },
   },
@@ -442,7 +442,7 @@ export const Clearable: StoryType = {
 };
 
 export const WithMask: StoryType = {
-  args: { label: "Order date", mask: true },
+  args: { label: "Date", mask: true },
   parameters: {
     docs: {
       description: {
@@ -450,7 +450,7 @@ export const WithMask: StoryType = {
           "`mask: true` enables a locale-aware input mask. Separators are auto-inserted as the user types digits. Paste of recognizable date formats (ISO or locale short) is intercepted and reformatted into the locale's display format.",
       },
       source: {
-        code: `<VcDatePicker v-model="value" label="Order date" mask />`,
+        code: `<VcDatePicker v-model="value" label="Date" mask />`,
       },
     },
   },
@@ -471,7 +471,7 @@ export const WithMask: StoryType = {
 
 export const LocaleJa: StoryType = {
   args: {
-    label: "注文日",
+    label: "日付",
     locale: "ja-JP",
   },
   parameters: {
@@ -481,7 +481,7 @@ export const LocaleJa: StoryType = {
           "Japanese locale: format from Intl + i18n labels via temporary global locale switch. Story registers `ja.json` and toggles `useI18n().locale` to `ja-JP` for demonstration — in production, locale messages are loaded at app startup.\n\nNote on i18n scope: this story temporarily switches vue-i18n's GLOBAL locale to ja-JP on mount (restoring on unmount). If Storybook autodocs renders this story alongside others, neighboring stories may briefly see the ja-JP locale during this story's lifecycle. Production code paths are unaffected — locale is normally controlled by the user-preferences layer.",
       },
       source: {
-        code: `<!-- value ref starts empty -->\n<VcDatePicker v-model="value" label="注文日" locale="ja-JP" />`,
+        code: `<!-- value ref starts empty -->\n<VcDatePicker v-model="value" label="日付" locale="ja-JP" />`,
       },
     },
   },
@@ -514,11 +514,11 @@ export const LocaleJa: StoryType = {
 };
 
 export const SizeSm: StoryType = {
-  args: { label: "Order date", size: "sm" },
+  args: { label: "Date", size: "sm" },
   parameters: {
     docs: {
       source: {
-        code: `<VcDatePicker v-model="value" label="Order date" size="sm" />`,
+        code: `<VcDatePicker v-model="value" label="Date" size="sm" />`,
       },
     },
   },
@@ -533,7 +533,7 @@ export const SizeSm: StoryType = {
 };
 
 export const SizeXs: StoryType = {
-  args: { label: "Order date", size: "xs", weekdayFormat: "narrow" },
+  args: { label: "Date", size: "xs", weekdayFormat: "narrow" },
   parameters: {
     docs: {
       description: {
@@ -541,7 +541,7 @@ export const SizeXs: StoryType = {
           '`size: xs` shrinks both the input and the embedded calendar to the compact 28px-cell scale. Pair with `weekday-format="narrow"` so the single-letter labels fit the cell width.',
       },
       source: {
-        code: `<VcDatePicker v-model="value" label="Order date" size="xs" weekday-format="narrow" />`,
+        code: `<VcDatePicker v-model="value" label="Date" size="xs" weekday-format="narrow" />`,
       },
     },
   },
@@ -556,7 +556,7 @@ export const SizeXs: StoryType = {
 };
 
 export const CloseOnSelectFalse: StoryType = {
-  args: { label: "Order date", closeOnSelect: false },
+  args: { label: "Date", closeOnSelect: false },
   parameters: {
     docs: {
       description: {
@@ -564,7 +564,7 @@ export const CloseOnSelectFalse: StoryType = {
           "`closeOnSelect: false` — picking a date in the calendar commits the value but does NOT close the popover. Useful when consumers want to allow multi-step refinement (e.g. preview the choice in context before dismissing). Click outside or press Escape to close.",
       },
       source: {
-        code: `<VcDatePicker v-model="value" label="Order date" :close-on-select="false" />`,
+        code: `<VcDatePicker v-model="value" label="Date" :close-on-select="false" />`,
       },
     },
   },
@@ -584,7 +584,7 @@ export const CloseOnSelectFalse: StoryType = {
 };
 
 export const EnabledTeleport: StoryType = {
-  args: { label: "Order date", enableTeleport: true },
+  args: { label: "Date", enableTeleport: true },
   parameters: {
     docs: {
       description: {
@@ -592,7 +592,7 @@ export const EnabledTeleport: StoryType = {
           "`enable-teleport` renders the calendar popover into `#popover-host` (the app-level host element). Use this when the picker sits inside a clipping container — a modal, dialog, or any ancestor with `overflow: hidden` — so the calendar can escape the clip and float over surrounding UI. In production the host lives in `App.vue`; this story provides a host via a Storybook decorator.",
       },
       source: {
-        code: `<VcDatePicker v-model="value" label="Order date" :enable-teleport="true" />`,
+        code: `<VcDatePicker v-model="value" label="Date" :enable-teleport="true" />`,
       },
     },
   },

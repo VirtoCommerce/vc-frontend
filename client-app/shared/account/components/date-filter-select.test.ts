@@ -1,8 +1,20 @@
 import { mount } from "@vue/test-utils";
 import { describe, expect, it, vi } from "vitest";
 import { DateFilterId } from "@/core/enums";
+import { VcInputDetails, VcLabel } from "@/ui-kit/components/atoms";
 import DateFilterSelect from "./date-filter-select.vue";
 import type { DateFilterType } from "@/core/types";
+import VcButton from "@/ui-kit/components/molecules/button/vc-button.vue";
+import VcCalendar from "@/ui-kit/components/molecules/calendar/vc-calendar.vue";
+import VcRangeCalendar from "@/ui-kit/components/molecules/calendar/vc-range-calendar.vue";
+import VcDateInput from "@/ui-kit/components/molecules/date-input/vc-date-input.vue";
+import VcDateRangeInput from "@/ui-kit/components/molecules/date-range-input/vc-date-range-input.vue";
+import VcInput from "@/ui-kit/components/molecules/input/vc-input.vue";
+import VcPopover from "@/ui-kit/components/molecules/popover/vc-popover.vue";
+import VcDatePicker from "@/ui-kit/components/organisms/date-picker/vc-date-picker.vue";
+import VcDateRangePicker from "@/ui-kit/components/organisms/date-range-picker/vc-date-range-picker.vue";
+
+vi.mock("vue-i18n", () => ({ useI18n: () => ({ t: (k: string) => k, locale: { value: "en" } }) }));
 
 // The rest of the composable pulls in useUser/GraphQL.
 vi.mock("../composables/useUserOrdersFilter", () => ({
@@ -53,5 +65,56 @@ describe("DateFilterSelect", () => {
   it("defaults layout to combined", () => {
     const wrapper = mountWithCustomSelected();
     expect(wrapper.findComponent({ name: "VcDateRangePicker" }).attributes("layout")).toBe("combined");
+  });
+
+  // Apply is gated on this emit, and the seeded ref is a starting point, not a verdict on the range.
+  describe("initial validity", () => {
+    it("says nothing before the range picker has reported", () => {
+      const wrapper = mountWithCustomSelected({
+        dateFilterType: {
+          id: DateFilterId.CUSTOM,
+          label: "Custom date",
+          startDate: "2026-10-20",
+          endDate: "2026-10-08",
+        },
+      });
+      expect(wrapper.emitted("update:valid")).toBeUndefined();
+    });
+
+    // The stubbed picker above emits nothing, so the real chain is what proves the verdict arrives.
+    it("reports an out-of-order range as invalid, and only that", () => {
+      const wrapper = mount(DateFilterSelect, {
+        props: {
+          layout: "split",
+          dateFilterType: {
+            id: DateFilterId.CUSTOM,
+            label: "Custom date",
+            startDate: "2026-10-20",
+            endDate: "2026-10-08",
+          },
+        },
+        global: {
+          components: {
+            VcDateInput,
+            VcInput,
+            VcInputDetails,
+            VcLabel,
+            VcButton,
+            VcPopover,
+            VcCalendar,
+            VcRangeCalendar,
+            VcDateRangeInput,
+            VcDatePicker,
+            VcDateRangePicker,
+          },
+          stubs: { VcSelect: true, VcIcon: true, VcTooltip: true },
+          directives: { "html-safe": {} },
+          mocks: { $t: (key: string) => key },
+        },
+      });
+
+      expect(wrapper.emitted("update:valid")).toEqual([[false]]);
+      wrapper.unmount();
+    });
   });
 });

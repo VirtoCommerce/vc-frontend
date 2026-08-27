@@ -641,10 +641,10 @@ describe("VcDateRangePicker — split layout", () => {
   });
 
   it("exposes the row as a labelled group", () => {
-    const wrapper = mountSplit({ label: "Order date range" });
+    const wrapper = mountSplit({ label: "Date range" });
     const group = wrapper.find("fieldset");
     expect(group.exists()).toBe(true);
-    expect(group.attributes("aria-label")).toBe("Order date range");
+    expect(group.attributes("aria-label")).toBe("Date range");
   });
 
   it("falls back to the generic group label when no label is given", () => {
@@ -1073,7 +1073,7 @@ describe("VcDateRangePicker — split layout", () => {
 
   describe("per-side and root wiring", () => {
     it("renders a single required asterisk, on the group label", () => {
-      const wrapper = mountSplit({ label: "Order date range", required: true });
+      const wrapper = mountSplit({ label: "Date range", required: true });
       expect(wrapper.findAll(".vc-label__asterisk")).toHaveLength(1);
       expect(wrapper.findAllComponents({ name: "VcDatePicker" }).map((field) => field.props("required"))).toEqual([
         false,
@@ -1082,13 +1082,13 @@ describe("VcDateRangePicker — split layout", () => {
     });
 
     it("keeps the required semantics on both inputs even though only the group shows an asterisk", () => {
-      const wrapper = mountSplit({ label: "Order date range", required: true });
+      const wrapper = mountSplit({ label: "Date range", required: true });
       const inputs = wrapper.findAll("input");
       expect(inputs.map((input) => input.attributes("aria-required"))).toEqual(["true", "true"]);
     });
 
     it("leaves aria-required off both inputs when the range is optional", () => {
-      const inputs = mountSplit({ label: "Order date range" }).findAll("input");
+      const inputs = mountSplit({ label: "Date range" }).findAll("input");
       expect(inputs.map((input) => input.attributes("aria-required"))).toEqual([undefined, undefined]);
     });
 

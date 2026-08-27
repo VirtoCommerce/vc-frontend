@@ -70,7 +70,9 @@ const range = computed<VcDateRangeType | undefined>({
   },
 });
 
-watch(rangeValid, (valid) => emit("update:valid", valid), { immediate: true });
+// Not immediate: the picker reports its own validity as it mounts, so announcing the seed first would
+// claim an out-of-order range is valid. Consumers hold the same default until that first report.
+watch(rangeValid, (valid) => emit("update:valid", valid));
 
 function handleChangeType(): void {
   if (selectedDateFilter.value.id === (DateFilterId.CUSTOM as DateFilterType["id"])) {

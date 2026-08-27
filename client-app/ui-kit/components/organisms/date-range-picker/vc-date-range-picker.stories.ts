@@ -94,11 +94,11 @@ export default meta;
 type StoryType = StoryObj<typeof meta>;
 
 export const Default: StoryType = {
-  args: { label: "Order date range" },
+  args: { label: "Date range" },
   parameters: {
     docs: {
       source: {
-        code: `<VcDateRangePicker v-model="value" label="Order date range" />`,
+        code: `<VcDateRangePicker v-model="value" label="Date range" />`,
       },
     },
   },
@@ -118,13 +118,13 @@ export const Default: StoryType = {
 };
 
 export const WithValue: StoryType = {
-  args: { label: "Order date range" },
+  args: { label: "Date range" },
   parameters: {
     docs: {
       source: {
         code: `
           <!-- value ref starts at { start: "2026-10-08", end: "2026-10-14" } -->
-          <VcDateRangePicker v-model="value" label="Order date range" />
+          <VcDateRangePicker v-model="value" label="Date range" />
         `,
       },
     },
@@ -146,7 +146,7 @@ export const WithValue: StoryType = {
 
 export const Split: StoryType = {
   args: {
-    label: "Order date range",
+    label: "Date range",
     layout: "split",
     startLabel: "Start date",
     endLabel: "End date",
@@ -163,7 +163,7 @@ export const Split: StoryType = {
           <VcDateRangePicker
             v-model="value"
             layout="split"
-            label="Order date range"
+            label="Date range"
             start-label="Start date"
             end-label="End date"
             clearable
@@ -188,11 +188,11 @@ export const Split: StoryType = {
 };
 
 export const Small: StoryType = {
-  args: { label: "Order date range", size: "sm" },
+  args: { label: "Date range", size: "sm" },
   parameters: {
     docs: {
       source: {
-        code: `<VcDateRangePicker v-model="value" label="Order date range" size="sm" />`,
+        code: `<VcDateRangePicker v-model="value" label="Date range" size="sm" />`,
       },
     },
   },
@@ -207,14 +207,14 @@ export const Small: StoryType = {
 };
 
 export const Disabled: StoryType = {
-  args: { label: "Order date range", disabled: true },
+  args: { label: "Date range", disabled: true },
   parameters: {
     docs: {
       description: {
         story: "Disabled state — both segments are non-interactive and the calendar trigger is also disabled.",
       },
       source: {
-        code: `<VcDateRangePicker v-model="value" label="Order date range" disabled />`,
+        code: `<VcDateRangePicker v-model="value" label="Date range" disabled />`,
       },
     },
   },
@@ -229,7 +229,7 @@ export const Disabled: StoryType = {
 };
 
 export const ErrorState: StoryType = {
-  args: { label: "Order date range", error: true, message: "End date must be after the start date" },
+  args: { label: "Date range", error: true, message: "End date must be after the start date" },
   parameters: {
     docs: {
       description: {
@@ -240,7 +240,7 @@ export const ErrorState: StoryType = {
         code: `
           <VcDateRangePicker
             v-model="value"
-            label="Order date range"
+            label="Date range"
             :error="true"
             message="End date must be after the start date"
           />
@@ -259,14 +259,14 @@ export const ErrorState: StoryType = {
 };
 
 export const Clearable: StoryType = {
-  args: { label: "Order date range", clearable: true },
+  args: { label: "Date range", clearable: true },
   parameters: {
     docs: {
       description: {
         story: "A single shell-level clear button resets both endpoints at once.",
       },
       source: {
-        code: `<VcDateRangePicker v-model="value" label="Order date range" clearable />`,
+        code: `<VcDateRangePicker v-model="value" label="Date range" clearable />`,
       },
     },
   },
@@ -286,14 +286,14 @@ export const Clearable: StoryType = {
 };
 
 export const WithFooter: StoryType = {
-  args: { label: "Order date range", firstDayOfWeek: 1, showFooter: true },
+  args: { label: "Date range", firstDayOfWeek: 1, showFooter: true },
   parameters: {
     docs: {
       description: {
         story: "`showFooter: true` exposes a Clear button inside the calendar.",
       },
       source: {
-        code: `<VcDateRangePicker v-model="value" label="Order date range" :first-day-of-week="1" show-footer />`,
+        code: `<VcDateRangePicker v-model="value" label="Date range" :first-day-of-week="1" show-footer />`,
       },
     },
   },
@@ -314,7 +314,7 @@ export const WithFooter: StoryType = {
 
 export const MinMax: StoryType = {
   args: {
-    label: "Order date range",
+    label: "Date range",
     min: "2026-10-05",
     max: "2026-10-25",
     message: "Pick dates between 2026-10-05 and 2026-10-25",
@@ -329,7 +329,7 @@ export const MinMax: StoryType = {
         code: `
           <VcDateRangePicker
             v-model="value"
-            label="Order date range"
+            label="Date range"
             min="2026-10-05"
             max="2026-10-25"
           />
@@ -361,7 +361,7 @@ export const MinMax: StoryType = {
 };
 
 export const Teleport: StoryType = {
-  args: { label: "Order date range", enableTeleport: true },
+  args: { label: "Date range", enableTeleport: true },
   parameters: {
     docs: {
       description: {
@@ -371,7 +371,7 @@ export const Teleport: StoryType = {
       source: {
         code: `
           <div style="overflow: hidden; height: 12rem; border: 1px dashed">
-            <VcDateRangePicker v-model="value" label="Order date range" :enable-teleport="true" />
+            <VcDateRangePicker v-model="value" label="Date range" :enable-teleport="true" />
           </div>
         `,
       },

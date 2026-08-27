@@ -40,11 +40,11 @@ export default meta;
 type StoryType = StoryObj<typeof meta>;
 
 export const Default: StoryType = {
-  args: { label: "Order date range" },
+  args: { label: "Date range" },
   parameters: {
     docs: {
       source: {
-        code: `<VcDateRangeInput v-model="value" label="Order date range" />`,
+        code: `<VcDateRangeInput v-model="value" label="Date range" />`,
       },
     },
   },
@@ -64,13 +64,13 @@ export const Default: StoryType = {
 };
 
 export const WithValue: StoryType = {
-  args: { label: "Order date range" },
+  args: { label: "Date range" },
   parameters: {
     docs: {
       source: {
         code: `
           <!-- value ref starts at { start: "2026-10-08", end: "2026-10-14" } -->
-          <VcDateRangeInput v-model="value" label="Order date range" />
+          <VcDateRangeInput v-model="value" label="Date range" />
         `,
       },
     },
@@ -91,11 +91,11 @@ export const WithValue: StoryType = {
 };
 
 export const Small: StoryType = {
-  args: { label: "Order date range", size: "sm" },
+  args: { label: "Date range", size: "sm" },
   parameters: {
     docs: {
       source: {
-        code: `<VcDateRangeInput v-model="value" label="Order date range" size="sm" />`,
+        code: `<VcDateRangeInput v-model="value" label="Date range" size="sm" />`,
       },
     },
   },
@@ -110,11 +110,11 @@ export const Small: StoryType = {
 };
 
 export const Disabled: StoryType = {
-  args: { label: "Order date range", disabled: true },
+  args: { label: "Date range", disabled: true },
   parameters: {
     docs: {
       source: {
-        code: `<VcDateRangeInput v-model="value" label="Order date range" disabled />`,
+        code: `<VcDateRangeInput v-model="value" label="Date range" disabled />`,
       },
     },
   },
@@ -129,7 +129,7 @@ export const Disabled: StoryType = {
 };
 
 export const ErrorState: StoryType = {
-  args: { label: "Order date range", error: true, message: "End date must be after the start date" },
+  args: { label: "Date range", error: true, message: "End date must be after the start date" },
   parameters: {
     docs: {
       description: {
@@ -139,7 +139,7 @@ export const ErrorState: StoryType = {
         code: `
           <VcDateRangeInput
             v-model="value"
-            label="Order date range"
+            label="Date range"
             :error="true"
             message="End date must be after the start date"
           />
@@ -158,14 +158,14 @@ export const ErrorState: StoryType = {
 };
 
 export const Clearable: StoryType = {
-  args: { label: "Order date range", clearable: true },
+  args: { label: "Date range", clearable: true },
   parameters: {
     docs: {
       description: {
         story: "A single shell-level clear button resets both segments at once.",
       },
       source: {
-        code: `<VcDateRangeInput v-model="value" label="Order date range" clearable />`,
+        code: `<VcDateRangeInput v-model="value" label="Date range" clearable />`,
       },
     },
   },
@@ -185,7 +185,7 @@ export const Clearable: StoryType = {
 };
 
 export const ClearableDisabled: StoryType = {
-  args: { label: "Order date range", clearable: true, disabled: true },
+  args: { label: "Date range", clearable: true, disabled: true },
   parameters: {
     docs: {
       description: {
@@ -193,7 +193,7 @@ export const ClearableDisabled: StoryType = {
           "Matches VcInput's own idiom: the clear button is hidden entirely (not just disabled) when the field is disabled or readonly.",
       },
       source: {
-        code: `<VcDateRangeInput v-model="value" label="Order date range" clearable disabled />`,
+        code: `<VcDateRangeInput v-model="value" label="Date range" clearable disabled />`,
       },
     },
   },
@@ -208,7 +208,7 @@ export const ClearableDisabled: StoryType = {
 };
 
 export const PartialRange: StoryType = {
-  args: { label: "Order date range" },
+  args: { label: "Date range" },
   parameters: {
     docs: {
       description: {
@@ -217,7 +217,7 @@ export const PartialRange: StoryType = {
       source: {
         code: `
           <!-- value ref starts at { start: "2026-10-08" } -->
-          <VcDateRangeInput v-model="value" label="Order date range" />
+          <VcDateRangeInput v-model="value" label="Date range" />
         `,
       },
     },

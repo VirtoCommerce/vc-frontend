@@ -86,11 +86,11 @@ export const Default: StoryType = {
 };
 
 export const WithLabel: StoryType = {
-  args: { label: "Order date" },
+  args: { label: "Date" },
   parameters: {
     docs: {
       source: {
-        code: `<VcDateInput v-model="value" label="Order date" />`,
+        code: `<VcDateInput v-model="value" label="Date" />`,
       },
     },
   },
@@ -105,13 +105,13 @@ export const WithLabel: StoryType = {
 };
 
 export const WithValue: StoryType = {
-  args: { label: "Order date" },
+  args: { label: "Date" },
   parameters: {
     docs: {
       source: {
         code: `
           <!-- value ref starts at "2026-10-15" -->
-          <VcDateInput v-model="value" label="Order date" />
+          <VcDateInput v-model="value" label="Date" />
         `,
       },
     },
@@ -133,7 +133,7 @@ export const WithValue: StoryType = {
 
 export const WithMinMax: StoryType = {
   args: {
-    label: "Order date",
+    label: "Date",
     min: "2026-10-05",
     max: "2026-10-25",
     message: "Pick a date between 2026-10-05 and 2026-10-25",
@@ -148,7 +148,7 @@ export const WithMinMax: StoryType = {
         code: `
           <VcDateInput
             v-model="value"
-            label="Order date"
+            label="Date"
             min="2026-10-05"
             max="2026-10-25"
           />
@@ -173,7 +173,7 @@ export const WithMinMax: StoryType = {
 
 export const WithExternalError: StoryType = {
   args: {
-    label: "Order date",
+    label: "Date",
     error: true,
     message: "Required field",
   },
@@ -184,7 +184,7 @@ export const WithExternalError: StoryType = {
           "Simulates a vee-validate error: when `error` is `true`, the external `message` wins and the internal locale/range validation messaging is suppressed.",
       },
       source: {
-        code: `<VcDateInput v-model="value" label="Order date" :error="true" message="Required field" />`,
+        code: `<VcDateInput v-model="value" label="Date" :error="true" message="Required field" />`,
       },
     },
   },
@@ -199,11 +199,11 @@ export const WithExternalError: StoryType = {
 };
 
 export const Disabled: StoryType = {
-  args: { label: "Order date", disabled: true },
+  args: { label: "Date", disabled: true },
   parameters: {
     docs: {
       source: {
-        code: `<VcDateInput v-model="value" label="Order date" disabled />`,
+        code: `<VcDateInput v-model="value" label="Date" disabled />`,
       },
     },
   },
@@ -218,11 +218,11 @@ export const Disabled: StoryType = {
 };
 
 export const Readonly: StoryType = {
-  args: { label: "Order date", readonly: true },
+  args: { label: "Date", readonly: true },
   parameters: {
     docs: {
       source: {
-        code: `<VcDateInput v-model="value" label="Order date" readonly />`,
+        code: `<VcDateInput v-model="value" label="Date" readonly />`,
       },
     },
   },
@@ -237,14 +237,14 @@ export const Readonly: StoryType = {
 };
 
 export const Required: StoryType = {
-  args: { label: "Order date", required: true },
+  args: { label: "Date", required: true },
   parameters: {
     docs: {
       description: {
         story: "Required label indicator (red asterisk) rendered by VcLabel.",
       },
       source: {
-        code: `<VcDateInput v-model="value" label="Order date" required />`,
+        code: `<VcDateInput v-model="value" label="Date" required />`,
       },
     },
   },
@@ -259,7 +259,7 @@ export const Required: StoryType = {
 };
 
 export const Clearable: StoryType = {
-  args: { label: "Order date", clearable: true },
+  args: { label: "Date", clearable: true },
   parameters: {
     docs: {
       description: {
@@ -267,7 +267,7 @@ export const Clearable: StoryType = {
           "Clear button appears while there is text; clicking emits both `clear` and `update:modelValue(undefined)`.",
       },
       source: {
-        code: `<VcDateInput v-model="value" label="Order date" clearable />`,
+        code: `<VcDateInput v-model="value" label="Date" clearable />`,
       },
     },
   },
@@ -287,7 +287,7 @@ export const Clearable: StoryType = {
 };
 
 export const UpdateOnEnter: StoryType = {
-  args: { label: "Order date", updateOn: "enter" },
+  args: { label: "Date", updateOn: "enter" },
   parameters: {
     docs: {
       description: {
@@ -295,7 +295,7 @@ export const UpdateOnEnter: StoryType = {
           '`updateOn: "enter"` — blur does NOT commit. Press Enter to commit. Useful when the parent wants to control when input is consumed.',
       },
       source: {
-        code: `<VcDateInput v-model="value" label="Order date" update-on="enter" />`,
+        code: `<VcDateInput v-model="value" label="Date" update-on="enter" />`,
       },
     },
   },
@@ -337,14 +337,14 @@ export const LocaleRu: StoryType = {
 };
 
 export const LocaleJa: StoryType = {
-  args: { label: "注文日", locale: "ja-JP" },
+  args: { label: "日付", locale: "ja-JP" },
   parameters: {
     docs: {
       description: {
         story: "Japanese locale: placeholder renders as `YYYY/MM/DD`.",
       },
       source: {
-        code: `<VcDateInput v-model="value" label="注文日" locale="ja-JP" />`,
+        code: `<VcDateInput v-model="value" label="日付" locale="ja-JP" />`,
       },
     },
   },
@@ -359,14 +359,14 @@ export const LocaleJa: StoryType = {
 };
 
 export const LocaleEnUs: StoryType = {
-  args: { label: "Order date", locale: "en-US" },
+  args: { label: "Date", locale: "en-US" },
   parameters: {
     docs: {
       description: {
         story: "US English locale: placeholder renders as `MM/DD/YYYY`.",
       },
       source: {
-        code: `<VcDateInput v-model="value" label="Order date" locale="en-US" />`,
+        code: `<VcDateInput v-model="value" label="Date" locale="en-US" />`,
       },
     },
   },
@@ -381,11 +381,11 @@ export const LocaleEnUs: StoryType = {
 };
 
 export const SizeSm: StoryType = {
-  args: { label: "Order date", size: "sm" },
+  args: { label: "Date", size: "sm" },
   parameters: {
     docs: {
       source: {
-        code: `<VcDateInput v-model="value" label="Order date" size="sm" />`,
+        code: `<VcDateInput v-model="value" label="Date" size="sm" />`,
       },
     },
   },
@@ -400,11 +400,11 @@ export const SizeSm: StoryType = {
 };
 
 export const SizeXs: StoryType = {
-  args: { label: "Order date", size: "xs" },
+  args: { label: "Date", size: "xs" },
   parameters: {
     docs: {
       source: {
-        code: `<VcDateInput v-model="value" label="Order date" size="xs" />`,
+        code: `<VcDateInput v-model="value" label="Date" size="xs" />`,
       },
     },
   },
@@ -419,7 +419,7 @@ export const SizeXs: StoryType = {
 };
 
 export const WithMask: StoryType = {
-  args: { label: "Order date", mask: true },
+  args: { label: "Date", mask: true },
   parameters: {
     docs: {
       description: {
@@ -427,7 +427,7 @@ export const WithMask: StoryType = {
           "With `mask: true`, separators are auto-inserted as the user types digits. The mask pattern is locale-aware — for the active i18n locale here. Paste of recognizable date formats (try pasting `2026-10-15`) is intercepted and reformatted into the locale's display format. Paste of free-form text is subject to mask transformation (digits flow into mask slots).",
       },
       source: {
-        code: `<VcDateInput v-model="value" label="Order date" mask />`,
+        code: `<VcDateInput v-model="value" label="Date" mask />`,
       },
     },
   },
@@ -447,7 +447,7 @@ export const WithMask: StoryType = {
 };
 
 export const WithMaskLocaleJa: StoryType = {
-  args: { label: "注文日", locale: "ja-JP", mask: true },
+  args: { label: "日付", locale: "ja-JP", mask: true },
   parameters: {
     docs: {
       description: {
@@ -455,7 +455,7 @@ export const WithMaskLocaleJa: StoryType = {
           "Mask + Japanese locale. The mask pattern follows the locale: ja-JP yields `####/##/##` (year first). Try typing `20261015` to see the separators auto-insert at year boundary and between month/day. Paste of ISO `2026-10-15` is intercepted by useDateField and reformatted to `2026/10/15`.",
       },
       source: {
-        code: `<VcDateInput v-model="value" label="注文日" locale="ja-JP" mask />`,
+        code: `<VcDateInput v-model="value" label="日付" locale="ja-JP" mask />`,
       },
     },
   },
