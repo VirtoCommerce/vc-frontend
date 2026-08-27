@@ -44,14 +44,19 @@ export function classifyShellFocusOut(event: FocusEvent): "left" | "own-popover"
 
 /**
  * Pays back the blur suppressed by an "own-popover" focusout: reports the one moment focus leaves the
- * popover for anywhere outside the shell. Returns a stop function; call it before starting another
- * watch and on unmount.
+ * popover for anywhere outside the shell. A no-op when the popover renders inside the shell — see
+ * below. Returns a stop function; call it before starting another watch and on unmount.
  */
 export function watchFocusLeavingOwnPopover(event: FocusEvent, onLeft: (blurEvent: FocusEvent) => void): () => void {
   const noop = (): void => {};
   const shell = event.currentTarget;
   const popover = document.getElementById(ownPopoverBodyId(event));
   if (!(shell instanceof Element) || !popover) {
+    return noop;
+  }
+  // Without teleport the popover stays in the shell's subtree, so a departure from it bubbles to the
+  // shell and is classified "left" there. Watching as well would report that one departure twice.
+  if (shell.contains(popover)) {
     return noop;
   }
 

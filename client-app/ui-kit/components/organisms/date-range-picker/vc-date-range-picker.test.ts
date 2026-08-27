@@ -413,6 +413,39 @@ describe("VcDateRangePicker", () => {
       outside.remove();
       popoverHost.remove();
     });
+
+    // Leaving the open calendar directly, with no Escape first: without teleport the popover sits in the
+    // fieldset, so the departure both bubbles here and reaches the document watch — one blur, not two.
+    it.each([
+      ["split with teleport", true],
+      ["split without teleport", false],
+    ])("%s: leaving the open calendar for the outside blurs exactly once", async (_name, enableTeleport) => {
+      const popoverHost = document.createElement("div");
+      popoverHost.id = "popover-host";
+      document.body.appendChild(popoverHost);
+      const outside = document.createElement("button");
+      document.body.appendChild(outside);
+      const wrapper = mountSplit({ enableTeleport }, { attachTo: document.body });
+
+      const [startInput] = wrapper.findAll("input");
+      startInput.element.focus();
+
+      const [startTrigger] = wrapper.findAll('button[aria-label="ui_kit.accessibility.open_calendar"]');
+      (startTrigger.element as HTMLButtonElement).focus();
+      await startTrigger.trigger("click");
+      await flushPromises();
+
+      const activeCell = document.activeElement as HTMLElement | null;
+      expect(activeCell?.dataset.rekaCalendarCellTrigger).toBeDefined();
+      expect(wrapper.element.contains(activeCell)).toBe(!enableTeleport);
+
+      outside.focus();
+      expect(wrapper.emitted("blur")).toHaveLength(1);
+
+      wrapper.unmount();
+      outside.remove();
+      popoverHost.remove();
+    });
   });
 
   // Re-anchoring is a legitimate partial; Escape must undo it whole, not leave a half-reverted range.

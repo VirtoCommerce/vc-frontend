@@ -106,6 +106,19 @@ describe("watchFocusLeavingOwnPopover", () => {
     stop();
   });
 
+  // Non-teleported split: the shell's own focusout listener already sees the departure bubble past.
+  it("stands down when the popover renders inside the shell", () => {
+    buildDom();
+    el("shell").appendChild(el("own-popover"));
+    const onLeft = vi.fn();
+    const stop = onShell("focusout", (event) => watchFocusLeavingOwnPopover(event, onLeft), "field", "cell");
+
+    el("cell").dispatchEvent(new FocusEvent("focusout", { bubbles: true, relatedTarget: el("outside") }));
+
+    expect(onLeft).not.toHaveBeenCalled();
+    stop();
+  });
+
   it("stays quiet while focus moves inside the popover", () => {
     const { onLeft, stop } = arm();
 

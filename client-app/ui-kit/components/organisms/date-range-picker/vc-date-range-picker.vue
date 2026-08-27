@@ -357,8 +357,8 @@ function onSegment(which: "start" | "end", value: string | undefined): void {
   emit("update:modelValue", mergeRange(which, value));
 }
 
-// Each split field's calendar is teleported out of this fieldset, so its own focusout never reports
-// the real departure.
+// A teleported split calendar leaves this fieldset, so its own focusout never reports the real
+// departure; the watch covers that and stands down when the calendar stays inside.
 let stopPopoverFocusWatch: (() => void) | undefined;
 onUnmounted(() => stopPopoverFocusWatch?.());
 
