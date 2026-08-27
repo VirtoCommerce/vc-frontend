@@ -4,7 +4,7 @@
       <p v-for="error in commonErrors" :key="error">{{ error }}</p>
     </VcAlert>
 
-    <VcAlert v-if="!roles.length" color="warning" size="sm" variant="solid-light" class="mb-4">
+    <VcAlert v-if="!roles.length && !rolesLoading" color="warning" size="sm" variant="solid-light" class="mb-4">
       {{ $t("common.messages.no_company_roles_available") }}
     </VcAlert>
 
@@ -14,7 +14,7 @@
         :items="roles"
         :label="$t('shared.account.invite_member_modal.role_label')"
         :placeholder="$t('shared.account.invite_member_modal.role_placeholder')"
-        :disabled="loading || !roles.length"
+        :disabled="loading || rolesLoading || !roles.length"
         :error="!!errors.roleId"
         :message="errors.roleId"
         text-field="normalizedName"
@@ -61,14 +61,15 @@
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
 import { useField, useForm } from "vee-validate";
-import { computed, ref, useTemplateRef } from "vue";
+import { computed, ref, useTemplateRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { string } from "yup";
 import { useErrorsTranslator } from "@/core/composables";
 import { globals } from "@/core/globals";
 import { useUser } from "@/shared/account";
-import { translateRoleName, useCompanyMemberRoles } from "@/shared/company/composables/useCompanyMemberRoles";
+import { useAssignableCompanyRoles } from "@/shared/company/composables/useAssignableCompanyRoles";
+import { translateRoleName } from "@/shared/company/composables/useCompanyMemberRoles";
 import { useNotifications } from "@/shared/notification";
 import { VcModal } from "@/ui-kit/components";
 import { getInvalidEmails, parseEmails, normalizeEmails } from "./emails";
@@ -93,9 +94,9 @@ const router = useRouter();
 const notifications = useNotifications();
 const { translate } = useErrorsTranslator<IdentityErrorInfoType>("identity_error");
 
-const { roles: companyMemberRoles } = useCompanyMemberRoles();
+const { roles: assignableRoles, loading: rolesLoading } = useAssignableCompanyRoles(organization.value!.id);
 const roles = computed(() =>
-  companyMemberRoles.value.map((role) => ({
+  assignableRoles.value.map((role) => ({
     ...role,
     normalizedName: translateRoleName(t, te, role),
   })),
@@ -110,6 +111,13 @@ const { errors, meta, handleSubmit } = useForm({
 });
 
 const { value: roleId } = useField<string>("roleId", toTypedSchema(string().required()));
+
+// Roles load asynchronously, so the initialValues default above usually can't fire in time.
+watch(assignableRoles, (loadedRoles) => {
+  if (!roleId.value && loadedRoles.length) {
+    roleId.value = loadedRoles[0].id;
+  }
+});
 const { value: message } = useField<string>("message", toTypedSchema(string().max(1000)));
 const { value: emails } = useField<string>(
   "emails",

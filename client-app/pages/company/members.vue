@@ -341,9 +341,9 @@ import {
   MemberStatus,
   MembersDropdownMenu,
   translateRoleName,
-  useCompanyMemberRoles,
   useOrganizationContacts,
 } from "@/shared/company";
+import { useAssignableCompanyRoles } from "@/shared/company/composables/useAssignableCompanyRoles";
 import { useOrganizationContactsFilterFacets } from "@/shared/company/composables/useOrganizationContactsFilterFacets";
 import { ContactStatus } from "@/shared/company/types";
 import { useModal } from "@/shared/modal";
@@ -393,7 +393,7 @@ const {
   resetFacets,
   resetFacetItem,
 } = useOrganizationContactsFilterFacets(organization.value!.id);
-const { roles: companyMemberRoles } = useCompanyMemberRoles();
+const { roles: assignableRoles, loading: assignableRolesLoading } = useAssignableCompanyRoles(organization.value!.id);
 const { openModal } = useModal();
 const router = useRouter();
 const breakpoints = useBreakpoints(breakpointsTailwind);
@@ -673,15 +673,15 @@ async function handleResendInvite(contact: ExtendedContactType): Promise<void> {
 function openEditCustomerRoleModal(contact: ExtendedContactType): void {
   const currentRole = contact.extended.roles[0];
   const currentRoleId =
-    companyMemberRoles.value.find((role) => role.id === currentRole?.id || role.name === currentRole?.name)?.id ??
+    assignableRoles.value.find((role) => role.id === currentRole?.id || role.name === currentRole?.name)?.id ??
     currentRole?.id;
 
   const closeEditCustomerRoleModal = openModal({
     component: EditCustomerRoleModal,
     props: {
-      roles: companyMemberRoles.value.map((role) => ({ ...role, name: translateRoleName(t, te, role) })),
+      roles: assignableRoles.value.map((role) => ({ ...role, name: translateRoleName(t, te, role) })),
       currentRoleId,
-      loading: contactsLoading,
+      loading: computed(() => contactsLoading.value || assignableRolesLoading.value),
 
       async onConfirm(selectedRoleId: string): Promise<void> {
         const result = await changeContactOrganizationRole({

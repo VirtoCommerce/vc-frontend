@@ -8,6 +8,7 @@ export * from "./mutations/resendOrganizationInvite";
 export * from "./mutations/revokeOrganizationInvite";
 export * from "./mutations/unlockOrganizationContact";
 export * from "./mutations/updateOrganization";
+export * from "./queries/getAssignableCompanyRoles";
 export * from "./queries/getCurrentOrganizationAddresses";
 export * from "./queries/getOrganizationAddresses";
 export * from "./queries/getOrganizationContactRoles";

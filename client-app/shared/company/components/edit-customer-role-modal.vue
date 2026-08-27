@@ -1,6 +1,6 @@
 <template>
   <VcModal :title="$t('common.titles.change_role')" dividers>
-    <VcAlert v-if="!roles.length" color="warning" size="sm" variant="solid-light" class="mb-4">
+    <VcAlert v-if="!roles.length && !loading" color="warning" size="sm" variant="solid-light" class="mb-4">
       {{ $t("common.messages.no_company_roles_available") }}
     </VcAlert>
 
