@@ -6,6 +6,7 @@ import { ValidationErrorObjectType } from "@/core/enums";
 import { truncate } from "@/core/utilities";
 import { useShortCart } from "@/shared/cart/composables";
 import { useNotifications } from "@/shared/notification";
+import { useQuantityValidationSchema } from "@/ui-kit/composables";
 import { COMPARE_NOTIFICATION_PRODUCT_NAME_MAX_LENGTH } from "../constants";
 import type { ICompareDisplayProduct } from "../types";
 import type { Product, ValidationErrorType } from "@/core/api/graphql/types";
@@ -21,28 +22,13 @@ function getQuantity(product: Product): number {
   return packSize ? Math.ceil(minQuantity / packSize) * packSize : minQuantity;
 }
 
-function isAddToCartDisabled(product: Product): boolean {
-  const availability = product.availabilityData;
-
-  if (!availability?.isActive || !availability?.isAvailable || !availability?.isBuyable || !availability?.isInStock) {
-    return true;
-  }
-
-  const quantity = getQuantity(product);
-
-  if (availability.availableQuantity != null && availability.availableQuantity < quantity) {
-    return true;
-  }
-
-  return !!product.maxQuantity && quantity > product.maxQuantity;
-}
-
 /**
  * "Add to cart" for the compare table's plain (non-configurable, non-variation) products — no
- * stepper, just a button — but still respecting availability/minimum-order-quantity/pack-size/
- * max-quantity the same way the shared QuantityControl validation would (see
- * useQuantityValidationSchema), with per-entry loading state so adding one product doesn't
- * disable the whole table.
+ * stepper, just a button. Quantity validity (min/max/pack-size/available) is delegated to
+ * useQuantityValidationSchema, the same rules QuantityControl uses everywhere else, instead of
+ * being re-implemented by hand. The isActive/isAvailable/isBuyable/isInStock gate stays separate,
+ * matching how vc-add-to-cart.vue checks those outside the schema too. Plus per-entry loading
+ * state so adding one product doesn't disable the whole table.
  */
 export function useCompareAddToCart() {
   const { t } = useI18n();
@@ -53,6 +39,37 @@ export function useCompareAddToCart() {
   const { pushHistoricalEvent } = useHistoricalEvents();
 
   const addingProductKeys = ref(new Set<string>());
+
+  // A single reactive schema instance, re-pointed at whichever product isAddToCartDisabled is
+  // currently checking — useQuantityValidationSchema needs refs (it's meant for one product's
+  // live form state), but compare has many products and no per-product form, so the refs here
+  // are just scratch state mutated synchronously right before quantitySchema.value is read.
+  const minQuantityRef = ref<number>();
+  const maxQuantityRef = ref<number>();
+  const availableQuantityRef = ref<number>();
+  const packSizeRef = ref<number>();
+
+  const { quantitySchema } = useQuantityValidationSchema({
+    minQuantity: minQuantityRef,
+    maxQuantity: maxQuantityRef,
+    availableQuantity: availableQuantityRef,
+    packSize: packSizeRef,
+  });
+
+  function isAddToCartDisabled(product: Product): boolean {
+    const availability = product.availabilityData;
+
+    if (!availability?.isActive || !availability?.isAvailable || !availability?.isBuyable || !availability?.isInStock) {
+      return true;
+    }
+
+    minQuantityRef.value = product.minQuantity ?? undefined;
+    maxQuantityRef.value = product.maxQuantity ?? undefined;
+    availableQuantityRef.value = availability.availableQuantity ?? undefined;
+    packSizeRef.value = product.packSize ?? undefined;
+
+    return !quantitySchema.value.isValidSync(getQuantity(product));
+  }
 
   function isAddingToCart(item: ICompareDisplayProduct): boolean {
     return addingProductKeys.value.has(getProductKey(item));

@@ -134,6 +134,26 @@ describe("useCompareAddToCart", () => {
 
       expect(isAddToCartDisabled(p)).toBe(true);
     });
+
+    // Both cases below cover rules useQuantityValidationSchema owns (see PR review discussion) —
+    // enforcing them through the shared schema instead of a hand-rolled copy is the point: it's
+    // impossible for compare to silently drift from QuantityControl's actual behavior again.
+    it("does not block on availableQuantity === 0 alone — matches useQuantityValidationSchema's own `if (availableQuantity?.value)` (0 is falsy)", () => {
+      const { isAddToCartDisabled } = useCompareAddToCart();
+      const p = product({
+        minQuantity: 1,
+        availabilityData: { ...product().availabilityData, availableQuantity: 0 },
+      });
+
+      expect(isAddToCartDisabled(p)).toBe(false);
+    });
+
+    it("is disabled once the quantity exceeds LINE_ITEM_QUANTITY_LIMIT, enforced by the schema and not re-implemented here", () => {
+      const { isAddToCartDisabled } = useCompareAddToCart();
+      const p = product({ minQuantity: 1_000_000 });
+
+      expect(isAddToCartDisabled(p)).toBe(true);
+    });
   });
 
   describe("onAddToCart", () => {

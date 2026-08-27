@@ -361,8 +361,6 @@ const visibleRows = computed(() => {
   return [...pinnedRows.value, ...rest];
 });
 
-// Both refs are unconditionally rendered plain divs, so they're already set by the time this
-// composable's onMounted attaches its scroll listeners.
 useHorizontalScrollSync(bodyScrollRef, headerScrollRef);
 
 watch(
