@@ -52,12 +52,15 @@ const { height: headerHeight } = useElementBounding(stickyHeader);
 
 const desktopMenuMode = computed(() => themeContext.value?.settings?.desktop_menu_mode);
 
+watch(headerHeight, (value) => {
+  headerHeightVar.value = `${value + OFFSET_TOP}px`;
+});
+
 watch([headerHeight, isMobile], ([value, mobile]) => {
   if (mobile) {
     return;
   }
 
-  headerHeightVar.value = `${value + OFFSET_TOP}px`;
   appHeaderHeightVar.value = `${value}px`;
 });
 
