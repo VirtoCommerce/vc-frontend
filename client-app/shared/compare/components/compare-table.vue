@@ -600,10 +600,18 @@ watch(
 
   &__row-info {
     @apply shrink-0 text-neutral-500;
+
+    @media (width < theme("screens.md")) {
+      @apply hidden;
+    }
   }
 
   &__row-pin {
     @apply shrink-0 opacity-0 transition-opacity;
+
+    @media (width < theme("screens.md")) {
+      @apply hidden;
+    }
 
     &:focus-visible {
       @apply opacity-100;
