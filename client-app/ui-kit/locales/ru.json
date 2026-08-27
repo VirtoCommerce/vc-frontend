@@ -44,7 +44,8 @@
       "previous_year": "Предыдущий год",
       "next_year": "Следующий год",
       "today": "Сегодня",
-      "clear": "Очистить"
+      "clear": "Очистить",
+      "outside_suggested_range": "Вне рекомендуемого диапазона"
     },
     "date_range_input": {
       "aria_label": "Диапазон дат",

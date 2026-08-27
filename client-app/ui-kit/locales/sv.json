@@ -44,7 +44,8 @@
       "previous_year": "Föregående år",
       "next_year": "Nästa år",
       "today": "Idag",
-      "clear": "Rensa"
+      "clear": "Rensa",
+      "outside_suggested_range": "Utanför det föreslagna intervallet"
     },
     "date_range_input": {
       "aria_label": "Datumintervall",

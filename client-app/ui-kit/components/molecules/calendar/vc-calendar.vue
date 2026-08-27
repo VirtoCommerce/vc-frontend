@@ -74,7 +74,12 @@
             :date="weekDate"
             class="vc-calendar__cell"
           >
-            <CalendarCellTrigger :day="weekDate" :month="month.value" class="vc-calendar__day" />
+            <CalendarCellTrigger
+              :day="weekDate"
+              :month="month.value"
+              class="vc-calendar__day"
+              v-bind="softBoundAttrs(weekDate)"
+            />
           </CalendarCell>
         </CalendarGridRow>
       </CalendarGridBody>
@@ -124,6 +129,13 @@ interface IProps {
   size?: VcCalendarSizeType;
   min?: string;
   max?: string;
+  /**
+   * Advisory lower bound. Days before it are marked as out of the suggested range but stay
+   * selectable, and month/year navigation is not gated. Use `min` for a boundary that must hold.
+   */
+  softMin?: string;
+  /** Advisory upper bound. See `softMin`. */
+  softMax?: string;
   disabledDate?: VcCalendarDisabledDateType;
   showFooter?: boolean;
   locale?: string;
@@ -143,6 +155,8 @@ const props = withDefaults(defineProps<IProps>(), {
   size: "md",
   min: undefined,
   max: undefined,
+  softMin: undefined,
+  softMax: undefined,
   disabledDate: undefined,
   showFooter: false,
   locale: undefined,
@@ -166,6 +180,8 @@ const base = useCalendarBase({
   locale: toRef(props, "locale"),
   min: toRef(props, "min"),
   max: toRef(props, "max"),
+  softMin: toRef(props, "softMin"),
+  softMax: toRef(props, "softMax"),
   disabledDate: toRef(props, "disabledDate"),
   firstDayOfWeek: toRef(props, "firstDayOfWeek"),
   initialPlaceholder: getInitialPlaceholder,
@@ -179,6 +195,7 @@ const {
   minDateValue,
   maxDateValue,
   isDateUnavailable,
+  isOutsideSoftBounds,
   prevYearDisabled,
   nextYearDisabled,
   onPlaceholderUpdate,
@@ -190,6 +207,15 @@ const {
 } = base;
 
 const rootClasses = computed(() => ["vc-calendar", `vc-calendar--size--${props.size}`]);
+
+// The marker is the only cue a soft bound leaves: the day keeps its enabled semantics, so the title
+// carries the reason for assistive tech and on hover.
+function softBoundAttrs(date: DateValue): Record<string, string> {
+  if (!isOutsideSoftBounds(date)) {
+    return {};
+  }
+  return { "data-soft-out-of-bounds": "true", title: t("ui_kit.calendar.outside_suggested_range") };
+}
 
 function onUpdate(value: DateValue | DateValue[] | undefined): void {
   const single = Array.isArray(value) ? value[0] : value;
@@ -388,6 +414,21 @@ defineExpose({
 
       &:hover {
         @apply bg-neutral-100 text-neutral-600;
+      }
+    }
+
+    /* softMin/softMax — advisory: dimmed and underlined, but selectable, and navigation stays free */
+    &[data-soft-out-of-bounds] {
+      @apply text-neutral-500;
+
+      // currentcolor, not a lighter neutral: the underline is a state cue, so it has to clear the same
+      // contrast bar as the digits it sits under — in every preset and its dark variant.
+      text-decoration: underline dotted currentcolor;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 2px;
+
+      &:hover {
+        @apply bg-neutral-100 text-neutral-700;
       }
     }
 

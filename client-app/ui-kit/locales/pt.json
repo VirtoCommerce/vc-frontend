@@ -44,7 +44,8 @@
       "previous_year": "Ano anterior",
       "next_year": "Próximo ano",
       "today": "Hoje",
-      "clear": "Limpar"
+      "clear": "Limpar",
+      "outside_suggested_range": "Fora do intervalo sugerido"
     },
     "date_range_input": {
       "aria_label": "Intervalo de datas",

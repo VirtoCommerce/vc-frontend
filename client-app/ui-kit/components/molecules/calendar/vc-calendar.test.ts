@@ -106,7 +106,7 @@ describe("VcCalendar — placeholder clamping to [min, max]", () => {
     expect(minCell.attributes("data-disabled")).toBeUndefined();
   });
 
-  // The range picker derives each calendar's bound from the opposite endpoint, so it lands after mount.
+  // A consumer can move min/max reactively, so a hard bound can land on an already-open calendar.
   describe("a bound that arrives after mount", () => {
     it("re-clamps the view when max moves into the past", async () => {
       const wrapper = mountCal();
@@ -143,5 +143,66 @@ describe("VcCalendar — placeholder clamping to [min, max]", () => {
       await flushPromises();
       expect(inViewCell(wrapper, "2020-05-01").exists()).toBe(true);
     });
+  });
+});
+
+// Advisory bounds exist so the range picker can point at the opposite endpoint without trapping the
+// user: the marked days must stay selectable, and every month must stay reachable.
+describe("VcCalendar — advisory bounds (softMin/softMax)", () => {
+  const OCTOBER = { modelValue: "2026-10-08" };
+
+  it("marks the days outside them and leaves the rest alone", () => {
+    const wrapper = mountCal({ ...OCTOBER, softMin: "2026-10-05", softMax: "2026-10-14" });
+
+    expect(inViewCell(wrapper, "2026-10-04").attributes("data-soft-out-of-bounds")).toBe("true");
+    expect(inViewCell(wrapper, "2026-10-20").attributes("data-soft-out-of-bounds")).toBe("true");
+    expect(inViewCell(wrapper, "2026-10-05").attributes("data-soft-out-of-bounds")).toBeUndefined();
+    expect(inViewCell(wrapper, "2026-10-14").attributes("data-soft-out-of-bounds")).toBeUndefined();
+  });
+
+  it("keeps a marked day enabled, selectable and titled", async () => {
+    const wrapper = mountCal({ ...OCTOBER, softMax: "2026-10-14" });
+    const marked = inViewCell(wrapper, "2026-10-20");
+
+    expect(marked.attributes("data-disabled")).toBeUndefined();
+    expect(marked.attributes("aria-disabled")).toBeUndefined();
+    expect(marked.attributes("title")).toBe("ui_kit.calendar.outside_suggested_range");
+
+    await marked.trigger("click");
+    expect(wrapper.emitted("update:modelValue")?.at(-1)).toEqual(["2026-10-20"]);
+  });
+
+  it("gates neither month nor year navigation", async () => {
+    const wrapper = mountCal({ ...OCTOBER, softMin: "2026-10-05", softMax: "2026-10-14" });
+
+    expect(wrapper.find(".vc-calendar__nav--month-next").attributes("data-disabled")).toBeUndefined();
+    expect(wrapper.find(".vc-calendar__nav--year-next").attributes("disabled")).toBeUndefined();
+    expect(wrapper.find(".vc-calendar__nav--year-prev").attributes("disabled")).toBeUndefined();
+
+    await wrapper.find(".vc-calendar__nav--month-next").trigger("click");
+    expect(inViewCell(wrapper, "2026-11-20").exists()).toBe(true);
+  });
+
+  it("never moves the open month, unlike min/max", async () => {
+    const wrapper = mountCal({ ...OCTOBER });
+    await wrapper.setProps({ softMax: "2020-06-15" });
+    await flushPromises();
+
+    expect(inViewCell(wrapper, "2026-10-08").exists()).toBe(true);
+  });
+
+  it("lets a hard bound win where the two overlap", () => {
+    const wrapper = mountCal({ ...OCTOBER, max: "2026-10-14", softMax: "2026-10-10" });
+    const hard = inViewCell(wrapper, "2026-10-20");
+    const soft = inViewCell(wrapper, "2026-10-12");
+
+    expect(hard.attributes("data-disabled")).toBe("");
+    expect(soft.attributes("data-disabled")).toBeUndefined();
+    expect(soft.attributes("data-soft-out-of-bounds")).toBe("true");
+  });
+
+  it("marks nothing when no advisory bound is given", () => {
+    const wrapper = mountCal(OCTOBER);
+    expect(wrapper.findAll("[data-soft-out-of-bounds]")).toHaveLength(0);
   });
 });

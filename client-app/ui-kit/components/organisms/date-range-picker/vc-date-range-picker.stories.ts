@@ -36,7 +36,8 @@ const meta: Meta<typeof VcDateRangePicker> = {
     layout: {
       control: "select",
       options: LAYOUTS,
-      description: '"combined" = one field with two segments. "split" = two separate labelled fields.',
+      description:
+        '"combined" = one `VcDateRangeInput` with two segments, opening a single `VcRangeCalendar` in a `VcPopover`. "split" = two `VcDatePicker`s, each with its own calendar, sharing one label and one details row. Every story below can be switched between the two from this control.',
       type: { name: "string", required: false },
       table: { type: { summary: LAYOUTS.join(" | ") }, defaultValue: { summary: "combined" } },
     },
@@ -155,7 +156,7 @@ export const Split: StoryType = {
     docs: {
       description: {
         story:
-          '`layout="split"` renders two independent `VcDatePicker`s with visible `startLabel` / `endLabel`, an en dash between them and ONE shared details row. `clearable` is forwarded to both fields, so each renders its own clear button that resets only its endpoint. While the range is in order AND both endpoints sit inside the `min` / `max` given to the picker, each calendar is cross-bounded by the opposite endpoint — the start calendar cannot go past the current end date and vice versa — so a mouse pick cannot break the order. The cross-bound is deliberately dropped whenever it would fight those outer bounds (an out-of-order range, or an endpoint outside `min` / `max`), because clamping there would disable every day of every reachable month; in that state a mouse pick can produce an out-of-order range. Typing one is always possible. Either way it surfaces the `invalid_range` message in the shared details row.',
+          '`layout="split"` renders two independent `VcDatePicker`s with visible `startLabel` / `endLabel`, an en dash between them and ONE shared details row. `clearable` is forwarded to both fields, so each renders its own clear button that resets only its endpoint. Each calendar carries the opposite endpoint as an ADVISORY bound (`calendarSoftMin` / `calendarSoftMax`): the days that would invert the range are dimmed and underlined, but they stay selectable and never gate month/year navigation — so moving a whole range forward or back is always one pick away, and no arrow ever dead-ends. An inverted range is therefore reachable by mouse, exactly as it is by typing and as the single range calendar in `combined` allows; it surfaces `invalid_range` in the shared details row and reports `update:valid` false. The picker\'s own `min` / `max` remain the only hard bounds, and win wherever the two overlap.',
       },
       source: {
         code: `

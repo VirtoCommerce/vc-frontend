@@ -61,8 +61,10 @@
         ref="calendarRef"
         :model-value="modelValue"
         :size="calendarSize"
-        :min="calendarMin ?? min"
-        :max="calendarMax ?? max"
+        :min="min"
+        :max="max"
+        :soft-min="calendarSoftMin"
+        :soft-max="calendarSoftMax"
         :disabled-date="disabledDate"
         :locale="locale"
         :first-day-of-week="firstDayOfWeek"
@@ -100,12 +102,12 @@ interface IProps {
   /** ISO YYYY-MM-DD max boundary. */
   max?: string;
   /**
-   * Calendar-only lower boundary; defaults to `min`. min/max gate field validation AND the calendar;
-   * this clamps the calendar only, so the range picker can block out-of-order picks without raising a field error.
+   * Advisory calendar-only lower bound. Earlier days are marked as out of the suggested range but stay
+   * selectable and navigable — the range picker hints at the opposite endpoint without blocking a pick.
    */
-  calendarMin?: string;
-  /** Calendar-only upper boundary; defaults to `max`. See `calendarMin`. */
-  calendarMax?: string;
+  calendarSoftMin?: string;
+  /** Advisory calendar-only upper bound. See `calendarSoftMin`. */
+  calendarSoftMax?: string;
   /** Predicate that returns true to mark a date unavailable (greyed out). */
   disabledDate?: VcCalendarDisabledDateType;
   /** Override locale; defaults to active i18n locale. */

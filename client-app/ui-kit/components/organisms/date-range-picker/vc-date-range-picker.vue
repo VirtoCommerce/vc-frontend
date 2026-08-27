@@ -11,6 +11,12 @@
       {{ label }}
     </VcLabel>
 
+    <!--
+      The opposite endpoint reaches each calendar as an ADVISORY bound: the days that would invert the
+      range are marked, yet stay selectable and never gate navigation. An inverted pick is therefore
+      possible — as typing one is, and as "combined"'s single range calendar allows — and lands in the
+      shared details row as `invalid_range` with `update:valid` false.
+    -->
     <div class="vc-date-range-picker__fields">
       <VcDatePicker
         v-bind="sharedFieldProps"
@@ -21,7 +27,7 @@
         :aria-label="startLabel ? undefined : t('ui_kit.date_range_input.start_date')"
         :placeholder="startPlaceholder"
         :name="sideAttr(name, 'start')"
-        :calendar-max="startMax"
+        :calendar-soft-max="modelValue?.end"
         :data-test-id="sideAttr(dataTestId, 'start')"
         @update:model-value="onSegment('start', $event)"
         @update:valid="setSegmentValid('start', $event)"
@@ -39,7 +45,7 @@
         :aria-label="endLabel ? undefined : t('ui_kit.date_range_input.end_date')"
         :placeholder="endPlaceholder"
         :name="sideAttr(name, 'end')"
-        :calendar-min="endMin"
+        :calendar-soft-min="modelValue?.start"
         :data-test-id="sideAttr(dataTestId, 'end')"
         @update:model-value="onSegment('end', $event)"
         @update:valid="setSegmentValid('end', $event)"
@@ -287,43 +293,6 @@ const aggregatedErrorText = computed<string | undefined>(() =>
   props.layout === "split" ? splitErrorText.value : inputErrorText.value,
 );
 watch(aggregatedErrorText, (value) => emit("update:errorText", value), { immediate: true });
-
-// Clamped to the opposite endpoint so the calendars cannot pick an out-of-order range.
-// The clamp is dropped whenever it would cross the caller's own opposite bound — an out-of-order
-// range, or an endpoint outside [min, max]: clamping there disables every day of every reachable month.
-const startMax = computed<string | undefined>(() => {
-  const end = props.modelValue?.end;
-  if (!end || !orderValid.value) {
-    return props.max;
-  }
-  if (props.min && end < props.min) {
-    return props.max;
-  }
-  if (!props.max) {
-    return end;
-  }
-  if (props.max < end) {
-    return props.max;
-  }
-  return end;
-});
-
-const endMin = computed<string | undefined>(() => {
-  const start = props.modelValue?.start;
-  if (!start || !orderValid.value) {
-    return props.min;
-  }
-  if (props.max && start > props.max) {
-    return props.min;
-  }
-  if (!props.min) {
-    return start;
-  }
-  if (props.min > start) {
-    return props.min;
-  }
-  return start;
-});
 
 // Start-aligned so the start field's calendar does not overhang the separator.
 // Side placements open beside the field, never across it, so they pass through untouched.

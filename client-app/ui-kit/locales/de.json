@@ -44,7 +44,8 @@
       "previous_year": "Vorheriges Jahr",
       "next_year": "Nächstes Jahr",
       "today": "Heute",
-      "clear": "Löschen"
+      "clear": "Löschen",
+      "outside_suggested_range": "Außerhalb des vorgeschlagenen Bereichs"
     },
     "date_range_input": {
       "aria_label": "Datumsbereich",

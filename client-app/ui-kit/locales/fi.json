@@ -44,7 +44,8 @@
       "previous_year": "Edellinen vuosi",
       "next_year": "Seuraava vuosi",
       "today": "Tänään",
-      "clear": "Tyhjennä"
+      "clear": "Tyhjennä",
+      "outside_suggested_range": "Ehdotetun aikavälin ulkopuolella"
     },
     "date_range_input": {
       "aria_label": "Päivämääräväli",

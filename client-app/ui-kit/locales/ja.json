@@ -44,7 +44,8 @@
       "previous_year": "前年",
       "next_year": "翌年",
       "today": "今日",
-      "clear": "クリア"
+      "clear": "クリア",
+      "outside_suggested_range": "推奨範囲外です"
     },
     "date_range_input": {
       "aria_label": "日付範囲",

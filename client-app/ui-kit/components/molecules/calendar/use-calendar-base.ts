@@ -17,6 +17,10 @@ export interface IUseCalendarBaseOptions {
   locale: Ref<string | undefined>;
   min: Ref<string | undefined>;
   max: Ref<string | undefined>;
+  /** Advisory lower bound: earlier days are marked, never disabled. */
+  softMin?: Ref<string | undefined>;
+  /** Advisory upper bound: later days are marked, never disabled. */
+  softMax?: Ref<string | undefined>;
   disabledDate: Ref<VcCalendarDisabledDateType | undefined>;
   firstDayOfWeek: Ref<VcCalendarFirstDayOfWeekType | undefined>;
   initialPlaceholder: () => DateValue;
@@ -97,12 +101,29 @@ export function useCalendarBase(opts: IUseCalendarBaseOptions) {
 
   const placeholderRef = ref(clampToBounds(opts.initialPlaceholder())) as Ref<DateValue>;
 
-  // A bound can arrive or move after mount (the range picker clamps each calendar to the opposite
-  // endpoint), which would leave the view on a month with every day disabled. Only out-of-bounds
-  // views are pulled back in, so month/year navigation inside the bounds stays free.
+  // A hard bound can arrive or move after mount, which would leave the view on a month with every day
+  // disabled. Only out-of-bounds views are pulled back in, so month/year navigation inside the bounds
+  // stays free. Soft bounds are excluded by design — they must never move the user's view.
   watch([minDateValue, maxDateValue], () => {
     placeholderRef.value = clampToBounds(placeholderRef.value);
   });
+
+  const softMinDateValue = computed(() => tryParseDate(opts.softMin?.value));
+  const softMaxDateValue = computed(() => tryParseDate(opts.softMax?.value));
+
+  // Deliberately absent from clampToBounds and the nav guards: a soft bound only paints the day,
+  // so every month stays reachable and every marked day stays selectable.
+  function isOutsideSoftBounds(date: DateValue): boolean {
+    const min = softMinDateValue.value;
+    if (min && date.compare(min) < 0) {
+      return true;
+    }
+    const max = softMaxDateValue.value;
+    if (max && date.compare(max) > 0) {
+      return true;
+    }
+    return false;
+  }
 
   const isDateUnavailable = computed(() => {
     const fn = opts.disabledDate.value;
@@ -265,6 +286,7 @@ export function useCalendarBase(opts: IUseCalendarBaseOptions) {
     minDateValue,
     maxDateValue,
     isDateUnavailable,
+    isOutsideSoftBounds,
     prevYearDisabled,
     nextYearDisabled,
     onPlaceholderUpdate,

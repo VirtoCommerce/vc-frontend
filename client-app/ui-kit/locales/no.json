@@ -44,7 +44,8 @@
       "previous_year": "Forrige år",
       "next_year": "Neste år",
       "today": "I dag",
-      "clear": "Tøm"
+      "clear": "Tøm",
+      "outside_suggested_range": "Utenfor det foreslåtte intervallet"
     },
     "date_range_input": {
       "aria_label": "Datointervall",

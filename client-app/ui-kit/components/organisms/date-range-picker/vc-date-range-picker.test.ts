@@ -654,182 +654,148 @@ describe("VcDateRangePicker — split layout", () => {
     wrapper.unmount();
   });
 
-  describe("cross-bound calendars", () => {
+  describe("advisory cross-bounds", () => {
     function calendarBounds(wrapper: ReturnType<typeof mountSplit>) {
       const [start, end] = wrapper.findAllComponents(VcCalendar);
       return {
-        startMax: start.props("max"),
+        startSoftMax: start.props("softMax"),
         startMin: start.props("min"),
+        startMax: start.props("max"),
+        endSoftMin: end.props("softMin"),
         endMin: end.props("min"),
         endMax: end.props("max"),
       };
     }
 
-    function enabledDayCount(calendar: DOMWrapper<Element> | VueWrapper): number {
-      const cells = calendar.findAll("[data-reka-calendar-cell-trigger]:not([data-outside-view])");
-      return cells.filter(
+    function dayCells(calendar: VueWrapper): DOMWrapper<Element>[] {
+      return calendar.findAll("[data-reka-calendar-cell-trigger]:not([data-outside-view])");
+    }
+
+    function enabledDayCount(calendar: VueWrapper): number {
+      return dayCells(calendar).filter(
         (cell) => cell.attributes("data-disabled") === undefined && cell.attributes("aria-disabled") !== "true",
       ).length;
     }
 
-    it("clamps each calendar to the opposite endpoint", () => {
-      const wrapper = mountSplit({ modelValue: { start: "2026-10-08", end: "2026-10-14" } });
-      const bounds = calendarBounds(wrapper);
-      expect(bounds.startMax).toBe("2026-10-14");
-      expect(bounds.endMin).toBe("2026-10-08");
+    function markedDays(calendar: VueWrapper): string[] {
+      return dayCells(calendar)
+        .filter((cell) => cell.attributes("data-soft-out-of-bounds") !== undefined)
+        .map((cell) => cell.attributes("data-value") ?? "");
+    }
+
+    function disabledDays(calendar: VueWrapper): string[] {
+      return dayCells(calendar)
+        .filter((cell) => cell.attributes("data-disabled") !== undefined || cell.attributes("aria-disabled") === "true")
+        .map((cell) => cell.attributes("data-value") ?? "");
+    }
+
+    function navDisabled(calendar: VueWrapper): boolean[] {
+      return [".vc-calendar__nav--month-next", ".vc-calendar__nav--year-next"].map(
+        (selector) => calendar.find(selector).attributes("disabled") !== undefined,
+      );
+    }
+
+    it("hands each calendar the opposite endpoint as an advisory bound", () => {
+      const bounds = calendarBounds(mountSplit({ modelValue: { start: "2026-10-08", end: "2026-10-14" } }));
+      expect(bounds.startSoftMax).toBe("2026-10-14");
+      expect(bounds.endSoftMin).toBe("2026-10-08");
     });
 
-    it("keeps the narrower of props.max and the end value", () => {
-      const wrapper = mountSplit({
-        modelValue: { start: "2026-10-08", end: "2026-10-25" },
-        min: "2026-10-05",
-        max: "2026-10-20",
-      });
-      const bounds = calendarBounds(wrapper);
-      expect(bounds.startMax).toBe("2026-10-20");
+    it("leaves the caller's own boundaries as the only hard ones", () => {
+      const bounds = calendarBounds(
+        mountSplit({ modelValue: { start: "2026-10-08", end: "2026-10-14" }, min: "2026-10-05", max: "2026-10-25" }),
+      );
       expect(bounds.startMin).toBe("2026-10-05");
-    });
-
-    it("keeps the narrower of props.min and the start value", () => {
-      const wrapper = mountSplit({
-        modelValue: { start: "2026-10-08", end: "2026-10-25" },
-        min: "2026-10-12",
-        max: "2026-10-30",
-      });
-      const bounds = calendarBounds(wrapper);
-      expect(bounds.endMin).toBe("2026-10-12");
-      expect(bounds.endMax).toBe("2026-10-30");
-    });
-
-    it("falls back to props.min/props.max when the opposite endpoint is empty", () => {
-      const wrapper = mountSplit({ modelValue: undefined, min: "2026-10-05", max: "2026-10-25" });
-      const bounds = calendarBounds(wrapper);
       expect(bounds.startMax).toBe("2026-10-25");
       expect(bounds.endMin).toBe("2026-10-05");
+      expect(bounds.endMax).toBe("2026-10-25");
     });
 
-    it("leaves both calendars unbounded when neither props nor the range constrain them", () => {
-      const wrapper = mountSplit();
-      const bounds = calendarBounds(wrapper);
-      expect(bounds.startMax).toBeUndefined();
-      expect(bounds.endMin).toBeUndefined();
+    it("drops the advisory bound while the opposite endpoint is empty", () => {
+      const bounds = calendarBounds(mountSplit({ modelValue: { start: "2026-10-08", end: undefined } }));
+      expect(bounds.startSoftMax).toBeUndefined();
+      expect(bounds.endSoftMin).toBe("2026-10-08");
     });
 
-    it("uses the opposite endpoint alone when the matching prop boundary is absent", () => {
-      const wrapper = mountSplit({ modelValue: { start: "2026-10-08", end: "2026-10-14" }, min: undefined });
-      const bounds = calendarBounds(wrapper);
-      expect(bounds.endMin).toBe("2026-10-08");
-    });
-
-    it("recomputes the boundaries when the range changes", async () => {
+    it("recomputes the advisory bound when the range changes", async () => {
       const wrapper = mountSplit({ modelValue: { start: "2026-10-08", end: "2026-10-14" } });
       await wrapper.setProps({ modelValue: { start: "2026-10-08", end: "2026-10-20" } });
-      expect(calendarBounds(wrapper).startMax).toBe("2026-10-20");
+      expect(calendarBounds(wrapper).startSoftMax).toBe("2026-10-20");
     });
 
-    // Clamping here would disable every day of the month the calendar opens on.
-    describe("already out of order", () => {
-      const outOfOrder = { start: "2026-12-01", end: "2026-10-14" };
-
-      it("drops the cross-bound clamp entirely when no caller boundary applies", () => {
-        const bounds = calendarBounds(mountSplit({ modelValue: outOfOrder }));
-        expect(bounds.startMax).toBeUndefined();
-        expect(bounds.endMin).toBeUndefined();
-      });
-
-      it("falls back to the caller's own boundaries rather than the opposite endpoint", () => {
-        const bounds = calendarBounds(mountSplit({ modelValue: outOfOrder, min: "2026-01-01", max: "2027-12-31" }));
-        expect(bounds.startMax).toBe("2027-12-31");
-        expect(bounds.endMin).toBe("2026-01-01");
-      });
-
-      it("leaves every day of the month each calendar opens on selectable, in both directions", () => {
-        const wrapper = mountSplit({ modelValue: outOfOrder });
-        const [startCalendar, endCalendar] = wrapper.findAllComponents(VcCalendar);
-        expect(enabledDayCount(startCalendar)).toBe(31);
-        expect(enabledDayCount(endCalendar)).toBe(31);
-      });
-
-      it("restores the clamp as soon as the range is back in order", async () => {
-        const wrapper = mountSplit({ modelValue: outOfOrder });
-        await wrapper.setProps({ modelValue: { start: "2026-10-01", end: "2026-10-14" } });
-        const bounds = calendarBounds(wrapper);
-        expect(bounds.startMax).toBe("2026-10-14");
-        expect(bounds.endMin).toBe("2026-10-01");
-      });
+    // An advisory bound cannot invert against min/max or empty a month, so it needs no reconciliation:
+    // the raw endpoint is handed over in every state the old hard clamp had to back out of.
+    it("keeps the raw endpoint when the range is already out of order", () => {
+      const bounds = calendarBounds(mountSplit({ modelValue: { start: "2026-12-01", end: "2026-10-14" } }));
+      expect(bounds.startSoftMax).toBe("2026-10-14");
+      expect(bounds.endSoftMin).toBe("2026-12-01");
     });
 
-    // The caller's own min/max still reach each field, so a clamp past them would hand the calendar
-    // an inverted pair (min after max) and disable every day of every month it can reach.
-    describe("an in-order range that sits outside the caller's own bounds", () => {
-      it("drops the start clamp when the persisted end predates props.min", () => {
-        const bounds = calendarBounds(
-          mountSplit({ min: "2026-08-25", modelValue: { start: "2026-03-01", end: "2026-03-20" } }),
-        );
-        expect(bounds.startMin).toBe("2026-08-25");
-        expect(bounds.startMax).toBeUndefined();
-      });
-
-      it("drops the end clamp when the persisted start postdates props.max", () => {
-        const bounds = calendarBounds(
-          mountSplit({ max: "2026-08-25", modelValue: { start: "2027-03-01", end: "2027-03-20" } }),
-        );
-        expect(bounds.endMax).toBe("2026-08-25");
-        expect(bounds.endMin).toBeUndefined();
-      });
-
-      it("never hands a calendar a min later than its max, in either direction", () => {
-        const past = calendarBounds(
-          mountSplit({ min: "2026-08-25", max: "2026-12-31", modelValue: { start: "2026-03-01", end: "2026-03-20" } }),
-        );
-        expect(past.startMin! <= past.startMax!).toBe(true);
-
-        const future = calendarBounds(
-          mountSplit({ min: "2026-01-01", max: "2026-08-25", modelValue: { start: "2027-03-01", end: "2027-03-20" } }),
-        );
-        expect(future.endMin! <= future.endMax!).toBe(true);
-      });
-
-      it("keeps days selectable in the month each calendar opens on", () => {
-        const startCalendar = mountSplit({
-          min: "2026-08-25",
-          max: "2026-12-31",
-          modelValue: { start: "2026-03-01", end: "2026-03-20" },
-        }).findAllComponents(VcCalendar)[0];
-        expect(enabledDayCount(startCalendar)).toBeGreaterThan(0);
-
-        const endCalendar = mountSplit({
-          min: "2026-01-01",
-          max: "2026-08-25",
-          modelValue: { start: "2027-03-01", end: "2027-03-20" },
-        }).findAllComponents(VcCalendar)[1];
-        expect(enabledDayCount(endCalendar)).toBeGreaterThan(0);
-      });
+    it("keeps the raw endpoint when it sits outside the caller's own bounds", () => {
+      const bounds = calendarBounds(
+        mountSplit({ min: "2026-08-25", max: "2026-12-31", modelValue: { start: "2026-03-01", end: "2026-03-20" } }),
+      );
+      expect(bounds.startSoftMax).toBe("2026-03-20");
+      expect(bounds.endSoftMin).toBe("2026-03-01");
     });
 
-    // The opposite endpoint is typed after mount, so the derived bound lands on an already-open calendar.
-    describe("a cross-bound that arrives after mount", () => {
-      it("re-clamps the start calendar's view to the new max", async () => {
-        const wrapper = mountSplit();
-        await wrapper.setProps({ modelValue: { start: undefined, end: "2020-06-15" } });
-        await flushPromises();
+    it("marks the days past the advisory bound without disabling any of them", () => {
+      const wrapper = mountSplit({ modelValue: { start: "2026-10-08", end: "2026-10-14" } });
+      const [startCalendar, endCalendar] = wrapper.findAllComponents(VcCalendar);
 
-        const [startCalendar] = wrapper.findAllComponents(VcCalendar);
-        expect(startCalendar.props("max")).toBe("2020-06-15");
-        expect(startCalendar.find('[data-reka-calendar-cell-trigger][data-value="2020-06-15"]').exists()).toBe(true);
-        expect(enabledDayCount(startCalendar)).toBeGreaterThan(0);
-      });
+      expect(markedDays(startCalendar)).toContain("2026-10-20");
+      expect(markedDays(startCalendar)).not.toContain("2026-10-10");
+      expect(markedDays(endCalendar)).toContain("2026-10-01");
+      expect(markedDays(endCalendar)).not.toContain("2026-10-20");
 
-      it("re-clamps the end calendar's view to the new min", async () => {
-        const wrapper = mountSplit();
-        await wrapper.setProps({ modelValue: { start: "2031-01-15", end: undefined } });
-        await flushPromises();
+      expect(disabledDays(startCalendar)).toEqual([]);
+      expect(disabledDays(endCalendar)).toEqual([]);
+      expect(enabledDayCount(startCalendar)).toBe(31);
+      expect(enabledDayCount(endCalendar)).toBe(31);
+      expect(dayCells(startCalendar)).toHaveLength(31);
+    });
 
-        const [, endCalendar] = wrapper.findAllComponents(VcCalendar);
-        expect(endCalendar.props("min")).toBe("2031-01-15");
-        expect(endCalendar.find('[data-reka-calendar-cell-trigger][data-value="2031-01-15"]').exists()).toBe(true);
-        expect(enabledDayCount(endCalendar)).toBeGreaterThan(0);
-      });
+    it("explains the marker through a title, since the day keeps its enabled semantics", () => {
+      const [startCalendar] = mountSplit({
+        modelValue: { start: "2026-10-08", end: "2026-10-14" },
+      }).findAllComponents(VcCalendar);
+      const marked = dayCells(startCalendar).find((cell) => cell.attributes("data-value") === "2026-10-20");
+      expect(marked?.attributes("title")).toBe("ui_kit.calendar.outside_suggested_range");
+    });
+
+    it("never gates month or year navigation", () => {
+      const wrapper = mountSplit({ modelValue: { start: "2026-10-08", end: "2026-10-14" } });
+      const [startCalendar, endCalendar] = wrapper.findAllComponents(VcCalendar);
+      expect(navDisabled(startCalendar)).toEqual([false, false]);
+      expect(navDisabled(endCalendar)).toEqual([false, false]);
+    });
+
+    it("does not pull the open month toward an advisory bound arriving after mount", async () => {
+      const wrapper = mountSplit();
+      const [startCalendar] = wrapper.findAllComponents(VcCalendar);
+      const openedOn = startCalendar.find(".vc-calendar__heading").text();
+
+      await wrapper.setProps({ modelValue: { start: undefined, end: "2020-06-15" } });
+      await flushPromises();
+
+      expect(startCalendar.find(".vc-calendar__heading").text()).toBe(openedOn);
+      // The whole month it stayed on is still selectable; only June 2020 lies past the advisory bound.
+      expect(enabledDayCount(startCalendar)).toBe(dayCells(startCalendar).length);
+    });
+
+    it("lets a marked day be picked and reports the inverted range it produces", async () => {
+      const wrapper = mountSplit({ modelValue: { start: "2026-10-08", end: "2026-10-14" } });
+      const [startCalendar] = wrapper.findAllComponents(VcCalendar);
+      const marked = dayCells(startCalendar).find((cell) => cell.attributes("data-value") === "2026-10-20");
+
+      await marked?.trigger("click");
+
+      expect(wrapper.emitted("update:modelValue")?.at(-1)).toEqual([{ start: "2026-10-20", end: "2026-10-14" }]);
+
+      // Validity is derived from the prop, so the inverted range is only reported once a parent accepts it.
+      await wrapper.setProps({ modelValue: { start: "2026-10-20", end: "2026-10-14" } });
+      expect(wrapper.emitted("update:valid")?.at(-1)?.[0]).toBe(false);
+      expect(wrapper.findComponent(VcInputDetails).props("message")).toBe("ui_kit.date_range_input.invalid_range");
     });
   });
 
