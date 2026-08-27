@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeMount, shallowRef, computed, unref } from "vue";
+import { shallowRef, computed, unref, watch } from "vue";
 import { useBreadcrumbs } from "@/core/composables";
 import { humanizeName } from "@/core/utilities/common";
 import { getBlockType } from "@/plugins/builder-preview/block-mapping";
@@ -67,13 +67,17 @@ function clearState() {
   canShowContent.value = false;
 }
 
-onBeforeMount(() => {
-  if (props.content) {
-    trySetContent();
-  } else {
-    clearState();
-  }
-});
+watch(
+  () => props.content,
+  () => {
+    if (props.content) {
+      trySetContent();
+    } else {
+      clearState();
+    }
+  },
+  { immediate: true },
+);
 
 useAnchorScroll(() => pageBuilderContent.value);
 
