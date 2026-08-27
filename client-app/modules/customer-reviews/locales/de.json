@@ -8,7 +8,9 @@
       "rating": "Bewertung",
       "rate_product": "Produkt bewerten",
       "item_as_described_by_vendor": "Artikel wie vom Lieferanten beschrieben?",
-      "product_review_image": "Produktbewertungsbild"
+      "product_review_image": "Produktbewertungsbild",
+      "product_review_image_of": "Produktbewertungsbild {index} von {total}",
+      "reviews_count": "keine Bewertungen | {n} Bewertung | {n} Bewertungen"
     },
     "messages": {
       "thanks_for_feedback": "Ihr Feedback wurde erfolgreich übermittelt und wartet auf eine Bestätigung. Vielen Dank!"

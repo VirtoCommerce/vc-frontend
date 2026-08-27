@@ -13,11 +13,11 @@ const createWrapper = createWrapperFactory(mount, StatWidget, {
 });
 
 const READY_PROPS = {
-  label: "New orders",
+  label: "Orders in “New” status",
   value: "0",
   icon: "cart",
   sub: "$0.00 total",
-  delta: "0 placed today",
+  delta: "of 0 created in the last 7 days",
 };
 
 describe("StatWidget", () => {
@@ -26,7 +26,7 @@ describe("StatWidget", () => {
 
     expect(wrapper.find(".stat-widget__value").text()).toBe("0");
     expect(wrapper.find(".stat-widget__sub").text()).toBe("$0.00 total");
-    expect(wrapper.find(".stat-widget__delta").text()).toBe("0 placed today");
+    expect(wrapper.find(".stat-widget__delta").text()).toBe("of 0 created in the last 7 days");
     expect(wrapper.find(".stat-widget__error").exists()).toBe(false);
   });
 
@@ -61,7 +61,7 @@ describe("StatWidget", () => {
     const loading = createWrapper({ props: { ...READY_PROPS, loading: true } });
     const failed = createWrapper({ props: { ...READY_PROPS, errorText: "Couldn't load" } });
 
-    expect(loading.find(".stat-widget__label").text()).toBe("New orders");
-    expect(failed.find(".stat-widget__label").text()).toBe("New orders");
+    expect(loading.find(".stat-widget__label").text()).toBe("Orders in “New” status");
+    expect(failed.find(".stat-widget__label").text()).toBe("Orders in “New” status");
   });
 });

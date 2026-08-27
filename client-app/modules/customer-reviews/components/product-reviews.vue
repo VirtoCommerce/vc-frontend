@@ -4,14 +4,14 @@
     :title="$t('common.labels.feedback')"
     prepend-icon="chat"
     size="lg"
-    class="text-sm"
+    class="product-reviews"
   >
     <template v-if="reviews?.length">
-      <div class="mb-4 lg:flex lg:justify-between">
+      <div class="product-reviews__head">
         <ProductRating v-if="productRating" :rating="productRating" />
 
-        <div v-if="reviews.length" class="max-lg:mt-3 lg:flex">
-          <VcTypography tag="span" class="mr-2 content-center text-sm font-bold max-lg:hidden">
+        <div v-if="reviews.length" class="product-reviews__sort">
+          <VcTypography tag="span" class="product-reviews__sort-label">
             {{ $t("common.labels.sort_by_date") }}
           </VcTypography>
 
@@ -23,6 +23,7 @@
             v-model="sortByDate"
             :items="sortByDateItems"
             :disabled="fetching"
+            size="sm"
             text-field="label"
             value-field="id"
             @change="changeSortByDate"
@@ -30,75 +31,59 @@
         </div>
       </div>
 
-      <section class="divide-y rounded border" :aria-label="$t('common.labels.product_reviews')">
-        <article v-for="review in reviews" :key="review.id" class="space-y-2 p-4">
-          <div class="flex items-start justify-between gap-2">
+      <section class="product-reviews__list" :aria-label="$t('common.labels.product_reviews')">
+        <article v-for="review in reviews" :key="review.id" class="product-reviews__item">
+          <div class="product-reviews__item-head">
             <div>
-              <VcTypography tag="h3" variant="base" class="text-sm">
+              <VcTypography tag="h3" variant="base" class="product-reviews__author">
                 {{ review.userName }}
               </VcTypography>
 
-              <VcTypography tag="span" variant="base" class="text-sm text-neutral-500">
+              <VcTypography tag="span" variant="base" class="product-reviews__date">
                 {{ $d(review.createdDate, "short") }}
               </VcTypography>
             </div>
 
-            <VcRating mode="full" size="sm" :value="review.rating" :with-text="false" read-only />
+            <VcRating mode="full" size="xs" :value="review.rating" :with-text="false" read-only />
           </div>
 
-          <VcTypography tag="p" class="text-sm">
+          <VcTypography tag="p" class="product-reviews__text">
             {{ review.review }}
           </VcTypography>
 
-          <div v-if="review.images?.length" class="flex items-center justify-between">
-            <VcNavButton
-              v-if="review.images.length > displayedReviewImagesCount"
-              :id="`images_${review.id}_prev`"
-              :aria-label="`${$t('common.buttons.previous')} ${$t('common.labels.product_review_image')}`"
-              :label="$t('common.buttons.previous')"
-              size="xs"
-              tabindex="0"
-              direction="left"
-            />
+          <div v-if="review.images?.length" class="product-reviews__photos">
+            <button
+              v-for="(image, index) in review.images"
+              :key="image?.id ?? index"
+              type="button"
+              class="product-reviews__photo"
+              :aria-label="
+                $t('common.labels.product_review_image_of', { index: index + 1, total: review.images.length })
+              "
+              @click="openImagesModal(review, index)"
+            >
+              <VcImage
+                :src="image?.url"
+                :alt="$t('common.labels.product_review_image')"
+                size-suffix="sm"
+                lazy
+                class="product-reviews__photo-img"
+              />
 
-            <section :aria-label="$t('common.labels.product_review_image')">
-              <Swiper
-                :slides-per-view="displayedReviewImagesCount"
-                :thumbs="{ swiper: imagesSwiper }"
-                :modules="swiperModules"
-                :navigation="{
-                  prevEl: `#images_${review.id}_prev`,
-                  nextEl: `#images_${review.id}_next`,
-                }"
-                wrapper-class="items-center"
-                class="mx-0 w-full p-1"
-                data-te-lightbox-init
-              >
-                <SwiperSlide v-for="(image, index) in review.images" :key="index" class="cursor-pointer p-2">
-                  <VcImage :src="image.url" :alt="$t('common.labels.product_review_image')" size-suffix="sm" lazy />
-                </SwiperSlide>
-              </Swiper>
-            </section>
-
-            <VcNavButton
-              v-if="review.images.length > displayedReviewImagesCount"
-              :id="`images_${review.id}_next`"
-              :aria-label="`${$t('common.buttons.next')} ${$t('common.labels.product_review_image')} - ${review.userName}`"
-              :label="$t('common.buttons.next')"
-              size="xs"
-              tabindex="0"
-              direction="right"
-            />
+              <span class="product-reviews__photo-overlay" aria-hidden="true">
+                <VcIcon name="search" size="sm" />
+              </span>
+            </button>
           </div>
         </article>
       </section>
 
-      <div class="mb-6 mt-5 justify-end text-center sm:flex sm:flex-wrap sm:items-center sm:gap-3">
+      <div class="product-reviews__footer">
         <VcButton
           v-if="isAuthenticated && feedbackAvailable && !reviewFormVisible && !reviewSubmitted"
           variant="outline"
           tabindex="0"
-          class="max-sm:mb-10 max-sm:w-[18.125rem] sm:order-last"
+          class="product-reviews__leave-button"
           @click="reviewFormVisible = true"
         >
           {{ $t("common.buttons.leave_feedback") }}
@@ -108,34 +93,34 @@
           v-if="pagesCount > 1"
           v-model:page="pageNumber"
           :pages="pagesCount"
-          class="grow max-sm:flex max-sm:justify-center"
+          class="product-reviews__pagination"
           @update:page="changePage"
         />
       </div>
     </template>
 
     <div v-if="isAuthenticated && feedbackAvailable">
-      <div v-if="reviewSubmitted" class="flex items-center gap-3 text-lg font-bold">
-        <VcIcon name="check-circle" :size="48" class="block text-success" aria-hidden="true" />
+      <div v-if="reviewSubmitted" class="product-reviews__thanks">
+        <VcIcon name="check-circle" :size="48" class="product-reviews__thanks-icon" aria-hidden="true" />
         {{ $t("common.messages.thanks_for_feedback") }}
       </div>
 
-      <form v-if="reviewFormVisible && !reviewSubmitted" @submit.prevent="submitReview">
-        <div class="flex justify-between">
+      <form v-if="reviewFormVisible && !reviewSubmitted" class="product-reviews__form" @submit.prevent="submitReview">
+        <div class="product-reviews__form-head">
           <VcTypography tag="h3" variant="h4" text-transform="none">
             {{ $t("common.labels.item_as_described_by_vendor") }}
           </VcTypography>
 
           <div>
-            <VcTypography tag="span" class="text-sm font-bold">
+            <VcTypography tag="span" class="product-reviews__rate-label">
               {{ $t("common.labels.rate_product") }}
-              <span class="text-danger">*</span>
+              <span class="product-reviews__required">*</span>
             </VcTypography>
 
             <VcRating
               mode="full"
-              size="sm"
-              class="mt-2"
+              size="xs"
+              class="product-reviews__form-rating"
               :read-only="false"
               :value="newReviewRating"
               :with-text="false"
@@ -148,16 +133,16 @@
           v-model="newReviewContent"
           :label="$t('common.labels.comments')"
           required
-          class="my-4"
+          class="product-reviews__comments"
           :aria-label="$t('common.labels.comments')"
         />
 
-        <VcTypography tag="span" class="text-sm">
-          <span class="text-danger">*</span>
+        <VcTypography tag="span" class="product-reviews__note">
+          <span class="product-reviews__required">*</span>
           {{ $t("common.labels.fields_required") }}
         </VcTypography>
 
-        <VcWidget class="mt-4">
+        <VcWidget class="product-reviews__uploader">
           <VcFileUploader
             v-bind="imageOptions"
             :files="files"
@@ -167,7 +152,7 @@
           />
         </VcWidget>
 
-        <div class="mt-4 flex flex-wrap justify-between gap-3 max-xs:justify-center">
+        <div class="product-reviews__actions">
           <VcButton
             v-if="reviews?.length"
             :disabled="fetching"
@@ -197,28 +182,24 @@
 </template>
 
 <script setup lang="ts">
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { Navigation, Thumbs } from "swiper/modules";
-import { Swiper, SwiperSlide } from "swiper/vue";
-import { computed, onActivated, ref, toRef } from "vue";
+import { onActivated, ref, toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useUser } from "@/shared/account";
 import { useFiles } from "@/shared/files";
-import {
-  DEFAULT_DESKTOP_DISPLAY_SLIDES_PER_REVIEW,
-  DEFAULT_MOBILE_DISPLAY_SLIDES_PER_REVIEW,
-  DEFAULT_REVIEW_IMAGES_SCOPE,
-} from "../constants";
+import { useModal } from "@/shared/modal";
+import { DEFAULT_REVIEW_IMAGES_SCOPE } from "../constants";
 import { useCustomerReviews } from "../useCustomerReviews";
 import ProductRating from "./product-rating.vue";
+import ReviewImagesModal from "./review-images-modal.vue";
+import type { CustomerReview, CustomerReviewImage } from "../api/graphql/types";
 import type { Rating } from "@/core/api/graphql/types";
-import type SwiperCore from "swiper";
 
 const props = defineProps<IProps>();
 
 const ENTITY_TYPE = "Product";
 
-const { t } = useI18n();
+const { t, d } = useI18n();
+const { openModal } = useModal();
 const { isAuthenticated } = useUser();
 const {
   files,
@@ -232,7 +213,6 @@ const {
 } = useFiles(DEFAULT_REVIEW_IMAGES_SCOPE);
 const { fetching, pagesCount, pageNumber, reviews, canLeaveFeedback, createCustomerReview, fetchCustomerReviews } =
   useCustomerReviews();
-const breakpoints = useBreakpoints(breakpointsTailwind);
 
 interface IProps {
   productId: string;
@@ -264,14 +244,23 @@ const productReviewsPayload = ref({
   page: 1,
   sort: "createddate:desc",
 });
-const imagesSwiper = ref<SwiperCore | null>(null);
-const swiperModules = [Navigation, Thumbs];
+function openImagesModal(review: CustomerReview, index: number): void {
+  const images = review.images?.filter((image): image is CustomerReviewImage => !!image) ?? [];
 
-const isMobile = breakpoints.smaller("lg");
+  if (!images.length) {
+    return;
+  }
 
-const displayedReviewImagesCount = computed(() =>
-  isMobile.value ? DEFAULT_MOBILE_DISPLAY_SLIDES_PER_REVIEW : DEFAULT_DESKTOP_DISPLAY_SLIDES_PER_REVIEW,
-);
+  openModal({
+    component: ReviewImagesModal,
+    props: {
+      images,
+      index,
+      author: review.userName,
+      date: d(review.createdDate, "short"),
+    },
+  });
+}
 
 async function changeSortByDate(value: string): Promise<void> {
   productReviewsPayload.value.page = 1;
@@ -330,3 +319,158 @@ onActivated(async () => {
   }
 });
 </script>
+
+<style lang="scss">
+.product-reviews {
+  $photo: "";
+
+  @apply text-sm;
+
+  &__head {
+    @apply mb-4;
+
+    @media (width >= theme("screens.lg")) {
+      @apply flex justify-between;
+    }
+  }
+
+  &__sort {
+    @media (width < theme("screens.lg")) {
+      @apply mt-3;
+    }
+
+    @media (width >= theme("screens.lg")) {
+      @apply flex;
+    }
+  }
+
+  &__sort-label {
+    @apply me-2 content-center text-sm font-bold;
+
+    @media (width < theme("screens.lg")) {
+      @apply hidden;
+    }
+  }
+
+  &__list {
+    @apply divide-y rounded-[--vc-radius] border;
+  }
+
+  &__item {
+    @apply space-y-2 p-4;
+  }
+
+  &__item-head {
+    @apply flex items-start justify-between gap-2;
+  }
+
+  &__author {
+    @apply text-sm;
+  }
+
+  &__date {
+    @apply text-sm text-neutral-500;
+  }
+
+  &__text {
+    @apply text-sm;
+  }
+
+  &__photos {
+    @apply flex flex-wrap gap-2;
+  }
+
+  &__photo {
+    $photo: &;
+
+    @apply relative size-16 shrink-0 overflow-hidden rounded-[--vc-radius] border;
+
+    @media (width >= theme("screens.lg")) {
+      @apply size-18;
+    }
+  }
+
+  &__photo-img {
+    @apply size-full object-cover;
+  }
+
+  &__photo-overlay {
+    @apply absolute inset-0 flex items-center justify-center bg-additional-950/30 text-additional-50 opacity-0 transition-opacity;
+
+    #{$photo}:hover &,
+    #{$photo}:focus-visible & {
+      @apply opacity-100;
+    }
+  }
+
+  &__footer {
+    @apply mb-6 mt-5 justify-end text-center;
+
+    @media (width >= theme("screens.sm")) {
+      @apply flex flex-wrap items-center gap-3;
+    }
+  }
+
+  &__leave-button {
+    @media (width < theme("screens.sm")) {
+      @apply mb-10 w-[18.125rem];
+    }
+
+    @media (width >= theme("screens.sm")) {
+      @apply order-last;
+    }
+  }
+
+  &__pagination {
+    @apply grow;
+
+    @media (width < theme("screens.sm")) {
+      @apply flex justify-center;
+    }
+  }
+
+  &__thanks {
+    @apply flex items-center gap-3 text-lg font-bold;
+  }
+
+  &__thanks-icon {
+    @apply block text-success;
+  }
+
+  &__form-head {
+    @apply flex justify-between;
+  }
+
+  &__rate-label {
+    @apply text-sm font-bold;
+  }
+
+  &__form-rating {
+    @apply mt-2;
+  }
+
+  &__comments {
+    @apply my-4;
+  }
+
+  &__note {
+    @apply text-sm;
+  }
+
+  &__required {
+    @apply text-danger;
+  }
+
+  &__uploader {
+    @apply mt-4;
+  }
+
+  &__actions {
+    @apply mt-4 flex flex-wrap justify-between gap-3;
+
+    @media (width < theme("screens.xs")) {
+      @apply justify-center;
+    }
+  }
+}
+</style>
