@@ -121,7 +121,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, onUnmounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
@@ -148,9 +148,11 @@ const {
   clearCompareList,
   clearCategory,
   restoreProducts,
+  clearRestoreBuffer,
   canRestoreProducts,
   getCategoryProductsCount,
 } = useCompareProducts();
+
 const {
   categoryTabs,
   selectedCategoryKey,
@@ -215,6 +217,10 @@ usePageHead({
     keywords: t("pages.compare.meta.keywords"),
     description: t("pages.compare.meta.description"),
   },
+});
+
+onUnmounted(() => {
+  clearRestoreBuffer();
 });
 </script>
 

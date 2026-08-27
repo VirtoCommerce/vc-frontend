@@ -43,6 +43,7 @@ const mocks = await vi.hoisted(async () => {
     clearCompareList: vi.fn(),
     clearCategory: vi.fn(),
     restoreProducts: vi.fn(),
+    clearRestoreBuffer: vi.fn(),
     canRestoreProducts: ref(false),
     getCategoryProductsCount: vi.fn(() => 0),
     categoryTabs: ref<ICompareCategoryTab[]>([]),
@@ -90,6 +91,7 @@ vi.mock("@/shared/compare", () => ({
     clearCompareList: mocks.clearCompareList,
     clearCategory: mocks.clearCategory,
     restoreProducts: mocks.restoreProducts,
+    clearRestoreBuffer: mocks.clearRestoreBuffer,
     canRestoreProducts: mocks.canRestoreProducts,
     getCategoryProductsCount: mocks.getCategoryProductsCount,
   }),
@@ -303,5 +305,15 @@ describe("CompareProducts", () => {
     options.props.onConfirm();
 
     expect(mocks.clearCategory).toHaveBeenCalledWith("cat-a");
+  });
+
+  it("drops the restore buffer when the page unmounts, so leaving /compare forfeits an accidental clear", () => {
+    const page = renderPage();
+
+    expect(mocks.clearRestoreBuffer).not.toHaveBeenCalled();
+
+    page.unmount();
+
+    expect(mocks.clearRestoreBuffer).toHaveBeenCalledTimes(1);
   });
 });

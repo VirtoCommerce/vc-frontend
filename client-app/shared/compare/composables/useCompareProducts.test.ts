@@ -411,6 +411,21 @@ describe("useCompareProducts", () => {
       restoreProducts();
       expect(hoisted.state.configurations.value).toHaveLength(1);
     });
+
+    it("clearRestoreBuffer drops a pending restore (e.g. once the compare page unmounts) so it can no longer be brought back", () => {
+      hoisted.state.products.value = [{ productId: "p1", categoryKey: "cat-a" }];
+      const { clearCompareList, clearRestoreBuffer, restoreProducts, products, canRestoreProducts } =
+        useCompareProducts();
+
+      clearCompareList();
+      expect(canRestoreProducts.value).toBe(true);
+
+      clearRestoreBuffer();
+
+      expect(canRestoreProducts.value).toBe(false);
+      restoreProducts();
+      expect(products.value).toEqual([]);
+    });
   });
 
   describe("isInCompareList", () => {

@@ -107,6 +107,14 @@ function restoreProducts() {
   lastRemovedConfigurations.value = [];
 }
 
+// Called when the compare page unmounts (see compare-products.vue) — the buffer is meant to
+// offer "undo" only for as long as the user stays on the page that just showed them the empty
+// state, not indefinitely for the rest of the session.
+function clearRestoreBuffer() {
+  lastRemovedEntries.value = [];
+  lastRemovedConfigurations.value = [];
+}
+
 export function useCompareProducts() {
   const { themeContext } = useThemeContext();
   const notifications = useNotifications();
@@ -230,6 +238,7 @@ export function useCompareProducts() {
     clearCompareList,
     clearCategory,
     restoreProducts,
+    clearRestoreBuffer,
     canRestoreProducts: computed(() => lastRemovedEntries.value.length > 0),
 
     productsLimit,
