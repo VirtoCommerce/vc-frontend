@@ -136,41 +136,72 @@ export function useCompareProductsPage() {
     products.value.filter((entry) => entry.localId && entry.configurationSectionInput?.length),
   );
 
+  // configuredEntries is a computed array — a fresh reference on every products.value change,
+  // including an unrelated plain product added/removed elsewhere in the list, even though the
+  // configured subset itself didn't change. Watching this string instead keeps the watcher below
+  // from re-issuing a createConfiguredLineItem mutation for every configured entry on every
+  // unrelated edit.
+  const configuredEntriesSignature = computed(() =>
+    configuredEntries.value
+      .map((entry) => `${entry.localId}:${JSON.stringify(entry.configurationSectionInput)}`)
+      .join("|"),
+  );
+
   const configuredLineItemsByLocalId = shallowRef<Record<string, ConfiguredLineItemType>>({});
 
   watch(
-    configuredEntries,
-    async (entries, _prevEntries, onCleanup) => {
+    configuredEntriesSignature,
+    async (_signature, _prevSignature, onCleanup) => {
+      const entries = configuredEntries.value;
+
       if (!entries.length) {
         configuredLineItemsByLocalId.value = {};
         return;
       }
+
+      // Only entries we don't already have a result for — the signature can also change because
+      // one more configured entry was added while the rest are unchanged, and those don't need
+      // re-fetching either.
+      const entriesToFetch = entries.filter(
+        (entry) => entry.localId && !(entry.localId in configuredLineItemsByLocalId.value),
+      );
 
       let cancelled = false;
       onCleanup(() => {
         cancelled = true;
       });
 
-      const results = await Promise.allSettled(
-        entries.map((entry) =>
-          createConfiguredLineItemMutation({
-            command: {
-              configurableProductId: entry.productId,
-              configurationSections: entry.configurationSectionInput,
-              storeId,
-              currencyCode,
-              cultureName,
-            },
-          }),
-        ),
-      );
+      const results = entriesToFetch.length
+        ? await Promise.allSettled(
+            entriesToFetch.map((entry) =>
+              createConfiguredLineItemMutation({
+                command: {
+                  configurableProductId: entry.productId,
+                  configurationSections: entry.configurationSectionInput,
+                  storeId,
+                  currencyCode,
+                  cultureName,
+                },
+              }),
+            ),
+          )
+        : [];
 
       if (cancelled) {
         return;
       }
 
+      const currentLocalIds = new Set(entries.map((entry) => entry.localId).filter(Boolean));
       const nextConfiguredLineItems: Record<string, ConfiguredLineItemType> = {};
-      entries.forEach((entry, index) => {
+
+      // Carry over already-fetched entries that are still present.
+      Object.entries(configuredLineItemsByLocalId.value).forEach(([localId, item]) => {
+        if (currentLocalIds.has(localId)) {
+          nextConfiguredLineItems[localId] = item;
+        }
+      });
+
+      entriesToFetch.forEach((entry, index) => {
         const result = results[index];
 
         if (result.status === "fulfilled") {
@@ -395,12 +426,24 @@ export function useCompareProductsPage() {
     analytics("selectItem", product, compareProductsListProperties.value);
   }
 
+  // selectedCategoryProducts also recomputes (new array reference) once configuredLineItemsByLocalId
+  // resolves the price override for an already-shown set, which would otherwise re-fire this watch
+  // for the exact same items. Only actually send viewItemList when the shown set itself changes.
+  let lastViewedItemListSignature: string | null = null;
+
   watch(
     selectedCategoryProducts,
     (items) => {
       if (!items.length) {
         return;
       }
+
+      const signature = `${selectedCategoryKey.value}:${items.map(({ entry }) => entry.localId ?? entry.productId).join(",")}`;
+
+      if (signature === lastViewedItemListSignature) {
+        return;
+      }
+      lastViewedItemListSignature = signature;
 
       analytics(
         "viewItemList",

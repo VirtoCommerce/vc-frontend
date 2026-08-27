@@ -1,4 +1,5 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { effectScope } from "vue";
 import { PropertyValueTypes } from "@/core/api/graphql/types";
 import { ProductType } from "@/core/enums";
 import { useNotifications } from "@/shared/notification";
@@ -11,6 +12,7 @@ import {
 } from "../constants";
 import type { ICompareProductEntry } from "../types";
 import type { AvailabilityData, Product, Property } from "@/core/api/graphql/types";
+import type { EffectScope } from "vue";
 
 const hoisted = await vi.hoisted(async () => {
   const { ref } = await import("vue");
@@ -31,11 +33,14 @@ const hoisted = await vi.hoisted(async () => {
     fetchingProducts: state.fetchingProducts,
   }));
 
+  const mutate = vi.fn(async () => ({ data: { createConfiguredLineItem: null } }));
+
   return {
     state,
     fns: {
       fetchProducts,
       useProducts,
+      mutate,
       analytics: vi.fn(),
       isEnabled: vi.fn(() => false),
     },
@@ -53,7 +58,7 @@ vi.mock("vue-router", () => ({
 }));
 
 vi.mock("@vue/apollo-composable", () => ({
-  useMutation: () => ({ mutate: vi.fn() }),
+  useMutation: () => ({ mutate: hoisted.fns.mutate }),
 }));
 
 vi.mock("@/core/composables", () => ({
@@ -88,7 +93,26 @@ vi.mock("./useCompareProducts", () => ({
   }),
 }));
 
-const { useCompareProductsPage } = await import("./useCompareProductsPage");
+const { useCompareProductsPage: realUseCompareProductsPage } = await import("./useCompareProductsPage");
+
+// products (hoisted.state.compareEntries) is one shared ref for the whole file, and
+// useCompareProductsPage's watchers have no component/unmount to tie their lifetime to — called
+// bare, every previous test's watchers would keep reacting to that shared ref forever, still
+// firing (and still calling the mocked mutate/analytics) on top of the current test's own. Run
+// each call in its own effectScope and stop it in afterEach so only the current test's watchers
+// are ever live.
+let scopes: EffectScope[] = [];
+
+function useCompareProductsPage(): ReturnType<typeof realUseCompareProductsPage> {
+  const scope = effectScope();
+  scopes.push(scope);
+  return scope.run(() => realUseCompareProductsPage())!;
+}
+
+afterEach(() => {
+  scopes.forEach((scope) => scope.stop());
+  scopes = [];
+});
 
 function entry(
   productId: string,
@@ -289,6 +313,49 @@ describe("useCompareProductsPage", () => {
       await Promise.resolve();
 
       expect(hoisted.fns.fetchProducts).toHaveBeenCalledWith({ productIds: ["p1", "p2"], itemsPerPage: 2 });
+    });
+  });
+
+  describe("configuredEntries watcher — stable signature", () => {
+    it("does not re-issue createConfiguredLineItem when an unrelated plain product is added elsewhere in the list", async () => {
+      hoisted.state.compareEntries.value = [
+        entry("p1", "cat-a", { localId: "l1", configurationSectionInput: [{ sectionId: "s1", type: "Product" }] }),
+      ];
+
+      useCompareProductsPage();
+      await Promise.resolve();
+      await Promise.resolve();
+      await Promise.resolve();
+
+      expect(hoisted.fns.mutate).toHaveBeenCalledTimes(1);
+
+      // Same configured entry, plus an unrelated plain product in a different category —
+      // configuredEntries' *content* is unchanged, only products.value's array reference is.
+      hoisted.state.compareEntries.value = [...hoisted.state.compareEntries.value, entry("p2", "cat-b")];
+      await Promise.resolve();
+      await Promise.resolve();
+      await Promise.resolve();
+
+      expect(hoisted.fns.mutate).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe("viewItemList analytics — stable signature", () => {
+    it("does not send viewItemList twice once configuredLineItemsByLocalId resolves for the same set", async () => {
+      hoisted.state.compareEntries.value = [
+        entry("p1", "cat-a", { localId: "l1", configurationSectionInput: [{ sectionId: "s1", type: "Product" }] }),
+      ];
+      hoisted.state.fetchedProducts.value = [product("p1")];
+
+      useCompareProductsPage();
+      await Promise.resolve();
+      await Promise.resolve();
+      await Promise.resolve();
+      await Promise.resolve();
+      await Promise.resolve();
+
+      const viewItemListCalls = hoisted.fns.analytics.mock.calls.filter(([eventName]) => eventName === "viewItemList");
+      expect(viewItemListCalls).toHaveLength(1);
     });
   });
 
