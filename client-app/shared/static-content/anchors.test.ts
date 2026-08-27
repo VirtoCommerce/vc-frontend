@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { getAnchorId, scrollToAnchor, slugifyAnchor } from "./anchors";
+import { cancelAnchorScroll, getAnchorId, scrollToAnchor, slugifyAnchor } from "./anchors";
 
 describe("slugifyAnchor", () => {
   it("lowercases and replaces spaces with dashes", () => {
@@ -96,6 +96,17 @@ describe("scrollToAnchor", () => {
     expect(scrollIntoView).not.toHaveBeenCalled();
   });
 
+  it("stops chasing an anchor that only mounts after the visitor took over", async () => {
+    const pending = scrollToAnchor("#products", 5000);
+    setTimeout(() => {
+      window.dispatchEvent(new Event("wheel"));
+      addSection("products");
+    }, 30);
+
+    await expect(pending).resolves.toBe(false);
+    expect(scrollIntoView).not.toHaveBeenCalled();
+  });
+
   it("stops when the visitor presses a scrolling key", async () => {
     const pending = scrollToAnchor("#products", 5000);
     setTimeout(() => window.dispatchEvent(new KeyboardEvent("keydown", { key: "PageDown" })), 30);
@@ -159,6 +170,16 @@ describe("scrollToAnchor", () => {
   it("cancels a pending wait when the next navigation carries no hash", async () => {
     const pending = scrollToAnchor("#products", 1000);
     await scrollToAnchor("");
+
+    setTimeout(() => addSection("products"), 30);
+
+    await expect(pending).resolves.toBe(false);
+    expect(scrollIntoView).not.toHaveBeenCalled();
+  });
+
+  it("cancels a pending wait when the page that asked for it goes away", async () => {
+    const pending = scrollToAnchor("#products", 1000);
+    cancelAnchorScroll();
 
     setTimeout(() => addSection("products"), 30);
 

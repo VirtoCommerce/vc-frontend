@@ -27,12 +27,11 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeMount, shallowRef, computed, unref, watch } from "vue";
-import { useRoute } from "vue-router";
+import { onBeforeMount, shallowRef, computed, unref } from "vue";
 import { useBreadcrumbs } from "@/core/composables";
 import { humanizeName } from "@/core/utilities/common";
 import { getBlockType } from "@/plugins/builder-preview/block-mapping";
-import { getAnchorId, scrollToAnchor } from "@/shared/static-content";
+import { getAnchorId, useAnchorScroll } from "@/shared/static-content";
 
 interface IProps {
   content?: string;
@@ -76,16 +75,7 @@ onBeforeMount(() => {
   }
 });
 
-// The page content is parsed after the route resolves, so the browser has already skipped the hash
-// by the time the anchor exists — an opened `/page#specifications` link has to scroll itself. Watch
-// the route rather than only mounting: this component is not always torn down between content pages,
-// and the router resets the scroll to the top on a path change. Without a hash this is a no-op.
-const route = useRoute();
-watch(
-  () => [route.path, route.hash],
-  () => void scrollToAnchor(route.hash),
-  { immediate: true },
-);
+useAnchorScroll(() => pageBuilderContent.value);
 
 function trySetContent() {
   if (!props.content) {
