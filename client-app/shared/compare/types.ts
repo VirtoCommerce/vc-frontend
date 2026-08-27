@@ -29,7 +29,7 @@ export interface ICompareCategoryTab {
   count: number;
 }
 
-export type CompareRowKindType = "text" | "price" | "rating" | "availability";
+export type CompareRowKindType = "text" | "price" | "rating" | "availability" | "boolean";
 
 export interface ICompareTableRow {
   key: string;
@@ -38,4 +38,6 @@ export interface ICompareTableRow {
   values: string[];
   differs: boolean;
   description?: string;
+  /** Only set when kind is "boolean" — parallel to `values`/products, undefined where the product lacks the property. */
+  boolValues?: (boolean | undefined)[];
 }

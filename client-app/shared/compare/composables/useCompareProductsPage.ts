@@ -3,13 +3,13 @@ import { uniqBy } from "lodash-es";
 import { computed, ref, shallowRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
-import { CreateConfiguredLineItemDocument } from "@/core/api/graphql/types";
+import { CreateConfiguredLineItemDocument, PropertyValueTypes } from "@/core/api/graphql/types";
 import { useAnalytics } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MAX_DISPLAY_IN_STOCK_QUANTITY } from "@/core/constants";
 import { ProductType } from "@/core/enums";
 import { globals } from "@/core/globals";
-import { getPropertiesGroupedByName, getPropertyValue, Logger } from "@/core/utilities";
+import { getPropertiesGroupedByName, Logger } from "@/core/utilities";
 import {
   ENABLED_KEY as CUSTOMER_REVIEWS_ENABLED_KEY,
   MODULE_ID as CUSTOMER_REVIEWS_MODULE_ID,
@@ -38,11 +38,33 @@ type ConfiguredLineItemType = CreateConfiguredLineItemMutation["createConfigured
 function getProductPropertyValue(product: Product, propertyName: string): string {
   // Reuses getPropertiesGroupedByName so hidden properties are excluded and multivalue properties
   // (several Property entries sharing the same name) are merged, matching how the product page
-  // itself displays properties.
+  // itself displays properties. getPropertiesGroupedByName already runs each property through
+  // getPropertyValue internally — its .value is the final formatted text, not the raw value — so
+  // it must NOT be passed through getPropertyValue a second time here: for a Boolean property that
+  // second pass would read the already-formatted string ("Да"/"Нет") as the value to test for
+  // truthiness, and any non-empty string is truthy, so it would always resolve to the "true" text.
   const property = Object.values(getPropertiesGroupedByName(product.properties)).find(
     (prop) => prop.name.toLowerCase() === propertyName,
   );
-  return property ? (getPropertyValue(property) ?? EMPTY_VALUE_PLACEHOLDER) : EMPTY_VALUE_PLACEHOLDER;
+  return property?.value != null ? String(property.value) : EMPTY_VALUE_PLACEHOLDER;
+}
+
+// getPropertiesGroupedByName formats .value into display text ("Да"/"Нет"), losing the raw boolean —
+// so boolean-kind rows (rendered as a check/x icon, see compare-table.vue) read straight off the
+// product's own properties instead of going through that formatting step.
+function isBooleanProperty(product: Product, propertyName: string): boolean {
+  return product.properties.some(
+    (prop) =>
+      !prop.hidden && prop.name.toLowerCase() === propertyName && prop.propertyValueType === PropertyValueTypes.Boolean,
+  );
+}
+
+function getProductPropertyBooleanValue(product: Product, propertyName: string): boolean | undefined {
+  const property = product.properties.find(
+    (prop) =>
+      !prop.hidden && prop.name.toLowerCase() === propertyName && prop.propertyValueType === PropertyValueTypes.Boolean,
+  );
+  return typeof property?.value === "boolean" ? property.value : undefined;
 }
 
 function getAvailabilitySignature(product: Product): string {
@@ -374,14 +396,17 @@ export function useCompareProductsPage() {
 
     return propertyNames
       .map(({ name, label }) => {
-        const values = selectedCategoryProducts.value.map(({ product }) => getProductPropertyValue(product, name));
+        const items = selectedCategoryProducts.value;
+        const values = items.map(({ product }) => getProductPropertyValue(product, name));
+        const isBoolean = items.some(({ product }) => isBooleanProperty(product, name));
 
         return {
           key: `${PROPERTY_ROW_KEY_PREFIX}${name}`,
           label,
-          kind: "text" as const,
+          kind: isBoolean ? ("boolean" as const) : ("text" as const),
           values,
           differs: new Set(values).size > 1,
+          boolValues: isBoolean ? items.map(({ product }) => getProductPropertyBooleanValue(product, name)) : undefined,
         };
       })
       .filter((row) => hasAnyValue(row.values));

@@ -277,6 +277,19 @@
               :quantity="products[index]!.product.availabilityData.availableQuantity"
             />
 
+            <span
+              v-else-if="row.kind === 'boolean' && row.boolValues?.[index] !== undefined"
+              class="compare-table__boolean"
+            >
+              <VcIcon
+                size="sm"
+                :name="row.boolValues[index] ? 'check' : 'x'"
+                :class="row.boolValues[index] ? 'text-success' : 'text-neutral-400'"
+              />
+
+              {{ value }}
+            </span>
+
             <template v-else>{{ value }}</template>
           </div>
         </div>
@@ -637,6 +650,10 @@ watch(
 
   &__rating {
     @apply flex items-center gap-2 text-sm font-bold;
+  }
+
+  &__boolean {
+    @apply flex items-center gap-2;
   }
 }
 </style>

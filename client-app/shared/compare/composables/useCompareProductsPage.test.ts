@@ -496,6 +496,39 @@ describe("useCompareProductsPage", () => {
 
       expect(tableRows.value.some((row) => row.key === `${PROPERTY_ROW_KEY_PREFIX}color`)).toBe(true);
     });
+
+    it("marks a Boolean-typed property as kind: 'boolean' and carries the raw true/false per product (for the check/x icon)", () => {
+      hoisted.state.compareEntries.value = [entry("p1", "cat-a"), entry("p2", "cat-a")];
+      hoisted.state.fetchedProducts.value = [
+        product("p1", {
+          properties: [property({ name: "waterproof", propertyValueType: PropertyValueTypes.Boolean, value: true })],
+        }),
+        product("p2", {
+          properties: [property({ name: "waterproof", propertyValueType: PropertyValueTypes.Boolean, value: false })],
+        }),
+      ];
+
+      const { tableRows } = useCompareProductsPage();
+      const waterproofRow = tableRows.value.find((row) => row.key === `${PROPERTY_ROW_KEY_PREFIX}waterproof`);
+
+      expect(waterproofRow?.kind).toBe("boolean");
+      expect(waterproofRow?.boolValues).toEqual([true, false]);
+      // Regression: getProductPropertyValue used to run a Boolean property's value through
+      // getPropertyValue twice — the second pass tested the already-formatted text ("Да"/"Нет")
+      // for truthiness, and any non-empty string is truthy, so it always read as "true".
+      expect(waterproofRow?.values).toEqual(["common.labels.true_property", "common.labels.false_property"]);
+    });
+
+    it("leaves a non-Boolean property as kind: 'text' with no boolValues", () => {
+      hoisted.state.compareEntries.value = [entry("p1", "cat-a")];
+      hoisted.state.fetchedProducts.value = [product("p1", { properties: [property({ name: "color" })] })];
+
+      const { tableRows } = useCompareProductsPage();
+      const colorRow = tableRows.value.find((row) => row.key === `${PROPERTY_ROW_KEY_PREFIX}color`);
+
+      expect(colorRow?.kind).toBe("text");
+      expect(colorRow?.boolValues).toBeUndefined();
+    });
   });
 
   describe("differRowsCount", () => {

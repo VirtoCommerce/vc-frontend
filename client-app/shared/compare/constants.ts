@@ -9,7 +9,7 @@ export const COMPARE_NOTIFICATION_PRODUCT_NAME_MAX_LENGTH = 60;
 // prefix so a catalog/configuration property can never collide with a built-in field's key
 // (e.g. a property literally named "price" or "sku"), which would otherwise shadow/duplicate a
 // row in compare-table.vue.
-export const CUSTOM_FIELD_ROW_KEY_PREFIX = "field:";
+const CUSTOM_FIELD_ROW_KEY_PREFIX = "field:";
 export const PROPERTY_ROW_KEY_PREFIX = "property:";
 export const CONFIG_PROPERTY_ROW_KEY_PREFIX = "config:";
 
