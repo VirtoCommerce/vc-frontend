@@ -203,6 +203,24 @@ describe("useCompareProductsPage", () => {
         expect.objectContaining({ preserveProductsWhileFetching: true }),
       );
     });
+
+    it("dedupes ids and sizes itemsPerPage to match, so a >16-entry list doesn't fall back to searchProducts' default page size and lose products past the 16th", async () => {
+      // p1 appears twice (two configurations of the same product) — without dedup it would eat
+      // an extra slot in an itemsPerPage sized off ids.length.
+      hoisted.state.compareEntries.value = [
+        entry("p1", "cat-a", { localId: "l1", configurationSectionInput: [{ sectionId: "s1", type: "Product" }] }),
+        entry("p1", "cat-a", { localId: "l2", configurationSectionInput: [{ sectionId: "s2", type: "Product" }] }),
+        entry("p2", "cat-a"),
+      ];
+
+      useCompareProductsPage();
+      // fetchProducts is called from inside a promise queue chained off the productIds watcher,
+      // not synchronously — let that microtask run.
+      await Promise.resolve();
+      await Promise.resolve();
+
+      expect(hoisted.fns.fetchProducts).toHaveBeenCalledWith({ productIds: ["p1", "p2"], itemsPerPage: 2 });
+    });
   });
 
   describe("customFieldRows — availability differs (VCST-5735 fix)", () => {

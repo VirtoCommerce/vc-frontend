@@ -121,7 +121,7 @@ export function useCompareProductsPage() {
   const { storeId, currencyCode, cultureName } = globals;
   const { analytics } = useAnalytics();
 
-  const productIds = computed(() => products.value.map((entry) => entry.productId));
+  const productIds = computed(() => Array.from(new Set(products.value.map((entry) => entry.productId))));
 
   const configuredEntries = computed(() =>
     products.value.filter((entry) => entry.localId && entry.configurationSectionInput?.length),
@@ -408,7 +408,10 @@ export function useCompareProductsPage() {
 
       fetchProductsQueue = fetchProductsQueue.then(async () => {
         try {
-          await fetchProducts({ productIds: ids });
+          // searchProducts defaults itemsPerPage/first to DEFAULT_PAGE_SIZE (16) when omitted.
+          // The compare limit is per category with no overall cap, so the deduped id count can
+          // exceed that — pass it explicitly or products past the 16th silently get no data.
+          await fetchProducts({ productIds: ids, itemsPerPage: ids.length });
         } catch (e) {
           Logger.error("useCompareProductsPage.fetchProducts", e);
         }
