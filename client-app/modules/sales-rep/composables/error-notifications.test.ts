@@ -90,6 +90,9 @@ beforeEach(async () => {
   showEveryCard();
   await cache.reset({ discardWatches: true });
   provideApolloClient(new ApolloClient({ link: ApolloLink.from([errorHandlerLink, failingLink]), cache }));
+  // The stat reads gate on their surface's published layout (VCST-5647); publish a settled, editing
+  // visibility so every card's figures are needed and the query actually fires to fail.
+  publishStatVisibility(DASHBOARD_LAYOUT_SCOPE, { settled: true, visible: [], editing: true });
 });
 
 // Every hub read. Each one names its own failure — an inline card error, an empty view, a load-failure page,
