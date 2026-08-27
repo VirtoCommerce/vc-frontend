@@ -588,6 +588,10 @@ watch(
       @apply hidden;
     }
 
+    @media (hover: none) {
+      @apply opacity-100;
+    }
+
     &:focus-visible {
       @apply opacity-100;
     }
