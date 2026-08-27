@@ -14,15 +14,27 @@ import type { AvailabilityData, Product, Property } from "@/core/api/graphql/typ
 const hoisted = await vi.hoisted(async () => {
   const { ref } = await import("vue");
 
+  const state = {
+    compareEntries: ref<ICompareProductEntry[]>([]),
+    fetchedProducts: ref<Product[]>([]),
+    fetchingProducts: ref(false),
+    route: { query: {} },
+  };
+
+  const fetchProducts = vi.fn();
+  // Real object so useCompareProductsPage's call args (opts) can be asserted on — see the
+  // "useProducts integration" describe block below.
+  const useProducts = vi.fn(() => ({
+    fetchProducts,
+    products: state.fetchedProducts,
+    fetchingProducts: state.fetchingProducts,
+  }));
+
   return {
-    state: {
-      compareEntries: ref<ICompareProductEntry[]>([]),
-      fetchedProducts: ref<Product[]>([]),
-      fetchingProducts: ref(false),
-      route: { query: {} },
-    },
+    state,
     fns: {
-      fetchProducts: vi.fn(),
+      fetchProducts,
+      useProducts,
       analytics: vi.fn(),
       isEnabled: vi.fn(() => false),
     },
@@ -64,11 +76,7 @@ vi.mock("@/core/globals", () => ({
 }));
 
 vi.mock("@/shared/catalog/composables/useProducts", () => ({
-  useProducts: () => ({
-    fetchProducts: hoisted.fns.fetchProducts,
-    products: hoisted.state.fetchedProducts,
-    fetchingProducts: hoisted.state.fetchingProducts,
-  }),
+  useProducts: hoisted.fns.useProducts,
 }));
 
 vi.mock("./useCompareProducts", () => ({
@@ -182,6 +190,18 @@ describe("useCompareProductsPage", () => {
       selectCategory("cat-b");
 
       expect(selectedCategoryKey.value).toBe("cat-b");
+    });
+  });
+
+  describe("useProducts integration", () => {
+    it("opts into preserveProductsWhileFetching, so a refetch (see useProducts.fetchProducts) doesn't clear fetchedProducts out from under categoryTabs/selectedCategoryProducts on every add/remove", () => {
+      // The actual "don't clear while fetching" behavior lives in useProducts.ts itself and is
+      // covered there (useProducts.test.ts) — this only asserts the compare page opts in.
+      useCompareProductsPage();
+
+      expect(hoisted.fns.useProducts).toHaveBeenCalledWith(
+        expect.objectContaining({ preserveProductsWhileFetching: true }),
+      );
     });
   });
 

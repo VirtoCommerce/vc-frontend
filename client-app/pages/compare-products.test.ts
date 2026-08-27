@@ -1,5 +1,6 @@
 import { cleanup, configure, fireEvent, render } from "@testing-library/vue";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { nextTick } from "vue";
 import CompareProducts from "./compare-products.vue";
 import type { ICompareCategoryTab, ICompareDisplayProduct } from "@/shared/compare";
 import "@testing-library/jest-dom/vitest";
@@ -7,11 +8,13 @@ import "@testing-library/jest-dom/vitest";
 configure({ testIdAttribute: "data-test-id" });
 
 const mocks = await vi.hoisted(async () => {
-  const { ref, defineComponent: define, h: createElement } = await import("vue");
+  const { ref, defineComponent: define, h: createElement, onMounted, onUnmounted } = await import("vue");
 
   const compareTableSpy = {
     props: {} as Record<string, unknown>,
     emit: undefined as undefined | ((event: string, payload?: unknown) => void),
+    mounts: 0,
+    unmounts: 0,
   };
 
   const CompareTable = define({
@@ -24,6 +27,8 @@ const mocks = await vi.hoisted(async () => {
     emits: ["clearCategory", "removeProduct", "selectItem"],
     setup(props, { emit }) {
       compareTableSpy.emit = (event, payload) => emit(event as never, payload);
+      onMounted(() => compareTableSpy.mounts++);
+      onUnmounted(() => compareTableSpy.unmounts++);
       return () => {
         compareTableSpy.props = { ...props };
         return createElement("div", { "data-test-id": "compare-table" });
@@ -142,6 +147,8 @@ beforeEach(() => {
   mocks.fetchingProducts.value = false;
   mocks.compareTableSpy.props = {};
   mocks.compareTableSpy.emit = undefined;
+  mocks.compareTableSpy.mounts = 0;
+  mocks.compareTableSpy.unmounts = 0;
   vi.clearAllMocks();
 });
 
@@ -167,6 +174,32 @@ describe("CompareProducts", () => {
 
     expect(page.queryByTestId("compare-table")).not.toBeInTheDocument();
     expect(page.queryByText("pages.compare.empty.title")).not.toBeInTheDocument();
+  });
+
+  it("keeps CompareTable mounted during a refetch, once there is already something to show", async () => {
+    mocks.products.value = [{ productId: "p1", categoryKey: "cat-a" }];
+    mocks.selectedCategoryProducts.value = [product("p1")];
+
+    const page = renderPage();
+    expect(mocks.compareTableSpy.mounts).toBe(1);
+
+    // A remove triggers a refetch (fetchingProducts flips true), but selectedCategoryProducts
+    // itself no longer drops to empty mid-flight — useCompareProductsPage's useProducts call
+    // opts into preserveProductsWhileFetching (see useProducts.test.ts and
+    // useCompareProductsPage.test.ts), so the last known products keep showing. Only "fetching
+    // AND currently empty" should gate the skeleton; assert fetching alone doesn't remount it.
+    mocks.fetchingProducts.value = true;
+    await nextTick();
+
+    expect(page.queryByTestId("compare-table")).toBeInTheDocument();
+    expect(mocks.compareTableSpy.mounts).toBe(1);
+    expect(mocks.compareTableSpy.unmounts).toBe(0);
+
+    mocks.fetchingProducts.value = false;
+    await nextTick();
+
+    expect(mocks.compareTableSpy.mounts).toBe(1);
+    expect(mocks.compareTableSpy.unmounts).toBe(0);
   });
 
   it("renders a tab per category and passes the selected category's data down to CompareTable", () => {

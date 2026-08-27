@@ -64,7 +64,13 @@
       </VcEmptyView>
     </VcWidget>
 
-    <div v-else-if="fetchingProducts" class="compare-products__loading-state">
+    <!-- Only for the very first load: useCompareProductsPage's useProducts call opts into
+         preserveProductsWhileFetching, so selectedCategoryProducts keeps showing the last known
+         products during a refetch instead of dropping to empty — this only stays true before
+         anything has ever loaded. Once there's something to show we'd rather keep the table
+         mounted (see below, with just an overlay) than tear it down and lose scroll position,
+         pins, and the All/Differences selection on every edit. -->
+    <div v-else-if="fetchingProducts && !selectedCategoryProducts.length" class="compare-products__loading-state">
       <VcLoaderOverlay visible no-bg />
     </div>
 
@@ -94,16 +100,19 @@
         </VcButton>
       </div>
 
-      <CompareTable
-        class="compare-products__table"
-        :products="selectedCategoryProducts"
-        :rows="tableRows"
-        :differ-count="differRowsCount"
-        :total-rows="tableRows.length"
-        @clear-category="openClearCategoryModal"
-        @remove-product="removeProduct"
-        @select-item="selectItemEvent"
-      />
+      <div class="compare-products__table-wrap">
+        <VcLoaderOverlay :visible="fetchingProducts" />
+
+        <CompareTable
+          :products="selectedCategoryProducts"
+          :rows="tableRows"
+          :differ-count="differRowsCount"
+          :total-rows="tableRows.length"
+          @clear-category="openClearCategoryModal"
+          @remove-product="removeProduct"
+          @select-item="selectItemEvent"
+        />
+      </div>
     </template>
   </VcContainer>
 </template>
@@ -267,8 +276,8 @@ usePageHead({
     @apply flex items-center gap-2;
   }
 
-  &__table {
-    @apply mt-4;
+  &__table-wrap {
+    @apply relative mt-4;
   }
 }
 </style>

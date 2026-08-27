@@ -294,6 +294,46 @@ describe("useProducts", () => {
     });
   });
 
+  describe("preserveProductsWhileFetching", () => {
+    it("clears products immediately on refetch by default", async () => {
+      const { fetchProducts, products } = useProducts();
+
+      await fetchProducts({ page: 1, itemsPerPage: 2 });
+      expect(products.value).toEqual([{ id: "product1" }, { id: "product2" }]);
+
+      let resolveRefetch!: (value: typeof mockData.mockSearchProductsResponse) => void;
+      mockData.searchProducts.mockReturnValueOnce(new Promise((resolve) => (resolveRefetch = resolve)));
+
+      // fetchProducts clears synchronously (before its first await), so this is already true
+      // right after calling it — no need to wait for the request to resolve.
+      const refetchPromise = fetchProducts({ page: 1, itemsPerPage: 2 });
+      expect(products.value).toEqual([]);
+
+      resolveRefetch(mockData.mockSearchProductsResponse);
+      await refetchPromise;
+
+      expect(products.value).toEqual([{ id: "product1" }, { id: "product2" }]);
+    });
+
+    it("keeps showing the previous products until a refetch resolves, when enabled", async () => {
+      const { fetchProducts, products } = useProducts({ preserveProductsWhileFetching: true });
+
+      await fetchProducts({ page: 1, itemsPerPage: 2 });
+      expect(products.value).toEqual([{ id: "product1" }, { id: "product2" }]);
+
+      let resolveRefetch!: (value: typeof mockData.mockSearchProductsMoreResponse) => void;
+      mockData.searchProducts.mockReturnValueOnce(new Promise((resolve) => (resolveRefetch = resolve)));
+
+      const refetchPromise = fetchProducts({ page: 1, itemsPerPage: 2 });
+      expect(products.value).toEqual([{ id: "product1" }, { id: "product2" }]);
+
+      resolveRefetch(mockData.mockSearchProductsMoreResponse);
+      await refetchPromise;
+
+      expect(products.value).toEqual([{ id: "product3" }, { id: "product4" }]);
+    });
+  });
+
   describe("page history handling", () => {
     beforeEach(() => {
       const localThemeContext = { ...mockData.mockThemeContext };

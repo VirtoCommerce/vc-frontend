@@ -103,7 +103,18 @@ export function useCompareProductsPage() {
   const { t, n } = useI18n();
   const route = useRoute();
   const { products, getCategoryProductsCount } = useCompareProducts();
-  const { fetchProducts, products: fetchedProducts, fetchingProducts } = useProducts();
+  // preserveProductsWhileFetching: without it, useProducts.fetchProducts clears its results to
+  // empty at the start of every call, including the refetch the productIds watch below triggers
+  // on every add/remove — categoryTabs and selectedCategoryProducts would flash empty on every
+  // edit (not just first load), which in turn resets CompareTable's own All/Differences
+  // selection, since it reacts to a (transiently) too-small product count.
+  const {
+    fetchProducts,
+    products: fetchedProducts,
+    fetchingProducts,
+  } = useProducts({
+    preserveProductsWhileFetching: true,
+  });
   const { isEnabled } = useModuleSettings(CUSTOMER_REVIEWS_MODULE_ID);
   const customerRatingEnabled = isEnabled(CUSTOMER_REVIEWS_ENABLED_KEY);
   const { mutate: createConfiguredLineItemMutation } = useMutation(CreateConfiguredLineItemDocument);
