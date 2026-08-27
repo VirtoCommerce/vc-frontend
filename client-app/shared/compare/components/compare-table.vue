@@ -93,7 +93,7 @@
                   :target="browserTarget"
                   :aria-label="t('pages.catalog.customize_button')"
                 >
-                  <span class="compare-table__product-cart-button-text">
+                  <span>
                     {{ t("pages.catalog.customize_button") }}
                   </span>
                 </VcButton>
@@ -107,7 +107,7 @@
                   :target="browserTarget"
                   :aria-label="t('pages.catalog.variations_button', [(item.product.variations?.length || 0) + 1])"
                 >
-                  <span class="compare-table__product-cart-button-text">
+                  <span>
                     {{ t("pages.catalog.variations_button", [(item.product.variations?.length || 0) + 1]) }}
                   </span>
                 </VcButton>
@@ -122,7 +122,7 @@
                   :aria-label="t('shared.compare.table.add_to_cart')"
                   @click="onAddToCart(item)"
                 >
-                  <span class="compare-table__product-cart-button-text">
+                  <span>
                     {{ t("shared.compare.table.add_to_cart") }}
                   </span>
                 </VcButton>
@@ -377,11 +377,11 @@ watch(
 <style lang="scss">
 .compare-table {
   &__scroll {
-    @apply overflow-x-auto rounded-b-[--radius];
+    @apply overflow-x-auto rounded-b-[--vc-radius];
   }
 
   &__header-row {
-    @apply sticky z-10 flex overflow-hidden rounded-t-[--radius] border-b border-neutral-200 bg-additional-50;
+    @apply sticky z-10 flex overflow-hidden rounded-t-[--vc-radius] border-b border-neutral-200 bg-additional-50;
 
     // Sits flush below the app header (shorter on mobile — see vc-header.vue/mobile-header.vue,
     // which keep this var updated with the header's live, current height).
@@ -400,7 +400,7 @@ watch(
     @apply hidden;
 
     @media (width < theme("screens.md")) {
-      @apply flex rounded-t-[--radius] border-b border-neutral-200 bg-additional-50 px-3 py-2.5;
+      @apply flex rounded-t-[--vc-radius] border-b border-neutral-200 bg-additional-50 px-3 py-2.5;
     }
   }
 
@@ -448,15 +448,13 @@ watch(
   }
 
   &__tabs {
-    @apply grid grid-cols-2 gap-0.5 rounded-lg bg-neutral-100 p-1.5;
+    @apply grid grid-cols-2 gap-0.5 rounded-[--vc-radius] bg-neutral-100 p-1.5;
   }
 
   &__tab {
     @apply w-full;
 
-    .vc-tab-switch__input:not(:checked) ~ .vc-tab-switch__button {
-      @apply border-transparent;
-    }
+    --vc-tab-switch-border-color: transparent;
   }
 
   &__differ {
@@ -480,7 +478,7 @@ watch(
   }
 
   &__product-image-wrap {
-    @apply relative h-44 overflow-hidden rounded-lg border border-neutral-300;
+    @apply relative h-44 overflow-hidden rounded-[--vc-radius] border border-neutral-300;
 
     @media (width < theme("screens.md")) {
       @apply h-24;
@@ -493,14 +491,6 @@ watch(
 
   &__product-remove {
     @apply absolute end-1 top-1;
-
-    .vc-product-actions {
-      @apply p-0.5;
-    }
-
-    .vc-product-actions-button {
-      @apply min-h-0 min-w-0 p-1;
-    }
   }
 
   &__product-footer {
@@ -522,7 +512,7 @@ watch(
   }
 
   &__product-summary-image-wrap {
-    @apply size-10 shrink-0 overflow-hidden rounded-lg border border-neutral-300;
+    @apply size-10 shrink-0 overflow-hidden rounded-[--vc-radius] border border-neutral-300;
   }
 
   &__product-summary-image {
@@ -537,18 +527,6 @@ watch(
 
   &__product-cart-button {
     @apply w-full;
-
-    @media (width < theme("screens.md")) {
-      .vc-button__icon {
-        @apply me-0;
-      }
-    }
-  }
-
-  &__product-cart-button-text {
-    @media (width < theme("screens.md")) {
-      @apply hidden;
-    }
   }
 
   &__row {
