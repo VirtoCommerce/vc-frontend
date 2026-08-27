@@ -1692,8 +1692,8 @@
         "keywords": "сравнить товары, сравнение товаров, сравнение бок о бок",
         "description": "Сравнивайте товары бок о бок, чтобы найти лучший вариант для ваших нужд."
       },
-      "added_count": "из {total} добавлено",
-      "added_count_in_category": "из {total} добавлено в {category}",
+      "added_count": "{count} из {total} добавлено",
+      "added_count_in_category": "{count} из {total} добавлено в {category}",
       "actions": {
         "clear_all": "Очистить все"
       },

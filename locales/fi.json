@@ -1692,8 +1692,8 @@
         "keywords": "vertaa tuotteita, tuotevertailu, rinnakkainen vertailu",
         "description": "Vertaa tuotteita rinnakkain löytääksesi tarpeisiisi parhaiten sopivan vaihtoehdon."
       },
-      "added_count": "lisätty {total}:sta",
-      "added_count_in_category": "lisätty {total}:sta kategoriassa {category}",
+      "added_count": "{count} lisätty {total}:sta",
+      "added_count_in_category": "{count} lisätty {total}:sta kategoriassa {category}",
       "actions": {
         "clear_all": "Tyhjennä kaikki"
       },

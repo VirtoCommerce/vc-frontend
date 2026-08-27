@@ -1692,8 +1692,8 @@
         "keywords": "jämför produkter, produktjämförelse, sida vid sida-jämförelse",
         "description": "Jämför produkter sida vid sida för att hitta det bästa alternativet för dina behov."
       },
-      "added_count": "av {total} tillagda",
-      "added_count_in_category": "av {total} tillagda i {category}",
+      "added_count": "{count} av {total} tillagda",
+      "added_count_in_category": "{count} av {total} tillagda i {category}",
       "actions": {
         "clear_all": "Rensa alla"
       },

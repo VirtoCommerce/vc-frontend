@@ -1692,8 +1692,8 @@
         "keywords": "porównaj produkty, porównanie produktów, porównanie obok siebie",
         "description": "Porównaj produkty obok siebie, aby znaleźć najlepszą opcję dla swoich potrzeb."
       },
-      "added_count": "z {total} dodanych",
-      "added_count_in_category": "z {total} dodanych w {category}",
+      "added_count": "{count} z {total} dodanych",
+      "added_count_in_category": "{count} z {total} dodanych w {category}",
       "actions": {
         "clear_all": "Wyczyść wszystko"
       },

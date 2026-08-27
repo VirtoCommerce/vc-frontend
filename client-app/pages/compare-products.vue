@@ -8,17 +8,20 @@
           {{ t("pages.compare.title") }}
         </VcTypography>
 
-        <p class="compare-products__added-count">
-          <span class="compare-products__added-count-value">{{ selectedCategoryCount }}</span>
-          {{
-            selectedCategoryLabel
-              ? t("pages.compare.added_count_in_category", {
-                  total: productsLimit,
-                  category: selectedCategoryLabel,
-                })
-              : t("pages.compare.added_count", { total: productsLimit })
-          }}
-        </p>
+        <i18n-t
+          :keypath="selectedCategoryLabel ? 'pages.compare.added_count_in_category' : 'pages.compare.added_count'"
+          scope="global"
+          tag="p"
+          class="compare-products__added-count"
+        >
+          <template #count>
+            <span class="compare-products__added-count-value">{{ selectedCategoryCount }}</span>
+          </template>
+
+          <template #total>{{ productsLimit }}</template>
+
+          <template #category>{{ selectedCategoryLabel }}</template>
+        </i18n-t>
       </div>
 
       <div class="compare-products__actions">

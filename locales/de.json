@@ -1692,8 +1692,8 @@
         "keywords": "Produkte vergleichen, Produktvergleich, nebeneinanderliegender Vergleich",
         "description": "Vergleichen Sie Produkte nebeneinander, um die beste Option für Ihre Bedürfnisse zu finden."
       },
-      "added_count": "von {total} hinzugefügt",
-      "added_count_in_category": "von {total} in {category} hinzugefügt",
+      "added_count": "{count} von {total} hinzugefügt",
+      "added_count_in_category": "{count} von {total} in {category} hinzugefügt",
       "actions": {
         "clear_all": "Alle löschen"
       },

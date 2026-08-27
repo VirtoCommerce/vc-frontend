@@ -1692,8 +1692,8 @@
         "keywords": "sammenlign produkter, produkt sammenligning, side om side sammenligning",
         "description": "Sammenlign produkter side om side for å finne det beste alternativet for dine behov."
       },
-      "added_count": "av {total} lagt til",
-      "added_count_in_category": "av {total} lagt til i {category}",
+      "added_count": "{count} av {total} lagt til",
+      "added_count_in_category": "{count} av {total} lagt til i {category}",
       "actions": {
         "clear_all": "Fjern alle"
       },

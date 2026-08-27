@@ -117,6 +117,13 @@ function renderPage() {
         VcIcon: true,
         VcLoaderOverlay: true,
         VcBadge: { template: "<span><slot /></span>" },
+        // vue-i18n is mocked wholesale above (useI18n only), so its global <i18n-t> component
+        // isn't actually registered — stub it well enough to render its named slots.
+        "i18n-t": {
+          props: ["tag"],
+          template:
+            '<component :is="tag || \'span\'"><slot name="count" /><slot name="total" /><slot name="category" /></component>',
+        },
         VcButton: {
           props: ["disabled", "variant"],
           emits: ["click"],

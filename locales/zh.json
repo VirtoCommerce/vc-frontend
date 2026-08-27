@@ -1692,8 +1692,8 @@
         "keywords": "比较产品,产品比较,并排比较",
         "description": "并排比较产品，找到最适合您需求的选择。"
       },
-      "added_count": "已添加 {total} 中的 {total}",
-      "added_count_in_category": "{category} 中已添加 {total} 中的 {total}",
+      "added_count": "已添加 {count} 中的 {total}",
+      "added_count_in_category": "{category} 中已添加 {count} 中的 {total}",
       "actions": {
         "clear_all": "全部清除"
       },

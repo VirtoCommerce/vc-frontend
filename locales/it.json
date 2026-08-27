@@ -1692,8 +1692,8 @@
         "keywords": "confronta prodotti, confronto prodotti, confronto affiancato",
         "description": "Confronta prodotti fianco a fianco per trovare l'opzione migliore per le tue esigenze."
       },
-      "added_count": "di {total} aggiunti",
-      "added_count_in_category": "di {total} aggiunti in {category}",
+      "added_count": "{count} di {total} aggiunti",
+      "added_count_in_category": "{count} di {total} aggiunti in {category}",
       "actions": {
         "clear_all": "Cancella tutto"
       },

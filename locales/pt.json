@@ -1692,8 +1692,8 @@
         "keywords": "comparar produtos, comparação de produtos, comparação lado a lado",
         "description": "Compare produtos lado a lado para encontrar a melhor opção para suas necessidades."
       },
-      "added_count": "de {total} adicionados",
-      "added_count_in_category": "de {total} adicionados em {category}",
+      "added_count": "{count} de {total} adicionados",
+      "added_count_in_category": "{count} de {total} adicionados em {category}",
       "actions": {
         "clear_all": "Limpar tudo"
       },

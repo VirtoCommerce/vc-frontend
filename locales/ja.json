@@ -1692,8 +1692,8 @@
         "keywords": "比較商品、商品比較、並べて比較",
         "description": "ニーズに最適なオプションを見つけるために、商品を並べて比較してください。"
       },
-      "added_count": "{total}個中{total}個追加済み",
-      "added_count_in_category": "{category}で{total}個中{total}個追加済み",
+      "added_count": "{total}個中{count}個追加済み",
+      "added_count_in_category": "{category}で{total}個中{count}個追加済み",
       "actions": {
         "clear_all": "すべてクリア"
       },

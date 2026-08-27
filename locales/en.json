@@ -1692,8 +1692,8 @@
         "keywords": "compare products, product comparison, side by side comparison",
         "description": "Compare products side by side to find the best option for your needs."
       },
-      "added_count": "of {total} added",
-      "added_count_in_category": "of {total} added in {category}",
+      "added_count": "{count} of {total} added",
+      "added_count_in_category": "{count} of {total} added in {category}",
       "actions": {
         "clear_all": "Clear all"
       },

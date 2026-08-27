@@ -1692,8 +1692,8 @@
         "keywords": "comparer les produits, comparaison de produits, comparaison côte à côte",
         "description": "Comparez les produits côte à côte pour trouver la meilleure option pour vos besoins."
       },
-      "added_count": "sur {total} ajoutés",
-      "added_count_in_category": "sur {total} ajoutés dans {category}",
+      "added_count": "{count} sur {total} ajoutés",
+      "added_count_in_category": "{count} sur {total} ajoutés dans {category}",
       "actions": {
         "clear_all": "Tout effacer"
       },
