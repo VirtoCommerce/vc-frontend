@@ -9,6 +9,7 @@
         ref="headerRowRef"
         class="compare-table__header-row"
         :class="{ 'compare-table__header-row--stuck': isCompact }"
+        tabindex="-1"
       >
         <div class="compare-table__controls" :class="{ 'compare-table__controls--stuck': isCompact }">
           <Teleport v-if="mobileTabsBarRef" :to="mobileTabsBarRef" :disabled="!isMobile">
@@ -281,7 +282,7 @@
 
 <script setup lang="ts">
 import { useBreakpoints, useCssVar, useElementBounding } from "@vueuse/core";
-import { computed, ref, watch } from "vue";
+import { computed, nextTick, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBrowserTarget } from "@/core/composables";
 import { ProductType } from "@/core/enums";
@@ -349,6 +350,19 @@ const { top: headerRowTop, update: updateHeaderRowBounding } = useElementBoundin
 const isCompact = computed(() => !isMobile.value && headerRowTop.value <= appHeaderHeight.value + 1);
 
 watch(appHeaderHeight, () => updateHeaderRowBounding());
+
+// isCompact flipping swaps entire v-if/v-else subtrees (the clear-category button, and each
+// product's compact-vs-full cell) rather than patching them in place, so Vue destroys whatever
+// held focus. Left alone, focus falls through to <body>, stranding keyboard users. Move it to
+// the stable header row itself (tabindex="-1" in the template) instead.
+watch(isCompact, async () => {
+  if (!headerRowRef.value?.contains(document.activeElement)) {
+    return;
+  }
+
+  await nextTick();
+  headerRowRef.value?.focus();
+});
 
 const isTabSwitchDisabled = computed(() => props.products.length <= 1);
 
