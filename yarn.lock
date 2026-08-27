@@ -14958,10 +14958,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"swiper@npm:11.2.10":
-  version: 11.2.10
-  resolution: "swiper@npm:11.2.10"
-  checksum: 10c0/b7e3a7c79d92ccc62af77744edc376c9aefc771a0abd50c4adf07b5e3450b5da9ca7f84f5809e275ff65e1bc9d4500d930628e84a76fc7f2db403291c69b7fac
+"swiper@npm:12.1.2":
+  version: 12.1.2
+  resolution: "swiper@npm:12.1.2"
+  checksum: 10c0/f2597a67c4d647e367a236735bb7779e2833346b332e6d7b8caf48c6b82da52787959e86f06762983ab82b142958690a0d1b9f6fc5a59170a648949b35cfedd0
   languageName: node
   linkType: hard
 
@@ -16098,7 +16098,7 @@ __metadata:
     storybook: "npm:9.1.20"
     storybook-addon-tag-badges: "npm:^3.1.0"
     storybook-vue3-router: "npm:^7.0.0"
-    swiper: "npm:11.2.10"
+    swiper: "npm:12.1.2"
     tailwindcss: "npm:^3.4.19"
     tw-elements: "npm:^1.1.0"
     typescript: "npm:5.9.3"
