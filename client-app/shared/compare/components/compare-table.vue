@@ -258,11 +258,16 @@
               "
             />
 
-            <ProductRating
-              v-else-if="row.kind === 'rating' && products[index]?.product.rating"
-              :rating="products[index]!.product.rating!"
-              size="xs"
-            />
+            <span v-else-if="row.kind === 'rating' && products[index]?.product.rating" class="compare-table__rating">
+              <VcRating
+                mode="full"
+                read-only
+                :value="products[index]!.product.rating!.value"
+                size="xs"
+                :with-text="false"
+              />
+              {{ value }}
+            </span>
 
             <InStock
               v-else-if="row.kind === 'availability' && products[index]"
@@ -294,7 +299,6 @@ import { AVAILABILITY_ROW_KEY, PRICE_ROW_KEY } from "../constants";
 import { getConfigurationLink, getDisplayPrice } from "../utilities";
 import type { ICompareDisplayProduct, ICompareTableRow } from "../types";
 import type { Product } from "@/core/api/graphql/types";
-import ProductRating from "@/modules/customer-reviews/components/product-rating.vue";
 import InStock from "@/shared/catalog/components/in-stock.vue";
 
 interface IEmits {
@@ -629,6 +633,10 @@ watch(
 
   &__price {
     --vc-product-price-font-size: theme("fontSize.sm");
+  }
+
+  &__rating {
+    @apply flex items-center gap-2 text-sm font-bold;
   }
 }
 </style>
