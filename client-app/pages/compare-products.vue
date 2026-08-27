@@ -67,13 +67,11 @@
       </VcEmptyView>
     </VcWidget>
 
-    <!-- Only for the very first load: useCompareProductsPage's useProducts call opts into
-         preserveProductsWhileFetching, so selectedCategoryProducts keeps showing the last known
-         products during a refetch instead of dropping to empty — this only stays true before
-         anything has ever loaded. Once there's something to show we'd rather keep the table
-         mounted (see below, with just an overlay) than tear it down and lose scroll position,
-         pins, and the All/Differences selection on every edit. -->
-    <div v-else-if="fetchingProducts && !selectedCategoryProducts.length" class="compare-products__loading-state">
+    <div
+      v-else-if="fetchingProducts && !selectedCategoryProducts.length"
+      data-test-id="compare-loading-state"
+      class="compare-products__loading-state"
+    >
       <VcLoaderOverlay visible no-bg />
     </div>
 

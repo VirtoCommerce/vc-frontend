@@ -183,6 +183,7 @@ describe("CompareProducts", () => {
 
     const page = renderPage();
 
+    expect(page.getByTestId("compare-loading-state")).toBeInTheDocument();
     expect(page.queryByTestId("compare-table")).not.toBeInTheDocument();
     expect(page.queryByText("pages.compare.empty.title")).not.toBeInTheDocument();
   });
