@@ -204,7 +204,7 @@
                 enable-teleport
               >
                 <template #trigger>
-                  <VcIcon name="information-circle" size="xs" :aria-label="row.description" />
+                  <VcIcon name="information-circle" size="xs" :label="row.description" />
                 </template>
 
                 <template #content>
