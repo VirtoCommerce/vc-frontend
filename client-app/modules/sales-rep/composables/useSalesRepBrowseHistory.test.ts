@@ -23,14 +23,16 @@ beforeEach(() => {
 });
 
 describe("useSalesRepBrowseHistory", () => {
-  it("maps rows, blanking absent display fields and passing the slug through untouched", () => {
+  // productId is non-null by contract: it falls back to the tracked code, so an unresolved row is the
+  // one whose productId still equals its sku — that, not a missing id, is what clears isResolved.
+  it("maps rows, blanking absent display fields and flagging the unresolved code", () => {
     queryMock.result.value = {
       salesRepCustomerInsights: {
         dataAsOf: "2026-08-20T00:00:00Z",
         browsedProducts: [
-          { productId: "p1", name: "Drill", sku: "SKU-1", imageUrl: "img", slug: "drill", viewCount: 4 },
-          // GA row the backend could not resolve to a product: no name, no slug.
-          { productId: "CODE-2", viewCount: 1 },
+          { productId: "p1", name: "Drill", sku: "SKU-1", imageUrl: "img", viewCount: 4 },
+          // GA row the backend could not resolve: productId came back as the tracked code itself.
+          { productId: "CODE-2", sku: "CODE-2", viewCount: 1 },
         ],
       },
     } satisfies SalesRepCustomerBrowsedProductsQuery;
@@ -43,16 +45,16 @@ describe("useSalesRepBrowseHistory", () => {
         name: "Drill",
         sku: "SKU-1",
         imageUrl: "img",
-        slug: "drill",
+        isResolved: true,
         viewCount: 4,
         lastViewedDate: undefined,
       },
       {
         productId: "CODE-2",
         name: "",
-        sku: "",
+        sku: "CODE-2",
         imageUrl: "",
-        slug: undefined,
+        isResolved: false,
         viewCount: 1,
         lastViewedDate: undefined,
       },

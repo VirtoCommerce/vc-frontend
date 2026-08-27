@@ -45,7 +45,7 @@ function summaryFixture(
     lastWebLogin: "2026-08-20T10:00:00Z",
     visitsCount: 12,
     lastSearchTerm: "gloves",
-    lastViewedProduct: { code: "SKU-1", productId: "p1", name: "Gloves", slug: "gloves", imageUrl: "" },
+    lastViewedProduct: { code: "SKU-1", productId: "p1", name: "Gloves", imageUrl: "" },
     isAnalyticsConfigured: true,
     ...overrides,
   };
@@ -127,10 +127,23 @@ describe("CustomerActivity summary states", () => {
     expect(wrapper.find(".customer-activity__note").exists()).toBe(true);
   });
 
+  // By product id, never a slug: /product/{id} always resolves, whereas the tracked SEO segment alone
+  // is not a valid catalog URL (VCST-5337).
+  it("links the last viewed product by its id", () => {
+    state.summary.value = summaryFixture();
+
+    const productRow = createWrapper().findAll(".customer-activity__row")[4];
+
+    expect(productRow.findComponent({ name: "VcLinkStub" }).props("to")).toEqual({
+      name: "Product",
+      params: { productId: "p1" },
+    });
+  });
+
   // An unresolvable product code still identifies the product by its code alone.
   it("renders the bare code, unlinked, when the product could not be resolved", () => {
     state.summary.value = summaryFixture({
-      lastViewedProduct: { code: "GONE-1", productId: "", name: "", slug: "", imageUrl: "" },
+      lastViewedProduct: { code: "GONE-1", productId: "", name: "", imageUrl: "" },
     });
 
     const wrapper = createWrapper();

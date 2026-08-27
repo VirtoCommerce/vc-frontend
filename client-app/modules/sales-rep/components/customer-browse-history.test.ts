@@ -30,7 +30,8 @@ const createWrapper = createWrapperFactory(mount, CustomerBrowseHistory, {
       VcEmptyView: true,
       VcIcon: true,
       VcImage: true,
-      VcLink: { template: "<a><slot /></a>" },
+      // Props-exposing stub so the link target can be asserted, not just its presence.
+      VcLink: { name: "VcLinkStub", props: ["to"], template: "<a><slot /></a>" },
       SalesRepRuleChips: true,
     },
   },
@@ -88,18 +89,21 @@ describe("CustomerBrowseHistory states", () => {
     expect(rows(wrapper)).toHaveLength(1);
   });
 
-  // GA stores the product code, not the id; only a backend-resolved row (it has a slug) may deep-link —
-  // an unresolved one would 404, so it degrades to plain text (design doc §5.1).
-  it("links a row only when the backend resolved the product", () => {
+  // GA stores the product code, not the id; only a backend-resolved row may deep-link, and it does so
+  // by id — an unresolved one has no linkable id, so it degrades to plain text (design doc §5.1).
+  it("links a resolved row by product id and degrades an unresolved one to plain text", () => {
     state.items.value = [
-      { productId: "p1", name: "Drill", sku: "SKU-1", imageUrl: "", slug: "drill", viewCount: 4 },
-      { productId: "CODE-2", name: "Mystery", sku: "", imageUrl: "", viewCount: 1 },
+      { productId: "p1", name: "Drill", sku: "SKU-1", imageUrl: "", isResolved: true, viewCount: 4 },
+      { productId: "CODE-2", name: "Mystery", sku: "CODE-2", imageUrl: "", isResolved: false, viewCount: 1 },
     ];
 
     const wrapper = createWrapper();
     const [resolved, unresolved] = rows(wrapper);
 
-    expect(resolved.find("a").exists()).toBe(true);
+    expect(resolved.findComponent({ name: "VcLinkStub" }).props("to")).toEqual({
+      name: "Product",
+      params: { productId: "p1" },
+    });
     expect(unresolved.find("a").exists()).toBe(false);
     expect(unresolved.text()).toContain("Mystery");
   });

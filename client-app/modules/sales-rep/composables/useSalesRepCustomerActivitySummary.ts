@@ -23,7 +23,7 @@ export function useSalesRepCustomerActivitySummary(
 ) {
   const variables = computed(() => ({
     organizationId: toValue(organizationId),
-    // storeId scopes the analytics data and resolves lastViewedProduct.slug.
+    // storeId scopes the analytics data and resolves lastViewedProduct's tracked code.
     storeId: globals.storeId,
     cultureName: globals.cultureName,
     periodFrom: toValue(options.periodFrom),
@@ -52,7 +52,6 @@ export function useSalesRepCustomerActivitySummary(
                 code: node.lastViewedProduct.code,
                 productId: node.lastViewedProduct.productId ?? "",
                 name: node.lastViewedProduct.name ?? "",
-                slug: node.lastViewedProduct.slug ?? "",
                 imageUrl: node.lastViewedProduct.imageUrl ?? "",
               }
             : undefined,

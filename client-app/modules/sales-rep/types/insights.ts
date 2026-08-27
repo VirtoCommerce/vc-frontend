@@ -13,8 +13,9 @@ export type SalesRepBrowsedProductRowType = {
   name: string;
   sku: string;
   imageUrl: string;
-  // Present only when the backend resolved GA's product code to a real product; gates the deep link.
-  slug?: string;
+  // True only when the backend resolved GA's product code to a real product; gates the deep link.
+  // Unlike the other insights rows, productId cannot say it on its own — see the mapping.
+  isResolved: boolean;
   viewCount: number;
   lastViewedDate?: string;
 };

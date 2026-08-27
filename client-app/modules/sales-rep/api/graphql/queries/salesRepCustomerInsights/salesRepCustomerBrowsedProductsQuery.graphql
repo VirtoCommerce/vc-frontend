@@ -19,7 +19,6 @@ query SalesRepCustomerBrowsedProducts(
       name
       sku
       imageUrl
-      slug
       viewCount
       lastViewedDate
     }

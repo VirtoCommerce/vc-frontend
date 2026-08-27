@@ -116,7 +116,8 @@ const createWrapper = createWrapperFactory(mount, Activities, {
       VcPagination: true,
       VcEmptyView: true,
       VcIcon: true,
-      VcLink: { template: "<a><slot /></a>" },
+      // Props-exposing stub so link targets can be asserted, not just their presence.
+      VcLink: { name: "VcLinkStub", props: ["to"], template: "<a><slot /></a>" },
       ActivityRow: ActivityRowStub,
       SalesRepRuleChips: RuleChipsStub,
     },
@@ -379,10 +380,12 @@ describe("Activities page — Top|Recent mode", () => {
     expect(wrapper.find(".activities__caveat").exists()).toBe(true);
   });
 
-  it("deep-links a resolved product and degrades an unresolved code to plain text", async () => {
+  // By product id, never a slug: /product/{id} always resolves. An unresolved code comes back as its
+  // own productId, so it has nothing linkable and must stay plain text.
+  it("deep-links a resolved product by id and degrades an unresolved code to plain text", async () => {
     insights.browseItems.value = [
-      { productId: "p1", name: "Drill", sku: "D-1", slug: "drill", viewCount: 9 },
-      { productId: "p2", name: "", sku: "X-2", viewCount: 3 },
+      { productId: "p1", name: "Drill", sku: "D-1", isResolved: true, viewCount: 9 },
+      { productId: "X-2", name: "", sku: "X-2", isResolved: false, viewCount: 3 },
     ];
 
     const wrapper = createWrapper();
@@ -391,7 +394,10 @@ describe("Activities page — Top|Recent mode", () => {
 
     const rows = topRows(wrapper);
     expect(rows).toHaveLength(2);
-    expect(rows[0].find("a").exists()).toBe(true);
+    expect(rows[0].findComponent({ name: "VcLinkStub" }).props("to")).toEqual({
+      name: "Product",
+      params: { productId: "p1" },
+    });
     expect(rows[0].text()).toContain("Drill");
     expect(rows[1].find("a").exists()).toBe(false);
     expect(rows[1].text()).toContain("X-2");

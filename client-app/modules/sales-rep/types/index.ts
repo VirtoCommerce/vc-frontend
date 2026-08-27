@@ -88,7 +88,6 @@ export type SalesRepActivityItemType = {
   productId: string;
   productCode: string;
   productName: string;
-  productSlug: string;
   productImageUrl: string;
 };
 
@@ -98,9 +97,9 @@ export type SalesRepActivityCategoryCountType = { category: string; count: numbe
 // `isAnalyticsConfigured: false` when analytics is absent; `createdOn` still comes from the DB.
 export type SalesRepActivityProductType = {
   code: string;
+  // Empty when the tracked code matched no product; gates the deep link.
   productId: string;
   name: string;
-  slug: string;
   imageUrl: string;
 };
 export type SalesRepCustomerActivitySummaryType = {

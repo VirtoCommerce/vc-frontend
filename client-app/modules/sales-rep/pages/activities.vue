@@ -62,12 +62,12 @@
             <li v-for="(item, index) in topViewItems" :key="item.productId" class="activities__top-row">
               <span class="activities__top-rank">{{ index + 1 }}</span>
 
-              <!-- A slug proves the backend resolved GA's product code to a real product; without
-                   one a link would 404, so the row degrades to plain text (name or code). -->
+              <!-- Only a row the backend resolved to a real product carries a linkable id; an
+                   unresolved one degrades to plain text (name or code). -->
               <VcLink
-                v-if="item.slug"
+                v-if="item.isResolved"
                 class="activities__top-link"
-                :to="getProductRoute(item.productId, item.slug)"
+                :to="getProductRoute(item.productId)"
                 target="_blank"
                 rel="noopener noreferrer"
               >

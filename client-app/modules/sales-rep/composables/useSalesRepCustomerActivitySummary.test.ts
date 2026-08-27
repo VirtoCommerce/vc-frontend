@@ -25,7 +25,7 @@ describe("useSalesRepCustomerActivitySummary", () => {
         visitsCount: 12,
         lastSearchTerm: "gloves",
         isAnalyticsConfigured: true,
-        lastViewedProduct: { code: "SKU-1", productId: "p1", name: "Gloves", slug: "gloves", imageUrl: "img" },
+        lastViewedProduct: { code: "SKU-1", productId: "p1", name: "Gloves", imageUrl: "img" },
       },
     } satisfies SalesRepCustomerActivitySummaryQuery;
 
@@ -37,7 +37,7 @@ describe("useSalesRepCustomerActivitySummary", () => {
       visitsCount: 12,
       lastSearchTerm: "gloves",
       isAnalyticsConfigured: true,
-      lastViewedProduct: { code: "SKU-1", productId: "p1", name: "Gloves", slug: "gloves", imageUrl: "img" },
+      lastViewedProduct: { code: "SKU-1", productId: "p1", name: "Gloves", imageUrl: "img" },
     });
   });
 

@@ -24,7 +24,6 @@ function item(overrides: Partial<SalesRepActivityItemType> = {}): SalesRepActivi
     productId: "",
     productCode: "",
     productName: "",
-    productSlug: "",
     productImageUrl: "",
     ...overrides,
   };
@@ -91,7 +90,9 @@ describe("ActivityRow per-type rendering", () => {
     expect(link.props("to")).toEqual({ name: "Search", query: { q: "gloves" } });
   });
 
-  it("links a resolved product view via its slug and shows the bucket size", () => {
+  // By product id, never a slug: /product/{id} always resolves, whereas the tracked SEO segment alone
+  // is not a valid catalog URL (VCST-5337).
+  it("links a resolved product view by its id and shows the bucket size", () => {
     const wrapper = createWrapper({
       props: {
         item: item({
@@ -102,13 +103,12 @@ describe("ActivityRow per-type rendering", () => {
           productId: "p1",
           productName: "Gloves",
           productCode: "SKU-1",
-          productSlug: "gloves",
         }),
       },
     });
     const link = findLink(wrapper);
 
-    expect(link.props("to")).toBe("/gloves");
+    expect(link.props("to")).toEqual({ name: "Product", params: { productId: "p1" } });
     expect(wrapper.find(".activity-row__count").exists()).toBe(true);
   });
 

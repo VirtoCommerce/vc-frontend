@@ -42,7 +42,6 @@ query SalesRepActivities(
       productId
       productCode
       productName
-      productSlug
       productImageUrl
     }
   }

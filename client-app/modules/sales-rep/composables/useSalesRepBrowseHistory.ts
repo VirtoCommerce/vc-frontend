@@ -54,7 +54,10 @@ export function useSalesRepBrowseHistory(options: UseSalesRepBrowseHistoryOption
       name: row.name ?? "",
       sku: row.sku ?? "",
       imageUrl: row.imageUrl ?? "",
-      slug: row.slug,
+      // browsedProducts.productId is non-null by contract: it falls back to the tracked code when the
+      // code matches no product. Such a row must not deep-link — /product/<code> 404s — and the code
+      // coming back unchanged is the only thing that distinguishes it from a resolved product id.
+      isResolved: Boolean(row.productId) && row.productId !== row.sku,
       viewCount: row.viewCount,
       lastViewedDate: row.lastViewedDate as string | undefined,
     })),

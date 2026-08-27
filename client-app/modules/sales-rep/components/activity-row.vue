@@ -110,10 +110,9 @@ const searchRoute = computed(() => ({
   query: { [QueryParamName.SearchPhrase]: props.item.searchTerm },
 }));
 
-// Deep-link via slug when the backend resolved the code; an unresolved product stays plain text.
-const productRoute = computed(() =>
-  props.item.productId ? getProductRoute(props.item.productId, props.item.productSlug || undefined) : undefined,
-);
+// Link by id (the /product/{id} route always resolves); an unresolved code leaves productId empty,
+// so such a row stays plain text.
+const productRoute = computed(() => (props.item.productId ? getProductRoute(props.item.productId) : undefined));
 
 // GA-tracked name first, the code as the stable fallback (unresolvable codes still carry it).
 const productLabel = computed(() => props.item.productName || props.item.productCode);

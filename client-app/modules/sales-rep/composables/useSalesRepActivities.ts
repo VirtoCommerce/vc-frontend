@@ -27,7 +27,7 @@ type UseSalesRepActivitiesOptionsType = {
 export function useSalesRepActivities(options: UseSalesRepActivitiesOptionsType = {}) {
   const variables = computed(() => ({
     organizationId: toValue(options.organizationId),
-    // Scope to the rep's store so other-store activity doesn't leak in; also resolves product slugs.
+    // Scope to the rep's store so other-store activity doesn't leak in; also resolves tracked product codes.
     storeId: globals.storeId,
     // Localize orderStatusDisplayValue to the active culture.
     cultureName: globals.cultureName,
@@ -67,7 +67,6 @@ export function useSalesRepActivities(options: UseSalesRepActivitiesOptionsType 
       productId: event.productId ?? "",
       productCode: event.productCode ?? "",
       productName: event.productName ?? "",
-      productSlug: event.productSlug ?? "",
       productImageUrl: event.productImageUrl ?? "",
     })),
   );

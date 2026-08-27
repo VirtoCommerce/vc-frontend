@@ -50,11 +50,11 @@
               </span>
 
               <span class="customer-browse-history__text">
-                <!-- GA stores the product CODE in item_id; a slug proves the backend resolved it to a
-                     real product. Without one a link would 404, so the row degrades to plain text. -->
+                <!-- GA stores the product CODE in item_id; only a row the backend resolved to a real
+                     product carries a linkable id, so an unresolved row degrades to plain text. -->
                 <VcLink
-                  v-if="item.slug"
-                  :to="getProductRoute(item.productId, item.slug)"
+                  v-if="item.isResolved"
+                  :to="getProductRoute(item.productId)"
                   target="_blank"
                   rel="noopener noreferrer"
                   class="customer-browse-history__name"

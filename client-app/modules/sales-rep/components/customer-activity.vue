@@ -178,10 +178,11 @@ const searchRoute = computed(() => ({
   query: { [QueryParamName.SearchPhrase]: summary.value?.lastSearchTerm },
 }));
 
-// Deep-link via slug when the backend resolved the code; an unresolved product stays plain text.
+// Link by id (the /product/{id} route always resolves); an unresolved code leaves productId empty,
+// so the row stays plain text.
 const productRoute = computed(() => {
-  const product = summary.value?.lastViewedProduct;
-  return product?.productId ? getProductRoute(product.productId, product.slug || undefined) : undefined;
+  const productId = summary.value?.lastViewedProduct?.productId;
+  return productId ? getProductRoute(productId) : undefined;
 });
 
 // Code + name per the design; unresolvable codes still show the code alone.
