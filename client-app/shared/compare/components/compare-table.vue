@@ -54,13 +54,14 @@
           </VcButton>
         </div>
 
-        <div ref="headerScrollRef" class="compare-table__header-scroll" @scroll="onHorizontalScroll">
-          <div class="compare-table__header-inner">
+        <div ref="headerScrollRef" class="compare-table__header-scroll" role="table">
+          <div class="compare-table__header-inner" role="row">
             <div
               v-for="item in products"
               :key="item.entry.localId ?? item.product.id"
               class="compare-table__product"
               :class="{ 'compare-table__product--compact': isCompact }"
+              role="columnheader"
             >
               <template v-if="isCompact">
                 <div class="compare-table__product-summary">
@@ -185,14 +186,15 @@
         </div>
       </div>
 
-      <div ref="bodyScrollRef" class="compare-table__scroll" @scroll="onHorizontalScroll">
+      <div ref="bodyScrollRef" class="compare-table__scroll" role="table">
         <div
           v-for="(row, index) in visibleRows"
           :key="row.key"
           class="compare-table__row"
           :class="{ 'compare-table__row--alt': index % 2 === 1 }"
+          role="row"
         >
-          <div class="compare-table__row-label">
+          <div class="compare-table__row-label" role="rowheader">
             <span class="compare-table__row-label-info-wrap">
               <span class="compare-table__row-label-text">{{ row.label }}</span>
 
@@ -240,6 +242,7 @@
             v-for="(value, index) in row.values"
             :key="products[index]?.entry.localId ?? products[index]?.product.id ?? index"
             class="compare-table__row-value"
+            role="cell"
           >
             <VcProductPrice
               v-if="row.kind === 'price' && products[index]"
@@ -283,6 +286,7 @@ import { useI18n } from "vue-i18n";
 import { useBrowserTarget } from "@/core/composables";
 import { ProductType } from "@/core/enums";
 import { getProductRoute } from "@/core/utilities";
+import { useHorizontalScrollSync } from "@/ui-kit/composables";
 import { BREAKPOINTS } from "@/ui-kit/constants";
 import { useCompareAddToCart, useCompareTableRowPins } from "../composables";
 import { AVAILABILITY_ROW_KEY, PRICE_ROW_KEY } from "../constants";
@@ -357,14 +361,9 @@ const visibleRows = computed(() => {
   return [...pinnedRows.value, ...rest];
 });
 
-function onHorizontalScroll(event: Event) {
-  const source = event.currentTarget as HTMLElement;
-  const target = source === bodyScrollRef.value ? headerScrollRef.value : bodyScrollRef.value;
-
-  if (target) {
-    target.scrollLeft = source.scrollLeft;
-  }
-}
+// Both refs are unconditionally rendered plain divs, so they're already set by the time this
+// composable's onMounted attaches its scroll listeners.
+useHorizontalScrollSync(bodyScrollRef, headerScrollRef);
 
 watch(
   isTabSwitchDisabled,
