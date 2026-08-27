@@ -6,7 +6,6 @@
       "type": "string",
       "default": null,
       "placeholder": "specifications",
-      "info": "Link to this section from a rich text field, for example #specifications. Leave empty to use the generated section id.",
       "tab": "Settings"
     },
     {
