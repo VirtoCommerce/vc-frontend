@@ -139,7 +139,9 @@ function onInput() {
     @apply flex items-center justify-center gap-1.5 w-full rounded-[--radius] border border-[--border-color] p-[--p] font-bold cursor-pointer select-none;
 
     input:checked ~ & {
-      @apply border-neutral-200 shadow-md text-neutral-950 bg-additional-50;
+      @apply shadow-md text-neutral-950 bg-additional-50;
+
+      border-color: var(--vc-tab-switch-checked-border-color, var(--border-color));
     }
 
     &:hover {
