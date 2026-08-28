@@ -58,6 +58,11 @@ export async function scrollToAnchor(hash: string, timeoutMs = ANCHOR_WAIT_MS): 
 
   target.scrollIntoView({ behavior: "smooth", block: "start" });
 
+  if (!target.hasAttribute("tabindex")) {
+    target.setAttribute("tabindex", "-1");
+  }
+  target.focus({ preventScroll: true });
+
   return true;
 }
 

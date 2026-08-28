@@ -67,6 +67,24 @@ describe("scrollToAnchor", () => {
     expect(scrollIntoView).toHaveBeenCalledWith({ behavior: "smooth", block: "start" });
   });
 
+  it("moves the keyboard starting point to the section it scrolled to", async () => {
+    const section = addSection("specifications");
+
+    await scrollToAnchor("#specifications");
+
+    expect(document.activeElement).toBe(section);
+    expect(section.getAttribute("tabindex")).toBe("-1");
+  });
+
+  it("leaves a target that is already focusable in the tab order", async () => {
+    const section = addSection("specifications");
+    section.setAttribute("tabindex", "0");
+
+    await scrollToAnchor("#specifications");
+
+    expect(section.getAttribute("tabindex")).toBe("0");
+  });
+
   it("finds an <a name> anchor authored inside rich text", async () => {
     const anchor = document.createElement("a");
     anchor.setAttribute("name", "chapter-one");
