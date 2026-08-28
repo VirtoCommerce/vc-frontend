@@ -186,6 +186,9 @@ interface IProps {
   /**
    * Predicate that returns true to mark a date unavailable (greyed out). Receives ISO YYYY-MM-DD.
    * Read once at mount: reka takes the predicate by value, so swapping it later re-filters typed input but not the grid.
+   *
+   * In "combined" the calendar cannot select a range that spans an unavailable day (see VcRangeCalendar);
+   * typing one, and "split" — two independent single-date calendars — can still produce that range.
    */
   disabledDate?: VcCalendarDisabledDateType;
   /** Override locale; defaults to active i18n locale. */
@@ -259,21 +262,6 @@ const calendarRef = useTemplateRef<{ focusActiveCell: () => void; $el?: Element 
 const startFieldRef = useTemplateRef<{ reset: () => void } | null>("startFieldRef");
 const endFieldRef = useTemplateRef<{ reset: () => void } | null>("endFieldRef");
 
-// Same rule as the combined shell one layer down: a field only resyncs from a change to its OWN half,
-// so text it rejected outlives a commit made in the other field — leaving Apply gated on a model that
-// is perfectly valid. Any commit drops rejected text; merely uncommitted text is left to its owner.
-watch(
-  () => [props.modelValue?.start, props.modelValue?.end] as const,
-  () => {
-    if (!startSegmentValid.value) {
-      startFieldRef.value?.reset();
-    }
-    if (!endSegmentValid.value) {
-      endFieldRef.value?.reset();
-    }
-  },
-);
-
 const { calendarSize, focusField, onToggle, onEscapeClose, onFieldEscape, onTriggerEscape } = useCalendarPopover({
   size: () => props.size,
   getFocusTarget: () => rangeInputRef.value?.startInputElement,
@@ -293,14 +281,16 @@ const {
   setSegmentValid,
   setSegmentErrorText,
   mergeRange,
-  startSegmentValid,
-  endSegmentValid,
 } = useDateRangeField({
   modelValue: () => props.modelValue,
   error: () => props.error,
   message: () => props.message,
   required: () => props.required,
   detailsId,
+  // "split" fields hold their own text, so the reset lands on the fields, not on the combined shell.
+  resetSegment: (which) => {
+    (which === "start" ? startFieldRef : endFieldRef).value?.reset();
+  },
 });
 
 // Seeded from the order check so an out-of-order initial model never reports a transient true.

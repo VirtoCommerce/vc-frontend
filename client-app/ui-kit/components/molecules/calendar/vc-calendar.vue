@@ -296,8 +296,11 @@ defineExpose({
   // (_ui-kit-tokens.scss): component key, then the shared solid-primary override, then the palette —
   // so a theme that re-inks primary fills re-inks the calendar with them, in one place.
   // 700, not 500: the system ink is white in light themes, and on primary-500 that measures
-  // 2.11 : 1 in default/mercury (2.14 watermelon, 4.07 purple-pink). On primary-700 the same ink
-  // clears AA in all 7 light presets (5.02–18.27) and all 7 dark ones (8.17–12.36).
+  // 2.11 : 1 in default/mercury (2.14 watermelon, 4.07 purple-pink). The primary-700 fallback clears
+  // AA wherever it fires — 5.02–18.27 across the light presets, 8.17–12.36 across the dark ones.
+  // A preset that defines the shared key intercepts the chain and the fallback never fires there, so
+  // that arm has to be measured on its own pair: red.dark pairs #d34247 with white at 4.53 (AA by
+  // 0.03), default.dark and mercury.dark pair #f99e24 with white at 2.11, as their buttons already do.
   --selected-bg: var(--vc-calendar-selected-bg, var(--color-vc-background-solid-primary, var(--color-primary-700)));
   --selected-text: var(--vc-calendar-selected-text, var(--color-vc-text-solid-primary, var(--color-additional-50)));
 

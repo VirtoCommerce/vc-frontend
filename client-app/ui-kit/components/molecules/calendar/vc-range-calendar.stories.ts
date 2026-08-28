@@ -220,7 +220,7 @@ export const Unavailable: StoryType = {
     docs: {
       description: {
         story:
-          "`disabledDate` predicate marks weekends as unavailable (data-unavailable) — distinct from min/max disabled.",
+          "`disabledDate` predicate marks weekends as unavailable (data-unavailable) — distinct from min/max disabled. A range cannot span an unavailable day, so the seeded Thu–Fri range stays inside one work week.",
       },
       source: {
         code: `
@@ -237,7 +237,7 @@ export const Unavailable: StoryType = {
   render: (args) => ({
     components: { VcRangeCalendar },
     setup() {
-      const value = ref<VcDateRangeType | undefined>({ start: "2026-10-08", end: "2026-10-14" });
+      const value = ref<VcDateRangeType | undefined>({ start: "2026-10-08", end: "2026-10-09" });
       const disabledDate = (iso: string) => {
         const d = new Date(`${iso}T00:00:00Z`);
         const dow = d.getUTCDay();

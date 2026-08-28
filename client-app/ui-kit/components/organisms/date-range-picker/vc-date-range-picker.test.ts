@@ -51,7 +51,8 @@ function mountSplit(props = {}, options: { attachTo?: Element } = {}) {
       ...props,
     },
     global: {
-      // Unrendered "combined" branch, but the compiled template resolves every component up front.
+      // The picker's template resolves both branches up front, so the unrendered "combined" ones are
+      // needed too. VcCalendar is not one of them: VcDatePicker renders it, and "split" renders that.
       components: {
         VcDateInput,
         VcInput,
@@ -93,12 +94,15 @@ function mountBoundPicker(initial: VcDateRangeType | undefined, props: Record<st
 
   const wrapper = mount(Parent, {
     global: {
+      // VcCalendar is not resolved by the picker's own template: VcDatePicker renders it, and the
+      // it.each below mounts this helper with layout: "split", which renders VcDatePicker.
       components: {
         VcDateInput,
         VcInput,
         VcInputDetails,
         VcButton,
         VcPopover,
+        VcCalendar,
         VcRangeCalendar,
         VcDateRangeInput,
         VcDatePicker,
@@ -325,6 +329,30 @@ describe("VcDateRangePicker", () => {
     expect(state.value).toEqual({ start: "2026-08-10", end: "2026-08-20" });
     expect(wrapper.findAll("input").map((input) => input.element.value)).toEqual(["08/10/2026", "08/20/2026"]);
     expect(picker.emitted("update:valid")?.at(-1)).toEqual([true]);
+
+    wrapper.unmount();
+  });
+
+  // Valid-but-uncommitted text, in the half the calendar did NOT change: no watch sees it, because the
+  // model's start never moved. Only the reset inside onCalendarUpdate puts the segment back on the model.
+  it("drops valid uncommitted text in the half the calendar did not change", async () => {
+    const { wrapper, state } = mountBoundPicker({ start: "2026-10-08" }, { updateOn: "enter" });
+    await flushPromises();
+
+    const [startInput] = wrapper.findAll("input");
+    expect(startInput.element.value).toBe("10/08/2026");
+
+    await startInput.setValue("10/15/2026");
+    await startInput.trigger("blur");
+    expect(state.value).toEqual({ start: "2026-10-08" });
+
+    await wrapper.find('button[aria-haspopup="dialog"]').trigger("click");
+    await flushPromises();
+    await clickDay("2026-10-20");
+    await flushPromises();
+
+    expect(state.value).toEqual({ start: "2026-10-08", end: "2026-10-20" });
+    expect(wrapper.findAll("input")[0].element.value).toBe("10/08/2026");
 
     wrapper.unmount();
   });

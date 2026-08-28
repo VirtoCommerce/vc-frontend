@@ -140,7 +140,7 @@ interface IProps {
   min?: string;
   /** ISO YYYY-MM-DD max boundary, applied to both segments. */
   max?: string;
-  /** Predicate that returns true to mark a date unavailable. Receives ISO YYYY-MM-DD. */
+  /** Predicate that returns true to mark a date unavailable. Receives ISO YYYY-MM-DD. Rejects typed dates it matches. */
   disabledDate?: VcCalendarDisabledDateType;
   /** Override locale; defaults to active i18n locale. */
   locale?: string;
@@ -225,14 +225,15 @@ const {
   setSegmentValid,
   setSegmentErrorText,
   mergeRange,
-  startSegmentValid,
-  endSegmentValid,
 } = useDateRangeField({
   modelValue: () => props.modelValue,
   error: () => props.error,
   message: () => props.message,
   required: () => props.required,
   detailsId,
+  resetSegment: (which) => {
+    (which === "start" ? startInputRef : endInputRef).value?.reset();
+  },
 });
 
 // Immediate so the empty (valid) state is reported on mount.
@@ -244,22 +245,6 @@ function onSegment(which: "start" | "end", value: string | undefined): void {
 }
 
 const { onFocusIn, onFocusOut } = useShellFocusEvents(emit);
-
-// Rejected text can never commit, yet it keeps the whole shell invalid while the model holds a good
-// range — and a segment only resyncs from a change to its OWN half, so text rejected in one segment
-// outlives a commit made in the other. Any commit to the range is the moment to drop it. Text that is
-// merely uncommitted stays: it can still be committed with Enter.
-watch(
-  () => [props.modelValue?.start, props.modelValue?.end] as const,
-  () => {
-    if (!startSegmentValid.value) {
-      startInputRef.value?.reset();
-    }
-    if (!endSegmentValid.value) {
-      endInputRef.value?.reset();
-    }
-  },
-);
 
 // An already-empty segment sees no prop change on clear; nextTick so reset() reads the cleared model.
 function resetSegments(side?: "start" | "end"): void {
@@ -296,8 +281,15 @@ defineExpose({
   $error: "";
   $disabled: "";
 
+  // No $readonly capture: the state has no chrome of its own (each segment renders its own readonly
+  // input), so --readonly is a fork hook only, as .vc-input--readonly is.
+
   --color: var(--vc-input-base-color, theme("colors.primary.500"));
-  --focus-color: rgb(from var(--color) r g b / 0.3);
+  // 0.8, not the house 0.3: the segments are seamless with outline-none inputs, so this ring is the
+  // field's only focus cue, and at 0.3 it composites to 1.46-1.63 : 1 on the surface — under the 3:1
+  // of WCAG 1.4.11. The shell declares its own key and is an ancestor of the segments, so it never
+  // inherits .vc-input's. Dark needs the same 0.8, so there is no dark-layer override for it.
+  --focus-color: rgb(from var(--color) r g b / 0.8);
   --radius: var(--vc-input-radius, var(--vc-radius, 0.5rem));
   --vc-button-radius: calc(var(--radius) - 2px);
 

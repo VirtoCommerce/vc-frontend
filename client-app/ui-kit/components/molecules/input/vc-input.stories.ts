@@ -336,7 +336,10 @@ export const Seamless: StoryType = {
 
       <div>
         <div class="mb-2 text-sm font-medium text-neutral-700">Correct usage — composed inside one shared shell</div>
-        <div class="flex h-11 items-center rounded-lg border border-neutral-400 bg-additional-50 p-0.5">
+        <div
+          class="flex h-11 items-center rounded-[--radius] border border-neutral-400 bg-additional-50 p-0.5"
+          style="--radius: var(--vc-input-radius, var(--vc-radius, 0.5rem))"
+        >
           <VcInput seamless hide-details placeholder="Start" class="flex-1" />
           <span class="px-1 text-neutral-400" aria-hidden="true">–</span>
           <VcInput seamless hide-details placeholder="End" class="flex-1" />
@@ -346,7 +349,7 @@ export const Seamless: StoryType = {
       <div class="grid grid-cols-3 gap-4">
         <div>
           <div class="mb-2 text-sm font-medium text-neutral-700">seamless + message (details row stays)</div>
-          <div class="rounded-lg border border-neutral-400 bg-additional-50 p-0.5">
+          <div class="rounded-[--radius] border border-neutral-400 bg-additional-50 p-0.5" style="--radius: var(--vc-input-radius, var(--vc-radius, 0.5rem))">
             <VcInput
               seamless
               aria-label="Segment"
@@ -357,13 +360,13 @@ export const Seamless: StoryType = {
         </div>
         <div>
           <div class="mb-2 text-sm font-medium text-neutral-700">seamless + counter (also stays)</div>
-          <div class="rounded-lg border border-neutral-400 bg-additional-50 p-0.5">
+          <div class="rounded-[--radius] border border-neutral-400 bg-additional-50 p-0.5" style="--radius: var(--vc-input-radius, var(--vc-radius, 0.5rem))">
             <VcInput seamless counter aria-label="Segment" :maxlength="20" model-value="Segment" />
           </div>
         </div>
         <div>
           <div class="mb-2 text-sm font-medium text-neutral-700">seamless hide-details (chrome-free)</div>
-          <div class="rounded-lg border border-neutral-400 bg-additional-50 p-0.5">
+          <div class="rounded-[--radius] border border-neutral-400 bg-additional-50 p-0.5" style="--radius: var(--vc-input-radius, var(--vc-radius, 0.5rem))">
             <VcInput seamless hide-details placeholder="Segment" message="Never rendered" />
           </div>
         </div>
@@ -374,10 +377,14 @@ export const Seamless: StoryType = {
     docs: {
       description: {
         story:
-          "`seamless` strips border, background, focus ring, and fixed height — it is a composition primitive, not a standalone style, so it looks broken used bare on a page (top example). The real use case is embedding one or more segments inside a single parent-owned bordered shell that supplies the chrome instead — see VcDateRangeInput, which renders two `seamless hide-details` segments inside one shared shell. The `message`/`counter` row is an independent concern from the chrome: `seamless` alone still renders it for both `message` (bottom-left) and `counter` (bottom-center) — only pair it with `hide-details` (bottom-right) when the parent owns error display and description association itself.",
+          "`seamless` strips border, background, focus ring, and fixed height — it is a composition primitive, not a standalone style, so it looks broken used bare on a page (top example). The real use case is embedding one or more segments inside a single parent-owned bordered shell that supplies the chrome instead — see VcDateRangeInput, which renders two `seamless hide-details` segments inside one shared shell. The shells below take their corner radius from the same `--vc-input-radius` / `--vc-radius` chain the component does, so a fork that retunes the token retunes the composition too. The `message`/`counter` row is an independent concern from the chrome: `seamless` alone still renders it for both `message` (bottom-left) and `counter` (bottom-center) — only pair it with `hide-details` (bottom-right) when the parent owns error display and description association itself.",
       },
       source: {
-        code: `<div class="flex h-11 items-center rounded-lg border border-neutral-400 bg-additional-50 p-0.5">
+        code: `<!-- the shell owns the chrome, so it reads the radius token chain VcInput itself would -->
+<div
+  class="flex h-11 items-center rounded-[--radius] border border-neutral-400 bg-additional-50 p-0.5"
+  style="--radius: var(--vc-input-radius, var(--vc-radius, 0.5rem))"
+>
   <VcInput seamless hide-details v-model="range.start" class="flex-1" />
   <span aria-hidden="true">–</span>
   <VcInput seamless hide-details v-model="range.end" class="flex-1" />

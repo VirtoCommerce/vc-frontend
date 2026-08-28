@@ -37,7 +37,7 @@ const meta: Meta<typeof VcDateRangePicker> = {
       control: "select",
       options: LAYOUTS,
       description:
-        '"combined" = one `VcDateRangeInput` with two segments, opening a single `VcRangeCalendar` in a `VcPopover`. "split" = two `VcDatePicker`s, each with its own calendar, sharing one label and one details row. Every story below can be switched between the two from this control.',
+        '"combined" = one `VcDateRangeInput` with two segments, opening a single `VcRangeCalendar` in a `VcPopover`. "split" = two `VcDatePicker`s, each with its own calendar, sharing one label and one details row. Every story can be switched between the two from this control, except MinMax, which pins both layouts on purpose to show them side by side.',
       type: { name: "string", required: false },
       table: { type: { summary: LAYOUTS.join(" | ") }, defaultValue: { summary: "combined" } },
     },
@@ -84,6 +84,11 @@ const meta: Meta<typeof VcDateRangePicker> = {
     required: { control: "boolean" },
     clearable: { control: "boolean" },
     error: { control: "boolean" },
+    mask: { control: "boolean" },
+    showEmptyDetails: {
+      control: "boolean",
+      description: "Keep the details row's height reserved while it has no message, so the layout below never shifts.",
+    },
     showFooter: { control: "boolean" },
     closeOnSelect: { control: "boolean" },
     enableTeleport: { control: "boolean" },
@@ -386,6 +391,70 @@ export const Teleport: StoryType = {
     template: `
       <div style="overflow: hidden; height: 12rem; padding: 1rem; border: 1px dashed var(--color-neutral-400)">
         <VcDateRangePicker v-bind="args" v-model="value" />
+      </div>
+    `,
+  }),
+};
+
+export const WithMask: StoryType = {
+  args: { label: "Date range", mask: true },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`mask: true` enables a locale-aware input mask on every text segment, in both layouts. Separators are auto-inserted as digits are typed, and a paste of a recognizable date format is reformatted into the locale's display format. The orders filter ships with it on, so this is the typing experience production actually has.",
+      },
+      source: {
+        code: `<VcDateRangePicker v-model="value" label="Date range" mask />`,
+      },
+    },
+  },
+  render: (args) => ({
+    components: { VcDateRangePicker },
+    setup() {
+      const value = ref<VcDateRangeType | undefined>(undefined);
+      return { args, value };
+    },
+    template: `
+      <div class="space-y-2">
+        <VcDateRangePicker v-bind="args" v-model="value" />
+        <div class="text-sm text-neutral-600">Range: {{ value ?? "(none)" }}</div>
+      </div>
+    `,
+  }),
+};
+
+export const ReservedDetailsRow: StoryType = {
+  args: { label: "Date range", mask: true },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`showEmptyDetails` reserves the details row's height while there is no message, so nothing below the field moves when validation appears — what the orders filter needs, since the picker sits above the results. The two pickers here are identical except for that prop, which is pinned per instance here rather than driven by the toolbar control: type `99/99/9999` into a start segment and tab out; only the second one pushes the text beneath it down.",
+      },
+      source: {
+        code: `<VcDateRangePicker v-model="value" label="Date range" mask show-empty-details />`,
+      },
+    },
+  },
+  render: (args) => ({
+    components: { VcDateRangePicker },
+    setup() {
+      const reserved = ref<VcDateRangeType | undefined>(undefined);
+      const collapsing = ref<VcDateRangeType | undefined>(undefined);
+      return { args, reserved, collapsing };
+    },
+    template: `
+      <div class="grid max-w-2xl grid-cols-2 gap-6">
+        <div>
+          <VcDateRangePicker v-bind="args" v-model="reserved" show-empty-details />
+          <div class="text-sm text-neutral-600">show-empty-details</div>
+        </div>
+
+        <div>
+          <VcDateRangePicker v-bind="args" v-model="collapsing" :show-empty-details="false" />
+          <div class="text-sm text-neutral-600">default</div>
+        </div>
       </div>
     `,
   }),

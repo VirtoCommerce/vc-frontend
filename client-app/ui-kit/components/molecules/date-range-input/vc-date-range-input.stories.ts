@@ -33,6 +33,11 @@ const meta: Meta<typeof VcDateRangeInput> = {
     required: { control: "boolean" },
     clearable: { control: "boolean" },
     error: { control: "boolean" },
+    mask: { control: "boolean" },
+    showEmptyDetails: {
+      control: "boolean",
+      description: "Keep the details row's height reserved while it has no message, so the layout below never shifts.",
+    },
   },
 };
 
@@ -232,6 +237,70 @@ export const PartialRange: StoryType = {
       <div class="space-y-2">
         <VcDateRangeInput v-bind="args" v-model="value" />
         <div class="text-sm text-neutral-600">Range: {{ value ?? "(none)" }}</div>
+      </div>
+    `,
+  }),
+};
+
+export const WithMask: StoryType = {
+  args: { label: "Date range", mask: true },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`mask: true` enables a locale-aware input mask on BOTH segments. Separators are auto-inserted as digits are typed, and a paste of a recognizable date format is reformatted into the locale's display format. This is what the orders filter ships, so it is the typing experience to check first.",
+      },
+      source: {
+        code: `<VcDateRangeInput v-model="value" label="Date range" mask />`,
+      },
+    },
+  },
+  render: (args) => ({
+    components: { VcDateRangeInput },
+    setup() {
+      const value = ref<VcDateRangeType | undefined>(undefined);
+      return { args, value };
+    },
+    template: `
+      <div class="space-y-2">
+        <VcDateRangeInput v-bind="args" v-model="value" />
+        <div class="text-sm text-neutral-600">Range: {{ value ?? "(none)" }}</div>
+      </div>
+    `,
+  }),
+};
+
+export const ReservedDetailsRow: StoryType = {
+  args: { label: "Date range", mask: true },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`showEmptyDetails` reserves the details row's height while there is no message, so nothing below the field moves when validation appears. The two fields here are identical except for that prop, which is pinned per instance here rather than driven by the toolbar control: type `99/99/9999` into the start segment of each and tab out — only the right one pushes the text beneath it down.",
+      },
+      source: {
+        code: `<VcDateRangeInput v-model="value" label="Date range" mask show-empty-details />`,
+      },
+    },
+  },
+  render: (args) => ({
+    components: { VcDateRangeInput },
+    setup() {
+      const reserved = ref<VcDateRangeType | undefined>(undefined);
+      const collapsing = ref<VcDateRangeType | undefined>(undefined);
+      return { args, reserved, collapsing };
+    },
+    template: `
+      <div class="grid max-w-2xl grid-cols-2 gap-6">
+        <div>
+          <VcDateRangeInput v-bind="args" v-model="reserved" show-empty-details />
+          <div class="text-sm text-neutral-600">show-empty-details</div>
+        </div>
+
+        <div>
+          <VcDateRangeInput v-bind="args" v-model="collapsing" :show-empty-details="false" />
+          <div class="text-sm text-neutral-600">default</div>
+        </div>
       </div>
     `,
   }),

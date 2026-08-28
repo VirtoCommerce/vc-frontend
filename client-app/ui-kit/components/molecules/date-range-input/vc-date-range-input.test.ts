@@ -1,7 +1,7 @@
 import { flushPromises, mount } from "@vue/test-utils";
 import { describe, expect, it, vi } from "vitest";
 import { defineComponent, ref } from "vue";
-import { VcInputDetails } from "@/ui-kit/components/atoms";
+import { VcInputDetails, VcLabel } from "@/ui-kit/components/atoms";
 import VcButton from "../button/vc-button.vue";
 import VcDateInput from "../date-input/vc-date-input.vue";
 import VcInput from "../input/vc-input.vue";
@@ -328,9 +328,18 @@ describe("VcDateRangeInput", () => {
       expect(inputs.map((input) => input.attributes("aria-invalid"))).toEqual(["false", "false"]);
     });
 
+    // VcLabel stays real here: the asterisk is what the segments must NOT repeat, so a stub proves nothing.
     it("forwards required to both segments while the asterisk stays on the group label", () => {
-      const wrapper = mountInput({ required: true });
+      const wrapper = mount(VcDateRangeInput, {
+        props: { modelValue: undefined, mask: true, label: "Date range", required: true },
+        global: {
+          components: { VcDateInput, VcInput, VcInputDetails, VcLabel },
+          stubs: { VcIcon: true, VcTooltip: true, VcButton: true },
+          directives: { "html-safe": {} },
+        },
+      });
       const inputs = wrapper.findAll("input");
+      expect(wrapper.findAll(".vc-label__asterisk")).toHaveLength(1);
       expect(inputs.map((input) => input.attributes("aria-required"))).toEqual(["true", "true"]);
     });
 

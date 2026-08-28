@@ -348,11 +348,13 @@ describe("useDateField — errorText touched-gating", () => {
     field.onBlur();
     expect(field.errorText.value).toBe("ui_kit.date_input.invalid_format");
 
+    // Locale change clears displayValue (modelValue is undefined) so error hides via isEmpty, NOT touched reset.
     locale!.value = "de-DE";
     await nextTick();
     expect(field.displayValue.value).toBe("");
     expect(field.errorText.value).toBeUndefined();
 
+    // Typing without blurring: error surfaces immediately, proving touched survived the locale change.
     field.displayValue.value = "garbage2";
     expect(field.errorText.value).toBe("ui_kit.date_input.invalid_format");
   });
@@ -418,6 +420,7 @@ describe("useDateField — disabledDate predicate", () => {
   });
 
   test("throwing predicate is swallowed: input treated as valid, no error surfaced, Logger.error called", () => {
+    // Mirror VcCalendar behavior — a consumer-supplied predicate that throws must not break the field.
     const loggerSpy = vi.spyOn(Logger, "error").mockImplementation(() => {});
     const { field, onCommit } = setup({
       modelValue: undefined,
@@ -427,10 +430,12 @@ describe("useDateField — disabledDate predicate", () => {
     });
     field.displayValue.value = "10/17/2026";
     field.onBlur();
+    // Predicate throws are swallowed → field stays valid and commits through.
     expect(field.isValid.value).toBe(true);
     expect(field.errorText.value).toBeUndefined();
     expect(onCommit).toHaveBeenCalledExactlyOnceWith("2026-10-17");
-    // isDisabledDateHit is read more than once per evaluation.
+    // Only isValid reaches the predicate here: the throw is swallowed as false, so isValid stays true
+    // and errorText short-circuits on it. isValid's evaluation count is not pinned, so assert loosely.
     expect(loggerSpy).toHaveBeenCalled();
     expect(loggerSpy.mock.calls[0][0]).toBe("VcDateInput: disabledDate predicate threw");
     loggerSpy.mockRestore();

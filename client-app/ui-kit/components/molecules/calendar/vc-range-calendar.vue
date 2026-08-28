@@ -137,6 +137,11 @@ interface IProps {
   /**
    * Predicate that returns true to mark a date unavailable (hatched, distinct from min/max). Receives ISO YYYY-MM-DD.
    * The grid reads it once at mount: reka takes the predicate by value, so swapping it later does not re-filter the rendered days.
+   *
+   * A range may not span an unavailable day: reka refuses the completing pick and only the anchor
+   * survives, so picking a day beyond one never yields a range. `min`/`max` bound the ENDS of the grid
+   * and cannot express this — no prop here marks a day a range may pass over. Typing is not gated the
+   * same way: a text field rejects a date the predicate matches, never the span between two it accepts.
    */
   disabledDate?: VcCalendarDisabledDateType;
   /** Show the footer (Clear button). */
@@ -427,18 +432,22 @@ defineExpose({ focusActiveCell });
   // The single calendar's keys stay in the chain so an existing override keeps working.
   --radius: var(--vc-range-calendar-radius, var(--vc-calendar-radius, var(--vc-radius, 0.75rem)));
   --day-radius: var(--vc-range-calendar-day-radius, var(--vc-calendar-day-radius, var(--vc-radius, 0.375rem)));
-  --focus-ring: rgb(from var(--color-primary-500) r g b / 0.35);
+  // 0.8, not the house 0.3-0.35: this ring is the only focus cue on the day grid, and at 0.35 it
+  // composites to 1.56-1.77 : 1 on the calendar surface, under the 3:1 of WCAG 1.4.11. Dark needs the
+  // same value, so it is set once here rather than re-declared in the dark layer.
+  --focus-ring: rgb(from var(--color-primary-500) r g b / 0.8);
 
-  // Range endpoints, as a pair: own key first (a fork restyling the single calendar should not silently
-  // reshape this one), then the single calendar's key, then the shared solid-primary override, then the
-  // palette — the same chain the buttons use. 700 rather than 500 for contrast: see vc-calendar.
+  // Range endpoints, as a pair: own key, then the shared solid-primary override, then the palette —
+  // the same chain the buttons use. The single calendar's --vc-calendar-selected-* keys are deliberately
+  // NOT in it: both were born alongside these, so there is nothing legacy to honour, and reading them
+  // would let a fork restyling VcCalendar silently repaint this one. 700 rather than 500: see vc-calendar.
   --selected-bg: var(
     --vc-range-calendar-selected-bg,
-    var(--vc-calendar-selected-bg, var(--color-vc-background-solid-primary, var(--color-primary-700)))
+    var(--color-vc-background-solid-primary, var(--color-primary-700))
   );
   --selected-text: var(
     --vc-range-calendar-selected-text,
-    var(--vc-calendar-selected-text, var(--color-vc-text-solid-primary, var(--color-additional-50)))
+    var(--color-vc-text-solid-primary, var(--color-additional-50))
   );
 
   --bg-color: var(--color-additional-50);
@@ -625,14 +634,6 @@ defineExpose({ focusActiveCell });
     }
 
     /* Kept last: these tie with :hover and the state attributes above, so source order decides. */
-    /* range-middle: reka marks ALL span cells data-selected, incl. endpoints — exclude them */
-    &[data-selected]:not([data-selection-start]):not([data-selection-end]) {
-      @apply text-primary-800;
-
-      background: var(--color-primary-100);
-      border-radius: 0;
-    }
-
     &[data-selection-start],
     &[data-selection-end] {
       @apply font-bold;
@@ -672,13 +673,19 @@ defineExpose({ focusActiveCell });
       border-end-end-radius: var(--day-radius);
     }
 
-    /* hover-preview band; endpoints and run edges are excluded so their own fills win */
+    /* The committed in-range band and the hover-preview band read the same, and reka never sets both
+       (data-highlighted only exists while an anchor is pending). Endpoints and run edges are excluded
+       from each so their own fills win; reka marks ALL span cells data-selected, endpoints included.
+       Split the list if the two states are ever meant to differ. */
+    &[data-selected]:not([data-selection-start]):not([data-selection-end]),
     &[data-highlighted]:not([data-highlighted-start]):not([data-highlighted-end]):not([data-selection-start]):not(
         [data-selection-end]
       ) {
       @apply text-primary-800;
 
       background: var(--color-primary-100);
+      /* The fill alone sits at 1.20-1.33 : 1 on the surface, so it cannot be the only in-range cue
+         (WCAG 1.4.1). These rails clear 3:1 in every preset. */
       border-top: 1px dashed var(--color-primary-500);
       border-bottom: 1px dashed var(--color-primary-500);
       border-radius: 0;

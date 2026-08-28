@@ -158,6 +158,60 @@ describe("VcRangeCalendar", () => {
     expect(startAttributed).toBeFalsy();
   });
 
+  describe("unavailable days inside a range", () => {
+    // Sat 2026-10-10 and Sun 2026-10-11 sit between the two work weeks.
+    const weekends = (iso: string) => [0, 6].includes(new Date(`${iso}T00:00:00Z`).getUTCDay());
+
+    it("completes a range that stays clear of unavailable days", async () => {
+      const { wrapper, state } = mountBoundCal({ start: "2026-10-05", end: undefined }, { disabledDate: weekends });
+      await flushPromises();
+
+      await clickDay("2026-10-09");
+
+      expect(state.value).toEqual({ start: "2026-10-05", end: "2026-10-09" });
+
+      wrapper.unmount();
+    });
+
+    // Pins a documented limitation, not desired behaviour: reka rejects the completing click without emitting,
+    // and the repeat press re-anchors there. See the `disabledDate` prop doc.
+    it("rejects a range spanning an unavailable day, then re-anchors on the repeat press", async () => {
+      const { wrapper, state, emits } = mountBoundCal(
+        { start: "2026-10-05", end: undefined },
+        { disabledDate: weekends },
+      );
+      await flushPromises();
+
+      await clickDay("2026-10-12");
+
+      expect(emits).toEqual([]);
+      expect(state.value).toEqual({ start: "2026-10-05", end: undefined });
+
+      await clickDay("2026-10-12");
+
+      expect(state.value).toEqual({ start: "2026-10-12", end: undefined });
+
+      wrapper.unmount();
+    });
+
+    // The prop doc claims "picking a day beyond one never yields a range" — that has to hold in the
+    // backwards direction too, where the pick would become the START rather than the end.
+    it("rejects a backwards span across an unavailable day", async () => {
+      const { wrapper, state, emits } = mountBoundCal(
+        { start: "2026-10-12", end: undefined },
+        { disabledDate: weekends },
+      );
+      await flushPromises();
+
+      await clickDay("2026-10-05");
+
+      expect(emits).toEqual([]);
+      expect(state.value).toEqual({ start: "2026-10-12", end: undefined });
+
+      wrapper.unmount();
+    });
+  });
+
   describe("end-only range", () => {
     it("does not re-anchor an initial end-only range on mount", async () => {
       const { wrapper, state, emits } = mountBoundCal({ start: undefined, end: "2026-10-14" });

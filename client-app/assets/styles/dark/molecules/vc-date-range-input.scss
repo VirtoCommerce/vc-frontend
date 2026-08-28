@@ -1,6 +1,0 @@
-// Focus ring: bump opacity for dark-mode visibility, as dark/molecules/vc-input.scss does for .vc-input.
-// The shell declares its own --focus-color and is an ancestor of the segments, so it never inherits that one.
-// This is the field's only focus indicator: the segments are seamless (ring-0) with outline-none inputs.
-.vc-date-range-input {
-  --focus-color: rgb(from var(--color) r g b / 0.8);
-}

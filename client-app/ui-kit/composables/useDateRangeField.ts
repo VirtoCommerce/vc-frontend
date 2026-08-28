@@ -10,6 +10,8 @@ export interface IUseDateRangeFieldOptions {
   required: MaybeRefOrGetter<boolean | undefined>;
   /** Id of the shell's details row; the segments reference it through `aria-describedby`. */
   detailsId: string;
+  /** Drops the named segment's uncommitted text. Called on every commit for a segment holding rejected text. */
+  resetSegment?: (which: "start" | "end") => void;
 }
 
 export function useDateRangeField(opts: IUseDateRangeFieldOptions) {
@@ -85,6 +87,25 @@ export function useDateRangeField(opts: IUseDateRangeFieldOptions) {
 
   watch(() => toValue(opts.modelValue), dropLastEmitted);
 
+  // Rejected text can never commit, yet it keeps the whole shell invalid while the model holds a good
+  // range — and a segment only resyncs from a change to its OWN half, so text rejected in one segment
+  // outlives a commit made in the other. Any commit to the range is the moment to drop it. Text that is
+  // merely uncommitted stays: it can still be committed with Enter.
+  watch(
+    () => {
+      const range = toValue(opts.modelValue);
+      return [range?.start, range?.end] as const;
+    },
+    () => {
+      if (!startSegmentValid.value) {
+        opts.resetSegment?.("start");
+      }
+      if (!endSegmentValid.value) {
+        opts.resetSegment?.("end");
+      }
+    },
+  );
+
   /** A range with neither endpoint collapses to `undefined`. */
   function mergeRange(which: "start" | "end", value: string | undefined): VcDateRangeType | undefined {
     const range = lastEmitted ? lastEmitted.range : toValue(opts.modelValue);
@@ -102,9 +123,6 @@ export function useDateRangeField(opts: IUseDateRangeFieldOptions) {
 
   return {
     isValid,
-    /** Per-segment format validity, for shells that need to know WHICH half is holding rejected text. */
-    startSegmentValid,
-    endSegmentValid,
     /** Validation message the shell produced itself; external `message` is not part of it. */
     internalErrorText,
     computedError,
