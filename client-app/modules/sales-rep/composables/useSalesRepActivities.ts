@@ -19,6 +19,9 @@ type UseSalesRepActivitiesOptionsType = {
   // 0 is meaningful (counts only), so ?? keeps it — the default applies only to an absent option.
   take?: number | Ref<number | undefined> | (() => number | undefined);
   skip?: number | Ref<number | undefined> | (() => number | undefined);
+  // Selecting the per-category counts is what makes the backend read EVERY category, tracked ones
+  // included — so a caller that renders no badges leaves them out and waits only for its own rows.
+  withCategoryCounts?: boolean;
 };
 
 // Owns the salesRepActivities op: a merged, newest-first feed of order/customer events (exact) and
@@ -36,6 +39,7 @@ export function useSalesRepActivities(options: UseSalesRepActivitiesOptionsType 
     periodTo: toValue(options.periodTo),
     take: toValue(options.take) ?? ACTIVITY_PAGE_SIZE,
     skip: toValue(options.skip) ?? 0,
+    withCategoryCounts: options.withCategoryCounts ?? true,
   }));
 
   const { result, loading, error, onError } = useSalesRepHubQuery(SalesRepActivitiesDocument, variables, {

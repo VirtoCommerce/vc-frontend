@@ -48,7 +48,8 @@ const activitiesRouteName = ACTIVITIES_ROUTE_NAME;
 
 // Latest few events across ALL assigned accounts — deliberately no organizationId, even on a scoped
 // surface; the full feed lives on the Activities page.
-const { items, loading, error } = useSalesRepActivities({ take: MY_ACTIVITY_TAKE });
+// No badges here, so none are selected — the widget waits for its own rows and nothing else.
+const { items, loading, error } = useSalesRepActivities({ take: MY_ACTIVITY_TAKE, withCategoryCounts: false });
 
 // As many skeleton rows as the widget will show, so the height holds when data arrives.
 const skeletonRows = MY_ACTIVITY_TAKE;

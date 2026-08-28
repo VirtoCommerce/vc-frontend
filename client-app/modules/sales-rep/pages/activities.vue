@@ -148,8 +148,10 @@ const { t } = useI18n();
 const category = ref<string | undefined>(undefined);
 const page = ref(1);
 
-// The hub's shared period model (Lifetime / This month / This year), surfaced as chips.
-const { period, from: periodFrom, to: periodTo } = useSalesRepPeriodFilter();
+// The hub's shared period model (Lifetime / This month / This year), surfaced as chips. It opens on
+// This month: with no bounds the tracked categories are read from GA4's earliest supported date (2015),
+// so "All time" scans a decade to render a page. It stays one chip away.
+const { period, from: periodFrom, to: periodTo } = useSalesRepPeriodFilter("month");
 
 // Chips speak "rule name | undefined"; undefined is the lifetime baseline.
 const periodRule = computed<string | undefined>({
@@ -192,29 +194,47 @@ watch(category, () => {
   modeChip.value = undefined;
 });
 
-// ONE query per view: the connection returns items + categoryCounts + totalCount together, so the
-// tab badges always share the rows' vintage. A separate counts-only run (take: 0) hit a different
-// backend cache entry and could disagree with the rows while new analytics data landed.
-const { items, categoryCounts, totalCount, loading, error } = useSalesRepActivities({
+// The rows of the selected tab, and nothing else: without categoryCounts selected the backend reads
+// only the category being shown, so a database-backed tab (Orders, Customers) never waits on Google.
+const { items, totalCount, loading, error } = useSalesRepActivities({
   organizationId: () => props.organizationId,
   categories: () => (category.value ? [category.value] : undefined),
   periodFrom,
   periodTo,
   take: ACTIVITY_PAGE_SIZE,
   skip: () => (page.value - 1) * ACTIVITY_PAGE_SIZE,
+  withCategoryCounts: false,
 });
 
-const countOf = (name: string) => categoryCounts.value.find((entry) => entry.category === name)?.count ?? 0;
+// The badges, in their own request: counting every category is the slow half, and it does not change
+// as the rep switches tabs or turns pages, so it runs once per customer+period and the list never
+// waits for it. take: 0 asks for counts only.
+const { categoryCounts, loading: countsLoading } = useSalesRepActivities({
+  organizationId: () => props.organizationId,
+  periodFrom,
+  periodTo,
+  take: 0,
+});
 
-// "All" sums the same categoryCounts the tab badges read — totalCount is category-scoped once a tab
-// filters the rows, so it can't back the All badge.
-const allCount = computed(() => categoryCounts.value.reduce((sum, entry) => sum + entry.count, 0));
+// The selected tab's badge comes from the rows themselves (totalCount covers exactly the requested
+// categories), so the badge a rep is looking at can never disagree with the list under it — the two
+// requests can otherwise land either side of a backend cache boundary. The other badges are the
+// counts request's job.
+const countOf = (name: string) =>
+  name === category.value
+    ? totalCount.value
+    : (categoryCounts.value.find((entry) => entry.category === name)?.count ?? 0);
+
+// "All" sums the badges; on the All tab the rows request already counted everything it merged.
+const allCount = computed(() =>
+  category.value ? categoryCounts.value.reduce((sum, entry) => sum + entry.count, 0) : totalCount.value,
+);
 
 // keepPreviousResult holds the outgoing response during any refetch, so badges keep their last-known
 // figures across tab/period switches and while a Top view shows (the insights ops carry no
 // categoryCounts). Only the very first load has nothing to hold: the tabs stay up without figures —
 // a premature "(0)" on every tab reads as a real count, then jumps.
-const countsPending = computed(() => loading.value && !categoryCounts.value.length);
+const countsPending = computed(() => countsLoading.value && !categoryCounts.value.length);
 
 // Fixed vocabulary + counts. Zero-count categories keep their tab by design — a rep must see that a
 // category exists and is quiet, not wonder where it went.

@@ -42,19 +42,43 @@ const insights = await vi.hoisted(async () => {
   };
 });
 
-// One op per view: rows AND tab badges come from the same response (a separate counts-only run
-// could return a different data vintage). The captured options let the tests hold the page to that.
-const activityCalls = vi.hoisted(() => ({ options: [] as { take?: number }[] }));
+// Counting every category is the slow half of the feed, so it runs in its own request while the rows
+// of the selected tab load on their own. The two are mocked apart, and the captured options let the
+// tests hold the page to that split.
+const counts = await vi.hoisted(async () => {
+  const { ref } = await import("vue");
+  return {
+    categoryCounts: ref<SalesRepActivityCategoryCountType[]>([]),
+    loading: ref(false),
+  };
+});
+
+type ActivityOptionsType = {
+  take?: number;
+  withCategoryCounts?: boolean;
+  periodFrom?: Ref<string | undefined> | (() => string | undefined);
+};
+
+const activityCalls = vi.hoisted(() => ({ options: [] as ActivityOptionsType[] }));
 vi.mock("../composables/useSalesRepActivities", () => ({
-  useSalesRepActivities: (options: { take?: number } = {}) => {
+  useSalesRepActivities: (options: ActivityOptionsType = {}) => {
     activityCalls.options.push(options);
-    return {
-      items: state.items,
-      categoryCounts: state.categoryCounts,
-      totalCount: state.totalCount,
-      loading: state.loading,
-      error: state.error,
-    };
+
+    return options.withCategoryCounts === false
+      ? {
+          items: state.items,
+          categoryCounts: state.categoryCounts,
+          totalCount: state.totalCount,
+          loading: state.loading,
+          error: state.error,
+        }
+      : {
+          items: state.items,
+          categoryCounts: counts.categoryCounts,
+          totalCount: state.totalCount,
+          loading: counts.loading,
+          error: state.error,
+        };
   },
 }));
 vi.mock("../composables/useSalesRepSearchHistory", async () => {
@@ -168,6 +192,8 @@ beforeEach(() => {
   state.items.value = [];
   state.categoryCounts.value = [];
   state.totalCount.value = 0;
+  counts.categoryCounts.value = [];
+  counts.loading.value = false;
   state.loading.value = false;
   state.error.value = null;
   insights.searchItems.value = [];
@@ -183,23 +209,35 @@ beforeEach(() => {
 });
 
 describe("Activities page", () => {
-  // The badges must share the rows' vintage: a second, counts-only run (take: 0) hits a different
-  // backend cache entry and can disagree with the rows while new analytics data lands.
-  it("runs ONE salesRepActivities query per view — never a separate counts-only run", async () => {
+  // Selecting the badges is what makes the backend read every category, tracked ones included. The
+  // rows request leaves them out — which is what lets a database-backed tab skip Google entirely —
+  // and the badges run once, in a request that does not change as the rep switches tabs.
+  it("splits the rows request from the badge-counts request", async () => {
     const wrapper = createWrapper();
 
-    expect(activityCalls.options).toHaveLength(1);
-    expect(activityCalls.options[0].take).toBe(ACTIVITY_PAGE_SIZE);
+    expect(activityCalls.options).toHaveLength(2);
+    expect(activityCalls.options.find((options) => options.withCategoryCounts === false)?.take).toBe(
+      ACTIVITY_PAGE_SIZE,
+    );
+    expect(activityCalls.options.find((options) => options.withCategoryCounts !== false)?.take).toBe(0);
 
-    // A tab switch re-drives the same reactive query; it must not spawn another op.
+    // A tab switch re-drives the same two reactive queries; it must not spawn more.
     await openTab(wrapper, "searches");
-    expect(activityCalls.options).toHaveLength(1);
+    expect(activityCalls.options).toHaveLength(2);
+  });
+
+  // "All time" reads the tracked categories from GA4's earliest supported date — a decade scanned to
+  // render a page — so the feed opens on a bounded window and leaves the wider one a chip away.
+  it("opens on a bounded period, not All time", () => {
+    createWrapper();
+
+    expect(activityCalls.options.every((options) => toValue(options.periodFrom) !== undefined)).toBe(true);
   });
 
   // Zero-count categories keep their tab: a rep must see a category exists and is quiet, not wonder
   // where it went (analytics-off environments report searches/productViews/logins as 0).
   it("offers every category tab, counts included, even at zero", () => {
-    state.categoryCounts.value = [
+    counts.categoryCounts.value = [
       { category: "orders", count: 7 },
       { category: "searches", count: 0 },
     ];
@@ -213,18 +251,32 @@ describe("Activities page", () => {
     expect(rules[2].label).toContain("(0)");
   });
 
-  // "All" sums the response's categoryCounts — the rows' totalCount is category-scoped once a tab
-  // filters, so it can't back the All badge.
-  it("derives the All badge from the same response's categoryCounts", () => {
-    state.categoryCounts.value = [
+  // On All the rows request already counted everything it merged, so its totalCount IS the All badge.
+  // Once a tab filters the rows, totalCount is category-scoped and All sums the badges instead.
+  it("derives the All badge from the rows on All, and from the badges on a tab", async () => {
+    counts.categoryCounts.value = [
       { category: "orders", count: 2 },
       { category: "logins", count: 1 },
     ];
     state.totalCount.value = 99;
 
     const wrapper = createWrapper();
+    expect(findChips(wrapper)[0].props("allLabel")).toBe("sales_rep.activity.tabs.all (99)");
 
+    await openTab(wrapper, "orders");
     expect(findChips(wrapper)[0].props("allLabel")).toBe("sales_rep.activity.tabs.all (3)");
+  });
+
+  // The badge a rep is looking at can never disagree with the list under it: it comes from the rows
+  // request itself, never from the badge request, which can land the other side of a cache boundary.
+  it("takes the selected tab's badge from the rows request", async () => {
+    counts.categoryCounts.value = [{ category: "orders", count: 2 }];
+    state.totalCount.value = 5;
+
+    const wrapper = createWrapper();
+    await openTab(wrapper, "orders");
+
+    expect((findChips(wrapper)[0].props("rules") as SalesRepRuleType[])[0].label).toContain("(5)");
   });
 
   it("offers the period chips beside the category tabs", () => {
@@ -284,7 +336,7 @@ describe("Activities page", () => {
   });
 
   it("keeps the tabs up without figures while the counts load", () => {
-    state.loading.value = true;
+    counts.loading.value = true;
 
     const wrapper = createWrapper();
     const rules = findChips(wrapper)[0].props("rules") as SalesRepRuleType[];
@@ -296,11 +348,12 @@ describe("Activities page", () => {
   // Only the very first load hides the figures; a refetch (tab/period switch, page turn) holds the
   // last-known counts instead of blanking every badge.
   it("holds the last-known counts on the tabs while a refetch runs", async () => {
-    state.categoryCounts.value = [{ category: "orders", count: 7 }];
+    counts.categoryCounts.value = [{ category: "orders", count: 7 }];
+    state.totalCount.value = 7;
 
     const wrapper = createWrapper();
 
-    state.loading.value = true;
+    counts.loading.value = true;
     await nextTick();
 
     const rules = findChips(wrapper)[0].props("rules") as SalesRepRuleType[];
@@ -308,16 +361,17 @@ describe("Activities page", () => {
     expect(findChips(wrapper)[0].props("allLabel")).toContain("(7)");
   });
 
-  // "No activity yet" fits the lifetime view; a period-scoped feed names the tracked window instead.
-  it("switches the empty-state wording when a period narrows the feed", async () => {
+  // A period-scoped feed names the tracked window; clearing the chip widens it back to lifetime,
+  // where "No activity yet" is the honest wording.
+  it("switches the empty-state wording with the period", async () => {
     const wrapper = createWrapper();
 
-    expect(emptyViews(wrapper)[0].attributes("text")).toBe("sales_rep.activity.empty");
+    expect(emptyViews(wrapper)[0].attributes("text")).toBe("sales_rep.activity.empty_period");
 
-    findChips(wrapper)[1].vm.$emit("update:modelValue", "month");
+    findChips(wrapper)[1].vm.$emit("update:modelValue", undefined);
     await nextTick();
 
-    expect(emptyViews(wrapper)[0].attributes("text")).toBe("sales_rep.activity.empty_period");
+    expect(emptyViews(wrapper)[0].attributes("text")).toBe("sales_rep.activity.empty");
   });
 
   it("renders a row per event with the customer named on the cross-customer feed", () => {
@@ -467,10 +521,11 @@ describe("Activities page — Top|Recent mode", () => {
 
   // The insights ops carry no categoryCounts, so the badges keep the last feed-response figures.
   it("keeps the feed's badge figures while a Top view is shown", async () => {
-    state.categoryCounts.value = [
+    counts.categoryCounts.value = [
       { category: "searches", count: 4 },
       { category: "orders", count: 2 },
     ];
+    state.totalCount.value = 4;
 
     const wrapper = createWrapper();
     await openTab(wrapper, "searches");
