@@ -43,12 +43,17 @@ separate from the host repo:
 
 ```
 my-plugin/
+├── public/
+│   └── plugin.json       # tells the platform the expose key (step 5)
 ├── src/
 │   ├── index.ts          # the plugin entry: exports init()
-│   └── pages/MyPage.vue
+│   └── pages/my-page.vue
 ├── vite.config.ts
 └── package.json
 ```
+
+Version pins below are illustrative — the generator copies the host's own, so read them from the
+output rather than from here.
 
 In `package.json`: pin the facade to its **versioned tarball URL** — a Release asset
 of the (public) host repo, published by the *Core Facade Release* workflow. No
@@ -59,7 +64,7 @@ your code imports** as dev dependencies — Vue included:
 ```jsonc
 {
   "dependencies": {
-    "@vc-frontend/core": "https://github.com/VirtoCommerce/vc-frontend/releases/download/core-v1.0.0/vc-frontend-core-1.0.0.tgz",
+    "@vc-frontend/core": "https://github.com/VirtoCommerce/vc-frontend/releases/download/core-v<CORE_VERSION>/vc-frontend-core-<CORE_VERSION>.tgz",
   },
   "devDependencies": {
     // compile-time only - NOTHING below ships in your bundle (import: false);
@@ -124,6 +129,9 @@ export default defineConfig({
   ],
   build: { target: "esnext" }, // MF entry uses top-level await
   server: { port: 3001, cors: true, origin: "http://localhost:3001" },
+  // `yarn preview` needs this too: Vite 7 defaults preview CORS to off, and the host fetches
+  // your manifest cross-origin.
+  preview: { cors: true },
 });
 ```
 
@@ -152,9 +160,29 @@ Rules of the road:
   something the facade doesn't export, that's a facade extension request (below).
 - `init()` runs **before the host installs the router**, so routes you add here work
   even on a direct deep link.
-- Keep `init()` fast: it has a time budget (5s — the loader's per-phase `loadTimeoutMs`),
+- Keep `init()` fast: it has a time budget (3s — the loader's per-phase `loadTimeoutMs`),
   and the whole app boot waits for it.
-- **Styling:** your components ship their own CSS (plain styles in SFCs work as-is).
+- **Don't name a route after a host route.** `router.addRoute` evicts an existing root-level route
+  that shares the new record's name, so `name: "Checkout"` would take the host's page over. The
+  loader refuses such a claim for the whole load-and-init phase and logs it — including a name
+  nested in `children` (vue-router adds those at root level too), the two-argument
+  `addRoute(parentName, record)` form, and a `removeRoute` of a host name, so remove-then-add does
+  not get you there either. You can still remove routes you added yourself. Pick names nobody else
+  can plausibly use.
+- **Your remote name must match `/^[A-Za-z0-9][A-Za-z0-9._-]*$/`.** No slashes: MF resolves a
+  `loadRemote` id by prefix, so a name containing one can swallow another plugin's request. The
+  scaffolder already writes a compliant name; a hand-edited `plugin.json` is where this bites.
+- **Authorize on the backend, always.** The `permission` your plugin declares only decides whether
+  the host bothers to load it. Your bundle is fetched by a plain `<script>` with no credentials, so
+  anyone can read its code by URL. Every query your plugin makes must be authorized server-side.
+- **`requiredHostVersion` is your promise, not a check.** The scaffolder writes `^<facade version>`,
+  which is the range you were actually built against. You may widen it — a plugin that uses almost
+  nothing from the facade legitimately can — but the loader takes the range at face value, so
+  anything you admit is something you are claiming to work with.
+- **Styling:** your components ship their own CSS (plain styles in SFCs work as-is). Separate
+  stylesheets declared as `contentFiles` are linked into `document.head` right after your module
+  loads, before `init()` runs — so a plugin whose `init()` fails or overruns is still styled rather
+  than rendering a live page with no CSS.
   For **Tailwind**, scaffold with `--with-tailwind` (or copy its output): the plugin
   runs its own utility pass with the **host's design system as preset**
   (`require("@vc-frontend/core/tailwind-preset")` in `tailwind.config.cjs` — colors
@@ -187,8 +215,8 @@ Notes on the host side:
   renders an empty page. A development-mode build resolves the store from
   `APP_BACKEND_URL`, exactly like `yarn dev`.
 - The preview server is **https** (same local certificate as the dev server).
-- The remote list is inlined at **build** time — changing `APP_MODULES_FEDERATION_REMOTES` means
-  rebuilding the host.
+- The env override is inlined at **build** time — changing `APP_MODULES_FEDERATION_REMOTES` means
+  rebuilding the host. (A plugin shipped through the platform needs no host rebuild; see Step 5.)
 
 Open `https://localhost:3000/my-plugin` — your separately-built page renders inside the
 live storefront. In a development-mode build the console confirms the load with
@@ -230,17 +258,28 @@ Once the two servers are up, how you iterate depends on which side you're changi
   longer reproduces). `build`+`preview` is still the canonical run because it matches
   CI/prod; use `yarn dev` when you want the HMR loop.
 
-**Changing the host** — you only rebuild the host when the **remote list/name** changes
-(`APP_MODULES_FEDERATION_REMOTES` is inlined at build time) or host source changes; plain plugin edits
-never need a host rebuild.
+**Changing the host** — you only rebuild the host when the **remote list/name** in the env override
+changes (it is inlined at build time) or host source changes; plain plugin edits never need a host
+rebuild.
 
 ## Step 5 — ship it
 
+**Primary path — inside a backend module.** Build `dist/` into the module's
+`plugins/vc-frontend/` folder and the platform advertises it; no host rebuild. The module must
+depend on `VirtoCommerce.XFrontend`, and a `plugin.json` beside the bundle must declare the expose
+key — the platform otherwise defaults to `./Module`, while this scaffold exposes `./plugin`. The
+scaffolder already wrote it as `public/plugin.json`, which Vite copies into `dist/`:
+
+```json
+{ "id": "my-plugin", "remote": { "name": "my-plugin", "exposed": "./plugin" } }
+```
+
+**Externally hosted alternative.**
+
 1. Build and upload `dist/` (manifest + chunks) to trusted **https** hosting.
-2. Add the manifest URL to the host's `APP_MODULES_FEDERATION_REMOTES` and rebuild the host
-   (the remote list is inlined at build time — settings-driven runtime discovery
-   is a planned follow-up, `TODO.md` #2).
-3. Add the plugin origin to the storefront CSP (`script-src`, `connect-src`).
+2. Add the manifest URL to the host's `APP_MODULES_FEDERATION_REMOTES` and rebuild the host.
+3. Add the plugin origin to the storefront CSP (`script-src`, `connect-src`, `style-src` — your
+   stylesheets arrive by URL too).
 
 ---
 

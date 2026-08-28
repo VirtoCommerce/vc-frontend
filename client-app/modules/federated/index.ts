@@ -1,11 +1,13 @@
 import { loadRemote, registerRemotes } from "@module-federation/enhanced/runtime";
+import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { version as CORE_VERSION } from "@/core-api/package.json";
 import { checkHostCompatibility } from "./version-gate";
+import type { RouteRecordRaw, Router } from "vue-router";
 
 /**
  * Host-side loader for Module Federation plugins. For each configured
- * remote: read its manifest, version-check it, `loadRemote` its `./plugin` expose, and
+ * remote: read its manifest, version-check it, `loadRemote` its declared expose, and
  * call `init()`. Plugins bind to the host's live services via the shared facade.
  * - Version safety: an incompatible remote is skipped before any of its code runs.
  * - Isolation: one bad remote can't abort the others; outcomes are logged/returned.
@@ -13,21 +15,47 @@ import { checkHostCompatibility } from "./version-gate";
  *   installing the router, so a hung remote is *bounded* — it degrades to failed/skipped
  *   within its budget rather than hanging boot forever. There are TWO budget knobs
  *   (manifestTimeoutMs, loadTimeoutMs — the latter bounds load and init separately),
- *   so one remote may legally take up to manifest + 2×load (defaults: 3s + 5s + 5s =
- *   13s). bootstrap.ts additionally holds a BOOT_BACKSTOP_MS above that sum — a true
- *   backstop that fires only when these budgets malfunction or the loader chunk fetch
- *   itself hangs; keep it > manifest + 2×load when changing the defaults here.
- * Discovery is env-driven (`APP_MODULES_FEDERATION_REMOTES`); the harness ships no built-in remote.
+ *   so one remote may legally take up to manifest + 2×load (defaults: 2s + 3s + 3s =
+ *   8s). bootstrap.ts additionally holds a BOOT_BACKSTOP_MS above that sum PLUS its own
+ *   DISCOVERY_TIMEOUT_MS — a true backstop that fires only when these budgets malfunction
+ *   or the loader chunk fetch itself hangs; keep it > discovery + manifest + 2×load when
+ *   changing the defaults here.
+ * Discovery has two sources: the platform's plugin list (xAPI `store.plugins`, fetched by the
+ * caller) and `APP_MODULES_FEDERATION_REMOTES`, which wins when set so a local remote is never
+ * overridden by what the backend serves. The harness ships no built-in remote.
  */
 
-/** The contract every federated plugin's `./plugin` expose must satisfy. */
+/** The contract every federated plugin's declared expose must satisfy. */
 interface IFederatedPlugin {
   init?: () => void | Promise<void>;
 }
 
 interface IRemoteDescriptor {
   name: string;
+  /** Manifest URL, never remoteEntry.js — see the ".json" rule in resolveEnvRemotes. */
   entry: string;
+  /** MF expose key: "./Module" by the platform's default, "./plugin" from our scaffold. */
+  exposed: string;
+  permission?: string;
+  styles: string[];
+  /**
+   * Env descriptors may legitimately live on another origin (see isAllowedRemoteUrl); platform
+   * descriptors may not. Carried on the descriptor because isCompatible re-checks the manifest
+   * RESPONSE url and cannot otherwise tell the two sources apart.
+   */
+  allowCrossOrigin?: boolean;
+  /** The platform module's version, for logs only — compatibility rides on requiredHostVersion. */
+  version?: string;
+}
+
+/** One plugin as xAPI projects it (`store.plugins`); structural so the loader stays off the core GraphQL layer. */
+export interface IPlatformPlugin {
+  id: string;
+  version?: string | null;
+  permission?: string | null;
+  entry?: { type?: string | null; path?: string | null; hash?: string | null } | null;
+  contentFiles?: readonly ({ type?: string | null; path?: string | null; hash?: string | null } | null)[] | null;
+  remote?: { name?: string | null; exposed?: string | null } | null;
 }
 
 /** Subset of the MF manifest the host reads before executing plugin code. */
@@ -45,6 +73,16 @@ export interface IFederatedLoadResult {
 }
 
 export interface IFederatedLoaderOptions {
+  /** What the platform advertises for this store; ignored when the env override is set. */
+  plugins?: readonly IPlatformPlugin[];
+  /**
+   * xAPI does not filter the list per user, so a declared permission is evaluated here. This is a
+   * UX and latency filter, NOT an authorization boundary: the bundle is fetched by an injected
+   * <script> that carries no credentials, so its code and stylesheets stay publicly readable by
+   * URL. Each plugin's data access has to be authorized by the backend on its own.
+   * No callback + declared permission => skipped.
+   */
+  hasPermission?: (permission: string) => boolean;
   /** Budget for reading one remote's manifest JSON; exceeded => skipped (fail closed). */
   manifestTimeoutMs?: number;
   /**
@@ -56,8 +94,8 @@ export interface IFederatedLoaderOptions {
 }
 
 // Exported for the invariant test only (bootstrap's backstop must exceed their sum).
-export const DEFAULT_MANIFEST_TIMEOUT_MS = 3_000;
-export const DEFAULT_LOAD_TIMEOUT_MS = 5_000;
+export const DEFAULT_MANIFEST_TIMEOUT_MS = 2_000;
+export const DEFAULT_LOAD_TIMEOUT_MS = 3_000;
 
 /** Distinguishes a budget expiry from the work's own failure (see raceWithLateLogging). */
 class TimeoutError extends Error {}
@@ -95,12 +133,13 @@ async function raceWithLateLogging<T>(work: Promise<T>, ms: number, label: strin
 }
 
 /**
- * Remote code executes with full app privileges, so the entry URL must not be
- * downgradable: https only, with http allowed solely for localhost development.
- * NOTE: this validates the MANIFEST url only. The manifest then declares its own
- * remoteEntry.js/chunk URLs, which loadRemote fetches as-is — they are NOT re-checked
- * here. The trust boundary is therefore the configured remote: whoever controls that
- * https manifest is trusted to point at code URLs of their choosing.
+ * The env override is the only cross-origin path, so its entry must not be downgradable: https
+ * only, with http allowed solely for localhost development. Platform entries answer to
+ * isSameOrigin instead.
+ * NOTE: either way this validates the MANIFEST url only. The manifest then declares its own
+ * remoteEntry.js/chunk URLs, which loadRemote fetches as-is — they are NOT re-checked, so a
+ * same-origin manifest can still point at code elsewhere. Whoever controls the manifest is
+ * trusted to choose its code URLs.
  */
 function isAllowedRemoteUrl(entry: string): boolean {
   let url: URL;
@@ -124,21 +163,35 @@ interface IResolvedRemotes {
 }
 
 /**
- * Parses and validates APP_MODULES_FEDERATION_REMOTES. The full entry-URL contract
- * lives HERE (a future discovery source must route through this function, not just
- * isAllowedRemoteUrl): the value must be a string, an allowed https/localhost URL, and
- * contain ".json" — the MF runtime decides manifest-vs-remoteEntry by that substring
- * (isPureRemoteEntry in @module-federation/runtime-core does `!entry.includes(".json")`),
- * so a manifest URL without it would pass the version gate (it fetches fine as JSON)
- * but then be <script>-loaded as JS by loadRemote — a SyntaxError far from the real
- * cause. Rejected here, at configuration time, with the real reason instead.
+ * MF resolves a loadRemote id by PREFIX (`id.startsWith(remote.name)`, then the rest is the expose),
+ * so a name containing "/" can swallow another remote's request: with remotes "a" and "a/plugin",
+ * `loadRemote("a/plugin/Module")` matches "a" first and serves expose "./plugin/Module" out of ITS
+ * bundle - one plugin's code never runs while both are reported loaded. The exact-string duplicate
+ * check cannot see that, and neither can MF's own (it dedupes by exact name too).
  */
-function resolveRemotes(): IResolvedRemotes {
+const SAFE_REMOTE_NAME = /^[A-Za-z0-9][A-Za-z0-9._-]*$/;
+
+/** Assumed on the env path only — no env descriptor declares an expose key. */
+const SCAFFOLD_EXPOSE_KEY = "./plugin";
+const PLATFORM_EXPOSE_KEY = "./Module";
+const MF_MANIFEST_FILE = "mf-manifest.json";
+const PLATFORM_SCRIPT_ENTRY_TYPE = "script";
+const PLATFORM_STYLE_FILE_TYPE = "style";
+
+/**
+ * Parses and validates APP_MODULES_FEDERATION_REMOTES: a string, an allowed https/localhost URL,
+ * and it must contain ".json" — the MF runtime picks manifest-vs-remoteEntry by that substring
+ * (isPureRemoteEntry does `!entry.includes(".json")`), so a manifest URL without it passes the
+ * version gate and is then <script>-loaded as JS, failing far from the cause. The platform path
+ * satisfies the same rule by building MF_MANIFEST_FILE; keep it that way.
+ */
+function resolveEnvRemotes(): IResolvedRemotes | undefined {
   const resolved: IResolvedRemotes = { remotes: [], invalidNames: [] };
   const raw = import.meta.env.APP_MODULES_FEDERATION_REMOTES;
   if (!raw) {
-    // No remotes configured -> no-op. The harness carries no built-in remote.
-    return resolved;
+    // Unset -> platform list. Set but unusable still returns below, so a typo surfaces as
+    // skips rather than being papered over by whatever the backend serves.
+    return undefined;
   }
 
   let parsed: unknown;
@@ -154,6 +207,12 @@ function resolveRemotes(): IResolvedRemotes {
   }
 
   for (const [name, value] of Object.entries(parsed)) {
+    // Keys were never validated here, so "" was accepted and registered as a nameless remote.
+    if (!SAFE_REMOTE_NAME.test(name)) {
+      Logger.error(`[MF] Skipping remote "${name}": a remote name must match ${String(SAFE_REMOTE_NAME)}`);
+      resolved.invalidNames.push(name);
+      continue;
+    }
     if (typeof value !== "string") {
       Logger.error(`[MF] Skipping remote "${name}": entry must be a string URL`);
       resolved.invalidNames.push(name);
@@ -171,9 +230,218 @@ function resolveRemotes(): IResolvedRemotes {
       resolved.invalidNames.push(name);
       continue;
     }
-    resolved.remotes.push({ name, entry: value });
+    resolved.remotes.push({ name, entry: value, exposed: SCAFFOLD_EXPOSE_KEY, styles: [], allowCrossOrigin: true });
   }
   return resolved;
+}
+
+/**
+ * The platform serves plugin files from the storefront's own origin, so that — not the scheme — is
+ * the check for a platform entry. `toAbsoluteUrl` ignores its base for an already-absolute or
+ * protocol-relative path, so without this a descriptor could name any host.
+ */
+function isSameOrigin(url: string): boolean {
+  try {
+    return new URL(url).origin === globalThis.location.origin;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Descriptor fields are backend data behind a hand-written structural type, not codegen — a
+ * non-string arriving here (schema drift, a bad module) must cost one plugin, not throw out of
+ * the batch and lose every plugin with it.
+ */
+function asString(value: unknown): string | undefined {
+  return typeof value === "string" ? value : undefined;
+}
+
+/** The `$(ModuleId)` token in a platform path must survive verbatim — the platform's routes contain it. */
+function toAbsoluteUrl(path: string): string | undefined {
+  try {
+    return new URL(path, globalThis.location.origin).toString();
+  } catch {
+    return undefined;
+  }
+}
+
+function toManifestUrl(entryUrl: string): string {
+  const url = new URL(entryUrl);
+  const path = url.pathname;
+  url.pathname = path.slice(0, path.lastIndexOf("/") + 1) + MF_MANIFEST_FILE;
+  return url.toString();
+}
+
+function withCacheBuster(url: string, hash?: string | null): string {
+  if (!hash) {
+    return url;
+  }
+  const result = new URL(url);
+  result.searchParams.set("v", hash);
+  return result.toString();
+}
+
+function collectStyles(plugin: IPlatformPlugin): string[] {
+  const styles: string[] = [];
+  for (const file of Array.isArray(plugin.contentFiles) ? plugin.contentFiles : []) {
+    const filePath = asString(file?.path);
+    if (!filePath) {
+      continue;
+    }
+    // The platform documents these kinds as lower-case by contract, but a dropped stylesheet is
+    // invisible otherwise: the plugin loads and renders unstyled with nothing to point at.
+    const fileType = asString(file?.type);
+    if (fileType?.toLowerCase() !== PLATFORM_STYLE_FILE_TYPE) {
+      const kind = fileType ? `"${fileType}"` : "(none declared)";
+      Logger.info(`[MF] Plugin "${String(plugin?.id)}": ignoring content file "${filePath}" of kind ${kind}`);
+      continue;
+    }
+    const url = toAbsoluteUrl(filePath);
+    if (!url || !isSameOrigin(url)) {
+      Logger.error(`[MF] Ignoring stylesheet "${filePath}" of plugin "${plugin.id}": not same-origin`);
+      continue;
+    }
+    styles.push(withCacheBuster(url, asString(file?.hash)));
+  }
+  return styles;
+}
+
+const STYLE_MARKER = "data-mf-plugin-style";
+
+/**
+ * No cascade fence here yet: containment needs the HOST's own CSS layered too, so the plugin layer
+ * can sit below the host's utilities and above its component styles (VCST-5760). Wrapping only the
+ * plugin's sheet would put it above everything unlayered instead. The marker attribute doubles as
+ * the dedupe key, so a second boot adds nothing.
+ */
+function injectStyles(urls: string[]): void {
+  const present = new Set(
+    Array.from(document.head.querySelectorAll(`link[${STYLE_MARKER}]`), (node) => node.getAttribute(STYLE_MARKER)),
+  );
+  for (const href of urls) {
+    if (present.has(href)) {
+      continue;
+    }
+    present.add(href);
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.setAttribute(STYLE_MARKER, href);
+    link.href = href;
+    document.head.append(link);
+  }
+}
+
+/**
+ * Only a script entry is an MF remote; anything else would be loaded as one by mistake. An absent
+ * type is accepted, because the platform declares the field optional.
+ */
+function isLoadableEntryType(declared: unknown, name: string): boolean {
+  const type = asString(declared)?.toLowerCase();
+  if (type && type !== PLATFORM_SCRIPT_ENTRY_TYPE) {
+    Logger.error(`[MF] Skipping plugin "${name}": entry type "${type}" is not supported`);
+    return false;
+  }
+  return true;
+}
+
+/**
+ * A platform entry path becomes the URL of the manifest beside it, or nothing.
+ *
+ * Two rules, both fail-closed. Same-origin, because a platform descriptor may only name the
+ * storefront's own origin. And http(s) AFTER the rewrite, because rewriting to mf-manifest.json is
+ * what puts ".json" in the entry and MF picks manifest-vs-remoteEntry by that substring: a URL with
+ * an OPAQUE path (blob:, whose origin IS this origin, so the same-origin check accepts it) makes the
+ * pathname setter a documented no-op, so the rewrite returns its input unchanged and MF would
+ * script-load the entry as code. Checking the protocol here makes the ".json" rule true by
+ * construction rather than by luck.
+ */
+function toPlatformManifestUrl(path: string, name: string): string | undefined {
+  const entryUrl = toAbsoluteUrl(path);
+  if (!entryUrl || !isSameOrigin(entryUrl)) {
+    Logger.error(`[MF] Skipping plugin "${name}": entry "${path}" is not same-origin`);
+    return undefined;
+  }
+  const manifestUrl = toManifestUrl(entryUrl);
+  if (!/^https?:$/.test(new URL(manifestUrl).protocol)) {
+    Logger.error(`[MF] Skipping plugin "${name}": entry "${path}" is not an http(s) URL`);
+    return undefined;
+  }
+  return manifestUrl;
+}
+
+/**
+ * The platform serves `remoteEntry.js`; the gate needs the manifest beside it, so the entry is
+ * rewritten. A plugin shipping no manifest fails the gate and is skipped.
+ */
+function resolvePlatformRemotes(plugins: readonly IPlatformPlugin[]): IResolvedRemotes {
+  const resolved: IResolvedRemotes = { remotes: [], invalidNames: [] };
+
+  const seen = new Set<string>();
+
+  // Not `?? []`: a non-array (schema drift, a bad gateway) is not iterable and would throw out of
+  // the whole loader — the batch must survive whatever shape arrives.
+  for (const [index, plugin] of (Array.isArray(plugins) ? plugins : []).entries()) {
+    const name = asString(plugin?.remote?.name) || asString(plugin?.id) || "";
+    const path = asString(plugin?.entry?.path);
+    if (!SAFE_REMOTE_NAME.test(name)) {
+      // Reported under whatever identifies it, so the outcome summary never drops a plugin
+      // silently; one carrying neither id nor remote name has only its position to be named by.
+      const label = asString(plugin?.id) || name || `plugin #${index + 1}`;
+      Logger.error(`[MF] Skipping plugin "${label}": remote name "${name}" must match ${String(SAFE_REMOTE_NAME)}`);
+      resolved.invalidNames.push(label);
+      continue;
+    }
+    if (!path) {
+      Logger.error(`[MF] Skipping plugin "${name}": the platform declared no entry path`);
+      resolved.invalidNames.push(name);
+      continue;
+    }
+    if (!isLoadableEntryType(plugin?.entry?.type, name)) {
+      resolved.invalidNames.push(name);
+      continue;
+    }
+    const manifestUrl = toPlatformManifestUrl(path, name);
+    if (!manifestUrl) {
+      resolved.invalidNames.push(name);
+      continue;
+    }
+    // Claimed only now: a descriptor rejected above must not hold a name against a later, valid
+    // plugin. Registering a name twice is a no-op in the MF runtime (no `force` — see
+    // registerRemotes below), so the second descriptor's code would never execute while the load
+    // loop still ran per descriptor and reported it loaded. The loser is reported by id instead,
+    // since the name itself belongs to the winner.
+    if (seen.has(name)) {
+      Logger.error(`[MF] Skipping plugin "${String(plugin?.id)}": remote name "${name}" is already taken`);
+      resolved.invalidNames.push(asString(plugin?.id) || name);
+      continue;
+    }
+    seen.add(name);
+    resolved.remotes.push({
+      name,
+      entry: withCacheBuster(manifestUrl, asString(plugin?.entry?.hash)),
+      exposed: asString(plugin?.remote?.exposed) || PLATFORM_EXPOSE_KEY,
+      permission: asString(plugin?.permission),
+      styles: collectStyles(plugin),
+      version: asString(plugin?.version),
+    });
+  }
+  return resolved;
+}
+
+/** Env wins when set — a local remote must not be replaced by whatever the backend serves. */
+function resolveRemotes(plugins: readonly IPlatformPlugin[]): IResolvedRemotes {
+  const env = resolveEnvRemotes();
+  if (!env) {
+    return resolvePlatformRemotes(plugins);
+  }
+  if (plugins.length > 0) {
+    // A configured-but-empty override is the quiet way to lose every deployed plugin.
+    Logger.warn(
+      `[MF] APP_MODULES_FEDERATION_REMOTES is set, so ${plugins.length} platform plugin(s) are ignored; it resolved to ${env.remotes.length} remote(s)`,
+    );
+  }
+  return env;
 }
 
 /**
@@ -184,6 +452,128 @@ function resolveRemotes(): IResolvedRemotes {
  * timeout — all fail closed. Shared-library versions (vue, apollo, ...) are guarded
  * separately by the SHARED-DEPENDENCY GATE at loadRemote() time.
  */
+/**
+ * Every name ONE `addRoute` call would claim at root level. vue-router computes
+ * `isRootAdd = !originalRecord` and recurses into `children` before assigning it, so each named
+ * child is a root add too and evicts its namesake — checking only the top-level `name` would let
+ * `{ name: "Mine", children: [{ name: "Checkout" }] }` through.
+ */
+function claimedRouteNames(record: unknown, into: NonNullable<RouteRecordRaw["name"]>[] = []) {
+  if (!record || typeof record !== "object") {
+    return into;
+  }
+  const { name, children } = record as { name?: unknown; children?: unknown };
+  if (typeof name === "string" || typeof name === "symbol") {
+    into.push(name);
+  }
+  for (const child of Array.isArray(children) ? children : []) {
+    claimedRouteNames(child, into);
+  }
+  return into;
+}
+
+/** Set for the synchronous span of a plugin's init() so a refusal names the right plugin. */
+let initingPlugin: string | undefined;
+
+/**
+ * `router.addRoute` evicts whatever root-level route already carries the new record's name —
+ * vue-router calls `removeRoute` for it, and its own warning is dev-only. A plugin naming its
+ * route `Checkout` would take the host's page over in silence, so refuse the eviction.
+ *
+ * Installed ONCE for the whole load+init phase, not per plugin: plugins are loaded and initialised
+ * concurrently, so a per-plugin save/restore captures whatever `addRoute` it observed — which is
+ * the PREVIOUS plugin's wrapper — and hands that back on the way out, leaving the host router
+ * permanently guarded by a closure belonging to one plugin while the next plugin ran unguarded.
+ * Covering the whole phase also covers a remote's module scope, which executes during loadRemote,
+ * before any init() is called.
+ *
+ * Both overloads add at root level: `addRoute(record)` and `addRoute(parentName, record)`. What it
+ * still does not cover is a claim made after the phase ends — see the README's security model.
+ */
+function installRouteGuard(): () => void {
+  const router: Router | undefined = globals.router;
+  if (!router) {
+    return () => {};
+  }
+  /**
+   * The host's routes as of right now. `hasRoute` alone is not enough to protect them: a plugin can
+   * `removeRoute("Checkout")` and then add its own under that name, and by the time the add is
+   * checked the name IS free. remove-then-add is not a contrived shape either — the host's own
+   * builder-preview plugin does exactly that (plugins/builder-preview/builder-preview.plugin.ts).
+   * A name added DURING this phase is not in here, so a plugin may still remove its own routes.
+   */
+  const hostRouteNames = new Set(
+    router
+      .getRoutes()
+      .map((route) => route.name)
+      .filter((name) => name !== undefined),
+  );
+  // initingPlugin is set for the synchronous span of init() only; a claim made from a continuation
+  // after that cannot be attributed to one plugin.
+  const who = () => (initingPlugin ? `"${initingPlugin}"` : "a plugin");
+
+  // Captured unbound and applied with the router as receiver, so the host gets its own methods
+  // back - restoring a bound copy would leave them permanently replaced.
+  const originalAdd = router.addRoute as (...args: unknown[]) => () => void;
+  const originalRemove = router.removeRoute as (...args: unknown[]) => void;
+
+  const guardedAdd = (...args: unknown[]) => {
+    // Which argument holds the record is decided as vue-router decides it (isRouteName), not by
+    // argument count: `addRoute(record, undefined)` passes two arguments but the record is first.
+    const [first, second] = args;
+    const record = typeof first === "string" || typeof first === "symbol" ? second : first;
+    const taken = claimedRouteNames(record).find((claimed) => router.hasRoute(claimed) || hostRouteNames.has(claimed));
+    if (taken !== undefined) {
+      Logger.error(`[MF] ${who()} tried to replace the existing route "${String(taken)}" - refused`);
+      return () => {};
+    }
+    return originalAdd.apply(router, args);
+  };
+
+  const guardedRemove = (...args: unknown[]) => {
+    const target = args[0] as RouteRecordRaw["name"];
+    if (target !== undefined && hostRouteNames.has(target)) {
+      Logger.error(`[MF] ${who()} tried to remove the host route "${String(target)}" - refused`);
+      return;
+    }
+    return originalRemove.apply(router, args);
+  };
+
+  router.addRoute = guardedAdd;
+  router.removeRoute = guardedRemove;
+  return () => {
+    // Only undo our own install: a plugin that replaced a method itself keeps what it chose, and
+    // restoring blindly would resurrect a wrapper the plugin deliberately shadowed.
+    if (router.addRoute === guardedAdd) {
+      router.addRoute = originalAdd;
+    }
+    if (router.removeRoute === guardedRemove) {
+      router.removeRoute = originalRemove;
+    }
+  };
+}
+
+/**
+ * `plugin.init()` — called ON the module, so a module shaped `{ services, init() { this.services } }`
+ * (the natural form of the platform's default `./Module` expose) keeps its receiver. Passing the
+ * detached function would make `this` undefined and report the plugin failed with no hint why.
+ */
+async function runInit(name: string, plugin: IFederatedPlugin, budgetMs: number): Promise<void> {
+  let started: void | Promise<void>;
+  initingPlugin = name;
+  try {
+    started = plugin.init?.();
+  } finally {
+    initingPlugin = undefined;
+  }
+  await raceWithLateLogging(Promise.resolve(started), budgetMs, `plugin "${name}" init`, "state is indeterminate");
+}
+
+/** Post-redirect rule, per discovery source — see the `allowCrossOrigin` note on IRemoteDescriptor. */
+function isResponseOriginAllowed(remote: IRemoteDescriptor, url: string): boolean {
+  return remote.allowCrossOrigin ? isAllowedRemoteUrl(url) : isSameOrigin(url);
+}
+
 async function isCompatible(remote: IRemoteDescriptor, manifestTimeoutMs: number): Promise<boolean> {
   try {
     const readManifest = async (): Promise<IRemoteManifest> => {
@@ -193,6 +583,15 @@ async function isCompatible(remote: IRemoteDescriptor, manifestTimeoutMs: number
         // even if a fetch implementation ignores the signal.
         signal: AbortSignal.timeout(manifestTimeoutMs),
       });
+      // The descriptor was checked, the response was not: redirects are followed, so an entry can
+      // still land somewhere its source does not allow. Each source keeps ITS OWN rule — a
+      // platform entry must stay same-origin, an env entry must stay https (or loopback http) —
+      // because demanding same-origin here would kill the env override, whose whole purpose is
+      // cross-origin. A redirect within the source's own rule stays allowed.
+      const servedFrom = asString(response.url);
+      if (servedFrom && !isResponseOriginAllowed(remote, servedFrom)) {
+        throw new Error(`manifest for "${remote.name}" was served from ${servedFrom}, which its source does not allow`);
+      }
       if (!response.ok) {
         throw new Error(`manifest HTTP ${response.status}`);
       }
@@ -218,8 +617,12 @@ async function isCompatible(remote: IRemoteDescriptor, manifestTimeoutMs: number
  * no prod signal yet — reporting them to Application Insights (exceptions for
  * `failed`, customEvents for `skipped`) is a tracked stage-2 follow-up: see TODO.md.
  */
-function reportOutcome(result: IFederatedLoadResult): void {
+function reportOutcome(result: IFederatedLoadResult, versions?: ReadonlyMap<string, string>): void {
   const { loaded, failed, skipped } = result;
+  const label = (name: string): string => {
+    const version = versions?.get(name);
+    return version ? `${name}@${version}` : name;
+  };
   if (failed.length === 0 && skipped.length === 0) {
     // Happy path: no prod noise (Logger is a no-op in production builds). But a plugin
     // author running the prescribed local flow (build --mode=development + preview,
@@ -227,11 +630,13 @@ function reportOutcome(result: IFederatedLoadResult): void {
     // invisible for extension-point-only plugins that render no route. One positive
     // line closes that gap.
     if (loaded.length > 0) {
-      Logger.info(`[MF] plugins loaded=[${loaded.join(", ")}]`);
+      Logger.info(`[MF] plugins loaded=[${loaded.map(label).join(", ")}]`);
     }
     return;
   }
-  Logger.warn(`[MF] plugins loaded=${loaded.length} failed=[${failed.join(", ")}] skipped=[${skipped.join(", ")}]`);
+  Logger.warn(
+    `[MF] plugins loaded=${loaded.length} failed=[${failed.map(label).join(", ")}] skipped=[${skipped.map(label).join(", ")}]`,
+  );
 }
 
 /**
@@ -243,81 +648,111 @@ export async function initFederatedModules(options?: IFederatedLoaderOptions): P
   const loadTimeoutMs = options?.loadTimeoutMs ?? DEFAULT_LOAD_TIMEOUT_MS;
 
   const result: IFederatedLoadResult = { loaded: [], failed: [], skipped: [] };
-  const { remotes, invalidNames } = resolveRemotes();
+  const { remotes, invalidNames } = resolveRemotes(options?.plugins ?? []);
   // Config-invalid remotes count as skipped so they surface through the same loud
   // summary log as version-gate skips — never a silent drop.
   result.skipped.push(...invalidNames);
-  if (remotes.length === 0) {
+  const versions = new Map(
+    remotes.filter((remote) => remote.version).map((remote) => [remote.name, remote.version as string]),
+  );
+
+  // Before the manifest fetch: a plugin the user may not run should cost no network at all.
+  const permitted = remotes.filter((remote) => {
+    const permission = remote.permission?.trim();
+    try {
+      if (!permission || options?.hasPermission?.(permission)) {
+        return true;
+      }
+      Logger.info(`[MF] Skipping "${remote.name}": requires permission "${permission}"`);
+    } catch (error) {
+      // Host-supplied callback: one bad evaluation must cost one plugin, not the batch.
+      Logger.error(`[MF] Skipping "${remote.name}": the permission check threw`, error);
+    }
+    result.skipped.push(remote.name);
+    return false;
+  });
+
+  if (permitted.length === 0) {
     if (result.skipped.length > 0) {
-      reportOutcome(result);
+      reportOutcome(result, versions);
     }
     return result;
   }
 
   // Version-gate everything before registering/executing any remote code.
   const compatibility = await Promise.all(
-    remotes.map(async (remote) => ({ remote, ok: await isCompatible(remote, manifestTimeoutMs) })),
+    permitted.map(async (remote) => ({ remote, ok: await isCompatible(remote, manifestTimeoutMs) })),
   );
   const compatible = compatibility.filter((entry) => entry.ok).map((entry) => entry.remote);
   compatibility.filter((entry) => !entry.ok).forEach((entry) => result.skipped.push(entry.remote.name));
 
   if (compatible.length === 0) {
-    reportOutcome(result);
+    reportOutcome(result, versions);
     return result;
   }
 
   try {
-    registerRemotes(
-      compatible.map((remote) => ({ name: remote.name, entry: remote.entry })),
-      // Re-registering the same remote across HMR reloads must not throw.
-      { force: true },
-    );
+    // No `force`: re-registering a known name is already a silent no-op in the MF runtime, while
+    // `force` tears the remote down first (module cache, global entry name, share scope) and a
+    // second boot would then re-run the plugin's module scope and its init().
+    registerRemotes(compatible.map((remote) => ({ name: remote.name, entry: remote.entry })));
   } catch (error) {
-    // Registration is all-or-nothing, so a throw here fails every compatible remote at
-    // once — but it must still resolve (not reject) to keep the "never rejects" contract.
+    // registerRemotes registers one remote at a time, so a throw can leave earlier ones registered;
+    // every compatible remote is still reported failed, and this must resolve (not reject) to keep
+    // the "never rejects" contract.
     compatible.forEach((remote) => result.failed.push(remote.name));
     Logger.error("[MF] registerRemotes failed", error);
-    reportOutcome(result);
+    reportOutcome(result, versions);
     return result;
   }
 
-  await Promise.allSettled(
-    compatible.map(async (remote) => {
-      try {
-        // Load and init are raced SEPARATELY: a timed-out plugin's init() is never
-        // invoked - the timeout is real containment for the init phase. Neither phase
-        // can be CANCELLED though: a loadRemote that resolves after its budget has
-        // still executed the remote's module scope (top-level side effects like a CSS
-        // import), and an init() that started keeps running — raceWithLateLogging logs
-        // both late settlements so the "failed" outcome is never silently contradicted.
-        const plugin = await raceWithLateLogging(
-          loadRemote<IFederatedPlugin>(`${remote.name}/plugin`),
-          loadTimeoutMs,
-          `plugin "${remote.name}" load`,
-          "its module scope has executed (init() is NOT called); state is indeterminate",
-        );
-        // The MF runtime resolves null instead of rejecting when an errorLoadRemote
-        // failover hook is registered. None is today, but "no module delivered"
-        // must never count (silently) as loaded if one ever appears.
-        if (plugin === null) {
-          throw new Error(`plugin "${remote.name}" load resolved to null - no module was delivered`);
-        }
-        if (plugin.init) {
-          await raceWithLateLogging(
-            Promise.resolve(plugin.init()),
+  // One guard for the whole phase — see installRouteGuard on why it must not be per plugin.
+  const releaseRouteGuard = installRouteGuard();
+  try {
+    await Promise.allSettled(
+      compatible.map(async (remote) => {
+        try {
+          // Load and init are raced SEPARATELY: a timed-out plugin's init() is never
+          // invoked - the timeout is real containment for the init phase. Neither phase
+          // can be CANCELLED though: a loadRemote that resolves after its budget has
+          // still executed the remote's module scope (top-level side effects like a CSS
+          // import), and an init() that started keeps running — raceWithLateLogging logs
+          // both late settlements so the "failed" outcome is never silently contradicted.
+          const plugin = await raceWithLateLogging(
+            loadRemote<IFederatedPlugin>(`${remote.name}/${remote.exposed.replace(/^\.\//, "")}`),
             loadTimeoutMs,
-            `plugin "${remote.name}" init`,
-            "state is indeterminate",
+            `plugin "${remote.name}" load`,
+            "its module scope has executed (init() is NOT called); state is indeterminate",
           );
+          // The MF runtime resolves null instead of rejecting when an errorLoadRemote
+          // failover hook is registered. None is today, but "no module delivered"
+          // must never count (silently) as loaded if one ever appears.
+          if (plugin === null) {
+            throw new Error(`plugin "${remote.name}" load resolved to null - no module was delivered`);
+          }
+          // BEFORE init(), not after: a timeout does not cancel init(), so whatever it registered
+          // synchronously stays. Withholding the sheets then left the plugin's page live and
+          // UNSTYLED - strictly worse than an orphan <link> on a plugin that never renders. The
+          // plugin's own chunk CSS already arrived during loadRemote and could not be withheld either.
+          injectStyles(remote.styles);
+          if (plugin.init) {
+            await runInit(remote.name, plugin, loadTimeoutMs);
+          } else {
+            // Most likely the platform's default "./Module" expose against the admin-shell
+            // contract; its module scope ran, but nothing registered anything.
+            Logger.warn(`[MF] "${remote.name}" exposes no init() — nothing was registered`);
+          }
+          result.loaded.push(remote.name);
+        } catch (error) {
+          result.failed.push(remote.name);
+          Logger.error(`[MF] Failed to load federated plugin "${remote.name}"`, error);
         }
-        result.loaded.push(remote.name);
-      } catch (error) {
-        result.failed.push(remote.name);
-        Logger.error(`[MF] Failed to load federated plugin "${remote.name}"`, error);
-      }
-    }),
-  );
+      }),
+    );
+  } finally {
+    releaseRouteGuard();
+  }
 
-  reportOutcome(result);
+  reportOutcome(result, versions);
   return result;
 }

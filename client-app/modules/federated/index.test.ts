@@ -2,13 +2,43 @@ import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { initFederatedModules } from "./index";
 
-const { loadRemoteMock, registerRemotesMock, loggerErrorMock, loggerWarnMock, loggerInfoMock } = vi.hoisted(() => ({
-  loadRemoteMock: vi.fn(),
-  registerRemotesMock: vi.fn(),
-  loggerErrorMock: vi.fn(),
-  loggerWarnMock: vi.fn(),
-  loggerInfoMock: vi.fn(),
-}));
+interface IRouterStub {
+  addRoute: (...args: unknown[]) => unknown;
+  removeRoute: (...args: unknown[]) => unknown;
+  hasRoute: (name: unknown) => boolean;
+  getRoutes: () => { name?: unknown }[];
+}
+
+/**
+ * Router-shaped on purpose: the loader's guard reads `getRoutes()` to learn which names the HOST
+ * owns and wraps `removeRoute` as well as `addRoute`. A stub missing either silently disables the
+ * half of the guard that depends on it.
+ */
+function routerStub(existing: string[] = []) {
+  const owned = new Set(existing);
+  const addRoute = vi.fn();
+  const removeRoute = vi.fn((name: unknown) => owned.delete(String(name)));
+  const router: IRouterStub = {
+    addRoute,
+    removeRoute,
+    hasRoute: (name: unknown) => owned.has(String(name)),
+    getRoutes: () => [...owned].map((name) => ({ name })),
+  };
+  return { addRoute, removeRoute, router };
+}
+
+const { loadRemoteMock, registerRemotesMock, loggerErrorMock, loggerWarnMock, loggerInfoMock, globalsMock } =
+  vi.hoisted(() => {
+    const hostGlobals: { router?: IRouterStub } = {};
+    return {
+      loadRemoteMock: vi.fn(),
+      registerRemotesMock: vi.fn(),
+      loggerErrorMock: vi.fn(),
+      loggerWarnMock: vi.fn(),
+      loggerInfoMock: vi.fn(),
+      globalsMock: hostGlobals,
+    };
+  });
 
 vi.mock("@module-federation/enhanced/runtime", () => ({
   loadRemote: loadRemoteMock,
@@ -21,6 +51,8 @@ vi.mock("@/core/utilities", () => ({
 
 vi.mock("@/core-api/package.json", () => ({ version: "1.4.0" }));
 
+vi.mock("@/core/globals", () => ({ globals: globalsMock }));
+
 const REMOTE_URL = "https://plugins.example.com/news/mf-manifest.json";
 
 function stubRemotesEnv(remotes: unknown): void {
@@ -32,13 +64,18 @@ const COMPATIBLE_MANIFEST = { metaData: { requiredHostVersion: "^1.0.0" } };
 
 function stubManifestFetch(
   manifest: unknown = COMPATIBLE_MANIFEST,
-  init?: { ok?: boolean; status?: number },
+  init?: { ok?: boolean; status?: number; servedFrom?: string },
 ): ReturnType<typeof vi.fn> {
-  const fetchMock = vi.fn().mockResolvedValue({
-    ok: init?.ok ?? true,
-    status: init?.status ?? 200,
-    json: () => Promise.resolve(manifest),
-  });
+  // `url` is what a real Response exposes: the POST-redirect URL. Omitting it silently disables
+  // every origin check the loader makes on the response, so the stub must carry it.
+  const fetchMock = vi.fn().mockImplementation((requested: string) =>
+    Promise.resolve({
+      ok: init?.ok ?? true,
+      status: init?.status ?? 200,
+      url: init?.servedFrom ?? requested,
+      json: () => Promise.resolve(manifest),
+    }),
+  );
   vi.stubGlobal("fetch", fetchMock);
   return fetchMock;
 }
@@ -51,6 +88,7 @@ describe("initFederatedModules", () => {
   afterEach(() => {
     vi.unstubAllEnvs();
     vi.unstubAllGlobals();
+    delete globalsMock.router;
   });
 
   it("is a no-op when APP_MODULES_FEDERATION_REMOTES is not set", async () => {
@@ -153,7 +191,7 @@ describe("initFederatedModules", () => {
 
     const result = await initFederatedModules();
 
-    expect(registerRemotesMock).toHaveBeenCalledWith([{ name: "news", entry: REMOTE_URL }], { force: true });
+    expect(registerRemotesMock).toHaveBeenCalledWith([{ name: "news", entry: REMOTE_URL }]);
     expect(loadRemoteMock).toHaveBeenCalledWith("news/plugin");
     expect(initMock).toHaveBeenCalledOnce();
     expect(result).toEqual({ loaded: ["news"], failed: [], skipped: [] });
@@ -171,6 +209,39 @@ describe("initFederatedModules", () => {
     const result = await initFederatedModules();
 
     expect(result.loaded).toEqual(["news"]);
+  });
+
+  it("refuses a plugin route that would evict an existing host route", async () => {
+    const { addRoute, router } = routerStub(["Cart"]);
+    globalsMock.router = router;
+    stubManifestFetch();
+    stubRemotesEnv({ news: REMOTE_URL });
+    loadRemoteMock.mockResolvedValue({
+      init: () => {
+        router.addRoute({ name: "Cart", path: "/cart" });
+        router.addRoute({ name: "News", path: "/news" });
+      },
+    });
+
+    const result = await initFederatedModules();
+
+    expect(addRoute).toHaveBeenCalledTimes(1);
+    expect(addRoute).toHaveBeenCalledWith({ name: "News", path: "/news" });
+    expect(result.loaded).toEqual(["news"]);
+    expect(loggerErrorMock).toHaveBeenCalledWith(expect.stringContaining('tried to replace the existing route "Cart"'));
+  });
+
+  it("restores the router after init so a later host add is not guarded", async () => {
+    const { addRoute, router } = routerStub(["Cart"]);
+    globalsMock.router = router;
+    stubManifestFetch();
+    stubRemotesEnv({ news: REMOTE_URL });
+    loadRemoteMock.mockResolvedValue({ init: vi.fn() });
+
+    await initFederatedModules();
+    router.addRoute({ name: "Cart", path: "/cart" });
+
+    expect(addRoute).toHaveBeenCalledTimes(1);
   });
 
   it("skips an incompatible plugin before loading any of its code", async () => {
@@ -322,12 +393,16 @@ describe("initFederatedModules", () => {
   });
 
   it("backstop invariant: a budget-compliant remote can never trip the boot backstop", async () => {
-    const { BOOT_BACKSTOP_MS } = await import("./bootstrap");
+    const { BOOT_BACKSTOP_MS, DISCOVERY_TIMEOUT_MS } = await import("./bootstrap");
     const { DEFAULT_MANIFEST_TIMEOUT_MS, DEFAULT_LOAD_TIMEOUT_MS } = await import("./index");
 
-    // One remote may legally take manifest + load + init; the bootstrap backstop must
-    // sit above that sum or a compliant plugin loses its deep-link guarantee.
-    expect(BOOT_BACKSTOP_MS).toBeGreaterThan(DEFAULT_MANIFEST_TIMEOUT_MS + 2 * DEFAULT_LOAD_TIMEOUT_MS);
+    // Every BUDGETED leg, in the order `work` runs them: the plugin list, then one remote's
+    // manifest, then its load and its init. Leaving the plugin list out of this sum is what let a
+    // compliant remote trip the backstop. What is left over is the headroom the unbudgeted
+    // loader-chunk fetch gets — see the BOOT_BACKSTOP_MS comment for why it has no budget.
+    expect(BOOT_BACKSTOP_MS).toBeGreaterThan(
+      DISCOVERY_TIMEOUT_MS + DEFAULT_MANIFEST_TIMEOUT_MS + 2 * DEFAULT_LOAD_TIMEOUT_MS,
+    );
   });
 
   it("reports failed on an overrunning init() and logs its late completion as indeterminate", async () => {
@@ -376,5 +451,192 @@ describe("initFederatedModules", () => {
     const result = await initFederatedModules();
 
     expect(result.failed).toEqual(["news"]);
+  });
+  it("loads an env remote served from another origin - the override's whole purpose", async () => {
+    stubManifestFetch();
+    stubRemotesEnv({ news: REMOTE_URL });
+    loadRemoteMock.mockResolvedValue({ init: vi.fn() });
+
+    const result = await initFederatedModules();
+
+    expect(result.loaded).toEqual(["news"]);
+    expect(loggerErrorMock).not.toHaveBeenCalled();
+  });
+
+  it("still holds an env remote to its own rule after a redirect: plain http off-loopback is refused", async () => {
+    stubManifestFetch(COMPATIBLE_MANIFEST, { servedFrom: "http://plugins.example.com/news/mf-manifest.json" });
+    stubRemotesEnv({ news: REMOTE_URL });
+
+    const result = await initFederatedModules();
+
+    expect(result.skipped).toEqual(["news"]);
+    expect(loadRemoteMock).not.toHaveBeenCalled();
+  });
+
+  it("keeps init()'s receiver, so a module that calls this.<x> in init works", async () => {
+    stubManifestFetch();
+    stubRemotesEnv({ news: REMOTE_URL });
+    const seen: string[] = [];
+    loadRemoteMock.mockResolvedValue({
+      services: ["a", "b"],
+      init() {
+        // A module shaped like the platform's default "./Module" expose.
+        (this as { services: string[] }).services.forEach((service) => seen.push(service));
+      },
+    });
+
+    const result = await initFederatedModules();
+
+    expect(result.loaded).toEqual(["news"]);
+    expect(seen).toEqual(["a", "b"]);
+  });
+
+  describe("route squatting", () => {
+    function hostRouter(existing: string[]) {
+      const stub = routerStub(existing);
+      globalsMock.router = stub.router;
+      return stub;
+    }
+
+    it("refuses a named child route that would evict a host route", async () => {
+      const { addRoute, router } = hostRouter(["Checkout"]);
+      stubManifestFetch();
+      stubRemotesEnv({ news: REMOTE_URL });
+      loadRemoteMock.mockResolvedValue({
+        init: () => {
+          router.addRoute({ name: "News", path: "/news", children: [{ name: "Checkout", path: "hijacked" }] });
+        },
+      });
+
+      await initFederatedModules();
+
+      expect(addRoute).not.toHaveBeenCalled();
+      expect(loggerErrorMock).toHaveBeenCalledWith(expect.stringContaining('replace the existing route "Checkout"'));
+    });
+
+    it("refuses a two-argument addRoute that would evict a host route", async () => {
+      const { addRoute, router } = hostRouter(["Checkout", "Account"]);
+      stubManifestFetch();
+      stubRemotesEnv({ news: REMOTE_URL });
+      loadRemoteMock.mockResolvedValue({
+        init: () => {
+          router.addRoute("Account", { name: "Checkout", path: "hijacked" });
+        },
+      });
+
+      await initFederatedModules();
+
+      expect(addRoute).not.toHaveBeenCalled();
+      expect(loggerErrorMock).toHaveBeenCalledWith(expect.stringContaining('replace the existing route "Checkout"'));
+    });
+
+    it("refuses an addRoute whose second argument is undefined", async () => {
+      const { addRoute, router } = hostRouter(["Checkout"]);
+      stubManifestFetch();
+      stubRemotesEnv({ news: REMOTE_URL });
+      loadRemoteMock.mockResolvedValue({
+        init: () => {
+          // vue-router takes the record from the first argument here, since it is not a route
+          // name - so a guard dispatching by argument count reads `undefined` and claims nothing.
+          router.addRoute({ name: "Checkout", path: "/hijacked" }, undefined);
+        },
+      });
+
+      await initFederatedModules();
+
+      expect(addRoute).not.toHaveBeenCalled();
+      expect(loggerErrorMock).toHaveBeenCalledWith(expect.stringContaining('replace the existing route "Checkout"'));
+    });
+
+    it("lets a plugin mount under a host parent when the name is free", async () => {
+      const { addRoute, router } = hostRouter(["Account"]);
+      stubManifestFetch();
+      stubRemotesEnv({ news: REMOTE_URL });
+      loadRemoteMock.mockResolvedValue({
+        init: () => {
+          router.addRoute("Account", { name: "News", path: "news" });
+        },
+      });
+
+      await initFederatedModules();
+
+      expect(addRoute).toHaveBeenCalledWith("Account", { name: "News", path: "news" });
+    });
+
+    it("refuses removing a host route, so remove-then-add cannot launder a squat", async () => {
+      const { addRoute, removeRoute, router } = hostRouter(["Checkout"]);
+      stubManifestFetch();
+      stubRemotesEnv({ news: REMOTE_URL });
+      loadRemoteMock.mockResolvedValue({
+        init: () => {
+          // hasRoute alone could not stop this: after the remove the name IS free. The host's own
+          // builder-preview plugin uses remove-then-add, so it is a normal shape, not a contrivance.
+          router.removeRoute("Checkout");
+          router.addRoute({ name: "Checkout", path: "/hijacked" });
+        },
+      });
+
+      await initFederatedModules();
+
+      expect(removeRoute).not.toHaveBeenCalled();
+      expect(addRoute).not.toHaveBeenCalled();
+      expect(loggerErrorMock).toHaveBeenCalledWith(expect.stringContaining('remove the host route "Checkout"'));
+    });
+
+    it("lets a plugin remove a route it added itself", async () => {
+      const { removeRoute, router } = hostRouter(["Checkout"]);
+      stubManifestFetch();
+      stubRemotesEnv({ news: REMOTE_URL });
+      loadRemoteMock.mockResolvedValue({
+        init: () => {
+          router.addRoute({ name: "News", path: "/news" });
+          router.removeRoute("News");
+        },
+      });
+
+      await initFederatedModules();
+
+      expect(removeRoute).toHaveBeenCalledWith("News");
+    });
+
+    it("hands the host its own router back after two plugins have both run init", async () => {
+      const { addRoute, router } = hostRouter(["Cart"]);
+      const pristine = router.addRoute;
+      stubManifestFetch();
+      stubRemotesEnv({ a: REMOTE_URL, b: "https://plugins.example.com/b/mf-manifest.json" });
+      // Both inits yield, so both are inside the phase at the same time - the shape that used to
+      // leave one plugin's wrapper installed on the host router for good.
+      loadRemoteMock.mockResolvedValue({ init: async () => await Promise.resolve() });
+
+      await initFederatedModules();
+
+      expect(router.addRoute).toBe(pristine);
+      router.addRoute({ name: "Cart", path: "/cart" });
+      expect(addRoute).toHaveBeenCalledTimes(1);
+    });
+
+    it("guards the second of two concurrent plugins, not just the first", async () => {
+      const { addRoute, router } = hostRouter(["Cart"]);
+      stubManifestFetch();
+      stubRemotesEnv({ a: REMOTE_URL, b: "https://plugins.example.com/b/mf-manifest.json" });
+      loadRemoteMock.mockImplementation((id: string) =>
+        Promise.resolve({
+          init:
+            id === "a/plugin"
+              ? () => undefined
+              : async () => {
+                  // Lands after plugin a's init has already settled.
+                  await Promise.resolve();
+                  router.addRoute({ name: "Cart", path: "/b-cart" });
+                },
+        }),
+      );
+
+      await initFederatedModules();
+      await flushPromises();
+
+      expect(addRoute).not.toHaveBeenCalled();
+      expect(loggerErrorMock).toHaveBeenCalledWith(expect.stringContaining('replace the existing route "Cart"'));
+    });
   });
 });

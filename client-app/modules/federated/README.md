@@ -34,14 +34,25 @@ yarn build-only --mode=development && yarn preview
 - `APP_MODULES_FEDERATION_ENABLED` → turns the host into a federation host (build + runtime). Only
   `"true"`, `"1"`, `"yes"` or `"on"` enable it — any other value counts as off (allowlist:
   enabling remote code loading is the dangerous direction).
-- `APP_MODULES_FEDERATION_REMOTES` → a JSON map of `remoteName → manifestUrl`. No var = no remotes = no-op.
-  URLs must be **https** (http is allowed for localhost only).
+- `APP_MODULES_FEDERATION_REMOTES` → a JSON map of `remoteName → manifestUrl`, the **local/dev
+  override**. URLs must be **https** (http is allowed for localhost only). When set it replaces
+  the platform list entirely, so a local remote is never mixed with the deployed ones.
 
-> **Both vars are inlined at BUILD time** (Vite `import.meta.env`): changing the remote
-> list means rebuilding the host, not just flipping a deployment variable. Runtime,
-> settings-driven discovery is the planned replacement (see `TODO.md` #2 and
-> `specs/2026-07-06-discovery-hosting-decision.md`; `APP_MODULES_FEDERATION_REMOTES` then stays as the
-> local/dev override).
+Without that override the list comes from the **platform** at runtime: every installed module
+that ships `plugins/vc-frontend/` is advertised through `store.plugins(appId: "vc-frontend")`.
+Installing a module is therefore enough to add a plugin — no host rebuild.
+
+That list has its own query, issued only by a host built as a federation host. Keeping it out of
+the boot store query is deliberate: `store.plugins` needs x-api 3.1016.0, and a single unknown
+field fails the whole GraphQL document — which would take `settings.modules` down with it.
+
+Only a `script` entry is loaded; the platform advertising any other `entry.type` is skipped rather
+than fed to the MF runtime. Locally the plugin folder is proxied to `APP_BACKEND_URL`
+(`^/modules/.*/plugins/vc-frontend/` in `vite.config.ts`, dev and preview alike), so the platform
+path works in `yarn dev` and `yarn preview` — not just against a deployed host.
+
+> `APP_MODULES_FEDERATION_ENABLED` is still inlined at BUILD time (Vite `import.meta.env`), so
+> turning the host into a federation host is a rebuild; which plugins it then loads is not.
 
 That's the whole operator surface. Everything below is _why_ and _how_.
 
@@ -61,7 +72,8 @@ That's the whole operator surface. Everything below is _why_ and _how_.
 │         ┌────────────────┼────────────────┐                          │
 │         ▼                ▼                 ▼                          │
 │   resolveRemotes()  version gate      loadRemote()                    │
-│   (APP_MODULES_FEDERATION_REMOTES)  (isCompatible)    + plugin.init()                 │
+│   (platform list or  (isCompatible)   + plugin.init()                 │
+│    the env override)                                                  │
 │                                                                       │
 │   exposes the shared facade  ▶  @vc-frontend/core  (live instance)    │
 └───────────────────────────────────────────────┬───────────────────────┘
@@ -79,12 +91,24 @@ That's the whole operator surface. Everything below is _why_ and _how_.
         └────────────────────────┘                  └────────────────────────┘
 ```
 
-**How host and remotes find each other:** the host holds a list of remotes
-(`APP_MODULES_FEDERATION_REMOTES`). Each entry points at the plugin's `mf-manifest.json`, a small JSON
-index that tells the MF runtime where the plugin's code (`remoteEntry.js` + chunks) lives.
-The host reads that manifest, checks compatibility, then loads the plugin's `./plugin`
-entry and calls its `init()`. The plugin, in turn, reaches back into the host **only**
-through the shared `@vc-frontend/core` facade — never by importing host source directly.
+**How host and remotes find each other:** the host gets a list of remotes — from the platform
+(`store.plugins(appId: "vc-frontend")`) or, when set, from `APP_MODULES_FEDERATION_REMOTES`. Either
+way it resolves to the plugin's `mf-manifest.json`, a small JSON index that tells the MF runtime
+where the plugin's code (`remoteEntry.js` + chunks) lives; platform entries point at
+`remoteEntry.js`, so the host rewrites the last segment to reach the manifest beside it. The host
+reads that manifest, checks compatibility, then loads the expose key the descriptor declares
+(`./plugin` for our scaffold, `./Module` by the platform's default) and calls its `init()`. The
+plugin, in turn, reaches back into the host **only** through the shared `@vc-frontend/core`
+facade — never by importing host source directly.
+
+**Plugin CSS is not fenced by the host yet.** A plugin's stylesheet is linked into `document.head`
+as-is, so it hits every page and whether it beats a lazily-loaded host route's CSS depends on where
+the user has been — and the copy of the host's utility classes that Tailwind generates inside your
+build can override the host's own on host markup if the presets have drifted. The fix is decided
+and scoped as VCST-5760: native cascade layers, `plugin` between the host's component styles and
+the host's utilities, plus a `plugin-overrides` layer for deliberate overrides. Until it lands,
+prefer `<style scoped>` for anything you would be unhappy to see applied outside your own markup.
+See `specs/2026-08-21-plugin-css-cascade-layers.md`.
 
 ---
 
@@ -182,21 +206,33 @@ startFederatedModules()            bootstrap.ts
   │  dynamic import("./index")              ← keeps MF runtime out of non-MF builds
   ▼
 initFederatedModules()             index.ts
-  1. resolveRemotes()              parse + validate APP_MODULES_FEDERATION_REMOTES → [{name, entry}]
-                                   (empty ⇒ done; non-string / non-https / non-".json"
-                                   entries are reported as SKIPPED, never silently dropped)
-  2. isCompatible(remote)          fetch manifest JSON (3s budget), evaluate
+  0. fetchPlugins()                the platform's list, on its own 2s budget (bootstrap.ts).
+                                   Slow or failing ⇒ no plugins, never a stalled boot
+  1. resolveRemotes(plugins)       env override if set, else the platform's descriptors
+                                   (empty ⇒ done; a name that is not /^[A-Za-z0-9][\w.-]*$/,
+                                   a non-string / non-https / non-".json" env entry, a
+                                   platform entry that is not same-origin http(s), or a
+                                   non-string field anywhere ⇒ SKIPPED, never silently dropped)
+  1a. permission filter            a plugin declaring a permission the user lacks is SKIPPED
+                                   before any fetch — the platform serves one list to everyone.
+                                   A UX/latency filter, not a boundary (see Security model)
+  2. isCompatible(remote)          fetch manifest JSON (2s budget), evaluate
                                    requiredHostVersion (semver version or RANGE) against
                                    CORE_VERSION. Incompatible, malformed, unreadable or
                                    timed out ⇒ SKIP (fail closed — no plugin code has run)
-  3. registerRemotes(compatible)   { force: true } so HMR re-registration won't throw
-  4. loadRemote(`${name}/plugin`)  ⇒ plugin module ⇒ await plugin.init()  (5s budget each)
+  3. registerRemotes(compatible)   no force: a known name is already a no-op in the runtime
+  3a. installRouteGuard()          wraps addRoute/removeRoute for the whole phase below
+  4. loadRemote(`${name}/${exposed}`) ⇒ inject its contentFiles styles ⇒ await its init() if it
+                                   has one (3s budget each); a module without init() still
+                                   counts as loaded
   5. Promise.allSettled            one bad plugin cannot abort the others
   6. reportOutcome({loaded,failed,skipped})   logs (Logger is live in dev, no-op in prod)
 ```
 
-In production `Logger` is a no-op, so failed/skipped plugins currently surface through
-the loader's returned outcome only — there is no telemetry signal yet. Reporting
+In production `Logger` is a no-op for **every** level, `error` included, and
+`startFederatedModules` discards the loader's result and returns `void`. So a plugin that is
+skipped, failed or lost to the backstop produces no production signal at all — the operator's only
+symptom is that the feature is absent. Reporting
 outcomes to Application Insights (`trackException` for **failed** — something broke; a
 `trackEvent` for **skipped** — a gate doing its job, kept out of the exceptions blade
 so it cannot drown real failures) is a tracked stage-2 follow-up in `TODO.md`; the
@@ -217,12 +253,20 @@ Three design points worth calling out:
   normalized to `"^1.0.0"` — so a host **major** bump correctly rejects plugins built
   against the previous major.
 - **Every network step is time-budgeted** (two knobs via `initFederatedModules(options)`:
-  manifest 3s; load and init 5s _each_ — one remote may legally take up to
-  manifest + 2×load ≈ 13s). Because boot awaits this loader, a hung remote must degrade
-  to a `failed`/`skipped` plugin — never a blank storefront. `bootstrap.ts` adds a
-  20s **backstop** above that sum, covering what the budgets cannot (the loader chunk
-  fetch itself hanging, an inner timeout malfunctioning) — a remote operating within
-  its budgets never trips it, preserving the deep-link guarantee. Containment
+  manifest 2s; load and init 3s _each_ — one remote may legally take up to
+  manifest + 2×load ≈ 8s), plus `DISCOVERY_TIMEOUT_MS` (2s) on the plugin-list query in
+  `bootstrap.ts`. Boot awaits this loader, so those budgets are also blank-screen time:
+  a hung remote delays first paint until it is reported `failed`/`skipped` — up to 8s of
+  per-remote budget, 10s counting the discovery leg, and never longer than the backstop below.
+  `bootstrap.ts` adds a
+  12s **backstop** above the budgeted legs (2 + 2 + 3 + 3 = 10s), covering what the budgets
+  do not: the loader chunk's own fetch, and an inner timeout malfunctioning.
+  **The remaining 2s is all the headroom that unbudgeted chunk fetch gets** — a
+  budget-compliant remote behind a slower one can still trip the cap, so the guarantee is
+  "never, unless the chunk fetch is slower than the leftover", not a flat "never". The chunk
+  is deliberately left unbudgeted: bounding it is what the backstop is _for_, and a second
+  timer would only drop every plugin sooner on a bad connection. Widen the cap, not the
+  promise, if 2s proves tight. Containment
   semantics: a `loadRemote` that resolves _after_ its budget never gets its `init()`
   called; an `init()` that already started cannot be cancelled — the plugin is reported
   `failed`, and any late settlement (success or the real failure cause) is logged as
@@ -296,7 +340,9 @@ export function init() {
 }
 ```
 
-Once built and deployed, add it to the host's `APP_MODULES_FEDERATION_REMOTES` and it loads on next boot.
+Ship the build inside a backend module under `plugins/vc-frontend/` and the platform advertises it —
+see *Environment variables* above. `APP_MODULES_FEDERATION_REMOTES` stays for a local or externally
+hosted remote.
 
 ---
 
@@ -325,45 +371,97 @@ Once built and deployed, add it to the host's `APP_MODULES_FEDERATION_REMOTES` a
 | Var              | Scope                | Meaning                                                                                                              |
 | ---------------- | -------------------- | -------------------------------------------------------------------------------------------------------------------- |
 | `APP_MODULES_FEDERATION_ENABLED`    | build time (inlined) | Enables the MF host plugin in Vite **and** the runtime bootstrap. Off (unset/`""`/`"false"`/`"0"`) ⇒ complete no-op. |
-| `APP_MODULES_FEDERATION_REMOTES` | build time (inlined) | JSON `{ "<name>": "<manifestUrl>" }`, https-only. Absent/invalid ⇒ no remotes loaded.                                |
+| `APP_MODULES_FEDERATION_REMOTES` | build time (inlined) | Local/dev override: JSON `{ "<name>": "<manifestUrl>" }`, https-only. Absent ⇒ the platform's list is used. Set to anything else — including `{}` or invalid JSON — ⇒ it still replaces the platform list, so no remotes load, and the host does not ask the platform for one. |
 
 ---
 
 ## Security model (read before enabling in production)
 
 A federated plugin executes with **full application privileges** — same origin, same
-session, same Apollo client. Treat the remote list as part of the deploy artifact, not
-as tenant-editable configuration. What the harness enforces today:
+session, same Apollo client. Installing a platform module is therefore a code-admission
+decision for the storefront. What the harness enforces today:
 
-- **https-only remotes** (http allowed for loopback only: `localhost` / `127.0.0.1` /
-  `[::1]`) — no downgradable code loads.
+- **https-only env remotes** (http for loopback only: `localhost` / `127.0.0.1` / `[::1]`). This
+  covers the *manifest* URL; the `remoteEntry.js` and chunk URLs that manifest declares are
+  fetched as delivered and never re-validated.
 - **Fail-closed gating** — a manifest that can't be fetched, parsed or version-matched
   never gets its code executed.
-- **Build-time remote list** — an attacker can't add a remote without producing a new
-  host build (this is a temporary property; see the central-discovery TODO, which must
-  come with an origin allowlist).
+- **Same-origin platform entries** — a platform descriptor may only name the storefront's own
+  origin; an absolute or protocol-relative URL pointing elsewhere is skipped, entries and
+  stylesheets alike. It must also resolve to an **http(s)** URL after the rewrite to
+  `mf-manifest.json`: a `blob:` URL shares this origin and has an opaque path, which makes the
+  path rewrite a no-op, so the entry would carry no `.json` and the MF runtime would script-load
+  it as code. The env override is the only way to load cross-origin code, and it is build-time.
+  The manifest *response* is re-checked too, since `fetch` follows redirects and an entry could
+  otherwise land somewhere its source does not allow — **each source keeps its own rule**: a
+  platform response must stay same-origin, an env response must still satisfy the https/loopback
+  rule. Demanding same-origin for both would kill the env override, whose whole purpose is
+  cross-origin. What none of this bounds is the manifest's *contents*: a same-origin manifest may
+  still declare chunk URLs on another host, and the MF runtime fetches those unchecked.
+- **Remote names are validated** (`/^[A-Za-z0-9][A-Za-z0-9._-]*$/`, both discovery paths). MF
+  resolves a `loadRemote` id by PREFIX, so with remotes `a` and `a/plugin` the request meant for
+  the second matches the first and is served out of *its* bundle — one plugin's code never runs
+  while both are reported loaded. Exact-name deduplication cannot see that, in this loader or in
+  MF itself.
+- **No silent host-route takeover** — `router.addRoute` evicts whatever root-level route already
+  carries the new record's name, and vue-router's warning for it is dev-only. For the span of the
+  load-and-init phase the loader wraps the router and refuses a claim on a name the host already
+  owns, checking every name one call would claim: both `addRoute` overloads and each named entry in
+  `children`, since vue-router treats those as root adds too. `removeRoute` is wrapped in the same
+  window and refuses a host name, because remove-then-add would otherwise leave the name free by the
+  time the add is checked — a plugin may still remove routes it added itself. One wrapper covers the
+  whole phase, not one per plugin: plugins init concurrently, and a per-plugin save/restore leaks one
+  plugin's wrapper onto the host router while the next runs unguarded. The wrapper cannot tell a host
+  call from a plugin's, which is why `app-runner` starts the loader only after its own route-mutating
+  installs (builder-preview does remove-then-add) — inside the window those would be refused and
+  logged against a plugin. It covers takeover, not authorization, and only inside that window — a
+  claim made from a continuation after the phase ends is outside it, and the name it is refused under
+  cannot be attributed to a single plugin. The window is not bounded by the backstop either: boot may
+  proceed at the cap with the wrapper still installed, since the loader keeps running detached.
+- **No tenant-editable remote list** — there is no store setting to edit. The runtime list is
+  whatever modules are installed, so a platform administrator with install rights decides which
+  plugins the storefront loads; the env override stays build-time. It is still backend-supplied
+  data, so whoever controls the GraphQL response controls the list — bounded, since that origin
+  also serves the host bundle.
+
+- **The permission filter is not a security boundary.** It decides what a user's browser bothers
+  to load, nothing more. The MF runtime fetches a remote with an injected `<script>`, which carries
+  no credentials, so any visitor can read a plugin's code and stylesheets straight from their URLs;
+  and the plugin list itself — ids, entry paths, the permission strings — is served to anonymous
+  visitors too. Treat it as latency and clutter control. **Every plugin must have its data access
+  authorized by the backend independently**; a plugin that relies on the host skipping it for the
+  wrong user is not protected.
 
 What **you** must provide when enabling MF in an environment:
 
-- **CSP**: add each plugin origin to `script-src` and `connect-src` (manifest fetch +
-  chunk loading). Without CSP, any XSS can `import()` arbitrary code anyway — CSP is the
-  real boundary that makes the https/allowlist story meaningful.
-- **Trusted hosting** for plugin artifacts (same trust level as the host bundle itself);
-  artifact integrity/signing is an open follow-up in `TODO.md`.
+- **CSP**: same-origin platform plugins fit a `self` policy — code and stylesheets alike, since both
+  arrive by URL. An externally hosted remote needs its origin in `script-src`, `connect-src` and
+  `style-src`. Without CSP, any XSS can `import()` arbitrary code anyway — CSP is what makes an
+  origin restriction mean anything.
+- **Trusted hosting** for plugin artifacts at the host bundle's trust level — including
+  `contentFiles` stylesheets, linked into `document.head` once the plugin loads, with no integrity
+  check and no cascade fence. Integrity checking was reviewed and deliberately left out while
+  plugins are served by our own backend (`TODO.md` #3).
 
 Known limitation (documented, accepted for now): the gate fetches the manifest itself,
 and the MF runtime fetches it **again** for loading — a remote redeployed between the
 two requests means the manifest that was validated is not guaranteed to be the one
-executed (TOCTOU), and remote boot pays a second round trip. The MF runtime exposes no
-public way to seed its manifest cache; the real fix is hash-pinned artifacts in the
-central-discovery response (see `TODO.md` #3 — vc-shell already passes `entry.hash`).
+executed (TOCTOU), and remote boot pays a second round trip. Both are fixable and neither is done
+yet: the runtime's `fetch` loader hook is emitted before it fetches a manifest and takes a
+`Response` in reply (`runtime-core/.../SnapshotHandler.js`), so handing back the body the gate
+already read makes validated bytes == executed bytes **and** removes the extra request. Tracked in
+`TODO.md` #3.
 
 ---
 
 ## Gotchas & guarantees
 
 - **Off by default.** No flag, no cost — the loader isn't even imported.
-- **Isolation is total.** `initFederatedModules()` never rejects; a failing plugin is
+- **Isolation is total**, malformed descriptors included. Every descriptor field is read through
+  a string guard and the list itself is checked for arrayness, because the projection is a
+  hand-written structural type and nothing else guards its shape — a non-string `permission` or
+  `entry.type` used to throw out of the loader and lose every plugin instead of skipping one.
+  `initFederatedModules()` never rejects; a failing plugin is
   logged and reported, others still load. A hung remote is cut off by the time budgets.
 - **Fail closed on version.** Can't read/parse/satisfy a manifest ⇒ skip that remote.
 - **The `.d.ts` is generated and drift-guarded.** After any facade change, run
@@ -377,5 +475,5 @@ central-discovery response (see `TODO.md` #3 — vc-shell already passes `entry.
   @apollo/client, …): plugins pin against the facade version, so a breaking shared
   dep must surface there.
 
-See [`TODO.md`](./TODO.md) for what's intentionally deferred (remote discovery via a
-central manifest, artifact integrity, a reference plugin in CI, etc.).
+See [`TODO.md`](./TODO.md) for what's intentionally deferred (a CSP at the ingress, per-plugin
+route authorization, a reference plugin in CI, etc.).

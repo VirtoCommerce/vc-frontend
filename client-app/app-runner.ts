@@ -1,7 +1,8 @@
 import { createHead } from "@unhead/vue/client";
 import { DefaultApolloClient } from "@vue/apollo-composable";
 import { createApp, h, provide } from "vue";
-import { apolloClient, getPageContext, initializeApplication } from "@/core/api/graphql";
+import { isMfFlagEnabled } from "@/core-api/federation.mjs";
+import { apolloClient, getPageContext, getStorePlugins, initializeApplication } from "@/core/api/graphql";
 import { GetSlugInfoDocument } from "@/core/api/graphql/types";
 import {
   useCurrency,
@@ -68,6 +69,13 @@ async function getUcpHandoffUserId(): Promise<string | undefined> {
   }
 }
 
+/**
+ * The env override skips the query: that list wins in the loader anyway, so asking would cost the
+ * plugin author's dev loop a round trip per boot, and an error against a backend without the field.
+ */
+const ASK_PLATFORM_FOR_PLUGINS =
+  isMfFlagEnabled(import.meta.env.APP_MODULES_FEDERATION_ENABLED) && !import.meta.env.APP_MODULES_FEDERATION_REMOTES;
+
 /** The preview plugins are optional: a failed load leaves the app booting without them. */
 function reportOptionalChunkFailure(error: unknown): undefined {
   ignoreChunkLoadFailure(error);
@@ -105,7 +113,7 @@ export default async () => {
 
   app.use(authPlugin);
 
-  const { setUser, user, isAuthenticated, savedUserId } = useUser();
+  const { setUser, user, isAuthenticated, savedUserId, checkPermissions } = useUser();
   const { themeContext, addPresetToThemeContext, setThemeContext } = useThemeContext();
   const {
     currentLanguage,
@@ -153,6 +161,13 @@ export default async () => {
   } catch (e) {
     Logger.warn("Failed to verify backend module versions", e);
   }
+
+  // Issued here so its round trip overlaps the boot queries instead of following them.
+  const storePluginsPromise = ASK_PLATFORM_FOR_PLUGINS ? getStorePlugins(domain) : undefined;
+  // The loader owns the error log and the degradation to "no plugins", but only attaches its handler
+  // once it runs; until then an unobserved rejection reaches the global handler. Handling it here
+  // does not consume it — the loader still sees and reports the failure.
+  void storePluginsPromise?.catch((error: unknown) => Logger.debug("[MF] the plugin-list query failed", error));
 
   const getPageContextPromise = getPageContext({
     domain: domain,
@@ -266,10 +281,6 @@ export default async () => {
   void initLoyalty(router, i18n);
   void initSalesRep(router, i18n);
 
-  // Module Federation host: load federated plugins if APP_MODULES_FEDERATION_ENABLED is on.
-  // Awaited before app.use(router) so plugin routes exist for the first navigation.
-  const federatedModulesReady = startFederatedModules();
-
   // Plugins
   app.use(head);
   app.use(i18n);
@@ -299,6 +310,15 @@ export default async () => {
       app.use(builderIoPreviewPlugin, { router });
     }
   }
+
+  // Started once no host plugin can still touch the router: the loader guards it against route
+  // takeover for the whole phase and cannot tell a host call from a plugin's, so builder-preview's
+  // remove-then-add would be refused. Outside preview mode nothing above awaits, so this costs no
+  // boot time. The user is already set, so a permission-gated plugin sees real claims.
+  const federatedModulesReady = startFederatedModules({
+    fetchPlugins: () => storePluginsPromise ?? Promise.resolve(undefined),
+    hasPermission: checkPermissions,
+  });
 
   // Federated plugin routes must exist before the router is installed. Never rejects.
   await federatedModulesReady;

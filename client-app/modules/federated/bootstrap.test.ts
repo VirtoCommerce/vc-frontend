@@ -149,4 +149,52 @@ describe("startFederatedModules", () => {
       vi.useRealTimers();
     }
   });
+  it("does not fetch the plugin list when the flag is off", async () => {
+    const fetchPlugins = vi.fn();
+    const { startFederatedModules } = await loadBootstrap();
+
+    await startFederatedModules({ fetchPlugins });
+
+    expect(fetchPlugins).not.toHaveBeenCalled();
+  });
+
+  it("passes the fetched plugin list to the loader", async () => {
+    vi.stubEnv("APP_MODULES_FEDERATION_ENABLED", "true");
+    initFederatedModulesMock.mockResolvedValue({ loaded: [], failed: [], skipped: [] });
+    const plugins = [{ id: "VirtoCommerce.SalesRep" }];
+    const hasPermission = vi.fn();
+    const { startFederatedModules } = await loadBootstrap();
+
+    await startFederatedModules({ fetchPlugins: () => Promise.resolve(plugins), hasPermission });
+
+    expect(initFederatedModulesMock).toHaveBeenCalledWith({ plugins, hasPermission });
+  });
+
+  it("degrades to no plugins when the plugin list cannot be read", async () => {
+    vi.stubEnv("APP_MODULES_FEDERATION_ENABLED", "true");
+    initFederatedModulesMock.mockResolvedValue({ loaded: [], failed: [], skipped: [] });
+    const { startFederatedModules } = await loadBootstrap();
+
+    await startFederatedModules({ fetchPlugins: () => Promise.reject(new Error("no such field")) });
+
+    expect(initFederatedModulesMock).toHaveBeenCalledWith({ plugins: undefined, hasPermission: undefined });
+    expect(loggerErrorMock).toHaveBeenCalledWith(expect.stringContaining("plugin list"), expect.anything());
+  });
+  it("budgets the plugin list, so a stalled discovery query cannot eat the boot backstop", async () => {
+    vi.stubEnv("APP_MODULES_FEDERATION_ENABLED", "true");
+    initFederatedModulesMock.mockResolvedValue({ loaded: [], failed: [], skipped: [] });
+    const { startFederatedModules, DISCOVERY_TIMEOUT_MS } = await loadBootstrap();
+    vi.useFakeTimers();
+    try {
+      // Never settles - the cold-backend case the backstop used to absorb.
+      const started = startFederatedModules({ fetchPlugins: () => new Promise(() => {}) });
+      await vi.advanceTimersByTimeAsync(DISCOVERY_TIMEOUT_MS);
+      await started;
+    } finally {
+      vi.useRealTimers();
+    }
+
+    expect(initFederatedModulesMock).toHaveBeenCalledWith(expect.objectContaining({ plugins: undefined }));
+    expect(loggerWarnMock).toHaveBeenCalledWith(expect.stringContaining("did not answer within"));
+  });
 });
