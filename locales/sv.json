@@ -1055,13 +1055,15 @@
         "added_html": "Produkt <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> läggs till i jämförelselistan <span class=\"hidden lg:inline\">(återstående - {itemsLeft})</span>",
         "removed_html": "Produkt <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> togs bort från jämförelselistan",
         "compare_button": "Jämför",
-        "added_to_cart_html": "Lade till <strong>{productName}</strong> i kundvagnen"
+        "added_to_cart_html": "Lade till <strong>{productName}</strong> i kundvagnen",
+        "fetch_failed": "Kunde inte ladda vissa jämförda produkter. Försök igen."
       },
       "table": {
         "tabs": {
           "all": "Alla",
           "differences": "Skillnader"
         },
+        "uncategorized": "Osorterad",
         "differ_rows": "Skiljer sig: {count} av {total} rader",
         "clear_category": "Rensa kategori",
         "remove_product": "Ta bort från jämförelse",

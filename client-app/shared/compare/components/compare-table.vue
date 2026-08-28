@@ -55,245 +55,253 @@
           </VcButton>
         </div>
 
-        <div ref="headerScrollRef" class="compare-table__header-scroll" role="table">
-          <div class="compare-table__header-inner" role="row">
-            <div
-              v-for="item in products"
-              :key="item.entry.localId ?? item.product.id"
-              class="compare-table__product"
-              :class="{ 'compare-table__product--compact': isCompact }"
-              role="columnheader"
-            >
-              <template v-if="isCompact">
-                <div class="compare-table__product-summary">
-                  <div class="compare-table__product-summary-image-wrap">
-                    <VcImage
-                      class="compare-table__product-summary-image"
-                      :src="item.product.imgSrc"
-                      :alt="item.product.name"
-                    />
+        <table ref="headerScrollRef" class="compare-table__header-scroll">
+          <thead class="compare-table__thead">
+            <tr class="compare-table__header-inner">
+              <th
+                v-for="item in products"
+                :key="item.entry.localId ?? item.product.id"
+                class="compare-table__product"
+                :class="{ 'compare-table__product--compact': isCompact }"
+                scope="col"
+              >
+                <template v-if="isCompact">
+                  <div class="compare-table__product-summary">
+                    <div class="compare-table__product-summary-image-wrap">
+                      <VcImage
+                        class="compare-table__product-summary-image"
+                        :src="item.product.imgSrc"
+                        :alt="item.product.name"
+                      />
+                    </div>
+
+                    <VcProductTitle
+                      class="compare-table__product-summary-title"
+                      :to="getProductRoute(item.product.id, item.product.slug)"
+                      :title="item.product.name"
+                      :lines-number="1"
+                      @click="emit('selectItem', item.product)"
+                    >
+                      {{ item.product.name }}
+                    </VcProductTitle>
                   </div>
-
-                  <VcProductTitle
-                    class="compare-table__product-summary-title"
-                    :to="getProductRoute(item.product.id, item.product.slug)"
-                    :title="item.product.name"
-                    :lines-number="1"
-                    @click="emit('selectItem', item.product)"
-                  >
-                    {{ item.product.name }}
-                  </VcProductTitle>
-                </div>
-
-                <VcButton
-                  v-if="item.product.isConfigurable"
-                  class="compare-table__product-cart-button"
-                  prepend-icon="cube-transparent"
-                  size="sm"
-                  :to="getConfigurationLink(item)"
-                  :target="browserTarget"
-                  :aria-label="t('pages.catalog.customize_button')"
-                >
-                  <span>
-                    {{ t("pages.catalog.customize_button") }}
-                  </span>
-                </VcButton>
-
-                <VcButton
-                  v-else-if="item.product.hasVariations"
-                  class="compare-table__product-cart-button"
-                  prepend-icon="layers"
-                  size="sm"
-                  :to="getProductRoute(item.product.id, item.product.slug)"
-                  :target="browserTarget"
-                  :aria-label="t('pages.catalog.variations_button', [(item.product.variations?.length || 0) + 1])"
-                >
-                  <span>
-                    {{ t("pages.catalog.variations_button", [(item.product.variations?.length || 0) + 1]) }}
-                  </span>
-                </VcButton>
-
-                <VcButton
-                  v-else
-                  class="compare-table__product-cart-button"
-                  prepend-icon="shopping-cart"
-                  size="sm"
-                  :loading="isAddingToCart(item)"
-                  :disabled="isAddToCartDisabled(item.product) || isAddingToCart(item)"
-                  :aria-label="t('shared.compare.table.add_to_cart')"
-                  @click="onAddToCart(item)"
-                >
-                  <span>
-                    {{ t("shared.compare.table.add_to_cart") }}
-                  </span>
-                </VcButton>
-              </template>
-
-              <template v-else>
-                <div class="compare-table__product-image-wrap">
-                  <VcImage class="compare-table__product-image" :src="item.product.imgSrc" :alt="item.product.name" />
-
-                  <VcProductActions class="compare-table__product-remove" with-background>
-                    <VcProductActionsButton
-                      icon="trash-2"
-                      :tooltip-text="t('shared.compare.table.remove_product')"
-                      @click="emit('removeProduct', item)"
-                    />
-                  </VcProductActions>
-                </div>
-
-                <div class="compare-table__product-footer">
-                  <VcProductTitle
-                    class="compare-table__product-title"
-                    :to="getProductRoute(item.product.id, item.product.slug)"
-                    :title="item.product.name"
-                    :lines-number="2"
-                    @click="emit('selectItem', item.product)"
-                  >
-                    {{ item.product.name }}
-                  </VcProductTitle>
 
                   <VcButton
                     v-if="item.product.isConfigurable"
-                    icon="cube-transparent"
+                    class="compare-table__product-cart-button"
+                    prepend-icon="cube-transparent"
                     size="sm"
                     :to="getConfigurationLink(item)"
                     :target="browserTarget"
                     :aria-label="t('pages.catalog.customize_button')"
-                  />
+                  >
+                    <span>
+                      {{ t("pages.catalog.customize_button") }}
+                    </span>
+                  </VcButton>
 
                   <VcButton
                     v-else-if="item.product.hasVariations"
-                    icon="layers"
+                    class="compare-table__product-cart-button"
+                    prepend-icon="layers"
                     size="sm"
                     :to="getProductRoute(item.product.id, item.product.slug)"
                     :target="browserTarget"
                     :aria-label="t('pages.catalog.variations_button', [(item.product.variations?.length || 0) + 1])"
-                  />
+                  >
+                    <span>
+                      {{ t("pages.catalog.variations_button", [(item.product.variations?.length || 0) + 1]) }}
+                    </span>
+                  </VcButton>
 
                   <VcButton
                     v-else
-                    icon="shopping-cart"
+                    class="compare-table__product-cart-button"
+                    prepend-icon="shopping-cart"
                     size="sm"
                     :loading="isAddingToCart(item)"
                     :disabled="isAddToCartDisabled(item.product) || isAddingToCart(item)"
                     :aria-label="t('shared.compare.table.add_to_cart')"
                     @click="onAddToCart(item)"
-                  />
-                </div>
-              </template>
-            </div>
-          </div>
-        </div>
+                  >
+                    <span>
+                      {{ t("shared.compare.table.add_to_cart") }}
+                    </span>
+                  </VcButton>
+                </template>
+
+                <template v-else>
+                  <div class="compare-table__product-image-wrap">
+                    <VcImage class="compare-table__product-image" :src="item.product.imgSrc" :alt="item.product.name" />
+
+                    <VcProductActions class="compare-table__product-remove" with-background>
+                      <VcProductActionsButton
+                        icon="trash-2"
+                        :tooltip-text="t('shared.compare.table.remove_product')"
+                        @click="emit('removeProduct', item)"
+                      />
+                    </VcProductActions>
+                  </div>
+
+                  <div class="compare-table__product-footer">
+                    <VcProductTitle
+                      class="compare-table__product-title"
+                      :to="getProductRoute(item.product.id, item.product.slug)"
+                      :title="item.product.name"
+                      :lines-number="2"
+                      @click="emit('selectItem', item.product)"
+                    >
+                      {{ item.product.name }}
+                    </VcProductTitle>
+
+                    <VcButton
+                      v-if="item.product.isConfigurable"
+                      icon="cube-transparent"
+                      size="sm"
+                      :to="getConfigurationLink(item)"
+                      :target="browserTarget"
+                      :aria-label="t('pages.catalog.customize_button')"
+                    />
+
+                    <VcButton
+                      v-else-if="item.product.hasVariations"
+                      icon="layers"
+                      size="sm"
+                      :to="getProductRoute(item.product.id, item.product.slug)"
+                      :target="browserTarget"
+                      :aria-label="t('pages.catalog.variations_button', [(item.product.variations?.length || 0) + 1])"
+                    />
+
+                    <VcButton
+                      v-else
+                      icon="shopping-cart"
+                      size="sm"
+                      :loading="isAddingToCart(item)"
+                      :disabled="isAddToCartDisabled(item.product) || isAddingToCart(item)"
+                      :aria-label="t('shared.compare.table.add_to_cart')"
+                      @click="onAddToCart(item)"
+                    />
+                  </div>
+                </template>
+              </th>
+            </tr>
+          </thead>
+        </table>
       </div>
 
-      <div ref="bodyScrollRef" class="compare-table__scroll" role="table">
-        <div
-          v-for="(row, index) in visibleRows"
-          :key="row.key"
-          class="compare-table__row"
-          :class="{ 'compare-table__row--alt': index % 2 === 1 }"
-          role="row"
-        >
-          <div class="compare-table__row-label" role="rowheader">
-            <span class="compare-table__row-label-info-wrap">
-              <span class="compare-table__row-label-text">{{ row.label }}</span>
-
-              <VcTooltip
-                v-if="row.description"
-                class="compare-table__row-info"
-                placement="top"
-                strategy="fixed"
-                enable-teleport
-              >
-                <template #trigger>
-                  <VcIcon name="information-circle" size="xs" :label="row.description" />
-                </template>
-
-                <template #content>
-                  {{ row.description }}
-                </template>
-              </VcTooltip>
-            </span>
-
-            <VcButton
-              class="compare-table__row-pin"
-              :class="{ 'compare-table__row-pin--active': isRowPinned(row.key) }"
-              size="xxs"
-              variant="ghost"
-              :color="isRowPinned(row.key) ? 'secondary' : 'neutral'"
-              icon
-              :aria-pressed="isRowPinned(row.key)"
-              :aria-label="
-                t(
-                  isRowPinned(row.key) ? 'shared.compare.table.pin.unpin_label' : 'shared.compare.table.pin.pin_label',
-                  { label: row.label },
-                )
-              "
-              :title="
-                t(isRowPinned(row.key) ? 'shared.compare.table.pin.unpin_title' : 'shared.compare.table.pin.pin_title')
-              "
-              @click="togglePin(row.key)"
-            >
-              <VcIcon name="pin" :variant="isRowPinned(row.key) ? 'solid' : 'outline'" />
-            </VcButton>
-          </div>
-
-          <div
-            v-for="(value, index) in row.values"
-            :key="products[index]?.entry.localId ?? products[index]?.product.id ?? index"
-            class="compare-table__row-value"
-            role="cell"
+      <table ref="bodyScrollRef" class="compare-table__scroll">
+        <tbody class="compare-table__tbody">
+          <tr
+            v-for="(row, index) in visibleRows"
+            :key="row.key"
+            class="compare-table__row"
+            :class="{ 'compare-table__row--alt': index % 2 === 1 }"
           >
-            <VcProductPrice
-              v-if="row.kind === 'price' && products[index]"
-              class="compare-table__price"
-              align="start"
-              single-line
-              :actual-price="getDisplayPrice(products[index]!.product).actual"
-              :list-price="getDisplayPrice(products[index]!.product).list"
-              :with-from-label="
-                products[index]!.product.hasVariations ||
-                (products[index]!.product.isConfigurable && !products[index]!.entry.configurationSectionInput?.length)
-              "
-            />
+            <th class="compare-table__row-label" scope="row">
+              <span class="compare-table__row-label-info-wrap">
+                <span class="compare-table__row-label-text">{{ row.label }}</span>
 
-            <span v-else-if="row.kind === 'rating' && products[index]?.product.rating" class="compare-table__rating">
-              <VcRating
-                mode="full"
-                read-only
-                :value="products[index]!.product.rating!.value"
-                size="xs"
-                :with-text="false"
-              />
-              {{ value }}
-            </span>
+                <VcTooltip
+                  v-if="row.description"
+                  class="compare-table__row-info"
+                  placement="top"
+                  strategy="fixed"
+                  enable-teleport
+                >
+                  <template #trigger>
+                    <VcIcon name="information-circle" size="xs" :label="row.description" />
+                  </template>
 
-            <InStock
-              v-else-if="row.kind === 'availability' && products[index]"
-              :is-in-stock="products[index]!.product.availabilityData.isInStock"
-              :is-available="products[index]!.product.availabilityData.isAvailable"
-              :is-digital="products[index]!.product.productType === ProductType.Digital"
-              :quantity="products[index]!.product.availabilityData.availableQuantity"
-            />
+                  <template #content>
+                    {{ row.description }}
+                  </template>
+                </VcTooltip>
+              </span>
 
-            <span
-              v-else-if="row.kind === 'boolean' && row.boolValues?.[index] !== undefined"
-              class="compare-table__boolean"
+              <VcButton
+                class="compare-table__row-pin"
+                :class="{ 'compare-table__row-pin--active': isRowPinned(row.key) }"
+                size="xxs"
+                variant="ghost"
+                :color="isRowPinned(row.key) ? 'secondary' : 'neutral'"
+                icon
+                :aria-pressed="isRowPinned(row.key)"
+                :aria-label="
+                  t(
+                    isRowPinned(row.key)
+                      ? 'shared.compare.table.pin.unpin_label'
+                      : 'shared.compare.table.pin.pin_label',
+                    { label: row.label },
+                  )
+                "
+                :title="
+                  t(
+                    isRowPinned(row.key)
+                      ? 'shared.compare.table.pin.unpin_title'
+                      : 'shared.compare.table.pin.pin_title',
+                  )
+                "
+                @click="togglePin(row.key)"
+              >
+                <VcIcon name="pin" :variant="isRowPinned(row.key) ? 'solid' : 'outline'" />
+              </VcButton>
+            </th>
+
+            <td
+              v-for="(value, index) in row.values"
+              :key="products[index]?.entry.localId ?? products[index]?.product.id ?? index"
+              class="compare-table__row-value"
             >
-              <VcIcon
-                size="sm"
-                :name="row.boolValues[index] ? 'check' : 'x'"
-                :class="row.boolValues[index] ? 'text-success' : 'text-neutral-400'"
+              <VcProductPrice
+                v-if="row.kind === 'price' && products[index]"
+                class="compare-table__price"
+                align="start"
+                single-line
+                :actual-price="getDisplayPrice(products[index]!.product).actual"
+                :list-price="getDisplayPrice(products[index]!.product).list"
+                :with-from-label="
+                  products[index]!.product.hasVariations ||
+                  (products[index]!.product.isConfigurable && !products[index]!.entry.configurationSectionInput?.length)
+                "
               />
 
-              {{ value }}
-            </span>
+              <span v-else-if="row.kind === 'rating' && products[index]?.product.rating" class="compare-table__rating">
+                <VcRating
+                  mode="full"
+                  read-only
+                  :value="products[index]!.product.rating!.value"
+                  size="xs"
+                  :with-text="false"
+                />
+                {{ value }}
+              </span>
 
-            <template v-else>{{ value }}</template>
-          </div>
-        </div>
-      </div>
+              <InStock
+                v-else-if="row.kind === 'availability' && products[index]"
+                :is-in-stock="products[index]!.product.availabilityData.isInStock"
+                :is-available="products[index]!.product.availabilityData.isAvailable"
+                :is-digital="products[index]!.product.productType === ProductType.Digital"
+                :quantity="products[index]!.product.availabilityData.availableQuantity"
+              />
+
+              <span
+                v-else-if="row.kind === 'boolean' && row.boolValues?.[index] !== undefined"
+                class="compare-table__boolean"
+              >
+                <VcIcon
+                  size="sm"
+                  :name="row.boolValues[index] ? 'check' : 'x'"
+                  :class="row.boolValues[index] ? 'text-success' : 'text-neutral-400'"
+                />
+
+                {{ value }}
+              </span>
+
+              <template v-else>{{ value }}</template>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </template>
   </VcWidget>
 </template>
@@ -408,7 +416,11 @@ watch(
 <style lang="scss">
 .compare-table {
   &__scroll {
-    @apply overflow-x-auto rounded-b-[--vc-radius];
+    @apply block overflow-x-auto rounded-b-[--vc-radius];
+  }
+
+  &__tbody {
+    @apply block;
   }
 
   &__header-row {
@@ -436,7 +448,7 @@ watch(
   }
 
   &__header-scroll {
-    @apply min-w-0 flex-1 overflow-x-auto;
+    @apply block min-w-0 flex-1 overflow-x-auto;
 
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -444,6 +456,10 @@ watch(
     &::-webkit-scrollbar {
       display: none;
     }
+  }
+
+  &__thead {
+    @apply block;
   }
 
   &__header-inner {
@@ -493,7 +509,7 @@ watch(
   }
 
   &__product {
-    @apply flex min-w-48 max-w-60 flex-1 flex-col gap-3 p-3;
+    @apply flex min-w-48 max-w-60 flex-1 flex-col gap-3 p-3 text-start font-normal;
 
     @media (width < theme("screens.md")) {
       @apply w-28 min-w-0 max-w-none flex-none;
@@ -589,7 +605,7 @@ watch(
   }
 
   &__row-label {
-    @apply sticky start-0 z-[1] flex w-60 shrink-0 items-center gap-1 border-e border-neutral-200 bg-additional-50 px-3 py-2.5 text-xs text-neutral-600;
+    @apply sticky start-0 z-[1] flex w-60 shrink-0 items-center gap-1 border-e border-neutral-200 bg-additional-50 px-3 py-2.5 text-start text-xs font-normal text-neutral-600;
 
     @media (width < theme("screens.md")) {
       @apply w-28;

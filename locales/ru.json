@@ -1055,13 +1055,15 @@
         "added_html": "Товар <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> добавлен в список сравнения <span class=\"hidden lg:inline\">(осталось - {itemsLeft})</span>",
         "removed_html": "Товар <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> удален из списка сравнения",
         "compare_button": "Сравнить",
-        "added_to_cart_html": "<strong>{productName}</strong> добавлен в корзину"
+        "added_to_cart_html": "<strong>{productName}</strong> добавлен в корзину",
+        "fetch_failed": "Не удалось загрузить некоторые сравниваемые товары. Пожалуйста, попробуйте еще раз."
       },
       "table": {
         "tabs": {
           "all": "Все",
           "differences": "Различия"
         },
+        "uncategorized": "Без категории",
         "differ_rows": "Различаются: {count} из {total} строк",
         "clear_category": "Очистить категорию",
         "remove_product": "Удалить из сравнения",

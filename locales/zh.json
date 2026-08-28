@@ -1055,13 +1055,15 @@
         "added_html": "产品<span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span>已添加到比较列表<span class=\"hidden lg:inline\">（剩余 - {itemsLeft}）</span>",
         "removed_html": "产品<span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span>已从比较列表中移除",
         "compare_button": "比较",
-        "added_to_cart_html": "已将<strong>{productName}</strong>添加到购物车"
+        "added_to_cart_html": "已将<strong>{productName}</strong>添加到购物车",
+        "fetch_failed": "无法加载部分对比商品。请重试。"
       },
       "table": {
         "tabs": {
           "all": "全部",
           "differences": "差异"
         },
+        "uncategorized": "未分类",
         "differ_rows": "差异：{count} / {total} 行",
         "clear_category": "清除类别",
         "remove_product": "从比较中移除",

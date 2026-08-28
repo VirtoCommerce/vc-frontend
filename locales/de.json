@@ -1055,13 +1055,15 @@
         "added_html": "Produkt <span class=\"hidden lg:inline\">„<strong>{productName}</strong>“</span> wurde zur Vergleichsliste hinzugefügt <span class=\"hidden lg:inline\">(verbleibende Artikel - {itemsLeft})</span>",
         "removed_html": "Produkt <span class=\"hidden lg:inline\">„<strong>{productName}</strong>“</span> wurde aus der Vergleichsliste entfernt",
         "compare_button": "Vergleichen",
-        "added_to_cart_html": "<strong>{productName}</strong> zum Warenkorb hinzugefügt"
+        "added_to_cart_html": "<strong>{productName}</strong> zum Warenkorb hinzugefügt",
+        "fetch_failed": "Einige Vergleichsprodukte konnten nicht geladen werden. Bitte versuche es erneut."
       },
       "table": {
         "tabs": {
           "all": "Alle",
           "differences": "Unterschiede"
         },
+        "uncategorized": "Nicht kategorisiert",
         "differ_rows": "Unterschiede: {count} von {total} Zeilen",
         "clear_category": "Kategorie löschen",
         "remove_product": "Aus dem Vergleich entfernen",

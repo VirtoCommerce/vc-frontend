@@ -1055,13 +1055,15 @@
         "added_html": "Produkt <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> er lagt til i sammenligningslisten <span class=\"hidden lg:inline\">(elementer igjen - {itemsLeft})</span>",
         "removed_html": "Produkt <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> ble fjernet fra sammenligningslisten",
         "compare_button": "Sammenlign",
-        "added_to_cart_html": "Lagt til <strong>{productName}</strong> i handlekurven"
+        "added_to_cart_html": "Lagt til <strong>{productName}</strong> i handlekurven",
+        "fetch_failed": "Kunne ikke laste inn noen sammenlignede produkter. Prøv igjen."
       },
       "table": {
         "tabs": {
           "all": "Alle",
           "differences": "Forskjeller"
         },
+        "uncategorized": "Ukategorisert",
         "differ_rows": "Forskjellig: {count} av {total} rader",
         "clear_category": "Fjern kategori",
         "remove_product": "Fjern fra sammenligning",

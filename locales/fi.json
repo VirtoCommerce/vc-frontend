@@ -1055,13 +1055,15 @@
         "added_html": "Tuote <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> lisättiin vertailulistaan <span class=\"hidden lg:inline\">(jäljellä - {itemsLeft})</span>",
         "removed_html": "Tuote <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> poistettiin vertailulistasta",
         "compare_button": "Vertaa",
-        "added_to_cart_html": "Lisätty <strong>{productName}</strong> ostoskoriin"
+        "added_to_cart_html": "Lisätty <strong>{productName}</strong> ostoskoriin",
+        "fetch_failed": "Joidenkin verrattujen tuotteiden lataaminen epäonnistui. Yritä uudelleen."
       },
       "table": {
         "tabs": {
           "all": "Kaikki",
           "differences": "Erot"
         },
+        "uncategorized": "Luokittelemattomat",
         "differ_rows": "Erot: {count} / {total} riviä",
         "clear_category": "Tyhjennä kategoria",
         "remove_product": "Poista vertailusta",
