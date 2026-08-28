@@ -396,9 +396,9 @@ export function useProducts(
     fetchingProducts.value = true;
     if (!preserveProductsWhileFetching) {
       products.value = [];
+      totalProductsCount.value = 0;
+      pagesCount.value = 1;
     }
-    totalProductsCount.value = 0;
-    pagesCount.value = 1;
 
     if (searchParams.page) {
       updateCurrentPage(Number(searchParams.page));

@@ -296,10 +296,12 @@ describe("useProducts", () => {
 
   describe("preserveProductsWhileFetching", () => {
     it("clears products immediately on refetch by default", async () => {
-      const { fetchProducts, products } = useProducts();
+      const { fetchProducts, products, totalProductsCount, pagesCount } = useProducts();
 
       await fetchProducts({ page: 1, itemsPerPage: 2 });
       expect(products.value).toEqual([{ id: "product1" }, { id: "product2" }]);
+      expect(totalProductsCount.value).toBe(10);
+      expect(pagesCount.value).toBe(5);
 
       let resolveRefetch!: (value: typeof mockData.mockSearchProductsResponse) => void;
       mockData.searchProducts.mockReturnValueOnce(new Promise((resolve) => (resolveRefetch = resolve)));
@@ -308,6 +310,8 @@ describe("useProducts", () => {
       // right after calling it — no need to wait for the request to resolve.
       const refetchPromise = fetchProducts({ page: 1, itemsPerPage: 2 });
       expect(products.value).toEqual([]);
+      expect(totalProductsCount.value).toBe(0);
+      expect(pagesCount.value).toBe(1);
 
       resolveRefetch(mockData.mockSearchProductsResponse);
       await refetchPromise;
@@ -331,6 +335,26 @@ describe("useProducts", () => {
       await refetchPromise;
 
       expect(products.value).toEqual([{ id: "product3" }, { id: "product4" }]);
+    });
+
+    it("keeps totalProductsCount and pagesCount alongside the preserved products, not just products itself", async () => {
+      const { fetchProducts, totalProductsCount, pagesCount } = useProducts({
+        preserveProductsWhileFetching: true,
+      });
+
+      await fetchProducts({ page: 1, itemsPerPage: 2 });
+      expect(totalProductsCount.value).toBe(10);
+      expect(pagesCount.value).toBe(5);
+
+      let resolveRefetch!: (value: typeof mockData.mockSearchProductsMoreResponse) => void;
+      mockData.searchProducts.mockReturnValueOnce(new Promise((resolve) => (resolveRefetch = resolve)));
+
+      const refetchPromise = fetchProducts({ page: 1, itemsPerPage: 2 });
+      expect(totalProductsCount.value).toBe(10);
+      expect(pagesCount.value).toBe(5);
+
+      resolveRefetch(mockData.mockSearchProductsMoreResponse);
+      await refetchPromise;
     });
   });
 
