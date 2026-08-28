@@ -166,7 +166,18 @@ export function useDateField(opts: IUseDateFieldOptions) {
     touched.value = false;
   }
 
+  /**
+   * Empties the text without reading the model. `reset` cannot serve a CLEAR: an uncontrolled parent
+   * never writes the model back, so repainting from it puts the cleared dates straight back and the
+   * button reads as broken. VcInput clears the same way — its defineModel keeps a local value.
+   */
+  function clearText(): void {
+    displayValue.value = "";
+    touched.value = false;
+  }
+
   return {
+    clearText,
     displayValue,
     errorText,
     isValid,

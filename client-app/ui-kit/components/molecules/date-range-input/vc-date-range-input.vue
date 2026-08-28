@@ -110,6 +110,7 @@ import type { VcDateFieldUpdateOnType } from "@/ui-kit/composables";
 interface IDateInputExposed {
   inputElement: HTMLInputElement | null;
   reset: () => void;
+  clearText: () => void;
   hasText: boolean;
 }
 
@@ -258,12 +259,19 @@ function resetSegments(side?: "start" | "end"): void {
   });
 }
 
+// A CLEAR, not a resync: an uncontrolled parent never writes the model back, and reset() would paint
+// the cleared dates straight back in. Synchronous — there is no model round trip to wait for.
+function clearSegments(): void {
+  startInputRef.value?.clearText();
+  endInputRef.value?.clearText();
+}
+
 function clearBoth(): void {
   // Refocus before the button unmounts, as VcInput.clear() does; focus lost to body would emit a false blur.
   startInputElement.value?.focus();
   emit("update:modelValue", undefined);
   emit("clear");
-  resetSegments();
+  clearSegments();
 }
 
 defineExpose({
@@ -273,6 +281,8 @@ defineExpose({
    * side to leave the other segment's text alone — a partial commit does not define it.
    */
   resetSegments,
+  /** Empties both segments outright, for a CLEAR the parent may not write back. */
+  clearSegments,
 });
 </script>
 

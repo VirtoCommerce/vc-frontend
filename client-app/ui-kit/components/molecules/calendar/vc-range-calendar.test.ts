@@ -161,6 +161,23 @@ describe("VcRangeCalendar", () => {
   // The shell gates its own handler, but reka would still mutate its internal start/end and paint a
   // range the model does not hold — so the grid has to be frozen at the root, not only downstream.
   describe.each(["disabled", "readonly"] as const)("%s", (prop) => {
+    // The footer Clear is a second route into the model, and it bypasses the grid entirely.
+    it("disables the footer Clear instead of letting it empty the range", async () => {
+      const wrapper = mountCal({
+        modelValue: { start: "2026-10-08", end: "2026-10-14" },
+        showFooter: true,
+        [prop]: true,
+      });
+
+      const clear = wrapper.find(".vc-range-calendar__footer-btn");
+      expect(clear.attributes("disabled")).toBeDefined();
+
+      await clear.trigger("click");
+
+      expect(wrapper.emitted("update:modelValue")).toBeUndefined();
+      expect(wrapper.emitted("clear")).toBeUndefined();
+    });
+
     it("does not paint a selection the model never took", async () => {
       const { wrapper, state, emits } = mountBoundCal(undefined, { [prop]: true });
       await flushPromises();

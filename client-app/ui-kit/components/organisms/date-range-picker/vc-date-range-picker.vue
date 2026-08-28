@@ -258,10 +258,11 @@ const { t } = useI18n();
 const rangeInputRef = useTemplateRef<{
   startInputElement: HTMLInputElement | null;
   resetSegments: (side?: "start" | "end") => void;
+  clearSegments: () => void;
 } | null>("rangeInputRef");
 const calendarRef = useTemplateRef<{ focusActiveCell: () => void; $el?: Element | null } | null>("calendarRef");
-const startFieldRef = useTemplateRef<{ reset: () => void } | null>("startFieldRef");
-const endFieldRef = useTemplateRef<{ reset: () => void } | null>("endFieldRef");
+const startFieldRef = useTemplateRef<{ reset: () => void; clearText: () => void } | null>("startFieldRef");
+const endFieldRef = useTemplateRef<{ reset: () => void; clearText: () => void } | null>("endFieldRef");
 
 const { calendarSize, focusField, onToggle, onEscapeClose, onFieldEscape, onTriggerEscape } = useCalendarPopover({
   size: () => props.size,
@@ -394,10 +395,16 @@ function onCalendarUpdate(close: () => void, value: VcDateRangeType | undefined)
 }
 
 // The model update alone can't drive this: clearing an already-empty range emits nothing.
+// Gated exactly as onCalendarUpdate is: a frozen field must not lose its range to the footer either.
 function onCalendarClear(close: () => void): void {
+  if (props.disabled || props.readonly) {
+    return;
+  }
   emit("clear");
-  // Uncommitted segment text isn't cleared by the model round trip, exactly as in clearBoth.
-  rangeInputRef.value?.resetSegments();
+  // A CLEAR empties the text rather than resyncing it, exactly as in clearBoth.
+  rangeInputRef.value?.clearSegments();
+  startFieldRef.value?.clearText();
+  endFieldRef.value?.clearText();
   if (props.closeOnSelect) {
     close();
     focusField();

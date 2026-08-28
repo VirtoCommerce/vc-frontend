@@ -349,6 +349,22 @@ describe("VcDateRangeInput", () => {
     });
   });
 
+  // A parent that does not write the model back must still see the field empty: reset() would repaint
+  // the cleared dates from the unchanged prop, and the button would read as broken.
+  it("empties both segments on clear even when the parent never applies it", async () => {
+    const wrapper = mountInput({ modelValue: { start: "2026-10-08", end: "2026-10-14" }, clearable: true });
+    expect(wrapper.findAll("input").map((input) => input.element.value)).toEqual(["10/08/2026", "10/14/2026"]);
+
+    await wrapper.findComponent({ name: "VcButton" }).trigger("click");
+    await flushPromises();
+
+    expect(wrapper.emitted("clear")).toHaveLength(1);
+    expect(wrapper.props("modelValue")).toEqual({ start: "2026-10-08", end: "2026-10-14" });
+    expect(wrapper.findAll("input").map((input) => input.element.value)).toEqual(["", ""]);
+
+    wrapper.unmount();
+  });
+
   describe("focus/blur shell boundary", () => {
     it("emits focus exactly once when focus enters the shell from outside", () => {
       const outside = document.createElement("button");

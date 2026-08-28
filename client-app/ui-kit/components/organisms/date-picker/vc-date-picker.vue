@@ -121,12 +121,13 @@ interface IProps {
   updateOn?: VcDateFieldUpdateOnType;
   /** Apply a locale-aware input mask on the text input. See VcDateInput for semantics. */
   mask?: boolean;
+  /** Show a clear button in the field. Default false — the field then has no pointer way to clear. */
   clearable?: boolean;
   /** Teleport the popover into #popover-host — use inside clipping containers (modal, overflow:hidden). */
   enableTeleport?: boolean;
-  /** Show the calendar footer (Today / Clear buttons). */
   /** Keep a re-click on the selected day from clearing it. Default true. See VcCalendar. */
   preventDeselect?: boolean;
+  /** Show the calendar footer (Today / Clear buttons). */
   showFooter?: boolean;
   firstDayOfWeek?: VcCalendarFirstDayOfWeekType;
   weekdayFormat?: VcCalendarWeekdayFormatType;
@@ -169,9 +170,11 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const { t } = useI18n();
 
-const dateInputRef = useTemplateRef<{ inputElement: HTMLInputElement | null; reset: () => void } | null>(
-  "dateInputRef",
-);
+const dateInputRef = useTemplateRef<{
+  inputElement: HTMLInputElement | null;
+  reset: () => void;
+  clearText: () => void;
+} | null>("dateInputRef");
 const innerInputElement = computed<HTMLInputElement | null>(() => dateInputRef.value?.inputElement ?? null);
 
 const calendarRef = useTemplateRef<{ focusActiveCell: () => void; $el?: Element | null } | null>("calendarRef");
@@ -215,11 +218,13 @@ function onInputClear(): void {
 
 // The model round trip cannot drive this: clearing an already-empty date emits nothing.
 function onCalendarClear(close: () => void): void {
+  if (props.disabled || props.readonly) {
+    return;
+  }
   emit("clear");
-  // Uncommitted text is not cleared by the model round trip, exactly as in onCalendarUpdate.
-  void nextTick(() => {
-    dateInputRef.value?.reset();
-  });
+  // A CLEAR empties the text rather than resyncing it: an uncontrolled parent never writes the model
+  // back, and reset() would paint the cleared date straight back in.
+  dateInputRef.value?.clearText();
   if (props.closeOnSelect) {
     close();
     focusField();

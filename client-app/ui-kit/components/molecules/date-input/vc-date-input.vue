@@ -108,7 +108,7 @@ const props = withDefaults(defineProps<IProps>(), {
 const { locale: i18nLocale } = useI18n();
 const resolvedLocale = computed<string>(() => props.locale ?? i18nLocale.value);
 
-const { displayValue, errorText, isValid, onBlur, onEnter, onClear, reset, commit } = useDateField({
+const { displayValue, errorText, isValid, onBlur, onEnter, onClear, reset, clearText, commit } = useDateField({
   modelValue: toRef(props, "modelValue"),
   locale: resolvedLocale,
   updateOn: toRef(props, "updateOn"),
@@ -171,6 +171,8 @@ const hasText = computed<boolean>(() => displayValue.value.trim().length > 0);
 defineExpose({
   inputElement: innerInputElement,
   reset,
+  /** Empties the text outright, for a CLEAR the parent may not write back. See useDateField. */
+  clearText,
   hasText,
 });
 

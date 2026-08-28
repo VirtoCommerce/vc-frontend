@@ -100,7 +100,13 @@
     </RangeCalendarGrid>
 
     <div v-if="showFooter" class="vc-range-calendar__footer">
-      <button type="button" class="vc-range-calendar__footer-btn" @click="onClearClick">
+      <button
+        type="button"
+        class="vc-range-calendar__footer-btn"
+        :disabled="disabled || readonly"
+        :aria-disabled="disabled || readonly || undefined"
+        @click="onClearClick"
+      >
         {{ t("ui_kit.calendar.clear") }}
       </button>
     </div>
@@ -350,6 +356,10 @@ function onUpdate(value: DateRange | undefined): void {
 }
 
 function onClearClick(): void {
+  // The button is disabled too, but a programmatic click would still reach this.
+  if (props.disabled || props.readonly) {
+    return;
+  }
   // A commit to nothing, and one WE emit — the props watch skips our own echo, so this is the only
   // place that can tell Escape the old range is gone.
   committedRange = undefined;
