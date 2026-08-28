@@ -1,6 +1,0 @@
-// Focus ring: bump opacity for dark-mode visibility. At the house 0.35 the outline on day cells and
-// nav buttons is near-invisible on a dark surface, failing WCAG 2.4.7. The range twin carries no such
-// override: it declares 0.8 in light too, because 0.35 misses 3:1 there as well (WCAG 1.4.11).
-.vc-calendar {
-  --focus-ring: rgb(from var(--color-primary-500) r g b / 0.8);
-}

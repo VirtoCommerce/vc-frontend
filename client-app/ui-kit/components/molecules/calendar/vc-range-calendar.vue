@@ -12,6 +12,7 @@
     :min-value="minDateValue"
     :max-value="maxDateValue"
     :is-date-unavailable="isDateUnavailable"
+    allow-non-contiguous-ranges
     fixed-weeks
     prevent-deselect
     :class="rootClasses"
@@ -138,10 +139,9 @@ interface IProps {
    * Predicate that returns true to mark a date unavailable (hatched, distinct from min/max). Receives ISO YYYY-MM-DD.
    * The grid reads it once at mount: reka takes the predicate by value, so swapping it later does not re-filter the rendered days.
    *
-   * A range may not span an unavailable day: reka refuses the completing pick and only the anchor
-   * survives, so picking a day beyond one never yields a range. `min`/`max` bound the ENDS of the grid
-   * and cannot express this — no prop here marks a day a range may pass over. Typing is not gated the
-   * same way: a text field rejects a date the predicate matches, never the span between two it accepts.
+   * An unavailable day cannot BE an endpoint, but a range may span one: the grid runs with reka's
+   * `allowNonContiguousRanges`, so such a day renders inside the band and keeps its own strike-through.
+   * Without it reka refuses the completing pick outright and the repeat press destroys the anchor.
    */
   disabledDate?: VcCalendarDisabledDateType;
   /** Show the footer (Clear button). */
@@ -437,18 +437,13 @@ defineExpose({ focusActiveCell });
   // same value, so it is set once here rather than re-declared in the dark layer.
   --focus-ring: rgb(from var(--color-primary-500) r g b / 0.8);
 
-  // Range endpoints, as a pair: own key, then the shared solid-primary override, then the palette —
-  // the same chain the buttons use. The single calendar's --vc-calendar-selected-* keys are deliberately
-  // NOT in it: both were born alongside these, so there is nothing legacy to honour, and reading them
-  // would let a fork restyling VcCalendar silently repaint this one. 700 rather than 500: see vc-calendar.
-  --selected-bg: var(
-    --vc-range-calendar-selected-bg,
-    var(--color-vc-background-solid-primary, var(--color-primary-700))
-  );
-  --selected-text: var(
-    --vc-range-calendar-selected-text,
-    var(--color-vc-text-solid-primary, var(--color-additional-50))
-  );
+  // Range endpoints, as a pair: own key, then the palette. Two arms are deliberately absent — the
+  // single calendar's --vc-calendar-selected-* keys (both born alongside these, so nothing legacy to
+  // honour, and reading them would let a fork restyling VcCalendar silently repaint this one), and the
+  // shared --color-vc-*-solid-primary keys. 700 rather than 500, and why not the shared key either:
+  // see vc-calendar.
+  --selected-bg: var(--vc-range-calendar-selected-bg, var(--color-primary-700));
+  --selected-text: var(--vc-range-calendar-selected-text, var(--color-additional-50));
 
   --bg-color: var(--color-additional-50);
   --border-color: var(--color-neutral-200);

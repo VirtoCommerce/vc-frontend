@@ -187,8 +187,7 @@ interface IProps {
    * Predicate that returns true to mark a date unavailable (greyed out). Receives ISO YYYY-MM-DD.
    * Read once at mount: reka takes the predicate by value, so swapping it later re-filters typed input but not the grid.
    *
-   * In "combined" the calendar cannot select a range that spans an unavailable day (see VcRangeCalendar);
-   * typing one, and "split" — two independent single-date calendars — can still produce that range.
+   * An unavailable day cannot be picked as an endpoint in either layout, but a range may span one.
    */
   disabledDate?: VcCalendarDisabledDateType;
   /** Override locale; defaults to active i18n locale. */

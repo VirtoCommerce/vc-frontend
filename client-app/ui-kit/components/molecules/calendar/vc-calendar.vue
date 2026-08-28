@@ -290,19 +290,20 @@ defineExpose({
 .vc-calendar {
   --radius: var(--vc-calendar-radius, var(--vc-radius, 0.75rem));
   --day-radius: var(--vc-calendar-day-radius, var(--vc-radius, 0.375rem));
-  --focus-ring: rgb(from var(--color-primary-500) r g b / 0.35);
+  // 0.8, not the house 0.3-0.35: this ring is the only focus cue on the day grid, and at 0.35 it
+  // composites to 1.56-1.77 : 1 on the calendar surface, under the 3:1 of WCAG 1.4.11. Dark needs the
+  // same value, so it is set once here rather than re-declared in the dark layer.
+  --focus-ring: rgb(from var(--color-primary-500) r g b / 0.8);
 
-  // Selected day, as a pair. Same chain as every other solid-primary surface in the system
-  // (_ui-kit-tokens.scss): component key, then the shared solid-primary override, then the palette —
-  // so a theme that re-inks primary fills re-inks the calendar with them, in one place.
-  // 700, not 500: the system ink is white in light themes, and on primary-500 that measures
-  // 2.11 : 1 in default/mercury (2.14 watermelon, 4.07 purple-pink). The primary-700 fallback clears
-  // AA wherever it fires — 5.02–18.27 across the light presets, 8.17–12.36 across the dark ones.
-  // A preset that defines the shared key intercepts the chain and the fallback never fires there, so
-  // that arm has to be measured on its own pair: red.dark pairs #d34247 with white at 4.53 (AA by
-  // 0.03), default.dark and mercury.dark pair #f99e24 with white at 2.11, as their buttons already do.
-  --selected-bg: var(--vc-calendar-selected-bg, var(--color-vc-background-solid-primary, var(--color-primary-700)));
-  --selected-text: var(--vc-calendar-selected-text, var(--color-vc-text-solid-primary, var(--color-additional-50)));
+  // Selected day, as a pair. Component key, then the palette — deliberately NOT via the shared
+  // --color-vc-*-solid-primary keys the buttons use (_ui-kit-tokens.scss). 700, not 500, because the
+  // system ink is white and on primary-500 that measures 2.11 : 1 in default/mercury (2.14 watermelon,
+  // 4.07 purple-pink); the shared key would override that contrast choice with the theme's own pair,
+  // and in default.dark/mercury.dark that pair is #f99e24 on white — 2.11 : 1 again. On primary-700
+  // the ink clears AA in all 14 preset/mode combinations: 5.02 (watermelon) to 18.27 (black-gold).
+  // A fork retinting the selected day uses --vc-calendar-selected-bg / -text.
+  --selected-bg: var(--vc-calendar-selected-bg, var(--color-primary-700));
+  --selected-text: var(--vc-calendar-selected-text, var(--color-additional-50));
 
   --bg-color: var(--color-additional-50);
   --border-color: var(--color-neutral-200);

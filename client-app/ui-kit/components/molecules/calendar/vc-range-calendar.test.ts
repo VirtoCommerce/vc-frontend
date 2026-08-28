@@ -173,9 +173,9 @@ describe("VcRangeCalendar", () => {
       wrapper.unmount();
     });
 
-    // Pins a documented limitation, not desired behaviour: reka rejects the completing click without emitting,
-    // and the repeat press re-anchors there. See the `disabledDate` prop doc.
-    it("rejects a range spanning an unavailable day, then re-anchors on the repeat press", async () => {
+    // Without allow-non-contiguous-ranges reka swallows this click and the repeat press re-anchors,
+    // so the range can never be made — the whole reason the prop is set.
+    it("completes a range that spans an unavailable day", async () => {
       const { wrapper, state, emits } = mountBoundCal(
         { start: "2026-10-05", end: undefined },
         { disabledDate: weekends },
@@ -184,29 +184,62 @@ describe("VcRangeCalendar", () => {
 
       await clickDay("2026-10-12");
 
-      expect(emits).toEqual([]);
-      expect(state.value).toEqual({ start: "2026-10-05", end: undefined });
-
-      await clickDay("2026-10-12");
-
-      expect(state.value).toEqual({ start: "2026-10-12", end: undefined });
+      expect(emits).toEqual([{ start: "2026-10-05", end: "2026-10-12" }]);
+      expect(state.value).toEqual({ start: "2026-10-05", end: "2026-10-12" });
 
       wrapper.unmount();
     });
 
-    // The prop doc claims "picking a day beyond one never yields a range" — that has to hold in the
-    // backwards direction too, where the pick would become the START rather than the end.
-    it("rejects a backwards span across an unavailable day", async () => {
-      const { wrapper, state, emits } = mountBoundCal(
-        { start: "2026-10-12", end: undefined },
-        { disabledDate: weekends },
-      );
+    it("completes a backwards span across an unavailable day", async () => {
+      const { wrapper, state } = mountBoundCal({ start: "2026-10-12", end: undefined }, { disabledDate: weekends });
       await flushPromises();
 
       await clickDay("2026-10-05");
 
+      expect(state.value).toEqual({ start: "2026-10-05", end: "2026-10-12" });
+
+      wrapper.unmount();
+    });
+
+    // Spanning one is allowed; landing on one is not.
+    it("still refuses an unavailable day as an endpoint", async () => {
+      const { wrapper, state, emits } = mountBoundCal(undefined, { disabledDate: weekends });
+      await flushPromises();
+
+      const cell = document.querySelector<HTMLElement>(
+        "[data-reka-calendar-cell-trigger][data-unavailable]:not([data-outside-view])",
+      );
+      expect(cell?.getAttribute("aria-disabled")).toBe("true");
+      cell?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+      await flushPromises();
+
       expect(emits).toEqual([]);
-      expect(state.value).toEqual({ start: "2026-10-12", end: undefined });
+      expect(state.value).toBeUndefined();
+
+      wrapper.unmount();
+    });
+
+    // The band has to read as continuous, with the spanned days keeping their own cue.
+    it("marks the spanned unavailable days as both in-range and unavailable", async () => {
+      const { wrapper } = mountBoundCal({ start: "2026-10-05", end: "2026-10-12" }, { disabledDate: weekends });
+      await flushPromises();
+
+      const inBand = Array.from(
+        document.querySelectorAll<HTMLElement>(
+          "[data-reka-calendar-cell-trigger][data-selected]:not([data-outside-view])",
+        ),
+      ).map((cell) => cell.dataset.value);
+      expect(inBand).toEqual([
+        "2026-10-05",
+        "2026-10-06",
+        "2026-10-07",
+        "2026-10-08",
+        "2026-10-09",
+        "2026-10-10",
+        "2026-10-11",
+        "2026-10-12",
+      ]);
+      expect(document.querySelector('[data-value="2026-10-10"][data-selected][data-unavailable]')).not.toBeNull();
 
       wrapper.unmount();
     });
