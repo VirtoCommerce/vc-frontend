@@ -7493,15 +7493,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dompurify@npm:^3.4.12":
-  version: 3.4.12
-  resolution: "dompurify@npm:3.4.12"
+"dompurify@npm:^3.4.14":
+  version: 3.4.14
+  resolution: "dompurify@npm:3.4.14"
   dependencies:
     "@types/trusted-types": "npm:^2.0.7"
   dependenciesMeta:
     "@types/trusted-types":
       optional: true
-  checksum: 10c0/127a13817353d4e20e75a991a9022a04c3af12af7479f68e2b8bee6dbc7330a96edfb8f4ebff96f4f0f24cd43e8dbba46214131f510c3aa87a843bd8b610d0ab
+  checksum: 10c0/feca07ece3805d1d4e33e847c11196888dcdc97b2afe0bb8a2fd11de4e62bfdc434c2403ee3fb3c7771e903325041d062febec6c5518796391fdc0419a90a873
   languageName: node
   linkType: hard
 
@@ -13617,10 +13617,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"swiper@npm:11.2.10":
-  version: 11.2.10
-  resolution: "swiper@npm:11.2.10"
-  checksum: 10c0/b7e3a7c79d92ccc62af77744edc376c9aefc771a0abd50c4adf07b5e3450b5da9ca7f84f5809e275ff65e1bc9d4500d930628e84a76fc7f2db403291c69b7fac
+"swiper@npm:12.1.2":
+  version: 12.1.2
+  resolution: "swiper@npm:12.1.2"
+  checksum: 10c0/f2597a67c4d647e367a236735bb7779e2833346b332e6d7b8caf48c6b82da52787959e86f06762983ab82b142958690a0d1b9f6fc5a59170a648949b35cfedd0
   languageName: node
   linkType: hard
 
@@ -14682,7 +14682,7 @@ __metadata:
     browserslist: "npm:^4.28.6"
     browserslist-to-esbuild: "npm:^2.1.1"
     dependency-cruiser: "npm:^18.1.0"
-    dompurify: "npm:^3.4.12"
+    dompurify: "npm:^3.4.14"
     eslint: "npm:^9.39.5"
     eslint-config-prettier: "npm:^10.1.8"
     eslint-import-resolver-typescript: "npm:^4.4.5"
@@ -14722,7 +14722,7 @@ __metadata:
     storybook: "npm:9.1.20"
     storybook-addon-tag-badges: "npm:^3.1.0"
     storybook-vue3-router: "npm:^7.0.0"
-    swiper: "npm:11.2.10"
+    swiper: "npm:12.1.2"
     tailwindcss: "npm:^3.4.19"
     tw-elements: "npm:^1.1.0"
     typescript: "npm:5.9.3"
