@@ -70,8 +70,10 @@
         :first-day-of-week="firstDayOfWeek"
         :weekday-format="weekdayFormat"
         :show-footer="showFooter"
+        :prevent-deselect="preventDeselect"
         @keydown.esc.stop="onEscapeClose(close)"
         @update:model-value="onCalendarUpdate(close, $event)"
+        @clear="onCalendarClear(close)"
       />
     </template>
   </VcPopover>
@@ -123,6 +125,8 @@ interface IProps {
   /** Teleport the popover into #popover-host — use inside clipping containers (modal, overflow:hidden). */
   enableTeleport?: boolean;
   /** Show the calendar footer (Today / Clear buttons). */
+  /** Keep a re-click on the selected day from clearing it. Default true. See VcCalendar. */
+  preventDeselect?: boolean;
   showFooter?: boolean;
   firstDayOfWeek?: VcCalendarFirstDayOfWeekType;
   weekdayFormat?: VcCalendarWeekdayFormatType;
@@ -156,6 +160,11 @@ const props = withDefaults(defineProps<IProps>(), {
   closeOnSelect: true,
   placement: "bottom-end",
   hideDetails: false,
+  // Declared, not merely left undefined: these three decide whether the field has ANY pointer way to
+  // clear, so the docs table has to show what a consumer gets when it passes nothing.
+  clearable: false,
+  showFooter: false,
+  preventDeselect: true,
 });
 
 const { t } = useI18n();
@@ -202,6 +211,19 @@ function onInputFocus(event: FocusEvent): void {
 
 function onInputClear(): void {
   emit("clear");
+}
+
+// The model round trip cannot drive this: clearing an already-empty date emits nothing.
+function onCalendarClear(close: () => void): void {
+  emit("clear");
+  // Uncommitted text is not cleared by the model round trip, exactly as in onCalendarUpdate.
+  void nextTick(() => {
+    dateInputRef.value?.reset();
+  });
+  if (props.closeOnSelect) {
+    close();
+    focusField();
+  }
 }
 
 function onCalendarUpdate(close: () => void, value: string | undefined): void {

@@ -12,6 +12,8 @@
     :min-value="minDateValue"
     :max-value="maxDateValue"
     :is-date-unavailable="isDateUnavailable"
+    :disabled="disabled"
+    :readonly="readonly"
     allow-non-contiguous-ranges
     fixed-weeks
     prevent-deselect
@@ -144,6 +146,13 @@ interface IProps {
    * Without it reka refuses the completing pick outright and the repeat press destroys the anchor.
    */
   disabledDate?: VcCalendarDisabledDateType;
+  /**
+   * Freeze the grid. The shell also gates its own update handler, but without this reka still mutates
+   * its internal start/end on a click and paints a range the model does not hold.
+   */
+  disabled?: boolean;
+  /** As `disabled`, but the days stay focusable for reading. */
+  readonly?: boolean;
   /** Show the footer (Clear button). */
   showFooter?: boolean;
   /** Override locale; defaults to active i18n locale. */
@@ -168,6 +177,8 @@ const props = withDefaults(defineProps<IProps>(), {
   min: undefined,
   max: undefined,
   disabledDate: undefined,
+  disabled: false,
+  readonly: false,
   showFooter: false,
   locale: undefined,
   firstDayOfWeek: undefined,

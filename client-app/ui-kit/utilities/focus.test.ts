@@ -97,12 +97,33 @@ describe("watchFocusLeavingOwnPopover", () => {
     stop();
   });
 
-  it("emits a blur when focus is lost to nothing", () => {
+  // A click on non-focusable chrome loses focus to nothing while the PAGE keeps it — a real departure.
+  // jsdom reports document.hasFocus() false for every document, so the browser's answer is stubbed in.
+  it("emits a blur when focus is lost to nothing inside a focused page", () => {
     const { onLeft, stop } = arm();
+    const hasFocus = vi.spyOn(document, "hasFocus").mockReturnValue(true);
 
     el("cell").dispatchEvent(new FocusEvent("focusout", { bubbles: true, relatedTarget: null }));
 
     expect(onLeft).toHaveBeenCalledTimes(1);
+    hasFocus.mockRestore();
+    stop();
+  });
+
+  // Alt-Tab fires focusout with a null relatedTarget while focus stays on the cell. Reporting it would
+  // both lie and burn the one-shot watch, so the REAL departure afterwards is the assertion that matters.
+  it("stays quiet on a window switch and still reports the real departure afterwards", () => {
+    const { onLeft, stop } = arm();
+    const hasFocus = vi.spyOn(document, "hasFocus").mockReturnValue(false);
+
+    el("cell").dispatchEvent(new FocusEvent("focusout", { bubbles: true, relatedTarget: null }));
+    expect(onLeft).not.toHaveBeenCalled();
+
+    hasFocus.mockReturnValue(true);
+    el("cell").dispatchEvent(new FocusEvent("focusout", { bubbles: true, relatedTarget: el("outside") }));
+    expect(onLeft).toHaveBeenCalledTimes(1);
+
+    hasFocus.mockRestore();
     stop();
   });
 

@@ -158,6 +158,24 @@ describe("VcRangeCalendar", () => {
     expect(startAttributed).toBeFalsy();
   });
 
+  // The shell gates its own handler, but reka would still mutate its internal start/end and paint a
+  // range the model does not hold — so the grid has to be frozen at the root, not only downstream.
+  describe.each(["disabled", "readonly"] as const)("%s", (prop) => {
+    it("does not paint a selection the model never took", async () => {
+      const { wrapper, state, emits } = mountBoundCal(undefined, { [prop]: true });
+      await flushPromises();
+
+      // No model, so the grid opens on today's month — the only page whose cells are in view here.
+      await clickDay(todayDate().toString());
+
+      expect(emits).toEqual([]);
+      expect(state.value).toBeUndefined();
+      expect(document.querySelector(".vc-range-calendar__day[data-selection-start]")).toBeNull();
+
+      wrapper.unmount();
+    });
+  });
+
   describe("unavailable days inside a range", () => {
     // Sat 2026-10-10 and Sun 2026-10-11 sit between the two work weeks.
     const weekends = (iso: string) => [0, 6].includes(new Date(`${iso}T00:00:00Z`).getUTCDay());

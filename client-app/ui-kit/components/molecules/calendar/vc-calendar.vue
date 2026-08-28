@@ -13,7 +13,7 @@
     :max-value="maxDateValue"
     :is-date-unavailable="isDateUnavailable"
     fixed-weeks
-    prevent-deselect
+    :prevent-deselect="preventDeselect"
     :class="rootClasses"
     :data-test-id="dataTestId"
     @update:model-value="onUpdate"
@@ -146,6 +146,12 @@ interface IProps {
    * The grid reads it once at mount: reka takes the predicate by value, so swapping it later does not re-filter the rendered days.
    */
   disabledDate?: VcCalendarDisabledDateType;
+  /**
+   * Keep a re-click on the selected day from clearing it. Default true: for a range endpoint, and for
+   * any field the user did not mean to empty, that click is data loss. An OPTIONAL single-date field
+   * with no `clearable` and no `showFooter` has no other pointer way to clear — set false there.
+   */
+  preventDeselect?: boolean;
   showFooter?: boolean;
   locale?: string;
   firstDayOfWeek?: VcCalendarFirstDayOfWeekType;
@@ -155,6 +161,8 @@ interface IProps {
 
 interface IEmits {
   (event: "update:modelValue", value: string | undefined): void;
+  /** The footer Clear button was pressed, even when the date was already empty. */
+  (event: "clear"): void;
 }
 
 const emit = defineEmits<IEmits>();
@@ -167,6 +175,7 @@ const props = withDefaults(defineProps<IProps>(), {
   softMin: undefined,
   softMax: undefined,
   disabledDate: undefined,
+  preventDeselect: true,
   showFooter: false,
   locale: undefined,
   firstDayOfWeek: undefined,
@@ -269,6 +278,9 @@ function onTodayClick(): void {
 
 function onClearClick(): void {
   emit("update:modelValue", undefined);
+  // An already-empty field emits no model change, but the shell still has to see the action —
+  // the same contract as vc-range-calendar.
+  emit("clear");
 }
 
 // Sync placeholder to incoming model value so external state changes scroll the view.

@@ -68,6 +68,12 @@ export function watchFocusLeavingOwnPopover(event: FocusEvent, onLeft: (blurEven
     if (next instanceof Node && popover.contains(next)) {
       return;
     }
+    // Alt-Tab and a click into devtools fire focusout with a null relatedTarget while focus stays put.
+    // Reporting that would emit a false blur AND burn this one-shot watch, so the real departure later
+    // would go unreported. A click on non-focusable chrome also has a null target but keeps page focus.
+    if (next === null && !document.hasFocus()) {
+      return;
+    }
     document.removeEventListener("focusout", onDocumentFocusOut, true);
     if (next instanceof Node && shell.contains(next)) {
       return;

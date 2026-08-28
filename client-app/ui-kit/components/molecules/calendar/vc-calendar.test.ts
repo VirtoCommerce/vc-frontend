@@ -83,6 +83,32 @@ describe("VcCalendar — re-picking the selected date", () => {
     await flushPromises();
     expect(wrapper.emitted("update:modelValue")?.at(-1)).toEqual(["2020-06-10"]);
   });
+
+  // The default guards a range endpoint and anything the user did not mean to empty; an optional
+  // single-date field with no clear button and no footer needs the click back as its only pointer route.
+  it("clears the date when preventDeselect is off", async () => {
+    const wrapper = mountCal({ modelValue: "2020-06-10", max: "2020-06-15", preventDeselect: false });
+    await inViewCell(wrapper, "2020-06-10").trigger("click");
+    await flushPromises();
+    expect(wrapper.emitted("update:modelValue")?.at(-1)).toEqual([undefined]);
+  });
+});
+
+describe("VcCalendar — footer Clear", () => {
+  // vc-range-calendar emits both; the twins have to agree, and an already-empty field emits no model
+  // change at all — so `clear` is the only thing a shell can react to.
+  it("emits clear alongside the model change", async () => {
+    const wrapper = mountCal({ modelValue: "2020-06-10", max: "2020-06-15", showFooter: true });
+    await wrapper.find(".vc-calendar__footer-btn--ghost").trigger("click");
+    expect(wrapper.emitted("update:modelValue")?.at(-1)).toEqual([undefined]);
+    expect(wrapper.emitted("clear")).toHaveLength(1);
+  });
+
+  it("emits clear even when the date is already empty", async () => {
+    const wrapper = mountCal({ modelValue: undefined, showFooter: true });
+    await wrapper.find(".vc-calendar__footer-btn--ghost").trigger("click");
+    expect(wrapper.emitted("clear")).toHaveLength(1);
+  });
 });
 
 describe("VcCalendar — placeholder clamping to [min, max]", () => {

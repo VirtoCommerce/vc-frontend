@@ -139,6 +139,8 @@
         :first-day-of-week="firstDayOfWeek"
         :weekday-format="weekdayFormat"
         :show-footer="showFooter"
+        :disabled="disabled"
+        :readonly="readonly"
         @keydown.esc.stop="onEscapeClose(close)"
         @update:model-value="onCalendarUpdate(close, $event)"
         @clear="onCalendarClear(close)"
