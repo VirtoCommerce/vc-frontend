@@ -181,6 +181,32 @@
       "all_categories": "Todas las categorías",
       "load_failed": "No se pudieron cargar los más vendidos"
     },
+    "documents": {
+      "title": "Biblioteca de documentos",
+      "browse_all": "Ver todos",
+      "open": "Abrir",
+      "empty": "Aún no hay documentos",
+      "load_failed": "No se pudieron cargar los documentos",
+      "page": {
+        "subtitle": "Catálogos, lookbooks, listas de precios y guías de ventas: abra o descargue la última publicación.",
+        "search_placeholder": "Buscar por nombre",
+        "search_aria": "Buscar documentos",
+        "all_tab": "Todos",
+        "empty": "Aún no hay documentos",
+        "no_results": "Ningún documento coincide con su búsqueda",
+        "reset_search": "Restablecer búsqueda",
+        "load_failed": "No se pudieron cargar los documentos"
+      },
+      "details": {
+        "pages_count": "{count} página | {count} páginas",
+        "open": "Abrir",
+        "download": "Descargar",
+        "close": "Cerrar detalles",
+        "not_found": "Este documento ya no está disponible.",
+        "latest_publication": "Última publicación"
+      },
+      "published": "Publicado {date}"
+    },
     "rules": {
       "load_failed": {
         "filter": "No se pudieron cargar los filtros, por lo que se muestra la lista completa. Actualice la página.",

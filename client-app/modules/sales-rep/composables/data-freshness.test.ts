@@ -10,6 +10,7 @@ import { useSalesRepCustomer } from "./useSalesRepCustomer";
 import { useSalesRepCustomerCounts } from "./useSalesRepCustomerCounts";
 import { useSalesRepCustomers } from "./useSalesRepCustomers";
 import { useSalesRepCustomersCount } from "./useSalesRepCustomersCount";
+import { useSalesRepDocuments } from "./useSalesRepDocuments";
 import { useSalesRepOrderStatistics } from "./useSalesRepOrderStatistics";
 import { useSalesRepOrders } from "./useSalesRepOrders";
 import { useSalesRepTopSellers } from "./useSalesRepTopSellers";
@@ -178,6 +179,33 @@ function customerSalesReps() {
   };
 }
 
+function documents() {
+  return {
+    salesRepDocuments: {
+      __typename: "SalesRepDocumentConnection",
+      totalCount: metric,
+      items: [
+        {
+          __typename: "SalesRepDocument",
+          id: "doc-1",
+          name: "Spring catalog.pdf",
+          category: "Catalogs",
+          contentType: "application/pdf",
+          // The row is a normalized entity (it has an id), so this is where a stale read would
+          // replay the old figure.
+          size: metric,
+          createdDate: "2026-08-01T00:00:00.000Z",
+          modifiedDate: null,
+          url: "/api/sales-rep/documents/doc-1",
+          summary: "",
+          pageCount: null,
+          previewUrl: "",
+        },
+      ],
+    },
+  };
+}
+
 const responses: Record<string, () => Record<string, unknown>> = {
   SalesRepCustomerOrderStatistics: orderStatistics,
   SalesRepCustomerCartStatistics: cartStatistics,
@@ -188,6 +216,7 @@ const responses: Record<string, () => Record<string, unknown>> = {
   SalesRepCustomers: customers,
   SalesRepCustomersCount: customersCount,
   CustomerSalesReps: customerSalesReps,
+  SalesRepDocuments: documents,
 };
 
 const link = new ApolloLink(
@@ -319,6 +348,15 @@ const widgetSources: [string, () => () => number | undefined][] = [
     () => {
       const { items } = useSalesReps();
       return () => (items.value[0] ? Number(items.value[0].phone) : undefined);
+    },
+  ],
+  [
+    "documents list",
+    () => {
+      // The categories query stays disabled here (withCategories defaults off), so the request
+      // count still counts one fetch per mount.
+      const { items } = useSalesRepDocuments();
+      return () => items.value[0]?.size;
     },
   ],
 ];
