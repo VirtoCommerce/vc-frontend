@@ -52,7 +52,10 @@ function getBackendProxy(): Record<string, ProxyOptions> {
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }): UserConfig => {
-  const isServe = command == "serve";
+  // Vitest also reports `command === "serve"`, but it never serves over https, so the mkcert
+  // plugin below has nothing to do there. Without this guard `yarn test:unit` in a fresh git
+  // worktree dies trying to install a local CA, which needs sudo.
+  const isServe = command == "serve" && !process.env.VITEST;
 
   // https://stackoverflow.com/a/66389044
   process.env = {
