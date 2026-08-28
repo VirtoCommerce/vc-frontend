@@ -26,8 +26,9 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeMount, shallowRef, computed, unref } from "vue";
+import { computed, shallowRef, unref, watch } from "vue";
 import { useBreadcrumbs } from "@/core/composables";
+import { Logger } from "@/core/utilities";
 import { humanizeName } from "@/core/utilities/common";
 import { getBlockType } from "@/plugins/builder-preview/block-mapping";
 
@@ -42,11 +43,13 @@ type BlockType = {
 };
 
 interface IPageBuilderContent {
-  settings: BlockType;
+  settings: Record<string, unknown>;
   content: BlockType[];
 }
 
 const props = defineProps<IProps>();
+
+const VP_PAGE_BUILDER_LOG_SCOPE = "[vp-page-builder]";
 
 // VCST-5274: prefer the live name derived from the permalink (which follows renames) over the
 // document's baked `settings.name`, which is written once at authoring time and never updated
@@ -57,28 +60,47 @@ const templateName = computed(() =>
   ),
 );
 const breadcrumbs = useBreadcrumbs(() => [{ title: templateName.value }] as IBreadcrumb[]);
-const canShowContent = shallowRef(false);
 const pageBuilderContent = shallowRef<IPageBuilderContent | null>(null);
 
-function clearState() {
-  pageBuilderContent.value = null;
-  canShowContent.value = false;
+watch(
+  () => props.content,
+  (content) => {
+    pageBuilderContent.value = parsePageBuilderContent(content);
+  },
+  { immediate: true },
+);
+
+function parsePageBuilderContent(content?: string): IPageBuilderContent | null {
+  let parsedContent: IPageBuilderContent | null = null;
+
+  if (content) {
+    try {
+      const value: unknown = JSON.parse(content);
+      if (
+        isRecord(value) &&
+        isRecord(value.settings) &&
+        Array.isArray(value.content) &&
+        value.content.every(isPageBuilderBlock)
+      ) {
+        parsedContent = { settings: value.settings, content: value.content };
+      } else {
+        Logger.warn(`${VP_PAGE_BUILDER_LOG_SCOPE} Ignored a page document that is not Page Builder content`);
+      }
+    } catch (error) {
+      // A cache-and-network update can temporarily replace the document. Do not keep rendering the
+      // previous page when the latest payload is empty or malformed.
+      Logger.warn(`${VP_PAGE_BUILDER_LOG_SCOPE} Ignored a page document that is not valid JSON`, error);
+    }
+  }
+
+  return parsedContent;
 }
 
-onBeforeMount(() => {
-  if (props.content) {
-    trySetContent();
-  } else {
-    clearState();
-  }
-});
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
 
-function trySetContent() {
-  if (!props.content) {
-    return;
-  }
-  const blocks = <IPageBuilderContent>JSON.parse(props.content);
-  pageBuilderContent.value = blocks;
-  canShowContent.value = true;
+function isPageBuilderBlock(value: unknown): value is BlockType {
+  return isRecord(value) && typeof value.type === "string";
 }
 </script>
