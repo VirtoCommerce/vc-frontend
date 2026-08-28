@@ -586,15 +586,15 @@ const headAttrs = computed<VcTableHeadAttrsType>(() => ({
   class: normalizeClass(["vc-table__head", { "vc-table__head--sticky": props.stickyHeader || props.maxHeight }]),
 }));
 
-// Shared by the default header and the `#header` slot scope. String class for the same
-// reason as `headAttrs` above.
+// Shared by the default header and the `#header` slot scope. String class to match
+// `headAttrs`; the style is a copy, since the same object also styles the body cells.
 const selectionColumnAttrs = computed<VcTableSelectionColumnAttrsType>(() => ({
   class: normalizeClass([
     "vc-table__title",
     "vc-table__selection-cell",
     { "vc-table__title--fixed": selectionColumnSticky.value },
   ]),
-  style: selectionColumnStyle.value,
+  style: { ...selectionColumnStyle.value },
 }));
 
 // Colspan for full-width state cells (empty/error), including the selection column.
@@ -659,7 +659,8 @@ function warnOnMisalignedCustomHeader(): void {
     return;
   }
 
-  const rows = desktopTableRef.value?.querySelectorAll<HTMLTableRowElement>("thead tr");
+  // Direct descendants only: column slots render consumer content, a nested table included.
+  const rows = desktopTableRef.value?.querySelectorAll<HTMLTableRowElement>(":scope > thead > tr");
 
   if (!rows?.length) {
     return;
@@ -671,7 +672,9 @@ function warnOnMisalignedCustomHeader(): void {
     ...[...rows].map((row) => [...row.cells].reduce((total, cell) => total + cell.colSpan, 0)),
   );
 
-  // One cell short is the dropped selection cell; any other shape is a deliberate layout.
+  // A one-cell shortfall, without telling which cell is missing: `colSpan` is summed, and a
+  // multi-row header whose lower row fills a gap left above it lands here too. Any other
+  // shape is a deliberate layout.
   if (!renderedColumns || renderedColumns !== stateColspan.value - 1) {
     return;
   }
@@ -680,7 +683,7 @@ function warnOnMisalignedCustomHeader(): void {
 
   // eslint-disable-next-line no-console
   console.warn(
-    "VcTable: the `#header` slot replaces the default header, selection cell included, while body rows keep theirs. Render a selection `<th>` from the slot scope (`showSelectionColumn`, `selectionColumnAttrs`, `toggleSelectAll`, …), or the columns will be misaligned by one.",
+    "VcTable: the custom `#header` renders one cell fewer than the body rows. Either the selection cell was dropped — the `#header` slot replaces the default header, selection cell included, while body rows keep theirs; render a selection `<th>` from the slot scope (`showSelectionColumn`, `selectionColumnAttrs`, `toggleSelectAll`, …) — or a data column has no header cell, or a multi-row header heads a column only in its lower row. Ignore this if the shape is deliberate.",
   );
 }
 
@@ -928,13 +931,18 @@ function toggleSelectAll(): void {
     const keys = props.selection.map(String).filter((key) => !pageKeySet.has(key));
     commitSelection(keys, { action: "deselect-all" });
   } else {
-    const keys = props.selection.map(String);
-    for (const key of selectableKeysOnPage.value) {
-      if (!keys.includes(key)) {
-        keys.push(key);
-      }
+    // The Set carries the dedup the previous accumulating `includes` loop provided: two items
+    // can share a key (duplicate `id`s, or `getItemKey`'s index fallback colliding with another
+    // row's id), and each repeat would cost one extra click, since `toggleRow` splices a single
+    // occurrence.
+    const added = [...new Set(selectableKeysOnPage.value)].filter((key) => !selectionSet.value.has(key));
+
+    // No selectable row on this page: committing would emit a `select-all` that changed nothing.
+    if (!added.length) {
+      return;
     }
-    commitSelection(keys, { action: "select-all" });
+
+    commitSelection([...props.selection.map(String), ...added], { action: "select-all" });
   }
 }
 
@@ -949,18 +957,28 @@ const headerSlotScope = computed<VcTableHeaderSlotScopeType>(() => ({
   headAttrs: headAttrs.value,
 }));
 
-// Selection can be switched on after mount. Watching it instead of hooking `onUpdated` keeps
-// a correctly written header from re-querying the DOM on every render. `hasColumnSlots` is
-// deliberately not a source: reading it here would invoke the default slot outside render.
-watch(
-  [showSelectionColumn, () => props.loading],
-  () => {
-    if (import.meta.env.DEV && slots.header) {
-      warnOnMisalignedCustomHeader();
-    }
-  },
-  { flush: "post" },
-);
+// Selection can be switched on, columns added or removed, and the desktop table mounted only
+// after a mobile → desktop flip. Watching those instead of hooking `onUpdated` keeps a correctly
+// written header from re-querying the DOM on every render. The column sources are id lists
+// standing in for `stateColspan`, which the check actually compares: reading that here would
+// invoke the default slot outside render.
+if (import.meta.env.DEV) {
+  watch(
+    [
+      showSelectionColumn,
+      isMobile,
+      () => props.loading,
+      () => JSON.stringify([...childColumns.value.keys()]),
+      () => JSON.stringify(props.columns.map((column) => column.id)),
+    ],
+    () => {
+      if (slots.header) {
+        warnOnMisalignedCustomHeader();
+      }
+    },
+    { flush: "post" },
+  );
+}
 
 // Scope helpers exposed to #desktop-item / #mobile-item slots.
 function selectionSlotScope(
@@ -1108,8 +1126,14 @@ watch(
   $skeleton: "";
 
   --radius: var(--vc-table-radius, var(--vc-radius, 0.5rem));
-  // Selected-row highlight; dark override bumps the alpha for dark surfaces.
-  --vc-table-selected-bg-color: rgb(from var(--color-primary-500) r g b / 0.08);
+  // Selected-row highlight, declared once: the dark layer varies only the alpha, so the alias
+  // chain cannot drift between the two. `--vc-table-selected-bg` is the previous public name,
+  // still honored so forks that overrode it keep their highlight.
+  --selected-bg-alpha: 0.08;
+  --selected-bg-color: var(
+    --vc-table-selected-bg-color,
+    var(--vc-table-selected-bg, rgb(from var(--color-primary-500) r g b / var(--selected-bg-alpha)))
+  );
   --desktop-radius: v-bind(desktopRadius);
   --desktop-border-width: v-bind(desktopBorderWidth);
   --mobile-border-width: v-bind(mobileBorderWidth);
@@ -1240,7 +1264,7 @@ watch(
       &,
       &:nth-child(even),
       &:hover {
-        background-color: var(--vc-table-selected-bg-color);
+        background-color: var(--selected-bg-color);
       }
     }
   }
@@ -1287,7 +1311,7 @@ watch(
 
       // Keep the highlight on sticky (opaque) cells of a selected row.
       .vc-table__row--selected & {
-        background-color: var(--vc-table-selected-bg-color);
+        background-color: var(--selected-bg-color);
       }
 
       @include fixed-column-separators;

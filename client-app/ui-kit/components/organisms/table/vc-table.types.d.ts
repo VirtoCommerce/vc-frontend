@@ -94,6 +94,11 @@ declare global {
    * in `"single"` mode `toggleSelectAll` is a no-op and the cell carries no control, but
    * it still needs an accessible name, the way the built-in header renders a `sr-only`
    * `ui_kit.table.selection_column` label.
+   *
+   * The scope exposes no per-column attributes — the resolved columns and their sticky
+   * offsets are not part of it. Over `fixed` columns that means the header cells scroll away
+   * while the body cells stay pinned; reproducing the offsets is on the consumer, using the
+   * 150px default documented on `width` — the constant itself is not part of the scope object.
    */
   type VcTableHeaderSlotScopeType = {
     showSelectionColumn: boolean;
