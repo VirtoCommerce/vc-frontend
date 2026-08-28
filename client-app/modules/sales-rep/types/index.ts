@@ -30,6 +30,8 @@ export type SalesRepRuleType = {
   label: string;
   // Item count shown as a highlighted counter next to the label (document-category tabs only).
   count?: number;
+  // Whether the figure behind this tab comes from tracked storefront activity (late, and slow to load).
+  tracked?: boolean;
   defaultDirection?: SalesRepSortDirectionType;
   supportsDirection?: boolean;
 };

@@ -110,6 +110,17 @@ describe("CustomerActivity summary states", () => {
     expect(wrapper.text()).toContain("SKU-1 · Gloves");
   });
 
+  // Tracked figures appear late and load slowly, properties of the source rather than faults, so the
+  // rows carrying them say so. Created on is a platform fact and carries no such mark.
+  it("marks only the tracked rows", () => {
+    state.summary.value = summaryFixture();
+
+    const wrapper = createWrapper();
+
+    expect(wrapper.findAll(".tracked-metric-hint")).toHaveLength(4);
+    expect(wrapper.findAll(".customer-activity__row")[0].find(".tracked-metric-hint").exists()).toBe(false);
+  });
+
   // Unconfigured analytics is a distinct state, not an error and not fake zeros: the GA-sourced rows
   // give way to the note while Created on (a DB fact) keeps rendering.
   it("shows created-on plus the not-configured note when analytics is off", () => {

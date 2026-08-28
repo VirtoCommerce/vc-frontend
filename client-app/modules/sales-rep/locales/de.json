@@ -237,6 +237,7 @@
         "during_hour": "{date}, in der Stunde von {time}"
       },
       "caveat": "Suchanfragen, Produktansichten und Anmeldungen basieren auf erfasster Storefront-Aktivität und sind Näherungswerte.",
+      "tracked_hint": "Erfasste Storefront-Aktivität: erscheint mit bis zu 48 Stunden Verzögerung und lädt langsamer.",
       "empty": "Noch keine Aktivität",
       "empty_period": "Keine erfasste Aktivität in diesem Zeitraum",
       "no_results": "Keine Aktivität in dieser Kategorie",

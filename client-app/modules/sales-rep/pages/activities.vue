@@ -11,7 +11,7 @@
     <div class="activities__results">
       <div class="activities__controls">
         <!-- Category tabs driven by categoryCounts; zero-count categories keep their tab. -->
-        <SalesRepRuleChips v-model="category" :rules="categoryRules" :all-label="allTabLabel" />
+        <SalesRepRuleChips v-model="category" :rules="categoryRules" :all-label="allTabLabel" all-tracked />
 
         <SalesRepRuleChips
           v-model="periodRule"
@@ -241,7 +241,12 @@ const countsPending = computed(() => countsLoading.value && !categoryCounts.valu
 const categoryRules = computed<SalesRepRuleType[]>(() =>
   ACTIVITY_CATEGORIES.map((name) => {
     const label = t(`sales_rep.activity.tabs.${name}`);
-    return { name, label: countsPending.value ? label : `${label} (${formatStatCount(countOf(name))})` };
+    return {
+      name,
+      label: countsPending.value ? label : `${label} (${formatStatCount(countOf(name))})`,
+      // All mixes tracked rows in, so the baseline tab is marked too (all-tracked on the chips).
+      tracked: (GA_ACTIVITY_CATEGORIES as readonly string[]).includes(name),
+    };
   }),
 );
 

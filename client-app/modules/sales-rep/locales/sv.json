@@ -237,6 +237,7 @@
         "during_hour": "{date}, under timmen {time}"
       },
       "caveat": "Sökningar, produktvisningar och inloggningar baseras på spårad butiksaktivitet och är ungefärliga.",
+      "tracked_hint": "Spårad butiksaktivitet: kan ta upp till 48 timmar att visas och laddar långsammare.",
       "empty": "Ingen aktivitet ännu",
       "empty_period": "Ingen spårad aktivitet under denna period",
       "no_results": "Ingen aktivitet i denna kategori",

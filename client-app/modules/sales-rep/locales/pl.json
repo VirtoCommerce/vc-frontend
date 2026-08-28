@@ -237,6 +237,7 @@
         "during_hour": "{date}, w godzinie {time}"
       },
       "caveat": "Wyszukiwania, wyświetlenia produktów i logowania opierają się na śledzonej aktywności sklepu i są przybliżone.",
+      "tracked_hint": "Śledzona aktywność w sklepie: może pojawić się z opóźnieniem do 48 godzin i ładuje się wolniej.",
       "empty": "Brak aktywności",
       "empty_period": "Brak śledzonej aktywności w tym okresie",
       "no_results": "Brak aktywności w tej kategorii",

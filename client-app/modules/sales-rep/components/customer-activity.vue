@@ -51,6 +51,7 @@
               <dt class="customer-activity__label">
                 <VcIcon class="customer-activity__icon" name="log-in" :size="15" />
                 {{ t("sales_rep.activity.customer.last_web_login") }}
+                <TrackedMetricHint />
               </dt>
 
               <dd class="customer-activity__value">
@@ -62,6 +63,7 @@
               <dt class="customer-activity__label">
                 <VcIcon class="customer-activity__icon" name="activity" :size="15" />
                 {{ t("sales_rep.activity.customer.visits") }}
+                <TrackedMetricHint />
               </dt>
 
               <dd class="customer-activity__value">{{ formatStatCount(summary.visitsCount) }}</dd>
@@ -71,6 +73,7 @@
               <dt class="customer-activity__label">
                 <VcIcon class="customer-activity__icon" name="search" :size="15" />
                 {{ t("sales_rep.activity.customer.last_search_term") }}
+                <TrackedMetricHint />
               </dt>
 
               <dd class="customer-activity__value">
@@ -86,6 +89,7 @@
               <dt class="customer-activity__label">
                 <VcIcon class="customer-activity__icon" name="eye" :size="15" />
                 {{ t("sales_rep.activity.customer.last_viewed_product") }}
+                <TrackedMetricHint />
               </dt>
 
               <dd class="customer-activity__value">
@@ -135,6 +139,7 @@ import CustomerBrowseHistory from "./customer-browse-history.vue";
 import CustomerSearchHistory from "./customer-search-history.vue";
 import LayoutWidget from "./layout-widget.vue";
 import SalesRepRuleChips from "./sales-rep-rule-chips.vue";
+import TrackedMetricHint from "./tracked-metric-hint.vue";
 import type { SalesRepRuleType } from "../types";
 
 interface IProps {

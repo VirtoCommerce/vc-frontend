@@ -142,7 +142,12 @@ vi.mock("@/core/composables", async (importOriginal) => ({
 vi.mock("@/core/globals", () => ({ globals: { storeId: "test-store", cultureName: "en-US", currencyCode: "USD" } }));
 
 // Props-exposing stubs so the tab vocabulary and row scoping can be asserted.
-const RuleChipsStub = { name: "RuleChipsStub", props: ["rules", "allLabel", "loading"], template: "<div />" };
+const RuleChipsStub = {
+  name: "RuleChipsStub",
+  // Typed rather than a name list: a bare boolean attribute arrives as "" on an untyped prop.
+  props: { rules: Array, allLabel: String, allTracked: Boolean, loading: Boolean },
+  template: "<div />",
+};
 const ActivityRowStub = {
   name: "ActivityRowStub",
   props: ["item", "showOrganization", "compact"],
@@ -224,6 +229,21 @@ describe("Activities page", () => {
     // A tab switch re-drives the same two reactive queries; it must not spawn more.
     await openTab(wrapper, "searches");
     expect(activityCalls.options).toHaveLength(2);
+  });
+
+  // Tracked figures appear late and load slowly, both properties of the source rather than faults, so
+  // the tabs carrying them say so. Orders and Customers come from the platform's own data and do not.
+  it("marks the tracked category tabs", () => {
+    const wrapper = createWrapper();
+    const rules = findChips(wrapper)[0].props("rules") as SalesRepRuleType[];
+
+    expect(rules.filter((rule) => rule.tracked).map((rule) => rule.name)).toEqual([
+      "searches",
+      "productViews",
+      "logins",
+    ]);
+    // All merges tracked rows in, so the baseline tab carries the mark too.
+    expect(findChips(wrapper)[0].props("allTracked")).toBe(true);
   });
 
   // "All time" reads the tracked categories from GA4's earliest supported date — a decade scanned to

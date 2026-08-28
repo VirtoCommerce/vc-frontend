@@ -10,6 +10,8 @@
       <span class="sales-rep-rule-chips__label" :data-text="allLabel">{{ allLabel }}</span>
 
       <span v-if="allCount !== undefined" class="sales-rep-rule-chips__count">{{ formatStatCount(allCount) }}</span>
+
+      <TrackedMetricHint v-if="allTracked" />
     </button>
 
     <button
@@ -23,6 +25,8 @@
       <span class="sales-rep-rule-chips__label" :data-text="rule.label">{{ rule.label }}</span>
 
       <span v-if="rule.count !== undefined" class="sales-rep-rule-chips__count">{{ formatStatCount(rule.count) }}</span>
+
+      <TrackedMetricHint v-if="rule.tracked" />
     </button>
   </div>
 </template>
@@ -30,6 +34,7 @@
 <script setup lang="ts">
 import { computed, watch } from "vue";
 import { formatStatCount, selectableFilterRules } from "../utils";
+import TrackedMetricHint from "./tracked-metric-hint.vue";
 import type { SalesRepRuleType } from "../types";
 
 interface IProps {
@@ -39,6 +44,8 @@ interface IProps {
   allLabel: string;
   // Item count for the baseline tab; rendered as a highlighted counter when present (like `rule.count`).
   allCount?: number;
+  // Whether the baseline tab's figure comes from tracked activity (like `rule.tracked`).
+  allTracked?: boolean;
   // Whether `rules` is still being fetched — an in-flight refetch must not look like "the rule is gone".
   loading?: boolean;
 }

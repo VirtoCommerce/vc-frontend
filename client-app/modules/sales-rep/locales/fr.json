@@ -237,6 +237,7 @@
         "during_hour": "{date}, dans l'heure de {time}"
       },
       "caveat": "Les recherches, vues de produit et connexions sont basées sur l'activité suivie de la boutique et sont approximatives.",
+      "tracked_hint": "Activité suivie de la boutique : peut mettre jusqu'à 48 heures à apparaître et se charge plus lentement.",
       "empty": "Aucune activité pour le moment",
       "empty_period": "Aucune activité suivie sur cette période",
       "no_results": "Aucune activité dans cette catégorie",

@@ -237,6 +237,7 @@
         "during_hour": "{date}, durante a hora de {time}"
       },
       "caveat": "Pesquisas, visualizações de produto e logins baseiam-se na atividade monitorada da loja e são aproximados.",
+      "tracked_hint": "Atividade rastreada da loja: pode levar até 48 horas para aparecer e carrega mais devagar.",
       "empty": "Ainda não há atividade",
       "empty_period": "Nenhuma atividade monitorada neste período",
       "no_results": "Nenhuma atividade nesta categoria",
