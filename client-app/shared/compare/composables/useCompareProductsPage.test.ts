@@ -176,9 +176,6 @@ describe("useCompareProductsPage", () => {
   describe("category selection", () => {
     it("defaults to the first tab when there is no ?category= in the URL", () => {
       hoisted.state.compareEntries.value = [entry("p1", "cat-a"), entry("p2", "cat-b")];
-      // A tab with nothing resolved yet is hidden (see "categoryTabs — unresolved entries" below)
-      // unless it's already selected, so give both categories something to resolve to here —
-      // this test is about the default-selection logic, not resolution.
       hoisted.state.fetchedProducts.value = [product("p1"), product("p2")];
 
       const { selectedCategoryKey } = useCompareProductsPage();
@@ -234,16 +231,19 @@ describe("useCompareProductsPage", () => {
       expect(categoryTabs.value).toEqual([{ categoryKey: "", label: "shared.compare.table.uncategorized", count: 1 }]);
     });
 
-    it("hides a category entirely once nothing in it has resolved (still loading, >16 cap, deleted product, or a failed fetch) — the fetch-failure toast, tested below, is what surfaces that", () => {
+    it("keeps a category visible with the uncategorized fallback label once nothing in it has resolved (still loading, >16 cap, deleted product, or a failed fetch), rather than dropping it and stranding its entries — the fetch-failure toast, tested below, is what surfaces that", () => {
       hoisted.state.compareEntries.value = [entry("p1", "cat-a"), entry("p2", "cat-b")];
       hoisted.state.fetchedProducts.value = [product("p2")]; // p1/cat-a never resolved
 
       const { categoryTabs } = useCompareProductsPage();
 
-      expect(categoryTabs.value).toEqual([{ categoryKey: "cat-b", label: "p2", count: 1 }]);
+      expect(categoryTabs.value).toEqual([
+        { categoryKey: "cat-a", label: "shared.compare.table.uncategorized", count: 0 },
+        { categoryKey: "cat-b", label: "p2", count: 1 },
+      ]);
     });
 
-    it("keeps the currently selected category visible (blank label) even at zero resolved, so a mid-refetch doesn't yank the user to a different tab", () => {
+    it("keeps the currently selected category visible (fallback label) even at zero resolved, so a mid-refetch doesn't yank the user to a different tab", () => {
       hoisted.state.route.query = { category: "cat-a" };
       hoisted.state.compareEntries.value = [entry("p1", "cat-a")];
       hoisted.state.fetchedProducts.value = [];
@@ -251,7 +251,9 @@ describe("useCompareProductsPage", () => {
       const { categoryTabs, selectedCategoryKey } = useCompareProductsPage();
 
       expect(selectedCategoryKey.value).toBe("cat-a");
-      expect(categoryTabs.value).toEqual([{ categoryKey: "cat-a", label: "", count: 0 }]);
+      expect(categoryTabs.value).toEqual([
+        { categoryKey: "cat-a", label: "shared.compare.table.uncategorized", count: 0 },
+      ]);
     });
 
     it("uses a later entry's resolved product for the label when an earlier entry in the same category is unresolved", () => {

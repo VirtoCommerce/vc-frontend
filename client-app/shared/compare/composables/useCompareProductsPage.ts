@@ -256,38 +256,25 @@ export function useCompareProductsPage() {
       }
     });
 
-    return Array.from(entriesByCategoryKey.entries())
-      .map(([categoryKey, entries]) => {
-        // Per entry, not just the first one — an earlier entry in the same category can still be
-        // unresolved (>16 cap, deleted product, failed fetch) while a later one fetched fine.
-        const resolvedProducts = resolveEntryProducts(entries, fetchedProducts.value);
+    return Array.from(entriesByCategoryKey.entries()).map(([categoryKey, entries]) => {
+      // Per entry, not just the first one — an earlier entry in the same category can still be
+      // unresolved (>16 cap, deleted product, failed fetch) while a later one fetched fine.
+      const resolvedProducts = resolveEntryProducts(entries, fetchedProducts.value);
 
-        // getProductCategoryKey returns "" when a product has no Category breadcrumb — every
-        // such product shares this one bucket, so it needs its own label rather than blank.
-        // resolvedProducts[0] can still be undefined here for the currently selected category
-        // (kept below even at count 0, mid-refetch) — stay blank rather than throw.
-        let label = "";
-        if (categoryKey === "") {
-          label = t("shared.compare.table.uncategorized");
-        } else if (resolvedProducts[0]) {
-          label = getProductCategoryLabel(resolvedProducts[0]);
-        }
+      const label =
+        categoryKey !== "" && resolvedProducts[0]
+          ? getProductCategoryLabel(resolvedProducts[0])
+          : t("shared.compare.table.uncategorized");
 
-        return {
-          categoryKey,
-          label,
-          // Resolved entries only, so this always matches what actually renders below — raw
-          // storage count (getCategoryProductsCount) stays available separately for anything
-          // that needs "how many will actually be removed" (e.g. Clear category).
-          count: resolvedProducts.length,
-        };
-      })
-      .filter((tab) => tab.count > 0 || tab.categoryKey === selectedCategoryKey.value);
-    // A category with zero resolved products (still loading, >16 cap, deleted product, or a
-    // failed fetch — see the notifications.warning below) has nothing to show and no real label
-    // to show it with, so drop it from the tab bar entirely rather than render it broken. Keep
-    // the currently selected one visible regardless, or a mid-refetch tab would vanish out from
-    // under the user and the categoryTabs watch below would immediately bounce them elsewhere.
+      return {
+        categoryKey,
+        label,
+        // Resolved entries only, so this always matches what actually renders below — raw
+        // storage count (getCategoryProductsCount) stays available separately for anything
+        // that needs "how many will actually be removed" (e.g. Clear category).
+        count: resolvedProducts.length,
+      };
+    });
   });
 
   // Seeded from ?category= when arriving via the "added to compare" toast's button (see
