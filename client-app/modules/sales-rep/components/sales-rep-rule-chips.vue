@@ -11,7 +11,7 @@
 
       <span v-if="allCount !== undefined" class="sales-rep-rule-chips__count">{{ formatStatCount(allCount) }}</span>
 
-      <TrackedMetricHint v-if="allTracked" />
+      <TrackedMetricHint v-if="allTracked" slow />
     </button>
 
     <button
@@ -26,7 +26,7 @@
 
       <span v-if="rule.count !== undefined" class="sales-rep-rule-chips__count">{{ formatStatCount(rule.count) }}</span>
 
-      <TrackedMetricHint v-if="rule.tracked" />
+      <TrackedMetricHint v-if="rule.tracked" slow />
     </button>
   </div>
 </template>

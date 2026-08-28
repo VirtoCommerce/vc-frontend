@@ -65,6 +65,8 @@ const createWrapper = createWrapperFactory(mount, CustomerActivity, {
       VcEmptyView: true,
       VcIcon: true,
       VcLink: VcLinkStub,
+      // Rendered, not stubbed away: the tracked-metric hint lives in its trigger slot.
+      VcTooltip: { template: '<span><slot name="trigger" /></span>' },
     },
   },
 });
@@ -119,6 +121,12 @@ describe("CustomerActivity summary states", () => {
 
     expect(wrapper.findAll(".tracked-metric-hint")).toHaveLength(4);
     expect(wrapper.findAll(".customer-activity__row")[0].find(".tracked-metric-hint").exists()).toBe(false);
+
+    // The summary is already on screen, so its hint speaks only of the delay: a load the reader has no
+    // decision left to make about is noise, not a warning.
+    expect(wrapper.findAll(".tracked-metric-hint vc-icon-stub").map((icon) => icon.attributes("label"))).toEqual(
+      Array.from({ length: 4 }, () => "sales_rep.activity.tracked_hint"),
+    );
   });
 
   // Unconfigured analytics is a distinct state, not an error and not fake zeros: the GA-sourced rows

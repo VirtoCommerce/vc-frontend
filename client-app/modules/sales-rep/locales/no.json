@@ -237,7 +237,8 @@
         "during_hour": "{date}, i timen {time}"
       },
       "caveat": "Søk, produktvisninger og pålogginger er basert på sporet butikkaktivitet og er omtrentlige.",
-      "tracked_hint": "Sporet butikkaktivitet: kan bruke opptil 48 timer på å vises, og laster tregere.",
+      "tracked_hint": "Sporet butikkaktivitet: kan bruke opptil 48 timer på å vises.",
+      "tracked_hint_slow": "Sporet butikkaktivitet: kan bruke opptil 48 timer på å vises, og laster tregere.",
       "empty": "Ingen aktivitet ennå",
       "empty_period": "Ingen sporet aktivitet i denne perioden",
       "no_results": "Ingen aktivitet i denne kategorien",
