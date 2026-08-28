@@ -2,4 +2,10 @@
 // and the nav buttons is near-invisible on a dark surface, failing WCAG 2.4.7.
 .vc-range-calendar {
   --focus-ring: rgb(from var(--color-primary-500) r g b / 0.8);
+
+  // Hover-preview endpoints: default.dark and mercury.dark leave primary-200 uninverted, which pairs
+  // with primary-900 at 1.02 : 1 — the digit under the cursor disappears. This pairing measures
+  // 8.03 : 1 in those two and 7.92–10.37 : 1 in the other five dark presets.
+  --preview-bg: var(--color-primary-800);
+  --preview-text: var(--color-primary-100);
 }

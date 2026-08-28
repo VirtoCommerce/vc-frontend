@@ -78,7 +78,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, useTemplateRef } from "vue";
+import { computed, nextTick, useTemplateRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useCalendarPopover } from "@/ui-kit/composables";
 import type { VcDateFieldUpdateOnType } from "@/ui-kit/composables";
@@ -108,7 +108,10 @@ interface IProps {
   calendarSoftMin?: string;
   /** Advisory calendar-only upper bound. See `calendarSoftMin`. */
   calendarSoftMax?: string;
-  /** Predicate that returns true to mark a date unavailable (greyed out). */
+  /**
+   * Predicate that returns true to mark a date unavailable (greyed out).
+   * Read once at mount: reka takes the predicate by value, so swapping it later re-filters typed input but not the grid.
+   */
   disabledDate?: VcCalendarDisabledDateType;
   /** Override locale; defaults to active i18n locale. */
   locale?: string;
@@ -157,7 +160,9 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const { t } = useI18n();
 
-const dateInputRef = useTemplateRef<{ inputElement: HTMLInputElement | null } | null>("dateInputRef");
+const dateInputRef = useTemplateRef<{ inputElement: HTMLInputElement | null; reset: () => void } | null>(
+  "dateInputRef",
+);
 const innerInputElement = computed<HTMLInputElement | null>(() => dateInputRef.value?.inputElement ?? null);
 
 const calendarRef = useTemplateRef<{ focusActiveCell: () => void; $el?: Element | null } | null>("calendarRef");
@@ -204,6 +209,12 @@ function onCalendarUpdate(close: () => void, value: string | undefined): void {
     return;
   }
   emit("update:modelValue", value);
+  // The field resyncs its display from a model CHANGE, so uncommitted text would outlive a pick of the
+  // date already committed — leaving the calendar and the field disagreeing, with the field reporting
+  // invalid for good. nextTick so the reset reads the applied model.
+  void nextTick(() => {
+    dateInputRef.value?.reset();
+  });
   if (props.closeOnSelect) {
     close();
     focusField();

@@ -101,11 +101,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onUnmounted, provide, useTemplateRef, watch } from "vue";
+import { computed, nextTick, provide, useTemplateRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { useComponentId, useDateRangeField } from "@/ui-kit/composables";
+import { useComponentId, useDateRangeField, useShellFocusEvents } from "@/ui-kit/composables";
 import { getInputClearIconSize } from "@/ui-kit/utilities";
-import { classifyShellFocusOut, shellFocusEntered, watchFocusLeavingOwnPopover } from "@/ui-kit/utilities/focus";
 import type { VcDateFieldUpdateOnType } from "@/ui-kit/composables";
 
 interface IDateInputExposed {
@@ -242,33 +241,17 @@ function onSegment(which: "start" | "end", value: string | undefined): void {
   emit("update:modelValue", mergeRange(which, value));
 }
 
-// The calendar lives outside this fieldset, so its own focusout never reports the real departure.
-let stopPopoverFocusWatch: (() => void) | undefined;
-onUnmounted(() => stopPopoverFocusWatch?.());
-
-function onFocusIn(event: FocusEvent): void {
-  if (shellFocusEntered(event)) {
-    emit("focus", event);
-  }
-}
-
-function onFocusOut(event: FocusEvent): void {
-  const exit = classifyShellFocusOut(event);
-  if (exit === "left") {
-    emit("blur", event);
-    return;
-  }
-  if (exit === "own-popover") {
-    stopPopoverFocusWatch?.();
-    stopPopoverFocusWatch = watchFocusLeavingOwnPopover(event, (blurEvent) => emit("blur", blurEvent));
-  }
-}
+const { onFocusIn, onFocusOut } = useShellFocusEvents(emit);
 
 // An already-empty segment sees no prop change on clear; nextTick so reset() reads the cleared model.
-function resetSegments(): void {
+function resetSegments(side?: "start" | "end"): void {
   void nextTick(() => {
-    startInputRef.value?.reset();
-    endInputRef.value?.reset();
+    if (side !== "end") {
+      startInputRef.value?.reset();
+    }
+    if (side !== "start") {
+      endInputRef.value?.reset();
+    }
   });
 }
 
@@ -282,7 +265,10 @@ function clearBoth(): void {
 
 defineExpose({
   startInputElement,
-  /** Drops uncommitted segment text; for shells whose clear action bypasses this component. */
+  /**
+   * Drops uncommitted segment text, for shells whose clear or pick bypasses this component. Pass a
+   * side to leave the other segment's text alone — a partial commit does not define it.
+   */
   resetSegments,
 });
 </script>
@@ -297,12 +283,18 @@ defineExpose({
   --radius: var(--vc-input-radius, var(--vc-radius, 0.5rem));
   --vc-button-radius: calc(var(--radius) - 2px);
 
+  // Measured: a committed date is 86px at 16px/Lato, and each segment's text box is about half the
+  // shell minus the chrome — so below this the year starts getting clipped.
+  $tight-segments-breakpoint: 15.5rem;
+
   // The separator supplies the gap between the segments, so they sit tighter than a standalone input.
   --vc-input-padding-x: theme("padding.1");
 
   // Root is a fieldset. Preflight zeroes its border/padding/margin; min-inline-size: min-content is
   // the one UA default it misses, and it would stop the field from shrinking with its container.
   @apply flex flex-col min-w-0;
+
+  container-type: inline-size;
 
   &--size {
     &--xs {
@@ -336,6 +328,12 @@ defineExpose({
     @apply relative flex items-center p-px border border-neutral-400 rounded-[--radius] bg-additional-50 h-[--height];
 
     font-size: var(--text-size);
+
+    // Narrow shells give up the segment padding rather than the font size: below 16px iOS zooms the
+    // page on focus. The format hint stays wider than the box — a committed date is what must fit.
+    @container (width < #{$tight-segments-breakpoint}) {
+      --vc-input-padding-x: 0px;
+    }
 
     // Not :focus-within — the clear/calendar buttons paint their own outline, so the shell must not double-ring.
     &:has(input:focus) {

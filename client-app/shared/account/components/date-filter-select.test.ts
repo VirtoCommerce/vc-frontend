@@ -67,6 +67,26 @@ describe("DateFilterSelect", () => {
     expect(wrapper.findComponent({ name: "VcDateRangePicker" }).attributes("layout")).toBe("combined");
   });
 
+  // "combined" turns the per-field labels into aria-labels, so without a group label the mobile filter
+  // shows two unlabelled date boxes.
+  it("labels the combined field, and leaves split to its own field labels", () => {
+    const combined = mountWithCustomSelected();
+    expect(combined.findComponent({ name: "VcDateRangePicker" }).attributes("label")).toBe(
+      "shared.account.orders_filter.date_range_label",
+    );
+
+    const split = mountWithCustomSelected({ layout: "split" });
+    expect(split.findComponent({ name: "VcDateRangePicker" }).attributes("label")).toBeUndefined();
+  });
+
+  // reka's prevent-deselect took away the re-click that used to drop a date, so the calendar footer is
+  // the pointer path back — in both layouts.
+  it("asks for the calendar footer", () => {
+    expect(
+      mountWithCustomSelected().findComponent({ name: "VcDateRangePicker" }).attributes("show-footer"),
+    ).toBeDefined();
+  });
+
   // Apply is gated on this emit, and the seeded ref is a starting point, not a verdict on the range.
   describe("initial validity", () => {
     it("says nothing before the range picker has reported", () => {
@@ -82,39 +102,43 @@ describe("DateFilterSelect", () => {
     });
 
     // The stubbed picker above emits nothing, so the real chain is what proves the verdict arrives.
-    it("reports an out-of-order range as invalid, and only that", () => {
-      const wrapper = mount(DateFilterSelect, {
-        props: {
-          layout: "split",
-          dateFilterType: {
-            id: DateFilterId.CUSTOM,
-            label: "Custom date",
-            startDate: "2026-10-20",
-            endDate: "2026-10-08",
+    // Both layouts ship: split on desktop, combined on mobile.
+    it.each(["split", "combined"] as const)(
+      "reports an out-of-order range as invalid in %s, and only that",
+      (layout) => {
+        const wrapper = mount(DateFilterSelect, {
+          props: {
+            layout,
+            dateFilterType: {
+              id: DateFilterId.CUSTOM,
+              label: "Custom date",
+              startDate: "2026-10-20",
+              endDate: "2026-10-08",
+            },
           },
-        },
-        global: {
-          components: {
-            VcDateInput,
-            VcInput,
-            VcInputDetails,
-            VcLabel,
-            VcButton,
-            VcPopover,
-            VcCalendar,
-            VcRangeCalendar,
-            VcDateRangeInput,
-            VcDatePicker,
-            VcDateRangePicker,
+          global: {
+            components: {
+              VcDateInput,
+              VcInput,
+              VcInputDetails,
+              VcLabel,
+              VcButton,
+              VcPopover,
+              VcCalendar,
+              VcRangeCalendar,
+              VcDateRangeInput,
+              VcDatePicker,
+              VcDateRangePicker,
+            },
+            stubs: { VcSelect: true, VcIcon: true, VcTooltip: true },
+            directives: { "html-safe": {} },
+            mocks: { $t: (key: string) => key },
           },
-          stubs: { VcSelect: true, VcIcon: true, VcTooltip: true },
-          directives: { "html-safe": {} },
-          mocks: { $t: (key: string) => key },
-        },
-      });
+        });
 
-      expect(wrapper.emitted("update:valid")).toEqual([[false]]);
-      wrapper.unmount();
-    });
+        expect(wrapper.emitted("update:valid")).toEqual([[false]]);
+        wrapper.unmount();
+      },
+    );
   });
 });

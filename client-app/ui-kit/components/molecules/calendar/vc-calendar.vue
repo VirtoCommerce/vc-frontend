@@ -78,12 +78,16 @@
               :day="weekDate"
               :month="month.value"
               class="vc-calendar__day"
-              v-bind="softBoundAttrs(weekDate)"
+              v-bind="dayAttrs(weekDate)"
             />
           </CalendarCell>
         </CalendarGridRow>
       </CalendarGridBody>
     </CalendarGrid>
+
+    <span v-if="softMin || softMax" :id="softBoundHintId" class="sr-only">
+      {{ t("ui_kit.calendar.outside_suggested_range") }}
+    </span>
 
     <div v-if="showFooter" class="vc-calendar__footer">
       <button
@@ -119,8 +123,9 @@ import {
 } from "reka-ui";
 import { computed, toRef, useTemplateRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
+import { useComponentId } from "@/ui-kit/composables";
 import { tryParseDate } from "@/ui-kit/utilities/date";
-import { dateValueToIso, todayDate, useCalendarBase } from "./use-calendar-base";
+import { dateValueToIso, isToday, todayDate, useCalendarBase } from "./use-calendar-base";
 import type { DateValue } from "@internationalized/date";
 import type { ComponentPublicInstance } from "vue";
 
@@ -136,6 +141,10 @@ interface IProps {
   softMin?: string;
   /** Advisory upper bound. See `softMin`. */
   softMax?: string;
+  /**
+   * Predicate that returns true to mark a date unavailable (greyed out). Receives ISO YYYY-MM-DD.
+   * The grid reads it once at mount: reka takes the predicate by value, so swapping it later does not re-filter the rendered days.
+   */
   disabledDate?: VcCalendarDisabledDateType;
   showFooter?: boolean;
   locale?: string;
@@ -206,15 +215,26 @@ const {
   focusActiveCell,
 } = base;
 
-const rootClasses = computed(() => ["vc-calendar", `vc-calendar--size--${props.size}`]);
+// --mode--single carries no rule in here any more, but it is a published class: a fork styling
+// `.vc-calendar--mode--single …` would lose its rule silently if this stopped being emitted.
+const rootClasses = computed(() => ["vc-calendar", `vc-calendar--size--${props.size}`, "vc-calendar--mode--single"]);
 
-// The marker is the only cue a soft bound leaves: the day keeps its enabled semantics, so the title
-// carries the reason for assistive tech and on hover.
-function softBoundAttrs(date: DateValue): Record<string, string> {
-  if (!isOutsideSoftBounds(date)) {
-    return {};
+const softBoundHintId = useComponentId("vc-calendar-soft-hint");
+
+// reka sets aria-label on every cell unconditionally, so the reason cannot be part of the name: it goes
+// into the accessible DESCRIPTION, which reaches a keyboard user too — `title` alone is hover-only.
+// aria-current marks today, which reka only exposes as a data attribute.
+function dayAttrs(date: DateValue): Record<string, string> {
+  const attrs: Record<string, string> = {};
+  if (isToday(date)) {
+    attrs["aria-current"] = "date";
   }
-  return { "data-soft-out-of-bounds": "true", title: t("ui_kit.calendar.outside_suggested_range") };
+  if (isOutsideSoftBounds(date)) {
+    attrs["data-soft-out-of-bounds"] = "true";
+    attrs.title = t("ui_kit.calendar.outside_suggested_range");
+    attrs["aria-describedby"] = softBoundHintId;
+  }
+  return attrs;
 }
 
 function onUpdate(value: DateValue | DateValue[] | undefined): void {

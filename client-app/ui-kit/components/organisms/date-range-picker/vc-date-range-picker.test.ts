@@ -2,6 +2,7 @@ import { flushPromises, mount } from "@vue/test-utils";
 import { describe, expect, it, vi } from "vitest";
 import { defineComponent, h, ref } from "vue";
 import { VcInputDetails, VcLabel } from "@/ui-kit/components/atoms";
+import { todayDate } from "@/ui-kit/components/molecules/calendar/use-calendar-base";
 import VcDatePicker from "../date-picker/vc-date-picker.vue";
 import VcDateRangePicker from "./vc-date-range-picker.vue";
 import type { DOMWrapper, VueWrapper } from "@vue/test-utils";
@@ -72,7 +73,7 @@ function mountSplit(props = {}, options: { attachTo?: Element } = {}) {
 }
 
 // Escape reverts through reka's internals, which only a real v-model round trip exercises.
-function mountBoundPicker(initial: VcDateRangeType | undefined) {
+function mountBoundPicker(initial: VcDateRangeType | undefined, props: Record<string, unknown> = {}) {
   const state = ref<VcDateRangeType | undefined>(initial);
   const emits: (VcDateRangeType | undefined)[] = [];
 
@@ -80,6 +81,7 @@ function mountBoundPicker(initial: VcDateRangeType | undefined) {
     setup() {
       return () =>
         h(VcDateRangePicker, {
+          ...props,
           modelValue: state.value,
           "onUpdate:modelValue": (value: VcDateRangeType | undefined) => {
             state.value = value;
@@ -249,6 +251,75 @@ describe("VcDateRangePicker", () => {
     await flushPromises();
 
     expect(wrapper.findAll("input").map((input) => input.element.value)).toEqual(["", ""]);
+
+    wrapper.unmount();
+  });
+
+  // Same defect one layer down: in split each field owns its calendar, and picking the date the field
+  // already holds changes no model half at all.
+  it("drops rejected text when a split field re-picks the date it already holds", async () => {
+    const wrapper = mountSplit({ modelValue: { start: "2026-08-10", end: undefined } }, { attachTo: document.body });
+
+    const [startInput] = wrapper.findAll("input");
+    await startInput.setValue("99/99/9999");
+    await startInput.trigger("blur");
+    expect(startInput.element.value).toBe("99/99/9999");
+
+    const [startTrigger] = wrapper.findAll('button[aria-label="ui_kit.accessibility.open_calendar"]');
+    await startTrigger.trigger("click");
+    await flushPromises();
+    await clickDay("2026-08-10");
+    await flushPromises();
+
+    expect(wrapper.findAll("input")[0].element.value).toBe("08/10/2026");
+
+    wrapper.unmount();
+  });
+
+  // A segment resyncs its display from a change to its OWN half of the model, so rejected text can
+  // outlive a range the calendar just produced — and that segment then reports invalid for good, which
+  // gates Apply in both order filters.
+  it("drops rejected segment text when the calendar produces a range", async () => {
+    const { wrapper, state } = mountBoundPicker({ start: "2026-08-10", end: undefined });
+    const picker = wrapper.findComponent(VcDateRangePicker);
+
+    const [startInput] = wrapper.findAll("input");
+    await startInput.setValue("99/99/9999");
+    await startInput.trigger("blur");
+    expect(state.value).toEqual({ start: "2026-08-10", end: undefined });
+    expect(picker.emitted("update:valid")?.at(-1)).toEqual([false]);
+
+    // Completing the range from the committed anchor changes the END half only, so the start segment
+    // gets no model change of its own to resync from.
+    await wrapper.find('button[aria-haspopup="dialog"]').trigger("click");
+    await flushPromises();
+    await clickDay("2026-08-20");
+    await flushPromises();
+
+    expect(state.value).toEqual({ start: "2026-08-10", end: "2026-08-20" });
+    expect(wrapper.findAll("input").map((input) => input.element.value)).toEqual(["08/10/2026", "08/20/2026"]);
+    expect(picker.emitted("update:valid")?.at(-1)).toEqual([true]);
+
+    wrapper.unmount();
+  });
+
+  // An anchor pick defines the start only. With updateOn="enter" a blur does not commit, so the end
+  // segment can legitimately hold text the model has not taken — resetting it would throw that away.
+  it("leaves the untouched segment's typed text alone on an anchor-only pick", async () => {
+    const { wrapper, state } = mountBoundPicker(undefined, { updateOn: "enter" });
+
+    const [, endInput] = wrapper.findAll("input");
+    await endInput.setValue("08/20/2026");
+    await endInput.trigger("blur");
+    expect(state.value).toBeUndefined();
+
+    await wrapper.find('button[aria-haspopup="dialog"]').trigger("click");
+    await flushPromises();
+    await clickDay(todayDate().toString());
+    await flushPromises();
+
+    expect(state.value).toEqual({ start: todayDate().toString(), end: undefined });
+    expect(wrapper.findAll("input")[1].element.value).toBe("08/20/2026");
 
     wrapper.unmount();
   });

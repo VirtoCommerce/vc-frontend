@@ -55,6 +55,15 @@ const meta: Meta<typeof VcDateInput> = {
       control: "boolean",
       description: "Apply a locale-aware input mask. Default: false.",
     },
+    seamless: {
+      control: "boolean",
+      description:
+        "Strip border, background, focus ring and fixed height so a parent shell can own the chrome. Pair with `hideDetails`.",
+    },
+    hideDetails: {
+      control: "boolean",
+      description: "Drop the details row so a parent shell can render one for a group of fields.",
+    },
   },
 };
 

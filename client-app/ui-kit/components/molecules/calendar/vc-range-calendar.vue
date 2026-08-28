@@ -18,7 +18,9 @@
     :data-test-id="dataTestId"
     @update:model-value="onUpdate"
     @update:start-value="onStartValueUpdate"
+    @update:valid-model-value="onValidModelValueUpdate"
     @update:placeholder="onPlaceholderUpdate"
+    @keydown.capture="onCalendarKeydownCapture"
     @keydown="onCalendarKeydown"
     @pointerdown="endEscapeRevert"
   >
@@ -83,7 +85,12 @@
             :date="weekDate"
             class="vc-range-calendar__cell"
           >
-            <RangeCalendarCellTrigger :day="weekDate" :month="month.value" class="vc-range-calendar__day" />
+            <RangeCalendarCellTrigger
+              :day="weekDate"
+              :month="month.value"
+              class="vc-range-calendar__day"
+              v-bind="dayAttrs(weekDate)"
+            />
           </RangeCalendarCell>
         </RangeCalendarGridRow>
       </RangeCalendarGridBody>
@@ -111,10 +118,10 @@ import {
   RangeCalendarPrev,
   RangeCalendarRoot,
 } from "reka-ui";
-import { computed, nextTick, toRef, useTemplateRef, watch } from "vue";
+import { computed, nextTick, shallowRef, toRef, useTemplateRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { tryParseDate } from "@/ui-kit/utilities/date";
-import { dateValueToIso, todayDate, useCalendarBase } from "./use-calendar-base";
+import { dateValueToIso, isToday, todayDate, useCalendarBase } from "./use-calendar-base";
 import type { DateValue } from "@internationalized/date";
 import type { DateRange } from "reka-ui";
 import type { ComponentPublicInstance } from "vue";
@@ -127,7 +134,10 @@ interface IProps {
   min?: string;
   /** ISO YYYY-MM-DD max boundary; later days render disabled. */
   max?: string;
-  /** Predicate that returns true to mark a date unavailable (hatched, distinct from min/max). Receives ISO YYYY-MM-DD. */
+  /**
+   * Predicate that returns true to mark a date unavailable (hatched, distinct from min/max). Receives ISO YYYY-MM-DD.
+   * The grid reads it once at mount: reka takes the predicate by value, so swapping it later does not re-filter the rendered days.
+   */
   disabledDate?: VcCalendarDisabledDateType;
   /** Show the footer (Clear button). */
   showFooter?: boolean;
@@ -168,10 +178,16 @@ const { t } = useI18n();
 
 const calendarRootRef = useTemplateRef<ComponentPublicInstance | null>("calendarRootRef");
 
-const parsedModelValue = computed<DateRange>(() => ({
-  start: tryParseDate(props.modelValue?.start),
-  end: tryParseDate(props.modelValue?.end),
-}));
+function parseRange(value: VcDateRangeType | undefined): DateRange {
+  return { start: tryParseDate(value?.start), end: tryParseDate(value?.end) };
+}
+
+// eslint-disable-next-line vue/no-setup-props-reactivity-loss
+const initialRange = props.modelValue;
+
+// A pushed snapshot rather than a computed: reka re-reads the model only when this object changes, and
+// a swallowed Escape revert has to re-read a model that did not change (see resyncRekaWithModel).
+const parsedModelValue = shallowRef<DateRange>(parseRange(initialRange));
 
 const base = useCalendarBase({
   locale: toRef(props, "locale"),
@@ -202,9 +218,22 @@ const {
 
 const rootClasses = computed(() => ["vc-range-calendar", `vc-range-calendar--size--${props.size}`]);
 
+// reka exposes today as a data attribute only; aria-current is what a screen reader announces.
+function dayAttrs(date: DateValue): Record<string, string> {
+  return isToday(date) ? { "aria-current": "date" } : {};
+}
+
 // Dedup snapshot: props.modelValue is still stale during reka's same-tick round trip.
-// eslint-disable-next-line vue/no-setup-props-reactivity-loss
-let lastKnown: VcDateRangeType | undefined = props.modelValue;
+let lastKnown: VcDateRangeType | undefined = initialRange;
+
+// What reka would restore on Escape: its own validModelValue, seeded from the mount model and
+// refreshed ONLY when a complete range is built inside the grid — so it goes stale on every commit
+// that arrives from outside.
+let rekaRevertTarget: VcDateRangeType | undefined = initialRange;
+
+// The range we actually hold: commits from outside plus complete in-grid picks, but NOT the
+// in-progress anchor we emit ourselves — cancelling that anchor is what Escape is for.
+let committedRange: VcDateRangeType | undefined = initialRange;
 
 // Swallows reka's duplicate update:startValue echo after it swaps and commits a completed range.
 let pendingCompleteRangeStart: string | undefined;
@@ -215,6 +244,9 @@ let suppressExternalSyncEcho = false;
 // reka reverts an in-progress pick by restoring startValue and endValue separately: the start-only
 // intermediate must not leave as a fresh partial pick, only the whole range it settles on.
 let pendingEscapeRevert = false;
+
+// True while the pending revert aims at a stale target, i.e. would destroy or resurrect a range.
+let staleEscapeRevert = false;
 
 function isSameRange(a: VcDateRangeType | undefined, b: VcDateRangeType | undefined): boolean {
   return a?.start === b?.start && a?.end === b?.end;
@@ -231,16 +263,65 @@ function emitRange(value: VcDateRangeType | undefined): void {
   emit("update:modelValue", value);
 }
 
+function toRange(value: DateRange | undefined): VcDateRangeType | undefined {
+  const start = dateValueToIso(value?.start);
+  const end = dateValueToIso(value?.end);
+  return start || end ? { start, end } : undefined;
+}
+
+// reka refreshes its Escape target when a complete range settles in its own start/end — which happens
+// for a range built inside the grid, but ALSO while it performs a revert we just refused. Only the
+// first is a commit: adopting the refused range would tell the next Escape that the same stale revert
+// is safe. Whatever we last emitted is the test — a refused revert never reaches the model.
+function onValidModelValueUpdate(value: DateRange | undefined): void {
+  rekaRevertTarget = toRange(value);
+  if (isSameRange(rekaRevertTarget, lastKnown)) {
+    committedRange = rekaRevertTarget;
+  }
+}
+
+// reka keeps its own startValue/endValue and re-reads the model only when the prop changes. After a
+// swallowed revert those hold the reverted dates, so the grid needs an explicit re-read.
+function resyncRekaWithModel(): void {
+  // reka answers the re-read with update:startValue, and for a partial range with update:modelValue —
+  // echoes of our own value, exactly like an external sync.
+  suppressExternalSyncEcho = true;
+  void nextTick(() => {
+    suppressExternalSyncEcho = false;
+  });
+  parsedModelValue.value = parseRange(props.modelValue);
+  // reka moved its placeholder to the revert target's start; the model we keep gets no prop change to
+  // re-drive it, so a model without a start of its own would leave the grid on the refused month.
+  placeholderRef.value = clampToBounds(
+    tryParseDate(props.modelValue?.start) ?? tryParseDate(props.modelValue?.end) ?? todayDate(),
+  );
+}
+
 function onUpdate(value: DateRange | undefined): void {
   // update:modelValue is the authoritative end of an Escape revert. Clearing the guard here rather
   // than after N ticks is what makes it browser-proof: the gap between reka's two restores is one
   // microtask in jsdom but a whole task later in a real browser.
+  const isStaleRevert = pendingEscapeRevert && staleEscapeRevert;
   endEscapeRevert();
+
+  if (isStaleRevert) {
+    // Cancel against the range we hold instead of reka's snapshot — forwarding its revert would drop
+    // a typed value or bring back a deleted one.
+    emitRange(committedRange);
+    resyncRekaWithModel();
+    return;
+  }
+
   const start = dateValueToIso(value?.start);
   const end = dateValueToIso(value?.end);
   if (!start && !end) {
     pendingCompleteRangeStart = undefined;
     emitRange(undefined);
+    return;
+  }
+  // reka cannot hold an end-only range and rewrites it as a start anchor. onStartValueUpdate refuses
+  // that echo on its own route; on an Escape revert it arrives here instead, with nothing suppressed.
+  if (start && !end && lastKnown?.end && !lastKnown.start && start === lastKnown.end) {
     return;
   }
   if (start && end) {
@@ -253,14 +334,27 @@ function onUpdate(value: DateRange | undefined): void {
 }
 
 function onClearClick(): void {
+  // A commit to nothing, and one WE emit — the props watch skips our own echo, so this is the only
+  // place that can tell Escape the old range is gone.
+  committedRange = undefined;
   emitRange(undefined);
   // emitRange dedups an already-empty model, but shells still need to react to the explicit action.
   emit("clear");
 }
 
+// Capture phase, because reka's cell trigger stops arrows/Enter/Space from bubbling
+// (RangeCalendarCellTrigger.js: handleArrowKey calls stopPropagation). Without this, a keyboard pick
+// after an Escape reka chose not to answer would meet a guard still armed — and be swallowed.
+function onCalendarKeydownCapture(event: KeyboardEvent): void {
+  if (event.key !== "Escape") {
+    endEscapeRevert();
+  }
+}
+
 function onCalendarKeydown(event: KeyboardEvent): void {
   if (event.key === "Escape") {
     pendingEscapeRevert = true;
+    staleEscapeRevert = !isSameRange(rekaRevertTarget, committedRange);
     return;
   }
   endEscapeRevert();
@@ -271,6 +365,7 @@ function onCalendarKeydown(event: KeyboardEvent): void {
 // swallow the next anchor pick.
 function endEscapeRevert(): void {
   pendingEscapeRevert = false;
+  staleEscapeRevert = false;
 }
 
 function onStartValueUpdate(value: DateValue | undefined): void {
@@ -295,6 +390,12 @@ function onStartValueUpdate(value: DateValue | undefined): void {
 watch(
   () => [props.modelValue?.start, props.modelValue?.end] as const,
   ([newStart, newEnd], [oldStart, oldEnd]) => {
+    parsedModelValue.value = parseRange(props.modelValue);
+    // Our own in-progress anchor comes back as a prop change too; only a value we did not emit is a
+    // commit that Escape may fall back to.
+    if (!isSameRange(props.modelValue, lastKnown)) {
+      committedRange = props.modelValue;
+    }
     // Resync so a later user pick isn't deduped against a stale snapshot.
     lastKnown = props.modelValue;
     // Swallow reka's same-tick echo from being fed this external value.
@@ -329,6 +430,11 @@ defineExpose({ focusActiveCell });
   --bg-color: var(--color-additional-50);
   --border-color: var(--color-neutral-200);
   --text-color: var(--color-neutral-800);
+
+  // Hover-preview endpoints, as a pair: two dark presets leave primary-200 uninverted, so the light
+  // pairing collapses to 1.02 : 1 there — exactly while the user is dragging a range out.
+  --preview-bg: var(--color-primary-200);
+  --preview-text: var(--color-primary-900);
 
   @apply inline-flex flex-col p-3 gap-2 bg-[--bg-color] text-[--text-color] border border-[--border-color] rounded-[--radius];
 
@@ -518,6 +624,15 @@ defineExpose({ focusActiveCell });
       @apply font-bold text-additional-50;
 
       background: var(--color-primary-500);
+
+      /* Source order cannot save these from [data-outside-view]:hover, which is one attribute more
+         specific: an endpoint of a range spanning a month boundary would grey out under the cursor. */
+      &:hover,
+      &[data-outside-view]:hover {
+        @apply text-additional-50;
+
+        background: var(--color-primary-500);
+      }
     }
 
     &[data-selection-start] {
@@ -557,9 +672,10 @@ defineExpose({ focusActiveCell });
 
     /* preview end; the anchor is excluded so its solid endpoint fill wins */
     &[data-highlighted-end]:not([data-selection-start]):not([data-selection-end]) {
-      @apply font-bold text-primary-900;
+      @apply font-bold;
 
-      background: var(--color-primary-200);
+      background: var(--preview-bg);
+      color: var(--preview-text);
       border: 1px dashed var(--color-primary-500);
       border-start-start-radius: 0;
       border-end-start-radius: 0;
@@ -567,9 +683,10 @@ defineExpose({ focusActiveCell });
 
     /* preview start; mirror of preview end */
     &[data-highlighted-start]:not([data-selection-start]):not([data-selection-end]) {
-      @apply font-bold text-primary-900;
+      @apply font-bold;
 
-      background: var(--color-primary-200);
+      background: var(--preview-bg);
+      color: var(--preview-text);
       border: 1px dashed var(--color-primary-500);
       border-start-end-radius: 0;
       border-end-end-radius: 0;
@@ -588,8 +705,11 @@ defineExpose({ focusActiveCell });
     }
   }
 
+  // justify-end, not justify-between: with a single button the latter degrades to flex-start and would
+  // put Clear on the opposite edge from the same button in vc-calendar's two-button footer. Assumes
+  // exactly one button — a second action needs a gap and probably justify-between back.
   &__footer {
-    @apply flex justify-between items-center pt-2 mt-1 border-t border-neutral-200;
+    @apply flex justify-end items-center pt-2 mt-1 border-t border-neutral-200;
   }
 
   // Clear is the footer's only action here, and it is a ghost one — VcCalendar's primary Today button

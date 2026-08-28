@@ -14,8 +14,9 @@
     <!--
       The opposite endpoint reaches each calendar as an ADVISORY bound: the days that would invert the
       range are marked, yet stay selectable and never gate navigation. An inverted pick is therefore
-      possible — as typing one is, and as "combined"'s single range calendar allows — and lands in the
-      shared details row as `invalid_range` with `update:valid` false.
+      possible — as typing one is — and lands in the shared details row as `invalid_range` with
+      `update:valid` false. "combined" cannot reach that state through its calendar at all: reka
+      normalises a backwards pair by swapping it, so the same gesture there yields a valid range.
     -->
     <div class="vc-date-range-picker__fields">
       <VcDatePicker
@@ -145,10 +146,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onUnmounted, ref, useTemplateRef, watch } from "vue";
+import { computed, ref, useTemplateRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { useCalendarPopover, useComponentId, useDateRangeField } from "@/ui-kit/composables";
-import { classifyShellFocusOut, shellFocusEntered, watchFocusLeavingOwnPopover } from "@/ui-kit/utilities/focus";
+import { useCalendarPopover, useComponentId, useDateRangeField, useShellFocusEvents } from "@/ui-kit/composables";
 import type { VcDateFieldUpdateOnType } from "@/ui-kit/composables";
 
 interface IProps {
@@ -181,7 +181,10 @@ interface IProps {
   min?: string;
   /** ISO YYYY-MM-DD max boundary. See `min`. */
   max?: string;
-  /** Predicate that returns true to mark a date unavailable (greyed out). Receives ISO YYYY-MM-DD. */
+  /**
+   * Predicate that returns true to mark a date unavailable (greyed out). Receives ISO YYYY-MM-DD.
+   * Read once at mount: reka takes the predicate by value, so swapping it later re-filters typed input but not the grid.
+   */
   disabledDate?: VcCalendarDisabledDateType;
   /** Override locale; defaults to active i18n locale. */
   locale?: string;
@@ -213,8 +216,10 @@ interface IProps {
    */
   placement?: VcPopoverPlacementType;
   /**
-   * "combined" (default) = one field with two segments and one range calendar.
-   * "split" = two labelled VcDatePickers, the layout both order-filter call sites ship today.
+   * "combined" (default) = one field with two segments and one range calendar; `startLabel`/`endLabel`
+   * become accessible names, so `label` is the only visible one. The orders filter ships this on mobile.
+   * "split" = two separately labelled VcDatePickers, each with its own calendar; the orders filter
+   * ships this on desktop.
    */
   layout?: VcDateRangePickerLayoutType;
   dataTestId?: string;
@@ -246,7 +251,7 @@ const { t } = useI18n();
 
 const rangeInputRef = useTemplateRef<{
   startInputElement: HTMLInputElement | null;
-  resetSegments: () => void;
+  resetSegments: (side?: "start" | "end") => void;
 } | null>("rangeInputRef");
 const calendarRef = useTemplateRef<{ focusActiveCell: () => void; $el?: Element | null } | null>("calendarRef");
 
@@ -357,34 +362,18 @@ function onSegment(which: "start" | "end", value: string | undefined): void {
   emit("update:modelValue", mergeRange(which, value));
 }
 
-// A teleported split calendar leaves this fieldset, so its own focusout never reports the real
-// departure; the watch covers that and stands down when the calendar stays inside.
-let stopPopoverFocusWatch: (() => void) | undefined;
-onUnmounted(() => stopPopoverFocusWatch?.());
-
-function onFocusIn(event: FocusEvent): void {
-  if (shellFocusEntered(event)) {
-    emit("focus", event);
-  }
-}
-
-function onFocusOut(event: FocusEvent): void {
-  const exit = classifyShellFocusOut(event);
-  if (exit === "left") {
-    emit("blur", event);
-    return;
-  }
-  if (exit === "own-popover") {
-    stopPopoverFocusWatch?.();
-    stopPopoverFocusWatch = watchFocusLeavingOwnPopover(event, (blurEvent) => emit("blur", blurEvent));
-  }
-}
+const { onFocusIn, onFocusOut } = useShellFocusEvents(emit);
 
 function onCalendarUpdate(close: () => void, value: VcDateRangeType | undefined): void {
   if (props.disabled || props.readonly) {
     return;
   }
   emit("update:modelValue", value);
+  // A segment whose own half of the model did not change never resyncs on its own, so rejected text
+  // would keep reporting invalid over a range the calendar just accepted. An anchor pick defines the
+  // start ONLY, though — resetting the end segment there would drop text the user typed but has not
+  // committed (reachable with updateOn="enter", where blur does not commit).
+  rangeInputRef.value?.resetSegments(value?.start && !value?.end ? "start" : undefined);
   // Close only once BOTH endpoints are committed, not after the anchor.
   if (props.closeOnSelect && value?.start && value?.end) {
     close();

@@ -597,6 +597,7 @@
         "created_date_label": "Opprettelsesdato",
         "start_date_label": "Startdato",
         "end_date_label": "Sluttdato",
+        "date_range_label": "Datointervall",
         "apply_button": "@:common.buttons.apply",
         "reset_button": "@:common.buttons.reset"
       },

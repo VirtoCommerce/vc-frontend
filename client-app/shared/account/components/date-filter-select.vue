@@ -16,7 +16,9 @@
       mask
       enable-teleport
       show-empty-details
+      show-footer
       :layout="layout"
+      :label="combinedLabel"
       :start-label="$t('shared.account.orders_filter.start_date_label')"
       :end-label="$t('shared.account.orders_filter.end_date_label')"
       @update:valid="rangeValid = $event"
@@ -26,6 +28,7 @@
 
 <script setup lang="ts">
 import { computed, ref, toRefs, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { DateFilterId } from "@/core/enums";
 import { useUserOrdersFilter } from "../composables/useUserOrdersFilter";
 import type { DateFilterType } from "@/core/types";
@@ -47,6 +50,8 @@ const props = withDefaults(defineProps<IProps>(), {
   layout: "combined",
 });
 
+const { t } = useI18n();
+
 const { dateFilterTypes } = useUserOrdersFilter();
 
 const { dateFilterType } = toRefs(props);
@@ -55,6 +60,12 @@ const selectedDateFilter = ref<DateFilterType>(dateFilterType.value ?? dateFilte
 
 // An empty range is valid.
 const rangeValid = ref(true);
+
+// "combined" turns startLabel/endLabel into aria-labels, so its one visible label has to name the pair.
+// "split" already labels each field, so a group label there would only repeat them.
+const combinedLabel = computed(() =>
+  props.layout === "combined" ? t("shared.account.orders_filter.date_range_label") : undefined,
+);
 
 const range = computed<VcDateRangeType | undefined>({
   get() {

@@ -18,7 +18,7 @@ function mountCal(props = {}, options: { attachTo?: Element } = {}) {
 }
 
 // The bug only reproduces through a real v-model round trip: the emitted value must flow back as a prop.
-function mountBoundCal(initial: VcDateRangeType | undefined) {
+function mountBoundCal(initial: VcDateRangeType | undefined, props: Record<string, unknown> = {}) {
   const state = ref<VcDateRangeType | undefined>(initial);
   const emits: (VcDateRangeType | undefined)[] = [];
 
@@ -26,6 +26,7 @@ function mountBoundCal(initial: VcDateRangeType | undefined) {
     setup() {
       return () =>
         h(VcRangeCalendar, {
+          ...props,
           modelValue: state.value,
           "onUpdate:modelValue": (value: VcDateRangeType | undefined) => {
             state.value = value;
@@ -206,17 +207,22 @@ describe("VcRangeCalendar", () => {
 
   // reka deselects an endpoint that is picked twice; here that silently dropped a committed date.
   describe("re-picking an endpoint", () => {
-    it("keeps the anchor when it is re-picked from the keyboard", async () => {
+    // reka reads cell keys from `event.code`, not `event.key`, and acts on the focused day — a bare
+    // `key` on an unfocused cell reaches nothing, and asserting `.start` alone cannot tell "anchor
+    // kept" from "collapsed into a single-day range".
+    it("closes the anchor into a single-day range from the keyboard", async () => {
       const { wrapper, state } = mountBoundCal({ start: "2026-10-08", end: undefined });
       await flushPromises();
 
       const cell = document.querySelector<HTMLElement>(
         `[data-reka-calendar-cell-trigger][data-value="2026-10-08"]:not([data-outside-view])`,
       )!;
-      pressKey(cell, "Enter");
+      cell.focus();
+      await flushPromises();
+      pressKey(cell, "Enter", { code: "Enter" });
       await flushPromises();
 
-      expect(state.value?.start).toBe("2026-10-08");
+      expect(state.value).toEqual({ start: "2026-10-08", end: "2026-10-08" });
 
       wrapper.unmount();
     });
@@ -368,6 +374,204 @@ describe("VcRangeCalendar", () => {
       wrapper.unmount();
     });
 
+    // reka seeds its revert target at mount and refreshes it only for a range built inside the grid,
+    // so after any commit from outside its "revert" aims at a snapshot that no longer exists. Every
+    // case below arms reka's isEditing through that external sync, which is what makes Escape act.
+    describe("a revert target reka never refreshed", () => {
+      it("keeps a value that arrived from outside instead of wiping it", async () => {
+        const { wrapper, state, emits } = mountBoundCal(undefined);
+        await flushPromises();
+
+        state.value = { start: "2026-10-08", end: undefined };
+        await flushPromises();
+
+        pressEscape(inViewCellElement("2026-10-08")!);
+        // Two flushes: reka's restore settles in one, what it forwards in the next.
+        await flushPromises();
+        await flushPromises();
+
+        expect(state.value).toEqual({ start: "2026-10-08", end: undefined });
+        expect(emits).toEqual([]);
+
+        wrapper.unmount();
+      });
+
+      it("keeps a complete range that was filled in one endpoint at a time", async () => {
+        const { wrapper, state, emits } = mountBoundCal(undefined);
+        await flushPromises();
+
+        state.value = { start: "2026-10-08", end: undefined };
+        await flushPromises();
+        state.value = { start: "2026-10-08", end: "2026-10-14" };
+        await flushPromises();
+
+        pressEscape(inViewCellElement("2026-10-08")!);
+        // Two flushes: reka's restore settles in one, what it forwards in the next.
+        await flushPromises();
+        await flushPromises();
+
+        expect(state.value).toEqual({ start: "2026-10-08", end: "2026-10-14" });
+        expect(emits).toEqual([]);
+
+        wrapper.unmount();
+      });
+
+      it("does not resurrect a range that was cleared from outside", async () => {
+        const { wrapper, state, emits } = mountBoundCal({ start: "2026-10-08", end: "2026-10-14" });
+        await flushPromises();
+
+        state.value = undefined;
+        await flushPromises();
+
+        pressEscape(inViewCellElement(todayDate().toString())!);
+        // Two flushes: reka's restore settles in one, the resurrection it used to emit in the next.
+        await flushPromises();
+        await flushPromises();
+
+        expect(state.value).toBeUndefined();
+        expect(emits).toEqual([]);
+
+        wrapper.unmount();
+      });
+
+      // reka rewrites its own revert target while performing the revert we refused. Adopting that as
+      // committed would tell the NEXT Escape the same stale revert is safe.
+      it("stays stale on a repeated Escape instead of adopting the refused range", async () => {
+        const { wrapper, state } = mountBoundCal({ start: "2026-10-08", end: "2026-10-14" });
+        await flushPromises();
+
+        state.value = undefined;
+        await flushPromises();
+
+        // Twice: the first Escape is the one whose refusal reka answers by rewriting its target.
+        for (let attempt = 0; attempt < 2; attempt++) {
+          pressEscape(inViewCellElement(todayDate().toString())!);
+          await flushPromises();
+          await flushPromises();
+        }
+
+        expect(state.value).toBeUndefined();
+
+        wrapper.unmount();
+      });
+
+      // reka drags its placeholder to the revert target's start; nothing re-drives it for a kept model
+      // that has no start of its own, so the grid would sit on the month we refused.
+      it("keeps the view on the kept model, not on the refused range's month", async () => {
+        // Today-relative on purpose: with a fixed October fixture the assertion would stop
+        // discriminating for the whole of that month, when the refused month IS today's month.
+        const refusedStart = todayDate().add({ months: 2 });
+        const { wrapper, state } = mountBoundCal({
+          start: refusedStart.toString(),
+          end: refusedStart.add({ days: 6 }).toString(),
+        });
+        await flushPromises();
+
+        const heading = () => wrapper.find(".vc-range-calendar__heading").text();
+        state.value = undefined;
+        await flushPromises();
+        const headingBeforeEscape = heading();
+
+        pressEscape(inViewCellElement(todayDate().toString())!);
+        await flushPromises();
+        await flushPromises();
+
+        expect(heading()).toBe(headingBeforeEscape);
+
+        wrapper.unmount();
+      });
+
+      // The footer Clear is a commit WE emit, so the props watch skips it as our own echo — nothing
+      // else can tell Escape the range is gone. The `show-footer` the orders filter now passes is what
+      // puts this button in front of a user.
+      it("does not bring the range back after the footer cleared it", async () => {
+        const { wrapper, state, emits } = mountBoundCal(
+          { start: "2026-10-08", end: "2026-10-14" },
+          { showFooter: true },
+        );
+        await flushPromises();
+
+        await wrapper.find(".vc-range-calendar__footer-btn").trigger("click");
+        await flushPromises();
+        expect(state.value).toBeUndefined();
+        const emitCountAfterClear = emits.length;
+
+        pressEscape(inViewCellElement(todayDate().toString())!);
+        await flushPromises();
+        await flushPromises();
+
+        expect(state.value).toBeUndefined();
+        expect(emits.slice(emitCountAfterClear)).toEqual([]);
+
+        wrapper.unmount();
+      });
+
+      // reka cannot hold an end-only range: it rewrites it as a start anchor. On the Escape route that
+      // rewrite used to be forwarded, turning "up to the 14th" into "from the 14th".
+      it("keeps an end-only range end-only across an Escape", async () => {
+        const { wrapper, state } = mountBoundCal({ start: undefined, end: "2026-10-14" });
+        await flushPromises();
+
+        state.value = { start: "2026-10-08", end: "2026-10-14" };
+        await flushPromises();
+        state.value = { start: undefined, end: "2026-10-14" };
+        await flushPromises();
+
+        pressEscape(inViewCellElement("2026-10-14")!);
+        await flushPromises();
+        await flushPromises();
+
+        expect(state.value).toEqual({ start: undefined, end: "2026-10-14" });
+
+        wrapper.unmount();
+      });
+
+      // The swallowed revert leaves reka's own start/end on the reverted dates; the grid has to be
+      // pulled back to the model, or the selection it paints outlives the value. The range is filled
+      // one endpoint at a time on purpose — a complete range in one step never arms reka's revert.
+      it("repaints the grid from the model after swallowing the revert", async () => {
+        const { wrapper, state } = mountBoundCal(undefined);
+        await flushPromises();
+
+        state.value = { start: "2026-10-08", end: undefined };
+        await flushPromises();
+        state.value = { start: "2026-10-08", end: "2026-10-14" };
+        await flushPromises();
+
+        pressEscape(inViewCellElement("2026-10-08")!);
+        // Two flushes: reka's restore settles in one, what it forwards in the next.
+        await flushPromises();
+        await flushPromises();
+
+        expect(inViewCellElement("2026-10-08")?.dataset.selectionStart).toBeDefined();
+        expect(inViewCellElement("2026-10-14")?.dataset.selectionEnd).toBeDefined();
+
+        wrapper.unmount();
+      });
+    });
+
+    // The pointer twin of this test passes on its own: @pointerdown disarms the guard. Keyboard keys
+    // never reach that handler — reka's cell trigger stops arrows/Enter/Space from bubbling — so the
+    // first keypick after an Escape reka ignored has to be disarmed in the capture phase.
+    it("does not swallow the next keyboard pick after an Escape with nothing to revert", async () => {
+      const { wrapper, state } = mountBoundCal({ start: "2026-10-08", end: "2026-10-14" });
+      await flushPromises();
+
+      pressEscape(inViewCellElement("2026-10-08")!);
+      await flushPromises();
+      await flushPromises();
+
+      const cell = inViewCellElement("2026-10-20")!;
+      cell.focus();
+      await flushPromises();
+      pressKey(cell, "Enter", { code: "Enter" });
+      await flushPromises();
+
+      expect(state.value).toEqual({ start: "2026-10-20", end: undefined });
+
+      wrapper.unmount();
+    });
+
     it("emits nothing when Escape arrives with no pick in progress", async () => {
       const { wrapper, emits } = mountBoundCal({ start: "2026-10-08", end: "2026-10-14" });
       await flushPromises();
@@ -379,6 +583,16 @@ describe("VcRangeCalendar", () => {
 
       wrapper.unmount();
     });
+  });
+
+  // reka exposes today as a data attribute only; the ARIA state is ours to add.
+  it("marks today with aria-current", () => {
+    const wrapper = mountCal({ modelValue: undefined });
+    const today = todayDate().toString();
+    const cell = wrapper.find(`[data-reka-calendar-cell-trigger][data-value="${today}"]:not([data-outside-view])`);
+
+    expect(cell.attributes("aria-current")).toBe("date");
+    expect(cell.attributes("data-today")).toBeDefined();
   });
 
   describe("keyboard navigation (Home/End/PageUp/PageDown)", () => {

@@ -597,6 +597,7 @@
         "created_date_label": "Created date",
         "start_date_label": "Start date",
         "end_date_label": "End date",
+        "date_range_label": "Date range",
         "apply_button": "@:common.buttons.apply",
         "reset_button": "@:common.buttons.reset"
       },

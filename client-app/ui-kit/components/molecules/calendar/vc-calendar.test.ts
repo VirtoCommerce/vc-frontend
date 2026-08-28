@@ -1,5 +1,6 @@
 import { flushPromises, mount } from "@vue/test-utils";
 import { describe, expect, it, vi } from "vitest";
+import { todayDate } from "./use-calendar-base";
 import VcCalendar from "./vc-calendar.vue";
 
 vi.mock("vue-i18n", () => ({
@@ -170,6 +171,37 @@ describe("VcCalendar — advisory bounds (softMin/softMax)", () => {
 
     await marked.trigger("click");
     expect(wrapper.emitted("update:modelValue")?.at(-1)).toEqual(["2026-10-20"]);
+  });
+
+  // reka owns aria-label on every cell, so the reason can only be a DESCRIPTION — and `title` alone
+  // never reaches a keyboard user.
+  it("describes a marked day through aria-describedby, not the title alone", () => {
+    const wrapper = mountCal({ ...OCTOBER, softMax: "2026-10-14" });
+    const marked = inViewCell(wrapper, "2026-10-20");
+
+    const hintId = marked.attributes("aria-describedby");
+    expect(hintId).toBeTruthy();
+    const hint = wrapper.find(`#${hintId}`);
+    expect(hint.exists()).toBe(true);
+    expect(hint.classes()).toContain("sr-only");
+    expect(hint.text()).toBe("ui_kit.calendar.outside_suggested_range");
+
+    expect(inViewCell(wrapper, "2026-10-05").attributes("aria-describedby")).toBeUndefined();
+  });
+
+  it("renders no hint node when no advisory bound is set", () => {
+    const wrapper = mountCal(OCTOBER);
+
+    expect(wrapper.find(".sr-only").exists()).toBe(false);
+    expect(inViewCell(wrapper, "2026-10-20").attributes("aria-describedby")).toBeUndefined();
+  });
+
+  it("marks today with aria-current", () => {
+    const wrapper = mountCal({});
+    const today = todayDate().toString();
+
+    expect(inViewCell(wrapper, today).attributes("aria-current")).toBe("date");
+    expect(inViewCell(wrapper, today).attributes("data-today")).toBeDefined();
   });
 
   it("gates neither month nor year navigation", async () => {

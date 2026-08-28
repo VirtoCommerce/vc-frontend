@@ -2,6 +2,7 @@ import {
   endOfMonth,
   endOfWeek,
   getLocalTimeZone,
+  isSameDay,
   startOfMonth,
   startOfWeek,
   today as todayInLocalTz,
@@ -39,6 +40,11 @@ export function dateValueToIso(value: DateValue | undefined): string | undefined
 
 export function todayDate(): DateValue {
   return todayInLocalTz(getLocalTimeZone());
+}
+
+/** reka marks today with a data attribute only; both calendars need the ARIA state too. */
+export function isToday(date: DateValue): boolean {
+  return isSameDay(date, todayDate());
 }
 
 // reka handles only arrows/space/enter; we add Home/End/PageUp/PageDown (APG date-grid gap).

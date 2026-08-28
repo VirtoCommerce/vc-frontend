@@ -36,7 +36,7 @@ const meta: Meta<typeof VcDatePicker> = {
     docs: {
       description: {
         component:
-          'Date picker organism composing `VcDateInput`, a calendar trigger button (`VcButton` in the input\'s append slot), and a `VcPopover` anchored to the input that hosts a `VcCalendar`. Single-mode selection only — range selection lives on a separate branch. ARIA: the inner input advertises `aria-haspopup="dialog"`, `aria-expanded`, and `aria-controls` pointing at the popover content; the popover content carries `role="dialog"` with a localized `aria-label`. Picking a date via the calendar closes the popover by default (`closeOnSelect`) and returns focus to the input.',
+          'Date picker organism composing `VcDateInput`, a calendar trigger button (`VcButton` in the input\'s append slot), and a `VcPopover` anchored to the input that hosts a `VcCalendar`. Single-date selection; `VcDateRangePicker` covers ranges and composes this component in its `split` layout. ARIA: the inner input advertises `aria-haspopup="dialog"`, `aria-expanded`, and `aria-controls` pointing at the popover content; the popover content carries `role="dialog"` with a localized `aria-label`. Picking a date via the calendar closes the popover by default (`closeOnSelect`) and returns focus to the input.',
       },
     },
   },
@@ -79,6 +79,17 @@ const meta: Meta<typeof VcDatePicker> = {
       control: "text",
       description: "Override locale; defaults to active i18n locale",
     },
+    calendarSoftMin: {
+      control: "text",
+      description:
+        "Advisory lower bound in ISO YYYY-MM-DD: earlier days are marked as out of the suggested range but stay selectable, and navigation is not gated. Use `min` for a boundary that must hold.",
+      table: { type: { summary: "string" } },
+    },
+    calendarSoftMax: {
+      control: "text",
+      description: "Advisory upper bound in ISO YYYY-MM-DD. See `calendarSoftMin`.",
+      table: { type: { summary: "string" } },
+    },
     label: { control: "text" },
     placeholder: { control: "text" },
     message: { control: "text" },
@@ -91,6 +102,16 @@ const meta: Meta<typeof VcDatePicker> = {
     showFooter: { control: "boolean" },
     closeOnSelect: { control: "boolean" },
     enableTeleport: { control: "boolean" },
+    hideDetails: {
+      control: "boolean",
+      description: "Drop the details row so a parent can render one for a group of fields.",
+    },
+    aria: {
+      control: false,
+      description:
+        "Extra ARIA attributes for the inner input, merged under the combobox wiring this picker owns. Object, not a control.",
+      table: { type: { summary: "Record<string, string | number | null>" } },
+    },
   },
 };
 
@@ -218,7 +239,7 @@ export const ValidityEvent: StoryType = {
     docs: {
       description: {
         story:
-          "Demonstrates the `update:valid` event from a consumer's perspective. When a user types an out-of-range date, the value is rejected internally — it is NOT emitted via `v-model`, so a parent watching `v-model` alone would never learn about the invalid state. Instead, the picker emits `update:valid=false` (forwarded from the inner `VcDateInput`/`useDateField.isValid`, fired `{ immediate: true }` on mount and on every validity change). A parent captures that boolean to gate actions — here a mock **Apply** button is disabled while invalid. This mirrors the real orders filter (`shared/account/components/date-filter-select.vue`), which uses exactly this wiring to disable its Apply button. Try typing a date before 2026-10-05 or after 2026-10-25 to see Apply disable.",
+          "Demonstrates the `update:valid` event from a consumer's perspective. When a user types an out-of-range date, the value is rejected internally — it is NOT emitted via `v-model`, so a parent watching `v-model` alone would never learn about the invalid state. Instead, the picker emits `update:valid=false` (forwarded from the inner `VcDateInput`/`useDateField.isValid`, fired `{ immediate: true }` on mount and on every validity change). A parent captures that boolean to gate actions — here a mock **Apply** button is disabled while invalid. The real orders filter uses the same wiring, two hops up: `date-filter-select.vue` relays `VcDateRangePicker`'s `update:valid` — which combines both segments' validity with the start <= end order — and the Apply button is disabled on it in `orders-filter.vue` (desktop) and `orders-mobile-filters.vue` (mobile). Try typing a date before 2026-10-05 or after 2026-10-25 to see Apply disable.",
       },
       source: {
         code: `
