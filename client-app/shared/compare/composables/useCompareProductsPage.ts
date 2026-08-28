@@ -64,7 +64,12 @@ function getProductPropertyBooleanValue(product: Product, propertyName: string):
     (prop) =>
       !prop.hidden && prop.name.toLowerCase() === propertyName && prop.propertyValueType === PropertyValueTypes.Boolean,
   );
-  return typeof property?.value === "boolean" ? property.value : undefined;
+
+  if (!property || property.value === undefined) {
+    return undefined;
+  }
+
+  return property.value === true;
 }
 
 function getAvailabilitySignature(product: Product): string {

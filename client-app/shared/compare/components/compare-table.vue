@@ -396,9 +396,6 @@ watch(isCompact, async () => {
   headerRowRef.value?.focus();
 });
 
-// The remove button lives inside the product column it destroys, so on removal focus would
-// otherwise fall through to <body>. Rescue it onto the stable header row, same as the isCompact
-// watcher above.
 async function onRemoveProduct(item: ICompareDisplayProduct) {
   emit("removeProduct", item);
 
