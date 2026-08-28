@@ -51,6 +51,10 @@ describe("scrollToAnchor", () => {
     return section;
   }
 
+  function scrolledElements() {
+    return scrollIntoView.mock.contexts;
+  }
+
   beforeEach(() => {
     scrollIntoView = vi.fn();
     Element.prototype.scrollIntoView = scrollIntoView;
@@ -61,10 +65,11 @@ describe("scrollToAnchor", () => {
   });
 
   it("scrolls to a section that is already rendered", async () => {
-    addSection("specifications");
+    const section = addSection("specifications");
 
     await expect(scrollToAnchor("#specifications")).resolves.toBe(true);
     expect(scrollIntoView).toHaveBeenCalledWith({ behavior: "smooth", block: "start" });
+    expect(scrolledElements()).toEqual([section]);
   });
 
   it("moves the keyboard starting point to the section it scrolled to", async () => {
@@ -74,6 +79,31 @@ describe("scrollToAnchor", () => {
 
     expect(document.activeElement).toBe(section);
     expect(section.getAttribute("tabindex")).toBe("-1");
+  });
+
+  it("leaves focus alone when the visitor has moved it to a control", async () => {
+    const section = addSection("specifications");
+    const search = document.createElement("input");
+    document.body.appendChild(search);
+    search.focus();
+
+    await scrollToAnchor("#specifications");
+
+    expect(document.activeElement).toBe(search);
+    expect(section.hasAttribute("tabindex")).toBe(false);
+    expect(scrolledElements()).toEqual([section]);
+  });
+
+  it("moves focus off the span the skip links park it on", async () => {
+    const section = addSection("specifications");
+    const skipTarget = document.createElement("span");
+    skipTarget.tabIndex = -1;
+    document.body.appendChild(skipTarget);
+    skipTarget.focus();
+
+    await scrollToAnchor("#specifications");
+
+    expect(document.activeElement).toBe(section);
   });
 
   it("leaves a target that is already focusable in the tab order", async () => {
@@ -91,14 +121,16 @@ describe("scrollToAnchor", () => {
     document.body.appendChild(anchor);
 
     await expect(scrollToAnchor("#chapter-one")).resolves.toBe(true);
+    expect(scrolledElements()).toEqual([anchor]);
   });
 
   it("waits for a section that mounts asynchronously", async () => {
     const pending = scrollToAnchor("#products", 2000);
-    setTimeout(() => addSection("products"), 50);
+    let section: HTMLElement | undefined;
+    setTimeout(() => (section = addSection("products")), 50);
 
     await expect(pending).resolves.toBe(true);
-    expect(scrollIntoView).toHaveBeenCalledOnce();
+    expect(scrolledElements()).toEqual([section]);
   });
 
   it("gives up once the budget is spent instead of hanging", async () => {
@@ -147,24 +179,27 @@ describe("scrollToAnchor", () => {
     const stale = scrollToAnchor("#stale", 1000);
     const fresh = scrollToAnchor("#fresh", 1000);
 
+    let freshSection: HTMLElement | undefined;
     setTimeout(() => {
       addSection("stale");
-      addSection("fresh");
+      freshSection = addSection("fresh");
     }, 40);
 
     await expect(stale).resolves.toBe(false);
     await expect(fresh).resolves.toBe(true);
-    expect(scrollIntoView).toHaveBeenCalledOnce();
+    expect(scrolledElements()).toEqual([freshSection]);
   });
 
   it("ignores a programmatic scroll, which the router performs on every path change", async () => {
     const pending = scrollToAnchor("#products", 500);
+    let section: HTMLElement | undefined;
     setTimeout(() => {
       window.dispatchEvent(new Event("scroll"));
-      addSection("products");
+      section = addSection("products");
     }, 30);
 
     await expect(pending).resolves.toBe(true);
+    expect(scrolledElements()).toEqual([section]);
   });
 
   it("does not mistake a meta tag of the same name for an anchor", async () => {
@@ -205,7 +240,14 @@ describe("scrollToAnchor", () => {
     expect(scrollIntoView).not.toHaveBeenCalled();
   });
 
-  it("survives a malformed percent escape in the hash", async () => {
+  it("falls back to the raw hash when the percent escape is malformed", async () => {
+    const section = addSection("broken%");
+
+    await expect(scrollToAnchor("#broken%", 500)).resolves.toBe(true);
+    expect(scrolledElements()).toEqual([section]);
+  });
+
+  it("gives up on a malformed hash that matches nothing, without throwing", async () => {
     await expect(scrollToAnchor("#broken%", 30)).resolves.toBe(false);
   });
 

@@ -58,16 +58,28 @@ export async function scrollToAnchor(hash: string, timeoutMs = ANCHOR_WAIT_MS): 
 
   target.scrollIntoView({ behavior: "smooth", block: "start" });
 
-  if (!target.hasAttribute("tabindex")) {
-    target.setAttribute("tabindex", "-1");
+  if (!visitorHoldsFocus()) {
+    if (!target.hasAttribute("tabindex")) {
+      target.setAttribute("tabindex", "-1");
+    }
+    target.focus({ preventScroll: true });
   }
-  target.focus({ preventScroll: true });
 
   return true;
 }
 
 export function cancelAnchorScroll(): void {
   latestRequest++;
+}
+
+function visitorHoldsFocus(): boolean {
+  const active = document.activeElement;
+
+  if (!(active instanceof HTMLElement) || active === document.body) {
+    return false;
+  }
+
+  return active.tabIndex >= 0;
 }
 
 function findAnchor(id: string): HTMLElement | null {
