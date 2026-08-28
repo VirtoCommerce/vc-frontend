@@ -282,7 +282,11 @@ export function useCalendarBase(opts: IUseCalendarBaseOptions) {
       return;
     }
 
-    const firstInView = root.querySelector<HTMLElement>("[data-reka-calendar-cell-trigger]:not([data-outside-view])");
+    // reka gives a disabled day no tabindex, so focusing one is a silent no-op and the grid stays
+    // unreachable from the keyboard — which is exactly the first cell whenever `min` starts mid-month.
+    const firstInView = root.querySelector<HTMLElement>(
+      "[data-reka-calendar-cell-trigger]:not([data-outside-view]):not([data-disabled])",
+    );
     firstInView?.focus({ preventScroll: true });
   }
 

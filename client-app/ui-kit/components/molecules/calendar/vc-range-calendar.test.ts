@@ -207,6 +207,24 @@ describe("VcRangeCalendar", () => {
 
   // reka deselects an endpoint that is picked twice; here that silently dropped a committed date.
   describe("re-picking an endpoint", () => {
+    // reka only reaches its deselect branch when highlightedRange is null, which needs a click with no
+    // hover and no focus — the helpers that send mouseenter first bypass the branch entirely, so a test
+    // built on them cannot tell whether prevent-deselect is set at all.
+    it("keeps the anchor on a bare click, with no hover to build a highlighted range", async () => {
+      const { wrapper, state } = mountBoundCal({ start: "2026-10-08", end: undefined });
+      await flushPromises();
+
+      const cell = document.querySelector<HTMLElement>(
+        `[data-reka-calendar-cell-trigger][data-value="2026-10-08"]:not([data-outside-view])`,
+      )!;
+      cell.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+      await flushPromises();
+
+      expect(state.value).toEqual({ start: "2026-10-08", end: undefined });
+
+      wrapper.unmount();
+    });
+
     // reka reads cell keys from `event.code`, not `event.key`, and acts on the focused day — a bare
     // `key` on an unfocused cell reaches nothing, and asserting `.start` alone cannot tell "anchor
     // kept" from "collapsed into a single-day range".
@@ -550,24 +568,31 @@ describe("VcRangeCalendar", () => {
       });
     });
 
-    // The pointer twin of this test passes on its own: @pointerdown disarms the guard. Keyboard keys
-    // never reach that handler — reka's cell trigger stops arrows/Enter/Space from bubbling — so the
-    // first keypick after an Escape reka ignored has to be disarmed in the capture phase.
-    it("does not swallow the next keyboard pick after an Escape with nothing to revert", async () => {
+    // The guard is armed on every Escape, but reka only answers while it is editing — after a complete
+    // commit from outside it does not, so the guard is left armed AND stale (its revert target is still
+    // the mount value). The next keyboard pick then lands in the stale branch and is swallowed: the
+    // grid repaints to the committed range and the keystroke disappears with no feedback. Pointer picks
+    // are safe on their own (@pointerdown disarms), but reka's cell trigger stops arrows/Enter/Space
+    // from bubbling, so only a capture-phase handler can disarm for the keyboard.
+    it("does not swallow a keyboard pick after an unanswered stale Escape", async () => {
       const { wrapper, state } = mountBoundCal({ start: "2026-10-08", end: "2026-10-14" });
       await flushPromises();
 
-      pressEscape(inViewCellElement("2026-10-08")!);
+      // A complete range: reka's own watcher early-returns, so it never refreshes its revert target.
+      state.value = { start: "2026-11-05", end: "2026-11-12" };
+      await flushPromises();
+
+      pressEscape(inViewCellElement("2026-11-05")!);
       await flushPromises();
       await flushPromises();
 
-      const cell = inViewCellElement("2026-10-20")!;
+      const cell = inViewCellElement("2026-11-20")!;
       cell.focus();
       await flushPromises();
       pressKey(cell, "Enter", { code: "Enter" });
       await flushPromises();
 
-      expect(state.value).toEqual({ start: "2026-10-20", end: undefined });
+      expect(state.value).toEqual({ start: "2026-11-20", end: undefined });
 
       wrapper.unmount();
     });

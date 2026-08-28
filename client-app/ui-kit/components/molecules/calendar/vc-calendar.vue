@@ -292,6 +292,15 @@ defineExpose({
   --day-radius: var(--vc-calendar-day-radius, var(--vc-radius, 0.375rem));
   --focus-ring: rgb(from var(--color-primary-500) r g b / 0.35);
 
+  // Selected day, as a pair. Same chain as every other solid-primary surface in the system
+  // (_ui-kit-tokens.scss): component key, then the shared solid-primary override, then the palette —
+  // so a theme that re-inks primary fills re-inks the calendar with them, in one place.
+  // 700, not 500: the system ink is white in light themes, and on primary-500 that measures
+  // 2.11 : 1 in default/mercury (2.14 watermelon, 4.07 purple-pink). On primary-700 the same ink
+  // clears AA in all 7 light presets (5.02–18.27) and all 7 dark ones (8.17–12.36).
+  --selected-bg: var(--vc-calendar-selected-bg, var(--color-vc-background-solid-primary, var(--color-primary-700)));
+  --selected-text: var(--vc-calendar-selected-text, var(--color-vc-text-solid-primary, var(--color-additional-50)));
+
   --bg-color: var(--color-additional-50);
   --border-color: var(--color-neutral-200);
   --text-color: var(--color-neutral-800);
@@ -520,14 +529,14 @@ defineExpose({
   &__day[data-selected] {
     @apply font-bold;
 
-    background: var(--color-primary-500);
-    color: var(--color-additional-50);
+    background: var(--selected-bg);
+    color: var(--selected-text);
     box-shadow: none;
 
     &:hover,
     &[data-outside-view]:hover {
-      background: var(--color-primary-500);
-      color: var(--color-additional-50);
+      background: var(--selected-bg);
+      color: var(--selected-text);
     }
   }
 }

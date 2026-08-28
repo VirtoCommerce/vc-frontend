@@ -20,6 +20,7 @@
     -->
     <div class="vc-date-range-picker__fields">
       <VcDatePicker
+        ref="startFieldRef"
         v-bind="sharedFieldProps"
         class="vc-date-range-picker__field"
         :placement="startPlacement"
@@ -39,6 +40,7 @@
       <span class="vc-date-range-picker__separator" aria-hidden="true">–</span>
 
       <VcDatePicker
+        ref="endFieldRef"
         v-bind="sharedFieldProps"
         class="vc-date-range-picker__field"
         :model-value="modelValue?.end"
@@ -254,6 +256,23 @@ const rangeInputRef = useTemplateRef<{
   resetSegments: (side?: "start" | "end") => void;
 } | null>("rangeInputRef");
 const calendarRef = useTemplateRef<{ focusActiveCell: () => void; $el?: Element | null } | null>("calendarRef");
+const startFieldRef = useTemplateRef<{ reset: () => void } | null>("startFieldRef");
+const endFieldRef = useTemplateRef<{ reset: () => void } | null>("endFieldRef");
+
+// Same rule as the combined shell one layer down: a field only resyncs from a change to its OWN half,
+// so text it rejected outlives a commit made in the other field — leaving Apply gated on a model that
+// is perfectly valid. Any commit drops rejected text; merely uncommitted text is left to its owner.
+watch(
+  () => [props.modelValue?.start, props.modelValue?.end] as const,
+  () => {
+    if (!startSegmentValid.value) {
+      startFieldRef.value?.reset();
+    }
+    if (!endSegmentValid.value) {
+      endFieldRef.value?.reset();
+    }
+  },
+);
 
 const { calendarSize, focusField, onToggle, onEscapeClose, onFieldEscape, onTriggerEscape } = useCalendarPopover({
   size: () => props.size,
@@ -274,6 +293,8 @@ const {
   setSegmentValid,
   setSegmentErrorText,
   mergeRange,
+  startSegmentValid,
+  endSegmentValid,
 } = useDateRangeField({
   modelValue: () => props.modelValue,
   error: () => props.error,

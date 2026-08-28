@@ -196,6 +196,23 @@ describe("VcCalendar — advisory bounds (softMin/softMax)", () => {
     expect(inViewCell(wrapper, "2026-10-20").attributes("aria-describedby")).toBeUndefined();
   });
 
+  // reka leaves a disabled day without tabindex, so the fallback that opens the grid has to skip it or
+  // focus silently stays on the trigger and the arrow keys do nothing.
+  it("focuses the first ENABLED day when min starts mid-month", async () => {
+    const min = todayDate().add({ years: 4 }).set({ day: 10 });
+    const wrapper = mountCal({ modelValue: undefined, min: min.toString() }, { attachTo: document.body });
+    await flushPromises();
+
+    wrapper.vm.focusActiveCell();
+    await flushPromises();
+
+    const active = document.activeElement as HTMLElement | null;
+    expect(active?.dataset.value).toBe(min.toString());
+    expect(active?.dataset.disabled).toBeUndefined();
+
+    wrapper.unmount();
+  });
+
   it("marks today with aria-current", () => {
     const wrapper = mountCal({});
     const today = todayDate().toString();

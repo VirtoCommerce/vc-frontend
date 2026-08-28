@@ -298,9 +298,9 @@ function resyncRekaWithModel(): void {
 }
 
 function onUpdate(value: DateRange | undefined): void {
-  // update:modelValue is the authoritative end of an Escape revert. Clearing the guard here rather
-  // than after N ticks is what makes it browser-proof: the gap between reka's two restores is one
-  // microtask in jsdom but a whole task later in a real browser.
+  // update:modelValue is the authoritative end of an Escape revert: reka writes startValue and endValue
+  // in one synchronous handler, so this is the first place that sees the whole restored value. Clearing
+  // the guard on the conclusion rather than after N ticks keeps it independent of the flush shape.
   const isStaleRevert = pendingEscapeRevert && staleEscapeRevert;
   endEscapeRevert();
 
@@ -423,9 +423,23 @@ defineExpose({ focusActiveCell });
 
 <style lang="scss">
 .vc-range-calendar {
-  --radius: var(--vc-calendar-radius, var(--vc-radius, 0.75rem));
-  --day-radius: var(--vc-calendar-day-radius, var(--vc-radius, 0.375rem));
+  // Own keys first: a fork restyling the single calendar's radius should not silently reshape this one.
+  // The single calendar's keys stay in the chain so an existing override keeps working.
+  --radius: var(--vc-range-calendar-radius, var(--vc-calendar-radius, var(--vc-radius, 0.75rem)));
+  --day-radius: var(--vc-range-calendar-day-radius, var(--vc-calendar-day-radius, var(--vc-radius, 0.375rem)));
   --focus-ring: rgb(from var(--color-primary-500) r g b / 0.35);
+
+  // Range endpoints, as a pair: own key first (a fork restyling the single calendar should not silently
+  // reshape this one), then the single calendar's key, then the shared solid-primary override, then the
+  // palette — the same chain the buttons use. 700 rather than 500 for contrast: see vc-calendar.
+  --selected-bg: var(
+    --vc-range-calendar-selected-bg,
+    var(--vc-calendar-selected-bg, var(--color-vc-background-solid-primary, var(--color-primary-700)))
+  );
+  --selected-text: var(
+    --vc-range-calendar-selected-text,
+    var(--vc-calendar-selected-text, var(--color-vc-text-solid-primary, var(--color-additional-50)))
+  );
 
   --bg-color: var(--color-additional-50);
   --border-color: var(--color-neutral-200);
@@ -621,17 +635,17 @@ defineExpose({ focusActiveCell });
 
     &[data-selection-start],
     &[data-selection-end] {
-      @apply font-bold text-additional-50;
+      @apply font-bold;
 
-      background: var(--color-primary-500);
+      background: var(--selected-bg);
+      color: var(--selected-text);
 
       /* Source order cannot save these from [data-outside-view]:hover, which is one attribute more
          specific: an endpoint of a range spanning a month boundary would grey out under the cursor. */
       &:hover,
       &[data-outside-view]:hover {
-        @apply text-additional-50;
-
-        background: var(--color-primary-500);
+        background: var(--selected-bg);
+        color: var(--selected-text);
       }
     }
 
@@ -699,9 +713,10 @@ defineExpose({ focusActiveCell });
     }
 
     /* today that is also an endpoint: invert ring to white so it reads on the fill */
+    /* The ring reads against the endpoint fill, so it follows the same ink as the digits on it. */
     &[data-today][data-selection-start],
     &[data-today][data-selection-end] {
-      box-shadow: inset 0 0 0 2px var(--color-additional-50);
+      box-shadow: inset 0 0 0 2px var(--selected-text);
     }
   }
 

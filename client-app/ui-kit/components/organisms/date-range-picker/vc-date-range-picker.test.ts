@@ -255,6 +255,32 @@ describe("VcDateRangePicker", () => {
     wrapper.unmount();
   });
 
+  // A field resyncs only from a change to its OWN half, so text it rejected survives a commit made in
+  // the OTHER field: the model holds a valid range, the shell reports invalid, and Apply is gated on a
+  // range that is perfectly good.
+  it.each([
+    ["combined", {}],
+    ["split", { layout: "split", startLabel: "Start date", endLabel: "End date" }],
+  ])("drops text rejected in one field when the other one commits (%s)", async (_name, extraProps) => {
+    const { wrapper, state } = mountBoundPicker({ start: "2026-08-10", end: undefined }, extraProps);
+    const picker = wrapper.findComponent(VcDateRangePicker);
+
+    const [startInput, endInput] = wrapper.findAll("input");
+    await startInput.setValue("99/99/9999");
+    await startInput.trigger("blur");
+    expect(picker.emitted("update:valid")?.at(-1)).toEqual([false]);
+
+    await endInput.setValue("08/20/2026");
+    await endInput.trigger("blur");
+    await flushPromises();
+
+    expect(state.value).toEqual({ start: "2026-08-10", end: "2026-08-20" });
+    expect(wrapper.findAll("input").map((input) => input.element.value)).toEqual(["08/10/2026", "08/20/2026"]);
+    expect(picker.emitted("update:valid")?.at(-1)).toEqual([true]);
+
+    wrapper.unmount();
+  });
+
   // Same defect one layer down: in split each field owns its calendar, and picking the date the field
   // already holds changes no model half at all.
   it("drops rejected text when a split field re-picks the date it already holds", async () => {

@@ -30,6 +30,7 @@
 import { computed, ref, toRefs, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { DateFilterId } from "@/core/enums";
+import { isDateRangeInOrder } from "@/ui-kit/utilities/date";
 import { useUserOrdersFilter } from "../composables/useUserOrdersFilter";
 import type { DateFilterType } from "@/core/types";
 
@@ -58,8 +59,11 @@ const { dateFilterType } = toRefs(props);
 
 const selectedDateFilter = ref<DateFilterType>(dateFilterType.value ?? dateFilterTypes.value[0]);
 
-// An empty range is valid.
-const rangeValid = ref(true);
+// Seeded from the committed order, not a bare `true`: the consumer's flag outlives this component —
+// the filter popover unmounts its content while the orders list reloads — and a remount that starts
+// optimistic could never emit its way back down, because true→true is not a change. Order is the only
+// invalidity knowable from two ISO endpoints; a rejected keystroke cannot survive a remount.
+const rangeValid = ref(isDateRangeInOrder(selectedDateFilter.value.startDate, selectedDateFilter.value.endDate));
 
 // "combined" turns startLabel/endLabel into aria-labels, so its one visible label has to name the pair.
 // "split" already labels each field, so a group label there would only repeat them.
@@ -81,9 +85,9 @@ const range = computed<VcDateRangeType | undefined>({
   },
 });
 
-// Not immediate: the picker reports its own validity as it mounts, so announcing the seed first would
-// claim an out-of-order range is valid. Consumers hold the same default until that first report.
-watch(rangeValid, (valid) => emit("update:valid", valid));
+// Immediate, so a remount re-announces the seed: the consumer cannot be left latched on a verdict from
+// a previous instance. The seed already carries the order, so nothing claims an inverted range is valid.
+watch(rangeValid, (valid) => emit("update:valid", valid), { immediate: true });
 
 function handleChangeType(): void {
   if (selectedDateFilter.value.id === (DateFilterId.CUSTOM as DateFilterType["id"])) {

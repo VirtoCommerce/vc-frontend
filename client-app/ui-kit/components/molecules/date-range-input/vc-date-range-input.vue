@@ -225,6 +225,8 @@ const {
   setSegmentValid,
   setSegmentErrorText,
   mergeRange,
+  startSegmentValid,
+  endSegmentValid,
 } = useDateRangeField({
   modelValue: () => props.modelValue,
   error: () => props.error,
@@ -242,6 +244,22 @@ function onSegment(which: "start" | "end", value: string | undefined): void {
 }
 
 const { onFocusIn, onFocusOut } = useShellFocusEvents(emit);
+
+// Rejected text can never commit, yet it keeps the whole shell invalid while the model holds a good
+// range — and a segment only resyncs from a change to its OWN half, so text rejected in one segment
+// outlives a commit made in the other. Any commit to the range is the moment to drop it. Text that is
+// merely uncommitted stays: it can still be committed with Enter.
+watch(
+  () => [props.modelValue?.start, props.modelValue?.end] as const,
+  () => {
+    if (!startSegmentValid.value) {
+      startInputRef.value?.reset();
+    }
+    if (!endSegmentValid.value) {
+      endInputRef.value?.reset();
+    }
+  },
+);
 
 // An already-empty segment sees no prop change on clear; nextTick so reset() reads the cleared model.
 function resetSegments(side?: "start" | "end"): void {

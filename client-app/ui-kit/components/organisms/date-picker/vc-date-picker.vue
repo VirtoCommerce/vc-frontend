@@ -223,5 +223,7 @@ function onCalendarUpdate(close: () => void, value: string | undefined): void {
 
 defineExpose({
   inputElement: innerInputElement,
+  /** Drops uncommitted text and re-reads the model; for shells that commit on this field's behalf. */
+  reset: () => dateInputRef.value?.reset(),
 });
 </script>

@@ -1,5 +1,6 @@
-import { mount } from "@vue/test-utils";
+import { flushPromises, mount } from "@vue/test-utils";
 import { describe, expect, it, vi } from "vitest";
+import { defineComponent, h, ref } from "vue";
 import { DateFilterId } from "@/core/enums";
 import { VcInputDetails, VcLabel } from "@/ui-kit/components/atoms";
 import DateFilterSelect from "./date-filter-select.vue";
@@ -19,7 +20,12 @@ vi.mock("vue-i18n", () => ({ useI18n: () => ({ t: (k: string) => k, locale: { va
 // The rest of the composable pulls in useUser/GraphQL.
 vi.mock("../composables/useUserOrdersFilter", () => ({
   useUserOrdersFilter: () => ({
-    dateFilterTypes: { value: [{ id: DateFilterId.CUSTOM, label: "Custom date" }] },
+    dateFilterTypes: {
+      value: [
+        { id: DateFilterId.CUSTOM, label: "Custom date" },
+        { id: "last30", label: "Last 30 days" },
+      ],
+    },
   }),
 }));
 
@@ -88,9 +94,54 @@ describe("DateFilterSelect", () => {
   });
 
   // Apply is gated on this emit, and the seeded ref is a starting point, not a verdict on the range.
+  // Switching the filter type is the one place this component owns state of its own, and until now
+  // deleting the whole handler left the suite green.
+  describe("switching the filter type", () => {
+    function switchTo(wrapper: ReturnType<typeof mountWithCustomSelected>, next: DateFilterType) {
+      const select = wrapper.findComponent({ name: "VcSelect" });
+      select.vm.$emit("update:modelValue", next);
+      select.vm.$emit("change");
+      return wrapper.vm.$nextTick();
+    }
+
+    // Re-selecting Custom hands back the very object the range setter has been mutating, dates and all,
+    // so the handler is the only thing that empties it.
+    it("drops the dates when Custom is re-selected", async () => {
+      const custom = {
+        id: DateFilterId.CUSTOM,
+        label: "Custom date",
+        startDate: "2026-10-08",
+        endDate: "2026-10-20",
+      } as DateFilterType;
+      const wrapper = mountWithCustomSelected({ dateFilterType: custom });
+
+      await switchTo(wrapper, custom);
+
+      const change = wrapper.emitted("change")?.at(-1)?.[0] as DateFilterType;
+      expect(change.startDate).toBeUndefined();
+      expect(change.endDate).toBeUndefined();
+    });
+
+    // A preset unmounts the picker, so nothing is left to re-report validity — the handler has to.
+    it("reports valid again when a preset replaces an invalid custom range", async () => {
+      const wrapper = mountWithCustomSelected();
+      wrapper.findComponent({ name: "VcDateRangePicker" }).vm.$emit("update:valid", false);
+      await wrapper.vm.$nextTick();
+      expect(wrapper.emitted("update:valid")?.at(-1)).toEqual([false]);
+
+      await switchTo(wrapper, { id: "last30", label: "Last 30 days" });
+
+      expect(wrapper.emitted("update:valid")?.at(-1)).toEqual([true]);
+      expect(wrapper.emitted("change")?.at(-1)?.[0]).toMatchObject({ id: "last30" });
+    });
+  });
+
   describe("initial validity", () => {
-    it("says nothing before the range picker has reported", () => {
-      const wrapper = mountWithCustomSelected({
+    // The consumer's flag outlives this component, so silence on mount would leave it latched on the
+    // previous instance's verdict. The seed carries the order, so it cannot claim an inverted range is
+    // valid while waiting for the picker.
+    it("announces the committed order on mount", () => {
+      const inverted = mountWithCustomSelected({
         dateFilterType: {
           id: DateFilterId.CUSTOM,
           label: "Custom date",
@@ -98,7 +149,55 @@ describe("DateFilterSelect", () => {
           endDate: "2026-10-08",
         },
       });
-      expect(wrapper.emitted("update:valid")).toBeUndefined();
+      expect(inverted.emitted("update:valid")).toEqual([[false]]);
+
+      const inOrder = mountWithCustomSelected({
+        dateFilterType: {
+          id: DateFilterId.CUSTOM,
+          label: "Custom date",
+          startDate: "2026-10-08",
+          endDate: "2026-10-20",
+        },
+      });
+      expect(inOrder.emitted("update:valid")).toEqual([[true]]);
+
+      expect(mountWithCustomSelected().emitted("update:valid")).toEqual([[true]]);
+    });
+
+    // The filter popover unmounts its content while the orders list reloads (`:disabled="loading"` on
+    // VcPopover), so this component is remounted routinely — with the consumer's flag still holding the
+    // old verdict. Without an emit on mount, Apply stays dead for the life of the page.
+    it("re-announces validity after a remount, so the consumer cannot stay latched", async () => {
+      const consumerValid = ref(true);
+      const mounted = ref(true);
+
+      const Parent = defineComponent({
+        setup() {
+          return () =>
+            mounted.value
+              ? h(DateFilterSelect, {
+                  dateFilterType: { id: DateFilterId.CUSTOM, label: "Custom date" },
+                  "onUpdate:valid": (value: boolean) => {
+                    consumerValid.value = value;
+                  },
+                })
+              : h("div", { key: "placeholder" });
+        },
+      });
+
+      const wrapper = mount(Parent, { global: { stubs, mocks: { $t: (key: string) => key } } });
+      wrapper.findComponent({ name: "VcDateRangePicker" }).vm.$emit("update:valid", false);
+      await flushPromises();
+      expect(consumerValid.value).toBe(false);
+
+      mounted.value = false;
+      await flushPromises();
+      mounted.value = true;
+      await flushPromises();
+
+      expect(consumerValid.value).toBe(true);
+
+      wrapper.unmount();
     });
 
     // The stubbed picker above emits nothing, so the real chain is what proves the verdict arrives.

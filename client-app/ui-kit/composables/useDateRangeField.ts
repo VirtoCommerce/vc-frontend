@@ -102,6 +102,9 @@ export function useDateRangeField(opts: IUseDateRangeFieldOptions) {
 
   return {
     isValid,
+    /** Per-segment format validity, for shells that need to know WHICH half is holding rejected text. */
+    startSegmentValid,
+    endSegmentValid,
     /** Validation message the shell produced itself; external `message` is not part of it. */
     internalErrorText,
     computedError,
