@@ -1,32 +1,20 @@
 <template>
   <div class="sales-rep-rule-chips">
-    <!-- Baseline tab: active when no rule is chosen; clicking it clears the filter. -->
+    <!-- The baseline tab (no rule name) renders in the same loop as the rules, so it can sit at
+         either end: clicking it clears the filter, and it is active while nothing is selected. -->
     <button
+      v-for="tab in tabs"
+      :key="tab.name ?? ''"
       type="button"
-      :class="['sales-rep-rule-chips__tab', { 'sales-rep-rule-chips__tab--active': !modelValue }]"
-      :aria-pressed="!modelValue"
-      @click="modelValue = undefined"
+      :class="['sales-rep-rule-chips__tab', { 'sales-rep-rule-chips__tab--active': isActive(tab) }]"
+      :aria-pressed="isActive(tab)"
+      @click="modelValue = tab.name"
     >
-      <span class="sales-rep-rule-chips__label" :data-text="allLabel">{{ allLabel }}</span>
+      <span class="sales-rep-rule-chips__label" :data-text="tab.label">{{ tab.label }}</span>
 
-      <span v-if="allCount !== undefined" class="sales-rep-rule-chips__count">{{ formatStatCount(allCount) }}</span>
+      <span v-if="tab.count !== undefined" class="sales-rep-rule-chips__count">{{ formatStatCount(tab.count) }}</span>
 
-      <TrackedMetricHint v-if="allTracked" slow />
-    </button>
-
-    <button
-      v-for="rule in selectableRules"
-      :key="rule.name"
-      type="button"
-      :class="['sales-rep-rule-chips__tab', { 'sales-rep-rule-chips__tab--active': modelValue === rule.name }]"
-      :aria-pressed="modelValue === rule.name"
-      @click="modelValue = rule.name"
-    >
-      <span class="sales-rep-rule-chips__label" :data-text="rule.label">{{ rule.label }}</span>
-
-      <span v-if="rule.count !== undefined" class="sales-rep-rule-chips__count">{{ formatStatCount(rule.count) }}</span>
-
-      <TrackedMetricHint v-if="rule.tracked" slow />
+      <TrackedMetricHint v-if="tab.tracked" slow />
     </button>
   </div>
 </template>
@@ -37,6 +25,9 @@ import { formatStatCount, selectableFilterRules } from "../utils";
 import TrackedMetricHint from "./tracked-metric-hint.vue";
 import type { SalesRepRuleType } from "../types";
 
+// A rendered tab: one of the rules, or the baseline, which has no rule name.
+type TabType = Omit<SalesRepRuleType, "name"> & { name?: string };
+
 interface IProps {
   // The server-defined filter rules to offer as tabs.
   rules: SalesRepRuleType[];
@@ -46,6 +37,10 @@ interface IProps {
   allCount?: number;
   // Whether the baseline tab's figure comes from tracked activity (like `rule.tracked`).
   allTracked?: boolean;
+  // Render the baseline tab after the rules instead of before them. For vocabularies that read as a
+  // progression the widest option belongs at the end ("This month, This year, All time"), while a
+  // set of alternatives keeps it first ("All, Orders, Customers…").
+  allLast?: boolean;
   // Whether `rules` is still being fetched — an in-flight refetch must not look like "the rule is gone".
   loading?: boolean;
 }
@@ -74,6 +69,21 @@ watch(
 
 // A backend "All" passthrough rule (customer segments carry one) would duplicate the baseline tab — drop it.
 const selectableRules = computed(() => selectableFilterRules(props.rules));
+
+const tabs = computed<TabType[]>(() => {
+  const baseline: TabType = {
+    label: props.allLabel,
+    count: props.allCount,
+    tracked: props.allTracked,
+  };
+
+  return props.allLast ? [...selectableRules.value, baseline] : [baseline, ...selectableRules.value];
+});
+
+// The baseline carries no rule name, so "nothing selected" is what makes it the active tab.
+function isActive(tab: TabType): boolean {
+  return tab.name ? modelValue.value === tab.name : !modelValue.value;
+}
 </script>
 
 <style lang="scss">

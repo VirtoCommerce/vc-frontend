@@ -17,6 +17,7 @@
           v-model="periodRule"
           :rules="periodRules"
           :all-label="t('sales_rep.activity.period.all_time')"
+          all-last
         />
       </div>
 
