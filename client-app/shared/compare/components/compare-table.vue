@@ -381,11 +381,18 @@ watch(appHeaderHeight, () => updateHeaderRowBounding());
 // held focus. Left alone, focus falls through to <body>, stranding keyboard users. Move it to
 // the stable header row itself (tabindex="-1" in the template) instead.
 watch(isCompact, async () => {
-  if (!headerRowRef.value?.contains(document.activeElement)) {
+  const previouslyFocused = document.activeElement;
+
+  if (!headerRowRef.value?.contains(previouslyFocused)) {
     return;
   }
 
   await nextTick();
+
+  if (previouslyFocused instanceof HTMLElement && previouslyFocused.isConnected) {
+    return;
+  }
+
   headerRowRef.value?.focus();
 });
 
