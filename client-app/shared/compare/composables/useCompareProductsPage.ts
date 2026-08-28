@@ -493,35 +493,38 @@ export function useCompareProductsPage() {
   // overlapping calls must be serialized here — otherwise an older, slower response can land after
   // a newer one and leave stale products displayed.
   let fetchProductsQueue = Promise.resolve();
+  const fetchFailed = ref(false);
 
-  watch(
-    productIds,
-    (ids) => {
-      if (!ids.length) {
-        return;
+  function fetchCompareProducts(ids: string[]) {
+    if (!ids.length) {
+      return;
+    }
+
+    fetchProductsQueue = fetchProductsQueue.then(async () => {
+      try {
+        // searchProducts defaults itemsPerPage/first to DEFAULT_PAGE_SIZE (16) when omitted.
+        // The compare limit is per category with no overall cap, so the deduped id count can
+        // exceed that — pass it explicitly or products past the 16th silently get no data.
+        await fetchProducts({ productIds: ids, itemsPerPage: ids.length });
+        fetchFailed.value = false;
+      } catch (e) {
+        Logger.error("useCompareProductsPage.fetchProducts", e);
+        fetchFailed.value = true;
+        notifications.warning({
+          duration: 15000,
+          group: FETCH_ERROR_NOTIFICATIONS_GROUP,
+          singleInGroup: true,
+          text: t("shared.compare.notifications.fetch_failed"),
+        });
       }
+    });
+  }
 
-      fetchProductsQueue = fetchProductsQueue.then(async () => {
-        try {
-          // searchProducts defaults itemsPerPage/first to DEFAULT_PAGE_SIZE (16) when omitted.
-          // The compare limit is per category with no overall cap, so the deduped id count can
-          // exceed that — pass it explicitly or products past the 16th silently get no data.
-          await fetchProducts({ productIds: ids, itemsPerPage: ids.length });
-        } catch (e) {
-          Logger.error("useCompareProductsPage.fetchProducts", e);
-          // Otherwise a failed fetch is indistinguishable from a successful-but-empty one — see
-          // the categoryTabs fallback label above for how the affected tabs read in this case.
-          notifications.warning({
-            duration: 15000,
-            group: FETCH_ERROR_NOTIFICATIONS_GROUP,
-            singleInGroup: true,
-            text: t("shared.compare.notifications.fetch_failed"),
-          });
-        }
-      });
-    },
-    { immediate: true },
-  );
+  watch(productIds, fetchCompareProducts, { immediate: true });
+
+  function retryFetch() {
+    fetchCompareProducts(productIds.value);
+  }
 
   return {
     categoryTabs,
@@ -532,6 +535,8 @@ export function useCompareProductsPage() {
     tableRows,
     differRowsCount,
     fetchingProducts,
+    fetchFailed,
+    retryFetch,
     selectCategory,
     selectItemEvent,
   };

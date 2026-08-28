@@ -75,6 +75,20 @@
       <VcLoaderOverlay visible no-bg />
     </div>
 
+    <VcWidget
+      v-else-if="fetchFailed && !selectedCategoryProducts.length"
+      data-test-id="compare-error-state"
+      class="compare-products__error-state"
+    >
+      <VcEmptyView variant="error" :text="t('ui_kit.table.error')">
+        <template #button>
+          <VcButton size="sm" @click="retryFetch">
+            {{ t("ui_kit.table.retry") }}
+          </VcButton>
+        </template>
+      </VcEmptyView>
+    </VcWidget>
+
     <template v-else>
       <div class="compare-products__category-tabs">
         <VcButton
@@ -161,6 +175,8 @@ const {
   tableRows,
   differRowsCount,
   fetchingProducts,
+  fetchFailed,
+  retryFetch,
   selectCategory,
   selectItemEvent,
 } = useCompareProductsPage();
@@ -251,7 +267,8 @@ onUnmounted(() => {
     }
   }
 
-  &__empty-state {
+  &__empty-state,
+  &__error-state {
     @apply mt-6;
   }
 

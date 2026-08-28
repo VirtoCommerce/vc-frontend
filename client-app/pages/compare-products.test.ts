@@ -54,6 +54,8 @@ const mocks = await vi.hoisted(async () => {
     tableRows: ref<unknown[]>([]),
     differRowsCount: ref(0),
     fetchingProducts: ref(false),
+    fetchFailed: ref(false),
+    retryFetch: vi.fn(),
     selectCategory: vi.fn(),
     selectItemEvent: vi.fn(),
     openModal: vi.fn(),
@@ -104,6 +106,8 @@ vi.mock("@/shared/compare", () => ({
     tableRows: mocks.tableRows,
     differRowsCount: mocks.differRowsCount,
     fetchingProducts: mocks.fetchingProducts,
+    fetchFailed: mocks.fetchFailed,
+    retryFetch: mocks.retryFetch,
     selectCategory: mocks.selectCategory,
     selectItemEvent: mocks.selectItemEvent,
   }),
@@ -156,6 +160,7 @@ beforeEach(() => {
   mocks.tableRows.value = [];
   mocks.differRowsCount.value = 0;
   mocks.fetchingProducts.value = false;
+  mocks.fetchFailed.value = false;
   mocks.compareTableSpy.props = {};
   mocks.compareTableSpy.emit = undefined;
   mocks.compareTableSpy.mounts = 0;
@@ -186,6 +191,30 @@ describe("CompareProducts", () => {
     expect(page.getByTestId("compare-loading-state")).toBeInTheDocument();
     expect(page.queryByTestId("compare-table")).not.toBeInTheDocument();
     expect(page.queryByText("pages.compare.empty.title")).not.toBeInTheDocument();
+  });
+
+  it("shows an error state with a retry button instead of an empty table when the fetch failed and nothing resolved", async () => {
+    mocks.products.value = [{ productId: "p1", categoryKey: "cat-a" }];
+    mocks.fetchFailed.value = true;
+
+    const page = renderPage();
+
+    expect(page.getByTestId("compare-error-state")).toBeInTheDocument();
+    expect(page.queryByTestId("compare-table")).not.toBeInTheDocument();
+
+    await fireEvent.click(page.getByText("ui_kit.table.retry"));
+    expect(mocks.retryFetch).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps showing the table instead of the error state once something has resolved, even if fetchFailed is still true", () => {
+    mocks.products.value = [{ productId: "p1", categoryKey: "cat-a" }];
+    mocks.fetchFailed.value = true;
+    mocks.selectedCategoryProducts.value = [product("p1")];
+
+    const page = renderPage();
+
+    expect(page.queryByTestId("compare-error-state")).not.toBeInTheDocument();
+    expect(page.getByTestId("compare-table")).toBeInTheDocument();
   });
 
   it("keeps CompareTable mounted during a refetch, once there is already something to show", async () => {

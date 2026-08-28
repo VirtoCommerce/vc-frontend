@@ -288,6 +288,42 @@ describe("useCompareProductsPage", () => {
     });
   });
 
+  describe("fetchFailed / retryFetch", () => {
+    it("sets fetchFailed on a failed fetch and clears it once a retry succeeds", async () => {
+      hoisted.fns.fetchProducts.mockRejectedValueOnce(new Error("network error"));
+      hoisted.state.compareEntries.value = [entry("p1", "cat-a")];
+
+      const { fetchFailed, retryFetch } = useCompareProductsPage();
+
+      await vi.waitFor(() => {
+        expect(fetchFailed.value).toBe(true);
+      });
+
+      retryFetch();
+
+      await vi.waitFor(() => {
+        expect(fetchFailed.value).toBe(false);
+      });
+    });
+
+    it("retryFetch re-issues the fetch for the current product ids", async () => {
+      hoisted.fns.fetchProducts.mockRejectedValueOnce(new Error("network error"));
+      hoisted.state.compareEntries.value = [entry("p1", "cat-a")];
+
+      const { retryFetch } = useCompareProductsPage();
+
+      await vi.waitFor(() => {
+        expect(hoisted.fns.fetchProducts).toHaveBeenCalledTimes(1);
+      });
+
+      retryFetch();
+
+      await vi.waitFor(() => {
+        expect(hoisted.fns.fetchProducts).toHaveBeenCalledTimes(2);
+      });
+    });
+  });
+
   describe("useProducts integration", () => {
     it("opts into preserveProductsWhileFetching, so a refetch (see useProducts.fetchProducts) doesn't clear fetchedProducts out from under categoryTabs/selectedCategoryProducts on every add/remove", () => {
       // The actual "don't clear while fetching" behavior lives in useProducts.ts itself and is
