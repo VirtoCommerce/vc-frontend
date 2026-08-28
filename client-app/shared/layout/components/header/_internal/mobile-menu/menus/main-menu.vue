@@ -21,7 +21,14 @@
           @close="$emit('close')"
           @select-item="$emit('selectItem', item)"
         >
-          <LinkDefault :item="item" @close="$emit('close')" @select-item="$emit('selectItem', item)" />
+          <template #default="{ extensionProps }">
+            <LinkDefault
+              :item="item"
+              :count="toValue(extensionProps?.count)"
+              @close="$emit('close')"
+              @select-item="$emit('selectItem', item)"
+            />
+          </template>
         </ExtensionPoint>
       </li>
     </ul>
@@ -171,6 +178,7 @@
 </template>
 
 <script setup lang="ts">
+import { toValue } from "vue";
 import { useI18n } from "vue-i18n";
 import { useCurrency, useNavigations } from "@/core/composables";
 import { ROUTES } from "@/router/routes/constants";

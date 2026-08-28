@@ -105,4 +105,19 @@ describe("create-plugin scaffolder", () => {
     expect(status).not.toBe(0);
     expect(stderr).toContain("kebab-case");
   });
+  it("installs every package the facade's published files import, so its subpaths resolve", () => {
+    const dir = scaffoldExpectingSuccess("my-plugin", ["--yes"]);
+    const pkg = JSON.parse(readFileSync(join(dir, "package.json"), "utf8")) as {
+      devDependencies: Record<string, string>;
+    };
+    const facadePeers = JSON.parse(readFileSync(resolve(__dirname, "../../core-api/package.json"), "utf8")) as {
+      peerDependencies: Record<string, string>;
+    };
+
+    // A package manager installs none of these on its own. lodash-es is the one that bit: it is
+    // imported at runtime by @vc-frontend/core/testing, so the first spec in a scaffolded plugin
+    // died on `Cannot find module` - the subpath was unusable by the only consumer it exists for.
+    expect(Object.keys(pkg.devDependencies)).toEqual(expect.arrayContaining(Object.keys(facadePeers.peerDependencies)));
+    expect(pkg.devDependencies["lodash-es"]).toBeTruthy();
+  });
 });

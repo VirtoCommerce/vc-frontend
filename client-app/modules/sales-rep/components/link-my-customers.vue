@@ -22,7 +22,7 @@
 import { capitalize } from "lodash-es";
 import { computed, toRef } from "vue";
 import { useLink, useRoute } from "vue-router";
-import { useSalesRepCustomersCount } from "../composables/useSalesRepCustomersCount";
+import { useSharedSalesRepCustomersCount } from "../composables/useSalesRepCustomersCount";
 import { CUSTOMER_PROFILE_ROUTE_NAME } from "../constants";
 import type { ExtendedMenuLinkType } from "@/core/types";
 
@@ -34,7 +34,7 @@ const props = defineProps<IProps>();
 
 const item = toRef(props, "item");
 
-const { count } = useSalesRepCustomersCount();
+const { count } = useSharedSalesRepCustomersCount();
 
 // Route-based highlight for the link's own route, kept active on the customer profile (its detail
 // page is a sibling route, so useLink wouldn't mark it active on its own).

@@ -108,14 +108,32 @@ host. No second Vue, no second router, no duplicate Apollo cache.
 
 **Current facade surface** (see `client-app/core-api/index.ts` for the authoritative list):
 
-- UI: `VcWidget`, `VcButton`, `VcMarkdownRender` (all `Vc*` are also globally registered)
-- Extension points: `useExtensionRegistry`
-- Data: `apolloClient`, `graphqlClient`
-- Config: `useModuleSettings`, `globals`
-- Meta: `CORE_VERSION`, `type I18n`
+- UI (22 components): `VcAlert`, `VcBadge`, `VcBreadcrumbs`, `VcButton`, `VcCheckbox`,
+  `VcEmptyView`, `VcIcon`, `VcImage`, `VcInput`, `VcLabel`, `VcLink`, `VcLoaderOverlay`,
+  `VcMarkdownRender`, `VcMenuItem`, `VcModal`, `VcSelect`, `VcTable`, `VcTableColumn`,
+  `VcTextarea`, `VcTypography`, `VcWidget`, `VcWidgetSkeleton` (`VcImage` is host-bound too —
+  its thumbnail logic reads theme settings through a getter that throws until the host sets the
+  theme context, so only a filename-only `src` renders standalone); the themed `OrderStatus`
+  (host-only — its colours come from the THEME's `orders_statuses` in
+  `config/settings_data.json`, which no query serves, and it throws until the host has set the
+  theme context, so it renders inside the host and nowhere else); and `uiKit`, the plugin that
+  registers every `Vc*` globally (all `Vc*` are already registered inside the host)
+- Extension points: `useExtensionRegistry`, `EXTENSION_NAMES`
+- Data: `apolloClient`, `graphqlClient`, `registerCacheTypePolicies`,
+  `SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT`
+- Composables: `useUser`, `useNavigations`, `useModal`, `useNotifications`, `useBreadcrumbs`,
+  `usePageHead`, `useWishlistSharingScopes`
+- Config / utilities: `useModuleSettings`, `globals`, `Logger`, `getProductRoute`,
+  `toStartDateFilterValue`, `toEndDateFilterValue`, `registerLocaleLoader`, `ROUTES` (the host
+  route names a plugin mounts under or links to)
+- Meta: `CORE_VERSION`, and the types `I18n`, `ILanguage`, `LocaleLoaderType`, `MenuType`,
+  `ExtendedMenuLinkType`, `IWishlistSharingScopeControlsType`,
+  `WishlistSharingScopeSavedContextType`
+- Separate subpaths: `@vc-frontend/core/federation`, `/tailwind-preset`, `/testing`
 
-> **Rule of thumb:** keep the facade **small and additive**. New export ⇒ minor
-> `CORE_VERSION` bump; removing/renaming ⇒ major (breaks _every_ plugin).
+> **Rule of thumb:** keep the facade **small and additive**. The level depends on the
+> release line: on 0.x a new export ⇒ **patch** and removing/renaming ⇒ **minor**; from
+> 1.0.0 it is the ordinary minor/major. Either way, removing/renaming breaks _every_ plugin.
 > **How to add an export, and how the `.d.ts` generation works:**
 > [`client-app/core-api/README.md`](../../core-api/README.md).
 
@@ -215,7 +233,8 @@ Three design points worth calling out:
   incompatible (fail closed) — a plugin must declare `requiredHostVersion` to run
   (`createRemoteFederationOptions` makes it mandatory). A bare version like `"1.0.0"` is
   normalized to `"^1.0.0"` — so a host **major** bump correctly rejects plugins built
-  against the previous major.
+  against the previous major. While the contract is pre-1.0 the **minor** carries that role
+  instead: `^0.1.0` accepts `0.1.x` and refuses `0.2.0`.
 - **Every network step is time-budgeted** (two knobs via `initFederatedModules(options)`:
   manifest 3s; load and init 5s _each_ — one remote may legally take up to
   manifest + 2×load ≈ 13s). Because boot awaits this loader, a hung remote must degrade
@@ -254,7 +273,7 @@ A plugin is its own build. It must:
    federation(
      createRemoteFederationOptions({
        name: "news",
-       requiredHostVersion: "^1.0.0", // CONTRACT GATE input, stamped into the manifest
+       requiredHostVersion: "^0.1.0", // CONTRACT GATE input, stamped into the manifest
      }),
    );
    ```
@@ -274,8 +293,8 @@ A plugin is its own build. It must:
 
    ```jsonc
    // mf-manifest.json (excerpt)
-   { "metaData": { "requiredHostVersion": "^1.0.0" } }
-   // a bare "1.0.0" means the same thing (normalized to ^1.0.0);
+   { "metaData": { "requiredHostVersion": "^0.1.0" } }
+   // a bare "0.1.0" means the same thing (normalized to ^0.1.0);
    // anything semver can't parse is rejected (fail closed)
    ```
 
@@ -372,8 +391,9 @@ central-discovery response (see `TODO.md` #3 — vc-shell already passes `entry.
   `validate:core-types`, which regenerates the contract and **fails if the committed
   file is stale** — same for `CORE_VERSION`/package.json sync and shared-range drift.
 - **`CORE_VERSION` is single-sourced** from `core-api/package.json` and managed by
-  the contract build: additive facade changes auto-bump minor; breaking ones require
-  `yarn bump:core major` — **including a major bump of a shared singleton** (vue,
+  the contract build: additive facade changes auto-bump (patch on 0.x, minor from 1.0.0);
+  breaking ones require an explicit `yarn bump:core <breaking level>` (minor on 0.x, major
+  from 1.0.0) — **including a major bump of a shared singleton** (vue,
   @apollo/client, …): plugins pin against the facade version, so a breaking shared
   dep must surface there.
 

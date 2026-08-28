@@ -1,11 +1,13 @@
 import { computed, defineAsyncComponent } from "vue";
-import { cache } from "@/core/api/graphql/config";
+import { registerCacheTypePolicies } from "@/core/api/graphql/config/registerCacheTypePolicies";
 import { useNavigations } from "@/core/composables/useNavigations";
+import { ROUTES } from "@/router/routes/constants";
 import { useUser } from "@/shared/account/composables/useUser";
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import { EXTENSION_NAMES } from "@/shared/common/constants/extensionPointsNames";
 import { useWishlistSharingScopes } from "@/shared/wishlists/composables/useWishlistSharingScopes";
 import { loadModuleLocale } from "../utils";
+import { useSharedSalesRepCustomersCount } from "./composables/useSalesRepCustomersCount";
 import { isSalesRepsEnabled, isSalesRepUser } from "./composables/useSalesRepsConfig";
 import {
   CUSTOMER_SHARING_SCOPE,
@@ -21,7 +23,7 @@ import {
   SALES_REP_ACCESS_PERMISSION,
   SALES_REP_DOCUMENTS_READ_PERMISSION,
 } from "./constants";
-import { registerLayoutTypePolicies } from "./layout/cache-policies";
+import { layoutTypePolicies } from "./layout/cache-policies";
 import { documentsBlock } from "./layout/documents-block";
 import { registerBlock } from "./layout/registry";
 import { salesRepMenuSchema } from "./menu";
@@ -35,14 +37,14 @@ export function init(router: Router, i18n: I18n) {
     return;
   }
 
-  // Relative routes -> mount under the "Company" parent (/company/sales-reps, /company/dashboard, /company/my-customers).
-  router.addRoute("Company", salesRepsRoute);
-  router.addRoute("Company", dashboardRoute);
-  router.addRoute("Company", myCustomersRoute);
+  // Relative routes -> mount under the Company parent (/company/sales-reps, /company/dashboard, /company/my-customers).
+  router.addRoute(ROUTES.COMPANY.NAME, salesRepsRoute);
+  router.addRoute(ROUTES.COMPANY.NAME, dashboardRoute);
+  router.addRoute(ROUTES.COMPANY.NAME, myCustomersRoute);
   // Customer profile (VCST-5308) -> /company/my-customers/:organizationId.
-  router.addRoute("Company", customerProfileRoute);
+  router.addRoute(ROUTES.COMPANY.NAME, customerProfileRoute);
   // Document library (VCST-5730) -> /company/documents (its own beforeEnter checks documents:read).
-  router.addRoute("Company", documentsRoute);
+  router.addRoute(ROUTES.COMPANY.NAME, documentsRoute);
 
   const { mergeMenuSchema, registerAccountSection } = useNavigations();
   const { checkPermissions } = useUser();
@@ -60,13 +62,15 @@ export function init(router: Router, i18n: I18n) {
     registerBlock(DASHBOARD_LAYOUT_SCOPE, documentsBlock);
   }
 
-  // Custom My customers links that show the total-customer count badge (desktop + mobile).
-  const { register } = useExtensionRegistry();
+  // My customers links showing the total-customer count badge. Desktop needs its own
+  // component for the sibling-route highlight; mobile only contributes the count, so the
+  // host renders its own menu link with it.
+  const { register, registerContribution } = useExtensionRegistry();
   register("accountMenu", MY_CUSTOMERS_NAV_LINK_ID, {
     component: defineAsyncComponent(() => import("./components/link-my-customers.vue")),
   });
-  register("mobileMenu", MY_CUSTOMERS_NAV_LINK_ID, {
-    component: defineAsyncComponent(() => import("./components/link-my-customers-mobile.vue")),
+  registerContribution("mobileMenu", MY_CUSTOMERS_NAV_LINK_ID, {
+    use: useSharedSalesRepCustomersCount,
   });
 
   // "Sales reps" contact-info link for buyers (VCST-5409) — stays in the Corporate widget.
@@ -130,7 +134,7 @@ export function init(router: Router, i18n: I18n) {
 
   // Layout regions and blocks carry ids that repeat across surfaces, so Apollo would normalize them
   // into entities shared by every scope. See layout/cache-policies.ts.
-  registerLayoutTypePolicies(cache);
+  registerCacheTypePolicies(layoutTypePolicies, { owner: "sales-rep" });
 
   void loadModuleLocale(i18n, "sales-rep");
 }

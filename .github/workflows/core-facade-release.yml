@@ -31,7 +31,11 @@ jobs:
         run: |
           corepack enable
 
+      # Full history + tags: the bump guard judges this contract against the last published
+      # core-v* tag, and a shallow checkout would silently retire that gate.
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          fetch-depth: 0
 
       # Immutable core-v* releases must only ever be minted from the default branch —
       # a release from a feature branch would permanently occupy that contract version
@@ -70,7 +74,8 @@ jobs:
           if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
             echo "::error::Release $TAG already exists — releases are immutable." \
               "Bump the contract version (yarn build:core-types auto-bumps on facade" \
-              "changes; yarn bump:core major for breaking ones) and re-run."
+              "changes; for a breaking one run yarn bump:core with the level that"\
+              "release line uses - minor on 0.x, major from 1.0.0) and re-run."
             exit 1
           fi
           if git ls-remote --exit-code --tags origin "refs/tags/$TAG" > /dev/null 2>&1; then

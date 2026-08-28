@@ -52,6 +52,7 @@ import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
+import { ROUTES } from "@/router/routes/constants";
 import LayoutSurface from "../components/layout-surface.vue";
 import { useSalesRepCustomer } from "../composables/useSalesRepCustomer";
 import { useSalesRepCustomerWidgets } from "../composables/useSalesRepCustomerWidgets";
@@ -86,7 +87,7 @@ usePageHead({
 });
 
 const breadcrumbs = useBreadcrumbs(() => [
-  { title: t("common.links.account"), route: { name: "Account" } },
+  { title: t("common.links.account"), route: { name: ROUTES.ACCOUNT.NAME } },
   { title: t("sales_rep.hub.title") },
   { title: t("sales_rep.my_customers.page.title"), route: { name: MY_CUSTOMERS_ROUTE_NAME } },
   { title: customer.value?.organizationName ?? "" },

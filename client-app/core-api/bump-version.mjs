@@ -1,9 +1,9 @@
 /**
  * Bumps the @vc-frontend/core CONTRACT version in its single source of truth,
- * core-api/package.json (the runtime CORE_VERSION imports it). Minor bumps happen
- * automatically inside `yarn build:core-types`; run this directly only for a
- * BREAKING change:
- *   yarn bump:core major
+ * core-api/package.json (the runtime CORE_VERSION imports it). Additive bumps happen
+ * automatically inside `yarn build:core-types`; run this directly only for a BREAKING
+ * change, with the level that release line uses - `minor` on 0.x, `major` from 1.0.0:
+ *   yarn bump:core minor
  * This version tracks facade changes only - it is independent of the host app
  * version that release automation bumps in the root package.json.
  */
@@ -36,8 +36,9 @@ if (isDirectRun) {
   }
   const { current, next } = bumpContractVersion(level);
   console.log(`[bump:core] ${current} -> ${next} (core-api/package.json)`);
-  if (level === "major") {
-    console.log('[bump:core] MAJOR bump: also update the "@vc-frontend/core" range in federation.mjs.');
+  // A caret range is pinned by the leftmost non-zero component: on 0.x a MINOR invalidates it.
+  if (level === "major" || (level === "minor" && current.startsWith("0."))) {
+    console.log(`[bump:core] breaking bump: also update the "@vc-frontend/core" range in federation.mjs to ^${next}.`);
   }
   console.log("[bump:core] next: yarn build:core-types, then commit the changed files together.");
 }

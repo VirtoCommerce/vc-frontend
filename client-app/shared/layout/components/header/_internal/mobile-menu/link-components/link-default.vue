@@ -1,5 +1,11 @@
 <template>
-  <MobileMenuLink :link="item" class="py-1 text-2xl font-bold" @close="$emit('close')" @select="$emit('selectItem')">
+  <MobileMenuLink
+    :link="item"
+    :count="count"
+    class="py-1 text-2xl font-bold"
+    @close="$emit('close')"
+    @select="$emit('selectItem')"
+  >
     {{ item.title }}
   </MobileMenuLink>
 </template>
@@ -10,6 +16,7 @@ import MobileMenuLink from "@/shared/layout/components/header/_internal/mobile-m
 
 interface IProps {
   item: ExtendedMenuLinkType;
+  count?: number;
 }
 
 interface IEmits {
