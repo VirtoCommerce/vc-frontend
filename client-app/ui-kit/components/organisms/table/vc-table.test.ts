@@ -747,10 +747,18 @@ async function mountSelectable(options: {
   desktopBodySlot?: boolean;
   headerSlot?: "with-selection" | "without-selection" | "no-cells";
   fixedStartColumn?: boolean;
+  stickyHeader?: boolean;
+  maxHeight?: string;
   loading?: boolean;
   error?: boolean;
 }) {
   const props: Record<string, unknown> = { items: options.items ?? items };
+  if (options.stickyHeader !== undefined) {
+    props.stickyHeader = options.stickyHeader;
+  }
+  if (options.maxHeight !== undefined) {
+    props.maxHeight = options.maxHeight;
+  }
   if (options.selectionMode !== undefined) {
     props.selectionMode = options.selectionMode;
   }
@@ -803,16 +811,19 @@ async function mountSelectable(options: {
     const keepsSelectionCell = options.headerSlot === "with-selection";
 
     slots.header = (scope: VcTableHeaderSlotScopeType) => {
+      const headAttrs = { ...scope.headAttrs, class: [scope.headAttrs.class, "custom-head"] };
+
       if (options.headerSlot === "no-cells") {
-        return h("thead", { class: "custom-head" });
+        return h("thead", headAttrs);
       }
 
-      return h("thead", { class: "custom-head" }, [
+      return h("thead", headAttrs, [
         h("tr", [
           ...(keepsSelectionCell && scope.showSelectionColumn
             ? [
                 h("th", { scope: "col", ...scope.selectionColumnAttrs }, [
-                  // The built-in header shows a select-all only in `multiple`; mirror that.
+                  // The built-in header shows a select-all only in `multiple`; mirror that,
+                  // sr-only label included — an empty cell has no accessible name.
                   ...(scope.selectionMode === "multiple"
                     ? [
                         h("button", {
@@ -823,7 +834,7 @@ async function mountSelectable(options: {
                           onClick: () => scope.toggleSelectAll(),
                         }),
                       ]
-                    : []),
+                    : [h("span", { class: "sr-only" }, "Row selection")]),
                 ]),
               ]
             : []),
@@ -1965,7 +1976,7 @@ describe("#header slot — selection scope", () => {
 
     expect(headerCell.exists()).toBe(true);
     expect(headerCell.classes()).toContain("vc-table__title");
-    expect(headerCell.attributes("style")).toContain("width: var(--vc-table-selection-cell-width, 3rem)");
+    expect(headerCell.attributes("style")).toContain("width: 3rem");
   });
 
   it("reports select-all state through the scope", async () => {
@@ -2027,6 +2038,48 @@ describe("#header slot — selection scope", () => {
     expect(customCell.attributes("style")).toBe(builtInCell.attributes("style"));
   });
 
+  it("passes the sticky head classes through the scope, like the default thead", async () => {
+    const custom = await mountSelectable({
+      selectionMode: "multiple",
+      selection: [],
+      headerSlot: "with-selection",
+      stickyHeader: true,
+    });
+    const builtIn = await mountSelectable({ selectionMode: "multiple", selection: [], stickyHeader: true });
+
+    const customHead = custom.find("thead.custom-head");
+    const builtInHead = builtIn.find("thead.vc-table__head");
+
+    expect(customHead.classes()).toContain("vc-table__head--sticky");
+    expect(new Set(customHead.classes().filter((name) => name !== "custom-head"))).toEqual(
+      new Set(builtInHead.classes()),
+    );
+  });
+
+  it("turns the sticky head modifier on for maxHeight alone, without stickyHeader", async () => {
+    const wrapper = await mountSelectable({
+      selectionMode: "multiple",
+      selection: [],
+      headerSlot: "with-selection",
+      maxHeight: "200px",
+    });
+
+    expect(wrapper.find("thead.custom-head").classes()).toContain("vc-table__head--sticky");
+  });
+
+  it("leaves the sticky head modifier off when the table is not sticky", async () => {
+    const wrapper = await mountSelectable({
+      selectionMode: "multiple",
+      selection: [],
+      headerSlot: "with-selection",
+    });
+
+    const head = wrapper.find("thead.custom-head");
+
+    expect(head.classes()).toContain("vc-table__head");
+    expect(head.classes()).not.toContain("vc-table__head--sticky");
+  });
+
   it("reports showSelectionColumn as false when selection is off", async () => {
     const wrapper = await mountSelectable({ headerSlot: "with-selection" });
 
@@ -2044,11 +2097,48 @@ describe("#header slot — selection scope", () => {
       headerSlot: "with-selection",
     });
 
-    expect(wrapper.find("thead th.vc-table__selection-cell").exists()).toBe(true);
+    const selectionCell = wrapper.find("thead th.vc-table__selection-cell");
+
+    expect(selectionCell.exists()).toBe(true);
+    expect(wrapper.find(".custom-select-all").exists()).toBe(false);
     expect(wrapper.findAll("thead th")).toHaveLength(2);
     wrapper.findAll("tbody .vc-table__row").forEach((row) => {
       expect(row.findAll("td")).toHaveLength(2);
     });
+  });
+});
+
+describe("built-in header — sticky modifier", () => {
+  it.each([
+    [{}, false],
+    [{ stickyHeader: true }, true],
+    [{ maxHeight: "220px" }, true],
+    [{ stickyHeader: true, maxHeight: "220px" }, true],
+  ])("renders the modifier %o -> %s", async (props, expected) => {
+    const wrapper = await mountSelectable(props);
+
+    expect(wrapper.find("thead.vc-table__head").classes().includes("vc-table__head--sticky")).toBe(expected);
+  });
+});
+
+describe("built-in header — selection cell accessible name", () => {
+  it("labels the single-mode selection cell, where there is no select-all checkbox", async () => {
+    const wrapper = await mountSelectable({ selectionMode: "single", selection: [] });
+
+    const selectionCell = wrapper.find("thead th.vc-table__selection-cell");
+
+    expect(selectionCell.find(".checkbox-stub").exists()).toBe(false);
+    // The docs tell consumers to mirror this, so an empty cell here would make them wrong.
+    expect(selectionCell.find(".sr-only").text()).toBe("ui_kit.table.selection_column");
+  });
+
+  it("labels the multiple-mode selection cell through the checkbox instead", async () => {
+    const wrapper = await mountSelectable({ selectionMode: "multiple", selection: [] });
+
+    const selectionCell = wrapper.find("thead th.vc-table__selection-cell");
+
+    expect(selectionCell.find(".sr-only").exists()).toBe(false);
+    expect(selectionCell.find(".checkbox-stub").attributes("aria-label")).toBe("ui_kit.table.select_all");
   });
 });
 

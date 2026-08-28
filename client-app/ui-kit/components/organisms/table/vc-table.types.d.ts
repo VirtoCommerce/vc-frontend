@@ -67,18 +67,33 @@ declare global {
   /**
    * Classes and inline style of the leading selection header cell — fixed width, plus
    * sticky positioning when the table has fixed-start columns. `v-bind` onto a `<th>`
-   * to match the built-in cell.
+   * to match the built-in cell. To add your own classes: in a template use a sibling
+   * `class` attribute and Vue merges the two; in a render function merge `class` yourself,
+   * since a spread would overwrite it.
    */
   type VcTableSelectionColumnAttrsType = {
-    class: (string | Record<string, boolean>)[];
+    class: string;
     style: Record<string, string>;
+  };
+
+  /**
+   * Classes of the built-in `<thead>`, including the sticky modifier that `stickyHeader`
+   * and `maxHeight` turn on — the only carrier of the header's sticky positioning.
+   * `v-bind` onto a custom `<thead>`. To add your own classes: in a template use a sibling
+   * `class` attribute and Vue merges the two; in a render function merge `class` yourself,
+   * since a spread would overwrite it.
+   */
+  type VcTableHeadAttrsType = {
+    class: string;
   };
 
   /**
    * Scope passed to the `#header` slot. A custom header replaces the default one entirely,
    * so it must render its own leading selection cell whenever `showSelectionColumn` is
    * `true`, or every column shifts by one. Only `"multiple"` has a select-all control —
-   * in `"single"` mode the cell stays empty and `toggleSelectAll` is a no-op.
+   * in `"single"` mode `toggleSelectAll` is a no-op and the cell carries no control, but
+   * it still needs an accessible name, the way the built-in header renders a `sr-only`
+   * `ui_kit.table.selection_column` label.
    */
   type VcTableHeaderSlotScopeType = {
     showSelectionColumn: boolean;
@@ -89,6 +104,7 @@ declare global {
     canSelectAll: boolean;
     toggleSelectAll: () => void;
     selectionColumnAttrs: VcTableSelectionColumnAttrsType;
+    headAttrs: VcTableHeadAttrsType;
   };
 
   /**

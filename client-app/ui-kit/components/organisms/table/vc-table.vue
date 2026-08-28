@@ -62,10 +62,7 @@
         </caption>
 
         <slot name="header" v-bind="headerSlotScope">
-          <thead
-            v-if="!hideDefaultHeader && orderedColumns.length"
-            :class="['vc-table__head', { 'vc-table__head--sticky': stickyHeader || maxHeight }]"
-          >
+          <thead v-if="!hideDefaultHeader && orderedColumns.length" v-bind="headAttrs">
             <tr class="vc-table__head-row">
               <th v-if="showSelectionColumn" scope="col" v-bind="selectionColumnAttrs">
                 <VcCheckbox
@@ -311,6 +308,7 @@ import {
   getCurrentInstance,
   h,
   nextTick,
+  normalizeClass,
   onMounted,
   onUpdated,
   provide,
@@ -417,7 +415,7 @@ const props = withDefaults(
 const { t } = useI18n();
 
 const FIXED_COLUMN_DEFAULT_WIDTH = "150px";
-const SELECTION_COLUMN_WIDTH = "var(--vc-table-selection-cell-width, 3rem)";
+const SELECTION_COLUMN_WIDTH = "3rem";
 
 // Track columns registered by VcTableColumn children
 const childColumns = ref<Map<string, VcTableColumnRegistrationType>>(new Map());
@@ -582,9 +580,20 @@ const selectionColumnStyle = computed<Record<string, string>>(() => {
   return base;
 });
 
-// Shared by the default header and the `#header` slot scope.
+// Shared by the default `<thead>` and the `#header` slot scope. Normalized to a string, not
+// left an array: a bare `v-bind` normalizes `class` in place, rewriting this computed's cache.
+const headAttrs = computed<VcTableHeadAttrsType>(() => ({
+  class: normalizeClass(["vc-table__head", { "vc-table__head--sticky": props.stickyHeader || props.maxHeight }]),
+}));
+
+// Shared by the default header and the `#header` slot scope. String class for the same
+// reason as `headAttrs` above.
 const selectionColumnAttrs = computed<VcTableSelectionColumnAttrsType>(() => ({
-  class: ["vc-table__title", "vc-table__selection-cell", { "vc-table__title--fixed": selectionColumnSticky.value }],
+  class: normalizeClass([
+    "vc-table__title",
+    "vc-table__selection-cell",
+    { "vc-table__title--fixed": selectionColumnSticky.value },
+  ]),
   style: selectionColumnStyle.value,
 }));
 
@@ -937,6 +946,7 @@ const headerSlotScope = computed<VcTableHeaderSlotScopeType>(() => ({
   canSelectAll: canSelectAll.value,
   toggleSelectAll,
   selectionColumnAttrs: selectionColumnAttrs.value,
+  headAttrs: headAttrs.value,
 }));
 
 // Selection can be switched on after mount. Watching it instead of hooking `onUpdated` keeps
