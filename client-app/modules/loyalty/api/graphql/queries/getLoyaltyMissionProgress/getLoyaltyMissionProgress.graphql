@@ -8,6 +8,7 @@ query GetLoyaltyMissionProgress(
   $isStarted: Boolean
   $cultureName: String
   $storeId: String!
+  $currencyCode: String
 ) {
   loyaltyMissionProgress(
     after: $after
@@ -17,6 +18,7 @@ query GetLoyaltyMissionProgress(
     isStarted: $isStarted
     cultureName: $cultureName
     storeId: $storeId
+    currencyCode: $currencyCode
   ) {
     totalCount
     items {

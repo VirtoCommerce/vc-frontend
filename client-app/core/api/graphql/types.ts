@@ -1055,7 +1055,7 @@ export type CustomerOrderStatisticsPeriodArgs = {
 };
 
 export type CustomerOrderStatisticsComparison = {
-  /** Current average minus the previous one. */
+  /** Current average minus previous average (amount, formatted amount and currency). */
   averageChange: MoneyType;
   /** Percentage change of average; null when the previous average is zero. */
   averageChangePercent?: Maybe<Scalars['Decimal']['output']>;
@@ -6241,6 +6241,7 @@ export type QueryLoyaltyMissionProgressArgs = {
   completedEndDate?: InputMaybe<Scalars['DateTime']['input']>;
   completedStartDate?: InputMaybe<Scalars['DateTime']['input']>;
   cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   isStarted?: InputMaybe<Scalars['Boolean']['input']>;
   keyword?: InputMaybe<Scalars['String']['input']>;
