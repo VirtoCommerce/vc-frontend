@@ -238,7 +238,6 @@
       },
       "caveat": "Haut, tuotekatselut ja kirjautumiset perustuvat seurattuun verkkokaupan toimintaan ja ovat likimääräisiä.",
       "tracked_hint": "Verkkokaupasta kerätty aktiivisuus: voi näkyä vasta 48 tunnin kuluttua.",
-      "tracked_hint_slow": "Verkkokaupasta kerätty aktiivisuus: voi näkyä vasta 48 tunnin kuluttua ja latautuu hitaammin.",
       "empty": "Ei vielä aktiviteettia",
       "empty_period": "Ei seurattua aktiviteettia tällä ajanjaksolla",
       "no_results": "Ei aktiviteettia tässä kategoriassa",

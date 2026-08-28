@@ -14,7 +14,7 @@
 
       <span v-if="tab.count !== undefined" class="sales-rep-rule-chips__count">{{ formatStatCount(tab.count) }}</span>
 
-      <TrackedMetricHint v-if="tab.tracked" slow />
+      <TrackedMetricHint v-if="tab.tracked" />
     </button>
   </div>
 </template>

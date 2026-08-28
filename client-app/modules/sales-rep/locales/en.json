@@ -238,7 +238,6 @@
       },
       "caveat": "Searches, product views and sign-ins are based on tracked storefront activity and are approximate.",
       "tracked_hint": "Tracked storefront activity: can take up to 48 hours to appear.",
-      "tracked_hint_slow": "Tracked storefront activity: can take up to 48 hours to appear, and is slower to load.",
       "empty": "No activity yet",
       "empty_period": "No tracked activity in this period",
       "no_results": "No activity in this category",

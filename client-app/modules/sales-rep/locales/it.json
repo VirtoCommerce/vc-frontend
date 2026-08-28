@@ -238,7 +238,6 @@
       },
       "caveat": "Ricerche, visualizzazioni prodotto e accessi si basano sull'attività tracciata del negozio e sono approssimativi.",
       "tracked_hint": "Attività tracciata dello store: può richiedere fino a 48 ore per comparire.",
-      "tracked_hint_slow": "Attività tracciata dello store: può richiedere fino a 48 ore per comparire e si carica più lentamente.",
       "empty": "Ancora nessuna attività",
       "empty_period": "Nessuna attività tracciata in questo periodo",
       "no_results": "Nessuna attività in questa categoria",

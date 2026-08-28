@@ -4,37 +4,24 @@
   <span class="tracked-metric-hint">
     <VcTooltip placement="top">
       <template #trigger>
-        <VcIcon name="hourglass" :size="14" :label="t(messageKey)" />
+        <VcIcon name="hourglass" :size="14" :label="t('sales_rep.activity.tracked_hint')" />
       </template>
 
       <template #content>
-        {{ t(messageKey) }}
+        {{ t("sales_rep.activity.tracked_hint") }}
       </template>
     </VcTooltip>
   </span>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
-interface IProps {
-  // Whether reading this figure still costs a request to Google. Set it where the figure is not on
-  // screen yet (a tab that has to be opened); leave it off where it already is, since a load the
-  // reader has no decision left to make about is noise, not a warning.
-  slow?: boolean;
-}
-
-const props = defineProps<IProps>();
-
 // Marks a figure that comes from tracked storefront activity rather than from the platform's own
-// data. Such a figure appears late (Google processes events for up to 48 hours) and, until it is
-// fetched, is slow to load. The wording lives here so every surface says it the same way.
+// data, and says the one thing a reader can act on: it appears late, because Google processes events
+// for up to 48 hours. Such a figure is also slow to fetch, but that is not a decision anyone makes
+// here — the tab is going to be opened regardless — so it stays out of the wording.
 const { t } = useI18n();
-
-const messageKey = computed(() =>
-  props.slow ? "sales_rep.activity.tracked_hint_slow" : "sales_rep.activity.tracked_hint",
-);
 </script>
 
 <style lang="scss">

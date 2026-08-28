@@ -238,7 +238,6 @@
       },
       "caveat": "Las búsquedas, vistas de producto e inicios de sesión se basan en la actividad registrada de la tienda y son aproximados.",
       "tracked_hint": "Actividad registrada de la tienda: puede tardar hasta 48 horas en aparecer.",
-      "tracked_hint_slow": "Actividad registrada de la tienda: puede tardar hasta 48 horas en aparecer y carga más lento.",
       "empty": "Aún no hay actividad",
       "empty_period": "No hay actividad registrada en este período",
       "no_results": "No hay actividad en esta categoría",
