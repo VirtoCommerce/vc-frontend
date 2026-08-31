@@ -7,6 +7,9 @@ import type { MaybeRef, Ref } from "vue";
 
 export type VcDateFieldUpdateOnType = "blur" | "enter";
 
+/** Why the typed date is rejected; each value is also its `ui_kit.date_input.*` message key. */
+type DateFieldFailureType = "invalid_format" | "min_date_error" | "max_date_error" | "unavailable_date";
+
 export interface IUseDateFieldOptions {
   /** ISO YYYY-MM-DD from parent (the source of truth). */
   modelValue: Ref<string | undefined>;
@@ -82,44 +85,47 @@ export function useDateField(opts: IUseDateFieldOptions) {
     }
   }
 
-  const isValid = computed<boolean>(() => {
+  // One ladder for both readers: `isValid` wants the verdict, `errorText` the reason. Keeping the
+  // rungs in two places also ran the consumer's disabledDate predicate twice for a date it rejects.
+  const failure = computed<DateFieldFailureType | undefined>(() => {
     if (isEmpty.value) {
-      return true;
-    }
-    const cd = parsedDate.value;
-    if (!cd) {
-      return false;
-    }
-    if (minDate.value && cd.compare(minDate.value) < 0) {
-      return false;
-    }
-    if (maxDate.value && cd.compare(maxDate.value) > 0) {
-      return false;
-    }
-    if (isDisabledDateHit(cd)) {
-      return false;
-    }
-    return true;
-  });
-
-  const errorText = computed<string | undefined>(() => {
-    if (!touched.value || isValid.value || isEmpty.value) {
       return undefined;
     }
     const cd = parsedDate.value;
     if (!cd) {
-      return t("ui_kit.date_input.invalid_format");
+      return "invalid_format";
     }
     if (minDate.value && cd.compare(minDate.value) < 0) {
-      return t("ui_kit.date_input.min_date_error", { min: opts.min?.value });
+      return "min_date_error";
     }
     if (maxDate.value && cd.compare(maxDate.value) > 0) {
-      return t("ui_kit.date_input.max_date_error", { max: opts.max?.value });
+      return "max_date_error";
     }
     if (isDisabledDateHit(cd)) {
-      return t("ui_kit.date_input.unavailable_date");
+      return "unavailable_date";
     }
     return undefined;
+  });
+
+  const isValid = computed<boolean>(() => !failure.value);
+
+  // Keys stay literal so `yarn check-locales` can still see them.
+  const errorText = computed<string | undefined>(() => {
+    if (!touched.value) {
+      return undefined;
+    }
+    switch (failure.value) {
+      case "invalid_format":
+        return t("ui_kit.date_input.invalid_format");
+      case "min_date_error":
+        return t("ui_kit.date_input.min_date_error", { min: opts.min?.value });
+      case "max_date_error":
+        return t("ui_kit.date_input.max_date_error", { max: opts.max?.value });
+      case "unavailable_date":
+        return t("ui_kit.date_input.unavailable_date");
+      default:
+        return undefined;
+    }
   });
 
   function commit(): void {
