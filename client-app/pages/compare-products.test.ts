@@ -202,7 +202,7 @@ describe("CompareProducts", () => {
     expect(page.getByTestId("compare-error-state")).toBeInTheDocument();
     expect(page.queryByTestId("compare-table")).not.toBeInTheDocument();
 
-    await fireEvent.click(page.getByText("ui_kit.table.retry"));
+    await fireEvent.click(page.getByText("pages.compare.retry"));
     expect(mocks.retryFetch).toHaveBeenCalledTimes(1);
   });
 

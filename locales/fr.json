@@ -1713,7 +1713,9 @@
         "description": "Ajoutez des produits du catalogue pour comparer leurs caractéristiques côte à côte. Vous pouvez comparer jusqu'à {limit} produits par catégorie.",
         "restore_button": "Restaurer les produits",
         "add_button": "Ajouter des produits"
-      }
+      },
+      "error": "Échec du chargement des données",
+      "retry": "Réessayer"
     }
   },
   "identity_error": {

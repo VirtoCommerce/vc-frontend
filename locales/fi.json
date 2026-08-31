@@ -1713,7 +1713,9 @@
         "description": "Lisää tuotteita luettelosta vertaillaksesi niiden ominaisuuksia rinnakkain. Voit verrata enintään {limit} tuotetta per kategoria.",
         "restore_button": "Palauta tuotteet",
         "add_button": "Lisää tuotteita"
-      }
+      },
+      "error": "Tietojen lataaminen epäonnistui",
+      "retry": "Yritä uudelleen"
     }
   },
   "identity_error": {

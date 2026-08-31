@@ -1713,7 +1713,9 @@
         "description": "Add products from the catalog to compare their characteristics side by side. You can compare up to {limit} products per category.",
         "restore_button": "Restore products",
         "add_button": "Add products"
-      }
+      },
+      "error": "Failed to load data",
+      "retry": "Try again"
     }
   },
   "identity_error": {

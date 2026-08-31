@@ -1713,7 +1713,9 @@
         "description": "Lägg till produkter från katalogen för att jämföra deras egenskaper sida vid sida. Du kan jämföra upp till {limit} produkter per kategori.",
         "restore_button": "Återställ produkter",
         "add_button": "Lägg till produkter"
-      }
+      },
+      "error": "Det gick inte att läsa in data",
+      "retry": "Försök igen"
     }
   },
   "identity_error": {

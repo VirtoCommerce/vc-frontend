@@ -1713,7 +1713,9 @@
         "description": "将产品添加到目录中，以便并排比较它们的特性。每个类别最多可以比较{limit}种产品。",
         "restore_button": "恢复产品",
         "add_button": "添加产品"
-      }
+      },
+      "error": "加载数据失败",
+      "retry": "重试"
     }
   },
   "identity_error": {

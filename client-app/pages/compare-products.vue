@@ -80,10 +80,10 @@
       data-test-id="compare-error-state"
       class="compare-products__error-state"
     >
-      <VcEmptyView variant="error" :text="t('ui_kit.table.error')">
+      <VcEmptyView variant="error" :text="t('pages.compare.error')">
         <template #button>
           <VcButton size="sm" @click="retryFetch">
-            {{ t("ui_kit.table.retry") }}
+            {{ t("pages.compare.retry") }}
           </VcButton>
         </template>
       </VcEmptyView>

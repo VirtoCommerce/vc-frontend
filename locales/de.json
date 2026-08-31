@@ -1713,7 +1713,9 @@
         "description": "Fügen Sie Produkte aus dem Katalog hinzu, um deren Eigenschaften nebeneinander zu vergleichen. Sie können bis zu {limit} Produkte pro Kategorie vergleichen.",
         "restore_button": "Produkte wiederherstellen",
         "add_button": "Produkte hinzufügen"
-      }
+      },
+      "error": "Daten konnten nicht geladen werden",
+      "retry": "Erneut versuchen"
     }
   },
   "identity_error": {
