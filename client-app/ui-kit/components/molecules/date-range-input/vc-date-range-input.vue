@@ -149,28 +149,15 @@ interface IEmits {
 
 const emit = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
-  modelValue: undefined,
   size: "md",
-  label: undefined,
-  startLabel: undefined,
-  endLabel: undefined,
-  startPlaceholder: undefined,
-  endPlaceholder: undefined,
-  name: undefined,
   disabled: false,
   readonly: false,
   required: false,
-  message: undefined,
   error: false,
-  min: undefined,
-  max: undefined,
-  disabledDate: undefined,
-  locale: undefined,
   updateOn: "blur",
   mask: false,
   clearable: false,
   showEmptyDetails: false,
-  dataTestId: undefined,
 });
 
 const { t } = useI18n();

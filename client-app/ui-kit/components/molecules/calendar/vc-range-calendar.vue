@@ -178,18 +178,11 @@ interface IEmits {
 const emit = defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
-  modelValue: undefined,
   size: "md",
-  min: undefined,
-  max: undefined,
-  disabledDate: undefined,
   disabled: false,
   readonly: false,
   showFooter: false,
-  locale: undefined,
-  firstDayOfWeek: undefined,
   weekdayFormat: "short",
-  dataTestId: undefined,
 });
 
 // First candidate that parses wins; today is the floor.
