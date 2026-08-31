@@ -10,11 +10,32 @@ import {
   getFilterExpressionForAvailableIn,
   getFilterExpressionFromFacets,
   generateFilterExpressionFromFilters,
+  escapeFilterSyntaxValue,
   termFacetToCommonFacet,
   rangeFacetToCommonFacet,
 } from "@/core/utilities";
 import type { RangeFacet, TermFacet, SearchProductFilterResult } from "@/core/api/graphql/types";
 import type { FacetItemType } from "@/core/types";
+
+describe("escapeFilterSyntaxValue", () => {
+  it("returns a plain value unchanged", () => {
+    expect(escapeFilterSyntaxValue("acme")).toBe("acme");
+  });
+
+  it("escapes double quotes", () => {
+    expect(escapeFilterSyntaxValue('acme "corp"')).toBe('acme \\"corp\\"');
+  });
+
+  it("escapes backslashes", () => {
+    expect(escapeFilterSyntaxValue("acme\\corp")).toBe("acme\\\\corp");
+  });
+
+  it("escapes a backslash immediately before a quote without under- or double-escaping", () => {
+    // Regression test: escaping quotes before backslashes would turn `\"` into `\\"`,
+    // leaving the quote unescaped and breaking out of the surrounding quoted string.
+    expect(escapeFilterSyntaxValue('acme\\"corp')).toBe('acme\\\\\\"corp');
+  });
+});
 
 describe("getFilterExpressionFromFacetRange", () => {
   it.each`

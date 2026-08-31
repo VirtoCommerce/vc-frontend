@@ -1,6 +1,7 @@
 import { describe, it, expect, afterEach, vi } from "vitest";
 import {
   getReturnUrlValue,
+  isSafeRelativeUrl,
   extractHostname,
   truncate,
   appendSuffixToFilename,
@@ -28,55 +29,66 @@ describe("getReturnUrlValue", () => {
     });
   });
 
-  it("should return the value of returnUrl parameter", () => {
-    // Mock location.href
+  it.each([
+    { case: "the returnUrl parameter", href: "http://example.com?returnUrl=/home", expected: "/home" },
+    {
+      case: "the ReturnUrl parameter (case-insensitive)",
+      href: "http://example.com?ReturnUrl=/dashboard",
+      expected: "/dashboard",
+    },
+    { case: "no returnUrl parameter present", href: "http://example.com", expected: null },
+    {
+      case: "returnUrl pointing to a different hostname",
+      href: "http://example.com?returnUrl=http://malicious.com/home",
+      expected: null,
+    },
+    {
+      case: "returnUrl as an absolute URL on the same hostname",
+      href: "http://example.com?returnUrl=http://example.com/home",
+      expected: null,
+    },
+    {
+      case: "returnUrl as a javascript: URL",
+      href: "http://example.com?returnUrl=javascript:alert(1)",
+      expected: null,
+    },
+    {
+      case: "returnUrl as a protocol-relative URL",
+      href: "http://example.com?returnUrl=//malicious.com",
+      expected: null,
+    },
+    {
+      case: "returnUrl with a tab hiding a protocol-relative bypass (browsers strip tabs before parsing)",
+      href: "http://example.com?returnUrl=/%09/malicious.com",
+      expected: null,
+    },
+  ])("should handle $case", ({ href, expected }) => {
     Object.defineProperty(window, "location", {
       configurable: true,
-      value: {
-        href: "http://example.com?returnUrl=/home",
-      },
+      value: { href },
     });
 
-    const result = getReturnUrlValue();
-    expect(result).toBe("/home");
+    expect(getReturnUrlValue()).toBe(expected);
   });
+});
 
-  it("should return the value of ReturnUrl parameter (case-insensitive)", () => {
-    // Mock location.href
-    Object.defineProperty(window, "location", {
-      configurable: true,
-      value: {
-        href: "http://example.com?ReturnUrl=/dashboard",
-      },
-    });
-
-    const result = getReturnUrlValue();
-    expect(result).toBe("/dashboard");
-  });
-
-  it("should return null when returnUrl parameter is not present", () => {
-    // Mock location.href
-    Object.defineProperty(window, "location", {
-      configurable: true,
-      value: {
-        href: "http://example.com",
-      },
-    });
-
-    const result = getReturnUrlValue();
-    expect(result).toBeNull();
-  });
-
-  it("should return null when returnUrl points to a different hostname", () => {
-    Object.defineProperty(window, "location", {
-      configurable: true,
-      value: {
-        href: "http://example.com?returnUrl=http://malicious.com/home",
-      },
-    });
-
-    const result = getReturnUrlValue();
-    expect(result).toBeNull();
+describe("isSafeRelativeUrl", () => {
+  it.each([
+    { case: "a relative path", url: "/account/orders", expected: true },
+    { case: "a relative path with query and hash", url: "/account?tab=orders#top", expected: true },
+    { case: "a protocol-relative URL", url: "//evil.com", expected: false },
+    { case: "an absolute https URL", url: "https://evil.com", expected: false },
+    { case: "a javascript: URL", url: "javascript:alert(1)", expected: false },
+    { case: "a backslash-then-slash bypass", url: "/\\evil.com", expected: false },
+    { case: "a slash-then-backslash bypass", url: "\\/evil.com", expected: false },
+    { case: "a double-backslash bypass", url: "\\\\evil.com", expected: false },
+    { case: "a tab-hidden protocol-relative bypass", url: "/\t/evil.com", expected: false },
+    { case: "a newline-hidden protocol-relative bypass", url: "/\n/evil.com", expected: false },
+    { case: "a carriage-return-hidden protocol-relative bypass", url: "/\r/evil.com", expected: false },
+    { case: "a leading tab hiding a protocol-relative bypass", url: "\t//evil.com", expected: false },
+    { case: "a path with no leading slash", url: "account/orders", expected: false },
+  ])("should return $expected for $case ($url)", ({ url, expected }) => {
+    expect(isSafeRelativeUrl(url)).toBe(expected);
   });
 });
 
