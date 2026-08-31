@@ -286,8 +286,7 @@ function onClearClick(): void {
 watch(
   () => props.modelValue,
   (next) => {
-    const parsed = tryParseDate(next);
-    placeholderRef.value = clampToBounds(parsed ?? getInitialPlaceholder());
+    placeholderRef.value = clampToBounds(tryParseDate(next) ?? todayDate());
   },
 );
 
