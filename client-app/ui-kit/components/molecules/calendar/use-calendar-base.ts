@@ -51,8 +51,6 @@ export function isToday(date: DateValue): boolean {
 // firstDayOfWeek is a number (0=Sunday); startOfWeek/endOfWeek expect a DayOfWeek string.
 const DAY_OF_WEEK_NAMES = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as const;
 
-type CalendarKeyTargetType = { target: DateValue };
-
 // Home/End: ctrl/meta = month (else week). PageUp/Down: shift = year (else month), per APG.
 type CalendarKeyModifiersType = { ctrlOrMeta: boolean; shift: boolean };
 
@@ -197,37 +195,22 @@ export function useCalendarBase(opts: IUseCalendarBaseOptions) {
     key: string,
     focused: DateValue,
     modifiers: CalendarKeyModifiersType,
-  ): CalendarKeyTargetType | undefined {
+  ): DateValue | undefined {
     const { ctrlOrMeta, shift } = modifiers;
-    let target: DateValue;
 
     switch (key) {
       case "Home":
-        if (ctrlOrMeta) {
-          target = startOfMonth(focused);
-        } else {
-          target = startOfWeek(focused, resolvedLocale.value, mappedFirstDay.value);
-        }
-        break;
+        return ctrlOrMeta ? startOfMonth(focused) : startOfWeek(focused, resolvedLocale.value, mappedFirstDay.value);
       case "End":
-        if (ctrlOrMeta) {
-          target = endOfMonth(focused);
-        } else {
-          target = endOfWeek(focused, resolvedLocale.value, mappedFirstDay.value);
-        }
-        break;
+        return ctrlOrMeta ? endOfMonth(focused) : endOfWeek(focused, resolvedLocale.value, mappedFirstDay.value);
       case "PageDown":
-        target = shift ? focused.add({ years: 1 }) : focused.add({ months: 1 });
-        break;
+        return shift ? focused.add({ years: 1 }) : focused.add({ months: 1 });
       case "PageUp":
-        target = shift ? focused.add({ years: -1 }) : focused.add({ months: -1 });
-        break;
+        return shift ? focused.add({ years: -1 }) : focused.add({ months: -1 });
       default:
         // Let reka handle arrows/space/enter.
         return undefined;
     }
-
-    return { target };
   }
 
   function onCalendarKeydown(event: KeyboardEvent): void {
@@ -243,14 +226,14 @@ export function useCalendarBase(opts: IUseCalendarBaseOptions) {
 
     const ctrlOrMeta = event.ctrlKey || event.metaKey;
     const shift = event.shiftKey;
-    const resolvedKey = resolveKeyTarget(event.key, focused, { ctrlOrMeta, shift });
-    if (!resolvedKey) {
+    const resolved = resolveKeyTarget(event.key, focused, { ctrlOrMeta, shift });
+    if (!resolved) {
       return;
     }
 
     event.preventDefault();
 
-    const target = clampToBounds(resolvedKey.target);
+    const target = clampToBounds(resolved);
 
     // Scroll the grid when the target spills into an adjacent month.
     placeholderRef.value = target;
