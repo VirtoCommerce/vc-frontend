@@ -271,10 +271,8 @@ function suppressEchoForOneTick(): void {
 }
 
 // reka restores startValue and endValue separately; only the whole range it settles on may leave.
-let pendingEscapeRevert = false;
-
-// True while the pending revert aims at a stale target — it would destroy or resurrect a range.
-let staleEscapeRevert = false;
+// "stale" aims at a target that would destroy or resurrect a range.
+let pendingRevert: "fresh" | "stale" | undefined;
 
 function isSameRange(a: VcDateRangeType | undefined, b: VcDateRangeType | undefined): boolean {
   return a?.start === b?.start && a?.end === b?.end;
@@ -318,7 +316,7 @@ function resyncRekaWithModel(): void {
 function onUpdate(value: DateRange | undefined): void {
   // The authoritative end of a revert: reka writes both values in one handler, so the whole value lands
   // here. Clearing the guard on the conclusion keeps it independent of the flush shape.
-  const isStaleRevert = pendingEscapeRevert && staleEscapeRevert;
+  const isStaleRevert = pendingRevert === "stale";
   endEscapeRevert();
 
   if (isStaleRevert) {
@@ -370,8 +368,7 @@ function onCalendarKeydownCapture(event: KeyboardEvent): void {
 
 function onCalendarKeydown(event: KeyboardEvent): void {
   if (event.key === "Escape") {
-    pendingEscapeRevert = true;
-    staleEscapeRevert = !isSameRange(rekaRevertTarget, committedRange);
+    pendingRevert = isSameRange(rekaRevertTarget, committedRange) ? "fresh" : "stale";
     return;
   }
   endEscapeRevert();
@@ -380,12 +377,11 @@ function onCalendarKeydown(event: KeyboardEvent): void {
 
 // A fresh gesture means the revert landed or never will; a guard left armed swallows the next pick.
 function endEscapeRevert(): void {
-  pendingEscapeRevert = false;
-  staleEscapeRevert = false;
+  pendingRevert = undefined;
 }
 
 function onStartValueUpdate(value: DateValue | undefined): void {
-  if (pendingEscapeRevert) {
+  if (pendingRevert) {
     return;
   }
   const iso = dateValueToIso(value);
