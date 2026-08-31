@@ -61,14 +61,14 @@ jobs:
           fetch-depth: 0
 
       - name: Get Image Version
-        uses: VirtoCommerce/vc-github-actions/get-image-version@master
+        uses: VirtoCommerce/vc-github-actions/get-image-version@59eabc1faa8c97ee0c7725d32a1f9d651ec5fea2 # master
         with:
           projectType: theme
         id: image
 
       - name: Get changelog
         id: changelog
-        uses: VirtoCommerce/vc-github-actions/changelog-generator@master
+        uses: VirtoCommerce/vc-github-actions/changelog-generator@59eabc1faa8c97ee0c7725d32a1f9d651ec5fea2 # master
 
       - name: Set release VERSION_SUFFIX
         run: |
@@ -144,14 +144,14 @@ jobs:
       - name: Publish to Blob
         if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master')}}
         id: blobRelease
-        uses: VirtoCommerce/vc-github-actions/publish-blob-release@master
+        uses: VirtoCommerce/vc-github-actions/publish-blob-release@59eabc1faa8c97ee0c7725d32a1f9d651ec5fea2 # master
         with:
           blobSAS: ${{ secrets.BLOB_TOKEN }}
           blobUrl: ${{ vars.BLOB_URL }}
 
       - name: Add link to PR
         if: ${{ github.event_name == 'pull_request' }}
-        uses: VirtoCommerce/vc-github-actions/publish-artifact-link@master
+        uses: VirtoCommerce/vc-github-actions/publish-artifact-link@59eabc1faa8c97ee0c7725d32a1f9d651ec5fea2 # master
         with:
           artifactUrl: ${{ steps.blobRelease.outputs.packageUrl }}
           repoOrg: ${{ github.repository_owner }}
@@ -190,7 +190,7 @@ jobs:
           fi
 
       - name: Parse Jira Keys from All Commits
-        uses: VirtoCommerce/vc-github-actions/get-jira-keys@master
+        uses: VirtoCommerce/vc-github-actions/get-jira-keys@59eabc1faa8c97ee0c7725d32a1f9d651ec5fea2 # master
         if: always()
         id: jira_keys
         with:
@@ -201,7 +201,7 @@ jobs:
       - name: Push Build Info to Jira
         if: ${{ env.CLOUD_INSTANCE_BASE_URL != 0 && env.CLIENT_ID != 0 && env.CLIENT_SECRET != 0 && steps.jira_keys.outputs.jira-keys != '' && always() }}
         id: push_build_info_to_jira
-        uses: VirtoCommerce/jira-upload-build-info@master
+        uses: VirtoCommerce/jira-upload-build-info@c1e3d83b7f59b5493055f562f67d5f88048a0c44 # master
         with:
           cloud-instance-base-url: '${{ secrets.CLOUD_INSTANCE_BASE_URL }}'
           client-id: '${{ secrets.CLIENT_ID }}'
@@ -225,7 +225,7 @@ jobs:
 
       - name: Update Jira Tasks with Release Number
         if: ${{ github.ref == 'refs/heads/master' }}
-        uses: VirtoCommerce/vc-github-actions/update-jira-tasks-with-release-number@master
+        uses: VirtoCommerce/vc-github-actions/update-jira-tasks-with-release-number@59eabc1faa8c97ee0c7725d32a1f9d651ec5fea2 # master
         with:
           ghRepository: ${{ github.repository }}
           ghReleaseTag: ${{ steps.image.outputs.prefix }}
