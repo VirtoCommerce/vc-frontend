@@ -1,6 +1,6 @@
 <template>
   <fieldset
-    v-if="layout === 'split'"
+    v-if="isSplit"
     :class="['vc-date-range-picker', `vc-date-range-picker--layout--${layout}`, `vc-date-range-picker--size--${size}`]"
     :aria-label="label || t('ui_kit.date_range_input.aria_label')"
     :data-test-id="dataTestId"
@@ -241,6 +241,9 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const { t } = useI18n();
 
+// Two separately labelled fields, each with its own calendar; "combined" is one field and one range calendar.
+const isSplit = computed<boolean>(() => props.layout === "split");
+
 const rangeInputRef = useTemplateRef<{
   startInputElement: HTMLInputElement | null;
   resetSegments: (side?: "start" | "end") => void;
@@ -284,17 +287,12 @@ const {
 // Seeded from the order check so an out-of-order initial model never reports a transient true.
 const inputValid = ref(orderValid.value);
 const inputErrorText = ref<string | undefined>(undefined);
-const aggregatedValid = computed<boolean>(() => {
-  if (props.layout === "split") {
-    return splitValid.value;
-  }
-  return inputValid.value;
-});
+const aggregatedValid = computed<boolean>(() => (isSplit.value ? splitValid.value : inputValid.value));
 watch(aggregatedValid, (value) => emit("update:valid", value), { immediate: true });
 
 // "split" owns the message itself; "combined" forwards what VcDateRangeInput reported.
 const aggregatedErrorText = computed<string | undefined>(() =>
-  props.layout === "split" ? splitErrorText.value : inputErrorText.value,
+  isSplit.value ? splitErrorText.value : inputErrorText.value,
 );
 watch(aggregatedErrorText, (value) => emit("update:errorText", value), { immediate: true });
 

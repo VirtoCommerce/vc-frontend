@@ -303,7 +303,7 @@ function resyncRekaWithModel(): void {
   suppressEchoForOneTick();
   parsedModelValue.value = parseRange(props.modelValue);
   // reka moved its placeholder to the revert target; nothing else would bring the grid back.
-  placeholderRef.value = clampToBounds(preferredPlaceholder(props.modelValue?.start, props.modelValue?.end));
+  placeholderRef.value = clampToBounds(getInitialPlaceholder());
 }
 
 function onUpdate(value: DateRange | undefined): void {
@@ -351,8 +351,9 @@ function onClearClick(): void {
   emit("clear");
 }
 
-// Capture phase: reka's cell trigger stops arrows/Enter/Space from bubbling, so a keyboard pick after
-// an unanswered Escape would meet a guard still armed.
+// Capture phase: reka's cell trigger stops arrows/Enter/Space from bubbling
+// (RangeCalendarCellTrigger.js: handleArrowKey calls stopPropagation), so a keyboard pick after an
+// unanswered Escape would meet a guard still armed.
 function onCalendarKeydownCapture(event: KeyboardEvent): void {
   if (event.key !== "Escape") {
     endEscapeRevert();

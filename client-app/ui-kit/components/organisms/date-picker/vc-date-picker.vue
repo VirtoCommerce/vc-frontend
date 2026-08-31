@@ -195,7 +195,7 @@ function forwardedAria(triggerProps: Record<string, unknown>): AriaAttributesTyp
     "aria-expanded": String(triggerProps["aria-expanded"] ?? false),
   };
   const controls = ariaControlsOf(triggerProps);
-  if (controls) {
+  if (controls !== undefined) {
     aria["aria-controls"] = controls;
   }
   return aria;
