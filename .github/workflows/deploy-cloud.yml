@@ -97,14 +97,14 @@ jobs:
     steps:
 
     - name: Read deployment config
-      uses: VirtoCommerce/vc-github-actions/get-deploy-param@master
+      uses: VirtoCommerce/vc-github-actions/get-deploy-param@59eabc1faa8c97ee0c7725d32a1f9d651ec5fea2 # master
       id: deployConfig
       with:
         envName: ${{ inputs.environmentId }}
         deployConfigPath: .deployment/theme/cloudDeploy.json
 
     - name: Start deployment
-      uses: VirtoCommerce/vc-github-actions/gh-deployments@master
+      uses: VirtoCommerce/vc-github-actions/gh-deployments@59eabc1faa8c97ee0c7725d32a1f9d651ec5fea2 # master
       id: deployment
       with:
         step: start
@@ -113,7 +113,7 @@ jobs:
         no_override: false
 
     - name: Deploy to ${{ steps.deployConfig.outputs.environmentName }}
-      uses: VirtoCommerce/vc-github-actions/create-deploy-pr@master
+      uses: VirtoCommerce/vc-github-actions/create-deploy-pr@59eabc1faa8c97ee0c7725d32a1f9d651ec5fea2 # master
       with:
         githubToken: ${{ env.GITHUB_TOKEN }}
         deployRepo: ${{ steps.deployConfig.outputs.deployRepo }}
@@ -146,7 +146,7 @@ jobs:
       run: echo "DEPLOY_STATE=failed"  >> $GITHUB_ENV
 
     - name: Update GitHub deployment status
-      uses: VirtoCommerce/vc-github-actions/gh-deployments@master
+      uses: VirtoCommerce/vc-github-actions/gh-deployments@59eabc1faa8c97ee0c7725d32a1f9d651ec5fea2 # master
       if: always()
       with:
         step: finish
@@ -158,7 +158,7 @@ jobs:
     - name: Push Deployment Info to Jira
       if: ${{ env.CLOUD_INSTANCE_BASE_URL != 0 && env.CLIENT_ID != 0 && env.CLIENT_SECRET != 0 && inputs.jiraKeys != '' && always() }}
       id: push_deployment_info_to_jira
-      uses: VirtoCommerce/jira-upload-deployment-info@master
+      uses: VirtoCommerce/jira-upload-deployment-info@075189e412c50d1824fc481edd6c606dc062af9a # master
       env:
         CLOUD_INSTANCE_BASE_URL: ${{secrets.CLOUD_INSTANCE_BASE_URL}}
         CLIENT_ID: ${{secrets.CLIENT_ID}}
