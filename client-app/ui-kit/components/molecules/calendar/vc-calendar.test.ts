@@ -30,8 +30,7 @@ function inViewCell(wrapper: ReturnType<typeof mountCal>, iso: string) {
   return wrapper.find(`[data-reka-calendar-cell-trigger][data-value="${iso}"]:not([data-outside-view])`);
 }
 
-// This is the calendar the app actually renders (VcDatePicker ← split layout), so its own wiring to
-// the shared base needs holding down, not just the range twin's.
+// The calendar the app actually renders, so its own wiring to the shared base needs holding down.
 describe("VcCalendar — keyboard navigation and focus entry", () => {
   it("moves focus by week/month/year and leaves unrelated keys alone", async () => {
     const wrapper = mountCal({ modelValue: "2026-10-08", firstDayOfWeek: 1 }, { attachTo: document.body });
@@ -84,8 +83,7 @@ describe("VcCalendar — re-picking the selected date", () => {
     expect(wrapper.emitted("update:modelValue")?.at(-1)).toEqual(["2020-06-10"]);
   });
 
-  // The default guards a range endpoint and anything the user did not mean to empty; an optional
-  // single-date field with no clear button and no footer needs the click back as its only pointer route.
+  // An optional field with no clear button and no footer needs the re-click as its only pointer route.
   it("clears the date when preventDeselect is off", async () => {
     const wrapper = mountCal({ modelValue: "2020-06-10", max: "2020-06-15", preventDeselect: false });
     await inViewCell(wrapper, "2020-06-10").trigger("click");
@@ -95,8 +93,8 @@ describe("VcCalendar — re-picking the selected date", () => {
 });
 
 describe("VcCalendar — footer Clear", () => {
-  // vc-range-calendar emits both; the twins have to agree, and an already-empty field emits no model
-  // change at all — so `clear` is the only thing a shell can react to.
+  // The twins have to agree, and an already-empty field emits no model change — so `clear` is all a
+  // shell can react to.
   it("emits clear alongside the model change", async () => {
     const wrapper = mountCal({ modelValue: "2020-06-10", max: "2020-06-15", showFooter: true });
     await wrapper.find(".vc-calendar__footer-btn--ghost").trigger("click");
@@ -173,8 +171,7 @@ describe("VcCalendar — placeholder clamping to [min, max]", () => {
   });
 });
 
-// Advisory bounds exist so the range picker can point at the opposite endpoint without trapping the
-// user: the marked days must stay selectable, and every month must stay reachable.
+// Advisory bounds point at the opposite endpoint without trapping the user: marked days stay selectable.
 describe("VcCalendar — advisory bounds (softMin/softMax)", () => {
   const OCTOBER = { modelValue: "2026-10-08" };
 
@@ -199,8 +196,7 @@ describe("VcCalendar — advisory bounds (softMin/softMax)", () => {
     expect(wrapper.emitted("update:modelValue")?.at(-1)).toEqual(["2026-10-20"]);
   });
 
-  // reka owns aria-label on every cell, so the reason can only be a DESCRIPTION — and `title` alone
-  // never reaches a keyboard user.
+  // reka owns the cell's aria-label, so the reason can only be a description; `title` is hover-only.
   it("describes a marked day through aria-describedby, not the title alone", () => {
     const wrapper = mountCal({ ...OCTOBER, softMax: "2026-10-14" });
     const marked = inViewCell(wrapper, "2026-10-20");
@@ -222,8 +218,7 @@ describe("VcCalendar — advisory bounds (softMin/softMax)", () => {
     expect(inViewCell(wrapper, "2026-10-20").attributes("aria-describedby")).toBeUndefined();
   });
 
-  // reka leaves a disabled day without tabindex, so the fallback that opens the grid has to skip it or
-  // focus silently stays on the trigger and the arrow keys do nothing.
+  // reka leaves a disabled day without tabindex, so the entry fallback has to skip it.
   it("focuses the first ENABLED day when min starts mid-month", async () => {
     const min = todayDate().add({ years: 4 }).set({ day: 10 });
     const wrapper = mountCal({ modelValue: undefined, min: min.toString() }, { attachTo: document.body });

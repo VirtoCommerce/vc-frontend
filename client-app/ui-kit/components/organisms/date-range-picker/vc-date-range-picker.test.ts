@@ -51,8 +51,7 @@ function mountSplit(props = {}, options: { attachTo?: Element } = {}) {
       ...props,
     },
     global: {
-      // The picker's template resolves both branches up front, so the unrendered "combined" ones are
-      // needed too. VcCalendar is not one of them: VcDatePicker renders it, and "split" renders that.
+      // The template resolves both branches up front, so the unrendered "combined" ones are needed too.
       components: {
         VcDateInput,
         VcInput,
@@ -94,8 +93,7 @@ function mountBoundPicker(initial: VcDateRangeType | undefined, props: Record<st
 
   const wrapper = mount(Parent, {
     global: {
-      // VcCalendar is not resolved by the picker's own template: VcDatePicker renders it, and the
-      // it.each below mounts this helper with layout: "split", which renders VcDatePicker.
+      // VcCalendar comes from VcDatePicker, which "split" renders.
       components: {
         VcDateInput,
         VcInput,
@@ -259,9 +257,8 @@ describe("VcDateRangePicker", () => {
     wrapper.unmount();
   });
 
-  // A field resyncs only from a change to its OWN half, so text it rejected survives a commit made in
-  // the OTHER field: the model holds a valid range, the shell reports invalid, and Apply is gated on a
-  // range that is perfectly good.
+  // A field resyncs only from its OWN half, so rejected text survives a commit in the other and gates
+  // Apply on a range that is perfectly good.
   it.each([
     ["combined", {}],
     ["split", { layout: "split", startLabel: "Start date", endLabel: "End date" }],
@@ -285,8 +282,7 @@ describe("VcDateRangePicker", () => {
     wrapper.unmount();
   });
 
-  // Same defect one layer down: in split each field owns its calendar, and picking the date the field
-  // already holds changes no model half at all.
+  // Same defect one layer down: picking the date a split field already holds changes no model half.
   it("drops rejected text when a split field re-picks the date it already holds", async () => {
     const wrapper = mountSplit({ modelValue: { start: "2026-08-10", end: undefined } }, { attachTo: document.body });
 
@@ -306,9 +302,8 @@ describe("VcDateRangePicker", () => {
     wrapper.unmount();
   });
 
-  // A segment resyncs its display from a change to its OWN half of the model, so rejected text can
-  // outlive a range the calendar just produced — and that segment then reports invalid for good, which
-  // gates Apply in both order filters.
+  // A segment resyncs only from its OWN half, so rejected text outlives a range the calendar produced
+  // and then reports invalid for good.
   it("drops rejected segment text when the calendar produces a range", async () => {
     const { wrapper, state } = mountBoundPicker({ start: "2026-08-10", end: undefined });
     const picker = wrapper.findComponent(VcDateRangePicker);
@@ -319,8 +314,7 @@ describe("VcDateRangePicker", () => {
     expect(state.value).toEqual({ start: "2026-08-10", end: undefined });
     expect(picker.emitted("update:valid")?.at(-1)).toEqual([false]);
 
-    // Completing the range from the committed anchor changes the END half only, so the start segment
-    // gets no model change of its own to resync from.
+    // Completing from the anchor changes the END half only, so the start segment gets no resync.
     await wrapper.find('button[aria-haspopup="dialog"]').trigger("click");
     await flushPromises();
     await clickDay("2026-08-20");
@@ -333,8 +327,7 @@ describe("VcDateRangePicker", () => {
     wrapper.unmount();
   });
 
-  // Valid-but-uncommitted text, in the half the calendar did NOT change: no watch sees it, because the
-  // model's start never moved. Only the reset inside onCalendarUpdate puts the segment back on the model.
+  // Uncommitted text in the half the calendar did NOT change: only onCalendarUpdate's reset fixes it.
   it("drops valid uncommitted text in the half the calendar did not change", async () => {
     const { wrapper, state } = mountBoundPicker({ start: "2026-10-08" }, { updateOn: "enter" });
     await flushPromises();
@@ -357,8 +350,7 @@ describe("VcDateRangePicker", () => {
     wrapper.unmount();
   });
 
-  // An anchor pick defines the start only. With updateOn="enter" a blur does not commit, so the end
-  // segment can legitimately hold text the model has not taken — resetting it would throw that away.
+  // An anchor defines the start only, and with updateOn="enter" the end may hold uncommitted text.
   it("leaves the untouched segment's typed text alone on an anchor-only pick", async () => {
     const { wrapper, state } = mountBoundPicker(undefined, { updateOn: "enter" });
 
@@ -432,9 +424,8 @@ describe("VcDateRangePicker", () => {
     wrapper.unmount();
   });
 
-  // The footer Clear emits update:modelValue AND clear. onCalendarUpdate used to schedule a resync on
-  // the next tick, which read a model an uncontrolled parent never wrote back and painted the cleared
-  // dates straight in — undoing the clear. Static prop here on purpose: no v-model round trip.
+  // The footer Clear emits update:modelValue AND clear; the resync onCalendarUpdate used to schedule
+  // read a model the parent never wrote back and undid it. Static prop: no v-model round trip.
   it("keeps the fields empty after a footer Clear the parent never applies", async () => {
     const wrapper = mountPicker(
       { modelValue: { start: "2026-10-08", end: "2026-10-14" }, showFooter: true, mask: true },
@@ -484,8 +475,7 @@ describe("VcDateRangePicker", () => {
       outside.remove();
     });
 
-    // The suppressed blur still has to be paid back: leaving through the calendar is a real departure,
-    // and the shell sees no focusout of its own for it.
+    // The suppressed blur has to be paid back: the shell sees no focusout of its own for this.
     it("combined: blurs exactly once when focus leaves the calendar for the outside", async () => {
       const outside = document.createElement("button");
       document.body.appendChild(outside);
@@ -562,8 +552,7 @@ describe("VcDateRangePicker", () => {
       popoverHost.remove();
     });
 
-    // Leaving the open calendar directly, with no Escape first: without teleport the popover sits in the
-    // fieldset, so the departure both bubbles here and reaches the document watch — one blur, not two.
+    // Without teleport the departure both bubbles here and reaches the document watch — one blur, not two.
     it.each([
       ["split with teleport", true],
       ["split without teleport", false],
@@ -629,8 +618,8 @@ describe("VcDateRangePicker", () => {
   });
 });
 
-// Production renders this row inside VcPopover's #content, so a `.vc-popover__body` WRAPS the shell.
-// Treating any popover in the relatedTarget's ancestry as "the field's own calendar" swallowed every blur.
+// Production nests this inside a `.vc-popover__body`, so treating any ancestor popover as the field's
+// own calendar swallowed every blur.
 describe("VcDateRangePicker — hosted inside a popover body", () => {
   type MountedType = ReturnType<typeof mountSplit>;
 
@@ -716,8 +705,7 @@ describe("VcDateRangePicker — hosted inside a popover body", () => {
   });
 });
 
-// Ownership is read from the shell's own aria-controls, so any OTHER popover on the page — a select
-// listbox teleported beside the field — still counts as focus leaving, even while the calendar is open.
+// Ownership comes from the shell's own aria-controls, so any OTHER popover still counts as leaving.
 describe("VcDateRangePicker — focus moving into an unrelated popover", () => {
   function unrelatedPopover(): HTMLElement {
     const body = document.createElement("div");
@@ -835,8 +823,7 @@ describe("VcDateRangePicker — split layout", () => {
     wrapper.unmount();
   });
 
-  // Same defect one layer down: in "split" each field is a VcDatePicker with its own calendar footer,
-  // and its own onCalendarUpdate used to schedule the resync that undid the clear.
+  // Same defect one layer down: each split field's own onCalendarUpdate scheduled the undoing resync.
   it("keeps a split field empty after its footer Clear the parent never applies", async () => {
     const wrapper = mountSplit(
       { modelValue: { start: "2026-10-08", end: "2026-10-14" }, showFooter: true, mask: true },
@@ -923,8 +910,7 @@ describe("VcDateRangePicker — split layout", () => {
       expect(calendarBounds(wrapper).startSoftMax).toBe("2026-10-20");
     });
 
-    // An advisory bound cannot invert against min/max or empty a month, so it needs no reconciliation:
-    // the raw endpoint is handed over in every state the old hard clamp had to back out of.
+    // An advisory bound needs no reconciliation: the raw endpoint is handed over in every state.
     it("keeps the raw endpoint when the range is already out of order", () => {
       const bounds = calendarBounds(mountSplit({ modelValue: { start: "2026-12-01", end: "2026-10-14" } }));
       expect(bounds.startSoftMax).toBe("2026-10-14");
@@ -1106,8 +1092,7 @@ describe("VcDateRangePicker — split layout", () => {
       wrapper.unmount();
     });
 
-    // Uncontrolled parent: the model prop never changes, so a snapshot kept past the task would
-    // resurrect the start date the parent already rejected.
+    // Uncontrolled parent: a snapshot kept past the task would resurrect the rejected start date.
     it("drops the previous emit's snapshot when the parent does not apply it", async () => {
       const wrapper = mountSplit();
 

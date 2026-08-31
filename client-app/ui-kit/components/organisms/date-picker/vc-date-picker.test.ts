@@ -27,8 +27,7 @@ function selectedDay(wrapper: ReturnType<typeof mountPicker>, iso: string) {
 }
 
 describe("VcDatePicker — preventDeselect", () => {
-  // The default guards a value the user did not mean to empty. It is a pass-through to VcCalendar,
-  // and nothing in the app sets it, so this is the only place the false branch is exercised.
+  // A pass-through to VcCalendar that nothing in the app sets, so the false branch lives only here.
   it("keeps the value when the selected day is re-clicked", async () => {
     const wrapper = mountPicker();
 
@@ -55,8 +54,7 @@ describe("VcDatePicker — preventDeselect", () => {
 });
 
 describe("VcDatePicker — footer Clear", () => {
-  // The model round trip cannot drive this: an uncontrolled parent never writes the emit back, so a
-  // resync would repaint the date the button just cleared.
+  // An uncontrolled parent never writes the emit back, so a resync would repaint the cleared date.
   it("empties the field even when the parent never applies the clear", async () => {
     const wrapper = mountPicker({ showFooter: true });
 

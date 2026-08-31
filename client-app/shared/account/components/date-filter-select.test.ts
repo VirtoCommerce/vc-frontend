@@ -73,8 +73,7 @@ describe("DateFilterSelect", () => {
     expect(wrapper.findComponent({ name: "VcDateRangePicker" }).attributes("layout")).toBe("combined");
   });
 
-  // "combined" turns the per-field labels into aria-labels, so without a group label the mobile filter
-  // shows two unlabelled date boxes.
+  // "combined" turns the per-field labels into aria-labels, so without a group label nothing is named.
   it("labels the combined field, and leaves split to its own field labels", () => {
     const combined = mountWithCustomSelected();
     expect(combined.findComponent({ name: "VcDateRangePicker" }).attributes("label")).toBe(
@@ -85,17 +84,14 @@ describe("DateFilterSelect", () => {
     expect(split.findComponent({ name: "VcDateRangePicker" }).attributes("label")).toBeUndefined();
   });
 
-  // reka's prevent-deselect took away the re-click that used to drop a date, so the calendar footer is
-  // the pointer path back — in both layouts.
+  // prevent-deselect took away the re-click, so the calendar footer is the pointer path back.
   it("asks for the calendar footer", () => {
     expect(
       mountWithCustomSelected().findComponent({ name: "VcDateRangePicker" }).attributes("show-footer"),
     ).toBeDefined();
   });
 
-  // Apply is gated on this emit, and the seeded ref is a starting point, not a verdict on the range.
-  // Switching the filter type is the one place this component owns state of its own, and until now
-  // deleting the whole handler left the suite green.
+  // Apply is gated on this emit, and switching the filter type is the one state this component owns.
   describe("switching the filter type", () => {
     function switchTo(wrapper: ReturnType<typeof mountWithCustomSelected>, next: DateFilterType) {
       const select = wrapper.findComponent({ name: "VcSelect" });
@@ -104,8 +100,7 @@ describe("DateFilterSelect", () => {
       return wrapper.vm.$nextTick();
     }
 
-    // Re-selecting Custom hands back the very object the range setter has been mutating, dates and all,
-    // so the handler is the only thing that empties it.
+    // Re-selecting Custom hands back the object the range setter mutated, so only the handler empties it.
     it("drops the dates when Custom is re-selected", async () => {
       const custom = {
         id: DateFilterId.CUSTOM,
@@ -137,9 +132,7 @@ describe("DateFilterSelect", () => {
   });
 
   describe("initial validity", () => {
-    // The consumer's flag outlives this component, so silence on mount would leave it latched on the
-    // previous instance's verdict. The seed carries the order, so it cannot claim an inverted range is
-    // valid while waiting for the picker.
+    // The consumer's flag outlives this component, so silence on mount would leave it latched.
     it("announces the committed order on mount", () => {
       const inverted = mountWithCustomSelected({
         dateFilterType: {
@@ -164,9 +157,8 @@ describe("DateFilterSelect", () => {
       expect(mountWithCustomSelected().emitted("update:valid")).toEqual([[true]]);
     });
 
-    // The filter popover unmounts its content while the orders list reloads (`:disabled="loading"` on
-    // VcPopover), so this component is remounted routinely — with the consumer's flag still holding the
-    // old verdict. Without an emit on mount, Apply stays dead for the life of the page.
+    // The filter popover unmounts its content while the orders list reloads, so without an emit on
+    // mount Apply stays dead for the life of the page.
     it("re-announces validity after a remount, so the consumer cannot stay latched", async () => {
       const consumerValid = ref(true);
       const mounted = ref(true);
@@ -200,8 +192,7 @@ describe("DateFilterSelect", () => {
       wrapper.unmount();
     });
 
-    // The stubbed picker above emits nothing, so the real chain is what proves the verdict arrives.
-    // Both layouts ship: split on desktop, combined on mobile.
+    // The stubbed picker emits nothing, so the real chain is what proves the verdict arrives.
     it.each(["split", "combined"] as const)(
       "reports an out-of-order range as invalid in %s, and only that",
       (layout) => {

@@ -256,8 +256,7 @@ describe("useDateRangeField — mergeRange", () => {
   });
 });
 
-// The prop is still the pre-update value for a second commit in the same task (clearing one segment
-// commits the other's typed text), so merging into it silently drops the first edit.
+// A second commit in the same task still reads the pre-update prop, silently dropping the first edit.
 describe("useDateRangeField — two commits before the prop updates", () => {
   test("keeps both edits", () => {
     const { field } = setup({ modelValue: { start: "2026-08-08", end: undefined } });
@@ -278,8 +277,7 @@ describe("useDateRangeField — two commits before the prop updates", () => {
     expect(field.mergeRange("start", "2026-09-01")).toEqual({ start: "2026-09-01", end: undefined });
   });
 
-  // An uncontrolled parent never applies the emit, so the model watch never fires and only the
-  // end-of-task drop stops the next commit from merging into a rejected endpoint.
+  // An uncontrolled parent never applies the emit, so only the end-of-task drop saves the next commit.
   test("goes back to the prop once the task ends, even if the model never changed", async () => {
     const { field } = setup();
     expect(field.mergeRange("start", "2026-06-15")).toEqual({ start: "2026-06-15", end: undefined });

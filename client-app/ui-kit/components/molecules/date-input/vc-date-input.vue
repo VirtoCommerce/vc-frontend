@@ -81,7 +81,7 @@ interface IProps {
   aria?: Record<string, string | number | null>;
   tabindex?: string | number;
   dataTestId?: string;
-  /** Strip border, background, focus ring and fixed height so a parent shell can own the chrome. Pair with `hideDetails`. */
+  /** Strip the chrome (border, background, ring, fixed height) so a shell can own it. Pair with `hideDetails`. */
   seamless?: boolean;
   /** Drop the details row (message/error text) so a parent can render one for a group of fields. */
   hideDetails?: boolean;
@@ -94,6 +94,7 @@ interface IEmits {
   (event: "update:errorText", value: string | undefined): void;
   (event: "blur", focusEvent: FocusEvent): void;
   (event: "focus", focusEvent: FocusEvent): void;
+  /** The clear button only; text typed away emits `update:modelValue` alone. */
   (event: "clear"): void;
 }
 
@@ -165,7 +166,7 @@ function onInputClear(): void {
 const inputRef = useTemplateRef<{ inputElement: HTMLInputElement | null } | null>("inputRef");
 const innerInputElement = computed<HTMLInputElement | null>(() => inputRef.value?.inputElement ?? null);
 
-// Uncommitted text never reaches the model; shells gating a clear affordance need the display state too.
+// Uncommitted text never reaches the model, so a shell gating a clear button needs this too.
 const hasText = computed<boolean>(() => displayValue.value.trim().length > 0);
 
 defineExpose({

@@ -85,8 +85,7 @@ export function useDateField(opts: IUseDateFieldOptions) {
     }
   }
 
-  // One ladder for both readers: `isValid` wants the verdict, `errorText` the reason. Keeping the
-  // rungs in two places also ran the consumer's disabledDate predicate twice for a date it rejects.
+  // One ladder for both readers: `isValid` wants the verdict, `errorText` the reason.
   const failure = computed<DateFieldFailureType | undefined>(() => {
     if (isEmpty.value) {
       return undefined;
@@ -148,8 +147,7 @@ export function useDateField(opts: IUseDateFieldOptions) {
 
   /**
    * Empties the text without reading the model. `reset` cannot serve a CLEAR: an uncontrolled parent
-   * never writes the model back, so repainting from it puts the cleared dates straight back and the
-   * button reads as broken. VcInput clears the same way — its defineModel keeps a local value.
+   * never writes back, so repainting from the model puts the cleared date straight back.
    */
   function clearText(): void {
     displayValue.value = "";
@@ -163,7 +161,7 @@ export function useDateField(opts: IUseDateFieldOptions) {
     }
   }
 
-  // Enter commits whatever `updateOn` says; `commit` marks the field touched itself.
+  // Enter commits whatever `updateOn` says; `commit` marks the field touched.
   function onEnter(): void {
     commit();
   }

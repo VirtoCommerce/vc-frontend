@@ -59,14 +59,11 @@ const { dateFilterType } = toRefs(props);
 
 const selectedDateFilter = ref<DateFilterType>(dateFilterType.value ?? dateFilterTypes.value[0]);
 
-// Seeded from the committed order, not a bare `true`: the consumer's flag outlives this component —
-// the filter popover unmounts its content while the orders list reloads — and a remount that starts
-// optimistic could never emit its way back down, because true→true is not a change. Order is the only
-// invalidity knowable from two ISO endpoints; a rejected keystroke cannot survive a remount.
+// Seeded from the committed order, not a bare `true`: the consumer's flag outlives this component, and
+// a remount starting optimistic could never emit its way back down — true→true is not a change.
 const rangeValid = ref(isDateRangeInOrder(selectedDateFilter.value.startDate, selectedDateFilter.value.endDate));
 
-// "combined" turns startLabel/endLabel into aria-labels, so its one visible label has to name the pair.
-// "split" already labels each field, so a group label there would only repeat them.
+// "combined" turns startLabel/endLabel into aria-labels, so its one visible label must name the pair.
 const combinedLabel = computed(() =>
   props.layout === "combined" ? t("shared.account.orders_filter.date_range_label") : undefined,
 );
@@ -85,8 +82,7 @@ const range = computed<VcDateRangeType | undefined>({
   },
 });
 
-// Immediate, so a remount re-announces the seed: the consumer cannot be left latched on a verdict from
-// a previous instance. The seed already carries the order, so nothing claims an inverted range is valid.
+// Immediate, so a remount re-announces the seed rather than leaving the consumer latched.
 watch(rangeValid, (valid) => emit("update:valid", valid), { immediate: true });
 
 function handleChangeType(): void {

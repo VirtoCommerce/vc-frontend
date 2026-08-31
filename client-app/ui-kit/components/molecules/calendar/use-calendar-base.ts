@@ -79,7 +79,7 @@ function focusCellByIso(root: HTMLElement, iso: string): void {
     `[data-reka-calendar-cell-trigger][data-value="${iso}"]:not([data-outside-view])`,
   );
   const cell = inView ?? root.querySelector<HTMLElement>(`[data-reka-calendar-cell-trigger][data-value="${iso}"]`);
-  // preventScroll: the calendar is body-portaled, so a default focus() would scroll the whole document to it.
+  // preventScroll: the calendar is body-portaled, so focus() would scroll the whole document.
   cell?.focus({ preventScroll: true });
 }
 
@@ -105,9 +105,8 @@ export function useCalendarBase(opts: IUseCalendarBaseOptions) {
 
   const placeholderRef = ref(clampToBounds(opts.initialPlaceholder())) as Ref<DateValue>;
 
-  // A hard bound can arrive or move after mount, which would leave the view on a month with every day
-  // disabled. Only out-of-bounds views are pulled back in, so month/year navigation inside the bounds
-  // stays free. Soft bounds are excluded by design — they must never move the user's view.
+  // A bound arriving after mount can leave the view on a fully disabled month. Only out-of-bounds
+  // views are pulled back, so navigation inside the bounds stays free. Soft bounds never move the view.
   watch([minDateValue, maxDateValue], () => {
     placeholderRef.value = clampToBounds(placeholderRef.value);
   });
@@ -115,8 +114,7 @@ export function useCalendarBase(opts: IUseCalendarBaseOptions) {
   const softMinDateValue = computed(() => tryParseDate(opts.softMin?.value));
   const softMaxDateValue = computed(() => tryParseDate(opts.softMax?.value));
 
-  // Deliberately absent from clampToBounds and the nav guards: a soft bound only paints the day,
-  // so every month stays reachable and every marked day stays selectable.
+  // Deliberately absent from clampToBounds and the nav guards: a soft bound only paints the day.
   function isOutsideSoftBounds(date: DateValue): boolean {
     const min = softMinDateValue.value;
     if (min && date.compare(min) < 0) {
@@ -265,8 +263,8 @@ export function useCalendarBase(opts: IUseCalendarBaseOptions) {
       return;
     }
 
-    // reka gives a disabled day no tabindex, so focusing one is a silent no-op and the grid stays
-    // unreachable from the keyboard — which is exactly the first cell whenever `min` starts mid-month.
+    // reka gives a disabled day no tabindex, so focusing one is a silent no-op — which is the first
+    // cell whenever `min` starts mid-month.
     const firstInView = root.querySelector<HTMLElement>(
       "[data-reka-calendar-cell-trigger]:not([data-outside-view]):not([data-disabled])",
     );

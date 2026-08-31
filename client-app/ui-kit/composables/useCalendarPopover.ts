@@ -39,7 +39,7 @@ export function useCalendarPopover(opts: IUseCalendarPopoverOptions) {
 
   function onToggle(opened: boolean): void {
     if (!opened) {
-      // Trigger-click / click-outside closes skip onEscapeClose; focus would stay in the hidden popover.
+      // Trigger-click and click-outside skip onEscapeClose; focus would stay in the hidden popover.
       const calendarEl = opts.getCalendar()?.$el;
       if (calendarEl instanceof HTMLElement && calendarEl.contains(document.activeElement)) {
         focusField();

@@ -207,8 +207,7 @@ function parseRange(value: VcDateRangeType | undefined): DateRange {
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss
 const initialRange = props.modelValue;
 
-// A pushed snapshot rather than a computed: reka re-reads the model only when this object changes, and
-// a swallowed Escape revert has to re-read a model that did not change (see resyncRekaWithModel).
+// Pushed, not computed: a swallowed Escape revert has to re-read a model that did not change.
 const parsedModelValue = shallowRef<DateRange>(parseRange(initialRange));
 
 const base = useCalendarBase({
@@ -240,7 +239,7 @@ const {
 
 const rootClasses = computed(() => ["vc-range-calendar", `vc-range-calendar--size--${props.size}`]);
 
-// reka exposes today as a data attribute only; aria-current is what a screen reader announces.
+// reka marks today with a data attribute only; aria-current is what a reader announces.
 function dayAttrs(date: DateValue): Record<string, string> {
   return isToday(date) ? { "aria-current": "date" } : {};
 }
@@ -248,13 +247,10 @@ function dayAttrs(date: DateValue): Record<string, string> {
 // Dedup snapshot: props.modelValue is still stale during reka's same-tick round trip.
 let lastKnown: VcDateRangeType | undefined = initialRange;
 
-// What reka would restore on Escape: its own validModelValue, seeded from the mount model and
-// refreshed ONLY when a complete range is built inside the grid — so it goes stale on every commit
-// that arrives from outside.
+// What reka would restore on Escape. It refreshes only on in-grid completions, so an outside commit stales it.
 let rekaRevertTarget: VcDateRangeType | undefined = initialRange;
 
-// The range we actually hold: commits from outside plus complete in-grid picks, but NOT the
-// in-progress anchor we emit ourselves — cancelling that anchor is what Escape is for.
+// Outside commits plus complete in-grid picks — not the anchor we emit ourselves; Escape cancels that.
 let committedRange: VcDateRangeType | undefined = initialRange;
 
 // Swallows reka's duplicate update:startValue echo after it swaps and commits a completed range.
@@ -263,8 +259,7 @@ let pendingCompleteRangeStart: string | undefined;
 // reka cannot represent an end-only range and re-anchors it as start; that echo must not be forwarded.
 let suppressExternalSyncEcho = false;
 
-// Every route that pushes a value INTO reka draws an echo back on the same tick, so the guard is
-// always armed for exactly one tick — cleared here rather than by each caller.
+// Every push INTO reka draws a same-tick echo, so the guard is armed for exactly one tick.
 function suppressEchoForOneTick(): void {
   suppressExternalSyncEcho = true;
   void nextTick(() => {
@@ -272,11 +267,10 @@ function suppressEchoForOneTick(): void {
   });
 }
 
-// reka reverts an in-progress pick by restoring startValue and endValue separately: the start-only
-// intermediate must not leave as a fresh partial pick, only the whole range it settles on.
+// reka restores startValue and endValue separately; only the whole range it settles on may leave.
 let pendingEscapeRevert = false;
 
-// True while the pending revert aims at a stale target, i.e. would destroy or resurrect a range.
+// True while the pending revert aims at a stale target — it would destroy or resurrect a range.
 let staleEscapeRevert = false;
 
 function isSameRange(a: VcDateRangeType | undefined, b: VcDateRangeType | undefined): boolean {
@@ -300,10 +294,8 @@ function toRange(value: DateRange | undefined): VcDateRangeType | undefined {
   return start || end ? { start, end } : undefined;
 }
 
-// reka refreshes its Escape target when a complete range settles in its own start/end — which happens
-// for a range built inside the grid, but ALSO while it performs a revert we just refused. Only the
-// first is a commit: adopting the refused range would tell the next Escape that the same stale revert
-// is safe. Whatever we last emitted is the test — a refused revert never reaches the model.
+// reka refreshes its Escape target on an in-grid completion but ALSO on a revert we refused. Only the
+// first is a commit, and what we last emitted is the test: a refused revert never reaches the model.
 function onValidModelValueUpdate(value: DateRange | undefined): void {
   rekaRevertTarget = toRange(value);
   if (isSameRange(rekaRevertTarget, lastKnown)) {
@@ -311,30 +303,25 @@ function onValidModelValueUpdate(value: DateRange | undefined): void {
   }
 }
 
-// reka keeps its own startValue/endValue and re-reads the model only when the prop changes. After a
-// swallowed revert those hold the reverted dates, so the grid needs an explicit re-read.
+// reka re-reads the model only on a prop change, so after a swallowed revert the grid needs this.
 function resyncRekaWithModel(): void {
-  // reka answers the re-read with update:startValue, and for a partial range with update:modelValue —
-  // echoes of our own value, exactly like an external sync.
+  // reka answers with echoes of our own value, exactly like an external sync.
   suppressEchoForOneTick();
   parsedModelValue.value = parseRange(props.modelValue);
-  // reka moved its placeholder to the revert target's start; the model we keep gets no prop change to
-  // re-drive it, so a model without a start of its own would leave the grid on the refused month.
+  // reka moved its placeholder to the revert target; nothing else would bring the grid back.
   placeholderRef.value = clampToBounds(
     tryParseDate(props.modelValue?.start) ?? tryParseDate(props.modelValue?.end) ?? todayDate(),
   );
 }
 
 function onUpdate(value: DateRange | undefined): void {
-  // update:modelValue is the authoritative end of an Escape revert: reka writes startValue and endValue
-  // in one synchronous handler, so this is the first place that sees the whole restored value. Clearing
-  // the guard on the conclusion rather than after N ticks keeps it independent of the flush shape.
+  // The authoritative end of a revert: reka writes both values in one handler, so the whole value lands
+  // here. Clearing the guard on the conclusion keeps it independent of the flush shape.
   const isStaleRevert = pendingEscapeRevert && staleEscapeRevert;
   endEscapeRevert();
 
   if (isStaleRevert) {
-    // Cancel against the range we hold instead of reka's snapshot — forwarding its revert would drop
-    // a typed value or bring back a deleted one.
+    // Against the range we hold: forwarding reka's would drop a typed value or resurrect a deleted one.
     emitRange(committedRange);
     resyncRekaWithModel();
     return;
@@ -347,8 +334,7 @@ function onUpdate(value: DateRange | undefined): void {
     emitRange(undefined);
     return;
   }
-  // reka cannot hold an end-only range and rewrites it as a start anchor. onStartValueUpdate refuses
-  // that echo on its own route; on an Escape revert it arrives here instead, with nothing suppressed.
+  // reka rewrites an end-only range as a start anchor; on an Escape revert that echo arrives here.
   if (start && !end && lastKnown?.end && !lastKnown.start && start === lastKnown.end) {
     return;
   }
@@ -366,17 +352,15 @@ function onClearClick(): void {
   if (props.disabled || props.readonly) {
     return;
   }
-  // A commit to nothing, and one WE emit — the props watch skips our own echo, so this is the only
-  // place that can tell Escape the old range is gone.
+  // The props watch skips our own echo, so this is the only place that can tell Escape the range is gone.
   committedRange = undefined;
   emitRange(undefined);
   // emitRange dedups an already-empty model, but shells still need to react to the explicit action.
   emit("clear");
 }
 
-// Capture phase, because reka's cell trigger stops arrows/Enter/Space from bubbling
-// (RangeCalendarCellTrigger.js: handleArrowKey calls stopPropagation). Without this, a keyboard pick
-// after an Escape reka chose not to answer would meet a guard still armed — and be swallowed.
+// Capture phase: reka's cell trigger stops arrows/Enter/Space from bubbling, so a keyboard pick after
+// an unanswered Escape would meet a guard still armed.
 function onCalendarKeydownCapture(event: KeyboardEvent): void {
   if (event.key !== "Escape") {
     endEscapeRevert();
@@ -393,8 +377,7 @@ function onCalendarKeydown(event: KeyboardEvent): void {
   baseOnCalendarKeydown(event);
 }
 
-// Any fresh gesture means the revert has either landed or will never come; a guard left armed would
-// swallow the next anchor pick.
+// A fresh gesture means the revert landed or never will; a guard left armed swallows the next pick.
 function endEscapeRevert(): void {
   pendingEscapeRevert = false;
   staleEscapeRevert = false;
@@ -423,8 +406,7 @@ watch(
   () => [props.modelValue?.start, props.modelValue?.end] as const,
   ([newStart, newEnd], [oldStart, oldEnd]) => {
     parsedModelValue.value = parseRange(props.modelValue);
-    // Our own in-progress anchor comes back as a prop change too; only a value we did not emit is a
-    // commit that Escape may fall back to.
+    // Our own anchor returns as a prop change too; only a value we did not emit is a commit.
     if (!isSameRange(props.modelValue, lastKnown)) {
       committedRange = props.modelValue;
     }
@@ -432,8 +414,7 @@ watch(
     lastKnown = props.modelValue;
     // Swallow reka's same-tick echo from being fed this external value.
     suppressEchoForOneTick();
-    // A changed start must win: reka's placeholder-follows-startValue watcher overrides any
-    // end-preference later in the flush. End-only changes still render the end month.
+    // A changed start must win: reka's placeholder-follows-startValue overrides any end preference later.
     const startChanged = newStart !== oldStart;
     const endChanged = newEnd !== oldEnd;
     let targetIso: string | undefined;
@@ -452,20 +433,15 @@ defineExpose({ focusActiveCell });
 
 <style lang="scss">
 .vc-range-calendar {
-  // Own keys first: a fork restyling the single calendar's radius should not silently reshape this one.
-  // The single calendar's keys stay in the chain so an existing override keeps working.
+  // Own keys first, so restyling VcCalendar cannot reshape this one; its keys stay as the fallback.
   --radius: var(--vc-range-calendar-radius, var(--vc-calendar-radius, var(--vc-radius, 0.75rem)));
   --day-radius: var(--vc-range-calendar-day-radius, var(--vc-calendar-day-radius, var(--vc-radius, 0.375rem)));
-  // 0.8, not the house 0.3-0.35: this ring is the only focus cue on the day grid, and at 0.35 it
-  // composites to 1.56-1.77 : 1 on the calendar surface, under the 3:1 of WCAG 1.4.11. Dark needs the
-  // same value, so it is set once here rather than re-declared in the dark layer.
+  // 0.8, not the house 0.3-0.35: at 0.35 this composites to 1.56-1.77 : 1, under WCAG 1.4.11's 3:1.
+  // Dark needs the same value, so it is not re-declared in the dark layer.
   --focus-ring: rgb(from var(--color-primary-500) r g b / 0.8);
 
-  // Range endpoints, as a pair: own key, then the palette. Two arms are deliberately absent — the
-  // single calendar's --vc-calendar-selected-* keys (both born alongside these, so nothing legacy to
-  // honour, and reading them would let a fork restyling VcCalendar silently repaint this one), and the
-  // shared --color-vc-*-solid-primary keys. 700 rather than 500, and why not the shared key either:
-  // see vc-calendar.
+  // Own key, then the palette. Deliberately not VcCalendar's --vc-calendar-selected-* keys (restyling
+  // it must not repaint this) and not the shared --color-vc-* ones; 700 not 500 — see vc-calendar.
   --selected-bg: var(--vc-range-calendar-selected-bg, var(--color-primary-700));
   --selected-text: var(--vc-range-calendar-selected-text, var(--color-additional-50));
 
@@ -473,8 +449,7 @@ defineExpose({ focusActiveCell });
   --border-color: var(--color-neutral-200);
   --text-color: var(--color-neutral-800);
 
-  // Hover-preview endpoints, as a pair: two dark presets leave primary-200 uninverted, so the light
-  // pairing collapses to 1.02 : 1 there — exactly while the user is dragging a range out.
+  // Two dark presets leave primary-200 uninverted, collapsing the light pairing to 1.02 : 1.
   --preview-bg: var(--color-primary-200);
   --preview-text: var(--color-primary-900);
 
@@ -639,8 +614,7 @@ defineExpose({ focusActiveCell });
         var(--color-neutral-200) 5px
       );
 
-      /* The endpoint fill below overrides both the hatch and the muted text; currentColor keeps the
-         strike legible on either surface, so it is the cue that survives on an unavailable endpoint. */
+      /* The endpoint fill overrides the hatch and the muted text, so the strike is the surviving cue. */
       text-decoration: line-through;
       text-decoration-thickness: 1px;
     }
@@ -660,8 +634,7 @@ defineExpose({ focusActiveCell });
       background: var(--selected-bg);
       color: var(--selected-text);
 
-      /* Source order cannot save these from [data-outside-view]:hover, which is one attribute more
-         specific: an endpoint of a range spanning a month boundary would grey out under the cursor. */
+      /* [data-outside-view]:hover is one attribute more specific, so source order cannot save these. */
       &:hover,
       &[data-outside-view]:hover {
         background: var(--selected-bg);
@@ -692,10 +665,8 @@ defineExpose({ focusActiveCell });
       border-end-end-radius: var(--day-radius);
     }
 
-    /* The committed in-range band and the hover-preview band read the same, and reka never sets both
-       (data-highlighted only exists while an anchor is pending). Endpoints and run edges are excluded
-       from each so their own fills win; reka marks ALL span cells data-selected, endpoints included.
-       Split the list if the two states are ever meant to differ. */
+    /* Committed band and hover preview read the same, and reka never sets both. Endpoints and run edges
+       are excluded so their own fills win. Split the list if the two states must ever differ. */
     &[data-selected]:not([data-selection-start]):not([data-selection-end]),
     &[data-highlighted]:not([data-highlighted-start]):not([data-highlighted-end]):not([data-selection-start]):not(
         [data-selection-end]
@@ -703,8 +674,7 @@ defineExpose({ focusActiveCell });
       @apply text-primary-800;
 
       background: var(--color-primary-100);
-      /* The fill alone sits at 1.20-1.33 : 1 on the surface, so it cannot be the only in-range cue
-         (WCAG 1.4.1). These rails clear 3:1 in every preset. */
+      /* The fill alone is 1.20-1.33 : 1, so it cannot be the only cue (WCAG 1.4.1); these rails clear 3:1. */
       border-top: 1px dashed var(--color-primary-500);
       border-bottom: 1px dashed var(--color-primary-500);
       border-radius: 0;
@@ -738,8 +708,7 @@ defineExpose({ focusActiveCell });
       box-shadow: inset 0 0 0 2px var(--color-primary-500);
     }
 
-    /* today that is also an endpoint: invert ring to white so it reads on the fill */
-    /* The ring reads against the endpoint fill, so it follows the same ink as the digits on it. */
+    /* today as an endpoint: the ring reads against the fill, so it takes the same ink as the digits */
     &[data-today][data-selection-start],
     &[data-today][data-selection-end] {
       box-shadow: inset 0 0 0 2px var(--selected-text);

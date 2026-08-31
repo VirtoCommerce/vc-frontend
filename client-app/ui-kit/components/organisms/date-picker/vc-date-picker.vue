@@ -151,6 +151,7 @@ interface IEmits {
   (event: "update:errorText", value: string | undefined): void;
   (event: "blur", focusEvent: FocusEvent): void;
   (event: "focus", focusEvent: FocusEvent): void;
+  /** A clear button, field or calendar footer. Not text typed away, not a deselecting re-click. */
   (event: "clear"): void;
 }
 
@@ -161,8 +162,7 @@ const props = withDefaults(defineProps<IProps>(), {
   closeOnSelect: true,
   placement: "bottom-end",
   hideDetails: false,
-  // Declared, not merely left undefined: these three decide whether the field has ANY pointer way to
-  // clear, so the docs table has to show what a consumer gets when it passes nothing.
+  // Declared, not left undefined: these three decide whether the field has any pointer way to clear.
   clearable: false,
   showFooter: false,
   preventDeselect: true,
@@ -216,14 +216,13 @@ function onInputClear(): void {
   emit("clear");
 }
 
-// The model round trip cannot drive this: clearing an already-empty date emits nothing.
+// The model round trip can't drive this: clearing an already-empty date emits nothing.
 function onCalendarClear(close: () => void): void {
   if (props.disabled || props.readonly) {
     return;
   }
   emit("clear");
-  // A CLEAR empties the text rather than resyncing it: an uncontrolled parent never writes the model
-  // back, and reset() would paint the cleared date straight back in.
+  // A CLEAR empties the text: an uncontrolled parent never writes back, so reset() would repaint it.
   dateInputRef.value?.clearText();
   if (props.closeOnSelect) {
     close();
@@ -237,14 +236,12 @@ function onCalendarUpdate(close: () => void, value: string | undefined): void {
   }
   emit("update:modelValue", value);
   if (value === undefined) {
-    // A clear, not a pick — the footer Clear and a deselect both land here. Resyncing would read a
-    // model an uncontrolled parent never wrote back and paint the cleared date straight in, undoing
-    // what onCalendarClear just did. Order-independent this way: whichever event arrives first wins.
+    // A clear, not a pick. Resyncing would read a model an uncontrolled parent never wrote back and
+    // paint the cleared date straight in, undoing onCalendarClear.
     dateInputRef.value?.clearText();
   } else {
-    // The field resyncs its display from a model CHANGE, so uncommitted text would outlive a pick of
-    // the date already committed — leaving the calendar and the field disagreeing, with the field
-    // reporting invalid for good. nextTick so the reset reads the applied model.
+    // The field resyncs only from a model CHANGE, so re-picking the committed date would leave stale
+    // text reporting invalid for good. nextTick so the reset reads the applied model.
     void nextTick(() => {
       dateInputRef.value?.reset();
     });

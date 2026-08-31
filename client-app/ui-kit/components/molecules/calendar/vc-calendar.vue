@@ -230,8 +230,7 @@ const rootClasses = computed(() => ["vc-calendar", `vc-calendar--size--${props.s
 
 const softBoundHintId = useComponentId("vc-calendar-soft-hint");
 
-// reka sets aria-label on every cell unconditionally, so the reason cannot be part of the name: it goes
-// into the accessible DESCRIPTION, which reaches a keyboard user too — `title` alone is hover-only.
+// reka owns the cell's aria-label, so the reason goes into the description; `title` alone is hover-only.
 // aria-current marks today, which reka only exposes as a data attribute.
 function dayAttrs(date: DateValue): Record<string, string> {
   const attrs: Record<string, string> = {};
@@ -278,8 +277,7 @@ function onTodayClick(): void {
 
 function onClearClick(): void {
   emit("update:modelValue", undefined);
-  // An already-empty field emits no model change, but the shell still has to see the action —
-  // the same contract as vc-range-calendar.
+  // An already-empty field emits no model change, but the shell still has to see the action.
   emit("clear");
 }
 
@@ -302,18 +300,14 @@ defineExpose({
 .vc-calendar {
   --radius: var(--vc-calendar-radius, var(--vc-radius, 0.75rem));
   --day-radius: var(--vc-calendar-day-radius, var(--vc-radius, 0.375rem));
-  // 0.8, not the house 0.3-0.35: this ring is the only focus cue on the day grid, and at 0.35 it
-  // composites to 1.56-1.77 : 1 on the calendar surface, under the 3:1 of WCAG 1.4.11. Dark needs the
-  // same value, so it is set once here rather than re-declared in the dark layer.
+  // 0.8, not the house 0.3-0.35: at 0.35 this composites to 1.56-1.77 : 1, under WCAG 1.4.11's 3:1.
+  // Dark needs the same value, so it is not re-declared in the dark layer.
   --focus-ring: rgb(from var(--color-primary-500) r g b / 0.8);
 
-  // Selected day, as a pair. Component key, then the palette — deliberately NOT via the shared
-  // --color-vc-*-solid-primary keys the buttons use (_ui-kit-tokens.scss). 700, not 500, because the
-  // system ink is white and on primary-500 that measures 2.11 : 1 in default/mercury (2.14 watermelon,
-  // 4.07 purple-pink); the shared key would override that contrast choice with the theme's own pair,
-  // and in default.dark/mercury.dark that pair is #f99e24 on white — 2.11 : 1 again. On primary-700
-  // the ink clears AA in all 14 preset/mode combinations: 5.02 (watermelon) to 18.27 (black-gold).
-  // A fork retinting the selected day uses --vc-calendar-selected-bg / -text.
+  // Component key, then the palette — deliberately NOT the shared --color-vc-*-solid-primary keys,
+  // which would override this contrast choice with the theme's own pair. 700 not 500: white ink on
+  // primary-500 is 2.11 : 1 in default/mercury, on primary-700 it clears AA in all 14 combinations
+  // (5.02 watermelon to 18.27 black-gold). A fork retints via --vc-calendar-selected-bg / -text.
   --selected-bg: var(--vc-calendar-selected-bg, var(--color-primary-700));
   --selected-text: var(--vc-calendar-selected-text, var(--color-additional-50));
 
@@ -466,8 +460,7 @@ defineExpose({
     &[data-soft-out-of-bounds] {
       @apply text-neutral-500;
 
-      // currentcolor, not a lighter neutral: the underline is a state cue, so it has to clear the same
-      // contrast bar as the digits it sits under — in every preset and its dark variant.
+      // currentcolor: the underline is a state cue, so it must clear the same bar as its digits.
       text-decoration: underline dotted currentcolor;
       text-decoration-thickness: 1px;
       text-underline-offset: 2px;
@@ -540,8 +533,7 @@ defineExpose({
   }
 
   // Kept last: this ties with the :hover and state rules inside __day, so source order decides.
-  // The nested hovers outspecify [data-outside-view]:hover, which would otherwise repaint a selected
-  // day belonging to a neighbouring month.
+  // The nested hovers outspecify [data-outside-view]:hover, which would repaint a selected day.
   &__day[data-selected] {
     @apply font-bold;
 

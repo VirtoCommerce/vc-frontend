@@ -30,8 +30,7 @@ export function useDateRangeField(opts: IUseDateRangeFieldOptions) {
 
   const isValid = computed<boolean>(() => startSegmentValid.value && endSegmentValid.value && orderValid.value);
 
-  // Segments are hide-details, so their touched-gated per-reason message is relayed here.
-  // An invalid-but-untouched segment shows nothing, matching standalone VcDateInput.
+  // Segments are hide-details, so their touched-gated message is relayed here.
   const internalErrorText = computed<string | undefined>(() => {
     if (startErrorText.value) {
       return startErrorText.value;
@@ -77,8 +76,8 @@ export function useDateRangeField(opts: IUseDateRangeFieldOptions) {
     }
   }
 
-  // Two commits in one task (clear a segment while the other holds uncommitted text) both read the
-  // pre-update prop, dropping the first edit. Boxed so an emitted `undefined` stays distinguishable.
+  // Two commits in one task both read the pre-update prop, dropping the first edit. Boxed so an
+  // emitted `undefined` stays distinguishable.
   let lastEmitted: { range: VcDateRangeType | undefined } | undefined;
 
   function dropLastEmitted(): void {
@@ -87,10 +86,9 @@ export function useDateRangeField(opts: IUseDateRangeFieldOptions) {
 
   watch(() => toValue(opts.modelValue), dropLastEmitted);
 
-  // Rejected text can never commit, yet it keeps the whole shell invalid while the model holds a good
-  // range — and a segment only resyncs from a change to its OWN half, so text rejected in one segment
-  // outlives a commit made in the other. Any commit to the range is the moment to drop it. Text that is
-  // merely uncommitted stays: it can still be committed with Enter.
+  // Rejected text keeps the shell invalid, and a segment resyncs only from its OWN half — so text
+  // rejected in one outlives a commit in the other. Any commit is the moment to drop it. Text that is
+  // merely uncommitted stays: Enter can still commit it.
   watch(
     () => {
       const range = toValue(opts.modelValue);
@@ -115,8 +113,7 @@ export function useDateRangeField(opts: IUseDateRangeFieldOptions) {
     };
     const merged = !next.start && !next.end ? undefined : next;
     lastEmitted = { range: merged };
-    // The snapshot only has to bridge two commits within one task. An uncontrolled parent never
-    // changes the model, so the watch alone would leave it stale and merge into a rejected endpoint.
+    // The snapshot only bridges two commits in one task; an uncontrolled parent would leave it stale.
     void nextTick(dropLastEmitted);
     return merged;
   }

@@ -143,6 +143,7 @@ interface IEmits {
   (event: "blur", focusEvent: FocusEvent): void;
   /** Focus entered the whole field; see `blur` for the boundary rule. */
   (event: "focus", focusEvent: FocusEvent): void;
+  /** The shell's clear button; it empties both endpoints, so there is no side to report. */
   (event: "clear"): void;
 }
 
@@ -178,7 +179,7 @@ const startInputRef = useTemplateRef<IDateInputExposed | null>("startInputRef");
 const endInputRef = useTemplateRef<IDateInputExposed | null>("endInputRef");
 const startInputElement = computed<HTMLInputElement | null>(() => startInputRef.value?.inputElement ?? null);
 
-// Model-or-display-text: uncommitted (possibly invalid) text must stay clearable even with an empty model.
+// Uncommitted (possibly invalid) text must stay clearable even with an empty model.
 const hasClearableContent = computed<boolean>(
   () =>
     !!props.modelValue?.start ||
@@ -214,8 +215,7 @@ const {
   },
 });
 
-// Everything the two segments share, as VcDateRangePicker does for its two split fields: the next
-// shared prop lands in one place instead of two blocks kept in step by eye.
+// Shared by both segments, as VcDateRangePicker does for its split fields: one place to extend.
 const sharedSegmentProps = computed(() => ({
   seamless: true,
   hideDetails: true,
@@ -254,15 +254,14 @@ function resetSegments(side?: "start" | "end"): void {
   });
 }
 
-// A CLEAR, not a resync: an uncontrolled parent never writes the model back, and reset() would paint
-// the cleared dates straight back in. Synchronous — there is no model round trip to wait for.
+// A CLEAR, not a resync: an uncontrolled parent never writes back, so reset() would repaint the dates.
 function clearSegments(): void {
   startInputRef.value?.clearText();
   endInputRef.value?.clearText();
 }
 
 function clearBoth(): void {
-  // Refocus before the button unmounts, as VcInput.clear() does; focus lost to body would emit a false blur.
+  // Refocus before the button unmounts, as VcInput.clear() does; focus lost to body emits a false blur.
   startInputElement.value?.focus();
   emit("update:modelValue", undefined);
   emit("clear");
@@ -271,10 +270,7 @@ function clearBoth(): void {
 
 defineExpose({
   startInputElement,
-  /**
-   * Drops uncommitted segment text, for shells whose clear or pick bypasses this component. Pass a
-   * side to leave the other segment's text alone — a partial commit does not define it.
-   */
+  /** Drops uncommitted text. Pass a side to leave the other segment alone. */
   resetSegments,
   /** Empties both segments outright, for a CLEAR the parent may not write back. */
   clearSegments,
@@ -286,27 +282,22 @@ defineExpose({
   $error: "";
   $disabled: "";
 
-  // No $readonly capture: the state has no chrome of its own (each segment renders its own readonly
-  // input), so --readonly is a fork hook only, as .vc-input--readonly is.
+  // No $readonly capture: each segment renders its own readonly input, so --readonly is a fork hook.
 
   --color: var(--vc-input-base-color, theme("colors.primary.500"));
-  // 0.8, not the house 0.3: the segments are seamless with outline-none inputs, so this ring is the
-  // field's only focus cue, and at 0.3 it composites to 1.46-1.63 : 1 on the surface — under the 3:1
-  // of WCAG 1.4.11. The shell declares its own key and is an ancestor of the segments, so it never
-  // inherits .vc-input's. Dark needs the same 0.8, so there is no dark-layer override for it.
+  // 0.8, not the house 0.3: seamless segments make this the field's only focus cue, and at 0.3 it
+  // composites to 1.46-1.63 : 1, under WCAG 1.4.11's 3:1. Dark needs the same, so no dark override.
   --focus-color: rgb(from var(--color) r g b / 0.8);
   --radius: var(--vc-input-radius, var(--vc-radius, 0.5rem));
   --vc-button-radius: calc(var(--radius) - 2px);
 
-  // Measured: a committed date is 86px at 16px/Lato, and each segment's text box is about half the
-  // shell minus the chrome — so below this the year starts getting clipped.
+  // A committed date measures 86px at 16px/Lato; below this the year starts clipping.
   $tight-segments-breakpoint: 15.5rem;
 
   // The separator supplies the gap between the segments, so they sit tighter than a standalone input.
   --vc-input-padding-x: theme("padding.1");
 
-  // Root is a fieldset. Preflight zeroes its border/padding/margin; min-inline-size: min-content is
-  // the one UA default it misses, and it would stop the field from shrinking with its container.
+  // Preflight misses the fieldset's min-inline-size: min-content, which would stop it shrinking.
   @apply flex flex-col min-w-0;
 
   container-type: inline-size;
@@ -344,13 +335,12 @@ defineExpose({
 
     font-size: var(--text-size);
 
-    // Narrow shells give up the segment padding rather than the font size: below 16px iOS zooms the
-    // page on focus. The format hint stays wider than the box — a committed date is what must fit.
+    // Padding goes before font size: below 16px iOS zooms on focus. The committed date is what must fit.
     @container (width < #{$tight-segments-breakpoint}) {
       --vc-input-padding-x: 0px;
     }
 
-    // Not :focus-within — the clear/calendar buttons paint their own outline, so the shell must not double-ring.
+    // Not :focus-within — the buttons paint their own outline, so the shell must not double-ring.
     &:has(input:focus) {
       @apply ring ring-[--focus-color];
     }

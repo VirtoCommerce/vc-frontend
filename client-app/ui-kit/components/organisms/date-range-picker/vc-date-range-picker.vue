@@ -12,11 +12,9 @@
     </VcLabel>
 
     <!--
-      The opposite endpoint reaches each calendar as an ADVISORY bound: the days that would invert the
-      range are marked, yet stay selectable and never gate navigation. An inverted pick is therefore
-      possible — as typing one is — and lands in the shared details row as `invalid_range` with
-      `update:valid` false. "combined" cannot reach that state through its calendar at all: reka
-      normalises a backwards pair by swapping it, so the same gesture there yields a valid range.
+      The opposite endpoint is an ADVISORY bound: inverting days are marked but stay selectable, so an
+      inverted pick lands in the details row as `invalid_range`. "combined" cannot reach that state —
+      reka swaps a backwards pair.
     -->
     <div class="vc-date-range-picker__fields">
       <VcDatePicker
@@ -178,18 +176,14 @@ interface IProps {
   message?: string;
   /** External error flag (e.g. from vee-validate). Overrides internal validation display. */
   error?: boolean;
-  /**
-   * ISO YYYY-MM-DD min boundary. Gates both fields plus the calendar behind them — the single range
-   * calendar in "combined", each field's own calendar in "split".
-   */
+  /** ISO YYYY-MM-DD min boundary. Gates both fields and the calendar behind them, in either layout. */
   min?: string;
   /** ISO YYYY-MM-DD max boundary. See `min`. */
   max?: string;
   /**
-   * Predicate that returns true to mark a date unavailable (greyed out). Receives ISO YYYY-MM-DD.
-   * Read once at mount: reka takes the predicate by value, so swapping it later re-filters typed input but not the grid.
-   *
-   * An unavailable day cannot be picked as an endpoint in either layout, but a range may span one.
+   * Marks a date unavailable (greyed out). Receives ISO YYYY-MM-DD. Read once at mount: swapping it
+   * later re-filters typed input but not the grid. An unavailable day cannot be an endpoint, but a
+   * range may span one.
    */
   disabledDate?: VcCalendarDisabledDateType;
   /** Override locale; defaults to active i18n locale. */
@@ -198,10 +192,7 @@ interface IProps {
   updateOn?: VcDateFieldUpdateOnType;
   /** Apply a locale-aware input mask on the text inputs. See VcDateInput for semantics. */
   mask?: boolean;
-  /**
-   * Show a clear affordance. "combined" gets ONE shell-level button that resets both endpoints;
-   * "split" forwards it to each field, so each button clears only its own endpoint.
-   */
+  /** "combined" gets one button resetting both endpoints; "split" gives each field its own. */
   clearable?: boolean;
   /** Keep the details row's height reserved while it has no message, so the layout below never shifts. */
   showEmptyDetails?: boolean;
@@ -211,21 +202,14 @@ interface IProps {
   showFooter?: boolean;
   firstDayOfWeek?: VcCalendarFirstDayOfWeekType;
   weekdayFormat?: VcCalendarWeekdayFormatType;
-  /**
-   * Close the popover once a range is selected via calendar. Default true.
-   * "combined" closes only after BOTH endpoints are picked; "split" closes each field on its own pick.
-   */
+  /** Close on calendar pick. Default true; "combined" waits for BOTH endpoints. */
   closeOnSelect?: boolean;
-  /**
-   * Popover placement relative to the field. Default "bottom-end". In "split" a top/bottom placement
-   * is start-aligned for the start field's calendar; side placements pass through unchanged.
-   */
+  /** Default "bottom-end". In "split" a top/bottom placement is start-aligned for the start field. */
   placement?: VcPopoverPlacementType;
   /**
-   * "combined" (default) = one field with two segments and one range calendar; `startLabel`/`endLabel`
-   * become accessible names, so `label` is the only visible one. The orders filter ships this on mobile.
-   * "split" = two separately labelled VcDatePickers, each with its own calendar; the orders filter
-   * ships this on desktop.
+   * "combined" (default) = one field, two segments, one range calendar; `startLabel`/`endLabel` become
+   * accessible names. "split" = two labelled VcDatePickers. The orders filter ships combined on mobile,
+   * split on desktop.
    */
   layout?: VcDateRangePickerLayoutType;
   dataTestId?: string;
@@ -241,6 +225,7 @@ interface IEmits {
   (event: "blur", focusEvent: FocusEvent): void;
   /** Focus entered the whole control; see `blur` for the boundary rule. */
   (event: "focus", focusEvent: FocusEvent): void;
+  /** A clear button; in "split" relayed from either field, so it does not say which. See VcDatePicker. */
   (event: "clear"): void;
 }
 
@@ -272,7 +257,7 @@ const { calendarSize, focusField, onToggle, onEscapeClose, onFieldEscape, onTrig
 
 const detailsId = useComponentId("date-range-picker") + "-details";
 
-// "split" fields are hide-details, so the picker owns range validity; "combined" delegates to VcDateRangeInput.
+// "split" fields are hide-details, so the picker owns validity; "combined" delegates to the input.
 const {
   isValid: splitValid,
   internalErrorText: splitErrorText,
@@ -312,8 +297,7 @@ const aggregatedErrorText = computed<string | undefined>(() =>
 );
 watch(aggregatedErrorText, (value) => emit("update:errorText", value), { immediate: true });
 
-// Start-aligned so the start field's calendar does not overhang the separator.
-// Side placements open beside the field, never across it, so they pass through untouched.
+// Start-aligned so the start field's calendar does not overhang the separator; sides pass through.
 const startPlacement = computed<VcPopoverPlacementType>(() => {
   if (props.placement.startsWith("left") || props.placement.startsWith("right")) {
     return props.placement;
@@ -383,17 +367,14 @@ function onCalendarUpdate(close: () => void, value: VcDateRangeType | undefined)
   }
   emit("update:modelValue", value);
   if (!value) {
-    // A clear, not a pick — the footer Clear and a deselect both land here. Resyncing would read a
-    // model an uncontrolled parent never wrote back and paint the cleared dates straight in, undoing
-    // what onCalendarClear just did. Order-independent this way: whichever event arrives first wins.
+    // A clear, not a pick. Resyncing would read a model an uncontrolled parent never wrote back and
+    // paint the cleared dates straight in, undoing onCalendarClear.
     rangeInputRef.value?.clearSegments();
-    // Closing belongs to onCalendarClear; the guard below never fired for an empty range anyway.
+    // Closing belongs to onCalendarClear.
     return;
   }
-  // A segment whose own half of the model did not change never resyncs on its own, so rejected text
-  // would keep reporting invalid over a range the calendar just accepted. An anchor pick defines the
-  // start ONLY, though — resetting the end segment there would drop text the user typed but has not
-  // committed (reachable with updateOn="enter", where blur does not commit).
+  // A segment resyncs only from its own half, so rejected text would outlive a range the calendar
+  // accepted. An anchor defines the start ONLY — resetting the end would drop uncommitted text.
   rangeInputRef.value?.resetSegments(value.start && !value.end ? "start" : undefined);
   // Close only once BOTH endpoints are committed, not after the anchor.
   if (props.closeOnSelect && value.start && value.end) {
@@ -402,15 +383,13 @@ function onCalendarUpdate(close: () => void, value: VcDateRangeType | undefined)
   }
 }
 
-// The model update alone can't drive this: clearing an already-empty range emits nothing.
-// Gated exactly as onCalendarUpdate is: a frozen field must not lose its range to the footer either.
+// The model update can't drive this: clearing an already-empty range emits nothing. Gated as above.
 function onCalendarClear(close: () => void): void {
   if (props.disabled || props.readonly) {
     return;
   }
   emit("clear");
-  // A CLEAR empties the text rather than resyncing it, exactly as in clearBoth. Only the combined
-  // layout reaches this — the split fields bind their own @clear to onInputClear.
+  // Combined only; the split fields bind their own @clear to onInputClear.
   rangeInputRef.value?.clearSegments();
   if (props.closeOnSelect) {
     close();
@@ -443,8 +422,7 @@ function onCalendarClear(close: () => void): void {
   }
 
   &--layout {
-    // Root is a fieldset. Preflight zeroes its border/padding/margin; min-inline-size: min-content is
-    // the one UA default it misses, and it would stop the container query from ever narrowing the row.
+    // Preflight misses the fieldset's min-inline-size: min-content, which would pin the row open.
     &--split {
       @apply flex flex-col min-w-0;
 
@@ -455,7 +433,7 @@ function onCalendarClear(close: () => void): void {
   &__fields {
     @apply flex items-end gap-2;
 
-    // Side by side, the two placeholder-width fields need 22rem (352px); narrower than that they stack rather than truncate.
+    // Side by side the two fields need 22rem; below that they stack rather than truncate.
     @container (width < #{$fields-stack-breakpoint}) {
       @apply flex-col items-stretch;
     }

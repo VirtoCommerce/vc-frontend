@@ -107,8 +107,7 @@ describe("VcRangeCalendar", () => {
     expect(wrapper.emitted("update:modelValue")).toBeUndefined();
   });
 
-  // Uncontrolled host: the prop never comes back, so the dedup snapshot is the only record of the last
-  // emit. It must not swallow the completed range that follows the anchor.
+  // Uncontrolled host: the dedup snapshot is the only record, and must not swallow the completed range.
   it("keeps emitting when the host never applies the emitted value", async () => {
     const anchor = todayDate().set({ day: 10 }).toString();
     const completion = todayDate().set({ day: 20 }).toString();
@@ -158,8 +157,7 @@ describe("VcRangeCalendar", () => {
     expect(startAttributed).toBeFalsy();
   });
 
-  // The shell gates its own handler, but reka would still mutate its internal start/end and paint a
-  // range the model does not hold — so the grid has to be frozen at the root, not only downstream.
+  // The shell gates its own handler, but reka would still paint a range the model does not hold.
   describe.each(["disabled", "readonly"] as const)("%s", (prop) => {
     // The footer Clear is a second route into the model, and it bypasses the grid entirely.
     it("disables the footer Clear instead of letting it empty the range", async () => {
@@ -208,8 +206,7 @@ describe("VcRangeCalendar", () => {
       wrapper.unmount();
     });
 
-    // Without allow-non-contiguous-ranges reka swallows this click and the repeat press re-anchors,
-    // so the range can never be made — the whole reason the prop is set.
+    // Without allow-non-contiguous-ranges reka swallows this click and the range can never be made.
     it("completes a range that spans an unavailable day", async () => {
       const { wrapper, state, emits } = mountBoundCal(
         { start: "2026-10-05", end: undefined },
@@ -329,9 +326,8 @@ describe("VcRangeCalendar", () => {
 
   // reka deselects an endpoint that is picked twice; here that silently dropped a committed date.
   describe("re-picking an endpoint", () => {
-    // reka only reaches its deselect branch when highlightedRange is null, which needs a click with no
-    // hover and no focus — the helpers that send mouseenter first bypass the branch entirely, so a test
-    // built on them cannot tell whether prevent-deselect is set at all.
+    // reka reaches its deselect branch only when highlightedRange is null, which needs a click with no
+    // hover and no focus; the mouseenter helpers bypass it entirely.
     it("keeps the anchor on a bare click, with no hover to build a highlighted range", async () => {
       const { wrapper, state } = mountBoundCal({ start: "2026-10-08", end: undefined });
       await flushPromises();
@@ -347,9 +343,8 @@ describe("VcRangeCalendar", () => {
       wrapper.unmount();
     });
 
-    // reka reads cell keys from `event.code`, not `event.key`, and acts on the focused day — a bare
-    // `key` on an unfocused cell reaches nothing, and asserting `.start` alone cannot tell "anchor
-    // kept" from "collapsed into a single-day range".
+    // reka reads cell keys from `event.code` and acts on the focused day, so a bare `key` on an
+    // unfocused cell reaches nothing.
     it("closes the anchor into a single-day range from the keyboard", async () => {
       const { wrapper, state } = mountBoundCal({ start: "2026-10-08", end: undefined });
       await flushPromises();
@@ -437,8 +432,7 @@ describe("VcRangeCalendar", () => {
       el.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true }));
     }
 
-    // reka restores startValue and endValue separately: forwarding the start half alone left the model
-    // half-reverted — neither the committed range nor the new anchor.
+    // reka restores startValue and endValue separately; forwarding the start half left it half-reverted.
     it("restores the whole committed range in a single emit", async () => {
       const { wrapper, state, emits } = mountBoundCal({ start: "2026-10-08", end: "2026-10-14" });
       await flushPromises();
@@ -479,8 +473,7 @@ describe("VcRangeCalendar", () => {
       wrapper.unmount();
     });
 
-    // The guard must not depend on a tick count: jsdom flushes reka's revert on the next microtask,
-    // a real browser lands it a whole task later, which used to let the start-only half through.
+    // The guard must not depend on a tick count: a real browser lands the revert a whole task later.
     it("swallows the start-only half however late reka's revert lands", async () => {
       const wrapper = mountCal({ modelValue: { start: "2026-10-20", end: undefined } });
 
@@ -514,9 +507,8 @@ describe("VcRangeCalendar", () => {
       wrapper.unmount();
     });
 
-    // reka seeds its revert target at mount and refreshes it only for a range built inside the grid,
-    // so after any commit from outside its "revert" aims at a snapshot that no longer exists. Every
-    // case below arms reka's isEditing through that external sync, which is what makes Escape act.
+    // reka refreshes its revert target only for an in-grid range, so after an outside commit it aims at
+    // a snapshot that no longer exists. Every case below arms reka's isEditing through that sync.
     describe("a revert target reka never refreshed", () => {
       it("keeps a value that arrived from outside instead of wiping it", async () => {
         const { wrapper, state, emits } = mountBoundCal(undefined);
@@ -574,8 +566,8 @@ describe("VcRangeCalendar", () => {
         wrapper.unmount();
       });
 
-      // reka rewrites its own revert target while performing the revert we refused. Adopting that as
-      // committed would tell the NEXT Escape the same stale revert is safe.
+      // reka rewrites its revert target while performing the revert we refused; adopting it would arm
+      // the NEXT Escape with the same stale one.
       it("stays stale on a repeated Escape instead of adopting the refused range", async () => {
         const { wrapper, state } = mountBoundCal({ start: "2026-10-08", end: "2026-10-14" });
         await flushPromises();
@@ -595,11 +587,9 @@ describe("VcRangeCalendar", () => {
         wrapper.unmount();
       });
 
-      // reka drags its placeholder to the revert target's start; nothing re-drives it for a kept model
-      // that has no start of its own, so the grid would sit on the month we refused.
+      // reka drags its placeholder to the revert target; nothing re-drives it for a start-less model.
       it("keeps the view on the kept model, not on the refused range's month", async () => {
-        // Today-relative on purpose: with a fixed October fixture the assertion would stop
-        // discriminating for the whole of that month, when the refused month IS today's month.
+        // Today-relative: a fixed October fixture stops discriminating during that month.
         const refusedStart = todayDate().add({ months: 2 });
         const { wrapper, state } = mountBoundCal({
           start: refusedStart.toString(),
@@ -621,9 +611,8 @@ describe("VcRangeCalendar", () => {
         wrapper.unmount();
       });
 
-      // The footer Clear is a commit WE emit, so the props watch skips it as our own echo — nothing
-      // else can tell Escape the range is gone. The `show-footer` the orders filter now passes is what
-      // puts this button in front of a user.
+      // The footer Clear is a commit WE emit, so the props watch skips it — nothing else can tell
+      // Escape the range is gone.
       it("does not bring the range back after the footer cleared it", async () => {
         const { wrapper, state, emits } = mountBoundCal(
           { start: "2026-10-08", end: "2026-10-14" },
@@ -646,8 +635,7 @@ describe("VcRangeCalendar", () => {
         wrapper.unmount();
       });
 
-      // reka cannot hold an end-only range: it rewrites it as a start anchor. On the Escape route that
-      // rewrite used to be forwarded, turning "up to the 14th" into "from the 14th".
+      // reka rewrites an end-only range as a start anchor, turning "up to the 14th" into "from the 14th".
       it("keeps an end-only range end-only across an Escape", async () => {
         const { wrapper, state } = mountBoundCal({ start: undefined, end: "2026-10-14" });
         await flushPromises();
@@ -666,9 +654,8 @@ describe("VcRangeCalendar", () => {
         wrapper.unmount();
       });
 
-      // The swallowed revert leaves reka's own start/end on the reverted dates; the grid has to be
-      // pulled back to the model, or the selection it paints outlives the value. The range is filled
-      // one endpoint at a time on purpose — a complete range in one step never arms reka's revert.
+      // The swallowed revert leaves reka's start/end on the reverted dates, so the grid needs pulling
+      // back. Filled one endpoint at a time: a complete range in one step never arms reka's revert.
       it("repaints the grid from the model after swallowing the revert", async () => {
         const { wrapper, state } = mountBoundCal(undefined);
         await flushPromises();
@@ -690,12 +677,9 @@ describe("VcRangeCalendar", () => {
       });
     });
 
-    // The guard is armed on every Escape, but reka only answers while it is editing — after a complete
-    // commit from outside it does not, so the guard is left armed AND stale (its revert target is still
-    // the mount value). The next keyboard pick then lands in the stale branch and is swallowed: the
-    // grid repaints to the committed range and the keystroke disappears with no feedback. Pointer picks
-    // are safe on their own (@pointerdown disarms), but reka's cell trigger stops arrows/Enter/Space
-    // from bubbling, so only a capture-phase handler can disarm for the keyboard.
+    // reka answers Escape only while editing, so after an outside commit the guard is left armed AND
+    // stale, and the next keyboard pick is swallowed with no feedback. @pointerdown disarms for the
+    // pointer; reka's cell trigger stops arrows/Enter/Space, so the keyboard needs a capture handler.
     it("does not swallow a keyboard pick after an unanswered stale Escape", async () => {
       const { wrapper, state } = mountBoundCal({ start: "2026-10-08", end: "2026-10-14" });
       await flushPromises();
@@ -732,7 +716,7 @@ describe("VcRangeCalendar", () => {
     });
   });
 
-  // reka exposes today as a data attribute only; the ARIA state is ours to add.
+  // reka marks today with a data attribute only; the ARIA state is ours to add.
   it("marks today with aria-current", () => {
     const wrapper = mountCal({ modelValue: undefined });
     const today = todayDate().toString();
@@ -839,9 +823,8 @@ describe("VcRangeCalendar", () => {
       expect(inViewCell(wrapper, "2027-10-08").exists()).toBe(true);
     });
 
-    // The buttons are ours, not reka's, so nothing else marks a year jump as out of bounds. The
-    // handlers' own guards are belt-and-braces: neither `trigger` nor a native dispatch delivers a
-    // click to a disabled element, so `disabled` is the whole reachable gate.
+    // The buttons are ours, not reka's. Their handler guards are unreachable — neither `trigger` nor a
+    // native dispatch delivers a click to a disabled element — so `disabled` is the whole gate.
     it("gates each year button at its own hard bound", () => {
       const wrapper = mountCal({ min: "2026-10-01", max: "2026-10-31" });
       const prev = wrapper.find(".vc-range-calendar__nav--year-prev");

@@ -110,8 +110,8 @@ describe("watchFocusLeavingOwnPopover", () => {
     stop();
   });
 
-  // Alt-Tab fires focusout with a null relatedTarget while focus stays on the cell. Reporting it would
-  // both lie and burn the one-shot watch, so the REAL departure afterwards is the assertion that matters.
+  // Alt-Tab fires focusout with a null relatedTarget while focus stays put; reporting it would lie AND
+  // burn the one-shot watch, so the real departure afterwards is what matters.
   it("stays quiet on a window switch and still reports the real departure afterwards", () => {
     const { onLeft, stop } = arm();
     const hasFocus = vi.spyOn(document, "hasFocus").mockReturnValue(false);

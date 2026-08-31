@@ -7,8 +7,7 @@ function crossedFocusBoundary(event: FocusEvent): boolean {
   return !(other instanceof Node && shell?.contains(other));
 }
 
-// Ownership is read from the shell's own trigger(s): the popover body is teleported out of the shell's
-// subtree, and mere containment would also match an unrelated popover opened elsewhere on the page.
+// Read from the shell's own trigger: the body is teleported out, and containment would match any popover.
 function ownPopoverBodyId(event: FocusEvent): string {
   const other = event.relatedTarget;
   const shell = event.currentTarget;
@@ -54,8 +53,7 @@ export function watchFocusLeavingOwnPopover(event: FocusEvent, onLeft: (blurEven
   if (!(shell instanceof Element) || !popover) {
     return noop;
   }
-  // Without teleport the popover stays in the shell's subtree, so a departure from it bubbles to the
-  // shell and is classified "left" there. Watching as well would report that one departure twice.
+  // Without teleport the departure bubbles to the shell and is classified "left" there; watching would double it.
   if (shell.contains(popover)) {
     return noop;
   }
@@ -68,9 +66,8 @@ export function watchFocusLeavingOwnPopover(event: FocusEvent, onLeft: (blurEven
     if (next instanceof Node && popover.contains(next)) {
       return;
     }
-    // Alt-Tab and a click into devtools fire focusout with a null relatedTarget while focus stays put.
-    // Reporting that would emit a false blur AND burn this one-shot watch, so the real departure later
-    // would go unreported. A click on non-focusable chrome also has a null target but keeps page focus.
+    // Alt-Tab and devtools fire focusout with a null relatedTarget while focus stays put. Reporting it
+    // would emit a false blur AND burn this one-shot watch, so the real departure would go unreported.
     if (next === null && !document.hasFocus()) {
       return;
     }

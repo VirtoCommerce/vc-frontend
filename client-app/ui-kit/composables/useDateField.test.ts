@@ -434,8 +434,7 @@ describe("useDateField — disabledDate predicate", () => {
     expect(field.isValid.value).toBe(true);
     expect(field.errorText.value).toBeUndefined();
     expect(onCommit).toHaveBeenCalledExactlyOnceWith("2026-10-17");
-    // Only isValid reaches the predicate here: the throw is swallowed as false, so isValid stays true
-    // and errorText short-circuits on it. isValid's evaluation count is not pinned, so assert loosely.
+    // The throw is swallowed as false, so isValid stays true; its evaluation count is not pinned.
     expect(loggerSpy).toHaveBeenCalled();
     expect(loggerSpy.mock.calls[0][0]).toBe("VcDateInput: disabledDate predicate threw");
     loggerSpy.mockRestore();
