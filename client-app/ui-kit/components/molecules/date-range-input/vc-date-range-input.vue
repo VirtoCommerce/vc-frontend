@@ -22,25 +22,13 @@
     <div class="vc-date-range-input__field">
       <VcDateInput
         ref="startInputRef"
-        seamless
-        hide-details
+        v-bind="sharedSegmentProps"
         class="vc-date-range-input__segment"
         :class="{ 'vc-date-range-input__segment--filled': !!modelValue?.start }"
         :model-value="modelValue?.start"
         :name="name ? `${name}-start` : undefined"
         :aria-label="startLabel || t('ui_kit.date_range_input.start_date')"
-        :aria="segmentAria"
         :placeholder="startPlaceholder"
-        :size="size"
-        :disabled="disabled"
-        :readonly="readonly"
-        :error="computedError"
-        :min="min"
-        :max="max"
-        :disabled-date="disabledDate"
-        :locale="locale"
-        :update-on="updateOn"
-        :mask="mask"
         @update:model-value="onSegment('start', $event)"
         @update:valid="setSegmentValid('start', $event)"
         @update:error-text="setSegmentErrorText('start', $event)"
@@ -50,25 +38,13 @@
 
       <VcDateInput
         ref="endInputRef"
-        seamless
-        hide-details
+        v-bind="sharedSegmentProps"
         class="vc-date-range-input__segment"
         :class="{ 'vc-date-range-input__segment--filled': !!modelValue?.end }"
         :model-value="modelValue?.end"
         :name="name ? `${name}-end` : undefined"
         :aria-label="endLabel || t('ui_kit.date_range_input.end_date')"
-        :aria="segmentAria"
         :placeholder="endPlaceholder"
-        :size="size"
-        :disabled="disabled"
-        :readonly="readonly"
-        :error="computedError"
-        :min="min"
-        :max="max"
-        :disabled-date="disabledDate"
-        :locale="locale"
-        :update-on="updateOn"
-        :mask="mask"
         @update:model-value="onSegment('end', $event)"
         @update:valid="setSegmentValid('end', $event)"
         @update:error-text="setSegmentErrorText('end', $event)"
@@ -237,6 +213,24 @@ const {
     (which === "start" ? startInputRef : endInputRef).value?.reset();
   },
 });
+
+// Everything the two segments share, as VcDateRangePicker does for its two split fields: the next
+// shared prop lands in one place instead of two blocks kept in step by eye.
+const sharedSegmentProps = computed(() => ({
+  seamless: true,
+  hideDetails: true,
+  aria: segmentAria.value,
+  size: props.size,
+  disabled: props.disabled,
+  readonly: props.readonly,
+  error: computedError.value,
+  min: props.min,
+  max: props.max,
+  disabledDate: props.disabledDate,
+  locale: props.locale,
+  updateOn: props.updateOn,
+  mask: props.mask,
+}));
 
 // Immediate so the empty (valid) state is reported on mount.
 watch(isValid, (value) => emit("update:valid", value), { immediate: true });
