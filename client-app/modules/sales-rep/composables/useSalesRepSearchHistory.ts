@@ -3,6 +3,7 @@ import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { SalesRepCustomerSearchTermsDocument } from "../api/graphql/types";
 import { HUB_FETCH_POLICY, INSIGHTS_DEFAULT_ROWS } from "../constants";
+import { latestDate } from "../utils";
 import { useSalesRepHubQuery } from "./useSalesRepHubQuery";
 import type { SalesRepSearchTermRowType } from "../types/insights";
 import type { Ref } from "vue";
@@ -46,8 +47,6 @@ export function useSalesRepSearchHistory(options: UseSalesRepSearchHistoryOption
   // Null payload = no insights provider for the store — an expected state, not an error.
   const notConfigured = computed(() => Boolean(result.value) && !payload.value);
 
-  const dataAsOf = computed(() => payload.value?.dataAsOf as string | undefined);
-
   const items = computed<SalesRepSearchTermRowType[]>(() =>
     (payload.value?.searchTerms ?? []).map((row) => ({
       term: row.term,
@@ -55,6 +54,14 @@ export function useSalesRepSearchHistory(options: UseSalesRepSearchHistoryOption
       lastSearchedDate: row.lastSearchedDate as string | undefined,
     })),
   );
+
+  // Derived from the rows this op returned, NOT read from the payload's own `dataAsOf`. Both insights
+  // ops select the same root field with the same arguments, so Apollo normalizes them into one cache
+  // entry — and `dataAsOf`, which takes no arguments, is a single key in it. Whichever of the two
+  // responses landed last would then date BOTH surfaces, including the one whose own rows carry no
+  // dates at all (sort "count" returns none). The backend defines the field as the latest date across
+  // the SELECTED collections, so for a single-collection op this is that same value, computed apart.
+  const dataAsOf = computed(() => latestDate(items.value.map((row) => row.lastSearchedDate)));
 
   return { items, notConfigured, dataAsOf, loading, error };
 }

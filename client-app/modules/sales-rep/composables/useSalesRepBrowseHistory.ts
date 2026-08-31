@@ -3,6 +3,7 @@ import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { SalesRepCustomerBrowsedProductsDocument } from "../api/graphql/types";
 import { HUB_FETCH_POLICY, INSIGHTS_DEFAULT_ROWS } from "../constants";
+import { latestDate } from "../utils";
 import { useSalesRepHubQuery } from "./useSalesRepHubQuery";
 import type { SalesRepBrowsedProductRowType } from "../types/insights";
 import type { Ref } from "vue";
@@ -46,8 +47,6 @@ export function useSalesRepBrowseHistory(options: UseSalesRepBrowseHistoryOption
   // Null payload = no insights provider for the store — an expected state, not an error.
   const notConfigured = computed(() => Boolean(result.value) && !payload.value);
 
-  const dataAsOf = computed(() => payload.value?.dataAsOf as string | undefined);
-
   const items = computed<SalesRepBrowsedProductRowType[]>(() =>
     (payload.value?.browsedProducts ?? []).map((row) => ({
       productId: row.productId,
@@ -62,6 +61,11 @@ export function useSalesRepBrowseHistory(options: UseSalesRepBrowseHistoryOption
       lastViewedDate: row.lastViewedDate as string | undefined,
     })),
   );
+
+  // Derived from the rows this op returned, NOT read from the payload's own `dataAsOf` — see the
+  // matching note in useSalesRepSearchHistory: the two ops share one normalized cache entry, and an
+  // argument-less `dataAsOf` in it would be whatever the other one wrote last.
+  const dataAsOf = computed(() => latestDate(items.value.map((row) => row.lastViewedDate)));
 
   return { items, notConfigured, dataAsOf, loading, error };
 }

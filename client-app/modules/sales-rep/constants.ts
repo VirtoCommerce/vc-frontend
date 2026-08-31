@@ -44,6 +44,11 @@ export const ACTIVITIES_ROUTE_SEGMENT = "activities";
 export const ACTIVITIES_NAV_LINK_ID = "sales-rep-activities";
 // Backend paging: take defaults to 20 and caps at 50; take 0 returns counts only (backs the tabs).
 export const ACTIVITY_PAGE_SIZE = 20;
+// How deep the backend will page the merged feed (its ModuleConstants.Activities.MaxSkip). A merged
+// page can only be sliced from the top `skip + take` rows of every requested category, so the cap is
+// what bounds one request's cost. Past it the query returns NO rows while totalCount keeps describing
+// the whole set — so the pager has to stop here, or it offers pages that render as "no activity".
+export const ACTIVITY_MAX_SKIP = 500;
 // Compact "My activity" dashboard widget shows the latest few events across all assigned accounts.
 export const MY_ACTIVITY_TAKE = 5;
 // Category vocabulary of salesRepActivities (the backend types it as free-form String). Ordered —

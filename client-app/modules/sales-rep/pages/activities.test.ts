@@ -2,7 +2,12 @@ import { mount } from "@vue/test-utils";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { nextTick, toValue } from "vue";
 import { createWrapperFactory } from "@/core/utilities/tests";
-import { ACTIVITY_PAGE_SIZE, CUSTOMER_PROFILE_ROUTE_NAME } from "../constants";
+import {
+  ACTIVITY_MAX_SKIP,
+  ACTIVITY_PAGE_SIZE,
+  CUSTOMER_PROFILE_ROUTE_NAME,
+  MY_CUSTOMERS_ROUTE_NAME,
+} from "../constants";
 import Activities from "./activities.vue";
 import type { SalesRepActivityCategoryCountType, SalesRepActivityItemType, SalesRepRuleType } from "../types";
 import type { Ref } from "vue";
@@ -49,6 +54,9 @@ const counts = await vi.hoisted(async () => {
   const { ref } = await import("vue");
   return {
     categoryCounts: ref<SalesRepActivityCategoryCountType[]>([]),
+    // Category-unfiltered, so this IS the "All" figure — kept apart from the rows request's own
+    // totalCount, which is category-scoped once a tab filters it.
+    totalCount: ref(0),
     loading: ref(false),
   };
 });
@@ -75,7 +83,7 @@ vi.mock("../composables/useSalesRepActivities", () => ({
       : {
           items: state.items,
           categoryCounts: counts.categoryCounts,
-          totalCount: state.totalCount,
+          totalCount: counts.totalCount,
           loading: counts.loading,
           error: state.error,
         };
@@ -114,17 +122,25 @@ vi.mock("../composables/useSalesRepBrowseHistory", async () => {
 // The heading and the breadcrumb both name the customer, so tests need to control when the name resolves.
 const customerState = await vi.hoisted(async () => {
   const { ref } = await import("vue");
-  return { organizationName: ref<string | undefined>(undefined) };
+  return {
+    organizationName: ref<string | undefined>(undefined),
+    // As apollo drives it: true from setup for a query enabled there, and only from the NEXT tick when
+    // `enabled` flips on a live instance. The page's dead-end view turns on that difference.
+    loading: ref(true),
+    failed: ref(false),
+    notFound: ref(false),
+  };
 });
 vi.mock("../composables/useSalesRepCustomer", async () => {
-  const { computed, ref } = await import("vue");
+  const { computed } = await import("vue");
   return {
     useSalesRepCustomer: () => ({
       customer: computed(() =>
         customerState.organizationName.value ? { organizationName: customerState.organizationName.value } : undefined,
       ),
-      loading: ref(false),
-      notFound: ref(false),
+      loading: customerState.loading,
+      failed: customerState.failed,
+      notFound: customerState.notFound,
     }),
   };
 });
@@ -169,9 +185,18 @@ const createWrapper = createWrapperFactory(mount, Activities, {
       VcBreadcrumbs: true,
       // Slot-rendering stub: the heading text is asserted below.
       VcTypography: { name: "VcTypographyStub", template: "<h1><slot /></h1>" },
-      VcPagination: true,
-      VcEmptyView: true,
+      // Props-exposing stub: the page's own page-count arithmetic is what these tests assert.
+      VcPagination: { name: "VcPaginationStub", props: ["pages", "page"], template: "<nav />" },
+      // Keeps the auto-stub's element name (the assertions below read its attributes) but renders the
+      // `button` slot, where the dead-end view puts its way back.
+      VcEmptyView: {
+        // Not "…Stub": that name would make the element below resolve back to this component.
+        name: "VcEmptyView",
+        props: ["text", "variant", "icon"],
+        template: `<vc-empty-view-stub :text="text" :variant="variant" :icon="icon"><slot name="button" /></vc-empty-view-stub>`,
+      },
       VcIcon: true,
+      VcButton: { name: "VcButtonStub", props: ["to"], template: "<a><slot /></a>" },
       // Props-exposing stub so link targets can be asserted, not just their presence.
       VcLink: { name: "VcLinkStub", props: ["to"], template: "<a><slot /></a>" },
       ActivityRow: ActivityRowStub,
@@ -205,7 +230,11 @@ beforeEach(() => {
   state.categoryCounts.value = [];
   state.totalCount.value = 0;
   counts.categoryCounts.value = [];
+  counts.totalCount.value = 0;
   counts.loading.value = false;
+  customerState.loading.value = true;
+  customerState.failed.value = false;
+  customerState.notFound.value = false;
   state.loading.value = false;
   state.error.value = null;
   insights.searchItems.value = [];
@@ -275,32 +304,38 @@ describe("Activities page", () => {
     expect(rules[2].label).toContain("(0)");
   });
 
-  // On All the rows request already counted everything it merged, so its totalCount IS the All badge.
-  // Once a tab filters the rows, totalCount is category-scoped and All sums the badges instead.
-  it("derives the All badge from the rows on All, and from the badges on a tab", async () => {
+  // The counts request carries no category filter, so its own totalCount is the All figure. Summing
+  // the per-category badges would be a second way to compute the same number, free to disagree.
+  it("takes the All badge from the counts request, on every tab", async () => {
     counts.categoryCounts.value = [
       { category: "orders", count: 2 },
       { category: "logins", count: 1 },
     ];
+    counts.totalCount.value = 3;
+    // Category-scoped once a tab filters the rows — it must never reach a badge.
     state.totalCount.value = 99;
 
     const wrapper = createWrapper();
-    expect(findChips(wrapper)[0].props("allLabel")).toBe("sales_rep.activity.tabs.all (99)");
+    expect(findChips(wrapper)[0].props("allLabel")).toBe("sales_rep.activity.tabs.all (3)");
 
     await openTab(wrapper, "orders");
     expect(findChips(wrapper)[0].props("allLabel")).toBe("sales_rep.activity.tabs.all (3)");
   });
 
-  // The badge a rep is looking at can never disagree with the list under it: it comes from the rows
-  // request itself, never from the badge request, which can land the other side of a cache boundary.
-  it("takes the selected tab's badge from the rows request", async () => {
+  // One source per figure: reading the selected tab's badge off the rows request instead made the
+  // same tab (and All with it) change value as the rep moved between tabs.
+  it("keeps a tab's badge the same whether or not it is selected", async () => {
     counts.categoryCounts.value = [{ category: "orders", count: 2 }];
+    counts.totalCount.value = 2;
     state.totalCount.value = 5;
 
     const wrapper = createWrapper();
-    await openTab(wrapper, "orders");
+    const ordersBadge = () => (findChips(wrapper)[0].props("rules") as SalesRepRuleType[])[0].label;
 
-    expect((findChips(wrapper)[0].props("rules") as SalesRepRuleType[])[0].label).toContain("(5)");
+    expect(ordersBadge()).toContain("(2)");
+
+    await openTab(wrapper, "orders");
+    expect(ordersBadge()).toContain("(2)");
   });
 
   it("offers the period chips beside the category tabs", () => {
@@ -373,7 +408,7 @@ describe("Activities page", () => {
   // last-known counts instead of blanking every badge.
   it("holds the last-known counts on the tabs while a refetch runs", async () => {
     counts.categoryCounts.value = [{ category: "orders", count: 7 }];
-    state.totalCount.value = 7;
+    counts.totalCount.value = 7;
 
     const wrapper = createWrapper();
 
@@ -410,6 +445,28 @@ describe("Activities page", () => {
 
     expect(rows).toHaveLength(2);
     expect(rows[0].props("showOrganization")).toBe(true);
+  });
+
+  // The backend serves the merged feed only ACTIVITY_MAX_SKIP rows deep and returns NO rows past it,
+  // while totalCount keeps counting the whole set. A pager sized from totalCount alone would offer
+  // pages that come back empty and render as "no activity in this period".
+  it("stops the pager at the deepest page the backend serves", () => {
+    state.items.value = [{ category: "orders", type: "orderPlaced" }];
+    state.totalCount.value = 10_000;
+
+    const wrapper = createWrapper();
+    const servedPages = ACTIVITY_MAX_SKIP / ACTIVITY_PAGE_SIZE + 1;
+
+    expect(wrapper.findComponent({ name: "VcPaginationStub" }).props("pages")).toBe(servedPages);
+  });
+
+  it("sizes the pager to the rows when they fit inside that window", () => {
+    state.items.value = [{ category: "orders", type: "orderPlaced" }];
+    state.totalCount.value = ACTIVITY_PAGE_SIZE * 3;
+
+    const wrapper = createWrapper();
+
+    expect(wrapper.findComponent({ name: "VcPaginationStub" }).props("pages")).toBe(3);
   });
 });
 
@@ -543,13 +600,14 @@ describe("Activities page — Top|Recent mode", () => {
     expect(topRows(wrapper)).toHaveLength(0);
   });
 
-  // The insights ops carry no categoryCounts, so the badges keep the last feed-response figures.
-  it("keeps the feed's badge figures while a Top view is shown", async () => {
+  // Top mode swaps the list's source, not the badges' — those stay with the counts request, which the
+  // mode toggle does not touch.
+  it("keeps the badge figures while a Top view is shown", async () => {
     counts.categoryCounts.value = [
       { category: "searches", count: 4 },
       { category: "orders", count: 2 },
     ];
-    state.totalCount.value = 4;
+    counts.totalCount.value = 6;
 
     const wrapper = createWrapper();
     await openTab(wrapper, "searches");
@@ -632,5 +690,80 @@ describe("heading and breadcrumbs", () => {
       "sales_rep.hub.title",
       "sales_rep.activity.breadcrumb",
     ]);
+  });
+});
+
+// ?organizationId= is a URL a rep can arrive at with any value. Unhandled, an id they cannot see
+// renders as their own feed — fallback heading, no customer crumb, every badge at 0 — while the rail
+// lights nothing, and Top mode blames the store's analytics for what is really an access answer.
+describe("a customer the rep cannot see", () => {
+  it("replaces the feed with the dead-end view and a way back", async () => {
+    const wrapper = createWrapper({ props: { organizationId: "not-mine" } });
+
+    // The read settles with no customer.
+    customerState.loading.value = false;
+    customerState.notFound.value = true;
+    await nextTick();
+
+    const views = emptyViews(wrapper);
+    expect(views).toHaveLength(1);
+    expect(views[0].attributes("text")).toBe("sales_rep.customer_profile.not_found");
+    expect(views[0].attributes("variant")).toBe("empty");
+    expect(wrapper.find("h1").exists()).toBe(false);
+    expect(findChips(wrapper)).toHaveLength(0);
+
+    expect(wrapper.findComponent({ name: "VcButtonStub" }).props("to")).toEqual({
+      name: MY_CUSTOMERS_ROUTE_NAME,
+    });
+  });
+
+  // A server error must not read as "this customer isn't yours".
+  it("words a failed read apart from a customer that is not theirs", async () => {
+    const wrapper = createWrapper({ props: { organizationId: "org-1" } });
+
+    customerState.loading.value = false;
+    customerState.failed.value = true;
+    await nextTick();
+
+    const views = emptyViews(wrapper);
+    expect(views[0].attributes("text")).toBe("sales_rep.customer_profile.load_failed");
+    expect(views[0].attributes("variant")).toBe("error");
+  });
+
+  // The rep-wide feed passes no id, so the customer query never runs and `notFound` is true by
+  // default there — reading it unguarded would blank the page this feature is mostly used from.
+  it("leaves the rep's own feed alone", async () => {
+    customerState.loading.value = false;
+    customerState.notFound.value = true;
+
+    const wrapper = createWrapper();
+    await nextTick();
+
+    expect(wrapper.find("h1").text()).toBe("sales_rep.activity.page.title");
+    expect(findChips(wrapper).length).toBeGreaterThan(0);
+  });
+
+  // This route serves both feeds on ONE component instance, so stepping onto a customer flips the
+  // customer query from disabled to enabled — and apollo defers that start by a tick. In the gap
+  // nothing is loading and nothing has resolved, which is `notFound`'s own shape: judged then, the
+  // dead end would flash over a customer the rep does serve.
+  it("does not flash the dead end before the read for the new id starts", async () => {
+    customerState.loading.value = false;
+    customerState.notFound.value = true;
+
+    const wrapper = createWrapper();
+    await wrapper.setProps({ organizationId: "org-1" });
+
+    expect(emptyViews(wrapper).map((view) => view.attributes("text"))).not.toContain(
+      "sales_rep.customer_profile.not_found",
+    );
+
+    // The deferred read starts, then settles with no customer — now it is an answer.
+    customerState.loading.value = true;
+    await nextTick();
+    customerState.loading.value = false;
+    await nextTick();
+
+    expect(emptyViews(wrapper)[0].attributes("text")).toBe("sales_rep.customer_profile.not_found");
   });
 });

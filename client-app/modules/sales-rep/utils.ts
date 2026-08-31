@@ -219,6 +219,23 @@ export function formatHourLabel(isoDate: string): string {
   ).format(new Date(isoDate));
 }
 
+// The freshest of a set of dates, absent ones skipped; undefined when none carries one. Parsed rather
+// than compared as strings: the wire format is the backend's to choose, and offsets would sort wrong.
+export function latestDate(dates: readonly (string | undefined)[]): string | undefined {
+  let latest: string | undefined;
+  let latestTime = -Infinity;
+
+  for (const date of dates) {
+    const time = date ? new Date(date).getTime() : Number.NaN;
+    if (Number.isFinite(time) && time > latestTime) {
+      latestTime = time;
+      latest = date;
+    }
+  }
+
+  return latest;
+}
+
 // The catalog search results page for a tracked term, exactly as the header search navigates (VCST-5731).
 export function searchResultsRoute(term: string): RouteLocationRaw {
   return { name: ROUTES.SEARCH.NAME, query: { [QueryParamName.SearchPhrase]: term } };

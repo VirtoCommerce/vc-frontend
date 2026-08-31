@@ -2,123 +2,142 @@
   <div class="activities">
     <VcBreadcrumbs :items="breadcrumbs" />
 
-    <!-- Narrowed to one customer via the ?organizationId= query param (the customer widget links
-         here): the heading names that customer, exactly as the customer-orders page does. -->
-    <VcTypography class="activities__title" tag="h1">
-      {{ heading }}
-    </VcTypography>
+    <VcEmptyView
+      v-if="customerUnavailable"
+      :text="unavailableText"
+      :variant="scopedCustomerFailed ? 'error' : 'empty'"
+      icon="outline-404"
+    >
+      <template #button>
+        <VcButton :to="{ name: MY_CUSTOMERS_ROUTE_NAME }" prepend-icon="arrow-left">
+          {{ t("sales_rep.customer_profile.back_to_customers") }}
+        </VcButton>
+      </template>
+    </VcEmptyView>
 
-    <div class="activities__results">
-      <div class="activities__controls">
-        <!-- Category tabs driven by categoryCounts; zero-count categories keep their tab. -->
-        <SalesRepRuleChips v-model="category" :rules="categoryRules" :all-label="allTabLabel">
-          <!-- No name = the All tab, which merges tracked rows in and so carries the mark too. -->
-          <template #suffix="{ tab }">
-            <TrackedMetricHint v-if="!tab.name || TRACKED_ACTIVITY_CATEGORIES.has(tab.name)" />
-          </template>
-        </SalesRepRuleChips>
+    <template v-else>
+      <!-- Narrowed to one customer via the ?organizationId= query param (the customer widget links
+           here): the heading names that customer, exactly as the customer-orders page does. -->
+      <VcTypography class="activities__title" tag="h1">
+        {{ heading }}
+      </VcTypography>
 
-        <SalesRepRuleChips
-          v-model="periodRule"
-          :rules="periodRules"
-          :all-label="t('sales_rep.activity.period.all_time')"
-          all-last
-        />
-      </div>
+      <div class="activities__results">
+        <div class="activities__controls">
+          <!-- Category tabs driven by categoryCounts; zero-count categories keep their tab. -->
+          <SalesRepRuleChips v-model="category" :rules="categoryRules" :all-label="allTabLabel">
+            <!-- No name = the All tab, which merges tracked rows in and so carries the mark too. -->
+            <template #suffix="{ tab }">
+              <TrackedMetricHint v-if="!tab.name || TRACKED_ACTIVITY_CATEGORIES.has(tab.name)" />
+            </template>
+          </SalesRepRuleChips>
 
-      <!-- Top|Recent mode toggle — only for the tracked categories that rank (searches, product
-           views). Baseline chip = Recent (the feed), the customer panels' idiom in reverse. -->
-      <div v-if="isRankableTab" class="activities__mode">
-        <SalesRepRuleChips v-model="modeChip" :rules="modeRules" :all-label="t('sales_rep.customer_insights.recent')" />
-      </div>
+          <SalesRepRuleChips
+            v-model="periodRule"
+            :rules="periodRules"
+            :all-label="t('sales_rep.activity.period.all_time')"
+            all-last
+          />
+        </div>
 
-      <!-- A failure gets its own view — it must not read as "no activity" (VCST-5586). -->
-      <VcEmptyView v-if="viewFailed && !viewLoading" :text="failedText" variant="error" />
+        <!-- Top|Recent mode toggle — only for the tracked categories that rank (searches, product
+             views). Baseline chip = Recent (the feed), the customer panels' idiom in reverse. -->
+        <div v-if="isRankableTab" class="activities__mode">
+          <SalesRepRuleChips
+            v-model="modeChip"
+            :rules="modeRules"
+            :all-label="t('sales_rep.customer_insights.recent')"
+          />
+        </div>
 
-      <VcEmptyView v-else-if="viewEmpty && !viewLoading" :text="emptyText" :icon="emptyIcon" />
+        <!-- A failure gets its own view — it must not read as "no activity" (VCST-5586). -->
+        <VcEmptyView v-if="viewFailed && !viewLoading" :text="failedText" variant="error" />
 
-      <VcWidget v-else size="md">
-        <template #default-container>
-          <!-- Skeleton on EVERY fetch (first load, tab/period/mode switch, page turn) — the table
-               widgets do the same via VcTable's loading prop, and the GA-backed query can run for
-               seconds. -->
-          <div v-if="viewLoading" class="activities__skeletons" aria-hidden="true">
-            <div v-for="index in skeletonRows" :key="index" class="activities__skeleton" />
-          </div>
+        <VcEmptyView v-else-if="viewEmpty && !viewLoading" :text="emptyText" :icon="emptyIcon" />
 
-          <!-- Top mode: ranked count lists from salesRepCustomerInsights. Counts, not events — so
-               no timestamps, and the list is capped single-page (no pager). -->
-          <ol v-else-if="topMode && category === 'searches'" class="activities__top-list">
-            <li v-for="(item, index) in topSearchItems" :key="item.term" class="activities__top-row">
-              <span class="activities__top-rank">{{ index + 1 }}</span>
-
-              <!-- The catalog search results page, exactly as the feed rows link (VCST-5731). -->
-              <VcLink
-                class="activities__top-link"
-                :to="searchResultsRoute(item.term)"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                “{{ item.term }}”
-              </VcLink>
-
-              <span class="activities__top-count">
-                {{ t("sales_rep.customer_insights.search_history.count", item.count) }}
-              </span>
-            </li>
-          </ol>
-
-          <ol v-else-if="topMode" class="activities__top-list">
-            <li v-for="(item, index) in topViewItems" :key="item.productId" class="activities__top-row">
-              <span class="activities__top-rank">{{ index + 1 }}</span>
-
-              <!-- Only a row the backend resolved to a real product carries a linkable id; an
-                   unresolved one degrades to plain text (name or code). -->
-              <VcLink
-                v-if="item.isResolved"
-                class="activities__top-link"
-                :to="getProductRoute(item.productId)"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {{ item.name || item.sku }}
-              </VcLink>
-
-              <span v-else class="activities__top-name">{{ item.name || item.sku }}</span>
-
-              <span class="activities__top-count">
-                {{ t("sales_rep.customer_insights.browse_history.views", item.viewCount) }}
-              </span>
-            </li>
-          </ol>
-
-          <template v-else>
-            <div class="activities__list">
-              <ActivityRow
-                v-for="(item, index) in items"
-                :key="index"
-                :item="item"
-                :show-organization="!organizationId"
-              />
+        <VcWidget v-else size="md">
+          <template #default-container>
+            <!-- Skeleton on EVERY fetch (first load, tab/period/mode switch, page turn) — the table
+                 widgets do the same via VcTable's loading prop, and the GA-backed query can run for
+                 seconds. -->
+            <div v-if="viewLoading" class="activities__skeletons" aria-hidden="true">
+              <div v-for="index in skeletonRows" :key="index" class="activities__skeleton" />
             </div>
 
-            <VcPagination
-              v-if="pages > 1"
-              v-model:page="page"
-              :pages="pages"
-              class="activities__pagination"
-              @update:page="scrollToTop"
-            />
-          </template>
-        </template>
-      </VcWidget>
+            <!-- Top mode: ranked count lists from salesRepCustomerInsights. Counts, not events — so
+                 no timestamps, and the list is capped single-page (no pager). -->
+            <ol v-else-if="topMode && category === 'searches'" class="activities__top-list">
+              <li v-for="(item, index) in topSearchItems" :key="item.term" class="activities__top-row">
+                <span class="activities__top-rank">{{ index + 1 }}</span>
 
-      <!-- Honesty caveat for the GA-sourced categories (searches, product views, logins). -->
-      <p v-if="showCaveat && !viewFailed" class="activities__caveat">
-        <VcIcon name="info" :size="14" aria-hidden="true" />
-        {{ t("sales_rep.activity.caveat") }}
-      </p>
-    </div>
+                <!-- The catalog search results page, exactly as the feed rows link (VCST-5731). -->
+                <VcLink
+                  class="activities__top-link"
+                  :to="searchResultsRoute(item.term)"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  “{{ item.term }}”
+                </VcLink>
+
+                <span class="activities__top-count">
+                  {{ t("sales_rep.customer_insights.search_history.count", item.count) }}
+                </span>
+              </li>
+            </ol>
+
+            <ol v-else-if="topMode" class="activities__top-list">
+              <li v-for="(item, index) in topViewItems" :key="item.productId" class="activities__top-row">
+                <span class="activities__top-rank">{{ index + 1 }}</span>
+
+                <!-- Only a row the backend resolved to a real product carries a linkable id; an
+                     unresolved one degrades to plain text (name or code). -->
+                <VcLink
+                  v-if="item.isResolved"
+                  class="activities__top-link"
+                  :to="getProductRoute(item.productId)"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {{ item.name || item.sku }}
+                </VcLink>
+
+                <span v-else class="activities__top-name">{{ item.name || item.sku }}</span>
+
+                <span class="activities__top-count">
+                  {{ t("sales_rep.customer_insights.browse_history.views", item.viewCount) }}
+                </span>
+              </li>
+            </ol>
+
+            <template v-else>
+              <div class="activities__list">
+                <ActivityRow
+                  v-for="(item, index) in items"
+                  :key="index"
+                  :item="item"
+                  :show-organization="!organizationId"
+                />
+              </div>
+
+              <VcPagination
+                v-if="pages > 1"
+                v-model:page="page"
+                :pages="pages"
+                class="activities__pagination"
+                @update:page="scrollToTop"
+              />
+            </template>
+          </template>
+        </VcWidget>
+
+        <!-- Honesty caveat for the GA-sourced categories (searches, product views, logins). -->
+        <p v-if="showCaveat && !viewFailed" class="activities__caveat">
+          <VcIcon name="info" :size="14" aria-hidden="true" />
+          {{ t("sales_rep.activity.caveat") }}
+        </p>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -137,6 +156,7 @@ import { useSalesRepPeriodFilter } from "../composables/useSalesRepPeriodFilter"
 import { useSalesRepSearchHistory } from "../composables/useSalesRepSearchHistory";
 import {
   ACTIVITY_CATEGORIES,
+  ACTIVITY_MAX_SKIP,
   ACTIVITY_PAGE_SIZE,
   CUSTOMER_PROFILE_ROUTE_NAME,
   INSIGHTS_MAX_ROWS,
@@ -222,31 +242,30 @@ const { items, totalCount, loading, error } = useSalesRepActivities({
 // The badges, in their own request: counting every category is the slow half, and it does not change
 // as the rep switches tabs or turns pages, so it runs once per customer+period and the list never
 // waits for it. take: 0 asks for counts only.
-const { categoryCounts, loading: countsLoading } = useSalesRepActivities({
+const {
+  categoryCounts,
+  totalCount: countsTotal,
+  loading: countsLoading,
+} = useSalesRepActivities({
   organizationId: () => props.organizationId,
   periodFrom,
   periodTo,
   take: 0,
 });
 
-// The selected tab's badge comes from the rows themselves (totalCount covers exactly the requested
-// categories), so the badge a rep is looking at can never disagree with the list under it — the two
-// requests can otherwise land either side of a backend cache boundary. The other badges are the
-// counts request's job.
-const countOf = (name: string) =>
-  name === category.value
-    ? totalCount.value
-    : (categoryCounts.value.find((entry) => entry.category === name)?.count ?? 0);
+// Every badge reads the counts request, the SELECTED tab included. Taking that one from the rows
+// request instead kept it in step with the list under it, but at the price of one figure having two
+// sources: the same tab, and "All" with it, then changed value as the rep moved between tabs, which
+// reads as data changing under them rather than as two requests disagreeing.
+const countOf = (name: string) => categoryCounts.value.find((entry) => entry.category === name)?.count ?? 0;
 
-// "All" sums the badges; on the All tab the rows request already counted everything it merged.
-const allCount = computed(() =>
-  category.value ? categoryCounts.value.reduce((sum, entry) => sum + entry.count, 0) : totalCount.value,
-);
+// The counts request carries no category filter, so its own totalCount IS the "All" figure.
+const allCount = computed(() => countsTotal.value);
 
-// keepPreviousResult holds the outgoing response during any refetch, so badges keep their last-known
-// figures across tab/period switches and while a Top view shows (the insights ops carry no
-// categoryCounts). Only the very first load has nothing to hold: the tabs stay up without figures —
-// a premature "(0)" on every tab reads as a real count, then jumps.
+// keepPreviousResult holds the outgoing response during a refetch, so the badges keep their
+// last-known figures while the period changes under them. Only the very first load has nothing to
+// hold: the tabs stay up without figures — a premature "(0)" on every tab reads as a real count,
+// then jumps.
 const countsPending = computed(() => countsLoading.value && !categoryCounts.value.length);
 
 // Fixed vocabulary + counts. Zero-count categories keep their tab by design — a rep must see that a
@@ -353,9 +372,11 @@ const emptyIcon = computed(() => {
   return onSearchesTab.value ? "search" : "eye";
 });
 
-const pages = computed(() => Math.max(1, Math.ceil(totalCount.value / ACTIVITY_PAGE_SIZE)));
+// totalCount counts rows the backend will not serve past its skip cap (see ACTIVITY_MAX_SKIP), so the
+// pager stops at the deepest page that still comes back with rows.
+const MAX_PAGES = Math.floor(ACTIVITY_MAX_SKIP / ACTIVITY_PAGE_SIZE) + 1;
+const pages = computed(() => Math.min(Math.max(1, Math.ceil(totalCount.value / ACTIVITY_PAGE_SIZE)), MAX_PAGES));
 
-// Clamp back to the last valid page when the set shrinks below the current page.
 watch(pages, (total) => {
   if (page.value > total) {
     page.value = total;
@@ -366,8 +387,44 @@ watch(pages, (total) => {
 const showCaveat = computed(() => !category.value || TRACKED_ACTIVITY_CATEGORIES.has(category.value));
 
 // The scoped customer's name — resolved only when the query param narrows the feed.
-const { customer } = useSalesRepCustomer(() => props.organizationId ?? "");
+const {
+  customer,
+  loading: customerLoading,
+  failed: customerFailed,
+  notFound: customerNotFound,
+} = useSalesRepCustomer(() => props.organizationId ?? "");
 const customerName = computed(() => (props.organizationId ? customer.value?.organizationName : undefined));
+
+// Untreated, an id the rep cannot see reads as their own feed — fallback heading, no customer crumb,
+// every badge at 0 — and Top mode blames the store's analytics, since the insights query nulls its
+// payload for an invisible organization exactly as for an absent provider. Only this query can tell.
+// Both flags are gated on the param: with no id the query never runs, so `notFound` is true by default.
+const scopedCustomerFailed = computed(() => Boolean(props.organizationId) && customerFailed.value);
+
+// `notFound` is "settled with no customer" — which is also the instant BEFORE the query starts: apollo
+// starts synchronously only when enabled at setup, and defers a tick when `enabled` flips later, as it
+// does stepping from the rep-wide feed onto a customer's (one route record serves both). So wait until
+// the read for this very id has begun; a stale id from the previous scope must not answer for the new.
+const askedFor = ref<string | undefined>(undefined);
+watch(
+  [() => props.organizationId, customerLoading],
+  ([id, isLoading]) => {
+    if (isLoading) {
+      askedFor.value = id;
+    }
+  },
+  { immediate: true },
+);
+
+const scopedCustomerMissing = computed(
+  () => Boolean(props.organizationId) && askedFor.value === props.organizationId && customerNotFound.value,
+);
+const customerUnavailable = computed(() => scopedCustomerFailed.value || scopedCustomerMissing.value);
+
+// The customer profile's own wording for the same two situations, reused rather than restated.
+const unavailableText = computed(() =>
+  scopedCustomerFailed.value ? t("sales_rep.customer_profile.load_failed") : t("sales_rep.customer_profile.not_found"),
+);
 
 // One line, no subtitle: rep-wide names whose feed this is, the narrowed mode names the customer.
 // The bare noun stands in until the name resolves, so the heading never renders half-written.

@@ -31,11 +31,45 @@ describe("useSalesRepSearchHistory", () => {
       },
     } satisfies SalesRepCustomerSearchTermsQuery;
 
-    const { items, dataAsOf, notConfigured } = useSalesRepSearchHistory({ organizationId: "org-1" });
+    const { items, notConfigured } = useSalesRepSearchHistory({ organizationId: "org-1" });
 
     expect(items.value).toEqual([{ term: "gloves", count: 12, lastSearchedDate: "2026-08-19T10:00:00Z" }]);
-    expect(dataAsOf.value).toBe("2026-08-20T00:00:00Z");
     expect(notConfigured.value).toBe(false);
+  });
+
+  // The payload's own dataAsOf is deliberately NOT read: both insights ops select the same root field
+  // with the same arguments, so Apollo keeps one normalized entry and an argument-less dataAsOf in it
+  // ends up whichever op answered last. Here the payload claims a date the rows do not support, which
+  // is exactly the shape of that bug — the browsed-products op having written it.
+  it("dates the list from its own rows, not from the shared payload field", () => {
+    queryMock.result.value = {
+      salesRepCustomerInsights: {
+        dataAsOf: "2026-08-31T00:00:00Z",
+        searchTerms: [
+          { term: "gloves", count: 12, lastSearchedDate: "2026-08-19T10:00:00Z" },
+          { term: "bolts", count: 3, lastSearchedDate: "2026-08-21T09:00:00Z" },
+        ],
+      },
+    } satisfies SalesRepCustomerSearchTermsQuery;
+
+    const { dataAsOf } = useSalesRepSearchHistory({ organizationId: "org-1" });
+
+    expect(dataAsOf.value).toBe("2026-08-21T09:00:00Z");
+  });
+
+  // Sort "count" returns aggregate rows that carry no dates at all, so there is no date to show —
+  // and borrowing the other list's would misdate this one.
+  it("reports no date when the rows carry none", () => {
+    queryMock.result.value = {
+      salesRepCustomerInsights: {
+        dataAsOf: "2026-08-31T00:00:00Z",
+        searchTerms: [{ term: "gloves", count: 12 }],
+      },
+    } satisfies SalesRepCustomerSearchTermsQuery;
+
+    const { dataAsOf } = useSalesRepSearchHistory({ organizationId: "org-1" });
+
+    expect(dataAsOf.value).toBeUndefined();
   });
 
   it("flags not-configured on a null payload, but never before a result arrives", () => {

@@ -73,6 +73,25 @@ describe("useSalesRepBrowseHistory", () => {
     expect(notConfigured.value).toBe(true);
   });
 
+  // Same reason as in useSalesRepSearchHistory: the two insights ops share one normalized cache entry,
+  // so the payload's argument-less dataAsOf is whichever of them answered last. The list dates itself
+  // from the rows it actually shows.
+  it("dates the list from its own rows, not from the shared payload field", () => {
+    queryMock.result.value = {
+      salesRepCustomerInsights: {
+        dataAsOf: "2026-08-31T00:00:00Z",
+        browsedProducts: [
+          { productId: "p1", sku: "SKU-1", viewCount: 4, lastViewedDate: "2026-08-19T10:00:00Z" },
+          { productId: "p2", sku: "SKU-2", viewCount: 2, lastViewedDate: "2026-08-22T08:00:00Z" },
+        ],
+      },
+    } satisfies SalesRepCustomerBrowsedProductsQuery;
+
+    const { dataAsOf } = useSalesRepBrowseHistory({ organizationId: "org-1" });
+
+    expect(dataAsOf.value).toBe("2026-08-22T08:00:00Z");
+  });
+
   it("surfaces the query error so the widget can show a failure state", () => {
     const { error } = useSalesRepBrowseHistory({ organizationId: "org-1" });
 
