@@ -808,4 +808,49 @@ describe("VcRangeCalendar", () => {
       wrapper.unmount();
     });
   });
+
+  // Selected through the published __nav--* modifiers, as VcCalendar's own nav tests do.
+  describe("month and year navigation", () => {
+    function inViewCell(wrapper: ReturnType<typeof mountCal>, iso: string) {
+      return wrapper.find(`[data-reka-calendar-cell-trigger][data-value="${iso}"]:not([data-outside-view])`);
+    }
+
+    it("steps a month in each direction", async () => {
+      const wrapper = mountCal();
+
+      await wrapper.find(".vc-range-calendar__nav--month-next").trigger("click");
+      await flushPromises();
+      expect(inViewCell(wrapper, "2026-11-20").exists()).toBe(true);
+
+      await wrapper.find(".vc-range-calendar__nav--month-prev").trigger("click");
+      await wrapper.find(".vc-range-calendar__nav--month-prev").trigger("click");
+      await flushPromises();
+      expect(inViewCell(wrapper, "2026-09-20").exists()).toBe(true);
+    });
+
+    it("steps a whole year in each direction", async () => {
+      const wrapper = mountCal();
+
+      await wrapper.find(".vc-range-calendar__nav--year-prev").trigger("click");
+      expect(inViewCell(wrapper, "2025-10-08").exists()).toBe(true);
+
+      await wrapper.find(".vc-range-calendar__nav--year-next").trigger("click");
+      await wrapper.find(".vc-range-calendar__nav--year-next").trigger("click");
+      expect(inViewCell(wrapper, "2027-10-08").exists()).toBe(true);
+    });
+
+    // The buttons are ours, not reka's, so nothing else marks a year jump as out of bounds. The
+    // handlers' own guards are belt-and-braces: neither `trigger` nor a native dispatch delivers a
+    // click to a disabled element, so `disabled` is the whole reachable gate.
+    it("gates each year button at its own hard bound", () => {
+      const wrapper = mountCal({ min: "2026-10-01", max: "2026-10-31" });
+      const prev = wrapper.find(".vc-range-calendar__nav--year-prev");
+      const next = wrapper.find(".vc-range-calendar__nav--year-next");
+
+      expect(prev.attributes("disabled")).toBeDefined();
+      expect(prev.attributes("aria-disabled")).toBe("true");
+      expect(next.attributes("disabled")).toBeDefined();
+      expect(next.attributes("aria-disabled")).toBe("true");
+    });
+  });
 });

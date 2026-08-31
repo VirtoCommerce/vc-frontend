@@ -14,6 +14,7 @@
     @focusin="onFocusIn"
     @focusout="onFocusOut"
   >
+    <!-- Carries no rule of its own: a published hook for a fork restyling the group label. -->
     <VcLabel v-if="label" :required="required" :error="computedError" class="vc-date-range-input__label">
       {{ label }}
     </VcLabel>

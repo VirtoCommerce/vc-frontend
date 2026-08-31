@@ -406,7 +406,7 @@ function onStartValueUpdate(value: DateValue | undefined): void {
     pendingCompleteRangeStart = undefined;
     return;
   }
-  if (lastKnown?.end && !lastKnown?.start) {
+  if (lastKnown?.end && !lastKnown.start) {
     return;
   }
   emitRange({ start: iso, end: undefined });

@@ -396,7 +396,7 @@ function onCalendarUpdate(close: () => void, value: VcDateRangeType | undefined)
   // committed (reachable with updateOn="enter", where blur does not commit).
   rangeInputRef.value?.resetSegments(value.start && !value.end ? "start" : undefined);
   // Close only once BOTH endpoints are committed, not after the anchor.
-  if (props.closeOnSelect && value?.start && value?.end) {
+  if (props.closeOnSelect && value.start && value.end) {
     close();
     focusField();
   }
