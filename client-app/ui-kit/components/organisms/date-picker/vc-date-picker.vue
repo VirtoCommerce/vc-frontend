@@ -83,6 +83,7 @@
 import { computed, nextTick, useTemplateRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useCalendarPopover } from "@/ui-kit/composables";
+import { ariaControlsOf } from "@/ui-kit/utilities";
 import type { VcDateFieldUpdateOnType } from "@/ui-kit/composables";
 
 type AriaAttributesType = Record<string, string | number | null>;
@@ -193,8 +194,8 @@ function forwardedAria(triggerProps: Record<string, unknown>): AriaAttributesTyp
     "aria-haspopup": triggerProps["aria-haspopup"] as string,
     "aria-expanded": String(triggerProps["aria-expanded"] ?? false),
   };
-  const controls = triggerProps["aria-controls"];
-  if (typeof controls === "string") {
+  const controls = ariaControlsOf(triggerProps);
+  if (controls) {
     aria["aria-controls"] = controls;
   }
   return aria;

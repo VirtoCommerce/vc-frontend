@@ -26,7 +26,7 @@
         class="vc-date-range-input__segment"
         :class="{ 'vc-date-range-input__segment--filled': !!modelValue?.start }"
         :model-value="modelValue?.start"
-        :name="name ? `${name}-start` : undefined"
+        :name="sideAttr(name, 'start')"
         :aria-label="startLabel || t('ui_kit.date_range_input.start_date')"
         :placeholder="startPlaceholder"
         @update:model-value="onSegment('start', $event)"
@@ -42,7 +42,7 @@
         class="vc-date-range-input__segment"
         :class="{ 'vc-date-range-input__segment--filled': !!modelValue?.end }"
         :model-value="modelValue?.end"
-        :name="name ? `${name}-end` : undefined"
+        :name="sideAttr(name, 'end')"
         :aria-label="endLabel || t('ui_kit.date_range_input.end_date')"
         :placeholder="endPlaceholder"
         @update:model-value="onSegment('end', $event)"
@@ -81,7 +81,7 @@
 import { computed, nextTick, provide, useTemplateRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useComponentId, useDateRangeField, useShellFocusEvents } from "@/ui-kit/composables";
-import { getInputClearIconSize } from "@/ui-kit/utilities";
+import { getInputClearIconSize, sideAttr } from "@/ui-kit/utilities";
 import type { VcDateFieldUpdateOnType } from "@/ui-kit/composables";
 
 interface IDateInputExposed {

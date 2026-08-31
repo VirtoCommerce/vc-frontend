@@ -117,7 +117,7 @@
             :aria-label="t('ui_kit.accessibility.open_calendar')"
             aria-haspopup="dialog"
             :aria-expanded="String(triggerProps['aria-expanded'] ?? false)"
-            :aria-controls="toggleAriaControls(triggerProps)"
+            :aria-controls="ariaControlsOf(triggerProps)"
             @click="toggle"
             @keydown.esc="onTriggerEscape($event, opened, close)"
           />
@@ -151,6 +151,7 @@
 import { computed, ref, useTemplateRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useCalendarPopover, useComponentId, useDateRangeField, useShellFocusEvents } from "@/ui-kit/composables";
+import { ariaControlsOf, sideAttr } from "@/ui-kit/utilities";
 import type { VcDateFieldUpdateOnType } from "@/ui-kit/composables";
 
 interface IProps {
@@ -326,18 +327,6 @@ const sharedFieldProps = computed(() => ({
   closeOnSelect: props.closeOnSelect,
   placement: props.placement,
 }));
-
-function sideAttr(value: string | undefined, side: "start" | "end"): string | undefined {
-  if (!value) {
-    return undefined;
-  }
-  return `${value}-${side}`;
-}
-
-function toggleAriaControls(triggerProps: Record<string, unknown>): string | undefined {
-  const controls = triggerProps["aria-controls"];
-  return typeof controls === "string" ? controls : undefined;
-}
 
 function onSegment(which: "start" | "end", value: string | undefined): void {
   emit("update:modelValue", mergeRange(which, value));
