@@ -65,11 +65,9 @@ declare global {
   };
 
   /**
-   * Classes and inline style of the leading selection header cell — fixed width, plus
-   * sticky positioning when the table has fixed-start columns. `v-bind` onto a `<th>`
-   * to match the built-in cell. To add your own classes: in a template use a sibling
-   * `class` attribute and Vue merges the two; in a render function merge `class` yourself,
-   * since a spread would overwrite it.
+   * Classes and inline style of the leading selection header cell. `v-bind` onto a `<th>`
+   * to match the built-in cell; add your own classes with a sibling `class` attribute — in a
+   * render function merge `class` yourself, since a spread would overwrite it.
    */
   type VcTableSelectionColumnAttrsType = {
     class: string;
@@ -77,11 +75,9 @@ declare global {
   };
 
   /**
-   * Classes of the built-in `<thead>`, including the sticky modifier that `stickyHeader`
-   * and `maxHeight` turn on — the only carrier of the header's sticky positioning.
-   * `v-bind` onto a custom `<thead>`. To add your own classes: in a template use a sibling
-   * `class` attribute and Vue merges the two; in a render function merge `class` yourself,
-   * since a spread would overwrite it.
+   * Classes of the built-in `<thead>`, sticky modifier included — the only carrier of the
+   * header's sticky positioning. `v-bind` onto a custom `<thead>`; add your own classes the
+   * way `VcTableSelectionColumnAttrsType` describes.
    */
   type VcTableHeadAttrsType = {
     class: string;
@@ -90,15 +86,9 @@ declare global {
   /**
    * Scope passed to the `#header` slot. A custom header replaces the default one entirely,
    * so it must render its own leading selection cell whenever `showSelectionColumn` is
-   * `true`, or every column shifts by one. Only `"multiple"` has a select-all control —
-   * in `"single"` mode `toggleSelectAll` is a no-op and the cell carries no control, but
-   * it still needs an accessible name, the way the built-in header renders a `sr-only`
-   * `ui_kit.table.selection_column` label.
-   *
-   * The scope exposes no per-column attributes — the resolved columns and their sticky
-   * offsets are not part of it. Over `fixed` columns that means the header cells scroll away
-   * while the body cells stay pinned; reproducing the offsets is on the consumer, using the
-   * 150px default documented on `width` — the constant itself is not part of the scope object.
+   * `true`, or every column shifts by one. No per-column attributes are exposed: over
+   * `fixed` columns the consumer reproduces the sticky offsets itself. See the
+   * `SelectionCustomHeader` story.
    */
   type VcTableHeaderSlotScopeType = {
     showSelectionColumn: boolean;

@@ -580,14 +580,14 @@ const selectionColumnStyle = computed<Record<string, string>>(() => {
   return base;
 });
 
-// Shared by the default `<thead>` and the `#header` slot scope. Normalized to a string, not
-// left an array: a bare `v-bind` normalizes `class` in place, rewriting this computed's cache.
+// Shared with the `#header` slot scope. String class, not an array: a bare `v-bind` would
+// normalize `class` in place and rewrite this computed's cache.
 const headAttrs = computed<VcTableHeadAttrsType>(() => ({
   class: normalizeClass(["vc-table__head", { "vc-table__head--sticky": props.stickyHeader || props.maxHeight }]),
 }));
 
-// Shared by the default header and the `#header` slot scope. String class to match
-// `headAttrs`; the style is a copy, since the same object also styles the body cells.
+// Shared with the `#header` slot scope. The style is a copy: the same object also styles
+// the body cells.
 const selectionColumnAttrs = computed<VcTableSelectionColumnAttrsType>(() => ({
   class: normalizeClass([
     "vc-table__title",
@@ -648,14 +648,11 @@ function syncRetryListener() {
 const desktopTableRef = useTemplateRef<HTMLTableElement | null>("desktopTableRef");
 let headerAlignmentWarned = false;
 
-// Only the default skeleton and the VcTableColumn rows inject selection cells;
-// `#desktop-skeleton`, `#desktop-body` and `#desktop-item` rows are consumer-authored.
-const bodyRendersSelectionCell = computed<boolean>(() =>
-  props.loading ? !slots["desktop-skeleton"] : hasColumnSlots.value,
-);
-
 function warnOnMisalignedCustomHeader(): void {
-  if (headerAlignmentWarned || !showSelectionColumn.value || !bodyRendersSelectionCell.value) {
+  // Only the default skeleton and the VcTableColumn rows inject selection cells.
+  const bodyHasSelectionCell = props.loading ? !slots["desktop-skeleton"] : hasColumnSlots.value;
+
+  if (headerAlignmentWarned || !showSelectionColumn.value || !bodyHasSelectionCell) {
     return;
   }
 
@@ -666,15 +663,12 @@ function warnOnMisalignedCustomHeader(): void {
     return;
   }
 
-  // Widest row wins: a grouped header spreads columns over several rows, and a selection
-  // cell with `rowspan` lives only in the first one.
+  // Widest row wins: a grouped header spreads its columns over several rows.
   const renderedColumns = Math.max(
     ...[...rows].map((row) => [...row.cells].reduce((total, cell) => total + cell.colSpan, 0)),
   );
 
-  // A one-cell shortfall, without telling which cell is missing: `colSpan` is summed, and a
-  // multi-row header whose lower row fills a gap left above it lands here too. Any other
-  // shape is a deliberate layout.
+  // Only a one-cell shortfall is reported; any other shape is a deliberate layout.
   if (!renderedColumns || renderedColumns !== stateColspan.value - 1) {
     return;
   }
@@ -707,6 +701,11 @@ onMounted(() => {
 onUpdated(() => {
   syncRowClickListener();
   syncRetryListener();
+
+  // Columns, selection and the desktop table itself can all appear after mount.
+  if (import.meta.env.DEV && slots.header) {
+    warnOnMisalignedCustomHeader();
+  }
 });
 
 // Resolve row class from VcTable prop
@@ -931,10 +930,7 @@ function toggleSelectAll(): void {
     const keys = props.selection.map(String).filter((key) => !pageKeySet.has(key));
     commitSelection(keys, { action: "deselect-all" });
   } else {
-    // The Set carries the dedup the previous accumulating `includes` loop provided: two items
-    // can share a key (duplicate `id`s, or `getItemKey`'s index fallback colliding with another
-    // row's id), and each repeat would cost one extra click, since `toggleRow` splices a single
-    // occurrence.
+    // Dedup: two items can share a key, and `toggleRow` splices a single occurrence.
     const added = [...new Set(selectableKeysOnPage.value)].filter((key) => !selectionSet.value.has(key));
 
     // No selectable row on this page: committing would emit a `select-all` that changed nothing.
@@ -956,29 +952,6 @@ const headerSlotScope = computed<VcTableHeaderSlotScopeType>(() => ({
   selectionColumnAttrs: selectionColumnAttrs.value,
   headAttrs: headAttrs.value,
 }));
-
-// Selection can be switched on, columns added or removed, and the desktop table mounted only
-// after a mobile → desktop flip. Watching those instead of hooking `onUpdated` keeps a correctly
-// written header from re-querying the DOM on every render. The column sources are id lists
-// standing in for `stateColspan`, which the check actually compares: reading that here would
-// invoke the default slot outside render.
-if (import.meta.env.DEV) {
-  watch(
-    [
-      showSelectionColumn,
-      isMobile,
-      () => props.loading,
-      () => JSON.stringify([...childColumns.value.keys()]),
-      () => JSON.stringify(props.columns.map((column) => column.id)),
-    ],
-    () => {
-      if (slots.header) {
-        warnOnMisalignedCustomHeader();
-      }
-    },
-    { flush: "post" },
-  );
-}
 
 // Scope helpers exposed to #desktop-item / #mobile-item slots.
 function selectionSlotScope(
@@ -1126,9 +1099,8 @@ watch(
   $skeleton: "";
 
   --radius: var(--vc-table-radius, var(--vc-radius, 0.5rem));
-  // Selected-row highlight, declared once: the dark layer varies only the alpha, so the alias
-  // chain cannot drift between the two. `--vc-table-selected-bg` is the previous public name,
-  // still honored so forks that overrode it keep their highlight.
+  // Selected-row highlight, declared once — the dark layer varies only the alpha.
+  // `--vc-table-selected-bg` is the previous public name, still honored for forks.
   --selected-bg-alpha: 0.08;
   --selected-bg-color: var(
     --vc-table-selected-bg-color,

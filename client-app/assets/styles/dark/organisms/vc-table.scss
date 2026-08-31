@@ -1,5 +1,5 @@
-// Higher alpha than light mode: 8% primary is nearly invisible on dark surfaces. Only the alpha
-// is overridden, so the alias chain in vc-table.vue stays the single declaration of the highlight.
+// Higher alpha than light mode: 8% primary is nearly invisible on dark surfaces. Overriding the
+// alpha alone keeps vc-table.vue the single declaration of the alias chain.
 .vc-table {
   --selected-bg-alpha: 0.16;
 }
