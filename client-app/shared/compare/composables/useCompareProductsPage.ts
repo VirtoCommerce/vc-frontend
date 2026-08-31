@@ -261,10 +261,10 @@ export function useCompareProductsPage() {
       // unresolved (>16 cap, deleted product, failed fetch) while a later one fetched fine.
       const resolvedProducts = resolveEntryProducts(entries, fetchedProducts.value);
 
+      const fallbackLabelKey =
+        categoryKey === "" ? "shared.compare.table.uncategorized" : "shared.compare.table.unresolved_category";
       const label =
-        categoryKey !== "" && resolvedProducts[0]
-          ? getProductCategoryLabel(resolvedProducts[0])
-          : t("shared.compare.table.uncategorized");
+        categoryKey !== "" && resolvedProducts[0] ? getProductCategoryLabel(resolvedProducts[0]) : t(fallbackLabelKey);
 
       return {
         categoryKey,

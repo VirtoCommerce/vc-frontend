@@ -231,14 +231,14 @@ describe("useCompareProductsPage", () => {
       expect(categoryTabs.value).toEqual([{ categoryKey: "", label: "shared.compare.table.uncategorized", count: 1 }]);
     });
 
-    it("keeps a category visible with the uncategorized fallback label once nothing in it has resolved (still loading, >16 cap, deleted product, or a failed fetch), rather than dropping it and stranding its entries — the fetch-failure toast, tested below, is what surfaces that", () => {
+    it("keeps a category visible with the unresolved fallback label once nothing in it has resolved (still loading, >16 cap, deleted product, or a failed fetch), rather than dropping it and stranding its entries — the fetch-failure toast, tested below, is what surfaces that", () => {
       hoisted.state.compareEntries.value = [entry("p1", "cat-a"), entry("p2", "cat-b")];
       hoisted.state.fetchedProducts.value = [product("p2")]; // p1/cat-a never resolved
 
       const { categoryTabs } = useCompareProductsPage();
 
       expect(categoryTabs.value).toEqual([
-        { categoryKey: "cat-a", label: "shared.compare.table.uncategorized", count: 0 },
+        { categoryKey: "cat-a", label: "shared.compare.table.unresolved_category", count: 0 },
         { categoryKey: "cat-b", label: "p2", count: 1 },
       ]);
     });
@@ -252,7 +252,7 @@ describe("useCompareProductsPage", () => {
 
       expect(selectedCategoryKey.value).toBe("cat-a");
       expect(categoryTabs.value).toEqual([
-        { categoryKey: "cat-a", label: "shared.compare.table.uncategorized", count: 0 },
+        { categoryKey: "cat-a", label: "shared.compare.table.unresolved_category", count: 0 },
       ]);
     });
 
