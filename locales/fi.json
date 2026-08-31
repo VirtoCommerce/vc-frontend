@@ -1064,6 +1064,7 @@
           "differences": "Erot"
         },
         "uncategorized": "Luokittelemattomat",
+        "unresolved_category": "Ei saatavilla",
         "differ_rows": "Erot: {count} / {total} riviä",
         "clear_category": "Tyhjennä kategoria",
         "remove_product": "Poista vertailusta",

@@ -1064,6 +1064,7 @@
           "differences": "違い"
         },
         "uncategorized": "未分類",
+        "unresolved_category": "利用不可",
         "differ_rows": "{total}行中{count}行が異なります",
         "clear_category": "カテゴリをクリア",
         "remove_product": "比較から削除",

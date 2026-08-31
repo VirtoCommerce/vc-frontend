@@ -1064,6 +1064,7 @@
           "differences": "Различия"
         },
         "uncategorized": "Без категории",
+        "unresolved_category": "Недоступно",
         "differ_rows": "Различаются: {count} из {total} строк",
         "clear_category": "Очистить категорию",
         "remove_product": "Удалить из сравнения",
