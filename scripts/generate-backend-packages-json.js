@@ -21,10 +21,10 @@ function log(message) {
 // Strip ASCII control characters (CR/LF and raw ESC included) before a value
 // reaches a log sink, so a hostile response body or error message can't forge
 // extra log lines or terminal escape sequences.
-// eslint-disable-next-line no-control-regex -- the control-character range is the point of this filter
-const LOG_UNSAFE_CHARS = /[\x00-\x1f\x7f]+/g;
+// eslint-disable-next-line no-control-regex, sonarjs/duplicates-in-character-class -- control-char range is the point of this filter; \r/\n duplicate part of the \x00-\x1f range on purpose, since CodeQL js/log-injection only recognizes replace() as a sanitizer when \n is an explicit character-class member
+const LOG_UNSAFE_CHARS = /[\r\n\x00-\x1f\x7f]/g;
 function sanitizeForLog(value) {
-  return String(value).replace(LOG_UNSAFE_CHARS, " ");
+  return String(value).replace(LOG_UNSAFE_CHARS, "");
 }
 
 // Read backend URL from .env.local or .env file
