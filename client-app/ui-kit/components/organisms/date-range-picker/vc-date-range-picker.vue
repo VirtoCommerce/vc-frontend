@@ -32,7 +32,7 @@
         @update:model-value="onSegment('start', $event)"
         @update:valid="setSegmentValid('start', $event)"
         @update:error-text="setSegmentErrorText('start', $event)"
-        @clear="onInputClear"
+        @clear="emit('clear')"
       />
 
       <span class="vc-date-range-picker__separator" aria-hidden="true">–</span>
@@ -51,7 +51,7 @@
         @update:model-value="onSegment('end', $event)"
         @update:valid="setSegmentValid('end', $event)"
         @update:error-text="setSegmentErrorText('end', $event)"
-        @clear="onInputClear"
+        @clear="emit('clear')"
       />
     </div>
 
@@ -99,12 +99,12 @@
         :clearable="clearable"
         :show-empty-details="showEmptyDetails"
         :data-test-id="dataTestId"
-        @update:model-value="onInputUpdate"
+        @update:model-value="emit('update:modelValue', $event)"
         @update:valid="inputValid = $event"
         @update:error-text="inputErrorText = $event"
-        @blur="onInputBlur"
-        @focus="onInputFocus"
-        @clear="onInputClear"
+        @blur="emit('blur', $event)"
+        @focus="emit('focus', $event)"
+        @clear="emit('clear')"
         @keydown.esc="onFieldEscape($event, opened, close)"
       >
         <template #append>
@@ -339,22 +339,6 @@ function toggleAriaControls(triggerProps: Record<string, unknown>): string | und
   return typeof controls === "string" ? controls : undefined;
 }
 
-function onInputUpdate(value: VcDateRangeType | undefined): void {
-  emit("update:modelValue", value);
-}
-
-function onInputBlur(event: FocusEvent): void {
-  emit("blur", event);
-}
-
-function onInputFocus(event: FocusEvent): void {
-  emit("focus", event);
-}
-
-function onInputClear(): void {
-  emit("clear");
-}
-
 function onSegment(which: "start" | "end", value: string | undefined): void {
   emit("update:modelValue", mergeRange(which, value));
 }
@@ -389,7 +373,7 @@ function onCalendarClear(close: () => void): void {
     return;
   }
   emit("clear");
-  // Combined only; the split fields bind their own @clear to onInputClear.
+  // Combined only; the split fields clear their own segments.
   rangeInputRef.value?.clearSegments();
   if (props.closeOnSelect) {
     close();
