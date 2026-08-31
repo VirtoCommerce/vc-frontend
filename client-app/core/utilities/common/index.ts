@@ -5,7 +5,7 @@ const RETURN_URL_KEYS = ["returnUrl", "ReturnUrl"] as const;
 
 export function isSafeRelativeUrl(url: string): boolean {
   // Mirrors the browser's tab/newline stripping + backslash normalization, or a hidden "//" could slip past.
-  const normalized = url.replace(/[\t\n\r]/g, "").replace(/\\/g, "/");
+  const normalized = url.replaceAll(/[\t\n\r]/g, "").replaceAll(/\\/g, "/");
   return normalized.startsWith("/") && !normalized.startsWith("//");
 }
 
