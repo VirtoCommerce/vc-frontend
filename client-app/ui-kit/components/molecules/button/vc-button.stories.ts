@@ -6,6 +6,7 @@ const SIZES = ["xxs", "xs", "sm", "md", "lg"];
 const COLORS = ["primary", "secondary", "success", "info", "neutral", "warning", "danger", "accent"];
 const VARIANTS = ["solid", "outline", "surface", "ghost", "soft", "tonal"];
 const TYPES = ["button", "reset", "submit"];
+const ICON_VARIANTS = ["outline", "solid"];
 
 export default {
   title: "Components/Molecules/VcButton",
@@ -50,6 +51,18 @@ export default {
       table: {
         type: {
           summary: VARIANTS.join(" | "),
+        },
+      },
+    },
+    iconVariant: {
+      control: "inline-radio",
+      options: ICON_VARIANTS,
+      description:
+        "Icon set for `icon`, `prependIcon` and `appendIcon`. Left unset, the icon resolves its own set (outline first, solid fallback).",
+      type: { name: "string", required: false },
+      table: {
+        type: {
+          summary: ICON_VARIANTS.join(" | "),
         },
       },
     },
@@ -164,6 +177,13 @@ export const Icon: StoryType = {
         ],
       },
     },
+  },
+};
+
+export const IconVariant: StoryType = {
+  args: {
+    prependIcon: "save-v2",
+    iconVariant: "solid",
   },
 };
 
