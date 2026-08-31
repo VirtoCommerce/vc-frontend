@@ -282,6 +282,10 @@ export function useCompareProductsPage() {
   // category instead of whichever one would otherwise be picked by default.
   const initialCategoryKey = typeof route.query.category === "string" ? route.query.category : "";
   const selectedCategoryKey = ref(initialCategoryKey);
+  // Whether selectedCategoryKey reflects a deliberate choice (deep link or tab click) rather than
+  // the tabs watch below picking a default for the user. Only a still-automatic selection gets
+  // moved once counts resolve — a deliberate one is never overridden, even if its count is 0.
+  const isCategorySelectionDeliberate = ref(initialCategoryKey !== "");
 
   const selectedCategoryTab = computed(() =>
     categoryTabs.value.find((tab) => tab.categoryKey === selectedCategoryKey.value),
@@ -472,6 +476,7 @@ export function useCompareProductsPage() {
   );
 
   function selectCategory(categoryKey: string) {
+    isCategorySelectionDeliberate.value = true;
     selectedCategoryKey.value = categoryKey;
   }
 
@@ -482,9 +487,16 @@ export function useCompareProductsPage() {
         return;
       }
 
-      if (!tabs.some((tab) => tab.categoryKey === selectedCategoryKey.value)) {
-        selectedCategoryKey.value = tabs[0]?.categoryKey ?? "";
+      const currentTab = tabs.find((tab) => tab.categoryKey === selectedCategoryKey.value);
+
+      // A deliberate selection (deep link or tab click) is never moved, even at count 0 — that's
+      // what lets Clear category reach an unresolved entry. Only an automatic default gets
+      // upgraded to a populated tab once one resolves; missing entirely always needs a re-pick.
+      if (currentTab && (isCategorySelectionDeliberate.value || currentTab.count > 0)) {
+        return;
       }
+
+      selectedCategoryKey.value = tabs.find((tab) => tab.count > 0)?.categoryKey ?? tabs[0].categoryKey;
     },
     { immediate: true },
   );
