@@ -192,8 +192,13 @@ const props = withDefaults(defineProps<IProps>(), {
   dataTestId: undefined,
 });
 
+// First candidate that parses wins; today is the floor.
+function preferredPlaceholder(...isoCandidates: (string | undefined)[]): DateValue {
+  return isoCandidates.map((iso) => tryParseDate(iso)).find((parsed) => !!parsed) ?? todayDate();
+}
+
 function getInitialPlaceholder(): DateValue {
-  return tryParseDate(props.modelValue?.start) ?? tryParseDate(props.modelValue?.end) ?? todayDate();
+  return preferredPlaceholder(props.modelValue?.start, props.modelValue?.end);
 }
 
 const { t } = useI18n();
@@ -307,9 +312,7 @@ function resyncRekaWithModel(): void {
   suppressEchoForOneTick();
   parsedModelValue.value = parseRange(props.modelValue);
   // reka moved its placeholder to the revert target; nothing else would bring the grid back.
-  placeholderRef.value = clampToBounds(
-    tryParseDate(props.modelValue?.start) ?? tryParseDate(props.modelValue?.end) ?? todayDate(),
-  );
+  placeholderRef.value = clampToBounds(preferredPlaceholder(props.modelValue?.start, props.modelValue?.end));
 }
 
 function onUpdate(value: DateRange | undefined): void {
@@ -402,7 +405,7 @@ function onStartValueUpdate(value: DateValue | undefined): void {
 // use-calendar-base does not sync the placeholder on model changes — this watch does.
 watch(
   () => [props.modelValue?.start, props.modelValue?.end] as const,
-  ([newStart, newEnd], [oldStart, oldEnd]) => {
+  ([newStart, newEnd], [oldStart]) => {
     parsedModelValue.value = parseRange(props.modelValue);
     // Our own anchor returns as a prop change too; only a value we did not emit is a commit.
     if (!isSameRange(props.modelValue, lastKnown)) {
@@ -414,15 +417,7 @@ watch(
     suppressEchoForOneTick();
     // A changed start must win: reka's placeholder-follows-startValue overrides any end preference later.
     const startChanged = newStart !== oldStart;
-    const endChanged = newEnd !== oldEnd;
-    let targetIso: string | undefined;
-    if (startChanged) {
-      targetIso = newStart;
-    } else if (endChanged) {
-      targetIso = newEnd;
-    }
-    const parsed = tryParseDate(targetIso) ?? tryParseDate(newEnd) ?? tryParseDate(newStart);
-    placeholderRef.value = clampToBounds(parsed ?? todayDate());
+    placeholderRef.value = clampToBounds(preferredPlaceholder(startChanged ? newStart : newEnd, newEnd, newStart));
   },
 );
 
