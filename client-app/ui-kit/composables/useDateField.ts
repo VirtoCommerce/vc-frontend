@@ -146,32 +146,6 @@ export function useDateField(opts: IUseDateFieldOptions) {
     }
   }
 
-  function onBlur(): void {
-    const mode = toValue(opts.updateOn) ?? "blur";
-    if (mode === "blur") {
-      touched.value = true;
-      commit();
-    }
-  }
-
-  function onEnter(): void {
-    touched.value = true;
-    commit();
-  }
-
-  function onClear(): void {
-    displayValue.value = "";
-    touched.value = false;
-    if (opts.modelValue.value !== undefined) {
-      opts.onCommit(undefined);
-    }
-  }
-
-  function reset(): void {
-    syncDisplayFromModel();
-    touched.value = false;
-  }
-
   /**
    * Empties the text without reading the model. `reset` cannot serve a CLEAR: an uncontrolled parent
    * never writes the model back, so repainting from it puts the cleared dates straight back and the
@@ -179,6 +153,30 @@ export function useDateField(opts: IUseDateFieldOptions) {
    */
   function clearText(): void {
     displayValue.value = "";
+    touched.value = false;
+  }
+
+  function onBlur(): void {
+    const mode = toValue(opts.updateOn) ?? "blur";
+    if (mode === "blur") {
+      commit();
+    }
+  }
+
+  // Enter commits whatever `updateOn` says; `commit` marks the field touched itself.
+  function onEnter(): void {
+    commit();
+  }
+
+  function onClear(): void {
+    clearText();
+    if (opts.modelValue.value !== undefined) {
+      opts.onCommit(undefined);
+    }
+  }
+
+  function reset(): void {
+    syncDisplayFromModel();
     touched.value = false;
   }
 
