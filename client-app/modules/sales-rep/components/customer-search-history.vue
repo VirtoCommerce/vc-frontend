@@ -29,7 +29,12 @@
       <template v-else>
         <ul class="customer-search-history__list">
           <template v-if="loading && !items.length">
-            <li v-for="index in rowLimit" :key="index" class="customer-search-history__skeleton" aria-hidden="true" />
+            <li
+              v-for="index in INSIGHTS_DEFAULT_ROWS"
+              :key="index"
+              class="customer-search-history__skeleton"
+              aria-hidden="true"
+            />
           </template>
 
           <template v-else>
@@ -58,7 +63,6 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { useBlockChrome } from "../composables/useBlockChrome";
 import { useInsightsCaveat } from "../composables/useInsightsCaveat";
 import { useSalesRepPeriodFilter } from "../composables/useSalesRepPeriodFilter";
 import { useSalesRepSearchHistory } from "../composables/useSalesRepSearchHistory";
@@ -83,15 +87,12 @@ const sort = computed(() => sortChip.value ?? INSIGHTS_SORT_BY_COUNT);
 
 const { from: periodFrom, to: periodTo } = useSalesRepPeriodFilter("year");
 
-const chrome = useBlockChrome();
-const rowLimit = computed(() => chrome?.savedSettings.value.maxRows ?? INSIGHTS_DEFAULT_ROWS);
-
 const { items, notConfigured, dataAsOf, loading, error } = useSalesRepSearchHistory({
   organizationId: () => props.organizationId,
   sort: () => sort.value,
   periodFrom,
   periodTo,
-  take: () => rowLimit.value,
+  take: INSIGHTS_DEFAULT_ROWS,
 });
 
 const failed = computed(() => Boolean(error.value));

@@ -188,14 +188,12 @@
       "tracked_caveat": "Basé uniquement sur l'activité suivie",
       "data_as_of": "Données au {date}",
       "search_history": {
-        "title": "Historique de recherche",
         "empty": "Aucune recherche suivie sur cette période",
         "count": "{n} recherche | {n} recherches",
         "last_searched": "Dernière recherche le {date}",
         "load_failed": "Impossible de charger l'historique de recherche"
       },
       "browse_history": {
-        "title": "Historique de navigation",
         "empty": "Aucune vue de produit suivie sur cette période",
         "views": "{n} vue | {n} vues",
         "load_failed": "Impossible de charger l'historique de navigation"

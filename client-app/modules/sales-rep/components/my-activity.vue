@@ -1,7 +1,7 @@
 <template>
   <LayoutWidget :title="t('sales_rep.activity.my_activity.title')" size="md" class="my-activity">
     <template #append>
-      <VcLink :to="{ name: activitiesRouteName }" class="my-activity__all-link">
+      <VcLink :to="{ name: ACTIVITIES_ROUTE_NAME }" class="my-activity__all-link">
         {{ t("sales_rep.activity.view_all") }}
 
         <VcIcon name="arrow-right" size="xs" />
@@ -43,8 +43,6 @@ import ActivityRow from "./activity-row.vue";
 import LayoutWidget from "./layout-widget.vue";
 
 const { t } = useI18n();
-
-const activitiesRouteName = ACTIVITIES_ROUTE_NAME;
 
 // Latest few events across ALL assigned accounts — deliberately no organizationId, even on a scoped
 // surface; the full feed lives on the Activities page.

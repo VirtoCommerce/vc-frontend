@@ -1,5 +1,6 @@
 import { mount } from "@vue/test-utils";
 import { describe, expect, it } from "vitest";
+import { h } from "vue";
 import { createWrapperFactory } from "@/core/utilities/tests";
 import SalesRepRuleChips from "./sales-rep-rule-chips.vue";
 import type { SalesRepRuleType } from "../types";
@@ -61,20 +62,16 @@ describe("SalesRepRuleChips", () => {
     expect(wrapper.emitted("update:modelValue")?.at(-1)).toEqual([undefined]);
   });
 
-  it("marks the tracked tabs, baseline included", () => {
+  // Adornments are the caller's to decide: the component hands each tab's name to the slot and knows
+  // nothing about what the name means. The baseline has no name.
+  it("renders the suffix slot for every tab, naming each one", () => {
     const wrapper = createWrapper({
-      props: {
-        rules: [{ name: "searches", label: "Searches", tracked: true }, ...PERIOD_RULES],
-        allLabel: "All",
-        allTracked: true,
+      props: { rules: PERIOD_RULES, allLabel: "All time" },
+      slots: {
+        suffix: (params: { tab: { name?: string } }) => h("i", { class: "mark" }, params.tab.name ?? "baseline"),
       },
     });
 
-    const marked = wrapper
-      .findAll(".sales-rep-rule-chips__tab")
-      .filter((tab) => tab.find(".tracked-metric-hint").exists())
-      .map((tab) => tab.find(".sales-rep-rule-chips__label").text());
-
-    expect(marked).toEqual(["All", "Searches"]);
+    expect(wrapper.findAll(".mark").map((mark) => mark.text())).toEqual(["baseline", "month", "year"]);
   });
 });

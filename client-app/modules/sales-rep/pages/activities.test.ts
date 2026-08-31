@@ -145,8 +145,15 @@ vi.mock("@/core/globals", () => ({ globals: { storeId: "test-store", cultureName
 const RuleChipsStub = {
   name: "RuleChipsStub",
   // Typed rather than a name list: a bare boolean attribute arrives as "" on an untyped prop.
-  props: { rules: Array, allLabel: String, allTracked: Boolean, loading: Boolean },
-  template: "<div />",
+  props: { rules: Array, allLabel: String, allLast: Boolean, loading: Boolean },
+  // Renders the suffix slot the way the real component does — once per tab, the baseline with no
+  // name — so the page's adornment rule is observable.
+  template: `<div>
+    <span class="stub-tab" data-name=""><slot name="suffix" :tab="{}" /></span>
+    <span v-for="rule in rules" :key="rule.name" class="stub-tab" :data-name="rule.name">
+      <slot name="suffix" :tab="rule" />
+    </span>
+  </div>`,
 };
 const ActivityRowStub = {
   name: "ActivityRowStub",
@@ -234,16 +241,13 @@ describe("Activities page", () => {
   // Tracked figures appear late and load slowly, both properties of the source rather than faults, so
   // the tabs carrying them say so. Orders and Customers come from the platform's own data and do not.
   it("marks the tracked category tabs", () => {
-    const wrapper = createWrapper();
-    const rules = findChips(wrapper)[0].props("rules") as SalesRepRuleType[];
+    const marked = findChips(createWrapper())[0]
+      .findAll(".stub-tab")
+      .filter((tab) => tab.find(".tracked-metric-hint").exists())
+      .map((tab) => tab.attributes("data-name"));
 
-    expect(rules.filter((rule) => rule.tracked).map((rule) => rule.name)).toEqual([
-      "searches",
-      "productViews",
-      "logins",
-    ]);
-    // All merges tracked rows in, so the baseline tab carries the mark too.
-    expect(findChips(wrapper)[0].props("allTracked")).toBe(true);
+    // "" is the All tab, which merges tracked rows in and so carries the mark too.
+    expect(marked).toEqual(["", "searches", "productViews", "logins"]);
   });
 
   // "All time" reads the tracked categories from GA4's earliest supported date — a decade scanned to
@@ -597,7 +601,6 @@ describe("heading and breadcrumbs", () => {
     await nextTick();
 
     expect(wrapper.find("h1").text()).toBe("sales_rep.activity.page.customer_title");
-    expect(wrapper.find(".activities__scope").exists()).toBe(false);
   });
 
   it("links the customer breadcrumb to that customer's profile", async () => {

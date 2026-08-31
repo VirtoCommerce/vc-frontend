@@ -188,14 +188,12 @@
       "tracked_caveat": "トラッキングされたアクティビティのみに基づいています",
       "data_as_of": "{date} 時点のデータ",
       "search_history": {
-        "title": "検索履歴",
         "empty": "この期間にトラッキングされた検索はありません",
         "count": "{n} 回の検索",
         "last_searched": "最終検索日: {date}",
         "load_failed": "検索履歴を読み込めませんでした"
       },
       "browse_history": {
-        "title": "閲覧履歴",
         "empty": "この期間にトラッキングされた商品閲覧はありません",
         "views": "{n} 回の閲覧",
         "load_failed": "閲覧履歴を読み込めませんでした"

@@ -14,7 +14,8 @@
 
       <span v-if="tab.count !== undefined" class="sales-rep-rule-chips__count">{{ formatStatCount(tab.count) }}</span>
 
-      <TrackedMetricHint v-if="tab.tracked" />
+      <!-- Adornments belong to whoever knows what a tab means: the baseline arrives with no name. -->
+      <slot name="suffix" :tab="tab" />
     </button>
   </div>
 </template>
@@ -22,7 +23,6 @@
 <script setup lang="ts">
 import { computed, watch } from "vue";
 import { formatStatCount, selectableFilterRules } from "../utils";
-import TrackedMetricHint from "./tracked-metric-hint.vue";
 import type { SalesRepRuleType } from "../types";
 
 // A rendered tab: one of the rules, or the baseline, which has no rule name.
@@ -35,8 +35,6 @@ interface IProps {
   allLabel: string;
   // Item count for the baseline tab; rendered as a highlighted counter when present (like `rule.count`).
   allCount?: number;
-  // Whether the baseline tab's figure comes from tracked activity (like `rule.tracked`).
-  allTracked?: boolean;
   // Render the baseline tab after the rules instead of before them. For vocabularies that read as a
   // progression the widest option belongs at the end ("This month, This year, All time"), while a
   // set of alternatives keeps it first ("All, Orders, Customers…").
@@ -74,7 +72,6 @@ const tabs = computed<TabType[]>(() => {
   const baseline: TabType = {
     label: props.allLabel,
     count: props.allCount,
-    tracked: props.allTracked,
   };
 
   return props.allLast ? [...selectableRules.value, baseline] : [baseline, ...selectableRules.value];

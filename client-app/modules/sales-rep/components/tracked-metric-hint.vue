@@ -2,7 +2,10 @@
   <!-- The class sits on an element this component owns: VcTooltip forwards attributes to VcPopover,
        which does not always render a single root to receive them. -->
   <span class="tracked-metric-hint">
-    <VcTooltip placement="top">
+    <!-- lazy: without it the popover mounts its floating element straight away, and floating-ui's
+         autoUpdate then measures the trigger every animation frame for the life of the page — once
+         per hint, and a tab row carries four. -->
+    <VcTooltip lazy placement="top">
       <template #trigger>
         <VcIcon name="hourglass" :size="14" :label="t('sales_rep.activity.tracked_hint')" />
       </template>

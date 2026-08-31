@@ -188,14 +188,12 @@
       "tracked_caveat": "Nur auf Basis erfasster Aktivitäten",
       "data_as_of": "Datenstand: {date}",
       "search_history": {
-        "title": "Suchverlauf",
         "empty": "Keine erfassten Suchanfragen in diesem Zeitraum",
         "count": "{n} Suchanfrage | {n} Suchanfragen",
         "last_searched": "Zuletzt gesucht am {date}",
         "load_failed": "Suchverlauf konnte nicht geladen werden"
       },
       "browse_history": {
-        "title": "Angesehene Produkte",
         "empty": "Keine erfassten Produktansichten in diesem Zeitraum",
         "views": "{n} Aufruf | {n} Aufrufe",
         "load_failed": "Angesehene Produkte konnten nicht geladen werden"

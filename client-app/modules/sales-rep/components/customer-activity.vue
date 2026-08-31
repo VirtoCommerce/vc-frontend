@@ -1,7 +1,7 @@
 <template>
   <LayoutWidget :title="t('sales_rep.activity.customer.title')" size="md" class="customer-activity">
     <template #append>
-      <VcLink :to="{ name: activitiesRouteName, query: { organizationId } }" class="customer-activity__all-link">
+      <VcLink :to="{ name: ACTIVITIES_ROUTE_NAME, query: { organizationId } }" class="customer-activity__all-link">
         {{ t("sales_rep.activity.view_all") }}
 
         <VcIcon name="arrow-right" size="xs" />
@@ -135,12 +135,10 @@
 <script setup lang="ts">
 import { computed, reactive, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { QueryParamName } from "@/core/enums";
 import { getProductRoute } from "@/core/utilities/product";
-import { ROUTES } from "@/router/routes/constants";
 import { useSalesRepCustomerActivitySummary } from "../composables/useSalesRepCustomerActivitySummary";
 import { ACTIVITIES_ROUTE_NAME } from "../constants";
-import { formatStatCount } from "../utils";
+import { formatStatCount, searchResultsRoute } from "../utils";
 import CustomerBrowseHistory from "./customer-browse-history.vue";
 import CustomerSearchHistory from "./customer-search-history.vue";
 import LayoutWidget from "./layout-widget.vue";
@@ -155,8 +153,6 @@ interface IProps {
 const props = defineProps<IProps>();
 
 const { t } = useI18n();
-
-const activitiesRouteName = ACTIVITIES_ROUTE_NAME;
 
 const SEARCHES_VIEW = "searches";
 const PRODUCT_VIEWS_VIEW = "product_views";
@@ -183,11 +179,7 @@ const skeletonRows = 5;
 
 const failed = computed(() => Boolean(error.value));
 
-// The catalog search results page, exactly as the header search navigates (VCST-5731).
-const searchRoute = computed(() => ({
-  name: ROUTES.SEARCH.NAME,
-  query: { [QueryParamName.SearchPhrase]: summary.value?.lastSearchTerm },
-}));
+const searchRoute = computed(() => searchResultsRoute(summary.value?.lastSearchTerm ?? ""));
 
 // Link by id (the /product/{id} route always resolves); an unresolved code leaves productId empty,
 // so the row stays plain text.

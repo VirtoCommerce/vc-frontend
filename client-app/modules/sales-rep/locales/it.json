@@ -188,14 +188,12 @@
       "tracked_caveat": "Basato solo sull'attività tracciata",
       "data_as_of": "Dati al {date}",
       "search_history": {
-        "title": "Cronologia delle ricerche",
         "empty": "Nessuna ricerca tracciata in questo periodo",
         "count": "{n} ricerca | {n} ricerche",
         "last_searched": "Ultima ricerca: {date}",
         "load_failed": "Impossibile caricare la cronologia delle ricerche"
       },
       "browse_history": {
-        "title": "Cronologia di navigazione",
         "empty": "Nessuna visualizzazione di prodotto tracciata in questo periodo",
         "views": "{n} visualizzazione | {n} visualizzazioni",
         "load_failed": "Impossibile caricare la cronologia di navigazione"

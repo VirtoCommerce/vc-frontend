@@ -188,14 +188,12 @@
       "tracked_caveat": "Wyłącznie na podstawie śledzonej aktywności",
       "data_as_of": "Dane na dzień {date}",
       "search_history": {
-        "title": "Historia wyszukiwania",
         "empty": "Brak śledzonych wyszukiwań w tym okresie",
         "count": "{n} wyszukiwań | {n} wyszukiwanie | {n} wyszukiwania | {n} wyszukiwań",
         "last_searched": "Ostatnie wyszukiwanie: {date}",
         "load_failed": "Nie udało się wczytać historii wyszukiwania"
       },
       "browse_history": {
-        "title": "Historia przeglądania",
         "empty": "Brak śledzonych wyświetleń produktów w tym okresie",
         "views": "{n} wyświetleń | {n} wyświetlenie | {n} wyświetlenia | {n} wyświetleń",
         "load_failed": "Nie udało się wczytać historii przeglądania"

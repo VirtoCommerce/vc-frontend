@@ -188,14 +188,12 @@
       "tracked_caveat": "仅基于已跟踪的活动",
       "data_as_of": "数据截至 {date}",
       "search_history": {
-        "title": "搜索历史",
         "empty": "此时间段内没有已跟踪的搜索",
         "count": "{n} 次搜索",
         "last_searched": "上次搜索:{date}",
         "load_failed": "无法加载搜索历史"
       },
       "browse_history": {
-        "title": "浏览历史",
         "empty": "此时间段内没有已跟踪的商品浏览",
         "views": "{n} 次浏览",
         "load_failed": "无法加载浏览历史"

@@ -188,14 +188,12 @@
       "tracked_caveat": "Basert kun på sporet aktivitet",
       "data_as_of": "Data per {date}",
       "search_history": {
-        "title": "Søkehistorikk",
         "empty": "Ingen sporede søk i denne perioden",
         "count": "{n} søk | {n} søk",
         "last_searched": "Sist søkt {date}",
         "load_failed": "Kunne ikke laste søkehistorikken"
       },
       "browse_history": {
-        "title": "Visningshistorikk",
         "empty": "Ingen sporede produktvisninger i denne perioden",
         "views": "{n} visning | {n} visninger",
         "load_failed": "Kunne ikke laste visningshistorikken"

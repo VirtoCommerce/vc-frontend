@@ -51,6 +51,10 @@ export const MY_ACTIVITY_TAKE = 5;
 export const ACTIVITY_CATEGORIES = ["orders", "customers", "searches", "productViews", "logins"] as const;
 // Categories sourced from tracked analytics (hour-precision buckets), named by the caveat line.
 export const GA_ACTIVITY_CATEGORIES = ["searches", "productViews", "logins"] as const;
+// Membership sets built once for the module. The arrays above stay: they carry the tab order.
+export const TRACKED_ACTIVITY_CATEGORIES = new Set<string>(GA_ACTIVITY_CATEGORIES);
+// The categories salesRepCustomerInsights can rank by count — only their tabs offer Top | Recent.
+export const RANKED_ACTIVITY_CATEGORIES = new Set<string>(["searches", "productViews"]);
 
 // Document library (VCST-5730). Read permission gates the widget, the page and the nav link;
 // write implies read and administrators pass — both are resolved server-side, the client only

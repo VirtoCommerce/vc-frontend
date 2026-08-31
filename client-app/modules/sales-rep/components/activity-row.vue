@@ -38,10 +38,6 @@
           <span>{{ t("sales_rep.activity.rows.searched_for") }}</span>
 
           <VcLink v-if="item.searchTerm" class="activity-row__link" :to="searchRoute"> “{{ item.searchTerm }}” </VcLink>
-
-          <span v-if="item.count > 1" class="activity-row__count">
-            {{ t("sales_rep.activity.rows.count_suffix", { count: item.count }) }}
-          </span>
         </template>
 
         <template v-else-if="item.type === 'productView'">
@@ -58,10 +54,6 @@
           </VcLink>
 
           <span v-else class="activity-row__emphasis">{{ productLabel }}</span>
-
-          <span v-if="item.count > 1" class="activity-row__count">
-            {{ t("sales_rep.activity.rows.count_suffix", { count: item.count }) }}
-          </span>
         </template>
 
         <template v-else-if="item.type === 'login'">
@@ -72,6 +64,11 @@
         <template v-else>
           <span>{{ t("sales_rep.activity.rows.unknown") }}</span>
         </template>
+
+        <!-- Hour buckets carry a count; the sign-in row says it in words, and the exact rows have none. -->
+        <span v-if="showCount" class="activity-row__count">
+          {{ t("sales_rep.activity.rows.count_suffix", { count: item.count }) }}
+        </span>
       </div>
 
       <div class="activity-row__meta">
@@ -90,10 +87,8 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { QueryParamName } from "@/core/enums";
 import { getProductRoute } from "@/core/utilities/product";
-import { ROUTES } from "@/router/routes/constants";
-import { activityCategoryIcon, formatHourLabel, formatStatCount, formatTimeAgo } from "../utils";
+import { activityCategoryIcon, formatHourLabel, formatStatCount, formatTimeAgo, searchResultsRoute } from "../utils";
 import type { SalesRepActivityItemType } from "../types";
 import OrderStatus from "@/shared/account/components/order-status.vue";
 
@@ -110,11 +105,11 @@ const { t, d } = useI18n();
 
 const icon = computed(() => activityCategoryIcon(props.item.category));
 
-// The catalog search results page, exactly as the header search navigates (VCST-5731).
-const searchRoute = computed(() => ({
-  name: ROUTES.SEARCH.NAME,
-  query: { [QueryParamName.SearchPhrase]: props.item.searchTerm },
-}));
+// Only the two rows that name a single thing repeat it; a sign-in row says "3 sign-ins" in words.
+const COUNTED_TYPES = ["search", "productView"];
+const showCount = computed(() => props.item.count > 1 && COUNTED_TYPES.includes(props.item.type));
+
+const searchRoute = computed(() => searchResultsRoute(props.item.searchTerm));
 
 // Link by id (the /product/{id} route always resolves); an unresolved code leaves productId empty,
 // so such a row stays plain text.
@@ -158,10 +153,7 @@ const timeLabel = computed(() => {
     @apply font-medium text-[--link-color] hover:underline;
   }
 
-  &__emphasis {
-    @apply font-medium;
-  }
-
+  &__emphasis,
   &__total {
     @apply font-medium;
   }

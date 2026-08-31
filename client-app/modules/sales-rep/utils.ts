@@ -1,9 +1,11 @@
-import { ContentType } from "@/core/enums";
+import { ContentType, QueryParamName } from "@/core/enums";
 import { globals } from "@/core/globals";
+import { ROUTES } from "@/router/routes/constants";
 import type { MoneyType } from "./api/graphql/types";
 import type { SalesRepDocumentType, SalesRepRuleType } from "./types";
 import type { StatWidgetToneType } from "./types/widgets";
 import type { ComposerTranslation } from "vue-i18n";
+import type { RouteLocationRaw } from "vue-router";
 
 // Selectable filter options exclude the backend "all" rule (chips already prepend a synthetic "All" baseline).
 export function selectableFilterRules(rules: SalesRepRuleType[]): SalesRepRuleType[] {
@@ -176,9 +178,29 @@ const TIME_AGO_UNITS: readonly { unit: Intl.RelativeTimeFormatUnit; seconds: num
   { unit: "minute", seconds: 60 },
 ];
 
-export function formatTimeAgo(isoDate: string, now: Date = new Date()): string {
-  const elapsedSeconds = Math.max(0, Math.round((now.getTime() - new Date(isoDate).getTime()) / 1000));
-  const formatter = new Intl.RelativeTimeFormat(globals.cultureName, { numeric: "auto" });
+// Intl formatters cost more to construct than to use, and these run once per rendered row — up to a
+// full page of them on every tab switch. One per culture, kept for the life of the tab.
+const timeAgoFormatters = new Map<string, Intl.RelativeTimeFormat>();
+const hourFormatters = new Map<string, Intl.DateTimeFormat>();
+
+function formatterFor<T>(cache: Map<string, T>, create: (cultureName: string) => T): T {
+  const cultureName = globals.cultureName;
+  let formatter = cache.get(cultureName);
+
+  if (!formatter) {
+    formatter = create(cultureName);
+    cache.set(cultureName, formatter);
+  }
+
+  return formatter;
+}
+
+export function formatTimeAgo(isoDate: string): string {
+  const elapsedSeconds = Math.max(0, Math.round((Date.now() - new Date(isoDate).getTime()) / 1000));
+  const formatter = formatterFor(
+    timeAgoFormatters,
+    (cultureName) => new Intl.RelativeTimeFormat(cultureName, { numeric: "auto" }),
+  );
 
   const match = TIME_AGO_UNITS.find(({ seconds }) => elapsedSeconds >= seconds);
   if (!match) {
@@ -191,7 +213,15 @@ export function formatTimeAgo(isoDate: string, now: Date = new Date()): string {
 
 // Wall-clock hour label ("2:00 PM") for the honest "during the hour of …" phrasing on hour-bucket rows.
 export function formatHourLabel(isoDate: string): string {
-  return new Intl.DateTimeFormat(globals.cultureName, { hour: "numeric", minute: "2-digit" }).format(new Date(isoDate));
+  return formatterFor(
+    hourFormatters,
+    (cultureName) => new Intl.DateTimeFormat(cultureName, { hour: "numeric", minute: "2-digit" }),
+  ).format(new Date(isoDate));
+}
+
+// The catalog search results page for a tracked term, exactly as the header search navigates (VCST-5731).
+export function searchResultsRoute(term: string): RouteLocationRaw {
+  return { name: ROUTES.SEARCH.NAME, query: { [QueryParamName.SearchPhrase]: term } };
 }
 
 // Document library display helpers.

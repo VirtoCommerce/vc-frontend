@@ -11,7 +11,12 @@
     <div class="activities__results">
       <div class="activities__controls">
         <!-- Category tabs driven by categoryCounts; zero-count categories keep their tab. -->
-        <SalesRepRuleChips v-model="category" :rules="categoryRules" :all-label="allTabLabel" all-tracked />
+        <SalesRepRuleChips v-model="category" :rules="categoryRules" :all-label="allTabLabel">
+          <!-- No name = the All tab, which merges tracked rows in and so carries the mark too. -->
+          <template #suffix="{ tab }">
+            <TrackedMetricHint v-if="!tab.name || TRACKED_ACTIVITY_CATEGORIES.has(tab.name)" />
+          </template>
+        </SalesRepRuleChips>
 
         <SalesRepRuleChips
           v-model="periodRule"
@@ -48,7 +53,7 @@
               <span class="activities__top-rank">{{ index + 1 }}</span>
 
               <!-- The catalog search results page, exactly as the feed rows link (VCST-5731). -->
-              <VcLink class="activities__top-link" :to="searchRoute(item.term)"> “{{ item.term }}” </VcLink>
+              <VcLink class="activities__top-link" :to="searchResultsRoute(item.term)"> “{{ item.term }}” </VcLink>
 
               <span class="activities__top-count">
                 {{ t("sales_rep.customer_insights.search_history.count", item.count) }}
@@ -114,11 +119,10 @@
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
-import { QueryParamName } from "@/core/enums";
 import { getProductRoute } from "@/core/utilities/product";
-import { ROUTES } from "@/router/routes/constants";
 import ActivityRow from "../components/activity-row.vue";
 import SalesRepRuleChips from "../components/sales-rep-rule-chips.vue";
+import TrackedMetricHint from "../components/tracked-metric-hint.vue";
 import { useSalesRepActivities } from "../composables/useSalesRepActivities";
 import { useSalesRepBrowseHistory } from "../composables/useSalesRepBrowseHistory";
 import { useSalesRepCustomer } from "../composables/useSalesRepCustomer";
@@ -128,11 +132,13 @@ import {
   ACTIVITY_CATEGORIES,
   ACTIVITY_PAGE_SIZE,
   CUSTOMER_PROFILE_ROUTE_NAME,
-  GA_ACTIVITY_CATEGORIES,
+  INSIGHTS_MAX_ROWS,
   INSIGHTS_SORT_BY_COUNT,
+  RANKED_ACTIVITY_CATEGORIES,
+  TRACKED_ACTIVITY_CATEGORIES,
   MY_CUSTOMERS_ROUTE_NAME,
 } from "../constants";
-import { formatStatCount } from "../utils";
+import { formatStatCount, searchResultsRoute } from "../utils";
 import type { SalesRepPeriodType } from "../composables/useSalesRepPeriodFilter";
 import type { SalesRepRuleType } from "../types";
 
@@ -168,8 +174,7 @@ const periodRules = computed<SalesRepRuleType[]>(() => [
 ]);
 
 // The categories salesRepCustomerInsights can rank by count; only their tabs get the mode toggle.
-const RANKED_CATEGORIES = new Set<string>(["searches", "productViews"]);
-const isRankableTab = computed(() => Boolean(category.value && RANKED_CATEGORIES.has(category.value)));
+const isRankableTab = computed(() => Boolean(category.value && RANKED_ACTIVITY_CATEGORIES.has(category.value)));
 
 // Baseline chip = Recent (today's feed); the one selectable rule flips to the ranked Top list —
 // the same chip idiom the customer panels use for their Top|Recent sort.
@@ -242,12 +247,7 @@ const countsPending = computed(() => countsLoading.value && !categoryCounts.valu
 const categoryRules = computed<SalesRepRuleType[]>(() =>
   ACTIVITY_CATEGORIES.map((name) => {
     const label = t(`sales_rep.activity.tabs.${name}`);
-    return {
-      name,
-      label: countsPending.value ? label : `${label} (${formatStatCount(countOf(name))})`,
-      // All mixes tracked rows in, so the baseline tab is marked too (all-tracked on the chips).
-      tracked: (GA_ACTIVITY_CATEGORIES as readonly string[]).includes(name),
-    };
+    return { name, label: countsPending.value ? label : `${label} (${formatStatCount(countOf(name))})` };
   }),
 );
 
@@ -258,10 +258,6 @@ const allTabLabel = computed(() =>
 );
 
 const failed = computed(() => Boolean(error.value));
-
-// The insights ranked fields clamp take to 1..20, and 20 happens to equal the feed's page size —
-// so Top lists are one full page, never paged.
-const TOP_LIST_TAKE = 20;
 
 // Each Top list runs only while its tab shows it — the GA-backed op can take seconds, so no
 // speculative fetching. organizationId passes through only in the per-customer page mode; omitted,
@@ -279,7 +275,7 @@ const {
   sort: INSIGHTS_SORT_BY_COUNT,
   periodFrom,
   periodTo,
-  take: TOP_LIST_TAKE,
+  take: INSIGHTS_MAX_ROWS,
   enabled: topSearchesEnabled,
 });
 
@@ -293,7 +289,7 @@ const {
   sort: INSIGHTS_SORT_BY_COUNT,
   periodFrom,
   periodTo,
-  take: TOP_LIST_TAKE,
+  take: INSIGHTS_MAX_ROWS,
   enabled: topViewsEnabled,
 });
 
@@ -360,8 +356,7 @@ watch(pages, (total) => {
 });
 
 // The caveat concerns tracked (GA-sourced) rows, so it shows for those tabs and for the mixed "All" view.
-const gaCategories = new Set<string>(GA_ACTIVITY_CATEGORIES);
-const showCaveat = computed(() => !category.value || gaCategories.has(category.value));
+const showCaveat = computed(() => !category.value || TRACKED_ACTIVITY_CATEGORIES.has(category.value));
 
 // The scoped customer's name — resolved only when the query param narrows the feed.
 const { customer } = useSalesRepCustomer(() => props.organizationId ?? "");
@@ -377,10 +372,6 @@ const heading = computed(() => {
     ? t("sales_rep.activity.page.customer_title", { customer: customerName.value })
     : t("sales_rep.activity.page.title_fallback");
 });
-
-function searchRoute(term: string) {
-  return { name: ROUTES.SEARCH.NAME, query: { [QueryParamName.SearchPhrase]: term } };
-}
 
 function scrollToTop(): void {
   window.scroll({ top: 0, behavior: "smooth" });
@@ -427,10 +418,7 @@ const breadcrumbs = useBreadcrumbs(() => {
     @apply -mt-1 flex;
   }
 
-  &__list {
-    @apply flex flex-col divide-y divide-neutral-100 px-6 py-2;
-  }
-
+  &__list,
   &__top-list {
     @apply flex flex-col divide-y divide-neutral-100 px-6 py-2;
   }
