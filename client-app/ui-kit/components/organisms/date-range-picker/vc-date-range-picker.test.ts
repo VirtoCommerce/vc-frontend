@@ -432,6 +432,29 @@ describe("VcDateRangePicker", () => {
     wrapper.unmount();
   });
 
+  // The footer Clear emits update:modelValue AND clear. onCalendarUpdate used to schedule a resync on
+  // the next tick, which read a model an uncontrolled parent never wrote back and painted the cleared
+  // dates straight in — undoing the clear. Static prop here on purpose: no v-model round trip.
+  it("keeps the fields empty after a footer Clear the parent never applies", async () => {
+    const wrapper = mountPicker(
+      { modelValue: { start: "2026-10-08", end: "2026-10-14" }, showFooter: true, mask: true },
+      { attachTo: document.body },
+    );
+    await flushPromises();
+    expect(wrapper.findAll("input").map((input) => input.element.value)).toEqual(["10/08/2026", "10/14/2026"]);
+
+    await wrapper.find('button[aria-haspopup="dialog"]').trigger("click");
+    await flushPromises();
+    await wrapper.find(".vc-range-calendar__footer-btn").trigger("click");
+    await flushPromises();
+
+    expect(wrapper.emitted("clear")).toHaveLength(1);
+    expect(wrapper.emitted("update:modelValue")?.at(-1)).toEqual([undefined]);
+    expect(wrapper.findAll("input").map((input) => input.element.value)).toEqual(["", ""]);
+
+    wrapper.unmount();
+  });
+
   describe("opening the calendar does not blur the field", () => {
     it("combined: no blur on opening; blur still fires when focus truly leaves", async () => {
       const outside = document.createElement("button");
@@ -809,6 +832,25 @@ describe("VcDateRangePicker — split layout", () => {
     expect(document.activeElement).toBe(startInput.element);
 
     document.body.removeEventListener("keydown", onEscape);
+    wrapper.unmount();
+  });
+
+  // Same defect one layer down: in "split" each field is a VcDatePicker with its own calendar footer,
+  // and its own onCalendarUpdate used to schedule the resync that undid the clear.
+  it("keeps a split field empty after its footer Clear the parent never applies", async () => {
+    const wrapper = mountSplit(
+      { modelValue: { start: "2026-10-08", end: "2026-10-14" }, showFooter: true, mask: true },
+      { attachTo: document.body },
+    );
+    await flushPromises();
+    expect(wrapper.findAll("input")[0].element.value).toBe("10/08/2026");
+
+    // Both split calendars render in this harness, so the start field's footer Clear is directly reachable.
+    await wrapper.find(".vc-calendar__footer-btn--ghost").trigger("click");
+    await flushPromises();
+
+    expect(wrapper.findAll("input")[0].element.value).toBe("");
+
     wrapper.unmount();
   });
 

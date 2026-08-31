@@ -236,12 +236,19 @@ function onCalendarUpdate(close: () => void, value: string | undefined): void {
     return;
   }
   emit("update:modelValue", value);
-  // The field resyncs its display from a model CHANGE, so uncommitted text would outlive a pick of the
-  // date already committed — leaving the calendar and the field disagreeing, with the field reporting
-  // invalid for good. nextTick so the reset reads the applied model.
-  void nextTick(() => {
-    dateInputRef.value?.reset();
-  });
+  if (value === undefined) {
+    // A clear, not a pick — the footer Clear and a deselect both land here. Resyncing would read a
+    // model an uncontrolled parent never wrote back and paint the cleared date straight in, undoing
+    // what onCalendarClear just did. Order-independent this way: whichever event arrives first wins.
+    dateInputRef.value?.clearText();
+  } else {
+    // The field resyncs its display from a model CHANGE, so uncommitted text would outlive a pick of
+    // the date already committed — leaving the calendar and the field disagreeing, with the field
+    // reporting invalid for good. nextTick so the reset reads the applied model.
+    void nextTick(() => {
+      dateInputRef.value?.reset();
+    });
+  }
   if (props.closeOnSelect) {
     close();
     focusField();

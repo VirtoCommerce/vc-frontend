@@ -261,8 +261,8 @@ const rangeInputRef = useTemplateRef<{
   clearSegments: () => void;
 } | null>("rangeInputRef");
 const calendarRef = useTemplateRef<{ focusActiveCell: () => void; $el?: Element | null } | null>("calendarRef");
-const startFieldRef = useTemplateRef<{ reset: () => void; clearText: () => void } | null>("startFieldRef");
-const endFieldRef = useTemplateRef<{ reset: () => void; clearText: () => void } | null>("endFieldRef");
+const startFieldRef = useTemplateRef<{ reset: () => void } | null>("startFieldRef");
+const endFieldRef = useTemplateRef<{ reset: () => void } | null>("endFieldRef");
 
 const { calendarSize, focusField, onToggle, onEscapeClose, onFieldEscape, onTriggerEscape } = useCalendarPopover({
   size: () => props.size,
@@ -382,11 +382,19 @@ function onCalendarUpdate(close: () => void, value: VcDateRangeType | undefined)
     return;
   }
   emit("update:modelValue", value);
+  if (!value) {
+    // A clear, not a pick — the footer Clear and a deselect both land here. Resyncing would read a
+    // model an uncontrolled parent never wrote back and paint the cleared dates straight in, undoing
+    // what onCalendarClear just did. Order-independent this way: whichever event arrives first wins.
+    rangeInputRef.value?.clearSegments();
+    // Closing belongs to onCalendarClear; the guard below never fired for an empty range anyway.
+    return;
+  }
   // A segment whose own half of the model did not change never resyncs on its own, so rejected text
   // would keep reporting invalid over a range the calendar just accepted. An anchor pick defines the
   // start ONLY, though — resetting the end segment there would drop text the user typed but has not
   // committed (reachable with updateOn="enter", where blur does not commit).
-  rangeInputRef.value?.resetSegments(value?.start && !value?.end ? "start" : undefined);
+  rangeInputRef.value?.resetSegments(value.start && !value.end ? "start" : undefined);
   // Close only once BOTH endpoints are committed, not after the anchor.
   if (props.closeOnSelect && value?.start && value?.end) {
     close();
@@ -401,10 +409,9 @@ function onCalendarClear(close: () => void): void {
     return;
   }
   emit("clear");
-  // A CLEAR empties the text rather than resyncing it, exactly as in clearBoth.
+  // A CLEAR empties the text rather than resyncing it, exactly as in clearBoth. Only the combined
+  // layout reaches this — the split fields bind their own @clear to onInputClear.
   rangeInputRef.value?.clearSegments();
-  startFieldRef.value?.clearText();
-  endFieldRef.value?.clearText();
   if (props.closeOnSelect) {
     close();
     focusField();
