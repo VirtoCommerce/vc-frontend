@@ -23,7 +23,7 @@ import type { MaybeRef } from "vue";
  * {@link https://github.com/VirtoCommerce/vc-module-experience-api/blob/master/docs/filter-syntax.md#escaping-special-characters}
  */
 export function escapeFilterSyntaxValue(value: string): string {
-  return value.replaceAll(/\\/g, "\\\\").replaceAll(/"/g, String.raw`\"`);
+  return value.replaceAll("\\", "\\\\").replaceAll('"', String.raw`\"`);
 }
 
 /**
