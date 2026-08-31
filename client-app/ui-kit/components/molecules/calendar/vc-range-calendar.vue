@@ -210,17 +210,6 @@ const initialRange = props.modelValue;
 // Pushed, not computed: a swallowed Escape revert has to re-read a model that did not change.
 const parsedModelValue = shallowRef<DateRange>(parseRange(initialRange));
 
-const base = useCalendarBase({
-  locale: toRef(props, "locale"),
-  min: toRef(props, "min"),
-  max: toRef(props, "max"),
-  disabledDate: toRef(props, "disabledDate"),
-  firstDayOfWeek: toRef(props, "firstDayOfWeek"),
-  initialPlaceholder: getInitialPlaceholder,
-  getRoot: () => calendarRootRef.value?.$el as Element | null | undefined,
-  getSelectedIso: () => parsedModelValue.value.start?.toString() ?? parsedModelValue.value.end?.toString(),
-});
-
 const {
   placeholderRef,
   resolvedLocale,
@@ -235,7 +224,16 @@ const {
   clampToBounds,
   onCalendarKeydown: baseOnCalendarKeydown,
   focusActiveCell,
-} = base;
+} = useCalendarBase({
+  locale: toRef(props, "locale"),
+  min: toRef(props, "min"),
+  max: toRef(props, "max"),
+  disabledDate: toRef(props, "disabledDate"),
+  firstDayOfWeek: toRef(props, "firstDayOfWeek"),
+  initialPlaceholder: getInitialPlaceholder,
+  getRoot: () => calendarRootRef.value?.$el as Element | null | undefined,
+  getSelectedIso: () => parsedModelValue.value.start?.toString() ?? parsedModelValue.value.end?.toString(),
+});
 
 const rootClasses = computed(() => ["vc-range-calendar", `vc-range-calendar--size--${props.size}`]);
 
@@ -327,13 +325,13 @@ function onUpdate(value: DateRange | undefined): void {
     return;
   }
 
-  const start = dateValueToIso(value?.start);
-  const end = dateValueToIso(value?.end);
-  if (!start && !end) {
+  const range = toRange(value);
+  if (!range) {
     pendingCompleteRangeStart = undefined;
     emitRange(undefined);
     return;
   }
+  const { start, end } = range;
   // reka rewrites an end-only range as a start anchor; on an Escape revert that echo arrives here.
   if (start && !end && lastKnown?.end && !lastKnown.start && start === lastKnown.end) {
     return;
@@ -344,7 +342,7 @@ function onUpdate(value: DateRange | undefined): void {
       pendingCompleteRangeStart = undefined;
     });
   }
-  emitRange({ start, end });
+  emitRange(range);
 }
 
 function onClearClick(): void {
