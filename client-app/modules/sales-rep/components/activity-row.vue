@@ -47,7 +47,13 @@
         <template v-else-if="item.type === 'productView'">
           <span>{{ t("sales_rep.activity.rows.viewed_product") }}</span>
 
-          <VcLink v-if="productRoute" class="activity-row__link" :to="productRoute" target="_blank">
+          <VcLink
+            v-if="productRoute"
+            class="activity-row__link"
+            :to="productRoute"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             {{ productLabel }}
           </VcLink>
 

@@ -94,7 +94,13 @@
 
               <dd class="customer-activity__value">
                 <template v-if="summary.lastViewedProduct">
-                  <VcLink v-if="productRoute" class="customer-activity__link" :to="productRoute" target="_blank">
+                  <VcLink
+                    v-if="productRoute"
+                    class="customer-activity__link"
+                    :to="productRoute"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     {{ productLabel }}
                   </VcLink>
 
