@@ -69,7 +69,7 @@ function getProductPropertyBooleanValue(product: Product, propertyName: string):
     return undefined;
   }
 
-  return property.value === true;
+  return Boolean(property.value);
 }
 
 function getAvailabilitySignature(product: Product): string {
