@@ -263,6 +263,15 @@ let pendingCompleteRangeStart: string | undefined;
 // reka cannot represent an end-only range and re-anchors it as start; that echo must not be forwarded.
 let suppressExternalSyncEcho = false;
 
+// Every route that pushes a value INTO reka draws an echo back on the same tick, so the guard is
+// always armed for exactly one tick — cleared here rather than by each caller.
+function suppressEchoForOneTick(): void {
+  suppressExternalSyncEcho = true;
+  void nextTick(() => {
+    suppressExternalSyncEcho = false;
+  });
+}
+
 // reka reverts an in-progress pick by restoring startValue and endValue separately: the start-only
 // intermediate must not leave as a fresh partial pick, only the whole range it settles on.
 let pendingEscapeRevert = false;
@@ -307,10 +316,7 @@ function onValidModelValueUpdate(value: DateRange | undefined): void {
 function resyncRekaWithModel(): void {
   // reka answers the re-read with update:startValue, and for a partial range with update:modelValue —
   // echoes of our own value, exactly like an external sync.
-  suppressExternalSyncEcho = true;
-  void nextTick(() => {
-    suppressExternalSyncEcho = false;
-  });
+  suppressEchoForOneTick();
   parsedModelValue.value = parseRange(props.modelValue);
   // reka moved its placeholder to the revert target's start; the model we keep gets no prop change to
   // re-drive it, so a model without a start of its own would leave the grid on the refused month.
@@ -425,10 +431,7 @@ watch(
     // Resync so a later user pick isn't deduped against a stale snapshot.
     lastKnown = props.modelValue;
     // Swallow reka's same-tick echo from being fed this external value.
-    suppressExternalSyncEcho = true;
-    void nextTick(() => {
-      suppressExternalSyncEcho = false;
-    });
+    suppressEchoForOneTick();
     // A changed start must win: reka's placeholder-follows-startValue watcher overrides any
     // end-preference later in the flush. End-only changes still render the end month.
     const startChanged = newStart !== oldStart;
