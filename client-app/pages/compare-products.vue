@@ -39,9 +39,16 @@
           </div>
         </template>
 
-        <VcTypography tag="h3">
-          {{ t("pages.compare.empty.title") }}
-        </VcTypography>
+        <div
+          ref="emptyStateHeadingRef"
+          data-test-id="compare-empty-heading"
+          class="compare-products__empty-heading"
+          tabindex="-1"
+        >
+          <VcTypography tag="h3">
+            {{ t("pages.compare.empty.title") }}
+          </VcTypography>
+        </div>
 
         <p class="compare-products__empty-description">
           {{ t("pages.compare.empty.description", { limit: productsLimit }) }}
@@ -134,7 +141,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onUnmounted } from "vue";
+import { computed, nextTick, onUnmounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
@@ -182,6 +189,17 @@ const {
 } = useCompareProductsPage();
 
 const isEmpty = computed(() => products.value.length === 0);
+
+const emptyStateHeadingRef = ref<HTMLElement | null>(null);
+
+watch(isEmpty, async (empty) => {
+  if (!empty) {
+    return;
+  }
+
+  await nextTick();
+  emptyStateHeadingRef.value?.focus();
+});
 
 function removeProduct({ product, entry }: ICompareDisplayProduct) {
   removeFromCompareList(product, entry.configurationSectionInput);
@@ -274,6 +292,10 @@ onUnmounted(() => {
 
   &__empty-icon {
     @apply flex size-14 items-center justify-center rounded-[--vc-radius] bg-neutral-100 text-neutral-400;
+  }
+
+  &__empty-heading {
+    @apply outline-none;
   }
 
   &__empty-description {

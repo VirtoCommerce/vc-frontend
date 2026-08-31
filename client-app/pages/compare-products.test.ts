@@ -323,6 +323,20 @@ describe("CompareProducts", () => {
     expect(mocks.removeFromCompareList).toHaveBeenCalledWith(item.product, item.entry.configurationSectionInput);
   });
 
+  it("moves focus to the empty state heading once the last product is removed, since CompareTable (and the header row it focuses on a remove) unmounts along with it", async () => {
+    mocks.products.value = [{ productId: "p1", categoryKey: "cat-a" }];
+    const page = renderPage();
+
+    expect(page.queryByTestId("compare-table")).toBeInTheDocument();
+
+    mocks.products.value = [];
+    await nextTick();
+    await nextTick();
+
+    expect(page.queryByTestId("compare-table")).not.toBeInTheDocument();
+    expect(page.getByTestId("compare-empty-heading")).toHaveFocus();
+  });
+
   it("forwards CompareTable's clear-category event to a confirmation modal that calls clearCategory", () => {
     mocks.products.value = [{ productId: "p1", categoryKey: "cat-a" }];
     mocks.selectedCategoryKey.value = "cat-a";
