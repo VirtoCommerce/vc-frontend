@@ -4,9 +4,16 @@ import {
   customerProfileRoute,
   dashboardRoute,
   documentsRoute,
+  isCustomerScopedActivity,
+  isMyActivity,
+  isMyCustomersArea,
   myCustomersRoute,
   salesRepsRoute,
 } from "./routes";
+import type { RouteLocationNormalizedLoaded } from "vue-router";
+
+const at = (name: string, query: Record<string, string> = {}) =>
+  ({ name, query }) as unknown as RouteLocationNormalizedLoaded;
 
 // The rep-facing hub pages mount under the org-gated "/company" parent but must stay reachable for a
 // sales rep with zero org memberships (their access is `sales-rep:access`, not org membership). They
@@ -36,5 +43,25 @@ describe("sales-rep routes", () => {
   // No `requiresOrganization: false` override -> it keeps the "/company" parent's org gate.
   it("does not clear the org gate on the sales-reps route", () => {
     expect(salesRepsRoute.meta?.requiresOrganization).not.toBe(false);
+  });
+});
+
+// The rail marks a link active by route record, so an area spanning sibling records has to say so.
+// One route serves both feeds here: ?organizationId= makes it a page about a customer.
+describe("sales-rep account rail areas", () => {
+  it.each([
+    ["the customer list", at("SalesRepMyCustomers"), true, false],
+    ["a customer profile", at("SalesRepCustomerProfile"), true, false],
+    ["a customer's activity", at("SalesRepActivities", { organizationId: "org-1" }), true, false],
+    ["the rep's own activity", at("SalesRepActivities"), false, true],
+    ["the dashboard", at("SalesRepDashboard"), false, false],
+  ])("lights My customers=%s / My activity for %s", (_name, route, inCustomers, inActivity) => {
+    expect(isMyCustomersArea(route)).toBe(inCustomers);
+    expect(isMyActivity(route)).toBe(inActivity);
+  });
+
+  it("treats an empty organizationId as the rep's own feed", () => {
+    expect(isCustomerScopedActivity(at("SalesRepActivities", { organizationId: "" }))).toBe(false);
+    expect(isMyActivity(at("SalesRepActivities", { organizationId: "" }))).toBe(true);
   });
 });

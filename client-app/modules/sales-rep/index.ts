@@ -32,6 +32,8 @@ import {
   customerProfileRoute,
   dashboardRoute,
   documentsRoute,
+  isMyActivity,
+  isMyCustomersArea,
   myCustomersRoute,
   salesRepsRoute,
 } from "./routes";
@@ -133,6 +135,9 @@ export function init(router: Router, i18n: I18n) {
         title: "sales_rep.my_customers.navigation.link",
         icon: "users",
         route: { name: MY_CUSTOMERS_ROUTE_NAME },
+        // A customer's profile and their activity are pages about a customer, so the rail keeps this
+        // item lit there — vue-router cannot tell, they are sibling route records.
+        activeWhen: isMyCustomersArea,
       },
       ...documentsNavLink,
       {
@@ -140,6 +145,8 @@ export function init(router: Router, i18n: I18n) {
         title: "sales_rep.activity.navigation.link",
         icon: "activity",
         route: { name: ACTIVITIES_ROUTE_NAME },
+        // The same route scoped to one customer is that customer's page, not the rep's own feed.
+        activeWhen: isMyActivity,
       },
     ],
     isVisible: computed(() => isSalesRepsEnabled() && checkPermissions(SALES_REP_ACCESS_PERMISSION)),

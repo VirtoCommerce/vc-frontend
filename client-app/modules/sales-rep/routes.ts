@@ -16,7 +16,7 @@ import {
   SALES_REP_ACCESS_PERMISSION,
   SALES_REP_DOCUMENTS_READ_PERMISSION,
 } from "./constants";
-import type { RouteRecordRaw } from "vue-router";
+import type { RouteLocationNormalizedLoaded, RouteRecordRaw } from "vue-router";
 
 const SalesRepsPage = () => import("./pages/sales-reps.vue");
 const MyCustomersPage = () => import("./pages/my-customers.vue");
@@ -130,3 +130,26 @@ export const customerProfileRoute: RouteRecordRaw = {
     }
   },
 };
+
+// One route serves two things: "my activity" across every assigned customer, and a single customer's
+// activity (?organizationId=). Only the first is the rep's own — the second is a page about a
+// customer, reached from their profile.
+export function isCustomerScopedActivity(route: RouteLocationNormalizedLoaded): boolean {
+  return route.name === ACTIVITIES_ROUTE_NAME && Boolean(route.query.organizationId);
+}
+
+// The pages that belong to "My customers": the list, one customer's profile, and that customer's
+// activity. Spelled out because vue-router marks a link active by route RECORD — these are sibling
+// records under /company, so it cannot see that they are one area.
+export function isMyCustomersArea(route: RouteLocationNormalizedLoaded): boolean {
+  return (
+    route.name === MY_CUSTOMERS_ROUTE_NAME ||
+    route.name === CUSTOMER_PROFILE_ROUTE_NAME ||
+    isCustomerScopedActivity(route)
+  );
+}
+
+// "My activity" owns the feed only while it really is the rep's own.
+export function isMyActivity(route: RouteLocationNormalizedLoaded): boolean {
+  return route.name === ACTIVITIES_ROUTE_NAME && !isCustomerScopedActivity(route);
+}
