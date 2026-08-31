@@ -37,7 +37,15 @@
         <template v-else-if="item.type === 'search'">
           <span>{{ t("sales_rep.activity.rows.searched_for") }}</span>
 
-          <VcLink v-if="item.searchTerm" class="activity-row__link" :to="searchRoute"> “{{ item.searchTerm }}” </VcLink>
+          <VcLink
+            v-if="item.searchTerm"
+            class="activity-row__link"
+            :to="searchRoute"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            “{{ item.searchTerm }}”
+          </VcLink>
         </template>
 
         <template v-else-if="item.type === 'productView'">
@@ -127,7 +135,12 @@ const timeLabel = computed(() => {
   }
 
   return props.item.precision === "hour"
-    ? t("sales_rep.activity.time.during_hour", { date: d(occurredAt), time: formatHourLabel(props.item.occurredAt) })
+    ? t("sales_rep.activity.time.during_hour", {
+        // "short" so an hour-bucket row reads like the exact rows beside it ("Aug 27, 2026"), which use
+        // "long" — the hour wording is the intended difference between them, the date style is not.
+        date: d(occurredAt, "short"),
+        time: formatHourLabel(props.item.occurredAt),
+      })
     : d(occurredAt, "long");
 });
 </script>

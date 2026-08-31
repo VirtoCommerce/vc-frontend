@@ -53,7 +53,14 @@
               <span class="activities__top-rank">{{ index + 1 }}</span>
 
               <!-- The catalog search results page, exactly as the feed rows link (VCST-5731). -->
-              <VcLink class="activities__top-link" :to="searchResultsRoute(item.term)"> “{{ item.term }}” </VcLink>
+              <VcLink
+                class="activities__top-link"
+                :to="searchResultsRoute(item.term)"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                “{{ item.term }}”
+              </VcLink>
 
               <span class="activities__top-count">
                 {{ t("sales_rep.customer_insights.search_history.count", item.count) }}

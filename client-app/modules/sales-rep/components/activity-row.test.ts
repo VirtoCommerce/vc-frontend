@@ -88,6 +88,9 @@ describe("ActivityRow per-type rendering", () => {
     const link = findLink(wrapper);
 
     expect(link.props("to")).toEqual({ name: "Search", query: { q: "gloves" } });
+    // A new tab, as a product row opens: following a term must not cost the rep the feed they were reading.
+    expect(link.attributes("target")).toBe("_blank");
+    expect(link.attributes("rel")).toBe("noopener noreferrer");
   });
 
   // By product id, never a slug: /product/{id} always resolves, whereas the tracked SEO segment alone

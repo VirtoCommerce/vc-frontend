@@ -1,5 +1,6 @@
 import { mount } from "@vue/test-utils";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { toValue } from "vue";
 import { createWrapperFactory } from "@/core/utilities/tests";
 import CustomerBrowseHistory from "./customer-browse-history.vue";
 
@@ -14,8 +15,12 @@ const state = await vi.hoisted(async () => {
   };
 });
 
+const browseOptions = vi.hoisted(() => ({ last: undefined as Record<string, unknown> | undefined }));
 vi.mock("../composables/useSalesRepBrowseHistory", () => ({
-  useSalesRepBrowseHistory: () => ({ ...state }),
+  useSalesRepBrowseHistory: (options: Record<string, unknown>) => {
+    browseOptions.last = options;
+    return { ...state };
+  },
 }));
 vi.mock("../composables/useSalesRepPeriodFilter", async () => {
   const { ref } = await import("vue");
@@ -106,5 +111,13 @@ describe("CustomerBrowseHistory states", () => {
     });
     expect(unresolved.find("a").exists()).toBe(false);
     expect(unresolved.text()).toContain("Mystery");
+  });
+
+  it("does not query while another sub-view is showing", () => {
+    createWrapper({ props: { organizationId: "org-1", active: false } });
+    expect(toValue(browseOptions.last?.enabled)).toBe(false);
+
+    createWrapper({ props: { organizationId: "org-1", active: true } });
+    expect(toValue(browseOptions.last?.enabled)).toBe(true);
   });
 });

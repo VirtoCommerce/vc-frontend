@@ -1,5 +1,6 @@
 import { mount } from "@vue/test-utils";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { toValue } from "vue";
 import { createWrapperFactory } from "@/core/utilities/tests";
 import CustomerSearchHistory from "./customer-search-history.vue";
 
@@ -14,8 +15,13 @@ const state = await vi.hoisted(async () => {
   };
 });
 
+// The options are captured: the default sort and the visibility gate are part of this panel's contract.
+const searchOptions = vi.hoisted(() => ({ last: undefined as Record<string, unknown> | undefined }));
 vi.mock("../composables/useSalesRepSearchHistory", () => ({
-  useSalesRepSearchHistory: () => ({ ...state }),
+  useSalesRepSearchHistory: (options: Record<string, unknown>) => {
+    searchOptions.last = options;
+    return { ...state };
+  },
 }));
 vi.mock("../composables/useSalesRepPeriodFilter", async () => {
   const { ref } = await import("vue");
@@ -29,6 +35,7 @@ const createWrapper = createWrapperFactory(mount, CustomerSearchHistory, {
     stubs: {
       VcEmptyView: true,
       VcIcon: true,
+      VcLink: { name: "VcLinkStub", props: ["to"], template: "<a><slot /></a>" },
       SalesRepRuleChips: true,
     },
   },
@@ -108,5 +115,36 @@ describe("CustomerSearchHistory states", () => {
     expect(caveat.exists()).toBe(true);
     expect(caveat.text()).toContain("sales_rep.customer_insights.tracked_caveat");
     expect(caveat.text()).toContain("sales_rep.customer_insights.data_as_of");
+  });
+
+  // VCST-5731: "clicking a search term opens catalog search results for that term".
+  it("links every term to the catalog search for it", () => {
+    state.items.value = [{ term: "coffee", count: 3 }];
+
+    const link = createWrapper().findComponent({ name: "VcLinkStub" });
+
+    expect(link.exists()).toBe(true);
+    expect(link.text()).toBe("coffee");
+    expect(link.props("to")).toMatchObject({ query: { q: "coffee" } });
+    expect(link.attributes("target")).toBe("_blank");
+    expect(link.attributes("rel")).toBe("noopener noreferrer");
+  });
+
+  // Recent is the baseline here as it is for product views: the newest searches are what the customer
+  // is asking about now, and "top" is the deliberate second look.
+  it("asks for the newest searches by default", () => {
+    createWrapper();
+
+    expect(toValue(searchOptions.last?.sort)).toBe("date");
+  });
+
+  // The panel stays mounted behind the other sub-view; a list nobody is looking at must not spend a
+  // round trip on the analytics backend.
+  it("does not query while another sub-view is showing", () => {
+    createWrapper({ props: { organizationId: "org-1", active: false } });
+    expect(toValue(searchOptions.last?.enabled)).toBe(false);
+
+    createWrapper({ props: { organizationId: "org-1", active: true } });
+    expect(toValue(searchOptions.last?.enabled)).toBe(true);
   });
 });

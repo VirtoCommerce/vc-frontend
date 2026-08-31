@@ -97,6 +97,9 @@ import type { SalesRepBrowsedProductRowType } from "../types/insights";
 
 interface IProps {
   organizationId: string;
+  // False while another sub-view is showing: the panel stays mounted (its rows are kept) but must not
+  // spend a GA round trip on a list nobody is looking at.
+  active?: boolean;
 }
 
 const props = defineProps<IProps>();
@@ -111,6 +114,9 @@ const sortChipRules = computed<SalesRepRuleType[]>(() => [
 ]);
 const sort = computed(() => sortChip.value ?? INSIGHTS_SORT_BY_DATE);
 
+// Absent means visible: a panel rendered on its own is not gated.
+const isVisible = computed(() => props.active !== false);
+
 const { from: periodFrom, to: periodTo } = useSalesRepPeriodFilter("year");
 
 const { items, notConfigured, dataAsOf, loading, error } = useSalesRepBrowseHistory({
@@ -119,6 +125,7 @@ const { items, notConfigured, dataAsOf, loading, error } = useSalesRepBrowseHist
   periodFrom,
   periodTo,
   take: INSIGHTS_DEFAULT_ROWS,
+  enabled: isVisible,
 });
 
 const failed = computed(() => Boolean(error.value));

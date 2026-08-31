@@ -77,7 +77,13 @@
               </dt>
 
               <dd class="customer-activity__value">
-                <VcLink v-if="summary.lastSearchTerm" class="customer-activity__link" :to="searchRoute">
+                <VcLink
+                  v-if="summary.lastSearchTerm"
+                  class="customer-activity__link"
+                  :to="searchRoute"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   “{{ summary.lastSearchTerm }}”
                 </VcLink>
 
@@ -121,12 +127,14 @@
         v-if="visitedViews.has(SEARCHES_VIEW)"
         v-show="viewChip === SEARCHES_VIEW"
         :organization-id="organizationId"
+        :active="viewChip === SEARCHES_VIEW"
       />
 
       <CustomerBrowseHistory
         v-if="visitedViews.has(PRODUCT_VIEWS_VIEW)"
         v-show="viewChip === PRODUCT_VIEWS_VIEW"
         :organization-id="organizationId"
+        :active="viewChip === PRODUCT_VIEWS_VIEW"
       />
     </template>
   </LayoutWidget>

@@ -3,7 +3,11 @@
        to be a widget of its own), so the widget box and title belong to the container. -->
   <div class="customer-search-history">
     <div class="customer-search-history__filter">
-      <SalesRepRuleChips v-model="sortChip" :rules="sortChipRules" :all-label="t('sales_rep.customer_insights.top')" />
+      <SalesRepRuleChips
+        v-model="sortChip"
+        :rules="sortChipRules"
+        :all-label="t('sales_rep.customer_insights.recent')"
+      />
     </div>
 
     <div class="customer-search-history__content">
@@ -40,7 +44,14 @@
           <template v-else>
             <li v-for="item in items" :key="item.term" class="customer-search-history__row">
               <span class="customer-search-history__term-line">
-                <span class="customer-search-history__term">{{ item.term }}</span>
+                <VcLink
+                  class="customer-search-history__term"
+                  :to="searchResultsRoute(item.term)"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {{ item.term }}
+                </VcLink>
 
                 <span class="customer-search-history__count">
                   {{ t("sales_rep.customer_insights.search_history.count", item.count) }}
@@ -67,11 +78,15 @@ import { useInsightsCaveat } from "../composables/useInsightsCaveat";
 import { useSalesRepPeriodFilter } from "../composables/useSalesRepPeriodFilter";
 import { useSalesRepSearchHistory } from "../composables/useSalesRepSearchHistory";
 import { INSIGHTS_DEFAULT_ROWS, INSIGHTS_SORT_BY_COUNT, INSIGHTS_SORT_BY_DATE } from "../constants";
+import { searchResultsRoute } from "../utils";
 import SalesRepRuleChips from "./sales-rep-rule-chips.vue";
 import type { SalesRepRuleType } from "../types";
 
 interface IProps {
   organizationId: string;
+  // False while another sub-view is showing: the panel stays mounted (its rows are kept) but must not
+  // spend a GA round trip on a list nobody is looking at.
+  active?: boolean;
 }
 
 const props = defineProps<IProps>();
@@ -79,11 +94,16 @@ const props = defineProps<IProps>();
 const { t, d } = useI18n();
 
 // The baseline chip is "Top" (ranked by count); the one selectable rule flips to "Recent".
+// Recent is the baseline, as it is for product views and for the activity feed's own mode chip: the
+// newest searches are what the customer is asking about now, and "top" is the deliberate second look.
 const sortChip = ref<string | undefined>(undefined);
 const sortChipRules = computed<SalesRepRuleType[]>(() => [
-  { name: INSIGHTS_SORT_BY_DATE, label: t("sales_rep.customer_insights.recent") },
+  { name: INSIGHTS_SORT_BY_COUNT, label: t("sales_rep.customer_insights.top") },
 ]);
-const sort = computed(() => sortChip.value ?? INSIGHTS_SORT_BY_COUNT);
+const sort = computed(() => sortChip.value ?? INSIGHTS_SORT_BY_DATE);
+
+// Absent means visible: a panel rendered on its own is not gated.
+const isVisible = computed(() => props.active !== false);
 
 const { from: periodFrom, to: periodTo } = useSalesRepPeriodFilter("year");
 
@@ -93,6 +113,7 @@ const { items, notConfigured, dataAsOf, loading, error } = useSalesRepSearchHist
   periodFrom,
   periodTo,
   take: INSIGHTS_DEFAULT_ROWS,
+  enabled: isVisible,
 });
 
 const failed = computed(() => Boolean(error.value));
@@ -131,7 +152,7 @@ const caveat = useInsightsCaveat(dataAsOf);
   }
 
   &__term {
-    @apply min-w-0 text-sm font-medium text-neutral-900 [word-break:break-word];
+    @apply min-w-0 text-sm font-medium text-[--link-color] [word-break:break-word] hover:underline;
   }
 
   &__count {
