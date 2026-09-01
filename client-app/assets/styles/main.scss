@@ -12,7 +12,7 @@
 }
 
 html {
-  scroll-padding-top: var(--vc-header-height, 0px);
+  scroll-padding-top: var(--vc-app-header-height, 0px);
 }
 
 @include meta.load-css("print");
