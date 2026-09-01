@@ -50,7 +50,7 @@ export function useSalesRepTaskCalendar(monthAnchor: Ref<string>) {
     ),
   );
 
-  return { dayMarkers, loading, error, period, refetch };
+  return { dayMarkers, loading, error, refetch };
 }
 
 /**

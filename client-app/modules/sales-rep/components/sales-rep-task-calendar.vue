@@ -13,9 +13,9 @@
       the cell trigger, so anything rendered in here is excluded from the accessible name.
     -->
     <template #day="{ date }">
-      <span v-if="dotsFor(date).length" class="sales-rep-task-calendar__dots" aria-hidden="true">
+      <span v-if="dots[date]" class="sales-rep-task-calendar__dots" aria-hidden="true">
         <span
-          v-for="kind in dotsFor(date)"
+          v-for="kind in dots[date]"
           :key="kind"
           :class="`sales-rep-task-calendar__dot sales-rep-task-calendar__dot--${kind}`"
         />
@@ -27,7 +27,8 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import type { SalesRepTaskDayMarkersType, SalesRepTaskStatusType } from "../types/tasks";
+import { TASK_MARKER_KINDS } from "../tasks";
+import type { SalesRepTaskDayMarkersType } from "../types/tasks";
 
 interface IProps {
   /** Selected day, ISO "YYYY-MM-DD". */
@@ -48,35 +49,33 @@ const props = withDefaults(defineProps<IProps>(), { month: undefined, dayMarkers
 
 const { t } = useI18n();
 
-// Render order, so a kind keeps the same slot from day to day. Canceled tasks get no dot: they are not one of
-// the three tabs, and a fourth colour would say something the legend does not explain.
-const KIND_ORDER: SalesRepTaskStatusType[] = ["upcoming", "overdue", "completed"];
+/**
+ * Which dots each day gets, resolved once per data change rather than per cell — a fixed-weeks grid asks 42 times.
+ * Normalising through the shared TASK_MARKER_KINDS keeps the dots, the legend and buildDayMarkers in one order, and
+ * drops any kind that has no colour (a canceled task earns no dot).
+ */
+const dots = computed<SalesRepTaskDayMarkersType>(() => {
+  const result: SalesRepTaskDayMarkersType = {};
 
-// A day cell is small; past this the dots stop reading as distinct marks. Three kinds exist today, so the cap
-// only guards a future fourth.
-const MAX_DOTS = 3;
-
-function dotsFor(date: string): SalesRepTaskStatusType[] {
-  const kinds = props.dayMarkers?.[date];
-  if (!kinds?.length) {
-    return [];
+  for (const [date, kinds] of Object.entries(props.dayMarkers ?? {})) {
+    const shown = TASK_MARKER_KINDS.filter((kind) => kinds.includes(kind));
+    if (shown.length) {
+      result[date] = shown;
+    }
   }
 
-  return KIND_ORDER.filter((kind) => kinds.includes(kind)).slice(0, MAX_DOTS);
-}
+  return result;
+});
 
 // The screen-reader counterpart of the dots. Named rather than a bare list ("Upcoming, Overdue" alone, read
 // straight after the date, sounds like a property of the date).
 const dayDescriptions = computed<Record<string, string>>(() => {
   const result: Record<string, string> = {};
 
-  for (const date of Object.keys(props.dayMarkers ?? {})) {
-    const kinds = dotsFor(date);
-    if (kinds.length) {
-      result[date] = t("sales_rep.tasks.day_markers", {
-        kinds: kinds.map((kind) => t(`sales_rep.tasks.legend.${kind}`)).join(", "),
-      });
-    }
+  for (const [date, kinds] of Object.entries(dots.value)) {
+    result[date] = t("sales_rep.tasks.day_markers", {
+      kinds: kinds.map((kind) => t(`sales_rep.tasks.legend.${kind}`)).join(", "),
+    });
   }
 
   return result;

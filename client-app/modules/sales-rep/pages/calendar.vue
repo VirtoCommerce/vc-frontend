@@ -86,7 +86,7 @@
           />
 
           <ul class="sales-rep-calendar__legend">
-            <li v-for="kind in LEGEND_KINDS" :key="kind" class="sales-rep-calendar__legend-item">
+            <li v-for="kind in TASK_MARKER_KINDS" :key="kind" class="sales-rep-calendar__legend-item">
               <span :class="`sales-rep-calendar__legend-dot sales-rep-calendar__legend-dot--${kind}`" />
               {{ t(`sales_rep.tasks.legend.${kind}`) }}
             </li>
@@ -111,10 +111,8 @@ import { useMonthAnchor, useSalesRepTaskCalendar } from "../composables/useSales
 import { useSalesRepTaskCounts } from "../composables/useSalesRepTaskCounts";
 import { useSalesRepTaskMutations } from "../composables/useSalesRepTaskMutations";
 import { useSalesRepTasks } from "../composables/useSalesRepTasks";
-import { localDayKey, localDayWindow } from "../tasks";
-import type { SalesRepTaskStatusType, SalesRepTaskType } from "../types/tasks";
-
-const LEGEND_KINDS: SalesRepTaskStatusType[] = ["upcoming", "overdue", "completed"];
+import { TASK_MARKER_KINDS, localDayKey, localDayKeyToDate, localDayWindow } from "../tasks";
+import type { SalesRepTaskType } from "../types/tasks";
 
 const { t, d } = useI18n();
 const { openModal } = useModal();
@@ -162,9 +160,7 @@ const tabRules = computed(() =>
 );
 
 // "short" (Sep 1, 2026), not "long" — the long named format appends a time, and this heading names a DAY.
-const selectedDayLabel = computed(() => d(new Date(`${selectedDay.value}T00:00:00`), "short"));
-// The dots follow whatever month the grid is showing, including a page the user reached with its arrows
-// without selecting anything.
+const selectedDayLabel = computed(() => d(localDayKeyToDate(selectedDay.value), "short"));
 
 function goToToday(): void {
   selectedDay.value = localDayKey(new Date());

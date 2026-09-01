@@ -63,14 +63,14 @@ export type StatisticsWindowsType = {
 
 // Local-time counterpart of Date.UTC: the instant at a wall-clock moment in the user's zone, with the same
 // over/underflow normalization (month − 1 === −1 → prev Dec; day − n <= 0 → prev month).
-const local = (year: number, month: number, day: number, hours = 0, minutes = 0, seconds = 0, ms = 0): number =>
+export const local = (year: number, month: number, day: number, hours = 0, minutes = 0, seconds = 0, ms = 0): number =>
   new Date(year, month, day, hours, minutes, seconds, ms).getTime();
 
 // End of a day on the user's clock — the inclusive upper bound every "to" window uses.
-const eod = (year: number, month: number, day: number): number => local(year, month, day, 23, 59, 59, 999);
+export const eod = (year: number, month: number, day: number): number => local(year, month, day, 23, 59, 59, 999);
 
 // Every bound leaves here as a UTC instant — only *where* the user's day starts differs from UTC's.
-const iso = (ms: number): string => new Date(ms).toISOString();
+export const iso = (ms: number): string => new Date(ms).toISOString();
 
 export function buildStatisticsWindows(now: Date = new Date()): StatisticsWindowsType {
   const year = now.getFullYear();

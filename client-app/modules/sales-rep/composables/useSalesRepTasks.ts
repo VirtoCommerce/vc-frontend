@@ -9,7 +9,7 @@ import type { SalesRepTaskType } from "../types/tasks";
 import type { Ref } from "vue";
 
 /** Wire row -> view model, with the status derived on the caller's day boundary (see tasks.ts). */
-export function mapSalesRepTask(task: SalesRepTaskFieldsFragment, dayStart: Date): SalesRepTaskType {
+function mapSalesRepTask(task: SalesRepTaskFieldsFragment, dayStart: Date): SalesRepTaskType {
   return {
     id: task.id,
     name: task.name,
@@ -105,7 +105,5 @@ export function useSalesRepTasks(options: UseSalesRepTasksOptionsType = {}) {
     pages,
     items,
     totalCount,
-    dayStart,
-    today,
   };
 }

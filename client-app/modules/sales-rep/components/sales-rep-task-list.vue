@@ -22,7 +22,7 @@
             <span class="sales-rep-task-list__name">{{ item.name }}</span>
           </button>
 
-          <span v-if="subline(item)" class="sales-rep-task-list__meta">{{ subline(item) }}</span>
+          <span v-if="sublines.get(item.id)" class="sales-rep-task-list__meta">{{ sublines.get(item.id) }}</span>
 
           <SalesRepTaskStatus :status="item.status" />
 
@@ -53,7 +53,7 @@
           <span class="sales-rep-task-list__name">{{ item.name }}</span>
         </button>
 
-        <span v-if="subline(item)" class="sales-rep-task-list__meta">{{ subline(item) }}</span>
+        <span v-if="sublines.get(item.id)" class="sales-rep-task-list__meta">{{ sublines.get(item.id) }}</span>
       </template>
     </VcTableColumn>
 
@@ -72,7 +72,9 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
+import { taskSubline } from "../tasks";
 import SalesRepTaskStatus from "./sales-rep-task-status.vue";
 import type { SalesRepTaskType } from "../types/tasks";
 
@@ -91,25 +93,12 @@ defineEmits<{
   (event: "update:page", page: number): void;
 }>();
 
-withDefaults(defineProps<IProps>(), { loading: false, busy: false, page: 1, pages: 1 });
+const props = withDefaults(defineProps<IProps>(), { loading: false, busy: false, page: 1, pages: 1 });
 
 const { t, d } = useI18n();
 
-// The line under the title: what is most useful about the deadline, else the task's type ("Finance").
-// An overdue task says when it expired; anything else with a date says when it is due.
-function subline(task: SalesRepTaskType): string {
-  if (!task.dueDate) {
-    return task.type;
-  }
-
-  if (task.status === "overdue") {
-    return t("sales_rep.tasks.due_relative.expired", { date: d(task.dueDate, "short") });
-  }
-
-  return task.status === "completed"
-    ? task.type
-    : t("sales_rep.tasks.due_relative.due", { date: d(task.dueDate, "short") });
-}
+// Resolved once per row rather than per template read: each one formats a date through Intl.
+const sublines = computed(() => new Map(props.tasks.map((task) => [task.id, taskSubline(task, t, d)])));
 
 function completionLabel(task: SalesRepTaskType): string {
   return task.status === "completed"

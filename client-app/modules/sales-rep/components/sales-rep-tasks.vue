@@ -46,7 +46,7 @@
             <div class="sales-rep-tasks__details">
               <span class="sales-rep-tasks__name" :title="task.name">{{ task.name }}</span>
 
-              <span v-if="subline(task)" class="sales-rep-tasks__meta">{{ subline(task) }}</span>
+              <span v-if="sublines.get(task.id)" class="sales-rep-tasks__meta">{{ sublines.get(task.id) }}</span>
             </div>
 
             <SalesRepTaskStatus :status="task.status" />
@@ -64,11 +64,10 @@ import { useBlockChrome } from "../composables/useBlockChrome";
 import { useMonthAnchor, useSalesRepTaskCalendar } from "../composables/useSalesRepTaskCalendar";
 import { useSalesRepTasks } from "../composables/useSalesRepTasks";
 import { CALENDAR_ROUTE_NAME, TASKS_DEFAULT_ROWS } from "../constants";
-import { localDayKey, localDayWindow } from "../tasks";
+import { localDayKey, localDayKeyToDate, localDayWindow, taskSubline } from "../tasks";
 import LayoutWidget from "./layout-widget.vue";
 import SalesRepTaskCalendar from "./sales-rep-task-calendar.vue";
 import SalesRepTaskStatus from "./sales-rep-task-status.vue";
-import type { SalesRepTaskType } from "../types/tasks";
 
 interface IProps {
   // Omit inside a layout; LayoutWidget then falls back to the block's titleKey.
@@ -107,22 +106,10 @@ const { dayMarkers } = useSalesRepTaskCalendar(month);
 
 const failed = computed(() => Boolean(error.value));
 
-const selectedDayLabel = computed(() => d(new Date(`${selectedDay.value}T00:00:00`), "short"));
+const selectedDayLabel = computed(() => d(localDayKeyToDate(selectedDay.value), "short"));
 
-// Same reading as the Calendar page's table: the deadline when it is the useful thing, else the type.
-function subline(task: SalesRepTaskType): string {
-  if (!task.dueDate) {
-    return task.type;
-  }
-
-  if (task.status === "overdue") {
-    return t("sales_rep.tasks.due_relative.expired", { date: d(task.dueDate, "short") });
-  }
-
-  return task.status === "completed"
-    ? task.type
-    : t("sales_rep.tasks.due_relative.due", { date: d(task.dueDate, "short") });
-}
+// Resolved once per row rather than per template read: each one formats a date through Intl.
+const sublines = computed(() => new Map(tasks.value.map((task) => [task.id, taskSubline(task, t, d)])));
 </script>
 
 <style lang="scss">

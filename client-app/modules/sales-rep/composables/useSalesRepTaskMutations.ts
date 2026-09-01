@@ -22,44 +22,30 @@ export function useSalesRepTaskMutations() {
 
   const loading = computed(() => creating.value || updating.value || changingStatus.value || deleting.value);
 
-  async function create(input: SalesRepTaskInputType): Promise<boolean> {
+  async function run(operation: string, mutate: () => Promise<unknown>): Promise<boolean> {
     try {
-      await createTask({ command: input });
+      await mutate();
       return true;
     } catch (error) {
-      Logger.error("[sales-rep] createSalesRepTask failed:", error);
+      Logger.error(`[sales-rep] ${operation} failed:`, error);
       return false;
     }
   }
 
-  async function update(id: string, input: SalesRepTaskInputType): Promise<boolean> {
-    try {
-      await updateTask({ command: { id, ...input } });
-      return true;
-    } catch (error) {
-      Logger.error("[sales-rep] updateSalesRepTask failed:", error);
-      return false;
-    }
+  function create(input: SalesRepTaskInputType): Promise<boolean> {
+    return run("createSalesRepTask", () => createTask({ command: input }));
   }
 
-  async function setCompleted(id: string, completed: boolean): Promise<boolean> {
-    try {
-      await changeStatus({ command: { id, completed } });
-      return true;
-    } catch (error) {
-      Logger.error("[sales-rep] changeSalesRepTaskStatus failed:", error);
-      return false;
-    }
+  function update(id: string, input: SalesRepTaskInputType): Promise<boolean> {
+    return run("updateSalesRepTask", () => updateTask({ command: { id, ...input } }));
   }
 
-  async function remove(id: string): Promise<boolean> {
-    try {
-      await deleteTask({ command: { id } });
-      return true;
-    } catch (error) {
-      Logger.error("[sales-rep] deleteSalesRepTask failed:", error);
-      return false;
-    }
+  function setCompleted(id: string, completed: boolean): Promise<boolean> {
+    return run("changeSalesRepTaskStatus", () => changeStatus({ command: { id, completed } }));
+  }
+
+  function remove(id: string): Promise<boolean> {
+    return run("deleteSalesRepTask", () => deleteTask({ command: { id } }));
   }
 
   return { create, update, setCompleted, remove, loading };

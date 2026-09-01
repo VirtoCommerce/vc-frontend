@@ -1,4 +1,7 @@
-import type { SalesRepTaskDayMarkersType, SalesRepTaskStatusType } from "./types/tasks";
+import { toEndDateFilterValue, toStartDateFilterValue } from "@/core/utilities";
+import { eod, iso, local } from "./utils";
+import type { SalesRepTaskStatusType, SalesRepTaskType, SalesRepTaskDayMarkersType } from "./types/tasks";
+import type { ComposerTranslation } from "vue-i18n";
 
 /**
  * Task day maths, on the USER'S calendar rather than UTC — the same rule buildStatisticsWindows follows in
@@ -10,6 +13,13 @@ import type { SalesRepTaskDayMarkersType, SalesRepTaskStatusType } from "./types
  * the pill it renders always agree. Send one boundary to both, or they can disagree at midnight.
  */
 
+/**
+ * The conditions a day can be marked with, in render order — one source for the calendar dots, the legend beside
+ * them and the buckets `buildDayMarkers` produces, so the three cannot drift into different orders. `canceled` is
+ * deliberately absent: it is not one of the tabs, and a fourth colour would say something the legend does not explain.
+ */
+export const TASK_MARKER_KINDS: readonly SalesRepTaskStatusType[] = ["upcoming", "overdue", "completed"];
+
 /** Midnight at the start of the user's current day. */
 export function startOfLocalDay(now: Date = new Date()): Date {
   return new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -18,6 +28,14 @@ export function startOfLocalDay(now: Date = new Date()): Date {
 /** That boundary as a UTC instant — what the `today` GraphQL argument takes. */
 export function startOfLocalDayIso(now: Date = new Date()): string {
   return startOfLocalDay(now).toISOString();
+}
+
+/**
+ * A "YYYY-MM-DD" back as a Date for formatting. The explicit T00:00:00 is what keeps it local: a bare date-only
+ * string parses as UTC, which renders as the previous day for anyone west of Greenwich.
+ */
+export function localDayKeyToDate(dayKey: string): Date {
+  return new Date(`${dayKey}T00:00:00`);
 }
 
 /** "YYYY-MM-DD" on the user's calendar. The key a calendar cell is addressed by; NOT `iso.slice(0, 10)`. */
@@ -41,8 +59,8 @@ export function localCalendarWindow(monthKey: string): { from: string; to: strin
   const [year, month] = monthKey.split("-").map(Number);
 
   return {
-    from: new Date(year, month - 1, 1 - 7).toISOString(),
-    to: new Date(year, month, 7, 23, 59, 59, 999).toISOString(),
+    from: iso(local(year, month - 1, 1 - 7)),
+    to: iso(eod(year, month, 7)),
   };
 }
 
@@ -55,12 +73,8 @@ export function toMonthKey(value: string | Date): string {
 
 /** Inclusive local-day bounds of one "YYYY-MM-DD", as UTC instants — the window behind "tasks for this date". */
 export function localDayWindow(dayKey: string): { from: string; to: string } {
-  const [year, month, day] = dayKey.split("-").map(Number);
-
-  return {
-    from: new Date(year, month - 1, day).toISOString(),
-    to: new Date(year, month - 1, day, 23, 59, 59, 999).toISOString(),
-  };
+  // Non-null: the core helpers only return undefined for an absent date, and a day key is required here.
+  return { from: localDayKeyToIso(dayKey), to: toEndDateFilterValue(dayKey)! };
 }
 
 /**
@@ -69,9 +83,7 @@ export function localDayWindow(dayKey: string): { from: string; to: string } {
  * counts as upcoming, matching the backend's boundary.
  */
 export function localDayKeyToIso(dayKey: string): string {
-  const [year, month, day] = dayKey.split("-").map(Number);
-
-  return new Date(year, month - 1, day).toISOString();
+  return toStartDateFilterValue(dayKey)!;
 }
 
 type TaskStateType = {
@@ -106,7 +118,7 @@ export function taskStatus(task: TaskStateType, dayStart: Date): SalesRepTaskSta
  */
 export function buildDayMarkers(
   tasks: readonly { dueDate?: string | null; status: SalesRepTaskStatusType }[],
-  order: readonly SalesRepTaskStatusType[] = ["upcoming", "overdue", "completed"],
+  order: readonly SalesRepTaskStatusType[] = TASK_MARKER_KINDS,
 ): SalesRepTaskDayMarkersType {
   const byDay = new Map<string, Set<SalesRepTaskStatusType>>();
 
@@ -128,4 +140,27 @@ export function buildDayMarkers(
   }
 
   return result;
+}
+
+/**
+ * The line under a task's title: whatever is most useful about the deadline, else the task's type. Shared by the
+ * table and the dashboard widget so the two cannot read the same task differently. Takes the i18n functions rather
+ * than calling useI18n, like `documentMeta` in utils.ts.
+ */
+export function taskSubline(
+  task: SalesRepTaskType,
+  t: ComposerTranslation,
+  d: (value: number | Date | string, format: string) => string,
+): string {
+  if (!task.dueDate) {
+    return task.type;
+  }
+
+  if (task.status === "overdue") {
+    return t("sales_rep.tasks.due_relative.expired", { date: d(task.dueDate, "short") });
+  }
+
+  return task.status === "completed"
+    ? task.type
+    : t("sales_rep.tasks.due_relative.due", { date: d(task.dueDate, "short") });
 }
