@@ -203,6 +203,7 @@
       "max_value": "Maximalt värde är {value}",
       "min_value": "Minsta värde är {value}",
       "empty_wish_list": "Det finns inga artiklar i listan",
+      "no_company_roles_available": "Det finns inga roller tillgängliga. Kontakta din butiksadministratör.",
       "not_defined": "Odefinierat",
       "invalid_coupon": "Den här koden är inte giltig",
       "failed_coupon": "Något gick fel med kupongen. Försök igen.",
