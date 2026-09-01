@@ -5,7 +5,6 @@ import { cancelAnchorScroll, scrollToAnchor } from "../anchors";
 export function useAnchorScroll(content?: () => unknown): void {
   const route = useRoute();
 
-  let currentPath: string | undefined;
   let awaitingContent = false;
 
   function scroll() {
@@ -14,10 +13,10 @@ export function useAnchorScroll(content?: () => unknown): void {
   }
 
   watch(
-    () => [route.path, route.hash],
-    () => {
-      const movedToAnotherPage = currentPath !== undefined && currentPath !== route.path;
-      currentPath = route.path;
+    () => [route.path, route.hash] as const,
+    ([path], previous) => {
+      // Undefined on the immediate run, so the page we opened on never counts as a move.
+      const movedToAnotherPage = previous !== undefined && previous[0] !== path;
 
       if (content && (movedToAnotherPage || awaitingContent)) {
         cancelAnchorScroll();
