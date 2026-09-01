@@ -170,6 +170,73 @@
       "filter_all": "Alle",
       "load_failed": "Kunne ikke laste ordrene"
     },
+    "tasks": {
+      "title": "Kalender",
+      "widget_title": "Oppgaver og frister",
+      "full_calendar": "Hele kalenderen",
+      "new_task": "Ny oppgave",
+      "add_task": "Legg til oppgave",
+      "today": "I dag",
+      "empty": "Ingen oppgaver ennå",
+      "empty_day": "Ingenting har frist denne dagen",
+      "load_failed": "Kunne ikke laste oppgavene",
+      "day_task_count": "{count} oppgave | {count} oppgaver",
+      "day_of_total": "{shown} av {total} oppgaver",
+      "day_markers": "Merket: {kinds}",
+      "page": {
+        "subtitle": "Oppgavene, oppfølgingene og fristene dine på tvers av alle kontoer — fordelt på dager.",
+        "search_placeholder": "Søk etter navn",
+        "search_aria": "Søk i oppgaver",
+        "all_tab": "Alle",
+        "no_results": "Ingen oppgaver samsvarer med søket ditt",
+        "reset_search": "Tilbakestill søk"
+      },
+      "table": {
+        "task": "Oppgave",
+        "status": "Status",
+        "notes": "Notater",
+        "due": "Frist",
+        "complete_aria": "Merk «{name}» som fullført",
+        "reopen_aria": "Gjenåpne «{name}»",
+        "edit_aria": "Rediger «{name}»"
+      },
+      "status": {
+        "upcoming": "Kommende",
+        "overdue": "Forfalt",
+        "completed": "Fullført",
+        "canceled": "Avbrutt"
+      },
+      "priority": {
+        "lowest": "Lavest",
+        "low": "Lav",
+        "normal": "Normal",
+        "high": "Høy",
+        "highest": "Høyest"
+      },
+      "due_relative": {
+        "expired": "Utløp {date}",
+        "due": "Frist {date}"
+      },
+      "legend": {
+        "upcoming": "Kommende",
+        "overdue": "Forfalt",
+        "completed": "Fullført"
+      },
+      "form": {
+        "create_title": "Ny oppgave",
+        "edit_title": "Rediger oppgave",
+        "name_label": "Tittel",
+        "due_date_label": "Frist",
+        "priority_label": "Prioritet",
+        "type_label": "Type",
+        "description_label": "Notater",
+        "save_button": "Lagre",
+        "cancel_button": "Avbryt",
+        "delete_button": "Slett",
+        "saved": "Oppgaven er lagret",
+        "deleted": "Oppgaven er slettet"
+      }
+    },
     "top_sellers": {
       "title": "Toppselgere",
       "rank": "#",
@@ -208,6 +275,18 @@
       "published": "Publisert {date}"
     },
     "rules": {
+      "task": {
+        "filter": {
+          "upcoming": "Kommende",
+          "overdue": "Forfalt",
+          "completed": "Fullført"
+        },
+        "sort": {
+          "due-date": "Frist",
+          "recent": "Nylig opprettet",
+          "name": "Oppgave"
+        }
+      },
       "load_failed": {
         "filter": "Filtrene kunne ikke lastes, så hele listen vises. Last siden på nytt.",
         "sort": "Sorteringsalternativene kunne ikke lastes, så standardrekkefølgen brukes. Last siden på nytt.",

@@ -152,6 +152,33 @@ export type CustomerOrderStatisticsPeriod = {
   warning?: Maybe<Scalars['String']['output']>;
 };
 
+export type InputChangeSalesRepTaskStatus = {
+  /** True marks the task done; false reopens it. */
+  completed: Scalars['Boolean']['input'];
+  /** Id of the task to change. Must be a task the caller owns. */
+  id: Scalars['String']['input'];
+};
+
+export type InputCreateSalesRepTask = {
+  /** Free-text notes. */
+  description?: InputMaybe<Scalars['String']['input']>;
+  /** When the task is due. */
+  dueDate: Scalars['DateTime']['input'];
+  /** Task title. */
+  name: Scalars['String']['input'];
+  /** Lowest, Low, Normal, High or Highest. Defaults to Normal. */
+  priority?: InputMaybe<Scalars['String']['input']>;
+  /** Optional store to scope the task to. */
+  storeId?: InputMaybe<Scalars['String']['input']>;
+  /** One of the values configured in the TaskManagement.TaskTypes settings dictionary. */
+  type?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type InputDeleteSalesRepTask = {
+  /** Id of the task to delete. Must be a task the caller owns. */
+  id: Scalars['String']['input'];
+};
+
 export type InputSalesRepLayout = {
   /** Top-level fixed regions with their blocks. */
   regions: Array<InputSalesRepLayoutRegion>;
@@ -205,6 +232,21 @@ export type InputSendCustomerCommunicationType = {
   title?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type InputUpdateSalesRepTask = {
+  /** Free-text notes. */
+  description?: InputMaybe<Scalars['String']['input']>;
+  /** When the task is due. */
+  dueDate: Scalars['DateTime']['input'];
+  /** Id of the task to change. Must be a task the caller owns. */
+  id: Scalars['String']['input'];
+  /** Task title. */
+  name: Scalars['String']['input'];
+  /** Lowest, Low, Normal, High or Highest. Defaults to Normal. */
+  priority?: InputMaybe<Scalars['String']['input']>;
+  /** One of the values configured in the TaskManagement.TaskTypes settings dictionary. */
+  type?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type MoneyType = {
   /** A decimal with the amount rounded to the significant number of decimal digits. */
   amount: Scalars['Decimal']['output'];
@@ -223,8 +265,27 @@ export type MoneyType = {
 };
 
 export type Mutations = {
+  changeSalesRepTaskStatus?: Maybe<SalesRepTask>;
+  createSalesRepTask?: Maybe<SalesRepTask>;
+  deleteSalesRepTask?: Maybe<Scalars['Boolean']['output']>;
   saveSalesRepLayout?: Maybe<SalesRepLayout>;
   sendCustomerCommunication?: Maybe<SalesRepCommunicationResult>;
+  updateSalesRepTask?: Maybe<SalesRepTask>;
+};
+
+
+export type MutationsChangeSalesRepTaskStatusArgs = {
+  command: InputChangeSalesRepTaskStatus;
+};
+
+
+export type MutationsCreateSalesRepTaskArgs = {
+  command: InputCreateSalesRepTask;
+};
+
+
+export type MutationsDeleteSalesRepTaskArgs = {
+  command: InputDeleteSalesRepTask;
 };
 
 
@@ -235,6 +296,11 @@ export type MutationsSaveSalesRepLayoutArgs = {
 
 export type MutationsSendCustomerCommunicationArgs = {
   command: InputSendCustomerCommunicationType;
+};
+
+
+export type MutationsUpdateSalesRepTaskArgs = {
+  command: InputUpdateSalesRepTask;
 };
 
 /** Information about pagination in a connection. */
@@ -266,6 +332,11 @@ export type Query = {
   salesRepOrderFilterRules?: Maybe<Array<Maybe<SalesRepOrderFilterRule>>>;
   salesRepOrderSortRules?: Maybe<Array<Maybe<SalesRepOrderSortRule>>>;
   salesRepOrders?: Maybe<SalesRepOrderConnection>;
+  salesRepTask?: Maybe<SalesRepTask>;
+  salesRepTaskFilterRules?: Maybe<Array<Maybe<SalesRepTaskFilterRule>>>;
+  salesRepTaskSortRules?: Maybe<Array<Maybe<SalesRepTaskSortRule>>>;
+  salesRepTaskTypes?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  salesRepTasks?: Maybe<SalesRepTaskConnection>;
   salesRepTopSellerFilterRules?: Maybe<Array<Maybe<SalesRepTopSellerFilterRule>>>;
   salesRepTopSellerSortRules?: Maybe<Array<Maybe<SalesRepTopSellerSortRule>>>;
   salesRepTopSellers?: Maybe<Array<Maybe<SalesRepTopSeller>>>;
@@ -387,6 +458,36 @@ export type QuerySalesRepOrdersArgs = {
   period?: InputMaybe<SalesRepStatisticsPeriodInput>;
   sort?: InputMaybe<Scalars['String']['input']>;
   storeId?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QuerySalesRepTaskArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type QuerySalesRepTaskFilterRulesArgs = {
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QuerySalesRepTaskSortRulesArgs = {
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QuerySalesRepTasksArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  keyword?: InputMaybe<Scalars['String']['input']>;
+  period?: InputMaybe<SalesRepStatisticsPeriodInput>;
+  sort?: InputMaybe<Scalars['String']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+  today?: InputMaybe<Scalars['DateTime']['input']>;
 };
 
 
@@ -803,6 +904,67 @@ export type SalesRepStatisticsPeriodInput = {
   to?: InputMaybe<Scalars['DateTime']['input']>;
 };
 
+export type SalesRepTask = {
+  /** True when finished as done; false or null on a cancelled task. Combine with isActive and dueDate to render the status: active and due before the start of the viewer's today = overdue, active otherwise = upcoming, completed = done. */
+  completed?: Maybe<Scalars['Boolean']['output']>;
+  /** When the task was created. */
+  createdDate: Scalars['DateTime']['output'];
+  /** Free-text notes. */
+  description?: Maybe<Scalars['String']['output']>;
+  /** When the task is due, as an instant. */
+  dueDate?: Maybe<Scalars['DateTime']['output']>;
+  /** Task id. */
+  id: Scalars['String']['output'];
+  /** False once the task has been completed or cancelled. */
+  isActive: Scalars['Boolean']['output'];
+  /** When the task was last changed. */
+  modifiedDate?: Maybe<Scalars['DateTime']['output']>;
+  /** Task title. */
+  name: Scalars['String']['output'];
+  /** Priority name: Lowest, Low, Normal, High or Highest. */
+  priority?: Maybe<Scalars['String']['output']>;
+  /** Task type - one of the values configured in the TaskManagement.TaskTypes settings dictionary. */
+  type?: Maybe<Scalars['String']['output']>;
+};
+
+/** A connection from an object to a list of objects of type `SalesRepTask`. */
+export type SalesRepTaskConnection = {
+  /** A list of all of the edges returned in the connection. */
+  edges?: Maybe<Array<Maybe<SalesRepTaskEdge>>>;
+  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
+  items?: Maybe<Array<Maybe<SalesRepTask>>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
+  totalCount?: Maybe<Scalars['Int']['output']>;
+};
+
+/** An edge in a connection from an object to another object of type `SalesRepTask`. */
+export type SalesRepTaskEdge = {
+  /** A cursor for use in pagination */
+  cursor: Scalars['String']['output'];
+  /** The item at the end of the edge */
+  node?: Maybe<SalesRepTask>;
+};
+
+export type SalesRepTaskFilterRule = {
+  /** Localized label for the rule. */
+  localizedName?: Maybe<Scalars['String']['output']>;
+  /** Stable rule id — send it back in the salesRepTasks 'filter' argument. */
+  name: Scalars['String']['output'];
+};
+
+export type SalesRepTaskSortRule = {
+  /** Direction applied when the 'sort' argument carries no direction suffix: 'asc' or 'desc'. */
+  defaultDirection: Scalars['String']['output'];
+  /** Localized label for the ordering. */
+  localizedName?: Maybe<Scalars['String']['output']>;
+  /** Stable sort-rule id — send it back as the salesRepTasks 'sort' argument (optionally suffixed ':asc'/':desc'). */
+  name: Scalars['String']['output'];
+  /** Whether the client may choose the direction; false = a ':asc'/':desc' opposite of the default is rejected. */
+  supportsDirection: Scalars['Boolean']['output'];
+};
+
 export type SalesRepTopSeller = {
   /** Category id (from the line-item snapshot). */
   categoryId?: Maybe<Scalars['String']['output']>;
@@ -842,6 +1004,29 @@ export type SalesRepTopSellerSortRule = {
   supportsDirection: Scalars['Boolean']['output'];
 };
 
+export type SalesRepTaskFieldsFragment = { id: string, name: string, description?: string, type?: string, priority?: string, dueDate?: any, isActive: boolean, completed?: boolean, createdDate: any, modifiedDate?: any };
+
+export type ChangeSalesRepTaskStatusMutationVariables = Exact<{
+  command: InputChangeSalesRepTaskStatus;
+}>;
+
+
+export type ChangeSalesRepTaskStatusMutation = { changeSalesRepTaskStatus?: { id: string, name: string, description?: string, type?: string, priority?: string, dueDate?: any, isActive: boolean, completed?: boolean, createdDate: any, modifiedDate?: any } };
+
+export type CreateSalesRepTaskMutationVariables = Exact<{
+  command: InputCreateSalesRepTask;
+}>;
+
+
+export type CreateSalesRepTaskMutation = { createSalesRepTask?: { id: string, name: string, description?: string, type?: string, priority?: string, dueDate?: any, isActive: boolean, completed?: boolean, createdDate: any, modifiedDate?: any } };
+
+export type DeleteSalesRepTaskMutationVariables = Exact<{
+  command: InputDeleteSalesRepTask;
+}>;
+
+
+export type DeleteSalesRepTaskMutation = { deleteSalesRepTask?: boolean };
+
 export type SaveSalesRepLayoutMutationVariables = Exact<{
   command: InputSalesRepLayout;
 }>;
@@ -855,6 +1040,13 @@ export type SendCustomerCommunicationMutationVariables = Exact<{
 
 
 export type SendCustomerCommunicationMutation = { sendCustomerCommunication?: { succeeded: boolean, pushSent: boolean, emailSent: boolean, warnings: Array<string> } };
+
+export type UpdateSalesRepTaskMutationVariables = Exact<{
+  command: InputUpdateSalesRepTask;
+}>;
+
+
+export type UpdateSalesRepTaskMutation = { updateSalesRepTask?: { id: string, name: string, description?: string, type?: string, priority?: string, dueDate?: any, isActive: boolean, completed?: boolean, createdDate: any, modifiedDate?: any } };
 
 export type CustomerSalesRepsQueryVariables = Exact<{
   storeId?: InputMaybe<Scalars['String']['input']>;
@@ -1045,6 +1237,47 @@ export type SalesRepOrdersQueryVariables = Exact<{
 
 export type SalesRepOrdersQuery = { salesRepOrders?: { totalCount?: number, items?: Array<{ id: string, number?: string, organizationId?: string, organizationName?: string, createdDate: any, status?: string, statusDisplayValue?: string, itemsCount: number, total: { amount: number, formattedAmount: string, currency: { code: string, symbol: string } } }> } };
 
+export type SalesRepTaskCountsQueryVariables = Exact<{
+  today: Scalars['DateTime']['input'];
+}>;
+
+
+export type SalesRepTaskCountsQuery = { all?: { totalCount?: number }, upcoming?: { totalCount?: number }, overdue?: { totalCount?: number }, completed?: { totalCount?: number } };
+
+export type SalesRepTaskFilterRulesQueryVariables = Exact<{
+  storeId?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type SalesRepTaskFilterRulesQuery = { salesRepTaskFilterRules?: Array<{ name: string, localizedName?: string }> };
+
+export type SalesRepTaskSortRulesQueryVariables = Exact<{
+  storeId?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type SalesRepTaskSortRulesQuery = { salesRepTaskSortRules?: Array<{ name: string, localizedName?: string, defaultDirection: string, supportsDirection: boolean }> };
+
+export type SalesRepTaskTypesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type SalesRepTaskTypesQuery = { salesRepTaskTypes?: Array<string> };
+
+export type SalesRepTasksQueryVariables = Exact<{
+  first?: InputMaybe<Scalars['Int']['input']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+  keyword?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<Scalars['String']['input']>;
+  today?: InputMaybe<Scalars['DateTime']['input']>;
+  period?: InputMaybe<SalesRepStatisticsPeriodInput>;
+}>;
+
+
+export type SalesRepTasksQuery = { salesRepTasks?: { totalCount?: number, items?: Array<{ id: string, name: string, description?: string, type?: string, priority?: string, dueDate?: any, isActive: boolean, completed?: boolean, createdDate: any, modifiedDate?: any }> } };
+
 export type SalesRepTopSellerFilterRulesQueryVariables = Exact<{
   storeId?: InputMaybe<Scalars['String']['input']>;
   cultureName?: InputMaybe<Scalars['String']['input']>;
@@ -1079,9 +1312,13 @@ export type SalesRepTopSellersQueryVariables = Exact<{
 
 export type SalesRepTopSellersQuery = { salesRepTopSellers?: Array<{ rank: number, productId: string, name?: string, sku?: string, imageUrl?: string, categoryId?: string, units: number, revenue: { amount: number, formattedAmount: string, currency: { code: string } } }> };
 
-
+export const SalesRepTaskFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"salesRepTaskFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"SalesRepTask"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"priority"}},{"kind":"Field","name":{"kind":"Name","value":"dueDate"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"completed"}},{"kind":"Field","name":{"kind":"Name","value":"createdDate"}},{"kind":"Field","name":{"kind":"Name","value":"modifiedDate"}}]}}]} as unknown as DocumentNode<SalesRepTaskFieldsFragment, unknown>;
+export const ChangeSalesRepTaskStatusDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ChangeSalesRepTaskStatus"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"InputChangeSalesRepTaskStatus"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"changeSalesRepTaskStatus"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"salesRepTaskFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"salesRepTaskFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"SalesRepTask"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"priority"}},{"kind":"Field","name":{"kind":"Name","value":"dueDate"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"completed"}},{"kind":"Field","name":{"kind":"Name","value":"createdDate"}},{"kind":"Field","name":{"kind":"Name","value":"modifiedDate"}}]}}]} as unknown as DocumentNode<ChangeSalesRepTaskStatusMutation, ChangeSalesRepTaskStatusMutationVariables>;
+export const CreateSalesRepTaskDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateSalesRepTask"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"InputCreateSalesRepTask"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createSalesRepTask"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"salesRepTaskFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"salesRepTaskFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"SalesRepTask"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"priority"}},{"kind":"Field","name":{"kind":"Name","value":"dueDate"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"completed"}},{"kind":"Field","name":{"kind":"Name","value":"createdDate"}},{"kind":"Field","name":{"kind":"Name","value":"modifiedDate"}}]}}]} as unknown as DocumentNode<CreateSalesRepTaskMutation, CreateSalesRepTaskMutationVariables>;
+export const DeleteSalesRepTaskDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteSalesRepTask"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"InputDeleteSalesRepTask"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteSalesRepTask"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}]}]}}]} as unknown as DocumentNode<DeleteSalesRepTaskMutation, DeleteSalesRepTaskMutationVariables>;
 export const SaveSalesRepLayoutDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SaveSalesRepLayout"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"InputSalesRepLayout"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"saveSalesRepLayout"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"regions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"blocks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"hidden"}},{"kind":"Field","name":{"kind":"Name","value":"settings"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<SaveSalesRepLayoutMutation, SaveSalesRepLayoutMutationVariables>;
 export const SendCustomerCommunicationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SendCustomerCommunication"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"InputSendCustomerCommunicationType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sendCustomerCommunication"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"succeeded"}},{"kind":"Field","name":{"kind":"Name","value":"pushSent"}},{"kind":"Field","name":{"kind":"Name","value":"emailSent"}},{"kind":"Field","name":{"kind":"Name","value":"warnings"}}]}}]}}]} as unknown as DocumentNode<SendCustomerCommunicationMutation, SendCustomerCommunicationMutationVariables>;
+export const UpdateSalesRepTaskDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateSalesRepTask"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"InputUpdateSalesRepTask"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateSalesRepTask"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"salesRepTaskFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"salesRepTaskFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"SalesRepTask"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"priority"}},{"kind":"Field","name":{"kind":"Name","value":"dueDate"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"completed"}},{"kind":"Field","name":{"kind":"Name","value":"createdDate"}},{"kind":"Field","name":{"kind":"Name","value":"modifiedDate"}}]}}]} as unknown as DocumentNode<UpdateSalesRepTaskMutation, UpdateSalesRepTaskMutationVariables>;
 export const CustomerSalesRepsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CustomerSalesReps"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"keyword"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sort"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"customerSalesReps"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"storeId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}}},{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}},{"kind":"Argument","name":{"kind":"Name","value":"keyword"},"value":{"kind":"Variable","name":{"kind":"Name","value":"keyword"}}},{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sort"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalCount"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"fullName"}},{"kind":"Field","name":{"kind":"Name","value":"emails"}},{"kind":"Field","name":{"kind":"Name","value":"phones"}}]}}]}}]}}]} as unknown as DocumentNode<CustomerSalesRepsQuery, CustomerSalesRepsQueryVariables>;
 export const SalesRepCustomerDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SalesRepCustomer"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"organizationId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"salesRepCustomer"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"organizationId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"organizationId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"organizationId"}},{"kind":"Field","name":{"kind":"Name","value":"organizationName"}},{"kind":"Field","name":{"kind":"Name","value":"iconUrl"}},{"kind":"Field","name":{"kind":"Name","value":"accountType"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}},{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"city"}},{"kind":"Field","name":{"kind":"Name","value":"regionName"}}]}},{"kind":"Field","name":{"kind":"Name","value":"primaryContact"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fullName"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]} as unknown as DocumentNode<SalesRepCustomerQuery, SalesRepCustomerQueryVariables>;
 export const SalesRepCustomerCartStatisticsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SalesRepCustomerCartStatistics"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"organizationId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"currencyCode"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"cartFilter"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"weekFrom"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"DateTime"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"weekTo"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"DateTime"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"salesRepCustomerCartStatistics"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"organizationId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"organizationId"}}},{"kind":"Argument","name":{"kind":"Name","value":"storeId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}}},{"kind":"Argument","name":{"kind":"Name","value":"currencyCode"},"value":{"kind":"Variable","name":{"kind":"Name","value":"currencyCode"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"activeCarts"},"name":{"kind":"Name","value":"period"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"cartFilter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"selectedItemQuantity"}},{"kind":"Field","name":{"kind":"Name","value":"unselectedItemQuantity"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"itemsThisWeek"},"name":{"kind":"Name","value":"period"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"from"},"value":{"kind":"Variable","name":{"kind":"Name","value":"weekFrom"}}},{"kind":"Argument","name":{"kind":"Name","value":"to"},"value":{"kind":"Variable","name":{"kind":"Name","value":"weekTo"}}},{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"cartFilter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"selectedItemQuantity"}}]}}]}}]}}]} as unknown as DocumentNode<SalesRepCustomerCartStatisticsQuery, SalesRepCustomerCartStatisticsQueryVariables>;
@@ -1099,6 +1336,11 @@ export const SalesRepLayoutDocument = {"kind":"Document","definitions":[{"kind":
 export const SalesRepOrderFilterRulesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SalesRepOrderFilterRules"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"cultureName"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"organizationId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"periodFrom"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"DateTime"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"periodTo"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"DateTime"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"salesRepOrderFilterRules"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"storeId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}}},{"kind":"Argument","name":{"kind":"Name","value":"cultureName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"cultureName"}}},{"kind":"Argument","name":{"kind":"Name","value":"organizationId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"organizationId"}}},{"kind":"Argument","name":{"kind":"Name","value":"period"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"from"},"value":{"kind":"Variable","name":{"kind":"Name","value":"periodFrom"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"to"},"value":{"kind":"Variable","name":{"kind":"Name","value":"periodTo"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"localizedName"}}]}}]}}]} as unknown as DocumentNode<SalesRepOrderFilterRulesQuery, SalesRepOrderFilterRulesQueryVariables>;
 export const SalesRepOrderSortRulesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SalesRepOrderSortRules"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"cultureName"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"salesRepOrderSortRules"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"storeId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}}},{"kind":"Argument","name":{"kind":"Name","value":"cultureName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"cultureName"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"localizedName"}},{"kind":"Field","name":{"kind":"Name","value":"defaultDirection"}},{"kind":"Field","name":{"kind":"Name","value":"supportsDirection"}}]}}]}}]} as unknown as DocumentNode<SalesRepOrderSortRulesQuery, SalesRepOrderSortRulesQueryVariables>;
 export const SalesRepOrdersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SalesRepOrders"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"organizationId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"cultureName"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sort"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"periodFrom"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"DateTime"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"periodTo"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"DateTime"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"salesRepOrders"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"organizationId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"organizationId"}}},{"kind":"Argument","name":{"kind":"Name","value":"storeId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}}},{"kind":"Argument","name":{"kind":"Name","value":"cultureName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"cultureName"}}},{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}},{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sort"}}},{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}},{"kind":"Argument","name":{"kind":"Name","value":"period"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"from"},"value":{"kind":"Variable","name":{"kind":"Name","value":"periodFrom"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"to"},"value":{"kind":"Variable","name":{"kind":"Name","value":"periodTo"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalCount"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"number"}},{"kind":"Field","name":{"kind":"Name","value":"organizationId"}},{"kind":"Field","name":{"kind":"Name","value":"organizationName"}},{"kind":"Field","name":{"kind":"Name","value":"createdDate"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"statusDisplayValue"}},{"kind":"Field","name":{"kind":"Name","value":"itemsCount"}},{"kind":"Field","name":{"kind":"Name","value":"total"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"formattedAmount"}},{"kind":"Field","name":{"kind":"Name","value":"currency"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<SalesRepOrdersQuery, SalesRepOrdersQueryVariables>;
+export const SalesRepTaskCountsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SalesRepTaskCounts"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"today"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"DateTime"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"all"},"name":{"kind":"Name","value":"salesRepTasks"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"0"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalCount"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"upcoming"},"name":{"kind":"Name","value":"salesRepTasks"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"0"}},{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"StringValue","value":"upcoming","block":false}},{"kind":"Argument","name":{"kind":"Name","value":"today"},"value":{"kind":"Variable","name":{"kind":"Name","value":"today"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalCount"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"overdue"},"name":{"kind":"Name","value":"salesRepTasks"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"0"}},{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"StringValue","value":"overdue","block":false}},{"kind":"Argument","name":{"kind":"Name","value":"today"},"value":{"kind":"Variable","name":{"kind":"Name","value":"today"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalCount"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"completed"},"name":{"kind":"Name","value":"salesRepTasks"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"0"}},{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"StringValue","value":"completed","block":false}},{"kind":"Argument","name":{"kind":"Name","value":"today"},"value":{"kind":"Variable","name":{"kind":"Name","value":"today"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalCount"}}]}}]}}]} as unknown as DocumentNode<SalesRepTaskCountsQuery, SalesRepTaskCountsQueryVariables>;
+export const SalesRepTaskFilterRulesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SalesRepTaskFilterRules"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"cultureName"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"salesRepTaskFilterRules"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"storeId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}}},{"kind":"Argument","name":{"kind":"Name","value":"cultureName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"cultureName"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"localizedName"}}]}}]}}]} as unknown as DocumentNode<SalesRepTaskFilterRulesQuery, SalesRepTaskFilterRulesQueryVariables>;
+export const SalesRepTaskSortRulesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SalesRepTaskSortRules"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"cultureName"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"salesRepTaskSortRules"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"storeId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}}},{"kind":"Argument","name":{"kind":"Name","value":"cultureName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"cultureName"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"localizedName"}},{"kind":"Field","name":{"kind":"Name","value":"defaultDirection"}},{"kind":"Field","name":{"kind":"Name","value":"supportsDirection"}}]}}]}}]} as unknown as DocumentNode<SalesRepTaskSortRulesQuery, SalesRepTaskSortRulesQueryVariables>;
+export const SalesRepTaskTypesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SalesRepTaskTypes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"salesRepTaskTypes"}}]}}]} as unknown as DocumentNode<SalesRepTaskTypesQuery, SalesRepTaskTypesQueryVariables>;
+export const SalesRepTasksDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SalesRepTasks"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"keyword"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sort"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"today"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"DateTime"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"period"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"SalesRepStatisticsPeriodInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"salesRepTasks"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}},{"kind":"Argument","name":{"kind":"Name","value":"keyword"},"value":{"kind":"Variable","name":{"kind":"Name","value":"keyword"}}},{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sort"}}},{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}},{"kind":"Argument","name":{"kind":"Name","value":"today"},"value":{"kind":"Variable","name":{"kind":"Name","value":"today"}}},{"kind":"Argument","name":{"kind":"Name","value":"period"},"value":{"kind":"Variable","name":{"kind":"Name","value":"period"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalCount"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"salesRepTaskFields"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"salesRepTaskFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"SalesRepTask"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"priority"}},{"kind":"Field","name":{"kind":"Name","value":"dueDate"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"completed"}},{"kind":"Field","name":{"kind":"Name","value":"createdDate"}},{"kind":"Field","name":{"kind":"Name","value":"modifiedDate"}}]}}]} as unknown as DocumentNode<SalesRepTasksQuery, SalesRepTasksQueryVariables>;
 export const SalesRepTopSellerFilterRulesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SalesRepTopSellerFilterRules"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"cultureName"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"organizationId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"periodFrom"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"DateTime"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"periodTo"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"DateTime"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"salesRepTopSellerFilterRules"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"storeId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}}},{"kind":"Argument","name":{"kind":"Name","value":"cultureName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"cultureName"}}},{"kind":"Argument","name":{"kind":"Name","value":"organizationId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"organizationId"}}},{"kind":"Argument","name":{"kind":"Name","value":"period"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"from"},"value":{"kind":"Variable","name":{"kind":"Name","value":"periodFrom"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"to"},"value":{"kind":"Variable","name":{"kind":"Name","value":"periodTo"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"localizedName"}}]}}]}}]} as unknown as DocumentNode<SalesRepTopSellerFilterRulesQuery, SalesRepTopSellerFilterRulesQueryVariables>;
 export const SalesRepTopSellerSortRulesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SalesRepTopSellerSortRules"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"cultureName"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"salesRepTopSellerSortRules"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"storeId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}}},{"kind":"Argument","name":{"kind":"Name","value":"cultureName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"cultureName"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"localizedName"}},{"kind":"Field","name":{"kind":"Name","value":"defaultDirection"}},{"kind":"Field","name":{"kind":"Name","value":"supportsDirection"}}]}}]}}]} as unknown as DocumentNode<SalesRepTopSellerSortRulesQuery, SalesRepTopSellerSortRulesQueryVariables>;
 export const SalesRepTopSellersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SalesRepTopSellers"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"organizationId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sort"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"periodFrom"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"DateTime"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"periodTo"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"DateTime"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"take"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"currencyCode"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"cultureName"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"salesRepTopSellers"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"organizationId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"organizationId"}}},{"kind":"Argument","name":{"kind":"Name","value":"storeId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}}},{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}},{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sort"}}},{"kind":"Argument","name":{"kind":"Name","value":"period"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"from"},"value":{"kind":"Variable","name":{"kind":"Name","value":"periodFrom"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"to"},"value":{"kind":"Variable","name":{"kind":"Name","value":"periodTo"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"take"},"value":{"kind":"Variable","name":{"kind":"Name","value":"take"}}},{"kind":"Argument","name":{"kind":"Name","value":"currencyCode"},"value":{"kind":"Variable","name":{"kind":"Name","value":"currencyCode"}}},{"kind":"Argument","name":{"kind":"Name","value":"cultureName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"cultureName"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"rank"}},{"kind":"Field","name":{"kind":"Name","value":"productId"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"sku"}},{"kind":"Field","name":{"kind":"Name","value":"imageUrl"}},{"kind":"Field","name":{"kind":"Name","value":"categoryId"}},{"kind":"Field","name":{"kind":"Name","value":"units"}},{"kind":"Field","name":{"kind":"Name","value":"revenue"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"formattedAmount"}},{"kind":"Field","name":{"kind":"Name","value":"currency"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"code"}}]}}]}}]}}]}}]} as unknown as DocumentNode<SalesRepTopSellersQuery, SalesRepTopSellersQueryVariables>;
@@ -1121,12 +1363,24 @@ export const OperationNames = {
     SalesRepOrderFilterRules: 'SalesRepOrderFilterRules',
     SalesRepOrderSortRules: 'SalesRepOrderSortRules',
     SalesRepOrders: 'SalesRepOrders',
+    SalesRepTaskCounts: 'SalesRepTaskCounts',
+    SalesRepTaskFilterRules: 'SalesRepTaskFilterRules',
+    SalesRepTaskSortRules: 'SalesRepTaskSortRules',
+    SalesRepTaskTypes: 'SalesRepTaskTypes',
+    SalesRepTasks: 'SalesRepTasks',
     SalesRepTopSellerFilterRules: 'SalesRepTopSellerFilterRules',
     SalesRepTopSellerSortRules: 'SalesRepTopSellerSortRules',
     SalesRepTopSellers: 'SalesRepTopSellers'
   },
   Mutation: {
+    ChangeSalesRepTaskStatus: 'ChangeSalesRepTaskStatus',
+    CreateSalesRepTask: 'CreateSalesRepTask',
+    DeleteSalesRepTask: 'DeleteSalesRepTask',
     SaveSalesRepLayout: 'SaveSalesRepLayout',
-    SendCustomerCommunication: 'SendCustomerCommunication'
+    SendCustomerCommunication: 'SendCustomerCommunication',
+    UpdateSalesRepTask: 'UpdateSalesRepTask'
+  },
+  Fragment: {
+    salesRepTaskFields: 'salesRepTaskFields'
   }
 }

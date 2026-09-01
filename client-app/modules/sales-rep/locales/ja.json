@@ -170,6 +170,73 @@
       "filter_all": "すべて",
       "load_failed": "注文を読み込めませんでした"
     },
+    "tasks": {
+      "title": "カレンダー",
+      "widget_title": "タスクと期限",
+      "full_calendar": "カレンダー全体",
+      "new_task": "新しいタスク",
+      "add_task": "タスクを追加",
+      "today": "今日",
+      "empty": "タスクはまだありません",
+      "empty_day": "この日に期限のタスクはありません",
+      "load_failed": "タスクを読み込めませんでした",
+      "day_task_count": "{count} 件のタスク",
+      "day_of_total": "{total} 件中 {shown} 件のタスク",
+      "day_markers": "マーク: {kinds}",
+      "page": {
+        "subtitle": "すべての取引先のタスク、フォローアップ、期限を日付ごとに一覧表示します。",
+        "search_placeholder": "名前で検索",
+        "search_aria": "タスクを検索",
+        "all_tab": "すべて",
+        "no_results": "検索条件に一致するタスクがありません",
+        "reset_search": "検索をリセット"
+      },
+      "table": {
+        "task": "タスク",
+        "status": "ステータス",
+        "notes": "メモ",
+        "due": "期限",
+        "complete_aria": "「{name}」を完了にする",
+        "reopen_aria": "「{name}」を再開する",
+        "edit_aria": "「{name}」を編集する"
+      },
+      "status": {
+        "upcoming": "予定",
+        "overdue": "期限超過",
+        "completed": "完了",
+        "canceled": "キャンセル済み"
+      },
+      "priority": {
+        "lowest": "最低",
+        "low": "低",
+        "normal": "標準",
+        "high": "高",
+        "highest": "最高"
+      },
+      "due_relative": {
+        "expired": "期限切れ: {date}",
+        "due": "期限: {date}"
+      },
+      "legend": {
+        "upcoming": "予定",
+        "overdue": "期限超過",
+        "completed": "完了"
+      },
+      "form": {
+        "create_title": "新しいタスク",
+        "edit_title": "タスクを編集",
+        "name_label": "タイトル",
+        "due_date_label": "期限日",
+        "priority_label": "優先度",
+        "type_label": "種類",
+        "description_label": "メモ",
+        "save_button": "保存",
+        "cancel_button": "キャンセル",
+        "delete_button": "削除",
+        "saved": "タスクを保存しました",
+        "deleted": "タスクを削除しました"
+      }
+    },
     "top_sellers": {
       "title": "トップセラー",
       "rank": "#",
@@ -208,6 +275,18 @@
       "published": "公開日: {date}"
     },
     "rules": {
+      "task": {
+        "filter": {
+          "upcoming": "予定",
+          "overdue": "期限超過",
+          "completed": "完了"
+        },
+        "sort": {
+          "due-date": "期限日",
+          "recent": "作成日が新しい順",
+          "name": "タスク"
+        }
+      },
       "load_failed": {
         "filter": "フィルターを読み込めなかったため、すべての一覧を表示しています。ページを再読み込みしてください。",
         "sort": "並べ替えオプションを読み込めなかったため、既定の順序を使用しています。ページを再読み込みしてください。",

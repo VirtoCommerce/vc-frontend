@@ -1,0 +1,16 @@
+# One round trip for the tab badges: four aliases of the same field, each asking only for totalCount
+# (first: 0 fetches no rows). The backend has no dedicated counts query and does not need one.
+query SalesRepTaskCounts($today: DateTime!) {
+  all: salesRepTasks(first: 0) {
+    totalCount
+  }
+  upcoming: salesRepTasks(first: 0, filter: "upcoming", today: $today) {
+    totalCount
+  }
+  overdue: salesRepTasks(first: 0, filter: "overdue", today: $today) {
+    totalCount
+  }
+  completed: salesRepTasks(first: 0, filter: "completed", today: $today) {
+    totalCount
+  }
+}

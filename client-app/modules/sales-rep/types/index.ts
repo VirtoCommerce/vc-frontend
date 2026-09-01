@@ -33,7 +33,7 @@ export type SalesRepRuleType = {
   defaultDirection?: SalesRepSortDirectionType;
   supportsDirection?: boolean;
 };
-export type SalesRepRuleDomainType = "order" | "customer" | "topSeller";
+export type SalesRepRuleDomainType = "order" | "customer" | "topSeller" | "task";
 export type SalesRepRuleKindType = "filter" | "sort";
 
 // View model for a ranked Top Sellers row. `units`/`revenue` are display-ready strings from the shared

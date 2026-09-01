@@ -1,0 +1,12 @@
+fragment salesRepTaskFields on SalesRepTask {
+  id
+  name
+  description
+  type
+  priority
+  dueDate
+  isActive
+  completed
+  createdDate
+  modifiedDate
+}

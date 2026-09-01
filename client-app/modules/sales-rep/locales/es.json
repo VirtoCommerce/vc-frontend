@@ -170,6 +170,73 @@
       "filter_all": "Todos",
       "load_failed": "No se pudieron cargar los pedidos"
     },
+    "tasks": {
+      "title": "Calendario",
+      "widget_title": "Tareas y vencimientos",
+      "full_calendar": "Calendario completo",
+      "new_task": "Nueva tarea",
+      "add_task": "Añadir tarea",
+      "today": "Hoy",
+      "empty": "Aún no hay tareas",
+      "empty_day": "No vence nada este día",
+      "load_failed": "No se pudieron cargar las tareas",
+      "day_task_count": "{count} tarea | {count} tareas",
+      "day_of_total": "{shown} de {total} tareas",
+      "day_markers": "Marcado: {kinds}",
+      "page": {
+        "subtitle": "Sus tareas, seguimientos y vencimientos de todas las cuentas: organizados por día.",
+        "search_placeholder": "Buscar por nombre",
+        "search_aria": "Buscar tareas",
+        "all_tab": "Todas",
+        "no_results": "Ninguna tarea coincide con su búsqueda",
+        "reset_search": "Restablecer búsqueda"
+      },
+      "table": {
+        "task": "Tarea",
+        "status": "Estado",
+        "notes": "Notas",
+        "due": "Vencimiento",
+        "complete_aria": "Marcar «{name}» como completada",
+        "reopen_aria": "Reabrir «{name}»",
+        "edit_aria": "Editar «{name}»"
+      },
+      "status": {
+        "upcoming": "Próxima",
+        "overdue": "Vencida",
+        "completed": "Completada",
+        "canceled": "Cancelada"
+      },
+      "priority": {
+        "lowest": "Mínima",
+        "low": "Baja",
+        "normal": "Normal",
+        "high": "Alta",
+        "highest": "Máxima"
+      },
+      "due_relative": {
+        "expired": "Venció {date}",
+        "due": "Vence {date}"
+      },
+      "legend": {
+        "upcoming": "Próximas",
+        "overdue": "Vencidas",
+        "completed": "Completadas"
+      },
+      "form": {
+        "create_title": "Nueva tarea",
+        "edit_title": "Editar tarea",
+        "name_label": "Título",
+        "due_date_label": "Fecha de vencimiento",
+        "priority_label": "Prioridad",
+        "type_label": "Tipo",
+        "description_label": "Notas",
+        "save_button": "Guardar",
+        "cancel_button": "Cancelar",
+        "delete_button": "Eliminar",
+        "saved": "Tarea guardada",
+        "deleted": "Tarea eliminada"
+      }
+    },
     "top_sellers": {
       "title": "Top vendedores",
       "rank": "#",
@@ -208,6 +275,18 @@
       "published": "Publicado {date}"
     },
     "rules": {
+      "task": {
+        "filter": {
+          "upcoming": "Próximas",
+          "overdue": "Vencidas",
+          "completed": "Completadas"
+        },
+        "sort": {
+          "due-date": "Fecha de vencimiento",
+          "recent": "Creadas recientemente",
+          "name": "Tarea"
+        }
+      },
       "load_failed": {
         "filter": "No se pudieron cargar los filtros, por lo que se muestra la lista completa. Actualice la página.",
         "sort": "No se pudieron cargar las opciones de ordenación, por lo que se usa el orden predeterminado. Actualice la página.",

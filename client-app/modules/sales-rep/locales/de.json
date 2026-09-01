@@ -170,6 +170,73 @@
       "filter_all": "Alle",
       "load_failed": "Bestellungen konnten nicht geladen werden"
     },
+    "tasks": {
+      "title": "Kalender",
+      "widget_title": "Aufgaben & Fälligkeiten",
+      "full_calendar": "Vollständiger Kalender",
+      "new_task": "Neue Aufgabe",
+      "add_task": "Aufgabe hinzufügen",
+      "today": "Heute",
+      "empty": "Noch keine Aufgaben",
+      "empty_day": "An diesem Tag ist nichts fällig",
+      "load_failed": "Aufgaben konnten nicht geladen werden",
+      "day_task_count": "{count} Aufgabe | {count} Aufgaben",
+      "day_of_total": "{shown} von {total} Aufgaben",
+      "day_markers": "Markiert: {kinds}",
+      "page": {
+        "subtitle": "Ihre Aufgaben, Follow-ups und Fälligkeiten über alle Konten hinweg — nach Tagen aufgeschlüsselt.",
+        "search_placeholder": "Suche nach Name",
+        "search_aria": "Aufgaben suchen",
+        "all_tab": "Alle",
+        "no_results": "Keine Aufgaben entsprechen Ihrer Suche",
+        "reset_search": "Suche zurücksetzen"
+      },
+      "table": {
+        "task": "Aufgabe",
+        "status": "Status",
+        "notes": "Notizen",
+        "due": "Fällig",
+        "complete_aria": "„{name}“ als erledigt markieren",
+        "reopen_aria": "„{name}“ wieder öffnen",
+        "edit_aria": "„{name}“ bearbeiten"
+      },
+      "status": {
+        "upcoming": "Anstehend",
+        "overdue": "Überfällig",
+        "completed": "Erledigt",
+        "canceled": "Abgebrochen"
+      },
+      "priority": {
+        "lowest": "Sehr niedrig",
+        "low": "Niedrig",
+        "normal": "Normal",
+        "high": "Hoch",
+        "highest": "Sehr hoch"
+      },
+      "due_relative": {
+        "expired": "Abgelaufen {date}",
+        "due": "Fällig {date}"
+      },
+      "legend": {
+        "upcoming": "Anstehend",
+        "overdue": "Überfällig",
+        "completed": "Erledigt"
+      },
+      "form": {
+        "create_title": "Neue Aufgabe",
+        "edit_title": "Aufgabe bearbeiten",
+        "name_label": "Titel",
+        "due_date_label": "Fälligkeitsdatum",
+        "priority_label": "Priorität",
+        "type_label": "Typ",
+        "description_label": "Notizen",
+        "save_button": "Speichern",
+        "cancel_button": "Abbrechen",
+        "delete_button": "Löschen",
+        "saved": "Aufgabe gespeichert",
+        "deleted": "Aufgabe gelöscht"
+      }
+    },
     "top_sellers": {
       "title": "Top-Seller",
       "rank": "#",
@@ -208,6 +275,18 @@
       "published": "Veröffentlicht {date}"
     },
     "rules": {
+      "task": {
+        "filter": {
+          "upcoming": "Anstehend",
+          "overdue": "Überfällig",
+          "completed": "Erledigt"
+        },
+        "sort": {
+          "due-date": "Fälligkeitsdatum",
+          "recent": "Zuletzt erstellt",
+          "name": "Aufgabe"
+        }
+      },
       "load_failed": {
         "filter": "Die Filter konnten nicht geladen werden, daher wird die vollständige Liste angezeigt. Bitte die Seite neu laden.",
         "sort": "Die Sortieroptionen konnten nicht geladen werden, daher wird die Standardsortierung verwendet. Bitte die Seite neu laden.",

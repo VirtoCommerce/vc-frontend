@@ -170,6 +170,73 @@
       "filter_all": "Todos",
       "load_failed": "Falha ao carregar os pedidos"
     },
+    "tasks": {
+      "title": "Calendário",
+      "widget_title": "Tarefas e prazos",
+      "full_calendar": "Calendário completo",
+      "new_task": "Nova tarefa",
+      "add_task": "Adicionar tarefa",
+      "today": "Hoje",
+      "empty": "Ainda não há tarefas",
+      "empty_day": "Nada com prazo neste dia",
+      "load_failed": "Falha ao carregar as tarefas",
+      "day_task_count": "{count} tarefas | {count} tarefa | {count} tarefas",
+      "day_of_total": "{shown} de {total} tarefas",
+      "day_markers": "Marcado: {kinds}",
+      "page": {
+        "subtitle": "Suas tarefas, acompanhamentos e prazos de todas as contas — organizados por dia.",
+        "search_placeholder": "Pesquisar por nome",
+        "search_aria": "Pesquisar tarefas",
+        "all_tab": "Todas",
+        "no_results": "Nenhuma tarefa corresponde à sua pesquisa",
+        "reset_search": "Redefinir pesquisa"
+      },
+      "table": {
+        "task": "Tarefa",
+        "status": "Status",
+        "notes": "Notas",
+        "due": "Prazo",
+        "complete_aria": "Marcar «{name}» como concluída",
+        "reopen_aria": "Reabrir «{name}»",
+        "edit_aria": "Editar «{name}»"
+      },
+      "status": {
+        "upcoming": "Próxima",
+        "overdue": "Atrasada",
+        "completed": "Concluída",
+        "canceled": "Cancelada"
+      },
+      "priority": {
+        "lowest": "Mínima",
+        "low": "Baixa",
+        "normal": "Normal",
+        "high": "Alta",
+        "highest": "Máxima"
+      },
+      "due_relative": {
+        "expired": "Venceu em {date}",
+        "due": "Vence em {date}"
+      },
+      "legend": {
+        "upcoming": "Próximas",
+        "overdue": "Atrasadas",
+        "completed": "Concluídas"
+      },
+      "form": {
+        "create_title": "Nova tarefa",
+        "edit_title": "Editar tarefa",
+        "name_label": "Título",
+        "due_date_label": "Data de vencimento",
+        "priority_label": "Prioridade",
+        "type_label": "Tipo",
+        "description_label": "Notas",
+        "save_button": "Salvar",
+        "cancel_button": "Cancelar",
+        "delete_button": "Excluir",
+        "saved": "Tarefa salva",
+        "deleted": "Tarefa excluída"
+      }
+    },
     "top_sellers": {
       "title": "Mais vendidos",
       "rank": "#",
@@ -208,6 +275,18 @@
       "published": "Publicado em {date}"
     },
     "rules": {
+      "task": {
+        "filter": {
+          "upcoming": "Próximas",
+          "overdue": "Atrasadas",
+          "completed": "Concluídas"
+        },
+        "sort": {
+          "due-date": "Data de vencimento",
+          "recent": "Criadas recentemente",
+          "name": "Tarefa"
+        }
+      },
       "load_failed": {
         "filter": "Não foi possível carregar os filtros, por isso é exibida a lista completa. Atualize a página.",
         "sort": "Não foi possível carregar as opções de ordenação, por isso é usada a ordem padrão. Atualize a página.",
