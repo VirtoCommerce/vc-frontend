@@ -11,11 +11,15 @@ const state = await vi.hoisted(async () => {
     loading: ref(false),
     error: ref<Error | null>(null),
     totalCount: ref(0),
+    counts: ref({ all: 0, upcoming: 0, overdue: 0, completed: 0 }),
     useSalesRepTasks: vi.fn(),
   };
 });
 
 vi.mock("../composables/useSalesRepTasks", () => ({ useSalesRepTasks: state.useSalesRepTasks }));
+vi.mock("../composables/useSalesRepTaskCounts", () => ({
+  useSalesRepTaskCounts: () => ({ counts: state.counts }),
+}));
 vi.mock("../composables/useSalesRepTaskCalendar", async () => {
   const { ref } = await import("vue");
   return {
@@ -79,6 +83,7 @@ beforeEach(() => {
   state.loading.value = false;
   state.error.value = null;
   state.totalCount.value = 0;
+  state.counts.value = { all: 0, upcoming: 0, overdue: 0, completed: 0 };
   state.useSalesRepTasks.mockClear();
   state.useSalesRepTasks.mockImplementation(() => ({
     items: state.items,
@@ -101,8 +106,8 @@ describe("SalesRepTasks rows", () => {
     expect(rows(wrapper)[1].find(".chip").attributes("data-color")).toBe("danger");
   });
 
-  // The sub-line says whatever is most useful about the deadline, and falls back to the task's type.
-  it("reads the deadline for an open task and the type once it no longer matters", () => {
+  // The sub-line says whatever is most useful about the deadline; only a task without one falls back to its type.
+  it("reads the deadline, and falls back to the type only without one", () => {
     state.items.value = [
       makeTask({ status: "upcoming" }),
       makeTask({ id: "task-2", status: "overdue" }),
@@ -115,8 +120,9 @@ describe("SalesRepTasks rows", () => {
 
     expect(meta[0]).toContain("sales_rep.tasks.due_relative.due");
     expect(meta[1]).toContain("sales_rep.tasks.due_relative.expired");
-    // Done: when it was due stops being the interesting fact.
-    expect(meta[2]).toBe("Finance");
+    // A completed task keeps its date: the type is an optional dictionary value, so falling back to it left
+    // most completed rows with no second line at all.
+    expect(meta[2]).toContain("sales_rep.tasks.due_relative.due");
     // Only the admin app can make a dateless task; it still has to read as something.
     expect(meta[3]).toBe("Finance");
   });
@@ -187,5 +193,26 @@ describe("SalesRepTasks wiring", () => {
     const wrapper = createWrapper();
 
     expect(wrapper.get(".sales-rep-tasks__all-link").attributes("data-route")).toBe(CALENDAR_ROUTE_NAME);
+  });
+});
+
+// Overdue work is due in the past, so the day this widget shows can never contain it.
+describe("SalesRepTasks overdue notice", () => {
+  it("surfaces the overdue total and links it to the calendar", () => {
+    state.counts.value = { all: 9, upcoming: 4, overdue: 3, completed: 2 };
+
+    const wrapper = createWrapper();
+    const notice = wrapper.get(".sales-rep-tasks__overdue");
+
+    expect(notice.text()).toContain('"count":3');
+    expect(notice.attributes("data-route")).toBe(CALENDAR_ROUTE_NAME);
+  });
+
+  it("stays out of the way when nothing is overdue", () => {
+    state.counts.value = { all: 4, upcoming: 4, overdue: 0, completed: 0 };
+
+    const wrapper = createWrapper();
+
+    expect(wrapper.find(".sales-rep-tasks__overdue").exists()).toBe(false);
   });
 });

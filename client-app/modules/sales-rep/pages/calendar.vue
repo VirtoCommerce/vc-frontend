@@ -35,7 +35,7 @@
         <template #header-container>
           <div class="sales-rep-calendar__day-head">
             <div>
-              <VcTypography tag="h2" class="sales-rep-calendar__day-title">{{ selectedDayLabel }}</VcTypography>
+              <VcTypography tag="h2" class="sales-rep-calendar__day-title">{{ panelTitle }}</VcTypography>
 
               <span class="sales-rep-calendar__day-count">
                 {{ t("sales_rep.tasks.day_of_total", { shown: tasks.length, total: totalCount }) }}
@@ -52,11 +52,11 @@
           <!-- A failure replaces the rows: apollo keeps the previous ones on a failed refetch. -->
           <VcEmptyView v-if="failed && !loading" :text="t('sales_rep.tasks.load_failed')" variant="error" />
 
-          <!-- Empty here always means "nothing due on this day": the list is narrowed by the day and the tab,
-               never by a keyword — this page has no search. -->
+          <!-- Never a keyword miss — this page has no search — so empty means the current scope is empty, and
+               which scope that is depends on whether a status tab replaced the day. -->
           <VcEmptyView
             v-else-if="!tasks.length && !loading"
-            :text="t('sales_rep.tasks.empty_day')"
+            :text="t(filter ? 'sales_rep.tasks.empty' : 'sales_rep.tasks.empty_day')"
             variant="empty"
             icon="calendar"
           />
@@ -79,9 +79,10 @@
         <!-- VcCalendar renders its own month/year header, so this widget adds none. -->
         <VcWidget size="md">
           <SalesRepTaskCalendar
-            v-model="selectedDay"
+            :model-value="selectedDay"
             :month="month"
             :day-markers="dayMarkers"
+            @update:model-value="selectDay"
             @update:month="setMonth"
           />
 
@@ -121,21 +122,27 @@ const selectedDay = ref(localDayKey(new Date()));
 // Drives the dots query. The calendar owns which month is on screen and reports it back.
 const { month, setMonth, goToToday: monthToday } = useMonthAnchor();
 
-// The day list is a due-date window intersected with the selected tab, which is how the backend composes
-// `period` and `filter` — one is not a substitute for the other.
-const period = computed(() => localDayWindow(selectedDay.value));
+/**
+ * The day and the status tab are two views of the same set, not two filters over it: a status tab spans every
+ * date (overdue work is never due today, so intersecting it with a day would show nothing), and picking a date
+ * goes back to that day's full list. Anding them is what made an active "Completed 3" sit over an empty list —
+ * the badges count the whole set, so a tab must show the whole set too.
+ */
+const filter = ref<string | undefined>(undefined);
+
+const period = computed(() => (filter.value ? undefined : localDayWindow(selectedDay.value)));
 
 const {
   items: tasks,
   loading,
   error,
-  filter,
   page,
   pages,
   totalCount,
   refetch,
 } = useSalesRepTasks({
   period,
+  filter,
   sort: "due-date",
 });
 
@@ -162,8 +169,20 @@ const tabRules = computed(() =>
 // "short" (Sep 1, 2026), not "long" — the long named format appends a time, and this heading names a DAY.
 const selectedDayLabel = computed(() => d(localDayKeyToDate(selectedDay.value), "short"));
 
+// Whichever view is on: the day, or the tab named by its own chip.
+const panelTitle = computed(() =>
+  filter.value
+    ? (filterRules.value.find((rule) => rule.name === filter.value)?.label ?? filter.value)
+    : selectedDayLabel.value,
+);
+
+function selectDay(day: string): void {
+  selectedDay.value = day;
+  filter.value = undefined;
+}
+
 function goToToday(): void {
-  selectedDay.value = localDayKey(new Date());
+  selectDay(localDayKey(new Date()));
   monthToday();
 }
 
@@ -182,10 +201,22 @@ async function toggleCompletion(task: SalesRepTaskType): Promise<void> {
   }
 }
 
+// A save reports the day it landed on: a task moved to another date would otherwise be refetched into a view
+// that no longer contains it, leaving "Task saved" over a list where it is nowhere to be seen. A delete reports
+// nothing — there is no row left to go to.
+async function onTaskSaved(dayKey?: string): Promise<void> {
+  if (dayKey) {
+    selectDay(dayKey);
+    setMonth(dayKey);
+  }
+
+  await refreshAll();
+}
+
 function openTaskModal(task?: SalesRepTaskType): void {
   openModal({
     component: SalesRepTaskModal,
-    props: { task, defaultDay: selectedDay.value, onSaved: refreshAll },
+    props: { task, defaultDay: selectedDay.value, onSaved: onTaskSaved },
   });
 }
 </script>

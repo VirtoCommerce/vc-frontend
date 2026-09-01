@@ -28,8 +28,13 @@ function mapSalesRepTask(task: SalesRepTaskFieldsFragment, dayStart: Date): Sale
 type UseSalesRepTasksOptionsType = {
   // Expanded union (not MaybeRefOrGetter<… | undefined>) to avoid the redundant "undefined" — Sonar S4782.
   pageSize?: number | Ref<number | undefined> | (() => number | undefined);
-  /** Fixed due-date window, e.g. the day a calendar cell selected. Overrides nothing — it intersects with the tab. */
+  /** Fixed due-date window, e.g. the day a calendar cell selected. */
   period?: Ref<{ from: string; to: string } | undefined>;
+  /**
+   * The chosen server filter rule. Passed in by a surface whose `period` depends on it — the calendar page
+   * drops the day window while a status tab is active, which it cannot express if the ref lives in here.
+   */
+  filter?: Ref<string | undefined>;
   sort?: string;
 };
 
@@ -39,7 +44,7 @@ type UseSalesRepTasksOptionsType = {
  */
 export function useSalesRepTasks(options: UseSalesRepTasksOptionsType = {}) {
   // undefined = the synthetic "All" baseline, matching sales-rep-rule-chips' convention.
-  const filter = ref<string | undefined>(undefined);
+  const filter = options.filter ?? ref<string | undefined>(undefined);
   const sortRule = ref<string | undefined>(options.sort);
   const page = ref(1);
 

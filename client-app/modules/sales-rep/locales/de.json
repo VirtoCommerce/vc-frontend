@@ -181,6 +181,7 @@
       "empty_day": "An diesem Tag ist nichts fällig",
       "load_failed": "Aufgaben konnten nicht geladen werden",
       "day_task_count": "{count} Aufgabe | {count} Aufgaben",
+      "overdue_total": "{count} überfällige Aufgabe | {count} überfällige Aufgaben",
       "day_of_total": "{shown} von {total} Aufgaben",
       "day_markers": "Markiert: {kinds}",
       "page": {
@@ -229,6 +230,8 @@
         "save_button": "Speichern",
         "cancel_button": "Abbrechen",
         "delete_button": "Löschen",
+        "delete_title": "Aufgabe löschen",
+        "delete_confirm": "Diese Aufgabe wird endgültig gelöscht. Fortfahren?",
         "saved": "Aufgabe gespeichert",
         "deleted": "Aufgabe gelöscht"
       }

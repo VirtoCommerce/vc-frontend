@@ -181,6 +181,7 @@
       "empty_day": "На этот день ничего не запланировано",
       "load_failed": "Не удалось загрузить задачи",
       "day_task_count": "{count} задач | {count} задача | {count} задачи | {count} задач",
+      "overdue_total": "{count} просроченных задач | {count} просроченная задача | {count} просроченные задачи | {count} просроченных задач",
       "day_of_total": "{shown} из {total} задач",
       "day_markers": "Отмечено: {kinds}",
       "page": {
@@ -229,6 +230,8 @@
         "save_button": "Сохранить",
         "cancel_button": "Отмена",
         "delete_button": "Удалить",
+        "delete_title": "Удалить задачу",
+        "delete_confirm": "Задача будет удалена безвозвратно. Продолжить?",
         "saved": "Задача сохранена",
         "deleted": "Задача удалена"
       }

@@ -161,12 +161,19 @@ function button(wrapper: WrapperType, key: string) {
   return found;
 }
 
-/** The options the page handed useSalesRepTasks — where the day scope and the sort live. */
+/** The options the page handed useSalesRepTasks — where the day scope, the tab and the sort live. */
 function taskOptions() {
   return state.useSalesRepTasks.mock.calls.at(-1)?.[0] as {
-    period: { value: { from: string; to: string } };
+    period: { value: { from: string; to: string } | undefined };
+    filter: { value: string | undefined };
     sort: string;
   };
+}
+
+/** The page owns the tab now, so a test picks one the way the chips do. */
+async function pickTab(wrapper: WrapperType, name: string) {
+  wrapper.getComponent(ChipsStub).vm.$emit("update:modelValue", name);
+  await flushPromises();
 }
 
 beforeEach(() => {
@@ -237,7 +244,6 @@ describe("Calendar day scope", () => {
     expect(taskOptions().period.value).toEqual(localDayWindow(localDayKey(new Date())));
   });
 
-  // The window and the tab intersect — picking a day narrows the list, it does not replace the filter.
   it("rescopes the list to the day the rep picked", async () => {
     const wrapper = createWrapper();
 
@@ -265,6 +271,51 @@ describe("Calendar day scope", () => {
     // Both halves: the day the list is scoped to, and the month the grid shows.
     expect(taskOptions().period.value).toEqual(localDayWindow(localDayKey(new Date())));
     expect(state.goToToday).toHaveBeenCalled();
+  });
+});
+
+/**
+ * The day and the tab are two views of the same set, not two filters over it. Anding them put an active
+ * "Completed 3" chip over an empty list, because the badges count the whole set while the list counted one day.
+ */
+describe("Calendar tab scope", () => {
+  it("drops the day window while a status tab is active", async () => {
+    const wrapper = createWrapper();
+
+    await pickTab(wrapper, "overdue");
+
+    expect(taskOptions().filter.value).toBe("overdue");
+    // Overdue work is due in the past, so intersecting it with the day on screen would show nothing.
+    expect(taskOptions().period.value).toBeUndefined();
+  });
+
+  it("returns to the day's full list when the rep picks a date", async () => {
+    const wrapper = createWrapper();
+    await pickTab(wrapper, "overdue");
+
+    wrapper.getComponent(CalendarStub).vm.$emit("update:modelValue", "2026-10-20");
+    await flushPromises();
+
+    expect(taskOptions().filter.value).toBeUndefined();
+    expect(taskOptions().period.value).toEqual(localDayWindow("2026-10-20"));
+  });
+
+  it("heads the panel with the tab's own label instead of the date", async () => {
+    state.rules.value = [{ name: "overdue", label: "Overdue" }];
+    const wrapper = createWrapper();
+
+    await pickTab(wrapper, "overdue");
+
+    expect(wrapper.get(".sales-rep-calendar__day-title").text()).toBe("Overdue");
+  });
+
+  // "Nothing due on this day" is wrong copy for a list that is not scoped to a day.
+  it("explains an empty tab as an empty tab, not an empty day", async () => {
+    const wrapper = createWrapper();
+
+    await pickTab(wrapper, "completed");
+
+    expect(emptyViews(wrapper)[0].attributes("text")).toBe("sales_rep.tasks.empty");
   });
 });
 
@@ -381,5 +432,33 @@ describe("Calendar writes", () => {
     expect(state.refetch).toHaveBeenCalled();
     expect(state.refetchCounts).toHaveBeenCalled();
     expect(state.refetchMarkers).toHaveBeenCalled();
+  });
+
+  // Otherwise "Task saved" lands over a list the task is not in, and it looks like the save was lost.
+  it("follows a task saved onto another day", async () => {
+    const wrapper = createWrapper();
+    await pickTab(wrapper, "completed");
+
+    await button(wrapper, "tasks.new_task").trigger("click");
+    const call = state.openModal.mock.calls.at(-1)?.[0] as { props: { onSaved: (day?: string) => Promise<void> } };
+
+    await call.props.onSaved("2026-11-02");
+
+    expect(taskOptions().period.value).toEqual(localDayWindow("2026-11-02"));
+    // The tab goes with it: a status view would hide the task again.
+    expect(taskOptions().filter.value).toBeUndefined();
+  });
+
+  it("stays where it is after a delete", async () => {
+    const wrapper = createWrapper();
+    wrapper.getComponent(CalendarStub).vm.$emit("update:modelValue", "2026-10-20");
+    await flushPromises();
+
+    await button(wrapper, "tasks.new_task").trigger("click");
+    const call = state.openModal.mock.calls.at(-1)?.[0] as { props: { onSaved: (day?: string) => Promise<void> } };
+
+    await call.props.onSaved();
+
+    expect(taskOptions().period.value).toEqual(localDayWindow("2026-10-20"));
   });
 });

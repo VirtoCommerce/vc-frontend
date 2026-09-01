@@ -181,6 +181,7 @@
       "empty_day": "Tänä päivänä ei eräänny mitään",
       "load_failed": "Tehtäviä ei voitu ladata",
       "day_task_count": "{count} tehtävä | {count} tehtävää",
+      "overdue_total": "{count} myöhässä oleva tehtävä | {count} myöhässä olevaa tehtävää",
       "day_of_total": "{shown}/{total} tehtävästä",
       "day_markers": "Merkitty: {kinds}",
       "page": {
@@ -229,6 +230,8 @@
         "save_button": "Tallenna",
         "cancel_button": "Peruuta",
         "delete_button": "Poista",
+        "delete_title": "Poista tehtävä",
+        "delete_confirm": "Tämä tehtävä poistetaan pysyvästi. Jatketaanko?",
         "saved": "Tehtävä tallennettu",
         "deleted": "Tehtävä poistettu"
       }

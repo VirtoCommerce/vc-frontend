@@ -510,10 +510,12 @@ defineExpose({
     }
   }
 
+  // The four nav buttons keep their cell width; the heading takes whatever is left instead of a fixed three
+  // cells, which is not enough for a long month name at the smaller sizes ("September 2026" ellipsized at `sm`).
   &__header {
     @apply grid items-center;
 
-    grid-template-columns: repeat(7, var(--cell-size));
+    grid-template-columns: var(--cell-size) var(--cell-size) 1fr var(--cell-size) var(--cell-size);
     gap: var(--grid-gap);
   }
 
@@ -548,7 +550,7 @@ defineExpose({
   &__heading {
     @apply text-center font-bold text-neutral-900;
 
-    grid-column: 3 / 6;
+    grid-column: 3;
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;

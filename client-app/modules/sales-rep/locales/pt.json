@@ -181,6 +181,7 @@
       "empty_day": "Nada com prazo neste dia",
       "load_failed": "Falha ao carregar as tarefas",
       "day_task_count": "{count} tarefas | {count} tarefa | {count} tarefas",
+      "overdue_total": "{count} tarefa atrasada | {count} tarefas atrasadas",
       "day_of_total": "{shown} de {total} tarefas",
       "day_markers": "Marcado: {kinds}",
       "page": {
@@ -229,6 +230,8 @@
         "save_button": "Salvar",
         "cancel_button": "Cancelar",
         "delete_button": "Excluir",
+        "delete_title": "Excluir tarefa",
+        "delete_confirm": "Esta tarefa será excluída permanentemente. Continuar?",
         "saved": "Tarefa salva",
         "deleted": "Tarefa excluída"
       }

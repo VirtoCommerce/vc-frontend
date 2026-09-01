@@ -181,6 +181,7 @@
       "empty_day": "Nessuna scadenza in questo giorno",
       "load_failed": "Impossibile caricare le attività",
       "day_task_count": "{count} attività | {count} attività",
+      "overdue_total": "{count} attività scaduta | {count} attività scadute",
       "day_of_total": "{shown} di {total} attività",
       "day_markers": "Contrassegnato: {kinds}",
       "page": {
@@ -229,6 +230,8 @@
         "save_button": "Salva",
         "cancel_button": "Annulla",
         "delete_button": "Elimina",
+        "delete_title": "Elimina attività",
+        "delete_confirm": "Questa attività verrà eliminata definitivamente. Continuare?",
         "saved": "Attività salvata",
         "deleted": "Attività eliminata"
       }

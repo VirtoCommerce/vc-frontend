@@ -181,6 +181,7 @@
       "empty_day": "No vence nada este día",
       "load_failed": "No se pudieron cargar las tareas",
       "day_task_count": "{count} tarea | {count} tareas",
+      "overdue_total": "{count} tarea vencida | {count} tareas vencidas",
       "day_of_total": "{shown} de {total} tareas",
       "day_markers": "Marcado: {kinds}",
       "page": {
@@ -229,6 +230,8 @@
         "save_button": "Guardar",
         "cancel_button": "Cancelar",
         "delete_button": "Eliminar",
+        "delete_title": "Eliminar tarea",
+        "delete_confirm": "Esta tarea se eliminará de forma permanente. ¿Continuar?",
         "saved": "Tarea guardada",
         "deleted": "Tarea eliminada"
       }

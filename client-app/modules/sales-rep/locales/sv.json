@@ -181,6 +181,7 @@
       "empty_day": "Inget förfaller denna dag",
       "load_failed": "Kunde inte läsa in uppgifterna",
       "day_task_count": "{count} uppgift | {count} uppgifter",
+      "overdue_total": "{count} försenad uppgift | {count} försenade uppgifter",
       "day_of_total": "{shown} av {total} uppgifter",
       "day_markers": "Markerad: {kinds}",
       "page": {
@@ -229,6 +230,8 @@
         "save_button": "Spara",
         "cancel_button": "Avbryt",
         "delete_button": "Radera",
+        "delete_title": "Ta bort uppgift",
+        "delete_confirm": "Den här uppgiften tas bort permanent. Vill du fortsätta?",
         "saved": "Uppgiften har sparats",
         "deleted": "Uppgiften har raderats"
       }

@@ -29,6 +29,9 @@ vi.mock("../composables/useSalesRepTaskTypes", async () => {
   return { useSalesRepTaskTypes: () => ({ types: state.types, loading: ref(false), error: ref(null) }) };
 });
 vi.mock("@/shared/notification", () => ({ useNotifications: () => ({ success: state.success, error: vi.fn() }) }));
+
+const modal = vi.hoisted(() => ({ openModal: vi.fn(), closeModal: vi.fn(), closeConfirmation: vi.fn() }));
+vi.mock("@/shared/modal", () => ({ useModal: () => modal }));
 vi.mock("vue-i18n", () => ({ useI18n: () => ({ t: (key: string) => key, d: () => "Oct 15", n: String }) }));
 
 const closeMock = vi.hoisted(() => vi.fn());
@@ -104,6 +107,20 @@ async function save(wrapper: WrapperType) {
   await flushPromises();
 }
 
+/** Delete asks first, so the test has to answer: click the button, then run the confirmation's onConfirm. */
+async function confirmDelete(wrapper: WrapperType) {
+  await wrapper.get(".sales-rep-task-modal__delete").trigger("click");
+
+  const opened = modal.openModal.mock.calls.at(-1)?.[0] as {
+    component: string;
+    props: { onConfirm: () => Promise<void> };
+  };
+  expect(opened.component).toBe("VcConfirmationModal");
+
+  await opened.props.onConfirm();
+  await flushPromises();
+}
+
 beforeEach(() => {
   state.types.value = [];
   state.success.mockClear();
@@ -112,6 +129,8 @@ beforeEach(() => {
   mutations.create.mockClear().mockResolvedValue(true);
   mutations.update.mockClear().mockResolvedValue(true);
   mutations.remove.mockClear().mockResolvedValue(true);
+  modal.closeConfirmation.mockClear();
+  modal.openModal.mockClear().mockReturnValue(modal.closeConfirmation);
 });
 
 describe("SalesRepTaskModal create", () => {
@@ -150,6 +169,18 @@ describe("SalesRepTaskModal create", () => {
     expect(state.success).toHaveBeenCalled();
     expect(onSaved).toHaveBeenCalled();
     expect(closeMock).toHaveBeenCalled();
+  });
+
+  // The caller shows one day at a time, so a task written to another one has to say where it went.
+  it("reports the day it wrote, not the day it opened on", async () => {
+    const onSaved = vi.fn();
+    const wrapper = createWrapper({ defaultDay: "2026-10-15", onSaved });
+    await field(wrapper, "name_label").setValue("Call ACME");
+    await field(wrapper, "due_date_label").setValue("2026-11-02");
+
+    await save(wrapper);
+
+    expect(onSaved).toHaveBeenCalledWith("2026-11-02");
   });
 
   // useMutation already raises the global error toast; what matters here is that the rep does not lose the form.
@@ -203,25 +234,37 @@ describe("SalesRepTaskModal edit", () => {
     expect(mutations.update).toHaveBeenCalledWith("task-1", expect.objectContaining({ name: "Call ACME back" }));
   });
 
-  it("deletes, then tells the caller to refetch and closes", async () => {
-    const onSaved = vi.fn();
-    const wrapper = createWrapper({ task: makeTask(), onSaved });
-
-    await wrapper.get(".sales-rep-task-modal__delete").trigger("click");
-    await flushPromises();
-
-    expect(mutations.remove).toHaveBeenCalledWith("task-1");
-    expect(onSaved).toHaveBeenCalled();
-    expect(closeMock).toHaveBeenCalled();
-  });
-
-  it("keeps the form open when the delete failed", async () => {
-    mutations.remove.mockResolvedValue(false);
+  // Deleting is not undoable and the button shares a row with Save, so the click alone must not do it.
+  it("asks before deleting anything", async () => {
     const wrapper = createWrapper({ task: makeTask() });
 
     await wrapper.get(".sales-rep-task-modal__delete").trigger("click");
     await flushPromises();
 
+    expect(modal.openModal).toHaveBeenCalled();
+    expect(mutations.remove).not.toHaveBeenCalled();
+  });
+
+  it("deletes once confirmed, then tells the caller to refetch and closes", async () => {
+    const onSaved = vi.fn();
+    const wrapper = createWrapper({ task: makeTask(), onSaved });
+
+    await confirmDelete(wrapper);
+
+    expect(mutations.remove).toHaveBeenCalledWith("task-1");
+    // No day: a delete leaves no row for the caller to navigate to.
+    expect(onSaved).toHaveBeenCalledWith();
+    expect(modal.closeConfirmation).toHaveBeenCalled();
+    expect(closeMock).toHaveBeenCalled();
+  });
+
+  it("keeps both dialogs open when the delete failed", async () => {
+    mutations.remove.mockResolvedValue(false);
+    const wrapper = createWrapper({ task: makeTask() });
+
+    await confirmDelete(wrapper);
+
+    expect(modal.closeConfirmation).not.toHaveBeenCalled();
     expect(closeMock).not.toHaveBeenCalled();
   });
 });

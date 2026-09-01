@@ -181,6 +181,7 @@
       "empty_day": "Aucune échéance ce jour-là",
       "load_failed": "Impossible de charger les tâches",
       "day_task_count": "{count} tâche | {count} tâche | {count} tâches",
+      "overdue_total": "{count} tâche en retard | {count} tâches en retard",
       "day_of_total": "{shown} tâches sur {total}",
       "day_markers": "Marqué : {kinds}",
       "page": {
@@ -229,6 +230,8 @@
         "save_button": "Enregistrer",
         "cancel_button": "Annuler",
         "delete_button": "Supprimer",
+        "delete_title": "Supprimer la tâche",
+        "delete_confirm": "Cette tâche sera supprimée définitivement. Continuer ?",
         "saved": "Tâche enregistrée",
         "deleted": "Tâche supprimée"
       }

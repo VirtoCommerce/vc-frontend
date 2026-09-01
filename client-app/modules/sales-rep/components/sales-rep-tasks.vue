@@ -18,6 +18,14 @@
           @update:month="setMonth"
         />
 
+        <!-- The one thing on this widget that is not about the day on screen: overdue work is due in the past,
+             so without this the dashboard shows a rep nothing at all about it. -->
+        <VcLink v-if="overdueCount" :to="{ name: CALENDAR_ROUTE_NAME }" class="sales-rep-tasks__overdue">
+          <VcIcon name="clock-alert" size="xs" />
+
+          {{ t("sales_rep.tasks.overdue_total", { count: overdueCount }, overdueCount) }}
+        </VcLink>
+
         <div class="sales-rep-tasks__day">
           <span class="sales-rep-tasks__day-label">{{ selectedDayLabel }}</span>
 
@@ -62,6 +70,7 @@ import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBlockChrome } from "../composables/useBlockChrome";
 import { useMonthAnchor, useSalesRepTaskCalendar } from "../composables/useSalesRepTaskCalendar";
+import { useSalesRepTaskCounts } from "../composables/useSalesRepTaskCounts";
 import { useSalesRepTasks } from "../composables/useSalesRepTasks";
 import { CALENDAR_ROUTE_NAME, TASKS_DEFAULT_ROWS } from "../constants";
 import { localDayKey, localDayKeyToDate, localDayWindow, taskSubline } from "../tasks";
@@ -104,6 +113,12 @@ const {
 
 const { dayMarkers } = useSalesRepTaskCalendar(month);
 
+// One extra round trip on the dashboard, and a deliberate one: the counts document is four aliases of the same
+// field with `first: 0`, so it carries no rows. A bespoke single-alias document would run the same resolver.
+const { counts } = useSalesRepTaskCounts();
+
+const overdueCount = computed(() => counts.value.overdue);
+
 const failed = computed(() => Boolean(error.value));
 
 const selectedDayLabel = computed(() => d(localDayKeyToDate(selectedDay.value), "short"));
@@ -121,6 +136,10 @@ const sublines = computed(() => new Map(tasks.value.map((task) => [task.id, task
 
   &__all-link {
     @apply inline-flex items-center gap-1 whitespace-nowrap text-sm font-medium text-[--link-color] hover:text-[--link-hover-color];
+  }
+
+  &__overdue {
+    @apply mt-3 inline-flex items-center gap-1.5 self-start text-xs font-bold text-danger-600 hover:text-danger-700;
   }
 
   &__day {

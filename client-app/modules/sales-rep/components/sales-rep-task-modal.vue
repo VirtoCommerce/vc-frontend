@@ -3,6 +3,7 @@
     ref="modalComponent"
     :title="t(task ? 'sales_rep.tasks.form.edit_title' : 'sales_rep.tasks.form.create_title')"
     class="sales-rep-task-modal"
+    :is-persistent="loading"
     is-mobile-fullscreen
     dividers
   >
@@ -88,6 +89,7 @@ import { useField, useForm } from "vee-validate";
 import { computed, useTemplateRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { string } from "yup";
+import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import { VcModal } from "@/ui-kit/components";
 import { useSalesRepTaskMutations } from "../composables/useSalesRepTaskMutations";
@@ -100,8 +102,11 @@ interface IProps {
   task?: SalesRepTaskType;
   /** Pre-selects the due date when creating from a calendar cell ("YYYY-MM-DD"). */
   defaultDay?: string;
-  /** Lets the caller refetch; the modal owns no list. */
-  onSaved?: () => void;
+  /**
+   * Lets the caller refetch; the modal owns no list. A save reports the day it wrote ("YYYY-MM-DD") so the
+   * caller can follow a task that moved to another date; a delete reports nothing.
+   */
+  onSaved?: (dayKey?: string) => void;
 }
 
 const props = defineProps<IProps>();
@@ -114,6 +119,7 @@ const PRIORITIES = ["Lowest", "Low", "Normal", "High", "Highest"] as const;
 
 const { t } = useI18n();
 const notifications = useNotifications();
+const { openModal } = useModal();
 const modalComponent = useTemplateRef<InstanceType<typeof VcModal>>("modalComponent");
 
 const { create, update, remove: removeTask, loading } = useSalesRepTaskMutations();
@@ -162,18 +168,33 @@ const save = handleSubmit(async (data) => {
   }
 
   notifications.success({ text: t("sales_rep.tasks.form.saved"), duration: 5000, single: true });
-  props.onSaved?.();
+  props.onSaved?.(data.dueDate);
   modalComponent.value?.close();
 });
 
-async function remove(): Promise<void> {
-  if (!props.task || !(await removeTask(props.task.id))) {
-    return;
-  }
+function remove(): void {
+  // Deleting a task is not undoable and the button sits in the same row as Save, so it asks first. A failed
+  // delete leaves the confirmation open to retry, per this module's convention (see useSalesRepTaskMutations).
+  const closeConfirmation = openModal({
+    component: "VcConfirmationModal",
+    props: {
+      variant: "danger",
+      loading,
+      title: t("sales_rep.tasks.form.delete_title"),
+      text: t("sales_rep.tasks.form.delete_confirm"),
 
-  notifications.success({ text: t("sales_rep.tasks.form.deleted"), duration: 5000, single: true });
-  props.onSaved?.();
-  modalComponent.value?.close();
+      async onConfirm() {
+        if (!props.task || !(await removeTask(props.task.id))) {
+          return;
+        }
+
+        closeConfirmation();
+        notifications.success({ text: t("sales_rep.tasks.form.deleted"), duration: 5000, single: true });
+        props.onSaved?.();
+        modalComponent.value?.close();
+      },
+    },
+  });
 }
 </script>
 

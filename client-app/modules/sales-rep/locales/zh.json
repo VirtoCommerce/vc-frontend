@@ -181,6 +181,7 @@
       "empty_day": "当天没有到期事项",
       "load_failed": "无法加载任务",
       "day_task_count": "{count} 项任务",
+      "overdue_total": "{count} 项逾期任务",
       "day_of_total": "共 {total} 项任务，显示 {shown} 项",
       "day_markers": "标记：{kinds}",
       "page": {
@@ -229,6 +230,8 @@
         "save_button": "保存",
         "cancel_button": "取消",
         "delete_button": "删除",
+        "delete_title": "删除任务",
+        "delete_confirm": "此任务将被永久删除。是否继续？",
         "saved": "任务已保存",
         "deleted": "任务已删除"
       }

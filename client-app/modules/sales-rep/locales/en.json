@@ -181,6 +181,7 @@
       "empty_day": "Nothing due on this day",
       "load_failed": "Couldn't load tasks",
       "day_task_count": "{count} task | {count} tasks",
+      "overdue_total": "{count} overdue task | {count} overdue tasks",
       "day_of_total": "{shown} of {total} tasks",
       "day_markers": "Marked: {kinds}",
       "page": {
@@ -229,6 +230,8 @@
         "save_button": "Save",
         "cancel_button": "Cancel",
         "delete_button": "Delete",
+        "delete_title": "Delete task",
+        "delete_confirm": "This task will be deleted permanently. Continue?",
         "saved": "Task saved",
         "deleted": "Task deleted"
       }

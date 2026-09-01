@@ -181,6 +181,7 @@
       "empty_day": "この日に期限のタスクはありません",
       "load_failed": "タスクを読み込めませんでした",
       "day_task_count": "{count} 件のタスク",
+      "overdue_total": "期限切れのタスク {count} 件",
       "day_of_total": "{total} 件中 {shown} 件のタスク",
       "day_markers": "マーク: {kinds}",
       "page": {
@@ -229,6 +230,8 @@
         "save_button": "保存",
         "cancel_button": "キャンセル",
         "delete_button": "削除",
+        "delete_title": "タスクを削除",
+        "delete_confirm": "このタスクは完全に削除されます。続行しますか？",
         "saved": "タスクを保存しました",
         "deleted": "タスクを削除しました"
       }

@@ -181,6 +181,7 @@
       "empty_day": "Ingenting har frist denne dagen",
       "load_failed": "Kunne ikke laste oppgavene",
       "day_task_count": "{count} oppgave | {count} oppgaver",
+      "overdue_total": "{count} forfalt oppgave | {count} forfalte oppgaver",
       "day_of_total": "{shown} av {total} oppgaver",
       "day_markers": "Merket: {kinds}",
       "page": {
@@ -229,6 +230,8 @@
         "save_button": "Lagre",
         "cancel_button": "Avbryt",
         "delete_button": "Slett",
+        "delete_title": "Slett oppgave",
+        "delete_confirm": "Denne oppgaven blir slettet permanent. Vil du fortsette?",
         "saved": "Oppgaven er lagret",
         "deleted": "Oppgaven er slettet"
       }
