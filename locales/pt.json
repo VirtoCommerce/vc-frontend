@@ -203,6 +203,7 @@
       "max_value": "O valor máximo é {value}",
       "min_value": "O valor mínimo é {value}",
       "empty_wish_list": "Não há itens na lista",
+      "no_company_roles_available": "Não há funções disponíveis. Entre em contato com o administrador da sua loja.",
       "not_defined": "Indefinido",
       "invalid_coupon": "Este código não é válido",
       "failed_coupon": "Algo deu errado com o cupom. Por favor, tente novamente.",

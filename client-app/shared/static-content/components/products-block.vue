@@ -29,7 +29,6 @@ import { computed, watchEffect } from "vue";
 import { ProductCard, useProducts } from "@/shared/catalog";
 
 interface IProps {
-  id?: string;
   background?: string;
   title?: string;
   subtitle?: string;
