@@ -168,8 +168,6 @@ export type InputCreateSalesRepTask = {
   name: Scalars['String']['input'];
   /** Lowest, Low, Normal, High or Highest. Defaults to Normal. */
   priority?: InputMaybe<Scalars['String']['input']>;
-  /** Optional store to scope the task to. */
-  storeId?: InputMaybe<Scalars['String']['input']>;
   /** One of the values configured in the TaskManagement.TaskTypes settings dictionary. */
   type?: InputMaybe<Scalars['String']['input']>;
 };
@@ -233,18 +231,18 @@ export type InputSendCustomerCommunicationType = {
 };
 
 export type InputUpdateSalesRepTask = {
-  /** Free-text notes. */
-  description?: InputMaybe<Scalars['String']['input']>;
+  /** Free-text notes. Send the stored value back unchanged to keep it; empty string clears it. */
+  description: Scalars['String']['input'];
   /** When the task is due. */
   dueDate: Scalars['DateTime']['input'];
   /** Id of the task to change. Must be a task the caller owns. */
   id: Scalars['String']['input'];
   /** Task title. */
   name: Scalars['String']['input'];
-  /** Lowest, Low, Normal, High or Highest. Defaults to Normal. */
-  priority?: InputMaybe<Scalars['String']['input']>;
-  /** One of the values configured in the TaskManagement.TaskTypes settings dictionary. */
-  type?: InputMaybe<Scalars['String']['input']>;
+  /** Lowest, Low, Normal, High or Highest. Empty string means Normal. */
+  priority: Scalars['String']['input'];
+  /** One of the values configured in the TaskManagement.TaskTypes settings dictionary. Empty string clears it. */
+  type: Scalars['String']['input'];
 };
 
 export type MoneyType = {
@@ -480,7 +478,6 @@ export type QuerySalesRepTaskSortRulesArgs = {
 
 export type QuerySalesRepTasksArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
-  cultureName?: InputMaybe<Scalars['String']['input']>;
   filter?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   keyword?: InputMaybe<Scalars['String']['input']>;
@@ -898,9 +895,9 @@ export type SalesRepOrderSortRule = {
 };
 
 export type SalesRepStatisticsPeriodInput = {
-  /** Inclusive lower bound on the created date (null = no lower bound). */
+  /** Inclusive lower bound of the period (null = no lower bound). */
   from?: InputMaybe<Scalars['DateTime']['input']>;
-  /** Inclusive upper bound on the created date (null = no upper bound). */
+  /** Inclusive upper bound of the period (null = no upper bound). */
   to?: InputMaybe<Scalars['DateTime']['input']>;
 };
 
