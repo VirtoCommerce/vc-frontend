@@ -19,6 +19,15 @@ const TAKE_OVER_KEYS = new Set([
 
 let latestRequest = 0;
 
+/**
+ * Mirrors `generateAnchor` in the Page Builder designer
+ * (`page-builder-designer/src/app/modules/integration/helpers/utils.ts`), which fills the anchor
+ * picker of its rich text link dialog. A link the picker produces resolves only while both sides
+ * derive the same string, so the quirks are shared on purpose: `\w` is ASCII-only, so a value with
+ * no Latin letters slugifies to `""` and `getAnchorId` keeps the generated id instead; runs of
+ * dashes are left alone. `anchors.test.ts` and the designer's `utils.spec.ts` /
+ * `anchors.helpers.spec.ts` assert the same values — neither side can change without the other.
+ */
 export function slugifyAnchor(value: string): string {
   if (!value) {
     return "";
