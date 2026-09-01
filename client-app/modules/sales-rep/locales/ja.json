@@ -185,11 +185,7 @@
       "day_markers": "マーク: {kinds}",
       "page": {
         "subtitle": "すべての取引先のタスク、フォローアップ、期限を日付ごとに一覧表示します。",
-        "search_placeholder": "名前で検索",
-        "search_aria": "タスクを検索",
-        "all_tab": "すべて",
-        "no_results": "検索条件に一致するタスクがありません",
-        "reset_search": "検索をリセット"
+        "all_tab": "すべて"
       },
       "table": {
         "task": "タスク",

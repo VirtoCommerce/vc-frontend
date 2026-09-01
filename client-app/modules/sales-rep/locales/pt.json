@@ -185,11 +185,7 @@
       "day_markers": "Marcado: {kinds}",
       "page": {
         "subtitle": "Suas tarefas, acompanhamentos e prazos de todas as contas — organizados por dia.",
-        "search_placeholder": "Pesquisar por nome",
-        "search_aria": "Pesquisar tarefas",
-        "all_tab": "Todas",
-        "no_results": "Nenhuma tarefa corresponde à sua pesquisa",
-        "reset_search": "Redefinir pesquisa"
+        "all_tab": "Todas"
       },
       "table": {
         "task": "Tarefa",

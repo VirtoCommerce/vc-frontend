@@ -185,11 +185,7 @@
       "day_markers": "Oznaczono: {kinds}",
       "page": {
         "subtitle": "Twoje zadania, działania następcze i terminy ze wszystkich kont — w układzie dziennym.",
-        "search_placeholder": "Szukaj według nazwy",
-        "search_aria": "Szukaj zadań",
-        "all_tab": "Wszystkie",
-        "no_results": "Żadne zadanie nie pasuje do wyszukiwania",
-        "reset_search": "Resetuj wyszukiwanie"
+        "all_tab": "Wszystkie"
       },
       "table": {
         "task": "Zadanie",

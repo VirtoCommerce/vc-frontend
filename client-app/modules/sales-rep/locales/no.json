@@ -185,11 +185,7 @@
       "day_markers": "Merket: {kinds}",
       "page": {
         "subtitle": "Oppgavene, oppfølgingene og fristene dine på tvers av alle kontoer — fordelt på dager.",
-        "search_placeholder": "Søk etter navn",
-        "search_aria": "Søk i oppgaver",
-        "all_tab": "Alle",
-        "no_results": "Ingen oppgaver samsvarer med søket ditt",
-        "reset_search": "Tilbakestill søk"
+        "all_tab": "Alle"
       },
       "table": {
         "task": "Oppgave",

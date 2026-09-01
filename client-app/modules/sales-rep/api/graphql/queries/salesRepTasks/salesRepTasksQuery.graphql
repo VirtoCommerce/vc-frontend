@@ -1,21 +1,12 @@
 query SalesRepTasks(
   $first: Int
   $after: String
-  $keyword: String
   $sort: String
   $filter: String
   $today: DateTime
   $period: SalesRepStatisticsPeriodInput
 ) {
-  salesRepTasks(
-    first: $first
-    after: $after
-    keyword: $keyword
-    sort: $sort
-    filter: $filter
-    today: $today
-    period: $period
-  ) {
+  salesRepTasks(first: $first, after: $after, sort: $sort, filter: $filter, today: $today, period: $period) {
     totalCount
     items {
       ...salesRepTaskFields

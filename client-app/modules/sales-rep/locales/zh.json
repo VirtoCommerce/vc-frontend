@@ -185,11 +185,7 @@
       "day_markers": "标记：{kinds}",
       "page": {
         "subtitle": "您在所有客户下的任务、跟进事项和截止日期 — 按日期排列。",
-        "search_placeholder": "按名称搜索",
-        "search_aria": "搜索任务",
-        "all_tab": "全部",
-        "no_results": "没有符合您搜索条件的任务",
-        "reset_search": "重置搜索"
+        "all_tab": "全部"
       },
       "table": {
         "task": "任务",

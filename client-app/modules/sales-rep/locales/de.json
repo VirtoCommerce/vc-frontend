@@ -185,11 +185,7 @@
       "day_markers": "Markiert: {kinds}",
       "page": {
         "subtitle": "Ihre Aufgaben, Follow-ups und Fälligkeiten über alle Konten hinweg — nach Tagen aufgeschlüsselt.",
-        "search_placeholder": "Suche nach Name",
-        "search_aria": "Aufgaben suchen",
-        "all_tab": "Alle",
-        "no_results": "Keine Aufgaben entsprechen Ihrer Suche",
-        "reset_search": "Suche zurücksetzen"
+        "all_tab": "Alle"
       },
       "table": {
         "task": "Aufgabe",

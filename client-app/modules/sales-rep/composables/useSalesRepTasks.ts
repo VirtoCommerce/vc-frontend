@@ -38,7 +38,6 @@ type UseSalesRepTasksOptionsType = {
  * visible blocks.
  */
 export function useSalesRepTasks(options: UseSalesRepTasksOptionsType = {}) {
-  const keyword = ref("");
   // undefined = the synthetic "All" baseline, matching sales-rep-rule-chips' convention.
   const filter = ref<string | undefined>(undefined);
   const sortRule = ref<string | undefined>(options.sort);
@@ -55,7 +54,6 @@ export function useSalesRepTasks(options: UseSalesRepTasksOptionsType = {}) {
     first: pageSize.value,
     // xAPI connections take the offset as the cursor.
     after: String((page.value - 1) * pageSize.value),
-    keyword: keyword.value,
     sort: sortRule.value,
     filter: filter.value,
     today,
@@ -101,7 +99,6 @@ export function useSalesRepTasks(options: UseSalesRepTasksOptionsType = {}) {
     refetch,
     loading,
     error,
-    keyword,
     filter,
     sortRule,
     page,

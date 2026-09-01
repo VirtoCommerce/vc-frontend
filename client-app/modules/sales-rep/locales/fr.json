@@ -185,11 +185,7 @@
       "day_markers": "Marqué : {kinds}",
       "page": {
         "subtitle": "Vos tâches, relances et échéances pour tous les comptes — organisées par jour.",
-        "search_placeholder": "Rechercher par nom",
-        "search_aria": "Rechercher des tâches",
-        "all_tab": "Toutes",
-        "no_results": "Aucune tâche ne correspond à votre recherche",
-        "reset_search": "Réinitialiser la recherche"
+        "all_tab": "Toutes"
       },
       "table": {
         "task": "Tâche",

@@ -185,11 +185,7 @@
       "day_markers": "Contrassegnato: {kinds}",
       "page": {
         "subtitle": "Le tue attività, i follow-up e le scadenze di tutti gli account — organizzati per giorno.",
-        "search_placeholder": "Cerca per nome",
-        "search_aria": "Cerca attività",
-        "all_tab": "Tutte",
-        "no_results": "Nessuna attività corrisponde alla tua ricerca",
-        "reset_search": "Reimposta ricerca"
+        "all_tab": "Tutte"
       },
       "table": {
         "task": "Attività",

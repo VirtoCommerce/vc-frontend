@@ -185,11 +185,7 @@
       "day_markers": "Merkitty: {kinds}",
       "page": {
         "subtitle": "Tehtäväsi, seurannat ja eräpäivät kaikilta asiakastileiltä — päiväkohtaisesti jaoteltuna.",
-        "search_placeholder": "Hae nimellä",
-        "search_aria": "Hae tehtäviä",
-        "all_tab": "Kaikki",
-        "no_results": "Yksikään tehtävä ei vastaa hakuasi",
-        "reset_search": "Tyhjennä haku"
+        "all_tab": "Kaikki"
       },
       "table": {
         "task": "Tehtävä",

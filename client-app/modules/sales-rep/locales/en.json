@@ -185,11 +185,7 @@
       "day_markers": "Marked: {kinds}",
       "page": {
         "subtitle": "Your tasks, follow-ups and due dates across all accounts — laid out by day.",
-        "search_placeholder": "Search by name",
-        "search_aria": "Search tasks",
-        "all_tab": "All",
-        "no_results": "No tasks match your search",
-        "reset_search": "Reset search"
+        "all_tab": "All"
       },
       "table": {
         "task": "Task",

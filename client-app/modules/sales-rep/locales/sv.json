@@ -185,11 +185,7 @@
       "day_markers": "Markerad: {kinds}",
       "page": {
         "subtitle": "Dina uppgifter, uppföljningar och förfallodatum för alla konton — dag för dag.",
-        "search_placeholder": "Sök efter namn",
-        "search_aria": "Sök uppgifter",
-        "all_tab": "Alla",
-        "no_results": "Inga uppgifter matchar din sökning",
-        "reset_search": "Återställ sökning"
+        "all_tab": "Alla"
       },
       "table": {
         "task": "Uppgift",

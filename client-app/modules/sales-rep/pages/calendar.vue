@@ -52,10 +52,12 @@
           <!-- A failure replaces the rows: apollo keeps the previous ones on a failed refetch. -->
           <VcEmptyView v-if="failed && !loading" :text="t('sales_rep.tasks.load_failed')" variant="error" />
 
+          <!-- Empty here always means "nothing due on this day": the list is narrowed by the day and the tab,
+               never by a keyword — this page has no search. -->
           <VcEmptyView
             v-else-if="!tasks.length && !loading"
-            :text="keyword ? t('sales_rep.tasks.page.no_results') : t('sales_rep.tasks.empty_day')"
-            :variant="keyword ? 'search' : 'empty'"
+            :text="t('sales_rep.tasks.empty_day')"
+            variant="empty"
             icon="calendar"
           />
 
@@ -133,7 +135,6 @@ const {
   page,
   pages,
   totalCount,
-  keyword,
   refetch,
 } = useSalesRepTasks({
   period,

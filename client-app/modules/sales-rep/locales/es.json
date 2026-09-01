@@ -185,11 +185,7 @@
       "day_markers": "Marcado: {kinds}",
       "page": {
         "subtitle": "Sus tareas, seguimientos y vencimientos de todas las cuentas: organizados por día.",
-        "search_placeholder": "Buscar por nombre",
-        "search_aria": "Buscar tareas",
-        "all_tab": "Todas",
-        "no_results": "Ninguna tarea coincide con su búsqueda",
-        "reset_search": "Restablecer búsqueda"
+        "all_tab": "Todas"
       },
       "table": {
         "task": "Tarea",
