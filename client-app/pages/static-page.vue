@@ -18,6 +18,7 @@
         v-if="!item.hidden"
         :key="item.id"
         v-bind="item"
+        :id="getAnchorId(item)"
         :model="item"
         :settings="template.settings"
       />
@@ -32,13 +33,15 @@ import { computed, shallowRef, unref } from "vue";
 import { useBreadcrumbs } from "@/core/composables";
 import { usePageTitle } from "@/core/composables/usePageTitle";
 import { getBlockType } from "@/plugins/builder-preview/block-mapping";
-import { useStaticPage } from "@/shared/static-content";
+import { getAnchorId, useAnchorScroll, useStaticPage } from "@/shared/static-content";
 
 const { staticPage: template } = useStaticPage();
 
 const templateName = computed(() => unref(template)?.settings?.name || unref(template)?.settings?.header || "");
 
 const breadcrumbs = useBreadcrumbs(() => [{ title: templateName.value }] as IBreadcrumb[]);
+
+useAnchorScroll(() => template.value);
 
 const staticPageAnchor = shallowRef<HTMLElement | null>(null);
 const staticPageAnchorVisible = useElementVisibility(staticPageAnchor);
