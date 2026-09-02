@@ -187,6 +187,13 @@ export const IconVariant: StoryType = {
   },
 };
 
+export const PrependIconSmall: StoryType = {
+  args: {
+    prependIcon: "save-v2",
+    iconSize: "0.75rem",
+  },
+};
+
 export const IconSize: StoryType = {
   args: {
     iconSize: "1.75rem",

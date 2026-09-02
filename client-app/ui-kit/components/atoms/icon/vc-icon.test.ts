@@ -29,7 +29,7 @@ describe("VcIcon size", () => {
     const wrapper = mount(VcIcon, { props: { name: "academic-cap", size: "sm" } });
     await flushPromises();
     expect(wrapper.classes()).toContain("vc-icon--size--sm");
-    expect(wrapper.attributes("style") || "").not.toContain("width");
+    expect(wrapper.attributes("style") || "").not.toContain("--size");
   });
 
   it("applies inline px for numeric size", async () => {

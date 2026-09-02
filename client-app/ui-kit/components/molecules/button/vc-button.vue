@@ -287,7 +287,7 @@ defineExpose({
   &__loader-icon {
     $loaderIcon: &;
 
-    @apply block rounded-full animate-spin border-2 size-[--line-height] border-[--loader-border] border-r-[--loader-border-r];
+    @apply block rounded-full animate-spin border-2 size-[--vc-icon-size] border-[--loader-border] border-r-[--loader-border-r];
   }
 
   &:not(#{$icon}, #{$square}) {
@@ -457,7 +457,7 @@ defineExpose({
 
     // centres whatever the slot holds; an icon smaller than the text line would otherwise
     // sit on the line box top
-    @apply inline-flex items-center;
+    @apply flex items-center;
 
     &:empty {
       @apply hidden;
@@ -469,7 +469,7 @@ defineExpose({
 
     // centres whatever the slot holds; an icon smaller than the text line would otherwise
     // sit on the line box top
-    @apply inline-flex items-center;
+    @apply flex items-center;
 
     &:empty {
       @apply hidden;
