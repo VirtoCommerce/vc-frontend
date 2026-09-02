@@ -263,9 +263,6 @@ function onClick(event: Event) {
   &__label {
     @apply flex items-center min-w-0 min-h-[--size];
 
-    // The invisible input covers the whole container, so a link in the label would never receive
-    // the click. Lift links above it - the native <label> activation behaviour already skips
-    // clicks that land on an interactive descendant, so the checkbox is not toggled by them.
     a[href] {
       @apply relative z-20;
     }
