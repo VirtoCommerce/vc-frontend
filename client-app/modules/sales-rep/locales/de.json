@@ -177,7 +177,7 @@
       "new_task": "Neue Aufgabe",
       "add_task": "Aufgabe hinzufügen",
       "today": "Heute",
-      "empty": "Noch keine Aufgaben",
+      "empty": "Keine Aufgaben in diesem Tab",
       "empty_day": "An diesem Tag ist nichts fällig",
       "load_failed": "Aufgaben konnten nicht geladen werden",
       "day_task_count": "{count} Aufgabe | {count} Aufgaben",

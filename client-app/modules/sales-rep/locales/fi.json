@@ -177,7 +177,7 @@
       "new_task": "Uusi tehtävä",
       "add_task": "Lisää tehtävä",
       "today": "Tänään",
-      "empty": "Ei vielä tehtäviä",
+      "empty": "Tällä välilehdellä ei ole tehtäviä",
       "empty_day": "Tänä päivänä ei eräänny mitään",
       "load_failed": "Tehtäviä ei voitu ladata",
       "day_task_count": "{count} tehtävä | {count} tehtävää",

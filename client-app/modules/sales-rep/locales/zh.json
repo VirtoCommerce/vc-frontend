@@ -177,7 +177,7 @@
       "new_task": "新建任务",
       "add_task": "添加任务",
       "today": "今天",
-      "empty": "暂无任务",
+      "empty": "此标签页没有任务",
       "empty_day": "当天没有到期事项",
       "load_failed": "无法加载任务",
       "day_task_count": "{count} 项任务",

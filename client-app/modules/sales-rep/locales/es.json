@@ -177,7 +177,7 @@
       "new_task": "Nueva tarea",
       "add_task": "Añadir tarea",
       "today": "Hoy",
-      "empty": "Aún no hay tareas",
+      "empty": "No hay tareas en esta pestaña",
       "empty_day": "No vence nada este día",
       "load_failed": "No se pudieron cargar las tareas",
       "day_task_count": "{count} tarea | {count} tareas",

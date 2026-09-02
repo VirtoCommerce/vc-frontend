@@ -112,7 +112,7 @@ import { useMonthAnchor, useSalesRepTaskCalendar } from "../composables/useSales
 import { useSalesRepTaskCounts } from "../composables/useSalesRepTaskCounts";
 import { useSalesRepTaskMutations } from "../composables/useSalesRepTaskMutations";
 import { useSalesRepTasks } from "../composables/useSalesRepTasks";
-import { TASK_MARKER_KINDS, localDayKey, localDayKeyToDate, localDayWindow } from "../tasks";
+import { TASK_MARKER_KINDS, localDayKey, localDayKeyToDate, localDayWindow, toMonthKey } from "../tasks";
 import type { SalesRepTaskType } from "../types/tasks";
 
 const { t, d } = useI18n();
@@ -205,12 +205,25 @@ async function toggleCompletion(task: SalesRepTaskType): Promise<void> {
 // that no longer contains it, leaving "Task saved" over a list where it is nowhere to be seen. A delete reports
 // nothing — there is no row left to go to.
 async function onTaskSaved(dayKey?: string): Promise<void> {
+  const rescopesList = !!dayKey && (dayKey !== selectedDay.value || filter.value !== undefined);
+  const rescopesGrid = !!dayKey && toMonthKey(dayKey) !== month.value;
+
   if (dayKey) {
     selectDay(dayKey);
     setMonth(dayKey);
   }
 
-  await refreshAll();
+  /**
+   * Only the surfaces the move did NOT rescope get an explicit refetch. Apollo restarts a query whose variables
+   * changed on its own, and its `restart` is deferred to `nextTick` while `refetch()` runs synchronously — so
+   * refetching a rescoped query here fires a second, redundant request carrying the pre-move variables.
+   * The counts carry no day or month, so they always need one.
+   */
+  await Promise.all([
+    refetchCounts(),
+    ...(rescopesList ? [] : [refetch()]),
+    ...(rescopesGrid ? [] : [refetchMarkers()]),
+  ]);
 }
 
 function openTaskModal(task?: SalesRepTaskType): void {

@@ -177,7 +177,7 @@
       "new_task": "Nowe zadanie",
       "add_task": "Dodaj zadanie",
       "today": "Dziś",
-      "empty": "Brak zadań",
+      "empty": "Brak zadań na tej karcie",
       "empty_day": "Brak terminów w tym dniu",
       "load_failed": "Nie udało się wczytać zadań",
       "day_task_count": "{count} zadań | {count} zadanie | {count} zadania | {count} zadań",

@@ -177,7 +177,7 @@
       "new_task": "Ny oppgave",
       "add_task": "Legg til oppgave",
       "today": "I dag",
-      "empty": "Ingen oppgaver ennå",
+      "empty": "Ingen oppgaver i denne fanen",
       "empty_day": "Ingenting har frist denne dagen",
       "load_failed": "Kunne ikke laste oppgavene",
       "day_task_count": "{count} oppgave | {count} oppgaver",

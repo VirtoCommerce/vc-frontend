@@ -177,7 +177,7 @@
       "new_task": "Nuova attività",
       "add_task": "Aggiungi attività",
       "today": "Oggi",
-      "empty": "Ancora nessuna attività",
+      "empty": "Nessuna attività in questa scheda",
       "empty_day": "Nessuna scadenza in questo giorno",
       "load_failed": "Impossibile caricare le attività",
       "day_task_count": "{count} attività | {count} attività",

@@ -177,7 +177,7 @@
       "new_task": "New task",
       "add_task": "Add task",
       "today": "Today",
-      "empty": "No tasks yet",
+      "empty": "No tasks in this tab",
       "empty_day": "Nothing due on this day",
       "load_failed": "Couldn't load tasks",
       "day_task_count": "{count} task | {count} tasks",

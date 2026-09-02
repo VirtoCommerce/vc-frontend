@@ -449,7 +449,40 @@ describe("Calendar writes", () => {
     expect(taskOptions().filter.value).toBeUndefined();
   });
 
-  it("stays where it is after a delete", async () => {
+  /**
+   * Apollo restarts a query whose variables changed by itself, and defers that to nextTick while refetch() runs
+   * synchronously — so refetching a rescoped surface here would fire a second request carrying the variables the
+   * move just replaced.
+   */
+  it("leaves the surfaces the move rescoped to apollo, and refreshes only the rest", async () => {
+    const wrapper = createWrapper();
+
+    await button(wrapper, "tasks.new_task").trigger("click");
+    const call = state.openModal.mock.calls.at(-1)?.[0] as { props: { onSaved: (day?: string) => Promise<void> } };
+
+    // Another day AND another month than the "2026-10-01" the grid is anchored to.
+    await call.props.onSaved("2026-11-02");
+
+    expect(state.refetch).not.toHaveBeenCalled();
+    expect(state.refetchMarkers).not.toHaveBeenCalled();
+    // The counts carry neither a day nor a month, so nothing rescoped them.
+    expect(state.refetchCounts).toHaveBeenCalled();
+  });
+
+  it("still refreshes the grid when the save stayed inside the month on screen", async () => {
+    const wrapper = createWrapper();
+
+    await button(wrapper, "tasks.new_task").trigger("click");
+    const call = state.openModal.mock.calls.at(-1)?.[0] as { props: { onSaved: (day?: string) => Promise<void> } };
+
+    await call.props.onSaved("2026-10-20");
+
+    expect(state.refetch).not.toHaveBeenCalled();
+    expect(state.refetchMarkers).toHaveBeenCalled();
+  });
+
+  // A delete moves nothing, so every surface needs telling.
+  it("refreshes all three surfaces when the save reported no day", async () => {
     const wrapper = createWrapper();
     wrapper.getComponent(CalendarStub).vm.$emit("update:modelValue", "2026-10-20");
     await flushPromises();
@@ -460,5 +493,7 @@ describe("Calendar writes", () => {
     await call.props.onSaved();
 
     expect(taskOptions().period.value).toEqual(localDayWindow("2026-10-20"));
+    expect(state.refetch).toHaveBeenCalled();
+    expect(state.refetchMarkers).toHaveBeenCalled();
   });
 });

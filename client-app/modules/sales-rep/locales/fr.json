@@ -177,7 +177,7 @@
       "new_task": "Nouvelle tâche",
       "add_task": "Ajouter une tâche",
       "today": "Aujourd'hui",
-      "empty": "Aucune tâche pour le moment",
+      "empty": "Aucune tâche dans cet onglet",
       "empty_day": "Aucune échéance ce jour-là",
       "load_failed": "Impossible de charger les tâches",
       "day_task_count": "{count} tâche | {count} tâche | {count} tâches",

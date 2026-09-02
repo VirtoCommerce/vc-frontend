@@ -177,7 +177,7 @@
       "new_task": "Ny uppgift",
       "add_task": "Lägg till uppgift",
       "today": "I dag",
-      "empty": "Inga uppgifter ännu",
+      "empty": "Inga uppgifter på den här fliken",
       "empty_day": "Inget förfaller denna dag",
       "load_failed": "Kunde inte läsa in uppgifterna",
       "day_task_count": "{count} uppgift | {count} uppgifter",

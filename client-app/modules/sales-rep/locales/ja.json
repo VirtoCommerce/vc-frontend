@@ -177,7 +177,7 @@
       "new_task": "新しいタスク",
       "add_task": "タスクを追加",
       "today": "今日",
-      "empty": "タスクはまだありません",
+      "empty": "このタブにタスクはありません",
       "empty_day": "この日に期限のタスクはありません",
       "load_failed": "タスクを読み込めませんでした",
       "day_task_count": "{count} 件のタスク",
