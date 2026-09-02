@@ -46,8 +46,6 @@ function makeTask(overrides: Partial<SalesRepTaskType> = {}): SalesRepTaskType {
     dueDate: "2026-10-15T00:00:00Z",
     isActive: true,
     completed: undefined,
-    createdDate: "2026-10-01T00:00:00Z",
-    modifiedDate: undefined,
     status: "upcoming",
     ...overrides,
   };

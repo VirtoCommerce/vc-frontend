@@ -31,8 +31,8 @@ import { TASK_MARKER_KINDS } from "../tasks";
 import type { SalesRepTaskDayMarkersType } from "../types/tasks";
 
 interface IProps {
-  /** Selected day, ISO "YYYY-MM-DD". */
-  modelValue: string;
+  /** Selected day, ISO "YYYY-MM-DD". Omit for no selection at all. */
+  modelValue?: string;
   /** Displayed month, ISO "YYYY-MM-01" — controlled, so the dots query and the grid cannot drift apart. */
   month?: string;
   /** ISO day → the conditions present on it. A kind means "at least one", never a count. */
@@ -45,7 +45,12 @@ const emit = defineEmits<{
   (event: "update:month", month: string): void;
 }>();
 
-const props = withDefaults(defineProps<IProps>(), { month: undefined, dayMarkers: undefined, size: "md" });
+const props = withDefaults(defineProps<IProps>(), {
+  modelValue: undefined,
+  month: undefined,
+  dayMarkers: undefined,
+  size: "md",
+});
 
 const { t } = useI18n();
 

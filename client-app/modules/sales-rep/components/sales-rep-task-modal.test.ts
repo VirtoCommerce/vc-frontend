@@ -62,8 +62,6 @@ function makeTask(overrides: Partial<SalesRepTaskType> = {}): SalesRepTaskType {
     dueDate: localDayKeyToIso("2026-10-15"),
     isActive: true,
     completed: undefined,
-    createdDate: "2026-10-01T00:00:00Z",
-    modifiedDate: undefined,
     status: "upcoming",
     ...overrides,
   };

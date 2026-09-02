@@ -50,17 +50,17 @@ export function localDayKey(value: string | Date): string {
 /**
  * The due-date window behind a month grid's dots, as UTC instants.
  *
- * Padded by a week on each side on purpose: VcCalendar renders with `fixed-weeks`, so up to six leading and
- * trailing cells belong to the ADJACENT months and still draw markers. Querying only the calendar month would
- * leave those cells blank even when they have tasks. A week of slack covers any first-day-of-week setting
- * without this module having to know the calendar's.
+ * Padded on purpose: VcCalendar renders with `fixed-weeks`, so its 42 cells always spill into the adjacent
+ * months, and those cells draw markers too. The two edges are NOT symmetric - leading padding is at most 6 days
+ * (the weekday index of the 1st), but trailing is `42 - leading - daysInMonth`, which reaches 14 for a 28-day
+ * February starting on the first weekday. Cover the worst case, or the last grid row silently loses its dots.
  */
 export function localCalendarWindow(monthKey: string): { from: string; to: string } {
   const [year, month] = monthKey.split("-").map(Number);
 
   return {
     from: iso(local(year, month - 1, 1 - 7)),
-    to: iso(eod(year, month, 7)),
+    to: iso(eod(year, month, 14)),
   };
 }
 

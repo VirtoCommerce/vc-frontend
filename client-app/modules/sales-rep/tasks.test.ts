@@ -139,12 +139,20 @@ describe("localDayWindow", () => {
 });
 
 describe("localCalendarWindow", () => {
-  it("pads a week either side, because the grid renders adjacent-month days that also carry dots", () => {
+  it("pads either side, because the grid renders adjacent-month days that also carry dots", () => {
     const { from, to } = localCalendarWindow("2026-05-01");
 
-    // A week before May 1 and a week past May 31 — enough for `fixed-weeks` under any first-day-of-week.
     expect(new Date(from).getTime()).toBe(new Date(2026, 3, 24).getTime());
-    expect(new Date(to).getTime()).toBe(new Date(2026, 5, 7, 23, 59, 59, 999).getTime());
+    expect(new Date(to).getTime()).toBe(new Date(2026, 5, 14, 23, 59, 59, 999).getTime());
+  });
+
+  // The edges are not symmetric. February 2026 starts on a Sunday, so a 42-cell grid shows 28 own days and then
+  // 14 of March - the worst case, and exactly what a 7-day trailing pad used to leave dotless.
+  it("reaches the last cell of the worst-case grid", () => {
+    const { from, to } = localCalendarWindow("2026-02-01");
+
+    expect(new Date(from).getTime()).toBeLessThanOrEqual(new Date(2026, 1, 1).getTime());
+    expect(new Date(to).getTime()).toBeGreaterThanOrEqual(new Date(2026, 2, 14, 23, 59, 59, 999).getTime());
   });
 
   it("crosses a year boundary correctly", () => {

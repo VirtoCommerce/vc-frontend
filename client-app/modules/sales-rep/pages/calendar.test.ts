@@ -96,8 +96,6 @@ function makeTask(overrides: Partial<SalesRepTaskType> = {}): SalesRepTaskType {
     dueDate: "2026-10-15T00:00:00Z",
     isActive: true,
     completed: undefined,
-    createdDate: "2026-10-01T00:00:00Z",
-    modifiedDate: undefined,
     status: "upcoming",
     ...overrides,
   };
@@ -387,7 +385,9 @@ describe("Calendar writes", () => {
     expect(state.setCompleted).toHaveBeenCalledWith("task-1", false);
   });
 
-  it("leaves the surfaces alone when the write failed", async () => {
+  // A failed toggle usually means the row is stale — deleted from another tab — so the surfaces refresh anyway
+  // and the phantom row goes away. useMutation has already raised the error toast.
+  it("still refreshes when the write failed, so a stale row cannot linger", async () => {
     state.setCompleted.mockResolvedValue(false);
     state.items.value = [makeTask()];
 
@@ -395,7 +395,9 @@ describe("Calendar writes", () => {
     wrapper.getComponent(ListStub).vm.$emit("toggle", makeTask());
     await flushPromises();
 
-    expect(state.refetch).not.toHaveBeenCalled();
+    expect(state.refetch).toHaveBeenCalled();
+    expect(state.refetchCounts).toHaveBeenCalled();
+    expect(state.refetchMarkers).toHaveBeenCalled();
   });
 
   it("creates against the day on screen", async () => {

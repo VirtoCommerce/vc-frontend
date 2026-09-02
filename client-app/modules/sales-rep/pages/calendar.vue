@@ -78,8 +78,11 @@
       <aside class="sales-rep-calendar__aside">
         <!-- VcCalendar renders its own month/year header, so this widget adds none. -->
         <VcWidget size="md">
+          <!-- No selection while a tab is active: the list is not day-scoped then, so highlighting a day would
+               misdescribe it - and reka emits nothing when the clicked day is already the selected one, which
+               made that cell a dead click. With no selection, any day is a change and clears the tab. -->
           <SalesRepTaskCalendar
-            :model-value="selectedDay"
+            :model-value="filter ? undefined : selectedDay"
             :month="month"
             :day-markers="dayMarkers"
             @update:model-value="selectDay"
@@ -196,9 +199,11 @@ async function refreshAll(): Promise<void> {
 }
 
 async function toggleCompletion(task: SalesRepTaskType): Promise<void> {
-  if (await setCompleted(task.id, task.status !== "completed")) {
-    await refreshAll();
-  }
+  await setCompleted(task.id, task.status !== "completed");
+
+  // Either way: a failed toggle usually means the row is stale (deleted from another tab), and leaving it on
+  // screen invites the same click again.
+  await refreshAll();
 }
 
 // A save reports the day it landed on: a task moved to another date would otherwise be refetched into a view

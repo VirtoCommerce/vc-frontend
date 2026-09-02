@@ -19,8 +19,6 @@ function mapSalesRepTask(task: SalesRepTaskFieldsFragment, dayStart: Date): Sale
     dueDate: (task.dueDate as string | undefined) ?? undefined,
     isActive: task.isActive,
     completed: task.completed ?? undefined,
-    createdDate: task.createdDate as string,
-    modifiedDate: (task.modifiedDate as string | undefined) ?? undefined,
     status: taskStatus(task, dayStart),
   };
 }

@@ -11,8 +11,6 @@ export type SalesRepTaskType = {
   dueDate?: string;
   isActive: boolean;
   completed?: boolean;
-  createdDate: string;
-  modifiedDate?: string;
   status: SalesRepTaskStatusType;
 };
 

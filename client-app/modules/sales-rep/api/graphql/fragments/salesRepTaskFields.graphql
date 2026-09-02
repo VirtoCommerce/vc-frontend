@@ -7,6 +7,4 @@ fragment salesRepTaskFields on SalesRepTask {
   dueDate
   isActive
   completed
-  createdDate
-  modifiedDate
 }
