@@ -27,12 +27,12 @@
     @click="enabled ? $emit('click', $event) : null"
   >
     <span class="vc-button__content">
-      <VcIcon v-if="icon && typeof icon === 'string'" class="vc-button__icon" :name="icon" />
+      <VcIcon v-if="icon && typeof icon === 'string'" class="vc-button__icon" :name="icon" :variant="iconVariant" />
 
       <template v-else>
         <span v-if="$slots.prepend || prependIcon" class="vc-button__prepend">
           <slot name="prepend">
-            <VcIcon v-if="prependIcon" class="vc-button__icon" :name="prependIcon" />
+            <VcIcon v-if="prependIcon" class="vc-button__icon" :name="prependIcon" :variant="iconVariant" />
           </slot>
         </span>
 
@@ -42,7 +42,7 @@
 
         <span v-if="$slots.append || appendIcon" class="vc-button__append">
           <slot name="append">
-            <VcIcon v-if="appendIcon" class="vc-button__icon" :name="appendIcon" />
+            <VcIcon v-if="appendIcon" class="vc-button__icon" :name="appendIcon" :variant="iconVariant" />
           </slot>
         </span>
       </template>
@@ -60,6 +60,7 @@
 import { computed, inject, ref } from "vue";
 import { resolveVariant } from "../../../utilities/variant-compat";
 import { vcDialogKey } from "../dialog/vc-dialog-context";
+import type { IconVariantType } from "@/ui-kit/utilities";
 import type { ComponentPublicInstance } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 
@@ -93,6 +94,7 @@ interface IProps {
   minWidth?: string;
   tag?: string;
   iconSize?: string;
+  iconVariant?: IconVariantType;
   square?: boolean;
   tabindex?: string | number;
 }
@@ -223,7 +225,7 @@ defineExpose({
   --radius: var(--vc-button-radius, var(--vc-radius, 0.5rem));
   --min-w: var(--props-min-width, var(--vc-button-min-width));
 
-  --vc-icon-size: var(--vc-button-icon-size, var(--props-icon-size, var(--line-height)));
+  --vc-icon-size: var(--vc-button-icon-size, var(--props-icon-size, var(--icon-size)));
   --vc-icon-color: currentColor;
 
   $colors: primary, secondary, success, info, neutral, warning, danger, accent;
@@ -285,7 +287,7 @@ defineExpose({
   &__loader-icon {
     $loaderIcon: &;
 
-    @apply block rounded-full animate-spin border-2 size-[--line-height] border-[--loader-border] border-r-[--loader-border-r];
+    @apply block rounded-full animate-spin border-2 size-[--vc-icon-size] border-[--loader-border] border-r-[--loader-border-r];
   }
 
   &:not(#{$icon}, #{$square}) {
@@ -296,6 +298,7 @@ defineExpose({
     &--xxs {
       --size: 1.625rem;
       --line-height: 0.875rem;
+      --icon-size: 0.875rem;
       --px: theme("padding[2.5]");
 
       @apply text-xs/[--line-height] font-bold;
@@ -304,6 +307,7 @@ defineExpose({
     &--xs {
       --size: 2rem;
       --line-height: 0.875rem;
+      --icon-size: 1rem;
       --px: theme("padding.3");
 
       @apply text-xs/[--line-height] font-bold;
@@ -312,6 +316,7 @@ defineExpose({
     &--sm {
       --size: 2.375rem;
       --line-height: 1rem;
+      --icon-size: 1.25rem;
       --px: theme("padding[3.5]");
 
       @apply text-xs/[--line-height] uppercase font-black tracking-[1%];
@@ -320,6 +325,7 @@ defineExpose({
     &--md {
       --size: 2.75rem;
       --line-height: 1.25rem;
+      --icon-size: 1.5rem;
       --px: theme("padding.4");
 
       @apply text-sm/[--line-height] uppercase font-black tracking-[1%];
@@ -328,6 +334,7 @@ defineExpose({
     &--lg {
       --size: 3.25rem;
       --line-height: 1.5rem;
+      --icon-size: 1.75rem;
       --px: theme("padding.5");
 
       @apply text-base/[--line-height] uppercase font-black tracking-[1%];
@@ -448,6 +455,10 @@ defineExpose({
   &__prepend {
     $prepend: &;
 
+    // centres whatever the slot holds; an icon smaller than the text line would otherwise
+    // sit on the line box top
+    @apply flex items-center;
+
     &:empty {
       @apply hidden;
     }
@@ -455,6 +466,10 @@ defineExpose({
 
   &__append {
     $append: &;
+
+    // centres whatever the slot holds; an icon smaller than the text line would otherwise
+    // sit on the line box top
+    @apply flex items-center;
 
     &:empty {
       @apply hidden;

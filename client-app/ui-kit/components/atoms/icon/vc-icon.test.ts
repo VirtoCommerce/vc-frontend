@@ -29,20 +29,19 @@ describe("VcIcon size", () => {
     const wrapper = mount(VcIcon, { props: { name: "academic-cap", size: "sm" } });
     await flushPromises();
     expect(wrapper.classes()).toContain("vc-icon--size--sm");
-    expect(wrapper.attributes("style") || "").not.toContain("width");
+    expect(wrapper.attributes("style") || "").not.toContain("--size");
   });
 
   it("applies inline px for numeric size", async () => {
     const wrapper = mount(VcIcon, { props: { name: "academic-cap", size: 28 } });
     await flushPromises();
-    expect(wrapper.attributes("style")).toContain("width: 28px");
-    expect(wrapper.attributes("style")).toContain("height: 28px");
+    expect(wrapper.attributes("style")).toContain("--size: 28px");
   });
 
   it("applies an arbitrary CSS length verbatim (no bogus class)", async () => {
     const wrapper = mount(VcIcon, { props: { name: "academic-cap", size: "1.25rem" } });
     await flushPromises();
-    expect(wrapper.attributes("style")).toContain("width: 1.25rem");
+    expect(wrapper.attributes("style")).toContain("--size: 1.25rem");
     // eslint-disable-next-line sonarjs/null-dereference -- classes() returns string[]; the rule is a false positive here
     expect(wrapper.classes().some((c) => c.startsWith("vc-icon--size--"))).toBe(false);
   });
@@ -50,7 +49,7 @@ describe("VcIcon size", () => {
   it("applies auto verbatim", async () => {
     const wrapper = mount(VcIcon, { props: { name: "academic-cap", size: "auto" } });
     await flushPromises();
-    expect(wrapper.attributes("style")).toContain("width: auto");
+    expect(wrapper.attributes("style")).toContain("--size: auto");
   });
 
   it.each(PRESETS)("has a size class for preset %s", async (preset) => {
