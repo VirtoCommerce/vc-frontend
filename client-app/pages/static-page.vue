@@ -18,6 +18,7 @@
         v-if="!item.hidden"
         :key="item.id"
         v-bind="item"
+        :id="getAnchorId(item)"
         :model="item"
         :settings="template.settings"
       />
@@ -34,7 +35,7 @@ import { usePageTitle } from "@/core/composables/usePageTitle";
 import { useSeoKeywords } from "@/core/composables/useSeoKeywords";
 import { humanizeName } from "@/core/utilities/common";
 import { getBlockType } from "@/plugins/builder-preview/block-mapping";
-import { useStaticPage } from "@/shared/static-content";
+import { getAnchorId, useAnchorScroll, useStaticPage } from "@/shared/static-content";
 
 const { staticPage: template } = useStaticPage();
 
@@ -46,6 +47,8 @@ const templateName = computed(() =>
 );
 
 const breadcrumbs = useBreadcrumbs(() => [{ title: templateName.value }] as IBreadcrumb[]);
+
+useAnchorScroll(() => template.value);
 
 const staticPageAnchor = shallowRef<HTMLElement | null>(null);
 const staticPageAnchorVisible = useElementVisibility(staticPageAnchor);

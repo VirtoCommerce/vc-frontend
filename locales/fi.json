@@ -203,6 +203,7 @@
       "max_value": "Maksimiarvo on {value}",
       "min_value": "Minimiarvo on {value}",
       "empty_wish_list": "Listalla ei ole yhtään tuotetta",
+      "no_company_roles_available": "Rooleja ei ole saatavilla. Ota yhteyttä kaupan pääkäyttäjään.",
       "not_defined": "Määrittelemätön",
       "invalid_coupon": "Tämä koodi ei vastaa yhtään aktiivista kuponkia. Tarkista, että kaikki on oikein, ja yritä uudelleen.",
       "failed_coupon": "Kupongissa tapahtui virhe. Yritä uudelleen.",

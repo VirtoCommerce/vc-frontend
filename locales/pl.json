@@ -203,6 +203,7 @@
       "max_value": "Maksymalna wartość to {value}",
       "min_value": "Minimalna wartość to {value}",
       "empty_wish_list": "Lista życzeń nie zawiera żadnych przedmiotów",
+      "no_company_roles_available": "Brak dostępnych ról. Skontaktuj się z administratorem swojego sklepu.",
       "not_defined": "Niezdefiniowany",
       "invalid_coupon": "Ten kod nie jest prawidłowy",
       "failed_coupon": "Coś poszło nie tak z kuponem. Spróbuj ponownie.",
