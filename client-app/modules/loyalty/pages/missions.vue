@@ -18,14 +18,13 @@
 
     <template v-else>
       <div class="missions__banners">
-        <MissionsBanner variant="light" icon="badge-check">
+        <MissionsBanner
+          variant="light"
+          icon="badge-check"
+          :link-to="{ name: 'PointsHistory' }"
+          :link-text="$t('pages.account.missions.balance_banner.points_history')"
+        >
           <PointsBalance :balance="currentBalance" :loading="balanceLoading" />
-
-          <template #link>
-            <router-link :to="{ name: 'PointsHistory' }" class="missions-banner__link missions-banner__link--default">
-              {{ $t("pages.account.missions.balance_banner.points_history") }}
-            </router-link>
-          </template>
         </MissionsBanner>
 
         <MissionsBanner

@@ -12,16 +12,22 @@
       </slot>
     </div>
 
-    <slot name="link" />
+    <router-link v-if="linkTo" :to="linkTo" class="missions-banner__link missions-banner__link--default">
+      {{ linkText }}
+    </router-link>
   </div>
 </template>
 
 <script setup lang="ts">
+import type { RouteLocationRaw } from "vue-router";
+
 interface IProps {
   variant: "light" | "dark";
   icon: string;
   title?: string;
   description?: string;
+  linkTo?: RouteLocationRaw;
+  linkText?: string;
 }
 
 defineProps<IProps>();
