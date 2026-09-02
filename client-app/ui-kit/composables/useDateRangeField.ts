@@ -76,6 +76,14 @@ export function useDateRangeField(opts: IUseDateRangeFieldOptions) {
     }
   }
 
+  /** Drops what the segments reported, for a shell that unmounts them — their verdict must not outlive them. */
+  function clearSegmentReports(): void {
+    startSegmentValid.value = true;
+    endSegmentValid.value = true;
+    startErrorText.value = undefined;
+    endErrorText.value = undefined;
+  }
+
   // Two commits in one task both read the pre-update prop, dropping the first edit. Boxed so an
   // emitted `undefined` stays distinguishable.
   let lastEmitted: { range: VcDateRangeType | undefined } | undefined;
@@ -89,20 +97,16 @@ export function useDateRangeField(opts: IUseDateRangeFieldOptions) {
   // Rejected text keeps the shell invalid, and a segment resyncs only from its OWN half — so text
   // rejected in one outlives a commit in the other. Any commit is the moment to drop it. Text that is
   // merely uncommitted stays: Enter can still commit it.
-  watch(
-    () => {
-      const range = toValue(opts.modelValue);
-      return [range?.start, range?.end] as const;
-    },
-    () => {
-      if (!startSegmentValid.value) {
-        opts.resetSegment?.("start");
-      }
-      if (!endSegmentValid.value) {
-        opts.resetSegment?.("end");
-      }
-    },
-  );
+  // Two sources rather than one array getter: a fresh array never compares equal, so a prop object
+  // carrying the same two dates would drop text the user can still commit.
+  watch([() => toValue(opts.modelValue)?.start, () => toValue(opts.modelValue)?.end], () => {
+    if (!startSegmentValid.value) {
+      opts.resetSegment?.("start");
+    }
+    if (!endSegmentValid.value) {
+      opts.resetSegment?.("end");
+    }
+  });
 
   /** A range with neither endpoint collapses to `undefined`. */
   function mergeRange(which: "start" | "end", value: string | undefined): VcDateRangeType | undefined {
@@ -128,6 +132,7 @@ export function useDateRangeField(opts: IUseDateRangeFieldOptions) {
     segmentAria,
     setSegmentValid,
     setSegmentErrorText,
+    clearSegmentReports,
     mergeRange,
   };
 }

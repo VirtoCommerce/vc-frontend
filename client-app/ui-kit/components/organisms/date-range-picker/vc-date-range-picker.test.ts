@@ -389,6 +389,60 @@ describe("VcDateRangePicker", () => {
     expect(wrapper.emitted("update:valid")).toEqual([[false]]);
   });
 
+  // Each layout's fields are unmounted by the other's `v-if`, so a verdict must not outlive them.
+  // Both directions start in the layout whose field actually reports, or the flip has nothing to drop.
+  describe("layout flips", () => {
+    // The slice, not the tail: the remounted field's immediate re-emit lands in the same flush, so
+    // `at(-1)` is corrected even when a stale value went out one step earlier.
+    function emittedAfter(wrapper: ReturnType<typeof mountSplit>, event: string, from: number) {
+      return (wrapper.emitted(event)?.slice(from) ?? []).map((call) => call[0]);
+    }
+
+    it("drops the combined field's verdict when the range goes out of order behind a flip", async () => {
+      const wrapper = mountSplit({ layout: "combined", modelValue: { start: "2026-10-08", end: "2026-10-20" } });
+      await flushPromises();
+      await wrapper.setProps({ layout: "split" });
+      await flushPromises();
+      await wrapper.setProps({ modelValue: { start: "2026-10-20", end: "2026-10-08" } });
+      await flushPromises();
+      const beforeFlip = wrapper.emitted("update:valid")?.length ?? 0;
+
+      await wrapper.setProps({ layout: "combined" });
+      await flushPromises();
+
+      expect(emittedAfter(wrapper, "update:valid", beforeFlip)).not.toContain(true);
+      expect(wrapper.emitted("update:valid")?.at(-1)?.[0]).toBe(false);
+
+      wrapper.unmount();
+    });
+
+    it("drops a split field's rejected-text verdict on the way back to split", async () => {
+      const wrapper = mountSplit({ modelValue: { start: "2026-10-08", end: "2026-10-20" } });
+      await flushPromises();
+
+      const endInput = wrapper.findAll(".vc-date-range-picker__field input")[1];
+      await endInput.setValue("aa/bb/cccc");
+      await endInput.trigger("blur");
+      await flushPromises();
+      expect(wrapper.emitted("update:valid")?.at(-1)?.[0]).toBe(false);
+
+      await wrapper.setProps({ layout: "combined" });
+      await flushPromises();
+      const beforeFlipBack = wrapper.emitted("update:valid")?.length ?? 0;
+      const errorsBeforeFlipBack = wrapper.emitted("update:errorText")?.length ?? 0;
+
+      await wrapper.setProps({ layout: "split" });
+      await flushPromises();
+
+      expect(emittedAfter(wrapper, "update:valid", beforeFlipBack)).not.toContain(false);
+      expect(emittedAfter(wrapper, "update:errorText", errorsBeforeFlipBack)).not.toContain(
+        "ui_kit.date_input.invalid_format",
+      );
+
+      wrapper.unmount();
+    });
+  });
+
   it("returns focus to the start segment when the trigger click closes the popover with focus in the calendar", async () => {
     const wrapper = mountPicker({}, { attachTo: document.body });
     const trigger = wrapper.find('button[aria-haspopup="dialog"]');

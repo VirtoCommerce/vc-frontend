@@ -271,6 +271,7 @@ const {
   segmentAria,
   setSegmentValid,
   setSegmentErrorText,
+  clearSegmentReports,
   mergeRange,
 } = useDateRangeField({
   modelValue: () => props.modelValue,
@@ -284,10 +285,27 @@ const {
   },
 });
 
-// Seeded from the order check so an out-of-order initial model never reports a transient true.
-const inputValid = ref(orderValid.value);
+// A verdict must not outlive the field that reported it: the layout's `v-if` unmounts one side's
+// fields wholesale, so both sides' reports are dropped on a flip and the order check stands in until
+// the new fields speak — one flush, and it knows only order, so a min/max/disabledDate violation is
+// REPORTED valid inside it. The same stand-in keeps an out-of-order initial model off `true` at mount.
+const inputValid = ref<boolean | undefined>(undefined);
 const inputErrorText = ref<string | undefined>(undefined);
-const aggregatedValid = computed<boolean>(() => (isSplit.value ? splitValid.value : inputValid.value));
+
+// Sync flush so the reset does not depend on being registered before the aggregate watchers below.
+watch(
+  isSplit,
+  () => {
+    inputValid.value = undefined;
+    inputErrorText.value = undefined;
+    clearSegmentReports();
+  },
+  { flush: "sync" },
+);
+
+const aggregatedValid = computed<boolean>(() =>
+  isSplit.value ? splitValid.value : (inputValid.value ?? orderValid.value),
+);
 watch(aggregatedValid, (value) => emit("update:valid", value), { immediate: true });
 
 // "split" owns the message itself; "combined" forwards what VcDateRangeInput reported.

@@ -21,13 +21,14 @@ function setup(options: IRunOptions = {}) {
   const message = ref<string | undefined>(options.message);
   const required = ref<boolean | undefined>(options.required);
   const detailsId = options.detailsId ?? "range-details";
+  const resetSegment = vi.fn();
 
   let field!: ReturnType<typeof useDateRangeField>;
   scope.run(() => {
-    field = useDateRangeField({ modelValue, error, message, required, detailsId });
+    field = useDateRangeField({ modelValue, error, message, required, detailsId, resetSegment });
   });
 
-  return { field, modelValue, error, message, required, detailsId, scope };
+  return { field, modelValue, error, message, required, detailsId, resetSegment, scope };
 }
 
 beforeEach(() => {
@@ -153,6 +154,28 @@ describe("useDateRangeField — segment validity", () => {
     field.setSegmentValid("end", false);
     field.setSegmentErrorText("end", "ui_kit.date_input.max_date_error");
     expect(field.computedMessage.value).toBe("ui_kit.date_input.max_date_error");
+  });
+});
+
+describe("useDateRangeField — dropping rejected segment text", () => {
+  test("drops it when the range actually changes", async () => {
+    const { field, modelValue, resetSegment } = setup({ modelValue: { start: "2026-10-08", end: undefined } });
+    field.setSegmentValid("end", false);
+
+    modelValue.value = { start: "2026-10-08", end: "2026-10-20" };
+    await nextTick();
+
+    expect(resetSegment).toHaveBeenCalledWith("end");
+  });
+
+  test("keeps it when a new object repeats the same two dates", async () => {
+    const { field, modelValue, resetSegment } = setup({ modelValue: { start: "2026-10-08", end: undefined } });
+    field.setSegmentValid("end", false);
+
+    modelValue.value = { start: "2026-10-08", end: undefined };
+    await nextTick();
+
+    expect(resetSegment).not.toHaveBeenCalled();
   });
 });
 

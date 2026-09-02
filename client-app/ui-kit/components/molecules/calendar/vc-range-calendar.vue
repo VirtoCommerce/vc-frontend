@@ -353,7 +353,9 @@ function onClearClick(): void {
 
 // Capture phase: reka's cell trigger stops arrows/Enter/Space from bubbling
 // (RangeCalendarCellTrigger.js: handleArrowKey calls stopPropagation), so a keyboard pick after an
-// unanswered Escape would meet a guard still armed.
+// unanswered Escape would meet a guard still armed. reka's revert lands within the same task — its
+// Escape handler writes startValue/endValue and the pre-flush pair watcher writes modelValue
+// (RangeCalendarRoot.js:290, :260) — so only a synthetic same-task key sequence disarms it early.
 function onCalendarKeydownCapture(event: KeyboardEvent): void {
   if (event.key !== "Escape") {
     endEscapeRevert();
@@ -393,23 +395,22 @@ function onStartValueUpdate(value: DateValue | undefined): void {
 }
 
 // use-calendar-base does not sync the placeholder on model changes — this watch does.
-watch(
-  () => [props.modelValue?.start, props.modelValue?.end] as const,
-  ([newStart, newEnd], [oldStart]) => {
-    parsedModelValue.value = parseRange(props.modelValue);
-    // Our own anchor returns as a prop change too; only a value we did not emit is a commit.
-    if (!isSameRange(props.modelValue, lastKnown)) {
-      committedRange = props.modelValue;
-    }
-    // Resync so a later user pick isn't deduped against a stale snapshot.
-    lastKnown = props.modelValue;
-    // Swallow reka's same-tick echo from being fed this external value.
-    suppressEchoForOneTick();
-    // A changed start must win: reka's placeholder-follows-startValue overrides any end preference later.
-    const startChanged = newStart !== oldStart;
-    placeholderRef.value = clampToBounds(preferredPlaceholder(startChanged ? newStart : newEnd, newEnd, newStart));
-  },
-);
+// Two sources rather than one array getter: a fresh array never compares equal, so a prop object that
+// carries the same two dates would re-run all of this — moving the view and arming the echo guard.
+watch([() => props.modelValue?.start, () => props.modelValue?.end], ([newStart, newEnd], [oldStart]) => {
+  parsedModelValue.value = parseRange(props.modelValue);
+  // Our own anchor returns as a prop change too; only a value we did not emit is a commit.
+  if (!isSameRange(props.modelValue, lastKnown)) {
+    committedRange = props.modelValue;
+  }
+  // Resync so a later user pick isn't deduped against a stale snapshot.
+  lastKnown = props.modelValue;
+  // Swallow reka's same-tick echo from being fed this external value.
+  suppressEchoForOneTick();
+  // A changed start must win: reka's placeholder-follows-startValue overrides any end preference later.
+  const startChanged = newStart !== oldStart;
+  placeholderRef.value = clampToBounds(preferredPlaceholder(startChanged ? newStart : newEnd, newEnd, newStart));
+});
 
 defineExpose({ focusActiveCell });
 </script>
@@ -716,6 +717,15 @@ defineExpose({ focusActiveCell });
 
     &:hover {
       @apply bg-neutral-100 text-neutral-800;
+    }
+
+    &[disabled],
+    &[aria-disabled="true"] {
+      @apply text-neutral-400 cursor-not-allowed;
+
+      &:hover {
+        @apply bg-transparent text-neutral-400;
+      }
     }
   }
 }

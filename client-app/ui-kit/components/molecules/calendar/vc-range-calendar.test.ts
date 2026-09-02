@@ -419,6 +419,21 @@ describe("VcRangeCalendar", () => {
         wrapper.find('[data-reka-calendar-cell-trigger][data-value="2027-05-20"]:not([data-outside-view])').exists(),
       ).toBe(true);
     });
+
+    // A parent rebuilding the range object on every render must not pull the user's view back.
+    it("leaves the view alone when a new object repeats the same two dates", async () => {
+      const wrapper = mountCal({ modelValue: { start: "2026-10-08", end: "2026-11-20" } });
+      await flushPromises();
+      await wrapper.find(".vc-range-calendar__nav--month-next").trigger("click");
+      await wrapper.find(".vc-range-calendar__nav--month-next").trigger("click");
+      await flushPromises();
+      const heading = wrapper.find(".vc-range-calendar__heading").text();
+
+      await wrapper.setProps({ modelValue: { start: "2026-10-08", end: "2026-11-20" } });
+      await flushPromises();
+
+      expect(wrapper.find(".vc-range-calendar__heading").text()).toBe(heading);
+    });
   });
 
   describe("Escape during an in-progress pick", () => {
