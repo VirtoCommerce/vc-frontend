@@ -18,49 +18,34 @@
 
     <template v-else>
       <div class="missions__banners">
-        <!-- Balance banner -->
-        <div class="missions-banner missions-banner--light">
-          <div class="missions-banner__icon missions-banner__icon--light">
-            <VcIcon name="badge-check" variant="solid" class="text-primary" :size="28" />
+        <MissionsBanner variant="light" icon="badge-check">
+          <span class="missions-balance__label">
+            {{ $t("pages.account.missions.balance_banner.label") }}
+          </span>
+
+          <div class="missions-balance__value">
+            <span v-if="balanceLoading" class="missions-balance__amount-skeleton"></span>
+
+            <template v-else>
+              <span class="missions-balance__amount">{{ $n(currentBalance ?? 0, "decimal") }}</span>
+
+              <span class="missions-balance__unit">{{ $t("pages.account.missions.balance_banner.points") }}</span>
+            </template>
           </div>
 
-          <div class="missions-banner__body">
-            <span class="missions-banner__label">
-              {{ $t("pages.account.missions.balance_banner.label") }}
-            </span>
+          <template #link>
+            <router-link :to="{ name: 'PointsHistory' }" class="missions-banner__link missions-banner__link--default">
+              {{ $t("pages.account.missions.balance_banner.points_history") }}
+            </router-link>
+          </template>
+        </MissionsBanner>
 
-            <div class="missions-banner__value">
-              <span v-if="balanceLoading" class="missions-banner__amount-skeleton"></span>
-
-              <template v-else>
-                <span class="missions-banner__amount">{{ $n(currentBalance ?? 0, "decimal") }}</span>
-
-                <span class="missions-banner__unit">{{ $t("pages.account.missions.balance_banner.points") }}</span>
-              </template>
-            </div>
-          </div>
-
-          <router-link :to="{ name: 'PointsHistory' }" class="missions-banner__link missions-banner__link--default">
-            {{ $t("pages.account.missions.balance_banner.points_history") }}
-          </router-link>
-        </div>
-
-        <!-- Redeem banner -->
-        <div class="missions-banner missions-banner--dark">
-          <div class="missions-banner__icon missions-banner__icon--dark">
-            <VcIcon name="gift" class="text-primary" variant="solid" :size="28" />
-          </div>
-
-          <div class="missions-banner__body">
-            <span class="missions-banner__title">
-              {{ $t("pages.account.missions.redeem_banner.title") }}
-            </span>
-
-            <p class="missions-banner__subtitle">
-              {{ $t("pages.account.missions.redeem_banner.description") }}
-            </p>
-          </div>
-        </div>
+        <MissionsBanner
+          variant="dark"
+          icon="gift"
+          :title="$t('pages.account.missions.redeem_banner.title')"
+          :description="$t('pages.account.missions.redeem_banner.description')"
+        />
       </div>
 
       <VcEmptyView
@@ -89,6 +74,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import MissionCard from "../components/mission-card.vue";
+import MissionsBanner from "../components/missions-banner.vue";
 import { useLoyaltyBalance } from "../composables/useLoyaltyBalance";
 import { useMissions } from "../composables/useMissions";
 
@@ -135,33 +121,7 @@ onMounted(loadData);
   }
 }
 
-.missions-banner {
-  @apply flex items-center gap-4 rounded-[--vc-radius] border p-5 shadow-sm;
-
-  &--light {
-    @apply border-neutral-200 bg-additional-50;
-  }
-
-  &--dark {
-    @apply border-transparent bg-additional-950;
-  }
-
-  &__icon {
-    @apply flex size-14 shrink-0 items-center justify-center rounded-full;
-
-    &--light {
-      @apply bg-primary-50;
-    }
-
-    &--dark {
-      @apply bg-additional-50/10;
-    }
-  }
-
-  &__body {
-    @apply flex min-w-0 flex-col;
-  }
-
+.missions-balance {
   &__label {
     @apply text-xs font-bold uppercase tracking-wide text-neutral-500;
   }
@@ -180,26 +140,6 @@ onMounted(loadData);
 
   &__unit {
     @apply text-sm text-neutral-500;
-  }
-
-  &__title {
-    @apply font-bold text-additional-50;
-  }
-
-  &__subtitle {
-    @apply text-sm text-neutral-400;
-  }
-
-  &__link {
-    @apply ms-auto flex shrink-0 items-center gap-1 text-sm font-bold;
-
-    &--default {
-      @apply text-[--link-color] hover:text-[--link-hover-color];
-    }
-
-    &--accent {
-      @apply text-primary hover:text-primary-600;
-    }
   }
 }
 </style>
