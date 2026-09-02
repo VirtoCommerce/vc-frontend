@@ -1,16 +1,18 @@
 <template>
-  <span class="points-balance__label">
-    {{ $t("pages.account.missions.balance_banner.label") }}
-  </span>
+  <div class="points-balance">
+    <span class="points-balance__label">
+      {{ $t("pages.account.missions.balance_banner.label") }}
+    </span>
 
-  <div class="points-balance__value">
-    <span v-if="loading" class="points-balance__amount-skeleton"></span>
+    <div class="points-balance__value">
+      <span v-if="loading" class="points-balance__amount-skeleton"></span>
 
-    <template v-else>
-      <span class="points-balance__amount">{{ $n(balance ?? 0, "decimal") }}</span>
+      <template v-else>
+        <span class="points-balance__amount">{{ $n(balance ?? 0, "decimal") }}</span>
 
-      <span class="points-balance__unit">{{ $t("pages.account.missions.balance_banner.points") }}</span>
-    </template>
+        <span class="points-balance__unit">{{ $t("pages.account.missions.balance_banner.points") }}</span>
+      </template>
+    </div>
   </div>
 </template>
 
@@ -25,6 +27,8 @@ defineProps<IProps>();
 
 <style lang="scss">
 .points-balance {
+  @apply flex min-w-0 flex-col;
+
   &__label {
     @apply text-xs font-bold uppercase tracking-wide text-neutral-500;
   }
