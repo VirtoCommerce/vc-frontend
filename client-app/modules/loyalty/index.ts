@@ -101,14 +101,20 @@ function renderCondition({ paymentTypeName }: { paymentTypeName: string }) {
 export function init(router: Router, i18n: I18n) {
   const { isAuthenticated } = useUser();
 
-  if (isAuthenticated.value && isEnabled(ENABLED_KEY)) {
+  if (isEnabled(ENABLED_KEY)) {
     router.addRoute("Account", route);
     void loadModuleLocale(i18n, "loyalty");
-    mergeMenuSchema(menuItems);
+
+    if (isAuthenticated.value) {
+      mergeMenuSchema(menuItems);
+    }
 
     if (isEnabled(MISSIONS_ENABLED_KEY)) {
       router.addRoute("Account", missionsRoute);
-      mergeMenuSchema(missionsMenuItems);
+
+      if (isAuthenticated.value) {
+        mergeMenuSchema(missionsMenuItems);
+      }
     }
 
     register("paymentPage", EXTENSION_NAMES.paymentPage.paymentMethods, {
