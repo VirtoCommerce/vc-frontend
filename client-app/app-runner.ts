@@ -60,9 +60,9 @@ async function getUcpHandoffUserId(): Promise<string | undefined> {
   }
 
   try {
-    const { buyerId } = await restoreUcpHandoffCart(ucpSession);
-    applyUcpHandoffBuyer(buyerId);
-    return buyerId;
+    const { anonymousBuyerId } = await restoreUcpHandoffCart(ucpSession);
+    applyUcpHandoffBuyer(anonymousBuyerId);
+    return anonymousBuyerId;
   } catch (error) {
     Logger.warn("Failed to pre-restore UCP handoff session", error);
   }

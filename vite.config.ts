@@ -42,6 +42,7 @@ function getBackendProxy(): Record<string, ProxyOptions> {
   return {
     "^/api": getProxy(process.env.APP_BACKEND_URL),
     "^/graphql": getProxy(process.env.APP_BACKEND_URL, { ws: true }),
+    "^/ucp": getProxy(process.env.APP_BACKEND_URL),
     "^/(connect|revoke)/token": getProxy(process.env.APP_BACKEND_URL),
     "^/cms-content": getProxy(process.env.APP_BACKEND_URL),
     "^/externalsignin": getProxy(process.env.APP_BACKEND_URL),
@@ -52,7 +53,7 @@ function getBackendProxy(): Record<string, ProxyOptions> {
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }): UserConfig => {
-  const isServe = command == "serve";
+  const isServe = command == "serve" && mode !== "test";
 
   // https://stackoverflow.com/a/66389044
   process.env = {

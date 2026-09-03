@@ -1,5 +1,5 @@
 import { ROUTES } from "./constants";
-import { applyUcpHandoffBuyer, restoreUcpHandoffCart } from "./ucp-handoff";
+import { applyUcpHandoffBuyer, restoreUcpHandoffCart, UcpHandoffRestoreError } from "./ucp-handoff";
 import type { NavigationGuardNext, RouteLocationNormalized, RouteRecordName, RouteRecordRaw } from "vue-router";
 
 const Checkout = () => import("@/pages/checkout/index.vue");
@@ -75,11 +75,15 @@ export const checkoutRoutes: RouteRecordRaw[] = [
     async beforeEnter(to, from, next) {
       if (typeof to.query.ucp_session === "string") {
         try {
-          const { cartId, buyerId } = await restoreUcpHandoffCart(to.query.ucp_session);
-          applyUcpHandoffBuyer(buyerId);
+          const { cartId, anonymousBuyerId } = await restoreUcpHandoffCart(to.query.ucp_session);
+          applyUcpHandoffBuyer(anonymousBuyerId);
           next({ name: ROUTES.CART_ID.NAME, params: { cartId }, query: { ucp_handoff: "1" }, replace: true });
         } catch (error) {
           console.error("Unable to restore UCP handoff session.", error);
+          if (error instanceof UcpHandoffRestoreError && error.status === 401) {
+            next({ name: ROUTES.SIGN_IN.NAME, query: { returnUrl: to.fullPath }, replace: true });
+            return;
+          }
           next({ name: ROUTES.CART.NAME, replace: true });
         }
         return;
