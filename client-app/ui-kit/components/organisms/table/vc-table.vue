@@ -647,6 +647,9 @@ function syncRetryListener() {
 }
 
 const desktopTableRef = useTemplateRef<HTMLTableElement | null>("desktopTableRef");
+
+// Legitimate `<table>` children other than the header itself.
+const HEADER_SIBLING_TAGS = new Set(["CAPTION", "COLGROUP", "TBODY", "TFOOT"]);
 let headerAlignmentWarned = false;
 let headerTheadWarned = false;
 
@@ -657,15 +660,19 @@ function warnOnCustomHeaderIssues(): void {
     return;
   }
 
-  // Vue appends bare `<tr>`s straight to the table instead of foster-parenting them, so
-  // `headAttrs` lands nowhere and the alignment check below cannot run either.
+  // Without a `<thead>` the table has no header row group, and the alignment check below
+  // has no rows to count.
   if (!table.querySelector(":scope > thead")) {
-    if (!headerTheadWarned && table.querySelector(":scope > tr")) {
+    // `#header` is the only slot that can render a direct child of `<table>`; everything else
+    // lives inside `<tbody>`. So any other element here came from the header.
+    const strayHeaderContent = [...table.children].some((child) => !HEADER_SIBLING_TAGS.has(child.tagName));
+
+    if (!headerTheadWarned && strayHeaderContent) {
       headerTheadWarned = true;
 
       // eslint-disable-next-line no-console
       console.warn(
-        "VcTable: the `#header` slot must wrap its rows in a `<thead>`. Bare `<tr>`s get no sticky positioning from `headAttrs`, and the header/body alignment check is skipped.",
+        "VcTable: the `#header` slot must wrap its rows in a `<thead>` — a bare `<tr>` is not a header row group, so the header/body alignment check is skipped. Bind `headAttrs` to that `<thead>` to keep sticky positioning.",
       );
     }
 
@@ -839,7 +846,7 @@ function getAriaSort(columnId: string): "ascending" | "descending" | "none" {
 
 /**
  * Gets a unique key for table row rendering.
- * Tries to use item.id if available, otherwise falls back to index.
+ * Tries to use item.id if available, otherwise falls back to `__row_<index>`.
  */
 function getItemKey(item: T, index: number): string {
   const itemWithId = item as { id?: string | number };

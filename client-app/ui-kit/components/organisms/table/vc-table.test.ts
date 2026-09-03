@@ -2378,7 +2378,7 @@ describe("#header slot — DEV warning", () => {
     await mountSelectable({ selectionMode: "multiple", selection: [], headerSlot: "without-selection" });
 
     expect(warnSpy).toHaveBeenCalledTimes(1);
-    expect(warnSpy.mock.calls[0][0]).toMatch(/#header/);
+    expect(warnSpy.mock.calls[0][0]).toMatch(/renders one cell fewer/);
   });
 
   it("does not warn when the custom header renders the selection cell", async () => {
@@ -2403,7 +2403,7 @@ describe("#header slot — DEV warning", () => {
             { id: "name", title: "Name" },
             { default: ({ item }: { item: VcTableItemType }) => h("span", String(item.name ?? "")) },
           ),
-        // Vue appends these straight to the table instead of foster-parenting them into a thead.
+        // These land as direct `<table>` children; no `<thead>` is created for them.
         header: () => h("tr", [h("th", "Name")]),
       },
       global: { stubs: selectionStubs, plugins: [i18n], mocks: { $t: (key: string) => key } },
@@ -2419,7 +2419,7 @@ describe("#header slot — DEV warning", () => {
     wrapper.unmount();
   });
 
-  it("does not warn for a header slot that renders nothing", async () => {
+  it("falls back to the built-in thead when the header slot renders nothing", async () => {
     const wrapper = mount(VcTable, {
       props: { items, selectionMode: "multiple", selection: [] },
       slots: {
@@ -2438,7 +2438,86 @@ describe("#header slot — DEV warning", () => {
     await nextTick();
     await nextTick();
 
+    // Not the guard: an empty slot renders the default `<thead>`, so there is nothing to warn about.
+    expect(wrapper.find("table.vc-table__desktop > thead.vc-table__head").exists()).toBe(true);
     expect(warnSpy).not.toHaveBeenCalled();
+
+    wrapper.unmount();
+  });
+
+  it("warns for a header that renders a non-row element instead of a thead", async () => {
+    const wrapper = mount(VcTable, {
+      props: { items, selectionMode: "multiple", selection: [] },
+      slots: {
+        default: () =>
+          h(
+            VcTableColumn,
+            { id: "name", title: "Name" },
+            { default: ({ item }: { item: VcTableItemType }) => h("span", String(item.name ?? "")) },
+          ),
+        header: () => h("div", "Name"),
+      },
+      global: { stubs: selectionStubs, plugins: [i18n], mocks: { $t: (key: string) => key } },
+    });
+
+    await nextTick();
+    await nextTick();
+    await nextTick();
+
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+    expect(warnSpy.mock.calls[0][0]).toMatch(/<thead>/);
+
+    wrapper.unmount();
+  });
+
+  it("does not warn when the table renders neither a thead nor a bare row", async () => {
+    // No column slots, so the empty header slot has no default `<thead>` to fall back to and the
+    // table comes out childless — the only shape that actually reaches the bare-row guard.
+    const wrapper = mount(VcTable, {
+      props: { items, selectionMode: "multiple", selection: [] },
+      slots: { header: () => null },
+      global: { stubs: selectionStubs, plugins: [i18n], mocks: { $t: (key: string) => key } },
+    });
+
+    await nextTick();
+    await nextTick();
+    await nextTick();
+
+    const table = wrapper.find("table.vc-table__desktop").element;
+    expect(table.querySelector(":scope > thead")).toBeNull();
+    expect(table.querySelector(":scope > tr")).toBeNull();
+    expect(warnSpy).not.toHaveBeenCalled();
+
+    wrapper.unmount();
+  });
+
+  it("warns once about a missing thead, however many times the table re-renders", async () => {
+    const wrapper = mount(VcTable, {
+      props: { items, selectionMode: "multiple", selection: [] },
+      slots: {
+        default: () =>
+          h(
+            VcTableColumn,
+            { id: "name", title: "Name" },
+            { default: ({ item }: { item: VcTableItemType }) => h("span", String(item.name ?? "")) },
+          ),
+        header: () => h("tr", [h("th", "Name")]),
+      },
+      global: { stubs: selectionStubs, plugins: [i18n], mocks: { $t: (key: string) => key } },
+    });
+
+    await nextTick();
+    await nextTick();
+    await nextTick();
+
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+
+    await wrapper.setProps({ bordered: true });
+    await nextTick();
+    await wrapper.setProps({ bordered: false });
+    await nextTick();
+
+    expect(warnSpy).toHaveBeenCalledTimes(1);
 
     wrapper.unmount();
   });
@@ -2515,7 +2594,7 @@ describe("#header slot — DEV warning", () => {
     await nextTick();
 
     expect(warnSpy).toHaveBeenCalledTimes(1);
-    expect(warnSpy.mock.calls[0][0]).toMatch(/#header/);
+    expect(warnSpy.mock.calls[0][0]).toMatch(/renders one cell fewer/);
   });
 
   it("does not warn for #desktop-item rows, which carry no injected selection cell", async () => {
@@ -2538,7 +2617,7 @@ describe("#header slot — DEV warning", () => {
     await nextTick();
 
     expect(warnSpy).toHaveBeenCalledTimes(1);
-    expect(warnSpy.mock.calls[0][0]).toMatch(/#header/);
+    expect(warnSpy.mock.calls[0][0]).toMatch(/renders one cell fewer/);
   });
 
   it("warns only once across re-renders", async () => {
@@ -2588,7 +2667,7 @@ describe("#header slot — DEV warning", () => {
     await nextTick();
 
     expect(warnSpy).toHaveBeenCalledTimes(1);
-    expect(warnSpy.mock.calls[0][0]).toMatch(/#header/);
+    expect(warnSpy.mock.calls[0][0]).toMatch(/renders one cell fewer/);
   });
 
   it("warns for a one-cell shortfall even when the header kept its selection cell", async () => {
@@ -2680,7 +2759,7 @@ describe("#header slot — DEV warning", () => {
 
     expect(wrapper.find("table").exists()).toBe(true);
     expect(warnSpy).toHaveBeenCalledTimes(1);
-    expect(warnSpy.mock.calls[0][0]).toMatch(/#header/);
+    expect(warnSpy.mock.calls[0][0]).toMatch(/renders one cell fewer/);
   });
 
   it("warns when a VcTableColumn child registers after mount, leaving the header one cell short", async () => {
@@ -2747,7 +2826,7 @@ describe("#header slot — DEV warning", () => {
     await nextTick();
 
     expect(warnSpy).toHaveBeenCalledTimes(1);
-    expect(warnSpy.mock.calls[0][0]).toMatch(/#header/);
+    expect(warnSpy.mock.calls[0][0]).toMatch(/renders one cell fewer/);
   });
 
   it("stays silent in production builds", async () => {
@@ -2775,7 +2854,7 @@ describe("#header slot — DEV warning", () => {
     await nextTick();
 
     expect(warnSpy).toHaveBeenCalledTimes(1);
-    expect(warnSpy.mock.calls[0][0]).toMatch(/#header/);
+    expect(warnSpy.mock.calls[0][0]).toMatch(/renders one cell fewer/);
   });
 
   it("does not warn while a custom #desktop-skeleton owns the loading rows", async () => {
