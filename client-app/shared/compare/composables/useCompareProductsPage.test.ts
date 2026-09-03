@@ -536,7 +536,7 @@ describe("useCompareProductsPage", () => {
     });
 
     it("marks a Boolean-typed property as kind: 'boolean' and carries the raw true/false per product (for the check/x icon)", () => {
-      hoisted.state.compareEntries.value = [entry("p1", "cat-a"), entry("p2", "cat-a")];
+      hoisted.state.compareEntries.value = [entry("p1", "cat-a"), entry("p2", "cat-a"), entry("p3", "cat-a")];
       hoisted.state.fetchedProducts.value = [
         product("p1", {
           properties: [property({ name: "waterproof", propertyValueType: PropertyValueTypes.Boolean, value: true })],
@@ -544,17 +544,27 @@ describe("useCompareProductsPage", () => {
         product("p2", {
           properties: [property({ name: "waterproof", propertyValueType: PropertyValueTypes.Boolean, value: false })],
         }),
+        // The common shape in real catalog data: the property exists on the product but carries
+        // no value. It has to read as false, not as "no value" — see the null guard in
+        // getProductPropertyBooleanValue.
+        product("p3", {
+          properties: [property({ name: "waterproof", propertyValueType: PropertyValueTypes.Boolean, value: null })],
+        }),
       ];
 
       const { tableRows } = useCompareProductsPage();
       const waterproofRow = tableRows.value.find((row) => row.key === `${PROPERTY_ROW_KEY_PREFIX}waterproof`);
 
       expect(waterproofRow?.kind).toBe("boolean");
-      expect(waterproofRow?.boolValues).toEqual([true, false]);
+      expect(waterproofRow?.boolValues).toEqual([true, false, false]);
       // Regression: getProductPropertyValue used to run a Boolean property's value through
       // getPropertyValue twice — the second pass tested the already-formatted text ("Да"/"Нет")
       // for truthiness, and any non-empty string is truthy, so it always read as "true".
-      expect(waterproofRow?.values).toEqual(["common.labels.true_property", "common.labels.false_property"]);
+      expect(waterproofRow?.values).toEqual([
+        "common.labels.true_property",
+        "common.labels.false_property",
+        "common.labels.false_property",
+      ]);
     });
 
     it("leaves a non-Boolean property as kind: 'text' with no boolValues", () => {

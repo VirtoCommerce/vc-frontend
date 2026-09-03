@@ -1064,7 +1064,7 @@
           "differences": "Unterschiede"
         },
         "uncategorized": "Nicht kategorisiert",
-        "unresolved_category": "Nicht verfügbar",
+        "unresolved_category": "Unbekannte Kategorie",
         "differ_rows": "Unterschiede: {count} von {total} Zeilen",
         "clear_category": "Kategorie löschen",
         "remove_product": "Aus dem Vergleich entfernen",

@@ -1064,7 +1064,7 @@
           "differences": "Forskjeller"
         },
         "uncategorized": "Ukategorisert",
-        "unresolved_category": "Utilgjengelig",
+        "unresolved_category": "Ukjent kategori",
         "differ_rows": "Forskjellig: {count} av {total} rader",
         "clear_category": "Fjern kategori",
         "remove_product": "Fjern fra sammenligning",

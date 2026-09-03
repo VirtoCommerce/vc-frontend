@@ -1064,7 +1064,7 @@
           "differences": "Skillnader"
         },
         "uncategorized": "Osorterad",
-        "unresolved_category": "Ej tillgänglig",
+        "unresolved_category": "Okänd kategori",
         "differ_rows": "Skiljer sig: {count} av {total} rader",
         "clear_category": "Rensa kategori",
         "remove_product": "Ta bort från jämförelse",

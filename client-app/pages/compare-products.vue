@@ -39,16 +39,15 @@
           </div>
         </template>
 
-        <div
+        <VcTypography
           ref="emptyStateHeadingRef"
+          tag="h3"
           data-test-id="compare-empty-heading"
           class="compare-products__empty-heading"
           tabindex="-1"
         >
-          <VcTypography tag="h3">
-            {{ t("pages.compare.empty.title") }}
-          </VcTypography>
-        </div>
+          {{ t("pages.compare.empty.title") }}
+        </VcTypography>
 
         <p class="compare-products__empty-description">
           {{ t("pages.compare.empty.description", { limit: productsLimit }) }}
@@ -141,7 +140,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onUnmounted, ref, watch } from "vue";
+import { computed, nextTick, onUnmounted, useTemplateRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
@@ -190,7 +189,9 @@ const {
 
 const isEmpty = computed(() => products.value.length === 0);
 
-const emptyStateHeadingRef = ref<HTMLElement | null>(null);
+// Focus lands on the real <h3>, not a wrapper — a wrapper div has no role, so a screen reader
+// would read the text but lose "heading level 3".
+const emptyStateHeadingRef = useTemplateRef<{ $el: HTMLElement }>("emptyStateHeadingRef");
 
 watch(isEmpty, async (empty) => {
   if (!empty) {
@@ -198,7 +199,7 @@ watch(isEmpty, async (empty) => {
   }
 
   await nextTick();
-  emptyStateHeadingRef.value?.focus();
+  emptyStateHeadingRef.value?.$el?.focus();
 });
 
 function removeProduct({ product, entry }: ICompareDisplayProduct) {
