@@ -85,6 +85,11 @@ const createWrapper = createWrapperFactory(mount, CustomerOrders, {
       VcIcon: true,
       VcLink: true,
       VcEmptyView: true,
+      VcChip: {
+        props: { closable: Boolean },
+        emits: ["close", "click"],
+        template: `<span class="chip" @click="$emit('click')"><slot /><button v-if="closable" class="chip-close" @click.stop="$emit('close')" /></span>`,
+      },
       SalesRepOrdersFilters: true,
       OrderStatus: true,
     },
@@ -256,5 +261,44 @@ describe("CustomerOrders", () => {
     const customerCrumb = items.find((item) => item.title === "MERCURY123");
 
     expect(customerCrumb?.route).toEqual({ name: CUSTOMER_PROFILE_ROUTE_NAME, params: { organizationId: "org-1" } });
+  });
+
+  it("shows a chip for every applied filter", () => {
+    state.statusOptions.value = [{ name: "New", label: "New", count: 2 }];
+    state.filters.value = { statuses: ["New"], customerNames: ["ACME"], startDate: "2026-05-01", endDate: undefined };
+
+    const wrapper = createWrapper();
+
+    // one per applied filter, plus the reset chip
+    expect(wrapper.findAll(".chip")).toHaveLength(4);
+    expect(wrapper.text()).toContain("New");
+    expect(wrapper.text()).toContain("ACME");
+  });
+
+  it("shows no chips while nothing is filtered", () => {
+    const wrapper = createWrapper();
+
+    expect(wrapper.findAll(".chip")).toHaveLength(0);
+  });
+
+  it("drops a single filter when its chip is closed", async () => {
+    state.statusOptions.value = [{ name: "New", label: "New", count: 2 }];
+    state.filters.value = { statuses: ["New"], customerNames: ["ACME"], startDate: undefined, endDate: undefined };
+
+    const wrapper = createWrapper();
+    await wrapper.findAll(".chip-close")[0].trigger("click");
+
+    expect(state.filters.value).toMatchObject({ statuses: [], customerNames: ["ACME"] });
+  });
+
+  it("clears every filter from the reset chip", async () => {
+    state.filters.value = { statuses: ["New"], customerNames: [], startDate: "2026-05-01", endDate: undefined };
+
+    const wrapper = createWrapper();
+    const chips = wrapper.findAll(".chip");
+
+    await chips[chips.length - 1].trigger("click");
+
+    expect(state.filters.value).toEqual({ statuses: [], customerNames: [], startDate: undefined, endDate: undefined });
   });
 });

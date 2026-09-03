@@ -147,7 +147,6 @@
         "invalid_range": "Ogiltigt datumintervall.",
         "order_status": "Välj beställningsstatus",
         "customer": "Välj kund",
-        "status_option": "{0} ({1})",
         "reset": "Återställ",
         "apply": "Tillämpa",
         "custom_date": "Anpassat datum",

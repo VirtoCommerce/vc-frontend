@@ -147,7 +147,6 @@
         "invalid_range": "Ugyldig datoområde.",
         "order_status": "Velg bestillingsstatus",
         "customer": "Velg kunde",
-        "status_option": "{0} ({1})",
         "reset": "Tilbakestill",
         "apply": "Bruk",
         "custom_date": "Tilpasset dato",

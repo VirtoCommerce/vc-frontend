@@ -40,9 +40,22 @@
         <SalesRepOrdersFilters
           :statuses="statusOptions"
           :customers="customerOptions"
+          :applied="filters"
           :disabled="loading"
           @change="applyFilters"
         />
+      </div>
+
+      <div v-if="filterChips.length" class="customer-orders__chips">
+        <VcChip v-for="chip in filterChips" :key="chip.id" color="secondary" closable @close="removeFilterChip(chip)">
+          {{ chip.label }}
+        </VcChip>
+
+        <VcChip color="secondary" variant="outline" clickable @click="resetFilters">
+          <span>{{ t("common.buttons.reset_filters") }}</span>
+
+          <VcIcon name="reset" />
+        </VcChip>
       </div>
 
       <!-- A failed read keeps the previous rows, so the failure needs its own view (VCST-5586). -->
@@ -148,7 +161,7 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
-const { t } = useI18n();
+const { t, d } = useI18n();
 
 const {
   customer,
@@ -208,6 +221,82 @@ function applyFilters(value: SalesRepOrdersFilterDataType): void {
   page.value = 1;
 }
 
+// "YYYY-MM-DD" is a calendar day, so it is built in local time - new Date(string) parses it as UTC and
+// renders the previous day west of Greenwich.
+function toLocalDate(value: string): Date {
+  const [year, month, day] = value.split("-").map(Number);
+
+  return new Date(year, month - 1, day);
+}
+
+type FilterChipType = {
+  id: string;
+  field: keyof SalesRepOrdersFilterDataType;
+  value?: string;
+  label: string;
+};
+
+const filterChips = computed<FilterChipType[]>(() => {
+  const { statuses, customerNames, startDate, endDate } = filters.value;
+  const chips: FilterChipType[] = [];
+
+  for (const status of statuses) {
+    chips.push({
+      id: `statuses:${status}`,
+      field: "statuses",
+      value: status,
+      label: statusOptions.value.find((option) => option.name === status)?.label ?? status,
+    });
+  }
+
+  for (const name of customerNames ?? []) {
+    chips.push({ id: `customerNames:${name}`, field: "customerNames", value: name, label: name });
+  }
+
+  if (startDate) {
+    chips.push({
+      id: "startDate",
+      field: "startDate",
+      label: t("common.labels.starts_from", [d(toLocalDate(startDate))]),
+    });
+  }
+
+  if (endDate) {
+    chips.push({ id: "endDate", field: "endDate", label: t("common.labels.ends_to", [d(toLocalDate(endDate))]) });
+  }
+
+  return chips;
+});
+
+function removeFilterChip(chip: FilterChipType): void {
+  const next: SalesRepOrdersFilterDataType = {
+    ...filters.value,
+    statuses: [...filters.value.statuses],
+    customerNames: [...(filters.value.customerNames ?? [])],
+  };
+
+  switch (chip.field) {
+    case "statuses":
+      next.statuses = next.statuses.filter((value) => value !== chip.value);
+      break;
+    case "customerNames":
+      next.customerNames = next.customerNames?.filter((value) => value !== chip.value);
+      break;
+    case "startDate":
+      next.startDate = undefined;
+      break;
+    case "endDate":
+      next.endDate = undefined;
+      break;
+  }
+
+  applyFilters(next);
+}
+
+function resetFilters(): void {
+  applyFilters({ statuses: [], customerNames: [], startDate: undefined, endDate: undefined });
+}
+
 function orderRoute(item: SalesRepCustomerOrderRowType): RouteLocationRaw {
   return salesRepOrderRoute(item, props.organizationId);
 }
@@ -262,6 +351,10 @@ const breadcrumbs = useBreadcrumbs(() => {
 
   &__search-input {
     @apply grow;
+  }
+
+  &__chips {
+    @apply flex flex-wrap gap-x-3 gap-y-2;
   }
 
   &__order-link {

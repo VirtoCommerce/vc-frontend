@@ -63,7 +63,11 @@
 
                 <VcCheckboxGroup v-model="draft.statuses" class="sales-rep-orders-filters__status-list">
                   <VcCheckbox v-for="status in statuses" :key="status.name" :value="status.name">
-                    {{ t("sales_rep.customer_orders.filters.status_option", [status.label, status.count]) }}
+                    <div class="sales-rep-orders-filters__option">
+                      <span class="sales-rep-orders-filters__option-label">{{ status.label }}</span>
+
+                      <VcBadge variant="outline" size="sm" rounded>{{ status.count }}</VcBadge>
+                    </div>
                   </VcCheckbox>
                 </VcCheckboxGroup>
               </div>
@@ -74,7 +78,11 @@
 
                 <VcCheckboxGroup v-model="draft.customerNames" class="sales-rep-orders-filters__status-list">
                   <VcCheckbox v-for="customer in customers" :key="customer.name" :value="customer.name">
-                    {{ t("sales_rep.customer_orders.filters.status_option", [customer.label, customer.count]) }}
+                    <div class="sales-rep-orders-filters__option">
+                      <span class="sales-rep-orders-filters__option-label">{{ customer.label }}</span>
+
+                      <VcBadge variant="outline" size="sm" rounded>{{ customer.count }}</VcBadge>
+                    </div>
                   </VcCheckbox>
                 </VcCheckboxGroup>
               </div>
@@ -111,13 +119,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import type { SalesRepFacetOptionType, SalesRepOrdersFilterDataType } from "../types";
 
 interface IProps {
   statuses: SalesRepFacetOptionType[];
   customers?: SalesRepFacetOptionType[];
+  applied?: SalesRepOrdersFilterDataType;
   disabled?: boolean;
 }
 
@@ -127,7 +136,7 @@ interface IEmits {
 
 const emit = defineEmits<IEmits>();
 
-withDefaults(defineProps<IProps>(), { customers: () => [], disabled: false });
+const props = withDefaults(defineProps<IProps>(), { customers: () => [], applied: undefined, disabled: false });
 
 const { t } = useI18n();
 
@@ -137,6 +146,10 @@ type RangeType = { id: string; label: string; startDate?: string; endDate?: stri
 
 function emptyFilter(): SalesRepOrdersFilterDataType {
   return { statuses: [], customerNames: [], startDate: undefined, endDate: undefined };
+}
+
+function cloneFilter(value: SalesRepOrdersFilterDataType): SalesRepOrdersFilterDataType {
+  return { ...value, statuses: [...value.statuses], customerNames: [...(value.customerNames ?? [])] };
 }
 
 function toDateOnly(date: Date): string {
@@ -224,11 +237,7 @@ function applyRange(range: RangeType): void {
 }
 
 function apply(): void {
-  applied.value = {
-    ...draft.value,
-    statuses: [...draft.value.statuses],
-    customerNames: [...(draft.value.customerNames ?? [])],
-  };
+  applied.value = cloneFilter(draft.value);
   emit("change", applied.value);
 }
 
@@ -238,6 +247,24 @@ function reset(): void {
   selectedRange.value = ranges.value[0];
   emit("change", applied.value);
 }
+
+// The page can drop a single filter from its chips, so the popover follows what is actually applied.
+watch(
+  () => props.applied,
+  (value) => {
+    if (!value) {
+      return;
+    }
+
+    applied.value = cloneFilter(value);
+    draft.value = cloneFilter(value);
+
+    if (!value.startDate && !value.endDate) {
+      selectedRange.value = ranges.value[0];
+    }
+  },
+  { deep: true },
+);
 </script>
 
 <style lang="scss">
@@ -281,6 +308,14 @@ function reset(): void {
 
   &__status-list {
     @apply mt-2 space-y-3.5;
+  }
+
+  &__option {
+    @apply flex w-full max-w-full items-center gap-1;
+  }
+
+  &__option-label {
+    @apply min-w-0 truncate;
   }
 }
 </style>

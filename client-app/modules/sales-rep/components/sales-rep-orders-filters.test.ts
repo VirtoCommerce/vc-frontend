@@ -41,6 +41,7 @@ const createWrapper = createWrapperFactory(mount, SalesRepOrdersFilters, {
         template: "<div><slot /></div>",
       },
       VcCheckbox: { props: ["value"], template: "<label><slot /></label>" },
+      VcBadge: { template: '<span class="badge"><slot /></span>' },
       VcLabel: true,
       VcInputDetails: true,
       VcIcon: true,
@@ -124,6 +125,29 @@ describe("SalesRepOrdersFilters", () => {
       startDate: undefined,
       endDate: undefined,
     });
+  });
+
+  it("shows each option's order count beside its label", () => {
+    const wrapper = createWrapper();
+    const option = wrapper.find(".sales-rep-orders-filters__option");
+
+    expect(option.find(".sales-rep-orders-filters__option-label").text()).toBe("On hold");
+    expect(option.find(".badge").text()).toBe("4");
+  });
+
+  it("follows the applied filter, so a chip removed on the page clears its checkbox", async () => {
+    const wrapper = createWrapper();
+
+    await statuses(wrapper).setValue(["on-hold"]);
+    await applyButton(wrapper).trigger("click");
+
+    expect(statuses(wrapper).props("modelValue")).toEqual(["on-hold"]);
+
+    await wrapper.setProps({
+      applied: { statuses: [], customerNames: [], startDate: undefined, endDate: undefined },
+    });
+
+    expect(statuses(wrapper).props("modelValue")).toEqual([]);
   });
 
   it("offers a customer group only where the page passes customers", async () => {

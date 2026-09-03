@@ -147,7 +147,6 @@
         "invalid_range": "Nieprawidłowy zakres dat.",
         "order_status": "@:common.labels.status",
         "customer": "Wybierz klienta",
-        "status_option": "{0} ({1})",
         "reset": "Resetuj",
         "apply": "Zastosuj",
         "custom_date": "Data niestandardowa",

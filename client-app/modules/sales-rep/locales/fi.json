@@ -147,7 +147,6 @@
         "invalid_range": "Virheellinen päivämääräväli.",
         "order_status": "Valitse tilauksen tila",
         "customer": "Valitse asiakas",
-        "status_option": "{0} ({1})",
         "reset": "Nollaa",
         "apply": "Käytä",
         "custom_date": "Mukautettu päivämäärä",
