@@ -328,9 +328,8 @@ import { breakpointsTailwind, onClickOutside, useBreakpoints } from "@vueuse/cor
 import { computed, onMounted, ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
-import { usePageHead } from "@/core/composables";
+import { useErrorsTranslator, usePageHead } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
-import { B2B_ROLES } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { PlatformPermissions, XApiPermissions } from "@/core/enums";
 import { getFilterExpressionFromFacets } from "@/core/utilities";
@@ -341,17 +340,21 @@ import {
   InviteMemberModal,
   MemberStatus,
   MembersDropdownMenu,
+  translateRoleName,
   useOrganizationContacts,
 } from "@/shared/company";
+import { useAssignableCompanyRoles } from "@/shared/company/composables/useAssignableCompanyRoles";
 import { useOrganizationContactsFilterFacets } from "@/shared/company/composables/useOrganizationContactsFilterFacets";
 import { ContactStatus } from "@/shared/company/types";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
+import type { IdentityErrorInfoType } from "@/core/api/graphql/types";
 import type { FacetItemType, FacetValueItemType, ISortInfo } from "@/core/types";
 import type { ExtendedContactType } from "@/shared/company";
 import type { INotification } from "@/shared/notification";
 
-const { t } = useI18n();
+const { t, te } = useI18n();
+const { translate: translateIdentityError } = useErrorsTranslator<IdentityErrorInfoType>("identity_error");
 
 usePageHead({
   title: t("pages.company.members.meta.title"),
@@ -389,7 +392,8 @@ const {
   applyFacets,
   resetFacets,
   resetFacetItem,
-} = useOrganizationContactsFilterFacets();
+} = useOrganizationContactsFilterFacets(organization.value!.id);
+const { roles: assignableRoles, loading: assignableRolesLoading } = useAssignableCompanyRoles(organization.value!.id);
 const { openModal } = useModal();
 const router = useRouter();
 const breakpoints = useBreakpoints(breakpointsTailwind);
@@ -667,12 +671,17 @@ async function handleResendInvite(contact: ExtendedContactType): Promise<void> {
 }
 
 function openEditCustomerRoleModal(contact: ExtendedContactType): void {
+  const currentRole = contact.extended.roles[0];
+  const currentRoleId =
+    assignableRoles.value.find((role) => role.id === currentRole?.id || role.name === currentRole?.name)?.id ??
+    currentRole?.id;
+
   const closeEditCustomerRoleModal = openModal({
     component: EditCustomerRoleModal,
     props: {
-      roles: B2B_ROLES,
-      currentRoleId: contact.extended.roles[0]?.id,
-      loading: contactsLoading,
+      roles: assignableRoles.value.map((role) => ({ ...role, name: translateRoleName(t, te, role) })),
+      currentRoleId,
+      loading: computed(() => contactsLoading.value || assignableRolesLoading.value),
 
       async onConfirm(selectedRoleId: string): Promise<void> {
         const result = await changeContactOrganizationRole({
@@ -686,10 +695,15 @@ function openEditCustomerRoleModal(contact: ExtendedContactType): void {
         };
 
         if (!result?.succeeded) {
+          const errorText = result?.errors
+            ?.map((error) => error && translateIdentityError(error))
+            .filter((message): message is string => !!message)
+            .join(" ");
+
           notifications.error({
             ...notification,
 
-            text: t("common.messages.role_update_failed"),
+            text: errorText || t("common.messages.role_update_failed"),
           });
           return;
         }
