@@ -2250,10 +2250,23 @@ describe("toggleSelectAll — commit gating", () => {
     expect(wrapper.emitted("update:selection")?.[0][0]).toEqual(["1", "2", "3"]);
   });
 
-  it("does not repeat a key when two rows resolve to the same one", async () => {
-    // Pins behaviour the previous accumulating `includes` loop already had: `getItemKey` falls
-    // back to the row index, so an item without `id` can collide with another row's id, and a
-    // repeated key would cost an extra click (toggleRow splices one occurrence).
+  it("does not repeat a key when two rows carry the same id", async () => {
+    // Duplicate ids are the collision `getItemKey` cannot resolve, so the Set still earns its
+    // keep: a repeated key would cost an extra click (toggleRow splices one occurrence).
+    const { wrapper, getScope } = await mountCapturingHeaderScope("multiple", {
+      items: [
+        { id: "1", name: "Alice" },
+        { id: "1", name: "Bob" },
+      ],
+    });
+
+    getScope().toggleSelectAll();
+    await nextTick();
+
+    expect(wrapper.emitted("update:selection")?.[0][0]).toEqual(["1"]);
+  });
+
+  it("keys a row without an id apart from a real id that matches its index", async () => {
     const { wrapper, getScope } = await mountCapturingHeaderScope("multiple", {
       items: [{ id: "1", name: "Alice" }, { name: "Bob" }],
     });
@@ -2261,7 +2274,31 @@ describe("toggleSelectAll — commit gating", () => {
     getScope().toggleSelectAll();
     await nextTick();
 
-    expect(wrapper.emitted("update:selection")?.[0][0]).toEqual(["1"]);
+    expect(wrapper.emitted("update:selection")?.[0][0]).toEqual(["1", "__row_1"]);
+  });
+});
+
+describe("row selection — id-less rows", () => {
+  // `getItemKey` used to fall back to the bare index, so `{ id: "1" }` and an id-less sibling
+  // at index 1 shared the key "1" and selected each other on a plain click.
+  const collidingItems: VcTableItemType[] = [{ id: "1", name: "Alice" }, { name: "Bob" }];
+
+  it("selects only the clicked row, not the one whose id matches its index", async () => {
+    const wrapper = await mountSelectable({ items: collidingItems, selectionMode: "multiple", selection: [] });
+
+    const rowCheckboxes = wrapper.findAll("tbody .checkbox-stub");
+    await rowCheckboxes[1].trigger("click");
+
+    const emittedKeys = wrapper.emitted("update:selection")?.[0][0] as string[];
+    expect(emittedKeys).toEqual(["__row_1"]);
+
+    await wrapper.setProps({ selection: emittedKeys });
+    await nextTick();
+
+    const selectedFlags = wrapper
+      .findAll(".vc-table__row")
+      .map((row) => row.classes().includes("vc-table__row--selected"));
+    expect(selectedFlags).toEqual([false, true]);
   });
 });
 
@@ -2354,6 +2391,56 @@ describe("#header slot — DEV warning", () => {
     await mountSelectable({ headerSlot: "without-selection" });
 
     expect(warnSpy).not.toHaveBeenCalled();
+  });
+
+  it("warns when the custom header renders bare rows without a <thead>", async () => {
+    const wrapper = mount(VcTable, {
+      props: { items, selectionMode: "multiple", selection: [] },
+      slots: {
+        default: () =>
+          h(
+            VcTableColumn,
+            { id: "name", title: "Name" },
+            { default: ({ item }: { item: VcTableItemType }) => h("span", String(item.name ?? "")) },
+          ),
+        // Vue appends these straight to the table instead of foster-parenting them into a thead.
+        header: () => h("tr", [h("th", "Name")]),
+      },
+      global: { stubs: selectionStubs, plugins: [i18n], mocks: { $t: (key: string) => key } },
+    });
+
+    await nextTick();
+    await nextTick();
+    await nextTick();
+
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+    expect(warnSpy.mock.calls[0][0]).toMatch(/<thead>/);
+
+    wrapper.unmount();
+  });
+
+  it("does not warn for a header slot that renders nothing", async () => {
+    const wrapper = mount(VcTable, {
+      props: { items, selectionMode: "multiple", selection: [] },
+      slots: {
+        default: () =>
+          h(
+            VcTableColumn,
+            { id: "name", title: "Name" },
+            { default: ({ item }: { item: VcTableItemType }) => h("span", String(item.name ?? "")) },
+          ),
+        header: () => null,
+      },
+      global: { stubs: selectionStubs, plugins: [i18n], mocks: { $t: (key: string) => key } },
+    });
+
+    await nextTick();
+    await nextTick();
+    await nextTick();
+
+    expect(warnSpy).not.toHaveBeenCalled();
+
+    wrapper.unmount();
   });
 
   it("does not warn for a header that renders no cells at all", async () => {

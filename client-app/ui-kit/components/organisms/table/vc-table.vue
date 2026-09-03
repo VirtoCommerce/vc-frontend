@@ -393,6 +393,7 @@ const props = withDefaults(
      * Selected row keys (v-model:selection). Parent-owned, so selection persists across
      * `items`/page/sort/filter changes. Accepts `string | number` keys but compares them
      * as strings (matching `getItemKey`), so numeric `[1, 2]` still matches `id: 1` / `id: 2`.
+     * Rows without an `id` are keyed `__row_<index>` — give items an `id` for stable selection.
      */
     selection?: VcTableSelectionKeyType[];
     /** Predicate: rows returning `false` get a disabled control and are excluded from select-all. */
@@ -647,8 +648,30 @@ function syncRetryListener() {
 
 const desktopTableRef = useTemplateRef<HTMLTableElement | null>("desktopTableRef");
 let headerAlignmentWarned = false;
+let headerTheadWarned = false;
 
-function warnOnMisalignedCustomHeader(): void {
+function warnOnCustomHeaderIssues(): void {
+  const table = desktopTableRef.value;
+
+  if (!table) {
+    return;
+  }
+
+  // Vue appends bare `<tr>`s straight to the table instead of foster-parenting them, so
+  // `headAttrs` lands nowhere and the alignment check below cannot run either.
+  if (!table.querySelector(":scope > thead")) {
+    if (!headerTheadWarned && table.querySelector(":scope > tr")) {
+      headerTheadWarned = true;
+
+      // eslint-disable-next-line no-console
+      console.warn(
+        "VcTable: the `#header` slot must wrap its rows in a `<thead>`. Bare `<tr>`s get no sticky positioning from `headAttrs`, and the header/body alignment check is skipped.",
+      );
+    }
+
+    return;
+  }
+
   // Only the default skeleton and the VcTableColumn rows inject selection cells.
   const bodyHasSelectionCell = props.loading ? !slots["desktop-skeleton"] : hasColumnSlots.value;
 
@@ -657,9 +680,9 @@ function warnOnMisalignedCustomHeader(): void {
   }
 
   // Direct descendants only: column slots render consumer content, a nested table included.
-  const rows = desktopTableRef.value?.querySelectorAll<HTMLTableRowElement>(":scope > thead > tr");
+  const rows = table.querySelectorAll<HTMLTableRowElement>(":scope > thead > tr");
 
-  if (!rows?.length) {
+  if (!rows.length) {
     return;
   }
 
@@ -694,7 +717,7 @@ onMounted(() => {
 
   if (import.meta.env.DEV && slots.header) {
     // columns register on child mount, so the header renders a tick later
-    void nextTick(warnOnMisalignedCustomHeader);
+    void nextTick(warnOnCustomHeaderIssues);
   }
 });
 
@@ -704,7 +727,7 @@ onUpdated(() => {
 
   // Columns, selection and the desktop table itself can all appear after mount.
   if (import.meta.env.DEV && slots.header) {
-    warnOnMisalignedCustomHeader();
+    warnOnCustomHeaderIssues();
   }
 });
 
@@ -820,7 +843,9 @@ function getAriaSort(columnId: string): "ascending" | "descending" | "none" {
  */
 function getItemKey(item: T, index: number): string {
   const itemWithId = item as { id?: string | number };
-  return String(itemWithId.id ?? index);
+  // Prefixed so an id-less row cannot collide with another row's `id` (`{ id: "1" }` + a
+  // sibling without one at index 1 selected both).
+  return String(itemWithId.id ?? `__row_${index}`);
 }
 
 const tableId = useComponentId("vc-table");

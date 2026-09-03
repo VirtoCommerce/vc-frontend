@@ -26,7 +26,8 @@ declare global {
   /**
    * A row selection key. Accepted as `string | number` on input, but VcTable
    * normalizes keys to strings for all internal comparisons and emits them back
-   * as strings (consistent with `getItemKey`, which stringifies `item.id`).
+   * as strings (consistent with `getItemKey`, which stringifies `item.id`). A row
+   * without an `id` falls back to `__row_<index>`, which no real `id` can collide with.
    */
   type VcTableSelectionKeyType = string | number;
 
