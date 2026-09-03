@@ -11,6 +11,10 @@
   --vc-radius: 0.5rem;
 }
 
+html {
+  scroll-padding-top: var(--vc-app-header-height, 0px);
+}
+
 @include meta.load-css("print");
 @include meta.load-css("dark");
 

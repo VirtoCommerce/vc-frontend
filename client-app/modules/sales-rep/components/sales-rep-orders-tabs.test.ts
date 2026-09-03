@@ -111,6 +111,14 @@ describe("the order status tabs of a widget inside a layout", () => {
     expect(wrapper.findAll(".sales-rep-rule-chips__tab")).toHaveLength(3);
   });
 
+  // The chips' count element is opt-in (documents category tabs); rules without counts render none.
+  it("renders no count element when the rules carry no counts", () => {
+    mocks.filterRules = CATALOG;
+    const { wrapper } = mountOrders();
+
+    expect(wrapper.find(".sales-rep-rule-chips__count").exists()).toBe(false);
+  });
+
   it("clears the chosen chip once the tab is saved away", async () => {
     mocks.filterRules = CATALOG;
     const { wrapper, saved, filter } = mountOrders();
