@@ -1055,7 +1055,7 @@ export type CustomerOrderStatisticsPeriodArgs = {
 };
 
 export type CustomerOrderStatisticsComparison = {
-  /** Current average minus the previous one. */
+  /** Current average minus previous average (amount, formatted amount and currency). */
   averageChange: MoneyType;
   /** Percentage change of average; null when the previous average is zero. */
   averageChangePercent?: Maybe<Scalars['Decimal']['output']>;
@@ -2136,6 +2136,8 @@ export type InputChangeOrganizationContactRoleType = {
   memberId: Scalars['String']['input'];
   /** Role IDs or names to be assigned to the user within the organization */
   roleIds?: InputMaybe<Array<Scalars['String']['input']>>;
+  /** ID of store whose company-role whitelist should be used for validation. When omitted, the member's own store is used */
+  storeId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type InputChangeOrganizationLogoCommandType = {
@@ -3419,6 +3421,17 @@ export type LoyaltyBalanceResult = {
   resultBalance: Scalars['Decimal']['output'];
 };
 
+/** Per-SKU accumulation for a PerSku mission. */
+export type LoyaltyMissionProgressItem = {
+  /** The accumulated quantity. */
+  currentQuantity: Scalars['Int']['output'];
+  product?: Maybe<Product>;
+  /** The SKU product id. */
+  productId?: Maybe<Scalars['String']['output']>;
+  /** The target quantity. */
+  targetQuantity: Scalars['Int']['output'];
+};
+
 /** Represents a log entry for a loyalty program operation. */
 export type LoyaltyOperationLog = {
   /** The amount involved in the operation. */
@@ -3460,6 +3473,74 @@ export type LoyaltyOperationLogObject = {
   orderNumber?: Maybe<Scalars['String']['output']>;
   /** The type of the object associated with the operation. */
   type: Scalars['String']['output'];
+};
+
+/** Represents a loyalty mission together with the current user's progress. */
+export type LoyaltyUserMission = {
+  /** The mission banner image URL. */
+  bannerUrl?: Maybe<Scalars['String']['output']>;
+  /** The date and time when the mission was completed. */
+  completedDate?: Maybe<Scalars['DateTime']['output']>;
+  /** The accumulated value as money in the goal currency. Null when the goal has no currency (non-OrderValue goals). */
+  currentMoneyValue?: Maybe<MoneyType>;
+  /** The accumulated value towards the mission target. */
+  currentValue?: Maybe<Scalars['Decimal']['output']>;
+  /** Whole days left until the mission ends. Null when the mission has no end date. */
+  daysRemaining?: Maybe<Scalars['Int']['output']>;
+  /** The localized mission description. */
+  description?: Maybe<Scalars['String']['output']>;
+  /** The mission end date. */
+  endDate?: Maybe<Scalars['DateTime']['output']>;
+  /** Whether the user has started the mission. */
+  isStarted?: Maybe<Scalars['Boolean']['output']>;
+  /** Per-SKU progress items for PerSku missions. */
+  items?: Maybe<Array<Maybe<LoyaltyMissionProgressItem>>>;
+  /** The localized mission name. */
+  localizedName?: Maybe<Scalars['String']['output']>;
+  /** The mission identifier. */
+  missionId?: Maybe<Scalars['String']['output']>;
+  /** The mission type: OrderValue, OrderCount, PerSkuAny or PerSkuAll. */
+  missionType?: Maybe<Scalars['String']['output']>;
+  /** The internal mission name. */
+  name?: Maybe<Scalars['String']['output']>;
+  /** The completion percentage (0-100). */
+  percentage?: Maybe<Scalars['Decimal']['output']>;
+  /** The end of the mission occurrence window. */
+  periodEnd?: Maybe<Scalars['DateTime']['output']>;
+  /** The start of the mission occurrence window. */
+  periodStart?: Maybe<Scalars['DateTime']['output']>;
+  /** The progress identifier. Null when the user has not started the mission yet. */
+  progressId?: Maybe<Scalars['String']['output']>;
+  /** The loyalty points granted on completion. */
+  rewardPoints?: Maybe<MoneyType>;
+  /** The mission start date. */
+  startDate?: Maybe<Scalars['DateTime']['output']>;
+  /** The progress status (InProgress, Completed, Expired). */
+  status?: Maybe<Scalars['String']['output']>;
+  /** The target value as money in the goal currency. Null when the goal has no currency (non-OrderValue goals). */
+  targetMoneyValue?: Maybe<MoneyType>;
+  /** The mission target value. */
+  targetValue?: Maybe<Scalars['Decimal']['output']>;
+};
+
+/** A connection from an object to a list of objects of type `LoyaltyUserMission`. */
+export type LoyaltyUserMissionConnection = {
+  /** A list of all of the edges returned in the connection. */
+  edges?: Maybe<Array<Maybe<LoyaltyUserMissionEdge>>>;
+  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
+  items?: Maybe<Array<Maybe<LoyaltyUserMission>>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
+  totalCount?: Maybe<Scalars['Int']['output']>;
+};
+
+/** An edge in a connection from an object to another object of type `LoyaltyUserMission`. */
+export type LoyaltyUserMissionEdge = {
+  /** A cursor for use in pagination */
+  cursor: Scalars['String']['output'];
+  /** The item at the end of the edge */
+  node?: Maybe<LoyaltyUserMission>;
 };
 
 /** A connection from an object to a list of objects of type `MemberAddress`. */
@@ -4795,8 +4876,12 @@ export type OrderTotalType = {
 /** Organization info */
 export type Organization = {
   addresses?: Maybe<MemberAddressConnection>;
+  /** Real platform roles a company member can be assigned in this store - the intersection of the store's role whitelist and the roles that actually exist, unlike contactRoles this includes roles nobody has yet and excludes whitelist entries that don't resolve to a real role. */
+  assignableRoles?: Maybe<Array<Maybe<RoleType>>>;
   /** Business category */
   businessCategory?: Maybe<Scalars['String']['output']>;
+  /** Distinct roles currently assigned to at least one member of this organization - membership roles and members' global (account-level) roles alike. Useful for building a members-list role filter that only offers roles with results. */
+  contactRoles?: Maybe<Array<Maybe<RoleType>>>;
   contacts?: Maybe<ContactConnection>;
   /** Default billing address */
   defaultBillingAddress?: Maybe<MemberAddressType>;
@@ -4842,13 +4927,29 @@ export type OrganizationAddressesArgs = {
 
 
 /** Organization info */
+export type OrganizationAssignableRolesArgs = {
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+/** Organization info */
+export type OrganizationContactRolesArgs = {
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+/** Organization info */
 export type OrganizationContactsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   roleIds?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   searchPhrase?: InputMaybe<Scalars['String']['input']>;
   sort?: InputMaybe<Scalars['String']['input']>;
   statuses?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -5804,6 +5905,7 @@ export type Query = {
   fulfillmentCenters?: Maybe<FulfillmentCenterConnection>;
   getSavedForLater?: Maybe<CartType>;
   loyaltyBalance?: Maybe<LoyaltyBalanceResult>;
+  loyaltyMissionProgress?: Maybe<LoyaltyUserMissionConnection>;
   loyaltyPointsHistory?: Maybe<LoyaltyOperationLogConnection>;
   me?: Maybe<UserType>;
   menu?: Maybe<MenuLinkListType>;
@@ -6152,6 +6254,22 @@ export type QueryGetSavedForLaterArgs = {
 
 export type QueryLoyaltyBalanceArgs = {
   orderId?: InputMaybe<Scalars['String']['input']>;
+  userId?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryLoyaltyMissionProgressArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  completedEndDate?: InputMaybe<Scalars['DateTime']['input']>;
+  completedStartDate?: InputMaybe<Scalars['DateTime']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  isStarted?: InputMaybe<Scalars['Boolean']['input']>;
+  keyword?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
+  statuses?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  storeId: Scalars['String']['input'];
   userId?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -9090,6 +9208,15 @@ export type UpdateOrganizationMutationVariables = Exact<{
 
 export type UpdateOrganizationMutation = { updateOrganization?: { id: string } };
 
+export type GetAssignableCompanyRolesQueryVariables = Exact<{
+  id: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
+  storeId?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type GetAssignableCompanyRolesQuery = { organization?: { assignableRoles?: Array<{ id: string, name: string }> } };
+
 export type GetCurrentOrganizationAddressesQueryVariables = Exact<{
   after?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -9113,6 +9240,14 @@ export type GetOrganizationAddressesQueryVariables = Exact<{
 
 
 export type GetOrganizationAddressesQuery = { organization?: { addresses?: { totalCount?: number, items?: Array<{ id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, isDefault: boolean, isFavorite: boolean, phone?: string, email?: string, description?: string, addressType?: number }> } } };
+
+export type GetOrganizationContactRolesQueryVariables = Exact<{
+  id: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
+}>;
+
+
+export type GetOrganizationContactRolesQuery = { organization?: { contactRoles?: Array<{ id: string, name: string }> } };
 
 export type GetOrganizationContactsQueryVariables = Exact<{
   id: Scalars['String']['input'];
@@ -9368,8 +9503,10 @@ export const ResendOrganizationInviteDocument = {"kind":"Document","definitions"
 export const RevokeOrganizationInviteDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RevokeOrganizationInvite"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"InputRevokeOrganizationInviteType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"revokeOrganizationInvite"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<RevokeOrganizationInviteMutation, RevokeOrganizationInviteMutationVariables>;
 export const UnlockOrganizationContactDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UnlockOrganizationContact"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"InputLockUnlockOrganizationContactType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"unlockOrganizationContact"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<UnlockOrganizationContactMutation, UnlockOrganizationContactMutationVariables>;
 export const UpdateOrganizationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateOrganization"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"InputUpdateOrganizationType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateOrganization"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<UpdateOrganizationMutation, UpdateOrganizationMutationVariables>;
+export const GetAssignableCompanyRolesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAssignableCompanyRoles"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"organization"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"userId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"assignableRoles"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"storeId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]} as unknown as DocumentNode<GetAssignableCompanyRolesQuery, GetAssignableCompanyRolesQueryVariables>;
 export const GetCurrentOrganizationAddressesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetCurrentOrganizationAddresses"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sort"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"countryCodes"}},"type":{"kind":"ListType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"regionIds"}},"type":{"kind":"ListType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"cities"}},"type":{"kind":"ListType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"keyword"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"currentOrganizationAddresses"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}},{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}},{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sort"}}},{"kind":"Argument","name":{"kind":"Name","value":"countryCodes"},"value":{"kind":"Variable","name":{"kind":"Name","value":"countryCodes"}}},{"kind":"Argument","name":{"kind":"Name","value":"regionIds"},"value":{"kind":"Variable","name":{"kind":"Name","value":"regionIds"}}},{"kind":"Argument","name":{"kind":"Name","value":"cities"},"value":{"kind":"Variable","name":{"kind":"Name","value":"cities"}}},{"kind":"Argument","name":{"kind":"Name","value":"keyword"},"value":{"kind":"Variable","name":{"kind":"Name","value":"keyword"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalCount"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"memberAddressFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"term_facets"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"terms"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"term"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"memberAddressFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MemberAddressType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"organization"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"line1"}},{"kind":"Field","name":{"kind":"Name","value":"line2"}},{"kind":"Field","name":{"kind":"Name","value":"city"}},{"kind":"Field","name":{"kind":"Name","value":"countryCode"}},{"kind":"Field","name":{"kind":"Name","value":"countryName"}},{"kind":"Field","name":{"kind":"Name","value":"regionId"}},{"kind":"Field","name":{"kind":"Name","value":"regionName"}},{"kind":"Field","name":{"kind":"Name","value":"postalCode"}},{"kind":"Field","name":{"kind":"Name","value":"isDefault"}},{"kind":"Field","name":{"kind":"Name","value":"isFavorite"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"addressType"}}]}}]} as unknown as DocumentNode<GetCurrentOrganizationAddressesQuery, GetCurrentOrganizationAddressesQueryVariables>;
 export const GetOrganizationAddressesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetOrganizationAddresses"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sort"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"organization"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"userId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"addresses"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}},{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}},{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sort"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalCount"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"memberAddressFields"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"memberAddressFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MemberAddressType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"organization"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"line1"}},{"kind":"Field","name":{"kind":"Name","value":"line2"}},{"kind":"Field","name":{"kind":"Name","value":"city"}},{"kind":"Field","name":{"kind":"Name","value":"countryCode"}},{"kind":"Field","name":{"kind":"Name","value":"countryName"}},{"kind":"Field","name":{"kind":"Name","value":"regionId"}},{"kind":"Field","name":{"kind":"Name","value":"regionName"}},{"kind":"Field","name":{"kind":"Name","value":"postalCode"}},{"kind":"Field","name":{"kind":"Name","value":"isDefault"}},{"kind":"Field","name":{"kind":"Name","value":"isFavorite"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"addressType"}}]}}]} as unknown as DocumentNode<GetOrganizationAddressesQuery, GetOrganizationAddressesQueryVariables>;
+export const GetOrganizationContactRolesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetOrganizationContactRoles"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"organization"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"userId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"contactRoles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]} as unknown as DocumentNode<GetOrganizationContactRolesQuery, GetOrganizationContactRolesQueryVariables>;
 export const GetOrganizationContactsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetOrganizationContacts"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sort"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"searchPhrase"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"roleIds"}},"type":{"kind":"ListType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"statuses"}},"type":{"kind":"ListType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"organization"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"userId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"contacts"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}},{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sort"}}},{"kind":"Argument","name":{"kind":"Name","value":"searchPhrase"},"value":{"kind":"Variable","name":{"kind":"Name","value":"searchPhrase"}}},{"kind":"Argument","name":{"kind":"Name","value":"roleIds"},"value":{"kind":"Variable","name":{"kind":"Name","value":"roleIds"}}},{"kind":"Argument","name":{"kind":"Name","value":"statuses"},"value":{"kind":"Variable","name":{"kind":"Name","value":"statuses"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"fullName"}},{"kind":"Field","name":{"kind":"Name","value":"emails"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"statusInOrganization"}},{"kind":"Field","name":{"kind":"Name","value":"isLockedInOrganization"}},{"kind":"Field","name":{"kind":"Name","value":"rolesInOrganization"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"securityAccounts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"roles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"totalCount"}}]}}]}}]}}]} as unknown as DocumentNode<GetOrganizationContactsQuery, GetOrganizationContactsQueryVariables>;
 export const GetPageDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetPage"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"cultureName"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"page"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"storeId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}}},{"kind":"Argument","name":{"kind":"Name","value":"cultureName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"cultureName"}}},{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"relativeUrl"}},{"kind":"Field","name":{"kind":"Name","value":"content"}}]}}]}}]} as unknown as DocumentNode<GetPageQuery, GetPageQueryVariables>;
 export const GetPageDocumentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getPageDocument"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pageDocument"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"source"}},{"kind":"Field","name":{"kind":"Name","value":"permalink"}},{"kind":"Field","name":{"kind":"Name","value":"content"}}]}}]}}]} as unknown as DocumentNode<GetPageDocumentQuery, GetPageDocumentQueryVariables>;
@@ -9424,8 +9561,10 @@ export const OperationNames = {
     GetShortOrder: 'GetShortOrder',
     GetOrders: 'GetOrders',
     GetOrganizationOrders: 'GetOrganizationOrders',
+    GetAssignableCompanyRoles: 'GetAssignableCompanyRoles',
     GetCurrentOrganizationAddresses: 'GetCurrentOrganizationAddresses',
     GetOrganizationAddresses: 'GetOrganizationAddresses',
+    GetOrganizationContactRoles: 'GetOrganizationContactRoles',
     GetOrganizationContacts: 'GetOrganizationContacts',
     GetPage: 'GetPage',
     getPageDocument: 'getPageDocument',
