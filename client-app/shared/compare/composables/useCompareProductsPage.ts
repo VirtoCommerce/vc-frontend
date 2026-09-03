@@ -497,6 +497,8 @@ export function useCompareProductsPage() {
       }
 
       selectedCategoryKey.value = tabs.find((tab) => tab.count > 0)?.categoryKey ?? tabs[0].categoryKey;
+      // The watch picked this, not the user — so it stays eligible for the count > 0 upgrade above.
+      isCategorySelectionDeliberate.value = false;
     },
     { immediate: true },
   );
