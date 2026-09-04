@@ -119,8 +119,8 @@
 </template>
 
 <script setup lang="ts">
-import { syncRefs, useElementSize, useScrollLock } from "@vueuse/core";
-import { computed, ref } from "vue";
+import { syncRefs, useCssVar, useElementSize, useScrollLock } from "@vueuse/core";
+import { computed, ref, watch } from "vue";
 import { useWhiteLabeling } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
@@ -148,6 +148,19 @@ const { logoUrl } = useWhiteLabeling();
 
 const placeholderStyle = computed<StyleValue | undefined>(() =>
   height.value ? { height: height.value + "px" } : undefined,
+);
+
+// Exact app header height, kept live so sticky elements elsewhere (e.g. tables with a sticky
+// header row) can sit flush below this fixed mobile header instead of under it. VcHeader owns
+// this var on desktop (see vc-header.vue).
+const appHeaderHeightVar = useCssVar("--vc-app-header-height");
+
+watch(
+  height,
+  (value) => {
+    appHeaderHeightVar.value = `${value}px`;
+  },
+  { immediate: true },
 );
 
 const isScrollLocked = computed(() => mobileMenuVisible.value || searchBarVisible.value);

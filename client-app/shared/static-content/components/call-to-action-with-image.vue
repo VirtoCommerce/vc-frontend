@@ -40,7 +40,6 @@ type ButtonType = {
 };
 
 interface IProps {
-  id: string;
   background?: string;
   title?: string;
   subtitle?: string;

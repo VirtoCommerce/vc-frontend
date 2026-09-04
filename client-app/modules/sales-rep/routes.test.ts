@@ -1,6 +1,9 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import {
   activitiesRoute,
+  allCustomerOrdersRoute,
+  customerOrderRoute,
+  customerOrdersRoute,
   customerProfileRoute,
   dashboardRoute,
   documentsRoute,
@@ -10,7 +13,17 @@ import {
   myCustomersRoute,
   salesRepsRoute,
 } from "./routes";
-import type { RouteLocationNormalizedLoaded } from "vue-router";
+import type {
+  NavigationGuard,
+  RouteLocationNormalized,
+  RouteLocationNormalizedLoaded,
+  RouteRecordRaw,
+} from "vue-router";
+
+vi.mock("@/shared/account/composables/useUser", () => ({
+  useUser: () => ({ checkPermissions: () => true }),
+}));
+vi.mock("./composables/useSalesRepsConfig", () => ({ isSalesRepsEnabled: () => true }));
 
 const at = (name: string, query: Record<string, string> = {}) =>
   ({ name, query }) as unknown as RouteLocationNormalizedLoaded;
@@ -23,6 +36,9 @@ describe("sales-rep routes", () => {
     ["dashboard", dashboardRoute],
     ["my customers", myCustomersRoute],
     ["customer profile", customerProfileRoute],
+    ["customer orders", customerOrdersRoute],
+    ["customer order", customerOrderRoute],
+    ["all customer orders", allCustomerOrdersRoute],
     ["documents", documentsRoute],
     ["activities", activitiesRoute],
   ])("clears requiresOrganization on the rep-facing %s route", (_name, route) => {
@@ -38,6 +54,38 @@ describe("sales-rep routes", () => {
     expect(props({ query: { organizationId: "org1" } })).toEqual({ organizationId: "org1" });
     expect(props({ query: {} })).toEqual({ organizationId: undefined });
     expect(props({ query: { organizationId: ["a", "b"] } })).toEqual({ organizationId: undefined });
+  });
+
+  it("nests the customer orders list under the customer", () => {
+    expect(customerOrdersRoute.path).toBe("my-customers/:organizationId/orders");
+  });
+
+  it("nests one order under the customer's order list", () => {
+    expect(customerOrderRoute.path).toBe("my-customers/:organizationId/orders/:orderId");
+  });
+
+  // A sibling of My customers, since "my-customers/orders" would match the :organizationId segment.
+  it("keeps the all-customers order list out of the customer path", () => {
+    expect(allCustomerOrdersRoute.path).toBe("customer-orders");
+  });
+
+  // guardSalesRep only calls next() to bounce a non-rep, so a beforeEnter that forgets to call it on the way
+  // through leaves the click doing nothing at all.
+  it.each([
+    ["dashboard", dashboardRoute],
+    ["my customers", myCustomersRoute],
+    ["customer profile", customerProfileRoute],
+    ["customer orders", customerOrdersRoute],
+    ["customer order", customerOrderRoute],
+    ["all customer orders", allCustomerOrdersRoute],
+  ])("lets a sales rep through the %s route", (_name, route: RouteRecordRaw) => {
+    const next = vi.fn();
+    const to = { params: { organizationId: "org-1", orderId: "o-1" } } as unknown as RouteLocationNormalized;
+
+    (route.beforeEnter as NavigationGuard)(to, to, next);
+
+    expect(next).toHaveBeenCalledTimes(1);
+    expect(next).toHaveBeenCalledWith();
   });
 
   // No `requiresOrganization: false` override -> it keeps the "/company" parent's org gate.

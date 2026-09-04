@@ -29,6 +29,9 @@ import { registerBlock } from "./layout/registry";
 import { salesRepMenuSchema } from "./menu";
 import {
   activitiesRoute,
+  allCustomerOrdersRoute,
+  customerOrderRoute,
+  customerOrdersRoute,
   customerProfileRoute,
   dashboardRoute,
   documentsRoute,
@@ -52,6 +55,9 @@ export function init(router: Router, i18n: I18n) {
   router.addRoute("Company", myCustomersRoute);
   // Customer profile (VCST-5308) -> /company/my-customers/:organizationId.
   router.addRoute("Company", customerProfileRoute);
+  router.addRoute("Company", customerOrdersRoute);
+  router.addRoute("Company", customerOrderRoute);
+  router.addRoute("Company", allCustomerOrdersRoute);
   // Document library (VCST-5730) -> /company/documents (its own beforeEnter checks documents:read).
   router.addRoute("Company", documentsRoute);
   // All-activity feed (VCST-5337) -> /company/activities.

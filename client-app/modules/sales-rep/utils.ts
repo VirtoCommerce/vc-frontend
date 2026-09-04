@@ -1,8 +1,15 @@
 import { ContentType, QueryParamName } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { ROUTES } from "@/router/routes/constants";
-import type { MoneyType } from "./api/graphql/types";
-import type { SalesRepDocumentType, SalesRepRuleType } from "./types";
+import { BUYER_ORDER_ROUTE_NAME, CUSTOMER_ORDER_ROUTE_NAME } from "./constants";
+import type { MoneyType, SalesRepCustomerOrdersQuery, SalesRepOrdersQuery } from "./api/graphql/types";
+import type {
+  SalesRepCustomerOrderRowType,
+  SalesRepDocumentType,
+  SalesRepOrderRowType,
+  SalesRepFacetOptionType,
+  SalesRepRuleType,
+} from "./types";
 import type { StatWidgetToneType } from "./types/widgets";
 import type { ComposerTranslation } from "vue-i18n";
 import type { RouteLocationRaw } from "vue-router";
@@ -313,4 +320,78 @@ export function formatSignedPercent(percent?: number | null): SignedPercentType 
     return { text: `${rounded}%`, tone: "negative", icon: "chevron-down" };
   }
   return { text: "0%", tone: "neutral", icon: "minus" };
+}
+
+// Connection items → table rows, shared by the orders widget and the customer orders page.
+type OrderNodeType = NonNullable<NonNullable<SalesRepOrdersQuery["salesRepOrders"]>["items"]>[number];
+
+type OrderRowSourceType = {
+  id: string;
+  number?: string;
+  organizationId?: string;
+  organizationName?: string;
+  createdDate: string;
+  status?: string;
+  statusDisplayValue?: string;
+  total?: Pick<MoneyType, "formattedAmount"> | null;
+};
+
+function toOrderRowBase(order: OrderRowSourceType) {
+  return {
+    id: order.id,
+    number: order.number ?? "",
+    organizationId: order.organizationId ?? "",
+    organizationName: order.organizationName ?? "",
+    createdDate: order.createdDate,
+    status: order.status ?? "",
+    statusDisplayValue: order.statusDisplayValue ?? "",
+    total: formatStatMoney(order.total),
+  };
+}
+
+function presentOrders<T>(items?: (T | null)[]): NonNullable<T>[] {
+  return (items ?? []).filter((order): order is NonNullable<T> => order != null);
+}
+
+export function toSalesRepOrderRows(items?: OrderNodeType[]): SalesRepOrderRowType[] {
+  return presentOrders(items).map((order) => ({
+    ...toOrderRowBase(order),
+    itemsCount: formatStatCount(order.itemsCount),
+  }));
+}
+
+type CustomerOrderNodeType = NonNullable<
+  NonNullable<SalesRepCustomerOrdersQuery["salesRepCustomerOrders"]>["items"]
+>[number];
+
+export function toSalesRepCustomerOrderRows(items?: CustomerOrderNodeType[]): SalesRepCustomerOrderRowType[] {
+  return presentOrders(items).map((order) => ({
+    ...toOrderRowBase(order),
+    // A rep-placed order records the rep as its customer — the field the backend scopes own-orders by.
+    isOwn: Boolean(globals.userId) && order.customerId === globals.userId,
+  }));
+}
+
+export function toFacetOptions(
+  facets: NonNullable<SalesRepCustomerOrdersQuery["salesRepCustomerOrders"]>["term_facets"] | undefined,
+  facetName: string,
+): SalesRepFacetOptionType[] {
+  return (facets ?? [])
+    .filter((facet) => facet?.name === facetName)
+    .flatMap((facet) => facet.terms ?? [])
+    .filter((term) => term != null)
+    .map((term) => ({ name: term.term, label: term.label || term.term, count: term.count }));
+}
+
+// An order the rep placed opens on the buyer-facing page, where they can still act on it; everyone else's
+// opens read-only in the hub.
+export function salesRepOrderRoute(order: SalesRepCustomerOrderRowType, organizationId?: string): RouteLocationRaw {
+  if (order.isOwn) {
+    return { name: BUYER_ORDER_ROUTE_NAME, params: { orderId: order.id } };
+  }
+
+  return {
+    name: CUSTOMER_ORDER_ROUTE_NAME,
+    params: { organizationId: organizationId ?? order.organizationId, orderId: order.id },
+  };
 }

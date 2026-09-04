@@ -125,6 +125,38 @@
         "ship_to": "Ship-to"
       }
     },
+    "customer_orders": {
+      "page": {
+        "title": "{customer} orders",
+        "all_title": "Customer orders",
+        "title_fallback": "Orders"
+      },
+      "breadcrumb": "Orders",
+      "back_to_customer": "Back to customer",
+      "back_to_orders": "Back to orders",
+      "order_not_found": "Order not found",
+      "order_load_failed": "This order couldn't be loaded. Try refreshing the page.",
+      "search_placeholder": "Search by number, name or other data",
+      "search_aria": "Search orders",
+      "reset_search": "Reset search",
+      "filters": {
+        "button": "Filters",
+        "title": "Filters",
+        "created_date": "Created date",
+        "start_date": "Start date",
+        "end_date": "End date",
+        "invalid_range": "Invalid date range.",
+        "order_status": "Select order status",
+        "customer": "Select customer",
+        "reset": "Reset",
+        "apply": "Apply",
+        "custom_date": "Custom date",
+        "last_day": "Last day",
+        "last_week": "Last week",
+        "last_month": "Last month",
+        "last_year": "Last year"
+      }
+    },
     "communication": {
       "action": "Send email",
       "title": "Send a message",
@@ -157,7 +189,7 @@
       }
     },
     "orders": {
-      "title": "Recent orders",
+      "title": "My recent orders",
       "view_all": "All orders",
       "empty": "No orders yet",
       "no_results": "No orders match this filter",

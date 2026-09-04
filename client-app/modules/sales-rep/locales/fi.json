@@ -125,6 +125,38 @@
         "ship_to": "Toimitusosoite"
       }
     },
+    "customer_orders": {
+      "page": {
+        "title": "Asiakkaan {customer} tilaukset",
+        "all_title": "Asiakkaiden tilaukset",
+        "title_fallback": "Tilaukset"
+      },
+      "breadcrumb": "Tilaukset",
+      "back_to_customer": "Takaisin asiakkaan tietoihin",
+      "back_to_orders": "Takaisin tilauksiin",
+      "order_not_found": "Tilausta ei löytynyt",
+      "order_load_failed": "This order couldn't be loaded. Try refreshing the page.",
+      "search_placeholder": "Hae numerolla, nimellä tai muilla tiedoilla",
+      "search_aria": "Hae tilauksia",
+      "reset_search": "Nollaa haku",
+      "filters": {
+        "button": "Suodattimet",
+        "title": "Suodattimet",
+        "created_date": "Luontipäivämäärä",
+        "start_date": "Aloituspäivämäärä",
+        "end_date": "Lopetuspäivämäärä",
+        "invalid_range": "Virheellinen päivämääräväli.",
+        "order_status": "Valitse tilauksen tila",
+        "customer": "Valitse asiakas",
+        "reset": "Nollaa",
+        "apply": "Käytä",
+        "custom_date": "Mukautettu päivämäärä",
+        "last_day": "Viimeinen päivä",
+        "last_week": "Viime viikko",
+        "last_month": "Viime kuukausi",
+        "last_year": "Viime vuosi"
+      }
+    },
     "communication": {
       "action": "Lähetä sähköposti",
       "title": "Lähetä viesti",
@@ -157,7 +189,7 @@
       }
     },
     "orders": {
-      "title": "Viimeisimmät tilaukset",
+      "title": "Omat viimeisimmät tilaukset",
       "view_all": "Kaikki tilaukset",
       "empty": "Ei vielä tilauksia",
       "no_results": "Mikään tilaus ei vastaa tätä suodatinta",

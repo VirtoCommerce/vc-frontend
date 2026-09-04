@@ -203,6 +203,7 @@
       "max_value": "Maksimiarvo on {value}",
       "min_value": "Minimiarvo on {value}",
       "empty_wish_list": "Listalla ei ole yhtään tuotetta",
+      "no_company_roles_available": "Rooleja ei ole saatavilla. Ota yhteyttä kaupan pääkäyttäjään.",
       "not_defined": "Määrittelemätön",
       "invalid_coupon": "Tämä koodi ei vastaa yhtään aktiivista kuponkia. Tarkista, että kaikki on oikein, ja yritä uudelleen.",
       "failed_coupon": "Kupongissa tapahtui virhe. Yritä uudelleen.",
@@ -515,8 +516,6 @@
         }
       },
       "impersonate_form": {
-        "subtitle": "Vahvista henkilöllisyytesi jatkaaksesi",
-        "description": "Kirjaudut sisään asiakkaan puolesta. Istunto kirjataan auditointia varten.",
         "email_label": "Sähköposti",
         "email_placeholder": "Anna sähköposti",
         "password_label": "Salasana",
@@ -1366,6 +1365,9 @@
       },
       "impersonate": {
         "title": "Turvavarmistus",
+        "subtitle": "Vahvista henkilöllisyytesi jatkaaksesi",
+        "description": "Kirjaudut sisään asiakkaan puolesta. Istunto kirjataan auditointia varten.",
+        "no_permission": "Tällä tilillä ei ole oikeutta kirjautua asiakkaan puolesta.",
         "back_to_home": "Takaisin etusivulle",
         "switching_in_progress": "Vaihdetaan asiakasnäkymään…",
         "error": "Henkilöllisyyden jäljittelyssä ilmeni ongelmia. Tarkista käyttöoikeutesi"

@@ -203,6 +203,7 @@
       "max_value": "Maksimumsverdi er {value}",
       "min_value": "Minimumsverdi er {value}",
       "empty_wish_list": "Listen inneholder ingen produkter",
+      "no_company_roles_available": "Det finnes ingen tilgjengelige roller. Kontakt butikkadministratoren din.",
       "not_defined": "Ikke definert",
       "invalid_coupon": "Denne koden er ikke gyldig",
       "failed_coupon": "Noe gikk galt med kupongen. Prøv igjen.",
@@ -515,8 +516,6 @@
         }
       },
       "impersonate_form": {
-        "subtitle": "Bekreft identiteten din for å fortsette",
-        "description": "Du logger inn på vegne av en kunde. Økten vil bli loggført for revisjon.",
         "email_label": "E-post",
         "email_placeholder": "Skriv inn e-posten din",
         "password_label": "Passord",
@@ -1366,6 +1365,9 @@
       },
       "impersonate": {
         "title": "Sikkerhetsverifisering",
+        "subtitle": "Bekreft identiteten din for å fortsette",
+        "description": "Du logger inn på vegne av en kunde. Økten vil bli loggført for revisjon.",
+        "no_permission": "Denne kontoen har ikke tillatelse til å logge inn på vegne av en kunde.",
         "back_to_home": "Tilbake til hjem",
         "switching_in_progress": "Bytter til kundevisning…",
         "error": "Problemer med identitetsetterligning. Kontroller tilgangsrettighetene dine"
