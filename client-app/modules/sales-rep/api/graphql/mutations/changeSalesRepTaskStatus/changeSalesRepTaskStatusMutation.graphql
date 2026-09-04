@@ -1,0 +1,5 @@
+mutation ChangeSalesRepTaskStatus($command: InputChangeSalesRepTaskStatus!) {
+  changeSalesRepTaskStatus(command: $command) {
+    ...salesRepTaskFields
+  }
+}

@@ -72,6 +72,27 @@ export const DOCUMENTS_NAV_LINK_ID = "sales-rep-documents";
 // 15 = three full rows of the grid's 5-card cap, so the pager appears only past three rows.
 export const DOCUMENTS_PAGE_SIZE = 15;
 
+// Tasks / Calendar (VCST-5732). Backed by vc-module-task-management, an OPTIONAL backend dependency:
+// the feature is gated on that module being installed, not on a setting of ours (see useSalesRepsConfig).
+export const TASK_MANAGEMENT_MODULE_ID = "VirtoCommerce.TaskManagement";
+export const CALENDAR_ROUTE_NAME = "SalesRepCalendar";
+export const CALENDAR_ROUTE_SEGMENT = "calendar";
+export const CALENDAR_NAV_LINK_ID = "sales-rep-calendar";
+// Layout block id — persisted as block.type in saved layouts, so it is load-bearing (see LAYOUT_SCOPE notes).
+export const TASKS_BLOCK_ID = "tasks";
+// Page size for the Calendar page's task table (offset-as-cursor, like useSalesRepDocuments).
+export const TASKS_PAGE_SIZE = 15;
+// Dashboard widget row cap — follows documents: default 5, max 10.
+export const TASKS_DEFAULT_ROWS = 5;
+export const TASKS_MAX_ROWS = 10;
+// The one order every task surface asks for. A sort-rule name from salesRepTaskSortRules (an unrecognized name
+// fails closed — keep it aligned with a real rule); no surface offers a sort control, so the rule list itself is
+// not fetched.
+export const TASKS_SORT_RULE = "due-date";
+// Upper bound on the month query behind the calendar dots. A rep's month is tens of tasks; the cap only
+// stops a pathological book of business from pulling an unbounded page for three dots a day.
+export const TASKS_CALENDAR_MAX = 200;
+
 // Backs the "New orders" card; order filter rules are raw order statuses, so this uses the "New"
 // status (an unrecognized name fails closed — keep it aligned with a real status). The card's label
 // quotes this status name in every locale, so changing it means retranslating those strings too.

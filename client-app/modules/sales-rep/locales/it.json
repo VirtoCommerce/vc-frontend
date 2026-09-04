@@ -202,6 +202,71 @@
       "filter_all": "Tutti",
       "load_failed": "Impossibile caricare gli ordini"
     },
+    "tasks": {
+      "title": "Calendario",
+      "widget_title": "Attività e scadenze",
+      "full_calendar": "Calendario completo",
+      "new_task": "Nuova attività",
+      "add_task": "Aggiungi attività",
+      "today": "Oggi",
+      "empty": "Nessuna attività in questa scheda",
+      "empty_day": "Nessuna scadenza in questo giorno",
+      "load_failed": "Impossibile caricare le attività",
+      "day_task_count": "{count} attività | {count} attività",
+      "overdue_total": "{count} attività scaduta | {count} attività scadute",
+      "day_of_total": "{shown} di {total} attività",
+      "day_markers": "Contrassegnato: {kinds}",
+      "page": {
+        "subtitle": "Le tue attività, i follow-up e le scadenze di tutti gli account — organizzati per giorno.",
+        "all_tab": "Tutte"
+      },
+      "table": {
+        "task": "Attività",
+        "status": "Stato",
+        "notes": "Note",
+        "complete_aria": "Segna «{name}» come completata",
+        "reopen_aria": "Riapri «{name}»",
+        "edit_aria": "Modifica «{name}»"
+      },
+      "status": {
+        "upcoming": "In arrivo",
+        "overdue": "Scaduta",
+        "completed": "Completata",
+        "canceled": "Annullata"
+      },
+      "priority": {
+        "lowest": "Minima",
+        "low": "Bassa",
+        "normal": "Normale",
+        "high": "Alta",
+        "highest": "Massima"
+      },
+      "due_relative": {
+        "expired": "Scaduta il {date}",
+        "due": "Scade il {date}"
+      },
+      "legend": {
+        "upcoming": "In arrivo",
+        "overdue": "Scadute",
+        "completed": "Completate"
+      },
+      "form": {
+        "create_title": "Nuova attività",
+        "edit_title": "Modifica attività",
+        "name_label": "Titolo",
+        "due_date_label": "Data di scadenza",
+        "priority_label": "Priorità",
+        "type_label": "Tipo",
+        "description_label": "Note",
+        "save_button": "Salva",
+        "cancel_button": "Annulla",
+        "delete_button": "Elimina",
+        "delete_title": "Elimina attività",
+        "delete_confirm": "Questa attività verrà eliminata definitivamente. Continuare?",
+        "saved": "Attività salvata",
+        "deleted": "Attività eliminata"
+      }
+    },
     "top_sellers": {
       "title": "Top venditori",
       "rank": "#",
@@ -240,6 +305,18 @@
       "published": "Pubblicato {date}"
     },
     "rules": {
+      "task": {
+        "filter": {
+          "upcoming": "In arrivo",
+          "overdue": "Scadute",
+          "completed": "Completate"
+        },
+        "sort": {
+          "due-date": "Data di scadenza",
+          "recent": "Create di recente",
+          "name": "Attività"
+        }
+      },
       "load_failed": {
         "filter": "Non è stato possibile caricare i filtri, quindi viene mostrato l'elenco completo. Aggiorna la pagina.",
         "sort": "Non è stato possibile caricare le opzioni di ordinamento, quindi viene usato l'ordine predefinito. Aggiorna la pagina.",

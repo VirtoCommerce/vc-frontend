@@ -202,6 +202,71 @@
       "filter_all": "All",
       "load_failed": "Couldn't load orders"
     },
+    "tasks": {
+      "title": "Calendar",
+      "widget_title": "Tasks & due dates",
+      "full_calendar": "Full calendar",
+      "new_task": "New task",
+      "add_task": "Add task",
+      "today": "Today",
+      "empty": "No tasks in this tab",
+      "empty_day": "Nothing due on this day",
+      "load_failed": "Couldn't load tasks",
+      "day_task_count": "{count} task | {count} tasks",
+      "overdue_total": "{count} overdue task | {count} overdue tasks",
+      "day_of_total": "{shown} of {total} tasks",
+      "day_markers": "Marked: {kinds}",
+      "page": {
+        "subtitle": "Your tasks, follow-ups and due dates across all accounts — laid out by day.",
+        "all_tab": "All"
+      },
+      "table": {
+        "task": "Task",
+        "status": "Status",
+        "notes": "Notes",
+        "complete_aria": "Mark “{name}” as completed",
+        "reopen_aria": "Reopen “{name}”",
+        "edit_aria": "Edit “{name}”"
+      },
+      "status": {
+        "upcoming": "Upcoming",
+        "overdue": "Overdue",
+        "completed": "Completed",
+        "canceled": "Canceled"
+      },
+      "priority": {
+        "lowest": "Lowest",
+        "low": "Low",
+        "normal": "Normal",
+        "high": "High",
+        "highest": "Highest"
+      },
+      "due_relative": {
+        "expired": "Expired {date}",
+        "due": "Due {date}"
+      },
+      "legend": {
+        "upcoming": "Upcoming",
+        "overdue": "Overdue",
+        "completed": "Completed"
+      },
+      "form": {
+        "create_title": "New task",
+        "edit_title": "Edit task",
+        "name_label": "Title",
+        "due_date_label": "Due date",
+        "priority_label": "Priority",
+        "type_label": "Type",
+        "description_label": "Notes",
+        "save_button": "Save",
+        "cancel_button": "Cancel",
+        "delete_button": "Delete",
+        "delete_title": "Delete task",
+        "delete_confirm": "This task will be deleted permanently. Continue?",
+        "saved": "Task saved",
+        "deleted": "Task deleted"
+      }
+    },
     "top_sellers": {
       "title": "Top sellers",
       "rank": "#",
@@ -240,6 +305,18 @@
       "published": "Published {date}"
     },
     "rules": {
+      "task": {
+        "filter": {
+          "upcoming": "Upcoming",
+          "overdue": "Overdue",
+          "completed": "Completed"
+        },
+        "sort": {
+          "due-date": "Due date",
+          "recent": "Recently created",
+          "name": "Task"
+        }
+      },
       "load_failed": {
         "filter": "The filters couldn't be loaded, so the full list is shown. Try refreshing the page.",
         "sort": "The sorting options couldn't be loaded, so the default order is used. Try refreshing the page.",

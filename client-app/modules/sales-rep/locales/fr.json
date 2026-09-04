@@ -202,6 +202,71 @@
       "filter_all": "Tous",
       "load_failed": "Impossible de charger les commandes"
     },
+    "tasks": {
+      "title": "Calendrier",
+      "widget_title": "Tâches et échéances",
+      "full_calendar": "Calendrier complet",
+      "new_task": "Nouvelle tâche",
+      "add_task": "Ajouter une tâche",
+      "today": "Aujourd'hui",
+      "empty": "Aucune tâche dans cet onglet",
+      "empty_day": "Aucune échéance ce jour-là",
+      "load_failed": "Impossible de charger les tâches",
+      "day_task_count": "{count} tâche | {count} tâche | {count} tâches",
+      "overdue_total": "{count} tâche en retard | {count} tâches en retard",
+      "day_of_total": "{shown} tâches sur {total}",
+      "day_markers": "Marqué : {kinds}",
+      "page": {
+        "subtitle": "Vos tâches, relances et échéances pour tous les comptes — organisées par jour.",
+        "all_tab": "Toutes"
+      },
+      "table": {
+        "task": "Tâche",
+        "status": "Statut",
+        "notes": "Notes",
+        "complete_aria": "Marquer « {name} » comme terminée",
+        "reopen_aria": "Rouvrir « {name} »",
+        "edit_aria": "Modifier « {name} »"
+      },
+      "status": {
+        "upcoming": "À venir",
+        "overdue": "En retard",
+        "completed": "Terminée",
+        "canceled": "Annulée"
+      },
+      "priority": {
+        "lowest": "La plus basse",
+        "low": "Basse",
+        "normal": "Normale",
+        "high": "Haute",
+        "highest": "La plus haute"
+      },
+      "due_relative": {
+        "expired": "Expirée le {date}",
+        "due": "Échéance le {date}"
+      },
+      "legend": {
+        "upcoming": "À venir",
+        "overdue": "En retard",
+        "completed": "Terminées"
+      },
+      "form": {
+        "create_title": "Nouvelle tâche",
+        "edit_title": "Modifier la tâche",
+        "name_label": "Titre",
+        "due_date_label": "Date d'échéance",
+        "priority_label": "Priorité",
+        "type_label": "Type",
+        "description_label": "Notes",
+        "save_button": "Enregistrer",
+        "cancel_button": "Annuler",
+        "delete_button": "Supprimer",
+        "delete_title": "Supprimer la tâche",
+        "delete_confirm": "Cette tâche sera supprimée définitivement. Continuer ?",
+        "saved": "Tâche enregistrée",
+        "deleted": "Tâche supprimée"
+      }
+    },
     "top_sellers": {
       "title": "Meilleures ventes",
       "rank": "#",
@@ -240,6 +305,18 @@
       "published": "Publié le {date}"
     },
     "rules": {
+      "task": {
+        "filter": {
+          "upcoming": "À venir",
+          "overdue": "En retard",
+          "completed": "Terminées"
+        },
+        "sort": {
+          "due-date": "Date d'échéance",
+          "recent": "Créées récemment",
+          "name": "Tâche"
+        }
+      },
       "load_failed": {
         "filter": "Les filtres n'ont pas pu être chargés, la liste complète est donc affichée. Veuillez actualiser la page.",
         "sort": "Les options de tri n'ont pas pu être chargées, l'ordre par défaut est donc utilisé. Veuillez actualiser la page.",

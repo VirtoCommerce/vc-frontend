@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { VcCalendar } from "..";
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
@@ -37,11 +37,21 @@ const meta: Meta<typeof VcCalendar> = {
       description: "Maximum date in YYYY-MM-DD format",
       table: { type: { summary: "string" } },
     },
+    month: {
+      control: "text",
+      description: "Displayed month, as any date inside it in YYYY-MM-DD format",
+      table: { type: { summary: "string" } },
+    },
     showFooter: {
       control: "boolean",
     },
     locale: {
       control: "text",
+    },
+    dayDescriptions: {
+      control: "object",
+      description: "ISO `YYYY-MM-DD` → screen-reader text for that day",
+      table: { type: { summary: "Record<string, string>" } },
     },
   },
 };
@@ -390,6 +400,190 @@ export const LocaleLongMonthName: StoryType = {
       return { args, value };
     },
     template: `<VcCalendar v-bind="args" v-model="value" />`,
+  }),
+};
+
+export const WithDayMarkers: StoryType = {
+  args: {
+    weekdayFormat: "short",
+    firstDayOfWeek: 1,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "The calendar owns no marker concept: the dots below are the story's own markup, rendered through the `day` slot, which fires *after* the day number the calendar keeps drawing itself. Dedupe, ordering, colour and any cap are the consumer's — here Oct 8 holds nine overdue tasks and collapses to one dot, and Oct 27 has five kinds trimmed to four. What the slot cannot do is talk to a screen reader: reka puts an explicit `aria-label` (the full date) on the cell trigger, so slot content never reaches the accessible name. That is what `day-descriptions` is for — the calendar renders it as a visually hidden span and wires up `aria-describedby`, so the day announces as its date followed by the description.",
+      },
+      source: {
+        code: `
+          <VcCalendar v-model="value" :first-day-of-week="1" :day-descriptions="dayDescriptions">
+            <template #day="{ date }">
+              <span v-if="kindsFor(date).length" class="task-dots">
+                <span v-for="kind in kindsFor(date)" :key="kind" :class="DOT_CLASSES[kind]" />
+              </span>
+            </template>
+          </VcCalendar>
+        `,
+      },
+    },
+  },
+  render: (args) => ({
+    components: { VcCalendar },
+    setup() {
+      const value = ref<string | undefined>("2026-10-15");
+
+      // Everything below is consumer-side: the order dots appear in, their colour, their cap.
+      const KIND_ORDER = ["upcoming", "overdue", "completed", "blocked", "draft"];
+      const MAX_DOTS = 4;
+      const DOT_CLASSES: Record<string, string> = {
+        upcoming: "bg-info-500",
+        overdue: "bg-danger-500",
+        completed: "bg-success-500",
+        blocked: "bg-warning-500",
+        draft: "bg-neutral-500",
+      };
+      const KIND_LABELS: Record<string, string> = {
+        upcoming: "Upcoming",
+        overdue: "Overdue",
+        completed: "Completed",
+        blocked: "Blocked",
+        draft: "Draft",
+      };
+
+      // Raw per-day items, as a fetch would hand them over — repeated, unordered, unfiltered.
+      const itemsByDay: Record<string, string[]> = {
+        "2026-09-30": ["completed"],
+        "2026-10-02": ["upcoming"],
+        "2026-10-06": ["upcoming", "overdue"],
+        "2026-10-08": Array.from({ length: 9 }, () => "overdue"),
+        "2026-10-13": ["completed"],
+        "2026-10-15": ["upcoming", "overdue", "completed"],
+        "2026-10-20": ["completed", "overdue", "upcoming"],
+        "2026-10-22": ["blocked"],
+        "2026-10-23": ["upcoming", "cancelled"],
+        "2026-10-27": ["upcoming", "overdue", "completed", "blocked", "draft"],
+        "2026-11-03": ["overdue"],
+      };
+
+      // One dot per kind present, in a stable order, capped — a set test, not a per-item loop.
+      function kindsFor(date: string): string[] {
+        const present = new Set(itemsByDay[date] ?? []);
+        return KIND_ORDER.filter((kind) => present.has(kind)).slice(0, MAX_DOTS);
+      }
+
+      const dayDescriptions = computed<Record<string, string>>(() => {
+        const result: Record<string, string> = {};
+        for (const date of Object.keys(itemsByDay)) {
+          const labels = kindsFor(date).map((kind) => KIND_LABELS[kind]);
+          if (labels.length) {
+            result[date] = `Marked: ${labels.join(", ")}`;
+          }
+        }
+        return result;
+      });
+
+      return { args, value, dayDescriptions, kindsFor, DOT_CLASSES };
+    },
+    template: `
+      <div class="space-y-2">
+        <VcCalendar v-bind="args" v-model="value" :day-descriptions="dayDescriptions">
+          <template #day="{ date }">
+            <span
+              v-if="kindsFor(date).length"
+              class="pointer-events-none absolute inset-x-0 bottom-1 flex justify-center gap-0.5"
+            >
+              <span
+                v-for="kind in kindsFor(date)"
+                :key="kind"
+                class="size-1 rounded-full"
+                :class="DOT_CLASSES[kind]"
+              />
+            </span>
+          </template>
+        </VcCalendar>
+        <div class="text-sm text-neutral-600">Selected: {{ value || "(none)" }}</div>
+      </div>
+    `,
+  }),
+};
+
+export const MonthNavigation: StoryType = {
+  args: {
+    weekdayFormat: "short",
+    firstDayOfWeek: 1,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`update:month` reports the displayed month as the ISO first-of-month — once on mount, then on every month change (header arrows, year arrows, keyboard paging, or a `model-value` jump). That is the hook for per-month fetching: the dots below are rebuilt for whichever month is on screen. Pairing it with the `month` prop (`v-model:month`) also lets a consumer drive the view from outside.",
+      },
+      source: {
+        code: `
+          <VcCalendar v-model="value" v-model:month="displayedMonth" :day-descriptions="dayDescriptions">
+            <template #day="{ date }">…</template>
+          </VcCalendar>
+        `,
+      },
+    },
+  },
+  render: (args) => ({
+    components: { VcCalendar },
+    setup() {
+      const value = ref<string | undefined>(undefined);
+      const displayedMonth = ref("2026-10-01");
+
+      // Stands in for a per-month fetch: whichever month is displayed, mark its 4th, 11th and 19th.
+      const itemsByDay = computed<Record<string, string[]>>(() => {
+        const prefix = displayedMonth.value.slice(0, 8);
+        return {
+          [`${prefix}04`]: ["upcoming"],
+          [`${prefix}11`]: ["overdue"],
+          [`${prefix}19`]: ["upcoming", "overdue"],
+        };
+      });
+
+      const DOT_CLASSES: Record<string, string> = { upcoming: "bg-info-500", overdue: "bg-danger-500" };
+
+      function kindsFor(date: string): string[] {
+        return itemsByDay.value[date] ?? [];
+      }
+
+      const dayDescriptions = computed<Record<string, string>>(() => {
+        const result: Record<string, string> = {};
+        for (const [date, kinds] of Object.entries(itemsByDay.value)) {
+          result[date] = `Marked: ${kinds.join(", ")}`;
+        }
+        return result;
+      });
+
+      return { args, value, displayedMonth, dayDescriptions, kindsFor, DOT_CLASSES };
+    },
+    template: `
+      <div class="space-y-2">
+        <VcCalendar
+          v-bind="args"
+          v-model="value"
+          v-model:month="displayedMonth"
+          :day-descriptions="dayDescriptions"
+        >
+          <template #day="{ date }">
+            <span
+              v-if="kindsFor(date).length"
+              class="pointer-events-none absolute inset-x-0 bottom-1 flex justify-center gap-0.5"
+            >
+              <span
+                v-for="kind in kindsFor(date)"
+                :key="kind"
+                class="size-1 rounded-full"
+                :class="DOT_CLASSES[kind]"
+              />
+            </span>
+          </template>
+        </VcCalendar>
+        <div class="text-sm text-neutral-600">Displayed month: {{ displayedMonth }}</div>
+      </div>
+    `,
   }),
 };
 

@@ -73,7 +73,22 @@
             :date="weekDate"
             class="vc-calendar__cell"
           >
-            <CalendarCellTrigger :day="weekDate" :month="month.value" class="vc-calendar__day" />
+            <CalendarCellTrigger
+              :day="weekDate"
+              :month="month.value"
+              class="vc-calendar__day"
+              :aria-describedby="getDayDescriptionId(weekDate)"
+            >
+              <template v-if="hasDayContent" #default="dayProps">
+                {{ dayProps.dayValue }}
+
+                <slot name="day" v-bind="dayProps" :date="weekDate.toString()" />
+
+                <span v-if="getDayDescriptionId(weekDate)" :id="getDayDescriptionId(weekDate)" class="sr-only">
+                  {{ getDayDescription(weekDate) }}
+                </span>
+              </template>
+            </CalendarCellTrigger>
           </CalendarCell>
         </CalendarGridRow>
       </CalendarGridBody>
@@ -99,6 +114,7 @@
 
 <script setup lang="ts">
 import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from "@internationalized/date";
+import { uniqueId } from "lodash-es";
 import {
   CalendarCell,
   CalendarCellTrigger,
@@ -112,7 +128,7 @@ import {
   CalendarPrev,
   CalendarRoot,
 } from "reka-ui";
-import { computed, nextTick, toRef, useTemplateRef, watch } from "vue";
+import { computed, nextTick, toRef, useSlots, useTemplateRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { dateValueToIso, todayDate, tryParseDate, useCalendarBase } from "./use-calendar-base";
 import type { DateValue } from "@internationalized/date";
@@ -123,16 +139,33 @@ interface IProps {
   size?: VcCalendarSizeType;
   min?: string;
   max?: string;
+  /**
+   * Displayed month, as any ISO `YYYY-MM-DD` date inside it. Optional: left unset, the calendar
+   * keeps owning the month and only reports it through `update:month`.
+   */
+  month?: string;
   disabledDate?: VcCalendarDisabledDateType;
   showFooter?: boolean;
   locale?: string;
   firstDayOfWeek?: VcCalendarFirstDayOfWeekType;
   weekdayFormat?: VcCalendarWeekdayFormatType;
+  /**
+   * Screen-reader text per day, keyed by ISO `YYYY-MM-DD`. Rendered as a visually hidden span and
+   * referenced with `aria-describedby` — a prop rather than markup because reka's own `aria-label`
+   * on the cell keeps anything rendered inside it out of the accessible name.
+   */
+  dayDescriptions?: Record<string, string>;
   dataTestId?: string;
 }
 
 interface IEmits {
   (event: "update:modelValue", value: string | undefined): void;
+  /**
+   * First day of the displayed month, ISO `YYYY-MM-DD`. Fires once on mount with the starting
+   * month, then on every month change: header arrows, year arrows, keyboard paging, or a
+   * `modelValue` / `month` change that lands in another month. Day moves inside a month are silent.
+   */
+  (event: "update:month", value: string): void;
 }
 
 const emit = defineEmits<IEmits>();
@@ -142,16 +175,18 @@ const props = withDefaults(defineProps<IProps>(), {
   size: "md",
   min: undefined,
   max: undefined,
+  month: undefined,
   disabledDate: undefined,
   showFooter: false,
   locale: undefined,
   firstDayOfWeek: undefined,
   weekdayFormat: "short",
+  dayDescriptions: undefined,
   dataTestId: undefined,
 });
 
 function getInitialPlaceholder(): DateValue {
-  return tryParseDate(props.modelValue) ?? todayDate();
+  return tryParseDate(props.month) ?? tryParseDate(props.modelValue) ?? todayDate();
 }
 
 const { t } = useI18n();
@@ -177,12 +212,33 @@ const {
   goToNextYear,
 } = base;
 
+const slots = useSlots();
+
 // reka's CalendarRoot forwards its root element via `$el`.
 const calendarRootRef = useTemplateRef<ComponentPublicInstance | null>("calendarRootRef");
 
 const rootClasses = computed(() => ["vc-calendar", `vc-calendar--size--${props.size}`, "vc-calendar--mode--single"]);
 
 const parsedModelValue = computed<DateValue | undefined>(() => tryParseDate(props.modelValue));
+
+// Day cell composition. `day` renders after the day number, which the calendar keeps drawing itself
+// so the size/selected/today typography stays owned here; `.vc-calendar__day` is positioned, so
+// decorations can be placed absolutely. A description cannot be slot content: reka's explicit
+// aria-label on the trigger excludes everything inside it from the accessible name, so the text is
+// rendered visually hidden and referenced with aria-describedby instead. Reka's cell slot is handed
+// over only when one of the two is in use, keeping an undecorated calendar's DOM byte-identical.
+const hasDayContent = computed<boolean>(() => !!slots.day || Object.keys(props.dayDescriptions ?? {}).length > 0);
+
+const dayDescriptionIdPrefix = uniqueId("vc-calendar-day-");
+
+function getDayDescription(date: DateValue): string | undefined {
+  return props.dayDescriptions?.[date.toString()] || undefined;
+}
+
+function getDayDescriptionId(date: DateValue): string | undefined {
+  // The grid renders one month, so an ISO date appears at most once and is a safe id suffix.
+  return getDayDescription(date) ? `${dayDescriptionIdPrefix}-${date.toString()}` : undefined;
+}
 
 function onUpdate(value: DateValue | DateValue[] | undefined): void {
   const single = Array.isArray(value) ? value[0] : value;
@@ -370,17 +426,41 @@ function onCalendarKeydown(event: KeyboardEvent): void {
   });
 }
 
-// Sync placeholder to incoming model value so external state changes scroll the view.
+// Sync placeholder to incoming model value so external state changes scroll the view. A cleared selection
+// falls back to today only while the calendar owns its month; a consumer driving `month` keeps the view (and
+// the focusable cell) where it is.
 watch(
   () => props.modelValue,
   (next) => {
     const parsed = tryParseDate(next);
     if (parsed) {
       placeholderRef.value = parsed;
-    } else {
+    } else if (!tryParseDate(props.month)) {
       placeholderRef.value = getInitialPlaceholder();
     }
   },
+);
+
+// Same for a consumer-driven month.
+watch(
+  () => props.month,
+  (next) => {
+    const parsed = tryParseDate(next);
+    if (parsed) {
+      placeholderRef.value = parsed;
+    }
+  },
+);
+
+// Every way of changing the view — header arrows, year arrows, keyboard paging, a modelValue or
+// month jump — lands on the placeholder, so one watcher reports them all. Keyed on the month start
+// so day-level moves within a month stay silent.
+watch(
+  () => placeholderRef.value.set({ day: 1 }).toString(),
+  (monthStart) => {
+    emit("update:month", monthStart);
+  },
+  { immediate: true },
 );
 
 defineExpose({
@@ -432,10 +512,12 @@ defineExpose({
     }
   }
 
+  // The four nav buttons keep their cell width; the heading takes whatever is left instead of a fixed three
+  // cells, which is not enough for a long month name at the smaller sizes ("September 2026" ellipsized at `sm`).
   &__header {
     @apply grid items-center;
 
-    grid-template-columns: repeat(7, var(--cell-size));
+    grid-template-columns: var(--cell-size) var(--cell-size) 1fr var(--cell-size) var(--cell-size);
     gap: var(--grid-gap);
   }
 
@@ -470,7 +552,7 @@ defineExpose({
   &__heading {
     @apply text-center font-bold text-neutral-900;
 
-    grid-column: 3 / 6;
+    grid-column: 3;
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;

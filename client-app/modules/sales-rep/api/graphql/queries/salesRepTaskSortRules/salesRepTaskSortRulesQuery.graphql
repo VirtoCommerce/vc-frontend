@@ -1,0 +1,8 @@
+query SalesRepTaskSortRules($storeId: String, $cultureName: String) {
+  salesRepTaskSortRules(storeId: $storeId, cultureName: $cultureName) {
+    name
+    localizedName
+    defaultDirection
+    supportsDirection
+  }
+}

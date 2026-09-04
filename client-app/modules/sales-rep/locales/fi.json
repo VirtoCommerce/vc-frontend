@@ -202,6 +202,71 @@
       "filter_all": "Kaikki",
       "load_failed": "Tilauksia ei voitu ladata"
     },
+    "tasks": {
+      "title": "Kalenteri",
+      "widget_title": "Tehtävät ja eräpäivät",
+      "full_calendar": "Koko kalenteri",
+      "new_task": "Uusi tehtävä",
+      "add_task": "Lisää tehtävä",
+      "today": "Tänään",
+      "empty": "Tällä välilehdellä ei ole tehtäviä",
+      "empty_day": "Tänä päivänä ei eräänny mitään",
+      "load_failed": "Tehtäviä ei voitu ladata",
+      "day_task_count": "{count} tehtävä | {count} tehtävää",
+      "overdue_total": "{count} myöhässä oleva tehtävä | {count} myöhässä olevaa tehtävää",
+      "day_of_total": "{shown}/{total} tehtävästä",
+      "day_markers": "Merkitty: {kinds}",
+      "page": {
+        "subtitle": "Tehtäväsi, seurannat ja eräpäivät kaikilta asiakastileiltä — päiväkohtaisesti jaoteltuna.",
+        "all_tab": "Kaikki"
+      },
+      "table": {
+        "task": "Tehtävä",
+        "status": "Tila",
+        "notes": "Muistiinpanot",
+        "complete_aria": "Merkitse ”{name}” valmiiksi",
+        "reopen_aria": "Avaa ”{name}” uudelleen",
+        "edit_aria": "Muokkaa tehtävää ”{name}”"
+      },
+      "status": {
+        "upcoming": "Tulossa",
+        "overdue": "Myöhässä",
+        "completed": "Valmis",
+        "canceled": "Peruutettu"
+      },
+      "priority": {
+        "lowest": "Alin",
+        "low": "Matala",
+        "normal": "Normaali",
+        "high": "Korkea",
+        "highest": "Ylin"
+      },
+      "due_relative": {
+        "expired": "Erääntyi {date}",
+        "due": "Eräpäivä {date}"
+      },
+      "legend": {
+        "upcoming": "Tulossa",
+        "overdue": "Myöhässä",
+        "completed": "Valmis"
+      },
+      "form": {
+        "create_title": "Uusi tehtävä",
+        "edit_title": "Muokkaa tehtävää",
+        "name_label": "Otsikko",
+        "due_date_label": "Eräpäivä",
+        "priority_label": "Prioriteetti",
+        "type_label": "Tyyppi",
+        "description_label": "Muistiinpanot",
+        "save_button": "Tallenna",
+        "cancel_button": "Peruuta",
+        "delete_button": "Poista",
+        "delete_title": "Poista tehtävä",
+        "delete_confirm": "Tämä tehtävä poistetaan pysyvästi. Jatketaanko?",
+        "saved": "Tehtävä tallennettu",
+        "deleted": "Tehtävä poistettu"
+      }
+    },
     "top_sellers": {
       "title": "Suosituimmat myyjät",
       "rank": "#",
@@ -240,6 +305,18 @@
       "published": "Julkaistu {date}"
     },
     "rules": {
+      "task": {
+        "filter": {
+          "upcoming": "Tulossa",
+          "overdue": "Myöhässä",
+          "completed": "Valmiit"
+        },
+        "sort": {
+          "due-date": "Eräpäivä",
+          "recent": "Viimeksi luodut",
+          "name": "Tehtävä"
+        }
+      },
       "load_failed": {
         "filter": "Suodattimia ei voitu ladata, joten koko luettelo näytetään. Päivitä sivu.",
         "sort": "Lajitteluvalintoja ei voitu ladata, joten käytetään oletusjärjestystä. Päivitä sivu.",
