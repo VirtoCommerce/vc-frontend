@@ -1,7 +1,9 @@
 # One round trip for the tab badges: four aliases of the same field, each asking only for totalCount
 # (first: 0 fetches no rows). The backend has no dedicated counts query and does not need one.
-query SalesRepTaskCounts($today: DateTime!) {
-  all: salesRepTasks(first: 0) {
+# `day` is what the "All" tab shows - the selected day, not every task ever - so it takes the day window,
+# while the status aliases span every date like the tabs they badge.
+query SalesRepTaskCounts($today: DateTime!, $period: SalesRepStatisticsPeriodInput!) {
+  day: salesRepTasks(first: 0, period: $period) {
     totalCount
   }
   upcoming: salesRepTasks(first: 0, filter: "upcoming", today: $today) {

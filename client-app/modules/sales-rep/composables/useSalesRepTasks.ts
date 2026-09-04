@@ -89,9 +89,10 @@ export function useSalesRepTasks(options: UseSalesRepTasksOptionsType = {}) {
     }
   });
 
-  // flush: "sync" resets the page before the variables watcher runs, so a filter/sort change fires one request.
+  // flush: "sync" resets the page before the variables watcher runs, so a scope change fires one request. The
+  // period is in the list too: a day picked from page 3 would otherwise ask for offset 30 of a day with two tasks.
   watch(
-    [filter, sortRule],
+    [filter, sortRule, () => options.period?.value?.from],
     () => {
       page.value = 1;
     },

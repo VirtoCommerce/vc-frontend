@@ -192,7 +192,6 @@
         "task": "タスク",
         "status": "ステータス",
         "notes": "メモ",
-        "due": "期限",
         "complete_aria": "「{name}」を完了にする",
         "reopen_aria": "「{name}」を再開する",
         "edit_aria": "「{name}」を編集する"

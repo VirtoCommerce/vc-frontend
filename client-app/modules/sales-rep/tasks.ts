@@ -143,23 +143,21 @@ export function buildDayMarkers(
 }
 
 /**
- * The line under a task's title: the deadline, and only for a task that has none, its type. Shared by the table
- * and the dashboard widget so the two cannot read the same task differently. Takes the i18n functions rather than
- * calling useI18n, like `documentMeta` in utils.ts.
+ * The line under a task's title: the deadline, then the type — both when both exist. Shared by the table and the
+ * dashboard widget so the two cannot read the same task differently; " · "-joined like `documentMeta` in utils.ts,
+ * and takes the i18n functions rather than calling useI18n for the same reason it does.
  *
- * A completed task keeps showing its due date rather than falling back to the type: the type is an optional
- * dictionary value, so that fallback silently left completed rows with no second line at all.
+ * The type rides along rather than replacing the date: it is the only place the form's Type field is ever read
+ * back, and a rep-created task always has a due date, so a "type instead of date" fallback would never show it.
  */
 export function taskSubline(
   task: SalesRepTaskType,
   t: ComposerTranslation,
   d: (value: number | Date | string, format: string) => string,
 ): string {
-  if (!task.dueDate) {
-    return task.type;
-  }
-
   const key = task.status === "overdue" ? "expired" : "due";
 
-  return t(`sales_rep.tasks.due_relative.${key}`, { date: d(task.dueDate, "short") });
+  return [task.dueDate ? t(`sales_rep.tasks.due_relative.${key}`, { date: d(task.dueDate, "short") }) : "", task.type]
+    .filter(Boolean)
+    .join(" · ");
 }

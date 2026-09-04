@@ -192,7 +192,6 @@
         "task": "Tehtävä",
         "status": "Tila",
         "notes": "Muistiinpanot",
-        "due": "Eräpäivä",
         "complete_aria": "Merkitse ”{name}” valmiiksi",
         "reopen_aria": "Avaa ”{name}” uudelleen",
         "edit_aria": "Muokkaa tehtävää ”{name}”"

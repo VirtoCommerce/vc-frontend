@@ -16,7 +16,8 @@ const state = await vi.hoisted(async () => {
     page: ref(1),
     pages: ref(1),
     totalCount: ref(0),
-    counts: ref({ all: 0, upcoming: 0, overdue: 0, completed: 0 }),
+    counts: ref({ day: 0, upcoming: 0, overdue: 0, completed: 0 }),
+    countsDayWindow: undefined as { value: { from: string; to: string } } | undefined,
     rules: ref<{ name: string; label: string }[]>([]),
     rulesFailed: ref(false),
     month: ref("2026-10-01"),
@@ -34,12 +35,10 @@ vi.mock("../composables/useSalesRepTasks", () => ({ useSalesRepTasks: state.useS
 vi.mock("../composables/useSalesRepTaskCounts", async () => {
   const { ref } = await import("vue");
   return {
-    useSalesRepTaskCounts: () => ({
-      counts: state.counts,
-      loading: ref(false),
-      error: ref(null),
-      refetch: state.refetchCounts,
-    }),
+    useSalesRepTaskCounts: (dayWindow: { value: { from: string; to: string } }) => {
+      state.countsDayWindow = dayWindow;
+      return { counts: state.counts, loading: ref(false), error: ref(null), refetch: state.refetchCounts };
+    },
   };
 });
 vi.mock("../composables/useSalesRepTaskCalendar", async () => {
@@ -182,7 +181,7 @@ beforeEach(() => {
   state.page.value = 1;
   state.pages.value = 1;
   state.totalCount.value = 0;
-  state.counts.value = { all: 0, upcoming: 0, overdue: 0, completed: 0 };
+  state.counts.value = { day: 0, upcoming: 0, overdue: 0, completed: 0 };
   state.rules.value = [];
   state.rulesFailed.value = false;
   state.month.value = "2026-10-01";
@@ -214,7 +213,7 @@ describe("Calendar tabs", () => {
       { name: "upcoming", label: "Upcoming" },
       { name: "overdue", label: "Overdue" },
     ];
-    state.counts.value = { all: 12, upcoming: 7, overdue: 3, completed: 2 };
+    state.counts.value = { day: 2, upcoming: 7, overdue: 3, completed: 2 };
 
     const wrapper = createWrapper();
     const chips = wrapper.getComponent(ChipsStub);
@@ -223,7 +222,17 @@ describe("Calendar tabs", () => {
       { name: "upcoming", label: "Upcoming", count: 7 },
       { name: "overdue", label: "Overdue", count: 3 },
     ]);
-    expect(chips.props("allCount")).toBe(12);
+  });
+
+  // "All" lists the selected day, so its badge is that day's total — not every task the rep ever had, which
+  // would promise a hundred rows over a list of two while the status badges match their lists exactly.
+  it("badges All with the selected day's total, and hands the counts query that day", () => {
+    state.counts.value = { day: 2, upcoming: 7, overdue: 3, completed: 2 };
+
+    const wrapper = createWrapper();
+
+    expect(wrapper.getComponent(ChipsStub).props("allCount")).toBe(2);
+    expect(state.countsDayWindow?.value).toEqual(localDayWindow(localDayKey(new Date())));
   });
 
   it("offers no tabs at all when the rules could not be loaded", () => {
@@ -467,8 +476,20 @@ describe("Calendar writes", () => {
 
     expect(state.refetch).not.toHaveBeenCalled();
     expect(state.refetchMarkers).not.toHaveBeenCalled();
-    // The counts carry neither a day nor a month, so nothing rescoped them.
+    // The counts carry the day for the All badge, so the move rescoped them as well.
+    expect(state.refetchCounts).not.toHaveBeenCalled();
+  });
+
+  it("still refreshes the counts when the save stayed on the day on screen", async () => {
+    const wrapper = createWrapper();
+
+    await button(wrapper, "tasks.new_task").trigger("click");
+    const call = state.openModal.mock.calls.at(-1)?.[0] as { props: { onSaved: (day?: string) => Promise<void> } };
+
+    await call.props.onSaved(localDayKey(new Date()));
+
     expect(state.refetchCounts).toHaveBeenCalled();
+    expect(state.refetch).toHaveBeenCalled();
   });
 
   it("still refreshes the grid when the save stayed inside the month on screen", async () => {

@@ -70,9 +70,9 @@ import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBlockChrome } from "../composables/useBlockChrome";
 import { useMonthAnchor, useSalesRepTaskCalendar } from "../composables/useSalesRepTaskCalendar";
-import { useSalesRepTaskCounts } from "../composables/useSalesRepTaskCounts";
+import { useSalesRepOverdueTaskCount } from "../composables/useSalesRepTaskCounts";
 import { useSalesRepTasks } from "../composables/useSalesRepTasks";
-import { CALENDAR_ROUTE_NAME, TASKS_DEFAULT_ROWS } from "../constants";
+import { CALENDAR_ROUTE_NAME, TASKS_DEFAULT_ROWS, TASKS_SORT_RULE } from "../constants";
 import { localDayKey, localDayKeyToDate, localDayWindow, taskSubline } from "../tasks";
 import LayoutWidget from "./layout-widget.vue";
 import SalesRepTaskCalendar from "./sales-rep-task-calendar.vue";
@@ -108,16 +108,13 @@ const {
 } = useSalesRepTasks({
   period,
   pageSize: () => rowLimit.value,
-  sort: "due-date",
+  sort: TASKS_SORT_RULE,
 });
 
 const { dayMarkers } = useSalesRepTaskCalendar(month);
 
-// One extra round trip on the dashboard, and a deliberate one: the counts document is four aliases of the same
-// field with `first: 0`, so it carries no rows. A bespoke single-alias document would run the same resolver.
-const { counts } = useSalesRepTaskCounts();
-
-const overdueCount = computed(() => counts.value.overdue);
+// One extra round trip on the dashboard, and a deliberate one: a single `first: 0` alias, so it carries no rows.
+const { overdueCount } = useSalesRepOverdueTaskCount();
 
 const failed = computed(() => Boolean(error.value));
 

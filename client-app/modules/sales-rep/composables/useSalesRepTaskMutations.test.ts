@@ -1,4 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
+import { Logger } from "@/core/utilities";
 import { useSalesRepTaskMutations } from "./useSalesRepTaskMutations";
 
 const mutate = vi.hoisted(() => vi.fn(() => Promise.resolve()));
@@ -59,5 +60,18 @@ describe("useSalesRepTaskMutations", () => {
     await create({ name: "New", dueDate: "2026-09-04T09:00:00Z" });
 
     expect(passedCommand()).toEqual({ command: { name: "New", dueDate: "2026-09-04T09:00:00Z" } });
+  });
+
+  // The contract the dialogs rely on: a failed write answers false instead of throwing, so the caller keeps the
+  // form open, and the failure is logged since useMutation's own toast is the only other trace of it.
+  it("answers false and logs when the write fails", async () => {
+    const logger = vi.spyOn(Logger, "error").mockImplementation(() => {});
+    mutate.mockRejectedValueOnce(new Error("boom"));
+    const { setCompleted } = useSalesRepTaskMutations();
+
+    await expect(setCompleted("task-1", true)).resolves.toBe(false);
+
+    expect(logger).toHaveBeenCalledWith(expect.stringContaining("changeSalesRepTaskStatus"), expect.any(Error));
+    logger.mockRestore();
   });
 });

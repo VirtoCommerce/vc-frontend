@@ -192,7 +192,6 @@
         "task": "Oppgave",
         "status": "Status",
         "notes": "Notater",
-        "due": "Frist",
         "complete_aria": "Merk «{name}» som fullført",
         "reopen_aria": "Gjenåpne «{name}»",
         "edit_aria": "Rediger «{name}»"

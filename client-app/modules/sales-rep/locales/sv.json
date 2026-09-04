@@ -192,7 +192,6 @@
         "task": "Uppgift",
         "status": "Status",
         "notes": "Anteckningar",
-        "due": "Förfaller",
         "complete_aria": "Markera ”{name}” som slutförd",
         "reopen_aria": "Återöppna ”{name}”",
         "edit_aria": "Redigera ”{name}”"

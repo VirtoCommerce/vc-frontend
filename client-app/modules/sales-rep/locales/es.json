@@ -192,7 +192,6 @@
         "task": "Tarea",
         "status": "Estado",
         "notes": "Notas",
-        "due": "Vencimiento",
         "complete_aria": "Marcar «{name}» como completada",
         "reopen_aria": "Reabrir «{name}»",
         "edit_aria": "Editar «{name}»"

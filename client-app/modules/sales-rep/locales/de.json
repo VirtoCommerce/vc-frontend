@@ -192,7 +192,6 @@
         "task": "Aufgabe",
         "status": "Status",
         "notes": "Notizen",
-        "due": "Fällig",
         "complete_aria": "„{name}“ als erledigt markieren",
         "reopen_aria": "„{name}“ wieder öffnen",
         "edit_aria": "„{name}“ bearbeiten"

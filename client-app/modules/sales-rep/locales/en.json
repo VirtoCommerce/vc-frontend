@@ -192,7 +192,6 @@
         "task": "Task",
         "status": "Status",
         "notes": "Notes",
-        "due": "Due",
         "complete_aria": "Mark “{name}” as completed",
         "reopen_aria": "Reopen “{name}”",
         "edit_aria": "Edit “{name}”"

@@ -192,7 +192,6 @@
         "task": "Zadanie",
         "status": "Status",
         "notes": "Notatki",
-        "due": "Termin",
         "complete_aria": "Oznacz „{name}” jako ukończone",
         "reopen_aria": "Otwórz ponownie „{name}”",
         "edit_aria": "Edytuj „{name}”"

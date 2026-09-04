@@ -192,7 +192,6 @@
         "task": "任务",
         "status": "状态",
         "notes": "备注",
-        "due": "截止",
         "complete_aria": "将“{name}”标记为已完成",
         "reopen_aria": "重新打开“{name}”",
         "edit_aria": "编辑“{name}”"

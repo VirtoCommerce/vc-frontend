@@ -183,6 +183,16 @@ describe("VcCalendar", () => {
       expect(emittedMonths(wrapper)).toEqual(["2026-06-01", "2026-07-01"]);
     });
 
+    // A consumer that drives the month clears the selection to mean "no day", not "go back to today".
+    it("keeps a consumer-driven month when the selection is cleared", async () => {
+      const wrapper = createWrapper({ month: "2026-06-01", modelValue: "2026-06-15" });
+
+      await wrapper.setProps({ modelValue: undefined });
+
+      expect(getDay(wrapper, "2026-06-15").attributes("data-outside-view")).toBeUndefined();
+      expect(emittedMonths(wrapper)).toEqual(["2026-06-01"]);
+    });
+
     it("ignores an unparseable month rather than resetting the view", async () => {
       const wrapper = createWrapper({ month: "2026-06-15" });
 

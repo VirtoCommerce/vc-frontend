@@ -192,7 +192,6 @@
         "task": "Tarefa",
         "status": "Status",
         "notes": "Notas",
-        "due": "Prazo",
         "complete_aria": "Marcar «{name}» como concluída",
         "reopen_aria": "Reabrir «{name}»",
         "edit_aria": "Editar «{name}»"

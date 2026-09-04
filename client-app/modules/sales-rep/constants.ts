@@ -65,6 +65,10 @@ export const TASKS_PAGE_SIZE = 15;
 // Dashboard widget row cap — follows documents: default 5, max 10.
 export const TASKS_DEFAULT_ROWS = 5;
 export const TASKS_MAX_ROWS = 10;
+// The one order every task surface asks for. A sort-rule name from salesRepTaskSortRules (an unrecognized name
+// fails closed — keep it aligned with a real rule); no surface offers a sort control, so the rule list itself is
+// not fetched.
+export const TASKS_SORT_RULE = "due-date";
 // Upper bound on the month query behind the calendar dots. A rep's month is tens of tasks; the cap only
 // stops a pathological book of business from pulling an unbounded page for three dots a day.
 export const TASKS_CALENDAR_MAX = 200;

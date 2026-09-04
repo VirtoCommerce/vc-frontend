@@ -9,11 +9,11 @@ import { useSalesRepHubQuery } from "./useSalesRepHubQuery";
  * defaults are back-office flavoured and none of them fit a sales rep, so an empty-looking list usually means
  * nobody has configured it yet, not that the query failed.
  */
-export function useSalesRepTaskTypes(enabled: boolean = true) {
-  const { result, loading, error, onError } = useSalesRepHubQuery(
+export function useSalesRepTaskTypes() {
+  const { result, onError } = useSalesRepHubQuery(
     SalesRepTaskTypesDocument,
     computed(() => ({})),
-    { fetchPolicy: "cache-first", enabled },
+    { fetchPolicy: "cache-first" },
   );
 
   onError((err) => {
@@ -24,5 +24,5 @@ export function useSalesRepTaskTypes(enabled: boolean = true) {
     (result.value?.salesRepTaskTypes ?? []).filter((value): value is string => Boolean(value)),
   );
 
-  return { types, loading, error };
+  return { types };
 }

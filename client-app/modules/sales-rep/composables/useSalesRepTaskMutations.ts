@@ -9,6 +9,16 @@ import {
 } from "../api/graphql/types";
 import type { SalesRepTaskInputType } from "../types/tasks";
 
+async function run(operation: string, mutate: () => Promise<unknown>): Promise<boolean> {
+  try {
+    await mutate();
+    return true;
+  } catch (error) {
+    Logger.error(`[sales-rep] ${operation} failed:`, error);
+    return false;
+  }
+}
+
 /**
  * Task writes. `useMutation` (not useSalesRepHubQuery — that is for reads): a failed user action keeps the global
  * error toast, per the module's convention. Each call returns a boolean rather than throwing, so callers close a
@@ -21,16 +31,6 @@ export function useSalesRepTaskMutations() {
   const { mutate: deleteTask, loading: deleting } = useMutation(DeleteSalesRepTaskDocument);
 
   const loading = computed(() => creating.value || updating.value || changingStatus.value || deleting.value);
-
-  async function run(operation: string, mutate: () => Promise<unknown>): Promise<boolean> {
-    try {
-      await mutate();
-      return true;
-    } catch (error) {
-      Logger.error(`[sales-rep] ${operation} failed:`, error);
-      return false;
-    }
-  }
 
   function create(input: SalesRepTaskInputType): Promise<boolean> {
     return run("createSalesRepTask", () => createTask({ command: input }));

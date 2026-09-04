@@ -192,7 +192,6 @@
         "task": "Задача",
         "status": "Статус",
         "notes": "Заметки",
-        "due": "Срок",
         "complete_aria": "Отметить «{name}» как выполненную",
         "reopen_aria": "Возобновить «{name}»",
         "edit_aria": "Изменить «{name}»"

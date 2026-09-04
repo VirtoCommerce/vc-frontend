@@ -426,14 +426,16 @@ function onCalendarKeydown(event: KeyboardEvent): void {
   });
 }
 
-// Sync placeholder to incoming model value so external state changes scroll the view.
+// Sync placeholder to incoming model value so external state changes scroll the view. A cleared selection
+// falls back to today only while the calendar owns its month; a consumer driving `month` keeps the view (and
+// the focusable cell) where it is.
 watch(
   () => props.modelValue,
   (next) => {
     const parsed = tryParseDate(next);
     if (parsed) {
       placeholderRef.value = parsed;
-    } else {
+    } else if (!tryParseDate(props.month)) {
       placeholderRef.value = getInitialPlaceholder();
     }
   },

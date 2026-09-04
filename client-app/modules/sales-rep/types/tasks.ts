@@ -18,7 +18,8 @@ export type SalesRepTaskType = {
 export type SalesRepTaskDayMarkersType = Record<string, SalesRepTaskStatusType[]>;
 
 export type SalesRepTaskCountsType = {
-  all: number;
+  /** Tasks due on the selected day — what the "All" tab lists, unlike the status tabs which span every date. */
+  day: number;
   upcoming: number;
   overdue: number;
   completed: number;

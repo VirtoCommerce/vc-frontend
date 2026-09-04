@@ -192,7 +192,6 @@
         "task": "Attività",
         "status": "Stato",
         "notes": "Note",
-        "due": "Scadenza",
         "complete_aria": "Segna «{name}» come completata",
         "reopen_aria": "Riapri «{name}»",
         "edit_aria": "Modifica «{name}»"
