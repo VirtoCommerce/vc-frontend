@@ -203,6 +203,7 @@
       "max_value": "El valor máximo es {value}",
       "min_value": "El valor mínimo es {value}",
       "empty_wish_list": "No hay artículos en la lista",
+      "no_company_roles_available": "No hay roles disponibles. Póngase en contacto con el administrador de su tienda.",
       "not_defined": "Indefinido",
       "invalid_coupon": "Este código no es válido",
       "failed_coupon": "Algo salió mal con el cupón. Por favor, inténtalo de nuevo.",
@@ -515,8 +516,6 @@
         }
       },
       "impersonate_form": {
-        "subtitle": "Confirme su identidad para continuar",
-        "description": "Está iniciando sesión en nombre de un cliente. La sesión será auditada.",
         "email_label": "Correo electrónico",
         "email_placeholder": "Ingrese su correo electrónico",
         "password_label": "Contraseña",
@@ -1366,6 +1365,9 @@
       },
       "impersonate": {
         "title": "Verificación de seguridad",
+        "subtitle": "Confirme su identidad para continuar",
+        "description": "Está iniciando sesión en nombre de un cliente. La sesión será auditada.",
+        "no_permission": "Esta cuenta no tiene permiso para iniciar sesión en nombre de un cliente.",
         "back_to_home": "Volver al inicio",
         "switching_in_progress": "Cambiando a la vista del cliente…",
         "error": "Algunos problemas durante la suplantación. Verifica tus permisos"

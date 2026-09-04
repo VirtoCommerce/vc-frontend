@@ -28,5 +28,73 @@
         }
       }
     }
+  },
+  "common": {
+    "links": {
+      "missions_challenges": "Tehtävät & haasteet"
+    }
+  },
+  "shared": {
+    "account": {
+      "navigation": {
+        "links": {
+          "missions_challenges": "@:common.links.missions_challenges"
+        }
+      }
+    }
+  },
+  "pages": {
+    "account": {
+      "missions": {
+        "title": "Tehtävät & haasteet",
+        "description": "Suorita tehtäviä ansaitaksesi bonus Virto Rewards -pisteitä.",
+        "load_error": "Emme saaneet ladattua tehtäviäsi. Yritä uudelleen.",
+        "retry_button": "Yritä uudelleen",
+        "empty_list": "Sinulla ei ole vielä tehtäviä. Tarkista pian uudelleen uusia tapoja ansaita pisteitä.",
+        "balance_banner": {
+          "label": "Virto Rewards -saldo",
+          "points": "pistettä",
+          "points_history": "Pisteiden historia"
+        },
+        "redeem_banner": {
+          "title": "Lunasta pisteitäsi",
+          "description": "Vaihda pisteitä tuotteisiin palkintoluettelossa.",
+          "catalog": "Luettelo"
+        },
+        "card": {
+          "type_products": "Suositellut tuotteet",
+          "type_order_value": "Tilausarvo",
+          "type_orders": "Tilausten määrä",
+          "points": "pistettä",
+          "days_left": "{count} päivä jäljellä | {count} päivää jäljellä",
+          "mission_completed": "Tehtävä suoritettu",
+          "completed": "Suoritettu",
+          "open_mission": "Avaa tehtävä",
+          "progress_skus": "{current} / {target} tuotetta",
+          "progress_any_sku": "vähintään 1 / {target} tuotetta",
+          "progress_spend": "{sum} käytetty",
+          "progress_orders": "{current} / {target} tilausta"
+        },
+        "sku_modal": {
+          "buy_at_least": "Osta vähintään {count}",
+          "total_units": "Yhteensä kappaletta",
+          "targets_met": "Tavoitteet täytetty",
+          "cart_subtotal": "Ostoskorin välisumma",
+          "reward_hint": "Ansaitse {points} pistettä, kun kaikki tavoitteet on täytetty",
+          "reward_unlocked": "Kaikki tavoitteet täytetty — {points} pistettä avattu",
+          "close": "Sulje",
+          "add_to_cart": "Lisää ostoskoriin",
+          "added_to_cart": "Tuotteet lisätty ostoskoriin",
+          "add_to_cart_error": "Joitakin tuotteita ei voitu lisätä ostoskoriin"
+        },
+        "order_modal": {
+          "mission_target": "Tehtävän tavoite",
+          "value_requirement": "Käytä {target} kelpoisiin tilauksiin",
+          "count_requirement": "Tee {target} erillistä tilausta",
+          "close": "Sulje",
+          "redeem_products": "Lunasta tuotteita"
+        }
+      }
+    }
   }
 }

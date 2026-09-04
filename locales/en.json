@@ -203,6 +203,7 @@
       "max_value": "The maximum value is {value}",
       "min_value": "The minimum value is {value}",
       "empty_wish_list": "There are no items in the list",
+      "no_company_roles_available": "There are no roles available. Please contact your store administrator.",
       "not_defined": "Undefined",
       "invalid_coupon": "This code is not valid",
       "failed_coupon": "Something went wrong with the coupon. Please try again.",
@@ -515,8 +516,6 @@
         }
       },
       "impersonate_form": {
-        "subtitle": "Confirm your identity to continue",
-        "description": "You are logging in on behalf of a customer. The session will be audited.",
         "email_label": "Email",
         "email_placeholder": "Enter your email",
         "password_label": "Password",
@@ -1366,6 +1365,9 @@
       },
       "impersonate": {
         "title": "Security verification",
+        "subtitle": "Confirm your identity to continue",
+        "description": "You are logging in on behalf of a customer. The session will be audited.",
+        "no_permission": "This account is not allowed to log in on behalf of a customer.",
         "back_to_home": "Back to home",
         "switching_in_progress": "Switching to customer view…",
         "error": "Some problems occurred during impersonation. Check your permissions"

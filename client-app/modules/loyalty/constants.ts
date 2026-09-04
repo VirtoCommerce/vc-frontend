@@ -1,7 +1,9 @@
 export const MODULE_ID = "VirtoCommerce.Loyalty";
 export const ENABLED_KEY = "Loyalty.Enable";
+export const MISSIONS_ENABLED_KEY = "Loyalty.Missions.Enable";
 
 export const DEFAULT_LOYALTY_LOGS_PER_PAGE = 10;
+export const DEFAULT_MISSIONS_PER_PAGE = 12;
 
 export const CUSTOMER_ORDER_OBJECT_TYPE = "CustomerOrder";
 export const REGISTRATION_OBJECT_TYPE = "Registration";

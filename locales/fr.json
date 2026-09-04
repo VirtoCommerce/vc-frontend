@@ -203,6 +203,7 @@
       "max_value": "La valeur maximale est {value}",
       "min_value": "La valeur minimale est {value}",
       "empty_wish_list": "Il n'y a pas d'articles dans la liste",
+      "no_company_roles_available": "Aucun rôle disponible. Veuillez contacter l'administrateur de votre boutique.",
       "not_defined": "Indéfini",
       "invalid_coupon": "Ce code n'est pas valide",
       "failed_coupon": "Un problème est survenu avec le coupon. Veuillez réessayer.",
@@ -515,8 +516,6 @@
         }
       },
       "impersonate_form": {
-        "subtitle": "Confirmez votre identité pour continuer",
-        "description": "Vous vous connectez au nom d'un client. La session sera auditée.",
         "email_label": "E-mail",
         "email_placeholder": "Saisissez votre e-mail",
         "password_label": "Mot de passe",
@@ -702,13 +701,13 @@
       "configuration_items": {
         "title": "Liste des composants",
         "edit_configuration": "Modifier la configuration",
+        "selected_text": "Texte sélectionné : {text}",
         "columns": {
           "number": "Numéro",
           "section": "Section",
           "value": "Valeur",
           "price": "Prix"
-        },
-        "selected_text": "Texte sélectionné : {text}"
+        }
       },
       "coupons_section": {
         "title": "Réductions et coupons",
@@ -1366,6 +1365,9 @@
       },
       "impersonate": {
         "title": "Vérification de sécurité",
+        "subtitle": "Confirmez votre identité pour continuer",
+        "description": "Vous vous connectez au nom d'un client. La session sera auditée.",
+        "no_permission": "Ce compte n'est pas autorisé à se connecter au nom d'un client.",
         "back_to_home": "Retour à l'accueil",
         "switching_in_progress": "Basculement vers la vue client…",
         "error": "Des problèmes sont survenus lors de l'imitation. Vérifiez vos autorisations"

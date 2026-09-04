@@ -75,6 +75,8 @@ const independentModules: ModuleType[] = [
     name: "Loyalty",
     apiPath: "client-app/modules/loyalty/api/graphql",
     schemaPath: `${backendUrl}/graphql/loyalty`,
+    // Include specific core fragments that loyalty module uses
+    requiredCommonFragments: [`${core.apiPath}/catalog/fragments/availabilityData.graphql`],
   },
   {
     name: "SalesRep",

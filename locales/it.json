@@ -203,6 +203,7 @@
       "max_value": "Il valore massimo è {value}",
       "min_value": "Il valore minimo è {value}",
       "empty_wish_list": "Non ci sono articoli nella lista",
+      "no_company_roles_available": "Non sono disponibili ruoli. Contatta l'amministratore del tuo negozio.",
       "not_defined": "Non definito",
       "invalid_coupon": "Questo codice non è valido",
       "failed_coupon": "Qualcosa è andato storto con il coupon. Riprova.",
@@ -515,8 +516,6 @@
         }
       },
       "impersonate_form": {
-        "subtitle": "Conferma la tua identità per continuare",
-        "description": "Stai accedendo per conto di un cliente. La sessione verrà registrata per audit.",
         "email_label": "Email",
         "email_placeholder": "Inserisci la tua email",
         "password_label": "Password",
@@ -1366,6 +1365,9 @@
       },
       "impersonate": {
         "title": "Verifica di sicurezza",
+        "subtitle": "Conferma la tua identità per continuare",
+        "description": "Stai accedendo per conto di un cliente. La sessione verrà registrata per audit.",
+        "no_permission": "Questo account non è autorizzato ad accedere a nome di un cliente.",
         "back_to_home": "Torna alla home",
         "switching_in_progress": "Passaggio alla vista cliente…",
         "error": "Alcuni problemi durante l'impersonificazione. Controlla i tuoi permessi"
