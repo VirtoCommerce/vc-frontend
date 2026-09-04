@@ -25,9 +25,26 @@
       </div>
 
       <div class="compare-products__actions">
-        <VcButton variant="outline" size="sm" :disabled="isEmpty" prepend-icon="trash-2" @click="openClearAllModal">
+        <VcButton
+          class="hidden md:inline-flex"
+          variant="outline"
+          size="sm"
+          :disabled="isEmpty"
+          prepend-icon="trash-2"
+          @click="openClearAllModal"
+        >
           {{ t("pages.compare.actions.clear_all") }}
         </VcButton>
+
+        <VcButton
+          class="md:hidden"
+          variant="outline"
+          size="sm"
+          :disabled="isEmpty"
+          icon="trash-2"
+          :aria-label="t('pages.compare.actions.clear_all')"
+          @click="openClearAllModal"
+        />
       </div>
     </div>
 
@@ -96,7 +113,7 @@
     </VcWidget>
 
     <template v-else>
-      <div class="compare-products__category-tabs">
+      <div class="compare-products__category-tabs" @wheel="onCategoryTabsWheel">
         <VcButton
           v-for="tab in categoryTabs"
           :key="tab.categoryKey"
@@ -189,6 +206,15 @@ const {
 
 const isEmpty = computed(() => products.value.length === 0);
 
+function onCategoryTabsWheel(event: WheelEvent) {
+  if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) {
+    return;
+  }
+
+  event.preventDefault();
+  (event.currentTarget as HTMLElement).scrollLeft += event.deltaY;
+}
+
 // Focus lands on the real <h3>, not a wrapper — a wrapper div has no role, so a screen reader
 // would read the text but lose "heading level 3".
 const emptyStateHeadingRef = useTemplateRef<{ $el: HTMLElement }>("emptyStateHeadingRef");
@@ -280,10 +306,6 @@ onUnmounted(() => {
 
   &__actions {
     @apply flex gap-2;
-
-    @media (width < theme("screens.md")) {
-      @apply hidden;
-    }
   }
 
   &__empty-state,

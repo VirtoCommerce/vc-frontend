@@ -36,23 +36,23 @@
                 />
               </div>
 
-              <p v-if="!isCompact" class="compare-table__differ">
+              <p v-if="!isCompact && differCount > 0" class="compare-table__differ">
                 {{ t("shared.compare.table.differ_rows", { count: differCount, total: totalRows }) }}
               </p>
             </div>
-          </Teleport>
 
-          <VcButton
-            v-if="!isCompact"
-            class="compare-table__clear-category"
-            variant="soft"
-            color="neutral"
-            size="xs"
-            prepend-icon="x"
-            @click="emit('clearCategory')"
-          >
-            {{ t("shared.compare.table.clear_category") }}
-          </VcButton>
+            <VcButton
+              v-if="!isCompact"
+              class="compare-table__clear-category"
+              variant="soft"
+              color="neutral"
+              size="xs"
+              prepend-icon="x"
+              @click="emit('clearCategory')"
+            >
+              {{ t("shared.compare.table.clear_category") }}
+            </VcButton>
+          </Teleport>
         </div>
 
         <table ref="headerScrollRef" class="compare-table__header-scroll">
@@ -501,10 +501,10 @@ watch(
   }
 
   &__clear-category {
-    @apply self-start;
+    @apply self-start whitespace-nowrap;
 
     @media (width < theme("screens.md")) {
-      @apply hidden;
+      @apply self-center;
     }
   }
 
@@ -520,6 +520,10 @@ watch(
 
   &__differ {
     @apply text-xs text-neutral-500;
+
+    @media (width < theme("screens.md")) {
+      @apply hidden;
+    }
   }
 
   &__product {
