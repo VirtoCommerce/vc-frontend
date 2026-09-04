@@ -337,6 +337,7 @@
           "back_to_operator": "Back to {name}",
           "switching_back": "Switching back…",
           "no_results": "No results found",
+          "organization_locked_tooltip": "This organization is locked. Contact your administrator for access.",
           "dark_mode": {
             "system": "Theme: auto",
             "dark": "Theme: dark",
