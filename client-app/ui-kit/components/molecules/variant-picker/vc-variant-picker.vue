@@ -342,13 +342,6 @@ function toggleValue(): void {
       @apply size-[--size];
     }
 
-    &:focus-within,
-    &:focus-visible {
-      @apply outline-none;
-
-      box-shadow: 0 0 0 2px rgb(from var(--color-primary-500) r g b / 0.5);
-    }
-
     #{$active} & {
       &:has(#{$text}) {
         box-shadow: 0 0 0 2px var(--color-accent-500);

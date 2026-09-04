@@ -143,13 +143,6 @@ const text = useVModel(props, "modelValue", emit);
       }
     }
 
-    &:focus,
-    &:focus-visible {
-      #{$error} & {
-        @apply outline-danger-100;
-      }
-    }
-
     &[disabled],
     #{$disabled} & {
       @apply bg-neutral-100 cursor-not-allowed;

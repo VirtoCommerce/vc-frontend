@@ -334,14 +334,6 @@ defineExpose({
     }
   }
 
-  @each $color in $colors {
-    &--color--#{$color} {
-      &:focus {
-        --outline-color: rgb(from var(--color-#{$color}-500) r g b / 0.3);
-      }
-    }
-  }
-
   $variants: solid, soft, outline, surface, ghost, tonal;
 
   @each $variant in $variants {
@@ -469,10 +461,6 @@ defineExpose({
     #{$append} & {
       @apply ms-2;
     }
-  }
-
-  &:focus {
-    @apply outline outline-[3px] outline-[--outline-color];
   }
 }
 </style>

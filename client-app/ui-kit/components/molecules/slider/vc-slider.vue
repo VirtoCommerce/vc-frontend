@@ -210,17 +210,13 @@ const isEndInputInvalid = computed(() => {
 });
 
 // ARIA attributes for inputs including aria-invalid
-const startInputAriaAttributes = computed(
-  (): Record<string, string | null> => ({
-    "aria-invalid": isStartInputInvalid.value ? "true" : null,
-  }),
-);
+const startInputAriaAttributes = computed((): Record<string, string | null> => ({
+  "aria-invalid": isStartInputInvalid.value ? "true" : null,
+}));
 
-const endInputAriaAttributes = computed(
-  (): Record<string, string | null> => ({
-    "aria-invalid": isEndInputInvalid.value ? "true" : null,
-  }),
-);
+const endInputAriaAttributes = computed((): Record<string, string | null> => ({
+  "aria-invalid": isEndInputInvalid.value ? "true" : null,
+}));
 
 watch([value, min, max], ([newValue, newMin, newMax]) => {
   if (slider) {
@@ -596,7 +592,7 @@ function getSliderStart(value1: number, value2: number): [number, number] {
   &__button {
     @apply flex flex-col justify-end w-full h-[var(--cols-height)] border-t border-x border-transparent cursor-default outline-none;
 
-    &:focus {
+    &:focus-visible {
       $focusColumn: &;
 
       @apply outline-none;
@@ -622,8 +618,10 @@ function getSliderStart(value1: number, value2: number): [number, number] {
       @apply bg-primary-200 border-primary-300;
     }
 
+    // Ring relocated from the focusable button to the visible bar.
     #{$focusColumn} & {
-      @apply outline outline-2 outline-primary-500/40;
+      outline: var(--vc-focus-ring-width) solid var(--vc-focus-ring-color);
+      outline-offset: var(--vc-focus-ring-offset);
     }
   }
 
@@ -644,7 +642,6 @@ function getSliderStart(value1: number, value2: number): [number, number] {
 
     .noUi-handle {
       @apply top-[calc(var(--handle-size)/-2.5)] right-[calc(var(--handle-size)/-2)] size-[--handle-size] rounded-full bg-additional-50 border-4 border-primary cursor-pointer;
-      @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2;
 
       &::before,
       &::after {

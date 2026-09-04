@@ -248,21 +248,24 @@ onMounted(() => {
     @each $color in $colors {
       &--color--#{$color} {
         --vc-icon-color: var(--color-#{$color}-600);
-        --focus-color: rgb(from var(--color-#{$color}-500) r g b / 0.3);
 
         &:hover {
-          @apply bg-[--color-#{$color}-50] outline-none;
-        }
-
-        &:focus,
-        &:focus-visible {
-          @apply outline-[--focus-color] -outline-offset-2 rounded-[inherit];
+          @apply bg-[--color-#{$color}-50];
         }
 
         &#{$active} {
           @apply bg-[--color-#{$color}-100];
         }
       }
+    }
+
+    // The one documented exception to the shared offset: menu lists render inside a
+    // VcScrollbar with zero clearance (measured in the language dropdown), so an
+    // outset ring is clipped. Same inset value as vc-product-image's carousel button.
+    &:focus-visible {
+      @apply rounded-[inherit];
+
+      outline-offset: -2px;
     }
 
     &:disabled,

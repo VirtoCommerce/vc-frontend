@@ -124,7 +124,6 @@ const containerTag = computed(() => (isInsideInteractive.value ? "span" : "label
   --props-word-break: v-bind(props.wordBreak);
 
   --base-color: var(--vc-radio-button-base-color, var(--color-primary-500));
-  --focus-color: rgb(from var(--base-color) r g b / 0.3);
   --max-lines: var(--props-max-lines, var(--vc-radio-button-max-lines, initial));
   --word-break: var(--props-word-break, var(--vc-radio-button-word-break, initial));
 
@@ -186,6 +185,12 @@ const containerTag = computed(() => (isInsideInteractive.value ? "span" : "label
   &__input {
     @apply absolute inset-0 opacity-0 cursor-pointer m-0 w-full h-full z-[1];
 
+    // Full-bleed transparent overlay: the ring belongs on the visible indicator,
+    // otherwise the global rule outlines the whole control on top of it.
+    &:focus {
+      outline: none;
+    }
+
     #{$disabled} & {
       @apply cursor-not-allowed;
     }
@@ -198,8 +203,9 @@ const containerTag = computed(() => (isInsideInteractive.value ? "span" : "label
       @apply hidden;
     }
 
-    input:focus + & {
-      @apply outline-none ring ring-[--focus-color];
+    input:focus-visible + & {
+      outline: var(--vc-focus-ring-width) solid var(--vc-focus-ring-color);
+      outline-offset: var(--vc-focus-ring-offset);
     }
 
     #{$checked} & {

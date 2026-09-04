@@ -163,7 +163,6 @@ function onClick(event: Event) {
   $right: "";
 
   --base-color: var(--vc-checkbox-base-color, var(--color-primary-500));
-  --focus-color: rgb(from var(--base-color) r g b / 0.3);
 
   @apply flex-none select-none;
 
@@ -220,6 +219,12 @@ function onClick(event: Event) {
   &__input {
     @apply absolute inset-0 opacity-0 cursor-pointer m-0 w-full h-full z-10;
 
+    // Full-bleed transparent overlay: the ring belongs on the visible indicator,
+    // otherwise the global rule outlines the whole control on top of it.
+    &:focus {
+      outline: none;
+    }
+
     #{$disabled} & {
       @apply cursor-not-allowed;
     }
@@ -229,8 +234,9 @@ function onClick(event: Event) {
     @apply size-[--size] shrink-0 rounded border-2 border-neutral-400 bg-additional-50;
 
     // Focus styles via sibling selector (when hidden input is focused)
-    input:focus + & {
-      @apply ring ring-[--focus-color];
+    input:focus-visible + & {
+      outline: var(--vc-focus-ring-width) solid var(--vc-focus-ring-color);
+      outline-offset: var(--vc-focus-ring-offset);
     }
 
     #{$checked} & {

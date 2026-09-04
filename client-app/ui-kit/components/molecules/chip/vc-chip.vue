@@ -259,12 +259,6 @@ const _iconColor = computed(() => getColorValue(props.iconColor));
     }
   }
 
-  @each $color in $colors {
-    &--color--#{$color} {
-      --outline-color: rgb(from var(--color-#{$color}-500) r g b / 0.4);
-    }
-  }
-
   // Hover — color-mix based, mirrors VcButton. Applied on the content element when clickable.
   @each $color in $colors {
     &--solid--#{$color}#{$clickable} #{$contentEl}:hover {

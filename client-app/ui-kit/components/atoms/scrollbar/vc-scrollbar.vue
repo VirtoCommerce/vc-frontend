@@ -212,10 +212,6 @@ const _thumbColor = computed(() => getColorValue(props.thumbColor));
 
   overflow: unset;
 
-  &:focus-visible {
-    @apply outline outline-2 -outline-offset-2 outline-[--color-primary-500];
-  }
-
   &--vertical {
     $vertical: &;
 

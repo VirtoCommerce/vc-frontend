@@ -1,9 +1,24 @@
 // Consumable UI-Kit tokens.
-// Each declaration is `var(<preset-override-key>, <palette-fallback>)`.
+// Each colour declaration is `var(<preset-override-key>, <palette-fallback>)`.
 // Preset JSON may define any of the `--color-vc-*` overrides; if not, the palette fallback applies.
-// Pilot scope: VcButton only, default state. Hover/disabled stay in component SCSS for now.
+// Scope: the shared focus ring (every component except VcSwitch, which has no
+// indicator at all and is tracked separately), plus VcButton default state.
+// Hover/disabled stay in component SCSS for now.
 
 :root {
+  // ============================================================
+  // Focus ring — shared by every component
+  // ============================================================
+  // Mid-luminance accent: the only band clearing 3:1 on both near-white and dark
+  // surfaces. Dark mode raises it to accent-600 (_dark.scss).
+  --vc-focus-ring-color: var(--color-vc-focus-ring, var(--color-accent-500));
+
+  // Lengths, not colours: no `--color-vc-*` override keys. menu-item and the
+  // product-image carousel button clip an outset ring, so they set a negative
+  // `outline-offset` literally and are not driven by the offset token.
+  --vc-focus-ring-width: 2px;
+  --vc-focus-ring-offset: 2px;
+
   // ============================================================
   // VcButton — solid
   // ============================================================
