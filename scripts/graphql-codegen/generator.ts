@@ -35,6 +35,7 @@ if (
   backendUrl.startsWith("https://localhost") &&
   process.env.LOCAL_DEV_ALLOW_INSECURE_TLS === "true"
 ) {
+  // codeql[js/disabling-certificate-validation]: gated above to dev + https://localhost + an explicit opt-in env var, never reachable in CI/prod
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 }
 

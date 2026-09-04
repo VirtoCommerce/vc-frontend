@@ -42,7 +42,7 @@ rules:
           - pattern: sessionStorage.setItem($KEY, $TOK)
       - metavariable-regex:
           metavariable: $KEY
-          regex: '(?i).*(auth|token|session|jwt|credential).*'
+          regex: "(?i).*(auth|token|session|jwt|credential).*"
     message: >
       Auth/refresh tokens in local/session storage are XSS-exfiltratable. Store the
       refresh token in an HttpOnly cookie and keep the access token in memory only.
@@ -198,12 +198,44 @@ rules:
           - pattern: '$X.addEventListener("message", function ($E) { ... })'
           - pattern: '$X.addEventListener("message", async ($E) => { ... })'
           - pattern: '$X.addEventListener("message", async function ($E) { ... })'
-      # An $E.origin check anywhere in the handler body clears it — including async
-      # handlers, which Semgrep treats as structurally distinct from sync ones.
+      # An $E.origin check anywhere in the handler body clears it — including
+      # async handlers, which Semgrep treats as structurally distinct from sync
+      # ones. Two exclusion shapes are kept side by side (a match is cleared if
+      # it satisfies either): the original bare deep-expression check below
+      # covers a guard written as a plain expression/ternary anywhere in the
+      # body, while the pattern-not-inside further down additionally covers a
+      # guard written inside an `if` condition — the deep-expression operator
+      # placed directly on the body never reaches into a nested if-condition,
+      # which is why a real `if (event.origin !== trusted) return;` guard used
+      # to slip past the bare check alone.
       - pattern-not: '$X.addEventListener("message", ($E) => { <... $E.origin ...> })'
       - pattern-not: '$X.addEventListener("message", function ($E) { <... $E.origin ...> })'
       - pattern-not: '$X.addEventListener("message", async ($E) => { <... $E.origin ...> })'
       - pattern-not: '$X.addEventListener("message", async function ($E) { <... $E.origin ...> })'
+      - pattern-not-inside: |
+          $X.addEventListener("message", ($E) => {
+            ...
+            if (<... $E.origin ...>) { ... }
+            ...
+          })
+      - pattern-not-inside: |
+          $X.addEventListener("message", function ($E) {
+            ...
+            if (<... $E.origin ...>) { ... }
+            ...
+          })
+      - pattern-not-inside: |
+          $X.addEventListener("message", async ($E) => {
+            ...
+            if (<... $E.origin ...>) { ... }
+            ...
+          })
+      - pattern-not-inside: |
+          $X.addEventListener("message", async function ($E) {
+            ...
+            if (<... $E.origin ...>) { ... }
+            ...
+          })
     message: >
       'message' handler must validate event.origin against a trusted allowlist
       before acting on the payload.
