@@ -21,7 +21,7 @@
 
 <script setup lang="ts">
 import { useDebounceFn, useEventListener, useMutationObserver, useResizeObserver, useThrottleFn } from "@vueuse/core";
-import { computed, nextTick, onMounted, provide, ref, useTemplateRef } from "vue";
+import { computed, nextTick, onMounted, provide, ref, useTemplateRef, watch } from "vue";
 import { getColorValue } from "@/ui-kit/utilities";
 import { vcScrollbarKey } from "./vc-scrollbar-context";
 
@@ -131,11 +131,24 @@ onMounted(() => {
   void nextTick(updateAutoTabStop);
 });
 
+// flush: "post": a pre-flush watcher would run before these props' overflow classes (below)
+// reach the DOM, reading scrollHeight/clientHeight off the still-stale layout.
+watch([() => props.vertical, () => props.horizontal, () => props.disabled], updateAutoTabStop, {
+  flush: "post",
+});
+
 // The element's own box (ResizeObserver) stays fixed while slot content rendered by OTHER
 // components grows: structural and text changes are seen by the MutationObserver, image loads
-// only by the capture-phase load listener (load doesn't bubble and isn't a mutation).
+// only by the capture-phase load listener (load doesn't bubble and isn't a mutation). Attributes
+// are watched too, since FOCUSABLE_SELECTOR and the role guard both read them.
 useResizeObserver(el, scheduleAutoTabStopUpdate);
-useMutationObserver(el, scheduleAutoTabStopUpdate, { childList: true, subtree: true, characterData: true });
+useMutationObserver(el, scheduleAutoTabStopUpdate, {
+  childList: true,
+  subtree: true,
+  characterData: true,
+  attributes: true,
+  attributeFilter: ["disabled", "tabindex", "href", "contenteditable", "role"],
+});
 useEventListener(el, "load", scheduleAutoTabStopUpdate, { capture: true });
 
 const wasAtTop = ref(true);
