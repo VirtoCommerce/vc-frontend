@@ -642,24 +642,6 @@
         "message": "Er du sikker på at du vil slette organisasjonens nåværende logo? Sletteprosessen er irreversibel."
       }
     },
-    "compare": {
-      "add_to_compare": {
-        "tooltips": {
-          "add": "Legg til i sammenligning",
-          "remove": "Fjern fra sammenligning"
-        }
-      },
-      "notifications": {
-        "limit_reached": "Bare {productsLimit} produkter kan sammenlignes",
-        "added_html": "Produktet <span class=\"hidden lg:inline\">«<strong>{productName}</strong>»</span> er lagt til sammenligningslisten <span class=\"hidden lg:inline\">(antall igjen – {itemsLeft})</span>",
-        "removed_html": "Produktet <span class=\"hidden lg:inline\">«<strong>{productName}</strong>»</span> er fjernet fra sammenligningslisten",
-        "compare_button": "Sammenlign"
-      },
-      "clear_list_modal": {
-        "title": "Bekreft tømming",
-        "message": "Bekrefter du at alle produkter fjernes fra sammenligningslisten?"
-      }
-    },
     "cart": {
       "add_to_cart": {
         "errors": {
@@ -1059,6 +1041,49 @@
       "price_high_to_low": "Pris, høy til lav",
       "date_new_to_old": "Dato, ny til gammel",
       "date_old_to_new": "Dato, gammel til ny"
+    },
+    "compare": {
+      "add_to_compare": {
+        "tooltips": {
+          "add": "Legg til i sammenligning",
+          "remove": "Fjern fra sammenligning"
+        }
+      },
+      "notifications": {
+        "limit_reached": "Kun {productsLimit} produkter fra samme kategori kan sammenlignes",
+        "added_html": "Produkt <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> er lagt til i sammenligningslisten <span class=\"hidden lg:inline\">(elementer igjen - {itemsLeft})</span>",
+        "removed_html": "Produkt <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> ble fjernet fra sammenligningslisten",
+        "compare_button": "Sammenlign",
+        "added_to_cart_html": "Lagt til <strong>{productName}</strong> i handlekurven",
+        "fetch_failed": "Kunne ikke laste inn noen sammenlignede produkter. Prøv igjen."
+      },
+      "table": {
+        "tabs": {
+          "all": "Alle",
+          "differences": "Forskjeller"
+        },
+        "uncategorized": "Ukategorisert",
+        "unresolved_category": "Ukjent kategori",
+        "differ_rows": "Forskjellig: {count} av {total} rader",
+        "clear_category": "Fjern kategori",
+        "remove_product": "Fjern fra sammenligning",
+        "add_to_cart": "Legg i handlekurv",
+        "fields": {
+          "price_per_unit": "Pris per enhet",
+          "price_per_unit_tooltip": "Pris, ekskl. mva, per enhet.",
+          "customer_rating": "Kunderangering",
+          "availability": "Tilgjengelighet",
+          "sku": "@:common.labels.sku",
+          "min_order_qty": "Min. bestillingsantall",
+          "min_order_qty_tooltip": "MOQ — minimum antall enheter per bestilling."
+        },
+        "pin": {
+          "pin_title": "Fest øverst",
+          "unpin_title": "Løsne",
+          "pin_label": "Fest “{label}”",
+          "unpin_label": "Løsne “{label}”"
+        }
+      }
     }
   },
   "pages": {
@@ -1637,33 +1662,6 @@
     "loyalty_catalog": {
       "title": "Lojalitetskatalog"
     },
-    "compare": {
-      "meta": {
-        "title": "Sammenlign produkter",
-        "keywords": "test, sammenlign, produkter, side, nøkkelord",
-        "description": "Test sammenlign produkter sidebeskrivelse"
-      },
-      "empty_list": {
-        "title": "Sammenlign produkter",
-        "message": "Din produkt sammenligningsliste er tom",
-        "button_text": "Fortsett å bla her",
-        "img_alt": "tomHandlekurv",
-        "img_alt_mobile": "tomHandlekurvMobil"
-      },
-      "header_block": {
-        "title": "Sammenlign produkter",
-        "counter_message": "{productsNumber} produkter av {productsLimit} lagt til",
-        "differences_checkbox_label": "Vis kun forskjeller",
-        "clear_button": "Tøm liste"
-      },
-      "main_block": {
-        "price_label": "@:common.labels.product_price"
-      },
-      "links": {
-        "home": "@:common.links.home",
-        "compare_products": "Sammenlign produkter"
-      }
-    },
     "branch": {
       "address": "Adresse",
       "phone": "Telefon: ",
@@ -1692,6 +1690,34 @@
     },
     "brand": {
       "products_title": "Produkter"
+    },
+    "compare": {
+      "title": "Sammenlign produkter",
+      "meta": {
+        "keywords": "sammenlign produkter, produkt sammenligning, side om side sammenligning",
+        "description": "Sammenlign produkter side om side for å finne det beste alternativet for dine behov."
+      },
+      "added_count": "{count} av {total} lagt til",
+      "added_count_in_category": "{count} av {total} lagt til i {category}",
+      "actions": {
+        "clear_all": "Fjern alle"
+      },
+      "clear_all_modal": {
+        "title": "Fjern alle",
+        "message": "Ingen produkter vil bli fjernet fra sammenligningen. | 1 produkt vil bli fjernet fra sammenligningen. | Alle {n} produkter vil bli fjernet fra sammenligningen. | Alle {n} produkter vil bli fjernet fra sammenligningen."
+      },
+      "clear_category_modal": {
+        "title": "Fjern kategori",
+        "message": "Ingen produkter i {category} vil bli fjernet fra sammenligningen. | 1 produkt i {category} vil bli fjernet fra sammenligningen. | Alle {n} produkter i {category} vil bli fjernet fra sammenligningen. | Alle {n} produkter i {category} vil bli fjernet fra sammenligningen."
+      },
+      "empty": {
+        "title": "Sammenligningslisten din er tom",
+        "description": "Legg til produkter fra katalogen for å sammenligne deres egenskaper side om side. Du kan sammenligne opptil {limit} produkter per kategori.",
+        "restore_button": "Gjenopprett produkter",
+        "add_button": "Legg til produkter"
+      },
+      "error": "Kunne ikke laste inn data",
+      "retry": "Prøv igjen"
     }
   },
   "identity_error": {

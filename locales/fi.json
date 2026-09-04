@@ -642,24 +642,6 @@
         "message": "Haluatko varmasti poistaa organisaation nykyisen logon? Poistoprosessi on peruuttamaton."
       }
     },
-    "compare": {
-      "add_to_compare": {
-        "tooltips": {
-          "add": "Lisää vertailuun",
-          "remove": "Poista vertailusta"
-        }
-      },
-      "notifications": {
-        "limit_reached": "Vain {productsLimit} tuotetta voidaan vertailla",
-        "added_html": "Tuote <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> on lisätty vertailulistalle <span class=\"hidden lg:inline\">(jäljellä {itemsLeft} tuotetta)</span>",
-        "removed_html": "Tuote <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> on poistettu vertailulistalta",
-        "compare_button": "Vertaile"
-      },
-      "clear_list_modal": {
-        "title": "Vahvista tyhjennys",
-        "message": "Vahvistatko, että kaikki tuotteet poistetaan vertailulistalta?"
-      }
-    },
     "cart": {
       "add_to_cart": {
         "errors": {
@@ -1059,6 +1041,49 @@
       "price_high_to_low": "Hinta, korkeasta alhaiseen",
       "date_new_to_old": "Päivämäärä, uusi vanhaan",
       "date_old_to_new": "Päivämäärä, vanha uuteen"
+    },
+    "compare": {
+      "add_to_compare": {
+        "tooltips": {
+          "add": "Lisää vertailuun",
+          "remove": "Poista vertailusta"
+        }
+      },
+      "notifications": {
+        "limit_reached": "Vain {productsLimit} tuotetta samasta kategoriasta voidaan vertailla",
+        "added_html": "Tuote <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> lisättiin vertailulistaan <span class=\"hidden lg:inline\">(jäljellä - {itemsLeft})</span>",
+        "removed_html": "Tuote <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> poistettiin vertailulistasta",
+        "compare_button": "Vertaa",
+        "added_to_cart_html": "Lisätty <strong>{productName}</strong> ostoskoriin",
+        "fetch_failed": "Joidenkin verrattujen tuotteiden lataaminen epäonnistui. Yritä uudelleen."
+      },
+      "table": {
+        "tabs": {
+          "all": "Kaikki",
+          "differences": "Erot"
+        },
+        "uncategorized": "Luokittelemattomat",
+        "unresolved_category": "Tuntematon luokka",
+        "differ_rows": "Erot: {count} / {total} riviä",
+        "clear_category": "Tyhjennä kategoria",
+        "remove_product": "Poista vertailusta",
+        "add_to_cart": "Lisää ostoskoriin",
+        "fields": {
+          "price_per_unit": "Hinta per yksikkö",
+          "price_per_unit_tooltip": "Hinta, ALV:n ulkop., per yksikkö.",
+          "customer_rating": "Asiakasarvio",
+          "availability": "Saatavuus",
+          "sku": "@:common.labels.sku",
+          "min_order_qty": "Min. tilausmäärä",
+          "min_order_qty_tooltip": "MOQ — vähimmäismäärä yksiköitä per tilaus."
+        },
+        "pin": {
+          "pin_title": "Kiinnitä ylös",
+          "unpin_title": "Irrota",
+          "pin_label": "Kiinnitä “{label}”",
+          "unpin_label": "Irrota “{label}”"
+        }
+      }
     }
   },
   "pages": {
@@ -1637,33 +1662,6 @@
     "loyalty_catalog": {
       "title": "Kanta-asiakaskatalogi"
     },
-    "compare": {
-      "meta": {
-        "title": "Vertaa tuotteita",
-        "keywords": "testi, vertailu, tuotteet, sivu, avainsanat",
-        "description": "Testivertailusivun kuvaus"
-      },
-      "empty_list": {
-        "title": "Vertaa tuotteita",
-        "message": "Tuotevertailulistasi on tyhjä",
-        "button_text": "Jatka selaamista täällä",
-        "img_alt": "tyhjäOstoskori",
-        "img_alt_mobile": "tyhjäOstoskoriMobiili"
-      },
-      "header_block": {
-        "title": "Vertaa tuotteita",
-        "counter_message": "{productsNumber} tuotetta {productsLimit}:stä lisätty",
-        "differences_checkbox_label": "Näytä vain erot",
-        "clear_button": "Tyhjennä lista"
-      },
-      "main_block": {
-        "price_label": "@:common.labels.product_price"
-      },
-      "links": {
-        "home": "@:common.links.home",
-        "compare_products": "Vertaa tuotteita"
-      }
-    },
     "branch": {
       "address": "Osoite",
       "phone": "Puhelin: ",
@@ -1692,6 +1690,34 @@
     },
     "brand": {
       "products_title": "Tuotteet"
+    },
+    "compare": {
+      "title": "Tuotteiden vertailu",
+      "meta": {
+        "keywords": "vertaa tuotteita, tuotevertailu, rinnakkainen vertailu",
+        "description": "Vertaa tuotteita rinnakkain löytääksesi tarpeisiisi parhaiten sopivan vaihtoehdon."
+      },
+      "added_count": "{count} lisätty {total}:sta",
+      "added_count_in_category": "{count} lisätty {total}:sta kategoriassa {category}",
+      "actions": {
+        "clear_all": "Tyhjennä kaikki"
+      },
+      "clear_all_modal": {
+        "title": "Tyhjennä kaikki",
+        "message": "Yhtään tuotetta ei poisteta vertailusta. | 1 tuote poistetaan vertailusta. | Kaikki {n} tuotetta poistetaan vertailusta. | Kaikki {n} tuotetta poistetaan vertailusta."
+      },
+      "clear_category_modal": {
+        "title": "Tyhjennä kategoria",
+        "message": "Yhtään tuotetta kategoriasta {category} ei poisteta vertailusta. | 1 tuote kategoriassa {category} poistetaan vertailusta. | Kaikki {n} tuotetta kategoriassa {category} poistetaan vertailusta. | Kaikki {n} tuotetta kategoriassa {category} poistetaan vertailusta."
+      },
+      "empty": {
+        "title": "Vertailulistasi on tyhjä",
+        "description": "Lisää tuotteita luettelosta vertaillaksesi niiden ominaisuuksia rinnakkain. Voit verrata enintään {limit} tuotetta per kategoria.",
+        "restore_button": "Palauta tuotteet",
+        "add_button": "Lisää tuotteita"
+      },
+      "error": "Tietojen lataaminen epäonnistui",
+      "retry": "Yritä uudelleen"
     }
   },
   "identity_error": {

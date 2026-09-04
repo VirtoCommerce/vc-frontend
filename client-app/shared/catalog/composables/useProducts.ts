@@ -58,6 +58,14 @@ export function useProducts(
     facetsToHide?: string[];
     /** @default true */
     initialFetchingState?: boolean;
+    /**
+     * Keep showing the previous results while a refetch is in flight instead of clearing to
+     * empty first. Off by default since most consumers use the empty state itself as their
+     * "loading" signal (e.g. a skeleton keyed off `products.length === 0`); opt in where stale
+     * data on screen for a moment is preferable to the list flashing empty on every refetch.
+     * @default false
+     */
+    preserveProductsWhileFetching?: boolean;
     /** Overrides the default currency code passed to the products query (e.g. for the loyalty catalog). */
     // The `?` already allows the property to be omitted/undefined; the ref and getter branches still carry
     // `undefined` (e.g. the loyalty currency computed), so the bare value branch stays `string` to avoid a redundant top-level `undefined`.
@@ -71,6 +79,7 @@ export function useProducts(
     withZeroPrice = themeContext.value?.settings?.zero_price_product_enabled,
     catalogPaginationMode = CATALOG_PAGINATION_MODES.infiniteScroll,
     initialFetchingState = true,
+    preserveProductsWhileFetching = false,
     currencyCodeOverride,
   } = options;
   const { openModal } = useModal();
@@ -385,9 +394,11 @@ export function useProducts(
     };
 
     fetchingProducts.value = true;
-    products.value = [];
-    totalProductsCount.value = 0;
-    pagesCount.value = 1;
+    if (!preserveProductsWhileFetching) {
+      products.value = [];
+      totalProductsCount.value = 0;
+      pagesCount.value = 1;
+    }
 
     if (searchParams.page) {
       updateCurrentPage(Number(searchParams.page));

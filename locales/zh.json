@@ -642,24 +642,6 @@
         "message": "您确定要删除组织当前的标志吗？删除过程不可恢复。"
       }
     },
-    "compare": {
-      "add_to_compare": {
-        "tooltips": {
-          "add": "添加到比较",
-          "remove": "从比较中移除"
-        }
-      },
-      "notifications": {
-        "limit_reached": "最多可以比较 {productsLimit} 件商品",
-        "added_html": "商品 <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> 已添加到比较列表 <span class=\"hidden lg:inline\">（剩余 {itemsLeft} 件）</span>",
-        "removed_html": "商品 <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> 已从比较列表中移除",
-        "compare_button": "比较"
-      },
-      "clear_list_modal": {
-        "title": "确认清空",
-        "message": "您确认要从比较列表中移除所有商品吗？"
-      }
-    },
     "cart": {
       "add_to_cart": {
         "errors": {
@@ -1059,6 +1041,49 @@
       "price_high_to_low": "价格从高到低",
       "date_new_to_old": "日期，由新到旧",
       "date_old_to_new": "日期，从旧到新"
+    },
+    "compare": {
+      "add_to_compare": {
+        "tooltips": {
+          "add": "添加到比较",
+          "remove": "从比较中移除"
+        }
+      },
+      "notifications": {
+        "limit_reached": "最多只能比较{productsLimit}个同类产品",
+        "added_html": "产品<span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span>已添加到比较列表<span class=\"hidden lg:inline\">（剩余 - {itemsLeft}）</span>",
+        "removed_html": "产品<span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span>已从比较列表中移除",
+        "compare_button": "比较",
+        "added_to_cart_html": "已将<strong>{productName}</strong>添加到购物车",
+        "fetch_failed": "无法加载部分对比商品。请重试。"
+      },
+      "table": {
+        "tabs": {
+          "all": "全部",
+          "differences": "差异"
+        },
+        "uncategorized": "未分类",
+        "unresolved_category": "未知分类",
+        "differ_rows": "差异：{count} / {total} 行",
+        "clear_category": "清除类别",
+        "remove_product": "从比较中移除",
+        "add_to_cart": "添加到购物车",
+        "fields": {
+          "price_per_unit": "每件价格",
+          "price_per_unit_tooltip": "每单位价格（不含增值税）。",
+          "customer_rating": "客户评分",
+          "availability": "可用性",
+          "sku": "@:common.labels.sku",
+          "min_order_qty": "最小起订量",
+          "min_order_qty_tooltip": "起订量 — 每笔订单的最低单位数量。"
+        },
+        "pin": {
+          "pin_title": "固定到顶部",
+          "unpin_title": "取消固定",
+          "pin_label": "固定“{label}”",
+          "unpin_label": "取消固定“{label}”"
+        }
+      }
     }
   },
   "pages": {
@@ -1637,33 +1662,6 @@
     "loyalty_catalog": {
       "title": "忠诚度目录"
     },
-    "compare": {
-      "meta": {
-        "title": "比较产品",
-        "keywords": "测试, 比较, 产品, 页面, 关键词",
-        "description": "测试比较产品页面描述"
-      },
-      "empty_list": {
-        "title": "比较产品",
-        "message": "您的产品比较列表为空",
-        "button_text": "在此继续浏览",
-        "img_alt": "空购物车",
-        "img_alt_mobile": "移动端空购物车"
-      },
-      "header_block": {
-        "title": "比较产品",
-        "counter_message": "{productsNumber} 个商品，已添加到 {productsLimit} 个",
-        "differences_checkbox_label": "仅显示差异",
-        "clear_button": "清空列表"
-      },
-      "main_block": {
-        "price_label": "@:common.labels.product_price"
-      },
-      "links": {
-        "home": "@:common.links.home",
-        "compare_products": "比较产品"
-      }
-    },
     "branch": {
       "address": "地址",
       "phone": "电话：",
@@ -1692,6 +1690,34 @@
     },
     "brand": {
       "products_title": "商品"
+    },
+    "compare": {
+      "title": "比较产品",
+      "meta": {
+        "keywords": "比较产品,产品比较,并排比较",
+        "description": "并排比较产品，找到最适合您需求的选择。"
+      },
+      "added_count": "已添加 {total} 中的 {count}",
+      "added_count_in_category": "{category} 中已添加 {total} 中的 {count}",
+      "actions": {
+        "clear_all": "全部清除"
+      },
+      "clear_all_modal": {
+        "title": "清除全部",
+        "message": "不会移除任何产品。 | 将移除1件产品。 | 将移除所有{n}件产品。 | 将移除所有{n}件产品。"
+      },
+      "clear_category_modal": {
+        "title": "清除类别",
+        "message": "不会移除{category}中的任何产品。 | 将移除{category}中的1件产品。 | 将移除{category}中的所有{n}件产品。 | 将移除{category}中的所有{n}件产品。"
+      },
+      "empty": {
+        "title": "您的比较列表为空",
+        "description": "将产品添加到目录中，以便并排比较它们的特性。每个类别最多可以比较{limit}种产品。",
+        "restore_button": "恢复产品",
+        "add_button": "添加产品"
+      },
+      "error": "加载数据失败",
+      "retry": "重试"
     }
   },
   "identity_error": {
