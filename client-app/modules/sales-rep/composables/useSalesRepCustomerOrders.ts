@@ -13,16 +13,15 @@ import {
 import { toFacetOptions, toSalesRepCustomerOrderRows } from "../utils";
 import { useSalesRepCustomer } from "./useSalesRepCustomer";
 import { useSalesRepHubQuery } from "./useSalesRepHubQuery";
-import type { SalesRepOrdersFilterDataType, SalesRepRuleType } from "../types";
+import type { SalesRepOrdersFilterDataType, SalesRepSortRuleType } from "../types";
 import type { MaybeRefOrGetter } from "vue";
 
 export const PAGE_SIZE = 10;
 
 // Both sortable columns reverse freely, so the expression always carries a direction — a bare field name
 // would mean ascending to the backend.
-const SORT_RULES: SalesRepRuleType[] = Object.values(CUSTOMER_ORDERS_SORT_FIELDS).map((name) => ({
+const SORT_RULES: SalesRepSortRuleType[] = Object.values(CUSTOMER_ORDERS_SORT_FIELDS).map((name) => ({
   name,
-  label: name,
   defaultDirection: CUSTOMER_ORDERS_SORT_DIRECTION,
   supportsDirection: true,
 }));
