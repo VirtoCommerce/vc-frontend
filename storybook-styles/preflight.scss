@@ -1,3 +1,5 @@
+@use "../client-app/ui-kit/styles/focus-ring" as *;
+
 @tailwind base;
 
 @layer base {
@@ -5,8 +7,7 @@
     background-color: var(--color-additional-50);
 
     *:focus-visible {
-      outline: var(--vc-focus-ring-width) solid var(--vc-focus-ring-color);
-      outline-offset: var(--vc-focus-ring-offset);
+      @include focus-ring;
     }
   }
 }

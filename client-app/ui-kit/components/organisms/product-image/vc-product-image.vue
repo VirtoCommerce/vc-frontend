@@ -122,6 +122,8 @@ function slideChanged(swiper: SwiperInstance) {
 </script>
 
 <style lang="scss">
+@use "@/ui-kit/styles/focus-ring" as *;
+
 .vc-product-image {
   $self: &;
   $carouselImg: "";
@@ -153,7 +155,7 @@ function slideChanged(swiper: SwiperInstance) {
     &:focus-visible {
       @apply opacity-100;
 
-      outline-offset: calc(-1 * var(--vc-focus-ring-offset));
+      @include focus-ring($inset: true);
     }
 
     &--prev {

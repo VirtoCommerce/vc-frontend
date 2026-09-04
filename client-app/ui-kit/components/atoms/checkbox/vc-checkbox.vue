@@ -155,6 +155,8 @@ function onClick(event: Event) {
 </script>
 
 <style lang="scss">
+@use "@/ui-kit/styles/focus-ring" as *;
+
 .vc-checkbox {
   $disabled: "";
   $checked: "";
@@ -229,8 +231,7 @@ function onClick(event: Event) {
 
     // Focus styles via sibling selector (when hidden input is focused)
     input:focus-visible + & {
-      outline: var(--vc-focus-ring-width) solid var(--vc-focus-ring-color);
-      outline-offset: var(--vc-focus-ring-offset);
+      @include focus-ring;
     }
 
     #{$checked} & {

@@ -112,6 +112,8 @@ const containerTag = computed(() => (isInsideInteractive.value ? "span" : "label
 </script>
 
 <style lang="scss">
+@use "@/ui-kit/styles/focus-ring" as *;
+
 .vc-radio-button {
   $self: &;
   $checked: "";
@@ -198,8 +200,7 @@ const containerTag = computed(() => (isInsideInteractive.value ? "span" : "label
     }
 
     input:focus-visible + & {
-      outline: var(--vc-focus-ring-width) solid var(--vc-focus-ring-color);
-      outline-offset: var(--vc-focus-ring-offset);
+      @include focus-ring;
     }
 
     #{$checked} & {

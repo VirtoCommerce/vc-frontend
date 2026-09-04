@@ -424,6 +424,8 @@ onUnmounted(() => {
 </script>
 
 <style lang="scss">
+@use "@/ui-kit/styles/focus-ring" as *;
+
 .cyber-source-input-wrap {
   --color: var(--vc-input-base-color, var(--color-primary-500));
 
@@ -432,8 +434,7 @@ onUnmounted(() => {
   // Focus lives inside the iframe, so the host page cannot match it — the SDK's
   // focused class is the only signal, and the wrapper carries the ring.
   &.flex-microform-focused {
-    outline: var(--vc-focus-ring-width) solid var(--vc-focus-ring-color);
-    outline-offset: var(--vc-focus-ring-offset);
+    @include focus-ring;
   }
 
   &.flex-microform-invalid {

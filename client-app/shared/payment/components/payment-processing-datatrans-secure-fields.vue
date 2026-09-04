@@ -463,6 +463,8 @@ onUnmounted(removeScript);
 </script>
 
 <style lang="scss">
+@use "@/ui-kit/styles/focus-ring" as *;
+
 .datatrans-input-wrap {
   --color: var(--vc-input-base-color, var(--color-primary-500));
   border-radius: var(--radius);
@@ -472,8 +474,7 @@ onUnmounted(removeScript);
   // Focus lives inside the iframe, so the host page cannot match it — the SDK's
   // focused class is the only signal, and the wrapper carries the ring.
   &.focused {
-    outline: var(--vc-focus-ring-width) solid var(--vc-focus-ring-color);
-    outline-offset: var(--vc-focus-ring-offset);
+    @include focus-ring;
   }
 
   &.invalid {

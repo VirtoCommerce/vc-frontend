@@ -198,6 +198,8 @@ const _thumbColor = computed(() => getColorValue(props.thumbColor));
 </script>
 
 <style lang="scss">
+@use "@/ui-kit/styles/focus-ring" as *;
+
 .vc-scrollbar {
   $vertical: "";
   $horizontal: "";
@@ -215,7 +217,7 @@ const _thumbColor = computed(() => getColorValue(props.thumbColor));
   // A scroll region is size-constrained by construction, so an outset ring clips
   // against its container: invert the shared offset.
   &:focus-visible {
-    outline-offset: calc(-1 * var(--vc-focus-ring-offset));
+    @include focus-ring($inset: true);
   }
 
   &--vertical {

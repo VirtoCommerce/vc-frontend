@@ -265,6 +265,8 @@ provide<VcInputContextType>("inputContext", {
 </script>
 
 <style lang="scss">
+@use "@/ui-kit/styles/focus-ring" as *;
+
 .vc-input {
   $sizeXs: "";
   $sizeSm: "";
@@ -340,8 +342,7 @@ provide<VcInputContextType>("inputContext", {
     }
 
     &:has(input:focus-visible) {
-      outline: var(--vc-focus-ring-width) solid var(--vc-focus-ring-color);
-      outline-offset: var(--vc-focus-ring-offset);
+      @include focus-ring;
     }
 
     #{$error} & {

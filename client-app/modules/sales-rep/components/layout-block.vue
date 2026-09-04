@@ -88,6 +88,8 @@ provideBlockChrome({
 </script>
 
 <style lang="scss">
+@use "@/ui-kit/styles/focus-ring" as *;
+
 .layout-block {
   @apply relative;
 
@@ -105,12 +107,10 @@ provideBlockChrome({
     }
 
     // Self-sufficient: useKeyboardSort moves the card and restores focus a tick later,
-    // so the ring must not depend on `:focus-visible`. `ring-2` marks the grab.
+    // so the ring must not depend on `:focus-visible`. The grab itself reads from
+    // `--grabbed` (opacity + shadow), which is why no second ring is needed here.
     &[aria-pressed="true"] {
-      @apply ring-2 ring-primary-200;
-
-      outline: var(--vc-focus-ring-width) solid var(--vc-focus-ring-color);
-      outline-offset: var(--vc-focus-ring-offset);
+      @include focus-ring;
     }
   }
 

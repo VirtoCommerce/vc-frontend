@@ -180,6 +180,8 @@ onMounted(() => {
 </script>
 
 <style lang="scss">
+@use "@/ui-kit/styles/focus-ring" as *;
+
 .vc-menu-item {
   --props-max-lines: v-bind(maxLines);
   --max-lines: var(--props-max-lines, 2);
@@ -264,7 +266,7 @@ onMounted(() => {
     &:focus-visible {
       @apply rounded-[inherit];
 
-      outline-offset: calc(-1 * var(--vc-focus-ring-offset));
+      @include focus-ring($inset: true);
     }
 
     &:disabled,

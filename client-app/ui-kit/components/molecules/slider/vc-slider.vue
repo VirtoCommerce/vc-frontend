@@ -558,6 +558,8 @@ function getSliderStart(value1: number, value2: number): [number, number] {
 </script>
 
 <style lang="scss">
+@use "@/ui-kit/styles/focus-ring" as *;
+
 .vc-slider {
   $hoverable: "";
   $clickable: "";
@@ -619,8 +621,7 @@ function getSliderStart(value1: number, value2: number): [number, number] {
     }
 
     #{$focusColumn} & {
-      outline: var(--vc-focus-ring-width) solid var(--vc-focus-ring-color);
-      outline-offset: var(--vc-focus-ring-offset);
+      @include focus-ring;
     }
   }
 
