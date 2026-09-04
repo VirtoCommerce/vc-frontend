@@ -1,5 +1,5 @@
-import { useCssVar } from "@vueuse/core";
 import { useDarkMode } from "@/core/composables";
+import { readCssVar } from "@/ui-kit/utilities";
 
 // Fallback colors used when CSS custom properties are not defined
 const FALLBACK_PRIMARY = "#eb9016";
@@ -24,16 +24,16 @@ export function useSkyflowStyles() {
   const { isDark } = useDarkMode();
 
   // CSS custom properties are read once — Skyflow iframes do not support dynamic style updates
-  const vcInputRadius = useCssVar("--vc-input-radius").value;
-  const defaultRadius = useCssVar("--vc-radius").value;
-  const primaryColor = useCssVar("--color-primary-500").value || FALLBACK_PRIMARY;
-  const focusRingColor = useCssVar("--vc-focus-ring-color").value || FALLBACK_FOCUS_RING;
-  const focusRingWidth = useCssVar("--vc-focus-ring-width").value || FALLBACK_FOCUS_RING_WIDTH;
-  const errorColor = useCssVar("--color-danger-500").value || FALLBACK_ERROR;
-  const errorColorDark = useCssVar("--color-danger-700").value || FALLBACK_ERROR_DARK;
-  const borderColor = useCssVar("--color-neutral-400").value || FALLBACK_BORDER;
-  const backgroundColor = useCssVar("--color-additional-50").value || FALLBACK_BACKGROUND;
-  const textColor = useCssVar("--body-text-color").value || FALLBACK_TEXT;
+  const vcInputRadius = readCssVar("--vc-input-radius");
+  const defaultRadius = readCssVar("--vc-radius");
+  const primaryColor = readCssVar("--color-primary-500") || FALLBACK_PRIMARY;
+  const focusRingColor = readCssVar("--vc-focus-ring-color") || FALLBACK_FOCUS_RING;
+  const focusRingWidth = readCssVar("--vc-focus-ring-width") || FALLBACK_FOCUS_RING_WIDTH;
+  const errorColor = readCssVar("--color-danger-500") || FALLBACK_ERROR;
+  const errorColorDark = readCssVar("--color-danger-700") || FALLBACK_ERROR_DARK;
+  const borderColor = readCssVar("--color-neutral-400") || FALLBACK_BORDER;
+  const backgroundColor = readCssVar("--color-additional-50") || FALLBACK_BACKGROUND;
+  const textColor = readCssVar("--body-text-color") || FALLBACK_TEXT;
 
   const resolvedErrorColor = isDark.value ? errorColorDark : errorColor;
 

@@ -90,7 +90,7 @@
 
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
-import { useCssVar, useScriptTag } from "@vueuse/core";
+import { useScriptTag } from "@vueuse/core";
 import { Mask } from "maska";
 import { useForm } from "vee-validate";
 import { computed, onMounted, onUnmounted, ref } from "vue";
@@ -101,6 +101,7 @@ import { useAnalytics } from "@/core/composables";
 import { Logger } from "@/core/utilities";
 import { isExpirationDateValid } from "@/core/utilities/date";
 import { useNotifications } from "@/shared/notification";
+import { readCssVar } from "@/ui-kit/utilities";
 import PaymentPolicies from "./payment-policies.vue";
 import type { CustomerOrderType, KeyValueType } from "@/core/api/graphql/types";
 import type { Ref } from "vue";
@@ -180,9 +181,9 @@ const { analytics } = useAnalytics();
 const notifications = useNotifications();
 
 // CSS custom properties are read once — Datatrans iframes do not support dynamic style updates
-const backgroundColor = useCssVar("--color-additional-50").value || "#ffffff";
-const textColor = useCssVar("--body-text-color").value || "#1f2937";
-const placeholderColor = useCssVar("--color-neutral-400").value || "#a3a3a3";
+const backgroundColor = readCssVar("--color-additional-50") || "#ffffff";
+const textColor = readCssVar("--body-text-color") || "#1f2937";
+const placeholderColor = readCssVar("--color-neutral-400") || "#a3a3a3";
 
 const secureFieldsStyles: Record<string, Record<string, string>> = {
   "*": {
