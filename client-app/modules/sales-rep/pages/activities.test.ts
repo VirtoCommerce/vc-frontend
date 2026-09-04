@@ -128,20 +128,47 @@ const customerState = await vi.hoisted(async () => {
     // `enabled` flips on a live instance. The page's dead-end view turns on that difference.
     loading: ref(true),
     failed: ref(false),
-    notFound: ref(false),
   };
 });
+// `failed` and `notFound` are DERIVED here exactly as the real composable derives them - an id gates the
+// read, and "not found" answers only for a read that settled on the id being asked about. Handing the page
+// a free `notFound` ref would let these tests pin states the real composable cannot produce.
 vi.mock("../composables/useSalesRepCustomer", async () => {
-  const { computed } = await import("vue");
+  const vue = await import("vue");
   return {
-    useSalesRepCustomer: () => ({
-      customer: computed(() =>
+    useSalesRepCustomer: (organizationId: string | (() => string | undefined)) => {
+      const enabled = vue.computed(() => Boolean(vue.toValue(organizationId)));
+      const customer = vue.computed(() =>
         customerState.organizationName.value ? { organizationName: customerState.organizationName.value } : undefined,
-      ),
-      loading: customerState.loading,
-      failed: customerState.failed,
-      notFound: customerState.notFound,
-    }),
+      );
+      const failed = vue.computed(() => enabled.value && customerState.failed.value);
+
+      const answeredFor = vue.ref<string | undefined>(undefined);
+      vue.watch(
+        [enabled, customerState.loading, customerState.failed],
+        ([isEnabled, isLoading, hasFailed], previous) => {
+          const settled = hasFailed || (previous?.[1] === true && !isLoading);
+          if (isEnabled && settled) {
+            answeredFor.value = vue.toValue(organizationId);
+          }
+        },
+        { immediate: true },
+      );
+
+      return {
+        customer,
+        loading: customerState.loading,
+        failed,
+        notFound: vue.computed(
+          () =>
+            enabled.value &&
+            !customerState.loading.value &&
+            !failed.value &&
+            !customer.value &&
+            answeredFor.value === vue.toValue(organizationId),
+        ),
+      };
+    },
   };
 });
 // useBreadcrumbs is stubbed out, so capture the trail factory the page hands it and evaluate that —
@@ -234,7 +261,6 @@ beforeEach(() => {
   counts.loading.value = false;
   customerState.loading.value = true;
   customerState.failed.value = false;
-  customerState.notFound.value = false;
   state.loading.value = false;
   state.error.value = null;
   insights.searchItems.value = [];
@@ -702,7 +728,6 @@ describe("a customer the rep cannot see", () => {
 
     // The read settles with no customer.
     customerState.loading.value = false;
-    customerState.notFound.value = true;
     await nextTick();
 
     const views = emptyViews(wrapper);
@@ -730,11 +755,10 @@ describe("a customer the rep cannot see", () => {
     expect(views[0].attributes("variant")).toBe("error");
   });
 
-  // The rep-wide feed passes no id, so the customer query never runs and `notFound` is true by
-  // default there — reading it unguarded would blank the page this feature is mostly used from.
+  // The rep-wide feed passes no id, so the customer read never runs — and a page that judged the
+  // dead end from "nothing resolved" would blank the page this feature is mostly used from.
   it("leaves the rep's own feed alone", async () => {
     customerState.loading.value = false;
-    customerState.notFound.value = true;
 
     const wrapper = createWrapper();
     await nextTick();
@@ -749,7 +773,6 @@ describe("a customer the rep cannot see", () => {
   // dead end would flash over a customer the rep does serve.
   it("does not flash the dead end before the read for the new id starts", async () => {
     customerState.loading.value = false;
-    customerState.notFound.value = true;
 
     const wrapper = createWrapper();
     await wrapper.setProps({ organizationId: "org-1" });

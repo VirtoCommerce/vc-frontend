@@ -5,7 +5,7 @@
     <VcEmptyView
       v-if="customerUnavailable"
       :text="unavailableText"
-      :variant="scopedCustomerFailed ? 'error' : 'empty'"
+      :variant="customerFailed ? 'error' : 'empty'"
       icon="outline-404"
     >
       <template #button>
@@ -389,7 +389,6 @@ const showCaveat = computed(() => !category.value || TRACKED_ACTIVITY_CATEGORIES
 // The scoped customer's name — resolved only when the query param narrows the feed.
 const {
   customer,
-  loading: customerLoading,
   failed: customerFailed,
   notFound: customerNotFound,
 } = useSalesRepCustomer(() => props.organizationId ?? "");
@@ -398,32 +397,14 @@ const customerName = computed(() => (props.organizationId ? customer.value?.orga
 // Untreated, an id the rep cannot see reads as their own feed — fallback heading, no customer crumb,
 // every badge at 0 — and Top mode blames the store's analytics, since the insights query nulls its
 // payload for an invisible organization exactly as for an absent provider. Only this query can tell.
-// Both flags are gated on the param: with no id the query never runs, so `notFound` is true by default.
-const scopedCustomerFailed = computed(() => Boolean(props.organizationId) && customerFailed.value);
-
-// `notFound` is "settled with no customer" — which is also the instant BEFORE the query starts: apollo
-// starts synchronously only when enabled at setup, and defers a tick when `enabled` flips later, as it
-// does stepping from the rep-wide feed onto a customer's (one route record serves both). So wait until
-// the read for this very id has begun; a stale id from the previous scope must not answer for the new.
-const askedFor = ref<string | undefined>(undefined);
-watch(
-  [() => props.organizationId, customerLoading],
-  ([id, isLoading]) => {
-    if (isLoading) {
-      askedFor.value = id;
-    }
-  },
-  { immediate: true },
-);
-
-const scopedCustomerMissing = computed(
-  () => Boolean(props.organizationId) && askedFor.value === props.organizationId && customerNotFound.value,
-);
-const customerUnavailable = computed(() => scopedCustomerFailed.value || scopedCustomerMissing.value);
+// Both flags come already scoped: without an id the read is disabled, so neither can be true, and
+// `notFound` answers only for a read that settled on the id being asked about — this route serves the
+// rep-wide feed and a customer's on ONE instance, and the dead end must not flash while it switches.
+const customerUnavailable = computed(() => customerFailed.value || customerNotFound.value);
 
 // The customer profile's own wording for the same two situations, reused rather than restated.
 const unavailableText = computed(() =>
-  scopedCustomerFailed.value ? t("sales_rep.customer_profile.load_failed") : t("sales_rep.customer_profile.not_found"),
+  customerFailed.value ? t("sales_rep.customer_profile.load_failed") : t("sales_rep.customer_profile.not_found"),
 );
 
 // One line, no subtitle: rep-wide names whose feed this is, the narrowed mode names the customer.
