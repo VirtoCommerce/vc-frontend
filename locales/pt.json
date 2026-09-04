@@ -516,8 +516,6 @@
         }
       },
       "impersonate_form": {
-        "subtitle": "Confirme sua identidade para continuar",
-        "description": "Você está fazendo login em nome de um cliente. A sessão será auditada.",
         "email_label": "Email",
         "email_placeholder": "Digite seu email",
         "password_label": "Senha",
@@ -1367,6 +1365,9 @@
       },
       "impersonate": {
         "title": "Verificação de segurança",
+        "subtitle": "Confirme sua identidade para continuar",
+        "description": "Você está fazendo login em nome de um cliente. A sessão será auditada.",
+        "no_permission": "Esta conta não tem permissão para iniciar sessão em nome de um cliente.",
         "back_to_home": "Voltar ao início",
         "switching_in_progress": "Mudando para a visão do cliente…",
         "error": "Alguns problemas durante a personificação. Verifique suas permissões"

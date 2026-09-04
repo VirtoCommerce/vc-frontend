@@ -1,0 +1,83 @@
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { ref } from "vue";
+import { useReturnUrl } from "./useReturnUrl";
+
+const themeContext = ref<{ settings: { default_return_url?: string } }>({ settings: {} });
+
+vi.mock("./useThemeContext", () => ({
+  useThemeContext: () => ({ themeContext }),
+}));
+
+describe("useReturnUrl", () => {
+  const originalLocation = window.location;
+
+  function mockLocation(href: string): void {
+    Object.defineProperty(window, "location", {
+      configurable: true,
+      value: { href, origin: new URL(href).origin },
+    });
+  }
+
+  beforeEach(() => {
+    themeContext.value = { settings: { default_return_url: "/default-page" } };
+    mockLocation("http://localhost:3000/sign-in");
+  });
+
+  afterEach(() => {
+    Object.defineProperty(window, "location", { configurable: true, value: originalLocation });
+  });
+
+  it("returns the requested page", () => {
+    mockLocation("http://localhost:3000/sign-in?returnUrl=/account/orders");
+
+    expect(useReturnUrl().getReturnUrl()).toBe("/account/orders");
+  });
+
+  it("returns the store default when no page is requested", () => {
+    expect(useReturnUrl().getReturnUrl()).toBe("/default-page");
+  });
+
+  it("returns the home page when the store has no default", () => {
+    themeContext.value = { settings: {} };
+
+    expect(useReturnUrl().getReturnUrl()).toBe("/");
+  });
+
+  it("ignores a requested page from another host", () => {
+    mockLocation("http://localhost:3000/sign-in?returnUrl=http://example.com/phishing");
+
+    expect(useReturnUrl().getReturnUrl()).toBe("/default-page");
+  });
+
+  it("ignores a requested page that does not parse", () => {
+    mockLocation("http://localhost:3000/sign-in?returnUrl=https://[not-valid-ipv6");
+
+    expect(useReturnUrl().getReturnUrl()).toBe("/default-page");
+  });
+
+  it("reduces a requested page of the current origin to a path", () => {
+    mockLocation("http://localhost:3000/sign-in?returnUrl=http://localhost:3000/account/orders%3Fpage%3D2%23list");
+
+    expect(useReturnUrl().getReturnUrl()).toBe("/account/orders?page=2#list");
+  });
+
+  it("returns the home page when the store default leaves the origin", () => {
+    themeContext.value = { settings: { default_return_url: "//example.com/phishing" } };
+
+    expect(useReturnUrl().getReturnUrl()).toBe("/");
+  });
+
+  it("reads the requested page from the given url", () => {
+    expect(useReturnUrl().getReturnUrl("/sign-in?returnUrl=/account/orders")).toBe("/account/orders");
+  });
+
+  it("reads the location on every call", () => {
+    const { getReturnUrl } = useReturnUrl();
+
+    expect(getReturnUrl()).toBe("/default-page");
+
+    mockLocation("http://localhost:3000/sign-in?returnUrl=/account/orders");
+
+    expect(getReturnUrl()).toBe("/account/orders");
+  });
+});
