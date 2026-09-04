@@ -1,0 +1,49 @@
+query SalesRepActivities(
+  $organizationId: String
+  $storeId: String
+  $cultureName: String
+  $categories: [String!]
+  $periodFrom: DateTime
+  $periodTo: DateTime
+  $take: Int
+  $skip: Int
+  $withCategoryCounts: Boolean! = true
+) {
+  salesRepActivities(
+    organizationId: $organizationId
+    storeId: $storeId
+    cultureName: $cultureName
+    categories: $categories
+    period: { from: $periodFrom, to: $periodTo }
+    take: $take
+    skip: $skip
+  ) {
+    totalCount
+    categoryCounts @include(if: $withCategoryCounts) {
+      category
+      count
+    }
+    items {
+      category
+      type
+      occurredAt
+      precision
+      count
+      organizationId
+      organizationName
+      orderId
+      orderNumber
+      orderStatus
+      orderStatusDisplayValue
+      orderTotal {
+        amount
+        formattedAmount
+      }
+      searchTerm
+      productId
+      productCode
+      productName
+      productImageUrl
+    }
+  }
+}

@@ -1,0 +1,26 @@
+query SalesRepCustomerBrowsedProducts(
+  $organizationId: String
+  $storeId: String
+  $cultureName: String
+  $periodFrom: DateTime
+  $periodTo: DateTime
+  $take: Int
+  $sort: String
+) {
+  salesRepCustomerInsights(
+    organizationId: $organizationId
+    storeId: $storeId
+    cultureName: $cultureName
+    period: { from: $periodFrom, to: $periodTo }
+  ) {
+    dataAsOf
+    browsedProducts(take: $take, sort: $sort) {
+      productId
+      name
+      sku
+      imageUrl
+      viewCount
+      lastViewedDate
+    }
+  }
+}

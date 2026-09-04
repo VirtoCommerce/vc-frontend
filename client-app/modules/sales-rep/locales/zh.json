@@ -213,6 +213,86 @@
       "all_categories": "所有类别",
       "load_failed": "无法加载热销商品"
     },
+    "customer_insights": {
+      "top": "热门",
+      "recent": "最近",
+      "not_configured": "此商店未连接分析服务",
+      "tracked_caveat": "仅基于已跟踪的活动",
+      "data_as_of": "数据截至 {date}",
+      "search_history": {
+        "empty": "此时间段内没有已跟踪的搜索",
+        "count": "{n} 次搜索",
+        "last_searched": "上次搜索:{date}",
+        "load_failed": "无法加载搜索历史"
+      },
+      "browse_history": {
+        "empty": "此时间段内没有已跟踪的商品浏览",
+        "views": "{n} 次浏览",
+        "load_failed": "无法加载浏览历史"
+      }
+    },
+    "activity": {
+      "navigation": {
+        "link": "我的活动"
+      },
+      "page": {
+        "title": "我的活动",
+        "customer_title": "{customer} 的活动",
+        "title_fallback": "活动"
+      },
+      "breadcrumb": "活动",
+      "tabs": {
+        "all": "全部",
+        "orders": "订单",
+        "customers": "客户",
+        "searches": "搜索",
+        "productViews": "商品浏览",
+        "logins": "登录"
+      },
+      "period": {
+        "all_time": "全部时间",
+        "month": "本月",
+        "year": "今年"
+      },
+      "rows": {
+        "order_placed": "已下订单",
+        "customer_assigned": "已分配新客户",
+        "searched_for": "搜索了",
+        "viewed_product": "浏览了",
+        "logins": "{count} 次登录",
+        "count_suffix": "×{count}",
+        "unknown": "活动"
+      },
+      "time": {
+        "during_hour": "{date} {time} 时段内"
+      },
+      "caveat": "搜索、商品浏览和登录基于跟踪到的商店活动，为近似值。",
+      "tracked_hint": "店面跟踪数据：最多可能需要 48 小时才会显示。",
+      "empty": "暂无活动",
+      "empty_period": "此期间没有跟踪到的活动",
+      "no_results": "此类别暂无活动",
+      "load_failed": "无法加载活动",
+      "view_all": "全部活动",
+      "my_activity": {
+        "title": "我的活动"
+      },
+      "customer": {
+        "title": "客户活动",
+        "views": {
+          "summary": "概览",
+          "searches": "搜索",
+          "product_views": "商品浏览"
+        },
+        "created_on": "创建日期",
+        "last_web_login": "最近网站登录",
+        "visits": "访问次数",
+        "last_search_term": "最近搜索词",
+        "last_viewed_product": "最近浏览的商品",
+        "not_configured": "尚未跟踪网站活动 — 此商店未配置分析。",
+        "empty": "暂无活动数据",
+        "load_failed": "无法加载客户活动"
+      }
+    },
     "documents": {
       "title": "文档库",
       "browse_all": "浏览全部",

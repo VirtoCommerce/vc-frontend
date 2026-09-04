@@ -213,6 +213,86 @@
       "all_categories": "Alle kategorier",
       "load_failed": "Kunne ikke laste bestselgerne"
     },
+    "customer_insights": {
+      "top": "Topp",
+      "recent": "Nylige",
+      "not_configured": "Analyse er ikke koblet til for denne butikken",
+      "tracked_caveat": "Basert kun på sporet aktivitet",
+      "data_as_of": "Data per {date}",
+      "search_history": {
+        "empty": "Ingen sporede søk i denne perioden",
+        "count": "{n} søk | {n} søk",
+        "last_searched": "Sist søkt {date}",
+        "load_failed": "Kunne ikke laste søkehistorikken"
+      },
+      "browse_history": {
+        "empty": "Ingen sporede produktvisninger i denne perioden",
+        "views": "{n} visning | {n} visninger",
+        "load_failed": "Kunne ikke laste visningshistorikken"
+      }
+    },
+    "activity": {
+      "navigation": {
+        "link": "Min aktivitet"
+      },
+      "page": {
+        "title": "Min aktivitet",
+        "customer_title": "Aktivitet for {customer}",
+        "title_fallback": "Aktivitet"
+      },
+      "breadcrumb": "Aktivitet",
+      "tabs": {
+        "all": "Alle",
+        "orders": "Ordrer",
+        "customers": "Kunder",
+        "searches": "Søk",
+        "productViews": "Produktvisninger",
+        "logins": "Pålogginger"
+      },
+      "period": {
+        "all_time": "Hele perioden",
+        "month": "Denne måneden",
+        "year": "I år"
+      },
+      "rows": {
+        "order_placed": "Ordre lagt inn",
+        "customer_assigned": "Ny kunde tildelt",
+        "searched_for": "Søkte etter",
+        "viewed_product": "Så på",
+        "logins": "{count} pålogging | {count} pålogginger",
+        "count_suffix": "×{count}",
+        "unknown": "Aktivitet"
+      },
+      "time": {
+        "during_hour": "{date}, i timen {time}"
+      },
+      "caveat": "Søk, produktvisninger og pålogginger er basert på sporet butikkaktivitet og er omtrentlige.",
+      "tracked_hint": "Sporet butikkaktivitet: kan bruke opptil 48 timer på å vises.",
+      "empty": "Ingen aktivitet ennå",
+      "empty_period": "Ingen sporet aktivitet i denne perioden",
+      "no_results": "Ingen aktivitet i denne kategorien",
+      "load_failed": "Kunne ikke laste aktivitet",
+      "view_all": "All aktivitet",
+      "my_activity": {
+        "title": "Min aktivitet"
+      },
+      "customer": {
+        "title": "Kundeaktivitet",
+        "views": {
+          "summary": "Sammendrag",
+          "searches": "Søk",
+          "product_views": "Produktvisninger"
+        },
+        "created_on": "Opprettet",
+        "last_web_login": "Siste nettpålogging",
+        "visits": "Besøk",
+        "last_search_term": "Siste søkeord",
+        "last_viewed_product": "Sist viste produkt",
+        "not_configured": "Nettaktivitet spores ikke ennå — analyse er ikke konfigurert for denne butikken.",
+        "empty": "Ingen aktivitetsdata",
+        "load_failed": "Kunne ikke laste kundeaktivitet"
+      }
+    },
     "documents": {
       "title": "Dokumentbibliotek",
       "browse_all": "Bla gjennom alle",

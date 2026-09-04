@@ -213,6 +213,86 @@
       "all_categories": "All categories",
       "load_failed": "Couldn't load top sellers"
     },
+    "customer_insights": {
+      "top": "Top",
+      "recent": "Recent",
+      "not_configured": "Analytics is not connected for this store",
+      "tracked_caveat": "Based on tracked activity only",
+      "data_as_of": "Data as of {date}",
+      "search_history": {
+        "empty": "No tracked searches in this period",
+        "count": "{n} search | {n} searches",
+        "last_searched": "Last searched {date}",
+        "load_failed": "Couldn't load search history"
+      },
+      "browse_history": {
+        "empty": "No tracked product views in this period",
+        "views": "{n} view | {n} views",
+        "load_failed": "Couldn't load browse history"
+      }
+    },
+    "activity": {
+      "navigation": {
+        "link": "My activity"
+      },
+      "page": {
+        "title": "My activity",
+        "customer_title": "{customer} activity",
+        "title_fallback": "Activity"
+      },
+      "breadcrumb": "Activity",
+      "tabs": {
+        "all": "All",
+        "orders": "Orders",
+        "customers": "Customers",
+        "searches": "Searches",
+        "productViews": "Product views",
+        "logins": "Logins"
+      },
+      "period": {
+        "all_time": "All time",
+        "month": "This month",
+        "year": "This year"
+      },
+      "rows": {
+        "order_placed": "Order placed",
+        "customer_assigned": "New customer assigned",
+        "searched_for": "Searched for",
+        "viewed_product": "Viewed",
+        "logins": "{count} sign-in | {count} sign-ins",
+        "count_suffix": "×{count}",
+        "unknown": "Activity"
+      },
+      "time": {
+        "during_hour": "{date}, during the hour of {time}"
+      },
+      "caveat": "Searches, product views and sign-ins are based on tracked storefront activity and are approximate.",
+      "tracked_hint": "Tracked storefront activity: can take up to 48 hours to appear.",
+      "empty": "No activity yet",
+      "empty_period": "No tracked activity in this period",
+      "no_results": "No activity in this category",
+      "load_failed": "Couldn't load activity",
+      "view_all": "All activity",
+      "my_activity": {
+        "title": "My activity"
+      },
+      "customer": {
+        "title": "Customer activity",
+        "views": {
+          "summary": "Summary",
+          "searches": "Searches",
+          "product_views": "Product views"
+        },
+        "created_on": "Created on",
+        "last_web_login": "Last web login",
+        "visits": "Visits",
+        "last_search_term": "Last search term",
+        "last_viewed_product": "Last viewed product",
+        "not_configured": "Web activity isn't tracked yet — analytics is not configured for this store.",
+        "empty": "No activity data",
+        "load_failed": "Couldn't load customer activity"
+      }
+    },
     "documents": {
       "title": "Document library",
       "browse_all": "Browse all",

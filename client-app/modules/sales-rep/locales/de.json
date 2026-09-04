@@ -213,6 +213,86 @@
       "all_categories": "Alle Kategorien",
       "load_failed": "Topseller konnten nicht geladen werden"
     },
+    "customer_insights": {
+      "top": "Top",
+      "recent": "Zuletzt",
+      "not_configured": "Analytics ist für diesen Shop nicht verbunden",
+      "tracked_caveat": "Nur auf Basis erfasster Aktivitäten",
+      "data_as_of": "Datenstand: {date}",
+      "search_history": {
+        "empty": "Keine erfassten Suchanfragen in diesem Zeitraum",
+        "count": "{n} Suchanfrage | {n} Suchanfragen",
+        "last_searched": "Zuletzt gesucht am {date}",
+        "load_failed": "Suchverlauf konnte nicht geladen werden"
+      },
+      "browse_history": {
+        "empty": "Keine erfassten Produktansichten in diesem Zeitraum",
+        "views": "{n} Aufruf | {n} Aufrufe",
+        "load_failed": "Angesehene Produkte konnten nicht geladen werden"
+      }
+    },
+    "activity": {
+      "navigation": {
+        "link": "Meine Aktivität"
+      },
+      "page": {
+        "title": "Meine Aktivität",
+        "customer_title": "Aktivität von {customer}",
+        "title_fallback": "Aktivität"
+      },
+      "breadcrumb": "Aktivität",
+      "tabs": {
+        "all": "Alle",
+        "orders": "Bestellungen",
+        "customers": "Kunden",
+        "searches": "Suchanfragen",
+        "productViews": "Produktansichten",
+        "logins": "Anmeldungen"
+      },
+      "period": {
+        "all_time": "Gesamter Zeitraum",
+        "month": "Dieser Monat",
+        "year": "Dieses Jahr"
+      },
+      "rows": {
+        "order_placed": "Bestellung aufgegeben",
+        "customer_assigned": "Neuer Kunde zugewiesen",
+        "searched_for": "Gesucht nach",
+        "viewed_product": "Angesehen",
+        "logins": "{count} Anmeldung | {count} Anmeldungen",
+        "count_suffix": "×{count}",
+        "unknown": "Aktivität"
+      },
+      "time": {
+        "during_hour": "{date}, in der Stunde von {time}"
+      },
+      "caveat": "Suchanfragen, Produktansichten und Anmeldungen basieren auf erfasster Storefront-Aktivität und sind Näherungswerte.",
+      "tracked_hint": "Erfasste Storefront-Aktivität: erscheint mit bis zu 48 Stunden Verzögerung.",
+      "empty": "Noch keine Aktivität",
+      "empty_period": "Keine erfasste Aktivität in diesem Zeitraum",
+      "no_results": "Keine Aktivität in dieser Kategorie",
+      "load_failed": "Aktivität konnte nicht geladen werden",
+      "view_all": "Gesamte Aktivität",
+      "my_activity": {
+        "title": "Meine Aktivität"
+      },
+      "customer": {
+        "title": "Kundenaktivität",
+        "views": {
+          "summary": "Übersicht",
+          "searches": "Suchanfragen",
+          "product_views": "Produktansichten"
+        },
+        "created_on": "Erstellt am",
+        "last_web_login": "Letzte Web-Anmeldung",
+        "visits": "Besuche",
+        "last_search_term": "Letzter Suchbegriff",
+        "last_viewed_product": "Zuletzt angesehenes Produkt",
+        "not_configured": "Web-Aktivität wird noch nicht erfasst — Analytics ist für diesen Store nicht konfiguriert.",
+        "empty": "Keine Aktivitätsdaten",
+        "load_failed": "Kundenaktivität konnte nicht geladen werden"
+      }
+    },
     "documents": {
       "title": "Dokumentbibliothek",
       "browse_all": "Alle anzeigen",

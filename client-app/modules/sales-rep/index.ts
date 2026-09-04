@@ -8,6 +8,8 @@ import { useWishlistSharingScopes } from "@/shared/wishlists/composables/useWish
 import { loadModuleLocale } from "../utils";
 import { isSalesRepsEnabled, isSalesRepUser } from "./composables/useSalesRepsConfig";
 import {
+  ACTIVITIES_NAV_LINK_ID,
+  ACTIVITIES_ROUTE_NAME,
   CUSTOMER_SHARING_SCOPE,
   DASHBOARD_LAYOUT_SCOPE,
   DASHBOARD_NAV_LINK_ID,
@@ -26,12 +28,15 @@ import { documentsBlock } from "./layout/documents-block";
 import { registerBlock } from "./layout/registry";
 import { salesRepMenuSchema } from "./menu";
 import {
+  activitiesRoute,
   allCustomerOrdersRoute,
   customerOrderRoute,
   customerOrdersRoute,
   customerProfileRoute,
   dashboardRoute,
   documentsRoute,
+  isMyActivity,
+  isMyCustomersArea,
   myCustomersRoute,
   salesRepsRoute,
 } from "./routes";
@@ -55,6 +60,8 @@ export function init(router: Router, i18n: I18n) {
   router.addRoute("Company", allCustomerOrdersRoute);
   // Document library (VCST-5730) -> /company/documents (its own beforeEnter checks documents:read).
   router.addRoute("Company", documentsRoute);
+  // All-activity feed (VCST-5337) -> /company/activities.
+  router.addRoute("Company", activitiesRoute);
 
   const { mergeMenuSchema, registerAccountSection } = useNavigations();
   const { checkPermissions } = useUser();
@@ -134,8 +141,19 @@ export function init(router: Router, i18n: I18n) {
         title: "sales_rep.my_customers.navigation.link",
         icon: "users",
         route: { name: MY_CUSTOMERS_ROUTE_NAME },
+        // A customer's profile and their activity are pages about a customer, so the rail keeps this
+        // item lit there — vue-router cannot tell, they are sibling route records.
+        activeWhen: isMyCustomersArea,
       },
       ...documentsNavLink,
+      {
+        id: ACTIVITIES_NAV_LINK_ID,
+        title: "sales_rep.activity.navigation.link",
+        icon: "activity",
+        route: { name: ACTIVITIES_ROUTE_NAME },
+        // The same route scoped to one customer is that customer's page, not the rep's own feed.
+        activeWhen: isMyActivity,
+      },
     ],
     isVisible: computed(() => isSalesRepsEnabled() && checkPermissions(SALES_REP_ACCESS_PERMISSION)),
   });
