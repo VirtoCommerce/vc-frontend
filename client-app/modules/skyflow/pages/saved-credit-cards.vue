@@ -1,7 +1,7 @@
 <template>
   <div>
     <VcTypography tag="h1">
-      {{ $t("shared.account.navigation.links.saved_credit_cards") }}
+      {{ $t("skyflow.saved_credit_cards.menu_title") }}
     </VcTypography>
 
     <!-- Skeletons -->
@@ -22,26 +22,24 @@
     </div>
 
     <!-- Empty View -->
-    <VcEmptyView v-else :text="$t('pages.account.saved_credit_cards.no_cards')" icon="credit-card" />
+    <VcEmptyView v-else :text="$t('skyflow.saved_credit_cards.no_cards')" icon="credit-card" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { useMutation } from "@vue/apollo-composable";
 import { useI18n } from "vue-i18n";
-import { DeleteSkyFlowCardDocument, OperationNames } from "@/core/api/graphql/types";
 import { globals } from "@/core/globals";
 import { replaceXFromBeginning } from "@/core/utilities";
-import { CreditCard, CreditCardSkeleton } from "@/shared/account";
 import { useModal } from "@/shared/modal";
-import { useSkyflowCards } from "@/shared/payment";
+import { useDeleteSkyflowCard } from "../api/graphql";
+import CreditCardSkeleton from "../components/credit-card-skeleton.vue";
+import CreditCard from "../components/credit-card.vue";
+import { useSkyflowCards } from "../composables";
 
 const { t } = useI18n();
 const { openModal } = useModal();
 const { loading, skyflowCards, fetchSkyflowCards } = useSkyflowCards();
-const { mutate: deleteSkyflowCard } = useMutation(DeleteSkyFlowCardDocument, {
-  refetchQueries: [OperationNames.Query.GetSkyflowCards],
-});
+const { mutate: deleteSkyflowCard } = useDeleteSkyflowCard();
 const { storeId } = globals;
 
 function removeCreditCard(skyflowId: string): void {
@@ -49,8 +47,8 @@ function removeCreditCard(skyflowId: string): void {
     component: "VcConfirmationModal",
     props: {
       variant: "danger",
-      title: t("pages.account.saved_credit_cards.delete_credit_card_modal.title"),
-      text: t("pages.account.saved_credit_cards.delete_credit_card_modal.message"),
+      title: t("skyflow.saved_credit_cards.delete_credit_card_modal.title"),
+      text: t("skyflow.saved_credit_cards.delete_credit_card_modal.message"),
 
       async onConfirm(): Promise<void> {
         closeModal();

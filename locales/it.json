@@ -275,7 +275,6 @@
       "company_info": "Informazioni azienda",
       "company_members": "Membri azienda",
       "contact_administrator": "contatta l'amministratore del sito",
-      "saved_credit_cards": "Carte di credito salvate",
       "skip_to_main_content": "Vai al contenuto principale",
       "skip_to_footer": "Vai al piè di pagina"
     },
@@ -369,8 +368,7 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "Salvati per dopo",
-            "lists": "@:common.links.lists",
-            "saved_credit_cards": "@:common.links.saved_credit_cards"
+            "lists": "@:common.links.lists"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -486,8 +484,7 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members",
-          "saved_credit_cards": "@:common.links.saved_credit_cards"
+          "company_members": "@:common.links.company_members"
         }
       },
       "change_password_form": {
@@ -1340,13 +1337,6 @@
         "create_list_button": "Crea lista",
         "create_list_button_mobile": "Crea",
         "lists_icon": "Icona lista"
-      },
-      "saved_credit_cards": {
-        "no_cards": "Non hai ancora salvato nessuna carta di credito",
-        "delete_credit_card_modal": {
-          "title": "Conferma eliminazione",
-          "message": "Sei sicuro di voler rimuovere la carta di credito?"
-        }
       },
       "list_details": {
         "meta": {

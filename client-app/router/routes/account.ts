@@ -14,7 +14,6 @@ const OrderPayment = () => import("@/pages/account/order-payment.vue");
 const Lists = () => import("@/pages/account/lists.vue");
 const ListDetails = () => import("@/pages/account/list-details.vue");
 const SavedForLaterDetails = () => import("@/pages/account/saved-for-later-details.vue");
-const SavedCreditCards = () => import("@/pages/account/saved-credit-cards.vue");
 const PromotionCoupons = () => import("@/pages/account/promotion-coupons.vue");
 
 export const accountRoutes: RouteRecordRaw[] = [
@@ -75,11 +74,6 @@ export const accountRoutes: RouteRecordRaw[] = [
         props: true,
       },
     ],
-  },
-  {
-    path: "saved-credit-cards",
-    name: "SavedCreditCards",
-    component: SavedCreditCards,
   },
   {
     path: ROUTES.PROMOTION_COUPONS.PATH,

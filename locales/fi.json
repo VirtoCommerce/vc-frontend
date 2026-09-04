@@ -275,7 +275,6 @@
       "company_info": "Yrityksen tiedot",
       "company_members": "Yrityksen jäsenet",
       "contact_administrator": "ota yhteyttä sivuston ylläpitäjään",
-      "saved_credit_cards": "Tallennetut luottokortit",
       "skip_to_main_content": "Siirry pääsisältöön",
       "skip_to_footer": "Siirry alatunnisteeseen"
     },
@@ -369,8 +368,7 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "Tallessa myöhempää varten",
-            "lists": "@:common.links.lists",
-            "saved_credit_cards": "@:common.links.saved_credit_cards"
+            "lists": "@:common.links.lists"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -486,8 +484,7 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members",
-          "saved_credit_cards": "@:common.links.saved_credit_cards"
+          "company_members": "@:common.links.company_members"
         }
       },
       "change_password_form": {
@@ -1340,13 +1337,6 @@
         "create_list_button": "Luo lista",
         "create_list_button_mobile": "Luo",
         "lists_icon": "Listakuvake"
-      },
-      "saved_credit_cards": {
-        "no_cards": "Et ole tallentanut yhtään luottokorttia vielä",
-        "delete_credit_card_modal": {
-          "title": "Vahvista poisto",
-          "message": "Haluatko varmasti poistaa luottokortin?"
-        }
       },
       "list_details": {
         "meta": {

@@ -275,7 +275,6 @@
       "company_info": "Bedriftsinformasjon",
       "company_members": "Bedriftsmedlemmer",
       "contact_administrator": "kontakt nettstedets administrator",
-      "saved_credit_cards": "Lagrede kredittkort",
       "skip_to_main_content": "Hopp til hovedinnhold",
       "skip_to_footer": "Hopp til bunntekst"
     },
@@ -369,8 +368,7 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "Lagret til senere",
-            "lists": "@:common.links.lists",
-            "saved_credit_cards": "@:common.links.saved_credit_cards"
+            "lists": "@:common.links.lists"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -486,8 +484,7 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members",
-          "saved_credit_cards": "@:common.links.saved_credit_cards"
+          "company_members": "@:common.links.company_members"
         }
       },
       "change_password_form": {
@@ -1340,13 +1337,6 @@
         "create_list_button": "Opprett liste",
         "create_list_button_mobile": "Opprett",
         "lists_icon": "Listeikon"
-      },
-      "saved_credit_cards": {
-        "no_cards": "Du har ikke lagret noen kredittkort ennå",
-        "delete_credit_card_modal": {
-          "title": "Bekreft sletting",
-          "message": "Er du sikker på at du vil slette kredittkortet?"
-        }
       },
       "list_details": {
         "meta": {

@@ -275,7 +275,6 @@
       "company_info": "Firmeninformationen",
       "company_members": "Firmenmitglieder",
       "contact_administrator": "den Administrator der Website kontaktieren",
-      "saved_credit_cards": "Gespeicherte Kreditkarten",
       "skip_to_main_content": "Zum Hauptinhalt springen",
       "skip_to_footer": "Zum Footer springen"
     },
@@ -369,8 +368,7 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "saved_for_later": "Für später gespeichert",
-            "lists": "@:common.links.lists",
-            "saved_credit_cards": "@:common.links.saved_credit_cards"
+            "lists": "@:common.links.lists"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -486,8 +484,7 @@
           "list_details": "@:common.links.list_details",
           "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members",
-          "saved_credit_cards": "@:common.links.saved_credit_cards"
+          "company_members": "@:common.links.company_members"
         }
       },
       "change_password_form": {
@@ -1340,13 +1337,6 @@
         "create_list_button": "Liste erstellen",
         "create_list_button_mobile": "Erstellen",
         "lists_icon": "Listen-Symbol"
-      },
-      "saved_credit_cards": {
-        "no_cards": "Sie haben noch keine Kreditkarten gespeichert",
-        "delete_credit_card_modal": {
-          "title": "Löschen bestätigen",
-          "message": "Sind Sie sicher, dass Sie die Kreditkarte entfernen möchten?"
-        }
       },
       "list_details": {
         "meta": {
