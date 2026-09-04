@@ -1,4 +1,4 @@
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { VcBadge, VcCheckbox } from "@/ui-kit/components/atoms";
 import { BREAKPOINTS } from "@/ui-kit/constants";
 import { VcTable, VcTableColumn } from "..";
@@ -2539,8 +2539,8 @@ export const SlotsApiCustomHeader: StoryType = {
     setup: () => ({ args }),
     template: `
       <VcTable v-bind="args">
-        <template #header>
-          <thead class="vc-table__head">
+        <template #header="{ headAttrs }">
+          <thead v-bind="headAttrs">
             <tr>
               <th colspan="4" class="px-4 py-3 text-left font-bold text-primary-700 bg-primary-50">
                 Custom Header - User List
@@ -2577,8 +2577,8 @@ export const SlotsApiCustomHeader: StoryType = {
       source: {
         code: `
 <VcTable :columns="columns" :items="items">
-  <template #header>
-    <thead class="vc-table__head">
+  <template #header="{ headAttrs }">
+    <thead v-bind="headAttrs">
       <tr>
         <th colspan="4" class="px-4 py-3 text-left font-bold text-primary-600 bg-primary-50">
           Custom Header - User List
@@ -3235,6 +3235,117 @@ export const SelectionMobile: StoryType = {
   </template>
 
   <VcTableColumn id="name" title="Name" v-slot="{ item }">{{ item.name }}</VcTableColumn>
+</VcTable>
+        `,
+      },
+    },
+  },
+};
+
+// 32. SelectionCustomHeader — custom #header keeping the selection column aligned
+export const SelectionCustomHeader: StoryType = {
+  args: {
+    items: sampleItems,
+    pages: 1,
+    page: 1,
+    bordered: true,
+    selectionMode: "multiple",
+  },
+  argTypes: {
+    selectionMode: { control: "select", options: ["single", "multiple"] },
+  },
+  render: (args) => ({
+    components: { VcTable, VcTableColumn, VcCheckbox },
+    setup: () => {
+      const selection = ref<VcTableSelectionKeyType[]>([]);
+      // VcTable keeps the model as-is when the mode changes, so `single` would inherit
+      // several selected rows from `multiple`.
+      watch(
+        () => args.selectionMode,
+        () => {
+          selection.value = [];
+        },
+      );
+      return { args, selection };
+    },
+    template: `
+      <div>
+        <div class="mb-4 p-3 bg-neutral-100 rounded text-sm">
+          Selected keys: <strong>{{ selection.length ? selection.join(", ") : "none" }}</strong>
+        </div>
+
+        <VcTable
+          :items="args.items"
+          :pages="args.pages"
+          :page="args.page"
+          :bordered="args.bordered"
+          max-height="160px"
+          :selection-mode="args.selectionMode"
+          v-model:selection="selection"
+        >
+          <template #header="{ showSelectionColumn, selectionMode, isAllSelected, isSomeSelected, canSelectAll, toggleSelectAll, selectionColumnAttrs, headAttrs }">
+            <thead v-bind="headAttrs">
+              <tr class="bg-primary-50">
+                <th v-if="showSelectionColumn" scope="col" v-bind="selectionColumnAttrs">
+                  <VcCheckbox
+                    v-if="selectionMode === 'multiple'"
+                    size="sm"
+                    :model-value="isAllSelected"
+                    :indeterminate="isSomeSelected"
+                    :disabled="!canSelectAll"
+                    :aria-label="isAllSelected ? 'Deselect all rows' : 'Select all rows'"
+                    @change="toggleSelectAll"
+                  />
+
+                  <span v-else class="sr-only">Row selection</span>
+                </th>
+
+                <th scope="col" class="p-3 text-start font-black uppercase">Person</th>
+                <th scope="col" class="p-3 text-start font-black uppercase">Contact</th>
+              </tr>
+            </thead>
+          </template>
+
+          <VcTableColumn id="name" title="Name" v-slot="{ item }">{{ item.name }}</VcTableColumn>
+          <VcTableColumn id="email" title="Email" v-slot="{ item }">{{ item.email }}</VcTableColumn>
+        </VcTable>
+      </div>
+    `,
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "A custom `#header` replaces the built-in header row, selection cell included, while body rows keep theirs — so the header has to render its own, spreading `selectionColumnAttrs` on the `<th>` for the matching width and sticky behavior. Spread `headAttrs` on the `<thead>` too: it carries the sticky modifier, without which `sticky-header` and `max-height` have no effect on a custom header — this story sets `max-height`, so scroll the body to see the header hold. Add your own classes with a sibling `class` attribute rather than editing `headAttrs.class`. Guard the select-all control with `selectionMode === 'multiple'`, as the built-in header does — switch the `selectionMode` control to `single` and the cell keeps an `sr-only` label instead of going empty. Omit the cell entirely and every column shifts by one; in DEV, VcTable warns about it in the console. The scope carries no per-column attributes, so over `fixed` columns a custom header has to reproduce the sticky offsets itself — the built-in header cells are the only ones that get them. The labels below are plain strings for the demo: in app code translate them, the way the built-in header uses `ui_kit.table.select_all` / `ui_kit.table.deselect_all` / `ui_kit.table.selection_column`.",
+      },
+      source: {
+        code: `
+<VcTable :items="items" :selection-mode="selectionMode" max-height="160px" v-model:selection="selection">
+  <template #header="{ showSelectionColumn, selectionMode, isAllSelected, isSomeSelected, canSelectAll, toggleSelectAll, selectionColumnAttrs, headAttrs }">
+    <thead v-bind="headAttrs">
+      <tr>
+        <th v-if="showSelectionColumn" scope="col" v-bind="selectionColumnAttrs">
+          <VcCheckbox
+            v-if="selectionMode === 'multiple'"
+            size="sm"
+            :model-value="isAllSelected"
+            :indeterminate="isSomeSelected"
+            :disabled="!canSelectAll"
+            :aria-label="$t(isAllSelected ? 'ui_kit.table.deselect_all' : 'ui_kit.table.select_all')"
+            @change="toggleSelectAll"
+          />
+
+          <span v-else class="sr-only">{{ $t("ui_kit.table.selection_column") }}</span>
+        </th>
+
+        <th scope="col">Person</th>
+        <th scope="col">Contact</th>
+      </tr>
+    </thead>
+  </template>
+
+  <VcTableColumn id="name" title="Name" v-slot="{ item }">{{ item.name }}</VcTableColumn>
+  <VcTableColumn id="email" title="Email" v-slot="{ item }">{{ item.email }}</VcTableColumn>
 </VcTable>
         `,
       },

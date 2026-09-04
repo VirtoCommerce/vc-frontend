@@ -89,6 +89,56 @@ if (import.meta.env.DEV) {
 
 Keep backward compatibility: the component should still work with the old prop during the deprecation period.
 
+## Deprecating a CSS Variable
+
+A `--vc-*` custom property is public API: forks override it in `_custom.scss`, so renaming or
+removing one silently changes their rendering — no build error, no lint error, no console
+warning. There is no runtime hook for a custom property, so the `console.warn` the other tracks
+rely on is unavailable; the alias IS the whole compatibility mechanism.
+
+Keep the old name readable by chaining it into the fallback of the new one, and assign the
+result to the component's private downstream variable rather than declaring the public name
+(a declaration on the block would shadow a fork's `:root` override):
+
+```scss
+// vc-table.vue
+--selected-bg-alpha: 0.08;
+--selected-bg-color: var(
+  --vc-table-selected-bg-color,
+  var(--vc-table-selected-bg, rgb(from var(--color-primary-500) r g b / var(--selected-bg-alpha)))
+);
+```
+
+Declare the chain exactly once, and have `assets/styles/dark/**` override an *input* to it rather
+than the property itself — an alpha, a shade, a whole colour in its own variable:
+
+```scss
+// dark/organisms/vc-table.scss
+.vc-table {
+  --selected-bg-alpha: 0.16;
+}
+```
+
+Re-declaring the aliased property in the dark file works too, but it duplicates the chain and the
+copies drift; and if the dark file declares it while the light one carries the alias, the alias is
+dead in dark mode, because `html.dark .vc-table` (0,2,1) outranks `.vc-table` (0,1,0). Note the
+consequence for forks either way: a `:root` override applies to both modes, so a fork wanting a
+distinct dark value must override under `html.dark`.
+
+The chain direction is the same wherever the token lives; only the assignment target differs. On
+a component block it is the private downstream variable, as above. For a token declared on `:root`
+in `assets/styles/_ui-kit-tokens.scss`, `_colors.scss` or `main.scss` it is the canonical name
+itself — `--vc-x-new: var(--vc-x-old, <the existing --color-vc-* key and palette fallback>)` — which
+keeps a fork's override of either name live. Never point the deprecated name at the canonical one:
+once consumers move to the canonical name, nothing reads the deprecated one and a fork's override
+of it silently stops applying.
+
+Current aliases:
+
+| Deprecated | Canonical | Shipped through |
+|---|---|---|
+| `--vc-table-selected-bg` | `--vc-table-selected-bg-color` | 2.56.0 |
+
 ## Deprecating a Prop Value
 
 When deprecating a specific *value* of a prop (e.g. renaming a `variant` option `solid-light` → `soft`, or a `color`/`size` value) while keeping the prop itself, the old value must keep working during the deprecation period.
@@ -166,6 +216,15 @@ Component deprecation:
 
 Prop deprecation:
 - [ ] *.vue — console.warn behind import.meta.env.DEV with prop check
+- [ ] Backward compatibility maintained
+
+CSS variable deprecation:
+- [ ] *.vue — old name chained into the new name's fallback, assigned to the private var
+- [ ] assets/styles/dark/** — overrides an input to the chain, not the aliased property itself
+- [ ] assets/styles/_ui-kit-tokens.scss / _colors.scss / main.scss — if the token is declared
+      there instead, the canonical name reads the deprecated one ahead of its existing fallback
+- [ ] *.stories.ts — any demo of the old name switched to the new one
+- [ ] DEPRECATION.md — row added to the alias table
 - [ ] Backward compatibility maintained
 
 Prop value deprecation:
