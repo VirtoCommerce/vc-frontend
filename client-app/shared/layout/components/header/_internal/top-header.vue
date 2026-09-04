@@ -93,12 +93,12 @@
             @click="loginMenuVisible = !loginMenuVisible"
           >
             <span class="hidden min-w-0 font-bold xl:inline">
-              <template v-if="isMultiOrganization">
+              <template v-if="isMultiOrganization && organization">
                 <span
                   data-test-id="organization-name-label"
                   class="min-w-0 truncate xl:max-w-80"
-                  :title="organization?.name"
-                  >{{ organization?.name }}</span
+                  :title="organization.name"
+                  >{{ organization.name }}</span
                 >
                 /
               </template>

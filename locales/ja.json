@@ -337,6 +337,7 @@
           "back_to_operator": "{name} に戻る",
           "switching_back": "戻っています…",
           "no_results": "結果が見つかりません",
+          "organization_locked_tooltip": "この組織はロックされています。アクセスするには管理者に連絡してください。",
           "dark_mode": {
             "system": "テーマ：自動",
             "dark": "テーマ：ダーク",

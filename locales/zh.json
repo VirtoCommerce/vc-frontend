@@ -337,6 +337,7 @@
           "back_to_operator": "返回 {name}",
           "switching_back": "正在返回…",
           "no_results": "未找到结果",
+          "organization_locked_tooltip": "该组织已被锁定。请联系管理员以获取访问权限。",
           "dark_mode": {
             "system": "主题：自动",
             "dark": "主题：深色",
