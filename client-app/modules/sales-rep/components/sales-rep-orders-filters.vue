@@ -121,6 +121,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
+import { toLocalDateOnly } from "@/core/utilities/date";
 import type { SalesRepFacetOptionType, SalesRepOrdersFilterDataType } from "../types";
 
 interface IProps {
@@ -152,10 +153,6 @@ function cloneFilter(value: SalesRepOrdersFilterDataType): SalesRepOrdersFilterD
   return { ...value, statuses: [...value.statuses], customerNames: [...(value.customerNames ?? [])] };
 }
 
-function toDateOnly(date: Date): string {
-  return date.toISOString().split("T")[0];
-}
-
 const ranges = computed<RangeType[]>(() => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -163,7 +160,7 @@ const ranges = computed<RangeType[]>(() => {
   const from = (shift: (date: Date) => void): string => {
     const date = new Date(today);
     shift(date);
-    return toDateOnly(date);
+    return toLocalDateOnly(date);
   };
 
   return [
@@ -172,25 +169,25 @@ const ranges = computed<RangeType[]>(() => {
       id: "lastDay",
       label: t("sales_rep.customer_orders.filters.last_day"),
       startDate: from((date) => date.setDate(date.getDate() - 1)),
-      endDate: toDateOnly(today),
+      endDate: toLocalDateOnly(today),
     },
     {
       id: "lastWeek",
       label: t("sales_rep.customer_orders.filters.last_week"),
       startDate: from((date) => date.setDate(date.getDate() - 7)),
-      endDate: toDateOnly(today),
+      endDate: toLocalDateOnly(today),
     },
     {
       id: "lastMonth",
       label: t("sales_rep.customer_orders.filters.last_month"),
       startDate: from((date) => date.setMonth(date.getMonth() - 1)),
-      endDate: toDateOnly(today),
+      endDate: toLocalDateOnly(today),
     },
     {
       id: "lastYear",
       label: t("sales_rep.customer_orders.filters.last_year"),
       startDate: from((date) => date.setFullYear(date.getFullYear() - 1)),
-      endDate: toDateOnly(today),
+      endDate: toLocalDateOnly(today),
     },
   ];
 });

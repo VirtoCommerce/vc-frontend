@@ -135,6 +135,7 @@
       "back_to_customer": "Retour au client",
       "back_to_orders": "Retour aux commandes",
       "order_not_found": "Commande introuvable",
+      "order_load_failed": "This order couldn't be loaded. Try refreshing the page.",
       "search_placeholder": "Rechercher par numéro, nom ou autres données",
       "search_aria": "Rechercher des commandes",
       "reset_search": "Réinitialiser la recherche",

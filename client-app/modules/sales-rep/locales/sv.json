@@ -135,6 +135,7 @@
       "back_to_customer": "Tillbaka till kunden",
       "back_to_orders": "Tillbaka till order",
       "order_not_found": "Ordern hittades inte",
+      "order_load_failed": "This order couldn't be loaded. Try refreshing the page.",
       "search_placeholder": "Sök efter nummer, namn eller andra uppgifter",
       "search_aria": "Sök beställningar",
       "reset_search": "Återställ sökning",

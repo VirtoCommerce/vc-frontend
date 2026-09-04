@@ -189,6 +189,11 @@ const { sortInfo, applySort } = useSalesRepColumnSort({
 
 const localKeyword = ref("");
 
+// The keyword is reset when the list switches customers; the input holds its own draft, so it follows.
+watch(keyword, (value) => {
+  localKeyword.value = value;
+});
+
 const hasSearch = computed(
   () =>
     Boolean(keyword.value) ||

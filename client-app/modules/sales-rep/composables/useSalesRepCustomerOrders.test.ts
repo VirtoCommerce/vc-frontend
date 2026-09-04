@@ -16,7 +16,12 @@ const queryMock = await vi.hoisted(async () => {
 
 const customerMock = await vi.hoisted(async () => {
   const vue = await import("vue");
-  return { loading: vue.ref(false), notFound: vue.ref(false), options: vue.shallowRef<unknown>(undefined) };
+  return {
+    loading: vue.ref(false),
+    failed: vue.ref(false),
+    notFound: vue.ref(false),
+    options: vue.shallowRef<unknown>(undefined),
+  };
 });
 
 vi.mock("@vue/apollo-composable", () => ({ useQuery: queryMock.useQuery }));
@@ -33,6 +38,7 @@ vi.mock("./useSalesRepCustomer", async () => {
       return {
         customer: ref({ organizationName: "MERCURY123" }),
         loading: customerMock.loading,
+        failed: customerMock.failed,
         notFound: computed(() => (toValue(options?.enabled) ?? true) && customerMock.notFound.value),
       };
     },

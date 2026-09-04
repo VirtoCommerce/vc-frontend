@@ -13,6 +13,9 @@ const queryMock = await vi.hoisted(async () => {
   return { result, loading, error, onError, useQuery };
 });
 
+// useOrderView reads i18n for the shipment/payment labels, and this composable is called outside a setup.
+vi.mock("vue-i18n", () => ({ useI18n: () => ({ t: (key: string) => key }) }));
+
 vi.mock("@vue/apollo-composable", () => ({ useQuery: queryMock.useQuery }));
 
 vi.mock("@/core/globals", () => ({ globals: { storeId: "test-store", cultureName: "en-US", currencyCode: "USD" } }));

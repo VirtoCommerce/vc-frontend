@@ -2,7 +2,11 @@
   <div class="customer-order-details">
     <VcBreadcrumbs :items="breadcrumbs" class="hidden lg:block print:hidden" />
 
-    <VcEmptyView v-if="notFound" :text="t('sales_rep.customer_orders.order_not_found')" icon="outline-404">
+    <!-- A failed read must not read as "this order isn't yours": the hub query opts out of the toast, so
+         this is the only signal the rep gets. -->
+    <VcEmptyView v-if="failed && !loading" :text="t('sales_rep.customer_orders.order_load_failed')" variant="error" />
+
+    <VcEmptyView v-else-if="notFound" :text="t('sales_rep.customer_orders.order_not_found')" icon="outline-404">
       <template #button>
         <VcButton :to="ordersRoute" prepend-icon="arrow-left">
           {{ t("sales_rep.customer_orders.back_to_orders") }}
@@ -152,10 +156,8 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
-import { OrderStatusCode } from "@/core/constants/order-status";
 import { OrderLineItems, OrderStatus } from "@/shared/account";
 import { AcceptedGifts, OrderCommentSection, OrderSummary } from "@/shared/checkout";
-import { BOPIS_CODE } from "@/shared/checkout/composables/useBopis";
 import { AddressInfo, VendorName } from "@/shared/common";
 import { useSalesRepCustomerOrder } from "../composables/useSalesRepCustomerOrder";
 import { CUSTOMER_ORDERS_ROUTE_NAME, CUSTOMER_PROFILE_ROUTE_NAME, MY_CUSTOMERS_ROUTE_NAME } from "../constants";
@@ -172,6 +174,8 @@ const { t } = useI18n();
 
 const {
   order,
+  loading,
+  failed,
   notFound,
   giftItems,
   mainCurrencyOrderItems,
@@ -182,24 +186,13 @@ const {
   shipment,
   payment,
   allItemsAreDigital,
+  isCancelled,
+  shipmentMethodName,
+  paymentMethodName,
+  shipToTitle,
 } = useSalesRepCustomerOrder(() => props.orderId);
 
 const customerName = computed(() => order.value?.organizationName ?? "");
-
-const isCancelled = computed(
-  () => String(order.value?.status).toLowerCase() === String(OrderStatusCode.CANCELLED).toLowerCase(),
-);
-
-const shipmentMethodName = computed<string>(() =>
-  t(`common.methods.delivery_by_id.${shipment.value?.shipmentMethodCode}_${shipment.value?.shipmentMethodOption}`),
-);
-const paymentMethodName = computed(() => payment.value?.paymentMethod?.name);
-
-const shipToTitle = computed(() =>
-  shipment.value?.shipmentMethodCode === BOPIS_CODE
-    ? t("pages.account.order_details.bopis.pickup_address")
-    : t("common.titles.shipping_address"),
-);
 
 const ordersRoute = computed<RouteLocationRaw>(() => ({
   name: CUSTOMER_ORDERS_ROUTE_NAME,

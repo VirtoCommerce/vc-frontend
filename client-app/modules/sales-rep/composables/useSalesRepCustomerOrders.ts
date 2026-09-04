@@ -42,6 +42,7 @@ export function useSalesRepCustomerOrders(organizationId?: MaybeRefOrGetter<stri
   const {
     customer,
     loading: customerLoading,
+    failed: customerFailed,
     notFound,
   } = useSalesRepCustomer(() => orgId() ?? "", {
     enabled: hasCustomer,
@@ -108,9 +109,20 @@ export function useSalesRepCustomerOrders(organizationId?: MaybeRefOrGetter<stri
     }
   });
 
-  watch(orgId, () => {
-    page.value = 1;
-  });
+  // Both list routes render one component instance, so switching between them only changes the prop -
+  // every piece of per-list state has to be reset here or it rides along into the other list.
+  // flush "sync": Apollo's own variables watcher runs at the default pre flush, so without this the
+  // reset lands after it and an org change fires a second request with the previous offset.
+  watch(
+    orgId,
+    () => {
+      page.value = 1;
+      keyword.value = "";
+      filters.value = { statuses: [], customerNames: [], startDate: undefined, endDate: undefined };
+      sortRule.value = undefined;
+    },
+    { flush: "sync" },
+  );
 
   return {
     customer,
@@ -121,7 +133,9 @@ export function useSalesRepCustomerOrders(organizationId?: MaybeRefOrGetter<stri
     customerOptions,
     sortRules: SORT_RULES,
     loading: computed(() => loading.value || customerLoading.value),
-    failed: computed(() => Boolean(error.value)),
+    // Either read failing is a failure the page must name: a silent customer failure would otherwise
+    // surface only as the fallback heading.
+    failed: computed(() => Boolean(error.value) || customerFailed.value),
     page,
     pages,
     keyword,

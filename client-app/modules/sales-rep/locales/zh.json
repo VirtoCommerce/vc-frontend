@@ -135,6 +135,7 @@
       "back_to_customer": "返回客户",
       "back_to_orders": "返回订单列表",
       "order_not_found": "未找到订单",
+      "order_load_failed": "This order couldn't be loaded. Try refreshing the page.",
       "search_placeholder": "按号码、姓名或其他数据搜索",
       "search_aria": "搜索订单",
       "reset_search": "重置搜索",

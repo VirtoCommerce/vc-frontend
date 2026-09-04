@@ -1,4 +1,4 @@
-import { computed, toValue } from "vue";
+import { computed, ref, toValue } from "vue";
 import { Logger } from "@/core/utilities";
 import { SalesRepCustomerDocument } from "../api/graphql/types";
 import { HUB_FETCH_POLICY } from "../constants";
@@ -17,12 +17,24 @@ export function useSalesRepCustomer(organizationId: MaybeRefOrGetter<string>, op
 
   // The header is editable outside the storefront, so it revalidates too. Three components on the page
   // share this composable; Apollo's deduplication collapses their concurrent identical requests into one.
-  const { result, loading, error, onError } = useSalesRepHubQuery(SalesRepCustomerDocument, variables, {
+  const { result, loading, error, onError, onResult } = useSalesRepHubQuery(SalesRepCustomerDocument, variables, {
     fetchPolicy: HUB_FETCH_POLICY,
     enabled,
   });
 
+  // Apollo defers a start caused by `enabled` flipping to the next tick, so `loading` is briefly false with
+  // nothing in flight. Answering "not found" from that window flashes the 404 while a page is only switching
+  // customers, so the answer waits for a read that actually settled on the id being asked about.
+  const answeredFor = ref<string | undefined>(undefined);
+
+  onResult((queryResult) => {
+    if (!queryResult.loading) {
+      answeredFor.value = toValue(organizationId);
+    }
+  });
+
   onError((queryError) => {
+    answeredFor.value = toValue(organizationId);
     // No toast; the page names the failure itself.
     Logger.error("[sales-rep] salesRepCustomer failed:", queryError);
   });
@@ -46,7 +58,14 @@ export function useSalesRepCustomer(organizationId: MaybeRefOrGetter<string>, op
   const failed = computed(() => Boolean(error.value));
 
   // Not served / unknown settle to the not-found view once loading finishes.
-  const notFound = computed(() => enabled.value && !loading.value && !failed.value && !customer.value);
+  const notFound = computed(
+    () =>
+      enabled.value &&
+      !loading.value &&
+      !failed.value &&
+      !customer.value &&
+      answeredFor.value === toValue(organizationId),
+  );
 
   return { customer, loading, failed, notFound };
 }

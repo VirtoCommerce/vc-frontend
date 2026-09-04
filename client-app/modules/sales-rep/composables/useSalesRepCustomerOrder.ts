@@ -11,7 +11,7 @@ import type { MaybeRefOrGetter } from "vue";
 export function useSalesRepCustomerOrder(orderId: MaybeRefOrGetter<string>) {
   const variables = computed(() => ({ id: toValue(orderId), cultureName: globals.cultureName }));
 
-  const { result, loading, onError } = useSalesRepHubQuery(SalesRepCustomerOrderDocument, variables, {
+  const { result, loading, error, onError } = useSalesRepHubQuery(SalesRepCustomerOrderDocument, variables, {
     fetchPolicy: HUB_FETCH_POLICY,
   });
 
@@ -21,11 +21,16 @@ export function useSalesRepCustomerOrder(orderId: MaybeRefOrGetter<string>) {
 
   const order = computed(() => result.value?.salesRepCustomerOrder as CustomerOrderType | undefined);
 
-  const notFound = computed(() => !loading.value && !order.value);
+  // A failed read says nothing about whether the order exists or is the rep's to see, so the page
+  // words it differently - the toast is opted out of, and this is the only signal it gets.
+  const failed = computed(() => Boolean(error.value));
+
+  const notFound = computed(() => !loading.value && !failed.value && !order.value);
 
   return {
     order,
     loading,
+    failed,
     notFound,
     ...useOrderView(order),
   };
