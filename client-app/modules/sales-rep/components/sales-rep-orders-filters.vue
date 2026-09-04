@@ -196,7 +196,7 @@ const ranges = computed<RangeType[]>(() => {
 });
 
 const draft = ref<SalesRepOrdersFilterDataType>(emptyFilter());
-const applied = ref<SalesRepOrdersFilterDataType>(emptyFilter());
+const appliedFilter = ref<SalesRepOrdersFilterDataType>(emptyFilter());
 const selectedRange = ref<RangeType>(ranges.value[0]);
 
 const startValid = ref(true);
@@ -217,11 +217,11 @@ const showRangeError = computed(
 const isRangeValid = computed(() => startValid.value && endValid.value && isRangeOrderValid.value);
 
 const isEmpty = computed(() => {
-  const { statuses, customerNames, startDate, endDate } = applied.value;
+  const { statuses, customerNames, startDate, endDate } = appliedFilter.value;
   return !statuses.length && !customerNames?.length && !startDate && !endDate;
 });
 
-const isDirty = computed(() => JSON.stringify(draft.value) !== JSON.stringify(applied.value));
+const isDirty = computed(() => JSON.stringify(draft.value) !== JSON.stringify(appliedFilter.value));
 
 function applyRange(range: RangeType): void {
   if (range.id === CUSTOM_RANGE_ID) {
@@ -237,15 +237,15 @@ function applyRange(range: RangeType): void {
 }
 
 function apply(): void {
-  applied.value = cloneFilter(draft.value);
-  emit("change", applied.value);
+  appliedFilter.value = cloneFilter(draft.value);
+  emit("change", appliedFilter.value);
 }
 
 function reset(): void {
   draft.value = emptyFilter();
-  applied.value = emptyFilter();
+  appliedFilter.value = emptyFilter();
   selectedRange.value = ranges.value[0];
-  emit("change", applied.value);
+  emit("change", appliedFilter.value);
 }
 
 // The page can drop a single filter from its chips, so the popover follows what is actually applied.
@@ -256,7 +256,7 @@ watch(
       return;
     }
 
-    applied.value = cloneFilter(value);
+    appliedFilter.value = cloneFilter(value);
     draft.value = cloneFilter(value);
 
     if (!value.startDate && !value.endDate) {
