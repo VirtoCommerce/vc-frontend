@@ -152,6 +152,10 @@ describe("CompareTable — focus management", () => {
     await setCompact(false);
     const wrapper = mountTable();
 
+    // The button is teleported alongside the tabs, gated by v-if="mobileTabsBarRef" — null on the
+    // first render, so it only appears once that ref populates and triggers a second render pass.
+    await nextTick();
+
     const clearCategoryButton = wrapper.get(".compare-table__clear-category").element as HTMLElement;
     clearCategoryButton.focus();
     expect(document.activeElement).toBe(clearCategoryButton);
