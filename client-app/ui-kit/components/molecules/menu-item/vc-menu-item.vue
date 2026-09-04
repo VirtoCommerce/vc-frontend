@@ -259,13 +259,12 @@ onMounted(() => {
       }
     }
 
-    // The one documented exception to the shared offset: menu lists render inside a
-    // VcScrollbar with zero clearance (measured in the language dropdown), so an
-    // outset ring is clipped. Same inset value as vc-product-image's carousel button.
+    // Menu lists render inside a VcScrollbar with zero clearance (measured in the
+    // language dropdown), so an outset ring is clipped: invert the shared offset.
     &:focus-visible {
       @apply rounded-[inherit];
 
-      outline-offset: -2px;
+      outline-offset: calc(-1 * var(--vc-focus-ring-offset));
     }
 
     &:disabled,

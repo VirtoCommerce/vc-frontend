@@ -10,7 +10,7 @@
     @apply text-[--body-text-color];
 
     // Keyboard only, by design decision. Browsers keep `:focus-visible` on
-    // text-entry fields even when clicked, so typing targets still ring.
+    // editable text fields even when clicked, so typing targets still ring.
     *:focus-visible {
       outline: var(--vc-focus-ring-width) solid var(--vc-focus-ring-color);
       outline-offset: var(--vc-focus-ring-offset);

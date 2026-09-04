@@ -104,11 +104,13 @@ provideBlockChrome({
       @apply cursor-grabbing;
     }
 
-    // The focus ring during a keyboard grab: `aria-pressed` and `tabindex` come from the
-    // same attrs object. Declares its own style so it survives the one tick where
-    // useKeyboardSort has moved the card but not yet restored focus; `ring-2` marks the grab.
+    // Self-sufficient: useKeyboardSort moves the card and restores focus a tick later,
+    // so the ring must not depend on `:focus-visible`. `ring-2` marks the grab.
     &[aria-pressed="true"] {
-      @apply outline outline-2 outline-[--vc-focus-ring-color] ring-2 ring-primary-200;
+      @apply ring-2 ring-primary-200;
+
+      outline: var(--vc-focus-ring-width) solid var(--vc-focus-ring-color);
+      outline-offset: var(--vc-focus-ring-offset);
     }
   }
 

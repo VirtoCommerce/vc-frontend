@@ -149,12 +149,11 @@ function slideChanged(swiper: SwiperInstance) {
     @apply absolute top-0 z-[2] hidden h-full cursor-pointer items-center opacity-0 transition-opacity hover:opacity-100 md:flex;
 
     // Revealed on hover only, so a keyboard user would land on a fully transparent
-    // control. Inset for the same reason as vc-menu-item: the swiper clips an outset
-    // ring (measured: zero clearance on three sides).
+    // control. The swiper clips an outset ring (measured: zero clearance on three sides).
     &:focus-visible {
       @apply opacity-100;
 
-      outline-offset: -2px;
+      outline-offset: calc(-1 * var(--vc-focus-ring-offset));
     }
 
     &--prev {

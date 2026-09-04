@@ -618,7 +618,6 @@ function getSliderStart(value1: number, value2: number): [number, number] {
       @apply bg-primary-200 border-primary-300;
     }
 
-    // Ring relocated from the focusable button to the visible bar.
     #{$focusColumn} & {
       outline: var(--vc-focus-ring-width) solid var(--vc-focus-ring-color);
       outline-offset: var(--vc-focus-ring-offset);

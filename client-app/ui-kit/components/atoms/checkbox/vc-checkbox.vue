@@ -219,12 +219,6 @@ function onClick(event: Event) {
   &__input {
     @apply absolute inset-0 opacity-0 cursor-pointer m-0 w-full h-full z-10;
 
-    // Full-bleed transparent overlay: the ring belongs on the visible indicator,
-    // otherwise the global rule outlines the whole control on top of it.
-    &:focus {
-      outline: none;
-    }
-
     #{$disabled} & {
       @apply cursor-not-allowed;
     }

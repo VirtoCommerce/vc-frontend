@@ -1,21 +1,23 @@
 // Consumable UI-Kit tokens.
 // Each colour declaration is `var(<preset-override-key>, <palette-fallback>)`.
 // Preset JSON may define any of the `--color-vc-*` overrides; if not, the palette fallback applies.
-// Scope: the shared focus ring (every component except VcSwitch, which has no
-// indicator at all and is tracked separately), plus VcButton default state.
-// Hover/disabled stay in component SCSS for now.
+// Scope: the shared focus ring, plus VcButton default state. Hover/disabled stay
+// in component SCSS for now.
+// Known indicator gap: VcRadioButton with `no-indicator` relocates the ring onto a
+// `display:none` span, so that variant has none.
 
 :root {
   // ============================================================
   // Focus ring — shared by every component
   // ============================================================
-  // Mid-luminance accent: the only band clearing 3:1 on both near-white and dark
-  // surfaces. Dark mode raises it to accent-600 (_dark.scss).
+  // Mid-luminance accent clears 3:1 on page surfaces in every preset, light and dark
+  // (dark raises it to accent-600, _dark.scss). Known gap: coffee light, where the
+  // header, footer top and mobile menu all share #3d2b24 and measure 2.97.
   --vc-focus-ring-color: var(--color-vc-focus-ring, var(--color-accent-500));
 
-  // Lengths, not colours: no `--color-vc-*` override keys. menu-item and the
-  // product-image carousel button clip an outset ring, so they set a negative
-  // `outline-offset` literally and are not driven by the offset token.
+  // Lengths, not colours: no `--color-vc-*` override keys. Three components clip an
+  // outset ring and invert the offset instead: menu-item, the product-image carousel
+  // button, and scrollbar.
   --vc-focus-ring-width: 2px;
   --vc-focus-ring-offset: 2px;
 

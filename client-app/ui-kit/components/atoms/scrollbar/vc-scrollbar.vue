@@ -212,6 +212,12 @@ const _thumbColor = computed(() => getColorValue(props.thumbColor));
 
   overflow: unset;
 
+  // A scroll region is size-constrained by construction, so an outset ring clips
+  // against its container: invert the shared offset.
+  &:focus-visible {
+    outline-offset: calc(-1 * var(--vc-focus-ring-offset));
+  }
+
   &--vertical {
     $vertical: &;
 
