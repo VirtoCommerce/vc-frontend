@@ -1,28 +1,41 @@
 <template>
   <div class="identity-providers">
-    <component :is="loadProviderComponent(providerName)" v-for="providerName in providers" :key="providerName" />
+    <component
+      :is="loadProviderComponent(providerName)"
+      v-for="providerName in providers"
+      :key="providerName"
+      :return-url="returnUrl"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
+import { useMemoize } from "@vueuse/core";
 import { defineAsyncComponent } from "vue";
 import { Logger } from "@/core/utilities";
 import type { Component } from "vue";
 
-defineProps<IProps>();
-
-const loadProviderComponent = (providerName: string) => {
-  return defineAsyncComponent<Component>({
-    loader: () => import(`./${providerName.toLowerCase()}-provider.vue`),
-    onError(error) {
-      Logger.error(`Failed to load ${providerName} provider component`, error);
-    },
-  });
-};
-
 interface IProps {
   providers: string[];
+  returnUrl: string;
 }
+
+defineProps<IProps>();
+
+const loadProviderComponent = useMemoize(
+  (providerName: string): Component =>
+    defineAsyncComponent<Component>({
+      loader: () => import(`./${providerName.toLowerCase()}-provider.vue`),
+      // Renders nothing for a provider this theme does not ship, instead of leaving
+      // the component pending forever.
+      errorComponent: { render: () => null },
+      onError(error, _retry, fail) {
+        Logger.error(`Failed to load ${providerName} provider component`, error);
+        fail();
+      },
+    }),
+  { getKey: (providerName) => providerName.toLowerCase() },
+);
 </script>
 
 <style lang="scss">

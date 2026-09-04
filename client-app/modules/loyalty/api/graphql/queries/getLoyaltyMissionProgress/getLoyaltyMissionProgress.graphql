@@ -1,0 +1,85 @@
+#import "@/core/api/graphql/catalog/fragments/availabilityData.graphql"
+
+query GetLoyaltyMissionProgress(
+  $after: String
+  $first: Int
+  $sort: String
+  $statuses: [String]
+  $isStarted: Boolean
+  $cultureName: String
+  $storeId: String!
+  $currencyCode: String
+) {
+  loyaltyMissionProgress(
+    after: $after
+    first: $first
+    sort: $sort
+    statuses: $statuses
+    isStarted: $isStarted
+    cultureName: $cultureName
+    storeId: $storeId
+    currencyCode: $currencyCode
+  ) {
+    totalCount
+    items {
+      missionId
+      progressId
+      name
+      localizedName
+      description
+      bannerUrl
+      missionType
+      status
+      isStarted
+      percentage
+      currentValue
+      targetValue
+      currentMoneyValue {
+        formattedAmount
+      }
+      targetMoneyValue {
+        formattedAmount
+      }
+      startDate
+      endDate
+      periodStart
+      periodEnd
+      completedDate
+      daysRemaining
+      rewardPoints {
+        amount
+      }
+      items {
+        productId
+        currentQuantity
+        targetQuantity
+        product {
+          id
+          name
+          code
+          slug
+          imgSrc
+          minQuantity
+          maxQuantity
+          packSize
+          availabilityData {
+            ...availabilityData
+          }
+          price {
+            actual {
+              amount
+              formattedAmount
+              currency {
+                code
+              }
+            }
+          }
+        }
+      }
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+  }
+}
