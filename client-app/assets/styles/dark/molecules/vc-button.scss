@@ -128,4 +128,60 @@
       }
     }
   }
+
+  // Pressed — derived from the REST colour, not from hover: dark hover brightens, so a press
+  // stepped further along the ramp reads as a flash. Darkening from rest keeps the press
+  // distinct from both states, including on touch where hover never happens.
+  @each $color, $shade in $solid-bg {
+    &--solid--#{$color}:active:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(
+        in srgb,
+        var(--color-vc-background-solid-#{$color}, var(--color-#{$color}-#{$shade})),
+        black 20%
+      );
+      --border-color: var(--bg-color);
+    }
+  }
+
+  // Text is re-asserted wherever the light base rule would otherwise reach in: its `:active`
+  // selector is (0,3,0), higher than the (0,2,1) dark rest rules.
+  @each $color in $colors {
+    &--soft--#{$color}:active:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(
+        in srgb,
+        var(--color-vc-background-soft-#{$color}, var(--color-#{$color}-100)),
+        black 20%
+      );
+      --border-color: var(--bg-color);
+      --text-color: var(--color-vc-text-soft-#{$color}, var(--color-#{$color}-900));
+    }
+
+    &--tonal--#{$color}:active:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(
+        in srgb,
+        var(--color-vc-background-tonal-#{$color}, var(--color-#{$color}-100)),
+        black 20%
+      );
+      --text-color: var(--color-vc-text-tonal-#{$color}, var(--color-#{$color}-900));
+    }
+
+    // Rest is the page ground here, with nothing below it to darken into, so the press steps
+    // down from the hover fill instead.
+    &--outline--#{$color}:active:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(in srgb, var(--color-#{$color}-100), black 20%);
+      --text-color: var(--color-vc-text-outline-#{$color}, var(--color-#{$color}-900));
+    }
+
+    &--surface--#{$color}:active:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(in srgb, var(--color-#{$color}-100), black 20%);
+      --border-color: var(--bg-color);
+      --text-color: var(--color-vc-text-surface-#{$color}, var(--color-#{$color}-900));
+    }
+
+    &--ghost--#{$color}:active:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(in srgb, var(--color-#{$color}-100), black 20%);
+      --border-color: var(--bg-color);
+      --text-color: var(--color-vc-text-ghost-#{$color}, var(--color-#{$color}-900));
+    }
+  }
 }

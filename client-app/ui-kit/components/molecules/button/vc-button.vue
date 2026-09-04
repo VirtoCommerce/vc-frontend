@@ -381,6 +381,54 @@ defineExpose({
     }
   }
 
+  // Pressed — the same mix as hover, one step further. Text takes the step too wherever the
+  // darker fill would otherwise eat its contrast. Must stay after the hover block: same
+  // specificity, source order decides.
+  @each $color in $colors {
+    &--solid--#{$color}:active:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(in srgb, var(--vc-button-solid-#{$color}-bg), black 30%);
+      --border-color: var(--bg-color);
+    }
+
+    &--soft--#{$color}:active:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(in srgb, var(--vc-button-soft-#{$color}-bg), black 16%);
+      --border-color: var(--bg-color);
+      --text-color: color-mix(in srgb, var(--vc-button-soft-#{$color}-text), black 15%);
+    }
+
+    // Pale fills: the darker tint eats text contrast, so the text takes the step too.
+    &--surface--#{$color}:active:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(in srgb, var(--vc-button-surface-#{$color}-text), white 70%);
+      --border-color: var(--bg-color);
+      --text-color: color-mix(in srgb, var(--vc-button-surface-#{$color}-text), black 8%);
+    }
+
+    &--outline--#{$color}:active:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(in srgb, var(--vc-button-surface-#{$color}-text), white 70%);
+      --text-color: color-mix(in srgb, var(--vc-button-outline-#{$color}-text), black 8%);
+    }
+
+    &--ghost--#{$color}:active:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(in srgb, var(--vc-button-surface-#{$color}-text), white 70%);
+      --border-color: var(--bg-color);
+      --text-color: color-mix(in srgb, var(--vc-button-ghost-#{$color}-text), black 16%);
+    }
+
+    &--tonal--#{$color}:active:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(in srgb, var(--vc-button-tonal-#{$color}-bg), black 16%);
+      --text-color: color-mix(in srgb, var(--vc-button-tonal-#{$color}-text), black 15%);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    @apply transition-colors;
+
+    // The press should land at once; the release keeps the base duration.
+    &:active:not(#{$loading}, #{$disabled}) {
+      @apply duration-75;
+    }
+  }
+
   &#{$disabled}:not(#{$loading}),
   &:disabled#{$disabled}:not(#{$loading}) {
     --vc-icon-color: var(--color-neutral-400);
