@@ -125,6 +125,38 @@
         "ship_to": "Indirizzo di spedizione"
       }
     },
+    "customer_orders": {
+      "page": {
+        "title": "Ordini di {customer}",
+        "all_title": "Ordini dei clienti",
+        "title_fallback": "Ordini"
+      },
+      "breadcrumb": "Ordini",
+      "back_to_customer": "Torna al cliente",
+      "back_to_orders": "Torna agli ordini",
+      "order_not_found": "Ordine non trovato",
+      "order_load_failed": "This order couldn't be loaded. Try refreshing the page.",
+      "search_placeholder": "Cerca per numero, nome o altri dati",
+      "search_aria": "Cerca ordini",
+      "reset_search": "Reimposta ricerca",
+      "filters": {
+        "button": "Filtri",
+        "title": "Filtri",
+        "created_date": "Data di creazione",
+        "start_date": "Data di inizio",
+        "end_date": "Data di fine",
+        "invalid_range": "Intervallo di date non valido.",
+        "order_status": "@:common.labels.status",
+        "customer": "Seleziona cliente",
+        "reset": "Reimposta",
+        "apply": "Applica",
+        "custom_date": "Data personalizzata",
+        "last_day": "Ultimo giorno",
+        "last_week": "Ultima settimana",
+        "last_month": "Ultimo mese",
+        "last_year": "Ultimo anno"
+      }
+    },
     "communication": {
       "action": "Invia email",
       "title": "Invia un messaggio",
@@ -157,7 +189,7 @@
       }
     },
     "orders": {
-      "title": "Ordini recenti",
+      "title": "I miei ordini recenti",
       "view_all": "Tutti gli ordini",
       "empty": "Ancora nessun ordine",
       "no_results": "Nessun ordine corrisponde a questo filtro",

@@ -22,8 +22,15 @@ const queryMock = await vi.hoisted(async () => {
   const loading = r(false);
   const error = r<Error | null>(null);
   const onError = vi.fn();
-  const useQuery = vi.fn(() => ({ result, loading, error, onError }));
-  return { result, loading, error, onError, useQuery };
+  // The composable waits for a settled read before answering "not found", so the mock has to be able to
+  // report one: handlers are captured here and fired by `settle()`.
+  const resultHandlers: ((queryResult: { loading: boolean }) => void)[] = [];
+  const onResult = vi.fn((handler: (queryResult: { loading: boolean }) => void) => {
+    resultHandlers.push(handler);
+  });
+  const settle = () => resultHandlers.forEach((handler) => handler({ loading: false }));
+  const useQuery = vi.fn(() => ({ result, loading, error, onError, onResult }));
+  return { result, loading, error, onError, onResult, settle, resultHandlers, useQuery };
 });
 
 vi.mock("@vue/apollo-composable", () => ({ useQuery: queryMock.useQuery }));
@@ -46,6 +53,8 @@ beforeEach(() => {
   queryMock.error.value = null;
   queryMock.useQuery.mockClear();
   queryMock.onError.mockClear();
+  queryMock.onResult.mockClear();
+  queryMock.resultHandlers.length = 0;
 });
 
 describe("useSalesRepCustomer", () => {
@@ -114,6 +123,11 @@ describe("useSalesRepCustomer", () => {
     queryMock.loading.value = false;
     queryMock.result.value = { salesRepCustomer: null };
     expect(customer.value).toBeUndefined();
+
+    // Apollo defers a start to the next tick, so an unsettled read is not an answer yet.
+    expect(notFound.value).toBe(false);
+
+    queryMock.settle();
     expect(notFound.value).toBe(true);
   });
 

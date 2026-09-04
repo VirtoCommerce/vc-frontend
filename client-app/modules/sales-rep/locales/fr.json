@@ -125,6 +125,38 @@
         "ship_to": "Adresse de livraison"
       }
     },
+    "customer_orders": {
+      "page": {
+        "title": "Commandes de {customer}",
+        "all_title": "Commandes des clients",
+        "title_fallback": "Commandes"
+      },
+      "breadcrumb": "Commandes",
+      "back_to_customer": "Retour au client",
+      "back_to_orders": "Retour aux commandes",
+      "order_not_found": "Commande introuvable",
+      "order_load_failed": "This order couldn't be loaded. Try refreshing the page.",
+      "search_placeholder": "Rechercher par numéro, nom ou autres données",
+      "search_aria": "Rechercher des commandes",
+      "reset_search": "Réinitialiser la recherche",
+      "filters": {
+        "button": "Filtres",
+        "title": "Filtres",
+        "created_date": "Date de création",
+        "start_date": "Date de début",
+        "end_date": "Date de fin",
+        "invalid_range": "Plage de dates non valide.",
+        "order_status": "@:common.labels.status",
+        "customer": "Sélectionner un client",
+        "reset": "Réinitialiser",
+        "apply": "Appliquer",
+        "custom_date": "Date personnalisée",
+        "last_day": "Dernier jour",
+        "last_week": "Dernière semaine",
+        "last_month": "Dernier mois",
+        "last_year": "Dernière année"
+      }
+    },
     "communication": {
       "action": "Envoyer un e-mail",
       "title": "Envoyer un message",
@@ -157,7 +189,7 @@
       }
     },
     "orders": {
-      "title": "Commandes récentes",
+      "title": "Mes commandes récentes",
       "view_all": "Toutes les commandes",
       "empty": "Aucune commande pour le moment",
       "no_results": "Aucune commande ne correspond à ce filtre",

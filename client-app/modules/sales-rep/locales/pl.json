@@ -125,6 +125,38 @@
         "ship_to": "Adres dostawy"
       }
     },
+    "customer_orders": {
+      "page": {
+        "title": "Zamówienia klienta {customer}",
+        "all_title": "Zamówienia klientów",
+        "title_fallback": "Zamówienia"
+      },
+      "breadcrumb": "Zamówienia",
+      "back_to_customer": "Powrót do klienta",
+      "back_to_orders": "Powrót do zamówień",
+      "order_not_found": "Nie znaleziono zamówienia",
+      "order_load_failed": "This order couldn't be loaded. Try refreshing the page.",
+      "search_placeholder": "Szukaj po numerze, nazwisku lub innych danych",
+      "search_aria": "Szukaj zamówień",
+      "reset_search": "Resetuj wyszukiwanie",
+      "filters": {
+        "button": "Filtry",
+        "title": "Filtry",
+        "created_date": "Data utworzenia",
+        "start_date": "Data rozpoczęcia",
+        "end_date": "Data zakończenia",
+        "invalid_range": "Nieprawidłowy zakres dat.",
+        "order_status": "@:common.labels.status",
+        "customer": "Wybierz klienta",
+        "reset": "Resetuj",
+        "apply": "Zastosuj",
+        "custom_date": "Data niestandardowa",
+        "last_day": "Ostatni dzień",
+        "last_week": "Ostatni tydzień",
+        "last_month": "Ostatni miesiąc",
+        "last_year": "Ostatni rok"
+      }
+    },
     "communication": {
       "action": "Wyślij e-mail",
       "title": "Wyślij wiadomość",
@@ -157,7 +189,7 @@
       }
     },
     "orders": {
-      "title": "Ostatnie zamówienia",
+      "title": "Moje ostatnie zamówienia",
       "view_all": "Wszystkie zamówienia",
       "empty": "Brak zamówień",
       "no_results": "Żadne zamówienie nie pasuje do tego filtra",

@@ -1,3 +1,5 @@
+import type { OrdersFilterDataType } from "@/shared/account/types";
+
 // View model for the table; mapped from the GraphQL SalesRepContact (see useSalesReps).
 // Only active reps ever reach the client; filtering is server-side.
 export type SalesRepType = { id: string; name: string; email: string; phone: string };
@@ -34,6 +36,10 @@ export type SalesRepRuleType = {
   supportsDirection?: boolean;
 };
 export type SalesRepRuleDomainType = "order" | "customer" | "topSeller" | "task";
+// Column sorting needs only the direction metadata, never the display label, so a list of sort rules
+// defined in code does not have to invent one.
+export type SalesRepSortRuleType = Pick<SalesRepRuleType, "name" | "defaultDirection" | "supportsDirection">;
+
 export type SalesRepRuleKindType = "filter" | "sort";
 
 // View model for a ranked Top Sellers row. `units`/`revenue` are display-ready strings from the shared
@@ -107,4 +113,26 @@ export type SalesRepOrderRowType = {
   statusDisplayValue: string;
   itemsCount: string;
   total: string;
+};
+
+// The storefront's filter shape, but `customerNames` here is the owning organization, not the buyer.
+export type SalesRepOrdersFilterDataType = OrdersFilterDataType;
+
+// A facet option from the list's own term_facets, so every option offered has orders behind it.
+export type SalesRepFacetOptionType = {
+  name: string;
+  label: string;
+  count: number;
+};
+
+export type SalesRepCustomerOrderRowType = {
+  id: string;
+  number: string;
+  organizationId: string;
+  organizationName: string;
+  createdDate: string;
+  status: string;
+  statusDisplayValue: string;
+  total: string;
+  isOwn: boolean;
 };

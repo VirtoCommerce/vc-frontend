@@ -125,6 +125,38 @@
         "ship_to": "收货地址"
       }
     },
+    "customer_orders": {
+      "page": {
+        "title": "{customer} 的订单",
+        "all_title": "客户订单",
+        "title_fallback": "订单"
+      },
+      "breadcrumb": "订单",
+      "back_to_customer": "返回客户",
+      "back_to_orders": "返回订单列表",
+      "order_not_found": "未找到订单",
+      "order_load_failed": "This order couldn't be loaded. Try refreshing the page.",
+      "search_placeholder": "按号码、姓名或其他数据搜索",
+      "search_aria": "搜索订单",
+      "reset_search": "重置搜索",
+      "filters": {
+        "button": "过滤器",
+        "title": "过滤器",
+        "created_date": "创建日期",
+        "start_date": "开始日期",
+        "end_date": "结束日期",
+        "invalid_range": "日期范围无效。",
+        "order_status": "@:common.labels.status",
+        "customer": "选择客户",
+        "reset": "重置",
+        "apply": "应用",
+        "custom_date": "自定义日期",
+        "last_day": "最后一天",
+        "last_week": "上周",
+        "last_month": "上个月",
+        "last_year": "去年"
+      }
+    },
     "communication": {
       "action": "发送电子邮件",
       "title": "发送消息",
@@ -157,7 +189,7 @@
       }
     },
     "orders": {
-      "title": "最近订单",
+      "title": "我的最近订单",
       "view_all": "全部订单",
       "empty": "暂无订单",
       "no_results": "没有符合此筛选条件的订单",
