@@ -1,5 +1,3 @@
-// Focus ring: menu-item inner elements use --focus-color per-color at 0.3 opacity.
-// Bump to -700 at 0.8 in dark mode.
 .vc-menu-item {
   $colors: primary, secondary, accent, neutral, success, danger, info, warning;
   $active: "";
@@ -15,8 +13,6 @@
 
     @each $color in $colors {
       &--color--#{$color} {
-        --focus-color: rgb(from var(--color-#{$color}-700) r g b / 0.8);
-
         &:hover {
           @apply bg-[--color-#{$color}-100];
         }

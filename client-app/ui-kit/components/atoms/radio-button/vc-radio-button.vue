@@ -112,6 +112,8 @@ const containerTag = computed(() => (isInsideInteractive.value ? "span" : "label
 </script>
 
 <style lang="scss">
+@use "@/ui-kit/styles/focus-ring" as *;
+
 .vc-radio-button {
   $self: &;
   $checked: "";
@@ -124,7 +126,6 @@ const containerTag = computed(() => (isInsideInteractive.value ? "span" : "label
   --props-word-break: v-bind(props.wordBreak);
 
   --base-color: var(--vc-radio-button-base-color, var(--color-primary-500));
-  --focus-color: rgb(from var(--base-color) r g b / 0.3);
   --max-lines: var(--props-max-lines, var(--vc-radio-button-max-lines, initial));
   --word-break: var(--props-word-break, var(--vc-radio-button-word-break, initial));
 
@@ -198,8 +199,8 @@ const containerTag = computed(() => (isInsideInteractive.value ? "span" : "label
       @apply hidden;
     }
 
-    input:focus + & {
-      @apply outline-none ring ring-[--focus-color];
+    input:focus-visible + & {
+      @include focus-ring;
     }
 
     #{$checked} & {

@@ -93,7 +93,6 @@ function onInput() {
 
   --color: var(--vc-props-color, var(--vc-tab-switch-color, theme("colors.primary.500")));
   --hover-color: var(--vc-props-hover-color, var(--vc-tab-switch-hover-color, theme("colors.accent.500")));
-  --focus-color: rgb(from var(--color) r g b / 0.3);
   --radius: var(--vc-tab-switch-radius, var(--vc-radius, 0.5rem));
 
   @apply inline-block text-neutral;
@@ -145,11 +144,6 @@ function onInput() {
       --vc-icon-color: var(--hover-color);
 
       @apply text-[--hover-color];
-    }
-
-    &:focus,
-    &:focus-visible {
-      @apply outline outline-2 outline-[--focus-color] -outline-offset-1;
     }
   }
 
