@@ -1,5 +1,6 @@
 {
   "icon": "text_fields",
+  "description": "Free text block inside a product detail page body — for editorial copy, usage notes, warranty info, etc. Used as a nested block inside the `product-info` section. Use when: extra prose belongs in the product body alongside catalog-driven blocks (`product-description`, `product-properties`). Skip when: the catalog's product description already covers the text (use the `product-description` block), or rich markdown formatting is needed (this block is plain text, not markdown — use a section-level `text` instead, but only outside the product detail page body). `header` is an optional heading shown above the body; `name` is an admin-only label (visible only in the editor); `text` is plain multi-line content (newlines preserved).",
   "settings": [
     {
       "id": "header",
