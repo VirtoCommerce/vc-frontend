@@ -44,7 +44,15 @@
       "previous_year": "Forrige år",
       "next_year": "Neste år",
       "today": "I dag",
-      "clear": "Tøm"
+      "clear": "Tøm",
+      "outside_suggested_range": "Utenfor det foreslåtte intervallet"
+    },
+    "date_range_input": {
+      "aria_label": "Datointervall",
+      "clear": "Tøm datointervall",
+      "end_date": "Sluttdato",
+      "invalid_range": "Sluttdatoen må være på eller etter startdatoen",
+      "start_date": "Startdato"
     },
     "date_selector": {
       "min_date_error": "Datoen må være på eller etter {min}",

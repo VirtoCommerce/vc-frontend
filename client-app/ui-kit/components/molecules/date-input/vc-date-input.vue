@@ -18,6 +18,8 @@
     :tabindex="tabindex"
     :clearable="clearable"
     :test-id-input="dataTestId"
+    :seamless="seamless"
+    :hide-details="hideDetails"
     @blur="onInputBlur"
     @focus="onInputFocus"
     @keydown.enter="onInputEnter"
@@ -79,13 +81,20 @@ interface IProps {
   aria?: Record<string, string | number | null>;
   tabindex?: string | number;
   dataTestId?: string;
+  /** Strip the chrome (border, background, ring, fixed height) so a shell can own it. Pair with `hideDetails`. */
+  seamless?: boolean;
+  /** Drop the details row (message/error text) so a parent can render one for a group of fields. */
+  hideDetails?: boolean;
 }
 
 interface IEmits {
   (event: "update:modelValue", value: string | undefined): void;
   (event: "update:valid", value: boolean): void;
+  /** The per-reason message behind `update:valid`, for shells that render the details row themselves. */
+  (event: "update:errorText", value: string | undefined): void;
   (event: "blur", focusEvent: FocusEvent): void;
   (event: "focus", focusEvent: FocusEvent): void;
+  /** The clear button only; text typed away emits `update:modelValue` alone. */
   (event: "clear"): void;
 }
 
@@ -93,12 +102,14 @@ const emit = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   size: "md",
   updateOn: "blur",
+  seamless: false,
+  hideDetails: false,
 });
 
 const { locale: i18nLocale } = useI18n();
 const resolvedLocale = computed<string>(() => props.locale ?? i18nLocale.value);
 
-const { displayValue, errorText, isValid, onBlur, onEnter, onClear, commit } = useDateField({
+const { displayValue, errorText, isValid, onBlur, onEnter, onClear, reset, clearText, commit } = useDateField({
   modelValue: toRef(props, "modelValue"),
   locale: resolvedLocale,
   updateOn: toRef(props, "updateOn"),
@@ -132,6 +143,7 @@ const computedMessage = computed<string | undefined>(() => {
 
 // Immediate so the empty (valid) state is reported on mount.
 watch(isValid, (v) => emit("update:valid", v), { immediate: true });
+watch(errorText, (v) => emit("update:errorText", v), { immediate: true });
 
 function onInputBlur(event: FocusEvent): void {
   onBlur();
@@ -154,16 +166,24 @@ function onInputClear(): void {
 const inputRef = useTemplateRef<{ inputElement: HTMLInputElement | null } | null>("inputRef");
 const innerInputElement = computed<HTMLInputElement | null>(() => inputRef.value?.inputElement ?? null);
 
+// Uncommitted text never reaches the model, so a shell gating a clear button needs this too.
+const hasText = computed<boolean>(() => displayValue.value.trim().length > 0);
+
 defineExpose({
   inputElement: innerInputElement,
+  reset,
+  /** Empties the text outright, for a CLEAR the parent may not write back. See useDateField. */
+  clearText,
+  hasText,
 });
 
-// Intercept paste before maska reshapes it — well-formed dates would otherwise be corrupted by the mask transform.
+// maska's transform corrupts a well-formed pasted date, so intercept paste ahead of it.
 useEventListener(innerInputElement, "paste", (event: ClipboardEvent) => {
   if (!props.mask) {
     return;
   }
   const pasted = event.clipboardData?.getData("text") ?? "";
+  // eslint-disable-next-line sonarjs/null-dereference -- pasted is coalesced to "" above; the rule is a false positive here
   if (!pasted.trim()) {
     return;
   }

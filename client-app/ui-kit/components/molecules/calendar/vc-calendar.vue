@@ -13,6 +13,7 @@
     :max-value="maxDateValue"
     :is-date-unavailable="isDateUnavailable"
     fixed-weeks
+    :prevent-deselect="preventDeselect"
     :class="rootClasses"
     :data-test-id="dataTestId"
     @update:model-value="onUpdate"
@@ -73,11 +74,20 @@
             :date="weekDate"
             class="vc-calendar__cell"
           >
-            <CalendarCellTrigger :day="weekDate" :month="month.value" class="vc-calendar__day" />
+            <CalendarCellTrigger
+              :day="weekDate"
+              :month="month.value"
+              class="vc-calendar__day"
+              v-bind="dayAttrs(weekDate)"
+            />
           </CalendarCell>
         </CalendarGridRow>
       </CalendarGridBody>
     </CalendarGrid>
+
+    <span v-if="softMin || softMax" :id="softBoundHintId" class="sr-only">
+      {{ t("ui_kit.calendar.outside_suggested_range") }}
+    </span>
 
     <div v-if="showFooter" class="vc-calendar__footer">
       <button
@@ -98,7 +108,6 @@
 </template>
 
 <script setup lang="ts">
-import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from "@internationalized/date";
 import {
   CalendarCell,
   CalendarCellTrigger,
@@ -112,9 +121,11 @@ import {
   CalendarPrev,
   CalendarRoot,
 } from "reka-ui";
-import { computed, nextTick, toRef, useTemplateRef, watch } from "vue";
+import { computed, toRef, useTemplateRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { dateValueToIso, todayDate, tryParseDate, useCalendarBase } from "./use-calendar-base";
+import { useComponentId } from "@/ui-kit/composables";
+import { tryParseDate } from "@/ui-kit/utilities/date";
+import { dateValueToIso, isToday, todayDate, useCalendarBase } from "./use-calendar-base";
 import type { DateValue } from "@internationalized/date";
 import type { ComponentPublicInstance } from "vue";
 
@@ -123,7 +134,24 @@ interface IProps {
   size?: VcCalendarSizeType;
   min?: string;
   max?: string;
+  /**
+   * Advisory lower bound. Days before it are marked as out of the suggested range but stay
+   * selectable, and month/year navigation is not gated. Use `min` for a boundary that must hold.
+   */
+  softMin?: string;
+  /** Advisory upper bound. See `softMin`. */
+  softMax?: string;
+  /**
+   * Predicate that returns true to mark a date unavailable (greyed out). Receives ISO YYYY-MM-DD.
+   * The grid reads it once at mount: reka takes the predicate by value, so swapping it later does not re-filter the rendered days.
+   */
   disabledDate?: VcCalendarDisabledDateType;
+  /**
+   * Keep a re-click on the selected day from clearing it. Default true: for a range endpoint, and for
+   * any field the user did not mean to empty, that click is data loss. An OPTIONAL single-date field
+   * with no `clearable` and no `showFooter` has no other pointer way to clear — set false there.
+   */
+  preventDeselect?: boolean;
   showFooter?: boolean;
   locale?: string;
   firstDayOfWeek?: VcCalendarFirstDayOfWeekType;
@@ -133,6 +161,8 @@ interface IProps {
 
 interface IEmits {
   (event: "update:modelValue", value: string | undefined): void;
+  /** The footer Clear button was pressed, even when the date was already empty. */
+  (event: "clear"): void;
 }
 
 const emit = defineEmits<IEmits>();
@@ -142,7 +172,10 @@ const props = withDefaults(defineProps<IProps>(), {
   size: "md",
   min: undefined,
   max: undefined,
+  softMin: undefined,
+  softMax: undefined,
   disabledDate: undefined,
+  preventDeselect: true,
   showFooter: false,
   locale: undefined,
   firstDayOfWeek: undefined,
@@ -156,12 +189,22 @@ function getInitialPlaceholder(): DateValue {
 
 const { t } = useI18n();
 
+// reka's CalendarRoot forwards its root element via `$el`.
+const calendarRootRef = useTemplateRef<ComponentPublicInstance | null>("calendarRootRef");
+
+const parsedModelValue = computed<DateValue | undefined>(() => tryParseDate(props.modelValue));
+
 const base = useCalendarBase({
   locale: toRef(props, "locale"),
   min: toRef(props, "min"),
   max: toRef(props, "max"),
+  softMin: toRef(props, "softMin"),
+  softMax: toRef(props, "softMax"),
   disabledDate: toRef(props, "disabledDate"),
+  firstDayOfWeek: toRef(props, "firstDayOfWeek"),
   initialPlaceholder: getInitialPlaceholder,
+  getRoot: () => calendarRootRef.value?.$el as Element | null | undefined,
+  getSelectedIso: () => parsedModelValue.value?.toString(),
 });
 
 const {
@@ -170,19 +213,37 @@ const {
   minDateValue,
   maxDateValue,
   isDateUnavailable,
+  isOutsideSoftBounds,
   prevYearDisabled,
   nextYearDisabled,
   onPlaceholderUpdate,
   goToPreviousYear,
   goToNextYear,
+  clampToBounds,
+  onCalendarKeydown,
+  focusActiveCell,
 } = base;
 
-// reka's CalendarRoot forwards its root element via `$el`.
-const calendarRootRef = useTemplateRef<ComponentPublicInstance | null>("calendarRootRef");
-
+// --mode--single carries no rule in here any more, but it is a published class: a fork styling
+// `.vc-calendar--mode--single …` would lose its rule silently if this stopped being emitted.
 const rootClasses = computed(() => ["vc-calendar", `vc-calendar--size--${props.size}`, "vc-calendar--mode--single"]);
 
-const parsedModelValue = computed<DateValue | undefined>(() => tryParseDate(props.modelValue));
+const softBoundHintId = useComponentId("vc-calendar-soft-hint");
+
+// reka owns the cell's aria-label, so the reason goes into the description; `title` alone is hover-only.
+// aria-current marks today, which reka only exposes as a data attribute.
+function dayAttrs(date: DateValue): Record<string, string> {
+  const attrs: Record<string, string> = {};
+  if (isToday(date)) {
+    attrs["aria-current"] = "date";
+  }
+  if (isOutsideSoftBounds(date)) {
+    attrs["data-soft-out-of-bounds"] = "true";
+    attrs.title = t("ui_kit.calendar.outside_suggested_range");
+    attrs["aria-describedby"] = softBoundHintId;
+  }
+  return attrs;
+}
 
 function onUpdate(value: DateValue | DateValue[] | undefined): void {
   const single = Array.isArray(value) ? value[0] : value;
@@ -216,170 +277,16 @@ function onTodayClick(): void {
 
 function onClearClick(): void {
   emit("update:modelValue", undefined);
-}
-
-// reka handles only arrows/space/enter; we add Home/End/PageUp/PageDown (APG date-grid gap).
-// firstDayOfWeek is a number (0=Sunday); startOfWeek/endOfWeek expect a DayOfWeek string.
-const DAY_OF_WEEK_NAMES = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as const;
-
-const mappedFirstDay = computed(() => {
-  const value = props.firstDayOfWeek;
-  if (value === undefined) {
-    return undefined;
-  }
-  return DAY_OF_WEEK_NAMES[value];
-});
-
-function clampToBounds(date: DateValue): DateValue {
-  let result = date;
-  const min = minDateValue.value;
-  const max = maxDateValue.value;
-  if (min && result.compare(min) < 0) {
-    result = min;
-  }
-  if (max && result.compare(max) > 0) {
-    result = max;
-  }
-  return result;
-}
-
-function getFocusedCellDate(root: HTMLElement): DateValue | undefined {
-  const active = document.activeElement;
-  if (!(active instanceof HTMLElement)) {
-    return undefined;
-  }
-  if (!root.contains(active)) {
-    return undefined;
-  }
-  // Only day cells carry this (empty-valued) marker; nav/footer do not.
-  if (active.dataset.rekaCalendarCellTrigger === undefined) {
-    return undefined;
-  }
-  const iso = active.dataset.value;
-  if (!iso) {
-    return undefined;
-  }
-  return tryParseDate(iso);
-}
-
-function focusCellByIso(root: HTMLElement, iso: string): void {
-  // Prefer the in-view cell; adjacent-month cells render with data-outside-view.
-  const inView = root.querySelector<HTMLElement>(
-    `[data-reka-calendar-cell-trigger][data-value="${iso}"]:not([data-outside-view])`,
-  );
-  const cell = inView ?? root.querySelector<HTMLElement>(`[data-reka-calendar-cell-trigger][data-value="${iso}"]`);
-  // preventScroll: VcCalendar is body-portaled, so a default focus() would scroll the whole document to it.
-  cell?.focus({ preventScroll: true });
-}
-
-// Focus-entry for the day grid: selected → today → first focusable in-view cell.
-function focusActiveCell(): void {
-  const root = calendarRootRef.value?.$el;
-  if (!(root instanceof HTMLElement)) {
-    return;
-  }
-
-  const selected = parsedModelValue.value;
-  if (selected) {
-    focusCellByIso(root, selected.toString());
-    if (getFocusedCellDate(root)) {
-      return;
-    }
-  }
-
-  const now = todayDate();
-  focusCellByIso(root, now.toString());
-  if (getFocusedCellDate(root)) {
-    return;
-  }
-
-  const firstInView = root.querySelector<HTMLElement>("[data-reka-calendar-cell-trigger]:not([data-outside-view])");
-  firstInView?.focus({ preventScroll: true });
-}
-
-type CalendarKeyTargetType = { target: DateValue };
-
-// Home/End: ctrl/meta = month (else week). PageUp/Down: shift = year (else month), per APG.
-type CalendarKeyModifiersType = { ctrlOrMeta: boolean; shift: boolean };
-
-function resolveKeyTarget(
-  key: string,
-  focused: DateValue,
-  modifiers: CalendarKeyModifiersType,
-): CalendarKeyTargetType | undefined {
-  const { ctrlOrMeta, shift } = modifiers;
-  let target: DateValue;
-
-  switch (key) {
-    case "Home":
-      if (ctrlOrMeta) {
-        target = startOfMonth(focused);
-      } else {
-        target = startOfWeek(focused, resolvedLocale.value, mappedFirstDay.value);
-      }
-      break;
-    case "End":
-      if (ctrlOrMeta) {
-        target = endOfMonth(focused);
-      } else {
-        target = endOfWeek(focused, resolvedLocale.value, mappedFirstDay.value);
-      }
-      break;
-    case "PageDown":
-      target = shift ? focused.add({ years: 1 }) : focused.add({ months: 1 });
-      break;
-    case "PageUp":
-      target = shift ? focused.add({ years: -1 }) : focused.add({ months: -1 });
-      break;
-    default:
-      // Let reka handle arrows/space/enter.
-      return undefined;
-  }
-
-  return { target };
-}
-
-function onCalendarKeydown(event: KeyboardEvent): void {
-  const root = event.currentTarget;
-  if (!(root instanceof HTMLElement)) {
-    return;
-  }
-
-  const focused = getFocusedCellDate(root);
-  if (!focused) {
-    return;
-  }
-
-  const ctrlOrMeta = event.ctrlKey || event.metaKey;
-  const shift = event.shiftKey;
-  const resolvedKey = resolveKeyTarget(event.key, focused, { ctrlOrMeta, shift });
-  if (!resolvedKey) {
-    return;
-  }
-
-  event.preventDefault();
-
-  const target = clampToBounds(resolvedKey.target);
-
-  // Scroll the grid when the target spills into an adjacent month.
-  placeholderRef.value = target;
-
-  const targetIso = target.toString();
-  void nextTick(() => {
-    focusCellByIso(root, targetIso);
-  });
+  // An already-empty field emits no model change, but the shell still has to see the action.
+  emit("clear");
 }
 
 // Sync placeholder to incoming model value so external state changes scroll the view.
+// Clamped so an out-of-bounds seed (e.g. today after a past max) cannot open a fully-disabled month.
 watch(
   () => props.modelValue,
   (next) => {
-    const parsed = tryParseDate(next);
-    if (parsed) {
-      placeholderRef.value = parsed;
-    } else {
-      placeholderRef.value = getInitialPlaceholder();
-    }
+    placeholderRef.value = clampToBounds(tryParseDate(next) ?? todayDate());
   },
 );
 
@@ -392,7 +299,16 @@ defineExpose({
 .vc-calendar {
   --radius: var(--vc-calendar-radius, var(--vc-radius, 0.75rem));
   --day-radius: var(--vc-calendar-day-radius, var(--vc-radius, 0.375rem));
-  --focus-ring: rgb(from var(--color-primary-500) r g b / 0.35);
+  // 0.8, not the house 0.3-0.35: at 0.35 this composites to 1.56-1.77 : 1, under WCAG 1.4.11's 3:1.
+  // Dark needs the same value, so it is not re-declared in the dark layer.
+  --focus-ring: rgb(from var(--color-primary-500) r g b / 0.8);
+
+  // Component key, then the palette — deliberately NOT the shared --color-vc-*-solid-primary keys,
+  // which would override this contrast choice with the theme's own pair. 700 not 500: white ink on
+  // primary-500 is 2.11 : 1 in default/mercury, on primary-700 it clears AA in all 14 combinations
+  // (5.02 watermelon to 18.27 black-gold). A fork retints via --vc-calendar-selected-bg / -text.
+  --selected-bg: var(--vc-calendar-selected-bg, var(--color-primary-700));
+  --selected-text: var(--vc-calendar-selected-text, var(--color-additional-50));
 
   --bg-color: var(--color-additional-50);
   --border-color: var(--color-neutral-200);
@@ -539,6 +455,20 @@ defineExpose({
       }
     }
 
+    /* softMin/softMax — advisory: dimmed and underlined, but selectable, and navigation stays free */
+    &[data-soft-out-of-bounds] {
+      @apply text-neutral-500;
+
+      // currentcolor: the underline is a state cue, so it must clear the same bar as its digits.
+      text-decoration: underline dotted currentcolor;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 2px;
+
+      &:hover {
+        @apply bg-neutral-100 text-neutral-700;
+      }
+    }
+
     &[data-disabled] {
       @apply text-neutral-500 cursor-not-allowed pointer-events-none bg-transparent;
 
@@ -601,12 +531,20 @@ defineExpose({
     }
   }
 
-  &--mode--single &__day[data-selected] {
+  // Kept last: this ties with the :hover and state rules inside __day, so source order decides.
+  // The nested hovers outspecify [data-outside-view]:hover, which would repaint a selected day.
+  &__day[data-selected] {
     @apply font-bold;
 
-    background: var(--color-primary-500);
-    color: var(--color-additional-50);
+    background: var(--selected-bg);
+    color: var(--selected-text);
     box-shadow: none;
+
+    &:hover,
+    &[data-outside-view]:hover {
+      background: var(--selected-bg);
+      color: var(--selected-text);
+    }
   }
 }
 </style>

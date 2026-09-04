@@ -44,7 +44,15 @@
       "previous_year": "Año anterior",
       "next_year": "Año siguiente",
       "today": "Hoy",
-      "clear": "Borrar"
+      "clear": "Borrar",
+      "outside_suggested_range": "Fuera del rango sugerido"
+    },
+    "date_range_input": {
+      "aria_label": "Rango de fechas",
+      "clear": "Limpiar rango de fechas",
+      "end_date": "Fecha de fin",
+      "invalid_range": "La fecha de fin debe ser igual o posterior a la fecha de inicio",
+      "start_date": "Fecha de inicio"
     },
     "date_selector": {
       "min_date_error": "La fecha debe ser igual o posterior al {min}",

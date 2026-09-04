@@ -596,7 +596,7 @@
         "created_date_label": "Opprettelsesdato",
         "start_date_label": "Startdato",
         "end_date_label": "Sluttdato",
-        "invalid_range": "Ugyldig datoområde.",
+        "date_range_label": "Datointervall",
         "apply_button": "@:common.buttons.apply",
         "reset_button": "@:common.buttons.reset"
       },

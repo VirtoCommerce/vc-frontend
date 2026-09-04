@@ -44,7 +44,15 @@
       "previous_year": "Vorheriges Jahr",
       "next_year": "Nächstes Jahr",
       "today": "Heute",
-      "clear": "Löschen"
+      "clear": "Löschen",
+      "outside_suggested_range": "Außerhalb des vorgeschlagenen Bereichs"
+    },
+    "date_range_input": {
+      "aria_label": "Datumsbereich",
+      "clear": "Datumsbereich löschen",
+      "end_date": "Enddatum",
+      "invalid_range": "Enddatum muss auf oder nach dem Startdatum liegen",
+      "start_date": "Startdatum"
     },
     "date_selector": {
       "min_date_error": "Datum muss am oder nach {min} liegen",

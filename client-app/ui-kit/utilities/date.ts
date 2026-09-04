@@ -1,4 +1,5 @@
 import { CalendarDate, parseDate } from "@internationalized/date";
+import { Logger } from "@/core/utilities";
 
 export function toDateOnlyString(isoDate?: string): string | undefined {
   if (!isoDate) {
@@ -7,12 +8,55 @@ export function toDateOnlyString(isoDate?: string): string | undefined {
   return isoDate.split("T")[0];
 }
 
+/** Parses ISO YYYY-MM-DD; ISO datetime strings are accepted and truncated to the date portion. */
+export function tryParseDate(value: string | undefined): CalendarDate | undefined {
+  if (!value) {
+    return undefined;
+  }
+
+  const dateOnly = toDateOnlyString(value);
+  if (!dateOnly) {
+    return undefined;
+  }
+
+  try {
+    return parseDate(dateOnly);
+  } catch (error) {
+    if (import.meta.env.DEV) {
+      Logger.warn(`tryParseDate: "${value}" is not a parseable ISO date`, error);
+    }
+    return undefined;
+  }
+}
+
+/** True unless both endpoints parse to dates and start is after end; an unparseable endpoint counts as absent. */
+export function isDateRangeInOrder(start: string | undefined, end: string | undefined): boolean {
+  const startDate = tryParseDate(start);
+  const endDate = tryParseDate(end);
+  if (!startDate || !endDate) {
+    return true;
+  }
+  return startDate.compare(endDate) <= 0;
+}
+
 const ISO_DATE_REGEX = /^(\d{4})-(\d{2})-(\d{2})$/;
 
 interface ILocaleDateFormatProbe {
   order: ReadonlyArray<"year" | "month" | "day">;
   separator: string;
 }
+
+// Explicit 4-digit year: Intl's "short" yields 2-digit years our parser would reject. UTC so a local
+// timezone cannot shift the formatted calendar day.
+const SHORT_DATE_FORMAT_OPTIONS: Intl.DateTimeFormatOptions = {
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  timeZone: "UTC",
+};
+
+// Read-only probe for discovering a locale's layout: 2026-01-05 keeps day, month and year distinct.
+const LOCALE_FORMAT_PROBE_DATE = new Date(Date.UTC(2026, 0, 5));
 
 const localeFormatProbeCache = new Map<string, ILocaleDateFormatProbe | null>();
 
@@ -23,14 +67,7 @@ function probeLocaleDateFormat(locale: string): ILocaleDateFormatProbe | null {
   }
 
   try {
-    // Explicit 4-digit year: Intl's "short" yields 2-digit years our parser would reject.
-    const probe = new Date(Date.UTC(2026, 0, 5));
-    const parts = new Intl.DateTimeFormat(locale, {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      timeZone: "UTC",
-    }).formatToParts(probe);
+    const parts = new Intl.DateTimeFormat(locale, SHORT_DATE_FORMAT_OPTIONS).formatToParts(LOCALE_FORMAT_PROBE_DATE);
 
     const order: Array<"year" | "month" | "day"> = [];
     const literals: string[] = [];
@@ -169,14 +206,8 @@ export function formatDateLocale(value: CalendarDate | null | undefined, locale:
   }
 
   try {
-    // Render in UTC to prevent local-TZ drift shifting the formatted calendar day.
     const date = new Date(Date.UTC(value.year, value.month - 1, value.day));
-    return new Intl.DateTimeFormat(locale, {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      timeZone: "UTC",
-    }).format(date);
+    return new Intl.DateTimeFormat(locale, SHORT_DATE_FORMAT_OPTIONS).format(date);
   } catch {
     return "";
   }
@@ -185,13 +216,7 @@ export function formatDateLocale(value: CalendarDate | null | undefined, locale:
 /** Returns a placeholder hint like "MM/DD/YYYY" / "DD.MM.YYYY" / "YYYY/MM/DD" matching the locale's short format. Falls back to "YYYY-MM-DD". */
 export function derivePlaceholderFromLocale(locale: string): string {
   try {
-    const probe = new Date(Date.UTC(2026, 0, 5));
-    const parts = new Intl.DateTimeFormat(locale, {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      timeZone: "UTC",
-    }).formatToParts(probe);
+    const parts = new Intl.DateTimeFormat(locale, SHORT_DATE_FORMAT_OPTIONS).formatToParts(LOCALE_FORMAT_PROBE_DATE);
 
     const hint = parts
       .map((part) => {

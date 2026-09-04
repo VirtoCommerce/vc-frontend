@@ -26,3 +26,8 @@ export function isValidCssVariableName(value: string): boolean {
 export function isValidColor(value: string): boolean {
   return CSS.supports("color", value);
 }
+
+/** Clear-button icon size inside input shells, keyed off the input size. */
+export function getInputClearIconSize(size: VcInputSizeType): string {
+  return size === "md" ? "0.875rem" : "0.75rem";
+}
