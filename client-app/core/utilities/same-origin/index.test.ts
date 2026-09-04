@@ -26,6 +26,10 @@ describe("toSameOriginPath", () => {
     expect(toSameOriginPath("/account?tab=orders#top")).toBe("/account?tab=orders#top");
   });
 
+  it("rejects a same-origin URL whose path resolves off-origin", () => {
+    expect(toSameOriginPath("https://example.com//evil.com/p?a=1#h")).toBe("/");
+  });
+
   it("keeps a same-origin absolute URL but strips the origin", () => {
     expect(toSameOriginPath("https://example.com/dashboard")).toBe("/dashboard");
   });

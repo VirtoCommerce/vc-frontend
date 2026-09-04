@@ -245,8 +245,8 @@
               <!--
                 Toggle on `click`, not `change`: a native radio's `change` never fires when
                 re-clicking the already-checked radio, so `@change` could select but never
-                deselect by mouse. The overlay input covers the control, so exactly one click
-                fires; keyboard toggling is handled by the row's `onRowKeydown`.
+                deselect by mouse. VcRadioButton lets only the input's own click out, so exactly
+                one fires; keyboard toggling is handled by the row's `onRowKeydown`.
               -->
               <VcRadioButton
                 v-else

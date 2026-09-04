@@ -10,7 +10,10 @@ import type {
   IObserver,
   IQueuedMutationsController,
 } from "./types";
-import type { UpdateShortCartItemQuantityMutationVariables } from "@/core/api/graphql/types";
+import type {
+  RemoveCartItemsMutationVariables,
+  UpdateShortCartItemQuantityMutationVariables,
+} from "@/core/api/graphql/types";
 import type { DefaultContext } from "@apollo/client/core";
 
 export const DEFAULT_DEBOUNCE_MS = 1000;
@@ -291,6 +294,18 @@ const updateShortCartItemQuantityConfig: IQueueTargetConfig<UpdateShortCartItemQ
   },
 };
 
+export const removeCartItemsConfig: IQueueTargetConfig<RemoveCartItemsMutationVariables> = {
+  debounceMs: 1000,
+  getPartitionKey: (vars) => vars.command?.cartId ?? "",
+  mergeQueued: (a, b) => ({
+    ...a,
+    command: {
+      ...a.command,
+      lineItemIds: [...new Set([...(a.command?.lineItemIds ?? []), ...(b.command?.lineItemIds ?? [])])],
+    },
+  }),
+};
+
 /**
  * Helper function to create a properly typed queue target.
  * This preserves type safety when defining each target while allowing
@@ -304,7 +319,10 @@ export function createQueueTarget<TVars extends Record<string, unknown>>(
 }
 
 export const queuedMutationsController = createQueuedMutationsController({
-  targets: [createQueueTarget("UpdateShortCartItemQuantity", updateShortCartItemQuantityConfig)],
+  targets: [
+    createQueueTarget("UpdateShortCartItemQuantity", updateShortCartItemQuantityConfig),
+    createQueueTarget("RemoveCartItems", removeCartItemsConfig),
+  ],
 });
 
 // Backwards-compatible alias. Existing consumers import the link directly; new

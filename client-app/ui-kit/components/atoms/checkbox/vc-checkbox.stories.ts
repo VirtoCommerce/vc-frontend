@@ -1,4 +1,4 @@
-import { VcCheckbox } from "..";
+import { VcCheckbox, VcIcon, VcTooltip } from "..";
 import { VcButton, VcDropdownMenu, VcMenuItem } from "../../molecules";
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
@@ -103,6 +103,102 @@ export const Label: StoryType = {
       source: {
         code: `
 <VcCheckbox>VcCheckbox Label</VcCheckbox>
+        `,
+      },
+    },
+  },
+};
+
+export const LabelWithInteractiveContent: StoryType = {
+  render: (args) => ({
+    components: { VcCheckbox },
+    setup: () => ({ args }),
+    template: `<div class="space-y-4">
+      <VcCheckbox v-bind="args">
+        I agree to the
+        <a href="#" class="ms-1 underline">Terms and Conditions</a>
+      </VcCheckbox>
+
+      <VcCheckbox v-bind="args">
+        Ship to my default address
+        <button type="button" class="ms-2 rounded-[--vc-radius] border border-neutral-300 px-1.5 text-xs leading-4">Change</button>
+      </VcCheckbox>
+    </div>`,
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Interactive content in the label slot — links with `href`, buttons, selects — receives its own clicks and does not toggle the checkbox. Elements that only look interactive (`role="button"` on a `div`) are not exempt from label activation and will do both; use a real interactive element.',
+      },
+      source: {
+        code: `
+<VcCheckbox>
+  I agree to the
+  <a href="#" class="ms-1 underline">Terms and Conditions</a>
+</VcCheckbox>
+
+<VcCheckbox>
+  Ship to my default address
+  <button type="button" class="ms-2 rounded-[--vc-radius] border border-neutral-300 px-1.5 text-xs leading-4">Change</button>
+</VcCheckbox>
+        `,
+      },
+    },
+  },
+};
+
+export const Tooltip: StoryType = {
+  render: (args) => ({
+    components: { VcCheckbox, VcTooltip, VcIcon },
+    setup: () => ({ args }),
+    template: `<div class="space-y-4">
+      <VcCheckbox v-bind="args">
+        Show in stock
+
+        <template #tooltip>Only products available to ship right now</template>
+      </VcCheckbox>
+
+      <VcCheckbox v-bind="args">
+        Show in stock
+
+        <VcTooltip>
+          <template #trigger>
+            <VcIcon class="ms-1 block" name="information-circle" size="xs" />
+          </template>
+
+          <template #content>Only products available to ship right now</template>
+        </VcTooltip>
+      </VcCheckbox>
+    </div>
+
+    <div class="h-32"></div>`,
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Two ways to explain a checkbox. The `tooltip` slot puts one tooltip on the whole control, opening on hover over the label; the `tooltip` prop sets its placement and width. Alternatively put your own `VcTooltip` in the label slot when only part of the label should explain itself — its trigger is not interactive content, so clicking the icon still toggles the checkbox.",
+      },
+      source: {
+        code: `
+<VcCheckbox>
+  Show in stock
+
+  <template #tooltip>Only products available to ship right now</template>
+</VcCheckbox>
+
+<VcCheckbox>
+  Show in stock
+
+  <VcTooltip>
+    <template #trigger>
+      <VcIcon class="ms-1 block" name="information-circle" size="xs" />
+    </template>
+
+    <template #content>Only products available to ship right now</template>
+  </VcTooltip>
+</VcCheckbox>
         `,
       },
     },

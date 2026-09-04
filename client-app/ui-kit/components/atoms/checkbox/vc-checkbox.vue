@@ -11,10 +11,11 @@
       },
     ]"
   >
-    <component :is="containerTag" class="vc-checkbox__container">
+    <component :is="containerTag" class="vc-checkbox__container" @click="onContainerClick">
       <!-- Hidden real input for form/a11y — ONLY in standalone mode -->
       <input
         v-if="!isInsideInteractive"
+        ref="inputRef"
         type="checkbox"
         class="vc-checkbox__input"
         :aria-label="ariaLabel || name"
@@ -102,6 +103,10 @@ const props = withDefaults(defineProps<IProps>(), {
   }),
 });
 
+const inputRef = ref<HTMLInputElement | null>(null);
+
+let forwardExpected = false;
+
 const groupContext = inject<VcCheckboxGroupContextType | null>("checkboxGroupContext", null);
 const isInsideInteractive = inject(INTERACTIVE_PARENT_KEY, ref(false));
 const slots = useSlots();
@@ -146,7 +151,35 @@ function handleChange() {
   }
 }
 
-function onClick(event: Event) {
+// <label> activation forwards a second, identical click to the input, so one pointer press would
+// otherwise reach consumers twice. Drop that duplicate and nothing else: keyboard activation and a
+// click aimed at the input itself must still pass, and a click on slot content is not ours to eat.
+// The flag is cleared on the next task because the forwarded click, when it comes, is dispatched
+// synchronously within this one.
+function onContainerClick(event: MouseEvent) {
+  if (isInsideInteractive.value) {
+    return;
+  }
+
+  // A disabled control surfaces nothing, as its full-bleed input used to guarantee.
+  if (props.disabled) {
+    event.stopPropagation();
+    return;
+  }
+
+  if (event.target !== inputRef.value) {
+    forwardExpected = true;
+    setTimeout(() => (forwardExpected = false));
+    return;
+  }
+
+  if (forwardExpected) {
+    forwardExpected = false;
+    event.stopPropagation();
+  }
+}
+
+function onClick(event: MouseEvent) {
   if (props.preventDefault) {
     event.preventDefault();
     handleChange();
@@ -218,11 +251,8 @@ function onClick(event: Event) {
   }
 
   &__input {
-    @apply absolute inset-0 opacity-0 cursor-pointer m-0 w-full h-full z-10;
-
-    #{$disabled} & {
-      @apply cursor-not-allowed;
-    }
+    // Hidden, never stretched: an overlay over the container swallows clicks meant for label content.
+    @apply sr-only;
   }
 
   &__indicator {
@@ -265,10 +295,6 @@ function onClick(event: Event) {
 
     #{$disabled} & {
       @apply opacity-60;
-    }
-
-    &::before {
-      @apply content-[''] absolute inset-0;
     }
   }
 
