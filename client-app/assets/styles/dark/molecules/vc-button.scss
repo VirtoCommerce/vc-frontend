@@ -162,7 +162,7 @@
         var(--color-vc-background-tonal-#{$color}, var(--color-#{$color}-100)),
         black 20%
       );
-      --text-color: var(--color-vc-text-tonal-#{$color}, var(--color-#{$color}-900));
+      --text-color: var(--color-vc-text-tonal-#{$color}, var(--color-#{$color}-800));
     }
 
     // Rest is the page ground here, with nothing below it to darken into, so the press steps
