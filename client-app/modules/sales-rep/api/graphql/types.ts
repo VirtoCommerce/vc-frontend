@@ -351,6 +351,278 @@ export type CustomerOrderStatisticsPeriod = {
   warning?: Maybe<Scalars['String']['output']>;
 };
 
+export type CustomerOrderType = {
+  addresses: Array<OrderAddressType>;
+  /** Available payment methods */
+  availablePaymentMethods: Array<OrderPaymentMethodType>;
+  cancelReason?: Maybe<Scalars['String']['output']>;
+  cancelledDate?: Maybe<Scalars['DateTime']['output']>;
+  channelId?: Maybe<Scalars['String']['output']>;
+  comment?: Maybe<Scalars['String']['output']>;
+  coupons: Array<Scalars['String']['output']>;
+  createdBy?: Maybe<Scalars['String']['output']>;
+  createdDate: Scalars['DateTime']['output'];
+  currency: CurrencyType;
+  customerId: Scalars['String']['output'];
+  customerName?: Maybe<Scalars['String']['output']>;
+  discountAmount: MoneyType;
+  discountTotal: MoneyType;
+  discountTotalWithTax: MoneyType;
+  discounts: Array<OrderDiscountType>;
+  /** Customer order dynamic property values */
+  dynamicProperties: Array<DynamicPropertyValueType>;
+  employeeId?: Maybe<Scalars['String']['output']>;
+  employeeName?: Maybe<Scalars['String']['output']>;
+  fee: MoneyType;
+  feeTotal: MoneyType;
+  feeTotalWithTax: MoneyType;
+  feeWithTax: MoneyType;
+  id: Scalars['String']['output'];
+  inPayments: Array<PaymentInType>;
+  isApproved: Scalars['Boolean']['output'];
+  isCancelled: Scalars['Boolean']['output'];
+  isPrototype: Scalars['Boolean']['output'];
+  items: Array<OrderLineItemType>;
+  languageCode?: Maybe<Scalars['String']['output']>;
+  modifiedBy?: Maybe<Scalars['String']['output']>;
+  modifiedDate?: Maybe<Scalars['DateTime']['output']>;
+  number: Scalars['String']['output'];
+  objectType: Scalars['String']['output'];
+  operationType: Scalars['String']['output'];
+  /** Order totals */
+  orderTotals?: Maybe<Array<Maybe<OrderTotalType>>>;
+  organizationId?: Maybe<Scalars['String']['output']>;
+  organizationName?: Maybe<Scalars['String']['output']>;
+  outerId?: Maybe<Scalars['String']['output']>;
+  parentOperationId?: Maybe<Scalars['String']['output']>;
+  paymentDiscountTotal: MoneyType;
+  paymentDiscountTotalWithTax: MoneyType;
+  paymentSubTotal: MoneyType;
+  paymentSubTotalWithTax: MoneyType;
+  paymentTaxTotal: MoneyType;
+  paymentTotal: MoneyType;
+  paymentTotalWithTax: MoneyType;
+  purchaseOrderNumber?: Maybe<Scalars['String']['output']>;
+  shipments: Array<OrderShipmentType>;
+  shippingDiscountTotal: MoneyType;
+  shippingDiscountTotalWithTax: MoneyType;
+  shippingSubTotal: MoneyType;
+  shippingSubTotalWithTax: MoneyType;
+  shippingTaxTotal: MoneyType;
+  shippingTotal: MoneyType;
+  shippingTotalWithTax: MoneyType;
+  shoppingCartId?: Maybe<Scalars['String']['output']>;
+  status?: Maybe<Scalars['String']['output']>;
+  statusDisplayValue?: Maybe<Scalars['String']['output']>;
+  storeId: Scalars['String']['output'];
+  storeName?: Maybe<Scalars['String']['output']>;
+  subTotal: MoneyType;
+  subTotalDiscount: MoneyType;
+  subTotalDiscountWithTax: MoneyType;
+  subTotalTaxTotal: MoneyType;
+  subTotalWithTax: MoneyType;
+  subscriptionId?: Maybe<Scalars['String']['output']>;
+  subscriptionNumber?: Maybe<Scalars['String']['output']>;
+  taxDetails: Array<OrderTaxDetailType>;
+  taxPercentRate: Scalars['Decimal']['output'];
+  taxTotal: MoneyType;
+  taxType?: Maybe<Scalars['String']['output']>;
+  total: MoneyType;
+};
+
+
+export type CustomerOrderTypeInPaymentsArgs = {
+  after?: InputMaybe<Scalars['Int']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type DescriptionType = {
+  /** Description text. */
+  content?: Maybe<Scalars['String']['output']>;
+  /** Description ID. */
+  id: Scalars['String']['output'];
+  /** Description language code. */
+  languageCode?: Maybe<Scalars['String']['output']>;
+  /** Description type. */
+  reviewType?: Maybe<Scalars['String']['output']>;
+};
+
+/** A connection from an object to a list of objects of type `DictionaryItem`. */
+export type DictionaryItemConnection = {
+  /** A list of all of the edges returned in the connection. */
+  edges?: Maybe<Array<Maybe<DictionaryItemEdge>>>;
+  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
+  items?: Maybe<Array<Maybe<DictionaryItemType>>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
+  totalCount?: Maybe<Scalars['Int']['output']>;
+};
+
+/** An edge in a connection from an object to another object of type `DictionaryItem`. */
+export type DictionaryItemEdge = {
+  /** A cursor for use in pagination */
+  cursor: Scalars['String']['output'];
+  /** The item at the end of the edge */
+  node?: Maybe<DictionaryItemType>;
+};
+
+export type DictionaryItemType = {
+  /** Id */
+  id: Scalars['String']['output'];
+  /** Localized dictionary item value */
+  label?: Maybe<Scalars['String']['output']>;
+  /** Name */
+  name: Scalars['String']['output'];
+};
+
+export type DynamicPropertyType = {
+  dictionaryItems?: Maybe<DictionaryItemConnection>;
+  /** The order for the dynamic property to display */
+  displayOrder?: Maybe<Scalars['Int']['output']>;
+  /** Value type */
+  dynamicPropertyValueType: DynamicPropertyValueTypes;
+  /** Id */
+  id: Scalars['String']['output'];
+  /** Is dynamic property value an array */
+  isArray: Scalars['Boolean']['output'];
+  /** Is dynamic property value a dictionary */
+  isDictionary: Scalars['Boolean']['output'];
+  /** Is dynamic property value multilingual */
+  isMultilingual: Scalars['Boolean']['output'];
+  /** Is dynamic property value required */
+  isRequired: Scalars['Boolean']['output'];
+  /** Localized property name */
+  label?: Maybe<Scalars['String']['output']>;
+  name: Scalars['String']['output'];
+  /** Object type */
+  objectType: Scalars['String']['output'];
+};
+
+
+export type DynamicPropertyTypeDictionaryItemsArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type DynamicPropertyValueType = {
+  /** Associated dictionary item */
+  dictionaryItem?: Maybe<DictionaryItemType>;
+  /** Associated dynamic property */
+  dynamicProperty?: Maybe<DynamicPropertyType>;
+  /** Value type */
+  dynamicPropertyValueType: DynamicPropertyValueTypes;
+  /** Property name */
+  name?: Maybe<Scalars['String']['output']>;
+  /** Property value */
+  value?: Maybe<Scalars['DynamicPropertyValue']['output']>;
+  /** Value type */
+  valueType: Scalars['String']['output'];
+};
+
+/** Dynamic property value type */
+export enum DynamicPropertyValueTypes {
+  Boolean = 'BOOLEAN',
+  DateTime = 'DATE_TIME',
+  Decimal = 'DECIMAL',
+  Html = 'HTML',
+  Image = 'IMAGE',
+  Integer = 'INTEGER',
+  LongText = 'LONG_TEXT',
+  ShortText = 'SHORT_TEXT',
+  Undefined = 'UNDEFINED'
+}
+
+export type Facet = {
+  /** Three facet types: Terms, Range, and Filter */
+  facetType: FacetTypes;
+  /** Localized name of the facet. */
+  label: Scalars['String']['output'];
+  /** The key/name  of the facet. */
+  name: Scalars['String']['output'];
+  /** Display order of the facet. */
+  order?: Maybe<Scalars['Int']['output']>;
+};
+
+export type FacetRangeType = {
+  /** Amount of products for which the values in a field fall into the specified range */
+  count: Scalars['Long']['output'];
+  /** The range’s lower endpoint in number format */
+  from?: Maybe<Scalars['Decimal']['output']>;
+  /** The range’s lower endpoint in string format, empty string represents infinity */
+  fromStr?: Maybe<Scalars['String']['output']>;
+  /** The flag indicates that From exclusive */
+  includeFrom: Scalars['Boolean']['output'];
+  /** The flag indicates that To exclusive */
+  includeTo: Scalars['Boolean']['output'];
+  /** is selected state */
+  isSelected: Scalars['Boolean']['output'];
+  /** Localization label */
+  label: Scalars['String']['output'];
+  /** Maximum value among all values contained within the range */
+  max: Scalars['Decimal']['output'];
+  /** Minimum value among all values contained within the range */
+  min: Scalars['Decimal']['output'];
+  /** The range’s upper endpoint in number format */
+  to?: Maybe<Scalars['Decimal']['output']>;
+  /** The range’s upper endpoint in string format, empty string represents infinity */
+  toStr?: Maybe<Scalars['String']['output']>;
+  /** Sum of all values contained in the range */
+  total: Scalars['Long']['output'];
+};
+
+export type FacetTermType = {
+  /** count */
+  count: Scalars['Long']['output'];
+  /** is selected state */
+  isSelected: Scalars['Boolean']['output'];
+  label: Scalars['String']['output'];
+  /** term */
+  term: Scalars['String']['output'];
+};
+
+export enum FacetTypes {
+  Filter = 'FILTER',
+  Range = 'RANGE',
+  Terms = 'TERMS'
+}
+
+export type FilterFacet = Facet & {
+  /** The number of products matching the value specified in the filter facet expression */
+  count: Scalars['Int']['output'];
+  /** The three types of facets. Terms, Range, Filter */
+  facetType: FacetTypes;
+  /** Localized name of the facet. */
+  label: Scalars['String']['output'];
+  /** The key/name  of the facet. */
+  name: Scalars['String']['output'];
+  /** Display order of the facet. */
+  order?: Maybe<Scalars['Int']['output']>;
+};
+
+export type ImageType = {
+  /** Culture name */
+  cultureName?: Maybe<Scalars['String']['output']>;
+  /** The description of the image */
+  description?: Maybe<Scalars['String']['output']>;
+  /** The group of the image */
+  group?: Maybe<Scalars['String']['output']>;
+  /** The unique ID of the image */
+  id: Scalars['String']['output'];
+  /** The name of the image */
+  name?: Maybe<Scalars['String']['output']>;
+  /** The relative URL of the image */
+  relativeUrl?: Maybe<Scalars['String']['output']>;
+  /** Sort order */
+  sortOrder: Scalars['Int']['output'];
+  /** The URL of the image */
+  url: Scalars['StoreAssetUrl']['output'];
+};
+
 export type InputChangeSalesRepTaskStatus = {
   /** True marks the task done; false reopens it. */
   completed: Scalars['Boolean']['input'];
@@ -444,6 +716,23 @@ export type InputUpdateSalesRepTask = {
   type: Scalars['String']['input'];
 };
 
+export type InventoryInfo = {
+  /** Allow backorder */
+  allowBackorder: Scalars['Boolean']['output'];
+  /** Allow preorder */
+  allowPreorder: Scalars['Boolean']['output'];
+  /** Backorder availability date */
+  backorderAvailabilityDate?: Maybe<Scalars['DateTime']['output']>;
+  fulfillmentCenterId: Scalars['String']['output'];
+  fulfillmentCenterName: Scalars['String']['output'];
+  /** Inventory in stock quantity */
+  inStockQuantity: Scalars['Long']['output'];
+  /** Preorder availability date */
+  preorderAvailabilityDate?: Maybe<Scalars['DateTime']['output']>;
+  /** Inventory reserved quantity */
+  reservedQuantity: Scalars['Long']['output'];
+};
+
 export type MoneyType = {
   /** A decimal with the amount rounded to the significant number of decimal digits. */
   amount: Scalars['Decimal']['output'];
@@ -498,6 +787,316 @@ export type MutationsSendCustomerCommunicationArgs = {
 
 export type MutationsUpdateSalesRepTaskArgs = {
   command: InputUpdateSalesRepTask;
+};
+
+export type OrderAddressType = {
+  /** Address type */
+  addressType?: Maybe<Scalars['Int']['output']>;
+  /** City */
+  city?: Maybe<Scalars['String']['output']>;
+  /** Country code */
+  countryCode?: Maybe<Scalars['String']['output']>;
+  /** Country name */
+  countryName?: Maybe<Scalars['String']['output']>;
+  /** Email */
+  email?: Maybe<Scalars['String']['output']>;
+  /** First name */
+  firstName?: Maybe<Scalars['String']['output']>;
+  /** Id */
+  id?: Maybe<Scalars['String']['output']>;
+  /** Id */
+  key?: Maybe<Scalars['String']['output']>;
+  /** Last name */
+  lastName?: Maybe<Scalars['String']['output']>;
+  /** Line1 */
+  line1?: Maybe<Scalars['String']['output']>;
+  /** Line2 */
+  line2?: Maybe<Scalars['String']['output']>;
+  /** Middle name */
+  middleName?: Maybe<Scalars['String']['output']>;
+  /** Name */
+  name?: Maybe<Scalars['String']['output']>;
+  /** Company name */
+  organization?: Maybe<Scalars['String']['output']>;
+  /** Outer id */
+  outerId?: Maybe<Scalars['String']['output']>;
+  /** Phone */
+  phone?: Maybe<Scalars['String']['output']>;
+  /** Postal code */
+  postalCode: Scalars['String']['output'];
+  /** Region id */
+  regionId?: Maybe<Scalars['String']['output']>;
+  /** Region name */
+  regionName?: Maybe<Scalars['String']['output']>;
+  /** Zip */
+  zip?: Maybe<Scalars['String']['output']>;
+};
+
+export type OrderConfigurationItemFileType = {
+  /** MIME type of the file */
+  contentType?: Maybe<Scalars['String']['output']>;
+  /** Name of the file */
+  name: Scalars['String']['output'];
+  /** Size of the file */
+  size: Scalars['Long']['output'];
+  /** URL of the file */
+  url: Scalars['String']['output'];
+};
+
+export type OrderConfigurationItemType = {
+  /** Custom text for 'Text' configuration item section */
+  customText?: Maybe<Scalars['String']['output']>;
+  /** Extended price */
+  extendedPrice: MoneyType;
+  /** List of files for 'File' configuration item section */
+  files?: Maybe<Array<Maybe<OrderConfigurationItemFileType>>>;
+  /** Configuration item ID */
+  id: Scalars['String']['output'];
+  /** Configuration item image URL */
+  imageUrl?: Maybe<Scalars['String']['output']>;
+  /** Configuration item name */
+  name?: Maybe<Scalars['String']['output']>;
+  /** List price */
+  price: MoneyType;
+  product?: Maybe<Product>;
+  /** Configuration item product ID */
+  productId?: Maybe<Scalars['String']['output']>;
+  /** Configuration item product quantity */
+  quantity?: Maybe<Scalars['Int']['output']>;
+  /** Sale price */
+  salePrice: MoneyType;
+  /** Configuration item section ID */
+  sectionId: Scalars['String']['output'];
+  /** Configuration item section name */
+  sectionName?: Maybe<Scalars['String']['output']>;
+  /** Configuration item SKU */
+  sku?: Maybe<Scalars['String']['output']>;
+  /** Configuration item type. Possible values: 'Product', 'Variation', 'Text', 'File' */
+  type: Scalars['String']['output'];
+};
+
+export type OrderDiscountType = {
+  /** Order discount amount */
+  amount: MoneyType;
+  coupon?: Maybe<Scalars['String']['output']>;
+  /** @deprecated Use the new PromotionDescription field instead */
+  description?: Maybe<Scalars['String']['output']>;
+  /** Description of the promotion */
+  promotionDescription?: Maybe<Scalars['String']['output']>;
+  promotionId?: Maybe<Scalars['String']['output']>;
+  /** Name of the promotion */
+  promotionName?: Maybe<Scalars['String']['output']>;
+};
+
+export type OrderLineItemType = {
+  cancelReason?: Maybe<Scalars['String']['output']>;
+  cancelledDate?: Maybe<Scalars['DateTime']['output']>;
+  catalogId: Scalars['String']['output'];
+  categoryId?: Maybe<Scalars['String']['output']>;
+  comment?: Maybe<Scalars['String']['output']>;
+  /** Configuration items for configurable product */
+  configurationItems?: Maybe<Array<Maybe<OrderConfigurationItemType>>>;
+  currency: CurrencyType;
+  discountAmount: MoneyType;
+  discountAmountWithTax: MoneyType;
+  discountTotal: MoneyType;
+  discountTotalWithTax: MoneyType;
+  discounts: Array<OrderDiscountType>;
+  /** Customer order Line item dynamic property values */
+  dynamicProperties: Array<DynamicPropertyValueType>;
+  extendedPrice: MoneyType;
+  extendedPriceWithTax: MoneyType;
+  fulfillmentCenterId?: Maybe<Scalars['String']['output']>;
+  fulfillmentCenterName?: Maybe<Scalars['String']['output']>;
+  fulfillmentLocationCode?: Maybe<Scalars['String']['output']>;
+  height?: Maybe<Scalars['Decimal']['output']>;
+  id: Scalars['String']['output'];
+  imageUrl?: Maybe<Scalars['String']['output']>;
+  isCancelled: Scalars['Boolean']['output'];
+  isGift?: Maybe<Scalars['Boolean']['output']>;
+  length?: Maybe<Scalars['Decimal']['output']>;
+  listTotal: MoneyType;
+  listTotalWithTax: MoneyType;
+  measureUnit?: Maybe<Scalars['String']['output']>;
+  name: Scalars['String']['output'];
+  objectType: Scalars['String']['output'];
+  outerId?: Maybe<Scalars['String']['output']>;
+  placedPrice: MoneyType;
+  placedPriceWithTax: MoneyType;
+  price: MoneyType;
+  priceId?: Maybe<Scalars['String']['output']>;
+  priceWithTax: MoneyType;
+  product?: Maybe<Product>;
+  productId: Scalars['String']['output'];
+  productOuterId?: Maybe<Scalars['String']['output']>;
+  productType?: Maybe<Scalars['String']['output']>;
+  quantity: Scalars['Int']['output'];
+  reserveQuantity: Scalars['Int']['output'];
+  shippingMethodCode?: Maybe<Scalars['String']['output']>;
+  /** Indicates whether the PlacedPrice should be visible to the customer */
+  showPlacedPrice: Scalars['Boolean']['output'];
+  sku: Scalars['String']['output'];
+  status?: Maybe<Scalars['String']['output']>;
+  statusDisplayValue?: Maybe<Scalars['String']['output']>;
+  taxDetails: Array<OrderTaxDetailType>;
+  taxPercentRate: Scalars['Decimal']['output'];
+  taxTotal: MoneyType;
+  taxType?: Maybe<Scalars['String']['output']>;
+  vendor?: Maybe<CommonVendor>;
+  weight?: Maybe<Scalars['Decimal']['output']>;
+  weightUnit?: Maybe<Scalars['String']['output']>;
+  width?: Maybe<Scalars['Decimal']['output']>;
+};
+
+export type OrderPaymentMethodType = {
+  code: Scalars['String']['output'];
+  currency: CurrencyType;
+  description?: Maybe<Scalars['String']['output']>;
+  discountAmount: MoneyType;
+  discountAmountWithTax: MoneyType;
+  isActive: Scalars['Boolean']['output'];
+  isAvailableForPartial: Scalars['Boolean']['output'];
+  logoUrl?: Maybe<Scalars['String']['output']>;
+  /** Localized name of payment method. */
+  name?: Maybe<Scalars['String']['output']>;
+  paymentMethodGroupType: Scalars['Int']['output'];
+  paymentMethodType: Scalars['Int']['output'];
+  price: MoneyType;
+  priceWithTax: MoneyType;
+  priority: Scalars['Int']['output'];
+  storeId?: Maybe<Scalars['String']['output']>;
+  taxDetails?: Maybe<Array<OrderTaxDetailType>>;
+  taxPercentRate: Scalars['Decimal']['output'];
+  taxTotal: MoneyType;
+  taxType?: Maybe<Scalars['String']['output']>;
+  total: MoneyType;
+  totalWithTax: MoneyType;
+  typeName: Scalars['String']['output'];
+};
+
+export type OrderShipmentItemType = {
+  barCode?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+  lineItem?: Maybe<OrderLineItemType>;
+  lineItemId?: Maybe<Scalars['String']['output']>;
+  outerId?: Maybe<Scalars['String']['output']>;
+  quantity: Scalars['Int']['output'];
+  status?: Maybe<Scalars['String']['output']>;
+};
+
+export type OrderShipmentPackageType = {
+  barCode?: Maybe<Scalars['String']['output']>;
+  height?: Maybe<Scalars['Decimal']['output']>;
+  id: Scalars['String']['output'];
+  items: Array<OrderShipmentItemType>;
+  length?: Maybe<Scalars['Decimal']['output']>;
+  measureUnit?: Maybe<Scalars['String']['output']>;
+  packageType?: Maybe<Scalars['String']['output']>;
+  weight?: Maybe<Scalars['Decimal']['output']>;
+  weightUnit?: Maybe<Scalars['String']['output']>;
+  width?: Maybe<Scalars['Decimal']['output']>;
+};
+
+export type OrderShipmentType = {
+  cancelReason?: Maybe<Scalars['String']['output']>;
+  cancelledDate?: Maybe<Scalars['DateTime']['output']>;
+  comment?: Maybe<Scalars['String']['output']>;
+  currency: CurrencyType;
+  customerOrderId?: Maybe<Scalars['String']['output']>;
+  deliveryAddress?: Maybe<OrderAddressType>;
+  deliveryDate?: Maybe<Scalars['DateTime']['output']>;
+  discountAmount: MoneyType;
+  discountAmountWithTax: MoneyType;
+  discounts: Array<OrderDiscountType>;
+  /** Customer order Shipment dynamic property values */
+  dynamicProperties: Array<DynamicPropertyValueType>;
+  employeeId?: Maybe<Scalars['String']['output']>;
+  employeeName?: Maybe<Scalars['String']['output']>;
+  fee: MoneyType;
+  feeWithTax: MoneyType;
+  fulfillmentCenterId?: Maybe<Scalars['String']['output']>;
+  fulfillmentCenterName?: Maybe<Scalars['String']['output']>;
+  height?: Maybe<Scalars['Decimal']['output']>;
+  id: Scalars['String']['output'];
+  inPayments: Array<PaymentInType>;
+  isApproved: Scalars['Boolean']['output'];
+  isCancelled: Scalars['Boolean']['output'];
+  items: Array<OrderShipmentItemType>;
+  length?: Maybe<Scalars['Decimal']['output']>;
+  measureUnit?: Maybe<Scalars['String']['output']>;
+  number: Scalars['String']['output'];
+  objectType: Scalars['String']['output'];
+  operationType: Scalars['String']['output'];
+  organizationId?: Maybe<Scalars['String']['output']>;
+  organizationName?: Maybe<Scalars['String']['output']>;
+  outerId?: Maybe<Scalars['String']['output']>;
+  packages: Array<OrderShipmentPackageType>;
+  parentOperationId?: Maybe<Scalars['String']['output']>;
+  pickupLocation?: Maybe<PickupLocationType>;
+  price: MoneyType;
+  priceWithTax: MoneyType;
+  shipmentMethodCode?: Maybe<Scalars['String']['output']>;
+  shipmentMethodOption?: Maybe<Scalars['String']['output']>;
+  shippingMethod?: Maybe<OrderShippingMethodType>;
+  status?: Maybe<Scalars['String']['output']>;
+  statusDisplayValue?: Maybe<Scalars['String']['output']>;
+  taxDetails: Array<OrderTaxDetailType>;
+  taxPercentRate: Scalars['Decimal']['output'];
+  taxTotal: MoneyType;
+  taxType?: Maybe<Scalars['String']['output']>;
+  total: MoneyType;
+  totalWithTax: MoneyType;
+  trackingNumber?: Maybe<Scalars['String']['output']>;
+  trackingUrl?: Maybe<Scalars['String']['output']>;
+  vendor?: Maybe<CommonVendor>;
+  weight?: Maybe<Scalars['Decimal']['output']>;
+  weightUnit?: Maybe<Scalars['String']['output']>;
+  width?: Maybe<Scalars['Decimal']['output']>;
+};
+
+export type OrderShippingMethodType = {
+  code: Scalars['String']['output'];
+  description?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+  isActive: Scalars['Boolean']['output'];
+  logoUrl?: Maybe<Scalars['String']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  priority: Scalars['Int']['output'];
+  storeId?: Maybe<Scalars['String']['output']>;
+  taxType?: Maybe<Scalars['String']['output']>;
+  typeName?: Maybe<Scalars['String']['output']>;
+};
+
+export type OrderTaxDetailType = {
+  amount: MoneyType;
+  name: Scalars['String']['output'];
+  rate: MoneyType;
+};
+
+export type OrderTotalType = {
+  /** Total discount */
+  discountTotal: MoneyType;
+  /** Is current total in default total currency */
+  isDefaultTotalCurrency: Scalars['Boolean']['output'];
+  /** Cart subtotal */
+  subTotal: MoneyType;
+  /** Total tax */
+  taxTotal: MoneyType;
+  /** Cart total */
+  total: MoneyType;
+};
+
+export type OutlineItemType = {
+  id: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  /** SEO info */
+  seoInfos?: Maybe<Array<SeoInfo>>;
+  seoObjectType: Scalars['String']['output'];
+};
+
+export type OutlineType = {
+  /** Outline items */
+  items?: Maybe<Array<OutlineItemType>>;
 };
 
 /** Information about pagination in a connection. */
@@ -1679,6 +2278,148 @@ export type SalesRepTopSellerSortRule = {
   supportsDirection: Scalars['Boolean']['output'];
 };
 
+export type SeoInfo = {
+  id: Scalars['String']['output'];
+  imageAltDescription?: Maybe<Scalars['String']['output']>;
+  isActive: Scalars['Boolean']['output'];
+  languageCode?: Maybe<Scalars['String']['output']>;
+  metaDescription?: Maybe<Scalars['String']['output']>;
+  metaKeywords?: Maybe<Scalars['String']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  objectId: Scalars['String']['output'];
+  objectType: Scalars['String']['output'];
+  outline?: Maybe<Scalars['String']['output']>;
+  pageTitle?: Maybe<Scalars['String']['output']>;
+  semanticUrl: Scalars['String']['output'];
+  storeId?: Maybe<Scalars['String']['output']>;
+};
+
+export type TermFacet = Facet & {
+  /** Three facet types: Terms, Range, and Filter */
+  facetType: FacetTypes;
+  /** Localized name of the facet. */
+  label: Scalars['String']['output'];
+  /** The key/name  of the facet. */
+  name: Scalars['String']['output'];
+  /** Display order of the facet. */
+  order?: Maybe<Scalars['Int']['output']>;
+  /** Terms */
+  terms: Array<FacetTermType>;
+};
+
+export type TierPriceType = {
+  /** Price */
+  price: MoneyType;
+  /** Price with tax */
+  priceWithTax: MoneyType;
+  /** Quantity */
+  quantity: Scalars['Long']['output'];
+};
+
+export type VariationType = {
+  /** Assets */
+  assets: Array<Asset>;
+  associations?: Maybe<ProductAssociationConnection>;
+  /** Availability data */
+  availabilityData: AvailabilityData;
+  /** SKU of variation. */
+  code: Scalars['String']['output'];
+  /** Id of variation. */
+  id: Scalars['String']['output'];
+  /** Product images */
+  images: Array<ImageType>;
+  /** Max. quantity. */
+  maxQuantity?: Maybe<Scalars['Int']['output']>;
+  /** Min. quantity. */
+  minQuantity?: Maybe<Scalars['Int']['output']>;
+  /** Name of variation. */
+  name: Scalars['String']['output'];
+  /** Outlines */
+  outlines?: Maybe<Array<OutlineType>>;
+  /** Defines the number of items in a package. Quantity step for your product's. */
+  packSize?: Maybe<Scalars['Int']['output']>;
+  /** Product price */
+  price: PriceType;
+  /** Product prices */
+  prices: Array<PriceType>;
+  /** The type of product */
+  productType?: Maybe<Scalars['String']['output']>;
+  properties: Array<Property>;
+  /** Product rating */
+  rating?: Maybe<Rating>;
+  /** Request related slug for product */
+  slug?: Maybe<Scalars['String']['output']>;
+  /** Product vendor */
+  vendor?: Maybe<CommonVendor>;
+};
+
+
+export type VariationTypeAssociationsArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  group?: InputMaybe<Scalars['String']['input']>;
+  query?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** A connection from an object to a list of objects of type `Video`. */
+export type VideoConnection = {
+  /** A list of all of the edges returned in the connection. */
+  edges?: Maybe<Array<Maybe<VideoEdge>>>;
+  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
+  items?: Maybe<Array<Maybe<VideoType>>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
+  totalCount?: Maybe<Scalars['Int']['output']>;
+};
+
+/** An edge in a connection from an object to another object of type `Video`. */
+export type VideoEdge = {
+  /** A cursor for use in pagination */
+  cursor: Scalars['String']['output'];
+  /** The item at the end of the edge */
+  node?: Maybe<VideoType>;
+};
+
+export type VideoType = {
+  /** Video URL */
+  contentUrl: Scalars['String']['output'];
+  /** Culture name */
+  cultureName?: Maybe<Scalars['String']['output']>;
+  /** Video description */
+  description: Scalars['String']['output'];
+  /** Video duration */
+  duration?: Maybe<Scalars['String']['output']>;
+  /** Embedded video URL */
+  embedUrl?: Maybe<Scalars['String']['output']>;
+  /** Video name */
+  name: Scalars['String']['output'];
+  /** ID of the object video is attached to */
+  ownerId: Scalars['String']['output'];
+  /** Type of the object video is attached to (Product, Category) */
+  ownerType: Scalars['String']['output'];
+  /** Sort order */
+  sortOrder: Scalars['Int']['output'];
+  /** Video thumbnail URL */
+  thumbnailUrl: Scalars['String']['output'];
+  /** Video upload date */
+  uploadDate?: Maybe<Scalars['DateTime']['output']>;
+};
+
+export type PropertyFragment = { name: string, colorCode?: string, value?: string | number | boolean | null, valueDisplayOrder?: number, propertyType: PropertyType, hidden: boolean, propertyValueType: PropertyValueTypes, label: string, displayOrder?: number, group?: { id: string, name?: string, displayOrder?: number, description?: string } };
+
+export type CurrencyFragment = { code: string, symbol: string };
+
+export type MoneyFragment = { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } };
+
+export type FullOrderFieldsFragment = { comment?: string, purchaseOrderNumber?: string, cancelReason?: string, id: string, number: string, createdDate: any, status?: string, statusDisplayValue?: string, currency: { code: string, symbol: string }, shipments: Array<{ shipmentMethodCode?: string, shipmentMethodOption?: string, shippingMethod?: { logoUrl?: string, typeName?: string }, price: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, discountAmount: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, deliveryAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number }, pickupLocation?: { id: string, name: string, description?: string, geoLocation?: string, deliveryDays?: number, storageDays?: number, contactEmail?: string, contactPhone?: string, workingHours?: string, isActive: boolean, address?: { id: string, key?: string, name?: string, organization?: string, countryCode?: string, countryName?: string, city?: string, postalCode?: string, line1?: string, line2?: string, regionId?: string, regionName?: string, phone?: string, email?: string, outerId?: string, description?: string, addressType?: number } } }>, inPayments: Array<{ id: string, number: string, isApproved: boolean, gatewayCode?: string, paymentMethod?: { name?: string, logoUrl?: string, code: string, typeName: string, paymentMethodType: number, paymentMethodGroupType: number }, billingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, availablePaymentMethods: Array<{ name?: string, code: string, logoUrl?: string, price: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } } }>, items: Array<{ id: string, imageUrl?: string, isGift?: boolean, name: string, productId: string, productType?: string, showPlacedPrice: boolean, quantity: number, sku: string, outerId?: string, currency: { code: string, symbol: string }, listTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, product?: { id: string, brandName?: string, slug?: string, masterVariation?: { id: string, slug?: string }, properties: Array<{ name: string, colorCode?: string, value?: string | number | boolean | null, valueDisplayOrder?: number, propertyType: PropertyType, hidden: boolean, propertyValueType: PropertyValueTypes, label: string, displayOrder?: number, group?: { id: string, name?: string, displayOrder?: number, description?: string } }> }, extendedPrice: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, price: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, placedPrice: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, taxTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, discountTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, discounts: Array<{ promotionId?: string, promotionName?: string }>, vendor?: { id: string, name: string, rating?: { value: number, reviewCount: number } }, configurationItems?: Array<{ id: string, name?: string, customText?: string, type: string, files?: Array<{ name: string, url: string }> }> }>, discounts: Array<{ coupon?: string, description?: string, promotionId?: string, promotionName?: string, amount: { amount: number, formattedAmount: string, currency: { code: string } } }>, discountTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, shippingSubTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, shippingTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, taxTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, subTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, total: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, orderTotals?: Array<{ isDefaultTotalCurrency: boolean, total: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, subTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, discountTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, taxTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } } }> };
+
+export type OrderAddressFieldsFragment = { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number };
+
+export type OrderLineItemFieldsFragment = { id: string, imageUrl?: string, isGift?: boolean, name: string, productId: string, productType?: string, showPlacedPrice: boolean, quantity: number, sku: string, outerId?: string, currency: { code: string, symbol: string }, listTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, product?: { id: string, brandName?: string, slug?: string, masterVariation?: { id: string, slug?: string }, properties: Array<{ name: string, colorCode?: string, value?: string | number | boolean | null, valueDisplayOrder?: number, propertyType: PropertyType, hidden: boolean, propertyValueType: PropertyValueTypes, label: string, displayOrder?: number, group?: { id: string, name?: string, displayOrder?: number, description?: string } }> }, extendedPrice: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, price: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, placedPrice: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, taxTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, discountTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, discounts: Array<{ promotionId?: string, promotionName?: string }>, vendor?: { id: string, name: string, rating?: { value: number, reviewCount: number } }, configurationItems?: Array<{ id: string, name?: string, customText?: string, type: string, files?: Array<{ name: string, url: string }> }> };
+
+export type ShortOrderFieldsFragment = { id: string, number: string, createdDate: any, status?: string, statusDisplayValue?: string, items: Array<{ id: string, imageUrl?: string, isGift?: boolean, name: string, productId: string, productType?: string, showPlacedPrice: boolean, quantity: number, sku: string, outerId?: string, currency: { code: string, symbol: string }, listTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, product?: { id: string, brandName?: string, slug?: string, masterVariation?: { id: string, slug?: string }, properties: Array<{ name: string, colorCode?: string, value?: string | number | boolean | null, valueDisplayOrder?: number, propertyType: PropertyType, hidden: boolean, propertyValueType: PropertyValueTypes, label: string, displayOrder?: number, group?: { id: string, name?: string, displayOrder?: number, description?: string } }> }, extendedPrice: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, price: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, placedPrice: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, taxTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, discountTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, discounts: Array<{ promotionId?: string, promotionName?: string }>, vendor?: { id: string, name: string, rating?: { value: number, reviewCount: number } }, configurationItems?: Array<{ id: string, name?: string, customText?: string, type: string, files?: Array<{ name: string, url: string }> }> }>, discounts: Array<{ coupon?: string, description?: string, promotionId?: string, promotionName?: string, amount: { amount: number, formattedAmount: string, currency: { code: string } } }>, discountTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, shippingSubTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, shippingTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, taxTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, subTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, total: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, orderTotals?: Array<{ isDefaultTotalCurrency: boolean, total: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, subTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, discountTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, taxTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } } }> };
+
 export type SalesRepTaskFieldsFragment = { id: string, name: string, description?: string, type?: string, priority?: string, dueDate?: any, isActive: boolean, completed?: boolean };
 
 export type ChangeSalesRepTaskStatusMutationVariables = Exact<{
@@ -1686,14 +2427,14 @@ export type ChangeSalesRepTaskStatusMutationVariables = Exact<{
 }>;
 
 
-export type ChangeSalesRepTaskStatusMutation = { changeSalesRepTaskStatus?: { id: string, name: string, description?: string, type?: string, priority?: string, dueDate?: any, isActive: boolean, completed?: boolean, createdDate: any, modifiedDate?: any } };
+export type ChangeSalesRepTaskStatusMutation = { changeSalesRepTaskStatus?: { id: string, name: string, description?: string, type?: string, priority?: string, dueDate?: any, isActive: boolean, completed?: boolean } };
 
 export type CreateSalesRepTaskMutationVariables = Exact<{
   command: InputCreateSalesRepTask;
 }>;
 
 
-export type CreateSalesRepTaskMutation = { createSalesRepTask?: { id: string, name: string, description?: string, type?: string, priority?: string, dueDate?: any, isActive: boolean, completed?: boolean, createdDate: any, modifiedDate?: any } };
+export type CreateSalesRepTaskMutation = { createSalesRepTask?: { id: string, name: string, description?: string, type?: string, priority?: string, dueDate?: any, isActive: boolean, completed?: boolean } };
 
 export type DeleteSalesRepTaskMutationVariables = Exact<{
   command: InputDeleteSalesRepTask;
@@ -1721,7 +2462,7 @@ export type UpdateSalesRepTaskMutationVariables = Exact<{
 }>;
 
 
-export type UpdateSalesRepTaskMutation = { updateSalesRepTask?: { id: string, name: string, description?: string, type?: string, priority?: string, dueDate?: any, isActive: boolean, completed?: boolean, createdDate: any, modifiedDate?: any } };
+export type UpdateSalesRepTaskMutation = { updateSalesRepTask?: { id: string, name: string, description?: string, type?: string, priority?: string, dueDate?: any, isActive: boolean, completed?: boolean } };
 
 export type CustomerSalesRepsQueryVariables = Exact<{
   storeId?: InputMaybe<Scalars['String']['input']>;
@@ -1980,7 +2721,7 @@ export type SalesRepTasksQueryVariables = Exact<{
 }>;
 
 
-export type SalesRepTasksQuery = { salesRepTasks?: { totalCount?: number, items?: Array<{ id: string, name: string, description?: string, type?: string, priority?: string, dueDate?: any, isActive: boolean, completed?: boolean, createdDate: any, modifiedDate?: any }> } };
+export type SalesRepTasksQuery = { salesRepTasks?: { totalCount?: number, items?: Array<{ id: string, name: string, description?: string, type?: string, priority?: string, dueDate?: any, isActive: boolean, completed?: boolean }> } };
 
 export type SalesRepTopSellerFilterRulesQueryVariables = Exact<{
   storeId?: InputMaybe<Scalars['String']['input']>;
@@ -2016,6 +2757,13 @@ export type SalesRepTopSellersQueryVariables = Exact<{
 
 export type SalesRepTopSellersQuery = { salesRepTopSellers?: Array<{ rank: number, productId: string, name?: string, sku?: string, imageUrl?: string, categoryId?: string, units: number, revenue: { amount: number, formattedAmount: string, currency: { code: string } } }> };
 
+export const CurrencyFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"currency"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CurrencyType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}}]}}]} as unknown as DocumentNode<CurrencyFragment, unknown>;
+export const MoneyFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"money"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MoneyType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"formattedAmount"}},{"kind":"Field","name":{"kind":"Name","value":"formattedAmountWithoutCurrency"}},{"kind":"Field","name":{"kind":"Name","value":"currency"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"currency"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"currency"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CurrencyType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}}]}}]} as unknown as DocumentNode<MoneyFragment, unknown>;
+export const PropertyFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"property"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Property"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"displayOrder"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"colorCode"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"valueDisplayOrder"}},{"kind":"Field","name":{"kind":"Name","value":"propertyType"}},{"kind":"Field","name":{"kind":"Name","value":"hidden"}},{"kind":"Field","name":{"kind":"Name","value":"propertyValueType"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"displayOrder"}}]}}]} as unknown as DocumentNode<PropertyFragment, unknown>;
+export const OrderLineItemFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"orderLineItemFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"OrderLineItemType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"imageUrl"}},{"kind":"Field","name":{"kind":"Name","value":"isGift"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"productId"}},{"kind":"Field","name":{"kind":"Name","value":"productType"}},{"kind":"Field","name":{"kind":"Name","value":"showPlacedPrice"}},{"kind":"Field","name":{"kind":"Name","value":"currency"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"currency"}}]}},{"kind":"Field","name":{"kind":"Name","value":"listTotal"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"product"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"brandName"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"masterVariation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}},{"kind":"Field","name":{"kind":"Name","value":"properties"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"property"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"quantity"}},{"kind":"Field","name":{"kind":"Name","value":"sku"}},{"kind":"Field","name":{"kind":"Name","value":"extendedPrice"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"price"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"placedPrice"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"taxTotal"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"discountTotal"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"discounts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"promotionId"}},{"kind":"Field","name":{"kind":"Name","value":"promotionName"}}]}},{"kind":"Field","name":{"kind":"Name","value":"outerId"}},{"kind":"Field","name":{"kind":"Name","value":"vendor"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"rating"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"reviewCount"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"configurationItems"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"customText"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"files"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"currency"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CurrencyType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"money"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MoneyType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"formattedAmount"}},{"kind":"Field","name":{"kind":"Name","value":"formattedAmountWithoutCurrency"}},{"kind":"Field","name":{"kind":"Name","value":"currency"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"currency"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"property"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Property"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"displayOrder"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"colorCode"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"valueDisplayOrder"}},{"kind":"Field","name":{"kind":"Name","value":"propertyType"}},{"kind":"Field","name":{"kind":"Name","value":"hidden"}},{"kind":"Field","name":{"kind":"Name","value":"propertyValueType"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"displayOrder"}}]}}]} as unknown as DocumentNode<OrderLineItemFieldsFragment, unknown>;
+export const ShortOrderFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"shortOrderFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CustomerOrderType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"number"}},{"kind":"Field","name":{"kind":"Name","value":"createdDate"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"statusDisplayValue"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"orderLineItemFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"discounts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"amount"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"formattedAmount"}},{"kind":"Field","name":{"kind":"Name","value":"currency"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"code"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"coupon"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"promotionId"}},{"kind":"Field","name":{"kind":"Name","value":"promotionName"}}]}},{"kind":"Field","name":{"kind":"Name","value":"discountTotal"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"shippingSubTotal"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"shippingTotal"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"taxTotal"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subTotal"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"total"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"orderTotals"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"isDefaultTotalCurrency"}},{"kind":"Field","name":{"kind":"Name","value":"total"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subTotal"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"discountTotal"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"taxTotal"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"currency"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CurrencyType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"money"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MoneyType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"formattedAmount"}},{"kind":"Field","name":{"kind":"Name","value":"formattedAmountWithoutCurrency"}},{"kind":"Field","name":{"kind":"Name","value":"currency"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"currency"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"property"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Property"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"displayOrder"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"colorCode"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"valueDisplayOrder"}},{"kind":"Field","name":{"kind":"Name","value":"propertyType"}},{"kind":"Field","name":{"kind":"Name","value":"hidden"}},{"kind":"Field","name":{"kind":"Name","value":"propertyValueType"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"displayOrder"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"orderLineItemFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"OrderLineItemType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"imageUrl"}},{"kind":"Field","name":{"kind":"Name","value":"isGift"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"productId"}},{"kind":"Field","name":{"kind":"Name","value":"productType"}},{"kind":"Field","name":{"kind":"Name","value":"showPlacedPrice"}},{"kind":"Field","name":{"kind":"Name","value":"currency"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"currency"}}]}},{"kind":"Field","name":{"kind":"Name","value":"listTotal"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"product"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"brandName"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"masterVariation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}},{"kind":"Field","name":{"kind":"Name","value":"properties"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"property"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"quantity"}},{"kind":"Field","name":{"kind":"Name","value":"sku"}},{"kind":"Field","name":{"kind":"Name","value":"extendedPrice"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"price"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"placedPrice"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"taxTotal"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"discountTotal"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"discounts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"promotionId"}},{"kind":"Field","name":{"kind":"Name","value":"promotionName"}}]}},{"kind":"Field","name":{"kind":"Name","value":"outerId"}},{"kind":"Field","name":{"kind":"Name","value":"vendor"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"rating"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"reviewCount"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"configurationItems"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"customText"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"files"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}}]}}]}}]} as unknown as DocumentNode<ShortOrderFieldsFragment, unknown>;
+export const OrderAddressFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"orderAddressFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"OrderAddressType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"organization"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"line1"}},{"kind":"Field","name":{"kind":"Name","value":"line2"}},{"kind":"Field","name":{"kind":"Name","value":"city"}},{"kind":"Field","name":{"kind":"Name","value":"countryCode"}},{"kind":"Field","name":{"kind":"Name","value":"countryName"}},{"kind":"Field","name":{"kind":"Name","value":"regionId"}},{"kind":"Field","name":{"kind":"Name","value":"regionName"}},{"kind":"Field","name":{"kind":"Name","value":"postalCode"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"addressType"}}]}}]} as unknown as DocumentNode<OrderAddressFieldsFragment, unknown>;
+export const FullOrderFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"fullOrderFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CustomerOrderType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"shortOrderFields"}},{"kind":"Field","name":{"kind":"Name","value":"comment"}},{"kind":"Field","name":{"kind":"Name","value":"purchaseOrderNumber"}},{"kind":"Field","name":{"kind":"Name","value":"cancelReason"}},{"kind":"Field","name":{"kind":"Name","value":"currency"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"currency"}}]}},{"kind":"Field","name":{"kind":"Name","value":"shipments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"shipmentMethodCode"}},{"kind":"Field","name":{"kind":"Name","value":"shipmentMethodOption"}},{"kind":"Field","name":{"kind":"Name","value":"shippingMethod"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"logoUrl"}},{"kind":"Field","name":{"kind":"Name","value":"typeName"}}]}},{"kind":"Field","name":{"kind":"Name","value":"price"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"discountAmount"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"deliveryAddress"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"orderAddressFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"pickupLocation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"geoLocation"}},{"kind":"Field","name":{"kind":"Name","value":"deliveryDays"}},{"kind":"Field","name":{"kind":"Name","value":"storageDays"}},{"kind":"Field","name":{"kind":"Name","value":"contactEmail"}},{"kind":"Field","name":{"kind":"Name","value":"contactPhone"}},{"kind":"Field","name":{"kind":"Name","value":"workingHours"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"organization"}},{"kind":"Field","name":{"kind":"Name","value":"countryCode"}},{"kind":"Field","name":{"kind":"Name","value":"countryName"}},{"kind":"Field","name":{"kind":"Name","value":"city"}},{"kind":"Field","name":{"kind":"Name","value":"postalCode"}},{"kind":"Field","name":{"kind":"Name","value":"line1"}},{"kind":"Field","name":{"kind":"Name","value":"line2"}},{"kind":"Field","name":{"kind":"Name","value":"regionId"}},{"kind":"Field","name":{"kind":"Name","value":"regionName"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"outerId"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"addressType"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"inPayments"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"1"}},{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"StringValue","value":"CreatedDate:desc","block":false}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"number"}},{"kind":"Field","name":{"kind":"Name","value":"isApproved"}},{"kind":"Field","name":{"kind":"Name","value":"gatewayCode"}},{"kind":"Field","name":{"kind":"Name","value":"paymentMethod"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"logoUrl"}},{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"typeName"}},{"kind":"Field","name":{"kind":"Name","value":"paymentMethodType"}},{"kind":"Field","name":{"kind":"Name","value":"paymentMethodGroupType"}}]}},{"kind":"Field","name":{"kind":"Name","value":"billingAddress"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"orderAddressFields"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"availablePaymentMethods"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"logoUrl"}},{"kind":"Field","name":{"kind":"Name","value":"price"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"currency"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CurrencyType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"money"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MoneyType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"formattedAmount"}},{"kind":"Field","name":{"kind":"Name","value":"formattedAmountWithoutCurrency"}},{"kind":"Field","name":{"kind":"Name","value":"currency"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"currency"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"property"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Property"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"displayOrder"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"colorCode"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"valueDisplayOrder"}},{"kind":"Field","name":{"kind":"Name","value":"propertyType"}},{"kind":"Field","name":{"kind":"Name","value":"hidden"}},{"kind":"Field","name":{"kind":"Name","value":"propertyValueType"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"displayOrder"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"orderLineItemFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"OrderLineItemType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"imageUrl"}},{"kind":"Field","name":{"kind":"Name","value":"isGift"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"productId"}},{"kind":"Field","name":{"kind":"Name","value":"productType"}},{"kind":"Field","name":{"kind":"Name","value":"showPlacedPrice"}},{"kind":"Field","name":{"kind":"Name","value":"currency"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"currency"}}]}},{"kind":"Field","name":{"kind":"Name","value":"listTotal"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"product"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"brandName"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"masterVariation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}},{"kind":"Field","name":{"kind":"Name","value":"properties"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"property"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"quantity"}},{"kind":"Field","name":{"kind":"Name","value":"sku"}},{"kind":"Field","name":{"kind":"Name","value":"extendedPrice"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"price"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"placedPrice"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"taxTotal"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"discountTotal"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"discounts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"promotionId"}},{"kind":"Field","name":{"kind":"Name","value":"promotionName"}}]}},{"kind":"Field","name":{"kind":"Name","value":"outerId"}},{"kind":"Field","name":{"kind":"Name","value":"vendor"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"rating"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"reviewCount"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"configurationItems"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"customText"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"files"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"shortOrderFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CustomerOrderType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"number"}},{"kind":"Field","name":{"kind":"Name","value":"createdDate"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"statusDisplayValue"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"orderLineItemFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"discounts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"amount"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"formattedAmount"}},{"kind":"Field","name":{"kind":"Name","value":"currency"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"code"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"coupon"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"promotionId"}},{"kind":"Field","name":{"kind":"Name","value":"promotionName"}}]}},{"kind":"Field","name":{"kind":"Name","value":"discountTotal"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"shippingSubTotal"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"shippingTotal"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"taxTotal"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subTotal"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"total"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"orderTotals"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"isDefaultTotalCurrency"}},{"kind":"Field","name":{"kind":"Name","value":"total"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subTotal"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"discountTotal"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"taxTotal"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"orderAddressFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"OrderAddressType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"organization"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"line1"}},{"kind":"Field","name":{"kind":"Name","value":"line2"}},{"kind":"Field","name":{"kind":"Name","value":"city"}},{"kind":"Field","name":{"kind":"Name","value":"countryCode"}},{"kind":"Field","name":{"kind":"Name","value":"countryName"}},{"kind":"Field","name":{"kind":"Name","value":"regionId"}},{"kind":"Field","name":{"kind":"Name","value":"regionName"}},{"kind":"Field","name":{"kind":"Name","value":"postalCode"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"addressType"}}]}}]} as unknown as DocumentNode<FullOrderFieldsFragment, unknown>;
 export const SalesRepTaskFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"salesRepTaskFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"SalesRepTask"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"priority"}},{"kind":"Field","name":{"kind":"Name","value":"dueDate"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"completed"}}]}}]} as unknown as DocumentNode<SalesRepTaskFieldsFragment, unknown>;
 export const ChangeSalesRepTaskStatusDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ChangeSalesRepTaskStatus"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"InputChangeSalesRepTaskStatus"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"changeSalesRepTaskStatus"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"salesRepTaskFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"salesRepTaskFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"SalesRepTask"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"priority"}},{"kind":"Field","name":{"kind":"Name","value":"dueDate"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"completed"}}]}}]} as unknown as DocumentNode<ChangeSalesRepTaskStatusMutation, ChangeSalesRepTaskStatusMutationVariables>;
 export const CreateSalesRepTaskDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateSalesRepTask"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"InputCreateSalesRepTask"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createSalesRepTask"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"salesRepTaskFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"salesRepTaskFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"SalesRepTask"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"priority"}},{"kind":"Field","name":{"kind":"Name","value":"dueDate"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"completed"}}]}}]} as unknown as DocumentNode<CreateSalesRepTaskMutation, CreateSalesRepTaskMutationVariables>;
@@ -2091,6 +2839,13 @@ export const OperationNames = {
     UpdateSalesRepTask: 'UpdateSalesRepTask'
   },
   Fragment: {
+    property: 'property',
+    currency: 'currency',
+    money: 'money',
+    fullOrderFields: 'fullOrderFields',
+    orderAddressFields: 'orderAddressFields',
+    orderLineItemFields: 'orderLineItemFields',
+    shortOrderFields: 'shortOrderFields',
     salesRepTaskFields: 'salesRepTaskFields'
   }
 }
