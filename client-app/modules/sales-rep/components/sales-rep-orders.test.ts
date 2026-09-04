@@ -1,6 +1,7 @@
 import { mount } from "@vue/test-utils";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createWrapperFactory } from "@/core/utilities/tests";
+import { ALL_CUSTOMER_ORDERS_ROUTE_NAME, CUSTOMER_ORDERS_ROUTE_NAME } from "../constants";
 import SalesRepOrders from "./sales-rep-orders.vue";
 
 const state = await vi.hoisted(async () => {
@@ -45,15 +46,15 @@ const createWrapper = createWrapperFactory(mount, SalesRepOrders, {
     // scoped-slots with no row. This test only cares which of the three branches renders.
     renderStubDefaultSlot: false,
     stubs: {
-      // The content lives in a named slot, which a plain stub would not render.
-      VcWidget: { template: '<div><slot name="default-container" /></div>' },
+      VcWidget: { template: '<div><slot name="append" /><slot name="default-container" /></div>' },
       // LayoutWidget's drag controls: never rendered here, but the compiler resolves them anyway.
       VcButton: true,
       VcTable: true,
       VcTableColumn: true,
       VcEmptyView: true,
       VcIcon: true,
-      VcLink: true,
+      // Rendered as an anchor rather than stubbed away: the all-orders assertions read its `to` prop.
+      VcLink: { props: ["to"], template: "<a><slot /></a>" },
       // Rendered rather than stubbed away: the assertions are about which message the alert carries.
       VcAlert: { template: '<div class="vc-alert"><slot /></div>' },
       SalesRepRuleChips: true,
@@ -159,5 +160,33 @@ describe("SalesRepOrders states", () => {
 
     expect(emptyViews(wrapper)).toHaveLength(0);
     expect(wrapper.find("vc-table-stub").exists()).toBe(true);
+  });
+});
+
+// findComponent by selector is typed as WrapperLike, which does not expose props.
+type StubType = {
+  exists: () => boolean;
+  props: () => Record<string, unknown>;
+  attributes: (key: string) => string | undefined;
+  vm: { $emit: (event: string, ...args: unknown[]) => void };
+};
+
+describe("SalesRepOrders all-orders link", () => {
+  const allOrdersLink = (wrapper: ReturnType<typeof createWrapper>) =>
+    wrapper.findComponent("a.sales-rep-orders__all-link") as unknown as StubType;
+
+  it("points at the customer's own order list, in the same tab", () => {
+    const wrapper = createWrapper({ props: { title: "Recent orders", organizationId: "org-1" } });
+
+    const link = allOrdersLink(wrapper);
+
+    expect(link.props().to).toEqual({ name: CUSTOMER_ORDERS_ROUTE_NAME, params: { organizationId: "org-1" } });
+    expect(link.attributes("target")).toBeUndefined();
+  });
+
+  it("sends the cross-customer widget to every served customer's orders", () => {
+    const wrapper = createWrapper();
+
+    expect(allOrdersLink(wrapper).props().to).toEqual({ name: ALL_CUSTOMER_ORDERS_ROUTE_NAME });
   });
 });
