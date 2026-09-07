@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { effectScope } from "vue";
+import { effectScope, toValue } from "vue";
 import { PropertyValueTypes } from "@/core/api/graphql/types";
 import { ProductType } from "@/core/enums";
 import { useNotifications } from "@/shared/notification";
@@ -12,16 +12,17 @@ import {
 } from "../constants";
 import type { ICompareProductEntry } from "../types";
 import type { AvailabilityData, Product, Property } from "@/core/api/graphql/types";
-import type { EffectScope } from "vue";
+import type { EffectScope, MaybeRefOrGetter } from "vue";
 
 const hoisted = await vi.hoisted(async () => {
-  const { ref } = await import("vue");
+  const { computed, ref } = await import("vue");
 
   const state = {
     compareEntries: ref<ICompareProductEntry[]>([]),
     fetchedProducts: ref<Product[]>([]),
     fetchingProducts: ref(false),
     route: { query: {} },
+    categories: ref<{ id: string; name: string }[] | undefined>(undefined),
   };
 
   const fetchProducts = vi.fn();
@@ -35,12 +36,26 @@ const hoisted = await vi.hoisted(async () => {
 
   const mutate = vi.fn(async () => ({ data: { createConfiguredLineItem: null } }));
 
+  // Returns only the ids that were actually asked for, like the server does — so a test that seeds
+  // state.categories can't accidentally get a name back for a category the page never requested.
+  const useGetCategories = vi.fn((categoryIds: MaybeRefOrGetter<string[]>) => ({
+    result: computed(() => {
+      if (!state.categories.value) {
+        return undefined;
+      }
+
+      const requestedIds = toValue(categoryIds);
+      return { categories: { items: state.categories.value.filter(({ id }) => requestedIds.includes(id)) } };
+    }),
+  }));
+
   return {
     state,
     fns: {
       fetchProducts,
       useProducts,
       mutate,
+      useGetCategories,
       analytics: vi.fn(),
       isEnabled: vi.fn(() => false),
     },
@@ -81,6 +96,10 @@ vi.mock("@/core/globals", () => ({
   },
 }));
 
+vi.mock("@/core/api/graphql/catalog", () => ({
+  useGetCategories: hoisted.fns.useGetCategories,
+}));
+
 vi.mock("@/shared/catalog/composables/useProducts", () => ({
   useProducts: hoisted.fns.useProducts,
 }));
@@ -112,6 +131,7 @@ function useCompareProductsPage(): ReturnType<typeof realUseCompareProductsPage>
 afterEach(() => {
   scopes.forEach((scope) => scope.stop());
   scopes = [];
+  hoisted.state.categories.value = undefined;
 });
 
 function entry(
@@ -263,6 +283,33 @@ describe("useCompareProductsPage", () => {
       const { categoryTabs } = useCompareProductsPage();
 
       expect(categoryTabs.value).toEqual([{ categoryKey: "cat-a", label: "p2", count: 1 }]);
+    });
+
+    it("labels a tab with the category resolved by id, not with the refetched product's breadcrumb title (which the catalog resolves against the last browsed category, so it can name a different one of a multi-category product's categories)", () => {
+      hoisted.state.compareEntries.value = [entry("p1", "root/cat-a")];
+      // breadcrumb title says "some-other-category" — the category the product was compared under is cat-a.
+      hoisted.state.fetchedProducts.value = [
+        product("p1", { breadcrumbs: [{ itemId: "other", title: "some-other-category", typeName: "Category" }] }),
+      ];
+      hoisted.state.categories.value = [{ id: "cat-a", name: "Category A" }];
+
+      const { categoryTabs } = useCompareProductsPage();
+
+      expect(categoryTabs.value).toEqual([{ categoryKey: "root/cat-a", label: "Category A", count: 1 }]);
+    });
+
+    it("requests the last categoryKey segment of every compared entry, deduped", () => {
+      hoisted.state.compareEntries.value = [
+        entry("p1", "root/cat-a"),
+        entry("p2", "root/cat-a"),
+        entry("p3", "root/cat-b"),
+        entry("p4", ""), // uncategorized — nothing to resolve
+      ];
+
+      useCompareProductsPage();
+
+      const [categoryIds] = hoisted.fns.useGetCategories.mock.calls.at(-1)!;
+      expect(toValue(categoryIds)).toEqual(["cat-a", "cat-b"]);
     });
 
     it("counts only resolved entries, not the raw number of entries in storage", () => {

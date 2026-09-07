@@ -24,6 +24,15 @@ export function getProductCategoryLabel(product: Product, depth = COMPARE_CATEGO
   return categoryBreadcrumbs.at(-1)?.title ?? "";
 }
 
+/**
+ * The id of the category a product was compared under — the last segment of its `categoryKey`
+ * (which is a `/`-joined outline of the first COMPARE_CATEGORY_DEPTH category breadcrumb ids).
+ * Empty for an uncategorized entry.
+ */
+export function getCategoryIdFromKey(categoryKey: string): string {
+  return categoryKey.split("/").at(-1) ?? "";
+}
+
 export function getDisplayPrice(product: Product): PriceType {
   return product.hasVariations && product.minVariationPrice ? product.minVariationPrice : product.price;
 }

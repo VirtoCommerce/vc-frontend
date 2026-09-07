@@ -3,6 +3,7 @@ import { uniqBy } from "lodash-es";
 import { computed, ref, shallowRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
+import { useGetCategories } from "@/core/api/graphql/catalog";
 import { CreateConfiguredLineItemDocument, PropertyValueTypes } from "@/core/api/graphql/types";
 import { useAnalytics } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
@@ -25,7 +26,7 @@ import {
   RATING_ROW_KEY,
   SKU_ROW_KEY,
 } from "../constants";
-import { getDisplayPrice, getProductCategoryLabel } from "../utilities";
+import { getCategoryIdFromKey, getDisplayPrice, getProductCategoryLabel } from "../utilities";
 import { useCompareProducts } from "./useCompareProducts";
 import type { ICompareCategoryTab, ICompareDisplayProduct, ICompareProductEntry, ICompareTableRow } from "../types";
 import type { CreateConfiguredLineItemMutation, MoneyType, Product } from "@/core/api/graphql/types";
@@ -159,6 +160,25 @@ export function useCompareProductsPage() {
 
   const productIds = computed(() => Array.from(new Set(products.value.map((entry) => entry.productId))));
 
+  // A product can be linked to several categories, and the breadcrumbs the catalog returns for it
+  // are resolved against `previousOutline` (the last browsed category, see searchProducts) — not
+  // against the category the product was actually compared under. So tab labels are resolved by
+  // category id instead of read off the refetched products' breadcrumbs.
+  const comparedCategoryIds = computed(() =>
+    Array.from(new Set(products.value.map((entry) => getCategoryIdFromKey(entry.categoryKey)).filter(Boolean))),
+  );
+
+  const { result: categoriesResult } = useGetCategories(comparedCategoryIds);
+
+  const categoryNamesById = computed(
+    () =>
+      new Map(
+        (categoriesResult.value?.categories?.items ?? [])
+          .filter((category) => !!category)
+          .map((category) => [category.id, category.name]),
+      ),
+  );
+
   const configuredEntries = computed(() =>
     products.value.filter((entry) => entry.localId && entry.configurationSectionInput?.length),
   );
@@ -263,8 +283,13 @@ export function useCompareProductsPage() {
 
       const fallbackLabelKey =
         categoryKey === "" ? "shared.compare.table.uncategorized" : "shared.compare.table.unresolved_category";
+      // Breadcrumbs stay as the fallback for the moment before the categories query resolves, and
+      // for a category that no longer exists — a possibly-wrong label beats a flash of "unknown".
       const label =
-        categoryKey !== "" && resolvedProducts[0] ? getProductCategoryLabel(resolvedProducts[0]) : t(fallbackLabelKey);
+        categoryNamesById.value.get(getCategoryIdFromKey(categoryKey)) ||
+        (categoryKey !== "" && resolvedProducts[0]
+          ? getProductCategoryLabel(resolvedProducts[0])
+          : t(fallbackLabelKey));
 
       return {
         categoryKey,
