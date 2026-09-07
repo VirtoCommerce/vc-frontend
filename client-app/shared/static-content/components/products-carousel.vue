@@ -25,7 +25,6 @@ import { ProductCard, useProducts } from "@/shared/catalog";
 import { BREAKPOINTS } from "@/ui-kit/constants";
 
 interface IProps {
-  id?: string;
   background?: string;
   title?: string;
   subtitle?: string;

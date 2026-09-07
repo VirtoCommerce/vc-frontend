@@ -1,5 +1,5 @@
 import { computed, toValue } from "vue";
-import type { SalesRepRuleType, SalesRepSortDirectionType } from "../types";
+import type { SalesRepSortRuleType, SalesRepSortDirectionType } from "../types";
 import type { MaybeRefOrGetter, Ref } from "vue";
 
 // Bridges header-click sorting to the backend's named sort rules ("name"[:asc|desc]); the suffix is
@@ -16,7 +16,7 @@ type OptionsType = {
   // The column that carries the indicator when nothing is selected — i.e. the column of the server's default rule.
   defaultColumn: string;
   // Sort rules exposed by the backend for this domain (from useSalesRepRules), carrying the direction metadata.
-  rules: MaybeRefOrGetter<SalesRepRuleType[]>;
+  rules: MaybeRefOrGetter<SalesRepSortRuleType[]>;
 };
 
 // Split "name[:dir]" into rule name + recognized direction; an unrecognized suffix yields no direction.

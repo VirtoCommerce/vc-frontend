@@ -18,6 +18,7 @@
         v-if="!item.hidden"
         :key="item.id"
         v-bind="item"
+        :id="getAnchorId(item)"
         :model="item"
         :settings="pageBuilderContent.settings"
       />
@@ -26,10 +27,11 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeMount, shallowRef, computed, unref } from "vue";
+import { shallowRef, computed, unref, watch } from "vue";
 import { useBreadcrumbs } from "@/core/composables";
 import { humanizeName } from "@/core/utilities/common";
 import { getBlockType } from "@/plugins/builder-preview/block-mapping";
+import { getAnchorId, useAnchorScroll } from "@/shared/static-content";
 
 interface IProps {
   content?: string;
@@ -65,13 +67,19 @@ function clearState() {
   canShowContent.value = false;
 }
 
-onBeforeMount(() => {
-  if (props.content) {
-    trySetContent();
-  } else {
-    clearState();
-  }
-});
+watch(
+  () => props.content,
+  () => {
+    if (props.content) {
+      trySetContent();
+    } else {
+      clearState();
+    }
+  },
+  { immediate: true },
+);
+
+useAnchorScroll(() => pageBuilderContent.value);
 
 function trySetContent() {
   if (!props.content) {

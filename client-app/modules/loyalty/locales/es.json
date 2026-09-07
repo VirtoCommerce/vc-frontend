@@ -28,5 +28,73 @@
         }
       }
     }
+  },
+  "common": {
+    "links": {
+      "missions_challenges": "Misiones y desafíos"
+    }
+  },
+  "shared": {
+    "account": {
+      "navigation": {
+        "links": {
+          "missions_challenges": "@:common.links.missions_challenges"
+        }
+      }
+    }
+  },
+  "pages": {
+    "account": {
+      "missions": {
+        "title": "Misiones y desafíos",
+        "description": "Completa misiones para ganar puntos extra de Virto Rewards.",
+        "load_error": "No pudimos cargar tus misiones. Inténtalo de nuevo.",
+        "retry_button": "Inténtalo de nuevo",
+        "empty_list": "Todavía no tienes misiones. Vuelve pronto para descubrir nuevas formas de ganar puntos.",
+        "balance_banner": {
+          "label": "Saldo de Virto Rewards",
+          "points": "puntos",
+          "points_history": "Historial de puntos"
+        },
+        "redeem_banner": {
+          "title": "Canjea tus puntos",
+          "description": "Cambia puntos por productos en el catálogo de recompensas.",
+          "catalog": "Catálogo"
+        },
+        "card": {
+          "type_products": "SKU destacados",
+          "type_order_value": "Valor del pedido",
+          "type_orders": "Recuento de pedidos",
+          "points": "puntos",
+          "days_left": "{count} día restante | {count} días restantes",
+          "mission_completed": "Misión completada",
+          "completed": "Completado",
+          "open_mission": "Abrir misión",
+          "progress_skus": "{current} de {target} SKU",
+          "progress_any_sku": "al menos 1 de {target} SKU",
+          "progress_spend": "{sum} gastado",
+          "progress_orders": "{current} de {target} pedidos"
+        },
+        "sku_modal": {
+          "buy_at_least": "Compra al menos {count}",
+          "total_units": "Unidades totales",
+          "targets_met": "Objetivos cumplidos",
+          "cart_subtotal": "Subtotal del carrito",
+          "reward_hint": "Gana {points} puntos cuando se cumplan todos los objetivos",
+          "reward_unlocked": "Todos los objetivos cumplidos: se desbloquearon {points} puntos",
+          "close": "Cerrar",
+          "add_to_cart": "Añadir al carrito",
+          "added_to_cart": "Productos añadidos al carrito",
+          "add_to_cart_error": "Algunos productos no se pudieron añadir al carrito"
+        },
+        "order_modal": {
+          "mission_target": "Objetivo de la misión",
+          "value_requirement": "Gasta {target} en pedidos válidos",
+          "count_requirement": "Realiza {target} pedidos separados",
+          "close": "Cerrar",
+          "redeem_products": "Canjear productos"
+        }
+      }
+    }
   }
 }
