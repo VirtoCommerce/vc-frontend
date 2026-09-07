@@ -1,7 +1,26 @@
 import { describe, it, expect } from "vitest";
-import { toStartDateFilterValue, toEndDateFilterValue, toDateISOString, isDateString } from "./index";
+import { toStartDateFilterValue, toEndDateFilterValue, toDateISOString, isDateString, toLocalDateOnly } from "./index";
 
 describe("Date Utility Functions (Timezone Independent Tests)", () => {
+  describe("toLocalDateOnly", () => {
+    // Local midnight catches a UTC+ skew and 23:59 catches a UTC- one, so together they fail in any
+    // timezone but UTC if the formatting ever goes back through toISOString().
+    it.each([
+      { name: "local midnight", hour: 0, minute: 0 },
+      { name: "the last minute of the local day", hour: 23, minute: 59 },
+    ])("keeps the local calendar day at $name", ({ hour, minute }) => {
+      expect(toLocalDateOnly(new Date(2026, 8, 4, hour, minute))).toBe("2026-09-04");
+    });
+
+    it.each([
+      { name: "single-digit month and day", date: new Date(2026, 0, 5), expected: "2026-01-05" },
+      { name: "a leap day", date: new Date(2024, 1, 29), expected: "2024-02-29" },
+      { name: "a year boundary", date: new Date(2022, 11, 31, 23, 59), expected: "2022-12-31" },
+    ])("pads $name", ({ date, expected }) => {
+      expect(toLocalDateOnly(date)).toBe(expected);
+    });
+  });
+
   describe("toStartDateFilterValue", () => {
     it("should return undefined when no date is provided", () => {
       expect(toStartDateFilterValue()).toBeUndefined();
