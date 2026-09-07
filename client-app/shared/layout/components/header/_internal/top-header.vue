@@ -98,8 +98,9 @@
                   data-test-id="organization-name-label"
                   class="min-w-0 truncate xl:max-w-80"
                   :title="organization.name"
-                  >{{ organization.name }}</span
                 >
+                  {{ organization.name }}
+                </span>
                 /
               </template>
 
