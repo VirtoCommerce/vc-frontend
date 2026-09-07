@@ -5,8 +5,6 @@ import { globals } from "@/core/globals";
 import type { Query, QueryCategoriesArgs } from "@/core/api/graphql/types";
 import type { MaybeRefOrGetter } from "vue";
 
-// Hand-written (like the sibling getCategory/childCategories queries) rather than codegen'd — only
-// id/name are needed, so there's nothing to keep in sync with a generated document.
 const getCategoriesQueryDocument = gql`
   query GetCategories(
     $storeId: String!
@@ -32,9 +30,6 @@ const getCategoriesQueryDocument = gql`
   }
 `;
 
-// `categories` is a connection with a server-side default page size, so `first` is always derived
-// from the id count here — a caller asking for more ids than that default would otherwise silently
-// get a truncated result.
 function getVariables(categoryIds: string[]): QueryCategoriesArgs {
   const { storeId, userId, cultureName, currencyCode } = globals;
 
