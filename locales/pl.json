@@ -642,24 +642,6 @@
         "message": "Czy na pewno chcesz usunąć aktualne logo organizacji? Proces ten jest nieodwracalny."
       }
     },
-    "compare": {
-      "add_to_compare": {
-        "tooltips": {
-          "add": "Dodaj do Porównania",
-          "remove": "Usuń z Porównania"
-        }
-      },
-      "notifications": {
-        "limit_reached": "Można porównać tylko {productsLimit} produkty",
-        "added_html": "Produkt <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> został dodany do listy porównywania <span class=\"hidden lg:inline\">(pozostało pozycji - {itemsLeft})</span>",
-        "removed_html": "Produkt <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> został usunięty z listy porównywania",
-        "compare_button": "Porównaj"
-      },
-      "clear_list_modal": {
-        "title": "Potwierdź wyczyszczenie",
-        "message": "Czy potwierdzasz usunięcie wszystkich produktów z listy porównań?"
-      }
-    },
     "cart": {
       "add_to_cart": {
         "errors": {
@@ -1059,6 +1041,49 @@
       "price_high_to_low": "Cena: od najwyższej",
       "date_new_to_old": "Data, od najnowszej",
       "date_old_to_new": "Data, od najstarszych"
+    },
+    "compare": {
+      "add_to_compare": {
+        "tooltips": {
+          "add": "Dodaj do porównania",
+          "remove": "Usuń z porównania"
+        }
+      },
+      "notifications": {
+        "limit_reached": "Tylko {productsLimit} produktów z tej samej kategorii można porównać",
+        "added_html": "Produkt <span class=\"hidden lg:inline\">„<strong>{productName}</strong>”</span> został dodany do listy porównania <span class=\"hidden lg:inline\"> (pozostało {itemsLeft} elementów)</span>",
+        "removed_html": "Produkt <span class=\"hidden lg:inline\">„<strong>{productName}</strong>”</span> został usunięty z listy porównania",
+        "compare_button": "Porównaj",
+        "added_to_cart_html": "Dodano <strong>{productName}</strong> do koszyka",
+        "fetch_failed": "Nie udało się załadować niektórych porównywanych produktów. Spróbuj ponownie."
+      },
+      "table": {
+        "tabs": {
+          "all": "Wszystkie",
+          "differences": "Różnice"
+        },
+        "uncategorized": "Nie skategoryzowane",
+        "unresolved_category": "Nieznana kategoria",
+        "differ_rows": "Różnice: {count} z {total} wierszy",
+        "clear_category": "Wyczyść kategorię",
+        "remove_product": "Usuń z porównania",
+        "add_to_cart": "Dodaj do koszyka",
+        "fields": {
+          "price_per_unit": "Cena za sztukę",
+          "price_per_unit_tooltip": "Cena, bez VAT, za sztukę.",
+          "customer_rating": "Ocena klienta",
+          "availability": "Dostępność",
+          "sku": "@:common.labels.sku",
+          "min_order_qty": "Min. ilość zamówienia",
+          "min_order_qty_tooltip": "MOQ — minimalna liczba sztuk w zamówieniu."
+        },
+        "pin": {
+          "pin_title": "Przypnij u góry",
+          "unpin_title": "Odpowiedz",
+          "pin_label": "Przypnij „{label}”",
+          "unpin_label": "Odpowiedz „{label}”"
+        }
+      }
     }
   },
   "pages": {
@@ -1637,33 +1662,6 @@
     "loyalty_catalog": {
       "title": "Katalog lojalnościowy"
     },
-    "compare": {
-      "meta": {
-        "title": "Porównaj produkty",
-        "keywords": "test, porównaj, produkty, strona, słowa kluczowe",
-        "description": "Opis testowej strony porównania produktów"
-      },
-      "empty_list": {
-        "title": "Porównaj produkty",
-        "message": "Twoja lista porównań produktów jest pusta",
-        "button_text": "Kontynuuj przeglądanie tutaj",
-        "img_alt": "pustyKoszyk",
-        "img_alt_mobile": "pustyKoszykMobile"
-      },
-      "header_block": {
-        "title": "Porównaj produkty",
-        "counter_message": "{productsNumber} przedmioty z {productsLimit} dodanych",
-        "differences_checkbox_label": "Pokaż tylko różnice",
-        "clear_button": "Wyczyść listę"
-      },
-      "main_block": {
-        "price_label": "@:common.labels.product_price"
-      },
-      "links": {
-        "home": "@:common.links.home",
-        "compare_products": "Porównaj produkty"
-      }
-    },
     "branch": {
       "address": "Adres",
       "phone": "Telefon: ",
@@ -1692,6 +1690,34 @@
     },
     "brand": {
       "products_title": "Produkty"
+    },
+    "compare": {
+      "title": "Porównaj produkty",
+      "meta": {
+        "keywords": "porównaj produkty, porównanie produktów, porównanie obok siebie",
+        "description": "Porównaj produkty obok siebie, aby znaleźć najlepszą opcję dla swoich potrzeb."
+      },
+      "added_count": "{count} z {total} dodanych",
+      "added_count_in_category": "{count} z {total} dodanych w {category}",
+      "actions": {
+        "clear_all": "Wyczyść wszystko"
+      },
+      "clear_all_modal": {
+        "title": "Wyczyść wszystko",
+        "message": "Żaden produkt nie zostanie usunięty z porównania. | 1 produkt zostanie usunięty z porównania. | {n} produkty zostaną usunięte z porównania. | {n} produktów zostanie usuniętych z porównania."
+      },
+      "clear_category_modal": {
+        "title": "Wyczyść kategorię",
+        "message": "Żaden produkt w {category} nie zostanie usunięty z porównania. | 1 produkt w {category} zostanie usunięty z porównania. | {n} produkty w {category} zostaną usunięte z porównania. | {n} produktów w {category} zostanie usuniętych z porównania."
+      },
+      "empty": {
+        "title": "Twoja lista porównawcza jest pusta",
+        "description": "Dodaj produkty z katalogu, aby porównać ich cechy obok siebie. Możesz porównać do {limit} produktów w każdej kategorii.",
+        "restore_button": "Przywróć produkty",
+        "add_button": "Dodaj produkty"
+      },
+      "error": "Nie udało się załadować danych",
+      "retry": "Spróbuj ponownie"
     }
   },
   "identity_error": {

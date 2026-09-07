@@ -642,24 +642,6 @@
         "message": "Você realmente deseja remover o logotipo atual da organização? Este processo é irreversível."
       }
     },
-    "compare": {
-      "add_to_compare": {
-        "tooltips": {
-          "add": "Adicionar para Comparar",
-          "remove": "Remover de Comparar"
-        }
-      },
-      "notifications": {
-        "limit_reached": "Apenas {productsLimit} produtos podem ser comparados",
-        "added_html": "Produto <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> foi adicionado à lista de comparação <span class=\"hidden lg:inline\">(itens restantes - {itemsLeft})</span>",
-        "removed_html": "Produto <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> foi removido da lista de comparação",
-        "compare_button": "Comparar"
-      },
-      "clear_list_modal": {
-        "title": "Confirmar Limpeza",
-        "message": "Você confirma a remoção de todos os produtos da lista de comparação?"
-      }
-    },
     "cart": {
       "add_to_cart": {
         "errors": {
@@ -1059,6 +1041,49 @@
       "price_high_to_low": "Preço, do maior para o menor",
       "date_new_to_old": "Data, mais recente para o mais antigo",
       "date_old_to_new": "Data, do mais antigo para o mais recente"
+    },
+    "compare": {
+      "add_to_compare": {
+        "tooltips": {
+          "add": "Adicionar à Comparação",
+          "remove": "Remover da Comparação"
+        }
+      },
+      "notifications": {
+        "limit_reached": "Apenas {productsLimit} produtos da mesma categoria podem ser comparados",
+        "added_html": "Produto <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> adicionado à lista de comparação <span class=\"hidden lg:inline\">(itens restantes - {itemsLeft})</span>",
+        "removed_html": "Produto <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> removido da lista de comparação",
+        "compare_button": "Comparar",
+        "added_to_cart_html": "Adicionado <strong>{productName}</strong> ao carrinho",
+        "fetch_failed": "Não foi possível carregar alguns produtos comparados. Tente novamente."
+      },
+      "table": {
+        "tabs": {
+          "all": "Todos",
+          "differences": "Diferenças"
+        },
+        "uncategorized": "Não categorizado",
+        "unresolved_category": "Categoria desconhecida",
+        "differ_rows": "Diferem: {count} de {total} linhas",
+        "clear_category": "Limpar categoria",
+        "remove_product": "Remover da comparação",
+        "add_to_cart": "Adicionar ao carrinho",
+        "fields": {
+          "price_per_unit": "Preço por unidade",
+          "price_per_unit_tooltip": "Preço, sem IVA, por unidade.",
+          "customer_rating": "Avaliação do cliente",
+          "availability": "Disponibilidade",
+          "sku": "@:common.labels.sku",
+          "min_order_qty": "Quantidade mínima de pedido",
+          "min_order_qty_tooltip": "MOQ — número mínimo de unidades por pedido."
+        },
+        "pin": {
+          "pin_title": "Fixar no topo",
+          "unpin_title": "Desafixar",
+          "pin_label": "Fixar “{label}”",
+          "unpin_label": "Desafixar “{label}”"
+        }
+      }
     }
   },
   "pages": {
@@ -1637,33 +1662,6 @@
     "loyalty_catalog": {
       "title": "Catálogo de fidelidade"
     },
-    "compare": {
-      "meta": {
-        "title": "Comparar produtos",
-        "keywords": "teste, comparar, produtos, página, palavras-chave",
-        "description": "Descrição da página de comparação de produtos de teste"
-      },
-      "empty_list": {
-        "title": "Comparar produtos",
-        "message": "Sua lista de comparação de produtos está vazia",
-        "button_text": "Continue navegando aqui",
-        "img_alt": "Carrinho vazio",
-        "img_alt_mobile": "Carrinho vazio móvel"
-      },
-      "header_block": {
-        "title": "Comparar produtos",
-        "counter_message": "{productsNumber} itens de {productsLimit} adicionados",
-        "differences_checkbox_label": "Mostrar apenas diferenças",
-        "clear_button": "Limpar lista"
-      },
-      "main_block": {
-        "price_label": "@:common.labels.product_price"
-      },
-      "links": {
-        "home": "@:common.links.home",
-        "compare_products": "Comparar produtos"
-      }
-    },
     "branch": {
       "address": "Endereço",
       "phone": "Telefone: ",
@@ -1692,6 +1690,34 @@
     },
     "brand": {
       "products_title": "Produtos"
+    },
+    "compare": {
+      "title": "Comparar produtos",
+      "meta": {
+        "keywords": "comparar produtos, comparação de produtos, comparação lado a lado",
+        "description": "Compare produtos lado a lado para encontrar a melhor opção para suas necessidades."
+      },
+      "added_count": "{count} de {total} adicionados",
+      "added_count_in_category": "{count} de {total} adicionados em {category}",
+      "actions": {
+        "clear_all": "Limpar tudo"
+      },
+      "clear_all_modal": {
+        "title": "Limpar tudo",
+        "message": "Nenhum produto será removido da comparação. | 1 produto será removido da comparação. | Todos os {n} produtos serão removidos da comparação. | Todos os {n} produtos serão removidos da comparação."
+      },
+      "clear_category_modal": {
+        "title": "Limpar categoria",
+        "message": "Nenhum produto em {category} será removido da comparação. | 1 produto em {category} será removido da comparação. | Todos os {n} produtos em {category} serão removidos da comparação. | Todos os {n} produtos em {category} serão removidos da comparação."
+      },
+      "empty": {
+        "title": "Sua lista de comparação está vazia",
+        "description": "Adicione produtos do catálogo para comparar suas características lado a lado. Você pode comparar até {limit} produtos por categoria.",
+        "restore_button": "Restaurar produtos",
+        "add_button": "Adicionar produtos"
+      },
+      "error": "Falha ao carregar dados",
+      "retry": "Tentar novamente"
     }
   },
   "identity_error": {

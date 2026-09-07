@@ -49,6 +49,7 @@ query GetProductRecommendations(
         }
       }
       breadcrumbs {
+        itemId
         title
         typeName
       }

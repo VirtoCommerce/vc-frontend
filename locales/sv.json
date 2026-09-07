@@ -642,24 +642,6 @@
         "message": "Vill du verkligen ta bort organisationens nuvarande logotyp? Raderingsprocessen är oåterkallelig."
       }
     },
-    "compare": {
-      "add_to_compare": {
-        "tooltips": {
-          "add": "Lägg till i jämförelse",
-          "remove": "Ta bort från jämförelse"
-        }
-      },
-      "notifications": {
-        "limit_reached": "Endast {productsLimit} produkter kan jämföras",
-        "added_html": "Produkten <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> har lagts till i jämförelselistan <span class=\"hidden lg:inline\">(antal kvar - {itemsLeft})</span>",
-        "removed_html": "Produkten <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> har tagits bort från jämförelselistan",
-        "compare_button": "Jämför"
-      },
-      "clear_list_modal": {
-        "title": "Bekräfta rensning",
-        "message": "Bekräftar du att alla produkter ska tas bort från jämförelselistan?"
-      }
-    },
     "cart": {
       "add_to_cart": {
         "errors": {
@@ -1059,6 +1041,49 @@
       "price_high_to_low": "Pris, högt till lågt",
       "date_new_to_old": "Datum, nytt till gammalt",
       "date_old_to_new": "Datum, gammalt till nytt"
+    },
+    "compare": {
+      "add_to_compare": {
+        "tooltips": {
+          "add": "Lägg till i jämförelse",
+          "remove": "Ta bort från jämförelse"
+        }
+      },
+      "notifications": {
+        "limit_reached": "Endast {productsLimit} produkter från samma kategori kan jämföras",
+        "added_html": "Produkt <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> läggs till i jämförelselistan <span class=\"hidden lg:inline\">(återstående - {itemsLeft})</span>",
+        "removed_html": "Produkt <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> togs bort från jämförelselistan",
+        "compare_button": "Jämför",
+        "added_to_cart_html": "Lade till <strong>{productName}</strong> i kundvagnen",
+        "fetch_failed": "Kunde inte ladda vissa jämförda produkter. Försök igen."
+      },
+      "table": {
+        "tabs": {
+          "all": "Alla",
+          "differences": "Skillnader"
+        },
+        "uncategorized": "Osorterad",
+        "unresolved_category": "Okänd kategori",
+        "differ_rows": "Skiljer sig: {count} av {total} rader",
+        "clear_category": "Rensa kategori",
+        "remove_product": "Ta bort från jämförelse",
+        "add_to_cart": "Lägg till i kundvagnen",
+        "fields": {
+          "price_per_unit": "Pris per enhet",
+          "price_per_unit_tooltip": "Pris, exkl. moms, per enhet.",
+          "customer_rating": "Kundbetyg",
+          "availability": "Tillgänglighet",
+          "sku": "@:common.labels.sku",
+          "min_order_qty": "Min. beställningsantal",
+          "min_order_qty_tooltip": "MOQ — minsta antal enheter per beställning."
+        },
+        "pin": {
+          "pin_title": "Fäst överst",
+          "unpin_title": "Släpp fästning",
+          "pin_label": "Fäst “{label}”",
+          "unpin_label": "Släpp fästning för “{label}”"
+        }
+      }
     }
   },
   "pages": {
@@ -1637,33 +1662,6 @@
     "loyalty_catalog": {
       "title": "Lojalitetskatalog"
     },
-    "compare": {
-      "meta": {
-        "title": "Jämför produkter",
-        "keywords": "test, jämför, produkter, sida, nyckelord",
-        "description": "Testjämför produktsidans beskrivning"
-      },
-      "empty_list": {
-        "title": "Jämför produkter",
-        "message": "Din produktjämförelselista är tom",
-        "button_text": "Fortsätt bläddra här",
-        "img_alt": "tomKundvagn",
-        "img_alt_mobile": "tomKundvagnMobil"
-      },
-      "header_block": {
-        "title": "Jämför produkter",
-        "counter_message": "{productsNumber} artiklar av {productsLimit} tillagda",
-        "differences_checkbox_label": "Visa endast skillnader",
-        "clear_button": "Rensa lista"
-      },
-      "main_block": {
-        "price_label": "@:common.labels.product_price"
-      },
-      "links": {
-        "home": "@:common.links.home",
-        "compare_products": "Jämför produkter"
-      }
-    },
     "branch": {
       "address": "Adress",
       "phone": "Telefon: ",
@@ -1692,6 +1690,34 @@
     },
     "brand": {
       "products_title": "Produkter"
+    },
+    "compare": {
+      "title": "Jämför produkter",
+      "meta": {
+        "keywords": "jämför produkter, produktjämförelse, sida vid sida-jämförelse",
+        "description": "Jämför produkter sida vid sida för att hitta det bästa alternativet för dina behov."
+      },
+      "added_count": "{count} av {total} tillagda",
+      "added_count_in_category": "{count} av {total} tillagda i {category}",
+      "actions": {
+        "clear_all": "Rensa alla"
+      },
+      "clear_all_modal": {
+        "title": "Rensa alla",
+        "message": "Inga produkter kommer att tas bort från jämförelsen. | 1 produkt kommer att tas bort från jämförelsen. | Alla {n} produkter kommer att tas bort från jämförelsen. | Alla {n} produkter kommer att tas bort från jämförelsen."
+      },
+      "clear_category_modal": {
+        "title": "Rensa kategori",
+        "message": "Inga produkter i {category} kommer att tas bort från jämförelsen. | 1 produkt i {category} kommer att tas bort från jämförelsen. | Alla {n} produkter i {category} kommer att tas bort från jämförelsen. | Alla {n} produkter i {category} kommer att tas bort från jämförelsen."
+      },
+      "empty": {
+        "title": "Din jämförelselista är tom",
+        "description": "Lägg till produkter från katalogen för att jämföra deras egenskaper sida vid sida. Du kan jämföra upp till {limit} produkter per kategori.",
+        "restore_button": "Återställ produkter",
+        "add_button": "Lägg till produkter"
+      },
+      "error": "Det gick inte att läsa in data",
+      "retry": "Försök igen"
     }
   },
   "identity_error": {
