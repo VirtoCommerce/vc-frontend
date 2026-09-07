@@ -11,16 +11,15 @@
     <IdentityProviders
       v-if="hasOnlyIdentityProviders"
       :providers="identityProviders"
+      :return-url="returnUrl"
       class="sign-in__providers sign-in__providers--only"
     />
 
     <template v-if="hasIdentityProviders && !hasOnlyIdentityProviders" #side>
       <div class="sign-in__side">
-        <div class="sign-in__divider">
-          {{ $t("pages.sign_in.divider_text") }}
-        </div>
+        <SignInDivider>{{ $t("pages.sign_in.divider_text") }}</SignInDivider>
 
-        <IdentityProviders :providers="identityProviders" class="sign-in__providers" />
+        <IdentityProviders :providers="identityProviders" :return-url="returnUrl" class="sign-in__providers" />
       </div>
     </template>
   </VcEmptyPage>
@@ -29,27 +28,20 @@
 <script setup lang="ts">
 import { computed, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
-import { usePageHead, useThemeContext } from "@/core/composables";
+import { useRoute } from "vue-router";
+import { usePageHead, useReturnUrl } from "@/core/composables";
 import { SignInForm } from "@/shared/account";
-
-const PASSWORD_AUTHENTICATION_TYPE = "Password";
+import { useIdentityProviders } from "@/shared/sign-in/composables/useIdentityProviders";
+import SignInDivider from "@/shared/sign-in/components/sign-in-divider.vue";
 
 const IdentityProviders = defineAsyncComponent(() => import("@/shared/sign-in/components/identity-providers.vue"));
 
-const { themeContext } = useThemeContext();
-const authenticationTypes: string[] = themeContext.value.storeSettings?.authenticationTypes?.length
-  ? themeContext.value.storeSettings.authenticationTypes
-  : [PASSWORD_AUTHENTICATION_TYPE];
+const { identityProviders, hasIdentityProviders, hasOnlyIdentityProviders, hasPasswordAuthentication } =
+  useIdentityProviders();
+const { getReturnUrl } = useReturnUrl();
+const route = useRoute();
 
-const identityProviders = computed(() =>
-  authenticationTypes.filter((type: string) => type !== PASSWORD_AUTHENTICATION_TYPE),
-);
-
-const hasIdentityProviders = computed(() => identityProviders.value.length > 0);
-const hasOnlyIdentityProviders = computed(() => hasIdentityProviders.value && !hasPasswordAuthentication.value);
-const hasPasswordAuthentication = computed(() => {
-  return authenticationTypes.includes(PASSWORD_AUTHENTICATION_TYPE);
-});
+const returnUrl = computed<string>(() => getReturnUrl(route.fullPath));
 
 const { t } = useI18n();
 
@@ -85,39 +77,6 @@ usePageHead({
 
     @media (width > theme("screens.lg")) {
       @apply w-[30rem] gap-16;
-    }
-  }
-
-  &__divider {
-    @apply relative flex flex-col items-center uppercase;
-
-    @media (width > theme("screens.sm")) {
-      @apply flex-row;
-    }
-
-    &::before,
-    &::after {
-      @apply content-[''] absolute h-px w-[calc(50%-2rem)] top-1/2 bg-neutral-300;
-
-      @media (width > theme("screens.sm")) {
-        @apply h-[calc(50%-2rem)] w-px;
-      }
-    }
-
-    &::before {
-      @apply left-0;
-
-      @media (width > theme("screens.sm")) {
-        @apply top-2 left-1/2;
-      }
-    }
-
-    &::after {
-      @apply right-0;
-
-      @media (width > theme("screens.sm")) {
-        @apply top-auto bottom-2 left-1/2;
-      }
     }
   }
 
