@@ -20,6 +20,7 @@ vi.mock("./routes", () => ({
     { path: "/sign-in", name: "SignIn", component: {}, meta: { public: true } },
     { path: "/catalog", name: "Catalog", component: {} },
     { path: "/checkout/:cartId?", name: "Checkout", component: {}, meta: { redirectable: false } },
+    { path: "/oauth/authorize", name: "OAuthAuthorize", component: {}, meta: { requiresAuth: true } },
   ],
 }));
 
@@ -41,4 +42,12 @@ test("keeps the existing non-redirectable behavior for ordinary checkout", async
   await router.push("/checkout");
   expect(router.currentRoute.value.name).toBe("SignIn");
   expect(router.currentRoute.value.query.returnUrl).toBeUndefined();
+});
+
+test("preserves the complete OAuth continuation through storefront login", async () => {
+  const router = createRouter({ base: "/" });
+  const continuation = "/oauth/authorize?returnUrl=%2Fconnect%2Fauthorize%3Fclient_id%3Dclaude%26state%3Dopaque";
+  await router.push(continuation);
+  expect(router.currentRoute.value.name).toBe("SignIn");
+  expect(router.currentRoute.value.query.returnUrl).toBe(continuation);
 });

@@ -34,7 +34,8 @@ export function createRouter(options: { base: string }) {
       // save current location to return to it after sign in
       const isUcpHandoff =
         to.matched.some((route) => route.name === "Checkout") && typeof to.query.ucp_session === "string";
-      const query = isUcpHandoff ? { returnUrl: to.fullPath } : buildRedirectUrl(to) || {};
+      const query =
+        isUcpHandoff || to.name === "OAuthAuthorize" ? { returnUrl: to.fullPath } : buildRedirectUrl(to) || {};
 
       return next({
         name: ROUTES.SIGN_IN.NAME,
