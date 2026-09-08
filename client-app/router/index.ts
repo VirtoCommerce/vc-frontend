@@ -32,7 +32,9 @@ export function createRouter(options: { base: string }) {
 
     if (unauthorizedAccessIsDenied) {
       // save current location to return to it after sign in
-      const query = buildRedirectUrl(to) || {};
+      const isUcpHandoff =
+        to.matched.some((route) => route.name === "Checkout") && typeof to.query.ucp_session === "string";
+      const query = isUcpHandoff ? { returnUrl: to.fullPath } : buildRedirectUrl(to) || {};
 
       return next({
         name: ROUTES.SIGN_IN.NAME,
