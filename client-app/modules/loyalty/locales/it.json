@@ -72,7 +72,7 @@
           "open_mission": "Apri missione",
           "progress_skus": "{current} di {target} SKU",
           "progress_any_sku": "almeno 1 SKU su {target}",
-          "progress_spend": "{sum} spesi",
+          "progress_spend": "Speso {sum} di {target}",
           "progress_orders": "{current} di {target} ordini"
         },
         "sku_modal": {
