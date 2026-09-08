@@ -1,3 +1,5 @@
+import type { OrdersFilterDataType } from "@/shared/account/types";
+
 // View model for the table; mapped from the GraphQL SalesRepContact (see useSalesReps).
 // Only active reps ever reach the client; filtering is server-side.
 export type SalesRepType = { id: string; name: string; email: string; phone: string };
@@ -28,9 +30,15 @@ export type SalesRepSortDirectionType = "asc" | "desc";
 export type SalesRepRuleType = {
   name: string;
   label: string;
+  // Item count shown as a highlighted counter next to the label (document-category tabs only).
+  count?: number;
   defaultDirection?: SalesRepSortDirectionType;
   supportsDirection?: boolean;
 };
+// Column sorting needs only the direction metadata, never the display label, so a list of sort rules
+// defined in code does not have to invent one.
+export type SalesRepSortRuleType = Pick<SalesRepRuleType, "name" | "defaultDirection" | "supportsDirection">;
+
 export type SalesRepRuleDomainType = "order" | "customer" | "topSeller";
 export type SalesRepRuleKindType = "filter" | "sort";
 
@@ -65,6 +73,34 @@ export type SalesRepCommunicationResultType = {
   warnings: string[];
 };
 
+// View model for a shared library document (VCST-5730); mapped from the GraphQL SalesRepDocument.
+// `url` is the AUTHORIZED download endpoint (/api/sales-rep/documents/{id}) — the only URL the UI may
+// open or download; raw asset URLs are never constructed client-side. `previewUrl` is the only image
+// source usable in an <img> (the download endpoint needs auth headers a plain <img> cannot send).
+export type SalesRepDocumentType = {
+  id: string;
+  // Raw file name — what downloadFile saves the file as; every visible name renders displayName.
+  name: string;
+  // Human-facing name; falls back to the raw file name on a blank wire value.
+  displayName: string;
+  // Subfolder name under the library root (e.g. "Catalogs"); empty when the file sits at the root.
+  category: string;
+  // The library's single highlighted document — featured by default and badged "Latest release".
+  isPinned: boolean;
+  contentType: string;
+  size: number;
+  createdDate: string;
+  // Falls back to createdDate on the wire's null so "Updated …" always has a date to show.
+  modifiedDate: string;
+  url: string;
+  summary: string;
+  pageCount?: number;
+  previewUrl: string;
+};
+
+// A category tab on the browse-all page: subfolder name + document count.
+export type SalesRepDocumentCategoryType = { name: string; count: number };
+
 // Sales Rep order row, shared by the customer profile and hub dashboard; organizationName backs
 // the dashboard's Customer column.
 export type SalesRepOrderRowType = {
@@ -77,4 +113,26 @@ export type SalesRepOrderRowType = {
   statusDisplayValue: string;
   itemsCount: string;
   total: string;
+};
+
+// The storefront's filter shape, but `customerNames` here is the owning organization, not the buyer.
+export type SalesRepOrdersFilterDataType = OrdersFilterDataType;
+
+// A facet option from the list's own term_facets, so every option offered has orders behind it.
+export type SalesRepFacetOptionType = {
+  name: string;
+  label: string;
+  count: number;
+};
+
+export type SalesRepCustomerOrderRowType = {
+  id: string;
+  number: string;
+  organizationId: string;
+  organizationName: string;
+  createdDate: string;
+  status: string;
+  statusDisplayValue: string;
+  total: string;
+  isOwn: boolean;
 };

@@ -125,6 +125,38 @@
         "ship_to": "Toimitusosoite"
       }
     },
+    "customer_orders": {
+      "page": {
+        "title": "Asiakkaan {customer} tilaukset",
+        "all_title": "Asiakkaiden tilaukset",
+        "title_fallback": "Tilaukset"
+      },
+      "breadcrumb": "Tilaukset",
+      "back_to_customer": "Takaisin asiakkaan tietoihin",
+      "back_to_orders": "Takaisin tilauksiin",
+      "order_not_found": "Tilausta ei löytynyt",
+      "order_load_failed": "This order couldn't be loaded. Try refreshing the page.",
+      "search_placeholder": "Hae numerolla, nimellä tai muilla tiedoilla",
+      "search_aria": "Hae tilauksia",
+      "reset_search": "Nollaa haku",
+      "filters": {
+        "button": "Suodattimet",
+        "title": "Suodattimet",
+        "created_date": "Luontipäivämäärä",
+        "start_date": "Aloituspäivämäärä",
+        "end_date": "Lopetuspäivämäärä",
+        "invalid_range": "Virheellinen päivämääräväli.",
+        "order_status": "Valitse tilauksen tila",
+        "customer": "Valitse asiakas",
+        "reset": "Nollaa",
+        "apply": "Käytä",
+        "custom_date": "Mukautettu päivämäärä",
+        "last_day": "Viimeinen päivä",
+        "last_week": "Viime viikko",
+        "last_month": "Viime kuukausi",
+        "last_year": "Viime vuosi"
+      }
+    },
     "communication": {
       "action": "Lähetä sähköposti",
       "title": "Lähetä viesti",
@@ -157,7 +189,7 @@
       }
     },
     "orders": {
-      "title": "Viimeisimmät tilaukset",
+      "title": "Omat viimeisimmät tilaukset",
       "view_all": "Kaikki tilaukset",
       "empty": "Ei vielä tilauksia",
       "no_results": "Mikään tilaus ei vastaa tätä suodatinta",
@@ -180,6 +212,32 @@
       "no_results": "Ei myyntiä tässä luokassa",
       "all_categories": "Kaikki kategoriat",
       "load_failed": "Myydyimpiä ei voitu ladata"
+    },
+    "documents": {
+      "title": "Dokumenttikirjasto",
+      "browse_all": "Selaa kaikkia",
+      "open": "Avaa",
+      "empty": "Ei vielä dokumentteja",
+      "load_failed": "Dokumentteja ei voitu ladata",
+      "page": {
+        "subtitle": "Kuvastot, lookbookit, hinnastot ja myyntioppaat — avaa tai lataa uusin julkaisu.",
+        "search_placeholder": "Hae nimellä",
+        "search_aria": "Hae dokumentteja",
+        "all_tab": "Kaikki",
+        "empty": "Ei vielä dokumentteja",
+        "no_results": "Yksikään dokumentti ei vastaa hakuasi",
+        "reset_search": "Tyhjennä haku",
+        "load_failed": "Dokumentteja ei voitu ladata"
+      },
+      "details": {
+        "pages_count": "{count} sivu | {count} sivua",
+        "open": "Avaa",
+        "download": "Lataa",
+        "close": "Sulje tiedot",
+        "not_found": "Tämä dokumentti ei ole enää saatavilla.",
+        "latest_publication": "Uusin julkaisu"
+      },
+      "published": "Julkaistu {date}"
     },
     "rules": {
       "load_failed": {

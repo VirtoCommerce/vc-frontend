@@ -14,7 +14,10 @@ export function toSameOriginPath(url: string | null | undefined, fallback = "/")
     if (target.origin !== location.origin) {
       return fallback;
     }
-    return `${target.pathname}${target.search}${target.hash}`;
+    const path = `${target.pathname}${target.search}${target.hash}`;
+
+    // A path of "//host" resolves off-origin when it reaches `location`.
+    return path.startsWith("//") ? fallback : path;
   } catch {
     return fallback;
   }

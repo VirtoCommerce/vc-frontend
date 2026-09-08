@@ -198,6 +198,7 @@ import {
   PRODUCT_VARIATIONS_LAYOUT_PROPERTY_VALUES,
 } from "@/shared/catalog/constants/product";
 import { FloatingBar } from "@/shared/common";
+import { useAnchorScroll } from "@/shared/static-content";
 import { useXPickup } from "@/shared/x-pickup/composables/useXPickup";
 import { BREAKPOINTS } from "@/ui-kit/constants";
 import type { ISortInfo } from "@/core/types";
@@ -275,6 +276,9 @@ const { pushHistoricalEvent } = useHistoricalEvents();
 
 const router = useRouter();
 const route = useRoute();
+
+useAnchorScroll(() => product.value);
+
 const { cart, loading: loadingCart } = useShortCart();
 const { updateLocalizedUrl } = useLanguages();
 

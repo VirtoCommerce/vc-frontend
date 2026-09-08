@@ -125,6 +125,38 @@
         "ship_to": "Envío a"
       }
     },
+    "customer_orders": {
+      "page": {
+        "title": "Pedidos de {customer}",
+        "all_title": "Pedidos de clientes",
+        "title_fallback": "Pedidos"
+      },
+      "breadcrumb": "Pedidos",
+      "back_to_customer": "Volver al cliente",
+      "back_to_orders": "Volver a los pedidos",
+      "order_not_found": "Pedido no encontrado",
+      "order_load_failed": "This order couldn't be loaded. Try refreshing the page.",
+      "search_placeholder": "Buscar por número, nombre u otros datos",
+      "search_aria": "Buscar pedidos",
+      "reset_search": "Restablecer búsqueda",
+      "filters": {
+        "button": "Filtros",
+        "title": "Filtros",
+        "created_date": "Fecha de creación",
+        "start_date": "Fecha de inicio",
+        "end_date": "Fecha de finalización",
+        "invalid_range": "Rango de fechas no válido.",
+        "order_status": "@:common.labels.status",
+        "customer": "Seleccionar cliente",
+        "reset": "Restablecer",
+        "apply": "Aplicar",
+        "custom_date": "Fecha personalizada",
+        "last_day": "Último día",
+        "last_week": "Última semana",
+        "last_month": "Último mes",
+        "last_year": "Último año"
+      }
+    },
     "communication": {
       "action": "Enviar correo",
       "title": "Enviar un mensaje",
@@ -157,7 +189,7 @@
       }
     },
     "orders": {
-      "title": "Pedidos recientes",
+      "title": "Mis pedidos recientes",
       "view_all": "Todos los pedidos",
       "empty": "Aún no hay pedidos",
       "no_results": "Ningún pedido coincide con este filtro",
@@ -180,6 +212,32 @@
       "no_results": "Sin ventas en esta categoría",
       "all_categories": "Todas las categorías",
       "load_failed": "No se pudieron cargar los más vendidos"
+    },
+    "documents": {
+      "title": "Biblioteca de documentos",
+      "browse_all": "Ver todos",
+      "open": "Abrir",
+      "empty": "Aún no hay documentos",
+      "load_failed": "No se pudieron cargar los documentos",
+      "page": {
+        "subtitle": "Catálogos, lookbooks, listas de precios y guías de ventas: abra o descargue la última publicación.",
+        "search_placeholder": "Buscar por nombre",
+        "search_aria": "Buscar documentos",
+        "all_tab": "Todos",
+        "empty": "Aún no hay documentos",
+        "no_results": "Ningún documento coincide con su búsqueda",
+        "reset_search": "Restablecer búsqueda",
+        "load_failed": "No se pudieron cargar los documentos"
+      },
+      "details": {
+        "pages_count": "{count} página | {count} páginas",
+        "open": "Abrir",
+        "download": "Descargar",
+        "close": "Cerrar detalles",
+        "not_found": "Este documento ya no está disponible.",
+        "latest_publication": "Última publicación"
+      },
+      "published": "Publicado {date}"
     },
     "rules": {
       "load_failed": {

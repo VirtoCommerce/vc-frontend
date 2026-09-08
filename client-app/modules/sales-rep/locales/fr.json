@@ -125,6 +125,38 @@
         "ship_to": "Adresse de livraison"
       }
     },
+    "customer_orders": {
+      "page": {
+        "title": "Commandes de {customer}",
+        "all_title": "Commandes des clients",
+        "title_fallback": "Commandes"
+      },
+      "breadcrumb": "Commandes",
+      "back_to_customer": "Retour au client",
+      "back_to_orders": "Retour aux commandes",
+      "order_not_found": "Commande introuvable",
+      "order_load_failed": "This order couldn't be loaded. Try refreshing the page.",
+      "search_placeholder": "Rechercher par numéro, nom ou autres données",
+      "search_aria": "Rechercher des commandes",
+      "reset_search": "Réinitialiser la recherche",
+      "filters": {
+        "button": "Filtres",
+        "title": "Filtres",
+        "created_date": "Date de création",
+        "start_date": "Date de début",
+        "end_date": "Date de fin",
+        "invalid_range": "Plage de dates non valide.",
+        "order_status": "@:common.labels.status",
+        "customer": "Sélectionner un client",
+        "reset": "Réinitialiser",
+        "apply": "Appliquer",
+        "custom_date": "Date personnalisée",
+        "last_day": "Dernier jour",
+        "last_week": "Dernière semaine",
+        "last_month": "Dernier mois",
+        "last_year": "Dernière année"
+      }
+    },
     "communication": {
       "action": "Envoyer un e-mail",
       "title": "Envoyer un message",
@@ -157,7 +189,7 @@
       }
     },
     "orders": {
-      "title": "Commandes récentes",
+      "title": "Mes commandes récentes",
       "view_all": "Toutes les commandes",
       "empty": "Aucune commande pour le moment",
       "no_results": "Aucune commande ne correspond à ce filtre",
@@ -180,6 +212,32 @@
       "no_results": "Aucune vente dans cette catégorie",
       "all_categories": "Toutes catégories",
       "load_failed": "Impossible de charger les meilleures ventes"
+    },
+    "documents": {
+      "title": "Bibliothèque de documents",
+      "browse_all": "Tout parcourir",
+      "open": "Ouvrir",
+      "empty": "Aucun document pour le moment",
+      "load_failed": "Impossible de charger les documents",
+      "page": {
+        "subtitle": "Catalogues, lookbooks, grilles tarifaires et guides de vente — ouvrez ou téléchargez la dernière publication.",
+        "search_placeholder": "Rechercher par nom",
+        "search_aria": "Rechercher des documents",
+        "all_tab": "Tous",
+        "empty": "Aucun document pour le moment",
+        "no_results": "Aucun document ne correspond à votre recherche",
+        "reset_search": "Réinitialiser la recherche",
+        "load_failed": "Impossible de charger les documents"
+      },
+      "details": {
+        "pages_count": "{count} page | {count} pages",
+        "open": "Ouvrir",
+        "download": "Télécharger",
+        "close": "Fermer les détails",
+        "not_found": "Ce document n'est plus disponible.",
+        "latest_publication": "Dernière publication"
+      },
+      "published": "Publié le {date}"
     },
     "rules": {
       "load_failed": {

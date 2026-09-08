@@ -1,28 +1,24 @@
 <template>
-  <template v-if="isCollapsible">
-    <ProductTitledBlock
-      v-if="!model.hidden && description"
-      :title="model.title || $t('shared.catalog.product_details.description_block_title')"
-      icon="document-text"
-    >
-      <VcCollapsibleContent max-height="18.75rem" class="text-base text-neutral-600">
-        <VcMarkdownRender :src="description" />
-      </VcCollapsibleContent>
-    </ProductTitledBlock>
-  </template>
+  <ProductTitledBlock
+    v-if="!model.hidden && description && isCollapsible"
+    :title="model.title || $t('shared.catalog.product_details.description_block_title')"
+    icon="document-text"
+  >
+    <VcCollapsibleContent max-height="18.75rem" class="text-base text-neutral-600">
+      <VcMarkdownRender :src="description" />
+    </VcCollapsibleContent>
+  </ProductTitledBlock>
 
-  <template v-else>
-    <VcWidget
-      v-if="!model.hidden && description"
-      size="lg"
-      :title="model.title || $t('shared.catalog.product_details.description_block_title')"
-      prepend-icon="document-text"
-    >
-      <div class="text-base text-neutral-600">
-        <VcMarkdownRender :src="description" />
-      </div>
-    </VcWidget>
-  </template>
+  <VcWidget
+    v-else-if="!model.hidden && description"
+    size="lg"
+    :title="model.title || $t('shared.catalog.product_details.description_block_title')"
+    prepend-icon="document-text"
+  >
+    <div class="text-base text-neutral-600">
+      <VcMarkdownRender :src="description" />
+    </div>
+  </VcWidget>
 </template>
 
 <script setup lang="ts">

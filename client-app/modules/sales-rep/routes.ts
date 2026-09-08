@@ -1,27 +1,40 @@
 import { useUser } from "@/shared/account/composables/useUser";
 import { isSalesRepsEnabled } from "./composables/useSalesRepsConfig";
 import {
+  ALL_CUSTOMER_ORDERS_ROUTE_NAME,
+  ALL_CUSTOMER_ORDERS_ROUTE_SEGMENT,
+  CUSTOMER_ORDERS_ROUTE_NAME,
+  CUSTOMER_ORDERS_ROUTE_SEGMENT,
+  CUSTOMER_ORDER_ROUTE_NAME,
+  CUSTOMER_ORDER_ROUTE_SEGMENT,
   CUSTOMER_PROFILE_ROUTE_NAME,
   CUSTOMER_PROFILE_ROUTE_SEGMENT,
   DASHBOARD_ROUTE_NAME,
   DASHBOARD_ROUTE_SEGMENT,
+  DOCUMENTS_ROUTE_NAME,
+  DOCUMENTS_ROUTE_SEGMENT,
   MY_CUSTOMERS_ROUTE_NAME,
   MY_CUSTOMERS_ROUTE_SEGMENT,
   ROUTE_NAME,
   ROUTE_SEGMENT,
   SALES_REP_ACCESS_PERMISSION,
+  SALES_REP_DOCUMENTS_READ_PERMISSION,
 } from "./constants";
-import type { RouteRecordRaw } from "vue-router";
+import type { NavigationGuard, RouteRecordRaw } from "vue-router";
 
 const SalesRepsPage = () => import("./pages/sales-reps.vue");
+const CustomerOrdersPage = () => import("./pages/customer-orders.vue");
+const CustomerOrderDetailsPage = () => import("./pages/customer-order-details.vue");
 const MyCustomersPage = () => import("./pages/my-customers.vue");
 const CustomerProfilePage = () => import("./pages/customer-profile.vue");
 const DashboardPage = () => import("./pages/dashboard.vue");
+const DocumentsPage = () => import("./pages/documents.vue");
 
-// Reps only: reuse the My customers gate (SalesRep.Enabled + sales-rep:access), else -> Dashboard.
-function guardSalesRep(next: (to?: { name: string }) => void): boolean {
+// Reps only: the My customers gate (SalesRep.Enabled + sales-rep:access) AND every extra permission
+// the page names (checkPermissions is a variadic AND; admins pass), else -> Dashboard.
+function guardSalesRep(next: (to?: { name: string }) => void, ...extraPermissions: string[]): boolean {
   const { checkPermissions } = useUser();
-  if (isSalesRepsEnabled() && checkPermissions(SALES_REP_ACCESS_PERMISSION)) {
+  if (isSalesRepsEnabled() && checkPermissions(SALES_REP_ACCESS_PERMISSION, ...extraPermissions)) {
     return true;
   }
   next({ name: "Dashboard" });
@@ -36,6 +49,24 @@ function guardSalesRep(next: (to?: { name: string }) => void): boolean {
 // guards below still enforce reps-only access. VCST-5494.
 const repRouteMeta = { requiresOrganization: false };
 
+const guardCustomerRoute: NavigationGuard = (to, _from, next) => {
+  if (!guardSalesRep(next)) {
+    return;
+  }
+  const id = to.params.organizationId;
+  if (id && typeof id === "string") {
+    next();
+  } else {
+    next({ name: MY_CUSTOMERS_ROUTE_NAME });
+  }
+};
+
+const guardRepRoute: NavigationGuard = (_to, _from, next) => {
+  if (guardSalesRep(next)) {
+    next();
+  }
+};
+
 // Relative path -> mounts under the "Company" parent (/company/sales-reps).
 export const salesRepsRoute: RouteRecordRaw = {
   path: ROUTE_SEGMENT,
@@ -49,12 +80,7 @@ export const dashboardRoute: RouteRecordRaw = {
   name: DASHBOARD_ROUTE_NAME,
   component: DashboardPage,
   meta: repRouteMeta,
-  // Reps only — non-reps who hit the URL directly are bounced to the account dashboard.
-  beforeEnter(_to, _from, next) {
-    if (guardSalesRep(next)) {
-      next();
-    }
-  },
+  beforeEnter: guardRepRoute,
 };
 
 export const myCustomersRoute: RouteRecordRaw = {
@@ -62,9 +88,18 @@ export const myCustomersRoute: RouteRecordRaw = {
   name: MY_CUSTOMERS_ROUTE_NAME,
   component: MyCustomersPage,
   meta: repRouteMeta,
-  // Reps only — non-reps who hit the URL directly are bounced to the dashboard.
+  beforeEnter: guardRepRoute,
+};
+
+// Document library (VCST-5730) -> /company/documents. Beyond rep access it needs the documents
+// read permission — the same gate that hides the nav link and the dashboard widget.
+export const documentsRoute: RouteRecordRaw = {
+  path: DOCUMENTS_ROUTE_SEGMENT,
+  name: DOCUMENTS_ROUTE_NAME,
+  component: DocumentsPage,
+  meta: repRouteMeta,
   beforeEnter(_to, _from, next) {
-    if (guardSalesRep(next)) {
+    if (guardSalesRep(next, SALES_REP_DOCUMENTS_READ_PERMISSION)) {
       next();
     }
   },
@@ -77,16 +112,32 @@ export const customerProfileRoute: RouteRecordRaw = {
   component: CustomerProfilePage,
   props: true,
   meta: repRouteMeta,
-  // Reps-only gate + deep-link id check; the not-served/unknown-org case is handled on the page.
-  beforeEnter(to, _from, next) {
-    if (!guardSalesRep(next)) {
-      return;
-    }
-    const id = to.params.organizationId;
-    if (id && typeof id === "string") {
-      next();
-    } else {
-      next({ name: MY_CUSTOMERS_ROUTE_NAME });
-    }
-  },
+  beforeEnter: guardCustomerRoute,
+};
+
+export const customerOrdersRoute: RouteRecordRaw = {
+  path: CUSTOMER_ORDERS_ROUTE_SEGMENT,
+  name: CUSTOMER_ORDERS_ROUTE_NAME,
+  component: CustomerOrdersPage,
+  props: true,
+  meta: repRouteMeta,
+  beforeEnter: guardCustomerRoute,
+};
+
+export const customerOrderRoute: RouteRecordRaw = {
+  path: CUSTOMER_ORDER_ROUTE_SEGMENT,
+  name: CUSTOMER_ORDER_ROUTE_NAME,
+  component: CustomerOrderDetailsPage,
+  props: true,
+  meta: repRouteMeta,
+  beforeEnter: guardCustomerRoute,
+};
+
+// No customer in the route, so the page needs no id check — only the reps-only gate.
+export const allCustomerOrdersRoute: RouteRecordRaw = {
+  path: ALL_CUSTOMER_ORDERS_ROUTE_SEGMENT,
+  name: ALL_CUSTOMER_ORDERS_ROUTE_NAME,
+  component: CustomerOrdersPage,
+  meta: repRouteMeta,
+  beforeEnter: guardRepRoute,
 };

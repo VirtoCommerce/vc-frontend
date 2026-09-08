@@ -6,7 +6,7 @@
     "url": "https://virtocommerce.com"
   },
   "license": "SEE LICENSE IN LICENSE.txt",
-  "version": "2.56.0",
+  "version": "2.57.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -71,7 +71,7 @@
     "@vueuse/integrations": "^14.3.0",
     "axios": "^1.18.1",
     "barcode-detector": "3.2.1",
-    "dompurify": "^3.4.12",
+    "dompurify": "^3.4.14",
     "firebase": "^12.16.0",
     "graphql": "^16.14.2",
     "graphql-tag": "^2.12.7",
@@ -84,7 +84,7 @@
     "semver": "^7.8.5",
     "skyflow-js": "2.7.9",
     "sortablejs": "^1.15.7",
-    "swiper": "11.2.10",
+    "swiper": "12.1.2",
     "tw-elements": "^1.1.0",
     "utility-types": "^3.11.0",
     "uuid": "^14.0.1",
@@ -104,7 +104,6 @@
     "@graphql-codegen/cli": "5.0.7",
     "@graphql-codegen/introspection": "4.0.3",
     "@graphql-codegen/named-operations-object": "3.1.1",
-    "@graphql-codegen/near-operation-file-preset": "^3.1.0",
     "@graphql-codegen/typed-document-node": "5.1.2",
     "@graphql-codegen/typescript": "4.1.6",
     "@graphql-codegen/typescript-operations": "4.6.1",
@@ -114,12 +113,10 @@
     "@storybook/addon-a11y": "9.1.20",
     "@storybook/addon-docs": "9.1.20",
     "@storybook/addon-links": "9.1.20",
-    "@storybook/cli": "9.1.20",
     "@storybook/vue3-vite": "9.1.20",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/vue": "^8.1.0",
     "@tsconfig/node22": "^22.0.5",
-    "@types/dompurify": "^3.2.0",
     "@types/google.maps": "^3.65.2",
     "@types/gtag.js": "^0.0.20",
     "@types/jsdom": "^28.0.3",
@@ -153,7 +150,7 @@
     "husky": "^9.1.7",
     "jsdom": "^29.1.1",
     "lint-staged": "^17.1.1",
-    "postcss": "^8.5.20",
+    "postcss": "^8.5.26",
     "postcss-import": "^16.1.1",
     "prettier": "^3.9.5",
     "rollup-plugin-dts": "^6.4.1",
@@ -175,6 +172,10 @@
     "vue-tsc": "3.3.7"
   },
   "resolutions": {
+    "@graphql-codegen/plugin-helpers/lodash": "^4.18.1",
+    "@module-federation/dts-plugin/adm-zip": "^0.6.0",
+    "@module-federation/dts-plugin/undici": "^7.29.0",
+    "skyflow-js/lodash": "^4.18.1",
     "uri-js": "npm:uri-js-replace@^1.0.0"
   },
   "lint-staged": {

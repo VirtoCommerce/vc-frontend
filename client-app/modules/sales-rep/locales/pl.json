@@ -125,6 +125,38 @@
         "ship_to": "Adres dostawy"
       }
     },
+    "customer_orders": {
+      "page": {
+        "title": "Zamówienia klienta {customer}",
+        "all_title": "Zamówienia klientów",
+        "title_fallback": "Zamówienia"
+      },
+      "breadcrumb": "Zamówienia",
+      "back_to_customer": "Powrót do klienta",
+      "back_to_orders": "Powrót do zamówień",
+      "order_not_found": "Nie znaleziono zamówienia",
+      "order_load_failed": "This order couldn't be loaded. Try refreshing the page.",
+      "search_placeholder": "Szukaj po numerze, nazwisku lub innych danych",
+      "search_aria": "Szukaj zamówień",
+      "reset_search": "Resetuj wyszukiwanie",
+      "filters": {
+        "button": "Filtry",
+        "title": "Filtry",
+        "created_date": "Data utworzenia",
+        "start_date": "Data rozpoczęcia",
+        "end_date": "Data zakończenia",
+        "invalid_range": "Nieprawidłowy zakres dat.",
+        "order_status": "@:common.labels.status",
+        "customer": "Wybierz klienta",
+        "reset": "Resetuj",
+        "apply": "Zastosuj",
+        "custom_date": "Data niestandardowa",
+        "last_day": "Ostatni dzień",
+        "last_week": "Ostatni tydzień",
+        "last_month": "Ostatni miesiąc",
+        "last_year": "Ostatni rok"
+      }
+    },
     "communication": {
       "action": "Wyślij e-mail",
       "title": "Wyślij wiadomość",
@@ -157,7 +189,7 @@
       }
     },
     "orders": {
-      "title": "Ostatnie zamówienia",
+      "title": "Moje ostatnie zamówienia",
       "view_all": "Wszystkie zamówienia",
       "empty": "Brak zamówień",
       "no_results": "Żadne zamówienie nie pasuje do tego filtra",
@@ -180,6 +212,32 @@
       "no_results": "Brak sprzedaży w tej kategorii",
       "all_categories": "Wszystkie kategorie",
       "load_failed": "Nie udało się wczytać bestsellerów"
+    },
+    "documents": {
+      "title": "Biblioteka dokumentów",
+      "browse_all": "Przeglądaj wszystkie",
+      "open": "Otwórz",
+      "empty": "Brak dokumentów",
+      "load_failed": "Nie udało się wczytać dokumentów",
+      "page": {
+        "subtitle": "Katalogi, lookbooki, cenniki i przewodniki sprzedażowe — otwieraj lub pobieraj najnowszą publikację.",
+        "search_placeholder": "Szukaj według nazwy",
+        "search_aria": "Szukaj dokumentów",
+        "all_tab": "Wszystkie",
+        "empty": "Brak dokumentów",
+        "no_results": "Żaden dokument nie pasuje do wyszukiwania",
+        "reset_search": "Resetuj wyszukiwanie",
+        "load_failed": "Nie udało się wczytać dokumentów"
+      },
+      "details": {
+        "pages_count": "{count} stron | {count} strona | {count} strony | {count} stron",
+        "open": "Otwórz",
+        "download": "Pobierz",
+        "close": "Zamknij szczegóły",
+        "not_found": "Ten dokument nie jest już dostępny.",
+        "latest_publication": "Najnowsza publikacja"
+      },
+      "published": "Opublikowano {date}"
     },
     "rules": {
       "load_failed": {

@@ -18,6 +18,7 @@
         v-if="!item.hidden"
         :key="item.id"
         v-bind="item"
+        :id="getAnchorId(item)"
         :model="item"
         :settings="pageBuilderContent.settings"
       />
@@ -31,6 +32,7 @@ import { useBreadcrumbs } from "@/core/composables";
 import { Logger } from "@/core/utilities";
 import { humanizeName } from "@/core/utilities/common";
 import { getBlockType } from "@/plugins/builder-preview/block-mapping";
+import { getAnchorId, useAnchorScroll } from "@/shared/static-content";
 
 interface IProps {
   content?: string;
@@ -69,6 +71,8 @@ watch(
   },
   { immediate: true },
 );
+
+useAnchorScroll(() => pageBuilderContent.value);
 
 function parsePageBuilderContent(content?: string): IPageBuilderContent | null {
   let parsedContent: IPageBuilderContent | null = null;

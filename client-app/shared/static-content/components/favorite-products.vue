@@ -50,7 +50,6 @@ import { useProductsRoutes } from "@/core/composables";
 import { useProducts } from "@/shared/catalog";
 
 interface IProps {
-  id?: string;
   background?: string | null;
   widgetBackground?: {
     color?: string;

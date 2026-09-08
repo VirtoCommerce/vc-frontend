@@ -1,0 +1,8 @@
+query GetAssignableCompanyRoles($id: String!, $userId: String!, $storeId: String) {
+  organization(id: $id, userId: $userId) {
+    assignableRoles(storeId: $storeId) {
+      id
+      name
+    }
+  }
+}
