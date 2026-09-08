@@ -2,10 +2,10 @@ import { useApolloClient } from "@vue/apollo-composable";
 import { useRouter } from "vue-router";
 import { filterActiveQueryNames } from "@/core/api/graphql";
 import { OperationNames } from "@/core/api/graphql/types";
-import { useSupportReports, useThemeContext } from "@/core/composables";
+import { useReturnUrl, useSupportReports } from "@/core/composables";
 import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { globals } from "@/core/globals";
-import { buildRedirectUrl, getReturnUrlValue } from "@/core/utilities";
+import { buildRedirectUrl, toSameOriginPath } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
 import { useSignMeOut, useUser } from "@/shared/account";
 import {
@@ -43,7 +43,7 @@ export function setupBroadcastGlobalListeners() {
   const notifications = useNotifications();
   const { fetchUser, user } = useUser();
   const { signMeOut } = useSignMeOut({ reloadPage: false });
-  const { themeContext } = useThemeContext();
+  const { getReturnUrl } = useReturnUrl();
   const { report } = useSupportReports();
 
   function createReportButton(error: unknown): NotificationCustomButtonType {
@@ -154,7 +154,7 @@ export function setupBroadcastGlobalListeners() {
     });
   });
   on(openReturnUrl, () => {
-    location.href = getReturnUrlValue() ?? themeContext.value.settings.default_return_url ?? "/";
+    location.href = toSameOriginPath(getReturnUrl());
   });
 
   on(forbiddenEvent, () => {

@@ -28,5 +28,73 @@
         }
       }
     }
+  },
+  "common": {
+    "links": {
+      "missions_challenges": "Миссии и испытания"
+    }
+  },
+  "shared": {
+    "account": {
+      "navigation": {
+        "links": {
+          "missions_challenges": "@:common.links.missions_challenges"
+        }
+      }
+    }
+  },
+  "pages": {
+    "account": {
+      "missions": {
+        "title": "Миссии и испытания",
+        "description": "Выполняйте миссии, чтобы заработать дополнительные баллы Virto Rewards.",
+        "load_error": "Не удалось загрузить ваши задания. Пожалуйста, попробуйте еще раз.",
+        "retry_button": "Повторить",
+        "empty_list": "У вас пока нет заданий. Скоро появятся новые способы заработать очки.",
+        "balance_banner": {
+          "label": "Баланс Virto Rewards",
+          "points": "баллы",
+          "points_history": "История баллов"
+        },
+        "redeem_banner": {
+          "title": "Используйте свои баллы",
+          "description": "Обменивайте баллы на товары из каталога вознаграждений.",
+          "catalog": "Каталог"
+        },
+        "card": {
+          "type_products": "Рекомендуемые товары",
+          "type_order_value": "Сумма заказа",
+          "type_orders": "Количество заказов",
+          "points": "баллы",
+          "days_left": "{count} день остался | {count} дня осталось",
+          "mission_completed": "Миссия выполнена",
+          "completed": "Выполнено",
+          "open_mission": "Открыть миссию",
+          "progress_skus": "от {current} до {target} товаров",
+          "progress_any_sku": "хотя бы 1 из {target} товаров",
+          "progress_spend": "потрачено {sum}",
+          "progress_orders": "от {current} до {target} заказов"
+        },
+        "sku_modal": {
+          "buy_at_least": "Купите как минимум {count}",
+          "total_units": "Всего единиц",
+          "targets_met": "Цели достигнуты",
+          "cart_subtotal": "Промежуточный итог корзины",
+          "reward_hint": "Заработайте {points} баллов, когда все цели будут достигнуты",
+          "reward_unlocked": "Все цели достигнуты — разблокировано {points} баллов",
+          "close": "Закрыть",
+          "add_to_cart": "Добавить в корзину",
+          "added_to_cart": "Товары добавлены в корзину",
+          "add_to_cart_error": "Некоторые товары не удалось добавить в корзину"
+        },
+        "order_modal": {
+          "mission_target": "Цель миссии",
+          "value_requirement": "Потратьте {target} в соответствующих заказах",
+          "count_requirement": "Сделайте {target} отдельных заказов",
+          "close": "Закрыть",
+          "redeem_products": "Получить товары"
+        }
+      }
+    }
   }
 }

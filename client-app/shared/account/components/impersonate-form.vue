@@ -1,17 +1,5 @@
 <template>
   <div class="impersonate-form">
-    <VcTypography tag="h1" class="impersonate-form__title">
-      {{ $t("pages.account.impersonate.title") }}
-    </VcTypography>
-
-    <p class="impersonate-form__subtitle">
-      {{ $t("shared.account.impersonate_form.subtitle") }}
-    </p>
-
-    <p class="impersonate-form__description">
-      {{ $t("shared.account.impersonate_form.description") }}
-    </p>
-
     <VcAlert
       v-if="step === 'success'"
       class="impersonate-form__success"
@@ -156,18 +144,6 @@ watch([email, password], () => {
 <style lang="scss">
 .impersonate-form {
   @apply mx-auto flex w-full max-w-md flex-col text-start;
-
-  &__title {
-    @apply mb-2;
-  }
-
-  &__subtitle {
-    @apply mb-2 text-base font-semibold text-neutral-900;
-  }
-
-  &__description {
-    @apply mb-6 text-sm text-neutral-700;
-  }
 
   &__success {
     @apply mb-4;

@@ -6,6 +6,15 @@
       "type": "string",
       "default": null,
       "tab": "Settings"
+    },
+    {
+      "id": "anchor",
+      "label": "Anchor",
+      "type": "string",
+      "default": null,
+      "placeholder": "specifications",
+      "info": "Link to this block from a rich text field, for example #specifications. Leave empty to use the generated block id.",
+      "tab": "Settings"
     }
   ]
 }

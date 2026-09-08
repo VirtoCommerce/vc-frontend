@@ -1,6 +1,7 @@
 export * from "./queries/childCategories";
 export * from "./queries/getBrand";
 export * from "./queries/getBrands";
+export * from "./queries/getCategories";
 export * from "./queries/getCategory";
 export * from "./queries/getConfigurationItems";
 export * from "./queries/getProduct";
