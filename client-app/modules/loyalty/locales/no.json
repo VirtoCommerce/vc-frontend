@@ -72,7 +72,7 @@
           "open_mission": "Åpent oppdrag",
           "progress_skus": "{current} av {target} SKU-er",
           "progress_any_sku": "minst 1 av {target} SKU-er",
-          "progress_spend": "{sum} brukt",
+          "progress_spend": "{sum} av {target} brukt",
           "progress_orders": "{current} av {target} ordre"
         },
         "sku_modal": {
