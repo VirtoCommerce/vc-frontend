@@ -41,6 +41,72 @@ describe("getReturnUrlValue", () => {
     expect(result).toBe("/home");
   });
 
+  it("reads the parameter from a given url instead of the location", () => {
+    Object.defineProperty(window, "location", {
+      configurable: true,
+      value: {
+        href: "http://example.com/sign-in?returnUrl=/home",
+      },
+    });
+
+    expect(getReturnUrlValue("/sign-in?returnUrl=/account/orders")).toBe("/account/orders");
+  });
+
+  it("checks the host of a given url against the location, not against itself", () => {
+    Object.defineProperty(window, "location", {
+      configurable: true,
+      value: {
+        href: "http://example.com/sign-in",
+      },
+    });
+
+    expect(getReturnUrlValue("https://evil.com/x?returnUrl=https://evil.com/steal")).toBeNull();
+  });
+
+  it("treats a returnUrl that does not parse as absent", () => {
+    Object.defineProperty(window, "location", {
+      configurable: true,
+      value: {
+        href: "http://example.com/sign-in?returnUrl=https://[not-valid-ipv6",
+      },
+    });
+
+    expect(getReturnUrlValue()).toBeNull();
+  });
+
+  it("falls through to the next key when the first value does not parse", () => {
+    Object.defineProperty(window, "location", {
+      configurable: true,
+      value: {
+        href: "http://example.com/sign-in?returnUrl=https://[not-valid-ipv6&ReturnUrl=/home",
+      },
+    });
+
+    expect(getReturnUrlValue()).toBe("/home");
+  });
+
+  it("falls through to the next key when the first value points to another host", () => {
+    Object.defineProperty(window, "location", {
+      configurable: true,
+      value: {
+        href: "http://example.com/sign-in?returnUrl=https://evil.com/phishing&ReturnUrl=/home",
+      },
+    });
+
+    expect(getReturnUrlValue()).toBe("/home");
+  });
+
+  it("returns null when the given url does not parse", () => {
+    Object.defineProperty(window, "location", {
+      configurable: true,
+      value: {
+        href: "http://example.com/sign-in",
+      },
+    });
+
+    expect(getReturnUrlValue("https://[not-valid-ipv6")).toBeNull();
+  });
+
   it("should return the value of ReturnUrl parameter (case-insensitive)", () => {
     // Mock location.href
     Object.defineProperty(window, "location", {
