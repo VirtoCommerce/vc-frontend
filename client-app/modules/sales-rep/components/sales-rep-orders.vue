@@ -1,7 +1,7 @@
 <template>
   <LayoutWidget :title="title" size="md" class="sales-rep-orders">
     <template #append>
-      <VcLink :to="{ name: 'Orders' }" class="sales-rep-orders__all-link" target="_blank" rel="noopener noreferrer">
+      <VcLink :to="allOrdersRoute" class="sales-rep-orders__all-link">
         {{ t("sales_rep.orders.view_all") }}
 
         <VcIcon name="arrow-right" size="xs" />
@@ -64,7 +64,7 @@
                 <div class="sales-rep-orders__mobile-row">
                   <VcLink
                     class="sales-rep-orders__order-link"
-                    :to="{ name: 'OrderDetails', params: { orderId: item.id } }"
+                    :to="{ name: BUYER_ORDER_ROUTE_NAME, params: { orderId: item.id } }"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -89,7 +89,7 @@
             <VcTableColumn id="number" v-slot="{ item }" :title="t('sales_rep.orders.number')">
               <VcLink
                 class="sales-rep-orders__order-link"
-                :to="{ name: 'OrderDetails', params: { orderId: item.id } }"
+                :to="{ name: BUYER_ORDER_ROUTE_NAME, params: { orderId: item.id } }"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -148,7 +148,12 @@ import { useSalesRepColumnSort } from "../composables/useSalesRepColumnSort";
 import { useSalesRepOrders } from "../composables/useSalesRepOrders";
 import { useSalesRepPeriodFilter } from "../composables/useSalesRepPeriodFilter";
 import { useSalesRepRules } from "../composables/useSalesRepRules";
-import { ORDERS_DEFAULT_LIMIT } from "../constants";
+import {
+  ALL_CUSTOMER_ORDERS_ROUTE_NAME,
+  BUYER_ORDER_ROUTE_NAME,
+  CUSTOMER_ORDERS_ROUTE_NAME,
+  ORDERS_DEFAULT_LIMIT,
+} from "../constants";
 import { knownHiddenTabs, toggleTabRule, visibleTabRules } from "../layout/settings";
 import { selectableFilterRules } from "../utils";
 import LayoutWidget from "./layout-widget.vue";
@@ -176,6 +181,12 @@ const props = withDefaults(defineProps<IProps>(), {
 const { t } = useI18n();
 
 const isCrossCustomer = computed(() => !props.organizationId);
+
+const allOrdersRoute = computed(() =>
+  props.organizationId
+    ? { name: CUSTOMER_ORDERS_ROUTE_NAME, params: { organizationId: props.organizationId } }
+    : { name: ALL_CUSTOMER_ORDERS_ROUTE_NAME },
+);
 
 // Selected named rules; undefined → the server default (baseline filter / "recent" sort).
 const filter = ref<string | undefined>(undefined);

@@ -27,7 +27,16 @@ import { layoutTypePolicies } from "./layout/cache-policies";
 import { documentsBlock } from "./layout/documents-block";
 import { registerBlock } from "./layout/registry";
 import { salesRepMenuSchema } from "./menu";
-import { customerProfileRoute, dashboardRoute, documentsRoute, myCustomersRoute, salesRepsRoute } from "./routes";
+import {
+  allCustomerOrdersRoute,
+  customerOrderRoute,
+  customerOrdersRoute,
+  customerProfileRoute,
+  dashboardRoute,
+  documentsRoute,
+  myCustomersRoute,
+  salesRepsRoute,
+} from "./routes";
 import type { ExtendedMenuLinkType } from "@/core/types";
 import type { I18n } from "@/i18n";
 import type { Router } from "vue-router";
@@ -43,6 +52,9 @@ export function init(router: Router, i18n: I18n) {
   router.addRoute(ROUTES.COMPANY.NAME, myCustomersRoute);
   // Customer profile (VCST-5308) -> /company/my-customers/:organizationId.
   router.addRoute(ROUTES.COMPANY.NAME, customerProfileRoute);
+  router.addRoute(ROUTES.COMPANY.NAME, customerOrdersRoute);
+  router.addRoute(ROUTES.COMPANY.NAME, customerOrderRoute);
+  router.addRoute(ROUTES.COMPANY.NAME, allCustomerOrdersRoute);
   // Document library (VCST-5730) -> /company/documents (its own beforeEnter checks documents:read).
   router.addRoute(ROUTES.COMPANY.NAME, documentsRoute);
 

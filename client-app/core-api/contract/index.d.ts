@@ -76,16 +76,16 @@ interface IProps$i {
         disabled?: boolean;
     };
 }
-declare var __VLS_14: {
+declare var __VLS_16$2: {
     checked: boolean;
 };
-declare var __VLS_17$1: {
+declare var __VLS_19$1: {
     checked: boolean;
 };
 type __VLS_Slots$c = {} & {
-    default?: (props: typeof __VLS_14) => any;
+    default?: (props: typeof __VLS_16$2) => any;
 } & {
-    tooltip?: (props: typeof __VLS_17$1) => any;
+    tooltip?: (props: typeof __VLS_19$1) => any;
 };
 declare const __VLS_base$c: vue.DefineComponent<IProps$i, {}, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {} & {
     change: (value: boolean) => any;
@@ -1662,12 +1662,12 @@ declare const __VLS_base$8: vue.DefineComponent<IProps$b, {
     type: VcButtonTypeType;
     to: RouteLocationRaw | null;
     variant: VcButtonVariantType;
+    tabindex: string | number;
     loading: boolean;
     tag: string;
     truncate: boolean;
     color: VcButtonColorType;
     disabled: boolean;
-    tabindex: string | number;
     noWrap: boolean;
     fullWidth: boolean;
 }, {}, {}, {}, string, vue.ComponentProvideOptions, false, {}, any>;

@@ -29,20 +29,22 @@
           :aria-label="$t('shared.layout.search_bar.scope_loading_label')"
         />
 
-        <VcButton
-          v-for="item in searchScopeData.searchScope"
-          :key="item.id"
-          class="search-bar__button"
-          color="secondary"
-          append-icon="delete-2"
-          size="xs"
-          variant="soft"
-          :aria-label="$t('shared.layout.search_bar.scope_remove_label', { label: item.label })"
-          :data-search-scope="item.label"
-          @click.stop="onScopeItemClick(item.id)"
-        >
-          {{ item.label }}
-        </VcButton>
+        <template v-else>
+          <VcButton
+            v-for="item in searchScopeData.searchScope"
+            :key="item.id"
+            class="search-bar__button"
+            color="secondary"
+            append-icon="delete-2"
+            size="xs"
+            variant="soft"
+            :aria-label="$t('shared.layout.search_bar.scope_remove_label', { label: item.label })"
+            :data-search-scope="item.label"
+            @click.stop="onScopeItemClick(item.id)"
+          >
+            {{ item.label }}
+          </VcButton>
+        </template>
       </template>
 
       <template #append>
@@ -160,7 +162,7 @@ const categoriesFilterExpression = computed(() => {
 });
 
 const searchPlaceholder = computed(() => {
-  return isCategoryScope.value
+  return isCategoryScope.value && !preparingScope.value
     ? t("shared.layout.search_bar.enter_keyword_placeholder_category", { category: getCategoriesNames() })
     : t("shared.layout.search_bar.enter_keyword_placeholder");
 });

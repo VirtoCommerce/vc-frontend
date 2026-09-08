@@ -1,6 +1,14 @@
 {
   "settings": [
     {
+      "id": "anchor",
+      "label": "Anchor",
+      "type": "string",
+      "default": null,
+      "placeholder": "specifications",
+      "tab": "Settings"
+    },
+    {
       "id": "background",
       "label": "Background",
       "type": "select",
