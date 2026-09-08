@@ -358,6 +358,28 @@ export const AllVariants: StoryType = {
   }),
 };
 
+export const AllSizes: StoryType = {
+  args: {
+    color: "primary",
+    variant: "solid",
+  },
+  render: (args) => ({
+    components: { VcButton },
+    setup: () => ({ sizes: SIZES, args }),
+    template: `<div class="space-y-4">
+      <div class="flex flex-wrap gap-2 items-center" v-for="size in sizes">
+        <b class="w-10 text-xs">{{ size }}</b>
+
+        <VcButton v-bind="args" :size="size">Add to cart</VcButton>
+        <VcButton v-bind="args" :size="size" prepend-icon="save-v2">Add to cart</VcButton>
+        <VcButton v-bind="args" :size="size" append-icon="chevron-right">Next</VcButton>
+        <VcButton v-bind="args" :size="size" icon="save-v2" aria-label="Save" />
+      </div>
+    </div>
+    `,
+  }),
+};
+
 export const AllStates: StoryType = {
   render: () => ({
     components: { VcButton },

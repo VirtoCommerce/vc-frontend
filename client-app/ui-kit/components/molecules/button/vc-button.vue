@@ -319,7 +319,8 @@ defineExpose({
       --icon-size: 1.25rem;
       --px: theme("padding[3.5]");
 
-      @apply text-xs/[--line-height] uppercase font-black tracking-[1%];
+      @apply text-sm/[--line-height] font-bold;
+      text-transform: var(--vc-button-text-transform, none);
     }
 
     &--md {
@@ -328,7 +329,8 @@ defineExpose({
       --icon-size: 1.5rem;
       --px: theme("padding.4");
 
-      @apply text-sm/[--line-height] uppercase font-black tracking-[1%];
+      @apply text-base/[--line-height] font-bold;
+      text-transform: var(--vc-button-text-transform, none);
     }
 
     &--lg {
@@ -337,7 +339,8 @@ defineExpose({
       --icon-size: 1.75rem;
       --px: theme("padding.5");
 
-      @apply text-base/[--line-height] uppercase font-black tracking-[1%];
+      @apply text-lg/[--line-height] font-bold;
+      text-transform: var(--vc-button-text-transform, none);
     }
   }
 
