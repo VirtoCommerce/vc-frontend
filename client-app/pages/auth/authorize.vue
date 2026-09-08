@@ -18,8 +18,18 @@ onMounted(async () => {
     return;
   }
 
+  const { data, error: tokenError } = await useFetch("/connect/session", { headers: {} })
+    .get()
+    .json<{ requestToken: string }>();
+  if (tokenError.value || !data.value?.requestToken) {
+    await router.replace("/400");
+    return;
+  }
+
   const query = new URLSearchParams({ returnUrl });
-  const { error } = await useFetch(`/connect/session?${query}`, { headers: {} }).post();
+  const { error } = await useFetch(`/connect/session?${query}`, {
+    headers: { RequestVerificationToken: data.value.requestToken },
+  }).post();
   if (error.value) {
     await router.replace("/400");
     return;

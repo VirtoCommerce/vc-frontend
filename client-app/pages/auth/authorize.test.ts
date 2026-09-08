@@ -8,8 +8,15 @@ const query: { returnUrl: string | string[] | undefined } = { returnUrl: undefin
 const replace = vi.fn();
 const navigate = vi.fn();
 const error = ref<Error>();
+const tokenError = ref<Error>();
+const tokenData = ref<{ requestToken: string }>();
+const json = vi.fn(async () => ({ data: tokenData, error: tokenError }));
+const get = vi.fn(() => ({ json }));
 const post = vi.fn(async () => ({ error }));
-const fetch = vi.fn<(url: string, options: RequestInit) => { post: typeof post }>(() => ({ post }));
+const fetch = vi.fn<(url: string, options: RequestInit) => { post: typeof post; get: typeof get }>(() => ({
+  post,
+  get,
+}));
 
 vi.mock("vue-router", () => ({
   useRoute: () => ({ query }),
@@ -21,6 +28,8 @@ vi.mock("@/core/utilities", async () => await import("@/core/utilities/same-orig
 beforeEach(() => {
   vi.clearAllMocks();
   error.value = undefined;
+  tokenError.value = undefined;
+  tokenData.value = { requestToken: "csrf-token" };
   query.returnUrl = continuation;
   vi.stubGlobal("location", { origin: "https://shop.example", replace: navigate });
 });
@@ -36,7 +45,7 @@ async function openPage() {
 test("establishes the browser session before returning to the unchanged OAuth request", async () => {
   await openPage();
   expect(fetch).toHaveBeenCalledWith(`/connect/session?${new URLSearchParams({ returnUrl: continuation })}`, {
-    headers: {},
+    headers: { RequestVerificationToken: "csrf-token" },
   });
   expect(post).toHaveBeenCalledOnce();
   expect(navigate).toHaveBeenCalledWith(continuation);
@@ -64,3 +73,18 @@ test("does not open consent when the session request fails", async () => {
   expect(navigate).not.toHaveBeenCalled();
   expect(replace).toHaveBeenCalledWith("/400");
 });
+
+test.each([true, false])(
+  "does not create a session without an antiforgery token (failed request: %s)",
+  async (failed) => {
+    if (failed) {
+      tokenError.value = new Error("Failed to obtain token");
+    } else {
+      tokenData.value = undefined;
+    }
+    await openPage();
+    expect(post).not.toHaveBeenCalled();
+    expect(navigate).not.toHaveBeenCalled();
+    expect(replace).toHaveBeenCalledWith("/400");
+  },
+);
