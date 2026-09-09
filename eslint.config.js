@@ -518,7 +518,11 @@ export default defineConfigWithVueTs(
     },
   },
   {
-    files: ["**/*.js", "**/*.cjs"],
+    // typescript-eslint's typed-rule config matches `cts` as well, but its project service does not
+    // associate the extension, so a single `.cts` file aborts the WHOLE run with "you have used a
+    // rule which requires type information" — no findings printed, exit 2. Waiving type-aware rules
+    // for the extension is what keeps the gate alive; the only `.cts` here is a declaration file.
+    files: ["**/*.js", "**/*.cjs", "**/*.cts"],
     ...tseslint.configs.disableTypeChecked,
   },
 
