@@ -5952,7 +5952,9 @@ export type Query = {
   salesRepCustomerCartStatistics?: Maybe<CustomerCartStatistics>;
   salesRepCustomerCounts?: Maybe<SalesRepCustomerCounts>;
   salesRepCustomerFilterRules?: Maybe<Array<Maybe<SalesRepCustomerFilterRule>>>;
+  salesRepCustomerOrder?: Maybe<CustomerOrderType>;
   salesRepCustomerOrderStatistics?: Maybe<CustomerOrderStatistics>;
+  salesRepCustomerOrders?: Maybe<CustomerOrderConnection>;
   salesRepCustomerSortRules?: Maybe<Array<Maybe<SalesRepCustomerSortRule>>>;
   salesRepCustomers?: Maybe<SalesRepCustomerConnection>;
   salesRepDocument?: Maybe<SalesRepDocument>;
@@ -6665,10 +6667,28 @@ export type QuerySalesRepCustomerFilterRulesArgs = {
 };
 
 
+export type QuerySalesRepCustomerOrderArgs = {
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
+};
+
+
 export type QuerySalesRepCustomerOrderStatisticsArgs = {
   cultureName?: InputMaybe<Scalars['String']['input']>;
   currencyCode?: InputMaybe<Scalars['String']['input']>;
   organizationId?: InputMaybe<Scalars['String']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QuerySalesRepCustomerOrdersArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  facet?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  organizationId?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
   storeId?: InputMaybe<Scalars['String']['input']>;
 };
 
