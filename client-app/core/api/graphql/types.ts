@@ -443,6 +443,8 @@ export type CartType = {
   itemsCount: Scalars['Int']['output'];
   /** Quantity of items */
   itemsQuantity: Scalars['Int']['output'];
+  /** Get total points amount */
+  loyaltyPoints?: Maybe<MoneyType>;
   /** Shopping cart name */
   name: Scalars['String']['output'];
   /** Shopping cart organization ID */
@@ -4893,6 +4895,8 @@ export type Organization = {
   emails: Array<Maybe<Scalars['String']['output']>>;
   groups: Array<Maybe<Scalars['String']['output']>>;
   id: Scalars['String']['output'];
+  /** Whether the current user's membership in this organization is currently locked (VCST-5317). Locked organizations are still returned by the parent connection; this flag lets the caller decide how to present them (e.g. disable selection) instead of the server silently excluding them. */
+  isLockedForCurrentUser?: Maybe<Scalars['Boolean']['output']>;
   /** Member type */
   memberType: Scalars['String']['output'];
   /** Current user's effective status in this organization: the organization-specific override if set, otherwise the contact's global status. */
