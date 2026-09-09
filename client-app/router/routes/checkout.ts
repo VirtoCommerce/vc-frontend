@@ -1,4 +1,10 @@
+import { apolloClient } from "@/core/api/graphql";
+import { MergeCartDocument } from "@/core/api/graphql/types";
+import { useAuth } from "@/core/composables/useAuth";
+import { globals } from "@/core/globals";
+import { useNotifications } from "@/shared/notification";
 import { ROUTES } from "./constants";
+import { readUcpContinuation, removeUcpContinuation } from "./ucp-continuation";
 import { applyUcpHandoffBuyer, restoreUcpHandoffCart, UcpHandoffRestoreError } from "./ucp-handoff";
 import type { NavigationGuardNext, RouteLocationNormalized, RouteRecordName, RouteRecordRaw } from "vue-router";
 
@@ -20,6 +26,55 @@ function handleBeforeEnter(
     next({ name: redirectRoute, replace: true });
   } else {
     next();
+  }
+}
+
+async function restoreHandoff(reference: string): Promise<string> {
+  const session = readUcpContinuation(reference);
+  if (!session) {
+    throw new UcpHandoffRestoreError("Handoff continuation is no longer available in this tab.", 400);
+  }
+  const { cartId, anonymousBuyerId } = await restoreUcpHandoffCart(session);
+  applyUcpHandoffBuyer(anonymousBuyerId);
+  if (!anonymousBuyerId || !useAuth().headers.value.Authorization) {
+    return cartId;
+  }
+
+  const { data } = await apolloClient.mutate({
+    mutation: MergeCartDocument,
+    variables: {
+      command: {
+        secondCartId: cartId,
+        userId: globals.userId,
+        storeId: globals.storeId,
+        currencyCode: globals.currencyCode,
+        cultureName: globals.cultureName,
+      },
+    },
+  });
+  if (!data?.mergeCart?.id) {
+    throw new Error("Unable to transfer the anonymous handoff cart.");
+  }
+  return data.mergeCart.id;
+}
+
+async function handleHandoff(to: RouteLocationNormalized, next: NavigationGuardNext, reference: string) {
+  try {
+    const cartId = await restoreHandoff(reference);
+    removeUcpContinuation(reference);
+    next({ name: ROUTES.CART_ID.NAME, params: { cartId }, query: { ucp_handoff: "1" }, replace: true });
+  } catch (error) {
+    const status = error instanceof UcpHandoffRestoreError ? error.status : undefined;
+    if (status !== 401) {
+      const messages: Record<number, string> = { 403: "wrong_account", 400: "expired" };
+      const message = messages[status ?? 0] ?? "restore_failed";
+      useNotifications().error({ text: globals.i18n.global.t(`common.ucp.${message}`) });
+    }
+    if (status === 401 || status === 403) {
+      next({ name: ROUTES.SIGN_IN.NAME, query: { returnUrl: to.fullPath, reauthenticate: "1" }, replace: true });
+      return;
+    }
+    next({ name: ROUTES.CART.NAME, replace: true });
   }
 }
 
@@ -73,19 +128,8 @@ export const checkoutRoutes: RouteRecordRaw[] = [
     ],
     meta: { layout: "Secure", redirectable: false },
     async beforeEnter(to, from, next) {
-      if (typeof to.query.ucp_session === "string") {
-        try {
-          const { cartId, anonymousBuyerId } = await restoreUcpHandoffCart(to.query.ucp_session);
-          applyUcpHandoffBuyer(anonymousBuyerId);
-          next({ name: ROUTES.CART_ID.NAME, params: { cartId }, query: { ucp_handoff: "1" }, replace: true });
-        } catch (error) {
-          console.error("Unable to restore UCP handoff session.", error);
-          if (error instanceof UcpHandoffRestoreError && error.status === 401) {
-            next({ name: ROUTES.SIGN_IN.NAME, query: { returnUrl: to.fullPath }, replace: true });
-            return;
-          }
-          next({ name: ROUTES.CART.NAME, replace: true });
-        }
+      if (typeof to.query.ucp_resume === "string") {
+        await handleHandoff(to, next, to.query.ucp_resume);
         return;
       }
 

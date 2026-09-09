@@ -4,7 +4,7 @@ import { setGlobals } from "@/core/globals";
 
 export type UcpHandoffRestoreType = {
   cartId: string;
-  anonymousBuyerId?: string;
+  anonymousBuyerId?: string | null;
 };
 
 const ucpHandoffRestoreCache = new Map<string, UcpHandoffRestoreType>();
@@ -20,8 +20,8 @@ export class UcpHandoffRestoreError extends Error {
   }
 }
 
-export function applyUcpHandoffBuyer(anonymousBuyerId?: string): void {
-  if (!anonymousBuyerId) {
+export function applyUcpHandoffBuyer(anonymousBuyerId?: string | null): void {
+  if (!anonymousBuyerId || useAuth().headers.value.Authorization) {
     return;
   }
 
@@ -63,16 +63,20 @@ async function requestUcpHandoffRestoreWithFallback(ucpSession: string): Promise
     if (!(error instanceof UcpHandoffRestoreError) || error.status !== 401) {
       throw error;
     }
+    const { headers, isExpired, refresh } = useAuth();
+    if (isExpired()) {
+      await refresh();
+    }
+    if (!headers.value.Authorization) {
+      throw error;
+    }
   }
 
   return requestUcpHandoffRestore(ucpSession, true);
 }
 
 async function requestUcpHandoffRestore(ucpSession: string, authenticated: boolean): Promise<UcpHandoffRestoreType> {
-  const { headers: authHeaders, isExpired, refresh } = useAuth();
-  if (authenticated && isExpired()) {
-    await refresh();
-  }
+  const { headers: authHeaders } = useAuth();
 
   const headers = new Headers({
     "content-type": "application/json",
@@ -99,11 +103,10 @@ async function requestUcpHandoffRestore(ucpSession: string, authenticated: boole
   }
 
   const payload = (await response.json()) as {
-    anonymous_buyer_id?: string;
+    anonymous_buyer_id?: string | null;
     checkout?: {
       cart_id?: string;
-      buyer?: { id?: string };
-      cart?: { id?: string; buyer_id?: string };
+      cart?: { id?: string };
     };
   };
   const cartId = payload.checkout?.cart_id ?? payload.checkout?.cart?.id;

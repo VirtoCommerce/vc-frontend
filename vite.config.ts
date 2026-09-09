@@ -8,7 +8,6 @@ import { checker } from "vite-plugin-checker";
 import mkcert from "vite-plugin-mkcert";
 // Module Federation host config lives in vite.federation.ts.
 import { federatedHostPlugin, federatedAlias } from "./vite.federation.js";
-import type { TLSSocket } from "node:tls";
 import type { ProxyOptions, UserConfig, PluginOption } from "vite";
 
 const graphql = graphqlImport.default ?? graphqlImport;
@@ -26,12 +25,7 @@ function getProxy(target: ProxyOptions["target"], options: Omit<ProxyOptions, "t
     target,
     changeOrigin: true,
     secure: dontTrustSelfSignedCertificate,
-    configure(proxy) {
-      proxy.on("proxyReq", (proxyRequest, request) => {
-        proxyRequest.setHeader("X-Forwarded-Host", request.headers.host ?? "");
-        proxyRequest.setHeader("X-Forwarded-Proto", (request.socket as TLSSocket).encrypted ? "https" : "http");
-      });
-    },
+    xfwd: true,
     ...options,
   };
 }
