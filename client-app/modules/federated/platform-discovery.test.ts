@@ -181,6 +181,33 @@ describe("platform-served plugin discovery", () => {
     expect(loggerInfoMock).toHaveBeenCalledWith(expect.stringContaining("ignoring content file"));
   });
 
+  it.each([
+    ["is blank", ""],
+    ["is whitespace", "  "],
+  ])("treats a content-file kind that %s as no kind at all", async (_label, type) => {
+    stubManifestFetch();
+    const path = "/modules/$(VirtoCommerce.SalesRep)/plugins/vc-frontend/blank-kind.css";
+
+    await initFederatedModules({ plugins: [platformPlugin({ contentFiles: [{ type, path }] })] });
+
+    const injected = Array.from(document.head.querySelectorAll("link[data-mf-plugin-style]"));
+    expect(injected.map((node) => node.getAttribute("href"))).toEqual([`${globalThis.location.origin}${path}`]);
+  });
+
+  it("names the content file it dropped for having no usable path", async () => {
+    stubManifestFetch();
+
+    const result = await initFederatedModules({
+      plugins: [
+        platformPlugin({ contentFiles: [{ type: "style", path: 7 }] as unknown as IPlatformPlugin["contentFiles"] }),
+      ],
+    });
+
+    expect(result.loaded).toEqual(["sales-rep"]);
+    expect(document.head.querySelectorAll("link[data-mf-plugin-style]")).toHaveLength(0);
+    expect(loggerErrorMock).toHaveBeenCalledWith(expect.stringContaining("no usable path"));
+  });
+
   it("falls back to the extension when the content file declares no kind", async () => {
     stubManifestFetch();
     const path = "/modules/$(VirtoCommerce.SalesRep)/plugins/vc-frontend/untyped.css";
@@ -189,6 +216,21 @@ describe("platform-served plugin discovery", () => {
 
     const injected = Array.from(document.head.querySelectorAll("link[data-mf-plugin-style]"));
     expect(injected.map((node) => node.getAttribute("href"))).toEqual([`${globalThis.location.origin}${path}`]);
+  });
+
+  it("says so when a cache-buster hash is not a string, instead of dropping it silently", async () => {
+    const fetchMock = stubManifestFetch();
+
+    await initFederatedModules({
+      plugins: [
+        platformPlugin({
+          entry: { type: "script", path: "/modules/M/plugins/vc-frontend/remoteEntry.js", hash: 7 },
+        } as unknown as Partial<IPlatformPlugin>),
+      ],
+    });
+
+    expect(fetchMock).toHaveBeenCalledWith(expect.not.stringContaining("?v="), expect.anything());
+    expect(loggerWarnMock).toHaveBeenCalledWith(expect.stringContaining("cache-buster hash that is not a string"));
   });
 
   it("reports a descriptor carrying neither id nor remote name by its position in the list", async () => {
@@ -460,6 +502,25 @@ describe("platform-served plugin discovery", () => {
       expect(result.loaded).toEqual(expect.arrayContaining(expectedLoaded));
       expect(result.loaded).toHaveLength(expectedLoaded.length);
       expect(result.skipped).toEqual(outcome === "skipped" ? [expectedName] : []);
+    });
+
+    // Each branch's value IS its message - the outcome is `skipped` either way, so asserting the
+    // outcome alone leaves the branch free to be deleted.
+    it.each([
+      ["entry.path", { entry: { type: "script", path: 7 } }, "the entry path is not a string"],
+      ["entry.type", { entry: { type: 7, path: "/m/a/remoteEntry.js" } }, "the entry type is not a string"],
+      ["permission", { permission: 7 }, "the declared permission is not a string"],
+      ["remote.exposed", { remote: { name: "sales-rep", exposed: 7 } }, "the declared expose key is not a string"],
+    ])("names a drifted %s as drifted, not as absent", async (_field, overrides, reason) => {
+      const fetchMock = stubManifestFetch();
+
+      const result = await initFederatedModules({
+        plugins: [platformPlugin(overrides as unknown as Partial<IPlatformPlugin>)],
+      });
+
+      expect(result.skipped).toEqual(["sales-rep"]);
+      expect(loggerErrorMock).toHaveBeenCalledWith(expect.stringContaining(reason));
+      expect(fetchMock).not.toHaveBeenCalled();
     });
 
     it("resolves, rather than throwing, when the plugin list is not an array", async () => {

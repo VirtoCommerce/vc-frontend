@@ -278,12 +278,20 @@ function toManifestUrl(entryUrl: string): string {
   return url.toString();
 }
 
-function withCacheBuster(url: string, hash?: string | null): string {
-  if (!hash) {
+/**
+ * The platform sets no Cache-Control on these files, so `?v={hash}` is the only freshness signal.
+ * A hash that is present but unreadable therefore costs more than it looks like it does.
+ */
+function withCacheBuster(url: string, hash?: unknown): string {
+  const value = asString(hash);
+  if (!value) {
+    if (hash != null) {
+      Logger.warn(`[MF] ignoring a cache-buster hash that is not a string, for ${url}`);
+    }
     return url;
   }
   const result = new URL(url);
-  result.searchParams.set("v", hash);
+  result.searchParams.set("v", value);
   return result.toString();
 }
 
@@ -292,16 +300,20 @@ function collectStyles(plugin: IPlatformPlugin): string[] {
   for (const file of Array.isArray(plugin.contentFiles) ? plugin.contentFiles : []) {
     const filePath = asString(file?.path);
     if (!filePath) {
+      Logger.error(`[MF] Plugin "${String(plugin?.id)}": ignoring a content file with no usable path`);
       continue;
     }
     // No kind falls back to the extension, the way no entry.type falls back to "script": the
     // platform declares the field optional and a dropped stylesheet is invisible - the plugin
-    // loads and renders unstyled with nothing to point at. A drifted kind is not a missing one.
+    // loads and renders unstyled with nothing to point at. Blank counts as no kind; a non-string
+    // is a declaration we cannot read, so it stays a drop.
     const rawType = file?.type;
-    const fileType = asString(rawType)?.trim().toLowerCase();
-    const isStyle = rawType == null ? filePath.toLowerCase().endsWith(".css") : fileType === PLATFORM_STYLE_FILE_TYPE;
+    const isDeclared = rawType != null && !(typeof rawType === "string" && rawType.trim() === "");
+    const isStyle = isDeclared
+      ? asString(rawType)?.trim().toLowerCase() === PLATFORM_STYLE_FILE_TYPE
+      : filePath.toLowerCase().endsWith(".css");
     if (!isStyle) {
-      const kind = rawType == null ? "(none declared)" : `"${String(rawType)}"`;
+      const kind = isDeclared ? `"${String(rawType)}"` : "(none declared)";
       Logger.info(`[MF] Plugin "${String(plugin?.id)}": ignoring content file "${filePath}" of kind ${kind}`);
       continue;
     }
@@ -310,7 +322,7 @@ function collectStyles(plugin: IPlatformPlugin): string[] {
       Logger.error(`[MF] Ignoring stylesheet "${filePath}" of plugin "${plugin.id}": not same-origin`);
       continue;
     }
-    styles.push(withCacheBuster(url, asString(file?.hash)));
+    styles.push(withCacheBuster(url, file?.hash));
   }
   return styles;
 }
@@ -394,6 +406,10 @@ function nonStringFieldReason(plugin: IPlatformPlugin): string | undefined {
   if (plugin?.permission != null && typeof plugin.permission !== "string") {
     return "the declared permission is not a string";
   }
+  // remote.name is NOT checked here: falling back to the id is the platform's own default.
+  if (plugin?.remote?.exposed != null && typeof plugin.remote.exposed !== "string") {
+    return "the declared expose key is not a string";
+  }
   return undefined;
 }
 
@@ -452,7 +468,7 @@ function resolvePlatformRemotes(plugins: readonly IPlatformPlugin[]): IResolvedR
     seen.add(name);
     resolved.remotes.push({
       name,
-      entry: withCacheBuster(manifestUrl, asString(plugin?.entry?.hash)),
+      entry: withCacheBuster(manifestUrl, plugin?.entry?.hash),
       exposed: asString(plugin?.remote?.exposed) || PLATFORM_EXPOSE_KEY,
       permission: asString(plugin?.permission),
       styles: collectStyles(plugin),
