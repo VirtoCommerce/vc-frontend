@@ -2544,12 +2544,20 @@ declare const apolloClient: ApolloClient<_apollo_client_cache.NormalizedCacheObj
  * Call before the plugin issues its first query — policies do not apply retroactively to data
  * already in the cache. Registering late is warned about in development, not refused.
  *
- * One claim, one owner, at the granularity Apollo merges at (see {@link claimsOf} and
- * {@link blockedBy}). A claim held at an equal or higher priority is refused, and only that claim —
- * the rest of the policy, and the rest of the batch, still applies. `owner` is required so a refusal
- * names someone; pass `priority` only when a plugin is deliberately meant to outrank another. It is
- * capped at {@link MAX_PLUGIN_PRIORITY}, so the host's own policies at {@link HOST_PRIORITY} cannot
- * be taken over however high a caller aims.
+ * One claim, one owner, at the granularity Apollo merges at: a type-level policy (`keyFields`, a
+ * type-level `merge`) claims the whole typename, while a `fields` policy claims one field each. A
+ * claim held at an equal or higher priority is refused, and only that claim — the rest of the
+ * policy, and the rest of the batch, still applies.
+ *
+ * `owner` identifies the plugin. It is required, must be a non-empty string, and must not be
+ * `"host"`; anything else registers nothing and logs an error.
+ *
+ * `priority` is a property of the OWNER, not of the call: pass it only when a plugin is deliberately
+ * meant to outrank another. It is capped at 99, one below the host's own 100, so the host's declared
+ * policies cannot be taken over however high a caller aims. An owner's rank is remembered — OMIT
+ * `priority` on any later call and the plugin keeps the rank it already has, so a second `init()` or
+ * an HMR reload cannot silently demote it. Passing a DIFFERENT value is a deliberate re-declaration:
+ * it is warned about, and every claim that owner holds moves to the new rank together.
  *
  * WHAT THIS DOES NOT PROTECT: only the policies the host DECLARES are reserved. The host stores far
  * more typenames than it writes policies for — anything Apollo normalizes by its default `id` rule
@@ -2557,9 +2565,14 @@ declare const apolloClient: ApolloClient<_apollo_client_cache.NormalizedCacheObj
  * is accepted. The check is a collision guard between declared policies, not a fence around the
  * host's whole cache surface.
  *
+ * The guarantee covers policies registered THROUGH THIS FUNCTION. `apolloClient` is exported from
+ * the same facade and holds this very cache, so `apolloClient.cache.policies.addTypePolicies(...)`
+ * writes past the ownership map entirely. That route is unowned and unaudited by design; use this
+ * one.
+ *
  * In development the ownership map and every refusal are readable as `window.modulesCacheDebug`.
  */
-declare function registerCacheTypePolicies(policies: TypePolicies, { owner, priority }: {
+declare function registerCacheTypePolicies(policies: TypePolicies, options: {
     owner: string;
     priority?: number;
 }): void;

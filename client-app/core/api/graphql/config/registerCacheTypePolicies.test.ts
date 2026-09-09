@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 import { Logger } from "@/core/utilities/logger";
 import { cache } from "./cache";
 import { registerCacheTypePolicies } from "./registerCacheTypePolicies";
+import type { TypePolicies } from "@apollo/client/core";
 
 // The dev-only guards are the point of this spec; the constant is false under vitest's MODE.
 vi.mock("@/core/constants", async (importOriginal) => ({
@@ -210,6 +211,118 @@ describe("registerCacheTypePolicies", () => {
     registerCacheTypePolicies({ CartAddressType: { keyFields: ["id"] } }, { owner: "nan-plugin", priority: NaN });
 
     expect(cacheDebug().owners.get("CartAddressType")).toEqual({ owner: "host", priority: 100 });
+
+    warn.mockRestore();
+  });
+
+  it("refuses a caller that names itself the host, so the host's own rank cannot be downgraded", () => {
+    const error = vi.spyOn(Logger, "error").mockImplementation(() => {});
+    const warn = vi.spyOn(Logger, "warn").mockImplementation(() => {});
+
+    // "host" === "host" makes blockedBy()'s same-owner exemption fire before any priority is
+    // compared, so without the guard this lands at the default priority AND rewrites the host's
+    // record to that priority, leaving the typename open to the next ordinary plugin.
+    registerCacheTypePolicies({ CouponType: { keyFields: ["id"] } }, { owner: "host" });
+    registerCacheTypePolicies({ CouponType: { keyFields: ["id"] } }, { owner: "opportunist", priority: 1 });
+
+    expect(error).toHaveBeenCalledWith(expect.stringContaining("must not be"));
+    expect(cacheDebug().owners.get("CouponType")).toEqual({ owner: "host", priority: 100 });
+    expect(cache.policies.identify({ __typename: "CouponType", id: "X", code: "C" })[0]).toBe(
+      'CouponType:{"code":"C"}',
+    );
+
+    error.mockRestore();
+    warn.mockRestore();
+  });
+
+  it("refuses a missing owner instead of making every anonymous plugin the same one", () => {
+    const error = vi.spyOn(Logger, "error").mockImplementation(() => {});
+
+    const anonymous = {} as { owner: string; priority?: number };
+    registerCacheTypePolicies({ TestPluginAnonymous: { keyFields: ["a"] } }, anonymous);
+    registerCacheTypePolicies({ TestPluginAnonymous: { keyFields: ["b"] } }, anonymous);
+
+    expect(error).toHaveBeenCalledTimes(2);
+    expect(cacheDebug().owners.has("TestPluginAnonymous")).toBe(false);
+
+    error.mockRestore();
+  });
+
+  it("reports a missing options object instead of throwing on the destructuring", () => {
+    const error = vi.spyOn(Logger, "error").mockImplementation(() => {});
+
+    expect(() =>
+      (registerCacheTypePolicies as unknown as (policies: TypePolicies) => void)({
+        TestPluginNoOptions: { keyFields: ["a"] },
+      }),
+    ).not.toThrow();
+    expect(cacheDebug().owners.has("TestPluginNoOptions")).toBe(false);
+    expect(error).toHaveBeenCalledWith(expect.stringContaining("is required"));
+
+    error.mockRestore();
+  });
+
+  it("keeps an owner's rank when a later registration omits the priority", () => {
+    const warn = vi.spyOn(Logger, "warn").mockImplementation(() => {});
+
+    // The blessed re-registration path: HMR and a second init() both land here, usually without
+    // repeating the priority. Reading the omission as "back to the default" would drop the rank to
+    // 0 and hand the claim to any plugin sitting between the two.
+    registerCacheTypePolicies({ TestPluginRank: { keyFields: ["a"] } }, { owner: "ranked-plugin", priority: 40 });
+    registerCacheTypePolicies({ TestPluginRank: { keyFields: ["a"] } }, { owner: "ranked-plugin" });
+
+    expect(cacheDebug().owners.get("TestPluginRank")).toEqual({ owner: "ranked-plugin", priority: 40 });
+
+    registerCacheTypePolicies({ TestPluginRank: { keyFields: ["b"] } }, { owner: "midfield-plugin", priority: 20 });
+
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining("midfield-plugin"));
+    expect(cacheDebug().owners.get("TestPluginRank")).toEqual({ owner: "ranked-plugin", priority: 40 });
+
+    warn.mockRestore();
+  });
+
+  it("keeps a rank declared on a registration that was refused outright", () => {
+    const warn = vi.spyOn(Logger, "warn").mockImplementation(() => {});
+
+    // A plugin declares its rank once at init, and its first registration collides with the host —
+    // so it holds nothing at all. Reading the rank back off the claims it holds would find none and
+    // silently drop it to the default on the very next call.
+    registerCacheTypePolicies({ MoneyType: { keyFields: ["amount"] } }, { owner: "unlucky-plugin", priority: 80 });
+    registerCacheTypePolicies({ TestPluginUnlucky: { keyFields: ["a"] } }, { owner: "unlucky-plugin" });
+
+    expect(cacheDebug().owners.get("MoneyType")).toEqual({ owner: "host", priority: 100 });
+    expect(cacheDebug().owners.get("TestPluginUnlucky")).toEqual({ owner: "unlucky-plugin", priority: 80 });
+
+    warn.mockRestore();
+  });
+
+  it("treats a non-finite priority as no priority at all rather than an explicit zero", () => {
+    const warn = vi.spyOn(Logger, "warn").mockImplementation(() => {});
+
+    registerCacheTypePolicies({ TestPluginNaN: { keyFields: ["a"] } }, { owner: "nan-rank-plugin", priority: 70 });
+    registerCacheTypePolicies({ TestPluginNaN: { keyFields: ["a"] } }, { owner: "nan-rank-plugin", priority: NaN });
+
+    // Reading NaN as a deliberate 0 would demote every claim the owner holds, and announce it.
+    expect(cacheDebug().owners.get("TestPluginNaN")).toEqual({ owner: "nan-rank-plugin", priority: 70 });
+    expect(warn).not.toHaveBeenCalled();
+
+    warn.mockRestore();
+  });
+
+  it("moves every claim an owner holds when it re-declares a different priority", () => {
+    const warn = vi.spyOn(Logger, "warn").mockImplementation(() => {});
+
+    registerCacheTypePolicies(
+      { TestPluginMoveA: { keyFields: ["a"] }, TestPluginMoveB: { keyFields: ["b"] } },
+      { owner: "mover-plugin", priority: 30 },
+    );
+    registerCacheTypePolicies({ TestPluginMoveA: { keyFields: ["a"] } }, { owner: "mover-plugin", priority: 60 });
+
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining("re-declared its priority as 60"));
+    // The claim NOT named in the second call moves too: a rank belongs to the owner, and half its
+    // claims sitting at the old number is the split state this avoids.
+    expect(cacheDebug().owners.get("TestPluginMoveA")).toEqual({ owner: "mover-plugin", priority: 60 });
+    expect(cacheDebug().owners.get("TestPluginMoveB")).toEqual({ owner: "mover-plugin", priority: 60 });
 
     warn.mockRestore();
   });

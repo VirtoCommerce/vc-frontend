@@ -77,8 +77,9 @@ const rejected: CacheTypePolicyRejectionType[] = [];
  *
  * The same owner re-registering its own claim is never a collision: HMR and a second `init()` both
  * land here, and reporting that as a conflict points the reader at a second plugin that does not
- * exist. That exemption is why `owner` is REQUIRED — a shared default would make two unrelated
- * plugins the same owner and exempt them from each other.
+ * exist. That exemption is why `owner` is VALIDATED rather than merely typed — an absent one would
+ * make two unrelated plugins the same owner and exempt them from each other, and `"host"` would
+ * walk straight past the host's own claims. Both are refused in {@link registerCacheTypePolicies}.
  */
 function blockedBy(typename: string, key: string, typeLevel: boolean, owner: string, priority: number) {
   const prefix = `${typename}.`;
@@ -89,6 +90,39 @@ function blockedBy(typename: string, key: string, typeLevel: boolean, owner: str
     }
   }
   return undefined;
+}
+
+/**
+ * Every rank ever declared. A rank belongs to the OWNER, not to each individual claim: a plugin is
+ * one actor, and two of its own claims sitting at different ranks is a state nothing here wants.
+ *
+ * Held separately from `owners` rather than read back out of it, because an owner can legitimately
+ * hold NOTHING and still have a rank — its first registration collided, or a louder plugin took
+ * every claim it had. Reading the rank off the claims it currently holds would silently reset such
+ * a plugin to the default on its next call.
+ */
+const ownerPriorities = new Map<string, number>([[HOST_OWNER, HOST_PRIORITY]]);
+
+/**
+ * A caller-supplied rank, capped at the ceiling. `undefined` for a value that is not a rank at all:
+ * a non-finite one would make every `>=` comparison in blockedBy() false and so refuse nothing, and
+ * reading it as an explicit 0 would demote every claim the owner already holds.
+ */
+function sanitizePriority(priority: number): number | undefined {
+  return Number.isFinite(priority) ? Math.min(priority, MAX_PLUGIN_PRIORITY) : undefined;
+}
+
+/**
+ * Records an owner's rank and moves every claim it already holds onto it in the same step, so the
+ * per-claim copies in `owners` can never disagree with the rank itself.
+ */
+function setOwnerPriority(owner: string, priority: number): void {
+  ownerPriorities.set(owner, priority);
+  for (const [key, by] of owners) {
+    if (by.owner === owner) {
+      owners.set(key, { owner, priority });
+    }
+  }
 }
 
 /**
@@ -136,12 +170,20 @@ function claimWhatIsFree(typename: string, policy: TypePolicy, owner: string, pr
  * Call before the plugin issues its first query — policies do not apply retroactively to data
  * already in the cache. Registering late is warned about in development, not refused.
  *
- * One claim, one owner, at the granularity Apollo merges at (see {@link claimsOf} and
- * {@link blockedBy}). A claim held at an equal or higher priority is refused, and only that claim —
- * the rest of the policy, and the rest of the batch, still applies. `owner` is required so a refusal
- * names someone; pass `priority` only when a plugin is deliberately meant to outrank another. It is
- * capped at {@link MAX_PLUGIN_PRIORITY}, so the host's own policies at {@link HOST_PRIORITY} cannot
- * be taken over however high a caller aims.
+ * One claim, one owner, at the granularity Apollo merges at: a type-level policy (`keyFields`, a
+ * type-level `merge`) claims the whole typename, while a `fields` policy claims one field each. A
+ * claim held at an equal or higher priority is refused, and only that claim — the rest of the
+ * policy, and the rest of the batch, still applies.
+ *
+ * `owner` identifies the plugin. It is required, must be a non-empty string, and must not be
+ * `"host"`; anything else registers nothing and logs an error.
+ *
+ * `priority` is a property of the OWNER, not of the call: pass it only when a plugin is deliberately
+ * meant to outrank another. It is capped at 99, one below the host's own 100, so the host's declared
+ * policies cannot be taken over however high a caller aims. An owner's rank is remembered — OMIT
+ * `priority` on any later call and the plugin keeps the rank it already has, so a second `init()` or
+ * an HMR reload cannot silently demote it. Passing a DIFFERENT value is a deliberate re-declaration:
+ * it is warned about, and every claim that owner holds moves to the new rank together.
  *
  * WHAT THIS DOES NOT PROTECT: only the policies the host DECLARES are reserved. The host stores far
  * more typenames than it writes policies for — anything Apollo normalizes by its default `id` rule
@@ -149,15 +191,42 @@ function claimWhatIsFree(typename: string, policy: TypePolicy, owner: string, pr
  * is accepted. The check is a collision guard between declared policies, not a fence around the
  * host's whole cache surface.
  *
+ * The guarantee covers policies registered THROUGH THIS FUNCTION. `apolloClient` is exported from
+ * the same facade and holds this very cache, so `apolloClient.cache.policies.addTypePolicies(...)`
+ * writes past the ownership map entirely. That route is unowned and unaudited by design; use this
+ * one.
+ *
  * In development the ownership map and every refusal are readable as `window.modulesCacheDebug`.
  */
-export function registerCacheTypePolicies(
-  policies: TypePolicies,
-  { owner, priority = 0 }: { owner: string; priority?: number },
-): void {
-  // Sanitized once, at the boundary: a non-finite priority would make every `>=` comparison in
-  // blockedBy() false and so refuse nothing at all.
-  const effectivePriority = Math.min(Number.isFinite(priority) ? priority : 0, MAX_PLUGIN_PRIORITY);
+export function registerCacheTypePolicies(policies: TypePolicies, options: { owner: string; priority?: number }): void {
+  const { owner, priority } = options ?? {};
+
+  // A plugin is plain JS at this boundary, so the type alone guarantees nothing. Both values below
+  // would slip through the same-owner exemption in blockedBy(): an absent `owner` makes two
+  // unrelated plugins the same actor, and HOST_OWNER impersonates the host and downgrades its rank
+  // on the way past.
+  if (typeof owner !== "string" || !owner || owner === HOST_OWNER) {
+    Logger.error(
+      `registerCacheTypePolicies: "owner" is required and must not be "${HOST_OWNER}". Nothing was registered.`,
+    );
+    return;
+  }
+
+  const heldPriority = ownerPriorities.get(owner);
+  const requestedPriority = priority === undefined ? undefined : sanitizePriority(priority);
+  // An omitted `priority` INHERITS the rank rather than resetting it to the default. Re-registering
+  // is the blessed path (HMR, a second `init()`), and forgetting the argument on one of those calls
+  // must not hand the claim to a third plugin sitting between the old rank and 0.
+  const effectivePriority = requestedPriority ?? heldPriority ?? 0;
+
+  if (heldPriority !== undefined && effectivePriority !== heldPriority) {
+    Logger.warn(
+      `registerCacheTypePolicies: "${owner}" re-declared its priority as ${effectivePriority}, replacing ` +
+        `${heldPriority}. Every claim it already holds moves to the new rank.`,
+    );
+  }
+  setOwnerPriority(owner, effectivePriority);
+
   const accepted: TypePolicies = {};
 
   for (const [typename, policy] of Object.entries(policies)) {
