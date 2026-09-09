@@ -55,6 +55,25 @@ function escapesCaretRange(currentVersion, baseVersion) {
   return gt(currentVersion, baseVersion) && !satisfies(currentVersion, `^${baseVersion}`);
 }
 
+/**
+ * Which `semver.diff` levels count as having made the asked-for bump. Escaping `^baseVersion` is
+ * NECESSARY but not SUFFICIENT: semver excludes prereleases from caret ranges, so every prerelease
+ * above the baseline escapes it whatever moved — `1.0.0 -> 1.0.1-beta.1` would otherwise report
+ * "the breaking bump happened" and let a removal ship under a patch-level version.
+ *
+ * A `minor`-level ask is satisfied by a major too: leaving the 0.x line (0.9.0 -> 1.0.0) is a
+ * stronger signal than the minor it was asked for, not a weaker one.
+ */
+const SATISFIES = {
+  major: new Set(["major", "premajor"]),
+  minor: new Set(["minor", "preminor", "major", "premajor"]),
+};
+
+function bumpedAtLeast(baseVersion, currentVersion, level) {
+  // Fails closed on an unknown level: "the bump did not happen" makes the gate ASK for it.
+  return SATISFIES[level]?.has(diff(baseVersion, currentVersion)) ?? false;
+}
+
 /** A published line only ever moves forward. Unparseable input is left to the checks downstream. */
 function regressed(currentVersion, baseVersion) {
   if (!valid(currentVersion) || !valid(baseVersion)) {
@@ -111,7 +130,7 @@ export function decideVersionAction({ changed, baseVersion, currentVersion, remo
   const { breaking } = policyFor(baseVersion);
 
   if (removedExports.length > 0) {
-    if (escapesCaretRange(currentVersion, baseVersion)) {
+    if (escapesCaretRange(currentVersion, baseVersion) && bumpedAtLeast(baseVersion, currentVersion, breaking)) {
       // What the human actually DID, which is not always the level they were asked for: a bump out
       // of the 0.x line satisfies a `require-minor` by moving the major, so reporting `breaking`
       // here would call a 0.9.0 -> 1.0.0 release a minor.

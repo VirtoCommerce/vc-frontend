@@ -125,6 +125,39 @@ describe("decideVersionAction", () => {
     });
   });
 
+  describe("a prerelease does not stand in for the bump it did not make", () => {
+    // semver excludes prereleases from caret ranges, so escaping `^base` is true for ANY prerelease
+    // above the baseline — the level that actually moved has to be checked separately.
+    it("refuses a removal under a same-major prerelease", () => {
+      expect(
+        decideVersionAction({ ...base, changed: true, currentVersion: "1.4.1-beta.1", removedExports: ["VcButton"] }),
+      ).toEqual({ action: "require-major", removedExports: ["VcButton"] });
+    });
+
+    it("refuses a removal under a minor-level prerelease on a 1.x line", () => {
+      expect(
+        decideVersionAction({ ...base, changed: true, currentVersion: "1.5.0-beta.1", removedExports: ["VcButton"] }),
+      ).toEqual({ action: "require-major", removedExports: ["VcButton"] });
+    });
+
+    it("refuses a removal under a patch-level prerelease on a pre-1.0 line", () => {
+      expect(
+        decideVersionAction({
+          changed: true,
+          baseVersion: "0.1.0",
+          currentVersion: "0.1.1-beta.1",
+          removedExports: ["VcButton"],
+        }),
+      ).toEqual({ action: "require-minor", removedExports: ["VcButton"] });
+    });
+
+    it("accepts a removal under a prerelease of the level that was asked for", () => {
+      expect(
+        decideVersionAction({ ...base, changed: true, currentVersion: "2.0.0-beta.1", removedExports: ["VcButton"] }),
+      ).toEqual({ action: "none", reason: "premajor already bumped" });
+    });
+  });
+
   describe("a released line only moves forward", () => {
     it("refuses a version that went DOWN, instead of reading it as the breaking bump", () => {
       // Every version below the baseline is also outside `^base`, so the caret check alone said
