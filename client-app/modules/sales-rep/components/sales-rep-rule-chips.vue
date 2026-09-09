@@ -1,29 +1,35 @@
 <template>
   <div class="sales-rep-rule-chips">
-    <!-- Baseline tab: active when no rule is chosen; clicking it clears the filter. -->
-    <button
-      type="button"
-      :class="['sales-rep-rule-chips__tab', { 'sales-rep-rule-chips__tab--active': !modelValue }]"
-      :aria-pressed="!modelValue"
-      @click="modelValue = undefined"
+    <!-- Baseline tab: active when no rule is chosen; clicking it clears the filter. Its value is a
+         boolean so no non-empty rule name can collide with it (a rule named "" would still match,
+         but every surface here already reads a falsy filter as the baseline).
+         `Boolean(true)`, not `:value="true"`: the latter trips vue/prefer-true-attribute-shorthand,
+         and the shorthand it asks for passes "" instead — same reason as variations.vue. -->
+    <VcTabSwitch
+      class="sales-rep-rule-chips__tab"
+      size="sm"
+      :value="Boolean(true)"
+      :model-value="!modelValue"
+      @change="modelValue = undefined"
     >
-      <span class="sales-rep-rule-chips__label" :data-text="allLabel">{{ allLabel }}</span>
+      <span class="sales-rep-rule-chips__label">{{ allLabel }}</span>
 
       <span v-if="allCount !== undefined" class="sales-rep-rule-chips__count">{{ formatStatCount(allCount) }}</span>
-    </button>
+    </VcTabSwitch>
 
-    <button
+    <VcTabSwitch
       v-for="rule in selectableRules"
       :key="rule.name"
-      type="button"
-      :class="['sales-rep-rule-chips__tab', { 'sales-rep-rule-chips__tab--active': modelValue === rule.name }]"
-      :aria-pressed="modelValue === rule.name"
-      @click="modelValue = rule.name"
+      class="sales-rep-rule-chips__tab"
+      size="sm"
+      :value="rule.name"
+      :model-value="modelValue"
+      @change="modelValue = $event"
     >
-      <span class="sales-rep-rule-chips__label" :data-text="rule.label">{{ rule.label }}</span>
+      <span class="sales-rep-rule-chips__label">{{ rule.label }}</span>
 
       <span v-if="rule.count !== undefined" class="sales-rep-rule-chips__count">{{ formatStatCount(rule.count) }}</span>
-    </button>
+    </VcTabSwitch>
   </div>
 </template>
 
@@ -74,34 +80,12 @@ const selectableRules = computed(() => selectableFilterRules(props.rules));
 .sales-rep-rule-chips {
   @apply flex flex-wrap items-center gap-1;
 
-  // The transparent border keeps every tab the same size so selecting one causes no layout shift.
-  &__tab {
-    // Radius follows the app-wide `--vc-radius` token so it tracks the theme's roundness setting.
-    @apply inline-flex cursor-pointer items-center gap-1 rounded-[--vc-radius] border border-transparent px-3 py-1.5 text-sm font-medium text-neutral-500;
+  // The component's accent-500 default drops hover text below WCAG AA in every preset (VCST-5890).
+  --vc-tab-switch-hover-color: var(--color-neutral-900);
 
-    &:hover {
-      @apply text-neutral-900;
-    }
-
-    &--active {
-      @apply border-neutral-200 bg-additional-50 font-semibold text-neutral-900 shadow;
-    }
-  }
-
-  &__label {
-    @apply inline-flex flex-col items-center;
-
-    // Invisible ::after reserves the bold width so toggling font-weight never resizes the tab (avoids reflow).
-    &::after {
-      @apply invisible h-0 overflow-hidden font-semibold;
-
-      content: attr(data-text);
-    }
-  }
-
-  // Always bold + accent (the count doesn't dim with an unselected label), per the documents mock.
+  // Always accented (the count doesn't dim with an unselected label), per the documents mock.
   &__count {
-    @apply font-semibold text-primary-500;
+    @apply text-primary-500;
   }
 }
 </style>
