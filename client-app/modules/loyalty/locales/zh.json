@@ -72,7 +72,7 @@
           "open_mission": "开启任务",
           "progress_skus": "{current} / {target} 个 SKU",
           "progress_any_sku": "至少 1 个 {target} 个 SKU",
-          "progress_spend": "{sum} 已花费",
+          "progress_spend": "已花费 {sum} / {target}",
           "progress_orders": "{current} / {target} 个订单"
         },
         "sku_modal": {
