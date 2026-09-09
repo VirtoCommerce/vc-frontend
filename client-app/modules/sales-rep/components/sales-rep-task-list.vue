@@ -13,7 +13,7 @@
         <VcCheckbox
           :model-value="item.status === 'completed'"
           :aria-label="completionLabel(item)"
-          :disabled="busy"
+          :disabled="busy || item.status === 'canceled'"
           @update:model-value="$emit('toggle', item)"
         />
 
@@ -36,7 +36,7 @@
         <VcCheckbox
           :model-value="item.status === 'completed'"
           :aria-label="completionLabel(item)"
-          :disabled="busy"
+          :disabled="busy || item.status === 'canceled'"
           @update:model-value="$emit('toggle', item)"
         />
       </template>
