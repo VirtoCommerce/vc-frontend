@@ -5,22 +5,35 @@ current. Geometry is read off the frames, not inferred. Companions:
 `temp-VCST-5707-BE-contract.md` (data), `temp-VCST-5707-FE-plan.md` (state architecture). This file
 is the layout authority.
 
-## Frames — 12 nodes, six states × two breakpoints
+## Frames — 12 nodes
+
+**The desktop six are a sequence, not six copies of the dialog.** An earlier draft of this file
+said they were the same six states as the mobile row and that only `535:16411` needed measuring.
+That was wrong, and it cost a false claim that the dropdown menu had no design. All six are now
+opened and identified:
+
+| # | Desktop frame | What it actually shows |
+| --- | --- | --- |
+| 1 | `535:15951` | Lists page, no overlay — the layout reference |
+| 2 | `535:16064` | Lists page with the **list-actions menu open** (`535:16177`) |
+| 3 | `535:16181` | Share dialog · **Private** |
+| 4 | `535:16296` | Share dialog · **My organization** |
+| 5 | `535:16411` | Share dialog · **Specific customers** (popup instance `535:16525`, measured) |
+| 6 | `535:16526` | Share dialog · **Anyone with link** |
 
 Mobile frames sit in a row at y=6099-6131, x ascending by ~500 in this order:
 
-| State | Mobile | Total h | Desktop |
-| --- | --- | --- | --- |
-| Private | `566:550` | 278 | one of the six below |
-| My organization | `566:563` | 278 | ” |
-| Specific customers | `566:576` | 743 | `535:16411` → popup `535:16525` (measured) |
-| Anyone with link | `566:618` | 363 | ” |
-| Specific customers · 30 collapsed | `483:9790` | 879 | ” |
-| Specific customers · 30 expanded | `483:16521` | 857 (clipped) | ” |
+| State | Mobile | Total h |
+| --- | --- | --- |
+| Private | `566:550` | 278 |
+| My organization | `566:563` | 278 |
+| Specific customers | `566:576` | 743 |
+| Anyone with link | `566:618` | 363 |
+| Specific customers · 30 collapsed | `483:9790` | 879 (measured in full) |
+| Specific customers · 30 expanded | `483:16521` | 857 (clipped) |
 
-Desktop family: `535:15951`, `535:16064`, `535:16181`, `535:16296`, `535:16411`, `535:16526` — six
-1440-wide page frames, the same six states. Only `535:16411` and its popup instance `535:16525`
-were measured; the rest are structurally identical modulo the tab-row delta below.
+Frame 4 is the visual proof of the My-organization link conflict recorded below: the dialog is tabs
+only, with no link field, and its footer reads **Save**.
 
 Superseded prototypes, **not** in the current set: `467:4614`, `415:4589`, `477:11114` (the three
 un-chosen variants from VCDZ-894).
@@ -30,6 +43,102 @@ un-chosen variants from VCDZ-894).
 `VcDialogContent` / `VcDialogFooter`, `VcTabSwitch`, `VcLabel`, and the `Field / Customers` and
 `Field / Message` instances. So the recipients list and the link field are built from scratch — accepted, no ui-kit work is
 expected here.
+
+## List-actions dropdown menu — `535:16177`
+
+The entry point for the whole split, and it **is** designed (frame 2 of the desktop sequence).
+
+Container: `bg-additional-50`, `border border-neutral-200`, radius 8, `p-1` (**4**),
+`overflow-clip`, shadow `0 4px 6px -4px rgb(0 0 0 / .1), 0 6px 15px rgb(0 0 0 / .1)`. Anchored
+under the cog, right-aligned — today's `<VcDropdownMenu :y-offset="4" :x-offset="0"
+placement="bottom-end">` already matches.
+
+**The menu is an Acceptance requirement, not just a frame.** VCST-5707's Acceptance field lists it
+under "Action wheel": *1. Rename (previous "Edit") · 2. Share (new popup) · 3. Delete*. So the three
+items, their order and the Rename label are prescribed in the ticket; the frame supplies the
+geometry. Where the two disagree, the Acceptance wins.
+
+Three `VcMenuItem` **md** (40h, `px-3`, `gap-1.5`, `text-sm` Regular), in this order:
+
+| # | Label | Colour | Today's code |
+| --- | --- | --- | --- |
+| 1 | **Rename** (Acceptance + frame) | neutral-950 | `list_card.list_edit_button` = "Edit" |
+| 2 | **Share** (Acceptance + frame) | neutral-950 | does not exist |
+| 3 | **Delete** — Acceptance; the frame says *Remove list* | **danger-500** on the *label* | `list_card.remove_list_button` = "Delete", danger on the *icon* only |
+
+Four things to get right, none of them guessable from the geometry:
+
+- **Item 1 is "Rename", not "Edit"** — stated in the Acceptance as *Rename (previous "Edit")*.
+  Existing key `shared.wishlists.list_card.list_edit_button` is "Edit" in all 13 locales, so this
+  needs a new key, not a re-translation of the old one.
+- **Item 3 keeps today's "Delete".** The Acceptance says Delete and the existing key already says
+  Delete in all 13 locales; the frame's *Remove list* is the outlier, so no key change.
+- **Item 2 needs no new key.** `shared.wishlists.list_card.share_button` already exists and is
+  translated in all 13 locales ("Share" / "Поделиться" / "Teilen" / …) and is currently unused —
+  left over from an earlier design. Reuse it.
+- **Remove colours the label**, not just the glyph. Today `wishlist-dropdown-menu.vue:27` puts
+  `<VcIcon name="delete-2" class="text-danger" />` in the *default* slot with a plain label, while
+  the Edit item uses `<template #prepend>`. Design shows both prepends aligned and the whole Remove
+  label in danger, so that item wants `color="danger"` and its icon moved into `#prepend`.
+- **The Figma prepend slots are 14×14 and empty, but the Acceptance's own "Action wheel" screenshot
+  is not.** It shows a bare pencil for Rename, a two-person glyph for Share and a trash can for
+  Remove list, with the Remove glyph in danger as well as its label. Built as `pencil`, `users` and
+  today's `delete-2`; `users` matches the screenshot's silhouette, and the pencil replaces `edit`
+  (pencil-in-square) because the screenshot draws no square.
+
+Ignore two artefacts: the frame is 190 wide while each `VcMenuItem` instance inside it is left at
+its default **240** and is clipped, so neither number is a spec — the menu is content-sized; and
+`535:16151`'s cog is `hidden="true"` on the "Shared with me" row, which is just today's
+`access === Write` rule (`wishlist-card.vue:34`) drawn correctly.
+
+## The primary button label changes with the scope
+
+Read off all four dialog states:
+
+| Scope | Footer primary |
+| --- | --- |
+| Private | **Save** |
+| My organization | **Save** |
+| Anyone with link | **Save** |
+| Specific customers | **Share** |
+
+Desktop and mobile agree (`535:16525` and `483:9790` both read `Share` on Specific customers).
+So the label is not "Share" for the dialog and not "Save" for the form — it follows the selected
+scope, and it flips live as the user switches tabs. Cancel is `Cancel` in every state.
+
+There is no new locale key for either: `add_or_update_wishlist_modal.save_button` and
+`list_card.share_button` both exist in all 13 locales.
+
+## The Customers field has two display states
+
+- **Nothing selected** (`535:16525`): placeholder `Search customers by name or email`.
+- **Something selected** (`483:9790`): the control reads `30 selected` — a summary, not a chip list.
+
+Two notes. The placeholder promises **email** search, which the picker cannot do today (client-side
+filter over loaded pages, and no search emit from `VcSelect` — see the FE plan §0.4); if search
+lands as name-only the placeholder has to change with it. And it promises search over *customers*
+while a row's second line is an **address** by our own decision — the promise and the row content
+should not disagree, so raise it with the designer.
+
+## Stop-sharing confirmation — copy is prescribed
+
+VCST-5707's description gives the dialog verbatim, so this is not a copy decision:
+
+> **Stop sharing this page?**
+> Anyone with the link will lose access. You can share it again at any time.
+> `Cancel` · `Stop sharing`
+
+followed by *"If sharing is removed, I can create a new sharing option."* Build it as one
+`VcConfirmationModal`. Two caveats to raise rather than fix silently: the copy says "page" where
+this is a list, and "anyone with the link" is wrong for the Customer scope, where access follows org
+membership and not the link. Amending prescribed copy needs product's yes; until then ship it as
+written.
+
+**Trigger, decided 2026-09-09:** it fires only when the scope of an **already-shared** list changes
+— on Save, when the persisted scope is a sharing scope and the selected scope differs. So: not on a
+first share from `Private`, not when only the recipient set changes inside the Customer scope, and
+never on the per-row trash icon. It does fire on shared → `Private` and on shared → a different
+sharing scope, since both revoke the current audience.
 
 ## Field visibility per scope — the important table
 

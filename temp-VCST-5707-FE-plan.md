@@ -16,17 +16,22 @@ revision; §1.2 is `sharingSettings[].sharedWith: SharingTargetType` — a core-
 that owns the scope, so names and addresses arrive with the grant and no second lookup is needed; §2.4 now requires
 BE to say where the list-level key lives; `share_replace_hint` is 13 locale files. The design is final — the Figma frames in VCST-5707
 (the twelve frames inventoried in `temp-VCST-5707-UI-spec.md`) are the spec, and nothing here is design-gated.
-`467:4614`, `415:4589` and `477:11114` are **superseded** VCDZ-894 variants — do not read them. Two cells of the
+`415:4589` and `477:11114` are **superseded** VCDZ-894 variants — do not read them. `467:4614` is a special case:
+it is not in Ivan's list of current frames, but **VCST-5707's Acceptance links it** as the reference for the
+multiselect dropdown, so the *behaviour* it prescribes is binding while the *visuals* come from the current frames. Two cells of the
 current frames are knowingly overruled, both recorded below: Notify via (item 3) and the My-organization link
 (item 6).
 
 What is still open:
 
-1. **The sharing key still needs BE's answer.** The modal reads the key from `props.list?.sharingSetting?.id`
-   (`add-or-update-wishlist-modal.vue:181`) and mints `crypto.randomUUID()` when absent. Contract §2.4 now asks BE to
-   state whether `sharingSettings[].id` keeps being the list-level key or a `WishlistType.sharingKey` is added — but
-   until they answer, do not touch the key logic. If the key moves off the row PK with no documented home, every
-   edit-save mints a new one and the link rotates on every save.
+1. **The sharing key still needs BE's answer — with one fact now measured.** The share dialog reads the key from
+   `list.sharingSetting?.id` (`share-wishlist-modal.vue`) and mints `crypto.randomUUID()` when absent. Contract §2.4
+   asks BE to state whether `sharingSettings[].id` keeps being the list-level key or a `WishlistType.sharingKey` is
+   added — until they answer, do not touch the key logic. **Measured on vcst-qa 2026-09-09:** across a create and four
+   `changeWishlist` writes (two of them with a client-chosen `sharingKey: "probe-key-…"`, one with none),
+   `sharingSetting.id` stayed the same server-generated GUID and never took the client value. So on today's BE the
+   key we send is not what the row is keyed by, and the row id is stable across scope changes — which is what the
+   link needs. Still worth BE's written confirmation, but the FE's current reading of `sharingSetting.id` is correct.
 
 2. **In PR-A, grant display is only as good as the picker's loaded pages.** Nothing is missing from the contract —
    §1.2 delivers `sharedWith` on the grant — but it arrives with PR-B. Until then, names come from `knownOptions`
@@ -262,13 +267,19 @@ interface IEmits { (e: "remove", organizationId: string): void; (e: "clear"): vo
 
 ### 3.4 Menu entry point — decided: two modals
 
-`wishlist-dropdown-menu.vue` gets a third item `share`, shown only when `sharingSetting.access === Write` (already
-the card's condition, `wishlist-card.vue:34`). `lists.vue:99-106` and `list-details.vue:226-233` open one of two
-dialogs:
+**The menu is designed** — frame `535:16177` inside `535:16064`, three `VcMenuItem` md in the order
+**Rename / Share / Remove list**, full spec in `temp-VCST-5707-UI-spec.md` → "List-actions dropdown menu".
+`wishlist-dropdown-menu.vue` gets the `share` item in the middle, shown only when
+`sharingSetting.access === Write` (already the card's condition, `wishlist-card.vue:34`). `lists.vue:99-106` and
+`list-details.vue:226-233` open one of two dialogs:
 
-- **Edit** — name + description only. Sends `changeWishlist({ listId, listName, description })`.
-- **Share** — scope pills, picker, recipients, link, message, Notify via. Sends
-  `changeWishlist({ listId, scope, sharingKey, addSharedWithIds, removeSharedWithIds })`.
+- **Rename** — name + description only. Sends `changeWishlist({ listId, listName, description })`. Note the design
+  says *Rename*, not *Edit*, so this needs a new locale key; the existing `list_edit_button` stays "Edit".
+- **Share** — scope tabs, picker, recipients, link, message. Sends
+  `changeWishlist({ listId, scope, sharingKey, addSharedWithIds, removeSharedWithIds })`. Its footer primary is
+  **scope-dependent**: `Share` on Specific customers, `Save` on Private / My organization / Anyone with link, and it
+  flips live as tabs change. Both keys already exist in all 13 locales.
+  There is **no Notify via block** — VCST-5724 removed it (§0.3).
 
 The sharing block (scope selector + link + `<KeepAlive>` slot for the scope element) is extracted from
 `add-or-update-wishlist-modal.vue` into `wishlist-sharing-section.vue`; the create flow keeps the name/description
@@ -277,10 +288,12 @@ wherever it is hosted.
 
 Two consequences worth naming, because they are what the split actually costs:
 
-- **Partial writes become the normal case.** Edit omits every sharing field; Share omits `listName`/`description`.
-  For the delta inputs the contract already guarantees "omitted = untouched", but a write that omits `scope` must
-  also leave sharing alone or renaming a list would wipe it. Contract §2.1 now states this; verify it before the
-  Edit dialog ships.
+- **Partial writes become the normal case — verified safe on today's BE.** Rename omits every sharing field; Share
+  omits `listName`/`description`. Probed on vcst-qa 2026-09-09 with a throwaway list: `changeWishlist({ listId,
+  listName, description })` left `scope: Organization` and the whole `sharingSetting` untouched; `changeWishlist({
+  listId, scope, sharingKey })` and `changeWishlist({ listId, scope })` both left name and description untouched. So
+  neither dialog can wipe the other's fields on the current backend. Contract §2.1 keeps the requirement written down
+  so the new BE cannot regress it.
 - **Create no longer shares.** Name + description only; the new list starts `Private` and is shared afterwards.
   So `createWishlist` takes no sharing fields and the create path drops the scope selector entirely. Worth
   watching in review: sharing a brand-new list is now two dialogs where it used to be one, so if the rep's common
@@ -384,7 +397,8 @@ against a backend that has VCST-5925 and bumps `generate:backend-packages` in th
 | 2 | Picker composable: paging + accumulation + `knownOptions` + address in the options query + tests (§4). Client-side filter over accumulated pages until a search emit exists | BUILDABLE NOW | — (keyword wiring: VcSelect search emit) |
 | 3 | Modal: `<KeepAlive>`, `sharedWithIds` prop, contract type widening, modal tests for retention + ref rebind (§1, §2) | BUILDABLE NOW | — |
 | 4 | Customer element rewrite on a **Set draft capped at one** (`multiple` off, payload `{ sharedWithId: [...selected][0] }`, `canSave = size === 1`), recipients list component, message cap 250, Notify-via, per-added-org notify with aggregate toast (§3.2, 3.3, 5). **No Notify-via fieldset** — VCST-5724 removed it (§0.3) | BUILDABLE NOW | — |
-| 5 | Scope pills (`VcTabSwitch`) and Rename/Share/Delete menu + `focus: "sharing"` entry point (§3.1, 3.4) | BUILDABLE NOW | entry-point answer (which menu item owns the sharing UI) |
+| 5a | **Done 2026-09-09:** Rename / Share / Remove list menu; `AddOrUpdateWishlistModal` reduced to name + description (create + rename); new `ShareWishlistModal` with the scope selector, link and scope element; Share button on list details; scope-dependent primary label; 13 locales; tests split | DONE | — |
+| 5b | Scope tabs (`VcTabSwitch` + `icon` on the registry) replacing the `VcSelect` inside `ShareWishlistModal` (§3.1) | BUILDABLE NOW | — |
 | — | **PR-A = steps 1–5.** Wire unchanged: `sharedWithId`, one target. | | |
 | 6 | Codegen against BE with 1.1 + 1.2 + 2.1; `getWishlists` / `getWishlist` / `changeWishlist` documents select `sharingSettings { id scope access isOwner sharedWithId sharedWith { id name subtitle imageUrl } }`; `listSharedWithIds` reads the plural; payload → deltas; `multiple` on; `carriesPersistedTarget` → `{}`; tighten payload type to the generated `Pick`; retire `share_replace_hint` (13 locales, comment `:72`, tests `:234-250`, `:270-277`, `:347-351`); Select-all (§4.2 b) | **BLOCKED on VCST-5925** deployed to the dev backend the theme's dev branch runs against | BE merge + deploy; then codegen |
 | — | **PR-B = step 6.** Recipient names and addresses come with `sharedWith`, so there is no separate resolution step. | | |
@@ -482,22 +496,59 @@ button, exposing `controls`.
 
 ## 9. Open questions — surfaced, not answered
 
-1. **AC contradiction.** Description: Edit shows sharing *read-only* with remove; customfield_10175: editable
-   multiselect with per-row remove. Product chose editable — the description text should be corrected so QA does
-   not test the old sentence.
-2. **Entry point.** "Rename (previous Edit)" vs "Edit list should show Sharing details": one modal with a `share`
-   menu item that focuses the block (§3.4, recommended) or a separate Share dialog (extraction, more work).
+1. **AC contradiction.** The description says Edit shows sharing *read-only* with a remove option; the Acceptance
+   field says editable multiselect with per-row remove. Ivan chose editable ("it will be not read only mode - fully
+   customizable share options"), so the description sentence is the stale one and should be corrected before QA
+   tests it.
+2. **Entry point — not open, the Acceptance settles it.** Acceptance item 1 is *"Rename (previous “Edit”)"* and
+   item 2 is *"Share (new popup)"*, with item 3 *"Delete"* and an "Action wheel" screenshot. So the three-item menu
+   and the separate Share popup are requirements, not our design choice, and the "Rename" label is prescribed there
+   rather than discovered in Figma. The only divergence to note: the Acceptance says **Delete** for item 3 (matching
+   today's `list_card.remove_list_button`), while frame `535:16177` labels it *Remove list* — keep the existing key.
 3. **Zero recipients / "Clear all".** Contract says Clear all = scope switch to Private. In the UI that needs the
    element to change the *modal's* scope (an upward channel the contract does not have). Recommended default:
    Clear all empties the draft, Save stays disabled at zero with a hint "choose Private to stop sharing"; Stop
    sharing = the Private pill. Alternative: add `onRequestScope?: (scope) => void` prop from modal to element.
 4. **Non-rep corporate member.** Sees three pills (Customer is `isAvailable: isSalesRepUser`,
    `sales-rep/index.ts:94`); a persisted Customer list still shows the scope, read-only. Confirm that is intended.
-5. **Notify-via reversal** of VCST-5724 (§0.3).
-6. **Confirmation dialog.** AC: "Stop sharing this page? Anyone with the link will lose access." Copy is wrong for
-   Customer scope (access is by org membership) and says "page". When does it fire — on choosing Private, or on
-   Save with a shared→Private transition (recommended, one `VcConfirmationModal`)? Per-row trash should not confirm.
+5. **Search — parked by decision (2026-09-09).** Waiting on Maya's ticket (VCST-5923); if it does not bring what
+   the picker needs, **hide the search affordance** rather than build a substitute. Acceptance item 2.1 asks for
+   "native search", which reads as `VcSelect`'s own filter (`filteredItems`, `vc-select.vue:310`) and already exists,
+   so nothing here is blocked either way — but a native filter only sees loaded pages, so with paging it silently
+   hides matches. Do not build server-side keyword search in this ticket. The `30 selected` summary in the frames is
+   the same Acceptance line and **is** required.
+
+6. **Confirmation dialog — settled 2026-09-09, both copy and trigger.** The copy is prescribed verbatim in
+   VCST-5707's description: *"Stop sharing this page? / Anyone with the link will lose access. You can share it again
+   at any time. / `Cancel` · `Stop sharing`"*, followed by *"If sharing is removed, I can create a new sharing
+   option."* **Trigger, decided:** it fires only when the scope of an **already-shared** list changes — i.e. on Save,
+   when the persisted scope is a sharing scope and the selected scope differs from it. One `VcConfirmationModal`.
+   That means it does **not** fire on a first share (`Private` → anything), does **not** fire when only the
+   recipient set changes inside the Customer scope, and does **not** fire on the per-row trash icon. It does fire on
+   shared → `Private` and on shared → a different sharing scope, because both revoke the current audience.
+   Still worth raising with product, but not blocking: the given copy says "page" where this is a list, and "anyone
+   with the link" is wrong for the Customer scope, where access follows org membership rather than the link. Until
+   product amends it, ship it as written.
 7. **Select all semantics** (§4.2) — loaded rows vs every match.
 8. **Message visibility** — only when someone new is added (today's rule, recommended) or always.
-9. **Organisation name in the template** — client-side interpolation (§5) or the BE email template.
+9. **Organisation name in the notification — deferred 2026-09-09, Ivan is clarifying with product.** Do not build
+   it either way yet. What is already established, so the answer lands on a decision rather than an investigation:
+
+   - There are **two layers**. The platform email template owns the shell and is selected by `storeId` +
+     `cultureName` (per the input's own doc comments, `modules/sales-rep/api/graphql/types.ts:662-677`) — unreachable
+     from the FE. `title` + `message` are free-form strings we compose (`wishlist-customer-sharing.vue:104-113`).
+   - **If the name goes in `title`/`message`, it is FE-only, no BE change.** `notifyCustomer(organizationId, …)`
+     runs once per organization, so the name is in hand — from `knownOptions` now, from `sharedWith.name` after PR-B.
+     Today's default already says "with your organization" unnamed, so the ask is to name it.
+   - **Put it in `title`, not the body.** `body = shareMessage.trim() || t('share_default_message', { listName })`,
+     so a rep's custom note replaces the default entirely and the name would vanish. `title` is sent unconditionally
+     and the rep never edits it.
+   - **Who the name is for changes what to build.** For the *recipient* (disambiguating a shared inbox or a person
+     in several orgs) → `title`. For the *rep* — which is what "to clarify which organisation was shared" sounds
+     like — it belongs in the success toast (`share_success` → "List shared with {organizationName}") and in the
+     recipients list, not in the recipient's email; with N recipients the aggregate toast should name what went
+     where.
+   - **Recommendation when the answer comes:** both — `title` plus the toast — which covers either reading with one
+     interpolation param added across the module's 13 locale files and no BE work. If product literally means the
+     platform template, that is a separate `vc-module-sales-rep` ticket and is not in VCST-5925's contract.
 10. **VCST-5335 item 2.2 "Lists can be edited"** is Done but targeted customers stay on Read — ticket text to amend.
