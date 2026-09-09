@@ -1,0 +1,23 @@
+query SalesRepCustomerSearchTerms(
+  $organizationId: String
+  $storeId: String
+  $cultureName: String
+  $periodFrom: DateTime
+  $periodTo: DateTime
+  $take: Int
+  $sort: String
+) {
+  salesRepCustomerInsights(
+    organizationId: $organizationId
+    storeId: $storeId
+    cultureName: $cultureName
+    period: { from: $periodFrom, to: $periodTo }
+  ) {
+    dataAsOf
+    searchTerms(take: $take, sort: $sort) {
+      term
+      count
+      lastSearchedDate
+    }
+  }
+}

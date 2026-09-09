@@ -32,12 +32,14 @@ Configure the following settings in the Virto Commerce backend:
 3. Both can work independently or together
 
 The GTM implementation follows Google's best practices:
+
 - GTM script is injected in the `<head>` section
 - `dataLayer` is properly initialized before GTM loads
 
 ### Event Handling
 
 The module automatically sends ecommerce events regardless of whether you use:
+
 - **GTM Only**: Events are pushed directly to `dataLayer` for GTM to capture
 - **GA4 Only**: Events are sent via `gtag()` API
 - **Both GTM + GA4**: Events are sent via `gtag()` which pushes to `dataLayer`, allowing both systems to track
@@ -83,6 +85,55 @@ export const extendGoogleAnalyticsEvents: ExtendEventsType = ({ sendEvent, produ
     },
   })
 ```
+
+## Customer identity (custom dimensions)
+
+Every authenticated event is tagged with the customer's identity, so the **standard** GA4 events this
+module already sends — `view_item`, `search`, `view_search_results`, `add_to_cart` — can be reported for a
+single contact or organization instead of the whole store. No custom events are involved, and none are
+needed: GA4 simply has no built-in `userId` dimension, so without these properties there is no way to
+narrow any report to one customer. The `user_id` set in the `config` call is GA4's User-ID feature and is
+**not** a reportable dimension; these properties are.
+
+The values are built in [`user-properties.ts`](./user-properties.ts) and sent with
+`gtag('set', 'user_properties', …)` before the first `config`, so the initial `page_view` carries them.
+When a GTM container id is configured they are also pushed to `dataLayer`, since GTM cannot read gtag's
+internal state.
+
+### Required GA4 Admin registration
+
+None of this is reportable until each name below is registered in **GA4 Admin → Custom definitions** as a
+**User-scoped** dimension, against the exact same string. Collected-but-unregistered data is discarded for
+reporting purposes.
+
+| Dimension name      | User property       | Value                                              |
+| ------------------- | ------------------- | -------------------------------------------------- |
+| `contact_id`        | `contact_id`        | Contact id — the join key back to the platform     |
+| `organization_id`   | `organization_id`   | Organization id                                    |
+| `organization_name` | `organization_name` | Organization name, for readable reports            |
+| `session_kind`      | `session_kind`      | `self`, or `impersonated` while an operator drives |
+| `is_sales_rep`      | `is_sales_rep`      | `true` when the account holds `sales-rep:access`   |
+
+> [!IMPORTANT]
+>
+> **GA does not backfill.** A dimension reports only on data collected after it was registered, so useful
+> history starts on registration day, not on release day. Register them as early as possible.
+
+> [!WARNING]
+>
+> A user-property value is capped at **36 characters** and GA truncates silently.
+> `user-properties.ts` truncates first so the stored value stays predictable — `organization_name` may be
+> cut, which is why `organization_id` is the join key and never a name. It is also why the sales-rep signal
+> is a flag: real role names run 18-20 characters, so a joined role list overflows after one or two and
+> silently drops the rest, including the role worth reporting.
+
+`session_kind` exists because a sales rep impersonating a customer produces events under that customer's
+identity. Reporting on a customer's own behaviour means filtering to `session_kind = self`; without it a
+rep's browsing shows up as the customer's.
+
+To rename a property (a collision with an existing property on the client's GA4 property, for example),
+change `USER_PROPERTY_NAMES` in [`user-properties.ts`](./user-properties.ts) and re-register the dimension
+under the new name — the previously collected data stays under the old one.
 
 # Extending parameters
 

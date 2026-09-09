@@ -213,6 +213,86 @@
       "all_categories": "Todas as categorias",
       "load_failed": "Falha ao carregar os mais vendidos"
     },
+    "customer_insights": {
+      "top": "Top",
+      "recent": "Recentes",
+      "not_configured": "O Analytics não está conectado para esta loja",
+      "tracked_caveat": "Com base apenas na atividade rastreada",
+      "data_as_of": "Dados de {date}",
+      "search_history": {
+        "empty": "Nenhuma pesquisa rastreada neste período",
+        "count": "{n} pesquisa | {n} pesquisas",
+        "last_searched": "Última pesquisa: {date}",
+        "load_failed": "Não foi possível carregar o histórico de pesquisa"
+      },
+      "browse_history": {
+        "empty": "Nenhuma visualização de produto rastreada neste período",
+        "views": "{n} visualização | {n} visualizações",
+        "load_failed": "Não foi possível carregar o histórico de navegação"
+      }
+    },
+    "activity": {
+      "navigation": {
+        "link": "Minha atividade"
+      },
+      "page": {
+        "title": "Minha atividade",
+        "customer_title": "Atividade de {customer}",
+        "title_fallback": "Atividade"
+      },
+      "breadcrumb": "Atividade",
+      "tabs": {
+        "all": "Todas",
+        "orders": "Pedidos",
+        "customers": "Clientes",
+        "searches": "Pesquisas",
+        "productViews": "Visualizações de produto",
+        "logins": "Logins"
+      },
+      "period": {
+        "all_time": "Todo o período",
+        "month": "Este mês",
+        "year": "Este ano"
+      },
+      "rows": {
+        "order_placed": "Pedido realizado",
+        "customer_assigned": "Novo cliente atribuído",
+        "searched_for": "Pesquisou por",
+        "viewed_product": "Visualizou",
+        "logins": "{count} login | {count} logins",
+        "count_suffix": "×{count}",
+        "unknown": "Atividade"
+      },
+      "time": {
+        "during_hour": "{date}, durante a hora de {time}"
+      },
+      "caveat": "Pesquisas, visualizações de produto e logins baseiam-se na atividade monitorada da loja e são aproximados.",
+      "tracked_hint": "Atividade rastreada da loja: pode levar até 48 horas para aparecer.",
+      "empty": "Ainda não há atividade",
+      "empty_period": "Nenhuma atividade monitorada neste período",
+      "no_results": "Nenhuma atividade nesta categoria",
+      "load_failed": "Não foi possível carregar a atividade",
+      "view_all": "Toda a atividade",
+      "my_activity": {
+        "title": "Minha atividade"
+      },
+      "customer": {
+        "title": "Atividade do cliente",
+        "views": {
+          "summary": "Resumo",
+          "searches": "Pesquisas",
+          "product_views": "Visualizações de produto"
+        },
+        "created_on": "Criado em",
+        "last_web_login": "Último login na web",
+        "visits": "Visitas",
+        "last_search_term": "Último termo pesquisado",
+        "last_viewed_product": "Último produto visualizado",
+        "not_configured": "A atividade na web ainda não é monitorada — o analytics não está configurado para esta loja.",
+        "empty": "Sem dados de atividade",
+        "load_failed": "Não foi possível carregar a atividade do cliente"
+      }
+    },
     "documents": {
       "title": "Biblioteca de documentos",
       "browse_all": "Ver todos",

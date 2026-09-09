@@ -1,6 +1,8 @@
 import { useUser } from "@/shared/account/composables/useUser";
 import { isSalesRepsEnabled } from "./composables/useSalesRepsConfig";
 import {
+  ACTIVITIES_ROUTE_NAME,
+  ACTIVITIES_ROUTE_SEGMENT,
   ALL_CUSTOMER_ORDERS_ROUTE_NAME,
   ALL_CUSTOMER_ORDERS_ROUTE_SEGMENT,
   CUSTOMER_ORDERS_ROUTE_NAME,
@@ -20,7 +22,7 @@ import {
   SALES_REP_ACCESS_PERMISSION,
   SALES_REP_DOCUMENTS_READ_PERMISSION,
 } from "./constants";
-import type { NavigationGuard, RouteRecordRaw } from "vue-router";
+import type { NavigationGuard, RouteLocationNormalizedLoaded, RouteRecordRaw } from "vue-router";
 
 const SalesRepsPage = () => import("./pages/sales-reps.vue");
 const CustomerOrdersPage = () => import("./pages/customer-orders.vue");
@@ -28,6 +30,7 @@ const CustomerOrderDetailsPage = () => import("./pages/customer-order-details.vu
 const MyCustomersPage = () => import("./pages/my-customers.vue");
 const CustomerProfilePage = () => import("./pages/customer-profile.vue");
 const DashboardPage = () => import("./pages/dashboard.vue");
+const ActivitiesPage = () => import("./pages/activities.vue");
 const DocumentsPage = () => import("./pages/documents.vue");
 
 // Reps only: the My customers gate (SalesRep.Enabled + sales-rep:access) AND every extra permission
@@ -105,6 +108,24 @@ export const documentsRoute: RouteRecordRaw = {
   },
 };
 
+// All-activity feed (VCST-5337) -> /company/activities; ?organizationId= narrows to one customer.
+export const activitiesRoute: RouteRecordRaw = {
+  path: ACTIVITIES_ROUTE_SEGMENT,
+  name: ACTIVITIES_ROUTE_NAME,
+  component: ActivitiesPage,
+  meta: repRouteMeta,
+  // The optional narrowing arrives as a query param; unknown/foreign orgs null server-side.
+  props: (route) => ({
+    organizationId: typeof route.query.organizationId === "string" ? route.query.organizationId : undefined,
+  }),
+  // Reps only — non-reps who hit the URL directly are bounced to the dashboard.
+  beforeEnter(_to, _from, next) {
+    if (guardSalesRep(next)) {
+      next();
+    }
+  },
+};
+
 // Customer profile (VCST-5308) -> /company/my-customers/:organizationId.
 export const customerProfileRoute: RouteRecordRaw = {
   path: CUSTOMER_PROFILE_ROUTE_SEGMENT,
@@ -141,3 +162,26 @@ export const allCustomerOrdersRoute: RouteRecordRaw = {
   meta: repRouteMeta,
   beforeEnter: guardRepRoute,
 };
+
+// One route serves two things: "my activity" across every assigned customer, and a single customer's
+// activity (?organizationId=). Only the first is the rep's own — the second is a page about a
+// customer, reached from their profile.
+export function isCustomerScopedActivity(route: RouteLocationNormalizedLoaded): boolean {
+  return route.name === ACTIVITIES_ROUTE_NAME && Boolean(route.query.organizationId);
+}
+
+// The pages that belong to "My customers": the list, one customer's profile, and that customer's
+// activity. Spelled out because vue-router marks a link active by route RECORD — these are sibling
+// records under /company, so it cannot see that they are one area.
+export function isMyCustomersArea(route: RouteLocationNormalizedLoaded): boolean {
+  return (
+    route.name === MY_CUSTOMERS_ROUTE_NAME ||
+    route.name === CUSTOMER_PROFILE_ROUTE_NAME ||
+    isCustomerScopedActivity(route)
+  );
+}
+
+// "My activity" owns the feed only while it really is the rep's own.
+export function isMyActivity(route: RouteLocationNormalizedLoaded): boolean {
+  return route.name === ACTIVITIES_ROUTE_NAME && !isCustomerScopedActivity(route);
+}

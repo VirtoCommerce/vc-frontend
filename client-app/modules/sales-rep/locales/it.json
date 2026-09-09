@@ -213,6 +213,86 @@
       "all_categories": "Tutte le categorie",
       "load_failed": "Impossibile caricare i più venduti"
     },
+    "customer_insights": {
+      "top": "Top",
+      "recent": "Recenti",
+      "not_configured": "Analytics non è collegato per questo negozio",
+      "tracked_caveat": "Basato solo sull'attività tracciata",
+      "data_as_of": "Dati al {date}",
+      "search_history": {
+        "empty": "Nessuna ricerca tracciata in questo periodo",
+        "count": "{n} ricerca | {n} ricerche",
+        "last_searched": "Ultima ricerca: {date}",
+        "load_failed": "Impossibile caricare la cronologia delle ricerche"
+      },
+      "browse_history": {
+        "empty": "Nessuna visualizzazione di prodotto tracciata in questo periodo",
+        "views": "{n} visualizzazione | {n} visualizzazioni",
+        "load_failed": "Impossibile caricare la cronologia di navigazione"
+      }
+    },
+    "activity": {
+      "navigation": {
+        "link": "La mia attività"
+      },
+      "page": {
+        "title": "La mia attività",
+        "customer_title": "Attività di {customer}",
+        "title_fallback": "Attività"
+      },
+      "breadcrumb": "Attività",
+      "tabs": {
+        "all": "Tutte",
+        "orders": "Ordini",
+        "customers": "Clienti",
+        "searches": "Ricerche",
+        "productViews": "Visualizzazioni prodotto",
+        "logins": "Accessi"
+      },
+      "period": {
+        "all_time": "Tutto il periodo",
+        "month": "Questo mese",
+        "year": "Quest'anno"
+      },
+      "rows": {
+        "order_placed": "Ordine effettuato",
+        "customer_assigned": "Nuovo cliente assegnato",
+        "searched_for": "Ha cercato",
+        "viewed_product": "Ha visualizzato",
+        "logins": "{count} accesso | {count} accessi",
+        "count_suffix": "×{count}",
+        "unknown": "Attività"
+      },
+      "time": {
+        "during_hour": "{date}, nell'ora delle {time}"
+      },
+      "caveat": "Ricerche, visualizzazioni prodotto e accessi si basano sull'attività tracciata del negozio e sono approssimativi.",
+      "tracked_hint": "Attività tracciata dello store: può richiedere fino a 48 ore per comparire.",
+      "empty": "Ancora nessuna attività",
+      "empty_period": "Nessuna attività tracciata in questo periodo",
+      "no_results": "Nessuna attività in questa categoria",
+      "load_failed": "Impossibile caricare l'attività",
+      "view_all": "Tutta l'attività",
+      "my_activity": {
+        "title": "La mia attività"
+      },
+      "customer": {
+        "title": "Attività del cliente",
+        "views": {
+          "summary": "Riepilogo",
+          "searches": "Ricerche",
+          "product_views": "Visualizzazioni prodotto"
+        },
+        "created_on": "Creato il",
+        "last_web_login": "Ultimo accesso web",
+        "visits": "Visite",
+        "last_search_term": "Ultimo termine di ricerca",
+        "last_viewed_product": "Ultimo prodotto visualizzato",
+        "not_configured": "L'attività web non è ancora tracciata — l'analisi non è configurata per questo negozio.",
+        "empty": "Nessun dato di attività",
+        "load_failed": "Impossibile caricare l'attività del cliente"
+      }
+    },
     "documents": {
       "title": "Libreria documenti",
       "browse_all": "Sfoglia tutti",

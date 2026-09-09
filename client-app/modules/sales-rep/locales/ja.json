@@ -213,6 +213,86 @@
       "all_categories": "全カテゴリー",
       "load_failed": "売上上位を読み込めませんでした"
     },
+    "customer_insights": {
+      "top": "上位",
+      "recent": "最近",
+      "not_configured": "このストアではアナリティクスが接続されていません",
+      "tracked_caveat": "トラッキングされたアクティビティのみに基づいています",
+      "data_as_of": "{date} 時点のデータ",
+      "search_history": {
+        "empty": "この期間にトラッキングされた検索はありません",
+        "count": "{n} 回の検索",
+        "last_searched": "最終検索日: {date}",
+        "load_failed": "検索履歴を読み込めませんでした"
+      },
+      "browse_history": {
+        "empty": "この期間にトラッキングされた商品閲覧はありません",
+        "views": "{n} 回の閲覧",
+        "load_failed": "閲覧履歴を読み込めませんでした"
+      }
+    },
+    "activity": {
+      "navigation": {
+        "link": "マイアクティビティ"
+      },
+      "page": {
+        "title": "マイアクティビティ",
+        "customer_title": "{customer} のアクティビティ",
+        "title_fallback": "アクティビティ"
+      },
+      "breadcrumb": "アクティビティ",
+      "tabs": {
+        "all": "すべて",
+        "orders": "注文",
+        "customers": "顧客",
+        "searches": "検索",
+        "productViews": "商品閲覧",
+        "logins": "ログイン"
+      },
+      "period": {
+        "all_time": "全期間",
+        "month": "今月",
+        "year": "今年"
+      },
+      "rows": {
+        "order_placed": "注文が行われました",
+        "customer_assigned": "新しい顧客が割り当てられました",
+        "searched_for": "検索:",
+        "viewed_product": "閲覧:",
+        "logins": "{count} 回のログイン",
+        "count_suffix": "×{count}",
+        "unknown": "アクティビティ"
+      },
+      "time": {
+        "during_hour": "{date} {time} 台"
+      },
+      "caveat": "検索・商品閲覧・ログインはトラッキングされたストア活動に基づく概算値です。",
+      "tracked_hint": "ストアフロントの計測データ: 表示までに最大 48 時間かかります。",
+      "empty": "まだアクティビティはありません",
+      "empty_period": "この期間にトラッキングされたアクティビティはありません",
+      "no_results": "このカテゴリにアクティビティはありません",
+      "load_failed": "アクティビティを読み込めませんでした",
+      "view_all": "すべてのアクティビティ",
+      "my_activity": {
+        "title": "マイアクティビティ"
+      },
+      "customer": {
+        "title": "顧客アクティビティ",
+        "views": {
+          "summary": "概要",
+          "searches": "検索",
+          "product_views": "商品閲覧"
+        },
+        "created_on": "作成日",
+        "last_web_login": "最終ウェブログイン",
+        "visits": "訪問数",
+        "last_search_term": "最後の検索キーワード",
+        "last_viewed_product": "最後に閲覧した商品",
+        "not_configured": "ウェブ活動はまだトラッキングされていません — このストアにはアナリティクスが設定されていません。",
+        "empty": "アクティビティデータがありません",
+        "load_failed": "顧客アクティビティを読み込めませんでした"
+      }
+    },
     "documents": {
       "title": "ドキュメントライブラリ",
       "browse_all": "すべて表示",

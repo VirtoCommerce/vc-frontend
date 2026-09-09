@@ -213,6 +213,86 @@
       "all_categories": "Wszystkie kategorie",
       "load_failed": "Nie udało się wczytać bestsellerów"
     },
+    "customer_insights": {
+      "top": "Najczęstsze",
+      "recent": "Ostatnie",
+      "not_configured": "Analityka nie jest połączona z tym sklepem",
+      "tracked_caveat": "Wyłącznie na podstawie śledzonej aktywności",
+      "data_as_of": "Dane na dzień {date}",
+      "search_history": {
+        "empty": "Brak śledzonych wyszukiwań w tym okresie",
+        "count": "{n} wyszukiwań | {n} wyszukiwanie | {n} wyszukiwania | {n} wyszukiwań",
+        "last_searched": "Ostatnie wyszukiwanie: {date}",
+        "load_failed": "Nie udało się wczytać historii wyszukiwania"
+      },
+      "browse_history": {
+        "empty": "Brak śledzonych wyświetleń produktów w tym okresie",
+        "views": "{n} wyświetleń | {n} wyświetlenie | {n} wyświetlenia | {n} wyświetleń",
+        "load_failed": "Nie udało się wczytać historii przeglądania"
+      }
+    },
+    "activity": {
+      "navigation": {
+        "link": "Moja aktywność"
+      },
+      "page": {
+        "title": "Moja aktywność",
+        "customer_title": "Aktywność klienta {customer}",
+        "title_fallback": "Aktywność"
+      },
+      "breadcrumb": "Aktywność",
+      "tabs": {
+        "all": "Wszystkie",
+        "orders": "Zamówienia",
+        "customers": "Klienci",
+        "searches": "Wyszukiwania",
+        "productViews": "Wyświetlenia produktów",
+        "logins": "Logowania"
+      },
+      "period": {
+        "all_time": "Cały okres",
+        "month": "Ten miesiąc",
+        "year": "Ten rok"
+      },
+      "rows": {
+        "order_placed": "Złożono zamówienie",
+        "customer_assigned": "Przypisano nowego klienta",
+        "searched_for": "Wyszukiwano",
+        "viewed_product": "Wyświetlono",
+        "logins": "{count} logowań | {count} logowanie | {count} logowania | {count} logowań",
+        "count_suffix": "×{count}",
+        "unknown": "Aktywność"
+      },
+      "time": {
+        "during_hour": "{date}, w godzinie {time}"
+      },
+      "caveat": "Wyszukiwania, wyświetlenia produktów i logowania opierają się na śledzonej aktywności sklepu i są przybliżone.",
+      "tracked_hint": "Śledzona aktywność w sklepie: może pojawić się z opóźnieniem do 48 godzin.",
+      "empty": "Brak aktywności",
+      "empty_period": "Brak śledzonej aktywności w tym okresie",
+      "no_results": "Brak aktywności w tej kategorii",
+      "load_failed": "Nie udało się załadować aktywności",
+      "view_all": "Cała aktywność",
+      "my_activity": {
+        "title": "Moja aktywność"
+      },
+      "customer": {
+        "title": "Aktywność klienta",
+        "views": {
+          "summary": "Podsumowanie",
+          "searches": "Wyszukiwania",
+          "product_views": "Wyświetlenia produktów"
+        },
+        "created_on": "Data utworzenia",
+        "last_web_login": "Ostatnie logowanie w sieci",
+        "visits": "Wizyty",
+        "last_search_term": "Ostatnie wyszukiwane hasło",
+        "last_viewed_product": "Ostatnio oglądany produkt",
+        "not_configured": "Aktywność w sieci nie jest jeszcze śledzona — analityka nie jest skonfigurowana dla tego sklepu.",
+        "empty": "Brak danych o aktywności",
+        "load_failed": "Nie udało się załadować aktywności klienta"
+      }
+    },
     "documents": {
       "title": "Biblioteka dokumentów",
       "browse_all": "Przeglądaj wszystkie",

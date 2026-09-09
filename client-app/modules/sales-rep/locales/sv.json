@@ -213,6 +213,86 @@
       "all_categories": "Alla kategorier",
       "load_failed": "Kunde inte läsa in bästsäljarna"
     },
+    "customer_insights": {
+      "top": "Topp",
+      "recent": "Senaste",
+      "not_configured": "Analys är inte ansluten för den här butiken",
+      "tracked_caveat": "Baserat endast på spårad aktivitet",
+      "data_as_of": "Data per {date}",
+      "search_history": {
+        "empty": "Inga spårade sökningar under den här perioden",
+        "count": "{n} sökning | {n} sökningar",
+        "last_searched": "Senast sökt {date}",
+        "load_failed": "Det gick inte att läsa in sökhistoriken"
+      },
+      "browse_history": {
+        "empty": "Inga spårade produktvisningar under den här perioden",
+        "views": "{n} visning | {n} visningar",
+        "load_failed": "Det gick inte att läsa in visningshistoriken"
+      }
+    },
+    "activity": {
+      "navigation": {
+        "link": "Min aktivitet"
+      },
+      "page": {
+        "title": "Min aktivitet",
+        "customer_title": "Aktivitet för {customer}",
+        "title_fallback": "Aktivitet"
+      },
+      "breadcrumb": "Aktivitet",
+      "tabs": {
+        "all": "Alla",
+        "orders": "Beställningar",
+        "customers": "Kunder",
+        "searches": "Sökningar",
+        "productViews": "Produktvisningar",
+        "logins": "Inloggningar"
+      },
+      "period": {
+        "all_time": "Hela perioden",
+        "month": "Denna månad",
+        "year": "I år"
+      },
+      "rows": {
+        "order_placed": "Beställning lagd",
+        "customer_assigned": "Ny kund tilldelad",
+        "searched_for": "Sökte efter",
+        "viewed_product": "Visade",
+        "logins": "{count} inloggning | {count} inloggningar",
+        "count_suffix": "×{count}",
+        "unknown": "Aktivitet"
+      },
+      "time": {
+        "during_hour": "{date}, under timmen {time}"
+      },
+      "caveat": "Sökningar, produktvisningar och inloggningar baseras på spårad butiksaktivitet och är ungefärliga.",
+      "tracked_hint": "Spårad butiksaktivitet: kan ta upp till 48 timmar att visas.",
+      "empty": "Ingen aktivitet ännu",
+      "empty_period": "Ingen spårad aktivitet under denna period",
+      "no_results": "Ingen aktivitet i denna kategori",
+      "load_failed": "Kunde inte ladda aktivitet",
+      "view_all": "All aktivitet",
+      "my_activity": {
+        "title": "Min aktivitet"
+      },
+      "customer": {
+        "title": "Kundaktivitet",
+        "views": {
+          "summary": "Sammanfattning",
+          "searches": "Sökningar",
+          "product_views": "Produktvisningar"
+        },
+        "created_on": "Skapad",
+        "last_web_login": "Senaste webbinloggning",
+        "visits": "Besök",
+        "last_search_term": "Senaste sökterm",
+        "last_viewed_product": "Senast visade produkt",
+        "not_configured": "Webbaktivitet spåras inte ännu — analys är inte konfigurerad för denna butik.",
+        "empty": "Inga aktivitetsdata",
+        "load_failed": "Kunde inte ladda kundaktivitet"
+      }
+    },
     "documents": {
       "title": "Dokumentbibliotek",
       "browse_all": "Bläddra bland alla",

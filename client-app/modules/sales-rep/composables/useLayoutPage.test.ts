@@ -98,7 +98,7 @@ describe("useLayoutPage", () => {
           regions: [
             { id: "statistics", blocks: ["new_orders", "active_cart", "mtd", "orders_ytd", "aov"].map(echoedBlock) },
             { id: "mainLeft", blocks: ["orders", "top_sellers"].map(echoedBlock) },
-            { id: "mainRight", blocks: ["actions", "info"].map(echoedBlock) },
+            { id: "mainRight", blocks: ["actions", "info", "customer_activity"].map(echoedBlock) },
           ],
         },
       },

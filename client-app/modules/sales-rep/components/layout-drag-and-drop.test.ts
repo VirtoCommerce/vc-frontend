@@ -456,13 +456,13 @@ describe("widget column drag and drop", () => {
     api.startEdit();
     await nextTick();
 
-    expect(api.visibleIn("mainRight")).toEqual(["actions", "info"]);
+    expect(api.visibleIn("mainRight")).toEqual(["actions", "info", "customer_activity"]);
 
     await moveWithin(zones[0], "actions", 1);
 
-    expect(api.visibleIn("mainRight")).toEqual(["info", "actions"]);
+    expect(api.visibleIn("mainRight")).toEqual(["info", "actions", "customer_activity"]);
     const ids = blockIds(wrapper);
-    expect(ids).toEqual(["info", "actions"]);
+    expect(ids).toEqual(["info", "actions", "customer_activity"]);
   });
 
   it("hides a widget with its ✕ and keeps it out of the rendered set", async () => {
@@ -473,7 +473,7 @@ describe("widget column drag and drop", () => {
     await wrapper.find('[data-block-id="actions"] .layout-widget__hide').trigger("click");
 
     expect(api.hiddenIn("mainRight")).toEqual(["actions"]);
-    expect(blockIds(wrapper)).toEqual(["info"]);
+    expect(blockIds(wrapper)).toEqual(["info", "customer_activity"]);
   });
 
   // ✕ now lives inside the drag surface, so `filter` is the only thing stopping a mousedown on it from
@@ -497,10 +497,11 @@ describe("widget column drag and drop", () => {
   });
 });
 
-// The dashboard's right rail holds only the dynamically registered documents widget (VCST-5730), so
-// this is the regression net for a block that joins a surface through `registerBlock` rather than the
-// registry defaults: its ✕ must move it to the hidden half, the tray must offer it back, and the
-// restore must re-render it — the same contract the built-in widgets get from the suites above.
+// The dashboard's right rail holds the built-in My activity widget (VCST-5337) plus the dynamically
+// registered documents widget (VCST-5730), so this is the regression net for a block that joins a
+// surface through `registerBlock` rather than the registry defaults: its ✕ must move it to the hidden
+// half, the tray must offer it back, and the restore must re-render it — the same contract the
+// built-in widgets get from the suites above.
 describe("dashboard rail with the runtime-registered documents widget", () => {
   function setupRail() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- the composable's full surface
@@ -564,12 +565,12 @@ describe("dashboard rail with the runtime-registered documents widget", () => {
     api.startEdit();
     await nextTick();
 
-    expect(api.visibleIn("mainRight")).toEqual(["documents"]);
+    expect(api.visibleIn("mainRight")).toEqual(["my_activity", "documents"]);
 
     await wrapper.find('[data-block-id="documents"] .layout-widget__hide').trigger("click");
 
     expect(api.hiddenIn("mainRight")).toEqual(["documents"]);
-    expect(api.visibleIn("mainRight")).toEqual([]);
+    expect(api.visibleIn("mainRight")).toEqual(["my_activity"]);
     expect(wrapper.find('[data-block-id="documents"]').exists()).toBe(false);
     expect(wrapper.find('[data-restore-id="documents"]').exists()).toBe(true);
   });
@@ -582,7 +583,7 @@ describe("dashboard rail with the runtime-registered documents widget", () => {
     await wrapper.find('[data-block-id="documents"] .layout-widget__hide').trigger("click");
     await wrapper.find('[data-restore-id="documents"]').trigger("click");
 
-    expect(api.visibleIn("mainRight")).toEqual(["documents"]);
+    expect(api.visibleIn("mainRight")).toEqual(["my_activity", "documents"]);
     expect(api.hiddenIn("mainRight")).toEqual([]);
     expect(wrapper.find('[data-block-id="documents"]').exists()).toBe(true);
     expect(wrapper.find('[data-restore-id="documents"]').exists()).toBe(false);

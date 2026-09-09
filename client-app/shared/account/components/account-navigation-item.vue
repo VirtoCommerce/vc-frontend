@@ -15,8 +15,8 @@
 </template>
 
 <script setup lang="ts">
-import { toRef } from "vue";
-import { useLink } from "vue-router";
+import { computed, toRef } from "vue";
+import { useLink, useRoute } from "vue-router";
 import type { ExtendedMenuLinkType } from "@/core/types";
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -25,7 +25,12 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const item = toRef(props, "item");
 
-const { isActive } = useLink({ to: item.value?.route ?? {} });
+const route = useRoute();
+const { isActive: isRouteRecordActive } = useLink({ to: item.value?.route ?? {} });
+
+// A link that owns pages beyond its own route record declares the rule itself; everything else is
+// left to vue-router's record match.
+const isActive = computed(() => item.value?.activeWhen?.(route) ?? isRouteRecordActive.value);
 
 interface IProps {
   item: ExtendedMenuLinkType;
