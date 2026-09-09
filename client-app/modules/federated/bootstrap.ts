@@ -15,36 +15,16 @@ interface IStartOptions extends Pick<IFederatedLoaderOptions, "hasPermission"> {
  */
 
 /**
- * BACKSTOP, not a budget: the loader's own per-phase budgets (./index — two knobs;
- * a remote may legally take up to manifest + 2×load, 8s with the 2s/3s defaults),
- * plus DISCOVERY_TIMEOUT_MS for the plugin list, already bound how long a compliant
- * remote can hold boot. This outer cap exists for what those budgets cannot cover —
- * the fetch of THIS loader's own chunk hanging, or an inner timeout malfunctioning — so
- * it must stay above the sum of all the budgeted legs: 2 + 2 + 3 + 3 = 10s of the 12s.
- *
- * Which is the honest statement of the guarantee, and it is narrower than "never":
- * the remaining 2s is all the headroom the UNBUDGETED loader-chunk fetch gets. A
- * budget-compliant remote behind a chunk fetch slower than that can still trip the cap.
- * Deliberately not given a budget of its own: bounding it IS what this backstop is for,
- * and a second timer would only mean dropping every plugin sooner on a slow connection.
- * Widen the cap, not the promise, if that 2s ever proves too tight.
- *
- * Past the backstop, boot proceeds and the loader finishes
- * detached: late plugins may register routes after the first navigation, and the only
- * signal is dev logging — production telemetry is a tracked stage-2 follow-up
- * (TODO.md), so a backstop overrun currently leaves NO prod signal.
+ * Outer cap for what the per-phase budgets cannot cover: this loader's own chunk fetch (deliberately
+ * unbudgeted) and a malfunctioning inner timeout. Must exceed the budgeted legs — discovery 2 +
+ * manifest 2 + 2×load 3 = 10s — leaving 2s for the chunk fetch. Past it boot proceeds and the loader
+ * finishes detached, so late plugins may register routes after the first navigation.
+ * Full reasoning: README, "The load sequence" -> "Every network step is time-budgeted".
  */
 // Exported for the invariant test only (backstop > discovery + manifest + 2×load defaults).
 export const BOOT_BACKSTOP_MS = 12_000;
 
-/**
- * The plugin list is a network read like any other, so it gets a budget of its own. Without one it
- * was the single unbudgeted leg inside the backstop's race: a cold backend answering `store.plugins`
- * slowly plus a remote spending its full, legal manifest + 2×load allowance summed past the cap, so
- * the backstop fired on a compliant plugin and boot continued without its routes — exactly what the
- * backstop is documented never to do. app-runner starts this query alongside the other boot queries,
- * so by the time the loader awaits it it has usually resolved already; this bounds the cold case.
- */
+/** Budget for the plugin list; without one it was the only unbudgeted leg inside the backstop. */
 export const DISCOVERY_TIMEOUT_MS = 2_000;
 
 /**
@@ -56,6 +36,7 @@ async function withDiscoveryBudget(
   fetchPlugins: IStartOptions["fetchPlugins"],
 ): Promise<readonly IPlatformPlugin[] | undefined> {
   if (!fetchPlugins) {
+    Logger.warn("[MF] no plugin-list source was passed - platform discovery is off");
     return undefined;
   }
   let timer: ReturnType<typeof setTimeout> | undefined;

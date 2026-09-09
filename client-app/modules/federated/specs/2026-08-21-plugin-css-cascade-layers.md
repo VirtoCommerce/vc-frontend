@@ -138,7 +138,7 @@ bindings carrying a literal utility token are 27 of 3007 class-bearing attribute
   `plugin`.
 - **Tailwind v4 emits native layers itself** (`theme, base, components, utilities`), at which point
   the host side reduces to one order statement declared before the import:
-  `@layer theme, base, components, plugin, utilities, plugin-overrides;`. The layer names in this
+  `@layer theme, base, vendor, components, plugin, utilities, plugin-overrides;`. The layer names in this
   spec are the only thing that changes, so shipping on v3 does not lock plugins in.
 - **`postcss-cascade-layers`** (pulled in by `postcss-preset-env`) rewrites `@layer` to `:not(#\#)`
   and would defeat all of this. It is not in the pipeline today and must not be added.

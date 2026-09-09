@@ -74,7 +74,7 @@ Still open:
 - [ ] **Plugin styling containment — decided, tracked as VCST-5760** (sprint 26-17). Full analysis,
       measurements and the rejected alternatives: `specs/2026-08-21-plugin-css-cascade-layers.md`.
       Native cascade layers, order declared by the host:
-      `@layer host-base, host-components, plugin, host-utilities, plugin-overrides;`. `plugin` below
+      `@layer host-base, vendor, host-components, plugin, host-utilities, plugin-overrides;`. `plugin` below
       `host-utilities` means a plugin's copy of a host utility can never win on host markup; above
       `host-components` means `class="p-6"` in a plugin template is not silently beaten by the host
       globals that reach into its DOM (236 of 262 host SFC style blocks are global); and
@@ -210,7 +210,8 @@ authorization moved to #1 — it likely blocks the pilot.)
 - **Plugin i18n** — no contract for a plugin to register translation messages / RTL.
 - **Compat-drift governance** — no registry of plugin↔host versions / host-major breakage
   detection across N plugins.
-- **Prod telemetry for failed/skipped plugins (AppInsights)** — a stage-2 observability
+- **Prod telemetry for failed/skipped plugins (AppInsights)** — the one deferred item still
+  without a Jira id, and the one that makes the others invisible. An observability
   improvement, not a blocker: the harness fails closed and ships fine without it. `Logger`
   is a no-op in production, so a failed/skipped plugin leaves no prod signal today (dev gets
   console via Logger). Design sketch: expose the AppInsights instance to

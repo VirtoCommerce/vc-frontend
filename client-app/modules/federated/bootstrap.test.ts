@@ -144,11 +144,24 @@ describe("startFederatedModules", () => {
       // misleading warning long after a perfectly normal boot.
       await vi.advanceTimersByTimeAsync(20_000);
 
-      expect(loggerWarnMock).not.toHaveBeenCalled();
+      expect(loggerWarnMock).not.toHaveBeenCalledWith(expect.stringContaining("boot backstop"));
     } finally {
       vi.useRealTimers();
     }
   });
+
+  // The shape a fork can land on when resolving the app-runner merge; without a line it disables
+  // platform discovery in silence.
+  it("warns when it is started without a plugin-list source", async () => {
+    vi.stubEnv("APP_MODULES_FEDERATION_ENABLED", "true");
+    const { startFederatedModules } = await loadBootstrap();
+
+    await startFederatedModules();
+
+    expect(loggerWarnMock).toHaveBeenCalledWith(expect.stringContaining("no plugin-list source"));
+    expect(initFederatedModulesMock).toHaveBeenCalledWith(expect.objectContaining({ plugins: undefined }));
+  });
+
   it("does not fetch the plugin list when the flag is off", async () => {
     const fetchPlugins = vi.fn();
     const { startFederatedModules } = await loadBootstrap();

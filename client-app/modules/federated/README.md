@@ -197,8 +197,9 @@ that skew — it makes it loud and isolated instead of silently corrupting.
 
 ```
 app-runner.ts
-  │  const ready = startFederatedModules();   // fire early, don't await yet
+  │  getStorePlugins(domain)                  // issued early, alongside the other boot queries
   │  … other boot work …
+  │  const ready = startFederatedModules({ fetchPlugins, hasPermission });
   │  await ready;                             // BEFORE app.use(router)
   ▼
 startFederatedModules()            bootstrap.ts
@@ -235,7 +236,7 @@ skipped, failed or lost to the backstop produces no production signal at all —
 symptom is that the feature is absent. Reporting
 outcomes to Application Insights (`trackException` for **failed** — something broke; a
 `trackEvent` for **skipped** — a gate doing its job, kept out of the exceptions blade
-so it cannot drown real failures) is a tracked stage-2 follow-up in `TODO.md`; the
+so it cannot drown real failures) is an open follow-up in `TODO.md`, not yet ticketed; the
 harness fails closed and ships without it. It requires bridging the AppInsights
 instance to boot-time code (the library's `useAppInsights()` is inject-based and
 unusable from a loader that runs before the plugin installs).
@@ -245,6 +246,9 @@ Three design points worth calling out:
 - **Awaited before `app.use(router)`** so a plugin that calls `router.addRoute()` in
   `init()` is registered _before_ the initial navigation resolves — deep links to
   plugin routes work on first paint.
+- **Started only after every host plugin has installed.** The route guard covers the whole
+  load-and-init phase and cannot tell a host call from a plugin's, so builder-preview's
+  remove-then-add would be refused. Outside preview mode nothing between costs boot time.
 - **Version gate runs before any remote code executes.** We fetch the manifest (plain
   JSON, no execution), read `metaData.requiredHostVersion`, and only `loadRemote` the
   ones this host can satisfy. Missing, unreadable, or unparseable ⇒ treated as

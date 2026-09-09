@@ -48,7 +48,12 @@ interface IRemoteDescriptor {
   version?: string;
 }
 
-/** One plugin as xAPI projects it (`store.plugins`); structural so the loader stays off the core GraphQL layer. */
+/**
+ * One plugin as xAPI projects it (`store.plugins`); structural so the loader stays off the core
+ * GraphQL layer. Nothing checks it against the query: only `id` is required, so a renamed or
+ * dropped field still compiles and costs plugins at runtime. The asString guards below are the
+ * only enforcement.
+ */
 export interface IPlatformPlugin {
   id: string;
   version?: string | null;
@@ -289,11 +294,14 @@ function collectStyles(plugin: IPlatformPlugin): string[] {
     if (!filePath) {
       continue;
     }
-    // The platform documents these kinds as lower-case by contract, but a dropped stylesheet is
-    // invisible otherwise: the plugin loads and renders unstyled with nothing to point at.
-    const fileType = asString(file?.type);
-    if (fileType?.toLowerCase() !== PLATFORM_STYLE_FILE_TYPE) {
-      const kind = fileType ? `"${fileType}"` : "(none declared)";
+    // No kind falls back to the extension, the way no entry.type falls back to "script": the
+    // platform declares the field optional and a dropped stylesheet is invisible - the plugin
+    // loads and renders unstyled with nothing to point at. A drifted kind is not a missing one.
+    const rawType = file?.type;
+    const fileType = asString(rawType)?.trim().toLowerCase();
+    const isStyle = rawType == null ? filePath.toLowerCase().endsWith(".css") : fileType === PLATFORM_STYLE_FILE_TYPE;
+    if (!isStyle) {
+      const kind = rawType == null ? "(none declared)" : `"${String(rawType)}"`;
       Logger.info(`[MF] Plugin "${String(plugin?.id)}": ignoring content file "${filePath}" of kind ${kind}`);
       continue;
     }
@@ -311,9 +319,9 @@ const STYLE_MARKER = "data-mf-plugin-style";
 
 /**
  * No cascade fence here yet: containment needs the HOST's own CSS layered too, so the plugin layer
- * can sit below the host's utilities and above its component styles (VCST-5760). Wrapping only the
- * plugin's sheet would put it above everything unlayered instead. The marker attribute doubles as
- * the dedupe key, so a second boot adds nothing.
+ * can sit below the host's utilities and above its component styles (VCST-5760). Unlayered beats
+ * layered, so wrapping only the plugin's sheet would put it below all host CSS instead. The marker
+ * attribute doubles as the dedupe key, so a second boot adds nothing.
  */
 function injectStyles(urls: string[]): void {
   const present = new Set(
@@ -334,10 +342,11 @@ function injectStyles(urls: string[]): void {
 
 /**
  * Only a script entry is an MF remote; anything else would be loaded as one by mistake. An absent
- * type is accepted, because the platform declares the field optional.
+ * type is accepted, because the platform declares the field optional; a non-string one never
+ * reaches here (nonStringFieldReason rejects the descriptor first).
  */
 function isLoadableEntryType(declared: unknown, name: string): boolean {
-  const type = asString(declared)?.toLowerCase();
+  const type = asString(declared)?.trim().toLowerCase();
   if (type && type !== PLATFORM_SCRIPT_ENTRY_TYPE) {
     Logger.error(`[MF] Skipping plugin "${name}": entry type "${type}" is not supported`);
     return false;
@@ -371,6 +380,24 @@ function toPlatformManifestUrl(path: string, name: string): string | undefined {
 }
 
 /**
+ * Why the descriptor is rejected outright rather than read past: asString maps a non-string to
+ * undefined, which every reader downstream takes for "absent" — a dropped permission would then
+ * read as "no permission required". Undefined and drifted must not look alike.
+ */
+function nonStringFieldReason(plugin: IPlatformPlugin): string | undefined {
+  if (plugin?.entry?.path != null && typeof plugin.entry.path !== "string") {
+    return "the entry path is not a string";
+  }
+  if (plugin?.entry?.type != null && typeof plugin.entry.type !== "string") {
+    return "the entry type is not a string";
+  }
+  if (plugin?.permission != null && typeof plugin.permission !== "string") {
+    return "the declared permission is not a string";
+  }
+  return undefined;
+}
+
+/**
  * The platform serves `remoteEntry.js`; the gate needs the manifest beside it, so the entry is
  * rewritten. A plugin shipping no manifest fails the gate and is skipped.
  */
@@ -390,6 +417,12 @@ function resolvePlatformRemotes(plugins: readonly IPlatformPlugin[]): IResolvedR
       const label = asString(plugin?.id) || name || `plugin #${index + 1}`;
       Logger.error(`[MF] Skipping plugin "${label}": remote name "${name}" must match ${String(SAFE_REMOTE_NAME)}`);
       resolved.invalidNames.push(label);
+      continue;
+    }
+    const drifted = nonStringFieldReason(plugin);
+    if (drifted) {
+      Logger.error(`[MF] Skipping plugin "${name}": ${drifted}`);
+      resolved.invalidNames.push(name);
       continue;
     }
     if (!path) {
@@ -435,23 +468,18 @@ function resolveRemotes(plugins: readonly IPlatformPlugin[]): IResolvedRemotes {
   if (!env) {
     return resolvePlatformRemotes(plugins);
   }
-  if (plugins.length > 0) {
-    // A configured-but-empty override is the quiet way to lose every deployed plugin.
-    Logger.warn(
-      `[MF] APP_MODULES_FEDERATION_REMOTES is set, so ${plugins.length} platform plugin(s) are ignored; it resolved to ${env.remotes.length} remote(s)`,
-    );
+  // Logged whatever the count: app-runner skips the plugin query whenever the override is set, so
+  // `plugins` is always empty here and a count-gated line could never fire. An override resolving
+  // to nothing would then lose every deployed plugin without a word.
+  const notice = `[MF] APP_MODULES_FEDERATION_REMOTES is set, so platform plugins are ignored; it resolved to ${env.remotes.length} remote(s)`;
+  if (env.remotes.length === 0) {
+    Logger.warn(notice);
+  } else {
+    Logger.info(notice);
   }
   return env;
 }
 
-/**
- * CONTRACT GATE (version gate 1 of 2 — see version-gate.ts and the README). Fetches
- * the remote manifest (plain JSON — no code execution) and checks its declared
- * `requiredHostVersion` (semver version or range) against the host's core version.
- * Skips on incompatibility, malformed requirement, manifest read failure, or
- * timeout — all fail closed. Shared-library versions (vue, apollo, ...) are guarded
- * separately by the SHARED-DEPENDENCY GATE at loadRemote() time.
- */
 /**
  * Every name ONE `addRoute` call would claim at root level. vue-router computes
  * `isRootAdd = !originalRecord` and recurses into `children` before assigning it, so each named
@@ -574,6 +602,14 @@ function isResponseOriginAllowed(remote: IRemoteDescriptor, url: string): boolea
   return remote.allowCrossOrigin ? isAllowedRemoteUrl(url) : isSameOrigin(url);
 }
 
+/**
+ * CONTRACT GATE (version gate 1 of 2 — see version-gate.ts and the README). Fetches
+ * the remote manifest (plain JSON — no code execution) and checks its declared
+ * `requiredHostVersion` (semver version or range) against the host's core version.
+ * Skips on incompatibility, malformed requirement, manifest read failure, or
+ * timeout — all fail closed. Shared-library versions (vue, apollo, ...) are guarded
+ * separately by the SHARED-DEPENDENCY GATE at loadRemote() time.
+ */
 async function isCompatible(remote: IRemoteDescriptor, manifestTimeoutMs: number): Promise<boolean> {
   try {
     const readManifest = async (): Promise<IRemoteManifest> => {
@@ -612,10 +648,9 @@ async function isCompatible(remote: IRemoteDescriptor, manifestTimeoutMs: number
 }
 
 /**
- * Log a summary so a vanished plugin is never silent during development (Logger is
- * live in dev builds and a no-op in production). NOTE: failed/skipped plugins leave
- * no prod signal yet — reporting them to Application Insights (exceptions for
- * `failed`, customEvents for `skipped`) is a tracked stage-2 follow-up: see TODO.md.
+ * Log a summary so a vanished plugin is never silent during development. Logger is a no-op in
+ * production for every level, so failed/skipped plugins leave no prod signal at all; reporting
+ * them to Application Insights is an open follow-up, see TODO.md.
  */
 function reportOutcome(result: IFederatedLoadResult, versions?: ReadonlyMap<string, string>): void {
   const { loaded, failed, skipped } = result;
@@ -724,9 +759,9 @@ export async function initFederatedModules(options?: IFederatedLoaderOptions): P
             `plugin "${remote.name}" load`,
             "its module scope has executed (init() is NOT called); state is indeterminate",
           );
-          // The MF runtime resolves null instead of rejecting when an errorLoadRemote
-          // failover hook is registered. None is today, but "no module delivered"
-          // must never count (silently) as loaded if one ever appears.
+          // loadRemote is declared `Promise<T | null>`. Today the runtime only resolves a truthy
+          // errorLoadRemote failover and re-throws otherwise, but "no module delivered" must never
+          // count as loaded if that changes.
           if (plugin === null) {
             throw new Error(`plugin "${remote.name}" load resolved to null - no module was delivered`);
           }

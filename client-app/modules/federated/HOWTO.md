@@ -182,7 +182,8 @@ Rules of the road:
 - **Styling:** your components ship their own CSS (plain styles in SFCs work as-is). Separate
   stylesheets declared as `contentFiles` are linked into `document.head` right after your module
   loads, before `init()` runs — so a plugin whose `init()` fails or overruns is still styled rather
-  than rendering a live page with no CSS.
+  than rendering a live page with no CSS. Colour them with the host's `var(--color-*)` variables,
+  not literal hex: a hardcoded colour breaks dark mode and six of the seven presets.
   For **Tailwind**, scaffold with `--with-tailwind` (or copy its output): the plugin
   runs its own utility pass with the **host's design system as preset**
   (`require("@vc-frontend/core/tailwind-preset")` in `tailwind.config.cjs` — colors

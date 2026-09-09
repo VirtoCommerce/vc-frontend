@@ -1,5 +1,4 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-
 import type { IPlatformPlugin } from "./index";
 
 /**
@@ -89,7 +88,7 @@ vi.mock("@/ui-kit/utilities", () => ({ setDefaultIconVariant: vi.fn() }));
 vi.mock("@/ui-kit/utilities/getLocales", () => ({
   getLocales: vi.fn(async () => ({ messages: {}, fallbackMessages: {} })),
 }));
-vi.mock("@/i18n", () => ({ createI18n: () => ({ global: { t: (k: string) => k } }) }));
+vi.mock("@/i18n", () => ({ createI18n: () => ({ install: vi.fn(), global: { t: (k: string) => k } }) }));
 // Always a factory, never a bare vi.mock(path): a bare automock imports the real module to derive
 // its shape, which drags in the very graph — router pages, App.vue, ui-kit — these mocks avoid.
 // `app.use(authPlugin)` runs before the loader, so a plugin mock needs a real install() or Vue warns.

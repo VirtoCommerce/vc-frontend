@@ -166,23 +166,29 @@ describe("platform-served plugin discovery", () => {
   });
 
   it.each([
-    ["declares an unsupported kind", "script"],
-    ["declares no kind at all", undefined],
-  ])("says which content file it ignored when the file %s", async (_label, type) => {
+    ["declares an unsupported kind", "script", "/modules/$(VirtoCommerce.SalesRep)/x/extra.css"],
+    ["declares no kind and is not a .css file", undefined, "/modules/$(VirtoCommerce.SalesRep)/x/extra.js"],
+  ])("says which content file it ignored when the file %s", async (_label, type, path) => {
     stubManifestFetch();
 
     const result = await initFederatedModules({
-      plugins: [
-        platformPlugin({
-          contentFiles: [{ type, path: "/modules/$(VirtoCommerce.SalesRep)/plugins/vc-frontend/extra.css" }],
-        }),
-      ],
+      plugins: [platformPlugin({ contentFiles: [{ type, path }] })],
     });
 
     // Without a diagnostic the plugin just loads and renders unstyled, with nothing to point at.
     expect(result.loaded).toEqual(["sales-rep"]);
     expect(document.head.querySelectorAll("link[data-mf-plugin-style]")).toHaveLength(0);
     expect(loggerInfoMock).toHaveBeenCalledWith(expect.stringContaining("ignoring content file"));
+  });
+
+  it("falls back to the extension when the content file declares no kind", async () => {
+    stubManifestFetch();
+    const path = "/modules/$(VirtoCommerce.SalesRep)/plugins/vc-frontend/untyped.css";
+
+    await initFederatedModules({ plugins: [platformPlugin({ contentFiles: [{ path }] })] });
+
+    const injected = Array.from(document.head.querySelectorAll("link[data-mf-plugin-style]"));
+    expect(injected.map((node) => node.getAttribute("href"))).toEqual([`${globalThis.location.origin}${path}`]);
   });
 
   it("reports a descriptor carrying neither id nor remote name by its position in the list", async () => {
@@ -239,6 +245,25 @@ describe("platform-served plugin discovery", () => {
     expect(result.loaded).toEqual(["sales-rep"]);
     expect(document.head.querySelectorAll("link[data-mf-plugin-style]")).toHaveLength(0);
   });
+
+  it("styles a plugin whose init() throws, because a timeout cannot cancel init()", async () => {
+    stubManifestFetch();
+    loadRemoteMock.mockResolvedValue({
+      init: () => {
+        throw new Error("boom");
+      },
+    });
+    const path = "/modules/$(VirtoCommerce.SalesRep)/plugins/vc-frontend/init-fails.css";
+
+    const result = await initFederatedModules({
+      plugins: [platformPlugin({ contentFiles: [{ type: "style", path }] })],
+    });
+
+    expect(result.failed).toEqual(["sales-rep"]);
+    const injected = Array.from(document.head.querySelectorAll("link[data-mf-plugin-style]"));
+    expect(injected.map((node) => node.getAttribute("href"))).toEqual([`${globalThis.location.origin}${path}`]);
+  });
+
   it("leaves no stylesheet behind when the plugin fails to load", async () => {
     stubManifestFetch();
     loadRemoteMock.mockRejectedValue(new Error("boom"));
@@ -312,13 +337,19 @@ describe("platform-served plugin discovery", () => {
     expect(result.loaded).toEqual(["b"]);
   });
 
-  it("says so when the env override suppresses a non-empty platform list", async () => {
+  // app-runner skips the plugin query when the override is set, so an empty list is what the loader
+  // actually sees; an override resolving to nothing must still say so rather than losing every
+  // deployed plugin silently.
+  it.each([
+    ["an empty platform list", [] as IPlatformPlugin[]],
+    ["a non-empty one", [platformPlugin()]],
+  ])("warns that an env override resolved to no remotes at all, with %s", async (_label, plugins) => {
     stubManifestFetch();
     vi.stubEnv("APP_MODULES_FEDERATION_REMOTES", "{}");
 
-    await initFederatedModules({ plugins: [platformPlugin()] });
+    await initFederatedModules({ plugins });
 
-    expect(loggerWarnMock).toHaveBeenCalledWith(expect.stringContaining("1 platform plugin(s) are ignored"));
+    expect(loggerWarnMock).toHaveBeenCalledWith(expect.stringContaining("platform plugins are ignored"));
   });
   it("skips a plugin whose entry is not a script", async () => {
     const fetchMock = stubManifestFetch();
@@ -386,23 +417,49 @@ describe("platform-served plugin discovery", () => {
 
   describe("descriptors the platform should never send", () => {
     // The projection is a hand-written structural type, so nothing type-checks what arrives. One
-    // bad field must cost one plugin - it used to throw out of the loader and lose the whole batch.
+    // bad field must cost at most one plugin - it used to throw out of the loader and lose the
+    // whole batch. Each row records what that field's drift actually costs.
     it.each([
-      ["permission", { permission: 7 as unknown as string }],
-      ["entry.type", { entry: { type: 7, path: "/m/a/remoteEntry.js" } as unknown as IPlatformPlugin["entry"] }],
-      [
-        "contentFiles[].type",
-        { contentFiles: [{ type: 7, path: "/m/a/a.css" }] as unknown as IPlatformPlugin["contentFiles"] },
-      ],
-      ["remote.name", { remote: { name: 7 } as unknown as IPlatformPlugin["remote"] }],
-    ])("skips only the plugin whose %s is not a string", async (_field, overrides) => {
+      {
+        field: "permission",
+        overrides: { permission: 7 as unknown as string },
+        outcome: "skipped" as const,
+        expectedName: "sales-rep",
+      },
+      {
+        field: "entry.type",
+        overrides: { entry: { type: 7, path: "/m/a/remoteEntry.js" } as unknown as IPlatformPlugin["entry"] },
+        outcome: "skipped" as const,
+        expectedName: "sales-rep",
+      },
+      {
+        field: "contentFiles[].type",
+        overrides: {
+          contentFiles: [{ type: 7, path: "/m/a/a.css" }] as unknown as IPlatformPlugin["contentFiles"],
+        },
+        // A content file is not the plugin: only its stylesheet is dropped.
+        outcome: "loaded" as const,
+        expectedName: "sales-rep",
+      },
+      {
+        field: "remote.name",
+        overrides: { remote: { name: 7 } as unknown as IPlatformPlugin["remote"] },
+        // Falls back to the id, which the platform defaults the remote name to anyway.
+        outcome: "loaded" as const,
+        expectedName: "VirtoCommerce.SalesRep",
+      },
+    ])("a non-string $field is $outcome, and the batch survives", async ({ overrides, outcome, expectedName }) => {
       stubManifestFetch();
       loadRemoteMock.mockResolvedValue({ init: vi.fn() });
       const healthy = platformPlugin({ id: "healthy", remote: { name: "healthy", exposed: "./plugin" } });
 
       const result = await initFederatedModules({ plugins: [platformPlugin(overrides), healthy] });
 
-      expect(result.loaded).toContain("healthy");
+      const expectedLoaded = outcome === "loaded" ? ["healthy", expectedName] : ["healthy"];
+      expect(result.failed).toEqual([]);
+      expect(result.loaded).toEqual(expect.arrayContaining(expectedLoaded));
+      expect(result.loaded).toHaveLength(expectedLoaded.length);
+      expect(result.skipped).toEqual(outcome === "skipped" ? [expectedName] : []);
     });
 
     it("resolves, rather than throwing, when the plugin list is not an array", async () => {
