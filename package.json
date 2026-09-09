@@ -27,7 +27,7 @@
     "validate:core-types": "yarn precheck && node client-app/core-api/build-types.mjs --check",
     "validate": "yarn precheck && yarn validate:types && yarn validate:dependencies",
     "commitlint": "yarn precheck && commitlint --edit",
-    "lint-staged": "yarn precheck && lint-staged",
+    "lint-staged": "yarn precheck && lint-staged --verbose",
     "lint": "yarn precheck && eslint . --cache --cache-location node_modules/.cache/.eslintcache --cache-strategy content",
     "lint:fix": "yarn precheck && eslint . --fix --cache --cache-location node_modules/.cache/.eslintcache --cache-strategy content",
     "lint:clear-cache": "node -e \"require('fs').rmSync('node_modules/.cache/.eslintcache', { force: true })\"",
@@ -47,7 +47,9 @@
     "postinstall": "yarn precheck && husky",
     "check-locales": "yarn precheck && vite-node scripts/check-and-show-missing-locales.ts --source en.json locales client-app/ui-kit/locales client-app/modules/**/locales",
     "fix-locales": "yarn precheck && vite-node scripts/fix-missing-locales.ts --source en.json locales client-app/ui-kit/locales client-app/modules/**/locales",
-    "check:icon-parity": "yarn precheck && vite-node scripts/check-icon-parity.ts"
+    "check:icon-parity": "yarn precheck && vite-node scripts/check-icon-parity.ts",
+    "check:style-conventions": "yarn precheck && node scripts/check-style-conventions/index.mjs",
+    "check:comment-noise": "yarn precheck && node scripts/check-comment-noise/index.mjs"
   },
   "dependencies": {
     "@apollo/client": "^3.14.1",
@@ -179,8 +181,12 @@
     "uri-js": "npm:uri-js-replace@^1.0.0"
   },
   "lint-staged": {
-    "*.{js,ts,vue}": [
-      "eslint --fix"
+    "*.{js,mjs,ts,vue}": [
+      "eslint --fix",
+      "node scripts/check-comment-noise/index.mjs --changed"
+    ],
+    "*.{vue,scss}": [
+      "node scripts/check-style-conventions/index.mjs --changed"
     ],
     "*.{graphql,json}": [
       "prettier --write"
