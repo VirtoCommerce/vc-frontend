@@ -202,6 +202,71 @@
       "filter_all": "Wszyscy",
       "load_failed": "Nie udało się wczytać zamówień"
     },
+    "tasks": {
+      "title": "Kalendarz",
+      "widget_title": "Zadania i terminy",
+      "full_calendar": "Pełny kalendarz",
+      "new_task": "Nowe zadanie",
+      "add_task": "Dodaj zadanie",
+      "today": "Dziś",
+      "empty": "Brak zadań na tej karcie",
+      "empty_day": "Brak terminów w tym dniu",
+      "load_failed": "Nie udało się wczytać zadań",
+      "day_task_count": "{count} zadań | {count} zadanie | {count} zadania | {count} zadań",
+      "overdue_total": "{count} zaległych zadań | {count} zaległe zadanie | {count} zaległe zadania | {count} zaległych zadań",
+      "day_of_total": "{shown} z {total} zadań",
+      "day_markers": "Oznaczono: {kinds}",
+      "page": {
+        "subtitle": "Twoje zadania, działania następcze i terminy ze wszystkich kont — w układzie dziennym.",
+        "all_tab": "Wszystkie"
+      },
+      "table": {
+        "task": "Zadanie",
+        "status": "Status",
+        "notes": "Notatki",
+        "complete_aria": "Oznacz „{name}” jako ukończone",
+        "reopen_aria": "Otwórz ponownie „{name}”",
+        "edit_aria": "Edytuj „{name}”"
+      },
+      "status": {
+        "upcoming": "Nadchodzące",
+        "overdue": "Po terminie",
+        "completed": "Ukończone",
+        "canceled": "Anulowane"
+      },
+      "priority": {
+        "lowest": "Najniższy",
+        "low": "Niski",
+        "normal": "Normalny",
+        "high": "Wysoki",
+        "highest": "Najwyższy"
+      },
+      "due_relative": {
+        "expired": "Termin minął {date}",
+        "due": "Termin {date}"
+      },
+      "legend": {
+        "upcoming": "Nadchodzące",
+        "overdue": "Po terminie",
+        "completed": "Ukończone"
+      },
+      "form": {
+        "create_title": "Nowe zadanie",
+        "edit_title": "Edytuj zadanie",
+        "name_label": "Tytuł",
+        "due_date_label": "Termin",
+        "priority_label": "Priorytet",
+        "type_label": "Typ",
+        "description_label": "Notatki",
+        "save_button": "Zapisz",
+        "cancel_button": "Anuluj",
+        "delete_button": "Usuń",
+        "delete_title": "Usuń zadanie",
+        "delete_confirm": "To zadanie zostanie trwale usunięte. Kontynuować?",
+        "saved": "Zadanie zapisane",
+        "deleted": "Zadanie usunięte"
+      }
+    },
     "top_sellers": {
       "title": "Najlepsi sprzedawcy",
       "rank": "#",
@@ -240,6 +305,18 @@
       "published": "Opublikowano {date}"
     },
     "rules": {
+      "task": {
+        "filter": {
+          "upcoming": "Nadchodzące",
+          "overdue": "Po terminie",
+          "completed": "Ukończone"
+        },
+        "sort": {
+          "due-date": "Termin",
+          "recent": "Ostatnio utworzone",
+          "name": "Zadanie"
+        }
+      },
       "load_failed": {
         "filter": "Nie udało się wczytać filtrów, więc wyświetlana jest pełna lista. Odśwież stronę.",
         "sort": "Nie udało się wczytać opcji sortowania, więc używana jest kolejność domyślna. Odśwież stronę.",

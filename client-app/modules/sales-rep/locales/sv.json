@@ -202,6 +202,71 @@
       "filter_all": "Alla",
       "load_failed": "Kunde inte läsa in ordrarna"
     },
+    "tasks": {
+      "title": "Kalender",
+      "widget_title": "Uppgifter och förfallodatum",
+      "full_calendar": "Hela kalendern",
+      "new_task": "Ny uppgift",
+      "add_task": "Lägg till uppgift",
+      "today": "I dag",
+      "empty": "Inga uppgifter på den här fliken",
+      "empty_day": "Inget förfaller denna dag",
+      "load_failed": "Kunde inte läsa in uppgifterna",
+      "day_task_count": "{count} uppgift | {count} uppgifter",
+      "overdue_total": "{count} försenad uppgift | {count} försenade uppgifter",
+      "day_of_total": "{shown} av {total} uppgifter",
+      "day_markers": "Markerad: {kinds}",
+      "page": {
+        "subtitle": "Dina uppgifter, uppföljningar och förfallodatum för alla konton — dag för dag.",
+        "all_tab": "Alla"
+      },
+      "table": {
+        "task": "Uppgift",
+        "status": "Status",
+        "notes": "Anteckningar",
+        "complete_aria": "Markera ”{name}” som slutförd",
+        "reopen_aria": "Återöppna ”{name}”",
+        "edit_aria": "Redigera ”{name}”"
+      },
+      "status": {
+        "upcoming": "Kommande",
+        "overdue": "Försenad",
+        "completed": "Slutförd",
+        "canceled": "Avbruten"
+      },
+      "priority": {
+        "lowest": "Lägsta",
+        "low": "Låg",
+        "normal": "Normal",
+        "high": "Hög",
+        "highest": "Högsta"
+      },
+      "due_relative": {
+        "expired": "Förföll {date}",
+        "due": "Förfaller {date}"
+      },
+      "legend": {
+        "upcoming": "Kommande",
+        "overdue": "Försenade",
+        "completed": "Slutförda"
+      },
+      "form": {
+        "create_title": "Ny uppgift",
+        "edit_title": "Redigera uppgift",
+        "name_label": "Titel",
+        "due_date_label": "Förfallodatum",
+        "priority_label": "Prioritet",
+        "type_label": "Typ",
+        "description_label": "Anteckningar",
+        "save_button": "Spara",
+        "cancel_button": "Avbryt",
+        "delete_button": "Radera",
+        "delete_title": "Ta bort uppgift",
+        "delete_confirm": "Den här uppgiften tas bort permanent. Vill du fortsätta?",
+        "saved": "Uppgiften har sparats",
+        "deleted": "Uppgiften har raderats"
+      }
+    },
     "top_sellers": {
       "title": "Topp säljare",
       "rank": "#",
@@ -240,6 +305,18 @@
       "published": "Publicerad {date}"
     },
     "rules": {
+      "task": {
+        "filter": {
+          "upcoming": "Kommande",
+          "overdue": "Försenade",
+          "completed": "Slutförda"
+        },
+        "sort": {
+          "due-date": "Förfallodatum",
+          "recent": "Senast skapade",
+          "name": "Uppgift"
+        }
+      },
       "load_failed": {
         "filter": "Filtren kunde inte läsas in, så hela listan visas. Uppdatera sidan.",
         "sort": "Sorteringsalternativen kunde inte läsas in, så standardordningen används. Uppdatera sidan.",

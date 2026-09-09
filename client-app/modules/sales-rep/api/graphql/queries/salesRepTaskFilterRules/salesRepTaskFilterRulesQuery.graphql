@@ -1,0 +1,6 @@
+query SalesRepTaskFilterRules($storeId: String, $cultureName: String) {
+  salesRepTaskFilterRules(storeId: $storeId, cultureName: $cultureName) {
+    name
+    localizedName
+  }
+}

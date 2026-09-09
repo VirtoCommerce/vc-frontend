@@ -202,6 +202,71 @@
       "filter_all": "全部",
       "load_failed": "无法加载订单"
     },
+    "tasks": {
+      "title": "日历",
+      "widget_title": "任务与截止日期",
+      "full_calendar": "完整日历",
+      "new_task": "新建任务",
+      "add_task": "添加任务",
+      "today": "今天",
+      "empty": "此标签页没有任务",
+      "empty_day": "当天没有到期事项",
+      "load_failed": "无法加载任务",
+      "day_task_count": "{count} 项任务",
+      "overdue_total": "{count} 项逾期任务",
+      "day_of_total": "共 {total} 项任务，显示 {shown} 项",
+      "day_markers": "标记：{kinds}",
+      "page": {
+        "subtitle": "您在所有客户下的任务、跟进事项和截止日期 — 按日期排列。",
+        "all_tab": "全部"
+      },
+      "table": {
+        "task": "任务",
+        "status": "状态",
+        "notes": "备注",
+        "complete_aria": "将“{name}”标记为已完成",
+        "reopen_aria": "重新打开“{name}”",
+        "edit_aria": "编辑“{name}”"
+      },
+      "status": {
+        "upcoming": "即将到期",
+        "overdue": "已逾期",
+        "completed": "已完成",
+        "canceled": "已取消"
+      },
+      "priority": {
+        "lowest": "最低",
+        "low": "低",
+        "normal": "普通",
+        "high": "高",
+        "highest": "最高"
+      },
+      "due_relative": {
+        "expired": "已于 {date} 逾期",
+        "due": "{date} 到期"
+      },
+      "legend": {
+        "upcoming": "即将到期",
+        "overdue": "已逾期",
+        "completed": "已完成"
+      },
+      "form": {
+        "create_title": "新建任务",
+        "edit_title": "编辑任务",
+        "name_label": "标题",
+        "due_date_label": "截止日期",
+        "priority_label": "优先级",
+        "type_label": "类型",
+        "description_label": "备注",
+        "save_button": "保存",
+        "cancel_button": "取消",
+        "delete_button": "删除",
+        "delete_title": "删除任务",
+        "delete_confirm": "此任务将被永久删除。是否继续？",
+        "saved": "任务已保存",
+        "deleted": "任务已删除"
+      }
+    },
     "top_sellers": {
       "title": "畅销商品",
       "rank": "排名",
@@ -240,6 +305,18 @@
       "published": "发布于 {date}"
     },
     "rules": {
+      "task": {
+        "filter": {
+          "upcoming": "即将到期",
+          "overdue": "已逾期",
+          "completed": "已完成"
+        },
+        "sort": {
+          "due-date": "截止日期",
+          "recent": "最近创建",
+          "name": "任务"
+        }
+      },
       "load_failed": {
         "filter": "无法加载筛选条件，因此显示完整列表。请刷新页面。",
         "sort": "无法加载排序选项，因此使用默认排序。请刷新页面。",
