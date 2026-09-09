@@ -2,10 +2,10 @@ import { apolloClient } from "@/core/api/graphql";
 import { MergeCartDocument } from "@/core/api/graphql/types";
 import { useAuth } from "@/core/composables/useAuth";
 import { globals } from "@/core/globals";
+import { readUcpContinuation, removeUcpContinuation } from "@/shared/checkout/ucp/continuation";
+import { applyUcpHandoffBuyer, restoreUcpHandoffCart, UcpHandoffRestoreError } from "@/shared/checkout/ucp/handoff";
 import { useNotifications } from "@/shared/notification";
 import { ROUTES } from "./constants";
-import { readUcpContinuation, removeUcpContinuation } from "./ucp-continuation";
-import { applyUcpHandoffBuyer, restoreUcpHandoffCart, UcpHandoffRestoreError } from "./ucp-handoff";
 import type { NavigationGuardNext, RouteLocationNormalized, RouteRecordName, RouteRecordRaw } from "vue-router";
 
 const Checkout = () => import("@/pages/checkout/index.vue");

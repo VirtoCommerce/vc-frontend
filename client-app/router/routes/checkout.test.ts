@@ -1,15 +1,15 @@
 import { describe, expect, test, vi } from "vitest";
+import { saveUcpContinuation } from "@/shared/checkout/ucp/continuation";
+import { UcpHandoffRestoreError } from "@/shared/checkout/ucp/handoff";
 import { checkoutRoutes } from "./checkout";
 import { ROUTES } from "./constants";
-import { saveUcpContinuation } from "./ucp-continuation";
-import { UcpHandoffRestoreError } from "./ucp-handoff";
 import type { NavigationGuard, RouteLocationNormalized } from "vue-router";
 
 const handoff = vi.hoisted(() => ({
   restore: vi.fn(),
 }));
 
-vi.mock("./ucp-handoff", () => ({
+vi.mock("@/shared/checkout/ucp/handoff", () => ({
   applyUcpHandoffBuyer: vi.fn(),
   restoreUcpHandoffCart: handoff.restore,
   UcpHandoffRestoreError: class MockUcpHandoffRestoreError extends Error {

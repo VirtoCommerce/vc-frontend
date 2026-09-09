@@ -3,8 +3,8 @@ import { useThemeContext } from "@/core/composables";
 import { buildRedirectUrl, getReturnUrlValue } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
 import { useUser } from "@/shared/account";
+import { saveUcpContinuation } from "@/shared/checkout/ucp/continuation";
 import { mainRoutes } from "./routes";
-import { saveUcpContinuation } from "./routes/ucp-continuation";
 import type { RouteRecordName } from "vue-router";
 
 export function createRouter(options: { base: string }) {

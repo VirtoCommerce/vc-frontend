@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { setGlobals } from "@/core/globals";
-import { readUcpContinuation } from "./routes/ucp-continuation";
+import { readUcpContinuation } from "@/shared/checkout/ucp/continuation";
 import { createRouter } from "./index";
 
 vi.mock("@/pages/cart.vue", () => ({ default: {} }));

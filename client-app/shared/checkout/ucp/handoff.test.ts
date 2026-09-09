@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { USER_ID_LOCAL_STORAGE } from "@/core/constants";
 import { globals, setGlobals } from "@/core/globals";
-import { applyUcpHandoffBuyer, restoreUcpHandoffCart, UcpHandoffRestoreError } from "./ucp-handoff";
+import { applyUcpHandoffBuyer, restoreUcpHandoffCart, UcpHandoffRestoreError } from "./handoff";
 
 const auth = vi.hoisted(
   (): {
