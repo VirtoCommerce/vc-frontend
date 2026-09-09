@@ -1,5 +1,12 @@
 {
   "common": {
+    "ucp": {
+      "wrong_account": "Cette commande appartient à un autre compte ou à une autre organisation. Connectez-vous avec le compte utilisé dans votre assistant d’achat, puis réessayez.",
+      "expired": "Ce lien de commande a expiré, a déjà été utilisé ou n’est pas disponible dans cet onglet. Demandez un nouveau lien à votre assistant d’achat.",
+      "restore_failed": "Nous n’avons pas pu ouvrir votre commande. Veuillez réessayer le lien dans un instant.",
+      "authorization_failed": "Nous n’avons pas pu poursuivre la connexion",
+      "authorization_retry": "Veuillez relancer la connexion depuis votre assistant d’achat. Si le problème persiste, contactez l’administrateur de votre boutique."
+    },
     "buttons": {
       "home": "Page d'accueil",
       "ok": "OK",
