@@ -72,7 +72,7 @@
           "open_mission": "ミッションを開く",
           "progress_skus": "{current} / {target} SKU",
           "progress_any_sku": "{target}個中少なくとも1個",
-          "progress_spend": "{sum} 使用済み",
+          "progress_spend": "{sum} の {target} を使用",
           "progress_orders": "{current} / {target} 件の注文"
         },
         "sku_modal": {

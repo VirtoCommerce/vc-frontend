@@ -72,7 +72,7 @@
           "open_mission": "Avaa tehtävä",
           "progress_skus": "{current} / {target} tuotetta",
           "progress_any_sku": "vähintään 1 / {target} tuotetta",
-          "progress_spend": "{sum} käytetty",
+          "progress_spend": "{sum} käytetty kohteesta {target}",
           "progress_orders": "{current} / {target} tilausta"
         },
         "sku_modal": {

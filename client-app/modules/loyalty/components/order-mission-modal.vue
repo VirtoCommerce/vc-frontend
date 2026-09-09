@@ -113,7 +113,7 @@ const requirementLabel = computed(() => {
   }
 
   &__target-row {
-    @apply flex items-center justify-between gap-3;
+    @apply flex items-center justify-between gap-x-3 flex-wrap gap-y-1;
   }
 
   &__requirement {
@@ -133,7 +133,7 @@ const requirementLabel = computed(() => {
   }
 
   &__bar {
-    @apply h-full rounded-full bg-primary-500 transition-all;
+    @apply h-full rounded-full bg-warning-500 transition-all;
   }
 
   &__percent {
