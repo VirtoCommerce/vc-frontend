@@ -28,7 +28,6 @@ import { Logger } from "@/core/utilities";
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import type { ExtensionCategoryType } from "@/shared/common/types/extensionRegistry";
 import type { ConditionParamType, ContributionType } from "@/shared/common/types/extensionRegistryMap";
-import ExtensionContribution from "@/shared/common/components/extension-contribution.vue";
 
 /**
  * A stable id per contribution function, so the child's key changes when the entry behind a name is
@@ -64,6 +63,8 @@ export interface IProps<C extends ExtensionCategoryType> {
 </script>
 
 <script setup lang="ts" generic="C extends ExtensionCategoryType">
+import ExtensionContribution from "@/shared/common/components/extension-contribution.vue";
+
 defineOptions({
   inheritAttrs: false,
 });
