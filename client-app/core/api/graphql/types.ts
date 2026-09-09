@@ -6259,6 +6259,7 @@ export type QueryGetSavedForLaterArgs = {
 
 export type QueryLoyaltyBalanceArgs = {
   orderId?: InputMaybe<Scalars['String']['input']>;
+  storeId: Scalars['String']['input'];
   userId?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -6285,6 +6286,7 @@ export type QueryLoyaltyPointsHistoryArgs = {
   keyword?: InputMaybe<Scalars['String']['input']>;
   operationType?: InputMaybe<Scalars['String']['input']>;
   sort?: InputMaybe<Scalars['String']['input']>;
+  storeId: Scalars['String']['input'];
   userId?: InputMaybe<Scalars['String']['input']>;
 };
 

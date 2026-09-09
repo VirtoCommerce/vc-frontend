@@ -1,5 +1,5 @@
-query GetLoyaltyPointsHistory($sort: String, $after: String, $first: Int, $operationType: String) {
-  loyaltyPointsHistory(sort: $sort, after: $after, first: $first, operationType: $operationType) {
+query GetLoyaltyPointsHistory($sort: String, $after: String, $first: Int, $operationType: String, $storeId: String!) {
+  loyaltyPointsHistory(sort: $sort, after: $after, first: $first, operationType: $operationType, storeId: $storeId) {
     totalCount
     items {
       id
