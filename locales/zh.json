@@ -965,7 +965,8 @@
       "list_card": {
         "product_count_label": "商品数量",
         "list_edit_button": "编辑",
-        "remove_list_button": "删除",
+        "rename_list_button": "重命名",
+        "remove_list_button": "删除列表",
         "make_private_button": "设为私人",
         "share_button": "分享",
         "last_modified_label": "最后修改：{date}"
@@ -1014,6 +1015,9 @@
         },
         "clipboard_success": "链接已复制",
         "save_error": "无法保存列表，请重试。"
+      },
+      "share_wishlist_modal": {
+        "title": "分享“{listName}”"
       },
       "delete_wishlist_modal": {
         "title": "确认删除",

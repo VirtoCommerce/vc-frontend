@@ -965,7 +965,8 @@
       "list_card": {
         "product_count_label": "Cantidad de productos",
         "list_edit_button": "Editar",
-        "remove_list_button": "Eliminar",
+        "rename_list_button": "Renombrar",
+        "remove_list_button": "Eliminar lista",
         "make_private_button": "Hacer privado",
         "share_button": "Compartir",
         "last_modified_label": "Última modificación: {date}"
@@ -1014,6 +1015,9 @@
         },
         "clipboard_success": "Enlace copiado",
         "save_error": "No se pudo guardar la lista. Inténtalo de nuevo."
+      },
+      "share_wishlist_modal": {
+        "title": "Compartir “{listName}”"
       },
       "delete_wishlist_modal": {
         "title": "Confirmar eliminación",

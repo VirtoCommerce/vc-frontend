@@ -32,7 +32,9 @@
     <div class="wishlist-card__dropdown">
       <WishlistDropdownMenu
         v-if="list.sharingSetting?.access === WishlistAccessType.Write"
+        :shareable="isCorporateMember"
         @edit="$emit('settings')"
+        @share="$emit('share')"
         @remove="$emit('remove')"
       />
     </div>
@@ -48,6 +50,7 @@ import type { WishlistType } from "@/core/api/graphql/types";
 
 interface IEmits {
   (event: "settings"): void;
+  (event: "share"): void;
   (event: "remove"): void;
 }
 

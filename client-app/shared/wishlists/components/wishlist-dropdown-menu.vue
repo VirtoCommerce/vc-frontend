@@ -17,26 +17,50 @@
     <template #content>
       <VcMenuItem data-test-id="wishlist-card-edit-menu-item" color="secondary" nowrap @click="$emit('edit')">
         <template #prepend>
-          <VcIcon name="edit" />
+          <VcIcon name="pencil" />
         </template>
 
-        <span>{{ $t("shared.wishlists.list_card.list_edit_button") }}</span>
+        <span>{{ $t("shared.wishlists.list_card.rename_list_button") }}</span>
       </VcMenuItem>
 
-      <VcMenuItem data-test-id="wishlist-card-remove-menu-item" color="secondary" nowrap @click="$emit('remove')">
-        <VcIcon name="delete-2" class="text-danger" />
+      <VcMenuItem
+        v-if="shareable"
+        data-test-id="wishlist-card-share-menu-item"
+        color="secondary"
+        nowrap
+        @click="$emit('share')"
+      >
+        <template #prepend>
+          <VcIcon name="users" />
+        </template>
 
-        <span>{{ $t("shared.wishlists.list_card.remove_list_button") }}</span>
+        <span>{{ $t("shared.wishlists.list_card.share_button") }}</span>
+      </VcMenuItem>
+
+      <VcMenuItem data-test-id="wishlist-card-remove-menu-item" color="danger" nowrap @click="$emit('remove')">
+        <template #prepend>
+          <VcIcon name="delete-2" />
+        </template>
+
+        <span class="text-danger">{{ $t("shared.wishlists.list_card.remove_list_button") }}</span>
       </VcMenuItem>
     </template>
   </VcDropdownMenu>
 </template>
 
 <script setup lang="ts">
-interface IEmit {
+interface IEmits {
   (event: "edit"): void;
+  (event: "share"): void;
   (event: "remove"): void;
 }
 
-defineEmits<IEmit>();
+interface IProps {
+  /** Sharing is a corporate feature; without it the menu is rename and remove only. */
+  shareable?: boolean;
+}
+
+defineEmits<IEmits>();
+
+defineProps<IProps>();
 </script>

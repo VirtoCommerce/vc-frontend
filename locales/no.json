@@ -965,7 +965,8 @@
       "list_card": {
         "product_count_label": "Antall produkter",
         "list_edit_button": "Rediger",
-        "remove_list_button": "Fjern",
+        "rename_list_button": "Gi nytt navn",
+        "remove_list_button": "Fjern liste",
         "make_private_button": "Gjør privat",
         "share_button": "Del",
         "last_modified_label": "Sist endret: {date}"
@@ -1014,6 +1015,9 @@
         },
         "clipboard_success": "Lenke kopiert",
         "save_error": "Listen kunne ikke lagres. Prøv igjen."
+      },
+      "share_wishlist_modal": {
+        "title": "Del «{listName}»"
       },
       "delete_wishlist_modal": {
         "title": "Bekreft sletting",

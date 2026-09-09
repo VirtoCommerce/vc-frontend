@@ -38,6 +38,7 @@
             :key="list.id"
             :list="list"
             @settings="openListSettingsModal(list)"
+            @share="openShareListModal(list)"
             @remove="openDeleteListModal(list)"
           />
         </template>
@@ -64,6 +65,7 @@ import { useModal } from "@/shared/modal";
 import {
   AddOrUpdateWishlistModal,
   DeleteWishlistsModal,
+  ShareWishlistModal,
   UnsuccessfulCreateWishlistModal,
   useWishlists,
   WishlistCard,
@@ -99,6 +101,15 @@ function openCreateListModal() {
 function openListSettingsModal(list: WishlistType) {
   openModal({
     component: AddOrUpdateWishlistModal,
+    props: {
+      list,
+    },
+  });
+}
+
+function openShareListModal(list: WishlistType) {
+  openModal({
+    component: ShareWishlistModal,
     props: {
       list,
     },

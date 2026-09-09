@@ -965,7 +965,8 @@
       "list_card": {
         "product_count_label": "Tuotteiden määrä",
         "list_edit_button": "Muokkaa",
-        "remove_list_button": "Poista",
+        "rename_list_button": "Nimeä uudelleen",
+        "remove_list_button": "Poista lista",
         "make_private_button": "Tee yksityiseksi",
         "share_button": "Jaa",
         "last_modified_label": "Viimeksi muokattu: {date}"
@@ -1014,6 +1015,9 @@
         },
         "clipboard_success": "Linkki kopioitu",
         "save_error": "Listaa ei voitu tallentaa. Yritä uudelleen."
+      },
+      "share_wishlist_modal": {
+        "title": "Jaa “{listName}”"
       },
       "delete_wishlist_modal": {
         "title": "Vahvista poisto",

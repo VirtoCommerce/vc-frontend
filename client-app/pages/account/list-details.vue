@@ -59,6 +59,18 @@
           >
             {{ $t("shared.wishlists.list_details.list_settings_button") }}
           </VcButton>
+
+          <VcButton
+            v-if="canShare"
+            :disabled="loading"
+            size="sm"
+            variant="outline"
+            prepend-icon="users"
+            class="grow"
+            @click="openShareListModal"
+          >
+            {{ $t("shared.wishlists.list_card.share_button") }}
+          </VcButton>
         </div>
       </div>
 
@@ -121,6 +133,7 @@ import { cloneDeep, isEqual, keyBy, pick } from "lodash-es";
 import { computed, ref, watchEffect, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRouter } from "vue-router";
+import { WishlistAccessType } from "@/core/api/graphql/types";
 import { useAnalytics, useHistoricalEvents, usePageHead } from "@/core/composables";
 import { useAnalyticsUtils } from "@/core/composables/useAnalyticsUtils";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
@@ -128,6 +141,7 @@ import { PAGE_LIMIT } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { prepareLineItem, Logger } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
+import { useUser } from "@/shared/account/composables";
 import { dataChangedEvent, useBroadcast } from "@/shared/broadcast";
 import { useShortCart, getItemsForAddBulkItemsToCartResultsModal } from "@/shared/cart";
 import { SaveChangesModal } from "@/shared/common";
@@ -137,6 +151,7 @@ import {
   useWishlists,
   AddOrUpdateWishlistModal,
   DeleteWishlistProductModal,
+  ShareWishlistModal,
   WishlistLineItems,
   WishlistProductsSkeleton,
 } from "@/shared/wishlists";
@@ -166,6 +181,7 @@ const { t } = useI18n();
 const { analytics } = useAnalytics();
 const broadcast = useBroadcast();
 const { openModal } = useModal();
+const { isCorporateMember } = useUser();
 const { listLoading, list, fetchWishList, updateItemsInWishlist } = useWishlists();
 const {
   loading: cartLoading,
@@ -223,9 +239,22 @@ const actualListName = computed(() => props.listName ?? list.value?.name);
 
 const isMobile = breakpoints.smaller("lg");
 
+const canShare = computed(
+  () => isCorporateMember.value && list.value?.sharingSetting?.access === WishlistAccessType.Write,
+);
+
 function openListSettingsModal(): void {
   openModal({
     component: AddOrUpdateWishlistModal,
+    props: {
+      list: list.value,
+    },
+  });
+}
+
+function openShareListModal(): void {
+  openModal({
+    component: ShareWishlistModal,
     props: {
       list: list.value,
     },

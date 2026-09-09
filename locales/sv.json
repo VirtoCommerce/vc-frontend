@@ -965,7 +965,8 @@
       "list_card": {
         "product_count_label": "Antal produkter",
         "list_edit_button": "Redigera",
-        "remove_list_button": "Radera",
+        "rename_list_button": "Byt namn",
+        "remove_list_button": "Ta bort lista",
         "make_private_button": "Gör privat",
         "share_button": "Dela",
         "last_modified_label": "Senast ändrad: {date}"
@@ -1014,6 +1015,9 @@
         },
         "clipboard_success": "Länk kopierad",
         "save_error": "Listan kunde inte sparas. Försök igen."
+      },
+      "share_wishlist_modal": {
+        "title": "Dela ”{listName}”"
       },
       "delete_wishlist_modal": {
         "title": "Bekräfta radering",
