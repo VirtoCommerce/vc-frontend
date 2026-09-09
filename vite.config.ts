@@ -25,6 +25,7 @@ function getProxy(target: ProxyOptions["target"], options: Omit<ProxyOptions, "t
     target,
     changeOrigin: true,
     secure: dontTrustSelfSignedCertificate,
+    xfwd: true,
     ...options,
   };
 }
@@ -42,7 +43,12 @@ function getBackendProxy(): Record<string, ProxyOptions> {
   return {
     "^/api": getProxy(process.env.APP_BACKEND_URL),
     "^/graphql": getProxy(process.env.APP_BACKEND_URL, { ws: true }),
-    "^/(connect|revoke)/token": getProxy(process.env.APP_BACKEND_URL),
+    "^/ucp": getProxy(process.env.APP_BACKEND_URL),
+    "^/connect/(authorize|session|token)": getProxy(process.env.APP_BACKEND_URL),
+    "^/revoke/token": getProxy(process.env.APP_BACKEND_URL),
+    "^/\\.well-known/(openid-configuration|oauth-authorization-server|oauth-protected-resource|jwks|ucp)": getProxy(
+      process.env.APP_BACKEND_URL,
+    ),
     "^/cms-content": getProxy(process.env.APP_BACKEND_URL),
     "^/externalsignin": getProxy(process.env.APP_BACKEND_URL),
     "^/signin-oidc": getProxy(process.env.APP_BACKEND_URL),
@@ -52,7 +58,7 @@ function getBackendProxy(): Record<string, ProxyOptions> {
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }): UserConfig => {
-  const isServe = command == "serve";
+  const isServe = command == "serve" && mode !== "test";
 
   // https://stackoverflow.com/a/66389044
   process.env = {

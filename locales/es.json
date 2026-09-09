@@ -1,5 +1,12 @@
 {
   "common": {
+    "ucp": {
+      "wrong_account": "Este proceso de compra pertenece a otra cuenta u organización. Inicie sesión con la cuenta utilizada en su asistente de compras e inténtelo de nuevo.",
+      "expired": "Este enlace de compra ha caducado, ya se ha utilizado o no está disponible en esta pestaña. Solicite un nuevo enlace a su asistente de compras.",
+      "restore_failed": "No pudimos abrir su proceso de compra. Vuelva a intentar abrir el enlace en unos instantes.",
+      "authorization_failed": "No pudimos continuar el inicio de sesión",
+      "authorization_retry": "Reinicie la conexión desde su asistente de compras. Si el problema persiste, póngase en contacto con el administrador de su tienda."
+    },
     "buttons": {
       "home": "Página de inicio",
       "ok": "Aceptar",

@@ -41,7 +41,6 @@ import { BUILDER_IO_TRACE_MARKER, consoleIgnoredErrors } from "@/pages/matcher/b
 import { isPreviewMode as isBuilderIoPreviewMode } from "@/plugins/builder-io-preview/utils";
 import { getPreviewBootOptions as getPageBuilderPreviewBoot } from "@/plugins/builder-preview/utils";
 import { createRouter } from "@/router";
-import { applyUcpHandoffBuyer, restoreUcpHandoffCart } from "@/router/routes/ucp-handoff";
 import { useUser } from "@/shared/account";
 import ProductBlocks from "@/shared/catalog/components/product";
 import { useNotifications } from "@/shared/notification";
@@ -51,22 +50,6 @@ import { setDefaultIconVariant } from "@/ui-kit/utilities";
 import { getLocales as getUIKitLocales } from "@/ui-kit/utilities/getLocales";
 import App from "./App.vue";
 import type { PageContextResponseType } from "./core/api/graphql/types";
-
-async function getUcpHandoffUserId(): Promise<string | undefined> {
-  const ucpSession = new URL(globalThis.location.href).searchParams.get("ucp_session");
-
-  if (!ucpSession) {
-    return;
-  }
-
-  try {
-    const { buyerId } = await restoreUcpHandoffCart(ucpSession);
-    applyUcpHandoffBuyer(buyerId);
-    return buyerId;
-  } catch (error) {
-    Logger.warn("Failed to pre-restore UCP handoff session", error);
-  }
-}
 
 /** The preview plugins are optional: a failed load leaves the app booting without them. */
 function reportOptionalChunkFailure(error: unknown): undefined {
@@ -145,7 +128,7 @@ export default async () => {
   const domain = IS_DEVELOPMENT
     ? extractHostname(import.meta.env.APP_BACKEND_URL as string)
     : globalThis.location.hostname;
-  const userId = (await getUcpHandoffUserId()) ?? savedUserId.value;
+  const userId = savedUserId.value;
 
   try {
     const initialStore = await initializeApplication(domain);

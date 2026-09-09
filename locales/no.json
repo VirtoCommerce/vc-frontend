@@ -1,5 +1,12 @@
 {
   "common": {
+    "ucp": {
+      "wrong_account": "Denne utsjekkingen tilhører en annen konto eller organisasjon. Logg inn med kontoen du bruker i handleassistenten, og prøv igjen.",
+      "expired": "Denne utsjekkingslenken er utløpt, er allerede brukt eller er ikke tilgjengelig i denne fanen. Be handleassistenten om en ny lenke.",
+      "restore_failed": "Vi kunne ikke åpne utsjekkingen. Prøv lenken igjen om et øyeblikk.",
+      "authorization_failed": "Vi kunne ikke fortsette innloggingen",
+      "authorization_retry": "Start tilkoblingen på nytt fra handleassistenten. Kontakt butikkadministratoren hvis problemet vedvarer."
+    },
     "buttons": {
       "home": "Hjem",
       "ok": "OK",

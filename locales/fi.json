@@ -1,5 +1,12 @@
 {
   "common": {
+    "ucp": {
+      "wrong_account": "Tämä tilaus kuuluu toiselle tilille tai organisaatiolle. Kirjaudu sisään ostoavustajassa käyttämälläsi tilillä ja yritä uudelleen.",
+      "expired": "Tämä tilauslinkki on vanhentunut, se on jo käytetty tai se ei ole käytettävissä tässä välilehdessä. Pyydä ostoavustajaltasi uusi tilauslinkki.",
+      "restore_failed": "Tilauksen avaaminen ei onnistunut. Yritä avata linkki hetken kuluttua uudelleen.",
+      "authorization_failed": "Kirjautumista ei voitu jatkaa",
+      "authorization_retry": "Käynnistä yhteys uudelleen ostoavustajassasi. Jos ongelma jatkuu, ota yhteyttä kaupan ylläpitäjään."
+    },
     "buttons": {
       "home": "Kotisivu",
       "ok": "OK",

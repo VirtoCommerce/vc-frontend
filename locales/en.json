@@ -1,5 +1,12 @@
 {
   "common": {
+    "ucp": {
+      "wrong_account": "This checkout belongs to another account or organization. Sign in with the account used in your shopping assistant, then try again.",
+      "expired": "This checkout link has expired, has already been used, or is unavailable in this tab. Request a new checkout link from your shopping assistant.",
+      "restore_failed": "We could not open your checkout. Please try the link again in a moment.",
+      "authorization_failed": "We could not continue sign-in",
+      "authorization_retry": "Please restart the connection from your shopping assistant. If the problem persists, contact your store administrator."
+    },
     "buttons": {
       "home": "Home page",
       "ok": "OK",
