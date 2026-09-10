@@ -1000,8 +1000,6 @@
         "edit_mode_title": "清单设置",
         "list_name_label": "清单名称",
         "list_name_placeholder": "请输入名称",
-        "sharing_scope_label": "分享选项",
-        "sharing_scope_placeholder": "请选择一个选项",
         "sharing_link_label": "链接",
         "create_button": "创建清单",
         "save_button": "@:common.buttons.save",
@@ -1010,14 +1008,15 @@
         "make_shared": "设为共享",
         "sharing_scope": {
           "Private": "私密",
-          "Organization": "组织",
-          "AnyoneAnonymous": "任何人（只读）"
+          "Organization": "我的组织",
+          "AnyoneAnonymous": "任何拥有链接的人"
         },
         "clipboard_success": "链接已复制",
         "save_error": "无法保存列表，请重试。"
       },
       "share_wishlist_modal": {
-        "title": "分享“{listName}”"
+        "title": "分享“{listName}”",
+        "who_can_access_label": "谁可以访问"
       },
       "delete_wishlist_modal": {
         "title": "确认删除",

@@ -118,38 +118,40 @@ const VcInput = defineComponent({
   },
 });
 
-const VcSelect = defineComponent({
+const VcTabSwitch = defineComponent({
   props: {
     modelValue: { type: String, default: "" },
-    items: { type: Array as () => Record<string, string>[], default: () => [] },
-    textField: { type: String, default: "" },
-    valueField: { type: String, default: "" },
-    testIdDropdown: { type: String, default: "" },
+    value: { type: String, required: true },
+    label: { type: String, default: "" },
+    icon: { type: String, default: "" },
+    disabled: { type: Boolean, default: false },
   },
-  emits: ["update:modelValue"],
+  emits: ["change"],
   setup(props, { emit }) {
     return () =>
-      h(
-        "select",
-        {
-          "data-test-id": props.testIdDropdown,
-          value: props.modelValue,
-          onChange: (event: Event) => emit("update:modelValue", (event.target as HTMLSelectElement).value),
-        },
-        [
-          h("option", { value: "" }),
-          ...props.items.map((item) =>
-            h("option", { key: item[props.valueField], value: item[props.valueField] }, item[props.textField]),
-          ),
-        ],
-      );
+      h("label", { "data-icon": props.icon }, [
+        h("input", {
+          type: "radio",
+          value: props.value,
+          checked: props.modelValue === props.value,
+          disabled: props.disabled,
+        }),
+        h("button", { type: "button", onClick: () => emit("change", props.value) }, props.label),
+      ]);
+  },
+});
+
+const VcLabel = defineComponent({
+  setup(_, { slots }) {
+    return () => h("label", slots.default?.());
   },
 });
 
 const VcButton = defineComponent({
   props: { disabled: { type: Boolean, default: false }, loading: { type: Boolean, default: false } },
-  setup(props, { slots }) {
-    return () => h("button", { disabled: props.disabled }, slots.default?.());
+  emits: ["click"],
+  setup(props, { slots, emit }) {
+    return () => h("button", { disabled: props.disabled, onClick: () => emit("click") }, slots.default?.());
   },
 });
 
@@ -159,7 +161,7 @@ function renderModal(list: WishlistType) {
   component = render(ShareWishlistModal, {
     props: { list },
     global: {
-      components: { VcModal, VcInput, VcSelect, VcButton },
+      components: { VcModal, VcInput, VcTabSwitch, VcLabel, VcButton },
       mocks: { $t: (key: string) => key },
       stubs: { VcIcon: true },
     },
@@ -168,8 +170,12 @@ function renderModal(list: WishlistType) {
   return component;
 }
 
-function scopeSelect() {
-  return component.getByTestId<HTMLSelectElement>("wishlist-sharing-scope-select");
+function scopeTab(scope: string) {
+  return component.queryByTestId<HTMLElement>(`wishlist-sharing-scope-${scope}`);
+}
+
+function scopeRadio(scope: string) {
+  return scopeTab(scope)!.querySelector<HTMLInputElement>("input")!;
 }
 
 function saveButton() {
@@ -199,7 +205,7 @@ function targetedList(sharedWithId?: string): WishlistType {
 }
 
 async function selectScope(scope: string) {
-  await fireEvent.update(scopeSelect(), scope);
+  await fireEvent.click(scopeTab(scope)!.querySelector("button")!);
 }
 
 beforeAll(() => {
@@ -207,6 +213,7 @@ beforeAll(() => {
     scope: TARGETED_SCOPE,
     labelKey: SCOPE_LABEL_KEY,
     statusKey: "test_module.targeted_scope.status",
+    icon: "test-glyph",
     supportsLink: true,
     shoppable: true,
     isAvailable: () => scopeAvailable.value,
@@ -241,16 +248,15 @@ describe("ShareWishlistModal", () => {
     it("always lists the scopes core owns", () => {
       renderModal(privateList());
 
-      const select = scopeSelect();
-      expect(select).toContainHTML(`value="${WishlistScopeType.Private}"`);
-      expect(select).toContainHTML(`value="${WishlistScopeType.AnyoneAnonymous}"`);
-      expect(select).toContainHTML(`value="${WishlistScopeType.Organization}"`);
+      expect(scopeTab(WishlistScopeType.Private)).toBeInTheDocument();
+      expect(scopeTab(WishlistScopeType.AnyoneAnonymous)).toBeInTheDocument();
+      expect(scopeTab(WishlistScopeType.Organization)).toBeInTheDocument();
     });
 
     it("lists a contributed scope, labelled from the provider's own key", () => {
       renderModal(privateList());
 
-      expect(scopeSelect()).toContainHTML(`value="${TARGETED_SCOPE}"`);
+      expect(scopeTab(TARGETED_SCOPE)).toBeInTheDocument();
       expect(component.getByText(SCOPE_LABEL_KEY)).toBeInTheDocument();
     });
 
@@ -259,7 +265,7 @@ describe("ShareWishlistModal", () => {
 
       renderModal(privateList());
 
-      expect(scopeSelect()).not.toContainHTML(`value="${TARGETED_SCOPE}"`);
+      expect(scopeTab(TARGETED_SCOPE)).toBeNull();
     });
 
     it("still lists the scope a list already carries, so saving cannot silently rewrite it", () => {
@@ -267,7 +273,34 @@ describe("ShareWishlistModal", () => {
 
       renderModal(targetedList("org-1"));
 
-      expect(scopeSelect()).toContainHTML(`value="${TARGETED_SCOPE}"`);
+      expect(scopeTab(TARGETED_SCOPE)).toBeInTheDocument();
+    });
+
+    it("asks who can access, and shows each scope under the icon its provider declared", () => {
+      renderModal(privateList());
+
+      expect(component.getByText("shared.wishlists.share_wishlist_modal.who_can_access_label")).toBeInTheDocument();
+      expect(scopeTab(TARGETED_SCOPE)).toHaveAttribute("data-icon", "test-glyph");
+      expect(scopeTab(WishlistScopeType.Private)!.getAttribute("data-icon")).not.toBe("");
+    });
+
+    it("orders the tabs as the scopes declare, with unordered contributions last", () => {
+      renderModal(privateList());
+
+      const order = component.getAllByRole("radio").map((radio) => (radio as HTMLInputElement).value);
+      expect(order).toEqual([
+        WishlistScopeType.Private,
+        WishlistScopeType.Organization,
+        WishlistScopeType.AnyoneAnonymous,
+        TARGETED_SCOPE,
+      ]);
+    });
+
+    it("opens on the scope the list already has", () => {
+      renderModal(targetedList("org-1"));
+
+      expect(scopeRadio(TARGETED_SCOPE).checked).toBe(true);
+      expect(scopeRadio(WishlistScopeType.Private).checked).toBe(false);
     });
 
     it("hides the provider's controls for a user who may not use that scope", () => {
@@ -499,10 +532,7 @@ describe("ShareWishlistModal", () => {
     it("copies the link and confirms it", async () => {
       renderModal(targetedList("org-1"));
 
-      // The copy button is the only button inside the link field's append slot.
-      const buttons = component.getAllByRole("button");
-      const copyButton = buttons.find((button) => !button.hasAttribute("data-test-id"))!;
-      await fireEvent.click(copyButton);
+      await fireEvent.click(component.getByTestId("wishlist-sharing-copy-link-button"));
 
       expect(mocks.copy).toHaveBeenCalledOnce();
       expect(mocks.copy.mock.calls[0][0]).toContain("/shared-list/sharing-key-1");

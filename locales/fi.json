@@ -1000,8 +1000,6 @@
         "edit_mode_title": "Listan asetukset",
         "list_name_label": "Listan nimi",
         "list_name_placeholder": "Syötä nimi",
-        "sharing_scope_label": "Jakovaihtoehdot",
-        "sharing_scope_placeholder": "Valitse yksi vaihtoehto",
         "sharing_link_label": "Linkki",
         "create_button": "Luo lista",
         "save_button": "@:common.buttons.save",
@@ -1010,14 +1008,15 @@
         "make_shared": "Tee jaetuksi",
         "sharing_scope": {
           "Private": "Yksityinen",
-          "Organization": "Organisaatio",
-          "AnyoneAnonymous": "Kuka tahansa (vain luku)"
+          "Organization": "Oma organisaatio",
+          "AnyoneAnonymous": "Kuka tahansa linkin kanssa"
         },
         "clipboard_success": "Linkki kopioitu",
         "save_error": "Listaa ei voitu tallentaa. Yritä uudelleen."
       },
       "share_wishlist_modal": {
-        "title": "Jaa “{listName}”"
+        "title": "Jaa “{listName}”",
+        "who_can_access_label": "Kenellä on pääsy"
       },
       "delete_wishlist_modal": {
         "title": "Vahvista poisto",

@@ -14,8 +14,16 @@
       </VcButton>
     </template>
 
-    <template #content>
-      <VcMenuItem data-test-id="wishlist-card-edit-menu-item" color="secondary" nowrap @click="$emit('edit')">
+    <template #content="{ close }">
+      <VcMenuItem
+        data-test-id="wishlist-card-edit-menu-item"
+        color="secondary"
+        nowrap
+        @click="
+          close();
+          $emit('edit');
+        "
+      >
         <template #prepend>
           <VcIcon name="pencil" />
         </template>
@@ -28,7 +36,10 @@
         data-test-id="wishlist-card-share-menu-item"
         color="secondary"
         nowrap
-        @click="$emit('share')"
+        @click="
+          close();
+          $emit('share');
+        "
       >
         <template #prepend>
           <VcIcon name="users" />
@@ -37,9 +48,17 @@
         <span>{{ $t("shared.wishlists.list_card.share_button") }}</span>
       </VcMenuItem>
 
-      <VcMenuItem data-test-id="wishlist-card-remove-menu-item" color="danger" nowrap @click="$emit('remove')">
+      <VcMenuItem
+        data-test-id="wishlist-card-remove-menu-item"
+        color="danger"
+        nowrap
+        @click="
+          close();
+          $emit('remove');
+        "
+      >
         <template #prepend>
-          <VcIcon name="delete-2" />
+          <VcIcon name="trash-2" />
         </template>
 
         <span class="text-danger">{{ $t("shared.wishlists.list_card.remove_list_button") }}</span>

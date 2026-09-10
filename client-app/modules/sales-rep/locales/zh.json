@@ -263,7 +263,7 @@
       "share_success": "列表已与客户共享。",
       "share_partial": "列表已共享，但部分通知未送达。",
       "share_notify_error": "列表已保存，但无法通知客户。",
-      "scope_label": "客户",
+      "scope_label": "特定客户",
       "status": "与客户共享",
       "badge": "您的销售代表推荐"
     }

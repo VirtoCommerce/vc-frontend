@@ -3,20 +3,35 @@
     :title="$t('shared.wishlists.share_wishlist_modal.title', { listName: list.name })"
     dividers
     is-mobile-fullscreen
+    max-width="46rem"
     test-id="share-wishlist-modal"
     :is-persistent="saving"
   >
-    <div class="space-y-4">
-      <VcSelect
-        v-model="sharingScope"
-        test-id-dropdown="wishlist-sharing-scope-select"
-        :label="$t('shared.wishlists.add_or_update_wishlist_modal.sharing_scope_label')"
-        :placeholder="$t('shared.wishlists.add_or_update_wishlist_modal.sharing_scope_placeholder')"
-        :disabled="saving"
-        :items="listSharingScopes"
-        text-field="label"
-        value-field="id"
-      />
+    <div class="share-wishlist-modal">
+      <div>
+        <VcLabel size="sm">{{ $t("shared.wishlists.share_wishlist_modal.who_can_access_label") }}</VcLabel>
+
+        <div
+          class="share-wishlist-modal__scopes"
+          role="radiogroup"
+          :aria-label="$t('shared.wishlists.share_wishlist_modal.who_can_access_label')"
+        >
+          <VcTabSwitch
+            v-for="scope in listSharingScopes"
+            :key="scope.id"
+            :model-value="sharingScope"
+            :value="scope.id"
+            :label="scope.label"
+            :icon="scope.icon"
+            :disabled="saving"
+            :data-test-id="`wishlist-sharing-scope-${scope.id}`"
+            name="wishlist-sharing-scope"
+            size="sm"
+            class="share-wishlist-modal__scope"
+            @change="sharingScope = $event"
+          />
+        </div>
+      </div>
 
       <VcInput
         v-if="listSharingScopeSupportsLink"
@@ -27,6 +42,7 @@
         <template #append>
           <VcButton
             v-if="isClipboardSupported"
+            data-test-id="wishlist-sharing-copy-link-button"
             color="secondary"
             variant="soft"
             icon="document-duplicate"
@@ -128,6 +144,7 @@ const listSharingScopes = computed(() => {
   return scopes.map((scope) => ({
     id: scope.scope,
     label: scope.labelKey ? t(scope.labelKey) : scope.scope,
+    icon: scope.icon,
   }));
 });
 
@@ -202,3 +219,21 @@ async function copySharingLink() {
   });
 }
 </script>
+
+<style lang="scss">
+.share-wishlist-modal {
+  @apply space-y-4;
+
+  &__scopes {
+    @apply mt-2 grid grid-cols-2 gap-4;
+
+    @media (min-width: theme("screens.md")) {
+      @apply flex flex-wrap;
+    }
+  }
+
+  &__scope {
+    @apply min-w-0;
+  }
+}
+</style>

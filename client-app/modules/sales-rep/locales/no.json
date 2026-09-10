@@ -263,7 +263,7 @@
       "share_success": "Listen er delt med kunden.",
       "share_partial": "Listen er delt, men ikke alle varsler ble levert.",
       "share_notify_error": "Listen ble lagret, men kunden kunne ikke varsles.",
-      "scope_label": "Kunde",
+      "scope_label": "Bestemte kunder",
       "status": "Delt med kunde",
       "badge": "Anbefalt av din salgsrepresentant"
     }

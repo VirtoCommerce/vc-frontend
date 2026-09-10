@@ -263,7 +263,7 @@
       "share_success": "Lista została udostępniona klientowi.",
       "share_partial": "Lista została udostępniona, ale nie wszystkie powiadomienia zostały dostarczone.",
       "share_notify_error": "Lista została zapisana, ale nie udało się powiadomić klienta.",
-      "scope_label": "Klient",
+      "scope_label": "Wybrani klienci",
       "status": "Udostępniona klientowi",
       "badge": "Polecane przez Twojego przedstawiciela handlowego"
     }

@@ -263,7 +263,7 @@
       "share_success": "Liste partagée avec le client.",
       "share_partial": "Liste partagée, mais toutes les notifications n'ont pas été délivrées.",
       "share_notify_error": "La liste a été enregistrée, mais le client n'a pas pu être notifié.",
-      "scope_label": "Client",
+      "scope_label": "Clients spécifiques",
       "status": "Partagé avec le client",
       "badge": "Recommandé par votre commercial"
     }

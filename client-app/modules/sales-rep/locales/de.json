@@ -263,7 +263,7 @@
       "share_success": "Liste für den Kunden freigegeben.",
       "share_partial": "Liste freigegeben, aber nicht alle Benachrichtigungen wurden zugestellt.",
       "share_notify_error": "Die Liste wurde gespeichert, der Kunde konnte jedoch nicht benachrichtigt werden.",
-      "scope_label": "Kunde",
+      "scope_label": "Bestimmte Kunden",
       "status": "Mit Kunde geteilt",
       "badge": "Empfohlen von Ihrem Vertriebsmitarbeiter"
     }

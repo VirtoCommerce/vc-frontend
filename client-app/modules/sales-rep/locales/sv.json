@@ -263,7 +263,7 @@
       "share_success": "Listan har delats med kunden.",
       "share_partial": "Listan har delats, men alla aviseringar levererades inte.",
       "share_notify_error": "Listan sparades, men kunden kunde inte meddelas.",
-      "scope_label": "Kund",
+      "scope_label": "Specifika kunder",
       "status": "Delad med kund",
       "badge": "Rekommenderas av din säljare"
     }

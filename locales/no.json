@@ -1000,8 +1000,6 @@
         "edit_mode_title": "Listeinnstillinger",
         "list_name_label": "Listenavn",
         "list_name_placeholder": "Skriv inn navn",
-        "sharing_scope_label": "Delingsalternativer",
-        "sharing_scope_placeholder": "Vennligst velg ett alternativ",
         "sharing_link_label": "Lenke",
         "create_button": "Opprett liste",
         "save_button": "@:common.buttons.save",
@@ -1010,14 +1008,15 @@
         "make_shared": "Gjør delt",
         "sharing_scope": {
           "Private": "Privat",
-          "Organization": "Organisasjon",
-          "AnyoneAnonymous": "Hvem som helst (skrivebeskyttet)"
+          "Organization": "Min organisasjon",
+          "AnyoneAnonymous": "Alle med lenken"
         },
         "clipboard_success": "Lenke kopiert",
         "save_error": "Listen kunne ikke lagres. Prøv igjen."
       },
       "share_wishlist_modal": {
-        "title": "Del «{listName}»"
+        "title": "Del «{listName}»",
+        "who_can_access_label": "Hvem har tilgang"
       },
       "delete_wishlist_modal": {
         "title": "Bekreft sletting",

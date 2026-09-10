@@ -1000,8 +1000,6 @@
         "edit_mode_title": "List Settings",
         "list_name_label": "List name",
         "list_name_placeholder": "Please enter name",
-        "sharing_scope_label": "共有オプション",
-        "sharing_scope_placeholder": "いずれか 1 つを選択してください",
         "sharing_link_label": "リンク",
         "create_button": "Create list",
         "save_button": "@:common.buttons.save",
@@ -1010,14 +1008,15 @@
         "make_shared": "Make shared",
         "sharing_scope": {
           "Private": "プライベート",
-          "Organization": "組織",
-          "AnyoneAnonymous": "誰でも（閲覧専用）"
+          "Organization": "自分の組織",
+          "AnyoneAnonymous": "リンクを知っている全員"
         },
         "clipboard_success": "リンクをコピーしました",
         "save_error": "リストを保存できませんでした。もう一度お試しください。"
       },
       "share_wishlist_modal": {
-        "title": "「{listName}」を共有"
+        "title": "「{listName}」を共有",
+        "who_can_access_label": "アクセスできるユーザー"
       },
       "delete_wishlist_modal": {
         "title": "Confirm Delete",

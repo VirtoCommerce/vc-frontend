@@ -263,7 +263,7 @@
       "share_success": "リストを顧客と共有しました。",
       "share_partial": "リストを共有しましたが、一部の通知を配信できませんでした。",
       "share_notify_error": "リストは保存されましたが、顧客に通知できませんでした。",
-      "scope_label": "顧客",
+      "scope_label": "特定の顧客",
       "status": "顧客と共有",
       "badge": "営業担当者のおすすめ"
     }

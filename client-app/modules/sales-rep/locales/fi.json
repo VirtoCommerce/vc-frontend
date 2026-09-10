@@ -263,7 +263,7 @@
       "share_success": "Lista jaettiin asiakkaalle.",
       "share_partial": "Lista jaettiin, mutta kaikkia ilmoituksia ei toimitettu.",
       "share_notify_error": "Lista tallennettiin, mutta asiakkaalle ei voitu ilmoittaa.",
-      "scope_label": "Asiakas",
+      "scope_label": "Tietyt asiakkaat",
       "status": "Jaettu asiakkaalle",
       "badge": "Myyntiedustajasi suosittelema"
     }

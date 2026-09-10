@@ -1000,8 +1000,6 @@
         "edit_mode_title": "Listinställningar",
         "list_name_label": "Listnamn",
         "list_name_placeholder": "Ange namn",
-        "sharing_scope_label": "Delningsalternativ",
-        "sharing_scope_placeholder": "Välj ett alternativ",
         "sharing_link_label": "Länk",
         "create_button": "Skapa lista",
         "save_button": "@:common.buttons.save",
@@ -1010,14 +1008,15 @@
         "make_shared": "Gör delad",
         "sharing_scope": {
           "Private": "Privat",
-          "Organization": "Organisation",
-          "AnyoneAnonymous": "Alla (endast läsning)"
+          "Organization": "Min organisation",
+          "AnyoneAnonymous": "Alla med länken"
         },
         "clipboard_success": "Länk kopierad",
         "save_error": "Listan kunde inte sparas. Försök igen."
       },
       "share_wishlist_modal": {
-        "title": "Dela ”{listName}”"
+        "title": "Dela ”{listName}”",
+        "who_can_access_label": "Vem har åtkomst"
       },
       "delete_wishlist_modal": {
         "title": "Bekräfta radering",

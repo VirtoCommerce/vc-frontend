@@ -1000,8 +1000,6 @@
         "edit_mode_title": "Impostazioni lista",
         "list_name_label": "Nome lista",
         "list_name_placeholder": "Inserisci il nome",
-        "sharing_scope_label": "Opzioni di condivisione",
-        "sharing_scope_placeholder": "Seleziona un'opzione",
         "sharing_link_label": "Link",
         "create_button": "Crea lista",
         "save_button": "@:common.buttons.save",
@@ -1010,14 +1008,15 @@
         "make_shared": "Rendi condivisa",
         "sharing_scope": {
           "Private": "Privato",
-          "Organization": "Organizzazione",
-          "AnyoneAnonymous": "Chiunque (sola lettura)"
+          "Organization": "La mia organizzazione",
+          "AnyoneAnonymous": "Chiunque abbia il link"
         },
         "clipboard_success": "Link copiato",
         "save_error": "Impossibile salvare la lista. Riprova."
       },
       "share_wishlist_modal": {
-        "title": "Condividi “{listName}”"
+        "title": "Condividi “{listName}”",
+        "who_can_access_label": "Chi ha accesso"
       },
       "delete_wishlist_modal": {
         "title": "Conferma eliminazione",

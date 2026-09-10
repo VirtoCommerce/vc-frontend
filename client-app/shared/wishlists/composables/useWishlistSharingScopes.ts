@@ -4,6 +4,7 @@ import { WishlistScopeType } from "@/core/api/graphql/types";
 import type { Component, MaybeRefOrGetter } from "vue";
 
 const MODAL_KEY = "shared.wishlists.add_or_update_wishlist_modal";
+const UNORDERED_SCOPE_POSITION = Number.MAX_SAFE_INTEGER;
 
 /** An option of the list's "Sharing options" select. Modules contribute their own through `registerSharingScope`. */
 export interface IWishlistSharingScopeType {
@@ -11,6 +12,10 @@ export interface IWishlistSharingScopeType {
   labelKey: string;
   /** Status line for the list owner; falls back to the generic "Shared". */
   statusKey?: string;
+  /** Glyph shown on the scope's tab in the share dialog. */
+  icon?: string;
+  /** Position among the tabs, ascending; scopes that declare none come last. */
+  order?: number;
   supportsLink?: boolean;
   shoppable?: boolean;
   /** Defaults to available. */
@@ -43,15 +48,21 @@ const CORE_SHARING_SCOPES: IWishlistSharingScopeType[] = [
   {
     scope: WishlistScopeType.Private,
     labelKey: `${MODAL_KEY}.sharing_scope.${WishlistScopeType.Private}`,
+    icon: "hat-glasses",
+    order: 10,
   },
   {
     scope: WishlistScopeType.AnyoneAnonymous,
     labelKey: `${MODAL_KEY}.sharing_scope.${WishlistScopeType.AnyoneAnonymous}`,
+    icon: "link",
+    order: 40,
     supportsLink: true,
   },
   {
     scope: WishlistScopeType.Organization,
     labelKey: `${MODAL_KEY}.sharing_scope.${WishlistScopeType.Organization}`,
+    icon: "briefcase-business",
+    order: 20,
     supportsLink: true,
   },
 ];
@@ -68,7 +79,11 @@ function _useWishlistSharingScopes() {
     contributed.value = [...contributed.value, scope];
   }
 
-  const sharingScopes = computed<IWishlistSharingScopeType[]>(() => [...CORE_SHARING_SCOPES, ...contributed.value]);
+  const sharingScopes = computed<IWishlistSharingScopeType[]>(() =>
+    [...CORE_SHARING_SCOPES, ...contributed.value].sort(
+      (a, b) => (a.order ?? UNORDERED_SCOPE_POSITION) - (b.order ?? UNORDERED_SCOPE_POSITION),
+    ),
+  );
 
   /** Resolves a scope even when it is currently unavailable, so a saved list still reads correctly. */
   function getSharingScope(scope?: string | null): IWishlistSharingScopeType | undefined {
