@@ -256,6 +256,7 @@
       "share_customers_placeholder": "Kunden nach Namen suchen",
       "share_customers_error": "Die Kundenliste konnte nicht geladen werden. Bitte versuchen Sie es erneut.",
       "share_replace_hint": "Der zuvor ausgewählte Kunde verliert den Zugriff auf diese Liste.",
+      "share_empty_hint": "Eine leere Liste beendet die Freigabe nicht – ändern Sie stattdessen, wer Zugriff hat.",
       "share_message_label": "Nachricht (optional)",
       "share_message_placeholder": "Notiz für die Empfänger hinzufügen",
       "share_message_hint": "Empfänger erhalten dies in ihrer Benachrichtigung.",

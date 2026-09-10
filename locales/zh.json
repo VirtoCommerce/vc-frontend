@@ -1018,6 +1018,12 @@
         "title": "分享“{listName}”",
         "who_can_access_label": "谁可以访问"
       },
+      "stop_sharing_modal": {
+        "title": "停止共享此页面？",
+        "message": "拥有链接的所有人都将失去访问权限。您可以随时重新共享。",
+        "confirm_button": "停止共享",
+        "cancel_button": "@:common.buttons.cancel"
+      },
       "delete_wishlist_modal": {
         "title": "确认删除",
         "message": "您确定要移除“{listName}”清单吗？",

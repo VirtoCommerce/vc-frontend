@@ -256,6 +256,7 @@
       "share_customers_placeholder": "Pesquisar clientes por nome",
       "share_customers_error": "Não foi possível carregar a lista de clientes. Tente novamente.",
       "share_replace_hint": "O cliente selecionado anteriormente perderá o acesso a esta lista.",
+      "share_empty_hint": "Uma lista vazia não para a partilha — altere quem tem acesso.",
       "share_message_label": "Mensagem (opcional)",
       "share_message_placeholder": "Adicione uma nota para os destinatários",
       "share_message_hint": "Os destinatários receberão isto na notificação.",

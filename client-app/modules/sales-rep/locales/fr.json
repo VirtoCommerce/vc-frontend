@@ -256,6 +256,7 @@
       "share_customers_placeholder": "Rechercher des clients par nom",
       "share_customers_error": "La liste des clients n'a pas pu être chargée. Veuillez réessayer.",
       "share_replace_hint": "Le client précédemment sélectionné perdra l'accès à cette liste.",
+      "share_empty_hint": "Une liste vide n'arrête pas le partage : modifiez plutôt qui a accès.",
       "share_message_label": "Message (facultatif)",
       "share_message_placeholder": "Ajoutez une note pour les destinataires",
       "share_message_hint": "Les destinataires le recevront dans leur notification.",

@@ -256,6 +256,7 @@
       "share_customers_placeholder": "Szukaj klientów według nazwy",
       "share_customers_error": "Nie udało się wczytać listy klientów. Spróbuj ponownie.",
       "share_replace_hint": "Wcześniej wybrany klient utraci dostęp do tej listy.",
+      "share_empty_hint": "Pusta lista nie zatrzymuje udostępniania — zmień, kto ma dostęp.",
       "share_message_label": "Wiadomość (opcjonalnie)",
       "share_message_placeholder": "Dodaj notatkę dla odbiorców",
       "share_message_hint": "Odbiorcy otrzymają to w powiadomieniu.",

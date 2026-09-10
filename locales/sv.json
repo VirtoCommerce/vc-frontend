@@ -1018,6 +1018,12 @@
         "title": "Dela ”{listName}”",
         "who_can_access_label": "Vem har åtkomst"
       },
+      "stop_sharing_modal": {
+        "title": "Sluta dela den här sidan?",
+        "message": "Alla med länken förlorar åtkomsten. Du kan dela den igen när som helst.",
+        "confirm_button": "Sluta dela",
+        "cancel_button": "@:common.buttons.cancel"
+      },
       "delete_wishlist_modal": {
         "title": "Bekräfta radering",
         "message": "Är du säker på att du vill ta bort listan \"{listName}\"?",

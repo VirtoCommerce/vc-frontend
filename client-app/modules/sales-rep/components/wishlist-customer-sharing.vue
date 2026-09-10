@@ -126,6 +126,11 @@ const fieldMessage = computed(() => {
     return t("sales_rep.list_sharing.share_customers_error");
   }
 
+  // Emptying the list leaves Save disabled with nothing said, and the way out is on another tab — so say so.
+  if (!selected.value.size && persistedIds.value.size) {
+    return t("sales_rep.list_sharing.share_empty_hint");
+  }
+
   return replacesPreviousTarget.value ? t("sales_rep.list_sharing.share_replace_hint") : "";
 });
 

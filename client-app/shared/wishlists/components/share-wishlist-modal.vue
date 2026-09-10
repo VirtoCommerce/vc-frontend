@@ -84,7 +84,7 @@
         :loading="saving"
         :disabled="!canSave || saving"
         class="ms-auto"
-        @click="save(close)"
+        @click="requestSave(close)"
       >
         {{ activeScopeElement ? $t("shared.wishlists.list_card.share_button") : $t("common.buttons.save") }}
       </VcButton>
@@ -98,9 +98,11 @@ import { computed, ref, useTemplateRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { WishlistScopeType } from "@/core/api/graphql/types";
 import { Logger } from "@/core/utilities";
+import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import { useWishlistSharingScopes } from "../composables/useWishlistSharingScopes";
 import { useWishlists } from "../composables/useWishlists";
+import StopSharingConfirmationModal from "./stop-sharing-confirmation-modal.vue";
 import type { IWishlistSharingScopeControlsType } from "../composables/useWishlistSharingScopes";
 import type { WishlistType } from "@/core/api/graphql/types";
 
@@ -110,10 +112,14 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
+// The registry keys scopes by raw string so a module can own its own values; core's enum is one of those strings.
+const PRIVATE_SCOPE: string = WishlistScopeType.Private;
+
 const { t } = useI18n();
 
 const { copy: copyToClipboard, isSupported: isClipboardSupported } = useClipboard();
 const notifications = useNotifications();
+const { openModal } = useModal();
 
 const listSharingScope = computed<string>(() => props.list.sharingSetting?.scope ?? WishlistScopeType.Private);
 // A list carries at most one target today, while a scope's controls work with the whole set of them.
@@ -172,6 +178,33 @@ const scopeDirty = computed(() => !!scopeControls.value?.dirty);
 const scopeChanged = computed(() => sharingScope.value !== listSharingScope.value);
 
 const canSave = computed<boolean>(() => scopeCanSave.value && (scopeChanged.value || scopeDirty.value));
+
+// Only an already-shared list has an audience to lose. A first share out of Private takes nothing away, and swapping
+// recipients inside one scope is not a revocation — but leaving a sharing scope is, whichever scope follows it.
+const revokesCurrentAudience = computed(() => listSharingScope.value !== PRIVATE_SCOPE && scopeChanged.value);
+
+function requestSave(closeHandle: () => void): void {
+  if (!canSave.value || saving.value) {
+    return;
+  }
+
+  if (!revokesCurrentAudience.value) {
+    void save(closeHandle);
+
+    return;
+  }
+
+  const closeConfirmation = openModal({
+    component: StopSharingConfirmationModal,
+    props: {
+      onConfirm() {
+        // Dismissed first: the share dialog carries the loader and refuses dismissal on its own while the write runs.
+        closeConfirmation();
+        void save(closeHandle);
+      },
+    },
+  });
+}
 
 async function save(closeHandle: () => void): Promise<void> {
   if (!canSave.value || saving.value) {

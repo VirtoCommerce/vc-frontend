@@ -1018,6 +1018,12 @@
         "title": "Поделиться «{listName}»",
         "who_can_access_label": "Кто имеет доступ"
       },
+      "stop_sharing_modal": {
+        "title": "Прекратить доступ к этой странице?",
+        "message": "Все, у кого есть ссылка, потеряют доступ. Вы можете поделиться ею снова в любое время.",
+        "confirm_button": "Прекратить доступ",
+        "cancel_button": "@:common.buttons.cancel"
+      },
       "delete_wishlist_modal": {
         "title": "Подтвердить удаление",
         "message": "Вы уверены, что хотите удалить список “{listName}”?",

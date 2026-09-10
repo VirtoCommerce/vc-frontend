@@ -256,6 +256,7 @@
       "share_customers_placeholder": "名前で顧客を検索",
       "share_customers_error": "顧客リストを読み込めませんでした。もう一度お試しください。",
       "share_replace_hint": "以前に選択した顧客はこのリストにアクセスできなくなります。",
+      "share_empty_hint": "リストを空にしても共有は停止しません。アクセスできる範囲を変更してください。",
       "share_message_label": "メッセージ（任意）",
       "share_message_placeholder": "受信者へのメモを追加",
       "share_message_hint": "この内容は受信者への通知に含まれます。",

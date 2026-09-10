@@ -1018,6 +1018,12 @@
         "title": "Udostępnij „{listName}”",
         "who_can_access_label": "Kto ma dostęp"
       },
+      "stop_sharing_modal": {
+        "title": "Zatrzymać udostępnianie tej strony?",
+        "message": "Wszyscy posiadający link utracą dostęp. Możesz udostępnić ją ponownie w dowolnym momencie.",
+        "confirm_button": "Zatrzymaj udostępnianie",
+        "cancel_button": "@:common.buttons.cancel"
+      },
       "delete_wishlist_modal": {
         "title": "Potwierdź usunięcie",
         "message": "Czy na pewno chcesz usunąć listę „{listName}”?",

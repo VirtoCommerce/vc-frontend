@@ -1018,6 +1018,12 @@
         "title": "「{listName}」を共有",
         "who_can_access_label": "アクセスできるユーザー"
       },
+      "stop_sharing_modal": {
+        "title": "このページの共有を停止しますか？",
+        "message": "リンクを知っている全員がアクセスできなくなります。共有はいつでも再開できます。",
+        "confirm_button": "共有を停止",
+        "cancel_button": "@:common.buttons.cancel"
+      },
       "delete_wishlist_modal": {
         "title": "Confirm Delete",
         "message": "Are you sure you want to remove the “{listName}” list?",

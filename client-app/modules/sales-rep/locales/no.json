@@ -256,6 +256,7 @@
       "share_customers_placeholder": "Søk etter kunder på navn",
       "share_customers_error": "Kundelisten kunne ikke lastes. Prøv igjen.",
       "share_replace_hint": "Kunden som ble valgt tidligere, mister tilgangen til denne listen.",
+      "share_empty_hint": "En tom liste avslutter ikke delingen – endre i stedet hvem som har tilgang.",
       "share_message_label": "Melding (valgfritt)",
       "share_message_placeholder": "Legg til en melding til mottakerne",
       "share_message_hint": "Mottakerne får dette i varselet sitt.",

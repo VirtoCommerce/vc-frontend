@@ -1018,6 +1018,12 @@
         "title": "Condividi “{listName}”",
         "who_can_access_label": "Chi ha accesso"
       },
+      "stop_sharing_modal": {
+        "title": "Interrompere la condivisione di questa pagina?",
+        "message": "Chiunque abbia il link perderà l'accesso. Puoi condividerla di nuovo in qualsiasi momento.",
+        "confirm_button": "Interrompi condivisione",
+        "cancel_button": "@:common.buttons.cancel"
+      },
       "delete_wishlist_modal": {
         "title": "Conferma eliminazione",
         "message": "Sei sicuro di voler rimuovere la lista “{listName}”?",

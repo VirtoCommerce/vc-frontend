@@ -256,6 +256,7 @@
       "share_customers_placeholder": "Search customers by name",
       "share_customers_error": "The customer list could not be loaded. Please try again.",
       "share_replace_hint": "The previously selected customer will lose access to this list.",
+      "share_empty_hint": "An empty list does not stop sharing — change who can access instead.",
       "share_message_label": "Message (optional)",
       "share_message_placeholder": "Add a note for the recipients",
       "share_message_hint": "Recipients get this in their notification.",

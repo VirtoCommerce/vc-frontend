@@ -1018,6 +1018,12 @@
         "title": "Share “{listName}”",
         "who_can_access_label": "Who can access"
       },
+      "stop_sharing_modal": {
+        "title": "Stop sharing this page?",
+        "message": "Anyone with the link will lose access. You can share it again at any time.",
+        "confirm_button": "Stop sharing",
+        "cancel_button": "@:common.buttons.cancel"
+      },
       "delete_wishlist_modal": {
         "title": "Confirm Delete",
         "message": "Are you sure you want to remove the “{listName}” list?",

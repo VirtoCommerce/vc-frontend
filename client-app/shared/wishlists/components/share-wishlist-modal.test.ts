@@ -36,6 +36,7 @@ const mocks = await vi.hoisted(async () => {
     logger: { error: vi.fn(), warn: vi.fn() },
     copy: vi.fn(),
     clipboardSupported: reactiveRef(true),
+    openModal: vi.fn<(options: unknown) => () => void>(() => vi.fn()),
   };
 });
 
@@ -57,6 +58,8 @@ vi.mock("../composables/useWishlists", () => ({
 }));
 
 vi.mock("@/shared/notification", () => ({ useNotifications: () => mocks.notifications }));
+
+vi.mock("@/shared/modal", () => ({ useModal: () => ({ openModal: mocks.openModal }) }));
 
 vi.mock("@/core/utilities", () => ({ Logger: mocks.logger }));
 
@@ -256,6 +259,13 @@ async function selectScope(scope: string) {
   await fireEvent.click(scopeTab(scope)!.querySelector("button")!);
 }
 
+/** Answers the stop-sharing confirmation the way the modal stack would. */
+function confirmStopSharing() {
+  const options = mocks.openModal.mock.calls[0][0] as { props: { onConfirm: () => void } };
+
+  options.props.onConfirm();
+}
+
 function asyncScopeList(sharedWithId?: string): WishlistType {
   return {
     id: "list-1",
@@ -300,6 +310,7 @@ beforeEach(() => {
   controls.dirty.value = false;
   controls.payload.value = {};
   controls.onSaved.mockReset().mockResolvedValue(undefined);
+  mocks.openModal.mockReset().mockImplementation(() => vi.fn());
   asyncControls.canSave.value = false;
   asyncControls.dirty.value = false;
   asyncControls.payload.value = {};
@@ -545,11 +556,72 @@ describe("ShareWishlistModal", () => {
     it("sends no target for a scope that contributes none", async () => {
       renderModal(targetedList("org-1"));
 
+      // Leaving a sharing scope revokes the current audience, so this path goes through the confirmation.
+      await selectScope(WishlistScopeType.Private);
+      await fireEvent.click(saveButton());
+      confirmStopSharing();
+
+      await vi.waitFor(() => expect(mocks.updateWishlist).toHaveBeenCalledOnce());
+      expect(mocks.updateWishlist.mock.calls[0][0]).not.toHaveProperty("sharedWithId");
+    });
+  });
+
+  describe("warning before an audience loses the list", () => {
+    it("asks before moving an already-shared list to another scope, and saves nothing until confirmed", async () => {
+      renderModal(targetedList("org-1"));
+
       await selectScope(WishlistScopeType.Private);
       await fireEvent.click(saveButton());
 
+      expect(mocks.openModal).toHaveBeenCalledOnce();
+      expect(mocks.updateWishlist).not.toHaveBeenCalled();
+    });
+
+    it("saves once the confirmation comes back", async () => {
+      renderModal(targetedList("org-1"));
+
+      await selectScope(WishlistScopeType.Private);
+      await fireEvent.click(saveButton());
+      confirmStopSharing();
+
+      await vi.waitFor(() => expect(mocks.updateWishlist).toHaveBeenCalledOnce());
+      expect(mocks.updateWishlist.mock.calls[0][0]).toMatchObject({ scope: WishlistScopeType.Private });
+    });
+
+    it("changes nothing while the confirmation stands unanswered", async () => {
+      renderModal(targetedList("org-1"));
+
+      await selectScope(WishlistScopeType.Organization);
+      await fireEvent.click(saveButton());
+
+      // Dismissing the confirmation leaves the dialog as it was, with the new scope still only selected.
+      expect(mocks.updateWishlist).not.toHaveBeenCalled();
+      expect(scopeRadio(WishlistScopeType.Organization).checked).toBe(true);
+    });
+
+    it("asks nothing when a private list is shared for the first time", async () => {
+      renderModal(privateList());
+
+      await selectScope(WishlistScopeType.Organization);
+      await fireEvent.click(saveButton());
+
+      // Nobody had access, so nobody can lose it.
+      expect(mocks.openModal).not.toHaveBeenCalled();
       expect(mocks.updateWishlist).toHaveBeenCalledOnce();
-      expect(mocks.updateWishlist.mock.calls[0][0]).not.toHaveProperty("sharedWithId");
+    });
+
+    it("asks nothing when only the scope's own recipients change", async () => {
+      controls.canSave.value = true;
+      controls.dirty.value = true;
+      controls.payload.value = { sharedWithId: "org-2" };
+
+      renderModal(targetedList("org-1"));
+      await selectScope(TARGETED_SCOPE);
+      await fireEvent.click(saveButton());
+
+      // Still the same scope: the audience is being edited, not revoked.
+      expect(mocks.openModal).not.toHaveBeenCalled();
+      expect(mocks.updateWishlist).toHaveBeenCalledOnce();
     });
   });
 

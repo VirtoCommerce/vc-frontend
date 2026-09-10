@@ -1018,6 +1018,12 @@
         "title": "Jaa “{listName}”",
         "who_can_access_label": "Kenellä on pääsy"
       },
+      "stop_sharing_modal": {
+        "title": "Lopetetaanko tämän sivun jakaminen?",
+        "message": "Kaikki linkin haltijat menettävät käyttöoikeuden. Voit jakaa sen uudelleen milloin tahansa.",
+        "confirm_button": "Lopeta jakaminen",
+        "cancel_button": "@:common.buttons.cancel"
+      },
       "delete_wishlist_modal": {
         "title": "Vahvista poisto",
         "message": "Haluatko varmasti poistaa listan \"{listName}\"?",

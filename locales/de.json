@@ -1018,6 +1018,12 @@
         "title": "„{listName}“ teilen",
         "who_can_access_label": "Wer hat Zugriff"
       },
+      "stop_sharing_modal": {
+        "title": "Freigabe dieser Seite beenden?",
+        "message": "Alle mit dem Link verlieren den Zugriff. Sie können sie jederzeit erneut freigeben.",
+        "confirm_button": "Freigabe beenden",
+        "cancel_button": "@:common.buttons.cancel"
+      },
       "delete_wishlist_modal": {
         "title": "Löschen bestätigen",
         "message": "Sind Sie sicher, dass Sie die Liste „{listName}“ entfernen möchten?",

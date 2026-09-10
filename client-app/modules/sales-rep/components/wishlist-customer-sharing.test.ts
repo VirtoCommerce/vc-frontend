@@ -313,6 +313,21 @@ describe("WishlistCustomerSharing", () => {
       expect(controls.dirty).toBe(true);
     });
 
+    it("says where to stop sharing once the list is emptied", async () => {
+      renderSharing("org-1");
+
+      await fireEvent.click(recipientRow("org-1")!.closest("button")!);
+
+      // Otherwise Save is disabled with no explanation and the way out is on another tab.
+      expect(component.getByTestId("field-message")).toHaveTextContent(`${KEY}.share_empty_hint`);
+    });
+
+    it("says nothing of the sort on a list that was never shared", () => {
+      renderSharing();
+
+      expect(component.queryByTestId("field-message")).toBeNull();
+    });
+
     it("replaces the recipient when another customer is picked, since the backend keeps one grant", async () => {
       renderSharing("org-1");
 

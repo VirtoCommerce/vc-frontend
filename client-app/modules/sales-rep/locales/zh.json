@@ -256,6 +256,7 @@
       "share_customers_placeholder": "按名称搜索客户",
       "share_customers_error": "无法加载客户列表。请重试。",
       "share_replace_hint": "先前选择的客户将无法再访问此列表。",
+      "share_empty_hint": "清空列表不会停止共享，请改为更改可访问的范围。",
       "share_message_label": "留言（选填）",
       "share_message_placeholder": "为收件人添加备注",
       "share_message_hint": "收件人将在通知中看到此内容。",
