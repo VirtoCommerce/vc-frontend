@@ -11,7 +11,8 @@
       "amount": "金額",
       "redeemed": "利用済み",
       "earned": "獲得済み",
-      "registration": "登録"
+      "registration": "登録",
+      "mission": "ミッション報酬"
     },
     "list_details": {
       "empty_list": "リストは空です"

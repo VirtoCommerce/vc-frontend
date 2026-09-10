@@ -35,9 +35,9 @@ Files in this folder:
 | -------------------------- | ----------------------------------------------------------------------------------------------------------------- |
 | `index.ts`                 | **The facade source** — a list of re-exports. This is the API. Edit this.                                         |
 | `contract/index.d.ts`          | **Generated** type contract. Never edit; regenerate and commit.                                                   |
-| `contract/tailwind-preset.cjs` | **Generated** self-contained snapshot of the host's Tailwind design system (`@vc-frontend/core/tailwind-preset`). Source: the root `tailwind.config.ts`. Never edit; regenerate and commit. |
+| `contract/tailwind-preset.cjs` | **Generated** self-contained snapshot of the host's Tailwind design system (`@vc-frontend/core/tailwind-preset`). Source: the root `tailwind.config.ts`. Never edit; regenerate and commit. Its `types` condition points at the hand-written `tailwind-preset.d.cts` — without one a plugin whose `tailwind.config.ts` is TypeScript fails with TS7016, which `skipLibCheck` does not suppress. |
 | `federation.mjs`           | Shared-singleton contract (`createHostShared` / `createRemoteShared` + defaults) for both host and plugin builds; types in `federation.d.mts`. |
-| `bump-version.mjs`         | `yarn bump:core <level>` — manual contract-version bump (majors; minors are automatic).                           |
+| `bump-version.mjs`         | `yarn bump:core <level>` — manual bump for a BREAKING change (`minor` on 0.x, `major` from 1.0.0); additive bumps are automatic. |
 | `create-plugin.mjs`        | `yarn create:plugin` — scaffolds a new plugin project: versions read from the host, facade pinned to its release tarball. |
 | `build-types.mjs`          | The generator (below) — emits both the type contract and the tailwind preset snapshot.                            |
 | `contract-versioning.mjs`  | Pure decision logic for the version bumps/guards (side-effect-free so it is unit-testable). |
@@ -68,19 +68,40 @@ Guards that run with it (any failure = non-zero exit):
 - **Before emit:** `federation.mjs` ranges must be compatible with the host
   `package.json`. (The contract version has a single source — this `package.json` —
   so there is no sync to check.)
-- **During emit:** a type error **inside `core-api/`** fails the build. (Errors in
-  unrelated host files are tolerated — they never reach the rolled-up contract.)
+- **During emit:** ANY type error in the emitted graph fails the build — not just ones inside
+  `core-api/`. `tsconfig.types.json` pulls in the ui-kit ambient graph, so that surface is large,
+  and an unrelated `.vue` picking up an error will block `yarn build:core-types` and the release
+  step that runs it. (The comment in the code says "Fail on ANY diagnostic in the emitted graph";
+  this line used to claim unrelated host errors were tolerated, which they are not.)
 - **After bundling:** if any `@/...` reference survived, the build fails — the whole
   point is zero host coupling.
-- **In CI:** `yarn validate:core-types` (part of `yarn validate`, which `yarn build`
-  runs) regenerates the contract in memory and **fails if the committed file differs**.
-  You cannot merge a facade change with a stale contract.
-- **In CI (bump guard):** if the contract **changed relative to `origin/dev`** but
-  `CORE_VERSION` did not (someone bypassed the build or hand-edited version files),
-  the check fails and points at `yarn build:core-types` / `yarn bump:core major`.
-  (Base ref overridable via `MF_CONTRACT_BASE_REF`. With no baseline to diff against —
-  shallow checkout, missing base ref — the auto-bump skips quietly and the check
-  **warns loudly** that the guard is not enforced.)
+- **Peer declaration:** every external package the PUBLISHED files import — all of `files`, not
+  just the rolled contract — must appear in `peerDependencies`, and the build prints the exact
+  object to paste when it does not. `peerDependencies` is the only list a package manager reads:
+  `MF_SHARED_RANGES` and `CONTRACT_TYPE_PEERS` are build-time JS objects, so a consumer installing
+  the tarball by hand got neither, and `skipLibCheck: true` in the scaffold kept the type half of
+  that silent. Required vs optional follows reachability — a package the root contract imports is
+  needed by everyone, one reachable only through `./testing` or `./tailwind-preset` is declared
+  optional. `create-plugin` installs both, so a scaffolded plugin never sees the distinction.
+- **At release:** `yarn validate:core-types` regenerates the contract in memory and **fails if
+  the committed file differs**. During the MF pilot it is deliberately **out of `yarn validate`**,
+  so it does not gate a PR — the Core Facade Release workflow runs it before packing the tarball.
+  Run it by hand after a facade change; a stale contract is caught at release, not at merge.
+- **At release (bump guard):** the baseline is the **last published `core-v*` tag** — what a
+  plugin actually installs. If the contract changed relative to it but `CORE_VERSION` did not
+  (someone bypassed the build or hand-edited version files), the check fails and points at
+  `yarn build:core-types` / `yarn bump:core <breaking level>` (`minor` on the 0.x line, `major`
+  from 1.0.0 — the check names the right one). A removed export is only ever satisfied by the
+  breaking level, **and only by a version that moved UP**: every version below the baseline is also
+  outside `^baseVersion`, so a regressed number (a bad merge, a reverted bump) used to read as proof
+  the breaking bump had happened. A lower version is now refused outright, before levels are
+  reasoned about at all. That check is skipped while nothing is published, because resetting the
+  line is legitimate then — this facade itself went 1.2.0 → 0.1.0. If a tag exists but its contract
+  cannot be read (shallow checkout), the check **fails** rather than passing quietly; before the
+  first release there is nothing to diff against, so it warns instead — and says so rather than
+  printing "bump guard passed" over a comparison of the contract with itself. The auto-bump uses a different baseline on purpose — the branch
+  point (`origin/dev`), since it answers "did I change the contract", not "does this differ from
+  what is published". Both are overridable via `MF_CONTRACT_BASE_REF`.
 
 The output is deterministic: same source ⇒ byte-identical file, so the git diff of
 `contract/index.d.ts` is a readable review artifact of "what did the public API change".
@@ -95,6 +116,69 @@ change (design-token change) auto-bumps `CORE_VERSION` exactly like a contract c
 the released tarball is immutable per version.
 
 ---
+
+## What belongs in the facade
+
+Three tiers, in order of preference. The tier decides the **shape** of the export; a
+request that fits none of them is a request to change the host, not to widen the facade.
+
+| Tier                       | Export                            | Use when                                                                                                                                                                                              |
+| -------------------------- | --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1. Capability              | composable or function            | Default. The plugin states intent, the host executes it — `registerCacheTypePolicies`, `useNavigations`, `useModal`.                                                                                    |
+| 2. Host-rendered chrome    | nothing — an extension-point entry | The result must look native. The plugin registers **data** and the host renders its own markup: an entry omits `component` and contributes a `use()` composable. See `useExtensionRegistry`. |
+| 3. Frozen component        | a `.vue` component                | The visual itself is the contract and re-implementing it would drift from per-store settings — `OrderStatus`. Its props become contract: renaming one is a **breaking** change.                          |
+| 4. ui-kit primitive        | a `Vc*` component                 | Bulk exception, admitted by ONE rule: the component is already globally registered by the host AND a plugin template uses it. Nothing else qualifies — see below.                                        |
+
+Never export from a `_internal/` path. That folder is private by convention, and exporting
+from it freezes markup the host needs to keep free to change — Tier 2 exists for that case.
+
+### Tier 4 is a bulk exception, and its promise is not yet enforced
+
+The facade exports 22 `Vc*` components plus `uiKit`, not one. That is not tier 3 by another
+name: none of them is a visual whose per-store settings are the contract. They are there for a
+mechanical reason — the host registers ui-kit globally, so a plugin's template resolves `VcButton`
+inside the host but **not** on the plugin's own dev server, which has no host app instance. Without
+the export a plugin cannot build or run its specs standalone.
+
+The admission rule is therefore narrow and checkable: **globally registered by the host, and used
+by a plugin template.** A ui-kit component no plugin template reaches for does not belong here, and
+a request for anything that is not a ui-kit primitive is a tier 1–3 request.
+
+Known gap, stated rather than implied: tier 3's promise that "renaming a prop is breaking" is **not
+enforced for these**. The version gate compares exported NAMES (`extractExportNames`), so a renamed
+or removed prop on `VcButton` regenerates the contract, auto-bumps a patch, and every plugin pinned
+to the range keeps resolving it — then breaks at runtime on a prop that no longer exists. Making
+that promise real needs a prop-level diff between contract versions; until then, treat a ui-kit prop
+rename as a manual breaking bump.
+
+### Tier 2 only exists where the host renders a fallback
+
+A category opts into Tier 2 by declaring a **contributed shape** as the second type argument
+of `ExtensionEntryType` (in `extensionRegistryMap.ts` — today only `mobileMenu`). A category
+that leaves it at `never` gets a replace-only entry type, so a component-less registration
+there does not compile at all. That matters because `canRender()` and both extension points
+answer on the component: an entry without one is skipped, and the six categories whose host
+consumers render no fallback slot would drop it in silence.
+
+So the order is: give the host consumer a scoped fallback slot **first**, then declare the
+contributed shape. Never the other way round.
+
+`use()` is called by the extension point in its own setup and disposed when it unmounts, so a
+contribution may run a query. It is a composable rather than a plain value on purpose — a
+getter passed as data would be invoked during render, where nothing can be cleaned up.
+
+```ts
+register("mobileMenu", MY_CUSTOMERS_NAV_LINK_ID, {
+  use: useSharedSalesRepCustomersCount, // -> { count }, handed to the fallback slot
+});
+```
+
+A decorate entry may also carry a `condition` — the extension point evaluates it against
+`conditionParameter` before running `use()`, and a condition that declines leaves the fallback
+rendered but undecorated (the markup is the host's, so only the contribution is withheld).
+The runtime supports this, but no category enables it yet: a `condition` is only accepted once
+the category declares its `Condition` type parameter, and `mobileMenu` — the only decorate-capable
+category today — leaves it at `never`, so passing one there is a compile error.
 
 ## How to extend the facade (developer flow)
 
@@ -114,16 +198,23 @@ Say a plugin needs `useThemeContext`.
 
    The build also **bumps the contract version automatically**: if the generated
    contract differs from the one on `origin/dev` and the version wasn't bumped yet, it
-   applies a **minor** bump to this `package.json` (the single version source) for you —
+   applies an additive bump to this `package.json` (the single version source) for you —
    running it again won't double-bump. Plugins that use the new export then declare
-   `requiredHostVersion: "^1.1.0"`, so older hosts correctly refuse them.
+   `requiredHostVersion: "^0.1.1"` — the version that introduced the export, not the floor of
+   the line — so older hosts correctly refuse them.
+
+   > **This contract is pre-1.0 and makes no stability promise yet.** While the major is
+   > `0`, the levels shift down one: an additive change is a **patch** (`0.1.0 → 0.1.1`,
+   > which `^0.1.0` still accepts) and a breaking change is a **minor** (`0.1.0 → 0.2.0`,
+   > which `^0.1.0` refuses). The automation follows the release line it is on, so this
+   > flips back to the ordinary minor/major mapping the moment the contract reaches 1.0.0.
 
 3. **Breaking change? That's the one manual step.** If you removed or renamed an
    export, the build **refuses** to auto-bump (removed exports are provably breaking)
    and asks you to decide explicitly:
 
    ```bash
-   yarn bump:core major    # then update the @vc-frontend/core range in federation.mjs
+   yarn bump:core minor    # pre-1.0 breaking level; then update the range in federation.mjs
    ```
 
    A changed type on a _kept_ export can also be breaking — no diff can prove intent,
@@ -137,9 +228,11 @@ Say a plugin needs `useThemeContext`.
    (A facade change touches `contract/index.d.ts`; a design-token change in the root
    `tailwind.config.ts` touches `contract/tailwind-preset.cjs` — same flow, same guards.)
 
-You can't forget any of this: CI fails on a stale contract (forgot step 2) and on a
-changed contract without a version change (bypassed the build), each time printing the
-exact command to run.
+Mind the pilot's gap: **no PR check runs any of this** (`validate:core-types` is deliberately
+out of `yarn validate`). The Core Facade Release workflow is where a stale contract (forgot
+step 2) and a changed contract without a version change (bypassed the build) are caught, each
+time printing the exact command to run — so a facade PR that skips step 2 lands green and the
+debt surfaces at release. Run `yarn validate:core-types` by hand before asking for review.
 
 Rules of thumb for what to export:
 
