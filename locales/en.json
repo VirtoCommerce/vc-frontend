@@ -607,6 +607,46 @@
         "tap_to_copy": "Tap to copy"
       }
     },
+    "sign_in": {
+      "email_otp_sign_in_form": {
+        "switch_to_otp_link": "Sign in with a one-time code instead",
+        "request": {
+          "subtitle": "We'll email you a code. No password needed.",
+          "email_label": "Email",
+          "continue_button": "Continue",
+          "switch_to_password_link": "Sign in with a password instead",
+          "errors": {
+            "generic": "Something went wrong. Please try again"
+          }
+        },
+        "verify": {
+          "header": "Check your email",
+          "subtitle": "We sent a code to {email}.",
+          "code_label": "Code",
+          "paste_hint": "Paste is supported. On phones the code is offered above the keyboard.",
+          "submit_button": "Sign in",
+          "resend_button": "Resend code",
+          "use_different_email_link": "Use a different email",
+          "live_resent": "New code sent. The previous one no longer works.",
+          "errors": {
+            "invalid_code": "That code isn't right. Check the latest email — earlier codes stop working.",
+            "generic": "Something went wrong. Please try again"
+          }
+        },
+        "locked": {
+          "title": "Too many failed attempts",
+          "text_countdown": "For your security, sign-in with a code is temporarily locked. Try again in {time}.",
+          "text_ready": "You can try again now.",
+          "start_over_button": "Try again"
+        },
+        "generic": {
+          "title": "We couldn't sign you in",
+          "text": "Try a password instead, or contact your account administrator if this keeps happening.",
+          "password_button": "Sign in with a password",
+          "back_link": "Back to sign in"
+        }
+      }
+    },
     "company": {
       "add_or_update_address_modal": {
         "address_title": "Address information",

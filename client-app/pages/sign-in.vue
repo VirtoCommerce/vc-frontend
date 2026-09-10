@@ -2,10 +2,23 @@
   <VcEmptyPage class="sign-in" icon="outline-security" image="sign-in.jpg">
     <div class="sign-in__form">
       <VcTypography tag="h1" class="sign-in__title">
-        {{ $t("pages.sign_in.header") }}
+        {{ pageTitle }}
       </VcTypography>
 
-      <SignInForm v-if="hasPasswordAuthentication" />
+      <EmailOtpSignInForm
+        v-if="showEmailOtpForm"
+        :has-password-authentication="hasPasswordAuthentication"
+        @switch-to-password="switchToPassword"
+        @step-changed="otpStep = $event"
+      />
+
+      <template v-else>
+        <SignInForm v-if="hasPasswordAuthentication" />
+
+        <button v-if="hasEmailOtpAuthentication" type="button" class="sign-in__switch-link" @click="switchToOtp">
+          {{ $t("shared.sign_in.email_otp_sign_in_form.switch_to_otp_link") }}
+        </button>
+      </template>
     </div>
 
     <IdentityProviders
@@ -26,12 +39,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineAsyncComponent } from "vue";
+import { computed, defineAsyncComponent, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import { usePageHead, useReturnUrl } from "@/core/composables";
 import { SignInForm } from "@/shared/account";
+import { useEmailOtpAuthentication } from "@/shared/sign-in/composables/useEmailOtpAuthentication";
 import { useIdentityProviders } from "@/shared/sign-in/composables/useIdentityProviders";
+import EmailOtpSignInForm from "@/shared/sign-in/components/email-otp-sign-in-form.vue";
 import SignInDivider from "@/shared/sign-in/components/sign-in-divider.vue";
 
 const IdentityProviders = defineAsyncComponent(() => import("@/shared/sign-in/components/identity-providers.vue"));
@@ -42,6 +57,29 @@ const { getReturnUrl } = useReturnUrl();
 const route = useRoute();
 
 const returnUrl = computed<string>(() => getReturnUrl(route.fullPath));
+
+const { hasEmailOtpAuthentication } = useEmailOtpAuthentication();
+
+const signInMode = ref<"password" | "otp">(hasEmailOtpAuthentication.value ? "otp" : "password");
+const showEmailOtpForm = computed(() => hasEmailOtpAuthentication.value && signInMode.value === "otp");
+
+const otpStep = ref<"request" | "verify" | "locked" | "generic">("request");
+
+function switchToOtp() {
+  otpStep.value = "request";
+  signInMode.value = "otp";
+}
+
+function switchToPassword() {
+  otpStep.value = "request";
+  signInMode.value = "password";
+}
+
+const pageTitle = computed(() =>
+  showEmailOtpForm.value && otpStep.value === "verify"
+    ? t("shared.sign_in.email_otp_sign_in_form.verify.header")
+    : t("pages.sign_in.header"),
+);
 
 const { t } = useI18n();
 
@@ -66,6 +104,14 @@ usePageHead({
 
   &__title {
     @apply mb-3;
+  }
+
+  &__switch-link {
+    @apply mt-6 block text-sm font-bold text-[--link-color];
+
+    &:hover {
+      @apply text-[--link-hover-color];
+    }
   }
 
   &__side {

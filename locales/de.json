@@ -607,6 +607,46 @@
         "tap_to_copy": "Zum Kopieren tippen"
       }
     },
+    "sign_in": {
+      "email_otp_sign_in_form": {
+        "switch_to_otp_link": "Mit Einmalcode anmelden",
+        "request": {
+          "subtitle": "Wir senden Ihnen einen Code per E-Mail. Kein Passwort nötig.",
+          "email_label": "E-Mail",
+          "continue_button": "Weiter",
+          "switch_to_password_link": "Stattdessen mit Passwort anmelden",
+          "errors": {
+            "generic": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut"
+          }
+        },
+        "verify": {
+          "header": "Prüfen Sie Ihre E-Mails",
+          "subtitle": "Wir haben einen Code an {email} gesendet.",
+          "code_label": "Code",
+          "paste_hint": "Einfügen wird unterstützt. Auf dem Smartphone wird der Code über der Tastatur angeboten.",
+          "submit_button": "Anmelden",
+          "resend_button": "Code erneut senden",
+          "use_different_email_link": "Andere E-Mail-Adresse verwenden",
+          "live_resent": "Neuer Code gesendet. Der vorherige funktioniert nicht mehr.",
+          "errors": {
+            "invalid_code": "Dieser Code ist nicht richtig. Prüfen Sie die neueste E-Mail — frühere Codes funktionieren nicht mehr.",
+            "generic": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut"
+          }
+        },
+        "locked": {
+          "title": "Zu viele fehlgeschlagene Versuche",
+          "text_countdown": "Aus Sicherheitsgründen ist die Anmeldung per Code vorübergehend gesperrt. Versuchen Sie es erneut in {time}.",
+          "text_ready": "Sie können es jetzt erneut versuchen.",
+          "start_over_button": "Erneut versuchen"
+        },
+        "generic": {
+          "title": "Anmeldung nicht möglich",
+          "text": "Versuchen Sie es stattdessen mit einem Passwort oder wenden Sie sich an Ihren Kontoadministrator, falls dies weiterhin auftritt.",
+          "password_button": "Mit Passwort anmelden",
+          "back_link": "Zurück zur Anmeldung"
+        }
+      }
+    },
     "company": {
       "add_or_update_address_modal": {
         "address_title": "Adressinformationen",

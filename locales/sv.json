@@ -607,6 +607,46 @@
         "tap_to_copy": "Tryck för att kopiera"
       }
     },
+    "sign_in": {
+      "email_otp_sign_in_form": {
+        "switch_to_otp_link": "Logga in med engångskod",
+        "request": {
+          "subtitle": "Vi skickar en kod till din e-post. Inget lösenord behövs.",
+          "email_label": "E-post",
+          "continue_button": "Fortsätt",
+          "switch_to_password_link": "Logga in med lösenord istället",
+          "errors": {
+            "generic": "Något gick fel. Försök igen"
+          }
+        },
+        "verify": {
+          "header": "Kolla din e-post",
+          "subtitle": "Vi skickade en kod till {email}.",
+          "code_label": "Kod",
+          "paste_hint": "Det går att klistra in. På mobilen visas koden ovanför tangentbordet.",
+          "submit_button": "Logga in",
+          "resend_button": "Skicka koden igen",
+          "use_different_email_link": "Använd en annan e-postadress",
+          "live_resent": "Ny kod skickad. Den föregående fungerar inte längre.",
+          "errors": {
+            "invalid_code": "Den koden stämmer inte. Kontrollera det senaste e-postmeddelandet — tidigare koder slutar fungera.",
+            "generic": "Något gick fel. Försök igen"
+          }
+        },
+        "locked": {
+          "title": "För många misslyckade försök",
+          "text_countdown": "Av säkerhetsskäl är inloggning med kod tillfälligt spärrad. Försök igen om {time}.",
+          "text_ready": "Du kan försöka igen nu.",
+          "start_over_button": "Försök igen"
+        },
+        "generic": {
+          "title": "Vi kunde inte logga in dig",
+          "text": "Prova med lösenord istället, eller kontakta din kontoadministratör om detta fortsätter.",
+          "password_button": "Logga in med lösenord",
+          "back_link": "Tillbaka till inloggningen"
+        }
+      }
+    },
     "company": {
       "add_or_update_address_modal": {
         "address_title": "Adressinformation",

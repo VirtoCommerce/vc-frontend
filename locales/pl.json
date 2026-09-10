@@ -607,6 +607,46 @@
         "tap_to_copy": "Dotknij, aby skopiować"
       }
     },
+    "sign_in": {
+      "email_otp_sign_in_form": {
+        "switch_to_otp_link": "Zaloguj się kodem jednorazowym",
+        "request": {
+          "subtitle": "Wyślemy Ci kod e-mailem. Hasło nie jest potrzebne.",
+          "email_label": "Email",
+          "continue_button": "Dalej",
+          "switch_to_password_link": "Zaloguj się hasłem",
+          "errors": {
+            "generic": "Coś poszło nie tak. Spróbuj ponownie"
+          }
+        },
+        "verify": {
+          "header": "Sprawdź swoją pocztę e-mail",
+          "subtitle": "Wysłaliśmy kod na adres {email}.",
+          "code_label": "Kod",
+          "paste_hint": "Wklejanie jest obsługiwane. Na telefonie kod pojawia się nad klawiaturą.",
+          "submit_button": "Zaloguj się",
+          "resend_button": "Wyślij kod ponownie",
+          "use_different_email_link": "Użyj innego adresu e-mail",
+          "live_resent": "Wysłano nowy kod. Poprzedni już nie działa.",
+          "errors": {
+            "invalid_code": "Ten kod jest nieprawidłowy. Sprawdź najnowszą wiadomość e-mail — wcześniejsze kody przestają działać.",
+            "generic": "Coś poszło nie tak. Spróbuj ponownie"
+          }
+        },
+        "locked": {
+          "title": "Zbyt wiele nieudanych prób",
+          "text_countdown": "Ze względów bezpieczeństwa logowanie kodem jest tymczasowo zablokowane. Spróbuj ponownie za {time}.",
+          "text_ready": "Możesz spróbować ponownie teraz.",
+          "start_over_button": "Spróbuj ponownie"
+        },
+        "generic": {
+          "title": "Nie udało się Cię zalogować",
+          "text": "Spróbuj zamiast tego użyć hasła lub skontaktuj się z administratorem konta, jeśli problem się powtarza.",
+          "password_button": "Zaloguj się hasłem",
+          "back_link": "Powrót do logowania"
+        }
+      }
+    },
     "company": {
       "add_or_update_address_modal": {
         "address_title": "Informacje o adresie",

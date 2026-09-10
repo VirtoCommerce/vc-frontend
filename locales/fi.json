@@ -607,6 +607,46 @@
         "tap_to_copy": "Napauta kopioidaksesi"
       }
     },
+    "sign_in": {
+      "email_otp_sign_in_form": {
+        "switch_to_otp_link": "Kirjaudu kertakoodilla",
+        "request": {
+          "subtitle": "Lähetämme sinulle koodin sähköpostitse. Salasanaa ei tarvita.",
+          "email_label": "Sähköposti",
+          "continue_button": "Jatka",
+          "switch_to_password_link": "Kirjaudu salasanalla",
+          "errors": {
+            "generic": "Jokin meni pieleen. Yritä uudelleen"
+          }
+        },
+        "verify": {
+          "header": "Tarkista sähköpostisi",
+          "subtitle": "Lähetimme koodin osoitteeseen {email}.",
+          "code_label": "Koodi",
+          "paste_hint": "Liittäminen on tuettu. Puhelimessa koodi tarjotaan näppäimistön yläpuolella.",
+          "submit_button": "Kirjaudu sisään",
+          "resend_button": "Lähetä koodi uudelleen",
+          "use_different_email_link": "Käytä toista sähköpostiosoitetta",
+          "live_resent": "Uusi koodi lähetetty. Edellinen ei enää toimi.",
+          "errors": {
+            "invalid_code": "Tämä koodi ei ole oikein. Tarkista uusin sähköposti — aiemmat koodit lakkaavat toimimasta.",
+            "generic": "Jokin meni pieleen. Yritä uudelleen"
+          }
+        },
+        "locked": {
+          "title": "Liian monta epäonnistunutta yritystä",
+          "text_countdown": "Turvallisuutesi vuoksi kirjautuminen koodilla on tilapäisesti lukittu. Yritä uudelleen {time} kuluttua.",
+          "text_ready": "Voit yrittää uudelleen nyt.",
+          "start_over_button": "Yritä uudelleen"
+        },
+        "generic": {
+          "title": "Emme voineet kirjata sinua sisään",
+          "text": "Kokeile salasanaa tai ota yhteyttä tilisi ylläpitäjään, jos tämä toistuu.",
+          "password_button": "Kirjaudu salasanalla",
+          "back_link": "Takaisin kirjautumiseen"
+        }
+      }
+    },
     "company": {
       "add_or_update_address_modal": {
         "address_title": "Osoitetiedot",

@@ -607,6 +607,46 @@
         "tap_to_copy": "Toca para copiar"
       }
     },
+    "sign_in": {
+      "email_otp_sign_in_form": {
+        "switch_to_otp_link": "Iniciar sesión con un código de un solo uso",
+        "request": {
+          "subtitle": "Te enviaremos un código por correo electrónico. No necesitas contraseña.",
+          "email_label": "Correo electrónico",
+          "continue_button": "Continuar",
+          "switch_to_password_link": "Iniciar sesión con contraseña",
+          "errors": {
+            "generic": "Algo salió mal. Inténtalo de nuevo"
+          }
+        },
+        "verify": {
+          "header": "Revisa tu correo electrónico",
+          "subtitle": "Enviamos un código a {email}.",
+          "code_label": "Código",
+          "paste_hint": "Se admite pegar. En el móvil, el código se ofrece encima del teclado.",
+          "submit_button": "Iniciar sesión",
+          "resend_button": "Reenviar código",
+          "use_different_email_link": "Usar otro correo electrónico",
+          "live_resent": "Nuevo código enviado. El anterior ya no funciona.",
+          "errors": {
+            "invalid_code": "Ese código no es correcto. Revisa el último correo electrónico; los códigos anteriores dejan de funcionar.",
+            "generic": "Algo salió mal. Inténtalo de nuevo"
+          }
+        },
+        "locked": {
+          "title": "Demasiados intentos fallidos",
+          "text_countdown": "Por tu seguridad, el inicio de sesión con código está bloqueado temporalmente. Vuelve a intentarlo en {time}.",
+          "text_ready": "Ya puedes volver a intentarlo.",
+          "start_over_button": "Intentar de nuevo"
+        },
+        "generic": {
+          "title": "No pudimos iniciar tu sesión",
+          "text": "Prueba con una contraseña, o contacta a tu administrador de cuenta si esto sigue ocurriendo.",
+          "password_button": "Iniciar sesión con contraseña",
+          "back_link": "Volver al inicio de sesión"
+        }
+      }
+    },
     "company": {
       "add_or_update_address_modal": {
         "address_title": "Información de la dirección",

@@ -607,6 +607,46 @@
         "tap_to_copy": "Trykk for å kopiere"
       }
     },
+    "sign_in": {
+      "email_otp_sign_in_form": {
+        "switch_to_otp_link": "Logg inn med engangskode",
+        "request": {
+          "subtitle": "Vi sender deg en kode på e-post. Du trenger ikke passord.",
+          "email_label": "E-post",
+          "continue_button": "Fortsett",
+          "switch_to_password_link": "Logg inn med passord i stedet",
+          "errors": {
+            "generic": "Noe gikk galt. Prøv igjen"
+          }
+        },
+        "verify": {
+          "header": "Sjekk e-posten din",
+          "subtitle": "Vi sendte en kode til {email}.",
+          "code_label": "Kode",
+          "paste_hint": "Innliming støttes. På mobil vises koden over tastaturet.",
+          "submit_button": "Logg inn",
+          "resend_button": "Send kode på nytt",
+          "use_different_email_link": "Bruk en annen e-post",
+          "live_resent": "Ny kode sendt. Den forrige fungerer ikke lenger.",
+          "errors": {
+            "invalid_code": "Den koden stemmer ikke. Sjekk den nyeste e-posten — tidligere koder slutter å fungere.",
+            "generic": "Noe gikk galt. Prøv igjen"
+          }
+        },
+        "locked": {
+          "title": "For mange mislykkede forsøk",
+          "text_countdown": "Av sikkerhetshensyn er pålogging med kode midlertidig sperret. Prøv igjen om {time}.",
+          "text_ready": "Du kan prøve igjen nå.",
+          "start_over_button": "Prøv igjen"
+        },
+        "generic": {
+          "title": "Vi kunne ikke logge deg inn",
+          "text": "Prøv med passord i stedet, eller kontakt kontoadministratoren din hvis dette fortsetter.",
+          "password_button": "Logg inn med passord",
+          "back_link": "Tilbake til innlogging"
+        }
+      }
+    },
     "company": {
       "add_or_update_address_modal": {
         "address_title": "Adressedetaljer",

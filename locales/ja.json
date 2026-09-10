@@ -607,6 +607,46 @@
         "tap_to_copy": "タップしてコピー"
       }
     },
+    "sign_in": {
+      "email_otp_sign_in_form": {
+        "switch_to_otp_link": "ワンタイムコードでサインイン",
+        "request": {
+          "subtitle": "メールでコードをお送りします。パスワードは不要です。",
+          "email_label": "メール",
+          "continue_button": "続ける",
+          "switch_to_password_link": "パスワードでサインインする",
+          "errors": {
+            "generic": "問題が発生しました。もう一度お試しください"
+          }
+        },
+        "verify": {
+          "header": "メールをご確認ください",
+          "subtitle": "{email} 宛てにコードを送信しました。",
+          "code_label": "コード",
+          "paste_hint": "貼り付けに対応しています。スマートフォンではキーボードの上にコードが表示されます。",
+          "submit_button": "サインイン",
+          "resend_button": "コードを再送信",
+          "use_different_email_link": "別のメールアドレスを使う",
+          "live_resent": "新しいコードを送信しました。以前のコードは使用できません。",
+          "errors": {
+            "invalid_code": "コードが正しくありません。最新のメールをご確認ください。以前のコードは無効になります。",
+            "generic": "問題が発生しました。もう一度お試しください"
+          }
+        },
+        "locked": {
+          "title": "失敗した試行が多すぎます",
+          "text_countdown": "セキュリティのため、コードによるサインインは一時的にロックされています。{time}後に再度お試しください。",
+          "text_ready": "今すぐ再試行できます。",
+          "start_over_button": "再試行"
+        },
+        "generic": {
+          "title": "サインインできませんでした",
+          "text": "代わりにパスワードをお試しいただくか、この状態が続く場合はアカウント管理者にお問い合わせください。",
+          "password_button": "パスワードでサインイン",
+          "back_link": "サインインに戻る"
+        }
+      }
+    },
     "company": {
       "add_or_update_address_modal": {
         "address_title": "住所情報",

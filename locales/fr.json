@@ -607,6 +607,46 @@
         "tap_to_copy": "Appuyez pour copier"
       }
     },
+    "sign_in": {
+      "email_otp_sign_in_form": {
+        "switch_to_otp_link": "Se connecter avec un code à usage unique",
+        "request": {
+          "subtitle": "Nous vous enverrons un code par e-mail. Aucun mot de passe requis.",
+          "email_label": "E-mail",
+          "continue_button": "Continuer",
+          "switch_to_password_link": "Se connecter avec un mot de passe",
+          "errors": {
+            "generic": "Une erreur s'est produite. Veuillez réessayer"
+          }
+        },
+        "verify": {
+          "header": "Consultez votre e-mail",
+          "subtitle": "Nous avons envoyé un code à {email}.",
+          "code_label": "Code",
+          "paste_hint": "Le collage est pris en charge. Sur mobile, le code est proposé au-dessus du clavier.",
+          "submit_button": "Se connecter",
+          "resend_button": "Renvoyer le code",
+          "use_different_email_link": "Utiliser une autre adresse e-mail",
+          "live_resent": "Nouveau code envoyé. L'ancien ne fonctionne plus.",
+          "errors": {
+            "invalid_code": "Ce code n'est pas correct. Vérifiez le dernier e-mail — les codes précédents cessent de fonctionner.",
+            "generic": "Une erreur s'est produite. Veuillez réessayer"
+          }
+        },
+        "locked": {
+          "title": "Trop de tentatives échouées",
+          "text_countdown": "Pour votre sécurité, la connexion par code est temporairement verrouillée. Réessayez dans {time}.",
+          "text_ready": "Vous pouvez réessayer maintenant.",
+          "start_over_button": "Réessayer"
+        },
+        "generic": {
+          "title": "Impossible de vous connecter",
+          "text": "Essayez plutôt un mot de passe, ou contactez l'administrateur de votre compte si le problème persiste.",
+          "password_button": "Se connecter avec un mot de passe",
+          "back_link": "Retour à la connexion"
+        }
+      }
+    },
     "company": {
       "add_or_update_address_modal": {
         "address_title": "Informations sur l'adresse",
