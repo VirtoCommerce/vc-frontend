@@ -76,6 +76,9 @@ export { useModuleSettings } from "@/core/composables/useModuleSettings";
 export { useNavigations } from "@/core/composables/useNavigations";
 export { useBreadcrumbs } from "@/core/composables/useBreadcrumbs";
 export { usePageHead } from "@/core/composables/usePageHead";
+// A query-string parameter as a writable ref, replacing the current history entry the way the
+// host's own filters do - so a plugin's selection survives a reload and back/forward.
+export { useRouteQueryParam } from "@/core/composables/useRouteQueryParam";
 export { useUser } from "@/shared/account/composables/useUser";
 export { useModal } from "@/shared/modal/composables/useModal";
 export { useNotifications } from "@/shared/notification/composables/useNotifications";
@@ -91,7 +94,7 @@ export { Logger } from "@/core/utilities";
 export { getProductRoute } from "@/core/utilities/product";
 // A date-only bound ("YYYY-MM-DD") to the instant a filter needs: local midnight, or the last
 // millisecond of that day. A plugin filtering by date has to land on the host's boundaries, not its own.
-export { toEndDateFilterValue, toStartDateFilterValue } from "@/core/utilities/date";
+export { toEndDateFilterValue, toLocalDateOnly, toStartDateFilterValue } from "@/core/utilities/date";
 // A plugin's messages must re-merge on every locale switch, not just at init: the host re-runs
 // every registered loader when the language changes. Merge the way the host does — read the
 // existing messages and `setLocaleMessage(locale, merge({}, existing, yours))`; vue-i18n's
@@ -105,6 +108,30 @@ export type { LocaleLoaderType } from "@/core/locale-loaders";
 // Exporting the whole map is deliberate — it puts every route name a plugin could reach for under
 // the contract, so a rename shows up as a contract diff (a minor on 0.x) instead of a silent break.
 export { ROUTES } from "@/router/routes/constants";
+
+// Order rendering, so a plugin's order page shows an order the way the host's own does.
+// `useOrderView` is the host's order view-model (gift vs regular items, per-currency groups,
+// BOPIS); the components are the ones the host's order details page composes. Direct .vue paths,
+// not the shared/* barrels - same reason as the composables above.
+export { useOrderView } from "@/shared/account/composables/useOrderView";
+export { default as OrderLineItems } from "@/shared/account/components/order-line-items.vue";
+export { default as AcceptedGifts } from "@/shared/checkout/components/accepted-gifts.vue";
+export { default as OrderCommentSection } from "@/shared/checkout/components/order-comment-section.vue";
+export { default as OrderSummary } from "@/shared/checkout/components/order-summary.vue";
+export { default as AddressInfo } from "@/shared/common/components/address-info.vue";
+export { default as VendorName } from "@/shared/common/components/vendor-name.vue";
+// The orders `filter` expression the host builds from its filter panel model, and the facet name
+// the status chips read - a plugin listing orders has to speak the same filter grammar.
+export { getFilterExpression } from "@/shared/account/composables/useUserOrdersFilter";
+export type { OrdersFilterDataType } from "@/shared/account/types";
+export { STATUS_ORDERS_FACET_NAME } from "@/core/constants/orders";
+
+// Files. `useFetch` is the host's fetch with its auth interceptors, so a plugin can read a
+// protected file URL as the signed-in user; `downloadFile` saves one through it.
+export { useFetch } from "@/core/api/common/composables/useFetch";
+export { downloadFile } from "@/shared/files/utils";
+export { getFileSize } from "@/ui-kit/utilities/file-size";
+export { ContentType } from "@/core/enums/content-type.enum";
 
 export { globals } from "@/core/globals";
 export type { I18n } from "@/i18n";
