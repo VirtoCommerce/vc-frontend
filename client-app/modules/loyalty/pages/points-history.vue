@@ -100,6 +100,7 @@ import { useLoyaltyPointsHistory } from "../composables/useLoyaltyPointsHistory"
 import {
   CUSTOMER_ORDER_OBJECT_TYPE,
   REGISTRATION_OBJECT_TYPE,
+  MISSION_OBJECT_TYPE,
   REDEEMED_OPERATION,
   EARNED_OPERATION,
 } from "../constants";
@@ -131,6 +132,10 @@ function getOperation(log: LoyaltyOperationLog) {
 
   if (log.object?.type == REGISTRATION_OBJECT_TYPE) {
     return t("loyalty.points-history.registration");
+  }
+
+  if (log.object?.type === MISSION_OBJECT_TYPE) {
+    return t("loyalty.points-history.mission");
   }
 
   return log.object?.type;

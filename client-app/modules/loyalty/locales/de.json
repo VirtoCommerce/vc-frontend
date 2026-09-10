@@ -11,7 +11,8 @@
       "amount": "Betrag",
       "redeemed": "Eingelöst",
       "earned": "Verdient",
-      "registration": "Registrierung"
+      "registration": "Registrierung",
+      "mission": "Aufgabenbelohnung"
     },
     "list_details": {
       "empty_list": "Ihre Liste ist leer"

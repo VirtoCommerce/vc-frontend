@@ -11,7 +11,8 @@
       "amount": "Amount",
       "redeemed": "Redeemed",
       "earned": "Earned",
-      "registration": "Registration"
+      "registration": "Registration",
+      "mission": "Mission reward"
     },
     "list_details": {
       "empty_list": "Your list is empty"

@@ -7,6 +7,7 @@ export const DEFAULT_MISSIONS_PER_PAGE = 12;
 
 export const CUSTOMER_ORDER_OBJECT_TYPE = "CustomerOrder";
 export const REGISTRATION_OBJECT_TYPE = "Registration";
+export const MISSION_OBJECT_TYPE = "Mission";
 export const REDEEMED_OPERATION = "Redeemed";
 export const EARNED_OPERATION = "Earned";
 export const LOYALTY_PAYMENT_TYPE_NAME = "LoyaltyPaymentMethod";

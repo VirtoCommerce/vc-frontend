@@ -11,7 +11,8 @@
       "amount": "Kwota",
       "redeemed": "Wykorzystane",
       "earned": "Zdobyte",
-      "registration": "Rejestracja"
+      "registration": "Rejestracja",
+      "mission": "Nagroda za misję"
     },
     "list_details": {
       "empty_list": "Twoja lista jest pusta"
