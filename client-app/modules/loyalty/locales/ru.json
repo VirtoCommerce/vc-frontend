@@ -67,6 +67,7 @@
           "type_orders": "Количество заказов",
           "points": "баллы",
           "days_left": "{count} день остался | {count} дня осталось",
+          "no_deadline": "Без срока",
           "mission_completed": "Миссия выполнена",
           "completed": "Выполнено",
           "open_mission": "Открыть миссию",

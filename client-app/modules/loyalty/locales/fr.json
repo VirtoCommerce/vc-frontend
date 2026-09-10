@@ -67,6 +67,7 @@
           "type_orders": "Nombre de commandes",
           "points": "points",
           "days_left": "{count} jour restant | {count} jours restants",
+          "no_deadline": "Sans échéance",
           "mission_completed": "Mission terminée",
           "completed": "Terminé",
           "open_mission": "Ouvrir la mission",

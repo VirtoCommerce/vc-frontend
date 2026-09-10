@@ -67,6 +67,7 @@
           "type_orders": "Antall ordre",
           "points": "poeng",
           "days_left": "{count} dag igjen | {count} dager igjen",
+          "no_deadline": "Ingen frist",
           "mission_completed": "Oppdrag fullført",
           "completed": "Fullført",
           "open_mission": "Åpent oppdrag",

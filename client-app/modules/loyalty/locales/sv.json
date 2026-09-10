@@ -67,6 +67,7 @@
           "type_orders": "Antal ordrar",
           "points": "poäng",
           "days_left": "{count} dag kvar | {count} dagar kvar",
+          "no_deadline": "Ingen tidsgräns",
           "mission_completed": "Uppdrag slutfört",
           "completed": "Slutförd",
           "open_mission": "Öppna uppdrag",

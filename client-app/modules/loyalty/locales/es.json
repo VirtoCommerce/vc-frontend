@@ -67,6 +67,7 @@
           "type_orders": "Recuento de pedidos",
           "points": "puntos",
           "days_left": "{count} día restante | {count} días restantes",
+          "no_deadline": "Sin fecha límite",
           "mission_completed": "Misión completada",
           "completed": "Completado",
           "open_mission": "Abrir misión",

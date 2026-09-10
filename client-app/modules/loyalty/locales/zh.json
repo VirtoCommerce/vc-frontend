@@ -67,6 +67,7 @@
           "type_orders": "订单数量",
           "points": "积分",
           "days_left": "{count} 天剩余 | {count} 天剩余",
+          "no_deadline": "无截止日期",
           "mission_completed": "任务已完成",
           "completed": "已完成",
           "open_mission": "开启任务",

@@ -67,6 +67,7 @@
           "type_orders": "Anzahl Bestellungen",
           "points": "Punkte",
           "days_left": "{count} Tag übrig | {count} Tage übrig",
+          "no_deadline": "Keine Frist",
           "mission_completed": "Aufgabe abgeschlossen",
           "completed": "Abgeschlossen",
           "open_mission": "Aufgabe öffnen",
