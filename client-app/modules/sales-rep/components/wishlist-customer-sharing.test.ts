@@ -7,6 +7,7 @@ import { defineComponent, h, onMounted, ref } from "vue";
 import WishlistCustomerSharing from "./wishlist-customer-sharing.vue";
 import type { IWishlistSharingScopeControlsType } from "@/shared/wishlists";
 import type { RenderResult } from "@testing-library/vue";
+import type { PropType } from "vue";
 import "@testing-library/jest-dom/vitest";
 
 configure({ testIdAttribute: "data-test-id" });
@@ -119,7 +120,7 @@ let controls: IWishlistSharingScopeControlsType;
 function renderSharing(sharedWithId?: string) {
   const Host = defineComponent({
     props: {
-      sharedWithId: { type: String, default: undefined },
+      sharedWithIds: { type: Array as PropType<string[]>, required: true },
       sharingLink: { type: String, required: true },
     },
     setup(props) {
@@ -132,14 +133,14 @@ function renderSharing(sharedWithId?: string) {
       return () =>
         h(WishlistCustomerSharing, {
           ref: inner,
-          sharedWithId: props.sharedWithId,
+          sharedWithIds: props.sharedWithIds,
           sharingLink: props.sharingLink,
         });
     },
   });
 
   component = render(Host, {
-    props: { sharedWithId, sharingLink: SHARING_LINK },
+    props: { sharedWithIds: sharedWithId ? [sharedWithId] : [], sharingLink: SHARING_LINK },
     global: {
       components: { VcSelect, VcTextarea },
       stubs: { VcIcon: true },

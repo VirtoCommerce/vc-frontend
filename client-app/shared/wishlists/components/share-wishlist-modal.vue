@@ -52,14 +52,18 @@
         </template>
       </VcInput>
 
-      <component
-        :is="activeScopeElement"
-        v-if="activeScopeElement"
-        ref="scopeControls"
-        :shared-with-id="listSharedWithId"
-        :sharing-link="sharingLink"
-        :saving="saving"
-      />
+      <!-- Kept alive so a scope's draft — the picked recipients, the message — survives a look at another tab. The
+           cache dies with the dialog: `openModal` mounts a fresh modal per open, so the next one re-reads the server. -->
+      <KeepAlive>
+        <component
+          :is="activeScopeElement"
+          v-if="activeScopeElement"
+          ref="scopeControls"
+          :shared-with-ids="listSharedWithIds"
+          :sharing-link="sharingLink"
+          :saving="saving"
+        />
+      </KeepAlive>
     </div>
 
     <template #actions="{ close }">
@@ -112,7 +116,12 @@ const { copy: copyToClipboard, isSupported: isClipboardSupported } = useClipboar
 const notifications = useNotifications();
 
 const listSharingScope = computed<string>(() => props.list.sharingSetting?.scope ?? WishlistScopeType.Private);
-const listSharedWithId = computed<string | undefined>(() => props.list.sharingSetting?.sharedWithId ?? undefined);
+// A list carries at most one target today, while a scope's controls work with the whole set of them.
+const listSharedWithIds = computed<string[]>(() => {
+  const target = props.list.sharingSetting?.sharedWithId;
+
+  return target ? [target] : [];
+});
 
 // `autoRefetch: false`: the composable refetches outside its own try/catch and rethrows, so a refetch hiccup after a
 // successful mutation would look like a failed save and skip the scope's follow-up. Refreshed explicitly below instead.

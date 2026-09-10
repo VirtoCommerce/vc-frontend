@@ -3,12 +3,14 @@
 /* eslint-disable vue/require-emit-validator, vue/padding-lines-in-component-definition */
 import { render, fireEvent, cleanup, configure } from "@testing-library/vue";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { defineComponent, h, ref } from "vue";
+import { defineAsyncComponent, defineComponent, h, ref } from "vue";
 import { WishlistScopeType } from "@/core/api/graphql/types";
 import { useWishlistSharingScopes } from "../composables/useWishlistSharingScopes";
 import ShareWishlistModal from "./share-wishlist-modal.vue";
+import type { WishlistSharingTargetsPayloadType } from "../composables/useWishlistSharingScopes";
 import type { WishlistType } from "@/core/api/graphql/types";
 import type { RenderResult } from "@testing-library/vue";
+import type { PropType } from "vue";
 import "@testing-library/jest-dom/vitest";
 
 // The app tags elements with `data-test-id`, not Testing Library's default `data-testid`.
@@ -20,6 +22,9 @@ const KEY = "shared.wishlists.add_or_update_wishlist_modal";
 // Deliberately not the Sales Rep scope: core must not know any contributed scope by name.
 const TARGETED_SCOPE = "TargetedTestScope";
 const SCOPE_LABEL_KEY = "test_module.targeted_scope.label";
+
+// A second contributed scope, registered the way a real module does it — behind `defineAsyncComponent`.
+const ASYNC_SCOPE = "AsyncTestScope";
 
 const mocks = await vi.hoisted(async () => {
   const { ref: reactiveRef } = await import("vue");
@@ -60,28 +65,71 @@ const scopeAvailable = ref(true);
 const controls = {
   canSave: ref(false),
   dirty: ref(false),
-  payload: ref<{ sharedWithId?: string }>({}),
+  payload: ref<WishlistSharingTargetsPayloadType>({}),
   onSaved: vi.fn(),
+};
+
+const scopeElementProps = {
+  sharedWithIds: { type: Array as PropType<string[]>, default: () => [] },
+  sharingLink: { type: String, default: "" },
+  saving: { type: Boolean, default: false },
 };
 
 // Owns state the modal cannot see and reports it through the contract — the whole point of the seam.
 const ScopeControls = defineComponent({
-  props: {
-    sharedWithId: { type: String, default: undefined },
-    sharingLink: { type: String, default: "" },
-    saving: { type: Boolean, default: false },
-  },
+  props: scopeElementProps,
   setup(props, { expose }) {
     expose(controls);
     return () =>
       h("div", {
         "data-test-id": "scope-controls",
-        "data-shared-with-id": props.sharedWithId ?? "",
+        "data-shared-with-ids": props.sharedWithIds.join(","),
         "data-sharing-link": props.sharingLink,
         "data-saving": String(props.saving),
       });
   },
 });
+
+const asyncControls = {
+  canSave: ref(false),
+  dirty: ref(false),
+  payload: ref<WishlistSharingTargetsPayloadType>({}),
+  onSaved: vi.fn(),
+};
+
+const asyncScopeSetup = vi.fn();
+
+// Carries a draft of its own, so a lost instance is visible rather than silent.
+const AsyncScopeControls = defineAsyncComponent(() =>
+  Promise.resolve(
+    defineComponent({
+      props: scopeElementProps,
+      setup(props, { expose }) {
+        asyncScopeSetup();
+        expose(asyncControls);
+
+        const draft = ref("");
+
+        return () =>
+          h(
+            "div",
+            {
+              "data-test-id": "async-scope-controls",
+              "data-shared-with-ids": props.sharedWithIds.join(","),
+              "data-saving": String(props.saving),
+            },
+            [
+              h("input", {
+                "data-test-id": "async-scope-draft",
+                value: draft.value,
+                onInput: (event: Event) => (draft.value = (event.target as HTMLInputElement).value),
+              }),
+            ],
+          );
+      },
+    }),
+  ),
+);
 
 // Native controls stand in for the ui-kit: the kit's own dropdown/teleport behaviour is covered where it lives.
 const VcModal = defineComponent({
@@ -208,6 +256,20 @@ async function selectScope(scope: string) {
   await fireEvent.click(scopeTab(scope)!.querySelector("button")!);
 }
 
+function asyncScopeList(sharedWithId?: string): WishlistType {
+  return {
+    id: "list-1",
+    name: "Spring assortment",
+    description: "",
+    sharingSetting: { id: "sharing-key-1", scope: ASYNC_SCOPE, sharedWithId, isOwner: true },
+  } as unknown as WishlistType;
+}
+
+async function selectAsyncScope() {
+  await selectScope(ASYNC_SCOPE);
+  await vi.waitFor(() => expect(component.getByTestId("async-scope-controls")).toBeInTheDocument());
+}
+
 beforeAll(() => {
   useWishlistSharingScopes().registerSharingScope({
     scope: TARGETED_SCOPE,
@@ -218,6 +280,13 @@ beforeAll(() => {
     shoppable: true,
     isAvailable: () => scopeAvailable.value,
     element: ScopeControls,
+  });
+
+  useWishlistSharingScopes().registerSharingScope({
+    scope: ASYNC_SCOPE,
+    labelKey: "test_module.async_scope.label",
+    icon: "test-glyph",
+    element: AsyncScopeControls,
   });
 });
 
@@ -231,6 +300,11 @@ beforeEach(() => {
   controls.dirty.value = false;
   controls.payload.value = {};
   controls.onSaved.mockReset().mockResolvedValue(undefined);
+  asyncControls.canSave.value = false;
+  asyncControls.dirty.value = false;
+  asyncControls.payload.value = {};
+  asyncControls.onSaved.mockReset().mockResolvedValue(undefined);
+  asyncScopeSetup.mockReset();
 });
 
 afterEach(() => {
@@ -293,6 +367,7 @@ describe("ShareWishlistModal", () => {
         WishlistScopeType.Organization,
         WishlistScopeType.AnyoneAnonymous,
         TARGETED_SCOPE,
+        ASYNC_SCOPE,
       ]);
     });
 
@@ -327,8 +402,57 @@ describe("ShareWishlistModal", () => {
       renderModal(targetedList("org-1"));
 
       const element = component.getByTestId("scope-controls");
-      expect(element).toHaveAttribute("data-shared-with-id", "org-1");
+      expect(element).toHaveAttribute("data-shared-with-ids", "org-1");
       expect(element.getAttribute("data-sharing-link")).toContain("/shared-list/sharing-key-1");
+    });
+  });
+
+  describe("looking at another tab and coming back", () => {
+    function asyncScopeControls() {
+      return component.getByTestId("async-scope-controls");
+    }
+
+    async function openOn(list: WishlistType) {
+      renderModal(list);
+      await vi.waitFor(() => expect(asyncScopeControls()).toBeInTheDocument());
+    }
+
+    it("keeps the scope's draft, and the instance that owns it", async () => {
+      await openOn(asyncScopeList("org-1"));
+
+      await fireEvent.update(component.getByTestId("async-scope-draft"), "Season preview");
+
+      await selectScope(WishlistScopeType.Private);
+      expect(component.queryByTestId("async-scope-controls")).toBeNull();
+
+      await selectAsyncScope();
+
+      expect(component.getByTestId<HTMLInputElement>("async-scope-draft")).toHaveValue("Season preview");
+      expect(asyncScopeSetup).toHaveBeenCalledOnce();
+    });
+
+    it("reads the scope's contract again once it is back, through the wrapper the registry hands over", async () => {
+      await openOn(asyncScopeList("org-1"));
+
+      await selectScope(WishlistScopeType.Private);
+
+      asyncControls.canSave.value = true;
+      asyncControls.dirty.value = true;
+
+      await selectAsyncScope();
+
+      // Back on the list's own scope, so only the element's own report can enable Save.
+      await vi.waitFor(() => expect(saveButton()).not.toBeDisabled());
+    });
+
+    it("hands the scope the list as it stands now, not as it stood when the tab was left", async () => {
+      await openOn(asyncScopeList("org-1"));
+
+      await selectScope(WishlistScopeType.Private);
+      await component.rerender({ list: asyncScopeList("org-2") });
+      await selectAsyncScope();
+
+      expect(asyncScopeControls()).toHaveAttribute("data-shared-with-ids", "org-2");
     });
   });
 

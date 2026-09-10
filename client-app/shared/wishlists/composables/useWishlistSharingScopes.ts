@@ -29,6 +29,16 @@ export type WishlistSharingScopeSavedContextType = {
 };
 
 /**
+ * The target fields a scope may contribute to the list's write command. `sharedWithId` replaces the whole target; the
+ * two delta fields add and revoke grants without resending the rest.
+ */
+export type WishlistSharingTargetsPayloadType = {
+  sharedWithId?: string;
+  addSharedWithIds?: string[];
+  removeSharedWithIds?: string[];
+};
+
+/**
  * What a scope's `element` exposes so the modal can fold per-scope input into its single save. Comes from the rendered
  * instance rather than the registration object: the registry is a global filled at module init, while the state these
  * depend on is per-open.
@@ -37,7 +47,7 @@ export interface IWishlistSharingScopeControlsType {
   canSave?: boolean;
   /** The core form cannot see per-scope input, so a scope reports its own changes. */
   dirty?: boolean;
-  payload?: { sharedWithId?: string };
+  payload?: WishlistSharingTargetsPayloadType;
   /** Must handle its own failures — the list is already persisted by then. */
   onSaved?: (context: WishlistSharingScopeSavedContextType) => Promise<void> | void;
 }

@@ -31,7 +31,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, toRef } from "vue";
+import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useNotifications } from "@/shared/notification";
 import { useSalesRepCommunication } from "../composables/useSalesRepCommunication";
@@ -40,7 +40,8 @@ import type { SalesRepCustomerOptionType } from "../composables/useSalesRepCusto
 import type { WishlistSharingScopeSavedContextType } from "@/shared/wishlists";
 
 interface IProps {
-  sharedWithId?: string;
+  /** Customers the list is already shared with. The backend holds a single grant, so only the first one is used. */
+  sharedWithIds: string[];
   /** Appended to the notification so the customer can reach the list. */
   sharingLink: string;
   saving?: boolean;
@@ -58,15 +59,16 @@ const { options, loading, failed } = useSalesRepCustomerOptions();
 const NOTIFICATION_MESSAGE_LIMIT = 1000;
 const SEPARATOR = "\n\n";
 
-const persistedTarget = toRef(props, "sharedWithId");
-const selectedOrganizationId = ref<string | undefined>(persistedTarget.value ?? undefined);
+const persistedTarget = computed<string | undefined>(() => props.sharedWithIds[0]);
+// Seeded once: the draft has to survive the modal deactivating this element while another scope's tab is open.
+const selectedOrganizationId = ref<string | undefined>(persistedTarget.value);
 const shareMessage = ref("");
 
 const messageMaxLength = computed(() => NOTIFICATION_MESSAGE_LIMIT - props.sharingLink.length - SEPARATOR.length);
 
 // Only a genuinely new target counts: re-selecting the original (including A -> B -> A) is no change.
 const isNewTarget = computed(
-  () => !!selectedOrganizationId.value && selectedOrganizationId.value !== (persistedTarget.value ?? undefined),
+  () => !!selectedOrganizationId.value && selectedOrganizationId.value !== persistedTarget.value,
 );
 
 // The backend keeps a single sharing setting per list, so targeting another customer detaches the current one.
