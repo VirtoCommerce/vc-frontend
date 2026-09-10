@@ -1,7 +1,7 @@
 import { enableAutoUnmount, mount } from "@vue/test-utils";
 import { vMaska } from "maska/vue";
 import { afterEach, describe, expect, it } from "vitest";
-import { h } from "vue";
+import { h, nextTick } from "vue";
 import { createI18n } from "vue-i18n";
 import { createWrapperFactory } from "@/core/utilities/tests";
 import * as UIKitComponents from "@/ui-kit/components";
@@ -236,7 +236,7 @@ describe("VcSelect", () => {
       expect(wrapper.emitted("update:modelValue")).toEqual([[["Albania"]]]);
     });
 
-    // DEFECT — меняется на шаге 3.
+    // DEFECT — переносится на шаг 4: атрибут будет ставить VcListbox.
     it("does not set aria-multiselectable on the listbox", () => {
       const wrapper = createWrapper({ items: ITEMS, multiple: true, modelValue: [] });
 
@@ -343,17 +343,62 @@ describe("VcSelect", () => {
   });
 
   describe("keyboard and ARIA", () => {
-    // DEFECT — меняется на шаге 3: фокус должен оставаться на триггере.
-    it("moves real DOM focus onto the first option on ArrowDown", async () => {
+    // Фокус остаётся на триггере: список ведётся через aria-activedescendant, а не переносом
+    // фокуса. Иначе в autocomplete после первой же стрелки нельзя было бы печатать.
+    it("keeps DOM focus on the trigger while arrowing through options", async () => {
+      const wrapper = createWrapper({ items: ITEMS });
+      const input = wrapper.get("input");
+
+      // Реальный фокус, а не только событие: trigger("focus") не двигает document.activeElement.
+      (input.element as HTMLInputElement).focus();
+      await input.trigger("focus");
+      await input.trigger("keydown", { key: "ArrowDown" });
+      await nextTick();
+
+      expect(document.activeElement).toBe(input.element);
+      expect(wrapper.findAll('[role="option"]')[0].attributes("id")).toBe(input.attributes("aria-activedescendant"));
+    });
+
+    it("wraps around and supports Home/End", async () => {
+      const wrapper = createWrapper({ items: ITEMS });
+      const input = wrapper.get("input");
+      const optionIds = wrapper.findAll('[role="option"]').map((option) => option.attributes("id"));
+
+      await input.trigger("focus");
+      await input.trigger("keydown", { key: "ArrowUp" });
+      await nextTick();
+
+      expect(input.attributes("aria-activedescendant")).toBe(optionIds[optionIds.length - 1]);
+
+      await input.trigger("keydown", { key: "Home" });
+      await nextTick();
+
+      expect(input.attributes("aria-activedescendant")).toBe(optionIds[0]);
+
+      await input.trigger("keydown", { key: "End" });
+      await nextTick();
+
+      expect(input.attributes("aria-activedescendant")).toBe(optionIds[optionIds.length - 1]);
+    });
+
+    it("selects the highlighted option on Enter", async () => {
+      const wrapper = createWrapper({ items: ITEMS });
+      const input = wrapper.get("input");
+
+      await input.trigger("focus");
+      await input.trigger("keydown", { key: "ArrowDown" });
+      await input.trigger("keydown", { key: "ArrowDown" });
+      await input.trigger("keydown", { key: "Enter" });
+
+      expect(wrapper.emitted("update:modelValue")).toEqual([["Belgium"]]);
+    });
+
+    it("options are not reachable with Tab", () => {
       const wrapper = createWrapper({ items: ITEMS });
 
-      await wrapper.get("input").trigger("focus");
-      await wrapper.get("input").trigger("keydown", { key: "ArrowDown" });
+      const tabIndexes = wrapper.findAll('[role="option"]').map((option) => option.attributes("tabindex"));
 
-      const firstOptionId = wrapper.findAll('[role="option"]')[0].attributes("id");
-
-      expect(firstOptionId).toBeTruthy();
-      expect(document.activeElement?.id).toBe(firstOptionId);
+      expect(tabIndexes).toEqual(["-1", "-1", "-1"]);
     });
 
     it("links the trigger to the listbox only while open", async () => {
@@ -468,14 +513,14 @@ describe("VcSelect", () => {
       expect(wrapper.get(".vc-select__button").classes()).toContain("vc-select__button--size--xs");
     });
 
-    // DEFECT — чинится на шаге 3: ArrowDown обязан открывать список.
-    it("does not open the list on ArrowDown", async () => {
+    it("opens the list on ArrowDown", async () => {
       const wrapper = createWrapper({ items: ITEMS }, slots);
 
       await wrapper.get(".vc-select__button").trigger("keydown", { key: "ArrowDown" });
+      await nextTick();
 
-      expect(wrapper.get(".vc-select__button").attributes("aria-expanded")).toBe("false");
-      expect(wrapper.classes()).not.toContain("vc-select--opened");
+      expect(wrapper.get(".vc-select__button").attributes("aria-expanded")).toBe("true");
+      expect(wrapper.classes()).toContain("vc-select--opened");
     });
   });
 });

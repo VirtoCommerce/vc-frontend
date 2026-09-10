@@ -53,7 +53,8 @@
           @open="open"
           @close="close()"
           @clear="clear"
-          @navigate-down="next(-1)"
+          @navigate="onNavigate($event, open)"
+          @confirm="onConfirm(toggle, close)"
           @update:search="search = $event"
         >
           <template v-if="$slots.selected" #selected="scope">
@@ -73,20 +74,16 @@
           :option-id="getOptionId(index)"
           :data-vc-select-option="componentId"
           :active="isActiveItem(item)"
+          :highlighted="index === highlightedIndex"
           :aria-selected="isActiveItem(item)"
           role="option"
           :size="itemSize"
+          :tabindex="-1"
           @click="
             select(item);
             !multiple && close();
           "
-          @keyup.esc.prevent="
-            focusTrigger();
-            close();
-          "
-          @keydown.up.prevent="prev(index)"
-          @keydown.down.prevent="next(index)"
-          @keydown.tab.prevent="handleTab($event, index)"
+          @mousemove="highlightedIndex = index"
         >
           <VcCheckbox
             v-if="multiple"
@@ -119,7 +116,7 @@
 </template>
 
 <script setup lang="ts" generic="T, V = T, M extends boolean = false">
-import { computed, ref, useTemplateRef, provide, toRef, watch } from "vue";
+import { computed, nextTick, ref, useTemplateRef, provide, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { vcPopoverKey } from "@/ui-kit/components/molecules/popover/vc-popover-context";
 import { useComponentId, useSelect } from "@/ui-kit/composables";
@@ -186,15 +183,15 @@ const accessibleLabel = computed(() => props.ariaLabel ?? props.label);
 
 const isShown = ref(false);
 const filterValue = ref("");
-const focusedOptionIndex = ref(-1);
+const highlightedIndex = ref(-1);
 
 function getOptionId(index: number) {
   return `${componentId}-option-${index}`;
 }
 
 const activeDescendantId = computed(() => {
-  if (isShown.value && focusedOptionIndex.value >= 0) {
-    return getOptionId(focusedOptionIndex.value);
+  if (isShown.value && highlightedIndex.value >= 0) {
+    return getOptionId(highlightedIndex.value);
   }
   return undefined;
 });
@@ -265,7 +262,7 @@ const search = computed({
 });
 
 watch(filteredItems, (items) => {
-  focusedOptionIndex.value = -1;
+  highlightedIndex.value = -1;
 
   if (isShown.value && filterValue.value) {
     liveRegionMessage.value = items.length
@@ -309,45 +306,92 @@ function select(item: T) {
   commit(getItemValue(item));
 }
 
-function getItemsElements() {
-  return Array.from(document.querySelectorAll(`[data-vc-select-option="${componentId}"] [tabindex='0']`));
+/**
+ * Keyboard model: DOM focus never leaves the trigger, and the active option is published
+ * through `aria-activedescendant`. The previous code moved real focus onto the option, which
+ * made typing impossible in autocomplete mode and tied navigation to DOM order.
+ */
+function moveHighlight(delta: number) {
+  const count = filteredItems.value.length;
+
+  if (!count) {
+    return;
+  }
+
+  const current = highlightedIndex.value;
+
+  if (current < 0) {
+    highlightedIndex.value = delta > 0 ? 0 : count - 1;
+    return;
+  }
+
+  highlightedIndex.value = (current + delta + count) % count;
 }
 
-function next(index: number) {
-  const elements = getItemsElements();
+function onNavigate(key: "up" | "down" | "home" | "end", open: () => void) {
+  if (!isShown.value) {
+    open();
 
-  if (elements?.length) {
-    const focusItemIndex = index === elements?.length - 1 ? 0 : index + 1;
-    focusedOptionIndex.value = focusItemIndex;
-    const nextElement = elements[focusItemIndex];
+    // The list may not be rendered yet on the very first open (lazy popover).
+    void nextTick(() => {
+      highlightedIndex.value = key === "end" ? filteredItems.value.length - 1 : 0;
+    });
+    return;
+  }
 
-    if (nextElement instanceof HTMLElement) {
-      nextElement.focus();
-    }
+  if (key === "home") {
+    highlightedIndex.value = 0;
+  } else if (key === "end") {
+    highlightedIndex.value = filteredItems.value.length - 1;
+  } else {
+    moveHighlight(key === "down" ? 1 : -1);
   }
 }
 
-function prev(index: number) {
-  const elements = getItemsElements();
+function onConfirm(toggle: () => void, close: () => void) {
+  if (!isShown.value) {
+    toggle();
+    return;
+  }
 
-  if (elements?.length) {
-    const focusItemIndex = index === 0 ? elements?.length - 1 : index - 1;
-    focusedOptionIndex.value = focusItemIndex;
-    const prevElement = elements[focusItemIndex];
+  const item = filteredItems.value[highlightedIndex.value];
 
-    if (prevElement instanceof HTMLElement) {
-      prevElement.focus();
-    }
+  if (item === undefined) {
+    return;
+  }
+
+  select(item);
+
+  if (!props.multiple) {
+    close();
   }
 }
+
+// Keep the highlighted option in view without moving focus to it.
+watch(highlightedIndex, (index) => {
+  if (index < 0) {
+    return;
+  }
+
+  void nextTick(() => {
+    // Optional call: jsdom has no scrollIntoView, and an unhandled rejection there would
+    // hide real failures in the suite output.
+    document.getElementById(getOptionId(index))?.scrollIntoView?.({ block: "nearest" });
+  });
+});
 
 function toggled(value: boolean) {
   isShown.value = value;
 
-  if (!isShown.value) {
-    filterValue.value = "";
-    focusedOptionIndex.value = -1;
+  if (isShown.value) {
+    // Open with the current selection highlighted, so the first arrow press moves from there.
+    highlightedIndex.value = filteredItems.value.findIndex((item) => isActiveItem(item));
+    return;
   }
+
+  filterValue.value = "";
+  highlightedIndex.value = -1;
+  focusTrigger();
 }
 
 function clear() {
@@ -367,14 +411,6 @@ function clear() {
 
 function focusTrigger() {
   triggerElement.value?.focus();
-}
-
-function handleTab(event: KeyboardEvent, index: number) {
-  if (event.shiftKey) {
-    prev(index);
-  } else {
-    next(index);
-  }
 }
 </script>
 

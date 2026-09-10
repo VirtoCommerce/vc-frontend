@@ -21,6 +21,7 @@
         `vc-menu-item__inner--color--${color}`,
         {
           'vc-menu-item__inner--active': active,
+          'vc-menu-item__inner--highlighted': highlighted,
           'vc-menu-item__inner--disabled': disabled,
           'vc-menu-item__inner--truncate': truncate,
           'vc-menu-item__inner--nowrap': nowrap,
@@ -72,6 +73,17 @@ interface IProps {
   role?: string;
   ariaSelected?: boolean;
   optionId?: string;
+  /**
+   * Keyboard-highlighted state for `aria-activedescendant` lists, where DOM focus stays on
+   * the combobox and cannot provide the usual focus ring.
+   */
+  highlighted?: boolean;
+  /**
+   * Tab-order position of the inner element. Defaults to 0. Pass -1 for options inside a
+   * listbox driven by `aria-activedescendant`, where focus stays on the combobox and the
+   * options must not be reachable with Tab.
+   */
+  tabindex?: number;
 }
 
 defineOptions({
@@ -84,6 +96,7 @@ const props = withDefaults(defineProps<IProps>(), {
   color: "primary",
   size: "md",
   clickable: true,
+  tabindex: 0,
 });
 
 const currentElement = ref<HTMLElement>();
@@ -130,15 +143,15 @@ provide(INTERACTIVE_PARENT_KEY, isInteractive);
 
 const attrs = computed(() => {
   if (innerTag.value === "router-link") {
-    return { to: props.to, target: props.target, tabindex: 0 };
+    return { to: props.to, target: props.target, tabindex: props.tabindex };
   }
 
   if (innerTag.value === "a") {
-    return { href: props.externalLink, target: props.target, tabindex: 0 };
+    return { href: props.externalLink, target: props.target, tabindex: props.tabindex };
   }
 
   if (innerTag.value === "button") {
-    return { type: "button", tabindex: 0 };
+    return { type: "button", tabindex: props.tabindex };
   }
 
   return {};
@@ -187,6 +200,7 @@ onMounted(() => {
   $colors: primary, secondary, success, info, warning, danger, neutral;
 
   $active: "";
+  $highlighted: "";
   $truncate: "";
   $maxLines: "";
 
@@ -205,6 +219,10 @@ onMounted(() => {
       $active: &;
 
       @apply font-bold;
+    }
+
+    &--highlighted {
+      $highlighted: &;
     }
 
     &--truncate {
@@ -255,8 +273,13 @@ onMounted(() => {
         }
 
         &:focus,
-        &:focus-visible {
-          @apply outline-[--focus-color] -outline-offset-2 rounded-[inherit];
+        &:focus-visible,
+        &#{$highlighted} {
+          @apply outline outline-2 outline-[--focus-color] -outline-offset-2 rounded-[inherit];
+        }
+
+        &#{$highlighted} {
+          @apply bg-[--color-#{$color}-50];
         }
 
         &#{$active} {

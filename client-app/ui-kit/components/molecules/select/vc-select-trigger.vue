@@ -16,8 +16,13 @@
     :aria-describedby="detailsId"
     :class="['vc-select__button', `vc-select__button--size--${size}`]"
     @click="$emit('toggle')"
-    @keydown.enter="$emit('toggle')"
-    @keydown.down.prevent="$emit('navigateDown')"
+    @keydown.enter.prevent="$emit('confirm')"
+    @keydown.space.prevent="$emit('confirm')"
+    @keydown.down.prevent="$emit('navigate', 'down')"
+    @keydown.up.prevent="$emit('navigate', 'up')"
+    @keydown.home.prevent="$emit('navigate', 'home')"
+    @keydown.end.prevent="$emit('navigate', 'end')"
+    @keydown.esc="$emit('close')"
   >
     <div class="vc-select__button-content">
       <slot v-if="hasSelection" name="selected" v-bind="{ item: selectedItem as T, error }" />
@@ -70,7 +75,11 @@
     truncate
     disable-autocomplete
     @update:model-value="$emit('update:search', String($event ?? ''))"
-    @keydown.down.prevent="$emit('navigateDown')"
+    @keydown.down.prevent="$emit('navigate', 'down')"
+    @keydown.up.prevent="$emit('navigate', 'up')"
+    @keydown.home="onHome"
+    @keydown.end="onEnd"
+    @keydown.enter.prevent="$emit('confirm')"
     @focus="$emit('open')"
     @keydown.esc="$emit('close')"
   >
@@ -108,12 +117,13 @@
 <script setup lang="ts" generic="T">
 import { computed, useTemplateRef } from "vue";
 
-defineEmits<{
+const emit = defineEmits<{
   (event: "toggle"): void;
   (event: "open"): void;
   (event: "close"): void;
   (event: "clear"): void;
-  (event: "navigateDown"): void;
+  (event: "navigate", key: "up" | "down" | "home" | "end"): void;
+  (event: "confirm"): void;
   (event: "update:search", value: string): void;
 }>();
 
@@ -149,6 +159,22 @@ defineSlots<{
 // would replace both lives in the unmerged VCST-5097 branch; adding a second definition
 // here would collide on merge, so this stays local until that branch lands.
 const clearIconSize = computed(() => (props.size === "md" ? "0.875rem" : "0.75rem"));
+
+// Home/End move the text caret when the user is typing; only steal them when the field is
+// read-only (a plain select), where there is no caret to move.
+function onHome(event: KeyboardEvent): void {
+  if (!props.autocomplete) {
+    event.preventDefault();
+    emit("navigate", "home");
+  }
+}
+
+function onEnd(event: KeyboardEvent): void {
+  if (!props.autocomplete) {
+    event.preventDefault();
+    emit("navigate", "end");
+  }
+}
 
 const rootElement = useTemplateRef<HTMLElement | { $el: HTMLElement }>("rootElement");
 
