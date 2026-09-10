@@ -118,7 +118,6 @@ vi.mock("@/modules/news", () => ({ init: vi.fn() }));
 vi.mock("@/modules/purchase-requests", () => ({ initialize: vi.fn() }));
 vi.mock("@/modules/push-messages", () => ({ init: vi.fn() }));
 vi.mock("@/modules/quotes", () => ({ init: vi.fn() }));
-vi.mock("@/modules/sales-rep", () => ({ init: vi.fn() }));
 vi.mock("@/plugins/builder-io-preview/utils", () => ({ isPreviewMode: () => false }));
 vi.mock("@/plugins/builder-preview/utils", () => ({ getPreviewBootOptions: () => previewBoot }));
 // Imported by app-runner in preview mode; its install() is where the host mutates routes.
@@ -225,6 +224,8 @@ describe("app-runner boot order", () => {
     });
 
     it("issues nothing and resolves to no plugins when the flag is off", async () => {
+      vi.stubEnv("APP_MODULES_FEDERATION_ENABLED", "false");
+
       await runBoot();
 
       expect(getStorePluginsMock).not.toHaveBeenCalled();

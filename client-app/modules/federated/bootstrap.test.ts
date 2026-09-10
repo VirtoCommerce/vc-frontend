@@ -27,9 +27,8 @@ describe("startFederatedModules", () => {
   });
 
   it.each([undefined, "", "false", "0"])("is a no-op when APP_MODULES_FEDERATION_ENABLED is %j", async (value) => {
-    if (value !== undefined) {
-      vi.stubEnv("APP_MODULES_FEDERATION_ENABLED", value);
-    }
+    // Stubbed even for undefined: the repo's .env enables the flag, so "unset" has to be made explicit.
+    vi.stubEnv("APP_MODULES_FEDERATION_ENABLED", value);
     const { startFederatedModules } = await loadBootstrap();
 
     await startFederatedModules();
@@ -163,6 +162,7 @@ describe("startFederatedModules", () => {
   });
 
   it("does not fetch the plugin list when the flag is off", async () => {
+    vi.stubEnv("APP_MODULES_FEDERATION_ENABLED", "false");
     const fetchPlugins = vi.fn();
     const { startFederatedModules } = await loadBootstrap();
 

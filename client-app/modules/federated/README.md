@@ -10,7 +10,9 @@ of MF is exactly that separation: a plugin team can build and release on their o
 without touching or rebuilding this repo.
 
 > Jira: **VCST-5159**. Everything here is behind the `APP_MODULES_FEDERATION_ENABLED` flag and is a **no-op
-> when the flag is off** — the harness ships with **zero built-in remotes**.
+> when the flag is off** — the harness ships with **zero built-in remotes**. The repo's `.env` turns the
+> flag **on**, so a stock build is a federation host that loads whatever the platform advertises; build
+> with `APP_MODULES_FEDERATION_ENABLED=false` for a host without it.
 
 > **Want to BUILD a plugin?** Start with the step-by-step walkthrough:
 > [`HOWTO.md`](./HOWTO.md). This file is the reference for how the host side works.
