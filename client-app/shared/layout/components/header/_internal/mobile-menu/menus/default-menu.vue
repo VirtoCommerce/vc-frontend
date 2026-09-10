@@ -8,17 +8,20 @@
         @close="$emit('close')"
         @select-item="$emit('selectItem', item)"
       >
-        <MobileMenuLink
-          :link="item"
-          :format-text-function="capitalize"
-          class="py-1 text-lg"
-          @close="$emit('close')"
-          @select="$emit('selectItem', item)"
-        >
-          <template #default="{ formattedText }">
-            {{ formattedText }}
-          </template>
-        </MobileMenuLink>
+        <template #default="{ extensionProps }">
+          <MobileMenuLink
+            :link="item"
+            :count="toValue(extensionProps?.count)"
+            :format-text-function="capitalize"
+            class="py-1 text-lg"
+            @close="$emit('close')"
+            @select="$emit('selectItem', item)"
+          >
+            <template #default="{ formattedText }">
+              {{ formattedText }}
+            </template>
+          </MobileMenuLink>
+        </template>
       </ExtensionPoint>
     </li>
   </ul>
@@ -26,6 +29,7 @@
 
 <script setup lang="ts">
 import { capitalize } from "lodash-es";
+import { toValue } from "vue";
 import type { ExtendedMenuLinkType } from "@/core/types";
 import MobileMenuLink from "@/shared/layout/components/header/_internal/mobile-menu/mobile-menu-link.vue";
 
