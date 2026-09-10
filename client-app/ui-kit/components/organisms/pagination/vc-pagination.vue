@@ -21,7 +21,7 @@
             'vc-pagination__page',
             {
               'vc-pagination__page--active': item && page === item,
-              'vc-pagination__page--ellipsis': item === 0,
+              'vc-pagination__page--ellipsis': !item,
             },
           ]"
           @click="setPage(item)"
@@ -165,6 +165,10 @@ const setPage = (page: number) => {
   $compact: "";
   $wrapped: "";
 
+  // Override the two knobs as a pair: the ink default follows the palette and flips in dark.
+  --page-active-bg: var(--vc-pagination-page-active-bg, theme("colors.primary.500"));
+  --page-active-text: var(--vc-pagination-page-active-text, theme("colors.additional.50"));
+
   @apply flex max-w-full;
 
   &--compact {
@@ -209,11 +213,14 @@ const setPage = (page: number) => {
     }
 
     &--active {
-      @apply bg-primary text-additional-50 pointer-events-none;
+      @apply pointer-events-none;
+
+      background-color: var(--page-active-bg);
+      color: var(--page-active-text);
     }
 
     &--ellipsis {
-      @apply text-neutral-400 pointer-events-none;
+      @apply pointer-events-none;
     }
   }
 
