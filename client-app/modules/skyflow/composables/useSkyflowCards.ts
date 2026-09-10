@@ -1,5 +1,5 @@
 import { computed, readonly } from "vue";
-import { useGetSkyflowCards } from "@/core/api/graphql";
+import { useGetSkyflowCards } from "../api/graphql";
 
 export function useSkyflowCards() {
   const { loading, result, load, refetch } = useGetSkyflowCards();

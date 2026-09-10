@@ -95,10 +95,9 @@ import { IS_DEVELOPMENT } from "@/core/constants";
 import { Logger, replaceXFromBeginning } from "@/core/utilities";
 import { useUser } from "@/shared/account";
 import { useNotifications } from "@/shared/notification";
-import { usePayment, useSkyflowCards, useSkyflowStyles } from "../composables";
+import { usePayment } from "@/shared/payment";
+import { useSkyflowCards, useSkyflowStyles } from "../composables";
 import { getCardSchemeFromNumber, getCvvValidation } from "../utils/skyflow-cvv-validation";
-import PaymentPolicies from "./payment-policies.vue";
-import type { IPaymentMethodEmits, IPaymentMethodParameters } from "./types";
 import type {
   AuthorizePaymentResultType,
   CustomerOrderType,
@@ -107,9 +106,11 @@ import type {
   InputKeyValueType,
   KeyValueType,
 } from "@/core/api/graphql/types";
+import type { IPaymentMethodEmits, IPaymentMethodParameters } from "@/shared/payment/components/types";
 import type ComposableContainer from "skyflow-js/types/core/external/collect/compose-collect-container";
 import type ComposableElement from "skyflow-js/types/core/external/collect/compose-collect-element";
 import type { IInsertRecordInput, IInsertResponse } from "skyflow-js/types/utils/common";
+import PaymentPolicies from "@/shared/payment/components/payment-policies.vue";
 
 const emit = defineEmits<IPaymentMethodEmits>();
 
