@@ -346,6 +346,9 @@ function onClearClick(): void {
   }
   // The props watch skips our own echo, so this is the only place that can tell Escape the range is gone.
   committedRange = undefined;
+  // reka paints from this ref, and the props watch only refreshes it when a parent writes the emit
+  // back — an uncontrolled host would keep the old range on screen.
+  parsedModelValue.value = parseRange(undefined);
   emitRange(undefined);
   // emitRange dedups an already-empty model, but shells still need to react to the explicit action.
   emit("clear");

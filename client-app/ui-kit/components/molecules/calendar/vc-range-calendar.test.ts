@@ -626,6 +626,20 @@ describe("VcRangeCalendar", () => {
         wrapper.unmount();
       });
 
+      // An uncontrolled host never writes the emit back, so the props watch never fires and only
+      // onClearClick can repaint the grid.
+      it("empties the grid on footer Clear even when the host never writes the value back", async () => {
+        const wrapper = mountCal({ showFooter: true });
+        await flushPromises();
+        expect(wrapper.findAll("[data-selected], [data-selection-start], [data-selection-end]")).not.toHaveLength(0);
+
+        await wrapper.find(".vc-range-calendar__footer-btn").trigger("click");
+        await flushPromises();
+
+        expect(wrapper.findAll("[data-selected], [data-selection-start], [data-selection-end]")).toHaveLength(0);
+        wrapper.unmount();
+      });
+
       // The footer Clear is a commit WE emit, so the props watch skips it — nothing else can tell
       // Escape the range is gone.
       it("does not bring the range back after the footer cleared it", async () => {
