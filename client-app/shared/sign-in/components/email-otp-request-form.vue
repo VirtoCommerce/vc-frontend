@@ -18,6 +18,7 @@
     <VcInput
       v-model.trim="email"
       name="email"
+      type="email"
       class="email-otp-request-form__input"
       :label="$t('shared.sign_in.email_otp_sign_in_form.request.email_label')"
       :placeholder="$t('common.placeholders.email')"
