@@ -5,4 +5,5 @@ export * from "./useFocusManagement";
 export * from "./useHorizontalScrollSync";
 export * from "./useListeners";
 export * from "./useQuantityValidationSchema";
+export * from "./useSelect";
 export * from "./useSmartSticky";

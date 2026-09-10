@@ -143,7 +143,12 @@
           @keydown.down.prevent="next(index)"
           @keydown.tab.prevent="handleTab($event, index)"
         >
-          <VcCheckbox v-if="multiple" :model-value="isActiveItem(item)" :aria-label="getItemText(item)" tabindex="-1" />
+          <VcCheckbox
+            v-if="multiple"
+            :model-value="isActiveItem(item)"
+            :aria-label="toLabel(getItemText(item))"
+            tabindex="-1"
+          />
 
           <slot name="item" v-bind="{ item, index }">
             {{ getItemText(item) }}
@@ -168,56 +173,59 @@
   </div>
 </template>
 
-<script setup lang="ts">
-// TODO: https://virtocommerce.atlassian.net/browse/ST-5117
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-import { isEqual, union } from "lodash-es";
+<script setup lang="ts" generic="T, V = T, M extends boolean = false">
 import { computed, ref, useTemplateRef, provide, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { vcPopoverKey } from "@/ui-kit/components/molecules/popover/vc-popover-context";
-import { useComponentId } from "@/ui-kit/composables";
+import { useComponentId, useSelect } from "@/ui-kit/composables";
 
-interface IProps {
-  modelValue?: object | string | Array<object | string>;
-  label?: string;
-  ariaLabel?: string;
-  required?: boolean;
-  disabled?: boolean;
-  readonly?: boolean;
-  items: any[];
-  size?: "xs" | "sm" | "md" | "auto";
-  itemSize?: "xs" | "sm" | "md" | "lg";
-  textField?: string;
-  valueField?: string;
-  placeholder?: string;
-  showEmptyDetails?: boolean;
-  error?: boolean;
-  message?: string;
-  autocomplete?: boolean;
-  singleLineMessage?: boolean;
-  multiple?: boolean;
-  clearable?: boolean;
-  testIdDropdown?: string;
-  enableTeleport?: boolean;
-  /** Defer rendering the option list until the dropdown is first opened (forwarded to VcPopover). */
-  lazy?: boolean;
-  /** Teleport target selector for the dropdown; defaults to the global popover host (forwarded to VcPopover). */
-  teleportSelector?: string;
-}
+const emit = defineEmits<{
+  (event: "update:modelValue", value: VcSelectEmittedType<V, M>): void;
+  (event: "change", value: VcSelectEmittedType<V, M>): void;
+}>();
 
-interface IEmits {
-  (event: "update:modelValue", value: any): void;
-  (event: "change", value: any): void;
-}
-
-const emit = defineEmits<IEmits>();
-
-const props = withDefaults(defineProps<IProps>(), {
-  size: "md",
-  itemSize: "sm",
-});
+const props = withDefaults(
+  defineProps<{
+    modelValue?: M extends true ? V[] : V;
+    label?: string;
+    ariaLabel?: string;
+    required?: boolean;
+    disabled?: boolean;
+    readonly?: boolean;
+    items: T[];
+    size?: "xs" | "sm" | "md" | "auto";
+    itemSize?: "xs" | "sm" | "md" | "lg";
+    /** Property name, or an accessor, producing the option label. */
+    textField?: VcSelectFieldAccessorType<T, string>;
+    /** Property name, or an accessor, producing the model value. Defaults to the item itself. */
+    valueField?: VcSelectFieldAccessorType<T, V>;
+    placeholder?: string;
+    showEmptyDetails?: boolean;
+    error?: boolean;
+    message?: string;
+    autocomplete?: boolean;
+    singleLineMessage?: boolean;
+    /**
+     * The `& boolean` is load-bearing, not decoration: with a bare `M` the compiler emits no
+     * Boolean prop cast, so a valueless `multiple` attribute arrives as "" and multi-select
+     * silently degrades to single. The rule below judges the intersection as useless because
+     * `M` is already constrained to boolean — it cannot see the runtime cast that depends on it.
+     */
+    // eslint-disable-next-line sonarjs/no-useless-intersection
+    multiple?: M & boolean;
+    clearable?: boolean;
+    testIdDropdown?: string;
+    enableTeleport?: boolean;
+    /** Defer rendering the option list until the dropdown is first opened (forwarded to VcPopover). */
+    lazy?: boolean;
+    /** Teleport target selector for the dropdown; defaults to the global popover host (forwarded to VcPopover). */
+    teleportSelector?: string;
+  }>(),
+  {
+    size: "md",
+    itemSize: "sm",
+  },
+);
 
 provide(vcPopoverKey, { enableTeleport: toRef(() => props.enableTeleport ?? false) });
 
@@ -247,39 +255,42 @@ const activeDescendantId = computed(() => {
 
 const liveRegionMessage = ref("");
 
-const getItemText = (item: any) => (props.textField && item ? item[props.textField] : item);
-const getItemValue = (item: any) => (props.valueField && item ? item[props.valueField] : item);
+const {
+  getItemText,
+  isActiveItem,
+  getItemValue,
+  getToggledValues,
+  selectedItem: selected,
+  selectedValues,
+  hasSelection,
+  filteredItems,
+} = useSelect<T, V>({
+  items: toRef(() => props.items),
+  modelValue: toRef(() => props.modelValue),
+  multiple: toRef(() => props.multiple),
+  filterValue,
+  textField: toRef(() => props.textField),
+  valueField: toRef(() => props.valueField),
+});
 
-const selectedText = computed(() => {
-  if (Array.isArray(props.modelValue)) {
-    if (props.modelValue.length) {
-      return t("ui_kit.select.items_selected", [props.modelValue.length]);
-    }
+function toLabel(value: unknown): string {
+  return value === undefined || value === null ? "" : String(value);
+}
 
-    return null;
+const selectedText = computed<string | null>(() => {
+  if (props.multiple) {
+    return selectedValues.value.length ? t("ui_kit.select.items_selected", [selectedValues.value.length]) : null;
   }
 
-  if (props.textField && selected.value) {
-    return selected.value[props.textField];
-  }
+  const text = selected.value === undefined ? undefined : getItemText(selected.value);
 
-  return selected.value;
+  // null, not "": an empty string would suppress the placeholder that `?? placeholder` provides.
+  return text === undefined || text === null ? null : String(text);
 });
 
 const placeholderText = computed(() => selectedText.value ?? props.placeholder);
 
 const enabled = computed<boolean>(() => !props.readonly && !props.disabled);
-
-const selected = computed(() => {
-  return props.valueField ? props.items.find((item) => item[props.valueField!] === props.modelValue) : props.modelValue;
-});
-
-const hasSelection = computed(() => {
-  if (props.multiple && Array.isArray(props.modelValue)) {
-    return props.modelValue.length > 0;
-  }
-  return props.modelValue !== undefined && props.modelValue !== null;
-});
 
 const isClearButtonVisible = computed(() => {
   if (!props.clearable || props.disabled || props.readonly) {
@@ -300,33 +311,11 @@ const search = computed({
       return filterValue.value;
     }
 
-    return selectedText.value;
+    return selectedText.value ?? "";
   },
   set(value) {
     filterValue.value = value;
   },
-});
-
-const filteredItems = computed(() => {
-  if (!filterValue.value) {
-    return props.items;
-  }
-
-  const searching = filterValue.value.toLowerCase();
-  const items = props.items.filter((item) =>
-    String(getItemText(item) ?? "")
-      .toLowerCase()
-      .includes(searching),
-  );
-
-  const first = items.filter(
-    (item) =>
-      String(getItemText(item) ?? "")
-        .toLowerCase()
-        .indexOf(searching) === 0,
-  );
-
-  return union(first, items);
 });
 
 watch(filteredItems, (items) => {
@@ -341,44 +330,37 @@ watch(filteredItems, (items) => {
   }
 });
 
-function isActiveItem(item: any) {
-  const itemValue = getItemValue(item);
-
-  if (!Array.isArray(props.modelValue)) {
-    return itemValue === props.modelValue;
-  }
-
-  return props.modelValue.some((selectedItem) => isEqual(getItemValue(selectedItem), itemValue));
+/**
+ * Single funnel for both events; each caller passes the shape correct for its own mode.
+ * `M` is still an unresolved type parameter here, so `VcSelectEmittedType<V, M>` stays a
+ * deferred conditional type and nothing can be assigned to it without a cast — the lint
+ * rule judges the cast by the resolved type, the compiler by the deferred one.
+ */
+function commit(value: V | V[] | undefined): void {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+  emit("update:modelValue", value as VcSelectEmittedType<V, M>);
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+  emit("change", value as VcSelectEmittedType<V, M>);
 }
 
-function select(item?: any) {
+function select(item: T) {
   if (!enabled.value) {
     return;
   }
 
-  if (props.multiple && Array.isArray(props.modelValue)) {
-    let newValues = [...props.modelValue];
-
-    const existingIndex = newValues.findIndex((existingItem) =>
-      isEqual(getItemValue(existingItem), getItemValue(item)),
-    );
-
-    if (existingIndex >= 0) {
-      newValues = [...newValues.slice(0, existingIndex), ...newValues.slice(existingIndex + 1)];
-    } else {
-      newValues.push(item);
-    }
-
-    emit("update:modelValue", newValues);
-    emit("change", newValues);
-  } else {
-    const newValue = getItemValue(item);
-
-    if (newValue !== props.modelValue) {
-      emit("update:modelValue", newValue);
-      emit("change", newValue);
-    }
+  if (props.multiple) {
+    commit(getToggledValues(item));
+    return;
   }
+
+  // Single mode stays idempotent: re-picking the current value emits nothing.
+  // Reuses isActiveItem so the check matches the deep comparison that drives the
+  // highlight — a strict `===` here would re-emit for a deep-equal object model.
+  if (isActiveItem(item)) {
+    return;
+  }
+
+  commit(getItemValue(item));
 }
 
 function getItemsElements() {
@@ -430,12 +412,10 @@ function clear() {
   }
 
   // Clear selection
-  if (props.multiple && Array.isArray(props.modelValue) && props.modelValue.length) {
-    emit("update:modelValue", []);
-    emit("change", []);
+  if (props.multiple && selectedValues.value.length) {
+    commit([]);
   } else if (!props.multiple && hasSelection.value) {
-    emit("update:modelValue", undefined);
-    emit("change", undefined);
+    commit(undefined);
   }
 }
 
@@ -469,7 +449,6 @@ function handleTab(event: KeyboardEvent, index: number) {
 .vc-select {
   $disabled: "";
   $readonly: "";
-  $autocomplete: "";
   $opened: "";
   $error: "";
 
@@ -483,10 +462,6 @@ function handleTab(event: KeyboardEvent, index: number) {
 
   &--readonly {
     $readonly: &;
-  }
-
-  &--autocomplete {
-    $autocomplete: &;
   }
 
   &--opened {
@@ -517,7 +492,6 @@ function handleTab(event: KeyboardEvent, index: number) {
       @apply border-danger;
     }
 
-    &--opened,
     &:focus {
       @apply outline-none ring-[3px] ring-primary-100;
     }

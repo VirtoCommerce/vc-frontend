@@ -12,9 +12,34 @@ const OBJECT_ITEMS = [
   { id: 4, name: "India" },
 ];
 
-const meta: Meta<typeof VcSelect> = {
+// Generic SFCs with several type parameters break `Meta<typeof Component>` inference,
+// so the args are described explicitly — same approach as vc-table.stories.ts.
+interface IVcSelectStoryArgs {
+  items: unknown[];
+  modelValue?: unknown;
+  label?: string;
+  ariaLabel?: string;
+  placeholder?: string;
+  message?: string;
+  size?: "xs" | "sm" | "md" | "auto";
+  itemSize?: "xs" | "sm" | "md" | "lg";
+  textField?: string;
+  valueField?: string;
+  required?: boolean;
+  disabled?: boolean;
+  readonly?: boolean;
+  error?: boolean;
+  autocomplete?: boolean;
+  multiple?: boolean;
+  clearable?: boolean;
+  showEmptyDetails?: boolean;
+  singleLineMessage?: boolean;
+}
+
+const meta: Meta<IVcSelectStoryArgs> = {
   title: "Components/Molecules/VcSelect",
-  component: VcSelect,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  component: VcSelect as any,
   argTypes: {
     size: {
       control: "radio",

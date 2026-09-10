@@ -105,6 +105,46 @@ describe("VcSelect", () => {
       expect(wrapper.emitted("update:modelValue")).toBeUndefined();
     });
 
+    // Single сравнивает по идентичности, а не по содержимому: эквивалентный, но другой
+    // объект — это новый выбор, и он обязан эмитить. На этом держится date-filter-select,
+    // который пересоздаёт свои диапазоны при смене локали и ждёт change, чтобы сбросить
+    // флаги валидности.
+    it("re-emits for a deep-equal but distinct object", async () => {
+      const items = [{ code: "al" }, { code: "be" }];
+      const wrapper = createWrapper({ items, textField: "code", modelValue: { code: "be" } });
+
+      await wrapper.findAll('[role="option"]')[1].trigger("click");
+
+      expect(wrapper.emitted("update:modelValue")).toEqual([[items[1]]]);
+    });
+
+    // Пустая строка как модель не совпадает ни с одним элементом, поэтому должна
+    // вести себя как «ничего не выбрано», а не съедать placeholder пустой меткой.
+    it("shows the placeholder for an empty model value", () => {
+      const wrapper = createWrapper({
+        items: OBJECT_ITEMS,
+        textField: "name",
+        valueField: "id",
+        modelValue: "",
+        placeholder: "Pick one",
+      });
+
+      expect(wrapper.get("input").attributes("placeholder")).toBe("Pick one");
+    });
+
+    // Значение, которого нет в items, не должно протекать в поле как сырой текст.
+    it("does not leak an unmatched valueField model into the field", () => {
+      const wrapper = createWrapper({
+        items: OBJECT_ITEMS,
+        textField: "name",
+        valueField: "id",
+        modelValue: "does-not-exist",
+        placeholder: "Pick one",
+      });
+
+      expect(wrapper.get("input").attributes("placeholder")).toBe("Pick one");
+    });
+
     it("marks the selected option with aria-selected", () => {
       const wrapper = createWrapper({ items: ITEMS, modelValue: "Belgium" });
 
@@ -115,6 +155,20 @@ describe("VcSelect", () => {
   });
 
   describe("multiple selection", () => {
+    // Проп объявлен как `M & boolean`, а не просто `M`: без литерального boolean в типе
+    // Vue не генерирует приведение, и shorthand-атрибут `multiple` приезжает пустой
+    // строкой — falsy. Приложение передаёт именно shorthand, поэтому мультивыбор
+    // молча превращался в одиночный. Здесь пустая строка эмулирует shorthand.
+    it("treats a valueless multiple attribute as true", () => {
+      const wrapper = createWrapper({
+        items: ITEMS,
+        multiple: "" as unknown as boolean,
+        modelValue: [],
+      });
+
+      expect(wrapper.findAll('[role="option"] .vc-checkbox')).toHaveLength(ITEMS.length);
+    });
+
     it("adds an item to the array", async () => {
       const wrapper = createWrapper({ items: ITEMS, multiple: true, modelValue: ["Albania"] });
 
@@ -141,16 +195,15 @@ describe("VcSelect", () => {
       expect(wrapper.get("input").attributes("placeholder")).toBe("2 items selected");
     });
 
-    // Пиннит подсветку выбранного при multiple + valueField: isActiveItem (vc-select.vue:351)
-    // прогоняет getItemValue по записям модели, поэтому унификация модели на шаге 1
-    // (массив значений вместо массива объектов) обязана поменяться вместе с ним.
+    // Модель в multiple хранит значения valueField, поэтому подсветка обязана
+    // сравнивать значения с значениями, а не с целыми объектами.
     it("marks selected options with aria-selected when valueField is set", () => {
       const wrapper = createWrapper({
         items: OBJECT_ITEMS,
         textField: "name",
         valueField: "id",
         multiple: true,
-        modelValue: [OBJECT_ITEMS[1]],
+        modelValue: ["2"],
       });
 
       const flags = wrapper.findAll('[role="option"]').map((option) => option.attributes("aria-selected"));
@@ -158,9 +211,8 @@ describe("VcSelect", () => {
       expect(flags).toEqual(["false", "true"]);
     });
 
-    // DEFECT — меняется на шаге 1.
-    // С valueField модель в multiple хранит целые объекты, а в single — скаляр.
-    it("stores whole objects, not valueField values", async () => {
+    // Модель одинакова в обоих режимах: массив значений valueField, а не целых элементов.
+    it("stores valueField values, not whole items", async () => {
       const wrapper = createWrapper({
         items: OBJECT_ITEMS,
         textField: "name",
@@ -171,17 +223,17 @@ describe("VcSelect", () => {
 
       await wrapper.findAll('[role="option"]')[0].trigger("click");
 
-      expect(wrapper.emitted("update:modelValue")).toEqual([[[OBJECT_ITEMS[0]]]]);
+      expect(wrapper.emitted("update:modelValue")).toEqual([[["1"]]]);
     });
 
-    // DEFECT — меняется на шаге 1.
-    // modelValue не массив -> Array.isArray ложно -> уходим в single-ветку и эмитим скаляр.
-    it("degrades to single selection when modelValue is undefined", async () => {
+    // Неинициализированная модель трактуется как пустой массив, а не проваливается
+    // в одиночный выбор (как было до рефакторинга).
+    it("treats an uninitialised model as empty", async () => {
       const wrapper = createWrapper({ items: ITEMS, multiple: true });
 
       await wrapper.findAll('[role="option"]')[0].trigger("click");
 
-      expect(wrapper.emitted("update:modelValue")).toEqual([["Albania"]]);
+      expect(wrapper.emitted("update:modelValue")).toEqual([[["Albania"]]]);
     });
 
     // DEFECT — меняется на шаге 3.
@@ -369,14 +421,23 @@ describe("VcSelect", () => {
       expect(wrapper.find(".probe-selected").exists()).toBe(false);
     });
 
+    // Без valueField модель — это сам элемент, поэтому значение, которого нет в items,
+    // всё равно попадает в слот, а не проваливается в placeholder.
+    it("renders the selected slot for a model value that matches no item", () => {
+      const wrapper = createWrapper({ items: ITEMS, modelValue: "Atlantis" }, slots);
+
+      expect(wrapper.find(".probe-selected").exists()).toBe(true);
+      expect(wrapper.find(".probe-placeholder").exists()).toBe(false);
+    });
+
     // Позитивная ветка слота: selected (vc-select.vue:273) резолвит модель обратно в элемент
     // через valueField, и слот получает целый объект. Шаг 1 переписывает этот резолв.
     it("passes the resolved item to the selected slot", () => {
       const wrapper = createWrapper(
         { items: OBJECT_ITEMS, textField: "name", valueField: "id", modelValue: "2" },
         {
-          selected: ({ item }: { item: (typeof OBJECT_ITEMS)[number] }) =>
-            h("span", { class: "probe-selected" }, item.name),
+          selected: ({ item }: { item: unknown }) =>
+            h("span", { class: "probe-selected" }, (item as (typeof OBJECT_ITEMS)[number]).name),
           placeholder: () => h("span", { class: "probe-placeholder" }, "pick one"),
         },
       );
