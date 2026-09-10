@@ -29,6 +29,7 @@ export { default as VcLineItem } from "./line-item/vc-line-item.vue";
 export { default as VcLineItems } from "./line-items/vc-line-items.vue";
 export { default as VcList } from "./list/vc-list.vue";
 export { default as VcListItem } from "./list-item/vc-list-item.vue";
+export { default as VcListbox } from "./listbox/vc-listbox.vue";
 export { default as VcLoaderOverlay } from "./loader-overlay/vc-loader-overlay.vue";
 export { default as VcLoaderWithText } from "./loader-with-text/vc-loader-with-text.vue";
 export { default as VcMenuItem } from "./menu-item/vc-menu-item.vue";

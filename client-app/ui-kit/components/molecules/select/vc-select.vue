@@ -16,17 +16,18 @@
       {{ label }}
     </VcLabel>
 
-    <VcDropdownMenu
+    <VcPopover
+      ref="popoverElement"
       class="vc-select__container"
       :disabled="!enabled"
       :lazy="lazy"
       :teleport-selector="teleportSelector"
       :data-test-id="testIdDropdown"
-      tabindex="-1"
-      width="trigger"
-      :list-id="listboxId"
-      list-role="listbox"
-      :list-label="accessibleLabel"
+      :width="dropdownWidth"
+      placement="bottom-start"
+      :offset-options="4"
+      :z-index="10"
+      shadow
       @toggle="toggled"
     >
       <template #trigger="{ open, toggle, close }">
@@ -68,40 +69,42 @@
       </template>
 
       <template v-if="enabled" #content="{ close }">
-        <VcMenuItem
-          v-for="(item, index) in filteredItems"
-          :key="index"
-          :option-id="getOptionId(index)"
-          :data-vc-select-option="componentId"
-          :active="isActiveItem(item)"
-          :highlighted="index === highlightedIndex"
-          :aria-selected="isActiveItem(item)"
-          role="option"
-          :size="itemSize"
-          :tabindex="-1"
-          @click="
-            select(item);
-            !multiple && close();
-          "
-          @mousemove="highlightedIndex = index"
-        >
-          <VcCheckbox
-            v-if="multiple"
-            :model-value="isActiveItem(item)"
-            :aria-label="toLabel(getItemText(item))"
-            tabindex="-1"
-          />
+        <VcListbox :list-id="listboxId" :list-label="accessibleLabel" :multiselectable="multiple">
+          <VcMenuItem
+            v-for="(item, index) in filteredItems"
+            :key="index"
+            :option-id="getOptionId(index)"
+            :data-vc-select-option="componentId"
+            :active="isActiveItem(item)"
+            :highlighted="index === highlightedIndex"
+            :aria-selected="isActiveItem(item)"
+            role="option"
+            :size="itemSize"
+            :tabindex="-1"
+            @click="
+              select(item);
+              !multiple && close();
+            "
+            @mousemove="highlightedIndex = index"
+          >
+            <VcCheckbox
+              v-if="multiple"
+              :model-value="isActiveItem(item)"
+              :aria-label="toLabel(getItemText(item))"
+              tabindex="-1"
+            />
 
-          <slot name="item" v-bind="{ item, index }">
-            {{ getItemText(item) }}
-          </slot>
-        </VcMenuItem>
+            <slot name="item" v-bind="{ item, index }">
+              {{ getItemText(item) }}
+            </slot>
+          </VcMenuItem>
 
-        <VcMenuItem v-if="!filteredItems.length" role="option" :aria-selected="false" disabled>
-          {{ $t(filterValue ? "ui_kit.messages.no_results" : "ui_kit.select.no_options") }}
-        </VcMenuItem>
+          <VcMenuItem v-if="!filteredItems.length" role="option" :aria-selected="false" disabled :size="itemSize">
+            {{ $t(filterValue ? "ui_kit.messages.no_results" : "ui_kit.select.no_options") }}
+          </VcMenuItem>
+        </VcListbox>
       </template>
-    </VcDropdownMenu>
+    </VcPopover>
 
     <VcInputDetails
       :id="detailsId"
@@ -116,10 +119,12 @@
 </template>
 
 <script setup lang="ts" generic="T, V = T, M extends boolean = false">
+import { useElementBounding } from "@vueuse/core";
 import { computed, nextTick, ref, useTemplateRef, provide, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { vcPopoverKey } from "@/ui-kit/components/molecules/popover/vc-popover-context";
 import { useComponentId, useSelect } from "@/ui-kit/composables";
+import VcListbox from "../listbox/vc-listbox.vue";
 import VcSelectTrigger from "./vc-select-trigger.vue";
 
 const emit = defineEmits<{
@@ -178,6 +183,11 @@ const triggerId = componentId + "-trigger";
 const detailsId = componentId + "-details";
 const listboxId = componentId + "-listbox";
 const triggerElement = useTemplateRef<{ focus: () => void }>("triggerElement");
+
+// VcDropdownMenu used to do this; the dropdown matches the trigger's width.
+const popoverElement = useTemplateRef<{ $el: HTMLElement }>("popoverElement");
+const { width: triggerWidth } = useElementBounding(() => popoverElement.value?.$el ?? null);
+const dropdownWidth = computed(() => `${triggerWidth.value}px`);
 
 const accessibleLabel = computed(() => props.ariaLabel ?? props.label);
 
@@ -367,17 +377,35 @@ function onConfirm(toggle: () => void, close: () => void) {
   }
 }
 
-// Keep the highlighted option in view without moving focus to it.
+/**
+ * Keep the highlighted option in view without moving focus to it.
+ * Deliberately not `scrollIntoView`: that scrolls every scrollable ancestor, so opening a
+ * dropdown low on the page yanked the whole page. This adjusts only the list's own scrollTop.
+ */
+function scrollHighlightedIntoView(index: number) {
+  const option = document.getElementById(getOptionId(index));
+  const list = option?.closest<HTMLElement>('[role="listbox"]');
+
+  if (!option || !list) {
+    return;
+  }
+
+  const optionBox = option.getBoundingClientRect();
+  const listBox = list.getBoundingClientRect();
+
+  if (optionBox.top < listBox.top) {
+    list.scrollTop -= listBox.top - optionBox.top;
+  } else if (optionBox.bottom > listBox.bottom) {
+    list.scrollTop += optionBox.bottom - listBox.bottom;
+  }
+}
+
 watch(highlightedIndex, (index) => {
   if (index < 0) {
     return;
   }
 
-  void nextTick(() => {
-    // Optional call: jsdom has no scrollIntoView, and an unhandled rejection there would
-    // hide real failures in the suite output.
-    document.getElementById(getOptionId(index))?.scrollIntoView?.({ block: "nearest" });
-  });
+  void nextTick(() => scrollHighlightedIntoView(index));
 });
 
 function toggled(value: boolean) {

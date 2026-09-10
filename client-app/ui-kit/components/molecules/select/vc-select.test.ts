@@ -236,9 +236,14 @@ describe("VcSelect", () => {
       expect(wrapper.emitted("update:modelValue")).toEqual([[["Albania"]]]);
     });
 
-    // DEFECT — переносится на шаг 4: атрибут будет ставить VcListbox.
-    it("does not set aria-multiselectable on the listbox", () => {
+    it("marks the listbox as multiselectable", () => {
       const wrapper = createWrapper({ items: ITEMS, multiple: true, modelValue: [] });
+
+      expect(wrapper.get('[role="listbox"]').attributes("aria-multiselectable")).toBe("true");
+    });
+
+    it("leaves aria-multiselectable off in single mode", () => {
+      const wrapper = createWrapper({ items: ITEMS });
 
       expect(wrapper.get('[role="listbox"]').attributes("aria-multiselectable")).toBeUndefined();
     });
