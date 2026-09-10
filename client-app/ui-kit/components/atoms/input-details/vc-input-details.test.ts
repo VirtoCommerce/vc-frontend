@@ -6,7 +6,7 @@ import VcInputDetails from "./vc-input-details.vue";
 
 const MESSAGE = "End date must be on or after start date";
 
-// VcTooltip stays real: the whole point is the trigger it renders around the clamped message.
+// VcTooltip stays real: the clamped branch renders the message inside it, which is what these guard.
 function mountDetails(props = {}) {
   return mount(VcInputDetails, {
     props: { message: MESSAGE, ...props },
@@ -15,18 +15,12 @@ function mountDetails(props = {}) {
 }
 
 describe("VcInputDetails single-line message", () => {
-  // Clamped text is unreadable without a pointer unless the trigger is focusable; VcPopover opens on focusin.
-  it("makes the clamped message reachable by keyboard", () => {
-    const message = mountDetails({ singleLine: true }).find(".vc-input-details__message");
-    expect(message.attributes("tabindex")).toBe("0");
+  it("clamps to one line so a reserved details row keeps the height it renders", () => {
+    expect(mountDetails({ singleLine: true }).classes()).toContain("vc-input-details--single-line");
   });
 
-  it("leaves the wrapping message out of the tab order", () => {
-    const message = mountDetails().find(".vc-input-details__message");
-    expect(message.attributes("tabindex")).toBeUndefined();
-  });
-
-  it("keeps the full message in the DOM when clamped, so aria-describedby still resolves to it", () => {
+  // Clamping moves the message into a tooltip; consumers point aria-describedby at this row.
+  it("keeps the full message in the DOM when clamped", () => {
     expect(mountDetails({ singleLine: true }).text()).toContain(MESSAGE);
   });
 });

@@ -17,8 +17,7 @@
 
       <VcTooltip v-else class="vc-input-details__tooltip-container" placement="bottom-start" enable-teleport>
         <template #trigger>
-          <!-- Focusable so the clamped text is reachable without a mouse: VcPopover opens on focusin. -->
-          <div tabindex="0" class="vc-input-details__message">{{ message }}</div>
+          <div class="vc-input-details__message">{{ message }}</div>
         </template>
 
         <template #content>
