@@ -23,6 +23,7 @@
     @keydown.home.prevent="$emit('navigate', 'home')"
     @keydown.end.prevent="$emit('navigate', 'end')"
     @keydown.esc="$emit('close')"
+    @keydown.tab="$emit('tab', $event)"
   >
     <div class="vc-select__button-content">
       <slot v-if="hasSelection" name="selected" v-bind="{ item: selectedItem as T, error }" />
@@ -82,6 +83,7 @@
     @keydown.enter.prevent="$emit('confirm')"
     @focus="$emit('open')"
     @keydown.esc="$emit('close')"
+    @keydown.tab="$emit('tab', $event)"
   >
     <template #append>
       <VcButton
@@ -124,6 +126,7 @@ const emit = defineEmits<{
   (event: "clear"): void;
   (event: "navigate", key: "up" | "down" | "home" | "end"): void;
   (event: "confirm"): void;
+  (event: "tab", payload: KeyboardEvent): void;
   (event: "update:search", value: string): void;
 }>();
 

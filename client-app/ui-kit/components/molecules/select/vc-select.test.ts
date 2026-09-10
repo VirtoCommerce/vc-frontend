@@ -30,6 +30,7 @@ const countingI18n = createI18n({
         select: {
           items_selected: "{0} items selected",
           results_available: "{0} results available",
+          selected_of_total: "{selected} of {total}",
         },
       },
     },
@@ -246,6 +247,85 @@ describe("VcSelect", () => {
       const wrapper = createWrapper({ items: ITEMS });
 
       expect(wrapper.get('[role="listbox"]').attributes("aria-multiselectable")).toBeUndefined();
+    });
+  });
+
+  describe("select all", () => {
+    const selectAllProps = { items: ITEMS, multiple: true, selectAll: true };
+
+    it("is absent unless asked for", () => {
+      const wrapper = createWrapper({ items: ITEMS, multiple: true, modelValue: [] });
+
+      expect(wrapper.find(".vc-select__select-all").exists()).toBe(false);
+    });
+
+    it("is ignored in single mode", () => {
+      const wrapper = createWrapper({ items: ITEMS, selectAll: true });
+
+      expect(wrapper.find(".vc-select__select-all").exists()).toBe(false);
+    });
+
+    it("selects every visible option and announces itself", async () => {
+      const wrapper = createWrapper({ ...selectAllProps, modelValue: [] });
+
+      await wrapper.get(".vc-select__select-all input").trigger("change");
+
+      expect(wrapper.emitted("update:modelValue")).toEqual([[ITEMS]]);
+      expect(wrapper.emitted("selectAll")).toHaveLength(1);
+    });
+
+    it("clears the visible options when everything is already selected", async () => {
+      const wrapper = createWrapper({ ...selectAllProps, modelValue: [...ITEMS] });
+
+      await wrapper.get(".vc-select__select-all input").trigger("change");
+
+      expect(wrapper.emitted("update:modelValue")).toEqual([[[]]]);
+    });
+
+    it("reports mixed state for a partial selection", () => {
+      const wrapper = createWrapper({ ...selectAllProps, modelValue: ["Albania"] });
+
+      expect(wrapper.get(".vc-select__select-all input").attributes("aria-checked")).toBe("mixed");
+    });
+
+    it("reports checked state once everything is selected", () => {
+      const wrapper = createWrapper({ ...selectAllProps, modelValue: [...ITEMS] });
+
+      expect(wrapper.get(".vc-select__select-all input").attributes("aria-checked")).toBe("true");
+    });
+
+    it("counts against the whole set, not the loaded page", () => {
+      const wrapper = createWrapperWithMessages({ ...selectAllProps, modelValue: ["Albania"], total: 3000 });
+
+      expect(wrapper.get(".vc-select__select-all-count").text()).toBe("1 of 3000");
+    });
+
+    it("falls back to the option count when no total is given", () => {
+      const wrapper = createWrapperWithMessages({ ...selectAllProps, modelValue: ["Albania"] });
+
+      expect(wrapper.get(".vc-select__select-all-count").text()).toBe("1 of 3");
+    });
+
+    // Фильтр сужает набор: выбирается видимое, а отфильтрованный выбор сохраняется.
+    it("acts on the filtered subset only", async () => {
+      const wrapper = createWrapper({ ...selectAllProps, autocomplete: true, modelValue: ["China"] });
+
+      await wrapper.get("input").trigger("focus");
+      await wrapper.get("input").setValue("bel");
+      await wrapper.get(".vc-select__select-all input").trigger("change");
+
+      expect(wrapper.emitted("update:modelValue")).toEqual([[["China", "Belgium"]]]);
+    });
+
+    it("hands focus to the checkbox on Tab, since the popover is out of tab order", async () => {
+      const wrapper = createWrapper({ ...selectAllProps, modelValue: [] });
+      const input = wrapper.get("input");
+
+      (input.element as HTMLInputElement).focus();
+      await input.trigger("focus");
+      await input.trigger("keydown", { key: "Tab" });
+
+      expect(document.activeElement).toBe(wrapper.get(".vc-select__select-all input").element);
     });
   });
 

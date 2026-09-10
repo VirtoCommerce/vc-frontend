@@ -31,6 +31,8 @@ interface IVcSelectStoryArgs {
   error?: boolean;
   autocomplete?: boolean;
   multiple?: boolean;
+  selectAll?: boolean;
+  total?: number;
   clearable?: boolean;
   showEmptyDetails?: boolean;
   singleLineMessage?: boolean;
@@ -574,6 +576,52 @@ export const MultipleSelectAutocompleteClearable: StoryType = {
 // =============================================================================
 // Group 5: Object items
 // =============================================================================
+
+export const SelectAll: StoryType = {
+  args: {
+    items: ITEMS,
+    label: "Label",
+    placeholder: "Select multiple items",
+    multiple: true,
+    selectAll: true,
+    modelValue: [],
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+<VcSelect v-model="selected" :items="items" multiple select-all label="Label" />
+        `,
+      },
+      description: {
+        story:
+          "`select-all` adds a row above the options with a real checkbox, so partial selection " +
+          'can report `aria-checked="mixed"`. The counter shows the selection against the whole ' +
+          "set — pass `total` when the list is paged and `items` holds one page. With a filter " +
+          "active, Select all applies to the filtered subset and leaves the rest of the selection alone.",
+      },
+    },
+  },
+};
+
+export const SelectAllWithTotal: StoryType = {
+  args: {
+    items: ITEMS,
+    label: "Buyer name",
+    placeholder: "Select buyers",
+    multiple: true,
+    selectAll: true,
+    total: 3000,
+    modelValue: ["Albania"],
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: "Paged list: only one page is loaded, so `total` carries the real size for the counter.",
+      },
+    },
+  },
+};
 
 export const ObjectItems: StoryType = {
   args: {

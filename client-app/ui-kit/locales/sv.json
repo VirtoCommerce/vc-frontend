@@ -99,7 +99,10 @@
       "items_selected": "{0} objekt valda",
       "results_available": "{0} resultat tillgängliga",
       "no_results_found": "Inga resultat hittades",
-      "no_options": "Inga alternativ tillgängliga"
+      "no_options": "Inga alternativ tillgängliga",
+      "select_all": "Välj alla",
+      "deselect_all": "Avmarkera alla",
+      "selected_of_total": "{selected} av {total}"
     },
     "file": {
       "progress": "{percent} klart",

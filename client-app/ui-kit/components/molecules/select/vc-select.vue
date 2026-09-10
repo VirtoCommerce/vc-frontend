@@ -56,6 +56,7 @@
           @clear="clear"
           @navigate="onNavigate($event, open)"
           @confirm="onConfirm(toggle, close)"
+          @tab="onTab"
           @update:search="search = $event"
         >
           <template v-if="$slots.selected" #selected="scope">
@@ -70,6 +71,25 @@
 
       <template v-if="enabled" #content="{ close }">
         <VcListbox :list-id="listboxId" :list-label="accessibleLabel" :multiselectable="multiple">
+          <template v-if="showSelectAll" #header>
+            <div class="vc-select__select-all">
+              <VcCheckbox
+                ref="selectAllElement"
+                size="sm"
+                :model-value="isAllSelected"
+                :indeterminate="isSomeSelected"
+                :aria-label="selectAllLabel"
+                @change="onSelectAll"
+                @keydown.esc="focusTrigger()"
+                @keydown.down.prevent="focusTrigger()"
+              />
+
+              <span class="vc-select__select-all-text">{{ $t("ui_kit.select.select_all") }}</span>
+
+              <span class="vc-select__select-all-count">{{ selectedOfTotal }}</span>
+            </div>
+          </template>
+
           <VcMenuItem
             v-for="(item, index) in filteredItems"
             :key="index"
@@ -120,6 +140,7 @@
 
 <script setup lang="ts" generic="T, V = T, M extends boolean = false">
 import { useElementBounding } from "@vueuse/core";
+import { isEqual } from "lodash-es";
 import { computed, nextTick, ref, useTemplateRef, provide, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { vcPopoverKey } from "@/ui-kit/components/molecules/popover/vc-popover-context";
@@ -130,6 +151,8 @@ import VcSelectTrigger from "./vc-select-trigger.vue";
 const emit = defineEmits<{
   (event: "update:modelValue", value: VcSelectEmittedType<V, M>): void;
   (event: "change", value: VcSelectEmittedType<V, M>): void;
+  /** Select all was pressed. Fires alongside the model update, so a paged consumer can load the rest. */
+  (event: "selectAll"): void;
 }>();
 
 const props = withDefaults(
@@ -162,6 +185,13 @@ const props = withDefaults(
     // eslint-disable-next-line sonarjs/no-useless-intersection
     multiple?: M & boolean;
     clearable?: boolean;
+    /** Adds a Select all row above the options. Multiple mode only. */
+    selectAll?: boolean;
+    /**
+     * Size of the whole set for the counter. Defaults to the number of options currently
+     * rendered; pass it explicitly when the list is paged and `items` holds only one page.
+     */
+    total?: number;
     testIdDropdown?: string;
     enableTeleport?: boolean;
     /** Defer rendering the option list until the dropdown is first opened (forwarded to VcPopover). */
@@ -440,6 +470,92 @@ function clear() {
 function focusTrigger() {
   triggerElement.value?.focus();
 }
+
+// -----------------------------------------------------------------------------
+// Select all
+// -----------------------------------------------------------------------------
+
+if (import.meta.env.DEV && props.selectAll && !props.multiple) {
+  // eslint-disable-next-line no-console
+  console.warn("VcSelect: `select-all` only applies to `multiple` selects and is ignored here.");
+}
+
+const showSelectAll = computed(() => props.selectAll && props.multiple);
+
+/** Select all acts on what the user can see, so an active filter narrows it. */
+const selectableValues = computed(() => filteredItems.value.map((item) => getItemValue(item)));
+
+const selectedVisibleCount = computed(
+  () =>
+    selectableValues.value.filter((value) => selectedValues.value.some((current) => isEqual(current, value))).length,
+);
+
+const isAllSelected = computed(
+  () => selectableValues.value.length > 0 && selectedVisibleCount.value === selectableValues.value.length,
+);
+
+const isSomeSelected = computed(() => selectedVisibleCount.value > 0 && !isAllSelected.value);
+
+const totalCount = computed(() => props.total ?? filteredItems.value.length);
+
+const selectedOfTotal = computed(() =>
+  t("ui_kit.select.selected_of_total", { selected: selectedValues.value.length, total: totalCount.value }),
+);
+
+const selectAllLabel = computed(
+  () =>
+    `${t(isAllSelected.value ? "ui_kit.select.deselect_all" : "ui_kit.select.select_all")}, ${selectedOfTotal.value}`,
+);
+
+function onSelectAll() {
+  if (isAllSelected.value) {
+    // Clear only what is visible; anything filtered out keeps its selection.
+    const visible = selectableValues.value;
+    commit(selectedValues.value.filter((value) => !visible.some((item) => isEqual(item, value))));
+  } else {
+    const merged = [...selectedValues.value];
+
+    selectableValues.value.forEach((value) => {
+      if (!merged.some((current) => isEqual(current, value))) {
+        merged.push(value);
+      }
+    });
+
+    commit(merged);
+  }
+
+  // Always announced: the component can only reach loaded options, so a paged consumer
+  // needs the event to decide whether to fetch and select the rest.
+  emit("selectAll");
+}
+
+const selectAllElement = useTemplateRef<{ $el: HTMLElement }>("selectAllElement");
+
+function onTab(event: KeyboardEvent) {
+  if (!showSelectAll.value || !isShown.value || event.shiftKey) {
+    return;
+  }
+
+  if (focusSelectAll()) {
+    event.preventDefault();
+  }
+}
+
+/**
+ * The Select all checkbox sits outside the listbox, so `aria-activedescendant` cannot reach
+ * it, and the popover is teleported, so native Tab order does not either. Tab from the
+ * trigger hands focus over explicitly.
+ */
+function focusSelectAll(): boolean {
+  const input = selectAllElement.value?.$el?.querySelector<HTMLElement>("input");
+
+  if (!input) {
+    return false;
+  }
+
+  input.focus();
+  return true;
+}
 </script>
 
 <style lang="scss">
@@ -509,6 +625,18 @@ function focusTrigger() {
       &--md {
         @apply h-11 text-base;
       }
+    }
+  }
+
+  &__select-all {
+    @apply flex items-center gap-3 px-3 py-2.5;
+
+    &-text {
+      @apply grow text-sm font-bold text-neutral-950;
+    }
+
+    &-count {
+      @apply shrink-0 text-sm text-neutral-600;
     }
   }
 

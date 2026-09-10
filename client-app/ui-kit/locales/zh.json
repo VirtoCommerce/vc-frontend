@@ -99,7 +99,10 @@
       "items_selected": "已选择 {0} 件商品",
       "results_available": "{0} 个结果可用",
       "no_results_found": "未找到结果",
-      "no_options": "没有可用选项"
+      "no_options": "没有可用选项",
+      "select_all": "全选",
+      "deselect_all": "取消全选",
+      "selected_of_total": "{total} 项中的 {selected} 项"
     },
     "file": {
       "progress": "{percent} 完成",
