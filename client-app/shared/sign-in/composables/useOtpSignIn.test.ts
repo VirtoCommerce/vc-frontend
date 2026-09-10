@@ -1,20 +1,29 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { ref } from "vue";
 
 vi.mock("@/core/composables", () => {
   const externalSignInCallback = vi.fn<() => Promise<void>>();
+  const authErrors = ref<{ code: string; description: string }[]>();
+  const analytics = vi.fn();
 
   return {
-    __mockAuthState: { externalSignInCallback },
-    useAuth: () => ({ externalSignInCallback }),
+    __mockAuthState: { externalSignInCallback, authErrors },
+    __mockAnalyticsState: { analytics },
+    useAuth: () => ({ externalSignInCallback, errors: authErrors }),
+    useAnalytics: () => ({ analytics }),
   };
 });
 
 vi.mock("@/shared/account/composables", () => {
   const signIn = vi.fn<() => Promise<void>>();
+  const signInErrors = ref<{ code: string; description: string }[]>();
+  const resetErrors = vi.fn(() => {
+    signInErrors.value = [];
+  });
 
   return {
-    __mockSignMeInState: { signIn },
-    useSignMeIn: () => ({ signIn }),
+    __mockSignMeInState: { signIn, signInErrors, resetErrors },
+    useSignMeIn: () => ({ signIn, errors: signInErrors, resetErrors }),
   };
 });
 
@@ -32,7 +41,7 @@ vi.mock("@/core/utilities", () => ({
 }));
 
 vi.mock("@/core/api/common", async () => {
-  const { ref } = await import("vue");
+  const { ref: refFn } = await import("vue");
 
   type FetchResultType = {
     data: { value: unknown };
@@ -40,8 +49,8 @@ vi.mock("@/core/api/common", async () => {
   };
 
   const fetchResult: FetchResultType = {
-    data: ref<unknown>(undefined),
-    error: ref<unknown>(undefined),
+    data: refFn<unknown>(undefined),
+    error: refFn<unknown>(undefined),
   };
 
   const useFetch = vi.fn();
@@ -52,12 +61,21 @@ vi.mock("@/core/api/common", async () => {
   };
 });
 
+type IdentityErrorMockType = { code: string; description: string };
+
 type AuthMockStateType = {
   externalSignInCallback: ReturnType<typeof vi.fn>;
+  authErrors: { value: IdentityErrorMockType[] | undefined };
+};
+
+type AnalyticsMockStateType = {
+  analytics: ReturnType<typeof vi.fn>;
 };
 
 type SignMeInMockStateType = {
   signIn: ReturnType<typeof vi.fn>;
+  signInErrors: { value: IdentityErrorMockType[] | undefined };
+  resetErrors: ReturnType<typeof vi.fn>;
 };
 
 type FetchMockStateType = {
@@ -71,6 +89,11 @@ type FetchMockStateType = {
 async function getAuthState(): Promise<AuthMockStateType> {
   const mod = (await import("@/core/composables")) as unknown as { __mockAuthState: AuthMockStateType };
   return mod.__mockAuthState;
+}
+
+async function getAnalyticsState(): Promise<AnalyticsMockStateType> {
+  const mod = (await import("@/core/composables")) as unknown as { __mockAnalyticsState: AnalyticsMockStateType };
+  return mod.__mockAnalyticsState;
 }
 
 async function getSignMeInState(): Promise<SignMeInMockStateType> {
@@ -100,10 +123,16 @@ describe("useOtpSignIn", () => {
     const auth = await getAuthState();
     auth.externalSignInCallback.mockReset();
     auth.externalSignInCallback.mockResolvedValue(undefined);
+    auth.authErrors.value = undefined;
 
     const signMeIn = await getSignMeInState();
     signMeIn.signIn.mockReset();
     signMeIn.signIn.mockResolvedValue(undefined);
+    signMeIn.signInErrors.value = undefined;
+    signMeIn.resetErrors.mockClear();
+
+    const analyticsState = await getAnalyticsState();
+    analyticsState.analytics.mockReset();
 
     const fetchState = await getFetchState();
     fetchState.useFetch.mockReset();
@@ -141,29 +170,42 @@ describe("useOtpSignIn", () => {
     expect(loading.value).toBe(false);
   });
 
-  it("requestCode logs and rethrows when the request fails", async () => {
+  it("requestCode resolves to undefined when the request fails (useFetch never rejects)", async () => {
     const fetchState = await getFetchState();
-    fetchState.useFetch.mockImplementation(() => ({
-      post: () => ({
-        json: () => Promise.reject(new Error("network error")),
-      }),
-    }));
+    fetchState.fetchResult.data.value = null;
+    fetchState.fetchResult.error.value = new Error("network error");
 
-    const { Logger } = await import("@/core/utilities");
     const { useOtpSignIn } = await importComposable();
     const { requestCode, loading } = useOtpSignIn();
 
-    await expect(requestCode("buyer@acme.com")).rejects.toThrow("network error");
-    expect(Logger.error).toHaveBeenCalled();
+    const result = await requestCode("buyer@acme.com");
+
+    expect(result).toBeUndefined();
     expect(loading.value).toBe(false);
   });
 
-  it("verifyCode completes sign-in when the outcome is Success", async () => {
+  it("resets loading if the fetch call itself throws synchronously", async () => {
+    const fetchState = await getFetchState();
+    fetchState.useFetch.mockImplementation(() => ({
+      post: () => ({
+        json: () => Promise.reject(new Error("unexpected failure")),
+      }),
+    }));
+
+    const { useOtpSignIn } = await importComposable();
+    const { requestCode, loading } = useOtpSignIn();
+
+    await expect(requestCode("buyer@acme.com")).rejects.toThrow("unexpected failure");
+    expect(loading.value).toBe(false);
+  });
+
+  it("verifyCode completes sign-in and reports success when the outcome is Success", async () => {
     const fetchState = await getFetchState();
     fetchState.fetchResult.data.value = { outcome: "Success" };
 
     const auth = await getAuthState();
     const signMeIn = await getSignMeInState();
+    const { analytics } = await getAnalyticsState();
 
     const { useOtpSignIn } = await importComposable();
     const { verifyCode } = useOtpSignIn();
@@ -175,6 +217,58 @@ describe("useOtpSignIn", () => {
     expect(result).toEqual({ outcome: "Success" });
     expect(auth.externalSignInCallback).toHaveBeenCalledTimes(1);
     expect(signMeIn.signIn).toHaveBeenCalledTimes(1);
+    expect(analytics).toHaveBeenCalledWith("login", "otp", { success: true });
+  });
+
+  it("verifyCode reports failure and does not redirect for a recoverable sign-in error", async () => {
+    const fetchState = await getFetchState();
+    fetchState.fetchResult.data.value = { outcome: "Success" };
+
+    const auth = await getAuthState();
+    auth.authErrors.value = [{ code: "user_not_found", description: "User not found" }];
+
+    const signMeIn = await getSignMeInState();
+    signMeIn.signInErrors.value = [{ code: "user_not_found", description: "User not found" }];
+
+    const { analytics } = await getAnalyticsState();
+    const { useOtpSignIn } = await importComposable();
+    const { verifyCode } = useOtpSignIn();
+
+    const originalLocation = window.location;
+    Object.defineProperty(window, "location", { configurable: true, value: { href: "" } });
+
+    await verifyCode("buyer@acme.com", "123456");
+
+    expect(analytics).toHaveBeenCalledWith("login", "otp", {
+      success: false,
+      errors: "user_not_found: User not found",
+    });
+    expect(window.location.href).toBe("");
+
+    Object.defineProperty(window, "location", { configurable: true, value: originalLocation });
+  });
+
+  it("verifyCode redirects to /400 when the sign-in is not allowed", async () => {
+    const fetchState = await getFetchState();
+    fetchState.fetchResult.data.value = { outcome: "Success" };
+
+    const auth = await getAuthState();
+    auth.authErrors.value = [{ code: "sign_in_not_allowed", description: "Sign-in not allowed" }];
+
+    const signMeIn = await getSignMeInState();
+    signMeIn.signInErrors.value = [{ code: "sign_in_not_allowed", description: "Sign-in not allowed" }];
+
+    const { useOtpSignIn } = await importComposable();
+    const { verifyCode } = useOtpSignIn();
+
+    const originalLocation = window.location;
+    Object.defineProperty(window, "location", { configurable: true, value: { href: "" } });
+
+    await verifyCode("buyer@acme.com", "123456");
+
+    expect(window.location.href).toBe("/400");
+
+    Object.defineProperty(window, "location", { configurable: true, value: originalLocation });
   });
 
   it("verifyCode does not sign in when the code is rejected", async () => {
@@ -194,19 +288,40 @@ describe("useOtpSignIn", () => {
     expect(signMeIn.signIn).not.toHaveBeenCalled();
   });
 
-  it("verifyCode logs and rethrows when the request fails", async () => {
+  it("verifyCode resolves to undefined when the request fails (useFetch never rejects)", async () => {
     const fetchState = await getFetchState();
-    fetchState.useFetch.mockImplementation(() => ({
-      post: () => ({
-        json: () => Promise.reject(new Error("network error")),
-      }),
-    }));
+    fetchState.fetchResult.data.value = null;
+    fetchState.fetchResult.error.value = new Error("network error");
 
-    const { Logger } = await import("@/core/utilities");
+    const auth = await getAuthState();
+    const signMeIn = await getSignMeInState();
+
     const { useOtpSignIn } = await importComposable();
     const { verifyCode } = useOtpSignIn();
 
-    await expect(verifyCode("buyer@acme.com", "123456")).rejects.toThrow("network error");
+    const result = await verifyCode("buyer@acme.com", "123456");
+
+    expect(result).toBeUndefined();
+    expect(auth.externalSignInCallback).not.toHaveBeenCalled();
+    expect(signMeIn.signIn).not.toHaveBeenCalled();
+  });
+
+  it("verifyCode logs and reports failure when completing sign-in throws", async () => {
+    const fetchState = await getFetchState();
+    fetchState.fetchResult.data.value = { outcome: "Success" };
+
+    const auth = await getAuthState();
+    auth.externalSignInCallback.mockRejectedValue(new Error("token exchange failed"));
+
+    const { Logger } = await import("@/core/utilities");
+    const { analytics } = await getAnalyticsState();
+    const { useOtpSignIn } = await importComposable();
+    const { verifyCode } = useOtpSignIn();
+
+    const result = await verifyCode("buyer@acme.com", "123456");
+
+    expect(result).toEqual({ outcome: "Success" });
     expect(Logger.error).toHaveBeenCalled();
+    expect(analytics).toHaveBeenCalledWith("login", "otp", { success: false, errors: "token exchange failed" });
   });
 });

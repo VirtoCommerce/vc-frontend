@@ -5,6 +5,7 @@ import SignInPage from "./sign-in.vue";
 
 const authenticationTypes = ref<string[]>(["Password"]);
 const fullPath = ref("/sign-in");
+const hasEmailOtpAuthentication = ref(false);
 const getReturnUrl = vi.fn<(url?: string) => string>((url) => `resolved:${url}`);
 
 vi.mock("@/core/composables", () => ({
@@ -17,7 +18,7 @@ vi.mock("@/shared/account", () => ({
 }));
 
 vi.mock("@/shared/sign-in/composables/useEmailOtpAuthentication", () => ({
-  useEmailOtpAuthentication: () => ({ hasEmailOtpAuthentication: computed(() => false) }),
+  useEmailOtpAuthentication: () => ({ hasEmailOtpAuthentication }),
 }));
 
 vi.mock("@/shared/sign-in/composables/useIdentityProviders", () => {
@@ -30,7 +31,6 @@ vi.mock("@/shared/sign-in/composables/useIdentityProviders", () => {
       identityProviders,
       hasIdentityProviders,
       hasPasswordAuthentication,
-      hasOnlyIdentityProviders: computed(() => hasIdentityProviders.value && !hasPasswordAuthentication.value),
     }),
   };
 });
@@ -56,6 +56,7 @@ async function mountPage() {
         VcTypography: { template: "<div><slot /></div>" },
         SignInDivider: { template: "<div class='divider'><slot /></div>" },
         IdentityProviders: { name: "IdentityProviders", props: ["providers", "returnUrl"], template: "<div />" },
+        EmailOtpSignInForm: { name: "EmailOtpSignInForm", template: "<div />" },
       },
     },
   });
@@ -69,6 +70,7 @@ describe("sign-in page", () => {
   beforeEach(() => {
     authenticationTypes.value = ["Password"];
     fullPath.value = "/sign-in";
+    hasEmailOtpAuthentication.value = false;
     getReturnUrl.mockClear();
   });
 
@@ -98,6 +100,17 @@ describe("sign-in page", () => {
     expect(wrapper.findComponent({ name: "SignInForm" }).exists()).toBe(false);
     expect(wrapper.findComponent({ name: "IdentityProviders" }).props("providers")).toEqual(["AzureAD", "GoogleSSO"]);
     expect(wrapper.find(".divider").exists()).toBe(false);
+  });
+
+  it("offers the providers next to the form when password is off but OTP is on", async () => {
+    authenticationTypes.value = ["AzureAD", "GoogleSSO"];
+    hasEmailOtpAuthentication.value = true;
+
+    const wrapper = await mountPage();
+
+    expect(wrapper.findComponent({ name: "EmailOtpSignInForm" }).exists()).toBe(true);
+    expect(wrapper.findComponent({ name: "IdentityProviders" }).props("providers")).toEqual(["AzureAD", "GoogleSSO"]);
+    expect(wrapper.find(".divider").exists()).toBe(true);
   });
 
   it("resolves the page to come back to from the current route", async () => {
