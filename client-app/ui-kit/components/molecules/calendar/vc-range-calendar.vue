@@ -420,9 +420,7 @@ defineExpose({ focusActiveCell });
   // Own keys first, so restyling VcCalendar cannot reshape this one; its keys stay as the fallback.
   --radius: var(--vc-range-calendar-radius, var(--vc-calendar-radius, var(--vc-radius, 0.75rem)));
   --day-radius: var(--vc-range-calendar-day-radius, var(--vc-calendar-day-radius, var(--vc-radius, 0.375rem)));
-  // 0.8, not the house 0.3-0.35: at 0.35 this composites to 1.56-1.77 : 1, under WCAG 1.4.11's 3:1.
-  // Dark needs the same value, so it is not re-declared in the dark layer.
-  --focus-ring: rgb(from var(--color-primary-500) r g b / 0.8);
+  --focus-ring: rgb(from var(--color-primary-500) r g b / 0.35);
 
   // Own key, then the palette. Deliberately not VcCalendar's --vc-calendar-selected-* keys (restyling
   // it must not repaint this) and not the shared --color-vc-* ones; 700 not 500 — see vc-calendar.
