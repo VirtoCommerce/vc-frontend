@@ -35,8 +35,12 @@ Mobile frames sit in a row at y=6099-6131, x ascending by ~500 in this order:
 Frame 4 is the visual proof of the My-organization link conflict recorded below: the dialog is tabs
 only, with no link field, and its footer reads **Save**.
 
-Superseded prototypes, **not** in the current set: `467:4614`, `415:4589`, `477:11114` (the three
-un-chosen variants from VCDZ-894).
+Superseded prototypes, **not** in the current set: `415:4589`, `477:11114` (two of the three
+un-chosen variants from VCDZ-894). `467:4614` is the third, and it is a **special case, not simply
+superseded**: VCST-5707's Acceptance links it as the reference for the multiselect dropdown, so its
+dropdown (`467:4739`) is binding for *behaviour and row structure* while the current frames own the
+*visuals*. Its scope control is stale — radios, not the `VcTabSwitch` tabs of `576:22868` — so read
+only the dropdown out of it. Measured below.
 
 `🩹` marks a local patch rather than a real component: **Recipients list**, **Avatar**,
 **Field / Shareable link**, and the **WishlistCard** rows. Real instances: `VcDialogHeader` /
@@ -117,11 +121,12 @@ There is no new locale key for either: `add_or_update_wishlist_modal.save_button
 - **Nothing selected** (`535:16525`): placeholder `Search customers by name or email`.
 - **Something selected** (`483:9790`): the control reads `30 selected` — a summary, not a chip list.
 
-Two notes. The placeholder promises **email** search, which the picker cannot do today (client-side
-filter over loaded pages, and no search emit from `VcSelect` — see the FE plan §0.4); if search
-lands as name-only the placeholder has to change with it. And it promises search over *customers*
-while a row's second line is an **address** by our own decision — the promise and the row content
-should not disagree, so raise it with the designer.
+Two notes. The placeholder promises **email** search, which the picker cannot do (no search emit
+from `VcSelect`, and our rows are organizations that carry no single email — see the FE plan §0.4).
+**Shipped 2026-09-10 as "Search customers by name"**, which is what the client-side filter over the
+loaded set actually does; if server-side search ever covers more, the placeholder grows with it.
+The same slip is why a row's second line is an **address**: raise both with the designer together,
+since email is wrong for an organization in either place.
 
 ## Stop-sharing confirmation — copy is prescribed
 
@@ -224,11 +229,61 @@ Implementation notes:
   measurement — no `ResizeObserver`, no height math.
 - Give it an opaque background from the dialog surface token and a top divider, or rows will show
   through as they pass under it.
-- Add `padding-bottom` to the list equal to the bar height (42) so the last row cannot hide behind
-  the bar at the end of the scroll.
+- **No bottom padding is needed, contrary to an earlier draft of this note.** The bar is the list's
+  last in-flow child, so once the list's end scrolls into view the bar detaches from the scrollport
+  and settles after the last row — nothing is permanently occluded. A 42px `padding-bottom` would
+  only leave a dead band under the last row in the settled state. Built without it.
 - The footer (Cancel / Share) sits outside the scroll container, so "above the footer" comes for
   free — the bar must not be placed in the footer itself.
 - DOM order is unchanged (bar stays last in the list), so keyboard order stays correct.
+
+## Customers dropdown — `467:4739` (row `467:4745`)
+
+Read on 2026-09-10, and it settles two things the earlier draft left open.
+
+- **Row** 44h, `px-3` (12), `gap-3` (12), radius **6** (the in-input radius rule), `items-center`.
+  The frame's `bg` is `secondary-50` (`#f3f6f9`) — that is `VcMenuItem`'s hover/active state, not a
+  resting fill.
+- **Checkbox** `VcCheckbox` MD (20) at the head of the row — it comes from `VcSelect multiple`, so
+  it appears only in PR-B.
+- **Avatar** 32×32 `rounded-full`, initials `Lato Black` white. The frame fills it `#0e7490`, while
+  the recipients list fills the same avatar `secondary-500` (`#688198`). **Two raw hexes for one
+  element is a designer slip, not two states** — build both from `secondary-500`, and raise it.
+- **Meta**, two lines, `flex-1 min-w-0`: line 1 `Lato Bold` **14** neutral-950, line 2
+  `Lato Regular` **13** neutral-500 (`#737373`). 13 is not on the project scale — use `text-xs`
+  (12/14), per the "every size is a project class" rule.
+- **`Row / Select all`** 44h: checkbox, `Select all`, and a right-aligned **`2 of 5`** counter.
+  That is where the selected count lives — **not** on the field label, which is where the FE plan
+  §3.2 first put it. The row is VCST-5923's to build; the counter arrives with it.
+
+The option row is a two-line row *by design*, so a picker that renders only the organization name
+is under-built even before PR-B.
+
+## The Message field — `483:9820`, copy included
+
+The frame prescribes the copy, and it is not what the module shipped before:
+
+| Slot | Frame | Was |
+| --- | --- | --- |
+| Label | **Message (optional)** | "Message" |
+| Placeholder | **Add a note for the recipients** | "Optional message to include" |
+| Hint | **Recipients get this in their notification.** | — |
+| Counter | **0 / 250** | dynamic `1000 − link − 2` |
+
+`VcTextarea rows=2` → h 66, `p-3`, `border-neutral-300`, radius 8; details are `VcInputDetails`
+(`text-xxs` 10/12 neutral-500, hint grows, counter right, danger-500 at the limit). All four are
+`VcTextarea`'s own props — `label`, `placeholder`, `message`, `counter` + `max-length` — so nothing
+is hand-built.
+
+**Label sizes are the kit's, not the frame's.** Every field label in these frames is 14/18 (`SM`),
+but `VcLabel` inside `VcInput`/`VcTextarea` resolves from the input context: MD input → **MD label
+(16/20)**. Rendering our own `VcLabel size="sm"` instead would drop the `for`/`id` pairing the kit
+generates, so this one is accepted as-is — the same call as the footer button widths. Only labels
+outside an input (Who can access, Shareable link's own label) are ours to size.
+
+**The Customers label carries no asterisk** in any frame, while `wishlist-customer-sharing.vue`
+passes `required` to the picker. Save *is* blocked without a customer, so the marker is true and it
+stays; flagged for the designer rather than silently dropped.
 
 ## Visual spec — tokens, colours, borders, spacing, icons
 
@@ -411,7 +466,9 @@ container and would break the sticky toggle below, `clip` does not.
 - *Show all / Show less bar*: full-width `py-0.5` wrapper, button **centred**
   (mock x=107 = (342−128)/2, and 112 when collapsed→expanded swaps the label).
   Button = `VcButton` **SM ghost primary** with a `chevron-down` append icon: h **38**, `px-3.5`
-  (14), `gap-2`, radius 8, label `text-sm` Bold. Rotate the chevron 180° for `Show less`.
+  (14), `gap-2`, radius 8, label `text-sm` Bold. The append glyph is **20**, which SM does not give
+  by default (SM = 16), so pass `icon-size="1.25rem"`. `Show less` swaps the glyph for `chevron-up`
+  rather than rotating it — the kit has both, and a rotation would need its own transition rule.
   Above it, `h-px bg-neutral-200`.
 
 **4 · Message** — 102h. Outer `gap-1` (4), label→control `gap-0.5` (2).

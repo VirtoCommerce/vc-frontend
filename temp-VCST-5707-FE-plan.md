@@ -238,10 +238,10 @@ Sections, top to bottom, all inside the existing `.wishlist-customer-sharing` ro
 3. **Message** — `VcTextarea`, `counter`, `:max-length="MESSAGE_MAX_LENGTH"` = **250** fixed. Drop the dynamic
    `1000 − link − 2` (`:58-65`): a 250 cap plus any realistic link is far under the BE's 1000. Visible when
    `addedIds.size > 0` (today's `v-if="isNewTarget"` generalised), since it only feeds notifications.
-4. **Notify via** — `VcCheckbox` × 2 (`sendEmail`, `sendPush`), both default `true` (preserves VCST-5724's
-   behaviour when untouched). Reuse `sales_rep.communication.email_label` / `push_label` / `channels_label`
-   (`locales/en.json` "communication" block); the `share_*_label` keys deleted in #2438 do not need resurrecting.
-   Both unchecked → no notifications are sent and the message field is disabled.
+   The frame also prescribes the copy — label *Message (optional)*, placeholder *Add a note for the recipients*,
+   hint *Recipients get this in their notification.* — see the UI spec's "The Message field".
+4. ~~**Notify via**~~ — **not built.** VCST-5724 shipped the decision to remove the channel choice (§0.3); the
+   frames are stale here. Both channels are always requested.
 5. **Retire the single-target rule** (wire step): delete `replacesPreviousTarget` + comment (`:72-73`), the
    `share_replace_hint` branch in `fieldMessage` (`:93`), the key in 13 locales, and the two tests at
    `wishlist-customer-sharing.test.ts:234-250`.
@@ -339,8 +339,18 @@ the overflow. The customers page already pages correctly: `after: String((page -
 - Delete the `> OPTIONS_LIMIT` warning and its two tests (`useSalesRepCustomerOptions.test.ts:118-139`).
 
 **Keyword source.** `VcSelect` has no search emit (§0.4). Until it does: keep client-side filtering over the
-*accumulated* pages with load-more (already removes the 100 cap), and set `keyword` from the select's search text
-once 5923 (or a follow-up) exposes it. Raise with 5923's owner now; it is a one-emit change on their side.
+*accumulated* pages, and set `keyword` from the select's search text once 5923 (or a follow-up) exposes it. Raise
+with 5923's owner now; it is a one-emit change on their side.
+
+**Shipped 2026-09-10, and it is not the load-more shape above.** `VcSelect` has no reach-end emit either, so a
+20-per-scroll page has nothing to trigger it — shipping `PAGE_SIZE = 20` with no trigger would have shown the rep
+*fewer* customers than today's single page of 100. And client-side filtering is only correct over the whole set:
+filtering half the customers silently hides the rest behind a search box that looks like it searched everything.
+So `useSalesRepCustomerOptions` keeps `first: 100` and **advances pages by itself** until
+`loaded.size === totalCount`, an empty page comes back, or `MAX_PAGES = 20` (2000 customers) stops it — the cap
+warns, exactly as the old `> 100` warning did, but three orders of magnitude further out. `loading` stays true for
+the whole run so the field never looks settled mid-set. Scroll-triggered paging becomes worth building only once
+5923 gives the picker a search emit, because then the server does the filtering.
 
 **Select all.** Two candidates: (a) select the loaded rows — cheap, but on an ACL "all" that means "the 20 I have
 scrolled to" is a trap; (b) select every customer matching the keyword — `selectAll()` pages through the id+name
@@ -394,9 +404,9 @@ against a backend that has VCST-5925 and bumps `generate:backend-packages` in th
 | # | Step | Status | Unblocked by |
 | --- | --- | --- | --- |
 | 1 | Spec: `client-app/modules/sales-rep/specs/VCST-5707-lists-sharing/<date>-sharing-design.md` (decisions + verified facts, this plan condensed) | BUILDABLE NOW | — |
-| 2 | Picker composable: paging + accumulation + `knownOptions` + address in the options query + tests (§4). Client-side filter over accumulated pages until a search emit exists | BUILDABLE NOW | — (keyword wiring: VcSelect search emit) |
+| 2 | **Done 2026-09-10:** picker composable — `address { city regionName }` in the options query (module codegen run against vcst-qa; only the two `SalesRepCustomerOptions` lines changed), accumulation into a `Map` that doubles as `knownOptions` (`findOption`), self-advancing paging to the whole set with a 2000 cap, formatted `location` on the option, `OPTIONS_LIMIT` warning retired. 15 tests | DONE | — (keyword wiring: VcSelect search emit) |
 | 3 | Modal: `<KeepAlive>`, `sharedWithIds` prop, contract type widening, modal tests for retention + ref rebind (§1, §2) | BUILDABLE NOW | — |
-| 4 | Customer element rewrite on a **Set draft capped at one** (`multiple` off, payload `{ sharedWithId: [...selected][0] }`, `canSave = size === 1`), recipients list component, message cap 250, Notify-via, per-added-org notify with aggregate toast (§3.2, 3.3, 5). **No Notify-via fieldset** — VCST-5724 removed it (§0.3) | BUILDABLE NOW | — |
+| 4 | **Done 2026-09-10:** customer element on a Set draft capped at one (`canSave = size === 1`, payload still `{ sharedWithId }`), deltas as `addedIds`/`removedIds`, two-line picker options with the avatar (`467:4745`), new `wishlist-sharing-recipients.vue` (header + `Clear all`, rows, sticky `Show all N` / `Show less`) and `wishlist-sharing-avatar.vue`, message capped at **250** with the frame's hint, notify looped over `addedIds` with one aggregate toast, 8 new locale keys ×13 + the frame's Message copy. **No Notify-via fieldset** — VCST-5724 removed it (§0.3). Deferred to PR-B with the plural wire: `multiple` on the picker, Select-all + its `2 of 5` counter (VCST-5923), a pluralised success toast, `sharedWith.imageUrl` on the avatar | DONE | — |
 | 5a | **Done 2026-09-09:** Rename / Share / Remove list menu; `AddOrUpdateWishlistModal` reduced to name + description (create + rename); new `ShareWishlistModal` with the scope selector, link and scope element; Share button on list details; scope-dependent primary label; 13 locales; tests split | DONE | — |
 | 5b | **Done 2026-09-10:** scope tabs — `VcTabSwitch` sm with `icon` from the registry (`hat-glasses` / `briefcase-business` / `user-plus` / `link`), "Who can access" label, 2×2 grid below `md`, one wrapping row above; the two `VcSelect` locale keys retired in all 13 locales | DONE | — |
 | — | **PR-A = steps 1–5.** Wire unchanged: `sharedWithId`, one target. | | |
