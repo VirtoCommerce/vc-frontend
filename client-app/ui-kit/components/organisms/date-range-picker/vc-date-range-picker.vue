@@ -59,7 +59,7 @@
       :id="detailsId"
       :error="computedError"
       :message="computedMessage"
-      :single-line="false"
+      single-line
       :show-empty="showEmptyDetails"
     />
   </fieldset>
@@ -173,7 +173,7 @@ interface IProps {
   disabled?: boolean;
   readonly?: boolean;
   required?: boolean;
-  /** Info/help text for the shared details row. Shown when no validation error is active. */
+  /** Info/help text for the shared details row. Shown when no validation error is active. Rendered as plain text on one line, with the full string in a tooltip. */
   message?: string;
   /** External error flag (e.g. from vee-validate). Overrides internal validation display. */
   error?: boolean;

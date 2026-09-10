@@ -43,6 +43,12 @@ describe("VcDateRangeInput", () => {
     expect(wrapper.findAllComponents({ name: "VcInputDetails" })).toHaveLength(1);
   });
 
+  // showEmptyDetails reserves one line; a message allowed to wrap would render two and shift content by 12px.
+  it("clamps the details message to one line so showEmptyDetails reserves the height it renders", () => {
+    const wrapper = mountInput({ error: true, message: "A validation message long enough to wrap in a narrow field" });
+    expect(wrapper.find(".vc-input-details").classes()).toContain("vc-input-details--single-line");
+  });
+
   it("emits update:valid=true for an empty range on mount", () => {
     const wrapper = mountInput();
     expect(wrapper.emitted("update:valid")?.at(-1)?.[0]).toBe(true);

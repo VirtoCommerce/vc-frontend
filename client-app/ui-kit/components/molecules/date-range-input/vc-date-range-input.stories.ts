@@ -7,6 +7,7 @@ const SIZES = ["xs", "sm", "md"];
 const meta: Meta<typeof VcDateRangeInput> = {
   title: "Components/Molecules/VcDateRangeInput",
   component: VcDateRangeInput,
+  decorators: [() => ({ template: '<div id="popover-host"></div><story />' })],
   parameters: {
     docs: {
       description: {
@@ -190,25 +191,39 @@ export const Clearable: StoryType = {
 };
 
 export const ClearableDisabled: StoryType = {
-  args: { label: "Date range", clearable: true, disabled: true },
+  args: { label: "Date range", clearable: true },
   parameters: {
     docs: {
       description: {
         story:
-          "Matches VcInput's own idiom: the clear button is hidden entirely (not just disabled) when the field is disabled or readonly.",
+          "Matches VcInput's own idiom: the clear button is hidden entirely (not just disabled) when the field is disabled or readonly. Both fields here are `clearable` and differ only by `disabled`, which is pinned per instance rather than driven by the toolbar control — only the left one renders the control.",
       },
       source: {
-        code: `<VcDateRangeInput v-model="value" label="Date range" clearable disabled />`,
+        code: `<VcDateRangeInput v-model="enabled" label="Date range" clearable />
+<VcDateRangeInput v-model="disabled" label="Date range" clearable disabled />`,
       },
     },
   },
   render: (args) => ({
     components: { VcDateRangeInput },
     setup() {
-      const value = ref<VcDateRangeType | undefined>({ start: "2026-10-08", end: "2026-10-14" });
-      return { args, value };
+      const enabled = ref<VcDateRangeType | undefined>({ start: "2026-10-08", end: "2026-10-14" });
+      const disabled = ref<VcDateRangeType | undefined>({ start: "2026-10-08", end: "2026-10-14" });
+      return { args, enabled, disabled };
     },
-    template: `<VcDateRangeInput v-bind="args" v-model="value" />`,
+    template: `
+      <div class="grid max-w-2xl grid-cols-2 gap-6">
+        <div>
+          <VcDateRangeInput v-bind="args" v-model="enabled" :disabled="false" />
+          <div class="text-sm text-neutral-600">clearable</div>
+        </div>
+
+        <div>
+          <VcDateRangeInput v-bind="args" v-model="disabled" disabled />
+          <div class="text-sm text-neutral-600">clearable + disabled</div>
+        </div>
+      </div>
+    `,
   }),
 };
 

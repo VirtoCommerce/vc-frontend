@@ -1060,6 +1060,12 @@ describe("VcDateRangePicker — split layout", () => {
       expect(details[0].props("message")).toBe("ui_kit.date_range_input.invalid_range");
     });
 
+    // showEmptyDetails reserves one line; a message allowed to wrap would render two and shift content by 12px.
+    it("clamps the details message to one line so showEmptyDetails reserves the height it renders", () => {
+      const wrapper = mountSplit({ modelValue: { start: "2026-10-20", end: "2026-10-01" } });
+      expect(wrapper.find(".vc-input-details").classes()).toContain("vc-input-details--single-line");
+    });
+
     it("reports a field's own min message through the shared details row, not the format one", async () => {
       const wrapper = mountSplit({ min: "2026-10-05" });
       const [startInput] = wrapper.findAll("input");
