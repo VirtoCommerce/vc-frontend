@@ -11,7 +11,8 @@
       "amount": "Cantidad",
       "redeemed": "Canjeado",
       "earned": "Ganado",
-      "registration": "Registro"
+      "registration": "Registro",
+      "mission": "Recompensa de misión"
     },
     "list_details": {
       "empty_list": "Tu lista está vacía"
