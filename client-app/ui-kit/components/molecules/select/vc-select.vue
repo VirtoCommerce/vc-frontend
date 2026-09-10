@@ -30,95 +30,40 @@
       @toggle="toggled"
     >
       <template #trigger="{ open, toggle, close }">
-        <div
-          v-if="$slots.selected || $slots.placeholder"
-          :id="triggerId"
+        <VcSelectTrigger
           ref="triggerElement"
-          tabindex="0"
-          role="button"
-          :aria-label="accessibleLabel"
-          :aria-expanded="isShown"
-          aria-haspopup="listbox"
-          :aria-controls="isShown ? listboxId : undefined"
-          :aria-activedescendant="activeDescendantId"
-          :aria-invalid="error || undefined"
-          :aria-required="required || undefined"
-          :aria-disabled="disabled || undefined"
-          :aria-describedby="detailsId"
-          class="vc-select__button"
-          @click="toggle"
-          @keydown.enter="toggle"
-          @keydown.down.prevent="next(-1)"
-        >
-          <div class="vc-select__button-content">
-            <slot v-if="selected" name="selected" v-bind="{ item: selected, error }" />
-
-            <slot v-else-if="!selected && $slots.placeholder" name="placeholder" v-bind="{ error }" />
-          </div>
-
-          <VcIcon class="vc-select__icon" :name="isShown ? 'chevron-up' : 'chevron-down'" size="xs" />
-        </div>
-
-        <VcInput
-          v-else
-          ref="triggerElement"
-          v-model="search"
-          class="vc-select__input"
-          :aria-label="accessibleLabel"
-          :aria="{
-            id: triggerId,
-            role: 'combobox',
-            'aria-expanded': String(isShown),
-            'aria-haspopup': 'listbox',
-            'aria-controls': isShown ? listboxId : null,
-            'aria-activedescendant': activeDescendantId ?? null,
-            'aria-invalid': error ? 'true' : null,
-            'aria-required': required ? 'true' : null,
-            'aria-autocomplete': autocomplete ? 'list' : null,
-            'aria-describedby': detailsId,
-          }"
-          :required="required"
+          :selected-item="selected"
+          :has-selection="selected !== undefined"
+          :search="search"
+          :placeholder-text="placeholderText ?? undefined"
           :size="size"
-          :placeholder="placeholderText"
+          :opened="isShown"
+          :clear-visible="isClearButtonVisible"
+          :autocomplete="autocomplete"
           :disabled="disabled"
-          :readonly="readonly || !autocomplete"
+          :readonly="readonly"
           :error="error"
-          truncate
-          disable-autocomplete
-          @keydown.down.prevent="next(-1)"
-          @focus="open"
-          @click="(autocomplete && open) || (!autocomplete && toggle)"
-          @keydown.esc="close()"
+          :required="required"
+          :accessible-label="accessibleLabel"
+          :trigger-id="triggerId"
+          :listbox-id="listboxId"
+          :details-id="detailsId"
+          :active-descendant-id="activeDescendantId"
+          @toggle="toggle"
+          @open="open"
+          @close="close()"
+          @clear="clear"
+          @navigate-down="next(-1)"
+          @update:search="search = $event"
         >
-          <template #append>
-            <VcButton
-              v-if="isClearButtonVisible"
-              :aria-label="$t('ui_kit.buttons.clear')"
-              :disabled="disabled"
-              type="button"
-              icon="delete-thin"
-              color="neutral"
-              variant="ghost"
-              class="vc-select__clear"
-              :icon-size="size === 'md' ? '0.875rem' : '0.75rem'"
-              @keydown.enter.stop.prevent
-              @keyup.enter.stop.prevent="clear"
-              @click.stop="clear"
-            />
-
-            <VcButton
-              :aria-label="$t('ui_kit.buttons.toggle_dropdown')"
-              :disabled="disabled"
-              :icon="isShown ? 'chevron-up' : 'chevron-down'"
-              type="button"
-              color="neutral"
-              variant="ghost"
-              tabindex="-1"
-              class="vc-select__arrow"
-              @click="handleArrowClick($event, toggle)"
-            />
+          <template v-if="$slots.selected" #selected="scope">
+            <slot name="selected" v-bind="scope" />
           </template>
-        </VcInput>
+
+          <template v-if="$slots.placeholder" #placeholder="scope">
+            <slot name="placeholder" v-bind="scope" />
+          </template>
+        </VcSelectTrigger>
       </template>
 
       <template v-if="enabled" #content="{ close }">
@@ -178,6 +123,7 @@ import { computed, ref, useTemplateRef, provide, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { vcPopoverKey } from "@/ui-kit/components/molecules/popover/vc-popover-context";
 import { useComponentId, useSelect } from "@/ui-kit/composables";
+import VcSelectTrigger from "./vc-select-trigger.vue";
 
 const emit = defineEmits<{
   (event: "update:modelValue", value: VcSelectEmittedType<V, M>): void;
@@ -234,7 +180,7 @@ const componentId = useComponentId("select");
 const triggerId = componentId + "-trigger";
 const detailsId = componentId + "-details";
 const listboxId = componentId + "-listbox";
-const triggerElement = useTemplateRef<HTMLElement | { $el: HTMLElement }>("triggerElement");
+const triggerElement = useTemplateRef<{ focus: () => void }>("triggerElement");
 
 const accessibleLabel = computed(() => props.ariaLabel ?? props.label);
 
@@ -419,21 +365,8 @@ function clear() {
   }
 }
 
-function handleArrowClick(event: MouseEvent, toggle: () => void) {
-  event.stopPropagation();
-  toggle();
-}
-
 function focusTrigger() {
-  const el = triggerElement.value;
-
-  if (!el) {
-    return;
-  }
-
-  const element = "$el" in el ? el.$el : el;
-  const focusable = element.querySelector<HTMLElement>("[tabindex='0'], input") ?? element;
-  focusable.focus();
+  triggerElement.value?.focus();
 }
 
 function handleTab(event: KeyboardEvent, index: number) {
@@ -494,6 +427,24 @@ function handleTab(event: KeyboardEvent, index: number) {
 
     &:focus {
       @apply outline-none ring-[3px] ring-primary-100;
+    }
+  }
+
+  &__button {
+    // Same scale as VcInput so both triggers line up at a given size.
+    // `auto` keeps its height from the content, as before.
+    &--size {
+      &--xs {
+        @apply h-8 text-sm;
+      }
+
+      &--sm {
+        @apply h-[2.375rem] text-base;
+      }
+
+      &--md {
+        @apply h-11 text-base;
+      }
     }
   }
 

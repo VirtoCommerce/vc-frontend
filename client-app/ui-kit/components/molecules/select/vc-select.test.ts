@@ -446,18 +446,26 @@ describe("VcSelect", () => {
       expect(wrapper.get(".probe-selected").text()).toBe("Belgium");
     });
 
-    // DEFECT — чинится на шаге 2: clearable в этой ветке не отрисовывается вовсе.
-    it("ignores the clearable prop", () => {
+    it("honours the clearable prop", async () => {
       const wrapper = createWrapper({ items: ITEMS, modelValue: "Albania", clearable: true }, slots);
+
+      expect(wrapper.find(".vc-select__clear").exists()).toBe(true);
+
+      await wrapper.get(".vc-select__clear").trigger("click");
+
+      expect(wrapper.emitted("update:modelValue")).toEqual([[undefined]]);
+    });
+
+    it("hides the clear button when nothing is selected", () => {
+      const wrapper = createWrapper({ items: ITEMS, clearable: true }, slots);
 
       expect(wrapper.find(".vc-select__clear").exists()).toBe(false);
     });
 
-    // DEFECT — чинится на шаге 2: у кнопки нет ни одного size-модификатора.
-    it("ignores the size prop", () => {
+    it("reflects the size prop as a modifier", () => {
       const wrapper = createWrapper({ items: ITEMS, size: "xs" }, slots);
 
-      expect(wrapper.get(".vc-select__button").classes().join(" ")).not.toContain("--size--");
+      expect(wrapper.get(".vc-select__button").classes()).toContain("vc-select__button--size--xs");
     });
 
     // DEFECT — чинится на шаге 3: ArrowDown обязан открывать список.
