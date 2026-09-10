@@ -627,15 +627,15 @@
           "submit_button": "Iniciar sesión",
           "resend_button": "Reenviar código",
           "use_different_email_link": "Usar otro correo electrónico",
-          "live_resent": "Nuevo código enviado. El anterior ya no funciona.",
+          "live_resent": "Nuevo código enviado.",
           "errors": {
-            "invalid_code": "Ese código no es correcto. Revisa el último correo electrónico; los códigos anteriores dejan de funcionar.",
+            "invalid_code": "Ese código no es correcto. Revisa el último correo electrónico para ver el código actual.",
             "generic": "Algo salió mal. Inténtalo de nuevo"
           }
         },
         "locked": {
           "title": "Demasiados intentos fallidos",
-          "text_countdown": "Por tu seguridad, el inicio de sesión con código está bloqueado temporalmente. Vuelve a intentarlo en {time}.",
+          "text_countdown": "Por tu seguridad, tu cuenta está bloqueada temporalmente. Vuelve a intentarlo en {time}.",
           "text_ready": "Ya puedes volver a intentarlo.",
           "start_over_button": "Intentar de nuevo"
         },

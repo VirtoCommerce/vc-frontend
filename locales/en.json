@@ -627,15 +627,15 @@
           "submit_button": "Sign in",
           "resend_button": "Resend code",
           "use_different_email_link": "Use a different email",
-          "live_resent": "New code sent. The previous one no longer works.",
+          "live_resent": "New code sent.",
           "errors": {
-            "invalid_code": "That code isn't right. Check the latest email — earlier codes stop working.",
+            "invalid_code": "That code isn't right. Check the latest email for the current code.",
             "generic": "Something went wrong. Please try again"
           }
         },
         "locked": {
           "title": "Too many failed attempts",
-          "text_countdown": "For your security, sign-in with a code is temporarily locked. Try again in {time}.",
+          "text_countdown": "For your security, your account is temporarily locked. Try again in {time}.",
           "text_ready": "You can try again now.",
           "start_over_button": "Try again"
         },

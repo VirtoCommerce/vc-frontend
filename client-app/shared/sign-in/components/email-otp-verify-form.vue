@@ -1,5 +1,24 @@
 <template>
-  <div class="email-otp-verify-form">
+  <form class="email-otp-verify-form" @submit.prevent="onSubmit">
+    <VcAlert
+      v-for="error in signInErrors"
+      :key="error.code"
+      class="email-otp-verify-form__error"
+      color="danger"
+      size="sm"
+      variant="outline-dark"
+      icon
+    >
+      <span v-if="isLockoutError(error?.code)">
+        {{ translate(error) }}
+        <ContactAdministratorLink />.
+      </span>
+
+      <span v-else>
+        {{ translate(error) }}
+      </span>
+    </VcAlert>
+
     <p class="email-otp-verify-form__subtitle">
       {{ $t("shared.sign_in.email_otp_sign_in_form.verify.subtitle", { email: props.maskedEmail }) }}
     </p>
@@ -25,7 +44,6 @@
         inputmode="numeric"
         autocomplete="one-time-code"
         pattern="[0-9]*"
-        :maxlength="CODE_LENGTH"
         :aria-invalid="!!errorMessage"
         aria-describedby="email-otp-hint email-otp-message"
         data-test-id="email-otp-code-input"
@@ -40,7 +58,6 @@
           :key="index"
           class="email-otp-verify-form__cell"
           :class="{
-            'email-otp-verify-form__cell--filled': !!code[index - 1],
             'email-otp-verify-form__cell--active': isFocused && index - 1 === code.length && code.length < CODE_LENGTH,
           }"
         >
@@ -60,10 +77,10 @@
     <VcButton
       :loading="loading"
       :disabled="!isCodeComplete"
+      type="submit"
       class="email-otp-verify-form__submit"
       full-width
       data-test-id="email-otp-sign-in-button"
-      @click="onSubmit"
     >
       {{ $t("shared.sign_in.email_otp_sign_in_form.verify.submit_button") }}
     </VcButton>
@@ -84,15 +101,18 @@
       </button>
     </div>
 
-    <p class="email-otp-verify-form__sr-only" aria-live="polite">{{ liveMessage }}</p>
-  </div>
+    <p class="sr-only" aria-live="polite">{{ liveMessage }}</p>
+  </form>
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, ref } from "vue";
+import { computed, nextTick, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { Logger } from "@/core/utilities";
+import { useErrorsTranslator } from "@/core/composables";
+import { isLockoutError, Logger } from "@/core/utilities";
+import { ContactAdministratorLink } from "@/shared/common";
 import { useOtpSignIn } from "@/shared/sign-in/composables/useOtpSignIn";
+import type { IdentityErrorType } from "@/core/api/graphql/types";
 import type { IOtpVerifyResponse } from "@/shared/sign-in/composables/useOtpSignIn";
 
 const emit = defineEmits<{
@@ -109,7 +129,8 @@ const props = defineProps<{
 const CODE_LENGTH = 6;
 
 const { t } = useI18n();
-const { loading, verifyCode, requestCode } = useOtpSignIn();
+const { translate } = useErrorsTranslator<IdentityErrorType>("shared.account.sign_in_form.errors");
+const { loading, verifyCode, requestCode, signInErrors, resetSignInErrors } = useOtpSignIn();
 
 const codeInputRef = ref<HTMLInputElement>();
 const code = ref("");
@@ -118,6 +139,10 @@ const errorMessage = ref("");
 const liveMessage = ref("");
 
 const isCodeComplete = computed(() => code.value.length === CODE_LENGTH && /^\d+$/.test(code.value));
+
+onMounted(() => {
+  codeInputRef.value?.focus();
+});
 
 function onInput() {
   code.value = code.value.replace(/\D/g, "").slice(0, CODE_LENGTH);
@@ -135,6 +160,8 @@ async function onSubmit() {
   if (!isCodeComplete.value || loading.value) {
     return;
   }
+
+  resetSignInErrors();
 
   try {
     const result = await verifyCode(props.email, code.value);
@@ -177,7 +204,14 @@ async function onResend() {
       return;
     }
 
+    if (result?.outcome !== "Sent") {
+      errorMessage.value = t("shared.sign_in.email_otp_sign_in_form.verify.errors.generic");
+      return;
+    }
+
     code.value = "";
+    liveMessage.value = "";
+    await nextTick();
     liveMessage.value = t("shared.sign_in.email_otp_sign_in_form.verify.live_resent");
     await nextTick();
     codeInputRef.value?.focus();
@@ -192,6 +226,10 @@ async function onResend() {
 .email-otp-verify-form {
   @apply text-start;
 
+  &__error {
+    @apply mb-4;
+  }
+
   &__subtitle {
     @apply mb-4 text-base text-neutral-600;
   }
@@ -201,7 +239,11 @@ async function onResend() {
   }
 
   &__field {
-    @apply relative mb-3;
+    @apply relative mb-3 rounded-md;
+
+    &:focus-within {
+      @apply ring-1 ring-accent-700;
+    }
   }
 
   &__input {
@@ -235,10 +277,6 @@ async function onResend() {
 
   &__cell {
     @apply flex h-14 items-center justify-center rounded-md border border-neutral-300 bg-additional-50 text-lg font-semibold tabular-nums;
-
-    &--filled {
-      @apply border-neutral-300;
-    }
   }
 
   &__field--focused &__cell--active {
@@ -279,18 +317,6 @@ async function onResend() {
     &:disabled {
       @apply cursor-not-allowed opacity-50;
     }
-  }
-
-  &__sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    margin: -1px;
-    padding: 0;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    white-space: nowrap;
-    border: 0;
   }
 }
 </style>

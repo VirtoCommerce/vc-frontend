@@ -627,15 +627,15 @@
           "submit_button": "登录",
           "resend_button": "重新发送验证码",
           "use_different_email_link": "使用其他邮箱",
-          "live_resent": "已发送新验证码，之前的验证码已失效。",
+          "live_resent": "已发送新验证码。",
           "errors": {
-            "invalid_code": "验证码不正确。请查看最新邮件——旧验证码已失效。",
+            "invalid_code": "验证码不正确。请查看最新邮件获取当前验证码。",
             "generic": "出了点问题，请重试"
           }
         },
         "locked": {
           "title": "失败尝试次数过多",
-          "text_countdown": "出于安全考虑，验证码登录已被临时锁定。请在 {time} 后重试。",
+          "text_countdown": "出于安全考虑，您的账户已被临时锁定。请在 {time} 后重试。",
           "text_ready": "您现在可以重试了。",
           "start_over_button": "重试"
         },

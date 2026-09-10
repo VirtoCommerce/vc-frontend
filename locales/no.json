@@ -627,15 +627,15 @@
           "submit_button": "Logg inn",
           "resend_button": "Send kode på nytt",
           "use_different_email_link": "Bruk en annen e-post",
-          "live_resent": "Ny kode sendt. Den forrige fungerer ikke lenger.",
+          "live_resent": "Ny kode sendt.",
           "errors": {
-            "invalid_code": "Den koden stemmer ikke. Sjekk den nyeste e-posten — tidligere koder slutter å fungere.",
+            "invalid_code": "Den koden stemmer ikke. Sjekk den nyeste e-posten for gjeldende kode.",
             "generic": "Noe gikk galt. Prøv igjen"
           }
         },
         "locked": {
           "title": "For mange mislykkede forsøk",
-          "text_countdown": "Av sikkerhetshensyn er pålogging med kode midlertidig sperret. Prøv igjen om {time}.",
+          "text_countdown": "Av sikkerhetshensyn er kontoen din midlertidig sperret. Prøv igjen om {time}.",
           "text_ready": "Du kan prøve igjen nå.",
           "start_over_button": "Prøv igjen"
         },

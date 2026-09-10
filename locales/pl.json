@@ -627,15 +627,15 @@
           "submit_button": "Zaloguj się",
           "resend_button": "Wyślij kod ponownie",
           "use_different_email_link": "Użyj innego adresu e-mail",
-          "live_resent": "Wysłano nowy kod. Poprzedni już nie działa.",
+          "live_resent": "Wysłano nowy kod.",
           "errors": {
-            "invalid_code": "Ten kod jest nieprawidłowy. Sprawdź najnowszą wiadomość e-mail — wcześniejsze kody przestają działać.",
+            "invalid_code": "Ten kod jest nieprawidłowy. Sprawdź najnowszą wiadomość e-mail, aby zobaczyć aktualny kod.",
             "generic": "Coś poszło nie tak. Spróbuj ponownie"
           }
         },
         "locked": {
           "title": "Zbyt wiele nieudanych prób",
-          "text_countdown": "Ze względów bezpieczeństwa logowanie kodem jest tymczasowo zablokowane. Spróbuj ponownie za {time}.",
+          "text_countdown": "Ze względów bezpieczeństwa Twoje konto jest tymczasowo zablokowane. Spróbuj ponownie za {time}.",
           "text_ready": "Możesz spróbować ponownie teraz.",
           "start_over_button": "Spróbuj ponownie"
         },

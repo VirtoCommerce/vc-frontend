@@ -627,15 +627,15 @@
           "submit_button": "Kirjaudu sisään",
           "resend_button": "Lähetä koodi uudelleen",
           "use_different_email_link": "Käytä toista sähköpostiosoitetta",
-          "live_resent": "Uusi koodi lähetetty. Edellinen ei enää toimi.",
+          "live_resent": "Uusi koodi lähetetty.",
           "errors": {
-            "invalid_code": "Tämä koodi ei ole oikein. Tarkista uusin sähköposti — aiemmat koodit lakkaavat toimimasta.",
+            "invalid_code": "Tämä koodi ei ole oikein. Tarkista uusin sähköposti nähdäksesi nykyisen koodin.",
             "generic": "Jokin meni pieleen. Yritä uudelleen"
           }
         },
         "locked": {
           "title": "Liian monta epäonnistunutta yritystä",
-          "text_countdown": "Turvallisuutesi vuoksi kirjautuminen koodilla on tilapäisesti lukittu. Yritä uudelleen {time} kuluttua.",
+          "text_countdown": "Turvallisuutesi vuoksi tilisi on tilapäisesti lukittu. Yritä uudelleen {time} kuluttua.",
           "text_ready": "Voit yrittää uudelleen nyt.",
           "start_over_button": "Yritä uudelleen"
         },

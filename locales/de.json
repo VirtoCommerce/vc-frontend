@@ -627,15 +627,15 @@
           "submit_button": "Anmelden",
           "resend_button": "Code erneut senden",
           "use_different_email_link": "Andere E-Mail-Adresse verwenden",
-          "live_resent": "Neuer Code gesendet. Der vorherige funktioniert nicht mehr.",
+          "live_resent": "Neuer Code gesendet.",
           "errors": {
-            "invalid_code": "Dieser Code ist nicht richtig. Prüfen Sie die neueste E-Mail — frühere Codes funktionieren nicht mehr.",
+            "invalid_code": "Dieser Code ist nicht richtig. Prüfen Sie die neueste E-Mail auf den aktuellen Code.",
             "generic": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut"
           }
         },
         "locked": {
           "title": "Zu viele fehlgeschlagene Versuche",
-          "text_countdown": "Aus Sicherheitsgründen ist die Anmeldung per Code vorübergehend gesperrt. Versuchen Sie es erneut in {time}.",
+          "text_countdown": "Aus Sicherheitsgründen ist Ihr Konto vorübergehend gesperrt. Versuchen Sie es erneut in {time}.",
           "text_ready": "Sie können es jetzt erneut versuchen.",
           "start_over_button": "Erneut versuchen"
         },

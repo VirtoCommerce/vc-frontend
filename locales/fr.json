@@ -627,15 +627,15 @@
           "submit_button": "Se connecter",
           "resend_button": "Renvoyer le code",
           "use_different_email_link": "Utiliser une autre adresse e-mail",
-          "live_resent": "Nouveau code envoyé. L'ancien ne fonctionne plus.",
+          "live_resent": "Nouveau code envoyé.",
           "errors": {
-            "invalid_code": "Ce code n'est pas correct. Vérifiez le dernier e-mail — les codes précédents cessent de fonctionner.",
+            "invalid_code": "Ce code n'est pas correct. Vérifiez le dernier e-mail pour connaître le code actuel.",
             "generic": "Une erreur s'est produite. Veuillez réessayer"
           }
         },
         "locked": {
           "title": "Trop de tentatives échouées",
-          "text_countdown": "Pour votre sécurité, la connexion par code est temporairement verrouillée. Réessayez dans {time}.",
+          "text_countdown": "Pour votre sécurité, votre compte est temporairement verrouillé. Réessayez dans {time}.",
           "text_ready": "Vous pouvez réessayer maintenant.",
           "start_over_button": "Réessayer"
         },

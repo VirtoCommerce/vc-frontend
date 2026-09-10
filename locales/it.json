@@ -627,15 +627,15 @@
           "submit_button": "Accedi",
           "resend_button": "Invia di nuovo il codice",
           "use_different_email_link": "Usa un'altra e-mail",
-          "live_resent": "Nuovo codice inviato. Quello precedente non funziona più.",
+          "live_resent": "Nuovo codice inviato.",
           "errors": {
-            "invalid_code": "Questo codice non è corretto. Controlla l'ultima e-mail: i codici precedenti smettono di funzionare.",
+            "invalid_code": "Questo codice non è corretto. Controlla l'ultima e-mail per il codice attuale.",
             "generic": "Qualcosa è andato storto. Riprova"
           }
         },
         "locked": {
           "title": "Troppi tentativi falliti",
-          "text_countdown": "Per la tua sicurezza, l'accesso con codice è temporaneamente bloccato. Riprova tra {time}.",
+          "text_countdown": "Per la tua sicurezza, il tuo account è temporaneamente bloccato. Riprova tra {time}.",
           "text_ready": "Ora puoi riprovare.",
           "start_over_button": "Riprova"
         },

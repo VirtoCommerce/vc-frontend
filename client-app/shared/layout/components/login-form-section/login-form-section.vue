@@ -8,7 +8,7 @@
 
         <EmailOtpSignInForm
           v-if="showEmailOtpForm"
-          has-password-authentication
+          :has-password-authentication="hasPasswordAuthentication"
           @switch-to-password="switchToPassword"
           @step-changed="otpStep = $event"
         />
@@ -20,6 +20,7 @@
             v-if="hasEmailOtpAuthentication"
             type="button"
             class="mt-4 block text-sm font-bold text-[--link-color] hover:text-[--link-hover-color]"
+            data-test-id="email-otp-switch-to-otp-link"
             @click="switchToOtp"
           >
             {{ $t("shared.sign_in.email_otp_sign_in_form.switch_to_otp_link") }}
@@ -61,39 +62,28 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useThemeContext } from "@/core/composables";
 import { SignInForm, useUser } from "@/shared/account";
 import { useEmailOtpAuthentication } from "@/shared/sign-in/composables/useEmailOtpAuthentication";
+import { useIdentityProviders } from "@/shared/sign-in/composables/useIdentityProviders";
+import { useOtpSignInMode } from "@/shared/sign-in/composables/useOtpSignInMode";
 import { getImageUrl } from "@/ui-kit/utilities";
 import EmailOtpSignInForm from "@/shared/sign-in/components/email-otp-sign-in-form.vue";
 
 const { t } = useI18n();
 const { themeContext } = useThemeContext();
 const { isAuthenticated } = useUser();
+const { hasPasswordAuthentication } = useIdentityProviders();
 const { hasEmailOtpAuthentication } = useEmailOtpAuthentication();
+const { showEmailOtpForm, otpStep, switchToOtp, switchToPassword } = useOtpSignInMode(hasEmailOtpAuthentication);
 
 const bgImage = computed(() =>
   themeContext.value.settings.homepage_background_image
     ? getImageUrl(themeContext.value.settings.homepage_background_image)
     : "none",
 );
-
-const signInMode = ref<"password" | "otp">(hasEmailOtpAuthentication.value ? "otp" : "password");
-const showEmailOtpForm = computed(() => hasEmailOtpAuthentication.value && signInMode.value === "otp");
-
-const otpStep = ref<"request" | "verify" | "locked" | "generic">("request");
-
-function switchToOtp() {
-  otpStep.value = "request";
-  signInMode.value = "otp";
-}
-
-function switchToPassword() {
-  otpStep.value = "request";
-  signInMode.value = "password";
-}
 
 const sectionTitle = computed(() =>
   showEmailOtpForm.value && otpStep.value === "verify"
