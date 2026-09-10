@@ -642,24 +642,6 @@
         "message": "Do you really want to remove the organization's current logo? The removal process is irreversible."
       }
     },
-    "compare": {
-      "add_to_compare": {
-        "tooltips": {
-          "add": "Add to Compare",
-          "remove": "Remove from Compare"
-        }
-      },
-      "notifications": {
-        "limit_reached": "Only {productsLimit} products can be compared",
-        "added_html": "Product <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> is added to compare list <span class=\"hidden lg:inline\">(items left - {itemsLeft})</span>",
-        "removed_html": "Product <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> was removed from the compare list",
-        "compare_button": "Compare"
-      },
-      "clear_list_modal": {
-        "title": "Confirm clear",
-        "message": "Do you confirm the removal of all products from the compare list?"
-      }
-    },
     "cart": {
       "add_to_cart": {
         "errors": {
@@ -1059,6 +1041,49 @@
       "price_high_to_low": "Price, high to low",
       "date_new_to_old": "Date, new to old",
       "date_old_to_new": "Date, old to new"
+    },
+    "compare": {
+      "add_to_compare": {
+        "tooltips": {
+          "add": "Add to Compare",
+          "remove": "Remove from Compare"
+        }
+      },
+      "notifications": {
+        "limit_reached": "Only {productsLimit} products from the same category can be compared",
+        "added_html": "Product <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> is added to compare list <span class=\"hidden lg:inline\">(items left - {itemsLeft})</span>",
+        "removed_html": "Product <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> was removed from the compare list",
+        "compare_button": "Compare",
+        "added_to_cart_html": "Added <strong>{productName}</strong> to cart",
+        "fetch_failed": "Couldn't load some compared products. Please try again."
+      },
+      "table": {
+        "tabs": {
+          "all": "All",
+          "differences": "Differences"
+        },
+        "uncategorized": "Uncategorized",
+        "unresolved_category": "Unknown category",
+        "differ_rows": "Differ: {count} of {total} rows",
+        "clear_category": "Clear category",
+        "remove_product": "Remove from compare",
+        "add_to_cart": "Add to cart",
+        "fields": {
+          "price_per_unit": "Price per unit",
+          "price_per_unit_tooltip": "Price, excl. VAT, per unit.",
+          "customer_rating": "Customer rating",
+          "availability": "Availability",
+          "sku": "@:common.labels.sku",
+          "min_order_qty": "Min. order qty",
+          "min_order_qty_tooltip": "MOQ — minimum number of units per order."
+        },
+        "pin": {
+          "pin_title": "Pin to top",
+          "unpin_title": "Unpin",
+          "pin_label": "Pin “{label}”",
+          "unpin_label": "Unpin “{label}”"
+        }
+      }
     }
   },
   "pages": {
@@ -1637,33 +1662,6 @@
     "loyalty_catalog": {
       "title": "Loyalty catalog"
     },
-    "compare": {
-      "meta": {
-        "title": "Compare products",
-        "keywords": "test, compare, products, page, keywords",
-        "description": "Test compare products page description"
-      },
-      "empty_list": {
-        "title": "Compare products",
-        "message": "Your product compare list is empty",
-        "button_text": "Continue browsing here",
-        "img_alt": "emptyCart",
-        "img_alt_mobile": "emptyCartMobile"
-      },
-      "header_block": {
-        "title": "Compare products",
-        "counter_message": "{productsNumber} items out of {productsLimit} added",
-        "differences_checkbox_label": "Show differences only",
-        "clear_button": "Clear list"
-      },
-      "main_block": {
-        "price_label": "@:common.labels.product_price"
-      },
-      "links": {
-        "home": "@:common.links.home",
-        "compare_products": "Compare products"
-      }
-    },
     "branch": {
       "address": "Address",
       "phone": "Phone: ",
@@ -1692,6 +1690,34 @@
     },
     "brand": {
       "products_title": "Products"
+    },
+    "compare": {
+      "title": "Compare products",
+      "meta": {
+        "keywords": "compare products, product comparison, side by side comparison",
+        "description": "Compare products side by side to find the best option for your needs."
+      },
+      "added_count": "{count} of {total} added",
+      "added_count_in_category": "{count} of {total} added in {category}",
+      "actions": {
+        "clear_all": "Clear all"
+      },
+      "clear_all_modal": {
+        "title": "Clear all",
+        "message": "No products will be removed from comparison. | All 1 product will be removed from comparison. | All {n} products will be removed from comparison. | All {n} products will be removed from comparison."
+      },
+      "clear_category_modal": {
+        "title": "Clear category",
+        "message": "No products in {category} will be removed from comparison. | All 1 product in {category} will be removed from comparison. | All {n} products in {category} will be removed from comparison. | All {n} products in {category} will be removed from comparison."
+      },
+      "empty": {
+        "title": "Your compare list is empty",
+        "description": "Add products from the catalog to compare their characteristics side by side. You can compare up to {limit} products per category.",
+        "restore_button": "Restore products",
+        "add_button": "Add products"
+      },
+      "error": "Failed to load data",
+      "retry": "Try again"
     }
   },
   "identity_error": {

@@ -44,6 +44,9 @@ function getBackendProxy(): Record<string, ProxyOptions> {
     "^/graphql": getProxy(process.env.APP_BACKEND_URL, { ws: true }),
     "^/(connect|revoke)/token": getProxy(process.env.APP_BACKEND_URL),
     "^/cms-content": getProxy(process.env.APP_BACKEND_URL),
+    // Federated plugin artifacts, so the platform discovery path is exercisable locally. Scoped to
+    // the plugin folder rather than all of /modules, which serves every module's static files.
+    "^/modules/.*/plugins/vc-frontend/": getProxy(process.env.APP_BACKEND_URL),
     "^/externalsignin": getProxy(process.env.APP_BACKEND_URL),
     "^/signin-oidc": getProxy(process.env.APP_BACKEND_URL),
     "^/signin-google": getProxy(process.env.APP_BACKEND_URL),
