@@ -1632,6 +1632,7 @@ interface IProps$b {
     minWidth?: string;
     tag?: string;
     iconSize?: string;
+    iconVariant?: IconVariantType;
     square?: boolean;
     tabindex?: string | number;
 }
