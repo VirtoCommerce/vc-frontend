@@ -6,6 +6,7 @@ const SIZES = ["xxs", "xs", "sm", "md", "lg"];
 const COLORS = ["primary", "secondary", "success", "info", "neutral", "warning", "danger", "accent"];
 const VARIANTS = ["solid", "outline", "surface", "ghost", "soft", "tonal"];
 const TYPES = ["button", "reset", "submit"];
+const ICON_VARIANTS = ["outline", "solid"];
 
 export default {
   title: "Components/Molecules/VcButton",
@@ -50,6 +51,18 @@ export default {
       table: {
         type: {
           summary: VARIANTS.join(" | "),
+        },
+      },
+    },
+    iconVariant: {
+      control: "inline-radio",
+      options: ICON_VARIANTS,
+      description:
+        "Icon set for `icon`, `prependIcon` and `appendIcon`. Left unset, the icon resolves its own set (outline first, solid fallback).",
+      type: { name: "string", required: false },
+      table: {
+        type: {
+          summary: ICON_VARIANTS.join(" | "),
         },
       },
     },
@@ -112,7 +125,7 @@ export const FullWidth: StoryType = {
 
 export const PrependIcon: StoryType = {
   args: {
-    prependIcon: "save-v2",
+    prependIcon: "save",
   },
 };
 
@@ -122,7 +135,7 @@ export const SlotPrependIcon: StoryType = {
     components: { VcButton, VcIcon },
     setup: () => ({ args }),
     template: `<VcButton v-bind="args">
-      <VcIcon name="save-v2" />
+      <VcIcon name="save" />
       <span>Button text</span>
     </VcButton>`,
   }),
@@ -130,7 +143,7 @@ export const SlotPrependIcon: StoryType = {
 
 export const AppendIcon: StoryType = {
   args: {
-    appendIcon: "save-v2",
+    appendIcon: "save",
   },
 };
 
@@ -141,14 +154,14 @@ export const SlotAppendIcon: StoryType = {
     setup: () => ({ args }),
     template: `<VcButton v-bind="args">
       <span>Button text</span>
-      <VcIcon name="save-v2" />
+      <VcIcon name="save" />
     </VcButton>`,
   }),
 };
 
 export const Icon: StoryType = {
   args: {
-    icon: "save-v2",
+    icon: "save",
     ariaLabel: "Save", // Add aria-label for accessibility
   },
   parameters: {
@@ -167,10 +180,26 @@ export const Icon: StoryType = {
   },
 };
 
+// bookmark is one of the few names whose outline and solid assets are the same glyph,
+// so the switch reads as a weight change rather than a different picture
+export const IconVariant: StoryType = {
+  args: {
+    prependIcon: "bookmark",
+    iconVariant: "solid",
+  },
+};
+
+export const PrependIconSmall: StoryType = {
+  args: {
+    prependIcon: "save",
+    iconSize: "0.75rem",
+  },
+};
+
 export const IconSize: StoryType = {
   args: {
     iconSize: "1.75rem",
-    icon: "save-v2",
+    icon: "save",
     ariaLabel: "Save", // Add aria-label for accessibility
   },
   parameters: {
@@ -197,7 +226,7 @@ export const SlotIcon: StoryType = {
     components: { VcButton, VcIcon },
     setup: () => ({ args }),
     template: `<VcButton v-bind="args">
-      <VcIcon name="save-v2" />
+      <VcIcon name="save" />
     </VcButton>`,
   }),
   parameters: {
@@ -271,7 +300,7 @@ export const Loading: StoryType = {
 export const Disabled: StoryType = {
   args: {
     disabled: true,
-    appendIcon: "save-v2",
+    appendIcon: "save",
   },
   parameters: {
     a11y: {
@@ -303,7 +332,7 @@ export const MinWidth: StoryType = {
 export const Truncate: StoryType = {
   args: {
     truncate: true,
-    prependIcon: "save-v2",
+    prependIcon: "save",
   },
   render: (args) => ({
     components: { VcButton },
@@ -325,6 +354,28 @@ export const AllVariants: StoryType = {
         <VcButton v-bind="args" :variant="variant">
           {{ variant }}
         </VcButton>
+      </div>
+    </div>
+    `,
+  }),
+};
+
+export const AllSizes: StoryType = {
+  args: {
+    color: "primary",
+    variant: "solid",
+  },
+  render: (args) => ({
+    components: { VcButton },
+    setup: () => ({ sizes: SIZES, args }),
+    template: `<div class="space-y-4">
+      <div class="flex flex-wrap gap-2 items-center" v-for="size in sizes">
+        <b class="w-10 text-xs">{{ size }}</b>
+
+        <VcButton v-bind="args" :size="size">Add to cart</VcButton>
+        <VcButton v-bind="args" :size="size" prepend-icon="save">Add to cart</VcButton>
+        <VcButton v-bind="args" :size="size" append-icon="chevron-right">Next</VcButton>
+        <VcButton v-bind="args" :size="size" icon="save" aria-label="Save" />
       </div>
     </div>
     `,
