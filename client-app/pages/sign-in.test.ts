@@ -16,6 +16,10 @@ vi.mock("@/shared/account", () => ({
   SignInForm: { name: "SignInForm", template: "<form />" },
 }));
 
+vi.mock("@/shared/sign-in/composables/useEmailOtpAuthentication", () => ({
+  useEmailOtpAuthentication: () => ({ hasEmailOtpAuthentication: computed(() => false) }),
+}));
+
 vi.mock("@/shared/sign-in/composables/useIdentityProviders", () => {
   const identityProviders = computed(() => authenticationTypes.value.filter((type) => type !== "Password"));
   const hasPasswordAuthentication = computed(() => authenticationTypes.value.includes("Password"));
