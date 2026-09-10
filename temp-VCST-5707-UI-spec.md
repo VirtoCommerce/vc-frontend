@@ -86,6 +86,9 @@ Four things to get right, none of them guessable from the geometry:
   today's `delete-2`; `users` matches the screenshot's silhouette, and the pencil replaces `edit`
   (pencil-in-square) because the screenshot draws no square.
 
+Built with the dropdown's `close()` called before each emit — previously the menu stayed open under the
+modal's scrim (pre-existing, visible on dev).
+
 Ignore two artefacts: the frame is 190 wide while each `VcMenuItem` instance inside it is left at
 its default **240** and is clipped, so neither number is a spec — the menu is content-sized; and
 `535:16151`'s cog is `hidden="true"` on the "Shared with me" row, which is just today's
@@ -179,6 +182,9 @@ Message being Customer-only means it belongs in the scope element, not in the sh
 which matches where `wishlist-customer-sharing.vue` already puts it.
 
 ## Dialog shell
+
+Built 2026-09-10 as `<VcModal max-width="46rem">` (736px; the kit's default is 35.25rem = 564px, which wrapped
+the four tabs onto two rows). Whole-rem widths are the repo convention, hence 46 rather than 45.8125.
 
 | | Desktop | Mobile |
 | --- | --- | --- |
@@ -367,6 +373,12 @@ Shareable link: all three are 8.)*
   - hover: label + icon accent-500 · disabled: neutral-400 · focus: 2px ring primary-500 @30%
 - Desktop: one row, content-sized — 79 / 136 / 151 / 139 wide, `gap-4` (16), row 30h.
 - Mobile: `flex flex-wrap gap-4`, every tab **163** wide → 2×2, field 56 → **102** tall.
+- **Order** is Private → My organization → Specific customers → Anyone with link. The registry appends
+  contributed scopes after core's, which would have put Specific customers last, so each registration now
+  declares `order` (10 / 20 / 30 / 40); a contribution without one lands at the end.
+- Tab labels are the design's: "My organization" and "Anyone with link" replaced "Organization" and
+  "Anyone (readonly)" in `sharing_scope.*`, "Specific customers" replaced "Customer" in the sales-rep
+  `scope_label` — 26 locale files, values only.
 
 **2 · Customers** — `Field / Customers`, 64h. Outer `gap-1` (4), inner label→control `gap-0.5` (2).
 Control = `VcInput` MD: h **44**, `border-neutral-400`, radius 8, `bg-additional-50`, text inset
