@@ -63,6 +63,44 @@
    ```
 3. Your registered components will then be automatically rendered at the corresponding extension points in the core app.
 
+### 3. Contributing data instead of markup
+
+Some extension points are host chrome: the host wants to keep its own markup and take only a value
+from you (the mobile menu's "My customers" link takes a count badge). Register a `use()` instead of
+a component:
+
+```ts
+// The id belongs to the plugin, so the plugin owns the constant — as `sales-rep` does with
+// MY_CUSTOMERS_NAV_LINK_ID, which it also reuses for its `accountMenu` entry and its menu link.
+// `EXTENSION_NAMES` carries the HOST's own ids; asking it for a name it does not declare is a
+// compile error, not an `undefined` you find out about when the badge never appears.
+const { registerContribution } = useExtensionRegistry();
+registerContribution("mobileMenu", MY_COUNT_ID, { use: useMyCount });
+```
+
+The rules, because they are not obvious:
+
+- **Only categories that declare a contributed shape accept one.** A category declares it as the
+  second parameter of `ExtensionEntryType<Props, Contributed, Condition>` in
+  `extensionRegistryMap.ts`, and it may only do so once its host consumer renders a **scoped**
+  fallback slot (`<template #default="{ extensionProps }">`). Without that slot nothing reads the
+  contribution — which is why `registerContribution()` refuses every other category.
+- **`use()` runs in the extension point's setup**, inside a scope stopped when the entry unmounts
+  or its name changes, so it may start a query. Keep it synchronous, and do not let it throw:
+  wrap global state in `createSharedComposable` and catch inside, or a failed first call leaves
+  every later surface reading `undefined`.
+- **A late registration still gets a component context.** If the entry lands after the point
+  mounted (an asynchronously loaded plugin), the invalidated computed mounts a fresh
+  `ExtensionContribution`, so `use()` runs in a real setup: `inject()` resolves, and an
+  injection-dependent composable — which is every Apollo one, i.e. the whole reason `use()` is a
+  function — works there. `extension-point-late-registration.test.ts` pins it.
+- **Replacing an entry means `unregister()` then register — and both may land in the same tick.**
+  That works: the extension point keys the contribution on the FUNCTION it registered, not on the
+  name, so the old one is disposed and the new one starts. Keying on the name alone used to leave
+  the old contribution running with its query alive while the replacement was never called.
+- **`$canRenderExtensionPoint` is false for a contribution** (it answers "has a component"). Never
+  gate a decorate-capable point on it.
+
 > **Recommendation**
 >
 > For consistent extension identifiers and to avoid typos, import the `EXTENSION_NAMES` constant from `@/shared/common/constants/extensionPointsNames.ts` and use its properties:
@@ -75,4 +113,6 @@
 
 > [!TIP]
 >
-> **Dev tip:** In dev mode the registry is available as `window.VCExtensionRegistry`.
+> **Dev tip:** In dev mode the registry is available as `window.VCExtensionRegistry`, and the
+> ownership of Apollo type policies registered through `registerCacheTypePolicies` as
+> `window.modulesCacheDebug`.
