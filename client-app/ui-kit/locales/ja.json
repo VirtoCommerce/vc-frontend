@@ -99,7 +99,10 @@
       "items_selected": "{0} 個のアイテムが選択されました",
       "results_available": "{0} 件の結果が利用可能",
       "no_results_found": "結果が見つかりません",
-      "no_options": "選択肢がありません"
+      "no_options": "選択肢がありません",
+      "select_all": "すべて選択",
+      "deselect_all": "すべて選択解除",
+      "selected_of_total": "{total} 件中 {selected} 件"
     },
     "file": {
       "progress": "{percent} 完了",

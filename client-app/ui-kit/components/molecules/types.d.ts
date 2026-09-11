@@ -34,6 +34,7 @@ declare module "vue" {
     VcLineItem: typeof Components.VcLineItem;
     VcLineItems: typeof Components.VcLineItems;
     VcList: typeof Components.VcList;
+    VcListbox: typeof Components.VcListbox;
     VcListItem: typeof Components.VcListItem;
     VcLoaderOverlay: typeof Components.VcLoaderOverlay;
     VcLoaderWithText: typeof Components.VcLoaderWithText;

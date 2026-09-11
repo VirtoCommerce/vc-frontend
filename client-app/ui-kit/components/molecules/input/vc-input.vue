@@ -5,6 +5,7 @@
       `vc-input--size--${size}`,
       {
         'vc-input--readonly': readonly,
+        'vc-input--pointer-focus': pointerFocus,
         'vc-input--disabled': disabled,
         'vc-input--error': error,
         'vc-input--no-border': noBorder,
@@ -102,7 +103,7 @@
 <script setup lang="ts" generic="T extends string | number | null">
 import { vMaska } from "maska/vue";
 import { provide, computed, ref, useTemplateRef } from "vue";
-import { useAttrsOnly, useComponentId, useListeners } from "@/ui-kit/composables";
+import { useAttrsOnly, useComponentId, useFocusModality, useListeners } from "@/ui-kit/composables";
 import type { MaskOptions } from "maska";
 
 export interface IProps {
@@ -174,6 +175,8 @@ const LIMITED_TYPES: IProps["type"][] = ["number", "date"];
 
 const componentId = useComponentId("input");
 const detailsId = componentId + "-details";
+// Only read by the read-only ring rule below; see useFocusModality for why it is document-wide.
+const { isPointerFocus: pointerFocus } = useFocusModality();
 const listeners = useListeners();
 const attrs = useAttrsOnly();
 
@@ -273,6 +276,7 @@ provide<VcInputContextType>("inputContext", {
   $sizeMd: "";
 
   $readonly: "";
+  $pointerFocus: "";
   $disabled: "";
   $error: "";
   $noBorder: "";
@@ -302,6 +306,10 @@ provide<VcInputContextType>("inputContext", {
 
   &--readonly {
     $readonly: &;
+  }
+
+  &--pointer-focus {
+    $pointerFocus: &;
   }
 
   &--disabled {
@@ -343,6 +351,11 @@ provide<VcInputContextType>("inputContext", {
 
     &:has(input:focus-visible) {
       @include focus-ring;
+    }
+
+    // A read-only field takes no typing, so a mouse click on it is not a reason to ring.
+    #{$readonly}#{$pointerFocus} & {
+      @apply outline-none;
     }
 
     #{$error} & {

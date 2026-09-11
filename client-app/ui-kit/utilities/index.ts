@@ -8,4 +8,5 @@ export * from "./icons";
 export * from "./images";
 export * from "./price";
 export * from "./string-array";
+export * from "./text-diff";
 export * from "./variant-compat";

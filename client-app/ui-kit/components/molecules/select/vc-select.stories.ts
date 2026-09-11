@@ -12,9 +12,39 @@ const OBJECT_ITEMS = [
   { id: 4, name: "India" },
 ];
 
-const meta: Meta<typeof VcSelect> = {
+// Generic SFCs with several type parameters break `Meta<typeof Component>` inference,
+// so the args are described explicitly — same approach as vc-table.stories.ts.
+interface IVcSelectStoryArgs {
+  items: unknown[];
+  modelValue?: unknown;
+  label?: string;
+  ariaLabel?: string;
+  placeholder?: string;
+  message?: string;
+  size?: "xs" | "sm" | "md" | "auto";
+  itemSize?: "xs" | "sm" | "md" | "lg";
+  textField?: string;
+  valueField?: string;
+  required?: boolean;
+  disabled?: boolean;
+  readonly?: boolean;
+  error?: boolean;
+  autocomplete?: boolean;
+  multiple?: boolean;
+  selectAll?: boolean;
+  total?: number;
+  loading?: boolean;
+  hasNextPage?: boolean;
+  serverFilter?: boolean;
+  clearable?: boolean;
+  showEmptyDetails?: boolean;
+  singleLineMessage?: boolean;
+}
+
+const meta: Meta<IVcSelectStoryArgs> = {
   title: "Components/Molecules/VcSelect",
-  component: VcSelect,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  component: VcSelect as any,
   argTypes: {
     size: {
       control: "radio",
@@ -550,6 +580,101 @@ export const MultipleSelectAutocompleteClearable: StoryType = {
 // Group 5: Object items
 // =============================================================================
 
+export const SelectAll: StoryType = {
+  args: {
+    items: ITEMS,
+    label: "Label",
+    placeholder: "Select multiple items",
+    multiple: true,
+    selectAll: true,
+    modelValue: [],
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+<VcSelect v-model="selected" :items="items" multiple select-all label="Label" />
+        `,
+      },
+      description: {
+        story:
+          "`select-all` adds a row above the options with a real checkbox, so partial selection " +
+          'can report `aria-checked="mixed"`. The counter shows the selection against the whole ' +
+          "set — pass `total` when the list is paged and `items` holds one page. With a filter " +
+          "active, Select all applies to the filtered subset and leaves the rest of the selection alone.",
+      },
+    },
+  },
+};
+
+export const SelectAllWithTotal: StoryType = {
+  args: {
+    items: ITEMS,
+    label: "Buyer name",
+    placeholder: "Select buyers",
+    multiple: true,
+    selectAll: true,
+    total: 3000,
+    modelValue: ["Albania"],
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: "Paged list: only one page is loaded, so `total` carries the real size for the counter.",
+      },
+    },
+  },
+};
+
+export const Loading: StoryType = {
+  args: { items: [], label: "Country", loading: true },
+  parameters: {
+    docs: {
+      description: {
+        story: "With nothing loaded yet a spinner takes the place of the empty row.",
+      },
+    },
+  },
+};
+
+export const InfiniteScroll: StoryType = {
+  args: {
+    items: ITEMS,
+    label: "Buyer name",
+    placeholder: "Select buyers",
+    multiple: true,
+    hasNextPage: true,
+    total: 3000,
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+<VcSelect
+  v-model="selected"
+  :items="loadedItems"
+  :loading="loading"
+  :has-next-page="hasNextPage"
+  :total="totalCount"
+  multiple
+  server-filter
+  @load-more="loadNextPage"
+  @search="search"
+/>
+        `,
+      },
+      description: {
+        story:
+          "`items` stays consumer-owned: the component renders a sentinel at the bottom of the " +
+          "list and emits `load-more` when it comes into view. Pair it with `server-filter` so the " +
+          "typed text is forwarded through `@search` (debounced 300ms) instead of being applied to " +
+          "the one page that happens to be loaded — otherwise the search would report no results " +
+          "for anything below the fold.",
+      },
+    },
+  },
+};
+
 export const ObjectItems: StoryType = {
   args: {
     items: OBJECT_ITEMS,
@@ -703,6 +828,45 @@ export const EmptyItems: StoryType = {
         code: `
 <VcSelect v-model="selected" :items="[]" label="Country" placeholder="No options available" />
         `,
+      },
+    },
+  },
+};
+
+export const CustomClearable: StoryType = {
+  args: {
+    items: ITEMS,
+    modelValue: "Belgium",
+    clearable: true,
+    ariaLabel: "Select an item",
+  },
+  render: (args) => ({
+    setup: () => ({ args }),
+    template: `<VcSelect v-bind="args" v-model="args.modelValue" class="mb-32">
+    <template #placeholder>
+      <div class="flex items-center gap-3 p-3 text-sm">
+        <div class="w-8 h-8 rounded-full bg-neutral-200"></div>
+        Select an item
+      </div>
+    </template>
+
+    <template #selected="{ item }">
+      <div class="flex items-center gap-3 p-3 text-sm">
+        <div class="flex items-center justify-center w-8 h-8 rounded-full text-additional-50 bg-danger">{{ item[0] }}</div>
+
+        {{ item }}
+      </div>
+    </template>
+  </VcSelect>`,
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "The configuration that decides the trigger's DOM: the clear control is a `VcButton`, " +
+          "and a button may not nest inside another, so the trigger is a real `<button>` sibling " +
+          "that stretches over the whole box with a pseudo-element. Clicking the chevron or the " +
+          "empty space opens the list; clicking the cross clears without opening it.",
       },
     },
   },
