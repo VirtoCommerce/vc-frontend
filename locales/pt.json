@@ -608,6 +608,46 @@
         "tap_to_copy": "Toque para copiar"
       }
     },
+    "sign_in": {
+      "email_otp_sign_in_form": {
+        "switch_to_otp_link": "Entrar com um código de uso único",
+        "request": {
+          "subtitle": "Enviaremos um código por e-mail. Nenhuma senha necessária.",
+          "email_label": "Email",
+          "continue_button": "Continuar",
+          "switch_to_password_link": "Entrar com uma senha",
+          "errors": {
+            "generic": "Algo deu errado. Tente novamente"
+          }
+        },
+        "verify": {
+          "header": "Verifique seu e-mail",
+          "subtitle": "Enviamos um código para {email}.",
+          "code_label": "Código",
+          "paste_hint": "Colar é compatível. No celular, o código é exibido acima do teclado.",
+          "submit_button": "Entrar",
+          "resend_button": "Reenviar código",
+          "use_different_email_link": "Usar outro e-mail",
+          "live_resent": "Novo código enviado.",
+          "errors": {
+            "invalid_code": "Esse código não está correto. Verifique o e-mail mais recente para ver o código atual.",
+            "generic": "Algo deu errado. Tente novamente"
+          }
+        },
+        "locked": {
+          "title": "Muitas tentativas malsucedidas",
+          "text_countdown": "Para sua segurança, sua conta está temporariamente bloqueada. Tente novamente em {time}.",
+          "text_ready": "Você já pode tentar novamente.",
+          "start_over_button": "Tentar novamente"
+        },
+        "generic": {
+          "title": "Não foi possível fazer login",
+          "text": "Tente uma senha, ou entre em contato com o administrador da sua conta se isso continuar acontecendo.",
+          "password_button": "Entrar com uma senha",
+          "back_link": "Voltar ao login"
+        }
+      }
+    },
     "company": {
       "add_or_update_address_modal": {
         "address_title": "Informações de endereço",
