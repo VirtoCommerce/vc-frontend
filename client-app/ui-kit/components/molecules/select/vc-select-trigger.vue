@@ -81,7 +81,7 @@
     @keydown.home="onHome"
     @keydown.end="onEnd"
     @keydown.enter.prevent="$emit('confirm')"
-    @focus="$emit('open')"
+    @click="onClick"
     @keydown.esc="$emit('close')"
     @keydown.tab="$emit('tab', $event)"
   >
@@ -162,6 +162,24 @@ defineSlots<{
 // would replace both lives in the unmerged VCST-5097 branch; adding a second definition
 // here would collide on merge, so this stays local until that branch lands.
 const clearIconSize = computed(() => (props.size === "md" ? "0.875rem" : "0.75rem"));
+
+/**
+ * Focus never opens the list — the WAI-ARIA APG reference comboboxes do not, and every path that
+ * did open on focus fought with the focus the close returns to the trigger.
+ *
+ * A plain select toggles on click, like a button. Autocomplete only ever opens on click, because a
+ * click inside the field is the user placing a caret, never a request to take the list away.
+ */
+function onClick(): void {
+  // Not a ternary inside emit(): the emit type is a set of call signatures, so a union argument
+  // matches none of them.
+  if (props.autocomplete) {
+    emit("open");
+    return;
+  }
+
+  emit("toggle");
+}
 
 // Home/End move the text caret when the user is typing; only steal them when the field is
 // read-only (a plain select), where there is no caret to move.

@@ -332,7 +332,7 @@ describe("VcSelect", () => {
       const input = wrapper.get("input");
 
       (input.element as HTMLInputElement).focus();
-      await input.trigger("focus");
+      await input.trigger("click");
       await input.trigger("keydown", { key: "Tab" });
 
       expect(document.activeElement).toBe(wrapper.get(".vc-select__select-all input").element);
@@ -578,7 +578,7 @@ describe("VcSelect", () => {
       const input = wrapper.get("input");
       const optionIds = wrapper.findAll('[role="option"]').map((option) => option.attributes("id"));
 
-      await input.trigger("focus");
+      await input.trigger("click");
       await input.trigger("keydown", { key: "ArrowUp" });
       await nextTick();
 
@@ -626,6 +626,100 @@ describe("VcSelect", () => {
 
       expect(input.attributes("aria-expanded")).toBe("true");
       expect(input.attributes("aria-controls")).toBe(wrapper.get('[role="listbox"]').attributes("id"));
+    });
+
+    // Закрытие возвращает фокус на триггер, а дефолтный триггер открывается по фокусу —
+    // без развязки эти двое гоняются друг за другом и список не закрыть выбором пункта.
+    it("closes when an option is picked with the default trigger", async () => {
+      const wrapper = createWrapper({ items: ITEMS });
+      const input = wrapper.get("input");
+
+      await wrapper.get(".vc-select__arrow").trigger("click");
+
+      expect(input.attributes("aria-expanded")).toBe("true");
+
+      await wrapper.findAll('[role="option"]')[1].trigger("click");
+      await nextTick();
+
+      expect(input.attributes("aria-expanded")).toBe("false");
+      expect(document.activeElement).toBe(input.element);
+    });
+
+    // A plain select is a button: the click toggles it, and focus alone must not open it — the
+    // click that delivers the focus would otherwise toggle it straight back shut.
+    it("toggles on click and does not open on focus alone (plain select)", async () => {
+      const wrapper = createWrapper({ items: ITEMS });
+      const input = wrapper.get("input");
+
+      await input.trigger("focus");
+
+      expect(input.attributes("aria-expanded")).toBe("false");
+
+      await input.trigger("click");
+
+      expect(input.attributes("aria-expanded")).toBe("true");
+
+      await input.trigger("click");
+      await nextTick();
+
+      expect(input.attributes("aria-expanded")).toBe("false");
+      expect(document.activeElement).toBe(input.element);
+    });
+
+    // Autocomplete never closes on a click inside the field — that click is the user placing a
+    // caret. It opens on click or on typing, and closes on the arrow button or outside.
+    it("never closes on a click inside the field (autocomplete)", async () => {
+      const wrapper = createWrapper({ items: ITEMS, autocomplete: true });
+      const input = wrapper.get("input");
+
+      await input.trigger("focus");
+
+      expect(input.attributes("aria-expanded")).toBe("false");
+
+      await input.trigger("click");
+
+      expect(input.attributes("aria-expanded")).toBe("true");
+
+      await input.trigger("click");
+
+      expect(input.attributes("aria-expanded")).toBe("true");
+
+      await wrapper.get(".vc-select__arrow").trigger("click");
+      await nextTick();
+
+      expect(input.attributes("aria-expanded")).toBe("false");
+    });
+
+    // The APG editable combobox opens on input, not on focus: tab in, type, and the list appears.
+    it("opens on typing (autocomplete)", async () => {
+      const wrapper = createWrapper({ items: ITEMS, autocomplete: true });
+      const input = wrapper.get("input");
+
+      await input.trigger("focus");
+
+      expect(input.attributes("aria-expanded")).toBe("false");
+
+      await input.setValue("bel");
+      await nextTick();
+
+      expect(input.attributes("aria-expanded")).toBe("true");
+      expect(wrapper.findAll('[role="option"]').map((option) => option.text())).toEqual(["Belgium"]);
+    });
+
+    // The closed field shows the selected label, so the keystroke lands inside it. Only the typed
+    // characters are the query — filtering by "Belgiumb" would find nothing.
+    it("starts a fresh query when typing over a selection (autocomplete)", async () => {
+      const wrapper = createWrapper({ items: ITEMS, autocomplete: true, modelValue: "Belgium" });
+      const input = wrapper.get("input");
+
+      expect((input.element as HTMLInputElement).value).toBe("Belgium");
+
+      await input.setValue("Belgiumc");
+      await nextTick();
+
+      expect(input.attributes("aria-expanded")).toBe("true");
+      expect((input.element as HTMLInputElement).value).toBe("c");
+      expect(wrapper.findAll('[role="option"]').map((option) => option.text())).toEqual(["China"]);
     });
 
     it("describes the trigger with the details element", () => {

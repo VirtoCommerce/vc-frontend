@@ -282,10 +282,10 @@ onMounted(() => {
 
     // Menu lists render inside a VcScrollbar with zero clearance (measured in the
     // language dropdown), so an outset ring is clipped: invert the shared offset.
-    // `highlighted` shares the ring: in an aria-activedescendant listbox DOM focus stays
-    // on the combobox, so the option never matches :focus-visible.
-    &:focus-visible,
-    &#{$highlighted} {
+    // `highlighted` deliberately does NOT ring: the same state is set by hovering the mouse,
+    // and the focus ring must keep meaning "the keyboard is here". The highlight reads as a
+    // background, exactly like hover, and `aria-activedescendant` carries it to assistive tech.
+    &:focus-visible {
       @apply rounded-[inherit];
 
       @include focus-ring($inset: true);

@@ -57,7 +57,7 @@
           @navigate="onNavigate($event, open)"
           @confirm="onConfirm(toggle, close)"
           @tab="onTab"
-          @update:search="search = $event"
+          @update:search="onSearchInput($event, open)"
         >
           <template v-if="$slots.selected" #selected="scope">
             <slot name="selected" v-bind="scope" />
@@ -167,6 +167,7 @@ import { computed, nextTick, ref, useTemplateRef, provide, toRef, watch } from "
 import { useI18n } from "vue-i18n";
 import { vcPopoverKey } from "@/ui-kit/components/molecules/popover/vc-popover-context";
 import { useComponentId, useListboxNavigation, useSelect } from "@/ui-kit/composables";
+import { insertedText } from "@/ui-kit/utilities/text-diff";
 import VcListbox from "../listbox/vc-listbox.vue";
 import VcSelectTrigger from "./vc-select-trigger.vue";
 import type { ListboxNavigationKeyType } from "@/ui-kit/composables";
@@ -286,7 +287,15 @@ const activeDescendantId = computed(() =>
   isShown.value && highlightedIndex.value >= 0 ? getOptionId(highlightedIndex.value) : undefined,
 );
 
-const liveRegionMessage = ref("");
+const liveRegionMessage = computed(() => {
+  if (!isShown.value || !filterValue.value) {
+    return "";
+  }
+
+  return filteredItems.value.length
+    ? t("ui_kit.select.results_available", [filteredItems.value.length])
+    : t("ui_kit.select.no_results_found");
+});
 
 function toLabel(value: unknown): string {
   return value === undefined || value === null ? "" : String(value);
@@ -331,18 +340,6 @@ const search = computed({
   set(value) {
     filterValue.value = value;
   },
-});
-
-// The highlight itself is kept or dropped by useListboxNavigation, which can tell an appended
-// page from a rebuilt list.
-watch(filteredItems, (items) => {
-  if (isShown.value && filterValue.value) {
-    liveRegionMessage.value = items.length
-      ? t("ui_kit.select.results_available", [items.length])
-      : t("ui_kit.select.no_results_found");
-  } else {
-    liveRegionMessage.value = "";
-  }
 });
 
 /**
@@ -422,7 +419,26 @@ function toggled(value: boolean) {
 
   filterValue.value = "";
   highlightedIndex.value = -1;
+
+  // A closed dropdown owes the keyboard user its focus back. Safe now that focus opens nothing.
   focusTrigger();
+}
+
+/**
+ * Typing is what opens an autocomplete list — the APG editable combobox opens on input, not on
+ * focus. While closed the field shows the current selection, so the keystroke landed inside that
+ * label; typing starts a fresh query instead of editing the selected text.
+ */
+function onSearchInput(value: string, open: () => void): void {
+  if (!props.autocomplete || isShown.value) {
+    filterValue.value = value;
+    return;
+  }
+
+  // Open before assigning: the live-region watcher on the filtered list only announces while the
+  // list is on screen, and it runs once for both changes.
+  open();
+  filterValue.value = insertedText(selectedText.value ?? "", value);
 }
 
 function clear() {
