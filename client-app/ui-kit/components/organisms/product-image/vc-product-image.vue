@@ -122,6 +122,8 @@ function slideChanged(swiper: SwiperInstance) {
 </script>
 
 <style lang="scss">
+@use "@/ui-kit/styles/focus-ring" as *;
+
 .vc-product-image {
   $self: &;
   $carouselImg: "";
@@ -147,6 +149,14 @@ function slideChanged(swiper: SwiperInstance) {
 
   &__carousel-btn {
     @apply absolute top-0 z-[2] hidden h-full cursor-pointer items-center opacity-0 transition-opacity hover:opacity-100 md:flex;
+
+    // Revealed on hover only, so a keyboard user would land on a fully transparent
+    // control. The swiper clips an outset ring (measured: zero clearance on three sides).
+    &:focus-visible {
+      @apply opacity-100;
+
+      @include focus-ring($inset: true);
+    }
 
     &--prev {
       @apply left-0 pl-1 pr-5;
