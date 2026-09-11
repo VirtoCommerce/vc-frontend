@@ -185,15 +185,60 @@ module.exports = {
         dependencyTypes: ["npm-peer"],
       },
     },
+    // BLIND TO `import type`, both of the rules below. `tsPreCompilationDeps` is off (see the note
+    // above), so a type-only edge never enters this graph and no rule here can match one - and a
+    // type-only import is exactly the coupling that breaks when a module moves to its own repo.
+    // Turning it on is not a drop-in: `true` takes the repo from 0 errors to 19 (+195 warnings) and
+    // `"specify"` to 15 (+200), because the existing rules' `dependencyTypesNot: ["type-only"]`
+    // clauses are no-ops today and start mattering all at once. The type-only half is covered by
+    // NO_HOST_INTERNAL_IMPORT / NO_DEEP_SALES_REP_IMPORT in eslint.config.js instead - which sees
+    // `import type`, but which CI does not currently run, so it holds in the IDE and in
+    // `yarn lint`, not in the pipeline. Closing that properly means either scoping the
+    // tsPreCompilationDeps work or adding lint to the validate chain.
+    {
+      name: "no-module-to-host-internal",
+      comment:
+        "A module reached into a host '_internal/' folder. Those are private: once a module " +
+        "depends on one, the host can no longer restyle its own chrome without breaking it - and " +
+        "a module that ships as a Module Federation plugin cannot follow the host's refactors at " +
+        "all. Contribute through an extension point instead (see shared/common/composables/" +
+        "extensionRegistry/README.md). The two push-messages links are known debt; do not add more.",
+      severity: "error",
+      from: {
+        path: "^client-app/modules/",
+        pathNot: [
+          "^client-app/modules/push-messages/components/link-push-messages[.]vue$",
+          "^client-app/modules/push-messages/components/link-push-messages-mobile[.]vue$",
+        ],
+      },
+      to: {
+        path: "/_internal/",
+      },
+    },
+    {
+      name: "no-host-to-sales-rep-internals",
+      comment:
+        "The host reached past 'modules/sales-rep/index.ts'. That module is being extracted into " +
+        "its own repository, so its entry point is the only surface the host may depend on. Widen " +
+        "this rule to the next module as it is prepared for extraction.",
+      severity: "error",
+      from: {
+        pathNot: "^client-app/modules/sales-rep/",
+      },
+      to: {
+        path: "^client-app/modules/sales-rep/",
+        pathNot: "^client-app/modules/sales-rep/index[.]ts$",
+      },
+    },
   ],
   options: {
-    // The generated @vc-frontend/core type contract and its build/versioning
-    // scripts are not shipped app code. The contract legitimately imports peer
-    // packages (vue, @apollo/client, …) and the scripts import the rollup toolchain
-    // and semver (from the ROOT package.json, not the facade's); neither belongs in
-    // the app dependency graph.
+    // The generated @vc-frontend/core type contract, its build/versioning scripts and
+    // the /testing entry never run in the storefront. The contract legitimately imports
+    // peer packages (vue, @apollo/client, …), the scripts import the rollup toolchain and
+    // semver, and /testing imports vue-i18n as a consumer peer — all resolved from the
+    // ROOT package.json, not the facade's, and none of it is in the app dependency graph.
     exclude: {
-      path: "client-app/core-api/(contract/|build-types\\.mjs$|bump-version\\.mjs$)",
+      path: "client-app/core-api/(contract/|build-types\\.mjs$|bump-version\\.mjs$|contract-versioning\\.mjs$|testing\\.mjs$)",
     },
     doNotFollow: {
       path: "node_modules",

@@ -43,15 +43,20 @@ separate from the host repo:
 
 ```
 my-plugin/
+├── public/
+│   └── plugin.json       # tells the platform the expose key (step 5)
 ├── src/
 │   ├── index.ts          # the plugin entry: exports init()
-│   └── pages/MyPage.vue
+│   └── pages/my-page.vue
 ├── vite.config.ts
 └── package.json
 ```
 
+Version pins below are illustrative — the generator copies the host's own, so read them from the
+output rather than from here.
+
 In `package.json`: pin the facade to its **versioned tarball URL** — a Release asset
-of the (public) host repo, published by the *Core Facade Release* workflow. No
+of the (public) host repo, published by the _Core Facade Release_ workflow. No
 registry, token, or account; any package manager installs it, and your lockfile
 records the tarball checksum so the pin is tamper-evident. Then install **everything
 your code imports** as dev dependencies — Vue included:
@@ -59,7 +64,7 @@ your code imports** as dev dependencies — Vue included:
 ```jsonc
 {
   "dependencies": {
-    "@vc-frontend/core": "https://github.com/VirtoCommerce/vc-frontend/releases/download/core-v1.0.0/vc-frontend-core-1.0.0.tgz",
+    "@vc-frontend/core": "https://github.com/VirtoCommerce/vc-frontend/releases/download/core-v<CORE_VERSION>/vc-frontend-core-<CORE_VERSION>.tgz",
   },
   "devDependencies": {
     // compile-time only - NOTHING below ships in your bundle (import: false);
@@ -83,7 +88,7 @@ built chunks reference the host's live instances. (Add `vue-i18n`, `@apollo/clie
 `@vue/apollo-composable`, `@vueuse/core` the same way if you import them.)
 
 > **Type-peers — install them even if your code never imports them.** The facade's
-> `contract/index.d.ts` *references* external libraries in its own types (e.g. `useModuleSettings`
+> `contract/index.d.ts` _references_ external libraries in its own types (e.g. `useModuleSettings`
 > pulls in `@vueuse/core`, `apolloClient` pulls in `@apollo/client`). If a referenced
 > package isn't installed, TypeScript **silently degrades that whole facade export to
 > `any`** — the plugin tsconfig ships `skipLibCheck: true`, so you get no "Cannot find
@@ -95,6 +100,78 @@ built chunks reference the host's live instances. (Add `vue-i18n`, `@apollo/clie
 
 The facade dependency brings you the type contract (`contract/index.d.ts`) and the
 shared-dependency config (`@vc-frontend/core/federation`).
+
+### Mount helpers for your specs
+
+`@vc-frontend/core/testing` ships the host's `createWrapperFactory` /
+`createShallowWrapperFactory` as real source — the root export is types-only because the host
+injects the implementation at runtime, and your specs run with no host to inject anything.
+Pass `mount` in rather than letting the helper import it, so it uses your copy:
+
+```ts
+import { createWrapperFactory } from "@vc-frontend/core/testing";
+import { mount } from "@vue/test-utils";
+
+const createWrapper = createWrapperFactory(mount, MyComponent);
+```
+
+It needs `vue-i18n` (already a shared singleton) and `lodash-es` as dev dependencies, plus
+`@vue/test-utils` — the helpers take `mount` as an argument rather than importing it. None of the
+three reaches your bundle: this module is only ever imported by specs.
+
+All three are declared `peerDependencies` of `@vc-frontend/core`, and `yarn create:plugin` copies
+that whole list into the generated `devDependencies` — so a scaffolded plugin has them. A
+hand-assembled repo does not: no package manager installs peers for you, and the failure is a bare
+`Cannot find module 'lodash-es'` on the first spec that imports these helpers.
+
+#### Making `@vc-frontend/core` resolvable in specs
+
+The helpers are not enough on their own. Your components import VALUES from the root specifier
+(`Logger`, `globals`, `useUser`), and at runtime the host hands those over through the shared
+scope — but under vitest there is no host, and the root export carries only a `types` condition.
+So the first spec that mounts such a component dies on module resolution, before any assertion.
+
+Alias the specifier to a mock you own:
+
+```ts
+// vitest.config.ts
+resolve: {
+  alias: {
+    "@vc-frontend/core": fileURLToPath(new URL("./src/mocks/vc-frontend-core.ts", import.meta.url)),
+  },
+},
+```
+
+```ts
+// src/mocks/vc-frontend-core.ts — the facade symbols your plugin actually touches
+export const Logger = { debug() {}, warn() {}, error() {} };
+export const globals = { storeId: "store-id" };
+```
+
+Then keep it to **one `vi.mock("@vc-frontend/core", …)` per spec file**, listing every facade
+symbol the subject's whole module graph imports. Two `vi.mock` calls on the same specifier
+override each other, and a partial facade mock silently breaks the imports it left out.
+
+Two consequences worth planning for: a spec cannot mount a REAL `Vc*` component (it resolves to
+your mock, so it is a stub — assertions that depend on a real component's behaviour, like a click
+landing on a `VcButton`, belong on the host side), and neither `OrderStatus` nor `VcImage` renders
+standalone at all, since both read the host's theme context.
+
+### Everything else is just your dependency
+
+A package that is **not** in `MF_SHARED_RANGES` needs no ceremony: `yarn add` it and it
+gets bundled into your plugin, even when the host happens to use it too. A second copy is
+only a bundle-size cost, not a correctness one — that is exactly the criterion the shared
+list is built on (`federation.mjs`). The sales-rep hub's `sortablejs` (drag-and-drop
+layout) is the worked example: leaf DOM library, no cross-copy state, so it stays out of
+the shared list and rides along in the plugin bundle.
+
+> **The exception to watch: libraries whose state crosses the host/plugin boundary
+> through `provide`/`inject`.** `vee-validate` is the live case — sales-rep gets away with
+> its own copy only because its modal owns _both_ the `useForm` and the `useField` inside
+> it. A plugin that instead contributes a **field into a host-owned form** would inject
+> from the host's copy and find nothing; that library would have to move into
+> `MF_SHARED_RANGES` (and its range verified against the host's `package.json`) first.
 
 ## Step 2 — wire the build
 
@@ -117,13 +194,16 @@ export default defineConfig({
       createRemoteFederationOptions({
         name: "my-plugin",
         // CONTRACT GATE: the facade version this plugin is built against.
-        requiredHostVersion: "^1.0.0",
+        requiredHostVersion: "^0.1.0",
         // Optional: sharedOverrides / exposes when you need to deviate.
       }),
     ),
   ],
   build: { target: "esnext" }, // MF entry uses top-level await
   server: { port: 3001, cors: true, origin: "http://localhost:3001" },
+  // `yarn preview` needs this too: Vite 7 defaults preview CORS to off, and the host fetches
+  // your manifest cross-origin.
+  preview: { cors: true },
 });
 ```
 
@@ -152,9 +232,30 @@ Rules of the road:
   something the facade doesn't export, that's a facade extension request (below).
 - `init()` runs **before the host installs the router**, so routes you add here work
   even on a direct deep link.
-- Keep `init()` fast: it has a time budget (5s — the loader's per-phase `loadTimeoutMs`),
+- Keep `init()` fast: it has a time budget (3s — the loader's per-phase `loadTimeoutMs`),
   and the whole app boot waits for it.
-- **Styling:** your components ship their own CSS (plain styles in SFCs work as-is).
+- **Don't name a route after a host route.** `router.addRoute` evicts an existing root-level route
+  that shares the new record's name, so `name: "Checkout"` would take the host's page over. The
+  loader refuses such a claim for the whole load-and-init phase and logs it — including a name
+  nested in `children` (vue-router adds those at root level too), the two-argument
+  `addRoute(parentName, record)` form, and a `removeRoute` of a host name, so remove-then-add does
+  not get you there either. You can still remove routes you added yourself. Pick names nobody else
+  can plausibly use.
+- **Your remote name must match `/^[A-Za-z0-9][A-Za-z0-9._-]*$/`.** No slashes: MF resolves a
+  `loadRemote` id by prefix, so a name containing one can swallow another plugin's request. The
+  scaffolder already writes a compliant name; a hand-edited `plugin.json` is where this bites.
+- **Authorize on the backend, always.** The `permission` your plugin declares only decides whether
+  the host bothers to load it. Your bundle is fetched by a plain `<script>` with no credentials, so
+  anyone can read its code by URL. Every query your plugin makes must be authorized server-side.
+- **`requiredHostVersion` is your promise, not a check.** The scaffolder writes `^<facade version>`,
+  which is the range you were actually built against. You may widen it — a plugin that uses almost
+  nothing from the facade legitimately can — but the loader takes the range at face value, so
+  anything you admit is something you are claiming to work with.
+- **Styling:** your components ship their own CSS (plain styles in SFCs work as-is). Separate
+  stylesheets declared as `contentFiles` are linked into `document.head` right after your module
+  loads, before `init()` runs — so a plugin whose `init()` fails or overruns is still styled rather
+  than rendering a live page with no CSS. Colour them with the host's `var(--color-*)` variables,
+  not literal hex: a hardcoded colour breaks dark mode and six of the seven presets.
   For **Tailwind**, scaffold with `--with-tailwind` (or copy its output): the plugin
   runs its own utility pass with the **host's design system as preset**
   (`require("@vc-frontend/core/tailwind-preset")` in `tailwind.config.cjs` — colors
@@ -178,7 +279,7 @@ yarn build-only --mode=development && yarn preview  # -> https://localhost:3000
 Notes on the host side:
 
 - **build + preview is the canonical run** — it matches what CI/prod produce, so it is the
-  default for *running* the host. (`yarn dev` also works and additionally gives HMR — see
+  default for _running_ the host. (`yarn dev` also works and additionally gives HMR — see
   [**The dev inner loop**](#the-dev-inner-loop) below — reach for it as the iteration loop.)
   `yarn preview` proxies API calls to `APP_BACKEND_URL` exactly like dev does, so your usual
   `.env.local` backend applies.
@@ -187,8 +288,8 @@ Notes on the host side:
   renders an empty page. A development-mode build resolves the store from
   `APP_BACKEND_URL`, exactly like `yarn dev`.
 - The preview server is **https** (same local certificate as the dev server).
-- The remote list is inlined at **build** time — changing `APP_MODULES_FEDERATION_REMOTES` means
-  rebuilding the host.
+- The env override is inlined at **build** time — changing `APP_MODULES_FEDERATION_REMOTES` means
+  rebuilding the host. (A plugin shipped through the platform needs no host rebuild; see Step 5.)
 
 Open `https://localhost:3000/my-plugin` — your separately-built page renders inside the
 live storefront. In a development-mode build the console confirms the load with
@@ -221,7 +322,7 @@ Once the two servers are up, how you iterate depends on which side you're changi
   content-hashed chunks on reload. Do a cache-bypassing reload (DevTools "Disable cache")
   so a stale `mf-manifest.json` isn't served.
 - **HMR (no reload):** run the plugin as its own dev server — `yarn dev` (`vite --port
-  3001`, which serves `mf-manifest.json` in dev too) instead of `build`+`preview` — **and**
+3001`, which serves `mf-manifest.json` in dev too) instead of `build`+`preview` — **and**
   run the host with `yarn dev` instead of `build-only`+`preview`. The plugin's HMR client is
   injected into the host page, so edits hot-update live across the MF boundary. Verified on
   this harness for route / UI-kit / `useModuleSettings` plugins **and** for a plugin that
@@ -230,17 +331,85 @@ Once the two servers are up, how you iterate depends on which side you're changi
   longer reproduces). `build`+`preview` is still the canonical run because it matches
   CI/prod; use `yarn dev` when you want the HMR loop.
 
-**Changing the host** — you only rebuild the host when the **remote list/name** changes
-(`APP_MODULES_FEDERATION_REMOTES` is inlined at build time) or host source changes; plain plugin edits
-never need a host rebuild.
+**Changing the host** — you only rebuild the host when the **remote list/name** in the env override
+changes (it is inlined at build time) or host source changes; plain plugin edits never need a host
+rebuild.
 
 ## Step 5 — ship it
 
+**Primary path — inside a backend module.** Build `dist/` into the module's
+`plugins/vc-frontend/` folder and the platform advertises it; no host rebuild. The module must
+depend on `VirtoCommerce.XFrontend`, and a `plugin.json` beside the bundle must declare the expose
+key — the platform otherwise defaults to `./Module`, while this scaffold exposes `./plugin`. The
+scaffolder already wrote it as `public/plugin.json`, which Vite copies into `dist/`:
+
+```json
+{ "id": "my-plugin", "remote": { "name": "my-plugin", "exposed": "./plugin" } }
+```
+
+**Externally hosted alternative.**
+
 1. Build and upload `dist/` (manifest + chunks) to trusted **https** hosting.
-2. Add the manifest URL to the host's `APP_MODULES_FEDERATION_REMOTES` and rebuild the host
-   (the remote list is inlined at build time — settings-driven runtime discovery
-   is a planned follow-up, `TODO.md` #2).
-3. Add the plugin origin to the storefront CSP (`script-src`, `connect-src`).
+2. Add the manifest URL to the host's `APP_MODULES_FEDERATION_REMOTES` and rebuild the host.
+3. Add the plugin origin to the storefront CSP (`script-src`, `connect-src`, `style-src` — your
+   stylesheets arrive by URL too).
+
+### The other route: shipping inside a Virto Commerce module
+
+The platform released a second way for a storefront plugin to reach a browser, on
+2026-08-03 — `vc-module-x-api` **3.1016.0** and `vc-module-x-frontend` **3.1005.0**. Instead
+of its own hosting, the plugin rides in a backend module's artifacts and the platform both
+serves and announces it:
+
+- the module declares a dependency on x-frontend, and its build writes the bundle to
+  `{MODULE_FOLDER}/plugins/vc-frontend/`;
+- the environment yml routes `- path: /modules  route: platform`;
+- the storefront asks for the list rather than being told at build time:
+
+```graphql
+query InitializeApplication($domain: String!) {
+  store(domain: $domain) {
+    storeUrl
+    plugins(appId: "vc-frontend") {
+      id
+      version
+      permission
+      entry {
+        type
+        path
+      }
+      remote {
+        name
+        exposed
+      }
+      contentFiles {
+        hash
+        path
+      }
+    }
+  }
+}
+```
+
+Same origin as the storefront, so no per-plugin CSP entry and no external hosting to buy.
+
+**This host does not consume that yet**, and two things have to move first:
+
+1. The loader reads `APP_MODULES_FEDERATION_REMOTES` — the build-time env described above —
+   not `plugins(appId:)`. That is `TODO.md` #2.
+2. The loader **requires a manifest JSON URL** and skips anything else (see the "entry must
+   be a manifest JSON URL" guard in `index.ts`), while the platform advertises
+   `.../remoteEntry.js`. Either the loader learns to take a remoteEntry, or the platform's
+   entry path points at `mf-manifest.json`.
+
+For the packaging half there is a working reference:
+`vc-module-system-operations/samples/VirtoCommerce.SystemOperations.SampleExtension` —
+`@module-federation/vite`, remote `name` set to the .NET module id, `outDir` writing straight
+into the discovery folder, and `remoteEntry.js` deliberately left unhashed because the
+platform synthesizes that exact path. Read it for the build config only: that sample is a
+plugin for the **System Operations admin app**, so its `./Module` expose and
+`install(host, ctx)` shape are that app's contract — this host's are `./plugin` and `init()`,
+as in Steps 2 and 3.
 
 ---
 
@@ -250,10 +419,15 @@ Extension points let a plugin inject content into host screens **without owning
 them** (widgets on account pages, etc.). From a plugin it's one facade import:
 
 ```ts
-import { useExtensionRegistry } from "@vc-frontend/core";
+import { EXTENSION_NAMES, useExtensionRegistry } from "@vc-frontend/core";
 
-useExtensionRegistry().register(/* category, name, your component */);
+useExtensionRegistry().register("sharedList", EXTENSION_NAMES.sharedList.provenanceNote, {
+  component: YourComponent,
+});
 ```
+
+Take the name from `EXTENSION_NAMES`, not a literal — the host matches registrations against
+those keys.
 
 How the ExtensionPoint system works, the available categories, and payload shapes:
 [`client-app/shared/common/composables/extensionRegistry/README.md`](../../shared/common/composables/extensionRegistry/README.md).
@@ -289,16 +463,16 @@ cd vc-frontend && yarn core:yalc-push
 `.yalc/` and `yalc.lock` are gitignored by the scaffold, but the `package.json` edit is
 not — before pushing, run `yalc remove @vc-frontend/core` and restore the pinned tarball
 URL. Never commit a `file:` facade dependency. Once the facade change is merged and the
-*Core Facade Release* workflow has published `core-v<new-version>`, bump your pin to the
+_Core Facade Release_ workflow has published `core-v<new-version>`, bump your pin to the
 new URL (and your `requiredHostVersion` if you use the new exports).
 
 ## Versioning cheat sheet
 
 | You do…                                             | What happens                                                                            |
 | --------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| add a facade export                                 | `yarn build:core-types` auto-bumps the contract **minor** (e.g. 1.0.0 → 1.1.0)          |
-| remove/rename a facade export                       | the build refuses; you run `yarn bump:core major` explicitly — this breaks every plugin |
-| build a plugin using a new export                   | declare `requiredHostVersion: "^1.1.0"` — older hosts will refuse it (CONTRACT GATE)    |
+| add a facade export                                 | `yarn build:core-types` auto-bumps the contract **patch** (e.g. 0.1.0 → 0.1.1)          |
+| remove/rename a facade export                       | the build refuses; you run `yarn bump:core minor` explicitly — this breaks every plugin |
+| build a plugin using a new export                   | declare `requiredHostVersion` = the version that ADDED the export (`^0.1.1`, not the line floor `^0.1.0`) — older hosts then refuse it (CONTRACT GATE) |
 | build a plugin against a different Vue/Apollo major | the SHARED-DEPENDENCY GATE fails that plugin at load, in isolation                      |
 | consume a new facade version in your plugin         | bump the pinned tarball URL to `core-v<new>` **and** `requiredHostVersion` together     |
-| forget any of the regenerate/bump steps             | CI fails with the exact command to run                                                  |
+| forget any of the regenerate/bump steps             | Caught by `yarn validate:core-types` — run it by hand; during the MF pilot it is not in CI |

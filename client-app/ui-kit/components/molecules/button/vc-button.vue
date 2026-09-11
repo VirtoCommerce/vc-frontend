@@ -27,12 +27,12 @@
     @click="enabled ? $emit('click', $event) : null"
   >
     <span class="vc-button__content">
-      <VcIcon v-if="icon && typeof icon === 'string'" class="vc-button__icon" :name="icon" />
+      <VcIcon v-if="icon && typeof icon === 'string'" class="vc-button__icon" :name="icon" :variant="iconVariant" />
 
       <template v-else>
         <span v-if="$slots.prepend || prependIcon" class="vc-button__prepend">
           <slot name="prepend">
-            <VcIcon v-if="prependIcon" class="vc-button__icon" :name="prependIcon" />
+            <VcIcon v-if="prependIcon" class="vc-button__icon" :name="prependIcon" :variant="iconVariant" />
           </slot>
         </span>
 
@@ -42,7 +42,7 @@
 
         <span v-if="$slots.append || appendIcon" class="vc-button__append">
           <slot name="append">
-            <VcIcon v-if="appendIcon" class="vc-button__icon" :name="appendIcon" />
+            <VcIcon v-if="appendIcon" class="vc-button__icon" :name="appendIcon" :variant="iconVariant" />
           </slot>
         </span>
       </template>
@@ -60,6 +60,7 @@
 import { computed, inject, ref } from "vue";
 import { resolveVariant } from "../../../utilities/variant-compat";
 import { vcDialogKey } from "../dialog/vc-dialog-context";
+import type { IconVariantType } from "@/ui-kit/utilities";
 import type { ComponentPublicInstance } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 
@@ -93,6 +94,7 @@ interface IProps {
   minWidth?: string;
   tag?: string;
   iconSize?: string;
+  iconVariant?: IconVariantType;
   square?: boolean;
   tabindex?: string | number;
 }
@@ -223,7 +225,7 @@ defineExpose({
   --radius: var(--vc-button-radius, var(--vc-radius, 0.5rem));
   --min-w: var(--props-min-width, var(--vc-button-min-width));
 
-  --vc-icon-size: var(--vc-button-icon-size, var(--props-icon-size, var(--line-height)));
+  --vc-icon-size: var(--vc-button-icon-size, var(--props-icon-size, var(--icon-size)));
   --vc-icon-color: currentColor;
 
   $colors: primary, secondary, success, info, neutral, warning, danger, accent;
@@ -285,7 +287,7 @@ defineExpose({
   &__loader-icon {
     $loaderIcon: &;
 
-    @apply block rounded-full animate-spin border-2 size-[--line-height] border-[--loader-border] border-r-[--loader-border-r];
+    @apply block rounded-full animate-spin border-2 size-[--vc-icon-size] border-[--loader-border] border-r-[--loader-border-r];
   }
 
   &:not(#{$icon}, #{$square}) {
@@ -296,6 +298,7 @@ defineExpose({
     &--xxs {
       --size: 1.625rem;
       --line-height: 0.875rem;
+      --icon-size: 0.875rem;
       --px: theme("padding[2.5]");
 
       @apply text-xs/[--line-height] font-bold;
@@ -304,6 +307,7 @@ defineExpose({
     &--xs {
       --size: 2rem;
       --line-height: 0.875rem;
+      --icon-size: 1rem;
       --px: theme("padding.3");
 
       @apply text-xs/[--line-height] font-bold;
@@ -312,33 +316,31 @@ defineExpose({
     &--sm {
       --size: 2.375rem;
       --line-height: 1rem;
+      --icon-size: 1.25rem;
       --px: theme("padding[3.5]");
 
-      @apply text-xs/[--line-height] uppercase font-black tracking-[1%];
+      @apply text-sm/[--line-height] font-bold;
+      text-transform: var(--vc-button-text-transform, none);
     }
 
     &--md {
       --size: 2.75rem;
       --line-height: 1.25rem;
+      --icon-size: 1.5rem;
       --px: theme("padding.4");
 
-      @apply text-sm/[--line-height] uppercase font-black tracking-[1%];
+      @apply text-base/[--line-height] font-bold;
+      text-transform: var(--vc-button-text-transform, none);
     }
 
     &--lg {
       --size: 3.25rem;
       --line-height: 1.5rem;
+      --icon-size: 1.75rem;
       --px: theme("padding.5");
 
-      @apply text-base/[--line-height] uppercase font-black tracking-[1%];
-    }
-  }
-
-  @each $color in $colors {
-    &--color--#{$color} {
-      &:focus {
-        --outline-color: rgb(from var(--color-#{$color}-500) r g b / 0.3);
-      }
+      @apply text-lg/[--line-height] font-bold;
+      text-transform: var(--vc-button-text-transform, none);
     }
   }
 
@@ -386,6 +388,54 @@ defineExpose({
 
     &--tonal--#{$color}:hover:not(#{$loading}, #{$disabled}) {
       --bg-color: color-mix(in srgb, var(--vc-button-tonal-#{$color}-bg), black 8%);
+    }
+  }
+
+  // Pressed — the same mix as hover, one step further. Text takes the step too wherever the
+  // darker fill would otherwise eat its contrast. Must stay after the hover block: same
+  // specificity, source order decides.
+  @each $color in $colors {
+    &--solid--#{$color}:active:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(in srgb, var(--vc-button-solid-#{$color}-bg), black 30%);
+      --border-color: var(--bg-color);
+    }
+
+    &--soft--#{$color}:active:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(in srgb, var(--vc-button-soft-#{$color}-bg), black 16%);
+      --border-color: var(--bg-color);
+      --text-color: color-mix(in srgb, var(--vc-button-soft-#{$color}-text), black 15%);
+    }
+
+    // Pale fills: the darker tint eats text contrast, so the text takes the step too.
+    &--surface--#{$color}:active:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(in srgb, var(--vc-button-surface-#{$color}-text), white 70%);
+      --border-color: var(--bg-color);
+      --text-color: color-mix(in srgb, var(--vc-button-surface-#{$color}-text), black 8%);
+    }
+
+    &--outline--#{$color}:active:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(in srgb, var(--vc-button-surface-#{$color}-text), white 70%);
+      --text-color: color-mix(in srgb, var(--vc-button-outline-#{$color}-text), black 8%);
+    }
+
+    &--ghost--#{$color}:active:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(in srgb, var(--vc-button-surface-#{$color}-text), white 70%);
+      --border-color: var(--bg-color);
+      --text-color: color-mix(in srgb, var(--vc-button-ghost-#{$color}-text), black 16%);
+    }
+
+    &--tonal--#{$color}:active:not(#{$loading}, #{$disabled}) {
+      --bg-color: color-mix(in srgb, var(--vc-button-tonal-#{$color}-bg), black 16%);
+      --text-color: color-mix(in srgb, var(--vc-button-tonal-#{$color}-text), black 15%);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    @apply transition-colors;
+
+    // The press should land at once; the release keeps the base duration.
+    &:active:not(#{$loading}, #{$disabled}) {
+      @apply duration-75;
     }
   }
 
@@ -448,6 +498,10 @@ defineExpose({
   &__prepend {
     $prepend: &;
 
+    // centres whatever the slot holds; an icon smaller than the text line would otherwise
+    // sit on the line box top
+    @apply flex items-center;
+
     &:empty {
       @apply hidden;
     }
@@ -455,6 +509,10 @@ defineExpose({
 
   &__append {
     $append: &;
+
+    // centres whatever the slot holds; an icon smaller than the text line would otherwise
+    // sit on the line box top
+    @apply flex items-center;
 
     &:empty {
       @apply hidden;
@@ -469,10 +527,6 @@ defineExpose({
     #{$append} & {
       @apply ms-2;
     }
-  }
-
-  &:focus {
-    @apply outline outline-[3px] outline-[--outline-color];
   }
 }
 </style>
