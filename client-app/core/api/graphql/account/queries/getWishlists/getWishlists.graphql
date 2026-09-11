@@ -32,7 +32,13 @@ query GetWishlists(
         scope
         access
         isOwner
-        sharedWithId
+        message
+        targets {
+          id
+          name
+          subtitle
+          imageUrl
+        }
       }
     }
   }

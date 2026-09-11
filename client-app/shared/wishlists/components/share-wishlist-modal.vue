@@ -59,7 +59,8 @@
           :is="activeScopeElement"
           v-if="activeScopeElement"
           ref="scopeControls"
-          :shared-with-ids="listSharedWithIds"
+          :targets="listTargets"
+          :message="listMessage"
           :sharing-link="sharingLink"
           :saving="saving"
         />
@@ -104,7 +105,7 @@ import { useWishlistSharingScopes } from "../composables/useWishlistSharingScope
 import { useWishlists } from "../composables/useWishlists";
 import StopSharingConfirmationModal from "./stop-sharing-confirmation-modal.vue";
 import type { IWishlistSharingScopeControlsType } from "../composables/useWishlistSharingScopes";
-import type { WishlistType } from "@/core/api/graphql/types";
+import type { SharingTargetType, WishlistType } from "@/core/api/graphql/types";
 
 interface IProps {
   list: WishlistType;
@@ -122,12 +123,10 @@ const notifications = useNotifications();
 const { openModal } = useModal();
 
 const listSharingScope = computed<string>(() => props.list.sharingSetting?.scope ?? WishlistScopeType.Private);
-// A list carries at most one target today, while a scope's controls work with the whole set of them.
-const listSharedWithIds = computed<string[]>(() => {
-  const target = props.list.sharingSetting?.sharedWithId;
-
-  return target ? [target] : [];
-});
+// Resolved by whichever module owns the scope, so a recipient row needs no second lookup. Empty for a viewer who
+// does not own the list — the backend hides who else it was shared with.
+const listTargets = computed<SharingTargetType[]>(() => props.list.sharingSetting?.targets ?? []);
+const listMessage = computed<string>(() => props.list.sharingSetting?.message ?? "");
 
 // `autoRefetch: false`: the composable refetches outside its own try/catch and rethrows, so a refetch hiccup after a
 // successful mutation would look like a failed save and skip the scope's follow-up. Refreshed explicitly below instead.

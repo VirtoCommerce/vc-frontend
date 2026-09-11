@@ -57,7 +57,8 @@ export type SalesRepTopSellerRowType = {
 // Rep → customer-org broadcast (VCST-5310). storeId/cultureName are added from globals in the composable,
 // not entered by the user; recipients (all org members) are resolved backend-side.
 export type SalesRepCommunicationInputType = {
-  organizationId: string;
+  // One send reaches every member of every organization listed, and a member of several of them receives it once.
+  organizationIds: string[];
   sendEmail: boolean;
   sendPush: boolean;
   message: string;

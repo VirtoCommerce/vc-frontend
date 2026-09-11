@@ -1,6 +1,7 @@
 import { createGlobalState } from "@vueuse/core";
 import { computed, shallowRef, toValue } from "vue";
 import { WishlistScopeType } from "@/core/api/graphql/types";
+import type { ChangeWishlistPayloadType } from "@/core/types";
 import type { Component, MaybeRefOrGetter } from "vue";
 
 const MODAL_KEY = "shared.wishlists.add_or_update_wishlist_modal";
@@ -28,15 +29,11 @@ export type WishlistSharingScopeSavedContextType = {
   sharingLink: string;
 };
 
-/**
- * The target fields a scope may contribute to the list's write command. `sharedWithId` replaces the whole target; the
- * two delta fields add and revoke grants without resending the rest.
- */
-export type WishlistSharingTargetsPayloadType = {
-  sharedWithId?: string;
-  addSharedWithIds?: string[];
-  removeSharedWithIds?: string[];
-};
+/** What a scope may contribute to the list's write command, mirroring the fields of `changeWishlist`. */
+export type WishlistSharingScopePayloadType = Pick<
+  ChangeWishlistPayloadType,
+  "sharedWithId" | "addSharedWithIds" | "removeSharedWithIds" | "message"
+>;
 
 /**
  * What a scope's `element` exposes so the modal can fold per-scope input into its single save. Comes from the rendered
@@ -47,7 +44,7 @@ export interface IWishlistSharingScopeControlsType {
   canSave?: boolean;
   /** The core form cannot see per-scope input, so a scope reports its own changes. */
   dirty?: boolean;
-  payload?: WishlistSharingTargetsPayloadType;
+  payload?: WishlistSharingScopePayloadType;
   /** Must handle its own failures — the list is already persisted by then. */
   onSaved?: (context: WishlistSharingScopeSavedContextType) => Promise<void> | void;
 }

@@ -7,8 +7,8 @@ import { defineAsyncComponent, defineComponent, h, ref } from "vue";
 import { WishlistScopeType } from "@/core/api/graphql/types";
 import { useWishlistSharingScopes } from "../composables/useWishlistSharingScopes";
 import ShareWishlistModal from "./share-wishlist-modal.vue";
-import type { WishlistSharingTargetsPayloadType } from "../composables/useWishlistSharingScopes";
-import type { WishlistType } from "@/core/api/graphql/types";
+import type { WishlistSharingScopePayloadType } from "../composables/useWishlistSharingScopes";
+import type { SharingTargetType, WishlistType } from "@/core/api/graphql/types";
 import type { RenderResult } from "@testing-library/vue";
 import type { PropType } from "vue";
 import "@testing-library/jest-dom/vitest";
@@ -68,15 +68,18 @@ const scopeAvailable = ref(true);
 const controls = {
   canSave: ref(false),
   dirty: ref(false),
-  payload: ref<WishlistSharingTargetsPayloadType>({}),
+  payload: ref<WishlistSharingScopePayloadType>({}),
   onSaved: vi.fn(),
 };
 
 const scopeElementProps = {
-  sharedWithIds: { type: Array as PropType<string[]>, default: () => [] },
+  targets: { type: Array as PropType<SharingTargetType[]>, default: () => [] },
+  message: { type: String, default: "" },
   sharingLink: { type: String, default: "" },
   saving: { type: Boolean, default: false },
 };
+
+const targetIds = (targets: SharingTargetType[]) => targets.map((target) => target.id).join(",");
 
 // Owns state the modal cannot see and reports it through the contract — the whole point of the seam.
 const ScopeControls = defineComponent({
@@ -86,7 +89,8 @@ const ScopeControls = defineComponent({
     return () =>
       h("div", {
         "data-test-id": "scope-controls",
-        "data-shared-with-ids": props.sharedWithIds.join(","),
+        "data-target-ids": targetIds(props.targets),
+        "data-message": props.message,
         "data-sharing-link": props.sharingLink,
         "data-saving": String(props.saving),
       });
@@ -96,7 +100,7 @@ const ScopeControls = defineComponent({
 const asyncControls = {
   canSave: ref(false),
   dirty: ref(false),
-  payload: ref<WishlistSharingTargetsPayloadType>({}),
+  payload: ref<WishlistSharingScopePayloadType>({}),
   onSaved: vi.fn(),
 };
 
@@ -118,7 +122,7 @@ const AsyncScopeControls = defineAsyncComponent(() =>
             "div",
             {
               "data-test-id": "async-scope-controls",
-              "data-shared-with-ids": props.sharedWithIds.join(","),
+              "data-target-ids": targetIds(props.targets),
               "data-saving": String(props.saving),
             },
             [
@@ -246,12 +250,18 @@ function privateList(): WishlistType {
   } as unknown as WishlistType;
 }
 
-function targetedList(sharedWithId?: string): WishlistType {
+function targetedList(...ids: string[]): WishlistType {
   return {
     id: "list-1",
     name: "Spring assortment",
     description: "",
-    sharingSetting: { id: "sharing-key-1", scope: TARGETED_SCOPE, sharedWithId, isOwner: true },
+    sharingSetting: {
+      id: "sharing-key-1",
+      scope: TARGETED_SCOPE,
+      isOwner: true,
+      message: "New season is live.",
+      targets: ids.map((id) => ({ id, name: id.toUpperCase() })),
+    },
   } as unknown as WishlistType;
 }
 
@@ -266,12 +276,17 @@ function confirmStopSharing() {
   options.props.onConfirm();
 }
 
-function asyncScopeList(sharedWithId?: string): WishlistType {
+function asyncScopeList(...ids: string[]): WishlistType {
   return {
     id: "list-1",
     name: "Spring assortment",
     description: "",
-    sharingSetting: { id: "sharing-key-1", scope: ASYNC_SCOPE, sharedWithId, isOwner: true },
+    sharingSetting: {
+      id: "sharing-key-1",
+      scope: ASYNC_SCOPE,
+      isOwner: true,
+      targets: ids.map((id) => ({ id })),
+    },
   } as unknown as WishlistType;
 }
 
@@ -409,11 +424,12 @@ describe("ShareWishlistModal", () => {
       expect(component.getByTestId("scope-controls")).toBeInTheDocument();
     });
 
-    it("hands over the persisted target and the list's sharing link", () => {
-      renderModal(targetedList("org-1"));
+    it("hands over the persisted recipients, the saved note and the list's sharing link", () => {
+      renderModal(targetedList("org-1", "org-2"));
 
       const element = component.getByTestId("scope-controls");
-      expect(element).toHaveAttribute("data-shared-with-ids", "org-1");
+      expect(element).toHaveAttribute("data-target-ids", "org-1,org-2");
+      expect(element).toHaveAttribute("data-message", "New season is live.");
       expect(element.getAttribute("data-sharing-link")).toContain("/shared-list/sharing-key-1");
     });
   });
@@ -463,7 +479,7 @@ describe("ShareWishlistModal", () => {
       await component.rerender({ list: asyncScopeList("org-2") });
       await selectAsyncScope();
 
-      expect(asyncScopeControls()).toHaveAttribute("data-shared-with-ids", "org-2");
+      expect(asyncScopeControls()).toHaveAttribute("data-target-ids", "org-2");
     });
   });
 
@@ -534,7 +550,7 @@ describe("ShareWishlistModal", () => {
     it("sends the scope, the key and the provider's contribution — and nothing about the name", async () => {
       controls.canSave.value = true;
       controls.dirty.value = true;
-      controls.payload.value = { sharedWithId: "org-2" };
+      controls.payload.value = { addSharedWithIds: ["org-2"], removeSharedWithIds: ["org-1"] };
 
       renderModal(targetedList("org-1"));
       await selectScope(TARGETED_SCOPE);
@@ -546,7 +562,8 @@ describe("ShareWishlistModal", () => {
         listId: "list-1",
         scope: TARGETED_SCOPE,
         sharingKey: "sharing-key-1",
-        sharedWithId: "org-2",
+        addSharedWithIds: ["org-2"],
+        removeSharedWithIds: ["org-1"],
       });
       // The rename dialog owns these; sending them from here would let a stale copy overwrite a concurrent rename.
       expect(command).not.toHaveProperty("listName");
@@ -562,7 +579,7 @@ describe("ShareWishlistModal", () => {
       confirmStopSharing();
 
       await vi.waitFor(() => expect(mocks.updateWishlist).toHaveBeenCalledOnce());
-      expect(mocks.updateWishlist.mock.calls[0][0]).not.toHaveProperty("sharedWithId");
+      expect(mocks.updateWishlist.mock.calls[0][0]).not.toHaveProperty("addSharedWithIds");
     });
   });
 
@@ -613,7 +630,7 @@ describe("ShareWishlistModal", () => {
     it("asks nothing when only the scope's own recipients change", async () => {
       controls.canSave.value = true;
       controls.dirty.value = true;
-      controls.payload.value = { sharedWithId: "org-2" };
+      controls.payload.value = { addSharedWithIds: ["org-2"] };
 
       renderModal(targetedList("org-1"));
       await selectScope(TARGETED_SCOPE);
@@ -628,7 +645,7 @@ describe("ShareWishlistModal", () => {
   describe("staying put while a write is in flight", () => {
     it("refuses dismissal and locks Cancel until the save settles", async () => {
       controls.canSave.value = true;
-      controls.payload.value = { sharedWithId: "org-1" };
+      controls.payload.value = { addSharedWithIds: ["org-1"] };
       let settle: () => void = () => {};
       mocks.updateWishlist.mockImplementation(() => new Promise<void>((resolve) => (settle = resolve)));
 
@@ -659,7 +676,7 @@ describe("ShareWishlistModal", () => {
   describe("the provider's follow-up after a save", () => {
     it("runs once the list is persisted, with the list's name and the sharing link", async () => {
       controls.canSave.value = true;
-      controls.payload.value = { sharedWithId: "org-1" };
+      controls.payload.value = { addSharedWithIds: ["org-1"] };
 
       renderModal(privateList());
       await selectScope(TARGETED_SCOPE);

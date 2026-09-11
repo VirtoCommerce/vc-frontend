@@ -665,7 +665,9 @@ export type InputSendCustomerCommunicationType = {
   /** The Rep's message (required, max 1000 chars). May contain a URL. */
   message: Scalars['String']['input'];
   /** Customer organization whose members receive the message. */
-  organizationId: Scalars['String']['input'];
+  organizationId?: InputMaybe<Scalars['String']['input']>;
+  /** Customer organizations whose members receive the message (each member once); at least one organization is required. */
+  organizationIds?: InputMaybe<Array<Scalars['String']['input']>>;
   /** Send an email to the recipients. */
   sendEmail: Scalars['Boolean']['input'];
   /** Send an in-store push notification to the recipients. */
