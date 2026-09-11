@@ -423,7 +423,6 @@ defineExpose({ focusActiveCell });
   // Own keys first, so restyling VcCalendar cannot reshape this one; its keys stay as the fallback.
   --radius: var(--vc-range-calendar-radius, var(--vc-calendar-radius, var(--vc-radius, 0.75rem)));
   --day-radius: var(--vc-range-calendar-day-radius, var(--vc-calendar-day-radius, var(--vc-radius, 0.375rem)));
-  --focus-ring: rgb(from var(--color-primary-500) r g b / 0.35);
 
   // Own key, then the palette. Deliberately not VcCalendar's --vc-calendar-selected-* keys (restyling
   // it must not repaint this) and not the shared --color-vc-* ones; 700 not 500 — see vc-calendar.
@@ -492,12 +491,6 @@ defineExpose({ focusActiveCell });
 
     &:hover {
       @apply bg-primary-50 text-primary-700;
-    }
-
-    &:focus-visible {
-      @apply outline outline-[3px] outline-[--focus-ring];
-
-      outline-offset: 1px;
     }
 
     &[disabled],
@@ -605,9 +598,6 @@ defineExpose({ focusActiveCell });
     }
 
     &:focus-visible {
-      @apply outline outline-[3px] outline-[--focus-ring];
-
-      outline-offset: 1px;
       z-index: 1;
     }
 
