@@ -409,6 +409,7 @@ against a backend that has VCST-5925 and bumps `generate:backend-packages` in th
 | 4 | **Done 2026-09-10:** customer element on a Set draft capped at one (`canSave = size === 1`, payload still `{ sharedWithId }`), deltas as `addedIds`/`removedIds`, two-line picker options with the avatar (`467:4745`), new `wishlist-sharing-recipients.vue` (header + `Clear all`, rows, sticky `Show all N` / `Show less`) and `wishlist-sharing-avatar.vue`, message capped at **250** with the frame's hint, notify looped over `addedIds` with one aggregate toast, 8 new locale keys ×13 + the frame's Message copy. **No Notify-via fieldset** — VCST-5724 removed it (§0.3). Deferred to PR-B with the plural wire: `multiple` on the picker, Select-all + its `2 of 5` counter (VCST-5923), a pluralised success toast, `sharedWith.imageUrl` on the avatar | DONE | — |
 | 5a | **Done 2026-09-09:** Rename / Share / Remove list menu; `AddOrUpdateWishlistModal` reduced to name + description (create + rename); new `ShareWishlistModal` with the scope selector, link and scope element; Share button on list details; scope-dependent primary label; 13 locales; tests split | DONE | — |
 | 5b | **Done 2026-09-10:** scope tabs — `VcTabSwitch` sm with `icon` from the registry (`hat-glasses` / `briefcase-business` / `user-plus` / `link`), "Who can access" label, 2×2 grid below `md`, one wrapping row above; the two `VcSelect` locale keys retired in all 13 locales | DONE | — |
+| 5c | **Done 2026-09-10:** stop-sharing confirmation — `stop-sharing-confirmation-modal.vue` with the ticket's verbatim copy (the kit organism hardcodes "OK"), opened from Save only when an already-shared list changes scope; plus the zero-recipient hint (§9.3). 13 core locales | DONE | — |
 | — | **PR-A = steps 1–5.** Wire unchanged: `sharedWithId`, one target. | | |
 | 6 | Codegen against BE with 1.1 + 1.2 + 2.1; `getWishlists` / `getWishlist` / `changeWishlist` documents select `sharingSettings { id scope access isOwner sharedWithId sharedWith { id name subtitle imageUrl } }`; `listSharedWithIds` reads the plural; payload → deltas; `multiple` on; `carriesPersistedTarget` → `{}`; tighten payload type to the generated `Pick`; retire `share_replace_hint` (13 locales, comment `:72`, tests `:234-250`, `:270-277`, `:347-351`); Select-all (§4.2 b) | **BLOCKED on VCST-5925** deployed to the dev backend the theme's dev branch runs against | BE merge + deploy; then codegen |
 | — | **PR-B = step 6.** Recipient names and addresses come with `sharedWith`, so there is no separate resolution step. | | |
@@ -515,10 +516,17 @@ button, exposing `controls`.
    and the separate Share popup are requirements, not our design choice, and the "Rename" label is prescribed there
    rather than discovered in Figma. The only divergence to note: the Acceptance says **Delete** for item 3 (matching
    today's `list_card.remove_list_button`), while frame `535:16177` labels it *Remove list* — keep the existing key.
-3. **Zero recipients / "Clear all".** Contract says Clear all = scope switch to Private. In the UI that needs the
-   element to change the *modal's* scope (an upward channel the contract does not have). Recommended default:
-   Clear all empties the draft, Save stays disabled at zero with a hint "choose Private to stop sharing"; Stop
-   sharing = the Private pill. Alternative: add `onRequestScope?: (scope) => void` prop from modal to element.
+3. **Zero recipients / "Clear all" — settled and built 2026-09-10.** Contract says Clear all = scope switch to
+   Private, but in the UI that would need the element to change the *modal's* scope, an upward channel the seam does
+   not have. Built as the recommended default instead: Clear all (and the per-row trash) empties the draft, Save
+   stays disabled at zero, and the field carries `share_empty_hint` — "An empty list does not stop sharing — change
+   who can access instead." — shown only when the list actually had recipients, so a never-shared list is not
+   lectured. Stop sharing stays the Private tab, which is where the confirmation fires. `onRequestScope` was not
+   added; nothing else wants it.
+
+   The hint is plain copy, not a linked message: all 153 `@:` references in `locales/` are whole values, none
+   embedded mid-sentence, so naming the field by its own visible label beats interpolating core's scope name into a
+   module string.
 4. **Non-rep corporate member.** Sees three pills (Customer is `isAvailable: isSalesRepUser`,
    `sales-rep/index.ts:94`); a persisted Customer list still shows the scope, read-only. Confirm that is intended.
 5. **Search — parked by decision (2026-09-09).** Waiting on Maya's ticket (VCST-5923); if it does not bring what

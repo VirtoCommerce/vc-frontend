@@ -136,17 +136,26 @@ VCST-5707's description gives the dialog verbatim, so this is not a copy decisio
 > Anyone with the link will lose access. You can share it again at any time.
 > `Cancel` · `Stop sharing`
 
-followed by *"If sharing is removed, I can create a new sharing option."* Build it as one
-`VcConfirmationModal`. Two caveats to raise rather than fix silently: the copy says "page" where
-this is a list, and "anyone with the link" is wrong for the Customer scope, where access follows org
-membership and not the link. Amending prescribed copy needs product's yes; until then ship it as
-written.
+followed by *"If sharing is removed, I can create a new sharing option."* Two caveats to raise
+rather than fix silently: the copy says "page" where this is a list, and "anyone with the link" is
+wrong for the Customer scope, where access follows org membership and not the link. Amending
+prescribed copy needs product's yes; **shipped as written on 2026-09-10**.
 
-**Trigger, decided 2026-09-09:** it fires only when the scope of an **already-shared** list changes
-— on Save, when the persisted scope is a sharing scope and the selected scope differs. So: not on a
-first share from `Private`, not when only the recipient set changes inside the Customer scope, and
-never on the per-row trash icon. It does fire on shared → `Private` and on shared → a different
-sharing scope, since both revoke the current audience.
+**Built as its own component, not `VcConfirmationModal`.** The kit organism hardcodes its confirm
+button to `ui_kit.buttons.ok` and exposes no way past it, while this dialog's copy prescribes
+**Stop sharing** — and "OK" on a button that revokes an audience is worse than a small duplicate.
+`stop-sharing-confirmation-modal.vue` is the organism's shape (VcModal `variant="danger"`,
+`icon="warning"`, outline-secondary Cancel, solid-danger confirm) with the ticket's own copy, in 13
+locales under `shared.wishlists.stop_sharing_modal`. Editing the ui-kit was never an option.
+
+**Trigger, decided 2026-09-09, built 2026-09-10:** it fires only when the scope of an
+**already-shared** list changes — on Save, when the persisted scope is a sharing scope and the
+selected scope differs. So: not on a first share from `Private`, not when only the recipient set
+changes inside the Customer scope, and never on the per-row trash icon. It does fire on
+shared → `Private` and on shared → a different sharing scope, since both revoke the current
+audience. In code that is one computed in `share-wishlist-modal.vue`: the persisted scope is not
+`Private` **and** the selected scope differs. "Not `Private`" is the whole test for "already
+shared" — every other scope, core's or a module's, is a sharing option by definition.
 
 ## Field visibility per scope — the important table
 
