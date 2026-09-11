@@ -34,7 +34,7 @@ yarn build-only --mode=development && yarn preview
 ```
 
 - `module_federation_enabled` in `client-app/config/settings_data.json` → the host switch. `vite.federation.ts`
-  reads it to decide whether the MF host plugin (and so the MF runtime, `remoteEntry.js`, `mf-manifest.json`)
+  reads it to decide whether the MF host plugin (and so the MF runtime, `remoteEntry-<hash>.js`, `mf-manifest.json`)
   is built at all; `enabled.ts` reads it at runtime to decide whether to ask the platform for plugins and
   start the loader. `false` ⇒ neither; a missing key counts as `true`.
 - `APP_MODULES_FEDERATION_REMOTES` → a JSON map of `remoteName → manifestUrl`, the **local/dev
@@ -387,7 +387,7 @@ hosted remote.
 | File                                 | Role                                                                                                                                                                                                                                                 |
 | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `client-app/core-api/federation.mjs` | **Single source of truth** for the shared-singleton contract: `createHostShared`/`createRemoteShared` (+ `HOST_SHARED`/`REMOTE_SHARED` defaults). Plain `.mjs` so plugin vite configs (node) and browser code can both import it. |
-| `vite.federation.ts` (repo root)     | Build-side host config: `federatedHostPlugin` (empty unless the theme's `module_federation_enabled`; consumes `createHostShared()`), `federatedAlias`. At root because it imports a build-time dev dep.                                                                                                    |
+| `vite.federation.ts` (repo root)     | Build-side host config: `federatedHostPlugin` (empty unless the theme's `module_federation_enabled`; consumes `createHostShared()`; host entry is `remoteEntry-<hash>.js` so a CDN cannot serve a stale one), `federatedAlias`. At root because it imports a build-time dev dep.                                                                                                    |
 | `client-app/core-api/`               | The `@vc-frontend/core` facade + the `build-types.mjs` type-contract build.                                                                                                                                                                          |
 | `client-app/app-runner.ts`           | Calls `startFederatedModules()` and awaits it before `app.use(router)`.                                                                                                                                                                              |
 

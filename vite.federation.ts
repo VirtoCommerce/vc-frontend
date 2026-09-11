@@ -41,7 +41,9 @@ export function federatedHostPlugin(): PluginOption[] {
   return [
     federation({
       name: "host",
-      filename: "remoteEntry.js",
+      // Default `remoteEntry-[hash]`: nothing but this build loads the host's own entry, and an
+      // unhashed .js sits in CDN caches for hours after a deploy, pointing at chunks that no longer
+      // exist (qa1, 2026-09-11). Plugins keep an unhashed remoteEntry.js - the platform advertises it.
       manifest: true,
       dts: false,
       shareStrategy: "loaded-first",
