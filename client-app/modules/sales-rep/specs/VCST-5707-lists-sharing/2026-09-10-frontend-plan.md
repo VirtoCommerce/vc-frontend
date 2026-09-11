@@ -1,21 +1,25 @@
 # VCST-5707 — frontend implementation plan (Lists sharing: one recipient → many)
 
 **Branch:** `feat/VCST-5707-lists-sharing-improvements` @ `78d02b0e1` (= origin/dev, clean)
-**BE contract:** VCST-5925 (Draft), comment 108733. `temp-VCST-5707-BE-contract.md` mirrors it — both are current.
-**Layout authority:** `temp-VCST-5707-UI-spec.md` — measured Figma geometry for desktop and mobile, plus the
+**BE contract:** VCST-5925 (Draft), comment 108733. `2026-09-09-backend-contract.md` mirrors it — both are current.
+**Layout authority:** `2026-09-09-ui-spec.md` — measured Figma geometry for desktop and mobile, plus the
 design gaps and the a11y/touch-target items this plan does not cover.
-**Plan only.** Nothing below has been applied.
+**Status 2026-09-11:** built on the branch above, PR #2476 (draft). Everything in §6 is done; what remains is a
+codegen re-run against a backend carrying the merged BE work, and the picker affordances that wait on VCST-5923.
 
 ---
 
 ## 0. Still unsettled — read first
 
 Resolved since this plan was drafted, and now reflected in both the contract comment and
-`temp-VCST-5707-BE-contract.md`: the write shape is `addSharedWithIds` / `removeSharedWithIds` with an optional
-revision; §1.2 is `sharingSettings[].sharedWith: SharingTargetType` — a core-declared type filled by the module
+`2026-09-09-backend-contract.md`: the write shape is `addSharedWithIds` / `removeSharedWithIds` with an optional
+revision; §1.2 is `sharingSettings[].sharedWith: SharingTargetType`. **What the backend actually shipped is the
+contract's own §5 counter-proposal:** one `sharingSetting` carrying `targets: [SharingTargetType]` rather than a
+list of settings — which closes §2.4 (one key) and §3.4 (one scope) structurally. Read `targets` wherever this plan
+and the contract say `sharingSettings[].sharedWith` — a core-declared type filled by the module
 that owns the scope, so names and addresses arrive with the grant and no second lookup is needed; §2.4 now requires
 BE to say where the list-level key lives; `share_replace_hint` is 13 locale files. The design is final — the Figma frames in VCST-5707
-(the twelve frames inventoried in `temp-VCST-5707-UI-spec.md`) are the spec, and nothing here is design-gated.
+(the twelve frames inventoried in `2026-09-09-ui-spec.md`) are the spec, and nothing here is design-gated.
 `415:4589` and `477:11114` are **superseded** VCDZ-894 variants — do not read them. `467:4614` is a special case:
 it is not in Ivan's list of current frames, but **VCST-5707's Acceptance links it** as the reference for the
 multiselect dropdown, so the *behaviour* it prescribes is binding while the *visuals* come from the current frames. Two cells of the
@@ -33,16 +37,16 @@ What is still open:
    key we send is not what the row is keyed by, and the row id is stable across scope changes — which is what the
    link needs. Still worth BE's written confirmation, but the FE's current reading of `sharingSetting.id` is correct.
 
-2. **In PR-A, grant display is only as good as the picker's loaded pages.** Nothing is missing from the contract —
-   §1.2 delivers `sharedWith` on the grant — but it arrives with PR-B. Until then, names come from `knownOptions`
-   with the raw id as fallback, exactly today's rule at `wishlist-customer-sharing.vue:75-86`.
+2. **Closed 2026-09-11.** Recipient display no longer depends on the picker's loaded pages: `sharingSetting.targets`
+   carries `name` and `subtitle` for every persisted recipient. The picker's own options serve only the rows the rep
+   just picked, which have no target yet — the two sources split by origin, not by reliability.
 
 3. **"Notify via" checkboxes — closed, not open.** **VCST-5724 is Done** on the option that removes the channel
    selection outright: Email and Push are always used and the checkboxes are gone from the dialog. VCST-5724 /
    PR #2438 (2026-08-20, `12b0112e6`) already shipped it — `wishlist-customer-sharing.vue:109-110` hardcodes both
    channels and the component has no checkboxes. The Figma frames still draw the block, so **the frames are stale
    here**: do not build the fieldset, and tell the designer to re-cut. Layout consequence in
-   `temp-VCST-5707-UI-spec.md` → "Notify via — decided against the frame".
+   `2026-09-09-ui-spec.md` → "Notify via — decided against the frame".
 
 4. **Server-side search waits on VCST-5923, and is droppable.** That ticket has no description and "No
    requirements" in its AC field (assignee Maya Diachkovskaia); its title covers Select-all and load-more only.
@@ -132,10 +136,11 @@ const recipients = computed(() => [...selectedIds.value].map(id => ({
 })));
 ```
 
-- `grantTargets` = `sharedWith` off each persisted grant (contract §1.2, arrives in PR-B) — already carries a
-  formatted `subtitle`, so no client-side address formatting for those rows. `knownOptions` = every option ever
-  loaded by the picker in this dialog (accumulated, never evicted); it covers rows the rep just picked, which have
-  no grant yet. Raw id = last resort. In PR-A `grantTargets` is simply empty.
+- `grantTargets` = `sharingSetting.targets` (shipped as one setting with many targets, not a list of settings) —
+  already carries a formatted `subtitle`, so no client-side address formatting for those rows. `knownOptions` =
+  every option ever loaded by the picker in this dialog (accumulated, never evicted); it covers rows the rep just
+  picked, which have no target yet. The id stands in only when the backend resolved neither name nor subtitle,
+  which means the organization is gone.
 - **Correctness rule (brief constraint 3):** `payload` is built from `selectedIds` vs `persistedIds` only. The
   picker's `options` never enter the payload. A persisted grant on a page never fetched stays in `persistedIds`,
   stays in `selectedIds`, appears in the list (by id), and is neither added nor removed. Test in §7.1.
@@ -218,9 +223,9 @@ Consequences:
   (`useWishlistSharingScopes.ts:12-21`) has no slot for one. Add `icon: string` to the interface and supply it in all
   four registrations — `hat-glasses` / `briefcase-business` / `link` in `CORE_SHARING_SCOPES` (`:41-56`), `user-plus`
   in `sales-rep/index.ts:88-96`. Names verified against `ui-kit/icons/outline` by path data; see the icon table in
-  `temp-VCST-5707-UI-spec.md`.
+  `2026-09-09-ui-spec.md`.
 - Colours, borders, paddings, icon sizes and the token for every element are in
-  `temp-VCST-5707-UI-spec.md` → "Visual spec". Build from there, not from the frames' raw hexes: the mock was drawn
+  `2026-09-09-ui-spec.md` → "Visual spec". Build from there, not from the frames' raw hexes: the mock was drawn
   on a non-default palette, so `#e5e5e5` must become `neutral-200` and `#000` must become `neutral-950`.
 - Sharing link field (`:50-66`) stays as is — `supportsLink` already covers all shared scopes including Customer.
 - Save button label stays Save/Create unless product asks for "Share".
@@ -268,7 +273,7 @@ interface IEmits { (e: "remove", organizationId: string): void; (e: "clear"): vo
 ### 3.4 Menu entry point — decided: two modals
 
 **The menu is designed** — frame `535:16177` inside `535:16064`, three `VcMenuItem` md in the order
-**Rename / Share / Remove list**, full spec in `temp-VCST-5707-UI-spec.md` → "List-actions dropdown menu".
+**Rename / Share / Remove list**, full spec in `2026-09-09-ui-spec.md` → "List-actions dropdown menu".
 `wishlist-dropdown-menu.vue` gets the `share` item in the middle, shown only when
 `sharingSetting.access === Write` (already the card's condition, `wishlist-card.vue:34`). `lists.vue:99-106` and
 `list-details.vue:226-233` open one of two dialogs:
@@ -396,27 +401,29 @@ onSaved: async (context) => {
 
 ## 6. Sequencing — what is buildable now, what is blocked
 
-Two PRs. **PR-A** is single-target on the wire and identical to today in what it sends to BE; it can merge any time.
-**PR-B** is the only PR whose runtime depends on VCST-5925 and it stays small so its time-in-flight is short. Never
-hand-edit `client-app/core/api/graphql/types.ts` or the module `types.ts`; PR-B runs `yarn generate:graphql-types`
-against a backend that has VCST-5925 and bumps `generate:backend-packages` in the same commit.
+Planned as two PRs, shipped as one (#2476): the backend landed on `vcptcore-dev` before the single-target half was
+merged, so splitting would have meant merging a wire shape that was already superseded. Never hand-edit
+`client-app/core/api/graphql/types.ts` or the module `types.ts`; the branch runs `yarn generate:graphql-types`
+against a backend that has VCST-5925, and `generate:backend-packages` is bumped in the same commit before merge.
 
 | # | Step | Status | Unblocked by |
 | --- | --- | --- | --- |
-| 1 | Spec: `client-app/modules/sales-rep/specs/VCST-5707-lists-sharing/<date>-sharing-design.md` (decisions + verified facts, this plan condensed) | BUILDABLE NOW | — |
+| 1 | **Done 2026-09-11:** spec moved into the module as this file plus its two companions | DONE | — |
 | 2 | **Done 2026-09-10:** picker composable — `address { city regionName }` in the options query (module codegen run against vcst-qa; only the two `SalesRepCustomerOptions` lines changed), accumulation into a `Map` that doubles as `knownOptions` (`findOption`), self-advancing paging to the whole set with a 2000 cap, formatted `location` on the option, `OPTIONS_LIMIT` warning retired. 15 tests | DONE | — (keyword wiring: VcSelect search emit) |
-| 3 | Modal: `<KeepAlive>`, `sharedWithIds` prop, contract type widening, modal tests for retention + ref rebind (§1, §2) | BUILDABLE NOW | — |
+| 3 | **Done 2026-09-10:** modal — `<KeepAlive>`, the persisted-recipients prop, contract type widening, modal tests for retention + ref rebind (§1, §2) | DONE | — |
 | 4 | **Done 2026-09-10:** customer element on a Set draft capped at one (`canSave = size === 1`, payload still `{ sharedWithId }`), deltas as `addedIds`/`removedIds`, two-line picker options with the avatar (`467:4745`), new `wishlist-sharing-recipients.vue` (header + `Clear all`, rows, sticky `Show all N` / `Show less`) and `wishlist-sharing-avatar.vue`, message capped at **250** with the frame's hint, notify looped over `addedIds` with one aggregate toast, 8 new locale keys ×13 + the frame's Message copy. **No Notify-via fieldset** — VCST-5724 removed it (§0.3). Deferred to PR-B with the plural wire: `multiple` on the picker, Select-all + its `2 of 5` counter (VCST-5923), a pluralised success toast, `sharedWith.imageUrl` on the avatar | DONE | — |
 | 5a | **Done 2026-09-09:** Rename / Share / Remove list menu; `AddOrUpdateWishlistModal` reduced to name + description (create + rename); new `ShareWishlistModal` with the scope selector, link and scope element; Share button on list details; scope-dependent primary label; 13 locales; tests split | DONE | — |
 | 5b | **Done 2026-09-10:** scope tabs — `VcTabSwitch` sm with `icon` from the registry (`hat-glasses` / `briefcase-business` / `user-plus` / `link`), "Who can access" label, 2×2 grid below `md`, one wrapping row above; the two `VcSelect` locale keys retired in all 13 locales | DONE | — |
 | 5c | **Done 2026-09-10:** stop-sharing confirmation — `stop-sharing-confirmation-modal.vue` with the ticket's verbatim copy (the kit organism hardcodes "OK"), opened from Save only when an already-shared list changes scope; plus the zero-recipient hint (§9.3). 13 core locales | DONE | — |
 | — | **PR-A = steps 1–5.** Wire unchanged: `sharedWithId`, one target. | | |
-| 6 | Codegen against BE with 1.1 + 1.2 + 2.1; `getWishlists` / `getWishlist` / `changeWishlist` documents select `sharingSettings { id scope access isOwner sharedWithId sharedWith { id name subtitle imageUrl } }`; `listSharedWithIds` reads the plural; payload → deltas; `multiple` on; `carriesPersistedTarget` → `{}`; tighten payload type to the generated `Pick`; retire `share_replace_hint` (13 locales, comment `:72`, tests `:234-250`, `:270-277`, `:347-351`); Select-all (§4.2 b) | **BLOCKED on VCST-5925** deployed to the dev backend the theme's dev branch runs against | BE merge + deploy; then codegen |
-| — | **PR-B = step 6.** Recipient names and addresses come with `sharedWith`, so there is no separate resolution step. | | |
+| 6 | **Done 2026-09-11:** codegen against `vcptcore-dev`; `getWishlists` / `getWishlist` / `changeWishlist` documents select `sharingSettings { id scope access isOwner sharedWithId sharedWith { id name subtitle imageUrl } }`; `listSharedWithIds` reads the plural; payload → deltas; `multiple` on; `carriesPersistedTarget` → `{}`; tighten payload type to the generated `Pick`; retire `share_replace_hint` (13 locales, comment `:72`, tests `:234-250`, `:270-277`, `:347-351`); Select-all (§4.2 b) | DONE | — |
+| — | Recipient names and cities come with `targets`, so there is no separate resolution step. Select-all and its `2 of 5` counter still wait on VCST-5923. | | |
+| 6a | Re-run `yarn generate:graphql-types` and `generate:backend-packages` against a backend where the BE PRs are in `dev`, to drop the unrelated drift the dev environment introduced (`isLockedForCurrentUser`, Loyalty's `storeId`) | BLOCKED | BE merge into `dev` |
 | 7 | Recipient-side verification of 3.1/3.2: list appears with `isOwner: false`, status `shared_with_me`, no cog, `/shared-list/:key` opens without 403. No FE change expected; e2e in vc-testing-module | BLOCKED on BE (independent of cardinality) | BE ships 3.1/3.2 |
 
-Half-broken-dev guard: PR-B is not opened until the dev backend reports the new schema (codegen fails loudly on a
-missing field, which is the right signal); PR-A carries no plural semantics that a singular BE could misread.
+Half-broken-dev guard: #2476 stays draft until the dev backend reports the new schema. Codegen fails loudly on a
+missing field, which is the right signal — the shape the branch is built against was read off `vcptcore-dev`, not
+assumed.
 
 ---
 
