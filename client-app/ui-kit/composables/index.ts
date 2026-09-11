@@ -3,6 +3,7 @@ export * from "./useComponentId";
 export * from "./useDateField";
 export * from "./useFocusManagement";
 export * from "./useHorizontalScrollSync";
+export * from "./useListboxNavigation";
 export * from "./useListeners";
 export * from "./useQuantityValidationSchema";
 export * from "./useSelect";

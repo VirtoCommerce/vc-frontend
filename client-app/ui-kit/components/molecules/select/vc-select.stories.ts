@@ -33,6 +33,9 @@ interface IVcSelectStoryArgs {
   multiple?: boolean;
   selectAll?: boolean;
   total?: number;
+  loading?: boolean;
+  hasNextPage?: boolean;
+  serverFilter?: boolean;
   clearable?: boolean;
   showEmptyDetails?: boolean;
   singleLineMessage?: boolean;
@@ -618,6 +621,55 @@ export const SelectAllWithTotal: StoryType = {
     docs: {
       description: {
         story: "Paged list: only one page is loaded, so `total` carries the real size for the counter.",
+      },
+    },
+  },
+};
+
+export const Loading: StoryType = {
+  args: { items: [], label: "Country", loading: true },
+  parameters: {
+    docs: {
+      description: {
+        story: "With nothing loaded yet a spinner takes the place of the empty row.",
+      },
+    },
+  },
+};
+
+export const InfiniteScroll: StoryType = {
+  args: {
+    items: ITEMS,
+    label: "Buyer name",
+    placeholder: "Select buyers",
+    multiple: true,
+    hasNextPage: true,
+    total: 3000,
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+<VcSelect
+  v-model="selected"
+  :items="loadedItems"
+  :loading="loading"
+  :has-next-page="hasNextPage"
+  :total="totalCount"
+  multiple
+  server-filter
+  @load-more="loadNextPage"
+  @search="search"
+/>
+        `,
+      },
+      description: {
+        story:
+          "`items` stays consumer-owned: the component renders a sentinel at the bottom of the " +
+          "list and emits `load-more` when it comes into view. Pair it with `server-filter` so the " +
+          "typed text is forwarded through `@search` (debounced 300ms) instead of being applied to " +
+          "the one page that happens to be loaded — otherwise the search would report no results " +
+          "for anything below the fold.",
       },
     },
   },

@@ -1,6 +1,6 @@
 import { enableAutoUnmount, mount } from "@vue/test-utils";
 import { vMaska } from "maska/vue";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { h, nextTick } from "vue";
 import { createI18n } from "vue-i18n";
 import { createWrapperFactory } from "@/core/utilities/tests";
@@ -41,6 +41,16 @@ const countingI18n = createI18n({
 // отслеживает только присоединённые узлы — detached-монтирование ломает и то и другое.
 // Отсюда обязательный auto-unmount: оставшийся в body экземпляр перехватывал бы
 // эти запросы в следующих тестах.
+// jsdom has no IntersectionObserver, and VcInfinityScrollLoader constructs one on mount.
+// The sentinel's visibility is not what these tests check, so a no-op is enough.
+class IntersectionObserverStub {
+  observe(): void {}
+  unobserve(): void {}
+  disconnect(): void {}
+}
+
+vi.stubGlobal("IntersectionObserver", IntersectionObserverStub);
+
 enableAutoUnmount(afterEach);
 
 // Монтирование намеренно интеграционное: дети (VcInput, VcPopover, VcMenuItem, VcCheckbox)
@@ -424,6 +434,86 @@ describe("VcSelect", () => {
 
       expect(wrapper.emitted("update:modelValue")).toBeUndefined();
       expect(wrapper.findAll('[role="option"]')).toHaveLength(ITEMS.length);
+    });
+  });
+
+  describe("async loading", () => {
+    it("shows a spinner instead of the empty row while the first page loads", () => {
+      const wrapper = createWrapper({ items: [], loading: true });
+
+      expect(wrapper.find(".vc-select__loader").exists()).toBe(true);
+      expect(wrapper.get('[role="option"]').text()).not.toContain("ui_kit.select.no_options");
+    });
+
+    it("keeps showing options while a further page loads", () => {
+      const wrapper = createWrapper({ items: ITEMS, loading: true });
+
+      expect(wrapper.find(".vc-select__loader").exists()).toBe(false);
+      expect(wrapper.findAll('[role="option"]')).toHaveLength(ITEMS.length);
+    });
+
+    it("renders the load-more sentinel only when more pages exist", () => {
+      const without = createWrapper({ items: ITEMS });
+      const with_ = createWrapper({ items: ITEMS, hasNextPage: true });
+
+      expect(without.find(".vc-select__load-more").exists()).toBe(false);
+      expect(with_.find(".vc-select__load-more").exists()).toBe(true);
+    });
+
+    it("lets the empty state be replaced", () => {
+      const wrapper = createWrapper({ items: [] }, { empty: () => h("span", { class: "probe-empty" }, "nothing") });
+
+      expect(wrapper.get(".probe-empty").text()).toBe("nothing");
+    });
+
+    it("does not filter locally when the consumer filters server-side", async () => {
+      const wrapper = createWrapper({ items: ITEMS, autocomplete: true, serverFilter: true });
+
+      await wrapper.get("input").trigger("focus");
+      await wrapper.get("input").setValue("zzz");
+
+      expect(wrapper.findAll('[role="option"]')).toHaveLength(ITEMS.length);
+    });
+
+    it("still filters locally by default", async () => {
+      const wrapper = createWrapper({ items: ITEMS, autocomplete: true });
+
+      await wrapper.get("input").trigger("focus");
+      await wrapper.get("input").setValue("zzz");
+
+      expect(wrapper.get('[role="option"]').text()).toBe("ui_kit.messages.no_results");
+    });
+
+    it("debounces the search text and clears it immediately", async () => {
+      vi.useFakeTimers();
+
+      try {
+        const wrapper = createWrapper({ items: ITEMS, autocomplete: true, serverFilter: true });
+
+        await wrapper.get("input").trigger("focus");
+        await wrapper.get("input").setValue("bel");
+
+        expect(wrapper.emitted("search")).toBeUndefined();
+
+        await vi.advanceTimersByTimeAsync(300);
+
+        expect(wrapper.emitted("search")).toEqual([["bel"]]);
+
+        await wrapper.get("input").setValue("");
+
+        expect(wrapper.emitted("search")).toEqual([["bel"], [""]]);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it("stays silent when filtering locally", async () => {
+      const wrapper = createWrapper({ items: ITEMS, autocomplete: true });
+
+      await wrapper.get("input").trigger("focus");
+      await wrapper.get("input").setValue("bel");
+
+      expect(wrapper.emitted("search")).toBeUndefined();
     });
   });
 

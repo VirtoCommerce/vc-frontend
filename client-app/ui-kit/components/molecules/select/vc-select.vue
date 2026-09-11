@@ -119,9 +119,31 @@
             </slot>
           </VcMenuItem>
 
-          <VcMenuItem v-if="!filteredItems.length" role="option" :aria-selected="false" disabled :size="itemSize">
-            {{ $t(filterValue ? "ui_kit.messages.no_results" : "ui_kit.select.no_options") }}
+          <VcMenuItem v-if="showLoadingRow" role="option" :aria-selected="false" disabled :size="itemSize">
+            <slot name="loading">
+              <VcLoader class="vc-select__loader" />
+            </slot>
           </VcMenuItem>
+
+          <VcMenuItem v-else-if="!filteredItems.length" role="option" :aria-selected="false" disabled :size="itemSize">
+            <slot name="empty">
+              {{ $t(filterValue ? "ui_kit.messages.no_results" : "ui_kit.select.no_options") }}
+            </slot>
+          </VcMenuItem>
+
+          <!--
+            Rendered only while more pages exist, so the loader's own "end of list" branch
+            (page-number >= pages-count) is unreachable — the numbers below just keep it quiet.
+          -->
+          <VcInfinityScrollLoader
+            v-if="hasNextPage"
+            :loading="loading"
+            :page-number="1"
+            :pages-count="2"
+            distance="50"
+            class="vc-select__load-more"
+            @visible="$emit('loadMore')"
+          />
         </VcListbox>
       </template>
     </VcPopover>
@@ -139,20 +161,25 @@
 </template>
 
 <script setup lang="ts" generic="T, V = T, M extends boolean = false">
-import { useElementBounding } from "@vueuse/core";
+import { useDebounceFn, useElementBounding } from "@vueuse/core";
 import { isEqual } from "lodash-es";
 import { computed, nextTick, ref, useTemplateRef, provide, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { vcPopoverKey } from "@/ui-kit/components/molecules/popover/vc-popover-context";
-import { useComponentId, useSelect } from "@/ui-kit/composables";
+import { useComponentId, useListboxNavigation, useSelect } from "@/ui-kit/composables";
 import VcListbox from "../listbox/vc-listbox.vue";
 import VcSelectTrigger from "./vc-select-trigger.vue";
+import type { ListboxNavigationKeyType } from "@/ui-kit/composables";
 
 const emit = defineEmits<{
   (event: "update:modelValue", value: VcSelectEmittedType<V, M>): void;
   (event: "change", value: VcSelectEmittedType<V, M>): void;
   /** Select all was pressed. Fires alongside the model update, so a paged consumer can load the rest. */
   (event: "selectAll"): void;
+  /** The list was scrolled to its end and more pages are available. */
+  (event: "loadMore"): void;
+  /** Debounced search text; only emitted when `serverFilter` is set. */
+  (event: "search", value: string): void;
 }>();
 
 const props = withDefaults(
@@ -192,6 +219,12 @@ const props = withDefaults(
      * rendered; pass it explicitly when the list is paged and `items` holds only one page.
      */
     total?: number;
+    /** Shows a loading indicator inside the list. */
+    loading?: boolean;
+    /** Renders the infinite-scroll sentinel; reaching it emits `load-more`. */
+    hasNextPage?: boolean;
+    /** Turns off client-side filtering — the consumer filters and re-supplies `items`. */
+    serverFilter?: boolean;
     testIdDropdown?: string;
     enableTeleport?: boolean;
     /** Defer rendering the option list until the dropdown is first opened (forwarded to VcPopover). */
@@ -223,18 +256,15 @@ const accessibleLabel = computed(() => props.ariaLabel ?? props.label);
 
 const isShown = ref(false);
 const filterValue = ref("");
-const highlightedIndex = ref(-1);
-
-function getOptionId(index: number) {
-  return `${componentId}-option-${index}`;
-}
-
-const activeDescendantId = computed(() => {
-  if (isShown.value && highlightedIndex.value >= 0) {
-    return getOptionId(highlightedIndex.value);
-  }
-  return undefined;
+const { highlightedIndex, getOptionId, navigate } = useListboxNavigation({
+  componentId,
+  count: computed(() => filteredItems.value.length),
 });
+
+// Only announce an active option while the list is on screen.
+const activeDescendantId = computed(() =>
+  isShown.value && highlightedIndex.value >= 0 ? getOptionId(highlightedIndex.value) : undefined,
+);
 
 const liveRegionMessage = ref("");
 
@@ -252,6 +282,7 @@ const {
   modelValue: toRef(() => props.modelValue),
   multiple: toRef(() => props.multiple),
   filterValue,
+  serverFilter: toRef(() => props.serverFilter),
   textField: toRef(() => props.textField),
   valueField: toRef(() => props.valueField),
 });
@@ -346,29 +377,7 @@ function select(item: T) {
   commit(getItemValue(item));
 }
 
-/**
- * Keyboard model: DOM focus never leaves the trigger, and the active option is published
- * through `aria-activedescendant`. The previous code moved real focus onto the option, which
- * made typing impossible in autocomplete mode and tied navigation to DOM order.
- */
-function moveHighlight(delta: number) {
-  const count = filteredItems.value.length;
-
-  if (!count) {
-    return;
-  }
-
-  const current = highlightedIndex.value;
-
-  if (current < 0) {
-    highlightedIndex.value = delta > 0 ? 0 : count - 1;
-    return;
-  }
-
-  highlightedIndex.value = (current + delta + count) % count;
-}
-
-function onNavigate(key: "up" | "down" | "home" | "end", open: () => void) {
+function onNavigate(key: ListboxNavigationKeyType, open: () => void) {
   if (!isShown.value) {
     open();
 
@@ -379,13 +388,7 @@ function onNavigate(key: "up" | "down" | "home" | "end", open: () => void) {
     return;
   }
 
-  if (key === "home") {
-    highlightedIndex.value = 0;
-  } else if (key === "end") {
-    highlightedIndex.value = filteredItems.value.length - 1;
-  } else {
-    moveHighlight(key === "down" ? 1 : -1);
-  }
+  navigate(key);
 }
 
 function onConfirm(toggle: () => void, close: () => void) {
@@ -406,37 +409,6 @@ function onConfirm(toggle: () => void, close: () => void) {
     close();
   }
 }
-
-/**
- * Keep the highlighted option in view without moving focus to it.
- * Deliberately not `scrollIntoView`: that scrolls every scrollable ancestor, so opening a
- * dropdown low on the page yanked the whole page. This adjusts only the list's own scrollTop.
- */
-function scrollHighlightedIntoView(index: number) {
-  const option = document.getElementById(getOptionId(index));
-  const list = option?.closest<HTMLElement>('[role="listbox"]');
-
-  if (!option || !list) {
-    return;
-  }
-
-  const optionBox = option.getBoundingClientRect();
-  const listBox = list.getBoundingClientRect();
-
-  if (optionBox.top < listBox.top) {
-    list.scrollTop -= listBox.top - optionBox.top;
-  } else if (optionBox.bottom > listBox.bottom) {
-    list.scrollTop += optionBox.bottom - listBox.bottom;
-  }
-}
-
-watch(highlightedIndex, (index) => {
-  if (index < 0) {
-    return;
-  }
-
-  void nextTick(() => scrollHighlightedIntoView(index));
-});
 
 function toggled(value: boolean) {
   isShown.value = value;
@@ -471,6 +443,23 @@ function focusTrigger() {
   triggerElement.value?.focus();
 }
 
+// Server-side search: the consumer owns filtering, so the typed text is forwarded instead of
+// being applied locally. Clearing is sent immediately — waiting to restore a full list feels broken.
+const SEARCH_DEBOUNCE_MS = 300;
+const emitSearchDebounced = useDebounceFn((value: string) => emit("search", value), SEARCH_DEBOUNCE_MS);
+
+watch(filterValue, (value) => {
+  if (!props.serverFilter) {
+    return;
+  }
+
+  if (value) {
+    void emitSearchDebounced(value);
+  } else {
+    emit("search", "");
+  }
+});
+
 // -----------------------------------------------------------------------------
 // Select all
 // -----------------------------------------------------------------------------
@@ -481,6 +470,10 @@ if (import.meta.env.DEV && props.selectAll && !props.multiple) {
 }
 
 const showSelectAll = computed(() => props.selectAll && props.multiple);
+
+// A spinner replaces the empty row only while there is nothing to show yet; once options are
+// on screen, further loading is reported by the sentinel at the bottom instead.
+const showLoadingRow = computed(() => props.loading && !filteredItems.value.length);
 
 /** Select all acts on what the user can see, so an active filter narrows it. */
 const selectableValues = computed(() => filteredItems.value.map((item) => getItemValue(item)));

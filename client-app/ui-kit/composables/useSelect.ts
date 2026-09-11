@@ -7,6 +7,8 @@ type ParamsType<T, V> = {
   modelValue: Ref<V | V[] | undefined>;
   multiple: Ref<boolean | undefined>;
   filterValue: Ref<string>;
+  /** When true the list is filtered by the consumer (server-side) and must pass through untouched. */
+  serverFilter?: Ref<boolean | undefined>;
   textField?: Ref<VcSelectFieldAccessorType<T, string> | undefined>;
   valueField?: Ref<VcSelectFieldAccessorType<T, V> | undefined>;
 };
@@ -100,7 +102,7 @@ export function useSelect<T, V>(params: ParamsType<T, V>) {
 
   /** Substring match, with prefix matches hoisted to the top. */
   const filteredItems = computed<T[]>(() => {
-    if (!params.filterValue.value) {
+    if (!params.filterValue.value || params.serverFilter?.value) {
       return params.items.value;
     }
 
