@@ -271,7 +271,6 @@ cd my-plugin && yarn build && yarn preview          # -> http://localhost:3001
 
 # terminal 2 - the host, pointed at your plugin
 cd vc-frontend
-APP_MODULES_FEDERATION_ENABLED=true \
 APP_MODULES_FEDERATION_REMOTES='{"my-plugin":"http://localhost:3001/mf-manifest.json"}' \
 yarn build-only --mode=development && yarn preview  # -> https://localhost:3000
 ```

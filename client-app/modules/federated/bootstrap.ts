@@ -10,8 +10,8 @@ interface IStartOptions extends Pick<IFederatedLoaderOptions, "hasPermission"> {
 
 /**
  * App-runner entry for Module Federation. Kept free of static MF-runtime
- * imports: the loader (./index) is imported dynamically and only when the host is enabled (build flag
- * AND theme setting, see ./enabled), so non-MF builds bundle neither the runtime nor the loader.
+ * imports: the loader (./index) is imported dynamically and only when the theme enables federation
+ * (see ./enabled), so a `module_federation_enabled: false` build bundles neither the runtime nor the loader.
  */
 
 /**

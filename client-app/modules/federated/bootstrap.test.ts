@@ -22,7 +22,6 @@ describe("startFederatedModules", () => {
   });
 
   afterEach(() => {
-    vi.unstubAllEnvs();
     vi.doUnmock("./index");
     vi.doUnmock("@/config/settings_data.json");
   });
@@ -31,18 +30,7 @@ describe("startFederatedModules", () => {
     vi.doMock("@/config/settings_data.json", () => ({ default: { current: "default", settings } }));
   }
 
-  it.each([undefined, "", "false", "0"])("is a no-op when APP_MODULES_FEDERATION_ENABLED is %j", async (value) => {
-    // Stubbed even for undefined: the repo's .env enables the flag, so "unset" has to be made explicit.
-    vi.stubEnv("APP_MODULES_FEDERATION_ENABLED", value);
-    const { startFederatedModules } = await loadBootstrap();
-
-    await startFederatedModules();
-
-    expect(initFederatedModulesMock).not.toHaveBeenCalled();
-  });
-
-  it("runs the loader when APP_MODULES_FEDERATION_ENABLED is enabled", async () => {
-    vi.stubEnv("APP_MODULES_FEDERATION_ENABLED", "true");
+  it("runs the loader with the stock theme config", async () => {
     initFederatedModulesMock.mockResolvedValue({ loaded: [], failed: [], skipped: [] });
     const { startFederatedModules } = await loadBootstrap();
 
@@ -51,8 +39,7 @@ describe("startFederatedModules", () => {
     expect(initFederatedModulesMock).toHaveBeenCalledOnce();
   });
 
-  it("is a no-op when the theme sets module_federation_enabled to false, even with the flag on", async () => {
-    vi.stubEnv("APP_MODULES_FEDERATION_ENABLED", "true");
+  it("is a no-op when the theme sets module_federation_enabled to false", async () => {
     stubThemeSettings({ module_federation_enabled: false });
     const fetchPlugins = vi.fn();
     const { startFederatedModules } = await loadBootstrap();
@@ -64,7 +51,6 @@ describe("startFederatedModules", () => {
   });
 
   it("treats a theme without the module_federation_enabled key as enabled", async () => {
-    vi.stubEnv("APP_MODULES_FEDERATION_ENABLED", "true");
     stubThemeSettings({});
     initFederatedModulesMock.mockResolvedValue({ loaded: [], failed: [], skipped: [] });
     const { startFederatedModules } = await loadBootstrap();
@@ -75,7 +61,6 @@ describe("startFederatedModules", () => {
   });
 
   it("resolves (never rejects) when the loader chunk fails to load", async () => {
-    vi.stubEnv("APP_MODULES_FEDERATION_ENABLED", "true");
     vi.doMock("./index", () => {
       throw new Error("chunk load error");
     });
@@ -86,7 +71,6 @@ describe("startFederatedModules", () => {
   });
 
   it("resolves (never rejects) when the loader itself rejects", async () => {
-    vi.stubEnv("APP_MODULES_FEDERATION_ENABLED", "true");
     initFederatedModulesMock.mockRejectedValue(new Error("unexpected"));
     const { startFederatedModules } = await loadBootstrap();
 
@@ -97,7 +81,6 @@ describe("startFederatedModules", () => {
   it("stops waiting at the boot backstop when the loader hangs (boot proceeds)", async () => {
     vi.useFakeTimers();
     try {
-      vi.stubEnv("APP_MODULES_FEDERATION_ENABLED", "true");
       // Simulates an inner-budget malfunction (the loader never settles) — the one
       // in-loader case the backstop exists for.
       initFederatedModulesMock.mockImplementation(() => new Promise(() => {}));
@@ -116,7 +99,6 @@ describe("startFederatedModules", () => {
   it("logs a loader-chunk failure even when it happens AFTER the backstop fired", async () => {
     vi.useFakeTimers();
     try {
-      vi.stubEnv("APP_MODULES_FEDERATION_ENABLED", "true");
       // Chunk fetch stalls past the backstop, then errors: the failure must still be
       // logged — otherwise the backstop's "late plugins" warning is the only (and
       // misleading) signal for a loader that actually died.
@@ -144,7 +126,6 @@ describe("startFederatedModules", () => {
   it("bounds a hanging loader-chunk import at the backstop (timer starts before the import)", async () => {
     vi.useFakeTimers();
     try {
-      vi.stubEnv("APP_MODULES_FEDERATION_ENABLED", "true");
       // A stalled (never-settling) chunk fetch: the import promise neither resolves nor rejects.
       vi.doMock("./index", () => new Promise(() => {}));
       const { startFederatedModules } = await loadBootstrap();
@@ -162,7 +143,6 @@ describe("startFederatedModules", () => {
   it("does not log a backstop warning when the loader settles in time (timer is cleared)", async () => {
     vi.useFakeTimers();
     try {
-      vi.stubEnv("APP_MODULES_FEDERATION_ENABLED", "true");
       initFederatedModulesMock.mockResolvedValue({ loaded: ["news"], failed: [], skipped: [] });
       const { startFederatedModules } = await loadBootstrap();
 
@@ -180,7 +160,6 @@ describe("startFederatedModules", () => {
   // The shape a fork can land on when resolving the app-runner merge; without a line it disables
   // platform discovery in silence.
   it("warns when it is started without a plugin-list source", async () => {
-    vi.stubEnv("APP_MODULES_FEDERATION_ENABLED", "true");
     const { startFederatedModules } = await loadBootstrap();
 
     await startFederatedModules();
@@ -189,18 +168,7 @@ describe("startFederatedModules", () => {
     expect(initFederatedModulesMock).toHaveBeenCalledWith(expect.objectContaining({ plugins: undefined }));
   });
 
-  it("does not fetch the plugin list when the flag is off", async () => {
-    vi.stubEnv("APP_MODULES_FEDERATION_ENABLED", "false");
-    const fetchPlugins = vi.fn();
-    const { startFederatedModules } = await loadBootstrap();
-
-    await startFederatedModules({ fetchPlugins });
-
-    expect(fetchPlugins).not.toHaveBeenCalled();
-  });
-
   it("passes the fetched plugin list to the loader", async () => {
-    vi.stubEnv("APP_MODULES_FEDERATION_ENABLED", "true");
     initFederatedModulesMock.mockResolvedValue({ loaded: [], failed: [], skipped: [] });
     const plugins = [{ id: "VirtoCommerce.SalesRep" }];
     const hasPermission = vi.fn();
@@ -212,7 +180,6 @@ describe("startFederatedModules", () => {
   });
 
   it("degrades to no plugins when the plugin list cannot be read", async () => {
-    vi.stubEnv("APP_MODULES_FEDERATION_ENABLED", "true");
     initFederatedModulesMock.mockResolvedValue({ loaded: [], failed: [], skipped: [] });
     const { startFederatedModules } = await loadBootstrap();
 
@@ -222,7 +189,6 @@ describe("startFederatedModules", () => {
     expect(loggerErrorMock).toHaveBeenCalledWith(expect.stringContaining("plugin list"), expect.anything());
   });
   it("budgets the plugin list, so a stalled discovery query cannot eat the boot backstop", async () => {
-    vi.stubEnv("APP_MODULES_FEDERATION_ENABLED", "true");
     initFederatedModulesMock.mockResolvedValue({ loaded: [], failed: [], skipped: [] });
     const { startFederatedModules, DISCOVERY_TIMEOUT_MS } = await loadBootstrap();
     vi.useFakeTimers();
