@@ -90,3 +90,11 @@ export const Compact: StoryType = {
     compact: true,
   },
 };
+
+export const ActivePageCSSVariables: StoryType = {
+  args: {
+    page: 2,
+    pages: 9,
+    class: "[--vc-pagination-page-active-bg:#0055CC] [--vc-pagination-page-active-text:#FFFFFF]",
+  },
+};
