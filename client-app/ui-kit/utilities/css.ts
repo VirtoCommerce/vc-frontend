@@ -31,3 +31,12 @@ export function isValidColor(value: string): boolean {
 export function getInputClearIconSize(size: VcInputSizeType): string {
   return size === "md" ? "0.875rem" : "0.75rem";
 }
+
+// One-shot read of a custom property's computed value (var() chains already substituted).
+// Not `useCssVar`: it writes what it read back as an inline style on the target, which then
+// outranks the preset's `:root` / `html.dark` rules and freezes the value across a theme switch.
+export function readCssVar(name: string, target?: HTMLElement | null): string {
+  return getComputedStyle(target ?? document.documentElement)
+    .getPropertyValue(name)
+    .trim();
+}

@@ -271,6 +271,8 @@ provide<VcInputContextType>("inputContext", {
 </script>
 
 <style lang="scss">
+@use "@/ui-kit/styles/focus-ring" as *;
+
 .vc-input {
   $sizeXs: "";
   $sizeSm: "";
@@ -285,7 +287,6 @@ provide<VcInputContextType>("inputContext", {
   $truncate: "";
 
   --color: var(--vc-input-base-color, theme("colors.primary.500"));
-  --focus-color: rgb(from var(--color) r g b / 0.3);
 
   --radius: var(--vc-input-radius, var(--vc-radius, 0.5rem));
   --vc-button-radius: calc(var(--radius) - 2px);
@@ -351,8 +352,8 @@ provide<VcInputContextType>("inputContext", {
       @apply h-11 text-base;
     }
 
-    &:has(input:focus) {
-      @apply ring ring-[--focus-color];
+    &:has(input:focus-visible) {
+      @include focus-ring;
     }
 
     #{$error} & {
