@@ -484,7 +484,9 @@ already read makes validated bytes == executed bytes **and** removes the extra r
 
 ## Gotchas & guarantees
 
-- **Off by default.** No flag, no cost — the loader isn't even imported.
+- **One switch, on by default.** `module_federation_enabled: false` in
+  `client-app/config/settings_data.json` ⇒ no MF host build, no plugin-list query, and the loader
+  isn't even imported — zero cost. A missing key counts as `true`.
 - **Isolation is total**, malformed descriptors included. Every descriptor field is read through
   a string guard and the list itself is checked for arrayness, because the projection is a
   hand-written structural type and nothing else guards its shape — a non-string `permission` or

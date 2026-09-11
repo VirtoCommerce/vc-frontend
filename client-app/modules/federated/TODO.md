@@ -8,15 +8,80 @@ Roughly in priority order.
 
 ---
 
+## 0. Release 2.58.0 follow-ups (recorded 2026-09-11)
+
+What the release-readiness pass found. Numbers were measured on `vcptcore-qa1` with theme build
+`bb5f1147` and `VirtoCommerce.SalesRep` 3.1009.0-pr-13; items already tracked elsewhere in this
+file are cross-referenced, not repeated.
+
+**Before the theme release**
+
+- [ ] **`/modules → platform` route on every environment that runs the theme.** Only `vcptcore-qa1`
+      has it; `vcst-qa`, `vcst-dev`, `vcptcore-dev`, `vcptcore-qa` do not (checked 2026-09-11) —
+      there the manifest 404s and Sales Rep Hub is silently absent. One `<TICKETS>-<env>-deployment`
+      PR per env branch in vc-deploy-dev.
+- [ ] **Release `vc-module-sales-rep` 3.1009.0** (un-draft #13). The marketplace's latest is
+      3.1008.0, which carries no plugin: theme 2.58 + module ≤ 3.1008 = no Sales Rep Hub at all. The
+      release runs through the shared `vc-build QuickRelease` workflow, which pins no Node while
+      `module-ci` pins Node 24 — check that the runner built `StorefrontApp`, and `unzip -Z1` the
+      zip: `plugins/vc-frontend/` must sit at the module root (the first PR artefact had it under
+      `bin/`).
+- [ ] **Release notes for 2.58.0.** MF is a preview. Version matrix: theme ≥ 2.58.0, SalesRep ≥
+      3.1009.0, x-api ≥ 3.1020.0 (the module's own floor; `store.plugins` itself needs 3.1016.0),
+      x-frontend ≥ 3.1005.0; Customer ≥ 3.1024.0 and ProfileExperienceApi ≥ 3.1018.0 come from the
+      2.58 page context, not from MF. The `/modules` route. What happens when any of it is missing:
+      the storefront boots, the hub is absent, nothing is logged in prod. The switch is build-time
+      only. A module shipping `plugins/vc-frontend/` runs its code in every visitor's browser with
+      the host's full privileges — install trusted modules only. Known limits: boot waits for the
+      plugins, no prod telemetry, an externally hosted plugin needs a host rebuild plus CSP.
+- [ ] **Module README, "Storefront plugin" section**: needs theme ≥ 2.58.0 and the route; how to see
+      the plugin loaded (`mf-manifest.json` → 200 in the network tab); why the hub is missing
+      (404 = no route, `skipped` = facade or shared-library version).
+- [ ] **DevOps checklist for a new environment**: the `/modules` route; the storefront nginx must
+      not cache 404s (Cloudflare kept one per `Accept-Encoding` variant for hours after a redeploy —
+      the 2026-09-11 blank page); `Cache-Control` on `/modules/**` — next item.
+
+**Soon after**
+
+- [ ] **`Cache-Control` for `/modules/**`** (platform / x-frontend). The platform sends none, so
+      Cloudflare answers `BYPASS` and browsers fall back to heuristic caching: `immutable` for the
+      hashed `assets/*`, `no-cache` for `remoteEntry.js`, `mf-manifest.json`, `plugin.json`.
+- [ ] **Boot cost with a plugin installed.** The sales-rep plugin declares no `permission` (it also
+      serves buyer-facing widgets), so every visitor loads it before the router is installed:
+      ~115 KB raw on the critical path, the manifest fetched twice (gate + runtime), about six
+      sequential round trips to the platform on a cold cache — measured ≈ 150 ms warm and
+      ≈ 1.5–2 s cold at ~350 ms RTT. The fixes are VCST-5761 (#1) and the fetch-hook seeding (#3).
+      For the record: the MF host itself costs +159 KB gzip over an MF-off build of the same commit
+      (+9 %), ≈ +67 KB gzip of it on the initial `index.html` payload.
+- [ ] **Delete the in-repo `client-app/modules/sales-rep`** once QA signs the plugin off — the copy
+      is dead code with double maintenance (`initSalesRep` is commented out in `app-runner.ts`; the
+      bundle contains none of it). Take `PORT_TO_MF.md`, the `independentModules` entry in
+      `scripts/graphql-codegen/generator.ts` and a `types.ts` regeneration with it.
+- [ ] **E2E**: vc-testing-module has no Sales Rep Hub coverage at all — add a smoke (plugin loaded,
+      hub menu visible for a rep) so the plugin path is not manual-only.
+- [ ] **Port #2439 / #2444 into the plugin** once facade `0.1.1` (#2480) is released;
+      `requiredHostVersion: "^0.1.1"`.
+- [ ] **Module (backend owners)**: any SalesRep version crashes a platform running
+      `ASPNETCORE_ENVIRONMENT=Development` — `ValidateOnBuild` rejects the scoped
+      `SalesRepRoleResolver` consumed from XCart's singleton `CanAccessCartAuthorizationHandler`.
+      That is every customer's local platform. Candidate fix: a singleton resolver caching via
+      `IPlatformMemoryCache` with `SecurityCacheRegion.CreateChangeToken()`.
+- [ ] The plugin's `useSalesRepsConfig.ts` comment says `SalesRep.Enabled` defaults to `false`;
+      `ModuleConstants` says `true`. Fix with the next plugin PR.
+
+Cross-references: prod telemetry for failed/skipped plugins (#6), CSP at the ingress (#4),
+`validate:core-types` back into `yarn validate` (#5 — expect the known false red from vue-tsc's
+VcButton `tabindex` ordering artefact).
+
 ## 1. Pilot: the sales-rep storefront plugin
 
 Prove the full loop (build → host → gate → `loadRemote` → `init`) with a real feature.
 Definition and rationale: *Pilot* section of the discovery spec.
 
-- [ ] **Publish the first facade release** — run the *Core Facade Release* workflow once so the
+- [x] **Publish the first facade release** (`core-v0.1.0`, 2026-09-10) — run the *Core Facade Release* workflow once so the
       `core-v<CORE_VERSION>` URL that fresh scaffolds pin actually resolves. The scaffolder reads the
       host's current version, so do not hardcode one here.
-- [ ] Scaffold the plugin (`yarn create:plugin`) into `vc-module-sales-rep`, building into its
+- [x] Scaffold the plugin (`yarn create:plugin`) into `vc-module-sales-rep` (#13, `StorefrontApp/`), building into its
       `plugins/vc-frontend/` folder so the platform advertises it (#2). The scaffolder emits the
       `public/plugin.json` that declares `exposed: "./plugin"` — verify it lands in `dist/`, since
       the platform's default is `./Module`.
@@ -184,9 +249,9 @@ type-check — including from the real tarball), but only manually. Remaining:
 
 ## 6. Stage 2 — hardening & scale-out (not yet designed)
 
-From the 2026-07-06 review. None of these block shipping the harness — it is off by
-default, and flag-on with a build-pinned list of trusted plugins fails closed and is
-bounded. They become relevant when scaling past a controlled pilot (more plugins,
+From the 2026-07-06 review. None of these block shipping the harness — it ships on by
+default behind `module_federation_enabled`, loads only what installed modules advertise, and
+fails closed and bounded. They become relevant when scaling past a controlled pilot (more plugins,
 third-party authors, runtime discovery, broad store rollout); the kill switch and CSP are the
 two to treat as prerequisites for *that* stage (artifact integrity is not — see #3). (Route
 authorization moved to #1 — it likely blocks the pilot.)

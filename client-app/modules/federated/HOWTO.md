@@ -353,22 +353,23 @@ scaffolder already wrote it as `public/plugin.json`, which Vite copies into `dis
 3. Add the plugin origin to the storefront CSP (`script-src`, `connect-src`, `style-src` — your
    stylesheets arrive by URL too).
 
-### The other route: shipping inside a Virto Commerce module
+### The primary path in detail
 
-The platform released a second way for a storefront plugin to reach a browser, on
-2026-08-03 — `vc-module-x-api` **3.1016.0** and `vc-module-x-frontend` **3.1005.0**. Instead
-of its own hosting, the plugin rides in a backend module's artifacts and the platform both
-serves and announces it:
+The platform side shipped on 2026-08-03 — `vc-module-x-api` **3.1016.0** and
+`vc-module-x-frontend` **3.1005.0** — and this host consumes it. The plugin rides in a backend
+module's artifacts, and the platform both serves and announces it:
 
-- the module declares a dependency on x-frontend, and its build writes the bundle to
-  `{MODULE_FOLDER}/plugins/vc-frontend/`;
-- the environment yml routes `- path: /modules  route: platform`;
-- the storefront asks for the list rather than being told at build time:
+- the module declares a dependency on `VirtoCommerce.XFrontend` (that is what makes the platform
+  probe it), and its build writes the bundle to `{MODULE_FOLDER}/plugins/vc-frontend/`;
+- whatever hosts the storefront must route `/modules` to the platform — in vc-deploy-dev that is
+  `- path: /modules  route: platform` in the environment yml. Without it the manifest 404s and the
+  plugin is skipped: the storefront boots, the feature is simply absent;
+- at boot the host asks for the list in a query of its own (`GetStorePlugins`, 2 s budget, fails
+  closed to "no plugins" — an older x-api answers 400 and the visitor sees nothing of it):
 
 ```graphql
-query InitializeApplication($domain: String!) {
+query GetStorePlugins($domain: String!) {
   store(domain: $domain) {
-    storeUrl
     plugins(appId: "vc-frontend") {
       id
       version
@@ -376,39 +377,42 @@ query InitializeApplication($domain: String!) {
       entry {
         type
         path
+        hash
+      }
+      contentFiles {
+        type
+        path
+        hash
       }
       remote {
         name
         exposed
-      }
-      contentFiles {
-        hash
-        path
       }
     }
   }
 }
 ```
 
-Same origin as the storefront, so no per-plugin CSP entry and no external hosting to buy.
+The platform advertises `.../remoteEntry.js`; the loader rewrites that to the sibling
+`mf-manifest.json` and reads `requiredHostVersion` from it before any plugin code runs (the
+contract gate). `createRemoteFederationOptions` emits both files — keep `remoteEntry.js` unhashed,
+the platform synthesizes that exact path. `?v=<entry.hash>` is the only freshness signal: the
+platform sets no `Cache-Control` on these files.
 
-**This host does not consume that yet**, and two things have to move first:
+Same origin as the storefront, so a `'self'` CSP covers it and there is no external hosting to buy.
+The bundle is fetched before the router is installed, so declare `permission` in `plugin.json`
+whenever the plugin serves a subset of users — every other visitor then pays nothing for it
+(VCST-5761 moves the whole load off the boot path). Installing such a module is a code-admission
+decision for the storefront: the plugin runs with the host's full privileges — see the README's
+security model.
 
-1. The loader reads `APP_MODULES_FEDERATION_REMOTES` — the build-time env described above —
-   not `plugins(appId:)`. That is `TODO.md` #2.
-2. The loader **requires a manifest JSON URL** and skips anything else (see the "entry must
-   be a manifest JSON URL" guard in `index.ts`), while the platform advertises
-   `.../remoteEntry.js`. Either the loader learns to take a remoteEntry, or the platform's
-   entry path points at `mf-manifest.json`.
-
-For the packaging half there is a working reference:
-`vc-module-system-operations/samples/VirtoCommerce.SystemOperations.SampleExtension` —
-`@module-federation/vite`, remote `name` set to the .NET module id, `outDir` writing straight
-into the discovery folder, and `remoteEntry.js` deliberately left unhashed because the
-platform synthesizes that exact path. Read it for the build config only: that sample is a
-plugin for the **System Operations admin app**, so its `./Module` expose and
-`install(host, ctx)` shape are that app's contract — this host's are `./plugin` and `init()`,
-as in Steps 2 and 3.
+Reference implementation: `vc-module-sales-rep` (`src/VirtoCommerce.SalesRep.Web/StorefrontApp`,
+built into `plugins/vc-frontend/` by the `BuildStorefrontPlugin` / `PublishStorefrontPlugin`
+targets of its `.csproj` under `vc-build Compress`). An older packaging reference is
+`vc-module-system-operations/samples/VirtoCommerce.SystemOperations.SampleExtension` — read it for
+the build config only: that sample is a plugin for the **System Operations admin app**, so its
+`./Module` expose and `install(host, ctx)` shape are that app's contract — this host's are
+`./plugin` and `init()`, as in Steps 2 and 3.
 
 ---
 
