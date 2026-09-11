@@ -44,7 +44,15 @@
       "previous_year": "Previous year",
       "next_year": "Next year",
       "today": "Today",
-      "clear": "Clear"
+      "clear": "Clear",
+      "outside_suggested_range": "Outside the suggested range"
+    },
+    "date_range_input": {
+      "aria_label": "Date range",
+      "clear": "Clear date range",
+      "end_date": "End date",
+      "invalid_range": "End date must be on or after start date",
+      "start_date": "Start date"
     },
     "date_selector": {
       "min_date_error": "Date must be on or after {min}",

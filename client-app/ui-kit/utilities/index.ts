@@ -1,3 +1,4 @@
+export * from "./attrs";
 export * from "./css";
 export * from "./date";
 export * from "./file";

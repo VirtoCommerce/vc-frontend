@@ -1,5 +1,12 @@
 import { describe, it, expect, beforeAll } from "vitest";
-import { getColorValue, isMainColorType, isValidColor, isValidCssVariableName, readCssVar } from "./css";
+import {
+  getColorValue,
+  getInputClearIconSize,
+  isMainColorType,
+  isValidColor,
+  isValidCssVariableName,
+  readCssVar,
+} from "./css";
 
 // jsdom does not implement CSS.supports; polyfill it via CSSStyleDeclaration,
 // which jsdom does validate against real CSS grammar.
@@ -77,6 +84,16 @@ describe("isValidColor", () => {
 
   it("should return false for invalid CSS color values", () => {
     expect(isValidColor("not-a-real-color")).toBe(false);
+  });
+});
+
+describe("getInputClearIconSize", () => {
+  it("should return the larger icon for the md input size", () => {
+    expect(getInputClearIconSize("md")).toBe("0.875rem");
+  });
+
+  it("should return the smaller icon for every other input size", () => {
+    expect((["xs", "sm", "auto"] as const).map(getInputClearIconSize)).toEqual(["0.75rem", "0.75rem", "0.75rem"]);
   });
 });
 

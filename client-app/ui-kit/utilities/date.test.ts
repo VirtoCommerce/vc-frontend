@@ -4,8 +4,10 @@ import {
   deriveDateMaskFromLocale,
   derivePlaceholderFromLocale,
   formatDateLocale,
+  isDateRangeInOrder,
   parseDateInput,
   toDateOnlyString,
+  tryParseDate,
 } from "@/ui-kit/utilities/date";
 
 describe("toDateOnlyString", () => {
@@ -173,5 +175,41 @@ describe("derivePlaceholderFromLocale — fallback", () => {
 describe("deriveDateMaskFromLocale — fallback", () => {
   test("returns ISO-shape mask for unparseable locale", () => {
     expect(deriveDateMaskFromLocale("zzz-zzz-zzz")).toBe("####-##-##");
+  });
+});
+
+describe("tryParseDate", () => {
+  test("parses ISO YYYY-MM-DD", () => {
+    expect(tryParseDate("2026-10-08")?.toString()).toBe("2026-10-08");
+  });
+
+  test("truncates an ISO datetime to the date portion", () => {
+    expect(tryParseDate("2026-10-08T12:34:56.000Z")?.toString()).toBe("2026-10-08");
+  });
+
+  test.each([undefined, "", "garbage", "2026-13-40"])("returns undefined for %s", (value) => {
+    expect(tryParseDate(value)).toBeUndefined();
+  });
+});
+
+describe("isDateRangeInOrder", () => {
+  test.each<[string | undefined, string | undefined]>([
+    [undefined, undefined],
+    ["2026-10-08", undefined],
+    [undefined, "2026-10-08"],
+    ["2026-10-08", "2026-10-08"],
+    ["2026-10-08", "2026-10-14"],
+    ["2026-10-08T23:59:59.000Z", "2026-10-08"],
+  ])("treats (%s, %s) as in order", (start, end) => {
+    expect(isDateRangeInOrder(start, end)).toBe(true);
+  });
+
+  test("flags start after end", () => {
+    expect(isDateRangeInOrder("2026-10-14", "2026-10-08")).toBe(false);
+  });
+
+  test("treats an unparseable endpoint as absent", () => {
+    expect(isDateRangeInOrder("garbage", "2026-10-08")).toBe(true);
+    expect(isDateRangeInOrder("2026-10-14", "garbage")).toBe(true);
   });
 });

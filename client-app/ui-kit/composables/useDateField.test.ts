@@ -179,6 +179,32 @@ describe("useDateField — onClear", () => {
   });
 });
 
+describe("useDateField — reset", () => {
+  test("drops uncommitted invalid text of an already-empty field without committing", () => {
+    const { field, onCommit } = setup({ modelValue: undefined });
+    field.displayValue.value = "99/99/9999";
+    field.onBlur();
+    expect(field.isValid.value).toBe(false);
+
+    field.reset();
+
+    expect(field.displayValue.value).toBe("");
+    expect(field.isValid.value).toBe(true);
+    expect(field.errorText.value).toBeUndefined();
+    expect(onCommit).not.toHaveBeenCalled();
+  });
+
+  test("repaints the display from the model and never commits", () => {
+    const { field, onCommit } = setup({ modelValue: "2026-10-15" });
+    field.displayValue.value = "garbage";
+
+    field.reset();
+
+    expect(field.displayValue.value).toBe("10/15/2026");
+    expect(onCommit).not.toHaveBeenCalled();
+  });
+});
+
 describe("useDateField — min/max validation", () => {
   test("rejects value below min and surfaces min error", () => {
     const { field, onCommit } = setup({
@@ -408,7 +434,7 @@ describe("useDateField — disabledDate predicate", () => {
     expect(field.isValid.value).toBe(true);
     expect(field.errorText.value).toBeUndefined();
     expect(onCommit).toHaveBeenCalledExactlyOnceWith("2026-10-17");
-    // Logger.error fires on every read of isDisabledDateHit — at minimum once (during isValid eval).
+    // The throw is swallowed as false, so isValid stays true; its evaluation count is not pinned.
     expect(loggerSpy).toHaveBeenCalled();
     expect(loggerSpy.mock.calls[0][0]).toBe("VcDateInput: disabledDate predicate threw");
     loggerSpy.mockRestore();
