@@ -392,7 +392,6 @@ defineExpose({
 .vc-calendar {
   --radius: var(--vc-calendar-radius, var(--vc-radius, 0.75rem));
   --day-radius: var(--vc-calendar-day-radius, var(--vc-radius, 0.375rem));
-  --focus-ring: rgb(from var(--color-primary-500) r g b / 0.35);
 
   --bg-color: var(--color-additional-50);
   --border-color: var(--color-neutral-200);
@@ -452,12 +451,6 @@ defineExpose({
 
     &:hover {
       @apply bg-primary-50 text-primary-700;
-    }
-
-    &:focus-visible {
-      @apply outline outline-[3px] outline-[--focus-ring];
-
-      outline-offset: 1px;
     }
 
     &[disabled],
@@ -561,9 +554,6 @@ defineExpose({
     }
 
     &:focus-visible {
-      @apply outline outline-[3px] outline-[--focus-ring];
-
-      outline-offset: 1px;
       z-index: 1;
     }
   }
