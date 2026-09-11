@@ -69,6 +69,7 @@ beforeEach(() => {
   state.loading.value = false;
   state.hasNextPage.value = false;
   state.searchPhrase.value = "";
+  state.isShowSearch.value = true;
   vi.clearAllMocks();
 });
 
@@ -211,5 +212,67 @@ describe("TopHeaderOrganizations", () => {
     await nextTick();
 
     expect(wrapper.find("[data-test-id='organizations-empty-list']").exists()).toBe(true);
+  });
+
+  // Ниже порога поиска поля нет, а опции намеренно вне таб-порядка: без своего таб-стопа
+  // список не достать с клавиатуры вообще. До этого тесты сидели только на ветке с полем.
+  describe("below the search threshold", () => {
+    beforeEach(() => {
+      state.isShowSearch.value = false;
+    });
+
+    it("renders no search field", () => {
+      const wrapper = mountComponent();
+
+      expect(wrapper.find("[data-test-id='organizations-search']").exists()).toBe(false);
+    });
+
+    it("makes the list itself the tab stop", () => {
+      const wrapper = mountComponent();
+
+      expect(wrapper.get('[role="listbox"]').attributes("tabindex")).toBe("0");
+    });
+
+    it("navigates the options from the list", async () => {
+      const wrapper = mountComponent();
+      const list = wrapper.get('[role="listbox"]');
+      const optionIds = wrapper.findAll('[role="option"]').map((option) => option.attributes("id"));
+
+      await list.trigger("keydown", { key: "ArrowDown" });
+      await nextTick();
+
+      expect(list.attributes("aria-activedescendant")).toBe(optionIds[0]);
+
+      await list.trigger("keydown", { key: "End" });
+      await nextTick();
+
+      expect(list.attributes("aria-activedescendant")).toBe(optionIds[optionIds.length - 1]);
+    });
+
+    it("picks the highlighted organization on Enter", async () => {
+      const wrapper = mountComponent();
+      const list = wrapper.get('[role="listbox"]');
+
+      await list.trigger("keydown", { key: "ArrowDown" });
+      await nextTick();
+      await list.trigger("keydown", { key: "Enter" });
+
+      expect(state.trySwitch).toHaveBeenCalledWith("org-1");
+    });
+
+    it("leaves the keys to the search field when it is there", async () => {
+      state.isShowSearch.value = true;
+      const wrapper = mountComponent();
+      const input = wrapper.get("input");
+      const optionIds = wrapper.findAll('[role="option"]').map((option) => option.attributes("id"));
+
+      // The field sits inside the listbox, so its events bubble through the list handler too:
+      // one press must still move the highlight by one.
+      await input.trigger("keydown", { key: "ArrowDown" });
+      await nextTick();
+
+      expect(input.attributes("aria-activedescendant")).toBe(optionIds[0]);
+      expect(wrapper.get('[role="listbox"]').attributes("tabindex")).toBeUndefined();
+    });
   });
 });

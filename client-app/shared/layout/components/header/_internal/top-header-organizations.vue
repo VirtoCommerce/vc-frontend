@@ -20,7 +20,10 @@
       :list-label="$t('common.labels.organizations')"
       :dividers="false"
       max-height="15rem"
+      :focusable="!isShowSearch"
+      :active-descendant-id="isShowSearch ? undefined : activeDescendantId"
       class="top-header-organizations__list"
+      @keydown="onListKeydown"
     >
       <template v-if="isShowSearch" #header>
         <div class="top-header-organizations__search">
@@ -120,6 +123,7 @@ import { useDebounceFn } from "@vueuse/core";
 import { computed, onMounted, ref, watch } from "vue";
 import { useOrganizationSwitcher, useUser, useUserOrganizations } from "@/shared/account";
 import { useComponentId, useListboxNavigation } from "@/ui-kit/composables";
+import type { ListboxNavigationKeyType } from "@/ui-kit/composables";
 
 const emit = defineEmits<{
   organizationSelected: [];
@@ -211,6 +215,44 @@ async function selectOrganization(organizationId: string): Promise<void> {
 
 async function onSearch(): Promise<void> {
   await search();
+}
+
+const NAVIGATION_KEYS: Record<string, ListboxNavigationKeyType> = {
+  ArrowDown: "down",
+  ArrowUp: "up",
+  Home: "home",
+  End: "end",
+};
+
+/**
+ * Below the search threshold there is no field to own the keyboard, and the options are out of
+ * tab order by design (`aria-activedescendant`), so the list itself becomes the tab stop and takes
+ * the same keys. Inert while the field is rendered: its own events bubble up through here, and
+ * both handlers would navigate.
+ */
+function onListKeydown(event: KeyboardEvent): void {
+  if (isShowSearch.value) {
+    return;
+  }
+
+  const direction = NAVIGATION_KEYS[event.key];
+
+  if (direction) {
+    event.preventDefault();
+    navigate(direction);
+    return;
+  }
+
+  if (event.key !== "Enter" && event.key !== " ") {
+    return;
+  }
+
+  const highlighted = displayedOrganizations.value[highlightedIndex.value];
+
+  if (highlighted) {
+    event.preventDefault();
+    void selectOrganization(highlighted.id);
+  }
 }
 
 /** Enter picks the highlighted organization; with nothing highlighted it runs the search. */

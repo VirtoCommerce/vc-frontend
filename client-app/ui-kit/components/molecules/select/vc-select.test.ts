@@ -327,6 +327,38 @@ describe("VcSelect", () => {
       expect(wrapper.emitted("update:modelValue")).toEqual([[["China", "Belgium"]]]);
     });
 
+    // Счётчик и чекбокс рядом обязаны говорить об одном наборе. С фильтром "bel" виден один
+    // невыбранный Belgium, а выбранная Albania скрыта — раньше подпись читалась "1 of 1".
+    it("counts only what the filter leaves visible", async () => {
+      const wrapper = createWrapperWithMessages({ ...selectAllProps, autocomplete: true, modelValue: ["Albania"] });
+      const input = wrapper.get("input");
+
+      await input.trigger("click");
+      await input.setValue("bel");
+      await nextTick();
+
+      expect(wrapper.findAll('[role="option"]').map((option) => option.text())).toEqual(["Belgium"]);
+      expect(wrapper.get(".vc-select__select-all-count").text()).toBe("0 of 1");
+      expect(wrapper.get(".vc-select__select-all input").attributes("aria-checked")).toBe("false");
+    });
+
+    it("keeps counting against the whole set while a server-side filter is on", async () => {
+      const wrapper = createWrapperWithMessages({
+        ...selectAllProps,
+        autocomplete: true,
+        serverFilter: true,
+        total: 3000,
+        modelValue: ["Albania"],
+      });
+      const input = wrapper.get("input");
+
+      await input.trigger("click");
+      await input.setValue("bel");
+      await nextTick();
+
+      expect(wrapper.get(".vc-select__select-all-count").text()).toBe("1 of 3000");
+    });
+
     it("hands focus to the checkbox on Tab, since the popover is out of tab order", async () => {
       const wrapper = createWrapper({ ...selectAllProps, modelValue: [] });
       const input = wrapper.get("input");
@@ -595,6 +627,34 @@ describe("VcSelect", () => {
       expect(input.attributes("aria-activedescendant")).toBe(optionIds[optionIds.length - 1]);
     });
 
+    // Открытие с клавиатуры: APG кладёт подсветку на первый пункт для Down/Home и на последний
+    // для Up/End. Раньше всё, кроме End, открывало список на нулевом индексе.
+    it("opens on the last option with ArrowUp", async () => {
+      const wrapper = createWrapper({ items: ITEMS });
+      const input = wrapper.get("input");
+      const optionIds = wrapper.findAll('[role="option"]').map((option) => option.attributes("id"));
+
+      await input.trigger("keydown", { key: "ArrowUp" });
+      await nextTick();
+      await nextTick();
+
+      expect(input.attributes("aria-expanded")).toBe("true");
+      expect(input.attributes("aria-activedescendant")).toBe(optionIds[optionIds.length - 1]);
+    });
+
+    it("opens on the first option with ArrowDown", async () => {
+      const wrapper = createWrapper({ items: ITEMS });
+      const input = wrapper.get("input");
+      const optionIds = wrapper.findAll('[role="option"]').map((option) => option.attributes("id"));
+
+      await input.trigger("keydown", { key: "ArrowDown" });
+      await nextTick();
+      await nextTick();
+
+      expect(input.attributes("aria-expanded")).toBe("true");
+      expect(input.attributes("aria-activedescendant")).toBe(optionIds[0]);
+    });
+
     it("selects the highlighted option on Enter", async () => {
       const wrapper = createWrapper({ items: ITEMS });
       const input = wrapper.get("input");
@@ -643,6 +703,29 @@ describe("VcSelect", () => {
 
       expect(input.attributes("aria-expanded")).toBe("false");
       expect(document.activeElement).toBe(input.element);
+    });
+
+    // Клик снаружи уже поставил фокус туда, куда целился пользователь. Забрать его обратно —
+    // значит не дать кликнуть в соседнее поле: оно закроет список и сразу потеряет фокус.
+    it("leaves focus alone when it has already moved outside", async () => {
+      const outside = document.createElement("input");
+      document.body.appendChild(outside);
+
+      const wrapper = createWrapper({ items: ITEMS });
+      const input = wrapper.get("input");
+
+      await input.trigger("click");
+
+      expect(input.attributes("aria-expanded")).toBe("true");
+
+      outside.focus();
+      // Именно так закрытие приходит от клика снаружи: попап сам гасит себя и сообщает об этом.
+      wrapper.getComponent({ name: "VcPopover" }).vm.$emit("toggle", false);
+      await nextTick();
+
+      expect(document.activeElement).toBe(outside);
+
+      outside.remove();
     });
 
     // A plain select is a button: the click toggles it, and focus alone must not open it — the

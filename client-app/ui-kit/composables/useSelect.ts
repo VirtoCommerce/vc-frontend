@@ -100,6 +100,27 @@ export function useSelect<T, V>(params: ParamsType<T, V>) {
     return params.modelValue.value != null;
   });
 
+  /**
+   * Lower-cased text the filter matches against. Only a primitive carries one: an option that
+   * resolves to an object — no `textField`, and the item itself is an object — used to stringify
+   * to "[object Object]", so it matched any query that is a substring of that, and nothing else.
+   * Excluding it is the whole behaviour change, and it only reaches a select that filters a list
+   * of objects with no way to label them.
+   */
+  function getFilterText(item: T): string {
+    const text = getItemText(item);
+
+    if (typeof text === "string") {
+      return text.toLowerCase();
+    }
+
+    if (typeof text === "number" || typeof text === "bigint" || typeof text === "boolean") {
+      return String(text).toLowerCase();
+    }
+
+    return "";
+  }
+
   /** Substring match, with prefix matches hoisted to the top. */
   const filteredItems = computed<T[]>(() => {
     if (!params.filterValue.value || params.serverFilter?.value) {
@@ -107,17 +128,8 @@ export function useSelect<T, V>(params: ParamsType<T, V>) {
     }
 
     const searching = params.filterValue.value.toLowerCase();
-    const matched = params.items.value.filter((item) =>
-      String(getItemText(item) ?? "")
-        .toLowerCase()
-        .includes(searching),
-    );
-
-    const prefixMatched = matched.filter((item) =>
-      String(getItemText(item) ?? "")
-        .toLowerCase()
-        .startsWith(searching),
-    );
+    const matched = params.items.value.filter((item) => getFilterText(item).includes(searching));
+    const prefixMatched = matched.filter((item) => getFilterText(item).startsWith(searching));
 
     return union(prefixMatched, matched);
   });

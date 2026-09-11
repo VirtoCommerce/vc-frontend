@@ -381,7 +381,11 @@ function onNavigate(key: ListboxNavigationKeyType, open: () => void) {
 
     // The list may not be rendered yet on the very first open (lazy popover).
     void nextTick(() => {
-      highlightedIndex.value = key === "end" ? filteredItems.value.length - 1 : 0;
+      // APG: Down/Home open on the first option, Up/End on the last. Opening upwards onto the
+      // first option would send the very next ArrowUp wrapping to the bottom.
+      const toLast = key === "end" || key === "up";
+
+      highlightedIndex.value = toLast ? filteredItems.value.length - 1 : 0;
     });
     return;
   }
@@ -420,8 +424,35 @@ function toggled(value: boolean) {
   filterValue.value = "";
   highlightedIndex.value = -1;
 
-  // A closed dropdown owes the keyboard user its focus back. Safe now that focus opens nothing.
-  focusTrigger();
+  // A closed dropdown owes the keyboard user its focus back — but only while the focus is still
+  // ours to give back. An outside click has already put it where the user asked for it, and
+  // taking it from there is what makes the next field impossible to click into.
+  if (holdsFocus()) {
+    focusTrigger();
+  }
+}
+
+/**
+ * May the trigger take the focus back? Only when nobody else is holding it: an outside click has
+ * already delivered it to whatever the user aimed at, and pulling it away from there is what makes
+ * the next field impossible to click into.
+ *
+ * A bare `<body>` counts as ours. Clicking past the dropdown onto nothing focusable leaves focus
+ * nowhere, and so does picking an option in a browser that does not focus what it clicks — the
+ * keyboard user has to get the trigger back in both.
+ */
+function holdsFocus(): boolean {
+  const active = document.activeElement;
+
+  if (!active || active === document.body) {
+    return true;
+  }
+
+  // The dropdown is teleported, so it is not a descendant of the root; reach it through the
+  // listbox id, the one element the two sides share.
+  const dropdown = document.getElementById(listboxId)?.closest(".vc-listbox");
+
+  return document.getElementById(componentId)?.contains(active) === true || dropdown?.contains(active) === true;
 }
 
 /**
@@ -506,10 +537,23 @@ const isAllSelected = computed(
 
 const isSomeSelected = computed(() => selectedVisibleCount.value > 0 && !isAllSelected.value);
 
-const totalCount = computed(() => props.total ?? filteredItems.value.length);
+/**
+ * The counter must describe the same set the checkbox beside it reports on, and Select all acts
+ * on what the user can see. While a local filter is narrowing the list, `total` cannot know about
+ * it — left alone it reads `1 of 1` next to an unchecked box, the one selected item being the one
+ * the filter hid. A server-side filter is exempt: there the consumer re-supplies both the items
+ * and the matching `total`.
+ */
+const localFilter = computed(() => !!filterValue.value && !props.serverFilter);
+
+const totalCount = computed(() =>
+  localFilter.value ? filteredItems.value.length : (props.total ?? filteredItems.value.length),
+);
+
+const selectedCount = computed(() => (localFilter.value ? selectedVisibleCount.value : selectedValues.value.length));
 
 const selectedOfTotal = computed(() =>
-  t("ui_kit.select.selected_of_total", { selected: selectedValues.value.length, total: totalCount.value }),
+  t("ui_kit.select.selected_of_total", { selected: selectedCount.value, total: totalCount.value }),
 );
 
 const selectAllLabel = computed(
@@ -618,9 +662,7 @@ function focusSelectAll(): boolean {
     #{$opened} & {
       @apply ring-[3px] ring-primary-100;
     }
-  }
 
-  &__button {
     // Same scale as VcInput so both triggers line up at a given size.
     // `auto` keeps its height from the content, as before.
     &--size {

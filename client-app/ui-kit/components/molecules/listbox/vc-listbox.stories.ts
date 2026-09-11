@@ -97,6 +97,50 @@ export const Selection: StoryType = {
   },
 };
 
+export const Focusable: StoryType = {
+  args: { focusable: true },
+  render: (args) => ({
+    components: { VcListbox, VcMenuItem },
+    setup: () => ({ args, COUNTRIES }),
+    template: `
+      <VcListbox
+        v-bind="args"
+        list-label="Countries"
+        class="w-64"
+        :active-descendant-id="highlighted === -1 ? undefined : 'listbox-story-option-' + highlighted"
+        @keydown.down.prevent="highlighted = (highlighted + 1) % COUNTRIES.length"
+        @keydown.up.prevent="highlighted = (highlighted - 1 + COUNTRIES.length) % COUNTRIES.length"
+      >
+        <VcMenuItem
+          v-for="(country, index) in COUNTRIES"
+          :key="country"
+          role="option"
+          size="sm"
+          :tabindex="-1"
+          :option-id="'listbox-story-option-' + index"
+          :highlighted="index === highlighted"
+          :aria-selected="index === highlighted"
+        >
+          {{ country }}
+        </VcMenuItem>
+      </VcListbox>
+    `,
+    data: () => ({ highlighted: -1 }),
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Tab into the list, then arrow through it. Options driven by `aria-activedescendant` " +
+          "are out of tab order, so a listbox with no combobox field above it has nothing to " +
+          "receive the keyboard — `focusable` makes the list itself the tab stop and " +
+          "`active-descendant-id` announces which option the arrows are on. Leave both off " +
+          "whenever a field owns the keys, as it does inside `VcSelect`.",
+      },
+    },
+  },
+};
+
 export const CustomMaxHeight: StoryType = {
   args: { maxHeight: "8rem" },
   render: (args) => ({

@@ -9,7 +9,9 @@
       vertical
       tag="ul"
       role="listbox"
+      :focusable="focusable"
       :aria-label="listLabel"
+      :aria-activedescendant="activeDescendantId"
       :aria-multiselectable="multiselectable || undefined"
       :class="['vc-listbox__list', { 'vc-listbox__list--dividers': dividers }]"
     >
@@ -30,6 +32,14 @@ withDefaults(
     listLabel?: string;
     /** Sets `aria-multiselectable`; required by WAI-ARIA whenever more than one option can be picked. */
     multiselectable?: boolean;
+    /**
+     * Makes the list itself the tab stop. Needed when nothing else can own the keyboard: options
+     * driven by `aria-activedescendant` are out of tab order, so a listbox with no combobox field
+     * above it is unreachable without this. Leave it off whenever a field owns the keys.
+     */
+    focusable?: boolean;
+    /** Id of the highlighted option, for the keyboard to be announced while focus stays on the list. */
+    activeDescendantId?: string;
     dividers?: boolean;
     maxHeight?: string;
   }>(),
