@@ -1,5 +1,6 @@
 {
   "icon": "text_fields",
+  "description": "Renders the current product's downloadable assets / files (PDFs, datasheets, certificates) from the catalog — no editable content of its own. Used as a nested block inside the `product-info` section. Use when: the product has supporting documents that should appear as download links in the product detail body. Skip when: not on a product page, or the product has no assets attached. `title` is an optional heading above the list (typical: 'Downloads' or 'Documents').",
   "settings": [
     {
       "id": "title",

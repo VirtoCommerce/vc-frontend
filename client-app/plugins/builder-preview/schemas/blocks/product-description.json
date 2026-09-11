@@ -1,5 +1,6 @@
 {
   "icon": "text_fields",
+  "description": "Renders the current product's description from the catalog — no editable copy of its own. Used as a nested block inside the `product-info` section. Use when: the standard catalog product description should appear in the product detail body. Skip when: not on a product page, or the user wants custom prose instead (use the `text` block). `title` is an optional heading shown above the description — typically leave empty so the description appears anonymously.",
   "settings": [
     {
       "id": "title",

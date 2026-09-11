@@ -1,5 +1,6 @@
 {
   "name": "FavoriteProducts",
+  "description": "Curated product widget with branded styling — a products grid (or list) inside a coloured / imaged widget background, with custom-coloured title and subtitle. Typical homepage block for a 'favourites' / 'featured picks' section. Use when: a styled product showcase with custom title/subtitle colours and a widget background distinct from plain product grids. Skip when: a simple product grid is enough (use `products`), carousel format (use `products-carousel`), specific SKUs by code (use `predefined-product-list`), or full filterable category listing (use `category`). `widgetBackground.color` is a hex color; `widgetBackground.image` is an optional background image URL — leave empty unless the user supplied one. `title.text` / `title.color` and `subtitle.text` / `subtitle.color` are the heading text and brand colour. `viewMode` (`grid` / `list`, default `list`); `count` (max 12, default 4); `query` is a search keyword. `filter` is a raw GraphQL filter expression for power users — leave empty unless the user explicitly provided one.",
   "icon": "favorite",
   "settings": [
     {

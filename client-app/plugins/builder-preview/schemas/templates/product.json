@@ -1,5 +1,6 @@
 {
   "name": "Product template",
+  "description": "Product detail page (PDP) — for individual product pages combining product imagery, descriptive copy, and supporting product blocks. Use when: the user explicitly asks for a product page or PDP, or describes content tied to a single product. Skip when: the user wants a generic landing page (use `page`), an editorial article (use `blogs`), or a product listing / category page (this theme has no template for that — tell the user rather than forcing it). Section composition is constrained — only `image`, `text`, `product-info`, `related-products`, `recommended-products` can appear in `content[]`. This template carries no page-level settings of its own; SEO and metadata come from the product record (Catalog), not from page-builder settings.",
   "previewUrl": "/printers/inkjet-color/epson-workforce-wf-2750-all-in-one-wireless-color-printercopierscannerfax-machine-color-black",
   "path": "default/content/templates/product.json",
   "type": "themes",
