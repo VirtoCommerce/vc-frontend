@@ -337,6 +337,7 @@
           "back_to_operator": "Zurück zu {name}",
           "switching_back": "Wechsle zurück…",
           "no_results": "Keine Ergebnisse gefunden",
+          "organization_locked_tooltip": "Diese Organisation ist gesperrt. Wenden Sie sich für Zugriff an Ihren Administrator.",
           "dark_mode": {
             "system": "Design: automatisch",
             "dark": "Design: dunkel",
