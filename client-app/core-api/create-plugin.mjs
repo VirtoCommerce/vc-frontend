@@ -16,7 +16,7 @@ import { createRequire } from "node:module";
 import { dirname, join, relative, resolve } from "node:path";
 import * as readline from "node:readline/promises";
 import { fileURLToPath } from "node:url";
-import { MF_SHARED_RANGES } from "./federation.mjs";
+import { CONTRACT_TYPE_PEERS, MF_SHARED_RANGES } from "./federation.mjs";
 
 const CORE_API_DIR = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(CORE_API_DIR, "../..");
@@ -220,7 +220,17 @@ const pkgJson = {
   // MF-shared (import: false, borrowed from the host at runtime); the rest are type-peers
   // and tooling, tree-shaken away. `typePeerNames` ensures every facade type-peer is present
   // even when its optional runtime group wasn't selected (see the note at the top of file).
-  devDependencies: mergeDeps(sortedEntries(runtimeDeps), sortedEntries(toolDeps), sortedEntries(typePeerNames)),
+  // The facade's own peerDependencies come last and cover everything its PUBLISHED files import,
+  // optional subpath peers included — a package manager installs none of them on its own, and
+  // `lodash-es` (imported at runtime by @vc-frontend/core/testing) is why the first spec in a
+  // scaffolded plugin used to die on `Cannot find module`. build-types.mjs keeps that list honest.
+  devDependencies: mergeDeps(
+    sortedEntries(runtimeDeps),
+    sortedEntries(toolDeps),
+    sortedEntries(typePeerNames),
+    CONTRACT_TYPE_PEERS,
+    corePkg.peerDependencies ?? {},
+  ),
 };
 
 const viteConfig = `import { federation } from "@module-federation/vite";
@@ -236,7 +246,10 @@ export default defineConfig({
     federation(
       createRemoteFederationOptions({
         name: "${pluginName}",
-        // CONTRACT GATE: the facade version this plugin is built against.
+        // CONTRACT GATE: the facade version this plugin is built against. The loader takes this
+        // range at face value, so widening it is a claim of compatibility, not a request for one:
+        // a host whose version falls INSIDE the range still loads you even if you never tested
+        // against it. A host OUTSIDE the range is refused before any of your code runs.
         requiredHostVersion: "^${corePkg.version}",${sharedOverridesArg}
       }),
     ),
@@ -365,8 +378,17 @@ run \`yalc remove @vc-frontend/core\` and restore the pinned URL before pushing 
 commit a \`file:.yalc/...\` dependency.
 `;
 
+// Platform discovery descriptor. Without it AppManifestService assumes its own defaults —
+// remote name = the .NET module id and expose "./Module" — and the host would loadRemote a key this
+// plugin does not export. Vite copies `public/` into `dist/`, next to remoteEntry.js.
+const pluginJson = {
+  id: pluginName,
+  remote: { name: pluginName, exposed: "./plugin" },
+};
+
 // ── write ─────────────────────────────────────────────────────────────────────
 mkdirSync(join(targetDir, "src", "pages"), { recursive: true });
+mkdirSync(join(targetDir, "public"), { recursive: true });
 writeFileSync(join(targetDir, "package.json"), JSON.stringify(pkgJson, null, 2) + "\n");
 writeFileSync(join(targetDir, "index.html"), indexHtml);
 writeFileSync(join(targetDir, "vite.config.ts"), viteConfig);
@@ -380,6 +402,7 @@ if (selected.tailwind) {
   writeFileSync(join(targetDir, "postcss.config.cjs"), postcssConfig);
   writeFileSync(join(targetDir, "src", "styles.css"), stylesCss);
 }
+writeFileSync(join(targetDir, "public", "plugin.json"), JSON.stringify(pluginJson, null, 2) + "\n");
 writeFileSync(join(targetDir, "src", "shims-vue.d.ts"), shimsVue);
 writeFileSync(join(targetDir, "README.md"), readme);
 // yalc artifacts (local facade co-dev) must never be committed - see README.

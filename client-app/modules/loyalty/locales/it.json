@@ -11,7 +11,8 @@
       "amount": "Importo",
       "redeemed": "Riscattati",
       "earned": "Guadagnati",
-      "registration": "Registrazione"
+      "registration": "Registrazione",
+      "mission": "Ricompensa missione"
     },
     "list_details": {
       "empty_list": "La tua lista è vuota"
@@ -25,6 +26,74 @@
         "text": "Stai tentando di pagare l'ordine utilizzando i punti. Il tuo saldo punti attuale è {currentBalance}.",
         "errors": {
           "insufficient_points": "Impossibile effettuare l'ordine a causa di un saldo punti insufficiente. Il tuo saldo punti attuale è {currentBalance}."
+        }
+      }
+    }
+  },
+  "common": {
+    "links": {
+      "missions_challenges": "Missioni e sfide"
+    }
+  },
+  "shared": {
+    "account": {
+      "navigation": {
+        "links": {
+          "missions_challenges": "@:common.links.missions_challenges"
+        }
+      }
+    }
+  },
+  "pages": {
+    "account": {
+      "missions": {
+        "title": "Missioni e sfide",
+        "description": "Completa le missioni per guadagnare punti bonus Virto Rewards.",
+        "load_error": "Impossibile caricare le tue missioni. Riprova.",
+        "retry_button": "Riprova",
+        "empty_list": "Non hai ancora missioni. Torna presto per scoprire nuovi modi per guadagnare punti.",
+        "balance_banner": {
+          "label": "Saldo Virto Rewards",
+          "points": "punti",
+          "points_history": "Cronologia punti"
+        },
+        "redeem_banner": {
+          "title": "Riscatta i tuoi punti",
+          "description": "Scambia punti per prodotti nel catalogo premi.",
+          "catalog": "Catalogo"
+        },
+        "card": {
+          "type_products": "SKU in primo piano",
+          "type_order_value": "Valore ordine",
+          "type_orders": "Numero di ordini",
+          "points": "punti",
+          "days_left": "{count} giorno rimasto | {count} giorni rimasti",
+          "mission_completed": "Missione completata",
+          "completed": "Completato",
+          "open_mission": "Apri missione",
+          "progress_skus": "{current} di {target} SKU",
+          "progress_any_sku": "almeno 1 SKU su {target}",
+          "progress_spend": "Speso {sum} di {target}",
+          "progress_orders": "{current} di {target} ordini"
+        },
+        "sku_modal": {
+          "buy_at_least": "Acquista almeno {count}",
+          "total_units": "Unità totali",
+          "targets_met": "Obiettivi raggiunti",
+          "cart_subtotal": "Subtotale carrello",
+          "reward_hint": "Guadagna {points} punti quando tutti gli obiettivi sono soddisfatti",
+          "reward_unlocked": "Tutti gli obiettivi raggiunti — {points} punti sbloccati",
+          "close": "Chiudi",
+          "add_to_cart": "Aggiungi al carrello",
+          "added_to_cart": "Prodotti aggiunti al carrello",
+          "add_to_cart_error": "Alcuni prodotti non hanno potuto essere aggiunti al carrello"
+        },
+        "order_modal": {
+          "mission_target": "Obiettivo missione",
+          "value_requirement": "Spendi {target} in ordini idonei",
+          "count_requirement": "Effettua {target} ordini separati",
+          "close": "Chiudi",
+          "redeem_products": "Riscatta prodotti"
         }
       }
     }

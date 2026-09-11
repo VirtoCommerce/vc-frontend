@@ -125,6 +125,38 @@
         "ship_to": "Адрес доставки"
       }
     },
+    "customer_orders": {
+      "page": {
+        "title": "Заказы {customer}",
+        "all_title": "Заказы клиентов",
+        "title_fallback": "Заказы"
+      },
+      "breadcrumb": "Заказы",
+      "back_to_customer": "Назад к клиенту",
+      "back_to_orders": "Назад к заказам",
+      "order_not_found": "Заказ не найден",
+      "order_load_failed": "This order couldn't be loaded. Try refreshing the page.",
+      "search_placeholder": "По номеру, имени или другим данным",
+      "search_aria": "Поиск заказов",
+      "reset_search": "Очистить поиск",
+      "filters": {
+        "button": "Фильтры",
+        "title": "Фильтры",
+        "created_date": "Дата создания",
+        "start_date": "Дата начала",
+        "end_date": "Дата окончания",
+        "invalid_range": "Некорректный диапазон дат.",
+        "order_status": "@:common.labels.status",
+        "customer": "Выберите клиента",
+        "reset": "Очистить",
+        "apply": "Применить",
+        "custom_date": "Произвольная дата",
+        "last_day": "Последний день",
+        "last_week": "Последняя неделя",
+        "last_month": "Последний месяц",
+        "last_year": "Последний год"
+      }
+    },
     "communication": {
       "action": "Отправить эл. письмо",
       "title": "Отправить сообщение",
@@ -157,7 +189,7 @@
       }
     },
     "orders": {
-      "title": "Недавние заказы",
+      "title": "Мои недавние заказы",
       "view_all": "Все заказы",
       "empty": "Пока нет заказов",
       "no_results": "Нет заказов, соответствующих этому фильтру",

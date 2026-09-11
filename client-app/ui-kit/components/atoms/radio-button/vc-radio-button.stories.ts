@@ -136,6 +136,48 @@ export const WithSlot: StoryType = {
   },
 };
 
+export const LabelWithInteractiveContent: StoryType = {
+  render: (args) => ({
+    components: { VcRadioButton },
+    setup: () => ({ args }),
+    template: `<div class="space-y-4">
+      <VcRadioButton v-bind="args" v-model="args.modelValue" value="terms">
+        I agree to the
+        <a href="#" class="underline">Terms and Conditions</a>
+      </VcRadioButton>
+
+      <VcRadioButton v-bind="args" v-model="args.modelValue" value="address">
+        Ship to my default address
+        <button type="button" class="ms-2 rounded-[--vc-radius] border border-neutral-300 px-1.5 text-xs leading-4">Change</button>
+      </VcRadioButton>
+    </div>`,
+  }),
+  args: {
+    value: "terms",
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Interactive content in the label slot — links with `href`, buttons, selects — receives its own clicks and does not select the radio button. Elements that only look interactive (`role="button"` on a `div`) are not exempt from label activation and will do both; use a real interactive element.',
+      },
+      source: {
+        code: `
+          <VcRadioButton v-model="selected" value="terms">
+            I agree to the
+            <a href="#" class="underline">Terms and Conditions</a>
+          </VcRadioButton>
+
+          <VcRadioButton v-model="selected" value="address">
+            Ship to my default address
+            <button type="button" class="ms-2 rounded-[--vc-radius] border border-neutral-300 px-1.5 text-xs leading-4">Change</button>
+          </VcRadioButton>
+        `,
+      },
+    },
+  },
+};
+
 export const BreakWord: StoryType = {
   decorators: [
     () => ({

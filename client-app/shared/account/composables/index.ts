@@ -1,6 +1,7 @@
 export * from "./useCustomerAddresses";
 export * from "./useImpersonate";
 export * from "./useOrderNavigation";
+export * from "./useOrderView";
 export * from "./useOrganizationSwitcher";
 export * from "./usePasswordRequirements";
 export * from "./usePromotionCoupons";
