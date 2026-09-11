@@ -65,9 +65,8 @@ Still open:
 - [ ] **Freshness of the list** — our side is uncached, so a newly installed plugin appears on the
       next page load. What is left is platform-side: `AppManifestService` caches its manifest for
       the process lifetime.
-- [ ] **Theme master switch** in `client-app/config/settings_data.json` for the runtime
-      role of `APP_MODULES_FEDERATION_ENABLED` — while keeping a build-time bundling gate
-      (`vite.federation.ts` can import the JSON, or a build switch survives).
+- [x] **Theme master switch** — `module_federation_enabled` in `client-app/config/settings_data.json`,
+      read by `enabled.ts` together with the flag; the flag stays the build-time bundling gate.
 - [ ] **Backend-capability gate** — `requiredBackendModules` precondition checked against
       the installed module list before load; unmet ⇒ `skipped` with a distinct reason
       (decided in review: discovery-decoupling ≠ functional-decoupling).

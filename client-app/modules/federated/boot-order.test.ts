@@ -190,6 +190,7 @@ describe("app-runner boot order", () => {
 
   afterEach(() => {
     vi.unstubAllEnvs();
+    vi.doUnmock("@/config/settings_data.json");
   });
 
   it("puts the theme context and the user in place before the loader, and the router after it", async () => {
@@ -225,6 +226,21 @@ describe("app-runner boot order", () => {
 
     it("issues nothing and resolves to no plugins when the flag is off", async () => {
       vi.stubEnv("APP_MODULES_FEDERATION_ENABLED", "false");
+
+      await runBoot();
+
+      expect(getStorePluginsMock).not.toHaveBeenCalled();
+      await expect(loaderOptions.current?.fetchPlugins?.()).resolves.toBeUndefined();
+    });
+
+    it("issues nothing when the theme turns federation off, whatever the flag says", async () => {
+      vi.stubEnv("APP_MODULES_FEDERATION_ENABLED", "true");
+      vi.doMock("@/config/settings_data.json", async (importOriginal) => {
+        const real = await importOriginal<{ default: { current: string; settings: Record<string, unknown> } }>();
+        return {
+          default: { ...real.default, settings: { ...real.default.settings, module_federation_enabled: false } },
+        };
+      });
 
       await runBoot();
 

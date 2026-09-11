@@ -24,7 +24,12 @@ describe("startFederatedModules", () => {
   afterEach(() => {
     vi.unstubAllEnvs();
     vi.doUnmock("./index");
+    vi.doUnmock("@/config/settings_data.json");
   });
+
+  function stubThemeSettings(settings: Record<string, unknown>) {
+    vi.doMock("@/config/settings_data.json", () => ({ default: { current: "default", settings } }));
+  }
 
   it.each([undefined, "", "false", "0"])("is a no-op when APP_MODULES_FEDERATION_ENABLED is %j", async (value) => {
     // Stubbed even for undefined: the repo's .env enables the flag, so "unset" has to be made explicit.
@@ -38,6 +43,29 @@ describe("startFederatedModules", () => {
 
   it("runs the loader when APP_MODULES_FEDERATION_ENABLED is enabled", async () => {
     vi.stubEnv("APP_MODULES_FEDERATION_ENABLED", "true");
+    initFederatedModulesMock.mockResolvedValue({ loaded: [], failed: [], skipped: [] });
+    const { startFederatedModules } = await loadBootstrap();
+
+    await startFederatedModules();
+
+    expect(initFederatedModulesMock).toHaveBeenCalledOnce();
+  });
+
+  it("is a no-op when the theme sets module_federation_enabled to false, even with the flag on", async () => {
+    vi.stubEnv("APP_MODULES_FEDERATION_ENABLED", "true");
+    stubThemeSettings({ module_federation_enabled: false });
+    const fetchPlugins = vi.fn();
+    const { startFederatedModules } = await loadBootstrap();
+
+    await startFederatedModules({ fetchPlugins });
+
+    expect(initFederatedModulesMock).not.toHaveBeenCalled();
+    expect(fetchPlugins).not.toHaveBeenCalled();
+  });
+
+  it("treats a theme without the module_federation_enabled key as enabled", async () => {
+    vi.stubEnv("APP_MODULES_FEDERATION_ENABLED", "true");
+    stubThemeSettings({});
     initFederatedModulesMock.mockResolvedValue({ loaded: [], failed: [], skipped: [] });
     const { startFederatedModules } = await loadBootstrap();
 

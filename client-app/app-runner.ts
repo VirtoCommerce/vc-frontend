@@ -26,11 +26,11 @@ import {
 } from "@/core/plugins";
 import { extractHostname, Logger } from "@/core/utilities";
 import { ignoreChunkLoadFailure } from "@/core/utilities/optional-chunk";
-import { isMfFlagEnabled } from "@/core-api/federation.mjs";
 import { createI18n } from "@/i18n";
 import { init as initModuleBackInStock } from "@/modules/back-in-stock";
 import { init as initCustomerReviews } from "@/modules/customer-reviews";
 import { startFederatedModules } from "@/modules/federated/bootstrap";
+import { isFederationEnabled } from "@/modules/federated/enabled";
 import { init as initializeGoogleAnalytics } from "@/modules/google-analytics";
 import { init as initLoyalty } from "@/modules/loyalty";
 import { init as initNews } from "@/modules/news";
@@ -75,8 +75,7 @@ async function getUcpHandoffUserId(): Promise<string | undefined> {
  * The env override skips the query: that list wins in the loader anyway, so asking would cost the
  * plugin author's dev loop a round trip per boot, and an error against a backend without the field.
  */
-const ASK_PLATFORM_FOR_PLUGINS =
-  isMfFlagEnabled(import.meta.env.APP_MODULES_FEDERATION_ENABLED) && !import.meta.env.APP_MODULES_FEDERATION_REMOTES;
+const ASK_PLATFORM_FOR_PLUGINS = isFederationEnabled() && !import.meta.env.APP_MODULES_FEDERATION_REMOTES;
 
 /** The preview plugins are optional: a failed load leaves the app booting without them. */
 function reportOptionalChunkFailure(error: unknown): undefined {

@@ -377,6 +377,8 @@ export interface IThemeConfigSettings {
 
   push_messages_enabled?: boolean;
   files_enabled?: boolean;
+  /** Loads the plugins the platform advertises (Module Federation). Missing ⇒ enabled. */
+  module_federation_enabled?: boolean;
 
   bulk_order_enabled?: boolean;
   product_compare_enabled?: boolean;
