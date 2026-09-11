@@ -71,6 +71,10 @@
         :highlighted="index === highlightedIndex"
         :tabindex="-1"
         :aria-selected="contactOrganizationId === item.id"
+        :disabled="item.isLockedForCurrentUser"
+        :title="
+          item.isLockedForCurrentUser ? $t('shared.layout.header.top_header.organization_locked_tooltip') : undefined
+        "
         @click="selectOrganization(item.id)"
         @mousemove="highlightedIndex = index"
       >
@@ -82,7 +86,12 @@
           :title="item.name"
           word-break="break-word"
           :data-organization-name="item.name"
+          :disabled="item.isLockedForCurrentUser"
         />
+
+        <template v-if="item.isLockedForCurrentUser" #append>
+          <VcIcon name="lock-closed" size="xs" />
+        </template>
       </VcMenuItem>
 
       <div
@@ -108,7 +117,7 @@
 
 <script setup lang="ts">
 import { useDebounceFn } from "@vueuse/core";
-import { computed, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { useOrganizationSwitcher, useUser, useUserOrganizations } from "@/shared/account";
 import { useComponentId, useListboxNavigation } from "@/ui-kit/composables";
 
@@ -147,6 +156,12 @@ watch(
 const componentId = useComponentId("organizations");
 const listboxId = componentId + "-listbox";
 
+// useUserOrganizations fetches only once per session, so a lock applied while this menu was
+// closed would otherwise leave a stale, clickable row. Refresh on every mount to catch that.
+onMounted(() => {
+  void search();
+});
+
 const displayedOrganizations = computed(() => {
   const withoutCurrent = organizations.value.filter((item) => item.id !== organization.value?.id);
 
@@ -174,6 +189,11 @@ async function selectOrganization(organizationId: string): Promise<void> {
   // The current organization is already active — selecting it must not trigger a redundant switch.
   if (organizationId === organization.value?.id) {
     emit("organizationSelected");
+    return;
+  }
+
+  const target = organizations.value.find((item) => item.id === organizationId);
+  if (target?.isLockedForCurrentUser) {
     return;
   }
 
