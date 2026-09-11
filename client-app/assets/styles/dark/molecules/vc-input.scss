@@ -1,8 +1,3 @@
-// Focus ring: bump opacity for dark-mode visibility.
-.vc-input {
-  --focus-color: rgb(from var(--color) r g b / 0.8);
-}
-
 // Autofill: browser forces light background; override with dark surface + light text.
 input:autofill,
 textarea:autofill {
