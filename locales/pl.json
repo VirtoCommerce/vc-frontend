@@ -337,6 +337,7 @@
           "back_to_operator": "Wróć do {name}",
           "switching_back": "Powrót…",
           "no_results": "Nie znaleziono wyników",
+          "organization_locked_tooltip": "Ta organizacja jest zablokowana. Skontaktuj się z administratorem, aby uzyskać dostęp.",
           "dark_mode": {
             "system": "Motyw: automatyczny",
             "dark": "Motyw: ciemny",

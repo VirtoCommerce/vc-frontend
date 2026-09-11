@@ -337,6 +337,7 @@
           "back_to_operator": "Tilbake til {name}",
           "switching_back": "Bytter tilbake…",
           "no_results": "Ingen resultater funnet",
+          "organization_locked_tooltip": "Denne organisasjonen er låst. Kontakt administratoren din for tilgang.",
           "dark_mode": {
             "system": "Tema: automatisk",
             "dark": "Tema: mørkt",
