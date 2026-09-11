@@ -21,13 +21,27 @@ function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+// localeFolder/targetFile both trace back to CLI-supplied glob patterns (see
+// check-locales-missing-keys.ts), so before writing the translated result back
+// out, pin the resolved destination to stay inside the resolved locale folder.
+function resolveLocaleJsonPath(localeFolder: string, filePath: string): string {
+  const resolvedFolder = path.resolve(localeFolder);
+  const resolvedFilePath = path.resolve(filePath);
+  // eslint-disable-next-line sonarjs/null-dereference -- false positive: path.resolve always returns a string
+  if (!resolvedFilePath.startsWith(resolvedFolder + path.sep) || path.extname(resolvedFilePath) !== ".json") {
+    throw new Error(`Refusing to write outside the locale folder: "${filePath}"`);
+  }
+  return resolvedFilePath;
+}
+
 async function processTargetFile(targetFilePath: string, keysToFix: MissingKeyType[]): Promise<void> {
   const { originFile, localeFolder } = keysToFix[0];
   const originFilePath = path.join(localeFolder, originFile);
+  const resolvedTargetFilePath = resolveLocaleJsonPath(localeFolder, targetFilePath);
 
   const [originFileContent, targetFileContent] = (await Promise.all([
     fs.promises.readFile(originFilePath, "utf-8").then(JSON.parse),
-    fs.promises.readFile(targetFilePath, "utf-8").then(JSON.parse),
+    fs.promises.readFile(resolvedTargetFilePath, "utf-8").then(JSON.parse),
   ])) as [LocaleDataType, LocaleDataType];
 
   const originLanguage = getLanguageFromFilename(originFile);
@@ -59,7 +73,7 @@ async function processTargetFile(targetFilePath: string, keysToFix: MissingKeyTy
   const missingKeySet = new Set(keysToFix.map((k) => k.key));
   const rebuilt = buildNewLocaleContent(originFileContent, targetFileContent, translationsMap, missingKeySet);
 
-  await fs.promises.writeFile(targetFilePath, JSON.stringify(rebuilt, null, 2));
+  await fs.promises.writeFile(resolvedTargetFilePath, JSON.stringify(rebuilt, null, 2));
 }
 
 export async function fixLocales() {
