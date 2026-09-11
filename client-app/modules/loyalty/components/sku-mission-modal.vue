@@ -16,11 +16,7 @@
           {{ $n(view.rewardPoints, "decimal") }} {{ $t("pages.account.missions.card.points") }}
         </VcChip>
 
-        <span class="sku-mission-modal__days">
-          <VcBadge :color="view.dateSeverity" />
-
-          {{ view.dateLabel }}
-        </span>
+        <MissionDateBadge :severity="view.dateSeverity" :label="view.dateLabel" />
       </div>
 
       <p v-if="mission.description" class="sku-mission-modal__description">
@@ -163,6 +159,7 @@ import { CountInCart, InStock } from "@/shared/catalog/components";
 import { useCloseModalOnRouteChange } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import { MISSION_STATUS, MISSION_TYPE, useMissionCard } from "../composables";
+import MissionDateBadge from "./mission-date-badge.vue";
 import type { MissionDataType } from "../composables";
 import QuantityControl from "@/shared/common/components/quantity-control.vue";
 
@@ -297,10 +294,6 @@ async function addProductsToCart(close: () => void) {
 
   &__meta {
     @apply flex flex-wrap items-center gap-3;
-  }
-
-  &__days {
-    @apply flex items-center gap-2 text-sm font-bold text-neutral-600;
   }
 
   &__description {
