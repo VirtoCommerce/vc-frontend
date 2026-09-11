@@ -147,6 +147,39 @@ describe("TopHeaderOrganizations", () => {
     expect(state.trySwitch).not.toHaveBeenCalled();
   });
 
+  // Un-hoisting the current organization mid-request shifts every option up by one, which
+  // invalidates the keyboard highlight on every page load.
+  it("keeps the current organization pinned to the top while a page loads", async () => {
+    state.organization.value = { id: "org-3", name: "Initech" };
+    const wrapper = mountComponent();
+    await nextTick();
+
+    expect(wrapper.findAll('[role="option"]')[0].text()).toContain("Initech");
+
+    state.loading.value = true;
+    await nextTick();
+
+    expect(wrapper.findAll('[role="option"]')[0].text()).toContain("Initech");
+  });
+
+  // Paging appends to the list; the highlighted option has not moved, so it must survive.
+  it("keeps the highlight when another page is appended", async () => {
+    const wrapper = mountComponent();
+    const input = wrapper.get("input");
+
+    await input.trigger("keydown", { key: "ArrowDown" });
+    await input.trigger("keydown", { key: "ArrowDown" });
+    await nextTick();
+
+    const highlighted = input.attributes("aria-activedescendant");
+
+    state.organizations.value = [...state.organizations.value, { id: "org-4", name: "Umbrella" }];
+    await nextTick();
+
+    expect(input.attributes("aria-activedescendant")).toBe(highlighted);
+    expect(wrapper.findAll('[role="option"]')).toHaveLength(4);
+  });
+
   it("drops the highlight when the list changes underneath", async () => {
     const wrapper = mountComponent();
     const input = wrapper.get("input");

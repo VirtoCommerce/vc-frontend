@@ -1,5 +1,5 @@
 <template>
-  <div class="vc-listbox">
+  <div class="vc-listbox" :style="{ '--props-max-height': maxHeight }">
     <div v-if="$slots.header" class="vc-listbox__header">
       <slot name="header" />
     </div>
@@ -12,7 +12,6 @@
       :aria-label="listLabel"
       :aria-multiselectable="multiselectable || undefined"
       :class="['vc-listbox__list', { 'vc-listbox__list--dividers': dividers }]"
-      :style="{ '--props-max-height': maxHeight }"
     >
       <slot />
     </VcScrollbar>

@@ -65,12 +65,15 @@ describe("VcListbox", () => {
     expect(without.get('[role="listbox"]').classes()).not.toContain("vc-listbox__list--dividers");
   });
 
-  it("forwards maxHeight as the height custom property", () => {
+  // `--max-height` is resolved on the root, so the property has to be declared there: on the
+  // list itself it is invisible to the rule that reads it and the prop does nothing.
+  it("declares maxHeight on the root, where the height rule reads it", () => {
     const wrapper = mountListbox({
       props: { maxHeight: "20rem" },
       slots: { default: () => option("Albania") },
     });
 
-    expect(wrapper.get('[role="listbox"]').attributes("style")).toContain("--props-max-height: 20rem");
+    expect(wrapper.get(".vc-listbox").attributes("style")).toContain("--props-max-height: 20rem");
+    expect(wrapper.get('[role="listbox"]').attributes("style") ?? "").not.toContain("--props-max-height");
   });
 });

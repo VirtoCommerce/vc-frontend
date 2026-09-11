@@ -150,25 +150,21 @@ const listboxId = componentId + "-listbox";
 const displayedOrganizations = computed(() => {
   const withoutCurrent = organizations.value.filter((item) => item.id !== organization.value?.id);
 
-  if (organization.value && !loading.value && organizations.value.length > 0) {
+  // No `loading` check: a new search empties the list first, so `length > 0` already keeps the
+  // current organization off an empty result. Gating on `loading` instead un-hoists it for the
+  // duration of every request, and a paging round trip then shifts every option up by one.
+  if (organization.value && organizations.value.length > 0) {
     return [organization.value, ...withoutCurrent];
   }
 
   return withoutCurrent;
 });
 
-const {
-  highlightedIndex,
-  activeDescendantId,
-  getOptionId,
-  navigate,
-  reset: resetHighlight,
-} = useListboxNavigation({
+const { highlightedIndex, activeDescendantId, getOptionId, navigate } = useListboxNavigation({
   componentId,
-  count: computed(() => displayedOrganizations.value.length),
+  items: displayedOrganizations,
+  getKey: (item) => item.id,
 });
-
-watch(displayedOrganizations, resetHighlight);
 
 async function selectOrganization(organizationId: string): Promise<void> {
   if (!organizationId) {

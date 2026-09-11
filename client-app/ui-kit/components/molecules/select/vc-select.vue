@@ -256,18 +256,6 @@ const accessibleLabel = computed(() => props.ariaLabel ?? props.label);
 
 const isShown = ref(false);
 const filterValue = ref("");
-const { highlightedIndex, getOptionId, navigate } = useListboxNavigation({
-  componentId,
-  count: computed(() => filteredItems.value.length),
-});
-
-// Only announce an active option while the list is on screen.
-const activeDescendantId = computed(() =>
-  isShown.value && highlightedIndex.value >= 0 ? getOptionId(highlightedIndex.value) : undefined,
-);
-
-const liveRegionMessage = ref("");
-
 const {
   getItemText,
   isActiveItem,
@@ -286,6 +274,19 @@ const {
   textField: toRef(() => props.textField),
   valueField: toRef(() => props.valueField),
 });
+
+const { highlightedIndex, getOptionId, navigate } = useListboxNavigation({
+  componentId,
+  items: filteredItems,
+  getKey: getItemValue,
+});
+
+// Only announce an active option while the list is on screen.
+const activeDescendantId = computed(() =>
+  isShown.value && highlightedIndex.value >= 0 ? getOptionId(highlightedIndex.value) : undefined,
+);
+
+const liveRegionMessage = ref("");
 
 function toLabel(value: unknown): string {
   return value === undefined || value === null ? "" : String(value);
@@ -332,9 +333,9 @@ const search = computed({
   },
 });
 
+// The highlight itself is kept or dropped by useListboxNavigation, which can tell an appended
+// page from a rebuilt list.
 watch(filteredItems, (items) => {
-  highlightedIndex.value = -1;
-
   if (isShown.value && filterValue.value) {
     liveRegionMessage.value = items.length
       ? t("ui_kit.select.results_available", [items.length])

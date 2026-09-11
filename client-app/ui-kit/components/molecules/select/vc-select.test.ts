@@ -460,6 +460,45 @@ describe("VcSelect", () => {
       expect(with_.find(".vc-select__load-more").exists()).toBe(true);
     });
 
+    // Подгрузка страницы дописывает элементы в конец: подсвеченный не сдвинулся, значит
+    // подсветка обязана уцелеть. Сброс отбрасывал бы пользователя в начало на каждой странице.
+    it("keeps the highlight when a further page is appended", async () => {
+      const wrapper = createWrapper({ items: ITEMS, hasNextPage: true });
+      const input = wrapper.get("input");
+
+      await input.trigger("focus");
+      await input.trigger("keydown", { key: "ArrowDown" });
+      await input.trigger("keydown", { key: "ArrowDown" });
+      await nextTick();
+
+      const highlighted = input.attributes("aria-activedescendant");
+
+      expect(highlighted).toBe(wrapper.findAll('[role="option"]')[1].attributes("id"));
+
+      await wrapper.setProps({ items: [...ITEMS, "Denmark", "Estonia"] });
+      await nextTick();
+
+      expect(input.attributes("aria-activedescendant")).toBe(highlighted);
+      expect(wrapper.findAll('[role="option"]')).toHaveLength(5);
+    });
+
+    // А вот подмена списка (новый ответ поиска) ставит под индекс другой пункт — тут сброс нужен.
+    it("drops the highlight when the list is replaced", async () => {
+      const wrapper = createWrapper({ items: ITEMS, hasNextPage: true });
+      const input = wrapper.get("input");
+
+      await input.trigger("focus");
+      await input.trigger("keydown", { key: "ArrowDown" });
+      await nextTick();
+
+      expect(input.attributes("aria-activedescendant")).toBeTruthy();
+
+      await wrapper.setProps({ items: ["Denmark", "Estonia"] });
+      await nextTick();
+
+      expect(input.attributes("aria-activedescendant")).toBeUndefined();
+    });
+
     it("lets the empty state be replaced", () => {
       const wrapper = createWrapper({ items: [] }, { empty: () => h("span", { class: "probe-empty" }, "nothing") });
 
