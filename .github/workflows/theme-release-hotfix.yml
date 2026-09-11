@@ -29,15 +29,15 @@ jobs:
         uses: warchant/setup-sonar-scanner@911ef81b14b267a261d70ac94e43d3c822a709d5 # v10
 
       - name: Install VirtoCommerce.GlobalTool
-        uses: VirtoCommerce/vc-github-actions/setup-vcbuild@master
+        uses: VirtoCommerce/.github/actions/setup-vcbuild@VCST-5414
 
       - name: Setup Git Credentials
-        uses: VirtoCommerce/vc-github-actions/setup-git-credentials-github@master
+        uses: VirtoCommerce/.github/actions/setup-git-credentials-github@VCST-5414
         with:
           githubToken: ${{ secrets.REPO_TOKEN }}
 
       - name: Get Image Version
-        uses: VirtoCommerce/vc-github-actions/get-image-version@master
+        uses: VirtoCommerce/.github/actions/get-image-version@VCST-5414
         id: image
         with:
           projectType: "theme"
@@ -87,7 +87,7 @@ jobs:
 
       - name: Publish to Blob
         id: blobRelease
-        uses: VirtoCommerce/vc-github-actions/publish-blob-release@master
+        uses: VirtoCommerce/.github/actions/publish-blob-release@VCST-5414
         with:
           blobSAS: ${{ secrets.BLOB_TOKEN }}
 
