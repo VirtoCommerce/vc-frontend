@@ -193,6 +193,8 @@ onMounted(() => {
 </script>
 
 <style lang="scss">
+@use "@/ui-kit/styles/focus-ring" as *;
+
 .vc-menu-item {
   --props-max-lines: v-bind(maxLines);
   --max-lines: var(--props-max-lines, 2);
@@ -266,18 +268,8 @@ onMounted(() => {
     @each $color in $colors {
       &--color--#{$color} {
         --vc-icon-color: var(--color-#{$color}-600);
-        --focus-color: rgb(from var(--color-#{$color}-500) r g b / 0.3);
 
-        &:hover {
-          @apply bg-[--color-#{$color}-50] outline-none;
-        }
-
-        &:focus,
-        &:focus-visible,
-        &#{$highlighted} {
-          @apply outline outline-2 outline-[--focus-color] -outline-offset-2 rounded-[inherit];
-        }
-
+        &:hover,
         &#{$highlighted} {
           @apply bg-[--color-#{$color}-50];
         }
@@ -286,6 +278,17 @@ onMounted(() => {
           @apply bg-[--color-#{$color}-100];
         }
       }
+    }
+
+    // Menu lists render inside a VcScrollbar with zero clearance (measured in the
+    // language dropdown), so an outset ring is clipped: invert the shared offset.
+    // `highlighted` shares the ring: in an aria-activedescendant listbox DOM focus stays
+    // on the combobox, so the option never matches :focus-visible.
+    &:focus-visible,
+    &#{$highlighted} {
+      @apply rounded-[inherit];
+
+      @include focus-ring($inset: true);
     }
 
     &:disabled,

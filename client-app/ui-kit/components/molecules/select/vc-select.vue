@@ -598,8 +598,8 @@ function focusSelectAll(): boolean {
       @apply border-danger;
     }
 
-    &:focus {
-      @apply outline-none ring-[3px] ring-primary-100;
+    #{$opened} & {
+      @apply ring-[3px] ring-primary-100;
     }
   }
 
