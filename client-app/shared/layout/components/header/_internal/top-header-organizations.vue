@@ -15,55 +15,64 @@
       {{ $t("common.labels.organizations") }}
     </div>
 
-    <div v-else class="top-header-organizations__search">
-      <div class="top-header-organizations__label">
-        {{ $t("common.labels.organizations") }}
-      </div>
-
-      <VcInput
-        v-model="searchPhrase"
-        type="search"
-        size="sm"
-        data-test-id="organizations-search"
-        :placeholder="$t('common.labels.search')"
-        :clearable="!!searchPhrase"
-        :aria="{
-          role: 'combobox',
-          'aria-expanded': 'true',
-          'aria-haspopup': 'listbox',
-          'aria-controls': listboxId,
-          'aria-activedescendant': activeDescendantId ?? null,
-        }"
-        @keydown.enter="onSearch"
-        @keydown.down.prevent="next(-1)"
-        @input="onSearchInput"
-        @clear="onSearchClear"
-      >
-        <template #append>
-          <VcButton icon="search" icon-size="1.25rem" data-test-id="organizations-search-button" @click="onSearch" />
-        </template>
-      </VcInput>
-    </div>
-
-    <VcScrollbar
-      :id="listboxId"
-      vertical
-      role="listbox"
-      :aria-label="$t('common.labels.organizations')"
+    <VcListbox
+      :list-id="listboxId"
+      :list-label="$t('common.labels.organizations')"
+      :dividers="false"
+      max-height="15rem"
       class="top-header-organizations__list"
-      test-id="organizations-list"
     >
+      <template v-if="isShowSearch" #header>
+        <div class="top-header-organizations__search">
+          <div class="top-header-organizations__label">
+            {{ $t("common.labels.organizations") }}
+          </div>
+
+          <VcInput
+            v-model="searchPhrase"
+            type="search"
+            size="sm"
+            data-test-id="organizations-search"
+            :placeholder="$t('common.labels.search')"
+            :clearable="!!searchPhrase"
+            :aria="{
+              role: 'combobox',
+              'aria-expanded': 'true',
+              'aria-haspopup': 'listbox',
+              'aria-controls': listboxId,
+              'aria-activedescendant': activeDescendantId ?? null,
+            }"
+            @keydown.enter="onEnter"
+            @keydown.down.prevent="navigate('down')"
+            @keydown.up.prevent="navigate('up')"
+            @keydown.home.prevent="navigate('home')"
+            @keydown.end.prevent="navigate('end')"
+            @input="onSearchInput"
+            @clear="onSearchClear"
+          >
+            <template #append>
+              <VcButton
+                icon="search"
+                icon-size="1.25rem"
+                data-test-id="organizations-search-button"
+                @click="onSearch"
+              />
+            </template>
+          </VcInput>
+        </div>
+      </template>
+
       <VcMenuItem
         v-for="(item, index) in displayedOrganizations"
         :key="item.id"
         size="xs"
         role="option"
         :option-id="getOptionId(index)"
-        :data-vc-organization-option="componentId"
+        :highlighted="index === highlightedIndex"
+        :tabindex="-1"
         :aria-selected="contactOrganizationId === item.id"
         @click="selectOrganization(item.id)"
-        @keydown.up.prevent="prev(index)"
-        @keydown.down.prevent="next(index)"
+        @mousemove="highlightedIndex = index"
       >
         <VcRadioButton
           :model-value="contactOrganizationId"
@@ -93,7 +102,7 @@
         class="top-header-organizations__loader"
         @visible="loadOrganizations"
       />
-    </VcScrollbar>
+    </VcListbox>
   </div>
 </template>
 
@@ -101,7 +110,7 @@
 import { useDebounceFn } from "@vueuse/core";
 import { computed, ref, watch } from "vue";
 import { useOrganizationSwitcher, useUser, useUserOrganizations } from "@/shared/account";
-import { useComponentId } from "@/ui-kit/composables";
+import { useComponentId, useListboxNavigation } from "@/ui-kit/composables";
 
 const emit = defineEmits<{
   organizationSelected: [];
@@ -137,7 +146,6 @@ watch(
 
 const componentId = useComponentId("organizations");
 const listboxId = componentId + "-listbox";
-const focusedOptionIndex = ref(-1);
 
 const displayedOrganizations = computed(() => {
   const withoutCurrent = organizations.value.filter((item) => item.id !== organization.value?.id);
@@ -149,51 +157,18 @@ const displayedOrganizations = computed(() => {
   return withoutCurrent;
 });
 
-watch(displayedOrganizations, () => {
-  focusedOptionIndex.value = -1;
+const {
+  highlightedIndex,
+  activeDescendantId,
+  getOptionId,
+  navigate,
+  reset: resetHighlight,
+} = useListboxNavigation({
+  componentId,
+  count: computed(() => displayedOrganizations.value.length),
 });
 
-function getOptionId(index: number): string {
-  return `${componentId}-option-${index}`;
-}
-
-const activeDescendantId = computed(() => {
-  if (focusedOptionIndex.value >= 0) {
-    return getOptionId(focusedOptionIndex.value);
-  }
-  return undefined;
-});
-
-function getOptionElements(): HTMLElement[] {
-  const elements = document.querySelectorAll<HTMLElement>(
-    `[data-vc-organization-option="${componentId}"] [tabindex='0']`,
-  );
-  return Array.from(elements);
-}
-
-function next(index: number): void {
-  const elements = getOptionElements();
-
-  if (!elements.length) {
-    return;
-  }
-
-  const nextIndex = index >= elements.length - 1 ? 0 : index + 1;
-  focusedOptionIndex.value = nextIndex;
-  elements[nextIndex]?.focus();
-}
-
-function prev(index: number): void {
-  const elements = getOptionElements();
-
-  if (!elements.length) {
-    return;
-  }
-
-  const prevIndex = index <= 0 ? elements.length - 1 : index - 1;
-  focusedOptionIndex.value = prevIndex;
-  elements[prevIndex]?.focus();
-}
+watch(displayedOrganizations, resetHighlight);
 
 async function selectOrganization(organizationId: string): Promise<void> {
   if (!organizationId) {
@@ -220,6 +195,18 @@ async function selectOrganization(organizationId: string): Promise<void> {
 
 async function onSearch(): Promise<void> {
   await search();
+}
+
+/** Enter picks the highlighted organization; with nothing highlighted it runs the search. */
+async function onEnter(): Promise<void> {
+  const highlighted = displayedOrganizations.value[highlightedIndex.value];
+
+  if (highlighted) {
+    await selectOrganization(highlighted.id);
+    return;
+  }
+
+  await onSearch();
 }
 
 const debouncedSearch = useDebounceFn(search, SEARCH_DEBOUNCE_MS);
@@ -259,7 +246,7 @@ async function onSearchClear(): Promise<void> {
   }
 
   &__list {
-    @apply my-1 max-h-60;
+    @apply my-1 bg-transparent;
   }
 
   &__radio {
