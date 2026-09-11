@@ -18,12 +18,21 @@
       :value="value"
       :checked="checked"
       :disabled="disabled"
-      :aria-checked="checked"
       @change="onChange"
       @input="onInput"
     />
 
-    <button class="vc-tab-switch__button" type="button" tabindex="0" :aria-label="ariaLabel || label" @click="onChange">
+    <!-- The radio is display:none, so its `aria-checked` never reaches the a11y tree — the visible
+         button has to carry the state itself. Toggle semantics, not `role="tab"`: the tablist parent
+         lives in consumer markup. -->
+    <button
+      class="vc-tab-switch__button"
+      type="button"
+      tabindex="0"
+      :aria-label="ariaLabel || label"
+      :aria-pressed="checked"
+      @click="onChange"
+    >
       <slot name="icon" v-bind="{ checked, value, label }">
         <VcIcon v-if="icon" :name="icon" class="vc-tab-switch__icon" />
       </slot>
