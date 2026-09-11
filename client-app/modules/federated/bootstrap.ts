@@ -1,6 +1,6 @@
 import { Logger } from "@/core/utilities";
 import { ignoreChunkLoadFailure } from "@/core/utilities/optional-chunk";
-import { isMfFlagEnabled } from "@/core-api/federation.mjs";
+import { isFederationEnabled } from "./enabled";
 import type { IFederatedLoaderOptions, IPlatformPlugin } from "./index";
 
 interface IStartOptions extends Pick<IFederatedLoaderOptions, "hasPermission"> {
@@ -10,8 +10,8 @@ interface IStartOptions extends Pick<IFederatedLoaderOptions, "hasPermission"> {
 
 /**
  * App-runner entry for Module Federation. Kept free of static MF-runtime
- * imports: the loader (./index) is imported dynamically and only when APP_MODULES_FEDERATION_ENABLED is
- * set, so non-MF builds bundle neither the runtime nor the loader.
+ * imports: the loader (./index) is imported dynamically and only when the theme enables federation
+ * (see ./enabled), so a `module_federation_enabled: false` build bundles neither the runtime nor the loader.
  */
 
 /**
@@ -56,7 +56,7 @@ async function withDiscoveryBudget(
 }
 
 export async function startFederatedModules(options?: IStartOptions): Promise<void> {
-  if (!isMfFlagEnabled(import.meta.env.APP_MODULES_FEDERATION_ENABLED)) {
+  if (!isFederationEnabled()) {
     return;
   }
   let timer: ReturnType<typeof setTimeout> | undefined;

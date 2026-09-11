@@ -140,22 +140,3 @@ export function createRemoteFederationOptions({ name, requiredHostVersion, expos
     dts: false,
   };
 }
-
-/**
- * Env-flag normalization shared by the vite config (node) and bootstrap (browser).
- * ALLOWLIST semantics: only an explicit affirmative ("true", "1", "yes", "on") enables
- * Module Federation — every other string ("false", "0", "off", "no", "disabled",
- * typos, ...) fails toward OFF. Enabling a code-loading feature is the dangerous
- * direction, so unrecognized values must never enable it.
- */
-const ON_FLAG_VALUES = new Set(["true", "1", "yes", "on"]);
-
-export function isMfFlagEnabled(value) {
-  if (value === true) {
-    return true;
-  }
-  if (typeof value !== "string") {
-    return false;
-  }
-  return ON_FLAG_VALUES.has(value.trim().toLowerCase());
-}

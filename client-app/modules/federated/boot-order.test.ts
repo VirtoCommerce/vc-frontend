@@ -118,7 +118,6 @@ vi.mock("@/modules/news", () => ({ init: vi.fn() }));
 vi.mock("@/modules/purchase-requests", () => ({ initialize: vi.fn() }));
 vi.mock("@/modules/push-messages", () => ({ init: vi.fn() }));
 vi.mock("@/modules/quotes", () => ({ init: vi.fn() }));
-vi.mock("@/modules/sales-rep", () => ({ init: vi.fn() }));
 vi.mock("@/plugins/builder-io-preview/utils", () => ({ isPreviewMode: () => false }));
 vi.mock("@/plugins/builder-preview/utils", () => ({ getPreviewBootOptions: () => previewBoot }));
 // Imported by app-runner in preview mode; its install() is where the host mutates routes.
@@ -191,6 +190,7 @@ describe("app-runner boot order", () => {
 
   afterEach(() => {
     vi.unstubAllEnvs();
+    vi.doUnmock("@/config/settings_data.json");
   });
 
   it("puts the theme context and the user in place before the loader, and the router after it", async () => {
@@ -212,8 +212,7 @@ describe("app-runner boot order", () => {
   describe("discovery wiring", () => {
     const PLUGINS = [{ id: "sales-rep" }] as unknown as readonly IPlatformPlugin[];
 
-    it("issues the plugin-list query and hands its result to the loader when the flag is on", async () => {
-      vi.stubEnv("APP_MODULES_FEDERATION_ENABLED", "true");
+    it("issues the plugin-list query and hands its result to the loader with the stock theme config", async () => {
       getStorePluginsMock.mockResolvedValue(PLUGINS);
 
       await runBoot();
@@ -224,7 +223,14 @@ describe("app-runner boot order", () => {
       await expect(loaderOptions.current?.fetchPlugins?.()).resolves.toBe(PLUGINS);
     });
 
-    it("issues nothing and resolves to no plugins when the flag is off", async () => {
+    it("issues nothing and resolves to no plugins when the theme turns federation off", async () => {
+      vi.doMock("@/config/settings_data.json", async (importOriginal) => {
+        const real = await importOriginal<{ default: { current: string; settings: Record<string, unknown> } }>();
+        return {
+          default: { ...real.default, settings: { ...real.default.settings, module_federation_enabled: false } },
+        };
+      });
+
       await runBoot();
 
       expect(getStorePluginsMock).not.toHaveBeenCalled();
@@ -232,7 +238,6 @@ describe("app-runner boot order", () => {
     });
 
     it("starts the query before it awaits the page context, so the round trips overlap", async () => {
-      vi.stubEnv("APP_MODULES_FEDERATION_ENABLED", "true");
       getStorePluginsMock.mockImplementation(() => {
         order.push("getStorePlugins");
         return Promise.resolve([]);
@@ -248,7 +253,6 @@ describe("app-runner boot order", () => {
     });
 
     it("issues nothing when the env override is set, since that list wins anyway", async () => {
-      vi.stubEnv("APP_MODULES_FEDERATION_ENABLED", "true");
       vi.stubEnv("APP_MODULES_FEDERATION_REMOTES", '{"local":"http://localhost:3001/mf-manifest.json"}');
 
       await runBoot();
@@ -261,7 +265,6 @@ describe("app-runner boot order", () => {
   it("starts the loader only after the host plugin that mutates routes has installed", async () => {
     // The loader's route guard cannot tell a host call from a plugin's, so a host install running
     // inside its phase has its own routes refused.
-    vi.stubEnv("APP_MODULES_FEDERATION_ENABLED", "true");
     previewBoot.isActive = true;
 
     await runBoot();

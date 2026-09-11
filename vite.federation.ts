@@ -2,7 +2,7 @@ import { createRequire } from "node:module";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { federation } from "@module-federation/vite";
-import { createHostShared, isMfFlagEnabled } from "./client-app/core-api/federation.mjs";
+import { createHostShared } from "./client-app/core-api/federation.mjs";
 import type { PluginOption } from "vite";
 
 /**
@@ -18,6 +18,10 @@ import type { PluginOption } from "vite";
 const require = createRequire(import.meta.url);
 const coreApiVersion = (require("./client-app/core-api/package.json") as { version: string }).version;
 const coreApiEntry = fileURLToPath(new URL("./client-app/core-api/index.ts", import.meta.url));
+/** The theme's switch; the runtime reads the same key in client-app/modules/federated/enabled.ts. */
+const themeEnablesFederation =
+  (require("./client-app/config/settings_data.json") as { settings: { module_federation_enabled?: boolean } }).settings
+    .module_federation_enabled !== false;
 
 /**
  * Alias so the HOST resolves @vc-frontend/core to the real source entry (it provides
@@ -28,16 +32,18 @@ export function federatedAlias(rootDir: string): Record<string, string> {
   return { "@vc-frontend/core": path.resolve(rootDir, "client-app/core-api/index.ts") };
 }
 
-/** MF host plugin(s) — empty when APP_MODULES_FEDERATION_ENABLED is off. Spread into vite `plugins`. */
-export function federatedHostPlugin(enabled: string | boolean | undefined): PluginOption[] {
-  if (!isMfFlagEnabled(enabled)) {
+/** MF host plugin(s) — empty when the theme sets `module_federation_enabled: false`. Spread into vite `plugins`. */
+export function federatedHostPlugin(): PluginOption[] {
+  if (!themeEnablesFederation) {
     return [];
   }
   // dts off — types come from `yarn build:core-types`, not the MF dts plugin.
   return [
     federation({
       name: "host",
-      filename: "remoteEntry.js",
+      // Default `remoteEntry-[hash]`: nothing but this build loads the host's own entry, and an
+      // unhashed .js sits in CDN caches for hours after a deploy, pointing at chunks that no longer
+      // exist (qa1, 2026-09-11). Plugins keep an unhashed remoteEntry.js - the platform advertises it.
       manifest: true,
       dts: false,
       shareStrategy: "loaded-first",

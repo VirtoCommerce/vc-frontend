@@ -9,8 +9,11 @@ in-repo modules in `client-app/modules/*` — those ship inside the host bundle.
 of MF is exactly that separation: a plugin team can build and release on their own cadence
 without touching or rebuilding this repo.
 
-> Jira: **VCST-5159**. Everything here is behind the `APP_MODULES_FEDERATION_ENABLED` flag and is a **no-op
-> when the flag is off** — the harness ships with **zero built-in remotes**.
+> Jira: **VCST-5159**. Everything here hangs on one switch, `module_federation_enabled` in
+> `client-app/config/settings_data.json`, and is a **no-op when it is `false`** — the harness ships with
+> **zero built-in remotes**. The stock theme ships it `true`, so a stock build is a federation host that
+> loads whatever the platform advertises; a theme that wants no plugins (and no MF runtime in its bundle)
+> sets it to `false`, next to its other feature toggles.
 
 > **Want to BUILD a plugin?** Start with the step-by-step walkthrough:
 > [`HOWTO.md`](./HOWTO.md). This file is the reference for how the host side works.
@@ -26,14 +29,14 @@ without touching or rebuilding this repo.
 # (HOWTO.md "The dev inner loop"). Use `--mode=development` locally so the store resolves
 # from APP_BACKEND_URL — a prod-mode build resolves it from `localhost` and renders an
 # empty page. See HOWTO.md step 4.
-APP_MODULES_FEDERATION_ENABLED=true \
 APP_MODULES_FEDERATION_REMOTES='{"news":"https://plugins.example.com/news/mf-manifest.json"}' \
 yarn build-only --mode=development && yarn preview
 ```
 
-- `APP_MODULES_FEDERATION_ENABLED` → turns the host into a federation host (build + runtime). Only
-  `"true"`, `"1"`, `"yes"` or `"on"` enable it — any other value counts as off (allowlist:
-  enabling remote code loading is the dangerous direction).
+- `module_federation_enabled` in `client-app/config/settings_data.json` → the host switch. `vite.federation.ts`
+  reads it to decide whether the MF host plugin (and so the MF runtime, `remoteEntry-<hash>.js`, `mf-manifest.json`)
+  is built at all; `enabled.ts` reads it at runtime to decide whether to ask the platform for plugins and
+  start the loader. `false` ⇒ neither; a missing key counts as `true`.
 - `APP_MODULES_FEDERATION_REMOTES` → a JSON map of `remoteName → manifestUrl`, the **local/dev
   override**. URLs must be **https** (http is allowed for localhost only). When set it replaces
   the platform list entirely, so a local remote is never mixed with the deployed ones.
@@ -51,8 +54,8 @@ than fed to the MF runtime. Locally the plugin folder is proxied to `APP_BACKEND
 (`^/modules/.*/plugins/vc-frontend/` in `vite.config.ts`, dev and preview alike), so the platform
 path works in `yarn dev` and `yarn preview` — not just against a deployed host.
 
-> `APP_MODULES_FEDERATION_ENABLED` is still inlined at BUILD time (Vite `import.meta.env`), so
-> turning the host into a federation host is a rebuild; which plugins it then loads is not.
+> `settings_data.json` is imported statically, so the switch is baked into a build — turning federation
+> on or off is a rebuild; which plugins the host then loads is not.
 
 That's the whole operator surface. Everything below is _why_ and _how_.
 
@@ -221,7 +224,7 @@ app-runner.ts
   │  await ready;                             // BEFORE app.use(router)
   ▼
 startFederatedModules()            bootstrap.ts
-  │  if (!APP_MODULES_FEDERATION_ENABLED) return;              ← flag off ⇒ instant no-op
+  │  if (!isFederationEnabled()) return;   ← module_federation_enabled: false ⇒ instant no-op
   │  dynamic import("./index")              ← keeps MF runtime out of non-MF builds
   ▼
 initFederatedModules()             index.ts
@@ -373,7 +376,8 @@ hosted remote.
 
 | File              | Role                                                                                                                                                                            |
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `bootstrap.ts`    | App-runner entry. Flag check + dynamic import of the loader (both failure-proof). **No static MF-runtime import** — so non-MF builds bundle neither the runtime nor the loader. |
+| `bootstrap.ts`    | App-runner entry. Switch check + dynamic import of the loader (both failure-proof). **No static MF-runtime import** — so non-MF builds bundle neither the runtime nor the loader. |
+| `enabled.ts`      | `isFederationEnabled()`: the theme's `module_federation_enabled`. Shared by `bootstrap.ts` and by `app-runner`'s plugin-list query, so both read one predicate.                                |
 | `index.ts`        | The loader: resolve+validate remotes → version gate → `registerRemotes` → `loadRemote`/`init` (time-budgeted) → report. Contains the `IFederatedPlugin` contract.               |
 | `version-gate.ts` | The CONTRACT GATE: fail-closed semver check of `requiredHostVersion` (version or range) against the facade version.                                                             |
 | `*.test.ts`       | Unit tests for the loader, the gate, bootstrap and the shared-dep contract.                                                                                                     |
@@ -382,19 +386,19 @@ hosted remote.
 
 | File                                 | Role                                                                                                                                                                                                                                                 |
 | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `client-app/core-api/federation.mjs` | **Single source of truth** for the shared-singleton contract: `createHostShared`/`createRemoteShared` (+ `HOST_SHARED`/`REMOTE_SHARED` defaults), `isMfFlagEnabled`. Plain `.mjs` so plugin vite configs (node) and browser code can both import it. |
-| `vite.federation.ts` (repo root)     | Build-side host config: `federatedHostPlugin` (consumes `createHostShared()`), `federatedAlias`. At root because it imports a build-time dev dep.                                                                                                    |
+| `client-app/core-api/federation.mjs` | **Single source of truth** for the shared-singleton contract: `createHostShared`/`createRemoteShared` (+ `HOST_SHARED`/`REMOTE_SHARED` defaults). Plain `.mjs` so plugin vite configs (node) and browser code can both import it. |
+| `vite.federation.ts` (repo root)     | Build-side host config: `federatedHostPlugin` (empty unless the theme's `module_federation_enabled`; consumes `createHostShared()`; host entry is `remoteEntry-<hash>.js` so a CDN cannot serve a stale one), `federatedAlias`. At root because it imports a build-time dev dep.                                                                                                    |
 | `client-app/core-api/`               | The `@vc-frontend/core` facade + the `build-types.mjs` type-contract build.                                                                                                                                                                          |
 | `client-app/app-runner.ts`           | Calls `startFederatedModules()` and awaits it before `app.use(router)`.                                                                                                                                                                              |
 
 ---
 
-## Environment variables
+## Configuration
 
-| Var              | Scope                | Meaning                                                                                                              |
-| ---------------- | -------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| `APP_MODULES_FEDERATION_ENABLED`    | build time (inlined) | Enables the MF host plugin in Vite **and** the runtime bootstrap. Off (unset/`""`/`"false"`/`"0"`) ⇒ complete no-op. |
-| `APP_MODULES_FEDERATION_REMOTES` | build time (inlined) | Local/dev override: JSON `{ "<name>": "<manifestUrl>" }`, https-only. Absent ⇒ the platform's list is used. Set to anything else — including `{}` or invalid JSON — ⇒ it still replaces the platform list, so no remotes load, and the host does not ask the platform for one. |
+| Setting                                                              | Scope                        | Meaning                                                                                                                                                                                                                                                                              |
+| -------------------------------------------------------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `module_federation_enabled` (`client-app/config/settings_data.json`) | build time (static import)   | The host switch. `false` ⇒ no MF host plugin in the Vite build (no MF runtime, `remoteEntry.js` or `mf-manifest.json`), no plugin-list query, no loader — a complete no-op. Missing ⇒ `true`.                                                                                     |
+| `APP_MODULES_FEDERATION_REMOTES` (env)                               | build time (inlined) | Local/dev override: JSON `{ "<name>": "<manifestUrl>" }`, https-only. Absent ⇒ the platform's list is used. Set to anything else — including `{}` or invalid JSON — ⇒ it still replaces the platform list, so no remotes load, and the host does not ask the platform for one. |
 
 ---
 
@@ -443,7 +447,8 @@ decision for the storefront. What the harness enforces today:
   proceed at the cap with the wrapper still installed, since the loader keeps running detached.
 - **No tenant-editable remote list** — there is no store setting to edit. The runtime list is
   whatever modules are installed, so a platform administrator with install rights decides which
-  plugins the storefront loads; the env override stays build-time. It is still backend-supplied
+  plugins the storefront loads; the env override stays build-time, and the theme's
+  `module_federation_enabled` is all-or-nothing, not a pick list. It is still backend-supplied
   data, so whoever controls the GraphQL response controls the list — bounded, since that origin
   also serves the host bundle.
 
@@ -479,7 +484,9 @@ already read makes validated bytes == executed bytes **and** removes the extra r
 
 ## Gotchas & guarantees
 
-- **Off by default.** No flag, no cost — the loader isn't even imported.
+- **One switch, on by default.** `module_federation_enabled: false` in
+  `client-app/config/settings_data.json` ⇒ no MF host build, no plugin-list query, and the loader
+  isn't even imported — zero cost. A missing key counts as `true`.
 - **Isolation is total**, malformed descriptors included. Every descriptor field is read through
   a string guard and the list itself is checked for arrayness, because the projection is a
   hand-written structural type and nothing else guards its shape — a non-string `permission` or
