@@ -39,7 +39,7 @@ jobs:
       contents: read
       security-events: write
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Install Semgrep
         run: pipx install semgrep
@@ -84,7 +84,7 @@ jobs:
         # Guard on the file existing: if Semgrep crashes before writing SARIF, skip the
         # upload instead of failing the (non-blocking, baseline-phase) Security workflow.
         if: ${{ always() && hashFiles('semgrep.sarif') != '' }}
-        uses: github/codeql-action/upload-sarif@8aad20d150bbac5944a9f9d289da16a4b0d87c1e # v4
+        uses: github/codeql-action/upload-sarif@cdf488f595d80d6e07e03d4674febd5ab45fa938 # v4
         with:
           sarif_file: semgrep.sarif
           category: semgrep
@@ -110,7 +110,7 @@ jobs:
     # fail-on-vuln: false keeps it non-blocking during the baseline phase.
     # Skip an advisory: add [[IgnoredVulns]] (id + reason, optional ignoreUntil) to
     # an osv-scanner.toml at the repo root, or dismiss the alert in the Security tab.
-    uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@9a498708959aeaef5ef730655706c5a1df1edbc2 # v2.3.8
+    uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@6e4298ebc4db23e847df9b2e2de2939d6f066c67 # v2.5.1
     with:
       scan-args: |-
         --lockfile=yarn.lock
