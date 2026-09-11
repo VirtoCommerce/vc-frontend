@@ -692,12 +692,30 @@ function focusSelectAll(): boolean {
     }
   }
 
+  &__button-trigger {
+    @apply grow flex min-w-0 h-full text-left;
+
+    // The chevron and the space around it stay clickable without moving inside the button —
+    // they cannot, because the clear control is a button and one may not nest in another. The
+    // stretched pseudo-element hands the whole box back to the trigger; the clear control is
+    // positioned and later in the DOM, so it still paints above and stays clickable.
+    &::after {
+      @apply absolute inset-0;
+
+      content: "";
+    }
+  }
+
   &__button-content {
     @apply grow overflow-y-hidden flex flex-col justify-center min-w-0 h-full;
 
     #{$error} & {
       @apply text-danger;
     }
+  }
+
+  &__clear {
+    @apply relative;
   }
 
   &__input {

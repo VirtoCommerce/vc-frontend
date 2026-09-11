@@ -1,35 +1,43 @@
 <template>
   <div
     v-if="$slots.selected || $slots.placeholder"
-    :id="triggerId"
     ref="rootElement"
-    tabindex="0"
-    role="button"
-    :aria-label="accessibleLabel"
-    :aria-expanded="opened"
-    aria-haspopup="listbox"
-    :aria-controls="opened ? listboxId : undefined"
-    :aria-activedescendant="activeDescendantId"
-    :aria-invalid="error || undefined"
-    :aria-required="required || undefined"
-    :aria-disabled="disabled || undefined"
-    :aria-describedby="detailsId"
     :class="['vc-select__button', `vc-select__button--size--${size}`]"
-    @click="$emit('toggle')"
-    @keydown.enter.prevent="$emit('confirm')"
-    @keydown.space.prevent="$emit('confirm')"
-    @keydown.down.prevent="$emit('navigate', 'down')"
-    @keydown.up.prevent="$emit('navigate', 'up')"
-    @keydown.home.prevent="$emit('navigate', 'home')"
-    @keydown.end.prevent="$emit('navigate', 'end')"
-    @keydown.esc="$emit('close')"
-    @keydown.tab="$emit('tab', $event)"
   >
-    <div class="vc-select__button-content">
-      <slot v-if="hasSelection" name="selected" v-bind="{ item: selectedItem as T, error }" />
+    <!--
+      A real button, not a div with role="button": the clear control below is a button too, and
+      one may not nest inside another, so it stays a sibling and the trigger stretches over the
+      whole box with a pseudo-element instead of wrapping it.
+    -->
+    <button
+      :id="triggerId"
+      type="button"
+      class="vc-select__button-trigger"
+      :aria-label="accessibleLabel"
+      :aria-expanded="opened"
+      aria-haspopup="listbox"
+      :aria-controls="opened ? listboxId : undefined"
+      :aria-activedescendant="activeDescendantId"
+      :aria-invalid="error || undefined"
+      :aria-required="required || undefined"
+      :aria-disabled="disabled || undefined"
+      :aria-describedby="detailsId"
+      @click.stop="$emit('toggle')"
+      @keydown.enter.prevent="$emit('confirm')"
+      @keydown.space.prevent="$emit('confirm')"
+      @keydown.down.prevent="$emit('navigate', 'down')"
+      @keydown.up.prevent="$emit('navigate', 'up')"
+      @keydown.home.prevent="$emit('navigate', 'home')"
+      @keydown.end.prevent="$emit('navigate', 'end')"
+      @keydown.esc="$emit('close')"
+      @keydown.tab="$emit('tab', $event)"
+    >
+      <span class="vc-select__button-content">
+        <slot v-if="hasSelection" name="selected" v-bind="{ item: selectedItem as T, error }" />
 
-      <slot v-else name="placeholder" v-bind="{ error }" />
-    </div>
+        <slot v-else name="placeholder" v-bind="{ error }" />
+      </span>
+    </button>
 
     <VcButton
       v-if="clearVisible"
@@ -209,7 +217,7 @@ defineExpose({
 
     const node = "$el" in element ? element.$el : element;
 
-    (node.querySelector<HTMLElement>("[tabindex='0'], input") ?? node).focus();
+    (node.querySelector<HTMLElement>(".vc-select__button-trigger, input") ?? node).focus();
   },
 });
 </script>

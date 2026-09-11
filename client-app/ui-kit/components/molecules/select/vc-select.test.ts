@@ -904,14 +904,62 @@ describe("VcSelect", () => {
       expect(wrapper.get(".vc-select__button").classes()).toContain("vc-select__button--size--xs");
     });
 
+    // Клик по слотовому триггеру не открывал список с тех пор, как VcSelect переехал с
+    // VcDropdownMenu на VcPopover: тот вешает свой `click: toggle` на обёртку #trigger-слота,
+    // и наш emit складывался с ним в двойной toggle. Ветка с VcInput уцелела только потому,
+    // что vc-input.vue сам гасит клик (`@click.stop`).
+    it("opens, closes and reopens on click", async () => {
+      const wrapper = createWrapper({ items: ITEMS }, slots);
+      const trigger = wrapper.get(".vc-select__button-trigger");
+
+      await trigger.trigger("click");
+      await nextTick();
+
+      expect(trigger.attributes("aria-expanded")).toBe("true");
+
+      await trigger.trigger("click");
+      await nextTick();
+
+      expect(trigger.attributes("aria-expanded")).toBe("false");
+
+      await trigger.trigger("click");
+      await nextTick();
+
+      expect(trigger.attributes("aria-expanded")).toBe("true");
+    });
+
+    it("does not let the click reach the popover wrapper twice", async () => {
+      const wrapper = createWrapper({ items: ITEMS }, slots);
+      let wrapperClicks = 0;
+
+      wrapper.get(".vc-popover__trigger").element.addEventListener("click", () => (wrapperClicks += 1));
+      await wrapper.get(".vc-select__button-trigger").trigger("click");
+
+      expect(wrapperClicks).toBe(0);
+    });
+
     it("opens the list on ArrowDown", async () => {
       const wrapper = createWrapper({ items: ITEMS }, slots);
 
-      await wrapper.get(".vc-select__button").trigger("keydown", { key: "ArrowDown" });
+      await wrapper.get(".vc-select__button-trigger").trigger("keydown", { key: "ArrowDown" });
       await nextTick();
 
-      expect(wrapper.get(".vc-select__button").attributes("aria-expanded")).toBe("true");
+      expect(wrapper.get(".vc-select__button-trigger").attributes("aria-expanded")).toBe("true");
       expect(wrapper.classes()).toContain("vc-select--opened");
+    });
+
+    // Настоящая <button>, а не div с role: внутри лежит кнопка очистки, а кнопку в кнопку
+    // вкладывать нельзя — она осталась соседом, а триггер накрывает коробку псевдоэлементом.
+    it("renders a real button element carrying the combobox semantics", () => {
+      const wrapper = createWrapper({ items: ITEMS, clearable: true, modelValue: "Belgium" }, slots);
+      const trigger = wrapper.get(".vc-select__button-trigger");
+
+      expect(trigger.element.tagName).toBe("BUTTON");
+      expect(trigger.attributes("type")).toBe("button");
+      expect(trigger.attributes("role")).toBeUndefined();
+      expect(trigger.attributes("aria-haspopup")).toBe("listbox");
+      expect(trigger.find("button").exists()).toBe(false);
+      expect(wrapper.get(".vc-select__clear").element.closest(".vc-select__button-trigger")).toBeNull();
     });
   });
 });
