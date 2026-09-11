@@ -966,7 +966,8 @@
       "list_card": {
         "product_count_label": "Product count",
         "list_edit_button": "Edit",
-        "remove_list_button": "Delete",
+        "rename_list_button": "Rename",
+        "remove_list_button": "Remove list",
         "make_private_button": "Make private",
         "share_button": "Share",
         "last_modified_label": "Last modified: {date}"
@@ -1000,8 +1001,6 @@
         "edit_mode_title": "List settings",
         "list_name_label": "List name",
         "list_name_placeholder": "Enter name",
-        "sharing_scope_label": "Sharing options",
-        "sharing_scope_placeholder": "Please select one option",
         "sharing_link_label": "Link",
         "create_button": "Create list",
         "save_button": "@:common.buttons.save",
@@ -1010,11 +1009,21 @@
         "make_shared": "Make shared",
         "sharing_scope": {
           "Private": "Private",
-          "Organization": "Organization",
-          "AnyoneAnonymous": "Anyone (readonly)"
+          "Organization": "My organization",
+          "AnyoneAnonymous": "Anyone with link"
         },
         "clipboard_success": "Link copied",
         "save_error": "The list could not be saved. Please try again."
+      },
+      "share_wishlist_modal": {
+        "title": "Share “{listName}”",
+        "who_can_access_label": "Who can access"
+      },
+      "stop_sharing_modal": {
+        "title": "Stop sharing this page?",
+        "message": "Anyone with the link will lose access. You can share it again at any time.",
+        "confirm_button": "Stop sharing",
+        "cancel_button": "@:common.buttons.cancel"
       },
       "delete_wishlist_modal": {
         "title": "Confirm Delete",

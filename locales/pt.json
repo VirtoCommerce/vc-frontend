@@ -966,7 +966,8 @@
       "list_card": {
         "product_count_label": "Contagem de produtos",
         "list_edit_button": "Editar",
-        "remove_list_button": "Excluir",
+        "rename_list_button": "Renomear",
+        "remove_list_button": "Remover lista",
         "make_private_button": "Tornar privado",
         "share_button": "Compartilhar",
         "last_modified_label": "Última modificação: {date}"
@@ -1000,8 +1001,6 @@
         "edit_mode_title": "Configurações da Lista",
         "list_name_label": "Nome da lista",
         "list_name_placeholder": "Por favor, insira o nome",
-        "sharing_scope_label": "Opções de compartilhamento",
-        "sharing_scope_placeholder": "Por favor, selecione uma opção",
         "sharing_link_label": "Link",
         "create_button": "Criar lista",
         "save_button": "@:common.buttons.save",
@@ -1010,11 +1009,21 @@
         "make_shared": "Tornar compartilhada",
         "sharing_scope": {
           "Private": "Privado",
-          "Organization": "Organização",
-          "AnyoneAnonymous": "Qualquer pessoa (somente leitura)"
+          "Organization": "Minha organização",
+          "AnyoneAnonymous": "Qualquer pessoa com o link"
         },
         "clipboard_success": "Link copiado",
         "save_error": "Não foi possível salvar a lista. Tente novamente."
+      },
+      "share_wishlist_modal": {
+        "title": "Compartilhar “{listName}”",
+        "who_can_access_label": "Quem tem acesso"
+      },
+      "stop_sharing_modal": {
+        "title": "Parar de partilhar esta página?",
+        "message": "Qualquer pessoa com o link perderá o acesso. Pode partilhá-la novamente em qualquer momento.",
+        "confirm_button": "Parar de partilhar",
+        "cancel_button": "@:common.buttons.cancel"
       },
       "delete_wishlist_modal": {
         "title": "Confirmar Exclusão",

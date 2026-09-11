@@ -966,7 +966,8 @@
       "list_card": {
         "product_count_label": "Количество товаров",
         "list_edit_button": "Редактировать",
-        "remove_list_button": "Удалить",
+        "rename_list_button": "Переименовать",
+        "remove_list_button": "Удалить список",
         "make_private_button": "Сделать приватным",
         "share_button": "Поделиться",
         "last_modified_label": "Последнее изменение: {date}"
@@ -1000,8 +1001,6 @@
         "edit_mode_title": "Настройки списка",
         "list_name_label": "Название списка",
         "list_name_placeholder": "Пожалуйста, введите название",
-        "sharing_scope_label": "Поделиться",
-        "sharing_scope_placeholder": "Пожалуйста, выберите один вариант",
         "sharing_link_label": "Ссылка",
         "create_button": "Создать список",
         "save_button": "@:common.buttons.save",
@@ -1010,11 +1009,21 @@
         "make_shared": "Сделать общим",
         "sharing_scope": {
           "Private": "Приватный",
-          "Organization": "Организация",
-          "AnyoneAnonymous": "Все (только чтение)"
+          "Organization": "Моя организация",
+          "AnyoneAnonymous": "Все, у кого есть ссылка"
         },
         "clipboard_success": "Ссылка скопирована",
         "save_error": "Не удалось сохранить список. Пожалуйста, попробуйте снова."
+      },
+      "share_wishlist_modal": {
+        "title": "Поделиться «{listName}»",
+        "who_can_access_label": "Кто имеет доступ"
+      },
+      "stop_sharing_modal": {
+        "title": "Прекратить доступ к этой странице?",
+        "message": "Все, у кого есть ссылка, потеряют доступ. Вы можете поделиться ею снова в любое время.",
+        "confirm_button": "Прекратить доступ",
+        "cancel_button": "@:common.buttons.cancel"
       },
       "delete_wishlist_modal": {
         "title": "Подтвердить удаление",

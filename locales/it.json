@@ -966,7 +966,8 @@
       "list_card": {
         "product_count_label": "Conteggio prodotti",
         "list_edit_button": "Modifica",
-        "remove_list_button": "Elimina",
+        "rename_list_button": "Rinomina",
+        "remove_list_button": "Rimuovi lista",
         "make_private_button": "Rendi privato",
         "share_button": "Condividi",
         "last_modified_label": "Ultima modifica: {date}"
@@ -1000,8 +1001,6 @@
         "edit_mode_title": "Impostazioni lista",
         "list_name_label": "Nome lista",
         "list_name_placeholder": "Inserisci il nome",
-        "sharing_scope_label": "Opzioni di condivisione",
-        "sharing_scope_placeholder": "Seleziona un'opzione",
         "sharing_link_label": "Link",
         "create_button": "Crea lista",
         "save_button": "@:common.buttons.save",
@@ -1010,11 +1009,21 @@
         "make_shared": "Rendi condivisa",
         "sharing_scope": {
           "Private": "Privato",
-          "Organization": "Organizzazione",
-          "AnyoneAnonymous": "Chiunque (sola lettura)"
+          "Organization": "La mia organizzazione",
+          "AnyoneAnonymous": "Chiunque abbia il link"
         },
         "clipboard_success": "Link copiato",
         "save_error": "Impossibile salvare la lista. Riprova."
+      },
+      "share_wishlist_modal": {
+        "title": "Condividi “{listName}”",
+        "who_can_access_label": "Chi ha accesso"
+      },
+      "stop_sharing_modal": {
+        "title": "Interrompere la condivisione di questa pagina?",
+        "message": "Chiunque abbia il link perderà l'accesso. Puoi condividerla di nuovo in qualsiasi momento.",
+        "confirm_button": "Interrompi condivisione",
+        "cancel_button": "@:common.buttons.cancel"
       },
       "delete_wishlist_modal": {
         "title": "Conferma eliminazione",

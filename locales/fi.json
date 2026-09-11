@@ -966,7 +966,8 @@
       "list_card": {
         "product_count_label": "Tuotteiden määrä",
         "list_edit_button": "Muokkaa",
-        "remove_list_button": "Poista",
+        "rename_list_button": "Nimeä uudelleen",
+        "remove_list_button": "Poista lista",
         "make_private_button": "Tee yksityiseksi",
         "share_button": "Jaa",
         "last_modified_label": "Viimeksi muokattu: {date}"
@@ -1000,8 +1001,6 @@
         "edit_mode_title": "Listan asetukset",
         "list_name_label": "Listan nimi",
         "list_name_placeholder": "Syötä nimi",
-        "sharing_scope_label": "Jakovaihtoehdot",
-        "sharing_scope_placeholder": "Valitse yksi vaihtoehto",
         "sharing_link_label": "Linkki",
         "create_button": "Luo lista",
         "save_button": "@:common.buttons.save",
@@ -1010,11 +1009,21 @@
         "make_shared": "Tee jaetuksi",
         "sharing_scope": {
           "Private": "Yksityinen",
-          "Organization": "Organisaatio",
-          "AnyoneAnonymous": "Kuka tahansa (vain luku)"
+          "Organization": "Oma organisaatio",
+          "AnyoneAnonymous": "Kuka tahansa linkin kanssa"
         },
         "clipboard_success": "Linkki kopioitu",
         "save_error": "Listaa ei voitu tallentaa. Yritä uudelleen."
+      },
+      "share_wishlist_modal": {
+        "title": "Jaa “{listName}”",
+        "who_can_access_label": "Kenellä on pääsy"
+      },
+      "stop_sharing_modal": {
+        "title": "Lopetetaanko tämän sivun jakaminen?",
+        "message": "Kaikki linkin haltijat menettävät käyttöoikeuden. Voit jakaa sen uudelleen milloin tahansa.",
+        "confirm_button": "Lopeta jakaminen",
+        "cancel_button": "@:common.buttons.cancel"
       },
       "delete_wishlist_modal": {
         "title": "Vahvista poisto",

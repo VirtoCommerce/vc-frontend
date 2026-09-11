@@ -966,7 +966,8 @@
       "list_card": {
         "product_count_label": "商品数量",
         "list_edit_button": "编辑",
-        "remove_list_button": "删除",
+        "rename_list_button": "重命名",
+        "remove_list_button": "删除列表",
         "make_private_button": "设为私人",
         "share_button": "分享",
         "last_modified_label": "最后修改：{date}"
@@ -1000,8 +1001,6 @@
         "edit_mode_title": "清单设置",
         "list_name_label": "清单名称",
         "list_name_placeholder": "请输入名称",
-        "sharing_scope_label": "分享选项",
-        "sharing_scope_placeholder": "请选择一个选项",
         "sharing_link_label": "链接",
         "create_button": "创建清单",
         "save_button": "@:common.buttons.save",
@@ -1010,11 +1009,21 @@
         "make_shared": "设为共享",
         "sharing_scope": {
           "Private": "私密",
-          "Organization": "组织",
-          "AnyoneAnonymous": "任何人（只读）"
+          "Organization": "我的组织",
+          "AnyoneAnonymous": "任何拥有链接的人"
         },
         "clipboard_success": "链接已复制",
         "save_error": "无法保存列表，请重试。"
+      },
+      "share_wishlist_modal": {
+        "title": "分享“{listName}”",
+        "who_can_access_label": "谁可以访问"
+      },
+      "stop_sharing_modal": {
+        "title": "停止共享此页面？",
+        "message": "拥有链接的所有人都将失去访问权限。您可以随时重新共享。",
+        "confirm_button": "停止共享",
+        "cancel_button": "@:common.buttons.cancel"
       },
       "delete_wishlist_modal": {
         "title": "确认删除",

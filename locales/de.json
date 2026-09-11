@@ -966,7 +966,8 @@
       "list_card": {
         "product_count_label": "Produktanzahl",
         "list_edit_button": "Bearbeiten",
-        "remove_list_button": "Löschen",
+        "rename_list_button": "Umbenennen",
+        "remove_list_button": "Liste entfernen",
         "make_private_button": "Privat machen",
         "share_button": "Teilen",
         "last_modified_label": "Zuletzt geändert: {date}"
@@ -1000,8 +1001,6 @@
         "edit_mode_title": "Listen Einstellungen",
         "list_name_label": "Listenname",
         "list_name_placeholder": "Bitte Namen eingeben",
-        "sharing_scope_label": "Teilen-Optionen",
-        "sharing_scope_placeholder": "Bitte wähle eine Option",
         "sharing_link_label": "Link",
         "create_button": "Liste erstellen",
         "save_button": "@:common.buttons.save",
@@ -1010,11 +1009,21 @@
         "make_shared": "Teilen",
         "sharing_scope": {
           "Private": "Privat",
-          "Organization": "Organisation",
-          "AnyoneAnonymous": "Jeder (schreibgeschützt)"
+          "Organization": "Meine Organisation",
+          "AnyoneAnonymous": "Alle mit dem Link"
         },
         "clipboard_success": "Link kopiert",
         "save_error": "Die Liste konnte nicht gespeichert werden. Bitte versuchen Sie es erneut."
+      },
+      "share_wishlist_modal": {
+        "title": "„{listName}“ teilen",
+        "who_can_access_label": "Wer hat Zugriff"
+      },
+      "stop_sharing_modal": {
+        "title": "Freigabe dieser Seite beenden?",
+        "message": "Alle mit dem Link verlieren den Zugriff. Sie können sie jederzeit erneut freigeben.",
+        "confirm_button": "Freigabe beenden",
+        "cancel_button": "@:common.buttons.cancel"
       },
       "delete_wishlist_modal": {
         "title": "Löschen bestätigen",

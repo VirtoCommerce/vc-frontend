@@ -966,7 +966,8 @@
       "list_card": {
         "product_count_label": "Antal produkter",
         "list_edit_button": "Redigera",
-        "remove_list_button": "Radera",
+        "rename_list_button": "Byt namn",
+        "remove_list_button": "Ta bort lista",
         "make_private_button": "Gör privat",
         "share_button": "Dela",
         "last_modified_label": "Senast ändrad: {date}"
@@ -1000,8 +1001,6 @@
         "edit_mode_title": "Listinställningar",
         "list_name_label": "Listnamn",
         "list_name_placeholder": "Ange namn",
-        "sharing_scope_label": "Delningsalternativ",
-        "sharing_scope_placeholder": "Välj ett alternativ",
         "sharing_link_label": "Länk",
         "create_button": "Skapa lista",
         "save_button": "@:common.buttons.save",
@@ -1010,11 +1009,21 @@
         "make_shared": "Gör delad",
         "sharing_scope": {
           "Private": "Privat",
-          "Organization": "Organisation",
-          "AnyoneAnonymous": "Alla (endast läsning)"
+          "Organization": "Min organisation",
+          "AnyoneAnonymous": "Alla med länken"
         },
         "clipboard_success": "Länk kopierad",
         "save_error": "Listan kunde inte sparas. Försök igen."
+      },
+      "share_wishlist_modal": {
+        "title": "Dela ”{listName}”",
+        "who_can_access_label": "Vem har åtkomst"
+      },
+      "stop_sharing_modal": {
+        "title": "Sluta dela den här sidan?",
+        "message": "Alla med länken förlorar åtkomsten. Du kan dela den igen när som helst.",
+        "confirm_button": "Sluta dela",
+        "cancel_button": "@:common.buttons.cancel"
       },
       "delete_wishlist_modal": {
         "title": "Bekräfta radering",

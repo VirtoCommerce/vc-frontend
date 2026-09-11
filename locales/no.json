@@ -966,7 +966,8 @@
       "list_card": {
         "product_count_label": "Antall produkter",
         "list_edit_button": "Rediger",
-        "remove_list_button": "Fjern",
+        "rename_list_button": "Gi nytt navn",
+        "remove_list_button": "Fjern liste",
         "make_private_button": "Gjør privat",
         "share_button": "Del",
         "last_modified_label": "Sist endret: {date}"
@@ -1000,8 +1001,6 @@
         "edit_mode_title": "Listeinnstillinger",
         "list_name_label": "Listenavn",
         "list_name_placeholder": "Skriv inn navn",
-        "sharing_scope_label": "Delingsalternativer",
-        "sharing_scope_placeholder": "Vennligst velg ett alternativ",
         "sharing_link_label": "Lenke",
         "create_button": "Opprett liste",
         "save_button": "@:common.buttons.save",
@@ -1010,11 +1009,21 @@
         "make_shared": "Gjør delt",
         "sharing_scope": {
           "Private": "Privat",
-          "Organization": "Organisasjon",
-          "AnyoneAnonymous": "Hvem som helst (skrivebeskyttet)"
+          "Organization": "Min organisasjon",
+          "AnyoneAnonymous": "Alle med lenken"
         },
         "clipboard_success": "Lenke kopiert",
         "save_error": "Listen kunne ikke lagres. Prøv igjen."
+      },
+      "share_wishlist_modal": {
+        "title": "Del «{listName}»",
+        "who_can_access_label": "Hvem har tilgang"
+      },
+      "stop_sharing_modal": {
+        "title": "Slutte å dele denne siden?",
+        "message": "Alle med lenken mister tilgangen. Du kan dele den på nytt når som helst.",
+        "confirm_button": "Slutt å dele",
+        "cancel_button": "@:common.buttons.cancel"
       },
       "delete_wishlist_modal": {
         "title": "Bekreft sletting",

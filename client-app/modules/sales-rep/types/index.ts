@@ -136,3 +136,11 @@ export type SalesRepCustomerOrderRowType = {
   total: string;
   isOwn: boolean;
 };
+
+// A customer the list is (or is about to be) shared with, resolved for display.
+export type WishlistSharingRecipientType = {
+  organizationId: string;
+  organizationName: string;
+  /** "City, Region"; empty when the customer's address never loaded. */
+  location: string;
+};
