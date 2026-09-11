@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll } from "vitest";
-import { getColorValue, isMainColorType, isValidColor, isValidCssVariableName } from "./css";
+import { getColorValue, isMainColorType, isValidColor, isValidCssVariableName, readCssVar } from "./css";
 
 // jsdom does not implement CSS.supports; polyfill it via CSSStyleDeclaration,
 // which jsdom does validate against real CSS grammar.
@@ -77,5 +77,43 @@ describe("isValidColor", () => {
 
   it("should return false for invalid CSS color values", () => {
     expect(isValidColor("not-a-real-color")).toBe(false);
+  });
+});
+
+describe("readCssVar", () => {
+  it("should read a custom property off the document root by default, trimmed", () => {
+    document.documentElement.style.setProperty("--test-token", " #123456 ");
+    expect(readCssVar("--test-token")).toBe("#123456");
+    document.documentElement.style.removeProperty("--test-token");
+  });
+
+  it("should read from an explicit target", () => {
+    const el = document.createElement("div");
+    el.style.setProperty("--test-token", "#abcdef");
+    document.body.append(el);
+    expect(readCssVar("--test-token", el)).toBe("#abcdef");
+    el.remove();
+  });
+
+  it("should return an empty string for an undefined property", () => {
+    expect(readCssVar("--nope-not-defined")).toBe("");
+  });
+
+  it("should not write the value back onto the target", () => {
+    // The whole reason the helper exists: `useCssVar` writes what it read back as an inline
+    // style, which then outranks the preset's `html.dark` rule and freezes the token.
+    // Read from a child so a write-back would be visible as a NEW inline property.
+    document.documentElement.style.setProperty("--test-token", "#123456");
+    const el = document.createElement("div");
+    document.body.append(el);
+
+    const value = readCssVar("--test-token", el);
+    const styleAfter = el.getAttribute("style");
+
+    el.remove();
+    document.documentElement.style.removeProperty("--test-token");
+
+    expect(value).toBe("#123456");
+    expect(styleAfter).toBeNull();
   });
 });
