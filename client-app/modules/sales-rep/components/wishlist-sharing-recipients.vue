@@ -24,7 +24,7 @@
     <ul class="wishlist-sharing-recipients__rows">
       <li v-for="recipient in visibleRecipients" :key="recipient.organizationId">
         <div class="wishlist-sharing-recipients__row">
-          <WishlistSharingAvatar :organization-name="recipient.organizationName" />
+          <WishlistSharingAvatar :organization-name="recipient.organizationName" :image-url="recipient.imageUrl" />
 
           <span class="wishlist-sharing-recipients__meta">
             <span class="wishlist-sharing-recipients__name">{{ recipient.organizationName }}</span>

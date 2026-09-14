@@ -97,13 +97,24 @@ describe("useSalesRepCustomerOptions", () => {
     const { options } = build();
 
     await respondWith(2, [
-      { organizationId: "org-1", organizationName: "Acme Inc.", address: { city: "Richmond", regionName: "Virginia" } },
+      {
+        organizationId: "org-1",
+        organizationName: "Acme Inc.",
+        iconUrl: "https://cdn.example/acme.png",
+        address: { city: "Richmond", regionName: "Virginia" },
+      },
       { organizationId: "org-2", organizationName: "Globex" },
     ] as CustomerItemsType);
 
     expect(options.value).toEqual([
-      { organizationId: "org-1", organizationName: "Acme Inc.", location: "Richmond, Virginia" },
-      { organizationId: "org-2", organizationName: "Globex", location: "" },
+      {
+        organizationId: "org-1",
+        organizationName: "Acme Inc.",
+        location: "Richmond, Virginia",
+        imageUrl: "https://cdn.example/acme.png",
+      },
+      // No icon set: the avatar falls back to initials rather than to a broken image.
+      { organizationId: "org-2", organizationName: "Globex", location: "", imageUrl: "" },
     ]);
   });
 
@@ -112,7 +123,7 @@ describe("useSalesRepCustomerOptions", () => {
 
     await respondWith(1, [{ organizationId: "org-1" }] as CustomerItemsType);
 
-    expect(options.value).toEqual([{ organizationId: "org-1", organizationName: "org-1", location: "" }]);
+    expect(options.value).toEqual([{ organizationId: "org-1", organizationName: "org-1", location: "", imageUrl: "" }]);
   });
 
   it("returns an empty list (not undefined) before the query resolves", () => {
@@ -192,6 +203,7 @@ describe("useSalesRepCustomerOptions", () => {
         organizationId: "org-1",
         organizationName: "Acme Inc.",
         location: "Richmond",
+        imageUrl: "",
       });
     });
 

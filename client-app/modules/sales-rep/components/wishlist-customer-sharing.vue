@@ -18,7 +18,7 @@
     >
       <template #item="{ item }">
         <span class="wishlist-customer-sharing__option">
-          <WishlistSharingAvatar :organization-name="item.organizationName" />
+          <WishlistSharingAvatar :organization-name="item.organizationName" :image-url="item.imageUrl" />
 
           <span class="wishlist-customer-sharing__option-meta">
             <span class="wishlist-customer-sharing__option-name">{{ item.organizationName }}</span>
@@ -133,6 +133,7 @@ function toRecipient(target: SharingTargetType): WishlistSharingRecipientType {
     organizationId: target.id,
     organizationName: target.name ?? target.id,
     location: target.subtitle ?? "",
+    imageUrl: target.imageUrl ?? "",
   };
 }
 

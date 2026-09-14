@@ -40,6 +40,13 @@ const VcButton = defineComponent({
   },
 });
 
+const VcImage = defineComponent({
+  props: { src: { type: String, default: "" }, alt: { type: String, default: "" } },
+  setup(props) {
+    return () => h("img", { src: props.src, alt: props.alt });
+  },
+});
+
 let component: RenderResult;
 
 function customers(count: number): WishlistSharingRecipientType[] {
@@ -47,6 +54,7 @@ function customers(count: number): WishlistSharingRecipientType[] {
     organizationId: `org-${index + 1}`,
     organizationName: `Customer ${index + 1}`,
     location: index % 2 ? "" : "Richmond, Virginia",
+    imageUrl: "",
   }));
 }
 
@@ -54,7 +62,7 @@ function renderRecipients(recipients: WishlistSharingRecipientType[], props: Rec
   component = render(WishlistSharingRecipients, {
     props: { recipients, ...props },
     global: {
-      components: { VcButton },
+      components: { VcButton, VcImage },
       stubs: { VcIcon: true },
     },
   });
@@ -84,15 +92,31 @@ describe("WishlistSharingRecipients", () => {
   });
 
   it("leaves out the second line for a customer whose address never loaded", () => {
-    renderRecipients([{ organizationId: "org-1", organizationName: "Acme", location: "" }]);
+    renderRecipients([{ organizationId: "org-1", organizationName: "Acme", location: "", imageUrl: "" }]);
 
     expect(component.container.querySelector(".wishlist-sharing-recipients__location")).toBeNull();
   });
 
   it("initials a recipient from the first two words of their name", () => {
-    renderRecipients([{ organizationId: "org-1", organizationName: "acme trading company", location: "" }]);
+    renderRecipients([
+      { organizationId: "org-1", organizationName: "acme trading company", location: "", imageUrl: "" },
+    ]);
 
     expect(component.getByText("AT")).toBeInTheDocument();
+  });
+
+  it("shows the organization's own logo instead of its initials", () => {
+    renderRecipients([
+      {
+        organizationId: "org-1",
+        organizationName: "Acme Inc.",
+        location: "",
+        imageUrl: "https://cdn.example/acme.png",
+      },
+    ]);
+
+    expect(component.container.querySelector("img")).toHaveAttribute("src", "https://cdn.example/acme.png");
+    expect(component.queryByText("AI")).toBeNull();
   });
 
   it("asks to remove the recipient behind the button that was pressed", async () => {

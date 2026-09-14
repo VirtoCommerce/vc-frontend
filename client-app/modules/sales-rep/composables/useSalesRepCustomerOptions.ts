@@ -16,6 +16,8 @@ export type SalesRepCustomerOptionType = {
   organizationName: string;
   /** "City, Region" — the second line of a picker option and of a recipient row. */
   location: string;
+  /** The organization's own logo; empty when it has none, and the avatar falls back to initials. */
+  imageUrl: string;
 };
 
 // The rep's served customer organizations, resolved server-side from their claims. Uses its own narrow query rather
@@ -70,6 +72,7 @@ export function useSalesRepCustomerOptions() {
           organizationId: customer.organizationId,
           organizationName: customer.organizationName ?? customer.organizationId,
           location: formatCustomerLocation(customer.address),
+          imageUrl: customer.iconUrl ?? "",
         });
       }
 

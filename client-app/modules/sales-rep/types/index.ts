@@ -144,4 +144,6 @@ export type WishlistSharingRecipientType = {
   organizationName: string;
   /** "City, Region"; empty when the customer's address never loaded. */
   location: string;
+  /** The organization's own logo; empty when it has none, and the avatar falls back to initials. */
+  imageUrl: string;
 };

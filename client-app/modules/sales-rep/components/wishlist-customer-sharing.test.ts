@@ -34,7 +34,9 @@ const mocks = await vi.hoisted(async () => {
 
   return {
     sendCommunication: vi.fn(),
-    options: reactiveRef<{ organizationId: string; organizationName: string; location: string }[]>([]),
+    options: reactiveRef<{ organizationId: string; organizationName: string; location: string; imageUrl: string }[]>(
+      [],
+    ),
     loading: reactiveRef(false),
     failed: reactiveRef(false),
     notifications: { success: vi.fn(), warning: vi.fn(), error: vi.fn() },
@@ -142,6 +144,13 @@ const VcTextarea = defineComponent({
   },
 });
 
+const VcImage = defineComponent({
+  props: { src: { type: String, default: "" }, alt: { type: String, default: "" } },
+  setup(props) {
+    return () => h("img", { src: props.src, alt: props.alt });
+  },
+});
+
 // The recipients list renders for real; only its buttons are stood in for.
 const VcButton = defineComponent({
   props: { disabled: { type: Boolean, default: false }, ariaLabel: { type: String, default: "" } },
@@ -187,7 +196,7 @@ function renderSharing(targets: SharingTargetType[] = [], message = "") {
   component = render(Host, {
     props: { targets, message, sharingLink: SHARING_LINK },
     global: {
-      components: { VcSelect, VcTextarea, VcButton },
+      components: { VcSelect, VcTextarea, VcButton, VcImage },
       stubs: { VcIcon: true },
     },
   });
@@ -212,8 +221,8 @@ function shareMessage() {
 }
 
 /** A target the way the backend hands it over, with the owning module's name and city already resolved. */
-function target(id: string, name?: string, subtitle?: string): SharingTargetType {
-  return { id, name, subtitle };
+function target(id: string, name?: string, subtitle?: string, imageUrl?: string): SharingTargetType {
+  return { id, name, subtitle, imageUrl };
 }
 
 const SUCCESS = { succeeded: true, pushSent: true, emailSent: true, warnings: [] as string[] };
@@ -222,8 +231,8 @@ const SAVED_CONTEXT = { listName: "Spring assortment", sharingLink: SHARING_LINK
 beforeEach(() => {
   mocks.sendCommunication.mockReset().mockResolvedValue(SUCCESS);
   mocks.options.value = [
-    { organizationId: "org-1", organizationName: "Acme Inc.", location: "Richmond, Virginia" },
-    { organizationId: "org-2", organizationName: "Globex", location: "" },
+    { organizationId: "org-1", organizationName: "Acme Inc.", location: "Richmond, Virginia", imageUrl: "" },
+    { organizationId: "org-2", organizationName: "Globex", location: "", imageUrl: "" },
   ];
   mocks.loading.value = false;
   mocks.failed.value = false;
@@ -288,7 +297,7 @@ describe("WishlistCustomerSharing", () => {
 
     it("keeps a persisted target listed even when it is not among the loaded options", () => {
       // Over the paging cap, or off the rep's roster since: without seeding it there would be no way to untick it.
-      mocks.options.value = [{ organizationId: "org-9", organizationName: "Initech", location: "" }];
+      mocks.options.value = [{ organizationId: "org-9", organizationName: "Initech", location: "", imageUrl: "" }];
 
       renderSharing([target("org-outside-the-page", "Umbrella")]);
 
@@ -326,6 +335,17 @@ describe("WishlistCustomerSharing", () => {
 
       expect(recipientList().getByText("Acme Inc.")).toBeInTheDocument();
       expect(recipientList().getByText("Richmond, Virginia")).toBeInTheDocument();
+    });
+
+    it("wears the organization's own logo, which comes with the target", () => {
+      mocks.options.value = [];
+
+      renderSharing([target("org-1", "Acme Inc.", "Richmond, Virginia", "https://cdn.example/acme.png")]);
+
+      expect(component.getByTestId("wishlist-sharing-recipients").querySelector("img")).toHaveAttribute(
+        "src",
+        "https://cdn.example/acme.png",
+      );
     });
 
     it("names a recipient by id when the backend could not resolve them", () => {
