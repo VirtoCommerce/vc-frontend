@@ -964,7 +964,6 @@
     "wishlists": {
       "list_card": {
         "product_count_label": "Antall produkter",
-        "list_edit_button": "Rediger",
         "rename_list_button": "Gi nytt navn",
         "remove_list_button": "Fjern liste",
         "make_private_button": "Gjør privat",
@@ -973,7 +972,7 @@
       },
       "list_details": {
         "add_all_to_cart_button": "Legg alle i handlekurven",
-        "list_settings_button": "Listeinnstillinger",
+        "list_settings_button": "@:shared.wishlists.list_card.rename_list_button",
         "empty_list": "Listen din er tom",
         "empty_list_button": "Fortsett å bla",
         "list_icon": "Listeikon"
@@ -997,7 +996,7 @@
       },
       "add_or_update_wishlist_modal": {
         "title": "Ny liste",
-        "edit_mode_title": "Listeinnstillinger",
+        "edit_mode_title": "@:shared.wishlists.list_card.rename_list_button",
         "list_name_label": "Listenavn",
         "list_name_placeholder": "Skriv inn navn",
         "sharing_link_label": "Lenke",

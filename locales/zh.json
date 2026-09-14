@@ -964,7 +964,6 @@
     "wishlists": {
       "list_card": {
         "product_count_label": "商品数量",
-        "list_edit_button": "编辑",
         "rename_list_button": "重命名",
         "remove_list_button": "删除列表",
         "make_private_button": "设为私人",
@@ -973,7 +972,7 @@
       },
       "list_details": {
         "add_all_to_cart_button": "全部加入购物车",
-        "list_settings_button": "清单设置",
+        "list_settings_button": "@:shared.wishlists.list_card.rename_list_button",
         "empty_list": "您的清单是空的",
         "empty_list_button": "继续浏览",
         "list_icon": "清单图标"
@@ -997,7 +996,7 @@
       },
       "add_or_update_wishlist_modal": {
         "title": "新清单",
-        "edit_mode_title": "清单设置",
+        "edit_mode_title": "@:shared.wishlists.list_card.rename_list_button",
         "list_name_label": "清单名称",
         "list_name_placeholder": "请输入名称",
         "sharing_link_label": "链接",

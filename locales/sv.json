@@ -964,7 +964,6 @@
     "wishlists": {
       "list_card": {
         "product_count_label": "Antal produkter",
-        "list_edit_button": "Redigera",
         "rename_list_button": "Byt namn",
         "remove_list_button": "Ta bort lista",
         "make_private_button": "Gör privat",
@@ -973,7 +972,7 @@
       },
       "list_details": {
         "add_all_to_cart_button": "Lägg till alla i kundvagn",
-        "list_settings_button": "Listinställningar",
+        "list_settings_button": "@:shared.wishlists.list_card.rename_list_button",
         "empty_list": "Din lista är tom",
         "empty_list_button": "Fortsätt bläddra",
         "list_icon": "Listikon"
@@ -997,7 +996,7 @@
       },
       "add_or_update_wishlist_modal": {
         "title": "Ny lista",
-        "edit_mode_title": "Listinställningar",
+        "edit_mode_title": "@:shared.wishlists.list_card.rename_list_button",
         "list_name_label": "Listnamn",
         "list_name_placeholder": "Ange namn",
         "sharing_link_label": "Länk",

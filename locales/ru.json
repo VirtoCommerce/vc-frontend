@@ -964,7 +964,6 @@
     "wishlists": {
       "list_card": {
         "product_count_label": "Количество товаров",
-        "list_edit_button": "Редактировать",
         "rename_list_button": "Переименовать",
         "remove_list_button": "Удалить список",
         "make_private_button": "Сделать приватным",
@@ -973,7 +972,7 @@
       },
       "list_details": {
         "add_all_to_cart_button": "Добавить все в корзину",
-        "list_settings_button": "Настройки списка",
+        "list_settings_button": "@:shared.wishlists.list_card.rename_list_button",
         "empty_list": "Ваш список пуст",
         "empty_list_button": "Перейти в каталог",
         "list_icon": "Иконка списка"
@@ -997,7 +996,7 @@
       },
       "add_or_update_wishlist_modal": {
         "title": "Новый список",
-        "edit_mode_title": "Настройки списка",
+        "edit_mode_title": "@:shared.wishlists.list_card.rename_list_button",
         "list_name_label": "Название списка",
         "list_name_placeholder": "Пожалуйста, введите название",
         "sharing_link_label": "Ссылка",

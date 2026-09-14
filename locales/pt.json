@@ -964,7 +964,6 @@
     "wishlists": {
       "list_card": {
         "product_count_label": "Contagem de produtos",
-        "list_edit_button": "Editar",
         "rename_list_button": "Renomear",
         "remove_list_button": "Remover lista",
         "make_private_button": "Tornar privado",
@@ -973,7 +972,7 @@
       },
       "list_details": {
         "add_all_to_cart_button": "Adicionar tudo ao carrinho",
-        "list_settings_button": "Configurações da lista",
+        "list_settings_button": "@:shared.wishlists.list_card.rename_list_button",
         "empty_list": "Sua lista está vazia",
         "empty_list_button": "Continuar navegando",
         "list_icon": "Ícone da lista"
@@ -997,7 +996,7 @@
       },
       "add_or_update_wishlist_modal": {
         "title": "Nova Lista",
-        "edit_mode_title": "Configurações da Lista",
+        "edit_mode_title": "@:shared.wishlists.list_card.rename_list_button",
         "list_name_label": "Nome da lista",
         "list_name_placeholder": "Por favor, insira o nome",
         "sharing_link_label": "Link",

@@ -964,7 +964,6 @@
     "wishlists": {
       "list_card": {
         "product_count_label": "Tuotteiden määrä",
-        "list_edit_button": "Muokkaa",
         "rename_list_button": "Nimeä uudelleen",
         "remove_list_button": "Poista lista",
         "make_private_button": "Tee yksityiseksi",
@@ -973,7 +972,7 @@
       },
       "list_details": {
         "add_all_to_cart_button": "Lisää kaikki ostoskoriin",
-        "list_settings_button": "Listan asetukset",
+        "list_settings_button": "@:shared.wishlists.list_card.rename_list_button",
         "empty_list": "Listasi on tyhjä",
         "empty_list_button": "Jatka selaamista",
         "list_icon": "Listakuvake"
@@ -997,7 +996,7 @@
       },
       "add_or_update_wishlist_modal": {
         "title": "Uusi lista",
-        "edit_mode_title": "Listan asetukset",
+        "edit_mode_title": "@:shared.wishlists.list_card.rename_list_button",
         "list_name_label": "Listan nimi",
         "list_name_placeholder": "Syötä nimi",
         "sharing_link_label": "Linkki",

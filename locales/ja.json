@@ -964,7 +964,6 @@
     "wishlists": {
       "list_card": {
         "product_count_label": "Product count",
-        "list_edit_button": "Edit",
         "rename_list_button": "名前を変更",
         "remove_list_button": "リストを削除",
         "make_private_button": "Make private",
@@ -973,7 +972,7 @@
       },
       "list_details": {
         "add_all_to_cart_button": "Add all to cart",
-        "list_settings_button": "List settings",
+        "list_settings_button": "@:shared.wishlists.list_card.rename_list_button",
         "empty_list": "Your list is empty",
         "empty_list_button": "Continue browsing",
         "list_icon": "List icon"
@@ -997,7 +996,7 @@
       },
       "add_or_update_wishlist_modal": {
         "title": "New List",
-        "edit_mode_title": "List Settings",
+        "edit_mode_title": "@:shared.wishlists.list_card.rename_list_button",
         "list_name_label": "List name",
         "list_name_placeholder": "Please enter name",
         "sharing_link_label": "リンク",
