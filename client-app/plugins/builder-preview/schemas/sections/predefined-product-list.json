@@ -1,5 +1,6 @@
 {
   "name": "Predefined products",
+  "description": "Products grid populated from an explicit list of SKUs — for hand-picked product showcases with deterministic ordering. Use when: the user names specific products by SKU/code or wants a tightly-curated list whose order matters. Skip when: keyword/search-based selection is enough (use `products`), carousel format (use `products-carousel`, which also accepts SKUs), or filterable category listing (use `category`). `title` and `subtitle` head the grid. `skus` is a list of `{ sku }` objects — each `sku` is a product code; the order in the list is preserved in the rendered grid.",
   "icon": "local_mall",
   "displayField": "name",
   "settings": [
