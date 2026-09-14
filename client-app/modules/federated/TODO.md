@@ -41,6 +41,30 @@ file are cross-referenced, not repeated.
       not cache 404s (Cloudflare kept one per `Accept-Encoding` variant for hours after a redeploy —
       the 2026-09-11 blank page); `Cache-Control` on `/modules/**` — next item.
 
+**Plugin developer experience (walked end to end 2026-09-14)**
+
+- [ ] **`yarn create:plugin` omits `packageManager`.** The scaffold ships a `.yarnrc.yml` (yarn 4
+      config) but nothing pins the version, so a plain `yarn install` runs whatever is global — yarn
+      1.22 here, which ignores that file and writes a v1 lockfile. Emit
+      `"packageManager": "yarn@<host version>"`, the way the sales-rep plugin's own package.json does.
+- [ ] **Default vue-i18n (and probably @vueuse/core) to on in the scaffolder.** The cost of the two
+      answers is not symmetric: answering "no" drops the package from MF shared while leaving it in
+      devDependencies, so a later `import { useI18n } from "vue-i18n"` compiles and bundles a SECOND
+      copy with its own locale state — silent breakage. Answering "yes" for a package the plugin
+      never imports leaves a shared entry with `import: false` that nothing ever loads.
+- [ ] **Next-steps output prints a `cd ../../../../../..` path** — print the absolute target instead.
+- [ ] **Consider `vueCompilerOptions.strictTemplates` in the scaffolded tsconfig.** With the
+      GlobalComponents augmentation (#2480) a known component is fully typed, but an unknown one is
+      still accepted silently, so a misspelled tag stays a runtime-only failure. Strict templates
+      also check unknown attributes. The sales-rep plugin uses only facade-exported components
+      (21 of them, all exported), so it would not be held back by this.
+- [ ] **Module CI does not type-check the storefront plugin.** `vc-build Compress` runs
+      `yarn build` (vite only), so `yarn type-check` never runs and the plugin ships red today:
+      `layout-edit-button.vue` passes `size="xssss"` and `variant="123"` to `VcButton`, and
+      `my-customers.vue` calls `$d(item.lastOrder.createdDate)` with a string where vue-i18n wants
+      `number | Date` (that one only became visible once the contract started typing slot props).
+      Fix the three in vc-module-sales-rep#13 and add the step to `module-ci`.
+
 **Soon after**
 
 - [ ] **`Cache-Control` for `/modules/**`** (platform / x-frontend). The platform sends none, so
