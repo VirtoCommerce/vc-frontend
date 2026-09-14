@@ -178,9 +178,16 @@ const scopeChanged = computed(() => sharingScope.value !== listSharingScope.valu
 
 const canSave = computed<boolean>(() => scopeCanSave.value && (scopeChanged.value || scopeDirty.value));
 
+// A targeted scope with nobody in it has no audience to lose, so leaving it takes nothing away.
+const hasCurrentAudience = computed(() =>
+  getSharingScope(listSharingScope.value)?.element ? listTargets.value.length > 0 : true,
+);
+
 // Only leaving a sharing scope revokes an audience; a first share takes nothing away, and swapping recipients
 // inside one scope is not a revocation.
-const revokesCurrentAudience = computed(() => listSharingScope.value !== PRIVATE_SCOPE && scopeChanged.value);
+const revokesCurrentAudience = computed(
+  () => listSharingScope.value !== PRIVATE_SCOPE && scopeChanged.value && hasCurrentAudience.value,
+);
 
 const confirmingStopSharing = ref(false);
 let pendingClose: (() => void) | undefined;
