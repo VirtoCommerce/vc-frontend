@@ -46,11 +46,16 @@ export function useWishlists(options: { autoRefetch: boolean } = { autoRefetch: 
     return newList.id;
   }
 
-  async function updateWishlist(payload: ChangeWishlistPayloadType): Promise<void> {
+  // Returns the saved list: the mutation is the only place the server's own sharing key surfaces, and the share
+  // dialog links the customer notification to it.
+  async function updateWishlist(payload: ChangeWishlistPayloadType): Promise<WishlistType> {
     listLoading.value = true;
 
+    let changedList: WishlistType;
+
     try {
-      list.value = await changeWishlist(payload);
+      changedList = await changeWishlist(payload);
+      list.value = changedList;
     } catch (e) {
       Logger.error(`${useWishlists.name}.${updateWishlist.name}`, e);
       throw e;
@@ -61,6 +66,8 @@ export function useWishlists(options: { autoRefetch: boolean } = { autoRefetch: 
     if (options.autoRefetch) {
       await fetchWishlists();
     }
+
+    return changedList;
   }
 
   async function fetchWishlists(): Promise<void> {

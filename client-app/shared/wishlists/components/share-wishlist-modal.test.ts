@@ -274,6 +274,11 @@ function targetedList(...ids: string[]): WishlistType {
   } as unknown as WishlistType;
 }
 
+/** What `updateWishlist` resolves with: the server's own copy, carrying the sharing key it actually persisted. */
+function savedList(sharingKey = "sharing-key-1"): WishlistType {
+  return { id: "list-1", name: "Spring assortment", sharingSetting: { id: sharingKey } } as unknown as WishlistType;
+}
+
 async function selectScope(scope: string) {
   await fireEvent.click(scopeTab(scope)!.querySelector("button")!);
 }
@@ -326,7 +331,7 @@ beforeAll(() => {
 });
 
 beforeEach(() => {
-  mocks.updateWishlist.mockReset().mockResolvedValue(undefined);
+  mocks.updateWishlist.mockReset().mockResolvedValue(savedList());
   mocks.fetchWishlists.mockReset().mockResolvedValue(undefined);
   mocks.logger.error.mockReset();
   Object.values(mocks.notifications).forEach((spy) => spy.mockReset());

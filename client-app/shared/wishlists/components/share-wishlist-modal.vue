@@ -169,8 +169,17 @@ const activeScopeElement = computed(() =>
   activeScope.value && isSharingScopeAvailable(activeScope.value) ? activeScope.value.element : undefined,
 );
 const listSharingScopeSupportsLink = computed(() => !!activeScope.value?.supportsLink);
-const sharingKey = computed(() => props.list.sharingSetting?.id ?? crypto.randomUUID());
-const sharingLink = computed(() => `${location.protocol}//${location.host}/shared-list/${sharingKey.value}`);
+// Minted once, never inside a computed: this key is what the customer notification links to, so it must not
+// change between the link the rep copied and the one the save persists. The save replaces it with the key the
+// server actually stored.
+// eslint-disable-next-line vue/no-setup-props-reactivity-loss -- see above
+const sharingKey = ref<string>(props.list.sharingSetting?.id ?? crypto.randomUUID());
+
+function linkFor(key: string): string {
+  return `${location.protocol}//${location.host}/shared-list/${key}`;
+}
+
+const sharingLink = computed(() => linkFor(sharingKey.value));
 
 const scopeCanSave = computed(() => (activeScopeElement.value ? !!scopeControls.value?.canSave : true));
 const scopeDirty = computed(() => !!scopeControls.value?.dirty);
@@ -226,17 +235,21 @@ async function save(closeHandle: () => void): Promise<void> {
   saving.value = true;
   try {
     // Sharing only: name and description belong to the rename dialog. A scope without controls contributes nothing.
-    await updateWishlist({
+    const saved = await updateWishlist({
       listId: props.list.id,
       scope: sharingScope.value,
       sharingKey: sharingKey.value,
       ...(scopeControls.value?.payload ?? {}),
     });
 
+    // The server owns the sharing key; ours was only a proposal. The customer notification links to what was
+    // actually persisted, so a backend that mints its own key cannot leave recipients with a dead link.
+    sharingKey.value = saved.sharingSetting?.id ?? sharingKey.value;
+
     // Saved from here on, so neither step may surface as a save error; both are awaited to keep the loader up.
     try {
       await scopeControls.value?.onSaved?.({
-        listName: props.list.name ?? "",
+        listName: props.list.name,
         sharingLink: sharingLink.value,
       });
     } catch (e) {
