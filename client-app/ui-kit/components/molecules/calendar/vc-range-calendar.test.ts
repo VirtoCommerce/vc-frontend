@@ -651,6 +651,30 @@ describe("VcRangeCalendar", () => {
         wrapper.unmount();
       });
 
+      // Escape aims at a revert target reka never refreshed, so the whole range comes back. Nothing is
+      // emitted on that path, so a host that never wrote the Clear back would disagree with the grid for good.
+      it("keeps the grid empty when Escape follows the footer Clear on such a host", async () => {
+        const wrapper = mountCal({ showFooter: true }, { attachTo: document.body });
+        await flushPromises();
+
+        await wrapper.find(".vc-range-calendar__footer-btn").trigger("click");
+        await flushPromises();
+        const emitsAfterClear = wrapper.emitted("update:modelValue")?.length;
+
+        const cell = wrapper.find(
+          '[data-reka-calendar-cell-trigger][data-value="2026-10-08"]:not([data-outside-view])',
+        );
+        expect(cell.exists()).toBe(true);
+        cell.element.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true }));
+        // Two flushes: reka's restore settles in one, what it forwards in the next.
+        await flushPromises();
+        await flushPromises();
+
+        expect(wrapper.findAll("[data-selected], [data-selection-start], [data-selection-end]")).toHaveLength(0);
+        expect(wrapper.emitted("update:modelValue")).toHaveLength(emitsAfterClear!);
+        wrapper.unmount();
+      });
+
       // The footer Clear is a commit WE emit, so the props watch skips it — nothing else can tell
       // Escape the range is gone.
       it("does not bring the range back after the footer cleared it", async () => {

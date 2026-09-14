@@ -298,10 +298,12 @@ function onValidModelValueUpdate(value: DateRange | undefined): void {
 }
 
 // reka re-reads the model only on a prop change, so after a swallowed revert the grid needs this.
-function resyncRekaWithModel(): void {
+// From committedRange, not the prop: an uncontrolled host never writes the emit back, so after a Clear
+// the prop still holds the range we just deleted and the grid would repaint it with nothing emitted.
+function resyncRekaWithCommitted(): void {
   // reka answers with echoes of our own value, exactly like an external sync.
   suppressEchoForOneTick();
-  parsedModelValue.value = parseRange(props.modelValue);
+  parsedModelValue.value = parseRange(committedRange);
   // reka moved its placeholder to the revert target; nothing else would bring the grid back.
   placeholderRef.value = clampToBounds(getInitialPlaceholder());
 }
@@ -315,7 +317,7 @@ function onUpdate(value: DateRange | undefined): void {
   if (isStaleRevert) {
     // Against the range we hold: forwarding reka's would drop a typed value or resurrect a deleted one.
     emitRange(committedRange);
-    resyncRekaWithModel();
+    resyncRekaWithCommitted();
     return;
   }
 
