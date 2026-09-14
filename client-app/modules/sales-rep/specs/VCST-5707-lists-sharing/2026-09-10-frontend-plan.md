@@ -58,7 +58,7 @@ What is still open:
    What that costs, measured rather than assumed:
 
    - **Server-side keyword search:** dropped. No search-text emit exists, so it cannot be built from outside the
-     kit. Client-side filtering over the accumulated pages stays — and since §4.2 loads every served customer up
+     kit. Client-side filtering over the single loaded page stays — and since §4.2 loads one page of 100 up
      front, it filters over the whole set, not over a partial one.
    - **Load-more inside the dropdown:** moot for the same reason. Everything is already loaded.
    - **Select-all and its `2 of 5` row counter:** not delivered. The frame draws them as the dropdown's first row,
@@ -152,7 +152,7 @@ const recipients = computed(() => [...selectedIds.value].map(id => ({
 
 - `grantTargets` = `sharingSetting.targets` (shipped as one setting with many targets, not a list of settings) —
   already carries a formatted `subtitle`, so no client-side address formatting for those rows. `knownOptions` =
-  every option ever loaded by the picker in this dialog (accumulated, never evicted); it covers rows the rep just
+  every option the picker loaded in this dialog; it covers rows the rep just
   picked, which have no target yet. The id stands in only when the backend resolved neither name nor subtitle,
   which means the organization is gone.
 - **Correctness rule (brief constraint 3):** `payload` is built from `selectedIds` vs `persistedIds` only. The
@@ -366,11 +366,25 @@ with 5923's owner now; it is a one-emit change on their side.
 20-per-scroll page has nothing to trigger it — shipping `PAGE_SIZE = 20` with no trigger would have shown the rep
 *fewer* customers than today's single page of 100. And client-side filtering is only correct over the whole set:
 filtering half the customers silently hides the rest behind a search box that looks like it searched everything.
-So `useSalesRepCustomerOptions` keeps `first: 100` and **advances pages by itself** until
-`loaded.size === totalCount`, an empty page comes back, or `MAX_PAGES = 20` (2000 customers) stops it — the cap
-warns, exactly as the old `> 100` warning did, but three orders of magnitude further out. `loading` stays true for
-the whole run so the field never looks settled mid-set. Scroll-triggered paging becomes worth building only once
-5923 gives the picker a search emit, because then the server does the filtering.
+So `useSalesRepCustomerOptions` kept `first: 100` and advanced pages by itself up to `MAX_PAGES = 20`.
+
+**Reverted 2026-09-14: back to the single page of 100.** Self-advancing paging was a workaround for a `VcSelect`
+that cannot search server-side, and it bought two defects the single page never had. Both came from the derived
+`loading = pageLoading || (loaded.size < totalCount && !truncated)`:
+
+- The watcher stops paging on an empty page, so `page` freezes below `MAX_PAGES`, `truncated` stays false and
+  `loading` is stuck **true** for good — the picker is permanently disabled. Any `totalCount` larger than what the
+  backend actually serves (ACL filtering) reaches this.
+- On a page that *fails*, `@vue/apollo-composable` has already nulled `result` for the restart and `processError`
+  never puts it back (the recovery branch is gated on an `errorPolicy` this client does not set), so `totalCount`
+  reads 0, `loading` goes **false**, and the field is enabled holding a partial set — the very lie this section
+  set out to prevent, on the error path.
+
+The overflow limitation (a rep serving more than 100 customers cannot reach the rest) is accepted again, with the
+`> OPTIONS_LIMIT` warning restored. Paging comes back with VCST-5923, when the kit gives the picker a search emit
+and the server does the filtering — and the stop signal should then be `pageInfo.hasNextPage`, which the
+connection already exposes and `useCartPickupLocations` already uses, not a comparison against `totalCount`
+(documented in the schema as nullable when the backend has no exact count).
 
 **Select all.** Two candidates: (a) select the loaded rows — cheap, but on an ACL "all" that means "the 20 I have
 scrolled to" is a trap; (b) select every customer matching the keyword — `selectAll()` pages through the id+name
@@ -424,7 +438,7 @@ against a backend that has VCST-5925, and `generate:backend-packages` is bumped 
 | # | Step | Status | Unblocked by |
 | --- | --- | --- | --- |
 | 1 | **Done 2026-09-11:** spec moved into the module as this file plus its two companions | DONE | — |
-| 2 | **Done 2026-09-10:** picker composable — `address { city regionName }` in the options query (module codegen run against vcst-qa; only the two `SalesRepCustomerOptions` lines changed), accumulation into a `Map` that doubles as `knownOptions` (`findOption`), self-advancing paging to the whole set with a 2000 cap, formatted `location` on the option, `OPTIONS_LIMIT` warning retired. 15 tests | DONE | — (keyword wiring: VcSelect search emit) |
+| 2 | **Done 2026-09-10, paging reverted 2026-09-14:** picker composable — `address { city regionName }` and `iconUrl` in the options query (module codegen run against vcst-qa), formatted `location` and `imageUrl` on the option, `findOption` for name resolution. Self-advancing paging was shipped and then reverted to the single `first: 100` page with its `OPTIONS_LIMIT` warning (see §4.2). 14 tests | DONE | — (paging + keyword wiring: VCST-5923) |
 | 3 | **Done 2026-09-10:** modal — `<KeepAlive>`, the persisted-recipients prop, contract type widening, modal tests for retention + ref rebind (§1, §2) | DONE | — |
 | 4 | **Done 2026-09-10:** customer element on a Set draft capped at one (`canSave = size === 1`, payload still `{ sharedWithId }`), deltas as `addedIds`/`removedIds`, two-line picker options with the avatar (`467:4745`), new `wishlist-sharing-recipients.vue` (header + `Clear all`, rows, sticky `Show all N` / `Show less`) and `wishlist-sharing-avatar.vue`, message capped at **250** with the frame's hint, notify looped over `addedIds` with one aggregate toast, 8 new locale keys ×13 + the frame's Message copy. **No Notify-via fieldset** — VCST-5724 removed it (§0.3). Deferred to PR-B with the plural wire: `multiple` on the picker, Select-all + its `2 of 5` counter (VCST-5923), a pluralised success toast, `sharedWith.imageUrl` on the avatar | DONE | — |
 | 5a | **Done 2026-09-09:** Rename / Share / Remove list menu; `AddOrUpdateWishlistModal` reduced to name + description (create + rename); new `ShareWishlistModal` with the scope selector, link and scope element; Share button on list details; scope-dependent primary label; 13 locales; tests split | DONE | — |

@@ -54,7 +54,7 @@ function build() {
   return scope.run(() => useSalesRepCustomerOptions())!;
 }
 
-/** Answers the page the composable is currently asking for. */
+/** Answers the query with a page of customers. */
 async function respondWith(totalCount: number, items: CustomerItemsType) {
   queryMock.result.value = customersResult(totalCount, items);
   await nextTick();
@@ -80,7 +80,7 @@ afterEach(() => {
 });
 
 describe("useSalesRepCustomerOptions", () => {
-  it("queries the caller's served customers, name-sorted, a page at a time", () => {
+  it("queries the caller's served customers, name-sorted, one page deep", () => {
     build();
 
     // No keyword: `VcSelect` filters over the items it was handed and gives the composable no search text to send.
@@ -132,67 +132,37 @@ describe("useSalesRepCustomerOptions", () => {
     expect(options.value).toEqual([]);
   });
 
-  describe("loading everything the rep serves", () => {
-    it("asks for the next page while customers are still missing, and keeps the pages already in", async () => {
-      const { options } = build();
+  describe("more customers than one page holds", () => {
+    it("warns that the overflow is unreachable, naming both numbers", async () => {
+      build();
 
-      await respondWith(2, [{ organizationId: "org-1", organizationName: "Acme" }] as CustomerItemsType);
+      await respondWith(500, [{ organizationId: "org-1", organizationName: "Acme" }] as CustomerItemsType);
 
-      expect(passedVariables().after).toBe("100");
-
-      await respondWith(2, [{ organizationId: "org-2", organizationName: "Globex" }] as CustomerItemsType);
-
-      // Replacing instead of accumulating would leave the client-side filter searching one page of the set.
-      expect(options.value.map((option) => option.organizationId)).toEqual(["org-1", "org-2"]);
-      expect(passedVariables().after).toBe("100");
+      expect(loggerMock.warn).toHaveBeenCalledOnce();
+      expect(loggerMock.warn.mock.calls[0][0]).toContain("100");
+      expect(loggerMock.warn.mock.calls[0][0]).toContain("500");
     });
 
-    it("stops once every served customer is in", async () => {
+    it("says nothing while the whole set fits", async () => {
       build();
 
       await respondWith(1, [{ organizationId: "org-1", organizationName: "Acme" }] as CustomerItemsType);
 
-      expect(passedVariables().after).toBe("0");
+      expect(loggerMock.warn).not.toHaveBeenCalled();
     });
 
-    it("stops on an empty page, whatever the count claims", async () => {
+    it("asks for one page and never advances the offset", async () => {
       build();
 
-      await respondWith(500, []);
+      await respondWith(500, [{ organizationId: "org-1", organizationName: "Acme" }] as CustomerItemsType);
 
       expect(passedVariables().after).toBe("0");
-    });
-
-    it("keeps loading until the set is complete", async () => {
-      const { loading } = build();
-
-      await respondWith(2, [{ organizationId: "org-1", organizationName: "Acme" }] as CustomerItemsType);
-
-      expect(loading.value).toBe(true);
-
-      await respondWith(2, [{ organizationId: "org-2", organizationName: "Globex" }] as CustomerItemsType);
-
-      expect(loading.value).toBe(false);
-    });
-
-    it("gives up and says so rather than paging forever", async () => {
-      build();
-
-      // Every page answers with one customer out of a much larger total, so the cap is what ends it.
-      for (let index = 0; index < 25; index++) {
-        await respondWith(5000, [
-          { organizationId: `org-${index}`, organizationName: `Org ${index}` },
-        ] as CustomerItemsType);
-      }
-
-      expect(passedVariables().after).toBe("1900");
-      expect(loggerMock.warn).toHaveBeenCalledOnce();
-      expect(loggerMock.warn.mock.calls[0][0]).toContain("5000");
+      expect(passedVariables().first).toBe(100);
     });
   });
 
   describe("resolving a name the picker is no longer showing", () => {
-    it("still knows a customer from a page already loaded", async () => {
+    it("still knows a customer the search box has filtered away", async () => {
       const { findOption } = build();
 
       await respondWith(1, [
@@ -207,7 +177,7 @@ describe("useSalesRepCustomerOptions", () => {
       });
     });
 
-    it("knows nothing about a customer no page ever carried", async () => {
+    it("knows nothing about a customer the page never carried", async () => {
       const { findOption } = build();
 
       await respondWith(1, [{ organizationId: "org-1", organizationName: "Acme" }] as CustomerItemsType);

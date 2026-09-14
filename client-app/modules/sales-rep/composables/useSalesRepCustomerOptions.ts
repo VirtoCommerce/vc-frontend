@@ -5,11 +5,9 @@ import { SalesRepCustomerOptionsDocument } from "../api/graphql/types";
 import { formatCustomerLocation } from "../utils";
 import { useSalesRepHubQuery } from "./useSalesRepHubQuery";
 
-const PAGE_SIZE = 100;
-
-// The picker filters client-side, which is only correct over the whole set, so every page is fetched. The cap is a
-// safety net, not an expected case.
-const MAX_PAGES = 20;
+// The picker filters client-side, so a rep serving more customers than this cannot reach the overflow (warned below).
+// Paging them all in waits on server-side search in `VcSelect`; VCST-5923.
+const OPTIONS_LIMIT = 100;
 
 export type SalesRepCustomerOptionType = {
   organizationId: string;
@@ -20,26 +18,19 @@ export type SalesRepCustomerOptionType = {
   imageUrl: string;
 };
 
-// The rep's served customer organizations. Its own narrow query rather than the My customers one, which also
-// aggregates order statistics per customer.
+// The rep's served customer organizations, resolved server-side from their claims. Uses its own narrow query rather
+// than the My customers one, which also aggregates order statistics per customer — a lot of work for a name and a city.
 export function useSalesRepCustomerOptions() {
-  const page = ref(1);
-
   const variables = computed(() => ({
     storeId: globals.storeId,
-    first: PAGE_SIZE,
-    after: String((page.value - 1) * PAGE_SIZE),
+    first: OPTIONS_LIMIT,
+    after: "0",
     // Nothing to send: `VcSelect` filters over the items it was given and emits no search text.
     keyword: "",
     sort: "name:asc",
   }));
 
-  const {
-    result,
-    loading: pageLoading,
-    onError,
-    onResult,
-  } = useSalesRepHubQuery(SalesRepCustomerOptionsDocument, variables);
+  const { result, loading, onError, onResult } = useSalesRepHubQuery(SalesRepCustomerOptionsDocument, variables);
 
   // An empty dropdown on a failed fetch reads as "this rep serves nobody"; callers surface this on the field instead.
   const failed = ref(false);
@@ -53,52 +44,35 @@ export function useSalesRepCustomerOptions() {
     failed.value = false;
   });
 
-  // Pages accumulate rather than replace: the filter needs all of them.
-  const loaded = ref(new Map<string, SalesRepCustomerOptionType>());
+  const options = computed<SalesRepCustomerOptionType[]>(() =>
+    (result.value?.salesRepCustomers?.items ?? []).map((customer) => ({
+      organizationId: customer.organizationId,
+      organizationName: customer.organizationName ?? customer.organizationId,
+      location: formatCustomerLocation(customer.address),
+      imageUrl: customer.iconUrl ?? "",
+    })),
+  );
 
   const totalCount = computed(() => result.value?.salesRepCustomers?.totalCount ?? 0);
-  const truncated = computed(() => page.value >= MAX_PAGES && loaded.value.size < totalCount.value);
 
-  // `immediate`: a cache hit fills `result` during setup, so the first page never arrives as a change.
+  // Until the picker gains server-side search, overflow looks like a missing customer rather than a truncated list.
+  // `immediate` matters: a cache hit fills `result` during setup, so the count never *changes*.
   watch(
-    result,
-    (current) => {
-      const items = current?.salesRepCustomers?.items ?? [];
-
-      for (const customer of items) {
-        loaded.value.set(customer.organizationId, {
-          organizationId: customer.organizationId,
-          organizationName: customer.organizationName ?? customer.organizationId,
-          location: formatCustomerLocation(customer.address),
-          imageUrl: customer.iconUrl ?? "",
-        });
-      }
-
-      // An empty page means the backend has nothing more to give, whatever its count says.
-      if (items.length && loaded.value.size < totalCount.value && page.value < MAX_PAGES) {
-        page.value += 1;
+    totalCount,
+    (count) => {
+      if (count > OPTIONS_LIMIT) {
+        Logger.warn(
+          `[sales-rep] share picker lists only ${OPTIONS_LIMIT} of ${count} served customers; the rest are unreachable.`,
+        );
       }
     },
     { immediate: true },
   );
 
-  watch(truncated, (isTruncated) => {
-    if (isTruncated) {
-      Logger.warn(
-        `[sales-rep] share picker lists ${loaded.value.size} of ${totalCount.value} served customers; the rest are unreachable.`,
-      );
-    }
-  });
-
-  const options = computed<SalesRepCustomerOptionType[]>(() => [...loaded.value.values()]);
-
-  // Stays up until the whole set is in, so the field never looks settled mid-paging.
-  const loading = computed(() => pageLoading.value || (loaded.value.size < totalCount.value && !truncated.value));
-
-  /** Resolves an option from anywhere in the loaded set. */
+  /** Resolves an option the picker is no longer showing; the caller falls back to the raw id when it is not there. */
   function findOption(organizationId: string): SalesRepCustomerOptionType | undefined {
-    return loaded.value.get(organizationId);
+    return options.value.find((option) => option.organizationId === organizationId);
   }
 
-  return { options, totalCount, findOption, loading, failed };
+  return { options, findOption, loading, failed };
 }
