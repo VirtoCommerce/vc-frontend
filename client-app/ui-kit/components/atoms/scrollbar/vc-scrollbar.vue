@@ -125,15 +125,27 @@ function updateAutoTabStop(): void {
   needsAutoTabStop.value = !target.querySelector(FOCUSABLE_SELECTOR);
 }
 
-const scheduleAutoTabStopUpdate = useDebounceFn(updateAutoTabStop, 100);
+function checkContent(): void {
+  updateAutoTabStop();
+
+  if (el.value) {
+    updateEdges(el.value);
+  }
+}
+
+// maxWait: a region whose content keeps changing — a spinner, a live counter — restarts a plain
+// debounce forever and the check never runs at all.
+const scheduleContentUpdate = useDebounceFn(checkContent, 100, { maxWait: 300 });
 
 onMounted(() => {
-  void nextTick(updateAutoTabStop);
+  void nextTick(checkContent);
 });
 
 // flush: "post": a pre-flush watcher would run before these props' overflow classes (below)
 // reach the DOM, reading scrollHeight/clientHeight off the still-stale layout.
-watch([() => props.vertical, () => props.horizontal, () => props.disabled], updateAutoTabStop, {
+// checkContent, not just the tab stop: these props decide which axes may announce, so turning one
+// on has to re-measure — otherwise the axis stays silent until some unrelated content change.
+watch([() => props.vertical, () => props.horizontal, () => props.disabled], checkContent, {
   flush: "post",
 });
 
@@ -141,20 +153,85 @@ watch([() => props.vertical, () => props.horizontal, () => props.disabled], upda
 // components grows: structural and text changes are seen by the MutationObserver, image loads
 // only by the capture-phase load listener (load doesn't bubble and isn't a mutation). Attributes
 // are watched too, since FOCUSABLE_SELECTOR and the role guard both read them.
-useResizeObserver(el, scheduleAutoTabStopUpdate);
-useMutationObserver(el, scheduleAutoTabStopUpdate, {
+useResizeObserver(el, scheduleContentUpdate);
+useMutationObserver(el, scheduleContentUpdate, {
   childList: true,
   subtree: true,
   characterData: true,
   attributes: true,
   attributeFilter: ["disabled", "tabindex", "href", "contenteditable", "role"],
 });
-useEventListener(el, "load", scheduleAutoTabStopUpdate, { capture: true });
+useEventListener(el, "load", scheduleContentUpdate, { capture: true });
 
 const wasAtTop = ref(true);
 const wasAtBottom = ref(false);
 const wasAtLeft = ref(true);
 const wasAtRight = ref(false);
+
+/**
+ * Which edges the region touches, emitted as arrivals at each one.
+ *
+ * Deliberately not tied to the scroll event: content that fits the viewport produces no scroll at
+ * all, so an edge that is reached from the very first render would otherwise never be reported.
+ *
+ * It reports arrivals and nothing more. Whether a list that still fits should ask for another page
+ * is the caller's decision — this component cannot tell content that arrived from content the
+ * caller drew in response to the last announcement, and guessing produced both a stalling pager
+ * and a self-retriggering one.
+ */
+function updateEdges(target: HTMLElement): Omit<VcScrollbarPayloadType, "scrollTop" | "scrollLeft"> {
+  const { scrollTop, scrollLeft, scrollHeight, scrollWidth, clientHeight, clientWidth } = target;
+  const threshold = props.edgeThreshold;
+
+  const edges = {
+    isAtTop: scrollTop <= threshold,
+    isAtBottom: scrollTop + clientHeight >= scrollHeight - threshold,
+    isAtLeft: scrollLeft <= threshold,
+    isAtRight: scrollLeft + clientWidth >= scrollWidth - threshold,
+  };
+
+  // A collapsed axis measures 0 and therefore scores as sitting at BOTH of its edges — a popover's
+  // content while closed (VcPopover renders it eagerly and hides it with display:none), a
+  // `max-height: 0` region, a squeezed flex item. `||`, not `&&`: one collapsed axis is enough,
+  // and the other axis's numbers are meaningless while the box has no area. Announce nothing and
+  // leave the latches for the first real measurement rather than poisoning them with this one.
+  if (!clientHeight || !clientWidth) {
+    return edges;
+  }
+
+  // An axis that cannot scroll sits at both of its edges by definition (`overflow: hidden` on the
+  // disabled modifier, and `overflow-*-auto` only on the axis that is turned on), so announcing
+  // them would report an arrival nobody can make.
+  const verticalScrolls = props.vertical && !props.disabled;
+  const horizontalScrolls = props.horizontal && !props.disabled;
+
+  if (verticalScrolls && edges.isAtTop && !wasAtTop.value) {
+    emit("reachTop");
+  }
+  if (verticalScrolls && edges.isAtBottom && !wasAtBottom.value) {
+    emit("reachBottom");
+  }
+  if (horizontalScrolls && edges.isAtLeft && !wasAtLeft.value) {
+    emit("reachLeft");
+  }
+  if (horizontalScrolls && edges.isAtRight && !wasAtRight.value) {
+    emit("reachRight");
+  }
+
+  // Only for the axes that can emit: latching a gated axis would leave it already "arrived", so
+  // turning that axis on later (VcTable binds both from props) would announce nothing.
+  if (verticalScrolls) {
+    wasAtTop.value = edges.isAtTop;
+    wasAtBottom.value = edges.isAtBottom;
+  }
+
+  if (horizontalScrolls) {
+    wasAtLeft.value = edges.isAtLeft;
+    wasAtRight.value = edges.isAtRight;
+  }
+
+  return edges;
+}
 
 const onScroll = useThrottleFn(
   (event: Event) => {
@@ -163,42 +240,19 @@ const onScroll = useThrottleFn(
       return;
     }
 
-    void scheduleAutoTabStopUpdate();
+    void scheduleContentUpdate();
 
-    const { scrollTop, scrollLeft, scrollHeight, scrollWidth, clientHeight, clientWidth } = target;
-    const threshold = props.edgeThreshold;
+    // Snapshot before the handlers run: updateEdges calls the consumer's reach-* handlers
+    // synchronously, and one of those may scroll the element, which would leave the payload
+    // describing a position the flags were never computed from.
+    const { scrollTop, scrollLeft } = target;
 
-    const isAtTop = scrollTop <= threshold;
-    const isAtBottom = scrollTop + clientHeight >= scrollHeight - threshold;
-    const isAtLeft = scrollLeft <= threshold;
-    const isAtRight = scrollLeft + clientWidth >= scrollWidth - threshold;
+    // `scroll` reports the position, so it carries the flags rather than the transitions, and only
+    // an actual scroll emits it. The flags come back from updateEdges: computing them a second time
+    // here would let the payload and the reach-* events drift apart on any threshold change.
+    const edges = updateEdges(target);
 
-    if (isAtTop && !wasAtTop.value) {
-      emit("reachTop");
-    }
-    if (isAtBottom && !wasAtBottom.value) {
-      emit("reachBottom");
-    }
-    if (isAtLeft && !wasAtLeft.value) {
-      emit("reachLeft");
-    }
-    if (isAtRight && !wasAtRight.value) {
-      emit("reachRight");
-    }
-
-    wasAtTop.value = isAtTop;
-    wasAtBottom.value = isAtBottom;
-    wasAtLeft.value = isAtLeft;
-    wasAtRight.value = isAtRight;
-
-    emit("scroll", {
-      scrollTop,
-      scrollLeft,
-      isAtTop,
-      isAtBottom,
-      isAtLeft,
-      isAtRight,
-    });
+    emit("scroll", { scrollTop, scrollLeft, ...edges });
   },
   100,
   true,

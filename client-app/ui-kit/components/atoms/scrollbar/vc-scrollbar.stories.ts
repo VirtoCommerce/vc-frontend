@@ -382,6 +382,75 @@ async function loadMore() {
   },
 };
 
+export const PagingOnReachBottom: StoryType = {
+  render: (args) => ({
+    components: { VcScrollbar },
+    setup: () => {
+      // Deliberately shorter than the viewport: nothing here can produce a scroll event, so the
+      // first page is announced only because the edge is reported without one.
+      const items = ref<number[]>(generateItems(2));
+      const loading = ref(false);
+      const totalPages = 4;
+      const page = ref(1);
+
+      const loadMore = async () => {
+        if (loading.value || page.value >= totalPages) {
+          return;
+        }
+
+        loading.value = true;
+        await new Promise((resolve) => setTimeout(resolve, 600));
+
+        const start = items.value.length;
+        items.value.push(...Array.from({ length: 6 }, (_, index) => start + index + 1));
+        page.value++;
+        loading.value = false;
+      };
+
+      return { args, items, loading, page, totalPages, loadMore };
+    },
+    template: `
+      <div class="flex flex-col gap-4">
+        <div class="text-sm text-neutral-600">
+          {{ items.length }} items, page {{ page }}/{{ totalPages }}{{ loading ? " — loading…" : "" }}
+        </div>
+
+        <VcScrollbar
+          v-bind="args"
+          vertical
+          :edge-threshold="50"
+          class="h-64 border border-neutral-200 rounded"
+          @reach-bottom="loadMore"
+        >
+          <div class="p-2 space-y-2">
+            <div v-for="item in items" :key="item" class="p-3 bg-neutral-100 rounded">Item {{ item }}</div>
+          </div>
+        </VcScrollbar>
+      </div>
+    `,
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`reach-bottom` reports an arrival at the edge, including the arrival that happens " +
+          "without any scrolling: this list starts with two rows, which fit the viewport, so no " +
+          "scroll event can ever fire — and the first page is still announced and still loads. " +
+          "It reports arrivals and nothing more; whether a list that still fits should ask for " +
+          "another page is the caller's decision, not this component's. `edge-threshold` decides " +
+          "how early the edge counts as reached.",
+      },
+      source: {
+        code: `
+<VcScrollbar vertical :edge-threshold="50" class="h-64" @reach-bottom="loadMore">
+  <div v-for="item in items" :key="item.id">{{ item.name }}</div>
+</VcScrollbar>
+        `,
+      },
+    },
+  },
+};
+
 export const AsCustomElement: StoryType = {
   render: (args) => ({
     components: { VcScrollbar },
