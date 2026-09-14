@@ -37,9 +37,9 @@
             v-for="list in lists"
             :key="list.id"
             :list="list"
-            @settings="openListSettingsModal(list)"
-            @share="openShareListModal(list)"
-            @remove="openDeleteListModal(list)"
+            @settings="openListSettingsModal(list, $event)"
+            @share="openShareListModal(list, $event)"
+            @remove="openDeleteListModal(list, $event)"
           />
         </template>
       </div>
@@ -98,8 +98,11 @@ function openCreateListModal() {
   }
 }
 
-function openListSettingsModal(list: WishlistType) {
+// `triggerElement` comes from the card's menu: the menu item that was clicked is hidden by the time the modal
+// closes, so focus has to return to the still-visible trigger instead.
+function openListSettingsModal(list: WishlistType, triggerElement?: HTMLElement) {
   openModal({
+    triggerElement,
     component: AddOrUpdateWishlistModal,
     props: {
       list,
@@ -107,8 +110,9 @@ function openListSettingsModal(list: WishlistType) {
   });
 }
 
-function openShareListModal(list: WishlistType) {
+function openShareListModal(list: WishlistType, triggerElement?: HTMLElement) {
   openModal({
+    triggerElement,
     component: ShareWishlistModal,
     props: {
       list,
@@ -116,8 +120,9 @@ function openShareListModal(list: WishlistType) {
   });
 }
 
-function openDeleteListModal(list: WishlistType) {
+function openDeleteListModal(list: WishlistType, triggerElement?: HTMLElement) {
   openModal({
+    triggerElement,
     component: DeleteWishlistsModal,
     props: {
       list,

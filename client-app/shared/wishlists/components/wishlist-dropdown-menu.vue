@@ -2,6 +2,7 @@
   <VcDropdownMenu :y-offset="4" :x-offset="0" placement="bottom-end">
     <template #trigger="{ triggerProps }">
       <VcButton
+        ref="triggerButton"
         data-test-id="wishlist-card-menu-button"
         :aria-label="$t('common.labels.actions')"
         icon
@@ -21,7 +22,7 @@
         nowrap
         @click="
           close();
-          $emit('edit');
+          $emit('edit', triggerElement());
         "
       >
         <template #prepend>
@@ -38,7 +39,7 @@
         nowrap
         @click="
           close();
-          $emit('share');
+          $emit('share', triggerElement());
         "
       >
         <template #prepend>
@@ -54,7 +55,7 @@
         nowrap
         @click="
           close();
-          $emit('remove');
+          $emit('remove', triggerElement());
         "
       >
         <template #prepend>
@@ -68,10 +69,12 @@
 </template>
 
 <script setup lang="ts">
+import { useTemplateRef } from "vue";
+
 interface IEmits {
-  (event: "edit"): void;
-  (event: "share"): void;
-  (event: "remove"): void;
+  (event: "edit", triggerElement?: HTMLElement): void;
+  (event: "share", triggerElement?: HTMLElement): void;
+  (event: "remove", triggerElement?: HTMLElement): void;
 }
 
 interface IProps {
@@ -82,4 +85,12 @@ interface IProps {
 defineEmits<IEmits>();
 
 defineProps<IProps>();
+
+const triggerButton = useTemplateRef<{ $el: HTMLElement }>("triggerButton");
+
+// `close()` only hides the popover body (`display: none`), so by the time a modal opened from here closes, the menu
+// item that had the focus is unfocusable and `returnFocus` is a no-op. The trigger stays visible — hand that over.
+function triggerElement(): HTMLElement | undefined {
+  return triggerButton.value?.$el;
+}
 </script>

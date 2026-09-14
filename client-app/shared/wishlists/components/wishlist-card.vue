@@ -33,9 +33,9 @@
       <WishlistDropdownMenu
         v-if="list.sharingSetting?.access === WishlistAccessType.Write"
         :shareable="isCorporateMember && !!list.sharingSetting?.isOwner"
-        @edit="$emit('settings')"
-        @share="$emit('share')"
-        @remove="$emit('remove')"
+        @edit="$emit('settings', $event)"
+        @share="$emit('share', $event)"
+        @remove="$emit('remove', $event)"
       />
     </div>
   </div>
@@ -49,9 +49,9 @@ import WishlistStatus from "./wishlist-status.vue";
 import type { WishlistType } from "@/core/api/graphql/types";
 
 interface IEmits {
-  (event: "settings"): void;
-  (event: "share"): void;
-  (event: "remove"): void;
+  (event: "settings", triggerElement?: HTMLElement): void;
+  (event: "share", triggerElement?: HTMLElement): void;
+  (event: "remove", triggerElement?: HTMLElement): void;
 }
 
 interface IProps {
