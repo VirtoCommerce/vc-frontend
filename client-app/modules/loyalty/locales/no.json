@@ -11,7 +11,8 @@
       "amount": "Beløp",
       "redeemed": "Innløst",
       "earned": "Opptjent",
-      "registration": "Registrering"
+      "registration": "Registrering",
+      "mission": "Oppdragsbelønning"
     },
     "list_details": {
       "empty_list": "Listen din er tom"

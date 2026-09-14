@@ -13,15 +13,31 @@ the same remap in reverse.
 
 ## 1. Import remap (host → `@vc-frontend/core` facade)
 
-| In-repo (host) | MF plugin (facade) |
-|---|---|
-| `useQuery` / `useMutation` from `@vue/apollo-composable` (every `composables/useSalesRep*.ts`) | same names from `@vc-frontend/core` |
-| `Logger` from `@/core/utilities` (7 composables — grep, do not go by this list) | remove import; use `console.error` |
-| `globals` from `@/core/globals` (`composables/useSalesRepLayout.ts`, for `storeId`) | `globals` from `@vc-frontend/core` |
-| `useBreadcrumbs` / `usePageHead` from `@/core/composables` (`pages/customer-profile.vue`) | `@vc-frontend/core` |
-| `MenuType` from `@/core/types` (`menu.ts`) | `MenuType` from `@vc-frontend/core` |
-| Vc components **not imported** anywhere in the module (globally registered by the host) | re-add explicit imports from `@vc-frontend/core` — MF has no global registration. Grep for `<Vc`; at time of writing the layout feature alone uses `VcAlert VcBreadcrumbs VcButton VcEmptyView VcIcon VcImage VcLoaderOverlay VcTypography VcWidget`, plus `VcInput VcTable` on the list page |
-| `useModuleSettings` from `@/core/composables/useModuleSettings` (`composables/useSalesRepsConfig.ts`) | `@vc-frontend/core` |
+Every runtime host import the module makes is a facade export — the remap is mechanical.
+Grep `from "@/` over the module rather than trusting the file lists below.
+
+| In-repo (host)                                                                                                                                                        | MF plugin (facade)                                                                                                                                                                                                                                                                                                     |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `useQuery` / `useMutation` from `@vue/apollo-composable` (`useSalesRepHubQuery.ts` and the mutations) | **unchanged** — a federation shared singleton (`core-api/federation.mjs`), not a facade export |
+| `Logger` from `@/core/utilities` and `globals` from `@/core/globals` (13 files each)                                                                                  | same names from `@vc-frontend/core`                                                                                                                                                                                                                                                                                    |
+| `registerCacheTypePolicies` (`index.ts`) | `@vc-frontend/core` |
+| `SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT` (`useSalesRepHubQuery.ts`, `useSalesRepCommunication.ts`) | `@vc-frontend/core` — added to the facade for this port. Every hub read runs through `useSalesRepHubQuery`, so this one import carries the whole module |
+| `toStartDateFilterValue` / `toEndDateFilterValue` (`pages/customer-orders.vue`, VCST-5733) | `@vc-frontend/core` — added for this port |
+| Direct ui-kit subpath imports — `VcWidget`, `VcButton`, `VcInput`, `VcCheckbox`, `VcWidgetSkeleton`, and the `@/ui-kit/components` barrel | `@vc-frontend/core`, all by name |
+| `ROUTES` (`index.ts`, `pages/customer-profile.vue`) — the `Company` / `Account` parent route names | `@vc-frontend/core` — added for this port. `router.addRoute(parent, …)` throws on an unknown parent, so these names are contract; hard-coding the strings puts a host rename outside every gate |
+| Real ui-kit components in specs — `VcButton`, `VcWidget`, `VcWidgetSkeleton`, `VcCheckbox`, `VcInput` mounted through `@/ui-kit/...` paths in `layout-surface.test.ts`, `layout-block-widget.test.ts`, `layout-widget-settings.test.ts`, `layout-drag-and-drop.test.ts` | **Accepted fidelity loss.** The facade's root export is types-only, so a plugin's specs cannot mount the real components; they resolve to the facade mock (§3) and become stubs. `layout-surface.test.ts` says why it matters — the edit toggle is a real `VcButton` and a stub would not carry its click. Keep those assertions on the host side, or drive the toggle through the component's own emit |
+| `useExtensionRegistry` and `EXTENSION_NAMES` (`index.ts`)                                                                                                             | `@vc-frontend/core`. `EXTENSION_NAMES` carries the HOST's ids only, and is typed as exactly those — asking it for a name it does not declare is a compile error, not an `undefined` you discover when the badge never appears. Your own entry ids stay yours: this module keeps `MY_CUSTOMERS_NAV_LINK_ID` |
+| `useWishlistSharingScopes` (`index.ts`) and `WishlistSharingScopeSavedContextType` (`components/wishlist-customer-sharing.vue`)                                       | `@vc-frontend/core`                                                                                                                                                                                                                                                                                                    |
+| `useUser` (`index.ts`, `routes.ts`, `composables/useSalesRepsConfig.ts`), `useModuleSettings`, `useNavigations`                                                       | `@vc-frontend/core`                                                                                                                                                                                                                                                                                                    |
+| `useModal` (2 files), `useNotifications` (2 files), `useBreadcrumbs` / `usePageHead` (`pages/customer-profile.vue`), `getProductRoute` (`components/top-sellers.vue`) | `@vc-frontend/core`                                                                                                                                                                                                                                                                                                    |
+| `OrderStatus` (`components/sales-rep-orders.vue`) and `VcModal` (`components/customer-communication-modal.vue`)                                                       | `@vc-frontend/core`                                                                                                                                                                                                                                                                                                    |
+| `MenuType` (`menu.ts`), `ExtendedMenuLinkType` (`components/link-my-customers.vue`)                                                                                   | `@vc-frontend/core`                                                                                                                                                                                                                                                                                                    |
+| `I18n` (`index.ts`)                                                                                                                                                   | drops out with the param-less entry — §2                                                                                                                                                                                                                                                                               |
+| Vc components used in templates but never imported                                                                                                                    | All 21 the module's templates reach for are facade exports. Global registrations still work when a remote renders inside the host's app instance; the explicit exports cover the plugin's own dev server, which has none                                                                                               |
+| `IWishlistSharingScopeControlsType` — the shape a scope's element exposes for the host's modal to read                                                                | `@vc-frontend/core`                                                                                                                                                                                                                                                                                                    |
+| `createWrapperFactory` from `@/core/utilities/tests` (5 specs)                                                                                                        | `@vc-frontend/core/testing` — ships as real source, since a plugin's specs run with no host to inject anything. It imports `lodash-es` and `vue-i18n` at RUNTIME: both are declared peers and `create-plugin` installs them, but a hand-written consumer must add them itself or the first spec dies on `Cannot find module` |
+| `cache` from `@/core/api/graphql/config/cache` (`data-freshness.test.ts`) | Not exported. The spec needs _an_ Apollo cache, not the host's instance, and the policies it exercises are the module's own: `new InMemoryCache({ typePolicies: layoutTypePolicies })` |
+| `cache` + `errorHandlerLink` (`composables/error-notifications.test.ts`) | **Do not port this spec.** It assembles the host's link chain and mocks `@/shared/broadcast` to assert no toast fires — that is host behaviour, and neither piece is facade material. `useSalesRepHubQuery.test.ts` already pins that every hub read attaches the suppress context, which is the module's half of it |
 
 ## 2. Entry point — `index.ts`
 
@@ -33,36 +49,65 @@ entry and the module reads host singletons off `globals`. Rewrite `init` as:
 - Re-add the **HMR idempotency guard** (`let registered = false; if (registered) return;`) —
   the MF loader re-invokes the entry on HMR, and `router.addRoute` / `extendMenuSchema` are
   not idempotent. (Dropped in-host because the host calls `init` exactly once.)
-- Replace `useNavigations().mergeMenuSchema(salesRepMenuSchema)` with
-  `extendMenuSchema(salesRepMenuSchema)` from the facade.
-- Replace `void loadModuleLocale(i18n, "sales-rep")` with the plugin's self-contained
-  `loadLocale()` — it merges `locales/en.json` via `i18n.setLocaleMessage` onto a fresh
-  object (never mutate the host's frozen locale namespace). See the plugin's original
-  `index.ts` git history for the exact implementation.
+- **Keep** `useNavigations().mergeMenuSchema(salesRepMenuSchema)` — the facade exports
+  `useNavigations`, not a standalone `extendMenuSchema` (an earlier revision of this guide said
+  otherwise). `mergeMenuSchema` **concatenates** arrays, which is exactly why the guard above is
+  not optional: a second call duplicates the menu link.
+- Replace `void loadModuleLocale(i18n, "sales-rep")` with the plugin's own `loadLocale()`.
+  `loadModuleLocale` lives in `client-app/modules/utils.ts` — **outside** the module, so copying
+  the module folder does not bring it. Reproduce its two jobs: dynamically import
+  `locales/<locale>.json` plus the `en` fallback, and merge each via `setLocaleMessage` onto a
+  fresh object (never `mergeLocaleMessage` — it mutates in place and the host's base messages can
+  be a frozen JSON-module namespace). Register it through the facade's `registerLocaleLoader` so
+  the messages re-merge on a runtime locale switch, not only at init.
 - Re-add `import "./styles.css";` at the top — MF injects the module's global CSS itself;
   in-host that file was dropped (it was comment-only; the real styling is scoped in the `.vue`).
 
 ## 3. Tests
 
-- `composables/useSalesReps.test.ts`: change `vi.mock("@vue/apollo-composable", …)` back to
-  `vi.mock("@vc-frontend/core", …)`.
+- `composables/useSalesReps.test.ts`: the `vi.mock("@vue/apollo-composable", …)` stays — the
+  plugin imports the composables from that package too (shared singleton, §1).
 - Re-add `src/mocks/vc-frontend-core.ts` and the vitest alias that makes the (types-only)
-  `@vc-frontend/core` specifier resolvable in tests.
+  `@vc-frontend/core` specifier resolvable in tests — the mechanics are generic and now live in
+  [`HOWTO.md`](../federated/HOWTO.md) ("Making `@vc-frontend/core` resolvable in specs").
+- **The remap is not a rename inside `vi.mock`.** 17 specs mock host paths by string —
+  `vi.mock("@/core/globals", …)`, `vi.mock("@/core/utilities", …)`, `vi.mock("@/shared/notification", …)`,
+  `vi.mock("@/core/composables/useModuleSettings", …)` — and a `from "@/…"` sweep does not touch them.
+  They must **collapse into ONE `vi.mock("@vc-frontend/core", …)` per file**, listing every facade
+  symbol that file's subject imports: two `vi.mock` calls on the same specifier override each other,
+  and a partial facade mock silently breaks every other facade import in that module graph.
+  `vi.doMock` / `vi.doUnmock` inside a test body need the same rename (`utils.test.ts`).
 - The MF-plumbing tests that were **not** ported (`index.test.ts`, `create-plugin.test.ts`,
   `federation-shared.test.ts`, `version-gate.test.ts`, `contract-versioning.test.ts`) live in
   the plugin repo / `client-app/modules/federated/` — restore from there, not from this module.
 
 ## 4. Standalone scaffolding (from the plugin repo, not the host)
 
+The port is done and lives in the **backend module**: `vc-module-sales-rep`, folder
+`src/VirtoCommerce.SalesRep.Web/StorefrontApp/` next to the VC-Shell admin `App/`, building into
+`plugins/vc-frontend/` — the folder the platform probes (draft PR
+[vc-module-sales-rep#13](https://github.com/VirtoCommerce/vc-module-sales-rep/pull/13)). The older
+standalone checkout at `vc-plugins/sales-rep-plugin` never had a git remote; it stops at 2026-07-08,
+before the layout, statistics, dashboard and filter work, which makes it a source of **scaffolding**,
+not of code: take its config and `src/mocks/`, and copy the module's current source over the rest.
+
 Restore the plugin repo's own config, which the host provides centrally and was therefore
 dropped: `package.json`, `vite.config.ts` (federation `exposes`/shared), `codegen.ts`,
 `tsconfig.json`, `eslint.config.js`, `.husky/`, `postcss.config.cjs`, `tailwind.config.cjs`,
 `src/shims-vue.d.ts`, `index.html`.
 
+**Take the facade's `peerDependencies` verbatim into your `devDependencies`.** No package manager
+installs them for you, and they cover everything the published tarball's own files import — the
+contract's type references plus `lodash-es`/`vue-i18n`, which `@vc-frontend/core/testing` imports at
+runtime. Miss them and the failure is quiet: `skipLibCheck` degrades the missing type references to
+`any` (so `mergeMenuSchema(42)` compiles), and the first spec importing the mount helpers dies on
+`Cannot find module 'lodash-es'`. `yarn create:plugin` does this for you; a hand-assembled repo must
+copy the list. The facade's build fails if that list ever drifts from what its files import.
+
 **The old plugin `package.json` predates the saved-layout work** — it has no `sortablejs`
 (+`@types/sortablejs`), which `components/layout-region.vue` imports directly, nor `@vueuse/core`
 for `useBreakpoints` in `pages/customer-profile.vue`. Add both, and decide whether `sortablejs` is
-bundled into the remote or listed as federation `shared`. `@vueuse/integrations` is *not* needed —
+bundled into the remote or listed as federation `shared`. `@vueuse/integrations` is _not_ needed —
 the layout used `useSortable` at one point and no longer does.
 
 ## 5. Cosmetic (host-lint-driven, optional to revert)
@@ -81,9 +126,8 @@ the layout used `useSortable` at one point and no longer does.
 `useModuleSettings("VirtoCommerce.SalesRep").isEnabled("SalesRep.Enabled")` (Boolean, default
 false). When the module isn't installed the storefront gets no settings for it, so this
 returns false. This differs from the standalone plugin, which could not read the host's
-settings and instead used a mock always-on gate. In an MF world the remote has no direct
-access to `useModuleSettings` either, so re-MF-ifying means reverting to a facade-provided
-settings check (or the mock) — see the plugin's original `useSalesRepsConfig.ts`.
+settings and instead used a mock always-on gate. `useModuleSettings` **is** a facade export now, so this
+file ports unchanged — no revert to the standalone plugin's mock gate.
 
 ## 7. GraphQL codegen registration
 

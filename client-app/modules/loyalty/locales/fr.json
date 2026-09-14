@@ -11,7 +11,8 @@
       "amount": "Montant",
       "redeemed": "Utilisés",
       "earned": "Gagnés",
-      "registration": "Inscription"
+      "registration": "Inscription",
+      "mission": "Récompense de mission"
     },
     "list_details": {
       "empty_list": "Votre liste est vide"

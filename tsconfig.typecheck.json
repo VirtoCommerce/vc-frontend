@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  // Scope for `vitest --typecheck` (the "Typing Tests" CI step). Deliberately NOT
+  // tsconfig.vitest.json: that project spans the whole app, so pointing the step at it surfaces
+  // every pre-existing type error in the repo — 26 of them today, in ui-kit stories and unrelated
+  // specs — and reds the step for things it is not about. The step exists to check the `.test-d.ts`
+  // assertions; TypeScript still pulls in whatever they import, so the sources they exercise are
+  // covered without dragging in the rest.
+  "extends": "./tsconfig.app.json",
+  "include": ["client-app/**/*.test-d.ts", "client-app/**/*.d.ts"],
+  "exclude": [],
+  "compilerOptions": {
+    "noEmit": true,
+    "composite": false,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "types": ["@types/gtag.js", "@types/google.maps", "node", "jsdom"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./client-app/*"]
+    }
+  }
+}

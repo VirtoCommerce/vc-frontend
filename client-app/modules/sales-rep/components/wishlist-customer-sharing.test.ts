@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, onMounted, ref } from "vue";
 import WishlistCustomerSharing from "./wishlist-customer-sharing.vue";
 import type { SharingTargetType } from "@/core/api/graphql/types";
-import type { IWishlistSharingScopeControlsType } from "@/shared/wishlists";
+import type { IWishlistSharingScopeControlsType } from "@/shared/wishlists/composables/useWishlistSharingScopes";
 import type { RenderResult } from "@testing-library/vue";
 import type { PropType } from "vue";
 import "@testing-library/jest-dom/vitest";

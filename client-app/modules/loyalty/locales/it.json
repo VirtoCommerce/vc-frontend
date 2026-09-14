@@ -11,7 +11,8 @@
       "amount": "Importo",
       "redeemed": "Riscattati",
       "earned": "Guadagnati",
-      "registration": "Registrazione"
+      "registration": "Registrazione",
+      "mission": "Ricompensa missione"
     },
     "list_details": {
       "empty_list": "La tua lista è vuota"

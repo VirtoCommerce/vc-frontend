@@ -337,6 +337,7 @@
           "back_to_operator": "Revenir à {name}",
           "switching_back": "Retour en cours…",
           "no_results": "Aucun résultat trouvé",
+          "organization_locked_tooltip": "Cette organisation est verrouillée. Contactez votre administrateur pour obtenir l'accès.",
           "dark_mode": {
             "system": "Thème : auto",
             "dark": "Thème : sombre",
