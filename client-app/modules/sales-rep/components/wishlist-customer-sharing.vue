@@ -15,6 +15,7 @@
       multiple
       autocomplete
       clearable
+      lazy
     >
       <template #item="{ item }">
         <span class="wishlist-customer-sharing__option">
@@ -106,7 +107,11 @@ const isDirty = computed(() => addedIds.value.length > 0 || removedIds.value.len
 const pickerOptions = computed<WishlistSharingRecipientType[]>(() => {
   const missing = props.targets.filter((target) => !findOption(target.id));
 
-  return [...missing.map(toRecipient), ...options.value];
+  // Merged into the backend's name sort rather than prepended, or a granted customer the page never carried would
+  // sit above every option the search box shows.
+  return [...missing.map(toRecipient), ...options.value].sort((a, b) =>
+    a.organizationName.localeCompare(b.organizationName),
+  );
 });
 
 const fieldMessage = computed(() => {
