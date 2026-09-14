@@ -46,8 +46,9 @@ file are cross-referenced, not repeated.
 - [x] **Toolchain parity for a scaffolded plugin** — #2480: eslint, prettier, editorconfig, vitest
       (with the facade alias and a mock), `.vscode`, `packageManager`, `strictTemplates`, the
       lint/format/test scripts, and a warning when the pinned facade version has no release tag.
-- [ ] **GraphQL codegen for a plugin with its own xAPI.** sales-rep hand-wrote `codegen.ts` and
-      seven codegen devDependencies; `--with-apollo` should emit both.
+- [x] **GraphQL codegen for a plugin with its own xAPI** — #2480: `--with-apollo` emits `codegen.ts`,
+      `.env.example` and a sample document, and the scalars live in `@vc-frontend/core/codegen`,
+      which the host's own generator now imports too.
 - [ ] **Ship the facade mock from the package instead of copying it per plugin**, with a
       build-types guard that fails when a facade export has no mock entry. Today each plugin's copy
       drifts on its own.
