@@ -51,6 +51,22 @@ describe("VcQuantityStepper bounds", () => {
       expect(input.attributes("aria-valuenow")).toBeUndefined();
     });
 
+    it("steps up out of the gap below the stepping floor, not by one", async () => {
+      const wrapper = createWrapper({ props: { modelValue: 1, min: 3 } });
+
+      await wrapper.get(".vc-quantity-stepper__increment").trigger("click");
+
+      expect(wrapper.emitted("update:modelValue")?.at(-1)).toEqual([3]);
+    });
+
+    it("steps down out of the gap to 0, not to the value below", async () => {
+      const wrapper = createWrapper({ props: { modelValue: 2, min: 3 } });
+
+      await wrapper.get(".vc-quantity-stepper__decrement").trigger("click");
+
+      expect(wrapper.emitted("update:modelValue")?.at(-1)).toEqual([0]);
+    });
+
     it("still steps down to the stepping floor before reaching 0", async () => {
       const wrapper = createWrapper({ props: { modelValue: 6, min: 3, step: 3 } });
 

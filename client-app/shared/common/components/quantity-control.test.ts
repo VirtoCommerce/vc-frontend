@@ -12,7 +12,13 @@ const createWrapper = createWrapperFactory(mount, QuantityControl, {
     components: { VcQuantityStepper, VcInput, VcInputDetails, VcButton },
     // The stepper asks for a single-line message, which VcInputDetails renders through the
     // tooltip's trigger slot — a bare stub would swallow the very text this suite asserts on.
-    stubs: { VcLabel: true, VcIcon: true, VcTooltip: { template: '<div><slot name="trigger" /></div>' } },
+    // VcAddToCart never renders in stepper mode, but the compiler hoists its resolution out of the branch.
+    stubs: {
+      VcAddToCart: true,
+      VcLabel: true,
+      VcIcon: true,
+      VcTooltip: { template: '<div><slot name="trigger" /></div>' },
+    },
   },
 });
 
@@ -70,9 +76,13 @@ describe("QuantityControl in stepper mode", () => {
 
   it("accepts zero as a quantity", async () => {
     const wrapper = createWrapper({ props: { ...stepperRow, modelValue: 3 } });
-    await wrapper.get("input").setValue(0);
+    const input = wrapper.get("input");
+    await input.setValue(0);
     await settle();
 
+    // A valid->valid edit re-emits no validation (the outcome is deduped), so assert the commit itself.
+    expect(wrapper.emitted("update:modelValue")?.at(-1)).toEqual([0]);
+    expect(input.attributes("aria-invalid")).toBeUndefined();
     expect(wrapper.emitted("update:validation")?.at(-1)?.[0]).toMatchObject({ isValid: true });
   });
 
