@@ -1,0 +1,6 @@
+query GetReturnPolicy($storeId: String!) {
+  returnPolicy(storeId: $storeId) {
+    isEnabled
+    windowDays
+  }
+}

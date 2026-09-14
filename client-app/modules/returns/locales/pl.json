@@ -1,0 +1,78 @@
+{
+  "returns": {
+    "meta": {
+      "title": "Zwroty",
+      "table_description": "lista zwrotów"
+    },
+    "title": "Zwroty",
+    "no_returns_message": "Nie ma jeszcze żadnych zwrotów",
+    "menu": {
+      "link": {
+        "title": "Zwroty"
+      }
+    },
+    "select_items": {
+      "title": "Wybierz produkty do zwrotu",
+      "meta_title": "Wybierz produkty do zwrotu",
+      "table_description": "pozycje zamówienia dostępne do zwrotu",
+      "select_all": "Zaznacz wszystkie kwalifikujące się pozycje",
+      "eligible_count": "{eligible} z {total} pozycji kwalifikuje się",
+      "nothing_returnable": "Nic z tego zamówienia nie może zostać zwrócone",
+      "selected_summary": "Wybrano: {lines} · {quantity} szt.",
+      "columns": {
+        "item": "Produkt",
+        "ordered": "Zamówiono",
+        "returnable": "Do zwrotu",
+        "quantity": "Ilość"
+      },
+      "quantity_for": "Ilość do zwrotu dla {name}",
+      "continue": "Kontynuuj"
+    },
+    "ineligibility": {
+      "ORDER_STATUS_NOT_ALLOWED": "Zwroty nie są dozwolone przy tym statusie zamówienia",
+      "LINE_CANCELLED": "Ta pozycja została anulowana",
+      "NOT_DELIVERED": "Jeszcze nie dostarczono",
+      "OUTSIDE_RETURN_WINDOW": "Poza okresem zwrotu",
+      "NOTHING_LEFT_TO_RETURN": "Już w całości zgłoszone"
+    },
+    "list": {
+      "columns": {
+        "number": "RMA",
+        "date": "Data",
+        "status": "Status",
+        "quantity": "Ilość"
+      }
+    }
+  },
+  "return_details": {
+    "title": "Zwrot {0}",
+    "not_found_message": "Nie znaleziono tego zwrotu",
+    "summary_section": "Podsumowanie",
+    "items_section": "Produkty",
+    "order_number": "Numer zamówienia",
+    "customer_reference": "Twój numer zamówienia",
+    "customer_comment": "Komentarz",
+    "columns": {
+      "requested": "Zgłoszono",
+      "approved": "Zatwierdzono"
+    }
+  },
+  "return_edit": {
+    "title": "Dodaj szczegóły zwrotu",
+    "not_editable_message": "Ten zwrot został już zgłoszony",
+    "details_section": "Szczegóły",
+    "bulk_section": "Zastosuj do wszystkich pozycji",
+    "apply_to_all": "Zastosuj jeden powód do wszystkich {count} pozycji",
+    "apply": "Zastosuj",
+    "returning": "zwrot: {quantity}",
+    "reason": "Powód",
+    "serial_number": "Numer seryjny",
+    "reason_comment": "Co jest nie tak?",
+    "saving": "Zapisywanie…",
+    "saved_automatically": "Zapisano automatycznie",
+    "submit": "Wyślij zwrot",
+    "incomplete_hint": "W {count} pozycji brakuje powodu",
+    "files": "Zdjęcia lub dokumenty",
+    "files_required": "Zdjęcia lub dokumenty (wymagane)"
+  }
+}

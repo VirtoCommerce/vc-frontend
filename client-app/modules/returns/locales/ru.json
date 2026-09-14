@@ -1,0 +1,78 @@
+{
+  "returns": {
+    "meta": {
+      "title": "Возвраты",
+      "table_description": "список возвратов"
+    },
+    "title": "Возвраты",
+    "no_returns_message": "Возвратов пока нет",
+    "menu": {
+      "link": {
+        "title": "Возвраты"
+      }
+    },
+    "select_items": {
+      "title": "Выберите позиции для возврата",
+      "meta_title": "Выберите позиции для возврата",
+      "table_description": "позиции заказа, доступные к возврату",
+      "select_all": "Выбрать все доступные позиции",
+      "eligible_count": "Доступно позиций: {eligible} из {total}",
+      "nothing_returnable": "Из этого заказа ничего нельзя вернуть",
+      "selected_summary": "Выбрано: {lines} · {quantity} шт.",
+      "columns": {
+        "item": "Позиция",
+        "ordered": "Заказано",
+        "returnable": "Можно вернуть",
+        "quantity": "Количество"
+      },
+      "quantity_for": "Количество к возврату для «{name}»",
+      "continue": "Продолжить"
+    },
+    "ineligibility": {
+      "ORDER_STATUS_NOT_ALLOWED": "Из заказа в таком статусе возврат не оформить",
+      "LINE_CANCELLED": "Позиция отменена",
+      "NOT_DELIVERED": "Ещё не доставлено",
+      "OUTSIDE_RETURN_WINDOW": "Срок возврата истёк",
+      "NOTHING_LEFT_TO_RETURN": "Уже заявлено полностью"
+    },
+    "list": {
+      "columns": {
+        "number": "Номер",
+        "date": "Дата",
+        "status": "Статус",
+        "quantity": "Кол-во"
+      }
+    }
+  },
+  "return_details": {
+    "title": "Возврат {0}",
+    "not_found_message": "Этот возврат не найден",
+    "summary_section": "Сводка",
+    "items_section": "Позиции",
+    "order_number": "Номер заказа",
+    "customer_reference": "Ваш номер заказа",
+    "customer_comment": "Комментарий",
+    "columns": {
+      "requested": "Запрошено",
+      "approved": "Одобрено"
+    }
+  },
+  "return_edit": {
+    "title": "Детали возврата",
+    "not_editable_message": "Этот возврат уже отправлен",
+    "details_section": "Детали",
+    "bulk_section": "Применить ко всем позициям",
+    "apply_to_all": "Применить одну причину ко всем позициям ({count})",
+    "apply": "Применить",
+    "returning": "к возврату: {quantity}",
+    "reason": "Причина",
+    "serial_number": "Серийный номер",
+    "reason_comment": "Что с ним не так?",
+    "saving": "Сохраняем…",
+    "saved_automatically": "Сохраняется автоматически",
+    "submit": "Отправить возврат",
+    "incomplete_hint": "Не указана причина: позиций {count}",
+    "files": "Фото или документы",
+    "files_required": "Фото или документы (обязательно)"
+  }
+}

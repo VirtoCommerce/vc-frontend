@@ -1,0 +1,78 @@
+{
+  "returns": {
+    "meta": {
+      "title": "Rücksendungen",
+      "table_description": "Liste der Rücksendungen"
+    },
+    "title": "Rücksendungen",
+    "no_returns_message": "Es liegen noch keine Rücksendungen vor",
+    "menu": {
+      "link": {
+        "title": "Rücksendungen"
+      }
+    },
+    "select_items": {
+      "title": "Zu retournierende Artikel wählen",
+      "meta_title": "Zu retournierende Artikel wählen",
+      "table_description": "für Rücksendung verfügbare Bestellpositionen",
+      "select_all": "Alle zulässigen Positionen wählen",
+      "eligible_count": "{eligible} von {total} Positionen zulässig",
+      "nothing_returnable": "Aus dieser Bestellung kann nichts retourniert werden",
+      "selected_summary": "{lines} gewählt · {quantity} Artikel",
+      "columns": {
+        "item": "Artikel",
+        "ordered": "Bestellt",
+        "returnable": "Retournierbar",
+        "quantity": "Menge"
+      },
+      "quantity_for": "Rücksendemenge für {name}",
+      "continue": "Weiter"
+    },
+    "ineligibility": {
+      "ORDER_STATUS_NOT_ALLOWED": "Aus dem Status dieser Bestellung sind keine Rücksendungen möglich",
+      "LINE_CANCELLED": "Diese Position wurde storniert",
+      "NOT_DELIVERED": "Noch nicht geliefert",
+      "OUTSIDE_RETURN_WINDOW": "Außerhalb des Rücksendezeitraums",
+      "NOTHING_LEFT_TO_RETURN": "Bereits vollständig angefragt"
+    },
+    "list": {
+      "columns": {
+        "number": "RMA",
+        "date": "Datum",
+        "status": "Status",
+        "quantity": "Menge"
+      }
+    }
+  },
+  "return_details": {
+    "title": "Rücksendung {0}",
+    "not_found_message": "Diese Rücksendung wurde nicht gefunden",
+    "summary_section": "Übersicht",
+    "items_section": "Artikel",
+    "order_number": "Bestellnummer",
+    "customer_reference": "Ihre Bestellreferenz",
+    "customer_comment": "Kommentar",
+    "columns": {
+      "requested": "Angefragt",
+      "approved": "Genehmigt"
+    }
+  },
+  "return_edit": {
+    "title": "Rücksendedetails hinzufügen",
+    "not_editable_message": "Diese Rücksendung wurde bereits eingereicht",
+    "details_section": "Details",
+    "bulk_section": "Auf alle Positionen anwenden",
+    "apply_to_all": "Einen Grund auf alle {count} Positionen anwenden",
+    "apply": "Anwenden",
+    "returning": "Rücksendung: {quantity}",
+    "reason": "Grund",
+    "serial_number": "Seriennummer",
+    "reason_comment": "Was ist damit nicht in Ordnung?",
+    "saving": "Wird gespeichert…",
+    "saved_automatically": "Automatisch gespeichert",
+    "submit": "Rücksendung einreichen",
+    "incomplete_hint": "Für {count} Position(en) fehlt noch ein Grund",
+    "files": "Fotos oder Dokumente",
+    "files_required": "Fotos oder Dokumente (erforderlich)"
+  }
+}

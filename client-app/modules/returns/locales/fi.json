@@ -1,0 +1,78 @@
+{
+  "returns": {
+    "meta": {
+      "title": "Palautukset",
+      "table_description": "palautusten luettelo"
+    },
+    "title": "Palautukset",
+    "no_returns_message": "Palautuksia ei ole vielä",
+    "menu": {
+      "link": {
+        "title": "Palautukset"
+      }
+    },
+    "select_items": {
+      "title": "Valitse palautettavat tuotteet",
+      "meta_title": "Valitse palautettavat tuotteet",
+      "table_description": "palautettavissa olevat tilausrivit",
+      "select_all": "Valitse kaikki kelpoiset rivit",
+      "eligible_count": "{eligible} / {total} riviä kelpaa",
+      "nothing_returnable": "Tästä tilauksesta ei voi palauttaa mitään",
+      "selected_summary": "{lines} valittu · {quantity} kpl",
+      "columns": {
+        "item": "Tuote",
+        "ordered": "Tilattu",
+        "returnable": "Palautettavissa",
+        "quantity": "Määrä"
+      },
+      "quantity_for": "Palautusmäärä tuotteelle {name}",
+      "continue": "Jatka"
+    },
+    "ineligibility": {
+      "ORDER_STATUS_NOT_ALLOWED": "Palautukset eivät ole sallittuja tämän tilauksen tilasta",
+      "LINE_CANCELLED": "Tämä rivi on peruutettu",
+      "NOT_DELIVERED": "Ei vielä toimitettu",
+      "OUTSIDE_RETURN_WINDOW": "Palautusajan ulkopuolella",
+      "NOTHING_LEFT_TO_RETURN": "Jo kokonaan pyydetty"
+    },
+    "list": {
+      "columns": {
+        "number": "RMA",
+        "date": "Päivämäärä",
+        "status": "Tila",
+        "quantity": "Määrä"
+      }
+    }
+  },
+  "return_details": {
+    "title": "Palautus {0}",
+    "not_found_message": "Tätä palautusta ei löytynyt",
+    "summary_section": "Yhteenveto",
+    "items_section": "Tuotteet",
+    "order_number": "Tilausnumero",
+    "customer_reference": "Oma tilausviitteesi",
+    "customer_comment": "Kommentti",
+    "columns": {
+      "requested": "Pyydetty",
+      "approved": "Hyväksytty"
+    }
+  },
+  "return_edit": {
+    "title": "Lisää palautuksen tiedot",
+    "not_editable_message": "Tämä palautus on jo lähetetty",
+    "details_section": "Tiedot",
+    "bulk_section": "Käytä kaikkiin riveihin",
+    "apply_to_all": "Käytä yhtä syytä kaikkiin {count} riviin",
+    "apply": "Käytä",
+    "returning": "palautetaan {quantity}",
+    "reason": "Syy",
+    "serial_number": "Sarjanumero",
+    "reason_comment": "Mikä siinä on vikana?",
+    "saving": "Tallennetaan…",
+    "saved_automatically": "Tallennettu automaattisesti",
+    "submit": "Lähetä palautus",
+    "incomplete_hint": "{count} riviltä puuttuu syy",
+    "files": "Valokuvat tai asiakirjat",
+    "files_required": "Valokuvat tai asiakirjat (pakollinen)"
+  }
+}

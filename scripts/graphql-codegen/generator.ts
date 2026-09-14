@@ -96,6 +96,11 @@ const independentModules: ModuleType[] = [
       `${core.fragmentsPath}/orderLineItemFields.graphql`,
     ],
   },
+  {
+    name: "Returns",
+    apiPath: "client-app/modules/returns/api/graphql",
+    schemaPath: `${backendUrl}/graphql/return`,
+  },
   /* EXPERIMENTAL FEATURE
   {
     name: "PurchaseRequests",

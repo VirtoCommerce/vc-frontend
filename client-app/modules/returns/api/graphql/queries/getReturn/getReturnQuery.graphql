@@ -1,0 +1,35 @@
+query GetReturn($id: String!) {
+  return(id: $id) {
+    id
+    number
+    status
+    createdDate
+    orderId
+    orderNumber
+    customerReference
+    customerComment
+    rejectReason
+    itemsQuantity
+    items {
+      id
+      orderLineItemId
+      sku
+      name
+      imageUrl
+      measureUnit
+      orderedQuantity
+      quantity
+      approvedQuantity
+      itemState
+      reasonCode
+      reasonComment
+      serialNumber
+      attachments {
+        name
+        url
+        mimeType
+        size
+      }
+    }
+  }
+}

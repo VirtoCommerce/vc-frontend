@@ -1,0 +1,78 @@
+{
+  "returns": {
+    "meta": {
+      "title": "Resi",
+      "table_description": "elenco dei resi"
+    },
+    "title": "Resi",
+    "no_returns_message": "Non ci sono ancora resi",
+    "menu": {
+      "link": {
+        "title": "Resi"
+      }
+    },
+    "select_items": {
+      "title": "Seleziona gli articoli da restituire",
+      "meta_title": "Seleziona gli articoli da restituire",
+      "table_description": "righe d'ordine disponibili per il reso",
+      "select_all": "Seleziona tutte le righe idonee",
+      "eligible_count": "{eligible} righe idonee su {total}",
+      "nothing_returnable": "Nulla di questo ordine può essere restituito",
+      "selected_summary": "{lines} selezionate · {quantity} articoli",
+      "columns": {
+        "item": "Articolo",
+        "ordered": "Ordinato",
+        "returnable": "Restituibile",
+        "quantity": "Quantità"
+      },
+      "quantity_for": "Quantità da restituire per {name}",
+      "continue": "Continua"
+    },
+    "ineligibility": {
+      "ORDER_STATUS_NOT_ALLOWED": "I resi non sono consentiti dallo stato di questo ordine",
+      "LINE_CANCELLED": "Questa riga è stata annullata",
+      "NOT_DELIVERED": "Non ancora consegnato",
+      "OUTSIDE_RETURN_WINDOW": "Fuori dal periodo di reso",
+      "NOTHING_LEFT_TO_RETURN": "Già richiesto per intero"
+    },
+    "list": {
+      "columns": {
+        "number": "RMA",
+        "date": "Data",
+        "status": "Stato",
+        "quantity": "Qtà"
+      }
+    }
+  },
+  "return_details": {
+    "title": "Reso {0}",
+    "not_found_message": "Questo reso non è stato trovato",
+    "summary_section": "Riepilogo",
+    "items_section": "Articoli",
+    "order_number": "Numero d'ordine",
+    "customer_reference": "Il tuo riferimento d'ordine",
+    "customer_comment": "Commento",
+    "columns": {
+      "requested": "Richiesto",
+      "approved": "Approvato"
+    }
+  },
+  "return_edit": {
+    "title": "Aggiungi i dettagli del reso",
+    "not_editable_message": "Questo reso è già stato inviato",
+    "details_section": "Dettagli",
+    "bulk_section": "Applica a tutte le righe",
+    "apply_to_all": "Applica un motivo a tutte le {count} righe",
+    "apply": "Applica",
+    "returning": "reso di {quantity}",
+    "reason": "Motivo",
+    "serial_number": "Numero di serie",
+    "reason_comment": "Qual è il problema?",
+    "saving": "Salvataggio…",
+    "saved_automatically": "Salvato automaticamente",
+    "submit": "Invia il reso",
+    "incomplete_hint": "{count} riga/righe senza motivo",
+    "files": "Foto o documenti",
+    "files_required": "Foto o documenti (obbligatorio)"
+  }
+}

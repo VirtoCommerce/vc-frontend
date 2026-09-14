@@ -1,0 +1,78 @@
+{
+  "returns": {
+    "meta": {
+      "title": "Devoluções",
+      "table_description": "lista de devoluções"
+    },
+    "title": "Devoluções",
+    "no_returns_message": "Ainda não há devoluções",
+    "menu": {
+      "link": {
+        "title": "Devoluções"
+      }
+    },
+    "select_items": {
+      "title": "Selecionar itens para devolução",
+      "meta_title": "Selecionar itens para devolução",
+      "table_description": "linhas do pedido disponíveis para devolução",
+      "select_all": "Selecionar todas as linhas elegíveis",
+      "eligible_count": "{eligible} de {total} linhas elegíveis",
+      "nothing_returnable": "Nada neste pedido pode ser devolvido",
+      "selected_summary": "{lines} selecionadas · {quantity} itens",
+      "columns": {
+        "item": "Item",
+        "ordered": "Pedido",
+        "returnable": "Devolvível",
+        "quantity": "Quantidade"
+      },
+      "quantity_for": "Quantidade a devolver de {name}",
+      "continue": "Continuar"
+    },
+    "ineligibility": {
+      "ORDER_STATUS_NOT_ALLOWED": "Devoluções não são permitidas a partir do status deste pedido",
+      "LINE_CANCELLED": "Esta linha foi cancelada",
+      "NOT_DELIVERED": "Ainda não entregue",
+      "OUTSIDE_RETURN_WINDOW": "Fora do prazo de devolução",
+      "NOTHING_LEFT_TO_RETURN": "Já solicitado integralmente"
+    },
+    "list": {
+      "columns": {
+        "number": "RMA",
+        "date": "Data",
+        "status": "Estado",
+        "quantity": "Qtd."
+      }
+    }
+  },
+  "return_details": {
+    "title": "Devolução {0}",
+    "not_found_message": "Esta devolução não foi encontrada",
+    "summary_section": "Resumo",
+    "items_section": "Itens",
+    "order_number": "Número do pedido",
+    "customer_reference": "Sua referência de pedido",
+    "customer_comment": "Comentário",
+    "columns": {
+      "requested": "Solicitado",
+      "approved": "Aprovado"
+    }
+  },
+  "return_edit": {
+    "title": "Adicionar detalhes da devolução",
+    "not_editable_message": "Esta devolução já foi enviada",
+    "details_section": "Detalhes",
+    "bulk_section": "Aplicar a todas as linhas",
+    "apply_to_all": "Aplicar um motivo às {count} linhas",
+    "apply": "Aplicar",
+    "returning": "devolvendo {quantity}",
+    "reason": "Motivo",
+    "serial_number": "Número de série",
+    "reason_comment": "Qual é o problema?",
+    "saving": "Salvando…",
+    "saved_automatically": "Salvo automaticamente",
+    "submit": "Enviar devolução",
+    "incomplete_hint": "{count} linha(s) ainda sem motivo",
+    "files": "Fotos ou documentos",
+    "files_required": "Fotos ou documentos (obrigatório)"
+  }
+}

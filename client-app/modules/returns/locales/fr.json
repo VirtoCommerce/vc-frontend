@@ -1,0 +1,78 @@
+{
+  "returns": {
+    "meta": {
+      "title": "Retours",
+      "table_description": "liste des retours"
+    },
+    "title": "Retours",
+    "no_returns_message": "Il n'y a pas encore de retours",
+    "menu": {
+      "link": {
+        "title": "Retours"
+      }
+    },
+    "select_items": {
+      "title": "Sélectionner les articles à retourner",
+      "meta_title": "Sélectionner les articles à retourner",
+      "table_description": "lignes de commande disponibles au retour",
+      "select_all": "Sélectionner toutes les lignes éligibles",
+      "eligible_count": "{eligible} lignes éligibles sur {total}",
+      "nothing_returnable": "Rien ne peut être retourné dans cette commande",
+      "selected_summary": "{lines} sélectionnées · {quantity} articles",
+      "columns": {
+        "item": "Article",
+        "ordered": "Commandé",
+        "returnable": "Retournable",
+        "quantity": "Quantité"
+      },
+      "quantity_for": "Quantité à retourner pour {name}",
+      "continue": "Continuer"
+    },
+    "ineligibility": {
+      "ORDER_STATUS_NOT_ALLOWED": "Les retours ne sont pas autorisés depuis le statut de cette commande",
+      "LINE_CANCELLED": "Cette ligne a été annulée",
+      "NOT_DELIVERED": "Pas encore livré",
+      "OUTSIDE_RETURN_WINDOW": "Hors du délai de retour",
+      "NOTHING_LEFT_TO_RETURN": "Déjà entièrement demandé"
+    },
+    "list": {
+      "columns": {
+        "number": "RMA",
+        "date": "Date",
+        "status": "Statut",
+        "quantity": "Qté"
+      }
+    }
+  },
+  "return_details": {
+    "title": "Retour {0}",
+    "not_found_message": "Ce retour n'a pas été trouvé",
+    "summary_section": "Résumé",
+    "items_section": "Articles",
+    "order_number": "Numéro de commande",
+    "customer_reference": "Votre référence de commande",
+    "customer_comment": "Commentaire",
+    "columns": {
+      "requested": "Demandé",
+      "approved": "Approuvé"
+    }
+  },
+  "return_edit": {
+    "title": "Ajouter les détails du retour",
+    "not_editable_message": "Ce retour a déjà été soumis",
+    "details_section": "Détails",
+    "bulk_section": "Appliquer à toutes les lignes",
+    "apply_to_all": "Appliquer un motif aux {count} lignes",
+    "apply": "Appliquer",
+    "returning": "retour de {quantity}",
+    "reason": "Motif",
+    "serial_number": "Numéro de série",
+    "reason_comment": "Quel est le problème ?",
+    "saving": "Enregistrement…",
+    "saved_automatically": "Enregistré automatiquement",
+    "submit": "Soumettre le retour",
+    "incomplete_hint": "{count} ligne(s) sans motif",
+    "files": "Photos ou documents",
+    "files_required": "Photos ou documents (obligatoire)"
+  }
+}

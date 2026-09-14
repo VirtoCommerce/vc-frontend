@@ -1,0 +1,13 @@
+query GetReturns($first: Int, $after: String, $sort: String, $keyword: String) {
+  returns(first: $first, after: $after, sort: $sort, keyword: $keyword) {
+    totalCount
+    items {
+      id
+      number
+      status
+      createdDate
+      orderId
+      itemsQuantity
+    }
+  }
+}

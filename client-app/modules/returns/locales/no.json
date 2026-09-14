@@ -1,0 +1,78 @@
+{
+  "returns": {
+    "meta": {
+      "title": "Returer",
+      "table_description": "liste over returer"
+    },
+    "title": "Returer",
+    "no_returns_message": "Det finnes ingen returer ennå",
+    "menu": {
+      "link": {
+        "title": "Returer"
+      }
+    },
+    "select_items": {
+      "title": "Velg varer som skal returneres",
+      "meta_title": "Velg varer som skal returneres",
+      "table_description": "ordrelinjer tilgjengelig for retur",
+      "select_all": "Velg alle kvalifiserte linjer",
+      "eligible_count": "{eligible} av {total} linjer kvalifisert",
+      "nothing_returnable": "Ingenting i denne ordren kan returneres",
+      "selected_summary": "{lines} valgt · {quantity} varer",
+      "columns": {
+        "item": "Vare",
+        "ordered": "Bestilt",
+        "returnable": "Returnerbar",
+        "quantity": "Antall"
+      },
+      "quantity_for": "Returantall for {name}",
+      "continue": "Fortsett"
+    },
+    "ineligibility": {
+      "ORDER_STATUS_NOT_ALLOWED": "Returer er ikke tillatt fra denne ordrens status",
+      "LINE_CANCELLED": "Denne linjen ble kansellert",
+      "NOT_DELIVERED": "Ikke levert ennå",
+      "OUTSIDE_RETURN_WINDOW": "Utenfor returfristen",
+      "NOTHING_LEFT_TO_RETURN": "Allerede fullstendig forespurt"
+    },
+    "list": {
+      "columns": {
+        "number": "RMA",
+        "date": "Dato",
+        "status": "Status",
+        "quantity": "Antall"
+      }
+    }
+  },
+  "return_details": {
+    "title": "Retur {0}",
+    "not_found_message": "Denne returen ble ikke funnet",
+    "summary_section": "Sammendrag",
+    "items_section": "Varer",
+    "order_number": "Ordrenummer",
+    "customer_reference": "Din bestillingsreferanse",
+    "customer_comment": "Kommentar",
+    "columns": {
+      "requested": "Forespurt",
+      "approved": "Godkjent"
+    }
+  },
+  "return_edit": {
+    "title": "Legg til returdetaljer",
+    "not_editable_message": "Denne returen er allerede sendt inn",
+    "details_section": "Detaljer",
+    "bulk_section": "Bruk på alle linjer",
+    "apply_to_all": "Bruk én årsak på alle {count} linjene",
+    "apply": "Bruk",
+    "returning": "returnerer {quantity}",
+    "reason": "Årsak",
+    "serial_number": "Serienummer",
+    "reason_comment": "Hva er galt med den?",
+    "saving": "Lagrer…",
+    "saved_automatically": "Lagret automatisk",
+    "submit": "Send inn retur",
+    "incomplete_hint": "{count} linje(r) mangler årsak",
+    "files": "Bilder eller dokumenter",
+    "files_required": "Bilder eller dokumenter (påkrevd)"
+  }
+}

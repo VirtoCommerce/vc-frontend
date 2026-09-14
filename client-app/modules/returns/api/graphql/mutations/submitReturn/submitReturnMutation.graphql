@@ -1,0 +1,7 @@
+mutation SubmitReturn($command: SubmitReturnCommandType!) {
+  submitReturn(command: $command) {
+    id
+    number
+    status
+  }
+}

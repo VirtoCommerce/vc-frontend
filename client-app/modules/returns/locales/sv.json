@@ -1,0 +1,78 @@
+{
+  "returns": {
+    "meta": {
+      "title": "Returer",
+      "table_description": "lista över returer"
+    },
+    "title": "Returer",
+    "no_returns_message": "Det finns inga returer ännu",
+    "menu": {
+      "link": {
+        "title": "Returer"
+      }
+    },
+    "select_items": {
+      "title": "Välj artiklar att returnera",
+      "meta_title": "Välj artiklar att returnera",
+      "table_description": "orderrader tillgängliga för retur",
+      "select_all": "Välj alla kvalificerade rader",
+      "eligible_count": "{eligible} av {total} rader kvalificerade",
+      "nothing_returnable": "Inget i denna order kan returneras",
+      "selected_summary": "{lines} valda · {quantity} artiklar",
+      "columns": {
+        "item": "Artikel",
+        "ordered": "Beställt",
+        "returnable": "Returnerbar",
+        "quantity": "Antal"
+      },
+      "quantity_for": "Returantal för {name}",
+      "continue": "Fortsätt"
+    },
+    "ineligibility": {
+      "ORDER_STATUS_NOT_ALLOWED": "Returer tillåts inte från denna orders status",
+      "LINE_CANCELLED": "Denna rad har annullerats",
+      "NOT_DELIVERED": "Inte levererad ännu",
+      "OUTSIDE_RETURN_WINDOW": "Utanför returperioden",
+      "NOTHING_LEFT_TO_RETURN": "Redan begärd i sin helhet"
+    },
+    "list": {
+      "columns": {
+        "number": "RMA",
+        "date": "Datum",
+        "status": "Status",
+        "quantity": "Antal"
+      }
+    }
+  },
+  "return_details": {
+    "title": "Retur {0}",
+    "not_found_message": "Denna retur hittades inte",
+    "summary_section": "Sammanfattning",
+    "items_section": "Artiklar",
+    "order_number": "Ordernummer",
+    "customer_reference": "Din inköpsorderreferens",
+    "customer_comment": "Kommentar",
+    "columns": {
+      "requested": "Begärt",
+      "approved": "Godkänt"
+    }
+  },
+  "return_edit": {
+    "title": "Lägg till returuppgifter",
+    "not_editable_message": "Denna retur har redan skickats in",
+    "details_section": "Detaljer",
+    "bulk_section": "Tillämpa på alla rader",
+    "apply_to_all": "Tillämpa en orsak på alla {count} rader",
+    "apply": "Tillämpa",
+    "returning": "returnerar {quantity}",
+    "reason": "Orsak",
+    "serial_number": "Serienummer",
+    "reason_comment": "Vad är fel på den?",
+    "saving": "Sparar…",
+    "saved_automatically": "Sparas automatiskt",
+    "submit": "Skicka in retur",
+    "incomplete_hint": "{count} rad(er) saknar orsak",
+    "files": "Foton eller dokument",
+    "files_required": "Foton eller dokument (obligatoriskt)"
+  }
+}

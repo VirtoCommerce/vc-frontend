@@ -1,0 +1,78 @@
+{
+  "returns": {
+    "meta": {
+      "title": "返品",
+      "table_description": "返品のリスト"
+    },
+    "title": "返品",
+    "no_returns_message": "返品はまだありません",
+    "menu": {
+      "link": {
+        "title": "返品"
+      }
+    },
+    "select_items": {
+      "title": "返品する商品を選択",
+      "meta_title": "返品する商品を選択",
+      "table_description": "返品可能な注文明細",
+      "select_all": "対象の明細をすべて選択",
+      "eligible_count": "{total} 件中 {eligible} 件が対象",
+      "nothing_returnable": "この注文から返品できる商品はありません",
+      "selected_summary": "{lines} 件選択 · {quantity} 点",
+      "columns": {
+        "item": "商品",
+        "ordered": "注文数",
+        "returnable": "返品可能数",
+        "quantity": "返品数"
+      },
+      "quantity_for": "{name} の返品数",
+      "continue": "次へ"
+    },
+    "ineligibility": {
+      "ORDER_STATUS_NOT_ALLOWED": "この注文のステータスでは返品できません",
+      "LINE_CANCELLED": "この明細はキャンセルされました",
+      "NOT_DELIVERED": "未配送",
+      "OUTSIDE_RETURN_WINDOW": "返品期間を過ぎています",
+      "NOTHING_LEFT_TO_RETURN": "すでに全数申請済みです"
+    },
+    "list": {
+      "columns": {
+        "number": "RMA番号",
+        "date": "日付",
+        "status": "ステータス",
+        "quantity": "数量"
+      }
+    }
+  },
+  "return_details": {
+    "title": "返品 {0}",
+    "not_found_message": "この返品は見つかりませんでした",
+    "summary_section": "概要",
+    "items_section": "商品",
+    "order_number": "注文番号",
+    "customer_reference": "発注参照番号",
+    "customer_comment": "コメント",
+    "columns": {
+      "requested": "申請数",
+      "approved": "承認数"
+    }
+  },
+  "return_edit": {
+    "title": "返品内容の入力",
+    "not_editable_message": "この返品はすでに申請済みです",
+    "details_section": "詳細",
+    "bulk_section": "すべての明細に適用",
+    "apply_to_all": "{count} 件すべてに同じ理由を適用",
+    "apply": "適用",
+    "returning": "返品数 {quantity}",
+    "reason": "理由",
+    "serial_number": "シリアル番号",
+    "reason_comment": "どのような不具合ですか？",
+    "saving": "保存中…",
+    "saved_automatically": "自動保存されました",
+    "submit": "返品を申請",
+    "incomplete_hint": "{count} 件の明細に理由が必要です",
+    "files": "写真または書類",
+    "files_required": "写真または書類（必須）"
+  }
+}
