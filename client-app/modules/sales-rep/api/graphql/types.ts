@@ -666,7 +666,7 @@ export type InputSendCustomerCommunicationType = {
   message: Scalars['String']['input'];
   /** Customer organization whose members receive the message. */
   organizationId?: InputMaybe<Scalars['String']['input']>;
-  /** Customer organizations whose members receive the message (each member once); at least one organization is required. */
+  /** Customer organizations whose members receive the message (each member once); at least one organization is required, at most 1000. */
   organizationIds?: InputMaybe<Array<Scalars['String']['input']>>;
   /** Send an email to the recipients. */
   sendEmail: Scalars['Boolean']['input'];

@@ -2167,7 +2167,7 @@ export type InputChangePurchaseOrderNumber = {
 };
 
 export type InputChangeWishlistType = {
-  /** Ids of the principals to share the list with (id space defined by scope); ids already shared with are ignored */
+  /** Ids to share the list with (id space defined by scope); ids already shared with are ignored; requires scope in the same write; ignored by scopes without targets */
   addSharedWithIds?: InputMaybe<Array<Scalars['String']['input']>>;
   /** Culture name */
   cultureName?: InputMaybe<Scalars['String']['input']>;
@@ -2177,13 +2177,13 @@ export type InputChangeWishlistType = {
   listId: Scalars['String']['input'];
   /** New List name */
   listName?: InputMaybe<Scalars['String']['input']>;
-  /** Message saved with the share (one for all targets); null leaves it unchanged, an empty string clears it */
+  /** Message saved with the share (one for all targets), max 1024 characters; null leaves it unchanged, an empty or whitespace-only string clears it; requires scope in the same write; ignored by scopes without targets */
   message?: InputMaybe<Scalars['String']['input']>;
-  /** Ids of the principals to stop sharing the list with; ids not shared with are ignored */
+  /** Ids to stop sharing the list with; ids not shared with are ignored; requires scope in the same write; ignored by scopes without targets */
   removeSharedWithIds?: InputMaybe<Array<Scalars['String']['input']>>;
   /** List scope (private or organization) */
   scope?: InputMaybe<Scalars['String']['input']>;
-  /** Id of the principal to share the list with (id space defined by scope) */
+  /** The single recipient the list is shared with (id space defined by scope): replaces the one it currently has, and is refused when the list has several; requires scope in the same write; ignored by scopes without targets */
   sharedWithId?: InputMaybe<Scalars['String']['input']>;
   /** Sharing key (URL argument) */
   sharingKey?: InputMaybe<Scalars['String']['input']>;
@@ -2220,7 +2220,7 @@ export type InputClearShipmentsType = {
 };
 
 export type InputCloneWishlistType = {
-  /** Ids of the principals to share the list with (id space defined by scope); ids already shared with are ignored */
+  /** Ids to share the list with (id space defined by scope); ids already shared with are ignored; requires scope in the same write; ignored by scopes without targets */
   addSharedWithIds?: InputMaybe<Array<Scalars['String']['input']>>;
   /** Culture name */
   cultureName?: InputMaybe<Scalars['String']['input']>;
@@ -2232,9 +2232,9 @@ export type InputCloneWishlistType = {
   listId: Scalars['String']['input'];
   /** List name */
   listName?: InputMaybe<Scalars['String']['input']>;
-  /** Message saved with the share (one for all targets); null leaves it unchanged, an empty string clears it */
+  /** Message saved with the share (one for all targets), max 1024 characters; null leaves it unchanged, an empty or whitespace-only string clears it; requires scope in the same write; ignored by scopes without targets */
   message?: InputMaybe<Scalars['String']['input']>;
-  /** Ids of the principals to stop sharing the list with; ids not shared with are ignored */
+  /** Ids to stop sharing the list with; ids not shared with are ignored; requires scope in the same write; ignored by scopes without targets */
   removeSharedWithIds?: InputMaybe<Array<Scalars['String']['input']>>;
   /** List scope (private or organization) */
   scope?: InputMaybe<Scalars['String']['input']>;
@@ -2345,7 +2345,7 @@ export type InputCreateUserType = {
 };
 
 export type InputCreateWishlistType = {
-  /** Ids of the principals to share the list with (id space defined by scope); ids already shared with are ignored */
+  /** Ids to share the list with (id space defined by scope); ids already shared with are ignored; requires scope in the same write; ignored by scopes without targets */
   addSharedWithIds?: InputMaybe<Array<Scalars['String']['input']>>;
   /** Culture name */
   cultureName?: InputMaybe<Scalars['String']['input']>;
@@ -2355,13 +2355,13 @@ export type InputCreateWishlistType = {
   description?: InputMaybe<Scalars['String']['input']>;
   /** List name */
   listName?: InputMaybe<Scalars['String']['input']>;
-  /** Message saved with the share (one for all targets); null leaves it unchanged, an empty string clears it */
+  /** Message saved with the share (one for all targets), max 1024 characters; null leaves it unchanged, an empty or whitespace-only string clears it; requires scope in the same write; ignored by scopes without targets */
   message?: InputMaybe<Scalars['String']['input']>;
-  /** Ids of the principals to stop sharing the list with; ids not shared with are ignored */
+  /** Ids to stop sharing the list with; ids not shared with are ignored; requires scope in the same write; ignored by scopes without targets */
   removeSharedWithIds?: InputMaybe<Array<Scalars['String']['input']>>;
   /** List scope (private or organization) */
   scope?: InputMaybe<Scalars['String']['input']>;
-  /** Id of the principal to share the list with (id space defined by scope) */
+  /** The single recipient the list is shared with (id space defined by scope): replaces the one it currently has, and is refused when the list has several; requires scope in the same write; ignored by scopes without targets */
   sharedWithId?: InputMaybe<Scalars['String']['input']>;
   /** Sharing key (URL argument) */
   sharingKey?: InputMaybe<Scalars['String']['input']>;
@@ -2962,7 +2962,7 @@ export type InputSendCustomerCommunicationType = {
   message: Scalars['String']['input'];
   /** Customer organization whose members receive the message. */
   organizationId?: InputMaybe<Scalars['String']['input']>;
-  /** Customer organizations whose members receive the message (each member once); at least one organization is required. */
+  /** Customer organizations whose members receive the message (each member once); at least one organization is required, at most 1000. */
   organizationIds?: InputMaybe<Array<Scalars['String']['input']>>;
   /** Send an email to the recipients. */
   sendEmail: Scalars['Boolean']['input'];
@@ -7722,22 +7722,22 @@ export type SharingSettingType = {
   /** Scope (private, organization, etc.) */
   scope?: Maybe<WishlistScopeType>;
   /**
-   * Id of the first principal the list is shared with; owner only, null for non-targeted scopes
-   * @deprecated Use Targets
+   * Id of the first target the list is shared with; owner only, null for non-targeted scopes
+   * @deprecated Use targets
    */
   sharedWithId?: Maybe<Scalars['String']['output']>;
-  /** Principals the list is shared with (id space defined by scope); owner only, empty for other viewers and for non-targeted scopes */
+  /** Targets the list is shared with (id space defined by scope); owner only, empty for other viewers and for non-targeted scopes */
   targets: Array<SharingTargetType>;
 };
 
 export type SharingTargetType = {
-  /** Id of the principal the list is shared with (id space defined by scope) */
+  /** Id the list is shared with (id space defined by scope) */
   id: Scalars['String']['output'];
-  /** Image URL of the principal, when resolved */
+  /** Image URL of the target, when resolved */
   imageUrl?: Maybe<Scalars['String']['output']>;
-  /** Display name of the principal, when the module owning the scope resolves it */
+  /** Display name of the target, when the module owning the scope resolves it */
   name?: Maybe<Scalars['String']['output']>;
-  /** Secondary display line of the principal (e.g. city and region), when resolved */
+  /** Secondary display line of the target (e.g. city and region), when resolved */
   subtitle?: Maybe<Scalars['String']['output']>;
 };
 
