@@ -37,6 +37,7 @@ Files in this folder:
 | `contract/index.d.ts`          | **Generated** type contract. Never edit; regenerate and commit.                                                   |
 | `contract/tailwind-preset.cjs` | **Generated** self-contained snapshot of the host's Tailwind design system (`@vc-frontend/core/tailwind-preset`). Source: the root `tailwind.config.ts`. Never edit; regenerate and commit. Its `types` condition points at the hand-written `tailwind-preset.d.cts` — without one a plugin whose `tailwind.config.ts` is TypeScript fails with TS7016, which `skipLibCheck` does not suppress. |
 | `federation.mjs`           | Shared-singleton contract (`createHostShared` / `createRemoteShared` + defaults) for both host and plugin builds; types in `federation.d.mts`. |
+| `codegen.mjs`              | graphql-codegen scalars + plugins (`@vc-frontend/core/codegen`), shared by the host's generator and by a plugin that types its own xAPI scope; types in `codegen.d.mts`. |
 | `bump-version.mjs`         | `yarn bump:core <level>` — manual bump for a BREAKING change (`minor` on 0.x, `major` from 1.0.0); additive bumps are automatic. |
 | `create-plugin.mjs`        | `yarn create:plugin` — scaffolds a new plugin project: versions read from the host, facade pinned to its release tarball. |
 | `build-types.mjs`          | The generator (below) — emits both the type contract and the tailwind preset snapshot.                            |

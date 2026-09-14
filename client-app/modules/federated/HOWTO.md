@@ -65,6 +65,9 @@ my-plugin/
 The lint/format/test half is the host's own stack, pinned to the host's versions, so a plugin is
 reviewed against the same conventions as the storefront. Out of the box `yarn lint`,
 `yarn type-check`, `yarn test` and `yarn build` all pass on the generated project.
+`--with-apollo` adds `codegen.ts`, `.env.example` and a sample document (see
+[**Your own xAPI**](#your-own-xapi-typed-documents)); `--with-tailwind` adds `tailwind.config.cjs`,
+`postcss.config.cjs` and `src/styles.css`.
 
 Version pins below are illustrative — the generator copies the host's own, so read them from the
 output rather than from here.

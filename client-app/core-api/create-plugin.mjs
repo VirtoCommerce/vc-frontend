@@ -423,7 +423,11 @@ A Module Federation plugin for the VC storefront, scaffolded by \`yarn create:pl
 - Check it: \`yarn lint\`, \`yarn type-check\`, \`yarn test\` - the host's own stack, pinned to the
   host's versions. Templates are type-checked strictly, and the facade declares every ui-kit
   component it exports, so \`<VcButton>\` is checked without importing it.
-- Full walkthrough (running against the host, shipping, versioning):
+${
+  selected.apollo
+    ? "- Your xAPI types: write `.graphql` documents under `src/api/graphql/`, then `yarn generate:graphql-types`\n  (needs `APP_BACKEND_URL` - copy `.env.example`). Commit the generated `types.ts`; the build must not need a backend.\n"
+    : ""
+}- Full walkthrough (running against the host, shipping, versioning):
   the host repo's \`client-app/modules/federated/HOWTO.md\`.
 
 ## The facade dependency
