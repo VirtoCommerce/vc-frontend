@@ -118,29 +118,37 @@
     </div>
 
     <template #actions="{ close }">
-      <span class="sku-mission-modal__reward" :class="{ 'sku-mission-modal__reward--met': missionCompleted }">
-        <VcIcon name="star" size="xs" variant="solid" class="text-primary" />
+      <div class="sku-mission-modal__actions">
+        <span class="sku-mission-modal__reward" :class="{ 'sku-mission-modal__reward--met': missionCompleted }">
+          <VcIcon name="star" size="xs" variant="solid" class="text-primary" />
 
-        {{
-          missionCompleted
-            ? $t("pages.account.missions.sku_modal.reward_unlocked", { points: $n(view.rewardPoints, "decimal") })
-            : $t("pages.account.missions.sku_modal.reward_hint", { points: $n(view.rewardPoints, "decimal") })
-        }}
-      </span>
+          {{
+            missionCompleted
+              ? $t("pages.account.missions.sku_modal.reward_unlocked", { points: $n(view.rewardPoints, "decimal") })
+              : $t("pages.account.missions.sku_modal.reward_hint", { points: $n(view.rewardPoints, "decimal") })
+          }}
+        </span>
 
-      <VcButton color="secondary" variant="outline" @click="close">
-        {{ $t("pages.account.missions.sku_modal.close") }}
-      </VcButton>
+        <VcButton
+          class="sku-mission-modal__action sku-mission-modal__action--secondary"
+          color="secondary"
+          variant="outline"
+          @click="close"
+        >
+          {{ $t("pages.account.missions.sku_modal.close") }}
+        </VcButton>
 
-      <VcButton
-        v-if="!isMissionCompleted"
-        prepend-icon="cart"
-        :loading="addToCartLoading"
-        :disabled="!hasItemsToAdd"
-        @click="addProductsToCart(close)"
-      >
-        {{ $t("pages.account.missions.sku_modal.add_to_cart") }}
-      </VcButton>
+        <VcButton
+          v-if="!isMissionCompleted"
+          class="sku-mission-modal__action"
+          prepend-icon="cart"
+          :loading="addToCartLoading"
+          :disabled="!hasItemsToAdd"
+          @click="addProductsToCart(close)"
+        >
+          {{ $t("pages.account.missions.sku_modal.add_to_cart") }}
+        </VcButton>
+      </div>
     </template>
   </VcModal>
 </template>
@@ -267,10 +275,16 @@ async function addProductsToCart(close: () => void) {
     await Promise.all(
       changedRows.value.map((row) => updateItemCartQuantity(row.id, row.quantity, row.price?.actual.currency.code)),
     );
-    notifications.success({ text: t("pages.account.missions.sku_modal.added_to_cart") });
+    notifications.success({
+      text: t("pages.account.missions.sku_modal.added_to_cart"),
+      duration: 10000,
+    });
     close();
   } catch {
-    notifications.error({ text: t("pages.account.missions.sku_modal.add_to_cart_error") });
+    notifications.error({
+      text: t("pages.account.missions.sku_modal.add_to_cart_error"),
+      duration: 10000,
+    });
   }
 }
 </script>
@@ -298,7 +312,7 @@ async function addProductsToCart(close: () => void) {
   }
 
   &__item {
-    @apply flex items-center gap-4 py-4;
+    @apply flex flex-wrap items-center gap-4 py-4;
   }
 
   &__image {
@@ -327,7 +341,11 @@ async function addProductsToCart(close: () => void) {
   }
 
   &__stepper-wrap {
-    @apply flex shrink-0 flex-col items-end gap-1;
+    @apply flex shrink-0 basis-full flex-col items-start gap-1 ps-[5.5rem];
+
+    @media (min-width: theme("screens.sm")) {
+      @apply basis-auto items-end ps-0;
+    }
   }
 
   &__stepper {
@@ -354,11 +372,46 @@ async function addProductsToCart(close: () => void) {
     }
   }
 
+  // Own footer container so the actions follow the viewport, not the ui-kit's container queries.
+  &__actions {
+    @apply flex w-full flex-wrap items-center gap-x-5 gap-y-2;
+
+    @media (min-width: theme("screens.md")) {
+      @apply flex-nowrap;
+    }
+  }
+
   &__reward {
-    @apply me-auto flex items-center gap-2 text-sm font-bold text-neutral-500;
+    @apply flex basis-full items-center gap-2 text-sm font-bold text-neutral-500;
 
     &--met {
       @apply text-success-600;
+    }
+
+    @media (min-width: theme("screens.md")) {
+      @apply me-auto basis-auto;
+    }
+  }
+
+  &__action {
+    @apply w-full;
+
+    // While the buttons are stacked, the primary action goes on top.
+    &--secondary {
+      @apply order-last;
+    }
+
+    // Below `md` the buttons share a row of their own, splitting the full width.
+    @media (min-width: theme("screens.sm")) {
+      @apply w-auto flex-1;
+
+      &--secondary {
+        @apply order-none;
+      }
+    }
+
+    @media (min-width: theme("screens.md")) {
+      @apply min-w-32 flex-none;
     }
   }
 }

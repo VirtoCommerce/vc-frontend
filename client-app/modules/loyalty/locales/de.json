@@ -11,7 +11,8 @@
       "amount": "Betrag",
       "redeemed": "Eingelöst",
       "earned": "Verdient",
-      "registration": "Registrierung"
+      "registration": "Registrierung",
+      "mission": "Aufgabenbelohnung"
     },
     "list_details": {
       "empty_list": "Ihre Liste ist leer"
@@ -72,7 +73,7 @@
           "open_mission": "Aufgabe öffnen",
           "progress_skus": "{current} von {target} SKUs",
           "progress_any_sku": "mindestens 1 von {target} SKUs",
-          "progress_spend": "{sum} ausgegeben",
+          "progress_spend": "{sum} von {target} ausgegeben",
           "progress_orders": "{current} von {target} Bestellungen"
         },
         "sku_modal": {

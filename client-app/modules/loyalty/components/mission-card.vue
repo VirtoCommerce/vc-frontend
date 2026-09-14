@@ -142,7 +142,7 @@ function openMission(): void {
   }
 
   &__bar {
-    @apply h-full rounded-full bg-primary-500;
+    @apply h-full rounded-full bg-warning-500;
 
     &--completed {
       @apply bg-success-500;

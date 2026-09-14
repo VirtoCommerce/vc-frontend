@@ -9,7 +9,7 @@ import { useSalesRepCartStatistics } from "./useSalesRepCartStatistics";
 import { useSalesRepCustomer } from "./useSalesRepCustomer";
 import { useSalesRepCustomerCounts } from "./useSalesRepCustomerCounts";
 import { useSalesRepCustomers } from "./useSalesRepCustomers";
-import { useSalesRepCustomersCount } from "./useSalesRepCustomersCount";
+import { useSharedSalesRepCustomersCount } from "./useSalesRepCustomersCount";
 import { useSalesRepDocuments } from "./useSalesRepDocuments";
 import { useSalesRepOrderStatistics } from "./useSalesRepOrderStatistics";
 import { useSalesRepOrders } from "./useSalesRepOrders";
@@ -338,7 +338,7 @@ const widgetSources: [string, () => () => number | undefined][] = [
   [
     "customers count badge",
     () => {
-      const { count } = useSalesRepCustomersCount();
+      const { count } = useSharedSalesRepCustomersCount();
       // The composable floors a missing count to 0; only a painted figure should settle the probe.
       return () => count.value || undefined;
     },

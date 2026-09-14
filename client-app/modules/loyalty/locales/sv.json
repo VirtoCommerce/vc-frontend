@@ -11,7 +11,8 @@
       "amount": "Belopp",
       "redeemed": "Inlösta",
       "earned": "Intjänade",
-      "registration": "Registrering"
+      "registration": "Registrering",
+      "mission": "Uppdragsbelöning"
     },
     "list_details": {
       "empty_list": "Din lista är tom"
@@ -72,7 +73,7 @@
           "open_mission": "Öppna uppdrag",
           "progress_skus": "{current} av {target} SKU:er",
           "progress_any_sku": "minst 1 av {target} SKU:er",
-          "progress_spend": "{sum} spenderat",
+          "progress_spend": "{sum} av {target} spenderat",
           "progress_orders": "{current} av {target} ordrar"
         },
         "sku_modal": {
