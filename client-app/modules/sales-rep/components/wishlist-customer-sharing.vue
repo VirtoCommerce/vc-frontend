@@ -199,7 +199,9 @@ async function notifyCustomers(
     message: [body, context.sharingLink].join(SEPARATOR),
   });
 
-  const details = result.warnings.map(localizeWarning).filter(Boolean).join(" ");
+  // One send covers many organizations, so the backend repeats a code once per organization; the copy names none
+  // of them, which makes the repetition pure noise.
+  const details = [...new Set(result.warnings)].map(localizeWarning).filter(Boolean).join(" ");
 
   if (result.succeeded && !result.warnings.length) {
     notifyShared();
