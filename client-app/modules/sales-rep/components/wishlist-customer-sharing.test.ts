@@ -510,6 +510,32 @@ describe("WishlistCustomerSharing", () => {
       });
     });
 
+    it("contributes an addition and a removal from the same save", async () => {
+      renderSharing([target("org-1", "Acme Inc.")]);
+
+      await pick("org-1");
+      await pick("org-2");
+
+      expect(controls.payload).toEqual({
+        addSharedWithIds: ["org-2"],
+        removeSharedWithIds: ["org-1"],
+        message: "",
+      });
+    });
+
+    it("contributes nothing when the set comes back to where it started", async () => {
+      renderSharing([target("org-1", "Acme Inc.")]);
+
+      await pick("org-2");
+      await pick("org-2");
+
+      expect(controls.payload).toEqual({
+        addSharedWithIds: [],
+        removeSharedWithIds: [],
+        message: "",
+      });
+    });
+
     it("carries the message so it is there when the dialog is reopened", async () => {
       renderSharing();
 
