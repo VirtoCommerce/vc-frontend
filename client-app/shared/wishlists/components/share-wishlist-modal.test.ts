@@ -36,7 +36,6 @@ const mocks = await vi.hoisted(async () => {
     logger: { error: vi.fn(), warn: vi.fn() },
     copy: vi.fn(),
     clipboardSupported: reactiveRef(true),
-    openModal: vi.fn<(options: unknown) => () => void>(() => vi.fn()),
   };
 });
 
@@ -58,8 +57,6 @@ vi.mock("../composables/useWishlists", () => ({
 }));
 
 vi.mock("@/shared/notification", () => ({ useNotifications: () => mocks.notifications }));
-
-vi.mock("@/shared/modal", () => ({ useModal: () => ({ openModal: mocks.openModal }) }));
 
 vi.mock("@/core/utilities", () => ({ Logger: mocks.logger }));
 
@@ -212,13 +209,25 @@ const VcButton = defineComponent({
 
 let component: RenderResult;
 
+/* Stands in for the confirmation the dialog renders inside its own tree — the real one is a second `VcModal`. */
+const StopSharingConfirmationModal = defineComponent({
+  emits: ["confirm", "close"],
+  setup(_props, { emit }) {
+    return () =>
+      h("div", { "data-test-id": "stop-sharing-confirmation" }, [
+        h("button", { type: "button", "data-test-id": "stop-sharing-confirm", onClick: () => emit("confirm") }),
+        h("button", { type: "button", "data-test-id": "stop-sharing-dismiss", onClick: () => emit("close") }),
+      ]);
+  },
+});
+
 function renderModal(list: WishlistType) {
   component = render(ShareWishlistModal, {
     props: { list },
     global: {
       components: { VcModal, VcInput, VcTabSwitch, VcLabel, VcButton },
       mocks: { $t: (key: string) => key },
-      stubs: { VcIcon: true },
+      stubs: { VcIcon: true, StopSharingConfirmationModal },
     },
   });
 
@@ -269,11 +278,12 @@ async function selectScope(scope: string) {
   await fireEvent.click(scopeTab(scope)!.querySelector("button")!);
 }
 
-/** Answers the stop-sharing confirmation the way the modal stack would. */
-function confirmStopSharing() {
-  const options = mocks.openModal.mock.calls[0][0] as { props: { onConfirm: () => void } };
+function stopSharingConfirmation() {
+  return component.queryByTestId("stop-sharing-confirmation");
+}
 
-  options.props.onConfirm();
+async function confirmStopSharing() {
+  await fireEvent.click(component.getByTestId("stop-sharing-confirm"));
 }
 
 function asyncScopeList(...ids: string[]): WishlistType {
@@ -325,7 +335,6 @@ beforeEach(() => {
   controls.dirty.value = false;
   controls.payload.value = {};
   controls.onSaved.mockReset().mockResolvedValue(undefined);
-  mocks.openModal.mockReset().mockImplementation(() => vi.fn());
   asyncControls.canSave.value = false;
   asyncControls.dirty.value = false;
   asyncControls.payload.value = {};
@@ -576,7 +585,7 @@ describe("ShareWishlistModal", () => {
       // Leaving a sharing scope revokes the current audience, so this path goes through the confirmation.
       await selectScope(WishlistScopeType.Private);
       await fireEvent.click(saveButton());
-      confirmStopSharing();
+      await confirmStopSharing();
 
       await vi.waitFor(() => expect(mocks.updateWishlist).toHaveBeenCalledOnce());
       expect(mocks.updateWishlist.mock.calls[0][0]).not.toHaveProperty("addSharedWithIds");
@@ -590,7 +599,7 @@ describe("ShareWishlistModal", () => {
       await selectScope(WishlistScopeType.Private);
       await fireEvent.click(saveButton());
 
-      expect(mocks.openModal).toHaveBeenCalledOnce();
+      expect(stopSharingConfirmation()).toBeInTheDocument();
       expect(mocks.updateWishlist).not.toHaveBeenCalled();
     });
 
@@ -599,7 +608,7 @@ describe("ShareWishlistModal", () => {
 
       await selectScope(WishlistScopeType.Private);
       await fireEvent.click(saveButton());
-      confirmStopSharing();
+      await confirmStopSharing();
 
       await vi.waitFor(() => expect(mocks.updateWishlist).toHaveBeenCalledOnce());
       expect(mocks.updateWishlist.mock.calls[0][0]).toMatchObject({ scope: WishlistScopeType.Private });
@@ -611,7 +620,8 @@ describe("ShareWishlistModal", () => {
       await selectScope(WishlistScopeType.Organization);
       await fireEvent.click(saveButton());
 
-      // Dismissing the confirmation leaves the dialog as it was, with the new scope still only selected.
+      // Unanswered: the dialog stays as it was, with the new scope still only selected.
+      expect(stopSharingConfirmation()).toBeInTheDocument();
       expect(mocks.updateWishlist).not.toHaveBeenCalled();
       expect(scopeRadio(WishlistScopeType.Organization).checked).toBe(true);
     });
@@ -623,7 +633,7 @@ describe("ShareWishlistModal", () => {
       await fireEvent.click(saveButton());
 
       // Nobody had access, so nobody can lose it.
-      expect(mocks.openModal).not.toHaveBeenCalled();
+      expect(stopSharingConfirmation()).toBeNull();
       expect(mocks.updateWishlist).toHaveBeenCalledOnce();
     });
 
@@ -637,7 +647,7 @@ describe("ShareWishlistModal", () => {
       await fireEvent.click(saveButton());
 
       // Still the same scope: the audience is being edited, not revoked.
-      expect(mocks.openModal).not.toHaveBeenCalled();
+      expect(stopSharingConfirmation()).toBeNull();
       expect(mocks.updateWishlist).toHaveBeenCalledOnce();
     });
   });

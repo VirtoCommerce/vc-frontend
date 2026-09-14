@@ -64,6 +64,15 @@
           :saving="saving"
         />
       </KeepAlive>
+
+      <!-- Rendered here, not through `openModal`: HeadlessUI detects a nested dialog through provide/inject, and
+           `ModalHost` renders the modal stack as siblings — so a confirmation opened that way leaves this dialog's
+           own outside-click and Escape handlers armed, and any click inside the confirmation dismisses this one. -->
+      <StopSharingConfirmationModal
+        v-if="confirmingStopSharing"
+        @confirm="confirmStopSharing"
+        @close="confirmingStopSharing = false"
+      />
     </div>
 
     <template #actions="{ close }">
@@ -97,7 +106,6 @@ import { computed, ref, useTemplateRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { WishlistScopeType } from "@/core/api/graphql/types";
 import { Logger } from "@/core/utilities";
-import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import { useWishlistSharingScopes } from "../composables/useWishlistSharingScopes";
 import { useWishlists } from "../composables/useWishlists";
@@ -118,7 +126,6 @@ const { t } = useI18n();
 
 const { copy: copyToClipboard, isSupported: isClipboardSupported } = useClipboard();
 const notifications = useNotifications();
-const { openModal } = useModal();
 
 const listSharingScope = computed<string>(() => props.list.sharingSetting?.scope ?? WishlistScopeType.Private);
 // Resolved by the module owning the scope; empty for anyone but the list's owner.
@@ -175,6 +182,9 @@ const canSave = computed<boolean>(() => scopeCanSave.value && (scopeChanged.valu
 // inside one scope is not a revocation.
 const revokesCurrentAudience = computed(() => listSharingScope.value !== PRIVATE_SCOPE && scopeChanged.value);
 
+const confirmingStopSharing = ref(false);
+let pendingClose: (() => void) | undefined;
+
 function requestSave(closeHandle: () => void): void {
   if (!canSave.value || saving.value) {
     return;
@@ -186,16 +196,19 @@ function requestSave(closeHandle: () => void): void {
     return;
   }
 
-  const closeConfirmation = openModal({
-    component: StopSharingConfirmationModal,
-    props: {
-      onConfirm() {
-        // Dismissed first: the share dialog carries the loader and refuses dismissal while the write runs.
-        closeConfirmation();
-        void save(closeHandle);
-      },
-    },
-  });
+  pendingClose = closeHandle;
+  confirmingStopSharing.value = true;
+}
+
+function confirmStopSharing(): void {
+  confirmingStopSharing.value = false;
+
+  const closeHandle = pendingClose;
+  pendingClose = undefined;
+
+  if (closeHandle) {
+    void save(closeHandle);
+  }
 }
 
 async function save(closeHandle: () => void): Promise<void> {
