@@ -7,7 +7,7 @@
     :aria-label="t('ui_kit.accessibility.calendar')"
     @toggle="onPopoverToggle"
   >
-    <template #default="{ toggle, triggerProps, close }">
+    <template #default="{ toggle, triggerProps, close, opened }">
       <VcDateInput
         ref="dateInputRef"
         :model-value="modelValue"
@@ -31,7 +31,7 @@
         :aria="forwardedAria(triggerProps)"
         :tabindex="tabindex"
         :data-test-id="dataTestId"
-        @keydown.esc.stop="close"
+        @keydown.esc="onTriggerEscape($event, opened, close)"
         @update:model-value="onInputUpdate"
         @update:valid="emit('update:valid', $event)"
         @blur="onInputBlur"
@@ -48,7 +48,7 @@
             :disabled="disabled || readonly"
             :aria-label="t('ui_kit.accessibility.open_calendar')"
             @click="toggle"
-            @keydown.esc.stop="onEscapeClose(close)"
+            @keydown.esc="onTriggerEscape($event, opened, close)"
           />
         </template>
       </VcDateInput>
@@ -184,11 +184,21 @@ function onPopoverToggle(opened: boolean): void {
   if (!opened) {
     return;
   }
-  // VcPopover doesn't focus its content; move focus into the grid (WCAG 2.1.1).
+  // VcPopover would focus the panel root; claim focus for the grid instead (WCAG 2.1.1).
   // nextTick: content is display:none until opened, so wait until it is visible.
   void nextTick(() => {
     calendarRef.value?.focusActiveCell();
   });
+}
+
+// Only an open calendar consumes Escape — otherwise the key belongs to an outer dialog.
+function onTriggerEscape(event: KeyboardEvent, opened: boolean, close: () => void): void {
+  if (!opened) {
+    return;
+  }
+
+  event.stopPropagation();
+  onEscapeClose(close);
 }
 
 function onEscapeClose(close: () => void): void {

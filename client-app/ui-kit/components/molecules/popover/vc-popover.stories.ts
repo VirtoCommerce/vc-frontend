@@ -161,6 +161,49 @@ export const Disabled: StoryType = {
   },
 };
 
+export const Dialog: StoryType = {
+  args: {
+    role: "dialog",
+    ariaLabel: "Filters",
+  },
+  render: (args) => ({
+    setup: () => ({ args }),
+    template: `<VcPopover v-bind="args">
+      <template #trigger="{ triggerProps }">
+        <VcButton v-bind="triggerProps">Open filters</VcButton>
+      </template>
+      <template #content="{ close }">
+        <div class="rounded bg-additional-50 p-4 shadow-md text-sm space-y-3">
+          <p>Press Escape here — the panel closes and focus goes back to the trigger.</p>
+          <VcButton size="sm" @click="close">Apply</VcButton>
+        </div>
+      </template>
+    </VcPopover>`,
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`role="dialog"` opts the panel into the non-modal dialog contract: it is named by `ariaLabel`, takes focus when it opens, closes on Escape from anywhere inside, and hands focus back to the trigger on close. The page stays interactive, so no `aria-modal` and no focus trap.',
+      },
+      source: {
+        code: `
+          <VcPopover role="dialog" aria-label="Filters">
+            <template #trigger="{ triggerProps }">
+              <VcButton v-bind="triggerProps">Open filters</VcButton>
+            </template>
+            <template #content="{ close }">
+              <div class="rounded bg-additional-50 p-4 shadow-md">
+                <VcButton size="sm" @click="close">Apply</VcButton>
+              </div>
+            </template>
+          </VcPopover>
+        `,
+      },
+    },
+  },
+};
+
 export const TopPlacement: StoryType = {
   args: {
     placement: "top",

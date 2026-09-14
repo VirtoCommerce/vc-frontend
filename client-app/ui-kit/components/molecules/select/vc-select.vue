@@ -48,6 +48,7 @@
           class="vc-select__button"
           @click="toggle"
           @keydown.enter="toggle"
+          @keydown.esc="onTriggerEscape($event, close)"
           @keydown.down.prevent="next(-1)"
         >
           <div class="vc-select__button-content">
@@ -88,7 +89,7 @@
           @keydown.down.prevent="next(-1)"
           @focus="open"
           @click="(autocomplete && open) || (!autocomplete && toggle)"
-          @keydown.esc="close()"
+          @keydown.esc="onTriggerEscape($event, close)"
         >
           <template #append>
             <VcButton
@@ -411,6 +412,16 @@ function prev(index: number) {
       prevElement.focus();
     }
   }
+}
+
+// Only an open dropdown consumes Escape — otherwise the key belongs to an outer dialog.
+function onTriggerEscape(event: KeyboardEvent, close: () => void) {
+  if (!isShown.value) {
+    return;
+  }
+
+  event.stopPropagation();
+  close();
 }
 
 function toggled(value: boolean) {

@@ -1,5 +1,13 @@
 <template>
-  <VcPopover placement="bottom-end" class="sales-rep-orders-filters" :offset-options="8" :disabled="disabled" lazy>
+  <VcPopover
+    placement="bottom-end"
+    class="sales-rep-orders-filters"
+    :offset-options="8"
+    :disabled="disabled"
+    role="dialog"
+    :aria-label="t('sales_rep.customer_orders.filters.title')"
+    lazy
+  >
     <template #default="{ triggerProps }">
       <VcButton :disabled="disabled" variant="outline" v-bind="triggerProps">
         <VcIcon name="filter" />
@@ -10,7 +18,9 @@
 
     <template #content="{ close }">
       <div class="sales-rep-orders-filters__panel">
-        <VcDialog dividers size="xs">
+        <!-- The popover owns initial focus: it names the panel, and VcDialog's autofocus only ever
+             ran on the first open (the content stays mounted afterwards). -->
+        <VcDialog dividers size="xs" :auto-focus="false">
           <VcDialogHeader @close="close">
             {{ t("sales_rep.customer_orders.filters.title") }}
           </VcDialogHeader>

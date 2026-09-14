@@ -32,6 +32,7 @@
         ]"
         :role="role"
         :aria-label="ariaLabel"
+        :tabindex="isDialog ? -1 : undefined"
       >
         <div
           v-if="arrowEnabled"
@@ -54,10 +55,10 @@
 
 <script setup lang="ts">
 import { flip, offset, shift, useFloating, autoUpdate, arrow } from "@floating-ui/vue";
-import { onClickOutside } from "@vueuse/core";
-import { ref, toRefs, computed, watch, inject } from "vue";
+import { onClickOutside, useEventListener } from "@vueuse/core";
+import { ref, toRefs, computed, watch, inject, nextTick } from "vue";
 import { useComponentId } from "@/ui-kit/composables";
-import { getColorValue } from "@/ui-kit/utilities";
+import { findFirstFocusableElement, getColorValue } from "@/ui-kit/utilities";
 import { vcPopoverKey } from "./vc-popover-context";
 
 interface IEmits {
@@ -76,10 +77,17 @@ interface IProps {
   radius?: string;
   width?: string;
   zIndex?: number | string;
+  /**
+   * ARIA role of the content panel. `dialog` and `alertdialog` additionally enable the non-modal
+   * dialog keyboard contract (WAI-ARIA APG): Escape anywhere in the panel closes it, the panel takes
+   * focus when it opens unless the consumer claims focus from `@toggle`, and focus returns to the
+   * trigger on close. Pair it with `ariaLabel` — a dialog needs a name.
+   */
   role?: string;
   hover?: boolean;
   disableTriggerEvents?: boolean;
   arrowEnabled?: boolean;
+  /** Accessible name of the content panel. Required when `role` is `dialog` or `alertdialog`. */
   ariaLabel?: string;
   enableTeleport?: boolean | null;
   teleportSelector?: string;
@@ -104,11 +112,14 @@ const opened = ref(false);
 const hasBeenOpened = ref(false);
 const reference = ref<HTMLElement | null>(null);
 const floating = ref<HTMLElement | null>(null);
+const triggerElement = ref<HTMLElement | null>(null);
+const focusReturnPending = ref(false);
 const floatingArrow = ref<Element | null>(null);
 const contentId = useComponentId("vc-popover");
 const { placement, strategy, flipOptions, offsetOptions, shiftOptions } = toRefs(props);
 
 const shouldRenderContent = computed(() => !props.lazy || hasBeenOpened.value);
+const isDialog = computed(() => props.role === "dialog" || props.role === "alertdialog");
 
 const triggerListeners = computed(() => ({
   mouseenter: props.hover ? open : undefined,
@@ -194,12 +205,119 @@ function toggle() {
   opened.value = !opened.value;
 }
 
+function firstFocusableInTrigger(): HTMLElement | null {
+  return reference.value ? findFirstFocusableElement(reference.value, {}) : null;
+}
+
+function captureTriggerElement(): void {
+  const active = document.activeElement;
+
+  if (reference.value && active instanceof HTMLElement && reference.value.contains(active)) {
+    triggerElement.value = active;
+    return;
+  }
+
+  triggerElement.value = firstFocusableInTrigger();
+}
+
+function focusTrigger(): void {
+  // The captured element can be gone by now — a consumer re-rendering its trigger replaces the node.
+  const target = triggerElement.value?.isConnected ? triggerElement.value : firstFocusableInTrigger();
+
+  target?.focus();
+  focusReturnPending.value = document.activeElement !== target;
+}
+
+async function focusPanel(): Promise<void> {
+  await nextTick();
+
+  // Skipped when a consumer claimed focus from its own @toggle handler (VcDatePicker: the active day).
+  if (!floating.value || floating.value.contains(document.activeElement)) {
+    return;
+  }
+
+  floating.value.focus();
+}
+
+async function returnFocusToTrigger(): Promise<void> {
+  // Read before the panel is hidden: a click outside leaves focus elsewhere and must not be stolen.
+  const focusWasInside = floating.value?.contains(document.activeElement) ?? false;
+
+  if (!focusWasInside) {
+    return;
+  }
+
+  await nextTick();
+  focusTrigger();
+}
+
+// A consumer that disables its trigger while closing (a filter drawer reloading its list) leaves
+// nothing focusable to return to — and disabling a focused button drops focus to <body> — so the
+// return is retried once the trigger can take focus again.
+watch(
+  () => props.disabled,
+  async (disabled) => {
+    if (disabled) {
+      // Pre-flush, so focus still sits where it will be lost: disabling a focused trigger drops
+      // focus to <body>, which a return that already landed would otherwise not know about.
+      focusReturnPending.value ||= reference.value?.contains(document.activeElement) ?? false;
+
+      // The panel is v-if'd out by `disabled` while `close()` refuses to run, which would otherwise
+      // leave `aria-expanded="true"` behind and re-show the panel when the consumer re-enables it.
+      opened.value = false;
+      return;
+    }
+
+    if (!focusReturnPending.value) {
+      return;
+    }
+
+    focusReturnPending.value = false;
+
+    // Only when the failed return left focus nowhere: anything else means the user has moved on.
+    if (document.activeElement !== document.body) {
+      return;
+    }
+
+    await nextTick();
+    focusTrigger();
+  },
+);
+
+// Bound on the element rather than in the template: a keydown handler there would make the panel
+// an interactive static element (vuejs-accessibility/no-static-element-interactions).
+useEventListener(floating, "keydown", (event: KeyboardEvent) => {
+  if (!isDialog.value || event.key !== "Escape") {
+    return;
+  }
+
+  // Only the innermost dialog reacts, so nested popovers close one level at a time.
+  event.stopPropagation();
+  close();
+});
+
 // Reactivity loss is acceptable here: teleportSelector is static after mount,
 // and onClickOutside options are not reactive anyway
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss
 onClickOutside(reference, () => close(), { ignore: [floating, props.teleportSelector] });
 
-watch(opened, (value: boolean) => emit("toggle", value));
+watch(opened, (value: boolean) => {
+  // Emitted first so a consumer's own focus handling queues ahead of focusPanel and wins the panel.
+  emit("toggle", value);
+
+  if (!isDialog.value) {
+    return;
+  }
+
+  if (value) {
+    // Bounded to one interaction: a return that failed for good has nothing left to hand back.
+    focusReturnPending.value = false;
+    captureTriggerElement();
+    void focusPanel();
+  } else {
+    void returnFocusToTrigger();
+  }
+});
 </script>
 
 <style lang="scss">
@@ -227,7 +345,9 @@ watch(opened, (value: boolean) => emit("toggle", value));
     --radius: var(--props-radius, var(--vc-popover-radius, var(--vc-radius, 0.5rem)));
     --arrow-color: var(--props-bg-color, var(--vc-popover-bg-color, var(--color-additional-50)));
 
-    @apply max-w-[100vw];
+    // Radius only shapes the focus ring a dialog panel gets when it takes focus: the body itself
+    // paints nothing, the card is drawn by &__content.
+    @apply max-w-[100vw] rounded-[--radius];
 
     &:has(#{$popper}) {
       @apply pt-2.5;
