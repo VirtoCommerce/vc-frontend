@@ -225,11 +225,15 @@ defineExpose({
   }
 
   &__option-name {
-    @apply truncate font-bold text-neutral-950;
+    // The leading is spelled out so the two lines total the avatar's 32 and the row stays balanced; the menu item
+    // hands down 14/14.
+    @apply truncate text-sm/[18px] font-bold text-neutral-950;
   }
 
   &__option-location {
-    @apply truncate text-xs text-neutral-500;
+    // `font-normal` against the kit: `VcMenuItem` bolds the whole row of a selected option, and the second line is
+    // Regular in every state.
+    @apply truncate text-xs font-normal text-neutral-500;
   }
 }
 </style>
