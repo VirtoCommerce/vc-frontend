@@ -75,11 +75,12 @@
       </div>
 
       <div ref="listElement" class="mt-5 w-full">
-        <!-- Skeletons -->
-        <WishlistProductsSkeleton v-if="listLoading" :itemsCount="actualPageRowsCount" />
+        <!-- Skeletons: only while there is nothing to show. `listLoading` is shared by every `useWishlists` caller,
+             so a save from the Rename or Share dialog would otherwise swap the whole table for a skeleton. -->
+        <WishlistProductsSkeleton v-if="listLoading && !list" :itemsCount="actualPageRowsCount" />
 
         <!-- List details -->
-        <template v-else-if="!listLoading && !!list?.items?.length">
+        <template v-else-if="!!list?.items?.length">
           <VcWidget size="lg">
             <div class="flex flex-col gap-6">
               <WishlistLineItems
@@ -106,7 +107,7 @@
 
         <!-- Empty list -->
         <VcEmptyView
-          v-else-if="!listLoading && list?.items?.length === 0"
+          v-else-if="list?.items?.length === 0"
           :text="$t('shared.wishlists.list_details.empty_list')"
           icon="outline-lists"
         >
@@ -443,13 +444,18 @@ watchEffect(async () => {
 /**
  * Send Google Analytics event for related products.
  */
+// Reported once per list: saving from the Rename or Share dialog reassigns `list`, which would otherwise send a
+// second impression for the same items with no navigation in between.
+let reportedListId: string | undefined;
+
 watchEffect(() => {
   const items = list.value?.items
     ?.map((item) => item.product!)
     // filtering of deleted products
     .filter(Boolean);
 
-  if (items?.length) {
+  if (items?.length && list.value?.id !== reportedListId) {
+    reportedListId = list.value?.id;
     analytics("viewItemList", items, wishlistListProperties.value);
   }
 });
