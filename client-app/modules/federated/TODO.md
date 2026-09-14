@@ -43,10 +43,15 @@ file are cross-referenced, not repeated.
 
 **Plugin developer experience (walked end to end 2026-09-14)**
 
-- [ ] **`yarn create:plugin` omits `packageManager`.** The scaffold ships a `.yarnrc.yml` (yarn 4
-      config) but nothing pins the version, so a plain `yarn install` runs whatever is global — yarn
-      1.22 here, which ignores that file and writes a v1 lockfile. Emit
-      `"packageManager": "yarn@<host version>"`, the way the sales-rep plugin's own package.json does.
+- [x] **Toolchain parity for a scaffolded plugin** — #2480: eslint, prettier, editorconfig, vitest
+      (with the facade alias and a mock), `.vscode`, `packageManager`, `strictTemplates`, the
+      lint/format/test scripts, and a warning when the pinned facade version has no release tag.
+- [ ] **GraphQL codegen for a plugin with its own xAPI.** sales-rep hand-wrote `codegen.ts` and
+      seven codegen devDependencies; `--with-apollo` should emit both.
+- [ ] **Ship the facade mock from the package instead of copying it per plugin**, with a
+      build-types guard that fails when a facade export has no mock entry. Today each plugin's copy
+      drifts on its own.
+- [ ] **Pre-commit hooks in the scaffold** (husky + lint-staged), which sales-rep also added by hand.
 - [ ] **Default vue-i18n (and probably @vueuse/core) to on in the scaffolder.** The cost of the two
       answers is not symmetric: answering "no" drops the package from MF shared while leaving it in
       devDependencies, so a later `import { useI18n } from "vue-i18n"` compiles and bundles a SECOND
