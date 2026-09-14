@@ -338,7 +338,16 @@ function onUpdate(value: DateRange | undefined): void {
       pendingCompleteRangeStart = undefined;
     });
   }
+  // The anchor we still paint, read before the emit can bring a new one back.
+  const anchorIso = parsedModelValue.value.start?.toString();
   emitRange(range);
+  // reka orders only the range it emits; its own start/end keep the backward order and the grid paints
+  // from those — caps facing outward, no band. A controlled host is rescued by the prop echo, an
+  // uncontrolled one by nothing. The anchor having become the end is the only tell reka leaves.
+  if (start && end && anchorIso === end && anchorIso !== start) {
+    suppressEchoForOneTick();
+    parsedModelValue.value = parseRange(range);
+  }
 }
 
 function onClearClick(): void {

@@ -325,6 +325,38 @@ describe("VcRangeCalendar", () => {
   });
 
   // reka deselects an endpoint that is picked twice; here that silently dropped a committed date.
+  // reka orders the range it emits but not its own start/end, and the grid paints from those. A host
+  // that writes the emit back is rescued by the prop echo landing in the same flush; nothing else is.
+  describe("a pick that runs backwards, on a host that never writes the emit back", () => {
+    it("paints the ordered range, caps inward and the band filled", async () => {
+      const wrapper = mountCal({ modelValue: { start: "2026-10-20" } }, { attachTo: document.body });
+      await flushPromises();
+
+      await clickDay("2026-10-10");
+
+      expect(wrapper.emitted("update:modelValue")?.at(-1)).toEqual([{ start: "2026-10-10", end: "2026-10-20" }]);
+      expect(wrapper.find("[data-selection-start]").attributes("data-value")).toBe("2026-10-10");
+      expect(wrapper.find("[data-selection-end]").attributes("data-value")).toBe("2026-10-20");
+      expect(wrapper.findAll("[data-selected]").length).toBeGreaterThan(2);
+
+      wrapper.unmount();
+    });
+
+    // The resync must not fire on an ordered pick: it would re-enter reka for nothing and arm the guard.
+    it("leaves a forward pick alone", async () => {
+      const wrapper = mountCal({ modelValue: { start: "2026-10-10" } }, { attachTo: document.body });
+      await flushPromises();
+
+      await clickDay("2026-10-20");
+
+      expect(wrapper.emitted("update:modelValue")?.at(-1)).toEqual([{ start: "2026-10-10", end: "2026-10-20" }]);
+      expect(wrapper.find("[data-selection-start]").attributes("data-value")).toBe("2026-10-10");
+      expect(wrapper.find("[data-selection-end]").attributes("data-value")).toBe("2026-10-20");
+
+      wrapper.unmount();
+    });
+  });
+
   describe("re-picking an endpoint", () => {
     // reka reaches its deselect branch only when highlightedRange is null, which needs a click with no
     // hover and no focus; the mouseenter helpers bypass it entirely.
