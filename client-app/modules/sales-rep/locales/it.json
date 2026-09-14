@@ -261,6 +261,8 @@
       "share_message_hint": "I destinatari lo riceveranno nella loro notifica.",
       "recipients_title": "Destinatari · {count}",
       "clear_recipients_button": "Cancella tutto",
+      "recipients_cleared": "Rimossi · {count}",
+      "restore_recipients_button": "Ripristina",
       "show_all_recipients_button": "Mostra tutti ({count})",
       "show_less_recipients_button": "Mostra meno",
       "remove_recipient_button": "Rimuovi {name}",

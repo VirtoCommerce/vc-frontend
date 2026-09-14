@@ -261,6 +261,8 @@
       "share_message_hint": "この内容は受信者への通知に含まれます。",
       "recipients_title": "受信者 · {count}",
       "clear_recipients_button": "すべて解除",
+      "recipients_cleared": "クリア済み · {count}",
+      "restore_recipients_button": "元に戻す",
       "show_all_recipients_button": "すべて表示（{count}）",
       "show_less_recipients_button": "表示を減らす",
       "remove_recipient_button": "{name} を削除",

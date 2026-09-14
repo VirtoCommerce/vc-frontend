@@ -30,11 +30,13 @@
     </VcSelect>
 
     <WishlistSharingRecipients
-      v-if="selected.length"
+      v-if="selected.length || clearedRecipients.length"
       :recipients="selected"
+      :cleared-count="clearedRecipients.length"
       :disabled="saving"
       @remove="deselect"
       @clear="clearSelection"
+      @restore="restoreSelection"
     />
 
     <VcTextarea
@@ -144,8 +146,18 @@ function deselect(organizationId: string): void {
   selected.value = selected.value.filter((recipient) => recipient.organizationId !== organizationId);
 }
 
+// One click empties the whole audience, and `targets` is the only other record of it — so the rows are kept in hand
+// until the rep does something else with the list.
+const clearedRecipients = ref<WishlistSharingRecipientType[]>([]);
+
 function clearSelection(): void {
+  clearedRecipients.value = selected.value;
   selected.value = [];
+}
+
+function restoreSelection(): void {
+  selected.value = clearedRecipients.value;
+  clearedRecipients.value = [];
 }
 
 function localizeWarning(code: string): string | undefined {

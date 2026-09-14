@@ -261,6 +261,8 @@
       "share_message_hint": "收件人将在通知中看到此内容。",
       "recipients_title": "收件人 · {count}",
       "clear_recipients_button": "全部清除",
+      "recipients_cleared": "已清除 · {count}",
+      "restore_recipients_button": "撤销",
       "show_all_recipients_button": "显示全部 {count} 个",
       "show_less_recipients_button": "收起",
       "remove_recipient_button": "移除 {name}",

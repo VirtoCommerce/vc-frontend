@@ -261,6 +261,8 @@
       "share_message_hint": "Recipients get this in their notification.",
       "recipients_title": "Recipients · {count}",
       "clear_recipients_button": "Clear all",
+      "recipients_cleared": "Cleared · {count}",
+      "restore_recipients_button": "Undo",
       "show_all_recipients_button": "Show all {count}",
       "show_less_recipients_button": "Show less",
       "remove_recipient_button": "Remove {name}",

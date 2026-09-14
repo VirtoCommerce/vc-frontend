@@ -261,6 +261,8 @@
       "share_message_hint": "Empfänger erhalten dies in ihrer Benachrichtigung.",
       "recipients_title": "Empfänger · {count}",
       "clear_recipients_button": "Alle entfernen",
+      "recipients_cleared": "Geleert · {count}",
+      "restore_recipients_button": "Rückgängig",
       "show_all_recipients_button": "Alle {count} anzeigen",
       "show_less_recipients_button": "Weniger anzeigen",
       "remove_recipient_button": "{name} entfernen",

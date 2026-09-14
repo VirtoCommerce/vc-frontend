@@ -261,6 +261,8 @@
       "share_message_hint": "Vastaanottajat saavat tämän ilmoituksessaan.",
       "recipients_title": "Vastaanottajat · {count}",
       "clear_recipients_button": "Tyhjennä kaikki",
+      "recipients_cleared": "Tyhjennetty · {count}",
+      "restore_recipients_button": "Kumoa",
       "show_all_recipients_button": "Näytä kaikki {count}",
       "show_less_recipients_button": "Näytä vähemmän",
       "remove_recipient_button": "Poista {name}",

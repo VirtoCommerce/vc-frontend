@@ -480,6 +480,36 @@ describe("WishlistCustomerSharing", () => {
       });
     });
 
+    it("offers the audience back after Clear all, instead of leaving the rep to retype it", async () => {
+      renderSharing([target("org-1", "Acme Inc."), target("org-2", "Globex")]);
+
+      await fireEvent.click(component.getByTestId("wishlist-sharing-clear-recipients-button"));
+
+      // One unconfirmed click empties the whole audience, and `targets` is the only other record of it.
+      expect(controls.canSave).toBe(false);
+
+      await fireEvent.click(component.getByTestId("wishlist-sharing-restore-recipients-button"));
+
+      expect(controls.canSave).toBe(true);
+      expect(controls.payload).toEqual({
+        addSharedWithIds: [],
+        removeSharedWithIds: [],
+        message: "",
+      });
+    });
+
+    it("contributes every recipient as a removal while the list stands cleared", async () => {
+      renderSharing([target("org-1", "Acme Inc."), target("org-2", "Globex")]);
+
+      await fireEvent.click(component.getByTestId("wishlist-sharing-clear-recipients-button"));
+
+      expect(controls.payload).toEqual({
+        addSharedWithIds: [],
+        removeSharedWithIds: ["org-1", "org-2"],
+        message: "",
+      });
+    });
+
     it("carries the message so it is there when the dialog is reopened", async () => {
       renderSharing();
 

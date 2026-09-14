@@ -261,6 +261,8 @@
       "share_message_hint": "Mottakerne får dette i varselet sitt.",
       "recipients_title": "Mottakere · {count}",
       "clear_recipients_button": "Fjern alle",
+      "recipients_cleared": "Fjernet · {count}",
+      "restore_recipients_button": "Angre",
       "show_all_recipients_button": "Vis alle {count}",
       "show_less_recipients_button": "Vis mindre",
       "remove_recipient_button": "Fjern {name}",

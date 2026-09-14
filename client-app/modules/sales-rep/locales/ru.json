@@ -261,6 +261,8 @@
       "share_message_hint": "Получатели увидят это в уведомлении.",
       "recipients_title": "Получатели · {count}",
       "clear_recipients_button": "Очистить всё",
+      "recipients_cleared": "Очищено · {count}",
+      "restore_recipients_button": "Вернуть",
       "show_all_recipients_button": "Показать все ({count})",
       "show_less_recipients_button": "Показать меньше",
       "remove_recipient_button": "Удалить {name}",

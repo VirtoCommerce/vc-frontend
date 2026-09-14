@@ -12,7 +12,7 @@
           variant="ghost"
           size="xs"
           :disabled="disabled"
-          @click="$emit('clear')"
+          @click="requestClear"
         >
           {{ t("sales_rep.list_sharing.clear_recipients_button") }}
         </VcButton>
@@ -53,6 +53,24 @@
       </li>
     </ul>
 
+    <div v-if="!recipients.length && clearedCount" class="wishlist-sharing-recipients__cleared">
+      <span class="wishlist-sharing-recipients__title">
+        {{ t("sales_rep.list_sharing.recipients_cleared", { count: clearedCount }) }}
+      </span>
+
+      <VcButton
+        ref="restoreButton"
+        data-test-id="wishlist-sharing-restore-recipients-button"
+        color="primary"
+        variant="ghost"
+        size="xs"
+        :disabled="disabled"
+        @click="$emit('restore')"
+      >
+        {{ t("sales_rep.list_sharing.restore_recipients_button") }}
+      </VcButton>
+    </div>
+
     <!-- Sticky so collapsing never means scrolling past every row first; inert when the content fits. -->
     <div v-if="collapsible" class="wishlist-sharing-recipients__toggle">
       <div class="wishlist-sharing-recipients__separator"></div>
@@ -89,6 +107,7 @@ import type { WishlistSharingRecipientType } from "../types";
 interface IEmits {
   (event: "remove", organizationId: string): void;
   (event: "clear"): void;
+  (event: "restore"): void;
 }
 
 interface IProps {
@@ -96,6 +115,8 @@ interface IProps {
   disabled?: boolean;
   /** How many rows are shown before the list offers to expand. */
   collapsedRows?: number;
+  /** Recipients the last `clear` took away, offered back until the rep does something else. */
+  clearedCount?: number;
 }
 
 const emit = defineEmits<IEmits>();
@@ -107,6 +128,7 @@ const { t } = useI18n();
 const isMobile = useBreakpoints(BREAKPOINTS).smaller("md");
 
 const rowsElement = useTemplateRef<HTMLElement>("rowsElement");
+const restoreButton = useTemplateRef<{ $el: HTMLElement }>("restoreButton");
 
 const expanded = ref(false);
 
@@ -115,6 +137,15 @@ const collapsible = computed(() => props.recipients.length > props.collapsedRows
 const visibleRecipients = computed(() =>
   collapsible.value && !expanded.value ? props.recipients.slice(0, props.collapsedRows) : props.recipients,
 );
+
+// The rows the clear takes away carry the focus with them, so hand it to the Undo that replaces them.
+async function requestClear(): Promise<void> {
+  emit("clear");
+
+  await nextTick();
+
+  restoreButton.value?.$el?.focus();
+}
 
 // The deleted row takes the focus with it. Nowhere to send it once the list empties: the block unmounts, and
 // `VcSelect` exposes no focus method.
@@ -142,6 +173,10 @@ watch(collapsible, (isCollapsible) => {
   @apply flex flex-col rounded-lg border border-neutral-200 bg-additional-50 overflow-clip;
 
   &__header {
+    @apply flex items-center gap-2 min-h-10 ps-3 pe-1.5 py-1;
+  }
+
+  &__cleared {
     @apply flex items-center gap-2 min-h-10 ps-3 pe-1.5 py-1;
   }
 

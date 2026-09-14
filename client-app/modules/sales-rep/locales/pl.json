@@ -261,6 +261,8 @@
       "share_message_hint": "Odbiorcy otrzymają to w powiadomieniu.",
       "recipients_title": "Odbiorcy · {count}",
       "clear_recipients_button": "Wyczyść wszystko",
+      "recipients_cleared": "Wyczyszczono · {count}",
+      "restore_recipients_button": "Cofnij",
       "show_all_recipients_button": "Pokaż wszystkie ({count})",
       "show_less_recipients_button": "Pokaż mniej",
       "remove_recipient_button": "Usuń {name}",

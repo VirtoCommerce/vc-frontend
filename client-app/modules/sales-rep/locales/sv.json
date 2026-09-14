@@ -261,6 +261,8 @@
       "share_message_hint": "Mottagarna får detta i sin avisering.",
       "recipients_title": "Mottagare · {count}",
       "clear_recipients_button": "Rensa alla",
+      "recipients_cleared": "Rensade · {count}",
+      "restore_recipients_button": "Ångra",
       "show_all_recipients_button": "Visa alla {count}",
       "show_less_recipients_button": "Visa mindre",
       "remove_recipient_button": "Ta bort {name}",
