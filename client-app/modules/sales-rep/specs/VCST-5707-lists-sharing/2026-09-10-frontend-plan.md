@@ -581,9 +581,12 @@ button, exposing `controls`.
    That means it does **not** fire on a first share (`Private` → anything), does **not** fire when only the
    recipient set changes inside the Customer scope, and does **not** fire on the per-row trash icon. It does fire on
    shared → `Private` and on shared → a different sharing scope, because both revoke the current audience.
-   Still worth raising with product, but not blocking: the given copy says "page" where this is a list, and "anyone
-   with the link" is wrong for the Customer scope, where access follows org membership rather than the link. Until
-   product amends it, ship it as written.
+   **Copy amended 2026-09-14.** The ticket's wording names the mechanism, so it holds for one of the four scopes the
+   dialog can be leaving: it is wrong for the Customer scope, where access follows org membership, and backwards when
+   the scope being moved to is `AnyoneAnonymous`. It also said "page" where this is a list. Shipped naming the result
+   instead — "Stop sharing this list? / Everyone the list is shared with will lose access." — which holds in every
+   direction. The title and confirm button keep the Acceptance's "Stop sharing" on a scope swap as well as on a move
+   to Private; "Change who can access" would be truer there and is still open.
 7. **Select all semantics** (§4.2) — loaded rows vs every match. Moot for this ticket: Select-all is not built
    (§0.4). Whoever builds it inherits the question, and with §4.2's eager full paging the two readings coincide.
 8. **Message visibility — settled 2026-09-11: always, under the Customer scope.** The note is persisted with the
