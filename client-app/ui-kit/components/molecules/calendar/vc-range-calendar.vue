@@ -267,6 +267,14 @@ function suppressEchoForOneTick(): void {
 // "stale" aims at a target that would destroy or resurrect a range.
 let pendingRevert: "fresh" | "stale" | undefined;
 
+// reka's own startValue, mirrored. Its internals run backward exactly when this is the emitted END,
+// which is the only tell it leaves; the model cannot stand in for it — an end-only model has no start
+// at all, and an uncontrolled host never advances one.
+let rekaStartIso: string | undefined = initialRange?.start;
+
+// reka drags the view to its revert target, so the month the user was reading has to be kept here.
+let revertViewSnapshot: DateValue | undefined;
+
 function isSameRange(a: VcDateRangeType | undefined, b: VcDateRangeType | undefined): boolean {
   return a?.start === b?.start && a?.end === b?.end;
 }
@@ -304,8 +312,13 @@ function resyncRekaWithCommitted(): void {
   // reka answers with echoes of our own value, exactly like an external sync.
   suppressEchoForOneTick();
   parsedModelValue.value = parseRange(committedRange);
-  // reka moved its placeholder to the revert target; nothing else would bring the grid back.
-  placeholderRef.value = clampToBounds(getInitialPlaceholder());
+  // reka moved its placeholder to the revert target; nothing else would bring the view back — and it
+  // belongs on the range we hold, not on the prop. With nothing to restore, a Clear leaves it alone:
+  // moving it would drag the user off the month they were reading.
+  const target = committedRange ? preferredPlaceholder(committedRange.start, committedRange.end) : revertViewSnapshot;
+  if (target) {
+    placeholderRef.value = clampToBounds(target);
+  }
 }
 
 function onUpdate(value: DateRange | undefined): void {
@@ -338,8 +351,7 @@ function onUpdate(value: DateRange | undefined): void {
       pendingCompleteRangeStart = undefined;
     });
   }
-  // The anchor we still paint, read before the emit can bring a new one back.
-  const anchorIso = parsedModelValue.value.start?.toString();
+  const anchorIso = rekaStartIso;
   emitRange(range);
   // reka orders only the range it emits; its own start/end keep the backward order and the grid paints
   // from those — caps facing outward, no band. A controlled host is rescued by the prop echo, an
@@ -379,6 +391,7 @@ function onCalendarKeydownCapture(event: KeyboardEvent): void {
 function onCalendarKeydown(event: KeyboardEvent): void {
   if (event.key === "Escape") {
     pendingRevert = isSameRange(rekaRevertTarget, committedRange) ? "fresh" : "stale";
+    revertViewSnapshot = placeholderRef.value;
     return;
   }
   endEscapeRevert();
@@ -391,6 +404,8 @@ function endEscapeRevert(): void {
 }
 
 function onStartValueUpdate(value: DateValue | undefined): void {
+  // Mirrors every startValue reka reports, including the echoes the guards below drop.
+  rekaStartIso = dateValueToIso(value);
   if (pendingRevert) {
     return;
   }

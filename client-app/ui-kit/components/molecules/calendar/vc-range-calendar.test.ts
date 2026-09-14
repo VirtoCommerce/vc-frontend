@@ -342,6 +342,41 @@ describe("VcRangeCalendar", () => {
       wrapper.unmount();
     });
 
+    // Both endpoints picked in the grid: such a host writes nothing back, so the anchor exists only in
+    // what we emitted. Reading it off the painted model instead would find nothing and skip the resync.
+    it("paints the ordered range when the anchor was picked in the grid too", async () => {
+      const late = todayDate().set({ day: 20 }).toString();
+      const early = todayDate().set({ day: 10 }).toString();
+      const wrapper = mountCal({ modelValue: undefined }, { attachTo: document.body });
+      await flushPromises();
+
+      await clickDay(late);
+      await clickDay(early);
+
+      expect(wrapper.emitted("update:modelValue")?.at(-1)).toEqual([{ start: early, end: late }]);
+      expect(wrapper.find("[data-selection-start]").attributes("data-value")).toBe(early);
+      expect(wrapper.find("[data-selection-end]").attributes("data-value")).toBe(late);
+      expect(wrapper.findAll("[data-selected]").length).toBeGreaterThan(2);
+
+      wrapper.unmount();
+    });
+
+    // An end-only model has no start at all, so nothing derived from the model can name the anchor —
+    // and here the anchor becomes the emitted START, the mirror image of the case above.
+    it("paints the ordered range when the model carried only an end", async () => {
+      const wrapper = mountCal({ modelValue: { end: "2026-10-20" } }, { attachTo: document.body });
+      await flushPromises();
+
+      await clickDay("2026-10-25");
+
+      expect(wrapper.emitted("update:modelValue")?.at(-1)).toEqual([{ start: "2026-10-20", end: "2026-10-25" }]);
+      expect(wrapper.find("[data-selection-start]").attributes("data-value")).toBe("2026-10-20");
+      expect(wrapper.find("[data-selection-end]").attributes("data-value")).toBe("2026-10-25");
+      expect(wrapper.findAll("[data-selected]").length).toBeGreaterThan(2);
+
+      wrapper.unmount();
+    });
+
     // The resync must not fire on an ordered pick: it would re-enter reka for nothing and arm the guard.
     it("leaves a forward pick alone", async () => {
       const wrapper = mountCal({ modelValue: { start: "2026-10-10" } }, { attachTo: document.body });
@@ -704,6 +739,33 @@ describe("VcRangeCalendar", () => {
 
         expect(wrapper.findAll("[data-selected], [data-selection-start], [data-selection-end]")).toHaveLength(0);
         expect(wrapper.emitted("update:modelValue")).toHaveLength(emitsAfterClear!);
+        wrapper.unmount();
+      });
+
+      // reka drags the view to its revert target. With the range gone there is nothing to restore it
+      // to, and falling back to the prop would land on the month of the range the user just deleted.
+      it("leaves the view where the user left it when Escape follows the Clear", async () => {
+        const wrapper = mountCal(
+          { modelValue: { start: "2020-03-05", end: "2020-03-10" }, showFooter: true },
+          { attachTo: document.body },
+        );
+        await flushPromises();
+
+        await wrapper.find(".vc-range-calendar__nav--month-next").trigger("click");
+        await flushPromises();
+        const viewedMonth = wrapper.find(".vc-range-calendar__heading").text();
+        expect(viewedMonth).not.toBe("March 2020");
+
+        await wrapper.find(".vc-range-calendar__footer-btn").trigger("click");
+        await flushPromises();
+
+        const cell = wrapper.find("[data-reka-calendar-cell-trigger]");
+        cell.element.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true }));
+        await flushPromises();
+        await flushPromises();
+
+        expect(wrapper.find(".vc-range-calendar__heading").text()).toBe(viewedMonth);
+        expect(wrapper.findAll("[data-selected]")).toHaveLength(0);
         wrapper.unmount();
       });
 
