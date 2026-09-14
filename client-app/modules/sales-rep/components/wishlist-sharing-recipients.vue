@@ -24,7 +24,7 @@
     <ul
       ref="rowsElement"
       class="wishlist-sharing-recipients__rows"
-      :aria-label="t('sales_rep.list_sharing.recipients_title', { count: visibleRecipients.length })"
+      :aria-label="t('sales_rep.list_sharing.recipients_title', { count: recipients.length })"
     >
       <li v-for="(recipient, index) in visibleRecipients" :key="recipient.organizationId">
         <div class="wishlist-sharing-recipients__row">
@@ -172,10 +172,7 @@ watch(collapsible, (isCollapsible) => {
   // `clip`, not `hidden`: `hidden` makes this a scroll container and breaks the sticky toggle.
   @apply flex flex-col rounded-lg border border-neutral-200 bg-additional-50 overflow-clip;
 
-  &__header {
-    @apply flex items-center gap-2 min-h-10 ps-3 pe-1.5 py-1;
-  }
-
+  &__header,
   &__cleared {
     @apply flex items-center gap-2 min-h-10 ps-3 pe-1.5 py-1;
   }

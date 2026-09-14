@@ -10,8 +10,10 @@ import "@testing-library/jest-dom/vitest";
 
 configure({ testIdAttribute: "data-test-id" });
 
-// `t` echoes the key so assertions read as the copy contract.
-vi.mock("vue-i18n", () => ({ useI18n: () => ({ t: (key: string) => key }) }));
+// `t` echoes the key so assertions read as the copy contract; the spy keeps the interpolation values reachable.
+const t = vi.hoisted(() => vi.fn<(key: string, values?: Record<string, unknown>) => string>((key) => key));
+
+vi.mock("vue-i18n", () => ({ useI18n: () => ({ t }) }));
 
 const KEY = "sales_rep.list_sharing";
 
@@ -48,6 +50,10 @@ const VcImage = defineComponent({
 
 let component: RenderResult;
 
+function interpolationsFor(key: string): unknown[] {
+  return t.mock.calls.filter(([called]) => called === key).map(([, values]) => values);
+}
+
 function customers(count: number): WishlistSharingRecipientType[] {
   return Array.from({ length: count }, (_, index) => ({
     organizationId: `org-${index + 1}`,
@@ -79,6 +85,7 @@ function toggle() {
 
 afterEach(() => {
   cleanup();
+  t.mockClear();
 });
 
 describe("WishlistSharingRecipients", () => {
@@ -116,6 +123,37 @@ describe("WishlistSharingRecipients", () => {
 
     expect(component.container.querySelector("img")).toHaveAttribute("src", "https://cdn.example/acme.png");
     expect(component.queryByText("AI")).toBeNull();
+  });
+
+  it("names the whole list, not only the rows currently on screen", () => {
+    renderRecipients(customers(30));
+
+    // The heading says 30; a list whose accessible name says 3 tells a screen-reader user the rest is not there.
+    expect(interpolationsFor(`${KEY}.recipients_title`)).toContainEqual({ count: 30 });
+    expect(interpolationsFor(`${KEY}.recipients_title`)).not.toContainEqual({ count: 3 });
+  });
+
+  it("initials a name that starts outside the basic plane without splitting it", () => {
+    renderRecipients([{ organizationId: "org-1", organizationName: "\u{1F3ED} Acme", location: "", imageUrl: "" }]);
+
+    expect(component.getByText("\u{1F3ED}A")).toBeInTheDocument();
+  });
+
+  it("falls back to initials when the logo fails to load", async () => {
+    renderRecipients([
+      {
+        organizationId: "org-1",
+        organizationName: "Acme Inc.",
+        location: "",
+        imageUrl: "https://cdn.example/acme.png",
+      },
+    ]);
+
+    // The kit swaps a failed source for its own generic glyph, which is not what this badge wants.
+    await fireEvent.error(component.container.querySelector("img")!);
+
+    expect(component.container.querySelector("img")).toBeNull();
+    expect(component.getByText("AI")).toBeInTheDocument();
   });
 
   it("asks to remove the recipient behind the button that was pressed", async () => {

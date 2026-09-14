@@ -38,7 +38,8 @@ const initials = computed(() =>
     .split(/\s+/)
     .filter(Boolean)
     .slice(0, 2)
-    .map((word) => word[0].toUpperCase())
+    // Code points, not UTF-16 units: an astral first character would otherwise yield a lone surrogate.
+    .map((word) => [...word][0].toUpperCase())
     .join(""),
 );
 </script>

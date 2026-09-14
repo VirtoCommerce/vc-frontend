@@ -77,16 +77,22 @@ const VcSelect = defineComponent({
     required: { type: Boolean, default: false },
     disabled: { type: Boolean, default: false },
     multiple: { type: Boolean, default: false },
+    clearable: { type: Boolean, default: false },
     testIdDropdown: { type: String, default: "" },
   },
-  emits: ["update:modelValue"],
+  emits: ["update:modelValue", "change"],
   setup(props, { emit }) {
     const isPicked = (item: Record<string, string>) =>
       props.modelValue.some((picked) => picked[props.valueField] === item[props.valueField]);
 
+    // The kit raises both events together on every path that changes the selection, its own clear button included.
+    function commit(next: Record<string, string>[]) {
+      emit("update:modelValue", next);
+      emit("change", next);
+    }
+
     function toggle(item: Record<string, string>) {
-      emit(
-        "update:modelValue",
+      commit(
         isPicked(item)
           ? props.modelValue.filter((picked) => picked[props.valueField] !== item[props.valueField])
           : [...props.modelValue, item],
@@ -117,6 +123,9 @@ const VcSelect = defineComponent({
               item[props.textField],
             ),
           ),
+          props.clearable
+            ? h("button", { type: "button", "data-test-id": "customer-select-clear", onClick: () => commit([]) })
+            : null,
           props.message ? h("span", { "data-test-id": "field-message" }, props.message) : null,
         ],
       );
@@ -220,7 +229,13 @@ function target(id: string, name?: string, subtitle?: string, imageUrl?: string)
 }
 
 const SUCCESS = { succeeded: true, pushSent: true, emailSent: true, warnings: [] as string[] };
-const SAVED_CONTEXT = { listName: "Spring assortment", sharingLink: SHARING_LINK };
+
+// The audience the server reports back with the save. Empty stands for a backend that does not resolve targets yet.
+function savedContext(...targetIds: string[]) {
+  return { listName: "Spring assortment", sharingLink: SHARING_LINK, targets: targetIds.map((id) => ({ id })) };
+}
+
+const SAVED_CONTEXT = savedContext();
 
 beforeEach(() => {
   mocks.sendCommunication.mockReset().mockResolvedValue(SUCCESS);
@@ -496,6 +511,34 @@ describe("WishlistCustomerSharing", () => {
       });
     });
 
+    it("offers the audience back after the picker's own clear, the same as after Clear all", async () => {
+      renderSharing([target("org-1", "Acme Inc."), target("org-2", "Globex")]);
+
+      await fireEvent.click(component.getByTestId("customer-select-clear"));
+
+      expect(component.queryByTestId("wishlist-sharing-remove-recipient-org-1")).toBeNull();
+      expect(controls.canSave).toBe(false);
+
+      await fireEvent.click(component.getByTestId("wishlist-sharing-restore-recipients-button"));
+
+      expect(controls.payload).toEqual({
+        addSharedWithIds: [],
+        removeSharedWithIds: [],
+        message: "",
+      });
+    });
+
+    it("retires the offer once the rep picks somebody else instead of undoing", async () => {
+      renderSharing([target("org-1", "Acme Inc.")]);
+
+      await fireEvent.click(component.getByTestId("wishlist-sharing-clear-recipients-button"));
+      await pick("org-2");
+      await fireEvent.click(component.getByTestId("wishlist-sharing-remove-recipient-org-2").closest("button")!);
+
+      // The cleared rows belong to an action the rep has moved on from; offering them back here would undo the wrong step.
+      expect(component.queryByTestId("wishlist-sharing-restore-recipients-button")).toBeNull();
+    });
+
     it("contributes every recipient as a removal while the list stands cleared", async () => {
       renderSharing([target("org-1", "Acme Inc."), target("org-2", "Globex")]);
 
@@ -635,6 +678,26 @@ describe("WishlistCustomerSharing", () => {
 
       expect(mocks.sendCommunication.mock.calls[0][0]).toMatchObject({ organizationIds: ["org-2"] });
       expect(mocks.notifications.success).toHaveBeenCalledOnce();
+      expect(mocks.notifications.success.mock.calls[0][0]).toMatchObject({
+        text: `${KEY}.share_success|{"count":2}`,
+      });
+    });
+
+    it("counts the audience the server saved rather than the one the dialog drafted", async () => {
+      renderSharing([target("org-1", "Acme Inc.")]);
+      await pick("org-2");
+
+      // Another session added a third customer while this dialog was open; the card behind it will say 3.
+      await controls.onSaved!(savedContext("org-1", "org-2", "org-3"));
+
+      expect(mocks.notifications.success.mock.calls[0][0]).toMatchObject({
+        text: `${KEY}.share_success|{"count":3}`,
+      });
+    });
+
+    it("falls back to its own draft while the backend resolves no targets", async () => {
+      await shareWith(["org-1", "org-2"]);
+
       expect(mocks.notifications.success.mock.calls[0][0]).toMatchObject({
         text: `${KEY}.share_success|{"count":2}`,
       });

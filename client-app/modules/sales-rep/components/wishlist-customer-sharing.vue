@@ -1,7 +1,7 @@
 <template>
   <div class="wishlist-customer-sharing">
     <VcSelect
-      v-model="selected"
+      :model-value="selected"
       test-id-dropdown="wishlist-share-customer-select"
       :label="t('sales_rep.list_sharing.share_customers_label')"
       :placeholder="t('sales_rep.list_sharing.share_customers_placeholder')"
@@ -16,6 +16,7 @@
       autocomplete
       clearable
       lazy
+      @change="onPickerChange"
     >
       <template #item="{ item }">
         <span class="wishlist-customer-sharing__option">
@@ -137,10 +138,14 @@ function toRecipient(target: SharingTargetType): WishlistSharingRecipientType {
   };
 }
 
-// Counts everyone the list reaches, matching the card behind the dialog; the notified subset is usually smaller.
-function notifyShared(): void {
-  const count = selected.value.length;
+// The audience the server persisted, so the toast agrees with the card behind the dialog. The draft stands in only
+// while the backend still returns no targets (VCST-5925).
+function audienceCount(context: WishlistSharingScopeSavedContextType): number {
+  return context.targets.length || selected.value.length;
+}
 
+// Counts everyone the list reaches; the notified subset is usually smaller.
+function notifyShared(count: number): void {
   notifications.success({
     text: t("sales_rep.list_sharing.share_success", { count }, count),
     duration: 10000,
@@ -150,18 +155,12 @@ function notifyShared(): void {
 
 // A save that only dropped recipients or reworded the note shared with nobody and notified nobody, so it cannot
 // borrow the "List shared with N customers" copy.
-function notifySaved(): void {
-  const count = selected.value.length;
-
+function notifySaved(count: number): void {
   notifications.success({
     text: t("sales_rep.list_sharing.share_saved", { count }, count),
     duration: 10000,
     single: true,
   });
-}
-
-function deselect(organizationId: string): void {
-  selected.value = selected.value.filter((recipient) => recipient.organizationId !== organizationId);
 }
 
 // One click empties the whole audience, and `targets` is the only other record of it — so the rows are kept in hand
@@ -176,6 +175,25 @@ function clearSelection(): void {
 function restoreSelection(): void {
   selected.value = clearedRecipients.value;
   clearedRecipients.value = [];
+}
+
+function deselect(organizationId: string): void {
+  clearedRecipients.value = [];
+  selected.value = selected.value.filter((recipient) => recipient.organizationId !== organizationId);
+}
+
+// The kit hands back an empty array both for its own clear button and for unticking the last option, so both go
+// through `clearSelection` — otherwise emptying the audience from the field would leave no way back. Any other
+// change is the rep moving on, which is what retires the offer.
+function onPickerChange(next: WishlistSharingRecipientType[]): void {
+  if (!next.length && selected.value.length) {
+    clearSelection();
+
+    return;
+  }
+
+  clearedRecipients.value = [];
+  selected.value = next;
 }
 
 function localizeWarning(code: string): string | undefined {
@@ -205,7 +223,7 @@ async function notifyCustomers(
   const details = [...new Set(result.warnings)].map(localizeWarning).filter(Boolean).join(" ");
 
   if (result.succeeded && !result.warnings.length) {
-    notifyShared();
+    notifyShared(audienceCount(context));
 
     return;
   }
@@ -234,7 +252,7 @@ defineExpose<IWishlistSharingScopeExposeType>({
   onSaved: async (context: WishlistSharingScopeSavedContextType) => {
     // Only new recipients are notified; a save that just drops one still has to confirm itself.
     if (!addedIds.value.length) {
-      notifySaved();
+      notifySaved(audienceCount(context));
 
       return;
     }
