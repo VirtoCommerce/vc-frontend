@@ -53,8 +53,7 @@
       </li>
     </ul>
 
-    <!-- Sticks above the footer while the expanded list is taller than the dialog, so collapsing never means
-         scrolling past every row first. Sticky is inert when the content fits, so no measuring is needed. -->
+    <!-- Sticky so collapsing never means scrolling past every row first; inert when the content fits. -->
     <div v-if="collapsible" class="wishlist-sharing-recipients__toggle">
       <div class="wishlist-sharing-recipients__separator"></div>
 
@@ -117,9 +116,8 @@ const visibleRecipients = computed(() =>
   collapsible.value && !expanded.value ? props.recipients.slice(0, props.collapsedRows) : props.recipients,
 );
 
-// The deleted row takes the focus with it, so hand it to whatever takes its place — the row below, or the new last
-// row when the bottom one goes. Emptying the list is the one case with nowhere to go: the block unmounts, and
-// `VcSelect` exposes no method to send the focus back to the picker.
+// The deleted row takes the focus with it. Nowhere to send it once the list empties: the block unmounts, and
+// `VcSelect` exposes no focus method.
 async function requestRemove(organizationId: string, index: number): Promise<void> {
   emit("remove", organizationId);
 
@@ -130,7 +128,7 @@ async function requestRemove(organizationId: string, index: number): Promise<voi
   buttons?.[Math.min(index, buttons.length - 1)]?.focus();
 }
 
-// Removing recipients until the list fits would otherwise leave it stuck in a state with no way back.
+// Shrinking below the threshold would otherwise strand the list expanded with no toggle to collapse it.
 watch(collapsible, (isCollapsible) => {
   if (!isCollapsible) {
     expanded.value = false;
@@ -140,7 +138,7 @@ watch(collapsible, (isCollapsible) => {
 
 <style lang="scss">
 .wishlist-sharing-recipients {
-  // `clip`, not `hidden`: `hidden` would make this a scroll container and the sticky toggle would stop working.
+  // `clip`, not `hidden`: `hidden` makes this a scroll container and breaks the sticky toggle.
   @apply flex flex-col rounded-lg border border-neutral-200 bg-additional-50 overflow-clip;
 
   &__header {

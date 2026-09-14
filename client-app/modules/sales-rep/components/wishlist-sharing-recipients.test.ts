@@ -1,5 +1,4 @@
-/* The ui-kit stubs below are deliberately minimal test doubles, not shippable components — emit validators and
-   component-block padding would only add noise to them. */
+/* The ui-kit stubs below are minimal test doubles, not shippable components. */
 /* eslint-disable vue/require-emit-validator, vue/padding-lines-in-component-definition */
 import { render, fireEvent, cleanup, configure } from "@testing-library/vue";
 import { afterEach, describe, expect, it, vi } from "vitest";

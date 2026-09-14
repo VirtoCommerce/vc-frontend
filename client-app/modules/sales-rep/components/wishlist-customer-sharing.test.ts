@@ -1,5 +1,4 @@
-/* The ui-kit stubs below are deliberately minimal test doubles, not shippable components — emit validators and
-   component-block padding would only add noise to them. */
+/* The ui-kit stubs below are minimal test doubles, not shippable components. */
 /* eslint-disable vue/require-emit-validator, vue/padding-lines-in-component-definition */
 import { render, fireEvent, cleanup, configure, within } from "@testing-library/vue";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -16,7 +15,7 @@ configure({ testIdAttribute: "data-test-id" });
 const KEY = "sales_rep.list_sharing";
 const SHARING_LINK = "https://store.example.com/shared-list/sharing-key-1";
 
-// What the module locale actually ships; anything else is a newly-added backend code an old storefront cannot map.
+// What the module locale ships; any other code is one an old storefront cannot map.
 const translatedWarningKeys = await vi.hoisted(() =>
   [
     "generic",
@@ -66,8 +65,7 @@ vi.mock("../composables/useSalesRepCustomerOptions", () => ({
 
 vi.mock("@/shared/notification", () => ({ useNotifications: () => mocks.notifications }));
 
-/* Multiple mode carries whole items, not ids — the real VcSelect pushes the item it was given. Each option is a
-   button so a click toggles it, the way the kit's checkbox rows do. */
+/* Multiple mode carries whole items, not ids — the real VcSelect pushes the item it was given. */
 const VcSelect = defineComponent({
   props: {
     modelValue: { type: Array as PropType<Record<string, string>[]>, default: () => [] },
@@ -166,7 +164,6 @@ const VcButton = defineComponent({
 });
 
 let component: RenderResult;
-/** Reached the way the modal reaches it — through a template ref. */
 let controls: IWishlistSharingScopeControlsType;
 
 function renderSharing(targets: SharingTargetType[] = [], message = "") {
@@ -220,7 +217,6 @@ function shareMessage() {
   return component.getByTestId<HTMLTextAreaElement>("wishlist-share-message-input");
 }
 
-/** A target the way the backend hands it over, with the owning module's name and city already resolved. */
 function target(id: string, name?: string, subtitle?: string, imageUrl?: string): SharingTargetType {
   return { id, name, subtitle, imageUrl };
 }
@@ -296,7 +292,7 @@ describe("WishlistCustomerSharing", () => {
     });
 
     it("keeps a persisted target listed even when it is not among the loaded options", () => {
-      // Over the paging cap, or off the rep's roster since: without seeding it there would be no way to untick it.
+      // Over the paging cap, or off the roster since: without seeding it there would be no way to untick it.
       mocks.options.value = [{ organizationId: "org-9", organizationName: "Initech", location: "", imageUrl: "" }];
 
       renderSharing([target("org-outside-the-page", "Umbrella")]);
@@ -316,7 +312,7 @@ describe("WishlistCustomerSharing", () => {
       return component.queryByTestId(`wishlist-sharing-remove-recipient-${organizationId}`);
     }
 
-    /** Scoped to the list: the picker's own options carry the same names. */
+    // Scoped to the list: the picker's options carry the same names.
     function recipientList() {
       return within(component.getByTestId("wishlist-sharing-recipients"));
     }
@@ -328,7 +324,7 @@ describe("WishlistCustomerSharing", () => {
     });
 
     it("shows a persisted recipient as the backend resolved them, without a second lookup", () => {
-      // Deliberately not in the picker's options: the name and city come with the target itself.
+      // Not in the picker's options: the name and city come with the target itself.
       mocks.options.value = [];
 
       renderSharing([target("org-1", "Acme Inc.", "Richmond, Virginia")]);
@@ -566,18 +562,23 @@ describe("WishlistCustomerSharing", () => {
       expect(mocks.sendCommunication.mock.calls[0][0]).toMatchObject({ sendEmail: true, sendPush: true });
     });
 
-    it("sends nothing when nobody was added", async () => {
+    it("sends nothing when nobody was added, but still confirms the save", async () => {
       renderSharing([target("org-1", "Acme Inc."), target("org-2", "Globex")]);
 
       await pick("org-1");
       await controls.onSaved!(SAVED_CONTEXT);
 
       expect(mocks.sendCommunication).not.toHaveBeenCalled();
+      expect(mocks.notifications.success.mock.calls[0][0]).toMatchObject({
+        text: `${KEY}.share_success|{"count":1}`,
+      });
     });
 
-    it("confirms a full delivery, counting who it reached", async () => {
-      await shareWith(["org-1", "org-2"]);
+    it("confirms the save by counting everyone the list now reaches, not who was just notified", async () => {
+      // One recipient was already there and is not notified again; the card behind the dialog says 2, so this must too.
+      await shareWith(["org-2"], [target("org-1", "Acme Inc.")]);
 
+      expect(mocks.sendCommunication.mock.calls[0][0]).toMatchObject({ organizationIds: ["org-2"] });
       expect(mocks.notifications.success).toHaveBeenCalledOnce();
       expect(mocks.notifications.success.mock.calls[0][0]).toMatchObject({
         text: `${KEY}.share_success|{"count":2}`,

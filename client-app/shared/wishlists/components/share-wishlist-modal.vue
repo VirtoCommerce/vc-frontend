@@ -52,8 +52,7 @@
         </template>
       </VcInput>
 
-      <!-- Kept alive so a scope's draft — the picked recipients, the message — survives a look at another tab. The
-           cache dies with the dialog: `openModal` mounts a fresh modal per open, so the next one re-reads the server. -->
+      <!-- Kept alive so a scope's draft survives a look at another tab. The cache dies with the dialog. -->
       <KeepAlive>
         <component
           :is="activeScopeElement"
@@ -68,8 +67,7 @@
     </div>
 
     <template #actions="{ close }">
-      <!-- Dismissing mid-save would unmount the tree the follow-up still needs, losing it without a trace.
-           `isPersistent` covers Esc, the backdrop and the header X; this button needs its own guard. -->
+      <!-- `isPersistent` covers Esc, the backdrop and the header X; this button needs its own guard. -->
       <VcButton
         data-test-id="wishlist-sharing-cancel-button"
         color="secondary"
@@ -113,7 +111,7 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
-// The registry keys scopes by raw string so a module can own its own values; core's enum is one of those strings.
+// The registry keys scopes by raw string; core's enum is one of those strings.
 const PRIVATE_SCOPE: string = WishlistScopeType.Private;
 
 const { t } = useI18n();
@@ -123,18 +121,15 @@ const notifications = useNotifications();
 const { openModal } = useModal();
 
 const listSharingScope = computed<string>(() => props.list.sharingSetting?.scope ?? WishlistScopeType.Private);
-// Resolved by whichever module owns the scope, so a recipient row needs no second lookup. Empty for a viewer who
-// does not own the list — the backend hides who else it was shared with.
+// Resolved by the module owning the scope; empty for anyone but the list's owner.
 const listTargets = computed<SharingTargetType[]>(() => props.list.sharingSetting?.targets ?? []);
 const listMessage = computed<string>(() => props.list.sharingSetting?.message ?? "");
 
-// `autoRefetch: false`: the composable refetches outside its own try/catch and rethrows, so a refetch hiccup after a
-// successful mutation would look like a failed save and skip the scope's follow-up. Refreshed explicitly below instead.
+// `autoRefetch: false`: the composable rethrows a refetch failure, which would read as a failed save. Refreshed below.
 const { updateWishlist, fetchWishlists } = useWishlists({ autoRefetch: false });
 const { sharingScopes, getSharingScope, isSharingScopeAvailable } = useWishlistSharingScopes();
 
-// Modal-owned busy flag for the save action. Driven with try/finally so the Save button can never get stuck
-// showing the loader (useWishlists' shared `loading` can leak true on error), and it guards against double-submit.
+// Own flag rather than `useWishlists`' shared `loading`, which can leak true on error.
 const saving = ref(false);
 
 const sharingScope = ref<string>(listSharingScope.value);
@@ -144,8 +139,7 @@ const scopeControls = useTemplateRef<IWishlistSharingScopeControlsType>("scopeCo
 const listSharingScopes = computed(() => {
   const available = sharingScopes.value.filter(isSharingScopeAvailable);
 
-  // A scope the list already carries stays listed even when it isn't on offer, or the select would render empty and
-  // saving would silently rewrite it. The provider may be gone entirely, hence the fallback to the raw value.
+  // A scope the list already carries stays listed even when it isn't on offer, or saving would silently rewrite it.
   const persisted = listSharingScope.value;
   const isPersistedListed = available.some((scope) => scope.scope === persisted);
   const scopes = [...available];
@@ -163,7 +157,7 @@ const listSharingScopes = computed(() => {
 });
 
 const activeScope = computed(() => getSharingScope(sharingScope.value));
-// Such a scope stays listed (see above) but must not offer its controls — that capability is what this user lacks.
+// Such a scope stays listed but must not offer its controls.
 const activeScopeElement = computed(() =>
   activeScope.value && isSharingScopeAvailable(activeScope.value) ? activeScope.value.element : undefined,
 );
@@ -171,15 +165,14 @@ const listSharingScopeSupportsLink = computed(() => !!activeScope.value?.support
 const sharingKey = computed(() => props.list.sharingSetting?.id ?? crypto.randomUUID());
 const sharingLink = computed(() => `${location.protocol}//${location.host}/shared-list/${sharingKey.value}`);
 
-// While the scope's component is still resolving, Save stays disabled rather than saving a half-configured scope.
 const scopeCanSave = computed(() => (activeScopeElement.value ? !!scopeControls.value?.canSave : true));
 const scopeDirty = computed(() => !!scopeControls.value?.dirty);
 const scopeChanged = computed(() => sharingScope.value !== listSharingScope.value);
 
 const canSave = computed<boolean>(() => scopeCanSave.value && (scopeChanged.value || scopeDirty.value));
 
-// Only an already-shared list has an audience to lose. A first share out of Private takes nothing away, and swapping
-// recipients inside one scope is not a revocation — but leaving a sharing scope is, whichever scope follows it.
+// Only leaving a sharing scope revokes an audience; a first share takes nothing away, and swapping recipients
+// inside one scope is not a revocation.
 const revokesCurrentAudience = computed(() => listSharingScope.value !== PRIVATE_SCOPE && scopeChanged.value);
 
 function requestSave(closeHandle: () => void): void {
@@ -197,7 +190,7 @@ function requestSave(closeHandle: () => void): void {
     component: StopSharingConfirmationModal,
     props: {
       onConfirm() {
-        // Dismissed first: the share dialog carries the loader and refuses dismissal on its own while the write runs.
+        // Dismissed first: the share dialog carries the loader and refuses dismissal while the write runs.
         closeConfirmation();
         void save(closeHandle);
       },
@@ -212,8 +205,7 @@ async function save(closeHandle: () => void): Promise<void> {
 
   saving.value = true;
   try {
-    // Sharing only: the list's name and description are owned by the rename dialog and are not sent from here. A scope
-    // without controls contributes nothing — the backend applies a null target for its own non-targeted scopes.
+    // Sharing only: name and description belong to the rename dialog. A scope without controls contributes nothing.
     await updateWishlist({
       listId: props.list.id,
       scope: sharingScope.value,
@@ -221,8 +213,7 @@ async function save(closeHandle: () => void): Promise<void> {
       ...(scopeControls.value?.payload ?? {}),
     });
 
-    // Saved from here on, so neither the follow-up nor the refresh may surface as a save error. Both are awaited to
-    // keep the loader up.
+    // Saved from here on, so neither step may surface as a save error; both are awaited to keep the loader up.
     try {
       await scopeControls.value?.onSaved?.({
         listName: props.list.name ?? "",
@@ -240,7 +231,7 @@ async function save(closeHandle: () => void): Promise<void> {
 
     closeHandle();
   } catch {
-    // The underlying mutation already logs; surface a toast and let the user retry (the button resets below).
+    // The mutation already logs; surface a toast and let the user retry.
     notifications.error({
       text: t("shared.wishlists.add_or_update_wishlist_modal.save_error"),
       single: true,

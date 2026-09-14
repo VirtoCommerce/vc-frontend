@@ -57,7 +57,7 @@ export type SalesRepTopSellerRowType = {
 // Rep → customer-org broadcast (VCST-5310). storeId/cultureName are added from globals in the composable,
 // not entered by the user; recipients (all org members) are resolved backend-side.
 export type SalesRepCommunicationInputType = {
-  // One send reaches every member of every organization listed, and a member of several of them receives it once.
+  // One send reaches every member of every organization listed, each of them once.
   organizationIds: string[];
   sendEmail: boolean;
   sendPush: boolean;
@@ -138,12 +138,12 @@ export type SalesRepCustomerOrderRowType = {
   isOwn: boolean;
 };
 
-// A customer the list is (or is about to be) shared with, resolved for display.
+// A customer the list is, or is about to be, shared with.
 export type WishlistSharingRecipientType = {
   organizationId: string;
   organizationName: string;
-  /** "City, Region"; empty when the customer's address never loaded. */
+  /** "City, Region"; empty when there is no address. */
   location: string;
-  /** The organization's own logo; empty when it has none, and the avatar falls back to initials. */
+  /** The organization's logo; empty when it has none, and the avatar falls back to initials. */
   imageUrl: string;
 };

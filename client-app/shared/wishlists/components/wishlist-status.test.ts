@@ -6,7 +6,7 @@ import WishlistStatus from "./wishlist-status.vue";
 import type { SharingSettingType } from "@/core/api/graphql/types";
 import "@testing-library/jest-dom/vitest";
 
-// Echoes the key, and the interpolation with it, so a test can see whether the count was offered at all.
+// Echoes the key with its interpolation, so a test can see whether the count was offered.
 vi.mock("vue-i18n", () => ({
   useI18n: () => ({
     t: (key: string, named?: Record<string, unknown>, plural?: number) =>
@@ -18,7 +18,7 @@ vi.mock("vue-i18n", () => ({
 const TARGETED_SCOPE = "TargetedTestScope";
 const TARGETED_STATUS_KEY = "test_module.targeted_scope.status";
 
-// A contributed scope is by definition absent from the generated enum, hence the cast.
+// A contributed scope is absent from the generated enum, hence the cast.
 function renderStatus(sharingSetting: { scope: string; isOwner: boolean; targets?: { id: string }[] }) {
   return render(WishlistStatus, {
     props: { sharingSetting: { id: "k", ...sharingSetting } as unknown as SharingSettingType },

@@ -64,9 +64,8 @@ import type { SharingTargetType } from "@/core/api/graphql/types";
 import type { WishlistSharingScopeSavedContextType } from "@/shared/wishlists";
 
 interface IProps {
-  /** Customers the list is already shared with, with name and city resolved by this module's backend. */
   targets: SharingTargetType[];
-  /** The note saved with the share, shown again when the dialog is reopened. */
+  /** The note saved with the share. */
   message: string;
   /** Appended to the notification so the customer can reach the list. */
   sharingLink: string;
@@ -85,14 +84,11 @@ const SEPARATOR = "\n\n";
 
 const persistedIds = computed(() => new Set(props.targets.map((target) => target.id)));
 
-// The draft the rep is building. `VcSelect` in multiple mode carries whole items, which is what the recipients list
-// wants anyway — so no second lookup for a row's name and city.
-// Seeded once deliberately: the draft belongs to the rep, and `<KeepAlive>` in the share dialog is what carries it
-// across a scope switch. A later server value must not overwrite what they picked.
+// Seeded once: the draft belongs to the rep, and `<KeepAlive>` carries it across a scope switch.
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss -- see above
 const selected = ref<WishlistSharingRecipientType[]>(props.targets.map(toRecipient));
 
-// eslint-disable-next-line vue/no-setup-props-reactivity-loss -- seeded once, same reason as `selected`
+// eslint-disable-next-line vue/no-setup-props-reactivity-loss -- see `selected`
 const shareMessage = ref(props.message);
 
 const selectedIds = computed(() => new Set(selected.value.map((recipient) => recipient.organizationId)));
@@ -102,11 +98,9 @@ const removedIds = computed(() => [...persistedIds.value].filter((id) => !select
 
 const messageChanged = computed(() => shareMessage.value.trim() !== props.message.trim());
 
-// Only a genuinely different set counts: re-selecting the original (including A -> B -> A) is no change.
 const isDirty = computed(() => addedIds.value.length > 0 || removedIds.value.length > 0 || messageChanged.value);
 
-// A customer already granted may sit on a page the picker never fetched, or on none at all once the ACL changed.
-// Listing them keeps their checkbox ticked, so unticking is possible from the dropdown and not only from the rows.
+// A granted customer may sit on a page the picker never fetched; listing them keeps the row unticking possible.
 const pickerOptions = computed<WishlistSharingRecipientType[]>(() => {
   const missing = props.targets.filter((target) => !findOption(target.id));
 
@@ -118,7 +112,6 @@ const fieldMessage = computed(() => {
     return t("sales_rep.list_sharing.share_customers_error");
   }
 
-  // Emptying the list leaves Save disabled with nothing said, and the way out is on another tab — so say so.
   if (!selected.value.length && persistedIds.value.size) {
     return t("sales_rep.list_sharing.share_empty_hint");
   }
@@ -126,8 +119,7 @@ const fieldMessage = computed(() => {
   return "";
 });
 
-// The backend leaves both null when the module owning the scope cannot resolve the principal — a deleted
-// organization, most likely — and the id is the only thing left to show.
+// Name and subtitle are null once the organization is gone, leaving the id as the only thing to show.
 function toRecipient(target: SharingTargetType): WishlistSharingRecipientType {
   return {
     organizationId: target.id,
@@ -135,6 +127,17 @@ function toRecipient(target: SharingTargetType): WishlistSharingRecipientType {
     location: target.subtitle ?? "",
     imageUrl: target.imageUrl ?? "",
   };
+}
+
+// Counts everyone the list reaches, matching the card behind the dialog; the notified subset is usually smaller.
+function notifySaved(): void {
+  const count = selected.value.length;
+
+  notifications.success({
+    text: t("sales_rep.list_sharing.share_success", { count }, count),
+    duration: 10000,
+    single: true,
+  });
 }
 
 function deselect(organizationId: string): void {
@@ -145,7 +148,6 @@ function clearSelection(): void {
   selected.value = [];
 }
 
-// An unknown code yields nothing, so the caller keeps its own summary instead of repeating it once per code.
 function localizeWarning(code: string): string | undefined {
   const key = `sales_rep.communication.warnings.${code}`;
 
@@ -159,8 +161,7 @@ async function notifyCustomers(
   const body =
     shareMessage.value.trim() || t("sales_rep.list_sharing.share_default_message", { listName: context.listName });
 
-  // One send for the whole set: the backend fans out to every member of every organization, and a member of several
-  // of them still receives it once.
+  // One send for the whole set: a member of several of these organizations still receives it once.
   const result = await sendCommunication({
     organizationIds,
     sendEmail: true,
@@ -172,11 +173,7 @@ async function notifyCustomers(
   const details = result.warnings.map(localizeWarning).filter(Boolean).join(" ");
 
   if (result.succeeded && !result.warnings.length) {
-    notifications.success({
-      text: t("sales_rep.list_sharing.share_success", { count: organizationIds.length }, organizationIds.length),
-      duration: 10000,
-      single: true,
-    });
+    notifySaved();
 
     return;
   }
@@ -194,7 +191,7 @@ async function notifyCustomers(
 }
 
 defineExpose({
-  // An emptied list is not a way to stop sharing — that is the scope's job, and the hint above says so.
+  // An emptied list is not a way to stop sharing — that is the scope's job.
   canSave: computed(() => selected.value.length > 0),
   dirty: isDirty,
   payload: computed(() => ({
@@ -203,7 +200,10 @@ defineExpose({
     message: shareMessage.value.trim(),
   })),
   onSaved: async (context: WishlistSharingScopeSavedContextType) => {
+    // Only new recipients are notified; a save that just drops one still has to confirm itself.
     if (!addedIds.value.length) {
+      notifySaved();
+
       return;
     }
 
