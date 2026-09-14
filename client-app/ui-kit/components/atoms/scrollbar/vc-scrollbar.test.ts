@@ -1,6 +1,7 @@
 import { enableAutoUnmount, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { h, nextTick } from "vue";
+import { describeScrollBox as describeBox } from "@/core/utilities/tests";
 import VcScrollbar from "./vc-scrollbar.vue";
 
 // jsdom ships MutationObserver but not ResizeObserver, and useResizeObserver constructs one on
@@ -14,37 +15,6 @@ class ResizeObserverStub {
 vi.stubGlobal("ResizeObserver", ResizeObserverStub);
 
 enableAutoUnmount(afterEach);
-
-/**
- * jsdom has no layout, so the box has to be described by hand — and the browser will not produce
- * every shape that can be written here. `scrollHeight` is clamped to at least `clientHeight`, so
- * content that fits reports them EQUAL; a smaller scrollHeight is unreachable in a real browser
- * and once let a test pass on behaviour the page could never exercise.
- */
-function describeBox(
-  element: HTMLElement,
-  box: { clientHeight: number; scrollHeight: number; scrollTop: number; clientWidth?: number; scrollWidth?: number },
-) {
-  const clientWidth = box.clientWidth ?? 300;
-  const scrollWidth = box.scrollWidth ?? clientWidth;
-
-  // Both axes, or the guard only covers the one it was written for — and the width the helper
-  // supplies must be describable too, or it invents a second impossible box on the way.
-  if (box.scrollHeight < box.clientHeight) {
-    throw new Error(`impossible box: scrollHeight ${box.scrollHeight} < clientHeight ${box.clientHeight}`);
-  }
-
-  if (scrollWidth < clientWidth) {
-    throw new Error(`impossible box: scrollWidth ${scrollWidth} < clientWidth ${clientWidth}`);
-  }
-
-  Object.defineProperty(element, "clientWidth", { value: clientWidth, configurable: true });
-  Object.defineProperty(element, "scrollWidth", { value: scrollWidth, configurable: true });
-
-  Object.defineProperty(element, "clientHeight", { value: box.clientHeight, configurable: true });
-  Object.defineProperty(element, "scrollHeight", { value: box.scrollHeight, configurable: true });
-  Object.defineProperty(element, "scrollTop", { value: box.scrollTop, writable: true, configurable: true });
-}
 
 // The observers behind the content check are debounced by 100 ms.
 const CONTENT_DEBOUNCE_MS = 100;

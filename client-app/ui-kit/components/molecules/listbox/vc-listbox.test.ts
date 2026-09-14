@@ -67,6 +67,17 @@ describe("VcListbox", () => {
 
   // `--max-height` is resolved on the root, so the property has to be declared there: on the
   // list itself it is invisible to the rule that reads it and the prop does nothing.
+  // Порог — мера самой области прокрутки, а не списка: без проброса подгрузка страницы
+  // начиналась бы ровно у нижней границы, а не заранее.
+  it("hands the edge threshold to the scroll region", () => {
+    const wrapper = mountListbox({
+      props: { edgeThreshold: 50 },
+      slots: { default: () => option("Albania") },
+    });
+
+    expect(wrapper.getComponent(UIKitComponents.VcScrollbar).props("edgeThreshold")).toBe(50);
+  });
+
   it("declares maxHeight on the root, where the height rule reads it", () => {
     const wrapper = mountListbox({
       props: { maxHeight: "20rem" },

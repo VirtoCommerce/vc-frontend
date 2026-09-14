@@ -128,9 +128,13 @@
           </VcMenuItem>
 
           <VcMenuItem v-if="showLoadingRow" role="option" :aria-selected="false" disabled :size="itemSize">
-            <slot name="loading">
-              <VcLoader class="vc-select__loader" />
-            </slot>
+            <!-- The row is a flex line that starts at the left like any option; a spinner standing
+                 in for the whole list belongs in the middle of it. -->
+            <span class="vc-select__loading">
+              <slot name="loading">
+                <VcLoader />
+              </slot>
+            </span>
           </VcMenuItem>
 
           <VcMenuItem v-else-if="!filteredItems.length" role="option" :aria-selected="false" disabled :size="itemSize">
@@ -139,19 +143,19 @@
             </slot>
           </VcMenuItem>
 
-          <!--
-            Rendered only while more pages exist, so the loader's own "end of list" branch
-            (page-number >= pages-count) is unreachable — the numbers below just keep it quiet.
-          -->
-          <VcInfinityScrollLoader
-            v-if="hasNextPage"
+          <VcLoadMore
+            tag="li"
+            role="none"
             :loading="loading"
-            :page-number="1"
-            :pages-count="2"
-            distance="50"
-            class="vc-select__load-more"
-            @visible="$emit('loadMore')"
-          />
+            :has-next-page="hasNextPage"
+            @load-more="$emit('loadMore')"
+          >
+            <template #loading>
+              <slot name="loading">
+                <VcLoader />
+              </slot>
+            </template>
+          </VcLoadMore>
         </VcListbox>
       </template>
     </VcPopover>
@@ -185,7 +189,7 @@ const emit = defineEmits<{
   (event: "change", value: VcSelectEmittedType<V, M>): void;
   /** Select all was pressed. Fires alongside the model update, so a paged consumer can load the rest. */
   (event: "selectAll"): void;
-  /** The list was scrolled to its end and more pages are available. */
+  /** The list is resting at its end and more pages are available. */
   (event: "loadMore"): void;
   /** Debounced search text; only emitted when `serverFilter` is set. */
   (event: "search", value: string): void;
@@ -230,7 +234,11 @@ const props = withDefaults(
     total?: number;
     /** Shows a loading indicator inside the list. */
     loading?: boolean;
-    /** Renders the infinite-scroll sentinel; reaching it emits `load-more`. */
+    /**
+     * More options exist beyond `items`. While it is set, the list asks for the next page with
+     * `load-more` whenever it comes to rest at its bottom — including a page too short to scroll.
+     * `loading` must be bound alongside it, or one request becomes many.
+     */
     hasNextPage?: boolean;
     /** Turns off client-side filtering — the consumer filters and re-supplies `items`. */
     serverFilter?: boolean;
@@ -527,9 +535,10 @@ if (import.meta.env.DEV && props.selectAll && !props.multiple) {
 
 const showSelectAll = computed(() => props.selectAll && props.multiple);
 
-// A spinner replaces the empty row only while there is nothing to show yet; once options are
-// on screen, further loading is reported by the sentinel at the bottom instead.
-const showLoadingRow = computed(() => props.loading && !filteredItems.value.length);
+// A spinner replaces the empty row only while there is nothing to show yet, and only while
+// nothing else is already reporting the fetch: VcLoadMore draws its own as soon as it knows
+// another page is coming, and two spinners in a row of three is what the overlap used to look like.
+const showLoadingRow = computed(() => props.loading && !filteredItems.value.length && !props.hasNextPage);
 
 /** Select all acts on what the user can see, so an active filter narrows it. */
 const selectableValues = computed(() => filteredItems.value.map((item) => getItemValue(item)));
@@ -628,6 +637,10 @@ function focusSelectAll(): boolean {
 
   &__container {
     @apply relative rounded-[--radius];
+  }
+
+  &__loading {
+    @apply flex w-full justify-center;
   }
 
   &__select-all {

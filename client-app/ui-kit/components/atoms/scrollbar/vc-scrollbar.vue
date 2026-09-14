@@ -60,7 +60,16 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const el = useTemplateRef<HTMLElement>("el");
 
-provide(vcScrollbarKey, { el });
+// The edges the region is resting against, as of the last measurement. They are the state the
+// reach-* events are derived from, published so that a descendant deciding something from them —
+// VcLoadMore asking for the next page — reads the same numbers rather than measuring its own.
+// Pre-measurement defaults describe an unscrolled region that has not reached its end.
+const isAtTop = ref(true);
+const isAtBottom = ref(false);
+const isAtLeft = ref(true);
+const isAtRight = ref(false);
+
+provide(vcScrollbarKey, { el, isAtTop, isAtBottom, isAtLeft, isAtRight });
 
 // A scrollable region must be keyboard-reachable (axe: scrollable-region-focusable), but only
 // when nothing inside is focusable — axe passes regions with focusable content, and a tab stop
@@ -163,11 +172,6 @@ useMutationObserver(el, scheduleContentUpdate, {
 });
 useEventListener(el, "load", scheduleContentUpdate, { capture: true });
 
-const wasAtTop = ref(true);
-const wasAtBottom = ref(false);
-const wasAtLeft = ref(true);
-const wasAtRight = ref(false);
-
 /**
  * Which edges the region touches, emitted as arrivals at each one.
  *
@@ -183,7 +187,7 @@ function updateEdges(target: HTMLElement): Omit<VcScrollbarPayloadType, "scrollT
   const { scrollTop, scrollLeft, scrollHeight, scrollWidth, clientHeight, clientWidth } = target;
   const threshold = props.edgeThreshold;
 
-  const edges = {
+  const measured = {
     isAtTop: scrollTop <= threshold,
     isAtBottom: scrollTop + clientHeight >= scrollHeight - threshold,
     isAtLeft: scrollLeft <= threshold,
@@ -194,9 +198,9 @@ function updateEdges(target: HTMLElement): Omit<VcScrollbarPayloadType, "scrollT
   // content while closed (VcPopover renders it eagerly and hides it with display:none), a
   // `max-height: 0` region, a squeezed flex item. `||`, not `&&`: one collapsed axis is enough,
   // and the other axis's numbers are meaningless while the box has no area. Announce nothing and
-  // leave the latches for the first real measurement rather than poisoning them with this one.
+  // leave the published state for the first real measurement rather than poisoning it with this one.
   if (!clientHeight || !clientWidth) {
-    return edges;
+    return measured;
   }
 
   // An axis that cannot scroll sits at both of its edges by definition (`overflow: hidden` on the
@@ -205,32 +209,35 @@ function updateEdges(target: HTMLElement): Omit<VcScrollbarPayloadType, "scrollT
   const verticalScrolls = props.vertical && !props.disabled;
   const horizontalScrolls = props.horizontal && !props.disabled;
 
-  if (verticalScrolls && edges.isAtTop && !wasAtTop.value) {
+  // The refs still hold the PREVIOUS measurement here — they are written at the end of this
+  // function — which is what makes the four events below arrivals rather than states.
+  if (verticalScrolls && measured.isAtTop && !isAtTop.value) {
     emit("reachTop");
   }
-  if (verticalScrolls && edges.isAtBottom && !wasAtBottom.value) {
+  if (verticalScrolls && measured.isAtBottom && !isAtBottom.value) {
     emit("reachBottom");
   }
-  if (horizontalScrolls && edges.isAtLeft && !wasAtLeft.value) {
+  if (horizontalScrolls && measured.isAtLeft && !isAtLeft.value) {
     emit("reachLeft");
   }
-  if (horizontalScrolls && edges.isAtRight && !wasAtRight.value) {
+  if (horizontalScrolls && measured.isAtRight && !isAtRight.value) {
     emit("reachRight");
   }
 
-  // Only for the axes that can emit: latching a gated axis would leave it already "arrived", so
-  // turning that axis on later (VcTable binds both from props) would announce nothing.
+  // The state doubles as the latch, so it is written only for the axes that can emit: recording an
+  // arrival on a gated axis would leave it already "arrived", and turning that axis on later
+  // (VcTable binds both from props) would then announce nothing.
   if (verticalScrolls) {
-    wasAtTop.value = edges.isAtTop;
-    wasAtBottom.value = edges.isAtBottom;
+    isAtTop.value = measured.isAtTop;
+    isAtBottom.value = measured.isAtBottom;
   }
 
   if (horizontalScrolls) {
-    wasAtLeft.value = edges.isAtLeft;
-    wasAtRight.value = edges.isAtRight;
+    isAtLeft.value = measured.isAtLeft;
+    isAtRight.value = measured.isAtRight;
   }
 
-  return edges;
+  return measured;
 }
 
 const onScroll = useThrottleFn(

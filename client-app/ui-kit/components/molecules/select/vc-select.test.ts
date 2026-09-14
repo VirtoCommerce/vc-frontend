@@ -3,11 +3,16 @@ import { vMaska } from "maska/vue";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { h, nextTick } from "vue";
 import { createI18n } from "vue-i18n";
-import { createWrapperFactory } from "@/core/utilities/tests";
+import { createWrapperFactory, describeScrollBox } from "@/core/utilities/tests";
 import * as UIKitComponents from "@/ui-kit/components";
 import VcSelect from "./vc-select.vue";
 
 const ITEMS = ["Albania", "Belgium", "China"];
+
+// VcScrollbar внутри списка дебаунсит пересчёт краёв на 100 мс.
+async function afterContentSettles() {
+  await new Promise((resolve) => setTimeout(resolve, 160));
+}
 
 const OBJECT_ITEMS = [
   { id: "1", name: "Albania" },
@@ -41,16 +46,6 @@ const countingI18n = createI18n({
 // отслеживает только присоединённые узлы — detached-монтирование ломает и то и другое.
 // Отсюда обязательный auto-unmount: оставшийся в body экземпляр перехватывал бы
 // эти запросы в следующих тестах.
-// jsdom has no IntersectionObserver, and VcInfinityScrollLoader constructs one on mount.
-// The sentinel's visibility is not what these tests check, so a no-op is enough.
-class IntersectionObserverStub {
-  observe(): void {}
-  unobserve(): void {}
-  disconnect(): void {}
-}
-
-vi.stubGlobal("IntersectionObserver", IntersectionObserverStub);
-
 enableAutoUnmount(afterEach);
 
 // Монтирование намеренно интеграционное: дети (VcInput, VcPopover, VcMenuItem, VcCheckbox)
@@ -482,23 +477,52 @@ describe("VcSelect", () => {
     it("shows a spinner instead of the empty row while the first page loads", () => {
       const wrapper = createWrapper({ items: [], loading: true });
 
-      expect(wrapper.find(".vc-select__loader").exists()).toBe(true);
+      expect(wrapper.find(".vc-loader").exists()).toBe(true);
       expect(wrapper.get('[role="option"]').text()).not.toContain("ui_kit.select.no_options");
     });
 
     it("keeps showing options while a further page loads", () => {
-      const wrapper = createWrapper({ items: ITEMS, loading: true });
+      const wrapper = createWrapper({ items: ITEMS, loading: true, hasNextPage: true });
 
-      expect(wrapper.find(".vc-select__loader").exists()).toBe(false);
       expect(wrapper.findAll('[role="option"]')).toHaveLength(ITEMS.length);
     });
 
-    it("renders the load-more sentinel only when more pages exist", () => {
-      const without = createWrapper({ items: ITEMS });
-      const with_ = createWrapper({ items: ITEMS, hasNextPage: true });
+    // Пустой список и загрузка следующей страницы — два разных индикатора в одном и том же месте.
+    it.each([
+      ["a first page with nothing to show yet", { items: [], loading: true }],
+      ["a further page on its way", { items: ITEMS, loading: true, hasNextPage: true }],
+    ])("shows exactly one spinner for %s", (_label, props) => {
+      const wrapper = createWrapper(props);
 
-      expect(without.find(".vc-select__load-more").exists()).toBe(false);
-      expect(with_.find(".vc-select__load-more").exists()).toBe(true);
+      expect(wrapper.findAll(".vc-loader")).toHaveLength(1);
+    });
+
+    it("shows no spinner while nothing is being fetched", () => {
+      const wrapper = createWrapper({ items: ITEMS, hasNextPage: true });
+
+      expect(wrapper.find(".vc-loader").exists()).toBe(false);
+    });
+
+    // Проводка целиком: список внутри попапа измеряется, стоит у своего низа — и селект просит
+    // страницу, хотя прокручивать тут нечего.
+    it("asks for the next page when the open list rests at its bottom", async () => {
+      const wrapper = createWrapper({ items: ITEMS, hasNextPage: true });
+
+      await wrapper.get("input").trigger("keydown", { key: "ArrowDown" });
+
+      describeScrollBox(wrapper.get(".vc-scrollbar").element as HTMLElement, {
+        clientHeight: 400,
+        scrollHeight: 400,
+        scrollTop: 0,
+      });
+
+      // В браузере измеримым список делает само открытие, и пересчёт запускает ResizeObserver.
+      // В jsdom его нет, поэтому измерение провоцируется тем, что скроллбар действительно
+      // наблюдает, — пришедшей строкой.
+      await wrapper.setProps({ items: [...ITEMS, "Denmark"] });
+      await afterContentSettles();
+
+      expect(wrapper.emitted("loadMore")).toHaveLength(1);
     });
 
     // Подгрузка страницы дописывает элементы в конец: подсвеченный не сдвинулся, значит

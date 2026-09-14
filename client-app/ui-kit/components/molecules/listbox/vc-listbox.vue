@@ -10,6 +10,7 @@
       tag="ul"
       role="listbox"
       :focusable="focusable"
+      :edge-threshold="edgeThreshold"
       :aria-label="listLabel"
       :aria-activedescendant="activeDescendantId"
       :aria-multiselectable="multiselectable || undefined"
@@ -42,6 +43,11 @@ withDefaults(
     activeDescendantId?: string;
     dividers?: boolean;
     maxHeight?: string;
+    /**
+     * How close to an edge the scroll area counts as having reached it, in px. Forwarded to the
+     * scroll region, whose measure it is; a paged list uses it to ask for the next page early.
+     */
+    edgeThreshold?: number;
   }>(),
   {
     dividers: true,

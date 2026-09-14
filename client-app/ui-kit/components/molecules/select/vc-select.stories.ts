@@ -1,3 +1,4 @@
+import { computed, ref } from "vue";
 import { VcSelect } from "..";
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
@@ -639,37 +640,78 @@ export const Loading: StoryType = {
 
 export const InfiniteScroll: StoryType = {
   args: {
-    items: ITEMS,
+    items: [],
     label: "Buyer name",
     placeholder: "Select buyers",
     multiple: true,
-    hasNextPage: true,
     total: 3000,
   },
+  render: (args) => ({
+    setup: () => {
+      const TOTAL_PAGES = 4;
+      const items = ref(["Buyer 1", "Buyer 2"]);
+      const page = ref(1);
+      const loading = ref(false);
+
+      async function loadNextPage() {
+        loading.value = true;
+        await new Promise((resolve) => setTimeout(resolve, 600));
+
+        const start = items.value.length;
+        items.value.push(...Array.from({ length: 6 }, (_, index) => `Buyer ${start + index + 1}`));
+        page.value++;
+        loading.value = false;
+      }
+
+      return { args, items, loading, page, hasNextPage: computed(() => page.value < TOTAL_PAGES), loadNextPage };
+    },
+    template: `
+      <div class="mb-32">
+        <VcSelect
+          v-bind="args"
+          v-model="args.modelValue"
+          :items="items"
+          :loading="loading"
+          :has-next-page="hasNextPage"
+          @load-more="loadNextPage"
+        />
+
+        <div class="mt-2 text-sm text-neutral-600">{{ items.length }} loaded, page {{ page }}/4</div>
+      </div>
+    `,
+  }),
   parameters: {
     docs: {
       source: {
         code: `
-<VcSelect
-  v-model="selected"
-  :items="loadedItems"
-  :loading="loading"
-  :has-next-page="hasNextPage"
-  :total="totalCount"
-  multiple
-  server-filter
-  @load-more="loadNextPage"
-  @search="search"
-/>
+<script setup lang="ts">
+const { items, loading, hasNextPage, totalCount, loadNextPage, search } = useBuyers();
+</script>
+
+<template>
+  <VcSelect
+    v-model="selected"
+    :items="items"
+    :loading="loading"
+    :has-next-page="hasNextPage"
+    :total="totalCount"
+    multiple
+    server-filter
+    @load-more="loadNextPage"
+    @search="search"
+  />
+</template>
         `,
       },
       description: {
         story:
-          "`items` stays consumer-owned: the component renders a sentinel at the bottom of the " +
-          "list and emits `load-more` when it comes into view. Pair it with `server-filter` so the " +
-          "typed text is forwarded through `@search` (debounced 300ms) instead of being applied to " +
-          "the one page that happens to be loaded — otherwise the search would report no results " +
-          "for anything below the fold.",
+          "`items` stays consumer-owned: open the list and it asks for the next page the moment it " +
+          "comes to rest at its bottom — which a two-option first page does immediately, with " +
+          "nothing to scroll. `loading` is not optional here: it is what keeps one request from " +
+          "becoming many, and what asks for the page after the one that just landed. Pair it with " +
+          "`server-filter` so the typed text is forwarded through `@search` (debounced 300ms) " +
+          "instead of being applied to the one page that happens to be loaded — otherwise the " +
+          "search would report no results for anything below the fold.",
       },
     },
   },

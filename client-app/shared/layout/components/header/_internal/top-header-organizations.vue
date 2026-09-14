@@ -21,6 +21,7 @@
       :dividers="false"
       max-height="15rem"
       :focusable="!isShowSearch"
+      :edge-threshold="50"
       :active-descendant-id="isShowSearch ? undefined : activeDescendantId"
       class="top-header-organizations__list"
       @keydown="onListKeydown"
@@ -103,15 +104,7 @@
         {{ $t("shared.layout.header.top_header.no_results") }}
       </div>
 
-      <VcInfinityScrollLoader
-        v-if="hasNextPage"
-        :loading="loading"
-        :page-number="currentPage"
-        :pages-count="pagesCount"
-        distance="50"
-        class="top-header-organizations__loader"
-        @visible="loadOrganizations"
-      />
+      <VcLoadMore tag="li" role="none" :loading="loading" :has-next-page="hasNextPage" @load-more="loadOrganizations" />
     </VcListbox>
   </div>
 </template>
@@ -130,18 +123,8 @@ const emit = defineEmits<{
 const SEARCH_DEBOUNCE_MS = 300;
 
 const { user, organization } = useUser();
-const {
-  searchPhrase,
-  organizations,
-  loading,
-  hasNextPage,
-  pagesCount,
-  currentPage,
-  loadOrganizations,
-  search,
-  reset,
-  isShowSearch,
-} = useUserOrganizations();
+const { searchPhrase, organizations, loading, hasNextPage, loadOrganizations, search, reset, isShowSearch } =
+  useUserOrganizations();
 const { switchError, trySwitch } = useOrganizationSwitcher();
 
 const contactOrganizationId = ref(user.value?.contact?.organizationId);
@@ -307,10 +290,6 @@ async function onSearchClear(): Promise<void> {
 
   &__radio {
     @apply flex px-3 py-1 text-sm;
-  }
-
-  &__loader {
-    @apply py-2;
   }
 
   &__empty {

@@ -1,5 +1,5 @@
-import { ref } from "vue";
-import { VcScrollbar, VcInfinityScrollLoader } from "..";
+import { computed, ref } from "vue";
+import { VcLoadMore, VcScrollbar } from "..";
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
 export default {
@@ -296,18 +296,15 @@ function onScroll(payload: VcScrollbarPayloadType) {
 
 export const WithInfiniteScroll: StoryType = {
   render: (args) => ({
-    components: { VcScrollbar, VcInfinityScrollLoader },
+    components: { VcLoadMore, VcScrollbar },
     setup: () => {
       const items = ref<number[]>(generateItems(15));
       const loading = ref(false);
       const currentPage = ref(1);
       const totalPages = 5;
+      const hasNextPage = computed(() => currentPage.value < totalPages);
 
       const loadMore = async () => {
-        if (loading.value || currentPage.value >= totalPages) {
-          return;
-        }
-
         loading.value = true;
         await new Promise((resolve) => setTimeout(resolve, 800));
 
@@ -317,7 +314,7 @@ export const WithInfiniteScroll: StoryType = {
         loading.value = false;
       };
 
-      return { args, items, loading, currentPage, totalPages, loadMore };
+      return { args, items, loading, currentPage, totalPages, hasNextPage, loadMore };
     },
     template: `
       <div class="flex flex-col gap-4">
@@ -330,50 +327,43 @@ export const WithInfiniteScroll: StoryType = {
             <div v-for="item in items" :key="item" class="p-3 bg-neutral-100 rounded">
               Item {{ item }}
             </div>
-
-            <VcInfinityScrollLoader
-              :loading="loading"
-              :page-number="currentPage"
-              :pages-count="totalPages"
-              @visible="loadMore"
-            />
           </div>
+
+          <VcLoadMore :loading="loading" :has-next-page="hasNextPage" @load-more="loadMore" />
         </VcScrollbar>
       </div>
     `,
   }),
   parameters: {
     docs: {
+      description: {
+        story:
+          "`VcLoadMore` reads its viewport from the scrollbar it sits in — no root or sentinel to " +
+          "configure, and no guard against a duplicate request: `loading` is that guard.",
+      },
       source: {
         code: `
 <script setup lang="ts">
 const items = ref([]);
 const loading = ref(false);
 const page = ref(1);
+const hasNextPage = computed(() => page.value < TOTAL_PAGES);
 
 async function loadMore() {
   loading.value = true;
-  const newItems = await fetchItems(page.value);
-  items.value.push(...newItems);
+  items.value.push(...(await fetchItems(page.value)));
   page.value++;
   loading.value = false;
 }
 </script>
 
 <template>
-  <!-- VcInfinityScrollLoader automatically uses VcScrollbar as viewport -->
   <VcScrollbar vertical class="h-64">
     <div v-for="item in items" :key="item.id">
       {{ item.name }}
     </div>
 
-    <VcInfinityScrollLoader
-      v-if="hasMore"
-      :loading="loading"
-      :page-number="page"
-      :pages-count="totalPages"
-      @visible="loadMore"
-    />
+    <VcLoadMore :loading="loading" :has-next-page="hasNextPage" @load-more="loadMore" />
   </VcScrollbar>
 </template>
         `,

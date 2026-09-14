@@ -46,6 +46,11 @@ interface IProps {
   testId?: string;
 }
 
+if (import.meta.env.DEV) {
+  // eslint-disable-next-line no-console
+  console.warn("[VcInfinityScrollLoader] This component is deprecated. Use VcLoadMore inside a VcScrollbar instead.");
+}
+
 const scrollbarContext = inject(vcScrollbarKey, null);
 
 const resolvedViewport = computed(() => props.viewport ?? scrollbarContext?.el.value ?? null);

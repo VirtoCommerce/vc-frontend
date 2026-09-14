@@ -2,7 +2,7 @@ import { enableAutoUnmount, mount } from "@vue/test-utils";
 import { vMaska } from "maska/vue";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { nextTick } from "vue";
-import { createWrapperFactory } from "@/core/utilities/tests";
+import { createWrapperFactory, describeScrollBox } from "@/core/utilities/tests";
 import * as UIKitComponents from "@/ui-kit/components";
 import TopHeaderOrganizations from "./top-header-organizations.vue";
 
@@ -42,15 +42,6 @@ vi.mock("@/shared/account", () => ({
   }),
   useOrganizationSwitcher: () => ({ switchError: state.switchError, trySwitch: state.trySwitch }),
 }));
-
-// VcInfinityScrollLoader builds one on mount; jsdom has none.
-class IntersectionObserverStub {
-  observe(): void {}
-  unobserve(): void {}
-  disconnect(): void {}
-}
-
-vi.stubGlobal("IntersectionObserver", IntersectionObserverStub);
 
 enableAutoUnmount(afterEach);
 
@@ -210,15 +201,36 @@ describe("TopHeaderOrganizations", () => {
     expect(input.attributes("aria-activedescendant")).toBeUndefined();
   });
 
-  it("shows the load-more sentinel only while more pages exist", async () => {
+  it("shows the load-more indicator only while a page is on its way", async () => {
+    state.hasNextPage.value = true;
     const wrapper = mountComponent();
 
-    expect(wrapper.find(".top-header-organizations__loader").exists()).toBe(false);
+    expect(wrapper.find(".vc-load-more").exists()).toBe(false);
 
-    state.hasNextPage.value = true;
+    state.loading.value = true;
     await nextTick();
 
-    expect(wrapper.find(".top-header-organizations__loader").exists()).toBe(true);
+    expect(wrapper.find(".vc-load-more").exists()).toBe(true);
+  });
+
+  // Список организаций короче своей области почти всегда: без запроса, который не ждёт прокрутки,
+  // вторая страница не пришла бы никогда.
+  it("asks for the next page when the list rests at its bottom", async () => {
+    state.hasNextPage.value = true;
+    const wrapper = mountComponent();
+
+    describeScrollBox(wrapper.get(".vc-scrollbar").element as HTMLElement, {
+      clientHeight: 400,
+      scrollHeight: 400,
+      scrollTop: 0,
+    });
+
+    // В jsdom нет ни вёрстки, ни ResizeObserver: измерение провоцируется изменением контента,
+    // которое скроллбар действительно наблюдает.
+    state.organizations.value = [...state.organizations.value, { id: "org-4", name: "Hooli" }];
+    await new Promise((resolve) => setTimeout(resolve, 160));
+
+    expect(state.loadOrganizations).toHaveBeenCalledTimes(1);
   });
 
   it("shows the empty message when nothing was found", async () => {
