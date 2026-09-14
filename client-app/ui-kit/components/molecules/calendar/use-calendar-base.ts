@@ -163,8 +163,9 @@ export function useCalendarBase(opts: IUseCalendarBaseOptions) {
     return next.compare(maxMonthStart) > 0;
   });
 
+  // reka hands this over unclamped, and it lands after the model watch, so it wins without this.
   function onPlaceholderUpdate(value: DateValue): void {
-    placeholderRef.value = value;
+    placeholderRef.value = clampToBounds(value);
   }
 
   function goToPreviousYear(): void {

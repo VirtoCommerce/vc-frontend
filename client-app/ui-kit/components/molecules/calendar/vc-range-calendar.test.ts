@@ -399,6 +399,17 @@ describe("VcRangeCalendar", () => {
       expect(minCell.exists()).toBe(true);
       expect(minCell.attributes("data-disabled")).toBeUndefined();
     });
+
+    it("stays in bounds when the consumer writes a value outside them", async () => {
+      const wrapper = mountCal({
+        modelValue: { start: "2020-06-01", end: "2020-06-10" },
+        min: "2020-06-01",
+        max: "2020-06-30",
+      });
+      await wrapper.setProps({ modelValue: { start: "2021-07-15" } });
+      await flushPromises();
+      expect(inViewCell(wrapper, "2020-06-30").exists()).toBe(true);
+    });
   });
 
   describe("placeholder preference on external model changes", () => {

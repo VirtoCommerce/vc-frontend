@@ -159,6 +159,13 @@ describe("VcCalendar — placeholder clamping to [min, max]", () => {
       expect(inViewCell(wrapper, "2020-05-15").exists()).toBe(true);
     });
 
+    it("stays in bounds when the consumer writes a value outside them", async () => {
+      const wrapper = mountCal({ modelValue: "2020-06-01", min: "2020-06-01", max: "2020-06-30" });
+      await wrapper.setProps({ modelValue: "2021-07-15" });
+      await flushPromises();
+      expect(inViewCell(wrapper, "2020-06-30").exists()).toBe(true);
+    });
+
     it("leaves a view already inside the bounds where the user navigated it", async () => {
       const wrapper = mountCal({ modelValue: "2020-06-01" });
       await wrapper.find(".vc-calendar__nav--month-prev").trigger("click");
