@@ -142,10 +142,11 @@ describe("WishlistSharingRecipients", () => {
   });
 
   describe("a list short enough to read at a glance", () => {
-    it("carries no header and no expand toggle", () => {
+    it("still offers Clear all, and no expand toggle", () => {
       renderRecipients(customers(3));
 
-      expect(component.queryByTestId("wishlist-sharing-clear-recipients-button")).toBeNull();
+      // Bulk-clear belongs to having recipients at all; only the toggle is about having more than fit.
+      expect(component.getByTestId("wishlist-sharing-clear-recipients-button")).toBeInTheDocument();
       expect(toggle()).toBeNull();
     });
   });

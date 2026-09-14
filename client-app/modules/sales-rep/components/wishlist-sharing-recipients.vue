@@ -1,6 +1,6 @@
 <template>
   <div data-test-id="wishlist-sharing-recipients" class="wishlist-sharing-recipients">
-    <template v-if="collapsible">
+    <template v-if="recipients.length">
       <div class="wishlist-sharing-recipients__header">
         <span class="wishlist-sharing-recipients__title">
           {{ t("sales_rep.list_sharing.recipients_title", { count: recipients.length }) }}
@@ -24,7 +24,7 @@
     <ul
       ref="rowsElement"
       class="wishlist-sharing-recipients__rows"
-      :aria-label="t('sales_rep.list_sharing.recipients_title', { count: recipients.length })"
+      :aria-label="t('sales_rep.list_sharing.recipients_title', { count: visibleRecipients.length })"
     >
       <li v-for="(recipient, index) in visibleRecipients" :key="recipient.organizationId">
         <div class="wishlist-sharing-recipients__row">
