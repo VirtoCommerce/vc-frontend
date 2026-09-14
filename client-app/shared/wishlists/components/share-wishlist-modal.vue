@@ -248,7 +248,7 @@ async function save(closeHandle: () => void): Promise<void> {
       listId: props.list.id,
       scope: sharingScope.value,
       sharingKey: sharingKey.value,
-      ...(scopeControls.value?.payload ?? {}),
+      ...scopeControls.value?.payload,
     });
 
     // The server owns the sharing key; ours was only a proposal. The customer notification links to what was
