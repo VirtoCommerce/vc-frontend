@@ -239,8 +239,13 @@ const actualListName = computed(() => props.listName ?? list.value?.name);
 
 const isMobile = breakpoints.smaller("lg");
 
+// `isOwner` as well as write access: the two are independent, and changing the scope revokes an audience a
+// non-owner cannot even see — the backend resolves `targets` for the owner only.
 const canShare = computed(
-  () => isCorporateMember.value && list.value?.sharingSetting?.access === WishlistAccessType.Write,
+  () =>
+    isCorporateMember.value &&
+    !!list.value?.sharingSetting?.isOwner &&
+    list.value?.sharingSetting?.access === WishlistAccessType.Write,
 );
 
 function openListSettingsModal(): void {

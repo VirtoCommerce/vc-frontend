@@ -32,7 +32,7 @@
     <div class="wishlist-card__dropdown">
       <WishlistDropdownMenu
         v-if="list.sharingSetting?.access === WishlistAccessType.Write"
-        :shareable="isCorporateMember"
+        :shareable="isCorporateMember && !!list.sharingSetting?.isOwner"
         @edit="$emit('settings')"
         @share="$emit('share')"
         @remove="$emit('remove')"
