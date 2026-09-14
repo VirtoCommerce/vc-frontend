@@ -17,6 +17,7 @@ import { dirname, join, relative, resolve } from "node:path";
 import * as readline from "node:readline/promises";
 import { fileURLToPath } from "node:url";
 import { CONTRACT_TYPE_PEERS, MF_SHARED_RANGES } from "./federation.mjs";
+import { gitIn } from "./git.mjs";
 
 const CORE_API_DIR = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(CORE_API_DIR, "../..");
@@ -145,7 +146,24 @@ const selected = await selectGroups();
 
 // ── assemble dependencies ─────────────────────────────────────────────────────
 const runtimeDeps = ["vue", ...GROUPS.filter((group) => selected[group.key]).flatMap((group) => group.packages)];
-const toolDeps = ["typescript", "vite", "@vitejs/plugin-vue", "@module-federation/vite", "vue-tsc"];
+const toolDeps = [
+  "typescript",
+  "vite",
+  "@vitejs/plugin-vue",
+  "@module-federation/vite",
+  "vue-tsc",
+  // The host's lint/format/test stack, so a plugin is reviewed against the same conventions.
+  "eslint",
+  "@vue/eslint-config-typescript",
+  "eslint-plugin-vue",
+  "eslint-plugin-prettier",
+  "eslint-config-prettier",
+  "typescript-eslint",
+  "globals",
+  "prettier",
+  "vitest",
+  "jsdom",
+];
 if (selected.tailwind) {
   // The last two are required by the host's tailwind preset (its `plugins` entries
   // resolve from THIS plugin's node_modules — the preset snapshot cannot carry code).
@@ -166,6 +184,19 @@ if (selected.tailwind) {
 // Local co-dev against an unpushed facade uses yalc instead (see HOWTO.md).
 const HOST_REPO = "VirtoCommerce/vc-frontend";
 const coreTarballUrl = `https://github.com/${HOST_REPO}/releases/download/core-v${corePkg.version}/vc-frontend-core-${corePkg.version}.tgz`;
+
+/**
+ * Scaffolding from a branch that bumped the contract pins a tarball nobody published, and
+ * `yarn install` then fails with a bare 404. Local tags only; no `core-v*` tag at all means
+ * tags were never fetched, so absence proves nothing.
+ */
+function pinnedReleaseIsMissing() {
+  const tags = gitIn(REPO_ROOT)(["tag", "--list", "core-v*"]);
+  if (tags.status !== 0 || !tags.stdout.trim()) {
+    return false;
+  }
+  return !tags.stdout.split("\n").some((tag) => tag.trim() === `core-v${corePkg.version}`);
+}
 
 // Optional groups the plugin does not USE at runtime are dropped from its MF shared config.
 // (They may still be installed as type-peers via typePeerNames, but declaring an unused
@@ -205,6 +236,8 @@ const pkgJson = {
   version: "1.0.0",
   private: true,
   type: "module",
+  // Without it `yarn install` runs whatever yarn is on PATH; yarn 1 ignores .yarnrc.yml below.
+  packageManager: hostPkg.packageManager,
   scripts: {
     build: "vite build",
     // Auto-rebuild dist/ on save; pair with `preview` for a build+reload loop.
@@ -214,6 +247,10 @@ const pkgJson = {
     // a host that is itself running `yarn dev` (see HOWTO "Dev inner loop").
     dev: "vite --port 3001",
     "type-check": "vue-tsc --noEmit",
+    lint: "eslint . --fix",
+    format: "prettier --write src/",
+    test: "vitest run",
+    "test:watch": "vitest",
   },
   dependencies: { "@vc-frontend/core": coreTarballUrl },
   // Compile-time only — nothing here ships in the bundle: packages the plugin imports are
@@ -310,6 +347,9 @@ const tsconfig = {
     types: ["vite/client"],
   },
   include: ["src", "vite.config.ts"],
+  // Off by default an unknown component is accepted silently, props unchecked. The contract
+  // declares the ui-kit components the facade exports, so host tags survive the strictness.
+  vueCompilerOptions: { strictTemplates: true },
 };
 
 const stylesImport = selected.tailwind ? 'import "./styles.css";\n' : "";
@@ -366,6 +406,9 @@ const readme = `# ${pluginName}
 A Module Federation plugin for the VC storefront, scaffolded by \`yarn create:plugin\`.
 
 - Build: \`yarn build\` - Serve for the host: \`yarn preview\` (port 3001)
+- Check it: \`yarn lint\`, \`yarn type-check\`, \`yarn test\` - the host's own stack, pinned to the
+  host's versions. Templates are type-checked strictly, and the facade declares every ui-kit
+  component it exports, so \`<VcButton>\` is checked without importing it.
 - Full walkthrough (running against the host, shipping, versioning):
   the host repo's \`client-app/modules/federated/HOWTO.md\`.
 
@@ -375,7 +418,9 @@ A Module Federation plugin for the VC storefront, scaffolded by \`yarn create:pl
 repo) - the lockfile records its checksum. **Keep it that way in commits.** For local
 co-development against an unpushed facade, use yalc (\`yalc add @vc-frontend/core\`);
 run \`yalc remove @vc-frontend/core\` and restore the pinned URL before pushing - never
-commit a \`file:.yalc/...\` dependency.
+commit a \`file:.yalc/...\` dependency. A \`portal:\`/\`link:\` pin is not an alternative: it
+symlinks, so the facade's types resolve their own imports from the host's node_modules and
+\`@vue/test-utils\` ends up with two identities.
 `;
 
 // Platform discovery descriptor. Without it AppManifestService assumes its own defaults —
@@ -385,6 +430,141 @@ const pluginJson = {
   id: pluginName,
   remote: { name: pluginName, exposed: "./plugin" },
 };
+
+const eslintConfig = `import { defineConfigWithVueTs, vueTsConfigs } from "@vue/eslint-config-typescript";
+import prettier from "eslint-plugin-prettier/recommended";
+import pluginVue from "eslint-plugin-vue";
+import globals from "globals";
+
+// The host's flat config, trimmed to what a standalone plugin needs.
+export default defineConfigWithVueTs(
+  { ignores: ["dist/", "node_modules/", ".yalc/"] },
+  pluginVue.configs["flat/recommended"],
+  vueTsConfigs.recommended,
+  { languageOptions: { globals: { ...globals.browser } } },
+  {
+    rules: {
+      // \`_\`-prefixed is the deliberate "unused" convention.
+      "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_", varsIgnorePattern: "^_" }],
+      // Both off in the host: pages are named after their route segment, props use \`defineProps<IProps>()\`.
+      "vue/multi-word-component-names": "off",
+      "vue/require-default-prop": "off",
+    },
+  },
+  {
+    files: ["**/*.cjs"],
+    rules: { "@typescript-eslint/no-require-imports": "off" },
+  },
+  prettier,
+);
+`;
+
+const prettierRc = {
+  $schema: "https://json.schemastore.org/prettierrc",
+  endOfLine: "auto",
+};
+
+const editorConfig = `# Editor configuration, see https://editorconfig.org
+root = true
+
+[*]
+charset = utf-8
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+max_line_length = 120
+trim_trailing_whitespace = true
+
+[*.{vue,js,ts,scss}]
+quote_type = double
+
+[*.md]
+max_line_length = off
+trim_trailing_whitespace = false
+`;
+
+const vscodeSettings = {
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": { "source.fixAll.eslint": "explicit" },
+  "eslint.useFlatConfig": true,
+};
+
+const vscodeExtensions = {
+  // Volar carries the strictTemplates checking; without it the editor accepts what type-check rejects.
+  recommendations: ["Vue.volar", "dbaeumer.vscode-eslint", "esbenp.prettier-vscode", "EditorConfig.EditorConfig"],
+};
+
+const FACADE_MOCK_PATH = "src/mocks/vc-frontend-core.ts";
+
+const vitestConfig = `import { fileURLToPath } from "node:url";
+import vue from "@vitejs/plugin-vue";
+import { defineConfig } from "vitest/config";
+
+export default defineConfig({
+  plugins: [vue()],
+  resolve: {
+    alias: [
+      // The facade is types-only at runtime, so Vite has no entry to resolve and a spec dies
+      // before vi.mock() can substitute anything. A regex, not a string: a string key matches by
+      // PREFIX and would swallow "@vc-frontend/core/testing" too.
+      {
+        find: /^@vc-frontend\\/core$/,
+        replacement: fileURLToPath(new URL("./${FACADE_MOCK_PATH}", import.meta.url)),
+      },
+    ],
+  },
+  test: { environment: "jsdom" },
+});
+`;
+
+const facadeMock = `// Test-only resolution target for "@vc-frontend/core" (see the alias in vitest.config.ts).
+// Mocking the facade is wholesale, so this carries working defaults and specs SPREAD it:
+//
+//   vi.mock("@vc-frontend/core", async (importOriginal) => ({
+//     ...(await importOriginal<Record<string, unknown>>()),
+//     globals: { storeId: "test-store" },
+//   }));
+//
+// Add the symbols your plugin uses.
+export const SUPPRESS_ERROR_NOTIFICATIONS_CONTEXT = { suppressErrorNotifications: true };
+
+export const Logger = { error: () => {}, warn: () => {}, info: () => {}, debug: () => {} };
+
+export const globals = {
+  storeId: "test-store",
+  cultureName: "en-US",
+  currencyCode: "USD",
+  i18n: undefined,
+  router: undefined,
+};
+
+export const useUser = () => ({ checkPermissions: () => true });
+export const useModuleSettings = () => ({ isEnabled: () => true, getModuleSettings: () => undefined });
+export const useModal = () => ({ openModal: () => {}, closeModal: () => {} });
+export const useNotifications = () => ({ success: () => {}, error: () => {}, warning: () => {}, info: () => {} });
+export const useNavigations = () => ({ mergeMenuSchema: () => {}, registerAccountSection: () => {} });
+export const useExtensionRegistry = () => ({ register: () => {}, registerContribution: () => {} });
+export const usePageHead = () => {};
+export const registerLocaleLoader = () => {};
+export const registerCacheTypePolicies = () => {};
+`;
+
+const samplePage = "my-page";
+const sampleSpec = `import { mount } from "@vue/test-utils";
+import { createWrapperFactory } from "@vc-frontend/core/testing";
+import { describe, expect, it } from "vitest";
+import MyPage from "./${samplePage}.vue";
+
+// createWrapperFactory supplies what a host-rendered component expects: \`$t\`, router stubs, i18n.
+const createWrapper = createWrapperFactory(mount, MyPage);
+
+describe("${pluginName} page", () => {
+  it("renders", () => {
+    expect(createWrapper().text()).toContain("${pluginName}");
+  });
+});
+`;
 
 // ── write ─────────────────────────────────────────────────────────────────────
 mkdirSync(join(targetDir, "src", "pages"), { recursive: true });
@@ -405,10 +585,36 @@ if (selected.tailwind) {
 writeFileSync(join(targetDir, "public", "plugin.json"), JSON.stringify(pluginJson, null, 2) + "\n");
 writeFileSync(join(targetDir, "src", "shims-vue.d.ts"), shimsVue);
 writeFileSync(join(targetDir, "README.md"), readme);
+writeFileSync(join(targetDir, "eslint.config.js"), eslintConfig);
+writeFileSync(join(targetDir, ".prettierrc.json"), JSON.stringify(prettierRc, null, 2) + "\n");
+writeFileSync(join(targetDir, ".prettierignore"), "dist/\nnode_modules/\n.yalc/\nyarn.lock\n");
+writeFileSync(join(targetDir, ".editorconfig"), editorConfig);
+mkdirSync(join(targetDir, ".vscode"), { recursive: true });
+writeFileSync(join(targetDir, ".vscode", "settings.json"), JSON.stringify(vscodeSettings, null, 2) + "\n");
+writeFileSync(join(targetDir, ".vscode", "extensions.json"), JSON.stringify(vscodeExtensions, null, 2) + "\n");
+writeFileSync(join(targetDir, "vitest.config.ts"), vitestConfig);
+mkdirSync(join(targetDir, "src", "mocks"), { recursive: true });
+writeFileSync(join(targetDir, FACADE_MOCK_PATH), facadeMock);
+if (selected.router) {
+  writeFileSync(join(targetDir, "src", "pages", `${samplePage}.test.ts`), sampleSpec);
+}
 // yalc artifacts (local facade co-dev) must never be committed - see README.
 writeFileSync(join(targetDir, ".gitignore"), "node_modules/\ndist/\n.yalc/\nyalc.lock\n");
 // Standalone project: keep Yarn out of the host's workspace/PnP context.
 writeFileSync(join(targetDir, ".yarnrc.yml"), "nodeLinker: node-modules\n");
+
+if (pinnedReleaseIsMissing()) {
+  console.log(
+    `\n!! @vc-frontend/core ${corePkg.version} is not released yet — \`core-v${corePkg.version}\` has no tag, so the\n` +
+      `   pin this scaffold wrote 404s on install. Until the "Core Facade Release" workflow publishes it,\n` +
+      "   link the local facade instead (yalc copies files, so types resolve against THIS plugin's\n" +
+      "   node_modules — a `portal:`/`link:` pin resolves them against the host's and breaks the\n" +
+      "   @vue/test-utils helpers with a private-property mismatch):\n" +
+      "     (host)   yarn core:yalc-push\n" +
+      "     (plugin) npx yalc add @vc-frontend/core && yarn install\n" +
+      "   Restore the pinned tarball URL before committing.",
+  );
+}
 
 console.log(`\nScaffolded "${pluginName}" at ${targetDir}`);
 console.log(`  deps pinned from host: ${runtimeDeps.join(", ")}`);

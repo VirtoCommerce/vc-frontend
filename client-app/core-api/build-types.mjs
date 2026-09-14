@@ -19,6 +19,7 @@ import dts from "rollup-plugin-dts";
 import { intersects, satisfies } from "semver";
 import ts from "typescript";
 import { bumpContractVersion } from "./bump-version.mjs";
+import { GIT_BIN, gitIn } from "./git.mjs";
 import { decideVersionAction, extractExportNames } from "./contract-versioning.mjs";
 import { CONTRACT_TYPE_PEERS, MF_SHARED_RANGES } from "./federation.mjs";
 
@@ -406,15 +407,10 @@ if (inlinedDeclarations.length) {
 }
 
 // 2a2 ── declare the globally registered components ───────────────────────────
-// `app.use(uiKit)` registers every ui-kit component globally, so a plugin template writes
-// `<VcButton>` with no import. Vue resolves that at runtime; TypeScript sees nothing — vue-tsc
-// accepts an unknown component silently, so no prop is ever checked and a misspelled tag surfaces
-// only as a runtime resolve warning. The host types those tags through `GlobalComponents`
-// augmentations under client-app/ui-kit, which rollup-plugin-dts cannot inline (they are module
-// augmentations, not declarations) and which are hand-maintained and incomplete — `VcLink` and
-// `VcTableColumn` are registered but missing there. The facade's own ui-kit re-exports are the
-// better source: they are registered (they come from the barrel `uiKit` iterates) and their types
-// are already in this file.
+// `app.use(uiKit)` registers them globally, so a plugin template uses `<VcButton>` unimported —
+// and vue-tsc accepts an unknown component silently, leaving every prop unchecked. Generated from
+// the facade's ui-kit re-exports: rollup-plugin-dts cannot inline the host's own augmentations,
+// and those are hand-maintained and already missing `VcLink` and `VcTableColumn`.
 step("declaring the host's global components…");
 
 const FACADE_ENTRY = resolve(CORE_API_DIR, "index.ts");
@@ -712,21 +708,7 @@ const tailwindPreset = generateTailwindPreset();
  * Returns null when no baseline is available (no git, no base ref, contract absent
  * at base) — callers then skip versioning logic quietly.
  */
-// S4036: never resolve `git` through PATH - use well-known absolute locations only,
-// same stance as the vue-tsc spawn above. Exotic installs simply skip the (optional)
-// versioning automation; CI runs on a standard image where /usr/bin/git exists.
-const GIT_BIN = [
-  "/usr/bin/git",
-  "/usr/local/bin/git",
-  "/opt/homebrew/bin/git",
-  String.raw`C:\Program Files\Git\cmd\git.exe`,
-].find((candidate) => existsSync(candidate));
-
-// maxBuffer: node's 1MB default would KILL the child once a committed artifact
-// outgrows it (status becomes null) — indistinguishable from "no baseline" below,
-// silently disabling the auto-bump and the require-major gate. Size the buffer so
-// that can't happen before anyone notices.
-const git = (args) => spawnSync(GIT_BIN, args, { cwd: REPO_ROOT, encoding: "utf8", maxBuffer: 32 * 1024 * 1024 });
+const git = gitIn(REPO_ROOT);
 
 /**
  * The newest published contract tag, or "" when nothing has been released yet (or tags were not

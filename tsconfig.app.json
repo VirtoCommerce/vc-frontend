@@ -6,9 +6,8 @@
     "artifacts",
     "assets",
     "content",
-    // Published artifact, not host source: it carries a `declare module "vue"` augmentation of
-    // GlobalComponents for plugins, and compiling it here would resolve host templates against the
-    // contract's rolled-up copies of the ui-kit prop types instead of the ui-kit's own.
+    // Published artifact, not host source. Its GlobalComponents augmentation would make host
+    // templates resolve ui-kit props through the contract's rolled-up copies of those types.
     "client-app/core-api/contract",
     "client-app/**/__tests__/*",
     "client-app/**/*.(test|spec).*",

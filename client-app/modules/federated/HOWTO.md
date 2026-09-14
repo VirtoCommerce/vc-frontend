@@ -44,13 +44,27 @@ separate from the host repo:
 ```
 my-plugin/
 ├── public/
-│   └── plugin.json       # tells the platform the expose key (step 5)
+│   └── plugin.json          # tells the platform the expose key (step 5)
 ├── src/
-│   ├── index.ts          # the plugin entry: exports init()
-│   └── pages/my-page.vue
+│   ├── index.ts             # the plugin entry: exports init()
+│   ├── mocks/
+│   │   └── vc-frontend-core.ts   # facade stand-in for specs (see below)
+│   └── pages/
+│       ├── my-page.vue
+│       └── my-page.test.ts
+├── .editorconfig
+├── .prettierrc.json
+├── .vscode/settings.json    # + extensions.json (Volar, eslint, prettier)
+├── eslint.config.js         # the host's flat config, trimmed
+├── tsconfig.json            # strict, strictTemplates on
 ├── vite.config.ts
-└── package.json
+├── vitest.config.ts
+└── package.json             # scripts: build, watch, dev, preview, type-check, lint, format, test
 ```
+
+The lint/format/test half is the host's own stack, pinned to the host's versions, so a plugin is
+reviewed against the same conventions as the storefront. Out of the box `yarn lint`,
+`yarn type-check`, `yarn test` and `yarn build` all pass on the generated project.
 
 Version pins below are illustrative — the generator copies the host's own, so read them from the
 output rather than from here.
@@ -130,6 +144,10 @@ The helpers are not enough on their own. Your components import VALUES from the 
 (`Logger`, `globals`, `useUser`), and at runtime the host hands those over through the shared
 scope — but under vitest there is no host, and the root export carries only a `types` condition.
 So the first spec that mounts such a component dies on module resolution, before any assertion.
+
+`yarn create:plugin` writes both files for you — `vitest.config.ts` with the alias below and a
+`src/mocks/vc-frontend-core.ts` carrying working defaults. What follows is what they contain, for a
+hand-assembled project or when you extend the mock.
 
 Alias the specifier to a mock you own:
 
@@ -334,6 +352,20 @@ Once the two servers are up, how you iterate depends on which side you're changi
 **Changing the host** — you only rebuild the host when the **remote list/name** in the env override
 changes (it is inlined at build time) or host source changes; plain plugin edits never need a host
 rebuild.
+
+### Which local setup covers which gap
+
+Plugins and the facade are released separately from the storefront, so most of development happens
+with one half unreleased. What works:
+
+| Situation                                                       | Works | How                                                                                                                                                                              |
+| --------------------------------------------------------------- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Plugin not released, host run locally                           | yes   | `APP_MODULES_FEDERATION_REMOTES` (Step 4). It is inlined at build time, so a changed map means rebuilding the host — plugin edits themselves never do.                           |
+| Plugin not released, host already deployed                      | no    | Nothing to point at the local plugin: the override is build-time and the deployed artifact is fixed. Run the host locally instead.                                                |
+| Plugin installed on an environment, host run locally            | yes   | The dev and preview servers proxy `^/modules/.*/plugins/vc-frontend/` to `APP_BACKEND_URL`, so the platform discovery path is exercised against a real backend with no override. |
+| Facade extended but not released                                | yes   | yalc (below). `yarn create:plugin` warns when the version it pinned has no `core-v*` tag yet, because `yarn install` would otherwise fail with a bare 404.                        |
+| Same, but with a `portal:` / `link:` pin instead of yalc        | no    | Both symlink, so the facade's `.d.mts` files resolve their own imports from the HOST's `node_modules`. `@vue/test-utils` then exists twice and `createWrapperFactory(mount, X)` fails on a private-property mismatch. yalc copies files into the plugin, which is why it does not have this problem. |
+| Plugin built against an unreleased facade version, then deployed | no    | The CONTRACT GATE refuses it before any of its code runs. `Logger` is a no-op in production builds, so nothing appears in the console — check the version matrix first.           |
 
 ## Step 5 — ship it
 
