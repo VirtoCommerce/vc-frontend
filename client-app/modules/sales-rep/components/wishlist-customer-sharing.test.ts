@@ -618,15 +618,16 @@ describe("WishlistCustomerSharing", () => {
       expect(mocks.sendCommunication.mock.calls[0][0]).toMatchObject({ sendEmail: true, sendPush: true });
     });
 
-    it("sends nothing when nobody was added, but still confirms the save", async () => {
+    it("sends nothing when nobody was added, and says the list was saved rather than shared", async () => {
       renderSharing([target("org-1", "Acme Inc."), target("org-2", "Globex")]);
 
       await pick("org-1");
       await controls.onSaved!(SAVED_CONTEXT);
 
       expect(mocks.sendCommunication).not.toHaveBeenCalled();
+      // "List shared with N customers" would claim a share that did not happen and a notification nobody got.
       expect(mocks.notifications.success.mock.calls[0][0]).toMatchObject({
-        text: `${KEY}.share_success|{"count":1}`,
+        text: `${KEY}.share_saved|{"count":1}`,
       });
     });
 

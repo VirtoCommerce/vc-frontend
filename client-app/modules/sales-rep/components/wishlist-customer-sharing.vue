@@ -132,11 +132,23 @@ function toRecipient(target: SharingTargetType): WishlistSharingRecipientType {
 }
 
 // Counts everyone the list reaches, matching the card behind the dialog; the notified subset is usually smaller.
-function notifySaved(): void {
+function notifyShared(): void {
   const count = selected.value.length;
 
   notifications.success({
     text: t("sales_rep.list_sharing.share_success", { count }, count),
+    duration: 10000,
+    single: true,
+  });
+}
+
+// A save that only dropped recipients or reworded the note shared with nobody and notified nobody, so it cannot
+// borrow the "List shared with N customers" copy.
+function notifySaved(): void {
+  const count = selected.value.length;
+
+  notifications.success({
+    text: t("sales_rep.list_sharing.share_saved", { count }, count),
     duration: 10000,
     single: true,
   });
@@ -185,7 +197,7 @@ async function notifyCustomers(
   const details = result.warnings.map(localizeWarning).filter(Boolean).join(" ");
 
   if (result.succeeded && !result.warnings.length) {
-    notifySaved();
+    notifyShared();
 
     return;
   }
