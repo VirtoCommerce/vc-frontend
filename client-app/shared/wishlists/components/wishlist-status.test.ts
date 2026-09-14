@@ -1,29 +1,53 @@
 import { render, cleanup } from "@testing-library/vue";
-import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, describe, expect, it } from "vitest";
+import { createI18n } from "vue-i18n";
 import { WishlistScopeType } from "@/core/api/graphql/types";
+import { createIntlPluralRule } from "@/i18n";
 import { useWishlistSharingScopes } from "../composables/useWishlistSharingScopes";
 import WishlistStatus from "./wishlist-status.vue";
 import type { SharingSettingType } from "@/core/api/graphql/types";
 import "@testing-library/jest-dom/vitest";
 
-// Echoes the key with its interpolation, so a test can see whether the count was offered.
-vi.mock("vue-i18n", () => ({
-  useI18n: () => ({
-    t: (key: string, named?: Record<string, unknown>, plural?: number) =>
-      named ? `${key}|${JSON.stringify(named)}|${plural}` : key,
-  }),
-}));
-
 // Core must not know any contributed scope by name.
 const TARGETED_SCOPE = "TargetedTestScope";
 const TARGETED_STATUS_KEY = "test_module.targeted_scope.status";
 
+/**
+ * The real message compiler and the app's own plural rule, not a `t` echo: a count is rendered through a
+ * pluralised message here, and an echo cannot tell a singular form from a plural one.
+ */
+const messages = {
+  en: {
+    shared: {
+      wishlists: {
+        status: {
+          private: "Private",
+          shared: "Shared",
+          shared_with_me: "Shared with me",
+        },
+      },
+    },
+    test_module: {
+      targeted_scope: {
+        status: "Shared with {count} customer | Shared with {count} customers",
+      },
+    },
+  },
+};
+
 // A contributed scope is absent from the generated enum, hence the cast.
 function renderStatus(sharingSetting: { scope: string; isOwner: boolean; targets?: { id: string }[] }) {
+  const i18n = createI18n({
+    legacy: false,
+    locale: "en",
+    messages,
+    pluralRules: { en: createIntlPluralRule("en") },
+  });
+
   return render(WishlistStatus, {
     props: { sharingSetting: { id: "k", ...sharingSetting } as unknown as SharingSettingType },
     global: {
-      mocks: { $t: (key: string) => key },
+      plugins: [i18n],
       stubs: { VcIcon: true },
     },
   });
@@ -45,47 +69,51 @@ describe("WishlistStatus", () => {
   it("calls a private list private", () => {
     const status = renderStatus({ scope: WishlistScopeType.Private, isOwner: true });
 
-    expect(status.getByText("shared.wishlists.status.private")).toBeInTheDocument();
+    expect(status.getByText("Private")).toBeInTheDocument();
   });
 
   it("uses the provider's own wording for a contributed scope the caller owns", () => {
-    const status = renderStatus({ scope: TARGETED_SCOPE, isOwner: true });
+    const status = renderStatus({
+      scope: TARGETED_SCOPE,
+      isOwner: true,
+      targets: [{ id: "org-1" }],
+    });
 
-    expect(status.getByText(TARGETED_STATUS_KEY)).toBeInTheDocument();
+    expect(status.getByText("Shared with 1 customer")).toBeInTheDocument();
   });
 
-  it("offers the recipient count to a scope that resolved its targets", () => {
+  it("counts the recipients a scope resolved", () => {
     const status = renderStatus({
       scope: TARGETED_SCOPE,
       isOwner: true,
       targets: [{ id: "org-1" }, { id: "org-2" }, { id: "org-3" }],
     });
 
-    expect(status.getByText(`${TARGETED_STATUS_KEY}|{"count":3}|3`)).toBeInTheDocument();
+    expect(status.getByText("Shared with 3 customers")).toBeInTheDocument();
   });
 
-  it("leaves the wording alone for a viewer the backend resolves no targets for", () => {
-    // Only the owner of a targeted scope gets `targets`, so nobody else can be counted.
+  it("says zero rather than falling through to the singular form when nobody is left", () => {
+    // `t(key)` with no plural argument resolves to the singular, so an unguarded zero reads "Shared with 1 customer".
     const status = renderStatus({ scope: TARGETED_SCOPE, isOwner: true, targets: [] });
 
-    expect(status.getByText(TARGETED_STATUS_KEY)).toBeInTheDocument();
+    expect(status.getByText("Shared with 0 customers")).toBeInTheDocument();
   });
 
   it("tells a recipient the list was shared with them, not who it was published to", () => {
     const status = renderStatus({ scope: TARGETED_SCOPE, isOwner: false });
 
-    expect(status.getByText("shared.wishlists.status.shared_with_me")).toBeInTheDocument();
+    expect(status.getByText("Shared with me")).toBeInTheDocument();
   });
 
   it("falls back to the generic wording for a scope that contributes none", () => {
     const status = renderStatus({ scope: WishlistScopeType.AnyoneAnonymous, isOwner: true });
 
-    expect(status.getByText("shared.wishlists.status.shared")).toBeInTheDocument();
+    expect(status.getByText("Shared")).toBeInTheDocument();
   });
 
   it("treats an organization list as shared for every member, not just its owner", () => {
     const status = renderStatus({ scope: WishlistScopeType.Organization, isOwner: false });
 
-    expect(status.getByText("shared.wishlists.status.shared")).toBeInTheDocument();
+    expect(status.getByText("Shared")).toBeInTheDocument();
   });
 });

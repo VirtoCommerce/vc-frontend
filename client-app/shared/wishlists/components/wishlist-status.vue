@@ -50,8 +50,7 @@ const statusKey = computed(() => {
     : "shared.wishlists.status.shared_with_me";
 });
 
-// Offered, never imposed: a scope whose message has no plural form renders as before.
-const statusText = computed(() =>
-  recipientCount.value ? t(statusKey.value, { count: recipientCount.value }, recipientCount.value) : t(statusKey.value),
-);
+// The count is always passed, zero included: `t(key)` with no plural argument resolves to the singular form, so a
+// scope left with no recipients would otherwise read "Shared with 1 customer".
+const statusText = computed(() => t(statusKey.value, { count: recipientCount.value }, recipientCount.value));
 </script>
