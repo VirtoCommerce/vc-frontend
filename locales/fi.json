@@ -1020,8 +1020,8 @@
         "scope_selected": "{label}, valittu"
       },
       "stop_sharing_modal": {
-        "title": "Lopetetaanko tämän sivun jakaminen?",
-        "message": "Kaikki linkin haltijat menettävät käyttöoikeuden. Voit jakaa sen uudelleen milloin tahansa.",
+        "title": "Lopetetaanko tämän listan jakaminen?",
+        "message": "Kaikki, joiden kanssa lista on jaettu, menettävät käyttöoikeuden. Voit jakaa sen uudelleen milloin tahansa.",
         "confirm_button": "Lopeta jakaminen",
         "cancel_button": "@:common.buttons.cancel"
       },

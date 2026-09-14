@@ -1020,8 +1020,8 @@
         "scope_selected": "{label}, sélectionné"
       },
       "stop_sharing_modal": {
-        "title": "Arrêter de partager cette page ?",
-        "message": "Toute personne disposant du lien perdra l'accès. Vous pourrez la partager à nouveau à tout moment.",
+        "title": "Arrêter de partager cette liste ?",
+        "message": "Toutes les personnes avec qui la liste est partagée perdront l'accès. Vous pourrez la partager à nouveau à tout moment.",
         "confirm_button": "Arrêter le partage",
         "cancel_button": "@:common.buttons.cancel"
       },

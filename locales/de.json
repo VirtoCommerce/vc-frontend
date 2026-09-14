@@ -1020,8 +1020,8 @@
         "scope_selected": "{label}, ausgewählt"
       },
       "stop_sharing_modal": {
-        "title": "Freigabe dieser Seite beenden?",
-        "message": "Alle mit dem Link verlieren den Zugriff. Sie können sie jederzeit erneut freigeben.",
+        "title": "Freigabe dieser Liste beenden?",
+        "message": "Alle, für die die Liste freigegeben ist, verlieren den Zugriff. Sie können sie jederzeit erneut freigeben.",
         "confirm_button": "Freigabe beenden",
         "cancel_button": "@:common.buttons.cancel"
       },

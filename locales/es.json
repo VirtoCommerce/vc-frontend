@@ -1020,8 +1020,8 @@
         "scope_selected": "{label}, seleccionado"
       },
       "stop_sharing_modal": {
-        "title": "¿Dejar de compartir esta página?",
-        "message": "Cualquier persona con el enlace perderá el acceso. Puede volver a compartirla en cualquier momento.",
+        "title": "¿Dejar de compartir esta lista?",
+        "message": "Todas las personas con las que se comparte la lista perderán el acceso. Puede volver a compartirla en cualquier momento.",
         "confirm_button": "Dejar de compartir",
         "cancel_button": "@:common.buttons.cancel"
       },

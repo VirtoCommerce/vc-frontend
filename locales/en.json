@@ -1020,8 +1020,8 @@
         "scope_selected": "{label}, selected"
       },
       "stop_sharing_modal": {
-        "title": "Stop sharing this page?",
-        "message": "Anyone with the link will lose access. You can share it again at any time.",
+        "title": "Stop sharing this list?",
+        "message": "Everyone the list is shared with will lose access. You can share it again at any time.",
         "confirm_button": "Stop sharing",
         "cancel_button": "@:common.buttons.cancel"
       },

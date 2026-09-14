@@ -1020,8 +1020,8 @@
         "scope_selected": "{label}，已选择"
       },
       "stop_sharing_modal": {
-        "title": "停止共享此页面？",
-        "message": "拥有链接的所有人都将失去访问权限。您可以随时重新共享。",
+        "title": "停止共享此清单？",
+        "message": "与之共享此清单的所有人都将失去访问权限。您可以随时重新共享。",
         "confirm_button": "停止共享",
         "cancel_button": "@:common.buttons.cancel"
       },

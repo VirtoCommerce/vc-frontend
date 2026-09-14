@@ -1020,8 +1020,8 @@
         "scope_selected": "{label}, wybrano"
       },
       "stop_sharing_modal": {
-        "title": "Zatrzymać udostępnianie tej strony?",
-        "message": "Wszyscy posiadający link utracą dostęp. Możesz udostępnić ją ponownie w dowolnym momencie.",
+        "title": "Zatrzymać udostępnianie tej listy?",
+        "message": "Wszyscy, którym udostępniono listę, utracą dostęp. Możesz udostępnić ją ponownie w dowolnym momencie.",
         "confirm_button": "Zatrzymaj udostępnianie",
         "cancel_button": "@:common.buttons.cancel"
       },

@@ -1020,8 +1020,8 @@
         "scope_selected": "{label}, vald"
       },
       "stop_sharing_modal": {
-        "title": "Sluta dela den här sidan?",
-        "message": "Alla med länken förlorar åtkomsten. Du kan dela den igen när som helst.",
+        "title": "Sluta dela den här listan?",
+        "message": "Alla som listan delas med förlorar åtkomsten. Du kan dela den igen när som helst.",
         "confirm_button": "Sluta dela",
         "cancel_button": "@:common.buttons.cancel"
       },

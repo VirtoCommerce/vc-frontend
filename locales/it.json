@@ -1020,8 +1020,8 @@
         "scope_selected": "{label}, selezionato"
       },
       "stop_sharing_modal": {
-        "title": "Interrompere la condivisione di questa pagina?",
-        "message": "Chiunque abbia il link perderà l'accesso. Puoi condividerla di nuovo in qualsiasi momento.",
+        "title": "Interrompere la condivisione di questa lista?",
+        "message": "Tutti coloro con cui la lista è condivisa perderanno l'accesso. Puoi condividerla di nuovo in qualsiasi momento.",
         "confirm_button": "Interrompi condivisione",
         "cancel_button": "@:common.buttons.cancel"
       },

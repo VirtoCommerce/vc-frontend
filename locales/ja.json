@@ -1020,8 +1020,8 @@
         "scope_selected": "{label}、選択中"
       },
       "stop_sharing_modal": {
-        "title": "このページの共有を停止しますか？",
-        "message": "リンクを知っている全員がアクセスできなくなります。共有はいつでも再開できます。",
+        "title": "このリストの共有を停止しますか？",
+        "message": "このリストを共有しているすべての相手がアクセスできなくなります。共有はいつでも再開できます。",
         "confirm_button": "共有を停止",
         "cancel_button": "@:common.buttons.cancel"
       },

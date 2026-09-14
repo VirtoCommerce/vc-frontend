@@ -1020,8 +1020,8 @@
         "scope_selected": "{label}, valgt"
       },
       "stop_sharing_modal": {
-        "title": "Slutte å dele denne siden?",
-        "message": "Alle med lenken mister tilgangen. Du kan dele den på nytt når som helst.",
+        "title": "Slutte å dele denne listen?",
+        "message": "Alle som listen er delt med, mister tilgangen. Du kan dele den på nytt når som helst.",
         "confirm_button": "Slutt å dele",
         "cancel_button": "@:common.buttons.cancel"
       },

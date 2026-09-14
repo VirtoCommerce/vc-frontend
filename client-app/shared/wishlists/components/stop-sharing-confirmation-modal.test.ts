@@ -53,7 +53,7 @@ afterEach(() => {
 });
 
 describe("StopSharingConfirmationModal", () => {
-  it("states what the list loses, in the wording the ticket prescribes", () => {
+  it("states what the list loses", () => {
     renderModal();
 
     expect(component.getByTestId("modal")).toHaveAttribute("data-title", `${KEY}.title`);
