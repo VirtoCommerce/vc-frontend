@@ -55,7 +55,7 @@ export function useWishlists(options: { autoRefetch: boolean } = { autoRefetch: 
 
     try {
       changedList = await changeWishlist(payload);
-      list.value = changedList;
+      applySavedList(changedList);
     } catch (e) {
       Logger.error(`${useWishlists.name}.${updateWishlist.name}`, e);
       throw e;
@@ -68,6 +68,19 @@ export function useWishlists(options: { autoRefetch: boolean } = { autoRefetch: 
     }
 
     return changedList;
+  }
+
+  // Merged rather than swapped in: the mutation selects fewer fields than the list queries, so replacing the entry
+  // would blank the card's item count and modified date. `list` is only touched when it holds the same list — it is
+  // shared with whatever page is mounted, and a save from the lists page must not put a partial list under it.
+  function applySavedList(changedList: WishlistType): void {
+    if (list.value?.id === changedList.id) {
+      list.value = { ...list.value, ...changedList };
+    }
+
+    lists.value = lists.value.map((wishlist) =>
+      wishlist.id === changedList.id ? { ...wishlist, ...changedList } : wishlist,
+    );
   }
 
   async function fetchWishlists(): Promise<void> {

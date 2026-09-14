@@ -75,9 +75,10 @@
       </div>
 
       <div ref="listElement" class="mt-5 w-full">
-        <!-- Skeletons: only while there is nothing to show. `listLoading` is shared by every `useWishlists` caller,
-             so a save from the Rename or Share dialog would otherwise swap the whole table for a skeleton. -->
-        <WishlistProductsSkeleton v-if="listLoading && !list" :itemsCount="actualPageRowsCount" />
+        <!-- Skeletons: only while the list on screen is not the one being loaded. `listLoading` is shared by every
+             `useWishlists` caller, so a save from the Rename or Share dialog would otherwise swap the whole table for
+             a skeleton; `list` survives navigation, so `!list` alone would leave the previous list's frame up. -->
+        <WishlistProductsSkeleton v-if="listLoading && list?.id !== listId" :itemsCount="actualPageRowsCount" />
 
         <!-- List details -->
         <template v-else-if="!!list?.items?.length">
