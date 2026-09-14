@@ -15,55 +15,49 @@
       {{ $t("common.labels.organizations") }}
     </div>
 
-    <VcListbox
-      :list-id="listboxId"
-      :list-label="$t('common.labels.organizations')"
-      :dividers="false"
-      max-height="15rem"
+    <div v-if="isShowSearch" class="top-header-organizations__search">
+      <div class="top-header-organizations__label">
+        {{ $t("common.labels.organizations") }}
+      </div>
+
+      <VcInput
+        v-model="searchPhrase"
+        type="search"
+        size="sm"
+        data-test-id="organizations-search"
+        :placeholder="$t('common.labels.search')"
+        :clearable="!!searchPhrase"
+        :aria="{
+          role: 'combobox',
+          'aria-expanded': 'true',
+          'aria-haspopup': 'listbox',
+          'aria-controls': listboxId,
+          'aria-activedescendant': activeDescendantId ?? null,
+        }"
+        @keydown.enter="onEnter"
+        @keydown.down.prevent="navigate('down')"
+        @keydown.up.prevent="navigate('up')"
+        @input="onSearchInput"
+        @clear="onSearchClear"
+      >
+        <template #append>
+          <VcButton icon="search" icon-size="1.25rem" data-test-id="organizations-search-button" @click="onSearch" />
+        </template>
+      </VcInput>
+    </div>
+
+    <VcScrollbar
+      :id="listboxId"
+      vertical
+      tag="ul"
+      role="listbox"
+      :aria-label="$t('common.labels.organizations')"
       :focusable="!isShowSearch"
       :edge-threshold="50"
-      :active-descendant-id="isShowSearch ? undefined : activeDescendantId"
+      :aria-activedescendant="isShowSearch ? undefined : activeDescendantId"
       class="top-header-organizations__list"
       @keydown="onListKeydown"
     >
-      <template v-if="isShowSearch" #header>
-        <div class="top-header-organizations__search">
-          <div class="top-header-organizations__label">
-            {{ $t("common.labels.organizations") }}
-          </div>
-
-          <VcInput
-            v-model="searchPhrase"
-            type="search"
-            size="sm"
-            data-test-id="organizations-search"
-            :placeholder="$t('common.labels.search')"
-            :clearable="!!searchPhrase"
-            :aria="{
-              role: 'combobox',
-              'aria-expanded': 'true',
-              'aria-haspopup': 'listbox',
-              'aria-controls': listboxId,
-              'aria-activedescendant': activeDescendantId ?? null,
-            }"
-            @keydown.enter="onEnter"
-            @keydown.down.prevent="navigate('down')"
-            @keydown.up.prevent="navigate('up')"
-            @input="onSearchInput"
-            @clear="onSearchClear"
-          >
-            <template #append>
-              <VcButton
-                icon="search"
-                icon-size="1.25rem"
-                data-test-id="organizations-search-button"
-                @click="onSearch"
-              />
-            </template>
-          </VcInput>
-        </div>
-      </template>
-
       <VcMenuItem
         v-for="(item, index) in displayedOrganizations"
         :key="item.id"
@@ -105,7 +99,7 @@
       </div>
 
       <VcLoadMore tag="li" role="none" :loading="loading" :has-next-page="hasNextPage" @load-more="loadOrganizations" />
-    </VcListbox>
+    </VcScrollbar>
   </div>
 </template>
 
@@ -284,8 +278,9 @@ async function onSearchClear(): Promise<void> {
     }
   }
 
+  // The list is the scroll region itself now; 15rem is what the menu around it can spare.
   &__list {
-    @apply my-1 bg-transparent;
+    @apply my-1 max-h-60 w-full select-none;
   }
 
   &__radio {

@@ -75,88 +75,102 @@
       </template>
 
       <template v-if="enabled" #content="{ close }">
-        <VcListbox :list-id="listboxId" :list-label="accessibleLabel" :multiselectable="multiple">
-          <template v-if="showSelectAll" #header>
-            <div class="vc-select__select-all">
-              <!-- The text goes in the checkbox's own slot: as a sibling span it labelled nothing,
+        <div class="vc-select__dropdown">
+          <div v-if="showSelectAll" class="vc-select__select-all">
+            <!-- The text goes in the checkbox's own slot: as a sibling span it labelled nothing,
                    so clicking the word "Select all" did not toggle the control. -->
-              <VcCheckbox
-                ref="selectAllElement"
-                size="sm"
-                class="vc-select__select-all-control"
-                :model-value="isAllSelected"
-                :indeterminate="isSomeSelected"
-                :aria-label="selectAllLabel"
-                @change="onSelectAll"
-                @keydown.esc="focusTrigger()"
-                @keydown.down.prevent="focusTrigger()"
-              >
-                <span class="vc-select__select-all-text">{{ $t("ui_kit.select.select_all") }}</span>
-              </VcCheckbox>
-
-              <span class="vc-select__select-all-count">{{ selectedOfTotal }}</span>
-            </div>
-          </template>
-
-          <VcMenuItem
-            v-for="(item, index) in filteredItems"
-            :key="index"
-            :option-id="getOptionId(index)"
-            :data-vc-select-option="componentId"
-            :active="isActiveItem(item)"
-            :highlighted="index === highlightedIndex"
-            :aria-selected="isActiveItem(item)"
-            role="option"
-            :size="itemSize"
-            :tabindex="-1"
-            @click="
-              select(item);
-              !multiple && close();
-            "
-            @mousemove="highlightedIndex = index"
-          >
             <VcCheckbox
-              v-if="multiple"
-              :model-value="isActiveItem(item)"
-              :aria-label="toLabel(getItemText(item))"
-              tabindex="-1"
-            />
+              ref="selectAllElement"
+              size="sm"
+              class="vc-select__select-all-control"
+              :model-value="isAllSelected"
+              :indeterminate="isSomeSelected"
+              :aria-label="selectAllLabel"
+              @change="onSelectAll"
+              @keydown.esc="focusTrigger()"
+              @keydown.down.prevent="focusTrigger()"
+            >
+              <span class="vc-select__select-all-text">{{ $t("ui_kit.select.select_all") }}</span>
+            </VcCheckbox>
 
-            <slot name="item" v-bind="{ item, index }">
-              {{ getItemText(item) }}
-            </slot>
-          </VcMenuItem>
+            <span class="vc-select__select-all-count">{{ selectedOfTotal }}</span>
+          </div>
 
-          <VcMenuItem v-if="showLoadingRow" role="option" :aria-selected="false" disabled :size="itemSize">
-            <!-- The row is a flex line that starts at the left like any option; a spinner standing
-                 in for the whole list belongs in the middle of it. -->
-            <span class="vc-select__loading">
-              <slot name="loading">
-                <VcLoader />
-              </slot>
-            </span>
-          </VcMenuItem>
-
-          <VcMenuItem v-else-if="!filteredItems.length" role="option" :aria-selected="false" disabled :size="itemSize">
-            <slot name="empty">
-              {{ $t(filterValue ? "ui_kit.messages.no_results" : "ui_kit.select.no_options") }}
-            </slot>
-          </VcMenuItem>
-
-          <VcLoadMore
-            tag="li"
-            role="none"
-            :loading="loading"
-            :has-next-page="hasNextPage"
-            @load-more="$emit('loadMore')"
+          <VcScrollbar
+            :id="listboxId"
+            vertical
+            tag="ul"
+            role="listbox"
+            :aria-label="accessibleLabel"
+            :aria-multiselectable="multiple || undefined"
+            class="vc-select__list"
           >
-            <template #loading>
-              <slot name="loading">
-                <VcLoader />
+            <VcMenuItem
+              v-for="(item, index) in filteredItems"
+              :key="index"
+              :option-id="getOptionId(index)"
+              :data-vc-select-option="componentId"
+              :active="isActiveItem(item)"
+              :highlighted="index === highlightedIndex"
+              :aria-selected="isActiveItem(item)"
+              role="option"
+              :size="itemSize"
+              :tabindex="-1"
+              @click="
+                select(item);
+                !multiple && close();
+              "
+              @mousemove="highlightedIndex = index"
+            >
+              <VcCheckbox
+                v-if="multiple"
+                :model-value="isActiveItem(item)"
+                :aria-label="toLabel(getItemText(item))"
+                tabindex="-1"
+              />
+
+              <slot name="item" v-bind="{ item, index }">
+                {{ getItemText(item) }}
               </slot>
-            </template>
-          </VcLoadMore>
-        </VcListbox>
+            </VcMenuItem>
+
+            <VcMenuItem v-if="showLoadingRow" role="option" :aria-selected="false" disabled :size="itemSize">
+              <!-- The row is a flex line that starts at the left like any option; a spinner standing
+                 in for the whole list belongs in the middle of it. -->
+              <span class="vc-select__loading">
+                <slot name="loading">
+                  <VcLoader />
+                </slot>
+              </span>
+            </VcMenuItem>
+
+            <VcMenuItem
+              v-else-if="!filteredItems.length"
+              role="option"
+              :aria-selected="false"
+              disabled
+              :size="itemSize"
+            >
+              <slot name="empty">
+                {{ $t(filterValue ? "ui_kit.messages.no_results" : "ui_kit.select.no_options") }}
+              </slot>
+            </VcMenuItem>
+
+            <VcLoadMore
+              tag="li"
+              role="none"
+              :loading="loading"
+              :has-next-page="hasNextPage"
+              @load-more="$emit('loadMore')"
+            >
+              <template #loading>
+                <slot name="loading">
+                  <VcLoader />
+                </slot>
+              </template>
+            </VcLoadMore>
+          </VcScrollbar>
+        </div>
       </template>
     </VcPopover>
 
@@ -180,7 +194,6 @@ import { useI18n } from "vue-i18n";
 import { vcPopoverKey } from "@/ui-kit/components/molecules/popover/vc-popover-context";
 import { useComponentId, useListboxNavigation, useSelect } from "@/ui-kit/composables";
 import { insertedText } from "@/ui-kit/utilities/text-diff";
-import VcListbox from "../listbox/vc-listbox.vue";
 import VcSelectTrigger from "./vc-select-trigger.vue";
 import type { ListboxNavigationKeyType } from "@/ui-kit/composables";
 
@@ -466,7 +479,7 @@ function holdsFocus(): boolean {
 
   // The dropdown is teleported, so it is not a descendant of the root; reach it through the
   // listbox id, the one element the two sides share.
-  const dropdown = document.getElementById(listboxId)?.closest(".vc-listbox");
+  const dropdown = document.getElementById(listboxId)?.closest(".vc-select__dropdown");
 
   return document.getElementById(componentId)?.contains(active) === true || dropdown?.contains(active) === true;
 }
@@ -639,12 +652,34 @@ function focusSelectAll(): boolean {
     @apply relative rounded-[--radius];
   }
 
+  // The dropdown is teleported out of the block, so it inherits nothing from it and declares its
+  // own tokens. The `--vc-dropdown-menu-*` fallbacks keep overrides working for anyone who styled
+  // this dropdown before it moved off VcDropdownMenu.
+  &__dropdown {
+    --dropdown-max-height: var(--vc-select-dropdown-max-height, var(--vc-dropdown-menu-max-height, 12rem));
+    --dropdown-radius: var(--vc-select-dropdown-radius, var(--vc-dropdown-menu-radius, var(--vc-radius, 0.5rem)));
+    --dropdown-bg-color: var(
+      --vc-select-dropdown-bg-color,
+      var(--vc-dropdown-menu-bg-color, var(--color-additional-50))
+    );
+
+    // overflow-hidden lets the container round its own corners, so the first and last option
+    // need no radius of their own.
+    @apply flex flex-col overflow-hidden rounded-[--dropdown-radius] bg-[--dropdown-bg-color] select-none;
+  }
+
+  &__list {
+    @apply max-h-[--dropdown-max-height] w-full divide-y divide-neutral-100;
+  }
+
   &__loading {
     @apply flex w-full justify-center;
   }
 
+  // shrink-0 + the rule below it: the row is a flex sibling of the scroll area now, so it has to
+  // refuse to shrink and draw the line that separated it from the list.
   &__select-all {
-    @apply flex items-center gap-3 px-3 py-2.5;
+    @apply flex shrink-0 items-center gap-3 border-b border-neutral-100 px-3 py-2.5;
 
     &-control {
       @apply grow;

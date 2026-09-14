@@ -72,10 +72,16 @@ describe("TopHeaderOrganizations", () => {
     expect(wrapper.findAll('[role="option"]')).toHaveLength(3);
   });
 
-  it("puts the search field in the listbox header", () => {
+  // Поле — комбобокс, который управляет списком, поэтому оно обязано лежать СНАРУЖИ него и выше:
+  // внутри `role="listbox"` могут быть только опции, а `aria-controls` должен на что-то указывать.
+  it("keeps the search field above the list it controls, not inside it", () => {
     const wrapper = mountComponent();
+    const field = wrapper.get("[data-test-id='organizations-search']").element;
+    const list = wrapper.get('[role="listbox"]').element;
 
-    expect(wrapper.find(".vc-listbox__header [data-test-id='organizations-search']").exists()).toBe(true);
+    expect(list.contains(field)).toBe(false);
+    expect(field.compareDocumentPosition(list) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(wrapper.get("input").attributes("aria-controls")).toBe(list.id);
   });
 
   // The whole point of the rewrite: focus stays in the search field while arrowing.
