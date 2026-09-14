@@ -1,13 +1,19 @@
 <template>
   <span class="wishlist-sharing-avatar" aria-hidden="true">
-    <VcImage v-if="imageUrl" :src="imageUrl" alt="" class="wishlist-sharing-avatar__image" />
+    <VcImage
+      v-if="imageUrl && !imageFailed"
+      :src="imageUrl"
+      alt=""
+      class="wishlist-sharing-avatar__image"
+      @error="imageFailed = true"
+    />
 
     <template v-else>{{ initials }}</template>
   </span>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref, watch } from "vue";
 
 interface IProps {
   organizationName: string;
@@ -16,6 +22,16 @@ interface IProps {
 }
 
 const props = defineProps<IProps>();
+
+// `VcImage` swaps a failed src for the kit's generic "no image" glyph, which is not what this badge wants.
+const imageFailed = ref(false);
+
+watch(
+  () => props.imageUrl,
+  () => {
+    imageFailed.value = false;
+  },
+);
 
 const initials = computed(() =>
   props.organizationName
