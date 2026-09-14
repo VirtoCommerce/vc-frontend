@@ -218,10 +218,11 @@ let component: RenderResult;
 
 /* Stands in for the confirmation the dialog renders inside its own tree — the real one is a second `VcModal`. */
 const StopSharingConfirmationModal = defineComponent({
+  props: { stopping: { type: Boolean, default: false } },
   emits: ["confirm", "close"],
-  setup(_props, { emit }) {
+  setup(props, { emit }) {
     return () =>
-      h("div", { "data-test-id": "stop-sharing-confirmation" }, [
+      h("div", { "data-test-id": "stop-sharing-confirmation", "data-stopping": String(props.stopping) }, [
         h("button", { type: "button", "data-test-id": "stop-sharing-confirm", onClick: () => emit("confirm") }),
         h("button", { type: "button", "data-test-id": "stop-sharing-dismiss", onClick: () => emit("close") }),
       ]);
@@ -703,6 +704,23 @@ describe("ShareWishlistModal", () => {
       // Nobody had access, so nobody can lose it.
       expect(stopSharingConfirmation()).toBeNull();
       expect(mocks.updateWishlist).toHaveBeenCalledOnce();
+    });
+
+    it("offers to stop when the list is going private, and to change access otherwise", async () => {
+      renderModal(targetedList("org-1"));
+
+      await selectScope(WishlistScopeType.Private);
+      await fireEvent.click(saveButton());
+
+      expect(stopSharingConfirmation()).toHaveAttribute("data-stopping", "true");
+
+      cleanup();
+      renderModal(targetedList("org-1"));
+
+      await selectScope(WishlistScopeType.Organization);
+      await fireEvent.click(saveButton());
+
+      expect(stopSharingConfirmation()).toHaveAttribute("data-stopping", "false");
     });
 
     it("asks nothing when the scope it leaves has nobody left in it", async () => {

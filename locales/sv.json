@@ -1023,6 +1023,9 @@
         "title": "Sluta dela den här listan?",
         "message": "Alla som listan delas med förlorar åtkomsten. Du kan dela den igen när som helst.",
         "confirm_button": "Sluta dela",
+        "change_title": "Ändra vem som har åtkomst?",
+        "change_message": "Alla som listan delas med nu förlorar åtkomsten.",
+        "change_confirm_button": "Ändra åtkomst",
         "cancel_button": "@:common.buttons.cancel"
       },
       "delete_wishlist_modal": {

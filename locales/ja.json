@@ -1023,6 +1023,9 @@
         "title": "このリストの共有を停止しますか？",
         "message": "このリストを共有しているすべての相手がアクセスできなくなります。共有はいつでも再開できます。",
         "confirm_button": "共有を停止",
+        "change_title": "アクセスできる相手を変更しますか？",
+        "change_message": "現在このリストを共有しているすべての相手がアクセスできなくなります。",
+        "change_confirm_button": "アクセスを変更",
         "cancel_button": "@:common.buttons.cancel"
       },
       "delete_wishlist_modal": {

@@ -1023,6 +1023,9 @@
         "title": "Freigabe dieser Liste beenden?",
         "message": "Alle, für die die Liste freigegeben ist, verlieren den Zugriff. Sie können sie jederzeit erneut freigeben.",
         "confirm_button": "Freigabe beenden",
+        "change_title": "Zugriff ändern?",
+        "change_message": "Alle, für die die Liste derzeit freigegeben ist, verlieren den Zugriff.",
+        "change_confirm_button": "Zugriff ändern",
         "cancel_button": "@:common.buttons.cancel"
       },
       "delete_wishlist_modal": {

@@ -35,8 +35,9 @@ const VcButton = defineComponent({
 
 let component: RenderResult;
 
-function renderModal() {
+function renderModal(stopping = true) {
   component = render(StopSharingConfirmationModal, {
+    props: { stopping },
     global: {
       components: { VcModal, VcButton },
       // `$t` echoes the key so assertions read as the copy contract.
@@ -58,6 +59,17 @@ describe("StopSharingConfirmationModal", () => {
 
     expect(component.getByTestId("modal")).toHaveAttribute("data-title", `${KEY}.title`);
     expect(component.getByText(`${KEY}.message`)).toBeInTheDocument();
+  });
+
+  it("asks to change access, not to stop, when one sharing scope replaces another", () => {
+    renderModal(false);
+
+    // Swapping Organization for Specific customers moves the audience; it does not end the sharing.
+    expect(component.getByTestId("modal")).toHaveAttribute("data-title", `${KEY}.change_title`);
+    expect(component.getByText(`${KEY}.change_message`)).toBeInTheDocument();
+    expect(component.getByTestId("stop-sharing-confirm-button").closest("button")).toHaveTextContent(
+      `${KEY}.change_confirm_button`,
+    );
   });
 
   it("names the destructive action rather than confirming with OK", () => {

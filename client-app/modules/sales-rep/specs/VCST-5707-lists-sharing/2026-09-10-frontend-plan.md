@@ -585,8 +585,9 @@ button, exposing `controls`.
    dialog can be leaving: it is wrong for the Customer scope, where access follows org membership, and backwards when
    the scope being moved to is `AnyoneAnonymous`. It also said "page" where this is a list. Shipped naming the result
    instead — "Stop sharing this list? / Everyone the list is shared with will lose access." — which holds in every
-   direction. The title and confirm button keep the Acceptance's "Stop sharing" on a scope swap as well as on a move
-   to Private; "Change who can access" would be truer there and is still open.
+   direction. The dialog also names the action it confirms: moving to Private asks "Stop sharing this list?" with a
+   **Stop sharing** button, while swapping one sharing scope for another asks "Change who can access?" with **Change
+   access**, since that moves the audience rather than ending it.
 7. **Select all semantics** (§4.2) — loaded rows vs every match. Moot for this ticket: Select-all is not built
    (§0.4). Whoever builds it inherits the question, and with §4.2's eager full paging the two readings coincide.
 8. **Message visibility — settled 2026-09-11: always, under the Customer scope.** The note is persisted with the

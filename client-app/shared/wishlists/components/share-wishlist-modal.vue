@@ -68,6 +68,7 @@
            own outside-click and Escape handlers armed, and any click inside the confirmation dismisses this one. -->
       <StopSharingConfirmationModal
         v-if="confirmingStopSharing"
+        :stopping="sharingScope === PRIVATE_SCOPE"
         @confirm="confirmStopSharing"
         @close="confirmingStopSharing = false"
       />

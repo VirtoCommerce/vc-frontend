@@ -1023,6 +1023,9 @@
         "title": "Interrompere la condivisione di questa lista?",
         "message": "Tutti coloro con cui la lista è condivisa perderanno l'accesso. Puoi condividerla di nuovo in qualsiasi momento.",
         "confirm_button": "Interrompi condivisione",
+        "change_title": "Modificare chi ha accesso?",
+        "change_message": "Tutti coloro con cui la lista è attualmente condivisa perderanno l'accesso.",
+        "change_confirm_button": "Modifica accesso",
         "cancel_button": "@:common.buttons.cancel"
       },
       "delete_wishlist_modal": {

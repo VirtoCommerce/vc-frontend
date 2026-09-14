@@ -1023,6 +1023,9 @@
         "title": "Stop sharing this list?",
         "message": "Everyone the list is shared with will lose access. You can share it again at any time.",
         "confirm_button": "Stop sharing",
+        "change_title": "Change who can access?",
+        "change_message": "Everyone the list is shared with now will lose access.",
+        "change_confirm_button": "Change access",
         "cancel_button": "@:common.buttons.cancel"
       },
       "delete_wishlist_modal": {

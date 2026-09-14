@@ -1023,6 +1023,9 @@
         "title": "Parar de partilhar esta lista?",
         "message": "Todas as pessoas com quem a lista é partilhada perderão o acesso. Pode partilhá-la novamente em qualquer momento.",
         "confirm_button": "Parar de partilhar",
+        "change_title": "Alterar quem tem acesso?",
+        "change_message": "Todas as pessoas com quem a lista é atualmente partilhada perderão o acesso.",
+        "change_confirm_button": "Alterar acesso",
         "cancel_button": "@:common.buttons.cancel"
       },
       "delete_wishlist_modal": {
