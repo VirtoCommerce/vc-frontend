@@ -2,7 +2,17 @@
   <div
     v-if="$slots.selected || $slots.placeholder"
     ref="rootElement"
-    :class="['vc-select__button', `vc-select__button--size--${size}`]"
+    :class="[
+      'vc-select-trigger',
+      'vc-select-trigger--button',
+      `vc-select-trigger--size--${size}`,
+      {
+        'vc-select-trigger--disabled': disabled,
+        'vc-select-trigger--readonly': readonly,
+        'vc-select-trigger--opened': opened,
+        'vc-select-trigger--error': error,
+      },
+    ]"
   >
     <!--
       A real button, not a div with role="button": the clear control below is a button too, and
@@ -12,7 +22,7 @@
     <button
       :id="triggerId"
       type="button"
-      class="vc-select__button-trigger"
+      class="vc-select-trigger__button"
       :aria-label="accessibleLabel"
       :aria-expanded="opened"
       aria-haspopup="listbox"
@@ -32,7 +42,7 @@
       @keydown.esc="$emit('close')"
       @keydown.tab="$emit('tab', $event)"
     >
-      <span class="vc-select__button-content">
+      <span class="vc-select-trigger__content">
         <slot v-if="hasSelection" name="selected" v-bind="{ item: selectedItem as T, error }" />
 
         <slot v-else name="placeholder" v-bind="{ error }" />
@@ -47,21 +57,28 @@
       icon="delete-thin"
       color="neutral"
       variant="ghost"
-      class="vc-select__clear"
+      class="vc-select-trigger__clear"
       :icon-size="clearIconSize"
       @keydown.enter.stop.prevent
       @keyup.enter.stop.prevent="$emit('clear')"
       @click.stop="$emit('clear')"
     />
 
-    <VcIcon class="vc-select__icon" :name="opened ? 'chevron-up' : 'chevron-down'" size="xs" />
+    <VcIcon class="vc-select-trigger__icon" :name="opened ? 'chevron-up' : 'chevron-down'" size="xs" />
   </div>
 
   <VcInput
     v-else
     ref="rootElement"
     :model-value="search"
-    class="vc-select__input"
+    :class="[
+      'vc-select-trigger',
+      'vc-select-trigger--field',
+      {
+        'vc-select-trigger--readonly': readonly,
+        'vc-select-trigger--opened': opened,
+      },
+    ]"
     :aria-label="accessibleLabel"
     :aria="{
       id: triggerId,
@@ -102,7 +119,7 @@
         icon="delete-thin"
         color="neutral"
         variant="ghost"
-        class="vc-select__clear"
+        class="vc-select-trigger__clear"
         :icon-size="clearIconSize"
         @keydown.enter.stop.prevent
         @keyup.enter.stop.prevent="$emit('clear')"
@@ -117,7 +134,7 @@
         color="neutral"
         variant="ghost"
         tabindex="-1"
-        class="vc-select__arrow"
+        class="vc-select-trigger__arrow"
         @click.stop="$emit('toggle')"
       />
     </template>
@@ -217,7 +234,130 @@ defineExpose({
 
     const node = "$el" in element ? element.$el : element;
 
-    (node.querySelector<HTMLElement>(".vc-select__button-trigger, input") ?? node).focus();
+    (node.querySelector<HTMLElement>(".vc-select-trigger__button, input") ?? node).focus();
   },
 });
 </script>
+
+<style lang="scss">
+.vc-select-trigger {
+  $disabled: "";
+  $readonly: "";
+  $opened: "";
+  $error: "";
+
+  // Same token chain VcSelect uses, declared here rather than inherited from it: this block
+  // renders inside VcSelect today, but a block that only works under one parent is not a block.
+  --radius: var(--vc-select-radius, var(--vc-radius, 0.5rem));
+
+  &--disabled {
+    $disabled: &;
+  }
+
+  &--readonly {
+    $readonly: &;
+  }
+
+  &--opened {
+    $opened: &;
+  }
+
+  &--error {
+    $error: &;
+  }
+
+  // The slotted branch paints its own box. The field branch is a VcInput and paints itself,
+  // so it takes neither the border nor the size scale.
+  &--button {
+    @apply relative flex items-center w-full rounded-[--radius] border bg-additional-50 appearance-none text-left;
+
+    &#{$disabled} {
+      @apply bg-neutral cursor-not-allowed pointer-events-none;
+    }
+
+    &#{$readonly} {
+      @apply pointer-events-none;
+    }
+
+    &#{$error} {
+      @apply border-danger;
+    }
+
+    &#{$opened} {
+      @apply ring-[3px] ring-primary-100;
+    }
+  }
+
+  // Same scale as VcInput so both branches line up at a given size.
+  // `auto` keeps its height from the content, as before.
+  &--size {
+    &--xs {
+      @apply h-8 text-sm;
+    }
+
+    &--sm {
+      @apply h-[2.375rem] text-base;
+    }
+
+    &--md {
+      @apply h-11 text-base;
+    }
+  }
+
+  &--field {
+    @apply w-full cursor-pointer;
+
+    input {
+      @apply cursor-pointer;
+    }
+
+    &#{$opened} input {
+      @apply cursor-auto;
+    }
+  }
+
+  &__button {
+    @apply grow flex min-w-0 h-full text-left;
+
+    // The chevron and the space around it stay clickable without moving inside the button —
+    // they cannot, because the clear control is a button and one may not nest in another. The
+    // stretched pseudo-element hands the whole box back to the trigger; the clear control is
+    // positioned and later in the DOM, so it still paints above and stays clickable.
+    &::after {
+      @apply absolute inset-0;
+
+      content: "";
+    }
+  }
+
+  &__content {
+    @apply grow overflow-y-hidden flex flex-col justify-center min-w-0 h-full;
+
+    #{$error} & {
+      @apply text-danger;
+    }
+  }
+
+  &__clear {
+    @apply relative;
+  }
+
+  &__arrow {
+    #{$readonly} & {
+      @apply hidden;
+    }
+  }
+
+  &__icon {
+    @apply shrink-0 mr-3 text-neutral-900;
+
+    #{$disabled} & {
+      @apply text-neutral-400;
+    }
+
+    #{$readonly} & {
+      @apply hidden;
+    }
+  }
+}
+</style>

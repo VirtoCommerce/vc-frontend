@@ -100,6 +100,23 @@ describe("TopHeaderOrganizations", () => {
     expect(input.attributes("aria-activedescendant")).toBe(wrapper.findAll('[role="option"]')[0].attributes("id"));
   });
 
+  // Редактируемому полю Home/End нужны для каретки. VcSelect перехватывает их только когда
+  // поле read-only; здесь оно всегда редактируемое, значит не перехватываем никогда.
+  it("leaves Home and End to the caret in the search field", async () => {
+    const wrapper = mountComponent();
+    const input = wrapper.get("input");
+
+    await input.trigger("keydown", { key: "End" });
+    await nextTick();
+
+    expect(input.attributes("aria-activedescendant")).toBeUndefined();
+
+    await input.trigger("keydown", { key: "Home" });
+    await nextTick();
+
+    expect(input.attributes("aria-activedescendant")).toBeUndefined();
+  });
+
   it("keeps options out of the tab order", () => {
     const wrapper = mountComponent();
 
@@ -110,22 +127,20 @@ describe("TopHeaderOrganizations", () => {
     ]);
   });
 
-  it("wraps with ArrowUp and jumps with Home/End", async () => {
+  it("wraps with ArrowUp from the search field", async () => {
     const wrapper = mountComponent();
     const input = wrapper.get("input");
     const ids = wrapper.findAll('[role="option"]').map((option) => option.attributes("id"));
 
     await input.trigger("keydown", { key: "ArrowUp" });
     await nextTick();
+
     expect(input.attributes("aria-activedescendant")).toBe(ids[2]);
 
-    await input.trigger("keydown", { key: "Home" });
+    await input.trigger("keydown", { key: "ArrowDown" });
     await nextTick();
+
     expect(input.attributes("aria-activedescendant")).toBe(ids[0]);
-
-    await input.trigger("keydown", { key: "End" });
-    await nextTick();
-    expect(input.attributes("aria-activedescendant")).toBe(ids[2]);
   });
 
   it("switches to the highlighted organization on Enter", async () => {

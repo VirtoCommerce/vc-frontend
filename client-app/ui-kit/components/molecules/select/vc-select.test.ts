@@ -359,6 +359,15 @@ describe("VcSelect", () => {
       expect(wrapper.get(".vc-select__select-all-count").text()).toBe("1 of 3000");
     });
 
+    // Текст «Select all» был соседним span и ничего не подписывал: кликался только сам чекбокс.
+    it("toggles when the visible label text is clicked", async () => {
+      const wrapper = createWrapper({ items: ITEMS, multiple: true, selectAll: true, modelValue: [] });
+
+      await wrapper.get(".vc-select__select-all-text").trigger("click");
+
+      expect(wrapper.emitted("update:modelValue")).toEqual([[ITEMS]]);
+    });
+
     it("hands focus to the checkbox on Tab, since the popover is out of tab order", async () => {
       const wrapper = createWrapper({ ...selectAllProps, modelValue: [] });
       const input = wrapper.get("input");
@@ -375,13 +384,13 @@ describe("VcSelect", () => {
     it("hides the clear button when there is no selection", () => {
       const wrapper = createWrapper({ items: ITEMS, clearable: true });
 
-      expect(wrapper.find(".vc-select__clear").exists()).toBe(false);
+      expect(wrapper.find(".vc-select-trigger__clear").exists()).toBe(false);
     });
 
     it("emits undefined on clear in single mode", async () => {
       const wrapper = createWrapper({ items: ITEMS, clearable: true, modelValue: "Albania" });
 
-      await wrapper.get(".vc-select__clear").trigger("click");
+      await wrapper.get(".vc-select-trigger__clear").trigger("click");
 
       expect(wrapper.emitted("update:modelValue")).toEqual([[undefined]]);
     });
@@ -394,7 +403,7 @@ describe("VcSelect", () => {
         modelValue: ["Albania"],
       });
 
-      await wrapper.get(".vc-select__clear").trigger("click");
+      await wrapper.get(".vc-select-trigger__clear").trigger("click");
 
       expect(wrapper.emitted("update:modelValue")).toEqual([[[]]]);
     });
@@ -402,7 +411,7 @@ describe("VcSelect", () => {
     it("hides the clear button when disabled", () => {
       const wrapper = createWrapper({ items: ITEMS, clearable: true, modelValue: "Albania", disabled: true });
 
-      expect(wrapper.find(".vc-select__clear").exists()).toBe(false);
+      expect(wrapper.find(".vc-select-trigger__clear").exists()).toBe(false);
     });
   });
 
@@ -462,7 +471,7 @@ describe("VcSelect", () => {
 
       expect(wrapper.findAll('[role="option"]')).toHaveLength(1);
 
-      await wrapper.get(".vc-select__clear").trigger("click");
+      await wrapper.get(".vc-select-trigger__clear").trigger("click");
 
       expect(wrapper.emitted("update:modelValue")).toBeUndefined();
       expect(wrapper.findAll('[role="option"]')).toHaveLength(ITEMS.length);
@@ -682,7 +691,7 @@ describe("VcSelect", () => {
       expect(input.attributes("aria-controls")).toBeUndefined();
       expect(input.attributes("aria-expanded")).toBe("false");
 
-      await wrapper.get(".vc-select__arrow").trigger("click");
+      await wrapper.get(".vc-select-trigger__arrow").trigger("click");
 
       expect(input.attributes("aria-expanded")).toBe("true");
       expect(input.attributes("aria-controls")).toBe(wrapper.get('[role="listbox"]').attributes("id"));
@@ -694,7 +703,7 @@ describe("VcSelect", () => {
       const wrapper = createWrapper({ items: ITEMS });
       const input = wrapper.get("input");
 
-      await wrapper.get(".vc-select__arrow").trigger("click");
+      await wrapper.get(".vc-select-trigger__arrow").trigger("click");
 
       expect(input.attributes("aria-expanded")).toBe("true");
 
@@ -767,7 +776,7 @@ describe("VcSelect", () => {
 
       expect(input.attributes("aria-expanded")).toBe("true");
 
-      await wrapper.get(".vc-select__arrow").trigger("click");
+      await wrapper.get(".vc-select-trigger__arrow").trigger("click");
       await nextTick();
 
       expect(input.attributes("aria-expanded")).toBe("false");
@@ -843,10 +852,19 @@ describe("VcSelect", () => {
       placeholder: () => h("span", { class: "probe-placeholder" }, "pick one"),
     };
 
+    // Незаданное значение из GraphQL приезжает как null, а без valueField модель — это и есть
+    // item, поэтому null доезжал до #selected слота как «выбор», которого нет.
+    it("shows the placeholder for a null model, not the selected slot", () => {
+      const wrapper = createWrapper({ items: ITEMS, modelValue: null as unknown as string }, slots);
+
+      expect(wrapper.find(".probe-placeholder").exists()).toBe(true);
+      expect(wrapper.find(".probe-selected").exists()).toBe(false);
+    });
+
     it("renders the button branch instead of the input", () => {
       const wrapper = createWrapper({ items: ITEMS }, slots);
 
-      expect(wrapper.find(".vc-select__button").exists()).toBe(true);
+      expect(wrapper.find(".vc-select-trigger--button").exists()).toBe(true);
       expect(wrapper.find("input").exists()).toBe(false);
     });
 
@@ -885,9 +903,9 @@ describe("VcSelect", () => {
     it("honours the clearable prop", async () => {
       const wrapper = createWrapper({ items: ITEMS, modelValue: "Albania", clearable: true }, slots);
 
-      expect(wrapper.find(".vc-select__clear").exists()).toBe(true);
+      expect(wrapper.find(".vc-select-trigger__clear").exists()).toBe(true);
 
-      await wrapper.get(".vc-select__clear").trigger("click");
+      await wrapper.get(".vc-select-trigger__clear").trigger("click");
 
       expect(wrapper.emitted("update:modelValue")).toEqual([[undefined]]);
     });
@@ -895,13 +913,13 @@ describe("VcSelect", () => {
     it("hides the clear button when nothing is selected", () => {
       const wrapper = createWrapper({ items: ITEMS, clearable: true }, slots);
 
-      expect(wrapper.find(".vc-select__clear").exists()).toBe(false);
+      expect(wrapper.find(".vc-select-trigger__clear").exists()).toBe(false);
     });
 
     it("reflects the size prop as a modifier", () => {
       const wrapper = createWrapper({ items: ITEMS, size: "xs" }, slots);
 
-      expect(wrapper.get(".vc-select__button").classes()).toContain("vc-select__button--size--xs");
+      expect(wrapper.get(".vc-select-trigger--button").classes()).toContain("vc-select-trigger--size--xs");
     });
 
     // Клик по слотовому триггеру не открывал список с тех пор, как VcSelect переехал с
@@ -910,7 +928,7 @@ describe("VcSelect", () => {
     // что vc-input.vue сам гасит клик (`@click.stop`).
     it("opens, closes and reopens on click", async () => {
       const wrapper = createWrapper({ items: ITEMS }, slots);
-      const trigger = wrapper.get(".vc-select__button-trigger");
+      const trigger = wrapper.get(".vc-select-trigger__button");
 
       await trigger.trigger("click");
       await nextTick();
@@ -933,7 +951,7 @@ describe("VcSelect", () => {
       let wrapperClicks = 0;
 
       wrapper.get(".vc-popover__trigger").element.addEventListener("click", () => (wrapperClicks += 1));
-      await wrapper.get(".vc-select__button-trigger").trigger("click");
+      await wrapper.get(".vc-select-trigger__button").trigger("click");
 
       expect(wrapperClicks).toBe(0);
     });
@@ -941,25 +959,45 @@ describe("VcSelect", () => {
     it("opens the list on ArrowDown", async () => {
       const wrapper = createWrapper({ items: ITEMS }, slots);
 
-      await wrapper.get(".vc-select__button-trigger").trigger("keydown", { key: "ArrowDown" });
+      await wrapper.get(".vc-select-trigger__button").trigger("keydown", { key: "ArrowDown" });
       await nextTick();
 
-      expect(wrapper.get(".vc-select__button-trigger").attributes("aria-expanded")).toBe("true");
+      expect(wrapper.get(".vc-select-trigger__button").attributes("aria-expanded")).toBe("true");
       expect(wrapper.classes()).toContain("vc-select--opened");
+    });
+
+    // Триггер — отдельный компонент, значит отдельный БЭМ-блок со своими стилями. Состояния
+    // приезжают пропсами и становятся его собственными модификаторами: тянуться селектором
+    // из `.vc-select--opened` в чужой блок было бы ровно тем, что канон запрещает.
+    it("owns its block and carries the state modifiers on its own root", () => {
+      const wrapper = createWrapper({ items: ITEMS, disabled: true, readonly: true, error: true }, slots);
+      const root = wrapper.get(".vc-select-trigger");
+
+      expect(root.classes()).toEqual(
+        expect.arrayContaining([
+          "vc-select-trigger",
+          "vc-select-trigger--button",
+          "vc-select-trigger--size--md",
+          "vc-select-trigger--disabled",
+          "vc-select-trigger--readonly",
+          "vc-select-trigger--error",
+        ]),
+      );
+      expect(wrapper.html()).not.toContain("vc-select__button");
     });
 
     // Настоящая <button>, а не div с role: внутри лежит кнопка очистки, а кнопку в кнопку
     // вкладывать нельзя — она осталась соседом, а триггер накрывает коробку псевдоэлементом.
     it("renders a real button element carrying the combobox semantics", () => {
       const wrapper = createWrapper({ items: ITEMS, clearable: true, modelValue: "Belgium" }, slots);
-      const trigger = wrapper.get(".vc-select__button-trigger");
+      const trigger = wrapper.get(".vc-select-trigger__button");
 
       expect(trigger.element.tagName).toBe("BUTTON");
       expect(trigger.attributes("type")).toBe("button");
       expect(trigger.attributes("role")).toBeUndefined();
       expect(trigger.attributes("aria-haspopup")).toBe("listbox");
       expect(trigger.find("button").exists()).toBe(false);
-      expect(wrapper.get(".vc-select__clear").element.closest(".vc-select__button-trigger")).toBeNull();
+      expect(wrapper.get(".vc-select-trigger__clear").element.closest(".vc-select-trigger__button")).toBeNull();
     });
   });
 });

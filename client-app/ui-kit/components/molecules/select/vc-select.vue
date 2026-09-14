@@ -31,10 +31,15 @@
       @toggle="toggled"
     >
       <template #trigger="{ open, toggle, close }">
+        <!--
+          has-selection is `!= null`, not `!== undefined`: an unset GraphQL value arrives as null,
+          and without `valueField` the raw model IS the item, so a null model reached the #selected
+          slot as a selection that is not there.
+        -->
         <VcSelectTrigger
           ref="triggerElement"
           :selected-item="selected"
-          :has-selection="selected !== undefined"
+          :has-selection="selected != null"
           :search="search"
           :placeholder-text="placeholderText ?? undefined"
           :size="size"
@@ -73,18 +78,21 @@
         <VcListbox :list-id="listboxId" :list-label="accessibleLabel" :multiselectable="multiple">
           <template v-if="showSelectAll" #header>
             <div class="vc-select__select-all">
+              <!-- The text goes in the checkbox's own slot: as a sibling span it labelled nothing,
+                   so clicking the word "Select all" did not toggle the control. -->
               <VcCheckbox
                 ref="selectAllElement"
                 size="sm"
+                class="vc-select__select-all-control"
                 :model-value="isAllSelected"
                 :indeterminate="isSomeSelected"
                 :aria-label="selectAllLabel"
                 @change="onSelectAll"
                 @keydown.esc="focusTrigger()"
                 @keydown.down.prevent="focusTrigger()"
-              />
-
-              <span class="vc-select__select-all-text">{{ $t("ui_kit.select.select_all") }}</span>
+              >
+                <span class="vc-select__select-all-text">{{ $t("ui_kit.select.select_all") }}</span>
+              </VcCheckbox>
 
               <span class="vc-select__select-all-count">{{ selectedOfTotal }}</span>
             </div>
@@ -614,137 +622,27 @@ function focusSelectAll(): boolean {
 
 <style lang="scss">
 .vc-select {
-  $disabled: "";
-  $readonly: "";
-  $opened: "";
-  $error: "";
-
   --radius: var(--vc-select-radius, var(--vc-radius, 0.5rem));
 
   @apply flex flex-col;
-
-  &--disabled {
-    $disabled: &;
-  }
-
-  &--readonly {
-    $readonly: &;
-  }
-
-  &--opened {
-    $opened: &;
-  }
-
-  &--error {
-    $error: &;
-  }
 
   &__container {
     @apply relative rounded-[--radius];
   }
 
-  &__button {
-    @apply relative flex items-center w-full rounded-[--radius] border bg-additional-50 appearance-none text-left;
-
-    #{$disabled} &,
-    &:disabled {
-      @apply bg-neutral cursor-not-allowed pointer-events-none;
-    }
-
-    #{$readonly} & {
-      @apply pointer-events-none;
-    }
-
-    #{$error} & {
-      @apply border-danger;
-    }
-
-    #{$opened} & {
-      @apply ring-[3px] ring-primary-100;
-    }
-
-    // Same scale as VcInput so both triggers line up at a given size.
-    // `auto` keeps its height from the content, as before.
-    &--size {
-      &--xs {
-        @apply h-8 text-sm;
-      }
-
-      &--sm {
-        @apply h-[2.375rem] text-base;
-      }
-
-      &--md {
-        @apply h-11 text-base;
-      }
-    }
-  }
-
   &__select-all {
     @apply flex items-center gap-3 px-3 py-2.5;
 
+    &-control {
+      @apply grow;
+    }
+
     &-text {
-      @apply grow text-sm font-bold text-neutral-950;
+      @apply text-sm font-bold text-neutral-950;
     }
 
     &-count {
       @apply shrink-0 text-sm text-neutral-600;
-    }
-  }
-
-  &__button-trigger {
-    @apply grow flex min-w-0 h-full text-left;
-
-    // The chevron and the space around it stay clickable without moving inside the button —
-    // they cannot, because the clear control is a button and one may not nest in another. The
-    // stretched pseudo-element hands the whole box back to the trigger; the clear control is
-    // positioned and later in the DOM, so it still paints above and stays clickable.
-    &::after {
-      @apply absolute inset-0;
-
-      content: "";
-    }
-  }
-
-  &__button-content {
-    @apply grow overflow-y-hidden flex flex-col justify-center min-w-0 h-full;
-
-    #{$error} & {
-      @apply text-danger;
-    }
-  }
-
-  &__clear {
-    @apply relative;
-  }
-
-  &__input {
-    @apply w-full cursor-pointer;
-
-    & input {
-      @apply cursor-pointer;
-
-      #{$opened} & {
-        @apply cursor-auto;
-      }
-    }
-  }
-
-  &__arrow {
-    #{$readonly} & {
-      @apply hidden;
-    }
-  }
-
-  &__icon {
-    @apply shrink-0 mr-3 text-neutral-900;
-
-    #{$disabled} & {
-      @apply text-neutral-400;
-    }
-
-    #{$readonly} & {
-      @apply hidden;
     }
   }
 }

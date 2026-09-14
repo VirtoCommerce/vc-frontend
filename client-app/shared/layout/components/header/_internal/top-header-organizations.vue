@@ -48,8 +48,6 @@
             @keydown.enter="onEnter"
             @keydown.down.prevent="navigate('down')"
             @keydown.up.prevent="navigate('up')"
-            @keydown.home.prevent="navigate('home')"
-            @keydown.end.prevent="navigate('end')"
             @input="onSearchInput"
             @clear="onSearchClear"
           >
