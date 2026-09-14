@@ -405,6 +405,78 @@ if (inlinedDeclarations.length) {
   step(`inlined ${inlinedDeclarations.length} ambient declaration(s).`);
 }
 
+// 2a2 ── declare the globally registered components ───────────────────────────
+// `app.use(uiKit)` registers every ui-kit component globally, so a plugin template writes
+// `<VcButton>` with no import. Vue resolves that at runtime; TypeScript sees nothing — vue-tsc
+// accepts an unknown component silently, so no prop is ever checked and a misspelled tag surfaces
+// only as a runtime resolve warning. The host types those tags through `GlobalComponents`
+// augmentations under client-app/ui-kit, which rollup-plugin-dts cannot inline (they are module
+// augmentations, not declarations) and which are hand-maintained and incomplete — `VcLink` and
+// `VcTableColumn` are registered but missing there. The facade's own ui-kit re-exports are the
+// better source: they are registered (they come from the barrel `uiKit` iterates) and their types
+// are already in this file.
+step("declaring the host's global components…");
+
+const FACADE_ENTRY = resolve(CORE_API_DIR, "index.ts");
+const UI_KIT_COMPONENTS_MODULE = "@/ui-kit/components";
+
+/** Public names the facade re-exports from the ui-kit barrel, any tier. */
+function uiKitComponentExports() {
+  const source = ts.createSourceFile(FACADE_ENTRY, readFileSync(FACADE_ENTRY, "utf8"), ts.ScriptTarget.Latest, true);
+  const names = new Set();
+  for (const statement of source.statements) {
+    const specifier = ts.isExportDeclaration(statement) ? statement.moduleSpecifier : undefined;
+    if (!specifier || !ts.isStringLiteral(specifier) || !specifier.text.startsWith(UI_KIT_COMPONENTS_MODULE)) {
+      continue;
+    }
+    if (statement.exportClause && ts.isNamedExports(statement.exportClause)) {
+      for (const element of statement.exportClause.elements) {
+        names.add(element.name.text);
+      }
+    }
+  }
+  return names;
+}
+
+/** Public export name -> the local declaration it aliases, as rollup renamed it. */
+function localNamesByExport(source) {
+  const file = ts.createSourceFile("contract.d.ts", source, ts.ScriptTarget.Latest, true);
+  const locals = new Map();
+  for (const statement of file.statements) {
+    if (!ts.isExportDeclaration(statement) || statement.moduleSpecifier || !statement.exportClause) {
+      continue;
+    }
+    if (ts.isNamedExports(statement.exportClause)) {
+      for (const element of statement.exportClause.elements) {
+        locals.set(element.name.text, (element.propertyName ?? element.name).text);
+      }
+    }
+  }
+  return locals;
+}
+
+const globalComponents = [...uiKitComponentExports()].sort(byCodepoint);
+const localNames = localNamesByExport(code);
+const unrolled = globalComponents.filter((name) => !localNames.has(name));
+if (unrolled.length) {
+  fail(`${unrolled.join(", ")} is re-exported from the ui-kit barrel but absent from the rolled contract.`);
+}
+if (globalComponents.length) {
+  code +=
+    "\n" +
+    [
+      "",
+      "// ── registered globally by `app.use(uiKit)`: usable in a plugin template unimported ──",
+      'declare module "vue" {',
+      "  export interface GlobalComponents {",
+      ...globalComponents.map((name) => `    ${name}: typeof ${localNames.get(name)};`),
+      "  }",
+      "}",
+      "",
+    ].join("\n");
+  step(`declared ${globalComponents.length} global component(s).`);
+}
+
 // Guard: every package the contract's types import must be one create-plugin installs. An
 // unlisted one never errors in a plugin — skipLibCheck turns it into `any` — so catch it here.
 const externals = [...new Set([...code.matchAll(/from ['"]([^'".][^'"]*)['"]/g)].map((match) => match[1]))].sort(

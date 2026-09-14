@@ -63,6 +63,20 @@ Files in this folder:
         contract/index.d.ts  (self-contained, ~1500 lines, committed)
 ```
 
+Step ② also appends a `declare module "vue"` augmentation of `GlobalComponents` covering the
+ui-kit components the facade re-exports. `app.use(uiKit)` registers them globally, so a plugin
+template writes `<VcButton>` with no import — and without the augmentation TypeScript sees nothing
+there: vue-tsc accepts an unknown component silently, so no prop is checked and a misspelled tag
+only fails at runtime. It is generated from the facade's own `@/ui-kit/components` re-exports
+rather than from the host's hand-written augmentations, which rollup-plugin-dts cannot inline and
+which are already missing components (`VcLink`, `VcTableColumn`).
+
+The generated contract is excluded from the host's own tsconfig projects
+(`client-app/core-api/contract`). It used to be compiled along with the rest of `client-app/**`,
+and once it carries that augmentation the merge makes host templates resolve ui-kit props through
+the contract's rolled-up copies instead of the ui-kit's own types — 48 spurious errors. Nothing in
+the host imports `@vc-frontend/core`; if something ever does, those errors come back.
+
 Guards that run with it (any failure = non-zero exit):
 
 - **Before emit:** `federation.mjs` ranges must be compatible with the host

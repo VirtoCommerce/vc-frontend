@@ -4175,3 +4175,31 @@ type VcTableItemType = {
 type VcTableSortDirectionType = "asc" | "desc";
 type VcMainColorType = "primary" | "secondary" | "neutral" | "accent" | "info" | "success" | "warning" | "danger";
 type FileSizeUnitsType = "byte" | "kilobyte" | "megabyte" | "gigabyte" | "terabyte" | "petabyte";
+
+// ── registered globally by `app.use(uiKit)`: usable in a plugin template unimported ──
+declare module "vue" {
+  export interface GlobalComponents {
+    VcAlert: typeof _default$k;
+    VcBadge: typeof _default$s;
+    VcBreadcrumbs: typeof _default$r;
+    VcButton: typeof _default$j;
+    VcCheckbox: typeof _default$q;
+    VcEmptyView: typeof _default$i;
+    VcIcon: typeof _default$p;
+    VcImage: typeof _default$o;
+    VcInput: typeof _default$h;
+    VcLabel: typeof _default$n;
+    VcLink: typeof _default$m;
+    VcLoaderOverlay: typeof _default$g;
+    VcMarkdownRender: typeof _default$l;
+    VcMenuItem: typeof _default$f;
+    VcModal: typeof _default$b;
+    VcSelect: typeof _default$e;
+    VcTable: typeof _default$a;
+    VcTableColumn: typeof _default$9;
+    VcTextarea: typeof _default$d;
+    VcTypography: typeof _default$c;
+    VcWidget: typeof _default$8;
+    VcWidgetSkeleton: typeof _default$7;
+  }
+}
