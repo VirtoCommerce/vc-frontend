@@ -60,7 +60,6 @@
           ref="scopeControls"
           :targets="listTargets"
           :message="listMessage"
-          :sharing-link="sharingLink"
           :saving="saving"
         />
       </KeepAlive>

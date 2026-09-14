@@ -72,7 +72,6 @@ const controls = {
 const scopeElementProps = {
   targets: { type: Array as PropType<SharingTargetType[]>, default: () => [] },
   message: { type: String, default: "" },
-  sharingLink: { type: String, default: "" },
   saving: { type: Boolean, default: false },
 };
 
@@ -88,7 +87,6 @@ const ScopeControls = defineComponent({
         "data-test-id": "scope-controls",
         "data-target-ids": targetIds(props.targets),
         "data-message": props.message,
-        "data-sharing-link": props.sharingLink,
         "data-saving": String(props.saving),
       });
   },
@@ -438,13 +436,12 @@ describe("ShareWishlistModal", () => {
       expect(component.getByTestId("scope-controls")).toBeInTheDocument();
     });
 
-    it("hands over the persisted recipients, the saved note and the list's sharing link", () => {
+    it("hands over the persisted recipients and the saved note", () => {
       renderModal(targetedList("org-1", "org-2"));
 
       const element = component.getByTestId("scope-controls");
       expect(element).toHaveAttribute("data-target-ids", "org-1,org-2");
       expect(element).toHaveAttribute("data-message", "New season is live.");
-      expect(element.getAttribute("data-sharing-link")).toContain("/shared-list/sharing-key-1");
     });
   });
 

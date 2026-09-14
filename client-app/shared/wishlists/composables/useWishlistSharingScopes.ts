@@ -33,7 +33,7 @@ export type WishlistSharingScopeSavedContextType = {
 /** What a scope may contribute to the list's write command, mirroring the fields of `changeWishlist`. */
 export type WishlistSharingScopePayloadType = Pick<
   ChangeWishlistPayloadType,
-  "sharedWithId" | "addSharedWithIds" | "removeSharedWithIds" | "message"
+  "addSharedWithIds" | "removeSharedWithIds" | "message"
 >;
 
 /**

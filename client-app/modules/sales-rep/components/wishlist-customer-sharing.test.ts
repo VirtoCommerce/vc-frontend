@@ -171,7 +171,6 @@ function renderSharing(targets: SharingTargetType[] = [], message = "") {
     props: {
       targets: { type: Array as PropType<SharingTargetType[]>, required: true },
       message: { type: String, required: true },
-      sharingLink: { type: String, required: true },
     },
     setup(props) {
       const inner = ref<IWishlistSharingScopeControlsType>();
@@ -185,13 +184,12 @@ function renderSharing(targets: SharingTargetType[] = [], message = "") {
           ref: inner,
           targets: props.targets,
           message: props.message,
-          sharingLink: props.sharingLink,
         });
     },
   });
 
   component = render(Host, {
-    props: { targets, message, sharingLink: SHARING_LINK },
+    props: { targets, message },
     global: {
       components: { VcSelect, VcTextarea, VcButton, VcImage },
       stubs: { VcIcon: true },

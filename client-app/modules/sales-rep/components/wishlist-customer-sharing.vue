@@ -70,8 +70,6 @@ interface IProps {
   targets: SharingTargetType[];
   /** The note saved with the share. */
   message: string;
-  /** Appended to the notification so the customer can reach the list. */
-  sharingLink: string;
   saving?: boolean;
 }
 
