@@ -164,6 +164,19 @@ const toolDeps = [
   "vitest",
   "jsdom",
 ];
+if (selected.apollo) {
+  // A plugin with its own xAPI scope generates its documents' types, like every host module does.
+  toolDeps.push(
+    "@graphql-codegen/cli",
+    "@graphql-codegen/add",
+    "@graphql-codegen/typescript",
+    "@graphql-codegen/typescript-operations",
+    "@graphql-codegen/typed-document-node",
+    "@graphql-codegen/named-operations-object",
+    // The generated types.ts imports it; the host leans on a transitive copy, a plugin should not.
+    "@graphql-typed-document-node/core",
+  );
+}
 if (selected.tailwind) {
   // The last two are required by the host's tailwind preset (its `plugins` entries
   // resolve from THIS plugin's node_modules — the preset snapshot cannot carry code).
@@ -251,6 +264,7 @@ const pkgJson = {
     format: "prettier --write src/",
     test: "vitest run",
     "test:watch": "vitest",
+    ...(selected.apollo ? { "generate:graphql-types": "graphql-codegen --config codegen.ts" } : {}),
   },
   dependencies: { "@vc-frontend/core": coreTarballUrl },
   // Compile-time only — nothing here ships in the bundle: packages the plugin imports are
@@ -438,7 +452,7 @@ import globals from "globals";
 
 // The host's flat config, trimmed to what a standalone plugin needs.
 export default defineConfigWithVueTs(
-  { ignores: ["dist/", "node_modules/", ".yalc/"] },
+  { ignores: ["dist/", "node_modules/", ".yalc/", "src/api/graphql/types.ts"] },
   pluginVue.configs["flat/recommended"],
   vueTsConfigs.recommended,
   { languageOptions: { globals: { ...globals.browser } } },
@@ -496,6 +510,43 @@ const vscodeExtensions = {
 };
 
 const FACADE_MOCK_PATH = "src/mocks/vc-frontend-core.ts";
+
+const codegenConfig = `import { CODEGEN_CONFIG, CODEGEN_PLUGINS } from "@vc-frontend/core/codegen";
+import { loadEnv } from "vite";
+import type { CodegenConfig } from "@graphql-codegen/cli";
+
+// graphql-codegen reads no .env of its own; reuse Vite's loader so one file serves both. The
+// shell wins over .env.
+const env = { ...loadEnv("", process.cwd(), ""), ...process.env };
+
+if (!env.APP_BACKEND_URL) {
+  throw new Error("APP_BACKEND_URL is not set - copy .env.example to .env, or export it.");
+}
+
+const codegen: CodegenConfig = {
+  // A backend module that registers its own schema (ScopedSchemaFactory) serves it under its
+  // scope name; plain \`/graphql\` is the storefront schema.
+  schema: \`\${env.APP_BACKEND_URL}/graphql/${pluginName}\`,
+  documents: "src/api/graphql/**/*.graphql",
+  // Scalars and plugins come from the host so the same backend value never gets two different
+  // TypeScript types.
+  generates: { "src/api/graphql/types.ts": { plugins: CODEGEN_PLUGINS, config: CODEGEN_CONFIG } },
+};
+
+export default codegen;
+`;
+
+const envExample = `# Backend whose GraphQL schema \`yarn generate:graphql-types\` introspects (see codegen.ts).
+# Copy to .env (gitignored) and adjust.
+APP_BACKEND_URL=https://localhost:5001
+`;
+
+// Valid against any Virto schema, so the first \`yarn generate:graphql-types\` succeeds and shows
+// what the output looks like. Replace it with your own operations.
+const sampleDocument = `query PluginPing {
+  __typename
+}
+`;
 
 const vitestConfig = `import { fileURLToPath } from "node:url";
 import vue from "@vitejs/plugin-vue";
@@ -587,7 +638,10 @@ writeFileSync(join(targetDir, "src", "shims-vue.d.ts"), shimsVue);
 writeFileSync(join(targetDir, "README.md"), readme);
 writeFileSync(join(targetDir, "eslint.config.js"), eslintConfig);
 writeFileSync(join(targetDir, ".prettierrc.json"), JSON.stringify(prettierRc, null, 2) + "\n");
-writeFileSync(join(targetDir, ".prettierignore"), "dist/\nnode_modules/\n.yalc/\nyarn.lock\n");
+writeFileSync(
+  join(targetDir, ".prettierignore"),
+  "dist/\nnode_modules/\n.yalc/\nyarn.lock\nsrc/api/graphql/types.ts\n",
+);
 writeFileSync(join(targetDir, ".editorconfig"), editorConfig);
 mkdirSync(join(targetDir, ".vscode"), { recursive: true });
 writeFileSync(join(targetDir, ".vscode", "settings.json"), JSON.stringify(vscodeSettings, null, 2) + "\n");
@@ -598,8 +652,14 @@ writeFileSync(join(targetDir, FACADE_MOCK_PATH), facadeMock);
 if (selected.router) {
   writeFileSync(join(targetDir, "src", "pages", `${samplePage}.test.ts`), sampleSpec);
 }
+if (selected.apollo) {
+  mkdirSync(join(targetDir, "src", "api", "graphql", "queries", "ping"), { recursive: true });
+  writeFileSync(join(targetDir, "codegen.ts"), codegenConfig);
+  writeFileSync(join(targetDir, ".env.example"), envExample);
+  writeFileSync(join(targetDir, "src", "api", "graphql", "queries", "ping", "pingQuery.graphql"), sampleDocument);
+}
 // yalc artifacts (local facade co-dev) must never be committed - see README.
-writeFileSync(join(targetDir, ".gitignore"), "node_modules/\ndist/\n.yalc/\nyalc.lock\n");
+writeFileSync(join(targetDir, ".gitignore"), "node_modules/\ndist/\n.yalc/\nyalc.lock\n.env\n");
 // Standalone project: keep Yarn out of the host's workspace/PnP context.
 writeFileSync(join(targetDir, ".yarnrc.yml"), "nodeLinker: node-modules\n");
 

@@ -281,6 +281,33 @@ Rules of the road:
   sources, and emits `components` + `utilities` **without `base`** so the host's
   preflight isn't re-applied.
 
+### Your own xAPI: typed documents
+
+A plugin that ships inside a backend module usually queries that module's own GraphQL scope.
+`yarn create:plugin --with-apollo` wires the same codegen the host uses: write `.graphql`
+documents under `src/api/graphql/`, run `yarn generate:graphql-types`, and import the generated
+`TypedDocumentNode` — result and variables types come with it.
+
+```bash
+cp .env.example .env    # APP_BACKEND_URL — the backend to introspect
+yarn generate:graphql-types
+```
+
+```ts
+import { useQuery } from "@vue/apollo-composable";
+import { MyThingDocument } from "../api/graphql/types";
+
+const { result } = useQuery(MyThingDocument, { id });
+```
+
+The generated `src/api/graphql/types.ts` is **committed** — the build must not need a backend. The
+scaffolded `codegen.ts` points at `<APP_BACKEND_URL>/graphql/<plugin-name>`, which is where a module
+registering its own `ScopedSchemaFactory` serves it; change it to plain `/graphql` if you query the
+storefront schema instead. Scalars and codegen plugins come from `@vc-frontend/core/codegen`, the
+same object the host generates with, so a `Decimal` or a `Date` never means one thing in the host
+and another in the plugin. Your Apollo client is the host's — shared singleton, same cache, same
+auth link — so nothing extra is set up for it.
+
 ## Step 4 — run it against the host
 
 ```bash

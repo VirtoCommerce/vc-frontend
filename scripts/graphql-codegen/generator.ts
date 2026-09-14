@@ -1,5 +1,6 @@
 import { existsSync } from "node:fs";
 import { generate } from "@graphql-codegen/cli";
+import { CODEGEN_CONFIG as CONFIG, CODEGEN_PLUGINS as PLUGINS } from "@vc-frontend/core/codegen";
 import {
   addExtension,
   describeErrorDetails,
@@ -102,52 +103,6 @@ const independentModules: ModuleType[] = [
     apiPath: "client-app/modules/purchase-requests/api/graphql",
     schemaPath: `${backendUrl}/graphql/aiDocumentProcessing`,
   },*/
-];
-
-const CONFIG = {
-  dedupeFragments: true,
-  identifierName: "OperationNames",
-  maybeValue: "T",
-  scalars: {
-    BigInt: "number",
-    Byte: "number",
-    Date: "string",
-    DateOnly: "string",
-    Decimal: "number",
-    DynamicPropertyValue: "string | number | boolean | null",
-    Guid: "string",
-    Half: "number",
-    Long: "number",
-    Milliseconds: "number",
-    ModuleSettingValue: "string | number | boolean | null",
-    OptionalDecimal: "number | undefined",
-    OptionalNullableDecimal: "number | null | undefined",
-    OptionalString: "string | undefined",
-    PropertyValue: "string | number | boolean | null",
-    SByte: "number",
-    Seconds: "number",
-    Short: "number",
-    TimeOnly: "string",
-    UInt: "number",
-    ULong: "number",
-    Uri: "string",
-    UShort: "number",
-  },
-  skipTypename: true,
-  useTypeImports: true,
-  skipGraphQLImport: true,
-};
-
-const PLUGINS = [
-  {
-    add: {
-      content: "// This file is auto-generated. Do not edit manually.\n",
-    },
-  },
-  "typescript",
-  "typescript-operations",
-  "typed-document-node",
-  "named-operations-object",
 ];
 
 async function runCodegen() {

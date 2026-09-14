@@ -108,6 +108,28 @@ describe("create-plugin scaffolder", () => {
     expect(readFileSync(join(dir, "vite.config.ts"), "utf8")).toContain('"@apollo/client": false');
   });
 
+  it("scaffolds the apollo variant with codegen wired to the facade's config", () => {
+    const dir = scaffoldExpectingSuccess("gql-plugin", ["--yes", "--with-apollo"]);
+
+    for (const file of ["codegen.ts", ".env.example", "src/api/graphql/queries/ping/pingQuery.graphql"]) {
+      expect(existsSync(join(dir, file)), `${file} should exist`).toBe(true);
+    }
+    expectParseableTs(join(dir, "codegen.ts"));
+
+    const codegen = readFileSync(join(dir, "codegen.ts"), "utf8");
+    // Scalars must come from the host, or the same backend value gets two TypeScript types.
+    expect(codegen).toContain('from "@vc-frontend/core/codegen"');
+    expect(codegen).toContain("/graphql/gql-plugin");
+
+    const pkg = JSON.parse(readFileSync(join(dir, "package.json"), "utf8")) as {
+      scripts: Record<string, string>;
+      devDependencies: Record<string, string>;
+    };
+    expect(pkg.scripts).toHaveProperty("generate:graphql-types");
+    // The generated types.ts imports it; the host resolves it transitively, a plugin must not.
+    expect(pkg.devDependencies).toHaveProperty("@graphql-typed-document-node/core");
+  });
+
   it("scaffolds the tailwind variant with the config/styles files", () => {
     const dir = scaffoldExpectingSuccess("tw-plugin", ["--yes", "--with-tailwind"]);
 
