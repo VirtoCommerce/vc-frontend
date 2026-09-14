@@ -5,7 +5,7 @@ import type { ChangeWishlistPayloadType } from "@/core/types";
 import type { Component, MaybeRefOrGetter } from "vue";
 
 const MODAL_KEY = "shared.wishlists.add_or_update_wishlist_modal";
-const UNORDERED_SCOPE_POSITION = Number.MAX_SAFE_INTEGER;
+export const UNORDERED_SCOPE_POSITION = Number.MAX_SAFE_INTEGER;
 
 /** An option of the list's "Sharing options" select. Modules contribute their own through `registerSharingScope`. */
 export interface IWishlistSharingScopeType {

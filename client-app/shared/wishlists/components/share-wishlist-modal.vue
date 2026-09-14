@@ -13,7 +13,7 @@
 
         <div
           class="share-wishlist-modal__scopes"
-          role="radiogroup"
+          role="group"
           :aria-label="$t('shared.wishlists.share_wishlist_modal.who_can_access_label')"
         >
           <VcTabSwitch
@@ -107,7 +107,7 @@ import { useI18n } from "vue-i18n";
 import { WishlistScopeType } from "@/core/api/graphql/types";
 import { Logger } from "@/core/utilities";
 import { useNotifications } from "@/shared/notification";
-import { useWishlistSharingScopes } from "../composables/useWishlistSharingScopes";
+import { UNORDERED_SCOPE_POSITION, useWishlistSharingScopes } from "../composables/useWishlistSharingScopes";
 import { useWishlists } from "../composables/useWishlists";
 import StopSharingConfirmationModal from "./stop-sharing-confirmation-modal.vue";
 import type { IWishlistSharingScopeControlsType } from "../composables/useWishlistSharingScopes";
@@ -154,6 +154,9 @@ const listSharingScopes = computed(() => {
   if (!isPersistedListed) {
     const known = getSharingScope(persisted);
     scopes.push({ ...(known ?? { scope: persisted, labelKey: "" }) });
+    // Re-sorted rather than appended: the registry sorts its own list, so a scope pushed afterwards would always
+    // land last and the tab strip would reorder itself depending on the viewer's permissions.
+    scopes.sort((a, b) => (a.order ?? UNORDERED_SCOPE_POSITION) - (b.order ?? UNORDERED_SCOPE_POSITION));
   }
 
   return scopes.map((scope) => ({
