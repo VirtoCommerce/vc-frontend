@@ -5,7 +5,8 @@
 **Layout authority:** `2026-09-09-ui-spec.md` — measured Figma geometry for desktop and mobile, plus the
 design gaps and the a11y/touch-target items this plan does not cover.
 **Status 2026-09-11:** built on the branch above, PR #2476 (draft). Everything in §6 is done; what remains is a
-codegen re-run against a backend carrying the merged BE work, and the picker affordances that wait on VCST-5923.
+codegen re-run against a backend carrying the merged BE work. The picker's Select-all and load-more are out of
+scope by decision, not pending — see §0.4.
 
 ---
 
@@ -48,12 +49,25 @@ What is still open:
    here**: do not build the fieldset, and tell the designer to re-cut. Layout consequence in
    `2026-09-09-ui-spec.md` → "Notify via — decided against the frame".
 
-4. **Server-side search waits on VCST-5923, and is droppable.** That ticket has no description and "No
-   requirements" in its AC field (assignee Maya Diachkovskaia); its title covers Select-all and load-more only.
-   `VcSelect` filters client-side (`filteredItems`, `vc-select.vue:310`) and emits only `update:modelValue` /
-   `change` — with no search-text emit, server-side keyword search is impossible. **Decided fallback:** wait for
-   5923's implementation, and if the emit is not in it, drop server-side search from this ticket's scope and keep
-   client-side filtering over accumulated pages. Nothing else depends on it.
+4. **Closed 2026-09-14: VCST-5923 is out of this ticket's scope.** Ivan's call — ship on the `VcSelect` we have
+   rather than risk the sprint, accepting its limits knowingly. That ticket still has no description and "No
+   requirements" in its AC field (assignee Maya Diachkovskaia, In progress); its title covers Select-all and
+   load-more only. `VcSelect` filters client-side (`filteredItems`, `vc-select.vue:305`) and emits only
+   `update:modelValue` / `change`.
+
+   What that costs, measured rather than assumed:
+
+   - **Server-side keyword search:** dropped. No search-text emit exists, so it cannot be built from outside the
+     kit. Client-side filtering over the accumulated pages stays — and since §4.2 loads every served customer up
+     front, it filters over the whole set, not over a partial one.
+   - **Load-more inside the dropdown:** moot for the same reason. Everything is already loaded.
+   - **Select-all and its `2 of 5` row counter:** not delivered. The frame draws them as the dropdown's first row,
+     and the kit renders no slot there. A sentinel option smuggled into `items` would work until the rep types in
+     the search box: the filter matches on the option's text, so the Select-all row would vanish from the filtered
+     list — exactly where "select all matching" is most wanted. Not worth the fake entity flowing through the
+     model, the filter and the payload.
+   - **Nothing in the Acceptance is affected.** Item 2.1 asks for "native search, shows how many is selected", and
+     both already work: the kit's own filter, and `ui_kit.select.items_selected` in the trigger.
 
 5. **Menu entry point — decided.** Two separate dialogs: a short **Edit** (name + description) and a dedicated
    **Share**. The sharing block is extracted into its own component; see §3.4 for what that costs. **Create** is
@@ -313,11 +327,12 @@ every grant carrying `Read` and `access` meaning "current viewer's access", a re
 `isOwner: false` → status `shared_with_me` (`wishlist-status.vue:43-45`), no cog menu. This depends on BE keeping the
 singular as the viewer projection (contract §1.1 "deprecated" must not mean "removed").
 
-### 3.6 Consumed from VCST-5923 (not built here)
+### 3.6 Left to VCST-5923 (deliberately not built here)
 
-Select-all inside the dropdown, load-more/lazy loading inside the dropdown. Assumed surface (to be aligned when
-their PR exists): a `select-all` affordance that emits the full loaded array, and a `load-more`/`reach-end` emit
-plus `loading` prop. If 5923 exposes a search-text emit, §4.2 wires it; if not, §4.2's fallback applies.
+Select-all inside the dropdown with its `2 of 5` counter; load-more/lazy loading inside the dropdown; a
+search-text emit for server-side keyword search. Whoever picks the frame's Select-all row back up will want a
+`select-all` affordance that emits the full loaded array, and a `load-more`/`reach-end` emit plus a `loading`
+prop. See §0.4 for why none of it is in this ticket.
 
 ---
 
@@ -417,7 +432,7 @@ against a backend that has VCST-5925, and `generate:backend-packages` is bumped 
 | 5c | **Done 2026-09-10:** stop-sharing confirmation — `stop-sharing-confirmation-modal.vue` with the ticket's verbatim copy (the kit organism hardcodes "OK"), opened from Save only when an already-shared list changes scope; plus the zero-recipient hint (§9.3). 13 core locales | DONE | — |
 | — | **PR-A = steps 1–5.** Wire unchanged: `sharedWithId`, one target. | | |
 | 6 | **Done 2026-09-11:** codegen against `vcptcore-dev`; `getWishlists` / `getWishlist` / `changeWishlist` documents select `sharingSettings { id scope access isOwner sharedWithId sharedWith { id name subtitle imageUrl } }`; `listSharedWithIds` reads the plural; payload → deltas; `multiple` on; `carriesPersistedTarget` → `{}`; tighten payload type to the generated `Pick`; retire `share_replace_hint` (13 locales, comment `:72`, tests `:234-250`, `:270-277`, `:347-351`); Select-all (§4.2 b) | DONE | — |
-| — | Recipient names and cities come with `targets`, so there is no separate resolution step. Select-all and its `2 of 5` counter still wait on VCST-5923. | | |
+| — | Recipient names, cities and logos come with `targets`, so there is no separate resolution step. Select-all and its `2 of 5` counter are dropped from this ticket (§0.4), not pending. | | |
 | 6a | Re-run `yarn generate:graphql-types` and `generate:backend-packages` against a backend where the BE PRs are in `dev`, to drop the unrelated drift the dev environment introduced (`isLockedForCurrentUser`, Loyalty's `storeId`) | BLOCKED | BE merge into `dev` |
 | 7 | Recipient-side verification of 3.1/3.2: list appears with `isOwner: false`, status `shared_with_me`, no cog, `/shared-list/:key` opens without 403. No FE change expected; e2e in vc-testing-module | BLOCKED on BE (independent of cardinality) | BE ships 3.1/3.2 |
 
@@ -536,7 +551,8 @@ button, exposing `controls`.
    module string.
 4. **Non-rep corporate member.** Sees three pills (Customer is `isAvailable: isSalesRepUser`,
    `sales-rep/index.ts:94`); a persisted Customer list still shows the scope, read-only. Confirm that is intended.
-5. **Search — parked by decision (2026-09-09).** Waiting on Maya's ticket (VCST-5923); if it does not bring what
+5. **Search — closed 2026-09-14, see §0.4.** Superseded by the decision to ship on today's `VcSelect`. The
+   original wording follows. ~~Parked by decision (2026-09-09).~~ Waiting on Maya's ticket (VCST-5923); if it does not bring what
    the picker needs, **hide the search affordance** rather than build a substitute. Acceptance item 2.1 asks for
    "native search", which reads as `VcSelect`'s own filter (`filteredItems`, `vc-select.vue:310`) and already exists,
    so nothing here is blocked either way — but a native filter only sees loaded pages, so with paging it silently
@@ -554,8 +570,11 @@ button, exposing `controls`.
    Still worth raising with product, but not blocking: the given copy says "page" where this is a list, and "anyone
    with the link" is wrong for the Customer scope, where access follows org membership rather than the link. Until
    product amends it, ship it as written.
-7. **Select all semantics** (§4.2) — loaded rows vs every match.
-8. **Message visibility** — only when someone new is added (today's rule, recommended) or always.
+7. **Select all semantics** (§4.2) — loaded rows vs every match. Moot for this ticket: Select-all is not built
+   (§0.4). Whoever builds it inherits the question, and with §4.2's eager full paging the two readings coincide.
+8. **Message visibility — settled 2026-09-11: always, under the Customer scope.** The note is persisted with the
+   share (`sharingSetting.message`, VCST-5728), so hiding the field until someone new is added would hide a value
+   that is already saved and make it uneditable. Recipients are only notified when customers were actually added.
 9. **Organisation name in the notification — deferred 2026-09-09, Ivan is clarifying with product.** Do not build
    it either way yet. What is already established, so the answer lands on a decision rather than an investigation:
 
