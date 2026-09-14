@@ -270,7 +270,7 @@
       "share_partial": "Listan har delats, men alla aviseringar levererades inte.",
       "share_notify_error": "Listan sparades, men aviseringen kunde inte skickas.",
       "scope_label": "Specifika kunder",
-      "status": "Delad med kund",
+      "status": "Delad med 1 kund | Delad med {count} kunder",
       "badge": "Rekommenderas av din säljare"
     }
   }

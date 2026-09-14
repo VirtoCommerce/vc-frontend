@@ -270,7 +270,7 @@
       "share_partial": "Lista compartida, pero no se entregaron todas las notificaciones.",
       "share_notify_error": "La lista se guardó, pero no se pudo enviar la notificación.",
       "scope_label": "Clientes específicos",
-      "status": "Compartida con cliente",
+      "status": "Compartida con 1 cliente | Compartida con {count} clientes",
       "badge": "Recomendado por tu representante de ventas"
     }
   }

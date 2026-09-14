@@ -372,6 +372,23 @@ describe("WishlistCustomerSharing", () => {
       expect(recipientRow("org-2")).toBeInTheDocument();
     });
 
+    it("hands the focus to the row that takes the deleted one's place", async () => {
+      renderSharing([target("org-1", "Acme Inc."), target("org-2", "Globex"), target("org-9", "Initech")]);
+
+      await fireEvent.click(recipientRow("org-1")!.closest("button")!);
+
+      // Otherwise the focus falls to the document and the rep tabs in from the top of the dialog again.
+      expect(document.activeElement).toBe(recipientRow("org-2")!.closest("button"));
+    });
+
+    it("keeps the focus in the list when the bottom row is the one deleted", async () => {
+      renderSharing([target("org-1", "Acme Inc."), target("org-2", "Globex")]);
+
+      await fireEvent.click(recipientRow("org-2")!.closest("button")!);
+
+      expect(document.activeElement).toBe(recipientRow("org-1")!.closest("button"));
+    });
+
     it("drops a recipient the rep removes, and blocks the save with nobody left", async () => {
       renderSharing([target("org-1", "Acme Inc.")]);
 

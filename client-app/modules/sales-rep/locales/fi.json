@@ -270,7 +270,7 @@
       "share_partial": "Lista jaettiin, mutta kaikkia ilmoituksia ei toimitettu.",
       "share_notify_error": "Lista tallennettiin, mutta ilmoitusta ei voitu lähettää.",
       "scope_label": "Tietyt asiakkaat",
-      "status": "Jaettu asiakkaalle",
+      "status": "Jaettu 1 asiakkaalle | Jaettu {count} asiakkaalle",
       "badge": "Myyntiedustajasi suosittelema"
     }
   }

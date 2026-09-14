@@ -21,8 +21,12 @@
       <div class="wishlist-sharing-recipients__separator"></div>
     </template>
 
-    <ul class="wishlist-sharing-recipients__rows">
-      <li v-for="recipient in visibleRecipients" :key="recipient.organizationId">
+    <ul
+      ref="rowsElement"
+      class="wishlist-sharing-recipients__rows"
+      :aria-label="t('sales_rep.list_sharing.recipients_title', { count: recipients.length })"
+    >
+      <li v-for="(recipient, index) in visibleRecipients" :key="recipient.organizationId">
         <div class="wishlist-sharing-recipients__row">
           <WishlistSharingAvatar :organization-name="recipient.organizationName" :image-url="recipient.imageUrl" />
 
@@ -42,7 +46,8 @@
             color="secondary"
             variant="ghost"
             icon="trash-2"
-            @click="$emit('remove', recipient.organizationId)"
+            class="wishlist-sharing-recipients__remove"
+            @click="requestRemove(recipient.organizationId, index)"
           />
         </div>
       </li>
@@ -76,7 +81,7 @@
 
 <script setup lang="ts">
 import { useBreakpoints } from "@vueuse/core";
-import { computed, ref, watch } from "vue";
+import { computed, nextTick, ref, useTemplateRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { BREAKPOINTS } from "@/ui-kit/constants";
 import WishlistSharingAvatar from "./wishlist-sharing-avatar.vue";
@@ -94,13 +99,15 @@ interface IProps {
   collapsedRows?: number;
 }
 
-defineEmits<IEmits>();
+const emit = defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), { collapsedRows: 3 });
 
 const { t } = useI18n();
 
 const isMobile = useBreakpoints(BREAKPOINTS).smaller("md");
+
+const rowsElement = useTemplateRef<HTMLElement>("rowsElement");
 
 const expanded = ref(false);
 
@@ -109,6 +116,19 @@ const collapsible = computed(() => props.recipients.length > props.collapsedRows
 const visibleRecipients = computed(() =>
   collapsible.value && !expanded.value ? props.recipients.slice(0, props.collapsedRows) : props.recipients,
 );
+
+// The deleted row takes the focus with it, so hand it to whatever takes its place — the row below, or the new last
+// row when the bottom one goes. Emptying the list is the one case with nowhere to go: the block unmounts, and
+// `VcSelect` exposes no method to send the focus back to the picker.
+async function requestRemove(organizationId: string, index: number): Promise<void> {
+  emit("remove", organizationId);
+
+  await nextTick();
+
+  const buttons = rowsElement.value?.querySelectorAll<HTMLElement>(".wishlist-sharing-recipients__remove");
+
+  buttons?.[Math.min(index, buttons.length - 1)]?.focus();
+}
 
 // Removing recipients until the list fits would otherwise leave it stuck in a state with no way back.
 watch(collapsible, (isCollapsible) => {

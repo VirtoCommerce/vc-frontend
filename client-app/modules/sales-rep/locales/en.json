@@ -270,7 +270,7 @@
       "share_partial": "List shared, but not every notification was delivered.",
       "share_notify_error": "The list was saved, but the notification could not be sent.",
       "scope_label": "Specific customers",
-      "status": "Shared with customer",
+      "status": "Shared with 1 customer | Shared with {count} customers",
       "badge": "Recommended by your sales representative"
     }
   }
