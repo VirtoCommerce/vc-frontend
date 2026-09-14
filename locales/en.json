@@ -1016,7 +1016,8 @@
       },
       "share_wishlist_modal": {
         "title": "Share “{listName}”",
-        "who_can_access_label": "Who can access"
+        "who_can_access_label": "Who can access",
+        "scope_selected": "{label}, selected"
       },
       "stop_sharing_modal": {
         "title": "Stop sharing this page?",

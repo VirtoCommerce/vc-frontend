@@ -1016,7 +1016,8 @@
       },
       "share_wishlist_modal": {
         "title": "Jaa “{listName}”",
-        "who_can_access_label": "Kenellä on pääsy"
+        "who_can_access_label": "Kenellä on pääsy",
+        "scope_selected": "{label}, valittu"
       },
       "stop_sharing_modal": {
         "title": "Lopetetaanko tämän sivun jakaminen?",

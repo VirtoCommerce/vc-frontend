@@ -1016,7 +1016,8 @@
       },
       "share_wishlist_modal": {
         "title": "「{listName}」を共有",
-        "who_can_access_label": "アクセスできるユーザー"
+        "who_can_access_label": "アクセスできるユーザー",
+        "scope_selected": "{label}、選択中"
       },
       "stop_sharing_modal": {
         "title": "このページの共有を停止しますか？",

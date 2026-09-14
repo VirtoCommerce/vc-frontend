@@ -32,6 +32,7 @@ const mocks = await vi.hoisted(async () => {
   return {
     updateWishlist: vi.fn(),
     fetchWishlists: vi.fn(),
+    closeModal: vi.fn(),
     notifications: { success: vi.fn(), warning: vi.fn(), error: vi.fn() },
     logger: { error: vi.fn(), warn: vi.fn() },
     copy: vi.fn(),
@@ -138,7 +139,10 @@ const VcModal = defineComponent({
   props: { title: { type: String, default: "" }, isPersistent: { type: Boolean, default: false } },
   emits: ["close"],
   setup(props, { slots, emit }) {
-    const close = () => emit("close");
+    const close = () => {
+      mocks.closeModal();
+      emit("close");
+    };
     return () => [
       // Mirrors the real modal: while persistent it refuses Esc, the backdrop and its own close button.
       h("div", { "data-test-id": "modal", "data-persistent": String(props.isPersistent), "data-title": props.title }),
@@ -175,6 +179,7 @@ const VcTabSwitch = defineComponent({
     label: { type: String, default: "" },
     icon: { type: String, default: "" },
     disabled: { type: Boolean, default: false },
+    ariaLabel: { type: String, default: "" },
   },
   emits: ["change"],
   setup(props, { emit }) {
@@ -186,7 +191,11 @@ const VcTabSwitch = defineComponent({
           checked: props.modelValue === props.value,
           disabled: props.disabled,
         }),
-        h("button", { type: "button", onClick: () => emit("change", props.value) }, props.label),
+        h(
+          "button",
+          { type: "button", "aria-label": props.ariaLabel, onClick: () => emit("change", props.value) },
+          props.label,
+        ),
       ]);
   },
 });
@@ -273,8 +282,12 @@ function targetedList(...ids: string[]): WishlistType {
 }
 
 /** What `updateWishlist` resolves with: the server's own copy, carrying the sharing key it actually persisted. */
-function savedList(sharingKey = "sharing-key-1"): WishlistType {
-  return { id: "list-1", name: "Spring assortment", sharingSetting: { id: sharingKey } } as unknown as WishlistType;
+function savedList(sharingKey = "sharing-key-1", ...audience: string[]): WishlistType {
+  return {
+    id: "list-1",
+    name: "Spring assortment",
+    sharingSetting: { id: sharingKey, targets: audience.map((id) => ({ id })) },
+  } as unknown as WishlistType;
 }
 
 async function selectScope(scope: string) {
@@ -331,6 +344,7 @@ beforeAll(() => {
 beforeEach(() => {
   mocks.updateWishlist.mockReset().mockResolvedValue(savedList());
   mocks.fetchWishlists.mockReset().mockResolvedValue(undefined);
+  mocks.closeModal.mockReset();
   mocks.logger.error.mockReset();
   Object.values(mocks.notifications).forEach((spy) => spy.mockReset());
   scopeAvailable.value = true;
@@ -394,6 +408,19 @@ describe("ShareWishlistModal", () => {
       expect(component.getByText("shared.wishlists.share_wishlist_modal.who_can_access_label")).toBeInTheDocument();
       expect(scopeTab(TARGETED_SCOPE)).toHaveAttribute("data-icon", "test-glyph");
       expect(scopeTab(WishlistScopeType.Private)!.getAttribute("data-icon")).not.toBe("");
+    });
+
+    it("names the selected tab as selected, since the kit hides the radio from assistive tech", () => {
+      renderModal(targetedList("org-1"));
+
+      const selectedTab = scopeTab(TARGETED_SCOPE)!.querySelector("button")!;
+      const otherTab = scopeTab(WishlistScopeType.Private)!.querySelector("button")!;
+
+      expect(selectedTab).toHaveAttribute("aria-label", "shared.wishlists.share_wishlist_modal.scope_selected");
+      expect(otherTab).toHaveAttribute(
+        "aria-label",
+        "shared.wishlists.add_or_update_wishlist_modal.sharing_scope.Private",
+      );
     });
 
     it("orders the tabs as the scopes declare, with unordered contributions last", () => {
@@ -581,6 +608,45 @@ describe("ShareWishlistModal", () => {
       expect(command).not.toHaveProperty("description");
     });
 
+    it("closes once the list is persisted", async () => {
+      controls.canSave.value = true;
+      controls.dirty.value = true;
+
+      renderModal(targetedList("org-1"));
+      await selectScope(TARGETED_SCOPE);
+      await fireEvent.click(saveButton());
+
+      await vi.waitFor(() => expect(mocks.closeModal).toHaveBeenCalledOnce());
+      expect(mocks.notifications.error).not.toHaveBeenCalled();
+    });
+
+    it("stays open and says so when the list could not be saved", async () => {
+      controls.canSave.value = true;
+      controls.dirty.value = true;
+      mocks.updateWishlist.mockRejectedValue(new Error("nope"));
+
+      renderModal(targetedList("org-1"));
+      await selectScope(TARGETED_SCOPE);
+      await fireEvent.click(saveButton());
+
+      await vi.waitFor(() => expect(mocks.notifications.error).toHaveBeenCalledOnce());
+      expect(mocks.closeModal).not.toHaveBeenCalled();
+    });
+
+    it("treats a mutation that answers with nothing as saved rather than failed", async () => {
+      controls.canSave.value = true;
+      controls.dirty.value = true;
+      // `changeWishlist` is nullable in the schema; reading through it must not turn a persisted list into an error.
+      mocks.updateWishlist.mockResolvedValue(undefined);
+
+      renderModal(targetedList("org-1"));
+      await selectScope(TARGETED_SCOPE);
+      await fireEvent.click(saveButton());
+
+      await vi.waitFor(() => expect(mocks.closeModal).toHaveBeenCalledOnce());
+      expect(mocks.notifications.error).not.toHaveBeenCalled();
+    });
+
     it("sends no target for a scope that contributes none", async () => {
       renderModal(targetedList("org-1"));
 
@@ -639,6 +705,17 @@ describe("ShareWishlistModal", () => {
       expect(mocks.updateWishlist).toHaveBeenCalledOnce();
     });
 
+    it("asks nothing when the scope it leaves has nobody left in it", async () => {
+      // A targeted scope with no recipients has no audience to lose, so leaving it takes nothing away.
+      renderModal(targetedList());
+
+      await selectScope(WishlistScopeType.Private);
+      await fireEvent.click(saveButton());
+
+      expect(stopSharingConfirmation()).toBeNull();
+      expect(mocks.updateWishlist).toHaveBeenCalledOnce();
+    });
+
     it("asks nothing when only the scope's own recipients change", async () => {
       controls.canSave.value = true;
       controls.dirty.value = true;
@@ -659,7 +736,9 @@ describe("ShareWishlistModal", () => {
       controls.canSave.value = true;
       controls.payload.value = { addSharedWithIds: ["org-1"] };
       let settle: () => void = () => {};
-      mocks.updateWishlist.mockImplementation(() => new Promise<void>((resolve) => (settle = resolve)));
+      mocks.updateWishlist.mockImplementation(
+        () => new Promise<WishlistType>((resolve) => (settle = () => resolve(savedList()))),
+      );
 
       renderModal(targetedList("org-1"));
       await selectScope(TARGETED_SCOPE);
@@ -675,6 +754,7 @@ describe("ShareWishlistModal", () => {
       // The save awaits the follow-up and the list refresh before releasing, so poll rather than count ticks.
       await vi.waitFor(() => expect(component.getByTestId("modal")).toHaveAttribute("data-persistent", "false"));
       expect(cancelButton()).not.toBeDisabled();
+      expect(mocks.notifications.error).not.toHaveBeenCalled();
     });
 
     it("leaves Cancel usable when nothing is being written", () => {
@@ -697,6 +777,19 @@ describe("ShareWishlistModal", () => {
       expect(controls.onSaved).toHaveBeenCalledOnce();
       expect(controls.onSaved.mock.calls[0][0]).toMatchObject({ listName: "Spring assortment" });
       expect(controls.onSaved.mock.calls[0][0].sharingLink).toContain("/shared-list/sharing-key-1");
+    });
+
+    it("hands over the audience the server persisted, not the one the dialog drafted", async () => {
+      controls.canSave.value = true;
+      controls.payload.value = { addSharedWithIds: ["org-2"] };
+      mocks.updateWishlist.mockResolvedValue(savedList("sharing-key-1", "org-1", "org-2", "org-3"));
+
+      renderModal(privateList());
+      await selectScope(TARGETED_SCOPE);
+      await fireEvent.click(saveButton());
+
+      await vi.waitFor(() => expect(controls.onSaved).toHaveBeenCalledOnce());
+      expect(controls.onSaved.mock.calls[0][0].targets).toEqual([{ id: "org-1" }, { id: "org-2" }, { id: "org-3" }]);
     });
 
     it("does not run when the list itself failed to save", async () => {

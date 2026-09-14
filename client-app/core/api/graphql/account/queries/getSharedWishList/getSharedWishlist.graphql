@@ -18,6 +18,13 @@ query GetSharedWishlist($sharingKey: String!) {
       scope
       access
       isOwner
+      message
+      targets {
+        id
+        name
+        subtitle
+        imageUrl
+      }
     }
   }
 }

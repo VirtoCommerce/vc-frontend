@@ -2,6 +2,7 @@ import { createGlobalState } from "@vueuse/core";
 import { computed, shallowRef, toValue } from "vue";
 import { WishlistScopeType } from "@/core/api/graphql/types";
 import { Logger } from "@/core/utilities";
+import type { SharingTargetType } from "@/core/api/graphql/types";
 import type { ChangeWishlistPayloadType } from "@/core/types";
 import type { Component, MaybeRef, MaybeRefOrGetter } from "vue";
 
@@ -28,6 +29,8 @@ export interface IWishlistSharingScopeType {
 export type WishlistSharingScopeSavedContextType = {
   listName: string;
   sharingLink: string;
+  /** The audience the server persisted, so a scope reports what was saved rather than its own draft. */
+  targets: SharingTargetType[];
 };
 
 /** What a scope may contribute to the list's write command, mirroring the fields of `changeWishlist`. */

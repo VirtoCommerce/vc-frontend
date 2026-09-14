@@ -1016,7 +1016,8 @@
       },
       "share_wishlist_modal": {
         "title": "分享“{listName}”",
-        "who_can_access_label": "谁可以访问"
+        "who_can_access_label": "谁可以访问",
+        "scope_selected": "{label}，已选择"
       },
       "stop_sharing_modal": {
         "title": "停止共享此页面？",

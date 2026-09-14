@@ -8,14 +8,12 @@
     :is-persistent="saving"
   >
     <div class="share-wishlist-modal">
-      <div>
-        <VcLabel size="sm">{{ $t("shared.wishlists.share_wishlist_modal.who_can_access_label") }}</VcLabel>
+      <fieldset class="share-wishlist-modal__scope-group">
+        <legend>
+          <VcLabel size="sm">{{ $t("shared.wishlists.share_wishlist_modal.who_can_access_label") }}</VcLabel>
+        </legend>
 
-        <div
-          class="share-wishlist-modal__scopes"
-          role="group"
-          :aria-label="$t('shared.wishlists.share_wishlist_modal.who_can_access_label')"
-        >
+        <div class="share-wishlist-modal__scopes">
           <VcTabSwitch
             v-for="scope in listSharingScopes"
             :key="scope.id"
@@ -24,6 +22,7 @@
             :label="scope.label"
             :icon="scope.icon"
             :disabled="saving"
+            :aria-label="scopeAriaLabel(scope)"
             :data-test-id="`wishlist-sharing-scope-${scope.id}`"
             name="wishlist-sharing-scope"
             size="sm"
@@ -31,7 +30,7 @@
             @change="sharingScope = $event"
           />
         </div>
-      </div>
+      </fieldset>
 
       <VcInput
         v-if="listSharingScopeSupportsLink"
@@ -165,6 +164,14 @@ const listSharingScopes = computed(() => {
   }));
 });
 
+// `VcTabSwitch` renders its radio `display: none`, so the checked state never reaches the accessibility tree and the
+// button's own label is the only place left to say which scope the list is on.
+function scopeAriaLabel(scope: { id: string; label: string }): string {
+  return scope.id === sharingScope.value
+    ? t("shared.wishlists.share_wishlist_modal.scope_selected", { label: scope.label })
+    : scope.label;
+}
+
 const activeScope = computed(() => getSharingScope(sharingScope.value));
 // Such a scope stays listed but must not offer its controls.
 const activeScopeElement = computed(() =>
@@ -246,13 +253,16 @@ async function save(closeHandle: () => void): Promise<void> {
 
     // The server owns the sharing key; ours was only a proposal. The customer notification links to what was
     // actually persisted, so a backend that mints its own key cannot leave recipients with a dead link.
-    sharingKey.value = saved.sharingSetting?.id ?? sharingKey.value;
+    // Optional throughout: `changeWishlist` is nullable in the schema, and throwing here would report a list that
+    // is already saved as a failed save.
+    sharingKey.value = saved?.sharingSetting?.id ?? sharingKey.value;
 
     // Saved from here on, so neither step may surface as a save error; both are awaited to keep the loader up.
     try {
       await scopeControls.value?.onSaved?.({
         listName: props.list.name,
         sharingLink: sharingLink.value,
+        targets: saved?.sharingSetting?.targets ?? [],
       });
     } catch (e) {
       Logger.error("ShareWishlistModal: sharing scope onSaved failed", e);
@@ -290,6 +300,11 @@ async function copySharingLink() {
 <style lang="scss">
 .share-wishlist-modal {
   @apply space-y-4;
+
+  &__scope-group {
+    // A fieldset defaults to `min-inline-size: min-content`, which stops it shrinking inside the dialog.
+    @apply min-w-0;
+  }
 
   &__scopes {
     @apply mt-2 grid grid-cols-2 gap-4;

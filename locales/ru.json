@@ -1016,7 +1016,8 @@
       },
       "share_wishlist_modal": {
         "title": "Поделиться «{listName}»",
-        "who_can_access_label": "Кто имеет доступ"
+        "who_can_access_label": "Кто имеет доступ",
+        "scope_selected": "{label}, выбрано"
       },
       "stop_sharing_modal": {
         "title": "Прекратить доступ к этой странице?",

@@ -1016,7 +1016,8 @@
       },
       "share_wishlist_modal": {
         "title": "Del «{listName}»",
-        "who_can_access_label": "Hvem har tilgang"
+        "who_can_access_label": "Hvem har tilgang",
+        "scope_selected": "{label}, valgt"
       },
       "stop_sharing_modal": {
         "title": "Slutte å dele denne siden?",
