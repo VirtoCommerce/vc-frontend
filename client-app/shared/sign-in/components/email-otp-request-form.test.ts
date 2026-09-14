@@ -77,13 +77,13 @@ describe("EmailOtpRequestForm", () => {
   });
 
   it("requests a code for the entered email and emits succeeded on Sent", async () => {
-    requestCode.mockResolvedValue({ outcome: "Sent", maskedEmail: "b***r@acme.com" });
+    requestCode.mockResolvedValue({ outcome: "CodeSent", maskedEmail: "b***r@acme.com" });
 
     const wrapper = await fillEmailAndSubmit("buyer@acme.com");
 
     expect(requestCode).toHaveBeenCalledWith("buyer@acme.com");
     expect(wrapper.emitted("succeeded")).toEqual([
-      [{ email: "buyer@acme.com", result: { outcome: "Sent", maskedEmail: "b***r@acme.com" } }],
+      [{ email: "buyer@acme.com", result: { outcome: "CodeSent", maskedEmail: "b***r@acme.com" } }],
     ]);
   });
 
@@ -99,7 +99,7 @@ describe("EmailOtpRequestForm", () => {
   });
 
   it("emits disabled when the module reports OTP is disabled, without emitting succeeded", async () => {
-    requestCode.mockResolvedValue({ outcome: "Disabled" });
+    requestCode.mockResolvedValue({ outcome: "OtpDisabled" });
 
     const wrapper = await fillEmailAndSubmit("buyer@acme.com");
 

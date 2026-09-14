@@ -52,5 +52,5 @@ export const LOYALTY_CURRENCY_KEY = "Loyalty.Currency";
 
 export const MODULE_ID_MARKETING_EXPERIENCE_API = "VirtoCommerce.MarketingExperienceApi";
 
-export const MODULE_ID_OTP = "VirtoCommerce.Otp";
+export const MODULE_ID_OTP = "VirtoCommerce.OTP";
 export const OTP_ENABLED_KEY = "OtpLogin.Enabled";

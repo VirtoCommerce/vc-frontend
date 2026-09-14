@@ -85,7 +85,7 @@ describe("EmailOtpSignInForm", () => {
 
     await requestForm(wrapper).vm.$emit("succeeded", {
       email: "buyer@acme.com",
-      result: { outcome: "Sent", maskedEmail: "b***r@acme.com" },
+      result: { outcome: "CodeSent", maskedEmail: "b***r@acme.com" },
     });
 
     expect(verifyForm(wrapper).exists()).toBe(true);
@@ -98,7 +98,7 @@ describe("EmailOtpSignInForm", () => {
 
     await requestForm(wrapper).vm.$emit("succeeded", {
       email: "buyer@acme.com",
-      result: { outcome: "Sent" },
+      result: { outcome: "CodeSent" },
     });
 
     expect(verifyForm(wrapper).props("maskedEmail")).toBe("buyer@acme.com");
@@ -108,7 +108,7 @@ describe("EmailOtpSignInForm", () => {
     const wrapper = mountForm();
     await requestForm(wrapper).vm.$emit("succeeded", {
       email: "buyer@acme.com",
-      result: { outcome: "Sent" },
+      result: { outcome: "CodeSent" },
     });
 
     await verifyForm(wrapper).vm.$emit("useDifferentEmail");
@@ -139,7 +139,7 @@ describe("EmailOtpSignInForm", () => {
 
   it("counts an ordinary lockout down and re-enables the retry button at zero", async () => {
     const wrapper = mountForm();
-    await requestForm(wrapper).vm.$emit("succeeded", { email: "buyer@acme.com", result: { outcome: "Sent" } });
+    await requestForm(wrapper).vm.$emit("succeeded", { email: "buyer@acme.com", result: { outcome: "CodeSent" } });
 
     await verifyForm(wrapper).vm.$emit("locked", 5);
 
@@ -156,7 +156,7 @@ describe("EmailOtpSignInForm", () => {
 
   it("treats an absurdly large lockout as indefinite: no countdown, contact administrator instead", async () => {
     const wrapper = mountForm();
-    await requestForm(wrapper).vm.$emit("succeeded", { email: "buyer@acme.com", result: { outcome: "Sent" } });
+    await requestForm(wrapper).vm.$emit("succeeded", { email: "buyer@acme.com", result: { outcome: "CodeSent" } });
 
     // Well beyond any real lockout window — e.g. an admin-imposed or sentinel value.
     await verifyForm(wrapper).vm.$emit("locked", 30 * 24 * 60 * 60);

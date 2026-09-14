@@ -114,7 +114,7 @@ describe("EmailOtpVerifyForm", () => {
   });
 
   it("emits disabled when the module became disabled", async () => {
-    verifyCode.mockResolvedValue({ outcome: "Disabled" });
+    verifyCode.mockResolvedValue({ outcome: "OtpDisabled" });
 
     const wrapper = mountForm();
     await typeCode(wrapper, "123456");
@@ -123,7 +123,7 @@ describe("EmailOtpVerifyForm", () => {
   });
 
   it("emits locked with the remaining lockout seconds", async () => {
-    verifyCode.mockResolvedValue({ outcome: "Locked", lockoutSecondsRemaining: 42 });
+    verifyCode.mockResolvedValue({ outcome: "AccountLocked", lockoutSecondsRemaining: 42 });
 
     const wrapper = mountForm();
     await typeCode(wrapper, "123456");
@@ -163,7 +163,7 @@ describe("EmailOtpVerifyForm", () => {
   });
 
   it("resend: reports success and clears the code only when the outcome is Sent", async () => {
-    requestCode.mockResolvedValue({ outcome: "Sent" });
+    requestCode.mockResolvedValue({ outcome: "CodeSent" });
 
     const wrapper = mountForm();
     await codeInput(wrapper).setValue("11111");
@@ -196,7 +196,7 @@ describe("EmailOtpVerifyForm", () => {
   });
 
   it("resend: emits disabled when the module became disabled", async () => {
-    requestCode.mockResolvedValue({ outcome: "Disabled" });
+    requestCode.mockResolvedValue({ outcome: "OtpDisabled" });
 
     const wrapper = mountForm();
     await wrapper.find('[data-test-id="email-otp-resend-button"]').trigger("click");

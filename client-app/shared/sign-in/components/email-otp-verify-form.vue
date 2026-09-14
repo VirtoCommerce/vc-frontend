@@ -176,10 +176,10 @@ async function handleOutcome(result: IOtpVerifyResponse | undefined): Promise<vo
   switch (result?.outcome) {
     case "Success":
       return;
-    case "Disabled":
+    case "OtpDisabled":
       emit("disabled");
       return;
-    case "Locked":
+    case "AccountLocked":
       emit("locked", result.lockoutSecondsRemaining);
       return;
     case "InvalidCode":
@@ -199,12 +199,12 @@ async function onResend() {
   try {
     const result = await requestCode(props.email);
 
-    if (result?.outcome === "Disabled") {
+    if (result?.outcome === "OtpDisabled") {
       emit("disabled");
       return;
     }
 
-    if (result?.outcome !== "Sent") {
+    if (result?.outcome !== "CodeSent") {
       errorMessage.value = t("shared.sign_in.email_otp_sign_in_form.verify.errors.generic");
       return;
     }
@@ -240,10 +240,6 @@ async function onResend() {
 
   &__field {
     @apply relative mb-3 rounded-md;
-
-    &:focus-within {
-      @apply ring-1 ring-accent-700;
-    }
   }
 
   &__input {

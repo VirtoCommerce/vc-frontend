@@ -82,7 +82,7 @@ const onSubmit = handleSubmit(async () => {
       return;
     }
 
-    if (result.outcome === "Disabled") {
+    if (result.outcome === "OtpDisabled") {
       emit("disabled");
       return;
     }

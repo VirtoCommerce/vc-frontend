@@ -6,8 +6,8 @@ import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { useSignMeIn } from "@/shared/account/composables";
 
-export type OtpRequestOutcomeType = "Sent" | "Disabled";
-export type OtpVerifyOutcomeType = "Success" | "InvalidCode" | "Disabled" | "Locked";
+export type OtpRequestOutcomeType = "CodeSent" | "OtpDisabled";
+export type OtpVerifyOutcomeType = "Success" | "InvalidCode" | "OtpDisabled" | "AccountLocked";
 
 export interface IOtpRequestResponse {
   outcome: OtpRequestOutcomeType;
@@ -20,10 +20,11 @@ export interface IOtpVerifyResponse {
 }
 
 const ANALYTICS_LOGIN_METHOD = "otp";
+const NATIVE_SIGN_IN_PROVIDER = "OTP";
 
 export function useOtpSignIn() {
   const loading = ref(false);
-  const { externalSignInCallback, errors: authErrors } = useAuth();
+  const { nativeSignIn, errors: authErrors } = useAuth();
   const { signIn, errors: signInErrors, resetErrors: resetSignInErrors } = useSignMeIn();
   const { analytics } = useAnalytics();
 
@@ -52,7 +53,7 @@ export function useOtpSignIn() {
       const result = data.value ?? undefined;
 
       if (result?.outcome === "Success") {
-        await completeSignIn();
+        await completeSignIn(email, code);
       }
 
       return result;
@@ -61,9 +62,9 @@ export function useOtpSignIn() {
     }
   }
 
-  async function completeSignIn(): Promise<void> {
+  async function completeSignIn(email: string, code: string): Promise<void> {
     try {
-      await externalSignInCallback();
+      await nativeSignIn(NATIVE_SIGN_IN_PROVIDER, { storeId: globals.storeId, email, code });
       await signIn();
     } catch (e) {
       const error = e instanceof Error ? e : new Error(String(e));

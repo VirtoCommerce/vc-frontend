@@ -2,14 +2,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ref } from "vue";
 
 vi.mock("@/core/composables", () => {
-  const externalSignInCallback = vi.fn<() => Promise<void>>();
+  const nativeSignIn = vi.fn<(provider: string, params: Record<string, string>) => Promise<void>>();
   const authErrors = ref<{ code: string; description: string }[]>();
   const analytics = vi.fn();
 
   return {
-    __mockAuthState: { externalSignInCallback, authErrors },
+    __mockAuthState: { nativeSignIn, authErrors },
     __mockAnalyticsState: { analytics },
-    useAuth: () => ({ externalSignInCallback, errors: authErrors }),
+    useAuth: () => ({ nativeSignIn, errors: authErrors }),
     useAnalytics: () => ({ analytics }),
   };
 });
@@ -64,7 +64,7 @@ vi.mock("@/core/api/common", async () => {
 type IdentityErrorMockType = { code: string; description: string };
 
 type AuthMockStateType = {
-  externalSignInCallback: ReturnType<typeof vi.fn>;
+  nativeSignIn: ReturnType<typeof vi.fn>;
   authErrors: { value: IdentityErrorMockType[] | undefined };
 };
 
@@ -121,8 +121,8 @@ describe("useOtpSignIn", () => {
     postedBody = undefined;
 
     const auth = await getAuthState();
-    auth.externalSignInCallback.mockReset();
-    auth.externalSignInCallback.mockResolvedValue(undefined);
+    auth.nativeSignIn.mockReset();
+    auth.nativeSignIn.mockResolvedValue(undefined);
     auth.authErrors.value = undefined;
 
     const signMeIn = await getSignMeInState();
@@ -157,7 +157,7 @@ describe("useOtpSignIn", () => {
 
   it("requestCode posts storeId and email to /api/otp/request and returns the response", async () => {
     const fetchState = await getFetchState();
-    fetchState.fetchResult.data.value = { outcome: "Sent", maskedEmail: "b•••r@acme.com" };
+    fetchState.fetchResult.data.value = { outcome: "CodeSent", maskedEmail: "b•••r@acme.com" };
 
     const { useOtpSignIn } = await importComposable();
     const { requestCode, loading } = useOtpSignIn();
@@ -166,7 +166,7 @@ describe("useOtpSignIn", () => {
 
     expect(postedUrl).toBe("/api/otp/request");
     expect(postedBody).toEqual({ storeId: "store-1", email: "buyer@acme.com" });
-    expect(result).toEqual({ outcome: "Sent", maskedEmail: "b•••r@acme.com" });
+    expect(result).toEqual({ outcome: "CodeSent", maskedEmail: "b•••r@acme.com" });
     expect(loading.value).toBe(false);
   });
 
@@ -215,7 +215,12 @@ describe("useOtpSignIn", () => {
     expect(postedUrl).toBe("/api/otp/verify");
     expect(postedBody).toEqual({ storeId: "store-1", email: "buyer@acme.com", code: "123456" });
     expect(result).toEqual({ outcome: "Success" });
-    expect(auth.externalSignInCallback).toHaveBeenCalledTimes(1);
+    expect(auth.nativeSignIn).toHaveBeenCalledTimes(1);
+    expect(auth.nativeSignIn).toHaveBeenCalledWith("OTP", {
+      storeId: "store-1",
+      email: "buyer@acme.com",
+      code: "123456",
+    });
     expect(signMeIn.signIn).toHaveBeenCalledTimes(1);
     expect(analytics).toHaveBeenCalledWith("login", "otp", { success: true });
   });
@@ -284,7 +289,7 @@ describe("useOtpSignIn", () => {
     const result = await verifyCode("buyer@acme.com", "000000");
 
     expect(result).toEqual({ outcome: "InvalidCode" });
-    expect(auth.externalSignInCallback).not.toHaveBeenCalled();
+    expect(auth.nativeSignIn).not.toHaveBeenCalled();
     expect(signMeIn.signIn).not.toHaveBeenCalled();
   });
 
@@ -302,7 +307,7 @@ describe("useOtpSignIn", () => {
     const result = await verifyCode("buyer@acme.com", "123456");
 
     expect(result).toBeUndefined();
-    expect(auth.externalSignInCallback).not.toHaveBeenCalled();
+    expect(auth.nativeSignIn).not.toHaveBeenCalled();
     expect(signMeIn.signIn).not.toHaveBeenCalled();
   });
 
@@ -311,7 +316,7 @@ describe("useOtpSignIn", () => {
     fetchState.fetchResult.data.value = { outcome: "Success" };
 
     const auth = await getAuthState();
-    auth.externalSignInCallback.mockRejectedValue(new Error("token exchange failed"));
+    auth.nativeSignIn.mockRejectedValue(new Error("token exchange failed"));
 
     const { Logger } = await import("@/core/utilities");
     const { analytics } = await getAnalyticsState();
