@@ -372,8 +372,9 @@ provide<VcInputContextType>("inputContext", {
     #{$seamless} & {
       @apply border-0 bg-transparent p-0;
 
-      &:has(input:focus) {
-        @apply ring-0;
+      // Mirrors the container's own focus rule: #2468 made it an outline, and ring-0 cancels box-shadow.
+      &:has(input:focus-visible) {
+        @apply outline-none;
       }
 
       // Outspecifies the disabled fill above: :has() lands at (0,2,1), a bare seamless rule at (0,2,0).
