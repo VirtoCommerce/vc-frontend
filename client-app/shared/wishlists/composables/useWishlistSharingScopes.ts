@@ -1,8 +1,9 @@
 import { createGlobalState } from "@vueuse/core";
 import { computed, shallowRef, toValue } from "vue";
 import { WishlistScopeType } from "@/core/api/graphql/types";
+import { Logger } from "@/core/utilities";
 import type { ChangeWishlistPayloadType } from "@/core/types";
-import type { Component, MaybeRefOrGetter } from "vue";
+import type { Component, MaybeRef, MaybeRefOrGetter } from "vue";
 
 const MODAL_KEY = "shared.wishlists.add_or_update_wishlist_modal";
 export const UNORDERED_SCOPE_POSITION = Number.MAX_SAFE_INTEGER;
@@ -36,9 +37,20 @@ export type WishlistSharingScopePayloadType = Pick<
 >;
 
 /**
- * What a scope's `element` exposes so the modal can fold per-scope input into its single save. Comes from the rendered
- * instance rather than the registration object: the registry is a global filled at module init, while the state these
- * depend on is per-open.
+ * What a scope's `element` passes to `defineExpose`. Typing the raw side is what makes the contract checkable at the
+ * contributor's end; the modal reads it through Vue's expose proxy, which unwraps every ref.
+ */
+export interface IWishlistSharingScopeExposeType {
+  canSave?: MaybeRef<boolean>;
+  dirty?: MaybeRef<boolean>;
+  payload?: MaybeRef<WishlistSharingScopePayloadType>;
+  onSaved?: (context: WishlistSharingScopeSavedContextType) => Promise<void> | void;
+}
+
+/**
+ * The same contract as the modal sees it, with the refs already unwrapped. Comes from the rendered instance rather
+ * than the registration object: the registry is a global filled at module init, while the state these depend on is
+ * per-open.
  */
 export interface IWishlistSharingScopeControlsType {
   canSave?: boolean;
@@ -78,7 +90,15 @@ function _useWishlistSharingScopes() {
   const contributed = shallowRef<IWishlistSharingScopeType[]>([]);
 
   function registerSharingScope(scope: IWishlistSharingScopeType): void {
-    if (contributed.value.some((registered) => registered.scope === scope.scope)) {
+    // Core's own scopes count as taken too: a duplicate value would render two tabs sharing one radio group, and
+    // `getSharingScope` would resolve whichever sorted first.
+    const isTaken =
+      CORE_SHARING_SCOPES.some((registered) => registered.scope === scope.scope) ||
+      contributed.value.some((registered) => registered.scope === scope.scope);
+
+    if (isTaken) {
+      Logger.warn(`useWishlistSharingScopes: the sharing scope "${scope.scope}" is already registered; ignoring.`);
+
       return;
     }
 

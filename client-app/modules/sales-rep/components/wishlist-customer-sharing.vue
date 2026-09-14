@@ -64,7 +64,7 @@ import WishlistSharingAvatar from "./wishlist-sharing-avatar.vue";
 import WishlistSharingRecipients from "./wishlist-sharing-recipients.vue";
 import type { WishlistSharingRecipientType } from "../types";
 import type { SharingTargetType } from "@/core/api/graphql/types";
-import type { WishlistSharingScopeSavedContextType } from "@/shared/wishlists";
+import type { IWishlistSharingScopeExposeType, WishlistSharingScopeSavedContextType } from "@/shared/wishlists";
 
 interface IProps {
   targets: SharingTargetType[];
@@ -221,7 +221,7 @@ async function notifyCustomers(
   });
 }
 
-defineExpose({
+defineExpose<IWishlistSharingScopeExposeType>({
   // An emptied list is not a way to stop sharing — that is the scope's job.
   canSave: computed(() => selected.value.length > 0),
   dirty: isDirty,
