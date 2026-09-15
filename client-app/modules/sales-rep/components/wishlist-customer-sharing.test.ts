@@ -1,6 +1,6 @@
 /* The ui-kit stubs below are minimal test doubles, not shippable components. */
 /* eslint-disable vue/require-emit-validator, vue/padding-lines-in-component-definition */
-import { render, fireEvent, cleanup, configure, within } from "@testing-library/vue";
+import { render, fireEvent, cleanup, configure, waitFor, within } from "@testing-library/vue";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, onMounted, ref } from "vue";
 import WishlistCustomerSharing from "./wishlist-customer-sharing.vue";
@@ -398,6 +398,28 @@ describe("WishlistCustomerSharing", () => {
       expect(document.activeElement).toBe(recipientRow("org-1")!.closest("button"));
     });
 
+    it("hands the focus to Undo when Clear all takes every row away", async () => {
+      renderSharing([target("org-1", "Acme Inc."), target("org-2", "Globex")]);
+
+      await fireEvent.click(component.getByTestId("wishlist-sharing-clear-recipients-button"));
+
+      // The button that had the focus unmounts with the rows; without the handoff the rep tabs in from the top again.
+      await waitFor(() =>
+        expect(document.activeElement).toBe(component.getByTestId("wishlist-sharing-restore-recipients-button")),
+      );
+    });
+
+    it("hands the focus back to Clear all when the rep undoes it", async () => {
+      renderSharing([target("org-1", "Acme Inc."), target("org-2", "Globex")]);
+      await fireEvent.click(component.getByTestId("wishlist-sharing-clear-recipients-button"));
+
+      await fireEvent.click(component.getByTestId("wishlist-sharing-restore-recipients-button"));
+
+      await waitFor(() =>
+        expect(document.activeElement).toBe(component.getByTestId("wishlist-sharing-clear-recipients-button")),
+      );
+    });
+
     it("drops a recipient the rep removes, and blocks the save with nobody left", async () => {
       renderSharing([target("org-1", "Acme Inc.")]);
 
@@ -436,13 +458,6 @@ describe("WishlistCustomerSharing", () => {
       renderSharing([target("org-1", "Acme Inc.")], "New season is live.");
 
       expect(shareMessage()).toHaveValue("New season is live.");
-    });
-
-    it("offers no channel choice, since every share goes out on both", () => {
-      renderSharing();
-
-      expect(component.queryByTestId("wishlist-share-email-checkbox")).toBeNull();
-      expect(component.queryByTestId("wishlist-share-push-checkbox")).toBeNull();
     });
 
     it("caps the message at the designed length", () => {

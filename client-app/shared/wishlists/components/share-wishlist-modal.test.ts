@@ -200,12 +200,6 @@ const VcTabSwitch = defineComponent({
   },
 });
 
-const VcLabel = defineComponent({
-  setup(_, { slots }) {
-    return () => h("label", slots.default?.());
-  },
-});
-
 const VcButton = defineComponent({
   props: { disabled: { type: Boolean, default: false }, loading: { type: Boolean, default: false } },
   emits: ["click"],
@@ -233,7 +227,7 @@ function renderModal(list: WishlistType) {
   component = render(ShareWishlistModal, {
     props: { list },
     global: {
-      components: { VcModal, VcInput, VcTabSwitch, VcLabel, VcButton },
+      components: { VcModal, VcInput, VcTabSwitch, VcButton },
       mocks: { $t: (key: string) => key },
       stubs: { VcIcon: true, StopSharingConfirmationModal },
     },
@@ -795,6 +789,21 @@ describe("ShareWishlistModal", () => {
       expect(controls.onSaved).toHaveBeenCalledOnce();
       expect(controls.onSaved.mock.calls[0][0]).toMatchObject({ listName: "Spring assortment" });
       expect(controls.onSaved.mock.calls[0][0].sharingLink).toContain("/shared-list/sharing-key-1");
+    });
+
+    it("links the notification to the key the server kept, not the one the dialog carried in", async () => {
+      controls.canSave.value = true;
+      controls.payload.value = { addSharedWithIds: ["org-1"] };
+      // The server owns the key: it may keep the dialog's proposal or mint its own, and only it knows which.
+      mocks.updateWishlist.mockResolvedValue(savedList("sharing-key-from-server", "org-1"));
+
+      renderModal(privateList());
+      await selectScope(TARGETED_SCOPE);
+      await fireEvent.click(saveButton());
+
+      await vi.waitFor(() => expect(controls.onSaved).toHaveBeenCalledOnce());
+      // Otherwise the customers are notified with a link to a key that resolves to nothing.
+      expect(controls.onSaved.mock.calls[0][0].sharingLink).toContain("/shared-list/sharing-key-from-server");
     });
 
     it("hands over the audience the server persisted, not the one the dialog drafted", async () => {

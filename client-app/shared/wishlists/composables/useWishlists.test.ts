@@ -89,6 +89,20 @@ describe("updateWishlist", () => {
     expect(list.value?.sharingSetting?.targets).toHaveLength(1);
   });
 
+  it("leaves the object the caller already holds untouched", async () => {
+    mocks.getWishList.mockResolvedValue(card("list-1", "Spring"));
+    await fetchWishList("list-1");
+    const openedWith = list.value!;
+    mocks.changeWishlist.mockResolvedValue(saved("list-1", "Spring", ["org-1"]));
+
+    await updateWishlist({ listId: "list-1", scope: "Customer" });
+
+    // The share dialog reads its recipients off the list it was opened with and notifies whoever is not in it yet.
+    // Merging into that same object would hand it the saved audience mid-save, and nobody would be notified.
+    expect(openedWith.sharingSetting?.targets).toHaveLength(0);
+    expect(list.value).not.toBe(openedWith);
+  });
+
   it("leaves the open list alone when the save is about another one", async () => {
     mocks.getWishList.mockResolvedValue(card("list-2", "Autumn"));
     await fetchWishList("list-2");
