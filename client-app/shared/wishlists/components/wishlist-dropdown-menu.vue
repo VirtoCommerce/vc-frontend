@@ -26,7 +26,7 @@
         "
       >
         <template #prepend>
-          <VcIcon name="pencil" />
+          <VcIcon name="edit" />
         </template>
 
         <span>{{ $t("shared.wishlists.list_card.rename_list_button") }}</span>
@@ -51,7 +51,7 @@
 
       <VcMenuItem
         data-test-id="wishlist-card-remove-menu-item"
-        color="danger"
+        color="secondary"
         nowrap
         @click="
           close();
@@ -59,10 +59,10 @@
         "
       >
         <template #prepend>
-          <VcIcon name="trash-2" />
+          <VcIcon name="delete-2" class="text-danger" />
         </template>
 
-        <span class="text-danger">{{ $t("shared.wishlists.list_card.remove_list_button") }}</span>
+        <span>{{ $t("shared.wishlists.list_card.remove_list_button") }}</span>
       </VcMenuItem>
     </template>
   </VcDropdownMenu>
