@@ -1,6 +1,8 @@
 # Federated Modules — TODO / open work
 
 Tracking for **VCST-5159**. Backlog, except where a section says otherwise (#2 has shipped).
+An item that has a work item is a one-line link — its detail lives in Jira. Everything else here
+has no work item.
 Decisions, rationale, and review analysis live in [`specs/`](./specs/)
 (discovery/hosting/enablement: [`2026-07-06-discovery-hosting-decision.md`](./specs/2026-07-06-discovery-hosting-decision.md);
 facade distribution: [`2026-07-06-facade-distribution-design.md`](./specs/2026-07-06-facade-distribution-design.md)).
@@ -80,7 +82,8 @@ file are cross-referenced, not repeated.
       serves buyer-facing widgets), so every visitor loads it before the router is installed:
       ~115 KB raw on the critical path, the manifest fetched twice (gate + runtime), about six
       sequential round trips to the platform on a cold cache — measured ≈ 150 ms warm and
-      ≈ 1.5–2 s cold at ~350 ms RTT. The fixes are VCST-5761 (#1) and the fetch-hook seeding (#3).
+      ≈ 1.5–2 s cold at ~350 ms RTT. The fixes are [VCST-5761](https://virtocommerce.atlassian.net/browse/VCST-5761)
+      (#1) and the fetch-hook seeding (#3).
       For the record: the MF host itself costs +159 KB gzip over an MF-off build of the same commit
       (+9 %), ≈ +67 KB gzip of it on the initial `index.html` payload.
 - [ ] **Delete the in-repo `client-app/modules/sales-rep`** once QA signs the plugin off — the copy
@@ -119,27 +122,22 @@ Definition and rationale: *Pilot* section of the discovery spec.
       value isn't the pinned release URL (catches a stray `file:`/`portal:`/yalc leak).
 - [ ] **Route authorization** — sales-rep is rep-only; plugin `addRoute` has no
       permission/guard primitive in the facade yet. Likely a pilot blocker for real users.
-      Partly addressed: the loader wraps the router for the whole load-and-init phase and refuses a
-      plugin claim on a name the host owns (`router.addRoute` evicts a same-named root route, and
-      vue-router's own warning is dev-only). It covers every name one call would claim — both
-      `addRoute` overloads and each named entry in `children` — and `removeRoute` of a host name,
-      so remove-then-add cannot launder a squat. That covers takeover, not authorization, and only
-      inside the window: a claim made after the phase settles is unguarded.
-- [ ] **Declare plugin routes in `plugin.json` so boot stops blocking on the loader** — VCST-5761.
-      Today `app.mount()` waits for the whole loader, so a slow plugin is blank-screen time for the
-      entire storefront. If a plugin declares the paths it intends to take, the host can register a
-      placeholder that shows a loading state and resolves once the plugin settles, install the
-      router immediately, and pay nothing at first paint. It also removes the backstop's
-      "late plugins register routes after the first navigation" hole, and makes the plugin count N
-      stop mattering (no cap needed while boot is not on the critical path). Needs a fallback: if
-      the loader settles and the plugin never claimed the path, the placeholder 404s.
-- [ ] **Extension-registry precedence: the host must win regardless of order** — VCST-5762.
-      Host module inits are fire-and-forget while the plugin's `init()` is awaited, and
-      `useExtensionRegistry.register` keeps the first claim with a dev-only warn. So which of a
-      host module and a plugin owns a `category/name` is decided by whichever continuation lands
-      first. The fix needs `register` to know the caller (host claim overwrites a plugin-held key
-      and is reported; plugin claim on a host-held key is refused into the loader's outcome), which
-      changes a facade-exported signature — hence a contract rebuild, hence not in the discovery PR.
+      VCST-5761 covers the declarative half (`when: userCan(...)` on a declared route, evaluated
+      before the placeholder is registered); what stays open here is a guard on a route the plugin
+      registers itself. Partly addressed: the loader wraps the router for the whole load-and-init
+      phase and refuses a plugin claim on a name the host owns (`router.addRoute` evicts a
+      same-named root route, and vue-router's own warning is dev-only). It covers every name one
+      call would claim — both `addRoute` overloads and each named entry in `children` — and
+      `removeRoute` of a host name, so remove-then-add cannot launder a squat. That covers
+      takeover, not authorization, and only inside the window: a claim made after the phase settles
+      is unguarded.
+- [ ] [**VCST-5761** — declare plugin contributions so boot stops blocking and nothing shifts when
+      a plugin lands](https://virtocommerce.atlassian.net/browse/VCST-5761). It also absorbs, from
+      this file: the route-fallback and boot-cost-∝-N items that used to sit in #6, the backstop's
+      late-registration hole, and a switched-off plugin paying the whole load chain.
+- [ ] [**VCST-5762** — extension-registry precedence: the host must win regardless of
+      order](https://virtocommerce.atlassian.net/browse/VCST-5762). Changes a facade-exported
+      signature, so it carries a contract rebuild.
 - [ ] Facade additions the plugin turns out to need (→ #7 guard rails).
 
 ## 2. Runtime discovery — done, via the platform rather than a store setting
@@ -165,22 +163,11 @@ Still open:
 - [ ] **Backend-capability gate** — `requiredBackendModules` precondition checked against
       the installed module list before load; unmet ⇒ `skipped` with a distinct reason
       (decided in review: discovery-decoupling ≠ functional-decoupling).
-- [ ] **Plugin styling containment — decided, tracked as VCST-5760** (sprint 26-17). Full analysis,
-      measurements and the rejected alternatives: `specs/2026-08-21-plugin-css-cascade-layers.md`.
-      Native cascade layers, order declared by the host:
-      `@layer host-base, vendor, host-components, plugin, host-utilities, plugin-overrides;`. `plugin` below
-      `host-utilities` means a plugin's copy of a host utility can never win on host markup; above
-      `host-components` means `class="p-6"` in a plugin template is not silently beaten by the host
-      globals that reach into its DOM (236 of 262 host SFC style blocks are global); and
-      `plugin-overrides` on top makes a deliberate override deterministic without `!important`.
-      The plugin author does nothing — plain utilities in templates, `@apply` in styles, no prefix.
-      Measured regression surface for moving the host's utilities into a top layer: **four** rules —
-      one to repair (`shared/static-content/components/call-to-action.vue:42`) and three that flip
-      toward the caller's intent (`<VcMarkdownRender class="text-sm">` twice,
-      `<ChangePasswordForm class="lg:w-1/2">` once). Earlier answers are superseded: a
-      Tailwind `prefix` (rejected on DX), `@scope` (rejected — `<Teleport>` escapes the scope root),
-      and `<style scoped>` + `@apply` with no global layer (rejected — a plugin that is three widgets
-      has nowhere to put shared styles), which was the PR #2372 prototype that is not landing.
+- [ ] [**VCST-5760** — contain plugin CSS with native cascade
+      layers](https://virtocommerce.atlassian.net/browse/VCST-5760) (sprint 26-17). Decision,
+      measured regression surface and the rejected alternatives (Tailwind `prefix`, `@scope`,
+      `<style scoped>` + `@apply`, the PR #2372 prototype that is not landing):
+      [`specs/2026-08-21-plugin-css-cascade-layers.md`](./specs/2026-08-21-plugin-css-cascade-layers.md).
 - [x] **Name-collision dedup** — the first descriptor to survive validation wins; a later plugin
       claiming the same name is reported in `skipped` under its own id, since the contested name
       belongs to the winner. Previously both were registered and both loaded, so one plugin's code
@@ -284,21 +271,13 @@ default behind `module_federation_enabled`, loads only what installed modules ad
 fails closed and bounded. They become relevant when scaling past a controlled pilot (more plugins,
 third-party authors, runtime discovery, broad store rollout); the kill switch and CSP are the
 two to treat as prerequisites for *that* stage (artifact integrity is not — see #3). (Route
-authorization moved to #1 — it likely blocks the pilot.)
+authorization moved to #1 — it likely blocks the pilot; boot cost ∝ N and route fallback moved to
+VCST-5761.)
 
 - **Inter-plugin isolation** — route-path collisions and extension-key clobbering between plugins
   are unhandled (only host-vs-plugin isolation exists). Duplicate remote names are handled — see #2.
 - **Kill switch** — killing a bad plugin means uninstalling its module (or a host rebuild when it
   came from the env override); there is no per-plugin toggle. Gate prod exposure on CSP.
-- **Boot cost ∝ N** — all remotes are manifest-fetched / loaded / `init`'d eagerly before
-  `app.use(router)`; add a lazy/route-triggered tier for non-critical plugins.
-- **Route fallback** — deep links to a skipped/failed plugin route degrade to a generic
-  routing failure; reserve host placeholder routes / a "feature unavailable" contract.
-  Related: when a plugin settles AFTER the boot backstop and registers its route late,
-  the user who deep-linked keeps seeing the 404 even though the route now exists
-  (`router.addRoute` does not re-match the current location) — a late-settlement
-  `router.replace(currentRoute.fullPath)` when the current match is the not-found route
-  would recover it.
 - **SSR/SEO** — `loadRemote` is client-side, so plugin routes are CSR-only (rules out MF for
   SEO-relevant public content; fine for authenticated sales-rep).
 - **Plugin i18n** — no contract for a plugin to register translation messages / RTL.
