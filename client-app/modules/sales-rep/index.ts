@@ -93,6 +93,8 @@ export function init(router: Router, i18n: I18n) {
     scope: CUSTOMER_SHARING_SCOPE,
     labelKey: "sales_rep.list_sharing.scope_label",
     statusKey: "sales_rep.list_sharing.status",
+    icon: "user-plus",
+    order: 30,
     supportsLink: true,
     shoppable: true,
     isAvailable: isSalesRepUser,

@@ -1,12 +1,13 @@
-/* The ui-kit stubs below are deliberately minimal test doubles, not shippable components — emit validators and
-   component-block padding would only add noise to them. */
+/* The ui-kit stubs below are minimal test doubles, not shippable components. */
 /* eslint-disable vue/require-emit-validator, vue/padding-lines-in-component-definition */
-import { render, fireEvent, cleanup, configure } from "@testing-library/vue";
+import { render, fireEvent, cleanup, configure, waitFor, within } from "@testing-library/vue";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, onMounted, ref } from "vue";
 import WishlistCustomerSharing from "./wishlist-customer-sharing.vue";
+import type { SharingTargetType } from "@/core/api/graphql/types";
 import type { IWishlistSharingScopeControlsType } from "@/shared/wishlists/composables/useWishlistSharingScopes";
 import type { RenderResult } from "@testing-library/vue";
+import type { PropType } from "vue";
 import "@testing-library/jest-dom/vitest";
 
 configure({ testIdAttribute: "data-test-id" });
@@ -14,7 +15,7 @@ configure({ testIdAttribute: "data-test-id" });
 const KEY = "sales_rep.list_sharing";
 const SHARING_LINK = "https://store.example.com/shared-list/sharing-key-1";
 
-// What the module locale actually ships; anything else is a newly-added backend code an old storefront cannot map.
+// What the module locale ships; any other code is one an old storefront cannot map.
 const translatedWarningKeys = await vi.hoisted(() =>
   [
     "generic",
@@ -32,7 +33,9 @@ const mocks = await vi.hoisted(async () => {
 
   return {
     sendCommunication: vi.fn(),
-    options: reactiveRef<{ organizationId: string; organizationName: string }[]>([]),
+    options: reactiveRef<{ organizationId: string; organizationName: string; location: string; imageUrl: string }[]>(
+      [],
+    ),
     loading: reactiveRef(false),
     failed: reactiveRef(false),
     notifications: { success: vi.fn(), warning: vi.fn(), error: vi.fn() },
@@ -55,51 +58,86 @@ vi.mock("../composables/useSalesRepCustomerOptions", () => ({
     options: mocks.options,
     loading: mocks.loading,
     failed: mocks.failed,
+    findOption: (organizationId: string) =>
+      mocks.options.value.find((option) => option.organizationId === organizationId),
   }),
 }));
 
 vi.mock("@/shared/notification", () => ({ useNotifications: () => mocks.notifications }));
 
+/* Multiple mode carries whole items, not ids — the real VcSelect pushes the item it was given. */
 const VcSelect = defineComponent({
   props: {
-    modelValue: { type: String, default: "" },
-    items: { type: Array as () => Record<string, string>[], default: () => [] },
+    modelValue: { type: Array as PropType<Record<string, string>[]>, default: () => [] },
+    items: { type: Array as PropType<Record<string, string>[]>, default: () => [] },
     textField: { type: String, default: "" },
     valueField: { type: String, default: "" },
     message: { type: String, default: "" },
     error: { type: Boolean, default: false },
     required: { type: Boolean, default: false },
     disabled: { type: Boolean, default: false },
+    multiple: { type: Boolean, default: false },
+    clearable: { type: Boolean, default: false },
     testIdDropdown: { type: String, default: "" },
   },
-  emits: ["update:modelValue"],
+  emits: ["update:modelValue", "change"],
   setup(props, { emit }) {
+    const isPicked = (item: Record<string, string>) =>
+      props.modelValue.some((picked) => picked[props.valueField] === item[props.valueField]);
+
+    // The kit raises both events together on every path that changes the selection, its own clear button included.
+    function commit(next: Record<string, string>[]) {
+      emit("update:modelValue", next);
+      emit("change", next);
+    }
+
+    function toggle(item: Record<string, string>) {
+      commit(
+        isPicked(item)
+          ? props.modelValue.filter((picked) => picked[props.valueField] !== item[props.valueField])
+          : [...props.modelValue, item],
+      );
+    }
+
     return () =>
-      h("div", [
-        h(
-          "select",
-          {
-            "data-test-id": props.testIdDropdown,
-            value: props.modelValue,
-            disabled: props.disabled,
-            required: props.required,
-            "aria-invalid": String(props.error),
-            onChange: (event: Event) => emit("update:modelValue", (event.target as HTMLSelectElement).value),
-          },
-          [
-            h("option", { value: "" }),
-            ...props.items.map((item) =>
-              h("option", { key: item[props.valueField], value: item[props.valueField] }, item[props.textField]),
+      h(
+        "div",
+        {
+          "data-test-id": props.testIdDropdown,
+          "data-multiple": String(props.multiple),
+          "aria-invalid": String(props.error),
+          "aria-required": String(props.required),
+          "aria-disabled": String(props.disabled),
+        },
+        [
+          ...props.items.map((item) =>
+            h(
+              "button",
+              {
+                key: item[props.valueField],
+                type: "button",
+                "data-test-id": `customer-option-${item[props.valueField]}`,
+                "aria-pressed": String(isPicked(item)),
+                onClick: () => toggle(item),
+              },
+              item[props.textField],
             ),
-          ],
-        ),
-        props.message ? h("span", { "data-test-id": "field-message" }, props.message) : null,
-      ]);
+          ),
+          props.clearable
+            ? h("button", { type: "button", "data-test-id": "customer-select-clear", onClick: () => commit([]) })
+            : null,
+          props.message ? h("span", { "data-test-id": "field-message" }, props.message) : null,
+        ],
+      );
   },
 });
 
 const VcTextarea = defineComponent({
-  props: { modelValue: { type: String, default: "" }, maxLength: { type: [Number, String], default: undefined } },
+  props: {
+    modelValue: { type: String, default: "" },
+    maxLength: { type: [Number, String], default: undefined },
+    message: { type: String, default: "" },
+  },
   emits: ["update:modelValue"],
   setup(props, { emit }) {
     return () =>
@@ -107,20 +145,41 @@ const VcTextarea = defineComponent({
         "data-test-id": "wishlist-share-message-input",
         value: props.modelValue,
         maxlength: props.maxLength,
+        "data-message": props.message,
         onInput: (event: Event) => emit("update:modelValue", (event.target as HTMLTextAreaElement).value),
       });
   },
 });
 
+const VcImage = defineComponent({
+  props: { src: { type: String, default: "" }, alt: { type: String, default: "" } },
+  setup(props) {
+    return () => h("img", { src: props.src, alt: props.alt });
+  },
+});
+
+// The recipients list renders for real; only its buttons are stood in for.
+const VcButton = defineComponent({
+  props: { disabled: { type: Boolean, default: false }, ariaLabel: { type: String, default: "" } },
+  emits: ["click"],
+  setup(props, { slots, emit }) {
+    return () =>
+      h(
+        "button",
+        { disabled: props.disabled, "aria-label": props.ariaLabel, onClick: () => emit("click") },
+        slots.default?.(),
+      );
+  },
+});
+
 let component: RenderResult;
-/** Reached the way the modal reaches it — through a template ref. */
 let controls: IWishlistSharingScopeControlsType;
 
-function renderSharing(sharedWithId?: string) {
+function renderSharing(targets: SharingTargetType[] = [], message = "") {
   const Host = defineComponent({
     props: {
-      sharedWithId: { type: String, default: undefined },
-      sharingLink: { type: String, required: true },
+      targets: { type: Array as PropType<SharingTargetType[]>, required: true },
+      message: { type: String, required: true },
     },
     setup(props) {
       const inner = ref<IWishlistSharingScopeControlsType>();
@@ -132,16 +191,16 @@ function renderSharing(sharedWithId?: string) {
       return () =>
         h(WishlistCustomerSharing, {
           ref: inner,
-          sharedWithId: props.sharedWithId,
-          sharingLink: props.sharingLink,
+          targets: props.targets,
+          message: props.message,
         });
     },
   });
 
   component = render(Host, {
-    props: { sharedWithId, sharingLink: SHARING_LINK },
+    props: { targets, message },
     global: {
-      components: { VcSelect, VcTextarea },
+      components: { VcSelect, VcTextarea, VcButton, VcImage },
       stubs: { VcIcon: true },
     },
   });
@@ -150,21 +209,39 @@ function renderSharing(sharedWithId?: string) {
 }
 
 function customerSelect() {
-  return component.getByTestId<HTMLSelectElement>("wishlist-share-customer-select");
+  return component.getByTestId("wishlist-share-customer-select");
+}
+
+function customerOption(organizationId: string) {
+  return component.getByTestId(`customer-option-${organizationId}`);
+}
+
+function pick(organizationId: string) {
+  return fireEvent.click(customerOption(organizationId));
 }
 
 function shareMessage() {
   return component.getByTestId<HTMLTextAreaElement>("wishlist-share-message-input");
 }
 
+function target(id: string, name?: string, subtitle?: string, imageUrl?: string): SharingTargetType {
+  return { id, name, subtitle, imageUrl };
+}
+
 const SUCCESS = { succeeded: true, pushSent: true, emailSent: true, warnings: [] as string[] };
-const SAVED_CONTEXT = { listName: "Spring assortment", sharingLink: SHARING_LINK };
+
+// The audience the server reports back with the save. Empty stands for a backend that does not resolve targets yet.
+function savedContext(...targetIds: string[]) {
+  return { listName: "Spring assortment", sharingLink: SHARING_LINK, targets: targetIds.map((id) => ({ id })) };
+}
+
+const SAVED_CONTEXT = savedContext();
 
 beforeEach(() => {
   mocks.sendCommunication.mockReset().mockResolvedValue(SUCCESS);
   mocks.options.value = [
-    { organizationId: "org-1", organizationName: "Acme Inc." },
-    { organizationId: "org-2", organizationName: "Globex" },
+    { organizationId: "org-1", organizationName: "Acme Inc.", location: "Richmond, Virginia", imageUrl: "" },
+    { organizationId: "org-2", organizationName: "Globex", location: "", imageUrl: "" },
   ];
   mocks.loading.value = false;
   mocks.failed.value = false;
@@ -180,20 +257,33 @@ describe("WishlistCustomerSharing", () => {
     it("lists the rep's served customers", () => {
       renderSharing();
 
-      expect(customerSelect()).toContainHTML('value="org-1"');
-      expect(customerSelect()).toContainHTML('value="org-2"');
+      expect(customerOption("org-1")).toBeInTheDocument();
+      expect(customerOption("org-2")).toBeInTheDocument();
     });
 
-    it("pre-selects the customer the list is already published to", () => {
-      renderSharing("org-2");
+    it("takes several customers at once", async () => {
+      renderSharing();
 
-      expect(customerSelect()).toHaveValue("org-2");
+      expect(customerSelect()).toHaveAttribute("data-multiple", "true");
+
+      await pick("org-1");
+      await pick("org-2");
+
+      expect(customerOption("org-1")).toHaveAttribute("aria-pressed", "true");
+      expect(customerOption("org-2")).toHaveAttribute("aria-pressed", "true");
+    });
+
+    it("pre-selects the customers the list is already shared with", () => {
+      renderSharing([target("org-2", "Globex")]);
+
+      expect(customerOption("org-2")).toHaveAttribute("aria-pressed", "true");
+      expect(customerOption("org-1")).toHaveAttribute("aria-pressed", "false");
     });
 
     it("is marked required, since the scope cannot be saved without a customer", () => {
       renderSharing();
 
-      expect(customerSelect()).toBeRequired();
+      expect(customerSelect()).toHaveAttribute("aria-required", "true");
     });
 
     it("is disabled while the customers are still loading", () => {
@@ -201,7 +291,7 @@ describe("WishlistCustomerSharing", () => {
 
       renderSharing();
 
-      expect(customerSelect()).toBeDisabled();
+      expect(customerSelect()).toHaveAttribute("aria-disabled", "true");
     });
 
     it("reports a failed load on the field instead of showing an empty dropdown", () => {
@@ -214,73 +304,172 @@ describe("WishlistCustomerSharing", () => {
       expect(component.getByTestId("field-message")).toHaveTextContent(`${KEY}.share_customers_error`);
     });
 
-    it("keeps a persisted target visible even when it is not among the loaded options", () => {
-      // Over the cap or lost to a failed fetch: without seeding this would read as unshared.
-      mocks.options.value = [{ organizationId: "org-9", organizationName: "Initech" }];
+    it("keeps a persisted target listed even when it is not among the loaded options", () => {
+      // Over the paging cap, or off the roster since: without seeding it there would be no way to untick it.
+      mocks.options.value = [{ organizationId: "org-9", organizationName: "Initech", location: "", imageUrl: "" }];
 
-      renderSharing("org-outside-the-page");
+      renderSharing([target("org-outside-the-page", "Umbrella")]);
 
-      expect(customerSelect()).toContainHTML('value="org-outside-the-page"');
-      expect(customerSelect()).toHaveValue("org-outside-the-page");
+      expect(customerOption("org-outside-the-page")).toHaveAttribute("aria-pressed", "true");
     });
 
     it("does not duplicate a persisted target that is already among the options", () => {
-      renderSharing("org-1");
+      renderSharing([target("org-1", "Acme Inc.")]);
 
-      const optionValues = [...customerSelect().querySelectorAll("option")].map((option) => option.value);
-      expect(optionValues.filter((value) => value === "org-1")).toHaveLength(1);
+      expect(component.getAllByTestId("customer-option-org-1")).toHaveLength(1);
     });
+  });
 
-    it("warns that moving the list detaches the previous customer", async () => {
-      renderSharing("org-1");
+  describe("the recipients list", () => {
+    function recipientRow(organizationId: string) {
+      return component.queryByTestId(`wishlist-sharing-remove-recipient-${organizationId}`);
+    }
 
-      expect(component.queryByTestId("field-message")).toBeNull();
+    // Scoped to the list: the picker's options carry the same names.
+    function recipientList() {
+      return within(component.getByTestId("wishlist-sharing-recipients"));
+    }
 
-      await fireEvent.update(customerSelect(), "org-2");
-
-      expect(component.getByTestId("field-message")).toHaveTextContent(`${KEY}.share_replace_hint`);
-    });
-
-    it("does not warn about a replacement on a list that had no customer yet", async () => {
+    it("stays away while nothing is selected", () => {
       renderSharing();
 
-      await fireEvent.update(customerSelect(), "org-1");
+      expect(component.queryByTestId("wishlist-sharing-recipients")).toBeNull();
+    });
+
+    it("shows a persisted recipient as the backend resolved them, without a second lookup", () => {
+      // Not in the picker's options: the name and city come with the target itself.
+      mocks.options.value = [];
+
+      renderSharing([target("org-1", "Acme Inc.", "Richmond, Virginia")]);
+
+      expect(recipientList().getByText("Acme Inc.")).toBeInTheDocument();
+      expect(recipientList().getByText("Richmond, Virginia")).toBeInTheDocument();
+    });
+
+    it("wears the organization's own logo, which comes with the target", () => {
+      mocks.options.value = [];
+
+      renderSharing([target("org-1", "Acme Inc.", "Richmond, Virginia", "https://cdn.example/acme.png")]);
+
+      expect(component.getByTestId("wishlist-sharing-recipients").querySelector("img")).toHaveAttribute(
+        "src",
+        "https://cdn.example/acme.png",
+      );
+    });
+
+    it("names a recipient by id when the backend could not resolve them", () => {
+      renderSharing([target("org-deleted")]);
+
+      expect(recipientList().getByText("org-deleted")).toBeInTheDocument();
+    });
+
+    it("shows a just-picked customer from the picker's own option", async () => {
+      renderSharing();
+
+      await pick("org-1");
+
+      expect(recipientList().getByText("Acme Inc.")).toBeInTheDocument();
+      expect(recipientList().getByText("Richmond, Virginia")).toBeInTheDocument();
+    });
+
+    it("keeps the customers already there when another one is picked", async () => {
+      renderSharing([target("org-1", "Acme Inc.")]);
+
+      await pick("org-2");
+
+      expect(recipientRow("org-1")).toBeInTheDocument();
+      expect(recipientRow("org-2")).toBeInTheDocument();
+    });
+
+    it("hands the focus to the row that takes the deleted one's place", async () => {
+      renderSharing([target("org-1", "Acme Inc."), target("org-2", "Globex"), target("org-9", "Initech")]);
+
+      await fireEvent.click(recipientRow("org-1")!.closest("button")!);
+
+      // Otherwise the focus falls to the document and the rep tabs in from the top of the dialog again.
+      expect(document.activeElement).toBe(recipientRow("org-2")!.closest("button"));
+    });
+
+    it("keeps the focus in the list when the bottom row is the one deleted", async () => {
+      renderSharing([target("org-1", "Acme Inc."), target("org-2", "Globex")]);
+
+      await fireEvent.click(recipientRow("org-2")!.closest("button")!);
+
+      expect(document.activeElement).toBe(recipientRow("org-1")!.closest("button"));
+    });
+
+    it("hands the focus to Undo when Clear all takes every row away", async () => {
+      renderSharing([target("org-1", "Acme Inc."), target("org-2", "Globex")]);
+
+      await fireEvent.click(component.getByTestId("wishlist-sharing-clear-recipients-button"));
+
+      // The button that had the focus unmounts with the rows; without the handoff the rep tabs in from the top again.
+      await waitFor(() =>
+        expect(document.activeElement).toBe(component.getByTestId("wishlist-sharing-restore-recipients-button")),
+      );
+    });
+
+    it("hands the focus back to Clear all when the rep undoes it", async () => {
+      renderSharing([target("org-1", "Acme Inc."), target("org-2", "Globex")]);
+      await fireEvent.click(component.getByTestId("wishlist-sharing-clear-recipients-button"));
+
+      await fireEvent.click(component.getByTestId("wishlist-sharing-restore-recipients-button"));
+
+      await waitFor(() =>
+        expect(document.activeElement).toBe(component.getByTestId("wishlist-sharing-clear-recipients-button")),
+      );
+    });
+
+    it("drops a recipient the rep removes, and blocks the save with nobody left", async () => {
+      renderSharing([target("org-1", "Acme Inc.")]);
+
+      await fireEvent.click(recipientRow("org-1")!.closest("button")!);
+
+      expect(recipientRow("org-1")).toBeNull();
+      // Emptying the list is not how sharing is stopped — that is the scope's job, so there is nothing to save.
+      expect(controls.canSave).toBe(false);
+      expect(controls.dirty).toBe(true);
+    });
+
+    it("says where to stop sharing once the list is emptied", async () => {
+      renderSharing([target("org-1", "Acme Inc.")]);
+
+      await fireEvent.click(recipientRow("org-1")!.closest("button")!);
+
+      // Otherwise Save is disabled with no explanation and the way out is on another tab.
+      expect(component.getByTestId("field-message")).toHaveTextContent(`${KEY}.share_empty_hint`);
+    });
+
+    it("says nothing of the sort on a list that was never shared", () => {
+      renderSharing();
 
       expect(component.queryByTestId("field-message")).toBeNull();
     });
   });
 
   describe("the message", () => {
-    it("appears only once a new customer is chosen", async () => {
-      renderSharing();
-
-      expect(component.queryByTestId("wishlist-share-message-input")).toBeNull();
-
-      await fireEvent.update(customerSelect(), "org-1");
+    it("is offered whether or not anybody new is being added", () => {
+      renderSharing([target("org-1", "Acme Inc.")]);
 
       expect(shareMessage()).toBeInTheDocument();
     });
 
-    it("stays hidden when the list is re-opened on its current customer", () => {
-      renderSharing("org-1");
+    it("comes back with what was saved alongside the share", () => {
+      renderSharing([target("org-1", "Acme Inc.")], "New season is live.");
 
-      expect(component.queryByTestId("wishlist-share-message-input")).toBeNull();
+      expect(shareMessage()).toHaveValue("New season is live.");
     });
 
-    it("offers no channel choice, since every share goes out on both", async () => {
+    it("caps the message at the designed length", () => {
       renderSharing();
 
-      await fireEvent.update(customerSelect(), "org-1");
-
-      expect(component.queryByTestId("wishlist-share-email-checkbox")).toBeNull();
-      expect(component.queryByTestId("wishlist-share-push-checkbox")).toBeNull();
+      expect(shareMessage()).toHaveAttribute("maxlength", "250");
     });
 
-    it("caps the message so the appended link cannot exceed the backend limit", async () => {
+    it("says where the text ends up", () => {
       renderSharing();
-      await fireEvent.update(customerSelect(), "org-1");
 
-      expect(shareMessage()).toHaveAttribute("maxlength", String(1000 - SHARING_LINK.length - 2));
+      expect(shareMessage()).toHaveAttribute("data-message", `${KEY}.share_message_hint`);
     });
   });
 
@@ -290,43 +479,178 @@ describe("WishlistCustomerSharing", () => {
 
       expect(controls.canSave).toBe(false);
 
-      await fireEvent.update(customerSelect(), "org-1");
+      await pick("org-1");
 
       expect(controls.canSave).toBe(true);
     });
 
-    it("contributes the chosen customer as sharedWithId", async () => {
-      renderSharing();
+    it("contributes the picked customers as an addition, never as a replacement", async () => {
+      renderSharing([target("org-1", "Acme Inc.")]);
 
-      await fireEvent.update(customerSelect(), "org-1");
+      await pick("org-2");
 
-      expect(controls.payload).toEqual({ sharedWithId: "org-1" });
+      expect(controls.payload).toEqual({
+        addSharedWithIds: ["org-2"],
+        removeSharedWithIds: [],
+        message: "",
+      });
     });
 
-    it("reports itself dirty only when the target actually changes", async () => {
-      renderSharing("org-1");
+    it("contributes a removed customer as a removal", async () => {
+      renderSharing([target("org-1", "Acme Inc."), target("org-2", "Globex")]);
+
+      await pick("org-1");
+
+      expect(controls.payload).toEqual({
+        addSharedWithIds: [],
+        removeSharedWithIds: ["org-1"],
+        message: "",
+      });
+    });
+
+    it("offers the audience back after Clear all, instead of leaving the rep to retype it", async () => {
+      renderSharing([target("org-1", "Acme Inc."), target("org-2", "Globex")]);
+
+      await fireEvent.click(component.getByTestId("wishlist-sharing-clear-recipients-button"));
+
+      // One unconfirmed click empties the whole audience, and `targets` is the only other record of it.
+      expect(controls.canSave).toBe(false);
+
+      await fireEvent.click(component.getByTestId("wishlist-sharing-restore-recipients-button"));
+
+      expect(controls.canSave).toBe(true);
+      expect(controls.payload).toEqual({
+        addSharedWithIds: [],
+        removeSharedWithIds: [],
+        message: "",
+      });
+    });
+
+    it("offers the audience back after the picker's own clear, the same as after Clear all", async () => {
+      renderSharing([target("org-1", "Acme Inc."), target("org-2", "Globex")]);
+
+      await fireEvent.click(component.getByTestId("customer-select-clear"));
+
+      expect(component.queryByTestId("wishlist-sharing-remove-recipient-org-1")).toBeNull();
+      expect(controls.canSave).toBe(false);
+
+      await fireEvent.click(component.getByTestId("wishlist-sharing-restore-recipients-button"));
+
+      expect(controls.payload).toEqual({
+        addSharedWithIds: [],
+        removeSharedWithIds: [],
+        message: "",
+      });
+    });
+
+    it("retires the offer once the rep picks somebody else instead of undoing", async () => {
+      renderSharing([target("org-1", "Acme Inc.")]);
+
+      await fireEvent.click(component.getByTestId("wishlist-sharing-clear-recipients-button"));
+      await pick("org-2");
+      await fireEvent.click(component.getByTestId("wishlist-sharing-remove-recipient-org-2").closest("button")!);
+
+      // The cleared rows belong to an action the rep has moved on from; offering them back here would undo the wrong step.
+      expect(component.queryByTestId("wishlist-sharing-restore-recipients-button")).toBeNull();
+    });
+
+    it("contributes every recipient as a removal while the list stands cleared", async () => {
+      renderSharing([target("org-1", "Acme Inc."), target("org-2", "Globex")]);
+
+      await fireEvent.click(component.getByTestId("wishlist-sharing-clear-recipients-button"));
+
+      expect(controls.payload).toEqual({
+        addSharedWithIds: [],
+        removeSharedWithIds: ["org-1", "org-2"],
+        message: "",
+      });
+    });
+
+    it("contributes an addition and a removal from the same save", async () => {
+      renderSharing([target("org-1", "Acme Inc.")]);
+
+      await pick("org-1");
+      await pick("org-2");
+
+      expect(controls.payload).toEqual({
+        addSharedWithIds: ["org-2"],
+        removeSharedWithIds: ["org-1"],
+        message: "",
+      });
+    });
+
+    it("contributes nothing when the set comes back to where it started", async () => {
+      renderSharing([target("org-1", "Acme Inc.")]);
+
+      await pick("org-2");
+      await pick("org-2");
+
+      expect(controls.payload).toEqual({
+        addSharedWithIds: [],
+        removeSharedWithIds: [],
+        message: "",
+      });
+    });
+
+    it("carries the message so it is there when the dialog is reopened", async () => {
+      renderSharing();
+
+      await pick("org-1");
+      await fireEvent.update(shareMessage(), "  New season is live.  ");
+
+      expect(controls.payload).toMatchObject({ message: "New season is live." });
+    });
+
+    it("reports itself dirty only when the recipients actually change", async () => {
+      renderSharing([target("org-1", "Acme Inc.")]);
 
       expect(controls.dirty).toBe(false);
 
-      await fireEvent.update(customerSelect(), "org-2");
+      await pick("org-2");
       expect(controls.dirty).toBe(true);
 
-      await fireEvent.update(customerSelect(), "org-1");
+      await pick("org-2");
       expect(controls.dirty).toBe(false);
+    });
+
+    it("reports itself dirty on a rewritten message alone", async () => {
+      renderSharing([target("org-1", "Acme Inc.")], "New season is live.");
+
+      expect(controls.dirty).toBe(false);
+
+      await fireEvent.update(shareMessage(), "Autumn is live.");
+
+      expect(controls.dirty).toBe(true);
     });
   });
 
-  describe("notifying the customer after the save", () => {
-    async function shareWith(organizationId: string, sharedWithId?: string) {
-      renderSharing(sharedWithId);
-      await fireEvent.update(customerSelect(), organizationId);
+  describe("notifying the customers after the save", () => {
+    async function shareWith(organizationIds: string[], targets: SharingTargetType[] = []) {
+      renderSharing(targets);
+
+      for (const organizationId of organizationIds) {
+        await pick(organizationId);
+      }
+
       await controls.onSaved!(SAVED_CONTEXT);
     }
 
-    it("sends a default body carrying the list name and the link when the rep wrote nothing", async () => {
-      await shareWith("org-1");
+    it("reaches every new customer in one send", async () => {
+      await shareWith(["org-1", "org-2"]);
 
       expect(mocks.sendCommunication).toHaveBeenCalledOnce();
+      expect(mocks.sendCommunication.mock.calls[0][0]).toMatchObject({ organizationIds: ["org-1", "org-2"] });
+    });
+
+    it("leaves out the customers that were already there", async () => {
+      await shareWith(["org-2"], [target("org-1", "Acme Inc.")]);
+
+      expect(mocks.sendCommunication.mock.calls[0][0]).toMatchObject({ organizationIds: ["org-2"] });
+    });
+
+    it("sends a default body carrying the list name and the link when the rep wrote nothing", async () => {
+      await shareWith(["org-1"]);
+
       const command = mocks.sendCommunication.mock.calls[0][0] as { message: string; title: string };
       expect(command.message).toContain(`${KEY}.share_default_message`);
       expect(command.message).toContain("Spring assortment");
@@ -336,7 +660,7 @@ describe("WishlistCustomerSharing", () => {
 
     it("sends the rep's own text, still with the link appended", async () => {
       renderSharing();
-      await fireEvent.update(customerSelect(), "org-1");
+      await pick("org-1");
       await fireEvent.update(shareMessage(), "New season is live.");
       await controls.onSaved!(SAVED_CONTEXT);
 
@@ -345,30 +669,59 @@ describe("WishlistCustomerSharing", () => {
     });
 
     it("always requests both channels", async () => {
-      await shareWith("org-1");
+      await shareWith(["org-1"]);
 
       expect(mocks.sendCommunication.mock.calls[0][0]).toMatchObject({ sendEmail: true, sendPush: true });
     });
 
-    it("sends nothing when the target did not change", async () => {
-      renderSharing("org-1");
+    it("sends nothing when nobody was added, and says the list was saved rather than shared", async () => {
+      renderSharing([target("org-1", "Acme Inc."), target("org-2", "Globex")]);
 
+      await pick("org-1");
       await controls.onSaved!(SAVED_CONTEXT);
 
       expect(mocks.sendCommunication).not.toHaveBeenCalled();
+      // "List shared with N customers" would claim a share that did not happen and a notification nobody got.
+      expect(mocks.notifications.success.mock.calls[0][0]).toMatchObject({
+        text: `${KEY}.share_saved|{"count":1}`,
+      });
     });
 
-    it("confirms a full delivery", async () => {
-      await shareWith("org-1");
+    it("confirms the save by counting everyone the list now reaches, not who was just notified", async () => {
+      // One recipient was already there and is not notified again; the card behind the dialog says 2, so this must too.
+      await shareWith(["org-2"], [target("org-1", "Acme Inc.")]);
 
+      expect(mocks.sendCommunication.mock.calls[0][0]).toMatchObject({ organizationIds: ["org-2"] });
       expect(mocks.notifications.success).toHaveBeenCalledOnce();
-      expect(mocks.notifications.success.mock.calls[0][0]).toMatchObject({ text: `${KEY}.share_success` });
+      expect(mocks.notifications.success.mock.calls[0][0]).toMatchObject({
+        text: `${KEY}.share_success|{"count":2}`,
+      });
+    });
+
+    it("counts the audience the server saved rather than the one the dialog drafted", async () => {
+      renderSharing([target("org-1", "Acme Inc.")]);
+      await pick("org-2");
+
+      // Another session added a third customer while this dialog was open; the card behind it will say 3.
+      await controls.onSaved!(savedContext("org-1", "org-2", "org-3"));
+
+      expect(mocks.notifications.success.mock.calls[0][0]).toMatchObject({
+        text: `${KEY}.share_success|{"count":3}`,
+      });
+    });
+
+    it("falls back to its own draft while the backend resolves no targets", async () => {
+      await shareWith(["org-1", "org-2"]);
+
+      expect(mocks.notifications.success.mock.calls[0][0]).toMatchObject({
+        text: `${KEY}.share_success|{"count":2}`,
+      });
     });
 
     it("names the channel that failed on a partial delivery", async () => {
       mocks.sendCommunication.mockResolvedValue({ ...SUCCESS, emailSent: false, warnings: ["EmailUnavailable"] });
 
-      await shareWith("org-1");
+      await shareWith(["org-1"]);
 
       expect(mocks.notifications.warning).toHaveBeenCalledOnce();
       expect(mocks.notifications.warning.mock.calls[0][0].text).toContain(
@@ -379,7 +732,7 @@ describe("WishlistCustomerSharing", () => {
     it("states a partial delivery once for a code it cannot translate", async () => {
       mocks.sendCommunication.mockResolvedValue({ ...SUCCESS, warnings: ["SomethingBrandNew"] });
 
-      await shareWith("org-1");
+      await shareWith(["org-1"]);
 
       // Exact match: an untranslatable code must not append a second copy of the summary sentence.
       expect(mocks.notifications.warning.mock.calls[0][0]).toMatchObject({ text: `${KEY}.share_partial` });
@@ -393,7 +746,7 @@ describe("WishlistCustomerSharing", () => {
         warnings: ["SomethingBrandNew"],
       });
 
-      await shareWith("org-1");
+      await shareWith(["org-1"]);
 
       // Must not degrade into "shared, but not every notification was delivered" — nothing was delivered at all.
       expect(mocks.notifications.warning.mock.calls[0][0]).toMatchObject({ text: `${KEY}.share_notify_error` });
@@ -407,7 +760,7 @@ describe("WishlistCustomerSharing", () => {
         warnings: [],
       });
 
-      await shareWith("org-1");
+      await shareWith(["org-1"]);
 
       expect(mocks.notifications.error).not.toHaveBeenCalled();
       expect(mocks.notifications.warning.mock.calls[0][0]).toMatchObject({ text: `${KEY}.share_notify_error` });
