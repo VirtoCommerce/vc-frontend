@@ -277,14 +277,20 @@ onMounted(() => {
         &#{$active} {
           @apply bg-[--color-#{$color}-100];
         }
+
+        // The keyboard position needs an indicator of its own. The background step above is
+        // 1.11-1.33:1 against the list surface across red/coffee light and dark — far under the
+        // 3:1 WCAG 1.4.11 asks of the visual information identifying a component's state — and on
+        // a selected option `--active` overrides it outright, at equal specificity and later in
+        // the file, so there is nothing left to see. An outline collides with neither.
+        &#{$highlighted} {
+          @include focus-ring($inset: true);
+        }
       }
     }
 
     // Menu lists render inside a VcScrollbar with zero clearance (measured in the
     // language dropdown), so an outset ring is clipped: invert the shared offset.
-    // `highlighted` deliberately does NOT ring: the same state is set by hovering the mouse,
-    // and the focus ring must keep meaning "the keyboard is here". The highlight reads as a
-    // background, exactly like hover, and `aria-activedescendant` carries it to assistive tech.
     &:focus-visible {
       @apply rounded-[inherit];
 

@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject, onMounted, watch } from "vue";
+import { computed, inject, onMounted, ref, watch } from "vue";
 import { vcScrollbarKey } from "../scrollbar/vc-scrollbar-context";
 
 interface IEmits {
@@ -64,21 +64,19 @@ if (import.meta.env.DEV && !scrollbar && props.hasNextPage) {
 }
 
 /**
- * The scrollbar reports where the list rests; these props are what make that reportable state
- * decidable, and they live here because only the consumer holds them.
+ * Whether the list, as the scrollbar last read it, wants another page.
  *
- * Requests are transitions of this value, not states of it, which is what keeps an answer from
- * provoking another question: a handler replies by drawing something — a spinner, placeholder
- * rows — and the list is still resting at its bottom afterwards, so the value never left `true`
- * and nothing fires.
+ * Read only at the moment of a measurement — see the watcher below. Every input except the
+ * geometry is consumer-driven and can change while the published edges describe a box that no
+ * longer exists, because the measurement runs behind a debounce: a handler appends rows and drops
+ * `loading` in the same tick, and a decision taken then reads the geometry from before the append,
+ * which still says "at the bottom". That is a second page nobody asked for.
  *
- * `loading` then does two things that the geometry alone cannot. It covers the one way the edge is
- * genuinely re-reached while a request is in flight — the user scrolls up and comes back — and,
- * falling back to false, it re-opens the question once the page has landed, so a list that still
- * fits its viewport asks for the page after it instead of stopping. That second half is why paging
- * cannot be decided inside VcScrollbar: only the consumer knows a page arrived.
+ * `loading` is therefore a guard and not a trigger. It covers the one way the edge is genuinely
+ * re-reached while a request is in flight — the user scrolls up and comes back — and it is what
+ * the spinner reports.
  */
-const shouldRequest = computed(
+const wantsMore = computed(
   () => props.hasNextPage && !props.loading && !props.pageLimitReached && scrollbar?.isAtBottom.value === true,
 );
 
@@ -86,20 +84,37 @@ const showSpinner = computed(() => props.loading && props.hasNextPage);
 
 const showEnd = computed(() => props.showEndOfList && !props.hasNextPage && !props.loading);
 
-watch(shouldRequest, (value) => {
-  if (value) {
-    emit("loadMore");
+/** A request is outstanding: asked for, and nothing has happened since that would change it. */
+const asked = ref(false);
+
+/**
+ * Decided on a reading of the box, never on a prop transition, and asked at most once per answer.
+ *
+ * A measurement that does not want more re-arms: that is the page landing and pushing the bottom
+ * away, or `loading` going up. So a list that still fits its viewport is asked about again — the
+ * page that landed is itself a content change, and every content change ends in a measurement —
+ * while a consumer that does not answer at all is not asked twice.
+ */
+function reconsider(): void {
+  if (!wantsMore.value) {
+    asked.value = false;
+    return;
   }
-});
+
+  if (asked.value) {
+    return;
+  }
+
+  asked.value = true;
+  emit("loadMore");
+}
+
+watch(() => scrollbar?.measuredAt.value, reconsider);
 
 // A list already resting at its bottom when this component appears — a popover opening onto a
-// short first page, a `v-if` flipping — produces no change for the watcher above, so the first
-// request has to be asked for outright.
-onMounted(() => {
-  if (shouldRequest.value) {
-    emit("loadMore");
-  }
-});
+// short first page, a `v-if` flipping — has been measured already, and no further measurement is
+// coming, so the first request has to be asked for outright.
+onMounted(reconsider);
 </script>
 
 <style lang="scss">

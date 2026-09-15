@@ -19,9 +19,16 @@
       one may not nest inside another, so it stays a sibling and the trigger stretches over the
       whole box with a pseudo-element instead of wrapping it.
     -->
+    <!--
+      role="combobox", although this is a real <button>: `aria-activedescendant` is not allowed on
+      `role=button`, so without it assistive tech drops the attribute and the keyboard walk through
+      the list is announced to nobody. APG's select-only combobox is exactly this — a button-shaped
+      control that owns `aria-expanded`, `aria-controls` and the active descendant.
+    -->
     <button
       :id="triggerId"
       type="button"
+      role="combobox"
       class="vc-select-trigger__button"
       :aria-label="accessibleLabel"
       :aria-expanded="opened"

@@ -184,6 +184,35 @@ describe("VcLoadMore", () => {
     expect(onLoadMore).toHaveBeenCalledTimes(1);
   });
 
+  // Пришедшая страница сдвигает низ, но измерение отстаёт на дебаунс. Потребитель дописывает
+  // строки и снимает `loading` в одном тике, и решение, принятое на этом переходе, читает
+  // геометрию ДО дописывания — она всё ещё говорит «мы у низа». Это вторая страница, которую
+  // никто не просил.
+  it("does not ask for a second page on the loading flag alone, before the region is re-measured", async () => {
+    const { state, onLoadMore, region } = mountList({ rows: 20 });
+
+    describeScrollBox(region, { clientHeight: 100, scrollHeight: 500, scrollTop: 400 });
+    region.dispatchEvent(new Event("scroll"));
+    await nextTick();
+
+    expect(onLoadMore).toHaveBeenCalledTimes(1);
+
+    state.loading = true;
+    await nextTick();
+
+    // The page lands: twice the rows, the bottom is far away now, and nothing scrolled.
+    describeScrollBox(region, { clientHeight: 100, scrollHeight: 900, scrollTop: 400 });
+    state.rows = 40;
+    state.loading = false;
+    await nextTick();
+
+    expect(onLoadMore).toHaveBeenCalledTimes(1);
+
+    await afterContentSettles();
+
+    expect(onLoadMore).toHaveBeenCalledTimes(1);
+  });
+
   // Попапу VcSelect список отдают уже измеренным: к моменту появления этого компонента у скроллбара
   // менять нечего, и ждать изменения — значит не спросить никогда.
   it("asks as soon as it appears in a list that is already resting at its bottom", async () => {

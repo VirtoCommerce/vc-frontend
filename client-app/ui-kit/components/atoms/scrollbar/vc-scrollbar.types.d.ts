@@ -24,6 +24,11 @@ declare global {
     isAtBottom: Readonly<import("vue").Ref<boolean>>;
     isAtLeft: Readonly<import("vue").Ref<boolean>>;
     isAtRight: Readonly<import("vue").Ref<boolean>>;
+    /**
+     * Counts the measurements behind the edges above, so a descendant can tell a fresh reading
+     * from one taken before the last content change.
+     */
+    measuredAt: Readonly<import("vue").Ref<number>>;
   };
 }
 

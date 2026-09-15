@@ -5,6 +5,7 @@ import { h, nextTick } from "vue";
 import { createI18n } from "vue-i18n";
 import { createWrapperFactory, describeScrollBox } from "@/core/utilities/tests";
 import * as UIKitComponents from "@/ui-kit/components";
+import { focusFirstElement } from "@/ui-kit/utilities/focus";
 import VcSelect from "./vc-select.vue";
 
 const ITEMS = ["Albania", "Belgium", "China"];
@@ -870,6 +871,25 @@ describe("VcSelect", () => {
     });
   });
 
+  // Модалка наводит фокус через focusFirstElement, и useFocusManagement расширяет её выборку
+  // селектором `.vc-select__container` — специально ради этого элемента. Без своего tabindex он
+  // не фокусируется, а focusFirstElement всё равно возвращает true, поэтому промах молчаливый:
+  // фокус остаётся на body и первый Tab уводит за пределы модалки.
+  it("keeps the container focusable, so a modal's autofocus lands on it", () => {
+    const wrapper = createWrapper({ items: ITEMS });
+    const container = wrapper.get(".vc-select__container");
+
+    expect(container.attributes("tabindex")).toBe("-1");
+
+    const returned = focusFirstElement(document.body, {
+      ignoreSelector: ".vc-select input",
+      extendSelector: ".vc-select__container",
+    });
+
+    expect(returned).toBe(true);
+    expect(document.activeElement).toBe(container.element);
+  });
+
   describe("custom trigger slot", () => {
     const slots = {
       selected: () => h("span", { class: "probe-selected" }, "chosen"),
@@ -1018,7 +1038,7 @@ describe("VcSelect", () => {
 
       expect(trigger.element.tagName).toBe("BUTTON");
       expect(trigger.attributes("type")).toBe("button");
-      expect(trigger.attributes("role")).toBeUndefined();
+      expect(trigger.attributes("role")).toBe("combobox");
       expect(trigger.attributes("aria-haspopup")).toBe("listbox");
       expect(trigger.find("button").exists()).toBe(false);
       expect(wrapper.get(".vc-select-trigger__clear").element.closest(".vc-select-trigger__button")).toBeNull();

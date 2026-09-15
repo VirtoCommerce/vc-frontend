@@ -69,7 +69,13 @@ const isAtBottom = ref(false);
 const isAtLeft = ref(true);
 const isAtRight = ref(false);
 
-provide(vcScrollbarKey, { el, isAtTop, isAtBottom, isAtLeft, isAtRight });
+// Bumped every time the edges above are re-read from a real box. A descendant deciding something
+// from them needs to know not just WHERE the region rests but WHEN that was established: the
+// measurement runs behind a debounce, so between a content change and the next measurement the
+// edges describe a box that no longer exists.
+const measuredAt = ref(0);
+
+provide(vcScrollbarKey, { el, isAtTop, isAtBottom, isAtLeft, isAtRight, measuredAt });
 
 // A scrollable region must be keyboard-reachable (axe: scrollable-region-focusable), but only
 // when nothing inside is focusable — axe passes regions with focusable content, and a tab stop
@@ -202,6 +208,8 @@ function updateEdges(target: HTMLElement): Omit<VcScrollbarPayloadType, "scrollT
   if (!clientHeight || !clientWidth) {
     return measured;
   }
+
+  measuredAt.value++;
 
   // An axis that cannot scroll sits at both of its edges by definition (`overflow: hidden` on the
   // disabled modifier, and `overflow-*-auto` only on the axis that is turned on), so announcing

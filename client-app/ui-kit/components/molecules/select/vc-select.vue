@@ -19,6 +19,7 @@
     <VcPopover
       ref="popoverElement"
       class="vc-select__container"
+      tabindex="-1"
       :disabled="!enabled"
       :lazy="lazy"
       :teleport-selector="teleportSelector"
