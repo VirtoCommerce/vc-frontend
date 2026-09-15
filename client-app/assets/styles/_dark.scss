@@ -19,6 +19,7 @@ html.dark {
   @include meta.load-css("dark/molecules/vc-chip");
   @include meta.load-css("dark/molecules/vc-alert");
   @include meta.load-css("dark/molecules/vc-menu-item");
+  @include meta.load-css("dark/molecules/vc-range-calendar");
   @include meta.load-css("dark/organisms/vc-table");
   @include meta.load-css("dark/shared/catalog/product-pickup-locations");
   @include meta.load-css("dark/shared/checkout/select-address-map-view");

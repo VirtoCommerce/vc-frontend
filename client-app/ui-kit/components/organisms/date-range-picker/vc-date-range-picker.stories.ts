@@ -1,0 +1,461 @@
+import { ref } from "vue";
+import VcDateRangePicker from "./vc-date-range-picker.vue";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
+
+const SIZES = ["xs", "sm", "md", "auto"];
+const LAYOUTS = ["combined", "split"];
+const PLACEMENTS = [
+  "top",
+  "top-start",
+  "top-end",
+  "bottom",
+  "bottom-start",
+  "bottom-end",
+  "left",
+  "left-start",
+  "left-end",
+  "right",
+  "right-start",
+  "right-end",
+];
+
+const meta: Meta<typeof VcDateRangePicker> = {
+  title: "Components/Organisms/VcDateRangePicker",
+  component: VcDateRangePicker,
+  decorators: [() => ({ template: '<div id="popover-host"></div><story />' })],
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'Date-range picker organism composing `VcDateRangeInput`, a calendar trigger button (`VcButton` in the input\'s append slot), and a `VcPopover` anchored to the input that hosts a `VcRangeCalendar`. That is the default `combined` layout; `split` composes two `VcDatePicker`s instead (see the Split story). ARIA: the popup semantics live on the calendar toggle button (`aria-haspopup="dialog"`, `aria-expanded`, `aria-controls`), not on the segment inputs, which stay plain textboxes — the popover content carries `role="dialog"` with a localized `aria-label`. Picking the SECOND endpoint via the calendar closes the popover by default (`closeOnSelect`) and returns focus to the input; picking the first (anchor) endpoint keeps it open.',
+      },
+    },
+  },
+  argTypes: {
+    // Global type alias — docgen cannot infer the options.
+    layout: {
+      control: "select",
+      options: LAYOUTS,
+      description:
+        '"combined" = one `VcDateRangeInput` with two segments, opening a single `VcRangeCalendar` in a `VcPopover`. "split" = two `VcDatePicker`s, each with its own calendar, sharing one label and one details row. Every story can be switched between the two from this control, except MinMax, which pins both layouts on purpose to show them side by side.',
+      type: { name: "string", required: false },
+      table: { type: { summary: LAYOUTS.join(" | ") }, defaultValue: { summary: "combined" } },
+    },
+    size: {
+      control: "inline-radio",
+      options: SIZES,
+      type: { name: "string", required: false },
+      table: { type: { summary: SIZES.join(" | ") } },
+    },
+    placement: {
+      control: "select",
+      options: PLACEMENTS,
+      type: { name: "string", required: false },
+      table: { type: { summary: PLACEMENTS.join(" | ") } },
+    },
+    firstDayOfWeek: {
+      control: "select",
+      options: [0, 1, 2, 3, 4, 5, 6],
+      description: "0 = Sunday, 1 = Monday, ..., 6 = Saturday",
+      table: { type: { summary: "0 | 1 | 2 | 3 | 4 | 5 | 6" } },
+    },
+    min: {
+      control: "text",
+      description: "Minimum date in ISO YYYY-MM-DD format",
+      table: { type: { summary: "string" } },
+    },
+    max: {
+      control: "text",
+      description: "Maximum date in ISO YYYY-MM-DD format",
+      table: { type: { summary: "string" } },
+    },
+    locale: {
+      control: "text",
+      description: "Override locale; defaults to active i18n locale",
+    },
+    label: { control: "text" },
+    startLabel: { control: "text" },
+    endLabel: { control: "text" },
+    startPlaceholder: { control: "text" },
+    endPlaceholder: { control: "text" },
+    message: { control: "text" },
+    disabled: { control: "boolean" },
+    readonly: { control: "boolean" },
+    required: { control: "boolean" },
+    clearable: { control: "boolean" },
+    error: { control: "boolean" },
+    mask: { control: "boolean" },
+    showEmptyDetails: {
+      control: "boolean",
+      description: "Keep the details row's height reserved while it has no message, so the layout below never shifts.",
+    },
+    showFooter: { control: "boolean" },
+    closeOnSelect: { control: "boolean" },
+    enableTeleport: { control: "boolean" },
+  },
+};
+
+export default meta;
+type StoryType = StoryObj<typeof meta>;
+
+export const Default: StoryType = {
+  args: { label: "Date range" },
+  parameters: {
+    docs: {
+      source: {
+        code: `<VcDateRangePicker v-model="value" label="Date range" />`,
+      },
+    },
+  },
+  render: (args) => ({
+    components: { VcDateRangePicker },
+    setup() {
+      const value = ref<VcDateRangeType | undefined>(undefined);
+      return { args, value };
+    },
+    template: `
+      <div class="space-y-2">
+        <VcDateRangePicker v-bind="args" v-model="value" />
+        <div class="text-sm text-neutral-600">Range: {{ value ?? "(none)" }}</div>
+      </div>
+    `,
+  }),
+};
+
+export const WithValue: StoryType = {
+  args: { label: "Date range" },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <!-- value ref starts at { start: "2026-10-08", end: "2026-10-14" } -->
+          <VcDateRangePicker v-model="value" label="Date range" />
+        `,
+      },
+    },
+  },
+  render: (args) => ({
+    components: { VcDateRangePicker },
+    setup() {
+      const value = ref<VcDateRangeType | undefined>({ start: "2026-10-08", end: "2026-10-14" });
+      return { args, value };
+    },
+    template: `
+      <div class="space-y-2">
+        <VcDateRangePicker v-bind="args" v-model="value" />
+        <div class="text-sm text-neutral-600">Range: {{ value ?? "(none)" }}</div>
+      </div>
+    `,
+  }),
+};
+
+export const Split: StoryType = {
+  args: {
+    label: "Date range",
+    layout: "split",
+    startLabel: "Start date",
+    endLabel: "End date",
+    clearable: true,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`layout="split"` renders two independent `VcDatePicker`s with visible `startLabel` / `endLabel`, an en dash between them and ONE shared details row. `clearable` is forwarded to both fields, so each renders its own clear button that resets only its endpoint. Each calendar carries the opposite endpoint as an ADVISORY bound (`calendarSoftMin` / `calendarSoftMax`): the days that would invert the range are dimmed and underlined, but they stay selectable and never gate month/year navigation — so moving a whole range forward or back is always one pick away, and no arrow ever dead-ends. An inverted range is therefore reachable by mouse, exactly as it is by typing and as the single range calendar in `combined` allows; it surfaces `invalid_range` in the shared details row and reports `update:valid` false. The picker\'s own `min` / `max` remain the only hard bounds, and win wherever the two overlap.',
+      },
+      source: {
+        code: `
+          <VcDateRangePicker
+            v-model="value"
+            layout="split"
+            label="Date range"
+            start-label="Start date"
+            end-label="End date"
+            clearable
+          />
+        `,
+      },
+    },
+  },
+  render: (args) => ({
+    components: { VcDateRangePicker },
+    setup() {
+      const value = ref<VcDateRangeType | undefined>({ start: "2026-10-08", end: "2026-10-14" });
+      return { args, value };
+    },
+    template: `
+      <div class="space-y-2">
+        <VcDateRangePicker v-bind="args" v-model="value" />
+        <div class="text-sm text-neutral-600">Range: {{ value ?? "(none)" }}</div>
+      </div>
+    `,
+  }),
+};
+
+export const Small: StoryType = {
+  args: { label: "Date range", size: "sm" },
+  parameters: {
+    docs: {
+      source: {
+        code: `<VcDateRangePicker v-model="value" label="Date range" size="sm" />`,
+      },
+    },
+  },
+  render: (args) => ({
+    components: { VcDateRangePicker },
+    setup() {
+      const value = ref<VcDateRangeType | undefined>({ start: "2026-10-08", end: "2026-10-14" });
+      return { args, value };
+    },
+    template: `<VcDateRangePicker v-bind="args" v-model="value" />`,
+  }),
+};
+
+export const Disabled: StoryType = {
+  args: { label: "Date range", disabled: true },
+  parameters: {
+    docs: {
+      description: {
+        story: "Disabled state — both segments are non-interactive and the calendar trigger is also disabled.",
+      },
+      source: {
+        code: `<VcDateRangePicker v-model="value" label="Date range" disabled />`,
+      },
+    },
+  },
+  render: (args) => ({
+    components: { VcDateRangePicker },
+    setup() {
+      const value = ref<VcDateRangeType | undefined>({ start: "2026-10-08", end: "2026-10-14" });
+      return { args, value };
+    },
+    template: `<VcDateRangePicker v-bind="args" v-model="value" />`,
+  }),
+};
+
+export const ErrorState: StoryType = {
+  args: { label: "Date range", error: true, message: "End date must be after the start date" },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Simulates a vee-validate error: `error` forces the shell's error styling and the external `message` wins.",
+      },
+      source: {
+        code: `
+          <VcDateRangePicker
+            v-model="value"
+            label="Date range"
+            :error="true"
+            message="End date must be after the start date"
+          />
+        `,
+      },
+    },
+  },
+  render: (args) => ({
+    components: { VcDateRangePicker },
+    setup() {
+      const value = ref<VcDateRangeType | undefined>({ start: "2026-10-20", end: "2026-10-01" });
+      return { args, value };
+    },
+    template: `<VcDateRangePicker v-bind="args" v-model="value" />`,
+  }),
+};
+
+export const Clearable: StoryType = {
+  args: { label: "Date range", clearable: true },
+  parameters: {
+    docs: {
+      description: {
+        story: "A single shell-level clear button resets both endpoints at once.",
+      },
+      source: {
+        code: `<VcDateRangePicker v-model="value" label="Date range" clearable />`,
+      },
+    },
+  },
+  render: (args) => ({
+    components: { VcDateRangePicker },
+    setup() {
+      const value = ref<VcDateRangeType | undefined>({ start: "2026-10-08", end: "2026-10-14" });
+      return { args, value };
+    },
+    template: `
+      <div class="space-y-2">
+        <VcDateRangePicker v-bind="args" v-model="value" />
+        <div class="text-sm text-neutral-600">Range: {{ value ?? "(none)" }}</div>
+      </div>
+    `,
+  }),
+};
+
+export const WithFooter: StoryType = {
+  args: { label: "Date range", firstDayOfWeek: 1, showFooter: true },
+  parameters: {
+    docs: {
+      description: {
+        story: "`showFooter: true` exposes a Clear button inside the calendar.",
+      },
+      source: {
+        code: `<VcDateRangePicker v-model="value" label="Date range" :first-day-of-week="1" show-footer />`,
+      },
+    },
+  },
+  render: (args) => ({
+    components: { VcDateRangePicker },
+    setup() {
+      const value = ref<VcDateRangeType | undefined>(undefined);
+      return { args, value };
+    },
+    template: `
+      <div class="space-y-2">
+        <VcDateRangePicker v-bind="args" v-model="value" />
+        <div class="text-sm text-neutral-600">Range: {{ value ?? "(none)" }}</div>
+      </div>
+    `,
+  }),
+};
+
+export const MinMax: StoryType = {
+  args: {
+    label: "Date range",
+    min: "2026-10-05",
+    max: "2026-10-25",
+    message: "Pick dates between 2026-10-05 and 2026-10-25",
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Both segments and the calendar enforce the same min/max boundary. Dates outside the range render as disabled cells in the calendar; typing an out-of-range date surfaces an inline validation error naming the boundary it broke, not a generic format complaint. Type `10/01/2026` (before `min`) into either layout and tab out: the shared details row reads "Date must be on or after 2026-10-05". `11/01/2026` (after `max`) reports the max boundary, and only genuinely unparseable text such as `99/99/9999` falls back to "Invalid date format". Both layouts are shown because each surfaces its segments\' messages through its own shared details row.',
+      },
+      source: {
+        code: `
+          <VcDateRangePicker
+            v-model="value"
+            label="Date range"
+            min="2026-10-05"
+            max="2026-10-25"
+          />
+        `,
+      },
+    },
+  },
+  render: (args) => ({
+    components: { VcDateRangePicker },
+    setup() {
+      const combined = ref<VcDateRangeType | undefined>({ start: "2026-10-08", end: "2026-10-14" });
+      const split = ref<VcDateRangeType | undefined>({ start: "2026-10-08", end: "2026-10-14" });
+      return { args, combined, split };
+    },
+    template: `
+      <div class="space-y-6">
+        <div class="space-y-2">
+          <VcDateRangePicker v-bind="args" v-model="combined" layout="combined" />
+          <div class="text-sm text-neutral-600">Combined range: {{ combined ?? "(none)" }}</div>
+        </div>
+
+        <div class="space-y-2">
+          <VcDateRangePicker v-bind="args" v-model="split" layout="split" />
+          <div class="text-sm text-neutral-600">Split range: {{ split ?? "(none)" }}</div>
+        </div>
+      </div>
+    `,
+  }),
+};
+
+export const Teleport: StoryType = {
+  args: { label: "Date range", enableTeleport: true },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`enable-teleport` renders the calendar popover into `#popover-host` (the app-level host element). Use this when the picker sits inside a clipping container — a modal, dialog, or any ancestor with `overflow: hidden` — so the calendar can escape the clip and float over surrounding UI. This story wraps the picker in an `overflow: hidden` box to demonstrate the escape.",
+      },
+      source: {
+        code: `
+          <div style="overflow: hidden; height: 12rem; border: 1px dashed">
+            <VcDateRangePicker v-model="value" label="Date range" :enable-teleport="true" />
+          </div>
+        `,
+      },
+    },
+  },
+  render: (args) => ({
+    components: { VcDateRangePicker },
+    setup() {
+      const value = ref<VcDateRangeType | undefined>(undefined);
+      return { args, value };
+    },
+    template: `
+      <div style="overflow: hidden; height: 12rem; padding: 1rem; border: 1px dashed var(--color-neutral-400)">
+        <VcDateRangePicker v-bind="args" v-model="value" />
+      </div>
+    `,
+  }),
+};
+
+export const WithMask: StoryType = {
+  args: { label: "Date range", mask: true },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`mask: true` enables a locale-aware input mask on every text segment, in both layouts. Separators are auto-inserted as digits are typed, and a paste of a recognizable date format is reformatted into the locale's display format. The orders filter ships with it on, so this is the typing experience production actually has.",
+      },
+      source: {
+        code: `<VcDateRangePicker v-model="value" label="Date range" mask />`,
+      },
+    },
+  },
+  render: (args) => ({
+    components: { VcDateRangePicker },
+    setup() {
+      const value = ref<VcDateRangeType | undefined>(undefined);
+      return { args, value };
+    },
+    template: `
+      <div class="space-y-2">
+        <VcDateRangePicker v-bind="args" v-model="value" />
+        <div class="text-sm text-neutral-600">Range: {{ value ?? "(none)" }}</div>
+      </div>
+    `,
+  }),
+};
+
+export const ReservedDetailsRow: StoryType = {
+  args: { label: "Date range", mask: true },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`showEmptyDetails` reserves the details row's height while there is no message, so nothing below the field moves when validation appears — what the orders filter needs, since the picker sits above the results. The two pickers here are identical except for that prop, which is pinned per instance here rather than driven by the toolbar control: type `99/99/9999` into a start segment and tab out; only the second one pushes the text beneath it down.",
+      },
+      source: {
+        code: `<VcDateRangePicker v-model="value" label="Date range" mask show-empty-details />`,
+      },
+    },
+  },
+  render: (args) => ({
+    components: { VcDateRangePicker },
+    setup() {
+      const reserved = ref<VcDateRangeType | undefined>(undefined);
+      const collapsing = ref<VcDateRangeType | undefined>(undefined);
+      return { args, reserved, collapsing };
+    },
+    template: `
+      <div class="grid max-w-2xl grid-cols-2 gap-6">
+        <div>
+          <VcDateRangePicker v-bind="args" v-model="reserved" show-empty-details />
+          <div class="text-sm text-neutral-600">show-empty-details</div>
+        </div>
+
+        <div>
+          <VcDateRangePicker v-bind="args" v-model="collapsing" :show-empty-details="false" />
+          <div class="text-sm text-neutral-600">default</div>
+        </div>
+      </div>
+    `,
+  }),
+};

@@ -98,6 +98,15 @@ describe("SalesRepOrdersFilters", () => {
     expect(lastChange(wrapper)).toMatchObject({ startDate: "2026-05-01", endDate: "2026-05-08" });
   });
 
+  // preventDeselect defaults to true, so re-clicking the day no longer empties a bound: without a
+  // clear control and with no footer, a pointer user would have no way back to an empty date.
+  it("gives both date bounds a clear control", () => {
+    const pickers = createWrapper().findAll("input.date");
+    expect(pickers).toHaveLength(2);
+    // The boolean shorthand lands as an empty string; absent, the attribute is undefined.
+    expect(pickers.map((picker) => picker.attributes("clearable"))).toEqual(["", ""]);
+  });
+
   it("blocks Apply while the custom range runs backwards", async () => {
     const wrapper = createWrapper();
     const dates = wrapper.findAll("input.date");

@@ -37,6 +37,16 @@ const meta: Meta<typeof VcCalendar> = {
       description: "Maximum date in YYYY-MM-DD format",
       table: { type: { summary: "string" } },
     },
+    softMin: {
+      control: "text",
+      description: "Advisory lower bound in YYYY-MM-DD format: earlier days are marked, not disabled",
+      table: { type: { summary: "string" } },
+    },
+    softMax: {
+      control: "text",
+      description: "Advisory upper bound in YYYY-MM-DD format: later days are marked, not disabled",
+      table: { type: { summary: "string" } },
+    },
     showFooter: {
       control: "boolean",
     },
@@ -129,6 +139,46 @@ export const WithMinMax: StoryType = {
       return { args, value };
     },
     template: `<VcCalendar v-bind="args" v-model="value" />`,
+  }),
+};
+
+export const WithAdvisoryBounds: StoryType = {
+  args: {
+    weekdayFormat: "short",
+    firstDayOfWeek: 1,
+    softMin: "2026-10-05",
+    softMax: "2026-10-25",
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`softMin` / `softMax` mark the days outside them — dimmed with a dotted underline and a `title` — while leaving them selectable, and month/year navigation untouched. Use them where a bound is a hint rather than a rule: `VcDateRangePicker` in `split` gives each calendar the opposite endpoint this way, so the days that would invert the range are visibly discouraged but a pick still lands (and surfaces `invalid_range`). `min` / `max` in the same place would disable the days AND dead-end the arrows. Hard bounds win where the two overlap.",
+      },
+      source: {
+        code: `
+          <VcCalendar
+            v-model="value"
+            :first-day-of-week="1"
+            soft-min="2026-10-05"
+            soft-max="2026-10-25"
+          />
+        `,
+      },
+    },
+  },
+  render: (args) => ({
+    components: { VcCalendar },
+    setup() {
+      const value = ref<string | undefined>("2026-10-15");
+      return { args, value };
+    },
+    template: `
+      <div class="space-y-2">
+        <VcCalendar v-bind="args" v-model="value" />
+        <div class="text-sm text-neutral-600">Selected: {{ value || "(none)" }}</div>
+      </div>
+    `,
   }),
 };
 
