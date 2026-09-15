@@ -157,19 +157,7 @@
               </slot>
             </VcMenuItem>
 
-            <VcLoadMore
-              tag="li"
-              role="none"
-              :loading="loading"
-              :has-next-page="hasNextPage"
-              @load-more="$emit('loadMore')"
-            >
-              <template #loading>
-                <slot name="loading">
-                  <VcLoader />
-                </slot>
-              </template>
-            </VcLoadMore>
+            <VcLoadMore tag="li" :loading="loading" :has-next-page="hasNextPage" @load-more="$emit('loadMore')" />
           </VcScrollbar>
         </div>
       </template>

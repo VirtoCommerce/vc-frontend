@@ -1,5 +1,11 @@
 <template>
-  <component :is="tag" v-if="pageLimitReached || showSpinner || showEnd" class="vc-load-more" :data-test-id="testId">
+  <component
+    :is="tag"
+    v-if="pageLimitReached || showSpinner || showEnd"
+    class="vc-load-more"
+    :data-test-id="testId"
+    :role="role"
+  >
     <slot v-if="pageLimitReached" name="limit">
       <VcIcon class="vc-load-more__icon" name="badge-check" />
 
@@ -48,12 +54,14 @@ interface IProps {
   pageLimitReached?: boolean;
   tag?: string;
   testId?: string;
+  role?: string;
 }
 
 const emit = defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
   tag: "div",
+  role: "status",
 });
 
 const scrollbar = inject(vcScrollbarKey, null);

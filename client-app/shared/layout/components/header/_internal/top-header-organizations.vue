@@ -98,7 +98,7 @@
         {{ $t("shared.layout.header.top_header.no_results") }}
       </div>
 
-      <VcLoadMore tag="li" role="none" :loading="loading" :has-next-page="hasNextPage" @load-more="loadOrganizations" />
+      <VcLoadMore tag="li" :loading="loading" :has-next-page="hasNextPage" @load-more="loadOrganizations" />
     </VcScrollbar>
   </div>
 </template>
