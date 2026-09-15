@@ -225,6 +225,8 @@ onMounted(() => {
 
     &--highlighted {
       $highlighted: &;
+
+      @apply outline-none;
     }
 
     &--truncate {
@@ -287,6 +289,11 @@ onMounted(() => {
           @include focus-ring($inset: true);
         }
       }
+    }
+
+    &:hover,
+    &:focus {
+      @apply outline-none ring-0;
     }
 
     // Menu lists render inside a VcScrollbar with zero clearance (measured in the

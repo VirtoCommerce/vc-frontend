@@ -97,67 +97,74 @@
             <span class="vc-select__select-all-count">{{ selectedOfTotal }}</span>
           </div>
 
-          <VcScrollbar
-            :id="listboxId"
-            vertical
-            tag="ul"
-            role="listbox"
-            :aria-label="accessibleLabel"
-            :aria-multiselectable="multiple || undefined"
-            class="vc-select__list"
-          >
-            <VcMenuItem
-              v-for="(item, index) in filteredItems"
-              :key="index"
-              :option-id="getOptionId(index)"
-              :data-vc-select-option="componentId"
-              :active="isActiveItem(item)"
-              :highlighted="index === highlightedIndex"
-              :aria-selected="isActiveItem(item)"
-              role="option"
-              :size="itemSize"
-              :tabindex="-1"
-              @click="
-                select(item);
-                !multiple && close();
-              "
-              @mousemove="highlightedIndex = index"
+          <VcScrollbar class="vc-select__scroll" vertical>
+            <!-- Only options may live inside a listbox, so the scroll region wraps the list
+                 instead of being it: the loader below is a status message, not an option. -->
+            <ul
+              :id="listboxId"
+              class="vc-select__list"
+              role="listbox"
+              :aria-label="accessibleLabel"
+              :aria-multiselectable="multiple || undefined"
             >
-              <VcCheckbox
-                v-if="multiple"
-                :model-value="isActiveItem(item)"
-                :aria-label="toLabel(getItemText(item))"
-                tabindex="-1"
-              />
+              <VcMenuItem
+                v-for="(item, index) in filteredItems"
+                :key="index"
+                :option-id="getOptionId(index)"
+                :data-vc-select-option="componentId"
+                :active="isActiveItem(item)"
+                :highlighted="index === highlightedIndex"
+                :aria-selected="isActiveItem(item)"
+                role="option"
+                :size="itemSize"
+                :tabindex="-1"
+                @click="
+                  select(item);
+                  !multiple && close();
+                "
+                @mousemove="highlightedIndex = index"
+              >
+                <VcCheckbox
+                  v-if="multiple"
+                  :model-value="isActiveItem(item)"
+                  :aria-label="toLabel(getItemText(item))"
+                  tabindex="-1"
+                />
 
-              <slot name="item" v-bind="{ item, index }">
-                {{ getItemText(item) }}
-              </slot>
-            </VcMenuItem>
-
-            <VcMenuItem v-if="showLoadingRow" role="option" :aria-selected="false" disabled :size="itemSize">
-              <!-- The row is a flex line that starts at the left like any option; a spinner standing
-                 in for the whole list belongs in the middle of it. -->
-              <span class="vc-select__loading">
-                <slot name="loading">
-                  <VcLoader />
+                <slot name="item" v-bind="{ item, index }">
+                  {{ getItemText(item) }}
                 </slot>
-              </span>
-            </VcMenuItem>
+              </VcMenuItem>
 
-            <VcMenuItem
-              v-else-if="!filteredItems.length"
-              role="option"
-              :aria-selected="false"
-              disabled
-              :size="itemSize"
-            >
-              <slot name="empty">
-                {{ $t(filterValue ? "ui_kit.messages.no_results" : "ui_kit.select.no_options") }}
-              </slot>
-            </VcMenuItem>
+              <VcMenuItem v-if="showLoadingRow" role="option" :aria-selected="false" disabled :size="itemSize">
+                <!-- The row is a flex line that starts at the left like any option; a spinner standing
+                 in for the whole list belongs in the middle of it. -->
+                <span class="vc-select__loading">
+                  <slot name="loading">
+                    <VcLoader />
+                  </slot>
+                </span>
+              </VcMenuItem>
 
-            <VcLoadMore tag="li" :loading="loading" :has-next-page="hasNextPage" @load-more="$emit('loadMore')" />
+              <VcMenuItem
+                v-else-if="!filteredItems.length"
+                role="option"
+                :aria-selected="false"
+                disabled
+                :size="itemSize"
+              >
+                <slot name="empty">
+                  {{ $t(filterValue ? "ui_kit.messages.no_results" : "ui_kit.select.no_options") }}
+                </slot>
+              </VcMenuItem>
+            </ul>
+
+            <VcLoadMore
+              class="vc-select__more"
+              :loading="loading"
+              :has-next-page="hasNextPage"
+              @load-more="$emit('loadMore')"
+            />
           </VcScrollbar>
         </div>
       </template>
@@ -657,8 +664,17 @@ function focusSelectAll(): boolean {
     @apply flex flex-col overflow-hidden rounded-[--dropdown-radius] bg-[--dropdown-bg-color] select-none;
   }
 
+  &__scroll {
+    @apply max-h-[--dropdown-max-height] w-full;
+  }
+
   &__list {
-    @apply max-h-[--dropdown-max-height] w-full divide-y divide-neutral-100;
+    @apply w-full divide-y divide-neutral-100;
+  }
+
+  // The loader left the list, so it no longer gets its separator from the list's own divide-y.
+  &__more {
+    @apply border-t border-neutral-100;
   }
 
   &__loading {

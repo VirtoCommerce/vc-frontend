@@ -66,8 +66,27 @@ export function useListboxNavigation<T>(params: ParamsType<T>) {
   }
 
   /**
+   * The box the list scrolls in: the listbox itself when it owns the overflow, otherwise the
+   * scroll region it is wrapped in — a listbox that owns only options cannot also be the region
+   * holding a loader or an empty state. Bounded at `document.body`, so the page is never it.
+   */
+  function getScrollBox(list: HTMLElement): HTMLElement {
+    let node: HTMLElement | null = list;
+
+    while (node && node !== document.body) {
+      if (node.scrollHeight > node.clientHeight) {
+        return node;
+      }
+
+      node = node.parentElement;
+    }
+
+    return list;
+  }
+
+  /**
    * Deliberately not `scrollIntoView`: that scrolls every scrollable ancestor, so opening a
-   * list low on the page yanks the whole page. This adjusts only the list's own scrollTop.
+   * list low on the page yanks the whole page. This adjusts only the scroll box's own scrollTop.
    */
   function scrollHighlightedIntoView(index: number): void {
     const option = document.getElementById(getOptionId(index));
@@ -77,13 +96,14 @@ export function useListboxNavigation<T>(params: ParamsType<T>) {
       return;
     }
 
+    const scrollBox = getScrollBox(list);
     const optionBox = option.getBoundingClientRect();
-    const listBox = list.getBoundingClientRect();
+    const viewport = scrollBox.getBoundingClientRect();
 
-    if (optionBox.top < listBox.top) {
-      list.scrollTop -= listBox.top - optionBox.top;
-    } else if (optionBox.bottom > listBox.bottom) {
-      list.scrollTop += optionBox.bottom - listBox.bottom;
+    if (optionBox.top < viewport.top) {
+      scrollBox.scrollTop -= viewport.top - optionBox.top;
+    } else if (optionBox.bottom > viewport.bottom) {
+      scrollBox.scrollTop += optionBox.bottom - viewport.bottom;
     }
   }
 

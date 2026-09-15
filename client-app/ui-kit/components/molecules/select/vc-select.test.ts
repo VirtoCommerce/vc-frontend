@@ -504,6 +504,17 @@ describe("VcSelect", () => {
       expect(wrapper.find(".vc-loader").exists()).toBe(false);
     });
 
+    // Внутри role="listbox" допустимы только опции, а пейджер — это role="status". Поэтому
+    // список лежит ВНУТРИ области прокрутки, а не является ею.
+    it("keeps the pager out of the listbox", () => {
+      const wrapper = createWrapper({ items: ITEMS, hasNextPage: true, loading: true });
+      const pager = wrapper.get(".vc-load-more");
+
+      expect(pager.attributes("role")).toBe("status");
+      expect(wrapper.get('[role="listbox"]').element.contains(pager.element)).toBe(false);
+      expect(wrapper.get(".vc-scrollbar").element.contains(pager.element)).toBe(true);
+    });
+
     // Проводка целиком: список внутри попапа измеряется, стоит у своего низа — и селект просит
     // страницу, хотя прокручивать тут нечего.
     it("asks for the next page when the open list rests at its bottom", async () => {

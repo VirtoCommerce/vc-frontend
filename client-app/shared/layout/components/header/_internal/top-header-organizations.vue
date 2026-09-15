@@ -46,49 +46,50 @@
       </VcInput>
     </div>
 
-    <VcScrollbar
-      :id="listboxId"
-      vertical
-      tag="ul"
-      role="listbox"
-      :aria-label="$t('common.labels.organizations')"
-      :focusable="!isShowSearch"
-      :edge-threshold="50"
-      :aria-activedescendant="isShowSearch ? undefined : activeDescendantId"
-      class="top-header-organizations__list"
-      @keydown="onListKeydown"
-    >
-      <VcMenuItem
-        v-for="(item, index) in displayedOrganizations"
-        :key="item.id"
-        size="xs"
-        role="option"
-        :option-id="getOptionId(index)"
-        :highlighted="index === highlightedIndex"
-        :tabindex="-1"
-        :aria-selected="contactOrganizationId === item.id"
-        :disabled="item.isLockedForCurrentUser"
-        :title="
-          item.isLockedForCurrentUser ? $t('shared.layout.header.top_header.organization_locked_tooltip') : undefined
-        "
-        @click="selectOrganization(item.id)"
-        @mousemove="highlightedIndex = index"
+    <!-- The keys are taken on the region rather than on the list itself: the list is the tab stop
+         only when there is no search field, and the region is what holds focus either way. -->
+    <VcScrollbar vertical :edge-threshold="50" class="top-header-organizations__list" @keydown="onListKeydown">
+      <!-- Only options may live inside a listbox, so the scroll region wraps the list instead of
+           being it: neither the empty state nor the loader below is an option. -->
+      <ul
+        :id="listboxId"
+        role="listbox"
+        :aria-label="$t('common.labels.organizations')"
+        :tabindex="isShowSearch ? undefined : 0"
+        :aria-activedescendant="isShowSearch ? undefined : activeDescendantId"
       >
-        <VcRadioButton
-          :model-value="contactOrganizationId"
-          :label="item.name"
-          :value="item.id"
-          :max-lines="2"
-          :title="item.name"
-          word-break="break-word"
-          :data-organization-name="item.name"
+        <VcMenuItem
+          v-for="(item, index) in displayedOrganizations"
+          :key="item.id"
+          size="xs"
+          role="option"
+          :option-id="getOptionId(index)"
+          :highlighted="index === highlightedIndex"
+          :tabindex="-1"
+          :aria-selected="contactOrganizationId === item.id"
           :disabled="item.isLockedForCurrentUser"
-        />
+          :title="
+            item.isLockedForCurrentUser ? $t('shared.layout.header.top_header.organization_locked_tooltip') : undefined
+          "
+          @click="selectOrganization(item.id)"
+          @mousemove="highlightedIndex = index"
+        >
+          <VcRadioButton
+            :model-value="contactOrganizationId"
+            :label="item.name"
+            :value="item.id"
+            :max-lines="2"
+            :title="item.name"
+            word-break="break-word"
+            :data-organization-name="item.name"
+            :disabled="item.isLockedForCurrentUser"
+          />
 
-        <template v-if="item.isLockedForCurrentUser" #append>
-          <VcIcon name="lock-closed" size="xs" />
-        </template>
-      </VcMenuItem>
+          <template v-if="item.isLockedForCurrentUser" #append>
+            <VcIcon name="lock-closed" size="xs" />
+          </template>
+        </VcMenuItem>
+      </ul>
 
       <div
         v-if="organizations.length === 0 && !loading"
@@ -98,7 +99,7 @@
         {{ $t("shared.layout.header.top_header.no_results") }}
       </div>
 
-      <VcLoadMore tag="li" :loading="loading" :has-next-page="hasNextPage" @load-more="loadOrganizations" />
+      <VcLoadMore :loading="loading" :has-next-page="hasNextPage" @load-more="loadOrganizations" />
     </VcScrollbar>
   </div>
 </template>
@@ -278,7 +279,7 @@ async function onSearchClear(): Promise<void> {
     }
   }
 
-  // The list is the scroll region itself now; 15rem is what the menu around it can spare.
+  // The scroll region around the list; 15rem is what the menu around it can spare.
   &__list {
     @apply my-1 max-h-60 w-full select-none;
   }

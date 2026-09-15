@@ -191,4 +191,37 @@ describe("VcScrollbar", () => {
       expect(wrapper.emitted("scroll")?.[0][0]).toMatchObject({ isAtBottom: true, isAtTop: true });
     });
   });
+
+  describe("auto tab stop", () => {
+    async function mountOverflowing(slot: () => unknown, props: Record<string, unknown> = {}) {
+      const wrapper = mount(VcScrollbar, {
+        attachTo: document.body,
+        props: { vertical: true, ...props },
+        slots: { default: slot },
+      });
+
+      describeBox(wrapper.element as HTMLElement, { clientHeight: 100, scrollHeight: 500, scrollTop: 0 });
+      await afterContentSettles();
+
+      return wrapper;
+    }
+
+    it("makes an overflowing region with nothing focusable in it keyboard-reachable", async () => {
+      const wrapper = await mountOverflowing(() => h("p", "row"));
+
+      expect(wrapper.attributes("tabindex")).toBe("0");
+    });
+
+    // Точка входа с клавиатуры принадлежит самому listbox-у (он ведёт aria-activedescendant),
+    // и не важно, лежит роль на регионе или внутри него: список, которому можно владеть только
+    // опциями, обязан лежать ВНУТРИ региона, а не быть им.
+    it.each([
+      ["on the region itself", () => h("p", "row"), { role: "listbox" }],
+      ["on a list inside it", () => h("ul", { role: "listbox" }, [h("li", { role: "option" }, "row")]), {}],
+    ])("adds no tab stop of its own when the listbox role sits %s", async (_label, slot, props) => {
+      const wrapper = await mountOverflowing(slot, props);
+
+      expect(wrapper.attributes("tabindex")).toBeUndefined();
+    });
+  });
 });

@@ -83,7 +83,10 @@ provide(vcScrollbarKey, { el, isAtTop, isAtBottom, isAtLeft, isAtRight, measured
 // The tab stop is added automatically when content overflows on an enabled axis AND the region
 // has no focusable descendants AND no interactive container role; `focusable` stays as an
 // explicit override.
-const INTERACTIVE_CONTAINER_ROLES = new Set([
+// The role is looked for inside the region as well as on it: a listbox that owns only options
+// has to wrap in one of these regions rather than be it, and its keyboard model is the same
+// whichever of the two elements carries the role.
+const INTERACTIVE_CONTAINER_SELECTOR = [
   "listbox",
   "menu",
   "menubar",
@@ -93,7 +96,9 @@ const INTERACTIVE_CONTAINER_ROLES = new Set([
   "tablist",
   "combobox",
   "radiogroup",
-]);
+]
+  .map((role) => `[role="${role}"]`)
+  .join(", ");
 
 const FOCUSABLE_SELECTOR = [
   "a[href]",
@@ -131,8 +136,7 @@ function updateAutoTabStop(): void {
     return;
   }
 
-  const role = target.getAttribute("role");
-  if (role && INTERACTIVE_CONTAINER_ROLES.has(role)) {
+  if (target.matches(INTERACTIVE_CONTAINER_SELECTOR) || target.querySelector(INTERACTIVE_CONTAINER_SELECTOR)) {
     needsAutoTabStop.value = false;
     return;
   }

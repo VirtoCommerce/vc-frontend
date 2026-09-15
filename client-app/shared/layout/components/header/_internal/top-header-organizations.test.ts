@@ -84,6 +84,26 @@ describe("TopHeaderOrganizations", () => {
     expect(wrapper.get("input").attributes("aria-controls")).toBe(list.id);
   });
 
+  // Внутри role="listbox" допустимы только опции: ни пустое состояние, ни пейджер (role="status")
+  // ими не являются, поэтому список лежит ВНУТРИ области прокрутки, а не является ею.
+  it("keeps the empty state and the pager out of the listbox", async () => {
+    state.organizations.value = [];
+    state.hasNextPage.value = true;
+    state.loading.value = true;
+
+    const wrapper = mountComponent();
+    const list = wrapper.get('[role="listbox"]').element;
+    const pager = wrapper.get(".vc-load-more").element;
+
+    expect(list.contains(pager)).toBe(false);
+    expect(wrapper.get(".vc-scrollbar").element.contains(pager)).toBe(true);
+
+    state.loading.value = false;
+    await nextTick();
+
+    expect(list.contains(wrapper.get("[data-test-id='organizations-empty-list']").element)).toBe(false);
+  });
+
   // The whole point of the rewrite: focus stays in the search field while arrowing.
   it("keeps focus in the search field and tracks the option with aria-activedescendant", async () => {
     const wrapper = mountComponent();
@@ -299,8 +319,8 @@ describe("TopHeaderOrganizations", () => {
       const input = wrapper.get("input");
       const optionIds = wrapper.findAll('[role="option"]').map((option) => option.attributes("id"));
 
-      // The field sits inside the listbox, so its events bubble through the list handler too:
-      // one press must still move the highlight by one.
+      // Поле лежит снаружи области прокрутки, и её обработчик всё равно уходит в ранний возврат:
+      // одно нажатие обязано сдвинуть подсветку ровно на один шаг.
       await input.trigger("keydown", { key: "ArrowDown" });
       await nextTick();
 
