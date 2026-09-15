@@ -97,14 +97,14 @@ jobs:
     steps:
 
     - name: Read deployment config
-      uses: VirtoCommerce/vc-github-actions/get-deploy-param@master
+      uses: VirtoCommerce/.github/actions/get-deploy-param@VCST-5414
       id: deployConfig
       with:
         envName: ${{ inputs.environmentId }}
         deployConfigPath: .deployment/theme/cloudDeploy.json
 
     - name: Start deployment
-      uses: VirtoCommerce/vc-github-actions/gh-deployments@master
+      uses: VirtoCommerce/.github/actions/gh-deployments@VCST-5414
       id: deployment
       with:
         step: start
@@ -113,7 +113,7 @@ jobs:
         no_override: false
 
     - name: Deploy to ${{ steps.deployConfig.outputs.environmentName }}
-      uses: VirtoCommerce/vc-github-actions/create-deploy-pr@master
+      uses: VirtoCommerce/.github/actions/create-deploy-pr@VCST-5414
       with:
         githubToken: ${{ env.GITHUB_TOKEN }}
         deployRepo: ${{ steps.deployConfig.outputs.deployRepo }}
@@ -146,7 +146,7 @@ jobs:
       run: echo "DEPLOY_STATE=failed"  >> $GITHUB_ENV
 
     - name: Update GitHub deployment status
-      uses: VirtoCommerce/vc-github-actions/gh-deployments@master
+      uses: VirtoCommerce/.github/actions/gh-deployments@VCST-5414
       if: always()
       with:
         step: finish
