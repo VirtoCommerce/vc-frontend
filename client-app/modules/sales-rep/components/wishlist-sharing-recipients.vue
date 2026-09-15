@@ -7,6 +7,7 @@
         </span>
 
         <VcButton
+          ref="clearButton"
           data-test-id="wishlist-sharing-clear-recipients-button"
           color="danger"
           variant="ghost"
@@ -65,7 +66,7 @@
         variant="ghost"
         size="xs"
         :disabled="disabled"
-        @click="$emit('restore')"
+        @click="requestRestore"
       >
         {{ t("sales_rep.list_sharing.restore_recipients_button") }}
       </VcButton>
@@ -102,7 +103,7 @@ import { computed, nextTick, ref, useTemplateRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { BREAKPOINTS } from "@/ui-kit/constants";
 import WishlistSharingAvatar from "./wishlist-sharing-avatar.vue";
-import type { WishlistSharingRecipientType } from "../types";
+import type { OrganizationRowType } from "../types";
 
 interface IEmits {
   (event: "remove", organizationId: string): void;
@@ -111,7 +112,7 @@ interface IEmits {
 }
 
 interface IProps {
-  recipients: WishlistSharingRecipientType[];
+  recipients: OrganizationRowType[];
   disabled?: boolean;
   /** How many rows are shown before the list offers to expand. */
   collapsedRows?: number;
@@ -128,6 +129,7 @@ const { t } = useI18n();
 const isMobile = useBreakpoints(BREAKPOINTS).smaller("md");
 
 const rowsElement = useTemplateRef<HTMLElement>("rowsElement");
+const clearButton = useTemplateRef<{ $el: HTMLElement }>("clearButton");
 const restoreButton = useTemplateRef<{ $el: HTMLElement }>("restoreButton");
 
 const expanded = ref(false);
@@ -145,6 +147,15 @@ async function requestClear(): Promise<void> {
   await nextTick();
 
   restoreButton.value?.$el?.focus();
+}
+
+// The Undo that had the focus unmounts with the cleared block, so hand it to the Clear all that replaces it.
+async function requestRestore(): Promise<void> {
+  emit("restore");
+
+  await nextTick();
+
+  clearButton.value?.$el?.focus();
 }
 
 // The deleted row takes the focus with it. Nowhere to send it once the list empties: the block unmounts, and
@@ -170,7 +181,7 @@ watch(collapsible, (isCollapsible) => {
 <style lang="scss">
 .wishlist-sharing-recipients {
   // `clip`, not `hidden`: `hidden` makes this a scroll container and breaks the sticky toggle.
-  @apply flex flex-col rounded-lg border border-neutral-200 bg-additional-50 overflow-clip;
+  @apply flex flex-col rounded-[--vc-radius] border border-neutral-200 bg-additional-50 overflow-clip;
 
   &__header,
   &__cleared {

@@ -9,8 +9,8 @@
   >
     <div class="share-wishlist-modal">
       <fieldset class="share-wishlist-modal__scope-group">
-        <legend>
-          <VcLabel size="sm">{{ $t("shared.wishlists.share_wishlist_modal.who_can_access_label") }}</VcLabel>
+        <legend class="share-wishlist-modal__scope-label">
+          {{ $t("shared.wishlists.share_wishlist_modal.who_can_access_label") }}
         </legend>
 
         <div class="share-wishlist-modal__scopes">
@@ -106,7 +106,7 @@ import { useI18n } from "vue-i18n";
 import { WishlistScopeType } from "@/core/api/graphql/types";
 import { Logger } from "@/core/utilities";
 import { useNotifications } from "@/shared/notification";
-import { UNORDERED_SCOPE_POSITION, useWishlistSharingScopes } from "../composables/useWishlistSharingScopes";
+import { useWishlistSharingScopes } from "../composables/useWishlistSharingScopes";
 import { useWishlists } from "../composables/useWishlists";
 import StopSharingConfirmationModal from "./stop-sharing-confirmation-modal.vue";
 import type { IWishlistSharingScopeControlsType } from "../composables/useWishlistSharingScopes";
@@ -143,19 +143,16 @@ const sharingScope = ref<string>(listSharingScope.value);
 const scopeControls = useTemplateRef<IWishlistSharingScopeControlsType>("scopeControls");
 
 const listSharingScopes = computed(() => {
-  const available = sharingScopes.value.filter(isSharingScopeAvailable);
+  const persisted = listSharingScope.value;
 
   // A scope the list already carries stays listed even when it isn't on offer, or saving would silently rewrite it.
-  const persisted = listSharingScope.value;
-  const isPersistedListed = available.some((scope) => scope.scope === persisted);
-  const scopes = [...available];
+  // Kept by narrowing the registry's own order rather than pushed onto the filtered result, or the tab strip would
+  // reorder itself depending on the viewer's permissions.
+  const scopes = sharingScopes.value.filter((scope) => isSharingScopeAvailable(scope) || scope.scope === persisted);
 
-  if (!isPersistedListed) {
-    const known = getSharingScope(persisted);
-    scopes.push({ ...(known ?? { scope: persisted, labelKey: "" }) });
-    // Re-sorted rather than appended: the registry sorts its own list, so a scope pushed afterwards would always
-    // land last and the tab strip would reorder itself depending on the viewer's permissions.
-    scopes.sort((a, b) => (a.order ?? UNORDERED_SCOPE_POSITION) - (b.order ?? UNORDERED_SCOPE_POSITION));
+  // A scope no module ever registered has no place in that order, so it goes last.
+  if (!scopes.some((scope) => scope.scope === persisted)) {
+    scopes.push({ scope: persisted, labelKey: "" });
   }
 
   return scopes.map((scope) => ({
@@ -305,6 +302,12 @@ async function copySharingLink() {
   &__scope-group {
     // A fieldset defaults to `min-inline-size: min-content`, which stops it shrinking inside the dialog.
     @apply min-w-0;
+  }
+
+  &__scope-label {
+    // `VcLabel` renders a `div` without a `for-id` and `legend` takes phrasing content only, so its size-sm styling
+    // is spelled out here rather than nested inside.
+    @apply mb-0.5 text-sm font-bold text-neutral-950;
   }
 
   &__scopes {

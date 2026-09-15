@@ -147,7 +147,7 @@ function audienceCount(context: WishlistSharingScopeSavedContextType): number {
 // Counts everyone the list reaches; the notified subset is usually smaller.
 function notifyShared(count: number): void {
   notifications.success({
-    text: t("sales_rep.list_sharing.share_success", { count }, count),
+    text: t("sales_rep.list_sharing.share_success", { count }),
     duration: 10000,
     single: true,
   });
@@ -157,7 +157,7 @@ function notifyShared(count: number): void {
 // borrow the "List shared with N customers" copy.
 function notifySaved(count: number): void {
   notifications.success({
-    text: t("sales_rep.list_sharing.share_saved", { count }, count),
+    text: t("sales_rep.list_sharing.share_saved", { count }),
     duration: 10000,
     single: true,
   });
@@ -178,7 +178,6 @@ function restoreSelection(): void {
 }
 
 function deselect(organizationId: string): void {
-  clearedRecipients.value = [];
   selected.value = selected.value.filter((recipient) => recipient.organizationId !== organizationId);
 }
 
@@ -283,7 +282,7 @@ defineExpose<IWishlistSharingScopeExposeType>({
   &__option-location {
     // `font-normal` against the kit: `VcMenuItem` bolds the whole row of a selected option, and the second line is
     // Regular in every state.
-    @apply truncate text-xs font-normal text-neutral-500;
+    @apply truncate text-xs font-normal text-neutral-600;
   }
 }
 </style>
