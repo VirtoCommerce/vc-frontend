@@ -42,6 +42,7 @@
         :autocomplete="computedAutocomplete"
         :aria-label="ariaLabel ?? label"
         :aria-describedby="describedBy"
+        :aria-invalid="invalid"
         :title="browserTooltip === 'enabled' ? message : ''"
         class="vc-input__input"
         :tabindex="tabindex"
@@ -104,6 +105,7 @@ import { vMaska } from "maska/vue";
 import { provide, computed, ref, useTemplateRef } from "vue";
 import { useAttrsOnly, useComponentId, useListeners } from "@/ui-kit/composables";
 import type { MaskOptions } from "maska";
+import type { AriaAttributes } from "vue";
 
 export interface IProps {
   modelModifiers?: Record<string, boolean>;
@@ -117,6 +119,7 @@ export interface IProps {
   placeholder?: string;
   message?: string;
   singleLineMessage?: boolean;
+  /** Visual error state. Also exposes `aria-invalid`, unless `aria["aria-invalid"]` overrides it. */
   error?: boolean;
   noBorder?: boolean;
   hidePasswordSwitcher?: boolean;
@@ -177,13 +180,24 @@ const detailsId = componentId + "-details";
 const listeners = useListeners();
 const attrs = useAttrsOnly();
 
-// Merged, not overwritten: the explicit binding below would otherwise drop `aria`'s own value.
+// `aria`'s own value is kept: the explicit bindings below would otherwise drop it.
 const describedBy = computed(() => {
   const ids = [props.counter || props.message ? detailsId : undefined, props.aria?.["aria-describedby"]]
     .filter(Boolean)
     .join(" ");
 
   return ids || undefined;
+});
+
+// An unrecognised aria-invalid token means "true" per ARIA, and axe rejects it outright.
+const invalid = computed<AriaAttributes["aria-invalid"]>(() => {
+  const override = props.aria?.["aria-invalid"];
+
+  if (override == null) {
+    return props.error ? "true" : undefined;
+  }
+
+  return override === "false" || override === "grammar" || override === "spelling" ? override : "true";
 });
 
 const computedAutocomplete = computed(() => {
