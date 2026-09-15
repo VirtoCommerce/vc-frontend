@@ -27,11 +27,13 @@ const meta: Meta<typeof VcPopover> = {
     },
     disabled: {
       control: "boolean",
-      description: "Prevents the popover from opening",
+      description:
+        "Prevents the popover from opening. It also closes an open popover and, once it clears, hands focus back to the trigger it was taken from.",
     },
     hover: {
       control: "boolean",
-      description: "Opens the popover on hover instead of click",
+      description:
+        "Opens the popover on hover and focus instead of click. A hover panel never takes focus, so it cannot carry a dialog the keyboard needs to enter.",
     },
     arrowEnabled: {
       control: "boolean",
@@ -184,7 +186,7 @@ export const Dialog: StoryType = {
     docs: {
       description: {
         story:
-          '`role="dialog"` opts the panel into the non-modal dialog contract: it is named by `ariaLabel`, takes focus when it opens, closes on Escape from anywhere inside, and hands focus back to the trigger on close. The page stays interactive, so no `aria-modal` and no focus trap.',
+          '`role="dialog"` opts the panel into the non-modal dialog contract: it is named by `ariaLabel`, takes focus when it opens, closes on Escape from anywhere in its DOM subtree (teleported content sits outside it), and hands focus back to the trigger on close. The page stays interactive, so no `aria-modal` and no focus trap.',
       },
       source: {
         code: `

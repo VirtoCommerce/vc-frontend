@@ -55,7 +55,9 @@
     </template>
 
     <template #content="{ close }">
-      <!-- Escape from anywhere in the calendar closes the dialog (WCAG 2.1.2 no keyboard trap). -->
+      <!-- Escape from anywhere in the calendar closes the dialog (WCAG 2.1.2 no keyboard trap), and
+           deliberately overrides VcPopover's own Escape: focus belongs on the field, not on whichever
+           trigger element opened the calendar. -->
       <VcCalendar
         ref="calendarRef"
         :model-value="modelValue"

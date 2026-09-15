@@ -71,6 +71,7 @@ interface IProps {
   flipOptions?: VcPopoverFlipOptionsType;
   offsetOptions?: VcPopoverOffsetOptionsType;
   shiftOptions?: VcPopoverShiftOptionsType;
+  /** Prevents opening, closes an open popover, and hands focus back to the trigger once it clears. */
   disabled?: boolean;
   shadow?: boolean;
   bgColor?: string;
@@ -78,12 +79,21 @@ interface IProps {
   width?: string;
   zIndex?: number | string;
   /**
-   * ARIA role of the content panel. `dialog` and `alertdialog` additionally enable the non-modal
-   * dialog keyboard contract (WAI-ARIA APG): Escape anywhere in the panel closes it, the panel takes
-   * focus when it opens unless the consumer claims focus from `@toggle`, and focus returns to the
-   * trigger on close. Pair it with `ariaLabel` — a dialog needs a name.
+   * ARIA role of the content panel, and the source of the trigger's `aria-haspopup`: a popup kind
+   * (`menu`, `listbox`, `tree`, `grid`, `dialog`) is announced as itself, `alertdialog` as `dialog`,
+   * `tooltip` not at all, and any other role — including none — keeps the historical `dialog`.
+   *
+   * `dialog` and `alertdialog` additionally enable the non-modal dialog keyboard contract
+   * (WAI-ARIA APG): Escape closes the panel from anywhere in its DOM subtree — teleported content
+   * sits outside it and must handle its own — the panel takes focus when it opens, unless `hover` is
+   * set or a consumer claims focus from `@toggle`, and focus returns to the trigger on close.
+   * Pair it with `ariaLabel`: a dialog needs a name.
    */
   role?: string;
+  /**
+   * Open on hover and focus instead of click. A hover panel never takes focus — it would close
+   * itself on the trigger's `focusout` — so it cannot carry a dialog the keyboard needs to enter.
+   */
   hover?: boolean;
   disableTriggerEvents?: boolean;
   arrowEnabled?: boolean;
@@ -102,6 +112,15 @@ const props = withDefaults(defineProps<IProps>(), {
   teleportSelector: "[id='popover-host']",
   enableTeleport: null,
 });
+
+// The values aria-haspopup accepts as a popup kind; `true` is a synonym for `menu`, not a neutral yes.
+const HASPOPUP_TOKENS = ["menu", "listbox", "tree", "grid", "dialog"] as const;
+
+type HaspopupTokenType = (typeof HASPOPUP_TOKENS)[number];
+
+function isHaspopupToken(value: string | undefined): value is HaspopupTokenType {
+  return HASPOPUP_TOKENS.some((token) => token === value);
+}
 
 const popoverContext = inject(vcPopoverKey, null);
 const shouldTeleport = computed(() =>
@@ -138,8 +157,21 @@ const triggerListeners = computed(() => ({
 
 // Role-free aria state for the #trigger slot: bound by the consumer on their own
 // (already interactive) element, so no role may be forced here.
+// aria-haspopup announces what the panel IS, so it follows `role` where the panel declares one —
+// VCST-5869 was exactly a trigger promising a dialog the panel never was. `alertdialog` is not one
+// of the attribute's tokens and maps onto `dialog`; `tooltip` has no token at all and a tooltip must
+// not claim a popup. A panel with no role keeps the historical default rather than losing the
+// announcement: the honest fix there is to give those panels a role, not to silence their triggers.
+const triggerHaspopup = computed<HaspopupTokenType | undefined>(() => {
+  if (isHaspopupToken(props.role)) {
+    return props.role;
+  }
+
+  return props.role === "tooltip" ? undefined : "dialog";
+});
+
 const ariaTriggerProps = computed(() => ({
-  "aria-haspopup": "dialog" as const,
+  "aria-haspopup": triggerHaspopup.value,
   "aria-expanded": opened.value,
   "aria-controls": opened.value ? contentId : undefined,
 }));
@@ -229,6 +261,12 @@ function focusTrigger(): void {
 }
 
 async function focusPanel(): Promise<void> {
+  // A hover popover closes on focusout of its trigger, so pulling focus into the panel would make it
+  // close itself and reopen on the way back.
+  if (props.hover) {
+    return;
+  }
+
   await nextTick();
 
   // Skipped when a consumer claimed focus from its own @toggle handler (VcDatePicker: the active day).
@@ -268,7 +306,9 @@ watch(
       return;
     }
 
-    if (!focusReturnPending.value) {
+    // Dialog-only, like the rest of the focus contract: a tooltip or dropdown must not pull focus
+    // back just because it was disabled and re-enabled.
+    if (!isDialog.value || !focusReturnPending.value) {
       return;
     }
 
@@ -287,7 +327,9 @@ watch(
 // Bound on the element rather than in the template: a keydown handler there would make the panel
 // an interactive static element (vuejs-accessibility/no-static-element-interactions).
 useEventListener(floating, "keydown", (event: KeyboardEvent) => {
-  if (!isDialog.value || event.key !== "Escape") {
+  // `repeat`: one held key must not walk up the nesting, closing a level per repeat as focus is
+  // handed outwards — a drawer would lose everything typed into it.
+  if (!isDialog.value || event.key !== "Escape" || event.repeat) {
     return;
   }
 

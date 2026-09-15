@@ -102,6 +102,7 @@
               variant="ghost"
               class="vc-select__clear"
               :icon-size="size === 'md' ? '0.875rem' : '0.75rem'"
+              @keydown.esc="onTriggerEscape($event, close)"
               @keydown.enter.stop.prevent
               @keyup.enter.stop.prevent="clear"
               @click.stop="clear"
@@ -116,6 +117,7 @@
               variant="ghost"
               tabindex="-1"
               class="vc-select__arrow"
+              @keydown.esc="onTriggerEscape($event, close)"
               @click="handleArrowClick($event, toggle)"
             />
           </template>
@@ -136,10 +138,7 @@
             select(item);
             !multiple && close();
           "
-          @keyup.esc.prevent="
-            focusTrigger();
-            close();
-          "
+          @keydown.esc="onItemEscape($event, close)"
           @keydown.up.prevent="prev(index)"
           @keydown.down.prevent="next(index)"
           @keydown.tab.prevent="handleTab($event, index)"
@@ -421,6 +420,13 @@ function onTriggerEscape(event: KeyboardEvent, close: () => void) {
   }
 
   event.stopPropagation();
+  close();
+}
+
+// From an option the dropdown is always open, and focus lives inside the list — hand it back.
+function onItemEscape(event: KeyboardEvent, close: () => void) {
+  event.stopPropagation();
+  focusTrigger();
   close();
 }
 
