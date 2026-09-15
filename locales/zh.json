@@ -608,6 +608,46 @@
         "tap_to_copy": "点击复制"
       }
     },
+    "sign_in": {
+      "email_otp_sign_in_form": {
+        "switch_to_otp_link": "改用一次性验证码登录",
+        "request": {
+          "subtitle": "我们会将验证码发送到您的邮箱，无需密码。",
+          "email_label": "邮箱",
+          "continue_button": "继续",
+          "switch_to_password_link": "改用密码登录",
+          "errors": {
+            "generic": "出了点问题，请重试"
+          }
+        },
+        "verify": {
+          "header": "查看您的邮箱",
+          "subtitle": "我们已向 {email} 发送了验证码。",
+          "code_label": "验证码",
+          "paste_hint": "支持粘贴。在手机上，验证码会显示在键盘上方。",
+          "submit_button": "登录",
+          "resend_button": "重新发送验证码",
+          "use_different_email_link": "使用其他邮箱",
+          "live_resent": "已发送新验证码。",
+          "errors": {
+            "invalid_code": "验证码不正确。请查看最新邮件获取当前验证码。",
+            "generic": "出了点问题，请重试"
+          }
+        },
+        "locked": {
+          "title": "失败尝试次数过多",
+          "text_countdown": "出于安全考虑，您的账户已被临时锁定。请在 {time} 后重试。",
+          "text_ready": "您现在可以重试了。",
+          "start_over_button": "重试"
+        },
+        "generic": {
+          "title": "无法为您登录",
+          "text": "请改用密码登录，如果问题持续出现，请联系您的账户管理员。",
+          "password_button": "使用密码登录",
+          "back_link": "返回登录"
+        }
+      }
+    },
     "company": {
       "add_or_update_address_modal": {
         "address_title": "地址信息",

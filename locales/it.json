@@ -608,6 +608,46 @@
         "tap_to_copy": "Tocca per copiare"
       }
     },
+    "sign_in": {
+      "email_otp_sign_in_form": {
+        "switch_to_otp_link": "Accedi con un codice monouso",
+        "request": {
+          "subtitle": "Ti invieremo un codice via e-mail. Nessuna password necessaria.",
+          "email_label": "Email",
+          "continue_button": "Continua",
+          "switch_to_password_link": "Accedi con una password",
+          "errors": {
+            "generic": "Qualcosa è andato storto. Riprova"
+          }
+        },
+        "verify": {
+          "header": "Controlla la tua e-mail",
+          "subtitle": "Abbiamo inviato un codice a {email}.",
+          "code_label": "Codice",
+          "paste_hint": "L'incolla è supportato. Su telefono, il codice viene proposto sopra la tastiera.",
+          "submit_button": "Accedi",
+          "resend_button": "Invia di nuovo il codice",
+          "use_different_email_link": "Usa un'altra e-mail",
+          "live_resent": "Nuovo codice inviato.",
+          "errors": {
+            "invalid_code": "Questo codice non è corretto. Controlla l'ultima e-mail per il codice attuale.",
+            "generic": "Qualcosa è andato storto. Riprova"
+          }
+        },
+        "locked": {
+          "title": "Troppi tentativi falliti",
+          "text_countdown": "Per la tua sicurezza, il tuo account è temporaneamente bloccato. Riprova tra {time}.",
+          "text_ready": "Ora puoi riprovare.",
+          "start_over_button": "Riprova"
+        },
+        "generic": {
+          "title": "Impossibile accedere",
+          "text": "Prova con una password oppure contatta l'amministratore del tuo account se il problema persiste.",
+          "password_button": "Accedi con una password",
+          "back_link": "Torna all'accesso"
+        }
+      }
+    },
     "company": {
       "add_or_update_address_modal": {
         "address_title": "Informazioni indirizzo",
