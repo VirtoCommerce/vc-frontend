@@ -75,10 +75,9 @@
       </div>
 
       <div ref="listElement" class="mt-5 w-full">
-        <!-- Skeletons: only while the list on screen is not the one being loaded. `listLoading` is shared by every
-             `useWishlists` caller, so a save from the Rename or Share dialog would otherwise swap the whole table for
-             a skeleton; `list` survives navigation, so `!list` alone would leave the previous list's frame up. -->
-        <WishlistProductsSkeleton v-if="listLoading && list?.id !== listId" :itemsCount="actualPageRowsCount" />
+        <!-- Skeletons: keyed off this page's own fetch, not the shared `listLoading`, which every `useWishlists`
+             caller raises — a save from the Rename or Share dialog would otherwise swap the whole table for one. -->
+        <WishlistProductsSkeleton v-if="listFetching" :itemsCount="actualPageRowsCount" />
 
         <!-- List details -->
         <template v-else-if="!!list?.items?.length">
@@ -211,6 +210,9 @@ const { continue_shopping_link } = getModuleSettings({
 
 const itemsPerPage = ref(6);
 const page = ref(1);
+// `list` is module-scoped and survives navigation, so re-entering a list leaves last visit's data in place while
+// this page's own buffer is still empty. Its own flag is the only thing that knows the difference.
+const listFetching = ref(true);
 const wishlistItems = ref<LineItemType[]>([]);
 const listElement = ref<HTMLElement | undefined>();
 const pendingItems = ref<Record<string, boolean>>({});
@@ -437,9 +439,15 @@ onBeforeRouteLeave(canChangeRoute);
 onBeforeRouteUpdate(canChangeRoute);
 
 watchEffect(async () => {
-  await fetchWishList(props.listId);
-  page.value = 1;
-  wishlistItems.value = cloneDeep(list.value?.items) ?? [];
+  listFetching.value = true;
+
+  try {
+    await fetchWishList(props.listId);
+    page.value = 1;
+    wishlistItems.value = cloneDeep(list.value?.items) ?? [];
+  } finally {
+    listFetching.value = false;
+  }
 });
 
 /**
