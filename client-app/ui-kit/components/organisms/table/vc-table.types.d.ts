@@ -26,7 +26,10 @@ declare global {
   /**
    * A row selection key. Accepted as `string | number` on input, but VcTable
    * normalizes keys to strings for all internal comparisons and emits them back
-   * as strings (consistent with `getItemKey`, which stringifies `item.id`).
+   * as strings (consistent with `getItemKey`, which stringifies `item.id`). A row
+   * without an `id` falls back to `__row_<index>`, which no numeric or ordinary string `id`
+   * collides with. Only `undefined`/`null` fall back — `id: ""` keys as `""`, and duplicate
+   * ids still share a key.
    */
   type VcTableSelectionKeyType = string | number;
 
@@ -62,6 +65,44 @@ declare global {
     selected: boolean;
     toggle: () => void;
     selectable: boolean;
+  };
+
+  /**
+   * Classes and inline style of the leading selection header cell. `v-bind` onto a `<th>`
+   * to match the built-in cell; add your own classes with a sibling `class` attribute — in a
+   * render function merge `class` yourself, since a spread would overwrite it.
+   */
+  type VcTableSelectionColumnAttrsType = {
+    class: string;
+    style: Record<string, string>;
+  };
+
+  /**
+   * Classes of the built-in `<thead>`, sticky modifier included — the only carrier of the
+   * header's sticky positioning. `v-bind` onto a custom `<thead>`; add your own classes the
+   * way `VcTableSelectionColumnAttrsType` describes.
+   */
+  type VcTableHeadAttrsType = {
+    class: string;
+  };
+
+  /**
+   * Scope passed to the `#header` slot. A custom header replaces the default one entirely,
+   * so it must render its own leading selection cell whenever `showSelectionColumn` is
+   * `true`, or every column shifts by one. No per-column attributes are exposed: over
+   * `fixed` columns the consumer reproduces the sticky offsets itself. See the
+   * `SelectionCustomHeader` story.
+   */
+  type VcTableHeaderSlotScopeType = {
+    showSelectionColumn: boolean;
+    selectionMode?: VcTableSelectionModeType;
+    isAllSelected: boolean;
+    isSomeSelected: boolean;
+    /** `false` when no row on the current page is selectable. */
+    canSelectAll: boolean;
+    toggleSelectAll: () => void;
+    selectionColumnAttrs: VcTableSelectionColumnAttrsType;
+    headAttrs: VcTableHeadAttrsType;
   };
 
   /**
