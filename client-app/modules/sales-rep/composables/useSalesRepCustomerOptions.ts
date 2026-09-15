@@ -4,19 +4,14 @@ import { Logger } from "@/core/utilities";
 import { SalesRepCustomerOptionsDocument } from "../api/graphql/types";
 import { formatCustomerLocation } from "../utils";
 import { useSalesRepHubQuery } from "./useSalesRepHubQuery";
+import type { OrganizationRowType } from "../types";
 
 // The picker filters client-side, so a rep serving more customers than this cannot reach the overflow (warned below).
 // Paging them all in waits on server-side search in `VcSelect`; VCST-5923.
 const OPTIONS_LIMIT = 100;
 
-export type SalesRepCustomerOptionType = {
-  organizationId: string;
-  organizationName: string;
-  /** "City, Region" — the second line of a picker option and of a recipient row. */
-  location: string;
-  /** The organization's own logo; empty when it has none, and the avatar falls back to initials. */
-  imageUrl: string;
-};
+/** A customer the rep may pick in the sharing picker. */
+export type SalesRepCustomerOptionType = OrganizationRowType;
 
 // The rep's served customer organizations, resolved server-side from their claims. Uses its own narrow query rather
 // than the My customers one, which also aggregates order statistics per customer — a lot of work for a name and a city.
