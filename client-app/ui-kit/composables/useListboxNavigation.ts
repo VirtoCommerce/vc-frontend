@@ -13,6 +13,25 @@ type ParamsType<T> = {
 export type ListboxNavigationKeyType = "up" | "down" | "home" | "end";
 
 /**
+ * The box the list scrolls in: the listbox itself when it owns the overflow, otherwise the scroll
+ * region it is wrapped in — a listbox that owns only options cannot also be the region holding a
+ * loader or an empty state. Bounded at `document.body`, so the page is never it.
+ */
+function getScrollBox(list: HTMLElement): HTMLElement {
+  let node: HTMLElement | null = list;
+
+  while (node && node !== document.body) {
+    if (node.scrollHeight > node.clientHeight) {
+      return node;
+    }
+
+    node = node.parentElement;
+  }
+
+  return list;
+}
+
+/**
  * Keyboard state for a listbox driven by `aria-activedescendant`.
  *
  * DOM focus stays on the combobox or search field; the active option is published through
@@ -63,25 +82,6 @@ export function useListboxNavigation<T>(params: ParamsType<T>) {
 
   function reset(): void {
     highlightedIndex.value = -1;
-  }
-
-  /**
-   * The box the list scrolls in: the listbox itself when it owns the overflow, otherwise the
-   * scroll region it is wrapped in — a listbox that owns only options cannot also be the region
-   * holding a loader or an empty state. Bounded at `document.body`, so the page is never it.
-   */
-  function getScrollBox(list: HTMLElement): HTMLElement {
-    let node: HTMLElement | null = list;
-
-    while (node && node !== document.body) {
-      if (node.scrollHeight > node.clientHeight) {
-        return node;
-      }
-
-      node = node.parentElement;
-    }
-
-    return list;
   }
 
   /**
