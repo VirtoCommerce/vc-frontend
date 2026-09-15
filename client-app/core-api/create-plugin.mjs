@@ -552,7 +552,7 @@ const sampleDocument = `query PluginPing {
 }
 `;
 
-const vitestConfig = `import { fileURLToPath } from "node:url";
+const vitestConfig = String.raw`import { fileURLToPath } from "node:url";
 import vue from "@vitejs/plugin-vue";
 import { defineConfig } from "vitest/config";
 
@@ -564,7 +564,7 @@ export default defineConfig({
       // before vi.mock() can substitute anything. A regex, not a string: a string key matches by
       // PREFIX and would swallow "@vc-frontend/core/testing" too.
       {
-        find: /^@vc-frontend\\/core$/,
+        find: /^@vc-frontend\/core$/,
         replacement: fileURLToPath(new URL("./${FACADE_MOCK_PATH}", import.meta.url)),
       },
     ],
