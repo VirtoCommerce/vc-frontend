@@ -3102,7 +3102,7 @@ declare function useNotifications(): {
     stack: vue.ComputedRef<INotificationExtended[]>;
 };
 
-/** An option of the list's "Sharing options" select. Modules contribute their own through `registerSharingScope`. */
+/** A tab of the share dialog's scope strip. Modules contribute their own through `registerSharingScope`. */
 interface IWishlistSharingScopeType {
     scope: string;
     labelKey: string;

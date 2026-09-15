@@ -230,3 +230,11 @@ navigation, so the plain check leaves the previous list's frame up while the nex
   the new `wishlist-sharing-*` test ids.
 - `VcTabSwitch` has no `role="radio"` / `aria-checked` and no arrow-key roving — a ui-kit gap that
   the `ariaLabel` workaround only papers over.
+- The success toast counts `context.targets.length || selected.length`. The fallback exists only
+  because the current backend resolves no targets; once VCST-5925 lands it masks the opposite case,
+  a save that persisted nobody, which would then report the drafted audience as saved. Drop the
+  fallback with the regeneration above.
+- The dialog leaves out the "Notify via" checkboxes the Figma carries, and its recipient rows show
+  the customer's address where the Figma shows an email — both settled with the requester. Every
+  share goes out on email and push, so the checkboxes would never be anything but ticked and
+  disabled, and the picker has no email search behind it.
