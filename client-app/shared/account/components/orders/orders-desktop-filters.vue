@@ -1,5 +1,13 @@
 <template>
-  <VcPopover placement="bottom-end" class="orders-desktop-filters" :offset-options="8" :disabled="loading" lazy>
+  <VcPopover
+    placement="bottom-end"
+    class="orders-desktop-filters"
+    :offset-options="8"
+    :disabled="loading"
+    role="dialog"
+    :aria-label="$t('shared.account.orders_filter.title')"
+    lazy
+  >
     <template #default="{ triggerProps }">
       <VcButton :disabled="loading" variant="outline" v-bind="triggerProps">
         <VcIcon name="filter" />

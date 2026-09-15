@@ -1,6 +1,8 @@
 <template>
   <div class="orders-filter">
-    <VcDialog dividers size="xs">
+    <!-- The popover owns initial focus: it names the panel, and VcDialog's autofocus only ever
+         ran on the first open (the content stays mounted afterwards). -->
+    <VcDialog dividers size="xs" :auto-focus="false">
       <VcDialogHeader @close="$emit('close')">
         {{ $t("shared.account.orders_filter.title") }}
       </VcDialogHeader>

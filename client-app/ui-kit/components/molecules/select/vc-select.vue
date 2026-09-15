@@ -48,6 +48,7 @@
           class="vc-select__button"
           @click="toggle"
           @keydown.enter="toggle"
+          @keydown.esc="onTriggerEscape($event, close)"
           @keydown.down.prevent="next(-1)"
         >
           <div class="vc-select__button-content">
@@ -88,7 +89,7 @@
           @keydown.down.prevent="next(-1)"
           @focus="open"
           @click="(autocomplete && open) || (!autocomplete && toggle)"
-          @keydown.esc="close()"
+          @keydown.esc="onTriggerEscape($event, close)"
         >
           <template #append>
             <VcButton
@@ -101,6 +102,7 @@
               variant="ghost"
               class="vc-select__clear"
               :icon-size="size === 'md' ? '0.875rem' : '0.75rem'"
+              @keydown.esc="onTriggerEscape($event, close)"
               @keydown.enter.stop.prevent
               @keyup.enter.stop.prevent="clear"
               @click.stop="clear"
@@ -115,6 +117,7 @@
               variant="ghost"
               tabindex="-1"
               class="vc-select__arrow"
+              @keydown.esc="onTriggerEscape($event, close)"
               @click="handleArrowClick($event, toggle)"
             />
           </template>
@@ -135,10 +138,7 @@
             select(item);
             !multiple && close();
           "
-          @keyup.esc.prevent="
-            focusTrigger();
-            close();
-          "
+          @keydown.esc="onItemEscape($event, close)"
           @keydown.up.prevent="prev(index)"
           @keydown.down.prevent="next(index)"
           @keydown.tab.prevent="handleTab($event, index)"
@@ -411,6 +411,23 @@ function prev(index: number) {
       prevElement.focus();
     }
   }
+}
+
+// Only an open dropdown consumes Escape — otherwise the key belongs to an outer dialog.
+function onTriggerEscape(event: KeyboardEvent, close: () => void) {
+  if (!isShown.value) {
+    return;
+  }
+
+  event.stopPropagation();
+  close();
+}
+
+// From an option the dropdown is always open, and focus lives inside the list — hand it back.
+function onItemEscape(event: KeyboardEvent, close: () => void) {
+  event.stopPropagation();
+  focusTrigger();
+  close();
 }
 
 function toggled(value: boolean) {
