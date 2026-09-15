@@ -67,13 +67,6 @@ const hoisted = vi.hoisted(() => {
               icon: "icon",
               priority: 30,
             },
-            {
-              id: "saved-cards",
-              route: { name: "SavedCreditCards" },
-              title: "Saved Cards",
-              icon: "icon",
-              priority: 40,
-            },
           ],
         },
         corporate: {
@@ -202,7 +195,7 @@ describe("useNavigations - mobilePreSelectedMenuItem", () => {
   });
 
   describe("User section routes", () => {
-    it.each(["Profile", "Addresses", "ChangePasswordAccount", "SavedCreditCards"])(
+    it.each(["Profile", "Addresses", "ChangePasswordAccount"])(
       "returns mobileUserMenuItem for %s route",
       async (routeName) => {
         hoisted.mockRouter.currentRoute.value.matched = [{ name: routeName }];
