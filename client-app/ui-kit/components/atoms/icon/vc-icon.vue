@@ -41,9 +41,7 @@ const style = computed(() => {
   const result: Record<string, string> = {};
 
   if (props.size !== undefined && props.size !== "" && !isPreset.value) {
-    const value = typeof props.size === "number" ? `${props.size}px` : props.size;
-    result.width = value;
-    result.height = value;
+    result["--size"] = typeof props.size === "number" ? `${props.size}px` : props.size;
   }
 
   if (props.strokeWidth !== undefined) {
@@ -264,29 +262,29 @@ watch(
 
   &--size {
     &--xxs {
-      @apply size-2.5;
+      --size: 0.625rem;
     }
 
     &--xs {
-      @apply size-3.5;
+      --size: 0.875rem;
     }
 
     &--sm {
-      @apply size-5;
+      --size: 1.25rem;
     }
 
     // md: no rule — themeable default via --vc-icon-size
 
     &--lg {
-      @apply size-10;
+      --size: 2.5rem;
     }
 
     &--xl {
-      @apply size-12;
+      --size: 3rem;
     }
 
     &--xxl {
-      @apply size-16;
+      --size: 4rem;
     }
   }
 
@@ -308,6 +306,12 @@ watch(
     }
 
     &__slot {
+      // An icon taller than the text line grows the line box and pushes the label off-centre.
+      // Shrink its margin box back to the line-height so the label stays centred.
+      & > #{$self} {
+        margin-block: calc((var(--line-height) - var(--size)) / 2);
+      }
+
       #{$icon} & {
         & > #{$self} {
           @apply mx-0 #{!important};

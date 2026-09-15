@@ -337,6 +337,7 @@
           "back_to_operator": "Voltar para {name}",
           "switching_back": "Voltando…",
           "no_results": "Nenhum resultado encontrado",
+          "organization_locked_tooltip": "Esta organização está bloqueada. Entre em contato com o administrador para obter acesso.",
           "dark_mode": {
             "system": "Tema: automático",
             "dark": "Tema: escuro",

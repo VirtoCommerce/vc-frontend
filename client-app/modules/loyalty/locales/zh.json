@@ -11,7 +11,8 @@
       "amount": "金额",
       "redeemed": "已兑换",
       "earned": "已获得",
-      "registration": "注册"
+      "registration": "注册",
+      "mission": "任务奖励"
     },
     "list_details": {
       "empty_list": "您的列表为空"
