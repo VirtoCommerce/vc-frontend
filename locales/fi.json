@@ -337,6 +337,7 @@
           "back_to_operator": "Takaisin: {name}",
           "switching_back": "Palataan…",
           "no_results": "Ei tuloksia",
+          "organization_locked_tooltip": "Tämä organisaatio on lukittu. Ota yhteyttä pääkäyttäjääsi saadaksesi pääsyn.",
           "dark_mode": {
             "system": "Teema: automaattinen",
             "dark": "Teema: tumma",
