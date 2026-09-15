@@ -1,10 +1,15 @@
 .vc-menu-item {
   $colors: primary, secondary, accent, neutral, success, danger, info, warning;
   $active: "";
+  $highlighted: "";
 
   &__inner {
     &--active {
       $active: &;
+    }
+
+    &--highlighted {
+      $highlighted: &;
     }
 
     &:not(#{$active}) {
@@ -13,12 +18,16 @@
 
     @each $color in $colors {
       &--color--#{$color} {
-        &:hover {
+        &:hover,
+        &#{$highlighted} {
           @apply bg-[--color-#{$color}-100];
         }
 
+        // One step further up the inverted dark scale than hover, mirroring the 50 -> 100
+        // relationship of the light theme: the keyboard highlight and the current selection
+        // must not land on the same pixel.
         &#{$active} {
-          @apply bg-[--color-#{$color}-100];
+          @apply bg-[--color-#{$color}-200];
         }
       }
     }

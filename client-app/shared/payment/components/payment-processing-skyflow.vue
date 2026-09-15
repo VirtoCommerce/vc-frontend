@@ -8,7 +8,7 @@
         size="auto"
         item-size="lg"
         class="mb-4 lg:w-2/5"
-        @change="(value) => selectSkyflowCard(value)"
+        @change="selectSkyflowCard"
       >
         <template #placeholder>
           <div class="flex items-center gap-3 p-3 text-sm">
@@ -191,13 +191,17 @@ const skyflowFormLoading = computed(() => {
   return false;
 });
 
-function selectSkyflowCard(skyflowCard: {
+function selectSkyflowCard(skyflowCard?: {
   cardNumber: string;
   cardExpiration?: string;
   skyflowId: string;
   cardScheme?: string | null;
   cardType?: string | null;
 }): void {
+  if (!skyflowCard) {
+    return;
+  }
+
   selectedSkyflowCard.value = skyflowCard;
   if (isNewCard(skyflowCard)) {
     void initNewCardForm();
