@@ -15,7 +15,7 @@
           {{ $t("common.buttons.print_order") }}
         </VcButton>
 
-        <RequestReturnButton v-if="returnsEnabled && order" :order-id="order.id" />
+        <RequestReturnButton v-if="returnsEnabled && order" :order-id="order.id" :order-status="order.status" />
 
         <VcButton
           v-if="showReorderButton"
