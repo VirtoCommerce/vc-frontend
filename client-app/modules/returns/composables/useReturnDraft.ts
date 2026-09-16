@@ -55,32 +55,38 @@ export function useReturnDraft(returnId: MaybeRefOrGetter<string>) {
   // two drafts, so the seed has to reopen when the id changes or the previous draft stays on screen.
   let seededReturnId = "";
 
-  watch(orderReturn, (value) => {
-    if (!value || value.id === seededReturnId) {
-      return;
-    }
+  watch(
+    orderReturn,
+    (value) => {
+      if (!value || value.id === seededReturnId) {
+        return;
+      }
 
-    seededReturnId = value.id;
-    customerReference.value = value.customerReference ?? "";
-    customerComment.value = value.customerComment ?? "";
-    lines.value = (value.items ?? []).map((item) => ({
-      orderLineItemId: item.orderLineItemId ?? "",
-      name: item.name ?? undefined,
-      sku: item.sku ?? undefined,
-      measureUnit: item.measureUnit ?? undefined,
-      quantity: item.quantity,
-      reasonCode: item.reasonCode ?? "",
-      reasonComment: item.reasonComment ?? "",
-      serialNumber: item.serialNumber ?? "",
-      attachments: (item.attachments ?? []).map((attachment) => ({
-        name: attachment.name,
-        url: attachment.url,
-        size: attachment.size,
-        mimeType: attachment.mimeType ?? undefined,
-      })),
-      attachmentUrls: (item.attachments ?? []).map((attachment) => attachment.url),
-    }));
-  });
+      seededReturnId = value.id;
+      customerReference.value = value.customerReference ?? "";
+      customerComment.value = value.customerComment ?? "";
+      lines.value = (value.items ?? []).map((item) => ({
+        orderLineItemId: item.orderLineItemId ?? "",
+        name: item.name ?? undefined,
+        sku: item.sku ?? undefined,
+        measureUnit: item.measureUnit ?? undefined,
+        quantity: item.quantity,
+        reasonCode: item.reasonCode ?? "",
+        reasonComment: item.reasonComment ?? "",
+        serialNumber: item.serialNumber ?? "",
+        attachments: (item.attachments ?? []).map((attachment) => ({
+          name: attachment.name,
+          url: attachment.url,
+          size: attachment.size,
+          mimeType: attachment.mimeType ?? undefined,
+        })),
+        attachmentUrls: (item.attachments ?? []).map((attachment) => attachment.url),
+      }));
+    },
+    // A cached result is already there when this runs, and without immediate the seed would wait for
+    // a change that may never come - leaving an empty form that the next autosave would persist.
+    { immediate: true },
+  );
 
   const incompleteLines = computed(() =>
     lines.value.filter(

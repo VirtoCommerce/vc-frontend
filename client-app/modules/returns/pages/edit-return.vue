@@ -6,7 +6,9 @@
 
     <VcTypography tag="h1">{{ $t("return_edit.title") }}</VcTypography>
 
-    <VcEmptyView v-if="!loading && !canEdit" :text="$t('return_edit.not_editable_message')" icon="outline-order" />
+    <VcEmptyView v-if="!loading && !orderReturn" :text="$t('return_details.not_found_message')" icon="outline-order" />
+
+    <VcEmptyView v-else-if="!loading && !canEdit" :text="$t('return_edit.not_editable_message')" icon="outline-order" />
 
     <template v-else-if="orderReturn">
       <VcWidget :title="$t('return_edit.details_section')" size="lg">
